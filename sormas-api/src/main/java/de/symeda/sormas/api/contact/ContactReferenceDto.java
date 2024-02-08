@@ -53,26 +53,23 @@ public class ContactReferenceDto extends ReferenceDto {
 		setUuid(uuid);
 	}
 
-	public ContactReferenceDto(String uuid, String contactFirstName, String contactLastName, String contactOtherName, String caseFirstName, String caseLastName, String caseOtherName) {
+	public ContactReferenceDto(String uuid, String contactFirstName, String contactLastName, String caseFirstName, String caseLastName) {
 
 		setUuid(uuid);
-		this.contactName = new PersonName(contactFirstName, contactLastName, contactOtherName);
+		this.contactName = new PersonName(contactFirstName, contactLastName);
 
 		if (caseFirstName != null && caseLastName != null) {
-			this.caseName = new PersonName(caseFirstName, caseLastName, caseOtherName);
+			this.caseName = new PersonName(caseFirstName, caseLastName);
 		}
 	}
-
 
 	@Override
 	public String getCaption() {
 		return buildCaption(
 			contactName.firstName,
 			contactName.lastName,
-			contactName.otherName,
 			caseName != null ? caseName.firstName : null,
 			caseName != null ? caseName.lastName : null,
-			caseName != null ? caseName.otherName : null,
 			getUuid(),
 			true);
 	}
@@ -82,10 +79,8 @@ public class ContactReferenceDto extends ReferenceDto {
 		return buildCaption(
 			contactName.firstName,
 			contactName.lastName,
-			contactName.otherName,
 			caseName != null ? caseName.firstName : null,
 			caseName != null ? caseName.lastName : null,
-			caseName != null ? caseName.otherName : null,
 			getUuid(),
 			true);
 	}
@@ -101,40 +96,32 @@ public class ContactReferenceDto extends ReferenceDto {
 	public static String buildCaption(
 		String contactFirstName,
 		String contactLastName,
-		String contactOtherName,
 		String caseFirstName,
 		String caseLastName,
-		String caseOtherName,
 		String contactUuid) {
-		return buildCaption(contactFirstName, contactLastName, contactOtherName, caseFirstName, caseLastName, caseOtherName, contactUuid, false);
+		return buildCaption(contactFirstName, contactLastName, caseFirstName, caseLastName, contactUuid, false);
 	}
 
 	public static String buildCaption(
 		String contactFirstName,
 		String contactLastName,
-		String contactOtherName,
 		String caseFirstName,
 		String caseLastName,
-		String caseOtherName,
 		String contactUuid,
 		boolean alwaysShowUuid) {
 
 		StringBuilder builder = new StringBuilder();
-		if (!DataHelper.isNullOrEmpty(contactFirstName) || !DataHelper.isNullOrEmpty(contactLastName) || !DataHelper.isNullOrEmpty(contactOtherName)) {
+		if (!DataHelper.isNullOrEmpty(contactFirstName) || !DataHelper.isNullOrEmpty(contactLastName)) {
 			builder.append(DataHelper.toStringNullable(contactFirstName))
 				.append(" ")
-				.append(DataHelper.toStringNullable(contactLastName).toUpperCase())
-				.append(" ")
-				.append(DataHelper.toStringNullable(contactOtherName));
+				.append(DataHelper.toStringNullable(contactLastName).toUpperCase());
 		}
 
-		if (!DataHelper.isNullOrEmpty(caseFirstName) || !DataHelper.isNullOrEmpty(caseLastName) || !DataHelper.isNullOrEmpty(caseOtherName)) {
+		if (!DataHelper.isNullOrEmpty(caseFirstName) || !DataHelper.isNullOrEmpty(caseLastName)) {
 			builder.append(StringUtils.wrap(I18nProperties.getString(Strings.toCase), " "))
 				.append(DataHelper.toStringNullable(caseFirstName))
 				.append(" ")
-				.append(DataHelper.toStringNullable(caseLastName))
-				.append(" ")
-				.append(DataHelper.toStringNullable(caseOtherName));
+				.append(DataHelper.toStringNullable(caseLastName));
 		}
 
 		if (alwaysShowUuid || builder.length() == 0) {
@@ -155,17 +142,12 @@ public class ContactReferenceDto extends ReferenceDto {
 		@SensitiveData
 		private String lastName;
 
-		@PersonalData
-		@SensitiveData
-		private String otherName;
-
 		public PersonName() {
 		}
 
-		public PersonName(String firstName, String lastName, String otherName) {
+		public PersonName(String firstName, String lastName) {
 			this.firstName = firstName;
 			this.lastName = lastName;
-			this.otherName = otherName;
 		}
 
 		public String getFirstName() {
@@ -175,15 +157,9 @@ public class ContactReferenceDto extends ReferenceDto {
 		public String getLastName() {
 			return lastName;
 		}
-		public String getOtherName() {return otherName;}
 
-		public String toString() {
-			return firstName + " " + lastName  + " " + otherName ;
-		}
-
-		@Override
 		public String buildCaption() {
-			return null;
+			return firstName + " " + lastName;
 		}
 	}
 

@@ -1,9 +1,5 @@
 package de.symeda.sormas.api.travelentry;
 
-import de.symeda.sormas.api.caze.CaseOrigin;
-import de.symeda.sormas.api.common.DeletionReason;
-import de.symeda.sormas.api.feature.FeatureType;
-import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import java.util.Date;
 import java.util.List;
 
@@ -93,7 +89,6 @@ public class TravelEntryDto extends PseudonymizableDto {
 	private boolean archived;
 	private boolean deleted;
 	private Disease disease;
-	private CaseOrigin caseOrigin;
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String diseaseDetails;
@@ -161,7 +156,7 @@ public class TravelEntryDto extends PseudonymizableDto {
 	}
 
 	public TravelEntryReferenceDto toReference() {
-		return new TravelEntryReferenceDto(getUuid(), getExternalId(), getPerson().getFirstName(), getPerson().getLastName(), getPerson().getOtherName());
+		return new TravelEntryReferenceDto(getUuid(), getExternalId(), getPerson().getFirstName(), getPerson().getLastName());
 	}
 
 	public PersonReferenceDto getPerson() {
@@ -210,14 +205,6 @@ public class TravelEntryDto extends PseudonymizableDto {
 
 	public void setDisease(Disease disease) {
 		this.disease = disease;
-	}
-
-	public CaseOrigin getCaseOrigin() {
-		return caseOrigin;
-	}
-
-	public void setCaseOrigin(CaseOrigin caseOrigin) {
-		this.caseOrigin = caseOrigin;
 	}
 
 	public String getDiseaseDetails() {

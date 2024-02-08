@@ -375,7 +375,7 @@ public class EventParticipantFacadeEjbTest extends AbstractBeanTest {
 			calendarDay1.getTime(),
 			new Date(),
 			user.toReference(),
-			SampleMaterial.WHOLE_BLOOD,
+			SampleMaterial.BLOOD,
 			rdcf.facility,
 			s -> s.setPathogenTestResult(PathogenTestResultType.POSITIVE));
 
@@ -391,7 +391,7 @@ public class EventParticipantFacadeEjbTest extends AbstractBeanTest {
 			calendarDay10.getTime(),
 			new Date(),
 			user.toReference(),
-			SampleMaterial.WHOLE_BLOOD,
+			SampleMaterial.BLOOD,
 			rdcf.facility,
 			s -> s.setPathogenTestResult(PathogenTestResultType.NEGATIVE));
 

@@ -19,8 +19,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
@@ -35,7 +33,6 @@ import de.symeda.sormas.api.infrastructure.area.AreaType;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
-import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import de.symeda.sormas.api.utils.FieldConstraints;
@@ -74,8 +71,6 @@ public class FacilityDto extends InfrastructureDto {
 	public static final String LONGITUDE = "longitude";
 	public static final String TYPE_GROUP = "typeGroup";
 	public static final String TYPE = "type";
-	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
-	public static final String AFP_TYPE = "afp_type";
 	public static final String EXTERNAL_ID = "externalID";
 	private Set<DiseaseConfigurationDto> diseases;
 
@@ -110,8 +105,6 @@ public class FacilityDto extends InfrastructureDto {
 	@Max(value = 180, message = Validations.numberTooBig)
 	private Double longitude;
 	private FacilityType type;
-	private DhimsFacility dhimsFacilityType;
-	private AFPFacilityOptions afp_type;
 	private boolean publicOwnership;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String externalID;
@@ -126,36 +119,36 @@ public class FacilityDto extends InfrastructureDto {
 
 
 	public FacilityDto(
-		Date creationDate,
-		Date changeDate,
-		String uuid,
-		boolean archived,
-		String name,
-		String regionUuid,
-		String regionName,
-		String regionExternalId,
-		String districtUuid,
-		String districtName,
-		String districtExternalId,
-		String communityUuid,
-		String communityName,
-		String communityExternalId,
-		String city,
-		String postalCode,
-		String street,
-		String houseNumber,
-		String additionalInformation,
-		AreaType areaType,
-		String contactPersonFirstName,
-		String contactPersonLastName,
-		String contactPersonPhone,
-		String contactPersonEmail,
-		Double latitude,
-		Double longitude,
-		FacilityType type,
-		AFPFacilityOptions afp_type,
-		boolean publicOwnership,
-		String externalID) {
+			Date creationDate,
+			Date changeDate,
+			String uuid,
+			boolean archived,
+			String name,
+			String regionUuid,
+			String regionName,
+			String regionExternalId,
+			String districtUuid,
+			String districtName,
+			String districtExternalId,
+			String communityUuid,
+			String communityName,
+			String communityExternalId,
+			String city,
+			String postalCode,
+			String street,
+			String houseNumber,
+			String additionalInformation,
+			AreaType areaType,
+			String contactPersonFirstName,
+			String contactPersonLastName,
+			String contactPersonPhone,
+			String contactPersonEmail,
+			Double latitude,
+			Double longitude,
+			FacilityType type,
+			boolean publicOwnership,
+			String externalID
+	) {
 
 		super(creationDate, changeDate, uuid, archived);
 		this.name = name;
@@ -181,7 +174,6 @@ public class FacilityDto extends InfrastructureDto {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.type = type;
-		this.afp_type = afp_type;
 		this.publicOwnership = publicOwnership;
 		this.externalID = externalID;
 	}
@@ -325,18 +317,6 @@ public class FacilityDto extends InfrastructureDto {
 	public void setType(FacilityType type) {
 		this.type = type;
 	}
-
-	public DhimsFacility getDhimsFacilityType() {
-		return dhimsFacilityType;
-	}
-
-	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
-		this.dhimsFacilityType = dhimsFacilityType;
-	}
-
-	public AFPFacilityOptions getAfpType(){return afp_type;}
-
-	public void setAfpType(AFPFacilityOptions afp_type){this.afp_type = afp_type;}
 
 	public boolean isPublicOwnership() {
 		return publicOwnership;

@@ -17,7 +17,6 @@ package de.symeda.sormas.app.epidata;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static de.symeda.sormas.app.epidata.EpiDataFragmentHelper.getDisease;
 import static de.symeda.sormas.app.epidata.EpiDataFragmentHelper.getDiseaseOfCaseOrContact;
 import static de.symeda.sormas.app.epidata.EpiDataFragmentHelper.getEpiDataOfCaseOrContact;
 
@@ -31,7 +30,6 @@ import androidx.databinding.ObservableArrayList;
 import com.googlecode.openbeans.Introspector;
 import com.googlecode.openbeans.PropertyDescriptor;
 
-import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.exposure.ExposureDto;
@@ -60,10 +58,8 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	public static final String TAG = EpidemiologicalDataEditFragment.class.getSimpleName();
 
 	private EpiData record;
-	private Disease disease;
 	private IEntryItemOnClickListener onExposureItemClickListener;
 	private IEntryItemOnClickListener onActivityAsCaseItemClickListener;
-
 
 	// Static methods
 
@@ -220,7 +216,6 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 
 	@Override
 	protected void prepareFragmentData() {
-		disease = getDisease(getActivityRootData());
 		record = getEpiDataOfCaseOrContact(getActivityRootData());
 	}
 
@@ -278,15 +273,6 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 			contentBinding.activityascaseInvestigationInfo.setText(Html.fromHtml(I18nProperties.getString(Strings.infoActivityAsCaseInvestigation)));
 			contentBinding.activityascaseLayout.setVisibility(GONE);
 			contentBinding.epiDataActivityAsCaseDetailsKnown.setVisibility(GONE);
-		}
-
-		if(disease != null){
-			if(disease == Disease.YELLOW_FEVER){
-				contentBinding.exposureInvestigationInfo.setVisibility(GONE);
-				contentBinding.epiDataExposureDetailsKnown.setVisibility(GONE);
-				contentBinding.epiDataContactWithSourceCaseKnown.setVisibility(GONE);
-				contentBinding.sourceContactsHeading.setVisibility(GONE);
-			}
 		}
 	}
 

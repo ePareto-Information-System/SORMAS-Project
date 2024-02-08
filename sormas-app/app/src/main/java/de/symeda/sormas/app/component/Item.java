@@ -17,8 +17,6 @@ package de.symeda.sormas.app.component;
 
 import java.util.Objects;
 
-import de.symeda.sormas.api.person.Sex;
-
 public class Item<C> {
 
 	private String key;

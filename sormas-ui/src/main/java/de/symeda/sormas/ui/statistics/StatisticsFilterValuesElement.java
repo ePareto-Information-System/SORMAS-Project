@@ -20,7 +20,6 @@ package de.symeda.sormas.ui.statistics;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.explicatis.ext_token_field.ExtTokenField;
@@ -67,7 +66,6 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 	 * Only needed when this element is part of a Region/District element.
 	 */
 	private StatisticsFilterJurisdictionElement jurisdictionElement;
-	private ComboBox dhimsFacilityType;
 
 	private StatisticsFilterResidenceElement residenceElement;
 
@@ -208,7 +206,7 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 						CommunityReferenceDto selectedCommunity = (CommunityReferenceDto) selectedCommunityTokenizable.getValue();
 						facilities.addAll(
 							FacadeProvider.getFacilityFacade()
-								.getActiveFacilitiesByCommunityAndType(selectedCommunity, jurisdictionElement.getFacilityType(),  false, false));
+								.getActiveFacilitiesByCommunityAndType(selectedCommunity, jurisdictionElement.getFacilityType(), false, false));
 					}
 					return createTokens(facilities);
 				} else if (CollectionUtils.isNotEmpty(selectedDistrictTokenizables)) {
@@ -317,9 +315,5 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 
 	public ExtTokenField getTokenField() {
 		return tokenField;
-	}
-
-	DhimsFacility getDhimsFacilityType() {
-		return (DhimsFacility) dhimsFacilityType.getValue();
 	}
 }

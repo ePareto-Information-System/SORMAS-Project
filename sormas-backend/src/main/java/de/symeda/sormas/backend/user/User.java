@@ -83,7 +83,6 @@ public class User extends AbstractDomainObject {
 	public static final String ACTIVE = "active";
 	public static final String FIRST_NAME = "firstName";
 	public static final String LAST_NAME = "lastName";
-	public static final String OTHER_NAME = "otherName";
 	public static final String USER_EMAIL = "userEmail";
 	public static final String PHONE = "phone";
 	public static final String ADDRESS = "address";

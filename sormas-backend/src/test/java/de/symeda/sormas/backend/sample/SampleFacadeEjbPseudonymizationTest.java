@@ -432,7 +432,7 @@ public class SampleFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		lab.setName("Lab");
 		getFacilityService().persist(lab);
 
-		return creator.createSample(contactDto.toReference(), new Date(), new Date(), user1.toReference(), SampleMaterial.WHOLE_BLOOD, lab);
+		return creator.createSample(contactDto.toReference(), new Date(), new Date(), user1.toReference(), SampleMaterial.BLOOD, lab);
 	}
 
 	private void assertNotPseudonymized(SampleDto sample, String reportingUserUuid) {

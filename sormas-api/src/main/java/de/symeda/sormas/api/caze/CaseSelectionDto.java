@@ -36,10 +36,6 @@ public class CaseSelectionDto extends PseudonymizableIndexDto implements Seriali
 	@PersonalData
 	@SensitiveData
 	private String personLastName;
-
-	@PersonalData
-	@SensitiveData
-	private String personOtherName;
 	private AgeAndBirthDateDto ageAndBirthDate;
 	private String responsibleDistrictName;
 	@PersonalData
@@ -59,7 +55,6 @@ public class CaseSelectionDto extends PseudonymizableIndexDto implements Seriali
 		Disease disease,
 		String personFirstName,
 		String personLastName,
-		String personOtherName,
 		AgeAndBirthDateDto ageAndBirthDate,
 		String responsibleDistrictName,
 		String healthFacilityName,
@@ -75,7 +70,6 @@ public class CaseSelectionDto extends PseudonymizableIndexDto implements Seriali
 		this.disease = disease;
 		this.personFirstName = personFirstName;
 		this.personLastName = personLastName;
-		this.personOtherName = personOtherName;
 		this.ageAndBirthDate = ageAndBirthDate;
 		this.responsibleDistrictName = responsibleDistrictName;
 		this.healthFacilityName = healthFacilityName;
@@ -124,14 +118,6 @@ public class CaseSelectionDto extends PseudonymizableIndexDto implements Seriali
 
 	public void setPersonLastName(String personLastName) {
 		this.personLastName = personLastName;
-	}
-
-	public String getPersonOtherName() {
-		return personOtherName;
-	}
-
-	public void setPersonOtherName(String personOtherName) {
-		this.personOtherName = personOtherName;
 	}
 
 	public AgeAndBirthDateDto getAgeAndBirthDate() {
@@ -199,12 +185,12 @@ public class CaseSelectionDto extends PseudonymizableIndexDto implements Seriali
 	}
 
 	public CaseReferenceDto toReference() {
-		return new CaseReferenceDto(getUuid(), personFirstName, personLastName, personOtherName);
+		return new CaseReferenceDto(getUuid(), personFirstName, personLastName);
 	}
 
 	@Override
 	public String getCaption() {
-		return CaseReferenceDto.buildCaption(getUuid(), getPersonFirstName(), getPersonLastName(), getPersonOtherName());
+		return CaseReferenceDto.buildCaption(getUuid(), getPersonFirstName(), getPersonLastName());
 	}
 
 	@Override

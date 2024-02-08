@@ -18,8 +18,7 @@
 package de.symeda.sormas.api.hospitalization;
 
 import de.symeda.sormas.api.feature.FeatureType;
-import de.symeda.sormas.api.utils.*;
-
+import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,24 +44,7 @@ public class HospitalizationDto extends EntityDto {
 	public static final String I18N_PREFIX = "CaseHospitalization";
 
 	public static final String ADMITTED_TO_HEALTH_FACILITY = "admittedToHealthFacility";
-	public static final String ADMITTED_TO_HEALTH_FACILITY_NEW = "admittedToHealthFacilityNew";
 	public static final String ADMISSION_DATE = "admissionDate";
-	public static final String NOTIFY_DISTRICT_DATE = "notifyDistrictDate";
-	public static final String DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE = "dateFirstSeen";
-	public static final String TERMINATION_DATE_HOSPITAL_STAY = "terminationDateHospitalStay";
-	public static final String DISEASE_ONSET_DATE = "diseaseOnsetDate";
-	public static final String PATIENT_HOSPITALIZED_DETAINED = "patientHospitalizedOrDetained";
-	public static final String PLACE = "place";
-	public static final String DURATION_MONTHS = "durationMonths";
-	public static final String DURATION_DAYS = "durationDays";
-	public static final String PLACE2 = "place2";
-	public static final String DURATION_MONTHS2 = "durationMonths2";
-	public static final String DURATION_DAYS2 = "durationDays2";
-	public static final String INVESTIGATOR_NAME = "investigatorName";
-	public static final String INVESTIGATOR_TITLE = "investigatorTitle";
-	public static final String INVESTIGATOR_UNIT = "investigatorUnit";
-	public static final String INVESTIGATOR_ADDRESS = "investigatorAddress";
-	public static final String INVESTIGATOR_TEL = "investigatorTel";
 	public static final String DISCHARGE_DATE = "dischargeDate";
 	public static final String ISOLATED = "isolated";
 	public static final String ISOLATION_DATE = "isolationDate";
@@ -81,23 +63,17 @@ public class HospitalizationDto extends EntityDto {
 	// Fields are declared in the order they should appear in the import template
 
 	@Outbreaks
-	private YesNo admittedToHealthFacility;
-	private YesNo admittedToHealthFacilityNew;
+	private YesNoUnknown admittedToHealthFacility;
 	private Date admissionDate;
-	private Date notifyDistrictDate;
-	private Date dateFirstSeen;
-	private Date terminationDateHospitalStay;
-	private Date diseaseOnsetDate;
-	private HospOut patientHospitalizedOrDetained;
 	private Date dischargeDate;
-	private YesNo isolated;
+	private YesNoUnknown isolated;
 	private Date isolationDate;
-	private YesNo leftAgainstAdvice;
+	private YesNoUnknown leftAgainstAdvice;
 
-	private YesNo hospitalizedPreviously;
+	private YesNoUnknown hospitalizedPreviously;
 	@Valid
 	private List<PreviousHospitalizationDto> previousHospitalizations = new ArrayList<>();
-	private YesNo intensiveCareUnit;
+	private YesNoUnknown intensiveCareUnit;
 	private Date intensiveCareUnitStart;
 	private Date intensiveCareUnitEnd;
 	private MildModerateSevereCritical patientConditionOnAdmission;
@@ -108,19 +84,6 @@ public class HospitalizationDto extends EntityDto {
 	private String description;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
 	private String healthFacilityRecordNumber;
-	private String place;
-	@Size(max = FieldConstraints.CHARACTER_LIMIT_UUID_MAX, message = Validations.onlyNumbersAllowed)
-	private String durationMonths;
-	@Size(max = FieldConstraints.CHARACTER_LIMIT_UUID_MAX, message = Validations.onlyNumbersAllowed)
-	private String durationDays;
-	private String place2;
-	private String durationMonths2;
-	private String durationDays2;
-	private String investigatorName;
-	private String investigatorTitle;
-	private String investigatorUnit;
-	private String investigatorAddress;
-	private String investigatorTel;
 
 	public static HospitalizationDto build() {
 		HospitalizationDto hospitalization = new HospitalizationDto();
@@ -144,11 +107,11 @@ public class HospitalizationDto extends EntityDto {
 		this.dischargeDate = dischargeDate;
 	}
 
-	public YesNo getIsolated() {
+	public YesNoUnknown getIsolated() {
 		return isolated;
 	}
 
-	public void setIsolated(YesNo isolated) {
+	public void setIsolated(YesNoUnknown isolated) {
 		this.isolated = isolated;
 	}
 
@@ -161,11 +124,11 @@ public class HospitalizationDto extends EntityDto {
 	}
 
 	@ImportIgnore
-	public YesNo getHospitalizedPreviously() {
+	public YesNoUnknown getHospitalizedPreviously() {
 		return hospitalizedPreviously;
 	}
 
-	public void setHospitalizedPreviously(YesNo hospitalizedPreviously) {
+	public void setHospitalizedPreviously(YesNoUnknown hospitalizedPreviously) {
 		this.hospitalizedPreviously = hospitalizedPreviously;
 	}
 
@@ -178,27 +141,19 @@ public class HospitalizationDto extends EntityDto {
 		this.previousHospitalizations = previousHospitalizations;
 	}
 
-	public YesNo getAdmittedToHealthFacility() {
+	public YesNoUnknown getAdmittedToHealthFacility() {
 		return admittedToHealthFacility;
 	}
 
-	public void setAdmittedToHealthFacility(YesNo admittedToHealthFacility) {
+	public void setAdmittedToHealthFacility(YesNoUnknown admittedToHealthFacility) {
 		this.admittedToHealthFacility = admittedToHealthFacility;
 	}
 
-	public YesNo getAdmittedToHealthFacilityNew() {
-		return admittedToHealthFacilityNew;
-	}
-
-	public void setAdmittedToHealthFacilityNew(YesNo admittedToHealthFacilityNew) {
-		this.admittedToHealthFacilityNew = admittedToHealthFacilityNew;
-	}
-
-	public YesNo getIntensiveCareUnit() {
+	public YesNoUnknown getIntensiveCareUnit() {
 		return intensiveCareUnit;
 	}
 
-	public void setIntensiveCareUnit(YesNo intensiveCareUnit) {
+	public void setIntensiveCareUnit(YesNoUnknown intensiveCareUnit) {
 		this.intensiveCareUnit = intensiveCareUnit;
 	}
 
@@ -218,11 +173,11 @@ public class HospitalizationDto extends EntityDto {
 		this.intensiveCareUnitEnd = intensiveCareUnitEnd;
 	}
 
-	public YesNo getLeftAgainstAdvice() {
+	public YesNoUnknown getLeftAgainstAdvice() {
 		return leftAgainstAdvice;
 	}
 
-	public void setLeftAgainstAdvice(YesNo leftAgainstAdvice) {
+	public void setLeftAgainstAdvice(YesNoUnknown leftAgainstAdvice) {
 		this.leftAgainstAdvice = leftAgainstAdvice;
 	}
 
@@ -264,130 +219,5 @@ public class HospitalizationDto extends EntityDto {
 
 	public void setHealthFacilityRecordNumber(String healthFacilityRecordNumber) {
 		this.healthFacilityRecordNumber = healthFacilityRecordNumber;
-	public Date getDiseaseOnsetDate() {
-		return diseaseOnsetDate;
-	}
-
-	public void setDiseaseOnsetDate(Date diseaseOnsetDate) {
-		this.diseaseOnsetDate = diseaseOnsetDate;
-	}
-
-	public HospOut getPatientHospitalizedOrDetained() {
-		return patientHospitalizedOrDetained;
-	}
-
-	public void setPatientHospitalizedOrDetained(HospOut patientHospitalizedOrDetained) {
-		this.patientHospitalizedOrDetained = patientHospitalizedOrDetained;
-	}
-
-	public String getPlace() {
-		return place;
-	}
-
-	public void setPlace(String place) {
-		this.place = place;
-	}
-
-	public String getDurationMonths() {
-		return durationMonths;
-	}
-
-	public void setDurationMonths(String durationMonths) {
-		this.durationMonths = durationMonths;
-	}
-
-	public String getDurationDays() {
-		return durationDays;
-	}
-
-	public void setDurationDays(String durationDays) {
-		this.durationDays = durationDays;
-	}
-
-	public String getInvestigatorName() {
-		return investigatorName;
-	}
-
-	public void setInvestigatorName(String investigatorName) {
-		this.investigatorName = investigatorName;
-	}
-
-	public String getInvestigatorTitle() {
-		return investigatorTitle;
-	}
-
-	public void setInvestigatorTitle(String investigatorTitle) {
-		this.investigatorTitle = investigatorTitle;
-	}
-
-	public String getInvestigatorUnit() {
-		return investigatorUnit;
-	}
-
-	public void setInvestigatorUnit(String investigatorUnit) {
-		this.investigatorUnit = investigatorUnit;
-	}
-
-	public String getInvestigatorAddress() {
-		return investigatorAddress;
-	}
-
-	public void setInvestigatorAddress(String investigatorAddress) {
-		this.investigatorAddress = investigatorAddress;
-	}
-
-	public String getInvestigatorTel() {
-		return investigatorTel;
-	}
-
-	public void setInvestigatorTel(String investigatorTel) {
-		this.investigatorTel = investigatorTel;
-	}
-
-	public String getPlace2() {
-		return place2;
-	}
-
-	public void setPlace2(String place2) {
-		this.place2 = place2;
-	}
-
-	public String getDurationMonths2() {
-		return durationMonths2;
-	}
-
-	public void setDurationMonths2(String durationMonths2) {
-		this.durationMonths2 = durationMonths2;
-	}
-
-	public String getDurationDays2() {
-		return durationDays2;
-	}
-
-	public void setDurationDays2(String durationDays2) {
-		this.durationDays2 = durationDays2;
-	}
-
-	public Date getNotifyDistrictDate() {
-		return notifyDistrictDate;
-	}
-
-	public void setNotifyDistrictDate(Date notifyDistrictDate) {
-		this.notifyDistrictDate = notifyDistrictDate;
-	}
-
-	public Date getDateFirstSeen() {
-		return dateFirstSeen;
-	}
-
-	public void setDateFirstSeen(Date dateFirstSeen) {
-		this.dateFirstSeen = dateFirstSeen;
-	}
-
-	public Date getTerminationDateHospitalStay() {
-		return terminationDateHospitalStay;
-	}
-	public void setTerminationDateHospitalStay(Date terminationDateHospitalStay) {
-		this.terminationDateHospitalStay = terminationDateHospitalStay;
 	}
 }

@@ -16,10 +16,8 @@
 package de.symeda.sormas.api.infrastructure.facility;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum FacilityTypeGroup {
@@ -47,8 +45,6 @@ public enum FacilityTypeGroup {
 		}
 		return accomodationGroups;
 	}
-
-	//public static final List<FacilityTypeGroup> FOR_DHIMS = Arrays.asList(CHPS_COMPOUND, MATERNITY_HOME, CLINIC, HEALTH_CENTRE, POLYCLINIC, HOSPITAL);
 
 	@Override
 	public String toString() {

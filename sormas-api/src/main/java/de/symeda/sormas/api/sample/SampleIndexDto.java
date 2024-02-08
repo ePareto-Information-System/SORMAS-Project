@@ -30,10 +30,8 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.utils.DateFormatHelper;
 import de.symeda.sormas.api.utils.EmbeddedPersonalData;
 import de.symeda.sormas.api.utils.EmbeddedSensitiveData;
-import de.symeda.sormas.api.utils.IpResult;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
-import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.EmptyValuePseudonymizer;
 
 public class SampleIndexDto extends PseudonymizableIndexDto implements Serializable {
@@ -108,13 +106,6 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	private SampleJurisdictionFlagsDto sampleJurisdictionFlagsDto;
 	private DeletionReason deletionReason;
 	private String otherDeletionReason;
-	private PathogenTestType sampleTests;
-	private String diseaseSampleTests;
-	private SampleDispatchMode sampleDispatchMode;
-	private Date sampleDispatchDate;
-	private String sampleTestsString;
-	private String ipSampleSent;
-	private IpResult ipSampleResults;
 
 	//@formatter:off
 	public SampleIndexDto(String uuid, String epidNumber, String labSampleId, String fieldSampleId, Date sampleDateTime,
@@ -122,29 +113,32 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 						  SampleMaterial sampleMaterial, SamplePurpose samplePurpose, SpecimenCondition specimenCondition,
 						  String labName, String referredSampleUuid,
 						  SamplingReason samplingReason, String samplingReasonDetails,
-						  String associatedCaseUuid, String associatedCaseFirstName, String associatedCaseLastName, String associatedCaseOtherName,
-						  String associatedContactUuid, String associatedContactFirstName, String associatedContactLastName, String associatedContactOtherName,
-						  String associatedEventParticipantUuid, String associatedEventParticipantFirstName, String associatedEventParticipantLastName, String associatedEventParticipantOtherName,
-						  Disease disease, String diseaseDetails, PathogenTestResultType pathogenTestResult, Boolean additionalTestingRequested, Boolean additionalTestPerformed,
-						  String districtName, String labUuid, Long pathogenTestCount,
-						  boolean isInJurisdiction, boolean isCaseInJurisdiction, boolean isContactInJurisdiction,  boolean isContactCaseInJurisdiction, boolean isEventParticipantInJurisdiction, PathogenTestType sampleTests,
-						  String diseaseSampleTests, SampleDispatchMode sampleDispatchMode, Date sampleDispatchDate, String sampleTestsString, String ipSampleSent, IpResult ipSampleResults) {
+						  String associatedCaseUuid, String associatedCaseFirstName, String associatedCaseLastName,
+						  String associatedContactUuid, String associatedContactFirstName, String associatedContactLastName,
+						  String associatedEventParticipantUuid, String associatedEventParticipantFirstName, String associatedEventParticipantLastName,
+						  Disease disease, String diseaseDetails, PathogenTestResultType pathogenTestResult, Boolean additionalTestingRequested,
+						  Boolean additionalTestPerformed, Long pathogenTestCount,
+							boolean isInJurisdiction, boolean isCaseInJurisdiction, boolean isContactInJurisdiction,  
+							boolean isContactCaseInJurisdiction, boolean isEventParticipantInJurisdiction) {
+  
+						//   Disease disease, String diseaseDetails, PathogenTestResultType pathogenTestResult, Boolean additionalTestingRequested, Boolean additionalTestPerformed,
+						//   String districtName, String labUuid, DeletionReason deletionReason, String otherDeletionReason, Long pathogenTestCount,
+						//   boolean isInJurisdiction, boolean isCaseInJurisdiction, boolean isContactInJurisdiction,  boolean isContactCaseInJurisdiction, boolean isEventParticipantInJurisdiction) {
 	//@formatter:on
 
 		super(uuid);
 		if (associatedCaseUuid != null) {
-			this.associatedCase = new CaseReferenceDto(associatedCaseUuid, associatedCaseFirstName, associatedCaseLastName, associatedCaseOtherName);
+			this.associatedCase = new CaseReferenceDto(associatedCaseUuid, associatedCaseFirstName, associatedCaseLastName);
 		}
 		if (associatedContactUuid != null) {
 			this.associatedContact =
-				new ContactReferenceDto(associatedContactUuid, associatedContactFirstName, associatedContactLastName, associatedContactOtherName, null, null, null);
+				new ContactReferenceDto(associatedContactUuid, associatedContactFirstName, associatedContactLastName, null, null);
 		}
 		if (associatedEventParticipantUuid != null) {
 			this.associatedEventParticipant = new EventParticipantReferenceDto(
 				associatedEventParticipantUuid,
 				associatedEventParticipantFirstName,
-				associatedEventParticipantLastName,
-				associatedEventParticipantOtherName);
+				associatedEventParticipantLastName);
 		}
 		this.epidNumber = epidNumber;
 		this.labSampleID = labSampleId;
@@ -183,13 +177,6 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 			isContactInJurisdiction,
 			isContactCaseInJurisdiction,
 			isEventParticipantInJurisdiction);
-		this.sampleTests = sampleTests;
-		this.diseaseSampleTests = diseaseSampleTests;
-		this.sampleDispatchMode = sampleDispatchMode;
-		this.sampleDispatchDate = sampleDispatchDate;
-		this.sampleTestsString = sampleTestsString;
-		this.ipSampleSent = ipSampleSent;
-		this.ipSampleResults = ipSampleResults;
 	}
 
 	//@formatter:off
@@ -389,14 +376,6 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.samplePurpose = samplePurpose;
 	}
 
-	public SampleDispatchMode getSampleDispatchMode() {
-		return sampleDispatchMode;
-	}
-
-	public void setSampleDispatchMode(SampleDispatchMode sampleDispatchMode) {
-		this.sampleDispatchMode = sampleDispatchMode;
-	}
-
 	public boolean isShipped() {
 		return shipped;
 	}
@@ -447,36 +426,12 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.pathogenTestResult = pathogenTestResult;
 	}
 
-	public PathogenTestType getSampleTests() {
-		return sampleTests;
-	}
-
-	public void setSampleTests(PathogenTestType sampleTests) {
-		this.sampleTests = sampleTests;
-	}
-
-	public IpResult getIpSampleResults() {
-		return ipSampleResults;
-	}
-
-	public void setIpSampleResults(IpResult ipSampleResults) {
-		this.ipSampleResults = ipSampleResults;
-	}
-
 	public Date getSampleDateTime() {
 		return sampleDateTime;
 	}
 
 	public void setSampleDateTime(Date sampleDateTime) {
 		this.sampleDateTime = sampleDateTime;
-	}
-
-	public Date getSampleDispatchDate() {
-		return sampleDispatchDate;
-	}
-
-	public void setSampleDispatchDate(Date sampleDispatchDate) {
-		this.sampleDispatchDate = sampleDispatchDate;
 	}
 
 	public AdditionalTestingStatus getAdditionalTestingStatus() {
@@ -501,30 +456,6 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 
 	public void setSamplingReasonDetails(String samplingReasonDetails) {
 		this.samplingReasonDetails = samplingReasonDetails;
-	}
-
-	public String getDiseaseSampleTests() {
-		return diseaseSampleTests;
-	}
-
-	public void setDiseaseSampleTests(String diseaseSampleTests) {
-		this.diseaseSampleTests = diseaseSampleTests;
-	}
-
-	public String getSampleTestsString() {
-		return sampleTestsString;
-	}
-
-	public void setSampleTestsString(String sampleTestsString) {
-		this.sampleTestsString = sampleTestsString;
-	}
-
-	public String getIpSampleSent() {
-		return ipSampleSent;
-	}
-
-	public void setIpSampleSent(String ipSampleSent) {
-		this.ipSampleSent = ipSampleSent;
 	}
 
 	public SampleJurisdictionFlagsDto getSampleJurisdictionFlagsDto() {

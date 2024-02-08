@@ -26,7 +26,6 @@ import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.infrastructure.cadre.CadreDto;
 import de.symeda.sormas.api.infrastructure.cadre.CadreReferenceDto;
-import de.symeda.sormas.api.caze.CaseOrigin;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -73,12 +72,9 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String SEX = "sex";
 	public static final String FIRST_NAME = "firstName";
 	public static final String LAST_NAME = "lastName";
-	public static final String OTHER_NAME = "otherName";
 	public static final String SALUTATION = "salutation";
 	public static final String OTHER_SALUTATION = "otherSalutation";
 	public static final String PRESENT_CONDITION = "presentCondition";
-	public static final String HOME_ADDRESS_RECREATIONAL = "homeAddressRecreational";
-	public static final String CASE_ORIGIN = "caseOrigin";
 	public static final String BIRTH_DATE = "birthdate";
 	public static final String BIRTH_DATE_DD = "birthdateDD";
 	public static final String BIRTH_DATE_MM = "birthdateMM";
@@ -120,7 +116,6 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String BIRTH_WEIGHT = "birthWeight";
 	public static final String PASSPORT_NUMBER = "passportNumber";
 	public static final String NATIONAL_HEALTH_ID = "nationalHealthId";
-	public static final String GHANA_CARD = "ghanaCard";
 	public static final String EMAIL_ADDRESS = "emailAddress";
 	public static final String OTHER_CONTACT_DETAILS = "otherContactDetails";
 	public static final String PLACE_OF_BIRTH_FACILITY_TYPE = "placeOfBirthFacilityType";
@@ -137,11 +132,8 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String ADDITIONAL_DETAILS = "additionalDetails";
 	public static final String CADRE = "cadre";
 	private static final long serialVersionUID = -8558187171374254398L;
-	public static final String DISEASE = "disease";
-	public static final String ADDITIONAL_PLACES_STAYED = "additionalPlacesStayed";
 
 	// Fields are declared in the order they should appear in the import template
-
 	@Outbreaks
 	@NotBlank(message = Validations.specifyFirstName)
 	@PersonalData(mandatoryField = true)
@@ -154,11 +146,6 @@ public class PersonDto extends PseudonymizableDto {
 	@SensitiveData(mandatoryField = true)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String lastName;
-	@Outbreaks
-	@PersonalData(mandatoryField = false)
-	@SensitiveData(mandatoryField = false)
-	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
-	private String otherName;
 	@HideForCountriesExcept
 	@PersonalData
 	@SensitiveData
@@ -259,9 +246,6 @@ public class PersonDto extends PseudonymizableDto {
 
 	@Outbreaks
 	private PresentCondition presentCondition;
-
-	@Outbreaks
-	private CaseOrigin caseOrigin;
 	private Date deathDate;
 	private CauseOfDeath causeOfDeath;
 	private Disease causeOfDeathDisease;
@@ -273,7 +257,7 @@ public class PersonDto extends PseudonymizableDto {
 		Disease.EVD,
 		Disease.GUINEA_WORM,
 		Disease.POLIO,
-		Disease.AHF,
+		Disease.UNSPECIFIED_VHF,
 		Disease.CORONAVIRUS,
 		Disease.UNDEFINED,
 		Disease.OTHER })
@@ -283,7 +267,7 @@ public class PersonDto extends PseudonymizableDto {
 		Disease.EVD,
 		Disease.GUINEA_WORM,
 		Disease.POLIO,
-		Disease.AHF,
+		Disease.UNSPECIFIED_VHF,
 		Disease.CORONAVIRUS,
 		Disease.UNDEFINED,
 		Disease.OTHER })
@@ -296,7 +280,7 @@ public class PersonDto extends PseudonymizableDto {
 		Disease.GUINEA_WORM,
 		Disease.LASSA,
 		Disease.POLIO,
-		Disease.AHF,
+		Disease.UNSPECIFIED_VHF,
 		Disease.UNDEFINED,
 		Disease.OTHER })
 	@HideForCountries
@@ -307,7 +291,7 @@ public class PersonDto extends PseudonymizableDto {
 		Disease.GUINEA_WORM,
 		Disease.LASSA,
 		Disease.POLIO,
-		Disease.AHF,
+		Disease.UNSPECIFIED_VHF,
 		Disease.UNDEFINED,
 		Disease.OTHER })
 	@SensitiveData
@@ -320,7 +304,7 @@ public class PersonDto extends PseudonymizableDto {
 		Disease.GUINEA_WORM,
 		Disease.LASSA,
 		Disease.POLIO,
-		Disease.AHF,
+		Disease.UNSPECIFIED_VHF,
 		Disease.UNDEFINED,
 		Disease.OTHER })
 	@HideForCountries
@@ -358,11 +342,6 @@ public class PersonDto extends PseudonymizableDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	@HideForCountries
 	private String nationalHealthId;
-
-	@SensitiveData
-	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
-	@HideForCountries
-	private String ghanaCard;
 	@Valid
 	private List<LocationDto> addresses = new ArrayList<>();
 	@Valid
@@ -402,14 +381,6 @@ public class PersonDto extends PseudonymizableDto {
 
 	@SensitiveData
 	private CadreReferenceDto cadre;
-	@Outbreaks
-	//@Required
-	private Disease disease;
-
-	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
-	private String additionalPlacesStayed;
-
-	private String homeAddressRecreational;
 
 	@SuppressWarnings("serial")
 	public static class SeveralNonPrimaryContactDetailsException extends RuntimeException {
@@ -419,8 +390,8 @@ public class PersonDto extends PseudonymizableDto {
 		}
 	}
 
-	public static String buildCaption(String firstName, String lastName, String otherName) {
-		return DataHelper.toStringNullable(firstName) + " " + DataHelper.toStringNullable(replaceGermanChars(lastName)).toUpperCase() + " " + DataHelper.toStringNullable(otherName);
+	public static String buildCaption(String firstName, String lastName) {
+		return DataHelper.toStringNullable(firstName) + " " + DataHelper.toStringNullable(replaceGermanChars(lastName)).toUpperCase();
 	}
 
 	/*
@@ -450,7 +421,6 @@ public class PersonDto extends PseudonymizableDto {
 		person.setSex(Sex.UNKNOWN);
 		return person;
 	}
-
 
 	public Integer getBirthdateDD() {
 		return birthdateDD;
@@ -555,9 +525,6 @@ public class PersonDto extends PseudonymizableDto {
 	public void setPresentCondition(PresentCondition presentCondition) {
 		this.presentCondition = presentCondition;
 	}
-
-	public CaseOrigin getCaseOrigin() {return caseOrigin;}
-	public void setCaseOrigin(CaseOrigin caseOrigin) {this.caseOrigin = caseOrigin;}
 
 	public CauseOfDeath getCauseOfDeath() {
 		return causeOfDeath;
@@ -790,12 +757,6 @@ public class PersonDto extends PseudonymizableDto {
 		this.lastName = lastName;
 	}
 
-	public String getOtherName() {
-		return otherName;
-	}
-	public void setOtherName(String otherName) {
-		this.otherName = otherName;
-	}
 	public Salutation getSalutation() {
 		return salutation;
 	}
@@ -948,14 +909,6 @@ public class PersonDto extends PseudonymizableDto {
 		this.nationalHealthId = nationalHealthId;
 	}
 
-	public String getGhanaCard() {
-		return ghanaCard;
-	}
-
-	public void setGhanaCard(String ghanaCard) {
-		this.ghanaCard = ghanaCard;
-	}
-
 	public FacilityType getPlaceOfBirthFacilityType() {
 		return placeOfBirthFacilityType;
 	}
@@ -1069,17 +1022,11 @@ public class PersonDto extends PseudonymizableDto {
 
 	public void setCadre(CadreReferenceDto cadre) {
 		this.cadre = cadre;
-	public Disease getDisease() {
-		return disease;
-	}
-
-	public void setDisease(Disease disease) {
-		this.disease = disease;
 	}
 
 	@Override
 	public String buildCaption() {
-		return buildCaption(firstName, lastName, otherName);
+		return buildCaption(firstName, lastName);
 	}
 
 	@JsonIgnore
@@ -1088,7 +1035,7 @@ public class PersonDto extends PseudonymizableDto {
 	}
 
 	public PersonReferenceDto toReference() {
-		return new PersonReferenceDto(getUuid(), firstName, lastName, otherName);
+		return new PersonReferenceDto(getUuid(), firstName, lastName);
 	}
 
 	@Override
@@ -1109,21 +1056,5 @@ public class PersonDto extends PseudonymizableDto {
 		clone.setPersonContactDetails(contactDetailsClone);
 
 		return clone;
-	}
-
-	public String getAdditionalPlacesStayed() {
-		return additionalPlacesStayed;
-	}
-
-	public void setAdditionalPlacesStayed(String additionalPlacesStayed) {
-		this.additionalPlacesStayed = additionalPlacesStayed;
-	}
-
-	public String getHomeAddressRecreational() {
-		return homeAddressRecreational;
-	}
-
-	public void setHomeAddressRecreational(String homeAddressRecreational) {
-		this.homeAddressRecreational = homeAddressRecreational;
 	}
 }

@@ -404,7 +404,7 @@ public final class CssStyles {
 			return "background-disease-plague";
 		case POLIO:
 			return "background-disease-polio";
-		case AHF:
+		case UNSPECIFIED_VHF:
 			return "background-disease-unspecified-vhf";
 		case WEST_NILE_FEVER:
 			return "background-disease-west-nile-fever";

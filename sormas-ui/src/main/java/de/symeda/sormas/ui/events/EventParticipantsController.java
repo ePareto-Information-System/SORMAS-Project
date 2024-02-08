@@ -224,7 +224,7 @@ public class EventParticipantsController {
 		DeletionInfoDto manuallyDeletionInfoDto = FacadeProvider.getEventParticipantFacade().getManuallyDeletionInfo(eventParticipantUuid);
 
 		final EventParticipantEditForm editForm =
-				new EventParticipantEditForm(event, eventParticipant.isPseudonymized(), eventParticipant.getPerson().isPseudonymized(), false);
+			new EventParticipantEditForm(event, eventParticipant.isPseudonymized(), eventParticipant.isInJurisdiction());
 		editForm.setValue(eventParticipant);
 		editForm.setWidth(100, Unit.PERCENTAGE);
 

@@ -72,14 +72,6 @@
                 app:value="@={data.person.lastName}"
                 style="@style/ControlSingleColumnStyle" />
 
-            <de.symeda.sormas.app.component.controls.ControlTextEditField
-                android:id="@+id/person_other_name"
-                app:required="true"
-                app:value="@={data.person.otherName}"
-                style="@style/ControlSingleColumnStyle" />
-
-
-
             <de.symeda.sormas.app.component.controls.ControlSpinnerField
                 android:id="@+id/person_sex"
                 app:required="true"

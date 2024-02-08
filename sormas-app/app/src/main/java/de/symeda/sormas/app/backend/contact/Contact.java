@@ -32,7 +32,6 @@ import javax.persistence.Enumerated;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.caze.VaccinationStatus;
-import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.contact.ContactCategory;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactIdentificationSource;
@@ -94,7 +93,6 @@ public class Contact extends PseudonymizableAdo {
 	public static final String HEALTH_CONDITIONS = "healthConditions";
 	public static final String CONTACT_TRANSMISSION_CLASSIFICATION = "contactTransmissionClassification";
 	public static final String VACCINATION_STATUS = "vaccinationStatus";
-	public static final String CONTACT_TRANSMISSION_CLASSIFICATION = "contactTransmissionClassification";
 
 	@DatabaseField(dataType = DataType.DATE_LONG, canBeNull = true)
 	private Date reportDateTime;
@@ -228,10 +226,6 @@ public class Contact extends PseudonymizableAdo {
 	private Date quarantineOfficialOrderSentDate;
 	@Column(length = CHARACTER_LIMIT_BIG)
 	private String additionalDetails;
-//	@Column(length = COLUMN_LENGTH_DEFAULT)
-	@Enumerated(EnumType.STRING)
-	private TransmissionClassification contactTransmissionClassification;
-
 
 	@Enumerated(EnumType.STRING)
 	private TransmissionClassification contactTransmissionClassification;
@@ -901,13 +895,5 @@ public class Contact extends PseudonymizableAdo {
 
 	public void setVaccinationStatus(VaccinationStatus vaccinationStatus) {
 		this.vaccinationStatus = vaccinationStatus;
-	}
-
-	public TransmissionClassification getContactTransmissionClassification() {
-		return contactTransmissionClassification;
-	}
-
-	public void setContactTransmissionClassification(TransmissionClassification contactTransmissionClassification) {
-		this.contactTransmissionClassification = contactTransmissionClassification;
 	}
 }

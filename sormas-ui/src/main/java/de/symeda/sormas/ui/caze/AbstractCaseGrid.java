@@ -205,37 +205,37 @@ public abstract class AbstractCaseGrid<IndexDto extends CaseIndexDto> extends Fi
 	protected Stream<String> getGridColumns() {
 
 		return Stream
-				.of(
-						Stream.of(
-								CaseIndexDto.UUID,
-								CaseIndexDto.EPID_NUMBER,
-								CaseIndexDto.EXTERNAL_ID,
-								CaseIndexDto.EXTERNAL_TOKEN,
-								CaseIndexDto.INTERNAL_TOKEN,
-								DISEASE_SHORT,
-								CaseIndexDto.DISEASE_VARIANT,
-								CaseIndexDto.CASE_CLASSIFICATION,
-								CaseIndexDto.OUTCOME),
-						getReinfectionColumn(),
-						Stream.of(CaseIndexDto.INVESTIGATION_STATUS),
-						getPersonColumns(),
-						getEventColumns(),
-						getSymptomsColumns(),
-						getSampleColumns(),
-						getJurisdictionColumns(),
-						Stream.of(CaseIndexDto.REPORT_DATE),
-						externalSurveillanceToolShareEnabled
-								? Stream.of(
-								CaseIndexDto.SURVEILLANCE_TOOL_LAST_SHARE_DATE,
-								CaseIndexDto.SURVEILLANCE_TOOL_STATUS,
-								CaseIndexDto.SURVEILLANCE_TOOL_SHARE_COUNT)
-								: Stream.<String> empty(),
-						Stream.of(CaseIndexDto.QUARANTINE_TO, CaseIndexDto.CREATION_DATE),
-						getFollowUpColumns(),
-						Stream.of(CaseIndexDto.VACCINATION_STATUS),
-						Stream.of(COLUMN_COMPLETENESS),
-						Stream.of(DELETE_REASON_COLUMN))
-				.flatMap(Function.identity());
+			.of(
+				Stream.of(
+					CaseIndexDto.UUID,
+					CaseIndexDto.EPID_NUMBER,
+					CaseIndexDto.EXTERNAL_ID,
+					CaseIndexDto.EXTERNAL_TOKEN,
+					CaseIndexDto.INTERNAL_TOKEN,
+					DISEASE_SHORT,
+					CaseIndexDto.DISEASE_VARIANT,
+					CaseIndexDto.CASE_CLASSIFICATION,
+					CaseIndexDto.OUTCOME),
+				getReinfectionColumn(),
+				Stream.of(CaseIndexDto.INVESTIGATION_STATUS),
+				getPersonColumns(),
+				getEventColumns(),
+				getSymptomsColumns(),
+				getSampleColumns(),
+				getJurisdictionColumns(),
+				Stream.of(CaseIndexDto.REPORT_DATE),
+				externalSurveillanceToolShareEnabled
+					? Stream.of(
+						CaseIndexDto.SURVEILLANCE_TOOL_LAST_SHARE_DATE,
+						CaseIndexDto.SURVEILLANCE_TOOL_STATUS,
+						CaseIndexDto.SURVEILLANCE_TOOL_SHARE_COUNT)
+					: Stream.<String> empty(),
+				Stream.of(CaseIndexDto.QUARANTINE_TO, CaseIndexDto.CREATION_DATE),
+				getFollowUpColumns(),
+				Stream.of(CaseIndexDto.VACCINATION_STATUS),
+				Stream.of(COLUMN_COMPLETENESS),
+				Stream.of(DELETE_REASON_COLUMN))
+			.flatMap(Function.identity());
 	}
 
 	protected Stream<String> getJurisdictionColumns() {

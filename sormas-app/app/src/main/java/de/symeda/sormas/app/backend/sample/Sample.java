@@ -24,11 +24,9 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,13 +34,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang3.StringUtils;
-
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-
-import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.sample.AdditionalTestType;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
@@ -80,7 +71,6 @@ public class Sample extends PseudonymizableAdo {
 	public static final String LAB_SAMPLE_ID = "labSampleID";
 	public static final String FIELD_SAMPLE_ID = "fieldSampleID";
 	public static final String FOR_RETEST = "forRetest";
-	public static final String DISEASE = "disease";
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private Case associatedCase;
@@ -158,8 +148,6 @@ public class Sample extends PseudonymizableAdo {
 	@DatabaseField
 	private boolean shipped;
 
-	private boolean sampleMaterialTypeForYF;
-
 	@DatabaseField
 	private boolean received;
 
@@ -172,24 +160,14 @@ public class Sample extends PseudonymizableAdo {
 	@DatabaseField
 	private Boolean additionalTestingRequested;
 
-	@DatabaseField
-	private YesNoUnknown ipSampleSent;
-
-	private String ipSampleResults;
-
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String requestedPathogenTestsString;
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String requestedAdditionalTestsString;
 
-	private String requestedSampleMaterialsString;
-
 	@Transient
 	private Set<PathogenTestType> requestedPathogenTests;
-
-	@Transient
-	private Set<SampleMaterial> requestedSampleMaterials;
 
 	@Transient
 	private Set<AdditionalTestType> requestedAdditionalTests;
@@ -209,9 +187,6 @@ public class Sample extends PseudonymizableAdo {
 	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
 	@DatabaseField
 	private boolean ownershipHandedOver;
-
-	@Enumerated(EnumType.STRING)
-	private Disease disease;
 
 	public Case getAssociatedCase() {
 		return associatedCase;
@@ -304,7 +279,6 @@ public class Sample extends PseudonymizableAdo {
 	public Facility getLab() {
 		return lab;
 	}
-	//getters and setters for pending results
 
 	public void setLab(Facility lab) {
 		this.lab = lab;
@@ -398,14 +372,6 @@ public class Sample extends PseudonymizableAdo {
 		this.shipped = shipped;
 	}
 
-	public boolean isYellowFeverSampleType() {
-		return sampleMaterialTypeForYF;
-	}
-
-	public void setYellowFeverSampleType(boolean sampleMaterialTypeForYF) {
-		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
-	}
-
 	public boolean isReceived() {
 		return received;
 	}
@@ -436,27 +402,6 @@ public class Sample extends PseudonymizableAdo {
 
 	public void setAdditionalTestingRequested(Boolean additionalTestingRequested) {
 		this.additionalTestingRequested = additionalTestingRequested;
-	}
-
-	public YesNoUnknown getIpSampleSent(){
-		return ipSampleSent;
-	}
-	public void setIpSampleSent(YesNoUnknown ipSampleSent) {
-		this.ipSampleSent = ipSampleSent;
-	}
-
-	public String getIpSampleResults(){
-		return ipSampleResults;
-	}
-	public void setIpSampleResults(String ipSampleResults) {
-		this.ipSampleResults = ipSampleResults;
-	}
-
-	public Disease getDisease() {
-		return disease;
-	}
-	public void setDisease(Disease disease) {
-		this.disease = disease;
 	}
 
 	public String getRequestedPathogenTestsString() {
@@ -539,37 +484,6 @@ public class Sample extends PseudonymizableAdo {
 			sb.substring(0, sb.lastIndexOf(","));
 		}
 		requestedAdditionalTestsString = sb.toString();
-	}
-
-	@Transient
-	public Set<SampleMaterial> getRequestedSampleMaterials() {
-		if (requestedSampleMaterials == null) {
-			if (StringUtils.isEmpty(requestedSampleMaterialsString)) {
-				requestedSampleMaterials = new HashSet<>();
-			} else {
-				requestedSampleMaterials =
-						Arrays.stream(requestedSampleMaterialsString.split(",")).map(SampleMaterial::valueOf).collect(Collectors.toSet());
-			}
-		}
-		return requestedSampleMaterials;
-	}
-
-	public void setRequestedSampleMaterials(Set<SampleMaterial> requestedSampleMaterials) {
-		this.requestedSampleMaterials = requestedSampleMaterials;
-
-		if (this.requestedSampleMaterials == null) {
-			return;
-		}
-
-		StringBuilder sb = new StringBuilder();
-		requestedSampleMaterials.stream().forEach(t -> {
-			sb.append(t.name());
-			sb.append(",");
-		});
-		if (sb.length() > 0) {
-			sb.substring(0, sb.lastIndexOf(","));
-		}
-		requestedSampleMaterialsString = sb.toString();
 	}
 
 	public String getRequestedOtherPathogenTests() {

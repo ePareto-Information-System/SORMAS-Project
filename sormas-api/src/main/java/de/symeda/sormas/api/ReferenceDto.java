@@ -63,11 +63,6 @@ public abstract class ReferenceDto implements Serializable, HasUuid, HasCaption,
 		this.uuid = uuid;
 	}
 
-	public boolean getCaption(String caption) {
-		this.caption = caption;
-        return Boolean.parseBoolean(caption);
-    }
-
 	public String getCaption() {
 		return caption;
 	}

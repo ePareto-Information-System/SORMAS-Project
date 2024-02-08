@@ -39,7 +39,6 @@ import androidx.databinding.BindingAdapter;
 import de.symeda.sormas.api.customizableenum.CustomizableEnum;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.app.R;
-import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.util.ControlLabelOnTouchListener;
 
 public abstract class ControlPropertyField<T> extends LinearLayout {

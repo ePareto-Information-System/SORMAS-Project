@@ -22,7 +22,6 @@ import com.explicatis.ext_token_field.ExtTokenField;
 import com.explicatis.ext_token_field.Tokenizable;
 import com.vaadin.ui.*;
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.infrastructure.facility.*;
 import org.vaadin.hene.popupbutton.PopupButton;
 
 import com.vaadin.icons.VaadinIcons;
@@ -47,6 +46,12 @@ import de.symeda.sormas.api.infrastructure.InfrastructureType;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityCriteria;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityExportDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityIndexDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
@@ -83,7 +88,6 @@ public class FacilitiesView extends AbstractConfigurationView {
 	private SearchField searchField;
 	private ComboBox typeGroupFilter;
 	private ComboBox typeFilter;
-	private ComboBox dhimsFacilityTypeFilter;
 	private ComboBox countryFilter;
 	private ComboBox regionFilter;
 	private ComboBox districtFilter;
@@ -287,16 +291,6 @@ public class FacilitiesView extends AbstractConfigurationView {
 			navigateTo(criteria);
 		});
 		filterLayout.addComponent(typeFilter);
-
-		dhimsFacilityTypeFilter = ComboBoxHelper.createComboBoxV7();
-		dhimsFacilityTypeFilter.setId(FacilityDto.DHIMS_FACILITY_TYPE);
-		dhimsFacilityTypeFilter.setWidth(220, Unit.PIXELS);
-		dhimsFacilityTypeFilter.setCaption(I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.DHIMS_FACILITY_TYPE));
-		dhimsFacilityTypeFilter.addValueChangeListener(e -> {
-			criteria.dhimsFacilityType((DhimsFacility) e.getProperty().getValue());
-			navigateTo(criteria);
-		});
-		filterLayout.addComponent(dhimsFacilityTypeFilter);
 
 		countryFilter = addCountryFilter(filterLayout, country -> {
 			criteria.country(country);

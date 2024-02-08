@@ -87,7 +87,7 @@ public class SampleReportFacadeEjbMappingTest {
 		source.setSampleDateTime(new Date(0L));
 		source.setSampleReceivedDate(new Date(1L));
 		source.setLabSampleId("lab-sample-id");
-		source.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		source.setSampleMaterial(SampleMaterial.BLOOD);
 		source.setSampleMaterialText("sample-material-text");
 		source.setSpecimenCondition(SpecimenCondition.ADEQUATE);
 		source.setSampleOverallTestResult(PathogenTestResultType.INDETERMINATE);
@@ -133,7 +133,7 @@ public class SampleReportFacadeEjbMappingTest {
 		source.setSampleDateTime(new Date(0L));
 		source.setSampleReceivedDate(new Date(1L));
 		source.setLabSampleId("lab-sample-id");
-		source.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		source.setSampleMaterial(SampleMaterial.BLOOD);
 		source.setSampleMaterialText("sample-material-text");
 		source.setSpecimenCondition(SpecimenCondition.ADEQUATE);
 		source.setSampleOverallTestResult(PathogenTestResultType.INDETERMINATE);

@@ -33,16 +33,14 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import de.symeda.sormas.api.epidata.EpiDataFacade;
-import de.symeda.sormas.api.hospitalization.HospitalizationFacade;
-import de.symeda.sormas.api.report.AggregateReportFacade;
-import de.symeda.sormas.api.sixtyday.SixtyDayFacade;
-import de.symeda.sormas.backend.epidata.EpiDataFacadeEjb;
-import de.symeda.sormas.backend.hospitalization.HospitalizationFacadeEjb;
-import de.symeda.sormas.backend.report.AggregateReport;
-import de.symeda.sormas.backend.report.AggregateReportFacadeEjb;
-import de.symeda.sormas.backend.sixtyday.SixtyDayFacadeEjb;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import de.hilling.junit.cdi.CdiTestJunitExtension;
 import de.hilling.junit.cdi.ContextControlWrapper;
@@ -254,14 +252,6 @@ import de.symeda.sormas.backend.vaccination.VaccinationFacadeEjb;
 import de.symeda.sormas.backend.vaccination.VaccinationService;
 import de.symeda.sormas.backend.visit.VisitFacadeEjb.VisitFacadeEjbLocal;
 import de.symeda.sormas.backend.visit.VisitService;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
 @ExtendWith(CdiTestJunitExtension.class)
 @ExtendWith(MockitoExtension.class)
@@ -612,17 +602,6 @@ public abstract class AbstractBeanTest {
 
 	public UserRoleService getUserRoleService() {
 		return getBean(UserRoleService.class);
-	}
-
-	public HospitalizationFacade getHospitalizationFacade() {
-		return getBean(HospitalizationFacadeEjb.HospitalizationFacadeEjbLocal.class);
-	}
-	public SixtyDayFacade getSixtyDayFacade() {
-		return getBean(SixtyDayFacadeEjb.SixtyDayFacadeEjbLocal.class);
-	}
-
-	public EpiDataFacade getEpiDataFacade() {
-		return getBean(EpiDataFacadeEjb.EpiDataFacadeEjbLocal.class);
 	}
 
 	public WeeklyReportFacade getWeeklyReportFacade() {

@@ -52,10 +52,6 @@ public class AbstractUuidDto implements HasUuid, HasCaption, Serializable {
 		this.uuid = uuid;
 	}
 
-	public AbstractUuidDto() {
-
-	}
-
 	@Override
 	public String getUuid() {
 		return uuid;

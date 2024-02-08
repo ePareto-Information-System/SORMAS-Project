@@ -46,7 +46,6 @@ import de.symeda.sormas.ui.clinicalcourse.ClinicalCourseView;
 import de.symeda.sormas.ui.epidata.CaseEpiDataView;
 import de.symeda.sormas.ui.externalmessage.ExternalMessagesView;
 import de.symeda.sormas.ui.hospitalization.HospitalizationView;
-import de.symeda.sormas.ui.sixtydayfollowup.SixtyDayFollowupView;
 import de.symeda.sormas.ui.therapy.TherapyView;
 import de.symeda.sormas.ui.utils.AbstractEditAllowedDetailView;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -174,18 +173,6 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 					I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.HOSPITALIZATION),
 					params);
 			}
-			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
-					&& !caze.checkIsUnreferredPortHealthCase()
-					&& !UserProvider.getCurrent().isPortHealthUser()) {
-				if(caze.getDisease() == Disease.AFP){
-					menu.addView(
-						SixtyDayFollowupView.VIEW_NAME,
-						I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.SIXTY_DAY),
-						params);
-				}
-
-			}
-
 			if (caze.getCaseOrigin() == CaseOrigin.POINT_OF_ENTRY
 				&& ControllerProvider.getCaseController().hasPointOfEntry(caze)
 				&& UserProvider.getCurrent().hasUserRight(UserRight.PORT_HEALTH_INFO_VIEW)) {
@@ -205,8 +192,7 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 				&& UserProvider.getCurrent().hasUserRight(UserRight.THERAPY_VIEW)
 				&& !caze.checkIsUnreferredPortHealthCase()
 				&& !FacadeProvider.getFeatureConfigurationFacade().isFeatureDisabled(FeatureType.CLINICAL_MANAGEMENT)) {
-
-				//menu.addView(TherapyView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.THERAPY), params);
+				menu.addView(TherapyView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.THERAPY), params);
 			}
 		}
 
@@ -222,10 +208,10 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 				&& UserProvider.getCurrent().hasUserRight(UserRight.CLINICAL_COURSE_VIEW)
 				&& !caze.checkIsUnreferredPortHealthCase()
 				&& !FacadeProvider.getFeatureConfigurationFacade().isFeatureDisabled(FeatureType.CLINICAL_MANAGEMENT)) {
-				/*menu.addView(
+				menu.addView(
 					ClinicalCourseView.VIEW_NAME,
 					I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CLINICAL_COURSE),
-					params);*/
+					params);
 			}
 		}
 		if (FacadeProvider.getDiseaseConfigurationFacade().hasFollowUp(caze.getDisease())

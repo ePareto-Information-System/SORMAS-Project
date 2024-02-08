@@ -141,7 +141,6 @@ public class LocationFacadeEjb implements LocationFacade {
 		target.setFacility(FacilityFacadeEjb.toReferenceDto(source.getFacility()));
 		target.setFacilityDetails(source.getFacilityDetails());
 		target.setFacilityType(source.getFacilityType());
-		target.setDhimsFacilityType(source.getDhimsFacilityType());
 
 		target.setContactPersonFirstName(source.getContactPersonFirstName());
 		target.setContactPersonLastName(source.getContactPersonLastName());

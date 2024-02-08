@@ -78,7 +78,6 @@ public class MapCaseDto extends AbstractUuidDto {
 		String personUuid,
 		String personFirstName,
 		String personLastName,
-		String personOtherName,
 		String healthFacilityUuid,
 		Double healthFacilityLat,
 		Double healthFacilityLon,
@@ -96,14 +95,14 @@ public class MapCaseDto extends AbstractUuidDto {
 		this.reportDate = reportDate;
 		this.caseClassification = caseClassification;
 		this.disease = disease;
-		this.person = new PersonReferenceDto(personUuid, personFirstName, personLastName, personOtherName);
-		this.healthFacilityUuid = healthFacilityUuid;
+		this.person = new PersonReferenceDto(personUuid, personFirstName, personLastName);
 		this.setHealthFacilityLat(healthFacilityLat);
 		this.setHealthFacilityLon(healthFacilityLon);
 		this.reportLat = reportLat;
 		this.reportLon = reportLon;
 		this.addressLat = addressLat;
 		this.addressLon = addressLon;
+		this.healthFacilityUuid = healthFacilityUuid;
 		this.isInJurisdiction = isInJurisdiction;
 		this.districtUuid = districtUuid;
 		this.districtLatitude = districtLatitude;

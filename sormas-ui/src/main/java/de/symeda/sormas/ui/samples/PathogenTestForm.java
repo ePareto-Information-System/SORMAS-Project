@@ -28,8 +28,6 @@ import java.util.function.Consumer;
 
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserRoleReferenceDto;
-import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.caze.CaseOutcome;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.vaadin.ui.Label;
@@ -65,7 +63,7 @@ import de.symeda.sormas.ui.utils.DateTimeField;
 import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.NullableOptionGroup;
 
-public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
+public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 	private static final long serialVersionUID = -1218707278398543154L;
 
@@ -105,7 +103,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private TextField testTypeTextField;
 	private ComboBox pcrTestSpecification;
 	private TextField typingIdField;
-	private ComboBox testTypeField;
 
 
 
@@ -177,17 +174,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		addField(PathogenTestDto.VIA_LIMS);
 		addField(PathogenTestDto.EXTERNAL_ID);
 		addField(PathogenTestDto.EXTERNAL_ORDER_ID);
-
-		if(Objects.equals(disease, Disease.AHF.toString())){
-
-			for (PathogenTestType pathogenTestType : PathogenTestType.DISEASE_TESTS) {
-				testTypeField.addItem(pathogenTestType);
-			}
-
-			testTypeField = addField(PathogenTestDto.TEST_TYPE, testTypeField);
-		}
-
-		testTypeField = addField(PathogenTestDto.TEST_TYPE, ComboBox.class);
+		ComboBox testTypeField = addField(PathogenTestDto.TEST_TYPE, ComboBox.class);
 		testTypeField.setItemCaptionMode(ItemCaptionMode.ID_TOSTRING);
 		testTypeField.setImmediate(true);
 		pcrTestSpecification = addField(PathogenTestDto.PCR_TEST_SPECIFICATION, ComboBox.class);

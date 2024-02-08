@@ -24,7 +24,6 @@ public class EventParticipantIndexDto extends PseudonymizableIndexDto implements
 	public static final String EVENT_UUID = "eventUuid";
 	public static final String FIRST_NAME = "firstName";
 	public static final String LAST_NAME = "lastName";
-	public static final String OTHER_NAME = "otherName";
 	public static final String SEX = "sex";
 	public static final String APPROXIMATE_AGE = "approximateAge";
 	public static final String INVOLVEMENT_DESCRIPTION = "involvementDescription";
@@ -39,9 +38,6 @@ public class EventParticipantIndexDto extends PseudonymizableIndexDto implements
 	private String firstName;
 	@SensitiveData
 	private String lastName;
-
-	@SensitiveData
-	private String otherName;
 	private Sex sex;
 	private Integer approximateAge;
 	@SensitiveData
@@ -137,14 +133,6 @@ public class EventParticipantIndexDto extends PseudonymizableIndexDto implements
 		this.lastName = lastName;
 	}
 
-	public String getOtherName() {
-		return otherName;
-	}
-
-	public void setOtherName(String otherName) {
-		this.otherName = otherName;
-	}
-
 	public Sex getSex() {
 		return sex;
 	}
@@ -210,7 +198,7 @@ public class EventParticipantIndexDto extends PseudonymizableIndexDto implements
 	}
 
 	public EventParticipantReferenceDto toReference() {
-		return new EventParticipantReferenceDto(getUuid(), firstName, lastName, otherName);
+		return new EventParticipantReferenceDto(getUuid(), firstName, lastName);
 	}
 
 	public DeletionReason getDeletionReason() {

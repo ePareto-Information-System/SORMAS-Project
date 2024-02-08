@@ -196,14 +196,11 @@ public class CaseReadFragment extends BaseReadFragment<FragmentCaseReadLayoutBin
 		} else if (record.getLaboratoryDiagnosticConfirmation() == YesNoUnknown.YES) {
 			contentBinding.setSingleClassification(CaseConfirmationBasis.LABORATORY_DIAGNOSTIC_CONFIRMATION);
 		}
-//		contentBinding.setCaseTransmissionClassificationClass(record.getCaseTransmissionClassification().toString());
-		//contentBinding.setCaseTransmissionClassificationClass(record.getCaseTransmissionClassification());
 	}
 
 	@Override
 	public void onAfterLayoutBinding(FragmentCaseReadLayoutBinding contentBinding) {
 		setUpFieldVisibilities(contentBinding);
-		Disease disease = record.getDisease();
 
 		// Replace classification user field with classified by field when case has been classified automatically
 		if (contentBinding.getData().getClassificationDate() != null && contentBinding.getData().getClassificationUser() == null) {
@@ -225,42 +222,6 @@ public class CaseReadFragment extends BaseReadFragment<FragmentCaseReadLayoutBin
 		} else {
 			contentBinding.facilityOrHome.setValue(TypeOfPlace.FACILITY);
 			contentBinding.facilityTypeGroup.setValue(record.getFacilityType().getFacilityTypeGroup());
-		}
-		if(disease == Disease.AHF) {
-			contentBinding.caseDataReInfection.setVisibility(GONE);
-			contentBinding.caseDataCaseTransmissionClassification.setVisibility(GONE);
-			contentBinding.caseDataVaccinationStatus.setVisibility(GONE);
-			contentBinding.caseDataVaccinationType.setVisibility(GONE);
-			contentBinding.caseDataVaccinationDate.setVisibility(GONE);
-		}
-		else if (disease == Disease.CSM) {
-			contentBinding.caseDataInvestigationStatus.setVisibility(GONE);
-			contentBinding.caseDataExternalToken.setVisibility(GONE);
-			contentBinding.caseDataInternalToken.setVisibility(GONE);
-			contentBinding.caseDataReInfection.setVisibility(GONE);
-			contentBinding.caseDataCaseTransmissionClassification.setVisibility(GONE);
-			contentBinding.caseDataQuarantine.setVisibility(GONE);
-			contentBinding.caseDataPregnant.setVisibility(GONE);
-			contentBinding.caseDataPostpartum.setVisibility(GONE);
-			contentBinding.caseDataSurveillanceOfficer.setVisibility(GONE);
-			contentBinding.caseDataAdditionalDetails.setVisibility(GONE);
-			contentBinding.caseDataCaseClassification.setVisibility(GONE);
-		}
-		else if(disease == Disease.YELLOW_FEVER){
-			contentBinding.caseDataInternalToken.setVisibility(GONE);
-			contentBinding.caseDataInternalToken.setVisibility(GONE);
-			contentBinding.caseDataReInfection.setVisibility(GONE);
-			contentBinding.caseDataCaseClassification.setVisibility(GONE);
-			contentBinding.caseDataInvestigationStatus.setVisibility(GONE);
-			contentBinding.caseDataCaseTransmissionClassification.setVisibility(GONE);
-			contentBinding.caseDataQuarantine.setVisibility(GONE);
-			contentBinding.caseDataPregnant.setVisibility(GONE);
-			contentBinding.caseDataPostpartum.setVisibility(GONE);
-			contentBinding.caseDataAdditionalDetails.setVisibility(GONE);
-			contentBinding.caseDataVaccinationStatus.setVisibility(VISIBLE);
-			contentBinding.caseDataVaccinationType.setVisibility(VISIBLE);
-			contentBinding.caseDataVaccinationDate.setVisibility(VISIBLE);
-			contentBinding.caseDataAdditionalDetails.setVisibility(GONE);
 		}
 	}
 

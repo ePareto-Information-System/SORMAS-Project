@@ -56,7 +56,6 @@ public class PrescriptionExportDto implements Serializable {
 		String caseUuid,
 		String caseFirstName,
 		String caseLastName,
-		String caseOtherName,
 		Date prescriptionDate,
 		Date prescriptionStart,
 		Date prescriptionEnd,
@@ -72,7 +71,7 @@ public class PrescriptionExportDto implements Serializable {
 		boolean isInJurisdiction) {
 
 		this.caseUuid = caseUuid;
-		this.caseName = PersonDto.buildCaption(caseFirstName, caseLastName, caseOtherName);
+		this.caseName = PersonDto.buildCaption(caseFirstName, caseLastName);
 		this.prescriptionDate = prescriptionDate;
 		this.prescriptionStart = prescriptionStart;
 		this.prescriptionEnd = prescriptionEnd;

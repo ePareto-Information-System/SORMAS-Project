@@ -15,7 +15,6 @@
 
 package de.symeda.sormas.ui.person;
 
-import static de.symeda.sormas.api.i18n.Strings.enabled;
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
 import static de.symeda.sormas.ui.utils.LayoutUtil.divsCss;
@@ -66,7 +65,6 @@ import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.PhoneNumberValidator;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
-import de.symeda.sormas.api.person.Sex;
 
 public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
@@ -91,12 +89,12 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 	private static final String HTML_LAYOUT =
 		"%s" + fluidRow(fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD), fluidRowLocs(PersonDto.SEX))
-			+ fluidRowLocs(PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PASSPORT_NUMBER)
-			+ fluidRowLocs(PersonDto.PRESENT_CONDITION, PersonDto.PHONE) + fluidRowLocs(6,PersonDto.EMAIL_ADDRESS)
+			+ fluidRowLocs(PersonDto.NATIONAL_HEALTH_ID, PersonDto.PASSPORT_NUMBER)
+			+ fluidRowLocs(PersonDto.PRESENT_CONDITION, SymptomsDto.ONSET_DATE) + fluidRowLocs(PersonDto.PHONE, PersonDto.EMAIL_ADDRESS)
 			+ fluidRowLocs(ENTER_HOME_ADDRESS_NOW) + loc(HOME_ADDRESS_HEADER) + divsCss(VSPACE_3, fluidRowLocs(HOME_ADDRESS_LOC));
 
-	private static final String NAME_ROW_WITH_PERSON_SEARCH = fluidRowLocs(PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.OTHER_NAME, PERSON_SEARCH_LOC);
-	private static final String NAME_ROW_WITHOUT_PERSON_SEARCH = fluidRowLocs(PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.OTHER_NAME);
+	private static final String NAME_ROW_WITH_PERSON_SEARCH = fluidRowLocs(6, PersonDto.FIRST_NAME, 4, PersonDto.LAST_NAME, 2, PERSON_SEARCH_LOC);
+	private static final String NAME_ROW_WITHOUT_PERSON_SEARCH = fluidRowLocs(PersonDto.FIRST_NAME, PersonDto.LAST_NAME);
 
 	public PersonCreateForm(boolean showHomeAddressForm, boolean showPresentCondition, boolean showSymptomsOnsetDate) {
 		this(showHomeAddressForm, showPresentCondition, showSymptomsOnsetDate, true);
@@ -131,7 +129,6 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 		addField(PersonDto.FIRST_NAME, TextField.class);
 		addField(PersonDto.LAST_NAME, TextField.class);
-		addField(PersonDto.OTHER_NAME, TextField.class);
 
 		if (showPersonSearchButton) {
 			searchPersonButton = createPersonSearchButton(PERSON_SEARCH_LOC);
@@ -186,22 +183,14 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 			birthDateMonth.markAsDirty();
 		});
 
-		ComboBox sexComboBox = new ComboBox("Sex");
+		ComboBox sex = addField(PersonDto.SEX, ComboBox.class);
 
-		for (Sex sex : Sex.values()) {
-			if (sex == Sex.MALE || sex == Sex.FEMALE) {
-				sexComboBox.addItem(sex);
-			}
-		}
-		addField(PersonDto.SEX, sexComboBox);
-
-		addField(PersonDto.GHANA_CARD, TextField.class);
 		addField(PersonDto.PASSPORT_NUMBER, TextField.class);
 		addField(PersonDto.NATIONAL_HEALTH_ID, TextField.class);
 
 		ComboBox presentCondition = addField(PersonDto.PRESENT_CONDITION, ComboBox.class);
 		presentCondition.setVisible(showPresentCondition);
-		FieldHelper.addSoftRequiredStyle(presentCondition, sexComboBox);
+		FieldHelper.addSoftRequiredStyle(presentCondition, sex);
 
 		if (showSymptomsOnsetDate) {
 			addCustomField(
@@ -217,9 +206,6 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		phone.addValidator(new PhoneNumberValidator(I18nProperties.getValidationError(Validations.validPhoneNumber, phone.getCaption())));
 		TextField email = addCustomField(PersonDto.EMAIL_ADDRESS, String.class, TextField.class);
 		email.setCaption(I18nProperties.getCaption(Captions.Person_emailAddress));
-		email.setVisible(false);
-
-		phone.addValidator(new PhoneNumberValidator(I18nProperties.getValidationError(Validations.validPhoneNumber, phone.getCaption())));
 		email.addValidator(new EmailValidator(I18nProperties.getValidationError(Validations.validEmailAddress, email.getCaption())));
 
 		if (showHomeAddressForm) {
@@ -372,7 +358,6 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		person.setBirthdateYYYY(personCreated.getBirthdateYYYY());
 		person.setSex(personCreated.getSex());
 		person.setPresentCondition(personCreated.getPresentCondition());
-		person.setGhanaCard(personCreated.getGhanaCard());
 		person.setNationalHealthId(personCreated.getNationalHealthId());
 		person.setPassportNumber(personCreated.getPassportNumber());
 
@@ -385,31 +370,19 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		if (getHomeAddressForm() != null && getHomeAddressForm().getValue() != null) {
 			person.setAddress(getHomeAddressForm().getValue());
 		}
-		if(StringUtils.isNotEmpty(getOtherName())) {
-			person.setOtherName(getOtherName());
+	}
+
+	public void updateHomeAddress(PersonDto person) {
+
+		commit();
+		if (getHomeAddressForm() != null && getHomeAddressForm().getValue() != null) {
+			person.setAddress(getHomeAddressForm().getValue());
 		}
 	}
 
 	public void enablePersonFields(Boolean enabled) {
 		enablePersonFields(enabled, false);
-		getField(PersonDto.FIRST_NAME).setEnabled(enabled);
-		getField(PersonDto.LAST_NAME).setEnabled(enabled);
-		getField(PersonDto.OTHER_NAME).setEnabled(enabled);
-		getField(PersonDto.BIRTH_DATE_DD).setEnabled(enabled);
-		getField(PersonDto.BIRTH_DATE_MM).setEnabled(enabled);
-		getField(PersonDto.BIRTH_DATE_YYYY).setEnabled(enabled);
-		getField(PersonDto.SEX).setEnabled(enabled);
-		getField(PersonDto.PRESENT_CONDITION).setEnabled(enabled);
-		getField(PersonDto.PHONE).setEnabled(enabled);
-		getField(PersonDto.EMAIL_ADDRESS).setEnabled(enabled);
-		getField(PersonDto.PASSPORT_NUMBER).setEnabled(enabled);
-		getField(PersonDto.NATIONAL_HEALTH_ID).setEnabled(enabled);
-		getField(PersonDto.GHANA_CARD).setEnabled(enabled);
-		if (homeAddressForm != null) {
-			homeAddressForm.setEnabled(enabled);
-		}
 	}
-
 
 	public void enablePersonFields(Boolean enabled, boolean alwaysEnableAddressFields) {
 
@@ -434,7 +407,6 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 		getField(PersonDto.FIRST_NAME).setEnabled(!readOnly);
 		getField(PersonDto.LAST_NAME).setEnabled(!readOnly);
-		getField(PersonDto.OTHER_NAME).setEnabled(!readOnly);
 		searchPersonButton.setEnabled(!readOnly);
 		if (getField(PersonDto.SEX).getValue() != null) {
 			getField(PersonDto.SEX).setEnabled(!readOnly);
@@ -457,12 +429,10 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 			false,
 			PersonDto.FIRST_NAME,
 			PersonDto.LAST_NAME,
-			PersonDto.OTHER_NAME,
 			PersonDto.SEX,
 			PersonDto.BIRTH_DATE_YYYY,
 			PersonDto.BIRTH_DATE_MM,
 			PersonDto.BIRTH_DATE_DD,
-			PersonDto.GHANA_CARD,
 			PersonDto.NATIONAL_HEALTH_ID,
 			PersonDto.PASSPORT_NUMBER,
 			PersonDto.PHONE,
@@ -486,39 +456,22 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		}
 	}
 
-	public void showPersonalEmail(){
-		 setVisible(false, PersonDto.EMAIL_ADDRESS);
-	}
-
-	public void showPassportNumber(){
-		setVisible(true, PersonDto.PASSPORT_NUMBER);
-	}
-	public void hidePassportNumber(){
-		setVisible(false, PersonDto.PASSPORT_NUMBER);
-	}
-
 	public void updatePresentConditionEnum(Disease disease) {
 
 		ComboBox presentConditionField = getField(PersonDto.PRESENT_CONDITION);
 		PresentCondition currentValue = (PresentCondition) presentConditionField.getValue();
 		List<PresentCondition> validValues;
-
-		if (disease == Disease.YELLOW_FEVER || disease == Disease.AHF) {
-			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);
-			showPersonalEmail();
-		} else if (disease == Disease.CSM) {
-			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD);
-			showPersonalEmail();
-		}else if (disease == Disease.AFP) {
-			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD, PresentCondition.BURIED);
-			showPersonalEmail();
-		} else {
+		if (disease == null) {
 			validValues = Arrays.asList(PresentCondition.values());
+		} else {
+			FieldVisibilityCheckers fieldVisibilityCheckers = FieldVisibilityCheckers.withDisease(disease);
+			validValues = Arrays.stream(PresentCondition.values())
+				.filter(c -> fieldVisibilityCheckers.isVisible(PresentCondition.class, c.name()))
+				.collect(Collectors.toList());
+			if (currentValue != null && !validValues.contains(currentValue)) {
+				validValues.add(currentValue);
+			}
 		}
-		if (currentValue != null && !validValues.contains(currentValue)) {
-			validValues.add(currentValue);
-		}
-
 		FieldHelper.updateEnumData(presentConditionField, validValues);
 	}
 
@@ -526,9 +479,6 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		return (String) getField(PersonDto.PHONE).getValue();
 	}
 
-	public String getOtherName() {
-		return (String) getField(PersonDto.OTHER_NAME).getValue();
-	}
 	public String getEmailAddress() {
 		return (String) getField(PersonDto.EMAIL_ADDRESS).getValue();
 	}

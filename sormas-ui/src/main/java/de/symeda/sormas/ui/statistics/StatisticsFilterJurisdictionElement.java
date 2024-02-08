@@ -28,7 +28,6 @@ import com.vaadin.v7.ui.ComboBox;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.infrastructure.facility.*;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
@@ -52,7 +51,6 @@ public class StatisticsFilterJurisdictionElement extends StatisticsFilterElement
 	StatisticsFilterValuesElement communityElement;
 	StatisticsFilterValuesElement facilityElement;
 	private ComboBox type;
-	private ComboBox dhimsFacilityType;
 
 	public StatisticsFilterJurisdictionElement(int rowIndex) {
 		setSpacing(true);
@@ -226,9 +224,6 @@ public class StatisticsFilterJurisdictionElement extends StatisticsFilterElement
 
 	FacilityType getFacilityType() {
 		return (FacilityType) type.getValue();
-	}
-	DhimsFacility getDhimsFacilityType() {
-		return (DhimsFacility) dhimsFacilityType.getValue();
 	}
 
 	@Override

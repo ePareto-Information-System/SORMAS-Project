@@ -18,8 +18,7 @@
 package de.symeda.sormas.api.hospitalization;
 
 import de.symeda.sormas.api.feature.FeatureType;
-import de.symeda.sormas.api.utils.*;
-
+import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import java.util.Date;
 
 import javax.validation.constraints.Size;
@@ -31,6 +30,10 @@ import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.FieldConstraints;
+import de.symeda.sormas.api.utils.SensitiveData;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
 @DependingOnFeatureType(featureType = FeatureType.CASE_SURVEILANCE)
@@ -58,7 +61,7 @@ public class PreviousHospitalizationDto extends PseudonymizableDto {
 	public static final String INTENSIVE_CARE_UNIT_END = "intensiveCareUnitEnd";
 	public static final String HEALTH_FACILITY_RECORD_NUMBER = "healthFacilityRecordNumber";
 
-	private YesNo admittedToHealthFacility;
+	private YesNoUnknown admittedToHealthFacility;
 	private Date admissionDate;
 	private Date dischargeDate;
 	private RegionReferenceDto region;
@@ -70,7 +73,7 @@ public class PreviousHospitalizationDto extends PseudonymizableDto {
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String healthFacilityDetails;
-	private YesNo isolated;
+	private YesNoUnknown isolated;
 	private Date isolationDate;
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
@@ -80,7 +83,7 @@ public class PreviousHospitalizationDto extends PseudonymizableDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String otherHospitalizationReason;
 
-	private YesNo intensiveCareUnit;
+	private YesNoUnknown intensiveCareUnit;
 	private Date intensiveCareUnitStart;
 	private Date intensiveCareUnitEnd;
 	private String healthFacilityRecordNumber;
@@ -121,11 +124,11 @@ public class PreviousHospitalizationDto extends PseudonymizableDto {
 		return previousHospitalization;
 	}
 
-	public YesNo getAdmittedToHealthFacility() {
+	public YesNoUnknown getAdmittedToHealthFacility() {
 		return admittedToHealthFacility;
 	}
 
-	public void setAdmittedToHealthFacility(YesNo admittedToHealthFacility) {
+	public void setAdmittedToHealthFacility(YesNoUnknown admittedToHealthFacility) {
 		this.admittedToHealthFacility = admittedToHealthFacility;
 	}
 
@@ -177,11 +180,11 @@ public class PreviousHospitalizationDto extends PseudonymizableDto {
 		this.healthFacility = healthFacility;
 	}
 
-	public YesNo getIsolated() {
+	public YesNoUnknown getIsolated() {
 		return isolated;
 	}
 
-	public void setIsolated(YesNo isolated) {
+	public void setIsolated(YesNoUnknown isolated) {
 		this.isolated = isolated;
 	}
 
@@ -225,11 +228,11 @@ public class PreviousHospitalizationDto extends PseudonymizableDto {
 		this.otherHospitalizationReason = otherHospitalizationReason;
 	}
 
-	public YesNo getIntensiveCareUnit() {
+	public YesNoUnknown getIntensiveCareUnit() {
 		return intensiveCareUnit;
 	}
 
-	public void setIntensiveCareUnit(YesNo intensiveCareUnit) {
+	public void setIntensiveCareUnit(YesNoUnknown intensiveCareUnit) {
 		this.intensiveCareUnit = intensiveCareUnit;
 	}
 

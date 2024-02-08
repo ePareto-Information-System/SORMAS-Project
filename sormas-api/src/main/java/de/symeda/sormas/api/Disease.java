@@ -19,79 +19,73 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 
 public enum Disease
 	implements
 	StatisticsGroupingKey {
 
-	AFP(true, true, true, false, false,60, true, false, false),
-	CHOLERA(true, true, true, true, false,5, true, false, false),
-	CONGENITAL_RUBELLA(true, true, true, true, false,21, true, false, false),
-	CSM(true, true, true, false, false,10, true, false, false),
-	DENGUE(true, true, true, false, false,14, true, false, false),
-	EVD(true, true, true, true,false, 21, true, false, false),
-	GUINEA_WORM(true, true, true, false, false,0, true, false, false),
-	LASSA(true, true, true, true, false,21, true, false, false),
-	MEASLES(true, true, true, false, false,21, true, true, false),
-	MONKEYPOX(true, true, true, true, false,21, true, false, false),
-	NEW_INFLUENZA(true, true, true, true, false,17, true, false, false),
-	PLAGUE(true, true, true, true, false,7, true, false, false),
-	POLIO(true, true, true, false, false,0, true, false, false),
-	//AHF(true, true, true, true, 21, true, false, false),
-	WEST_NILE_FEVER(true, false, true, false, false,0, true, false, false),
-	YELLOW_FEVER(true, true, true, false, false,6, true, false, false),
-	RABIES(true, true, true, true, false,6, true, false, false),
-	ANTHRAX(true, true, true, false, false,0, true, false, false),
-	CORONAVIRUS(true, true, true, true, false,14, true, true, true),
-	PNEUMONIA(true, false, true, false, false,0, true, false, false),
-	MALARIA(true, false, false, false, false,0, true, false, false),
-	TYPHOID_FEVER(true, false, false, false, false,0, true, false, false),
-	ACUTE_VIRAL_HEPATITIS(true, false, false, false, false,0, true, false, false),
-	NON_NEONATAL_TETANUS(true, false, false, false, false,0, true, false, false),
-	HIV(true, false, false, false, false,0, true, false, false),
-	SCHISTOSOMIASIS(true, false, false, false, false,0, true, false, false),
-	SOIL_TRANSMITTED_HELMINTHS(true, false, false, false, false,0, true, false, false),
-	TRYPANOSOMIASIS(true, false, false, false, false,0, true, false, false),
-	DIARRHEA_DEHYDRATION(true, false, false, false, false,0, true, false, false),
-	DIARRHEA_BLOOD(true, false, false, false, false,0, true, false, false),
-	SNAKE_BITE(true, false, false, false, false,0, true, false, false),
-	RUBELLA(true, false, false, false, false,0, true, false, false),
-	TUBERCULOSIS(true, false, false, false, false,0, true, false, false),
-	LEPROSY(true, false, false, false, false,0, true, false, false),
-	LYMPHATIC_FILARIASIS(true, false, false, false, false,0, true, false, false),
-	BURULI_ULCER(true, false, false, false, false,0, true, false, false),
-	PERTUSSIS(true, false, false, false, false,0, true, false, false),
-	NEONATAL_TETANUS(true, false, false, false, false,0, true, false, false),
-	ONCHOCERCIASIS(true, false, false, false, false,0, true, false, false),
-	DIPHTERIA(true, false, false, false, false,0, true, false, false),
-	TRACHOMA(true, false, false, false, false,0, true, false, false),
-	YAWS_ENDEMIC_SYPHILIS(true, false, false, false, false,0, true, false, false),
-	MATERNAL_DEATHS(true, false, false, false, false,0, true, false, false),
-	PERINATAL_DEATHS(true, false, false, false, false,0, true, false, false),
-	INFLUENZA_A(true, false, true, false, false,0, true, false, false),
-	INFLUENZA_B(true, false, true, false, false,0, true, false, false),
-	H_METAPNEUMOVIRUS(true, false, true, false, false,0, true, false, false),
-	RESPIRATORY_SYNCYTIAL_VIRUS(true, false, true, false, false,0, true, false, false),
-	PARAINFLUENZA_1_4(true, false, true, false, false,0, true, false, false),
-	ADENOVIRUS(true, false, true, false, false,0, true, false, false),
-	RHINOVIRUS(true, false, true, false, false,0, true, false, false),
-	ENTEROVIRUS(true, false, true, false, false,0, true, false, false),
-	M_PNEUMONIAE(true, false, true, false, false,0, true, false, false),
-	C_PNEUMONIAE(true, false, true, false, false,0, true, false, false),
-	ARI(true, false, false, false, false,0, true, false, false),
-	CHIKUNGUNYA(true, true, true, false, false,0, true, false, false),
-	POST_IMMUNIZATION_ADVERSE_EVENTS_MILD(true, false, false, false, false,0, true, false, false),
-	POST_IMMUNIZATION_ADVERSE_EVENTS_SEVERE(true, false, false, false, false,0, true, false, false),
-	FHA(true, false, false, false, false,0, true, false, false),
-	AHF(true, true, true, true, false,21, true, false, false),
-	OTHER(true, true, true, true, false,21, false, false, false),
-	ZIKA(true, true, true, false, false,6, true, false, false),
-	MARBURG(true, true, true, false, false,0, true, false, false),
-	UNDEFINED(true, true, true, true, false,0, false, false, false),
-	UNSPECIFIED_VHF(true, true, true, true, false,0, false, false, false);
-
+	AFP(true, true, true, false, false, 0, true, false, false),
+	CHOLERA(true, true, true, false, true, 5, true, false, false),
+	CONGENITAL_RUBELLA(true, true, true, false, true, 21, true, false, false),
+	CSM(true, true, true, false, false, 10, true, false, false),
+	DENGUE(true, true, true, false, false, 14, true, false, false),
+	EVD(true, true, true, false, true, 21, true, false, false),
+	GUINEA_WORM(true, true, true, false, false, 0, true, false, false),
+	LASSA(true, true, true, false, true, 21, true, false, false),
+	MEASLES(true, true, true, false, false, 21, true, true, false),
+	MONKEYPOX(true, true, true, false, true, 21, true, false, false),
+	NEW_INFLUENZA(true, true, true, false, true, 17, true, false, false),
+	PLAGUE(true, true, true, false, true, 7, true, false, false),
+	POLIO(true, true, true, false, false, 0, true, false, false),
+	UNSPECIFIED_VHF(true, true, true, false, true, 21, true, false, false),
+	WEST_NILE_FEVER(true, false, true, false, false, 0, true, false, false),
+	YELLOW_FEVER(true, true, true, false, false, 6, true, false, false),
+	RABIES(true, true, true, false, true, 6, true, false, false),
+	ANTHRAX(true, true, true, false, false, 0, true, false, false),
+	CORONAVIRUS(true, true, true, false, true, 14, true, true, true),
+	PNEUMONIA(true, false, true, false, false, 0, true, false, false),
+	MALARIA(true, false, false, true, false, 0, true, false, false),
+	TYPHOID_FEVER(true, false, false, true, false, 0, true, false, false),
+	ACUTE_VIRAL_HEPATITIS(true, false, false, true, false, 0, true, false, false),
+	NON_NEONATAL_TETANUS(true, false, false, true, false, 0, true, false, false),
+	HIV(true, false, false, true, false, 0, true, false, false),
+	SCHISTOSOMIASIS(true, false, false, true, false, 0, true, false, false),
+	SOIL_TRANSMITTED_HELMINTHS(true, false, false, true, false, 0, true, false, false),
+	TRYPANOSOMIASIS(true, false, false, true, false, 0, true, false, false),
+	DIARRHEA_DEHYDRATION(true, false, false, true, false, 0, true, false, false),
+	DIARRHEA_BLOOD(true, false, false, true, false, 0, true, false, false),
+	SNAKE_BITE(true, false, false, true, false, 0, true, false, false),
+	RUBELLA(true, false, false, true, false, 0, true, false, false),
+	TUBERCULOSIS(true, false, false, true, false, 0, true, false, false),
+	LEPROSY(true, false, false, true, false, 0, true, false, false),
+	LYMPHATIC_FILARIASIS(true, false, false, true, false, 0, true, false, false),
+	BURULI_ULCER(true, false, false, true, false, 0, true, false, false),
+	PERTUSSIS(true, false, false, true, false, 0, true, false, false),
+	NEONATAL_TETANUS(true, false, false, true, false, 0, true, false, false),
+	ONCHOCERCIASIS(true, false, false, true, false, 0, true, false, false),
+	DIPHTERIA(true, false, false, true, false, 0, true, false, false),
+	TRACHOMA(true, false, false, true, false, 0, true, false, false),
+	YAWS_ENDEMIC_SYPHILIS(true, false, false, true, false, 0, true, false, false),
+	MATERNAL_DEATHS(true, false, false, true, false, 0, true, false, false),
+	PERINATAL_DEATHS(true, false, false, true, false, 0, true, false, false),
+	INFLUENZA_A(true, false, true, false, false, 0, true, false, false),
+	INFLUENZA_B(true, false, true, false, false, 0, true, false, false),
+	H_METAPNEUMOVIRUS(true, false, true, false, false, 0, true, false, false),
+	RESPIRATORY_SYNCYTIAL_VIRUS(true, false, true, false, false, 0, true, false, false),
+	PARAINFLUENZA_1_4(true, false, true, false, false, 0, true, false, false),
+	ADENOVIRUS(true, false, true, false, false, 0, true, false, false),
+	RHINOVIRUS(true, false, true, false, false, 0, true, false, false),
+	ENTEROVIRUS(true, false, true, false, false, 0, true, false, false),
+	M_PNEUMONIAE(true, false, true, false, false, 0, true, false, false),
+	C_PNEUMONIAE(true, false, true, false, false, 0, true, false, false),
+	ARI(true, false, false, true, false, 0, true, false, false),
+	CHIKUNGUNYA(true, false, false, true, false, 0, true, false, false),
+	POST_IMMUNIZATION_ADVERSE_EVENTS_MILD(true, false, false, true, false, 0, true, false, false),
+	POST_IMMUNIZATION_ADVERSE_EVENTS_SEVERE(true, false, false, true, false, 0, true, false, false),
+	FHA(true, false, false, true, false, 0, true, false, false),
+	OTHER(true, true, true, false, true, 21, false, false, false),
+	UNDEFINED(true, true, true, false, true, 0, false, false, false);
 
 	private final boolean defaultActive;
 	private final boolean defaultPrimary;
@@ -174,7 +168,7 @@ public enum Disease
 	}
 
 	public boolean isDiseaseGroup() {
-		return this == AHF;
+		return this == UNSPECIFIED_VHF;
 	}
 
 	public boolean isVariantAllowed() {
@@ -206,14 +200,4 @@ public enum Disease
 	
 
 	public static List<Disease> DISEASE_LIST = Arrays.asList(Disease.values());
-	public static final List<Disease> AHF_DISEASES = Arrays.asList(
-			EVD,
-			MARBURG,
-			LASSA,
-			DENGUE,
-			CHIKUNGUNYA,
-			ZIKA,
-			YELLOW_FEVER
-	);
-
 }

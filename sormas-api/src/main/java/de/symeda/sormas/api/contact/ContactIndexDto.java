@@ -40,7 +40,6 @@ public class ContactIndexDto extends PseudonymizableIndexDto implements Serializ
 	public static final String PERSON_UUID = "personUuid";
 	public static final String PERSON_FIRST_NAME = "firstName";
 	public static final String PERSON_LAST_NAME = "lastName";
-	public static final String PERSON_OTHER_NAME = "otherName";
 	public static final String CAZE = "caze";
 	public static final String DISEASE = "disease";
 	public static final String LAST_CONTACT_DATE = "lastContactDate";
@@ -61,13 +60,12 @@ public class ContactIndexDto extends PseudonymizableIndexDto implements Serializ
 	public static final String REGION_UUID = "regionUuid";
 	public static final String DISTRICT_UUID = "districtUuid";
 	public static final String COMMUNITY_UUID = "communityUuid";
+
 	private String personUuid;
 	@PersonalData
 	private String firstName;
 	@PersonalData
 	private String lastName;
-	@PersonalData
-	private String otherName;
 	private CaseReferenceDto caze;
 	private Disease disease;
 	private String diseaseDetails;
@@ -94,54 +92,15 @@ public class ContactIndexDto extends PseudonymizableIndexDto implements Serializ
 	private String districtName;
 	private String caseRegionName;
 	private String caseDistrictName;
+
 	private DeletionReason deletionReason;
 	private String otherDeletionReason;
 
 	private ContactJurisdictionFlagsDto contactJurisdictionFlagsDto;
 
-	public ContactIndexDto(String uuid, String personUuid, String personFirstName, String personLastName, String personOtherName, String cazeUuid,
-						   Disease disease, String diseaseDetails, String caseFirstName, String caseLastName, String caseOtherName, String regionName,
-						   String districtName, Date lastContactDate, ContactCategory contactCategory,
-						   ContactProximity contactProximity, ContactClassification contactClassification, ContactStatus contactStatus, Float completeness,
-						   FollowUpStatus followUpStatus, Date followUpUntil, SymptomJournalStatus symptomJournalStatus, VaccinationStatus vaccinationStatus, Date reportDateTime, String externalID, String externalToken, String internalToken,
-						   CaseClassification caseClassification, String caseRegionName, String caseDistrictName)
-
-	{
-		super(uuid);
-		this.personUuid = personUuid;
-		this.firstName = personFirstName;
-		this.lastName = personLastName;
-		this.otherName = personOtherName;
-		this.disease = disease;
-		this.diseaseDetails = diseaseDetails;
-
-		if (cazeUuid != null) {
-			this.caze = new CaseReferenceDto(cazeUuid, caseFirstName, caseLastName, caseOtherName);
-		}
-		this.lastContactDate = lastContactDate;
-		this.contactCategory = contactCategory;
-		this.contactProximity = contactProximity;
-		this.contactClassification = contactClassification;
-		this.contactStatus = contactStatus;
-		this.completeness = completeness;
-		this.followUpStatus = followUpStatus;
-		this.followUpUntil = followUpUntil;
-		this.symptomJournalStatus = symptomJournalStatus;
-		this.vaccinationStatus = vaccinationStatus;
-		this.reportDateTime = reportDateTime;
-		this.caseClassification = caseClassification;
-		this.externalID = externalID;
-		this.externalToken = externalToken;
-		this.internalToken = internalToken;
-		this.regionName = regionName;
-		this.districtName = districtName;
-		this.caseRegionName = caseRegionName;
-		this.caseDistrictName = caseDistrictName;
-
-	}
-
-	public ContactIndexDto(String uuid, String personUuid, String personFirstName,String personLastName, String personOtherName, String cazeUuid,
-						   Disease disease, String diseaseDetails, String caseFirstName, String caseLastName, String caseOtherName, String regionName,
+	//@formatter:off
+	public ContactIndexDto(String uuid, String personUuid, String personFirstName, String personLastName, String cazeUuid,
+						   Disease disease, String diseaseDetails, String caseFirstName, String caseLastName, String regionName,
 						   String districtName, Date lastContactDate, ContactCategory contactCategory,
 						   ContactProximity contactProximity, ContactClassification contactClassification, ContactStatus contactStatus, Float completeness,
 						   FollowUpStatus followUpStatus, Date followUpUntil, SymptomJournalStatus symptomJournalStatus, VaccinationStatus vaccinationStatus, String contactOfficerUuid,
@@ -150,20 +109,17 @@ public class ContactIndexDto extends PseudonymizableIndexDto implements Serializ
 						   Date changeDate, // XXX: unused, only here for TypedQuery mapping
 						   String externalID, String externalToken, String internalToken, DeletionReason deletionReason, String otherDeletionReason, boolean isInJurisdiction, boolean isCaseInJurisdiction,
 						   int visitCount,
-						   Date latestChangedDate // unused, only here for TypedQuery mapping,
-
-	)
-	{
-		//@formatter:on
+						   Date latestChangedDate // unused, only here for TypedQuery mapping
+	) {
+	//@formatter:on
 
 		super(uuid);
 		this.personUuid = personUuid;
 		this.firstName = personFirstName;
 		this.lastName = personLastName;
-		this.otherName = personOtherName;
 
 		if (cazeUuid != null) {
-			this.caze = new CaseReferenceDto(cazeUuid, caseFirstName, caseLastName, caseOtherName);
+			this.caze = new CaseReferenceDto(cazeUuid, caseFirstName, caseLastName);
 		}
 
 		this.disease = disease;
@@ -196,12 +152,7 @@ public class ContactIndexDto extends PseudonymizableIndexDto implements Serializ
 		this.contactJurisdictionFlagsDto = new ContactJurisdictionFlagsDto(isInJurisdiction, isCaseInJurisdiction);
 	}
 
-    public ContactIndexDto(String uuid, String personUuid, String personFirstName, String personLastName, String personOtherName, String cazeUuid, Disease disease, String diseaseDetails, String caseFirstName, String caseLastName, String caseOtherName, String regionName, String districtName, Date lastContactDate, ContactCategory contactCategory, ContactProximity contactProximity, ContactClassification contactClassification, ContactStatus contactStatus, Float completeness, FollowUpStatus followUpStatus, Date followUpUntil, SymptomJournalStatus symptomJournalStatus, VaccinationStatus vaccinationStatus, String contactOfficerUuid, String reportingUserUuid, Date reportDateTime, CaseClassification caseClassification, String caseRegionName, String caseDistrictName, Date changeDate, String externalID, String externalToken, String internalToken, boolean isInJurisdiction, boolean isCaseInJurisdiction, int visitCount, Date latestChangedDate) {
-        super(uuid);
-    }
-
-
-    public String getPersonUuid() {
+	public String getPersonUuid() {
 		return personUuid;
 	}
 
@@ -223,14 +174,6 @@ public class ContactIndexDto extends PseudonymizableIndexDto implements Serializ
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-
-	public String getOtherName() {
-		return otherName;
-	}
-
-	public void setOtherName(String otherName) {
-		this.otherName = otherName;
 	}
 
 	public CaseReferenceDto getCaze() {

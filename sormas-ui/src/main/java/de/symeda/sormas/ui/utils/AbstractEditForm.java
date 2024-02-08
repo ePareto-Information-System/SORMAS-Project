@@ -62,8 +62,6 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 	private ComboBox diseaseField;
 	private boolean setServerDiseaseAsDefault;
 
-	protected String disease;
-
 	protected AbstractEditForm(Class<DTO> type, String propertyI18nPrefix) {
 		this(type, propertyI18nPrefix, true, null, null);
 	}
@@ -229,11 +227,9 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 		diseaseField.addValueChangeListener(e -> {
 			Object value = e.getProperty().getValue();
 			if (value != null && !diseaseField.containsId(value)) {
-
 				Item newItem = diseaseField.addItem(value);
 				newItem.getItemProperty(SormasFieldGroupFieldFactory.CAPTION_PROPERTY_ID).setValue(value.toString());
 			}
-			this.disease=value.toString();
 		});
 		return diseaseField;
 	}

@@ -52,7 +52,7 @@ public interface PersonFacade extends BaseFacade<PersonDto, PersonIndexDto, Pers
 	/**
 	 * Returns a list with the names of all persons that the user has access to and that match the criteria.
 	 * This only includes persons that are associated with an active case, contact or event participant.
-	 *
+	 * 
 	 * @return
 	 */
 	List<SimilarPersonDto> getSimilarPersonDtos(PersonSimilarityCriteria criteria);
@@ -88,11 +88,11 @@ public interface PersonFacade extends BaseFacade<PersonDto, PersonIndexDto, Pers
 	void mergePerson(PersonDto leadPerson, PersonDto otherPerson);
 
 	void mergePerson(
-			String leadPersonUuid,
-			String otherPersonUuid,
-			boolean mergeProperties,
-			List<String> selectedEventParticipantUuids,
-			boolean mergeEventparticipantProperties);
+		String leadPersonUuid,
+		String otherPersonUuid,
+		boolean mergeProperties,
+		List<String> selectedEventParticipantUuids,
+		boolean mergeEventparticipantProperties);
 
 	boolean isPersonSimilar(PersonSimilarityCriteria criteria, String personUuid);
 

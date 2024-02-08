@@ -25,12 +25,8 @@ import androidx.databinding.ViewDataBinding;
 import androidx.databinding.library.baseAdapters.BR;
 import androidx.fragment.app.FragmentActivity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.symeda.sormas.api.person.PersonContactDetailType;
 import de.symeda.sormas.api.person.PhoneNumberType;
-import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.ValidationException;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -38,7 +34,6 @@ import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.person.Person;
 import de.symeda.sormas.app.backend.person.PersonContactDetail;
-import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.component.dialog.FormDialog;
 import de.symeda.sormas.app.component.validation.FragmentValidator;
 import de.symeda.sormas.app.component.validation.ValidationHelper;
@@ -84,18 +79,7 @@ public class PersonContactDetailDialog extends FormDialog {
 
 	@Override
 	protected void initializeContentView(ViewDataBinding rootBinding, ViewDataBinding buttonPanelBinding) {
-
-		List<Item> filteredList = new ArrayList<>();
-		filteredList.add(new Item("", null));
-
-		for (PersonContactDetailType type : PersonContactDetailType.values()) {
-			if (type == PersonContactDetailType.PHONE || type == PersonContactDetailType.OTHER) {
-				Item item = new Item(type.toString(), type);
-				filteredList.add(item);
-			}
-		}
-		contentBinding.personContactDetailPersonContactDetailType.initializeSpinner(filteredList);
-		//contentBinding.personContactDetailPersonContactDetailType.initializeSpinner(DataUtils.getEnumItems(PersonContactDetailType.class, true));
+		contentBinding.personContactDetailPersonContactDetailType.initializeSpinner(DataUtils.getEnumItems(PersonContactDetailType.class, true));
 		contentBinding.personContactDetailPhoneNumberType.initializeSpinner(DataUtils.getEnumItems(PhoneNumberType.class, true));
 
 		contentBinding.personContactDetailPersonContactDetailType.addValueChangedListener(e -> {

@@ -136,11 +136,14 @@ public class SampleController {
 	private void createSample(SampleDto sampleDto, Disease disease, Runnable callback) {
 		final CommitDiscardWrapperComponent<SampleCreateForm> editView = getSampleCreateComponent(sampleDto, disease, callback);
 		// add option to create additional pathogen tests
+		SampleEditPathogenTestListHandler pathogenTestHandler = new SampleEditPathogenTestListHandler();
+		addPathogenTestButton(editView, false, null, null, pathogenTestHandler::addPathogenTest);
 
-		if(disease != Disease.CSM && disease != Disease.YELLOW_FEVER && disease != Disease.AFP){
-			SampleEditPathogenTestListHandler pathogenTestHandler = new SampleEditPathogenTestListHandler();
-			addPathogenTestButton(editView,false,null,null, pathogenTestHandler::addPathogenTest);
-		}
+		editView.setPostCommitListener(() -> {
+			pathogenTestHandler.saveAll(sampleDto.toReference());
+			SormasUI.refreshView();
+		});
+
 		VaadinUiUtil.showModalPopupWindow(editView, I18nProperties.getString(Strings.headingCreateNewSample));
 	}
 

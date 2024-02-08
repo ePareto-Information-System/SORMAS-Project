@@ -18,6 +18,8 @@ package de.symeda.sormas.api.person;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.utils.HideForCountries;
 import de.symeda.sormas.api.uuid.AbstractUuidDto;
@@ -44,10 +46,9 @@ public class SimilarPersonDto extends AbstractUuidDto {
 	public static final String PASSPORT_NUMBER = "passportNumber";
 
 	private static final List<String> LOCATION_DETAILS = Arrays.asList(POSTAL_CODE, CITY, STREET, HOUSE_NUMBER);
-	private String uuid;
+
 	private String firstName;
 	private String lastName;
-	private String otherName;
 	@HideForCountries
 	private String nickname;
 	private String ageAndBirthDate;
@@ -67,19 +68,8 @@ public class SimilarPersonDto extends AbstractUuidDto {
 		CountryHelper.COUNTRY_CODE_FRANCE })
 	private String passportNumber;
 
-	@HideForCountries
-	private String ghanaCard;
-
 	public SimilarPersonDto(String uuid) {
 		super(uuid);
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
 	}
 
 	public String getFirstName() {
@@ -96,14 +86,6 @@ public class SimilarPersonDto extends AbstractUuidDto {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-
-	public String getOtherName() {
-		return otherName;
-	}
-
-	public void setOtherName(String otherName) {
-		this.otherName = otherName;
 	}
 
 	public String getNickname() {
@@ -210,21 +192,13 @@ public class SimilarPersonDto extends AbstractUuidDto {
 		this.passportNumber = passportNumber;
 	}
 
-	public String getGhanaCard() {
-		return ghanaCard;
-	}
-
-	public void setGhanaCard(String ghanaCard) {
-		this.ghanaCard = ghanaCard;
-	}
-
 	public PersonReferenceDto toReference() {
-		return new PersonReferenceDto(getUuid(), firstName, lastName, otherName);
+		return new PersonReferenceDto(getUuid(), firstName, lastName);
 	}
 
-	@Override
-	public String toString() {
-		return PersonDto.buildCaption(firstName, lastName, otherName);
+	@JsonIgnore
+	public String buildCaption() {
+		return PersonDto.buildCaption(firstName, lastName);
 	}
 
 	public static String getI18nPrefix(String propertyId) {

@@ -41,9 +41,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.vaadin.v7.ui.*;
-import de.symeda.sormas.api.caze.CaseOutcome;
-
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.ContentMode;
@@ -59,6 +56,11 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.util.converter.Converter.ConversionException;
+import com.vaadin.v7.ui.AbstractField;
+import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.DateField;
+import com.vaadin.v7.ui.Field;
+import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
@@ -95,7 +97,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	private static final long serialVersionUID = 1L;
 
 	private static final String CLINICAL_MEASUREMENTS_HEADING_LOC = "clinicalMeasurementsHeadingLoc";
-	private static final String CLINICAL_HISTORY_HEADING_LOC = "clinicalHistoryHeadingLoc";
 	private static final String SIGNS_AND_SYMPTOMS_HEADING_LOC = "signsAndSymptomsHeadingLoc";
 	private static final String GENERAL_SIGNS_AND_SYMPTOMS_HEADING_LOC = "generalSignsAndSymptomsHeadingLoc";
 	private static final String RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC = "respiratorySignsAndSymptomsHeadingLoc";
@@ -129,23 +130,11 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowCss(VSPACE_3,
 							//XXX #1620 fluidColumnLoc?
 							fluidColumn(8, 0, loc(SYMPTOMS_HINT_LOC))) +
-					fluidRowLocs(6,DATE_OF_ONSET) +
-					fluidRowLocs(6,FEVER_BODY_TEMP_GREATER) +
 					fluidRow(fluidColumn(8,4, locCss(CssStyles.ALIGN_RIGHT,BUTTONS_LOC)))+
 					createSymptomGroupLayout(SymptomGroup.GENERAL, GENERAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
-					fluidRowLocs(6,ALTERED_CONSCIOUSNESS) +
-					fluidRowLocs(6,CONFUSED_DISORIENTED) +
-					fluidRowLocs(6,HEMORRHAGIC_SYNDROME) +
-					fluidRowLocs(HYPERGLYCEMIA, HYPOGLYCEMIA) +
-					fluidRowLocs(6,MENINGEAL_SIGNS) +
-					fluidRowLocs(6,SEIZURES) +
-					fluidRowLocs(6,SEPSIS) +
-					fluidRowLocs(6,SHOCK) +
-					fluidRowLocs(6,OTHER_COMPLICATIONS) +
-					fluidRowLocs(6,OTHER_COMPLICATIONS_TEXT) +
 					createSymptomGroupLayout(SymptomGroup.RESPIRATORY, RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.CARDIOVASCULAR, CARDIOVASCULAR_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
-					//createSymptomGroupLayout(SymptomGroup.GASTROINTESTINAL, GASTROINTESTINAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
+					createSymptomGroupLayout(SymptomGroup.GASTROINTESTINAL, GASTROINTESTINAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.URINARY, URINARY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.NERVOUS_SYSTEM, NERVOUS_SYSTEM_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.RASH, RASH_AND_SYMPTOMS_HEADING_LOC) +
@@ -155,9 +144,17 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					createSymptomGroupLayout(SymptomGroup.OTHER, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					locsCss(VSPACE_3, PATIENT_ILL_LOCATION, SYMPTOMS_COMMENTS) +
 					fluidRowLocsCss(VSPACE_3, ONSET_SYMPTOM, ONSET_DATE) +
-					//loc(CLINICAL_HISTORY_HEADING_LOC) +
-					fluidRowLocs(6,OUTCOME)+
-					fluidRowLocs(PROVISONAL_DIAGNOSIS);
+					loc(COMPLICATIONS_HEADING) +
+					fluidRow(
+							fluidColumn(6, 0,
+									locsCss(VSPACE_3,
+											ALTERED_CONSCIOUSNESS, CONFUSED_DISORIENTED, HEMORRHAGIC_SYNDROME,
+											HYPERGLYCEMIA, HYPOGLYCEMIA, OTHER_COMPLICATIONS,
+											OTHER_COMPLICATIONS_TEXT)),
+							fluidColumn(6, 0,
+									locsCss(VSPACE_3,
+											MENINGEAL_SIGNS, SEIZURES, SEPSIS, SHOCK))
+					);
 	//@formatter:on
 
 	private static String createSymptomGroupLayout(SymptomGroup symptomGroup, String loc) {
@@ -244,9 +241,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		Label clinicalMeasurementsHeadingLabel =
 			createLabel(I18nProperties.getString(Strings.headingClinicalMeasurements), H3, CLINICAL_MEASUREMENTS_HEADING_LOC);
 
-		Label headingClinicalHistoryHeadingLabel =
-				createLabel(I18nProperties.getString(Strings.headingClinicalHistory), H3, CLINICAL_HISTORY_HEADING_LOC);
-
 		Label signsAndSymptomsHeadingLabel =
 			createLabel(I18nProperties.getString(Strings.headingSignsAndSymptoms), H3, SIGNS_AND_SYMPTOMS_HEADING_LOC);
 
@@ -305,8 +299,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			temperature.setCaption(I18nProperties.getCaption(Captions.symptomsMaxTemperature));
 		}
 		addField(TEMPERATURE_SOURCE);
-		ComboBox outcome = addField(CaseDataDto.OUTCOME, ComboBox.class);
-		outcome.removeItem(CaseOutcome.UNKNOWN);
 
 		ComboBox bloodPressureSystolic = addField(BLOOD_PRESSURE_SYSTOLIC, ComboBox.class);
 		bloodPressureSystolic.addItems(SymptomsHelper.getBloodPressureValues());
@@ -543,17 +535,22 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				HEIGHT,
 				MID_UPPER_ARM_CIRCUMFERENCE,
 				GLASGOW_COMA_SCALE);
-		}
-		/*else {
+		} else {
 			setVisible(false, ONSET_SYMPTOM, ONSET_DATE);
-		}*/
+		}
 
 		// Initialize lists
 
 		conditionalBleedingSymptomFieldIds = Arrays.asList(
+			GUMS_BLEEDING,
+			INJECTION_SITE_BLEEDING,
+			NOSE_BLEEDING,
 			BLOODY_BLACK_STOOL,
+			RED_BLOOD_VOMIT,
 			DIGESTED_BLOOD_VOMIT,
+			EYES_BLEEDING,
 			COUGHING_BLOOD,
+			BLEEDING_VAGINA,
 			SKIN_BRUISING,
 			STOMACH_BLEEDING,
 			BLOOD_URINE,
@@ -700,6 +697,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			DIZZINESS_STANDING_UP,
 			HIGH_OR_LOW_BLOOD_PRESSURE,
 			URINARY_RETENTION,
+			// complications
 			ALTERED_CONSCIOUSNESS,
 			CONFUSED_DISORIENTED,
 			HEMORRHAGIC_SYNDROME,
@@ -792,187 +790,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		if (disease == Disease.MONKEYPOX) {
 			setUpMonkeypoxVisibilities();
 		}
-		if (disease == Disease.AFP) {
-			TextArea provisionalDiagnosis = addField(PROVISONAL_DIAGNOSIS, TextArea.class);
-			provisionalDiagnosis.setRows(4);
-
-			addFields(
-					MUSCLE_TONE,
-					DEEP_TENDON_REFLEX,
-					MUSCLE_VOLUME,
-					SENSORY_LOSS);
-
-			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
-			clinicalMeasurementsHeadingLabel.setVisible(false);
-			setVisible(false, FEVER,
-					ALTERED_CONSCIOUSNESS,
-					SEIZURES,
-					HEADACHE,
-					NECK_STIFFNESS);
-
-			symptomsHide();
-			setVisible(true, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
-
-		}
-		if(disease == Disease.NEW_INFLUENZA){
-			addField(DATE_OF_ONSET, DateField.class);
-			OptionGroup feverBodytemp = addField(FEVER_BODY_TEMP_GREATER, OptionGroup.class);
-
-			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
-			clinicalMeasurementsHeadingLabel.setVisible(false);
-			setVisible(false, ONSET_DATE);
-			symptomsHide();
-			setVisible(false, FEVER, HEADACHE, ALTERED_CONSCIOUSNESS, CONVULSION, SEIZURES);
-			setVisible(true, COUGH, SORE_THROAT, DIFFICULTY_BREATHING);
-		}
-
-		if(disease == Disease.CSM){
-			symptomsHide();
-			setVisible(true, BULGING_FONTANELLE, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
-			clinicalMeasurementsHeadingLabel.setVisible(false);
-			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
-
-		} else if (disease == Disease.AHF) {
-			setVisible(true, VOMITING, INJECTION_SITE_BLEEDING, GUMS_BLEEDING, DIARRHEA, EYES_BLEEDING, BLOODY_BLACK_STOOL, ABDOMINAL_PAIN, DIGESTED_BLOOD_VOMIT,
-					NOSE_BLEEDING, BLEEDING_VAGINA, BREATHLESSNESS, JOINT_PAIN);
-			setVisible(false,
-					SORE_THROAT,
-					COUGH,
-					COUGH_WITH_SPUTUM,
-					COUGH_WITH_HEAMOPTYSIS,
-					RUNNY_NOSE,
-					CHEST_PAIN,
-					CONJUNCTIVITIS,
-					EYE_PAIN_LIGHT_SENSITIVE,
-					KOPLIKS_SPOTS,
-					THROBOCYTOPENIA,
-					OTITIS_MEDIA,
-					HEARINGLOSS,
-					DEHYDRATION,
-					REFUSAL_FEEDOR_DRINK,
-					BACKACHE,
-					JAUNDICE,
-					DARK_URINE,
-					STOMACH_BLEEDING,
-					RAPID_BREATHING,
-					SWOLLEN_GLANDS,
-					UNEXPLAINED_BLEEDING,
-					COUGHING_BLOOD,
-					SKIN_BRUISING,
-					BLOOD_URINE,
-					OTHER_HEMORRHAGIC_SYMPTOMS,
-					OTHER_HEMORRHAGIC_SYMPTOMS_TEXT,
-					OTHER_NON_HEMORRHAGIC_SYMPTOMS,
-					OTHER_NON_HEMORRHAGIC_SYMPTOMS_TEXT,
-					LESIONS,
-					LESIONS_THAT_ITCH,
-					LESIONS_SAME_STATE,
-					LESIONS_SAME_SIZE,
-					LESIONS_DEEP_PROFOUND,
-					LESIONS_FACE,
-					LESIONS_LEGS,
-					LESIONS_SOLES_FEET,
-					LESIONS_PALMS_HANDS,
-					LESIONS_THORAX,
-					LESIONS_ARMS,
-					LESIONS_GENITALS,
-					LESIONS_ALL_OVER_BODY,
-					LYMPHADENOPATHY,
-					LYMPHADENOPATHY_AXILLARY,
-					LYMPHADENOPATHY_CERVICAL,
-					LYMPHADENOPATHY_INGUINAL,
-					CHILLS_SWEATS,
-					BEDRIDDEN,
-					ORAL_ULCERS,
-					PAINFUL_LYMPHADENITIS,
-					BLACKENING_DEATH_OF_TISSUE,
-					BUBOES_GROIN_ARMPIT_NECK,
-					PHARYNGEAL_ERYTHEMA,
-					PHARYNGEAL_EXUDATE,
-					OEDEMA_FACE_NECK,
-					OEDEMA_LOWER_EXTREMITY,
-					LOSS_SKIN_TURGOR,
-					PALPABLE_LIVER,
-					PALPABLE_SPLEEN,
-					MALAISE,
-					SUNKEN_EYES_FONTANELLE,
-					SIDE_PAIN,
-					FLUID_IN_LUNG_CAVITY,
-					TREMOR,
-					BILATERAL_CATARACTS,
-					UNILATERAL_CATARACTS,
-					CONGENITAL_GLAUCOMA,
-					CONGENITAL_HEART_DISEASE,
-					PIGMENTARY_RETINOPATHY,
-					RADIOLUCENT_BONE_DISEASE,
-					SPLENOMEGALY,
-					MICROCEPHALY,
-					MENINGOENCEPHALITIS,
-					DEVELOPMENTAL_DELAY,
-					CONGENITAL_HEART_DISEASE_TYPE,
-					CONGENITAL_HEART_DISEASE_DETAILS,
-					JAUNDICE_WITHIN_24_HOURS_OF_BIRTH,
-					PATIENT_ILL_LOCATION,
-					HYDROPHOBIA,
-					OPISTHOTONUS,
-					ANXIETY_STATES,
-					DELIRIUM,
-					UPROARIOUSNESS,
-					PARASTHESIA_AROUND_WOUND,
-					EXCESS_SALIVATION,
-					INSOMNIA,
-					PARALYSIS,
-					EXCITATION,
-					DYSPHAGIA,
-					AEROPHOBIA,
-					HYPERACTIVITY,
-					PARESIS,
-					AGITATION,
-					ASCENDING_FLACCID_PARALYSIS,
-					ERRATIC_BEHAVIOUR,
-					COMA,
-					CONVULSION,
-					FLUID_IN_LUNG_CAVITY_AUSCULTATION,
-					FLUID_IN_LUNG_CAVITY_XRAY,
-					ABNORMAL_LUNG_XRAY_FINDINGS,
-					CONJUNCTIVAL_INJECTION,
-					ACUTE_RESPIRATORY_DISTRESS_SYNDROME,
-					PNEUMONIA_CLINICAL_OR_RADIOLOGIC,
-					LOSS_OF_TASTE,
-					LOSS_OF_SMELL,
-					WHEEZING,
-					SKIN_ULCERS,
-					INABILITY_TO_WALK,
-					IN_DRAWING_OF_CHEST_WALL,
-					FEELING_ILL,
-					SHIVERING,
-					RESPIRATORY_DISEASE_VENTILATION,
-					FAST_HEART_RATE,
-					OXYGEN_SATURATION_LOWER_94,
-					WEAKNESS,
-					COUGH_WITHOUT_SPUTUM,
-					CHEST_PRESSURE,
-					BLUE_LIPS,
-					BLOOD_CIRCULATION_PROBLEMS,
-					PALPITATIONS,
-					DIZZINESS_STANDING_UP,
-					HIGH_OR_LOW_BLOOD_PRESSURE,
-					URINARY_RETENTION,
-
-					//ALTERED_CONSCIOUSNESS,
-					CONFUSED_DISORIENTED,
-					//OTHER_COMPLICATIONS,
-					//OTHER_COMPLICATIONS_TEXT,
-					HEMORRHAGIC_SYNDROME,
-					HYPERGLYCEMIA,
-					HYPOGLYCEMIA,
-					MENINGEAL_SIGNS,
-					//SEIZURES,
-					SEPSIS,
-					SHOCK);
-			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
-			clinicalMeasurementsHeadingLabel.setVisible(false);
-		}
 
 		if (symptomsContext != SymptomsContext.CASE) {
 			getFieldGroup().getField(PATIENT_ILL_LOCATION).setVisible(false);
@@ -1037,7 +854,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		Button setEmptyToNoButton = createButtonSetClearedToSymptomState(Captions.symptomsSetClearedToNo, SymptomState.NO);
 
-		//Button setEmptyToUnknownButton = createButtonSetClearedToSymptomState(Captions.symptomsSetClearedToUnknown, SymptomState.UNKNOWN);
+		Button setEmptyToUnknownButton = createButtonSetClearedToSymptomState(Captions.symptomsSetClearedToUnknown, SymptomState.UNKNOWN);
 
 		Label complicationsHeading = new Label(I18nProperties.getString(Strings.headingComplications));
 		CssStyles.style(complicationsHeading, CssStyles.H3);
@@ -1051,7 +868,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.addComponent(clearAllButton);
 		buttonsLayout.addComponent(setEmptyToNoButton);
-		//buttonsLayout.addComponent(setEmptyToUnknownButton);
+		buttonsLayout.addComponent(setEmptyToUnknownButton);
 		buttonsLayout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
 		buttonsLayout.setMargin(new MarginInfo(true, false, true, true));
 
@@ -1073,163 +890,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			}
 		}
 		complicationsHeading.setVisible(isComplicationsHeadingVisible);
-	}
-
-	private void symptomsHide() {
-		setVisible(false, VOMITING,
-				DIARRHEA,
-				BLOOD_IN_STOOL,
-				NAUSEA,
-				ABDOMINAL_PAIN,
-				MUSCLE_PAIN,
-				FATIGUE_WEAKNESS,
-				SKIN_RASH,
-				SORE_THROAT,
-				COUGH,
-				COUGH_WITH_SPUTUM,
-				COUGH_WITH_HEAMOPTYSIS,
-				RUNNY_NOSE,
-				DIFFICULTY_BREATHING,
-				CHEST_PAIN,
-				CONJUNCTIVITIS,
-				EYE_PAIN_LIGHT_SENSITIVE,
-				KOPLIKS_SPOTS,
-				THROBOCYTOPENIA,
-				OTITIS_MEDIA,
-				HEARINGLOSS,
-				DEHYDRATION,
-				ANOREXIA_APPETITE_LOSS,
-				REFUSAL_FEEDOR_DRINK,
-				JOINT_PAIN,
-				HICCUPS,
-				BACKACHE,
-				EYES_BLEEDING,
-				JAUNDICE,
-				DARK_URINE,
-				STOMACH_BLEEDING,
-				RAPID_BREATHING,
-				SWOLLEN_GLANDS,
-				UNEXPLAINED_BLEEDING,
-				GUMS_BLEEDING,
-				NOSE_BLEEDING,
-				BLOODY_BLACK_STOOL,
-				RED_BLOOD_VOMIT,
-				DIGESTED_BLOOD_VOMIT,
-				COUGHING_BLOOD,
-				BLEEDING_VAGINA,
-				SKIN_BRUISING,
-				BLOOD_URINE,
-				OTHER_HEMORRHAGIC_SYMPTOMS,
-				OTHER_HEMORRHAGIC_SYMPTOMS_TEXT,
-				OTHER_NON_HEMORRHAGIC_SYMPTOMS,
-				OTHER_NON_HEMORRHAGIC_SYMPTOMS_TEXT,
-				LESIONS,
-				LESIONS_THAT_ITCH,
-				LESIONS_SAME_STATE,
-				LESIONS_SAME_SIZE,
-				LESIONS_DEEP_PROFOUND,
-				LESIONS_FACE,
-				LESIONS_LEGS,
-				LESIONS_SOLES_FEET,
-				LESIONS_PALMS_HANDS,
-				LESIONS_THORAX,
-				LESIONS_ARMS,
-				LESIONS_GENITALS,
-				LESIONS_ALL_OVER_BODY,
-				LYMPHADENOPATHY,
-				LYMPHADENOPATHY_AXILLARY,
-				LYMPHADENOPATHY_CERVICAL,
-				LYMPHADENOPATHY_INGUINAL,
-				CHILLS_SWEATS,
-				BEDRIDDEN,
-				ORAL_ULCERS,
-				PAINFUL_LYMPHADENITIS,
-				BLACKENING_DEATH_OF_TISSUE,
-				BUBOES_GROIN_ARMPIT_NECK,
-				PHARYNGEAL_ERYTHEMA,
-				PHARYNGEAL_EXUDATE,
-				OEDEMA_FACE_NECK,
-				OEDEMA_LOWER_EXTREMITY,
-				LOSS_SKIN_TURGOR,
-				PALPABLE_LIVER,
-				PALPABLE_SPLEEN,
-				MALAISE,
-				SUNKEN_EYES_FONTANELLE,
-				SIDE_PAIN,
-				FLUID_IN_LUNG_CAVITY,
-				TREMOR,
-				BILATERAL_CATARACTS,
-				UNILATERAL_CATARACTS,
-				CONGENITAL_GLAUCOMA,
-				CONGENITAL_HEART_DISEASE,
-				PIGMENTARY_RETINOPATHY,
-				RADIOLUCENT_BONE_DISEASE,
-				SPLENOMEGALY,
-				MICROCEPHALY,
-				MENINGOENCEPHALITIS,
-				PURPURIC_RASH,
-				DEVELOPMENTAL_DELAY,
-				CONGENITAL_HEART_DISEASE_TYPE,
-				CONGENITAL_HEART_DISEASE_DETAILS,
-				JAUNDICE_WITHIN_24_HOURS_OF_BIRTH,
-				PATIENT_ILL_LOCATION,
-				HYDROPHOBIA,
-				OPISTHOTONUS,
-				ANXIETY_STATES,
-				DELIRIUM,
-				UPROARIOUSNESS,
-				PARASTHESIA_AROUND_WOUND,
-				EXCESS_SALIVATION,
-				INSOMNIA,
-				PARALYSIS,
-				EXCITATION,
-				DYSPHAGIA,
-				AEROPHOBIA,
-				HYPERACTIVITY,
-				PARESIS,
-				AGITATION,
-				ASCENDING_FLACCID_PARALYSIS,
-				ERRATIC_BEHAVIOUR,
-				COMA,
-				CONVULSION,
-				FLUID_IN_LUNG_CAVITY_AUSCULTATION,
-				FLUID_IN_LUNG_CAVITY_XRAY,
-				ABNORMAL_LUNG_XRAY_FINDINGS,
-				CONJUNCTIVAL_INJECTION,
-				ACUTE_RESPIRATORY_DISTRESS_SYNDROME,
-				PNEUMONIA_CLINICAL_OR_RADIOLOGIC,
-				LOSS_OF_TASTE,
-				LOSS_OF_SMELL,
-				WHEEZING,
-				SKIN_ULCERS,
-				INABILITY_TO_WALK,
-				IN_DRAWING_OF_CHEST_WALL,
-				FEELING_ILL,
-				SHIVERING,
-				RESPIRATORY_DISEASE_VENTILATION,
-				FAST_HEART_RATE,
-				OXYGEN_SATURATION_LOWER_94,
-				FEVERISHFEELING,
-				WEAKNESS,
-				FATIGUE,
-				COUGH_WITHOUT_SPUTUM,
-				BREATHLESSNESS,
-				CHEST_PRESSURE,
-				BLUE_LIPS,
-				BLOOD_CIRCULATION_PROBLEMS,
-				PALPITATIONS,
-				DIZZINESS_STANDING_UP,
-				HIGH_OR_LOW_BLOOD_PRESSURE,
-				URINARY_RETENTION,
-				CONFUSED_DISORIENTED,
-				OTHER_COMPLICATIONS,
-				OTHER_COMPLICATIONS_TEXT,
-				HEMORRHAGIC_SYNDROME,
-				HYPERGLYCEMIA,
-				HYPOGLYCEMIA,
-				MENINGEAL_SIGNS,
-				SEPSIS,
-				SHOCK);
 	}
 
 	private void toggleFeverComponentError(NullableOptionGroup feverField, ComboBox temperatureField) {
@@ -1400,7 +1060,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	}
 
 	/**
-	 * Returns true if the value of any field associated with the sourcePropertyIds
+	 * Returns true if if the value of any field associated with the sourcePropertyIds
 	 * is set to one of the values contained in sourceValues.
 	 *
 	 * @param fieldGroup
@@ -1450,7 +1110,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		onsetSymptom.setEnabled(false); // will be updated by listener if needed
 		onsetDateField.setEnabled(false); // will be updated by listener if needed
 	}
-
 
 	private void setUpMonkeypoxVisibilities() {
 		// Monkeypox picture resemblance fields

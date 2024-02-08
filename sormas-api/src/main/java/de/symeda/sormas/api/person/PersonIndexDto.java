@@ -19,7 +19,6 @@ public class PersonIndexDto extends PseudonymizableIndexDto implements Serializa
 	public static final String UUID = "uuid";
 	public static final String FIRST_NAME = "firstName";
 	public static final String LAST_NAME = "lastName";
-	public static final String OTHER_NAME = "otherName";
 	public static final String AGE_AND_BIRTH_DATE = "ageAndBirthDate";
 	public static final String SEX = "sex";
 	public static final String DISTRICT = "district";
@@ -36,9 +35,6 @@ public class PersonIndexDto extends PseudonymizableIndexDto implements Serializa
 	@PersonalData
 	@SensitiveData
 	private String lastName;
-	@PersonalData
-	@SensitiveData
-	private String otherName;
 	private AgeAndBirthDateDto ageAndBirthDate;
 	private Sex sex;
 	private String district;
@@ -66,7 +62,6 @@ public class PersonIndexDto extends PseudonymizableIndexDto implements Serializa
 		String uuid,
 		String firstName,
 		String lastName,
-		String otherName,
 		Integer age,
 		ApproximateAgeType ageType,
 		Integer birthdateDD,
@@ -86,7 +81,6 @@ public class PersonIndexDto extends PseudonymizableIndexDto implements Serializa
 		super(uuid);
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.otherName = otherName;
 		this.ageAndBirthDate = new AgeAndBirthDateDto(age, ageType, birthdateDD, birthdateMM, birthdateYYYY);
 		this.sex = sex;
 		this.district = district;
@@ -108,16 +102,12 @@ public class PersonIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.firstName = firstName;
 	}
 
-	public String getLastName() {return lastName;}
+	public String getLastName() {
+		return lastName;
+	}
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-
-	public String getOtherName() {return otherName;}
-
-	public void setOtherName(String otherName) {
-		this.otherName = otherName;
 	}
 
 	public AgeAndBirthDateDto getAgeAndBirthDate() {
@@ -210,7 +200,7 @@ public class PersonIndexDto extends PseudonymizableIndexDto implements Serializa
 
 	@Override
 	public String getCaption() {
-		return PersonDto.buildCaption(getFirstName(), getLastName(), getOtherName());
+		return PersonDto.buildCaption(getFirstName(), getLastName());
 	}
 
 	@Override

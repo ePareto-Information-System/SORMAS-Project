@@ -33,7 +33,6 @@
         <variable name="caseOriginClass" type="Class" />
         <variable name="caseTransmissionClassificationClass" type="de.symeda.sormas.api.caze.TransmissionClassification" />
         <variable name="differentPlaceOfStayJurisdiction" type="Boolean" />
-        <variable name="caseTransmissionClassificationClass" type="Class" />
     </data>
 
 
@@ -71,12 +70,6 @@
                 style="@style/ControlSingleColumnStyle"
                 app:required="true"
                 app:value="@={data.disease}" />
-
-            <de.symeda.sormas.app.component.controls.ControlSpinnerField
-                android:id="@+id/caseData_caseTransmissionClassification"
-                style="@style/ControlSingleColumnStyle"
-                app:required="true"
-                app:value="@={data.caseTransmissionClassification}" />
 
             <de.symeda.sormas.app.component.controls.ControlCheckBoxField
                 android:id="@+id/rapid_case_entry_checkBox"
@@ -314,26 +307,6 @@
                     style="@style/ControlSecondOfTwoColumnsStyle"
                     app:required="true"
                     app:value="@={data.person.lastName}" />
-
-                <de.symeda.sormas.app.component.controls.ControlTextEditField
-                    android:id="@+id/caseData_otherName"
-                    style="@style/ControlSecondOfTwoColumnsStyle"
-                    app:required="false"
-                    app:value="@={data.person.otherName}" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/ghanacard_fields_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <de.symeda.sormas.app.component.controls.ControlTextEditField
-                    android:id="@+id/caseData_ghanaCard"
-                    style="@style/ControlFirstOfTwoColumnsStyle"
-                    app:required="false"
-                    app:value="@={data.person.ghanaCard}" />
 
             </LinearLayout>
 

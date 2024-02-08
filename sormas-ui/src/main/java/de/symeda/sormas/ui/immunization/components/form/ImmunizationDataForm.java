@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import de.symeda.sormas.api.infrastructure.facility.*;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.vaadin.ui.Button;
@@ -61,6 +60,10 @@ import de.symeda.sormas.api.immunization.ImmunizationStatus;
 import de.symeda.sormas.api.immunization.MeansOfImmunization;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -203,8 +206,7 @@ public class ImmunizationDataForm extends AbstractEditForm<ImmunizationDto> {
 		facilityTypeGroup.setWidth(100, Unit.PERCENTAGE);
 		facilityTypeGroup.addItems(FacilityTypeGroup.values());
 		getContent().addComponent(facilityTypeGroup, FACILITY_TYPE_GROUP_LOC);
-		ComboBox facilityType = addField(ImmunizationDto.FACILITY_TYPE);
-		ComboBox dhimsFacilityType = addField(ImmunizationDto.DHIMS_FACILITY_TYPE);
+		ComboBox facilityType = addField(ImmunizationDto.FACILITY_TYPE, ComboBoxWithPlaceholder.class);
 		ComboBox facilityCombo = addInfrastructureField(ImmunizationDto.HEALTH_FACILITY);
 		facilityCombo.setImmediate(true);
 		TextField facilityDetails = addField(ImmunizationDto.HEALTH_FACILITY_DETAILS, TextField.class);

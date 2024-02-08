@@ -24,7 +24,6 @@ import static de.symeda.sormas.api.caze.CaseDataDto.DISEASE_DETAILS;
 import static de.symeda.sormas.api.caze.CaseDataDto.DISTRICT;
 import static de.symeda.sormas.api.caze.CaseDataDto.EPID_NUMBER;
 import static de.symeda.sormas.api.caze.CaseDataDto.FACILITY_TYPE;
-import static de.symeda.sormas.api.caze.CaseDataDto.DHIMS_FACILITY_TYPE;
 import static de.symeda.sormas.api.caze.CaseDataDto.HEALTH_FACILITY;
 import static de.symeda.sormas.api.caze.CaseDataDto.HEALTH_FACILITY_DETAILS;
 import static de.symeda.sormas.api.caze.CaseDataDto.PERSON;
@@ -76,7 +75,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
@@ -444,7 +442,6 @@ public class ImportFacadeEjb implements ImportFacade {
 		importColumns.add(ImportColumn.from(CaseDataDto.class, RESPONSIBLE_DISTRICT, DistrictReferenceDto.class, separator));
 		importColumns.add(ImportColumn.from(CaseDataDto.class, RESPONSIBLE_COMMUNITY, CommunityReferenceDto.class, separator));
 		importColumns.add(ImportColumn.from(CaseDataDto.class, FACILITY_TYPE, FacilityType.class, separator));
-		importColumns.add(ImportColumn.from(CaseDataDto.class, DHIMS_FACILITY_TYPE, DhimsFacility.class, separator));
 		importColumns.add(ImportColumn.from(CaseDataDto.class, HEALTH_FACILITY, FacilityReferenceDto.class, separator));
 		importColumns.add(ImportColumn.from(CaseDataDto.class, HEALTH_FACILITY_DETAILS, String.class, separator));
 		importColumns.add(ImportColumn.from(CaseDataDto.class, POINT_OF_ENTRY, PointOfEntryReferenceDto.class, separator));

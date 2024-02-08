@@ -81,7 +81,6 @@ public class ExternalMessageDto extends SormasToSormasShareableDto {
 	public static final String ASSIGNEE = "assignee";
 	public static final String SURVEILLANCE_REPORT = "surveillanceReport";
 
-
 	@AuditIncludeProperty
 	private ExternalMessageType type;
 	private Disease disease;
@@ -102,16 +101,14 @@ public class ExternalMessageDto extends SormasToSormasShareableDto {
 
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	private String personFirstName;
-	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_LUXEMBOURG)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
-	private String personNationalHealthId;
+	private String personLastName;
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_LUXEMBOURG)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String personExternalId;
+	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_LUXEMBOURG)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
-	private String personLastName;
-	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
-	private String personOtherName;
+	private String personNationalHealthId;
 	private Sex personSex;
 	private PresentCondition personPresentCondition;
 	private Integer personBirthDateDD;
@@ -147,6 +144,7 @@ public class ExternalMessageDto extends SormasToSormasShareableDto {
 	private String reportMessageId;
 	@AuditIncludeProperty
 	private ExternalMessageStatus status = ExternalMessageStatus.UNPROCESSED;
+
 	private UserReferenceDto assignee;
 	/**
 	 * Used in S2S context
@@ -263,14 +261,6 @@ public class ExternalMessageDto extends SormasToSormasShareableDto {
 
 	public void setPersonLastName(String personLastName) {
 		this.personLastName = personLastName;
-	}
-
-	public String getPersonOtherName() {
-		return personOtherName;
-	}
-
-	public void setPersonOtherName(String personOtherName) {
-		this.personOtherName = personOtherName;
 	}
 
 	public Sex getPersonSex() {

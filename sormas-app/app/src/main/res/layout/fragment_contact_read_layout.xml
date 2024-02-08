@@ -114,14 +114,6 @@
                         android:id="@+id/contact_externalToken"
                         app:value="@{data.externalToken}"
                         style="@style/ControlSecondOfTwoColumnsStyle"/>
-
-                        <de.symeda.sormas.app.component.controls.ControlTextReadField
-                        android:id="@+id/contact_disease"
-                        app:value="@{data.disease}"
-                        app:appendValue="@{data.diseaseDetails}"
-                        app:valueFormat="@string/two_strings_with_hyphen_format"
-                        style="@style/ControlFirstOfTwoColumnsStyle" />
-
                 </LinearLayout>
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
@@ -129,12 +121,12 @@
                     app:value="@{data.internalToken}"
                     style="@style/ControlSingleColumnStyle"/>
 
-<!--                <de.symeda.sormas.app.component.controls.ControlTextReadField-->
-<!--                    android:id="@+id/contact_disease"-->
-<!--                    app:value="@{data.disease}"-->
-<!--                    app:appendValue="@{data.diseaseDetails}"-->
-<!--                    app:valueFormat="@string/two_strings_with_hyphen_format"-->
-<!--                    style="@style/ControlSingleColumnStyle" />-->
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/contact_disease"
+                    app:value="@{data.disease}"
+                    app:appendValue="@{data.diseaseDetails}"
+                    app:valueFormat="@string/two_strings_with_hyphen_format"
+                    style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

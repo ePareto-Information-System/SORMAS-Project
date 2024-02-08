@@ -37,8 +37,6 @@ import de.symeda.sormas.api.caze.caseimport.EntityImportResultDto;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolRuntimeException;
 import de.symeda.sormas.api.person.PersonNameDto;
 import de.symeda.sormas.api.utils.*;
-import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
-import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -576,66 +574,6 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
                 }
             }
         }
-						List<FacilityReferenceDto> facilities = facilityFacade.getByNameAndType(
-							entry,
-							infrastructureData.getElement0(),
-							infrastructureData.getElement1(),
-							getTypeOfFacility(pd.getName(), currentElement),
-							getTypeOfDhimsFacility(pd.getName(), currentElement),
-							false);
-
-
-						if (facilities.isEmpty()) {
-							if (infrastructureData.getElement1() != null) {
-								throw new ImportErrorException(
-									I18nProperties.getValidationError(
-										Validations.importEntryDoesNotExistDbOrCommunity,
-										entry,
-										buildEntityProperty(entryHeaderPath)));
-							} else {
-								throw new ImportErrorException(
-									I18nProperties.getValidationError(
-										Validations.importEntryDoesNotExistDbOrDistrict,
-										entry,
-										buildEntityProperty(entryHeaderPath)));
-							}
-						} else if (facilities.size() > 1 && infrastructureData.getElement1() == null) {
-							throw new ImportErrorException(
-								I18nProperties
-									.getValidationError(Validations.importFacilityNotUniqueInDistrict, entry, buildEntityProperty(entryHeaderPath)));
-						} else if (facilities.size() > 1 && infrastructureData.getElement1() != null) {
-							throw new ImportErrorException(
-								I18nProperties
-									.getValidationError(Validations.importFacilityNotUniqueInCommunity, entry, buildEntityProperty(entryHeaderPath)));
-						} else {
-							pd.getWriteMethod().invoke(currentElement, facilities.get(0));
-						}
-					} else if (propertyType.isAssignableFrom(PointOfEntryReferenceDto.class)) {
-						PointOfEntryReferenceDto pointOfEntryReference;
-						DistrictReferenceDto pointOfEntryDistrict = CaseLogic.getDistrictWithFallback(caze);
-						List<PointOfEntryReferenceDto> customPointsOfEntry = pointOfEntryFacade.getByName(entry, pointOfEntryDistrict, false);
-						if (customPointsOfEntry.isEmpty()) {
-							final String poeName = entry;
-							List<PointOfEntryDto> defaultPointOfEntries = pointOfEntryFacade.getByUuids(PointOfEntryDto.CONSTANT_POE_UUIDS);
-							Optional<PointOfEntryDto> defaultPointOfEntry = defaultPointOfEntries.stream()
-								.filter(
-									defaultPoe -> InfrastructureHelper.buildPointOfEntryString(defaultPoe.getUuid(), defaultPoe.getName())
-										.equals(poeName))
-								.findFirst();
-							if (!defaultPointOfEntry.isPresent()) {
-								throw new ImportErrorException(
-									I18nProperties.getValidationError(
-										Validations.importEntryDoesNotExistDbOrDistrict,
-										entry,
-										buildEntityProperty(entryHeaderPath)));
-							}
-							pointOfEntryReference = defaultPointOfEntry.get().toReference();
-						} else if (customPointsOfEntry.size() > 1) {
-							throw new ImportErrorException(
-								I18nProperties.getValidationError(
-									Validations.importPointOfEntryNotUniqueInDistrict,
-									entry,
-									buildEntityProperty(entryHeaderPath)));
 
         if (invalidColumns.size() > 0) {
             LOGGER.warn("Unhandled columns [{}]", String.join(", ", invalidColumns));
@@ -685,33 +623,6 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
                 }
             }
         }
-	protected DhimsFacility getTypeOfDhimsFacility(String propertyName, Object currentElement)
-			throws IntrospectionException, InvocationTargetException, IllegalAccessException {
-		String typeProperty;
-		if (CaseDataDto.class.equals(currentElement.getClass()) && CaseDataDto.DHIMS_FACILITY_TYPE.equals(propertyName)) {
-			typeProperty = CaseDataDto.DHIMS_FACILITY_TYPE;
-		} else {
-			typeProperty = propertyName + "DhimsType";
-		}
-		PropertyDescriptor pd = new PropertyDescriptor(typeProperty, currentElement.getClass());
-		return (DhimsFacility) pd.getReadMethod().invoke(currentElement);
-	}
-
-	protected AFPFacilityOptions getTypeOfFacilityForAFP(String propertyName, Object currentElement)
-			throws IntrospectionException, InvocationTargetException, IllegalAccessException {
-		String typeProperty;
-		if (CaseDataDto.class.equals(currentElement.getClass()) && CaseDataDto.HEALTH_FACILITY.equals(propertyName)) {
-			typeProperty = CaseDataDto.AFP_FACILITY_OPTIONS;
-		} else {
-			typeProperty = propertyName + "Type";
-		}
-		PropertyDescriptor pd = new PropertyDescriptor(typeProperty, currentElement.getClass());
-		return (AFPFacilityOptions) pd.getReadMethod().invoke(currentElement);
-	}
-
-	protected String buildEntityProperty(String[] entityPropertyPath) {
-		return String.join(".", entityPropertyPath);
-	}
 
         if (invalidColumns.size() > 0) {
             LOGGER.warn("Unhandled columns [{}]", String.join(", ", invalidColumns));

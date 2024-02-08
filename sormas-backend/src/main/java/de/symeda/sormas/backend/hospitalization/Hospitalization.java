@@ -31,14 +31,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
 import de.symeda.sormas.api.utils.MildModerateSevereCritical;
-import de.symeda.sormas.api.i18n.Validations;
-import de.symeda.sormas.api.utils.FieldConstraints;
-import de.symeda.sormas.api.utils.HospOut;
-import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 
@@ -64,21 +59,18 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public static final String DESCRIPTION = "description";
 	public static final String HEALTH_FACILITY_RECORD = "healthFacilityRecordNumber";
-	public static final String DISEASE_ONSET_DATE = "diseaseOnsetDate";
-	public static final String PATIENT_HOSPITALIZED_DETAINED = "patientHospitalizedOrDetained";
 
-	private YesNo admittedToHealthFacility;
-	private YesNo admittedToHealthFacilityNew;
+	private YesNoUnknown admittedToHealthFacility;
 	private Date admissionDate;
 	private Date dischargeDate;
-	private YesNo isolated;
+	private YesNoUnknown isolated;
 	private Date isolationDate;
-	private YesNo leftAgainstAdvice;
+	private YesNoUnknown leftAgainstAdvice;
 
-	private YesNo hospitalizedPreviously;
+	private YesNoUnknown hospitalizedPreviously;
 	private Date changeDateOfEmbeddedLists;
 	private List<PreviousHospitalization> previousHospitalizations = new ArrayList<PreviousHospitalization>();
-	private YesNo intensiveCareUnit;
+	private YesNoUnknown intensiveCareUnit;
 	private Date intensiveCareUnitStart;
 	private Date intensiveCareUnitEnd;
 	private HospitalizationReasonType hospitalizationReason;
@@ -87,25 +79,6 @@ public class Hospitalization extends AbstractDomainObject {
 	private String healthFacilityRecordNumber;
 
 	private MildModerateSevereCritical patientConditionOnAdmission;
-	private Date diseaseOnsetDate;
-	private HospOut patientHospitalizedOrDetained;
-
-	private String place;
-	@Size(max = FieldConstraints.CHARACTER_LIMIT_UUID_MAX, message = Validations.onlyNumbersAllowed)
-	private String durationMonths;
-	@Size(max = FieldConstraints.CHARACTER_LIMIT_UUID_MAX, message = Validations.onlyNumbersAllowed)
-	private String durationDays;
-	private String place2;
-	private String durationMonths2;
-	private String durationDays2;
-	private String investigatorName;
-	private String investigatorTitle;
-	private String investigatorUnit;
-	private String investigatorAddress;
-	private String investigatorTel;
-	private Date notifyDistrictDate;
-	private Date dateFirstSeen;
-	private Date terminationDateHospitalStay;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getAdmissionDate() {
@@ -126,11 +99,11 @@ public class Hospitalization extends AbstractDomainObject {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNo getIsolated() {
+	public YesNoUnknown getIsolated() {
 		return isolated;
 	}
 
-	public void setIsolated(YesNo isolated) {
+	public void setIsolated(YesNoUnknown isolated) {
 		this.isolated = isolated;
 	}
 
@@ -144,11 +117,11 @@ public class Hospitalization extends AbstractDomainObject {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNo getHospitalizedPreviously() {
+	public YesNoUnknown getHospitalizedPreviously() {
 		return hospitalizedPreviously;
 	}
 
-	public void setHospitalizedPreviously(YesNo hospitalizedPreviously) {
+	public void setHospitalizedPreviously(YesNoUnknown hospitalizedPreviously) {
 		this.hospitalizedPreviously = hospitalizedPreviously;
 	}
 
@@ -162,21 +135,14 @@ public class Hospitalization extends AbstractDomainObject {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNo getAdmittedToHealthFacility() {
+	public YesNoUnknown getAdmittedToHealthFacility() {
 		return admittedToHealthFacility;
 	}
 
-	public void setAdmittedToHealthFacility(YesNo admittedToHealthFacility) {
+	public void setAdmittedToHealthFacility(YesNoUnknown admittedToHealthFacility) {
 		this.admittedToHealthFacility = admittedToHealthFacility;
 	}
 
-	public YesNo getAdmittedToHealthFacilityNew() {
-		return admittedToHealthFacilityNew;
-	}
-
-	public void setAdmittedToHealthFacilityNew(YesNo admittedToHealthFacilityNew) {
-		this.admittedToHealthFacilityNew = admittedToHealthFacilityNew;
-	}
 	/**
 	 * This change date has to be set whenever one of the embedded lists is modified: !oldList.equals(newList)
 	 * 
@@ -191,20 +157,20 @@ public class Hospitalization extends AbstractDomainObject {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNo getLeftAgainstAdvice() {
+	public YesNoUnknown getLeftAgainstAdvice() {
 		return leftAgainstAdvice;
 	}
 
-	public void setLeftAgainstAdvice(YesNo leftAgainstAdvice) {
+	public void setLeftAgainstAdvice(YesNoUnknown leftAgainstAdvice) {
 		this.leftAgainstAdvice = leftAgainstAdvice;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNo getIntensiveCareUnit() {
+	public YesNoUnknown getIntensiveCareUnit() {
 		return intensiveCareUnit;
 	}
 
-	public void setIntensiveCareUnit(YesNo intensiveCareUnit) {
+	public void setIntensiveCareUnit(YesNoUnknown intensiveCareUnit) {
 		this.intensiveCareUnit = intensiveCareUnit;
 	}
 
@@ -268,130 +234,5 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setHealthFacilityRecordNumber(String healthFacilityRecordNumber) {
 		this.healthFacilityRecordNumber = healthFacilityRecordNumber;
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date getDiseaseOnsetDate() {
-		return diseaseOnsetDate;
-	}
-
-	public void setDiseaseOnsetDate(Date diseaseOnsetDate) {
-		this.diseaseOnsetDate = diseaseOnsetDate;
-	}
-	@Enumerated(EnumType.STRING)
-	public HospOut getPatientHospitalizedOrDetained() {
-		return patientHospitalizedOrDetained;
-	}
-
-	public void setPatientHospitalizedOrDetained(HospOut patientHospitalizedOrDetained) {
-		this.patientHospitalizedOrDetained = patientHospitalizedOrDetained;
-	}
-
-	public String getPlace() {
-		return place;
-	}
-
-	public void setPlace(String place) {
-		this.place = place;
-	}
-
-	public String getDurationMonths() {
-		return durationMonths;
-	}
-
-	public void setDurationMonths(String durationMonths) {
-		this.durationMonths = durationMonths;
-	}
-
-	public String getDurationDays() {
-		return durationDays;
-	}
-	public String getPlace2() {
-		return place2;
-	}
-
-	public void setPlace2(String place2) {
-		this.place2 = place2;
-	}
-
-	public String getDurationMonths2() {
-		return durationMonths2;
-	}
-
-	public void setDurationMonths2(String durationMonths2) {
-		this.durationMonths2 = durationMonths2;
-	}
-
-	public String getDurationDays2() {
-		return durationDays2;
-	}
-
-	public void setDurationDays2(String durationDays2) {
-		this.durationDays2 = durationDays2;
-	}
-
-	public void setDurationDays(String durationDays) {
-		this.durationDays = durationDays;
-	}
-
-	public String getInvestigatorName() {
-		return investigatorName;
-	}
-
-	public void setInvestigatorName(String investigatorName) {
-		this.investigatorName = investigatorName;
-	}
-
-	public String getInvestigatorTitle() {
-		return investigatorTitle;
-	}
-
-	public void setInvestigatorTitle(String investigatorTitle) {
-		this.investigatorTitle = investigatorTitle;
-	}
-
-	public String getInvestigatorUnit() {
-		return investigatorUnit;
-	}
-
-	public void setInvestigatorUnit(String investigatorUnit) {
-		this.investigatorUnit = investigatorUnit;
-	}
-
-	public String getInvestigatorAddress() {
-		return investigatorAddress;
-	}
-
-	public void setInvestigatorAddress(String investigatorAddress) {
-		this.investigatorAddress = investigatorAddress;
-	}
-
-	public String getInvestigatorTel() {
-		return investigatorTel;
-	}
-
-	public void setInvestigatorTel(String investigatorTel) {
-		this.investigatorTel = investigatorTel;
-	}
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date getNotifyDistrictDate() {
-		return notifyDistrictDate;
-	}
-
-	public void setNotifyDistrictDate(Date notifyDistrictDate) {
-		this.notifyDistrictDate = notifyDistrictDate;
-	}
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date getDateFirstSeen() {
-		return dateFirstSeen;
-	}
-	public void setDateFirstSeen(Date dateFirstSeen) {
-		this.dateFirstSeen = dateFirstSeen;
-	}
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date getTerminationDateHospitalStay() {
-		return terminationDateHospitalStay;
-	}
-
-	public void setTerminationDateHospitalStay(Date terminationDateHospitalStay) {
-		this.terminationDateHospitalStay = terminationDateHospitalStay;
 	}
 }

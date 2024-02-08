@@ -27,9 +27,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.EntityDto;
-import de.symeda.sormas.api.utils.DataHelper;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.exception.CloneFailedException;
 import org.slf4j.Logger;
@@ -101,9 +98,6 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 	private boolean isEditAllowed;
 
 	protected UiFieldAccessCheckers fieldAccessCheckers;
-	protected Disease disease;
-
-	protected CaseDataForm caseDataForm;
 
 	public AbstractTableField(UiFieldAccessCheckers fieldAccessCheckers) {
 		this.fieldAccessCheckers = fieldAccessCheckers;

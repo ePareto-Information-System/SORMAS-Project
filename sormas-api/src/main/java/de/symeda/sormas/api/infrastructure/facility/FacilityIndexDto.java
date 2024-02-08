@@ -32,8 +32,6 @@ import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.uuid.AbstractUuidDto;
-import de.symeda.sormas.api.utils.AFPFacilityOptions;
-import org.apache.commons.lang3.StringUtils;
 
 public class FacilityIndexDto extends AbstractUuidDto {
 
@@ -56,8 +54,6 @@ public class FacilityIndexDto extends AbstractUuidDto {
 
 	private String name;
 	private FacilityType type;
-	private DhimsFacility dhimsFacilityType;
-	private AFPFacilityOptions afpFacilityOptions;
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
 	private CommunityReferenceDto community;
@@ -130,8 +126,6 @@ public FacilityIndexDto(
 		String uuid,
 		String name,
 		FacilityType type,
-		DhimsFacility dhimsFacilityType,
-		AFPFacilityOptions afpFacilityOptions,
 		String regionUuid,
 		String regionName,
 		String districtUuid,
@@ -187,8 +181,6 @@ public FacilityIndexDto(
 		this.uuid = uuid;
 		this.name = name;
 		this.type = type;
-		this.dhimsFacilityType = dhimsFacilityType;
-		this.afpFacilityOptions = afpFacilityOptions;
 		if (regionUuid != null) {
 			this.region = new RegionReferenceDto(regionUuid, regionName, null);
 		}
@@ -227,20 +219,6 @@ public FacilityIndexDto(
 
 	public void setType(FacilityType type) {
 		this.type = type;
-	}
-	public DhimsFacility getDhimsFacilityType() {
-		return dhimsFacilityType;
-	}
-
-	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
-		this.dhimsFacilityType = dhimsFacilityType;
-	}
-	public AFPFacilityOptions getAfpFacilityOptions() {
-		return afpFacilityOptions;
-	}
-
-	public void setAfpFacilityOptions(AFPFacilityOptions afpFacilityOptions) {
-		this.afpFacilityOptions = afpFacilityOptions;
 	}
 
 	public RegionReferenceDto getRegion() {

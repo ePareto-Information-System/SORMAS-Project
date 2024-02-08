@@ -418,7 +418,7 @@ public class RelatedLabMessageHandlerTest extends AbstractUiBeanTest {
 		labMessageToProcess.setReportId(reportId);
 		labMessageToProcess.addSampleReport(SampleReportDto.build());
 		labMessageToProcess.getSampleReports().get(0).setLabSampleId(labSampleId);
-		labMessageToProcess.getSampleReports().get(0).setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		labMessageToProcess.getSampleReports().get(0).setSampleMaterial(SampleMaterial.BLOOD);
 		labMessageToProcess.setReporterExternalIds(Collections.singletonList(sample.getLab().getExternalId()));
 		labMessageToProcess.getSampleReports().get(0).setSampleDateTime(sample.getSampleDateTime());
 		labMessageToProcess.getSampleReports().get(0).setSpecimenCondition(sample.getSpecimenCondition());
@@ -428,7 +428,7 @@ public class RelatedLabMessageHandlerTest extends AbstractUiBeanTest {
 			assertThat(originalSample.getSampleMaterial(), is(sample.getSampleMaterial()));
 
 			SampleDto updatedSample = invocation.getArgument(2);
-			assertThat(updatedSample.getSampleMaterial(), is(SampleMaterial.WHOLE_BLOOD));
+			assertThat(updatedSample.getSampleMaterial(), is(SampleMaterial.BLOOD));
 			assertThat(updatedSample.getSampleMaterial(), is(not(sample.getSampleMaterial())));
 
 			assertThat(originalSample.getUuid(), is(updatedSample.getUuid()));
@@ -678,7 +678,7 @@ public class RelatedLabMessageHandlerTest extends AbstractUiBeanTest {
 		labMessageToProcess.setPersonFirstName(person.getFirstName());
 		labMessageToProcess.setPersonLastName(person.getLastName() + " Changed");
 		labMessageToProcess.setPersonSex(person.getSex());
-		labMessageToProcess.getSampleReports().get(0).setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		labMessageToProcess.getSampleReports().get(0).setSampleMaterial(SampleMaterial.BLOOD);
 		labMessageToProcess.setReporterExternalIds(Collections.singletonList(sample.getLab().getExternalId()));
 		labMessageToProcess.getSampleReports().get(0).setSampleDateTime(sample.getSampleDateTime());
 		labMessageToProcess.getSampleReports().get(0).setSpecimenCondition(sample.getSpecimenCondition());

@@ -31,8 +31,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
-import de.symeda.sormas.api.sixtyday.SixtyDayDto;
 import de.symeda.sormas.api.utils.*;
 import org.apache.commons.lang3.StringUtils;
 
@@ -72,6 +70,18 @@ import de.symeda.sormas.api.therapy.TherapyDto;
 import de.symeda.sormas.api.travelentry.TravelEntryDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.DependingOnFeatureType;
+import de.symeda.sormas.api.utils.DependingOnUserRight;
+import de.symeda.sormas.api.utils.Diseases;
+import de.symeda.sormas.api.utils.EmbeddedPersonalData;
+import de.symeda.sormas.api.utils.FieldConstraints;
+import de.symeda.sormas.api.utils.HideForCountries;
+import de.symeda.sormas.api.utils.HideForCountriesExcept;
+import de.symeda.sormas.api.utils.Outbreaks;
+import de.symeda.sormas.api.utils.PersonalData;
+import de.symeda.sormas.api.utils.SensitiveData;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LatitudePseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LongitudePseudonymizer;
@@ -112,7 +122,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String DISTRICT = "district";
 	public static final String COMMUNITY = "community";
 	public static final String HEALTH_FACILITY = "healthFacility";
-	public static final String HOME_ADDRESS_RECREATIONAL = "homeAddressRecreational";
 	public static final String HEALTH_FACILITY_DETAILS = "healthFacilityDetails";
 	public static final String REPORTING_USER = "reportingUser";
 	public static final String REPORT_DATE = "reportDate";
@@ -123,7 +132,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String SURVEILLANCE_OFFICER = "surveillanceOfficer";
 	public static final String SYMPTOMS = "symptoms";
 	public static final String HOSPITALIZATION = "hospitalization";
-	public static final String SIXTY_DAY = "sixtyDay";
 	public static final String EPI_DATA = "epiData";
 	public static final String THERAPY = "therapy";
 	public static final String CLINICAL_COURSE = "clinicalCourse";
@@ -131,13 +139,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String PORT_HEALTH_INFO = "portHealthInfo";
 	public static final String HEALTH_CONDITIONS = "healthConditions";
 	public static final String PREGNANT = "pregnant";
-	public static final String IPSAMPLESENT = "ipSampleSent";
-	public static final String IPSAMPLERESULTS = "ipSampleResults";
 	public static final String VACCINATION_STATUS = "vaccinationStatus";
-	public static final String VACCINATION_TYPE = "vaccinationType";
-	public static final String VACCINE_TYPE = "vaccineType";
-	public static final String NUMBER_OF_DOSES = "numberOfDoses";
-	public static final String VACCINATION_DATE = "vaccinationDate";
 	public static final String SMALLPOX_VACCINATION_SCAR = "smallpoxVaccinationScar";
 	public static final String SMALLPOX_VACCINATION_RECEIVED = "smallpoxVaccinationReceived";
 	public static final String SMALLPOX_LAST_VACCINATION_DATE = "smallpoxLastVaccinationDate";
@@ -145,11 +147,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String REPORT_LAT = "reportLat";
 	public static final String REPORT_LON = "reportLon";
 	public static final String REPORT_LAT_LON_ACCURACY = "reportLatLonAccuracy";
-	public static final String REPORTING_OFFICER_NAME = "reportingOfficerName";
-	public static final String REPORTING_OFFICER_TITLE = "reportingOfficerTitle";
-	public static final String FUNCTION_OF_REPORTING_OFFICER = "functionOfReportingOfficer";
-	public static final String REPORTING_OFFICER_CONTACT_PHONE = "reportingOfficerContactPhone";
-	public static final String REPORTING_OFFICER_EMAIL = "reportingOfficerEmail";
 	public static final String OUTCOME = "outcome";
 	public static final String OUTCOME_DATE = "outcomeDate";
 	public static final String SEQUELAE = "sequelae";
@@ -162,7 +159,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String CASE_ORIGIN = "caseOrigin";
 	public static final String POINT_OF_ENTRY = "pointOfEntry";
 	public static final String POINT_OF_ENTRY_DETAILS = "pointOfEntryDetails";
-	public static final String HOSPITAL_NAME = "hospitalName";
 	public static final String ADDITIONAL_DETAILS = "additionalDetails";
 	public static final String EXTERNAL_ID = "externalID";
 	public static final String EXTERNAL_TOKEN = "externalToken";
@@ -195,8 +191,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String FOLLOW_UP_UNTIL = "followUpUntil";
 	public static final String VISITS = "visits";
 	public static final String FACILITY_TYPE = "facilityType";
-	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
-	public static final String AFP_FACILITY_OPTIONS = "afpFacilityOptions";
+
 	public static final String CASE_ID_ISM = "caseIdIsm";
 	public static final String CONTACT_TRACING_FIRST_CONTACT_TYPE = "contactTracingFirstContactType";
 	public static final String CONTACT_TRACING_FIRST_CONTACT_DATE = "contactTracingFirstContactDate";
@@ -234,7 +229,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String EXTERNAL_DATA = "externalData";
 	public static final String DELETION_REASON = "deletionReason";
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
-	public static final String CASE_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
 
 	public static final String NEW_EXISTING = "existingCase";
 
@@ -343,9 +337,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	@PersonalData(mandatoryField = true)
 	@SensitiveData(mandatoryField = true)
 	private FacilityType facilityType;
-	private DhimsFacility dhimsFacilityType;
-	private AFPFacilityOptions afpFacilityOptions;
-
 	@Outbreaks
 	@PersonalData(mandatoryField = true)
 	@SensitiveData(mandatoryField = true)
@@ -359,9 +350,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	@Valid
 	private HealthConditionsDto healthConditions;
 
-	private YesNo pregnant;
-	private YesNoUnknown ipSampleSent;
-	private Disease ipSampleResults;
+	private YesNoUnknown pregnant;
 	@Diseases({
 		Disease.AFP,
 		Disease.GUINEA_WORM,
@@ -370,7 +359,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		Disease.YELLOW_FEVER,
 		Disease.CSM,
 		Disease.RABIES,
-		Disease.AHF,
+		Disease.UNSPECIFIED_VHF,
 		Disease.ANTHRAX,
 		Disease.CORONAVIRUS,
 		Disease.OTHER })
@@ -400,14 +389,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	@DependingOnUserRight(UserRight.CASE_CLINICIAN_VIEW)
 	private String clinicianEmail;
-
-	private String reportingOfficerName;
-	private String reportingOfficerTitle;
-	private String functionOfReportingOfficer;
-	private String reportingOfficerContactPhone;
-	private String reportingOfficerEmail;
-	private String homeAddressRecreational;
-	private String hospitalName;
 	@Diseases({
 		Disease.CONGENITAL_RUBELLA })
 	private HospitalWardType notifyingClinic;
@@ -432,8 +413,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private Float reportLatLonAccuracy;
 	@Valid
 	private HospitalizationDto hospitalization;
-	@Valid
-	private SixtyDayDto sixtyDay;
 	@Valid
 	private SymptomsDto symptoms;
 	@Valid
@@ -525,7 +504,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		COUNTRY_CODE_GERMANY,
 		COUNTRY_CODE_SWITZERLAND })
 	private Date quarantineOfficialOrderSentDate;
-	private YesNo postpartum;
+	private YesNoUnknown postpartum;
 	private Trimester trimester;
 	private FollowUpStatus followUpStatus;
 	@SensitiveData
@@ -533,8 +512,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private String followUpComment;
 	private Date followUpUntil;
 	private boolean overwriteFollowUpUntil;
-	private CSMVaccines vaccineType;
-	private String numberOfDoses;
 
 	@HideForCountriesExcept(countries = COUNTRY_CODE_SWITZERLAND)
 	private Integer caseIdIsm;
@@ -613,11 +590,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String otherDeletionReason;
-	private TransmissionClassification caseTransmissionClassification;
-
-	@Outbreaks
-	private CardOrHistory vaccinationType;
-	private Date vaccinationDate;
 
 	private NewExisting existingCase;
 
@@ -632,7 +604,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		caze.setUuid(DataHelper.createUuid());
 		caze.setPerson(person);
 		caze.setHospitalization(HospitalizationDto.build());
-		caze.setSixtyDay(SixtyDayDto.build());
 		caze.setEpiData(EpiDataDto.build());
 		caze.setSymptoms(SymptomsDto.build());
 		caze.setTherapy(TherapyDto.build());
@@ -642,7 +613,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		caze.setPortHealthInfo(PortHealthInfoDto.build());
 		caze.setDisease(disease);
 		caze.setInvestigationStatus(InvestigationStatus.PENDING);
-		caze.setCaseClassification(CaseClassification.SUSPECT);
+		caze.setCaseClassification(CaseClassification.NOT_CLASSIFIED);
 		caze.setOutcome(CaseOutcome.NO_OUTCOME);
 		caze.setCaseOrigin(CaseOrigin.IN_COUNTRY);
 		// TODO This is a workaround for transferring the followup comment while converting a contact to a case. This can be removed if the followup for cases is implemented in the mobile app
@@ -651,7 +622,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	}
 
 	/**
-	 *
+	 * 
 	 * @param contact
 	 *            leads to the returned case
 	 * @return dto that contains the contacts information. If the contact has one exposure, this marked as the probable infection
@@ -742,7 +713,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	}
 
 	public CaseReferenceDto toReference() {
-		return new CaseReferenceDto(getUuid(), getPerson().getFirstName(), getPerson().getLastName(), getPerson().getOtherName());
+		return new CaseReferenceDto(getUuid(), getPerson().getFirstName(), getPerson().getLastName());
 	}
 
 	/**
@@ -987,33 +958,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		this.clinicianEmail = clinicianEmail;
 	}
 
-	public String getReportingOfficerTitle() {return reportingOfficerTitle;}
-
-	public void setReportingOfficerTitle(String reportingOfficerTitle) {
-		this.reportingOfficerTitle = reportingOfficerTitle;
-	}
-
-	public String getReportingOfficerName() {return reportingOfficerName;}
-
-	public void setReportingOfficerName(String reportingOfficerName) {
-		this.reportingOfficerName = reportingOfficerName;
-	}
-	public String getFunctionOfReportingOfficer() {return functionOfReportingOfficer;}
-
-	public void setFunctionOfReportingOfficer(String functionOfReportingOfficer) {
-		this.functionOfReportingOfficer = functionOfReportingOfficer;
-	}
-	public String getReportingOfficerContactPhone() {return reportingOfficerContactPhone;}
-
-	public void setReportingOfficerContactPhone(String reportingOfficerContactPhone) {
-		this.reportingOfficerContactPhone = reportingOfficerContactPhone;
-	}
-	public String getReportingOfficerEmail() {return reportingOfficerEmail;}
-
-	public void setReportingOfficerEmail(String reportingOfficerEmail) {
-		this.reportingOfficerEmail = reportingOfficerEmail;
-	}
-
 	@Deprecated
 	public UserReferenceDto getCaseOfficer() {
 		return caseOfficer;
@@ -1096,14 +1040,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		this.hospitalization = hospitalization;
 	}
 
-	public SixtyDayDto getSixtyDay() {
-		return sixtyDay;
-	}
-
-	public void setSixtyDay(SixtyDayDto sixtyDay) {
-		this.sixtyDay = sixtyDay;
-	}
-
 	public EpiDataDto getEpiData() {
 		return epiData;
 	}
@@ -1144,28 +1080,12 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		this.portHealthInfo = portHealthInfo;
 	}
 
-	public YesNo getPregnant() {
+	public YesNoUnknown getPregnant() {
 		return pregnant;
 	}
 
-	public void setPregnant(YesNo pregnant) {
+	public void setPregnant(YesNoUnknown pregnant) {
 		this.pregnant = pregnant;
-	}
-
-	public YesNoUnknown getIpSampleSent() {
-		return ipSampleSent;
-	}
-
-	public void setIpSampleSent(YesNoUnknown ipSampleSent) {
-		this.ipSampleSent = ipSampleSent;
-	}
-
-	public Disease getIpSampleResults(){
-		return ipSampleResults;
-	}
-
-	public void setIpSampleResults(Disease ipSampleResults) {
-		this.ipSampleResults = ipSampleResults;
 	}
 
 	public VaccinationStatus getVaccinationStatus() {
@@ -1174,22 +1094,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	public void setVaccinationStatus(VaccinationStatus vaccinationStatus) {
 		this.vaccinationStatus = vaccinationStatus;
-	}
-
-	public CardOrHistory getVaccinationType() {
-		return vaccinationType;
-	}
-
-	public void setVaccinationType(CardOrHistory vaccinationType) {
-		this.vaccinationType = vaccinationType;
-	}
-
-	public Date getVaccinationDate() {
-		return vaccinationDate;
-	}
-
-	public void setVaccinationDate(Date vaccinationDate) {
-		this.vaccinationDate = vaccinationDate;
 	}
 
 	public YesNoUnknown getSmallpoxVaccinationScar() {
@@ -1521,11 +1425,11 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		this.quarantineOfficialOrderSentDate = quarantineOfficialOrderSentDate;
 	}
 
-	public YesNo getPostpartum() {
+	public YesNoUnknown getPostpartum() {
 		return postpartum;
 	}
 
-	public void setPostpartum(YesNo postpartum) {
+	public void setPostpartum(YesNoUnknown postpartum) {
 		this.postpartum = postpartum;
 	}
 
@@ -1535,22 +1439,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	public void setTrimester(Trimester trimester) {
 		this.trimester = trimester;
-	}
-
-	public CSMVaccines getVaccineType() {
-		return vaccineType;
-	}
-
-	public void setVaccineType(CSMVaccines vaccineType) {
-		this.vaccineType = vaccineType;
-	}
-
-	public String getNumberOfDoses() {
-		return numberOfDoses;
-	}
-
-	public void setNumberOfDoses(String numberOfDoses) {
-		this.numberOfDoses = numberOfDoses;
 	}
 
 	public FollowUpStatus getFollowUpStatus() {
@@ -1592,16 +1480,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public void setFacilityType(FacilityType facilityType) {
 		this.facilityType = facilityType;
 	}
-
-	public DhimsFacility getDhimsFacilityType() {
-		return dhimsFacilityType;
-	}
-	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
-		this.dhimsFacilityType = dhimsFacilityType;
-	}
-
-	public AFPFacilityOptions getAfpFacilityOptions(){return afpFacilityOptions;}
-	public void setAfpFacilityOptions(AFPFacilityOptions afpFacilityOptions){this.afpFacilityOptions = afpFacilityOptions;}
 
 	public Integer getCaseIdIsm() {
 		return caseIdIsm;
@@ -1909,27 +1787,4 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 //	public void setImportUpdateCaseStatus(PickMerge importUpdateCaseStatus) {
 //		this.importUpdateCaseStatus = importUpdateCaseStatus;
 //	}
-		public TransmissionClassification getCaseTransmissionClassification() {
-		return caseTransmissionClassification;
-	}
-
-	public void setCaseTransmissionClassification(TransmissionClassification caseTransmissionClassification) {
-		this.caseTransmissionClassification = caseTransmissionClassification;
-	}
-
-	public String getHomeAddressRecreational() {
-		return homeAddressRecreational;
-	}
-
-	public void setHomeAddressRecreational(String homeAddressRecreational) {
-		this.homeAddressRecreational = homeAddressRecreational;
-	}
-
-	public String getHospitalName() {
-		return hospitalName;
-	}
-
-	public void setHospitalName(String hospitalName) {
-		this.hospitalName = hospitalName;
-	}
 }

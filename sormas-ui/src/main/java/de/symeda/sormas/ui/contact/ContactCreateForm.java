@@ -154,7 +154,6 @@ public class ContactCreateForm extends AbstractEditForm<ContactDto> {
 		reportDate = addField(ContactDto.REPORT_DATE_TIME, DateField.class);
 		ComboBox cbDisease = addDiseaseField(ContactDto.DISEASE, false, true);
 		addField(ContactDto.DISEASE_DETAILS, TextField.class);
-		addField(ContactDto.CONTACT_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
 
 		personCreateForm = new PersonCreateForm(false, false, false, showPersonSearchButton);
 		personCreateForm.setWidth(100, Unit.PERCENTAGE);

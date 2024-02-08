@@ -31,7 +31,14 @@ import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
-import de.symeda.sormas.api.utils.*;
+import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.DependingOnFeatureType;
+import de.symeda.sormas.api.utils.Diseases;
+import de.symeda.sormas.api.utils.FieldConstraints;
+import de.symeda.sormas.api.utils.HideForCountriesExcept;
+import de.symeda.sormas.api.utils.PersonalData;
+import de.symeda.sormas.api.utils.SensitiveData;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
 @DependingOnFeatureType(featureType = {
@@ -134,40 +141,40 @@ public class ExposureDto extends PseudonymizableDto {
 	private WorkEnvironment workEnvironment;
 
 	// Details
-	private YesNo indoors;
-	private YesNo outdoors;
-	private YesNo wearingMask;
-	private YesNo wearingPpe;
-	private YesNo otherProtectiveMeasures;
+	private YesNoUnknown indoors;
+	private YesNoUnknown outdoors;
+	private YesNoUnknown wearingMask;
+	private YesNoUnknown wearingPpe;
+	private YesNoUnknown otherProtectiveMeasures;
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String protectiveMeasuresDetails;
-	private YesNo shortDistance;
-	private YesNo longFaceToFaceContact;
+	private YesNoUnknown shortDistance;
+	private YesNoUnknown longFaceToFaceContact;
 	@Diseases({
 		Disease.UNDEFINED,
 		Disease.OTHER })
-	private YesNo animalMarket;
-	@Diseases({
-		Disease.AFP,
-		Disease.EVD,
-		Disease.GUINEA_WORM,
-		Disease.POLIO,
-		Disease.CORONAVIRUS,
-		Disease.AHF,
-		Disease.UNDEFINED,
-		Disease.OTHER })
-	private YesNo percutaneous;
+	private YesNoUnknown animalMarket;
 	@Diseases({
 		Disease.AFP,
 		Disease.EVD,
 		Disease.GUINEA_WORM,
 		Disease.POLIO,
 		Disease.CORONAVIRUS,
-		Disease.AHF,
+		Disease.UNSPECIFIED_VHF,
 		Disease.UNDEFINED,
 		Disease.OTHER })
-	private YesNo contactToBodyFluids;
+	private YesNoUnknown percutaneous;
+	@Diseases({
+		Disease.AFP,
+		Disease.EVD,
+		Disease.GUINEA_WORM,
+		Disease.POLIO,
+		Disease.CORONAVIRUS,
+		Disease.UNSPECIFIED_VHF,
+		Disease.UNDEFINED,
+		Disease.OTHER })
+	private YesNoUnknown contactToBodyFluids;
 	@Diseases({
 		Disease.AFP,
 		Disease.GUINEA_WORM,
@@ -177,7 +184,7 @@ public class ExposureDto extends PseudonymizableDto {
 		Disease.CORONAVIRUS,
 		Disease.UNDEFINED,
 		Disease.OTHER })
-	private YesNo handlingSamples;
+	private YesNoUnknown handlingSamples;
 	@Diseases({
 		Disease.AFP,
 		Disease.GUINEA_WORM,
@@ -186,7 +193,7 @@ public class ExposureDto extends PseudonymizableDto {
 		Disease.POLIO,
 		Disease.UNDEFINED,
 		Disease.OTHER })
-	private YesNo eatingRawAnimalProducts;
+	private YesNoUnknown eatingRawAnimalProducts;
 	@Diseases({
 		Disease.AFP,
 		Disease.EVD,
@@ -196,12 +203,12 @@ public class ExposureDto extends PseudonymizableDto {
 		Disease.PLAGUE,
 		Disease.ANTHRAX,
 		Disease.POLIO,
-		Disease.AHF,
+		Disease.UNSPECIFIED_VHF,
 		Disease.UNDEFINED,
 		Disease.OTHER })
-	private YesNo handlingAnimals;
+	private YesNoUnknown handlingAnimals;
 	private AnimalCondition animalCondition;
-	private YesNo animalVaccinated;
+	private YesNoUnknown animalVaccinated;
 	private AnimalContactType animalContactType;
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
@@ -213,7 +220,7 @@ public class ExposureDto extends PseudonymizableDto {
 		Disease.POLIO,
 		Disease.UNDEFINED,
 		Disease.OTHER })
-	private YesNo bodyOfWater;
+	private YesNoUnknown bodyOfWater;
 	@Diseases({
 		Disease.AFP,
 		Disease.CHOLERA,
@@ -234,9 +241,9 @@ public class ExposureDto extends PseudonymizableDto {
 	private String waterSourceDetails;
 	@PersonalData
 	private ContactReferenceDto contactToCase;
-	private YesNo prophylaxis;
+	private YesNoUnknown prophylaxis;
 	private Date prophylaxisDate;
-	private YesNo riskArea;
+	private YesNoUnknown riskArea;
 
 	// Exposure sub-types
 	private GatheringType gatheringType;
@@ -253,16 +260,16 @@ public class ExposureDto extends PseudonymizableDto {
 	private String typeOfAnimalDetails;
 
 	// Fields specific to ExposureType.BURIAL
-	private YesNo physicalContactDuringPreparation;
-	private YesNo physicalContactWithBody;
-	private YesNo deceasedPersonIll;
+	private YesNoUnknown physicalContactDuringPreparation;
+	private YesNoUnknown physicalContactWithBody;
+	private YesNoUnknown deceasedPersonIll;
 	@PersonalData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String deceasedPersonName;
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String deceasedPersonRelation;
-	private YesNo largeAttendanceNumber;
+	private YesNoUnknown largeAttendanceNumber;
 
 	public static ExposureDto build(ExposureType exposureType) {
 
@@ -346,43 +353,43 @@ public class ExposureDto extends PseudonymizableDto {
 		this.exposureRole = exposureRole;
 	}
 
-	public YesNo getIndoors() {
+	public YesNoUnknown getIndoors() {
 		return indoors;
 	}
 
-	public void setIndoors(YesNo indoors) {
+	public void setIndoors(YesNoUnknown indoors) {
 		this.indoors = indoors;
 	}
 
-	public YesNo getOutdoors() {
+	public YesNoUnknown getOutdoors() {
 		return outdoors;
 	}
 
-	public void setOutdoors(YesNo outdoors) {
+	public void setOutdoors(YesNoUnknown outdoors) {
 		this.outdoors = outdoors;
 	}
 
-	public YesNo getWearingMask() {
+	public YesNoUnknown getWearingMask() {
 		return wearingMask;
 	}
 
-	public void setWearingMask(YesNo wearingMask) {
+	public void setWearingMask(YesNoUnknown wearingMask) {
 		this.wearingMask = wearingMask;
 	}
 
-	public YesNo getWearingPpe() {
+	public YesNoUnknown getWearingPpe() {
 		return wearingPpe;
 	}
 
-	public void setWearingPpe(YesNo wearingPpe) {
+	public void setWearingPpe(YesNoUnknown wearingPpe) {
 		this.wearingPpe = wearingPpe;
 	}
 
-	public YesNo getOtherProtectiveMeasures() {
+	public YesNoUnknown getOtherProtectiveMeasures() {
 		return otherProtectiveMeasures;
 	}
 
-	public void setOtherProtectiveMeasures(YesNo otherProtectiveMeasures) {
+	public void setOtherProtectiveMeasures(YesNoUnknown otherProtectiveMeasures) {
 		this.otherProtectiveMeasures = otherProtectiveMeasures;
 	}
 
@@ -394,67 +401,67 @@ public class ExposureDto extends PseudonymizableDto {
 		this.protectiveMeasuresDetails = protectiveMeasuresDetails;
 	}
 
-	public YesNo getShortDistance() {
+	public YesNoUnknown getShortDistance() {
 		return shortDistance;
 	}
 
-	public void setShortDistance(YesNo shortDistance) {
+	public void setShortDistance(YesNoUnknown shortDistance) {
 		this.shortDistance = shortDistance;
 	}
 
-	public YesNo getLongFaceToFaceContact() {
+	public YesNoUnknown getLongFaceToFaceContact() {
 		return longFaceToFaceContact;
 	}
 
-	public void setLongFaceToFaceContact(YesNo longFaceToFaceContact) {
+	public void setLongFaceToFaceContact(YesNoUnknown longFaceToFaceContact) {
 		this.longFaceToFaceContact = longFaceToFaceContact;
 	}
 
-	public YesNo getAnimalMarket() {
+	public YesNoUnknown getAnimalMarket() {
 		return animalMarket;
 	}
 
-	public void setAnimalMarket(YesNo animalMarket) {
+	public void setAnimalMarket(YesNoUnknown animalMarket) {
 		this.animalMarket = animalMarket;
 	}
 
-	public YesNo getPercutaneous() {
+	public YesNoUnknown getPercutaneous() {
 		return percutaneous;
 	}
 
-	public void setPercutaneous(YesNo percutaneous) {
+	public void setPercutaneous(YesNoUnknown percutaneous) {
 		this.percutaneous = percutaneous;
 	}
 
-	public YesNo getContactToBodyFluids() {
+	public YesNoUnknown getContactToBodyFluids() {
 		return contactToBodyFluids;
 	}
 
-	public void setContactToBodyFluids(YesNo contactToBodyFluids) {
+	public void setContactToBodyFluids(YesNoUnknown contactToBodyFluids) {
 		this.contactToBodyFluids = contactToBodyFluids;
 	}
 
-	public YesNo getHandlingSamples() {
+	public YesNoUnknown getHandlingSamples() {
 		return handlingSamples;
 	}
 
-	public void setHandlingSamples(YesNo handlingSamples) {
+	public void setHandlingSamples(YesNoUnknown handlingSamples) {
 		this.handlingSamples = handlingSamples;
 	}
 
-	public YesNo getEatingRawAnimalProducts() {
+	public YesNoUnknown getEatingRawAnimalProducts() {
 		return eatingRawAnimalProducts;
 	}
 
-	public void setEatingRawAnimalProducts(YesNo eatingRawAnimalProducts) {
+	public void setEatingRawAnimalProducts(YesNoUnknown eatingRawAnimalProducts) {
 		this.eatingRawAnimalProducts = eatingRawAnimalProducts;
 	}
 
-	public YesNo getHandlingAnimals() {
+	public YesNoUnknown getHandlingAnimals() {
 		return handlingAnimals;
 	}
 
-	public void setHandlingAnimals(YesNo handlingAnimals) {
+	public void setHandlingAnimals(YesNoUnknown handlingAnimals) {
 		this.handlingAnimals = handlingAnimals;
 	}
 
@@ -466,11 +473,11 @@ public class ExposureDto extends PseudonymizableDto {
 		this.animalCondition = animalCondition;
 	}
 
-	public YesNo getAnimalVaccinated() {
+	public YesNoUnknown getAnimalVaccinated() {
 		return animalVaccinated;
 	}
 
-	public void setAnimalVaccinated(YesNo animalVaccinated) {
+	public void setAnimalVaccinated(YesNoUnknown animalVaccinated) {
 		this.animalVaccinated = animalVaccinated;
 	}
 
@@ -490,11 +497,11 @@ public class ExposureDto extends PseudonymizableDto {
 		this.animalContactTypeDetails = animalContactTypeDetails;
 	}
 
-	public YesNo getBodyOfWater() {
+	public YesNoUnknown getBodyOfWater() {
 		return bodyOfWater;
 	}
 
-	public void setBodyOfWater(YesNo bodyOfWater) {
+	public void setBodyOfWater(YesNoUnknown bodyOfWater) {
 		this.bodyOfWater = bodyOfWater;
 	}
 
@@ -570,27 +577,27 @@ public class ExposureDto extends PseudonymizableDto {
 		this.typeOfAnimalDetails = typeOfAnimalDetails;
 	}
 
-	public YesNo getPhysicalContactDuringPreparation() {
+	public YesNoUnknown getPhysicalContactDuringPreparation() {
 		return physicalContactDuringPreparation;
 	}
 
-	public void setPhysicalContactDuringPreparation(YesNo physicalContactDuringPreparation) {
+	public void setPhysicalContactDuringPreparation(YesNoUnknown physicalContactDuringPreparation) {
 		this.physicalContactDuringPreparation = physicalContactDuringPreparation;
 	}
 
-	public YesNo getPhysicalContactWithBody() {
+	public YesNoUnknown getPhysicalContactWithBody() {
 		return physicalContactWithBody;
 	}
 
-	public void setPhysicalContactWithBody(YesNo physicalContactWithBody) {
+	public void setPhysicalContactWithBody(YesNoUnknown physicalContactWithBody) {
 		this.physicalContactWithBody = physicalContactWithBody;
 	}
 
-	public YesNo getDeceasedPersonIll() {
+	public YesNoUnknown getDeceasedPersonIll() {
 		return deceasedPersonIll;
 	}
 
-	public void setDeceasedPersonIll(YesNo deceasedPersonIll) {
+	public void setDeceasedPersonIll(YesNoUnknown deceasedPersonIll) {
 		this.deceasedPersonIll = deceasedPersonIll;
 	}
 
@@ -666,11 +673,11 @@ public class ExposureDto extends PseudonymizableDto {
 		this.workEnvironment = workEnvironment;
 	}
 
-	public YesNo getProphylaxis() {
+	public YesNoUnknown getProphylaxis() {
 		return prophylaxis;
 	}
 
-	public void setProphylaxis(YesNo prophylaxis) {
+	public void setProphylaxis(YesNoUnknown prophylaxis) {
 		this.prophylaxis = prophylaxis;
 	}
 
@@ -682,19 +689,19 @@ public class ExposureDto extends PseudonymizableDto {
 		this.prophylaxisDate = prophylaxisDate;
 	}
 
-	public YesNo getRiskArea() {
+	public YesNoUnknown getRiskArea() {
 		return riskArea;
 	}
 
-	public void setRiskArea(YesNo riskArea) {
+	public void setRiskArea(YesNoUnknown riskArea) {
 		this.riskArea = riskArea;
 	}
 
-	public YesNo getLargeAttendanceNumber() {
+	public YesNoUnknown getLargeAttendanceNumber() {
 		return largeAttendanceNumber;
 	}
 
-	public void setLargeAttendanceNumber(YesNo largeAttendanceNumber) {
+	public void setLargeAttendanceNumber(YesNoUnknown largeAttendanceNumber) {
 		this.largeAttendanceNumber = largeAttendanceNumber;
 	}
 

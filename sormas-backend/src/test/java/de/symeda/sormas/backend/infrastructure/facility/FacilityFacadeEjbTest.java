@@ -11,8 +11,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import de.symeda.sormas.api.infrastructure.facility.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;

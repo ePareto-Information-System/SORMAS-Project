@@ -286,17 +286,6 @@
 			<artifactId>reflections</artifactId>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.apache.james</groupId>
-            <artifactId>apache-mime4j-dom</artifactId>
-            <version>0.8.9</version>
-            <scope>compile</scope>
-        </dependency>
-		<dependency>
-			<groupId>com.google.http-client</groupId>
-			<artifactId>google-http-client</artifactId>
-			<scope>compile</scope>
-		</dependency>
 
 		<!-- *** Test dependencies END *** -->
 

@@ -55,8 +55,6 @@ public class MergeContactIndexDto extends PseudonymizableIndexDto implements Mer
 	private String firstName;
 	@PersonalData
 	private String lastName;
-	@PersonalData
-	private String otherName;
 	private AgeAndBirthDateDto ageAndBirthDate;
 	private Sex sex;
 	private CaseReferenceDto caze;
@@ -77,7 +75,6 @@ public class MergeContactIndexDto extends PseudonymizableIndexDto implements Mer
 		String uuid,
 		String firstName,
 		String lastName,
-		String otherName,
 		Integer age,
 		ApproximateAgeType ageType,
 		Integer birthdateDD,
@@ -87,7 +84,6 @@ public class MergeContactIndexDto extends PseudonymizableIndexDto implements Mer
 		String cazeUuid,
 		String caseFirstName,
 		String caseLastName,
-		String caseOtherName,
 		Disease disease,
 		String diseaseDetails,
 		String regionName,
@@ -104,11 +100,10 @@ public class MergeContactIndexDto extends PseudonymizableIndexDto implements Mer
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.otherName = otherName;
 		this.ageAndBirthDate = new AgeAndBirthDateDto(age, ageType, birthdateDD, birthdateMM, birthdateYYYY);
 		this.sex = sex;
 		if (cazeUuid != null) {
-			this.caze = new CaseReferenceDto(cazeUuid, caseFirstName, caseLastName, caseOtherName);
+			this.caze = new CaseReferenceDto(cazeUuid, caseFirstName, caseLastName);
 		}
 		this.disease = disease;
 		this.diseaseDetails = diseaseDetails;
@@ -145,14 +140,6 @@ public class MergeContactIndexDto extends PseudonymizableIndexDto implements Mer
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-
-	public String getOtherName() {
-		return otherName;
-	}
-
-	public void setOtherName(String otherName) {
-		this.otherName = otherName;
 	}
 
 	public Sex getSex() {

@@ -208,7 +208,7 @@ public final class DownloadUtil {
 							columnNames.add(DataHelper.getSexAndAgeGroupString(ageGroup, null));
 							columnNames.add(DataHelper.getSexAndAgeGroupString(ageGroup, Sex.MALE));
 							columnNames.add(DataHelper.getSexAndAgeGroupString(ageGroup, Sex.FEMALE));
-							//columnNames.add(DataHelper.getSexAndAgeGroupString(ageGroup, Sex.OTHER));
+							columnNames.add(DataHelper.getSexAndAgeGroupString(ageGroup, Sex.OTHER));
 							ageGroupPositions.put(ageGroup, ageGroupIndex);
 							ageGroupIndex += 4;
 						}
@@ -257,8 +257,8 @@ public final class DownloadUtil {
 									exportLine[4] = String.valueOf((int) populationExportData[5]);
 								} else if (Sex.FEMALE.getName().equals(sexString)) {
 									exportLine[5] = String.valueOf((int) populationExportData[5]);
-//								} else if (Sex.OTHER.getName().equals(sexString)) {
-//									exportLine[6] = String.valueOf((int) populationExportData[5]);
+								} else if (Sex.OTHER.getName().equals(sexString)) {
+									exportLine[6] = String.valueOf((int) populationExportData[5]);
 								} else {
 									exportLine[3] = String.valueOf((int) populationExportData[5]);
 								}
@@ -270,8 +270,8 @@ public final class DownloadUtil {
 									ageGroupPosition += 1;
 								} else if (Sex.FEMALE.getName().equals(sexString)) {
 									ageGroupPosition += 2;
-//								} else if (Sex.OTHER.getName().equals(sexString)) {
-//									ageGroupPosition += 3;
+								} else if (Sex.OTHER.getName().equals(sexString)) {
+									ageGroupPosition += 3;
 								}
 								exportLine[ageGroupPosition] = String.valueOf((int) populationExportData[5]);
 							}

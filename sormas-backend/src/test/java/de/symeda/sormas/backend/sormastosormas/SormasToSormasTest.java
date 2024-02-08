@@ -188,7 +188,7 @@ public abstract class SormasToSormasTest extends AbstractBeanTest {
 
 		sample.setLab(rdcf.facility);
 		sample.setSampleDateTime(new Date());
-		sample.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		sample.setSampleMaterial(SampleMaterial.BLOOD);
 		sample.setSampleSource(SampleSource.HUMAN);
 		sample.setSamplePurpose(SamplePurpose.INTERNAL);
 

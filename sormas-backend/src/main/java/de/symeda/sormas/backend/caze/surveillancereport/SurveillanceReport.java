@@ -32,7 +32,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import de.symeda.sormas.api.caze.surveillancereport.ReportingType;
-import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
@@ -59,7 +58,6 @@ public class SurveillanceReport extends AbstractDomainObject implements SormasTo
 	public static final String FACILITY_REGION = "facilityRegion";
 	public static final String FACILITY_DISTRICT = "facilityDistrict";
 	public static final String FACILITY_TYPE = "facilityType";
-	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
 	public static final String FACILITY = "facility";
 	public static final String FACILITY_DETAILS = "facilityDetails";
 	public static final String NOTIFICATION_DETAILS = "notificationDetails";
@@ -82,7 +80,6 @@ public class SurveillanceReport extends AbstractDomainObject implements SormasTo
 	private District facilityDistrict;
 
 	private FacilityType facilityType;
-	private DhimsFacility dhimsFacilityType;
 
 	private Facility facility;
 
@@ -172,15 +169,7 @@ public class SurveillanceReport extends AbstractDomainObject implements SormasTo
 		this.facilityType = facilityType;
 	}
 
-	@Enumerated(EnumType.STRING)
-	public DhimsFacility getDhimsFacilityType() {
-		return dhimsFacilityType;
-	}
-	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
-		this.dhimsFacilityType = dhimsFacilityType;
-	}
-
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	public Facility getFacility() {
 		return facility;
 	}

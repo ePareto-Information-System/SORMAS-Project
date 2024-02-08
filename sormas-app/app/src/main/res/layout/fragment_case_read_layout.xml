@@ -29,7 +29,6 @@
         <import type="de.symeda.sormas.api.caze.CaseIdentificationSource" />
         <import type="de.symeda.sormas.api.caze.CaseOutcome" />
         <import type="de.symeda.sormas.api.caze.VaccinationStatus" />
-        <import type="de.symeda.sormas.api.utils.CardOrHistory" />
         <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
         <import type="de.symeda.sormas.api.Disease" />
         <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
@@ -44,9 +43,6 @@
         <variable name="data" type="de.symeda.sormas.app.backend.caze.Case" />
         <variable name="caseTransmissionClassificationClass" type="de.symeda.sormas.api.caze.TransmissionClassification" />
         <variable name="singleClassification" type="de.symeda.sormas.api.caze.CaseConfirmationBasis" />
-        <variable name="caseTransmissionClassificationClass" type="Class" />
-        <variable name="vaccinationCardOrHistory" type="Class" />
-
     </data>
 
     <ScrollView
@@ -214,10 +210,6 @@
                     style="@style/ControlSingleColumnStyle"
                     app:value="@{data.caseIdIsm}" />
 
-                <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/caseData_caseTransmissionClassification"
-                    app:value="@{data.caseTransmissionClassification}"
-                    style="@style/ControlSingleColumnStyle" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -757,16 +749,6 @@
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/caseData_vaccinationStatus"
                     app:value="@{data.vaccinationStatus}"
-                    style="@style/ControlSingleColumnStyle" />
-
-                <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/caseData_vaccinationType"
-                    app:value="@{data.vaccinationType}"
-                    style="@style/ControlSingleColumnStyle" />
-
-                <de.symeda.sormas.app.component.controls.ControlDateField
-                    android:id="@+id/caseData_vaccinationDate"
-                    app:value="@={data.vaccinationDate}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField

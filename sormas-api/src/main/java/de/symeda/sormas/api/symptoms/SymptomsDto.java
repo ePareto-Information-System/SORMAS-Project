@@ -19,7 +19,26 @@ package de.symeda.sormas.api.symptoms;
 
 import static de.symeda.sormas.api.CountryHelper.COUNTRY_CODE_GERMANY;
 import static de.symeda.sormas.api.CountryHelper.COUNTRY_CODE_SWITZERLAND;
-import static de.symeda.sormas.api.Disease.*;
+import static de.symeda.sormas.api.Disease.AFP;
+import static de.symeda.sormas.api.Disease.ANTHRAX;
+import static de.symeda.sormas.api.Disease.CHOLERA;
+import static de.symeda.sormas.api.Disease.CONGENITAL_RUBELLA;
+import static de.symeda.sormas.api.Disease.CORONAVIRUS;
+import static de.symeda.sormas.api.Disease.CSM;
+import static de.symeda.sormas.api.Disease.DENGUE;
+import static de.symeda.sormas.api.Disease.EVD;
+import static de.symeda.sormas.api.Disease.GUINEA_WORM;
+import static de.symeda.sormas.api.Disease.LASSA;
+import static de.symeda.sormas.api.Disease.MEASLES;
+import static de.symeda.sormas.api.Disease.MONKEYPOX;
+import static de.symeda.sormas.api.Disease.NEW_INFLUENZA;
+import static de.symeda.sormas.api.Disease.OTHER;
+import static de.symeda.sormas.api.Disease.PLAGUE;
+import static de.symeda.sormas.api.Disease.POLIO;
+import static de.symeda.sormas.api.Disease.RABIES;
+import static de.symeda.sormas.api.Disease.UNDEFINED;
+import static de.symeda.sormas.api.Disease.UNSPECIFIED_VHF;
+import static de.symeda.sormas.api.Disease.YELLOW_FEVER;
 
 import java.util.Date;
 
@@ -27,7 +46,6 @@ import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.ImportIgnore;
-import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.utils.Complication;
@@ -161,7 +179,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String OEDEMA_FACE_NECK = "oedemaFaceNeck";
 	public static final String OEDEMA_LOWER_EXTREMITY = "oedemaLowerExtremity";
 	public static final String ONSET_DATE = "onsetDate";
-	public static final String DATE_OF_ONSET = "dateOfOnset";
 	public static final String ONSET_SYMPTOM = "onsetSymptom";
 	public static final String OPISTHOTONUS = "opisthotonus";
 	public static final String ORAL_ULCERS = "oralUlcers";
@@ -198,10 +215,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String RASHES = "rashes";
 	public static final String SKIN_ULCERS = "skinUlcers";
 	public static final String SORE_THROAT = "soreThroat";
-	public static final String MUSCLE_TONE = "muscleTone";
-	public static final String DEEP_TENDON_REFLEX = "deepTendonReflex";
-	public static final String MUSCLE_VOLUME = "muscleVolume";
-	public static final String SENSORY_LOSS = "sensoryLoss";
 	public static final String SPLENOMEGALY = "splenomegaly";
 	public static final String STOMACH_BLEEDING = "stomachBleeding";
 	public static final String SUNKEN_EYES_FONTANELLE = "sunkenEyesFontanelle";
@@ -249,13 +262,10 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String HYPOGLYCEMIA = "hypoglycemia";
 	public static final String MENINGEAL_SIGNS = "meningealSigns";
 	public static final String OTHER_COMPLICATIONS = "otherComplications";
-	public static final String FEVER_BODY_TEMP_GREATER = "feverBodyTempGreater";
 	public static final String OTHER_COMPLICATIONS_TEXT = "otherComplicationsText";
 	public static final String SEIZURES = "seizures";
 	public static final String SEPSIS = "sepsis";
 	public static final String SHOCK = "shock";
-	public static final String OUTCOME = "outcome";
-	public static final String PROVISONAL_DIAGNOSIS = "provisionalDiagnosis";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -278,11 +288,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		ANTHRAX,
 		CORONAVIRUS,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState abdominalPain;
 
 	@Diseases({
@@ -294,12 +304,12 @@ public class SymptomsDto extends PseudonymizableDto {
 		CHOLERA,
 		POLIO,
 		YELLOW_FEVER,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState anorexiaAppetiteLoss;
 
 	@Diseases({
@@ -307,7 +317,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		POLIO,
 		YELLOW_FEVER,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -333,7 +343,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.SKIN)
 	private SymptomState blackeningDeathOfTissue;
 
 	@Diseases({
@@ -342,12 +352,12 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState bleedingVagina;
 
 	@Diseases({
@@ -357,11 +367,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		YELLOW_FEVER,
 		ANTHRAX,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState bloodInStool;
 
 	private Integer bloodPressureDiastolic;
@@ -374,12 +384,12 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.URINARY)
 	private SymptomState bloodUrine;
 
 	@Diseases({
@@ -388,12 +398,12 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState bloodyBlackStool;
 
 	@Diseases({
@@ -404,7 +414,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState buboesGroinArmpitNeck;
 
 	@Diseases({
@@ -416,7 +426,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		OTHER })
 	@Outbreaks
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState bulgingFontanelle;
 
 	@Diseases({
@@ -429,7 +439,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		ANTHRAX,
 		CORONAVIRUS,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -459,13 +469,13 @@ public class SymptomsDto extends PseudonymizableDto {
 		MEASLES,
 		MONKEYPOX,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
 		CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState conjunctivitis;
 
 	@Diseases({
@@ -479,26 +489,26 @@ public class SymptomsDto extends PseudonymizableDto {
 		PLAGUE,
 		POLIO,
 		ANTHRAX,
-		AHF,
+		UNSPECIFIED_VHF,
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState cough;
 
 	@Diseases({
 		CORONAVIRUS })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState coughWithSputum;
 
 	@Diseases({
 		CORONAVIRUS })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState coughWithHeamoptysis;
 
 	@Diseases({
@@ -508,13 +518,13 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		PLAGUE,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState coughingBlood;
 
 	@Diseases({
@@ -522,11 +532,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		POLIO,
 		YELLOW_FEVER,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.URINARY)
 	private SymptomState darkUrine;
 
 	@Diseases({
@@ -536,11 +546,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		CHOLERA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState dehydration;
 
 	@Diseases({
@@ -556,11 +566,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		ANTHRAX,
 		CORONAVIRUS,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState diarrhea;
 
 	@Diseases({
@@ -572,13 +582,13 @@ public class SymptomsDto extends PseudonymizableDto {
 		MEASLES,
 		PLAGUE,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		RABIES,
 		ANTHRAX,
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState difficultyBreathing;
 
 	@Diseases({
@@ -587,12 +597,12 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState digestedBloodVomit;
 
 	@Diseases({
@@ -606,12 +616,12 @@ public class SymptomsDto extends PseudonymizableDto {
 		DENGUE,
 		MONKEYPOX,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState eyePainLightSensitive;
 
 	@Diseases({
@@ -619,12 +629,12 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		POLIO,
 		YELLOW_FEVER,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState eyesBleeding;
 
 	@Diseases({
@@ -641,7 +651,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		MONKEYPOX,
 		PLAGUE,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		RABIES,
 		ANTHRAX,
 		CORONAVIRUS,
@@ -668,7 +678,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		MONKEYPOX,
 		PLAGUE,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		RABIES,
 		ANTHRAX,
 		CORONAVIRUS,
@@ -683,16 +693,16 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
 		CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState fluidInLungCavity;
 
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private Integer glasgowComaScale;
 
 	@Diseases({
@@ -703,12 +713,12 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		YELLOW_FEVER,
 		DENGUE,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState gumsBleeding;
 
 	@Diseases({
@@ -723,7 +733,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		MONKEYPOX,
 		PLAGUE,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		RABIES,
 		ANTHRAX,
 		CORONAVIRUS,
@@ -739,12 +749,12 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		CONGENITAL_RUBELLA,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState hearingloss;
 
 	private Integer heartRate;
@@ -756,11 +766,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		EVD,
 		GUINEA_WORM,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState hiccups;
 
 	@Diseases({
@@ -769,12 +779,12 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState injectionSiteBleeding;
 
 	@Diseases({
@@ -783,18 +793,18 @@ public class SymptomsDto extends PseudonymizableDto {
 		YELLOW_FEVER,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		CONGENITAL_RUBELLA,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState jaundice;
 
 	@Diseases({
 		CONGENITAL_RUBELLA })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private YesNoUnknown jaundiceWithin24HoursOfBirth;
 
 	@Diseases({
@@ -808,7 +818,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		MEASLES,
 		DENGUE,
 		CORONAVIRUS,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -826,7 +836,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState kopliksSpots;
 
 	@Diseases({
@@ -837,25 +847,9 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH)
 	/** rashes */
 	private SymptomState rashes;
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	/** Vesiculopustular rash */
-	private SymptomState lesions;
-
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
-	@DependantOn(LESIONS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	private Boolean lesionsAllOverBody;
 
 	@Diseases({
 		AFP,
@@ -865,7 +859,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_TYPE)
 	/** Vesiculopustular rash */
 	private SymptomState lesions;
 
@@ -877,7 +871,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_TYPE)
 	private SymptomState vesicularRash;
 
 	@Diseases({
@@ -888,7 +882,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(RASHES)
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsAllOverBody;
 
 	@Diseases({
@@ -899,7 +893,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(RASHES)
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String otherLesionAreas;
 
@@ -912,10 +906,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(RASHES)
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	@DependantOn(LESIONS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsArms;
 
 	@Diseases({
@@ -927,10 +918,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(RASHES)
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	@DependantOn(LESIONS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private SymptomState lesionsDeepProfound;
 
 	@Diseases({
@@ -941,10 +929,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(RASHES)
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	@DependantOn(LESIONS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsFace;
 
 	@Diseases({
@@ -955,10 +940,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(RASHES)
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	@DependantOn(LESIONS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsGenitals;
 
 	@Diseases({
@@ -969,20 +951,14 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(RASHES)
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	@DependantOn(LESIONS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsLegs;
 
 	@Diseases({
 		MONKEYPOX,
 		ANTHRAX })
 	@DependantOn(RASHES)
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	@DependantOn(LESIONS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Date lesionsOnsetDate;
 
 	@Diseases({
@@ -993,48 +969,30 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(RASHES)
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	@DependantOn(LESIONS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsPalmsHands;
 
 	@Diseases({
 		MONKEYPOX })
 	@DependantOn(RASHES)
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private SymptomState lesionsResembleImg1;
 	@Diseases({
 		MONKEYPOX })
 	@DependantOn(RASHES)
 	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
-	@DependantOn(LESIONS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	private SymptomState lesionsResembleImg1;
-	@Diseases({
-		MONKEYPOX })
-	@DependantOn(LESIONS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState lesionsResembleImg2;
 
 	@Diseases({
 		MONKEYPOX })
 	@DependantOn(RASHES)
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	@DependantOn(LESIONS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private SymptomState lesionsResembleImg3;
 
 	@Diseases({
 		MONKEYPOX })
 	@DependantOn(RASHES)
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	@DependantOn(LESIONS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private SymptomState lesionsResembleImg4;
 
 	@Diseases({
@@ -1045,10 +1003,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(RASHES)
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	@DependantOn(LESIONS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private SymptomState lesionsSameSize;
 
 	@Diseases({
@@ -1059,10 +1014,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(RASHES)
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	@DependantOn(LESIONS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private SymptomState lesionsSameState;
 
 	@Diseases({
@@ -1073,10 +1025,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(RASHES)
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	@DependantOn(LESIONS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsSolesFeet;
 
 	@Diseases({
@@ -1087,10 +1036,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(RASHES)
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	@DependantOn(LESIONS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private SymptomState lesionsThatItch;
 
 	@Diseases({
@@ -1102,7 +1048,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		OTHER })
 	@DependantOn(RASHES)
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.SKIN)
 	private Boolean lesionsThorax;
 
 	@Diseases({
@@ -1110,11 +1056,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState lossSkinTurgor;
 
 	@Diseases({
@@ -1124,7 +1070,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
 		CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState lymphadenopathy;
 
 	@Diseases({
@@ -1135,7 +1081,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState lymphadenopathyAxillary;
 
 	@Diseases({
@@ -1146,7 +1092,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState lymphadenopathyCervical;
 
 	@Diseases({
@@ -1157,7 +1103,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState lymphadenopathyInguinal;
 
 	@Diseases({
@@ -1165,7 +1111,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -1189,7 +1135,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		PLAGUE,
 		POLIO,
 		CORONAVIRUS,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -1208,7 +1154,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		DENGUE,
 		MONKEYPOX,
 		PLAGUE,
-		AHF,
+		UNSPECIFIED_VHF,
 		POLIO,
 		RABIES,
 		ANTHRAX,
@@ -1216,7 +1162,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState nausea;
 
 	@Diseases({
@@ -1228,7 +1174,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		OTHER })
 	@Outbreaks
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState neckStiffness;
 
 	@Diseases({
@@ -1238,12 +1184,12 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		POLIO,
 		YELLOW_FEVER,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState noseBleeding;
 
 	@Diseases({
@@ -1251,11 +1197,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private SymptomState oedemaFaceNeck;
 
 	@Diseases({
@@ -1263,18 +1209,15 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private SymptomState oedemaLowerExtremity;
 
 	@Outbreaks
 	private Date onsetDate;
-
-	@Outbreaks
-	private Date dateOfOnset;
 
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String onsetSymptom;
@@ -1287,7 +1230,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState oralUlcers;
 
 	@Diseases({
@@ -1297,15 +1240,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		PLAGUE,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@SymptomGrouping(SymptomGroup.OTHER)
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState otherHemorrhagicSymptoms;
 
 	@Diseases({
@@ -1317,12 +1256,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNSPECIFIED_VHF,
 		MONKEYPOX,
-		AHF,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(OTHER_HEMORRHAGIC_SYMPTOMS)
 	@SensitiveData
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String otherHemorrhagicSymptomsText;
 
@@ -1338,7 +1276,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		DENGUE,
 		MONKEYPOX,
 		PLAGUE,
-		AHF,
+		UNSPECIFIED_VHF,
 		CONGENITAL_RUBELLA,
 		POLIO,
 		RABIES,
@@ -1346,7 +1284,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState otherNonHemorrhagicSymptoms;
 
 	@Diseases({
@@ -1362,7 +1300,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		MONKEYPOX,
 		PLAGUE,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		CONGENITAL_RUBELLA,
 		CORONAVIRUS,
 		UNDEFINED,
@@ -1370,7 +1308,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Outbreaks
 	@DependantOn(OTHER_NON_HEMORRHAGIC_SYMPTOMS)
 	@SensitiveData
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String otherNonHemorrhagicSymptomsText;
 
@@ -1383,7 +1321,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState otitisMedia;
 
 	@Diseases({
@@ -1395,7 +1333,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		OTHER })
 	@Outbreaks
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState painfulLymphadenitis;
 
 	@Diseases({
@@ -1403,11 +1341,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState palpableLiver;
 
 	@Diseases({
@@ -1415,11 +1353,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState palpableSpleen;
 
 	@Diseases({
@@ -1438,11 +1376,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState pharyngealErythema;
 
 	@Diseases({
@@ -1450,11 +1388,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState pharyngealExudate;
 
 	@Diseases({
@@ -1463,10 +1401,10 @@ public class SymptomsDto extends PseudonymizableDto {
 		DENGUE,
 		GUINEA_WORM,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState rapidBreathing;
 
 	@Diseases({
@@ -1476,12 +1414,12 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		DENGUE,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState redBloodVomit;
 
 	@Diseases({
@@ -1492,12 +1430,12 @@ public class SymptomsDto extends PseudonymizableDto {
 		CSM,
 		CHOLERA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		RABIES,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState refusalFeedorDrink;
 
 	private Integer respiratoryRate;
@@ -1511,7 +1449,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState runnyNose;
 
 	@Diseases({
@@ -1519,11 +1457,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState sidePain;
 
 	@Diseases({
@@ -1532,7 +1470,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
@@ -1552,13 +1490,13 @@ public class SymptomsDto extends PseudonymizableDto {
 		DENGUE,
 		MONKEYPOX,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER,
 		CORONAVIRUS })
 	@Outbreaks
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RASH_TYPE)
 	/** Maculopapular rash */
 	private SymptomState skinRash;
 
@@ -1611,52 +1549,23 @@ public class SymptomsDto extends PseudonymizableDto {
 		ANTHRAX,
 		POLIO,
 		CORONAVIRUS,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState soreThroat;
-
-	@Diseases({
-			AFP,
-			UNDEFINED,
-			OTHER })
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	private SymptomState muscleTone;
-
-	@Diseases({
-			AFP,
-			UNDEFINED,
-			OTHER })
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	private SymptomState deepTendonReflex;
-
-	@Diseases({
-			AFP,
-			UNDEFINED,
-			OTHER })
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	private SymptomState muscleVolume;
-
-	@Diseases({
-			AFP,
-			UNDEFINED,
-			OTHER })
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	private SymptomState sensoryLoss;
-
 
 	@Diseases({
 		AFP,
 		GUINEA_WORM,
 		POLIO,
 		YELLOW_FEVER,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState stomachBleeding;
 
 	@Diseases({
@@ -1664,11 +1573,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState sunkenEyesFontanelle;
 
 	@Diseases({
@@ -1676,11 +1585,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		DENGUE,
 		GUINEA_WORM,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState swollenGlands;
 
 	private Boolean symptomatic;
@@ -1698,7 +1607,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		MONKEYPOX,
 		PLAGUE,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		CONGENITAL_RUBELLA,
 		CORONAVIRUS,
 		UNDEFINED,
@@ -1720,7 +1629,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		DENGUE,
 		MONKEYPOX,
 		PLAGUE,
-		AHF,
+		UNSPECIFIED_VHF,
 		CONGENITAL_RUBELLA,
 		POLIO,
 		RABIES,
@@ -1743,7 +1652,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		DENGUE,
 		MONKEYPOX,
 		PLAGUE,
-		AHF,
+		UNSPECIFIED_VHF,
 		CONGENITAL_RUBELLA,
 		POLIO,
 		CORONAVIRUS,
@@ -1758,11 +1667,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState throbocytopenia;
 
 	@Diseases({
@@ -1770,7 +1679,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -1779,31 +1688,31 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		CONGENITAL_RUBELLA })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState bilateralCataracts;
 
 	@Diseases({
 		CONGENITAL_RUBELLA })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState unilateralCataracts;
 
 	@Diseases({
 		CONGENITAL_RUBELLA })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState congenitalGlaucoma;
 
 	@Diseases({
 		CONGENITAL_RUBELLA })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState pigmentaryRetinopathy;
 
 	@Diseases({
-		CONGENITAL_RUBELLA })
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+		CONGENITAL_RUBELLA,
+		MONKEYPOX })
+	@SymptomGrouping(SymptomGroup.RASH_TYPE)
 	private SymptomState purpuricRash;
 
 	@Diseases({
@@ -1814,13 +1723,13 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		CONGENITAL_RUBELLA })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState developmentalDelay;
 
 	@Diseases({
 		CONGENITAL_RUBELLA })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState splenomegaly;
 
 	@Diseases({
@@ -1832,26 +1741,26 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		CONGENITAL_RUBELLA })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState radiolucentBoneDisease;
 
 	@Diseases({
 		CONGENITAL_RUBELLA })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private SymptomState congenitalHeartDisease;
 
 	@Diseases({
 		CONGENITAL_RUBELLA })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private CongenitalHeartDiseaseType congenitalHeartDiseaseType;
 
 	@Diseases({
 		CONGENITAL_RUBELLA })
 	@HideForCountries
 	@SensitiveData
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String congenitalHeartDiseaseDetails;
 
@@ -1863,15 +1772,12 @@ public class SymptomsDto extends PseudonymizableDto {
 		YELLOW_FEVER,
 		DENGUE,
 		PLAGUE,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		POLIO,
 		OTHER,
 		CORONAVIRUS })
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState unexplainedBleeding;
 
 	@Diseases({
@@ -1888,14 +1794,14 @@ public class SymptomsDto extends PseudonymizableDto {
 		MONKEYPOX,
 		PLAGUE,
 		ANTHRAX,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		POLIO,
 		CORONAVIRUS,
 		OTHER })
 	@Outbreaks
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState vomiting;
 
 	@Diseases({
@@ -1931,19 +1837,19 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		RABIES })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState paresthesiaAroundWound;
 
 	@Diseases({
 		RABIES })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState excessSalivation;
 
 	@Diseases({
 		RABIES })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState insomnia;
 
 	@Diseases({
@@ -2004,7 +1910,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
 		CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState coma;
 
 	@Diseases({
@@ -2020,7 +1926,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
 		CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState fluidInLungCavityAuscultation;
 
 	@Diseases({
@@ -2030,7 +1936,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
 		CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState fluidInLungCavityXray;
 
 	@Diseases({
@@ -2040,7 +1946,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
 		CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState abnormalLungXrayFindings;
 
 	@Diseases({
@@ -2057,7 +1963,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState acuteRespiratoryDistressSyndrome;
 
 	@Diseases({
@@ -2065,21 +1971,21 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState pneumoniaClinicalOrRadiologic;
 
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState lossOfTaste;
 
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState lossOfSmell;
 
 	@Diseases({
@@ -2099,7 +2005,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
 		CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.SKIN)
 	private SymptomState skinUlcers;
 
 	@Diseases({
@@ -2109,7 +2015,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
 		CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState inabilityToWalk;
 
 	@Diseases({
@@ -2119,7 +2025,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
 		CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState inDrawingOfChestWall;
 
 	@Diseases({
@@ -2127,7 +2033,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@HideForCountriesExcept
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState respiratoryDiseaseVentilation;
 
 	@Diseases({
@@ -2147,7 +2053,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@HideForCountriesExcept(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
 		CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private SymptomState fastHeartRate;
 
 	@Diseases({
@@ -2155,7 +2061,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@HideForCountriesExcept
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState oxygenSaturationLower94;
 
 	private Integer weight;
@@ -2172,7 +2078,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CHOLERA,
 		MEASLES,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		RABIES,
 		UNDEFINED,
 		OTHER })
@@ -2192,7 +2098,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		MEASLES,
 		PLAGUE,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		RABIES,
 		CORONAVIRUS,
 		UNDEFINED,
@@ -2211,7 +2117,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		YELLOW_FEVER,
 		DENGUE,
 		PLAGUE,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -2225,7 +2131,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -2239,7 +2145,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -2253,7 +2159,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		RABIES,
 		UNDEFINED,
 		OTHER })
@@ -2272,7 +2178,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CHOLERA,
 		MEASLES,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		GUINEA_WORM,
 		RABIES,
 		YELLOW_FEVER,
@@ -2296,7 +2202,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CHOLERA,
 		MEASLES,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		GUINEA_WORM,
 		RABIES,
 		YELLOW_FEVER,
@@ -2323,7 +2229,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CHOLERA,
 		MEASLES,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		RABIES,
 		CORONAVIRUS,
 		UNDEFINED,
@@ -2343,7 +2249,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CHOLERA,
 		MEASLES,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -2363,7 +2269,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		PLAGUE,
 		ANTHRAX,
 		POLIO,
-		AHF,
+		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -2397,49 +2303,49 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState coughWithoutSputum;
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState breathlessness;
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState chestPressure;
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState blueLips;
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private SymptomState bloodCirculationProblems;
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private SymptomState palpitations;
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private SymptomState dizzinessStandingUp;
 
 	@Diseases({
@@ -2447,7 +2353,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private SymptomState highOrLowBloodPressure;
 
 	@Diseases({
@@ -2455,7 +2361,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.URINARY)
 	private SymptomState urinaryRetention;
 
 	@Diseases({
@@ -2494,10 +2400,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@DependantOn(RASHES)
 	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsTrunk;
-	private YesNoUnknown feverBodyTempGreater;
-	@Outbreaks
-	private CaseOutcome outcome;
-	private String provisionalDiagnosis;
 
 	@Order(0)
 	public Float getTemperature() {
@@ -3289,43 +3191,9 @@ public class SymptomsDto extends PseudonymizableDto {
 	public Integer getWeight() {
 		return weight;
 	}
-	@Order(331)
-	public CaseOutcome getOutcome() { return outcome;}
 
-	@Order(332)
-	public SymptomState getMuscleTone() {
-		return muscleTone;
-	}
-
-	@Order(333)
-	public SymptomState getDeepTendonReflex() {
-		return deepTendonReflex;
-	}
-
-	@Order(334)
-	public SymptomState getMuscleVolume() {
-		return muscleVolume;
-	}
-
-	@Order(335)
-	public SymptomState getSensoryLoss() {
-		return sensoryLoss;
-	}
-	@Order(336)
-	public String getProvisionalDiagnosis() {
-		return provisionalDiagnosis;
-	}
-	@Order(337)
-	public Date getDateOfOnset() {
-		return dateOfOnset;
-	}
-	@Order(338)
-	public YesNoUnknown getFeverBodyTempGreater(){return feverBodyTempGreater;}
 	public void setAbdominalPain(SymptomState abdominalPain) {
 		this.abdominalPain = abdominalPain;
-	}
-	public void setOutcome(CaseOutcome outcome) {
-		this.outcome = outcome;
 	}
 
 	public void setAlteredConsciousness(SymptomState alteredConsciousness) {
@@ -3627,12 +3495,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	public void setOnsetDate(Date onsetDate) {
 		this.onsetDate = onsetDate;
 	}
-	public void setDateOfOnset(Date dateOfOnset) {
-		this.dateOfOnset = dateOfOnset;
-	}
-	public void setFeverBodyTempGreater(YesNoUnknown feverBodyTempGreater) {
-		this.feverBodyTempGreater = feverBodyTempGreater;
-	}
 
 	public void setOnsetSymptom(String onsetSymptom) {
 		this.onsetSymptom = onsetSymptom;
@@ -3732,19 +3594,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setSoreThroat(SymptomState soreThroat) {
 		this.soreThroat = soreThroat;
-	}
-
-	public void setMuscleTone(SymptomState muscleTone) {
-		this.muscleTone = muscleTone;
-	}
-	public void setDeepTendonReflex(SymptomState deepTendonReflex) {
-		this.deepTendonReflex = deepTendonReflex;
-	}
-	public void setMuscleVolume(SymptomState muscleVolume) {
-		this.muscleVolume = muscleVolume;
-	}
-	public void setSensoryLoss(SymptomState sensoryLoss) {
-		this.sensoryLoss = sensoryLoss;
 	}
 
 	public void setStomachBleeding(SymptomState stomachBleeding) {
@@ -4088,10 +3937,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setOtherComplicationsText(String otherComplicationsText) {
 		this.otherComplicationsText = otherComplicationsText;
-	}
-
-	public void setProvisionalDiagnosis(String provisionalDiagnosis) {
-		this.provisionalDiagnosis = provisionalDiagnosis;
 	}
 
 	public void setRespiratoryDiseaseVentilation(SymptomState respiratoryDiseaseVentilation) {

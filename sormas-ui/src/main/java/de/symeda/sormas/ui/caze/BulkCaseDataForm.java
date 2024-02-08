@@ -57,7 +57,10 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
-import de.symeda.sormas.api.infrastructure.facility.*;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
@@ -134,7 +137,6 @@ public class BulkCaseDataForm extends AbstractEditForm<CaseBulkEditData> {
 	private CheckBox shareWithReportingToolCheckbox;
 	private ComboBox facilityTypeGroup;
 	private ComboBox facilityType;
-	private ComboBox dhimsFacilityType;
 	private TextField healthFacilityDetails;
 	private Collection<? extends CaseIndexDto> selectedCases;
 	private OptionGroup facilityOrHome;
@@ -307,8 +309,6 @@ public class BulkCaseDataForm extends AbstractEditForm<CaseBulkEditData> {
 		facilityTypeGroup.setEnabled(false);
 		facilityType = addField(CaseBulkEditData.FACILITY_TYPE, ComboBox.class);
 		facilityType.setEnabled(false);
-		dhimsFacilityType = addField(CaseDataDto.DHIMS_FACILITY_TYPE, ComboBox.class);
-		dhimsFacilityType.setEnabled(false);
 		ComboBox facility = addInfrastructureField(CaseBulkEditData.HEALTH_FACILITY);
 		facility.setImmediate(true);
 		facility.setEnabled(false);
@@ -342,7 +342,7 @@ public class BulkCaseDataForm extends AbstractEditForm<CaseBulkEditData> {
 					facility,
 					communityDto != null
 						? FacadeProvider.getFacilityFacade()
-							.getActiveFacilitiesByCommunityAndType(communityDto, (FacilityType) facilityType.getValue(),true, false)
+							.getActiveFacilitiesByCommunityAndType(communityDto, (FacilityType) facilityType.getValue(), true, false)
 						: district.getValue() != null
 							? FacadeProvider.getFacilityFacade()
 								.getActiveFacilitiesByDistrictAndType(
@@ -558,7 +558,7 @@ public class BulkCaseDataForm extends AbstractEditForm<CaseBulkEditData> {
 				FieldHelper.updateItems(
 					facility,
 					FacadeProvider.getFacilityFacade()
-						.getActiveFacilitiesByCommunityAndType(community, (FacilityType) facilityType.getValue(),true, false));
+						.getActiveFacilitiesByCommunityAndType(community, (FacilityType) facilityType.getValue(), true, false));
 			} else {
 				FieldHelper.updateItems(
 					facility,

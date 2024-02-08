@@ -26,7 +26,6 @@ import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.caze.VaccinationStatus;
-import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.contact.ContactCategory;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactDto;

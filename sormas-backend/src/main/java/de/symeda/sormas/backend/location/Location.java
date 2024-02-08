@@ -33,7 +33,6 @@ import javax.persistence.ManyToOne;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.area.AreaType;
-import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.location.LocationReferenceDto;
 import de.symeda.sormas.api.person.PersonAddressType;
@@ -74,7 +73,6 @@ public class Location extends AbstractDomainObject {
 	public static final String ADDRESS_TYPE = "addressType";
 	public static final String ADDRESS_TYPE_DETAILS = "addressTypeDetails";
 	public static final String FACILITY_TYPE = "facilityType";
-	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
 	public static final String FACILITY = "facility";
 	public static final String FACILITY_DETAILS = "facilityDetails";
 	public static final String CONTACT_PERSON_FIRST_NAME = "contactPersonFirstName";
@@ -100,13 +98,11 @@ public class Location extends AbstractDomainObject {
 
 	private String postalCode;
 	private String street;
-	private String landMark;
 	private String houseNumber;
 	private String additionalInformation;
 	private PersonAddressType addressType;
 	private String addressTypeDetails;
 	private FacilityType facilityType;
-	private DhimsFacility dhimsFacilityType;
 	private Facility facility;
 	private String facilityDetails;
 
@@ -240,15 +236,6 @@ public class Location extends AbstractDomainObject {
 		this.street = street;
 	}
 
-	@Column(length = CHARACTER_LIMIT_BIG)
-	public String getLandMark() {
-		return landMark;
-	}
-
-	public void setLandMark(String landMark) {
-		this.landMark = landMark;
-	}
-
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getHouseNumber() {
 		return houseNumber;
@@ -294,16 +281,7 @@ public class Location extends AbstractDomainObject {
 		this.facilityType = facilityType;
 	}
 
-	@Enumerated(EnumType.STRING)
-	public DhimsFacility getDhimsFacilityType() {
-		return dhimsFacilityType;
-	}
-
-	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
-		this.dhimsFacilityType = dhimsFacilityType;
-	}
-
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Facility getFacility() {
 		return facility;
 	}

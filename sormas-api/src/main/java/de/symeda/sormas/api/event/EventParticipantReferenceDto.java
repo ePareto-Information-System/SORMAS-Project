@@ -33,31 +33,29 @@ public class EventParticipantReferenceDto extends ReferenceDto {
 	private String firstName;
 	@PersonalData
 	private String lastName;
-	@PersonalData
-	private String otherName;
 
 	public EventParticipantReferenceDto() {
+
 	}
 
 	public EventParticipantReferenceDto(String uuid) {
 		setUuid(uuid);
 	}
 
-	public EventParticipantReferenceDto(String uuid, String firstName, String lastName, String otherName) {
+	public EventParticipantReferenceDto(String uuid, String firstName, String lastName) {
 		super(uuid);
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.otherName = lastName;
 	}
 
 	@Override
 	public String getCaption() {
-		return buildCaption(getUuid(), firstName, lastName, otherName);
+		return buildCaption(getUuid(), firstName, lastName);
 	}
 
-	public static String buildCaption(String uuid, String firstName, String lastName, String otherName) {
+	public static String buildCaption(String uuid, String firstName, String lastName) {
 
-		String personName = PersonDto.buildCaption(firstName, lastName, otherName);
+		String personName = PersonDto.buildCaption(firstName, lastName);
 		String shortUuid = DataHelper.getShortUuid(uuid);
 
 		if (personName.trim().length() > 0) {
@@ -74,5 +72,4 @@ public class EventParticipantReferenceDto extends ReferenceDto {
 	public String getLastName() {
 		return lastName;
 	}
-	public String getOtherName() {return otherName;}
 }

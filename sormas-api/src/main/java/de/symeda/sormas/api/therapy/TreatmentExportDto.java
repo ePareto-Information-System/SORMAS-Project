@@ -53,7 +53,6 @@ public class TreatmentExportDto implements Serializable {
 		String caseUuid,
 		String caseFirstName,
 		String caseLastName,
-		String caseOtherName,
 		Date treatmentDateTime,
 		String executingClinician,
 		TreatmentType treatmentType,
@@ -66,7 +65,7 @@ public class TreatmentExportDto implements Serializable {
 		boolean isInJurisdiction) {
 
 		this.caseUuid = caseUuid;
-		this.caseName = PersonDto.buildCaption(caseFirstName, caseLastName, caseOtherName);
+		this.caseName = PersonDto.buildCaption(caseFirstName, caseLastName);
 		this.treatmentDateTime = treatmentDateTime;
 		this.executingClinician = executingClinician;
 		this.treatmentType = treatmentType;

@@ -33,8 +33,6 @@ public class CaseReferenceDto extends ReferenceDto {
 	private String firstName;
 	@PersonalData
 	private String lastName;
-	@PersonalData
-	private String otherName;
 
 	public CaseReferenceDto() {
 
@@ -44,18 +42,17 @@ public class CaseReferenceDto extends ReferenceDto {
 		setUuid(uuid);
 	}
 
-	public CaseReferenceDto(String uuid, String firstName, String lastName, String otherName) {
+	public CaseReferenceDto(String uuid, String firstName, String lastName) {
 
 		setUuid(uuid);
 
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.otherName = otherName;
 	}
 
 	@Override
 	public String getCaption() {
-		return buildCaption(getUuid(), firstName, lastName, otherName);
+		return buildCaption(getUuid(), firstName, lastName);
 	}
 
 	public String getFirstName() {
@@ -65,7 +62,6 @@ public class CaseReferenceDto extends ReferenceDto {
 	public String getLastName() {
 		return lastName;
 	}
-	public String getOtherName() {return otherName;}
 
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
@@ -74,11 +70,10 @@ public class CaseReferenceDto extends ReferenceDto {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	public void setOtherName(String otherName) {this.otherName = otherName;}
 
-	public static String buildCaption(String uuid, String firstName, String lastName, String otherName) {
+	public static String buildCaption(String uuid, String firstName, String lastName) {
 
-		String personName = PersonDto.buildCaption(firstName, lastName, otherName);
+		String personName = PersonDto.buildCaption(firstName, lastName);
 		String shortUuid = DataHelper.getShortUuid(uuid);
 
 		if (personName.trim().length() > 0) {

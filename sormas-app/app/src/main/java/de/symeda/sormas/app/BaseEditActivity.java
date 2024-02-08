@@ -282,7 +282,7 @@ public abstract class BaseEditActivity<ActivityRootEntity extends AbstractDomain
 
 	@Override
 	protected boolean openPage(PageMenuItem menuItem) {
-		BaseEditFragment newActiveFragment =  buildEditFragment(menuItem, storedRootEntity);
+		BaseEditFragment newActiveFragment = buildEditFragment(menuItem, storedRootEntity);
 		if (newActiveFragment == null)
 			return false;
 		replaceFragment(newActiveFragment, true);

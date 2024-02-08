@@ -28,8 +28,6 @@ public class SimilarContactDto extends PseudonymizableIndexDto implements Serial
 	private String firstName;
 	@PersonalData
 	private String lastName;
-	@PersonalData
-	private String otherName;
 	private CaseReferenceDto caze;
 	private String caseIdExternalSystem;
 	private Date lastContactDate;
@@ -40,8 +38,8 @@ public class SimilarContactDto extends PseudonymizableIndexDto implements Serial
 	private ContactJurisdictionFlagsDto contactJurisdictionFlagsDto;
 
 	//@formatter:off
-	public SimilarContactDto(String firstName, String lastName, String otherName, String uuid,
-							 String cazeUuid, String caseFirstName, String caseLastName, String caseOtherName ,String caseIdExternalSystem,
+	public SimilarContactDto(String firstName, String lastName, String uuid,
+							 String cazeUuid, String caseFirstName, String caseLastName, String caseIdExternalSystem,
 							 Date lastContactDate, ContactProximity contactProximity, ContactClassification contactClassification,
 							 ContactStatus contactStatus, FollowUpStatus followUpStatus, boolean isInJurisdiction, boolean isCaseInJurisdiction) {
 		//@formatter:on
@@ -50,7 +48,7 @@ public class SimilarContactDto extends PseudonymizableIndexDto implements Serial
 		this.lastName = lastName;
 
 		if (cazeUuid != null) {
-			this.caze = new CaseReferenceDto(cazeUuid, caseFirstName, caseLastName, caseOtherName);
+			this.caze = new CaseReferenceDto(cazeUuid, caseFirstName, caseLastName);
 		}
 		this.caseIdExternalSystem = caseIdExternalSystem;
 		this.lastContactDate = lastContactDate;
