@@ -115,8 +115,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
                             oneOfTwoCol(PersonDto.BURIAL_PLACE_DESCRIPTION)
                     ) +
                     fluidRowLocs(PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER) +
-					//fluidRowLocs(PersonDto.EXTERNAL_ID, PersonDto.EXTERNAL_TOKEN) +
-					//fluidRowLocs(PersonDto.INTERNAL_TOKEN, EXTERNAL_TOKEN_WARNING_LOC) +
+					fluidRowLocs(PersonDto.EXTERNAL_ID, PersonDto.EXTERNAL_TOKEN) +
+					fluidRowLocs(PersonDto.INTERNAL_TOKEN, EXTERNAL_TOKEN_WARNING_LOC) +
 
 					fluidRowLocs(PersonDto.HAS_COVID_APP, PersonDto.COVID_CODE_DELIVERED) +
 
@@ -373,6 +373,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		addressForm.setOnlyUnknownForInfluenza(disease);
 		addressForm.setOnlyUnknownForYellowFever(disease);
 		addressForm.setOnlyUnknownForAHF(disease);
+		addressForm.setOnlyUnknownForMeasles(disease);
 
 
 		addressForm.setCaption(null);
@@ -422,7 +423,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		Label externalTokenWarningLabel = new Label(I18nProperties.getString(Strings.messagePersonExternalTokenWarning));
 		externalTokenWarningLabel.addStyleNames(VSPACE_3, LABEL_WHITE_SPACE_NORMAL);
 		getContent().addComponent(externalTokenWarningLabel, EXTERNAL_TOKEN_WARNING_LOC);
-		addField(PersonDto.INTERNAL_TOKEN);
+		 addField(PersonDto.INTERNAL_TOKEN);
 
 		addField(PersonDto.HAS_COVID_APP).addStyleName(CssStyles.FORCE_CAPTION_CHECKBOX);
 		addField(PersonDto.COVID_CODE_DELIVERED).addStyleName(CssStyles.FORCE_CAPTION_CHECKBOX);
@@ -638,6 +639,15 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		if (disease == Disease.CSM) {
 			generalCommentLabel.setVisible(false);
 			setVisible(false, PersonDto.ADDITIONAL_DETAILS);
+		}
+
+		if (disease == Disease.MEASLES) {
+			setVisible(false, PersonDto.INTERNAL_TOKEN);
+			setVisible(false, PersonDto.EXTERNAL_TOKEN);
+			generalCommentLabel.setVisible(false);
+			setVisible(false, PersonDto.ADDITIONAL_DETAILS);
+			setVisible(false, PersonDto.MOTHERS_MAIDEN_NAME);
+			setVisible(false, PersonDto.NICKNAME);
 		}
 
 		if(disease == Disease.AFP){
