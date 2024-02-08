@@ -1371,6 +1371,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			getFieldGroup().getField(CaseDataDto.POSTPARTUM).setVisible(false);
 			healthConditionsField.setVisible(false);
 			surveillanceOfficerField.setVisible(false);
+			externalTokenField.setVisible(false);
+			quarantine.setVisible(false);
 		}
 
 		if(disease == Disease.YELLOW_FEVER || disease == Disease.CSM){
@@ -1615,7 +1617,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 						CaseDataDto.HEALTH_FACILITY_DETAILS);
 
 				nationalLevelDate.setVisible(true);
-				NullableOptionGroup vaccinatedByCardOrHistory = addField(CaseDataDto.VACCINATION_TYPE, NullableOptionGroup.class);
+//				NullableOptionGroup vaccinatedByCardOrHistory = addField(CaseDataDto.VACCINATION_TYPE, NullableOptionGroup.class);
 
 				FieldHelper.setEnabledWhen(vaccinationStatus, Arrays.asList(VaccinationStatus.VACCINATED), Collections.singletonList(
 						vaccinatedByCardOrHistory
@@ -1624,7 +1626,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				FieldHelper
 						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
 
-				cardDateField = addField(CaseDataDto.VACCINATION_DATE, DateField.class);
+
 				cardDateField.setVisible(false);
 
 				FieldHelper
@@ -1639,7 +1641,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				vaccineType.setCaption("Vaccine Type");
 				numberOfDoses = addField(CaseDataDto.NUMBER_OF_DOSES, TextField.class);
 				numberOfDoses.setCaption("Number of Doses");
-				cardDateField = addField(CaseDataDto.VACCINATION_DATE, DateField.class);
 
 				vaccineType.setVisible(false);
 				numberOfDoses.setVisible(false);
