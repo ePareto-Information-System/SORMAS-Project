@@ -32,18 +32,10 @@ import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.caze.*;
-import de.symeda.sormas.api.contact.ContactReferenceDto;
-import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
-import de.symeda.sormas.api.dashboard.EpiCurveGrouping;
-import de.symeda.sormas.api.disease.DiseaseVariant;
-import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.*;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
-import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.person.PresentCondition;
-import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.sample.AdditionalTestType;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
@@ -52,7 +44,6 @@ import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.sample.SpecimenCondition;
-import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.*;
@@ -60,14 +51,10 @@ import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import de.symeda.sormas.ui.UserProvider;
-import de.symeda.sormas.ui.dashboard.map.MapCaseDisplayMode;
 import de.symeda.sormas.ui.utils.*;
 import de.symeda.sormas.ui.utils.DateFormatHelper;
 import de.symeda.sormas.ui.utils.DateTimeField;
 import java.util.Date;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.james.mime4j.dom.datetime.DateTime;
-import org.vaadin.hene.popupbutton.PopupButton;
 
 public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
@@ -149,7 +136,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
                     //locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
                     fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
-                    //locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
+                    locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
                     fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID) +
                     fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
                     fluidRowLocs(SampleDto.COMMENT) +
@@ -357,14 +344,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				case AFP:
 					handleAFP();
 					break;
-				case NEW_INFLUENZA:
-					handleNewInfluenza();
-					break;
 				case YELLOW_FEVER:
 					handleYellowFever();
 					break;
 				case MEASLES:
-					handleMeasel();
+					handleMeasles();
 					break;
 				default:
 					// Handle default case, maybe log an error or set default visibility
@@ -402,14 +386,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				case AFP:
 					handleAFP();
 					break;
-				case NEW_INFLUENZA:
-					handleNewInfluenza();
-					break;
 				case YELLOW_FEVER:
 					handleYellowFever();
 					break;
 				case MEASLES:
-					handleMeasel();
+					handleMeasles();
 					break;
 				default:
 					// Handle default case, maybe log an error or set default visibility
@@ -948,11 +929,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	}
 
-	private void handleMeasel() {
+	private void handleMeasles() {
 		if (disease == Disease.MEASLES) {
 			setVisible(false, SampleDto.SAMPLING_REASON);
 			setVisible(false, SampleDto.SAMPLE_PURPOSE);
-
+			setVisible(true, SampleDto.RECEIVED);
 			List<PathogenTestType> measelesPathogenTests = PathogenTestType.getMeaslesTestTypes();
 
 			Arrays.stream(PathogenTestType.values())
@@ -1011,7 +992,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		}
 
 		return null;
-
 	}
 
 	private void setPropertiesVisibility(){
