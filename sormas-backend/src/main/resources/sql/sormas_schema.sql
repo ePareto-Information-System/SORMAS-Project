@@ -12795,5 +12795,8 @@ INSERT INTO schema_version (version_number, comment) VALUES (526, 'Added column 
 ALTER TABLE hospitalization ADD COLUMN seenatahealthfacility varchar(255) NULL;
 ALTER TABLE previoushospitalization ADD COLUMN seenatahealthfacility varchar(255) NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (527, 'Added column to seenatahealthfacility');
+
+ALTER TABLE epidata ADD COLUMN childcomeincontactwithsymptoms varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (528, 'Added column to childComeInContactWithSymptoms to epidata');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``
