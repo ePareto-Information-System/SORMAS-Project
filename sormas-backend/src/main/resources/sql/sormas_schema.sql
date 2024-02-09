@@ -12894,58 +12894,61 @@ $$ LANGUAGE plpgsql;
 INSERT INTO schema_version (version_number, comment) VALUES (533, 'Add the ''See personal data inside jurisdiction'' user right to the default Environmental Surveillance User #12284');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
--- Version 534
-ALTER TABLE samples ADD COLUMN ipsamplesent varchar(255);
-ALTER TABLE samples ADD COLUMN ipsampleresults varchar(512);
-INSERT INTO schema_version (version_number, comment) VALUES (534, 'Added a column name ipsampleresults to samples');
+ALTER TABLE externalmessage ADD COLUMN sample_id bigint;
+ALTER TABLE externalmessage ADD CONSTRAINT fk_externalmessage_sample_id FOREIGN KEY (sample_id) REFERENCES samples (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+CREATE INDEX IF NOT EXISTS idx_externalmessage_sample_id ON externalmessage (sample_id);
+ALTER TABLE externalmessage ADD COLUMN sampledatetime timestamp not null;
+INSERT INTO schema_version (version_number, comment) VALUES (534, 'Update exeternalmessage table with required columns');
 
 -- Version 535
+ALTER TABLE samples ADD COLUMN ipsamplesent varchar(255);
+ALTER TABLE samples ADD COLUMN ipsampleresults varchar(512);
+INSERT INTO schema_version (version_number, comment) VALUES (535, 'Added a column name ipsampleresults to samples');
+
+-- Version 536
 ALTER TABLE person ADD COLUMN othername varchar(512) NULL;
 ALTER TABLE location ADD COLUMN contactPersonOtherName text;
 ALTER TABLE person_history ADD COLUMN othername varchar(512);
 ALTER TABLE person ADD COLUMN ghanacard varchar(255) NULL;
 ALTER TABLE location ADD COLUMN landmark varchar(255) NULL;
-INSERT INTO schema_version (version_number, comment) VALUES (535, 'Added a column name landmark to location');
-
--- Version 536
-ALTER TABLE externalmessage ADD COLUMN personothername varchar(255) NULL;
-ALTER TABLE externalmessage_history ADD COLUMN personothername varchar(255) NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (536, 'Added a column name landmark to location');
 
 -- Version 537
+ALTER TABLE externalmessage ADD COLUMN personothername varchar(255) NULL;
+ALTER TABLE externalmessage_history ADD COLUMN personothername varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (537, 'Added a column name landmark to location');
+
+-- Version 538
 ALTER TABLE cases ADD COLUMN ipsamplesent varchar(255);
 ALTER TABLE cases ADD COLUMN ipsampleresults varchar(255);
 ALTER TABLE cases ADD COLUMN vaccinationtype varchar(255);
 ALTER TABLE cases ADD COLUMN vaccinationdate timestamp;
-INSERT INTO schema_version (version_number, comment) VALUES (537, 'Added columns vaccinationtype and vaccinationdate to cases');
+INSERT INTO schema_version (version_number, comment) VALUES (538, 'Added columns vaccinationtype and vaccinationdate to cases');
 
--- Version 538
+-- Version 539
 ALTER TABLE samples ADD COLUMN samplematerialrequested boolean;
 ALTER TABLE samples_history ADD COLUMN samplematerialrequested boolean;
 ALTER TABLE samples ALTER COLUMN samplematerial DROP NOT NULL;
 ALTER TABLE cases ADD COLUMN afpfacilityoptions varchar(255) NULL;
 ALTER TABLE location ADD COLUMN afpfacilityoptions varchar(255) NULL;
 ALTER TABLE facility ADD COLUMN landmark varchar(255) NULL;
-INSERT INTO schema_version (version_number, comment) VALUES (538, 'Added a column name samplematerialrequested to samples and samples_history, altered column samplematerial in samples to not null, Added columns afpfacilityoptions to cases and location, Added a column name landmark to facility');
-
--- Version 539
-ALTER TABLE samples ADD COLUMN specifyotheroutcome varchar(255);
-ALTER TABLE samples ALTER COLUMN samplepurpose DROP NOT NULL;
-INSERT INTO schema_version (version_number, comment) VALUES (539, 'Altered column samplepurpose in samples to not null');
+INSERT INTO schema_version (version_number, comment) VALUES (539, 'Added a column name samplematerialrequested to samples and samples_history, altered column samplematerial in samples to not null, Added columns afpfacilityoptions to cases and location, Added a column name landmark to facility');
 
 -- Version 540
+ALTER TABLE samples ADD COLUMN specifyotheroutcome varchar(255);
+ALTER TABLE samples ALTER COLUMN samplepurpose DROP NOT NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (540, 'Altered column samplepurpose in samples to not null');
+
+-- Version 541
 ALTER TABLE facility ADD COLUMN facilityafptype varchar(255) NULL;
 ALTER TABLE facility ADD COLUMN facility_afptype varchar(255) NULL;
 ALTER TABLE facility ADD COLUMN dhimsfacilitytype varchar(255);
 ALTER TABLE facility ADD COLUMN afptype varchar(255) NULL;
-INSERT INTO schema_version (version_number, comment) VALUES (540, 'Added columns: facilityafptype, facility_afptype, dhimsfacilitytype, afptype to facility');
-
--- Version 541
-ALTER TABLE location ADD COLUMN dhimsfacilitytype varchar(255);
-ALTER TABLE person ADD COLUMN dhimsfacilitytype varchar(255);
-INSERT INTO schema_version (version_number, comment) VALUES (541, 'Added column: dhimsfacilitytype to location, person');
+INSERT INTO schema_version (version_number, comment) VALUES (541, 'Added columns: facilityafptype, facility_afptype, dhimsfacilitytype, afptype to facility');
 
 -- Version 542
+ALTER TABLE location ADD COLUMN dhimsfacilitytype varchar(255);
+ALTER TABLE person ADD COLUMN dhimsfacilitytype varchar(255);
 ALTER TABLE cases ADD COLUMN dhimsfacilitytype varchar(255);
 ALTER TABLE cases_history ADD COLUMN dhimsfacilitytype varchar(255);
 ALTER TABLE cases ADD COLUMN reportingOfficerTitle varchar(255) NULL;
@@ -13152,29 +13155,13 @@ ALTER TABLE hospitalization ADD COLUMN notifydistrictdate varchar(255);
 ALTER TABLE hospitalization ADD COLUMN admittedtohealthfacilitynew varchar(255);
 ALTER TABLE hospitalization ADD COLUMN datefirstseen DATE;
 ALTER TABLE hospitalization ADD COLUMN terminationdatehospitalstay DATE;
-INSERT INTO schema_version (version_number, comment) VALUES (560, 'Added notifydistrictdate, admittedtohealthfacilitynew, datefirstseen, terminationdatehospitalstay to hospitalization');
-
--- Version 561
 ALTER TABLE hospitalization ADD COLUMN place2 varchar(255);
 ALTER TABLE hospitalization ADD COLUMN durationmonths2 varchar(255);
 ALTER TABLE hospitalization ADD COLUMN durationdays2 varchar(255);
 ALTER TABLE hospitalization ADD COLUMN place3 varchar(255);
 ALTER TABLE hospitalization ADD COLUMN durationmonths3 varchar(255);
 ALTER TABLE hospitalization ADD COLUMN durationdays3 varchar(255);
-INSERT INTO schema_version (version_number, comment) VALUES (561, 'Added place2, durationmonths2, durationdays2 to hospitalization');
-
--- Version 562
 ALTER TABLE cases ADD COLUMN numberofdoses varchar(255);
-INSERT INTO schema_version (version_number, comment) VALUES (562, 'Added numberofdoses to cases');
-
--- Version 563
 ALTER TABLE cases ADD COLUMN vaccinetype varchar(255);
-INSERT INTO schema_version (version_number, comment) VALUES (563, 'Added vaccinetype to cases');
-
--- Version 564
-ALTER TABLE externalmessage ADD COLUMN sample_id bigint;
-ALTER TABLE externalmessage ADD CONSTRAINT fk_externalmessage_sample_id FOREIGN KEY (sample_id) REFERENCES samples (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
-CREATE INDEX IF NOT EXISTS idx_externalmessage_sample_id ON externalmessage (sample_id);
-ALTER TABLE externalmessage ADD COLUMN sampledatetime timestamp not null;
-INSERT INTO schema_version (version_number, comment) VALUES (564, 'Update exeternalmessage table with required columns');
+INSERT INTO schema_version (version_number, comment) VALUES (560, ' Added 10 columns to hospitalization and 2 columns to cases');
 
