@@ -1914,14 +1914,15 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		if (caze.getHealthFacility() != null) {
 			FacilityDto healthFacility = facilityFacade.getByUuid(caze.getHealthFacility().getUuid());
 
-			if (caze.getFacilityType() == null) {
+			if (caze.getFacilityType() == null && caze.getDhimsFacilityType() == null) {
 				if (!FacilityDto.NONE_FACILITY_UUID.equals(caze.getHealthFacility().getUuid())) {
 					throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noFacilityType));
 				}
-			} else if (!caze.getFacilityType().isAccommodation()) {
+			}
+			/*else if (!caze.getFacilityType().isAccommodation() && caze.getDhimsFacilityType() == null) {
 				throw new ValidationRuntimeException(
 						I18nProperties.getValidationError(Validations.notAccomodationFacilityType, caze.getFacilityType()));
-			}
+			}*/
 
 			if (caze.getRegion() == null) {
 				if (caze.getResponsibleCommunity() == null
