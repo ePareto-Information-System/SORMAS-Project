@@ -253,7 +253,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		firstNameField = addField(PersonDto.FIRST_NAME, TextField.class);
 		lastNameField = addField(PersonDto.LAST_NAME, TextField.class);
 		otherNameField = addField(PersonDto.OTHER_NAME, TextField.class);
-		addFields(PersonDto.SALUTATION, PersonDto.OTHER_SALUTATION);
+		ComboBox salutation = addField(PersonDto.SALUTATION, ComboBox.class);
+		ComboBox otherSalutation = addField(PersonDto.OTHER_SALUTATION, ComboBox.class);
 		FieldHelper.setVisibleWhen(getFieldGroup(), PersonDto.OTHER_SALUTATION, PersonDto.SALUTATION, Salutation.OTHER, true);
 		ComboBox sexComboBox = new ComboBox("Sex");
 		for (Sex sex : Sex.values()) {
@@ -263,6 +264,13 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		}
 		addField(PersonDto.SEX, sexComboBox);
 		addField(PersonDto.BIRTH_NAME, TextField.class);
+		addField(PersonDto.PASSPORT_NUMBER);
+
+		if (caseOrigin == CaseOrigin.IN_COUNTRY) {
+			setVisible(false, PersonDto.PASSPORT_NUMBER);
+		}
+
+		addFields(PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD);
 		TextField nickie = addField(PersonDto.NICKNAME, TextField.class);
 		nickie.setVisible(false);
 		TextField maiden = addField(PersonDto.MOTHERS_MAIDEN_NAME, TextField.class);
@@ -318,6 +326,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		tfGestationAgeAtBirth
 				.setConversionError(I18nProperties.getValidationError(Validations.onlyIntegerNumbersAllowed, tfGestationAgeAtBirth.getCaption()));
 		TextField tfBirthWeight = addField(PersonDto.BIRTH_WEIGHT, TextField.class);
+
 		tfBirthWeight.setConversionError(I18nProperties.getValidationError(Validations.onlyIntegerNumbersAllowed, tfBirthWeight.getCaption()));
 		AbstractSelect deathPlaceType = addField(PersonDto.DEATH_PLACE_TYPE, ComboBox.class);
 		deathPlaceType.setNullSelectionAllowed(true);
@@ -325,6 +334,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		DateField burialDate = addField(PersonDto.BURIAL_DATE, DateField.class);
 		TextField burialPlaceDesc = addField(PersonDto.BURIAL_PLACE_DESCRIPTION, TextField.class);
 		ComboBox burialConductor = addField(PersonDto.BURIAL_CONDUCTOR, ComboBox.class);
+
 		addressForm = addField(PersonDto.ADDRESS, LocationEditForm.class);
 		addressForm.setOnlyUnknownForCSM(disease);
 		addressForm.setOnlyUnknownForAFP(disease);
@@ -337,7 +347,12 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		personContactDetailsField.setThisPerson(getValue());
 		personContactDetailsField.setCaption(null);
 		personContactDetailsField.setPseudonymized(isPseudonymized);
-		ComboBox occupationTypeField = addField(PersonDto.OCCUPATION_TYPE, ComboBox.class);
+
+		TextField occuDetails = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
+		occuDetails.setCaption("Please Specify Occupation");
+		ComboBox educationType = addField(PersonDto.EDUCATION_TYPE, ComboBox.class);
+		educationType.removeItem(EducationType.NURSERY);
+		/*ComboBox occupationTypeField = addField(PersonDto.OCCUPATION_TYPE, ComboBox.class);
 		TextField occupationTypeDetailsField = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
 		occupationTypeDetailsField.setVisible(false);
 		FieldHelper
@@ -345,37 +360,32 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		occupationTypeField.addValueChangeListener(e -> {
 			OccupationType occupationType = (OccupationType) e.getProperty().getValue();
 			occupationTypeDetailsField.setVisible(occupationType != null && occupationType.matchPropertyValue(OccupationType.HAS_DETAILS, true));
-		});
+		});*/
 
-		addFields(PersonDto.ARMED_FORCES_RELATION_TYPE, PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS);
-		//ComboBox occu = addField(PersonDto.OCCUPATION_TYPE, ComboBox.class);
-		//TextField occuDetails = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
-		//occuDetails.setCaption("Please Specify Occupation");
-		//addFields(PersonDto.ARMED_FORCES_RELATION_TYPE);
-//		ComboBox occu = addField(PersonDto.OCCUPATION_TYPE, ComboBox.class);
-//		TextField occuDetails = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
-//		occuDetails.setCaption("Please Specify Occupation");
-//		ComboBox armedForces = addField(PersonDto.ARMED_FORCES_RELATION_TYPE, ComboBox.class);
-		//ComboBox educationType = addField(PersonDto.EDUCATION_TYPE, ComboBox.class);
-		//educationType.removeItem(EducationType.NURSERY);
 		//TextField educationDetails = addField(PersonDto.EDUCATION_DETAILS, TextField.class);
-		//occu.setVisible(false);
-//		occu.setVisible(false);
 
 		List<CountryReferenceDto> countries = FacadeProvider.getCountryFacade().getAllActiveAsReference();
 		addInfrastructureField(PersonDto.BIRTH_COUNTRY).addItems(countries);
-//		protected void addFields() {
 			addressesHeader.setVisible(false);
 			contactInformationHeader.setVisible(false);
-			homeaddrecreational.setVisible(true);
-			//occuDetails.setVisible(false);
-//			occuDetails.setVisible(false);
-
-//		}
+			homeaddrecreational.setVisible(false);
 
 		if (disease == Disease.AHF) {
-			setVisible(false, PersonDto.PERSON_CONTACT_DETAILS);
+			setVisible(false, PersonDto.PERSON_CONTACT_DETAILS, PersonDto.BIRTH_COUNTRY);
 		}
+
+		setFieldsVisible(false,
+				deathDate,
+				tfGestationAgeAtBirth,
+				tfBirthWeight,
+				deathPlaceType,
+				deathPlaceDesc,
+				burialDate,
+				burialPlaceDesc,
+				burialConductor,
+				salutation,
+				otherSalutation
+		);
 	}
 	@Override
 	public void setValue(PersonDto newFieldValue) {
@@ -461,6 +471,13 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			}
 		}
 	}
+
+	private void setFieldsVisible(boolean visible, Field... fields) {
+		for (Field field : fields) {
+			field.setVisible(visible);
+		}
+	}
+
 	private void initializePresentConditionField() {
 		PresentCondition presentCondition = getValue().getPresentCondition();
 		ComboBox presentConditionField = getField(PersonDto.PRESENT_CONDITION);
@@ -499,6 +516,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			currentItem.getItemProperty(SormasFieldGroupFieldFactory.CAPTION_PROPERTY_ID).setValue(presentCondition.toString());
 		}
 	}
+
+
 	@Override
 	protected String createHtmlLayout() {
 		return HTML_LAYOUT;
