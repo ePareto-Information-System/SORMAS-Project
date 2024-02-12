@@ -85,6 +85,11 @@ public class PreviousHospitalizationDto extends PseudonymizableDto {
 	private Date intensiveCareUnitEnd;
 	private String healthFacilityRecordNumber;
 
+	private YesNoUnknown seenAtAHealthFacility;
+	private YesNoUnknown wasPatientAdmitted;
+
+
+
 	public static PreviousHospitalizationDto build(CaseDataDto caze) {
 
 		HospitalizationDto hospitalization = caze.getHospitalization();
@@ -256,4 +261,22 @@ public class PreviousHospitalizationDto extends PseudonymizableDto {
 	public void setHealthFacilityRecordNumber(String healthFacilityRecordNumber) {
 		this.healthFacilityRecordNumber = healthFacilityRecordNumber;
 	}
+	public YesNoUnknown getSeenAtAHealthFacility() {
+		return seenAtAHealthFacility;
+	}
+
+	public void setSeenAtAHealthFacility(YesNoUnknown seenAtAHealthFacility) {
+		this.seenAtAHealthFacility = seenAtAHealthFacility;
+	}
+
+	public YesNoUnknown getWasPatientAdmitted() {
+		return wasPatientAdmitted;
+	}
+
+	public void setWasPatientAdmitted(YesNoUnknown wasPatientAdmitted) {
+		this.wasPatientAdmitted = wasPatientAdmitted;
+	}
+
+
+
 }

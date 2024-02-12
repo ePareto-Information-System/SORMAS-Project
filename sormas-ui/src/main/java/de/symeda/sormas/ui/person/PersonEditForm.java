@@ -135,26 +135,27 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 									fluidRowLocs(PersonDto.PERSON_CONTACT_DETAILS)) +
 					loc(GENERAL_COMMENT_LOC) + fluidRowLocs(CaseDataDto.ADDITIONAL_DETAILS) +
 					fluidRowLocs(PersonDto.ADDITIONAL_PLACES_STAYED);
-	private final Label occupationHeader = new Label(I18nProperties.getString(Strings.headingPersonOccupation));
-	private final Label addressHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESS));
-	private final Label addressesHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESSES));
-	private final Label contactInformationHeader = new Label(I18nProperties.getString(Strings.headingContactInformation));
-	private Label personInformationHeadingLabel;
-	private TextField firstNameField;
-	private TextField lastNameField;
-	private TextField otherNameField;
-	private Disease disease;
-	private CaseOrigin caseOrigin;
-	private String diseaseDetails;
-	private ComboBox causeOfDeathField;
-	private ComboBox causeOfDeathDiseaseField;
-	private TextField causeOfDeathDetailsField;
-	private ComboBox birthDateDay;
-	private ComboBox cbPlaceOfBirthFacility;
-	private PersonContext personContext;
-	private boolean isPseudonymized;
-	private LocationEditForm addressForm;
-	private PresentConditionChangeListener presentConditionChangeListener;
+
+		private final Label occupationHeader = new Label(I18nProperties.getString(Strings.headingPersonOccupation));
+		private final Label addressHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESS));
+		private final Label addressesHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESSES));
+		private final Label contactInformationHeader = new Label(I18nProperties.getString(Strings.headingContactInformation));
+		private Label personInformationHeadingLabel;
+		private TextField firstNameField;
+		private TextField lastNameField;
+		private TextField otherNameField;
+		private Disease disease;
+		private CaseOrigin caseOrigin;
+		private String diseaseDetails;
+		private ComboBox causeOfDeathField;
+		private ComboBox causeOfDeathDiseaseField;
+		private TextField causeOfDeathDetailsField;
+		private ComboBox birthDateDay;
+		private ComboBox cbPlaceOfBirthFacility;
+		private PersonContext personContext;
+		private boolean isPseudonymized;
+		private LocationEditForm addressForm;
+		private PresentConditionChangeListener presentConditionChangeListener;
 	//@formatter:on
 	public PersonEditForm(PersonContext personContext, Disease disease, String diseaseDetails, ViewMode viewMode, boolean isPseudonymized, CaseOrigin caseOrigin) {
 		super(
@@ -248,6 +249,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		getContent().addComponent(contactInformationHeader, CONTACT_INFORMATION_HEADER);
 		addFields();
 	}
+	
 	@Override
 	protected void addFields() {
 
@@ -339,6 +341,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		addressForm.setOnlyUnknownForInfluenza(disease);
 		addressForm.setOnlyUnknownForYellowFever(disease);
 		addressForm.setOnlyUnknownForAHF(disease);
+		addressForm.setOnlyUnknownForMeasles(disease);
+
+
 		addressForm.setCaption(null);
 		addField(PersonDto.ADDRESSES, LocationsField.class).setCaption(null);
 		PersonContactDetailsField personContactDetailsField = addField(PersonDto.PERSON_CONTACT_DETAILS, PersonContactDetailsField.class);
@@ -355,20 +360,26 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			occupationTypeDetailsField.setVisible(occupationType != null && occupationType.matchPropertyValue(OccupationType.HAS_DETAILS, true));
 		});
 
-		addFields(PersonDto.ARMED_FORCES_RELATION_TYPE, PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS);
-		//ComboBox occu = addField(PersonDto.OCCUPATION_TYPE, ComboBox.class);
-		//TextField occuDetails = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
-		//occuDetails.setCaption("Please Specify Occupation");
+		// addFields(PersonDto.ARMED_FORCES_RELATION_TYPE, PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS);
+		// ComboBox occupationTypeField = addField(PersonDto.OCCUPATION_TYPE, ComboBox.class);
+		// TextField occupationTypeDetailsField = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
+		// occupationTypeDetailsField.setVisible(false);
+		// FieldHelper
+		// 	.updateItems(occupationTypeField, FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.OCCUPATION_TYPE, null));
+		// occupationTypeField.addValueChangeListener(e -> {
+		// 	OccupationType occupationType = (OccupationType) e.getProperty().getValue();
+		// 	occupationTypeDetailsField.setVisible(occupationType != null && occupationType.matchPropertyValue(OccupationType.HAS_DETAILS, true));
+		// });
+
 		//addFields(PersonDto.ARMED_FORCES_RELATION_TYPE);
 //		ComboBox occu = addField(PersonDto.OCCUPATION_TYPE, ComboBox.class);
 //		TextField occuDetails = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
 //		occuDetails.setCaption("Please Specify Occupation");
 //		ComboBox armedForces = addField(PersonDto.ARMED_FORCES_RELATION_TYPE, ComboBox.class);
-		//ComboBox educationType = addField(PersonDto.EDUCATION_TYPE, ComboBox.class);
-		//educationType.removeItem(EducationType.NURSERY);
-		//TextField educationDetails = addField(PersonDto.EDUCATION_DETAILS, TextField.class);
-		//occu.setVisible(false);
-//		occu.setVisible(false);
+		ComboBox educationType = addField(PersonDto.EDUCATION_TYPE, ComboBox.class);
+		ComboBox educationType = addField(PersonDto.EDUCATION_TYPE, ComboBox.class);
+		educationType.removeItem(EducationType.NURSERY);
+		TextField educationDetails = addField(PersonDto.EDUCATION_DETAILS, TextField.class);
 
 		List<CountryReferenceDto> countries = FacadeProvider.getCountryFacade().getAllActiveAsReference();
 		addInfrastructureField(PersonDto.BIRTH_COUNTRY).addItems(countries);
@@ -383,7 +394,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		Label externalTokenWarningLabel = new Label(I18nProperties.getString(Strings.messagePersonExternalTokenWarning));
 		externalTokenWarningLabel.addStyleNames(VSPACE_3, LABEL_WHITE_SPACE_NORMAL);
 		getContent().addComponent(externalTokenWarningLabel, EXTERNAL_TOKEN_WARNING_LOC);
-		addField(PersonDto.INTERNAL_TOKEN);
+		 addField(PersonDto.INTERNAL_TOKEN);
 
 		addField(PersonDto.HAS_COVID_APP).addStyleName(CssStyles.FORCE_CAPTION_CHECKBOX);
 		addField(PersonDto.COVID_CODE_DELIVERED).addStyleName(CssStyles.FORCE_CAPTION_CHECKBOX);
@@ -603,6 +614,15 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			setVisible(false, PersonDto.ADDITIONAL_DETAILS);
 		}
 
+		if (disease == Disease.MEASLES) {
+			setVisible(false, PersonDto.INTERNAL_TOKEN);
+			setVisible(false, PersonDto.EXTERNAL_TOKEN);
+			generalCommentLabel.setVisible(false);
+			setVisible(false, PersonDto.ADDITIONAL_DETAILS);
+			setVisible(false, PersonDto.MOTHERS_MAIDEN_NAME);
+			setVisible(false, PersonDto.NICKNAME);
+		}
+
 		if(disease == Disease.AFP){
 			TextArea additionalPlacesStayed = addField(PersonDto.ADDITIONAL_PLACES_STAYED, TextArea.class, new ResizableTextAreaWrapper<>(false));
 			setVisible(false, PersonDto.OCCUPATION_TYPE,PersonDto.EDUCATION_TYPE, PersonDto.ADDITIONAL_DETAILS, PersonDto.ADDRESSES);
@@ -612,6 +632,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			addressesHeader.setVisible(false);
 			contactInformationHeader.setVisible(false);
 			homeaddrecreational.setVisible(true);
+//			occuDetails.setVisible(false);
+
 		}
 
 		if (disease == Disease.AHF) {

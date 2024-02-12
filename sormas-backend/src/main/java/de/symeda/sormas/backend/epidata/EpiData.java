@@ -62,6 +62,7 @@ public class EpiData extends AbstractDomainObject {
 	private List<ActivityAsCase> activitiesAsCase = new ArrayList<>();
 	@NotExposedToApi
 	private Date changeDateOfEmbeddedLists;
+	private YesNoUnknown childComeInContactWithSymptoms;
 
 	@Enumerated(EnumType.STRING)
 	public YesNo getExposureDetailsKnown() {
@@ -173,5 +174,13 @@ public class EpiData extends AbstractDomainObject {
 
 	public void setContactWithSourceCaseKnown(YesNo contactWithSourceCaseKnown) {
 		this.contactWithSourceCaseKnown = contactWithSourceCaseKnown;
+	}
+
+	public YesNoUnknown getChildComeInContactWithSymptoms() {
+		return childComeInContactWithSymptoms;
+	}
+
+	public void setChildComeInContactWithSymptoms(YesNoUnknown childComeInContactWithSymptoms) {
+		this.childComeInContactWithSymptoms = childComeInContactWithSymptoms;
 	}
 }

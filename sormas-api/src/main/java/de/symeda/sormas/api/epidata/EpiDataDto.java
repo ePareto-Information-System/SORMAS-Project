@@ -52,6 +52,8 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String AREA_INFECTED_ANIMALS = "areaInfectedAnimals";
 	public static final String HIGH_TRANSMISSION_RISK_AREA = "highTransmissionRiskArea";
 	public static final String LARGE_OUTBREAKS_AREA = "largeOutbreaksArea";
+	public static final String CHILD_COME_IN_CONTACT_WITH_SYMPTOMS = "childComeInContactWithSymptoms";
+
 
 	@Enumerated(EnumType.STRING)
 	private Disease disease;
@@ -82,6 +84,8 @@ public class EpiDataDto extends PseudonymizableDto {
 	public YesNo getExposureDetailsKnown() {
 		return exposureDetailsKnown;
 	}
+
+	private YesNoUnknown childComeInContactWithSymptoms;
 
 	public void setExposureDetailsKnown(YesNo exposureDetailsKnown) {
 		this.exposureDetailsKnown = exposureDetailsKnown;
@@ -201,5 +205,13 @@ public class EpiDataDto extends PseudonymizableDto {
 		clone.getExposures().addAll(exposureDtos);
 
 		return clone;
+	}
+
+	public YesNoUnknown getChildComeInContactWithSymptoms() {
+		return childComeInContactWithSymptoms;
+	}
+
+	public void setChildComeInContactWithSymptoms(YesNoUnknown childComeInContactWithSymptoms) {
+		this.childComeInContactWithSymptoms = childComeInContactWithSymptoms;
 	}
 }

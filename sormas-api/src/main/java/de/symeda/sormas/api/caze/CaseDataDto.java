@@ -97,6 +97,8 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String EPIDEMIOLOGICAL_CONFIRMATION = "epidemiologicalConfirmation";
 	public static final String LABORATORY_DIAGNOSTIC_CONFIRMATION = "laboratoryDiagnosticConfirmation";
 	public static final String INVESTIGATION_STATUS = "investigationStatus";
+	public static final String VACCINATION_ROUTINE= "vaccinationRoutine";
+	public static final String VACCINATION_ROUTINE_DATE = "vaccinationRoutineDate";
 	public static final String PERSON = "person";
 	public static final String DISEASE = "disease";
 	public static final String DISEASE_VARIANT = "diseaseVariant";
@@ -375,6 +377,9 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		Disease.OTHER })
 	@Outbreaks
 	private VaccinationStatus vaccinationStatus;
+
+	private VaccinationRoutine vaccinationRoutine;
+
 	@Diseases({
 		Disease.MONKEYPOX })
 	private YesNoUnknown smallpoxVaccinationScar;
@@ -616,6 +621,8 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	@Outbreaks
 	private CardOrHistory vaccinationType;
 	private Date vaccinationDate;
+	private Date vaccinationRoutineDate;
+
 
 	private NewExisting existingCase;
 
@@ -1900,6 +1907,21 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		this.caseTransmissionClassification = caseTransmissionClassification;
 	}
 
+	public VaccinationRoutine getVaccinationRoutine() {
+		return vaccinationRoutine;
+	}
+
+	public void setVaccinationRoutine(VaccinationRoutine vaccinationRoutine) {
+		this.vaccinationRoutine = vaccinationRoutine;
+	}
+
+	public Date getVaccinationRoutineDate() {
+		return vaccinationRoutineDate;
+	}
+
+	public void setVaccinationRoutineDate(Date vaccinationRoutineDate) {
+		this.vaccinationRoutineDate = vaccinationRoutineDate;
+	}
 	public String getHomeAddressRecreational() {
 		return homeAddressRecreational;
 	}

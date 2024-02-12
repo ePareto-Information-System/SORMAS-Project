@@ -647,11 +647,68 @@ public class SampleController {
 		showChangePathogenTestResultWindow(editComponent, Arrays.asList(sampleUuid), newResult, callback);
 	}
 
+
+	//show take new test for rubella
+	public void showTakeNewTestForRubellaWindow(
+		CommitDiscardWrapperComponent<? extends AbstractSampleForm> editComponent,
+		SampleDto sampleDto,
+		Consumer<Boolean> callback) {
+
+		VerticalLayout layout = new VerticalLayout();
+		layout.setMargin(true);
+
+		ConfirmationComponent confirmationComponent = VaadinUiUtil.buildYesNoConfirmationComponent();
+
+		Label description = new Label(I18nProperties.getString(Strings.messageTakeNewTestForRubella));
+		description.setWidth(100, Unit.PERCENTAGE);
+		layout.addComponent(description);
+		layout.addComponent(confirmationComponent);
+		layout.setComponentAlignment(confirmationComponent, Alignment.BOTTOM_RIGHT);
+		layout.setSizeUndefined();
+		layout.setSpacing(true);
+
+		Window popupWindow = VaadinUiUtil.showPopupWindow(layout);
+		popupWindow.setSizeUndefined();
+		popupWindow.setCaption(I18nProperties.getString(Strings.headingTakeNewTestForRubella));
+		confirmationComponent.getConfirmButton().addClickListener(new ClickListener() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				if (editComponent != null && !SampleCreateForm.class.equals(editComponent.getWrappedComponent().getClass())) {
+					editComponent.commit();
+				}
+				final CommitDiscardWrapperComponent<PathogenTestForm> editView = new PathogenTestController().getPathogenTestCreateComponentForRubella(sampleDto, 2, null, false);
+				VaadinUiUtil.showModalPopupWindow(editView, I18nProperties.getString(Strings.headingCreatePathogenTestResult));
+
+				popupWindow.close();
+				SormasUI.refreshView();
+				if (callback != null) {
+					callback.accept(true);
+				}
+			}
+		});
+		confirmationComponent.getCancelButton().addClickListener(new ClickListener() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				popupWindow.close();
+				if (callback != null) {
+					callback.accept(false);
+				}
+			}
+		});
+	}
+
 	public void showChangePathogenTestResultWindow(
 		// CommitDiscardWrapperComponent<SampleEditForm> editComponent,
 		CommitDiscardWrapperComponent<? extends AbstractSampleForm> editComponent,
 		List<String> samplesUuids,
 		PathogenTestResultType newResult,
+		PathogenTestDto pathogenTest,
 		Consumer<Boolean> callback) {
 
 		if (samplesUuids == null || samplesUuids.size() == 0)
@@ -695,6 +752,10 @@ public class SampleController {
 				}
 
 				popupWindow.close();
+				if (pathogenTest.getTestedDisease() == Disease.MEASLES) {
+					showTakeNewTestForRubellaWindow(editComponent, sample, callback);
+				}
+				showTakeNewTestForRubellaWindow(editComponent, sample, callback);
 				SormasUI.refreshView();
 				if (callback != null) {
 					callback.accept(true);
@@ -709,6 +770,10 @@ public class SampleController {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				popupWindow.close();
+				if (pathogenTest.getTestedDisease() == Disease.MEASLES) {
+					SampleDto sample = FacadeProvider.getSampleFacade().getSampleByUuid(sampleUuid);
+					showTakeNewTestForRubellaWindow(editComponent, sample, callback);
+				}
 				if (callback != null) {
 					callback.accept(false);
 				}

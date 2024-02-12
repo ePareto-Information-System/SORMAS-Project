@@ -215,6 +215,35 @@ public class PathogenTestController {
 		});
 	}
 
+	public CommitDiscardWrapperComponent<PathogenTestForm> getPathogenTestCreateComponentForRubella(
+			SampleDto sampleDto,
+			int caseSampleCount,
+			Consumer<PathogenTestDto> onSavedPathogenTest,
+			boolean suppressNavigateToCase) {
+		PathogenTestForm createForm = new PathogenTestForm(sampleDto, true, caseSampleCount, false, true, Disease.MEASLES); // Valid because jurisdiction doesn't matter for entities that are about to be created
+
+		createForm.setValue(PathogenTestDto.build(sampleDto, UserProvider.getCurrent().getUser()), Disease.CONGENITAL_RUBELLA);
+		final CommitDiscardWrapperComponent<PathogenTestForm> editView = new CommitDiscardWrapperComponent<>(
+				createForm,
+				UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_CREATE),
+				createForm.getFieldGroup());
+
+
+		editView.addCommitListener(() -> {
+			if (!createForm.getFieldGroup().isModified()) {
+				PathogenTestDto pathogenTest = createForm.getValue();
+				savePathogenTest(pathogenTest, suppressNavigateToCase);
+
+				if (onSavedPathogenTest != null) {
+					onSavedPathogenTest.accept(pathogenTest);
+				}
+
+				SormasUI.refreshView();
+			}
+		});
+		return editView;
+	}
+
 
 	public PathogenTestDto savePathogenTest(
 			PathogenTestDto dto,
@@ -1067,6 +1096,8 @@ public class PathogenTestController {
 		});
 		return savedTestsWithSameVariant.get() <= 1; // one occurrence is the saved test's one
 	}
+
+
 
 
 

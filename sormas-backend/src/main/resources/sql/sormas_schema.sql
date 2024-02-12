@@ -12959,7 +12959,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (542, 'Added columns
 
 -- Version 543
 ALTER TABLE samples ADD COLUMN disease varchar(512) NULL;
-ALTER TABLE samples ADD COLUMN yellowfeversampletype varchar(512) NULL;
+ALTER TABLE samples ADD COLUMN yellowfeversampletype varchar(529) NULL;
 ALTER TABLE samples ADD COLUMN sampletests varchar(255) NULL;
 ALTER TABLE samples ADD COLUMN diseasesampletests varchar(255) NULL;
 ALTER TABLE samples ADD COLUMN sampledispatchmode varchar(255) NULL;

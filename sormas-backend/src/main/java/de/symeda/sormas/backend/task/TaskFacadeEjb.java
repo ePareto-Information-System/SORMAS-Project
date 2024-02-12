@@ -534,7 +534,7 @@ public class TaskFacadeEjb implements TaskFacade {
 					joins.getContact().get(Contact.UUID),
 					joins.getContactPerson().get(Person.FIRST_NAME),
 					joins.getContactPerson().get(Person.LAST_NAME),
-					joins.getContactPerson().get(Person.OTHER_NAME),
+					joins.getCasePerson().get(Person.OTHER_NAME),
 					joins.getContactCasePerson().get(Person.FIRST_NAME),
 					joins.getContactCasePerson().get(Person.LAST_NAME),
 					joins.getContactCasePerson().get(Person.OTHER_NAME),

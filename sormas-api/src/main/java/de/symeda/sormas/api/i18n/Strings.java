@@ -436,6 +436,7 @@ public interface Strings {
 	String headingDiseaseStatusMap = "headingDiseaseStatusMap";
 	String headingChangeCaseDisease = "headingChangeCaseDisease";
 	String headingChangePathogenTestResult = "headingChangePathogenTestResult";
+	String headingTakeNewTestForRubella = "headingTakeNewTestForRubella";
 	String headingClinicalMeasurements = "headingClinicalMeasurements";
 	String headingClinicalHistory = "headingClinicalHistory";
 	String headingClinicalVisitsDeleted = "headingClinicalVisitsDeleted";
@@ -1455,7 +1456,7 @@ public interface Strings {
 	String messageWrongFileType = "messageWrongFileType";
 	String messageReceiveSampleBeforeTestResult = "messageReceiveSampleBeforeTestResult";
 	String messageWrongTemplateFileType = "messageWrongTemplateFileType";
-
+	String messageTakeNewTestForRubella = "messageTakeNewTestForRubella";
 	String min = "min";
 	String mmhg = "mmhg";
 	String month = "month";

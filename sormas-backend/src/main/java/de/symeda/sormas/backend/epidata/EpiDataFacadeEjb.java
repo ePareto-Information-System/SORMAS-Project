@@ -107,6 +107,8 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		}
 		target.getActivitiesAsCase().clear();
 		target.getActivitiesAsCase().addAll(activitiesAsCase);
+		target.setChildComeInContactWithSymptoms(source.getChildComeInContactWithSymptoms());
+
 
 		return target;
 	}
@@ -252,6 +254,7 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 			activityAsCaseDtos.add(activityAsCaseDto);
 		}
 		target.setActivitiesAsCase(activityAsCaseDtos);
+		target.setChildComeInContactWithSymptoms(source.getChildComeInContactWithSymptoms());
 
 		return target;
 	}

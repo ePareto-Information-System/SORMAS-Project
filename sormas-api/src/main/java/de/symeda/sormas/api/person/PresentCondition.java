@@ -24,9 +24,11 @@ import de.symeda.sormas.api.utils.Diseases;
 public enum PresentCondition {
 
 	ALIVE,
+	@Diseases(value = {
+			Disease.MEASLES }, hide = true)
 	DEAD,
 	@Diseases(value = {
-		Disease.CORONAVIRUS }, hide = true)
+		Disease.CORONAVIRUS, Disease.MEASLES }, hide = true)
 	BURIED,
 	UNKNOWN;
 

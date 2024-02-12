@@ -50,6 +50,8 @@ public class Hospitalization extends AbstractDomainObject {
 	public static final String TABLE_NAME = "hospitalization";
 
 	public static final String ADMITTED_TO_HEALTH_FACILITY = "admittedToHealthFacility";
+	private YesNoUnknown seenAtAHealthFacility;
+	private YesNoUnknown wasPatientAdmitted;
 	public static final String ADMISSION_DATE = "admissionDate";
 	public static final String DISCHARGE_DATE = "dischargeDate";
 	public static final String ISOLATED = "isolated";
@@ -164,6 +166,15 @@ public class Hospitalization extends AbstractDomainObject {
 	@Enumerated(EnumType.STRING)
 	public YesNo getAdmittedToHealthFacility() {
 		return admittedToHealthFacility;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getSeenAtAHealthFacility() {
+		return seenAtAHealthFacility;
+	}
+
+	public void setSeenAtAHealthFacility(YesNoUnknown seenAtAHealthFacility) {
+		this.seenAtAHealthFacility = seenAtAHealthFacility;
 	}
 
 	public void setAdmittedToHealthFacility(YesNo admittedToHealthFacility) {
@@ -395,4 +406,15 @@ public class Hospitalization extends AbstractDomainObject {
 	public void setTerminationDateHospitalStay(Date terminationDateHospitalStay) {
 		this.terminationDateHospitalStay = terminationDateHospitalStay;
 	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getWasPatientAdmitted() {
+		return wasPatientAdmitted;
+	}
+
+	public void setWasPatientAdmitted(YesNoUnknown wasPatientAdmitted) {
+		this.wasPatientAdmitted = wasPatientAdmitted;
+	}
+
+
 }

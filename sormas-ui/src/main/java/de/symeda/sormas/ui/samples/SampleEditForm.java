@@ -115,6 +115,8 @@ public class SampleEditForm extends AbstractSampleForm {
 
 			//}
 
+
+			fillPathogenTestResult();
 			UserReferenceDto reportingUser = getValue().getReportingUser();
 //			if (!(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
 //				|| (reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid())))) {

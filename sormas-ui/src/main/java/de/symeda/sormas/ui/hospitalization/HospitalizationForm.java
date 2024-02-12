@@ -102,13 +102,13 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(HOSPITALIZATION_HEADING_LOC) +
-					fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
+					// fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
+					fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY, HospitalizationDto.WAS_PATIENT_ADMITTED) +
 					fluidRowLocs(HEALTH_FACILITY,HospitalizationDto.HEALTH_FACILITY_RECORD_NUMBER,"") +
 					fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
 					fluidRowLocs(6, OUTCOME, 3, OTHERCASEOUTCOMEDETAIL) +
 					fluidRowLocs(3, SEQUELAE, 4, SEQUELAE_DETAILS) +
 					fluidRowLocs(4, HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION) +
-					fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW) +
 					fluidRowLocs(4,HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE, 4,HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY) +
 					fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
 					fluidRowLocs(6,HospitalizationDto.NOTIFY_DISTRICT_DATE) +
@@ -208,6 +208,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		final OptionGroup patienConditionOnAdmission = addField(HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION, OptionGroup.class);
 		admittedToHealthFacilityField.setVisible(false);
 
+		final NullableOptionGroup seenAtAHealthFacility = addField(HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY, NullableOptionGroup.class);
+		seenAtAHealthFacility.setVisible(false);
+
+		final NullableOptionGroup wasPatientAdmitted = addField(HospitalizationDto.WAS_PATIENT_ADMITTED, NullableOptionGroup.class);
+		wasPatientAdmitted.setVisible(false);
+
 		final NullableOptionGroup admittedToHealthFacilityFieldNew = addField(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, NullableOptionGroup.class);
 		admittedToHealthFacilityFieldNew.setVisible(false);
 		admittedToHealthFacilityFieldNew.setCaption("Was the Patient Admitted at the Facility (in-patient)?");
@@ -244,6 +250,13 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		CssStyles.style(hospitalizedPreviouslyField, CssStyles.ERROR_COLOR_PRIMARY);
 		PreviousHospitalizationsField previousHospitalizationsField =
 				addField(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS, PreviousHospitalizationsField.class);
+
+		if (caze.getDisease() == Disease.MEASLES) {
+			setVisible(false, HospitalizationDto.ISOLATED);
+			setVisible(true, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY);
+			setVisible(true, HospitalizationDto.WAS_PATIENT_ADMITTED);
+			setVisible(false, HospitalizationDto.INTENSIVE_CARE_UNIT);
+		}
 
 		if(caze.getDisease() == Disease.AFP){
 

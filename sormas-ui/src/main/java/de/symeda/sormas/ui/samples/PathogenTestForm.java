@@ -96,6 +96,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	//@formatter:on
 
 	private SampleDto sample;
+	private Disease selectedDisease;
 	private AbstractSampleForm sampleForm;
 	private final int caseSampleCount;
 	private final boolean create;
@@ -128,6 +129,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			hideValidationUntilNextCommit();
 		}
 	}
+	private ComboBox diseaseField;
 
 	public PathogenTestForm(AbstractSampleForm sampleForm, boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction) {
 		this(create, caseSampleCount, isPseudonymized, inJurisdiction);
@@ -148,6 +150,17 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		}
 	}
 
+	public PathogenTestForm(SampleDto sample, boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction, Disease disease) {
+
+		this(create, caseSampleCount, isPseudonymized, inJurisdiction, disease);
+		this.sample = sample;
+		this.selectedDisease = disease;
+		addFields();
+		if (create) {
+			hideValidationUntilNextCommit();
+		}
+	}
+
 	public PathogenTestForm(boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction) {
 		super(
 			PathogenTestDto.class,
@@ -160,6 +173,22 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 		this.caseSampleCount = caseSampleCount;
 		this.create = create;
+		setWidth(900, Unit.PIXELS);
+	}
+
+	public PathogenTestForm(boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction, Disease disease) {
+		super(
+				PathogenTestDto.class,
+				PathogenTestDto.I18N_PREFIX,
+				false,
+				FieldVisibilityCheckers.withDisease(null).andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
+				UiFieldAccessCheckers.forDataAccessLevel(
+						UserProvider.getCurrent().getPseudonymizableDataAccessLevel(create || inJurisdiction), // Jurisdiction doesn't matter for creation forms
+						!create && isPseudonymized)); // Pseudonymization doesn't matter for creation forms
+
+		this.caseSampleCount = caseSampleCount;
+		this.create = create;
+		this.selectedDisease = disease;
 		setWidth(900, Unit.PIXELS);
 	}
 
@@ -222,7 +251,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		labDetails.setVisible(false);
 		typingIdField = addField(PathogenTestDto.TYPING_ID, TextField.class);
 		typingIdField.setVisible(false);
-		ComboBox diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
+		diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
 		ComboBox diseaseVariantField = addField(PathogenTestDto.TESTED_DISEASE_VARIANT, ComboBox.class);
 		diseaseVariantField.setNullSelectionAllowed(true);
 		addField(PathogenTestDto.TESTED_DISEASE_DETAILS, TextField.class);
@@ -339,7 +368,15 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 					Arrays.asList(PathogenTestType.values()),
 					FieldVisibilityCheckers.withDisease(disease),
 					PathogenTestType.class);
+
+			if (disease == Disease.MEASLES) {
+				List<PathogenTestType> measelesPathogenTests = PathogenTestType.getMeaslesTestTypes();
+				Arrays.stream(PathogenTestType.values())
+						.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
+						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
+			}
 		});
+
 
 		diseaseVariantField.addValueChangeListener(e -> {
 			DiseaseVariant diseaseVariant = (DiseaseVariant) e.getProperty().getValue();
@@ -443,5 +480,13 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		pcrTestSpecification.setValue(newFieldValue.getPcrTestSpecification());
 		testTypeTextField.setValue(newFieldValue.getTestTypeText());
 		typingIdField.setValue(newFieldValue.getTypingId());
+	}
+
+	public void setValue(PathogenTestDto newFieldValue, Disease disease) throws ReadOnlyException, Converter.ConversionException {
+		super.setValue(newFieldValue);
+		pcrTestSpecification.setValue(newFieldValue.getPcrTestSpecification());
+		testTypeTextField.setValue(newFieldValue.getTestTypeText());
+		typingIdField.setValue(newFieldValue.getTypingId());
+		diseaseField.setValue(disease);
 	}
 }
