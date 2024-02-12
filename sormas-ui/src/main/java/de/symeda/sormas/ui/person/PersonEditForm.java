@@ -358,17 +358,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		occuDetails.setCaption("Please Specify Occupation");
 		ComboBox educationType = addField(PersonDto.EDUCATION_TYPE, ComboBox.class);
 		educationType.removeItem(EducationType.NURSERY);
-		/*ComboBox occupationTypeField = addField(PersonDto.OCCUPATION_TYPE, ComboBox.class);
-		TextField occupationTypeDetailsField = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
-		occupationTypeDetailsField.setVisible(false);
-		FieldHelper
-				.updateItems(occupationTypeField, FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.OCCUPATION_TYPE, null));
-		occupationTypeField.addValueChangeListener(e -> {
-			OccupationType occupationType = (OccupationType) e.getProperty().getValue();
-			occupationTypeDetailsField.setVisible(occupationType != null && occupationType.matchPropertyValue(OccupationType.HAS_DETAILS, true));
-		});*/
 
-		//TextField educationDetails = addField(PersonDto.EDUCATION_DETAILS, TextField.class);
 
 		List<CountryReferenceDto> countries = FacadeProvider.getCountryFacade().getAllActiveAsReference();
 		addInfrastructureField(PersonDto.BIRTH_COUNTRY).addItems(countries);
@@ -397,6 +387,13 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			otherNote.setVisible(true);
 			otherNote.setCaption("Other Notes and Observations");
 		}
+
+		if (disease == Disease.AFP) {
+			setVisible(false,PersonDto.BIRTH_COUNTRY, PersonDto.NAMES_OF_GUARDIANS, PersonDto.BIRTH_NAME);
+			otherNote.setVisible(true);
+			otherNote.setCaption("Other Notes and Observations");
+		}
+
 	}
 	@Override
 	public void setValue(PersonDto newFieldValue) {

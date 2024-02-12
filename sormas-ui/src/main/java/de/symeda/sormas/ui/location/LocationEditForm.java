@@ -142,6 +142,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private TextField contactPersonPhone;
 	private TextField contactPersonEmail;
 	private TextField additionalInformationField;
+	private TextField  postalCodeField;
 	private boolean districtRequiredOnDefaultCountry;
 	private boolean skipCountryValueChange;
 	private boolean skipFacilityTypeUpdate;
@@ -240,7 +241,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		additionalInformationField = addField(LocationDto.ADDITIONAL_INFORMATION, TextField.class);
 		addField(LocationDto.DETAILS, TextField.class);
 		TextField cityField = addField(LocationDto.CITY, TextField.class);
-		TextField postalCodeField = addField(LocationDto.POSTAL_CODE, TextField.class);
+		postalCodeField = addField(LocationDto.POSTAL_CODE, TextField.class);
 
 		areaType = addField(LocationDto.AREA_TYPE, ComboBox.class);
 		areaType.removeItem(AreaType.UNKNOWN);
@@ -274,6 +275,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		ComboBox region = addInfrastructureField(LocationDto.REGION);
 		ComboBox district = addInfrastructureField(LocationDto.DISTRICT);
 		ComboBox community = addInfrastructureField(LocationDto.COMMUNITY);
+		community.setCaption("Sub-District");
 
 		continent.setVisible(false);
 		subcontinent.setVisible(false);
@@ -921,12 +923,14 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		newDisease = incomingDisease;
 		if (newDisease != null && newDisease.equals(Disease.AFP)) {
 			additionalInformationField.setCaption("Village");
-
 			setVisible(false, LocationDto.ADDRESS_TYPE,
 					LocationDto.ADDRESS_TYPE_DETAILS,
-					LocationDto.CITY,
+					LocationDto.HOUSE_NUMBER,
 					LocationDto.STREET,
+					LocationDto.POSTAL_CODE,
 					LocationDto.CONTACT_PERSON_FIRST_NAME);
+			setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE);
+
 		}
 	}
 
