@@ -12796,5 +12796,19 @@ INSERT INTO schema_version (version_number, comment) VALUES (551, 'Added notifie
 
 ALTER TABLE hospitalization ADD COLUMN hospitalrecordnumber varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (552, 'Added hospitalRecordNumber to hospitalization');
+
+ALTER TABLE symptoms ADD COLUMN feveronsetparalysis varchar(255);
+ALTER TABLE symptoms ADD COLUMN progressiveparalysis varchar(255);
+ALTER TABLE symptoms ADD COLUMN dateonsetparalysis DATE;
+ALTER TABLE symptoms ADD COLUMN progressiveflaccidacute varchar(255);
+ALTER TABLE symptoms ADD COLUMN assymetric varchar(255);
+ALTER TABLE symptoms ADD COLUMN siteofparalysis varchar(255);
+ALTER TABLE symptoms ADD COLUMN paralysedlimbsensitivetopain varchar(255);
+ALTER TABLE symptoms ADD COLUMN injectionsitebeforeonsetparalysis varchar(255);
+ALTER TABLE symptoms ADD COLUMN rightinjectionsite varchar(255);
+ALTER TABLE symptoms ADD COLUMN leftinjectionsite varchar(255);
+ALTER TABLE symptoms ADD COLUMN trueafp varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (553, 'Added 11 columns to symptoms-AFP');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``

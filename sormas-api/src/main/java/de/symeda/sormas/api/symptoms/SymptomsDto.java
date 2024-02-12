@@ -30,20 +30,7 @@ import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Validations;
-import de.symeda.sormas.api.utils.Complication;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DependantOn;
-import de.symeda.sormas.api.utils.DependingOnFeatureType;
-import de.symeda.sormas.api.utils.Diseases;
-import de.symeda.sormas.api.utils.FieldConstraints;
-import de.symeda.sormas.api.utils.HideForCountries;
-import de.symeda.sormas.api.utils.HideForCountriesExcept;
-import de.symeda.sormas.api.utils.Order;
-import de.symeda.sormas.api.utils.Outbreaks;
-import de.symeda.sormas.api.utils.SensitiveData;
-import de.symeda.sormas.api.utils.SymptomGroup;
-import de.symeda.sormas.api.utils.SymptomGrouping;
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
 @DependingOnFeatureType(featureType = {
@@ -248,6 +235,17 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String SHOCK = "shock";
 	public static final String OUTCOME = "outcome";
 	public static final String PROVISONAL_DIAGNOSIS = "provisionalDiagnosis";
+	public static final String FEVER_ONSET_PARALYSIS = "feverOnsetParalysis";
+	public static final String PROGRESSIVE_PARALYSIS = "progressiveParalysis";
+	public static final String DATE_ONSET_PARALYSIS = "dateOnsetParalysis";
+	public static final String PROGRESSIVE_FLACID_ACUTE = "progressiveFlaccidAcute";
+	public static final String ASSYMETRIC = "assymetric";
+	public static final String SITE_OF_PARALYSIS = "siteOfParalysis";
+	public static final String PARALYSED_LIMB_SENSITIVE_TO_PAIN = "paralysedLimbSensitiveToPain";
+	public static final String INJECTION_SITE_BEFORE_ONSET_PARALYSIS = "injectionSiteBeforeOnsetParalysis";
+	public static final String RIGHT_INJECTION_SITE = "rightInjectionSite";
+	public static final String LEFT_INJECTION_SITE = "leftInjectionSite";
+	public static final String TRUEAFP = "trueAfp";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -2343,6 +2341,18 @@ public class SymptomsDto extends PseudonymizableDto {
 	private CaseOutcome outcome;
 	private String provisionalDiagnosis;
 
+	private YesNoUnknown feverOnsetParalysis;
+	private YesNoUnknown progressiveParalysis;
+	private Date dateOnsetParalysis;
+	private YesNoUnknown progressiveFlaccidAcute;
+	private YesNoUnknown assymetric;
+	private InjectionSite siteOfParalysis;
+	private YesNo paralysedLimbSensitiveToPain;
+	private YesNo injectionSiteBeforeOnsetParalysis;
+	private InjectionSite rightInjectionSite;
+	private InjectionSite leftInjectionSite;
+	private YesNo trueAfp;
+
 	@Order(0)
 	public Float getTemperature() {
 		return temperature;
@@ -3133,38 +3143,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	public Integer getWeight() {
 		return weight;
 	}
-	@Order(331)
-	public CaseOutcome getOutcome() { return outcome;}
 
-	@Order(332)
-	public SymptomState getMuscleTone() {
-		return muscleTone;
-	}
-
-	@Order(333)
-	public SymptomState getDeepTendonReflex() {
-		return deepTendonReflex;
-	}
-
-	@Order(334)
-	public SymptomState getMuscleVolume() {
-		return muscleVolume;
-	}
-
-	@Order(335)
-	public SymptomState getSensoryLoss() {
-		return sensoryLoss;
-	}
-	@Order(336)
-	public String getProvisionalDiagnosis() {
-		return provisionalDiagnosis;
-	}
-	@Order(337)
-	public Date getDateOfOnset() {
-		return dateOfOnset;
-	}
-	@Order(338)
-	public YesNoUnknown getFeverBodyTempGreater(){return feverBodyTempGreater;}
 	public void setAbdominalPain(SymptomState abdominalPain) {
 		this.abdominalPain = abdominalPain;
 	}
@@ -3630,14 +3609,8 @@ public class SymptomsDto extends PseudonymizableDto {
 	public void setUnexplainedBleeding(SymptomState unexplainedBleeding) {
 		this.unexplainedBleeding = unexplainedBleeding;
 	}
-
 	public void setVomiting(SymptomState vomiting) {
 		this.vomiting = vomiting;
-	}
-
-	@Order(331)
-	public SymptomState getConvulsion() {
-		return convulsion;
 	}
 
 	public void setConvulsion(SymptomState convulsion) {
@@ -3699,7 +3672,10 @@ public class SymptomsDto extends PseudonymizableDto {
 	public void setCongenitalHeartDiseaseDetails(String congenitalHeartDiseaseDetails) {
 		this.congenitalHeartDiseaseDetails = congenitalHeartDiseaseDetails;
 	}
-
+	@Order(331)
+	public SymptomState getConvulsion() {
+		return convulsion;
+	}
 	@Order(332)
 	public SymptomState getHydrophobia() {
 		return hydrophobia;
@@ -3858,6 +3834,61 @@ public class SymptomsDto extends PseudonymizableDto {
 		return coma;
 	}
 
+	@Order(350)
+	public SymptomState getMuscleTone() {
+		return muscleTone;
+	}
+
+	@Order(351)
+	public SymptomState getDeepTendonReflex() {
+		return deepTendonReflex;
+	}
+
+	@Order(352)
+	public SymptomState getMuscleVolume() {
+		return muscleVolume;
+	}
+
+	@Order(353)
+	public SymptomState getSensoryLoss() {
+		return sensoryLoss;
+	}
+	@Order(354)
+	public String getProvisionalDiagnosis() {
+		return provisionalDiagnosis;
+	}
+	@Order(355)
+	public Date getDateOfOnset() {
+		return dateOfOnset;
+	}
+	@Order(356)
+	public YesNoUnknown getFeverBodyTempGreater(){return feverBodyTempGreater;}
+
+	@Order(357)
+	public YesNoUnknown getFeverOnsetParalysis(){return feverOnsetParalysis;}
+	@Order(358)
+	public YesNoUnknown getProgressiveParalysis(){return progressiveParalysis;}
+	@Order(359)
+	public Date getDateOnsetParalysis(){return dateOnsetParalysis;}
+	@Order(360)
+	public YesNoUnknown getProgressiveFlaccidAcute(){return progressiveFlaccidAcute;}
+	@Order(361)
+	public YesNoUnknown getAssymetric(){return  assymetric;}
+	@Order(362)
+	public InjectionSite getSiteOfParalysis(){return siteOfParalysis;}
+	@Order(363)
+	public YesNo getParalysedLimbSensitiveToPain(){return paralysedLimbSensitiveToPain;}
+	@Order(364)
+	public YesNo getInjectionSiteBeforeOnsetParalysis(){return injectionSiteBeforeOnsetParalysis;}
+	@Order(365)
+	public InjectionSite getRightInjectionSite(){return rightInjectionSite;}
+	@Order(366)
+	public InjectionSite getLeftInjectionSite(){return leftInjectionSite;}
+	@Order(367)
+	public YesNo getTrueAfp(){return trueAfp;}
+	@Order(368)
+	public CaseOutcome getOutcome() { return outcome;}
+
 	public void setComa(SymptomState coma) {
 		this.coma = coma;
 	}
@@ -4011,4 +4042,47 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.bloodCirculationProblems = bloodCirculationProblems;
 	}
 
+	public void setFeverOnsetParalysis(YesNoUnknown feverOnsetParalysis) {
+		this.feverOnsetParalysis = feverOnsetParalysis;
+	}
+
+	public void setProgressiveParalysis(YesNoUnknown progressiveParalysis) {
+		this.progressiveParalysis = progressiveParalysis;
+	}
+
+	public void setDateOnsetParalysis(Date dateOnsetParalysis) {
+		this.dateOnsetParalysis = dateOnsetParalysis;
+	}
+
+	public void setProgressiveFlaccidAcute(YesNoUnknown progressiveFlaccidAcute) {
+		this.progressiveFlaccidAcute = progressiveFlaccidAcute;
+	}
+
+	public void setAssymetric(YesNoUnknown assymetric) {
+		this.assymetric = assymetric;
+	}
+
+	public void setSiteOfParalysis(InjectionSite siteOfParalysis) {
+		this.siteOfParalysis = siteOfParalysis;
+	}
+
+	public void setParalysedLimbSensitiveToPain(YesNo paralysedLimbSensitiveToPain) {
+		this.paralysedLimbSensitiveToPain = paralysedLimbSensitiveToPain;
+	}
+
+	public void setInjectionSiteBeforeOnsetParalysis(YesNo injectionSiteBeforeOnsetParalysis) {
+		this.injectionSiteBeforeOnsetParalysis = injectionSiteBeforeOnsetParalysis;
+	}
+
+	public void setRightInjectionSite(InjectionSite rightInjectionSite) {
+		this.rightInjectionSite = rightInjectionSite;
+	}
+
+	public void setLeftInjectionSite(InjectionSite leftInjectionSite) {
+		this.leftInjectionSite = leftInjectionSite;
+	}
+
+	public void setTrueAfp(YesNo trueAfp) {
+		this.trueAfp = trueAfp;
+	}
 }

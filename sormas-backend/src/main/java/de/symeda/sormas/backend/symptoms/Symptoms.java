@@ -34,10 +34,7 @@ import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.TemperatureSource;
-import de.symeda.sormas.api.utils.Diseases;
-import de.symeda.sormas.api.utils.SymptomGroup;
-import de.symeda.sormas.api.utils.SymptomGrouping;
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 
 @Entity
@@ -253,6 +250,18 @@ public class Symptoms extends AbstractDomainObject {
 	private SymptomState otherComplications;
 	private String otherComplicationsText;
 	private String provisionalDiagnosis;
+
+	private YesNoUnknown feverOnsetParalysis;
+	private YesNoUnknown progressiveParalysis;
+	private Date dateOnsetParalysis;
+	private YesNoUnknown progressiveFlaccidAcute;
+	private YesNoUnknown assymetric;
+	private InjectionSite siteOfParalysis;
+	private YesNo paralysedLimbSensitiveToPain;
+	private YesNo injectionSiteBeforeOnsetParalysis;
+	private InjectionSite rightInjectionSite;
+	private InjectionSite leftInjectionSite;
+	private YesNo trueAfp;
 
 	// when adding new fields make sure to extend toHumanString
 
@@ -1921,5 +1930,93 @@ public class Symptoms extends AbstractDomainObject {
 
 	public void setProvisionalDiagnosis(String provisionalDiagnosis) {
 		this.provisionalDiagnosis = provisionalDiagnosis;
+	}
+
+	public YesNoUnknown getFeverOnsetParalysis() {
+		return feverOnsetParalysis;
+	}
+
+	public void setFeverOnsetParalysis(YesNoUnknown feverOnsetParalysis) {
+		this.feverOnsetParalysis = feverOnsetParalysis;
+	}
+
+	public YesNoUnknown getProgressiveParalysis() {
+		return progressiveParalysis;
+	}
+
+	public void setProgressiveParalysis(YesNoUnknown progressiveParalysis) {
+		this.progressiveParalysis = progressiveParalysis;
+	}
+
+	public Date getDateOnsetParalysis() {
+		return dateOnsetParalysis;
+	}
+
+	public void setDateOnsetParalysis(Date dateOnsetParalysis) {
+		this.dateOnsetParalysis = dateOnsetParalysis;
+	}
+
+	public YesNoUnknown getProgressiveFlaccidAcute() {
+		return progressiveFlaccidAcute;
+	}
+
+	public void setProgressiveFlaccidAcute(YesNoUnknown progressiveFlaccidAcute) {
+		this.progressiveFlaccidAcute = progressiveFlaccidAcute;
+	}
+
+	public YesNoUnknown getAssymetric() {
+		return assymetric;
+	}
+
+	public void setAssymetric(YesNoUnknown assymetric) {
+		this.assymetric = assymetric;
+	}
+
+	public InjectionSite getSiteOfParalysis() {
+		return siteOfParalysis;
+	}
+
+	public void setSiteOfParalysis(InjectionSite siteOfParalysis) {
+		this.siteOfParalysis = siteOfParalysis;
+	}
+
+	public YesNo getParalysedLimbSensitiveToPain() {
+		return paralysedLimbSensitiveToPain;
+	}
+
+	public void setParalysedLimbSensitiveToPain(YesNo paralysedLimbSensitiveToPain) {
+		this.paralysedLimbSensitiveToPain = paralysedLimbSensitiveToPain;
+	}
+
+	public YesNo getInjectionSiteBeforeOnsetParalysis() {
+		return injectionSiteBeforeOnsetParalysis;
+	}
+
+	public void setInjectionSiteBeforeOnsetParalysis(YesNo injectionSiteBeforeOnsetParalysis) {
+		this.injectionSiteBeforeOnsetParalysis = injectionSiteBeforeOnsetParalysis;
+	}
+
+	public InjectionSite getRightInjectionSite() {
+		return rightInjectionSite;
+	}
+
+	public void setRightInjectionSite(InjectionSite rightInjectionSite) {
+		this.rightInjectionSite = rightInjectionSite;
+	}
+
+	public InjectionSite getLeftInjectionSite() {
+		return leftInjectionSite;
+	}
+
+	public void setLeftInjectionSite(InjectionSite leftInjectionSite) {
+		this.leftInjectionSite = leftInjectionSite;
+	}
+
+	public YesNo getTrueAfp() {
+		return trueAfp;
+	}
+
+	public void setTrueAfp(YesNo trueAfp) {
+		this.trueAfp = trueAfp;
 	}
 }

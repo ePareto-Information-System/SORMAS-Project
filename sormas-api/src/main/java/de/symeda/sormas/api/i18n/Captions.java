@@ -2495,6 +2495,17 @@ public interface Captions {
 	String Symptoms_vomiting = "Symptoms.vomiting";
 	String Symptoms_weakness = "Symptoms.weakness";
 	String Symptoms_weight = "Symptoms.weight";
+	String Symptoms_feverOnsetParalysis = "Symptoms.feverOnsetParalysis";
+	String Symptoms_progressiveParalysis = "Symptoms.progressiveParalysis";
+	String Symptoms_dateOnsetParalysis = "Symptoms.dateOnsetParalysis";
+	String Symptoms_progressiveFlaccidAcute = "Symptoms.progressiveFlaccidAcute";
+	String Symptoms_assymetric = "Symptoms.assymetric";
+	String Symptoms_siteOfParalysis = "Symptoms.siteOfParalysis";
+	String Symptoms_paralysedLimbSensitiveToPain = "Symptoms.paralysedLimbSensitiveToPain";
+	String Symptoms_injectionSiteBeforeOnsetParalysis = "Symptoms.injectionSiteBeforeOnsetParalysis";
+	String Symptoms_rightInjectionSite = "Symptoms.rightInjectionSite";
+	String Symptoms_leftInjectionSite = "Symptoms.leftInjectionSite";
+	String Symptoms_trueAfp = "Symptoms.trueAfp";
 	String Symptoms_wheezing = "Symptoms.wheezing";
 	String symptomsLesionsLocations = "symptomsLesionsLocations";
 	String symptomsMaxTemperature = "symptomsMaxTemperature";
