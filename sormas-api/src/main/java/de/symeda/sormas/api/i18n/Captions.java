@@ -579,6 +579,7 @@ public interface Captions {
 	String CaseHospitalization_investigatorUnit = "CaseHospitalization.investigatorUnit";
 	String CaseHospitalization_investigatorAddress = "CaseHospitalization.investigatorAddress";
 	String CaseHospitalization_investigatorTel = "CaseHospitalization.investigatorTel";
+	String CaseHospitalization_hospitalRecordNumber = "CaseHospitalization.hospitalRecordNumber";
 
 	String CaseHospitalization_previousHospitalizations = "CaseHospitalization.previousHospitalizations";
 	String caseImportErrorDescription = "caseImportErrorDescription";

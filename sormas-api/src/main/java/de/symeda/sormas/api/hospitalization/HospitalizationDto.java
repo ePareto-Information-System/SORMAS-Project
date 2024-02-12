@@ -69,6 +69,7 @@ public class HospitalizationDto extends EntityDto {
 	public static final String HOSPITALIZATION_REASON = "hospitalizationReason";
 	public static final String OTHER_HOSPITALIZATION_REASON = "otherHospitalizationReason";
 	public static final String DESCRIPTION = "description";
+	public static final String HOSPITAL_RECORD_NUMBER = "hospitalRecordNumber";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -110,6 +111,7 @@ public class HospitalizationDto extends EntityDto {
 	private String investigatorUnit;
 	private String investigatorAddress;
 	private String investigatorTel;
+	private String hospitalRecordNumber;
 
 	public static HospitalizationDto build() {
 		HospitalizationDto hospitalization = new HospitalizationDto();
@@ -364,5 +366,13 @@ public class HospitalizationDto extends EntityDto {
 	}
 	public void setTerminationDateHospitalStay(Date terminationDateHospitalStay) {
 		this.terminationDateHospitalStay = terminationDateHospitalStay;
+	}
+
+	public String getHospitalRecordNumber() {
+		return hospitalRecordNumber;
+	}
+
+	public void setHospitalRecordNumber(String hospitalRecordNumber) {
+		this.hospitalRecordNumber = hospitalRecordNumber;
 	}
 }

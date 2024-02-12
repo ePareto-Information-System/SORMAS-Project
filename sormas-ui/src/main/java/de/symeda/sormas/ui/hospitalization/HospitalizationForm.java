@@ -77,7 +77,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private static final String HTML_LAYOUT =
 			loc(HOSPITALIZATION_HEADING_LOC) +
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
-					fluidRowLocs(HEALTH_FACILITY) +
+					fluidRowLocs(HEALTH_FACILITY, HospitalizationDto.HOSPITAL_RECORD_NUMBER) +
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW) +
 					fluidRowLocs(4,HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE, 4,HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY) +
 			fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
@@ -176,6 +176,9 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		DateField notifyDistrictDate = addField(HospitalizationDto.NOTIFY_DISTRICT_DATE, DateField.class);
 		DateField dateFirstSeen = addField(HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE, DateField.class);
 		DateField terminationDateHospitalStay = addField(HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY, DateField.class);
+		TextField hospitalRecordNumber = addField(HospitalizationDto.HOSPITAL_RECORD_NUMBER, TextField.class);
+
+		hospitalRecordNumber.setVisible(false);
 		dateFirstSeen.setVisible(false);
 		notifyDistrictDate.setVisible(false);
 		intensiveCareUnitStart.setVisible(false);
@@ -198,8 +201,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			addField(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS, PreviousHospitalizationsField.class);
 
 		if(caze.getDisease() == Disease.AFP){
-
-			Label fillThisSectionHeadingLabel = new Label(I18nProperties.getString(Strings.headingFillThis));
+			/*Label fillThisSectionHeadingLabel = new Label(I18nProperties.getString(Strings.headingFillThis));
 			fillThisSectionHeadingLabel.addStyleName(H3);
 			getContent().addComponent(fillThisSectionHeadingLabel, FILL_SECTION_HEADING_LOC);
 
@@ -217,35 +219,16 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			TextField investigatorTitle = addField(HospitalizationDto.INVESTIGATOR_TITLE, TextField.class);
 			TextField investigatorUnit = addField(HospitalizationDto.INVESTIGATOR_UNIT, TextField.class);
 			TextField investigatorAddress = addField(HospitalizationDto.INVESTIGATOR_ADDRESS, TextField.class);
-			TextField investigatorTel = addField(HospitalizationDto.INVESTIGATOR_TEL, TextField.class);
+			TextField investigatorTel = addField(HospitalizationDto.INVESTIGATOR_TEL, TextField.class);*/
 
 			admittedToHealthFacilityFieldNew.setVisible(true);
-			setVisible(false, HospitalizationDto.LEFT_AGAINST_ADVICE, HospitalizationDto.INTENSIVE_CARE_UNIT, HospitalizationDto.ISOLATED, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY);
+			hospitalRecordNumber.setVisible(true);
+
+			setVisible(false, HospitalizationDto.LEFT_AGAINST_ADVICE, HospitalizationDto.INTENSIVE_CARE_UNIT, HospitalizationDto.ISOLATED, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HospitalizationDto.DISCHARGE_DATE);
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
 		}
-
-		/*if(caze.getDisease() != Disease.AHF) {
-			FieldHelper.setEnabledWhen(
-					admittedToHealthFacilityField,
-					Arrays.asList(YesNo.YES, YesNo.NO),
-					Arrays.asList(
-							facilityField,
-							admissionDateField,
-							dischargeDateField,
-							intensiveCareUnit,
-							intensiveCareUnitStart,
-							intensiveCareUnitEnd,
-							isolationDateField,
-							descriptionField,
-							isolatedField,
-							leftAgainstAdviceField,
-							hospitalizationReason,
-							otherHospitalizationReason),
-					false);
-		}*/
-
 
 
 		initializeVisibilitiesAndAllowedVisibilities();

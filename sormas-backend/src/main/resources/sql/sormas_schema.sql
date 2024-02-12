@@ -12793,5 +12793,8 @@ ALTER TABLE cases ADD COLUMN notifiedby varchar(255);
 ALTER TABLE cases ADD COLUMN dateofnotification DATE;
 ALTER TABLE cases ADD COLUMN dateofinvestigation DATE;
 INSERT INTO schema_version (version_number, comment) VALUES (551, 'Added notifiedby, dateofnotification, dateofinvestigation to cases');
+
+ALTER TABLE hospitalization ADD COLUMN hospitalrecordnumber varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (552, 'Added hospitalRecordNumber to hospitalization');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``
