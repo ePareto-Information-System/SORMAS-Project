@@ -117,6 +117,8 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String GESTATION_AGE_AT_BIRTH = "gestationAgeAtBirth";
 	public static final String BIRTH_WEIGHT = "birthWeight";
 	public static final String PASSPORT_NUMBER = "passportNumber";
+	public static final String NUMBER_OF_PEOPLE = "numberOfPeople";
+	public static final String NUMBER_OF_OTHER_CONTACTS = "numberOfOtherContacts";
 	public static final String NATIONAL_HEALTH_ID = "nationalHealthId";
 	public static final String GHANA_CARD = "ghanaCard";
 	public static final String EMAIL_ADDRESS = "emailAddress";
@@ -360,6 +362,14 @@ public class PersonDto extends PseudonymizableDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	@HideForCountries
 	private String ghanaCard;
+	@SensitiveData
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
+	@HideForCountries
+	private String numberOfPeople;
+	@SensitiveData
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
+	@HideForCountries
+	private String numberOfOtherContacts;
 	@Valid
 	private List<LocationDto> addresses = new ArrayList<>();
 	@Valid
@@ -949,6 +959,22 @@ public class PersonDto extends PseudonymizableDto {
 
 	public void setGhanaCard(String ghanaCard) {
 		this.ghanaCard = ghanaCard;
+	}
+
+	public String getNumberOfPeople() {
+		return numberOfPeople;
+	}
+
+	public void setNumberOfPeople(String numberOfPeople) {
+		this.numberOfPeople = numberOfPeople;
+	}
+
+	public String getNumberOfOtherContacts() {
+		return numberOfOtherContacts;
+	}
+
+	public void setNumberOfOtherContacts(String numberOfOtherContacts) {
+		this.numberOfOtherContacts = numberOfOtherContacts;
 	}
 
 	public FacilityType getPlaceOfBirthFacilityType() {

@@ -127,6 +127,8 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	public static final String PASSPORT_NUMBER = "passportNumber";
 	public static final String NATIONAL_HEALTH_ID = "nationalHealthId";
 	public static final String GHANA_CARD = "ghanacard";
+	public static final String NUMBER_OF_PEOPLE = "numberOfPeople";
+	public static final String NUMBER_OF_OTHER_CONTACTS = "numberOfOtherContacts";
 	public static final String PLACE_OF_BIRTH_FACILITY_TYPE = "placeOfBirthFacilityType";
 	public static final String ADDRESSES = "addresses";
 	public static final String PERSON_CONTACT_DETAILS = "personContactDetails";
@@ -199,6 +201,8 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private String passportNumber;
 	private String nationalHealthId;
 	private String ghanaCard;
+	private String numberOfPeople;
+	private String numberOfOtherContacts;
 	private FacilityType placeOfBirthFacilityType;
 	private Set<Location> addresses = new HashSet<>();
 	private Set<PersonContactDetail> personContactDetails = new HashSet<>();
@@ -611,6 +615,22 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 
 	public void setGhanaCard(String ghanaCard) {
 		this.ghanaCard = ghanaCard;
+	}
+	@Column
+	public String getNumberOfPeople() {
+		return numberOfPeople;
+	}
+
+	public void setNumberOfPeople(String numberOfPeople) {
+		this.numberOfPeople = numberOfPeople;
+	}
+	@Column
+	public String getNumberOfOtherContacts() {
+		return numberOfOtherContacts;
+	}
+
+	public void setNumberOfOtherContacts(String numberOfOtherContacts) {
+		this.numberOfOtherContacts = numberOfOtherContacts;
 	}
 	@Enumerated(EnumType.STRING)
 	public FacilityType getPlaceOfBirthFacilityType() {

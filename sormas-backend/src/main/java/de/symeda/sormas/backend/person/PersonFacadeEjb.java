@@ -1002,6 +1002,8 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setPassportNumber(source.getPassportNumber());
 		target.setNationalHealthId(source.getNationalHealthId());
 		target.setGhanaCard(source.getGhanaCard());
+		target.setNumberOfPeople(source.getNumberOfPeople());
+		target.setNumberOfOtherContacts(source.getNumberOfOtherContacts());
 		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());
 		target.setSymptomJournalStatus(source.getSymptomJournalStatus());
 
@@ -1803,6 +1805,8 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setPassportNumber(source.getPassportNumber());
 		target.setNationalHealthId(source.getNationalHealthId());
 		target.setGhanaCard(source.getGhanaCard());
+		target.setNumberOfPeople(source.getNumberOfPeople());
+		target.setNumberOfOtherContacts(source.getNumberOfOtherContacts());
 		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());
 
 		if (!RequestContextHolder.isMobileSync()) {

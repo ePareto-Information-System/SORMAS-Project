@@ -106,6 +106,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 							oneOfTwoCol(PersonDto.BURIAL_PLACE_DESCRIPTION)
 					) +
 					fluidRowLocs(PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER) +
+					fluidRowLocs(PersonDto.NUMBER_OF_PEOPLE, PersonDto.NUMBER_OF_OTHER_CONTACTS) +
 					//fluidRowLocs(PersonDto.EXTERNAL_ID, PersonDto.EXTERNAL_TOKEN) +
 					//fluidRowLocs(PersonDto.INTERNAL_TOKEN, EXTERNAL_TOKEN_WARNING_LOC) +
 					fluidRowLocs(PersonDto.HAS_COVID_APP, PersonDto.COVID_CODE_DELIVERED) +
@@ -265,12 +266,17 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		addField(PersonDto.SEX, sexComboBox);
 		addField(PersonDto.BIRTH_NAME, TextField.class);
 		addField(PersonDto.PASSPORT_NUMBER);
+		TextField otherNote = addField(CaseDataDto.ADDITIONAL_DETAILS, TextField.class);
+		otherNote.setVisible(false);
 
 		if (caseOrigin == CaseOrigin.IN_COUNTRY) {
 			setVisible(false, PersonDto.PASSPORT_NUMBER);
 		}
 
 		addFields(PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD);
+		TextField numberOfPeople = addField(PersonDto.NUMBER_OF_PEOPLE, TextField.class);
+		TextField numberOfOtherContacts = addField(PersonDto.NUMBER_OF_OTHER_CONTACTS, TextField.class);
+
 		TextField nickie = addField(PersonDto.NICKNAME, TextField.class);
 		nickie.setVisible(false);
 		TextField maiden = addField(PersonDto.MOTHERS_MAIDEN_NAME, TextField.class);
@@ -370,10 +376,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			contactInformationHeader.setVisible(false);
 			homeaddrecreational.setVisible(false);
 
-		if (disease == Disease.AHF) {
-			setVisible(false, PersonDto.PERSON_CONTACT_DETAILS, PersonDto.BIRTH_COUNTRY);
-		}
-
 		setFieldsVisible(false,
 				deathDate,
 				tfGestationAgeAtBirth,
@@ -384,8 +386,17 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				burialPlaceDesc,
 				burialConductor,
 				salutation,
-				otherSalutation
+				otherSalutation,
+				numberOfPeople,
+				numberOfOtherContacts
 		);
+
+		if (disease == Disease.AHF) {
+			setVisible(false, PersonDto.PERSON_CONTACT_DETAILS, PersonDto.BIRTH_COUNTRY);
+			setVisible(true, PersonDto.NUMBER_OF_PEOPLE, PersonDto.NUMBER_OF_OTHER_CONTACTS);
+			otherNote.setVisible(true);
+			otherNote.setCaption("Other Notes and Observations");
+		}
 	}
 	@Override
 	public void setValue(PersonDto newFieldValue) {
