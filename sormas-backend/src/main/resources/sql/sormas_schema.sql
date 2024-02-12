@@ -13318,5 +13318,134 @@ INSERT INTO schema_version (version_number, comment) VALUES (575, 'Added influen
 UPDATE samples SET samplematerial = 'WHOLE_BLOOD' WHERE samplematerial = 'BLOOD';
 INSERT INTO schema_version (version_number, comment) VALUES (576, 'Updated samplematerial column');
 
+-- 2023-07-26 Add the 'Miscellaneuos update gh-release-1.87.0 #abc
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_name = 'featureconfiguration'
+        AND column_name = 'featuretype'
+    ) THEN
+UPDATE featureconfiguration
+SET featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES',
+    properties = json_build_object(
+            'SHARE_ASSOCIATED_CONTACTS', false,
+            'SHARE_SAMPLES', true,
+            'SHARE_IMMUNIZATIONS', true
+        )
+WHERE featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES_WITH_CONTACTS_AND_SAMPLES';
+END IF;
+END $$;
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_name = 'featureconfiguration'
+        AND column_name = 'properties'
+    ) THEN
+UPDATE featureconfiguration
+SET properties = json_build_object(
+        'SHARE_SAMPLES', true,
+        'SHARE_IMMUNIZATIONS', true
+    )
+WHERE featuretype = 'SORMAS_TO_SORMAS_SHARE_EVENTS';
+END IF;
+END $$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_name = 'featureconfiguration'
+        AND column_name = 'properties'
+    ) THEN
+        INSERT INTO featureconfiguration (
+            id,
+            uuid,
+            creationdate,
+            changedate,
+            enabled,
+            featuretype,
+            properties
+        )
+        VALUES (
+            nextval('entity_seq'),
+            generate_base32_uuid(),
+            now(),
+            now(),
+            (SELECT CASE
+                 WHEN EXISTS (
+                     SELECT id FROM featureconfiguration WHERE featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES'
+                 )
+                 THEN (SELECT enabled FROM featureconfiguration WHERE featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES')
+                 ELSE true
+              END
+             ),
+            'SORMAS_TO_SORMAS_SHARE_CONTACTS',
+            json_build_object('SHARE_SAMPLES',true,'SHARE_IMMUNIZATIONS',true)
+        );
+END IF;
+END $$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'sormastosormassharerequest' AND column_name = 'shareassociatedcontactsdisabled') THEN
+ALTER TABLE sormastosormassharerequest ADD COLUMN shareassociatedcontactsdisabled BOOLEAN DEFAULT FALSE;
+END IF;
+END $$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'sormastosormassharerequest_history' AND column_name = 'shareassociatedcontactsdisabled') THEN
+ALTER TABLE sormastosormassharerequest_history ADD COLUMN shareassociatedcontactsdisabled BOOLEAN DEFAULT FALSE;
+END IF;
+END $$;
+
+INSERT INTO schema_version (version_number, comment) VALUES (535, 'S2S_deactivate share parameter share associated contacts (for cases) #9146');
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'surveillancereports' AND column_name = 'creatinguser_id') THEN
+ALTER TABLE surveillancereports ADD COLUMN creatinguser_id INT;
+END IF;
+END $$;
+
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'userroles_userrights') THEN
+        DELETE FROM userroles_userrights WHERE userright = 'DASHBOARD_SAMPLE_ACCESS';
+    END IF;
+END $$;
+
+DELETE FROM customizableenumvalue
+WHERE id IN (
+    SELECT id
+    FROM (
+             SELECT id
+             FROM customizableenumvalue
+             WHERE value = 'TRANSPORTER'
+             ORDER BY id DESC
+             LIMIT 1 OFFSET 1
+         ) AS duplicates
+);
+
+DELETE FROM customizableenumvalue
+WHERE id IN (
+    SELECT id
+    FROM (
+             SELECT id
+             FROM customizableenumvalue
+             WHERE value = 'BUSINESSMAN_WOMAN'
+             ORDER BY id DESC
+             LIMIT 1 OFFSET 1
+         ) AS duplicates
+);
+
+INSERT INTO schema_version (version_number, comment) VALUES (577, 'Miscellaneuos update gh-release-1.87.0 ');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
-``
+

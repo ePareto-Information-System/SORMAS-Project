@@ -435,25 +435,25 @@ public class DashboardMapComponent extends VerticalLayout {
 		}
 		if (showContact) {
 			MapContactDto mapContact = new MapContactDto(
-					singleContactDto.getUuid(),
-					singleContactDto.getContactClassification(),
-					singleContactDto.getReportLat(),
-					singleContactDto.getReportLon(),
-					null,
-					null,
-					null,
-					null,
-					null,
-					null,
-					null,
-					null,
-					null,
-					singleContactDto.getDistrict().getUuid(),
-					null,
-					null,
-					0,
-					null
-			);
+				singleContactDto.getUuid(),
+				singleContactDto.getContactClassification(),
+				singleContactDto.getReportLat(),
+				singleContactDto.getReportLon(),
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				singleContactDto.getDistrict()!=null?singleContactDto.getDistrict().getUuid():null,
+				null,
+				null,
+				0,
+				null
+				);
 
 			List<MapContactDto> contactDtos = new ArrayList<>();
 			contactDtos.add(mapContact);

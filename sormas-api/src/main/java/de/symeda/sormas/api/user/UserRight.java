@@ -20,25 +20,15 @@ package de.symeda.sormas.api.user;
 
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
 import java.util.Set;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
-
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Set;
 
 public enum UserRight {
 
@@ -350,6 +340,7 @@ public enum UserRight {
 	DASHBOARD_CONTACT_VIEW_TRANSMISSION_CHAINS(UserRightGroup.DASHBOARD, UserRight._DASHBOARD_CONTACT_VIEW),
 	DASHBOARD_CAMPAIGNS_VIEW(UserRightGroup.DASHBOARD, UserRight._CAMPAIGN_VIEW),
 	DASHBOARD_SAMPLES_VIEW(UserRightGroup.DASHBOARD, UserRight._SAMPLE_VIEW),
+	//DASHBOARD_SAMPLES_ACCESS(UserRightGroup.DASHBOARD, UserRight._SAMPLE_ACCESS),
 
 	CASE_CLINICIAN_VIEW(UserRightGroup.CASE_MANAGEMENT, UserRight._CASE_VIEW),
 
@@ -488,6 +479,7 @@ public enum UserRight {
 	public static final String _PERSON_CONTACT_DETAILS_DELETE = "PERSON_CONTACT_DETAILS_DELETE";
 	public static final String _PERSON_MERGE = "PERSON_MERGE";
 	public static final String _PERSON_EXPORT = "PERSON_EXPORT";
+	//public static final String _SAMPLE_ACCESS = "SAMPLES_ACCESS";
 	public static final String _SAMPLE_CREATE = "SAMPLE_CREATE";
 	public static final String _SAMPLE_VIEW = "SAMPLE_VIEW";
 	public static final String _SAMPLE_EDIT = "SAMPLE_EDIT";
@@ -577,7 +569,6 @@ public enum UserRight {
 	public static final String _INFRASTRUCTURE_ARCHIVE = "INFRASTRUCTURE_ARCHIVE";
 	public static final String _DASHBOARD_SURVEILLANCE_VIEW = "DASHBOARD_SURVEILLANCE_VIEW";
 	public static final String _DASHBOARD_CONTACT_VIEW = "DASHBOARD_CONTACT_VIEW";
-	public static final String _DASHBOARD_SAMPLE_ACCESS = "DASHBOARD_SAMPLE_ACCESS";
 	public static final String _DASHBOARD_CONTACT_VIEW_TRANSMISSION_CHAINS = "DASHBOARD_CONTACT_VIEW_TRANSMISSION_CHAINS";
 	public static final String _DASHBOARD_CAMPAIGNS_VIEW = "DASHBOARD_CAMPAIGNS_VIEW";
 	public static final String _DASHBOARD_SAMPLES_VIEW = "DASHBOARD_SAMPLES_VIEW";

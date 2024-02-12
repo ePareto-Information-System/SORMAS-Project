@@ -222,8 +222,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		admittedToHealthFacilityFieldNew.setVisible(false);
 		admittedToHealthFacilityFieldNew.setCaption("Was the Patient Admitted at the Facility (in-patient)?");
 		final DateField admissionDateField = addField(HospitalizationDto.ADMISSION_DATE, DateField.class);
-		dischargeDateField = addDateField(HospitalizationDto.DISCHARGE_DATE, DateField.class, 7);
-
+		final DateField dischargeDateField = addDateField(HospitalizationDto.DISCHARGE_DATE, DateField.class, 7);
 		intensiveCareUnit = addField(HospitalizationDto.INTENSIVE_CARE_UNIT, NullableOptionGroup.class);
 		intensiveCareUnitStart = addField(HospitalizationDto.INTENSIVE_CARE_UNIT_START, DateField.class);
 		DateField notifyDistrictDate = addField(HospitalizationDto.NOTIFY_DISTRICT_DATE, DateField.class);
@@ -244,12 +243,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		final TextArea descriptionField = addField(HospitalizationDto.DESCRIPTION, TextArea.class);
 		descriptionField.setRows(4);
 		final NullableOptionGroup isolatedField = addField(HospitalizationDto.ISOLATED, NullableOptionGroup.class);
-
 		final NullableOptionGroup leftAgainstAdviceField = addField(HospitalizationDto.LEFT_AGAINST_ADVICE, NullableOptionGroup.class);
-		if (dischargeDateField.isModified() && caze.getOutcome() == null) {
-			leftAgainstAdviceField.setVisible(true);
-			leftAgainstAdviceField.setRequired(true);
-		}
 
 		ComboBox hospitalizationReason = addField(HospitalizationDto.HOSPITALIZATION_REASON);
 		TextField otherHospitalizationReason = addField(HospitalizationDto.OTHER_HOSPITALIZATION_REASON, TextField.class);
