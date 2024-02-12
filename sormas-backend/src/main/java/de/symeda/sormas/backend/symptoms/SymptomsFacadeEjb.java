@@ -667,6 +667,14 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setVesicularRash(source.getVesicularRash());
 		target.setOtherLesionAreas(source.getOtherLesionAreas());
 		target.setProvisionalDiagnosis(source.getProvisionalDiagnosis());
+		target.setNonVascular(source.getNonVascular());
+		target.setNonVascularDate(source.getNonVascularDate());
+		target.setSkinRashDate(source.getSkinRashDate());
+		target.setFeverDate(source.getFeverDate());
+		target.setCoughDate(source.getCoughDate());
+		target.setRunnyNoseDate(source.getRunnyNoseDate());
+		target.setConjunctivitisDate(source.getConjunctivitisDate());
+		target.setKopliksSpotsDate(source.getKopliksSpotsDate());
 
 		return target;
 	}

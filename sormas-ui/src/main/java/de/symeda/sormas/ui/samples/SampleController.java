@@ -154,24 +154,24 @@ public class SampleController {
 	 *            to add the pathogen test create component to.
 	 */
 	public CollapsiblePathogenTestForm addPathogenTestComponent(
-		CommitDiscardWrapperComponent<? extends AbstractSampleForm> sampleComponent,
-		boolean viaLims,
-		boolean deleteOnCancel,
-		boolean addSeparator,
-		Consumer<PathogenTestDto> saveHandler) {
+			CommitDiscardWrapperComponent<? extends AbstractSampleForm> sampleComponent,
+			boolean viaLims,
+			boolean deleteOnCancel,
+			boolean addSeparator,
+			Consumer<PathogenTestDto> saveHandler) {
 
 		int caseSampleCount = caseSampleCountOf(sampleComponent.getWrappedComponent().getValue());
 		return addPathogenTestComponent(sampleComponent, null, caseSampleCount, saveHandler, true, viaLims, deleteOnCancel, addSeparator);
 	}
 
 	public CollapsiblePathogenTestForm addPathogenTestComponent(
-		CommitDiscardWrapperComponent<? extends AbstractSampleForm> sampleComponent,
-		PathogenTestDto pathogenTest,
-		Consumer<PathogenTestDto> saveHandler,
-		int caseSampleCount,
-		boolean isNew,
-		boolean viaLims,
-		boolean addSeparator) {
+			CommitDiscardWrapperComponent<? extends AbstractSampleForm> sampleComponent,
+			PathogenTestDto pathogenTest,
+			Consumer<PathogenTestDto> saveHandler,
+			int caseSampleCount,
+			boolean isNew,
+			boolean viaLims,
+			boolean addSeparator) {
 		return addPathogenTestComponent(sampleComponent, pathogenTest, caseSampleCount, saveHandler, isNew, viaLims, false, addSeparator);
 	}
 
@@ -283,15 +283,15 @@ public class SampleController {
 	}
 
 	private CommitDiscardWrapperComponent<SampleCreateForm> getSampleCreateComponent(
-		SampleDto sampleDto,
-		Disease disease,
-		UserRight userRight,
-		Runnable callback) {
+			SampleDto sampleDto,
+			Disease disease,
+			UserRight userRight,
+			Runnable callback) {
 
 		final SampleCreateForm createForm = new SampleCreateForm(disease);
 		createForm.setValue(sampleDto);
 		final CommitDiscardWrapperComponent<SampleCreateForm> editView =
-			new CommitDiscardWrapperComponent<>(createForm, UserProvider.getCurrent().hasUserRight(userRight), createForm.getFieldGroup());
+				new CommitDiscardWrapperComponent<>(createForm, UserProvider.getCurrent().hasUserRight(userRight), createForm.getFieldGroup());
 
 		editView.addCommitListener(() -> {
 			if (!createForm.getFieldGroup().isModified()) {
@@ -306,11 +306,11 @@ public class SampleController {
 	}
 
 	public void addPathogenTestButton(
-		CommitDiscardWrapperComponent<? extends AbstractSampleForm> editView,
-		boolean viaLims,
-		Runnable addCallback,
-		Runnable deleteCallback,
-		Consumer<PathogenTestDto> saveHandler) {
+			CommitDiscardWrapperComponent<? extends AbstractSampleForm> editView,
+			boolean viaLims,
+			Runnable addCallback,
+			Runnable deleteCallback,
+			Consumer<PathogenTestDto> saveHandler) {
 
 		if (!UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_CREATE)) {
 			return;
@@ -341,21 +341,21 @@ public class SampleController {
 		createView.getWrappedComponent().getValue().setPathogenTestResult(PathogenTestResultType.PENDING);
 		VaadinUiUtil.showModalPopupWindow(createView, I18nProperties.getString(Strings.headingReferSample));
 	}
-	
+
 	public void createReferrals(Collection<? extends SampleIndexDto> samples, Runnable callback) {
 		SampleIndexDto firstSample = samples.stream().findFirst().orElse(null);
 		SampleDto sample = FacadeProvider.getSampleFacade().getSampleByUuid(firstSample.getUuid());
 		Date maxSampleDate = samples.stream().map(s -> s.getSampleDateTime()).max(Date::compareTo).get();
 		sample.setSampleDateTime(maxSampleDate);
-		
+
 		final SampleDto referralSample = SampleDto.buildReferralDto(UserProvider.getCurrent().getUserReference(), sample);
 		Disease disease = getDiseaseOf(referralSample);
 		final SampleBulkTransferForm createForm = new SampleBulkTransferForm(disease);
 		createForm.setValue(referralSample);
 		final CommitDiscardWrapperComponent<SampleBulkTransferForm> createView = new CommitDiscardWrapperComponent<>(
-			createForm,
-			UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_TRANSFER),
-			createForm.getFieldGroup());
+				createForm,
+				UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_TRANSFER),
+				createForm.getFieldGroup());
 
 		createView.addCommitListener(() -> {
 			if (!createForm.getFieldGroup().isModified()) {
@@ -372,7 +372,7 @@ public class SampleController {
 		final SampleDto referralSample = SampleDto.buildReferralDto(UserProvider.getCurrent().getUserReference(), existingSample);
 
 		final CommitDiscardWrapperComponent<SampleCreateForm> createView =
-			getSampleCreateComponent(referralSample, disease, UserRight.SAMPLE_TRANSFER, null);
+				getSampleCreateComponent(referralSample, disease, UserRight.SAMPLE_TRANSFER, null);
 
 		createView.addCommitListener(() -> {
 			if (!createView.getWrappedComponent().getFieldGroup().isModified()) {
@@ -387,9 +387,9 @@ public class SampleController {
 	private void saveSamples(SampleBulkTransferForm createForm, Collection<? extends SampleIndexDto> samples) {
 
 		List<SampleDto> samplesDtos = FacadeProvider.getSampleFacade().getByUuids(samples.stream().map(s -> s.getUuid()).collect(Collectors.toList()));
-		
+
 		final SampleDto sampleTemplate = createForm.getValue();
-		
+
 		for (SampleDto sample : samplesDtos)
 		{
 			SampleDto newSample = SampleDto.buildReferralDto(UserProvider.getCurrent().getUserReference(), sample);
@@ -401,31 +401,31 @@ public class SampleController {
 			newSample.setReportLon(sample.getReportLon());
 			newSample.setReportLatLonAccuracy(sample.getReportLatLonAccuracy());
 			newSample.setRequestedOtherPathogenTests(sample.getRequestedOtherPathogenTests());
-			newSample.setRequestedOtherAdditionalTests(sample.getRequestedOtherAdditionalTests());			
-			
+			newSample.setRequestedOtherAdditionalTests(sample.getRequestedOtherAdditionalTests());
+
 			//copy shipment/reception info from sample form data
 			newSample.setLab(sampleTemplate.getLab());
 			newSample.setLabDetails(sampleTemplate.getLabDetails());
-			
+
 			newSample.setShipped(sampleTemplate.isShipped());
 			newSample.setShipmentDate(sampleTemplate.getShipmentDate());
 			newSample.setShipmentDetails(sampleTemplate.getShipmentDetails());
-			
+
 			newSample.setReceived(sampleTemplate.isReceived());
 			newSample.setReceivedDate(sampleTemplate.getReceivedDate());
 			newSample.setLabSampleID(sampleTemplate.getLabSampleID());
 			newSample.setSpecimenCondition(sampleTemplate.getSpecimenCondition());
 			newSample.setNoTestPossibleReason(sampleTemplate.getNoTestPossibleReason());
-			
+
 			//sample's comments
 			//add newComment to originalComment
 			String originalComment = sample.getComment() == null ? "" : sample.getComment();
 			String newComment = sampleTemplate.getComment() == null ? "" : sampleTemplate.getComment();
 			newSample.setComment(originalComment + (originalComment.length() > 0 && newComment.length() > 0 ? "\n" : "") + newComment);
-			
+
 			FacadeProvider.getSampleFacade().saveSample(newSample);
 		}
-		
+
 		Notification.show(I18nProperties.getString(Strings.messageSamplesTransferred), Type.HUMANIZED_MESSAGE);
 	}
 
@@ -517,37 +517,37 @@ public class SampleController {
 	 *            instructions for what shall happen when the user chooses to open the referred sample
 	 */
 	public void addReferOrLinkToOtherLabButton(
-		CommitDiscardWrapperComponent<SampleEditForm> editForm,
-		Disease disease,
-		Consumer<Disease> createReferral,
-		Consumer<SampleDto> openReferredSample) {
+			CommitDiscardWrapperComponent<SampleEditForm> editForm,
+			Disease disease,
+			Consumer<Disease> createReferral,
+			Consumer<SampleDto> openReferredSample) {
 
 		Button referOrLinkToOtherLabButton = null;
 		SampleDto sample = editForm.getWrappedComponent().getValue();
 		if (sample.getReferredTo() == null) {
 			if (sample.getSamplePurpose() == SamplePurpose.EXTERNAL && UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_TRANSFER)) {
 				referOrLinkToOtherLabButton =
-					ButtonHelper.createButton("referOrLinkToOtherLab", I18nProperties.getCaption(Captions.sampleRefer), new ClickListener() {
+						ButtonHelper.createButton("referOrLinkToOtherLab", I18nProperties.getCaption(Captions.sampleRefer), new ClickListener() {
 
-						private static final long serialVersionUID = 1L;
+							private static final long serialVersionUID = 1L;
 
-						@Override
-						public void buttonClick(ClickEvent event) {
-							try {
-								createReferral.accept(disease);
-							} catch (SourceException | InvalidValueException e) {
-								Notification.show(I18nProperties.getString(Strings.messageSampleErrors), Type.ERROR_MESSAGE);
+							@Override
+							public void buttonClick(ClickEvent event) {
+								try {
+									createReferral.accept(disease);
+								} catch (SourceException | InvalidValueException e) {
+									Notification.show(I18nProperties.getString(Strings.messageSampleErrors), Type.ERROR_MESSAGE);
+								}
 							}
-						}
-					}, ValoTheme.BUTTON_LINK);
+						}, ValoTheme.BUTTON_LINK);
 			}
 		} else {
 			SampleDto referredDto = FacadeProvider.getSampleFacade().getSampleByUuid(sample.getReferredTo().getUuid());
 			FacilityReferenceDto referredDtoLab = referredDto.getLab();
 			String referOrLinkToOtherLabButtonCaption = referredDtoLab == null
-				? I18nProperties.getCaption(Captions.sampleReferredToInternal) + " ("
+					? I18nProperties.getCaption(Captions.sampleReferredToInternal) + " ("
 					+ DateFormatHelper.formatLocalDateTime(referredDto.getSampleDateTime()) + ")"
-				: I18nProperties.getCaption(Captions.sampleReferredTo) + " " + referredDtoLab.buildCaption();
+					: I18nProperties.getCaption(Captions.sampleReferredTo) + " " + referredDtoLab.buildCaption();
 
 			referOrLinkToOtherLabButton = ButtonHelper.createButton("referOrLinkToOtherLab", referOrLinkToOtherLabButtonCaption, new ClickListener() {
 
@@ -584,11 +584,11 @@ public class SampleController {
 			SampleDto referredFrom = FacadeProvider.getSampleFacade().getSampleByUuid(referredFromRef.getUuid());
 			FacilityReferenceDto referredFromLab = referredFrom.getLab();
 			String referredButtonCaption = referredFromLab == null
-				? I18nProperties.getCaption(Captions.sampleReferredFromInternal) + " ("
+					? I18nProperties.getCaption(Captions.sampleReferredFromInternal) + " ("
 					+ DateFormatHelper.formatLocalDateTime(referredFrom.getSampleDateTime()) + ")"
-				: I18nProperties.getCaption(Captions.sampleReferredFrom) + " " + referredFromLab.buildCaption();
+					: I18nProperties.getCaption(Captions.sampleReferredFrom) + " " + referredFromLab.buildCaption();
 			Button referredButton = ButtonHelper
-				.createButton("referredFrom", referredButtonCaption, event -> navigation.accept(referredFrom), ValoTheme.BUTTON_LINK, VSPACE_NONE);
+					.createButton("referredFrom", referredButtonCaption, event -> navigation.accept(referredFrom), ValoTheme.BUTTON_LINK, VSPACE_NONE);
 			editForm.getWrappedComponent().addReferredFromButton(referredButton);
 		}
 	}
@@ -627,32 +627,23 @@ public class SampleController {
 				} else if (associatedContact != null) {
 					final ContactDto contactDto = FacadeProvider.getContactFacade().getByUuid(associatedContact.getUuid());
 					ControllerProvider.getTaskController()
-						.createSampleCollectionTask(TaskContext.CONTACT, associatedContact, dto, contactDto.getDisease());
+							.createSampleCollectionTask(TaskContext.CONTACT, associatedContact, dto, contactDto.getDisease());
 				} else if (associatedEventParticipant != null) {
 					final EventParticipantDto eventParticipantDto =
-						FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(associatedEventParticipant.getUuid());
+							FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(associatedEventParticipant.getUuid());
 					final EventDto eventDto = FacadeProvider.getEventFacade().getEventByUuid(eventParticipantDto.getEvent().getUuid(), false);
 					ControllerProvider.getTaskController()
-						.createSampleCollectionTask(TaskContext.EVENT, eventParticipantDto.getEvent(), dto, eventDto.getDisease());
+							.createSampleCollectionTask(TaskContext.EVENT, eventParticipantDto.getEvent(), dto, eventDto.getDisease());
 				}
 			}
 		});
 		requestTaskComponent.getCancelButton().addClickListener(event -> popupWindow.close());
 	}
-	public void showChangePathogenTestResultWindow(
-			CommitDiscardWrapperComponent<? extends AbstractSampleForm> editComponent,
-			String sampleUuid,
-			PathogenTestResultType newResult,
-			Consumer<Boolean> callback) {
-		showChangePathogenTestResultWindow(editComponent, Arrays.asList(sampleUuid), newResult, callback);
-	}
 
-
-	//show take new test for rubella
 	public void showTakeNewTestForRubellaWindow(
-		CommitDiscardWrapperComponent<? extends AbstractSampleForm> editComponent,
-		SampleDto sampleDto,
-		Consumer<Boolean> callback) {
+			CommitDiscardWrapperComponent<? extends AbstractSampleForm> editComponent,
+			SampleDto sampleDto,
+			Consumer<Boolean> callback) {
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
@@ -704,27 +695,18 @@ public class SampleController {
 	}
 
 	public void showChangePathogenTestResultWindow(
-		// CommitDiscardWrapperComponent<SampleEditForm> editComponent,
-		CommitDiscardWrapperComponent<? extends AbstractSampleForm> editComponent,
-		List<String> samplesUuids,
-		PathogenTestResultType newResult,
-		PathogenTestDto pathogenTest,
-		Consumer<Boolean> callback) {
-
-		if (samplesUuids == null || samplesUuids.size() == 0)
-			return;
-
+			CommitDiscardWrapperComponent<? extends AbstractSampleForm> editComponent,
+			String sampleUuid,
+			PathogenTestResultType newResult,
+			PathogenTestDto pathogenTest,
+			Consumer<Boolean> callback) {
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
 
 		ConfirmationComponent confirmationComponent = VaadinUiUtil.buildYesNoConfirmationComponent();
-		
-		String descriptionText = samplesUuids.size() > 1
-			? String.format(I18nProperties.getString(Strings.messageChangePathogenTestsResults), samplesUuids.size(), newResult.toString())
-			: String.format(I18nProperties.getString(Strings.messageChangePathogenTestResult), newResult.toString());
 
-		Label description = new Label(descriptionText);
+		Label description = new Label(String.format(I18nProperties.getString(Strings.messageChangePathogenTestResult), newResult.toString()));
 		description.setWidth(100, Unit.PERCENTAGE);
 		layout.addComponent(description);
 		layout.addComponent(confirmationComponent);
@@ -735,7 +717,6 @@ public class SampleController {
 		Window popupWindow = VaadinUiUtil.showPopupWindow(layout);
 		popupWindow.setSizeUndefined();
 		popupWindow.setCaption(I18nProperties.getString(Strings.headingChangePathogenTestResult));
-		
 		confirmationComponent.getConfirmButton().addClickListener(new ClickListener() {
 
 			private static final long serialVersionUID = 1L;
@@ -745,12 +726,9 @@ public class SampleController {
 				if (editComponent != null && !SampleCreateForm.class.equals(editComponent.getWrappedComponent().getClass())) {
 					editComponent.commit();
 				}
-				List<SampleDto> samples = FacadeProvider.getSampleFacade().getByUuids(samplesUuids);
-				for (SampleDto sample : samples) {
-					sample.setPathogenTestResult(newResult);
-					FacadeProvider.getSampleFacade().saveSample(sample);
-				}
-
+				SampleDto sample = FacadeProvider.getSampleFacade().getSampleByUuid(sampleUuid);
+				sample.setPathogenTestResult(newResult);
+				FacadeProvider.getSampleFacade().saveSample(sample);
 				popupWindow.close();
 				if (pathogenTest.getTestedDisease() == Disease.MEASLES) {
 					showTakeNewTestForRubellaWindow(editComponent, sample, callback);
@@ -760,9 +738,8 @@ public class SampleController {
 				if (callback != null) {
 					callback.accept(true);
 				}
-			
-		}});
-
+			}
+		});
 		confirmationComponent.getCancelButton().addClickListener(new ClickListener() {
 
 			private static final long serialVersionUID = 1L;
@@ -781,11 +758,90 @@ public class SampleController {
 		});
 	}
 
+
+//	public void showChangePathogenTestResultWindow(
+//			CommitDiscardWrapperComponent<? exshowChangeAssociatedSampleResultDialogtends AbstractSampleForm> editComponent,
+//			String sampleUuid,
+//			PathogenTestResultType newResult,
+//			Consumer<Boolean> callback) {
+//
+//		showChangePathogenTestResultWindow(editComponent, Arrays.asList(sampleUuid), newResult, callback);
+//	}
+
 	public void showChangePathogenTestResultWindow(
-		CommitDiscardWrapperComponent<SampleEditForm> editComponent,
-		String sampleUuid,
-		PathogenTestResultType newResult,
-		Runnable callback) {
+			//CommitDiscardWrapperComponent<SampleEditForm> editComponent,
+			CommitDiscardWrapperComponent<? extends AbstractSampleForm> editComponent,
+			List<String> samplesUuids,
+			PathogenTestResultType newResult,
+			Consumer<Boolean> callback) {
+
+		if (samplesUuids == null || samplesUuids.size() == 0)
+			return;
+
+
+		VerticalLayout layout = new VerticalLayout();
+		layout.setMargin(true);
+
+		ConfirmationComponent confirmationComponent = VaadinUiUtil.buildYesNoConfirmationComponent();
+
+		String descriptionText = samplesUuids.size() > 1
+				? String.format(I18nProperties.getString(Strings.messageChangePathogenTestsResults), samplesUuids.size(), newResult.toString())
+				: String.format(I18nProperties.getString(Strings.messageChangePathogenTestResult), newResult.toString());
+
+		Label description = new Label(descriptionText);
+		description.setWidth(100, Unit.PERCENTAGE);
+		layout.addComponent(description);
+		layout.addComponent(confirmationComponent);
+		layout.setComponentAlignment(confirmationComponent, Alignment.BOTTOM_RIGHT);
+		layout.setSizeUndefined();
+		layout.setSpacing(true);
+
+		Window popupWindow = VaadinUiUtil.showPopupWindow(layout);
+		popupWindow.setSizeUndefined();
+		popupWindow.setCaption(I18nProperties.getString(Strings.headingChangePathogenTestResult));
+
+		confirmationComponent.getConfirmButton().addClickListener(new ClickListener() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				if (editComponent != null && !SampleCreateForm.class.equals(editComponent.getWrappedComponent().getClass())) {
+					editComponent.commit();
+				}
+				List<SampleDto> samples = FacadeProvider.getSampleFacade().getByUuids(samplesUuids);
+				for (SampleDto sample : samples) {
+					sample.setPathogenTestResult(newResult);
+					FacadeProvider.getSampleFacade().saveSample(sample);
+				}
+
+				popupWindow.close();
+				SormasUI.refreshView();
+				if (callback != null) {
+					callback.accept(true);
+				}
+
+			}});
+
+		confirmationComponent.getCancelButton().addClickListener(new ClickListener() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				popupWindow.close();
+				if (callback != null) {
+					callback.accept(false);
+				}
+			}
+		});
+	}
+
+	public void showChangePathogenTestResultWindow(
+			CommitDiscardWrapperComponent<SampleEditForm> editComponent,
+			String sampleUuid,
+			PathogenTestResultType newResult,
+			Runnable callback) {
 
 		showChangePathogenTestResultWindow(editComponent, Arrays.asList(sampleUuid), newResult, (Consumer<Boolean>) callback);
 //		showChangePathogenTestResultWindow(editComponent, sampleUuid, newResult, callback);
@@ -797,22 +853,22 @@ public class SampleController {
 	public void deleteAllSelectedItems(Collection<SampleIndexDto> selectedRows, SampleGrid sampleGrid, Runnable noEntriesRemainingCallback) {
 
 		ControllerProvider.getDeleteRestoreController()
-			.deleteAllSelectedItems(
-				selectedRows,
-				null,
-				null,
-				DeleteRestoreHandlers.forSample(),
-				bulkOperationCallback(sampleGrid, noEntriesRemainingCallback, null));
+				.deleteAllSelectedItems(
+						selectedRows,
+						null,
+						null,
+						DeleteRestoreHandlers.forSample(),
+						bulkOperationCallback(sampleGrid, noEntriesRemainingCallback, null));
 
 	}
 
 	public void restoreSelectedSamples(Collection<SampleIndexDto> selectedRows, SampleGrid sampleGrid, Runnable noEntriesRemainingCallback) {
 
 		ControllerProvider.getDeleteRestoreController()
-			.restoreSelectedItems(
-				selectedRows,
-				DeleteRestoreHandlers.forSample(),
-				bulkOperationCallback(sampleGrid, noEntriesRemainingCallback, null));
+				.restoreSelectedItems(
+						selectedRows,
+						DeleteRestoreHandlers.forSample(),
+						bulkOperationCallback(sampleGrid, noEntriesRemainingCallback, null));
 	}
 
 	public boolean isFieldSampleIdUnique(String uuid, String fieldSampleId) {
@@ -820,7 +876,7 @@ public class SampleController {
 	}
 
 	public TitleLayout getSampleViewTitleLayout(SampleDto sample) {
-	// public VerticalLayout getSampleViewTitleLayout(SampleDto sample) {
+		// public VerticalLayout getSampleViewTitleLayout(SampleDto sample) {
 
 //		VerticalLayout titleLayout = new VerticalLayout();
 //		titleLayout.addStyleNames(CssStyles.LAYOUT_MINIMAL, CssStyles.VSPACE_4, CssStyles.VSPACE_TOP_4);
@@ -832,10 +888,10 @@ public class SampleController {
 		titleLayout.addRow(DateFormatHelper.formatDate(sample.getSampleDateTime()));
 
 		String mainRowText = SampleReferenceDto.buildCaption(
-			sample.getSampleMaterial(),
-			sample.getAssociatedCase() != null ? sample.getAssociatedCase().getUuid() : null,
-			sample.getAssociatedContact() != null ? sample.getAssociatedContact().getUuid() : null,
-			sample.getAssociatedEventParticipant() != null ? sample.getAssociatedEventParticipant().getUuid() : null);
+				sample.getSampleMaterial(),
+				sample.getAssociatedCase() != null ? sample.getAssociatedCase().getUuid() : null,
+				sample.getAssociatedContact() != null ? sample.getAssociatedContact().getUuid() : null,
+				sample.getAssociatedEventParticipant() != null ? sample.getAssociatedEventParticipant().getUuid() : null);
 		titleLayout.addMainRow(mainRowText);
 
 		return titleLayout;

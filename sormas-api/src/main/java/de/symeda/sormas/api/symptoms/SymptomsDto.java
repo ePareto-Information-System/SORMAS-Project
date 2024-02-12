@@ -4211,6 +4211,7 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setOtherLesionAreas(String otherLesionAreas) {
 		this.otherLesionAreas = otherLesionAreas;
+	}
 	public void setNonVascular(SymptomState nonVascular) {
 		this.nonVascular = nonVascular;
 	}

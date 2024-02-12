@@ -226,7 +226,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		addField(SampleDto.SAMPLE_MATERIAL_TEXT, TextField.class);
 		addField(SampleDto.SAMPLE_SOURCE, ComboBox.class);
 		addField(SampleDto.FIELD_SAMPLE_ID, TextField.class);
-		addField(SampleDto.FOR_RETEST, OptionGroup.class).setRequired(true);
+		addField(SampleDto.FOR_RETEST, OptionGroup.class).setRequired(false);
 		addDateField(SampleDto.SHIPMENT_DATE, DateField.class, 7);
 		addField(SampleDto.SHIPMENT_DETAILS, TextField.class);
 		addField(SampleDto.RECEIVED_DATE, DateField.class);
@@ -963,6 +963,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	private void handleMeasles() {
 		if (disease == Disease.MEASLES) {
+			addSampleDispatchFields();
+
 			setVisible(false, SampleDto.SAMPLING_REASON);
 			setVisible(false, SampleDto.SAMPLE_PURPOSE);
 			setVisible(true, SampleDto.RECEIVED);

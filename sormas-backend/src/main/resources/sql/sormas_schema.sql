@@ -13165,3 +13165,25 @@ ALTER TABLE cases ADD COLUMN numberofdoses varchar(255);
 ALTER TABLE cases ADD COLUMN vaccinetype varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (560, ' Added 10 columns to hospitalization and 2 columns to cases');
 
+ALTER TABLE symptoms ADD COLUMN nonvascular varchar(255) NULL;
+ALTER TABLE symptoms ADD COLUMN nonvasculardate timestamp NULL;
+ALTER TABLE symptoms ADD COLUMN skinrashdate timestamp NULL;
+ALTER TABLE symptoms ADD COLUMN feverdate timestamp NULL;
+ALTER TABLE symptoms ADD COLUMN coughdate timestamp NULL;
+ALTER TABLE symptoms ADD COLUMN runnynosedate timestamp NULL;
+ALTER TABLE symptoms ADD COLUMN conjunctivitisdate timestamp NULL;
+ALTER TABLE symptoms ADD COLUMN kopliksspotsdate timestamp NULL;
+
+ALTER TABLE hospitalization ADD COLUMN waspatientadmitted varchar(255) NULL;
+ALTER TABLE previoushospitalization ADD COLUMN waspatientadmitted varchar(255) NULL;
+
+ALTER TABLE hospitalization ADD COLUMN seenatahealthfacility varchar(255) NULL;
+ALTER TABLE previoushospitalization ADD COLUMN seenatahealthfacility varchar(255) NULL;
+
+ALTER TABLE epidata ADD COLUMN childcomeincontactwithsymptoms varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (561, 'Added a few columns to symptoms, hospitalization, previoushospitalization and epidata');
+
+ALTER TABLE cases ADD COLUMN vaccinationroutine varchar(255) NULL;
+ALTER TABLE cases ADD COLUMN vaccinationroutinedate timestamp NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (562, 'Added a few columns to vaccinationroutine, vaccinationroutinedate to cases');
+

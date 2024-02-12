@@ -350,15 +350,15 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		personContactDetailsField.setThisPerson(getValue());
 		personContactDetailsField.setCaption(null);
 		personContactDetailsField.setPseudonymized(isPseudonymized);
-		ComboBox occupationTypeField = addField(PersonDto.OCCUPATION_TYPE, ComboBox.class);
+		//ComboBox occupationTypeField = addField(PersonDto.OCCUPATION_TYPE, ComboBox.class);
 		TextField occupationTypeDetailsField = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
-		occupationTypeDetailsField.setVisible(false);
-		FieldHelper
-				.updateItems(occupationTypeField, FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.OCCUPATION_TYPE, null));
-		occupationTypeField.addValueChangeListener(e -> {
-			OccupationType occupationType = (OccupationType) e.getProperty().getValue();
-			occupationTypeDetailsField.setVisible(occupationType != null && occupationType.matchPropertyValue(OccupationType.HAS_DETAILS, true));
-		});
+//		occupationTypeDetailsField.setVisible(false);
+//		FieldHelper
+//				.updateItems(occupationTypeField, FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.OCCUPATION_TYPE, null));
+//		occupationTypeField.addValueChangeListener(e -> {
+//			OccupationType occupationType = (OccupationType) e.getProperty().getValue();
+//			occupationTypeDetailsField.setVisible(occupationType != null && occupationType.matchPropertyValue(OccupationType.HAS_DETAILS, true));
+//		});
 
 		// addFields(PersonDto.ARMED_FORCES_RELATION_TYPE, PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS);
 		// ComboBox occupationTypeField = addField(PersonDto.OCCUPATION_TYPE, ComboBox.class);
@@ -376,7 +376,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 //		TextField occuDetails = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
 //		occuDetails.setCaption("Please Specify Occupation");
 //		ComboBox armedForces = addField(PersonDto.ARMED_FORCES_RELATION_TYPE, ComboBox.class);
-		ComboBox educationType = addField(PersonDto.EDUCATION_TYPE, ComboBox.class);
+//		ComboBox educationType = addField(PersonDto.EDUCATION_TYPE, ComboBox.class);
 		ComboBox educationType = addField(PersonDto.EDUCATION_TYPE, ComboBox.class);
 		educationType.removeItem(EducationType.NURSERY);
 		TextField educationDetails = addField(PersonDto.EDUCATION_DETAILS, TextField.class);
@@ -453,10 +453,10 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
 
-		if (!getField(PersonDto.OCCUPATION_TYPE).isVisible()
-				&& !getField(PersonDto.ARMED_FORCES_RELATION_TYPE).isVisible()
-				&& !getField(PersonDto.EDUCATION_TYPE).isVisible())
-			occupationHeader.setVisible(false);
+//		if (!getField(PersonDto.OCCUPATION_TYPE).isVisible()
+//				&& !getField(PersonDto.ARMED_FORCES_RELATION_TYPE).isVisible()
+//				&& !getField(PersonDto.EDUCATION_TYPE).isVisible())
+//			occupationHeader.setVisible(false);
 		if (!getField(PersonDto.ADDRESS).isVisible())
 			addressHeader.setVisible(false);
 		if (!getField(PersonDto.ADDRESSES).isVisible())
@@ -625,7 +625,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 		if(disease == Disease.AFP){
 			TextArea additionalPlacesStayed = addField(PersonDto.ADDITIONAL_PLACES_STAYED, TextArea.class, new ResizableTextAreaWrapper<>(false));
-			setVisible(false, PersonDto.OCCUPATION_TYPE,PersonDto.EDUCATION_TYPE, PersonDto.ADDITIONAL_DETAILS, PersonDto.ADDRESSES);
+			setVisible(false, PersonDto.EDUCATION_TYPE, PersonDto.ADDITIONAL_DETAILS, PersonDto.ADDRESSES);
 			additionalDetails.setCaption("Village");
 			generalCommentLabel.setVisible(false);
 			occupationHeader.setVisible(false);

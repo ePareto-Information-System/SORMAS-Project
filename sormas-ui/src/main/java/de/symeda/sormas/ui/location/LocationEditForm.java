@@ -933,9 +933,8 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	public void setOnlyUnknownForMeasles(Disease incomingDisease) {
 		newDisease = incomingDisease;
 		if (newDisease != null && newDisease.equals(Disease.MEASLES)) {
-			setVisible(false, LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
+			setVisible(false, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY, LocationDto.AREA_TYPE);
 			additionalInformationField.setCaption("Address (Location)");
-			areaType.setVisible(true);
 		}
 	}
 

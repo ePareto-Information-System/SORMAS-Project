@@ -256,6 +256,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			setVisible(true, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY);
 			setVisible(true, HospitalizationDto.WAS_PATIENT_ADMITTED);
 			setVisible(false, HospitalizationDto.INTENSIVE_CARE_UNIT);
+			setVisible(false, HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION);
 		}
 
 		if(caze.getDisease() == Disease.AFP){

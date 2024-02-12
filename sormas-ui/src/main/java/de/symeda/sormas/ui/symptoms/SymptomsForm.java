@@ -494,8 +494,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			OTHER_LESION_AREAS,
 			NON_VASCULAR
 			);
-		//
-			NON_VASCULAR);
 
 		addField(SYMPTOMS_COMMENTS, TextField.class).setDescription(
 			I18nProperties.getPrefixDescription(I18N_PREFIX, SYMPTOMS_COMMENTS, "") + "\n" + I18nProperties.getDescription(Descriptions.descGdpr));
