@@ -12788,5 +12788,10 @@ INSERT INTO schema_version (version_number, comment) VALUES (549, 'Added vaccine
 ALTER TABLE person ADD COLUMN numberofpeople varchar(255);
 ALTER TABLE person ADD COLUMN numberofothercontacts varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (550, 'Added numberOfPeople, numberOfOtherContacts to person');
+
+ALTER TABLE cases ADD COLUMN notifiedby varchar(255);
+ALTER TABLE cases ADD COLUMN dateofnotification DATE;
+ALTER TABLE cases ADD COLUMN dateofinvestigation DATE;
+INSERT INTO schema_version (version_number, comment) VALUES (551, 'Added notifiedby, dateofnotification, dateofinvestigation to cases');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``

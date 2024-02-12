@@ -3042,6 +3042,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setSymptoms(SymptomsFacadeEjb.toSymptomsDto(source.getSymptoms()));
 		target.setHomeAddressRecreational(source.getHomeAddressRecreational());
 		target.setHospitalName(source.getHospitalName());
+		target.setNotifiedBy(source.getNotifiedBy());
+		target.setDateOfNotification(source.getDateOfNotification());
+		target.setDateOfInvestigation(source.getDateOfInvestigation());
 
 		target.setPregnant(source.getPregnant());
 		target.setIpSampleSent(source.getIpSampleSent());
@@ -3251,6 +3254,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		//target.setSymptoms(symptomsFacade.fromDto(source.getSymptoms(), checkChangeDate));
 		target.setHomeAddressRecreational(source.getHomeAddressRecreational());
 		target.setHospitalName(source.getHospitalName());
+		target.setNotifiedBy(source.getNotifiedBy());
+		target.setDateOfNotification(source.getDateOfNotification());
+		target.setDateOfInvestigation(source.getDateOfInvestigation());
 		target.setSymptoms(symptomsFacade.fillOrBuildEntity(source.getSymptoms(), target.getSymptoms(), checkChangeDate));
 
 		target.setPregnant(source.getPregnant());

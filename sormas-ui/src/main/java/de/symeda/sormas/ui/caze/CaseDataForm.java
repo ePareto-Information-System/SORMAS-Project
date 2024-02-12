@@ -178,6 +178,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(9, CaseDataDto.INVESTIGATION_STATUS, 3, CaseDataDto.INVESTIGATED_DATE) +
 					fluidRowLocs(6, CaseDataDto.EPID_NUMBER, 3, ASSIGN_NEW_EPID_NUMBER_LOC) +
 					loc(EPID_NUMBER_WARNING_LOC) +
+					fluidRowLocs(CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION) +
 					fluidRowLocs(CaseDataDto.EXTERNAL_ID, CaseDataDto.EXTERNAL_TOKEN) +
 					fluidRowLocs("", EXTERNAL_TOKEN_WARNING_LOC) +
 					fluidRowLocs(6, CaseDataDto.CASE_ID_ISM, 6, CaseDataDto.INTERNAL_TOKEN) +
@@ -404,7 +405,15 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		DateField districtLevelDate = addField(CaseDataDto.DISTRICT_LEVEL_DATE, DateField.class);
 		DateField regionLevelDate = addField(CaseDataDto.REGION_LEVEL_DATE, DateField.class);
 		DateField nationalLevelDate = addField(CaseDataDto.NATIONAL_LEVEL_DATE, DateField.class);
+
+		TextField notifiedBy = addField(CaseDataDto.NOTIFIED_BY, TextField.class);
+		DateField dateOfNotification = addField(CaseDataDto.DATE_OF_NOTIFICATION, DateField.class);
+		DateField dateOfInvestigation = addField(CaseDataDto.DATE_OF_INVESTIGATION, DateField.class);
+		notifiedBy.setVisible(false);
+		dateOfNotification.setVisible(false);
+		dateOfInvestigation.setVisible(false);
 		districtLevelDate.setVisible(false);
+		regionLevelDate.setVisible(false);
 		regionLevelDate.setVisible(false);
 		nationalLevelDate.setVisible(false);
 
@@ -1603,6 +1612,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				setVisible(false, DHIMSFACILITY_OR_HOME_LOC, CaseDataDto.DHIMS_FACILITY_TYPE);
 				homeaddrecreational.setVisible(true);
 				nationalLevelDate.setVisible(true);
+				notifiedBy.setVisible(true);
+				dateOfNotification.setVisible(true);
+				dateOfInvestigation.setVisible(true);
 			}
 			//INFLUENZA
 			if(disease == Disease.NEW_INFLUENZA){
