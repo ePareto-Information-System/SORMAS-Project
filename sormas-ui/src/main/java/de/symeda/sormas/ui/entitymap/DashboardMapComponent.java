@@ -446,7 +446,7 @@ public class DashboardMapComponent extends VerticalLayout {
 				null,
 				null,
 				null,
-				singleContactDto.getDistrict().getUuid(),
+				singleContactDto.getDistrict()!=null?singleContactDto.getDistrict().getUuid():null,
 				null,
 				null,
 				0,

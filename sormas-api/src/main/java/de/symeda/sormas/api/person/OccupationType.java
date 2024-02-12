@@ -35,7 +35,7 @@ public class OccupationType extends CustomizableEnum implements Serializable {
 	public static final String LABORATORY_STAFF = "LABORATORY_STAFF";
 	public static final String OTHER = "OTHER";
 	public static final String UNKNOWN = "UNKNOWN";
-	public static final String TRANSPORTER="TRANSPORTER";
+	//public static final String TRANSPORTER="TRANSPORTER";
 	//public static final  String BUSINESSMAN_WOMAN="BUSINESSMAN_WOMAN";
 	private boolean hasDetails;
 
@@ -81,7 +81,7 @@ public class OccupationType extends CustomizableEnum implements Serializable {
 		defaultValues.put("LABORATORY_STAFF", propertiesDetailsFalse);
 		defaultValues.put("OTHER", propertiesDetailsTrue);
 		defaultValues.put("UNKNOWN", propertiesDetailsFalse);
-		defaultValues.put("TRANSPORTER", propertiesDetailsFalseForTransporter());
+		//defaultValues.put("TRANSPORTER", propertiesDetailsFalseForTransporter());
 		//defaultValues.put("BUSINESSMAN_WOMAN", propertiesDetailsFalseForBusinessmanWoman());
 
 		return defaultValues;

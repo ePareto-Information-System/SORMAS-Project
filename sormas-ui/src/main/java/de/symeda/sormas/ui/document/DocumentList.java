@@ -64,11 +64,11 @@ public class DocumentList extends VerticalLayout {
 	public void reload() {
 		List<DocumentDto> docs = Collections.emptyList();
 		if (!pseudonymized) {
-			docs = FacadeProvider.getDocumentFacade().getDocumentsRelatedToEntity(relatedEntityType, entityRef.getUuid());
+			docs = FacadeProvider.getDocumentFacade().getDocumentsRelatedToEntity(relatedEntityType,entityRef!=null?entityRef.getUuid():null);
 		}
 		removeAllComponents();
 		if (docs.isEmpty()) {
-			Label noActionsLabel = new Label(String.format(I18nProperties.getCaption(Captions.documentNoDocuments), relatedEntityType.toString()));
+			Label noActionsLabel = new Label(String.format(I18nProperties.getCaption(Captions.documentNoDocuments), relatedEntityType!=null?relatedEntityType.toString():null));
 			setSpacing(false);
 			addComponent(noActionsLabel);
 		} else {
