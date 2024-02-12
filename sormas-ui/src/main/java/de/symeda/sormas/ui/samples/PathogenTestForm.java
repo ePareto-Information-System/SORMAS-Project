@@ -28,6 +28,14 @@ import java.util.function.Consumer;
 
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
+import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.ui.utils.*;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.vaadin.ui.Label;
@@ -55,13 +63,6 @@ import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
-import de.symeda.sormas.ui.utils.AbstractEditForm;
-import de.symeda.sormas.ui.utils.CssStyles;
-import de.symeda.sormas.ui.utils.DateComparisonValidator;
-import de.symeda.sormas.ui.utils.DateFormatHelper;
-import de.symeda.sormas.ui.utils.DateTimeField;
-import de.symeda.sormas.ui.utils.FieldHelper;
-import de.symeda.sormas.ui.utils.NullableOptionGroup;
 
 public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
@@ -103,6 +104,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private TextField typingIdField;
 	private ComboBox testTypeField;
 
+	private Disease caseDisease;
+
 	public PathogenTestForm(AbstractSampleForm sampleForm, boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction) {
 		this(create, caseSampleCount, isPseudonymized, inJurisdiction);
 		this.sampleForm = sampleForm;
@@ -140,6 +143,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	@Override
 	protected void addFields() {
 
+		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(sample.getAssociatedCase().getUuid());
+		caseDisease =  caseDataDto.getDisease();
+
 		pathogenTestHeadingLabel = new Label();
 		pathogenTestHeadingLabel.addStyleName(H3);
 		getContent().addComponent(pathogenTestHeadingLabel, PATHOGEN_TEST_HEADING_LOC);
@@ -149,18 +155,30 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		addField(PathogenTestDto.EXTERNAL_ID);
 		addField(PathogenTestDto.EXTERNAL_ORDER_ID);
 
-		if(Objects.equals(disease, Disease.AHF.toString())){
+	/*	testTypeField = ComboBoxHelper.createComboBoxV7();
 
-			for (PathogenTestType pathogenTestType : PathogenTestType.DISEASE_TESTS) {
-				testTypeField.addItem(pathogenTestType);
-			}
-
-			testTypeField = addField(PathogenTestDto.TEST_TYPE, testTypeField);
+		for(PathogenTestType pathogenTestType : PathogenTestType.DISEASE_TESTS){
+			testTypeField.addItem(pathogenTestType);
+			testTypeField.setCaption("Test Type");
 		}
 
-		testTypeField = addField(PathogenTestDto.TEST_TYPE, ComboBox.class);
-		testTypeField.setItemCaptionMode(ItemCaptionMode.ID_TOSTRING);
-		testTypeField.setImmediate(true);
+		getContent().addComponent(testTypeField, PathogenTestDto.TEST_TYPE);*/
+		ComboBox testBox = new ComboBox("Sex");
+
+		if(caseDisease == Disease.AHF){
+			for (PathogenTestType test : PathogenTestType.values()) {
+				if (test == PathogenTestType.IGG_SERUM_ANTIBODY || test == PathogenTestType.IGM_SERUM_ANTIBODY || test == PathogenTestType.PCR_RT_PCR) {
+					testBox.addItem(test);
+				}
+			}
+			addField(PathogenTestDto.TEST_TYPE, testBox);
+		}
+		else {
+			testTypeField = addField(PathogenTestDto.TEST_TYPE, ComboBox.class);
+			testTypeField.setItemCaptionMode(ItemCaptionMode.ID_TOSTRING);
+			testTypeField.setImmediate(true);
+		}
+
 		pcrTestSpecification = addField(PathogenTestDto.PCR_TEST_SPECIFICATION, ComboBox.class);
 		testTypeTextField = addField(PathogenTestDto.TEST_TYPE_TEXT, TextField.class);
 		FieldHelper.addSoftRequiredStyle(testTypeTextField);
@@ -183,7 +201,16 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		labDetails.setVisible(false);
 		typingIdField = addField(PathogenTestDto.TYPING_ID, TextField.class);
 		typingIdField.setVisible(false);
-		ComboBox diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
+
+		ComboBox diseaseBox = new ComboBox("Diseases");
+
+		for (Disease ahfDisease : Disease.AHF_DISEASES) {
+			diseaseBox.addItem(ahfDisease);
+		}
+
+		ComboBox diseaseField = addField(PathogenTestDto.TESTED_DISEASE, diseaseBox);
+
+		//ComboBox diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
 		ComboBox diseaseVariantField = addField(PathogenTestDto.TESTED_DISEASE_VARIANT, ComboBox.class);
 		diseaseVariantField.setNullSelectionAllowed(true);
 		addField(PathogenTestDto.TESTED_DISEASE_DETAILS, TextField.class);
@@ -214,14 +241,14 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 		pcrTestSpecification.setVisible(false);
 
-		Map<Object, List<Object>> pcrTestSpecificationVisibilityDependencies = new HashMap<Object, List<Object>>() {
+		/*Map<Object, List<Object>> pcrTestSpecificationVisibilityDependencies = new HashMap<Object, List<Object>>() {
 
 			{
 				put(PathogenTestDto.TESTED_DISEASE, Arrays.asList(Disease.CORONAVIRUS));
 				put(PathogenTestDto.TEST_TYPE, Arrays.asList(PathogenTestType.PCR_RT_PCR));
 			}
 		};
-		FieldHelper.setVisibleWhen(getFieldGroup(), PathogenTestDto.PCR_TEST_SPECIFICATION, pcrTestSpecificationVisibilityDependencies, true);
+		FieldHelper.setVisibleWhen(getFieldGroup(), PathogenTestDto.PCR_TEST_SPECIFICATION, pcrTestSpecificationVisibilityDependencies, true);*/
 		FieldHelper.setVisibleWhen(
 			getFieldGroup(),
 			PathogenTestDto.TEST_TYPE_TEXT,
@@ -274,7 +301,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			updateDiseaseVariantField.accept(disease);
 
 			FieldHelper.updateItems(
-				testTypeField,
+				testBox,
 				Arrays.asList(PathogenTestType.values()),
 				FieldVisibilityCheckers.withDisease(disease),
 				PathogenTestType.class);
@@ -284,7 +311,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			diseaseVariantDetailsField.setVisible(diseaseVariant != null && diseaseVariant.matchPropertyValue(DiseaseVariant.HAS_DETAILS, true));
 		});
 
-		testTypeField.addValueChangeListener(e -> {
+	/*	testTypeField.addValueChangeListener(e -> {
 			PathogenTestType testType = (PathogenTestType) e.getProperty().getValue();
 			if (testType == PathogenTestType.IGM_SERUM_ANTIBODY || testType == PathogenTestType.IGG_SERUM_ANTIBODY) {
 				fourFoldIncrease.setVisible(true);
@@ -293,7 +320,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				fourFoldIncrease.setVisible(false);
 				fourFoldIncrease.setEnabled(false);
 			}
-		});
+		});*/
 
 		lab.addValueChangeListener(event -> {
 			if (event.getProperty().getValue() != null
@@ -307,7 +334,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			}
 		});
 
-		testTypeField.addValueChangeListener(e -> {
+		/*testTypeField.addValueChangeListener(e -> {
 			PathogenTestType testType = (PathogenTestType) e.getProperty().getValue();
 			if ((testType == PathogenTestType.PCR_RT_PCR && testResultField.getValue() == PathogenTestResultType.POSITIVE)
 				|| testType == PathogenTestType.CQ_VALUE_DETECTION) {
@@ -316,9 +343,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				cqValueField.setVisible(false);
 				cqValueField.clear();
 			}
-		});
+		});*/
 
-		testResultField.addValueChangeListener(e -> {
+	/*	testResultField.addValueChangeListener(e -> {
 			PathogenTestResultType testResult = (PathogenTestResultType) e.getProperty().getValue();
 			if ((testTypeField.getValue() == PathogenTestType.PCR_RT_PCR && testResult == PathogenTestResultType.POSITIVE)
 				|| testTypeField.getValue() == PathogenTestType.CQ_VALUE_DETECTION) {
@@ -327,7 +354,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				cqValueField.setVisible(false);
 				cqValueField.clear();
 			}
-		});
+		});*/
 
 		if (SamplePurpose.INTERNAL.equals(getSamplePurpose())) { // this only works for already saved samples
 			setRequired(true, PathogenTestDto.LAB);
@@ -359,5 +386,15 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		pcrTestSpecification.setValue(newFieldValue.getPcrTestSpecification());
 		testTypeTextField.setValue(newFieldValue.getTestTypeText());
 		typingIdField.setValue(newFieldValue.getTypingId());
+	}
+
+
+	public void getAssociatedDisease() {
+		final ContactDto contactDto = FacadeProvider.getContactFacade().getByUuid(sample.getAssociatedContact().getUuid());
+		contactDto.getDisease();
+
+		final EventDto eventDto = FacadeProvider.getEventFacade().getEventByUuid(sample.getAssociatedEventParticipant().getUuid(), false);
+		eventDto.getDisease();
+
 	}
 }

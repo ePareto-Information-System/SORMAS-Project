@@ -13,6 +13,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 package de.symeda.sormas.api.immunization;
 
 import de.symeda.sormas.api.caze.CaseOrigin;
@@ -69,7 +70,7 @@ public class ImmunizationDto extends SormasToSormasShareableDto {
 	public static final String END_DATE = "endDate";
 	public static final String EXTERNAL_ID = "externalId";
 	public static final String FACILITY_TYPE = "facilityType";
-	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
+//	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
 	public static final String FIRST_VACCINATION_DATE = "firstVaccinationDate";
 	public static final String HEALTH_FACILITY = "healthFacility";
 	public static final String HEALTH_FACILITY_DETAILS = "healthFacilityDetails";
