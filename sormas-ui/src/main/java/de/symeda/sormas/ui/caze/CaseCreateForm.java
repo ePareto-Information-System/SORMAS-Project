@@ -282,12 +282,9 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 
 			if (caseOrigin == CaseOrigin.IN_COUNTRY) {
 				personCreateForm.hidePassportNumber();
-				dhimsFacilityOrHome.setVisible(true);
-				facilityOrHome.setVisible(true);
+
 			} else{
 				personCreateForm.showPassportNumber();
-				dhimsFacilityOrHome.setVisible(false);
-				facilityOrHome.setVisible(false);
 			}
 
         });
@@ -295,7 +292,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		facilityOrHome =
 				addCustomField(FACILITY_OR_HOME_LOC, TypeOfPlace.class, NullableOptionGroup.class, I18nProperties.getCaption(Captions.casePlaceOfStay));
 		facilityOrHome.removeAllItems();
-		//facilityOrHome.setVisible(false);
 		for (TypeOfPlace place : TypeOfPlace.FOR_CASES) {
 			facilityOrHome.addItem(place);
 			facilityOrHome.setItemCaption(place, I18nProperties.getEnumCaption(place));
@@ -304,6 +300,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		facilityOrHome.setId("facilityOrHome");
 		facilityOrHome.setWidth(100, Unit.PERCENTAGE);
 		CssStyles.style(facilityOrHome, ValoTheme.OPTIONGROUP_HORIZONTAL);
+
 		facilityTypeGroup = ComboBoxHelper.createComboBoxV7();
 		facilityTypeGroup.setId("typeGroup");
 		facilityTypeGroup.setCaption(I18nProperties.getCaption(Captions.Facility_typeGroup));
@@ -328,7 +325,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 
 		dhimsFacilityOrHome =
 				addCustomField(DHIMSFACILITY_OR_HOME_LOC, TypeOfAbode.class, NullableOptionGroup.class, I18nProperties.getCaption(Captions.casePlaceOfStay));
-		dhimsFacilityOrHome.setVisible(false);
 		dhimsFacilityOrHome.removeAllItems();
 
 		for(TypeOfAbode place : TypeOfAbode.FOR_DHIMS_CASES){
@@ -351,11 +347,12 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		dhimsFacilityType.setWidth(100, Unit.PERCENTAGE);
 
 		getContent().addComponent(dhimsFacilityType, CaseDataDto.DHIMS_FACILITY_TYPE);
+		dhimsFacilityType.setVisible(false);
 
-		/*hospitalName = addInfrastructureField(CaseDataDto.HEALTH_FACILITY);
+		hospitalName = addField(CaseDataDto.HOSPITAL_NAME, ComboBox.class);
 		hospitalName.setImmediate(true);
+		hospitalName.setCaption("Please select hospital");
 		hospitalName.setVisible(false);
-		hospitalName.setCaption("Please select hospital");*/
 
 		if (convertedTravelEntry != null) {
 			differentPointOfEntryJurisdiction.setValue(true);
@@ -509,8 +506,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		dhimsFacilityType.addValueChangeListener(e -> updateFacility());
 		region.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 
-		region.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
-
 		OptionGroup caseTransmissionClassification = addField(CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
 		//caseTransmissionClassification.setRequired(false);
 		caseTransmissionClassification.setVisible(false);
@@ -645,6 +640,11 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				setVisible(true, CaseDataDto.POINT_OF_ENTRY);
 			}
 		});
+
+		dhimsFacilityOrHome.setVisible(false);
+		dhimsFacilityType.setVisible(false);
+		facilityOrHome.setVisible(false);
+
 		diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
 			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
 
@@ -658,11 +658,13 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			ogCaseOrigin.setVisible(disease != Disease.CSM);
 
 			if(disease == Disease.AFP){
-				afpFacilityOptions.setVisible(true);
 				caseTransmissionClassification.setVisible(false);
 				dhimsFacilityOrHome.setVisible(false);
 				dhimsFacilityType.setVisible(false);
+				facilityOrHome.setVisible(false);
+
 				homeaddrecreational.setVisible(true);
+				afpFacilityOptions.setVisible(true);
 			}
 
 			if(disease == Disease.YELLOW_FEVER){
@@ -690,8 +692,10 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				hospitalName.setVisible(true);
 			}
 			investigated.setVisible(disease == Disease.NEW_INFLUENZA);
-			dhimsFacilityOrHome.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.CSM);
-			dhimsFacilityType.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF  || disease == Disease.CSM);
+			/*dhimsFacilityOrHome.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.CSM);
+			dhimsFacilityType.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF  || disease == Disease.CSM);*/
+			//afpFacilityOptions.setVisible(disease != Disease.YELLOW_FEVER && disease != Disease.AHF  && disease != Disease.CSM);
+
 
 			personCreateForm.updatePresentConditionEnum((Disease) valueChangeEvent.getProperty().getValue());
 
