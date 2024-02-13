@@ -73,8 +73,14 @@ public enum SampleMaterial {
 	PLASMA_SERUM,
 	OTHER;
 
-	public static SampleMaterial[] YF_TYPES() {
+	//getYellowFeverMateriealTypes
+	public static SampleMaterial[] getYellowFeverMateriealTypes() {
 		return new SampleMaterial[] { SampleMaterial.WHOLE_BLOOD, SampleMaterial.SERUM, SampleMaterial.POST_MORTEM_LIVER_SPECIMEN };
+	}
+
+	//MEASELS Sample Types
+	public static SampleMaterial[] getMeaselsMateriealTypes() {
+		return new SampleMaterial[] { SampleMaterial.NASAL_SWAB, SampleMaterial.THROAT_SWAB, SampleMaterial.WHOLE_BLOOD, SampleMaterial.URINE };
 	}
 
 

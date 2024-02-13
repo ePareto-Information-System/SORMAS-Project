@@ -13187,3 +13187,8 @@ ALTER TABLE cases ADD COLUMN vaccinationroutine varchar(255) NULL;
 ALTER TABLE cases ADD COLUMN vaccinationroutinedate timestamp NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (562, 'Added a few columns to vaccinationroutine, vaccinationroutinedate to cases');
 
+ALTER TABLE samples ALTER COLUMN samplematerial DROP NOT NULL;
+ALTER TABLE samples_history ALTER COLUMN samplematerial DROP NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (563, 'Altered column samplematerial in samples and samples_history to not null');
+
