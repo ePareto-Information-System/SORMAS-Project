@@ -602,7 +602,7 @@ public class PathogenTestController {
 	private void showChangeAssociatedSampleResultDialog(PathogenTestDto dto, Consumer<Boolean> callback) {
 		if (dto.getTestResult() != FacadeProvider.getSampleFacade().getSampleByUuid(dto.getSample().getUuid()).getPathogenTestResult()) {
 			ControllerProvider.getSampleController()
-					.showChangePathogenTestResultWindow(null, Arrays.asList(dto.getSample().getUuid()), dto.getTestResult(), callback);
+					.showChangePathogenTestResultWindow(null, dto.getSample().getUuid(), dto.getTestResult(), dto, callback);
 		} else if (callback != null) {
 			callback.accept(true);
 		}
