@@ -12831,5 +12831,25 @@ ALTER TABLE samples ADD COLUMN residualanalysis varchar(255);
 ALTER TABLE samples ADD COLUMN resultexam varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (554, 'Added 18 columns to samples -AFP');
+
+ALTER TABLE person ADD COLUMN place varchar(255);
+ALTER TABLE person ADD COLUMN durationmonths varchar(255);
+ALTER TABLE person ADD COLUMN durationdays varchar(255);
+ALTER TABLE person ADD COLUMN place2 varchar(255);
+ALTER TABLE person ADD COLUMN durationmonths2 varchar(255);
+ALTER TABLE person ADD COLUMN durationdays2 varchar(255);
+ALTER TABLE person ADD COLUMN place3 varchar(255);
+ALTER TABLE person ADD COLUMN durationmonths3 varchar(255);
+ALTER TABLE person ADD COLUMN durationdays3 varchar(255);
+ALTER TABLE person ADD COLUMN place4 varchar(255);
+ALTER TABLE person ADD COLUMN durationmonths4 varchar(255);
+ALTER TABLE person ADD COLUMN durationdays4 varchar(255);
+ALTER TABLE person ADD COLUMN investigatorname varchar(255);
+ALTER TABLE person ADD COLUMN investigatortitle varchar(255);
+ALTER TABLE person ADD COLUMN investigatorunit varchar(255);
+ALTER TABLE person ADD COLUMN investigatoraddress varchar(255);
+ALTER TABLE person ADD COLUMN investigatortel varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (555, 'Added place, duration etc to person');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``

@@ -13,20 +13,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package de.symeda.sormas.ui.person;
-import static de.symeda.sormas.ui.utils.CssStyles.H3;
-import static de.symeda.sormas.ui.utils.CssStyles.LABEL_WHITE_SPACE_NORMAL;
-import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
-import static de.symeda.sormas.ui.utils.LayoutUtil.divsCss;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumnLocCss;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRow;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
-import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
-import static de.symeda.sormas.ui.utils.LayoutUtil.oneOfFourCol;
-import static de.symeda.sormas.ui.utils.LayoutUtil.oneOfTwoCol;
+import static de.symeda.sormas.ui.utils.CssStyles.*;
+import static de.symeda.sormas.ui.utils.LayoutUtil.*;
+
 import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 import de.symeda.sormas.api.caze.CaseOrigin;
+import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.*;
 import de.symeda.sormas.ui.utils.*;
@@ -76,6 +70,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private static final String CONTACT_INFORMATION_HEADER = "contactInformationHeader";
 	private static final String EXTERNAL_TOKEN_WARNING_LOC = "externalTokenWarningLoc";
 	private static final String GENERAL_COMMENT_LOC = "generalCommentLoc";
+	private static final String FILL_SECTION_HEADING_LOC = "fillSectionHeadingLoc";
+	private static final String SEEK_HELP_HEADING_LOC = "seekHelpHeadingLoc";
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(PERSON_INFORMATION_HEADING_LOC) +
@@ -131,7 +127,18 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 									fluidRowLocs(PersonDto.BIRTH_COUNTRY, PersonDto.CITIZENSHIP) +
 									fluidRowLocs(PersonDto.PERSON_CONTACT_DETAILS)) +
 					loc(GENERAL_COMMENT_LOC) + fluidRowLocs(CaseDataDto.ADDITIONAL_DETAILS) +
-					fluidRowLocs(PersonDto.ADDITIONAL_PLACES_STAYED);
+					fluidRowLocs(PersonDto.ADDITIONAL_PLACES_STAYED)+
+
+					//AFP
+					loc(FILL_SECTION_HEADING_LOC) +
+					loc(SEEK_HELP_HEADING_LOC) +
+					fluidRowLocs(PersonDto.PLACE, PersonDto.DURATION_MONTHS, PersonDto.DURATION_DAYS) +
+					fluidRowLocs(PersonDto.PLACE2, PersonDto.DURATION_MONTHS2, PersonDto.DURATION_DAYS2) +
+					fluidRowLocs(PersonDto.PLACE3, PersonDto.DURATION_MONTHS3, PersonDto.DURATION_DAYS3) +
+					fluidRowLocs(PersonDto.PLACE4, PersonDto.DURATION_MONTHS4, PersonDto.DURATION_DAYS4) +
+					locCss(VSPACE_TOP_3, PersonDto.INVESTIGATOR_NAME) +
+					fluidRowLocs(PersonDto.INVESTIGATOR_TITLE, PersonDto.INVESTIGATOR_UNIT) +
+					fluidRowLocs(PersonDto.INVESTIGATOR_ADDRESS, PersonDto.INVESTIGATOR_TEL);
 	private final Label occupationHeader = new Label(I18nProperties.getString(Strings.headingPersonOccupation));
 	private final Label addressHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESS));
 	private final Label addressesHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESSES));
@@ -389,6 +396,33 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		}
 
 		if (disease == Disease.AFP) {
+
+			Label fillThisSectionHeadingLabel = new Label(I18nProperties.getString(Strings.headingFillThis));
+			fillThisSectionHeadingLabel.addStyleName(H3);
+			getContent().addComponent(fillThisSectionHeadingLabel, FILL_SECTION_HEADING_LOC);
+
+			Label childSeekhelpHeadingLabel = new Label(I18nProperties.getString(Strings.headingChildSeek));
+			childSeekhelpHeadingLabel.addStyleName(H3);
+			getContent().addComponent(childSeekhelpHeadingLabel, SEEK_HELP_HEADING_LOC);
+
+			TextField place = addField(PersonDto.PLACE, TextField.class);
+			TextField durationMonths = addField(PersonDto.DURATION_MONTHS, TextField.class);
+			TextField durationDays = addField(PersonDto.DURATION_DAYS, TextField.class);
+			TextField place2 = addField(PersonDto.PLACE2, TextField.class);
+			TextField durationMonths2 = addField(PersonDto.DURATION_MONTHS2, TextField.class);
+			TextField durationDays2 = addField(PersonDto.DURATION_DAYS2, TextField.class);
+			TextField place3 = addField(PersonDto.PLACE3, TextField.class);
+			TextField durationMonths3 = addField(PersonDto.DURATION_MONTHS3, TextField.class);
+			TextField durationDays3 = addField(PersonDto.DURATION_DAYS3, TextField.class);
+			TextField place4 = addField(PersonDto.PLACE4, TextField.class);
+			TextField durationMonths4 = addField(PersonDto.DURATION_MONTHS4, TextField.class);
+			TextField durationDays4 = addField(PersonDto.DURATION_DAYS4, TextField.class);
+			TextField investigatorName = addField(PersonDto.INVESTIGATOR_NAME, TextField.class);
+			TextField investigatorTitle = addField(PersonDto.INVESTIGATOR_TITLE, TextField.class);
+			TextField investigatorUnit = addField(PersonDto.INVESTIGATOR_UNIT, TextField.class);
+			TextField investigatorAddress = addField(PersonDto.INVESTIGATOR_ADDRESS, TextField.class);
+			TextField investigatorTel = addField(PersonDto.INVESTIGATOR_TEL, TextField.class);
+
 			setVisible(false,PersonDto.BIRTH_COUNTRY, PersonDto.NAMES_OF_GUARDIANS, PersonDto.BIRTH_NAME);
 			otherNote.setVisible(true);
 			otherNote.setCaption("Other Notes and Observations");
