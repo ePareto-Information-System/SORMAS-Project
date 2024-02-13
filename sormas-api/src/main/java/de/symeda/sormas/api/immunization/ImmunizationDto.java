@@ -19,7 +19,8 @@ package de.symeda.sormas.api.immunization;
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.common.DeletionReason;
 import de.symeda.sormas.api.feature.FeatureType;
-import de.symeda.sormas.api.utils.DependingOnFeatureType;
+import de.symeda.sormas.api.utils.*;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,14 +45,7 @@ import de.symeda.sormas.api.sormastosormas.S2SIgnoreProperty;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasConfig;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasShareableDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
-import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DependingOnFeatureType;
-import de.symeda.sormas.api.utils.EmbeddedPersonalData;
-import de.symeda.sormas.api.utils.FieldConstraints;
-import de.symeda.sormas.api.utils.Outbreaks;
-import de.symeda.sormas.api.utils.PersonalData;
-import de.symeda.sormas.api.utils.SensitiveData;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.vaccination.VaccinationDto;
 
 @DependingOnFeatureType(featureType = FeatureType.IMMUNIZATION_MANAGEMENT)
@@ -98,6 +92,22 @@ public class ImmunizationDto extends SormasToSormasShareableDto {
 	public static final String DELETION_REASON = "deletionReason";
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
 
+	public static final String TOTAL_NUMBER_DOSES = "totalNumberDoses";
+	public static final String OPV_DOSE_AT_BIRTH = "opvDoseAtBirth";
+	public static final String SECOND = "secondDose";
+	public static final String FOURTH = "fourthDose";
+	public static final String FIRST = "firstDose";
+	public static final String THIRD = "thirdDose";
+	public static final String LAST_DOSE = "lastDose";
+	public static final String TOTAL_OPV_DOSES_RECEIVED_THROUGH_SIA = "totalOpvDosesReceivedThroughSia";
+	public static final String TOTAL_OPV_DOSES_RECEIVED_THROUGH_RI = "totalOpvDosesReceivedThroughRi";
+	public static final String DATE_LAST_OPV_DOSES_RECEIVED_THROUGH_SIA = "dateLastOpvDosesReceivedThroughSia";
+	public static final String TOTAL_IPV_DOSES_RECEIVED_THROUGH_SIA = "totalIpvDosesReceivedThroughSia";
+	public static final String TOTAL_IPV_DOSES_RECEIVED_THROUGH_RI = "totalIpvDosesReceivedThroughRi";
+	public static final String DATE_LAST_IPV_DOSES_RECEIVED_THROUGH_SIA = "dateLastIpvDosesReceivedThroughSia";
+	public static final String SOURCE_RI_VACCINATION_INFORMATION = "sourceRiVaccinationInformation";
+
+
 	@Outbreaks
 	@NotNull(message = Validations.validDisease)
 	private Disease disease;
@@ -125,9 +135,9 @@ public class ImmunizationDto extends SormasToSormasShareableDto {
 	@SensitiveData(mandatoryField = true)
 	private String externalId;
 
-	@NotNull(message = Validations.validResponsibleRegion)
+	//@NotNull(message = Validations.validResponsibleRegion)
 	private RegionReferenceDto responsibleRegion;
-	@NotNull(message = Validations.validResponsibleDistrict)
+	//@NotNull(message = Validations.validResponsibleDistrict)
 	private DistrictReferenceDto responsibleDistrict;
 	@PersonalData
 	@SensitiveData
@@ -173,6 +183,23 @@ public class ImmunizationDto extends SormasToSormasShareableDto {
 
 	@Valid
 	private List<VaccinationDto> vaccinations = new ArrayList<>();
+
+	private Integer totalNumberDoses;
+	private String opvDoseAtBirth;
+	private String secondDose;
+	private String fourthDose;
+	private String firstDose;
+	private String thirdDose;
+	private String lastDose;
+	private String totalOpvDosesReceivedThroughSia;
+	private String totalOpvDosesReceivedThroughRi;
+	private Date dateLastOpvDosesReceivedThroughSia;
+	private String totalIpvDosesReceivedThroughSia;
+	private String totalIpvDosesReceivedThroughRi;
+	private Date dateLastIpvDosesReceivedThroughSia;
+	private CardRecall sourceRiVaccinationInformation;
+
+
 
 	public static ImmunizationDto build(PersonReferenceDto person) {
 
@@ -466,5 +493,117 @@ public class ImmunizationDto extends SormasToSormasShareableDto {
 
 	public void setOtherDeletionReason(String otherDeletionReason) {
 		this.otherDeletionReason = otherDeletionReason;
+	}
+
+	public Integer getTotalNumberDoses() {
+		return totalNumberDoses;
+	}
+
+	public void setTotalNumberDoses(Integer totalNumberDoses) {
+		this.totalNumberDoses = totalNumberDoses;
+	}
+
+	public String getOpvDoseAtBirth() {
+		return opvDoseAtBirth;
+	}
+
+	public void setOpvDoseAtBirth(String opvDoseAtBirth) {
+		this.opvDoseAtBirth = opvDoseAtBirth;
+	}
+
+	public String getSecondDose() {
+		return secondDose;
+	}
+
+	public void setSecondDose(String secondDose) {
+		this.secondDose = secondDose;
+	}
+
+	public String getFourthDose() {
+		return fourthDose;
+	}
+
+	public void setFourthDose(String fourthDose) {
+		this.fourthDose = fourthDose;
+	}
+
+	public String getFirstDose() {
+		return firstDose;
+	}
+
+	public void setFirstDose(String firstDose) {
+		this.firstDose = firstDose;
+	}
+
+	public String getThirdDose() {
+		return thirdDose;
+	}
+
+	public void setThirdDose(String thirdDose) {
+		this.thirdDose = thirdDose;
+	}
+
+	public String getLastDose() {
+		return lastDose;
+	}
+
+	public void setLastDose(String lastDose) {
+		this.lastDose = lastDose;
+	}
+
+	public String getTotalOpvDosesReceivedThroughSia() {
+		return totalOpvDosesReceivedThroughSia;
+	}
+
+	public void setTotalOpvDosesReceivedThroughSia(String totalOpvDosesReceivedThroughSia) {
+		this.totalOpvDosesReceivedThroughSia = totalOpvDosesReceivedThroughSia;
+	}
+
+	public String getTotalOpvDosesReceivedThroughRi() {
+		return totalOpvDosesReceivedThroughRi;
+	}
+
+	public void setTotalOpvDosesReceivedThroughRi(String totalOpvDosesReceivedThroughRi) {
+		this.totalOpvDosesReceivedThroughRi = totalOpvDosesReceivedThroughRi;
+	}
+
+	public Date getDateLastOpvDosesReceivedThroughSia() {
+		return dateLastOpvDosesReceivedThroughSia;
+	}
+
+	public void setDateLastOpvDosesReceivedThroughSia(Date dateLastOpvDosesReceivedThroughSia) {
+		this.dateLastOpvDosesReceivedThroughSia = dateLastOpvDosesReceivedThroughSia;
+	}
+
+	public String getTotalIpvDosesReceivedThroughSia() {
+		return totalIpvDosesReceivedThroughSia;
+	}
+
+	public void setTotalIpvDosesReceivedThroughSia(String totalIpvDosesReceivedThroughSia) {
+		this.totalIpvDosesReceivedThroughSia = totalIpvDosesReceivedThroughSia;
+	}
+
+	public String getTotalIpvDosesReceivedThroughRi() {
+		return totalIpvDosesReceivedThroughRi;
+	}
+
+	public void setTotalIpvDosesReceivedThroughRi(String totalIpvDosesReceivedThroughRi) {
+		this.totalIpvDosesReceivedThroughRi = totalIpvDosesReceivedThroughRi;
+	}
+
+	public Date getDateLastIpvDosesReceivedThroughSia() {
+		return dateLastIpvDosesReceivedThroughSia;
+	}
+
+	public void setDateLastIpvDosesReceivedThroughSia(Date dateLastIpvDosesReceivedThroughSia) {
+		this.dateLastIpvDosesReceivedThroughSia = dateLastIpvDosesReceivedThroughSia;
+	}
+
+	public CardRecall getSourceRiVaccinationInformation() {
+		return sourceRiVaccinationInformation;
+	}
+
+	public void setSourceRiVaccinationInformation(CardRecall sourceRiVaccinationInformation) {
+		this.sourceRiVaccinationInformation = sourceRiVaccinationInformation;
 	}
 }

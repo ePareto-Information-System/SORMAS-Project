@@ -12851,5 +12851,26 @@ ALTER TABLE person ADD COLUMN investigatoraddress varchar(255);
 ALTER TABLE person ADD COLUMN investigatortel varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (555, 'Added place, duration etc to person');
+
+ALTER TABLE immunization ADD COLUMN totalnumberdoses integer;
+ALTER TABLE immunization ADD COLUMN opvdoseatbirth varchar(255);
+ALTER TABLE immunization ADD COLUMN seconddose varchar(255);
+ALTER TABLE immunization ADD COLUMN fourthdose varchar(255);
+ALTER TABLE immunization ADD COLUMN firstdose varchar(255);
+ALTER TABLE immunization ADD COLUMN thirddose varchar(255);
+ALTER TABLE immunization ADD COLUMN lastdose varchar(255);
+ALTER TABLE immunization ADD COLUMN totalopvdosesreceivedthroughsia varchar(255);
+ALTER TABLE immunization ADD COLUMN totalopvdosesreceivedthroughri varchar(255);
+ALTER TABLE immunization ADD COLUMN datelastopvdosesreceivedthroughsia varchar(255);
+ALTER TABLE immunization ADD COLUMN totalipvdosesreceivedthroughsia varchar(255);
+ALTER TABLE immunization ADD COLUMN totalipvdosesreceivedthroughri varchar(255);
+ALTER TABLE immunization ADD COLUMN datelastipvreceivedthroughsia date;
+ALTER TABLE immunization ADD COLUMN sourcerivaccinationinformation varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (556, 'Added totalnumberdoses,opvdoseatbirth  etc to immunization');
+
+ALTER TABLE immunization ADD COLUMN datelastipvdosesreceivedthroughsia varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (557, 'Added datelastipvdosesreceivedthroughsia  etc to immunization');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``

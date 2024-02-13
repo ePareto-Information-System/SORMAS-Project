@@ -115,7 +115,15 @@ public class ImmunizationDataForm extends AbstractEditForm<ImmunizationDto> {
 		+ fluidRowLocs(ImmunizationDto.POSITIVE_TEST_RESULT_DATE, ImmunizationDto.RECOVERY_DATE, LINK_IMMUNIZATION_TO_CASE_BTN_LOC)
 		+ fluidRow(fluidColumnLoc(6, 0, ImmunizationDto.COUNTRY))
 		+ fluidRowLocs(CaseDataDto.DELETION_REASON)
-		+ fluidRowLocs(CaseDataDto.OTHER_DELETION_REASON);
+		+ fluidRowLocs(CaseDataDto.OTHER_DELETION_REASON)
+
+		+ fluidRowLocs(6,ImmunizationDto.TOTAL_NUMBER_DOSES)
+		+ fluidRowLocs(ImmunizationDto.OPV_DOSE_AT_BIRTH, ImmunizationDto.SECOND, ImmunizationDto.FOURTH)
+		+ fluidRowLocs(ImmunizationDto.FIRST, ImmunizationDto.THIRD, ImmunizationDto.LAST_DOSE)
+		+ fluidRowLocs(ImmunizationDto.TOTAL_OPV_DOSES_RECEIVED_THROUGH_SIA, ImmunizationDto.TOTAL_OPV_DOSES_RECEIVED_THROUGH_RI)
+		+ fluidRowLocs(6,ImmunizationDto.DATE_LAST_OPV_DOSES_RECEIVED_THROUGH_SIA)
+		+ fluidRowLocs(ImmunizationDto.TOTAL_IPV_DOSES_RECEIVED_THROUGH_SIA, ImmunizationDto.TOTAL_IPV_DOSES_RECEIVED_THROUGH_RI)
+		+ fluidRowLocs(ImmunizationDto.DATE_LAST_IPV_DOSES_RECEIVED_THROUGH_SIA, ImmunizationDto.SOURCE_RI_VACCINATION_INFORMATION);
 	//@formatter:on
 
 	private final CaseReferenceDto relatedCase;
@@ -124,6 +132,20 @@ public class ImmunizationDataForm extends AbstractEditForm<ImmunizationDto> {
 	private CheckBox overwriteImmunizationManagementStatus;
 	private ComboBoxWithPlaceholder facilityTypeGroup;
 	private final Consumer<Runnable> actionCallback;
+	private Field totalNumberDoses;
+	private TextField opvDoseAtBirth;
+	private TextField secondDose;
+	private TextField fourthDose;
+	private TextField firstDose;
+	private TextField thirdDose;
+	private TextField lastDose;
+	private TextField totalOpvDosesReceivedThroughSia;
+	private TextField totalOpvDosesReceivedThroughRi;
+	private DateField dateLastOpvDosesReceivedThroughSia;
+	private DateField dateLastIpvDosesReceivedThroughSia;
+	private TextField totalIpvDosesReceivedThroughSia;
+	private TextField totalIpvDosesReceivedThroughRi;
+	private ComboBox sourceRiVaccinationInformation;
 
 	public ImmunizationDataForm(boolean isPseudonymized, boolean inJurisdiction, CaseReferenceDto relatedCase, Consumer<Runnable> actionCallback) {
 		super(
@@ -246,6 +268,23 @@ public class ImmunizationDataForm extends AbstractEditForm<ImmunizationDto> {
 			false);
 		cbDisease.addValueChangeListener(e -> vaccinationsField.setDisease((Disease) cbDisease.getValue()));
 
+		cbDisease.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
+				Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
+
+				if(disease == Disease.AFP){
+					jurisdictionHeadingLabel.setVisible(false);
+					meansOfImmunizationField.setValue(MeansOfImmunization.IMMUNIZATION);
+					meansOfImmunizationField.setEnabled(false);
+					meansOfImmunizationField.setReadOnly(true);
+					meansOfImmunizationField.setCaption("EDIT:");
+
+					setVisible(false, ImmunizationDto.REPORT_DATE,ImmunizationDto.DISEASE, ImmunizationDto.DISEASE_DETAILS);
+					setVisible(false, ImmunizationDto.IMMUNIZATION_MANAGEMENT_STATUS, ImmunizationDto.IMMUNIZATION_STATUS, ImmunizationDto.FACILITY_TYPE, ImmunizationDto.HEALTH_FACILITY, ImmunizationDto.START_DATE, ImmunizationDto.END_DATE, ImmunizationDto.VALID_FROM, ImmunizationDto.VALID_UNTIL, FACILITY_TYPE_GROUP_LOC, OVERWRITE_IMMUNIZATION_MANAGEMENT_STATUS, ImmunizationDto.RESPONSIBLE_REGION, ImmunizationDto.RESPONSIBLE_DISTRICT, ImmunizationDto.RESPONSIBLE_COMMUNITY, ImmunizationDto.EXTERNAL_ID, ImmunizationDto.ADDITIONAL_DETAILS, ImmunizationDto.PREVIOUS_INFECTION);
+					setRequired(false, ImmunizationDto.REPORT_DATE, ImmunizationDto.RESPONSIBLE_REGION, ImmunizationDto.RESPONSIBLE_DISTRICT, ImmunizationDto.RESPONSIBLE_COMMUNITY);
+				}
+
+		});
+
 		Label recoveryHeadingLabel = new Label(I18nProperties.getString(Strings.headingRecovery));
 		recoveryHeadingLabel.addStyleName(H3);
 		getContent().addComponent(recoveryHeadingLabel, RECOVERY_HEADING_LOC);
@@ -281,6 +320,26 @@ public class ImmunizationDataForm extends AbstractEditForm<ImmunizationDto> {
 		}
 		getContent().addComponent(linkImmunizationToCaseButton, LINK_IMMUNIZATION_TO_CASE_BTN_LOC);
 		linkImmunizationToCaseButton.setVisible(shouldShowRecoveryFields(meansOfImmunizationValue));
+
+		totalNumberDoses = addField(ImmunizationDto.TOTAL_NUMBER_DOSES, Field.class);
+		opvDoseAtBirth = addField(ImmunizationDto.OPV_DOSE_AT_BIRTH, TextField.class);
+		secondDose = addField(ImmunizationDto.SECOND, TextField.class);
+		fourthDose = addField(ImmunizationDto.FOURTH, TextField.class);
+
+		firstDose = addField(ImmunizationDto.FIRST, TextField.class);
+		thirdDose = addField(ImmunizationDto.THIRD, TextField.class);
+		lastDose = addField(ImmunizationDto.LAST_DOSE, TextField.class);
+
+		totalOpvDosesReceivedThroughSia = addField(ImmunizationDto.TOTAL_OPV_DOSES_RECEIVED_THROUGH_SIA, TextField.class);
+		totalOpvDosesReceivedThroughRi = addField(ImmunizationDto.TOTAL_OPV_DOSES_RECEIVED_THROUGH_RI, TextField.class);
+
+		dateLastOpvDosesReceivedThroughSia = addField(ImmunizationDto.DATE_LAST_OPV_DOSES_RECEIVED_THROUGH_SIA, DateField.class);
+
+		totalIpvDosesReceivedThroughSia = addField(ImmunizationDto.TOTAL_IPV_DOSES_RECEIVED_THROUGH_SIA, TextField.class);
+		totalIpvDosesReceivedThroughRi = addField(ImmunizationDto.TOTAL_IPV_DOSES_RECEIVED_THROUGH_RI, TextField.class);
+
+		dateLastIpvDosesReceivedThroughSia = addField(ImmunizationDto.DATE_LAST_IPV_DOSES_RECEIVED_THROUGH_SIA, DateField.class);
+		sourceRiVaccinationInformation = addField(ImmunizationDto.SOURCE_RI_VACCINATION_INFORMATION, ComboBox.class);
 
 		// Set initial visibilities & accesses
 		initializeVisibilitiesAndAllowedVisibilities();

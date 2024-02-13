@@ -22,7 +22,8 @@ public enum MeansOfImmunization {
 	VACCINATION,
 	RECOVERY,
 	VACCINATION_RECOVERY,
-	OTHER;
+	OTHER,
+	IMMUNIZATION;
 
 	public static boolean isVaccination(MeansOfImmunization meansOfImmunization) {
 		return meansOfImmunization == VACCINATION || meansOfImmunization == VACCINATION_RECOVERY;
