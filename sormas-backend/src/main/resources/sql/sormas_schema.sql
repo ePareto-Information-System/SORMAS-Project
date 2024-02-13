@@ -13192,3 +13192,6 @@ ALTER TABLE samples_history ALTER COLUMN samplematerial DROP NOT NULL;
 
 INSERT INTO schema_version (version_number, comment) VALUES (563, 'Altered column samplematerial in samples and samples_history to not null');
 
+ALTER TABLE surveillancereports ADD COLUMN dhimsfacilitytype VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (564, 'Added dhimsfacilitytype to surveillancereports');
+
