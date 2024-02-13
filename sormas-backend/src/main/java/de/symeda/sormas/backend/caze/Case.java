@@ -316,6 +316,9 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private String hospitalName;
 	private HospitalWardType notifyingClinic;
 	private String notifyingClinicDetails;
+	private String notifiedBy;
+	private Date dateOfNotification;
+	private Date dateOfInvestigation;
 
 	private Symptoms symptoms;
 
@@ -784,6 +787,30 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setHospitalName(String hospitalName) {
 		this.hospitalName = hospitalName;
+	}
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getNotifiedBy() {
+		return notifiedBy;
+	}
+
+	public void setNotifiedBy(String notifiedBy) {
+		this.notifiedBy = notifiedBy;
+	}
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public Date getDateOfNotification() {
+		return dateOfNotification;
+	}
+
+	public void setDateOfNotification(Date dateOfNotification) {
+		this.dateOfNotification = dateOfNotification;
+	}
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public Date getDateOfInvestigation() {
+		return dateOfInvestigation;
+	}
+
+	public void setDateOfInvestigation(Date dateOfInvestigation) {
+		this.dateOfInvestigation = dateOfInvestigation;
 	}
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)

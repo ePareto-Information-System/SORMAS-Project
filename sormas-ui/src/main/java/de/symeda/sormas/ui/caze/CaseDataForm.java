@@ -186,7 +186,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(9, CaseDataDto.INVESTIGATION_STATUS, 3, CaseDataDto.INVESTIGATED_DATE) +
 					fluidRowLocs(6, CaseDataDto.EPID_NUMBER, 3, ASSIGN_NEW_EPID_NUMBER_LOC) +
 					loc(EPID_NUMBER_WARNING_LOC) +
-					fluidRowLocs(6,CaseDataDto.EXTERNAL_ID, 6, CaseDataDto.EXTERNAL_TOKEN) +
+					fluidRowLocs(CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION) +
+					fluidRowLocs(CaseDataDto.EXTERNAL_ID, CaseDataDto.EXTERNAL_TOKEN) +
 					fluidRowLocs("", EXTERNAL_TOKEN_WARNING_LOC) +
 					fluidRowLocs(6, CaseDataDto.CASE_ID_ISM, 6, CaseDataDto.INTERNAL_TOKEN) +
 					fluidRow(
@@ -284,7 +285,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(CaseDataDto.FUNCTION_OF_REPORTING_OFFICER, CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE) +
 					fluidRowLocs(6,CaseDataDto.REPORTING_OFFICER_EMAIL) +
 					loc(PAPER_FORM_DATES_LOC) +
-					fluidRowLocs(CaseDataDto.DISTRICT_LEVEL_DATE, CaseDataDto.REGION_LEVEL_DATE, CaseDataDto.NATIONAL_LEVEL_DATE) +
+					fluidRowLocs(CaseDataDto.DISTRICT_LEVEL_DATE, CaseDataDto.REGION_LEVEL_DATE) +
+					fluidRowLocs(6,CaseDataDto.NATIONAL_LEVEL_DATE) +
 					loc(GENERAL_COMMENT_LOC) + fluidRowLocs(CaseDataDto.ADDITIONAL_DETAILS) +
 					fluidRowLocs(CaseDataDto.DELETION_REASON) +
 					fluidRowLocs(CaseDataDto.OTHER_DELETION_REASON);
@@ -428,7 +430,15 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		DateField districtLevelDate = addField(CaseDataDto.DISTRICT_LEVEL_DATE, DateField.class);
 		DateField regionLevelDate = addField(CaseDataDto.REGION_LEVEL_DATE, DateField.class);
 		DateField nationalLevelDate = addField(CaseDataDto.NATIONAL_LEVEL_DATE, DateField.class);
+
+		TextField notifiedBy = addField(CaseDataDto.NOTIFIED_BY, TextField.class);
+		DateField dateOfNotification = addField(CaseDataDto.DATE_OF_NOTIFICATION, DateField.class);
+		DateField dateOfInvestigation = addField(CaseDataDto.DATE_OF_INVESTIGATION, DateField.class);
+		notifiedBy.setVisible(false);
+		dateOfNotification.setVisible(false);
+		dateOfInvestigation.setVisible(false);
 		districtLevelDate.setVisible(false);
+		regionLevelDate.setVisible(false);
 		regionLevelDate.setVisible(false);
 		nationalLevelDate.setVisible(false);
 
@@ -1726,6 +1736,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				afpFacilityOptions.setVisible(true);
 				setVisible(false, DHIMSFACILITY_OR_HOME_LOC, CaseDataDto.DHIMS_FACILITY_TYPE);
 				homeaddrecreational.setVisible(true);
+				nationalLevelDate.setVisible(true);
+				notifiedBy.setVisible(true);
+				dateOfNotification.setVisible(true);
+				dateOfInvestigation.setVisible(true);
 			}
 			//INFLUENZA
 			if(disease == Disease.NEW_INFLUENZA){

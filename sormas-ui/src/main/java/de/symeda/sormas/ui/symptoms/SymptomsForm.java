@@ -64,6 +64,7 @@ import com.vaadin.v7.data.util.converter.Converter.ConversionException;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.Descriptions;
@@ -72,16 +73,20 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.SymptomsContext;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.symptoms.SymptomsHelper;
 import de.symeda.sormas.api.utils.DateComparator;
+import de.symeda.sormas.api.utils.InjectionSite;
 import de.symeda.sormas.api.utils.SymptomGroup;
 import de.symeda.sormas.api.utils.SymptomGrouping;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
+import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import de.symeda.sormas.api.visit.VisitStatus;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.ButtonHelper;
@@ -134,6 +139,14 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6,FEVER_BODY_TEMP_GREATER) +
 					fluidRow(fluidColumn(8,4, locCss(CssStyles.ALIGN_RIGHT,BUTTONS_LOC)))+
 					createSymptomGroupLayout(SymptomGroup.GENERAL, GENERAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
+
+					fluidRowLocs(FEVER_ONSET_PARALYSIS, PROGRESSIVE_PARALYSIS) +
+					fluidRowLocs(DATE_ONSET_PARALYSIS, PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
+					fluidRowLocs(SITE_OF_PARALYSIS) +
+					fluidRowLocs(PARALYSED_LIMB_SENSITIVE_TO_PAIN, INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
+					fluidRowLocs(RIGHT_INJECTION_SITE, LEFT_INJECTION_SITE) +
+					fluidRowLocs(6, TRUEAFP) +
+
 					fluidRowLocs(6,ALTERED_CONSCIOUSNESS) +
 					fluidRowLocs(6,CONFUSED_DISORIENTED) +
 					fluidRowLocs(6,HEMORRHAGIC_SYNDROME) +
@@ -799,6 +812,32 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			setUpMonkeypoxVisibilities();
 		}
 		if (disease == Disease.AFP) {
+			NullableOptionGroup feverOnsetParalysis = addField(FEVER_ONSET_PARALYSIS, NullableOptionGroup.class);
+			NullableOptionGroup progressiveParalysis = addField(PROGRESSIVE_PARALYSIS, NullableOptionGroup.class);
+			DateField dateOnsetParalysis = addField(DATE_ONSET_PARALYSIS, DateField.class);
+			NullableOptionGroup progressiveFlaccidAcute = addField(PROGRESSIVE_FLACID_ACUTE, NullableOptionGroup.class);
+			NullableOptionGroup assymetric = addField(ASSYMETRIC, NullableOptionGroup.class);
+
+			NullableOptionGroup siteParalysisBox = new NullableOptionGroup("Site of Paralysis");
+			for (InjectionSite injectionSite : InjectionSite.ParalysisSite) {
+				siteParalysisBox.addItem(injectionSite);
+			}
+			NullableOptionGroup siteOfParalysis = addField(SITE_OF_PARALYSIS, siteParalysisBox);
+			OptionGroup paralysedLimbSensitiveToPain = addField(PARALYSED_LIMB_SENSITIVE_TO_PAIN, OptionGroup.class);
+			OptionGroup injectionSiteBeforeOnsetParalysis = addField(INJECTION_SITE_BEFORE_ONSET_PARALYSIS, OptionGroup.class);
+
+			NullableOptionGroup rightInjectionSiteBox = new NullableOptionGroup("Right Injection Site");
+			for (InjectionSite injectionSiteRight : InjectionSite.InjectionSiteRight) {
+				rightInjectionSiteBox.addItem(injectionSiteRight);
+			}
+			NullableOptionGroup rightInjectionSite = addField(RIGHT_INJECTION_SITE, rightInjectionSiteBox);
+
+			NullableOptionGroup leftInjectionSiteBox = new NullableOptionGroup("Left Injection Site");
+			for (InjectionSite injectionSiteLeft : InjectionSite.InjectionSiteLeft) {
+				leftInjectionSiteBox.addItem(injectionSiteLeft);
+			}
+			NullableOptionGroup leftInjectionSite = addField(LEFT_INJECTION_SITE, leftInjectionSiteBox);
+			OptionGroup trueAFP = addField(TRUEAFP, OptionGroup.class);
 			TextArea provisionalDiagnosis = addField(PROVISONAL_DIAGNOSIS, TextArea.class);
 			provisionalDiagnosis.setRows(4);
 

@@ -108,6 +108,7 @@ public class Hospitalization extends AbstractDomainObject {
 	private Date notifyDistrictDate;
 	private Date dateFirstSeen;
 	private Date terminationDateHospitalStay;
+	private String hospitalRecordNumber;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getAdmissionDate() {
@@ -402,7 +403,6 @@ public class Hospitalization extends AbstractDomainObject {
 	public Date getTerminationDateHospitalStay() {
 		return terminationDateHospitalStay;
 	}
-
 	public void setTerminationDateHospitalStay(Date terminationDateHospitalStay) {
 		this.terminationDateHospitalStay = terminationDateHospitalStay;
 	}
@@ -416,5 +416,12 @@ public class Hospitalization extends AbstractDomainObject {
 		this.wasPatientAdmitted = wasPatientAdmitted;
 	}
 
+
+	public String getHospitalRecordNumber() {
+		return hospitalRecordNumber;
+	}
+	public void setHospitalRecordNumber(String hospitalRecordNumber) {
+		this.hospitalRecordNumber = hospitalRecordNumber;
+	}
 
 }

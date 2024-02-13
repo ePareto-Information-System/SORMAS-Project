@@ -292,6 +292,24 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private PosNeg finalLabResults;
 	private YesNoUnknown immunocompromisedStatusSuspected;
 	private AFPClassification afpFinalClassification;
+	private Date dateFirstSpecimen;
+	private Date dateSecondSpecimen;
+	private Date dateSpecimenSentNationalLevel;
+	private Date dateSpecimenReceivedNationalLevel;
+	private Date dateSpecimenSentInter;
+	private Date dateSpecimenReceivedInter;
+	private SpecimenCondition statusSpecimenReceptionAtLab;
+	private Date dateCombinedCellCultureResults;
+	private YesNo w1;
+	private YesNo w2;
+	private YesNo w3;
+	private YesNoUnknown discordant;
+	private YesNo sL1;
+	private YesNo sL2;
+	private YesNo sL3;
+	private Date dateFollowUpExam;
+	private InjectionSite residualAnalysis;
+	private AfpResult resultExam;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -1379,5 +1397,149 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setAfpFinalClassification(AFPClassification afpFinalClassification) {
 		this.afpFinalClassification = afpFinalClassification;
+	}
+
+	public Date getDateFirstSpecimen() {
+		return dateFirstSpecimen;
+	}
+
+	public void setDateFirstSpecimen(Date dateFirstSpecimen) {
+		this.dateFirstSpecimen = dateFirstSpecimen;
+	}
+
+	public Date getDateSecondSpecimen() {
+		return dateSecondSpecimen;
+	}
+
+	public void setDateSecondSpecimen(Date dateSecondSpecimen) {
+		this.dateSecondSpecimen = dateSecondSpecimen;
+	}
+
+	public Date getDateSpecimenSentNationalLevel() {
+		return dateSpecimenSentNationalLevel;
+	}
+
+	public void setDateSpecimenSentNationalLevel(Date dateSpecimenSentNationalLevel) {
+		this.dateSpecimenSentNationalLevel = dateSpecimenSentNationalLevel;
+	}
+
+	public Date getDateSpecimenReceivedNationalLevel() {
+		return dateSpecimenReceivedNationalLevel;
+	}
+
+	public void setDateSpecimenReceivedNationalLevel(Date dateSpecimenReceivedNationalLevel) {
+		this.dateSpecimenReceivedNationalLevel = dateSpecimenReceivedNationalLevel;
+	}
+
+	public Date getDateSpecimenSentInter() {
+		return dateSpecimenSentInter;
+	}
+
+	public void setDateSpecimenSentInter(Date dateSpecimenSentInter) {
+		this.dateSpecimenSentInter = dateSpecimenSentInter;
+	}
+
+	public Date getDateSpecimenReceivedInter() {
+		return dateSpecimenReceivedInter;
+	}
+
+	public void setDateSpecimenReceivedInter(Date dateSpecimenReceivedInter) {
+		this.dateSpecimenReceivedInter = dateSpecimenReceivedInter;
+	}
+
+	public SpecimenCondition getStatusSpecimenReceptionAtLab() {
+		return statusSpecimenReceptionAtLab;
+	}
+
+	public void setStatusSpecimenReceptionAtLab(SpecimenCondition statusSpecimenReceptionAtLab) {
+		this.statusSpecimenReceptionAtLab = statusSpecimenReceptionAtLab;
+	}
+
+	public Date getDateCombinedCellCultureResults() {
+		return dateCombinedCellCultureResults;
+	}
+
+	public void setDateCombinedCellCultureResults(Date dateCombinedCellCultureResults) {
+		this.dateCombinedCellCultureResults = dateCombinedCellCultureResults;
+	}
+
+	public YesNo getW1() {
+		return w1;
+	}
+
+	public void setW1(YesNo w1) {
+		this.w1 = w1;
+	}
+
+	public YesNo getW2() {
+		return w2;
+	}
+
+	public void setW2(YesNo w2) {
+		this.w2 = w2;
+	}
+
+	public YesNo getW3() {
+		return w3;
+	}
+
+	public void setW3(YesNo w3) {
+		this.w3 = w3;
+	}
+
+	public YesNoUnknown getDiscordant() {
+		return discordant;
+	}
+
+	public void setDiscordant(YesNoUnknown discordant) {
+		this.discordant = discordant;
+	}
+
+	public YesNo getsL1() {
+		return sL1;
+	}
+
+	public void setsL1(YesNo sL1) {
+		this.sL1 = sL1;
+	}
+
+	public YesNo getsL2() {
+		return sL2;
+	}
+
+	public void setsL2(YesNo sL2) {
+		this.sL2 = sL2;
+	}
+
+	public YesNo getsL3() {
+		return sL3;
+	}
+
+	public void setsL3(YesNo sL3) {
+		this.sL3 = sL3;
+	}
+
+	public Date getDateFollowUpExam() {
+		return dateFollowUpExam;
+	}
+
+	public void setDateFollowUpExam(Date dateFollowUpExam) {
+		this.dateFollowUpExam = dateFollowUpExam;
+	}
+
+	public InjectionSite getResidualAnalysis() {
+		return residualAnalysis;
+	}
+
+	public void setResidualAnalysis(InjectionSite residualAnalysis) {
+		this.residualAnalysis = residualAnalysis;
+	}
+
+	public AfpResult getResultExam() {
+		return resultExam;
+	}
+
+	public void setResultExam(AfpResult resultExam) {
+		this.resultExam = resultExam;
 	}
 }

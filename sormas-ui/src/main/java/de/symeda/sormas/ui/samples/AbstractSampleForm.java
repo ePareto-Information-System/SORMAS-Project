@@ -76,6 +76,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	protected static final String DISTRICT_LABORATORY_HEADLINE_LOC = "districtLaboratoryLoc";
 	protected static final String REGIONAL_LABORATORY_HEADLINE_LOC = "regionalLaboratoryLoc";
 	protected static final String REFERENCE_LABORATORY_HEADLINE_LOC = "referenceLaboratoryLoc";
+	protected static final String STOOL_SPECIMEN_COLLECTION_HEADLINE_LOC = "stoolSpecimenCollectionLoc";
+	protected static final String STOOL_SPECIMEN_RESULTS_HEADLINE_LOC = "stoolSpecimenResultsLoc";
+	protected static final String FINAL_LAB_RESULTS_HEADLINE_LOC = "finalLabResultsLoc";
+	protected static final String FOLLOW_UP_EXAMINATION_HEADLINE_LOC = "followUpExaminationLoc";
 	protected static final String LABORATORY_ANTIBIOGRAM_HEADLINE_LOC = "laboratoryAntibiogramHeadlineloc";
 	protected static final String LABORATORY_PCR_HEADLINE_LOC = "laboratoryPcrHeadlineloc";
 	protected static final String REQUESTED_ADDITIONAL_TESTS_READ_LOC = "requestedAdditionalTestsReadLoc";
@@ -100,16 +104,17 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.CSF_SAMPLE_COLLECTED) +
 					fluidRowLocs(SampleDto.CSF_REASON) +
 					fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
-					fluidRowLocs(SampleDto.APPEARANCE_OF_CSF) +
-					fluidRowLocs(6,SampleDto.INOCULATION_TIME_TRANSPORT_MEDIA) +
-					fluidRowLocs(SampleDto.SAMPLE_SENT_TO_LAB, SampleDto.REASON_NOT_SENT_TO_LAB) +
-					fluidRowLocs(SampleDto.DATE_SAMPLE_SENT_TO_LAB, SampleDto.LAB, SampleDto.LAB_DETAILS) +
-					fluidRowLocs(SampleDto.SAMPLE_CONTAINER_USED) +
-					fluidRowLocs(SampleDto.RDT_PERFORMED, SampleDto.RDT_RESULTS) +
-					fluidRowLocs(SampleDto.DISTRICT_NOTIFICATION_DATE, SampleDto.NAME_OF_PERSON, SampleDto.TEL_NUMBER) +
-					fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT) +
-					fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +
-					fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_NATIONAL, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
+                    fluidRowLocs(SampleDto.APPEARANCE_OF_CSF) +
+                    fluidRowLocs(6,SampleDto.INOCULATION_TIME_TRANSPORT_MEDIA) +
+                    fluidRowLocs(SampleDto.SAMPLE_SENT_TO_LAB, SampleDto.REASON_NOT_SENT_TO_LAB) +
+                    fluidRowLocs(6,SampleDto.DATE_SAMPLE_SENT_TO_LAB) +
+                    fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
+                    fluidRowLocs(SampleDto.SAMPLE_CONTAINER_USED) +
+                    fluidRowLocs(SampleDto.RDT_PERFORMED, SampleDto.RDT_RESULTS) +
+                    fluidRowLocs(SampleDto.DISTRICT_NOTIFICATION_DATE, SampleDto.NAME_OF_PERSON, SampleDto.TEL_NUMBER) +
+                    fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT) +
+                    fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +
+                    fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_NATIONAL, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
 
 
 					fluidRowLocs(SampleDto.SAMPLE_PURPOSE) +
@@ -186,9 +191,26 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 
 					//AFP
-					fluidRowLocs(SampleDto.DATE_SENT_NATIONAL_REG_LAB, SampleDto.DATE_DIFFERENTIATION_SENT_EPI, SampleDto.DATE_DIFFERENTIATION_RECEIVED_EPI) +
+					loc(STOOL_SPECIMEN_COLLECTION_HEADLINE_LOC) +
+					fluidRowLocs(SampleDto.DATE_FIRST_SPECIMEN, SampleDto.DATE_SECOND_SPECIMEN, SampleDto.DATE_SPECIMEN_SENT_NATIONAL_LEVEL) +
+					fluidRowLocs(SampleDto.DATE_SPECIMEN_RECEIVED_NATIONAL_LEVEL, SampleDto.DATE_SPECIMEN_SENT_INTERCOUNTY_NATLAB) +
+
+					loc(STOOL_SPECIMEN_RESULTS_HEADLINE_LOC) +
+					fluidRowLocs(SampleDto.DATE_SPECIMEN_RECEIVED_INTERCOUNTY_NATLAB, SampleDto.STATUS_SPECIMEN_RECEPTION_AT_LAB) +
+					fluidRowLocs(6,SampleDto.DATE_COMBINED_CELL_CULTURE_RESULTS) +
+
+
+					fluidRowLocs(SampleDto.DATE_SENT_NATIONAL_REG_LAB, SampleDto.DATE_DIFFERENTIATION_SENT_EPI) +
+					fluidRowLocs(6,SampleDto.DATE_DIFFERENTIATION_RECEIVED_EPI) +
 					fluidRowLocs(SampleDto.DATE_ISOLATE_SENT_SEQUENCING, SampleDto.DATE_SEQ_RESULTS_SENT_PROGRAM) +
-					fluidRowLocs(6,SampleDto.FINAL_LAB_RESULTS) +
+
+					loc(FINAL_LAB_RESULTS_HEADLINE_LOC) +
+					fluidRowLocs(SampleDto.W1, SampleDto.W2, SampleDto.W3) +
+					fluidRowLocs(SampleDto.SL1, SampleDto.SL2, SampleDto.SL3) +
+					fluidRowLocs(SampleDto.DISCORDANT, SampleDto.FINAL_LAB_RESULTS) +
+
+					loc(FOLLOW_UP_EXAMINATION_HEADLINE_LOC) +
+					fluidRowLocs(SampleDto.DATE_FOLLOWUP_EXAM, SampleDto.RESIDUAL_ANALYSIS, SampleDto.RESULT_EXAM) +
 					fluidRowLocs(6,SampleDto.IMMUNOCOMPROMISED_STATUS_SUSPECTED) +
 					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION);
 
@@ -906,6 +928,52 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	}
 
 	private void handleAFP() {
+
+		Label stoolSpecimenCollection = new Label(I18nProperties.getString(Strings.headingStoolSpecimenCollection));
+		CssStyles.style(stoolSpecimenCollection, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_4);
+		getContent().addComponent(stoolSpecimenCollection, STOOL_SPECIMEN_COLLECTION_HEADLINE_LOC);
+		stoolSpecimenCollection.setVisible(false);
+
+		Label stoolSpecimenResults = new Label(I18nProperties.getString(Strings.headingStoolSpecimenResults));
+		CssStyles.style(stoolSpecimenResults, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_4);
+		getContent().addComponent(stoolSpecimenResults, STOOL_SPECIMEN_RESULTS_HEADLINE_LOC);
+		stoolSpecimenResults.setVisible(false);
+
+		Label followUpExamination = new Label(I18nProperties.getString(Strings.headingFollowUpExamination));
+		CssStyles.style(followUpExamination, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_4);
+		getContent().addComponent(followUpExamination, FOLLOW_UP_EXAMINATION_HEADLINE_LOC);
+		followUpExamination.setVisible(false);
+
+		stoolSpecimenCollection.setVisible(true);
+		DateField dateFirstSpecimen = addField(SampleDto.DATE_FIRST_SPECIMEN, DateField.class);
+		DateField dateSecondSpecimen = addField(SampleDto.DATE_SECOND_SPECIMEN, DateField.class);
+		DateField dateSpecimenSentNationalLevel = addField(SampleDto.DATE_SPECIMEN_SENT_NATIONAL_LEVEL, DateField.class);
+		DateField dateSpecimenReceivedNationalLevel = addField(SampleDto.DATE_SPECIMEN_RECEIVED_NATIONAL_LEVEL, DateField.class);
+		DateField dateSpecimenSentInter = addField(SampleDto.DATE_SPECIMEN_SENT_INTERCOUNTY_NATLAB, DateField.class);
+		DateField dateSpecimenReceivedInter = addField(SampleDto.DATE_SPECIMEN_RECEIVED_INTERCOUNTY_NATLAB, DateField.class);
+
+		stoolSpecimenResults.setVisible(true);
+		OptionGroup statusSpecimenReceptionAtLab = addField(SampleDto.STATUS_SPECIMEN_RECEPTION_AT_LAB, OptionGroup.class);
+		DateField dateCombinedCellCultureResults = addField(SampleDto.DATE_COMBINED_CELL_CULTURE_RESULTS, DateField.class);
+		OptionGroup w1 = addField(SampleDto.W1, OptionGroup.class);
+		OptionGroup w2 = addField(SampleDto.W2, OptionGroup.class);
+		OptionGroup w3 = addField(SampleDto.W3, OptionGroup.class);
+		OptionGroup s1 = addField(SampleDto.SL1, OptionGroup.class);
+		OptionGroup s2 = addField(SampleDto.SL2, OptionGroup.class);
+		OptionGroup s3 = addField(SampleDto.SL3, OptionGroup.class);
+		NullableOptionGroup discordant = addField(SampleDto.DISCORDANT, NullableOptionGroup.class);
+
+		followUpExamination.setVisible(true);
+		DateField dateFollowUpExam = addField(SampleDto.DATE_FOLLOWUP_EXAM, DateField.class);
+		NullableOptionGroup residualAnalysis = addField(SampleDto.RESIDUAL_ANALYSIS, NullableOptionGroup.class);
+		residualAnalysis.removeItem(InjectionSite.RIGHT_FOREARM);
+		residualAnalysis.removeItem(InjectionSite.RIGHT_BUTTOCKS);
+		residualAnalysis.removeItem(InjectionSite.RIGHT_THIGH);
+		residualAnalysis.removeItem(InjectionSite.LEFT_FOREARM);
+		residualAnalysis.removeItem(InjectionSite.LEFT_BUTTOCKS);
+		residualAnalysis.removeItem(InjectionSite.LEFT_THIGH);
+		ComboBox resultExam = addField(SampleDto.RESULT_EXAM, ComboBox.class);
+
 		DateField dateSentNationalRegLab = addField(SampleDto.DATE_SENT_NATIONAL_REG_LAB, DateField.class);
 		DateField dateDifferentiationSentEpi = addField(SampleDto.DATE_DIFFERENTIATION_SENT_EPI, DateField.class);
 		DateField dateDifferentiationReceivedEpi = addField(SampleDto.DATE_DIFFERENTIATION_RECEIVED_EPI, DateField.class);

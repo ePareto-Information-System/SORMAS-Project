@@ -1204,6 +1204,24 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setFinalLabResults(source.getFinalLabResults());
 		target.setImmunocompromisedStatusSuspected(source.getImmunocompromisedStatusSuspected());
 		target.setAfpFinalClassification(source.getAfpFinalClassification());
+		target.setDateFirstSpecimen(source.getDateFirstSpecimen());
+		target.setDateSecondSpecimen(source.getDateSecondSpecimen());
+		target.setDateSpecimenSentNationalLevel(source.getDateSpecimenSentNationalLevel());
+		target.setDateSpecimenReceivedNationalLevel(source.getDateSpecimenReceivedNationalLevel());
+		target.setDateSpecimenSentInter(source.getDateSpecimenSentInter());
+		target.setDateSpecimenReceivedInter(source.getDateSpecimenReceivedInter());
+		target.setStatusSpecimenReceptionAtLab(source.getStatusSpecimenReceptionAtLab());
+		target.setDateCombinedCellCultureResults(source.getDateCombinedCellCultureResults());
+		target.setW1(source.getW1());
+		target.setW2(source.getW2());
+		target.setW3(source.getW3());
+		target.setDiscordant(source.getDiscordant());
+		target.setsL1(source.getsL1());
+		target.setsL2(source.getsL2());
+		target.setsL3(source.getsL3());
+		target.setDateFollowUpExam(source.getDateFollowUpExam());
+		target.setResidualAnalysis(source.getResidualAnalysis());
+		target.setResultExam(source.getResultExam());
 
 
 
@@ -1441,6 +1459,24 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setFinalLabResults(source.getFinalLabResults());
 		target.setImmunocompromisedStatusSuspected(source.getImmunocompromisedStatusSuspected());
 		target.setAfpFinalClassification(source.getAfpFinalClassification());
+		target.setDateFirstSpecimen(source.getDateFirstSpecimen());
+		target.setDateSecondSpecimen(source.getDateSecondSpecimen());
+		target.setDateSpecimenSentNationalLevel(source.getDateSpecimenSentNationalLevel());
+		target.setDateSpecimenReceivedNationalLevel(source.getDateSpecimenReceivedNationalLevel());
+		target.setDateSpecimenSentInter(source.getDateSpecimenSentInter());
+		target.setDateSpecimenReceivedInter(source.getDateSpecimenReceivedInter());
+		target.setStatusSpecimenReceptionAtLab(source.getStatusSpecimenReceptionAtLab());
+		target.setDateCombinedCellCultureResults(source.getDateCombinedCellCultureResults());
+		target.setW1(source.getW1());
+		target.setW2(source.getW2());
+		target.setW3(source.getW3());
+		target.setDiscordant(source.getDiscordant());
+		target.setsL1(source.getsL1());
+		target.setsL2(source.getsL2());
+		target.setsL3(source.getsL3());
+		target.setDateFollowUpExam(source.getDateFollowUpExam());
+		target.setResidualAnalysis(source.getResidualAnalysis());
+		target.setResultExam(source.getResultExam());
 
 
 

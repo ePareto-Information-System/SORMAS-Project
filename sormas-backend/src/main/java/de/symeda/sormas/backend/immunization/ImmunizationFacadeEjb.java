@@ -253,6 +253,20 @@ public class ImmunizationFacadeEjb
 		dto.setDeleted(entity.isDeleted());
 		dto.setDeletionReason(entity.getDeletionReason());
 		dto.setOtherDeletionReason(entity.getOtherDeletionReason());
+		dto.setTotalNumberDoses(entity.getTotalNumberDoses());
+		dto.setOpvDoseAtBirth(entity.getOpvDoseAtBirth());
+		dto.setSecondDose(entity.getSecondDose());
+		dto.setFourthDose(entity.getFourthDose());
+		dto.setFirstDose(entity.getFirstDose());
+		dto.setThirdDose(entity.getThirdDose());
+		dto.setLastDose(entity.getLastDose());
+		dto.setTotalOpvDosesReceivedThroughSia(entity.getTotalOpvDosesReceivedThroughSia());
+		dto.setTotalOpvDosesReceivedThroughRi(entity.getTotalOpvDosesReceivedThroughRi());
+		dto.setDateLastOpvDosesReceivedThroughSia(entity.getDateLastOpvDosesReceivedThroughSia());
+		dto.setTotalIpvDosesReceivedThroughSia(entity.getTotalIpvDosesReceivedThroughSia());
+		dto.setTotalIpvDosesReceivedThroughRi(entity.getTotalIpvDosesReceivedThroughRi());
+		dto.setDateLastIpvDosesReceivedThroughSia(entity.getDateLastIpvDosesReceivedThroughSia());
+		dto.setSourceRiVaccinationInformation(entity.getSourceRiVaccinationInformation());
 
 		return dto;
 	}
@@ -561,6 +575,20 @@ public class ImmunizationFacadeEjb
 		target.setValidFrom(source.getValidFrom());
 		target.setValidUntil(source.getValidUntil());
 		target.setRelatedCase(caseService.getByReferenceDto(source.getRelatedCase()));
+		target.setTotalNumberDoses(source.getTotalNumberDoses());
+		target.setOpvDoseAtBirth(source.getOpvDoseAtBirth());
+		target.setSecondDose(source.getSecondDose());
+		target.setFourthDose(source.getFourthDose());
+		target.setFirstDose(source.getFirstDose());
+		target.setThirdDose(source.getThirdDose());
+		target.setLastDose(source.getLastDose());
+		target.setTotalOpvDosesReceivedThroughSia(source.getTotalOpvDosesReceivedThroughSia());
+		target.setTotalOpvDosesReceivedThroughRi(source.getTotalOpvDosesReceivedThroughRi());
+		target.setDateLastOpvDosesReceivedThroughSia(source.getDateLastOpvDosesReceivedThroughSia());
+		target.setTotalIpvDosesReceivedThroughSia(source.getTotalIpvDosesReceivedThroughSia());
+		target.setTotalIpvDosesReceivedThroughRi(source.getTotalIpvDosesReceivedThroughRi());
+		target.setDateLastIpvDosesReceivedThroughSia(source.getDateLastIpvDosesReceivedThroughSia());
+		target.setSourceRiVaccinationInformation(source.getSourceRiVaccinationInformation());
 
 		if (includeVaccinations) {
 			List<Vaccination> vaccinationEntities = new ArrayList<>();

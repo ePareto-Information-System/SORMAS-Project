@@ -75,6 +75,7 @@ public class HospitalizationDto extends EntityDto {
 
 	public static final String SEEN_AT_A_HEALTH_FACILITY = "seenAtAHealthFacility";
 	public static final String WAS_PATIENT_ADMITTED = "wasPatientAdmitted";
+	public static final String HOSPITAL_RECORD_NUMBER = "hospitalRecordNumber";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -119,6 +120,7 @@ public class HospitalizationDto extends EntityDto {
 	private String investigatorUnit;
 	private String investigatorAddress;
 	private String investigatorTel;
+	private String hospitalRecordNumber;
 
 	private YesNoUnknown seenAtAHealthFacility;
 	private YesNoUnknown wasPatientAdmitted;
@@ -407,5 +409,11 @@ public class HospitalizationDto extends EntityDto {
 
 	public void setWasPatientAdmitted(YesNoUnknown wasPatientAdmitted) {
 		this.wasPatientAdmitted = wasPatientAdmitted;
+	public String getHospitalRecordNumber() {
+		return hospitalRecordNumber;
+	}
+
+	public void setHospitalRecordNumber(String hospitalRecordNumber) {
+		this.hospitalRecordNumber = hospitalRecordNumber;
 	}
 }

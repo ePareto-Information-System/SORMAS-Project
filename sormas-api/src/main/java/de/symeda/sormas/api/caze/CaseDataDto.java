@@ -144,6 +144,9 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String SMALLPOX_VACCINATION_RECEIVED = "smallpoxVaccinationReceived";
 	public static final String SMALLPOX_LAST_VACCINATION_DATE = "smallpoxLastVaccinationDate";
 	public static final String EPID_NUMBER = "epidNumber";
+	public static final String NOTIFIED_BY = "notifiedBy";
+	public static final String DATE_OF_NOTIFICATION = "dateOfNotification";
+	public static final String DATE_OF_INVESTIGATION = "dateOfInvestigation";
 	public static final String REPORT_LAT = "reportLat";
 	public static final String REPORT_LON = "reportLon";
 	public static final String REPORT_LAT_LON_ACCURACY = "reportLatLonAccuracy";
@@ -627,6 +630,9 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private NewExisting existingCase;
 
 	//private PickMerge importUpdateCaseStatus;
+	private String notifiedBy;
+	private Date dateOfNotification;
+	private Date dateOfInvestigation;
 
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		return build(person, disease, HealthConditionsDto.build());
@@ -1936,5 +1942,29 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	public void setHospitalName(String hospitalName) {
 		this.hospitalName = hospitalName;
+	}
+
+	public String getNotifiedBy() {
+		return notifiedBy;
+	}
+
+	public void setNotifiedBy(String notifiedBy) {
+		this.notifiedBy = notifiedBy;
+	}
+
+	public Date getDateOfNotification() {
+		return dateOfNotification;
+	}
+
+	public void setDateOfNotification(Date dateOfNotification) {
+		this.dateOfNotification = dateOfNotification;
+	}
+
+	public Date getDateOfInvestigation() {
+		return dateOfInvestigation;
+	}
+
+	public void setDateOfInvestigation(Date dateOfInvestigation) {
+		this.dateOfInvestigation = dateOfInvestigation;
 	}
 }

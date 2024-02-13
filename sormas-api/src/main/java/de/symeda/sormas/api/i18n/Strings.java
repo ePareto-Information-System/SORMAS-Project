@@ -725,6 +725,9 @@ public interface Strings {
 	String headingDistrictLaboratory = "headingDistrictLaboratory";
 	String headingRegionalLaboratory = "headingRegionalLaboratory";
 	String headingReferenceLaboratory = "headingReferenceLaboratory";
+	String headingStoolSpecimenCollection = "headingStoolSpecimenCollection";
+	String headingStoolSpecimenResults = "headingStoolSpecimenResults";
+	String headingFollowUpExamination = "headingFollowUpExamination";
 	String laboratoryAntibiogramHeadlineloc = "headingLaboratoryAntibiogramHeadlineloc";
 	String laboratoryPcrHeadlineloc = "headingLaboratoryPcrHeadlineloc";
 	String headingRequestedPathogenTests = "headingRequestedPathogenTests";

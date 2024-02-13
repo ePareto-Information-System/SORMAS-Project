@@ -1117,6 +1117,8 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setPassportNumber(source.getPassportNumber());
 		target.setNationalHealthId(source.getNationalHealthId());
 		target.setGhanaCard(source.getGhanaCard());
+		target.setNumberOfPeople(source.getNumberOfPeople());
+		target.setNumberOfOtherContacts(source.getNumberOfOtherContacts());
 		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());
 		target.setSymptomJournalStatus(source.getSymptomJournalStatus());
 
@@ -1131,6 +1133,23 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setAdditionalDetails(source.getAdditionalDetails());
 		target.setAdditionalPlacesStayed(source.getAdditionalPlacesStayed());
 		target.setHomeAddressRecreational(source.getHomeAddressRecreational());
+		target.setPlace(source.getPlace());
+		target.setDurationMonths(source.getDurationMonths());
+		target.setDurationDays(source.getDurationDays());
+		target.setPlace2(source.getPlace2());
+		target.setDurationMonths2(source.getDurationMonths2());
+		target.setDurationDays2(source.getDurationDays2());
+		target.setPlace3(source.getPlace3());
+		target.setDurationMonths3(source.getDurationMonths3());
+		target.setDurationDays3(source.getDurationDays3());
+		target.setPlace4(source.getPlace4());
+		target.setDurationMonths4(source.getDurationMonths4());
+		target.setDurationDays4(source.getDurationDays4());
+		target.setInvestigatorName(source.getInvestigatorName());
+		target.setInvestigatorTitle(source.getInvestigatorTitle());
+		target.setInvestigatorUnit(source.getInvestigatorUnit());
+		target.setInvestigatorAddress(source.getInvestigatorAddress());
+		target.setInvestigatorTel(source.getInvestigatorTel());
 
 		//target.setCadre(CadreFacadeEjb.toReferenceDto(source.getCadre()));
 
@@ -1920,6 +1939,8 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setPassportNumber(source.getPassportNumber());
 		target.setNationalHealthId(source.getNationalHealthId());
 		target.setGhanaCard(source.getGhanaCard());
+		target.setNumberOfPeople(source.getNumberOfPeople());
+		target.setNumberOfOtherContacts(source.getNumberOfOtherContacts());
 		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());
 
 		if (!RequestContextHolder.isMobileSync()) {
@@ -1938,7 +1959,23 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setAdditionalPlacesStayed(source.getAdditionalPlacesStayed());
 		target.setHomeAddressRecreational(source.getHomeAddressRecreational());
 
-		//target.setCadre(cadreService.getByReferenceDto(source.getCadre()));
+		target.setPlace(source.getPlace());
+		target.setDurationMonths(source.getDurationMonths());
+		target.setDurationDays(source.getDurationDays());
+		target.setPlace2(source.getPlace2());
+		target.setDurationMonths2(source.getDurationMonths2());
+		target.setDurationDays2(source.getDurationDays2());
+		target.setPlace3(source.getPlace3());
+		target.setDurationMonths3(source.getDurationMonths3());
+		target.setDurationDays3(source.getDurationDays3());
+		target.setPlace4(source.getPlace4());
+		target.setDurationMonths4(source.getDurationMonths4());
+		target.setDurationDays4(source.getDurationDays4());
+		target.setInvestigatorName(source.getInvestigatorName());
+		target.setInvestigatorTitle(source.getInvestigatorTitle());
+		target.setInvestigatorUnit(source.getInvestigatorUnit());
+		target.setInvestigatorAddress(source.getInvestigatorAddress());
+		target.setInvestigatorTel(source.getInvestigatorTel());
 
 		return target;
 	}

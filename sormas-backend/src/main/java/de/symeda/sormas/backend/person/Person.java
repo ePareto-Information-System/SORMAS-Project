@@ -131,6 +131,8 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	public static final String PASSPORT_NUMBER = "passportNumber";
 	public static final String NATIONAL_HEALTH_ID = "nationalHealthId";
 	public static final String GHANA_CARD = "ghanacard";
+	public static final String NUMBER_OF_PEOPLE = "numberOfPeople";
+	public static final String NUMBER_OF_OTHER_CONTACTS = "numberOfOtherContacts";
 	public static final String PLACE_OF_BIRTH_FACILITY_TYPE = "placeOfBirthFacilityType";
 	public static final String ADDRESSES = "addresses";
 	public static final String PERSON_CONTACT_DETAILS = "personContactDetails";
@@ -204,6 +206,8 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private String passportNumber;
 	private String nationalHealthId;
 	private String ghanaCard;
+	private String numberOfPeople;
+	private String numberOfOtherContacts;
 	private FacilityType placeOfBirthFacilityType;
 	private Set<Location> addresses = new HashSet<>();
 	private Set<PersonContactDetail> personContactDetails = new HashSet<>();
@@ -227,6 +231,23 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private List<EventParticipant> eventParticipants = new ArrayList<>();
 	private List<Immunization> immunizations = new ArrayList<>();
 	private List<TravelEntry> travelEntries = new ArrayList<>();
+	private String place;
+	private String durationMonths;
+	private String durationDays;
+	private String place2;
+	private String durationMonths2;
+	private String durationDays2;
+	private String place3;
+	private String durationMonths3;
+	private String durationDays3;
+	private String place4;
+	private String durationMonths4;
+	private String durationDays4;
+	private String investigatorName;
+	private String investigatorTitle;
+	private String investigatorUnit;
+	private String investigatorAddress;
+	private String investigatorTel;
 
 	private Cadre cadre;
 
@@ -619,6 +640,22 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	public void setGhanaCard(String ghanaCard) {
 		this.ghanaCard = ghanaCard;
 	}
+	@Column
+	public String getNumberOfPeople() {
+		return numberOfPeople;
+	}
+
+	public void setNumberOfPeople(String numberOfPeople) {
+		this.numberOfPeople = numberOfPeople;
+	}
+	@Column
+	public String getNumberOfOtherContacts() {
+		return numberOfOtherContacts;
+	}
+
+	public void setNumberOfOtherContacts(String numberOfOtherContacts) {
+		this.numberOfOtherContacts = numberOfOtherContacts;
+	}
 	@Enumerated(EnumType.STRING)
 	public FacilityType getPlaceOfBirthFacilityType() {
 		return placeOfBirthFacilityType;
@@ -829,6 +866,140 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 
 	public void setHomeAddressRecreational(String homeAddressRecreational) {
 		this.homeAddressRecreational = homeAddressRecreational;
+	}
+	public String getPlace() {
+		return place;
+	}
+
+	public void setPlace(String place) {
+		this.place = place;
+	}
+
+	public String getDurationMonths() {
+		return durationMonths;
+	}
+
+	public void setDurationMonths(String durationMonths) {
+		this.durationMonths = durationMonths;
+	}
+
+	public String getDurationDays() {
+		return durationDays;
+	}
+	public void setDurationDays(String durationDays) {
+		this.durationDays = durationDays;
+	}
+
+	public String getPlace2() {
+		return place2;
+	}
+
+	public void setPlace2(String place2) {
+		this.place2 = place2;
+	}
+
+	public String getDurationMonths2() {
+		return durationMonths2;
+	}
+
+	public void setDurationMonths2(String durationMonths2) {
+		this.durationMonths2 = durationMonths2;
+	}
+
+	public String getDurationDays2() {
+		return durationDays2;
+	}
+
+	public void setDurationDays2(String durationDays2) {
+		this.durationDays2 = durationDays2;
+	}
+
+	public String getPlace3() {
+		return place3;
+	}
+
+	public void setPlace3(String place3) {
+		this.place3 = place3;
+	}
+
+	public String getDurationMonths3() {
+		return durationMonths3;
+	}
+
+	public void setDurationMonths3(String durationMonths3) {
+		this.durationMonths3 = durationMonths3;
+	}
+
+	public String getDurationDays3() {
+		return durationDays3;
+	}
+
+	public void setDurationDays3(String durationDays3) {
+		this.durationDays3 = durationDays3;
+	}
+
+	public String getPlace4() {
+		return place4;
+	}
+
+	public void setPlace4(String place4) {
+		this.place4 = place4;
+	}
+
+	public String getDurationMonths4() {
+		return durationMonths4;
+	}
+
+	public void setDurationMonths4(String durationMonths4) {
+		this.durationMonths4 = durationMonths4;
+	}
+
+	public String getDurationDays4() {
+		return durationDays4;
+	}
+
+	public void setDurationDays4(String durationDays4) {
+		this.durationDays4 = durationDays4;
+	}
+
+	public String getInvestigatorName() {
+		return investigatorName;
+	}
+
+	public void setInvestigatorName(String investigatorName) {
+		this.investigatorName = investigatorName;
+	}
+
+	public String getInvestigatorTitle() {
+		return investigatorTitle;
+	}
+
+	public void setInvestigatorTitle(String investigatorTitle) {
+		this.investigatorTitle = investigatorTitle;
+	}
+
+	public String getInvestigatorUnit() {
+		return investigatorUnit;
+	}
+
+	public void setInvestigatorUnit(String investigatorUnit) {
+		this.investigatorUnit = investigatorUnit;
+	}
+
+	public String getInvestigatorAddress() {
+		return investigatorAddress;
+	}
+
+	public void setInvestigatorAddress(String investigatorAddress) {
+		this.investigatorAddress = investigatorAddress;
+	}
+
+	public String getInvestigatorTel() {
+		return investigatorTel;
+	}
+
+	public void setInvestigatorTel(String investigatorTel) {
+		this.investigatorTel = investigatorTel;
 	}
 
 	private void setPersonContactInformation(String contactInfo, PersonContactDetailType personContactDetailType) {

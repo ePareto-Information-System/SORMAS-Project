@@ -170,6 +170,7 @@ public class ExposureForm extends AbstractEditForm<ExposureDto> {
 
 		locationForm = addField(ExposureDto.LOCATION, LocationEditForm.class);
 		locationForm.setCaption(null);
+		locationForm.setVisible(false);
 		addField(ExposureDto.CONNECTION_NUMBER, TextField.class);
 		getField(ExposureDto.MEANS_OF_TRANSPORT).addValueChangeListener(e -> {
 			if (e.getProperty().getValue() == MeansOfTransport.PLANE) {

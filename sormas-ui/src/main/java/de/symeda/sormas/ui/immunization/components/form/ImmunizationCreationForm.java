@@ -81,13 +81,36 @@ public class ImmunizationCreationForm extends AbstractEditForm<ImmunizationDto> 
 		+ fluidRowLocs(ImmunizationDto.VALID_FROM, ImmunizationDto.VALID_UNTIL)
 		+ fluidRowLocs(VACCINATION_HEADING_LOC)
 		+ fluidRow(fluidColumnLoc(6, 0, ImmunizationDto.NUMBER_OF_DOSES))
-		+ fluidRowLocs(ImmunizationDto.PERSON);
+		+ fluidRowLocs(ImmunizationDto.PERSON)
+
+		//AFP
+		+ fluidRowLocs(6,ImmunizationDto.TOTAL_NUMBER_DOSES)
+		+ fluidRowLocs(ImmunizationDto.OPV_DOSE_AT_BIRTH, ImmunizationDto.SECOND, ImmunizationDto.FOURTH)
+		+ fluidRowLocs(ImmunizationDto.FIRST, ImmunizationDto.THIRD, ImmunizationDto.LAST_DOSE)
+		+ fluidRowLocs(ImmunizationDto.TOTAL_OPV_DOSES_RECEIVED_THROUGH_SIA, ImmunizationDto.TOTAL_OPV_DOSES_RECEIVED_THROUGH_RI)
+		+ fluidRowLocs(6,ImmunizationDto.DATE_LAST_OPV_DOSES_RECEIVED_THROUGH_SIA)
+		+ fluidRowLocs(ImmunizationDto.TOTAL_IPV_DOSES_RECEIVED_THROUGH_SIA, ImmunizationDto.TOTAL_IPV_DOSES_RECEIVED_THROUGH_RI)
+		+ fluidRowLocs(ImmunizationDto.DATE_LAST_IPV_DOSES_RECEIVED_THROUGH_SIA, ImmunizationDto.SOURCE_RI_VACCINATION_INFORMATION);
 	//@formatter:on
 
 	private PersonCreateForm personCreateForm;
 
 	private final PersonReferenceDto personDto;
 	private final Disease disease;
+	private Field totalNumberDoses;
+	private TextField opvDoseAtBirth;
+	private TextField secondDose;
+	private TextField fourthDose;
+	private TextField firstDose;
+	private TextField thirdDose;
+	private TextField lastDose;
+	private TextField totalOpvDosesReceivedThroughSia;
+	private TextField totalOpvDosesReceivedThroughRi;
+	private DateField dateLastOpvDosesReceivedThroughSia;
+	private DateField dateLastIpvDosesReceivedThroughSia;
+	private TextField totalIpvDosesReceivedThroughSia;
+	private TextField totalIpvDosesReceivedThroughRi;
+	private ComboBox sourceRiVaccinationInformation;
 
 	public ImmunizationCreationForm() {
 		this(null, null);
@@ -187,6 +210,29 @@ public class ImmunizationCreationForm extends AbstractEditForm<ImmunizationDto> 
 			(ValueChangeListener) valueChangeEvent -> personCreateForm
 				.updatePresentConditionEnum((Disease) valueChangeEvent.getProperty().getValue()));
 		getContent().addComponent(personCreateForm, TravelEntryDto.PERSON);
+
+		//Add Fields for AFP
+		totalNumberDoses = addField(ImmunizationDto.TOTAL_NUMBER_DOSES, Field.class);
+		opvDoseAtBirth = addField(ImmunizationDto.OPV_DOSE_AT_BIRTH, TextField.class);
+		secondDose = addField(ImmunizationDto.SECOND, TextField.class);
+		fourthDose = addField(ImmunizationDto.FOURTH, TextField.class);
+
+		firstDose = addField(ImmunizationDto.FIRST, TextField.class);
+		thirdDose = addField(ImmunizationDto.THIRD, TextField.class);
+		lastDose = addField(ImmunizationDto.LAST_DOSE, TextField.class);
+
+		totalOpvDosesReceivedThroughSia = addField(ImmunizationDto.TOTAL_OPV_DOSES_RECEIVED_THROUGH_SIA, TextField.class);
+		totalOpvDosesReceivedThroughRi = addField(ImmunizationDto.TOTAL_OPV_DOSES_RECEIVED_THROUGH_RI, TextField.class);
+
+		dateLastOpvDosesReceivedThroughSia = addField(ImmunizationDto.DATE_LAST_OPV_DOSES_RECEIVED_THROUGH_SIA, DateField.class);
+
+		totalIpvDosesReceivedThroughSia = addField(ImmunizationDto.TOTAL_IPV_DOSES_RECEIVED_THROUGH_SIA, TextField.class);
+		totalIpvDosesReceivedThroughRi = addField(ImmunizationDto.TOTAL_IPV_DOSES_RECEIVED_THROUGH_RI, TextField.class);
+
+		dateLastIpvDosesReceivedThroughSia = addField(ImmunizationDto.DATE_LAST_IPV_DOSES_RECEIVED_THROUGH_SIA, DateField.class);
+		sourceRiVaccinationInformation = addField(ImmunizationDto.SOURCE_RI_VACCINATION_INFORMATION, ComboBox.class);
+
+		hideImmunizationFields();
 
 		// Set initial visibilities & accesses
 		initializeVisibilitiesAndAllowedVisibilities();
@@ -322,7 +368,20 @@ public class ImmunizationCreationForm extends AbstractEditForm<ImmunizationDto> 
 			if (disease != null) {
 				setVisible(false, ImmunizationDto.DISEASE, ImmunizationDto.DISEASE_DETAILS);
 				setReadOnly(false, ImmunizationDto.DISEASE, ImmunizationDto.DISEASE_DETAILS);
-			} else {
+
+			}
+			if (disease != null && disease == Disease.AFP) {
+				jurisdictionHeadingLabel.setVisible(false);
+				meansOfImmunizationField.setValue(MeansOfImmunization.IMMUNIZATION);
+				meansOfImmunizationField.setEnabled(false);
+				meansOfImmunizationField.setReadOnly(true);
+				meansOfImmunizationField.setCaption("CREATE NEW:");
+				setVisible(false, ImmunizationDto.REPORT_DATE,ImmunizationDto.DISEASE, ImmunizationDto.DISEASE_DETAILS);
+				setVisible(false, ImmunizationDto.IMMUNIZATION_MANAGEMENT_STATUS, ImmunizationDto.IMMUNIZATION_STATUS, ImmunizationDto.FACILITY_TYPE, ImmunizationDto.HEALTH_FACILITY, ImmunizationDto.START_DATE, ImmunizationDto.END_DATE, ImmunizationDto.VALID_FROM, ImmunizationDto.VALID_UNTIL, FACILITY_TYPE_GROUP_LOC, OVERWRITE_IMMUNIZATION_MANAGEMENT_STATUS, ImmunizationDto.RESPONSIBLE_REGION, ImmunizationDto.RESPONSIBLE_DISTRICT, ImmunizationDto.RESPONSIBLE_COMMUNITY, ImmunizationDto.EXTERNAL_ID);
+				setRequired(false, ImmunizationDto.REPORT_DATE, ImmunizationDto.RESPONSIBLE_REGION, ImmunizationDto.RESPONSIBLE_DISTRICT, ImmunizationDto.RESPONSIBLE_COMMUNITY);
+				showImmunizationFields();
+			}
+			else {
 				setRequired(true, ImmunizationDto.DISEASE);
 			}
 			if (personDto != null) {
@@ -333,6 +392,40 @@ public class ImmunizationCreationForm extends AbstractEditForm<ImmunizationDto> 
 			}
 		});
 	}
+
+	private void hideImmunizationFields() {
+		totalNumberDoses.setVisible(false);
+		opvDoseAtBirth.setVisible(false);
+		secondDose.setVisible(false);
+		fourthDose.setVisible(false);
+		firstDose.setVisible(false);
+		thirdDose.setVisible(false);
+		lastDose.setVisible(false);
+		totalOpvDosesReceivedThroughSia.setVisible(false);
+		totalOpvDosesReceivedThroughRi.setVisible(false);
+		dateLastOpvDosesReceivedThroughSia.setVisible(false);
+		totalIpvDosesReceivedThroughSia.setVisible(false);
+		totalIpvDosesReceivedThroughRi.setVisible(false);
+		dateLastIpvDosesReceivedThroughSia.setVisible(false);
+		sourceRiVaccinationInformation.setVisible(false);
+	}
+	private void showImmunizationFields() {
+		totalNumberDoses.setVisible(true);
+		opvDoseAtBirth.setVisible(true);
+		secondDose.setVisible(true);
+		fourthDose.setVisible(true);
+		firstDose.setVisible(true);
+		thirdDose.setVisible(true);
+		lastDose.setVisible(true);
+		totalOpvDosesReceivedThroughSia.setVisible(true);
+		totalOpvDosesReceivedThroughRi.setVisible(true);
+		dateLastOpvDosesReceivedThroughSia.setVisible(true);
+		totalIpvDosesReceivedThroughSia.setVisible(true);
+		totalIpvDosesReceivedThroughRi.setVisible(true);
+		dateLastIpvDosesReceivedThroughSia.setVisible(true);
+		sourceRiVaccinationInformation.setVisible(true);
+	}
+
 
 	private void updateFacilityFields(ComboBox cbFacility, TextField tfFacilityDetails) {
 

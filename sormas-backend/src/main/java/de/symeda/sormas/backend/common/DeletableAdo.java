@@ -51,4 +51,6 @@ public abstract class DeletableAdo extends AbstractDomainObject {
 	public void setOtherDeletionReason(String deleteOtherReason) {
 		this.otherDeletionReason = deleteOtherReason;
 	}
+
+
 }
