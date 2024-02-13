@@ -692,8 +692,8 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				hospitalName.setVisible(true);
 			}
 			investigated.setVisible(disease == Disease.NEW_INFLUENZA);
-			/*dhimsFacilityOrHome.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.CSM);
-			dhimsFacilityType.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF  || disease == Disease.CSM);*/
+			dhimsFacilityOrHome.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.CSM);
+			dhimsFacilityType.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF  || disease == Disease.CSM);
 			//afpFacilityOptions.setVisible(disease != Disease.YELLOW_FEVER && disease != Disease.AHF  && disease != Disease.CSM);
 
 

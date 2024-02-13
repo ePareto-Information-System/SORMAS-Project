@@ -389,7 +389,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		);
 
 		if (disease == Disease.AHF) {
-			setVisible(false, PersonDto.PERSON_CONTACT_DETAILS, PersonDto.BIRTH_COUNTRY);
+			setVisible(false, PersonDto.BIRTH_COUNTRY);
 			setVisible(true, PersonDto.NUMBER_OF_PEOPLE, PersonDto.NUMBER_OF_OTHER_CONTACTS);
 			otherNote.setVisible(true);
 			otherNote.setCaption("Other Notes and Observations");
