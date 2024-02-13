@@ -945,7 +945,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		sampleMaterialComboBox.setVisible(false);
 		sampleMaterialComboBox.setRequired(false);
 
-		initializeMaterialsMultiSelect();
+		setSampleMaterialTypesForDisease(disease);
 		//updateSampleTestsFields();
 
 	}
