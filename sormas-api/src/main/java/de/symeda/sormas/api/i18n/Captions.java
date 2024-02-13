@@ -2090,6 +2090,17 @@ public interface Captions {
 	String Sample_finalLabResultsString = "Sample.finalLabResults";
 	String Sample_immunocompromisedStatusSuspectedString = "Sample.immunocompromisedStatusSuspected";
 	String Sample_afpFinalClassificationString = "Sample.afpFinalClassification";
+	String Sample_dateFirstSpecimen = "Sample.dateFirstSpecimen";
+	String Sample_dateSecondSpecimen = "Sample.dateSecondSpecimen";
+	String Sample_dateSpecimenSentNationalLevel = "Sample.dateSpecimenSentNationalLevel";
+	String Sample_dateSpecimenReceivedNationalLevel = "Sample.dateSpecimenReceivedNationalLevel";
+	String Sample_dateSpecimenSentInter = "Sample.dateSpecimenSentInter";
+	String Sample_dateSpecimenReceivedInter = "Sample.dateSpecimenReceivedInter";
+	String Sample_statusSpecimenReceptionAtLab = "Sample.statusSpecimenReceptionAtLab";
+	String Sample_dateCombinedCellCultureResults = "Sample.dateCombinedCellCultureResults";
+	String Sample_dateFollowUpExam = "Sample.dateFollowUpExam";
+	String Sample_residualAnalysis = "Sample.residualAnalysis";
+	String Sample_resultExam = "Sample.resultExam";
 	String Sample_testStatusGen = "Sample.testStatusGen";
 	String Sample_testType = "Sample.testType";
 	String Sample_typeOfTest = "Sample.typeOfTest";

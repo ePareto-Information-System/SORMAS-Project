@@ -155,6 +155,25 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String LABORATORY_FINAL_CLASSIFICATION = "laboratoryFinalClassification";
 
 	//AFP
+
+	public static final String DATE_FIRST_SPECIMEN = "dateFirstSpecimen";
+	public static final String DATE_SECOND_SPECIMEN = "dateSecondSpecimen";
+	public static final String DATE_SPECIMEN_SENT_NATIONAL_LEVEL = "dateSpecimenSentNationalLevel";
+	public static final String DATE_SPECIMEN_RECEIVED_NATIONAL_LEVEL = "dateSpecimenReceivedNationalLevel";
+	public static final String DATE_SPECIMEN_SENT_INTERCOUNTY_NATLAB = "dateSpecimenSentInter";
+	public static final String DATE_SPECIMEN_RECEIVED_INTERCOUNTY_NATLAB = "dateSpecimenReceivedInter";
+	public static final String STATUS_SPECIMEN_RECEPTION_AT_LAB = "statusSpecimenReceptionAtLab";
+	public static final String DATE_COMBINED_CELL_CULTURE_RESULTS = "dateCombinedCellCultureResults";
+	public static final String W1 = "w1";
+	public static final String W2 = "w2";
+	public static final String W3 = "w3";
+	public static final String DISCORDANT = "discordant";
+	public static final String SL1 = "sL1";
+	public static final String SL2 = "sL2";
+	public static final String SL3 = "sL3";
+	public static final String DATE_FOLLOWUP_EXAM = "dateFollowUpExam";
+	public static final String RESIDUAL_ANALYSIS = "residualAnalysis";
+	public static final String RESULT_EXAM = "resultExam";
 	public static final String DATE_SENT_NATIONAL_REG_LAB = "dateSentToNationalRegLab";
 	public static final String DATE_DIFFERENTIATION_SENT_EPI = "dateDifferentiationSentToEpi";
 	public static final String DATE_DIFFERENTIATION_RECEIVED_EPI = "dateDifferentiationReceivedFromEpi";
@@ -321,6 +340,25 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private PosNeg finalLabResults;
 	private YesNoUnknown immunocompromisedStatusSuspected;
 	private AFPClassification afpFinalClassification;
+
+	private Date dateFirstSpecimen;
+	private Date dateSecondSpecimen;
+	private Date dateSpecimenSentNationalLevel;
+	private Date dateSpecimenReceivedNationalLevel;
+	private Date dateSpecimenSentInter;
+	private Date dateSpecimenReceivedInter;
+	private SpecimenCondition statusSpecimenReceptionAtLab;
+	private Date dateCombinedCellCultureResults;
+	private YesNo w1;
+	private YesNo w2;
+	private YesNo w3;
+	private YesNoUnknown discordant;
+	private YesNo sL1;
+	private YesNo sL2;
+	private YesNo sL3;
+	private Date dateFollowUpExam;
+	private InjectionSite residualAnalysis;
+	private AfpResult resultExam;
 
 
 
@@ -954,6 +992,24 @@ public class SampleDto extends SormasToSormasShareableDto {
 		target.setFinalLabResults(source.getFinalLabResults());
 		target.setImmunocompromisedStatusSuspected(source.getImmunocompromisedStatusSuspected());
 		target.setAfpFinalClassification(source.getAfpFinalClassification());
+		target.setDateFirstSpecimen(source.getDateFirstSpecimen());
+		target.setDateSecondSpecimen(source.getDateSecondSpecimen());
+		target.setDateSpecimenSentNationalLevel(source.getDateSpecimenSentNationalLevel());
+		target.setDateSpecimenReceivedNationalLevel(source.getDateSpecimenReceivedNationalLevel());
+		target.setDateSpecimenSentInter(source.getDateSpecimenSentInter());
+		target.setDateSpecimenReceivedInter(source.getDateSpecimenReceivedInter());
+		target.setStatusSpecimenReceptionAtLab(source.getStatusSpecimenReceptionAtLab());
+		target.setDateCombinedCellCultureResults(source.getDateCombinedCellCultureResults());
+		target.setW1(source.getW1());
+		target.setW2(source.getW2());
+		target.setW3(source.getW3());
+		target.setDiscordant(source.getDiscordant());
+		target.setsL1(source.getsL1());
+		target.setsL2(source.getsL2());
+		target.setsL3(source.getsL3());
+		target.setDateFollowUpExam(source.getDateFollowUpExam());
+		target.setResidualAnalysis(source.getResidualAnalysis());
+		target.setResultExam(source.getResultExam());
 
 
 
@@ -1368,5 +1424,149 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 	public void setAfpFinalClassification(AFPClassification afpFinalClassification) {
 		this.afpFinalClassification = afpFinalClassification;
+	}
+
+	public Date getDateFirstSpecimen() {
+		return dateFirstSpecimen;
+	}
+
+	public void setDateFirstSpecimen(Date dateFirstSpecimen) {
+		this.dateFirstSpecimen = dateFirstSpecimen;
+	}
+
+	public Date getDateSecondSpecimen() {
+		return dateSecondSpecimen;
+	}
+
+	public void setDateSecondSpecimen(Date dateSecondSpecimen) {
+		this.dateSecondSpecimen = dateSecondSpecimen;
+	}
+
+	public Date getDateSpecimenSentNationalLevel() {
+		return dateSpecimenSentNationalLevel;
+	}
+
+	public void setDateSpecimenSentNationalLevel(Date dateSpecimenSentNationalLevel) {
+		this.dateSpecimenSentNationalLevel = dateSpecimenSentNationalLevel;
+	}
+
+	public Date getDateSpecimenReceivedNationalLevel() {
+		return dateSpecimenReceivedNationalLevel;
+	}
+
+	public void setDateSpecimenReceivedNationalLevel(Date dateSpecimenReceivedNationalLevel) {
+		this.dateSpecimenReceivedNationalLevel = dateSpecimenReceivedNationalLevel;
+	}
+
+	public Date getDateSpecimenSentInter() {
+		return dateSpecimenSentInter;
+	}
+
+	public void setDateSpecimenSentInter(Date dateSpecimenSentInter) {
+		this.dateSpecimenSentInter = dateSpecimenSentInter;
+	}
+
+	public Date getDateSpecimenReceivedInter() {
+		return dateSpecimenReceivedInter;
+	}
+
+	public void setDateSpecimenReceivedInter(Date dateSpecimenReceivedInter) {
+		this.dateSpecimenReceivedInter = dateSpecimenReceivedInter;
+	}
+
+	public SpecimenCondition getStatusSpecimenReceptionAtLab() {
+		return statusSpecimenReceptionAtLab;
+	}
+
+	public void setStatusSpecimenReceptionAtLab(SpecimenCondition statusSpecimenReceptionAtLab) {
+		this.statusSpecimenReceptionAtLab = statusSpecimenReceptionAtLab;
+	}
+
+	public Date getDateCombinedCellCultureResults() {
+		return dateCombinedCellCultureResults;
+	}
+
+	public void setDateCombinedCellCultureResults(Date dateCombinedCellCultureResults) {
+		this.dateCombinedCellCultureResults = dateCombinedCellCultureResults;
+	}
+
+	public YesNo getW1() {
+		return w1;
+	}
+
+	public void setW1(YesNo w1) {
+		this.w1 = w1;
+	}
+
+	public YesNo getW2() {
+		return w2;
+	}
+
+	public void setW2(YesNo w2) {
+		this.w2 = w2;
+	}
+
+	public YesNo getW3() {
+		return w3;
+	}
+
+	public void setW3(YesNo w3) {
+		this.w3 = w3;
+	}
+
+	public YesNoUnknown getDiscordant() {
+		return discordant;
+	}
+
+	public void setDiscordant(YesNoUnknown discordant) {
+		this.discordant = discordant;
+	}
+
+	public YesNo getsL1() {
+		return sL1;
+	}
+
+	public void setsL1(YesNo sL1) {
+		this.sL1 = sL1;
+	}
+
+	public YesNo getsL2() {
+		return sL2;
+	}
+
+	public void setsL2(YesNo sL2) {
+		this.sL2 = sL2;
+	}
+
+	public YesNo getsL3() {
+		return sL3;
+	}
+
+	public void setsL3(YesNo sL3) {
+		this.sL3 = sL3;
+	}
+
+	public Date getDateFollowUpExam() {
+		return dateFollowUpExam;
+	}
+
+	public void setDateFollowUpExam(Date dateFollowUpExam) {
+		this.dateFollowUpExam = dateFollowUpExam;
+	}
+
+	public InjectionSite getResidualAnalysis() {
+		return residualAnalysis;
+	}
+
+	public void setResidualAnalysis(InjectionSite residualAnalysis) {
+		this.residualAnalysis = residualAnalysis;
+	}
+
+	public AfpResult getResultExam() {
+		return resultExam;
+	}
+
+	public void setResultExam(AfpResult resultExam) {
+		this.resultExam = resultExam;
 	}
 }

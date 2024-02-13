@@ -38,6 +38,14 @@ public enum InjectionSite {
             RIGHT_ARM,
             LEFT_LEG,
             RIGHT_LEG);
+
+    public static final List<InjectionSite> RemoveParalysisSite = Arrays.asList(
+            RIGHT_FOREARM,
+            RIGHT_BUTTOCKS,
+            RIGHT_THIGH,
+            LEFT_FOREARM,
+            LEFT_BUTTOCKS,
+            LEFT_THIGH);
     @Override
     public String toString() {
         return I18nProperties.getEnumCaption(this);

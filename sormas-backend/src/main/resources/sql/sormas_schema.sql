@@ -12810,5 +12810,26 @@ ALTER TABLE symptoms ADD COLUMN leftinjectionsite varchar(255);
 ALTER TABLE symptoms ADD COLUMN trueafp varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (553, 'Added 11 columns to symptoms-AFP');
+
+ALTER TABLE samples ADD COLUMN datefirstspecimen DATE;
+ALTER TABLE samples ADD COLUMN datesecondspecimen DATE;
+ALTER TABLE samples ADD COLUMN datespecimensentnationallevel DATE;
+ALTER TABLE samples ADD COLUMN datespecimenreceivednationallevel DATE;
+ALTER TABLE samples ADD COLUMN datespecimensentinter DATE;
+ALTER TABLE samples ADD COLUMN datespecimenreceivedinter DATE;
+ALTER TABLE samples ADD COLUMN statusspecimenreceptionatlab varchar(255);
+ALTER TABLE samples ADD COLUMN datecombinedcellcultureresults varchar(255);
+ALTER TABLE samples ADD COLUMN w1 varchar(255);
+ALTER TABLE samples ADD COLUMN w2 varchar(255);
+ALTER TABLE samples ADD COLUMN w3 varchar(255);
+ALTER TABLE samples ADD COLUMN discordant varchar(255);
+ALTER TABLE samples ADD COLUMN sl1 varchar(255);
+ALTER TABLE samples ADD COLUMN sl2 varchar(255);
+ALTER TABLE samples ADD COLUMN sl3 varchar(255);
+ALTER TABLE samples ADD COLUMN datefollowupexam DATE;
+ALTER TABLE samples ADD COLUMN residualanalysis varchar(255);
+ALTER TABLE samples ADD COLUMN resultexam varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (554, 'Added 18 columns to samples -AFP');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``
