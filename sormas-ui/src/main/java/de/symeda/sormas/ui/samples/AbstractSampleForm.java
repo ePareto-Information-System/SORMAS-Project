@@ -84,6 +84,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private DateTimeField laboratorySampleDateReceived;
 
 	OptionGroup requestedPathogenTestsField;
+	OptionGroup requestedSampleMaterialsField;
 
 	//@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
@@ -397,6 +398,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					break;
 			}
 
+		setSampleMaterialTypesForDisease(disease);
+
     }
 
 	protected abstract Disease getDisease();
@@ -526,6 +529,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		requestedPathogenTestsField.removeItem(PathogenTestType.OTHER);
 		requestedPathogenTestsField.setCaption(null);
 
+		requestedSampleMaterialsField = addField(SampleDto.REQUESTED_SAMPLE_MATERIALS, OptionGroup.class);
+		CssStyles.style(requestedSampleMaterialsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+		requestedSampleMaterialsField.setMultiSelect(true);
+
 		OptionGroup requestedAdditionalTestsField = addField(SampleDto.REQUESTED_ADDITIONAL_TESTS, OptionGroup.class);
 		CssStyles.style(requestedAdditionalTestsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
 		requestedAdditionalTestsField.setMultiSelect(true);
@@ -547,35 +554,36 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		updateRequestedTestFields();
 	}
-	CheckBox sampleMaterialRequestedField = addField(SampleDto.SAMPLE_MATERIAL_REQUESTED, CheckBox.class);
-	OptionGroup requestedSampleMaterialsField = addField(SampleDto.REQUESTED_SAMPLE_MATERIALS, OptionGroup.class);
+	//CheckBox sampleMaterialRequestedField = addField(SampleDto.SAMPLE_MATERIAL_REQUESTED, CheckBox.class);
+
+	//OptionGroup requestedSampleMaterialsField = addField(SampleDto.REQUESTED_SAMPLE_MATERIALS, OptionGroup.class);
 	Field<?> sampleMaterialTestingField = getField(SampleDto.SAMPLE_MATERIAL_REQUESTED);
 
 	//tests for diseases
 	OptionGroup sampleTestsField = addField(SampleDto.SAMPLE_TESTS, OptionGroup.class);
 
 
-	protected void initializeMaterialsMultiSelect( ){
-
-			Label materialMultiSelectInfoLabel = new Label(I18nProperties.getString(Strings.infoSampleMaterialSelection));
-			getContent().addComponent(materialMultiSelectInfoLabel, SAMPLE_MATERIAL_INFO_LOC);
-
-			// Yes/No fields for sample materials
-			sampleMaterialRequestedField.setWidthUndefined();
-			sampleMaterialRequestedField.addValueChangeListener(e -> updateSampleMaterialFields());
-			sampleMaterialRequestedField.setCaption("Sample Types");
-
-
-			// CheckBox groups to select sample Materials
-			CssStyles.style(requestedSampleMaterialsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
-			requestedSampleMaterialsField.setMultiSelect(true);
-			requestedSampleMaterialsField.addItems(
-					Arrays.stream(YellowFeverSample.values())
-							.filter( c -> fieldVisibilityCheckers.isVisible(YellowFeverSample.class, c.name()))
-							.collect(Collectors.toList()));
-			requestedSampleMaterialsField.setCaption(null);
-
-	}
+//	protected void initializeMaterialsMultiSelect( ){
+//
+//			Label materialMultiSelectInfoLabel = new Label(I18nProperties.getString(Strings.infoSampleMaterialSelection));
+//			getContent().addComponent(materialMultiSelectInfoLabel, SAMPLE_MATERIAL_INFO_LOC);
+//
+//			// Yes/No fields for sample materials
+//			sampleMaterialRequestedField.setWidthUndefined();
+//			sampleMaterialRequestedField.addValueChangeListener(e -> updateSampleMaterialFields());
+//			sampleMaterialRequestedField.setCaption("Sample Types");
+//
+//
+//			// CheckBox groups to select sample Materials
+//			CssStyles.style(requestedSampleMaterialsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+//			requestedSampleMaterialsField.setMultiSelect(true);
+//			requestedSampleMaterialsField.addItems(
+//					Arrays.stream(YellowFeverSample.values())
+//							.filter( c -> fieldVisibilityCheckers.isVisible(YellowFeverSample.class, c.name()))
+//							.collect(Collectors.toList()));
+//			requestedSampleMaterialsField.setCaption(null);
+//
+//	}
 
 	private void selectAHFTests(){
 
@@ -590,42 +598,42 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	}
 
-	private void updateSampleMaterialFields() {
+//	private void updateSampleMaterialFields() {
+//
+//		boolean sampleMaterialsRequested = Boolean.TRUE.equals(sampleMaterialTestingField.getValue());
+//		setVisible(sampleMaterialsRequested, SampleDto.REQUESTED_SAMPLE_MATERIALS);
+//
+//		getContent().getComponent(SAMPLE_MATERIAL_INFO_LOC).setVisible(sampleMaterialsRequested);
+//
+//		if (getValue() != null ) {
+//			CssLayout requestedSampleMaterialsLayout = new CssLayout();
+//			CssStyles.style(requestedSampleMaterialsLayout, VSPACE_3);
+//			for (SampleMaterial sampleType : SampleMaterial.values()) {
+//				Label testLabel = new Label(sampleType.toString());
+//				testLabel.setWidthUndefined();
+//				CssStyles.style(testLabel, CssStyles.LABEL_ROUNDED_CORNERS, CssStyles.LABEL_BACKGROUND_FOCUS_LIGHT, VSPACE_4, HSPACE_RIGHT_4);
+//				requestedSampleMaterialsLayout.addComponent(testLabel);
+//			}
+//			getContent().addComponent(requestedSampleMaterialsLayout, SAMPLE_MATERIAL_INFO_LOC);
+//		}
+//	}
 
-		boolean sampleMaterialsRequested = Boolean.TRUE.equals(sampleMaterialTestingField.getValue());
-		setVisible(sampleMaterialsRequested, SampleDto.REQUESTED_SAMPLE_MATERIALS);
-
-		getContent().getComponent(SAMPLE_MATERIAL_INFO_LOC).setVisible(sampleMaterialsRequested);
-
-		if (getValue() != null ) {
-			CssLayout requestedSampleMaterialsLayout = new CssLayout();
-			CssStyles.style(requestedSampleMaterialsLayout, VSPACE_3);
-			for (SampleMaterial sampleType : SampleMaterial.values()) {
-				Label testLabel = new Label(sampleType.toString());
-				testLabel.setWidthUndefined();
-				CssStyles.style(testLabel, CssStyles.LABEL_ROUNDED_CORNERS, CssStyles.LABEL_BACKGROUND_FOCUS_LIGHT, VSPACE_4, HSPACE_RIGHT_4);
-				requestedSampleMaterialsLayout.addComponent(testLabel);
-			}
-			getContent().addComponent(requestedSampleMaterialsLayout, SAMPLE_MATERIAL_INFO_LOC);
-		}
-	}
-
-	private void updateSampleTestsFields() {
-
-			if(getValue() != null){
-				CssLayout requestedSampleTestsLayout = new CssLayout();
-				CssStyles.style(requestedSampleTestsLayout, VSPACE_3);
-				for (YellowFeverSample sampleTests : getValue().getRequestedSampleMaterials()) {
-					Label testLabel = new Label(sampleTests.toString());
-					testLabel.setWidthUndefined();
-					CssStyles.style(testLabel, CssStyles.LABEL_ROUNDED_CORNERS, CssStyles.LABEL_BACKGROUND_FOCUS_LIGHT, VSPACE_4, HSPACE_RIGHT_4);
-					requestedSampleTestsLayout.addComponent(testLabel);
-				}
-				getContent().addComponent(requestedSampleTestsLayout, SAMPLE_MATERIAL_INFO_LOC);
-			}else {
-				getContent().removeComponent(SAMPLE_MATERIAL_INFO_LOC);
-			}
-	}
+//	private void updateSampleTestsFields() {
+//
+//			if(getValue() != null){
+//				CssLayout requestedSampleTestsLayout = new CssLayout();
+//				CssStyles.style(requestedSampleTestsLayout, VSPACE_3);
+//				for (YellowFeverSample sampleTests : getValue().getRequestedSampleMaterials()) {
+//					Label testLabel = new Label(sampleTests.toString());
+//					testLabel.setWidthUndefined();
+//					CssStyles.style(testLabel, CssStyles.LABEL_ROUNDED_CORNERS, CssStyles.LABEL_BACKGROUND_FOCUS_LIGHT, VSPACE_4, HSPACE_RIGHT_4);
+//					requestedSampleTestsLayout.addComponent(testLabel);
+//				}
+//				getContent().addComponent(requestedSampleTestsLayout, SAMPLE_MATERIAL_INFO_LOC);
+//			}else {
+//				getContent().removeComponent(SAMPLE_MATERIAL_INFO_LOC);
+//			}
+//	}
 
 	private void updateRequestedTestFields() {
 
@@ -924,7 +932,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		sampleMaterialComboBox.setVisible(false);
 		sampleMaterialComboBox.setRequired(false);
 
-		initializeMaterialsMultiSelect();
+//		initializeMaterialsMultiSelect();
 		//updateSampleTestsFields();
 
 	}
@@ -933,9 +941,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		if (disease == Disease.MEASLES) {
 			setVisible(false, SampleDto.SAMPLING_REASON);
 			setVisible(false, SampleDto.SAMPLE_PURPOSE);
-			setVisible(true, SampleDto.RECEIVED);
+			setVisible(true, SampleDto.RECEIVED, SampleDto.REQUESTED_SAMPLE_MATERIALS);
 			List<PathogenTestType> measelesPathogenTests = PathogenTestType.getMeaslesTestTypes();
-
 			Arrays.stream(PathogenTestType.values())
 					.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
 					.forEach(pathogenTestType -> requestedPathogenTestsField.removeItem(pathogenTestType));
@@ -1027,6 +1034,30 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				CaseDataDto.DELETION_REASON,
 				CaseDataDto.OTHER_DELETION_REASON
 		);
+	}
+
+	//create a function with a switch samtement within to return sampleMateriela types for measels, yellow fever, and other diseases
+	public void setSampleMaterialTypesForDisease(Disease disease){
+		switch (disease){
+			case MEASLES:
+				requestedSampleMaterialsField.addItems(
+						Arrays.stream(SampleMaterial.getMeaselsMateriealTypes())
+								.filter( c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
+								.collect(Collectors.toList()));
+				break;
+			case YELLOW_FEVER:
+				requestedSampleMaterialsField.addItems(
+						Arrays.stream(SampleMaterial.getYellowFeverMateriealTypes())
+								.filter( c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
+								.collect(Collectors.toList()));
+				break;
+			default:
+				requestedSampleMaterialsField.addItems(
+						Arrays.stream(SampleMaterial.values())
+								.filter( c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
+								.collect(Collectors.toList()));
+				break;
+		}
 	}
 
 }

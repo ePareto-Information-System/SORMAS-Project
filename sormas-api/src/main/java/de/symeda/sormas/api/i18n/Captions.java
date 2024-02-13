@@ -2002,6 +2002,8 @@ public interface Captions {
 	String Sample_requestedOtherPathogenTests = "Sample.requestedOtherPathogenTests";
 	String Sample_requestedPathogenTests = "Sample.requestedPathogenTests";
 	String Sample_requestedPathogenTestsTags = "Sample.requestedPathogenTestsTags";
+
+	String Sample_requestedSampleMaterials = "Sample.requestedSampleMaterials";
 	String Sample_sampleCode = "Sample.sampleCode";
 	String Sample_sampleDateTime = "Sample.sampleDateTime";
 	String Sample_sampleMaterial = "Sample.sampleMaterial";

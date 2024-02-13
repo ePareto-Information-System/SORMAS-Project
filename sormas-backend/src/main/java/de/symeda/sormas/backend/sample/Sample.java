@@ -199,7 +199,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private Boolean sampleMaterialTestingRequested;
 	private Boolean additionalTestingRequested;
 	private Set<PathogenTestType> requestedPathogenTests;
-	private Set<YellowFeverSample> requestedSampleMaterials;
+	private Set<SampleMaterial> requestedSampleMaterials;
 	private Set<PathogenTestType> sampleTests;
 	private Set<AdditionalTestType> requestedAdditionalTests;
 	private String requestedOtherPathogenTests;
@@ -619,19 +619,19 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	}
 
 	@Transient
-	public Set<YellowFeverSample> getRequestedSampleMaterials() {
+	public Set<SampleMaterial> getRequestedSampleMaterials() {
 		if (requestedSampleMaterials == null) {
 			if (StringUtils.isEmpty(requestedSampleMaterialsString)) {
 				requestedSampleMaterials = new HashSet<>();
 			} else {
 				requestedSampleMaterials =
-						Arrays.stream(requestedSampleMaterialsString.split(",")).map(YellowFeverSample::valueOf).collect(Collectors.toSet());
+						Arrays.stream(requestedSampleMaterialsString.split(",")).map(SampleMaterial::valueOf).collect(Collectors.toSet());
 			}
 		}
 		return requestedSampleMaterials;
 	}
 
-	public void setRequestedSampleMaterials(Set<YellowFeverSample> requestedSampleMaterials) {
+	public void setRequestedSampleMaterials(Set<SampleMaterial> requestedSampleMaterials) {
 		this.requestedSampleMaterials = requestedSampleMaterials;
 
 		if (this.requestedSampleMaterials == null) {
