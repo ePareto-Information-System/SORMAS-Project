@@ -13195,19 +13195,19 @@ INSERT INTO schema_version (version_number, comment) VALUES (563, 'Altered colum
 ALTER TABLE surveillancereports ADD COLUMN dhimsfacilitytype VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (564, 'Added dhimsfacilitytype to surveillancereports');
 
-INSERT INTO schema_version (version_number, comment) VALUES (549, 'Added vaccinetype to cases');
+INSERT INTO schema_version (version_number, comment) VALUES (565, 'Added vaccinetype to cases');
 
 ALTER TABLE person ADD COLUMN numberofpeople varchar(255);
 ALTER TABLE person ADD COLUMN numberofothercontacts varchar(255);
-INSERT INTO schema_version (version_number, comment) VALUES (550, 'Added numberOfPeople, numberOfOtherContacts to person');
+INSERT INTO schema_version (version_number, comment) VALUES (566, 'Added numberOfPeople, numberOfOtherContacts to person');
 
 ALTER TABLE cases ADD COLUMN notifiedby varchar(255);
 ALTER TABLE cases ADD COLUMN dateofnotification DATE;
 ALTER TABLE cases ADD COLUMN dateofinvestigation DATE;
-INSERT INTO schema_version (version_number, comment) VALUES (551, 'Added notifiedby, dateofnotification, dateofinvestigation to cases');
+INSERT INTO schema_version (version_number, comment) VALUES (567, 'Added notifiedby, dateofnotification, dateofinvestigation to cases');
 
 ALTER TABLE hospitalization ADD COLUMN hospitalrecordnumber varchar(255);
-INSERT INTO schema_version (version_number, comment) VALUES (552, 'Added hospitalRecordNumber to hospitalization');
+INSERT INTO schema_version (version_number, comment) VALUES (568, 'Added hospitalRecordNumber to hospitalization');
 
 ALTER TABLE symptoms ADD COLUMN feveronsetparalysis varchar(255);
 ALTER TABLE symptoms ADD COLUMN progressiveparalysis varchar(255);
@@ -13221,7 +13221,7 @@ ALTER TABLE symptoms ADD COLUMN rightinjectionsite varchar(255);
 ALTER TABLE symptoms ADD COLUMN leftinjectionsite varchar(255);
 ALTER TABLE symptoms ADD COLUMN trueafp varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (553, 'Added 11 columns to symptoms-AFP');
+INSERT INTO schema_version (version_number, comment) VALUES (569, 'Added 11 columns to symptoms-AFP');
 
 ALTER TABLE samples ADD COLUMN datefirstspecimen DATE;
 ALTER TABLE samples ADD COLUMN datesecondspecimen DATE;
@@ -13242,7 +13242,7 @@ ALTER TABLE samples ADD COLUMN datefollowupexam DATE;
 ALTER TABLE samples ADD COLUMN residualanalysis varchar(255);
 ALTER TABLE samples ADD COLUMN resultexam varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (554, 'Added 18 columns to samples -AFP');
+INSERT INTO schema_version (version_number, comment) VALUES (570, 'Added 18 columns to samples -AFP');
 
 ALTER TABLE person ADD COLUMN place varchar(255);
 ALTER TABLE person ADD COLUMN durationmonths varchar(255);
@@ -13262,7 +13262,7 @@ ALTER TABLE person ADD COLUMN investigatorunit varchar(255);
 ALTER TABLE person ADD COLUMN investigatoraddress varchar(255);
 ALTER TABLE person ADD COLUMN investigatortel varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (555, 'Added place, duration etc to person');
+INSERT INTO schema_version (version_number, comment) VALUES (571, 'Added place, duration etc to person');
 
 ALTER TABLE immunization ADD COLUMN totalnumberdoses integer;
 ALTER TABLE immunization ADD COLUMN opvdoseatbirth varchar(255);
@@ -13279,10 +13279,10 @@ ALTER TABLE immunization ADD COLUMN totalipvdosesreceivedthroughri varchar(255);
 ALTER TABLE immunization ADD COLUMN datelastipvreceivedthroughsia date;
 ALTER TABLE immunization ADD COLUMN sourcerivaccinationinformation varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (556, 'Added totalnumberdoses,opvdoseatbirth  etc to immunization');
+INSERT INTO schema_version (version_number, comment) VALUES (572, 'Added totalnumberdoses,opvdoseatbirth  etc to immunization');
 
 ALTER TABLE immunization ADD COLUMN datelastipvdosesreceivedthroughsia varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (557, 'Added datelastipvdosesreceivedthroughsia  etc to immunization');
+INSERT INTO schema_version (version_number, comment) VALUES (573, 'Added datelastipvdosesreceivedthroughsia  etc to immunization');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``
