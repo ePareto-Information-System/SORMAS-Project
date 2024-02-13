@@ -676,6 +676,12 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				afpFacilityOptions.setVisible(false);
 				hospitalName.setVisible(true);
 			}
+
+			if(disease == Disease.MEASLES){
+				setRequired(true, DHIMSFACILITY_OR_HOME_LOC);
+				setRequired(true, CaseDataDto.DHIMS_FACILITY_TYPE);
+				afpFacilityOptions.setVisible(false);
+			}
 			investigated.setVisible(disease == Disease.NEW_INFLUENZA);
 			dhimsFacilityOrHome.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.CSM || disease == Disease.MEASLES);
 			dhimsFacilityType.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF  || disease == Disease.CSM || disease == Disease.MEASLES);
