@@ -2,6 +2,7 @@ package de.symeda.sormas.ui.sixtydayfollowup;
 
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.caze.AbstractCaseView;
+import de.symeda.sormas.ui.symptoms.SymptomsForm;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 
 
@@ -17,9 +18,9 @@ public class SixtyDayFollowupView extends AbstractCaseView {
     @Override
     protected void initView(String params) {
 
-        CommitDiscardWrapperComponent<SixtyDayForm> sixtyDayForm =
-                ControllerProvider.getCaseController().getSixtyDayComponent(getCaseRef().getUuid(), getViewMode());
-        setSubComponent(sixtyDayForm);
-        //setCaseEditPermission(sixtyDayForm);
+        CommitDiscardWrapperComponent<SixtyDayForm> caseSixtyDayComponent =
+                ControllerProvider.getCaseController().getSixtyDayComponent(getCaseRef().getUuid(), getViewMode(),true );
+        setSubComponent(caseSixtyDayComponent);
+        setEditPermission(caseSixtyDayComponent);
     }
 }

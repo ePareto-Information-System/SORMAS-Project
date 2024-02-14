@@ -1,6 +1,7 @@
 package de.symeda.sormas.api.sixtyday;
 
 import de.symeda.sormas.api.EntityDto;
+import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.symptoms.SymptomState;
@@ -62,9 +63,9 @@ public class SixtyDayDto extends PseudonymizableDto {
     private Date dateSubmissionForms;
 
     public static SixtyDayDto build() {
-        SixtyDayDto sixtyDayDto = new SixtyDayDto();
-        sixtyDayDto.setUuid(DataHelper.createUuid());
-        return sixtyDayDto;
+        SixtyDayDto sixtyDay = new SixtyDayDto();
+        sixtyDay.setUuid(DataHelper.createUuid());
+        return sixtyDay;
     }
 
     public String getPersonExamineCase() {

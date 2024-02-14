@@ -1,9 +1,27 @@
+/*******************************************************************************
+ * SORMAS® - Surveillance Outbreak Response Management & Analysis System
+ * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ *******************************************************************************/
 package de.symeda.sormas.backend.sixtyday;
 
-
+import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
 import de.symeda.sormas.api.sixtyday.SixtyDayFacade;
 import de.symeda.sormas.backend.caze.CaseService;
+import de.symeda.sormas.backend.epidata.EpiData;
 import de.symeda.sormas.backend.infrastructure.community.CommunityService;
 import de.symeda.sormas.backend.infrastructure.district.DistrictService;
 import de.symeda.sormas.backend.infrastructure.facility.FacilityService;
@@ -32,13 +50,13 @@ public class SixtyDayFacadeEjb implements SixtyDayFacade {
     @EJB
     private FacilityService facilityService;
 
-    public SixtyDay fromDto(SixtyDayDto source, boolean checkChangeDate) {
+    public SixtyDay fillOrBuildEntity(SixtyDayDto source, SixtyDay target, boolean checkChangeDate) {
 
         if (source == null) {
             return null;
         }
 
-        SixtyDay target = DtoHelper.fillOrBuildEntity(source, service.getByUuid(source.getUuid()), SixtyDay::new, checkChangeDate);
+        target = DtoHelper.fillOrBuildEntity(source, target, SixtyDay::new, checkChangeDate);
 
         target.setPersonExamineCase(source.getPersonExamineCase());
         target.setDateOfFollowup(source.getDateOfFollowup());
