@@ -1250,10 +1250,10 @@ public class CaseController {
 		return editView;
 	}
 
-	public CommitDiscardWrapperComponent<SixtyDayForm> getSixtyDayComponent(final String caseUuid, ViewMode viewMode) {
+	public CommitDiscardWrapperComponent<SixtyDayForm> getSixtyDayComponent(final String caseUuid, ViewMode viewMode, boolean isEditAllowed) {
 
 		CaseDataDto caze = findCase(caseUuid);
-		SixtyDayForm sixtyDayForm = new SixtyDayForm(caze, viewMode, caze.isPseudonymized());
+		SixtyDayForm sixtyDayForm = new SixtyDayForm(caze, viewMode, caze.isPseudonymized(), isEditAllowed);
 		sixtyDayForm.setValue(caze.getSixtyDay());
 
 		final CommitDiscardWrapperComponent<SixtyDayForm> editView = new CommitDiscardWrapperComponent<SixtyDayForm>(
@@ -1264,6 +1264,7 @@ public class CaseController {
 		final JurisdictionValues jurisdictionValues = new JurisdictionValues();
 
 		editView.setPreCommitListener(successCallback -> {
+			//cazeDto not used yet
 			final CaseDataDto cazeDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(caseUuid);
 		});
 

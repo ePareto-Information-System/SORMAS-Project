@@ -60,7 +60,7 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
     private final CaseDataDto caze;
     private final ViewMode viewMode;
 
-    public SixtyDayForm(CaseDataDto caze, ViewMode viewMode, boolean isPseudonymized) {
+    public SixtyDayForm(CaseDataDto caze, ViewMode viewMode, boolean isPseudonymized, boolean isEditAllowed) {
 
         super(
                 SixtyDayDto.class,

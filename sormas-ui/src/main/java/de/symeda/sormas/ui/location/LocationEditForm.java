@@ -925,12 +925,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			additionalInformationField.setCaption("Village");
 			setVisible(false, LocationDto.ADDRESS_TYPE,
 					LocationDto.ADDRESS_TYPE_DETAILS,
-					LocationDto.HOUSE_NUMBER,
 					LocationDto.STREET,
-					LocationDto.POSTAL_CODE,
 					LocationDto.CONTACT_PERSON_FIRST_NAME);
 			setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE);
-
+			postalCodeField.setCaption("Ghana Post Office");
 		}
 	}
 

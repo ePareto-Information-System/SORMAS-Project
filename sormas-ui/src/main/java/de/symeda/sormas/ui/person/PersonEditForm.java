@@ -423,7 +423,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			TextField investigatorAddress = addField(PersonDto.INVESTIGATOR_ADDRESS, TextField.class);
 			TextField investigatorTel = addField(PersonDto.INVESTIGATOR_TEL, TextField.class);
 
-			setVisible(false,PersonDto.BIRTH_COUNTRY, PersonDto.NAMES_OF_GUARDIANS, PersonDto.BIRTH_NAME);
+			setVisible(false,PersonDto.BIRTH_COUNTRY, PersonDto.NAMES_OF_GUARDIANS, PersonDto.BIRTH_NAME, PersonDto.PASSPORT_NUMBER);
 			otherNote.setVisible(true);
 			otherNote.setCaption("Other Notes and Observations");
 		}

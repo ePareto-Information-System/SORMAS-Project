@@ -3174,6 +3174,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			FacadeHelper.setUuidIfDtoExists(target.getHospitalization(), source.getHospitalization());
 			FacadeHelper.setUuidIfDtoExists(target.getEpiData(), source.getEpiData());
 			FacadeHelper.setUuidIfDtoExists(target.getSymptoms(), source.getSymptoms());
+			FacadeHelper.setUuidIfDtoExists(target.getSixtyDay(), source.getSixtyDay());
 		}
 
 		target.setDisease(source.getDisease());
@@ -3206,7 +3207,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setLaboratoryDiagnosticConfirmation(source.getLaboratoryDiagnosticConfirmation());
 		target.setInvestigationStatus(source.getInvestigationStatus());
 		target.setHospitalization(hospitalizationFacade.fillOrBuildEntity(source.getHospitalization(), target.getHospitalization(),checkChangeDate));
-		target.setSixtyDay(sixtyDayFacade.fromDto(source.getSixtyDay(), checkChangeDate));
+		target.setSixtyDay(sixtyDayFacade.fillOrBuildEntity(source.getSixtyDay(), target.getSixtyDay(),checkChangeDate));
 
 		target.setHospitalization(hospitalizationFacade.fillOrBuildEntity(source.getHospitalization(), target.getHospitalization(), checkChangeDate));
 		target.setEpiData(epiDataFacade.fillOrBuildEntity(source.getEpiData(), target.getEpiData(), checkChangeDate));
