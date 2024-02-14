@@ -430,6 +430,9 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
+			setVisible(false, HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION, HospitalizationDto.ISOLATED, HospitalizationDto.INTENSIVE_CARE_UNIT, HospitalizationDto.DISCHARGE_DATE);
+
+			setVisible(true, HospitalizationDto.DISEASE_ONSET_DATE, HospitalizationDto.PATIENT_HOSPITALIZED_DETAINED);
 		}
 
 		if(caze.getDisease() == Disease.NEW_INFLUENZA){

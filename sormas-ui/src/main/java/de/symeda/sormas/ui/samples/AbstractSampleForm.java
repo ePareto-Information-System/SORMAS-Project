@@ -144,8 +144,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					locCss(VSPACE_TOP_3, SampleDto.ADDITIONAL_TESTING_REQUESTED) +
 					loc(ADDITIONAL_TESTING_READ_HEADLINE_LOC) +
 					loc(ADDITIONAL_TESTING_INFO_LOC) +
-					loc(SampleDto.REQUESTED_ADDITIONAL_TESTS) +
-					loc(SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS) +
+					//loc(SampleDto.REQUESTED_ADDITIONAL_TESTS) +
+				//	loc(SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS) +
 					loc(REQUESTED_ADDITIONAL_TESTS_READ_LOC) +
 
 					locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
@@ -430,6 +430,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				case YELLOW_FEVER:
 					handleYellowFever();
 					break;
+				case AHF:
+					handleAHF();
 				case MEASLES:
 					handleMeasles();
 					break;
@@ -1010,8 +1012,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		addSampleDispatchFields();
 
 		setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
+
 		sampleMaterialComboBox.setVisible(false);
 		sampleMaterialComboBox.setRequired(false);
+		setVisible(false, SampleDto.SAMPLE_MATERIAL, SampleDto.SAMPLING_REASON, SampleDto.PATHOGEN_TESTING_REQUESTED);
+		setVisible(false, SampleDto.SAMPLE_TESTS, SampleDto.SAMPLE_SOURCE, SampleDto.DISEASE, SampleDto.SAMPLE_MATERIAL_TEXT);
 
 		setSampleMaterialTypesForDisease(disease);
 		//updateSampleTestsFields();

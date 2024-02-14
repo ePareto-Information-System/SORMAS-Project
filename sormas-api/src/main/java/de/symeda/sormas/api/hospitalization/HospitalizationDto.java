@@ -409,6 +409,7 @@ public class HospitalizationDto extends EntityDto {
 
 	public void setWasPatientAdmitted(YesNoUnknown wasPatientAdmitted) {
 		this.wasPatientAdmitted = wasPatientAdmitted;
+	}
 	public String getHospitalRecordNumber() {
 		return hospitalRecordNumber;
 	}

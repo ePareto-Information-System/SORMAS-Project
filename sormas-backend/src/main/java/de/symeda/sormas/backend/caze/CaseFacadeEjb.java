@@ -3550,7 +3550,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setNotifiedBy(source.getNotifiedBy());
 		target.setDateOfNotification(source.getDateOfNotification());
 		target.setDateOfInvestigation(source.getDateOfInvestigation());
-		target.setSymptoms(symptomsFacade.fillOrBuildEntity(source.getSymptoms(), target.getSymptoms(), checkChangeDate));
+		//target.setSymptoms(symptomsFacade.fillOrBuildEntity(source.getSymptoms(), target.getSymptoms(), checkChangeDate));
 
 		target.setPregnant(source.getPregnant());
 		target.setIpSampleSent(source.getIpSampleSent());

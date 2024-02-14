@@ -699,8 +699,9 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				afpFacilityOptions.setVisible(false);
 			}
 			investigated.setVisible(disease == Disease.NEW_INFLUENZA);
-			dhimsFacilityOrHome.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.CSM || disease == Disease.MEASLES);
-			dhimsFacilityType.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF  || disease == Disease.CSM || disease == Disease.MEASLES);
+			boolean visibleDisease = disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.CSM || disease == Disease.MEASLES;
+			dhimsFacilityOrHome.setVisible(visibleDisease);
+			dhimsFacilityType.setVisible(visibleDisease);
 
 			personCreateForm.updatePresentConditionEnum((Disease) valueChangeEvent.getProperty().getValue());
 

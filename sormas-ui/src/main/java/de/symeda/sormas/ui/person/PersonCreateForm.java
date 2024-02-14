@@ -211,7 +211,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 		TextField phone = addCustomField(PersonDto.PHONE, String.class, TextField.class);
 		phone.setCaption(I18nProperties.getCaption(Captions.Person_phone));
-		phone.setRequired(true);
+		phone.setRequired(false);
 		phone.addValidator(new PhoneNumberValidator(I18nProperties.getValidationError(Validations.validPhoneNumber, phone.getCaption())));
 		TextField email = addCustomField(PersonDto.EMAIL_ADDRESS, String.class, TextField.class);
 		email.setCaption(I18nProperties.getCaption(Captions.Person_emailAddress));

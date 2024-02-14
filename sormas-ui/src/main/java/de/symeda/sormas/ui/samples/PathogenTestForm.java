@@ -402,6 +402,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 			}
+			FieldHelper.updateItems(
 				testBox,
 				Arrays.asList(PathogenTestType.values()),
 				FieldVisibilityCheckers.withDisease(disease),
@@ -519,7 +520,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		testTypeTextField.setValue(newFieldValue.getTestTypeText());
 		typingIdField.setValue(newFieldValue.getTypingId());
 		diseaseField.setValue(disease);
+	}
 
+	//not implemented
 	public void getAssociatedDisease() {
 		final ContactDto contactDto = FacadeProvider.getContactFacade().getByUuid(sample.getAssociatedContact().getUuid());
 		contactDto.getDisease();

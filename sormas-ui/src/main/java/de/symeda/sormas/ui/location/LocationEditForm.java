@@ -891,7 +891,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	public void setOnlyUnknownForYellowFever(Disease incomingDisease) {
 		newDisease = incomingDisease;
 		if (newDisease != null && newDisease.equals(Disease.YELLOW_FEVER)) {
-			setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK);
+			setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK, LocationDto.AREA_TYPE);
 		}
 	}
 	public void setOnlyUnknownForAHF(Disease incomingDisease) {

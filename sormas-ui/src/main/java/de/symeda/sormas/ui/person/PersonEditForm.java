@@ -30,11 +30,8 @@ import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import de.symeda.sormas.api.infrastructure.cadre.CadreDto;
 import de.symeda.sormas.api.infrastructure.cadre.CadreReferenceDto;
 import de.symeda.sormas.api.caze.CaseOrigin;
-import de.symeda.sormas.api.hospitalization.HospitalizationDto;
-import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.*;
 import de.symeda.sormas.ui.utils.*;
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +49,6 @@ import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -129,8 +125,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					loc(ADDRESS_HEADER) +
 					fluidRowLocs(6,PersonDto.HOME_ADDRESS_RECREATIONAL) +
 					divsCss(VSPACE_3, fluidRowLocs(PersonDto.ADDRESS)) +
-					/*loc(ADDRESSES_HEADER) +
-					fluidRowLocs(PersonDto.ADDRESSES) +*/
 					loc(CONTACT_INFORMATION_HEADER) +
 					divsCss(
 							VSPACE_3,
@@ -291,15 +285,14 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		}
 		addField(PersonDto.SEX, sexComboBox);
 		addField(PersonDto.BIRTH_NAME, TextField.class);
-		addField(PersonDto.PASSPORT_NUMBER);
-		TextField otherNote = addField(CaseDataDto.ADDITIONAL_DETAILS, TextField.class);
-		otherNote.setVisible(false);
+		/*TextField otherNote = addField(CaseDataDto.ADDITIONAL_DETAILS, TextField.class);
+		otherNote.setVisible(false);*/
 
 		if (caseOrigin == CaseOrigin.IN_COUNTRY) {
 			setVisible(false, PersonDto.PASSPORT_NUMBER);
 		}
 
-		addFields(PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD);
+		addField(PersonDto.GHANA_CARD);
 		TextField numberOfPeople = addField(PersonDto.NUMBER_OF_PEOPLE, TextField.class);
 		TextField numberOfOtherContacts = addField(PersonDto.NUMBER_OF_OTHER_CONTACTS, TextField.class);
 
@@ -382,8 +375,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		personContactDetailsField.setThisPerson(getValue());
 		personContactDetailsField.setCaption(null);
 		personContactDetailsField.setPseudonymized(isPseudonymized);
-		//ComboBox occupationTypeField = addField(PersonDto.OCCUPATION_TYPE, ComboBox.class);
-		TextField occupationTypeDetailsField = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
 //		occupationTypeDetailsField.setVisible(false);
 //		FieldHelper
 //				.updateItems(occupationTypeField, FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.OCCUPATION_TYPE, null));
@@ -404,11 +395,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		// });
 
 		//addFields(PersonDto.ARMED_FORCES_RELATION_TYPE);
-//		ComboBox occu = addField(PersonDto.OCCUPATION_TYPE, ComboBox.class);
-//		TextField occuDetails = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
-//		occuDetails.setCaption("Please Specify Occupation");
-//		ComboBox armedForces = addField(PersonDto.ARMED_FORCES_RELATION_TYPE, ComboBox.class);
-//		ComboBox educationType = addField(PersonDto.EDUCATION_TYPE, ComboBox.class);
 		ComboBox educationType = addField(PersonDto.EDUCATION_TYPE, ComboBox.class);
 		educationType.removeItem(EducationType.NURSERY);
 		TextField educationDetails = addField(PersonDto.EDUCATION_DETAILS, TextField.class);
@@ -670,12 +656,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 		TextField occuDetails = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
 		occuDetails.setCaption("Please Specify Occupation");
-		ComboBox educationType = addField(PersonDto.EDUCATION_TYPE, ComboBox.class);
-		educationType.removeItem(EducationType.NURSERY);
 
-
-		List<CountryReferenceDto> countries = FacadeProvider.getCountryFacade().getAllActiveAsReference();
-		addInfrastructureField(PersonDto.BIRTH_COUNTRY).addItems(countries);
 			addressesHeader.setVisible(false);
 			contactInformationHeader.setVisible(false);
 			homeaddrecreational.setVisible(false);
@@ -698,8 +679,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		if (disease == Disease.AHF) {
 			setVisible(false, PersonDto.BIRTH_COUNTRY);
 			setVisible(true, PersonDto.NUMBER_OF_PEOPLE, PersonDto.NUMBER_OF_OTHER_CONTACTS);
-			otherNote.setVisible(true);
-			otherNote.setCaption("Other Notes and Observations");
+			additionalDetails.setVisible(true);
+			additionalDetails.setCaption("Other Notes and Observations");
 		}
 
 		if (disease == Disease.AFP) {
@@ -731,8 +712,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			TextField investigatorTel = addField(PersonDto.INVESTIGATOR_TEL, TextField.class);
 
 			setVisible(false,PersonDto.BIRTH_COUNTRY, PersonDto.NAMES_OF_GUARDIANS, PersonDto.BIRTH_NAME, PersonDto.PASSPORT_NUMBER);
-			otherNote.setVisible(true);
-			otherNote.setCaption("Other Notes and Observations");
+			additionalDetails.setVisible(true);
+			additionalDetails.setCaption("Other Notes and Observations");
 		}
 
 	}

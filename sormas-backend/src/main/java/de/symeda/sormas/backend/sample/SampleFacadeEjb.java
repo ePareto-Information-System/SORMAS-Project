@@ -1085,11 +1085,9 @@ public class SampleFacadeEjb implements SampleFacade {
 //		return em.createQuery(cq).getSingleResult();
 //	}
 
-	public Sample fromDto(@NotNull SampleDto source, boolean checkChangeDate) {
+	public Sample fillOrBuildEntity(@NotNull SampleDto source, Sample target, boolean checkChangeDate) {
+		target = DtoHelper.fillOrBuildEntity(source, target, Sample::new, checkChangeDate);
 
-		Sample target = DtoHelper.fillOrBuildEntity(source, sampleService.getByUuid(source.getUuid()), Sample::new, checkChangeDate);
-	// public Sample fillOrBuildEntity(@NotNull SampleDto source, Sample target, boolean checkChangeDate) {
-	// 	target = DtoHelper.fillOrBuildEntity(source, target, Sample::new, checkChangeDate);  1.87.0
 
 		target.setAssociatedCase(caseService.getByReferenceDto(source.getAssociatedCase()));
 		target.setAssociatedContact(contactService.getByReferenceDto(source.getAssociatedContact()));
@@ -1621,7 +1619,7 @@ public class SampleFacadeEjb implements SampleFacade {
 	}
 
 
-	public Sample fillOrBuildEntity(@NotNull SampleDto source, Sample target, boolean checkChangeDate) {
+/*	public Sample fillOrBuildEntity(@NotNull SampleDto source, Sample target, boolean checkChangeDate) {
 		target = DtoHelper.fillOrBuildEntity(source, target, Sample::new, checkChangeDate);
 
 		target.setAssociatedCase(caseService.getByReferenceDto(source.getAssociatedCase()));
@@ -1670,5 +1668,5 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setOtherDeletionReason(source.getOtherDeletionReason());
 
 		return target;
-	}
+	}*/
 }
