@@ -675,7 +675,10 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				numberOfPeople,
 				numberOfOtherContacts
 		);
-
+		if (disease == Disease.CSM) {
+			generalCommentLabel.setVisible(false);
+			setVisible(false, PersonDto.ADDITIONAL_DETAILS);
+		}
 		if (disease == Disease.AHF) {
 			setVisible(false, PersonDto.BIRTH_COUNTRY);
 			setVisible(true, PersonDto.NUMBER_OF_PEOPLE, PersonDto.NUMBER_OF_OTHER_CONTACTS);
@@ -711,9 +714,16 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			TextField investigatorAddress = addField(PersonDto.INVESTIGATOR_ADDRESS, TextField.class);
 			TextField investigatorTel = addField(PersonDto.INVESTIGATOR_TEL, TextField.class);
 
+			TextArea additionalPlacesStayed = addField(PersonDto.ADDITIONAL_PLACES_STAYED, TextArea.class, new ResizableTextAreaWrapper<>(false));
+			setVisible(false, PersonDto.EDUCATION_TYPE, PersonDto.ADDITIONAL_DETAILS, PersonDto.ADDRESSES);
+			additionalDetails.setCaption("Village");
+			generalCommentLabel.setVisible(false);
+			occupationHeader.setVisible(false);
+			addressesHeader.setVisible(false);
+			contactInformationHeader.setVisible(false);
+			homeaddrecreational.setVisible(true);
+
 			setVisible(false,PersonDto.BIRTH_COUNTRY, PersonDto.NAMES_OF_GUARDIANS, PersonDto.BIRTH_NAME, PersonDto.PASSPORT_NUMBER);
-			additionalDetails.setVisible(true);
-			additionalDetails.setCaption("Other Notes and Observations");
 		}
 
 	}
