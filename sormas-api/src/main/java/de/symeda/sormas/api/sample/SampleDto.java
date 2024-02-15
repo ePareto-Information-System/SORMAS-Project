@@ -250,7 +250,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private Boolean additionalTestingRequested;
 	private Set<PathogenTestType> requestedPathogenTests;
 	private Set<SampleMaterial> requestedSampleMaterials;
-	private Set<PathogenTestType> sampleTests;
+	private PathogenTestType sampleTests;
 	private Set<AdditionalTestType> requestedAdditionalTests;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String requestedOtherPathogenTests;
@@ -809,11 +809,11 @@ public class SampleDto extends SormasToSormasShareableDto {
 		this.requestedSampleMaterials = requestedSampleMaterials;
 	}
 
-	public Set<PathogenTestType> getSampleTests() {
+	public PathogenTestType getSampleTests() {
 		return sampleTests;
 	}
 
-	public void setSampleTests(Set<PathogenTestType> sampleTests) {
+	public void setSampleTests(PathogenTestType sampleTests) {
 		this.sampleTests = sampleTests;
 	}
 

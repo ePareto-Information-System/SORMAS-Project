@@ -1002,11 +1002,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			burialPlaceDesc.setValue(getValue().getAddress().buildCaption());
 		}
 	}
-	public Field getFirstNameField() {
-		return firstNameField;
-	}
-	public Field getLastNameField() {return lastNameField;}
-	public Field getOtherNameField() {return otherNameField;}
 	@Override
 	protected <F extends Field> F addFieldToLayout(CustomLayout layout, String propertyId, F field) {
 		field.addValueChangeListener(e -> fireValueChange(false));

@@ -203,7 +203,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 //					fluidColumnLoc(6, 0, CaseDataDto.DISEASE_VARIANT)) +
 					// fluidRowLocs(CaseDataDto.RE_INFECTION, CaseDataDto.PREVIOUS_INFECTION_DATE) 
 					//  + //
-					// fluidRowLocs(7, CaseDataDto.OUTCOME, 3, CaseDataDto.OTHERCASEOUTCOMEDETAILS, 3, CaseDataDto.OUTCOME_DATE) +
 					// 		fluidColumnLoc(6, 0, CaseDataDto.DISEASE_VARIANT) +
 //									CaseDataDto.RABIES_TYPE))) +
 					fluidRowLocs(CaseDataDto.DISEASE_VARIANT, CaseDataDto.DISEASE_VARIANT_DETAILS) +
@@ -258,9 +257,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					loc(MEDICAL_INFORMATION_LOC) +
 					fluidRowLocs(CaseDataDto.BLOOD_ORGAN_OR_TISSUE_DONATED) +
 					fluidRowLocs(CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM) + fluidRowLocs(CaseDataDto.TRIMESTER, "") +
-					fluidRowLocs(CaseDataDto.IPSAMPLESENT) + fluidRowLocs(CaseDataDto.IPSAMPLERESULTS, "") +
 					fluidRowLocs(CaseDataDto.VACCINATION_ROUTINE, CaseDataDto.VACCINATION_ROUTINE_DATE) +
-					//fluidRowLocs(CaseDataDto.IPSAMPLESENT) + fluidRowLocs(CaseDataDto.IPSAMPLERESULTS, "") +
 					fluidRowLocs(CaseDataDto.VACCINATION_STATUS, CaseDataDto.VACCINATION_TYPE, CaseDataDto.VACCINATION_DATE) +
 					fluidRowLocs(CaseDataDto.VACCINE_TYPE, CaseDataDto.NUMBER_OF_DOSES, CaseDataDto.VACCINATION_DATE) +
 					fluidRowLocs(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED, CaseDataDto.SMALLPOX_VACCINATION_SCAR) +
@@ -1102,9 +1099,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		addField(CaseDataDto.POSTPARTUM, NullableOptionGroup.class);
 		addField(CaseDataDto.TRIMESTER, NullableOptionGroup.class);
 
-		addField(CaseDataDto.IPSAMPLESENT, NullableOptionGroup.class);
-		addField(CaseDataDto.IPSAMPLERESULTS);
-
 		vaccinationStatus = addField(CaseDataDto.VACCINATION_STATUS, NullableOptionGroup.class);
 
 		NullableOptionGroup vaccinatedByCardOrHistory = addField(CaseDataDto.VACCINATION_TYPE, NullableOptionGroup.class);
@@ -1274,30 +1268,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		//FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.TRIMESTER, CaseDataDto.PREGNANT, Arrays.asList(YesNoUnknown.YES), true);
 		FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.TRIMESTER, CaseDataDto.PREGNANT, Collections.singletonList(YesNoUnknown.YES), true);
-		FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.IPSAMPLERESULTS, CaseDataDto.IPSAMPLESENT, Collections.singletonList(YesNoUnknown.YES), true);
-
-		System.out.println("++====called addValueChangeListener====++");
-
-//			diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
-//				Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
-//
-//				System.out.println("++====disease====++");
-//				System.out.println(disease);
-//
-//				List<DiseaseVariant> diseaseVariants =
-//						FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.DISEASE_VARIANT, disease);
-//
-//				System.out.println("++====diseaseVariants====++");
-//
-//				System.out.println(diseaseVariants);
-//				System.out.println("++====disease====++");
-//				System.out.println(disease);
-//
-//
-//				FieldHelper.updateItems(diseaseVariantField, diseaseVariants);
-//				diseaseVariantField
-//						.setVisible(disease != null && isVisibleAllowed(CaseDataDto.DISEASE_VARIANT) && CollectionUtils.isNotEmpty(diseaseVariants));
-//			});
 
 
 		diseaseField.addValueChangeListener(valueChangeEvent -> {
@@ -1670,6 +1640,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				setRequired(false, CaseDataDto.DHIMS_FACILITY_TYPE);
 				setVisible(false, CaseDataDto.VACCINATION_STATUS);
 				setVisible(false, DHIMSFACILITY_OR_HOME_LOC, CaseDataDto.CLINICIAN_NAME, CaseDataDto.CLINICIAN_EMAIL, CaseDataDto.CLINICIAN_PHONE);
+				vaccinationRoutineDate.setVisible(false);
 
 				if (dhimsFacilityTypeCombo.getValue() != null && hospitalName.getValue() == null) {
 					setVisible(false, CaseDataDto.HOSPITAL_NAME);
@@ -1685,7 +1656,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 						TYPE_GROUP_LOC,
 						CaseDataDto.FACILITY_TYPE,
 						CaseDataDto.HEALTH_FACILITY,
-						CaseDataDto.HEALTH_FACILITY_DETAILS );
+						CaseDataDto.HEALTH_FACILITY_DETAILS,
+						CaseDataDto.VACCINATION_ROUTINE_DATE);
 
 				setRequired(false,
 						FACILITY_OR_HOME_LOC,
@@ -1714,7 +1686,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			//CSM
 			else if(disease == Disease.CSM){
 
-				setVisible(false, CaseDataDto.REPORT_LAT, CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT_LON_ACCURACY);
+				setVisible(false, CaseDataDto.REPORT_LAT, CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT_LON_ACCURACY, CaseDataDto.VACCINATION_ROUTINE_DATE);
 				vaccineType = addField(CaseDataDto.VACCINE_TYPE, NullableOptionGroup.class);
 				vaccineType.setCaption("Vaccine Type");
 				numberOfDoses = addField(CaseDataDto.NUMBER_OF_DOSES, TextField.class);
@@ -1734,7 +1706,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			//AFP
 			if(disease == Disease.AFP){
 				afpFacilityOptions.setVisible(true);
-				setVisible(false, DHIMSFACILITY_OR_HOME_LOC, CaseDataDto.DHIMS_FACILITY_TYPE);
+				setVisible(false, DHIMSFACILITY_OR_HOME_LOC, CaseDataDto.DHIMS_FACILITY_TYPE, CaseDataDto.VACCINATION_ROUTINE_DATE);
 				homeaddrecreational.setVisible(true);
 				nationalLevelDate.setVisible(true);
 				notifiedBy.setVisible(true);
@@ -1743,7 +1715,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			}
 			//INFLUENZA
 			if(disease == Disease.NEW_INFLUENZA){
-				setVisible(false, DHIMSFACILITY_OR_HOME_LOC, CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION);
+				setVisible(false, DHIMSFACILITY_OR_HOME_LOC, CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION, CaseDataDto.VACCINATION_ROUTINE_DATE);
 				hospitalName.setVisible(true);
 				nationalLevelDate.setVisible(true);
 				dhimsFacilityTypeCombo.setVisible(false);

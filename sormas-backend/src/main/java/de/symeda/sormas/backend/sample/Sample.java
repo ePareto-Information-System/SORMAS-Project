@@ -202,7 +202,8 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private Boolean additionalTestingRequested;
 	private Set<PathogenTestType> requestedPathogenTests;
 	private Set<SampleMaterial> requestedSampleMaterials;
-	private Set<PathogenTestType> sampleTests;
+//	private Set<PathogenTestType> sampleTests;
+	private PathogenTestType sampleTests;
 	private Set<AdditionalTestType> requestedAdditionalTests;
 	private String requestedOtherPathogenTests;
 	private String requestedOtherAdditionalTests;
@@ -678,7 +679,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 		requestedSampleMaterialsString = sb.toString();
 	}
 
-	@Transient
+	/*@Transient
 	public Set<PathogenTestType> getSampleTests() {
 		if (sampleTests == null) {
 			if (StringUtils.isEmpty(sampleTestsString)) {
@@ -707,7 +708,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 			sb.substring(0, sb.lastIndexOf(","));
 		}
 		sampleTestsString = sb.toString();
-	}
+	}*/
 
 	@Transient
 	public Set<AdditionalTestType> getRequestedAdditionalTests() {
@@ -783,6 +784,14 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setRequestedOtherAdditionalTests(String requestedOtherAdditionalTests) {
 		this.requestedOtherAdditionalTests = requestedOtherAdditionalTests;
+	}
+	@Enumerated(EnumType.STRING)
+	public PathogenTestType getSampleTests() {
+		return sampleTests;
+	}
+
+	public void setSampleTests(PathogenTestType sampleTests) {
+		this.sampleTests = sampleTests;
 	}
 
 	@Enumerated(EnumType.STRING)

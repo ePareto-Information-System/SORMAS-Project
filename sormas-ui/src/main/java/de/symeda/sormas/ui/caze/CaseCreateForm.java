@@ -137,9 +137,9 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			+ fluidRowLocs(DONT_SHARE_WARNING_LOC)
 			+ fluidRowLocs(DIFFERENT_PLACE_OF_STAY_JURISDICTION)
 			+ fluidRowLocs(PLACE_OF_STAY_HEADING_LOC)
+			+ fluidRowLocs(CaseDataDto.REGION, CaseDataDto.DISTRICT, CaseDataDto.COMMUNITY)
 			+ fluidRowLocs(FACILITY_OR_HOME_LOC)
 			+ fluidRowLocs(DHIMSFACILITY_OR_HOME_LOC)
-			+ fluidRowLocs(CaseDataDto.REGION, CaseDataDto.DISTRICT, CaseDataDto.COMMUNITY)
 			+ fluidRowLocs(FACILITY_TYPE_GROUP_LOC, CaseDataDto.FACILITY_TYPE)
 			+ fluidRowLocs(6,CaseDataDto.DHIMS_FACILITY_TYPE)
 			+ fluidRowLocs(CaseDataDto.HEALTH_FACILITY, CaseDataDto.HEALTH_FACILITY_DETAILS)
@@ -677,12 +677,13 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				setRequired(true, DHIMSFACILITY_OR_HOME_LOC);
 				setRequired(true, CaseDataDto.DHIMS_FACILITY_TYPE);
 				afpFacilityOptions.setVisible(false);
+				homeaddrecreational.setVisible(false);
 			}
 
 			if(disease == Disease.CSM){
 				setRequired(true, DHIMSFACILITY_OR_HOME_LOC);
 				setRequired(true, CaseDataDto.DHIMS_FACILITY_TYPE);
-				caseTransmissionClassification.setVisible(true);
+				caseTransmissionClassification.setVisible(false);
 				afpFacilityOptions.setVisible(false);
 			}
 

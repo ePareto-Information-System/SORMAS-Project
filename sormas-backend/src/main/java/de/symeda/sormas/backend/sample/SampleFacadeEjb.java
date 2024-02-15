@@ -446,14 +446,14 @@ public class SampleFacadeEjb implements SampleFacade {
 			sample.setSampleMaterialTestingRequested(false);
 		}
 
-		if (sample.getSampleTests() == null || sample.getSampleTests().isEmpty()) {
+		/*if (sample.getSampleTests() == null || sample.getSampleTests().isEmpty()) {
 			Set<PathogenTestType> defaultTests = new HashSet<>(Arrays.asList(
 					PathogenTestType.IGM_SERUM_ANTIBODY,
 					PathogenTestType.IGG_SERUM_ANTIBODY,
 					PathogenTestType.PCR_RT_PCR
 			));
 			sample.setSampleTests(defaultTests);
-		}
+		}*/
 
 
 		sampleService.ensurePersisted(sample);

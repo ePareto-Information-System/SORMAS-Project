@@ -89,11 +89,13 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private Disease disease;
 	private ComboBox diseaseField;
 	public ComboBox sampleMaterialComboBox;
+	public ComboBox sampleSource;
 	//private ComboBox lab;
 	private TextField labDetails;
 	protected SampleDispatchMode sampleDispatchMode = SampleDispatchMode.REGIONAL_COLDROOM;
 	private DateTimeField sampleDateField;
 	private DateTimeField laboratorySampleDateReceived;
+	OptionGroup sampleTestsField;
 
 	OptionGroup requestedPathogenTestsField;
 	OptionGroup requestedSampleMaterialsField;
@@ -247,7 +249,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		diseaseField.setVisible(false);
 
 		addField(SampleDto.SAMPLE_MATERIAL_TEXT, TextField.class);
-		addField(SampleDto.SAMPLE_SOURCE, ComboBox.class);
+		sampleSource =  addField(SampleDto.SAMPLE_SOURCE, ComboBox.class);
 		addField(SampleDto.FIELD_SAMPLE_ID, TextField.class);
 		addField(SampleDto.FOR_RETEST, OptionGroup.class).setRequired(false);
 		addDateField(SampleDto.SHIPMENT_DATE, DateField.class, 7);
@@ -356,7 +358,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			getContent().addComponent(referredButton);
 		}
 
-		disease = getAssociatedDisease();
+		//disease = getAssociatedDisease();
 
 		getDisease();
 
@@ -418,7 +420,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		reportInfoLabel.setEnabled(false);
 		getContent().addComponent(reportInfoLabel, REPORT_INFO_LABEL_LOC);
 
-		Disease disease = getAssociatedDisease();
+		//Disease disease = getAssociatedDisease();
 
 			switch (disease) {
 				case CSM:
@@ -597,14 +599,16 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		getContent().addComponent(additionalTestsHeading, ADDITIONAL_TESTING_READ_HEADLINE_LOC);
 
 		updateRequestedTestFields();
+		sampleTestsField = addField(SampleDto.SAMPLE_TESTS, OptionGroup.class);
+		sampleTestsField.setVisible(false);
+
 	}
-	//CheckBox sampleMaterialRequestedField = addField(SampleDto.SAMPLE_MATERIAL_REQUESTED, CheckBox.class);
+	CheckBox sampleMaterialRequestedField = addField(SampleDto.SAMPLE_MATERIAL_REQUESTED, CheckBox.class);
 
 	//OptionGroup requestedSampleMaterialsField = addField(SampleDto.REQUESTED_SAMPLE_MATERIALS, OptionGroup.class);
 	Field<?> sampleMaterialTestingField = getField(SampleDto.SAMPLE_MATERIAL_REQUESTED);
 
 	//tests for diseases
-	OptionGroup sampleTestsField = addField(SampleDto.SAMPLE_TESTS, OptionGroup.class);
 
 
 //	protected void initializeMaterialsMultiSelect( ){
@@ -631,14 +635,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	private void selectAHFTests(){
 
-		//CssStyles.style(sampleTestsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
-		sampleTestsField.setReadOnly(true);
-
-		for (PathogenTestType pathogenTestType : PathogenTestType.DISEASE_TESTS) {
-			sampleTestsField.addItem(pathogenTestType);
-		}
-		sampleTestsField.removeItem(PathogenTestType.OTHER);
 		sampleTestsField.setCaption("Sample Tests");
+		sampleTestsField.setVisible(true);
+		List<PathogenTestType> validValues = Arrays.asList(PathogenTestType.IGG_SERUM_ANTIBODY, PathogenTestType.IGM_SERUM_ANTIBODY, PathogenTestType.PCR_RT_PCR);
+		FieldHelper.updateEnumData(sampleTestsField, validValues);
 
 	}
 
@@ -998,10 +998,21 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	private void handleAHF(){
 		diseaseField.setVisible(true);
-		setVisible(false,SampleDto.SAMPLE_SOURCE,
-				SampleDto.SAMPLE_PURPOSE,SampleDto.SAMPLING_REASON, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLE_MATERIAL_TEXT,
-				SampleDto.IPSAMPLESENT, SampleDto.SAMPLE_MATERIAL_REQUESTED, SampleDto.SHIPPED, SampleDto.RECEIVED, SampleDto.COMMENT, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.REQUESTED_SAMPLE_MATERIALS);
+		sampleSource.setVisible(false);
 
+		setVisible(false, SampleDto.SAMPLE_PURPOSE);
+		setVisible(false, SampleDto.SAMPLING_REASON);
+		setVisible(false, SampleDto.FIELD_SAMPLE_ID);
+		setVisible(false, SampleDto.SAMPLE_MATERIAL_TEXT);
+		setVisible(false, SampleDto.IPSAMPLESENT);
+		setVisible(false, SampleDto.SAMPLE_MATERIAL_REQUESTED);
+		setVisible(false, SampleDto.SHIPPED);
+		setVisible(false, SampleDto.RECEIVED);
+		setVisible(false, SampleDto.COMMENT);
+		setVisible(false, SampleDto.PATHOGEN_TESTING_REQUESTED);
+		setVisible(false, SampleDto.REQUESTED_SAMPLE_MATERIALS);
+
+		setRequired(false, SampleDto.SAMPLE_PURPOSE);
 		List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.PLASMA_SERUM);
 		FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
 
@@ -1085,6 +1096,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			if (facilityLab != null) {
 				lab.addItems(allActiveLaboratories);
 				lab.setValue(facilityLab);
+				lab.setReadOnly(true);
 				labDetails.setVisible(false);
 				labDetails.setRequired(false);
 			} else {

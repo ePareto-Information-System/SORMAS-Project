@@ -391,7 +391,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			}
 			lab.addItems(facilities);
 			FieldHelper.updateItems(
-					testTypeField,
+					testBox,
 					Arrays.asList(PathogenTestType.values()),
 					FieldVisibilityCheckers.withDisease(disease),
 					PathogenTestType.class);

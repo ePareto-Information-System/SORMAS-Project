@@ -109,8 +109,9 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					fluidRowLocs(6, OUTCOME, 3, OTHERCASEOUTCOMEDETAIL) +
 					fluidRowLocs(3, SEQUELAE, 4, SEQUELAE_DETAILS) +
 					fluidRowLocs(4, HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION) +
-			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
-					fluidRowLocs(HEALTH_FACILITY, HospitalizationDto.HOSPITAL_RECORD_NUMBER) +
+					fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
+					fluidRowLocs(6,HEALTH_FACILITY) +
+					fluidRowLocs(6,HospitalizationDto.HOSPITAL_RECORD_NUMBER) +
 					fluidRowLocs(4,HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE, 4,HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY) +
 					fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
 					fluidRowLocs(6,HospitalizationDto.NOTIFY_DISTRICT_DATE) +
@@ -416,12 +417,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		}
 
 		if(caze.getDisease() == Disease.AHF){
-			setVisible(false, HospitalizationDto.ADMISSION_DATE,HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, HospitalizationDto.ISOLATED);
+			setVisible(false, HospitalizationDto.ADMISSION_DATE,HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, HospitalizationDto.ISOLATED, HospitalizationDto.WAS_PATIENT_ADMITTED);
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
 
-			admittedToHealthFacilityFieldNew.setVisible(true);
+			admittedToHealthFacilityFieldNew.setVisible(false);
 
 		}
 
