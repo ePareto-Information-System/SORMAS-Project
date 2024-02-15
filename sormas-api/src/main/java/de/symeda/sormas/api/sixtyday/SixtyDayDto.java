@@ -63,9 +63,9 @@ public class SixtyDayDto extends PseudonymizableDto {
     private Date dateSubmissionForms;
 
     public static SixtyDayDto build() {
-        SixtyDayDto sixtyDay = new SixtyDayDto();
-        sixtyDay.setUuid(DataHelper.createUuid());
-        return sixtyDay;
+        SixtyDayDto sixtyDayDto  = new SixtyDayDto();
+        sixtyDayDto .setUuid(DataHelper.createUuid());
+        return sixtyDayDto ;
     }
 
     public String getPersonExamineCase() {
