@@ -306,6 +306,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		facilityTypeGroup.setCaption(I18nProperties.getCaption(Captions.Facility_typeGroup));
 		facilityTypeGroup.setWidth(100, Unit.PERCENTAGE);
 		facilityTypeGroup.addItems(FacilityTypeGroup.getAccomodationGroups());
+		facilityTypeGroup.setVisible(false);
 		getContent().addComponent(facilityTypeGroup, FACILITY_TYPE_GROUP_LOC);
 		facilityType = ComboBoxHelper.createComboBoxV7();
 		facilityType.setId("type");
@@ -416,6 +417,11 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				}
 				if (facilityType.getValue() == null && FacilityTypeGroup.MEDICAL_FACILITY.equals(facilityTypeGroup.getValue())) {
 					facilityType.setValue(FacilityType.HOSPITAL);
+				}
+
+				if(diseaseField.getValue() == Disease.MEASLES){
+					FieldHelper.removeItems(facilityType);
+					FieldHelper.updateEnumData(facilityType, FacilityType.DISEASE_FACILITIES);
 				}
 
 				if (facilityType.getValue() != null) {
@@ -611,7 +617,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		FieldHelper.setVisibleWhen(getFieldGroup(), Arrays.asList(CaseDataDto.RABIES_TYPE), CaseDataDto.DISEASE, Arrays.asList(Disease.RABIES), true);
 		FieldHelper.setVisibleWhen(
 				facilityOrHome,
-				Arrays.asList(facilityTypeGroup, facilityType, facilityCombo),
+				Arrays.asList(facilityType, facilityCombo),
 				Collections.singletonList(TypeOfPlace.FACILITY),
 				false);
 		FieldHelper.setVisibleWhen(
@@ -691,11 +697,21 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				afpFacilityOptions.setVisible(false);
 				hospitalName.setVisible(true);
 			}
+
+			if (disease == Disease.MEASLES) {
+				facilityTypeGroup.setVisible(false);
+				FieldHelper.removeItems(facilityCombo);
+				List<FacilityType> dhimsFacilityTypes = FacilityType.DISEASE_FACILITIES;
+				FieldHelper.updateEnumData(facilityType, dhimsFacilityTypes);
+			} else {
+				facilityTypeGroup.setVisible(true);
+				FieldHelper.removeItems(facilityCombo);
+				FieldHelper.updateEnumData(facilityType, FacilityType.getAccommodationTypes((FacilityTypeGroup) facilityTypeGroup.getValue()));
+			}
+
 			investigated.setVisible(disease == Disease.NEW_INFLUENZA);
 			dhimsFacilityOrHome.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.CSM);
 			dhimsFacilityType.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF  || disease == Disease.CSM);
-			//afpFacilityOptions.setVisible(disease != Disease.YELLOW_FEVER && disease != Disease.AHF  && disease != Disease.CSM);
-
 
 			personCreateForm.updatePresentConditionEnum((Disease) valueChangeEvent.getProperty().getValue());
 
