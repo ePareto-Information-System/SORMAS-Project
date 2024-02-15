@@ -86,7 +86,12 @@ public enum FacilityType {
 	DISABLED_PERSON_HABITATION(FacilityTypeGroup.CARE_FACILITY, true, false),
 	CARE_RECIPIENT_HABITATION(FacilityTypeGroup.CARE_FACILITY, true, false),
 	VISITING_AMBULATORY_AID(FacilityTypeGroup.CARE_FACILITY, false, false),
-	AFTER_SCHOOL(FacilityTypeGroup.EDUCATIONAL_FACILITY, false, false);
+	AFTER_SCHOOL(FacilityTypeGroup.EDUCATIONAL_FACILITY, false, false),
+	CHPS_COMPOUND(FacilityTypeGroup.MEDICAL_FACILITY, true, false),
+	MATERNITY_HOME(FacilityTypeGroup.MEDICAL_FACILITY, true, false),
+	CLINIC(FacilityTypeGroup.MEDICAL_FACILITY, true, false),
+	HEALTH_CENTRE(FacilityTypeGroup.MEDICAL_FACILITY, true, false),
+	POLYCLINIC(FacilityTypeGroup.MEDICAL_FACILITY, true, false);
 
 	private static final Map<FacilityTypeGroup, List<FacilityType>> typesByGroup = new HashMap<FacilityTypeGroup, List<FacilityType>>();
 	private static final Map<FacilityTypeGroup, List<FacilityType>> accomodationTypesByGroup = new HashMap<FacilityTypeGroup, List<FacilityType>>();
@@ -184,6 +189,14 @@ public enum FacilityType {
 		CORRECTIONAL_FACILITY,
 		MOBILE_NURSING_SERVICE,
 		VISITING_AMBULATORY_AID);
+
+	public static final List<FacilityType> DISEASE_FACILITIES = Arrays.asList(
+		CHPS_COMPOUND,
+		MATERNITY_HOME,
+		CLINIC,
+		HEALTH_CENTRE,
+		POLYCLINIC,
+		HOSPITAL);
 
 	@Override
 	public String toString() {
