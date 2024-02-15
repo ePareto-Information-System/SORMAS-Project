@@ -79,9 +79,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			loc(PATHOGEN_TEST_HEADING_LOC) +
 					fluidRowLocs(PathogenTestDto.REPORT_DATE, PathogenTestDto.VIA_LIMS) +
 					fluidRowLocs(PathogenTestDto.EXTERNAL_ID, PathogenTestDto.EXTERNAL_ORDER_ID) +
+					fluidRowLocs(PathogenTestDto.TESTED_DISEASE, PathogenTestDto.TESTED_DISEASE_DETAILS) +
 					fluidRowLocs(PathogenTestDto.TEST_TYPE, PathogenTestDto.TEST_TYPE_TEXT) +
 					fluidRowLocs(PathogenTestDto.PCR_TEST_SPECIFICATION, "") +
-					fluidRowLocs(PathogenTestDto.TESTED_DISEASE, PathogenTestDto.TESTED_DISEASE_DETAILS) +
 					fluidRowLocs(PathogenTestDto.TESTED_DISEASE_VARIANT, PathogenTestDto.TESTED_DISEASE_VARIANT_DETAILS) +
 					fluidRowLocs(PathogenTestDto.TYPING_ID, "") +
 					fluidRowLocs(PathogenTestDto.TEST_DATE_TIME, PathogenTestDto.LAB) +
@@ -212,29 +212,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		addField(PathogenTestDto.EXTERNAL_ID);
 		addField(PathogenTestDto.EXTERNAL_ORDER_ID);
 
-	/*	testTypeField = ComboBoxHelper.createComboBoxV7();
-
-		for(PathogenTestType pathogenTestType : PathogenTestType.DISEASE_TESTS){
-			testTypeField.addItem(pathogenTestType);
-			testTypeField.setCaption("Test Type");
-		}
-
-		getContent().addComponent(testTypeField, PathogenTestDto.TEST_TYPE);*/
-		ComboBox testBox = new ComboBox("Sex");
-
-		if(caseDisease == Disease.AHF){
-			for (PathogenTestType test : PathogenTestType.values()) {
-				if (test == PathogenTestType.IGG_SERUM_ANTIBODY || test == PathogenTestType.IGM_SERUM_ANTIBODY || test == PathogenTestType.PCR_RT_PCR) {
-					testBox.addItem(test);
-				}
-			}
-			addField(PathogenTestDto.TEST_TYPE, testBox);
-		}
-		else {
-			testTypeField = addField(PathogenTestDto.TEST_TYPE, ComboBox.class);
-			testTypeField.setItemCaptionMode(ItemCaptionMode.ID_TOSTRING);
-			testTypeField.setImmediate(true);
-		}
+		testTypeField = addField(PathogenTestDto.TEST_TYPE, ComboBox.class);
+		testTypeField.setItemCaptionMode(ItemCaptionMode.ID_TOSTRING);
+		testTypeField.setImmediate(true);
 
 		pcrTestSpecification = addField(PathogenTestDto.PCR_TEST_SPECIFICATION, ComboBox.class);
 		testTypeTextField = addField(PathogenTestDto.TEST_TYPE_TEXT, TextField.class);
@@ -270,15 +250,21 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		typingIdField.setVisible(false);
 		//diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
 
-		ComboBox diseaseBox = new ComboBox("Diseases");
+		/*ComboBox diseaseBox = new ComboBox("Diseases");
 
 		for (Disease ahfDisease : Disease.AHF_DISEASES) {
 			diseaseBox.addItem(ahfDisease);
 		}
 
-		ComboBox diseaseField = addField(PathogenTestDto.TESTED_DISEASE, diseaseBox);
+		ComboBox diseaseField = addField(PathogenTestDto.TESTED_DISEASE, diseaseBox);*/
 
-		//ComboBox diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
+		ComboBox diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
+
+		if(caseDisease == Disease.AHF){
+			diseaseField.removeAllItems();
+			FieldHelper.updateEnumData(diseaseField, Disease.AHF_DISEASES);
+		}
+
 		ComboBox diseaseVariantField = addField(PathogenTestDto.TESTED_DISEASE_VARIANT, ComboBox.class);
 		diseaseVariantField.setNullSelectionAllowed(true);
 		addField(PathogenTestDto.TESTED_DISEASE_DETAILS, TextField.class);
@@ -391,22 +377,19 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			}
 			lab.addItems(facilities);
 			FieldHelper.updateItems(
-					testBox,
+					testTypeField,
 					Arrays.asList(PathogenTestType.values()),
 					FieldVisibilityCheckers.withDisease(disease),
 					PathogenTestType.class);
 
-			if (disease == Disease.MEASLES) {
-				List<PathogenTestType> measelesPathogenTests = PathogenTestType.getMeaslesTestTypes();
+			if (disease == Disease.MEASLES || Disease.AHF_DISEASES.contains(disease)) {
+				List<PathogenTestType> ahfMeaselesPathogenTests = PathogenTestType.getMeaslesTestTypes();
 				Arrays.stream(PathogenTestType.values())
-						.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
+						.filter(pathogenTestType -> !ahfMeaselesPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
+			}else{
+				testTypeField.addItems(PathogenTestType.values());
 			}
-			FieldHelper.updateItems(
-				testBox,
-				Arrays.asList(PathogenTestType.values()),
-				FieldVisibilityCheckers.withDisease(disease),
-				PathogenTestType.class);
 		});
 
 
