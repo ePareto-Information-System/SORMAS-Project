@@ -238,6 +238,8 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 		TextField streetField = addField(LocationDto.STREET, TextField.class);
 		TextField houseNumberField = addField(LocationDto.HOUSE_NUMBER, TextField.class);
+		TextField landMark = addField(LocationDto.LAND_MARK, TextField.class);
+		landMark.setVisible(false);
 		additionalInformationField = addField(LocationDto.ADDITIONAL_INFORMATION, TextField.class);
 		addField(LocationDto.DETAILS, TextField.class);
 		TextField cityField = addField(LocationDto.CITY, TextField.class);
@@ -891,7 +893,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	public void setOnlyUnknownForYellowFever(Disease incomingDisease) {
 		newDisease = incomingDisease;
 		if (newDisease != null && newDisease.equals(Disease.YELLOW_FEVER)) {
-			setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK);
+			setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK, LocationDto.AREA_TYPE);
 		}
 	}
 	public void setOnlyUnknownForAHF(Disease incomingDisease) {
@@ -906,6 +908,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		newDisease = incomingDisease;
 		if (newDisease != null && newDisease.equals(Disease.CSM)) {
 			setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAT_LON_ACCURACY, LocationDto.LAND_MARK);
+			additionalInformationField.setVisible(false);
 		}
 	}
 

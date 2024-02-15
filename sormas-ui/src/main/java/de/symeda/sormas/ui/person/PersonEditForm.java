@@ -272,15 +272,14 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		}
 		addField(PersonDto.SEX, sexComboBox);
 		addField(PersonDto.BIRTH_NAME, TextField.class);
-		addField(PersonDto.PASSPORT_NUMBER);
-		TextField otherNote = addField(CaseDataDto.ADDITIONAL_DETAILS, TextField.class);
-		otherNote.setVisible(false);
+		/*TextField otherNote = addField(CaseDataDto.ADDITIONAL_DETAILS, TextField.class);
+		otherNote.setVisible(false);*/
 
 		if (caseOrigin == CaseOrigin.IN_COUNTRY) {
 			setVisible(false, PersonDto.PASSPORT_NUMBER);
 		}
 
-		addFields(PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD);
+		addField(PersonDto.GHANA_CARD);
 		TextField numberOfPeople = addField(PersonDto.NUMBER_OF_PEOPLE, TextField.class);
 		TextField numberOfOtherContacts = addField(PersonDto.NUMBER_OF_OTHER_CONTACTS, TextField.class);
 
@@ -369,6 +368,20 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 		List<CountryReferenceDto> countries = FacadeProvider.getCountryFacade().getAllActiveAsReference();
 		addInfrastructureField(PersonDto.BIRTH_COUNTRY).addItems(countries);
+		addInfrastructureField(PersonDto.CITIZENSHIP).addItems(countries);
+
+		addFields(PersonDto.PASSPORT_NUMBER, PersonDto.NATIONAL_HEALTH_ID);
+
+		Label generalCommentLabel = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDITIONAL_DETAILS));
+		generalCommentLabel.addStyleName(H3);
+		getContent().addComponent(generalCommentLabel, GENERAL_COMMENT_LOC);
+
+		TextArea additionalDetails = addField(PersonDto.ADDITIONAL_DETAILS, TextArea.class, new ResizableTextAreaWrapper<>(false));
+		additionalDetails.setRows(6);
+		additionalDetails.setDescription(
+				I18nProperties.getPrefixDescription(PersonDto.I18N_PREFIX, PersonDto.ADDITIONAL_DETAILS, "") + "\n"  + I18nProperties.getDescription(Descriptions.descGdpr));
+		CssStyles.style(additionalDetails, CssStyles.CAPTION_HIDDEN);
+
 			addressesHeader.setVisible(false);
 			contactInformationHeader.setVisible(false);
 			homeaddrecreational.setVisible(false);
@@ -387,12 +400,15 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				numberOfPeople,
 				numberOfOtherContacts
 		);
-
+		if (disease == Disease.CSM) {
+			generalCommentLabel.setVisible(false);
+			setVisible(false, PersonDto.ADDITIONAL_DETAILS);
+		}
 		if (disease == Disease.AHF) {
 			setVisible(false, PersonDto.BIRTH_COUNTRY);
 			setVisible(true, PersonDto.NUMBER_OF_PEOPLE, PersonDto.NUMBER_OF_OTHER_CONTACTS);
-			otherNote.setVisible(true);
-			otherNote.setCaption("Other Notes and Observations");
+			additionalDetails.setVisible(true);
+			additionalDetails.setCaption("Other Notes and Observations");
 		}
 
 		if (disease == Disease.AFP) {
@@ -423,9 +439,16 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			TextField investigatorAddress = addField(PersonDto.INVESTIGATOR_ADDRESS, TextField.class);
 			TextField investigatorTel = addField(PersonDto.INVESTIGATOR_TEL, TextField.class);
 
+			TextArea additionalPlacesStayed = addField(PersonDto.ADDITIONAL_PLACES_STAYED, TextArea.class, new ResizableTextAreaWrapper<>(false));
+			setVisible(false, PersonDto.EDUCATION_TYPE, PersonDto.ADDITIONAL_DETAILS, PersonDto.ADDRESSES);
+			additionalDetails.setCaption("Village");
+			generalCommentLabel.setVisible(false);
+			occupationHeader.setVisible(false);
+			addressesHeader.setVisible(false);
+			contactInformationHeader.setVisible(false);
+			homeaddrecreational.setVisible(true);
+
 			setVisible(false,PersonDto.BIRTH_COUNTRY, PersonDto.NAMES_OF_GUARDIANS, PersonDto.BIRTH_NAME, PersonDto.PASSPORT_NUMBER);
-			otherNote.setVisible(true);
-			otherNote.setCaption("Other Notes and Observations");
 		}
 
 	}
