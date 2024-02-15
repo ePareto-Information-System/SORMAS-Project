@@ -105,16 +105,15 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					// fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
 					fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY, HospitalizationDto.WAS_PATIENT_ADMITTED) +
 					fluidRowLocs(HEALTH_FACILITY,HospitalizationDto.HEALTH_FACILITY_RECORD_NUMBER,"") +
+					fluidRowLocs(4,HospitalizationDto.HOSPITAL_RECORD_NUMBER) +
 					fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
 					fluidRowLocs(6, OUTCOME, 3, OTHERCASEOUTCOMEDETAIL) +
 					fluidRowLocs(3, SEQUELAE, 4, SEQUELAE_DETAILS) +
 					fluidRowLocs(4, HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION) +
-					fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
-					fluidRowLocs(6,HEALTH_FACILITY) +
-					fluidRowLocs(6,HospitalizationDto.HOSPITAL_RECORD_NUMBER) +
+					fluidRowLocs(4,HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
 					fluidRowLocs(4,HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE, 4,HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY) +
 					fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
-					fluidRowLocs(6,HospitalizationDto.NOTIFY_DISTRICT_DATE) +
+					fluidRowLocs(4,HospitalizationDto.NOTIFY_DISTRICT_DATE) +
 					fluidRowLocs(HospitalizationDto.HOSPITALIZATION_REASON, HospitalizationDto.OTHER_HOSPITALIZATION_REASON) +
 					fluidRowLocs(3, HospitalizationDto.INTENSIVE_CARE_UNIT, 3,
 							HospitalizationDto.INTENSIVE_CARE_UNIT_START,
@@ -125,7 +124,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					loc(PREVIOUS_HOSPITALIZATIONS_HEADING_LOC) +
 					fluidRowLocs(HospitalizationDto.HOSPITALIZED_PREVIOUSLY) +
 					fluidRowLocs(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS) +
-					fluidRowLocs(6, HospitalizationDto.DISEASE_ONSET_DATE) +
+					fluidRowLocs(4, HospitalizationDto.DISEASE_ONSET_DATE) +
 					fluidRowLocs(HospitalizationDto.PATIENT_HOSPITALIZED_DETAINED) +
 
 					//AFP
@@ -205,6 +204,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		facilityField.setReadOnly(true);
 
 		TextField facilityRecord = addField(HospitalizationDto.HEALTH_FACILITY_RECORD_NUMBER, TextField.class);
+		facilityRecord.setVisible(false);
 
 		final NullableOptionGroup admittedToHealthFacilityField = addField(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, NullableOptionGroup.class);
 		// final OptionGroup admittedToHealthFacilityField = addField(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, OptionGroup.class);
@@ -413,6 +413,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
+			hospitalRecordNumber.setVisible(true);
 
 		}
 

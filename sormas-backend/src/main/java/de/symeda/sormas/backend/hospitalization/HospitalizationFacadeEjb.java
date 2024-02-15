@@ -102,6 +102,7 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setDescription(source.getDescription());
 		target.setHealthFacilityRecordNumber(source.getHealthFacilityRecordNumber());
 		target.setDiseaseOnsetDate(source.getDiseaseOnsetDate());
+		target.setPatientHospitalizedOrDetained(source.getPatientHospitalizedOrDetained());
 		target.setNotifyDistrictDate(source.getNotifyDistrictDate());
 		target.setDateFirstSeen(source.getDateFirstSeen());
 		target.setTerminationDateHospitalStay(source.getTerminationDateHospitalStay());
