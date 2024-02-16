@@ -437,4 +437,21 @@ public class PathogenTestService extends AbstractDeletableAdoService<PathogenTes
 
 		em.createQuery(cu).executeUpdate();
 	}
+
+	public PathogenTest getFirstPathogenTestBySample(String sampleUUid) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<PathogenTest> cq = cb.createQuery(getElementClass());
+		Root<PathogenTest> from = cq.from(getElementClass());
+
+		Predicate filter = createDefaultFilter(cb, from);
+
+		if (sampleUUid != null) {
+			filter = cb.and(filter, cb.equal(from.get(PathogenTest.SAMPLE).get(Sample.UUID), sampleUUid));
+		}
+
+		cq.where(filter);
+		cq.orderBy(cb.desc(from.get(PathogenTest.TEST_DATE_TIME)));
+
+		return QueryHelper.getFirstResult(em, cq);
+	}
 }

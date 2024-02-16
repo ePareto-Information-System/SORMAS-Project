@@ -157,14 +157,14 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		sampleTestDateField.addValidator(
 				new DateComparisonValidator(
 						sampleTestDateField,
-						sample.getSampleDateTime(),
+						sample.getReceivedDate(),
 						false,
 						false,
 						I18nProperties.getValidationError(
 								Validations.afterDateWithDate,
 								sampleTestDateField.getCaption(),
-								I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.SAMPLE_DATE_TIME),
-								DateFormatHelper.formatDate(sample.getSampleDateTime()))));
+								I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.RECEIVED_DATE),
+								DateFormatHelper.formatDate(sample.getReceivedDate()))));
 		ComboBox lab = addInfrastructureField(PathogenTestDto.LAB);
 		allActiveLabs = FacadeProvider.getFacilityFacade().getAllActiveLaboratories(true);
 		TextField labDetails = addField(PathogenTestDto.LAB_DETAILS, TextField.class);

@@ -385,12 +385,13 @@ public PathogenTestDto savePathogenTest(
 		CaseDataDto caze = FacadeProvider.getCaseFacade().getCaseDataByUuid(associatedCase.getUuid());
 
 		final boolean equalDisease = dto.getTestedDisease() == caze.getDisease();
+		Boolean isTheFirst = FacadeProvider.getPathogenTestFacade().checkIfPathogenTestIsTheFirst(dto.getSample().getUuid(), dto.getUuid());
 
 		Runnable callback = () -> {
 			if (equalDisease
-				&& PathogenTestResultType.NEGATIVE.equals(dto.getTestResult())
-				&& dto.getTestResultVerified()
-				&& !suppressSampleResultUpdatePopup) {
+					&& PathogenTestResultType.NEGATIVE.equals(dto.getTestResult())
+					&& isTheFirst
+					&& !suppressSampleResultUpdatePopup) {
 				showChangeAssociatedSampleResultDialog(dto, handleChanges -> {
 					if (dto.getTestedDiseaseVariant() != null && !DataHelper.equal(dto.getTestedDiseaseVariant(), caze.getDiseaseVariant())) {
 						showCaseUpdateWithNegativeNewDiseaseVariantDialog(
@@ -405,13 +406,22 @@ public PathogenTestDto savePathogenTest(
 						showNoCaseDialog(caze);
 					}
 				});
-			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && dto.getTestResultVerified()) {
-				if (equalDisease && suppressSampleResultUpdatePopup) {
-					checkForDiseaseVariantUpdate(dto, caze, suppressNavigateToCase, this::showConfirmCaseDialog);
-				} else if (equalDisease) {
-					showChangeAssociatedSampleResultDialog(dto, (accepted) -> {
-						if (accepted) {
-							checkForDiseaseVariantUpdate(dto, caze, suppressNavigateToCase, this::showConfirmCaseDialog);
+			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && isTheFirst) {
+				if (equalDisease) {
+					showChangeAssociatedSampleResultDialog(dto, handleChanges -> {
+						if (handleChanges) {
+							if (dto.getTestedDiseaseVariant() != null && !DataHelper.equal(dto.getTestedDiseaseVariant(), caze.getDiseaseVariant())) {
+								showCaseUpdateWithNegativeNewDiseaseVariantDialog(
+										caze,
+										dto.getTestedDiseaseVariant(),
+										dto.getTestedDiseaseVariantDetails(),
+										() -> {
+											//get case to see if there are changes
+											showNoCaseDialog(FacadeProvider.getCaseFacade().getByUuid(caze.getUuid()));
+										});
+							} else {
+								showConfirmCaseDialog(caze);
+							}
 						}
 					});
 				} else {
@@ -468,35 +478,37 @@ public PathogenTestDto savePathogenTest(
 			CaseDataDto caze = FacadeProvider.getCaseFacade().getCaseDataByUuid(associatedCase.getUuid());
 
 			final boolean equalDisease = dto.getTestedDisease() == caze.getDisease();
+		Boolean isTheFirst = FacadeProvider.getPathogenTestFacade().checkIfPathogenTestIsTheFirst(dto.getSample().getUuid(), dto.getUuid());
 
-			Runnable callback = () -> {
-				if (equalDisease
+
+		Runnable callback = () -> {
+			if (equalDisease
 					&& PathogenTestResultType.NEGATIVE.equals(dto.getTestResult())
-					&& dto.getTestResultVerified()
+					&& isTheFirst
 					&& !suppressSampleResultUpdatePopup) {
-					showChangeAssociatedSampleResultDialog(dto, null);
-				} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && dto.getTestResultVerified()) {
-					if (equalDisease && suppressSampleResultUpdatePopup) {
-						checkForDiseaseVariantUpdate(dto, caze, this::showConfirmCaseDialog);
-					} else if (equalDisease) {
-						showChangeAssociatedSampleResultDialog(dto, (accepted) -> {
-							if (accepted) {
-								checkForDiseaseVariantUpdate(dto, caze, this::showConfirmCaseDialog);
-							}
-						});
-					} else {
-						if (onActionNeeded != null)
-							onActionNeeded.accept(SavePathogenTest_NeededAction.CONFIRM_CASE_CLASSIFICATION, caze);
-						else
-							showCaseCloningWithNewDiseaseDialog(
+				showChangeAssociatedSampleResultDialog(dto, null);
+			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && isTheFirst) {
+				if (equalDisease && suppressSampleResultUpdatePopup) {
+					checkForDiseaseVariantUpdate(dto, caze, this::showConfirmCaseDialog);
+				} else if (equalDisease) {
+					showChangeAssociatedSampleResultDialog(dto, (accepted) -> {
+						if (accepted) {
+							checkForDiseaseVariantUpdate(dto, caze, this::showConfirmCaseDialog);
+						}
+					});
+				} else {
+					if (onActionNeeded != null)
+						onActionNeeded.accept(SavePathogenTest_NeededAction.CONFIRM_CASE_CLASSIFICATION, caze);
+					else
+						showCaseCloningWithNewDiseaseDialog(
 								caze,
 								dto.getTestedDisease(),
 								dto.getTestedDiseaseDetails(),
 								dto.getTestedDiseaseVariant(),
 								dto.getTestedDiseaseVariantDetails());
-					}
 				}
-			};
+			}
+		};
 
 			if (onSavedPathogenTest != null) {
 				onSavedPathogenTest.accept(dto, callback);
@@ -527,6 +539,7 @@ public PathogenTestDto savePathogenTest(
 
 		final ContactDto contact = FacadeProvider.getContactFacade().getByUuid(associatedContact.getUuid());
 		final boolean equalDisease = dto.getTestedDisease() == contact.getDisease();
+		Boolean isTheFirst = FacadeProvider.getPathogenTestFacade().checkIfPathogenTestIsTheFirst(dto.getSample().getUuid(), dto.getUuid());
 
 		Runnable callback = () -> {
 			if (!UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_EDIT)) {
@@ -534,11 +547,11 @@ public PathogenTestDto savePathogenTest(
 			}
 
 			if (equalDisease
-				&& PathogenTestResultType.NEGATIVE.equals(dto.getTestResult())
-				&& dto.getTestResultVerified()
-				&& !suppressSampleResultUpdatePopup) {
+					&& PathogenTestResultType.NEGATIVE.equals(dto.getTestResult())
+					&& isTheFirst
+					&& !suppressSampleResultUpdatePopup) {
 				showChangeAssociatedSampleResultDialog(dto, null);
-			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && dto.getTestResultVerified()) {
+			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && isTheFirst) {
 				if (equalDisease) {
 					if (contact.getResultingCase() == null && !ContactStatus.CONVERTED.equals(contact.getContactStatus())) {
 						showConvertContactToCaseDialog(contact, converted -> handleCaseCreationFromContactOrEventParticipant(converted, dto));
@@ -584,14 +597,15 @@ public PathogenTestDto savePathogenTest(
 			FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(associatedEventParticipant.getUuid());
 		final Disease eventDisease = FacadeProvider.getEventFacade().getEventByUuid(eventParticipant.getEvent().getUuid(), false).getDisease();
 		final boolean equalDisease = eventDisease != null && eventDisease.equals(dto.getTestedDisease());
+		Boolean isTheFirst = FacadeProvider.getPathogenTestFacade().checkIfPathogenTestIsTheFirst(dto.getSample().getUuid(), dto.getUuid());
 
 		Runnable callback = () -> {
 			if (equalDisease
-				&& PathogenTestResultType.NEGATIVE.equals(dto.getTestResult())
-				&& dto.getTestResultVerified()
-				&& !suppressSampleResultUpdatePopup) {
+					&& PathogenTestResultType.NEGATIVE.equals(dto.getTestResult())
+					&& isTheFirst
+					&& !suppressSampleResultUpdatePopup) {
 				showChangeAssociatedSampleResultDialog(dto, null);
-			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && dto.getTestResultVerified()) {
+			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && isTheFirst) {
 				if (equalDisease) {
 					if (eventParticipant.getResultingCase() == null) {
 						showConvertEventParticipantToCaseDialog(eventParticipant, dto.getTestedDisease(), caseCreated -> {
