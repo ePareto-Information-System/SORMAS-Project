@@ -811,7 +811,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			setVisible(false, ONSET_DATE);
 			symptomsHide();
 			setVisible(false, FEVER, HEADACHE, ALTERED_CONSCIOUSNESS, CONVULSION, SEIZURES);
-			setVisible(true, COUGH, SORE_THROAT, DIFFICULTY_BREATHING);
+			setVisible(true, COUGH, SORE_THROAT, DIFFICULTY_BREATHING, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
 		}
 
 		if(disease == Disease.CSM){

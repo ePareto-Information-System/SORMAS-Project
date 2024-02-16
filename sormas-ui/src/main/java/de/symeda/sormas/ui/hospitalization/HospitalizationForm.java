@@ -141,25 +141,23 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		getContent().addComponent(previousHospitalizationsHeadingLabel, PREVIOUS_HOSPITALIZATIONS_HEADING_LOC);
 
 		TextField facilityField = addCustomField(HEALTH_FACILITY, FacilityReferenceDto.class, TextField.class);
-//		FacilityReferenceDto healthFacility = caze.getHealthFacility();
+		FacilityReferenceDto healthFacility1 = caze.getHealthFacility();
 
 		String healthFacility = caze.getHospitalName();
-		DhimsFacility facilityType = caze.getDhimsFacilityType();
-		AFPFacilityOptions afpFacilityOptions = caze.getAfpFacilityOptions();
+		FacilityType facility = caze.getFacilityType();
 		final boolean noneFacility = healthFacility == null || healthFacility.equalsIgnoreCase(FacilityDto.NONE_FACILITY_UUID);
 
-		if (facilityType != null && facilityType != DhimsFacility.HOSPITAL){
-			facilityField.setValue(String.valueOf(facilityType));
-		}
-		else if(afpFacilityOptions != null && afpFacilityOptions != AFPFacilityOptions.Hospital){
-			facilityField.setValue(String.valueOf(afpFacilityOptions));
-		}
-		else if(healthFacility != null ){
+		if(healthFacility != null ){
 			facilityField.setValue(healthFacility);
 		}
+		else if (facility != null && facility != FacilityType.HOSPITAL){
+			facilityField.setValue(String.valueOf(facility));
+		}
+		else if (healthFacility1 != null){
+			facilityField.setValue(healthFacility1.getCaption());
+		}
 		else {
-			System.out.println("Is facility type HOSPITAL: " + DhimsFacility.HOSPITAL.equals(caze.getDhimsFacilityType()));
-			facilityField.setValue(noneFacility || !DhimsFacility.HOSPITAL.equals(caze.getDhimsFacilityType()) ? null : healthFacility);
+			facilityField.setValue(noneFacility || !FacilityType.HOSPITAL.equals(caze.getFacilityType()) ? null : healthFacility1.getCaption());
 		}
 		facilityField.setReadOnly(true);
 
