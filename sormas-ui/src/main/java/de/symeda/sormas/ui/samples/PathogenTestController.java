@@ -237,9 +237,11 @@ public class PathogenTestController {
 		CaseDataDto caze = FacadeProvider.getCaseFacade().getCaseDataByUuid(associatedCase.getUuid());
 
 		final boolean equalDisease = dto.getTestedDisease() == caze.getDisease();
+		Boolean isTheFirst = FacadeProvider.getPathogenTestFacade().checkIfPathogenTestIsTheFirst(dto.getSample().getUuid(), dto.getUuid());
+
 
 		Runnable callback = () -> {
-			if (equalDisease && PathogenTestResultType.NEGATIVE.equals(dto.getTestResult()) && dto.getTestResultVerified()) {
+			if (equalDisease && PathogenTestResultType.NEGATIVE.equals(dto.getTestResult()) && isTheFirst) {
 				showChangeAssociatedSampleResultDialog(dto, handleChanges -> {
 					if (dto.getTestedDiseaseVariant() != null && !DataHelper.equal(dto.getTestedDiseaseVariant(), caze.getDiseaseVariant())) {
 						showCaseUpdateWithNegativeNewDiseaseVariantDialog(
@@ -254,7 +256,7 @@ public class PathogenTestController {
 						showNoCaseDialog(caze);
 					}
 				});
-			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && dto.getTestResultVerified()) {
+			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && isTheFirst) {
 				if (equalDisease) {
 					showChangeAssociatedSampleResultDialog(dto, handleChanges -> {
 						if (handleChanges) {
@@ -307,12 +309,13 @@ public class PathogenTestController {
 
 		final ContactDto contact = FacadeProvider.getContactFacade().getContactByUuid(associatedContact.getUuid());
 		final boolean equalDisease = dto.getTestedDisease() == contact.getDisease();
+		Boolean isTheFirst = FacadeProvider.getPathogenTestFacade().checkIfPathogenTestIsTheFirst(dto.getSample().getUuid(), dto.getUuid());
 
 		Runnable callback = () -> {
-			if (equalDisease && PathogenTestResultType.NEGATIVE.equals(dto.getTestResult()) && dto.getTestResultVerified()) {
+			if (equalDisease && PathogenTestResultType.NEGATIVE.equals(dto.getTestResult()) && isTheFirst) {
 				showChangeAssociatedSampleResultDialog(dto, handleChanges -> {
 				});
-			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && dto.getTestResultVerified()) {
+			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && isTheFirst) {
 				if (equalDisease) {
 					if (!ContactStatus.CONVERTED.equals(contact.getContactStatus())) {
 						showConvertContactToCaseDialog(contact, converted -> {
@@ -356,12 +359,13 @@ public class PathogenTestController {
 			FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(associatedEventParticipant.getUuid());
 		final Disease eventDisease = FacadeProvider.getEventFacade().getEventByUuid(eventParticipant.getEvent().getUuid(), false).getDisease();
 		final boolean equalDisease = eventDisease != null && eventDisease.equals(dto.getTestedDisease());
+		Boolean isTheFirst = FacadeProvider.getPathogenTestFacade().checkIfPathogenTestIsTheFirst(dto.getSample().getUuid(), dto.getUuid());
 
 		Runnable callback = () -> {
-			if (equalDisease && PathogenTestResultType.NEGATIVE.equals(dto.getTestResult()) && dto.getTestResultVerified()) {
+			if (equalDisease && PathogenTestResultType.NEGATIVE.equals(dto.getTestResult()) && isTheFirst) {
 				showChangeAssociatedSampleResultDialog(dto, handleChanges -> {
 				});
-			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && dto.getTestResultVerified()) {
+			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && isTheFirst) {
 				if (equalDisease) {
 					if (eventParticipant.getResultingCase() == null) {
 						showConvertEventParticipantToCaseDialog(eventParticipant, dto.getTestedDisease(), caseCreated -> {
