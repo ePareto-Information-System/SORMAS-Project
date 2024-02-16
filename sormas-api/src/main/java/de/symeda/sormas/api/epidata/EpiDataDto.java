@@ -18,6 +18,7 @@
 package de.symeda.sormas.api.epidata;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EnumType;
@@ -52,6 +53,12 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String AREA_INFECTED_ANIMALS = "areaInfectedAnimals";
 	public static final String HIGH_TRANSMISSION_RISK_AREA = "highTransmissionRiskArea";
 	public static final String LARGE_OUTBREAKS_AREA = "largeOutbreaksArea";
+	public static final String PREVIOUSLY_VACCINATED_AGAINST_INFLUENZA = "previouslyVaccinatedAgainstInfluenza";
+	public static final String YEAR_OF_VACCINATION = "yearOfVaccination";
+	public static final String PLACES_VISITED_PAST_7DAYS = "placesVisitedPastSevenDays";
+	public static final String VISITED_PLACES_CONFIRMED_PANDEMIC = "vistedPlacesConfirmedPandemic";
+	public static final String RISK_FACTORS_SEVERE_DISEASE = "riskFactorsSevereDisease";
+	public static final String OTHER_SPECIFY = "otherSpecify";
 
 	@Enumerated(EnumType.STRING)
 	private Disease disease;
@@ -73,6 +80,12 @@ public class EpiDataDto extends PseudonymizableDto {
 		Disease.OTHER })
 	private YesNo areaInfectedAnimals;
 
+	private YesNo previouslyVaccinatedAgainstInfluenza;
+	private Date yearOfVaccination;
+	private String placesVisitedPastSevenDays;
+	private YesNo vistedPlacesConfirmedPandemic;
+	private RiskFactorInfluenza riskFactorsSevereDisease;
+	private String otherSpecify;
 	@Valid
 	private List<ExposureDto> exposures = new ArrayList<>();
 
@@ -176,6 +189,54 @@ public class EpiDataDto extends PseudonymizableDto {
 		this.disease = disease;
 	}
 
+	public YesNo getPreviouslyVaccinatedAgainstInfluenza() {
+		return previouslyVaccinatedAgainstInfluenza;
+	}
+
+	public void setPreviouslyVaccinatedAgainstInfluenza(YesNo previouslyVaccinatedAgainstInfluenza) {
+		this.previouslyVaccinatedAgainstInfluenza = previouslyVaccinatedAgainstInfluenza;
+	}
+
+	public Date getYearOfVaccination() {
+		return yearOfVaccination;
+	}
+
+	public void setYearOfVaccination(Date yearOfVaccination) {
+		this.yearOfVaccination = yearOfVaccination;
+	}
+
+	public String getPlacesVisitedPastSevenDays() {
+		return placesVisitedPastSevenDays;
+	}
+
+	public void setPlacesVisitedPastSevenDays(String placesVisitedPastSevenDays) {
+		this.placesVisitedPastSevenDays = placesVisitedPastSevenDays;
+	}
+
+	public YesNo getVistedPlacesConfirmedPandemic() {
+		return vistedPlacesConfirmedPandemic;
+	}
+
+	public void setVistedPlacesConfirmedPandemic(YesNo vistedPlacesConfirmedPandemic) {
+		this.vistedPlacesConfirmedPandemic = vistedPlacesConfirmedPandemic;
+	}
+
+	public RiskFactorInfluenza getRiskFactorsSevereDisease() {
+		return riskFactorsSevereDisease;
+	}
+
+	public void setRiskFactorsSevereDisease(RiskFactorInfluenza riskFactorsSevereDisease) {
+		this.riskFactorsSevereDisease = riskFactorsSevereDisease;
+	}
+
+	public String getOtherSpecify() {
+		return otherSpecify;
+	}
+
+	public void setOtherSpecify(String otherSpecify) {
+		this.otherSpecify = otherSpecify;
+	}
+
 	public static EpiDataDto build() {
 
 		EpiDataDto epiData = new EpiDataDto();
@@ -202,4 +263,6 @@ public class EpiDataDto extends PseudonymizableDto {
 
 		return clone;
 	}
+
+
 }

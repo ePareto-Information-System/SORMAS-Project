@@ -554,6 +554,7 @@ public interface Captions {
 	String CaseHospitalization_notifyDistrictDate = "CaseHospitalization.notifyDistrictDate";
 	String CaseHospitalization_dischargeDate = "CaseHospitalization.dischargeDate";
 	String CaseHospitalization_healthFacility = "CaseHospitalization.healthFacility";
+	String CaseHospitalization_healthFacilityDistrict = "CaseHospitalization.CaseHospitalization_healthFacilityDistrict";
 	String CaseHospitalization_fillSectionBeforeSigningLoc = "CaseHospitalization.fillSectionBeforeSigning";
 	String CaseHospitalization_seekHelpChildLoc = "CaseHospitalization.seekHelpChild";
 	String CaseHospitalization_hospitalizationReason = "CaseHospitalization.hospitalizationReason";
@@ -1117,6 +1118,12 @@ public interface Captions {
 	String EpiData_activityAsCaseDetailsKnown = "EpiData.activityAsCaseDetailsKnown";
 	String EpiData_areaInfectedAnimals = "EpiData.areaInfectedAnimals";
 	String EpiData_contactWithSourceCaseKnown = "EpiData.contactWithSourceCaseKnown";
+	String EpiData_previouslyVaccinatedAgainstInfluenza = "EpiData.previouslyVaccinatedAgainstInfluenza";
+	String EpiData_yearOfVaccination = "EpiData.yearOfVaccination";
+	String EpiData_placesVisitedPastSevenDays = "EpiData.placesVisitedPastSevenDays";
+	String EpiData_vistedPlacesConfirmedPandemic = "EpiData.vistedPlacesConfirmedPandemic";
+	String EpiData_riskFactorsSevereDisease = "EpiData.riskFactorsSevereDisease";
+	String EpiData_otherSpecify = "EpiData.otherSpecify";
 	String EpiData_exposureDetailsKnown = "EpiData.exposureDetailsKnown";
 	String EpiData_exposures = "EpiData.exposures";
 	String EpiData_highTransmissionRiskArea = "EpiData.highTransmissionRiskArea";

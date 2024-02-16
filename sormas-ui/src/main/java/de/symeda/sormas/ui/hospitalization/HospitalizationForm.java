@@ -26,6 +26,7 @@ import java.util.Objects;
 
 import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.utils.AFPFacilityOptions;
@@ -72,14 +73,15 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private static final String FILL_SECTION_HEADING_LOC = "fillSectionHeadingLoc";
 	private static final String SEEK_HELP_HEADING_LOC = "seekHelpHeadingLoc";
 	private static final String HEALTH_FACILITY = Captions.CaseHospitalization_healthFacility;
+	private static final String HEALTH_FACILITY_DISTRICT = Captions.CaseHospitalization_healthFacilityDistrict;
 	private static final String HOSPITAL_NAME_DETAIL = " ( %s )";
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(HOSPITALIZATION_HEADING_LOC) +
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
-					fluidRowLocs(HEALTH_FACILITY, HospitalizationDto.HOSPITAL_RECORD_NUMBER) +
+					fluidRowLocs(HEALTH_FACILITY, HEALTH_FACILITY_DISTRICT, HospitalizationDto.HOSPITAL_RECORD_NUMBER) +
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW) +
-					fluidRowLocs(4,HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE, 4,HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY) +
+					fluidRowLocs(HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE, HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY) +
 			fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
 			fluidRowLocs(6,HospitalizationDto.NOTIFY_DISTRICT_DATE) +
 			fluidRowLocs(HospitalizationDto.HOSPITALIZATION_REASON, HospitalizationDto.OTHER_HOSPITALIZATION_REASON) +
@@ -140,6 +142,16 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		previousHospitalizationsHeadingLabel.addStyleName(H3);
 		getContent().addComponent(previousHospitalizationsHeadingLabel, PREVIOUS_HOSPITALIZATIONS_HEADING_LOC);
 
+		TextField districtField = addCustomField(HEALTH_FACILITY_DISTRICT, DistrictReferenceDto.class, TextField.class);
+		DistrictReferenceDto districtReferenceDto = caze.getResponsibleDistrict();
+
+		if(districtReferenceDto!= null){
+			districtField.setValue(districtReferenceDto.getCaption());
+		}
+		districtField.setReadOnly(true);
+		districtField.setCaption("District where Health Facility located");
+		districtField.setVisible(false);
+
 		TextField facilityField = addCustomField(HEALTH_FACILITY, FacilityReferenceDto.class, TextField.class);
 		FacilityReferenceDto healthFacility1 = caze.getHealthFacility();
 
@@ -199,25 +211,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			addField(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS, PreviousHospitalizationsField.class);
 
 		if(caze.getDisease() == Disease.AFP){
-			/*Label fillThisSectionHeadingLabel = new Label(I18nProperties.getString(Strings.headingFillThis));
-			fillThisSectionHeadingLabel.addStyleName(H3);
-			getContent().addComponent(fillThisSectionHeadingLabel, FILL_SECTION_HEADING_LOC);
-
-			Label childSeekhelpHeadingLabel = new Label(I18nProperties.getString(Strings.headingChildSeek));
-			childSeekhelpHeadingLabel.addStyleName(H3);
-			getContent().addComponent(childSeekhelpHeadingLabel, SEEK_HELP_HEADING_LOC);
-
-			TextField place = addField(HospitalizationDto.PLACE, TextField.class);
-			TextField durationMonths = addField(HospitalizationDto.DURATION_MONTHS, TextField.class);
-			TextField durationDays = addField(HospitalizationDto.DURATION_DAYS, TextField.class);
-			TextField place2 = addField(HospitalizationDto.PLACE2, TextField.class);
-			TextField durationMonths2 = addField(HospitalizationDto.DURATION_MONTHS2, TextField.class);
-			TextField durationDays2 = addField(HospitalizationDto.DURATION_DAYS2, TextField.class);
-			TextField investigatorName = addField(HospitalizationDto.INVESTIGATOR_NAME, TextField.class);
-			TextField investigatorTitle = addField(HospitalizationDto.INVESTIGATOR_TITLE, TextField.class);
-			TextField investigatorUnit = addField(HospitalizationDto.INVESTIGATOR_UNIT, TextField.class);
-			TextField investigatorAddress = addField(HospitalizationDto.INVESTIGATOR_ADDRESS, TextField.class);
-			TextField investigatorTel = addField(HospitalizationDto.INVESTIGATOR_TEL, TextField.class);*/
 
 			admittedToHealthFacilityFieldNew.setVisible(true);
 			hospitalRecordNumber.setVisible(true);
@@ -378,6 +371,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			terminationDateHospitalStay.setVisible(true);
 			dischargeDateField.setCaption("Date person discharged from hospital");
 			admissionDateField.setCaption("Date of admission (in-patient)");
+			districtField.setVisible(true);
 
 		}
 	}

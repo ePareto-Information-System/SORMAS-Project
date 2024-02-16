@@ -76,6 +76,12 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setLargeOutbreaksArea(source.getLargeOutbreaksArea());
 		target.setAreaInfectedAnimals(source.getAreaInfectedAnimals());
 		target.setDisease(source.getDisease());
+		target.setPreviouslyVaccinatedAgainstInfluenza(source.getPreviouslyVaccinatedAgainstInfluenza());
+		target.setYearOfVaccination(source.getYearOfVaccination());
+		target.setPlacesVisitedPastSevenDays(source.getPlacesVisitedPastSevenDays());
+		target.setVistedPlacesConfirmedPandemic(source.getVistedPlacesConfirmedPandemic());
+		target.setRiskFactorsSevereDisease(source.getRiskFactorsSevereDisease());
+		target.setOtherSpecify(source.getOtherSpecify());
 
 		List<Exposure> exposures = new ArrayList<>();
 		for (ExposureDto exposureDto : source.getExposures()) {
@@ -235,6 +241,12 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setLargeOutbreaksArea(source.getLargeOutbreaksArea());
 		target.setAreaInfectedAnimals(source.getAreaInfectedAnimals());
 		target.setDisease(source.getDisease());
+		target.setPreviouslyVaccinatedAgainstInfluenza(source.getPreviouslyVaccinatedAgainstInfluenza());
+		target.setYearOfVaccination(source.getYearOfVaccination());
+		target.setPlacesVisitedPastSevenDays(source.getPlacesVisitedPastSevenDays());
+		target.setVistedPlacesConfirmedPandemic(source.getVistedPlacesConfirmedPandemic());
+		target.setRiskFactorsSevereDisease(source.getRiskFactorsSevereDisease());
+		target.setOtherSpecify(source.getOtherSpecify());
 
 		List<ExposureDto> exposureDtos = new ArrayList<>();
 		for (Exposure exposure : source.getExposures()) {

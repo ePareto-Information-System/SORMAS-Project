@@ -29,6 +29,8 @@ import javax.persistence.OneToMany;
 
 //import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.utils.AfpResult;
+import de.symeda.sormas.api.utils.RiskFactorInfluenza;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.activityascase.ActivityAsCase;
@@ -57,6 +59,12 @@ public class EpiData extends AbstractDomainObject {
 	private YesNo largeOutbreaksArea;
 	private YesNo areaInfectedAnimals;
 	private Disease disease;
+	private YesNo previouslyVaccinatedAgainstInfluenza;
+	private Date yearOfVaccination;
+	private String placesVisitedPastSevenDays;
+	private YesNo vistedPlacesConfirmedPandemic;
+	private RiskFactorInfluenza riskFactorsSevereDisease;
+	private String otherSpecify;
 
 	private List<Exposure> exposures = new ArrayList<>();
 	private List<ActivityAsCase> activitiesAsCase = new ArrayList<>();
@@ -173,5 +181,53 @@ public class EpiData extends AbstractDomainObject {
 
 	public void setContactWithSourceCaseKnown(YesNo contactWithSourceCaseKnown) {
 		this.contactWithSourceCaseKnown = contactWithSourceCaseKnown;
+	}
+	@Enumerated(EnumType.STRING)
+	public YesNo getPreviouslyVaccinatedAgainstInfluenza() {
+		return previouslyVaccinatedAgainstInfluenza;
+	}
+
+	public void setPreviouslyVaccinatedAgainstInfluenza(YesNo previouslyVaccinatedAgainstInfluenza) {
+		this.previouslyVaccinatedAgainstInfluenza = previouslyVaccinatedAgainstInfluenza;
+	}
+
+	public Date getYearOfVaccination() {
+		return yearOfVaccination;
+	}
+
+	public void setYearOfVaccination(Date yearOfVaccination) {
+		this.yearOfVaccination = yearOfVaccination;
+	}
+
+	public String getPlacesVisitedPastSevenDays() {
+		return placesVisitedPastSevenDays;
+	}
+
+	public void setPlacesVisitedPastSevenDays(String placesVisitedPastSevenDays) {
+		this.placesVisitedPastSevenDays = placesVisitedPastSevenDays;
+	}
+	@Enumerated(EnumType.STRING)
+	public YesNo getVistedPlacesConfirmedPandemic() {
+		return vistedPlacesConfirmedPandemic;
+	}
+
+	public void setVistedPlacesConfirmedPandemic(YesNo vistedPlacesConfirmedPandemic) {
+		this.vistedPlacesConfirmedPandemic = vistedPlacesConfirmedPandemic;
+	}
+
+	public RiskFactorInfluenza getRiskFactorsSevereDisease() {
+		return riskFactorsSevereDisease;
+	}
+
+	public void setRiskFactorsSevereDisease(RiskFactorInfluenza riskFactorsSevereDisease) {
+		this.riskFactorsSevereDisease = riskFactorsSevereDisease;
+	}
+
+	public String getOtherSpecify() {
+		return otherSpecify;
+	}
+
+	public void setOtherSpecify(String otherSpecify) {
+		this.otherSpecify = otherSpecify;
 	}
 }

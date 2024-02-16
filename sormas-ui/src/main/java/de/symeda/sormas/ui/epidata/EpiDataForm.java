@@ -19,16 +19,22 @@ package de.symeda.sormas.ui.epidata;
 
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_TOP_3;
-import static de.symeda.sormas.ui.utils.LayoutUtil.divsCss;
-import static de.symeda.sormas.ui.utils.LayoutUtil.h3;
-import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
-import static de.symeda.sormas.ui.utils.LayoutUtil.locCss;
+import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 
+import java.awt.*;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.DateField;
+import com.vaadin.v7.ui.OptionGroup;
+import com.vaadin.v7.ui.TextField;
+import de.symeda.sormas.api.utils.CardOrHistory;
+import de.symeda.sormas.api.utils.RiskFactorInfluenza;
 import de.symeda.sormas.api.utils.YesNo;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -68,6 +74,13 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	//@formatter:off
 	private static final String MAIN_HTML_LAYOUT = 
 			loc(LOC_EXPOSURE_TRAVEL_HISTORY_HEADING) +
+
+					loc(EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_INFLUENZA)+
+					fluidRowLocs(6, EpiDataDto.YEAR_OF_VACCINATION)+
+					loc(EpiDataDto.PLACES_VISITED_PAST_7DAYS)+
+					loc(EpiDataDto.VISITED_PLACES_CONFIRMED_PANDEMIC)+
+					fluidRowLocs(EpiDataDto.RISK_FACTORS_SEVERE_DISEASE, EpiDataDto.OTHER_SPECIFY)+
+
 					loc(EpiDataDto.RECENT_TRAVEL_OUTBREAK)+
 					loc(EpiDataDto.CONTACT_SIMILAR_SYMPTOMS)+
 					loc(EpiDataDto.CONTACT_SICK_ANIMALS)+
@@ -117,7 +130,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	@Override
 	protected void addFields() {
 
-		if (disease != null && !diseaseCheck()) {
+		if (disease != null && !diseaseCheck() && !diseaseInfluenzaCheck()) {
 			addHeadingsAndInfoTexts();
 		}
 
@@ -173,6 +186,28 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			contactSickAnimals.setVisible(false);
 
 			setVisible(false, EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, EpiDataDto.LARGE_OUTBREAKS_AREA, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN);
+
+		}
+
+		if(diseaseInfluenzaCheck()){
+			setVisible(false, EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, EpiDataDto.LARGE_OUTBREAKS_AREA, EpiDataDto.AREA_INFECTED_ANIMALS);
+			setVisible(false, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN, EpiDataDto.EXPOSURES, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN);
+
+			NullableOptionGroup previously = addField(EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_INFLUENZA, NullableOptionGroup.class);
+			DateField year = addField(EpiDataDto.YEAR_OF_VACCINATION, DateField.class);
+			year.setVisible(false);
+
+			addField(EpiDataDto.PLACES_VISITED_PAST_7DAYS, com.vaadin.v7.ui.TextArea.class);
+			addField(EpiDataDto.VISITED_PLACES_CONFIRMED_PANDEMIC, OptionGroup.class);
+			ComboBox riskFactor = addField(EpiDataDto.RISK_FACTORS_SEVERE_DISEASE, ComboBox.class);
+			TextField other = addField(EpiDataDto.OTHER_SPECIFY, com.vaadin.v7.ui.TextField.class);
+			other.setVisible(false);
+
+			FieldHelper
+					.setVisibleWhen(riskFactor, Arrays.asList(other), Arrays.asList(RiskFactorInfluenza.OTHER), true);
+
+			FieldHelper
+					.setVisibleWhen(previously, Arrays.asList(year), Arrays.asList(YesNo.YES), true);
 
 		}
 
@@ -246,4 +281,5 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		return disease == Disease.YELLOW_FEVER;
 	}
 	private boolean diseaseCSMCheck(){return disease == Disease.CSM; }
+	private boolean diseaseInfluenzaCheck(){return disease == Disease.NEW_INFLUENZA; }
 }

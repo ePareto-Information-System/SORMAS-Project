@@ -12872,5 +12872,14 @@ INSERT INTO schema_version (version_number, comment) VALUES (556, 'Added totalnu
 ALTER TABLE immunization ADD COLUMN datelastipvdosesreceivedthroughsia varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (557, 'Added datelastipvdosesreceivedthroughsia  etc to immunization');
+
+ALTER TABLE epidata ADD COLUMN previouslyvaccinatedagainstinfluenza varchar(255);
+ALTER TABLE epidata ADD COLUMN yearofvaccination Date;
+ALTER TABLE epidata ADD COLUMN placesvisitedpastsevendays varchar(255);
+ALTER TABLE epidata ADD COLUMN vistedplacesconfirmedpandemic varchar(255);
+ALTER TABLE epidata ADD COLUMN riskfactorsseveredisease varchar(255);
+ALTER TABLE epidata ADD COLUMN otherspecify varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (558, 'Added datelastipvdosesreceivedthroughsia  etc to epidata');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``
