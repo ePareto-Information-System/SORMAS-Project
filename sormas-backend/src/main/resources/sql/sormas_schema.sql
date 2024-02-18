@@ -13282,7 +13282,6 @@ ALTER TABLE immunization ADD COLUMN sourcerivaccinationinformation varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (572, 'Added totalnumberdoses,opvdoseatbirth  etc to immunization');
 
 ALTER TABLE immunization ADD COLUMN datelastipvdosesreceivedthroughsia varchar(255);
-
 INSERT INTO schema_version (version_number, comment) VALUES (573, 'Added datelastipvdosesreceivedthroughsia  etc to immunization');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``
