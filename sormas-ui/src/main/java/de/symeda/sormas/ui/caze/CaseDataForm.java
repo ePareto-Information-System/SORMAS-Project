@@ -1701,11 +1701,25 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			}
 			//INFLUENZA
 			if(disease == Disease.NEW_INFLUENZA){
-				setVisible(false, DHIMSFACILITY_OR_HOME_LOC, CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION, CaseDataDto.VACCINATION_ROUTINE_DATE);
+				setVisible(false, CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION, CaseDataDto.VACCINATION_ROUTINE_DATE);
 				hospitalName.setVisible(true);
 				nationalLevelDate.setVisible(true);
 //				dhimsFacilityTypeCombo.setVisible(false);
 //				afpFacilityOptions.setVisible(false);
+			}
+
+
+			//measles
+			if (disease == Disease.MEASLES) {
+				FieldHelper.setEnabledWhen(vaccinationStatus, Arrays.asList(VaccinationStatus.VACCINATED), Collections.singletonList(
+						vaccinatedByCardOrHistory
+				), false);
+				FieldHelper
+						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
+				cardDateField.setVisible(false);
+
+				FieldHelper
+						.setVisibleWhen(vaccinatedByCardOrHistory, Arrays.asList(cardDateField), Arrays.asList(CardOrHistory.CARD), true);
 			}
 		});
 		if (CaseDataDto.HOSPITALIZATION == null) {
