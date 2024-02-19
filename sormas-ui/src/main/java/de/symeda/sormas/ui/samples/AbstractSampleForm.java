@@ -130,6 +130,14 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					loc(SAMPLE_MATERIAL_READ_HEADLINE_LOC) +
 					loc(SampleDto.REQUESTED_SAMPLE_MATERIALS) +
 
+					//INFLUENZA
+					loc(SampleDto.POSITIVE_VIRAL_CULTURE) +
+					loc(SampleDto.POSITIVE_REAL_TIME) +
+					loc(SampleDto.FOUR_FOLD_RISE) +
+					fluidRowLocs(SampleDto.INFLUENZA_VIRUS, SampleDto.OTHER_INFLUENZA_VIRUS) +
+					loc(SampleDto.TREATMENT) +
+					loc(SampleDto.STATE_TREATMENT_ADMINISTERED) +
+
                     locCss(VSPACE_TOP_3, SampleDto.PATHOGEN_TESTING_REQUESTED) +
                     loc(PATHOGEN_TESTING_READ_HEADLINE_LOC) +
                     loc(PATHOGEN_TESTING_INFO_LOC) +
@@ -403,6 +411,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				break;
 			case YELLOW_FEVER:
 				handleYellowFever();
+			case NEW_INFLUENZA:
+				handleNewInfluenza();
 			default:
 				// Handle default case, maybe log an error or set default visibility
 				break;
@@ -962,6 +972,32 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		initializeMaterialsMultiSelect();
 		//updateSampleTestsFields();
+
+	}
+	private void handleNewInfluenza(){
+
+		setPropertiesVisibility();
+		List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.OROPHARYNGEAL_SWAB, SampleMaterial.NP_SWAB, SampleMaterial.SERUM, SampleMaterial.PLASMA);
+		FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
+
+		OptionGroup positiveviral = addField(SampleDto.POSITIVE_VIRAL_CULTURE, OptionGroup.class);
+		OptionGroup positiveRealTime = addField(SampleDto.POSITIVE_REAL_TIME, OptionGroup.class);
+		OptionGroup foldRise = addField(SampleDto.FOUR_FOLD_RISE, OptionGroup.class);
+		ComboBox Virus = addField(SampleDto.INFLUENZA_VIRUS, ComboBox.class);
+		TextField otherVirus = addField(SampleDto.OTHER_INFLUENZA_VIRUS, TextField.class);
+		otherVirus.setVisible(false);
+		TextField treatment = addField(SampleDto.TREATMENT, TextField.class);
+		TextField stateTreatment = addField(SampleDto.STATE_TREATMENT_ADMINISTERED, TextField.class);
+
+		ComboBox classificationBox = new ComboBox("Final Classification");
+
+		for (CaseClassification validValuesForInfluenza : CaseClassification.CASE_CLASSIFY_INFLUENZA) {
+			classificationBox.addItem(validValuesForInfluenza);
+		}
+		ComboBox finalClassification = addField(SampleDto.LABORATORY_FINAL_CLASSIFICATION, classificationBox);
+
+		FieldHelper
+				.setVisibleWhen(Virus, Arrays.asList(otherVirus), Arrays.asList(InfluenzaVirus.OTHER), true);
 
 	}
 

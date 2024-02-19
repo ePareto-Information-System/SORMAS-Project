@@ -71,7 +71,7 @@ public enum SampleMaterial {
 	SERUM,
 	POST_MORTEM_LIVER_SPECIMEN,
 	PLASMA_SERUM,
-	OTHER;
+	OTHER, OROPHARYNGEAL_SWAB;
 
 	public static SampleMaterial[] YF_TYPES() {
 		return new SampleMaterial[] { SampleMaterial.WHOLE_BLOOD, SampleMaterial.SERUM, SampleMaterial.POST_MORTEM_LIVER_SPECIMEN };

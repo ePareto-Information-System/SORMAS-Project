@@ -308,7 +308,13 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private Date dateFollowUpExam;
 	private InjectionSite residualAnalysis;
 	private AfpResult resultExam;
-
+	private YesNo positiveViralCulture;
+	private YesNo positiveRealTime;
+	private YesNo fourFoldRise;
+	private InfluenzaVirus influenzaVirus;
+	private String otherInfluenzaVirus;
+	private String treatment;
+	private String stateTreatmentAdministered;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	public Case getAssociatedCase() {
@@ -1530,5 +1536,59 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setResultExam(AfpResult resultExam) {
 		this.resultExam = resultExam;
+	}
+
+	public YesNo getPositiveViralCulture() {
+		return positiveViralCulture;
+	}
+
+	public void setPositiveViralCulture(YesNo positiveViralCulture) {
+		this.positiveViralCulture = positiveViralCulture;
+	}
+
+	public YesNo getPositiveRealTime() {
+		return positiveRealTime;
+	}
+
+	public void setPositiveRealTime(YesNo positiveRealTime) {
+		this.positiveRealTime = positiveRealTime;
+	}
+
+	public YesNo getFourFoldRise() {
+		return fourFoldRise;
+	}
+
+	public void setFourFoldRise(YesNo fourFoldRise) {
+		this.fourFoldRise = fourFoldRise;
+	}
+
+	public InfluenzaVirus getInfluenzaVirus() {
+		return influenzaVirus;
+	}
+
+	public void setInfluenzaVirus(InfluenzaVirus influenzaVirus) {
+		this.influenzaVirus = influenzaVirus;
+	}
+
+	public String getOtherInfluenzaVirus() {
+		return otherInfluenzaVirus;
+	}
+	public void setOtherInfluenzaVirus(String otherInfluenzaVirus) {
+		this.otherInfluenzaVirus = otherInfluenzaVirus;
+	}
+	public String getTreatment() {
+		return treatment;
+	}
+
+	public void setTreatment(String treatment) {
+		this.treatment = treatment;
+	}
+
+	public String getStateTreatmentAdministered() {
+		return stateTreatmentAdministered;
+	}
+
+	public void setStateTreatmentAdministered(String stateTreatmentAdministered) {
+		this.stateTreatmentAdministered = stateTreatmentAdministered;
 	}
 }

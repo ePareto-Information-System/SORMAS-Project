@@ -946,6 +946,13 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setDateFollowUpExam(source.getDateFollowUpExam());
 		target.setResidualAnalysis(source.getResidualAnalysis());
 		target.setResultExam(source.getResultExam());
+		target.setPositiveViralCulture(source.getPositiveViralCulture());
+		target.setPositiveRealTime(source.getPositiveRealTime());
+		target.setFourFoldRise(source.getFourFoldRise());
+		target.setInfluenzaVirus(source.getInfluenzaVirus());
+		target.setOtherInfluenzaVirus(source.getOtherInfluenzaVirus());
+		target.setTreatment(source.getTreatment());
+		target.setStateTreatmentAdministered(source.getStateTreatmentAdministered());
 
 
 
@@ -1200,6 +1207,13 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setDateFollowUpExam(source.getDateFollowUpExam());
 		target.setResidualAnalysis(source.getResidualAnalysis());
 		target.setResultExam(source.getResultExam());
+		target.setPositiveViralCulture(source.getPositiveViralCulture());
+		target.setPositiveRealTime(source.getPositiveRealTime());
+		target.setInfluenzaVirus(source.getInfluenzaVirus());
+		target.setOtherInfluenzaVirus(source.getOtherInfluenzaVirus());
+		target.setFourFoldRise(source.getFourFoldRise());
+		target.setTreatment(source.getTreatment());
+		target.setStateTreatmentAdministered(source.getStateTreatmentAdministered());
 
 
 

@@ -83,4 +83,7 @@ public enum CaseClassification
 
 	public static final List<CaseClassification> CASE_CLASSIFY = Arrays.asList(
 			CONFIRMED, PROBABLE, SUSPECT);
+
+	public static final List<CaseClassification> CASE_CLASSIFY_INFLUENZA = Arrays.asList(
+			CONFIRMED, PROBABLE, SUSPECT, NO_CASE);
 }

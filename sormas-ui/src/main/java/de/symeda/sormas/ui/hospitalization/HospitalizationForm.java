@@ -371,6 +371,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			terminationDateHospitalStay.setVisible(true);
 			dischargeDateField.setCaption("Date person discharged from hospital");
 			admissionDateField.setCaption("Date of admission (in-patient)");
+			facilityField.setVisible(true);
 			districtField.setVisible(true);
 
 		}

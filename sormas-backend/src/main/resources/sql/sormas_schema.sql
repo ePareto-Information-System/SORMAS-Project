@@ -12881,5 +12881,15 @@ ALTER TABLE epidata ADD COLUMN riskfactorsseveredisease varchar(255);
 ALTER TABLE epidata ADD COLUMN otherspecify varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (558, 'Added datelastipvdosesreceivedthroughsia  etc to epidata');
+
+ALTER TABLE samples ADD COLUMN positiveviralculture varchar(255);
+ALTER TABLE samples ADD COLUMN positiverealtime varchar(255);
+ALTER TABLE samples ADD COLUMN fourfoldrise varchar(255);
+ALTER TABLE samples ADD COLUMN otherinfluenzavirus varchar(255);
+ALTER TABLE samples ADD COLUMN influenzavirus varchar(255);
+ALTER TABLE samples ADD COLUMN treatment varchar(255);
+ALTER TABLE samples ADD COLUMN statetreatmentadministered varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (559, 'Added influenzalabcolumns to samples');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``

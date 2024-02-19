@@ -2144,7 +2144,13 @@ public interface Captions {
 	String Sample_dateCombinedCellCultureResults = "Sample.dateCombinedCellCultureResults";
 	String Sample_dateFollowUpExam = "Sample.dateFollowUpExam";
 	String Sample_residualAnalysis = "Sample.residualAnalysis";
-	String Sample_resultExam = "Sample.resultExam";
+	String Sample_resultExam = "Sample.positiveViralCulture";
+	String Sample_positiveRealTime = "Sample.positiveRealTime";
+	String Sample_fourFoldRise = "Sample.fourFoldRise";
+	String Sample_otherInfluenzaVirus = "Sample.otherInfluenzaVirus";
+	String Sample_treatment = "Sample.treatment";
+	String Sample_stateTreatmentAdministered = "Sample.stateTreatmentAdministered";
+	String Sample_influenzaVirus = "Sample.influenzaVirus";
 	String Sample_testStatusGen = "Sample.testStatusGen";
 	String Sample_testType = "Sample.testType";
 	String Sample_typeOfTest = "Sample.typeOfTest";
