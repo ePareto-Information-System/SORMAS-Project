@@ -132,7 +132,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					//fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
 
 					fluidRowLocs(SampleDto.IPSAMPLESENT) + fluidRowLocs(SampleDto.IPSAMPLERESULTS, "")+
-					locCss(VSPACE_TOP_3, SampleDto.SAMPLE_MATERIAL_REQUESTED) +
 					loc(SAMPLE_MATERIAL_READ_HEADLINE_LOC) +
 					loc(SampleDto.REQUESTED_SAMPLE_MATERIALS) +
 
@@ -444,7 +443,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			case NEW_INFLUENZA:
 				handleNewInfluenza();
 				break;
-			// Handle default case, maybe log an error or set default visibility
+			case MEASLES:
+				handleMeasles();
+				break;
 			default:
 		}
 	}
@@ -601,10 +602,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		sampleTestsField.setVisible(false);
 
 	}
-	CheckBox sampleMaterialRequestedField = addField(SampleDto.SAMPLE_MATERIAL_REQUESTED, CheckBox.class);
-	//OptionGroup requestedSampleMaterialsField = addField(SampleDto.REQUESTED_SAMPLE_MATERIALS, OptionGroup.class);
-	Field<?> sampleMaterialTestingField = getField(SampleDto.SAMPLE_MATERIAL_REQUESTED);
-
 
 	private void selectAHFTests(){
 
@@ -922,7 +919,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 
 		setVisible(false, SampleDto.SAMPLE_PURPOSE, SampleDto.REQUESTED_SAMPLE_MATERIALS, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLE_MATERIAL_TEXT,
-				SampleDto.IPSAMPLESENT, SampleDto.SAMPLE_MATERIAL_REQUESTED, SampleDto.SHIPPED, SampleDto.RECEIVED, SampleDto.COMMENT, SampleDto.SAMPLE_TESTS, SampleDto.DISEASE, SampleDto.SAMPLING_REASON);
+				SampleDto.IPSAMPLESENT, SampleDto.SHIPPED, SampleDto.RECEIVED, SampleDto.COMMENT, SampleDto.SAMPLE_TESTS, SampleDto.DISEASE, SampleDto.SAMPLING_REASON);
 
 		setRequired(false, SampleDto.SAMPLE_PURPOSE);
 
@@ -940,7 +937,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		setVisible(false, SampleDto.FIELD_SAMPLE_ID);
 		setVisible(false, SampleDto.SAMPLE_MATERIAL_TEXT);
 		setVisible(false, SampleDto.IPSAMPLESENT);
-		setVisible(false, SampleDto.SAMPLE_MATERIAL_REQUESTED);
 		setVisible(false, SampleDto.SHIPPED);
 		setVisible(false, SampleDto.RECEIVED);
 		setVisible(false, SampleDto.COMMENT);
@@ -1022,7 +1018,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private void handleMeasles() {
 		if (disease == Disease.MEASLES) {
 			addSampleDispatchFields();
-			setVisible(false, SampleDto.SAMPLE_MATERIAL_REQUESTED);
 			setVisible(false, SampleDto.SAMPLING_REASON);
 			setVisible(false, SampleDto.SAMPLE_PURPOSE);
 			setVisible(true, SampleDto.RECEIVED, SampleDto.REQUESTED_SAMPLE_MATERIALS);
@@ -1093,7 +1088,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				SampleDto.SAMPLING_REASON_DETAILS,
 				SampleDto.IPSAMPLESENT,
 				SampleDto.IPSAMPLERESULTS,
-				SampleDto.SAMPLE_MATERIAL_REQUESTED,
 				SampleDto.REQUESTED_SAMPLE_MATERIALS,
 				SampleDto.PATHOGEN_TESTING_REQUESTED,
 				SampleDto.REQUESTED_PATHOGEN_TESTS,
