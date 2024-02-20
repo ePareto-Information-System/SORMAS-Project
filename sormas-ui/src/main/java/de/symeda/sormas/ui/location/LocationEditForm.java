@@ -931,7 +931,6 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 					LocationDto.STREET,
 					LocationDto.CONTACT_PERSON_FIRST_NAME);
 			setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE);
-			postalCodeField.setCaption("Ghana Post Office");
 		}
 	}
 
@@ -939,7 +938,9 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		newDisease = incomingDisease;
 		if (newDisease != null && newDisease.equals(Disease.MEASLES)) {
 			setVisible(false, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY, LocationDto.AREA_TYPE);
-			additionalInformationField.setCaption("Address (Location)");
+			getField(LocationDto.LAND_MARK).setVisible(true);
+			postalCodeField.setVisible(true);
+
 		}
 	}
 
