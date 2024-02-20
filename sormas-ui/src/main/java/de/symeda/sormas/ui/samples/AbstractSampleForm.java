@@ -1065,7 +1065,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private void handleMeasles() {
 		if (disease == Disease.MEASLES) {
 			addSampleDispatchFields();
-
+			setVisible(false, SampleDto.SAMPLE_MATERIAL_REQUESTED);
 			setVisible(false, SampleDto.SAMPLING_REASON);
 			setVisible(false, SampleDto.SAMPLE_PURPOSE);
 			setVisible(true, SampleDto.RECEIVED, SampleDto.REQUESTED_SAMPLE_MATERIALS);
