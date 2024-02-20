@@ -454,7 +454,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		NullableOptionGroup outcome = new NullableOptionGroup("Outcome");
 
-		if(disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.CSM || disease == Disease.AFP){
+		if(disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.CSM || disease == Disease.AFP || disease == Disease.MEASLES){
 
 			for(CaseOutcome caseOutcome : CaseOutcome.values()){
 				if(caseOutcome == CaseOutcome.DECEASED || caseOutcome == CaseOutcome.ALIVE){
