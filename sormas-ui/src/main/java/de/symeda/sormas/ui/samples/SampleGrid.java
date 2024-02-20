@@ -118,23 +118,24 @@ public class SampleGrid extends FilteredGrid<SampleIndexDto, SampleCriteria> {
 		setColumns(
 			SampleIndexDto.UUID,
 			SampleIndexDto.LAB_SAMPLE_ID,
+			SampleIndexDto.LAB,
 			SampleIndexDto.EPID_NUMBER,
+			DISEASE_SHORT,
 			SampleIndexDto.ASSOCIATED_CASE,
 			SampleIndexDto.ASSOCIATED_CONTACT,
 			SampleIndexDto.ASSOCIATED_EVENT_PARTICIPANT,
-			DISEASE_SHORT,
 			SampleIndexDto.DISTRICT,
 			SampleIndexDto.SHIPPED,
 			SampleIndexDto.RECEIVED,
 			SampleIndexDto.SHIPMENT_DATE,
 			SampleIndexDto.RECEIVED_DATE,
-			SampleIndexDto.LAB,
 			SampleIndexDto.SAMPLE_MATERIAL,
-			SampleIndexDto.SAMPLE_PURPOSE,
+//			SampleIndexDto.SAMPLE_PURPOSE,
 			PATHOGEN_TEST_RESULT,
 			SampleIndexDto.ADDITIONAL_TESTING_STATUS,
 			LAST_PATHOGEN_TEST,
 			SampleIndexDto.PATHOGEN_TEST_COUNT,
+			SampleIndexDto.SAMPLE_DISPATCH_MODE,
 			DELETE_REASON_COLUMN);
 
 		((Column<SampleIndexDto, Date>) getColumn(SampleIndexDto.SHIPMENT_DATE)).setRenderer(new DateRenderer(DateFormatHelper.getDateFormat()));

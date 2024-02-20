@@ -63,7 +63,7 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	public static final String PATHOGEN_TEST_RESULT = "pathogenTestResult";
 	public static final String ADDITIONAL_TESTING_STATUS = "additionalTestingStatus";
 	public static final String PATHOGEN_TEST_COUNT = "pathogenTestCount";
-	public static final String SAMPLE_TESTS = "sampleTests";
+	public static final String SAMPLE_DISPATCH_MODE = "sampleDispatchMode";
 
 	private String uuid;
 	@EmbeddedPersonalData
@@ -104,13 +104,13 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	private DeletionReason deletionReason;
 	private String otherDeletionReason;
 	private PathogenTestType sampleTests;
+	private String fieldSampleID;
+	private String additionalTest;
+	private String community;
 	private SampleDispatchMode sampleDispatchMode;
 	private Date sampleDispatchDate;
 	private String ipSampleSent;
 	private IpResult ipSampleResults;
-	private String fieldSampleID;
-	private String additionalTest;
-	private String community;
 
 	//@formatter:off
 
@@ -120,13 +120,13 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 						  SampleMaterial sampleMaterial, SamplePurpose samplePurpose, SpecimenCondition specimenCondition,
 						  String labName, String referredSampleUuid,
 						  SamplingReason samplingReason, String samplingReasonDetails,
-						  String associatedCaseUuid, String associatedCaseFirstName, String associatedCaseLastName,
+						  String associatedCaseUuid, String associatedCaseFirstName, String associatedCaseLastName, String associatedCaseOtherName,
 						  String associatedContactUuid, String associatedContactFirstName, String associatedContactLastName,
 						  String associatedEventParticipantUuid, String associatedEventParticipantFirstName, String associatedEventParticipantLastName,
 						  Disease disease, String diseaseDetails, PathogenTestResultType pathogenTestResult,
 						  Boolean additionalTestingRequested,
 //						  String additionalTest,
-						  Boolean additionalTestPerformed, String district,String community, String labUuid, Long pathogenTestCount,
+						  Boolean additionalTestPerformed, String district,String community, String labUuid, SampleDispatchMode sampleDispatchMode, Long pathogenTestCount,
 						  boolean isInJurisdiction, boolean isCaseInJurisdiction,
 						  boolean isContactInJurisdiction,  boolean isContactCaseInJurisdiction, boolean isEventParticipantInJurisdiction) {
 		super(uuid);
@@ -135,7 +135,7 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 
 		this.uuid = uuid;
 		if (associatedCaseUuid != null) {
-			this.associatedCase = new CaseReferenceDto(associatedCaseUuid, associatedCaseFirstName, associatedCaseLastName);
+			this.associatedCase = new CaseReferenceDto(associatedCaseUuid, associatedCaseFirstName, associatedCaseLastName, associatedCaseOtherName);
 		}
 		if (associatedContactUuid != null) {
 			this.associatedContact =
@@ -180,6 +180,7 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.samplingReasonDetails = samplingReasonDetails;
 		this.district = district;
 		this.community = community;
+		this.sampleDispatchMode = sampleDispatchMode;
 
 	}
 

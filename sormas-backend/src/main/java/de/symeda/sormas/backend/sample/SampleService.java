@@ -191,10 +191,6 @@ public class SampleService extends AbstractDeletableAdoService<Sample>
 			SampleQueryContext sampleQueryContext = new SampleQueryContext(cb, cq, sample);
 			SampleJoins joins = sampleQueryContext.getJoins();
 
-			/*final Join<Sample, Case> caze = joins.getCaze();
-			final Join<Sample, Contact> contact = joins.getContact();
-			final Join<EventParticipant, Event> event = joins.getEvent();*/
-
 			final Join<Sample, Case> caze = joins.getCaze();
 			final Join<Case, District> caseDistrict = joins.getCaseResponsibleDistrict();
 			final Join<Case, Community> caseCommunity = joins.getCaseResponsibleCommunity();
@@ -262,6 +258,7 @@ public class SampleService extends AbstractDeletableAdoService<Sample>
 						caze.get(Case.UUID),
 						joins.getCasePerson().get(Person.FIRST_NAME),
 						joins.getCasePerson().get(Person.LAST_NAME),
+						joins.getCasePerson().get(Person.OTHER_NAME),
 						joins.getContact().get(Contact.UUID),
 						joins.getContactPerson().get(Person.FIRST_NAME),
 						joins.getContactPerson().get(Person.LAST_NAME),
@@ -275,7 +272,8 @@ public class SampleService extends AbstractDeletableAdoService<Sample>
 						cb.isNotEmpty(sample.get(Sample.ADDITIONAL_TESTS)),
 						districtSelect,
 						communitySelect,
-						joins.getLab().get(Facility.UUID)));
+						joins.getLab().get(Facility.UUID),
+						sample.get(Sample.SAMPLE_DISPATCH_MODE)));
 
 			// Tests count subquery
 			Subquery<Long> testCountSq = cq.subquery(Long.class);
