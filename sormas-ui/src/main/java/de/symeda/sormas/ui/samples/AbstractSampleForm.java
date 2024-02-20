@@ -411,11 +411,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				break;
 			case YELLOW_FEVER:
 				handleYellowFever();
+				break;
 			case NEW_INFLUENZA:
 				handleNewInfluenza();
-			default:
+			break;
 				// Handle default case, maybe log an error or set default visibility
-				break;
+			default:
 		}
 
     }
@@ -629,23 +630,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			}
 			getContent().addComponent(requestedSampleMaterialsLayout, SAMPLE_MATERIAL_INFO_LOC);
 		}
-	}
-
-	private void updateSampleTestsFields() {
-
-			if(getValue() != null){
-				CssLayout requestedSampleTestsLayout = new CssLayout();
-				CssStyles.style(requestedSampleTestsLayout, VSPACE_3);
-				for (YellowFeverSample sampleTests : getValue().getRequestedSampleMaterials()) {
-					Label testLabel = new Label(sampleTests.toString());
-					testLabel.setWidthUndefined();
-					CssStyles.style(testLabel, CssStyles.LABEL_ROUNDED_CORNERS, CssStyles.LABEL_BACKGROUND_FOCUS_LIGHT, VSPACE_4, HSPACE_RIGHT_4);
-					requestedSampleTestsLayout.addComponent(testLabel);
-				}
-				getContent().addComponent(requestedSampleTestsLayout, SAMPLE_MATERIAL_INFO_LOC);
-			}else {
-				getContent().removeComponent(SAMPLE_MATERIAL_INFO_LOC);
-			}
 	}
 
 	private void updateRequestedTestFields() {
@@ -971,8 +955,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		sampleMaterialComboBox.setRequired(false);
 
 		initializeMaterialsMultiSelect();
-		//updateSampleTestsFields();
-
+		setVisible(false, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLING_REASON, SampleDto.SAMPLE_MATERIAL_TEXT);
 	}
 	private void handleNewInfluenza(){
 
