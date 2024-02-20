@@ -407,26 +407,26 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					Arrays.asList(SamplePurpose.EXTERNAL, null));
 
 
-        } else {
-            getField(SampleDto.SAMPLE_DATE_TIME).setEnabled(false);
-            getField(SampleDto.SAMPLE_MATERIAL).setEnabled(false);
-            getField(SampleDto.SAMPLE_MATERIAL_TEXT).setEnabled(false);
-            getField(SampleDto.LAB).setEnabled(false);
-            shippedField.setEnabled(false);
-            getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
-            getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
-            getField(SampleDto.SAMPLE_SOURCE).setEnabled(false);
-        }
+		} else {
+			getField(SampleDto.SAMPLE_DATE_TIME).setEnabled(false);
+			getField(SampleDto.SAMPLE_MATERIAL).setEnabled(false);
+			getField(SampleDto.SAMPLE_MATERIAL_TEXT).setEnabled(false);
+			getField(SampleDto.LAB).setEnabled(false);
+			shippedField.setEnabled(false);
+			getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
+			getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
+			getField(SampleDto.SAMPLE_SOURCE).setEnabled(false);
+		}
 
-        StringBuilder reportInfoText = new StringBuilder().append(I18nProperties.getString(Strings.reportedOn))
-                .append(" ")
-                .append(DateFormatHelper.formatLocalDateTime(getValue().getReportDateTime()));
-        if (reportingUser != null) {
-            reportInfoText.append(" ").append(I18nProperties.getString(Strings.by)).append(" ").append(reportingUser.toString());
-        }
-        Label reportInfoLabel = new Label(reportInfoText.toString());
-        reportInfoLabel.setEnabled(false);
-        getContent().addComponent(reportInfoLabel, REPORT_INFO_LABEL_LOC);
+		StringBuilder reportInfoText = new StringBuilder().append(I18nProperties.getString(Strings.reportedOn))
+				.append(" ")
+				.append(DateFormatHelper.formatLocalDateTime(getValue().getReportDateTime()));
+		if (reportingUser != null) {
+			reportInfoText.append(" ").append(I18nProperties.getString(Strings.by)).append(" ").append(reportingUser.toString());
+		}
+		Label reportInfoLabel = new Label(reportInfoText.toString());
+		reportInfoLabel.setEnabled(false);
+		getContent().addComponent(reportInfoLabel, REPORT_INFO_LABEL_LOC);
 
 		switch (disease) {
 			case CSM:
@@ -443,46 +443,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				break;
 			case NEW_INFLUENZA:
 				handleNewInfluenza();
-			break;
-				// Handle default case, maybe log an error or set default visibility
+				break;
+			// Handle default case, maybe log an error or set default visibility
 			default:
 		}
-
-		StringBuilder reportInfoText = new StringBuilder().append(I18nProperties.getString(Strings.reportedOn))
-				.append(" ")
-				.append(DateFormatHelper.formatLocalDateTime(getValue().getReportDateTime()));
-		if (reportingUser != null) {
-			reportInfoText.append(" ").append(I18nProperties.getString(Strings.by)).append(" ").append(reportingUser.toString());
-		}
-		Label reportInfoLabel = new Label(reportInfoText.toString());
-		reportInfoLabel.setEnabled(false);
-		getContent().addComponent(reportInfoLabel, REPORT_INFO_LABEL_LOC);
-
-		//Disease disease = getAssociatedDisease();
-
-			switch (disease) {
-				case CSM:
-					handleCSM();
-					break;
-				case AFP:
-					handleAFP();
-					break;
-				case YELLOW_FEVER:
-					handleYellowFever();
-					break;
-				case AHF:
-					handleAHF();
-				case MEASLES:
-					handleMeasles();
-					break;
-				default:
-					// Handle default case, maybe log an error or set default visibility
-					break;
-			}
-
-		setSampleMaterialTypesForDisease(disease);
-
-    }
+	}
 
 	protected abstract Disease getDisease();
 
@@ -567,11 +532,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				SampleDto.SPECIMEN_CONDITION,
 				Arrays.asList(SpecimenCondition.NOT_ADEQUATE),
 				true);
-		/*FieldHelper.setRequiredWhen(
-			getFieldGroup(),
-			SampleDto.SAMPLE_MATERIAL,
-			Arrays.asList(SampleDto.SAMPLE_MATERIAL_TEXT),
-			Arrays.asList(SampleMaterial.OTHER));*/
 		FieldHelper.setRequiredWhen(
 				getFieldGroup(),
 				SampleDto.SPECIMEN_CONDITION,
@@ -642,34 +602,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	}
 	CheckBox sampleMaterialRequestedField = addField(SampleDto.SAMPLE_MATERIAL_REQUESTED, CheckBox.class);
-
 	//OptionGroup requestedSampleMaterialsField = addField(SampleDto.REQUESTED_SAMPLE_MATERIALS, OptionGroup.class);
 	Field<?> sampleMaterialTestingField = getField(SampleDto.SAMPLE_MATERIAL_REQUESTED);
 
-	//tests for diseases
-
-
-//	protected void initializeMaterialsMultiSelect( ){
-//
-//			Label materialMultiSelectInfoLabel = new Label(I18nProperties.getString(Strings.infoSampleMaterialSelection));
-//			getContent().addComponent(materialMultiSelectInfoLabel, SAMPLE_MATERIAL_INFO_LOC);
-//
-//			// Yes/No fields for sample materials
-//			sampleMaterialRequestedField.setWidthUndefined();
-//			sampleMaterialRequestedField.addValueChangeListener(e -> updateSampleMaterialFields());
-//			sampleMaterialRequestedField.setCaption("Sample Types");
-//
-//
-//			// CheckBox groups to select sample Materials
-//			CssStyles.style(requestedSampleMaterialsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
-//			requestedSampleMaterialsField.setMultiSelect(true);
-//			requestedSampleMaterialsField.addItems(
-//					Arrays.stream(YellowFeverSample.values())
-//							.filter( c -> fieldVisibilityCheckers.isVisible(YellowFeverSample.class, c.name()))
-//							.collect(Collectors.toList()));
-//			requestedSampleMaterialsField.setCaption(null);
-//
-//	}
 
 	private void selectAHFTests(){
 
@@ -678,44 +613,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		List<PathogenTestType> validValues = Arrays.asList(PathogenTestType.IGG_SERUM_ANTIBODY, PathogenTestType.IGM_SERUM_ANTIBODY, PathogenTestType.PCR_RT_PCR);
 		FieldHelper.updateEnumData(sampleTestsField, validValues);
 
-	}
-
-//	private void updateSampleMaterialFields() {
-//
-//		boolean sampleMaterialsRequested = Boolean.TRUE.equals(sampleMaterialTestingField.getValue());
-//		setVisible(sampleMaterialsRequested, SampleDto.REQUESTED_SAMPLE_MATERIALS);
-//
-//		getContent().getComponent(SAMPLE_MATERIAL_INFO_LOC).setVisible(sampleMaterialsRequested);
-//
-//		if (getValue() != null ) {
-//			CssLayout requestedSampleMaterialsLayout = new CssLayout();
-//			CssStyles.style(requestedSampleMaterialsLayout, VSPACE_3);
-//			for (SampleMaterial sampleType : SampleMaterial.values()) {
-//				Label testLabel = new Label(sampleType.toString());
-//				testLabel.setWidthUndefined();
-//				CssStyles.style(testLabel, CssStyles.LABEL_ROUNDED_CORNERS, CssStyles.LABEL_BACKGROUND_FOCUS_LIGHT, VSPACE_4, HSPACE_RIGHT_4);
-//				requestedSampleMaterialsLayout.addComponent(testLabel);
-//			}
-//			getContent().addComponent(requestedSampleMaterialsLayout, SAMPLE_MATERIAL_INFO_LOC);
-//		}
-//	}
-
-		boolean sampleMaterialsRequested = Boolean.TRUE.equals(sampleMaterialTestingField.getValue());
-		setVisible(sampleMaterialsRequested, SampleDto.REQUESTED_SAMPLE_MATERIALS);
-
-		getContent().getComponent(SAMPLE_MATERIAL_INFO_LOC).setVisible(sampleMaterialsRequested);
-
-		if (getValue() != null ) {
-			CssLayout requestedSampleMaterialsLayout = new CssLayout();
-			CssStyles.style(requestedSampleMaterialsLayout, VSPACE_3);
-			for (SampleMaterial sampleType : SampleMaterial.values()) {
-				Label testLabel = new Label(sampleType.toString());
-				testLabel.setWidthUndefined();
-				CssStyles.style(testLabel, CssStyles.LABEL_ROUNDED_CORNERS, CssStyles.LABEL_BACKGROUND_FOCUS_LIGHT, VSPACE_4, HSPACE_RIGHT_4);
-				requestedSampleMaterialsLayout.addComponent(testLabel);
-			}
-			getContent().addComponent(requestedSampleMaterialsLayout, SAMPLE_MATERIAL_INFO_LOC);
-		}
 	}
 
 	private void updateRequestedTestFields() {
@@ -1068,8 +965,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		setVisible(false, SampleDto.SAMPLE_TESTS, SampleDto.SAMPLE_SOURCE, SampleDto.DISEASE, SampleDto.SAMPLE_MATERIAL_TEXT);
 
 		setSampleMaterialTypesForDisease(disease);
-		//updateSampleTestsFields();
-		initializeMaterialsMultiSelect();
 		setVisible(false, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLING_REASON, SampleDto.SAMPLE_MATERIAL_TEXT);
 	}
 	private void handleNewInfluenza(){
@@ -1121,9 +1016,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
 		sampleMaterialComboBox.setVisible(false);
 		sampleMaterialComboBox.setRequired(false);
-
-		//initializeMaterialsMultiSelect();
-		//updateSampleTestsFields();
 
 	}
 

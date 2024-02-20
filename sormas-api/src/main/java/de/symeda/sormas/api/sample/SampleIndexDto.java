@@ -110,9 +110,6 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	private DeletionReason deletionReason;
 	private String otherDeletionReason;
 	private PathogenTestType sampleTests;
-	private String fieldSampleID;
-	private String additionalTest;
-	private String community;
 	private SampleDispatchMode sampleDispatchMode;
 	private Date sampleDispatchDate;
 	private String ipSampleSent;
@@ -190,13 +187,6 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 
 	}
 
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
 
 	//@formatter:off
 	public SampleIndexDto(String uuid, String epidNumber, String labSampleId, String fieldSampleId,
@@ -332,14 +322,6 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.labSampleID = labSampleID;
 	}
 
-	public String getFieldSampleID() {
-		return fieldSampleID;
-	}
-
-	public void setFieldSampleID(String fieldSampleID) {
-		this.fieldSampleID = fieldSampleID;
-	}
-
 	public String getDistrict() {
 		return district;
 	}
@@ -348,13 +330,7 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.district = district;
 	}
 
-	public String getCommunity() {
-		return community;
-	}
 
-	public void setCommunity(String community) {
-		this.community = community;
-	}
 
 	public Date getShipmentDate() {
 		return shipmentDate;
@@ -510,14 +486,6 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.samplingReasonDetails = samplingReasonDetails;
 	}
 
-/*	public String getDiseaseSampleTests() {
-		return diseaseSampleTests;
-	}
-
-	public void setDiseaseSampleTests(String diseaseSampleTests) {
-		this.diseaseSampleTests = diseaseSampleTests;
-	}*/
-
 	public String getIpSampleSent() {
 		return ipSampleSent;
 	}
@@ -568,14 +536,6 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 
 	public void setOtherDeletionReason(String otherDeletionReason) {
 		this.otherDeletionReason = otherDeletionReason;
-	}
-
-	public String getAdditionalTest() {
-		return additionalTest;
-	}
-
-	public void setAdditionalTest(String additionalTest) {
-		this.additionalTest = additionalTest;
 	}
 
 	public String getFieldSampleID() {

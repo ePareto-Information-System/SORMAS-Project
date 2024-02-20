@@ -190,6 +190,7 @@ public class EpiData extends AbstractDomainObject {
 
 	public void setChildComeInContactWithSymptoms(YesNoUnknown childComeInContactWithSymptoms) {
 		this.childComeInContactWithSymptoms = childComeInContactWithSymptoms;
+	}
 	@Enumerated(EnumType.STRING)
 	public YesNo getPreviouslyVaccinatedAgainstInfluenza() {
 		return previouslyVaccinatedAgainstInfluenza;
