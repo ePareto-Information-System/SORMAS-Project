@@ -81,7 +81,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 	private static final long serialVersionUID = 1L;
 
 	private static final String FACILITY_OR_HOME_LOC = "facilityOrHomeLoc";
-	private static final String DHIMSFACILITY_OR_HOME_LOC = "dhimsFacilityOrHomeLoc";
 	private static final String FACILITY_TYPE_GROUP_LOC = "typeGroupLoc";
 	private static final String DONT_SHARE_WARNING_LOC = "dontShareWithReportingToolWarnLoc";
 	private static final String RESPONSIBLE_JURISDICTION_HEADING_LOC = "responsibleJurisdictionHeadingLoc";
@@ -94,10 +93,8 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 	private ComboBox diseaseVariantField;
 	private TextField diseaseVariantDetailsField;
 	private NullableOptionGroup facilityOrHome;
-	private NullableOptionGroup dhimsFacilityOrHome;
 	private ComboBox facilityTypeGroup;
 	private ComboBox facilityType;
-	private ComboBox dhimsFacilityType;
 	private ComboBox responsibleDistrictCombo;
 	private ComboBox responsibleCommunityCombo;
 	private CheckBox differentPlaceOfStayJurisdiction;
@@ -107,7 +104,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 	private ComboBox facilityCombo;
 	private ComboBox pointOfEntryDistrictCombo;
 	private DateField investigated;
-	private TextField hospitalName;
+//	private TextField hospitalName;
 
 	private PersonCreateForm personCreateForm;
 
@@ -138,12 +135,10 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			+ fluidRowLocs(DIFFERENT_PLACE_OF_STAY_JURISDICTION)
 			+ fluidRowLocs(PLACE_OF_STAY_HEADING_LOC)
 			+ fluidRowLocs(FACILITY_OR_HOME_LOC)
-			+ fluidRowLocs(DHIMSFACILITY_OR_HOME_LOC)
 			+ fluidRowLocs(CaseDataDto.REGION, CaseDataDto.DISTRICT, CaseDataDto.COMMUNITY)
 			+ fluidRowLocs(FACILITY_TYPE_GROUP_LOC, CaseDataDto.FACILITY_TYPE)
 			+ fluidRowLocs(CaseDataDto.HEALTH_FACILITY, CaseDataDto.HEALTH_FACILITY_DETAILS)
 			+ fluidRowLocs(6, CaseDataDto.HOME_ADDRESS_RECREATIONAL)
-			+ fluidRowLocs(6,CaseDataDto.AFP_FACILITY_OPTIONS)
 			+ fluidRowLocs(CaseDataDto.DHIMS_FACILITY_TYPE, CaseDataDto.HOSPITAL_NAME)
 			+ fluidRowLocs(DIFFERENT_POINT_OF_ENTRY_JURISDICTION)
 			+ fluidRowLocs(POINT_OF_ENTRY_REGION, POINT_OF_ENTRY_DISTRICT)
@@ -312,46 +307,12 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		getContent().addComponent(facilityType, CaseDataDto.FACILITY_TYPE);
 		facilityCombo = addInfrastructureField(CaseDataDto.HEALTH_FACILITY);
 		facilityCombo.setImmediate(true);
-		ComboBox afpFacilityOptions = addField(CaseDataDto.AFP_FACILITY_OPTIONS, ComboBox.class);
-		afpFacilityOptions.setVisible(false);
 		TextField facilityDetails = addField(CaseDataDto.HEALTH_FACILITY_DETAILS, TextField.class);
 		facilityDetails.setVisible(false);
 		ComboBox cbPointOfEntry = addInfrastructureField(CaseDataDto.POINT_OF_ENTRY);
 		cbPointOfEntry.setImmediate(true);
 		TextField tfPointOfEntryDetails = addField(CaseDataDto.POINT_OF_ENTRY_DETAILS, TextField.class);
 		tfPointOfEntryDetails.setVisible(false);
-
-		dhimsFacilityOrHome =
-				addCustomField(DHIMSFACILITY_OR_HOME_LOC, TypeOfAbode.class, NullableOptionGroup.class, I18nProperties.getCaption(Captions.casePlaceOfStay));
-		dhimsFacilityOrHome.setVisible(false);
-		dhimsFacilityOrHome.removeAllItems();
-
-		for(TypeOfAbode place : TypeOfAbode.FOR_DHIMS_CASES){
-			dhimsFacilityOrHome.addItem(place);
-			dhimsFacilityOrHome.setItemCaption(place, I18nProperties.getEnumCaption(place));
-		}
-		dhimsFacilityOrHome.setItemCaptionMode(ItemCaptionMode.EXPLICIT);
-		dhimsFacilityOrHome.setId("dhimsFacilityOrHome");
-		dhimsFacilityOrHome.setWidth(100, Unit.PERCENTAGE);
-		CssStyles.style(dhimsFacilityOrHome, ValoTheme.OPTIONGROUP_HORIZONTAL);
-
-		dhimsFacilityType = ComboBoxHelper.createComboBoxV7();
-		dhimsFacilityType.setVisible(false);
-		for(DhimsFacility dhimsFacility : DhimsFacility.values()){
-			dhimsFacilityType.addItem(dhimsFacility);
-		}
-
-		dhimsFacilityType.setId("dhimsType");
-		dhimsFacilityType.setCaption("Facility Type");
-		dhimsFacilityType.setCaption(I18nProperties.getCaption(Captions.dhimsFacilityType));
-		dhimsFacilityType.setCaption(I18nProperties.getCaption(Captions.dhimsFacilityType));
-		dhimsFacilityType.setWidth(100, Unit.PERCENTAGE);
-
-		getContent().addComponent(dhimsFacilityType, CaseDataDto.DHIMS_FACILITY_TYPE);
-
-		hospitalName = addField(CaseDataDto.HOSPITAL_NAME, TextField.class);
-		hospitalName.setVisible(false);
-		hospitalName.setCaption("Please enter hospital name");
 
 		if (convertedTravelEntry != null) {
 			differentPointOfEntryJurisdiction.setValue(true);
@@ -412,6 +373,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 					|| ((facilityOrHome.getValue() instanceof java.util.Set) && TypeOfPlace.FACILITY.equals(facilityOrHome.getNullableValue()))) {
 				if (facilityTypeGroup.getValue() == null) {
 					facilityTypeGroup.setValue(FacilityTypeGroup.MEDICAL_FACILITY);
+					facilityType.setValue(FacilityType.HOSPITAL);
 				}
 				if (facilityType.getValue() == null && FacilityTypeGroup.MEDICAL_FACILITY.equals(facilityTypeGroup.getValue())) {
 					facilityType.setValue(FacilityType.HOSPITAL);
@@ -466,42 +428,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		facilityType.addValueChangeListener(e -> updateFacility());
 		region.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 
-		afpFacilityOptions.addValueChangeListener(e -> {
-			if(AFPFacilityOptions.Hospital.equals(afpFacilityOptions.getValue())){
-				hospitalName.setVisible(true);
-			} else {
-				hospitalName.setVisible(false);
-				hospitalName.clear();
-			}
-		});
-
-		dhimsFacilityOrHome.addValueChangeListener(e -> {
-			if (TypeOfAbode.DHIMS_FACILITY.equals(dhimsFacilityOrHome.getValue())
-					|| ((dhimsFacilityOrHome.getValue() instanceof java.util.Set) && TypeOfAbode.DHIMS_FACILITY.equals(dhimsFacilityOrHome.getNullableValue()))) {
-
-				if (dhimsFacilityType.getValue() == null) {
-					dhimsFacilityType.setValue(DhimsFacility.CHPS_COMPOUND);
-				}
-
-				dhimsFacilityType.addValueChangeListener(event -> {
-					if (DhimsFacility.HOSPITAL.equals(dhimsFacilityType.getValue())) {
-						hospitalName.setVisible(true);
-					} else {
-						hospitalName.setVisible(false);
-						hospitalName.clear();
-					}
-				});
-
-
-			} else if (TypeOfAbode.HOME.equals(dhimsFacilityOrHome.getValue())
-					|| ((dhimsFacilityOrHome.getValue() instanceof java.util.Set) && TypeOfAbode.HOME.equals(dhimsFacilityOrHome.getNullableValue()))) {
-				setNoneFacility();
-				dhimsFacilityType.clear();
-			}
-		});
-
-		region.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
-
 		OptionGroup caseTransmissionClassification = addField(CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
 		//caseTransmissionClassification.setRequired(false);
 		caseTransmissionClassification.setVisible(false);
@@ -547,7 +473,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 					if (userJurisdictionLevel != JurisdictionLevel.HEALTH_FACILITY) {
 						facilityOrHome.clear();
 						//setRequired(false, FACILITY_OR_HOME_LOC, FACILITY_TYPE_GROUP_LOC, CaseDataDto.FACILITY_TYPE, CaseDataDto.HEALTH_FACILITY);
-						setRequired(false, DHIMSFACILITY_OR_HOME_LOC, CaseDataDto.DHIMS_FACILITY_TYPE);
+//						setRequired(false, DHIMSFACILITY_OR_HOME_LOC, CaseDataDto.DHIMS_FACILITY_TYPE);
 					}
 					updatePointOfEntryFields(cbPointOfEntry, tfPointOfEntryDetails);
 				}
@@ -622,10 +548,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			this.getValue().setFacilityType((FacilityType) facilityType.getValue());
 		});
 
-		dhimsFacilityType.addValueChangeListener(e -> {
-			this.getValue().setDhimsFacilityType((DhimsFacility) dhimsFacilityType.getValue());
-		});
-
 		cbPointOfEntry.addValueChangeListener(e -> {
 			updatePointOfEntryFields(cbPointOfEntry, tfPointOfEntryDetails);
 		});
@@ -650,36 +572,36 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			ogCaseOrigin.setVisible(disease != Disease.CSM);
 
 			if(disease == Disease.AFP){
-				afpFacilityOptions.setVisible(true);
+//				afpFacilityOptions.setVisible(true);
 				caseTransmissionClassification.setVisible(false);
-				dhimsFacilityOrHome.setVisible(false);
-				dhimsFacilityType.setVisible(false);
+//				dhimsFacilityOrHome.setVisible(false);
+//				dhimsFacilityType.setVisible(false);
 				homeaddrecreational.setVisible(true);
 			}
 
 			if(disease == Disease.YELLOW_FEVER){
-				setRequired(true, DHIMSFACILITY_OR_HOME_LOC);
-				setRequired(true, CaseDataDto.DHIMS_FACILITY_TYPE);
-				afpFacilityOptions.setVisible(false);
+//				setRequired(true, DHIMSFACILITY_OR_HOME_LOC);
+//				setRequired(true, CaseDataDto.DHIMS_FACILITY_TYPE);
+//				afpFacilityOptions.setVisible(false);
 			}
 			if(disease == Disease.AHF) {
-				setRequired(true, DHIMSFACILITY_OR_HOME_LOC);
-				setRequired(true, CaseDataDto.DHIMS_FACILITY_TYPE);
-				afpFacilityOptions.setVisible(false);
+//				setRequired(true, DHIMSFACILITY_OR_HOME_LOC);
+//				setRequired(true, CaseDataDto.DHIMS_FACILITY_TYPE);
+//				afpFacilityOptions.setVisible(false);
 			}
 
 			if(disease == Disease.CSM){
-				setRequired(true, DHIMSFACILITY_OR_HOME_LOC);
-				setRequired(true, CaseDataDto.DHIMS_FACILITY_TYPE);
+//				setRequired(true, DHIMSFACILITY_OR_HOME_LOC);
+//				setRequired(true, CaseDataDto.DHIMS_FACILITY_TYPE);
 				caseTransmissionClassification.setVisible(true);
-				afpFacilityOptions.setVisible(false);
+//				afpFacilityOptions.setVisible(false);
 			}
 
 			if(disease == Disease.NEW_INFLUENZA){
-				setVisible(false, DHIMSFACILITY_OR_HOME_LOC);
+//				setVisible(false, DHIMSFACILITY_OR_HOME_LOC);
 				setVisible(false, CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION);
-				afpFacilityOptions.setVisible(false);
-				hospitalName.setVisible(true);
+//				afpFacilityOptions.setVisible(false);
+//				hospitalName.setVisible(true);
 			}
 
 			if (disease == Disease.MEASLES) {
@@ -694,8 +616,8 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			}
 
 			investigated.setVisible(disease == Disease.NEW_INFLUENZA);
-			dhimsFacilityOrHome.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.CSM);
-			dhimsFacilityType.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF  || disease == Disease.CSM);
+//			dhimsFacilityOrHome.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.CSM);
+//			dhimsFacilityType.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF  || disease == Disease.CSM);
 
 			personCreateForm.updatePresentConditionEnum((Disease) valueChangeEvent.getProperty().getValue());
 
@@ -740,11 +662,11 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			return;
 		}
 
-		Object dhimsFacilityOrHomeValue = dhimsFacilityOrHome.isRequired() ? dhimsFacilityOrHome.getValue() : dhimsFacilityOrHome.getNullableValue();
-		if (TypeOfAbode.HOME.equals(dhimsFacilityOrHomeValue)) {
-			setNoneFacility();
-			return;
-		}
+//		Object dhimsFacilityOrHomeValue = dhimsFacilityOrHome.isRequired() ? dhimsFacilityOrHome.getValue() : dhimsFacilityOrHome.getNullableValue();
+//		if (TypeOfAbode.HOME.equals(dhimsFacilityOrHomeValue)) {
+//			setNoneFacility();
+//			return;
+//		}
 
 		FieldHelper.removeItems(facilityCombo);
 

@@ -297,10 +297,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private ComboBox districtCombo;
 	private ComboBox communityCombo;
 	private OptionGroup facilityOrHome;
-	private OptionGroup dhimsFacilityOrHome;
+//	private OptionGroup dhimsFacilityOrHome;
 	private ComboBox facilityTypeGroup;
 	private ComboBox facilityTypeCombo;
-	private ComboBox dhimsFacilityTypeCombo;
+//	private ComboBox dhimsFacilityTypeCombo;
 	private ComboBox facilityCombo;
 	private TextField facilityDetails;
 	private boolean quarantineChangedByFollowUpUntilChange = false;
@@ -862,18 +862,18 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		facilityDetails = addField(CaseDataDto.HEALTH_FACILITY_DETAILS, TextField.class);
 		facilityDetails.setVisible(false);
 
-		dhimsFacilityOrHome = new OptionGroup(I18nProperties.getCaption(Captions.casePlaceOfStay), TypeOfAbode.FOR_DHIMS_CASES);
-		dhimsFacilityOrHome.setId("dhimsFacilityOrHome");
-		dhimsFacilityOrHome.setWidth(100, Unit.PERCENTAGE);
-		CssStyles.style(dhimsFacilityOrHome, ValoTheme.OPTIONGROUP_HORIZONTAL);
-		getContent().addComponent(dhimsFacilityOrHome, DHIMSFACILITY_OR_HOME_LOC);
-
-		dhimsFacilityTypeCombo = ComboBoxHelper.createComboBoxV7();
-		for(DhimsFacility dhimsFacility : DhimsFacility.values()){
-			dhimsFacilityTypeCombo.addItem(dhimsFacility);
-		}
-
-		dhimsFacilityTypeCombo = addField(CaseDataDto.DHIMS_FACILITY_TYPE);
+//		dhimsFacilityOrHome = new OptionGroup(I18nProperties.getCaption(Captions.casePlaceOfStay), TypeOfAbode.FOR_DHIMS_CASES);
+//		dhimsFacilityOrHome.setId("dhimsFacilityOrHome");
+//		dhimsFacilityOrHome.setWidth(100, Unit.PERCENTAGE);
+//		CssStyles.style(dhimsFacilityOrHome, ValoTheme.OPTIONGROUP_HORIZONTAL);
+//		getContent().addComponent(dhimsFacilityOrHome, DHIMSFACILITY_OR_HOME_LOC);
+//
+//		dhimsFacilityTypeCombo = ComboBoxHelper.createComboBoxV7();
+//		for(DhimsFacility dhimsFacility : DhimsFacility.values()){
+//			dhimsFacilityTypeCombo.addItem(dhimsFacility);
+//		}
+//
+//		dhimsFacilityTypeCombo = addField(CaseDataDto.DHIMS_FACILITY_TYPE);
 
 		hospitalName = addField(CaseDataDto.HOSPITAL_NAME, TextField.class);
 		hospitalName.setCaption("Hospital Name");
@@ -934,25 +934,25 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			setReadOnly(!UserProvider.getCurrent().hasUserRight(UserRight.CASE_SHARE), CaseDataDto.SHARED_TO_COUNTRY);
 		}
 
-		dhimsFacilityOrHome.addValueChangeListener(e -> {
-			//FieldHelper.removeItems(facilityCombo);
-			if (TypeOfAbode.DHIMS_FACILITY.equals(dhimsFacilityOrHome.getValue())) {
-				// switched from home to facility
-
-				if (dhimsFacilityTypeCombo.getValue() == null) {
-					dhimsFacilityTypeCombo.setValue(DhimsFacility.CHPS_COMPOUND);
-				}
-
-			} else {
-				// switched from facility to home
-				if (!facilityCombo.isReadOnly()) {
-					FacilityReferenceDto noFacilityRef = FacadeProvider.getFacilityFacade().getByUuid(FacilityDto.NONE_FACILITY_UUID).toReference();
-					facilityCombo.addItem(noFacilityRef);
-					facilityCombo.setValue(noFacilityRef);
-				}
-				dhimsFacilityTypeCombo.clear();
-			}
-		});
+//		dhimsFacilityOrHome.addValueChangeListener(e -> {
+//			//FieldHelper.removeItems(facilityCombo);
+//			if (TypeOfAbode.DHIMS_FACILITY.equals(dhimsFacilityOrHome.getValue())) {
+//				// switched from home to facility
+//
+//				if (dhimsFacilityTypeCombo.getValue() == null) {
+//					dhimsFacilityTypeCombo.setValue(DhimsFacility.CHPS_COMPOUND);
+//				}
+//
+//			} else {
+//				// switched from facility to home
+//				if (!facilityCombo.isReadOnly()) {
+//					FacilityReferenceDto noFacilityRef = FacadeProvider.getFacilityFacade().getByUuid(FacilityDto.NONE_FACILITY_UUID).toReference();
+//					facilityCombo.addItem(noFacilityRef);
+//					facilityCombo.setValue(noFacilityRef);
+//				}
+//				dhimsFacilityTypeCombo.clear();
+//			}
+//		});
 
 
 		ComboBox pointOfEntry = addInfrastructureField(CaseDataDto.POINT_OF_ENTRY, false);
@@ -1324,12 +1324,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		}
 		FieldHelper.setVisibleWhen(
 			facilityOrHome,
-			Arrays.asList(facilityTypeGroup, facilityTypeCombo, facilityCombo),
+			Arrays.asList(facilityTypeCombo, facilityCombo),
 			Collections.singletonList(TypeOfPlace.FACILITY),
 			false);
 		FieldHelper.setRequiredWhen(
 			facilityOrHome,
-			Arrays.asList(facilityTypeGroup, facilityTypeCombo, facilityCombo),
+			Arrays.asList(facilityTypeCombo, facilityCombo),
 			Collections.singletonList(TypeOfPlace.FACILITY),
 			false,
 			null);
@@ -1507,7 +1507,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			facilityTypeGroup.setReadOnly(facilityTypeCombo.isReadOnly());
 			facilityOrHome.setReadOnly(facilityTypeCombo.isReadOnly());
 
-			dhimsFacilityOrHome.setReadOnly(dhimsFacilityTypeCombo.isReadOnly());
+//			dhimsFacilityOrHome.setReadOnly(dhimsFacilityTypeCombo.isReadOnly());
 
 			// Hide case origin from port health users
 			if (UserProvider.getCurrent().isPortHealthUser()) {
@@ -1593,10 +1593,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				setVisible(false, CaseDataDto.VACCINATION_STATUS);
 				setVisible(false, DHIMSFACILITY_OR_HOME_LOC, CaseDataDto.CLINICIAN_NAME, CaseDataDto.CLINICIAN_EMAIL, CaseDataDto.CLINICIAN_PHONE);
 
-				if (dhimsFacilityTypeCombo.getValue() != null && hospitalName.getValue() == null) {
-					setVisible(false, CaseDataDto.HOSPITAL_NAME);
-
-				}
+//				if (dhimsFacilityTypeCombo.getValue() != null && hospitalName.getValue() == null) {
+//					setVisible(false, CaseDataDto.HOSPITAL_NAME);
+//
+//				}
 
 			}
 
@@ -1664,7 +1664,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				setVisible(false, DHIMSFACILITY_OR_HOME_LOC, CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION);
 				hospitalName.setVisible(true);
 				nationalLevelDate.setVisible(true);
-				dhimsFacilityTypeCombo.setVisible(false);
+//				dhimsFacilityTypeCombo.setVisible(false);
 				afpFacilityOptions.setVisible(false);
 			}
 		});
@@ -2023,16 +2023,16 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			}
 		}
 
-			if (TypeOfAbode.HOME.equals(dhimsFacilityOrHome.getValue())) {
-				FacilityReferenceDto noFacilityRef = FacadeProvider.getFacilityFacade().getByUuid(FacilityDto.NONE_FACILITY_UUID).toReference();
-				facilityCombo.addItem(noFacilityRef);
-				boolean readOnly = facilityCombo.isReadOnly();
-				facilityCombo.setReadOnly(false);
-				facilityCombo.setValue(noFacilityRef);
-				facilityCombo.setReadOnly(readOnly);
-			} else {
-				FieldHelper.removeItems(facilityCombo);
-			}
+//			if (TypeOfAbode.HOME.equals(dhimsFacilityOrHome.getValue())) {
+//				FacilityReferenceDto noFacilityRef = FacadeProvider.getFacilityFacade().getByUuid(FacilityDto.NONE_FACILITY_UUID).toReference();
+//				facilityCombo.addItem(noFacilityRef);
+//				boolean readOnly = facilityCombo.isReadOnly();
+//				facilityCombo.setReadOnly(false);
+//				facilityCombo.setValue(noFacilityRef);
+//				facilityCombo.setReadOnly(readOnly);
+//			} else {
+//				FieldHelper.removeItems(facilityCombo);
+//			}
 		}
 
 	@Override
