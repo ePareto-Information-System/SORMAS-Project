@@ -71,7 +71,7 @@ public enum SampleMaterial {
 	SERUM,
 	POST_MORTEM_LIVER_SPECIMEN,
 	PLASMA_SERUM,
-	OTHER;
+	OTHER, OROPHARYNGEAL_SWAB;
 
 	//getYellowFeverMateriealTypes
 	public static SampleMaterial[] getYellowFeverMateriealTypes() {

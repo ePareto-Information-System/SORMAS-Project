@@ -104,6 +104,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String REQUESTED_PATHOGEN_TESTS = "requestedPathogenTests";
 	public static final String REQUESTED_SAMPLE_MATERIALS = "requestedSampleMaterials";
 	public static final String SAMPLE_TESTS = "sampleTests";
+//	public static final String SAMPLE_DISEASE_TESTS = "sampleDiseaseTests";
 	public static final String SAMPLE_DISPATCH_MODE = "sampleDispatchMode";
 	public static final String SAMPLE_DISPATCH_DATE = "sampleDispatchDate";
 	public static final String REQUESTED_ADDITIONAL_TESTS = "requestedAdditionalTests";
@@ -185,6 +186,13 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String FINAL_LAB_RESULTS = "finalLabResults";
 	public static final String IMMUNOCOMPROMISED_STATUS_SUSPECTED = "immunocompromisedStatusSuspected";
 	public static final String AFP_FINAL_CLASSIFICATION = "afpFinalClassification";
+	public static final String POSITIVE_VIRAL_CULTURE = "positiveViralCulture";
+	public static final String POSITIVE_REAL_TIME = "positiveRealTime";
+	public static final String FOUR_FOLD_RISE = "fourFoldRise";
+	public static final String INFLUENZA_VIRUS = "influenzaVirus";
+	public static final String OTHER_INFLUENZA_VIRUS = "otherInfluenzaVirus";
+	public static final String TREATMENT = "treatment";
+	public static final String STATE_TREATMENT_ADMINISTERED = "stateTreatmentAdministered";
 
 
 	private CaseReferenceDto associatedCase;
@@ -241,7 +249,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private SampleReferenceDto referredTo;
 	private boolean shipped;
 	private boolean sampleMaterialTypeForYF;
-	private boolean sampleDiseaseTests;
+//	private boolean sampleDiseaseTests;
 	private boolean received;
 	private PathogenTestResultType pathogenTestResult;
 
@@ -364,6 +372,13 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private Date dateFollowUpExam;
 	private InjectionSite residualAnalysis;
 	private AfpResult resultExam;
+	private YesNo positiveViralCulture;
+	private YesNo positiveRealTime;
+	private YesNo fourFoldRise;
+	private InfluenzaVirus influenzaVirus;
+	private String otherInfluenzaVirus;
+	private String treatment;
+	private String stateTreatmentAdministered;
 
 
 
@@ -774,14 +789,14 @@ public class SampleDto extends SormasToSormasShareableDto {
 		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
 	}
 
-	@ImportIgnore
+	/*@ImportIgnore
 	public boolean isDiseaseSampleTests() {
 		return sampleDiseaseTests;
 	}
 
 	public void setDiseaseSampleTests(boolean sampleDiseaseTests) {
 		this.sampleDiseaseTests = sampleDiseaseTests;
-	}
+	}*/
 
 	@ImportIgnore
 	public Boolean getAdditionalTestingRequested() {
@@ -930,7 +945,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 		target.setPathogenTestingRequested(source.getPathogenTestingRequested());
 		target.setSampleMaterialTestingRequested(source.getSampleMaterialTestingRequested());
 		target.setYellowFeverSampleType(source.isYellowFeverSampleType());
-		target.setDiseaseSampleTests(source.isDiseaseSampleTests());
+//		target.setDiseaseSampleTests(source.isDiseaseSampleTests());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());
 		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
@@ -1023,6 +1038,13 @@ public class SampleDto extends SormasToSormasShareableDto {
 		target.setDateFollowUpExam(source.getDateFollowUpExam());
 		target.setResidualAnalysis(source.getResidualAnalysis());
 		target.setResultExam(source.getResultExam());
+		target.setPositiveViralCulture(source.getPositiveViralCulture());
+		target.setPositiveRealTime(source.getPositiveRealTime());
+		target.setFourFoldRise(source.getFourFoldRise());
+		target.setOtherInfluenzaVirus(source.getOtherInfluenzaVirus());
+		target.setInfluenzaVirus(source.getInfluenzaVirus());
+		target.setTreatment(source.getTreatment());
+		target.setStateTreatmentAdministered(source.getStateTreatmentAdministered());
 
 
 
@@ -1581,5 +1603,61 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 	public void setResultExam(AfpResult resultExam) {
 		this.resultExam = resultExam;
+	}
+
+	public YesNo getPositiveViralCulture() {
+		return positiveViralCulture;
+	}
+
+	public void setPositiveViralCulture(YesNo positiveViralCulture) {
+		this.positiveViralCulture = positiveViralCulture;
+	}
+
+	public YesNo getPositiveRealTime() {
+		return positiveRealTime;
+	}
+
+	public void setPositiveRealTime(YesNo positiveRealTime) {
+		this.positiveRealTime = positiveRealTime;
+	}
+
+	public YesNo getFourFoldRise() {
+		return fourFoldRise;
+	}
+
+	public void setFourFoldRise(YesNo fourFoldRise) {
+		this.fourFoldRise = fourFoldRise;
+	}
+
+	public InfluenzaVirus getInfluenzaVirus() {
+		return influenzaVirus;
+	}
+
+	public void setInfluenzaVirus(InfluenzaVirus influenzaVirus) {
+		this.influenzaVirus = influenzaVirus;
+	}
+
+	public String getOtherInfluenzaVirus() {
+		return otherInfluenzaVirus;
+	}
+
+	public void setOtherInfluenzaVirus(String otherInfluenzaVirus) {
+		this.otherInfluenzaVirus = otherInfluenzaVirus;
+	}
+
+	public String getTreatment() {
+		return treatment;
+	}
+
+	public void setTreatment(String treatment) {
+		this.treatment = treatment;
+	}
+
+	public String getStateTreatmentAdministered() {
+		return stateTreatmentAdministered;
+	}
+
+	public void setStateTreatmentAdministered(String stateTreatmentAdministered) {
+		this.stateTreatmentAdministered = stateTreatmentAdministered;
 	}
 }

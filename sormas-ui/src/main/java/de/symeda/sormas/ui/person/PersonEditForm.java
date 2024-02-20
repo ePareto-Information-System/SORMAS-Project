@@ -24,13 +24,19 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 import static de.symeda.sormas.ui.utils.LayoutUtil.oneOfFourCol;
 import static de.symeda.sormas.ui.utils.LayoutUtil.oneOfTwoCol;
 import static de.symeda.sormas.ui.utils.CssStyles.*;
+import static de.symeda.sormas.ui.utils.LayoutUtil.divsCss;
+import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumnLocCss;
+import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRow;
+import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
+import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
+import static de.symeda.sormas.ui.utils.LayoutUtil.oneOfFourCol;
+import static de.symeda.sormas.ui.utils.LayoutUtil.oneOfTwoCol;
 import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 
 import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import de.symeda.sormas.api.infrastructure.cadre.CadreReferenceDto;
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.person.*;
 import de.symeda.sormas.ui.utils.*;
@@ -260,12 +266,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		getContent().addComponent(contactInformationHeader, CONTACT_INFORMATION_HEADER);
 		addFields();
 	}
-	
+
 	@Override
 	protected void addFields() {
-
-		List<CadreReferenceDto> cadres = FacadeProvider.getCadreFacade().getAllActiveAsReference();
-		addField(PersonDto.CADRE, ComboBox.class).addItems(cadres);
 
 		personInformationHeadingLabel = new Label(I18nProperties.getString(Strings.headingPersonInformation));
 		personInformationHeadingLabel.addStyleName(H3);
@@ -285,8 +288,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		}
 		addField(PersonDto.SEX, sexComboBox);
 		addField(PersonDto.BIRTH_NAME, TextField.class);
-		/*TextField otherNote = addField(CaseDataDto.ADDITIONAL_DETAILS, TextField.class);
-		otherNote.setVisible(false);*/
 
 		if (caseOrigin == CaseOrigin.IN_COUNTRY) {
 			setVisible(false, PersonDto.PASSPORT_NUMBER);
@@ -361,6 +362,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		ComboBox burialConductor = addField(PersonDto.BURIAL_CONDUCTOR, ComboBox.class);
 
 		addressForm = addField(PersonDto.ADDRESS, LocationEditForm.class);
+
 		addressForm.setOnlyUnknownForCSM(disease);
 		addressForm.setOnlyUnknownForAFP(disease);
 		addressForm.setOnlyUnknownForInfluenza(disease);
@@ -383,18 +385,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 //			occupationTypeDetailsField.setVisible(occupationType != null && occupationType.matchPropertyValue(OccupationType.HAS_DETAILS, true));
 //		});
 
-		// addFields(PersonDto.ARMED_FORCES_RELATION_TYPE, PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS);
-		// ComboBox occupationTypeField = addField(PersonDto.OCCUPATION_TYPE, ComboBox.class);
-		// TextField occupationTypeDetailsField = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
-		// occupationTypeDetailsField.setVisible(false);
-		// FieldHelper
-		// 	.updateItems(occupationTypeField, FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.OCCUPATION_TYPE, null));
-		// occupationTypeField.addValueChangeListener(e -> {
-		// 	OccupationType occupationType = (OccupationType) e.getProperty().getValue();
-		// 	occupationTypeDetailsField.setVisible(occupationType != null && occupationType.matchPropertyValue(OccupationType.HAS_DETAILS, true));
-		// });
-
-		//addFields(PersonDto.ARMED_FORCES_RELATION_TYPE);
 		ComboBox educationType = addField(PersonDto.EDUCATION_TYPE, ComboBox.class);
 		educationType.removeItem(EducationType.NURSERY);
 		TextField educationDetails = addField(PersonDto.EDUCATION_DETAILS, TextField.class);
@@ -471,10 +461,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
 
-//		if (!getField(PersonDto.OCCUPATION_TYPE).isVisible()
-//				&& !getField(PersonDto.ARMED_FORCES_RELATION_TYPE).isVisible()
-//				&& !getField(PersonDto.EDUCATION_TYPE).isVisible())
-//			occupationHeader.setVisible(false);
 		if (!getField(PersonDto.ADDRESS).isVisible())
 			addressHeader.setVisible(false);
 		if (!getField(PersonDto.ADDRESSES).isVisible())
@@ -482,7 +468,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		contactInformationHeader.setVisible(false);
 		homeaddrecreational.setVisible(true);
 
-//		}
 
 		FieldHelper.setRequiredWhenNotNull(getFieldGroup(), PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE);
 		addFieldListeners(PersonDto.APPROXIMATE_AGE, e -> {
@@ -620,12 +605,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		getContent().addComponent(generalCommentLabel, GENERAL_COMMENT_LOC);
 
 
-		TextArea additionalDetails = addField(PersonDto.ADDITIONAL_DETAILS, TextArea.class, new ResizableTextAreaWrapper<>(false));
+		TextArea additionalDetails = addField(PersonDto.ADDITIONAL_DETAILS, TextArea.class);
 		additionalDetails.setRows(6);
-		additionalDetails.setDescription(
-				I18nProperties.getPrefixDescription(PersonDto.I18N_PREFIX, PersonDto.ADDITIONAL_DETAILS, "") + "\n"
-						+ I18nProperties.getDescription(Descriptions.descGdpr));
-		CssStyles.style(additionalDetails, CssStyles.CAPTION_HIDDEN);
 
 		if (disease == Disease.CSM) {
 			generalCommentLabel.setVisible(false);
@@ -650,16 +631,15 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			addressesHeader.setVisible(false);
 			contactInformationHeader.setVisible(false);
 			homeaddrecreational.setVisible(true);
-//			occuDetails.setVisible(false);
 
 		}
 
 		TextField occuDetails = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
 		occuDetails.setCaption("Please Specify Occupation");
 
-			addressesHeader.setVisible(false);
-			contactInformationHeader.setVisible(false);
-			homeaddrecreational.setVisible(false);
+		addressesHeader.setVisible(false);
+		contactInformationHeader.setVisible(false);
+		homeaddrecreational.setVisible(false);
 
 		setFieldsVisible(false,
 				deathDate,
@@ -826,7 +806,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		if (this.disease != null || FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease() != null) {
 			Disease disease = this.disease != null ? this.disease : FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease();
 			if (disease == Disease.AHF) {
-				// If the disease is AHF, restrict valid values to ALIVE and UNKNOWN
 				List<PresentCondition> validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);
 				FieldHelper.updateEnumData(presentConditionField, validValues);
 			} else if (disease == Disease.AFP) {

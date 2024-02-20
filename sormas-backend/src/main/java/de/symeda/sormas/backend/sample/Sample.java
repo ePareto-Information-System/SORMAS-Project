@@ -104,7 +104,17 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public static final String SAMPLING_REASON_DETAILS = "samplingReasonDetails";
 	public static final String SORMAS_TO_SORMAS_ORIGIN_INFO = "sormasToSormasOriginInfo";
 	public static final String SORMAS_TO_SORMAS_SHARES = "sormasToSormasShares";
-
+	public static final String PATHOGEN_TEST_COUNT = "pathogenTestCount";
+	public static final String SAMPLE_TESTS = "sampleTests";
+	public static final String SAMPLE_DISPATCH_MODE = "sampleDispatchMode";
+	public static final String SAMPLE_DISPATCH_DATE = "sampleDispatchDate";
+	public static final String REQUESTED_ADDITIONAL_TESTS = "requestedAdditionalTests";
+	public static final String DELETION_REASON = "deletionReason";
+	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
+	public static final String IPSAMPLESENT = "ipSampleSent";
+	public static final String IPSAMPLERESULTS = "ipSampleResults";
+//	public static final String SAMPLE_DISEASE_TESTS = "sampleDiseaseTests";
+	public static final String DISEASE = "disease";
 	public static final String CSF_SAMPLE_COLLECTED = "csfSampleCollected";
 	public static final String CSF_REASON = "csfReason";
 	public static final String APPEARANCE_OF_CSF = "appearanceOfCsf";
@@ -311,7 +321,14 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private Date dateFollowUpExam;
 	private InjectionSite residualAnalysis;
 	private AfpResult resultExam;
-
+	private YesNo positiveViralCulture;
+	private YesNo positiveRealTime;
+	private YesNo fourFoldRise;
+	private InfluenzaVirus influenzaVirus;
+	private String otherInfluenzaVirus;
+	private String treatment;
+	private String stateTreatmentAdministered;
+	private Long pathogenTestCount;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	public Case getAssociatedCase() {
@@ -819,7 +836,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public YesNo getIpSampleSent() {
 		return ipSampleSent;
 	}
-
+	@Column
 	public Date getSampleDispatchDate() {
 		return sampleDispatchDate;
 	}
@@ -918,42 +935,47 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setSampleReports(List<SampleReport> externalMessages) {
 		this.sampleReports = externalMessages;
 	}
+	@Enumerated(EnumType.STRING)
 	public YesNo getCsfSampleCollected() {
 		return csfSampleCollected;
 	}
 	public void setCsfSampleCollected(YesNo csfSampleCollected) {
 		this.csfSampleCollected = csfSampleCollected;
 	}
+	@Enumerated(EnumType.STRING)
 	public YesNo getRdtPerformed() {
 		return rdtPerformed;
 	}
 	public void setRdtPerformed(YesNo rdtPerformed) {
 		this.rdtPerformed = rdtPerformed;
 	}
+	@Enumerated(EnumType.STRING)
 	public YesNo getSampleSentToLab() {
 		return sampleSentToLab;
 	}
 	public void setSampleSentToLab(YesNo sampleSentToLab) {
 		this.sampleSentToLab = sampleSentToLab;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public CsfReason getCsfReason() {
 		return csfReason;
 	}
 	public void setCsfReason(CsfReason csfReason) {
 		this.csfReason = csfReason;
 	}
+	@Enumerated(EnumType.STRING)
 	public CsfAppearance getAppearanceOfCsf() {return appearanceOfCsf; }
 	public void setAppearanceOfCsf(CsfAppearance appearanceOfCsf) {
 		this.appearanceOfCsf = appearanceOfCsf;
 	}
+	@Enumerated(EnumType.STRING)
 	public SampleContainerUsed getSampleContainerUsed() {
 		return sampleContainerUsed;
 	}
 	public void setSampleContainerUsed(SampleContainerUsed sampleContainerUsed) {
 		this.sampleContainerUsed = sampleContainerUsed;
 	}
-
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getRdtResults() {
 		return rdtResults;
 	}
@@ -961,7 +983,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setRdtResults(String rdtResults) {
 		this.rdtResults = rdtResults;
 	}
-
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getReasonNotSentToLab() {
 		return reasonNotSentToLab;
 	}
@@ -969,6 +991,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setReasonNotSentToLab(String reasonNotSentToLab) {
 		this.reasonNotSentToLab = reasonNotSentToLab;
 	}
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getNameOfPerson() {
 		return nameOfPerson;
 	}
@@ -976,6 +999,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setNameOfPerson(String nameOfPerson) {
 		this.nameOfPerson = nameOfPerson;
 	}
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getTelNumber() {
 		return telNumber;
 	}
@@ -983,7 +1007,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setTelNumber(String telNumber) {
 		this.telNumber = telNumber;
 	}
-
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public Date getInoculationTimeTransportMedia() {
 		return inoculationTimeTransportMedia;
 	}
@@ -991,7 +1015,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setInoculationTimeTransportMedia(Date inoculationTimeTransportMedia) {
 		this.inoculationTimeTransportMedia = inoculationTimeTransportMedia;
 	}
-
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public Date getDistrictNotificationDate() {
 		return districtNotificationDate;
 	}
@@ -999,7 +1023,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setDistrictNotificationDate(Date districtNotificationDate) {
 		this.districtNotificationDate = districtNotificationDate;
 	}
-
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public Date getDateSampleSentToLab() {
 		return dateSampleSentToLab;
 	}
@@ -1007,7 +1031,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setDateSampleSentToLab(Date dateSampleSentToLab) {
 		this.dateSampleSentToLab = dateSampleSentToLab;
 	}
-
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public Date getDateFormSentToDistrict() {
 		return dateFormSentToDistrict;
 	}
@@ -1015,7 +1039,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setDateFormSentToDistrict(Date dateFormSentToDistrict) {
 		this.dateFormSentToDistrict = dateFormSentToDistrict;
 	}
-
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public Date getDateFormReceivedAtDistrict() {
 		return dateFormReceivedAtDistrict;
 	}
@@ -1023,7 +1047,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setDateFormReceivedAtDistrict(Date dateFormReceivedAtDistrict) {
 		this.dateFormReceivedAtDistrict = dateFormReceivedAtDistrict;
 	}
-
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public Date getDateFormSentToRegion() {
 		return dateFormSentToRegion;
 	}
@@ -1031,7 +1055,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setDateFormSentToRegion(Date dateFormSentToRegion) {
 		this.dateFormSentToRegion = dateFormSentToRegion;
 	}
-
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public Date getDateFormReceivedAtRegion() {
 		return dateFormReceivedAtRegion;
 	}
@@ -1039,7 +1063,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setDateFormReceivedAtRegion(Date dateFormReceivedAtRegion) {
 		this.dateFormReceivedAtRegion = dateFormReceivedAtRegion;
 	}
-
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public Date getDateFormSentToNational() {
 		return dateFormSentToNational;
 	}
@@ -1047,7 +1071,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setDateFormSentToNational(Date dateFormSentToNational) {
 		this.dateFormSentToNational = dateFormSentToNational;
 	}
-
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public Date getDateFormReceivedAtNational() {
 		return dateFormReceivedAtNational;
 	}
@@ -1055,7 +1079,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setDateFormReceivedAtNational(Date dateFormReceivedAtNational) {
 		this.dateFormReceivedAtNational = dateFormReceivedAtNational;
 	}
-
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getLaboratoryName() {
 		return laboratoryName;
 	}
@@ -1175,7 +1199,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLaboratoryRdtResults(String laboratoryRdtResults) {
 		this.laboratoryRdtResults = laboratoryRdtResults;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public CaseClassification getLaboratoryFinalClassification() {
 		return laboratoryFinalClassification;
 	}
@@ -1191,7 +1215,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLaboratoryPcrType(String laboratoryPcrType) {
 		this.laboratoryPcrType = laboratoryPcrType;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public SampleContainerUsed getLaboratorySampleContainerReceived() {
 		return laboratorySampleContainerReceived;
 	}
@@ -1199,7 +1223,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLaboratorySampleContainerReceived(SampleContainerUsed laboratorySampleContainerReceived) {
 		this.laboratorySampleContainerReceived = laboratorySampleContainerReceived;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public SpecimenCondition getLaboratorySampleCondition() {
 		return laboratorySampleCondition;
 	}
@@ -1207,7 +1231,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLaboratorySampleCondition(SpecimenCondition laboratorySampleCondition) {
 		this.laboratorySampleCondition = laboratorySampleCondition;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public CsfAppearance getLaboratoryAppearanceOfCSF() {
 		return laboratoryAppearanceOfCSF;
 	}
@@ -1215,7 +1239,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLaboratoryAppearanceOfCSF(CsfAppearance laboratoryAppearanceOfCSF) {
 		this.laboratoryAppearanceOfCSF = laboratoryAppearanceOfCSF;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public LabTest getLaboratoryTestPerformed() {
 		return laboratoryTestPerformed;
 	}
@@ -1223,7 +1247,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLaboratoryTestPerformed(LabTest laboratoryTestPerformed) {
 		this.laboratoryTestPerformed = laboratoryTestPerformed;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public Gram getLaboratoryGram() {
 		return laboratoryGram;
 	}
@@ -1231,7 +1255,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLaboratoryGram(Gram laboratoryGram) {
 		this.laboratoryGram = laboratoryGram;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public YesNo getLaboratoryRdtPerformed() {
 		return laboratoryRdtPerformed;
 	}
@@ -1239,7 +1263,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLaboratoryRdtPerformed(YesNo laboratoryRdtPerformed) {
 		this.laboratoryRdtPerformed = laboratoryRdtPerformed;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public LatexCulture getLaboratoryLatex() {
 		return laboratoryLatex;
 	}
@@ -1247,7 +1271,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLaboratoryLatex(LatexCulture laboratoryLatex) {
 		this.laboratoryLatex = laboratoryLatex;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public LatexCulture getLaboratoryCulture() {
 		return laboratoryCulture;
 	}
@@ -1255,7 +1279,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLaboratoryCulture(LatexCulture laboratoryCulture) {
 		this.laboratoryCulture = laboratoryCulture;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public LatexCulture getLaboratoryPcrOptions() {
 		return laboratoryPcrOptions;
 	}
@@ -1263,7 +1287,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLaboratoryPcrOptions(LatexCulture laboratoryPcrOptions) {
 		this.laboratoryPcrOptions = laboratoryPcrOptions;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public Antibiogram getLaboratoryCeftriaxone() {
 		return laboratoryCeftriaxone;
 	}
@@ -1271,7 +1295,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLaboratoryCeftriaxone(Antibiogram laboratoryCeftriaxone) {
 		this.laboratoryCeftriaxone = laboratoryCeftriaxone;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public Antibiogram getLaboratoryPenicillinG() {
 		return laboratoryPenicillinG;
 	}
@@ -1279,7 +1303,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLaboratoryPenicillinG(Antibiogram laboratoryPenicillinG) {
 		this.laboratoryPenicillinG = laboratoryPenicillinG;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public Antibiogram getLaboratoryAmoxycillin() {
 		return laboratoryAmoxycillin;
 	}
@@ -1287,7 +1311,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLaboratoryAmoxycillin(Antibiogram laboratoryAmoxycillin) {
 		this.laboratoryAmoxycillin = laboratoryAmoxycillin;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public Antibiogram getLaboratoryOxacillin() {
 		return laboratoryOxacillin;
 	}
@@ -1295,7 +1319,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLaboratoryOxacillin(Antibiogram laboratoryOxacillin) {
 		this.laboratoryOxacillin = laboratoryOxacillin;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public Antibiogram getLaboratoryAntibiogramOther() {
 		return laboratoryAntibiogramOther;
 	}
@@ -1303,7 +1327,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLaboratoryAntibiogramOther(Antibiogram laboratoryAntibiogramOther) {
 		this.laboratoryAntibiogramOther = laboratoryAntibiogramOther;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public LabType getLaboratoryType() {
 		return laboratoryType;
 	}
@@ -1550,5 +1574,67 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setResultExam(AfpResult resultExam) {
 		this.resultExam = resultExam;
+	}
+
+	public YesNo getPositiveViralCulture() {
+		return positiveViralCulture;
+	}
+
+	public void setPositiveViralCulture(YesNo positiveViralCulture) {
+		this.positiveViralCulture = positiveViralCulture;
+	}
+
+	public YesNo getPositiveRealTime() {
+		return positiveRealTime;
+	}
+
+	public void setPositiveRealTime(YesNo positiveRealTime) {
+		this.positiveRealTime = positiveRealTime;
+	}
+
+	public YesNo getFourFoldRise() {
+		return fourFoldRise;
+	}
+
+	public void setFourFoldRise(YesNo fourFoldRise) {
+		this.fourFoldRise = fourFoldRise;
+	}
+
+	public InfluenzaVirus getInfluenzaVirus() {
+		return influenzaVirus;
+	}
+
+	public void setInfluenzaVirus(InfluenzaVirus influenzaVirus) {
+		this.influenzaVirus = influenzaVirus;
+	}
+
+	public String getOtherInfluenzaVirus() {
+		return otherInfluenzaVirus;
+	}
+	public void setOtherInfluenzaVirus(String otherInfluenzaVirus) {
+		this.otherInfluenzaVirus = otherInfluenzaVirus;
+	}
+	public String getTreatment() {
+		return treatment;
+	}
+
+	public void setTreatment(String treatment) {
+		this.treatment = treatment;
+	}
+
+	public String getStateTreatmentAdministered() {
+		return stateTreatmentAdministered;
+	}
+
+	public void setStateTreatmentAdministered(String stateTreatmentAdministered) {
+		this.stateTreatmentAdministered = stateTreatmentAdministered;
+	}
+
+	public Long getPathogenTestCount() {
+		return pathogenTestCount;
+	}
+
+	public void setPathogenTestCount(Long pathogenTestCount) {
+		this.pathogenTestCount = pathogenTestCount;
 	}
 }
