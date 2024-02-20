@@ -12891,5 +12891,9 @@ ALTER TABLE samples ADD COLUMN treatment varchar(255);
 ALTER TABLE samples ADD COLUMN statetreatmentadministered varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (559, 'Added influenzalabcolumns to samples');
+
+ALTER TABLE samples ADD COLUMN pathogentestcount varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (560, 'Added influenzalabcolumns to samples');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``

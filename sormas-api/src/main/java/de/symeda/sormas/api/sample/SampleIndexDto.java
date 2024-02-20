@@ -63,7 +63,9 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	public static final String PATHOGEN_TEST_RESULT = "pathogenTestResult";
 	public static final String ADDITIONAL_TESTING_STATUS = "additionalTestingStatus";
 	public static final String PATHOGEN_TEST_COUNT = "pathogenTestCount";
+	public static final String SAMPLE_TESTS = "sampleTests";
 
+	private String uuid;
 	@EmbeddedPersonalData
 	@EmbeddedSensitiveData
 	@Pseudonymizer(EmptyValuePseudonymizer.class)
@@ -102,48 +104,64 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	private DeletionReason deletionReason;
 	private String otherDeletionReason;
 	private PathogenTestType sampleTests;
-	private String diseaseSampleTests;
 	private SampleDispatchMode sampleDispatchMode;
 	private Date sampleDispatchDate;
-	private String sampleTestsString;
 	private String ipSampleSent;
 	private IpResult ipSampleResults;
+	private String fieldSampleID;
+	private String additionalTest;
+	private String community;
 
 	//@formatter:off
-	public SampleIndexDto(String uuid, String epidNumber, String labSampleId, Date sampleDateTime,
-						  boolean shipped, Date shipmentDate, boolean received, Date receivedDate,
+
+	//@formatter:off
+	public SampleIndexDto(String uuid, String epidNumber, String labSampleId, String fieldSampleId,
+						  Date sampleDateTime, boolean shipped, Date shipmentDate, boolean received, Date receivedDate,
 						  SampleMaterial sampleMaterial, SamplePurpose samplePurpose, SpecimenCondition specimenCondition,
 						  String labName, String referredSampleUuid,
 						  SamplingReason samplingReason, String samplingReasonDetails,
-						  String associatedCaseUuid, String associatedCaseFirstName, String associatedCaseLastName, String associatedCaseOtherName,
-						  String associatedContactUuid, String associatedContactFirstName, String associatedContactLastName, String associatedContactOtherName,
-						  String associatedEventParticipantUuid, String associatedEventParticipantFirstName, String associatedEventParticipantLastName, String associatedEventParticipantOtherName,
-						  Disease disease, String diseaseDetails, PathogenTestResultType pathogenTestResult, Boolean additionalTestingRequested, Boolean additionalTestPerformed,
-						  String districtName, String labUuid, Long pathogenTestCount,
-						  boolean isInJurisdiction, boolean isCaseInJurisdiction, boolean isContactInJurisdiction,  boolean isContactCaseInJurisdiction, boolean isEventParticipantInJurisdiction, PathogenTestType sampleTests,
-						  String diseaseSampleTests, SampleDispatchMode sampleDispatchMode, Date sampleDispatchDate, String sampleTestsString, String ipSampleSent, IpResult ipSampleResults) {
-	//@formatter:on
-
+						  String associatedCaseUuid, String associatedCaseFirstName, String associatedCaseLastName,
+						  String associatedContactUuid, String associatedContactFirstName, String associatedContactLastName,
+						  String associatedEventParticipantUuid, String associatedEventParticipantFirstName, String associatedEventParticipantLastName,
+						  Disease disease, String diseaseDetails, PathogenTestResultType pathogenTestResult,
+						  Boolean additionalTestingRequested,
+//						  String additionalTest,
+						  Boolean additionalTestPerformed, String district,String community, String labUuid, Long pathogenTestCount,
+						  boolean isInJurisdiction, boolean isCaseInJurisdiction,
+						  boolean isContactInJurisdiction,  boolean isContactCaseInJurisdiction, boolean isEventParticipantInJurisdiction) {
 		super(uuid);
+
+		//@formatter:on
+
+		this.uuid = uuid;
 		if (associatedCaseUuid != null) {
-			this.associatedCase = new CaseReferenceDto(associatedCaseUuid, associatedCaseFirstName, associatedCaseLastName, associatedCaseOtherName);
+			this.associatedCase = new CaseReferenceDto(associatedCaseUuid, associatedCaseFirstName, associatedCaseLastName);
 		}
 		if (associatedContactUuid != null) {
 			this.associatedContact =
-				new ContactReferenceDto(associatedContactUuid, associatedContactFirstName, associatedContactLastName, associatedContactOtherName, null, null, null);
+					new ContactReferenceDto(associatedContactUuid, associatedContactFirstName, associatedContactLastName, null, null);
 		}
 		if (associatedEventParticipantUuid != null) {
 			this.associatedEventParticipant = new EventParticipantReferenceDto(
-				associatedEventParticipantUuid,
-				associatedEventParticipantFirstName,
-				associatedEventParticipantLastName,
-				associatedEventParticipantOtherName);
+					associatedEventParticipantUuid,
+					associatedEventParticipantFirstName,
+					associatedEventParticipantLastName);
 		}
+		this.pathogenTestCount = pathogenTestCount;
+		this.sampleJurisdictionFlagsDto = new SampleJurisdictionFlagsDto(
+				isInJurisdiction,
+				isCaseInJurisdiction,
+				isContactInJurisdiction,
+				isContactCaseInJurisdiction,
+				isEventParticipantInJurisdiction);
+
+		this.additionalTest = additionalTest;
 		this.epidNumber = epidNumber;
 		this.labSampleID = labSampleId;
+		this.fieldSampleID = fieldSampleId;
 		this.disease = disease;
 		this.diseaseDetails = diseaseDetails;
-		this.district = districtName;
+
 		this.shipped = shipped;
 		this.received = received;
 		this.referred = referredSampleUuid != null;
@@ -156,32 +174,21 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.specimenCondition = specimenCondition;
 		this.pathogenTestResult = pathogenTestResult;
 		this.additionalTestingStatus = Boolean.TRUE.equals(additionalTestPerformed)
-			? AdditionalTestingStatus.PERFORMED
-			: (Boolean.TRUE.equals(additionalTestingRequested) ? AdditionalTestingStatus.REQUESTED : AdditionalTestingStatus.NOT_REQUESTED);
+				? AdditionalTestingStatus.PERFORMED
+				: (Boolean.TRUE.equals(additionalTestingRequested) ? AdditionalTestingStatus.REQUESTED : AdditionalTestingStatus.NOT_REQUESTED);
 		this.samplingReason = samplingReason;
 		this.samplingReasonDetails = samplingReasonDetails;
-		this.pathogenTestCount = pathogenTestCount;
+		this.district = district;
+		this.community = community;
 
-		// These attributes will be set later
-		this.typeOfLastTest = null;
-		this.lastTestCqValue = null;
+	}
 
-		this.deletionReason = deletionReason;
-		this.otherDeletionReason = otherDeletionReason;
+	public String getUuid() {
+		return uuid;
+	}
 
-		this.sampleJurisdictionFlagsDto = new SampleJurisdictionFlagsDto(
-			isInJurisdiction,
-			isCaseInJurisdiction,
-			isContactInJurisdiction,
-			isContactCaseInJurisdiction,
-			isEventParticipantInJurisdiction);
-		this.sampleTests = sampleTests;
-		this.diseaseSampleTests = diseaseSampleTests;
-		this.sampleDispatchMode = sampleDispatchMode;
-		this.sampleDispatchDate = sampleDispatchDate;
-		this.sampleTestsString = sampleTestsString;
-		this.ipSampleSent = ipSampleSent;
-		this.ipSampleResults = ipSampleResults;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public CaseReferenceDto getAssociatedCase() {
@@ -402,21 +409,13 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.samplingReasonDetails = samplingReasonDetails;
 	}
 
-	public String getDiseaseSampleTests() {
+/*	public String getDiseaseSampleTests() {
 		return diseaseSampleTests;
 	}
 
 	public void setDiseaseSampleTests(String diseaseSampleTests) {
 		this.diseaseSampleTests = diseaseSampleTests;
-	}
-
-	public String getSampleTestsString() {
-		return sampleTestsString;
-	}
-
-	public void setSampleTestsString(String sampleTestsString) {
-		this.sampleTestsString = sampleTestsString;
-	}
+	}*/
 
 	public String getIpSampleSent() {
 		return ipSampleSent;
@@ -468,6 +467,30 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 
 	public void setOtherDeletionReason(String otherDeletionReason) {
 		this.otherDeletionReason = otherDeletionReason;
+	}
+
+	public String getAdditionalTest() {
+		return additionalTest;
+	}
+
+	public void setAdditionalTest(String additionalTest) {
+		this.additionalTest = additionalTest;
+	}
+
+	public String getFieldSampleID() {
+		return fieldSampleID;
+	}
+
+	public void setFieldSampleID(String fieldSampleID) {
+		this.fieldSampleID = fieldSampleID;
+	}
+
+	public String getCommunity() {
+		return community;
+	}
+
+	public void setCommunity(String community) {
+		this.community = community;
 	}
 
 	public String getCaption() {

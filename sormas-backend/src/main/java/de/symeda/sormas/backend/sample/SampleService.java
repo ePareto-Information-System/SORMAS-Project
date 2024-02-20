@@ -54,6 +54,8 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 import javax.persistence.criteria.Subquery;
 
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.location.Location;
 import org.apache.commons.collections.CollectionUtils;
 
 import de.symeda.sormas.api.EntityRelevanceStatus;
@@ -189,50 +191,91 @@ public class SampleService extends AbstractDeletableAdoService<Sample>
 			SampleQueryContext sampleQueryContext = new SampleQueryContext(cb, cq, sample);
 			SampleJoins joins = sampleQueryContext.getJoins();
 
-			final Join<Sample, Case> caze = joins.getCaze();
+			/*final Join<Sample, Case> caze = joins.getCaze();
 			final Join<Sample, Contact> contact = joins.getContact();
+			final Join<EventParticipant, Event> event = joins.getEvent();*/
+
+			final Join<Sample, Case> caze = joins.getCaze();
+			final Join<Case, District> caseDistrict = joins.getCaseResponsibleDistrict();
+			final Join<Case, Community> caseCommunity = joins.getCaseResponsibleCommunity();
+
+
+			final Join<Sample, Contact> contact = joins.getContact();
+			final Join<Contact, District> contactDistrict = joins.getContactDistrict();
+			final Join<Case, District> contactCaseDistrict = joins.getContactCaseDistrict();
+
+			final Join<Contact, Community> contactCommunity = joins.getContactCommunity();
+			final Join<Case, Community> contactCaseCommunity = joins.getContactCaseCommunity();
+
+
 			final Join<EventParticipant, Event> event = joins.getEvent();
+			final Join<Location, District> eventDistrict = joins.getEventDistrict();
+			final Join<Location, Community> eventCommunity = joins.getEventCommunity();
+
+			Expression<Object> diseaseSelect = cb.selectCase()
+					.when(cb.isNotNull(caze), caze.get(Case.DISEASE))
+					.otherwise(cb.selectCase().when(cb.isNotNull(contact), contact.get(Contact.DISEASE)).otherwise(event.get(Event.DISEASE)));
 
 			Expression<Object> diseaseDetailsSelect = cb.selectCase()
 				.when(cb.isNotNull(caze), caze.get(Case.DISEASE_DETAILS))
 				.otherwise(
 					cb.selectCase().when(cb.isNotNull(contact), contact.get(Contact.DISEASE_DETAILS)).otherwise(event.get(Event.DISEASE_DETAILS)));
 
+			Expression<Object> districtSelect = cb.selectCase()
+					.when(cb.isNotNull(caseDistrict), caseDistrict.get(District.NAME))
+					.otherwise(
+							cb.selectCase()
+									.when(cb.isNotNull(contactDistrict), contactDistrict.get(District.NAME))
+									.otherwise(
+											cb.selectCase()
+													.when(cb.isNotNull(contactCaseDistrict), contactCaseDistrict.get(District.NAME))
+													.otherwise(eventDistrict.get(District.NAME))));
+
+			Expression<Object> communitySelect = cb.selectCase()
+					.when(cb.isNotNull(caseCommunity), caseCommunity.get(Community.NAME))
+					.otherwise(
+							cb.selectCase()
+									.when(cb.isNotNull(contactCommunity), contactCommunity.get(Community.NAME))
+									.otherwise(
+											cb.selectCase()
+													.when(cb.isNotNull(contactCaseCommunity), contactCaseCommunity.get(Community.NAME))
+													.otherwise(eventCommunity.get(Community.NAME))));
+
 			List<Selection<?>> selections = new ArrayList<>(
 				Arrays.asList(
-					sample.get(Sample.UUID),
-					caze.get(Case.EPID_NUMBER),
-					sample.get(Sample.LAB_SAMPLE_ID),
-					sample.get(Sample.SAMPLE_DATE_TIME),
-					sample.get(Sample.SHIPPED),
-					sample.get(Sample.SHIPMENT_DATE),
-					sample.get(Sample.RECEIVED),
-					sample.get(Sample.RECEIVED_DATE),
-					sample.get(Sample.SAMPLE_MATERIAL),
-					sample.get(Sample.SAMPLE_PURPOSE),
-					sample.get(Sample.SPECIMEN_CONDITION),
-					joins.getLab().get(Facility.NAME),
-					joins.getReferredSample().get(Sample.UUID),
-					sample.get(Sample.SAMPLING_REASON),
-					sample.get(Sample.SAMPLING_REASON_DETAILS),
-					caze.get(Case.UUID),
-					joins.getCasePerson().get(Person.FIRST_NAME),
-					joins.getCasePerson().get(Person.LAST_NAME),
-					joins.getContact().get(Contact.UUID),
-					joins.getContactPerson().get(Person.FIRST_NAME),
-					joins.getContactPerson().get(Person.LAST_NAME),
-					joins.getEventParticipant().get(EventParticipant.UUID),
-					joins.getEventParticipantPerson().get(Person.FIRST_NAME),
-					joins.getEventParticipantPerson().get(Person.LAST_NAME),
-					sampleQueryContext.getDiseaseExpression(),
-					diseaseDetailsSelect,
-					sample.get(Sample.PATHOGEN_TEST_RESULT),
-					sample.get(Sample.ADDITIONAL_TESTING_REQUESTED),
-					cb.isNotEmpty(sample.get(Sample.ADDITIONAL_TESTS)),
-					sampleQueryContext.getDistrictNameExpression(),
-					joins.getLab().get(Facility.UUID),
-					sample.get(Sample.DELETION_REASON),
-					sample.get(Sample.OTHER_DELETION_REASON)));
+						sample.get(Sample.UUID),
+						caze.get(Case.EPID_NUMBER),
+						sample.get(Sample.LAB_SAMPLE_ID),
+						sample.get(Sample.FIELD_SAMPLE_ID),
+						sample.get(Sample.SAMPLE_DATE_TIME),
+						sample.get(Sample.SHIPPED),
+						sample.get(Sample.SHIPMENT_DATE),
+						sample.get(Sample.RECEIVED),
+						sample.get(Sample.RECEIVED_DATE),
+						sample.get(Sample.SAMPLE_MATERIAL),
+						sample.get(Sample.SAMPLE_PURPOSE),
+						sample.get(Sample.SPECIMEN_CONDITION),
+						joins.getLab().get(Facility.NAME),
+						joins.getReferredSample().get(Sample.UUID),
+						sample.get(Sample.SAMPLING_REASON),
+						sample.get(Sample.SAMPLING_REASON_DETAILS),
+						caze.get(Case.UUID),
+						joins.getCasePerson().get(Person.FIRST_NAME),
+						joins.getCasePerson().get(Person.LAST_NAME),
+						joins.getContact().get(Contact.UUID),
+						joins.getContactPerson().get(Person.FIRST_NAME),
+						joins.getContactPerson().get(Person.LAST_NAME),
+						joins.getEventParticipant().get(EventParticipant.UUID),
+						joins.getEventParticipantPerson().get(Person.FIRST_NAME),
+						joins.getEventParticipantPerson().get(Person.LAST_NAME),
+						diseaseSelect,
+						diseaseDetailsSelect,
+						sample.get(Sample.PATHOGEN_TEST_RESULT),
+						sample.get(Sample.ADDITIONAL_TESTING_REQUESTED),
+						cb.isNotEmpty(sample.get(Sample.ADDITIONAL_TESTS)),
+						districtSelect,
+						communitySelect,
+						joins.getLab().get(Facility.UUID)));
 
 			// Tests count subquery
 			Subquery<Long> testCountSq = cq.subquery(Long.class);
@@ -387,16 +430,22 @@ public class SampleService extends AbstractDeletableAdoService<Sample>
 					expression = joins.getCasePerson().get(Person.LAST_NAME);
 					orderList.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
 					expression = joins.getCasePerson().get(Person.FIRST_NAME);
+					orderList.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+					expression = joins.getCasePerson().get(Person.OTHER_NAME);
 					break;
 				case SampleIndexDto.ASSOCIATED_CONTACT:
 					expression = joins.getContactPerson().get(Person.LAST_NAME);
 					orderList.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
 					expression = joins.getContactPerson().get(Person.FIRST_NAME);
+					orderList.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+					expression = joins.getContactPerson().get(Person.OTHER_NAME);
 					break;
 				case SampleIndexDto.ASSOCIATED_EVENT_PARTICIPANT:
 					expression = joins.getEventParticipantPerson().get(Person.LAST_NAME);
 					orderList.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
 					expression = joins.getEventParticipantPerson().get(Person.FIRST_NAME);
+					orderList.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+					expression = joins.getEventParticipantPerson().get(Person.OTHER_NAME);
 					break;
 				case SampleIndexDto.DISTRICT:
 					expression = sampleQueryContext.getDistrictNameExpression();

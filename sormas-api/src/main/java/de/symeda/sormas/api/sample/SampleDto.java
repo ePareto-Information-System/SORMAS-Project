@@ -101,6 +101,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String REQUESTED_PATHOGEN_TESTS = "requestedPathogenTests";
 	public static final String REQUESTED_SAMPLE_MATERIALS = "requestedSampleMaterials";
 	public static final String SAMPLE_TESTS = "sampleTests";
+//	public static final String SAMPLE_DISEASE_TESTS = "sampleDiseaseTests";
 	public static final String SAMPLE_DISPATCH_MODE = "sampleDispatchMode";
 	public static final String SAMPLE_DISPATCH_DATE = "sampleDispatchDate";
 	public static final String REQUESTED_ADDITIONAL_TESTS = "requestedAdditionalTests";
@@ -243,7 +244,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private SampleReferenceDto referredTo;
 	private boolean shipped;
 	private boolean sampleMaterialTypeForYF;
-	private boolean sampleDiseaseTests;
+//	private boolean sampleDiseaseTests;
 	private boolean received;
 	private PathogenTestResultType pathogenTestResult;
 
@@ -775,14 +776,14 @@ public class SampleDto extends SormasToSormasShareableDto {
 		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
 	}
 
-	@ImportIgnore
+	/*@ImportIgnore
 	public boolean isDiseaseSampleTests() {
 		return sampleDiseaseTests;
 	}
 
 	public void setDiseaseSampleTests(boolean sampleDiseaseTests) {
 		this.sampleDiseaseTests = sampleDiseaseTests;
-	}
+	}*/
 
 	@ImportIgnore
 	public Boolean getAdditionalTestingRequested() {
@@ -931,7 +932,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 		target.setPathogenTestingRequested(source.getPathogenTestingRequested());
 		target.setSampleMaterialTestingRequested(source.getSampleMaterialTestingRequested());
 		target.setYellowFeverSampleType(source.isYellowFeverSampleType());
-		target.setDiseaseSampleTests(source.isDiseaseSampleTests());
+//		target.setDiseaseSampleTests(source.isDiseaseSampleTests());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());
 		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());

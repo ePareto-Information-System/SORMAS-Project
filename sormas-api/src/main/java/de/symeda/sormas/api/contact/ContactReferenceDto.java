@@ -62,7 +62,15 @@ public class ContactReferenceDto extends ReferenceDto {
 			this.caseName = new PersonName(caseFirstName, caseLastName, caseOtherName);
 		}
 	}
+	public ContactReferenceDto(String uuid, String contactFirstName, String contactLastName, String caseFirstName, String caseLastName) {
 
+		setUuid(uuid);
+		this.contactName = new PersonName(contactFirstName, contactLastName);
+
+		if (caseFirstName != null && caseLastName != null) {
+			this.caseName = new PersonName(caseFirstName, caseLastName);
+		}
+	}
 
 	@Override
 	public String getCaption() {
@@ -166,6 +174,11 @@ public class ContactReferenceDto extends ReferenceDto {
 			this.firstName = firstName;
 			this.lastName = lastName;
 			this.otherName = otherName;
+		}
+
+		public PersonName(String firstName, String lastName) {
+			this.firstName = firstName;
+			this.lastName = lastName;
 		}
 
 		public String getFirstName() {

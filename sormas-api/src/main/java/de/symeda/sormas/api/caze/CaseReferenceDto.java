@@ -53,6 +53,13 @@ public class CaseReferenceDto extends ReferenceDto {
 		this.otherName = otherName;
 	}
 
+	public CaseReferenceDto(String uuid, String firstName, String lastName) {
+
+		setUuid(uuid);
+
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
 	@Override
 	public String getCaption() {
 		return buildCaption(getUuid(), firstName, lastName, otherName);
