@@ -928,8 +928,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			causeOfDeathDiseaseField.setVisible(false);
 			causeOfDeathDetailsField.setVisible(false);
 			causeOfDeathField.setValue(null);
-			causeOfDeathDiseaseField.setValue(null);
-			causeOfDeathDetailsField.setValue(null);
+			//causeOfDeathDiseaseField.setValue(null);
+			//causeOfDeathDetailsField.setValue(null);
 			getField(PersonDto.DEATH_PLACE_TYPE).setValue(null);
 			getField(PersonDto.DEATH_PLACE_DESCRIPTION).setValue(null);
 		} else {

@@ -103,24 +103,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	//@formatter:off
 	protected static final String SAMPLE_COMMON_HTML_LAYOUT =
 			fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
-					fluidRowLocs(SampleDto.CSF_SAMPLE_COLLECTED) +
-					fluidRowLocs(SampleDto.CSF_REASON) +
-					fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
-                    fluidRowLocs(SampleDto.APPEARANCE_OF_CSF) +
-                    fluidRowLocs(6,SampleDto.INOCULATION_TIME_TRANSPORT_MEDIA) +
-                    fluidRowLocs(SampleDto.SAMPLE_SENT_TO_LAB, SampleDto.REASON_NOT_SENT_TO_LAB) +
-                    fluidRowLocs(6,SampleDto.DATE_SAMPLE_SENT_TO_LAB) +
-                    fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
-                    fluidRowLocs(SampleDto.SAMPLE_CONTAINER_USED) +
-                    fluidRowLocs(SampleDto.RDT_PERFORMED, SampleDto.RDT_RESULTS) +
-                    fluidRowLocs(SampleDto.DISTRICT_NOTIFICATION_DATE, SampleDto.NAME_OF_PERSON, SampleDto.TEL_NUMBER) +
-                    fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT) +
-                    fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +
-                    fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_NATIONAL, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
+
 
 
 					fluidRowLocs(SampleDto.SAMPLE_PURPOSE) +
-					fluidRowLocs(6,SampleDto.SAMPLE_MATERIAL) +
 					fluidRowLocs(SampleDto.FIELD_SAMPLE_ID, REFERRED_FROM_BUTTON_LOC) +
 					fluidRowLocs(6, SampleDto.DISEASE) +
 					fluidRowLocs(SampleDto.SAMPLE_TESTS) +
@@ -130,6 +116,52 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.SAMPLING_REASON, SampleDto.SAMPLING_REASON_DETAILS) +
 					fluidRowLocs(SampleDto.SAMPLE_SOURCE, "") +
 					//fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
+
+					fluidRowLocs(6,SampleDto.SAMPLE_MATERIAL) +
+					fluidRowLocs(SampleDto.CSF_SAMPLE_COLLECTED) +
+					fluidRowLocs(SampleDto.CSF_REASON) +
+					fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
+					fluidRowLocs(SampleDto.APPEARANCE_OF_CSF) +
+					fluidRowLocs(6,SampleDto.INOCULATION_TIME_TRANSPORT_MEDIA) +
+					fluidRowLocs(SampleDto.SAMPLE_SENT_TO_LAB, SampleDto.REASON_NOT_SENT_TO_LAB) +
+					fluidRowLocs(6,SampleDto.DATE_SAMPLE_SENT_TO_LAB) +
+					fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
+					fluidRowLocs(SampleDto.SAMPLE_CONTAINER_USED) +
+					fluidRowLocs(SampleDto.RDT_PERFORMED, SampleDto.RDT_RESULTS) +
+					fluidRowLocs(SampleDto.DISTRICT_NOTIFICATION_DATE, SampleDto.NAME_OF_PERSON, SampleDto.TEL_NUMBER) +
+					fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT) +
+					fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +
+					fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_NATIONAL, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
+
+					fluidRowLocs(6,SampleDto.LABORATORY_TYPE) +
+					fluidRowLocs(DISTRICT_LABORATORY_HEADLINE_LOC) +
+					fluidRowLocs(REGIONAL_LABORATORY_HEADLINE_LOC) +
+					fluidRowLocs(REFERENCE_LABORATORY_HEADLINE_LOC) +
+					locCss(VSPACE_TOP_3, SampleDto.LABORATORY_NAME) +
+					fluidRowLocs(SampleDto.LABORATORY_SAMPLE_DATE_RECEIVED, SampleDto.LABORATORY_NUMBER) +
+					fluidRowLocs(SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER) +
+					fluidRowLocs(SampleDto.LABORATORY_SAMPLE_CONDITION) +
+					fluidRowLocs(SampleDto.LABORATORY_APPEARANCE_OF_CSF, SampleDto.LABORATORY_TEST_PERFORMED, SampleDto.LABORATORY_TEST_PERFORMED_OTHER) +
+					fluidRowLocs(SampleDto.LABORATORY_CYTOLOGY, SampleDto.LABORATORY_GRAM, SampleDto.LABORATORY_GRAM_OTHER) +
+					fluidRowLocs(SampleDto.LABORATORY_RDT_PERFORMED, SampleDto.LABORATORY_RDT_RESULTS) +
+					fluidRowLocs(SampleDto.LABORATORY_LATEX) +
+					fluidRowLocs(SampleDto.LABORATORY_CULTURE, SampleDto.LABORATORY_CULTURE_OTHER) +
+					fluidRowLocs(SampleDto.LABORATORY_OTHER_TESTS, SampleDto.LABORATORY_OTHER_TESTS_RESULTS) +
+
+					loc(LABORATORY_ANTIBIOGRAM_HEADLINE_LOC) +
+					fluidRowLocs(SampleDto.LABORATORY_CEFTRIAXONE, SampleDto.LABORATORY_PENICILLIN_G) +
+					fluidRowLocs(SampleDto.LABORATORY_AMOXYCILLIN, SampleDto.LABORATORY_OXACILLIN) +
+					fluidRowLocs(SampleDto.LABORATORY_ANTIBIOGRAM_OTHER) +
+
+					loc(LABORATORY_PCR_HEADLINE_LOC) +
+					fluidRowLocs(SampleDto.LABORATORY_DATE_PCR_PERFORMED, SampleDto.LABORATORY_PCR_TYPE) +
+					fluidRowLocs(SampleDto.LABORATORY_PCR_OPTIONS) +
+					fluidRowLocs(SampleDto.LABORATORY_SEROTYPE, SampleDto.LABORATORY_SEROTYPE_TYPE, SampleDto.LABORATORY_SEROTYPE_RESULTS) +
+					fluidRowLocs(6,SampleDto.LABORATORY_FINAL_RESULTS) +
+					fluidRowLocs(SampleDto.LABORATORY_OBSERVATIONS) +
+					fluidRowLocs(SampleDto.LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY, SampleDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
+					fluidRowLocs(SampleDto.LABORATORY_FINAL_CLASSIFICATION) +
+
 
 					fluidRowLocs(SampleDto.IPSAMPLESENT) + fluidRowLocs(SampleDto.IPSAMPLERESULTS, "")+
 					loc(SAMPLE_MATERIAL_READ_HEADLINE_LOC) +
@@ -167,37 +199,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
 					fluidRowLocs(CaseDataDto.DELETION_REASON) +
 					fluidRowLocs(CaseDataDto.OTHER_DELETION_REASON) +
-
-					fluidRowLocs(6,SampleDto.LABORATORY_TYPE) +
-					fluidRowLocs(DISTRICT_LABORATORY_HEADLINE_LOC) +
-
-					fluidRowLocs(REGIONAL_LABORATORY_HEADLINE_LOC) +
-					fluidRowLocs(REFERENCE_LABORATORY_HEADLINE_LOC) +
-					locCss(VSPACE_TOP_3, SampleDto.LABORATORY_NAME) +
-					fluidRowLocs(SampleDto.LABORATORY_SAMPLE_DATE_RECEIVED, SampleDto.LABORATORY_NUMBER) +
-					fluidRowLocs(SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER) +
-					fluidRowLocs(SampleDto.LABORATORY_SAMPLE_CONDITION) +
-					fluidRowLocs(SampleDto.LABORATORY_APPEARANCE_OF_CSF, SampleDto.LABORATORY_TEST_PERFORMED, SampleDto.LABORATORY_TEST_PERFORMED_OTHER) +
-					fluidRowLocs(SampleDto.LABORATORY_CYTOLOGY, SampleDto.LABORATORY_GRAM, SampleDto.LABORATORY_GRAM_OTHER) +
-					fluidRowLocs(SampleDto.LABORATORY_RDT_PERFORMED, SampleDto.LABORATORY_RDT_RESULTS) +
-					fluidRowLocs(SampleDto.LABORATORY_LATEX) +
-					fluidRowLocs(SampleDto.LABORATORY_CULTURE, SampleDto.LABORATORY_CULTURE_OTHER) +
-					fluidRowLocs(SampleDto.LABORATORY_OTHER_TESTS, SampleDto.LABORATORY_OTHER_TESTS_RESULTS) +
-
-					loc(LABORATORY_ANTIBIOGRAM_HEADLINE_LOC) +
-					fluidRowLocs(SampleDto.LABORATORY_CEFTRIAXONE, SampleDto.LABORATORY_PENICILLIN_G) +
-					fluidRowLocs(SampleDto.LABORATORY_AMOXYCILLIN, SampleDto.LABORATORY_OXACILLIN) +
-					fluidRowLocs(SampleDto.LABORATORY_ANTIBIOGRAM_OTHER) +
-
-					loc(LABORATORY_PCR_HEADLINE_LOC) +
-					fluidRowLocs(SampleDto.LABORATORY_DATE_PCR_PERFORMED, SampleDto.LABORATORY_PCR_TYPE) +
-					fluidRowLocs(SampleDto.LABORATORY_PCR_OPTIONS) +
-					fluidRowLocs(SampleDto.LABORATORY_SEROTYPE, SampleDto.LABORATORY_SEROTYPE_TYPE, SampleDto.LABORATORY_SEROTYPE_RESULTS) +
-					fluidRowLocs(6,SampleDto.LABORATORY_FINAL_RESULTS) +
-					fluidRowLocs(SampleDto.LABORATORY_OBSERVATIONS) +
-					fluidRowLocs(SampleDto.LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY, SampleDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
-					fluidRowLocs(SampleDto.LABORATORY_FINAL_CLASSIFICATION) +
-
 
 					//AFP
 					loc(STOOL_SPECIMEN_COLLECTION_HEADLINE_LOC) +
@@ -708,7 +709,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		laboType.setRequired(true);
 
 		OptionGroup csfSampleCollected = addField(SampleDto.CSF_SAMPLE_COLLECTED, OptionGroup.class);
-		NullableOptionGroup csfReason = addField(SampleDto.CSF_REASON, NullableOptionGroup.class);
+		ComboBox csfReason = addField(SampleDto.CSF_REASON, ComboBox.class);
 		NullableOptionGroup appearanceOfCsf = addField(SampleDto.APPEARANCE_OF_CSF, NullableOptionGroup.class);
 		addField(SampleDto.INOCULATION_TIME_TRANSPORT_MEDIA, DateField.class);
 		OptionGroup sampleSentToLab = addField(SampleDto.SAMPLE_SENT_TO_LAB, OptionGroup.class);
@@ -738,7 +739,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				.setVisibleWhen(sampleSentToLab, Arrays.asList(reasonNotSent), Arrays.asList(YesNo.NO), true);
 		FieldHelper
 				.setVisibleWhen(sampleSentToLab, Arrays.asList(dateSampleSentToLab), Arrays.asList(YesNo.YES), true);
-
+		FieldHelper
+				.setVisibleWhen(csfSampleCollected, Arrays.asList(csfReason), Arrays.asList(YesNo.NO), true);
 		setPropertiesVisibility();
 
 		Label districtLaboratory = new Label(I18nProperties.getString(Strings.headingDistrictLaboratory));

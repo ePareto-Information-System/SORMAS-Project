@@ -403,12 +403,11 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		}
 
 		if(caze.getDisease() == Disease.AHF){
-			setVisible(false, HospitalizationDto.ADMISSION_DATE,HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, HospitalizationDto.ISOLATED, HospitalizationDto.WAS_PATIENT_ADMITTED);
+			setVisible(false, HospitalizationDto.ADMISSION_DATE,HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, HospitalizationDto.ISOLATED, HospitalizationDto.WAS_PATIENT_ADMITTED, HospitalizationDto.INTENSIVE_CARE_UNIT);
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
-
-			admittedToHealthFacilityFieldNew.setVisible(false);
+			admittedToHealthFacilityFieldNew.setVisible(true);
 
 		}
 

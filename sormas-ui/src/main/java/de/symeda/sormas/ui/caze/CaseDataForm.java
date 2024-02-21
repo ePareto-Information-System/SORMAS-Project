@@ -1452,7 +1452,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					btnReferFromPointOfEntry.setVisible(false);
 				}
 
-				if (getValue().getHealthFacility() == null && disease != Disease.YELLOW_FEVER) {
+				if (getValue().getHealthFacility() == null) {
 					setVisible(
 						false,
 						DIFFERENT_PLACE_OF_STAY_JURISDICTION,
@@ -1982,7 +1982,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		if (facilityType != null) {
 			if (community != null) {
-
 				FieldHelper.updateItems(
 					facilityCombo,
 					FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, facilityType, true, false));
