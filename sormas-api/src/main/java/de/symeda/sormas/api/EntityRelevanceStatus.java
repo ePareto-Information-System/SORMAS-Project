@@ -10,7 +10,8 @@ public enum EntityRelevanceStatus {
 	ACTIVE,
 	ARCHIVED,
 	ACTIVE_AND_ARCHIVED,
-	DELETED;
+	DELETED,
+	ALL;
 
 	@Override
 	public String toString() {

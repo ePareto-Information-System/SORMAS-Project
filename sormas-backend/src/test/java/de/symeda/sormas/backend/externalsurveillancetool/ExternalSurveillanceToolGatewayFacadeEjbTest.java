@@ -143,6 +143,23 @@ public class ExternalSurveillanceToolGatewayFacadeEjbTest extends SormasToSormas
 		assertThat(getExternalShareInfoFacade().getIndexList(externalShareInfoCriteria1, 0, 100), hasSize(1));
 	}
 
+//	@Test
+//	public void testSendingCasesOneCaseOk() throws ExternalSurveillanceToolException {
+//		TestDataCreator.RDCF rdcf = creator.createRDCF();
+//		UserReferenceDto user = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER)).toReference();
+//		CaseDataDto case1 = creator.createCase(user, rdcf, null);
+//
+//		stubFor(
+//			post(urlEqualTo("/export")).withRequestBody(containing(case1.getUuid()))
+//				.withRequestBody(containing("caseUuids"))
+//				.willReturn(aResponse().withStatus(HttpStatus.SC_OK)));
+//
+//		subjectUnderTest.sendCases(Arrays.asList(case1.getUuid()), true);
+//
+//		ExternalShareInfoCriteria externalShareInfoCriteria1 = new ExternalShareInfoCriteria().caze(case1.toReference());
+//		assertThat(getExternalShareInfoFacade().getIndexList(externalShareInfoCriteria1, 0, 100), hasSize(1));
+//	}
+
 	@Test
 	public void testSendingCasesOk() throws ExternalSurveillanceToolException {
 		TestDataCreator.RDCF rdcf = creator.createRDCF();

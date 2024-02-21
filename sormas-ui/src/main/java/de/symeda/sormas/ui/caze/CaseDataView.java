@@ -62,7 +62,6 @@ public class CaseDataView extends AbstractCaseView {
 	public static final String CASE_LOC = "case";
 	public static final String CASE_SIDE_PANEL_LOC = "caseSidePanel";
 	public static final String TASKS_LOC = "tasks";
-	public static final String SAMPLES_LOC = "samples";
 	public static final String EVENTS_LOC = "events";
 	public static final String IMMUNIZATION_LOC = "immunizations";
 	public static final String VACCINATIONS_LOC = "vaccinations";
@@ -95,7 +94,6 @@ public class CaseDataView extends AbstractCaseView {
 		LayoutWithSidePanel layout = new LayoutWithSidePanel(
 			editComponent,
 			TASKS_LOC,
-			SAMPLES_LOC,
 			EVENTS_LOC,
 			IMMUNIZATION_LOC,
 			VACCINATIONS_LOC,
@@ -137,7 +135,7 @@ public class CaseDataView extends AbstractCaseView {
 				isEditAllowed);
 			SampleListComponentLayout sampleListComponentLayout =
 				new SampleListComponentLayout(sampleList, I18nProperties.getString(Strings.infoCreateNewSampleDiscardsChangesCase), isEditAllowed);
-			layout.addSidePanelComponent(sampleListComponentLayout, SAMPLES_LOC);
+//			layout.addSidePanelComponent(sampleListComponentLayout, SAMPLES_LOC);
 		}
 
 		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EVENT_SURVEILLANCE)
