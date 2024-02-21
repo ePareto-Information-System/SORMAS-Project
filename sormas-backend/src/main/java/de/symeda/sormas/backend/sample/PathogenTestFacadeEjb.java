@@ -591,4 +591,24 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 	@Stateless
 	public static class PathogenTestFacadeEjbLocal extends PathogenTestFacadeEjb {
 	}
+
+	@Override
+	public Boolean checkIfPathogenTestIsTheFirst(String sampleUuid, String pathogenTestUuid) {
+		//return false if sampleUuid or pathogenTestUuid is null
+		if (sampleUuid == null || pathogenTestUuid == null) {
+			return false;
+		}
+
+		//get sample and its first pathogen test
+		Sample sample = sampleService.getByUuid(sampleUuid);
+		//get associated pathogen tests and Order by creation date and select first
+		PathogenTest firstPathogenTest = sample.getPathogenTests().stream().sorted((p1, p2) -> p1.getCreationDate().compareTo(p2.getCreationDate())).findFirst().orElse(null);
+
+		//check if the first pathogen test is the same as the pathogen test
+		if (firstPathogenTest != null && firstPathogenTest.getUuid().equals(pathogenTestUuid)) {
+			return true;
+		}
+
+		return false;
+	}
 }

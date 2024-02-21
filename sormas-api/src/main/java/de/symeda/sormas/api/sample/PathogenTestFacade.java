@@ -61,4 +61,6 @@ public interface PathogenTestFacade {
 
 	Page<PathogenTestDto> getIndexPage(PathogenTestCriteria pathogenTestCriteria, Integer offset, Integer size, List<SortProperty> sortProperties);
 
+	Boolean checkIfPathogenTestIsTheFirst(String sampleUuid, String pathogenTestUuid);
+
 }
