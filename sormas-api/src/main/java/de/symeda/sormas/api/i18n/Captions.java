@@ -462,6 +462,8 @@ public interface Captions {
 	String CaseData_trimester = "CaseData.trimester";
 	String CaseData_uuid = "CaseData.uuid";
 	String CaseData_vaccinationStatus = "CaseData.vaccinationStatus";
+	String CaseData_vaccinationRoutine = "CaseData.vaccinationRoutine";
+	String CaseData_vaccinationRoutineDate = "CaseData.vaccinationRoutineDate";
 	String CaseData_vaccinationStatusUpdate = "CaseData.vaccinationStatusUpdate";
 	String CaseData_vaccinationType = "CaseData.vaccinationType";
 	String CaseData_vaccinationDate = "CaseData.vaccinationDate";
@@ -2364,6 +2366,14 @@ public interface Captions {
 	String Symptoms_feverishFeeling = "Symptoms.feverishFeeling";
 	String Symptoms_firstSymptom = "Symptoms.firstSymptom";
 	String Symptoms_provisionalDiagnosis = "Symptoms.provisionalDiagnosis";
+	String Symptoms_nonVascularDate = "Symptoms.nonVascularDate";
+	String Symptoms_skinRashDate = "Symptoms.skinRashDate";
+	String Symptoms_feverDate = "Symptoms.feverDate";
+	String Symptoms_coughDate = "Symptoms.coughDate";
+	String Symptoms_runnyNoseDate = "Symptoms.runnyNoseDate";
+	String Symptoms_conjunctivitisDate = "Symptoms.conjunctivitisDate";
+	String Symptoms_kopliksSpotsDate = "Symptoms.kopliksSpotsDate";
+
 	String Symptoms_fluidInLungCavity = "Symptoms.fluidInLungCavity";
 	String Symptoms_fluidInLungCavityAuscultation = "Symptoms.fluidInLungCavityAuscultation";
 	String Symptoms_fluidInLungCavityXray = "Symptoms.fluidInLungCavityXray";
