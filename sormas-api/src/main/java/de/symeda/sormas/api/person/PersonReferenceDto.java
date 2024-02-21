@@ -55,6 +55,13 @@ public class PersonReferenceDto extends ReferenceDto {
 		this.lastName = lastName;
 		this.otherName = otherName;
 	}
+	public PersonReferenceDto(String uuid, String firstName, String lastName) {
+
+		setUuid(uuid);
+
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
 
 	@Override
 	public String getCaption() {
