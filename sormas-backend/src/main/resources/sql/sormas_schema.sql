@@ -13303,5 +13303,9 @@ ALTER TABLE samples ADD COLUMN statetreatmentadministered varchar(255);
 ALTER TABLE samples ADD COLUMN pathogentestcount varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (575, 'Added influenzalabcolumns to samples');
+
+UPDATE samples SET samplematerial = 'WHOLE_BLOOD' WHERE samplematerial = 'BLOOD';
+INSERT INTO schema_version (version_number, comment) VALUES (576, 'Updated samplematerial column');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``

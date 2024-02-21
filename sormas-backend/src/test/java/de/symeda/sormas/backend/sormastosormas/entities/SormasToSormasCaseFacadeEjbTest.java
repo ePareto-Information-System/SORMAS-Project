@@ -36,7 +36,6 @@ import javax.ws.rs.core.Response;
 import de.symeda.sormas.api.utils.YesNo;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
