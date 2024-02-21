@@ -119,7 +119,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 					fluidRowLocs(6,SampleDto.SAMPLE_MATERIAL) +
 					fluidRowLocs(SampleDto.CSF_SAMPLE_COLLECTED) +
-					fluidRowLocs(SampleDto.CSF_REASON) +
+					fluidRowLocs(6, SampleDto.CSF_REASON) +
 					fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
 					fluidRowLocs(SampleDto.APPEARANCE_OF_CSF) +
 					fluidRowLocs(6,SampleDto.INOCULATION_TIME_TRANSPORT_MEDIA) +
@@ -144,7 +144,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.LABORATORY_APPEARANCE_OF_CSF, SampleDto.LABORATORY_TEST_PERFORMED, SampleDto.LABORATORY_TEST_PERFORMED_OTHER) +
 					fluidRowLocs(SampleDto.LABORATORY_CYTOLOGY, SampleDto.LABORATORY_GRAM, SampleDto.LABORATORY_GRAM_OTHER) +
 					fluidRowLocs(SampleDto.LABORATORY_RDT_PERFORMED, SampleDto.LABORATORY_RDT_RESULTS) +
-					fluidRowLocs(SampleDto.LABORATORY_LATEX) +
+					fluidRowLocs(6,SampleDto.LABORATORY_LATEX) +
 					fluidRowLocs(SampleDto.LABORATORY_CULTURE, SampleDto.LABORATORY_CULTURE_OTHER) +
 					fluidRowLocs(SampleDto.LABORATORY_OTHER_TESTS, SampleDto.LABORATORY_OTHER_TESTS_RESULTS) +
 
@@ -159,7 +159,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.LABORATORY_SEROTYPE, SampleDto.LABORATORY_SEROTYPE_TYPE, SampleDto.LABORATORY_SEROTYPE_RESULTS) +
 					fluidRowLocs(6,SampleDto.LABORATORY_FINAL_RESULTS) +
 					fluidRowLocs(SampleDto.LABORATORY_OBSERVATIONS) +
-					fluidRowLocs(SampleDto.LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY, SampleDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
+					fluidRowLocs(6, SampleDto.LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY) +
+					fluidRowLocs(6, SampleDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
 					fluidRowLocs(SampleDto.LABORATORY_FINAL_CLASSIFICATION) +
 
 
@@ -775,15 +776,30 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		OptionGroup laboratoryRdtPerformed = addField(SampleDto.LABORATORY_RDT_PERFORMED, OptionGroup.class);
 		TextField laboratoryRdtResults = addField(SampleDto.LABORATORY_RDT_RESULTS, TextField.class);
 
+		laboratorySampleContainerOther.setVisible(false);
+		laboratoryTestPerformedOther.setVisible(false);
+		laboratoryGramOther.setVisible(false);
+		laboratoryRdtResults.setVisible(false);
 
-		NullableOptionGroup laboratoryLatex = new NullableOptionGroup();
+		FieldHelper
+				.setVisibleWhen(laboratoryRdtPerformed, Arrays.asList(laboratoryRdtResults), Arrays.asList(YesNo.YES), true);
+		FieldHelper
+				.setVisibleWhen(laboratorySampleContainerReceived, Arrays.asList(laboratorySampleContainerOther), Arrays.asList(SampleContainerUsed.OTHER), true);
+		FieldHelper
+				.setVisibleWhen(laboratoryTestPerformed, Arrays.asList(laboratoryTestPerformedOther), Arrays.asList(LabTest.OTHER), true);
+		FieldHelper
+				.setVisibleWhen(laboratoryGram, Arrays.asList(laboratoryGramOther), Arrays.asList(Gram.OTHER_PATHOGENS), true);
+
+
+
+		ComboBox laboratoryLatex = new ComboBox();
 		for (LatexCulture latexCulture : LatexCulture.LATEX) {
 			laboratoryLatex.addItem(latexCulture);
 			laboratoryLatex.setItemCaption(latexCulture, latexCulture.toString());
 		}
 		addField(SampleDto.LABORATORY_LATEX, laboratoryLatex);
 
-		NullableOptionGroup laboratoryCulture = new NullableOptionGroup();
+		ComboBox laboratoryCulture = new ComboBox();
 		for (LatexCulture latexCulture : LatexCulture.LAB_CULTURE) {
 			laboratoryCulture.addItem(latexCulture);
 			laboratoryCulture.setItemCaption(latexCulture, latexCulture.toString());
@@ -800,7 +816,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		DateField laboratoryDatePcrPerformed = addField(SampleDto.LABORATORY_DATE_PCR_PERFORMED, DateField.class);
 		TextField laboratoryPcrType = addField(SampleDto.LABORATORY_PCR_TYPE, TextField.class);
 
-		NullableOptionGroup labPcrOptions = new NullableOptionGroup();
+		ComboBox labPcrOptions = new ComboBox();
 		for (LatexCulture latexCulture : LatexCulture.LAB_CULTURE) {
 			labPcrOptions.addItem(latexCulture);
 			labPcrOptions.setItemCaption(latexCulture, latexCulture.toString());

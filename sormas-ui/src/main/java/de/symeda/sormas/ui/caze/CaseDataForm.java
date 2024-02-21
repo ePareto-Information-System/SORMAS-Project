@@ -225,7 +225,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(CaseDataDto.DONT_SHARE_WITH_REPORTING_TOOL) +
 					fluidRowLocs(DONT_SHARE_WARNING_LOC) +
 					fluidRowLocs(DIFFERENT_PLACE_OF_STAY_JURISDICTION) +
-					fluidRowLocs(6, CaseDataDto.HOME_ADDRESS_RECREATIONAL) +
 					fluidRowLocs(PLACE_OF_STAY_HEADING_LOC) +
 					fluidRowLocs(FACILITY_OR_HOME_LOC) +
 					fluidRowLocs(CaseDataDto.REGION, CaseDataDto.DISTRICT, CaseDataDto.COMMUNITY) +
@@ -496,8 +495,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		addField(CaseDataDto.SEQUELAE, NullableOptionGroup.class);
 
 		addFields(CaseDataDto.INVESTIGATED_DATE, CaseDataDto.OUTCOME_DATE, CaseDataDto.SEQUELAE_DETAILS);
-		TextField homeaddrecreational = addField(CaseDataDto.HOME_ADDRESS_RECREATIONAL, TextField.class);
-		homeaddrecreational.setVisible(false);
 		addField(CaseDataDto.CASE_IDENTIFICATION_SOURCE);
 		addField(CaseDataDto.SCREENING_TYPE);
 
@@ -1619,11 +1616,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			//AFP
 			if(disease == Disease.AFP){
 				setVisible(false, CaseDataDto.VACCINATION_ROUTINE_DATE);
-				homeaddrecreational.setVisible(true);
 				nationalLevelDate.setVisible(true);
 				notifiedBy.setVisible(true);
 				dateOfNotification.setVisible(true);
 				dateOfInvestigation.setVisible(true);
+				caseTransmissionClassification.setVisible(false);
 			}
 			//INFLUENZA
 			if(disease == Disease.NEW_INFLUENZA){

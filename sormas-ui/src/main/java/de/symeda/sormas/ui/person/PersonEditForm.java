@@ -622,18 +622,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			setVisible(false, PersonDto.NICKNAME);
 		}
 
-		if(disease == Disease.AFP){
-			TextArea additionalPlacesStayed = addField(PersonDto.ADDITIONAL_PLACES_STAYED, TextArea.class, new ResizableTextAreaWrapper<>(false));
-			setVisible(false, PersonDto.EDUCATION_TYPE, PersonDto.ADDITIONAL_DETAILS, PersonDto.ADDRESSES);
-			additionalDetails.setCaption("Village");
-			generalCommentLabel.setVisible(false);
-			occupationHeader.setVisible(false);
-			addressesHeader.setVisible(false);
-			contactInformationHeader.setVisible(false);
-			homeaddrecreational.setVisible(true);
-
-		}
-
 		TextField occuDetails = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
 		occuDetails.setCaption("Please Specify Occupation");
 

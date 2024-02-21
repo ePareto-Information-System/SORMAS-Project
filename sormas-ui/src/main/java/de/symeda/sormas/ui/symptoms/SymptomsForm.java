@@ -140,13 +140,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRow(fluidColumn(8,4, locCss(CssStyles.ALIGN_RIGHT,BUTTONS_LOC)))+
 					createSymptomGroupLayout(SymptomGroup.GENERAL, GENERAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 
-					fluidRowLocs(FEVER_ONSET_PARALYSIS, PROGRESSIVE_PARALYSIS) +
-					fluidRowLocs(DATE_ONSET_PARALYSIS, PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
-					fluidRowLocs(SITE_OF_PARALYSIS) +
-					fluidRowLocs(PARALYSED_LIMB_SENSITIVE_TO_PAIN, INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
-					fluidRowLocs(RIGHT_INJECTION_SITE, LEFT_INJECTION_SITE) +
-					fluidRowLocs(6, TRUEAFP) +
-
 					fluidRowLocs(6,ALTERED_CONSCIOUSNESS) +
 					fluidRowLocs(6,CONFUSED_DISORIENTED) +
 					fluidRowLocs(6,HEMORRHAGIC_SYNDROME) +
@@ -162,11 +155,19 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					//createSymptomGroupLayout(SymptomGroup.GASTROINTESTINAL, GASTROINTESTINAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.URINARY, URINARY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.NERVOUS_SYSTEM, NERVOUS_SYSTEM_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
-					createSymptomGroupLayout(SymptomGroup.RASH, RASH_AND_SYMPTOMS_HEADING_LOC) +
-					createSymptomGroupLayout(SymptomGroup.RASH_CHARACTERISTICS, RASH_CHARACTERISTICS_AND_SYMPTOMS_HEADING_LOC) +
-					createSymptomGroupLayout(SymptomGroup.RASH_TYPE, RASH_TYPE_AND_SYMPTOMS_HEADING_LOC) +
+					//createSymptomGroupLayout(SymptomGroup.RASH, RASH_AND_SYMPTOMS_HEADING_LOC) +
+					//createSymptomGroupLayout(SymptomGroup.RASH_CHARACTERISTICS, RASH_CHARACTERISTICS_AND_SYMPTOMS_HEADING_LOC) +
+					//createSymptomGroupLayout(SymptomGroup.RASH_TYPE, RASH_TYPE_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.SKIN, SKIN_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.OTHER, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
+
+					fluidRowLocs(FEVER_ONSET_PARALYSIS, PROGRESSIVE_PARALYSIS) +
+					fluidRowLocs(DATE_ONSET_PARALYSIS, PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
+					fluidRowLocs(6,SITE_OF_PARALYSIS) +
+					fluidRowLocs(PARALYSED_LIMB_SENSITIVE_TO_PAIN, INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
+					fluidRowLocs(RIGHT_INJECTION_SITE, LEFT_INJECTION_SITE) +
+					fluidRowLocs(6, TRUEAFP) +
+
 					locsCss(VSPACE_3, PATIENT_ILL_LOCATION, SYMPTOMS_COMMENTS) +
 					fluidRowLocsCss(VSPACE_3, ONSET_SYMPTOM, ONSET_DATE) +
 					createSymptomsDateLayout() +
@@ -265,7 +266,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		Label signsAndSymptomsHeadingLabel =
 			createLabel(I18nProperties.getString(Strings.headingSignsAndSymptoms), H3, SIGNS_AND_SYMPTOMS_HEADING_LOC);
 
-		final Label generalSymptomsHeadingLabel = createLabel(SymptomGroup.GENERAL.toString(), H4, GENERAL_SIGNS_AND_SYMPTOMS_HEADING_LOC);
+		/*final Label generalSymptomsHeadingLabel = createLabel(SymptomGroup.GENERAL.toString(), H4, GENERAL_SIGNS_AND_SYMPTOMS_HEADING_LOC);
 		final Label respiratorySymptomsHeadingLabel =
 			createLabel(SymptomGroup.RESPIRATORY.toString(), H4, RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC);
 		final Label cardiovascularSymptomsHeadingLabel =
@@ -276,11 +277,12 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		final Label nervousSystemSymptomsHeadingLabel =
 			createLabel(SymptomGroup.NERVOUS_SYSTEM.toString(), H4, NERVOUS_SYSTEM_SIGNS_AND_SYMPTOMS_HEADING_LOC);
 		final Label rashSymptomsHeadingLabel = createLabel(SymptomGroup.RASH.toString(), H4, RASH_AND_SYMPTOMS_HEADING_LOC);
+		rashSymptomsHeadingLabel.setVisible(false);
 		final Label rashCharacteristicsSymptomsHeadingLabel =
 			createLabel(SymptomGroup.RASH_CHARACTERISTICS.toString(), H4, RASH_CHARACTERISTICS_AND_SYMPTOMS_HEADING_LOC);
 		final Label rashTypeSymptomsHeadingLabel = createLabel(SymptomGroup.RASH_TYPE.toString(), H4, RASH_TYPE_AND_SYMPTOMS_HEADING_LOC);
 		final Label skinSymptomsHeadingLabel = createLabel(SymptomGroup.SKIN.toString(), H4, SKIN_SIGNS_AND_SYMPTOMS_HEADING_LOC);
-		final Label otherSymptomsHeadingLabel = createLabel(SymptomGroup.OTHER.toString(), H4, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC);
+		final Label otherSymptomsHeadingLabel = createLabel(SymptomGroup.OTHER.toString(), H4, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC);*/
 
 		DateField onsetDateField = addField(ONSET_DATE, DateField.class);
 		ComboBox onsetSymptom = addField(ONSET_SYMPTOM, ComboBox.class);
@@ -790,7 +792,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				.setVisible(FieldHelper.getNullableSourceFieldValue((Field) e.getProperty()) == SymptomState.YES);
 		});
 
-		getFieldGroup().getField(RASHES).addValueChangeListener(e -> {
+		/*getFieldGroup().getField(RASHES).addValueChangeListener(e -> {
 			if (FieldHelper.getNullableSourceFieldValue(getFieldGroup().getField(RASHES)) == SymptomState.YES) {
 				rashCharacteristicsSymptomsHeadingLabel.setVisible(true);
 				rashTypeSymptomsHeadingLabel.setVisible(true);
@@ -799,7 +801,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				rashCharacteristicsSymptomsHeadingLabel.setVisible(false);
 				rashTypeSymptomsHeadingLabel.setVisible(false);
 			}
-		});
+		});*/
 
 		// Symptoms hint text
 		Label symptomsHint = new Label(
@@ -811,54 +813,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		if (disease == Disease.MONKEYPOX) {
 			setUpMonkeypoxVisibilities();
 		}
-		if (disease == Disease.AFP) {
-			NullableOptionGroup feverOnsetParalysis = addField(FEVER_ONSET_PARALYSIS, NullableOptionGroup.class);
-			NullableOptionGroup progressiveParalysis = addField(PROGRESSIVE_PARALYSIS, NullableOptionGroup.class);
-			DateField dateOnsetParalysis = addField(DATE_ONSET_PARALYSIS, DateField.class);
-			NullableOptionGroup progressiveFlaccidAcute = addField(PROGRESSIVE_FLACID_ACUTE, NullableOptionGroup.class);
-			NullableOptionGroup assymetric = addField(ASSYMETRIC, NullableOptionGroup.class);
 
-			NullableOptionGroup siteParalysisBox = new NullableOptionGroup("Site of Paralysis");
-			for (InjectionSite injectionSite : InjectionSite.ParalysisSite) {
-				siteParalysisBox.addItem(injectionSite);
-			}
-			NullableOptionGroup siteOfParalysis = addField(SITE_OF_PARALYSIS, siteParalysisBox);
-			OptionGroup paralysedLimbSensitiveToPain = addField(PARALYSED_LIMB_SENSITIVE_TO_PAIN, OptionGroup.class);
-			OptionGroup injectionSiteBeforeOnsetParalysis = addField(INJECTION_SITE_BEFORE_ONSET_PARALYSIS, OptionGroup.class);
 
-			NullableOptionGroup rightInjectionSiteBox = new NullableOptionGroup("Right Injection Site");
-			for (InjectionSite injectionSiteRight : InjectionSite.InjectionSiteRight) {
-				rightInjectionSiteBox.addItem(injectionSiteRight);
-			}
-			NullableOptionGroup rightInjectionSite = addField(RIGHT_INJECTION_SITE, rightInjectionSiteBox);
 
-			NullableOptionGroup leftInjectionSiteBox = new NullableOptionGroup("Left Injection Site");
-			for (InjectionSite injectionSiteLeft : InjectionSite.InjectionSiteLeft) {
-				leftInjectionSiteBox.addItem(injectionSiteLeft);
-			}
-			NullableOptionGroup leftInjectionSite = addField(LEFT_INJECTION_SITE, leftInjectionSiteBox);
-			OptionGroup trueAFP = addField(TRUEAFP, OptionGroup.class);
-			TextArea provisionalDiagnosis = addField(PROVISONAL_DIAGNOSIS, TextArea.class);
-			provisionalDiagnosis.setRows(4);
 
-			addFields(
-					MUSCLE_TONE,
-					DEEP_TENDON_REFLEX,
-					MUSCLE_VOLUME,
-					SENSORY_LOSS);
-
-			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
-			clinicalMeasurementsHeadingLabel.setVisible(false);
-			setVisible(false, FEVER,
-					ALTERED_CONSCIOUSNESS,
-					SEIZURES,
-					HEADACHE,
-					NECK_STIFFNESS);
-
-			symptomsHide();
-			setVisible(true, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
-
-		}
 		if(disease == Disease.NEW_INFLUENZA){
 			addField(DATE_OF_ONSET, DateField.class);
 			OptionGroup feverBodytemp = addField(FEVER_BODY_TEMP_GREATER, OptionGroup.class);
@@ -869,6 +827,70 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			symptomsHide();
 			setVisible(false, FEVER, HEADACHE, ALTERED_CONSCIOUSNESS, CONVULSION, SEIZURES);
 			setVisible(true, COUGH, SORE_THROAT, DIFFICULTY_BREATHING, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
+		}
+		if(disease == Disease.YELLOW_FEVER){
+			setVisible(false,
+					NON_VASCULAR,
+					NON_VASCULAR_DATE,
+					SKIN_RASH_DATE,
+					FEVER_DATE,
+					COUGH_DATE,
+					RUNNY_NOSE_DATE,
+					CONJUNCTIVITIS_DATE,
+					KOPLIKS_SPOTS_DATE);
+		}
+
+		if (disease == Disease.AFP) {
+			symptomsHide();
+
+			clinicalMeasurementsHeadingLabel.setVisible(false);
+			setVisible(false,
+					TEMPERATURE,
+					TEMPERATURE_SOURCE,
+					FEVER,
+					ALTERED_CONSCIOUSNESS,
+					SEIZURES,
+					HEADACHE,
+					NECK_STIFFNESS);
+
+
+			NullableOptionGroup feverOnsetParalysis = addField(FEVER_ONSET_PARALYSIS, NullableOptionGroup.class);
+			NullableOptionGroup progressiveParalysis = addField(PROGRESSIVE_PARALYSIS, NullableOptionGroup.class);
+			DateField dateOnsetParalysis = addField(DATE_ONSET_PARALYSIS, DateField.class);
+			NullableOptionGroup progressiveFlaccidAcute = addField(PROGRESSIVE_FLACID_ACUTE, NullableOptionGroup.class);
+			NullableOptionGroup assymetric = addField(ASSYMETRIC, NullableOptionGroup.class);
+
+			NullableOptionGroup siteParalysisBox = new NullableOptionGroup("Site of Paralysis");
+			for (InjectionSite injectionSite : InjectionSite.ParalysisSite) {
+				siteParalysisBox.addItem(injectionSite);
+			}
+			ComboBox siteOfParalysis = addField(SITE_OF_PARALYSIS, ComboBox.class);
+			OptionGroup paralysedLimbSensitiveToPain = addField(PARALYSED_LIMB_SENSITIVE_TO_PAIN, OptionGroup.class);
+			ComboBox injectionSiteBeforeOnsetParalysis = addField(INJECTION_SITE_BEFORE_ONSET_PARALYSIS, ComboBox.class);
+
+			ComboBox rightInjectionSiteBox = new ComboBox("Right Injection Site");
+			for (InjectionSite injectionSiteRight : InjectionSite.InjectionSiteRight) {
+				rightInjectionSiteBox.addItem(injectionSiteRight);
+			}
+			ComboBox rightInjectionSite = addField(RIGHT_INJECTION_SITE, rightInjectionSiteBox);
+
+			ComboBox leftInjectionSiteBox = new ComboBox("Left Injection Site");
+			for (InjectionSite injectionSiteLeft : InjectionSite.InjectionSiteLeft) {
+				leftInjectionSiteBox.addItem(injectionSiteLeft);
+			}
+			ComboBox leftInjectionSite = addField(LEFT_INJECTION_SITE, leftInjectionSiteBox);
+			OptionGroup trueAFP = addField(TRUEAFP, OptionGroup.class);
+			TextArea provisionalDiagnosis = addField(PROVISONAL_DIAGNOSIS, TextArea.class);
+			provisionalDiagnosis.setRows(4);
+
+			addFields(
+					MUSCLE_TONE,
+					DEEP_TENDON_REFLEX,
+					MUSCLE_VOLUME,
+					SENSORY_LOSS);
+
+			setVisible(true, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
+
 		}
 
 		if(disease == Disease.CSM){
@@ -1045,14 +1067,14 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			getFieldGroup().getField(PATIENT_ILL_LOCATION).setVisible(false);
 		}
 
-		symptomGroupMap.forEach((location, strings) -> {
+		/*symptomGroupMap.forEach((location, strings) -> {
 			final Component groupLabel = getContent().getComponent(location);
 			final Optional<String> groupHasVisibleSymptom =
 				strings.stream().filter(s -> getFieldGroup().getField(s) != null && getFieldGroup().getField(s).isVisible()).findAny();
 			if (!groupHasVisibleSymptom.isPresent()) {
 				groupLabel.setVisible(false);
 			}
-		});
+		});*/
 
 		if (isEditableAllowed(OTHER_HEMORRHAGIC_SYMPTOMS_TEXT)) {
 			FieldHelper.setRequiredWhen(
@@ -1296,7 +1318,16 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				HYPOGLYCEMIA,
 				MENINGEAL_SIGNS,
 				SEPSIS,
-				SHOCK);
+				SHOCK,
+				LESIONS_ONSET_DATE,
+				NON_VASCULAR,
+				NON_VASCULAR_DATE,
+				SKIN_RASH_DATE,
+				FEVER_DATE,
+				COUGH_DATE,
+				RUNNY_NOSE_DATE,
+				CONJUNCTIVITIS_DATE,
+				KOPLIKS_SPOTS_DATE);
 	}
 
 	private void toggleFeverComponentError(NullableOptionGroup feverField, ComboBox temperatureField) {
