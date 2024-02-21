@@ -5,11 +5,13 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.ComboBox;
 import de.symeda.sormas.api.EntityRelevanceStatus;
+import de.symeda.sormas.api.caze.CaseIndexDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.sample.SampleAssociationType;
 import de.symeda.sormas.api.sample.SampleCriteria;
 import de.symeda.sormas.api.sample.SampleDto;
+import de.symeda.sormas.api.sample.SampleIndexDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SormasUI;
@@ -17,9 +19,13 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.samples.CCESamplesGrid;
 import de.symeda.sormas.ui.samples.SampleCreateForm;
+import de.symeda.sormas.ui.samples.SamplesView;
 import de.symeda.sormas.ui.utils.*;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CaseSampleView extends AbstractCaseView {
     public static final String VIEW_NAME = ROOT_VIEW_NAME + "/samples";
@@ -36,6 +42,7 @@ public class CaseSampleView extends AbstractCaseView {
     private static final String REFERRED = "referred";
     private CCESamplesGrid grid;
     private DetailSubComponentWrapper gridLayout;
+    private Button btnEnterBulkEditMode;
 
     public CaseSampleView() {
         super(VIEW_NAME, false);
@@ -139,24 +146,31 @@ public class CaseSampleView extends AbstractCaseView {
             }
 
             // Bulk operation dropdown
-//            if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS_CASE_SAMPLES)) {
-//                shipmentFilterLayout.setWidth(100, Unit.PERCENTAGE);
-//
-//                MenuBar bulkOperationsDropdown = MenuBarHelper.createDropDown(
-//                        Captions.bulkActions,
-//                        new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, selectedItem -> {
-//                            ControllerProvider.getSampleController().deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), new Runnable() {
-//
-//                                public void run() {
-//                                    navigateTo(criteria);
-//                                }
-//                            });
-//                        }));
-//
-//                bulkOperationsDropdown.setVisible(viewConfiguration.isInEagerMode());
-//
-//                actionButtonsLayout.addComponent(bulkOperationsDropdown);
-//            }
+            if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS_CASE_SAMPLES)) {
+                btnEnterBulkEditMode = ButtonHelper.createIconButton(Captions.actionEnterBulkEditMode, VaadinIcons.CHECK_SQUARE_O, null);
+                btnEnterBulkEditMode.setVisible(!viewConfiguration.isInEagerMode());
+
+                addHeaderComponent(btnEnterBulkEditMode);
+
+                Button btnLeaveBulkEditMode =
+                        ButtonHelper.createIconButton(Captions.actionLeaveBulkEditMode, VaadinIcons.CLOSE, null, ValoTheme.BUTTON_PRIMARY);
+                btnLeaveBulkEditMode.setVisible(viewConfiguration.isInEagerMode());
+
+                addHeaderComponent(btnLeaveBulkEditMode);
+
+                btnEnterBulkEditMode.addClickListener(e -> {
+                    ViewModelProviders.of(SamplesView.class).get(ViewConfiguration.class).setInEagerMode(true);
+                    btnEnterBulkEditMode.setVisible(false);
+                    btnLeaveBulkEditMode.setVisible(true);
+                    grid.reload();
+                });
+                btnLeaveBulkEditMode.addClickListener(e -> {
+                    ViewModelProviders.of(SamplesView.class).get(ViewConfiguration.class).setInEagerMode(false);
+                    btnLeaveBulkEditMode.setVisible(false);
+                    btnEnterBulkEditMode.setVisible(true);
+                    navigateTo(criteria);
+                });
+            }
 
             sampleTypeFilter = ComboBoxHelper.createComboBoxV7();
             sampleTypeFilter.setWidth(140, Unit.PERCENTAGE);
@@ -246,8 +260,8 @@ public class CaseSampleView extends AbstractCaseView {
         });
         CssStyles.removeStyles(activeStatusButton, CssStyles.BUTTON_FILTER_LIGHT);
         if (activeStatusButton != null) {
-//            activeStatusButton
-//                    .setCaption(statusButtons.get(activeStatusButton) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getItemCount())));
+            activeStatusButton
+                    .setCaption(statusButtons.get(activeStatusButton) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getDataSize())));
         }
     }
 
@@ -266,5 +280,12 @@ public class CaseSampleView extends AbstractCaseView {
         }
 
         applyingCriteria = false;
+    }
+
+    private Set<String> getSelectedRows() {
+        CCESamplesGrid caseGrid = (CCESamplesGrid) this.grid;
+        return this.viewConfiguration.isInEagerMode()
+                ? caseGrid.asMultiSelect().getSelectedItems().stream().map(SampleIndexDto::getUuid).collect(Collectors.toSet())
+                : Collections.emptySet();
     }
 }

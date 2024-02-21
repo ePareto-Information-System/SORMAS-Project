@@ -326,8 +326,8 @@ public class EventSamplesView extends AbstractDetailView<EventParticipantReferen
         });
         CssStyles.removeStyles(activeStatusButton, CssStyles.BUTTON_FILTER_LIGHT);
         if (activeStatusButton != null) {
-//            activeStatusButton
-//                    .setCaption(statusButtons.get(activeStatusButton) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getItemCount())));
+            activeStatusButton
+                    .setCaption(statusButtons.get(activeStatusButton) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getDataSize())));
         }
     }
 

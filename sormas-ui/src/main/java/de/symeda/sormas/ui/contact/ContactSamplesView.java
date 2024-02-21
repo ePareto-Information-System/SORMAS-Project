@@ -251,8 +251,8 @@ public class ContactSamplesView extends AbstractContactView {
         });
         CssStyles.removeStyles(activeStatusButton, CssStyles.BUTTON_FILTER_LIGHT);
         if (activeStatusButton != null) {
-//            activeStatusButton
-//                    .setCaption(statusButtons.get(activeStatusButton) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getItemCount())));
+            activeStatusButton
+                    .setCaption(statusButtons.get(activeStatusButton) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getDataSize())));
         }
     }
 

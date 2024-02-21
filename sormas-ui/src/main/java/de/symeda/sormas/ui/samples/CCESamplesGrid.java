@@ -247,4 +247,5 @@ public class CCESamplesGrid extends FilteredGrid<SampleIndexDto, SampleCriteria>
     public void setDataProviderListener(DataProviderListener<SampleIndexDto> dataProviderListener) {
         this.dataProviderListener = dataProviderListener;
     }
+
 }
