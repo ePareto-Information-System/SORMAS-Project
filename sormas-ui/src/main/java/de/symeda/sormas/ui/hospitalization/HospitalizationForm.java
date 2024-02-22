@@ -27,9 +27,6 @@ import java.util.Objects;
 import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
-import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
-import de.symeda.sormas.api.sample.SampleDto;
-import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import de.symeda.sormas.api.utils.YesNo;
 
 import com.vaadin.server.ErrorMessage;
@@ -339,12 +336,13 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		}
 
 		if(caze.getDisease() == Disease.AHF){
-			setVisible(false, HospitalizationDto.ADMISSION_DATE,HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, HospitalizationDto.ISOLATED);
+			setVisible(false, HospitalizationDto.ADMISSION_DATE,HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, HospitalizationDto.ISOLATED, HospitalizationDto.INTENSIVE_CARE_UNIT);
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
 
-			admittedToHealthFacilityFieldNew.setVisible(true);
+			setVisible(false, HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.ISOLATED, HospitalizationDto.INTENSIVE_CARE_UNIT, HospitalizationDto.DISCHARGE_DATE);
+			setVisible(true, HospitalizationDto.DISEASE_ONSET_DATE, HospitalizationDto.PATIENT_HOSPITALIZED_DETAINED);
 
 		}
 
