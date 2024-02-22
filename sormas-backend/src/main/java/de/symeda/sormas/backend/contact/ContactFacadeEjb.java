@@ -2122,10 +2122,12 @@ public class ContactFacadeEjb
 			Arrays.asList(
 				joins.getPerson().get(Person.FIRST_NAME),
 				joins.getPerson().get(Person.LAST_NAME),
+				joins.getPerson().get(Person.OTHER_NAME),
 				contactRoot.get(Contact.UUID),
 				joins.getCaze().get(Case.UUID),
 				joins.getCasePerson().get(Person.FIRST_NAME),
 				joins.getCasePerson().get(Person.LAST_NAME),
+				joins.getCasePerson().get(Person.OTHER_NAME),
 				contactRoot.get(Contact.CASE_ID_EXTERNAL_SYSTEM),
 				contactRoot.get(Contact.LAST_CONTACT_DATE),
 				contactRoot.get(Contact.CONTACT_PROXIMITY),

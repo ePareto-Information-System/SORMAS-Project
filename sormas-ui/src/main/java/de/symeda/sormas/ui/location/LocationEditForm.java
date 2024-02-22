@@ -274,7 +274,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		subcontinent = addInfrastructureField(LocationDto.SUB_CONTINENT);
 		country = addInfrastructureField(LocationDto.COUNTRY);
 		country.setVisible(false);
-		ComboBox region = addInfrastructureField(LocationDto.REGION);
+		region = addInfrastructureField(LocationDto.REGION);
 		ComboBox district = addInfrastructureField(LocationDto.DISTRICT);
 		ComboBox community = addInfrastructureField(LocationDto.COMMUNITY);
 		community.setCaption("Sub-District");

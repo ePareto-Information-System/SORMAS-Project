@@ -82,6 +82,7 @@ public class ContactIndexDto extends PseudonymizableIndexDto implements Serializ
 	private VaccinationStatus vaccinationStatus;
 	private String districtUuid;
 	private String contactOfficerUuid;
+	private String reportingUserUuid;
 	private Date reportDateTime;
 	private ContactCategory contactCategory;
 	private CaseClassification caseClassification;
@@ -179,6 +180,7 @@ public class ContactIndexDto extends PseudonymizableIndexDto implements Serializ
 		this.symptomJournalStatus = symptomJournalStatus;
 		this.vaccinationStatus = vaccinationStatus;
 		this.contactOfficerUuid = contactOfficerUuid;
+		this.reportingUserUuid = reportingUserUuid;
 		this.reportDateTime = reportDateTime;
 		this.caseClassification = caseClassification;
 		this.visitCount = visitCount;
@@ -337,8 +339,16 @@ public class ContactIndexDto extends PseudonymizableIndexDto implements Serializ
 		return contactOfficerUuid;
 	}
 
+	public String getReportingUserUuid() {
+		return reportingUserUuid;
+	}
+
 	public void setContactOfficerUuid(String contactOfficerUuid) {
 		this.contactOfficerUuid = contactOfficerUuid;
+	}
+
+	public void setReportingUserUuid(String reportingUserUuid) {
+		this.reportingUserUuid = reportingUserUuid;
 	}
 
 	public Date getReportDateTime() {

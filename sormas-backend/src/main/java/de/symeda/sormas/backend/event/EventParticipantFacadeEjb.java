@@ -605,6 +605,8 @@ public class EventParticipantFacadeEjb
 				cb.max(samples.get(Sample.SAMPLE_DATE_TIME)),
 				eventParticipant.get(EventParticipant.VACCINATION_STATUS),
 				joins.getEventParticipantReportingUser().get(User.UUID),
+				eventParticipant.get(EventParticipant.DELETION_REASON),
+				eventParticipant.get(EventParticipant.OTHER_DELETION_REASON),
 				inJurisdictionSelector,
 				inJurisdictionOrOwnedSelector);
 		cq.groupBy(

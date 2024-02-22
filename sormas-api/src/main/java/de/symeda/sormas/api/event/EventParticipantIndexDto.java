@@ -66,6 +66,7 @@ public class EventParticipantIndexDto extends PseudonymizableIndexDto implements
 		String eventUuid,
 		String firstName,
 		String lastName,
+		String otherName,
 		Sex sex,
 		Integer approximateAge,
 		ApproximateAgeType approximateAgeType,
@@ -85,6 +86,7 @@ public class EventParticipantIndexDto extends PseudonymizableIndexDto implements
 		this.eventUuid = eventUuid;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.otherName = otherName;
 		this.sex = sex;
 		this.approximateAge = approximateAge;
 		this.involvementDescription = involvementDescription;
