@@ -791,6 +791,7 @@ public interface Captions {
 	String Contact_uuid = "Contact.uuid";
 	String Contact_vaccinationStatus = "Contact.vaccinationStatus";
 	String Contact_visits = "Contact.visits";
+	String Contact_samples = "Contact.samples";
 	String contactActiveContacts = "contactActiveContacts";
 	String contactAllActiveAndArchiveContacts = "contactAllActiveAndArchiveContacts";
 	String contactArchivedContacts = "contactArchivedContacts";
@@ -1273,6 +1274,7 @@ public interface Captions {
 	String eventEditEventGroup = "eventEditEventGroup";
 	String eventEventActions = "eventEventActions";
 	String eventEventParticipants = "eventEventParticipants";
+	String eventEventParticipantsSamples = "eventEventParticipantsSamples";
 	String eventEventsList = "eventEventsList";
 	String eventEvolutionCommentWithStatus = "eventEvolutionCommentWithStatus";
 	String eventEvolutionDateWithStatus = "eventEvolutionDateWithStatus";
@@ -2204,6 +2206,7 @@ public interface Captions {
 	String Sample_typeOfTest = "Sample.typeOfTest";
 	String Sample_uuid = "Sample.uuid";
 	String sampleActiveSamples = "sampleActiveSamples";
+	String sampleAllSamples = "sampleAllSamples";
 	String sampleAllActiveAndArchivedSamples = "sampleAllActiveAndArchivedSamples";
 	String sampleArchivedSamples = "sampleArchivedSamples";
 	String sampleAssociationType = "sampleAssociationType";

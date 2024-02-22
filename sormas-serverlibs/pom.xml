@@ -11,7 +11,6 @@
 	<artifactId>sormas-serverlibs</artifactId>
 	<name>${project.artifactId}</name>
 	<packaging>pom</packaging>
-
 	<description>Lists the jars that need to be deployed in the Payara domain (in /lib). They are set to provided in the deployable applications.</description>
 
 	<dependencies>

@@ -340,12 +340,17 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		samplePurposeField.setRequired(true);
 
 		final CaseReferenceDto associatedCase = getValue().getAssociatedCase();
+		final ContactReferenceDto associatedContact = getValue().getAssociatedContact();
+		final EventParticipantReferenceDto associatedEventParticipant = getValue().getAssociatedEventParticipant();
+
 		if (associatedCase != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CASE_VIEW)) {
-			disease = FacadeProvider.getCaseFacade().getCaseDataByUuid(associatedCase.getUuid()).getDisease();
-		} else {
-			final ContactReferenceDto associatedContact = getValue().getAssociatedContact();
-			if (associatedContact != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CONTACT_VIEW)) {
-				disease = FacadeProvider.getContactFacade().getByUuid(associatedContact.getUuid()).getDisease();
+			disease = getDiseaseFromCase(associatedCase.getUuid());
+		} else if (associatedContact != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CONTACT_VIEW)) {
+			disease = getDiseaseFromContact(associatedContact.getUuid());
+		} else if (associatedEventParticipant != null && UserProvider.getCurrent().hasAllUserRights(UserRight.EVENT_VIEW)) {
+			EventReferenceDto eventReferenceDto = FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(associatedEventParticipant.getUuid()).getEvent();
+			if (eventReferenceDto != null) {
+				disease = getDiseaseFromEvent(eventReferenceDto.getUuid());
 			}
 		}
 
@@ -1053,6 +1058,15 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				return labItem;
 			}
 		}
+
+		return null;
+	}
+
+	private Disease getDiseaseFromCase(String caseUuid) {
+		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(caseUuid);
+		if (caseDataDto != null) {
+			return caseDataDto.getDisease();
+		}
 		return null;
 	}
 
@@ -1157,4 +1171,19 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		}
 	}
 
+	private Disease getDiseaseFromContact(String contactUuid) {
+		ContactDto contactDto = FacadeProvider.getContactFacade().getByUuid(contactUuid);
+		if (contactDto != null) {
+			return contactDto.getDisease();
+		}
+		return null;
+	}
+
+	private Disease getDiseaseFromEvent(String eventUuid) {
+		EventDto eventDto = FacadeProvider.getEventFacade().getByUuid(eventUuid);
+		if (eventDto != null) {
+			return eventDto.getDisease();
+		}
+		return null;
+	}
 }

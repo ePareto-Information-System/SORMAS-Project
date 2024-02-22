@@ -69,7 +69,6 @@ public class CaseDataView extends AbstractCaseView {
 	public static final String CASE_LOC = "case";
 	public static final String CASE_SIDE_PANEL_LOC = "caseSidePanel";
 	public static final String TASKS_LOC = "tasks";
-	public static final String SAMPLES_LOC = "samples";
 	public static final String EVENTS_LOC = "events";
 	public static final String IMMUNIZATION_LOC = "immunizations";
 	public static final String VACCINATIONS_LOC = "vaccinations";
@@ -106,18 +105,17 @@ public class CaseDataView extends AbstractCaseView {
 		editComponent = ControllerProvider.getCaseController().getCaseDataEditComponent(getCaseRef().getUuid(), ViewMode.NORMAL);
 
 		LayoutWithSidePanel layout = new LayoutWithSidePanel(
-				editComponent,
-				TASKS_LOC,
-				SAMPLES_LOC,
-				EVENTS_LOC,
-				IMMUNIZATION_LOC,
-				VACCINATIONS_LOC,
-				SORMAS_TO_SORMAS_LOC,
-				SMS_LOC,
-				ExternalSurveillanceServiceGateway.EXTERANEL_SURVEILLANCE_TOOL_GATEWAY_LOC,
-				SURVEILLANCE_REPORTS_LOC,
-				DOCUMENTS_LOC,
-				QuarantineOrderDocumentsComponent.QUARANTINE_LOC);
+			editComponent,
+			TASKS_LOC,
+			EVENTS_LOC,
+			IMMUNIZATION_LOC,
+			VACCINATIONS_LOC,
+			SORMAS_TO_SORMAS_LOC,
+			SMS_LOC,
+			ExternalSurveillanceServiceGateway.EXTERANEL_SURVEILLANCE_TOOL_GATEWAY_LOC,
+			SURVEILLANCE_REPORTS_LOC,
+			DOCUMENTS_LOC,
+			QuarantineOrderDocumentsComponent.QUARANTINE_LOC);
 
 		container.addComponent(layout);
 
@@ -151,9 +149,11 @@ public class CaseDataView extends AbstractCaseView {
 					new SampleCriteria().caze(getCaseRef()).sampleAssociationType(SampleAssociationType.CASE).disease(caze.getDisease()),
 					this::showUnsavedChangesPopup,
 					isEditAllowed);
-			SampleListComponentLayout sampleListComponentLayout =
-					new SampleListComponentLayout(sampleList, I18nProperties.getString(Strings.infoCreateNewSampleDiscardsChangesCase), isEditAllowed);
-			layout.addSidePanelComponent(sampleListComponentLayout, SAMPLES_LOC);
+//			SampleListComponentLayout sampleListComponentLayout =
+//					new SampleListComponentLayout(sampleList, I18nProperties.getString(Strings.infoCreateNewSampleDiscardsChangesCase), isEditAllowed);
+//			layout.addSidePanelComponent(sampleListComponentLayout, SAMPLES_LOC);
+//				new SampleListComponentLayout(sampleList, I18nProperties.getString(Strings.infoCreateNewSampleDiscardsChangesCase), isEditAllowed);
+//			layout.addSidePanelComponent(sampleListComponentLayout, SAMPLES_LOC);
 		}
 
 		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EVENT_SURVEILLANCE)

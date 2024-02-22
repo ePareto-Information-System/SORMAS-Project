@@ -26,6 +26,7 @@ import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.feature.FeatureTypeProperty;
+import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.immunization.ImmunizationListCriteria;
@@ -37,17 +38,16 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.vaccination.VaccinationAssociationType;
 import de.symeda.sormas.api.vaccination.VaccinationCriteria;
 import de.symeda.sormas.ui.ControllerProvider;
+import de.symeda.sormas.ui.SubMenu;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.contact.ContactListComponent;
 import de.symeda.sormas.ui.docgeneration.QuarantineOrderDocumentsComponent;
+import de.symeda.sormas.ui.externalmessage.ExternalMessagesView;
 import de.symeda.sormas.ui.immunization.immunizationlink.ImmunizationListComponent;
 import de.symeda.sormas.ui.samples.sampleLink.SampleListComponent;
 import de.symeda.sormas.ui.samples.sampleLink.SampleListComponentLayout;
 import de.symeda.sormas.ui.sormastosormas.SormasToSormasListComponent;
-import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
-import de.symeda.sormas.ui.utils.CssStyles;
-import de.symeda.sormas.ui.utils.DetailSubComponentWrapper;
-import de.symeda.sormas.ui.utils.LayoutWithSidePanel;
+import de.symeda.sormas.ui.utils.*;
 import de.symeda.sormas.ui.utils.components.sidecomponent.SideComponentLayout;
 import de.symeda.sormas.ui.vaccination.list.VaccinationListComponent;
 
@@ -185,4 +185,43 @@ public class EventParticipantDataView extends AbstractEventParticipantView {
 		layout.disableIfNecessary(deleted, eventParticipantEditAllowed);
 	}
 
+	@Override
+	public void refreshMenu(SubMenu menu, String params) {
+
+		if (!findReferenceByParams(params)) {
+			return;
+		}
+
+		EventParticipantDto eventParticipantDto = FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(getReference().getUuid());
+
+		menu.removeAllViews();
+		menu.addView(
+			EventParticipantsView.VIEW_NAME,
+			I18nProperties.getCaption(Captions.eventEventParticipants),
+			eventParticipantDto.getEvent().getUuid(),
+			true);
+
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EXTERNAL_MESSAGES)
+			&& UserProvider.getCurrent().hasUserRight(UserRight.EXTERNAL_MESSAGE_VIEW)
+			&& FacadeProvider.getExternalMessageFacade().existsExternalMessageForEntity(getReference())) {
+			menu.addView(ExternalMessagesView.VIEW_NAME, I18nProperties.getCaption(Captions.externalMessagesList));
+		}
+
+		menu.addView(EventParticipantDataView.VIEW_NAME, I18nProperties.getCaption(EventParticipantDto.I18N_PREFIX), params);
+		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)) {
+			menu.addView(EventSamplesView.VIEW_NAME, I18nProperties.getCaption(Captions.eventEventParticipantsSamples), params);
+		}
+		setMainHeaderComponent(ControllerProvider.getEventParticipantController().getEventParticipantViewTitleLayout(eventParticipantDto));
+	}
+
+	@Override
+	protected void setSubComponent(DirtyStateComponent newComponent) {
+		super.setSubComponent(newComponent);
+
+		EventParticipantDto eventParticipant = FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(getReference().getUuid());
+		if (eventParticipant.isDeleted()) {
+			newComponent.setEnabled(false);
+		}
+
+	}
 }

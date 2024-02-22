@@ -115,7 +115,6 @@ public class ContactDataView extends AbstractContactView {
 			CASE_BUTTONS_LOC,
 			EVENTS_LOC,
 			TASKS_LOC,
-			SAMPLES_LOC,
 			IMMUNIZATION_LOC,
 			VACCINATIONS_LOC,
 			SORMAS_TO_SORMAS_LOC,
