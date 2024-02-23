@@ -255,6 +255,10 @@ public abstract class AbstractCoreFacadeEjb<ADO extends CoreAdo, DTO extends Ent
 		return service.getEditPermissionType(service.getByUuid(uuid));
 	}
 
+	@Override
+	public boolean isEditAllowed(String uuid) {
+		return service.isEditAllowed(service.getByUuid(uuid));
+	}
 
 
 
