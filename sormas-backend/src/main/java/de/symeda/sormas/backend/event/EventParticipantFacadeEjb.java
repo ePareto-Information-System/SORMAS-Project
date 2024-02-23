@@ -1295,10 +1295,6 @@ public class EventParticipantFacadeEjb
 		return CoreEntityType.EVENT_PARTICIPANT;
 	}
 
-	@Override
-	public boolean isEditAllowed(String uuid) {
-		return false;
-	}
 
 	@LocalBean
 	@Stateless

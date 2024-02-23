@@ -1522,10 +1522,6 @@ public class EventFacadeEjb extends AbstractCoreFacadeEjb<Event, EventDto, Event
 		return service.inJurisdictionOrOwned(service.getByUuid(uuid));
 	}
 
-	@Override
-	public boolean isEditAllowed(String uuid) {
-		return false;
-	}
 
 	@LocalBean
 	@Stateless
