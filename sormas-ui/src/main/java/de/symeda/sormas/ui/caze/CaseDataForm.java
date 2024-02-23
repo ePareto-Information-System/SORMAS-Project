@@ -37,6 +37,7 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.locs;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.vaadin.ui.*;
 import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.infrastructure.facility.*;
@@ -52,11 +53,6 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.server.UserError;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.ErrorLevel;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseListener;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.Property;
@@ -406,16 +402,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		TextField notifiedBy = addField(CaseDataDto.NOTIFIED_BY, TextField.class);
 		DateField dateOfNotification = addField(CaseDataDto.DATE_OF_NOTIFICATION, DateField.class);
 		DateField dateOfInvestigation = addField(CaseDataDto.DATE_OF_INVESTIGATION, DateField.class);
-		notifiedBy.setVisible(false);
-		dateOfNotification.setVisible(false);
-		dateOfInvestigation.setVisible(false);
-		districtLevelDate.setVisible(false);
-		regionLevelDate.setVisible(false);
-		regionLevelDate.setVisible(false);
-		nationalLevelDate.setVisible(false);
-		clinicianName.setVisible(false);
-		clinicianPhone.setVisible(false);
-		clinicianEmail.setVisible(false);
 
 
 		TextField epidField = addField(CaseDataDto.EPID_NUMBER, TextField.class);
@@ -447,17 +433,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		}
 
 		TextField externalTokenField = addField(CaseDataDto.EXTERNAL_TOKEN, TextField.class);
-		externalTokenField.setVisible(false);
 		Label externalTokenWarningLabel = new Label(I18nProperties.getString(Strings.messageCaseExternalTokenWarning));
 		externalTokenWarningLabel.addStyleNames(VSPACE_3, LABEL_WHITE_SPACE_NORMAL);
 		getContent().addComponent(externalTokenWarningLabel, EXTERNAL_TOKEN_WARNING_LOC);
 
 		TextField internaltoken =  addField(CaseDataDto.INTERNAL_TOKEN, TextField.class);
-		internaltoken.setVisible(false);
-
 		NullableOptionGroup investigationstatus = addField(CaseDataDto.INVESTIGATION_STATUS, NullableOptionGroup.class);
-		investigationstatus.setVisible(false);
-
 		NullableOptionGroup outcome = new NullableOptionGroup("Outcome");
 
 		for(CaseOutcome caseOutcome : CaseOutcome.values()){
@@ -471,7 +452,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		addFields(CaseDataDto.INVESTIGATED_DATE, CaseDataDto.OUTCOME_DATE, CaseDataDto.SEQUELAE_DETAILS);
 		TextField homeaddrecreational = addField(CaseDataDto.HOME_ADDRESS_RECREATIONAL, TextField.class);
-		homeaddrecreational.setVisible(false);
 		addField(CaseDataDto.CASE_IDENTIFICATION_SOURCE);
 		addField(CaseDataDto.SCREENING_TYPE);
 
@@ -493,11 +473,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		addField(CaseDataDto.RABIES_TYPE, NullableOptionGroup.class);
 		addField(CaseDataDto.CASE_ORIGIN, TextField.class);
 		OptionGroup caseTransmissionClassification = addField(CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
-		caseTransmissionClassification.setVisible(false);
-
 
 		quarantine = addField(CaseDataDto.QUARANTINE);
-		quarantine.setVisible(false);
 		quarantine.addValueChangeListener(e -> onValueChange());
 		quarantineFrom = addField(CaseDataDto.QUARANTINE_FROM, DateField.class);
 		dfQuarantineTo = addDateField(CaseDataDto.QUARANTINE_TO, DateField.class, -1);
@@ -662,7 +639,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		// Reinfection
 //		{
 			NullableOptionGroup ogReinfection = addField(CaseDataDto.RE_INFECTION, NullableOptionGroup.class);
-		ogReinfection.setVisible(true);
 
 			addField(CaseDataDto.PREVIOUS_INFECTION_DATE);
 			ComboBox tfReinfectionStatus = addField(CaseDataDto.REINFECTION_STATUS, ComboBox.class);
@@ -1021,7 +997,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			I18nProperties.getPrefixDescription(CaseDataDto.I18N_PREFIX, CaseDataDto.ADDITIONAL_DETAILS, "") + "\n"
 				+ I18nProperties.getDescription(Descriptions.descGdpr));
 		CssStyles.style(additionalDetails, CssStyles.CAPTION_HIDDEN);
-		additionalDetails.setVisible(false);
 
 		addField(CaseDataDto.PREGNANT, NullableOptionGroup.class);
 		addField(CaseDataDto.POSTPARTUM, NullableOptionGroup.class);
@@ -1167,12 +1142,31 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			differentPlaceOfStayJurisdiction.setVisible(false);
 		}
 
+		//Set General Visibilities
+		externalTokenField.setVisible(false);
+		additionalDetails.setVisible(false);
+		notifiedBy.setVisible(false);
+		dateOfNotification.setVisible(false);
+		dateOfInvestigation.setVisible(false);
+		districtLevelDate.setVisible(false);
+		regionLevelDate.setVisible(false);
+		regionLevelDate.setVisible(false);
+		nationalLevelDate.setVisible(false);
+		clinicianName.setVisible(false);
+		clinicianPhone.setVisible(false);
+		clinicianEmail.setVisible(false);
+		caseTransmissionClassification.setVisible(false);
+		internaltoken.setVisible(false);
+		investigationstatus.setVisible(false);
+		homeaddrecreational.setVisible(false);
+		quarantine.setVisible(false);
+		ogReinfection.setVisible(false);
+
 		FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.TRIMESTER, CaseDataDto.PREGNANT, Collections.singletonList(YesNoUnknown.YES), true);
 
 		diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
 			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
 
-			ogReinfection.setVisible(false);
 			generalCommentLabel.setVisible(false);
 
 			List<DiseaseVariant> diseaseVariants =
@@ -1267,14 +1261,14 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			null);
 
 		/// CLINICIAN FIELDS
-		if (isVisibleAllowed(CaseDataDto.CLINICIAN_NAME)) {
+		/*if (isVisibleAllowed(CaseDataDto.CLINICIAN_NAME)) {
 			FieldHelper.setVisibleWhen(
 				getFieldGroup(),
 				Arrays.asList(CaseDataDto.CLINICIAN_NAME, CaseDataDto.CLINICIAN_PHONE, CaseDataDto.CLINICIAN_EMAIL),
 				CaseDataDto.FACILITY_TYPE,
 				Arrays.asList(FacilityType.HOSPITAL, FacilityType.OTHER_MEDICAL_FACILITY),
 				true);
-		}
+		}*/
 
 		// Other initializations
 		if (disease == Disease.MONKEYPOX) {
@@ -1481,10 +1475,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			}
 
 			if(disease == Disease.YELLOW_FEVER || disease == Disease.CSM){
-				externalTokenField.setVisible(false);
-				internaltoken.setVisible(false);
-				quarantine.setVisible(false);
-				additionalDetails.setVisible(false);
 				getFieldGroup().getField(CaseDataDto.PREGNANT).setVisible(false);
 				getFieldGroup().getField(CaseDataDto.POSTPARTUM).setVisible(false);
 
@@ -1499,13 +1489,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			if(disease == Disease.YELLOW_FEVER){
 				setVisible(false,
 						TYPE_GROUP_LOC);
-
-				setRequired(false,
-						FACILITY_OR_HOME_LOC,
-						TYPE_GROUP_LOC,
-						CaseDataDto.FACILITY_TYPE,
-						CaseDataDto.HEALTH_FACILITY,
-						CaseDataDto.HEALTH_FACILITY_DETAILS);
 
 				nationalLevelDate.setVisible(true);
 				NullableOptionGroup vaccinatedByCardOrHistory = addField(CaseDataDto.VACCINATION_TYPE, NullableOptionGroup.class);
