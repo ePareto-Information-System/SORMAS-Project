@@ -137,7 +137,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			+ fluidRowLocs(CaseDataDto.REGION, CaseDataDto.DISTRICT, CaseDataDto.COMMUNITY)
 			+ fluidRowLocs(6,FACILITY_TYPE_GROUP_LOC)
 			+ fluidRowLocs(CaseDataDto.FACILITY_TYPE, CaseDataDto.HEALTH_FACILITY)
-			+ fluidRowLocs(CaseDataDto.DHIMS_FACILITY_TYPE, CaseDataDto.HOSPITAL_NAME)
 			+ fluidRowLocs(6, CaseDataDto.HEALTH_FACILITY_DETAILS)
 			+ fluidRowLocs(6, CaseDataDto.HOME_ADDRESS_RECREATIONAL)
 			+ fluidRowLocs(6,CaseDataDto.AFP_FACILITY_OPTIONS)
@@ -382,10 +381,10 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 					facilityType.setValue(FacilityType.HOSPITAL);
 				}
 
-				if (isCaseDisease((Disease) diseaseField.getValue())) {
+				/*if (isCaseDisease((Disease) diseaseField.getValue())) {
 					FieldHelper.removeItems(facilityType);
 					FieldHelper.updateEnumData(facilityType, FacilityType.DISEASE_FACILITIES);
-				}
+				}*/
 
 				if (facilityType.getValue() != null) {
 					updateFacility();
@@ -432,17 +431,9 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		region.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 
 
-
-		region.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
-
 		OptionGroup caseTransmissionClassification = addField(CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
-		//caseTransmissionClassification.setRequired(false);
 		caseTransmissionClassification.setVisible(false);
-//		if (userJurisdictionLevel == JurisdictionLevel.COMMUNITY) {
-//			region.setReadOnly(true);
-//			district.setReadOnly(true);
-//		}
-//		JurisdictionLevel userJurisdictionLevel = UserRole.getJurisdictionLevel(UserProvider.getCurrent().getUserRoles());
+
 		JurisdictionLevel userJurisdictionLevel = UserProvider.getCurrent().getJurisdictionLevel();
 		if (userJurisdictionLevel == JurisdictionLevel.HEALTH_FACILITY) {
 			region.setReadOnly(true);

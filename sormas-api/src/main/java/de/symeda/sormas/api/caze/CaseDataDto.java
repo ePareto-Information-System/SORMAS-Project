@@ -215,7 +215,6 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String RE_INFECTION = "reInfection";
 	public static final String PREVIOUS_INFECTION_DATE = "previousInfectionDate";
 	public static final String REINFECTION_STATUS = "reinfectionStatus";
-	public static final String REINFECTION_DETAILS = "reinfectionDetails";
 
 	public static final String BLOOD_ORGAN_OR_TISSUE_DONATED = "bloodOrganOrTissueDonated";
 
