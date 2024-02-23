@@ -176,12 +176,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					loc(SampleDto.TREATMENT) +
 					loc(SampleDto.STATE_TREATMENT_ADMINISTERED) +
 
-                    locCss(VSPACE_TOP_3, SampleDto.PATHOGEN_TESTING_REQUESTED) +
-                    loc(PATHOGEN_TESTING_READ_HEADLINE_LOC) +
-                    loc(PATHOGEN_TESTING_INFO_LOC) +
-                    loc(SampleDto.REQUESTED_PATHOGEN_TESTS) +
-                    loc(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS) +
-                    loc(REQUESTED_PATHOGEN_TESTS_READ_LOC) +
+					locCss(VSPACE_TOP_3, SampleDto.PATHOGEN_TESTING_REQUESTED) +
+					loc(PATHOGEN_TESTING_READ_HEADLINE_LOC) +
+					loc(PATHOGEN_TESTING_INFO_LOC) +
+					loc(SampleDto.REQUESTED_PATHOGEN_TESTS) +
+					loc(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS) +
+					loc(REQUESTED_PATHOGEN_TESTS_READ_LOC) +
 
 					locCss(VSPACE_TOP_3, SampleDto.ADDITIONAL_TESTING_REQUESTED) +
 					loc(ADDITIONAL_TESTING_READ_HEADLINE_LOC) +

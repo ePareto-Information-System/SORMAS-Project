@@ -258,7 +258,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 		ComboBox diseaseField = addField(PathogenTestDto.TESTED_DISEASE, diseaseBox);*/
 
-		ComboBox diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
+		diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
 
 		if(caseDisease == Disease.AHF){
 			diseaseField.removeAllItems();
@@ -411,7 +411,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 		lab.addValueChangeListener(event -> {
 			if (event.getProperty().getValue() != null
-				&& ((FacilityReferenceDto) event.getProperty().getValue()).getUuid().equals(FacilityDto.OTHER_FACILITY_UUID)) {
+					&& ((FacilityReferenceDto) event.getProperty().getValue()).getUuid().equals(FacilityDto.OTHER_FACILITY_UUID)) {
 				labDetails.setVisible(true);
 				labDetails.setRequired(isEditableAllowed(labDetails));
 			} else {

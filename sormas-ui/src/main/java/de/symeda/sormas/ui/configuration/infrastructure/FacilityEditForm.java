@@ -77,7 +77,6 @@ public class FacilityEditForm extends AbstractEditForm<FacilityDto> {
 	private boolean create;
 	private ComboBox typeGroup;
 
-	private CheckBoxGroup checkBoxLab;
 
 	public FacilityEditForm(boolean create) {
 		super(FacilityDto.class, FacilityDto.I18N_PREFIX, false);
@@ -137,8 +136,6 @@ public class FacilityEditForm extends AbstractEditForm<FacilityDto> {
 			region.setRequired(notLab);
 			district.setRequired(notLab);
 
-			//hide the checkbox if the facility is not a lab
-			checkBoxLab.setVisible(!notLab);
 			if (!create) {
 				// Disable editing of region, etc. so case references stay correct
 				region.setEnabled(false);
@@ -174,33 +171,7 @@ public class FacilityEditForm extends AbstractEditForm<FacilityDto> {
 			typeGroup.setValue(facilityDto.getType().getFacilityTypeGroup());
 		}
 
-		checkBoxLab = new CheckBoxGroup(I18nProperties.getCaption(Captions.Facility_Diseases));
-		checkBoxLab.setWidth(100, Unit.PERCENTAGE);
-		checkBoxLab.setItems(FacadeProvider.getDiseaseConfigurationFacade().getAllPrimaryDiseases().toArray());
-		//set visible to false, because the checkbox is only needed for labs
-		checkBoxLab.setVisible(false);
-		getContent().addComponent(checkBoxLab, DISEASES_LIST_COL_ONE);
-
-		checkBoxLab.addValueChangeListener(e -> {
-			Set<DiseaseConfigurationDto> selectedDtos = new HashSet<>();
-			for(Disease disease : (Set<Disease>) e.getValue()) {
-				DiseaseConfigurationDto diseaseDto = new DiseaseConfigurationDto();
-				diseaseDto.setDisease(disease);
-				selectedDtos.add(diseaseDto);
-			}
-			getValue().setDiseases(selectedDtos);
-		});
-
-
 		super.setValue(facilityDto);
-
-		if (facilityDto.getDiseases() != null) {
-			Set<Disease> diseases = facilityDto.getDiseases().stream()
-					.filter(d -> d != null)
-					.map(d -> d.getDisease())
-					.collect(Collectors.toSet());
-			checkBoxLab.setValue(diseases);
-		}
 	}
 
 

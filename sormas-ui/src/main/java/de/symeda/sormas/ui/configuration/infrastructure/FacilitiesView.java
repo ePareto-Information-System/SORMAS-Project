@@ -95,9 +95,7 @@ public class FacilitiesView extends AbstractConfigurationView {
 	private MenuBar bulkOperationsDropdown;
 	private RowCount rowCount;
 
-	private ExtTokenField diseaseTokenField;
 
-	private com.vaadin.ui.ComboBox<TokenizableValue> diseasesDropdown;
 
 	public FacilitiesView() {
 
@@ -378,43 +376,6 @@ public class FacilitiesView extends AbstractConfigurationView {
 				});
 				actionButtonsLayout.addComponent(relevanceStatusFilter);
 
-				diseaseTokenField = new ExtTokenField();
-				diseaseTokenField.setId("diseasesTokens");
-				diseaseTokenField.setCaption(I18nProperties.getCaption(Captions.Facility_Diseases));
-				diseaseTokenField.setEnableDefaultDeleteTokenAction(true);
-				diseaseTokenField.setWidth(200, Unit.PIXELS);
-
-				diseasesDropdown = new com.vaadin.ui.ComboBox<TokenizableValue>("", createTokens(FacadeProvider.getDiseaseConfigurationFacade().getAllPrimaryDiseases()));
-				diseasesDropdown.setWidth(200, Unit.PIXELS);
-				diseasesDropdown.setId("diseasesTokens");
-				diseasesDropdown.addStyleName(CssStyles.VSPACE_NONE);
-				diseasesDropdown.setPlaceholder(I18nProperties.getString(Strings.promptTypeToAdd));
-				diseaseTokenField.setInputField(diseasesDropdown);
-				diseasesDropdown.addValueChangeListener(e -> {
-					TokenizableValue token = e.getValue();
-					if (token != null) {
-						List<Tokenizable> selectedTokens = diseaseTokenField.getValue();
-						if (selectedTokens.stream().map(t -> (TokenizableValue)t).map(tokenValue -> (Disease)tokenValue.getValue()).collect(Collectors.toList()).contains(token.getValue())) {
-							return;
-						}
-						diseaseTokenField.addTokenizable(token);
-						diseasesDropdown.setValue(null);
-					}
-					List<Tokenizable> selectedTokens = diseaseTokenField.getValue();
-					criteria.diseases(selectedTokens.stream().map(t -> (TokenizableValue)t).map(tokenValue -> (Disease)tokenValue.getValue()).collect(Collectors.toList()));
-					navigateTo(criteria);
-				});
-				filterLayout.addComponent(diseaseTokenField);
-
-				diseaseTokenField.addValueChangeListener(e -> {
-					List<Tokenizable> selectedTokens = diseaseTokenField.getValue();
-					if (selectedTokens.size() > 0) {
-						criteria.diseases(selectedTokens.stream().map(t -> (TokenizableValue)t).map(tokenValue -> (Disease)tokenValue.getValue()).collect(Collectors.toList()));
-					} else {
-						criteria.diseases(null);
-					}
-					navigateTo(criteria);
-				});
 
 				resetButton = ButtonHelper.createButton(Captions.actionResetFilters, event -> {
 					ViewModelProviders.of(FacilitiesView.class).remove(FacilityCriteria.class);
@@ -535,13 +496,15 @@ public class FacilitiesView extends AbstractConfigurationView {
 		districtFilter.setValue(criteria.getDistrict());
 		communityFilter.setValue(criteria.getCommunity());
 
-
-		if (criteria.getDiseases() != null) {
-			List<TokenizableValue> selectedDiseases = createTokens(criteria.getDiseases());
-			selectedDiseases.forEach(token -> diseaseTokenField.addTokenizable(token));
-		}
-
 		applyingCriteria = false;
+	}
+
+	private boolean isBulkOperationsDropdownVisible() {
+		boolean infrastructureDataEditable = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EDIT_INFRASTRUCTURE_DATA);
+
+		return viewConfiguration.isInEagerMode()
+			&& (EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())
+				|| (infrastructureDataEditable && EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
 	}
 
 	protected List<TokenizableValue> createTokens(List<Disease> diseases) {
@@ -551,15 +514,6 @@ public class FacilitiesView extends AbstractConfigurationView {
 			tokens.add(new TokenizableValue(disease, index++));
 		}
 		return tokens;
-	}
-
-
-	private boolean isBulkOperationsDropdownVisible() {
-		boolean infrastructureDataEditable = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EDIT_INFRASTRUCTURE_DATA);
-
-		return viewConfiguration.isInEagerMode()
-			&& (EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())
-				|| (infrastructureDataEditable && EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
 	}
 
 }

@@ -40,21 +40,9 @@ public interface FacilityFacade extends InfrastructureFacade<FacilityDto, Facili
 			boolean includeOtherFacility,
 			boolean includeNoneFacility);
 
-	List<FacilityReferenceDto> getActiveFacilitiesByCommunityAndType(
-			CommunityReferenceDto community,
-			DhimsFacility dhimsFacilityType,
-			boolean includeOtherFacility,
-			boolean includeNoneFacility);
-
 	List<FacilityReferenceDto> getActiveFacilitiesByDistrictAndType(
 			DistrictReferenceDto district,
 			FacilityType type,
-			boolean includeOtherFacility,
-			boolean includeNoneFacility);
-
-	List<FacilityReferenceDto> getActiveFacilitiesByDistrictAndType(
-			DistrictReferenceDto district,
-			DhimsFacility dhimsFacilityType,
 			boolean includeOtherFacility,
 			boolean includeNoneFacility);
 

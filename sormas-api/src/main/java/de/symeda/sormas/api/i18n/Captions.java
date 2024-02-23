@@ -684,6 +684,8 @@ public interface Captions {
 	String communityName = "communityName";
 	String Configuration_Facilities = "Configuration.Facilities";
 	String Configuration_LineListing = "Configuration.LineListing";
+	String Configuration_Diseases = "Configuration.Diseases";
+	String Configuration_Disease = "Configuration.Disease";
 	String Configuration_Outbreaks = "Configuration.Outbreaks";
 	String Configuration_PointsOfEntry = "Configuration.PointsOfEntry";
 	String Contact = "Contact";
@@ -1526,6 +1528,8 @@ public interface Captions {
 	String dhimsFacilityType = "dhimsFacilityType";
 	String afpFacilityOptions = "afpFacilityOptions";
 	String facilityTypeGroup = "facilityTypeGroup";
+	String facilitiesSelected = "facilitiesSelected";
+	String facilitiesAvailable = "facilitiesAvailable";
 	String FeatureConfiguration_districtName = "FeatureConfiguration.districtName";
 	String FeatureConfiguration_enabled = "FeatureConfiguration.enabled";
 	String FeatureConfiguration_endDate = "FeatureConfiguration.endDate";
@@ -2909,6 +2913,8 @@ public interface Captions {
 	String View_configuration_laboratories_short = "View.configuration.laboratories.short";
 	String View_configuration_linelisting = "View.configuration.linelisting";
 	String View_configuration_linelisting_short = "View.configuration.linelisting.short";
+	String View_configuration_diseases = "View.configuration.diseases";
+	String View_configuration_diseases_short = "View.configuration.diseases.short";
 	String View_configuration_outbreaks = "View.configuration.outbreaks";
 	String View_configuration_outbreaks_short = "View.configuration.outbreaks.short";
 	String View_configuration_pointsofentry = "View.configuration.pointsofentry";

@@ -36,17 +36,16 @@ import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.disease.DiseaseConfigurationDto;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
-import de.symeda.sormas.backend.disease.DiseaseConfiguration;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.api.infrastructure.facility.*;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.AFPFacilityOptions;
+import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
+import de.symeda.sormas.backend.disease.DiseaseConfiguration;
+import de.symeda.sormas.backend.user.UserService;
 import org.apache.commons.collections.CollectionUtils;
 import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
@@ -68,10 +67,10 @@ import de.symeda.sormas.backend.util.QueryHelper;
 import de.symeda.sormas.backend.util.RightsAllowed;
 
 @Stateless(name = "FacilityFacade")
-public class FacilityFacadeEjb extends
-		AbstractInfrastructureFacadeEjb<Facility, FacilityDto, FacilityIndexDto, FacilityReferenceDto, FacilityService, FacilityCriteria>
-		implements FacilityFacade {
-
+@RightsAllowed(UserRight._INFRASTRUCTURE_VIEW)
+public class FacilityFacadeEjb
+	extends AbstractInfrastructureFacadeEjb<Facility, FacilityDto, FacilityIndexDto, FacilityReferenceDto, FacilityService, FacilityCriteria>
+	implements FacilityFacade {
 	@EJB
 	private CommunityService communityService;
 	@EJB
@@ -112,17 +111,6 @@ public class FacilityFacadeEjb extends
 		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
-	@Override
-	public List<FacilityReferenceDto> getActiveFacilitiesByCommunityAndType(
-			CommunityReferenceDto communityRef,
-			DhimsFacility dhimsFacilityType,
-			boolean includeOtherFacility,
-			boolean includeNoneFacility) {
-
-		Community community = communityService.getByUuid(communityRef.getUuid());
-		List<Facility> facilities = service.getActiveFacilitiesByCommunityAndType(community, dhimsFacilityType, includeOtherFacility, includeNoneFacility);
-		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
-	}
 
 	@Override
 	public List<FacilityReferenceDto> getActiveFacilitiesByDistrictAndType(
@@ -138,17 +126,6 @@ public class FacilityFacadeEjb extends
 		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
-	@Override
-	public List<FacilityReferenceDto> getActiveFacilitiesByDistrictAndType(
-			DistrictReferenceDto districtRef,
-			DhimsFacility dhimsFacilityType,
-			boolean includeOtherFacility,
-			boolean includeNoneFacility) {
-
-		District district = districtService.getByUuid(districtRef.getUuid());
-		List<Facility> facilities = service.getActiveFacilitiesByDistrictAndType(district, dhimsFacilityType,  includeOtherFacility, includeNoneFacility);
-		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
-	}
 
 	@Override
 	// public List<FacilityReferenceDto> getActiveHospitalsByCommunity(CommunityReferenceDto communityRef,
@@ -181,14 +158,15 @@ public class FacilityFacadeEjb extends
 		return laboratories.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
-	//@Override
+
+	@Override
+	@PermitAll
 	public List<FacilityReferenceDto> getAllActiveFacilityByDisease(String diseaseName) {
 		List<Facility> laboratories = service.getAllActiveFacilityByDisease(diseaseName);
 		return laboratories.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
 	@Override
-	@PermitAll
 	public List<FacilityDto> getAllByRegionAfter(String regionUuid, Date date) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -357,7 +335,8 @@ public class FacilityFacadeEjb extends
 	}
 
 	@Override
-	public Page<FacilityIndexDto> getIndexPage(FacilityCriteria criteria, Integer offset, Integer size, List<SortProperty> sortProperties) {
+	public Page<FacilityIndexDto> getIndexPage(FacilityCriteria criteria, Integer offset, Integer size,
+											   List<SortProperty> sortProperties) {
 		List<FacilityIndexDto> facilityIndexList = getIndexList(criteria, offset, size, sortProperties);
 		long totalElementCount = count(criteria);
 		return new Page<>(facilityIndexList, offset, size, totalElementCount);
@@ -482,6 +461,24 @@ public class FacilityFacadeEjb extends
 		dto.setArchived(entity.isArchived());
 		dto.setExternalID(entity.getExternalID());
 		dto.setCentrallyManaged(entity.isCentrallyManaged());
+		if(entity.getDiseases() != null) {
+			dto.setDiseases(entity.getDiseases().stream()
+					.map(disease -> {
+						DiseaseConfigurationDto diseaseDto = new DiseaseConfigurationDto();
+						diseaseDto.setDisease(disease.getDisease());
+						diseaseDto.setActive(disease.getActive());
+						diseaseDto.setPrimaryDisease(disease.getPrimaryDisease());
+						//diseaseDto.setCaseBased(disease.getCaseBased());
+						diseaseDto.setFollowUpEnabled(disease.getFollowUpEnabled());
+						diseaseDto.setFollowUpDuration(disease.getFollowUpDuration());
+						diseaseDto.setCaseFollowUpDuration(disease.getCaseFollowUpDuration());
+						diseaseDto.setEventParticipantFollowUpDuration(disease.getEventParticipantFollowUpDuration());
+						diseaseDto.setExtendedClassification(disease.getExtendedClassification());
+						diseaseDto.setExtendedClassificationMulti(disease.getExtendedClassificationMulti());
+						return diseaseDto;
+					})
+					.collect(Collectors.toSet()));
+		}
 
 		if (entity.getDiseases() == null) {
 			dto.setDiseases(new HashSet<>());
@@ -842,4 +839,6 @@ public class FacilityFacadeEjb extends
 			//super(service, featureConfiguration);
 		}
 	}
+
+
 }

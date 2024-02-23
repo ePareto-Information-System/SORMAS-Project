@@ -1,23 +1,28 @@
-package de.symeda.sormas.api.disease;
-
-import java.util.List;
+package de.symeda.sormas.api.infrastructure.diseasecon;
 
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.EntityDto;
+import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.infrastructure.InfrastructureDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.DependingOnFeatureType;
 
 import java.util.List;
-import java.util.Set;
 
-public class DiseaseConfigurationDto extends EntityDto {
+@DependingOnFeatureType(featureType = {
+		FeatureType.CASE_SURVEILANCE,
+		FeatureType.EVENT_SURVEILLANCE,
+		FeatureType.AGGREGATE_REPORTING })
+public class DiseaseConDto extends InfrastructureDto {
 
 	private static final long serialVersionUID = -7653585175036656526L;
+
+	public static final String I18N_PREFIX = "DiseaseConfiguration";
 
 	private Disease disease;
 	private Boolean active;
 	private Boolean primaryDisease;
-	private Boolean caseSurveillanceEnabled;
-	private Boolean aggregateReportingEnabled;
+	private Boolean caseBased;
 	private Boolean followUpEnabled;
 	private Integer followUpDuration;
 	private Integer caseFollowUpDuration;
@@ -25,6 +30,28 @@ public class DiseaseConfigurationDto extends EntityDto {
 	private Boolean extendedClassification;
 	private Boolean extendedClassificationMulti;
 	private List<String> ageGroups;
+
+	public DiseaseConDto(){}
+
+	public DiseaseConDto(Disease disease,
+						 Boolean active,
+						 Boolean caseBased,
+						 Boolean followUpEnabled,
+						 Integer followUpDuration,
+						 Integer eventParticipantFollowUpDuration,
+						 Boolean extendedClassification,
+						 Boolean extendedClassificationMulti,
+						 List<String> ageGroups) {
+		this.disease = disease;
+		this.active = active;
+		this.caseBased = caseBased;
+		this.followUpEnabled = followUpEnabled;
+		this.followUpDuration = followUpDuration;
+		this.eventParticipantFollowUpDuration = eventParticipantFollowUpDuration;
+		this.extendedClassification = extendedClassification;
+		this.extendedClassificationMulti = extendedClassificationMulti;
+		this.ageGroups = ageGroups;
+	}
 
 	private List<FacilityReferenceDto> facilities;
 
@@ -52,20 +79,12 @@ public class DiseaseConfigurationDto extends EntityDto {
 		this.primaryDisease = primaryDisease;
 	}
 
-	public Boolean getCaseSurveillanceEnabled() {
-		return caseSurveillanceEnabled;
+	public Boolean getCaseBased() {
+		return caseBased;
 	}
 
-	public void setCaseSurveillanceEnabled(Boolean caseSurveillanceEnabled) {
-		this.caseSurveillanceEnabled = caseSurveillanceEnabled;
-	}
-
-	public Boolean getAggregateReportingEnabled() {
-		return aggregateReportingEnabled;
-	}
-
-	public void setAggregateReportingEnabled(Boolean aggregateReportingEnabled) {
-		this.aggregateReportingEnabled = aggregateReportingEnabled;
+	public void setCaseBased(Boolean caseBased) {
+		this.caseBased = caseBased;
 	}
 
 	public Boolean getFollowUpEnabled() {
@@ -129,5 +148,11 @@ public class DiseaseConfigurationDto extends EntityDto {
 	}
 	public void setFacilities(List<FacilityReferenceDto> diseaseFacilities) {
 		this.facilities = diseaseFacilities;
+	}
+
+	public static DiseaseConDto build() {
+		DiseaseConDto dto = new DiseaseConDto();
+		dto.setUuid(DataHelper.createUuid());
+		return dto;
 	}
 }

@@ -298,7 +298,8 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 			filter = cb.and(filter, createBasicFilter(cb, from));
 		}
 
-		// Don't check for district and community equality or type equality when searching for constant facilities
+		// Don't check for district and community equality or type equality when
+		// searching for constant facilities
 		if (!FacilityDto.OTHER_FACILITY.equals(name.trim()) && !FacilityDto.NO_FACILITY.equals(name.trim())) {
 			if (community != null) {
 				filter = cb.and(filter, cb.equal(from.get(Facility.COMMUNITY), community));
@@ -322,7 +323,8 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 		return em.createQuery(cq).getResultList();
 	}
 
-	public List<Facility> getFacilitiesByExternalIdAndType(@NotNull String externalId, FacilityType type, boolean includeArchivedEntities) {
+	public List<Facility> getFacilitiesByExternalIdAndType(@NotNull String externalId, FacilityType type,
+			boolean includeArchivedEntities) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Facility> cq = cb.createQuery(getElementClass());
@@ -372,7 +374,8 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 			Predicate countryFilter = cb.equal(countryUuid, country.getUuid());
 
 			if (country.equals(serverCountry)) {
-				filter = CriteriaBuilderHelper.and(cb, filter, CriteriaBuilderHelper.or(cb, countryFilter, countryUuid.isNull()));
+				filter = CriteriaBuilderHelper.and(cb, filter,
+						CriteriaBuilderHelper.or(cb, countryFilter, countryUuid.isNull()));
 			} else {
 				filter = CriteriaBuilderHelper.and(cb, filter, countryFilter);
 			}

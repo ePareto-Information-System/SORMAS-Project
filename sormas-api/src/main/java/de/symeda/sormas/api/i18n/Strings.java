@@ -1035,6 +1035,7 @@ public interface Strings {
 	String labelNumberOfCountries = "labelNumberOfCountries";
 	String labelNumberOfDistricts = "labelNumberOfDistricts";
 	String labelNumberOfFacilities = "labelNumberOfFacilities";
+	String labelNumberOfDiseases = "labelNumberOfDiseases";
 	String labelNumberOfPointofEntry = "labelNumberOfPointofEntry";
 	String labelNumberOfRegions = "labelNumberOfRegions";
 	String labelNumberOfSubcontinents = "labelNumberOfSubcontinents";
@@ -1260,6 +1261,7 @@ public interface Strings {
 	String messageFacilityChanged = "messageFacilityChanged";
 	String messageFacilityDearchived = "messageFacilityDearchived";
 	String messageFacilityDearchivingNotPossible = "messageFacilityDearchivingNotPossible";
+	String messageDiseaseDeachivingOrAchivingNotPossible = "messageDiseaseDeachivingOrAchivingNotPossible";
 	String messageFacilityMulitChanged = "messageFacilityMulitChanged";
 	String messageFollowUpCanceled = "messageFollowUpCanceled";
 	String messageFollowUpCanceledForSome = "messageFollowUpCanceledForSome";

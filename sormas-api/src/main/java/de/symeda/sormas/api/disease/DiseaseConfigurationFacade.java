@@ -57,4 +57,6 @@ public interface DiseaseConfigurationFacade {
 
 	boolean usesExtendedClassificationMulti(Disease disease);
 
+
+
 }

@@ -78,6 +78,8 @@ import de.symeda.sormas.api.infrastructure.area.AreaFacade;
 import de.symeda.sormas.api.infrastructure.community.CommunityFacade;
 import de.symeda.sormas.api.infrastructure.continent.ContinentFacade;
 import de.symeda.sormas.api.infrastructure.country.CountryFacade;
+import de.symeda.sormas.api.infrastructure.diseasecon.DiseaseConFacade;
+import de.symeda.sormas.api.infrastructure.diseasecon.DiseaseFacade;
 import de.symeda.sormas.api.infrastructure.district.DistrictFacade;
 import de.symeda.sormas.api.infrastructure.facility.FacilityFacade;
 import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryFacade;
@@ -335,6 +337,14 @@ public class FacadeProvider {
 
 	public static DiseaseConfigurationFacade getDiseaseConfigurationFacade() {
 		return get().lookupEjbRemote(DiseaseConfigurationFacade.class);
+	}
+
+	public static DiseaseConFacade getDiseaseConFacade() {
+		return get().lookupEjbRemote(DiseaseConFacade.class);
+	}
+
+	public static DiseaseFacade  getDiseaseFacade() {
+		return get().lookupEjbRemote(DiseaseFacade.class);
 	}
 
 	public static MaternalHistoryFacade getMaternalHistoryFacade() {
