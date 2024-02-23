@@ -46,7 +46,7 @@ public class DiseasesView extends AbstractConfigurationView {
         gridLayout.addComponent(createFilterBar());
         rowCount = new RowCount(Strings.labelNumberOfDiseases, grid.getDataSize());
         grid.addDataSizeChangeListener(e -> rowCount.update(grid.getDataSize()));
-        gridLayout.addComponent(rowCount);
+//        gridLayout.addComponent(rowCount);
         gridLayout.addComponent(grid);
 		gridLayout.setMargin(true);
 		gridLayout.setSpacing(false);

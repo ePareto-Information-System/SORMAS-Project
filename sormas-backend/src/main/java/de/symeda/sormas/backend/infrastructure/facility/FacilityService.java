@@ -403,12 +403,12 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 				}
 
 				Predicate likeFilters = cb.or(
-					CriteriaBuilderHelper.unaccentedIlike(cb, root.get(Facility.NAME), textFilter),
-					CriteriaBuilderHelper.unaccentedIlike(cb, root.get(Facility.POSTAL_CODE), textFilter),
-					CriteriaBuilderHelper.unaccentedIlike(cb, root.get(Facility.CITY), textFilter),
-					CriteriaBuilderHelper.unaccentedIlike(cb, root.get(Facility.STREET), textFilter),
-					CriteriaBuilderHelper.unaccentedIlike(cb, root.get(Facility.HOUSE_NUMBER), textFilter),
-					CriteriaBuilderHelper.unaccentedIlike(cb, root.get(Facility.ADDITIONAL_INFORMATION), textFilter));
+						CriteriaBuilderHelper.unaccentedIlike(cb, root.get(Facility.NAME), textFilter),
+						CriteriaBuilderHelper.unaccentedIlike(cb, root.get(Facility.POSTAL_CODE), textFilter),
+						CriteriaBuilderHelper.unaccentedIlike(cb, root.get(Facility.CITY), textFilter),
+						CriteriaBuilderHelper.unaccentedIlike(cb, root.get(Facility.STREET), textFilter),
+						CriteriaBuilderHelper.unaccentedIlike(cb, root.get(Facility.HOUSE_NUMBER), textFilter),
+						CriteriaBuilderHelper.unaccentedIlike(cb, root.get(Facility.ADDITIONAL_INFORMATION), textFilter));
 				filter = CriteriaBuilderHelper.and(cb, filter, likeFilters);
 			}
 		}
@@ -416,11 +416,6 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(root.get(Facility.TYPE), facilityCriteria.getType()));
 		} else {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.isNotNull(root.get(Facility.TYPE)));
-		}
-		if (facilityCriteria.getDhimsFacilityType() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(root.get(Facility.DHIMS_FACILITY_TYPE), facilityCriteria.getDhimsFacilityType()));
-		} else {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.isNotNull(root.get(Facility.DHIMS_FACILITY_TYPE)));
 		}
 		if (facilityCriteria.getRelevanceStatus() != null) {
 			if (facilityCriteria.getRelevanceStatus() == EntityRelevanceStatus.ACTIVE) {
@@ -436,8 +431,7 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 			filter = cb.and(filter, diseases.get(DiseaseConfiguration.DISEASE).in(facilityCriteria.getDiseases()));
 		}
 
-		return filter;
-		//return CriteriaBuilderHelper.and(cb, filter, excludeConstantFacilities); 1.87.0
+		return CriteriaBuilderHelper.and(cb, filter, excludeConstantFacilities);
 	}
 
 	public void createConstantFacilities() {

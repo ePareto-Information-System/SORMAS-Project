@@ -157,7 +157,7 @@ public class FacilityFacadeEjb
 		List<Facility> laboratories = service.getAllActiveLaboratories(includeOtherFacility);
 		return laboratories.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
-
+	
 
 	@Override
 	@PermitAll
@@ -522,15 +522,6 @@ public class FacilityFacadeEjb
 		Join<Facility, Community> community = facility.join(Facility.COMMUNITY, JoinType.LEFT);
 
 		Predicate filter = service.buildCriteriaFilter(facilityCriteria, cb, facility);
-		Predicate excludeFilter = cb.and(
-				cb.notEqual(facility.get(Facility.UUID), FacilityDto.OTHER_FACILITY_UUID),
-				cb.notEqual(facility.get(Facility.UUID), FacilityDto.NONE_FACILITY_UUID));
-
-		if (filter != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, excludeFilter);
-		} else {
-			filter = excludeFilter;
-		}
 
 		if (filter != null) {
 			cq.where(filter);
@@ -541,50 +532,29 @@ public class FacilityFacadeEjb
 			for (SortProperty sortProperty : sortProperties) {
 				Expression<?> expression;
 				switch (sortProperty.propertyName) {
-					// case Facility.NAME: 1.74.3
-					// case Facility.CITY:
-					// case Facility.LATITUDE:
-					// case Facility.LONGITUDE:
-					// case Facility.EXTERNAL_ID:
-					// case Facility.TYPE:
-					// 	expression = facility.get(sortProperty.propertyName);
-					// 	break;
-					// case Facility.REGION:
-					// 	expression = region.get(Region.NAME);
-					// 	break;
-					// case Facility.DISTRICT:
-					// 	expression = district.get(District.NAME);
-					// 	break;
-					// case Facility.COMMUNITY:
-					// 	expression = community.get(Community.NAME);
-					// 	break;
-					// default:
-					// 	throw new IllegalArgumentException(sortProperty.propertyName);
-				case Facility.NAME:
-				case Facility.POSTAL_CODE:
-				case Facility.CITY:
-				case Facility.STREET:
-				case Facility.HOUSE_NUMBER:
-				case Facility.ADDITIONAL_INFORMATION:
-				case Facility.LATITUDE:
-				case Facility.LONGITUDE:
-				case Facility.EXTERNAL_ID:
-				case Facility.TYPE:
-					expression = facility.get(sortProperty.propertyName);
-					break;
-				case Facility.DHIMS_FACILITY_TYPE:
-				case Facility.AFP_TYPE:
-				case Facility.REGION:
-					expression = region.get(Region.NAME);
-					break;
-				case Facility.DISTRICT:
-					expression = district.get(District.NAME);
-					break;
-				case Facility.COMMUNITY:
-					expression = community.get(Community.NAME);
-					break;
-				default:
-					throw new IllegalArgumentException(sortProperty.propertyName);
+					case Facility.NAME:
+					case Facility.POSTAL_CODE:
+					case Facility.CITY:
+					case Facility.STREET:
+					case Facility.HOUSE_NUMBER:
+					case Facility.ADDITIONAL_INFORMATION:
+					case Facility.LATITUDE:
+					case Facility.LONGITUDE:
+					case Facility.EXTERNAL_ID:
+					case Facility.TYPE:
+						expression = facility.get(sortProperty.propertyName);
+						break;
+					case Facility.REGION:
+						expression = region.get(Region.NAME);
+						break;
+					case Facility.DISTRICT:
+						expression = district.get(District.NAME);
+						break;
+					case Facility.COMMUNITY:
+						expression = community.get(Community.NAME);
+						break;
+					default:
+						throw new IllegalArgumentException(sortProperty.propertyName);
 				}
 				order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
 			}
@@ -598,48 +568,44 @@ public class FacilityFacadeEjb
 		}
 
 		cq.multiselect(
-			facility.get(Facility.UUID),
-			facility.get(Facility.NAME),
-			facility.get(Facility.TYPE),
-			facility.get(Facility.DHIMS_FACILITY_TYPE),
-			facility.get(Facility.AFP_TYPE),
-			region.get(Region.UUID),
-			region.get(Region.NAME),
-			district.get(District.UUID),
-			district.get(District.NAME),
-			community.get(Community.UUID),
-			community.get(Community.NAME),
-			facility.get(Facility.POSTAL_CODE),
-			facility.get(Facility.CITY),
-			facility.get(Facility.STREET),
-			facility.get(Facility.HOUSE_NUMBER),
-			facility.get(Facility.ADDITIONAL_INFORMATION),
-			facility.get(Facility.LATITUDE),
-			facility.get(Facility.LONGITUDE),
-			facility.get(Facility.EXTERNAL_ID));
+				facility.get(Facility.UUID),
+				facility.get(Facility.NAME),
+				facility.get(Facility.TYPE),
+				region.get(Region.UUID),
+				region.get(Region.NAME),
+				district.get(District.UUID),
+				district.get(District.NAME),
+				community.get(Community.UUID),
+				community.get(Community.NAME),
+				facility.get(Facility.POSTAL_CODE),
+				facility.get(Facility.CITY),
+				facility.get(Facility.STREET),
+				facility.get(Facility.HOUSE_NUMBER),
+				facility.get(Facility.ADDITIONAL_INFORMATION),
+				facility.get(Facility.LATITUDE),
+				facility.get(Facility.LONGITUDE),
+				facility.get(Facility.EXTERNAL_ID));
 
 		List<FacilityIndexDto> facilityIndexList = QueryHelper.getResultList(em, cq, first, max);
 
-		String diseases = "";
-		for (FacilityIndexDto facilityIndexDto : facilityIndexList) {
-			Facility facilityEntity = service.getByUuid(facilityIndexDto.getUuid());
-			if(Objects.nonNull((facilityEntity))) {
-				if (facilityEntity.getDiseases() == null) {
-					diseases = "";
-				} else {
-					diseases = facilityEntity.getDiseases().stream()
-							.map(disease -> {
-								return I18nProperties.getEnumCaption(disease.getDisease());
-							})
-							.collect(Collectors.joining(", "));
-				}
-
-				if (diseases.isEmpty()) {
-					diseases = I18nProperties.getString(Strings.infoNoAssignedDiseases);
-				}
-			}
-			facilityIndexDto.setDiseases(diseases);
-		}
+//		String diseases = "";
+//		for (FacilityIndexDto facilityIndexDto : facilityIndexList) {
+//			Facility facilityEntity = service.getByUuid(facilityIndexDto.getUuid());
+//			if (facilityEntity.getDiseases() == null) {
+//				diseases = "";
+//			} else {
+//				diseases = facilityEntity.getDiseases().stream()
+//						.map(disease -> {
+//							return I18nProperties.getEnumCaption(disease.getDisease());
+//						})
+//						.collect(Collectors.joining(", "));
+//			}
+//
+//			if(diseases.isEmpty()) {
+//				diseases = I18nProperties.getString(Strings.infoNoAssignedDiseases);
+//			}
+//			facilityIndexDto.setDiseases(diseases);
+//		}
 
 		return facilityIndexList;
 	}

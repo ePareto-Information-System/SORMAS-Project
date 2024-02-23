@@ -18,6 +18,7 @@ public class DiseaseConIndexDto implements Serializable {
     public static final String FOLLOW_UP_ENABLED = "followUpEnabled";
     public static final String FOLLOW_UP_DURATION = "followUpDuration";
     public static final String EXTENDED_CLASSIFICATION = "extendedClassification";
+    public static final String TOTAL_FACILITIES = "totalFacilities";
     public static final String AGE_GROUPS = "ageGroups";
 
 

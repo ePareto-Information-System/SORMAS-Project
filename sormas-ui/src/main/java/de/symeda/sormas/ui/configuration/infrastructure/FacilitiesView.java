@@ -105,7 +105,7 @@ public class FacilitiesView extends AbstractConfigurationView {
 		criteria = ViewModelProviders.of(getClass())
 				.get(FacilityCriteria.class, new FacilityCriteria().country(FacadeProvider.getCountryFacade().getServerCountry()));
 		if (criteria.getRelevanceStatus() == null) {
-			criteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
+//			criteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
 		}
 
 		grid = new FacilitiesGrid(criteria);

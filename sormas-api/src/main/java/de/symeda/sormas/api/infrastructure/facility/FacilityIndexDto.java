@@ -72,102 +72,48 @@ public class FacilityIndexDto extends AbstractUuidDto {
 	private String diseases;
 	private String uuid;
 
-//	public FacilityIndexDto(
-//			String uuid,
-//			String name,
-//			FacilityType type,
-//			String regionUuid,
-//			String regionName,
-//			String districtUuid,
-//			String districtName,
-//			String communityUuid,
-//			String communityName,
-//			String city,
-//			Double latitude,
-//			Double longitude,
-//			String externalID) {
-//		// String uuid,
-//		// String name,
-//		// FacilityType type,
-//		// String regionUuid,
-//		// String regionName,
-//		// String districtUuid,
-//		// String districtName,
-//		// String communityUuid,
-//		// String communityName,
-//		// String postalCode,
-//		// String city,
-//		// String street,
-//		// String houseNumber,
-//		// String additionalInformation,
-//		// Double latitude,
-//		// Double longitude,
-//		// String externalID) {
-//
-//		super(uuid);
-//		this.name = name;
-//		this.type = type;
-//		if (regionUuid != null) {
-//			this.region = new RegionReferenceDto(regionUuid, regionName, null);
-//		}
-//		if (districtUuid != null) {
-//			this.district = new DistrictReferenceDto(districtUuid, districtName, null);
-//		}
-//		if (communityUuid != null) {
-//			this.community = new CommunityReferenceDto(communityUuid, communityName, null);
-//		}
-//		this.postalCode = postalCode;
-//		this.city = city;
-//		this.street = street;
-//		this.houseNumber = houseNumber;
-//		this.additionalInformation = additionalInformation;
-//		this.latitude = latitude;
-//		this.longitude = longitude;
-//		this.externalID = externalID;
-//
-//	}
-public FacilityIndexDto(
-		String uuid,
-		String name,
-		FacilityType type,
-		DhimsFacility dhimsFacilityType,
-		AFPFacilityOptions afpFacilityOptions,
-		String regionUuid,
-		String regionName,
-		String districtUuid,
-		String districtName,
-		String communityUuid,
-		String communityName,
-		String postalCode,
-		String city,
-		String street,
-		String houseNumber,
-		String additionalInformation,
-		Double latitude,
-		Double longitude,
-		String externalID) {
+	public FacilityIndexDto(
+			String uuid,
+			String name,
+			FacilityType type,
+			String regionUuid,
+			String regionName,
+			String districtUuid,
+			String districtName,
+			String communityUuid,
+			String communityName,
+			String postalCode,
+			String city,
+			String street,
+			String houseNumber,
+			String additionalInformation,
+			Double latitude,
+			Double longitude,
+			String externalID) {
 
-	super(uuid);
-	this.name = name;
-	this.type = type;
-	if (regionUuid != null) {
-		this.region = new RegionReferenceDto(regionUuid, regionName, null);
+		super(uuid);
+		this.uuid =	uuid;
+		this.name = name;
+		this.type = type;
+		if (regionUuid != null) {
+			this.region = new RegionReferenceDto(regionUuid, regionName, null);
+		}
+		if (districtUuid != null) {
+			this.district = new DistrictReferenceDto(districtUuid, districtName, null);
+		}
+		if (communityUuid != null) {
+			this.community = new CommunityReferenceDto(communityUuid, communityName, null);
+		}
+		this.postalCode = postalCode;
+		this.city = city;
+		this.street = street;
+		this.houseNumber = houseNumber;
+		this.additionalInformation = additionalInformation;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.externalID = externalID;
 	}
-	if (districtUuid != null) {
-		this.district = new DistrictReferenceDto(districtUuid, districtName, null);
-	}
-	if (communityUuid != null) {
-		this.community = new CommunityReferenceDto(communityUuid, communityName, null);
-	}
-	this.postalCode = postalCode;
-	this.city = city;
-	this.street = street;
-	this.houseNumber = houseNumber;
-	this.additionalInformation = additionalInformation;
-	this.latitude = latitude;
-	this.longitude = longitude;
-	this.externalID = externalID;
-}
+
 	public FacilityIndexDto(
 			String uuid,
 			String name,
@@ -184,7 +130,7 @@ public FacilityIndexDto(
 			String externalID) {
 		super(uuid);
 
-		this.uuid = uuid;
+//		this.uuid = uuid;
 		this.name = name;
 		this.type = type;
 		this.dhimsFacilityType = dhimsFacilityType;

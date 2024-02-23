@@ -20,6 +20,7 @@ package de.symeda.sormas.ui.configuration.infrastructure;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.facility.FacilityCriteria;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityIndexDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
@@ -50,6 +51,7 @@ public class FacilitiesGrid extends FilteredGrid<FacilityIndexDto, FacilityCrite
 		}
 
 		setColumns(
+				FacilityIndexDto.UUID,
 				FacilityIndexDto.NAME,
 				FacilityIndexDto.TYPE,
 				FacilityIndexDto.REGION,
