@@ -549,19 +549,19 @@ public class CaseFilterForm extends AbstractFilterForm<CaseCriteria> {
 					}
 				}
 
-				if (dhimsFacilityType == null && dhimsFacilityTypeField != null) {
-					dhimsFacilityTypeField.removeAllItems();
-				} else if (dhimsFacilityTypeField != null) {
-					if (community == null) {
-						FieldHelper.updateItems(
-								dhimsFacilityTypeField,
-								FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(currentDistrict, dhimsFacilityType, true,false));
-					} else {
-						FieldHelper.updateItems(
-								dhimsFacilityTypeField,
-								FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, dhimsFacilityType,false, false));
-					}
-				}
+//				if (dhimsFacilityType == null && dhimsFacilityTypeField != null) {
+//					dhimsFacilityTypeField.removeAllItems();
+//				} else if (dhimsFacilityTypeField != null) {
+//					if (community == null) {
+//						FieldHelper.updateItems(
+//								dhimsFacilityTypeField,
+//								FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(currentDistrict, dhimsFacilityType, true,false));
+//					} else {
+//						FieldHelper.updateItems(
+//								dhimsFacilityTypeField,
+//								FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, dhimsFacilityType,false, false));
+//					}
+//				}
 			}
 			break;
 		}
@@ -602,28 +602,28 @@ public class CaseFilterForm extends AbstractFilterForm<CaseCriteria> {
 			}
 			break;
 		}
-			case CaseCriteria.DHIMS_FACILITY_TYPE: {
-				DhimsFacility dhimsFacilityType = (DhimsFacility) event.getProperty().getValue();
-				if (!DataHelper.equal(dhimsFacilityType, criteria.getDhimsFacilityType())) {
-					if (dhimsFacilityType == null) {
-						clearAndDisableFields(dhimsFacilityTypeField);
-					} else {
-						enableFields(dhimsFacilityTypeField);
-						dhimsFacilityTypeField.setValue(null);
-						CommunityReferenceDto community = (CommunityReferenceDto) communityField.getValue();
-						if (community != null) {
-							FieldHelper.updateItems(
-									dhimsFacilityTypeField,
-									FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, dhimsFacilityType, true, false));
-						} else if (currentDistrict != null) {
-							FieldHelper.updateItems(
-									facilityField,
-									FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(currentDistrict,dhimsFacilityType, true,false));
-						}
-					}
-				}
-				break;
-			}
+//			case CaseCriteria.DHIMS_FACILITY_TYPE: {
+//				DhimsFacility dhimsFacilityType = (DhimsFacility) event.getProperty().getValue();
+//				if (!DataHelper.equal(dhimsFacilityType, criteria.getDhimsFacilityType())) {
+//					if (dhimsFacilityType == null) {
+//						clearAndDisableFields(dhimsFacilityTypeField);
+//					} else {
+//						enableFields(dhimsFacilityTypeField);
+//						dhimsFacilityTypeField.setValue(null);
+//						CommunityReferenceDto community = (CommunityReferenceDto) communityField.getValue();
+//						if (community != null) {
+//							FieldHelper.updateItems(
+//									dhimsFacilityTypeField,
+//									FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, dhimsFacilityType, true, false));
+//						} else if (currentDistrict != null) {
+//							FieldHelper.updateItems(
+//									facilityField,
+//									FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(currentDistrict,dhimsFacilityType, true,false));
+//						}
+//					}
+//				}
+//				break;
+//			}
 		case CaseCriteria.BIRTHDATE_MM: {
 			Integer birthMM = (Integer) event.getProperty().getValue();
 

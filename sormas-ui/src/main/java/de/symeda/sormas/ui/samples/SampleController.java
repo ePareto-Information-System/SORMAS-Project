@@ -717,6 +717,8 @@ public class SampleController {
 		Window popupWindow = VaadinUiUtil.showPopupWindow(layout);
 		popupWindow.setSizeUndefined();
 		popupWindow.setCaption(I18nProperties.getString(Strings.headingChangePathogenTestResult));
+		Boolean isTheFirst = FacadeProvider.getPathogenTestFacade().checkIfPathogenTestIsTheFirst(pathogenTest.getSample().getUuid(), pathogenTest.getUuid());
+
 		confirmationComponent.getConfirmButton().addClickListener(new ClickListener() {
 
 			private static final long serialVersionUID = 1L;
@@ -730,10 +732,9 @@ public class SampleController {
 				sample.setPathogenTestResult(newResult);
 				FacadeProvider.getSampleFacade().saveSample(sample);
 				popupWindow.close();
-				if (pathogenTest.getTestedDisease() == Disease.MEASLES) {
+				if (pathogenTest.getTestedDisease() == Disease.MEASLES && isTheFirst) {
 					showTakeNewTestForRubellaWindow(editComponent, sample, callback);
 				}
-				showTakeNewTestForRubellaWindow(editComponent, sample, callback);
 				SormasUI.refreshView();
 				if (callback != null) {
 					callback.accept(true);
@@ -747,7 +748,7 @@ public class SampleController {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				popupWindow.close();
-				if (pathogenTest.getTestedDisease() == Disease.MEASLES) {
+				if (pathogenTest.getTestedDisease() == Disease.MEASLES && isTheFirst) {
 					SampleDto sample = FacadeProvider.getSampleFacade().getSampleByUuid(sampleUuid);
 					showTakeNewTestForRubellaWindow(editComponent, sample, callback);
 				}

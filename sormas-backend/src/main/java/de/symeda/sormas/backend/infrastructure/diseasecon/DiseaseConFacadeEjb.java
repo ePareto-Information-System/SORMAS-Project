@@ -27,15 +27,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Stateless(name = "DiseaseFacade")
+@Stateless(name = "DiseaseConFacade")
 @RightsAllowed(UserRight._INFRASTRUCTURE_VIEW)
-public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseConfiguration, DiseaseConDto, DiseaseConIndexDto, DiseaseConReferenceDto, DiseaseConService, DiseaseConCriteria> implements DiseaseFacade {
+public class DiseaseConFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseConfiguration, DiseaseConDto, DiseaseConIndexDto, DiseaseConReferenceDto, DiseaseConService, DiseaseConCriteria> implements DiseaseConFacade {
 
-    public DiseaseFacadeEjb() {
+    public DiseaseConFacadeEjb() {
     }
 
     @Inject
-    protected DiseaseFacadeEjb(DiseaseConService service, FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+    protected DiseaseConFacadeEjb(DiseaseConService service, FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal featureConfiguration) {
         super(
                 DiseaseConfiguration.class,
                 DiseaseConDto.class,
@@ -100,7 +100,7 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
     public List<DiseaseConReferenceDto> getReferencesByExternalId(String externalId, boolean includeArchivedEntities) {
         return service.getByExternalId(externalId, includeArchivedEntities)
                 .stream()
-                .map(DiseaseFacadeEjb::toReferenceDto)
+                .map(DiseaseConFacadeEjb::toReferenceDto)
                 .collect(Collectors.toList());
     }
 
@@ -113,7 +113,7 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
 
     @Override
     public List<DiseaseConReferenceDto> getAllActiveAsReference() {
-        return service.getAllActive().stream().map(DiseaseFacadeEjb::toReferenceDto).collect(Collectors.toList());
+        return service.getAllActive().stream().map(DiseaseConFacadeEjb::toReferenceDto).collect(Collectors.toList());
 
     }
 
@@ -205,13 +205,13 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
 
     @LocalBean
     @Stateless
-    public static class DiseaseFacadeEjbLocal extends DiseaseFacadeEjb {
+    public static class DiseaseConFacadeEjbLocal extends DiseaseConFacadeEjb {
 
-        public DiseaseFacadeEjbLocal() {
+        public DiseaseConFacadeEjbLocal() {
         }
 
         @Inject
-        protected DiseaseFacadeEjbLocal(DiseaseConService service, FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+        protected DiseaseConFacadeEjbLocal(DiseaseConService service, FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal featureConfiguration) {
             super(service, featureConfiguration);
         }
     }

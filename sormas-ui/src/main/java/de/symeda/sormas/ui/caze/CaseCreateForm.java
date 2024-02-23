@@ -32,8 +32,6 @@ import java.util.Date;
 import java.util.List;
 
 import de.symeda.sormas.api.infrastructure.facility.*;
-import de.symeda.sormas.api.utils.AFPFacilityOptions;
-import de.symeda.sormas.api.utils.TypeOfAbode;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.google.common.collect.Sets;

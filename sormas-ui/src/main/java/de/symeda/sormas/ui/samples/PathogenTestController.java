@@ -174,12 +174,12 @@ public class PathogenTestController {
 		Map<Disease, List<PathogenTestDto>> testsByDisease = pathogenTests.stream().collect(Collectors.groupingBy(PathogenTestDto::getTestedDisease));
 		Optional<PathogenTestDto> positiveWithSameDisease = testsByDisease.getOrDefault(caze.getDisease(), Collections.emptyList())
 				.stream()
-				.filter(t -> t.getTestResult() == PathogenTestResultType.POSITIVE && t.getTestResultVerified())
+				.filter(t -> t.getTestResult() == PathogenTestResultType.POSITIVE)
 				.findFirst();
 
 		Optional<PathogenTestDto> negativeWithSameDisease = testsByDisease.getOrDefault(caze.getDisease(), Collections.emptyList())
 				.stream()
-				.filter(t -> t.getTestResult() == PathogenTestResultType.NEGATIVE && t.getTestResultVerified())
+				.filter(t -> t.getTestResult() == PathogenTestResultType.NEGATIVE)
 				.findFirst();
 
 		if (positiveWithSameDisease.isPresent()) {
@@ -196,7 +196,7 @@ public class PathogenTestController {
 			List<PathogenTestDto> tests = testsByDisease.get(disease);
 
 			Optional<PathogenTestDto> positiveWithOtherDisease =
-					tests.stream().filter(t -> t.getTestResult() == PathogenTestResultType.POSITIVE && t.getTestResultVerified()).findFirst();
+					tests.stream().filter(t -> t.getTestResult() == PathogenTestResultType.POSITIVE).findFirst();
 
 			if (positiveWithOtherDisease.isPresent()) {
 				List<CaseDataDto> duplicatedCases =
@@ -222,7 +222,7 @@ public class PathogenTestController {
 			boolean suppressNavigateToCase) {
 		PathogenTestForm createForm = new PathogenTestForm(sampleDto, true, caseSampleCount, false, true, Disease.MEASLES); // Valid because jurisdiction doesn't matter for entities that are about to be created
 
-		createForm.setValue(PathogenTestDto.build(sampleDto, UserProvider.getCurrent().getUser()), Disease.CONGENITAL_RUBELLA);
+		createForm.setValue(PathogenTestDto.build(sampleDto, UserProvider.getCurrent().getUser()), Disease.RUBELLA);
 		final CommitDiscardWrapperComponent<PathogenTestForm> editView = new CommitDiscardWrapperComponent<>(
 				createForm,
 				UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_CREATE),
@@ -295,7 +295,7 @@ public class PathogenTestController {
 		Runnable callback = () -> {
 			if (equalDisease
 					&& PathogenTestResultType.NEGATIVE.equals(dto.getTestResult())
-					&& dto.getTestResultVerified()
+					
 					&& !suppressSampleResultUpdatePopup) {
 				showChangeAssociatedSampleResultDialog(dto, handleChanges -> {
 					if (dto.getTestedDiseaseVariant() != null && !DataHelper.equal(dto.getTestedDiseaseVariant(), caze.getDiseaseVariant())) {
@@ -311,7 +311,7 @@ public class PathogenTestController {
 						showNoCaseDialog(caze);
 					}
 				});
-			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && dto.getTestResultVerified()) {
+			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) ) {
 				if (equalDisease && suppressSampleResultUpdatePopup) {
 					checkForDiseaseVariantUpdate(dto, caze, suppressNavigateToCase, this::showConfirmCaseDialog);
 				} else if (equalDisease) {
@@ -557,10 +557,9 @@ public class PathogenTestController {
 		Runnable callback = () -> {
 			if (equalDisease
 					&& PathogenTestResultType.NEGATIVE.equals(dto.getTestResult())
-					&& dto.getTestResultVerified()
 					&& !suppressSampleResultUpdatePopup) {
 				showChangeAssociatedSampleResultDialog(dto, null);
-			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && dto.getTestResultVerified()) {
+			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult())) {
 				if (equalDisease) {
 					if (eventParticipant.getResultingCase() == null) {
 						showConvertEventParticipantToCaseDialog(eventParticipant, dto.getTestedDisease(), caseCreated -> {
@@ -655,10 +654,10 @@ public class PathogenTestController {
 
 			if (equalDisease
 					&& PathogenTestResultType.NEGATIVE.equals(dto.getTestResult())
-					&& dto.getTestResultVerified()
+					
 					&& !suppressSampleResultUpdatePopup) {
 				showChangeAssociatedSampleResultDialog(dto, null);
-			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && dto.getTestResultVerified()) {
+			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) ) {
 				if (equalDisease) {
 					if (contact.getResultingCase() == null && !ContactStatus.CONVERTED.equals(contact.getContactStatus())) {
 						showConvertContactToCaseDialog(contact, converted -> handleCaseCreationFromContactOrEventParticipant(converted, dto));
@@ -891,10 +890,10 @@ public class PathogenTestController {
 		Runnable callback = () -> {
 			if (equalDisease
 					&& PathogenTestResultType.NEGATIVE.equals(dto.getTestResult())
-					&& dto.getTestResultVerified()
+					
 					&& !suppressSampleResultUpdatePopup) {
 				showChangeAssociatedSampleResultDialog(dto, null);
-			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && dto.getTestResultVerified()) {
+			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) ) {
 				if (equalDisease && suppressSampleResultUpdatePopup) {
 					checkForDiseaseVariantUpdate(dto, caze, this::showConfirmCaseDialog);
 				} else if (equalDisease) {
@@ -948,12 +947,12 @@ public class PathogenTestController {
 		Map<Disease, List<PathogenTestDto>> testsByDisease = pathogenTests.stream().collect(Collectors.groupingBy(PathogenTestDto::getTestedDisease));
 		Optional<PathogenTestDto> positiveWithSameDisease = testsByDisease.getOrDefault(contact.getDisease(), Collections.emptyList())
 			.stream()
-			.filter(t -> t.getTestResult() == PathogenTestResultType.POSITIVE && t.getTestResultVerified())
+			.filter(t -> t.getTestResult() == PathogenTestResultType.POSITIVE)
 			.findFirst();
 
 		Optional<PathogenTestDto> negativeWithSameDisease = testsByDisease.getOrDefault(contact.getDisease(), Collections.emptyList())
 			.stream()
-			.filter(t -> t.getTestResult() == PathogenTestResultType.NEGATIVE && t.getTestResultVerified())
+			.filter(t -> t.getTestResult() == PathogenTestResultType.NEGATIVE)
 			.findFirst();
 
 		if (positiveWithSameDisease.isPresent()) {
@@ -972,7 +971,7 @@ public class PathogenTestController {
 			List<PathogenTestDto> tests = testsByDisease.get(disease);
 
 			Optional<PathogenTestDto> positiveWithOtherDisease =
-				tests.stream().filter(t -> t.getTestResult() == PathogenTestResultType.POSITIVE && t.getTestResultVerified()).findFirst();
+				tests.stream().filter(t -> t.getTestResult() == PathogenTestResultType.POSITIVE).findFirst();
 			if (positiveWithOtherDisease.isPresent()) {
 				List<CaseDataDto> duplicatedCases =
 					FacadeProvider.getCaseFacade().getDuplicatesWithPathogenTest(contact.getPerson(), positiveWithOtherDisease.get());
@@ -1008,12 +1007,12 @@ public class PathogenTestController {
 		Map<Disease, List<PathogenTestDto>> testsByDisease = pathogenTests.stream().collect(Collectors.groupingBy(PathogenTestDto::getTestedDisease));
 		Optional<PathogenTestDto> positiveWithSameDisease = testsByDisease.getOrDefault(eventDisease, Collections.emptyList())
 			.stream()
-			.filter(t -> t.getTestResult() == PathogenTestResultType.POSITIVE && t.getTestResultVerified())
+			.filter(t -> t.getTestResult() == PathogenTestResultType.POSITIVE)
 			.findFirst();
 
 		Optional<PathogenTestDto> negativeWithSameDisease = testsByDisease.getOrDefault(eventDisease, Collections.emptyList())
 			.stream()
-			.filter(t -> t.getTestResult() == PathogenTestResultType.NEGATIVE && t.getTestResultVerified())
+			.filter(t -> t.getTestResult() == PathogenTestResultType.NEGATIVE)
 			.findFirst();
 
 		if (positiveWithSameDisease.isPresent()) {
@@ -1032,7 +1031,7 @@ public class PathogenTestController {
 			List<PathogenTestDto> tests = testsByDisease.get(disease);
 
 			Optional<PathogenTestDto> positiveWithOtherDisease =
-				tests.stream().filter(t -> t.getTestResult() == PathogenTestResultType.POSITIVE && t.getTestResultVerified()).findFirst();
+				tests.stream().filter(t -> t.getTestResult() == PathogenTestResultType.POSITIVE).findFirst();
 			if (positiveWithOtherDisease.isPresent()) {
 				List<CaseDataDto> duplicatedCases = FacadeProvider.getCaseFacade()
 					.getDuplicatesWithPathogenTest(eventParticipant.getPerson().toReference(), positiveWithOtherDisease.get());
