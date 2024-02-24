@@ -12031,12 +12031,24 @@ VALUES
 INSERT INTO schema_version (version_number, comment) VALUES (485, 'Create user roles Lab Attendant and Lab Supervisor and Assigning userrights to roles LAB_ATTENDANT and LAB_SUPERVISOR and assigning new right SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO to LAB_ATTEDANT  #37');
 
 CREATE TABLE facility_diseaseconfiguration (
-                                               facility_id bigint,
-                                               diseaseconfiguration_id bigint,
-                                               PRIMARY KEY (facility_id, diseaseconfiguration_id),
-                                               FOREIGN KEY (facility_id) REFERENCES facility(id),
-                                               FOREIGN KEY (diseaseconfiguration_id) REFERENCES diseaseconfiguration(id)
+   facility_id bigint,
+   diseaseconfiguration_id bigint,
+   PRIMARY KEY (facility_id, diseaseconfiguration_id),
+   FOREIGN KEY (facility_id) REFERENCES facility(id),
+   FOREIGN KEY (diseaseconfiguration_id) REFERENCES diseaseconfiguration(id)
 );
+
+ALTER TABLE facility_diseaseconfiguration ADD COLUMN sys_period tstzrange;
+UPDATE facility_diseaseconfiguration SET sys_period=tstzrange((SELECT diseaseconfiguration.creationdate FROM diseaseconfiguration WHERE diseaseconfiguration.id = facility_diseaseconfiguration.diseaseconfiguration_id), null);
+ALTER TABLE facility_diseaseconfiguration ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE facility_diseaseconfiguration_history (LIKE facility_diseaseconfiguration);
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE OR DELETE ON facility_diseaseconfiguration
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'facility_diseaseconfiguration_history', true);
+ALTER TABLE facility_diseaseconfiguration_history OWNER TO sormas_user;
+
+ALTER TABLE diseaseconfiguration ADD COLUMN archived boolean DEFAULT false;
+ALTER TABLE diseaseconfiguration ADD COLUMN centrally_managed boolean DEFAULT false;
 
 INSERT INTO schema_version (version_number, comment) VALUES (486, 'Assigning Diseases to facility functionality #134');
 
@@ -13305,22 +13317,6 @@ INSERT INTO schema_version (version_number, comment) VALUES (575, 'Added influen
 
 UPDATE samples SET samplematerial = 'WHOLE_BLOOD' WHERE samplematerial = 'BLOOD';
 INSERT INTO schema_version (version_number, comment) VALUES (576, 'Updated samplematerial column');
-
-
-ALTER TABLE facility_diseaseconfiguration ADD COLUMN sys_period tstzrange;
-UPDATE facility_diseaseconfiguration SET sys_period=tstzrange((SELECT diseaseconfiguration.creationdate FROM diseaseconfiguration WHERE diseaseconfiguration.id = facility_diseaseconfiguration.diseaseconfiguration_id), null);
-ALTER TABLE facility_diseaseconfiguration ALTER COLUMN sys_period SET NOT NULL;
-CREATE TABLE facility_diseaseconfiguration_history (LIKE facility_diseaseconfiguration);
-CREATE TRIGGER versioning_trigger
-    BEFORE INSERT OR UPDATE OR DELETE ON facility_diseaseconfiguration
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'facility_diseaseconfiguration_history', true);
-ALTER TABLE facility_diseaseconfiguration_history OWNER TO sormas_user;
-
-INSERT INTO schema_version (version_number, comment) VALUES (577, 'Assigning Diseases to facility functionality on mobile app #134');
-
-ALTER TABLE diseaseconfiguration ADD COLUMN archived boolean DEFAULT false;
-ALTER TABLE diseaseconfiguration ADD COLUMN centrally_managed boolean DEFAULT false;
-INSERT INTO schema_version (version_number, comment) VALUES (578, 'Adding archived Column to diseaseconfiguration table  #134');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``
