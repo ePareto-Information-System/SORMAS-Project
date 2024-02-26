@@ -11916,6 +11916,141 @@ INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (475,
 UPDATE users SET password = LPAD(password, 64, '0') WHERE LENGTH(password) < 64;
 INSERT INTO schema_version (version_number, comment) VALUES (476, 'Adjust password hashes with leading zeros #9726');
 
+
+ALTER TABLE district ADD COLUMN IF NOT EXISTS districtlatitude double precision;
+ALTER TABLE district ADD COLUMN IF NOT EXISTS districtlongitude double precision;
+
+INSERT INTO schema_version (version_number, comment) VALUES (477, 'Add Geolocation to district #1865');
+
+
+CREATE TABLE cadre (
+     id bigint NOT NULL,
+     uuid varchar(36) not null unique,
+     creationdate timestamp without time zone NOT NULL,
+     changedate timestamp not null,
+     archived boolean not null default false,
+     position varchar(255),
+     externalid varchar(255),
+     deleted boolean not null default false,
+    primary key(id)
+);
+
+ALTER TABLE cadre OWNER TO sormas_user;
+ALTER TABLE person ADD COLUMN cadre_id bigint;
+
+ALTER TABLE cadre ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE cadre ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE cadre ADD COLUMN  otherdeletionreason text;
+
+
+ALTER TABLE cadre ADD COLUMN endofprocessingdate timestamp without time zone;
+ALTER TABLE cadre ADD COLUMN archiveundonereason character varying(512);
+                            
+INSERT INTO schema_version (version_number, comment) VALUES (478, 'Created a cadre table and added a relation to person table #34');
+
+-- 2022-26-10 Update userroles with HOSPITAL_SUPERVISOR
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'HOSPITAL_SUPERVISOR');
+
+
+INSERT INTO schema_version (version_number, comment ,upgradeneeded) VALUES (479, 'Update userroles with HOSPITAL_SUPERVISOR', true);
+
+-- 2022-07-11 Assigning DASHBOARD_DISEASE_DETAILS_ACCESS right to userroles that can view surveilance dashboard 
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT userrole_id, 'DASHBOARD_DISEASE_DETAILS_ACCESS' FROM userroles_userrights WHERE userright = 'DASHBOARD_SURVEILLANCE_VIEW';
+
+
+INSERT INTO schema_version (version_number, comment) VALUES (480, 'Assigning DASHBOARD_DISEASE_DETAILS_ACCESS right to userroles that can view surveilance dashboard');
+
+
+-- 2022-05-12 Assigning DASHBOARD_DISEASE_DETAILS_ACCESS right to userroles hospital supervisor
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT userrole_id, 'DASHBOARD_SURVEILLANCE_VIEW' FROM userroles_userrights WHERE userright = 'DASHBOARD_SURVEILLANCE_ACCESS';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT userrole_id, 'SORMAS_UI' FROM userroles_userrights WHERE userright = 'DASHBOARD_SURVEILLANCE_ACCESS';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT userrole_id, 'DASHBOARD_CONTACT_VIEW' FROM userroles_userrights WHERE userright = 'DASHBOARD_SURVEILLANCE_ACCESS';
+DELETE FROM userroles_userrights WHERE userright = 'DASHBOARD_SURVEILLANCE_ACCESS';
+
+
+INSERT INTO schema_version (version_number, comment) VALUES (481, 'Assigning DASHBOARD_SURVEILLANCE_VIEW,SORMAS_UI, DASHBOARD_CONTACT_VIEW, DASHBOARD_SAMPLE_ACCESS right to HOSPITAL_SUPERVISOR');
+
+
+-- 2023-16-03 Updating outcome with null values to value  No outcome yet
+UPDATE cases SET outcome='NO_OUTCOME' WHERE outcome is null;
+
+
+INSERT INTO schema_version (version_number, comment) VALUES (482, 'Updating outcome with null values to value  NO_OUTCOME');
+
+
+-- 2023-21-03 Assiging PERFORM_BULK_OPERATIONS_CASE_SAMPLES right to Lab Officer
+INSERT INTO userroles_userrights(userright, sys_period, userrole_id)
+	SELECT 'PERFORM_BULK_OPERATIONS_CASE_SAMPLES', tstzrange(now(), null),id AS userrole_id FROM userroles ur WHERE caption = 'Lab Officer' 
+	AND NOT exists(SELECT uu.userrole_id
+                 FROM userroles_userrights uu
+                 WHERE uu.userrole_id = ur.id
+                   AND uu.userright = 'PERFORM_BULK_OPERATIONS_CASE_SAMPLES');
+
+INSERT INTO schema_version (version_number, comment) VALUES (483, 'Assiging PERFORM_BULK_OPERATIONS_CASE_SAMPLES right to Lab Officer');
+
+
+-- 2023-21-03 Assiging PERFORM_BULK_OPERATIONS right to Lab Officer
+INSERT INTO userroles_userrights(userright, sys_period, userrole_id)
+	SELECT 'PERFORM_BULK_OPERATIONS', tstzrange(now(), null),id AS userrole_id FROM userroles ur WHERE caption = 'Lab Officer' 
+	AND NOT exists(SELECT uu.userrole_id
+                 FROM userroles_userrights uu
+                 WHERE uu.userrole_id = ur.id
+                   AND uu.userright = 'PERFORM_BULK_OPERATIONS');
+
+INSERT INTO schema_version (version_number, comment) VALUES (484, 'Assiging PERFORM_BULK_OPERATIONS right to Lab Officer');
+
+
+-- 2023-07-21 Create user roles LAB_ATTENDANT and LAB_SUPERVISOR Assigning userrights to roles 'LAB_ATTENDANT' and 'LAB_SUPERVISOR' 
+-- and assigning new right 'SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO' to LAB_ATTEDANT  #37
+INSERT INTO userroles (id,uuid, changedate,creationdate, caption, description, enabled, hasoptionalhealthfacility, hasassociateddistrictuser, porthealthuser, jurisdictionlevel)
+VALUES
+    (nextval('entity_seq'),generate_base32_uuid(), now(),now(), 'Lab Attendant', 'Role for Lab Attendant', true, false, false, false, 'LABORATORY'),
+    (nextval('entity_seq'),generate_base32_uuid(), now(),now(), 'Lab Supervisor', 'Role for Lab Supervisor', true, false, false, false, 'LABORATORY');
+
+INSERT INTO userroles_userrights (userright, userrole_id)
+SELECT userright, (SELECT id FROM userroles WHERE caption = 'Lab Supervisor' LIMIT 1)
+FROM userroles_userrights
+WHERE userrole_id = (SELECT id FROM userroles WHERE caption = 'Lab Officer' LIMIT 1);
+
+INSERT INTO userroles_userrights (userright, userrole_id)
+SELECT userright, (SELECT id FROM userroles WHERE caption = 'Lab Attendant' LIMIT 1)
+FROM userroles_userrights
+WHERE userrole_id = (SELECT id FROM userroles WHERE caption = 'Lab Officer' LIMIT 1);
+
+INSERT INTO userroles_userrights (userright, userrole_id)
+VALUES 
+    ('SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO', (SELECT id FROM userroles WHERE caption = 'Lab Attendant' LIMIT 1));
+INSERT INTO schema_version (version_number, comment) VALUES (485, 'Create user roles Lab Attendant and Lab Supervisor and Assigning userrights to roles LAB_ATTENDANT and LAB_SUPERVISOR and assigning new right SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO to LAB_ATTEDANT  #37');
+
+CREATE TABLE facility_diseaseconfiguration (
+                                               facility_id bigint,
+                                               diseaseconfiguration_id bigint,
+                                               PRIMARY KEY (facility_id, diseaseconfiguration_id),
+                                               FOREIGN KEY (facility_id) REFERENCES facility(id),
+                                               FOREIGN KEY (diseaseconfiguration_id) REFERENCES diseaseconfiguration(id)
+);
+
+INSERT INTO schema_version (version_number, comment) VALUES (486, 'Assigning Diseases to facility functionality #134');
+
+ALTER TABLE facility_diseaseconfiguration ADD COLUMN sys_period tstzrange;
+UPDATE facility_diseaseconfiguration SET sys_period=tstzrange((SELECT diseaseconfiguration.creationdate FROM diseaseconfiguration WHERE diseaseconfiguration.id = facility_diseaseconfiguration.diseaseconfiguration_id), null);
+ALTER TABLE facility_diseaseconfiguration ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE facility_diseaseconfiguration_history (LIKE facility_diseaseconfiguration);
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE OR DELETE ON facility_diseaseconfiguration
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'facility_diseaseconfiguration_history', true);
+ALTER TABLE facility_diseaseconfiguration_history OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (487, 'Assigning Diseases to facility functionality on mobile app #134');
+
+ALTER TABLE diseaseconfiguration ADD COLUMN archived boolean DEFAULT false;
+ALTER TABLE diseaseconfiguration ADD COLUMN centrally_managed boolean DEFAULT false;
+INSERT INTO schema_version (version_number, comment) VALUES (488, 'Adding archived, centrally_managed Column to diseaseconfiguration table  #134');
+
 -- 2024-02-26 Updated surveillance officer role to render facility #148
 update userroles set jurisdictionlevel = 'HEALTH_FACILITY' where caption = 'Surveillance Officer'
 INSERT INTO schema_version (version_number, comment) VALUES (489, 'Updated surveillance officer role to render facility #148');
