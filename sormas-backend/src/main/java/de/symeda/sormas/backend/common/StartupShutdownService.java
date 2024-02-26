@@ -365,8 +365,11 @@ public class StartupShutdownService {
 				"Surveillance",
 				"Supervisor",
 				DefaultEntityHelper.SURV_SUP_USERNAME_AND_PASSWORD,
-				u -> u.setRegion(region));
-
+					u -> {
+						u.setRegion(region);
+						u.setDistrict(district);
+						u.setHealthFacility(facility);
+					});
 			// Create Case Supervisor
 			createAndPersistDefaultUser(
 				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.CASE_SUPERVISOR)),
@@ -434,6 +437,7 @@ public class StartupShutdownService {
 				u -> {
 					u.setRegion(region);
 					u.setDistrict(district);
+					u.setHealthFacility(facility);
 				});
 
 			// Create Hospital Informant

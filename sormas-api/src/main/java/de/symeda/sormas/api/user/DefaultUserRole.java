@@ -43,9 +43,9 @@ public enum DefaultUserRole {
 		Arrays.asList(NotificationType.TASK_START, NotificationType.TASK_DUE, NotificationType.TASK_UPDATED_ASSIGNEE)),
 	SURVEILLANCE_SUPERVISOR(true,
 		false,
+		true,
 		false,
-		false,
-		JurisdictionLevel.REGION,
+		JurisdictionLevel.HEALTH_FACILITY,
 		Arrays.asList(
 			NotificationType.CASE_CLASSIFICATION_CHANGED,
 			NotificationType.DISEASE_CHANGED,
@@ -80,10 +80,10 @@ public enum DefaultUserRole {
 			NotificationType.EVENT_REMOVED_FROM_EVENT_GROUP)),
 	ADMIN_SUPERVISOR(true, false, false, false, JurisdictionLevel.REGION, Collections.emptyList(), Collections.emptyList()), // FIXME : remove this when user rights management is doable by users
 	SURVEILLANCE_OFFICER(false,
+		false,
 		true,
 		false,
-		false,
-		JurisdictionLevel.DISTRICT,
+		JurisdictionLevel.HEALTH_FACILITY,
 		Arrays.asList(
 			NotificationType.EVENT_PARTICIPANT_CASE_CLASSIFICATION_CONFIRMED,
 			NotificationType.EVENT_PARTICIPANT_RELATED_TO_OTHER_EVENTS,
