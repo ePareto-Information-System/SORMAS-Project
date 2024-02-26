@@ -13316,6 +13316,7 @@ ALTER TABLE samples ADD COLUMN pathogentestcount varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (575, 'Added influenzalabcolumns to samples');
 
 UPDATE samples SET samplematerial = 'WHOLE_BLOOD' WHERE samplematerial = 'BLOOD';
+
 INSERT INTO schema_version (version_number, comment) VALUES (576, 'Updated samplematerial column');
 
 -- 2023-07-26 Add the 'Miscellaneuos update gh-release-1.87.0 #abc
@@ -13404,8 +13405,6 @@ BEGIN
 ALTER TABLE sormastosormassharerequest_history ADD COLUMN shareassociatedcontactsdisabled BOOLEAN DEFAULT FALSE;
 END IF;
 END $$;
-
-INSERT INTO schema_version (version_number, comment) VALUES (535, 'S2S_deactivate share parameter share associated contacts (for cases) #9146');
 
 DO $$
 BEGIN
