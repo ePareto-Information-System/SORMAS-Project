@@ -12052,7 +12052,7 @@ ALTER TABLE diseaseconfiguration ADD COLUMN centrally_managed boolean DEFAULT fa
 INSERT INTO schema_version (version_number, comment) VALUES (488, 'Adding archived, centrally_managed Column to diseaseconfiguration table  #134');
 
 -- 2024-02-26 Updated surveillance officer role to render facility #148
-update userroles set jurisdictionlevel = 'HEALTH_FACILITY' where caption = 'Surveillance Officer'
+update userroles set jurisdictionlevel = 'HEALTH_FACILITY' where caption = 'Surveillance Officer';
 INSERT INTO schema_version (version_number, comment) VALUES (489, 'Updated surveillance officer role to render facility #148');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
