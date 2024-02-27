@@ -510,7 +510,9 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		}else if (disease == Disease.AFP) {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD, PresentCondition.BURIED);
 			showPersonalEmail();
-		} else {
+		} else if (disease == Disease.CORONAVIRUS) {
+			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD);
+		}else {
 			validValues = Arrays.asList(PresentCondition.values());
 		}
 		if (currentValue != null && !validValues.contains(currentValue)) {
