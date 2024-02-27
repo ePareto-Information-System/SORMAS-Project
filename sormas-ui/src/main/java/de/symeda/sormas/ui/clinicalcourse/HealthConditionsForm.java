@@ -25,6 +25,7 @@ import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.OTHER_COND
 import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.SICKLE_CELL_DISEASE;
 import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.TUBERCULOSIS;
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
+import static de.symeda.sormas.ui.utils.CssStyles.SVG_STROKE_MINOR;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumn;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRow;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
@@ -125,5 +126,46 @@ public class HealthConditionsForm extends AbstractEditForm<HealthConditionsDto> 
 		field.addValueChangeListener(e -> fireValueChange(false));
 
 		return super.addFieldToLayout(layout, propertyId, field);
+	}
+
+	//hide all fields
+	public void hideAllFields() {
+		setVisible(false,
+				TUBERCULOSIS,
+				ASPLENIA,
+				HEPATITIS,
+				DIABETES,
+				HIV,
+				HIV_ART,
+				CHRONIC_LIVER_DISEASE,
+				MALIGNANCY_CHEMOTHERAPY,
+				CHRONIC_HEART_FAILURE,
+				CHRONIC_PULMONARY_DISEASE,
+				CHRONIC_KIDNEY_DISEASE,
+				CHRONIC_NEUROLOGIC_CONDITION,
+				DOWN_SYNDROME,
+				CONGENITAL_SYPHILIS,
+				IMMUNODEFICIENCY_OTHER_THAN_HIV,
+				CARDIOVASCULAR_DISEASE_INCLUDING_HYPERTENSION,
+				OBESITY,
+				CURRENT_SMOKER,
+				FORMER_SMOKER,
+				ASTHMA,
+				SICKLE_CELL_DISEASE,
+				IMMUNODEFICIENCY_INCLUDING_HIV
+		);
+	}
+
+	public void showForCovid19() {
+		setVisible(true,
+				CARDIOVASCULAR_DISEASE_INCLUDING_HYPERTENSION,
+				IMMUNODEFICIENCY_INCLUDING_HIV,
+				DIABETES,
+				CHRONIC_KIDNEY_DISEASE,
+				CHRONIC_LIVER_DISEASE,
+				//TO DO ADD LUNG DISEASE
+				//ADD FOR STROKE
+				OTHER_CONDITIONS
+		);
 	}
 }
