@@ -434,26 +434,28 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		reportInfoLabel.setEnabled(false);
 		getContent().addComponent(reportInfoLabel, REPORT_INFO_LABEL_LOC);
 
-		switch (disease) {
-			case CSM:
-				handleCSM();
-				break;
-			case AFP:
-				handleAFP();
-				break;
-			case AHF:
-				handleAHF();
-				break;
-			case YELLOW_FEVER:
-				handleYellowFever();
-				break;
-			case NEW_INFLUENZA:
-				handleNewInfluenza();
-				break;
-			case MEASLES:
-				handleMeasles();
-				break;
-			default:
+		if(disease!=null) {
+			switch (disease) {
+				case CSM:
+					handleCSM();
+					break;
+				case AFP:
+					handleAFP();
+					break;
+				case AHF:
+					handleAHF();
+					break;
+				case YELLOW_FEVER:
+					handleYellowFever();
+					break;
+				case NEW_INFLUENZA:
+					handleNewInfluenza();
+					break;
+				case MEASLES:
+					handleMeasles();
+					break;
+				default:
+			}
 		}
 	}
 

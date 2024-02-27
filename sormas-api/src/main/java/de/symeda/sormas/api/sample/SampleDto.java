@@ -248,9 +248,9 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private SampleSource sampleSource;
 	private SampleReferenceDto referredTo;
 	private boolean shipped;
-	private boolean sampleMaterialTypeForYF;
-//	private boolean sampleDiseaseTests;
-	private boolean received;
+	private Boolean sampleMaterialTypeForYF;
+//	private Boolean sampleDiseaseTests;
+	private Boolean received;
 	private PathogenTestResultType pathogenTestResult;
 
 	private Boolean pathogenTestingRequested;
@@ -270,7 +270,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String samplingReasonDetails;
 
-	private boolean deleted;
+	private Boolean deleted;
 	private DeletionReason deletionReason;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String otherDeletionReason;
@@ -599,11 +599,11 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public void setFieldSampleID(String fieldSampleID) {
 		this.fieldSampleID = fieldSampleID;
 	}
-	
+
 	public YesNoUnknown getForRetest() {
 		return forRetest;
 	}
-	
+
 	public void setForRetest(YesNoUnknown forRetest) {
 		this.forRetest = forRetest;
 	}
@@ -743,7 +743,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 		return shipped;
 	}
 
-	public void setShipped(boolean shipped) {
+	public void setShipped(Boolean shipped) {
 		this.shipped = shipped;
 	}
 
@@ -751,7 +751,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 		return received;
 	}
 
-	public void setReceived(boolean received) {
+	public void setReceived(Boolean received) {
 		this.received = received;
 	}
 
@@ -781,20 +781,20 @@ public class SampleDto extends SormasToSormasShareableDto {
 		this.sampleMaterialTestingRequested = sampleMaterialTestingRequested;
 	}
 	@ImportIgnore
-	public boolean isYellowFeverSampleType() {
+	public Boolean isYellowFeverSampleType() {
 		return sampleMaterialTypeForYF;
 	}
 
-	public void setYellowFeverSampleType(boolean sampleMaterialTypeForYF) {
+	public void setYellowFeverSampleType(Boolean sampleMaterialTypeForYF) {
 		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
 	}
 
 	/*@ImportIgnore
-	public boolean isDiseaseSampleTests() {
+	public Boolean isDiseaseSampleTests() {
 		return sampleDiseaseTests;
 	}
 
-	public void setDiseaseSampleTests(boolean sampleDiseaseTests) {
+	public void setDiseaseSampleTests(Boolean sampleDiseaseTests) {
 		this.sampleDiseaseTests = sampleDiseaseTests;
 	}*/
 
@@ -1086,11 +1086,11 @@ public class SampleDto extends SormasToSormasShareableDto {
 		return (SampleDto) super.clone();
 	}
 
-	public boolean isDeleted() {
+	public Boolean isDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
+	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
 	}
 
