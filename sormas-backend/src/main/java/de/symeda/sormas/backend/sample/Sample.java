@@ -198,10 +198,10 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private String comment;
 	private SampleSource sampleSource;
 	private Sample referredTo;
-	private boolean shipped;
-	private boolean sampleMaterialTypeForYF;
-	private boolean sampleDiseaseTests;
-	private boolean received;
+	private Boolean shipped;
+	private Boolean sampleMaterialTypeForYF;
+	private Boolean sampleDiseaseTests;
+	private Boolean received;
 	private PathogenTestResultType pathogenTestResult;
 	private Date pathogenTestResultChangeDate;
 
@@ -544,36 +544,36 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	}
 
 	@Column
-	public boolean isShipped() {
+	public Boolean isShipped() {
 		return shipped;
 	}
 
-	public void setShipped(boolean shipped) {
+	public void setShipped(Boolean shipped) {
 		this.shipped = shipped;
 	}
 
-	public boolean isYellowFeverSampleType() {
+	public Boolean isYellowFeverSampleType() {
 		return sampleMaterialTypeForYF;
 	}
 
-	public void setYellowFeverSampleType(boolean sampleMaterialTypeForYF) {
+	public void setYellowFeverSampleType(Boolean sampleMaterialTypeForYF) {
 		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
 	}
 
-	public boolean isDiseaseSampleTests() {
+	public Boolean isDiseaseSampleTests() {
 		return sampleDiseaseTests;
 	}
 
-	public void setDiseaseSampleTests(boolean sampleDiseaseTests) {
+	public void setDiseaseSampleTests(Boolean sampleDiseaseTests) {
 		this.sampleDiseaseTests = sampleDiseaseTests;
 	}
 
 	@Column
-	public boolean isReceived() {
+	public Boolean isReceived() {
 		return received;
 	}
 
-	public void setReceived(boolean received) {
+	public void setReceived(Boolean received) {
 		this.received = received;
 	}
 
