@@ -373,6 +373,11 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			districtField.setVisible(true);
 
 		}
+
+		if (caze.getDisease() == Disease.CORONAVIRUS){
+			hideFields();
+			setVisible(true, HospitalizationDto.ISOLATED, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE);
+		}
 	}
 
 	private void updatePrevHospHint(NullableOptionGroup hospitalizedPreviouslyField, PreviousHospitalizationsField previousHospitalizationsField) {
@@ -410,5 +415,13 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			hospitalName.append(String.format(HOSPITAL_NAME_DETAIL, caze.getHealthFacilityDetails()));
 		}
 		return hospitalName.toString();
+	}
+
+	//hide all fields
+	public void hideFields() {
+		//get field group
+		for (Object propertyId : getFieldGroup().getUnboundPropertyIds()) {
+			setVisible(false, propertyId.toString());
+		}
 	}
 }
