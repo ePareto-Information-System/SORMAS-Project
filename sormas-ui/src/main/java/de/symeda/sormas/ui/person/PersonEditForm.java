@@ -355,12 +355,30 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 		addressForm = addField(PersonDto.ADDRESS, LocationEditForm.class);
 
-		addressForm.setOnlyUnknownForCSM(disease);
-		addressForm.setOnlyUnknownForAFP(disease);
-		addressForm.setOnlyUnknownForInfluenza(disease);
-		addressForm.setOnlyUnknownForYellowFever(disease);
-		addressForm.setOnlyUnknownForAHF(disease);
-
+		if (disease != null) {
+			switch (disease) {
+				case CSM:
+					addressForm.setOnlyUnknownForCSM(disease);
+					break;
+				case AFP:
+					addressForm.setOnlyUnknownForAFP(disease);
+					break;
+				case NEW_INFLUENZA:
+					addressForm.setOnlyUnknownForInfluenza(disease);
+					break;
+				case YELLOW_FEVER:
+					addressForm.setOnlyUnknownForYellowFever(disease);
+					break;
+				case AHF:
+					addressForm.setOnlyUnknownForAHF(disease);
+					break;
+				case CORONAVIRUS:
+					addressForm.setOnlyUnknownForCovid(disease);
+					break;
+				default:
+					break;
+			}
+		}
 
 		addressForm.setCaption(null);
 		addField(PersonDto.ADDRESSES, LocationsField.class).setCaption(null);
