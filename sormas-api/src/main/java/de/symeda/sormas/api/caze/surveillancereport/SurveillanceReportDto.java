@@ -83,8 +83,6 @@ public class SurveillanceReportDto extends SormasToSormasShareableDto {
 	private DistrictReferenceDto facilityDistrict;
 
 	private FacilityType facilityType;
-	private DhimsFacility dhimsFacilityType;
-
 	private FacilityReferenceDto facility;
 
 	@SensitiveData
@@ -161,13 +159,6 @@ public class SurveillanceReportDto extends SormasToSormasShareableDto {
 
 	public void setFacilityType(FacilityType facilityType) {
 		this.facilityType = facilityType;
-	}
-
-	public DhimsFacility getDhimsFacilityType() {
-		return dhimsFacilityType;
-	}
-	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
-		this.dhimsFacilityType = dhimsFacilityType;
 	}
 
 	public FacilityReferenceDto getFacility() {

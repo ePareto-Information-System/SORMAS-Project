@@ -268,6 +268,7 @@ import de.symeda.sormas.backend.hospitalization.Hospitalization;
 import de.symeda.sormas.backend.hospitalization.HospitalizationFacadeEjb;
 import de.symeda.sormas.backend.hospitalization.HospitalizationFacadeEjb.HospitalizationFacadeEjbLocal;
 import de.symeda.sormas.backend.hospitalization.PreviousHospitalization;
+import de.symeda.sormas.backend.sixtyday.SixtyDayFacadeEjb.SixtyDayFacadeEjbLocal;
 import de.symeda.sormas.backend.immunization.ImmunizationEntityHelper;
 import de.symeda.sormas.backend.immunization.entity.Immunization;
 import de.symeda.sormas.backend.importexport.ExportHelper;
@@ -406,7 +407,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	@EJB
 	private HospitalizationFacadeEjbLocal hospitalizationFacade;
 	@EJB
-	private SixtyDayFacadeEjb.SixtyDayFacadeEjbLocal sixtyDayFacade;
+	private SixtyDayFacadeEjbLocal sixtyDayFacade;
 	@EJB
 	private EpiDataFacadeEjbLocal epiDataFacade;
 	@EJB
@@ -3209,7 +3210,6 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setHospitalization(hospitalizationFacade.fillOrBuildEntity(source.getHospitalization(), target.getHospitalization(),checkChangeDate));
 		target.setSixtyDay(sixtyDayFacade.fillOrBuildEntity(source.getSixtyDay(), target.getSixtyDay(),checkChangeDate));
 
-		target.setHospitalization(hospitalizationFacade.fillOrBuildEntity(source.getHospitalization(), target.getHospitalization(), checkChangeDate));
 		target.setEpiData(epiDataFacade.fillOrBuildEntity(source.getEpiData(), target.getEpiData(), checkChangeDate));
 		if (source.getTherapy() == null) {
 			source.setTherapy(TherapyDto.build());

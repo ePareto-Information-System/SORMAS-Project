@@ -82,8 +82,6 @@ public class SurveillanceReport extends AbstractDomainObject implements SormasTo
 	private District facilityDistrict;
 
 	private FacilityType facilityType;
-	private DhimsFacility dhimsFacilityType;
-
 	private Facility facility;
 
 	private String facilityDetails;
@@ -169,14 +167,6 @@ public class SurveillanceReport extends AbstractDomainObject implements SormasTo
 
 	public void setFacilityType(FacilityType facilityType) {
 		this.facilityType = facilityType;
-	}
-
-	@Enumerated(EnumType.STRING)
-	public DhimsFacility getDhimsFacilityType() {
-		return dhimsFacilityType;
-	}
-	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
-		this.dhimsFacilityType = dhimsFacilityType;
 	}
 
 	@ManyToOne

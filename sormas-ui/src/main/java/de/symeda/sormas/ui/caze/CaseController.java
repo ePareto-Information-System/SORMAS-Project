@@ -1253,34 +1253,23 @@ public class CaseController {
 	public CommitDiscardWrapperComponent<SixtyDayForm> getSixtyDayComponent(final String caseUuid, ViewMode viewMode, boolean isEditAllowed) {
 
 		CaseDataDto caze = findCase(caseUuid);
-		SixtyDayForm sixtyDayForm = new SixtyDayForm(caze, viewMode, caze.isPseudonymized(), isEditAllowed);
+		SixtyDayForm sixtyDayForm = new SixtyDayForm(
+				caze.getDisease(),
+				CaseDataDto.class,
+				caze.isPseudonymized(),
+				caze.isInJurisdiction(),
+				isEditAllowed);
 		sixtyDayForm.setValue(caze.getSixtyDay());
 
 		final CommitDiscardWrapperComponent<SixtyDayForm> editView = new CommitDiscardWrapperComponent<SixtyDayForm>(
 				sixtyDayForm,
-				UserProvider.getCurrent().hasUserRight(UserRight.CASE_EDIT),
 				sixtyDayForm.getFieldGroup());
 
-		final JurisdictionValues jurisdictionValues = new JurisdictionValues();
-
-		editView.setPreCommitListener(successCallback -> {
-			//cazeDto not used yet
-			final CaseDataDto cazeDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(caseUuid);
-		});
-
 		editView.addCommitListener(() -> {
-			final CaseDataDto cazeDto = findCase(caseUuid);
-
-			if (jurisdictionValues.valuesUpdated) {
-				cazeDto.setRegion(jurisdictionValues.region);
-				cazeDto.setDistrict(jurisdictionValues.district);
-				cazeDto.setCommunity(jurisdictionValues.community);
-				cazeDto.setFacilityType(jurisdictionValues.facilityType);
-				cazeDto.setHealthFacility(jurisdictionValues.facility);
-				cazeDto.setHealthFacilityDetails(jurisdictionValues.facilityDetails);
-			}
+			CaseDataDto cazeDto = findCase(caseUuid);
 			cazeDto.setSixtyDay(sixtyDayForm.getValue());
 			saveCase(cazeDto);
+
 		});
 
 		return editView;

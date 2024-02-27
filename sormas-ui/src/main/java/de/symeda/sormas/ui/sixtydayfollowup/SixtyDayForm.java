@@ -1,35 +1,39 @@
+/*******************************************************************************
+ * SORMAS® - Surveillance Outbreak Response Management & Analysis System
+ * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ *******************************************************************************/
 package de.symeda.sormas.ui.sixtydayfollowup;
 
-import com.vaadin.server.ErrorMessage;
-import com.vaadin.shared.ui.ErrorLevel;
 import com.vaadin.ui.Label;
 import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.i18n.Validations;
-import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
-import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
-import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
-import de.symeda.sormas.api.symptoms.SymptomsDto;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
-import de.symeda.sormas.ui.hospitalization.PreviousHospitalizationsField;
+import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.*;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
-
-
 
 public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
 
@@ -57,29 +61,28 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
                     fluidRowLocs(SixtyDayDto.CONTACT_DETAILS_NUMBER, SixtyDayDto.CONTACT_DETAILS_EMAIL) +
                     fluidRowLocs(SixtyDayDto.SIGNATURE, SixtyDayDto.DATE_SUBMISSION_FORMS);
 
-    private final CaseDataDto caze;
-    private final ViewMode viewMode;
+    private final Disease disease;
+    private final Class<? extends EntityDto> parentClass;
+    private final boolean isPseudonymized;
 
-    public SixtyDayForm(CaseDataDto caze, ViewMode viewMode, boolean isPseudonymized, boolean isEditAllowed) {
-
+    public SixtyDayForm(Disease disease, Class<? extends EntityDto> parentClass,
+                        boolean isPseudonymized,
+                        boolean inJurisdiction,boolean isEditAllowed) {
         super(
                 SixtyDayDto.class,
                 SixtyDayDto.I18N_PREFIX,
                 false,
-                FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale())
-                        .add(new OutbreakFieldVisibilityChecker(viewMode)),
-                UiFieldAccessCheckers.forSensitiveData(isPseudonymized));
-        this.caze = caze;
-        this.viewMode = viewMode;
+                FieldVisibilityCheckers.withDisease(disease).andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
+                UiFieldAccessCheckers.forDataAccessLevel(UserProvider.getCurrent().getPseudonymizableDataAccessLevel(inJurisdiction), isPseudonymized),
+                isEditAllowed);
+        this.disease = disease;
+        this.parentClass = parentClass;
+        this.isPseudonymized = isPseudonymized;
         addFields();
     }
 
     @Override
     protected void addFields() {
-
-        if (caze == null || viewMode == null) {
-            return;
-        }
 
         Label sixtyDayHeadingLabel = new Label(I18nProperties.getString(Strings.headingSixtyDay));
         sixtyDayHeadingLabel.addStyleName(H3);
