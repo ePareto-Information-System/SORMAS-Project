@@ -648,7 +648,7 @@ public class SampleController {
 		VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
 
-		ConfirmationComponent confirmationComponent = VaadinUiUtil.buildYesNoConfirmationComponent();
+		ConfirmationComponent confirmationComponent = VaadinUiUtil.buildOkComponent();
 
 		Label description = new Label(I18nProperties.getString(Strings.messageTakeNewTestForRubella));
 		description.setWidth(100, Unit.PERCENTAGE);
@@ -661,6 +661,7 @@ public class SampleController {
 		Window popupWindow = VaadinUiUtil.showPopupWindow(layout);
 		popupWindow.setSizeUndefined();
 		popupWindow.setCaption(I18nProperties.getString(Strings.headingTakeNewTestForRubella));
+		popupWindow.setClosable(false);
 		confirmationComponent.getConfirmButton().addClickListener(new ClickListener() {
 
 			private static final long serialVersionUID = 1L;
@@ -677,18 +678,6 @@ public class SampleController {
 				SormasUI.refreshView();
 				if (callback != null) {
 					callback.accept(true);
-				}
-			}
-		});
-		confirmationComponent.getCancelButton().addClickListener(new ClickListener() {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				popupWindow.close();
-				if (callback != null) {
-					callback.accept(false);
 				}
 			}
 		});

@@ -37,7 +37,7 @@ public abstract class ConfirmationComponent extends HorizontalLayout {
 
 	private transient List<DoneListener> doneListeners = new ArrayList<DoneListener>();
 
-	private final boolean inverseOrder;
+	private  boolean inverseOrder;
 	private Button confirmButton;
 	private Button cancelButton;
 	private final String cancelButtonStyle;
@@ -68,6 +68,20 @@ public abstract class ConfirmationComponent extends HorizontalLayout {
 			addComponent(discardButton);
 	}
 
+
+	public ConfirmationComponent( String cancelButtonStyle) {
+		this.cancelButtonStyle = cancelButtonStyle;
+
+		setSpacing(true);
+		setSizeUndefined();
+
+
+
+		Button commitButton = getConfirmButton();
+		addComponent(commitButton);
+
+
+	}
 	public void addExtraButton(Button button, Button.ClickListener handler) {
 		button.addClickListener(e -> {
 			handler.buttonClick(e);

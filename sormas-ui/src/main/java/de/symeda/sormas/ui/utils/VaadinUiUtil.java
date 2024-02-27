@@ -568,6 +568,20 @@ public final class VaadinUiUtil {
 		return requestTaskComponent;
 	}
 
+	public static ConfirmationComponent buildOkComponent() {
+		ConfirmationComponent requestTaskComponent = new ConfirmationComponent(ValoTheme.BUTTON_PRIMARY) {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onConfirm() {
+			}
+
+		};
+		requestTaskComponent.getConfirmButton().setCaption(I18nProperties.getString(Strings.ok));
+		return requestTaskComponent;
+	}
+
 	public static HorizontalLayout createInfoComponent(String htmlContent) {
 		return createIconComponent(htmlContent, "img/info-icon.png", 35);
 

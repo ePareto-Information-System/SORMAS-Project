@@ -1675,4 +1675,5 @@ public interface Strings {
 	String messageDistrictsDearchivingNotPossible = "messageDistrictsDearchivingNotPossible";
 	String messageSubcontinentsDearchivingNotPossible = "messageSubcontinentsDearchivingNotPossible";
 	String messageCountriesDearchivingNotPossible = "messageCountriesDearchivingNotPossible";
+	String ok = "ok";
 }
