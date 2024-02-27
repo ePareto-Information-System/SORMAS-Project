@@ -960,6 +960,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					SHOCK);
 			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
 			clinicalMeasurementsHeadingLabel.setVisible(false);
+		} else if (disease == Disease.CORONAVIRUS) {
+			symptomsHide();
+			setVisible(true, FEVER, RAPID_BREATHING, MUSCLE_PAIN, CHEST_PAIN, ABDOMINAL_PAIN, JOINT_PAIN, WEAKNESS, DIARRHEA, COUGH, NAUSEA, SORE_THROAT, HEADACHE, RUNNY_NOSE, HEADACHE, CONFUSED_DISORIENTED, OTHER_COMPLICATIONS);
 		}
 
 		if (symptomsContext != SymptomsContext.CASE) {
