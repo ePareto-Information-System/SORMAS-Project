@@ -416,9 +416,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				case NEW_INFLUENZA:
 					handleNewInfluenza();
 					break;
-				case MEASLES:
-					handleMeasles();
-					break;
 				default:
 			}
 		}
