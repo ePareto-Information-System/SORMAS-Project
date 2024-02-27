@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 
 import com.vaadin.ui.*;
 import de.symeda.sormas.api.caze.*;
+import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.infrastructure.facility.*;
 import de.symeda.sormas.api.person.PresentCondition;
@@ -1286,20 +1287,22 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					e -> getContent().getComponent(SMALLPOX_VACCINATION_SCAR_IMG).setVisible(e.getProperty().getValue() == YesNoUnknown.YES));
 		}
 
+		HealthConditionsForm healthConditionsField = addField(CaseDataDto.HEALTH_CONDITIONS, HealthConditionsForm.class);
+
 		List<String> medicalInformationFields;
 
 		if (disease == Disease.CORONAVIRUS) {
 			medicalInformationFields =
 					Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.TRIMESTER);
+			healthConditionsField.setVisible(true);
+			healthConditionsField.hideAllFields();
+			healthConditionsField.showForCovid19();
 		} else {
 			medicalInformationFields =
 					Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.VACCINATION_STATUS, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
+			healthConditionsField.setVisible(false);
+
 		}
-
-
-
-		HealthConditionsForm healthConditionsField = addField(CaseDataDto.HEALTH_CONDITIONS, HealthConditionsForm.class);
-		healthConditionsField.setVisible(false);
 
 		for (String medicalInformationField : medicalInformationFields) {
 			if (getFieldGroup().getField(medicalInformationField).isVisible()) {
