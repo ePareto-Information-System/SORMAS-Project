@@ -11655,6 +11655,6 @@ UPDATE users SET password = LPAD(password, 64, '0') WHERE LENGTH(password) < 64;
 INSERT INTO schema_version (version_number, comment) VALUES (472, 'Adjust password hashes with leading zeros #9726');
 
 -- 2024-02-26 Updated surveillance officer role to render facility #148
-update userroles set jurisdictionlevel = 'HEALTH_FACILITY' where caption = 'Surveillance Officer'
+update userroles set jurisdictionlevel = 'HEALTH_FACILITY' where caption = 'Surveillance Officer';
 INSERT INTO schema_version (version_number, comment) VALUES (473, 'Updated surveillance officer role to render facility #148');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
