@@ -12895,5 +12895,9 @@ INSERT INTO schema_version (version_number, comment) VALUES (559, 'Added influen
 ALTER TABLE samples ADD COLUMN pathogentestcount varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (560, 'Added influenzalabcolumns to samples');
+
+-- 561 Add secondvaccinationdate to cases
+ALTER TABLE cases ADD COLUMN secondVaccinationDate timestamp;
+INSERT INTO schema_version (version_number, comment) VALUES (561, 'Added secondVaccinationDate to cases');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``
