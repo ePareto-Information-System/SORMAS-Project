@@ -12055,6 +12055,9 @@ INSERT INTO schema_version (version_number, comment) VALUES (488, 'Adding archiv
 update userroles set jurisdictionlevel = 'HEALTH_FACILITY' where caption = 'Surveillance Officer';
 
 INSERT INTO schema_version (version_number, comment) VALUES (489, 'Updated surveillance officer role to render facility #148');
+-- 2024-02-26 Updated surveillance officer role to render facility #148
+update userroles set jurisdictionlevel = 'HEALTH_FACILITY' where caption = 'Surveillance Officer';
+INSERT INTO schema_version (version_number, comment) VALUES (490, 'Updated surveillance officer role to render facility #148');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
 
