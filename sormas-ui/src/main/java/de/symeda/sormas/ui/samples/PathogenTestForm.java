@@ -193,8 +193,9 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		UserRoleReferenceDto userRoleToFind = new UserRoleReferenceDto(null, valLabUser);
 
 		if (userRoles.contains(userRoleToFind) && !userRoles.contains(new UserRoleReferenceDto(null, valLabSupervisor))) {
-			testResultVerifiedField.setRequired(false);
-			testResultVerifiedField.setEnabled(false);
+			//TODO Uncomment the line below to enable the testResultVerifiedField once Ghana health service agrees to enable it
+//			testResultVerifiedField.setRequired(false);
+//			testResultVerifiedField.setEnabled(false);
 
 			//PathogenTestDto.TEST_RESULT_VERIFIED defaultValue = PathogenTestDto.TEST_RESULT_VERIFIED; // Replace with the desired default value
 			//testResultVerifiedField.setValue(defaultValue);
