@@ -43,12 +43,7 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
-import de.symeda.sormas.api.user.JurisdictionLevel;
-import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.api.user.UserHelper;
-import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.user.UserRoleDto;
-import de.symeda.sormas.api.user.UserRoleReferenceDto;
+import de.symeda.sormas.api.user.*;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.ControllerProvider;
@@ -230,7 +225,22 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
 
 		final ComboBox healthFacility = (ComboBox) getFieldGroup().getField(UserDto.HEALTH_FACILITY);
 		healthFacility.setVisible(hasOptionalHealthFacility || useHealthFacility);
-		setRequired(useHealthFacility, UserDto.HEALTH_FACILITY);
+
+        //set to false here
+        boolean isSurveillanceSupervisor = false;
+        for (UserRoleReferenceDto role : userRolesFieldValue) {
+            if (role.getCaption().equals("Surveillance Officer")) {
+                isSurveillanceSupervisor = true;
+                break;
+            }
+        }
+
+        if (isSurveillanceSupervisor) {
+            setRequired(false, UserDto.HEALTH_FACILITY);
+        } else {
+            setRequired(useHealthFacility, UserDto.HEALTH_FACILITY);
+
+        }
 		if (!healthFacility.isVisible()) {
 			healthFacility.clear();
 		}
