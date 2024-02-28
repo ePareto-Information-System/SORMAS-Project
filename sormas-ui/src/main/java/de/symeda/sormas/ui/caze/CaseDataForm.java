@@ -155,6 +155,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private static final String REINFECTION_DETAILS_COL_1_LOC = "reinfectionDetailsCol1Loc";
 	private static final String REINFECTION_DETAILS_COL_2_LOC = "reinfectionDetailsCol2Loc";
 	public static final String CASE_REFER_POINT_OF_ENTRY_BTN_LOC = "caseReferFromPointOfEntryBtnLoc";
+	NullableOptionGroup vaccinatedByCardOrHistory;
 
 	//@formatter:off
 	private static final String MAIN_HTML_LAYOUT =
@@ -380,6 +381,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			followUpStatusHeadingLabel.addStyleName(H3);
 			getContent().addComponent(followUpStatusHeadingLabel, FOLLOW_UP_STATUS_HEADING_LOC);
 		}
+
 
 		// Add fields
 		DateField reportDate = addField(CaseDataDto.REPORT_DATE, DateField.class);
@@ -1005,6 +1007,28 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		vaccinationStatus = addField(CaseDataDto.VACCINATION_STATUS, NullableOptionGroup.class);
 		vaccinationStatus.removeItem(VaccinationStatus.UNKNOWN);
+		vaccinatedByCardOrHistory = addField(CaseDataDto.VACCINATION_TYPE, NullableOptionGroup.class);
+		cardDateField = addField(CaseDataDto.VACCINATION_DATE, DateField.class);
+		cardDateField.setVisible(false);
+
+		FieldHelper
+				.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
+
+		FieldHelper.setEnabledWhen(
+				vaccinatedByCardOrHistory,
+				Arrays.asList(CardOrHistory.CARD),
+				Collections.singletonList(
+						cardDateField
+				),
+				false);
+
+		vaccineType = addField(CaseDataDto.VACCINE_TYPE, ComboBox.class);
+		vaccineType.setCaption("Vaccine Type");
+		numberOfDoses = addField(CaseDataDto.NUMBER_OF_DOSES, TextField.class);
+		numberOfDoses.setCaption("Number of Doses");
+
+		vaccineType.setVisible(false);
+		numberOfDoses.setVisible(false);
 
 		addFields(CaseDataDto.SMALLPOX_VACCINATION_SCAR, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
 		addDateField(CaseDataDto.SMALLPOX_LAST_VACCINATION_DATE, DateField.class, 0);
@@ -1503,7 +1527,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 						TYPE_GROUP_LOC);
 
 				nationalLevelDate.setVisible(true);
-				NullableOptionGroup vaccinatedByCardOrHistory = addField(CaseDataDto.VACCINATION_TYPE, NullableOptionGroup.class);
+
 
 				FieldHelper.setEnabledWhen(vaccinationStatus, Arrays.asList(VaccinationStatus.VACCINATED), Collections.singletonList(
 						vaccinatedByCardOrHistory
@@ -1512,7 +1536,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				FieldHelper
 						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
 
-				cardDateField = addField(CaseDataDto.VACCINATION_DATE, DateField.class);
+
 				cardDateField.setVisible(false);
 
 				FieldHelper
@@ -1523,20 +1547,18 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			else if(disease == Disease.CSM){
 
 				setVisible(false, CaseDataDto.REPORT_LAT, CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT_LON_ACCURACY);
-				vaccineType = addField(CaseDataDto.VACCINE_TYPE, ComboBox.class);
-				vaccineType.setCaption("Vaccine Type");
-				numberOfDoses = addField(CaseDataDto.NUMBER_OF_DOSES, TextField.class);
-				numberOfDoses.setCaption("Number of Doses");
-				cardDateField = addField(CaseDataDto.VACCINATION_DATE, DateField.class);
 
-				vaccineType.setVisible(false);
-				numberOfDoses.setVisible(false);
-				cardDateField.setVisible(false);
+
 				reportingOfficerEmail.setVisible(false);
 
 				FieldHelper
 						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccineType, numberOfDoses, cardDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
 
+			}
+			//CORONAVIRUS
+			else if (disease == Disease.CORONAVIRUS) {
+				FieldHelper
+						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccineType, numberOfDoses, cardDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
 			}
 			//AFP
 			if(disease == Disease.AFP){
