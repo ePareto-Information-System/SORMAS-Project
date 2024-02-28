@@ -230,10 +230,21 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
 
 		final ComboBox healthFacility = (ComboBox) getFieldGroup().getField(UserDto.HEALTH_FACILITY);
 		healthFacility.setVisible(hasOptionalHealthFacility || useHealthFacility);
-		setRequired(useHealthFacility, UserDto.HEALTH_FACILITY);
-		if (!healthFacility.isVisible()) {
-			healthFacility.clear();
-		}
+
+        boolean isSurveillanceSupervisor = false;
+        for (UserRoleReferenceDto role : userRolesFieldValue) {
+            if (role.getCaption().equals("Surveillance Officer")) {
+                isSurveillanceSupervisor = true;
+                break;
+            }
+        }
+
+        if (isSurveillanceSupervisor) {
+            setRequired(false, UserDto.HEALTH_FACILITY);
+        } else {
+            setRequired(useHealthFacility, UserDto.HEALTH_FACILITY);
+
+        }
 
 		final ComboBox laboratory = (ComboBox) getFieldGroup().getField(UserDto.LABORATORY);
 		laboratory.setVisible(useLaboratory);
