@@ -211,6 +211,10 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		}
 
+		if (disease == Disease.CORONAVIRUS) {
+			hideAllFields();
+		}
+
 	}
 
 	private void addActivityAsCaseFields() {
@@ -282,4 +286,15 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	}
 	private boolean diseaseCSMCheck(){return disease == Disease.CSM; }
 	private boolean diseaseInfluenzaCheck(){return disease == Disease.NEW_INFLUENZA; }
+
+	//hide all fields
+	public void hideAllFields () {
+		for (Field<?> field : getFieldGroup().getFields()) {
+			//check if field is not null
+			if (field != null)
+				//hide the field
+				field.setVisible(false);
+
+		}
+	}
 }
