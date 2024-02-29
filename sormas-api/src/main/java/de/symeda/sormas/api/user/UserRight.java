@@ -17,7 +17,20 @@
  *******************************************************************************/
 package de.symeda.sormas.api.user;
 
+
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+
 import de.symeda.sormas.api.i18n.I18nProperties;
+
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
 
 public enum UserRight {
 
@@ -58,6 +71,8 @@ public enum UserRight {
 	SAMPLE_VIEW,
 	SAMPLE_EDIT,
 	SAMPLE_EDIT_NOT_OWNED,
+	SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO,
+	SAMPLE_EDIT_PATHOGEN_TEST_CONFIRM,
 	SAMPLE_DELETE,
 	SAMPLE_TRANSFER,
 	SAMPLE_EXPORT,
@@ -139,8 +154,13 @@ public enum UserRight {
 	INFRASTRUCTURE_ARCHIVE,
 	DASHBOARD_SURVEILLANCE_VIEW,
 	DASHBOARD_CONTACT_VIEW,
+	DASHBOARD_SAMPLE_ACCESS,
 	DASHBOARD_CONTACT_VIEW_TRANSMISSION_CHAINS,
 	DASHBOARD_CAMPAIGNS_VIEW,
+	DASHBOARD_SURVEILLANCE_ACCESS,
+	DASHBOARD_CONTACT_ACCESS,
+	DASHBOARD_CAMPAIGNS_ACCESS,
+	CASE_MANAGEMENT_ACCESS,
 	CASE_CLINICIAN_VIEW,
 	THERAPY_VIEW,
 	PRESCRIPTION_CREATE,
@@ -195,7 +215,8 @@ public enum UserRight {
 	SORMAS_UI,
 	SORMAS_TO_SORMAS_CLIENT,
 	EXTERNAL_VISITS,
-	DEV_MODE;
+	DEV_MODE,
+	DASHBOARD_DISEASE_DETAILS_ACCESS;
 	//@formatter:on
 
 	/*
@@ -232,6 +253,12 @@ public enum UserRight {
 	public static final String _SAMPLE_VIEW = "SAMPLE_VIEW";
 	public static final String _SAMPLE_EDIT = "SAMPLE_EDIT";
 	public static final String _SAMPLE_EDIT_NOT_OWNED = "SAMPLE_EDIT_NOT_OWNED";
+
+	public static final String _SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO = "SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO";
+
+	public static final String _SAMPLE_EDIT_PATHOGEN_TEST_CONFIRM = "SAMPLE_EDIT_PATHOGEN_TEST_CONFIRM";
+
+
 	public static final String _SAMPLE_DELETE = "SAMPLE_DELETE";
 	public static final String _SAMPLE_TRANSFER = "SAMPLE_TRANSFER";
 	public static final String _SAMPLE_EXPORT = "SAMPLE_EXPORT";
@@ -309,6 +336,7 @@ public enum UserRight {
 	public static final String _INFRASTRUCTURE_ARCHIVE = "INFRASTRUCTURE_ARCHIVE";
 	public static final String _DASHBOARD_SURVEILLANCE_VIEW = "DASHBOARD_SURVEILLANCE_VIEW";
 	public static final String _DASHBOARD_CONTACT_VIEW = "DASHBOARD_CONTACT_VIEW";
+	public static final String _DASHBOARD_SAMPLE_ACCESS = "DASHBOARD_SAMPLE_ACCESS";
 	public static final String _DASHBOARD_CONTACT_VIEW_TRANSMISSION_CHAINS = "DASHBOARD_CONTACT_VIEW_TRANSMISSION_CHAINS";
 	public static final String _DASHBOARD_CAMPAIGNS_VIEW = "DASHBOARD_CAMPAIGNS_VIEW";
 	public static final String _CASE_CLINICIAN_VIEW = "CASE_CLINICIAN_VIEW";
@@ -373,4 +401,5 @@ public enum UserRight {
 	public String getDescription() {
 		return I18nProperties.getEnumDescription(this);
 	}
+
 }
