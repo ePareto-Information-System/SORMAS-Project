@@ -1138,6 +1138,10 @@ public interface Captions {
 	String EpiData_patientTravelledInternationalTwo = "EpiData.patientTravelledInternationalTwo";
 	String EpiData_patientTravelledInternationalThree = "EpiData.patientTravelledInternationalThree";
 	String EpiData_patientTravelledInternationalFour = "EpiData.patientTravelledInternationalFour";
+	String EpiData_patientVisitedHealthCareFacility = "EpiData.patientVisitedHealthCareFacility";
+	String EpiData_patientCloseContactWithARI = "EpiData.patientCloseContactWithARI";
+	String EpiData_patientContactWithConfirmedCase = "EpiData.patientContactWithConfirmedCase";
+	String EpiData_patientContactWithConfirmedCaseExposureLocationCityCountry = "EpiData.patientContactWithConfirmedCaseExposureLocationCityCountry";
 
 	String epiDataNoSourceContacts = "epiDataNoSourceContacts";
 	String epiWeekFrom = "epiWeekFrom";

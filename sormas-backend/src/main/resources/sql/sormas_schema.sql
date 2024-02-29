@@ -12914,5 +12914,14 @@ ALTER TABLE epidata ADD COLUMN patientTravelledInternationalThree varchar(255);
 ALTER TABLE epidata ADD COLUMN patientTravelledInternationalFour varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (562, 'Added columns to epidData to implement patientTravelledTwoWeeksPrior #26');
 
+-- 563
+ALTER TABLE epidata ADD COLUMN patientVisitedHealthCareFacility varchar(255);
+ALTER TABLE epidata ADD COLUMN patientCloseContactWithARI varchar(255);
+ALTER TABLE epidata ADD COLUMN patientCloseContactWithARIContactSettingsString varchar(512);
+ALTER TABLE epidata ADD COLUMN patientContactWithConfirmedCase varchar(255);
+ALTER TABLE epidata ADD COLUMN patientContactWithConfirmedCaseExposureLocationsString varchar(512);
+ALTER TABLE epidata ADD COLUMN patientContactWithConfirmedCaseExposureLocationCityCountry varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (563, 'Added columns to epidData to implement patientVisitedHealthCareFacility #26');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``

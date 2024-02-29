@@ -20,6 +20,7 @@ package de.symeda.sormas.api.epidata;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -68,6 +69,13 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String PATIENT_TRAVELLED_INTERNATIONAL_THREE = "patientTravelledInternationalThree";
 	public static final String PATIENT_TRAVELLED_INTERNATIONAL_FOUR = "patientTravelledInternationalFour";
 	public static final String OTHER_SPECIFY = "otherSpecify";
+	public static final String PATIENT_VISITED_HEALTH_CARE_FACILITY = "patientVisitedHealthCareFacility";
+	public static final String PATIENT_CLOSE_CONTACT_WITH_ARI = "patientCloseContactWithARI";
+	public static final String PATIENT_CLOSE_CONTACT_WITH_ARI_CONTACT_SETTINGS = "patientCloseContactWithARIContactSettings";
+	public static final String PATIENT_CONTACT_WITH_CONFIRMED_CASE = "patientContactWithConfirmedCase";
+	public static final String PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATIONS = "patientContactWithConfirmedCaseExposureLocations";
+	public static final String PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATION_CITY_COUNTRY = "patientContactWithConfirmedCaseExposureLocationCityCountry";
+
 
 	@Enumerated(EnumType.STRING)
 	private Disease disease;
@@ -107,7 +115,12 @@ public class EpiDataDto extends PseudonymizableDto {
 	private String patientTravelledInternationalTwo;
 	private String patientTravelledInternationalThree;
 	private String patientTravelledInternationalFour;
-
+	private YesNoUnknown patientVisitedHealthCareFacility;
+	private YesNoUnknown patientCloseContactWithARI;
+	private Set<ContactSetting> patientCloseContactWithARIContactSettings;
+	private YesNoUnknown patientContactWithConfirmedCase;
+	private Set<ContactSetting> patientContactWithConfirmedCaseExposureLocations;
+	private String patientContactWithConfirmedCaseExposureLocationCityCountry;
 	@Valid
 	private List<ActivityAsCaseDto> activitiesAsCase = new ArrayList<>();
 
@@ -355,5 +368,51 @@ public class EpiDataDto extends PseudonymizableDto {
 		return clone;
 	}
 
+	public YesNoUnknown getPatientVisitedHealthCareFacility() {
+		return patientVisitedHealthCareFacility;
+	}
 
+	public void setPatientVisitedHealthCareFacility(YesNoUnknown patientVisitedHealthCareFacility) {
+		this.patientVisitedHealthCareFacility = patientVisitedHealthCareFacility;
+	}
+
+	public YesNoUnknown getPatientCloseContactWithARI() {
+		return patientCloseContactWithARI;
+	}
+
+	public void setPatientCloseContactWithARI(YesNoUnknown patientCloseContactWithARI) {
+		this.patientCloseContactWithARI = patientCloseContactWithARI;
+	}
+
+	public Set<ContactSetting> getPatientCloseContactWithARIContactSettings() {
+		return patientCloseContactWithARIContactSettings;
+	}
+
+	public void setPatientCloseContactWithARIContactSettings(Set<ContactSetting> patientCloseContactWithARIContactSettings) {
+		this.patientCloseContactWithARIContactSettings = patientCloseContactWithARIContactSettings;
+	}
+
+	public YesNoUnknown getPatientContactWithConfirmedCase() {
+		return patientContactWithConfirmedCase;
+	}
+
+	public void setPatientContactWithConfirmedCase(YesNoUnknown patientContactWithConfirmedCase) {
+		this.patientContactWithConfirmedCase = patientContactWithConfirmedCase;
+	}
+
+	public Set<ContactSetting> getPatientContactWithConfirmedCaseExposureLocations() {
+		return patientContactWithConfirmedCaseExposureLocations;
+	}
+
+	public void setPatientContactWithConfirmedCaseExposureLocations(Set<ContactSetting> patientContactWithConfirmedCaseExposureLocations) {
+		this.patientContactWithConfirmedCaseExposureLocations = patientContactWithConfirmedCaseExposureLocations;
+	}
+
+	public String getPatientContactWithConfirmedCaseExposureLocationCityCountry() {
+		return patientContactWithConfirmedCaseExposureLocationCityCountry;
+	}
+
+	public void setPatientContactWithConfirmedCaseExposureLocationCityCountry(String patientContactWithConfirmedCaseExposureLocationCityCountry) {
+		this.patientContactWithConfirmedCaseExposureLocationCityCountry = patientContactWithConfirmedCaseExposureLocationCityCountry;
+	}
 }
