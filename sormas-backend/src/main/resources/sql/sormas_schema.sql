@@ -12899,5 +12899,20 @@ INSERT INTO schema_version (version_number, comment) VALUES (560, 'Added influen
 -- 561 Add secondvaccinationdate to cases
 ALTER TABLE cases ADD COLUMN secondVaccinationDate timestamp;
 INSERT INTO schema_version (version_number, comment) VALUES (561, 'Added secondVaccinationDate to cases');
+
+-- 562
+ALTER TABLE epidata ADD COLUMN patientTravelledTwoWeeksPrior varchar(255);
+
+ALTER TABLE epidata ADD COLUMN patientTravelledInCountryOne varchar(255);
+ALTER TABLE epidata ADD COLUMN patientTravelledInCountryTwo varchar(255);
+ALTER TABLE epidata ADD COLUMN patientTravelledInCountryThree varchar(255);
+ALTER TABLE epidata ADD COLUMN patientTravelledInCountryFour varchar(255);
+
+ALTER TABLE epidata ADD COLUMN patientTravelledInternationalOne varchar(255);
+ALTER TABLE epidata ADD COLUMN patientTravelledInternationalTwo varchar(255);
+ALTER TABLE epidata ADD COLUMN patientTravelledInternationalThree varchar(255);
+ALTER TABLE epidata ADD COLUMN patientTravelledInternationalFour varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (562, 'Added columns to epidData to implement patientTravelledTwoWeeksPrior #26');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``

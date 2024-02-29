@@ -111,6 +111,15 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.getActivitiesAsCase().clear();
 		target.getActivitiesAsCase().addAll(activitiesAsCase);
 
+		target.setPatientTravelledTwoWeeksPrior(source.getPatientTravelledTwoWeeksPrior());
+		target.setPatientTravelledInCountryOne(source.getPatientTravelledInCountryOne());
+		target.setPatientTravelledInCountryTwo(source.getPatientTravelledInCountryTwo());
+		target.setPatientTravelledInCountryThree(source.getPatientTravelledInCountryThree());
+		target.setPatientTravelledInternationalOne(source.getPatientTravelledInternationalOne());
+		target.setPatientTravelledInternationalTwo(source.getPatientTravelledInternationalTwo());
+		target.setPatientTravelledInternationalThree(source.getPatientTravelledInternationalThree());
+		target.setPatientTravelledInternationalFour(source.getPatientTravelledInternationalFour());
+
 		return target;
 	}
 
@@ -261,6 +270,15 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 			activityAsCaseDtos.add(activityAsCaseDto);
 		}
 		target.setActivitiesAsCase(activityAsCaseDtos);
+
+		target.setPatientTravelledTwoWeeksPrior(source.getPatientTravelledTwoWeeksPrior());
+		target.setPatientTravelledInCountryOne(source.getPatientTravelledInCountryOne());
+		target.setPatientTravelledInCountryTwo(source.getPatientTravelledInCountryTwo());
+		target.setPatientTravelledInCountryThree(source.getPatientTravelledInCountryThree());
+		target.setPatientTravelledInternationalOne(source.getPatientTravelledInternationalOne());
+		target.setPatientTravelledInternationalTwo(source.getPatientTravelledInternationalTwo());
+		target.setPatientTravelledInternationalThree(source.getPatientTravelledInternationalThree());
+		target.setPatientTravelledInternationalFour(source.getPatientTravelledInternationalFour());
 
 		return target;
 	}

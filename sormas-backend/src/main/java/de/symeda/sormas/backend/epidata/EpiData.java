@@ -29,7 +29,6 @@ import javax.persistence.OneToMany;
 
 //import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.utils.AfpResult;
 import de.symeda.sormas.api.utils.RiskFactorInfluenza;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -70,6 +69,15 @@ public class EpiData extends AbstractDomainObject {
 	private List<ActivityAsCase> activitiesAsCase = new ArrayList<>();
 	@NotExposedToApi
 	private Date changeDateOfEmbeddedLists;
+	private YesNoUnknown patientTravelledTwoWeeksPrior;
+	private String patientTravelledInCountryOne;
+	private String patientTravelledInCountryTwo;
+	private String patientTravelledInCountryThree;
+	private String patientTravelledInCountryFour;
+	private String patientTravelledInternationalOne;
+	private String patientTravelledInternationalTwo;
+	private String patientTravelledInternationalThree;
+	private String patientTravelledInternationalFour;
 
 	@Enumerated(EnumType.STRING)
 	public YesNo getExposureDetailsKnown() {
@@ -229,5 +237,78 @@ public class EpiData extends AbstractDomainObject {
 
 	public void setOtherSpecify(String otherSpecify) {
 		this.otherSpecify = otherSpecify;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getPatientTravelledTwoWeeksPrior() {
+		return patientTravelledTwoWeeksPrior;
+	}
+
+	public void setPatientTravelledTwoWeeksPrior(YesNoUnknown patientTravelledTwoWeeksPrior) {
+		this.patientTravelledTwoWeeksPrior = patientTravelledTwoWeeksPrior;
+	}
+
+	public String getPatientTravelledInCountryOne() {
+		return patientTravelledInCountryOne;
+	}
+
+	public void setPatientTravelledInCountryOne(String patientTravelledInCountryOne) {
+		this.patientTravelledInCountryOne = patientTravelledInCountryOne;
+	}
+
+	public String getPatientTravelledInCountryTwo() {
+		return patientTravelledInCountryTwo;
+	}
+
+	public void setPatientTravelledInCountryTwo(String patientTravelledInCountryTwo) {
+		this.patientTravelledInCountryTwo = patientTravelledInCountryTwo;
+	}
+
+	public String getPatientTravelledInCountryThree() {
+		return patientTravelledInCountryThree;
+	}
+
+	public void setPatientTravelledInCountryThree(String patientTravelledInCountryThree) {
+		this.patientTravelledInCountryThree = patientTravelledInCountryThree;
+	}
+
+	public String getPatientTravelledInCountryFour() {
+		return patientTravelledInCountryFour;
+	}
+
+	public void setPatientTravelledInCountryFour(String patientTravelledInCountryFour) {
+		this.patientTravelledInCountryFour = patientTravelledInCountryFour;
+	}
+
+	public String getPatientTravelledInternationalOne() {
+		return patientTravelledInternationalOne;
+	}
+
+	public void setPatientTravelledInternationalOne(String PatientTravelledInternationalOne) {
+		this.patientTravelledInternationalOne = PatientTravelledInternationalOne;
+	}
+
+	public String getPatientTravelledInternationalTwo() {
+		return patientTravelledInternationalTwo;
+	}
+
+	public void setPatientTravelledInternationalTwo(String PatientTravelledInternationalTwo) {
+		this.patientTravelledInternationalTwo = PatientTravelledInternationalTwo;
+	}
+
+	public String getPatientTravelledInternationalThree() {
+		return patientTravelledInternationalThree;
+	}
+
+	public void setPatientTravelledInternationalThree(String PatientTravelledInternationalThree) {
+		this.patientTravelledInternationalThree = PatientTravelledInternationalThree;
+	}
+
+	public String getPatientTravelledInternationalFour() {
+		return patientTravelledInternationalFour;
+	}
+
+	public void setPatientTravelledInternationalFour(String PatientTravelledInternationalFour) {
+		this.patientTravelledInternationalFour = PatientTravelledInternationalFour;
 	}
 }

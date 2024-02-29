@@ -58,6 +58,15 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String PLACES_VISITED_PAST_7DAYS = "placesVisitedPastSevenDays";
 	public static final String VISITED_PLACES_CONFIRMED_PANDEMIC = "vistedPlacesConfirmedPandemic";
 	public static final String RISK_FACTORS_SEVERE_DISEASE = "riskFactorsSevereDisease";
+	public static final String PATIENT_TRAVELLED_TWO_WEEKS_PRIOR = "patientTravelledTwoWeeksPrior";
+	public static final String PATIENT_TRAVELLED_IN_COUNTRY_ONE = "patientTravelledInCountryOne";
+	public static final String PATIENT_TRAVELLED_IN_COUNTRY_TWO = "patientTravelledInCountryTwo";
+	public static final String PATIENT_TRAVELLED_IN_COUNTRY_THREE = "patientTravelledInCountryThree";
+	public static final String PATIENT_TRAVELLED_IN_COUNTRY_FOUR = "patientTravelledInCountryFour";
+	public static final String PATIENT_TRAVELLED_INTERNATIONAL_ONE = "patientTravelledInternationalOne";
+	public static final String PATIENT_TRAVELLED_INTERNATIONAL_TWO = "patientTravelledInternationalTwo";
+	public static final String PATIENT_TRAVELLED_INTERNATIONAL_THREE = "patientTravelledInternationalThree";
+	public static final String PATIENT_TRAVELLED_INTERNATIONAL_FOUR = "patientTravelledInternationalFour";
 	public static final String OTHER_SPECIFY = "otherSpecify";
 
 	@Enumerated(EnumType.STRING)
@@ -88,6 +97,16 @@ public class EpiDataDto extends PseudonymizableDto {
 	private String otherSpecify;
 	@Valid
 	private List<ExposureDto> exposures = new ArrayList<>();
+
+	private YesNoUnknown patientTravelledTwoWeeksPrior;
+	private String patientTravelledInCountryOne;
+	private String patientTravelledInCountryTwo;
+	private String patientTravelledInCountryThree;
+	private String patientTravelledInCountryFour;
+	private String patientTravelledInternationalOne;
+	private String patientTravelledInternationalTwo;
+	private String patientTravelledInternationalThree;
+	private String patientTravelledInternationalFour;
 
 	@Valid
 	private List<ActivityAsCaseDto> activitiesAsCase = new ArrayList<>();
@@ -235,6 +254,78 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public void setOtherSpecify(String otherSpecify) {
 		this.otherSpecify = otherSpecify;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getPatientTravelledTwoWeeksPrior() {
+		return patientTravelledTwoWeeksPrior;
+	}
+
+	public void setPatientTravelledTwoWeeksPrior(YesNoUnknown patientTravelledTwoWeeksPrior) {
+		this.patientTravelledTwoWeeksPrior = patientTravelledTwoWeeksPrior;
+	}
+	public String getPatientTravelledInCountryOne() {
+		return patientTravelledInCountryOne;
+	}
+
+	public void setPatientTravelledInCountryOne(String patientTravelledInCountryOne) {
+		this.patientTravelledInCountryOne = patientTravelledInCountryOne;
+	}
+
+	public String getPatientTravelledInCountryTwo() {
+		return patientTravelledInCountryTwo;
+	}
+
+	public void setPatientTravelledInCountryTwo(String patientTravelledInCountryTwo) {
+		this.patientTravelledInCountryTwo = patientTravelledInCountryTwo;
+	}
+
+	public String getPatientTravelledInCountryThree() {
+		return patientTravelledInCountryThree;
+	}
+
+	public void setPatientTravelledInCountryThree(String patientTravelledInCountryThree) {
+		this.patientTravelledInCountryThree = patientTravelledInCountryThree;
+	}
+
+	public String getPatientTravelledInCountryFour() {
+		return patientTravelledInCountryFour;
+	}
+
+	public void setPatientTravelledInCountryFour(String patientTravelledInCountryFour) {
+		this.patientTravelledInCountryFour = patientTravelledInCountryFour;
+	}
+
+	public String getPatientTravelledInternationalOne() {
+		return patientTravelledInternationalOne;
+	}
+
+	public void setPatientTravelledInternationalOne(String patientTravelledInternationalOne) {
+		this.patientTravelledInternationalOne = patientTravelledInternationalOne;
+	}
+
+	public String getPatientTravelledInternationalTwo() {
+		return patientTravelledInternationalTwo;
+	}
+
+	public void setPatientTravelledInternationalTwo(String patientTravelledInternationalTwo) {
+		this.patientTravelledInternationalTwo = patientTravelledInternationalTwo;
+	}
+
+	public String getPatientTravelledInternationalThree() {
+		return patientTravelledInternationalThree;
+	}
+
+	public void setPatientTravelledInternationalThree(String patientTravelledInternationalThree) {
+		this.patientTravelledInternationalThree = patientTravelledInternationalThree;
+	}
+
+	public String getPatientTravelledInternationalFour() {
+		return patientTravelledInternationalFour;
+	}
+
+	public void setPatientTravelledInternationalFour(String patientTravelledInternationalFour) {
+		this.patientTravelledInternationalFour = patientTravelledInternationalFour;
 	}
 
 	public static EpiDataDto build() {

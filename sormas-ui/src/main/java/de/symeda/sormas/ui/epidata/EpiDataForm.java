@@ -33,6 +33,7 @@ import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextField;
+import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.utils.RiskFactorInfluenza;
 import de.symeda.sormas.api.utils.YesNo;
@@ -80,7 +81,13 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					loc(EpiDataDto.PLACES_VISITED_PAST_7DAYS)+
 					loc(EpiDataDto.VISITED_PLACES_CONFIRMED_PANDEMIC)+
 					fluidRowLocs(EpiDataDto.RISK_FACTORS_SEVERE_DISEASE, EpiDataDto.OTHER_SPECIFY)+
-
+					loc(EpiDataDto.PATIENT_TRAVELLED_TWO_WEEKS_PRIOR)+
+					locCss(VSPACE_TOP_3, "") +
+					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_ONE, EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_TWO) +
+					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_THREE, EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_FOUR) +
+					locCss(VSPACE_TOP_3, "") +
+					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_ONE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_TWO) +
+					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_THREE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_FOUR) +
 					loc(EpiDataDto.RECENT_TRAVEL_OUTBREAK)+
 					loc(EpiDataDto.CONTACT_SIMILAR_SYMPTOMS)+
 					loc(EpiDataDto.CONTACT_SICK_ANIMALS)+
@@ -105,6 +112,18 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	private final Class<? extends EntityDto> parentClass;
 	private final Consumer<Boolean> sourceContactsToggleCallback;
 	private final boolean isPseudonymized;
+
+	private  NullableOptionGroup patientTravelledTwoWeeksPriorYesNoUknownField;
+	private TextField textFieldPatientTravelledInCountryOne;
+	private TextField textFieldPatientTravelledInCountryTwo;
+	private TextField textFieldPatientTravelledInCountryThree;
+	private TextField textFieldPatientTravelledInCountryFour;
+	private TextField textFieldPatientTravelledInternationalOne;
+	private TextField textFieldPatientTravelledInternationalTwo;
+	private TextField textFieldPatientTravelledInternationalThree;
+	private TextField textFieldPatientTravelledInternationalFour;
+
+
 
 	public EpiDataForm(
 		Disease disease,
@@ -163,6 +182,17 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			});
 		}
 
+		//patientTravelledTwoWeeksPrior
+		patientTravelledTwoWeeksPriorYesNoUknownField = addField(EpiDataDto.PATIENT_TRAVELLED_TWO_WEEKS_PRIOR, NullableOptionGroup.class);
+		textFieldPatientTravelledInCountryOne = addField(EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_ONE, TextField.class);
+		textFieldPatientTravelledInCountryTwo = addField(EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_TWO, TextField.class);
+		textFieldPatientTravelledInCountryThree = addField(EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_THREE, TextField.class);
+		textFieldPatientTravelledInCountryFour = addField(EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_FOUR, TextField.class);
+		textFieldPatientTravelledInternationalOne = addField(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_ONE, TextField.class);
+		textFieldPatientTravelledInternationalTwo = addField(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_TWO, TextField.class);
+		textFieldPatientTravelledInternationalThree = addField(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_THREE, TextField.class);
+		textFieldPatientTravelledInternationalFour = addField(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_FOUR, TextField.class);
+
 		FieldHelper.setVisibleWhen(
 			getFieldGroup(),
 			EpiDataDto.EXPOSURES,
@@ -213,6 +243,17 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		if (disease == Disease.CORONAVIRUS) {
 			hideAllFields();
+			setVisible(true, EpiDataDto.PATIENT_TRAVELLED_TWO_WEEKS_PRIOR);
+
+			//check if patient travelled two weeks prior and set the visibility of the fields
+			patientTravelledTwoWeeksPriorYesNoUknownField.addValueChangeListener(e -> {
+				YesNoUnknown patientTravelledTwoWeeksPrior = (YesNoUnknown) FieldHelper.getNullableSourceFieldValue((Field) e.getProperty());
+				if (patientTravelledTwoWeeksPrior == YesNoUnknown.YES) {
+					setVisible(true, EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_ONE, EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_TWO, EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_THREE, EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_FOUR);
+					setVisible(true, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_ONE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_TWO, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_THREE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_FOUR);
+				}
+			});
+
 		}
 
 	}
