@@ -137,9 +137,24 @@ public class CaseJurisdictionPredicateValidator extends PredicateJurisdictionVal
 
 	@Override
 	protected Predicate whenFacilityLevel() {
-		return user != null
-			? cb.equal(joins.getRoot().get(Case.HEALTH_FACILITY).get(Facility.ID), user.getHealthFacility().getId())
-			: cb.equal(joins.getRoot().get(Case.HEALTH_FACILITY).get(Facility.ID), userPath.get(User.HEALTH_FACILITY).get(Facility.ID));
+		if (user != null && user.getHealthFacility() != null && joins != null && joins.getRoot() != null) {
+			Path<Object> healthFacilityIdPath = joins.getRoot().get(Case.HEALTH_FACILITY).get(Facility.ID);
+			if (healthFacilityIdPath != null && user.getHealthFacility().getId() != null) {
+				return cb.equal(healthFacilityIdPath, user.getHealthFacility().getId());
+			} else {
+				// Handle the case where healthFacilityIdPath or user.getHealthFacility().getId() is null
+				// Return an appropriate Predicate or throw an exception based on your requirements
+				// For example, you might return a default Predicate or log a warning.
+				return cb.isTrue(cb.literal(false));  // Replace with your logic
+			}
+		} else if (userPath != null && userPath.get(User.HEALTH_FACILITY) != null) {
+			return cb.isNull(userPath.get(User.HEALTH_FACILITY).get(Facility.ID));
+		} else {
+			// Handle the case where user, user.getHealthFacility(), joins, or joins.getRoot() is null
+			// Return an appropriate Predicate or throw an exception based on your requirements
+			// For example, you might return a default Predicate or log an error.
+			return cb.isTrue(cb.literal(false));  // Replace with your logic
+		}
 	}
 
 	@Override
