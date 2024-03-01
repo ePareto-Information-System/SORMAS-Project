@@ -145,32 +145,14 @@ public class CaseSampleView extends AbstractCaseView {
                 actionButtonsLayout.addComponent(relevanceStatusFilter);
             }
 
-            // Bulk operation dropdown
-            if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS_CASE_SAMPLES)) {
-                btnEnterBulkEditMode = ButtonHelper.createIconButton(Captions.actionEnterBulkEditMode, VaadinIcons.CHECK_SQUARE_O, null);
-                btnEnterBulkEditMode.setVisible(!viewConfiguration.isInEagerMode());
 
-                addHeaderComponent(btnEnterBulkEditMode);
-
-                Button btnLeaveBulkEditMode =
-                        ButtonHelper.createIconButton(Captions.actionLeaveBulkEditMode, VaadinIcons.CLOSE, null, ValoTheme.BUTTON_PRIMARY);
-                btnLeaveBulkEditMode.setVisible(viewConfiguration.isInEagerMode());
-
-                addHeaderComponent(btnLeaveBulkEditMode);
-
-                btnEnterBulkEditMode.addClickListener(e -> {
-                    ViewModelProviders.of(SamplesView.class).get(ViewConfiguration.class).setInEagerMode(true);
-                    btnEnterBulkEditMode.setVisible(false);
-                    btnLeaveBulkEditMode.setVisible(true);
-                    grid.reload();
-                });
-                btnLeaveBulkEditMode.addClickListener(e -> {
-                    ViewModelProviders.of(SamplesView.class).get(ViewConfiguration.class).setInEagerMode(false);
-                    btnLeaveBulkEditMode.setVisible(false);
-                    btnEnterBulkEditMode.setVisible(true);
-                    navigateTo(criteria);
-                });
-            }
+            final Button newButton = ButtonHelper.createIconButtonWithCaption(
+                    Captions.sampleNewSample,
+                    I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, Captions.sampleNewSample),
+                    VaadinIcons.PLUS_CIRCLE,
+                    e -> ControllerProvider.getSampleController().create(criteria.getCaze(), criteria.getDisease(), SormasUI::refreshView),
+                    ValoTheme.BUTTON_PRIMARY);
+            addHeaderComponent(newButton);
 
             sampleTypeFilter = ComboBoxHelper.createComboBoxV7();
             sampleTypeFilter.setWidth(140, Unit.PERCENTAGE);
@@ -189,14 +171,7 @@ public class CaseSampleView extends AbstractCaseView {
             actionButtonsLayout.addComponent(sampleTypeFilter);
         }
 
-        final Button newButton = ButtonHelper.createIconButtonWithCaption(
-                Captions.sampleNewSample,
-                I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, Captions.sampleNewSample),
-                VaadinIcons.PLUS_CIRCLE,
-                e -> ControllerProvider.getSampleController().create(criteria.getCaze(), criteria.getDisease(), SormasUI::refreshView),
-                ValoTheme.BUTTON_PRIMARY);
 
-        actionButtonsLayout.addComponent(newButton);
 
         shipmentFilterLayout.addComponent(actionButtonsLayout);
         shipmentFilterLayout.setComponentAlignment(actionButtonsLayout, Alignment.TOP_RIGHT);
