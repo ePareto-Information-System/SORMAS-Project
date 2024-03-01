@@ -93,6 +93,16 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
         );
 
         List<DiseaseConIndexDto> diseaseConIndexDtoList = QueryHelper.getResultList(em, cq, first, max);
+
+        String facilities = "";
+        for (DiseaseConIndexDto diseaseConIndexDto : diseaseConIndexDtoList) {
+            DiseaseConfiguration diseaseConfiguration = service.getByUuid(diseaseConIndexDto.getUuid());
+            if (diseaseConfiguration.getFacilities() != null) {
+                facilities = diseaseConfiguration.getFacilities().stream().map(Facility::getName).collect(Collectors.joining(", "));
+            }
+            diseaseConIndexDto.setFacilities(facilities);
+        }
+
         return diseaseConIndexDtoList;
     }
 

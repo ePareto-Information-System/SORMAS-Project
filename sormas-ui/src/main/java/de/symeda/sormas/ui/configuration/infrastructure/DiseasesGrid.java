@@ -44,7 +44,9 @@ public class DiseasesGrid extends FilteredGrid<DiseaseConIndexDto, DiseaseConCri
                 DiseaseConIndexDto.PRIMARY_DISEASE,
                 DiseaseConIndexDto.FOLLOW_UP_ENABLED,
                 DiseaseConIndexDto.FOLLOW_UP_DURATION,
-                DiseaseConIndexDto.EXTENDED_CLASSIFICATION
+                DiseaseConIndexDto.EXTENDED_CLASSIFICATION,
+                DiseaseConIndexDto.FACILITIES
+
         );
 
         if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_EDIT)) {
