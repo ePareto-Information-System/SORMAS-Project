@@ -187,7 +187,7 @@ public class ContactSamplesView extends AbstractContactView {
                 e -> ControllerProvider.getSampleController().create(criteria.getContact(), criteria.getDisease(), SormasUI::refreshView),
                 ValoTheme.BUTTON_PRIMARY);
 
-        actionButtonsLayout.addComponent(newButton);
+        addHeaderComponent(newButton);
 
         shipmentFilterLayout.addComponent(actionButtonsLayout);
         shipmentFilterLayout.setComponentAlignment(actionButtonsLayout, Alignment.TOP_RIGHT);

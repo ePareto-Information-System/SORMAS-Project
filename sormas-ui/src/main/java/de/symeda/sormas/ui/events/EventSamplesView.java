@@ -262,7 +262,7 @@ public class EventSamplesView extends AbstractDetailView<EventParticipantReferen
                 e -> ControllerProvider.getSampleController().create(criteria.getEventParticipant(), criteria.getDisease(), SormasUI::refreshView),
                 ValoTheme.BUTTON_PRIMARY);
 
-        actionButtonsLayout.addComponent(newButton);
+        addHeaderComponent(newButton);
 
         shipmentFilterLayout.addComponent(actionButtonsLayout);
         shipmentFilterLayout.setComponentAlignment(actionButtonsLayout, Alignment.TOP_RIGHT);
