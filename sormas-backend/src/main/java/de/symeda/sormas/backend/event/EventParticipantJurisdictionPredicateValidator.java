@@ -90,22 +90,7 @@ public class EventParticipantJurisdictionPredicateValidator extends PredicateJur
 
 	@Override
 	protected Predicate whenFacilityLevel() {
-		if (user != null && user.getHealthFacility() != null && joins != null && joins.getAddress() != null && joins.getAddress().get(Location.FACILITY) != null) {
-			Path<Object> healthFacilityIdPath = joins.getAddress().get(Location.FACILITY).get(Facility.ID);
-			if (healthFacilityIdPath != null && user.getHealthFacility().getId() != null) {
-				return cb.equal(healthFacilityIdPath, user.getHealthFacility().getId());
-			} else {
-				// Handle the case where healthFacilityIdPath or user.getHealthFacility().getId() is null
-				// Return an appropriate Predicate or throw an exception based on your requirements
-				// For example, you might return a default Predicate or log a warning.
-				return cb.isTrue(cb.literal(false));  // Replace with your logic
-			}
-		} else {
-			// Handle the case where user, user.getHealthFacility(), joins, joins.getAddress(), or joins.getAddress().get(Location.FACILITY) is null
-			// Return an appropriate Predicate or throw an exception based on your requirements
-			// For example, you might return a default Predicate or log an error.
-			return cb.isTrue(cb.literal(false));  // Replace with your logic
-		}
+		return cb.equal(joins.getAddress().get(Location.FACILITY).get(Facility.ID), user.getHealthFacility().getId());
 	}
 
 	@Override

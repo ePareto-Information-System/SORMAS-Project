@@ -38,11 +38,13 @@ import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.*;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
@@ -64,6 +66,10 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
 	private static final String USER_DATA_HEADING_LOC = "userDataHeadingLoc";
 	private static final String USER_EMAIL_DESC_LOC = "userEmailDescLoc";
 	private static final String USER_PHONE_DESC_LOC = "userPhoneDescLoc";
+    boolean isSurveillanceSupervisor;
+    JurisdictionLevel jurisdictionLevel;
+    ComboBox healthFacility;
+
 
 	//@formatter:off
     private static final String HTML_LAYOUT =
@@ -156,7 +162,6 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
 
         // for informant
         ComboBox associatedOfficer = addField(UserDto.ASSOCIATED_OFFICER, ComboBox.class);
-
         ComboBox healthFacility = addInfrastructureField(UserDto.HEALTH_FACILITY);
         ComboBox cbPointOfEntry = addInfrastructureField(UserDto.POINT_OF_ENTRY);
         district.addValueChangeListener(e -> {
@@ -194,11 +199,10 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
 
     @SuppressWarnings("unchecked")
     private void updateFieldsByUserRole() {
-
 		final Field userRolesField = getFieldGroup().getField(UserDto.USER_ROLES);
 
         Set<UserRoleReferenceDto> userRolesFieldValue = (Set<UserRoleReferenceDto>) userRolesField.getValue();
-        final JurisdictionLevel jurisdictionLevel = UserRoleDto.getJurisdictionLevel(userRolesFieldValue.stream().map(userRole -> userRoleMap.get(userRole)).collect(Collectors.toSet()));
+        jurisdictionLevel = UserRoleDto.getJurisdictionLevel(userRolesFieldValue.stream().map(userRole -> userRoleMap.get(userRole)).collect(Collectors.toSet()));
 
 		final boolean hasAssociatedDistrictUser = UserProvider.getCurrent().hasAssociatedDistrictUser();
 		final boolean hasOptionalHealthFacility = UserProvider.getCurrent().hasOptionalHealthFacility();
@@ -206,6 +210,7 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
 
 		final boolean usePointOfEntry = (isPortHealthUser && hasAssociatedDistrictUser) || jurisdictionLevel == JurisdictionLevel.POINT_OF_ENTRY;
 		final boolean useHealthFacility = jurisdictionLevel == JurisdictionLevel.HEALTH_FACILITY;
+		final boolean useHealthFacilityForDistrict = jurisdictionLevel == JurisdictionLevel.DISTRICT;
         final boolean useLaboratory = jurisdictionLevel == JurisdictionLevel.LABORATORY || jurisdictionLevel == JurisdictionLevel.EXTERNAL_LABORATORY;
 		final boolean useCommunity = jurisdictionLevel == JurisdictionLevel.COMMUNITY;
 		final boolean useDistrict = hasAssociatedDistrictUser || jurisdictionLevel == JurisdictionLevel.DISTRICT || useCommunity || useHealthFacility || usePointOfEntry;
@@ -225,20 +230,14 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
 			community.clear();
 		}
 
-		final ComboBox healthFacility = (ComboBox) getFieldGroup().getField(UserDto.HEALTH_FACILITY);
-		healthFacility.setVisible(hasOptionalHealthFacility || useHealthFacility);
+		healthFacility = (ComboBox) getFieldGroup().getField(UserDto.HEALTH_FACILITY);
+		healthFacility.setVisible(hasOptionalHealthFacility || useHealthFacility || useHealthFacilityForDistrict);
 
-        //set to false here
-        boolean isSurveillanceSupervisor = false;
-        for (UserRoleReferenceDto role : userRolesFieldValue) {
-            if (role.getCaption().equals("Surveillance Officer")) {
-                isSurveillanceSupervisor = true;
-                break;
-            }
-        }
+        isSurveillanceSupervisor = userRolesFieldValue.stream().anyMatch(role -> role.getCaption().equals("Surveillance Officer"));
 
         if (isSurveillanceSupervisor) {
             setRequired(false, UserDto.HEALTH_FACILITY);
+
         } else {
             setRequired(useHealthFacility, UserDto.HEALTH_FACILITY);
 

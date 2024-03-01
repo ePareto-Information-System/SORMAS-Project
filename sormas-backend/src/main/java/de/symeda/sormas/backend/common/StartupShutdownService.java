@@ -368,7 +368,7 @@ public class StartupShutdownService {
 					u -> {
 						u.setRegion(region);
 						u.setDistrict(district);
-						u.setHealthFacility(facility);
+//						u.setHealthFacility(facility);
 					});
 			// Create Case Supervisor
 			createAndPersistDefaultUser(
@@ -446,7 +446,7 @@ public class StartupShutdownService {
 				u -> {
 					u.setRegion(region);
 					u.setDistrict(district);
-					u.setHealthFacility(facility);
+//					u.setHealthFacility(facility);
 				});
 
 			// Create Hospital Informant

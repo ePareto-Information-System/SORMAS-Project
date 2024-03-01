@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import de.symeda.sormas.api.user.JurisdictionLevel;
 import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.icons.VaadinIcons;
@@ -171,6 +172,8 @@ public class UserController {
 			@Override
 			public void onCommit() {
 				if (!createForm.getFieldGroup().isModified()) {
+					/*if(createForm.isSurveillanceSupervisor && createForm.healthFacility.getValue() == null){
+					}*/
 					UserDto dto = createForm.getValue();
 					dto = FacadeProvider.getUserFacade().saveUser(dto);
 					refreshView();
