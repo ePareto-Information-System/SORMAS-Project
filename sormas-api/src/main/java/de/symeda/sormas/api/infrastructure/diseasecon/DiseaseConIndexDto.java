@@ -20,6 +20,7 @@ public class DiseaseConIndexDto implements Serializable {
     public static final String EXTENDED_CLASSIFICATION = "extendedClassification";
     public static final String TOTAL_FACILITIES = "totalFacilities";
     public static final String AGE_GROUPS = "ageGroups";
+    public static final String FACILITIES = "facilities";
 
 
 
@@ -33,6 +34,7 @@ public class DiseaseConIndexDto implements Serializable {
 	private String extendedClassificationMulti;
 	private List<String> ageGroups;
     private String diseaseName;
+    private String facilities;
 
     public DiseaseConIndexDto(String uuid, Disease in_disease) {
 
@@ -131,5 +133,13 @@ public class DiseaseConIndexDto implements Serializable {
 
     public void  setDiseaseName (String diseaseName) {
         this.diseaseName = diseaseName;
+    }
+
+    public void setFacilities(String facilities) {
+        this.facilities = facilities;
+    }
+
+    public String getFacilities() {
+        return facilities;
     }
 }
