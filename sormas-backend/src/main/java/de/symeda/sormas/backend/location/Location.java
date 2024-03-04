@@ -29,11 +29,14 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Size;
 
+import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.area.AreaType;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.person.PersonAddressType;
+import de.symeda.sormas.api.utils.FieldConstraints;
 import de.symeda.sormas.api.utils.LocationHelper;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.infrastructure.community.Community;
@@ -71,13 +74,13 @@ public class Location extends AbstractDomainObject {
 	public static final String ADDRESS_TYPE = "addressType";
 	public static final String ADDRESS_TYPE_DETAILS = "addressTypeDetails";
 	public static final String FACILITY_TYPE = "facilityType";
-	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
 	public static final String FACILITY = "facility";
 	public static final String FACILITY_DETAILS = "facilityDetails";
 	public static final String CONTACT_PERSON_FIRST_NAME = "contactPersonFirstName";
 	public static final String CONTACT_PERSON_LAST_NAME = "contactPersonLastName";
 	public static final String CONTACT_PERSON_PHONE = "contactPersonPhone";
 	public static final String CONTACT_PERSON_EMAIL = "contactPersonEmail";
+	public static final String LOCALITY = "locality";
 	public static final String PERSON = "person";
 
 	private String details;
@@ -103,7 +106,6 @@ public class Location extends AbstractDomainObject {
 	private PersonAddressType addressType;
 	private String addressTypeDetails;
 	private FacilityType facilityType;
-	private DhimsFacility dhimsFacilityType;
 	private Facility facility;
 	private String facilityDetails;
 
@@ -111,7 +113,7 @@ public class Location extends AbstractDomainObject {
 	private String contactPersonLastName;
 	private String contactPersonPhone;
 	private String contactPersonEmail;
-
+	private String locality;
 	private Person person;
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
@@ -291,15 +293,6 @@ public class Location extends AbstractDomainObject {
 		this.facilityType = facilityType;
 	}
 
-	@Enumerated(EnumType.STRING)
-	public DhimsFacility getDhimsFacilityType() {
-		return dhimsFacilityType;
-	}
-
-	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
-		this.dhimsFacilityType = dhimsFacilityType;
-	}
-
 	@ManyToOne(cascade = {})
 	public Facility getFacility() {
 		return facility;
@@ -352,6 +345,14 @@ public class Location extends AbstractDomainObject {
 
 	public void setContactPersonEmail(String contactPersonEmail) {
 		this.contactPersonEmail = contactPersonEmail;
+	}
+	@Column(columnDefinition = "text")
+	public String getLocality() {
+		return locality;
+	}
+
+	public void setLocality(String locality) {
+		this.locality = locality;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)

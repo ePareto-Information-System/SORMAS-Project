@@ -12895,5 +12895,10 @@ INSERT INTO schema_version (version_number, comment) VALUES (559, 'Added influen
 ALTER TABLE samples ADD COLUMN pathogentestcount varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (560, 'Added influenzalabcolumns to samples');
+
+-- 2024-03-04 Added locality for IDSR #53
+ALTER TABLE location ADD COLUMN locality varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (561, 'Added locality to location');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``
