@@ -624,6 +624,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 		TextArea additionalDetails = addField(PersonDto.ADDITIONAL_DETAILS, TextArea.class);
 		additionalDetails.setRows(6);
+		additionalDetails.setVisible(false);
 
 		if (disease == Disease.CSM) {
 			generalCommentLabel.setVisible(false);
@@ -702,6 +703,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			TextArea additionalPlacesStayed = addField(PersonDto.ADDITIONAL_PLACES_STAYED, TextArea.class, new ResizableTextAreaWrapper<>(false));
 			setVisible(false, PersonDto.EDUCATION_TYPE, PersonDto.ADDITIONAL_DETAILS, PersonDto.ADDRESSES);
 			additionalDetails.setCaption("Village");
+			additionalDetails.setVisible(true);
 			generalCommentLabel.setVisible(false);
 			occupationHeader.setVisible(false);
 			addressesHeader.setVisible(false);

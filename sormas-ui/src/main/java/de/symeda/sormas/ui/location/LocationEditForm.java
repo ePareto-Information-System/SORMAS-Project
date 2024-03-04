@@ -110,7 +110,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY),
 			//fluidRowLocs(FACILITY_TYPE_GROUP_LOC, LocationDto.FACILITY_TYPE),
 			//fluidRowLocs(LocationDto.FACILITY, LocationDto.FACILITY_DETAILS),
-			fluidRowLocs(6,LocationDto.STREET),
+			fluidRowLocs(LocationDto.STREET, LocationDto.LOCALITY),
 			fluidRowLocs(6,LocationDto.ADDITIONAL_INFORMATION),
 			fluidRowLocs(6,LocationDto.HOUSE_NUMBER),
 			fluidRowLocs(LocationDto.CITY, LocationDto.AREA_TYPE),
@@ -143,6 +143,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private TextField contactPersonEmail;
 	private TextField additionalInformationField;
 	private TextField  postalCodeField;
+	private TextField localityField;
 	private boolean districtRequiredOnDefaultCountry;
 	private boolean skipCountryValueChange;
 	private boolean skipFacilityTypeUpdate;
@@ -237,17 +238,19 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		});
 
 		TextField streetField = addField(LocationDto.STREET, TextField.class);
+		localityField = addField(LocationDto.LOCALITY, TextField.class);
 		TextField houseNumberField = addField(LocationDto.HOUSE_NUMBER, TextField.class);
 		TextField landMark = addField(LocationDto.LAND_MARK, TextField.class);
 		landMark.setVisible(false);
 		additionalInformationField = addField(LocationDto.ADDITIONAL_INFORMATION, TextField.class);
+		additionalInformationField.setVisible(false);
 		addField(LocationDto.DETAILS, TextField.class);
 		TextField cityField = addField(LocationDto.CITY, TextField.class);
 		postalCodeField = addField(LocationDto.POSTAL_CODE, TextField.class);
 
 		areaType = addField(LocationDto.AREA_TYPE, ComboBox.class);
 		areaType.removeItem(AreaType.UNKNOWN);
-		areaType.setVisible(false);
+		areaType.setVisible(true);
 		areaType.setDescription(I18nProperties.getDescription(getPropertyI18nPrefix() + "." + LocationDto.AREA_TYPE));
 
 		contactPersonFirstName = addField(LocationDto.CONTACT_PERSON_FIRST_NAME, TextField.class);
@@ -893,14 +896,15 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	public void setOnlyUnknownForYellowFever(Disease incomingDisease) {
 		newDisease = incomingDisease;
 		if (newDisease != null && newDisease.equals(Disease.YELLOW_FEVER)) {
-			setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK, LocationDto.AREA_TYPE);
+			setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK);
+			localityField.setVisible(false);
 		}
 	}
 	public void setOnlyUnknownForAHF(Disease incomingDisease) {
 		newDisease = incomingDisease;
 		if (newDisease != null && newDisease.equals(Disease.AHF)) {
 			setVisible(false,
-					LocationDto.POSTAL_CODE, LocationDto.ADDITIONAL_INFORMATION);
+					LocationDto.POSTAL_CODE, LocationDto.ADDITIONAL_INFORMATION, LocationDto.LOCALITY);
 		}
 	}
 
@@ -908,7 +912,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		newDisease = incomingDisease;
 		if (newDisease != null && newDisease.equals(Disease.CSM)) {
 			setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAT_LON_ACCURACY, LocationDto.LAND_MARK);
-			additionalInformationField.setVisible(false);
+			localityField.setVisible(false);
 		}
 	}
 
@@ -916,9 +920,8 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		newDisease = incomingDisease;
 		if (newDisease != null && newDisease.equals(Disease.NEW_INFLUENZA)) {
 			setVisible(false,
-					LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
+					LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY, LocationDto.LOCALITY);
 			additionalInformationField.setCaption("Address (Location)");
-			areaType.setVisible(true);
 
 		}
 	}
@@ -929,7 +932,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			setVisible(false, LocationDto.ADDRESS_TYPE,
 					LocationDto.ADDRESS_TYPE_DETAILS,
 					LocationDto.STREET,
-					LocationDto.CONTACT_PERSON_FIRST_NAME);
+					LocationDto.CONTACT_PERSON_FIRST_NAME, LocationDto.LOCALITY);
 			setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE);
 		}
 	}

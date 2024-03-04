@@ -77,12 +77,12 @@ public class LocationDto extends PseudonymizableDto {
 	public static final String POSTAL_CODE = "postalCode";
 	public static final String LAND_MARK = "landMark";
 	public static final String STREET = "street";
+	public static final String LOCALITY = "locality";
 	public static final String HOUSE_NUMBER = "houseNumber";
 	public static final String ADDITIONAL_INFORMATION = "additionalInformation";
 	public static final String ADDRESS_TYPE = "addressType";
 	public static final String ADDRESS_TYPE_DETAILS = "addressTypeDetails";
 	public static final String FACILITY_TYPE = "facilityType";
-	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
 	public static final String FACILITY = "facility";
 	public static final String FACILITY_DETAILS = "facilityDetails";
 	public static final String CONTACT_PERSON_FIRST_NAME = "contactPersonFirstName";
@@ -139,6 +139,8 @@ public class LocationDto extends PseudonymizableDto {
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
 	private String street;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
+	private String locality;
 	@PersonalData
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
@@ -154,8 +156,6 @@ public class LocationDto extends PseudonymizableDto {
 	@SensitiveData
 	private FacilityType facilityType;
 
-	@PersonalData
-	private DhimsFacility dhimsFacilityType;
 	@PersonalData
 	@SensitiveData
 	private FacilityReferenceDto facility;
@@ -344,14 +344,6 @@ public class LocationDto extends PseudonymizableDto {
 		this.facilityType = facilityType;
 	}
 
-	public DhimsFacility getDhimsFacilityType() {
-		return dhimsFacilityType;
-	}
-
-	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
-		this.dhimsFacilityType = dhimsFacilityType;
-	}
-
 	public FacilityReferenceDto getFacility() {
 		return facility;
 	}
@@ -398,6 +390,14 @@ public class LocationDto extends PseudonymizableDto {
 
 	public void setContactPersonEmail(String contactPersonEmail) {
 		this.contactPersonEmail = contactPersonEmail;
+	}
+
+	public String getLocality() {
+		return locality;
+	}
+
+	public void setLocality(String locality) {
+		this.locality = locality;
 	}
 
 	@Override

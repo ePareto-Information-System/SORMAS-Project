@@ -13481,5 +13481,11 @@ INSERT INTO schema_version (version_number, comment) VALUES (581, 'Added columns
 ALTER TABLE samples ALTER COLUMN sampledatetime DROP NOT NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (582, 'Altered column sampledatetime in samples to not null');
 
+INSERT INTO schema_version (version_number, comment) VALUES (583, 'Added influenzalabcolumns to samples');
+
+-- 2024-03-04 Added locality for IDSR #53
+ALTER TABLE location ADD COLUMN locality varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (584, 'Added locality to location');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
