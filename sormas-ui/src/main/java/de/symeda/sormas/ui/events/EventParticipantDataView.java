@@ -104,17 +104,17 @@ public class EventParticipantDataView extends AbstractEventParticipantView {
 		boolean editAllowed = isEditAllowed();
 
 		SampleCriteria sampleCriteria = new SampleCriteria().eventParticipant(eventParticipantRef);
-		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)) {
-			SampleListComponent sampleList = new SampleListComponent(
-				sampleCriteria.eventParticipant(eventParticipantRef)
-					.disease(event.getDisease())
-					.sampleAssociationType(SampleAssociationType.EVENT_PARTICIPANT),
-				this::showUnsavedChangesPopup,
-				editAllowed);
-			SampleListComponentLayout sampleListComponentLayout =
-				new SampleListComponentLayout(sampleList, I18nProperties.getString(Strings.infoCreateNewSampleDiscardsChangesEventParticipant));
-			layout.addSidePanelComponent(sampleListComponentLayout, SAMPLES_LOC);
-		}
+//		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)) {
+//			SampleListComponent sampleList = new SampleListComponent(
+//				sampleCriteria.eventParticipant(eventParticipantRef)
+//					.disease(event.getDisease())
+//					.sampleAssociationType(SampleAssociationType.EVENT_PARTICIPANT),
+//				this::showUnsavedChangesPopup,
+//				editAllowed);
+//			SampleListComponentLayout sampleListComponentLayout =
+//				new SampleListComponentLayout(sampleList, I18nProperties.getString(Strings.infoCreateNewSampleDiscardsChangesEventParticipant));
+//			layout.addSidePanelComponent(sampleListComponentLayout, SAMPLES_LOC);
+//		}
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_VIEW)) {
 			VerticalLayout contactsLayout = new VerticalLayout();
