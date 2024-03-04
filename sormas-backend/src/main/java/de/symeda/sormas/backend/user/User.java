@@ -21,6 +21,7 @@ import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAUL
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -250,11 +251,20 @@ public class User extends AbstractDomainObject {
 		this.jurisdictionLevel = jurisdictionLevel;
 	}
 
-	@PrePersist
+/*	@PrePersist
 	@PreUpdate
 	public void updateJurisdictionLevel() {
 		jurisdictionLevel = UserRole.getJurisdictionLevel(this.getUserRoles());
+	}*/
+@PrePersist
+@PreUpdate
+public void updateJurisdictionLevel() {
+	jurisdictionLevel = UserRole.getJurisdictionLevel(this.getUserRoles());
+	Facility facility = this.getHealthFacility();
+	if(jurisdictionLevel.equals(JurisdictionLevel.HEALTH_FACILITY) && Objects.isNull(facility)){
+		jurisdictionLevel= JurisdictionLevel.DISTRICT;
 	}
+}
 
 	@ManyToOne(cascade = {})
 	public User getAssociatedOfficer() {

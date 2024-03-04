@@ -83,7 +83,7 @@ public enum DefaultUserRole {
 		false,
 		true,
 		false,
-		JurisdictionLevel.NONE,
+		JurisdictionLevel.HEALTH_FACILITY,
 		Arrays.asList(
 			NotificationType.EVENT_PARTICIPANT_CASE_CLASSIFICATION_CONFIRMED,
 			NotificationType.EVENT_PARTICIPANT_RELATED_TO_OTHER_EVENTS,

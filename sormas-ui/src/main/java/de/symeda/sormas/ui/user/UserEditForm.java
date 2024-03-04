@@ -210,7 +210,7 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
 
 		final boolean usePointOfEntry = (isPortHealthUser && hasAssociatedDistrictUser) || jurisdictionLevel == JurisdictionLevel.POINT_OF_ENTRY;
 		final boolean useHealthFacility = jurisdictionLevel == JurisdictionLevel.HEALTH_FACILITY;
-		final boolean useHealthFacilityForDistrict = jurisdictionLevel == JurisdictionLevel.DISTRICT;
+		//final boolean useHealthFacilityForDistrict = jurisdictionLevel == JurisdictionLevel.DISTRICT;
         final boolean useLaboratory = jurisdictionLevel == JurisdictionLevel.LABORATORY || jurisdictionLevel == JurisdictionLevel.EXTERNAL_LABORATORY;
 		final boolean useCommunity = jurisdictionLevel == JurisdictionLevel.COMMUNITY;
 		final boolean useDistrict = hasAssociatedDistrictUser || jurisdictionLevel == JurisdictionLevel.DISTRICT || useCommunity || useHealthFacility || usePointOfEntry;
@@ -231,7 +231,7 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
 		}
 
 		healthFacility = (ComboBox) getFieldGroup().getField(UserDto.HEALTH_FACILITY);
-		healthFacility.setVisible(hasOptionalHealthFacility || useHealthFacility || useHealthFacilityForDistrict);
+		healthFacility.setVisible(hasOptionalHealthFacility || useHealthFacility);
 
         isSurveillanceSupervisor = userRolesFieldValue.stream().anyMatch(role -> role.getCaption().equals("Surveillance Officer"));
 
