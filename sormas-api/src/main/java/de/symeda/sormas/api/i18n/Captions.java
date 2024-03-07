@@ -588,7 +588,7 @@ public interface Captions {
 	String CaseHospitalization_investigatorAddress = "CaseHospitalization.investigatorAddress";
 	String CaseHospitalization_investigatorTel = "CaseHospitalization.investigatorTel";
 	String CaseHospitalization_hospitalRecordNumber = "CaseHospitalization.hospitalRecordNumber";
-
+	String CaseHospitalization_patientVentilated = "CaseHospitalization.patientVentilated";
 	String CaseHospitalization_previousHospitalizations = "CaseHospitalization.previousHospitalizations";
 	String caseImportErrorDescription = "caseImportErrorDescription";
 	String caseImportMergeCase = "caseImportMergeCase";
@@ -1534,6 +1534,9 @@ public interface Captions {
 	String HealthConditions_hiv = "HealthConditions.hiv";
 	String HealthConditions_hivArt = "HealthConditions.hivArt";
 	String HealthConditions_immunodeficiencyIncludingHiv = "HealthConditions.immunodeficiencyIncludingHiv";
+	String HealthConditions_lungDisease = "HealthConditions.lungDisease";
+	String HealthConditions_stroke = "HealthConditions.stroke";
+	String HealthConditions_cancer = "HealthConditions.cancer";
 	String HealthConditions_immunodeficiencyOtherThanHiv = "HealthConditions.immunodeficiencyOtherThanHiv";
 	String HealthConditions_malignancyChemotherapy = "HealthConditions.malignancyChemotherapy";
 	String HealthConditions_obesity = "HealthConditions.obesity";
@@ -2439,6 +2442,8 @@ public interface Captions {
 	String Symptoms_fatigueWeakness = "Symptoms.fatigueWeakness";
 	String Symptoms_feelingIll = "Symptoms.feelingIll";
 	String Symptoms_fever = "Symptoms.fever";
+	String Symptoms_dyspnea = "Symptoms.dyspnea";
+	String Symptoms_tachypnea = "Symptoms.tachypnea";
 	String Symptoms_feverishFeeling = "Symptoms.feverishFeeling";
 	String Symptoms_firstSymptom = "Symptoms.firstSymptom";
 	String Symptoms_provisionalDiagnosis = "Symptoms.provisionalDiagnosis";

@@ -246,6 +246,8 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String RIGHT_INJECTION_SITE = "rightInjectionSite";
 	public static final String LEFT_INJECTION_SITE = "leftInjectionSite";
 	public static final String TRUEAFP = "trueAfp";
+	public static final String DYSPNEA = "dyspnea";
+	public static final String TACHYPNEA = "tachypnea";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -2352,6 +2354,8 @@ public class SymptomsDto extends PseudonymizableDto {
 	private InjectionSite rightInjectionSite;
 	private InjectionSite leftInjectionSite;
 	private YesNo trueAfp;
+	private SymptomState dyspnea;
+	private SymptomState tachypnea;
 
 	@Order(0)
 	public Float getTemperature() {
@@ -4084,5 +4088,18 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setTrueAfp(YesNo trueAfp) {
 		this.trueAfp = trueAfp;
+	}
+
+	public SymptomState getDyspnea() {
+		return dyspnea;
+	}
+	public void setDyspnea(SymptomState dyspnea) {
+		this.dyspnea = dyspnea;
+	}
+	public SymptomState getTachypnea() {
+		return tachypnea;
+	}
+	public void setTachypnea(SymptomState tachypnea) {
+		this.tachypnea = tachypnea;
 	}
 }

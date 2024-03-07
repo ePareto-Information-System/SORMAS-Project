@@ -105,6 +105,7 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setInvestigatorAddress(source.getInvestigatorAddress());
 		target.setInvestigatorTel(source.getInvestigatorTel());
 		target.setHospitalRecordNumber(source.getHospitalRecordNumber());
+		target.setPatientVentilated(source.getPatientVentilated());
 
 		return target;
 	}
@@ -191,6 +192,7 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setDateFirstSeen(source.getDateFirstSeen());
 		target.setTerminationDateHospitalStay(source.getTerminationDateHospitalStay());
 		target.setHospitalRecordNumber(source.getHospitalRecordNumber());
+		target.setPatientVentilated(source.getPatientVentilated());
 
 		return target;
 	}

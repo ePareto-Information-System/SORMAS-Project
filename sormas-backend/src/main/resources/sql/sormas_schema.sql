@@ -12923,10 +12923,13 @@ ALTER TABLE epidata ADD COLUMN patientContactWithConfirmedCaseExposureLocationsS
 ALTER TABLE epidata ADD COLUMN patientContactWithConfirmedCaseExposureLocationCityCountry varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (563, 'Added columns to epiData to implement patientVisitedHealthCareFacility #26');
 
+ALTER TABLE symptoms ADD COLUMN dyspnea varchar(255);
+ALTER TABLE symptoms ADD COLUMN tachypnea varchar(255);
+ALTER TABLE hospitalization ADD COLUMN patientVentilated varchar(255);
 ALTER TABLE healthconditions ADD COLUMN lungdisease varchar(255);
 ALTER TABLE healthconditions ADD COLUMN stroke varchar(255);
 ALTER TABLE healthconditions ADD COLUMN cancer varchar(255);
-INSERT INTO schema_version (version_number, comment) VALUES (564, 'Added columns to  healthconditions #26');
+INSERT INTO schema_version (version_number, comment) VALUES (564, 'Added columns to symptoms, hospitalization, healthconditions to implement patientVisitedHealthCareFacility #26');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``
