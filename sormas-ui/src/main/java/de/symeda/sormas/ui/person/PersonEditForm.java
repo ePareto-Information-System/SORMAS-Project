@@ -363,13 +363,30 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 		addressForm = addField(PersonDto.ADDRESS, LocationEditForm.class);
 
-		addressForm.setOnlyUnknownForCSM(disease);
-		addressForm.setOnlyUnknownForAFP(disease);
-		addressForm.setOnlyUnknownForInfluenza(disease);
-		addressForm.setOnlyUnknownForYellowFever(disease);
-		addressForm.setOnlyUnknownForAHF(disease);
-		addressForm.setOnlyUnknownForMeasles(disease);
-
+		if (disease != null) {
+			switch (disease) {
+				case CSM:
+					addressForm.setOnlyUnknownForCSM(disease);
+					break;
+				case AFP:
+					addressForm.setOnlyUnknownForAFP(disease);
+					break;
+				case NEW_INFLUENZA:
+					addressForm.setOnlyUnknownForInfluenza(disease);
+					break;
+				case YELLOW_FEVER:
+					addressForm.setOnlyUnknownForYellowFever(disease);
+					break;
+				case AHF:
+					addressForm.setOnlyUnknownForAHF(disease);
+					break;
+				case CORONAVIRUS:
+					addressForm.setOnlyUnknownForCovid(disease);
+					break;
+				default:
+					break;
+			}
+		}
 
 		addressForm.setCaption(null);
 		addField(PersonDto.ADDRESSES, LocationsField.class).setCaption(null);
@@ -801,6 +818,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				FieldHelper.updateEnumData(presentConditionField, validValues);
 			} else if (disease == Disease.MEASLES) {
 				List<PresentCondition> validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);
+				FieldHelper.updateEnumData(presentConditionField, validValues);
+			} else if (disease == Disease.CORONAVIRUS) {
+				List<PresentCondition> validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD);
 				FieldHelper.updateEnumData(presentConditionField, validValues);
 			} else {
 				FieldVisibilityCheckers fieldVisibilityCheckers = FieldVisibilityCheckers.withDisease(disease);

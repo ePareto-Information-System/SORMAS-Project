@@ -279,6 +279,11 @@ public class Symptoms extends AbstractDomainObject {
 	private InjectionSite rightInjectionSite;
 	private InjectionSite leftInjectionSite;
 	private YesNo trueAfp;
+	private SymptomState dyspnea;
+	private SymptomState tachypnea;
+
+	public Symptoms() {
+	}
 
 	// when adding new fields make sure to extend toHumanString
 
@@ -2164,5 +2169,18 @@ public class Symptoms extends AbstractDomainObject {
 
 	public void setTrueAfp(YesNo trueAfp) {
 		this.trueAfp = trueAfp;
+	}
+
+	public SymptomState getDyspnea() {
+		return dyspnea;
+	}
+	public void setDyspnea(SymptomState dyspnea) {
+		this.dyspnea = dyspnea;
+	}
+	public SymptomState getTachypnea() {
+		return tachypnea;
+	}
+	public void setTachypnea(SymptomState tachypnea) {
+		this.tachypnea = tachypnea;
 	}
 }

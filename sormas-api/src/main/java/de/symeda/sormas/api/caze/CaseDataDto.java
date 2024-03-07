@@ -211,6 +211,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String END_OF_ISOLATION_REASON = "endOfIsolationReason";
 	public static final String END_OF_ISOLATION_REASON_DETAILS = "endOfIsolationReasonDetails";
 	public static final String CASE_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
+	public static final String SECOND_VACCINATION_DATE = "secondVaccinationDate";
 	public static final String OTHERCASEOUTCOMEDETAILS = "specifyOtherOutcome";
 
 	public static final String PROHIBITION_TO_WORK = "prohibitionToWork";
@@ -220,7 +221,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String RE_INFECTION = "reInfection";
 	public static final String PREVIOUS_INFECTION_DATE = "previousInfectionDate";
 	public static final String REINFECTION_STATUS = "reinfectionStatus";
-	public static final String REINFECTION_DETAILS = "reinfectionDetails";
 
 	public static final String BLOOD_ORGAN_OR_TISSUE_DONATED = "bloodOrganOrTissueDonated";
 
@@ -633,6 +633,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private String notifiedBy;
 	private Date dateOfNotification;
 	private Date dateOfInvestigation;
+	private  Date secondVaccinationDate;
 
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		return build(person, disease, HealthConditionsDto.build());
@@ -1966,5 +1967,11 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	public void setDateOfInvestigation(Date dateOfInvestigation) {
 		this.dateOfInvestigation = dateOfInvestigation;
+	}
+	public Date getSecondVaccinationDate() {
+		return secondVaccinationDate;
+	}
+	public void setSecondVaccinationDate(Date secondVaccinationDate) {
+		this.secondVaccinationDate = secondVaccinationDate;
 	}
 }

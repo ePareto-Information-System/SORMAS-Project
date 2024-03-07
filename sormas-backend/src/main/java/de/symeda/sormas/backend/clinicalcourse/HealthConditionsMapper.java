@@ -60,6 +60,9 @@ public class HealthConditionsMapper {
 		target.setAsthma(source.getAsthma());
 		target.setSickleCellDisease(source.getSickleCellDisease());
 		target.setImmunodeficiencyIncludingHiv(source.getImmunodeficiencyIncludingHiv());
+		target.setLungDisease(source.getLungDisease());
+		target.setStroke(source.getStroke());
+		target.setCancer(source.getCancer());
 
 		return target;
 	}
@@ -94,6 +97,9 @@ public class HealthConditionsMapper {
 		target.setAsthma(source.getAsthma());
 		target.setSickleCellDisease(source.getSickleCellDisease());
 		target.setImmunodeficiencyIncludingHiv(source.getImmunodeficiencyIncludingHiv());
+		target.setLungDisease(source.getLungDisease());
+		target.setStroke(source.getStroke());
+		target.setCancer(source.getCancer());
 
 		return target;
 	}

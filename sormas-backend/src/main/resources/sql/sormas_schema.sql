@@ -4940,11 +4940,11 @@ INSERT INTO schema_version (version_number, comment) VALUES (239, 'Update app sy
 
 -- 2020-06-23 Import and use new facility types #1637
 WITH _other_facility AS (
-                         SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-FACILITY'
-    ),
+    SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-FACILITY'
+),
      _other_lab AS (
-                    SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-LABORATO'
-         )
+         SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-LABORATO'
+     )
 UPDATE samples
 SET lab_id = f.id
     FROM _other_facility f
@@ -4952,11 +4952,11 @@ LEFT JOIN _other_lab l ON 1 = 1
 WHERE lab_id = l.id;
 
 WITH _other_facility AS (
-                         SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-FACILITY'
-    ),
+    SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-FACILITY'
+),
      _other_lab AS (
-                    SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-LABORATO'
-         )
+         SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-LABORATO'
+     )
 UPDATE pathogentest
 SET lab_id = f.id
     FROM _other_facility f
@@ -4969,8 +4969,8 @@ ALTER TABLE cases ADD COLUMN facilitytype varchar(255);
 ALTER TABLE cases_history ADD COLUMN facilitytype varchar(255);
 
 WITH _no_facility AS (
-                      SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-ISNONE-FACILITY'
-    )
+    SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-ISNONE-FACILITY'
+)
 UPDATE cases
 SET facilitytype = 'HOSPITAL'
     FROM _no_facility f
@@ -6612,19 +6612,19 @@ ALTER TABLE exposures ALTER COLUMN location_id DROP NOT NULL;
 ALTER TABLE exposures_history ALTER COLUMN location_id DROP NOT NULL;
 
 WITH _exposures AS (
-                    SELECT e.id, e.location_id
-	FROM exposures e
-	LEFT JOIN cases c ON c.epidata_id = e.epidata_id
-	WHERE c.deleted IS true
+    SELECT e.id, e.location_id
+    FROM exposures e
+             LEFT JOIN cases c ON c.epidata_id = e.epidata_id
+    WHERE c.deleted IS true
 ),
      _locations AS (
-                    SELECT
-                        e.id,
-                    COUNT(l.location_id) count
-	FROM _exposures e
-	LEFT JOIN exposures l ON l.location_id = e.location_id
-	GROUP BY e.id
-         )
+         SELECT
+             e.id,
+             COUNT(l.location_id) count
+FROM _exposures e
+    LEFT JOIN exposures l ON l.location_id = e.location_id
+GROUP BY e.id
+    )
 UPDATE exposures e
 SET location_id = null
     FROM _locations l
@@ -10124,8 +10124,8 @@ CREATE OR REPLACE FUNCTION get_person_birthdate (_id BIGINT)
 RETURNS TIMESTAMP AS $$
 DECLARE _birthdate TIMESTAMP;
 BEGIN
-	SELECT INTO _birthdate
-		CASE
+SELECT INTO _birthdate
+    CASE
 			WHEN COALESCE(birthdate_dd, 0) > 0 AND COALESCE(birthdate_mm, 0) > 0 AND COALESCE(birthdate_yyyy, 0) > 0 
 				THEN (
 					CASE 
@@ -10172,11 +10172,11 @@ BEGIN
 						ELSE 1
 					END
 				)::TIMESTAMP
-		END
-	FROM person
+END
+FROM person
 	WHERE id = _id;
-	
-	RETURN _birthdate;
+
+RETURN _birthdate;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -10185,21 +10185,21 @@ RETURNS BIGINT AS $$
 DECLARE _birthdate TIMESTAMP;
 				_age BIGINT;
 BEGIN
-	SELECT INTO _birthdate get_person_birthdate(_id);
-	
-	SELECT INTO _age
-		CASE
+SELECT INTO _birthdate get_person_birthdate(_id);
+
+SELECT INTO _age
+    CASE
 			WHEN _birthdate IS NULL THEN 0
 			ELSE ABS(EXTRACT(DAY FROM COALESCE(_reference_date, NOW()) - _birthdate))
-		END;
-		
-	SELECT INTO _age
-		CASE
+END;
+
+SELECT INTO _age
+    CASE
 			WHEN _age > 0 THEN _age / 356
 			ELSE 0
-		END;
-	
-	RETURN _age;
+END;
+
+RETURN _age;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -10805,7 +10805,7 @@ ALTER TABLE travelentry_history ADD COLUMN dateofarrival timestamp without time 
 UPDATE travelentry SET dateofarrival = TO_TIMESTAMP(dea_entry->>'value', 'DD.MM.YYYY')
     FROM travelentry t
     CROSS JOIN LATERAL json_array_elements(t.deacontent) dea_entry
-    WHERE dea_entry->>'caption' ilike 'eingangsdatum' and t.id = travelentry.id;
+WHERE dea_entry->>'caption' ilike 'eingangsdatum' and t.id = travelentry.id;
 
 UPDATE travelentry SET dateofarrival = creationdate where dateofarrival is null;
 
@@ -10816,12 +10816,12 @@ INSERT INTO schema_version (version_number, comment) VALUES (453, 'Add dateOfArr
 -- 2022-03-14 - #7774 Automatic & manual archiving for all core entities
 UPDATE contact ct
 SET archived = TRUE
-FROM cases cs
+    FROM cases cs
 WHERE ct.caze_id = cs.id AND cs.archived IS TRUE AND ct.archived IS FALSE;
 
 UPDATE eventparticipant ep
 SET archived = TRUE
-FROM events ev
+    FROM events ev
 WHERE ep.event_id = ev.id AND ev.archived IS TRUE AND ep.archived IS FALSE;
 
 INSERT INTO schema_version (version_number, comment) VALUES (454, 'Automatic & manual archiving for all core entities #7774 ');
@@ -10832,16 +10832,16 @@ CREATE OR REPLACE FUNCTION delete_history_trigger()
     RETURNS trigger AS
 $$
 BEGIN
-    EXECUTE format('DELETE FROM %s WHERE %s = %s', TG_ARGV[0], TG_ARGV[1], OLD.ID);
-    RETURN NEW;
+EXECUTE format('DELETE FROM %s WHERE %s = %s', TG_ARGV[0], TG_ARGV[1], OLD.ID);
+RETURN NEW;
 END;
 $$
-    language 'plpgsql';
+language 'plpgsql';
 
 DROP TRIGGER IF EXISTS versioning_trigger ON deletionconfiguration;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON deletionconfiguration
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'deletionconfiguration_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'deletionconfiguration_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON deletionconfiguration;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON deletionconfiguration
@@ -10850,7 +10850,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON contact;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON contact
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'contact_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'contact_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON contact;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON contact
@@ -10863,7 +10863,7 @@ CREATE TRIGGER delete_history_trigger_contacts_visits
 DROP TRIGGER IF EXISTS versioning_trigger ON events;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON events
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'events_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'events_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON events;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON events
@@ -10876,7 +10876,7 @@ CREATE TRIGGER delete_history_trigger_events_eventgroups
 DROP TRIGGER IF EXISTS versioning_trigger ON populationdata;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON populationdata
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'populationdata_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'populationdata_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON populationdata;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON populationdata
@@ -10885,7 +10885,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON users;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON users
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'users_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'users_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON users;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON users
@@ -10902,7 +10902,7 @@ CREATE TRIGGER delete_history_trigger_users_userroles
 DROP TRIGGER IF EXISTS versioning_trigger ON customizableenumvalue;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON customizableenumvalue
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'customizableenumvalue_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'customizableenumvalue_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON customizableenumvalue;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON customizableenumvalue
@@ -10911,7 +10911,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON eventparticipant;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON eventparticipant
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'eventparticipant_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'eventparticipant_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON eventparticipant;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON eventparticipant
@@ -10920,7 +10920,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON clinicalvisit;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON clinicalvisit
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'clinicalvisit_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'clinicalvisit_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON clinicalvisit;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON clinicalvisit
@@ -10929,7 +10929,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON clinicalcourse;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON clinicalcourse
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'clinicalcourse_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'clinicalcourse_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON clinicalcourse;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON clinicalcourse
@@ -10938,7 +10938,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON immunization;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON immunization
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'immunization_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'immunization_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON immunization;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON immunization
@@ -10947,7 +10947,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON labmessage;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON labmessage
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'labmessage_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'labmessage_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON labmessage;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON labmessage
@@ -10956,7 +10956,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON outbreak;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON outbreak
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'outbreak_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'outbreak_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON outbreak;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON outbreak
@@ -10965,7 +10965,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON porthealthinfo;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON porthealthinfo
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'porthealthinfo_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'porthealthinfo_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON porthealthinfo;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON porthealthinfo
@@ -10974,7 +10974,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON prescription;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON prescription
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'prescription_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'prescription_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON prescription;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON prescription
@@ -10983,7 +10983,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON additionaltest;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON additionaltest
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'additionaltest_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'additionaltest_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON additionaltest;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON additionaltest
@@ -10992,7 +10992,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON sharerequestinfo;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON sharerequestinfo
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sharerequestinfo_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sharerequestinfo_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON sharerequestinfo;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON sharerequestinfo
@@ -11005,7 +11005,7 @@ CREATE TRIGGER delete_history_trigger_sharerequestinfo_shareinfo
 DROP TRIGGER IF EXISTS versioning_trigger ON sormastosormassharerequest;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON sormastosormassharerequest
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sormastosormassharerequest_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sormastosormassharerequest_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON sormastosormassharerequest;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON sormastosormassharerequest
@@ -11014,7 +11014,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON aggregatereport;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON aggregatereport
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'aggregatereport_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'aggregatereport_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON aggregatereport;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON aggregatereport
@@ -11023,7 +11023,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON featureconfiguration;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON featureconfiguration
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'featureconfiguration_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'featureconfiguration_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON featureconfiguration;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON featureconfiguration
@@ -11032,7 +11032,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON pointofentry;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON pointofentry
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'pointofentry_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'pointofentry_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON pointofentry;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON pointofentry
@@ -11041,7 +11041,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON task;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON task
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'task_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'task_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON task;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON task
@@ -11054,7 +11054,7 @@ CREATE TRIGGER delete_history_trigger_task_observer
 DROP TRIGGER IF EXISTS versioning_trigger ON testreport;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON testreport
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'testreport_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'testreport_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON testreport;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON testreport
@@ -11063,7 +11063,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON therapy;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON therapy
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'therapy_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'therapy_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON therapy;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON therapy
@@ -11072,7 +11072,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON travelentry;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON travelentry
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'travelentry_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'travelentry_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON travelentry;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON travelentry
@@ -11081,7 +11081,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON treatment;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON treatment
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'treatment_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'treatment_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON treatment;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON treatment
@@ -11090,7 +11090,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON areas;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON areas
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'areas_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'areas_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON areas;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON areas
@@ -11099,7 +11099,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON userrolesconfig;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON userrolesconfig
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'userrolesconfig_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'userrolesconfig_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON userrolesconfig;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON userrolesconfig
@@ -11108,7 +11108,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON vaccination;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON vaccination
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'vaccination_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'vaccination_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON vaccination;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON vaccination
@@ -11117,7 +11117,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON weeklyreport;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON weeklyreport
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'weeklyreport_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'weeklyreport_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON weeklyreport;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON weeklyreport
@@ -11126,7 +11126,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON healthconditions;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON healthconditions
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'healthconditions_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'healthconditions_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON healthconditions;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON healthconditions
@@ -11135,7 +11135,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON weeklyreportentry;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON weeklyreportentry
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'weeklyreportentry_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'weeklyreportentry_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON weeklyreportentry;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON weeklyreportentry
@@ -11144,7 +11144,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON campaignformdata;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON campaignformdata
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaignformdata_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaignformdata_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON campaignformdata;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON campaignformdata
@@ -11153,7 +11153,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON symptoms;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON symptoms
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'symptoms_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'symptoms_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON symptoms;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON symptoms
@@ -11162,7 +11162,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON campaignformmeta;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON campaignformmeta
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaignformmeta_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaignformmeta_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON campaignformmeta;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON campaignformmeta
@@ -11175,7 +11175,7 @@ CREATE TRIGGER delete_history_trigger_campaign_campaignformmeta
 DROP TRIGGER IF EXISTS versioning_trigger ON campaigns;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON campaigns
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaigns_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaigns_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON campaigns;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON campaigns
@@ -11188,7 +11188,7 @@ CREATE TRIGGER delete_history_trigger_campaign_campaignformmeta
 DROP TRIGGER IF EXISTS versioning_trigger ON visit;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON visit
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'visit_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'visit_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON visit;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON visit
@@ -11201,7 +11201,7 @@ CREATE TRIGGER delete_history_trigger_contacts_visits
 DROP TRIGGER IF EXISTS versioning_trigger ON documents;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON documents
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'documents_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'documents_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON documents;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON documents
@@ -11210,7 +11210,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON manualmessagelog;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON manualmessagelog
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'manualmessagelog_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'manualmessagelog_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON manualmessagelog;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON manualmessagelog
@@ -11219,7 +11219,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON action;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON action
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'action_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'action_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON action;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON action
@@ -11228,7 +11228,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON exportconfiguration;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON exportconfiguration
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'exportconfiguration_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'exportconfiguration_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON exportconfiguration;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON exportconfiguration
@@ -11237,7 +11237,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON district;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON district
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'district_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'district_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON district;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON district
@@ -11246,7 +11246,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON hospitalization;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON hospitalization
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'hospitalization_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'hospitalization_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON hospitalization;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON hospitalization
@@ -11255,7 +11255,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON surveillancereports;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON surveillancereports
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'surveillancereports_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'surveillancereports_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON surveillancereports;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON surveillancereports
@@ -11264,7 +11264,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON activityascase;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON activityascase
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'activityascase_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'activityascase_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON activityascase;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON activityascase
@@ -11273,7 +11273,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON epidata;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON epidata
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'epidata_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'epidata_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON epidata;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON epidata
@@ -11282,7 +11282,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON sormastosormasorigininfo;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON sormastosormasorigininfo
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sormastosormasorigininfo_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sormastosormasorigininfo_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON sormastosormasorigininfo;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON sormastosormasorigininfo
@@ -11291,7 +11291,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON campaigndiagramdefinition;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON campaigndiagramdefinition
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaigndiagramdefinition_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaigndiagramdefinition_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON campaigndiagramdefinition;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON campaigndiagramdefinition
@@ -11300,7 +11300,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON samples;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON samples
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'samples_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'samples_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON samples;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON samples
@@ -11309,7 +11309,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON sormastosormasshareinfo;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON sormastosormasshareinfo
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sormastosormasshareinfo_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sormastosormasshareinfo_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON sormastosormasshareinfo;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON sormastosormasshareinfo
@@ -11322,7 +11322,7 @@ CREATE TRIGGER delete_history_trigger_sharerequestinfo_shareinfo
 DROP TRIGGER IF EXISTS versioning_trigger ON diseaseconfiguration;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON diseaseconfiguration
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'diseaseconfiguration_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'diseaseconfiguration_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON diseaseconfiguration;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON diseaseconfiguration
@@ -11331,7 +11331,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON externalshareinfo;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON externalshareinfo
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'externalshareinfo_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'externalshareinfo_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON externalshareinfo;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON externalshareinfo
@@ -11340,7 +11340,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON personcontactdetail;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON personcontactdetail
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'personcontactdetail_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'personcontactdetail_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON personcontactdetail;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON personcontactdetail
@@ -11349,7 +11349,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON previoushospitalization;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON previoushospitalization
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'previoushospitalization_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'previoushospitalization_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON previoushospitalization;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON previoushospitalization
@@ -11358,7 +11358,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON continent;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON continent
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'continent_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'continent_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON continent;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON continent
@@ -11367,7 +11367,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON country;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON country
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'country_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'country_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON country;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON country
@@ -11376,7 +11376,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON exposures;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON exposures
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'exposures_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'exposures_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON exposures;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON exposures
@@ -11385,7 +11385,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON region;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON region
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'region_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'region_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON region;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON region
@@ -11394,7 +11394,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON subcontinent;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON subcontinent
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'subcontinent_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'subcontinent_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON subcontinent;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON subcontinent
@@ -11403,7 +11403,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON cases;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON cases
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'cases_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'cases_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON cases;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON cases
@@ -11412,7 +11412,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON community;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON community
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'community_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'community_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON community;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON community
@@ -11421,7 +11421,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON eventgroups;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON eventgroups
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'eventgroups_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'eventgroups_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON eventgroups;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON eventgroups
@@ -11434,7 +11434,7 @@ CREATE TRIGGER delete_history_trigger_events_eventgroups
 DROP TRIGGER IF EXISTS versioning_trigger ON facility;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON facility
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'facility_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'facility_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON facility;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON facility
@@ -11443,7 +11443,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON location;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON location
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'location_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'location_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON location;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON location
@@ -11456,7 +11456,7 @@ CREATE TRIGGER delete_history_trigger_person_locations
 DROP TRIGGER IF EXISTS versioning_trigger ON pathogentest;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON pathogentest
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'pathogentest_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'pathogentest_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON pathogentest;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON pathogentest
@@ -11465,7 +11465,7 @@ CREATE TRIGGER delete_history_trigger
 DROP TRIGGER IF EXISTS versioning_trigger ON person;
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON person
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'person_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'person_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON person;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON person
@@ -11490,8 +11490,8 @@ ALTER TABLE labmessage ADD COLUMN type varchar(255);
 ALTER TABLE labmessage_history ADD COLUMN type varchar(255);
 
 UPDATE labmessage SET type = CASE
-    WHEN labmessagedetails LIKE '%profile value="https://demis.rki.de/fhir/StructureDefinition/NotificationDiseaseCVDD"%' THEN 'PHYSICIANS_REPORT'
-    ELSE 'LAB_MESSAGE'
+                                 WHEN labmessagedetails LIKE '%profile value="https://demis.rki.de/fhir/StructureDefinition/NotificationDiseaseCVDD"%' THEN 'PHYSICIANS_REPORT'
+                                 ELSE 'LAB_MESSAGE'
     END;
 
 INSERT INTO schema_version (version_number, comment) VALUES (457, 'Initial UI support for physicians reports #8276');
@@ -11560,17 +11560,17 @@ CREATE OR REPLACE FUNCTION clone_healthconditions(healthconditions_id bigint)
     SECURITY DEFINER AS
 $BODY$
 DECLARE
-    new_id bigint;
+new_id bigint;
 BEGIN
-    INSERT INTO added_healthconditions SELECT * FROM healthconditions WHERE id = healthconditions_id;
-    UPDATE added_healthconditions
-    SET id           = nextval('entity_seq'),
-        uuid         = generate_base32_uuid(),
-        sys_period   = tstzrange(now(), null)
-    WHERE id = healthconditions_id
+INSERT INTO added_healthconditions SELECT * FROM healthconditions WHERE id = healthconditions_id;
+UPDATE added_healthconditions
+SET id           = nextval('entity_seq'),
+    uuid         = generate_base32_uuid(),
+    sys_period   = tstzrange(now(), null)
+WHERE id = healthconditions_id
     RETURNING id INTO new_id;
-    INSERT INTO healthconditions SELECT * FROM added_healthconditions WHERE id = new_id;
-    RETURN new_id;
+INSERT INTO healthconditions SELECT * FROM added_healthconditions WHERE id = new_id;
+RETURN new_id;
 END;
 $BODY$;
 ALTER FUNCTION clone_healthconditions(bigint) OWNER TO sormas_user;
@@ -11582,12 +11582,12 @@ CREATE OR REPLACE FUNCTION create_additional_healthconditions()
 
 $BODY$
 DECLARE
-    new_id bigint;
+new_id bigint;
 BEGIN
-    INSERT INTO healthconditions (id, uuid, changedate, creationdate)
-    VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now())
+INSERT INTO healthconditions (id, uuid, changedate, creationdate)
+VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now())
     RETURNING id INTO new_id;
-    RETURN new_id;
+RETURN new_id;
 END;
 $BODY$;
 
@@ -11595,26 +11595,26 @@ ALTER FUNCTION create_additional_healthconditions() OWNER TO sormas_user;
 DO
 $$
     DECLARE
-        rec_health         RECORD;
+rec_health         RECORD;
         rec_vaccination    RECORD;
         count_vaccinations integer;
         new_healthcondition_id bigint;
-    BEGIN
-        FOR rec_health IN SELECT * FROM tmp_healthconditions
-            LOOP
-                BEGIN
+BEGIN
+FOR rec_health IN SELECT * FROM tmp_healthconditions
+                                    LOOP
+BEGIN
                     count_vaccinations = (SELECT count(*) FROM vaccination WHERE healthconditions_id = rec_health.id);
-                    FOR rec_vaccination IN (SELECT * FROM vaccination WHERE healthconditions_id = rec_health.id)
+FOR rec_vaccination IN (SELECT * FROM vaccination WHERE healthconditions_id = rec_health.id)
                         LOOP
                             if count_vaccinations > 1 then
                                 new_healthcondition_id = clone_healthconditions(rec_health.id);
-                                update vaccination set healthconditions_id = new_healthcondition_id where id = rec_vaccination.id;
-                            end if;
+update vaccination set healthconditions_id = new_healthcondition_id where id = rec_vaccination.id;
+end if;
                             count_vaccinations = count_vaccinations - 1;
-                        end loop;
-                end;
-            END LOOP;
-    END;
+end loop;
+end;
+END LOOP;
+END;
 $$ LANGUAGE plpgsql;
 
 DROP TABLE IF EXISTS tmp_healthconditions;
@@ -11690,7 +11690,7 @@ ALTER TABLE userrolesconfig RENAME TO userroles;
 ALTER TABLE userrolesconfig_history RENAME TO userroles_history;
 DROP TRIGGER IF EXISTS versioning_trigger ON userroles;
 CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE ON userroles
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'userroles_history', true);
+                                                       FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'userroles_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON userroles;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON userroles
@@ -11758,9 +11758,9 @@ CREATE TRIGGER delete_history_trigger_users_userroles
     FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('users_userroles_history', 'userrole_id');
 
 CREATE TABLE userroles_emailnotificationtypes (
-    userrole_id bigint NOT NULL,
-    notificationtype character varying(255) NOT NULL,
-    sys_period tstzrange not null
+                                                  userrole_id bigint NOT NULL,
+                                                  notificationtype character varying(255) NOT NULL,
+                                                  sys_period tstzrange not null
 );
 ALTER TABLE userroles_emailnotificationtypes ADD CONSTRAINT fk_userrole_id FOREIGN KEY (userrole_id) REFERENCES userroles (id);
 ALTER TABLE userroles_emailnotificationtypes OWNER TO sormas_user;
@@ -11774,9 +11774,9 @@ CREATE TRIGGER delete_history_trigger_userroles_emailnotificationtypes
     FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('userroles_emailnotificationtypes_history', 'userrole_id');
 
 CREATE TABLE userroles_smsnotificationtypes (
-    userrole_id bigint NOT NULL,
-    notificationtype character varying(255) NOT NULL,
-    sys_period tstzrange not null
+                                                userrole_id bigint NOT NULL,
+                                                notificationtype character varying(255) NOT NULL,
+                                                sys_period tstzrange not null
 );
 ALTER TABLE userroles_smsnotificationtypes ADD CONSTRAINT fk_userrole_id FOREIGN KEY (userrole_id) REFERENCES userroles (id);
 ALTER TABLE userroles_smsnotificationtypes OWNER TO sormas_user;
@@ -11837,7 +11837,7 @@ INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (467,
 -- 2022-06-02 Fixed triggers on externalmessage table #8895
 DROP TRIGGER IF EXISTS versioning_trigger ON externalmessage;
 CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE ON externalmessage
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'externalmessage_history', true);
+                                                       FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'externalmessage_history', true);
 DROP TRIGGER IF EXISTS delete_history_trigger ON externalmessage;
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON externalmessage
@@ -11928,15 +11928,15 @@ INSERT INTO schema_version (version_number, comment) VALUES (477, 'Add Geolocati
 
 
 CREATE TABLE cadre (
-     id bigint NOT NULL,
-     uuid varchar(36) not null unique,
-     creationdate timestamp without time zone NOT NULL,
-     changedate timestamp not null,
-     archived boolean not null default false,
-     position varchar(255),
-     externalid varchar(255),
-     deleted boolean not null default false,
-    primary key(id)
+                       id bigint NOT NULL,
+                       uuid varchar(36) not null unique,
+                       creationdate timestamp without time zone NOT NULL,
+                       changedate timestamp not null,
+                       archived boolean not null default false,
+                       position varchar(255),
+                       externalid varchar(255),
+                       deleted boolean not null default false,
+                       primary key(id)
 );
 
 ALTER TABLE cadre OWNER TO sormas_user;
@@ -11953,7 +11953,7 @@ ALTER TABLE cadre ADD COLUMN  otherdeletionreason text;
 
 ALTER TABLE cadre ADD COLUMN endofprocessingdate timestamp without time zone;
 ALTER TABLE cadre ADD COLUMN archiveundonereason character varying(512);
-                            
+
 INSERT INTO schema_version (version_number, comment) VALUES (478, 'Created a cadre table and added a relation to person table #34');
 
 -- 2022-26-10 Update userroles with HOSPITAL_SUPERVISOR
@@ -11988,22 +11988,22 @@ INSERT INTO schema_version (version_number, comment) VALUES (482, 'Updating outc
 
 -- 2023-21-03 Assiging PERFORM_BULK_OPERATIONS_CASE_SAMPLES right to Lab Officer
 INSERT INTO userroles_userrights(userright, sys_period, userrole_id)
-	SELECT 'PERFORM_BULK_OPERATIONS_CASE_SAMPLES', tstzrange(now(), null),id AS userrole_id FROM userroles ur WHERE caption = 'Lab Officer' 
-	AND NOT exists(SELECT uu.userrole_id
-                 FROM userroles_userrights uu
-                 WHERE uu.userrole_id = ur.id
-                   AND uu.userright = 'PERFORM_BULK_OPERATIONS_CASE_SAMPLES');
+SELECT 'PERFORM_BULK_OPERATIONS_CASE_SAMPLES', tstzrange(now(), null),id AS userrole_id FROM userroles ur WHERE caption = 'Lab Officer'
+                                                                                                            AND NOT exists(SELECT uu.userrole_id
+                                                                                                                           FROM userroles_userrights uu
+                                                                                                                           WHERE uu.userrole_id = ur.id
+                                                                                                                             AND uu.userright = 'PERFORM_BULK_OPERATIONS_CASE_SAMPLES');
 
 INSERT INTO schema_version (version_number, comment) VALUES (483, 'Assiging PERFORM_BULK_OPERATIONS_CASE_SAMPLES right to Lab Officer');
 
 
 -- 2023-21-03 Assiging PERFORM_BULK_OPERATIONS right to Lab Officer
 INSERT INTO userroles_userrights(userright, sys_period, userrole_id)
-	SELECT 'PERFORM_BULK_OPERATIONS', tstzrange(now(), null),id AS userrole_id FROM userroles ur WHERE caption = 'Lab Officer' 
-	AND NOT exists(SELECT uu.userrole_id
-                 FROM userroles_userrights uu
-                 WHERE uu.userrole_id = ur.id
-                   AND uu.userright = 'PERFORM_BULK_OPERATIONS');
+SELECT 'PERFORM_BULK_OPERATIONS', tstzrange(now(), null),id AS userrole_id FROM userroles ur WHERE caption = 'Lab Officer'
+                                                                                               AND NOT exists(SELECT uu.userrole_id
+                                                                                                              FROM userroles_userrights uu
+                                                                                                              WHERE uu.userrole_id = ur.id
+                                                                                                                AND uu.userright = 'PERFORM_BULK_OPERATIONS');
 
 INSERT INTO schema_version (version_number, comment) VALUES (484, 'Assiging PERFORM_BULK_OPERATIONS right to Lab Officer');
 
@@ -12026,16 +12026,16 @@ FROM userroles_userrights
 WHERE userrole_id = (SELECT id FROM userroles WHERE caption = 'Lab Officer' LIMIT 1);
 
 INSERT INTO userroles_userrights (userright, userrole_id)
-VALUES 
+VALUES
     ('SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO', (SELECT id FROM userroles WHERE caption = 'Lab Attendant' LIMIT 1));
 INSERT INTO schema_version (version_number, comment) VALUES (485, 'Create user roles Lab Attendant and Lab Supervisor and Assigning userrights to roles LAB_ATTENDANT and LAB_SUPERVISOR and assigning new right SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO to LAB_ATTEDANT  #37');
 
 CREATE TABLE facility_diseaseconfiguration (
-   facility_id bigint,
-   diseaseconfiguration_id bigint,
-   PRIMARY KEY (facility_id, diseaseconfiguration_id),
-   FOREIGN KEY (facility_id) REFERENCES facility(id),
-   FOREIGN KEY (diseaseconfiguration_id) REFERENCES diseaseconfiguration(id)
+                                               facility_id bigint,
+                                               diseaseconfiguration_id bigint,
+                                               PRIMARY KEY (facility_id, diseaseconfiguration_id),
+                                               FOREIGN KEY (facility_id) REFERENCES facility(id),
+                                               FOREIGN KEY (diseaseconfiguration_id) REFERENCES diseaseconfiguration(id)
 );
 
 ALTER TABLE facility_diseaseconfiguration ADD COLUMN sys_period tstzrange;
@@ -12063,7 +12063,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (487, 'Add user role
 UPDATE featureconfiguration set featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES', properties = json_build_object('SHARE_ASSOCIATED_CONTACTS',false,'SHARE_SAMPLES',true,'SHARE_IMMUNIZATIONS',true) where featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES_WITH_CONTACTS_AND_SAMPLES';
 UPDATE featureconfiguration set properties = json_build_object('SHARE_SAMPLES',true,'SHARE_IMMUNIZATIONS',true) where featuretype = 'SORMAS_TO_SORMAS_SHARE_EVENTS';
 INSERT INTO featureconfiguration (id, uuid, creationdate, changedate, enabled, featuretype, properties)
-    VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), (SELECT CASE WHEN EXISTS(SELECT id FROM featureconfiguration WHERE featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES') THEN (SELECT enabled FROM featureconfiguration WHERE featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES') ELSE true END), 'SORMAS_TO_SORMAS_SHARE_CONTACTS', json_build_object('SHARE_SAMPLES',true,'SHARE_IMMUNIZATIONS',true));
+VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), (SELECT CASE WHEN EXISTS(SELECT id FROM featureconfiguration WHERE featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES') THEN (SELECT enabled FROM featureconfiguration WHERE featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES') ELSE true END), 'SORMAS_TO_SORMAS_SHARE_CONTACTS', json_build_object('SHARE_SAMPLES',true,'SHARE_IMMUNIZATIONS',true));
 
 ALTER TABLE sormastosormassharerequest ADD COLUMN shareassociatedcontactsdisabled boolean DEFAULT false;
 ALTER TABLE sormastosormassharerequest_history ADD COLUMN shareassociatedcontactsdisabled boolean DEFAULT false;
@@ -12088,11 +12088,11 @@ ALTER TABLE sharerequestinfo_history ADD COLUMN datatype varchar(255);
 
 UPDATE sharerequestinfo sr SET datatype = (
     SELECT CASE
-       WHEN (EXISTS(SELECT caze_id FROM sormastosormasshareinfo s JOIN sharerequestinfo_shareinfo ss ON ss.sharerequestinfo_id = r.id WHERE s.id = ss.shareinfo_id AND caze_id IS NOT NULL)) THEN 'CASE'
-       WHEN (EXISTS(SELECT contact_id FROM sormastosormasshareinfo s JOIN sharerequestinfo_shareinfo ss ON ss.sharerequestinfo_id = r.id WHERE s.id = ss.shareinfo_id  AND contact_id IS NOT NULL)) THEN 'CONTACT'
-       WHEN (EXISTS(SELECT event_id FROM sormastosormasshareinfo s JOIN sharerequestinfo_shareinfo ss ON ss.sharerequestinfo_id = r.id WHERE s.id = ss.shareinfo_id  AND event_id IS NOT NULL)) THEN 'EVENT'
-       ELSE 'CASE' -- hardcode CASE for share request with no shared object due to permanent deletions
-    END
+               WHEN (EXISTS(SELECT caze_id FROM sormastosormasshareinfo s JOIN sharerequestinfo_shareinfo ss ON ss.sharerequestinfo_id = r.id WHERE s.id = ss.shareinfo_id AND caze_id IS NOT NULL)) THEN 'CASE'
+               WHEN (EXISTS(SELECT contact_id FROM sormastosormasshareinfo s JOIN sharerequestinfo_shareinfo ss ON ss.sharerequestinfo_id = r.id WHERE s.id = ss.shareinfo_id  AND contact_id IS NOT NULL)) THEN 'CONTACT'
+               WHEN (EXISTS(SELECT event_id FROM sormastosormasshareinfo s JOIN sharerequestinfo_shareinfo ss ON ss.sharerequestinfo_id = r.id WHERE s.id = ss.shareinfo_id  AND event_id IS NOT NULL)) THEN 'EVENT'
+               ELSE 'CASE' -- hardcode CASE for share request with no shared object due to permanent deletions
+               END
     FROM sharerequestinfo r where r.id = sr.id
 );
 
@@ -12113,14 +12113,14 @@ INSERT INTO schema_version (version_number, comment) VALUES (492, 'Allow disease
 -- 2022-07-1 Edit and create user roles #4463
 DO $$
     DECLARE rec RECORD;
-    BEGIN
-        FOR rec IN (select ur.userrole_id from userroles_userrights ur
+BEGIN
+FOR rec IN (select ur.userrole_id from userroles_userrights ur
                     where ur.userright = 'USER_EDIT')
             LOOP
                 INSERT INTO userroles_userrights(userrole_id, userright) VALUES (rec.userrole_id, 'USER_ROLE_EDIT');
-                INSERT INTO userroles_userrights(userrole_id, userright) VALUES (rec.userrole_id, 'USER_ROLE_DELETE');
-            END LOOP;
-    END;
+INSERT INTO userroles_userrights(userrole_id, userright) VALUES (rec.userrole_id, 'USER_ROLE_DELETE');
+END LOOP;
+END;
 $$ LANGUAGE plpgsql;
 
 update userroles_smsnotificationtypes set notificationtype = 'CASE_DISEASE_CHANGED' where notificationtype = 'DISEASE_CHANGED';
@@ -12160,7 +12160,7 @@ DO $$
 BEGIN
 FOR rec IN SELECT DISTINCT occupationtype FROM person WHERE occupationtype != 'HEALTHCARE_WORKER' AND occupationtype != 'LABORATORY_STAFF' AND occupationtype != 'OTHER'
 LOOP
-    INSERT INTO customizableenumvalue(id, uuid, changedate, creationdate, datatype, value, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'OCCUPATION_TYPE', rec.occupationtype, rec.occupationtype);
+           INSERT INTO customizableenumvalue(id, uuid, changedate, creationdate, datatype, value, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'OCCUPATION_TYPE', rec.occupationtype, rec.occupationtype);
 END LOOP;
 END;
 $$ LANGUAGE plpgsql;
@@ -12171,62 +12171,62 @@ INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (496,
 
 DO $$
     DECLARE rec RECORD;
-    BEGIN
-        FOR rec IN SELECT id FROM userroles
-            LOOP
-                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'CASE_DELETE')) = true) THEN
-                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-                    SELECT rec.id, rights.r, tstzrange(now(), null)
-                    FROM (VALUES ('TASK_DELETE'), ('SAMPLE_DELETE'), ('VISIT_DELETE'), ('PERSON_DELETE'), ('TREATMENT_DELETE'), ('PRESCRIPTION_DELETE'), ('CLINICAL_VISIT_DELETE'), ('IMMUNIZATION_DELETE')) as rights (r)
-                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
-                END IF;
+BEGIN
+FOR rec IN SELECT id FROM userroles
+                              LOOP
+    IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'CASE_DELETE')) = true) THEN
+           INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+SELECT rec.id, rights.r, tstzrange(now(), null)
+FROM (VALUES ('TASK_DELETE'), ('SAMPLE_DELETE'), ('VISIT_DELETE'), ('PERSON_DELETE'), ('TREATMENT_DELETE'), ('PRESCRIPTION_DELETE'), ('CLINICAL_VISIT_DELETE'), ('IMMUNIZATION_DELETE')) as rights (r)
+WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+END IF;
 
                 IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'CONTACT_DELETE')) = true) THEN
                     INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-                    SELECT rec.id, rights.r, tstzrange(now(), null)
-                    FROM (VALUES ('TASK_DELETE'), ('SAMPLE_DELETE'), ('VISIT_DELETE'), ('PERSON_DELETE')) as rights (r)
-                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
-                END IF;
+SELECT rec.id, rights.r, tstzrange(now(), null)
+FROM (VALUES ('TASK_DELETE'), ('SAMPLE_DELETE'), ('VISIT_DELETE'), ('PERSON_DELETE')) as rights (r)
+WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+END IF;
 
                 IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'EVENT_DELETE')) = true) THEN
                     INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-                    SELECT rec.id, rights.r, tstzrange(now(), null)
-                    FROM (VALUES ('EVENTPARTICIPANT_DELETE'), ('TASK_DELETE'), ('ACTION_DELETE')) as rights (r)
-                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
-                END IF;
+SELECT rec.id, rights.r, tstzrange(now(), null)
+FROM (VALUES ('EVENTPARTICIPANT_DELETE'), ('TASK_DELETE'), ('ACTION_DELETE')) as rights (r)
+WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+END IF;
 
                 IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'SAMPLE_DELETE')) = true) THEN
                     INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-                    SELECT rec.id, rights.r, tstzrange(now(), null)
-                    FROM (VALUES ('PATHOGEN_TEST_DELETE'), ('ADDITIONAL_TEST_DELETE'), ('ADDITIONAL_TEST_VIEW')) as rights (r)
-                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
-                END IF;
+SELECT rec.id, rights.r, tstzrange(now(), null)
+FROM (VALUES ('PATHOGEN_TEST_DELETE'), ('ADDITIONAL_TEST_DELETE'), ('ADDITIONAL_TEST_VIEW')) as rights (r)
+WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+END IF;
 
                 IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'CASE_IMPORT')) = true) THEN
                     INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-                    SELECT rec.id, rights.r, tstzrange(now(), null)
-                    FROM (VALUES ('CASE_VIEW')) as rights (r)
-                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
-                END IF;
+SELECT rec.id, rights.r, tstzrange(now(), null)
+FROM (VALUES ('CASE_VIEW')) as rights (r)
+WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+END IF;
 
                 IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'EVENT_EXPORT')) = true) THEN
                     INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-                    SELECT rec.id, rights.r, tstzrange(now(), null)
-                    FROM (VALUES ('EVENT_VIEW')) as rights (r)
-                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
-                END IF;
+SELECT rec.id, rights.r, tstzrange(now(), null)
+FROM (VALUES ('EVENT_VIEW')) as rights (r)
+WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+END IF;
 
                 IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'EXTERNAL_MESSAGE_PROCESS')) = true) THEN
                     INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-                    SELECT rec.id, rights.r, tstzrange(now(), null)
-                    FROM (VALUES ('CASE_CREATE'), ('CASE_EDIT'), ('CONTACT_CREATE'), ('CONTACT_EDIT'), ('EVENT_CREATE'), ('EVENT_EDIT'), ('EVENTPARTICIPANT_CREATE'),
-                                 ('EVENTPARTICIPANT_EDIT'), ('SAMPLE_CREATE'), ('SAMPLE_EDIT'), ('PATHOGEN_TEST_CREATE'), ('PATHOGEN_TEST_EDIT'), ('PATHOGEN_TEST_DELETE'),
-                                 ('IMMUNIZATION_CREATE'), ('IMMUNIZATION_EDIT'), ('IMMUNIZATION_DELETE')) as rights (r)
-                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
-                END IF;
+SELECT rec.id, rights.r, tstzrange(now(), null)
+FROM (VALUES ('CASE_CREATE'), ('CASE_EDIT'), ('CONTACT_CREATE'), ('CONTACT_EDIT'), ('EVENT_CREATE'), ('EVENT_EDIT'), ('EVENTPARTICIPANT_CREATE'),
+             ('EVENTPARTICIPANT_EDIT'), ('SAMPLE_CREATE'), ('SAMPLE_EDIT'), ('PATHOGEN_TEST_CREATE'), ('PATHOGEN_TEST_EDIT'), ('PATHOGEN_TEST_DELETE'),
+             ('IMMUNIZATION_CREATE'), ('IMMUNIZATION_EDIT'), ('IMMUNIZATION_DELETE')) as rights (r)
+WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+END IF;
 
-            END LOOP;
-    END;
+END LOOP;
+END;
 $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (497, '#5058 Implement user right dependencies - add missing required rights for default roles', false);
@@ -12235,53 +12235,53 @@ INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (497,
 
 DO $$
     DECLARE rec RECORD;
-    BEGIN
-        FOR rec IN SELECT id FROM userroles
-            LOOP
-                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'CASE_DELETE')) = true) THEN
-                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-                    SELECT rec.id, rights.r, tstzrange(now(), null)
-                    FROM (VALUES ('THERAPY_VIEW'), ('CLINICAL_COURSE_VIEW')) as rights (r)
-                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
-                END IF;
+BEGIN
+FOR rec IN SELECT id FROM userroles
+                              LOOP
+    IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'CASE_DELETE')) = true) THEN
+           INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+SELECT rec.id, rights.r, tstzrange(now(), null)
+FROM (VALUES ('THERAPY_VIEW'), ('CLINICAL_COURSE_VIEW')) as rights (r)
+WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+END IF;
 
                 IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'PERFORM_BULK_OPERATIONS_EVENTPARTICIPANT')) = true) THEN
                     INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-                    SELECT rec.id, rights.r, tstzrange(now(), null)
-                    FROM (VALUES ('EVENTPARTICIPANT_EDIT')) as rights (r)
-                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
-                END IF;
+SELECT rec.id, rights.r, tstzrange(now(), null)
+FROM (VALUES ('EVENTPARTICIPANT_EDIT')) as rights (r)
+WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+END IF;
 
                 IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'CASE_IMPORT')) = true) THEN
                     INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-                    SELECT rec.id, rights.r, tstzrange(now(), null)
-                    FROM (VALUES ('CASE_VIEW')) as rights (r)
-                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
-                END IF;
+SELECT rec.id, rights.r, tstzrange(now(), null)
+FROM (VALUES ('CASE_VIEW')) as rights (r)
+WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+END IF;
 
                 IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'CONTACT_IMPORT')) = true) THEN
                     INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-                    SELECT rec.id, rights.r, tstzrange(now(), null)
-                    FROM (VALUES ('CONTACT_VIEW')) as rights (r)
-                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
-                END IF;
+SELECT rec.id, rights.r, tstzrange(now(), null)
+FROM (VALUES ('CONTACT_VIEW')) as rights (r)
+WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+END IF;
 
                 IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'EVENT_IMPORT')) = true) THEN
                     INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-                    SELECT rec.id, rights.r, tstzrange(now(), null)
-                    FROM (VALUES ('EVENT_VIEW')) as rights (r)
-                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
-                END IF;
+SELECT rec.id, rights.r, tstzrange(now(), null)
+FROM (VALUES ('EVENT_VIEW')) as rights (r)
+WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+END IF;
 
                 IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'EVENTPARTICIPANT_IMPORT')) = true) THEN
                     INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-                    SELECT rec.id, rights.r, tstzrange(now(), null)
-                    FROM (VALUES ('EVENTPARTICIPANT_VIEW')) as rights (r)
-                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
-                END IF;
+SELECT rec.id, rights.r, tstzrange(now(), null)
+FROM (VALUES ('EVENTPARTICIPANT_VIEW')) as rights (r)
+WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+END IF;
 
-            END LOOP;
-    END;
+END LOOP;
+END;
 $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment) VALUES (498, '#5058 Implement user right dependencies - add more missing required rights for default roles');
@@ -12312,10 +12312,10 @@ BEGIN
     PERFORM * FROM information_schema.columns WHERE table_name = in_table AND column_name = in_column AND table_schema = in_schema;
     IF FOUND THEN
         RETURN FALSE;
-    ELSE
+ELSE
         EXECUTE format('ALTER TABLE %s ADD COLUMN %s %s', in_table, in_column, column_type);
-        RETURN TRUE;
-    END IF;
+RETURN TRUE;
+END IF;
 END
 $_$ LANGUAGE plpgsql VOLATILE;
 
@@ -12336,32 +12336,32 @@ INSERT INTO schema_version (version_number, comment) VALUES (503, 'S2S_New Right
 
 DO $$
     DECLARE rec RECORD;
-    BEGIN
-        FOR rec IN SELECT id FROM userroles
-            LOOP
-                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright in ('CASE_VIEW', 'CONTACT_VIEW', 'EVENT_VIEW', 'ACTION_EDIT', 'TRAVEL_ENTRY_VIEW'))) = true) THEN
-                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-                    SELECT rec.id, rights.r, tstzrange(now(), null)
-                    FROM (VALUES ('DOCUMENT_VIEW')) as rights (r)
-                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
-                END IF;
+BEGIN
+FOR rec IN SELECT id FROM userroles
+                              LOOP
+    IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright in ('CASE_VIEW', 'CONTACT_VIEW', 'EVENT_VIEW', 'ACTION_EDIT', 'TRAVEL_ENTRY_VIEW'))) = true) THEN
+           INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+SELECT rec.id, rights.r, tstzrange(now(), null)
+FROM (VALUES ('DOCUMENT_VIEW')) as rights (r)
+WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+END IF;
 
                 IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright in ('CASE_EDIT', 'CONTACT_EDIT', 'EVENT_EDIT', 'ACTION_EDIT', 'TRAVEL_ENTRY_EDIT'))) = true) THEN
                     INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-                    SELECT rec.id, rights.r, tstzrange(now(), null)
-                    FROM (VALUES ('DOCUMENT_UPLOAD')) as rights (r)
-                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
-                END IF;
+SELECT rec.id, rights.r, tstzrange(now(), null)
+FROM (VALUES ('DOCUMENT_UPLOAD')) as rights (r)
+WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+END IF;
 
                 IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright in ('CASE_DELETE', 'CONTACT_DELETE', 'EVENT_DELETE', 'ACTION_DELETE', 'TRAVEL_ENTRY_DELETE'))) = true) THEN
                     INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-                    SELECT rec.id, rights.r, tstzrange(now(), null)
-                    FROM (VALUES ('DOCUMENT_DELETE')) as rights (r)
-                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
-                END IF;
+SELECT rec.id, rights.r, tstzrange(now(), null)
+FROM (VALUES ('DOCUMENT_DELETE')) as rights (r)
+WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+END IF;
 
-            END LOOP;
-    END;
+END LOOP;
+END;
 $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment) VALUES (504, '#8543 Add backend checks to access documents');
@@ -12455,7 +12455,7 @@ ALTER TABLE samplereport ADD CONSTRAINT fk_change_user_id FOREIGN KEY (change_us
 
 CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE ON samplereport
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'samplereport_history', true);
+                         FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'samplereport_history', true);
 
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON samplereport
@@ -12474,31 +12474,31 @@ ALTER TABLE samplereport
 
 DO $$
     DECLARE
-        rec RECORD;
-    BEGIN
-        FOR rec IN SELECT id,
-                          uuid,
-                          sampledatetime,
-                          samplereceiveddate,
-                          labsampleid,
-                          samplematerial,
-                          samplematerialtext,
-                          specimencondition,
-                          sampleoveralltestresult
-                   FROM externalmessage
-            LOOP
-                INSERT INTO samplereport(id, uuid, changedate, creationdate, sampledatetime, samplereceiveddate,
-                                         labsampleid, samplematerial, samplematerialtext, specimencondition,
-                                         sampleoveralltestresult, labmessage_id)
-                VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), rec.sampledatetime,
-                        rec.samplereceiveddate, rec.labsampleid, rec.samplematerial, rec.samplematerialtext,
-                        rec.specimencondition, rec.sampleoveralltestresult, rec.id);
-            END LOOP;
-    END;
+rec RECORD;
+BEGIN
+FOR rec IN SELECT id,
+                  uuid,
+                  sampledatetime,
+                  samplereceiveddate,
+                  labsampleid,
+                  samplematerial,
+                  samplematerialtext,
+                  specimencondition,
+                  sampleoveralltestresult
+           FROM externalmessage
+                    LOOP
+               INSERT INTO samplereport(id, uuid, changedate, creationdate, sampledatetime, samplereceiveddate,
+                                        labsampleid, samplematerial, samplematerialtext, specimencondition,
+                                        sampleoveralltestresult, labmessage_id)
+           VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), rec.sampledatetime,
+               rec.samplereceiveddate, rec.labsampleid, rec.samplematerial, rec.samplematerialtext,
+               rec.specimencondition, rec.sampleoveralltestresult, rec.id);
+END LOOP;
+END;
     $$ LANGUAGE plpgsql;
 
 ALTER TABLE externalmessage
-    DROP COLUMN sampledatetime,
+DROP COLUMN sampledatetime,
     DROP COLUMN samplereceiveddate,
     DROP COLUMN labsampleid,
     DROP COLUMN samplematerial,
@@ -12508,7 +12508,7 @@ ALTER TABLE externalmessage
     DROP COLUMN sample_id;
 
 ALTER TABLE externalmessage_history
-    DROP COLUMN sampledatetime,
+DROP COLUMN sampledatetime,
     DROP COLUMN samplereceiveddate,
     DROP COLUMN labsampleid,
     DROP COLUMN samplematerial,
@@ -12531,9 +12531,9 @@ ALTER TABLE testreport
     ALTER COLUMN samplereport_id SET not null;
 
 ALTER TABLE testreport
-    DROP COLUMN labmessage_id;
+DROP COLUMN labmessage_id;
 ALTER TABLE testreport_history
-    DROP COLUMN labmessage_id;
+DROP COLUMN labmessage_id;
 
 INSERT INTO schema_version (version_number, comment) VALUES (507, 'Introduce sample reports #9109');
 
@@ -12552,20 +12552,20 @@ ALTER TABLE sharerequestinfo_history ADD COLUMN ownershiphandedover BOOLEAN DEFA
 -- set ownershiphandedover to true on latest requests where the share info has ownershiphandedover = true
 DO $$
     DECLARE rec RECORD;
-    BEGIN
-        FOR rec IN SELECT si.id FROM sharerequestinfo si
-                                         JOIN sharerequestinfo_shareinfo ss ON si.id = ss.sharerequestinfo_id
-                                         JOIN sormastosormasshareinfo s ON s.id = ss.shareinfo_id
-                   WHERE
-                           s.ownershiphandedover = true AND
-                           si.creationdate = (SELECT max(creationdate) FROM sharerequestinfo sri
-                                                JOIN sharerequestinfo_shareinfo srisi ON sri.id = srisi.sharerequestinfo_id
-                                              WHERE srisi.shareinfo_id = s.id
-                                              GROUP BY srisi.shareinfo_id)
-            LOOP
-                UPDATE sharerequestinfo SET ownershiphandedover = true WHERE id = rec.id;
-            END LOOP;
-    END;
+BEGIN
+FOR rec IN SELECT si.id FROM sharerequestinfo si
+                                 JOIN sharerequestinfo_shareinfo ss ON si.id = ss.sharerequestinfo_id
+                                 JOIN sormastosormasshareinfo s ON s.id = ss.shareinfo_id
+           WHERE
+                   s.ownershiphandedover = true AND
+                   si.creationdate = (SELECT max(creationdate) FROM sharerequestinfo sri
+                                                                        JOIN sharerequestinfo_shareinfo srisi ON sri.id = srisi.sharerequestinfo_id
+                                      WHERE srisi.shareinfo_id = s.id
+                                      GROUP BY srisi.shareinfo_id)
+               LOOP
+UPDATE sharerequestinfo SET ownershiphandedover = true WHERE id = rec.id;
+END LOOP;
+END;
 $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment) VALUES (509, 'S2S_case editable on two systems, behavior of jurisdiction level wrong if share is without ownership #10553');
@@ -12615,13 +12615,13 @@ ALTER TABLE externalmessage_history ADD COLUMN surveillancereport_id bigint;
 DO $$
     DECLARE rec RECORD;
         DECLARE sr_id bigint;
-    BEGIN
-        FOR rec IN SELECT DISTINCT ON (em.id) em.id as emid, em.caze_id AS emcaseid, s.associatedcase_id AS scaseid, messagedatetime, em.type FROM externalmessage em JOIN samplereport sr ON sr.labmessage_id = em.id JOIN samples s ON s.id = sr.sample_id WHERE status = 'PROCESSED' AND (s.associatedcase_id IS NOT NULL OR em.caze_id IS NOT NULL)
-            LOOP
-                INSERT INTO surveillancereports (id, uuid, changedate, creationdate, reportdate, caze_id, reportingtype) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), rec.messagedatetime, CASE WHEN rec.emcaseid IS NOT NULL THEN rec.emcaseid ELSE rec.scaseid END, CASE WHEN rec.type = 'LAB_MESSAGE' THEN 'LABORATORY' ELSE 'DOCTOR' END) RETURNING id INTO sr_id;
-                UPDATE externalmessage SET surveillancereport_id = sr_id WHERE externalmessage.id = rec.emid;
-            END LOOP;
-    END;
+BEGIN
+FOR rec IN SELECT DISTINCT ON (em.id) em.id as emid, em.caze_id AS emcaseid, s.associatedcase_id AS scaseid, messagedatetime, em.type FROM externalmessage em JOIN samplereport sr ON sr.labmessage_id = em.id JOIN samples s ON s.id = sr.sample_id WHERE status = 'PROCESSED' AND (s.associatedcase_id IS NOT NULL OR em.caze_id IS NOT NULL)
+    LOOP
+           INSERT INTO surveillancereports (id, uuid, changedate, creationdate, reportdate, caze_id, reportingtype) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), rec.messagedatetime, CASE WHEN rec.emcaseid IS NOT NULL THEN rec.emcaseid ELSE rec.scaseid END, CASE WHEN rec.type = 'LAB_MESSAGE' THEN 'LABORATORY' ELSE 'DOCTOR' END) RETURNING id INTO sr_id;
+UPDATE externalmessage SET surveillancereport_id = sr_id WHERE externalmessage.id = rec.emid;
+END LOOP;
+END;
 $$ LANGUAGE plpgsql;
 
 ALTER TABLE externalmessage DROP COLUMN caze_id;
@@ -12733,9 +12733,9 @@ CREATE OR REPLACE FUNCTION externalmessage_tsv_update() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' OR  TG_OP = 'UPDATE' THEN
         new.tsv = to_tsvector('simple', unaccent(regexp_replace(new.externalmessagedetails,  E'[<>]', ' ', 'g')));
-    END IF;
+END IF;
 
-    RETURN new;
+RETURN new;
 END
 $$ LANGUAGE 'plpgsql';
 CREATE TRIGGER externalmessage_tsv_update BEFORE INSERT OR UPDATE OF externalmessagedetails ON externalmessage
@@ -12747,52 +12747,52 @@ INSERT INTO schema_version (version_number, comment) VALUES (527, '[DEMIS2SORMAS
 
 DO $$
     DECLARE rec RECORD;
-    BEGIN
-       FOR rec IN SELECT id FROM userroles
-           LOOP
-                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'EVENTGROUP_CREATE')) = true) THEN
-                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
-                    SELECT rec.id, rights.r, tstzrange(now(), null)
-                    FROM (VALUES ('EVENTGROUP_LINK')) as rights (r)
-                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
-                END IF;
+BEGIN
+FOR rec IN SELECT id FROM userroles
+                              LOOP
+    IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'EVENTGROUP_CREATE')) = true) THEN
+           INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+SELECT rec.id, rights.r, tstzrange(now(), null)
+FROM (VALUES ('EVENTGROUP_LINK')) as rights (r)
+WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+END IF;
 
-           END LOOP;
-    END;
+END LOOP;
+END;
 $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (528, '#12008 Add EVENTGROUP_LINK user right dependency for users with EVENTGROUP_CREATE user rights', false);
 
 -- 2023-05-10 Created a new Environment entity #11796
 CREATE TABLE environments(
-    id bigint not null,
-    uuid varchar(36) not null unique,
-    changedate timestamp not null,
-    creationdate timestamp not null,
-    change_user_id bigint,
-    reportdate timestamp,
-    reportinguser_id bigint,
-    environmentname text,
-    description text,
-    externalid varchar(512),
-    responsibleuser_id bigint,
-    investigationstatus varchar(255),
-    environmentmedia varchar(255),
-    watertype varchar(255),
-    otherwatertype text,
-    infrastructuredetails varchar(255),
-    otherinfrastructuredetails text,
-    wateruse json,
-    otherwateruse text,
-    location_id bigint,
-    deleted boolean DEFAULT false,
-    deletionreason varchar(255),
-    otherdeletionreason text,
-    archived boolean DEFAULT false,
-    archiveundonereason varchar(512),
-    endofprocessingdate timestamp without time zone,
-    sys_period tstzrange not null,
-    primary key(id)
+                             id bigint not null,
+                             uuid varchar(36) not null unique,
+                             changedate timestamp not null,
+                             creationdate timestamp not null,
+                             change_user_id bigint,
+                             reportdate timestamp,
+                             reportinguser_id bigint,
+                             environmentname text,
+                             description text,
+                             externalid varchar(512),
+                             responsibleuser_id bigint,
+                             investigationstatus varchar(255),
+                             environmentmedia varchar(255),
+                             watertype varchar(255),
+                             otherwatertype text,
+                             infrastructuredetails varchar(255),
+                             otherinfrastructuredetails text,
+                             wateruse json,
+                             otherwateruse text,
+                             location_id bigint,
+                             deleted boolean DEFAULT false,
+                             deletionreason varchar(255),
+                             otherdeletionreason text,
+                             archived boolean DEFAULT false,
+                             archiveundonereason varchar(512),
+                             endofprocessingdate timestamp without time zone,
+                             sys_period tstzrange not null,
+                             primary key(id)
 );
 
 ALTER TABLE environments OWNER TO sormas_user;
@@ -12802,7 +12802,7 @@ ALTER TABLE environments ADD CONSTRAINT fk_environments_responsibleuser_id FOREI
 ALTER TABLE environments ADD CONSTRAINT fk_environments_location_id FOREIGN KEY (location_id) REFERENCES location(id);
 CREATE TABLE environments_history (LIKE environments);
 CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE ON environments
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'environments_history', true);
+                                                       FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'environments_history', true);
 CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON environments
     FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('environments_history', 'id');
@@ -12891,15 +12891,15 @@ INSERT INTO schema_version (version_number, comment) VALUES (532, 'Add prescribe
 
 DO $$
     DECLARE ur RECORD;
-    BEGIN
-        FOR ur IN SELECT id FROM userroles WHERE linkeddefaultuserrole = 'ENVIRONMENTAL_SURVEILLANCE_USER'
-            LOOP
+BEGIN
+FOR ur IN SELECT id FROM userroles WHERE linkeddefaultuserrole = 'ENVIRONMENTAL_SURVEILLANCE_USER'
+    LOOP
                 IF NOT EXISTS (SELECT 1 FROM userroles_userrights WHERE userrole_id = ur.id AND userright = 'SEE_PERSONAL_DATA_IN_JURISDICTION') THEN
-                    INSERT INTO userroles_userrights (userrole_id, userright) VALUES (ur.id, 'SEE_PERSONAL_DATA_IN_JURISDICTION');
-                    UPDATE userroles set changedate = now() WHERE id = ur.id AND linkeddefaultuserrole = 'ENVIRONMENTAL_SURVEILLANCE_USER';
-                END IF;
-            END LOOP;
-    END;
+          INSERT INTO userroles_userrights (userrole_id, userright) VALUES (ur.id, 'SEE_PERSONAL_DATA_IN_JURISDICTION');
+UPDATE userroles set changedate = now() WHERE id = ur.id AND linkeddefaultuserrole = 'ENVIRONMENTAL_SURVEILLANCE_USER';
+END IF;
+END LOOP;
+END;
 $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment) VALUES (533, 'Add the ''See personal data inside jurisdiction'' user right to the default Environmental Surveillance User #12284');
@@ -13416,8 +13416,8 @@ END $$;
 DO $$
 BEGIN
     IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'userroles_userrights') THEN
-        DELETE FROM userroles_userrights WHERE userright = 'DASHBOARD_SAMPLE_ACCESS';
-    END IF;
+DELETE FROM userroles_userrights WHERE userright = 'DASHBOARD_SAMPLE_ACCESS';
+END IF;
 END $$;
 
 DELETE FROM customizableenumvalue
@@ -13428,7 +13428,7 @@ WHERE id IN (
              FROM customizableenumvalue
              WHERE value = 'TRANSPORTER'
              ORDER BY id DESC
-             LIMIT 1 OFFSET 1
+                 LIMIT 1 OFFSET 1
          ) AS duplicates
 );
 
@@ -13440,11 +13440,43 @@ WHERE id IN (
              FROM customizableenumvalue
              WHERE value = 'BUSINESSMAN_WOMAN'
              ORDER BY id DESC
-             LIMIT 1 OFFSET 1
+                 LIMIT 1 OFFSET 1
          ) AS duplicates
 );
 
 INSERT INTO schema_version (version_number, comment) VALUES (577, 'Miscellaneuos update gh-release-1.87.0 ');
+
+-- 578
+ALTER TABLE cases ADD COLUMN secondVaccinationDate timestamp;
+INSERT INTO schema_version (version_number, comment) VALUES (578, 'Added secondVaccinationDate to cases');
+
+ALTER TABLE epidata ADD COLUMN patientTravelledTwoWeeksPrior varchar(255);
+ALTER TABLE epidata ADD COLUMN patientTravelledInCountryOne varchar(255);
+ALTER TABLE epidata ADD COLUMN patientTravelledInCountryTwo varchar(255);
+ALTER TABLE epidata ADD COLUMN patientTravelledInCountryThree varchar(255);
+ALTER TABLE epidata ADD COLUMN patientTravelledInCountryFour varchar(255);
+ALTER TABLE epidata ADD COLUMN patientTravelledInternationalOne varchar(255);
+ALTER TABLE epidata ADD COLUMN patientTravelledInternationalTwo varchar(255);
+ALTER TABLE epidata ADD COLUMN patientTravelledInternationalThree varchar(255);
+ALTER TABLE epidata ADD COLUMN patientTravelledInternationalFour varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (579, 'Added columns to epiData to implement patientTravelledTwoWeeksPrior #26');
+
+-- 580
+ALTER TABLE epidata ADD COLUMN patientVisitedHealthCareFacility varchar(255);
+ALTER TABLE epidata ADD COLUMN patientCloseContactWithARI varchar(255);
+ALTER TABLE epidata ADD COLUMN patientCloseContactWithARIContactSettingsString varchar(512);
+ALTER TABLE epidata ADD COLUMN patientContactWithConfirmedCase varchar(255);
+ALTER TABLE epidata ADD COLUMN patientContactWithConfirmedCaseExposureLocationsString varchar(512);
+ALTER TABLE epidata ADD COLUMN patientContactWithConfirmedCaseExposureLocationCityCountry varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (580, 'Added columns to epiData to implement patientVisitedHealthCareFacility #26');
+
+ALTER TABLE symptoms ADD COLUMN dyspnea varchar(255);
+ALTER TABLE symptoms ADD COLUMN tachypnea varchar(255);
+ALTER TABLE hospitalization ADD COLUMN patientVentilated varchar(255);
+ALTER TABLE healthconditions ADD COLUMN lungdisease varchar(255);
+ALTER TABLE healthconditions ADD COLUMN stroke varchar(255);
+ALTER TABLE healthconditions ADD COLUMN cancer varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (581, 'Added columns to symptoms, hospitalization, healthconditions to implement patientVisitedHealthCareFacility #26');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 

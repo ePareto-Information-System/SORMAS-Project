@@ -246,7 +246,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public static final String QUARANTINE_CHANGE_COMMENT = "quarantineChangeComment";
 	public static final String DUPLICATE_OF = "duplicateOf";
 	public static final String CREATION_VERSION = "creationVersion";
-
+	public  static final String SECOND_VACCINATION_DATE = "secondVaccinationDate";
 	private Person person;
 	private String description;
 	private Disease disease;
@@ -443,6 +443,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private Long personId;
 
 	private Map<String, String> externalData;
+	private Date secondVaccinationDate;
 
 	public static Case build() {
 		Case caze = new Case();
@@ -1954,6 +1955,16 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		} else {
 			return reportLat + ", " + reportLon + " +-" + Math.round(reportLatLonAccuracy) + "m";
 		}
+	}
+
+	//secondVaccinationDate
+	@Temporal(TemporalType.DATE)
+	public Date getSecondVaccinationDate() {
+		return secondVaccinationDate;
+	}
+
+	public void setSecondVaccinationDate(Date secondVaccinationDate) {
+		this.secondVaccinationDate = secondVaccinationDate;
 	}
 
 	public Double buildCaseLatitudeCoordination() {

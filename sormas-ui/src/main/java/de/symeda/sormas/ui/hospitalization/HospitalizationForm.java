@@ -95,6 +95,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private TextField specifyOtherOutcome;
 	private NullableOptionGroup sequelae;
 	private TextField sequelaeDetails;
+	private NullableOptionGroup patientVentilated;
+
 
 	private static final String HEALTH_FACILITY_DISTRICT = Captions.CaseHospitalization_healthFacilityDistrict;
 	private static final String HOSPITAL_NAME_DETAIL = " ( %s )";
@@ -113,6 +115,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 							3,
 							HospitalizationDto.INTENSIVE_CARE_UNIT_END)
 					+ fluidRowLocs(HospitalizationDto.ISOLATED, HospitalizationDto.ISOLATION_DATE, "")
+					+ fluidRowLocs(HospitalizationDto.PATIENT_VENTILATED)
 					+ fluidRowLocs(HospitalizationDto.DESCRIPTION) +
 					loc(PREVIOUS_HOSPITALIZATIONS_HEADING_LOC) +
 					fluidRowLocs(HospitalizationDto.HOSPITALIZED_PREVIOUSLY) +
@@ -229,6 +232,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		DateField dateFirstSeen = addField(HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE, DateField.class);
 		DateField terminationDateHospitalStay = addField(HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY, DateField.class);
 		TextField hospitalRecordNumber = addField(HospitalizationDto.HOSPITAL_RECORD_NUMBER, TextField.class);
+		patientVentilated = addField(HospitalizationDto.PATIENT_VENTILATED, NullableOptionGroup.class);
+		patientVentilated.setVisible(false);
 
 		hospitalRecordNumber.setVisible(false);
 		dateFirstSeen.setVisible(false);
@@ -432,6 +437,14 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			districtField.setVisible(true);
 
 		}
+
+		if (caze.getDisease() == Disease.CORONAVIRUS){
+			hideFields();
+			hospitalRecordNumber.setVisible(true);
+			patientVentilated.setVisible(true);
+			intensiveCareUnit.setVisible(false);
+			setVisible(true, HospitalizationDto.ISOLATED, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE);
+		}
 	}
 
 	private void setDateFieldVisibilties() {
@@ -557,5 +570,13 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			hospitalName.append(String.format(HOSPITAL_NAME_DETAIL, caze.getHealthFacilityDetails()));
 		}
 		return hospitalName.toString();
+	}
+
+	//hide all fields
+	public void hideFields() {
+		//get field group
+		for (Object propertyId : getFieldGroup().getUnboundPropertyIds()) {
+			setVisible(false, propertyId.toString());
+		}
 	}
 }

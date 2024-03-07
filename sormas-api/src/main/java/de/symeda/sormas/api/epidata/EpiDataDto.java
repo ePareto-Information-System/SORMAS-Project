@@ -20,6 +20,7 @@ package de.symeda.sormas.api.epidata;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -60,7 +61,23 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String PLACES_VISITED_PAST_7DAYS = "placesVisitedPastSevenDays";
 	public static final String VISITED_PLACES_CONFIRMED_PANDEMIC = "vistedPlacesConfirmedPandemic";
 	public static final String RISK_FACTORS_SEVERE_DISEASE = "riskFactorsSevereDisease";
+	public static final String PATIENT_TRAVELLED_TWO_WEEKS_PRIOR = "patientTravelledTwoWeeksPrior";
+	public static final String PATIENT_TRAVELLED_IN_COUNTRY_ONE = "patientTravelledInCountryOne";
+	public static final String PATIENT_TRAVELLED_IN_COUNTRY_TWO = "patientTravelledInCountryTwo";
+	public static final String PATIENT_TRAVELLED_IN_COUNTRY_THREE = "patientTravelledInCountryThree";
+	public static final String PATIENT_TRAVELLED_IN_COUNTRY_FOUR = "patientTravelledInCountryFour";
+	public static final String PATIENT_TRAVELLED_INTERNATIONAL_ONE = "patientTravelledInternationalOne";
+	public static final String PATIENT_TRAVELLED_INTERNATIONAL_TWO = "patientTravelledInternationalTwo";
+	public static final String PATIENT_TRAVELLED_INTERNATIONAL_THREE = "patientTravelledInternationalThree";
+	public static final String PATIENT_TRAVELLED_INTERNATIONAL_FOUR = "patientTravelledInternationalFour";
 	public static final String OTHER_SPECIFY = "otherSpecify";
+	public static final String PATIENT_VISITED_HEALTH_CARE_FACILITY = "patientVisitedHealthCareFacility";
+	public static final String PATIENT_CLOSE_CONTACT_WITH_ARI = "patientCloseContactWithARI";
+	public static final String PATIENT_CLOSE_CONTACT_WITH_ARI_CONTACT_SETTINGS = "patientCloseContactWithARIContactSettings";
+	public static final String PATIENT_CONTACT_WITH_CONFIRMED_CASE = "patientContactWithConfirmedCase";
+	public static final String PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATIONS = "patientContactWithConfirmedCaseExposureLocations";
+	public static final String PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATION_CITY_COUNTRY = "patientContactWithConfirmedCaseExposureLocationCityCountry";
+
 
 	@Enumerated(EnumType.STRING)
 	private Disease disease;
@@ -91,6 +108,21 @@ public class EpiDataDto extends PseudonymizableDto {
 	@Valid
 	private List<ExposureDto> exposures = new ArrayList<>();
 
+	private YesNoUnknown patientTravelledTwoWeeksPrior;
+	private String patientTravelledInCountryOne;
+	private String patientTravelledInCountryTwo;
+	private String patientTravelledInCountryThree;
+	private String patientTravelledInCountryFour;
+	private String patientTravelledInternationalOne;
+	private String patientTravelledInternationalTwo;
+	private String patientTravelledInternationalThree;
+	private String patientTravelledInternationalFour;
+	private YesNoUnknown patientVisitedHealthCareFacility;
+	private YesNoUnknown patientCloseContactWithARI;
+	private Set<ContactSetting> patientCloseContactWithARIContactSettings;
+	private YesNoUnknown patientContactWithConfirmedCase;
+	private Set<ContactSetting> patientContactWithConfirmedCaseExposureLocations;
+	private String patientContactWithConfirmedCaseExposureLocationCityCountry;
 	@Valid
 	private List<ActivityAsCaseDto> activitiesAsCase = new ArrayList<>();
 
@@ -241,6 +273,78 @@ public class EpiDataDto extends PseudonymizableDto {
 		this.otherSpecify = otherSpecify;
 	}
 
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getPatientTravelledTwoWeeksPrior() {
+		return patientTravelledTwoWeeksPrior;
+	}
+
+	public void setPatientTravelledTwoWeeksPrior(YesNoUnknown patientTravelledTwoWeeksPrior) {
+		this.patientTravelledTwoWeeksPrior = patientTravelledTwoWeeksPrior;
+	}
+	public String getPatientTravelledInCountryOne() {
+		return patientTravelledInCountryOne;
+	}
+
+	public void setPatientTravelledInCountryOne(String patientTravelledInCountryOne) {
+		this.patientTravelledInCountryOne = patientTravelledInCountryOne;
+	}
+
+	public String getPatientTravelledInCountryTwo() {
+		return patientTravelledInCountryTwo;
+	}
+
+	public void setPatientTravelledInCountryTwo(String patientTravelledInCountryTwo) {
+		this.patientTravelledInCountryTwo = patientTravelledInCountryTwo;
+	}
+
+	public String getPatientTravelledInCountryThree() {
+		return patientTravelledInCountryThree;
+	}
+
+	public void setPatientTravelledInCountryThree(String patientTravelledInCountryThree) {
+		this.patientTravelledInCountryThree = patientTravelledInCountryThree;
+	}
+
+	public String getPatientTravelledInCountryFour() {
+		return patientTravelledInCountryFour;
+	}
+
+	public void setPatientTravelledInCountryFour(String patientTravelledInCountryFour) {
+		this.patientTravelledInCountryFour = patientTravelledInCountryFour;
+	}
+
+	public String getPatientTravelledInternationalOne() {
+		return patientTravelledInternationalOne;
+	}
+
+	public void setPatientTravelledInternationalOne(String patientTravelledInternationalOne) {
+		this.patientTravelledInternationalOne = patientTravelledInternationalOne;
+	}
+
+	public String getPatientTravelledInternationalTwo() {
+		return patientTravelledInternationalTwo;
+	}
+
+	public void setPatientTravelledInternationalTwo(String patientTravelledInternationalTwo) {
+		this.patientTravelledInternationalTwo = patientTravelledInternationalTwo;
+	}
+
+	public String getPatientTravelledInternationalThree() {
+		return patientTravelledInternationalThree;
+	}
+
+	public void setPatientTravelledInternationalThree(String patientTravelledInternationalThree) {
+		this.patientTravelledInternationalThree = patientTravelledInternationalThree;
+	}
+
+	public String getPatientTravelledInternationalFour() {
+		return patientTravelledInternationalFour;
+	}
+
+	public void setPatientTravelledInternationalFour(String patientTravelledInternationalFour) {
+		this.patientTravelledInternationalFour = patientTravelledInternationalFour;
+	}
+
 	public static EpiDataDto build() {
 
 		EpiDataDto epiData = new EpiDataDto();
@@ -274,5 +378,52 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public void setChildComeInContactWithSymptoms(YesNoUnknown childComeInContactWithSymptoms) {
 		this.childComeInContactWithSymptoms = childComeInContactWithSymptoms;
+	}
+	public YesNoUnknown getPatientVisitedHealthCareFacility() {
+		return patientVisitedHealthCareFacility;
+	}
+
+	public void setPatientVisitedHealthCareFacility(YesNoUnknown patientVisitedHealthCareFacility) {
+		this.patientVisitedHealthCareFacility = patientVisitedHealthCareFacility;
+	}
+
+	public YesNoUnknown getPatientCloseContactWithARI() {
+		return patientCloseContactWithARI;
+	}
+
+	public void setPatientCloseContactWithARI(YesNoUnknown patientCloseContactWithARI) {
+		this.patientCloseContactWithARI = patientCloseContactWithARI;
+	}
+
+	public Set<ContactSetting> getPatientCloseContactWithARIContactSettings() {
+		return patientCloseContactWithARIContactSettings;
+	}
+
+	public void setPatientCloseContactWithARIContactSettings(Set<ContactSetting> patientCloseContactWithARIContactSettings) {
+		this.patientCloseContactWithARIContactSettings = patientCloseContactWithARIContactSettings;
+	}
+
+	public YesNoUnknown getPatientContactWithConfirmedCase() {
+		return patientContactWithConfirmedCase;
+	}
+
+	public void setPatientContactWithConfirmedCase(YesNoUnknown patientContactWithConfirmedCase) {
+		this.patientContactWithConfirmedCase = patientContactWithConfirmedCase;
+	}
+
+	public Set<ContactSetting> getPatientContactWithConfirmedCaseExposureLocations() {
+		return patientContactWithConfirmedCaseExposureLocations;
+	}
+
+	public void setPatientContactWithConfirmedCaseExposureLocations(Set<ContactSetting> patientContactWithConfirmedCaseExposureLocations) {
+		this.patientContactWithConfirmedCaseExposureLocations = patientContactWithConfirmedCaseExposureLocations;
+	}
+
+	public String getPatientContactWithConfirmedCaseExposureLocationCityCountry() {
+		return patientContactWithConfirmedCaseExposureLocationCityCountry;
+	}
+
+	public void setPatientContactWithConfirmedCaseExposureLocationCityCountry(String patientContactWithConfirmedCaseExposureLocationCityCountry) {
+		this.patientContactWithConfirmedCaseExposureLocationCityCountry = patientContactWithConfirmedCaseExposureLocationCityCountry;
 	}
 }

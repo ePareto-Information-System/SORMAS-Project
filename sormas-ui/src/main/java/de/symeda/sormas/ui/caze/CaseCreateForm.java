@@ -102,7 +102,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 	private ComboBox facilityCombo;
 	private ComboBox pointOfEntryDistrictCombo;
 	private DateField investigated;
-	private TextField hospitalName;
 
 	private PersonCreateForm personCreateForm;
 
@@ -316,7 +315,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 
 
 		if (convertedTravelEntry != null) {
-			differentPointOfEntryJurisdiction.setValue(true);
 			RegionReferenceDto regionReferenceDto = convertedTravelEntry.getPointOfEntryRegion() != null
 					? convertedTravelEntry.getPointOfEntryRegion()
 					: convertedTravelEntry.getResponsibleRegion();
@@ -379,10 +377,10 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 					facilityType.setValue(FacilityType.HOSPITAL);
 				}
 
-				if (isCaseDisease((Disease) diseaseField.getValue())) {
+				/*if (isCaseDisease((Disease) diseaseField.getValue())) {
 					FieldHelper.removeItems(facilityType);
 					FieldHelper.updateEnumData(facilityType, FacilityType.DISEASE_FACILITIES);
-				}
+				}*/
 
 				if (facilityType.getValue() != null) {
 					updateFacility();
@@ -428,18 +426,9 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		facilityType.addValueChangeListener(e -> updateFacility());
 		region.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 
-
-
-		region.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
-
 		OptionGroup caseTransmissionClassification = addField(CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
-		//caseTransmissionClassification.setRequired(false);
 		caseTransmissionClassification.setVisible(false);
-//		if (userJurisdictionLevel == JurisdictionLevel.COMMUNITY) {
-//			region.setReadOnly(true);
-//			district.setReadOnly(true);
-//		}
-//		JurisdictionLevel userJurisdictionLevel = UserRole.getJurisdictionLevel(UserProvider.getCurrent().getUserRoles());
+
 		JurisdictionLevel userJurisdictionLevel = UserProvider.getCurrent().getJurisdictionLevel();
 		if (userJurisdictionLevel == JurisdictionLevel.HEALTH_FACILITY) {
 			region.setReadOnly(true);
@@ -536,16 +525,10 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				Arrays.asList(facilityType, facilityCombo),
 				Collections.singletonList(TypeOfPlace.FACILITY),
 				false);
-		/*FieldHelper.setVisibleWhen(
-				dhimsFacilityOrHome,
-				Arrays.asList(dhimsFacilityType, facilityCombo),
-				Collections.singletonList(TypeOfAbode.DHIMS_FACILITY),
-				false);*/
 
 		facilityCombo.addValueChangeListener(e -> {
 			updateFacilityFields(facilityCombo, facilityDetails);
 			this.getValue().setFacilityType((FacilityType) facilityType.getValue());
-//			this.getValue().setDhimsFacilityType((DhimsFacility) dhimsFacilityType.getValue());
 		});
 
 		cbPointOfEntry.addValueChangeListener(e -> {
@@ -569,36 +552,12 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				investigated = addField(CaseDataDto.INVESTIGATED_DATE, DateField.class);
 			}
 			investigated.setVisible(false);
-
 			ogCaseOrigin.setVisible(disease != Disease.CSM);
+			caseTransmissionClassification.setVisible(false);
 
-			if(disease == Disease.AFP){
-				caseTransmissionClassification.setVisible(false);
+			facilityTypeGroup.setVisible(false);
+			FieldHelper.removeItems(facilityCombo);
 
-			}
-
-			if(disease == Disease.YELLOW_FEVER){
-			}
-			if(disease == Disease.AHF) {
-			}
-
-			if(disease == Disease.CSM){
-			}
-
-			if(disease == Disease.NEW_INFLUENZA){
-				setVisible(false, CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION);
-			}
-
-			if (isCaseDisease((Disease) diseaseField.getValue())) {
-				facilityTypeGroup.setVisible(false);
-				FieldHelper.removeItems(facilityCombo);
-				List<FacilityType> dhimsFacilityTypes = FacilityType.DISEASE_FACILITIES;
-				FieldHelper.updateEnumData(facilityType, dhimsFacilityTypes);
-			} else {
-				facilityTypeGroup.setVisible(true);
-				FieldHelper.removeItems(facilityCombo);
-				FieldHelper.updateEnumData(facilityType, FacilityType.getAccommodationTypes((FacilityTypeGroup) facilityTypeGroup.getValue()));
-			}
 
 			investigated.setVisible(disease == Disease.NEW_INFLUENZA);
 			personCreateForm.updatePresentConditionEnum((Disease) valueChangeEvent.getProperty().getValue());

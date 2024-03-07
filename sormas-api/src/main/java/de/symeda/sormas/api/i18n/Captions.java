@@ -484,6 +484,7 @@ public interface Captions {
 	String CaseData_notifiedBy = "CaseData.notifiedBy";
 	String CaseData_dateOfNotification = "CaseData.dateOfNotification";
 	String CaseData_dateOfInvestigation = "CaseData.dateOfInvestigation";
+	String CaseData_secondVaccinationDate = "CaseData.secondVaccinationDate";
 	String CaseData_wasInQuarantineBeforeIsolation = "CaseData.wasInQuarantineBeforeIsolation";
 	String caseDataEnterHomeAddressNow = "caseDataEnterHomeAddressNow";
 	String caseDefaultView = "caseDefaultView";
@@ -610,7 +611,7 @@ public interface Captions {
 	String CaseHospitalization_investigatorAddress = "CaseHospitalization.investigatorAddress";
 	String CaseHospitalization_investigatorTel = "CaseHospitalization.investigatorTel";
 	String CaseHospitalization_hospitalRecordNumber = "CaseHospitalization.hospitalRecordNumber";
-
+	String CaseHospitalization_patientVentilated = "CaseHospitalization.patientVentilated";
 	String CaseHospitalization_previousHospitalizations = "CaseHospitalization.previousHospitalizations";
 	String caseImportErrorDescription = "caseImportErrorDescription";
 	String caseImportMergeCase = "caseImportMergeCase";
@@ -1166,6 +1167,20 @@ public interface Captions {
 	String EpiData_exposures = "EpiData.exposures";
 	String EpiData_highTransmissionRiskArea = "EpiData.highTransmissionRiskArea";
 	String EpiData_largeOutbreaksArea = "EpiData.largeOutbreaksArea";
+	String EpiData_patientTravelledTwoWeeksPrior = "EpiData.patientTravelledTwoWeeksPrior";
+	String EpiData_patientTravelledInCountryOne = "EpiData.patientTravelledInCountryOne";
+	String EpiData_patientTravelledInCountryTwo = "EpiData.patientTravelledInCountryTwo";
+	String EpiData_patientTravelledInCountryThree = "EpiData.patientTravelledInCountryThree";
+	String EpiData_patientTravelledInCountryFour = "EpiData.patientTravelledInCountryFour";
+	String EpiData_patientTravelledInternationalOne = "EpiData.patientTravelledInternationalOne";
+	String EpiData_patientTravelledInternationalTwo = "EpiData.patientTravelledInternationalTwo";
+	String EpiData_patientTravelledInternationalThree = "EpiData.patientTravelledInternationalThree";
+	String EpiData_patientTravelledInternationalFour = "EpiData.patientTravelledInternationalFour";
+	String EpiData_patientVisitedHealthCareFacility = "EpiData.patientVisitedHealthCareFacility";
+	String EpiData_patientCloseContactWithARI = "EpiData.patientCloseContactWithARI";
+	String EpiData_patientContactWithConfirmedCase = "EpiData.patientContactWithConfirmedCase";
+	String EpiData_patientContactWithConfirmedCaseExposureLocationCityCountry = "EpiData.patientContactWithConfirmedCaseExposureLocationCityCountry";
+
 	String epiDataNoSourceContacts = "epiDataNoSourceContacts";
 	String epiWeekFrom = "epiWeekFrom";
 	String epiWeekTo = "epiWeekTo";
@@ -1561,6 +1576,9 @@ public interface Captions {
 	String HealthConditions_hiv = "HealthConditions.hiv";
 	String HealthConditions_hivArt = "HealthConditions.hivArt";
 	String HealthConditions_immunodeficiencyIncludingHiv = "HealthConditions.immunodeficiencyIncludingHiv";
+	String HealthConditions_lungDisease = "HealthConditions.lungDisease";
+	String HealthConditions_stroke = "HealthConditions.stroke";
+	String HealthConditions_cancer = "HealthConditions.cancer";
 	String HealthConditions_immunodeficiencyOtherThanHiv = "HealthConditions.immunodeficiencyOtherThanHiv";
 	String HealthConditions_malignancyChemotherapy = "HealthConditions.malignancyChemotherapy";
 	String HealthConditions_obesity = "HealthConditions.obesity";
@@ -2487,6 +2505,8 @@ public interface Captions {
 	String Symptoms_fatigueWeakness = "Symptoms.fatigueWeakness";
 	String Symptoms_feelingIll = "Symptoms.feelingIll";
 	String Symptoms_fever = "Symptoms.fever";
+	String Symptoms_dyspnea = "Symptoms.dyspnea";
+	String Symptoms_tachypnea = "Symptoms.tachypnea";
 	String Symptoms_feverishFeeling = "Symptoms.feverishFeeling";
 	String Symptoms_firstSymptom = "Symptoms.firstSymptom";
 	String Symptoms_provisionalDiagnosis = "Symptoms.provisionalDiagnosis";

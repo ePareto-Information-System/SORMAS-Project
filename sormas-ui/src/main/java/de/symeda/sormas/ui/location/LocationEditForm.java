@@ -944,4 +944,13 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		}
 	}
 
+	//covid
+	public void setOnlyUnknownForCovid(Disease incomingDisease) {
+		newDisease = incomingDisease;
+		if (newDisease != null && newDisease.equals(Disease.CORONAVIRUS)) {
+			setVisible(true, LocationDto.POSTAL_CODE, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK);
+		}
+	}
+
+
 }

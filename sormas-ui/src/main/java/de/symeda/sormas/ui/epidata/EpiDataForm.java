@@ -21,10 +21,8 @@ import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_TOP_3;
 import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 
-import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -33,9 +31,10 @@ import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextField;
-import de.symeda.sormas.api.utils.CardOrHistory;
+import de.symeda.sormas.api.epidata.ContactSetting;
 import de.symeda.sormas.api.utils.RiskFactorInfluenza;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.ui.utils.CssStyles;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.vaadin.shared.ui.ContentMode;
@@ -80,7 +79,19 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					loc(EpiDataDto.PLACES_VISITED_PAST_7DAYS)+
 					loc(EpiDataDto.VISITED_PLACES_CONFIRMED_PANDEMIC)+
 					fluidRowLocs(EpiDataDto.RISK_FACTORS_SEVERE_DISEASE, EpiDataDto.OTHER_SPECIFY)+
-
+					loc(EpiDataDto.PATIENT_TRAVELLED_TWO_WEEKS_PRIOR)+
+					locCss(VSPACE_TOP_3, "") +
+					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_ONE, EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_TWO) +
+					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_THREE, EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_FOUR) +
+					locCss(VSPACE_TOP_3, "") +
+					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_ONE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_TWO) +
+					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_THREE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_FOUR) +
+					loc(EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY)+
+					loc(EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI)+
+					loc(EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI_CONTACT_SETTINGS)+
+					loc(EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE)+
+					loc(EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATIONS)+
+					loc(EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATION_CITY_COUNTRY)+
 					loc(EpiDataDto.RECENT_TRAVEL_OUTBREAK)+
 					loc(EpiDataDto.CONTACT_SIMILAR_SYMPTOMS)+
 					loc(EpiDataDto.CONTACT_SICK_ANIMALS)+
@@ -105,6 +116,22 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	private final Class<? extends EntityDto> parentClass;
 	private final Consumer<Boolean> sourceContactsToggleCallback;
 	private final boolean isPseudonymized;
+
+	private  NullableOptionGroup patientTravelledTwoWeeksPriorYesNoUknownField;
+	private TextField textFieldPatientTravelledInCountryOne;
+	private TextField textFieldPatientTravelledInCountryTwo;
+	private TextField textFieldPatientTravelledInCountryThree;
+	private TextField textFieldPatientTravelledInCountryFour;
+	private TextField textFieldPatientTravelledInternationalOne;
+	private TextField textFieldPatientTravelledInternationalTwo;
+	private TextField textFieldPatientTravelledInternationalThree;
+	private TextField textFieldPatientTravelledInternationalFour;
+	private NullableOptionGroup patientVisitedHealthCareFacilityYesNoUnkownField;
+	private NullableOptionGroup patientCloseContactWithARIYesNoUnkownField;
+	private OptionGroup patientCloseContactWithARIContactSettingsField;
+	private NullableOptionGroup patientContactWithConfirmedCaseYesNoField;
+	private OptionGroup patientContactWithConfirmedCaseExposureLocationsField;
+	private TextField patientContactWithConfirmedCaseExposureLocationCityCountryField;
 
 	public EpiDataForm(
 		Disease disease,
@@ -169,6 +196,32 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			});
 		}
 
+		//patientTravelledTwoWeeksPrior
+		patientTravelledTwoWeeksPriorYesNoUknownField = addField(EpiDataDto.PATIENT_TRAVELLED_TWO_WEEKS_PRIOR, NullableOptionGroup.class);
+		textFieldPatientTravelledInCountryOne = addField(EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_ONE, TextField.class);
+		textFieldPatientTravelledInCountryTwo = addField(EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_TWO, TextField.class);
+		textFieldPatientTravelledInCountryThree = addField(EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_THREE, TextField.class);
+		textFieldPatientTravelledInCountryFour = addField(EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_FOUR, TextField.class);
+		textFieldPatientTravelledInternationalOne = addField(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_ONE, TextField.class);
+		textFieldPatientTravelledInternationalTwo = addField(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_TWO, TextField.class);
+		textFieldPatientTravelledInternationalThree = addField(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_THREE, TextField.class);
+		textFieldPatientTravelledInternationalFour = addField(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_FOUR, TextField.class);
+
+		patientVisitedHealthCareFacilityYesNoUnkownField = addField(EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY, NullableOptionGroup.class);
+		patientCloseContactWithARIYesNoUnkownField = addField(EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI, NullableOptionGroup.class);
+		patientCloseContactWithARIContactSettingsField = addField(EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI_CONTACT_SETTINGS, OptionGroup.class);
+		CssStyles.style(patientCloseContactWithARIContactSettingsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+		patientCloseContactWithARIContactSettingsField.setMultiSelect(true);
+		patientCloseContactWithARIContactSettingsField.addItems((Object[]) ContactSetting.values());
+		patientCloseContactWithARIContactSettingsField.setCaption(null);
+		patientContactWithConfirmedCaseYesNoField = addField(EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE, NullableOptionGroup.class);
+		patientContactWithConfirmedCaseExposureLocationsField = addField(EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATIONS, OptionGroup.class);
+		CssStyles.style(patientContactWithConfirmedCaseExposureLocationsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+		patientContactWithConfirmedCaseExposureLocationsField.setMultiSelect(true);
+		patientContactWithConfirmedCaseExposureLocationsField.addItems((Object[]) ContactSetting.values());
+		patientContactWithConfirmedCaseExposureLocationsField.setCaption(null);
+		patientContactWithConfirmedCaseExposureLocationCityCountryField = addField(EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATION_CITY_COUNTRY, TextField.class);
+
 		FieldHelper.setVisibleWhen(
 			getFieldGroup(),
 			EpiDataDto.EXPOSURES,
@@ -220,6 +273,40 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 			FieldHelper
 					.setVisibleWhen(previously, Arrays.asList(year), Arrays.asList(YesNo.YES), true);
+
+		}
+
+		if (disease == Disease.CORONAVIRUS) {
+			hideAllFields();
+			setVisible(true, EpiDataDto.PATIENT_TRAVELLED_TWO_WEEKS_PRIOR);
+			setVisible(true, EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY);
+			setVisible(true, EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI);
+			setVisible(true, EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE);
+
+
+
+			//check if patient travelled two weeks prior and set the visibility of the fields
+			patientTravelledTwoWeeksPriorYesNoUknownField.addValueChangeListener(e -> {
+				YesNoUnknown patientTravelledTwoWeeksPrior = (YesNoUnknown) FieldHelper.getNullableSourceFieldValue((Field) e.getProperty());
+				if (patientTravelledTwoWeeksPrior == YesNoUnknown.YES) {
+					setVisible(true, EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_ONE, EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_TWO, EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_THREE, EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_FOUR);
+					setVisible(true, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_ONE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_TWO, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_THREE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_FOUR);
+				}
+			});
+
+			patientCloseContactWithARIYesNoUnkownField.addValueChangeListener(e -> {
+				YesNoUnknown patientCloseContactWithARI = (YesNoUnknown) FieldHelper.getNullableSourceFieldValue((Field) e.getProperty());
+				if (patientCloseContactWithARI == YesNoUnknown.YES) {
+					setVisible(true, EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI_CONTACT_SETTINGS);
+				}
+			});
+
+			patientContactWithConfirmedCaseYesNoField.addValueChangeListener(e -> {
+				YesNoUnknown patientContactWithConfirmedCase = (YesNoUnknown) FieldHelper.getNullableSourceFieldValue((Field) e.getProperty());
+				if (patientContactWithConfirmedCase == YesNoUnknown.YES) {
+					setVisible(true, EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATIONS, EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATION_CITY_COUNTRY);
+				}
+			});
 
 		}
 
@@ -294,4 +381,15 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	}
 	private boolean diseaseCSMCheck(){return disease == Disease.CSM; }
 	private boolean diseaseInfluenzaCheck(){return disease == Disease.NEW_INFLUENZA; }
+
+	//hide all fields
+	public void hideAllFields () {
+		for (Field<?> field : getFieldGroup().getFields()) {
+			//check if field is not null
+			if (field != null)
+				//hide the field
+				field.setVisible(false);
+
+		}
+	}
 }

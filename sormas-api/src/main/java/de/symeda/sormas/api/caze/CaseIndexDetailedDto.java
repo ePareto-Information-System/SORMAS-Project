@@ -73,7 +73,6 @@ public class CaseIndexDetailedDto extends CaseIndexDto {
 	private String responsibleCommunity;
 	private String otherDeletionReason;
 	private DeletionReason deletionReason;
-
 	private UserReferenceDto reportingUser;
 
 	//@formatter:off
@@ -114,6 +113,7 @@ public class CaseIndexDetailedDto extends CaseIndexDto {
 		this.symptomOnsetDate = symptomOnsetDate;
 		this.responsibleRegion = responsibleRegion;
 		this.responsibleCommunity = responsibleCommunity;
+		this.deletionReason = deletionReason;
 		this.otherDeletionReason = otherDeletionReason;
 	}
 

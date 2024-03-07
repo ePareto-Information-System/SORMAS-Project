@@ -116,6 +116,21 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setChildComeInContactWithSymptoms(source.getChildComeInContactWithSymptoms());
 
 
+		target.setPatientTravelledTwoWeeksPrior(source.getPatientTravelledTwoWeeksPrior());
+		target.setPatientTravelledInCountryOne(source.getPatientTravelledInCountryOne());
+		target.setPatientTravelledInCountryTwo(source.getPatientTravelledInCountryTwo());
+		target.setPatientTravelledInCountryThree(source.getPatientTravelledInCountryThree());
+		target.setPatientTravelledInternationalOne(source.getPatientTravelledInternationalOne());
+		target.setPatientTravelledInternationalTwo(source.getPatientTravelledInternationalTwo());
+		target.setPatientTravelledInternationalThree(source.getPatientTravelledInternationalThree());
+		target.setPatientTravelledInternationalFour(source.getPatientTravelledInternationalFour());
+		target.setPatientVisitedHealthCareFacility(source.getPatientVisitedHealthCareFacility());
+		target.setPatientCloseContactWithARI(source.getPatientCloseContactWithARI());
+		target.setPatientCloseContactWithARIContactSettings(source.getPatientCloseContactWithARIContactSettings());
+		target.setPatientContactWithConfirmedCase(source.getPatientContactWithConfirmedCase());
+		target.setPatientContactWithConfirmedCaseExposureLocations(source.getPatientContactWithConfirmedCaseExposureLocations());
+		target.setPatientContactWithConfirmedCaseExposureLocationCityCountry(source.getPatientContactWithConfirmedCaseExposureLocationCityCountry());
+
 		return target;
 	}
 
@@ -267,6 +282,21 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		}
 		target.setActivitiesAsCase(activityAsCaseDtos);
 		target.setChildComeInContactWithSymptoms(source.getChildComeInContactWithSymptoms());
+
+		target.setPatientTravelledTwoWeeksPrior(source.getPatientTravelledTwoWeeksPrior());
+		target.setPatientTravelledInCountryOne(source.getPatientTravelledInCountryOne());
+		target.setPatientTravelledInCountryTwo(source.getPatientTravelledInCountryTwo());
+		target.setPatientTravelledInCountryThree(source.getPatientTravelledInCountryThree());
+		target.setPatientTravelledInternationalOne(source.getPatientTravelledInternationalOne());
+		target.setPatientTravelledInternationalTwo(source.getPatientTravelledInternationalTwo());
+		target.setPatientTravelledInternationalThree(source.getPatientTravelledInternationalThree());
+		target.setPatientTravelledInternationalFour(source.getPatientTravelledInternationalFour());
+		target.setPatientVisitedHealthCareFacility(source.getPatientVisitedHealthCareFacility());
+		target.setPatientCloseContactWithARI(source.getPatientCloseContactWithARI());
+		target.setPatientCloseContactWithARIContactSettings(source.getPatientCloseContactWithARIContactSettings());
+		target.setPatientContactWithConfirmedCase(source.getPatientContactWithConfirmedCase());
+		target.setPatientContactWithConfirmedCaseExposureLocations(source.getPatientContactWithConfirmedCaseExposureLocations());
+		target.setPatientContactWithConfirmedCaseExposureLocationCityCountry(source.getPatientContactWithConfirmedCaseExposureLocationCityCountry());
 
 		return target;
 	}
