@@ -12056,4 +12056,11 @@ update userroles set jurisdictionlevel = 'HEALTH_FACILITY' where caption = 'Surv
 
 INSERT INTO schema_version (version_number, comment) VALUES (489, 'Updated surveillance officer role to render facility #148');
 
+-- 2024-03-05 the surveillance officer role should be able to see the Contact and sample Dashboard and Statistics menu #148
+INSERT INTO userroles_userrights(userrole_id, userright) VALUES (1177306, 'STATISTICS_ACCESS');
+INSERT INTO userroles_userrights(userrole_id, userright) VALUES (1177306, 'STATISTICS_EXPORT');
+INSERT INTO userroles_userrights(userrole_id, userright) VALUES (1177306, 'DASHBOARD_CONTACT_VIEW');
+INSERT INTO userroles_userrights(userrole_id, userright) VALUES (1177306, 'DASHBOARD_SAMPLE_ACCESS');
+
+INSERT INTO schema_version (version_number, comment) VALUES (490, 'Updated surveillance officer role to see dashboards and Statistics menu #148');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
