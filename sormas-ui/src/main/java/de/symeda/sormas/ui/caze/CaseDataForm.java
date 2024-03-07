@@ -128,29 +128,29 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private static final long serialVersionUID = 1L;
 
 	private static final String CASE_DATA_HEADING_LOC = "caseDataHeadingLoc";
-	private static final String MEDICAL_INFORMATION_LOC = "medicalInformationLoc";
-	private static final String PAPER_FORM_DATES_LOC = "paperFormDatesLoc";
+	static final String MEDICAL_INFORMATION_LOC = "medicalInformationLoc";
+	public static final String PAPER_FORM_DATES_LOC = "paperFormDatesLoc";
 	private static final String SMALLPOX_VACCINATION_SCAR_IMG = "smallpoxVaccinationScarImg";
 	private static final String CLASSIFICATION_RULES_LOC = "classificationRulesLoc";
 	private static final String CLASSIFIED_BY_SYSTEM_LOC = "classifiedBySystemLoc";
-	private static final String ASSIGN_NEW_EPID_NUMBER_LOC = "assignNewEpidNumberLoc";
+	public static final String ASSIGN_NEW_EPID_NUMBER_LOC = "assignNewEpidNumberLoc";
 	private static final String EPID_NUMBER_WARNING_LOC = "epidNumberWarningLoc";
-	private static final String EXTERNAL_TOKEN_WARNING_LOC = "externalTokenWarningLoc";
-	private static final String GENERAL_COMMENT_LOC = "generalCommentLoc";
+	public static final String EXTERNAL_TOKEN_WARNING_LOC = "externalTokenWarningLoc";
+	public static final String GENERAL_COMMENT_LOC = "generalCommentLoc";
 	private static final String FOLLOW_UP_STATUS_HEADING_LOC = "followUpStatusHeadingLoc";
 	private static final String CANCEL_OR_RESUME_FOLLOW_UP_BTN_LOC = "cancelOrResumeFollowUpBtnLoc";
 	private static final String LOST_FOLLOW_UP_BTN_LOC = "lostFollowUpBtnLoc";
-	private static final String PLACE_OF_STAY_HEADING_LOC = "placeOfStayHeadingLoc";
-	private static final String FACILITY_OR_HOME_LOC = "facilityOrHomeLoc";
-	private static final String TYPE_GROUP_LOC = "typeGroupLoc";
+	public static final String PLACE_OF_STAY_HEADING_LOC = "placeOfStayHeadingLoc";
+	public static final String FACILITY_OR_HOME_LOC = "facilityOrHomeLoc";
+	public static final String TYPE_GROUP_LOC = "typeGroupLoc";
 	private static final String CONTACT_TRACING_FIRST_CONTACT_HEADER_LOC = "contactTracingFirstContact";
 	private static final String EXPECTED_FOLLOW_UP_UNTIL_DATE_LOC = "expectedFollowUpUntilDateLoc";
 	private static final String CASE_CONFIRMATION_BASIS = "caseConfirmationBasis";
-	private static final String RESPONSIBLE_JURISDICTION_HEADING_LOC = "responsibleJurisdictionHeadingLoc";
-	private static final String DIFFERENT_PLACE_OF_STAY_JURISDICTION = "differentPlaceOfStayJurisdiction";
+	public static final String RESPONSIBLE_JURISDICTION_HEADING_LOC = "responsibleJurisdictionHeadingLoc";
+	public static final String DIFFERENT_PLACE_OF_STAY_JURISDICTION = "differentPlaceOfStayJurisdiction";
 	private static final String DONT_SHARE_WARNING_LOC = "dontShareWarning";
 	private static final String CASE_CLASSIFICATION_CALCULATE_BTN_LOC = "caseClassificationCalculateBtnLoc";
-	private static final String REINFECTION_INFO_LOC = "reinfectionInfoLoc";
+	public static final String REINFECTION_INFO_LOC = "reinfectionInfoLoc";
 	private static final String REINFECTION_DETAILS_COL_1_LOC = "reinfectionDetailsCol1Loc";
 	private static final String REINFECTION_DETAILS_COL_2_LOC = "reinfectionDetailsCol2Loc";
 	public static final String CASE_REFER_POINT_OF_ENTRY_BTN_LOC = "caseReferFromPointOfEntryBtnLoc";
@@ -233,7 +233,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					loc(MEDICAL_INFORMATION_LOC) +
 					fluidRowLocs(CaseDataDto.BLOOD_ORGAN_OR_TISSUE_DONATED) +
 					fluidRowLocs(CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM) + fluidRowLocs(CaseDataDto.TRIMESTER, "") +
-					fluidRowLocs(CaseDataDto.VACCINATION_STATUS, CaseDataDto.VACCINATION_TYPE, CaseDataDto.VACCINATION_DATE) +
+					fluidRowLocs(CaseDataDto.VACCINATION_STATUS, CaseDataDto.VACCINATION_TYPE) +
 					fluidRowLocs(CaseDataDto.VACCINE_TYPE, CaseDataDto.NUMBER_OF_DOSES, CaseDataDto.VACCINATION_DATE) +
 					fluidRowLocs(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED, CaseDataDto.SMALLPOX_VACCINATION_SCAR) +
 					fluidRowLocs(CaseDataDto.SMALLPOX_LAST_VACCINATION_DATE, "") +
@@ -991,6 +991,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		generalCommentLabel.addStyleName(H3);
 		getContent().addComponent(generalCommentLabel, GENERAL_COMMENT_LOC);
 
+		numberOfDoses = addField(CaseDataDto.NUMBER_OF_DOSES, TextField.class);
+		cardDateField = addField(CaseDataDto.VACCINATION_DATE, DateField.class);
+
 		TextArea additionalDetails = addField(CaseDataDto.ADDITIONAL_DETAILS, TextArea.class);
 		additionalDetails.setRows(6);
 		additionalDetails.setDescription(
@@ -1143,7 +1146,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		}
 
 		//Set General Visibilities
-		externalTokenField.setVisible(false);
 		additionalDetails.setVisible(false);
 		notifiedBy.setVisible(false);
 		dateOfNotification.setVisible(false);
@@ -1152,15 +1154,13 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		regionLevelDate.setVisible(false);
 		regionLevelDate.setVisible(false);
 		nationalLevelDate.setVisible(false);
-		clinicianName.setVisible(false);
-		clinicianPhone.setVisible(false);
-		clinicianEmail.setVisible(false);
 		caseTransmissionClassification.setVisible(false);
-		internaltoken.setVisible(false);
 		investigationstatus.setVisible(false);
 		homeaddrecreational.setVisible(false);
 		quarantine.setVisible(false);
 		ogReinfection.setVisible(false);
+		setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.INTERNAL_TOKEN, CaseDataDto.EXTERNAL_TOKEN, CaseDataDto.CLINICIAN_NAME, CaseDataDto.CLINICIAN_PHONE,
+				CaseDataDto.CLINICIAN_EMAIL, CaseDataDto.REPORTING_OFFICER_NAME, CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.FUNCTION_OF_REPORTING_OFFICER, CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE);
 
 		FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.TRIMESTER, CaseDataDto.PREGNANT, Collections.singletonList(YesNoUnknown.YES), true);
 
@@ -1474,21 +1474,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				reinfectionTree.initCheckboxes();
 			}
 
-			if(disease == Disease.YELLOW_FEVER || disease == Disease.CSM){
-				getFieldGroup().getField(CaseDataDto.PREGNANT).setVisible(false);
-				getFieldGroup().getField(CaseDataDto.POSTPARTUM).setVisible(false);
-
-			}
-			//AHF
-			if(disease == Disease.AHF){
-				setVisible(false, CaseDataDto.VACCINATION_STATUS);
-
-			}
+			hideFieldsForSelectedDisease(disease);
 
 			//YELLOW FEVER
 			if(disease == Disease.YELLOW_FEVER){
-				setVisible(false,
-						TYPE_GROUP_LOC);
 
 				nationalLevelDate.setVisible(true);
 				NullableOptionGroup vaccinatedByCardOrHistory = addField(CaseDataDto.VACCINATION_TYPE, NullableOptionGroup.class);
@@ -1499,45 +1488,40 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 				FieldHelper
 						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
-
-				cardDateField = addField(CaseDataDto.VACCINATION_DATE, DateField.class);
-				cardDateField.setVisible(false);
-
 				FieldHelper
 						.setVisibleWhen(vaccinatedByCardOrHistory, Arrays.asList(cardDateField), Arrays.asList(CardOrHistory.CARD), true);
 			}
 
 			//CSM
 			else if(disease == Disease.CSM){
-
-				setVisible(false, CaseDataDto.REPORT_LAT, CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT_LON_ACCURACY);
 				vaccineType = addField(CaseDataDto.VACCINE_TYPE, ComboBox.class);
 				vaccineType.setCaption("Vaccine Type");
-				numberOfDoses = addField(CaseDataDto.NUMBER_OF_DOSES, TextField.class);
 				numberOfDoses.setCaption("Number of Doses");
-				cardDateField = addField(CaseDataDto.VACCINATION_DATE, DateField.class);
-
-				vaccineType.setVisible(false);
-				numberOfDoses.setVisible(false);
-				cardDateField.setVisible(false);
-				reportingOfficerEmail.setVisible(false);
 
 				FieldHelper
 						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccineType, numberOfDoses, cardDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
-
 			}
+
 			//AFP
 			if(disease == Disease.AFP){
-				nationalLevelDate.setVisible(true);
-				notifiedBy.setVisible(true);
-				dateOfNotification.setVisible(true);
-				dateOfInvestigation.setVisible(true);
+				setVisible(true, CaseDataDto.NATIONAL_LEVEL_DATE, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
 			}
+
 			//INFLUENZA
 			if(disease == Disease.NEW_INFLUENZA){
 				nationalLevelDate.setVisible(true);
 			}
 		});
+	}
+	public void hideFieldsForSelectedDisease(Disease disease) {
+		Set<String> disabledFields = CaseFormConfiguration.getDisabledFieldsForDisease(disease);
+		for (String field : disabledFields) {
+			disableField(field);
+		}
+	}
+
+	private void disableField(String field) {
+		setVisible(false, field);
 	}
 
 	private void updateFacilityOrHome() {
