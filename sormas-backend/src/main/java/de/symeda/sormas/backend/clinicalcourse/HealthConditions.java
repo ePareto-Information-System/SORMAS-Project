@@ -39,6 +39,9 @@ public class HealthConditions extends AbstractDomainObject {
 	private YesNoUnknown asthma;
 	private YesNoUnknown sickleCellDisease;
 	private YesNoUnknown immunodeficiencyIncludingHiv;
+	private YesNoUnknown lungDisease;
+	private YesNoUnknown stroke;
+	private YesNoUnknown cancer;
 	private String otherConditions;
 
 	@Enumerated(EnumType.STRING)
@@ -246,5 +249,29 @@ public class HealthConditions extends AbstractDomainObject {
 
 	public void setImmunodeficiencyIncludingHiv(YesNoUnknown immunodeficiencyIncludingHiv) {
 		this.immunodeficiencyIncludingHiv = immunodeficiencyIncludingHiv;
+	}
+
+	public YesNoUnknown getLungDisease() {
+		return lungDisease;
+	}
+
+	public void setLungDisease(YesNoUnknown lungDisease) {
+		this.lungDisease = lungDisease;
+	}
+
+	public YesNoUnknown getStroke() {
+		return stroke;
+	}
+
+	public void setStroke(YesNoUnknown stroke) {
+		this.stroke = stroke;
+	}
+
+	public YesNoUnknown getCancer() {
+		return cancer;
+	}
+
+	public void setCancer(YesNoUnknown cancer) {
+		this.cancer = cancer;
 	}
 }

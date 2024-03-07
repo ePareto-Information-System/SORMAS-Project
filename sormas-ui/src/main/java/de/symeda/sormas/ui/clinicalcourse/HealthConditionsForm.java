@@ -1,29 +1,6 @@
 package de.symeda.sormas.ui.clinicalcourse;
 
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.ASPLENIA;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.ASTHMA;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.CARDIOVASCULAR_DISEASE_INCLUDING_HYPERTENSION;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.CHRONIC_HEART_FAILURE;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.CHRONIC_KIDNEY_DISEASE;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.CHRONIC_LIVER_DISEASE;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.CHRONIC_NEUROLOGIC_CONDITION;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.CHRONIC_PULMONARY_DISEASE;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.CONGENITAL_SYPHILIS;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.CURRENT_SMOKER;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.DIABETES;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.DOWN_SYNDROME;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.FORMER_SMOKER;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.HEPATITIS;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.HIV;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.HIV_ART;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.I18N_PREFIX;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.IMMUNODEFICIENCY_INCLUDING_HIV;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.IMMUNODEFICIENCY_OTHER_THAN_HIV;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.MALIGNANCY_CHEMOTHERAPY;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.OBESITY;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.OTHER_CONDITIONS;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.SICKLE_CELL_DISEASE;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.TUBERCULOSIS;
+import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.*;
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import static de.symeda.sormas.ui.utils.CssStyles.SVG_STROKE_MINOR;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumn;
@@ -61,7 +38,7 @@ public class HealthConditionsForm extends AbstractEditForm<HealthConditionsDto> 
 							fluidColumn(6, 0, locs(
 									TUBERCULOSIS, ASPLENIA, HEPATITIS, DIABETES, IMMUNODEFICIENCY_OTHER_THAN_HIV,
 									IMMUNODEFICIENCY_INCLUDING_HIV, HIV, HIV_ART, CONGENITAL_SYPHILIS, DOWN_SYNDROME,
-									CHRONIC_LIVER_DISEASE, MALIGNANCY_CHEMOTHERAPY)),
+									CHRONIC_LIVER_DISEASE, MALIGNANCY_CHEMOTHERAPY, LUNG_DISEASE, STROKE, CANCER)),
 							fluidColumn(6, 0, locs(
 									CHRONIC_HEART_FAILURE, CHRONIC_PULMONARY_DISEASE, CHRONIC_KIDNEY_DISEASE,
 									CHRONIC_NEUROLOGIC_CONDITION, CARDIOVASCULAR_DISEASE_INCLUDING_HYPERTENSION,
@@ -103,7 +80,10 @@ public class HealthConditionsForm extends AbstractEditForm<HealthConditionsDto> 
 			FORMER_SMOKER,
 			ASTHMA,
 			SICKLE_CELL_DISEASE,
-			IMMUNODEFICIENCY_INCLUDING_HIV);
+			IMMUNODEFICIENCY_INCLUDING_HIV,
+			LUNG_DISEASE,
+			STROKE,
+			CANCER);
 		TextArea otherConditions = addField(OTHER_CONDITIONS, TextArea.class);
 		otherConditions.setRows(6);
 		otherConditions.setDescription(
@@ -152,7 +132,10 @@ public class HealthConditionsForm extends AbstractEditForm<HealthConditionsDto> 
 				FORMER_SMOKER,
 				ASTHMA,
 				SICKLE_CELL_DISEASE,
-				IMMUNODEFICIENCY_INCLUDING_HIV
+				IMMUNODEFICIENCY_INCLUDING_HIV,
+				LUNG_DISEASE,
+				STROKE,
+				CANCER
 		);
 	}
 
@@ -163,8 +146,9 @@ public class HealthConditionsForm extends AbstractEditForm<HealthConditionsDto> 
 				DIABETES,
 				CHRONIC_KIDNEY_DISEASE,
 				CHRONIC_LIVER_DISEASE,
-				//TO DO ADD LUNG DISEASE
-				//ADD FOR STROKE
+				LUNG_DISEASE,
+				STROKE,
+				CANCER,
 				OTHER_CONDITIONS
 		);
 	}

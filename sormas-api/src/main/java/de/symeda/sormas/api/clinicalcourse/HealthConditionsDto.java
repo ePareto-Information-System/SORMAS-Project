@@ -48,6 +48,13 @@ public class HealthConditionsDto extends PseudonymizableDto {
 	public static final String ASTHMA = "asthma";
 	public static final String SICKLE_CELL_DISEASE = "sickleCellDisease";
 	public static final String IMMUNODEFICIENCY_INCLUDING_HIV = "immunodeficiencyIncludingHiv";
+	public static final String LUNG_DISEASE = "lungDisease";
+	public static final String STROKE = "stroke";
+	public static final String CANCER = "cancer";
+
+	private YesNoUnknown lungDisease;
+	private YesNoUnknown stroke;
+	private YesNoUnknown cancer;
 
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
@@ -331,5 +338,29 @@ public class HealthConditionsDto extends PseudonymizableDto {
 
 	public void setOtherConditions(String otherConditions) {
 		this.otherConditions = otherConditions;
+	}
+
+	public YesNoUnknown getLungDisease() {
+		return lungDisease;
+	}
+
+	public void setLungDisease(YesNoUnknown lungDisease) {
+		this.lungDisease = lungDisease;
+	}
+
+	public YesNoUnknown getStroke() {
+		return stroke;
+	}
+
+	public void setStroke(YesNoUnknown stroke) {
+		this.stroke = stroke;
+	}
+
+	public YesNoUnknown getCancer() {
+		return cancer;
+	}
+
+	public void setCancer(YesNoUnknown cancer) {
+		this.cancer = cancer;
 	}
 }
