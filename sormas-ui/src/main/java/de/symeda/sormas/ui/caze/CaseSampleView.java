@@ -38,7 +38,7 @@ public class CaseSampleView extends AbstractCaseView {
     private ComboBox sampleTypeFilter;
     private static final String NOT_SHIPPED = "notShipped";
     private static final String SHIPPED = "shipped";
-    private static final String RECEIVED = "received";
+    private static final String RECEIVED = "receiveds";
     private static final String REFERRED = "referred";
     private CCESamplesGrid grid;
     private DetailSubComponentWrapper gridLayout;

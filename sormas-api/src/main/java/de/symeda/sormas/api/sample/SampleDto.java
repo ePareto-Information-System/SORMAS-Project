@@ -904,6 +904,9 @@ public class SampleDto extends SormasToSormasShareableDto {
 		sample.setReportingUser(userRef);
 		sample.setReportDateTime(new Date());
 		sample.setPathogenTestResult(PathogenTestResultType.PENDING);
+		sample.setReceived(true);
+		sample.setShipped(false);
+		sample.setDeleted(false);
 
 		return sample;
 	}

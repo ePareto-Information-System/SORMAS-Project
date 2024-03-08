@@ -1045,19 +1045,18 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				vaccinationRoutineDate
 		), false);
 
+
+		vaccinationStatus.removeItem(VaccinationStatus.UNKNOWN);
 		cardDateField = addField(CaseDataDto.VACCINATION_DATE, DateField.class);
+		cardDateField.setVisible(false);
 
 		FieldHelper.setEnabledWhen(
 				vaccinatedByCardOrHistory,
 				Arrays.asList(CardOrHistory.CARD, CardOrHistory.HISTORY),
-                Collections.singletonList(
-                        cardDateField
-                ),
+				Collections.singletonList(
+						cardDateField
+				),
 				false);
-		vaccinationStatus.removeItem(VaccinationStatus.UNKNOWN);
-		vaccinatedByCardOrHistory = addField(CaseDataDto.VACCINATION_TYPE, NullableOptionGroup.class);
-		cardDateField = addField(CaseDataDto.VACCINATION_DATE, DateField.class);
-		cardDateField.setVisible(false);
 
 		secondVaccinationDateField = addField(CaseDataDto.SECOND_VACCINATION_DATE, DateField.class);
 		secondVaccinationDateField.setVisible(false);
