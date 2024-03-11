@@ -107,9 +107,9 @@ public class AdditionalTestListComponent extends SideComponent {
 		addComponent(list);
 		list.reload();
 
-		Label testsHeader = new Label(I18nProperties.getString(Strings.headingAdditionalTests));
-		testsHeader.addStyleName(CssStyles.H3);
-		componentHeader.addComponent(testsHeader);
+//		Label testsHeader = new Label(I18nProperties.getString(Strings.headingAdditionalTests));
+//		testsHeader.addStyleName(CssStyles.H3);
+//		componentHeader.addComponent(testsHeader);
 
 		//if (UserProvider.getCurrent().hasUserRight(UserRight.ADDITIONAL_TEST_CREATE)) {
 			createButton = ButtonHelper.createIconButton(Captions.additionalTestNewTest, VaadinIcons.PLUS_CIRCLE, e -> {
@@ -120,8 +120,8 @@ public class AdditionalTestListComponent extends SideComponent {
 //				}
 			}, ValoTheme.BUTTON_PRIMARY);
 
-			componentHeader.addComponent(createButton);
-			componentHeader.setComponentAlignment(createButton, Alignment.MIDDLE_RIGHT);
+//			componentHeader.addComponent(createButton);
+//			componentHeader.setComponentAlignment(createButton, Alignment.MIDDLE_RIGHT);
 
 
 
