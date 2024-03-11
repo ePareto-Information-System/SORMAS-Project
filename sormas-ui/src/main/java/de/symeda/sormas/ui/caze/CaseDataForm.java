@@ -1424,6 +1424,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		if (!shouldHidePaperFormDates()) {
 			Label paperFormDatesLabel = new Label(I18nProperties.getString(Strings.headingPaperFormDates));
 			paperFormDatesLabel.addStyleName(H3);
+			paperFormDatesLabel.setVisible(false);
 
 			// Set<Disease> excludedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA));
 

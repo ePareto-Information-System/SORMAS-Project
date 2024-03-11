@@ -78,14 +78,14 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.location.LocationEditForm;
 public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private static final long serialVersionUID = -1L;
-	private static final String PERSON_INFORMATION_HEADING_LOC = "personInformationHeadingLoc";
+	public static final String PERSON_INFORMATION_HEADING_LOC = "personInformationHeadingLoc";
 	private static final String CADRE_HEADER = "headingPersonCadre";
-	private static final String OCCUPATION_HEADER = "occupationHeader";
-	private static final String ADDRESS_HEADER = "addressHeader";
-	private static final String ADDRESSES_HEADER = "addressesHeader";
-	private static final String CONTACT_INFORMATION_HEADER = "contactInformationHeader";
+	public static final String OCCUPATION_HEADER = "occupationHeader";
+	public static final String ADDRESS_HEADER = "addressHeader";
+	public static final String ADDRESSES_HEADER = "addressesHeader";
+	public static final String CONTACT_INFORMATION_HEADER = "contactInformationHeader";
 	private static final String EXTERNAL_TOKEN_WARNING_LOC = "externalTokenWarningLoc";
-	private static final String GENERAL_COMMENT_LOC = "generalCommentLoc";
+	public static final String GENERAL_COMMENT_LOC = "generalCommentLoc";
 	private static final String FILL_SECTION_HEADING_LOC = "fillSectionHeadingLoc";
 	private static final String SEEK_HELP_HEADING_LOC = "seekHelpHeadingLoc";
 	//@formatter:off
@@ -362,31 +362,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		ComboBox burialConductor = addField(PersonDto.BURIAL_CONDUCTOR, ComboBox.class);
 
 		addressForm = addField(PersonDto.ADDRESS, LocationEditForm.class);
-
-		if (disease != null) {
-			switch (disease) {
-				case CSM:
-					addressForm.setOnlyUnknownForCSM(disease);
-					break;
-				case AFP:
-					addressForm.setOnlyUnknownForAFP(disease);
-					break;
-				case NEW_INFLUENZA:
-					addressForm.setOnlyUnknownForInfluenza(disease);
-					break;
-				case YELLOW_FEVER:
-					addressForm.setOnlyUnknownForYellowFever(disease);
-					break;
-				case AHF:
-					addressForm.setOnlyUnknownForAHF(disease);
-					break;
-				case CORONAVIRUS:
-					addressForm.setOnlyUnknownForCovid(disease);
-					break;
-				default:
-					break;
-			}
-		}
+		addressForm.getIncomingDisease(disease);
 
 		addressForm.setCaption(null);
 		addField(PersonDto.ADDRESSES, LocationsField.class).setCaption(null);
@@ -456,7 +432,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				PersonDto.BURIAL_CONDUCTOR,
 				PersonDto.CAUSE_OF_DEATH,
 				PersonDto.CAUSE_OF_DEATH_DETAILS,
-				PersonDto.CAUSE_OF_DEATH_DISEASE);
+				PersonDto.CAUSE_OF_DEATH_DISEASE,
+				PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PASSPORT_NUMBER);
 
 		FieldHelper.setVisibleWhen(getFieldGroup(), PersonDto.EDUCATION_DETAILS, PersonDto.EDUCATION_TYPE, Arrays.asList(EducationType.OTHER), true);
 
@@ -620,25 +597,11 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		Label generalCommentLabel = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDITIONAL_DETAILS));
 		generalCommentLabel.addStyleName(H3);
 		getContent().addComponent(generalCommentLabel, GENERAL_COMMENT_LOC);
-
+		generalCommentLabel.setVisible(false);
 
 		TextArea additionalDetails = addField(PersonDto.ADDITIONAL_DETAILS, TextArea.class);
 		additionalDetails.setRows(6);
 		additionalDetails.setVisible(false);
-
-		if (disease == Disease.CSM) {
-			generalCommentLabel.setVisible(false);
-			setVisible(false, PersonDto.ADDITIONAL_DETAILS);
-		}
-
-		if (disease == Disease.MEASLES) {
-			setVisible(false, PersonDto.INTERNAL_TOKEN);
-			setVisible(false, PersonDto.EXTERNAL_TOKEN);
-			generalCommentLabel.setVisible(false);
-			setVisible(false, PersonDto.ADDITIONAL_DETAILS);
-			setVisible(false, PersonDto.MOTHERS_MAIDEN_NAME);
-			setVisible(false, PersonDto.NICKNAME);
-		}
 
 		TextField occuDetails = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
 		occuDetails.setCaption("Please Specify Occupation");
@@ -661,12 +624,21 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				numberOfPeople,
 				numberOfOtherContacts
 		);
+		hideFieldsForSelectedDisease(disease);
+
 		if (disease == Disease.CSM) {
+		}
+
+		if (disease == Disease.MEASLES) {
+			setVisible(false, PersonDto.INTERNAL_TOKEN);
+			setVisible(false, PersonDto.EXTERNAL_TOKEN);
 			generalCommentLabel.setVisible(false);
 			setVisible(false, PersonDto.ADDITIONAL_DETAILS);
+			setVisible(false, PersonDto.MOTHERS_MAIDEN_NAME);
+			setVisible(false, PersonDto.NICKNAME);
 		}
+
 		if (disease == Disease.AHF) {
-			setVisible(false, PersonDto.BIRTH_COUNTRY);
 			setVisible(true, PersonDto.NUMBER_OF_PEOPLE, PersonDto.NUMBER_OF_OTHER_CONTACTS);
 			additionalDetails.setVisible(true);
 			additionalDetails.setCaption("Other Notes and Observations");
@@ -701,7 +673,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			TextField investigatorTel = addField(PersonDto.INVESTIGATOR_TEL, TextField.class);
 
 			TextArea additionalPlacesStayed = addField(PersonDto.ADDITIONAL_PLACES_STAYED, TextArea.class, new ResizableTextAreaWrapper<>(false));
-			setVisible(false, PersonDto.EDUCATION_TYPE, PersonDto.ADDITIONAL_DETAILS, PersonDto.ADDRESSES);
 			additionalDetails.setCaption("Village");
 			additionalDetails.setVisible(true);
 			generalCommentLabel.setVisible(false);
@@ -710,9 +681,19 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			contactInformationHeader.setVisible(false);
 			homeaddrecreational.setVisible(true);
 
-			setVisible(false,PersonDto.BIRTH_COUNTRY, PersonDto.NAMES_OF_GUARDIANS, PersonDto.BIRTH_NAME, PersonDto.PASSPORT_NUMBER);
 		}
 
+	}
+
+	public void hideFieldsForSelectedDisease(Disease disease) {
+		Set<String> disabledFields = PersonFormConfiguration.getDisabledFieldsForDisease(disease);
+		for (String field : disabledFields) {
+			disableField(field);
+		}
+	}
+
+	private void disableField(String field) {
+		setVisible(false, field);
 	}
 	@Override
 	public void setValue(PersonDto newFieldValue) {

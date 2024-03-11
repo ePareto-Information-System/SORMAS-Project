@@ -814,6 +814,17 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		symptomsHint.setWidth(100, Unit.PERCENTAGE);
 		getContent().addComponent(symptomsHint, SYMPTOMS_HINT_LOC);
 
+		setVisible(false, FEVER,
+				ALTERED_CONSCIOUSNESS,
+				SEIZURES,
+				HEADACHE,
+				NECK_STIFFNESS,
+				INJECTION_SITE_BLEEDING);
+
+		symptomsHide();
+		setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
+		clinicalMeasurementsHeadingLabel.setVisible(false);
+
 		if (disease == Disease.MONKEYPOX) {
 			setUpMonkeypoxVisibilities();
 		}

@@ -13487,5 +13487,10 @@ INSERT INTO schema_version (version_number, comment) VALUES (583, 'Added influen
 ALTER TABLE location ADD COLUMN locality varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (584, 'Added locality to location');
+
+-- 2024-03-08 Added dateFormSentToDistrict for IDSR-Hospitalization #53
+ALTER TABLE hospitalization ADD COLUMN dateformsenttodistrict date;
+
+INSERT INTO schema_version (version_number, comment) VALUES (585, 'Added dateFormSentToDistrict for IDSR-Hospitalization');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
