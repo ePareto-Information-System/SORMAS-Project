@@ -14,6 +14,8 @@ import java.util.Set;
 
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_TEXT;
 
+
+
 @Entity(name = DiseaseConfiguration.TABLE_NAME)
 @AuditIgnore(retainWrites = true)
 @Cacheable

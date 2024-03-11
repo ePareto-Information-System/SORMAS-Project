@@ -435,7 +435,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		reportInfoLabel.setEnabled(false);
 		getContent().addComponent(reportInfoLabel, REPORT_INFO_LABEL_LOC);
 
-		if(disease!=null) {
 			switch (disease) {
 				case CSM:
 					handleCSM();

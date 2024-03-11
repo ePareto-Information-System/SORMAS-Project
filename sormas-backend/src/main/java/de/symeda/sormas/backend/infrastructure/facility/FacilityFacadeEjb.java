@@ -159,6 +159,11 @@ public class FacilityFacadeEjb
 	}
 	
 
+	public List<FacilityReferenceDto> getAllActiveFacilityByDisease(String diseaseName) {
+		List<Facility> laboratories = service.getAllActiveFacilityByDisease(diseaseName);
+		return laboratories.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
+	}
+
 	@Override
 	@PermitAll
 	public List<FacilityReferenceDto> getAllActiveFacilityByDisease(String diseaseName) {
