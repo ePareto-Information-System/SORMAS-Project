@@ -18,12 +18,15 @@
 
 package de.symeda.sormas.backend.infrastructure.facility;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
@@ -33,6 +36,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
@@ -43,6 +47,7 @@ import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.common.AbstractInfrastructureAdoService;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
+import de.symeda.sormas.backend.disease.DiseaseConfiguration;
 import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.infrastructure.country.Country;
 import de.symeda.sormas.backend.infrastructure.country.CountryFacadeEjb.CountryFacadeEjbLocal;
@@ -228,6 +233,43 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 		}
 
 		return facilities;
+	}
+
+	public List<Facility> getAllActiveFacilityByDisease(String diseaseName) {
+		return getAllActiveFacilityByDisease(diseaseName, null);
+	}
+
+	private List<Facility> getAllActiveFacilityByDisease(
+			String diseaseName,
+			BiFunction<CriteriaBuilder, Root<Facility>, Predicate> createExtraFilters) {
+
+		DiseaseConfiguration disease = getDiseaseByName(diseaseName);
+		List<Facility> facilities = disease.getFacilities().stream()
+				.filter(facility -> FacilityType.LABORATORY.equals(facility.getType()))
+				.sorted(Comparator.comparing(Facility::getName))
+				.collect(Collectors.toList());
+		return facilities;
+	}
+
+	public DiseaseConfiguration getDiseaseByName(String diseaseName) {
+
+		Disease disease = Disease.valueOf(diseaseName.toUpperCase());
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<DiseaseConfiguration> query = cb.createQuery(DiseaseConfiguration.class);
+		Root<DiseaseConfiguration> root = query.from(DiseaseConfiguration.class);
+
+		// Define the WHERE clause to filter by the name
+		query.where(cb.equal(root.get("disease"), disease));
+
+		TypedQuery<DiseaseConfiguration> typedQuery = em.createQuery(query);
+
+		try {
+			return typedQuery.getSingleResult();
+		} catch (javax.persistence.NoResultException e) {
+			// Handle the case where no entity with the given name is found
+			return null; // Or throw an exception or handle it according to your needs
+		}
 	}
 
 	public List<Facility> getFacilitiesByNameAndType(

@@ -245,7 +245,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private boolean shipped;
 	private Boolean sampleMaterialTypeForYF;
 //	private Boolean sampleDiseaseTests;
-	private Boolean received;
+	private boolean received;
 	private PathogenTestResultType pathogenTestResult;
 
 	private Boolean pathogenTestingRequested;

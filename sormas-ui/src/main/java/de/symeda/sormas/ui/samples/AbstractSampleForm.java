@@ -399,7 +399,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         reportInfoLabel.setEnabled(false);
         getContent().addComponent(reportInfoLabel, REPORT_INFO_LABEL_LOC);
 
-		if(disease!=null) {
 			switch (disease) {
 				case CSM:
 					handleCSM();
@@ -416,9 +415,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				case NEW_INFLUENZA:
 					handleNewInfluenza();
 					break;
+				// Handle default case, maybe log an error or set default visibility
 				default:
 			}
-		}
 
     }
 

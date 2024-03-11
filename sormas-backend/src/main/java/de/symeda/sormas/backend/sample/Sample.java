@@ -198,10 +198,10 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private String comment;
 	private SampleSource sampleSource;
 	private Sample referredTo;
-	private Boolean shipped;
+	private boolean shipped;
 	private Boolean sampleMaterialTypeForYF;
 	private Boolean sampleDiseaseTests;
-	private Boolean received;
+	private boolean received;
 	private PathogenTestResultType pathogenTestResult;
 	private Date pathogenTestResultChangeDate;
 

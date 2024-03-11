@@ -63,6 +63,7 @@ public interface FacilityFacade extends InfrastructureFacade<FacilityDto, Facili
 	List<FacilityReferenceDto> getActiveHospitalsByDistrict(DistrictReferenceDto district, boolean includeOtherFacility);
 
 	List<FacilityReferenceDto> getAllActiveLaboratories(boolean includeOtherFacility);
+	List<FacilityReferenceDto> getAllActiveFacilityByDisease(String diseaseName);
 
 	List<FacilityDto> getAllByRegionAfter(String regionUuid, Date date);
 
