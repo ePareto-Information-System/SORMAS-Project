@@ -238,6 +238,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		});
 
 		TextField streetField = addField(LocationDto.STREET, TextField.class);
+		streetField.setVisible(false);
 		localityField = addField(LocationDto.LOCALITY, TextField.class);
 		TextField houseNumberField = addField(LocationDto.HOUSE_NUMBER, TextField.class);
 		TextField landMark = addField(LocationDto.LAND_MARK, TextField.class);
@@ -893,49 +894,47 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		}
 	}
 
-	public void setOnlyUnknownForYellowFever(Disease incomingDisease) {
+	public void getIncomingDisease(Disease incomingDisease){
 		newDisease = incomingDisease;
-		if (newDisease != null && newDisease.equals(Disease.YELLOW_FEVER)) {
+
+		switch (newDisease){
+			case YELLOW_FEVER:
+				handleYellowFever();
+			case AHF:
+				handleAHF();
+			case CSM:
+				handleCSM();
+			case NEW_INFLUENZA:
+				handleNewInfluenza();
+			case AFP:
+				handleAFP();
+		}
+	}
+
+	public void handleYellowFever(){
 			setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK);
 			localityField.setVisible(false);
-		}
 	}
-	public void setOnlyUnknownForAHF(Disease incomingDisease) {
-		newDisease = incomingDisease;
-		if (newDisease != null && newDisease.equals(Disease.AHF)) {
-			setVisible(false,
-					LocationDto.POSTAL_CODE, LocationDto.ADDITIONAL_INFORMATION, LocationDto.LOCALITY);
-		}
+	public void handleAHF(){
+		setVisible(false,
+				LocationDto.POSTAL_CODE, LocationDto.ADDITIONAL_INFORMATION, LocationDto.LOCALITY);
 	}
-
-	public void setOnlyUnknownForCSM(Disease incomingDisease) {
-		newDisease = incomingDisease;
-		if (newDisease != null && newDisease.equals(Disease.CSM)) {
-			setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAT_LON_ACCURACY, LocationDto.LAND_MARK);
-			localityField.setVisible(false);
-		}
+	public void handleCSM(){
+		setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAT_LON_ACCURACY, LocationDto.LAND_MARK);
+		localityField.setVisible(false);
 	}
-
-	public void setOnlyUnknownForInfluenza(Disease incomingDisease) {
-		newDisease = incomingDisease;
-		if (newDisease != null && newDisease.equals(Disease.NEW_INFLUENZA)) {
-			setVisible(false,
-					LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY, LocationDto.LOCALITY);
-			additionalInformationField.setCaption("Address (Location)");
-
-		}
+	public void handleNewInfluenza(){
+		setVisible(false,
+				LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY, LocationDto.LOCALITY);
+		additionalInformationField.setCaption("Address (Location)");
 	}
-	public void setOnlyUnknownForAFP(Disease incomingDisease) {
-		newDisease = incomingDisease;
-		if (newDisease != null && newDisease.equals(Disease.AFP)) {
-			additionalInformationField.setCaption("Village");
-			setVisible(false, LocationDto.ADDRESS_TYPE,
-					LocationDto.ADDRESS_TYPE_DETAILS,
-					LocationDto.STREET,
-					LocationDto.CONTACT_PERSON_FIRST_NAME, LocationDto.LOCALITY);
-			setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE);
-			postalCodeField.setCaption("Ghana Post Office");
-		}
+	public void handleAFP(){
+		additionalInformationField.setCaption("Village");
+		setVisible(false, LocationDto.ADDRESS_TYPE,
+				LocationDto.ADDRESS_TYPE_DETAILS,
+				LocationDto.STREET,
+				LocationDto.CONTACT_PERSON_FIRST_NAME, LocationDto.LOCALITY);
+		setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE);
 	}
 
 }

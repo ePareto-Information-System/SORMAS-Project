@@ -100,6 +100,7 @@ public class Hospitalization extends AbstractDomainObject {
 	private Date dateFirstSeen;
 	private Date terminationDateHospitalStay;
 	private String hospitalRecordNumber;
+	private Date dateFormSentToDistrict;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getAdmissionDate() {
@@ -375,6 +376,13 @@ public class Hospitalization extends AbstractDomainObject {
 	}
 	public void setHospitalRecordNumber(String hospitalRecordNumber) {
 		this.hospitalRecordNumber = hospitalRecordNumber;
+	}
+	public Date getDateFormSentToDistrict() {
+		return dateFormSentToDistrict;
+	}
+
+	public void setDateFormSentToDistrict(Date dateFormSentToDistrict) {
+		this.dateFormSentToDistrict = dateFormSentToDistrict;
 	}
 
 }

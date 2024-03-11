@@ -310,6 +310,7 @@ public interface Captions {
 	String CaseData_changeDate = "CaseData.changeDate";
 	String CaseData_classificationComment = "CaseData.classificationComment";
 	String CaseData_classificationDate = "CaseData.classificationDate";
+	String CaseData_numberOfDoses = "CaseData.numberOfDoses";
 	String CaseData_classificationUser = "CaseData.classificationUser";
 	String CaseData_classifiedBy = "CaseData.classifiedBy";
 	String CaseData_clinicalConfirmation = "CaseData.clinicalConfirmation";
@@ -552,6 +553,7 @@ public interface Captions {
 	String CaseHospitalization_admittedToHealthFacility = "CaseHospitalization.admittedToHealthFacility";
 	String CaseHospitalization_terminationDateHospitalStay = "CaseHospitalization.terminationDateHospitalStay";
 	String CaseHospitalization_notifyDistrictDate = "CaseHospitalization.notifyDistrictDate";
+	String CaseHospitalization_dateFormSentToDistrict = "CaseHospitalization.dateFormSentToDistrict";
 	String CaseHospitalization_dischargeDate = "CaseHospitalization.dischargeDate";
 	String CaseHospitalization_healthFacility = "CaseHospitalization.healthFacility";
 	String CaseHospitalization_healthFacilityDistrict = "CaseHospitalization.CaseHospitalization_healthFacilityDistrict";

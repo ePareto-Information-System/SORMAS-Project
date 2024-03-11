@@ -80,7 +80,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW) +
 					fluidRowLocs(HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE, HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY) +
 			fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
-			fluidRowLocs(6,HospitalizationDto.NOTIFY_DISTRICT_DATE) +
+			fluidRowLocs(HospitalizationDto.NOTIFY_DISTRICT_DATE, HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT) +
 			fluidRowLocs(HospitalizationDto.HOSPITALIZATION_REASON, HospitalizationDto.OTHER_HOSPITALIZATION_REASON) +
 					fluidRowLocs(3, HospitalizationDto.INTENSIVE_CARE_UNIT, 3,
 							HospitalizationDto.INTENSIVE_CARE_UNIT_START,
@@ -181,17 +181,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		intensiveCareUnit = addField(HospitalizationDto.INTENSIVE_CARE_UNIT, NullableOptionGroup.class);
 		intensiveCareUnitStart = addField(HospitalizationDto.INTENSIVE_CARE_UNIT_START, DateField.class);
 		DateField notifyDistrictDate = addField(HospitalizationDto.NOTIFY_DISTRICT_DATE, DateField.class);
+		DateField dateFormSentToDistrict = addField(HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT, DateField.class);
 		DateField dateFirstSeen = addField(HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE, DateField.class);
 		DateField terminationDateHospitalStay = addField(HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY, DateField.class);
 		TextField hospitalRecordNumber = addField(HospitalizationDto.HOSPITAL_RECORD_NUMBER, TextField.class);
 
-		hospitalRecordNumber.setVisible(false);
-		dateFirstSeen.setVisible(false);
-		notifyDistrictDate.setVisible(false);
-		intensiveCareUnitStart.setVisible(false);
-		terminationDateHospitalStay.setVisible(false);
 		intensiveCareUnitEnd = addField(HospitalizationDto.INTENSIVE_CARE_UNIT_END, DateField.class);
-		intensiveCareUnitEnd.setVisible(false);
 		FieldHelper
 			.setVisibleWhen(intensiveCareUnit, Arrays.asList(intensiveCareUnitStart, intensiveCareUnitEnd), Arrays.asList(YesNo.YES), true);
 		final Field isolationDateField = addField(HospitalizationDto.ISOLATION_DATE);
@@ -207,12 +202,27 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		PreviousHospitalizationsField previousHospitalizationsField =
 			addField(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS, PreviousHospitalizationsField.class);
 
+		admissionDateField.setVisible(false);
+		dischargeDateField.setVisible(false);
+		hospitalRecordNumber.setVisible(false);
+		dateFirstSeen.setVisible(false);
+		intensiveCareUnit.setVisible(false);
+		isolatedField.setVisible(false);
+		descriptionField.setVisible(false);
+		intensiveCareUnitStart.setVisible(false);
+		intensiveCareUnitEnd.setVisible(false);
+		terminationDateHospitalStay.setVisible(false);
+		leftAgainstAdviceField.setVisible(false);
+		hospitalizationReason.setVisible(false);
+		hospitalizedPreviouslyField.setVisible(false);
+		previousHospitalizationsHeadingLabel.setVisible(false);
+
 		if(caze.getDisease() == Disease.AFP){
 
 			admittedToHealthFacilityFieldNew.setVisible(true);
 			hospitalRecordNumber.setVisible(true);
 
-			setVisible(false, HospitalizationDto.LEFT_AGAINST_ADVICE, HospitalizationDto.INTENSIVE_CARE_UNIT, HospitalizationDto.ISOLATED, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HospitalizationDto.DISCHARGE_DATE);
+			setVisible(false, HospitalizationDto.LEFT_AGAINST_ADVICE, HospitalizationDto.INTENSIVE_CARE_UNIT, HospitalizationDto.ISOLATED, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT);
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
@@ -327,8 +337,9 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			addField(HospitalizationDto.PATIENT_HOSPITALIZED_DETAINED, NullableOptionGroup.class);
 
 			setVisible(false, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HEALTH_FACILITY, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE,
-					HospitalizationDto.INTENSIVE_CARE_UNIT, HospitalizationDto.ISOLATED, HospitalizationDto.DESCRIPTION);
+					HospitalizationDto.INTENSIVE_CARE_UNIT, HospitalizationDto.ISOLATED, HospitalizationDto.DESCRIPTION, HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT);
 
+			notifyDistrictDate.setVisible(false);
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
@@ -340,17 +351,18 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
+			notifyDistrictDate.setVisible(false);
 
-			setVisible(false, HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.ISOLATED, HospitalizationDto.INTENSIVE_CARE_UNIT, HospitalizationDto.DISCHARGE_DATE);
+			setVisible(false, HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.ISOLATED, HospitalizationDto.INTENSIVE_CARE_UNIT, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT);
 			setVisible(true, HospitalizationDto.DISEASE_ONSET_DATE, HospitalizationDto.PATIENT_HOSPITALIZED_DETAINED);
 
 		}
 
 		if(caze.getDisease() == Disease.YELLOW_FEVER){
-			notifyDistrictDate.setVisible(true);
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
+			dateFormSentToDistrict.setVisible(false);
 		}
 
 		if(caze.getDisease() == Disease.NEW_INFLUENZA){
@@ -361,6 +373,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			leftAgainstAdviceField.setVisible(false);
 			isolatedField.setVisible(false);
 			descriptionField.setVisible(false);
+			notifyDistrictDate.setVisible(false);
+			dateFormSentToDistrict.setVisible(false);
 
 			admittedToHealthFacilityFieldNew.setVisible(true);
 			admissionDateField.setVisible(true);
