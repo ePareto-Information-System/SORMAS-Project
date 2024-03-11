@@ -246,6 +246,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		addField(SampleDto.LAB_SAMPLE_ID, TextField.class);
 		sampleDateField = addField(SampleDto.SAMPLE_DATE_TIME, DateTimeField.class);
 		sampleDateField.setInvalidCommitted(false);
+		sampleDateField.setRequired(true);
 		//sampleMaterialComboBox = addField(SampleDto.SAMPLE_MATERIAL);
 
 		ComboBox diseaseBox = new ComboBox("Diseases");
