@@ -81,6 +81,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String TEL_NUMBER = "telNumber";
 	public static final String DATE_FORM_SENT_TO_DISTRICT = "dateFormSentToDistrict";
 	public static final String DATE_FORM_RECEIVED_AT_DISTRICT = "dateFormReceivedAtDistrict";
+	public static final String DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN = "dateResultsSentToClinician";
 	public static final String DATE_FORM_SENT_TO_REGION = "dateFormSentToRegion";
 	public static final String DATE_FORM_RECEIVED_AT_REGION = "dateFormReceivedAtRegion";
 	public static final String DATE_FORM_SENT_TO_NATIONAL = "dateFormSentToNational";
@@ -115,6 +116,9 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String SAMPLING_REASON_DETAILS = "samplingReasonDetails";
 	public static final String DELETION_REASON = "deletionReason";
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
+	public static final String SUSPECTED_DISEASE = "suspectedDisease";
+	public static final String DATE_LAB_RECEIVED_SPECIMEN = "dateLabReceivedSpecimen";
+	public static final String LAB_LOCATION = "labLocation";
 	public static final String IPSAMPLESENT = "ipSampleSent";
 	public static final String IPSAMPLERESULTS = "ipSampleResults";
 	public static final String DISEASE = "disease";
@@ -259,6 +263,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private Boolean additionalTestingRequested;
 	private Set<PathogenTestType> requestedPathogenTests;
 	private Set<SampleMaterial> requestedSampleMaterials;
+//	private Set<PathogenTestType> sampleTests;
 	private PathogenTestType sampleTests;
 	private Set<AdditionalTestType> requestedAdditionalTests;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
@@ -299,6 +304,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private Date dateSampleSentToLab;
 	private Date dateFormSentToDistrict;
 	private Date dateFormReceivedAtDistrict;
+	private Date dateResultsSentToClinician;
 	private Date dateFormSentToRegion;
 	private Date dateFormReceivedAtRegion;
 	private Date dateFormSentToNational;
@@ -380,6 +386,9 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private String otherInfluenzaVirus;
 	private String treatment;
 	private String stateTreatmentAdministered;
+	private Disease suspectedDisease;
+	private String labLocation;
+	private Date dateLabReceivedSpecimen;
 
 
 
@@ -781,14 +790,14 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public void setSampleMaterialTestingRequested(Boolean sampleMaterialTestingRequested) {
 		this.sampleMaterialTestingRequested = sampleMaterialTestingRequested;
 	}
-//	@ImportIgnore
-//	public boolean isYellowFeverSampleType() {
-//		return sampleMaterialTypeForYF;
-//	}
+	@ImportIgnore
+	public boolean isYellowFeverSampleType() {
+		return sampleMaterialTypeForYF;
+	}
 
-//	public void setYellowFeverSampleType(boolean sampleMaterialTypeForYF) {
-//		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
-//	}
+	public void setYellowFeverSampleType(boolean sampleMaterialTypeForYF) {
+		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
+	}
 
 	/*@ImportIgnore
 	public Boolean isDiseaseSampleTests() {
@@ -1046,6 +1055,10 @@ public class SampleDto extends SormasToSormasShareableDto {
 		target.setInfluenzaVirus(source.getInfluenzaVirus());
 		target.setTreatment(source.getTreatment());
 		target.setStateTreatmentAdministered(source.getStateTreatmentAdministered());
+		target.setSuspectedDisease(source.getSuspectedDisease());
+		target.setLabLocation(source.getLabLocation());
+		target.setDateLabReceivedSpecimen(source.getDateLabReceivedSpecimen());
+		target.setDateResultsSentToClinician(source.getDateResultsSentToClinician());
 
 
 
@@ -1660,5 +1673,37 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 	public void setStateTreatmentAdministered(String stateTreatmentAdministered) {
 		this.stateTreatmentAdministered = stateTreatmentAdministered;
+	}
+
+	public Disease getSuspectedDisease() {
+		return suspectedDisease;
+	}
+
+	public void setSuspectedDisease(Disease suspectedDisease) {
+		this.suspectedDisease = suspectedDisease;
+	}
+
+	public String getLabLocation() {
+		return labLocation;
+	}
+
+	public void setLabLocation(String labLocation) {
+		this.labLocation = labLocation;
+	}
+
+	public Date getDateLabReceivedSpecimen() {
+		return dateLabReceivedSpecimen;
+	}
+
+	public void setDateLabReceivedSpecimen(Date dateLabReceivedSpecimen) {
+		this.dateLabReceivedSpecimen = dateLabReceivedSpecimen;
+	}
+
+	public Date getDateResultsSentToClinician() {
+		return dateResultsSentToClinician;
+	}
+
+	public void setDateResultsSentToClinician(Date dateResultsSentToClinician) {
+		this.dateResultsSentToClinician = dateResultsSentToClinician;
 	}
 }

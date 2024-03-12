@@ -1228,6 +1228,10 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setOtherInfluenzaVirus(source.getOtherInfluenzaVirus());
 		target.setTreatment(source.getTreatment());
 		target.setStateTreatmentAdministered(source.getStateTreatmentAdministered());
+		target.setSuspectedDisease(source.getSuspectedDisease());
+		target.setLabLocation(source.getLabLocation());
+		target.setDateLabReceivedSpecimen(source.getDateLabReceivedSpecimen());
+		target.setDateResultsSentToClinician(source.getDateResultsSentToClinician());
 
 
 
@@ -1490,7 +1494,10 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setFourFoldRise(source.getFourFoldRise());
 		target.setTreatment(source.getTreatment());
 		target.setStateTreatmentAdministered(source.getStateTreatmentAdministered());
-
+		target.setSuspectedDisease(source.getSuspectedDisease());
+		target.setLabLocation(source.getLabLocation());
+		target.setDateLabReceivedSpecimen(source.getDateLabReceivedSpecimen());
+		target.setDateResultsSentToClinician(source.getDateResultsSentToClinician());
 
 
 		return target;

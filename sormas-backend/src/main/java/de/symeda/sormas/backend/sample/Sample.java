@@ -203,7 +203,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private Sample referredTo;
 	private boolean shipped;
 	private boolean sampleMaterialTypeForYF;
-	private Boolean sampleDiseaseTests;
+	private boolean sampleDiseaseTests;
 	private boolean received;
 	private PathogenTestResultType pathogenTestResult;
 	private Date pathogenTestResultChangeDate;
@@ -329,7 +329,12 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private String otherInfluenzaVirus;
 	private String treatment;
 	private String stateTreatmentAdministered;
+	private Disease suspectedDisease;
+	private String labLocation;
+	private Date dateLabReceivedSpecimen;
+	private Date dateResultsSentToClinician;
 	private Long pathogenTestCount;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	public Case getAssociatedCase() {
@@ -418,7 +423,6 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	}
 
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
 	public SampleMaterial getSampleMaterial() {
 		return sampleMaterial;
 	}
@@ -565,19 +569,19 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 		this.shipped = shipped;
 	}
 
-//	public boolean isYellowFeverSampleType() {
-//		return sampleMaterialTypeForYF;
-//	}
-//
-//	public void setYellowFeverSampleType(boolean sampleMaterialTypeForYF) {
-//		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
-//	}
+	public boolean isYellowFeverSampleType() {
+		return sampleMaterialTypeForYF;
+	}
 
-	public Boolean isDiseaseSampleTests() {
+	public void setYellowFeverSampleType(boolean sampleMaterialTypeForYF) {
+		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
+	}
+
+	public boolean isDiseaseSampleTests() {
 		return sampleDiseaseTests;
 	}
 
-	public void setDiseaseSampleTests(Boolean sampleDiseaseTests) {
+	public void setDiseaseSampleTests(boolean sampleDiseaseTests) {
 		this.sampleDiseaseTests = sampleDiseaseTests;
 	}
 
@@ -811,6 +815,15 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setSampleTests(PathogenTestType sampleTests) {
 		this.sampleTests = sampleTests;
 	}
+
+	@Enumerated(EnumType.STRING)
+    public PathogenTestType getSampleTests() {
+       return sampleTests;
+    }
+
+    public void setSampleTests(PathogenTestType sampleTests) {
+       this.sampleTests = sampleTests;
+    }
 
 	@Enumerated(EnumType.STRING)
 	public SamplingReason getSamplingReason() {
@@ -1637,5 +1650,34 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setPathogenTestCount(Long pathogenTestCount) {
 		this.pathogenTestCount = pathogenTestCount;
+	}
+
+	public Disease getSuspectedDisease() {
+		return suspectedDisease;
+	}
+
+	public void setSuspectedDisease(Disease suspectedDisease) {
+		this.suspectedDisease = suspectedDisease;
+	}
+	public String getLabLocation() {
+		return labLocation;
+	}
+
+	public void setLabLocation(String labLocation) {
+		this.labLocation = labLocation;
+	}
+	public Date getDateLabReceivedSpecimen() {
+		return dateLabReceivedSpecimen;
+	}
+
+	public void setDateLabReceivedSpecimen(Date dateLabReceivedSpecimen) {
+		this.dateLabReceivedSpecimen = dateLabReceivedSpecimen;
+	}
+	public Date getDateResultsSentToClinician() {
+		return dateResultsSentToClinician;
+	}
+
+	public void setDateResultsSentToClinician(Date dateResultsSentToClinician) {
+		this.dateResultsSentToClinician = dateResultsSentToClinician;
 	}
 }
