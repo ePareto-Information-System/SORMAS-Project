@@ -12905,5 +12905,18 @@ INSERT INTO schema_version (version_number, comment) VALUES (561, 'Added localit
 ALTER TABLE hospitalization ADD COLUMN dateformsenttodistrict date;
 
 INSERT INTO schema_version (version_number, comment) VALUES (562, 'Added dateFormSentToDistrict for IDSR-Hospitalization');
+
+-- 2024-03-11 Added 4 fields to Samples IDSR-Hospitalization #53
+ALTER TABLE samples ADD COLUMN datelabreceivedspecimen date;
+ALTER TABLE samples ADD COLUMN dateresultssenttoclinician date;
+ALTER TABLE samples ADD COLUMN lablocation varchar(255);
+ALTER TABLE samples ADD COLUMN suspecteddisease varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (563, 'Added 4 fields to Samples IDSR-Hospitalization');
+
+-- 2024-03-12 Updated sample_history IDSR-Hospitalization #53
+ALTER TABLE samples_history ALTER COLUMN samplematerial DROP NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (564, 'Updated sample_history IDSR-Hospitalization');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``

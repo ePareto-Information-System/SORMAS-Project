@@ -29,15 +29,7 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 import static de.symeda.sormas.ui.utils.LayoutUtil.locCss;
 import static de.symeda.sormas.ui.utils.LayoutUtil.locsCss;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -205,6 +197,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	private List<String> lesionsFieldIds;
 	private List<String> lesionsLocationFieldIds;
 	private List<String> monkeypoxImageFieldIds;
+	private Button clearAllButton;
+	private Button setEmptyToNoButton;
 
 	public SymptomsForm(
 		CaseDataDto caze,
@@ -252,10 +246,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		Label headingClinicalHistoryHeadingLabel =
 				createLabel(I18nProperties.getString(Strings.headingClinicalHistory), H3, CLINICAL_HISTORY_HEADING_LOC);
-
 		Label signsAndSymptomsHeadingLabel =
 			createLabel(I18nProperties.getString(Strings.headingSignsAndSymptoms), H3, SIGNS_AND_SYMPTOMS_HEADING_LOC);
-
+		signsAndSymptomsHeadingLabel.setVisible(false);
 		final Label generalSymptomsHeadingLabel = createLabel(SymptomGroup.GENERAL.toString(), H4, GENERAL_SIGNS_AND_SYMPTOMS_HEADING_LOC);
 		final Label respiratorySymptomsHeadingLabel =
 			createLabel(SymptomGroup.RESPIRATORY.toString(), H4, RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC);
@@ -750,6 +743,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			ContentMode.HTML);
 		symptomsHint.setWidth(100, Unit.PERCENTAGE);
 		getContent().addComponent(symptomsHint, SYMPTOMS_HINT_LOC);
+		//turn off for IDSR
+		symptomsHint.setVisible(false);
 
 		setVisible(false, FEVER,
 				ALTERED_CONSCIOUSNESS,
@@ -1017,7 +1012,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		addListenerForOnsetFields(onsetSymptom, onsetDateField);
 
-		Button clearAllButton = ButtonHelper.createButton(Captions.actionClearAll, event -> {
+		clearAllButton = ButtonHelper.createButton(Captions.actionClearAll, event -> {
 			for (Object symptomId : unconditionalSymptomFieldIds) {
 				getFieldGroup().getField(symptomId).setValue(null);
 			}
@@ -1035,9 +1030,19 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			}
 		}, ValoTheme.BUTTON_LINK);
 
-		Button setEmptyToNoButton = createButtonSetClearedToSymptomState(Captions.symptomsSetClearedToNo, SymptomState.NO);
+		setEmptyToNoButton = createButtonSetClearedToSymptomState(Captions.symptomsSetClearedToNo, SymptomState.NO);
+		clearAllButton.setVisible(false);
+		setEmptyToNoButton.setVisible(false);
 
 		//Button setEmptyToUnknownButton = createButtonSetClearedToSymptomState(Captions.symptomsSetClearedToUnknown, SymptomState.UNKNOWN);
+
+		Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA));
+
+		if (includedDiseases.contains(disease)) {
+			clearAllButton.setVisible(true);
+			setEmptyToNoButton.setVisible(true);
+			symptomsHint.setVisible(true);
+		}
 
 		Label complicationsHeading = new Label(I18nProperties.getString(Strings.headingComplications));
 		CssStyles.style(complicationsHeading, CssStyles.H3);

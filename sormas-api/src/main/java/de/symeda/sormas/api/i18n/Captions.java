@@ -2053,10 +2053,15 @@ public interface Captions {
 	String Sample_requestedOtherPathogenTests = "Sample.requestedOtherPathogenTests";
 	String Sample_requestedPathogenTests = "Sample.requestedPathogenTests";
 	String Sample_requestedPathogenTestsTags = "Sample.requestedPathogenTestsTags";
+	String Sample_requestedSampleMaterials = "Sample.requestedSampleMaterials";
 	String Sample_sampleCode = "Sample.sampleCode";
 	String Sample_sampleDateTime = "Sample.sampleDateTime";
 	String Sample_sampleMaterial = "Sample.sampleMaterial";
 	String Sample_sampleMaterialText = "Sample.sampleMaterialText";
+	String Sample_suspectedDisease = "Sample.suspectedDisease";
+	String Sample_dateLabReceivedSpecimen = "Sample.dateLabReceivedSpecimen";
+	String Sample_dateResultsSentToClinician = "Sample.dateResultsSentToClinician";
+	String Sample_labLocation = "Sample.labLocation";
 	String Sample_samplePurpose = "Sample.samplePurpose";
 	String Sample_sampleSource = "Sample.sampleSource";
 	String Sample_samplingReason = "Sample.samplingReason";

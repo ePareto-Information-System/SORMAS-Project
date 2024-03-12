@@ -199,8 +199,8 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private SampleSource sampleSource;
 	private Sample referredTo;
 	private boolean shipped;
-	private Boolean sampleMaterialTypeForYF;
-	private Boolean sampleDiseaseTests;
+	private boolean sampleMaterialTypeForYF;
+	private boolean sampleDiseaseTests;
 	private boolean received;
 	private PathogenTestResultType pathogenTestResult;
 	private Date pathogenTestResultChangeDate;
@@ -209,8 +209,9 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private Boolean sampleMaterialTestingRequested;
 	private Boolean additionalTestingRequested;
 	private Set<PathogenTestType> requestedPathogenTests;
-	private Set<YellowFeverSample> requestedSampleMaterials;
-	private Set<PathogenTestType> sampleTests;
+	private Set<SampleMaterial> requestedSampleMaterials;
+//	private Set<PathogenTestType> sampleTests;
+	private PathogenTestType sampleTests;
 	private Set<AdditionalTestType> requestedAdditionalTests;
 	private String requestedOtherPathogenTests;
 	private String requestedOtherAdditionalTests;
@@ -325,7 +326,12 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private String otherInfluenzaVirus;
 	private String treatment;
 	private String stateTreatmentAdministered;
+	private Disease suspectedDisease;
+	private String labLocation;
+	private Date dateLabReceivedSpecimen;
+	private Date dateResultsSentToClinician;
 	private Long pathogenTestCount;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	public Case getAssociatedCase() {
@@ -405,7 +411,6 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	}
 
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
 	public SampleMaterial getSampleMaterial() {
 		return sampleMaterial;
 	}
@@ -544,36 +549,36 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	}
 
 	@Column
-	public Boolean isShipped() {
+	public boolean isShipped() {
 		return shipped;
 	}
 
-	public void setShipped(Boolean shipped) {
+	public void setShipped(boolean shipped) {
 		this.shipped = shipped;
 	}
 
-	public Boolean isYellowFeverSampleType() {
+	public boolean isYellowFeverSampleType() {
 		return sampleMaterialTypeForYF;
 	}
 
-	public void setYellowFeverSampleType(Boolean sampleMaterialTypeForYF) {
+	public void setYellowFeverSampleType(boolean sampleMaterialTypeForYF) {
 		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
 	}
 
-	public Boolean isDiseaseSampleTests() {
+	public boolean isDiseaseSampleTests() {
 		return sampleDiseaseTests;
 	}
 
-	public void setDiseaseSampleTests(Boolean sampleDiseaseTests) {
+	public void setDiseaseSampleTests(boolean sampleDiseaseTests) {
 		this.sampleDiseaseTests = sampleDiseaseTests;
 	}
 
 	@Column
-	public Boolean isReceived() {
+	public boolean isReceived() {
 		return received;
 	}
 
-	public void setReceived(Boolean received) {
+	public void setReceived(boolean received) {
 		this.received = received;
 	}
 
@@ -654,19 +659,19 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	}
 
 	@Transient
-	public Set<YellowFeverSample> getRequestedSampleMaterials() {
+	public Set<SampleMaterial> getRequestedSampleMaterials() {
 		if (requestedSampleMaterials == null) {
 			if (StringUtils.isEmpty(requestedSampleMaterialsString)) {
 				requestedSampleMaterials = new HashSet<>();
 			} else {
 				requestedSampleMaterials =
-						Arrays.stream(requestedSampleMaterialsString.split(",")).map(YellowFeverSample::valueOf).collect(Collectors.toSet());
+						Arrays.stream(requestedSampleMaterialsString.split(",")).map(SampleMaterial::valueOf).collect(Collectors.toSet());
 			}
 		}
 		return requestedSampleMaterials;
 	}
 
-	public void setRequestedSampleMaterials(Set<YellowFeverSample> requestedSampleMaterials) {
+	public void setRequestedSampleMaterials(Set<SampleMaterial> requestedSampleMaterials) {
 		this.requestedSampleMaterials = requestedSampleMaterials;
 
 		if (this.requestedSampleMaterials == null) {
@@ -684,7 +689,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 		requestedSampleMaterialsString = sb.toString();
 	}
 
-	@Transient
+	/*@Transient
 	public Set<PathogenTestType> getSampleTests() {
 		if (sampleTests == null) {
 			if (StringUtils.isEmpty(sampleTestsString)) {
@@ -713,7 +718,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 			sb.substring(0, sb.lastIndexOf(","));
 		}
 		sampleTestsString = sb.toString();
-	}
+	}*/
 
 	@Transient
 	public Set<AdditionalTestType> getRequestedAdditionalTests() {
@@ -790,6 +795,15 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setRequestedOtherAdditionalTests(String requestedOtherAdditionalTests) {
 		this.requestedOtherAdditionalTests = requestedOtherAdditionalTests;
 	}
+
+	@Enumerated(EnumType.STRING)
+    public PathogenTestType getSampleTests() {
+       return sampleTests;
+    }
+
+    public void setSampleTests(PathogenTestType sampleTests) {
+       this.sampleTests = sampleTests;
+    }
 
 	@Enumerated(EnumType.STRING)
 	public SamplingReason getSamplingReason() {
@@ -1616,5 +1630,34 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setPathogenTestCount(Long pathogenTestCount) {
 		this.pathogenTestCount = pathogenTestCount;
+	}
+
+	public Disease getSuspectedDisease() {
+		return suspectedDisease;
+	}
+
+	public void setSuspectedDisease(Disease suspectedDisease) {
+		this.suspectedDisease = suspectedDisease;
+	}
+	public String getLabLocation() {
+		return labLocation;
+	}
+
+	public void setLabLocation(String labLocation) {
+		this.labLocation = labLocation;
+	}
+	public Date getDateLabReceivedSpecimen() {
+		return dateLabReceivedSpecimen;
+	}
+
+	public void setDateLabReceivedSpecimen(Date dateLabReceivedSpecimen) {
+		this.dateLabReceivedSpecimen = dateLabReceivedSpecimen;
+	}
+	public Date getDateResultsSentToClinician() {
+		return dateResultsSentToClinician;
+	}
+
+	public void setDateResultsSentToClinician(Date dateResultsSentToClinician) {
+		this.dateResultsSentToClinician = dateResultsSentToClinician;
 	}
 }
