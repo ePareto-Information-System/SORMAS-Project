@@ -207,8 +207,8 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private PathogenTestResultType pathogenTestResult;
 	private Date pathogenTestResultChangeDate;
 
-	private Boolean pathogenTestingRequested;
-	private Boolean sampleMaterialTestingRequested;
+	private boolean pathogenTestingRequested;
+	private boolean sampleMaterialTestingRequested;
 	private Boolean additionalTestingRequested;
 	private Set<PathogenTestType> requestedPathogenTests;
 	private Set<SampleMaterial> requestedSampleMaterials;
@@ -608,20 +608,20 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	}
 
 	@Column
-	public Boolean getPathogenTestingRequested() {
+	public boolean getPathogenTestingRequested() {
 		return pathogenTestingRequested;
 	}
 
-	public void setPathogenTestingRequested(Boolean pathogenTestingRequested) {
+	public void setPathogenTestingRequested(boolean pathogenTestingRequested) {
 		this.pathogenTestingRequested = pathogenTestingRequested;
 	}
 
 	@Column
-	public Boolean getSampleMaterialTestingRequested() {
+	public boolean getSampleMaterialTestingRequested() {
 		return sampleMaterialTestingRequested;
 	}
 
-	public void setSampleMaterialTestingRequested(Boolean sampleMaterialTestingRequested) {
+	public void setSampleMaterialTestingRequested(boolean sampleMaterialTestingRequested) {
 		this.sampleMaterialTestingRequested = sampleMaterialTestingRequested;
 	}
 
