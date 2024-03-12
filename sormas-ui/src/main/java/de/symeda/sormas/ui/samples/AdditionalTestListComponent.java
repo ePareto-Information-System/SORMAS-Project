@@ -112,13 +112,13 @@ public class AdditionalTestListComponent extends SideComponent {
 //		componentHeader.addComponent(testsHeader);
 
 		//if (UserProvider.getCurrent().hasUserRight(UserRight.ADDITIONAL_TEST_CREATE)) {
-			createButton = ButtonHelper.createIconButton(Captions.additionalTestNewTest, VaadinIcons.PLUS_CIRCLE, e -> {
-				//if (createOrEditAllowedCallback.get() == null) {
-					ControllerProvider.getAdditionalTestController().openCreateComponent(sampleUuid, list::reload);
-//				} else {
-//					Notification.show(null, I18nProperties.getString(createOrEditAllowedCallback.get()), Type.ERROR_MESSAGE);
-//				}
-			}, ValoTheme.BUTTON_PRIMARY);
+//			createButton = ButtonHelper.createIconButton(Captions.additionalTestNewTest, VaadinIcons.PLUS_CIRCLE, e -> {
+//				//if (createOrEditAllowedCallback.get() == null) {
+//					ControllerProvider.getAdditionalTestController().openCreateComponent(sampleUuid, list::reload);
+////				} else {
+////					Notification.show(null, I18nProperties.getString(createOrEditAllowedCallback.get()), Type.ERROR_MESSAGE);
+////				}
+//			}, ValoTheme.BUTTON_PRIMARY);
 
 //			componentHeader.addComponent(createButton);
 //			componentHeader.setComponentAlignment(createButton, Alignment.MIDDLE_RIGHT);
@@ -139,7 +139,7 @@ public class AdditionalTestListComponent extends SideComponent {
 			// 			UserRight.ADDITIONAL_TEST_CREATE);
 		//}
 		//if(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO) ) {
-			createButton.setEnabled(false);
+//			createButton.setEnabled(false);
 			list.setEnabled(false);
 		//}
 	}
