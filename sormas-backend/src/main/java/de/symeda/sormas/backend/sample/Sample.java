@@ -57,6 +57,7 @@ import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
 import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo;
 import de.symeda.sormas.backend.user.User;
 import org.bouncycastle.asn1.x509.Time;
+import org.docx4j.org.apache.xpath.operations.Bool;
 
 @Entity(name = "samples")
 public class Sample extends DeletableAdo implements SormasToSormasShareable {
@@ -207,8 +208,8 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private PathogenTestResultType pathogenTestResult;
 	private Date pathogenTestResultChangeDate;
 
-	private boolean pathogenTestingRequested;
-	private boolean sampleMaterialTestingRequested;
+	private Boolean pathogenTestingRequested;
+	private Boolean sampleMaterialTestingRequested;
 	private Boolean additionalTestingRequested;
 	private Set<PathogenTestType> requestedPathogenTests;
 	private Set<SampleMaterial> requestedSampleMaterials;
@@ -608,16 +609,16 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	}
 
 	@Column
-	public boolean getPathogenTestingRequested() {
+	public Boolean getPathogenTestingRequested() {
 		return pathogenTestingRequested;
 	}
 
-	public void setPathogenTestingRequested(boolean pathogenTestingRequested) {
+	public void setPathogenTestingRequested(Boolean pathogenTestingRequested) {
 		this.pathogenTestingRequested = pathogenTestingRequested;
 	}
 
 	@Column
-	public boolean getSampleMaterialTestingRequested() {
+	public Boolean getSampleMaterialTestingRequested() {
 		return sampleMaterialTestingRequested;
 	}
 
