@@ -248,9 +248,9 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private boolean received;
 	private PathogenTestResultType pathogenTestResult;
 
-	private Boolean pathogenTestingRequested;
-	private Boolean sampleMaterialTestingRequested;
-	private Boolean additionalTestingRequested;
+	private boolean pathogenTestingRequested;
+	private boolean sampleMaterialTestingRequested;
+	private boolean additionalTestingRequested;
 	private Set<PathogenTestType> requestedPathogenTests;
 	private Set<YellowFeverSample> requestedSampleMaterials;
 	private Set<PathogenTestType> sampleTests;
@@ -751,20 +751,20 @@ public class SampleDto extends SormasToSormasShareableDto {
 	}
 
 	@ImportIgnore
-	public Boolean getPathogenTestingRequested() {
+	public boolean getPathogenTestingRequested() {
 		return pathogenTestingRequested;
 	}
 
-	public void setPathogenTestingRequested(Boolean pathogenTestingRequested) {
+	public void setPathogenTestingRequested(boolean pathogenTestingRequested) {
 		this.pathogenTestingRequested = pathogenTestingRequested;
 	}
 
 	@ImportIgnore
-	public Boolean getSampleMaterialTestingRequested() {
+	public boolean getSampleMaterialTestingRequested() {
 		return sampleMaterialTestingRequested;
 	}
 
-	public void setSampleMaterialTestingRequested(Boolean sampleMaterialTestingRequested) {
+	public void setSampleMaterialTestingRequested(boolean sampleMaterialTestingRequested) {
 		this.sampleMaterialTestingRequested = sampleMaterialTestingRequested;
 	}
 	@ImportIgnore
@@ -786,11 +786,11 @@ public class SampleDto extends SormasToSormasShareableDto {
 	}*/
 
 	@ImportIgnore
-	public Boolean getAdditionalTestingRequested() {
+	public boolean getAdditionalTestingRequested() {
 		return additionalTestingRequested;
 	}
 
-	public void setAdditionalTestingRequested(Boolean additionalTestingRequested) {
+	public void setAdditionalTestingRequested(boolean additionalTestingRequested) {
 		this.additionalTestingRequested = additionalTestingRequested;
 	}
 
