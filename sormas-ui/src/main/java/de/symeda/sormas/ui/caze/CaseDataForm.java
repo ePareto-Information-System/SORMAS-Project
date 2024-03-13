@@ -787,10 +787,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		surveillanceOfficerField.setNullSelectionAllowed(true);
 		surveillanceOfficerField.setVisible(false);
 
-		addField(CaseDataDto.REPORTING_OFFICER_NAME, TextField.class);
-		addField(CaseDataDto.REPORTING_OFFICER_TITLE, TextField.class);
-		addField(CaseDataDto.FUNCTION_OF_REPORTING_OFFICER, TextField.class);
-		addField(CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE, TextField.class);
+		TextField reportingOfficerName = addField(CaseDataDto.REPORTING_OFFICER_NAME, TextField.class);
+		TextField reportingOfficerTitle = addField(CaseDataDto.REPORTING_OFFICER_TITLE, TextField.class);
+		TextField reportingOfficerFunction = addField(CaseDataDto.FUNCTION_OF_REPORTING_OFFICER, TextField.class);
+		TextField reportingOfficerPhone = addField(CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE, TextField.class);
+
 		TextField reportingOfficerEmail = addField(CaseDataDto.REPORTING_OFFICER_EMAIL, TextField.class);
 		reportingOfficerEmail.setVisible(false);
 
@@ -1160,7 +1161,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		quarantine.setVisible(false);
 		ogReinfection.setVisible(false);
 		setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.INTERNAL_TOKEN, CaseDataDto.EXTERNAL_TOKEN, CaseDataDto.CLINICIAN_NAME, CaseDataDto.CLINICIAN_PHONE,
-				CaseDataDto.CLINICIAN_EMAIL, CaseDataDto.REPORTING_OFFICER_NAME, CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.FUNCTION_OF_REPORTING_OFFICER, CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE);
+				CaseDataDto.CLINICIAN_EMAIL);
 
 		FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.TRIMESTER, CaseDataDto.PREGNANT, Collections.singletonList(YesNoUnknown.YES), true);
 
