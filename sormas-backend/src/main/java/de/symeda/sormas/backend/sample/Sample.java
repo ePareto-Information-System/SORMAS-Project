@@ -201,10 +201,10 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private String comment;
 	private SampleSource sampleSource;
 	private Sample referredTo;
-	private Boolean shipped;
-	private Boolean sampleMaterialTypeForYF;
+	private boolean shipped;
+	private boolean sampleMaterialTypeForYF;
 	private Boolean sampleDiseaseTests;
-	private Boolean received;
+	private boolean received;
 	private PathogenTestResultType pathogenTestResult;
 	private Date pathogenTestResultChangeDate;
 
@@ -557,21 +557,21 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	}
 
 	@Column
-	public Boolean isShipped() {
+	public boolean isShipped() {
 		return shipped;
 	}
 
-	public void setShipped(Boolean shipped) {
+	public void setShipped(boolean shipped) {
 		this.shipped = shipped;
 	}
 
-	public Boolean isYellowFeverSampleType() {
-		return sampleMaterialTypeForYF;
-	}
-
-	public void setYellowFeverSampleType(Boolean sampleMaterialTypeForYF) {
-		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
-	}
+//	public boolean isYellowFeverSampleType() {
+//		return sampleMaterialTypeForYF;
+//	}
+//
+//	public void setYellowFeverSampleType(boolean sampleMaterialTypeForYF) {
+//		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
+//	}
 
 	public Boolean isDiseaseSampleTests() {
 		return sampleDiseaseTests;
@@ -582,11 +582,11 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	}
 
 	@Column
-	public Boolean isReceived() {
+	public boolean isReceived() {
 		return received;
 	}
 
-	public void setReceived(Boolean received) {
+	public void setReceived(boolean received) {
 		this.received = received;
 	}
 
@@ -622,7 +622,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 		return sampleMaterialTestingRequested;
 	}
 
-	public void setSampleMaterialTestingRequested(boolean sampleMaterialTestingRequested) {
+	public void setSampleMaterialTestingRequested(Boolean sampleMaterialTestingRequested) {
 		this.sampleMaterialTestingRequested = sampleMaterialTestingRequested;
 	}
 

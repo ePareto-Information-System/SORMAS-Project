@@ -247,15 +247,15 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private String comment;
 	private SampleSource sampleSource;
 	private SampleReferenceDto referredTo;
-	private Boolean shipped;
-	private Boolean sampleMaterialTypeForYF;
+	private boolean shipped;
+	private boolean sampleMaterialTypeForYF;
 //	private Boolean sampleDiseaseTests;
-	private Boolean received;
+	private boolean received;
 	private PathogenTestResultType pathogenTestResult;
 
-	private boolean pathogenTestingRequested;
-	private boolean sampleMaterialTestingRequested;
-	private boolean additionalTestingRequested;
+	private Boolean pathogenTestingRequested;
+	private Boolean sampleMaterialTestingRequested;
+	private Boolean additionalTestingRequested;
 	private Set<PathogenTestType> requestedPathogenTests;
 	private Set<SampleMaterial> requestedSampleMaterials;
 	private PathogenTestType sampleTests;
@@ -270,7 +270,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String samplingReasonDetails;
 
-	private Boolean deleted;
+	private boolean deleted;
 	private DeletionReason deletionReason;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String otherDeletionReason;
@@ -743,7 +743,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 		return shipped;
 	}
 
-	public void setShipped(Boolean shipped) {
+	public void setShipped(boolean shipped) {
 		this.shipped = shipped;
 	}
 
@@ -751,7 +751,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 		return received;
 	}
 
-	public void setReceived(Boolean received) {
+	public void setReceived(boolean received) {
 		this.received = received;
 	}
 
@@ -764,30 +764,30 @@ public class SampleDto extends SormasToSormasShareableDto {
 	}
 
 	@ImportIgnore
-	public boolean getPathogenTestingRequested() {
+	public Boolean getPathogenTestingRequested() {
 		return pathogenTestingRequested;
 	}
 
-	public void setPathogenTestingRequested(boolean pathogenTestingRequested) {
+	public void setPathogenTestingRequested(Boolean pathogenTestingRequested) {
 		this.pathogenTestingRequested = pathogenTestingRequested;
 	}
 
 	@ImportIgnore
-	public boolean getSampleMaterialTestingRequested() {
+	public Boolean getSampleMaterialTestingRequested() {
 		return sampleMaterialTestingRequested;
 	}
 
-	public void setSampleMaterialTestingRequested(boolean sampleMaterialTestingRequested) {
+	public void setSampleMaterialTestingRequested(Boolean sampleMaterialTestingRequested) {
 		this.sampleMaterialTestingRequested = sampleMaterialTestingRequested;
 	}
-	@ImportIgnore
-	public Boolean isYellowFeverSampleType() {
-		return sampleMaterialTypeForYF;
-	}
+//	@ImportIgnore
+//	public boolean isYellowFeverSampleType() {
+//		return sampleMaterialTypeForYF;
+//	}
 
-	public void setYellowFeverSampleType(Boolean sampleMaterialTypeForYF) {
-		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
-	}
+//	public void setYellowFeverSampleType(boolean sampleMaterialTypeForYF) {
+//		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
+//	}
 
 	/*@ImportIgnore
 	public Boolean isDiseaseSampleTests() {
@@ -799,11 +799,11 @@ public class SampleDto extends SormasToSormasShareableDto {
 	}*/
 
 	@ImportIgnore
-	public boolean getAdditionalTestingRequested() {
+	public Boolean getAdditionalTestingRequested() {
 		return additionalTestingRequested;
 	}
 
-	public void setAdditionalTestingRequested(boolean additionalTestingRequested) {
+	public void setAdditionalTestingRequested(Boolean additionalTestingRequested) {
 		this.additionalTestingRequested = additionalTestingRequested;
 	}
 
@@ -904,9 +904,6 @@ public class SampleDto extends SormasToSormasShareableDto {
 		sample.setReportingUser(userRef);
 		sample.setReportDateTime(new Date());
 		sample.setPathogenTestResult(PathogenTestResultType.PENDING);
-		sample.setReceived(true);
-		sample.setShipped(false);
-		sample.setDeleted(false);
 
 		return sample;
 	}
@@ -947,7 +944,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 		target.setSampleSource(source.getSampleSource());
 		target.setPathogenTestingRequested(source.getPathogenTestingRequested());
 		target.setSampleMaterialTestingRequested(source.getSampleMaterialTestingRequested());
-		target.setYellowFeverSampleType(source.isYellowFeverSampleType());
+//		target.setYellowFeverSampleType(source.isYellowFeverSampleType());
 //		target.setDiseaseSampleTests(source.isDiseaseSampleTests());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());
@@ -1089,11 +1086,11 @@ public class SampleDto extends SormasToSormasShareableDto {
 		return (SampleDto) super.clone();
 	}
 
-	public Boolean isDeleted() {
+	public boolean isDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(Boolean deleted) {
+	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
 
