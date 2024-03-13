@@ -503,8 +503,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			VESICULAR_RASH,
 			OTHER_LESION_AREAS,
 			NON_VASCULAR,
-			BODY_ACHE
-			);
+			BODY_ACHE);
 
 		addField(SYMPTOMS_COMMENTS, TextField.class).setDescription(
 			I18nProperties.getPrefixDescription(I18N_PREFIX, SYMPTOMS_COMMENTS, "") + "\n" + I18nProperties.getDescription(Descriptions.descGdpr));
@@ -825,6 +824,54 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			setUpMonkeypoxVisibilities();
 		}
 
+		if (disease == Disease.AFP) {
+			NullableOptionGroup feverOnsetParalysis = addField(FEVER_ONSET_PARALYSIS, NullableOptionGroup.class);
+			NullableOptionGroup progressiveParalysis = addField(PROGRESSIVE_PARALYSIS, NullableOptionGroup.class);
+			DateField dateOnsetParalysis = addField(DATE_ONSET_PARALYSIS, DateField.class);
+			NullableOptionGroup progressiveFlaccidAcute = addField(PROGRESSIVE_FLACID_ACUTE, NullableOptionGroup.class);
+			NullableOptionGroup assymetric = addField(ASSYMETRIC, NullableOptionGroup.class);
+
+			NullableOptionGroup siteParalysisBox = new NullableOptionGroup("Site of Paralysis");
+			for (InjectionSite injectionSite : InjectionSite.ParalysisSite) {
+				siteParalysisBox.addItem(injectionSite);
+			}
+			NullableOptionGroup siteOfParalysis = addField(SITE_OF_PARALYSIS, siteParalysisBox);
+			OptionGroup paralysedLimbSensitiveToPain = addField(PARALYSED_LIMB_SENSITIVE_TO_PAIN, OptionGroup.class);
+			OptionGroup injectionSiteBeforeOnsetParalysis = addField(INJECTION_SITE_BEFORE_ONSET_PARALYSIS, OptionGroup.class);
+
+			NullableOptionGroup rightInjectionSiteBox = new NullableOptionGroup("Right Injection Site");
+			for (InjectionSite injectionSiteRight : InjectionSite.InjectionSiteRight) {
+				rightInjectionSiteBox.addItem(injectionSiteRight);
+			}
+			NullableOptionGroup rightInjectionSite = addField(RIGHT_INJECTION_SITE, rightInjectionSiteBox);
+
+			NullableOptionGroup leftInjectionSiteBox = new NullableOptionGroup("Left Injection Site");
+			for (InjectionSite injectionSiteLeft : InjectionSite.InjectionSiteLeft) {
+				leftInjectionSiteBox.addItem(injectionSiteLeft);
+			}
+			NullableOptionGroup leftInjectionSite = addField(LEFT_INJECTION_SITE, leftInjectionSiteBox);
+			OptionGroup trueAFP = addField(TRUEAFP, OptionGroup.class);
+			TextArea provisionalDiagnosis = addField(PROVISONAL_DIAGNOSIS, TextArea.class);
+			provisionalDiagnosis.setRows(4);
+
+			addFields(
+					MUSCLE_TONE,
+					DEEP_TENDON_REFLEX,
+					MUSCLE_VOLUME,
+					SENSORY_LOSS);
+
+			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
+			clinicalMeasurementsHeadingLabel.setVisible(false);
+			setVisible(false, FEVER,
+					ALTERED_CONSCIOUSNESS,
+					SEIZURES,
+					HEADACHE,
+					NECK_STIFFNESS);
+
+			symptomsHide();
+			setVisible(true, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
+
+		}
 
 		if(disease == Disease.NEW_INFLUENZA){
 			addField(DATE_OF_ONSET, DateField.class);
@@ -837,6 +884,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			setVisible(false, FEVER, HEADACHE, ALTERED_CONSCIOUSNESS, CONVULSION, SEIZURES);
 			setVisible(true, COUGH, SORE_THROAT, DIFFICULTY_BREATHING, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
 		}
+
 		if(disease == Disease.YELLOW_FEVER){
 			setVisible(true, HEADACHE, BACKACHE, NAUSEA, VOMITING, FEVER, JAUNDICE, CHILLS_SWEATS, FATIGUE_WEAKNESS, FATIGUE, WEAKNESS, BODY_ACHE);
 		}
@@ -949,8 +997,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					COMA,
 					CONVULSION,
 					FLUID_IN_LUNG_CAVITY_AUSCULTATION,
-					DYSPNEA,
-					TACHYPNEA,
 					FLUID_IN_LUNG_CAVITY_XRAY,
 					ABNORMAL_LUNG_XRAY_FINDINGS,
 					CONJUNCTIVAL_INJECTION,
@@ -987,18 +1033,12 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					MENINGEAL_SIGNS,
 					//SEIZURES,
 					SEPSIS,
-					SHOCK,
-					NON_VASCULAR,
-					NON_VASCULAR_DATE,
-					SKIN_RASH_DATE,
-					FEVER_DATE,
-					COUGH_DATE,
-					RUNNY_NOSE_DATE,
-					CONJUNCTIVITIS_DATE,
-					KOPLIKS_SPOTS_DATE);
+					SHOCK);
 			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
 			clinicalMeasurementsHeadingLabel.setVisible(false);
-		} else if (disease == Disease.CORONAVIRUS) {
+		} 
+		
+		if (disease == Disease.CORONAVIRUS) {
 			symptomsHide();
 			setVisible(true, FEVER, RAPID_BREATHING, MUSCLE_PAIN, CHEST_PAIN, ABDOMINAL_PAIN, JOINT_PAIN, WEAKNESS, DIARRHEA, COUGH, NAUSEA,
 					SORE_THROAT, HEADACHE, RUNNY_NOSE, HEADACHE, CONFUSED_DISORIENTED, OTHER_COMPLICATIONS, PHARYNGEAL_EXUDATE, COMA, ABNORMAL_LUNG_XRAY_FINDINGS,
