@@ -34,6 +34,7 @@ import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.sample.*;
+import de.symeda.sormas.api.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,11 +55,6 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityHelper;
 import de.symeda.sormas.api.user.NotificationType;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.AccessDeniedException;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.api.utils.SortProperty;
-import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.backend.FacadeHelper;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb;
@@ -450,11 +446,16 @@ public class SampleFacadeEjb implements SampleFacade {
 		if (sample.getAssociatedCase() == null && sample.getAssociatedContact() == null && sample.getAssociatedEventParticipant() == null) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validCaseContactOrEventParticipant));
 		}
+		/*if(sample.getCsfSampleCollected() == YesNo.YES && sample.getSampleDateTime() == null){
+			throw new ValidationRuntimeException(
+					I18nProperties
+							.getValidationError(Validations.required, I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.SAMPLE_DATE_TIME, SampleDto.CSF_SAMPLE_COLLECTED)));
+		}
 		if (sample.getSampleDateTime() == null) {
 			throw new ValidationRuntimeException(
 				I18nProperties
 					.getValidationError(Validations.required, I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.SAMPLE_DATE_TIME)));
-		}
+		}*/
 		if (sample.getReportDateTime() == null) {
 			throw new ValidationRuntimeException(
 				I18nProperties
@@ -958,6 +959,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setLabLocation(source.getLabLocation());
 		target.setDateLabReceivedSpecimen(source.getDateLabReceivedSpecimen());
 		target.setDateResultsSentToClinician(source.getDateResultsSentToClinician());
+		target.setDateSpecimenSentToLab(source.getDateSpecimenSentToLab());
 
 
 
@@ -1223,6 +1225,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setLabLocation(source.getLabLocation());
 		target.setDateLabReceivedSpecimen(source.getDateLabReceivedSpecimen());
 		target.setDateResultsSentToClinician(source.getDateResultsSentToClinician());
+		target.setDateSpecimenSentToLab(source.getDateSpecimenSentToLab());
 
 
 		return target;

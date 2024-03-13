@@ -98,6 +98,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private DateField dateFormSentToDistrict;
 	private DateField dateFormReceivedAtDistrict;
 	private DateField dateResultsSentToClinician;
+	private DateField dateSpecimenSentToLab;
 
 	//@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
@@ -119,7 +120,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_NATIONAL, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
 
 					fluidRowLocs(SampleDto.SUSPECTED_DISEASE, SampleDto.DATE_LAB_RECEIVED_SPECIMEN) +
-					fluidRowLocs(6,SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN) +
+					fluidRowLocs(SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.DATE_SPECIMEN_SENT_TO_LAB) +
                     fluidRowLocs(6,SampleDto.SAMPLE_MATERIAL) +
 					fluidRowLocs(SampleDto.FIELD_SAMPLE_ID, REFERRED_FROM_BUTTON_LOC) +
                     fluidRowLocs(6, SampleDto.DISEASE) +
@@ -310,6 +311,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateFormSentToDistrict = addField(SampleDto.DATE_FORM_SENT_TO_DISTRICT, DateField.class);
 		dateFormReceivedAtDistrict = addField(SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT, DateField.class);
 		dateResultsSentToClinician = addField(SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, DateField.class);
+		dateSpecimenSentToLab = addField(SampleDto.DATE_SPECIMEN_SENT_TO_LAB, DateField.class);
 		addField(SampleDto.DELETION_REASON);
 		addField(SampleDto.OTHER_DELETION_REASON, TextArea.class).setRows(3);
 		setVisible(false, SampleDto.DELETION_REASON, SampleDto.OTHER_DELETION_REASON);
@@ -768,6 +770,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		sampleDateField.setVisible(false);
 		suspectedDisease.setVisible(false);
 		labLocation.setVisible(false);
+		dateSpecimenSentToLab.setVisible(false);
 
 
 		FieldHelper
@@ -982,6 +985,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateFormSentToDistrict.setVisible(false);
 		dateFormReceivedAtDistrict.setVisible(false);
 		dateResultsSentToClinician.setVisible(false);
+		dateSpecimenSentToLab.setVisible(false);
 
 	}
 
@@ -996,6 +1000,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateFormSentToDistrict.setVisible(false);
 		dateFormReceivedAtDistrict.setVisible(false);
 		dateResultsSentToClinician.setVisible(false);
+		dateSpecimenSentToLab.setVisible(false);
 
 		diseaseField.setVisible(true);
 		List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.PLASMA_SERUM);
@@ -1017,6 +1022,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateFormSentToDistrict.setVisible(false);
 		dateFormReceivedAtDistrict.setVisible(false);
 		dateResultsSentToClinician.setVisible(false);
+		dateSpecimenSentToLab.setVisible(false);
 		setVisible(false, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLING_REASON, SampleDto.SAMPLE_MATERIAL_TEXT);
 
 		setVisible(true, SampleDto.IPSAMPLESENT, SampleDto.IPSAMPLERESULTS, SampleDto.REQUESTED_SAMPLE_MATERIALS);
@@ -1054,6 +1060,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateFormSentToDistrict.setVisible(false);
 		dateFormReceivedAtDistrict.setVisible(false);
 		dateResultsSentToClinician.setVisible(false);
+		dateSpecimenSentToLab.setVisible(false);
 	}
 
 	private void addSampleDispatchFields() {

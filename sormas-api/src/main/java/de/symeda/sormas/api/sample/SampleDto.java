@@ -79,6 +79,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String DATE_FORM_SENT_TO_DISTRICT = "dateFormSentToDistrict";
 	public static final String DATE_FORM_RECEIVED_AT_DISTRICT = "dateFormReceivedAtDistrict";
 	public static final String DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN = "dateResultsSentToClinician";
+	public static final String DATE_SPECIMEN_SENT_TO_LAB = "dateSpecimenSentToLab";
 	public static final String DATE_FORM_SENT_TO_REGION = "dateFormSentToRegion";
 	public static final String DATE_FORM_RECEIVED_AT_REGION = "dateFormReceivedAtRegion";
 	public static final String DATE_FORM_SENT_TO_NATIONAL = "dateFormSentToNational";
@@ -203,7 +204,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private String labSampleID;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String fieldSampleID;
-	@NotNull(message = Validations.requiredField)
+//	@NotNull(message = Validations.requiredField)
 	private Date sampleDateTime;
 
 	@NotNull(message = Validations.validReportDateTime)
@@ -299,6 +300,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private Date dateFormSentToDistrict;
 	private Date dateFormReceivedAtDistrict;
 	private Date dateResultsSentToClinician;
+	private Date dateSpecimenSentToLab;
 	private Date dateFormSentToRegion;
 	private Date dateFormReceivedAtRegion;
 	private Date dateFormSentToNational;
@@ -1053,6 +1055,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 		target.setLabLocation(source.getLabLocation());
 		target.setDateLabReceivedSpecimen(source.getDateLabReceivedSpecimen());
 		target.setDateResultsSentToClinician(source.getDateResultsSentToClinician());
+		target.setDateSpecimenSentToLab(source.getDateSpecimenSentToLab());
 
 
 
@@ -1699,5 +1702,13 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 	public void setDateResultsSentToClinician(Date dateResultsSentToClinician) {
 		this.dateResultsSentToClinician = dateResultsSentToClinician;
+	}
+
+	public Date getDateSpecimenSentToLab() {
+		return dateSpecimenSentToLab;
+	}
+
+	public void setDateSpecimenSentToLab(Date dateSpecimenSentToLab) {
+		this.dateSpecimenSentToLab = dateSpecimenSentToLab;
 	}
 }
