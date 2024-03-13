@@ -1627,14 +1627,14 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			//CSM
 			 if(disease == Disease.CSM){
 				setVisible(false, CaseDataDto.REPORT_LAT, CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT_LON_ACCURACY, CaseDataDto.VACCINATION_ROUTINE_DATE);
-				vaccineType = addField(CaseDataDto.VACCINE_TYPE, ComboBox.class);
-				vaccineType.setCaption("Vaccine Type");
-				numberOfDoses = addField(CaseDataDto.NUMBER_OF_DOSES, TextField.class);
-				numberOfDoses.setCaption("Number of Doses");
-
-				vaccineType.setVisible(false);
-				numberOfDoses.setVisible(false);
-				cardDateField.setVisible(false);
+//				vaccineType = addField(CaseDataDto.VACCINE_TYPE, ComboBox.class);
+//				vaccineType.setCaption("Vaccine Type");
+//				numberOfDoses = addField(CaseDataDto.NUMBER_OF_DOSES, TextField.class);
+//				numberOfDoses.setCaption("Number of Doses");
+//
+//				vaccineType.setVisible(false);
+//				numberOfDoses.setVisible(false);
+//				cardDateField.setVisible(false);
 				reportingOfficerEmail.setVisible(false);
 				setVisible(false, CaseDataDto.REPORT_LAT, CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT_LON_ACCURACY);
 
