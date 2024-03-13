@@ -203,8 +203,9 @@ public class SampleDto extends SormasToSormasShareableDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String fieldSampleID;
 	private YesNoUnknown forRetest;
-	@Required
-	@NotNull(message = Validations.requiredField)
+
+	//@Required
+	//@NotNull(message = Validations.requiredField)
 	private Date sampleDateTime;
 
 	@NotNull(message = Validations.validReportDateTime)

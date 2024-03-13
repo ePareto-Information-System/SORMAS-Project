@@ -519,11 +519,11 @@ public class SampleFacadeEjb implements SampleFacade {
 		if (sample.getAssociatedCase() == null && sample.getAssociatedContact() == null && sample.getAssociatedEventParticipant() == null) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validCaseContactOrEventParticipant));
 		}
-		if (sample.getSampleDateTime() == null) {
-			throw new ValidationRuntimeException(
-				I18nProperties
-					.getValidationError(Validations.required, I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.SAMPLE_DATE_TIME)));
-		}
+//		if (sample.getSampleDateTime() == null) {
+//			throw new ValidationRuntimeException(
+//				I18nProperties
+//					.getValidationError(Validations.required, I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.SAMPLE_DATE_TIME)));
+//		}
 		if (sample.getReportDateTime() == null) {
 			throw new ValidationRuntimeException(
 				I18nProperties

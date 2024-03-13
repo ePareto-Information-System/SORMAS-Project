@@ -713,6 +713,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private void handleCSM() {
 		sampleMaterialComboBox.setValue(SampleMaterial.CEREBROSPINAL_FLUID);
 		sampleDateField.setVisible(false);
+		sampleDateField.setRequired(false);
+
 
 		ComboBox laboType = addField(SampleDto.LABORATORY_TYPE, ComboBox.class);
 		laboType.setRequired(true);
@@ -1045,7 +1047,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		if (disease == Disease.MEASLES) {
 			addSampleDispatchFields();
 			setVisible(false, SampleDto.SAMPLING_REASON);
-			setVisible(false, SampleDto.SAMPLE_PURPOSE);
 			setVisible(true, SampleDto.RECEIVED, SampleDto.REQUESTED_SAMPLE_MATERIALS);
 			List<PathogenTestType> measelesPathogenTests = PathogenTestType.getMeaslesTestTypes();
 			Arrays.stream(PathogenTestType.values())

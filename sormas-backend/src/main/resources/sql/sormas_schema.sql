@@ -13478,5 +13478,8 @@ ALTER TABLE healthconditions ADD COLUMN stroke varchar(255);
 ALTER TABLE healthconditions ADD COLUMN cancer varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (581, 'Added columns to symptoms, hospitalization, healthconditions to implement patientVisitedHealthCareFacility #26');
 
+ALTER TABLE samples ALTER COLUMN sampledatetime DROP NOT NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (582, 'Altered column sampledatetime in samples to not null');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
