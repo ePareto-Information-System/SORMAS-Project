@@ -231,6 +231,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setRightInjectionSite(source.getRightInjectionSite());
 		target.setLeftInjectionSite(source.getLeftInjectionSite());
 		target.setTrueAfp(source.getTrueAfp());
+		target.setBodyAche(source.getBodyAche());
 
 		return target;
 	}
@@ -445,6 +446,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setRightInjectionSite(source.getRightInjectionSite());
 		target.setLeftInjectionSite(source.getLeftInjectionSite());
 		target.setTrueAfp(source.getTrueAfp());
+		target.setBodyAche(source.getBodyAche());
 
 
 		return target;

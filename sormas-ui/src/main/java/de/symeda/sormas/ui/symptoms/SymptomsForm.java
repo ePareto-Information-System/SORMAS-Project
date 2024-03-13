@@ -334,6 +334,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			ABDOMINAL_PAIN,
 			HEADACHE,
 			MUSCLE_PAIN,
+			CHILLS_SWEATS,
 			FATIGUE_WEAKNESS,
 			SKIN_RASH,
 			NECK_STIFFNESS,
@@ -394,7 +395,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			LYMPHADENOPATHY_AXILLARY,
 			LYMPHADENOPATHY_CERVICAL,
 			LYMPHADENOPATHY_INGUINAL,
-			CHILLS_SWEATS,
 			BEDRIDDEN,
 			ORAL_ULCERS,
 			PAINFUL_LYMPHADENITIS,
@@ -476,7 +476,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			DIZZINESS_STANDING_UP,
 			HIGH_OR_LOW_BLOOD_PRESSURE,
 			URINARY_RETENTION,
-			FEVER);
+			FEVER,
+			BODY_ACHE);
 
 		addField(SYMPTOMS_COMMENTS, TextField.class).setDescription(
 			I18nProperties.getPrefixDescription(I18N_PREFIX, SYMPTOMS_COMMENTS, "") + "\n" + I18nProperties.getDescription(Descriptions.descGdpr));
@@ -819,6 +820,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			setVisible(false, FEVER, HEADACHE, ALTERED_CONSCIOUSNESS, CONVULSION, SEIZURES);
 			setVisible(true, COUGH, SORE_THROAT, DIFFICULTY_BREATHING, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
 		}
+		if(disease == Disease.YELLOW_FEVER){
+			setVisible(true, HEADACHE, BACKACHE, NAUSEA, VOMITING, FEVER, JAUNDICE, CHILLS_SWEATS, FATIGUE_WEAKNESS, FATIGUE, WEAKNESS, BODY_ACHE);
+		}
 
 		if(disease == Disease.CSM){
 			symptomsHide();
@@ -826,7 +830,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			clinicalMeasurementsHeadingLabel.setVisible(false);
 			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
 
-		} else if (disease == Disease.AHF) {
+		}
+		if (disease == Disease.AHF) {
 			setVisible(true, VOMITING, INJECTION_SITE_BLEEDING, GUMS_BLEEDING, DIARRHEA, EYES_BLEEDING, BLOODY_BLACK_STOOL, ABDOMINAL_PAIN, DIGESTED_BLOOD_VOMIT,
 					NOSE_BLEEDING, BLEEDING_VAGINA, BREATHLESSNESS, JOINT_PAIN);
 			setVisible(false,
@@ -1077,6 +1082,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 	private void symptomsHide() {
 		setVisible(false, VOMITING,
+				BODY_ACHE,
 				DIARRHEA,
 				BLOOD_IN_STOOL,
 				NAUSEA,

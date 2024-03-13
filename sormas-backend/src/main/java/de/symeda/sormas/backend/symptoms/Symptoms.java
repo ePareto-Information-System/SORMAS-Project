@@ -262,6 +262,7 @@ public class Symptoms extends AbstractDomainObject {
 	private InjectionSite rightInjectionSite;
 	private InjectionSite leftInjectionSite;
 	private YesNo trueAfp;
+	private SymptomState bodyAche;
 
 	// when adding new fields make sure to extend toHumanString
 
@@ -2018,5 +2019,13 @@ public class Symptoms extends AbstractDomainObject {
 
 	public void setTrueAfp(YesNo trueAfp) {
 		this.trueAfp = trueAfp;
+	}
+
+	public SymptomState getBodyAche() {
+		return bodyAche;
+	}
+
+	public void setBodyAche(SymptomState bodyAche) {
+		this.bodyAche = bodyAche;
 	}
 }
