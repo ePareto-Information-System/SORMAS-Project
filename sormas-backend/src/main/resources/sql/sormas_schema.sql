@@ -13501,8 +13501,10 @@ ALTER TABLE samples ADD COLUMN suspecteddisease varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (586, 'Added 4 fields to Samples IDSR-Hospitalization');
 
--- 2024-03-12 Updated sample_history IDSR-Hospitalization #53
+-- 2024-03-12 Updated/Added columns in samples for CSM,IDSR #53
 ALTER TABLE samples_history ALTER COLUMN samplematerial DROP NOT NULL;
+ALTER TABLE samples ADD COLUMN datespecimensenttolab date;
+ALTER TABLE samples ALTER COLUMN sampledatetime DROP NOT NULL;
 
 INSERT INTO schema_version (version_number, comment) VALUES (587, 'Updated sample_history IDSR-Hospitalization');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

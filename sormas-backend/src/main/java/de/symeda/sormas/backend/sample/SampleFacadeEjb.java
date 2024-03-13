@@ -38,6 +38,7 @@ import javax.validation.constraints.NotNull;
 import de.symeda.sormas.api.person.PersonNameDto;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.sample.*;
+import de.symeda.sormas.api.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1232,6 +1233,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setLabLocation(source.getLabLocation());
 		target.setDateLabReceivedSpecimen(source.getDateLabReceivedSpecimen());
 		target.setDateResultsSentToClinician(source.getDateResultsSentToClinician());
+		target.setDateSpecimenSentToLab(source.getDateSpecimenSentToLab());
 
 
 
@@ -1498,6 +1500,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setLabLocation(source.getLabLocation());
 		target.setDateLabReceivedSpecimen(source.getDateLabReceivedSpecimen());
 		target.setDateResultsSentToClinician(source.getDateResultsSentToClinician());
+		target.setDateSpecimenSentToLab(source.getDateSpecimenSentToLab());
 
 
 		return target;
