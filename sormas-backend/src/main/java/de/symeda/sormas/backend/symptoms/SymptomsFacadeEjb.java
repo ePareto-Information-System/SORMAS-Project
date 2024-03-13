@@ -256,6 +256,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setTrueAfp(source.getTrueAfp());
 		target.setDyspnea(source.getDyspnea());
 		target.setDyspnea(source.getTachypnea());
+		target.setBodyAche(source.getBodyAche());
 
 		return target;
 	}
@@ -490,6 +491,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setTrueAfp(source.getTrueAfp());
 		target.setDyspnea(source.getDyspnea());
 		target.setDyspnea(source.getTachypnea());
+		target.setBodyAche(source.getBodyAche());
 
 
 		return target;

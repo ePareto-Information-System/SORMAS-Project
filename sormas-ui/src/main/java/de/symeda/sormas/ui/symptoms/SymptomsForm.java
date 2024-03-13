@@ -349,6 +349,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			ABDOMINAL_PAIN,
 			HEADACHE,
 			MUSCLE_PAIN,
+			CHILLS_SWEATS,
 			FATIGUE_WEAKNESS,
 			SKIN_RASH,
 			NECK_STIFFNESS,
@@ -410,7 +411,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			LYMPHADENOPATHY_AXILLARY,
 			LYMPHADENOPATHY_CERVICAL,
 			LYMPHADENOPATHY_INGUINAL,
-			CHILLS_SWEATS,
 			BEDRIDDEN,
 			ORAL_ULCERS,
 			PAINFUL_LYMPHADENITIS,
@@ -502,7 +502,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			MACULAR_RASH,
 			VESICULAR_RASH,
 			OTHER_LESION_AREAS,
-			NON_VASCULAR
+			NON_VASCULAR,
+			BODY_ACHE
 			);
 
 		addField(SYMPTOMS_COMMENTS, TextField.class).setDescription(
@@ -825,8 +826,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		}
 
 
-
-
 		if(disease == Disease.NEW_INFLUENZA){
 			addField(DATE_OF_ONSET, DateField.class);
 			OptionGroup feverBodytemp = addField(FEVER_BODY_TEMP_GREATER, OptionGroup.class);
@@ -839,68 +838,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			setVisible(true, COUGH, SORE_THROAT, DIFFICULTY_BREATHING, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
 		}
 		if(disease == Disease.YELLOW_FEVER){
-			setVisible(false,
-					NON_VASCULAR,
-					NON_VASCULAR_DATE,
-					SKIN_RASH_DATE,
-					FEVER_DATE,
-					COUGH_DATE,
-					RUNNY_NOSE_DATE,
-					CONJUNCTIVITIS_DATE,
-					KOPLIKS_SPOTS_DATE);
-		}
-
-		if (disease == Disease.AFP) {
-			symptomsHide();
-
-			clinicalMeasurementsHeadingLabel.setVisible(false);
-			setVisible(false,
-					TEMPERATURE,
-					TEMPERATURE_SOURCE,
-					FEVER,
-					ALTERED_CONSCIOUSNESS,
-					SEIZURES,
-					HEADACHE,
-					NECK_STIFFNESS);
-
-
-			NullableOptionGroup feverOnsetParalysis = addField(FEVER_ONSET_PARALYSIS, NullableOptionGroup.class);
-			NullableOptionGroup progressiveParalysis = addField(PROGRESSIVE_PARALYSIS, NullableOptionGroup.class);
-			DateField dateOnsetParalysis = addField(DATE_ONSET_PARALYSIS, DateField.class);
-			NullableOptionGroup progressiveFlaccidAcute = addField(PROGRESSIVE_FLACID_ACUTE, NullableOptionGroup.class);
-			NullableOptionGroup assymetric = addField(ASSYMETRIC, NullableOptionGroup.class);
-
-			NullableOptionGroup siteParalysisBox = new NullableOptionGroup("Site of Paralysis");
-			for (InjectionSite injectionSite : InjectionSite.ParalysisSite) {
-				siteParalysisBox.addItem(injectionSite);
-			}
-			ComboBox siteOfParalysis = addField(SITE_OF_PARALYSIS, ComboBox.class);
-			OptionGroup paralysedLimbSensitiveToPain = addField(PARALYSED_LIMB_SENSITIVE_TO_PAIN, OptionGroup.class);
-			ComboBox injectionSiteBeforeOnsetParalysis = addField(INJECTION_SITE_BEFORE_ONSET_PARALYSIS, ComboBox.class);
-
-			ComboBox rightInjectionSiteBox = new ComboBox("Right Injection Site");
-			for (InjectionSite injectionSiteRight : InjectionSite.InjectionSiteRight) {
-				rightInjectionSiteBox.addItem(injectionSiteRight);
-			}
-			ComboBox rightInjectionSite = addField(RIGHT_INJECTION_SITE, rightInjectionSiteBox);
-
-			ComboBox leftInjectionSiteBox = new ComboBox("Left Injection Site");
-			for (InjectionSite injectionSiteLeft : InjectionSite.InjectionSiteLeft) {
-				leftInjectionSiteBox.addItem(injectionSiteLeft);
-			}
-			ComboBox leftInjectionSite = addField(LEFT_INJECTION_SITE, leftInjectionSiteBox);
-			OptionGroup trueAFP = addField(TRUEAFP, OptionGroup.class);
-			TextArea provisionalDiagnosis = addField(PROVISONAL_DIAGNOSIS, TextArea.class);
-			provisionalDiagnosis.setRows(4);
-
-			addFields(
-					MUSCLE_TONE,
-					DEEP_TENDON_REFLEX,
-					MUSCLE_VOLUME,
-					SENSORY_LOSS);
-
-			setVisible(true, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
-
+			setVisible(true, HEADACHE, BACKACHE, NAUSEA, VOMITING, FEVER, JAUNDICE, CHILLS_SWEATS, FATIGUE_WEAKNESS, FATIGUE, WEAKNESS, BODY_ACHE);
 		}
 
 		if(disease == Disease.CSM){
@@ -909,7 +847,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			clinicalMeasurementsHeadingLabel.setVisible(false);
 			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
 
-		} else if (disease == Disease.AHF) {
+		}
+		if (disease == Disease.AHF) {
 			setVisible(true, VOMITING, INJECTION_SITE_BLEEDING, GUMS_BLEEDING, DIARRHEA, EYES_BLEEDING, BLOODY_BLACK_STOOL, ABDOMINAL_PAIN, DIGESTED_BLOOD_VOMIT,
 					NOSE_BLEEDING, BLEEDING_VAGINA, BREATHLESSNESS, JOINT_PAIN);
 			setVisible(false,
@@ -1194,6 +1133,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 	private void symptomsHide() {
 		setVisible(false, VOMITING,
+				BODY_ACHE,
 				DIARRHEA,
 				BLOOD_IN_STOOL,
 				NAUSEA,

@@ -92,6 +92,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String EYE_PAIN_LIGHT_SENSITIVE = "eyePainLightSensitive";
 	public static final String FATIGUE_WEAKNESS = "fatigueWeakness";
 	public static final String FEVER = "fever";
+	public static final String BODY_ACHE = "bodyAche";
 	public static final String FLUID_IN_LUNG_CAVITY = "fluidInLungCavity";
 	public static final String FLUID_IN_LUNG_CAVITY_AUSCULTATION = "fluidInLungCavityAuscultation";
 	public static final String FLUID_IN_LUNG_CAVITY_XRAY = "fluidInLungCavityXray";
@@ -455,6 +456,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		CORONAVIRUS,
 		UNDEFINED,
+		YELLOW_FEVER,
 		OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -756,6 +758,10 @@ public class SymptomsDto extends PseudonymizableDto {
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState hearingloss;
+	@Diseases({
+		YELLOW_FEVER})
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState bodyAche;
 
 	private Integer heartRate;
 
@@ -3278,6 +3284,8 @@ public class SymptomsDto extends PseudonymizableDto {
 		return weight;
 	}
 
+	@Order(331)
+	public SymptomState getBodyAche() {return  bodyAche;}
 	public void setAbdominalPain(SymptomState abdominalPain) {
 		this.abdominalPain = abdominalPain;
 	}
@@ -3415,6 +3423,9 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setHearingloss(SymptomState hearingloss) {
 		this.hearingloss = hearingloss;
+	}
+	public void setBodyAche(SymptomState bodyAche) {
+		this.bodyAche = bodyAche;
 	}
 
 	public void setHeartRate(Integer heartRate) {

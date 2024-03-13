@@ -284,6 +284,7 @@ public class Symptoms extends AbstractDomainObject {
 
 	public Symptoms() {
 	}
+	private SymptomState bodyAche;
 
 	// when adding new fields make sure to extend toHumanString
 
@@ -2182,5 +2183,11 @@ public class Symptoms extends AbstractDomainObject {
 	}
 	public void setTachypnea(SymptomState tachypnea) {
 		this.tachypnea = tachypnea;
+	public SymptomState getBodyAche() {
+		return bodyAche;
+	}
+
+	public void setBodyAche(SymptomState bodyAche) {
+		this.bodyAche = bodyAche;
 	}
 }

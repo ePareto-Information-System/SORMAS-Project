@@ -151,6 +151,7 @@ public interface Descriptions {
 	String Symptoms_difficultyBreathing = "Symptoms.difficultyBreathing";
 	String Symptoms_eyePainLightSensitive = "Symptoms.eyePainLightSensitive";
 	String Symptoms_fatigueWeakness = "Symptoms.fatigueWeakness";
+	String Symptoms_bodyAche = "Symptoms.bodyAche";
 	String Symptoms_fever = "Symptoms.fever";
 	String Symptoms_firstSymptom = "Symptoms.firstSymptom";
 	String Symptoms_hearingloss = "Symptoms.hearingloss";

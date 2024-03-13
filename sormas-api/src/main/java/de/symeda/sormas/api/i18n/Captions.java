@@ -2510,6 +2510,7 @@ public interface Captions {
 	String Symptoms_fastHeartRate = "Symptoms.fastHeartRate";
 	String Symptoms_fatigue = "Symptoms.fatigue";
 	String Symptoms_fatigueWeakness = "Symptoms.fatigueWeakness";
+	String Symptoms_bodyAche = "Symptoms.bodyAche";
 	String Symptoms_feelingIll = "Symptoms.feelingIll";
 	String Symptoms_fever = "Symptoms.fever";
 	String Symptoms_dyspnea = "Symptoms.dyspnea";
