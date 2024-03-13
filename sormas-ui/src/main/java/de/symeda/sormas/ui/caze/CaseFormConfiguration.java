@@ -133,11 +133,11 @@ public class CaseFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.OVERWRITE_FOLLOW_UP_UNTIL, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.FOLLOW_UP_COMMENT, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.SURVEILLANCE_OFFICER, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_NAME, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_TITLE, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.FUNCTION_OF_REPORTING_OFFICER, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_EMAIL, new HashSet<>(Arrays.asList(Disease.CSM)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_NAME, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AFP, Disease.NEW_INFLUENZA, Disease.AHF)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_TITLE, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AFP, Disease.NEW_INFLUENZA, Disease.AHF)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.FUNCTION_OF_REPORTING_OFFICER, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AFP, Disease.NEW_INFLUENZA, Disease.AHF)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AFP, Disease.NEW_INFLUENZA, Disease.AHF)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_EMAIL, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA, Disease.AHF)));
         DISABLED_FIELDS_BY_DISEASE.put(PAPER_FORM_DATES_LOC, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DISTRICT_LEVEL_DATE, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REGION_LEVEL_DATE, new HashSet<>(Arrays.asList()));
