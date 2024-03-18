@@ -209,8 +209,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		intensiveCareUnit.setVisible(false);
 		isolatedField.setVisible(false);
 		descriptionField.setVisible(false);
-		intensiveCareUnitStart.setVisible(false);
-		intensiveCareUnitEnd.setVisible(false);
+//		intensiveCareUnitStart.setVisible(false);
+//		intensiveCareUnitEnd.setVisible(false);
 		terminationDateHospitalStay.setVisible(false);
 		leftAgainstAdviceField.setVisible(false);
 		hospitalizationReason.setVisible(false);
@@ -336,25 +336,32 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			addField(HospitalizationDto.DISEASE_ONSET_DATE, DateField.class);
 			addField(HospitalizationDto.PATIENT_HOSPITALIZED_DETAINED, NullableOptionGroup.class);
 
-			setVisible(false, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HEALTH_FACILITY, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE,
+			setVisible(false, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE,
 					HospitalizationDto.INTENSIVE_CARE_UNIT, HospitalizationDto.ISOLATED, HospitalizationDto.DESCRIPTION, HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT);
 
 			notifyDistrictDate.setVisible(false);
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
+			hospitalRecordNumber.setVisible(true);
+			dateFirstSeen.setVisible(true);
+			dateFirstSeen.setCaption("Date seen at health facility:");
 
 		}
 
 		if(caze.getDisease() == Disease.AHF){
-			setVisible(false, HospitalizationDto.ADMISSION_DATE,HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, HospitalizationDto.ISOLATED, HospitalizationDto.INTENSIVE_CARE_UNIT);
+			setVisible(false, HospitalizationDto.ADMISSION_DATE,HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT);
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
 			notifyDistrictDate.setVisible(false);
 
-			setVisible(false, HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.ISOLATED, HospitalizationDto.INTENSIVE_CARE_UNIT, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT);
-			setVisible(true, HospitalizationDto.DISEASE_ONSET_DATE, HospitalizationDto.PATIENT_HOSPITALIZED_DETAINED);
+			hospitalRecordNumber.setVisible(true);
+			intensiveCareUnit.setVisible(true);
+			isolatedField.setVisible(true);
+			descriptionField.setVisible(true);
+
+			setVisible(true, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW);
 
 		}
 

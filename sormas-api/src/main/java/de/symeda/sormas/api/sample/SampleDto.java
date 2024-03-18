@@ -606,13 +606,13 @@ public class SampleDto extends SormasToSormasShareableDto {
 		this.fieldSampleID = fieldSampleID;
 	}
 
-	/*public YesNoUnknown getForRetest() {
+	public YesNoUnknown getForRetest() {
 		return forRetest;
 	}
 
 	public void setForRetest(YesNoUnknown forRetest) {
 		this.forRetest = forRetest;
-	}*/
+	}
 
 	public Date getSampleDateTime() {
 		return sampleDateTime;

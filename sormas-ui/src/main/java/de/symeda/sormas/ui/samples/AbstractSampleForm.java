@@ -81,7 +81,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private ComboBox diseaseField;
 	public ComboBox sampleMaterialComboBox;
 	public ComboBox sampleSource;
-	private ComboBox lab;
 	private TextField labDetails;
 	private TextField labLocation;
 	protected SampleDispatchMode sampleDispatchMode = SampleDispatchMode.REGIONAL_COLDROOM;
@@ -123,55 +122,33 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.DATE_SPECIMEN_SENT_TO_LAB) +
                     fluidRowLocs(6,SampleDto.SAMPLE_MATERIAL) +
 					fluidRowLocs(SampleDto.FIELD_SAMPLE_ID, REFERRED_FROM_BUTTON_LOC) +
-                    fluidRowLocs(6, SampleDto.DISEASE) +
+					fluidRowLocs(6, SampleDto.DISEASE) +
 					fluidRowLocs(SampleDto.SAMPLE_TESTS) +
+					fluidRowLocs("", SampleDto.SAMPLE_MATERIAL_TEXT) +
+					fluidRowLocs(SampleDto.SAMPLING_REASON, SampleDto.SAMPLING_REASON_DETAILS) +
+					fluidRowLocs(SampleDto.SAMPLE_SOURCE, "") +
+					//fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
+
+					fluidRowLocs(6,SampleDto.SAMPLE_MATERIAL) +
+					fluidRowLocs(SampleDto.CSF_SAMPLE_COLLECTED) +
+					fluidRowLocs(6, SampleDto.CSF_REASON) +
+					fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
+					fluidRowLocs(SampleDto.APPEARANCE_OF_CSF) +
+					fluidRowLocs(6,SampleDto.INOCULATION_TIME_TRANSPORT_MEDIA) +
+					fluidRowLocs(SampleDto.SAMPLE_SENT_TO_LAB, SampleDto.REASON_NOT_SENT_TO_LAB) +
+					fluidRowLocs(6,SampleDto.DATE_SAMPLE_SENT_TO_LAB) +
+					fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
+					fluidRowLocs(SampleDto.SAMPLE_CONTAINER_USED) +
 					fluidRowLocs(SampleDto.SAMPLE_DISPATCH_MODE) +
 					fluidRowLocs(6,SampleDto.SAMPLE_DISPATCH_DATE) +
-                    fluidRowLocs("", SampleDto.SAMPLE_MATERIAL_TEXT) +
-                    fluidRowLocs(SampleDto.SAMPLING_REASON, SampleDto.SAMPLING_REASON_DETAILS) +
-                    fluidRowLocs(SampleDto.SAMPLE_SOURCE, "") +
-                    //fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
-
-					fluidRowLocs(SampleDto.IPSAMPLESENT) + fluidRowLocs(SampleDto.IPSAMPLERESULTS, "")+
-					locCss(VSPACE_TOP_3, SampleDto.SAMPLE_MATERIAL_REQUESTED) +
-					loc(SAMPLE_MATERIAL_READ_HEADLINE_LOC) +
-					loc(SampleDto.REQUESTED_SAMPLE_MATERIALS) +
-
-					//INFLUENZA
-					loc(SampleDto.POSITIVE_VIRAL_CULTURE) +
-					loc(SampleDto.POSITIVE_REAL_TIME) +
-					loc(SampleDto.FOUR_FOLD_RISE) +
-					fluidRowLocs(SampleDto.INFLUENZA_VIRUS, SampleDto.OTHER_INFLUENZA_VIRUS) +
-					loc(SampleDto.TREATMENT) +
-					loc(SampleDto.STATE_TREATMENT_ADMINISTERED) +
-
-                    locCss(VSPACE_TOP_3, SampleDto.PATHOGEN_TESTING_REQUESTED) +
-                    loc(PATHOGEN_TESTING_READ_HEADLINE_LOC) +
-                    loc(PATHOGEN_TESTING_INFO_LOC) +
-                    loc(SampleDto.REQUESTED_PATHOGEN_TESTS) +
-                    loc(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS) +
-                    loc(REQUESTED_PATHOGEN_TESTS_READ_LOC) +
-
-                    locCss(VSPACE_TOP_3, SampleDto.ADDITIONAL_TESTING_REQUESTED) +
-                    loc(ADDITIONAL_TESTING_READ_HEADLINE_LOC) +
-                    loc(ADDITIONAL_TESTING_INFO_LOC) +
-                    loc(SampleDto.REQUESTED_ADDITIONAL_TESTS) +
-                    loc(SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS) +
-                    loc(REQUESTED_ADDITIONAL_TESTS_READ_LOC) +
-
-                    //locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
-                    fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
-                    //locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
-                    fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID) +
-                    fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
-                    fluidRowLocs(SampleDto.COMMENT) +
-                    fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT) +
-					fluidRowLocs(CaseDataDto.DELETION_REASON) +
-					fluidRowLocs(CaseDataDto.OTHER_DELETION_REASON) +
+					fluidRowLocs(SampleDto.RDT_PERFORMED, SampleDto.RDT_RESULTS) +
+					fluidRowLocs(SampleDto.DISTRICT_NOTIFICATION_DATE, SampleDto.NAME_OF_PERSON, SampleDto.TEL_NUMBER) +
+					fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT) +
+					fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +
+					fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_NATIONAL, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
 
 					fluidRowLocs(6,SampleDto.LABORATORY_TYPE) +
 					fluidRowLocs(DISTRICT_LABORATORY_HEADLINE_LOC) +
-
 					fluidRowLocs(REGIONAL_LABORATORY_HEADLINE_LOC) +
 					fluidRowLocs(REFERENCE_LABORATORY_HEADLINE_LOC) +
 					locCss(VSPACE_TOP_3, SampleDto.LABORATORY_NAME) +
@@ -181,7 +158,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.LABORATORY_APPEARANCE_OF_CSF, SampleDto.LABORATORY_TEST_PERFORMED, SampleDto.LABORATORY_TEST_PERFORMED_OTHER) +
 					fluidRowLocs(SampleDto.LABORATORY_CYTOLOGY, SampleDto.LABORATORY_GRAM, SampleDto.LABORATORY_GRAM_OTHER) +
 					fluidRowLocs(SampleDto.LABORATORY_RDT_PERFORMED, SampleDto.LABORATORY_RDT_RESULTS) +
-					fluidRowLocs(SampleDto.LABORATORY_LATEX) +
+					fluidRowLocs(6,SampleDto.LABORATORY_LATEX) +
 					fluidRowLocs(SampleDto.LABORATORY_CULTURE, SampleDto.LABORATORY_CULTURE_OTHER) +
 					fluidRowLocs(SampleDto.LABORATORY_OTHER_TESTS, SampleDto.LABORATORY_OTHER_TESTS_RESULTS) +
 
@@ -196,9 +173,49 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.LABORATORY_SEROTYPE, SampleDto.LABORATORY_SEROTYPE_TYPE, SampleDto.LABORATORY_SEROTYPE_RESULTS) +
 					fluidRowLocs(6,SampleDto.LABORATORY_FINAL_RESULTS) +
 					fluidRowLocs(SampleDto.LABORATORY_OBSERVATIONS) +
-					fluidRowLocs(SampleDto.LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY, SampleDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
+					fluidRowLocs(6, SampleDto.LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY) +
+					fluidRowLocs(6, SampleDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
+
+					//INFLUENZA
+					loc(SampleDto.POSITIVE_VIRAL_CULTURE) +
+					loc(SampleDto.POSITIVE_REAL_TIME) +
+					loc(SampleDto.FOUR_FOLD_RISE) +
+					fluidRowLocs(SampleDto.INFLUENZA_VIRUS, SampleDto.OTHER_INFLUENZA_VIRUS) +
+					loc(SampleDto.TREATMENT) +
+					loc(SampleDto.STATE_TREATMENT_ADMINISTERED) +
+
 					fluidRowLocs(SampleDto.LABORATORY_FINAL_CLASSIFICATION) +
 
+
+					fluidRowLocs(SampleDto.IPSAMPLESENT) + fluidRowLocs(SampleDto.IPSAMPLERESULTS, "")+
+					loc(SAMPLE_MATERIAL_READ_HEADLINE_LOC) +
+					loc(SampleDto.REQUESTED_SAMPLE_MATERIALS) +
+
+
+					locCss(VSPACE_TOP_3, SampleDto.PATHOGEN_TESTING_REQUESTED) +
+					loc(PATHOGEN_TESTING_READ_HEADLINE_LOC) +
+					loc(PATHOGEN_TESTING_INFO_LOC) +
+					loc(SampleDto.REQUESTED_PATHOGEN_TESTS) +
+					loc(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS) +
+					loc(REQUESTED_PATHOGEN_TESTS_READ_LOC) +
+
+					locCss(VSPACE_TOP_3, SampleDto.ADDITIONAL_TESTING_REQUESTED) +
+					loc(ADDITIONAL_TESTING_READ_HEADLINE_LOC) +
+					loc(ADDITIONAL_TESTING_INFO_LOC) +
+					//loc(SampleDto.REQUESTED_ADDITIONAL_TESTS) +
+				//	loc(SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS) +
+					loc(REQUESTED_ADDITIONAL_TESTS_READ_LOC) +
+
+					locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
+					fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
+					locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
+					fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID) +
+					fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
+					fluidRowLocs(SampleDto.COMMENT) +
+					fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT) +
+                    fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
+					fluidRowLocs(CaseDataDto.DELETION_REASON) +
+					fluidRowLocs(CaseDataDto.OTHER_DELETION_REASON) +
 
 					//AFP
 					loc(STOOL_SPECIMEN_COLLECTION_HEADLINE_LOC) +
@@ -614,28 +631,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	Field<?> sampleMaterialTestingField = getField(SampleDto.SAMPLE_MATERIAL_REQUESTED);
 
 
-	protected void initializeMaterialsMultiSelect( ){
-
-			Label materialMultiSelectInfoLabel = new Label(I18nProperties.getString(Strings.infoSampleMaterialSelection));
-			getContent().addComponent(materialMultiSelectInfoLabel, SAMPLE_MATERIAL_INFO_LOC);
-
-			// Yes/No fields for sample materials
-			sampleMaterialRequestedField.setWidthUndefined();
-			sampleMaterialRequestedField.addValueChangeListener(e -> updateSampleMaterialFields());
-			sampleMaterialRequestedField.setCaption("Sample Types");
-
-
-			// CheckBox groups to select sample Materials
-			CssStyles.style(requestedSampleMaterialsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
-			requestedSampleMaterialsField.setMultiSelect(true);
-			requestedSampleMaterialsField.addItems(
-					Arrays.stream(YellowFeverSample.values())
-							.filter( c -> fieldVisibilityCheckers.isVisible(YellowFeverSample.class, c.name()))
-							.collect(Collectors.toList()));
-			requestedSampleMaterialsField.setCaption(null);
-
-	}
-
 	private void selectAHFTests(){
 
 		sampleTestsField.setCaption("Sample Tests");
@@ -771,6 +766,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		suspectedDisease.setVisible(false);
 		labLocation.setVisible(false);
 		dateSpecimenSentToLab.setVisible(false);
+		dateLabReceivedSpecimen.setVisible(false);
+		dateResultsSentToClinician.setVisible(false);
 
 
 		FieldHelper
@@ -1116,13 +1113,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		}
 	}
 
-	private Disease getDiseaseFromCase(String caseUuid) {
-		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(caseUuid);
-		if (caseDataDto != null) {
-			return caseDataDto.getDisease();
-		}
-		return null;
-	}
 
 	private Disease getDiseaseFromContact(String contactUuid) {
 		ContactDto contactDto = FacadeProvider.getContactFacade().getByUuid(contactUuid);

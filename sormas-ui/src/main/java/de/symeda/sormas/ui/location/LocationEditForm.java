@@ -921,7 +921,6 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	}
 	public void handleCSM(){
 		setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAT_LON_ACCURACY, LocationDto.LAND_MARK);
-		localityField.setVisible(false);
 	}
 	public void handleNewInfluenza(){
 		setVisible(false,

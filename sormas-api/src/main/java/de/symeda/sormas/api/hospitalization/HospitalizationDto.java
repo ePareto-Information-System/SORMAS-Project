@@ -377,7 +377,6 @@ public class HospitalizationDto extends EntityDto {
 	public void setHospitalRecordNumber(String hospitalRecordNumber) {
 		this.hospitalRecordNumber = hospitalRecordNumber;
 	}
-
 	public Date getDateFormSentToDistrict() {
 		return dateFormSentToDistrict;
 	}

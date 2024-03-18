@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -36,6 +37,7 @@ import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.utils.RiskFactorInfluenza;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.ui.utils.CssStyles;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.vaadin.shared.ui.ContentMode;
@@ -130,6 +132,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	@Override
 	protected void addFields() {
 
+
 		if (disease != null && !diseaseCheck() && !diseaseInfluenzaCheck()) {
 			addHeadingsAndInfoTexts();
 		}
@@ -176,6 +179,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		exposuresField.addValueChangeListener(e -> {
 			ogExposureDetailsKnown.setEnabled(CollectionUtils.isEmpty(exposuresField.getValue()));
 		});
+
+		hideFieldsForSelectedDisease(disease);
 
 		if (diseaseCheck()) {
 			setVisible(false, EpiDataDto.EXPOSURES, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN);
@@ -282,4 +287,26 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	}
 	private boolean diseaseCSMCheck(){return disease == Disease.CSM; }
 	private boolean diseaseInfluenzaCheck(){return disease == Disease.NEW_INFLUENZA; }
+
+	//hide all fields
+	public void hideAllFields () {
+		for (Field<?> field : getFieldGroup().getFields()) {
+			//check if field is not null
+			if (field != null)
+				//hide the field
+				field.setVisible(false);
+
+		}
+	}
+
+	public void hideFieldsForSelectedDisease(Disease disease) {
+		Set<String> disabledFields = EpiFormConfiguration.getDisabledFieldsForDisease(disease);
+		for (String field : disabledFields) {
+			disableField(field);
+		}
+	}
+
+	private void disableField(String field) {
+		setVisible(false, field);
+	}
 }
