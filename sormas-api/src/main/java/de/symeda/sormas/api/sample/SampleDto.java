@@ -248,8 +248,8 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private SampleSource sampleSource;
 	private SampleReferenceDto referredTo;
 	private boolean shipped;
-	private boolean sampleMaterialTypeForYF;
-//	private Boolean sampleDiseaseTests;
+/*	private boolean sampleMaterialTypeForYF;
+	private Boolean sampleDiseaseTests;*/
 	private boolean received;
 	private PathogenTestResultType pathogenTestResult;
 
@@ -786,7 +786,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public void setSampleMaterialTestingRequested(Boolean sampleMaterialTestingRequested) {
 		this.sampleMaterialTestingRequested = sampleMaterialTestingRequested;
 	}
-	@ImportIgnore
+	/*@ImportIgnore
 	public boolean isYellowFeverSampleType() {
 		return sampleMaterialTypeForYF;
 	}
@@ -795,7 +795,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
 	}
 
-	/*@ImportIgnore
+	@ImportIgnore
 	public Boolean isDiseaseSampleTests() {
 		return sampleDiseaseTests;
 	}

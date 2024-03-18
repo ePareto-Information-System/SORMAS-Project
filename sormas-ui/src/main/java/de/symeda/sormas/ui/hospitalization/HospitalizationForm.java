@@ -392,6 +392,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			admissionDateField.setCaption("Date of admission (in-patient)");
 			facilityField.setVisible(true);
 			districtField.setVisible(true);
+			intensiveCareUnit.setVisible(true);
 
 		}
 	}
