@@ -202,8 +202,8 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private SampleSource sampleSource;
 	private Sample referredTo;
 	private boolean shipped;
-	private boolean sampleMaterialTypeForYF;
-	private boolean sampleDiseaseTests;
+/*	private boolean sampleMaterialTypeForYF;
+	private boolean sampleDiseaseTests;*/
 	private boolean received;
 	private PathogenTestResultType pathogenTestResult;
 	private Date pathogenTestResultChangeDate;
@@ -570,7 +570,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 		this.shipped = shipped;
 	}
 
-	public boolean isYellowFeverSampleType() {
+/*	public boolean isYellowFeverSampleType() {
 		return sampleMaterialTypeForYF;
 	}
 
@@ -584,7 +584,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setDiseaseSampleTests(boolean sampleDiseaseTests) {
 		this.sampleDiseaseTests = sampleDiseaseTests;
-	}
+	}*/
 
 	@Column
 	public boolean isReceived() {

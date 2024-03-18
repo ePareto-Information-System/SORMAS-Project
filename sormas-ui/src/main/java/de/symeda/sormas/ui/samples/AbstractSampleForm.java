@@ -50,6 +50,7 @@ import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.caze.CaseFormConfiguration;
 import de.symeda.sormas.ui.utils.*;
 import de.symeda.sormas.ui.utils.DateFormatHelper;
 import de.symeda.sormas.ui.utils.DateTimeField;
@@ -101,6 +102,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private DateField dateFormReceivedAtDistrict;
 	private DateField dateResultsSentToClinician;
 	private DateField dateSpecimenSentToLab;
+	private CheckBox pathogenTestingRequestedField;
 
 	//@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
@@ -178,12 +180,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.LABORATORY_OBSERVATIONS) +
 					fluidRowLocs(6, SampleDto.LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY) +
 					fluidRowLocs(6, SampleDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
-					fluidRowLocs(SampleDto.LABORATORY_FINAL_CLASSIFICATION) +
-
-
-					fluidRowLocs(SampleDto.IPSAMPLESENT) + fluidRowLocs(SampleDto.IPSAMPLERESULTS, "")+
-					loc(SAMPLE_MATERIAL_READ_HEADLINE_LOC) +
-					loc(SampleDto.REQUESTED_SAMPLE_MATERIALS) +
 
 					//INFLUENZA
 					loc(SampleDto.POSITIVE_VIRAL_CULTURE) +
@@ -192,6 +188,14 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.INFLUENZA_VIRUS, SampleDto.OTHER_INFLUENZA_VIRUS) +
 					loc(SampleDto.TREATMENT) +
 					loc(SampleDto.STATE_TREATMENT_ADMINISTERED) +
+
+					fluidRowLocs(SampleDto.LABORATORY_FINAL_CLASSIFICATION) +
+
+
+					fluidRowLocs(SampleDto.IPSAMPLESENT) + fluidRowLocs(SampleDto.IPSAMPLERESULTS, "")+
+					loc(SAMPLE_MATERIAL_READ_HEADLINE_LOC) +
+					loc(SampleDto.REQUESTED_SAMPLE_MATERIALS) +
+
 
 					locCss(VSPACE_TOP_3, SampleDto.PATHOGEN_TESTING_REQUESTED) +
 					loc(PATHOGEN_TESTING_READ_HEADLINE_LOC) +
@@ -457,6 +461,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		hidePropertiesVisibility();
 
+
 			switch (disease) {
 				case CSM:
 					handleCSM();
@@ -587,7 +592,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		getContent().addComponent(requestedAdditionalInfoLabel, ADDITIONAL_TESTING_INFO_LOC);
 
 		// Yes/No fields for requesting pathogen/additional tests
-		CheckBox pathogenTestingRequestedField = addField(SampleDto.PATHOGEN_TESTING_REQUESTED, CheckBox.class);
+		pathogenTestingRequestedField = addField(SampleDto.PATHOGEN_TESTING_REQUESTED, CheckBox.class);
 		pathogenTestingRequestedField.setWidthUndefined();
 		pathogenTestingRequestedField.addValueChangeListener(e -> updateRequestedTestFields());
 
@@ -633,6 +638,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		sampleTestsField = addField(SampleDto.SAMPLE_TESTS, OptionGroup.class);
 		sampleTestsField.setVisible(false);
+
 	}
 	CheckBox sampleMaterialRequestedField = addField(SampleDto.SAMPLE_MATERIAL_REQUESTED, CheckBox.class);
 	Field<?> sampleMaterialTestingField = getField(SampleDto.SAMPLE_MATERIAL_REQUESTED);
@@ -684,6 +690,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		handleDisease(Disease.YELLOW_FEVER, "National Public Health Reference Laboratory");
 		handleDisease(Disease.AHF, "Noguchi Memorial Institute for Medical Research");
 		handleDisease(Disease.AFP, "Noguchi Memorial Institute for Medical Research");
+		handleDiseaseField(Disease.CSM);
+		handleDiseaseField(Disease.NEW_INFLUENZA);
 
 		if (getValue() != null && canOnlyReadRequests) {
 			CssLayout requestedPathogenTestsLayout = new CssLayout();
@@ -728,10 +736,27 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				throw new InvalidValueException(I18nProperties.getString(Strings.messageFieldSampleIdExist));
 		}
 	}
+
 	private void handleDisease(Disease targetDisease, String labName) {
 		if (disease == targetDisease) {
 			setVisibleAndCheckLab(labName, SampleDto.PATHOGEN_TESTING_REQUESTED);
 		}
+	}
+
+	public void hideFieldsForSelectedDisease(Disease disease) {
+		Set<String> disabledFields = SampleFormConfiguration.getDisabledFieldsForDisease(disease);
+		for (String field : disabledFields) {
+			disableField(field);
+		}
+	}
+
+	private void handleDiseaseField(Disease targetDisease){
+		if (disease == targetDisease) {
+			setVisible(false, SampleDto.PATHOGEN_TESTING_REQUESTED);
+		}
+	}
+	private void disableField(String field) {
+		setVisible(false, field);
 	}
 
 	private void handleCSM() {
@@ -911,7 +936,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		});
 		laboratoryFinalResults.setVisible(true);
-
 	}
 
 	private void handleAFP() {
@@ -1057,6 +1081,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateFormReceivedAtDistrict.setVisible(false);
 		dateResultsSentToClinician.setVisible(false);
 		dateSpecimenSentToLab.setVisible(false);
+		pathogenTestingRequestedField.setVisible(false);
 	}
 
 	private void addSampleDispatchFields() {
@@ -1116,11 +1141,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	private void setVisibleAndCheckLab(String labName, String...fieldsToHide) {
 		setVisible(false, fieldsToHide);
+		List<FacilityReferenceDto> allActiveLaboratories = FacadeProvider.getFacilityFacade().getAllActiveLaboratories(false);
+		FacilityReferenceDto facilityLab = findLabByName(allActiveLaboratories, labName);
 
 		if (lab != null) {
-			List<FacilityReferenceDto> allActiveLaboratories = FacadeProvider.getFacilityFacade().getAllActiveLaboratories(false);
-			FacilityReferenceDto facilityLab = findLabByName(allActiveLaboratories, labName);
-
 			if (facilityLab != null) {
 				lab.addItems(allActiveLaboratories);
 				lab.setValue(facilityLab);
@@ -1131,7 +1155,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				System.out.println("Please add " + labName + " to Facility Configuration");
 			}
 		} else {
-			System.out.println("Lab dropdown is null. Please check your code.");
+			System.out.println("Lab dropdown is null. Please contact system admin.");
 		}
 	}
 

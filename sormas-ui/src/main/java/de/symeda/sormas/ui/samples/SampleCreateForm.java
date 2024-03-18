@@ -27,6 +27,7 @@ public class SampleCreateForm extends AbstractSampleForm {
 			defaultValueChangeListener();
 			final NullableOptionGroup samplePurposeField = getField(SampleDto.SAMPLE_PURPOSE);
 			samplePurposeField.setValue(SamplePurpose.EXTERNAL);
+
 		});
 	}
 
