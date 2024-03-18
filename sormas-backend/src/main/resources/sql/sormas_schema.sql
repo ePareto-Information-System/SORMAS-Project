@@ -13481,41 +13481,39 @@ INSERT INTO schema_version (version_number, comment) VALUES (581, 'Added columns
 ALTER TABLE samples ALTER COLUMN sampledatetime DROP NOT NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (582, 'Altered column sampledatetime in samples to not null');
 
-INSERT INTO schema_version (version_number, comment) VALUES (583, 'Added influenzalabcolumns to samples');
-
 -- 2024-03-04 Added locality for IDSR #53
 ALTER TABLE location ADD COLUMN locality varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (584, 'Added locality to location');
+INSERT INTO schema_version (version_number, comment) VALUES (583, 'Added locality to location');
 
 -- 2024-03-08 Added dateFormSentToDistrict for IDSR-Hospitalization #53
 ALTER TABLE hospitalization ADD COLUMN dateformsenttodistrict date;
 
-INSERT INTO schema_version (version_number, comment) VALUES (585, 'Added dateFormSentToDistrict for IDSR-Hospitalization');
+INSERT INTO schema_version (version_number, comment) VALUES (584, 'Added dateFormSentToDistrict for IDSR-Hospitalization');
 
 -- 2024-03-11 Added 4 fields to Samples IDSR-Hospitalization #53
-ALTER TABLE samples ADD COLUMN datelabreceivedspecimen date;
+ALTER TABLE samples ADD COLUMN datelabreceivedspecimen date;q
 ALTER TABLE samples ADD COLUMN dateresultssenttoclinician date;
 ALTER TABLE samples ADD COLUMN lablocation varchar(255);
 ALTER TABLE samples ADD COLUMN suspecteddisease varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (586, 'Added 4 fields to Samples IDSR-Hospitalization');
+INSERT INTO schema_version (version_number, comment) VALUES (585, 'Added 4 fields to Samples IDSR-Hospitalization');
 
 -- 2024-03-12 Updated/Added columns in samples for CSM,IDSR #53
 ALTER TABLE samples_history ALTER COLUMN samplematerial DROP NOT NULL;
 ALTER TABLE samples ADD COLUMN datespecimensenttolab date;
 ALTER TABLE samples ALTER COLUMN sampledatetime DROP NOT NULL;
 
-INSERT INTO schema_version (version_number, comment) VALUES (587, 'Updated sample_history IDSR-Hospitalization');
+INSERT INTO schema_version (version_number, comment) VALUES (586, 'Updated sample_history IDSR-Hospitalization');
 
 -- 2024-03-13 Added bodyAche in symptoms for yellow fever #53
 ALTER TABLE symptoms ADD COLUMN bodyache varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (588, 'Added bodyAche in symptoms for yellow fever');
+INSERT INTO schema_version (version_number, comment) VALUES (587, 'Added bodyAche in symptoms for yellow fever');
 
 -- 2024-03-17 Updated sampledatetime #53
 ALTER TABLE samples_history ALTER COLUMN sampledatetime DROP NOT NULL;
 
-INSERT INTO schema_version (version_number, comment) VALUES (589, 'Updated sampledatetime');
+INSERT INTO schema_version (version_number, comment) VALUES (588, 'Updated sampledatetime');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
