@@ -1974,7 +1974,8 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState coma;
 
 	@Diseases({
-		ANTHRAX })
+		ANTHRAX,
+		CSM})
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.NERVOUS_SYSTEM)
 	private SymptomState convulsion;
@@ -2368,6 +2369,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
+		AHF,
 		OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.GENERAL)

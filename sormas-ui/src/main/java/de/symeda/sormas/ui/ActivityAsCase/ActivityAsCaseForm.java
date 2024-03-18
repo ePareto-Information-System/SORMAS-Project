@@ -86,7 +86,7 @@ public class ActivityAsCaseForm extends AbstractEditForm<ActivityAsCaseDto> {
                                         ActivityAsCaseDto.HABITATION_DETAILS
                                 ))
                         ) +
-                        loc(ActivityAsCaseDto.ROLE) +
+						fluidRowLocs(6,ActivityAsCaseDto.ROLE) +
                         loc(LOC_LOCATION_HEADING) +
                         fluidRow(
                                 fluidColumn(6, 0, locs(ActivityAsCaseDto.TYPE_OF_PLACE)),

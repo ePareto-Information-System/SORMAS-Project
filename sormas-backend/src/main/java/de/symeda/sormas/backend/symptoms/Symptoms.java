@@ -2183,6 +2183,7 @@ public class Symptoms extends AbstractDomainObject {
 	}
 	public void setTachypnea(SymptomState tachypnea) {
 		this.tachypnea = tachypnea;
+	}
 	public SymptomState getBodyAche() {
 		return bodyAche;
 	}

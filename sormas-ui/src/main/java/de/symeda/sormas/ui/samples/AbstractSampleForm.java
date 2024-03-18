@@ -84,7 +84,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private ComboBox diseaseField;
 	public ComboBox sampleMaterialComboBox;
 	public ComboBox sampleSource;
-	private ComboBox lab;
 	private TextField labDetails;
 	private TextField labLocation;
 	protected SampleDispatchMode sampleDispatchMode = SampleDispatchMode.REGIONAL_COLDROOM;
@@ -128,8 +127,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.FIELD_SAMPLE_ID, REFERRED_FROM_BUTTON_LOC) +
 					fluidRowLocs(6, SampleDto.DISEASE) +
 					fluidRowLocs(SampleDto.SAMPLE_TESTS) +
-					fluidRowLocs(SampleDto.SAMPLE_DISPATCH_MODE) +
-					fluidRowLocs(6,SampleDto.SAMPLE_DISPATCH_DATE) +
 					fluidRowLocs("", SampleDto.SAMPLE_MATERIAL_TEXT) +
 					fluidRowLocs(SampleDto.SAMPLING_REASON, SampleDto.SAMPLING_REASON_DETAILS) +
 					fluidRowLocs(SampleDto.SAMPLE_SOURCE, "") +
@@ -145,6 +142,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(6,SampleDto.DATE_SAMPLE_SENT_TO_LAB) +
 					fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
 					fluidRowLocs(SampleDto.SAMPLE_CONTAINER_USED) +
+					fluidRowLocs(SampleDto.SAMPLE_DISPATCH_MODE) +
+					fluidRowLocs(6,SampleDto.SAMPLE_DISPATCH_DATE) +
 					fluidRowLocs(SampleDto.RDT_PERFORMED, SampleDto.RDT_RESULTS) +
 					fluidRowLocs(SampleDto.DISTRICT_NOTIFICATION_DATE, SampleDto.NAME_OF_PERSON, SampleDto.TEL_NUMBER) +
 					fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT) +
@@ -395,40 +394,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			getContent().addComponent(referredButton);
 		}
 
-		//disease = getAssociatedDisease();
-
-		final CaseReferenceDto associatedCase = getValue().getAssociatedCase();
-		final ContactReferenceDto associatedContact = getValue().getAssociatedContact();
-		final EventParticipantReferenceDto associatedEventParticipant = getValue().getAssociatedEventParticipant();
-
-		if (associatedCase != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CASE_VIEW)) {
-			disease = getDiseaseFromCase(associatedCase.getUuid());
-		} else if (associatedContact != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CONTACT_VIEW)) {
-			disease = getDiseaseFromContact(associatedContact.getUuid());
-		} else if (associatedEventParticipant != null && UserProvider.getCurrent().hasAllUserRights(UserRight.EVENT_VIEW)) {
-			EventReferenceDto eventReferenceDto = FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(associatedEventParticipant.getUuid()).getEvent();
-			if (eventReferenceDto != null) {
-				disease = getDiseaseFromEvent(eventReferenceDto.getUuid());
-			}
-		}
-
-		SampleReferenceDto referredFromRef = FacadeProvider.getSampleFacade().getReferredFrom(getValue().getUuid());
-		if (referredFromRef != null) {
-			SampleDto referredFrom = FacadeProvider.getSampleFacade().getSampleByUuid(referredFromRef.getUuid());
-			FacilityReferenceDto referredFromLab = referredFrom.getLab();
-			String referredButtonCaption = referredFromLab == null
-					? I18nProperties.getCaption(Captions.sampleReferredFromInternal) + " ("
-					+ DateFormatHelper.formatLocalDateTime(referredFrom.getSampleDateTime()) + ")"
-					: I18nProperties.getCaption(Captions.sampleReferredFrom) + " " + referredFromLab.toString();
-			Button referredButton = ButtonHelper.createButton(
-					"referredFrom",
-					referredButtonCaption,
-					event -> ControllerProvider.getSampleController().navigateToData(referredFrom.getUuid()),
-					ValoTheme.BUTTON_LINK,
-					VSPACE_NONE);
-
-			getContent().addComponent(referredButton);
-		}
 
 		getDisease();
 
@@ -673,28 +638,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	Field<?> sampleMaterialTestingField = getField(SampleDto.SAMPLE_MATERIAL_REQUESTED);
 
 
-	protected void initializeMaterialsMultiSelect( ){
-
-			Label materialMultiSelectInfoLabel = new Label(I18nProperties.getString(Strings.infoSampleMaterialSelection));
-			getContent().addComponent(materialMultiSelectInfoLabel, SAMPLE_MATERIAL_INFO_LOC);
-
-			// Yes/No fields for sample materials
-			sampleMaterialRequestedField.setWidthUndefined();
-			sampleMaterialRequestedField.addValueChangeListener(e -> updateSampleMaterialFields());
-			sampleMaterialRequestedField.setCaption("Sample Types");
-
-
-			// CheckBox groups to select sample Materials
-			CssStyles.style(requestedSampleMaterialsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
-			requestedSampleMaterialsField.setMultiSelect(true);
-			requestedSampleMaterialsField.addItems(
-					Arrays.stream(YellowFeverSample.values())
-							.filter( c -> fieldVisibilityCheckers.isVisible(YellowFeverSample.class, c.name()))
-							.collect(Collectors.toList()));
-			requestedSampleMaterialsField.setCaption(null);
-
-	}
-
 	private void selectAHFTests(){
 
 		sampleTestsField.setCaption("Sample Tests");
@@ -823,6 +766,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		suspectedDisease.setVisible(false);
 		labLocation.setVisible(false);
 		dateSpecimenSentToLab.setVisible(false);
+		dateLabReceivedSpecimen.setVisible(false);
+		dateResultsSentToClinician.setVisible(false);
 
 
 		FieldHelper
@@ -1190,13 +1135,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		}
 	}
 
-	private Disease getDiseaseFromCase(String caseUuid) {
-		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(caseUuid);
-		if (caseDataDto != null) {
-			return caseDataDto.getDisease();
-		}
-		return null;
-	}
 
 	private Disease getDiseaseFromContact(String contactUuid) {
 		ContactDto contactDto = FacadeProvider.getContactFacade().getByUuid(contactUuid);

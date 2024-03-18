@@ -1459,6 +1459,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setLaboratoryAmoxycillin(source.getLaboratoryAmoxycillin());
 		target.setLaboratoryOxacillin(source.getLaboratoryOxacillin());
 		target.setLaboratoryAntibiogramOther(source.getLaboratoryAntibiogramOther());
+		target.setLaboratoryType(source.getLaboratoryType());
 		target.setLaboratoryDateResultsSentHealthFacility(source.getLaboratoryDateResultsSentHealthFacility());
 		target.setLaboratoryDateResultsSentDSD(source.getLaboratoryDateResultsSentDSD());
 		target.setLaboratorySampleDateReceived(source.getLaboratorySampleDateReceived());

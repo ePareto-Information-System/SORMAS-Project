@@ -626,9 +626,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		);
 		hideFieldsForSelectedDisease(disease);
 
-		if (disease == Disease.CSM) {
-		}
-
 		if (disease == Disease.MEASLES) {
 			setVisible(false, PersonDto.INTERNAL_TOKEN);
 			setVisible(false, PersonDto.EXTERNAL_TOKEN);

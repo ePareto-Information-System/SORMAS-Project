@@ -428,7 +428,7 @@ public class HospitalizationDto extends EntityDto {
 
 	public void setPatientVentilated(YesNoUnknown patientVentilated) {
 		this.patientVentilated = patientVentilated;
-
+	}
 	public Date getDateFormSentToDistrict() {
 		return dateFormSentToDistrict;
 	}

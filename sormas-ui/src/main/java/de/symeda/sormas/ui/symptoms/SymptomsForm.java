@@ -262,20 +262,27 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		final Label generalSymptomsHeadingLabel = createLabel(SymptomGroup.GENERAL.toString(), H4, GENERAL_SIGNS_AND_SYMPTOMS_HEADING_LOC);
 		final Label respiratorySymptomsHeadingLabel =
 			createLabel(SymptomGroup.RESPIRATORY.toString(), H4, RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC);
+		respiratorySymptomsHeadingLabel.setVisible(false);
 		final Label cardiovascularSymptomsHeadingLabel =
 			createLabel(SymptomGroup.CARDIOVASCULAR.toString(), H4, CARDIOVASCULAR_SIGNS_AND_SYMPTOMS_HEADING_LOC);
+		cardiovascularSymptomsHeadingLabel.setVisible(false);
 		final Label gastrointestinalSymptomsHeadingLabel =
 			createLabel(SymptomGroup.GASTROINTESTINAL.toString(), H4, GASTROINTESTINAL_SIGNS_AND_SYMPTOMS_HEADING_LOC);
 		final Label urinarySymptomsHeadingLabel = createLabel(SymptomGroup.URINARY.toString(), H4, URINARY_SIGNS_AND_SYMPTOMS_HEADING_LOC);
+		urinarySymptomsHeadingLabel.setVisible(false);
 		final Label nervousSystemSymptomsHeadingLabel =
 			createLabel(SymptomGroup.NERVOUS_SYSTEM.toString(), H4, NERVOUS_SYSTEM_SIGNS_AND_SYMPTOMS_HEADING_LOC);
+		nervousSystemSymptomsHeadingLabel.setVisible(false);
 		final Label rashSymptomsHeadingLabel = createLabel(SymptomGroup.RASH.toString(), H4, RASH_AND_SYMPTOMS_HEADING_LOC);
 		rashSymptomsHeadingLabel.setVisible(false);
 		final Label rashCharacteristicsSymptomsHeadingLabel =
 			createLabel(SymptomGroup.RASH_CHARACTERISTICS.toString(), H4, RASH_CHARACTERISTICS_AND_SYMPTOMS_HEADING_LOC);
 		final Label rashTypeSymptomsHeadingLabel = createLabel(SymptomGroup.RASH_TYPE.toString(), H4, RASH_TYPE_AND_SYMPTOMS_HEADING_LOC);
+		rashTypeSymptomsHeadingLabel.setVisible(false);
 		final Label skinSymptomsHeadingLabel = createLabel(SymptomGroup.SKIN.toString(), H4, SKIN_SIGNS_AND_SYMPTOMS_HEADING_LOC);
-		final Label otherSymptomsHeadingLabel = createLabel(SymptomGroup.OTHER.toString(), H4, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC);*/
+		skinSymptomsHeadingLabel.setVisible(false);
+		final Label otherSymptomsHeadingLabel = createLabel(SymptomGroup.OTHER.toString(), H4, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC);
+		otherSymptomsHeadingLabel.setVisible(false);
 
 		DateField onsetDateField = addField(ONSET_DATE, DateField.class);
 		ComboBox onsetSymptom = addField(ONSET_SYMPTOM, ComboBox.class);
@@ -891,14 +898,13 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		if(disease == Disease.CSM){
 			symptomsHide();
-			setVisible(true, BULGING_FONTANELLE, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
+			setVisible(true, BULGING_FONTANELLE, FEVER, NECK_STIFFNESS, HEADACHE, CONVULSION, ALTERED_CONSCIOUSNESS, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
 			clinicalMeasurementsHeadingLabel.setVisible(false);
 			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
 
 		}
 		if (disease == Disease.AHF) {
-			setVisible(true, VOMITING, INJECTION_SITE_BLEEDING, GUMS_BLEEDING, DIARRHEA, EYES_BLEEDING, BLOODY_BLACK_STOOL, ABDOMINAL_PAIN, DIGESTED_BLOOD_VOMIT,
-					NOSE_BLEEDING, BLEEDING_VAGINA, BREATHLESSNESS, JOINT_PAIN);
+
 			setVisible(false,
 					SORE_THROAT,
 					COUGH,
@@ -1036,6 +1042,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					SHOCK);
 			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
 			clinicalMeasurementsHeadingLabel.setVisible(false);
+			setVisible(true, FEVER, HEADACHE, SKIN_RASH, VOMITING, NAUSEA, INJECTION_SITE_BLEEDING, ANOREXIA_APPETITE_LOSS, GUMS_BLEEDING, DIARRHEA, EYES_BLEEDING, FATIGUE, BLOOD_IN_STOOL, ABDOMINAL_PAIN, RED_BLOOD_VOMIT, JOINT_PAIN, NOSE_BLEEDING, BLEEDING_VAGINA, HICCUPS, BREATHLESSNESS);
 		} 
 		
 		if (disease == Disease.CORONAVIRUS) {

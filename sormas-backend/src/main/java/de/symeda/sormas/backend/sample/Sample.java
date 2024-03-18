@@ -394,7 +394,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
+//	@Column(nullable = false)
 	public Date getSampleDateTime() {
 		return sampleDateTime;
 	}
@@ -816,15 +816,6 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setSampleTests(PathogenTestType sampleTests) {
 		this.sampleTests = sampleTests;
 	}
-
-	@Enumerated(EnumType.STRING)
-    public PathogenTestType getSampleTests() {
-       return sampleTests;
-    }
-
-    public void setSampleTests(PathogenTestType sampleTests) {
-       this.sampleTests = sampleTests;
-    }
 
 	@Enumerated(EnumType.STRING)
 	public SamplingReason getSamplingReason() {
