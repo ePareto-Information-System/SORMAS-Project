@@ -940,7 +940,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private void handleMeasles() {
 		if (disease == Disease.MEASLES) {
 			setVisible(false, SampleDto.SAMPLING_REASON);
-			setVisible(false, SampleDto.SAMPLE_PURPOSE);
+			setVisible(false, SampleDto.SAMPLE_PURPOSE, SampleDto.SAMPLE_MATERIAL);
 			setVisible(true, SampleDto.RECEIVED, SampleDto.REQUESTED_SAMPLE_MATERIALS);
 			List<PathogenTestType> measelesPathogenTests = PathogenTestType.getMeaslesTestTypes();
 			Arrays.stream(PathogenTestType.values())
