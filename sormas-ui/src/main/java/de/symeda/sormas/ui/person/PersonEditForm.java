@@ -878,6 +878,10 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		}
 	}*/
 
+	public void hidePassportNumber(){
+		setVisible(false, PersonDto.PASSPORT_NUMBER);
+	}
+
 	private void updateFacilityDetailsVisibility(TextField detailsField, FacilityReferenceDto facility) {
 		if (facility == null) {
 			detailsField.setVisible(false);
