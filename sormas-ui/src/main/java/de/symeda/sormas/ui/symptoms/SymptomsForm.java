@@ -16,7 +16,6 @@
 package de.symeda.sormas.ui.symptoms;
 
 import static de.symeda.sormas.api.symptoms.SymptomsDto.*;
-import static de.symeda.sormas.api.symptoms.SymptomsDto.KOPLIKS_SPOTS_DATE;
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import static de.symeda.sormas.ui.utils.CssStyles.H4;
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
@@ -150,7 +149,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					createSymptomGroupLayout(SymptomGroup.OTHER, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					locsCss(VSPACE_3, PATIENT_ILL_LOCATION, SYMPTOMS_COMMENTS) +
 					fluidRowLocsCss(VSPACE_3, ONSET_SYMPTOM, ONSET_DATE) +
-					createSymptomsDateLayout() +
 					//loc(CLINICAL_HISTORY_HEADING_LOC) +
 					fluidRowLocs(6,OUTCOME)+
 					fluidRowLocs(PROVISONAL_DIAGNOSIS);
@@ -479,13 +477,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			I18nProperties.getPrefixDescription(I18N_PREFIX, SYMPTOMS_COMMENTS, "") + "\n" + I18nProperties.getDescription(Descriptions.descGdpr));
 
 		addField(LESIONS_ONSET_DATE, DateField.class);
-		addField(NON_VASCULAR_DATE, DateField.class);
-		addField(SKIN_RASH_DATE, DateField.class);
-		addField(FEVER_DATE, DateField.class);
-		addField(COUGH_DATE, DateField.class);
-		addField(RUNNY_NOSE_DATE, DateField.class);
-		addField(CONJUNCTIVITIS_DATE, DateField.class);
-		addField(KOPLIKS_SPOTS_DATE, DateField.class);
 
 
 		// complications
@@ -931,14 +922,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					//SEIZURES,
 					SEPSIS,
 					SHOCK,
-					NON_VASCULAR,
-					NON_VASCULAR_DATE,
-					SKIN_RASH_DATE,
-					FEVER_DATE,
-					COUGH_DATE,
-					RUNNY_NOSE_DATE,
-					CONJUNCTIVITIS_DATE,
-					KOPLIKS_SPOTS_DATE);
+					NON_VASCULAR);
 			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
 			clinicalMeasurementsHeadingLabel.setVisible(false);
 		}
@@ -946,13 +930,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		if(disease == Disease.MEASLES) {
 			symptomsHide();
 			setVisible(true, SKIN_RASH, FEVER, COUGH,RUNNY_NOSE, CONJUNCTIVITIS, KOPLIKS_SPOTS, NON_VASCULAR);
-			FieldHelper.setVisibleWhen(getFieldGroup(), FEVER_DATE, FEVER, Arrays.asList(SymptomState.YES), true);
-			FieldHelper.setVisibleWhen(getFieldGroup(), NON_VASCULAR_DATE, NON_VASCULAR, Arrays.asList(SymptomState.YES), true);
-			FieldHelper.setVisibleWhen(getFieldGroup(), SKIN_RASH_DATE, SKIN_RASH, Arrays.asList(SymptomState.YES), true);
-			FieldHelper.setVisibleWhen(getFieldGroup(), COUGH_DATE, COUGH, Arrays.asList(SymptomState.YES), true);
-			FieldHelper.setVisibleWhen(getFieldGroup(), RUNNY_NOSE_DATE, RUNNY_NOSE, Arrays.asList(SymptomState.YES), true);
-			FieldHelper.setVisibleWhen(getFieldGroup(), CONJUNCTIVITIS_DATE, CONJUNCTIVITIS, Arrays.asList(SymptomState.YES), true);
-			FieldHelper.setVisibleWhen(getFieldGroup(), KOPLIKS_SPOTS_DATE, KOPLIKS_SPOTS, Arrays.asList(SymptomState.YES), true);
 
 			setVisible(false, ALTERED_CONSCIOUSNESS, CONFUSED_DISORIENTED, HEMORRHAGIC_SYNDROME, HYPERGLYCEMIA, OTHER_COMPLICATIONS_TEXT, OTHER_COMPLICATIONS, SEIZURES);
 		}
@@ -1301,12 +1278,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			unconditionalSymptomFieldIds,
 			Arrays.asList(SymptomState.YES),
 			null);
-	}
-
-	public  static String createSymptomsDateLayout() {
-		return fluidRowLocs(NON_VASCULAR_DATE, SKIN_RASH_DATE, FEVER_DATE) +
-				fluidRowLocs(COUGH_DATE, RUNNY_NOSE_DATE, CONJUNCTIVITIS_DATE) +
-				fluidRowLocs(KOPLIKS_SPOTS_DATE);
 	}
 
 	/**

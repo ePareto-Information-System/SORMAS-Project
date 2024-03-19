@@ -12806,5 +12806,17 @@ INSERT INTO schema_version (version_number, comment) VALUES (529, 'Set samplemat
 
 ALTER TABLE samples_history ALTER COLUMN samplematerial DROP NOT NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (530, 'Set samplematerial to receive null values');
+
+DROP TRIGGER IF EXISTS nonVascularDate ON symptoms;
+DROP TRIGGER IF EXISTS skinRashDate ON symptoms;
+DROP TRIGGER IF EXISTS feverDate ON symptoms;
+DROP TRIGGER IF EXISTS coughDate ON symptoms;
+DROP TRIGGER IF EXISTS runnyNoseDate ON symptoms;
+DROP TRIGGER IF EXISTS conjunctivitisDate ON symptoms;
+DROP TRIGGER IF EXISTS kopliksSpotsDate ON symptoms;
+
+INSERT INTO schema_version (version_number, comment) VALUES (531, 'Drop nonVascularDate, skinRashDate, feverDate, coughDate, runnyNoseDate, conjunctivitisDate, kopliksSpotsDate');
+
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``

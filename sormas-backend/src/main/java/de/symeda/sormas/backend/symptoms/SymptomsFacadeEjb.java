@@ -221,13 +221,6 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setMuscleVolume(source.getMuscleVolume());
 		target.setSensoryLoss(source.getSensoryLoss());
 		target.setNonVascular(source.getNonVascular());
-		target.setNonVascularDate(source.getNonVascularDate());
-		target.setSkinRashDate(source.getSkinRashDate());
-		target.setFeverDate(source.getFeverDate());
-		target.setCoughDate(source.getCoughDate());
-		target.setRunnyNoseDate(source.getRunnyNoseDate());
-		target.setConjunctivitisDate(source.getConjunctivitisDate());
-		target.setKopliksSpotsDate(source.getKopliksSpotsDate());
 
 		return target;
 	}
@@ -432,14 +425,6 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setMuscleVolume(source.getMuscleVolume());
 		target.setSensoryLoss(source.getSensoryLoss());
 		target.setNonVascular(source.getNonVascular());
-		target.setNonVascularDate(source.getNonVascularDate());
-		target.setSkinRashDate(source.getSkinRashDate());
-		target.setFeverDate(source.getFeverDate());
-		target.setCoughDate(source.getCoughDate());
-		target.setRunnyNoseDate(source.getRunnyNoseDate());
-		target.setConjunctivitisDate(source.getConjunctivitisDate());
-		target.setKopliksSpotsDate(source.getKopliksSpotsDate());
-
 
 		return target;
 	}

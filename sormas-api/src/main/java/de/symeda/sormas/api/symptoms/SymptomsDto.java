@@ -251,13 +251,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public static final String NON_VASCULAR = "nonVascular";
 
-	public static final String NON_VASCULAR_DATE = "nonVascularDate";
-	public static final String SKIN_RASH_DATE = "skinRashDate";
-	public static final String FEVER_DATE = "feverDate";
-	public static final String COUGH_DATE = "coughDate";
-	public static final String RUNNY_NOSE_DATE = "runnyNoseDate";
-	public static final String CONJUNCTIVITIS_DATE = "conjunctivitisDate";
-	public static final String KOPLIKS_SPOTS_DATE = "kopliksSpotsDate";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -2353,15 +2346,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState nonVascular;
 
-
-	private Date nonVascularDate;
-	private Date skinRashDate;
-	private Date feverDate;
-	private Date coughDate;
-	private Date runnyNoseDate;
-	private Date conjunctivitisDate;
-	private Date kopliksSpotsDate;
-
 	private YesNoUnknown feverBodyTempGreater;
 	@Outbreaks
 	private CaseOutcome outcome;
@@ -4039,72 +4023,10 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.nonVascular = nonVascular;
 	}
 
-	public void setNonVascularDate(Date nonVascularDate) {
-		this.nonVascularDate = nonVascularDate;
-	}
-
-	public void setSkinRashDate(Date skinRashDate) {
-		this.skinRashDate = skinRashDate;
-	}
-
-	public void setFeverDate(Date feverDate) {
-		this.feverDate = feverDate;
-	}
-
-	public void setCoughDate(Date coughDate) {
-		this.coughDate = coughDate;
-	}
-
-	public void setRunnyNoseDate(Date runnyNoseDate) {
-		this.runnyNoseDate = runnyNoseDate;
-	}
-
-	public void setConjunctivitisDate(Date conjunctivitisDate) {
-		this.conjunctivitisDate = conjunctivitisDate;
-	}
-
-	public void setKopliksSpotsDate(Date kopliksSpotsDate) {
-		this.kopliksSpotsDate = kopliksSpotsDate;
-	}
-
 	@Order(351)
 	public SymptomState getNonVascular() {
 		return nonVascular;
 	}
 
-	@Order(352)
-	public Date getNonVascularDate() {
-		return nonVascularDate;
-	}
-
-	@Order(353)
-	public Date getSkinRashDate() {
-		return skinRashDate;
-	}
-
-	@Order(354)
-	public Date getFeverDate() {
-		return feverDate;
-	}
-
-	@Order(355)
-	public Date getCoughDate() {
-		return coughDate;
-	}
-
-	@Order(356)
-	public Date getRunnyNoseDate() {
-		return runnyNoseDate;
-	}
-
-	@Order(357)
-	public Date getConjunctivitisDate() {
-		return conjunctivitisDate;
-	}
-
-	@Order(358)
-	public Date getKopliksSpotsDate() {
-		return kopliksSpotsDate;
-	}
 
 }
