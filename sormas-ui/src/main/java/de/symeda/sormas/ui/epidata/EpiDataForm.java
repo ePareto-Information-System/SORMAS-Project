@@ -166,6 +166,50 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			});
 		}
 
+		//patientTravelledTwoWeeksPrior
+		patientTravelledTwoWeeksPriorYesNoUknownField = addField(EpiDataDto.PATIENT_TRAVELLED_TWO_WEEKS_PRIOR, NullableOptionGroup.class);
+		textFieldPatientTravelledInCountryOne = addField(EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_ONE, TextField.class);
+		textFieldPatientTravelledInCountryTwo = addField(EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_TWO, TextField.class);
+		textFieldPatientTravelledInCountryThree = addField(EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_THREE, TextField.class);
+		textFieldPatientTravelledInCountryFour = addField(EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_FOUR, TextField.class);
+		textFieldPatientTravelledInternationalOne = addField(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_ONE, TextField.class);
+		textFieldPatientTravelledInternationalTwo = addField(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_TWO, TextField.class);
+		textFieldPatientTravelledInternationalThree = addField(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_THREE, TextField.class);
+		textFieldPatientTravelledInternationalFour = addField(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_FOUR, TextField.class);
+
+		patientVisitedHealthCareFacilityYesNoUnkownField = addField(EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY, NullableOptionGroup.class);
+		patientCloseContactWithARIYesNoUnkownField = addField(EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI, NullableOptionGroup.class);
+		patientCloseContactWithARIContactSettingsField = addField(EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI_CONTACT_SETTINGS, OptionGroup.class);
+		CssStyles.style(patientCloseContactWithARIContactSettingsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+		patientCloseContactWithARIContactSettingsField.setMultiSelect(true);
+		patientCloseContactWithARIContactSettingsField.addItems((Object[]) ContactSetting.values());
+		patientCloseContactWithARIContactSettingsField.setCaption(null);
+		patientContactWithConfirmedCaseYesNoField = addField(EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE, NullableOptionGroup.class);
+		patientContactWithConfirmedCaseExposureLocationsField = addField(EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATIONS, OptionGroup.class);
+		CssStyles.style(patientContactWithConfirmedCaseExposureLocationsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+		patientContactWithConfirmedCaseExposureLocationsField.setMultiSelect(true);
+		patientContactWithConfirmedCaseExposureLocationsField.addItems((Object[]) ContactSetting.values());
+		patientContactWithConfirmedCaseExposureLocationsField.setCaption(null);
+		patientContactWithConfirmedCaseExposureLocationCityCountryField = addField(EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATION_CITY_COUNTRY, TextField.class);
+
+		setVisible(false,
+				EpiDataDto.PATIENT_TRAVELLED_TWO_WEEKS_PRIOR,
+				EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_ONE,
+				EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_TWO,
+				EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_THREE,
+				EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_FOUR,
+				EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_ONE,
+				EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_TWO,
+				EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_THREE,
+				EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_FOUR,
+				EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY,
+				EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI,
+				EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI_CONTACT_SETTINGS,
+				EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE,
+				EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATIONS,
+				EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATION_CITY_COUNTRY
+		);
+
 		FieldHelper.setVisibleWhen(
 			getFieldGroup(),
 			EpiDataDto.EXPOSURES,
@@ -186,6 +230,27 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			setVisible(false, EpiDataDto.EXPOSURES, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN);
 		}
 
+		if(disease == Disease.MEASLES) {
+			setVisible(false, EpiDataDto.EXPOSURES, EpiDataDto.EXPOSURE_DETAILS_KNOWN);
+			setVisible(true,
+					EpiDataDto.PATIENT_TRAVELLED_TWO_WEEKS_PRIOR,
+					EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_ONE,
+					EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_TWO,
+					EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_THREE,
+					EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_FOUR,
+					EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_ONE,
+					EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_TWO,
+					EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_THREE,
+					EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_FOUR,
+					EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY,
+					EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI,
+					EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI_CONTACT_SETTINGS,
+					EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE,
+					EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATIONS,
+					EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATION_CITY_COUNTRY
+			);
+
+		}
 		if (diseaseCSMCheck()) {
 			recentTravelOutbreak.setVisible(false);
 			contactSickAnimals.setVisible(false);

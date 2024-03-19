@@ -165,6 +165,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private boolean isPseudonymized;
 	private LocationEditForm addressForm;
 	private PresentConditionChangeListener presentConditionChangeListener;
+	private DateField burialDate;
+	private TextField burialPlaceDesc;
 	//@formatter:on
 	public PersonEditForm(PersonContext personContext, Disease disease, String diseaseDetails, ViewMode viewMode, boolean isPseudonymized, CaseOrigin caseOrigin) {
 		super(
@@ -349,8 +351,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		AbstractSelect deathPlaceType = addField(PersonDto.DEATH_PLACE_TYPE, ComboBox.class);
 		deathPlaceType.setNullSelectionAllowed(true);
 		TextField deathPlaceDesc = addField(PersonDto.DEATH_PLACE_DESCRIPTION, TextField.class);
-		DateField burialDate = addField(PersonDto.BURIAL_DATE, DateField.class);
-		TextField burialPlaceDesc = addField(PersonDto.BURIAL_PLACE_DESCRIPTION, TextField.class);
+		burialDate = addField(PersonDto.BURIAL_DATE, DateField.class);
+		burialPlaceDesc = addField(PersonDto.BURIAL_PLACE_DESCRIPTION, TextField.class);
 		ComboBox burialConductor = addField(PersonDto.BURIAL_CONDUCTOR, ComboBox.class);
 
 		addressForm = addField(PersonDto.ADDRESS, LocationEditForm.class);
@@ -895,8 +897,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			causeOfDeathDiseaseField.setVisible(false);
 			causeOfDeathDetailsField.setVisible(false);
 			causeOfDeathField.setValue(null);
-			causeOfDeathDiseaseField.setValue(null);
-			causeOfDeathDetailsField.setValue(null);
+//			causeOfDeathDiseaseField.setValue(null);
+//			causeOfDeathDetailsField.setValue(null);
 			getField(PersonDto.DEATH_PLACE_TYPE).setValue(null);
 			getField(PersonDto.DEATH_PLACE_DESCRIPTION).setValue(null);
 		} else {
@@ -906,8 +908,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			if (causeOfDeathField.getValue() == null) {
 				causeOfDeathDiseaseField.setVisible(false);
 				causeOfDeathDetailsField.setVisible(false);
-				causeOfDeathDiseaseField.setValue(null);
-				causeOfDeathDetailsField.setValue(null);
+//				causeOfDeathDiseaseField.setValue(null);
+//				causeOfDeathDetailsField.setValue(null);
 			} else if (causeOfDeathField.getValue() == CauseOfDeath.EPIDEMIC_DISEASE) {
 				if (isVisibleAllowed(causeOfDeathDiseaseField)) {
 					causeOfDeathDiseaseField.setVisible(true);
@@ -919,9 +921,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				} else {
 					causeOfDeathDetailsField.setVisible(false);
 				}
-				if (causeOfDeathDiseaseField.getValue() == null) {
+				/*if (causeOfDeathDiseaseField.getValue() == null) {
 					causeOfDeathDiseaseField.setValue(disease);
-				}
+				}*/
 				if (disease == Disease.OTHER) {
 					causeOfDeathDetailsField.setValue(diseaseDetails);
 				}
@@ -992,9 +994,11 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 						causeOfDeathField.setValue(CauseOfDeath.EPIDEMIC_DISEASE);
 						toggleCauseOfDeathFields(true);
 						setVisible(false, PersonDto.BURIAL_DATE, PersonDto.BURIAL_PLACE_DESCRIPTION, PersonDto.BURIAL_CONDUCTOR);
-						getField(PersonDto.BURIAL_DATE).setValue(null);
-						getField(PersonDto.BURIAL_PLACE_DESCRIPTION).setValue(null);
-						getField(PersonDto.BURIAL_CONDUCTOR).setValue(null);
+						if(burialDate.isVisible() && burialPlaceDesc.isVisible()){
+							getField(PersonDto.BURIAL_DATE).setValue(null);
+							getField(PersonDto.BURIAL_PLACE_DESCRIPTION).setValue(null);
+							getField(PersonDto.BURIAL_CONDUCTOR).setValue(null);
+						}
 						break;
 					case BURIED:
 						setVisible(true, PersonDto.DEATH_DATE, PersonDto.DEATH_PLACE_TYPE, PersonDto.DEATH_PLACE_DESCRIPTION);

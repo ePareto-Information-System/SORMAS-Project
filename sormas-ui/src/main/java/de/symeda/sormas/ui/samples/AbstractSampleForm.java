@@ -750,7 +750,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	private void handleDisease(Disease targetDisease, String labName) {
 		if (disease == targetDisease) {
-			setVisibleAndCheckLab(labName, SampleDto.PATHOGEN_TESTING_REQUESTED);
+			setVisibleAndCheckLab(labName, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.ADDITIONAL_TESTING_REQUESTED);
 		}
 	}
 
@@ -763,7 +763,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	private void handleDiseaseField(Disease targetDisease){
 		if (disease == targetDisease) {
-			setVisible(false, SampleDto.PATHOGEN_TESTING_REQUESTED);
+			setVisible(false, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.ADDITIONAL_TESTING_REQUESTED);
 		}
 	}
 	private void disableField(String field) {
