@@ -13492,7 +13492,7 @@ ALTER TABLE hospitalization ADD COLUMN dateformsenttodistrict date;
 INSERT INTO schema_version (version_number, comment) VALUES (584, 'Added dateFormSentToDistrict for IDSR-Hospitalization');
 
 -- 2024-03-11 Added 4 fields to Samples IDSR-Hospitalization #53
-ALTER TABLE samples ADD COLUMN datelabreceivedspecimen date;q
+ALTER TABLE samples ADD COLUMN datelabreceivedspecimen date;
 ALTER TABLE samples ADD COLUMN dateresultssenttoclinician date;
 ALTER TABLE samples ADD COLUMN lablocation varchar(255);
 ALTER TABLE samples ADD COLUMN suspecteddisease varchar(255);

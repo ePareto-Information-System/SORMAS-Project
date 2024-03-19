@@ -161,7 +161,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6, TRUEAFP) +
 
 					locsCss(VSPACE_3, PATIENT_ILL_LOCATION, SYMPTOMS_COMMENTS) +
-					fluidRowLocsCss(VSPACE_3, ONSET_SYMPTOM, ONSET_DATE) +
+					fluidRowLocs(6, ONSET_SYMPTOM) +
+					fluidRowLocs(6, ONSET_DATE) +
 					createSymptomsDateLayout() +
 					//loc(CLINICAL_HISTORY_HEADING_LOC) +
 					fluidRowLocs(6,OUTCOME)+
@@ -260,6 +261,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			createLabel(I18nProperties.getString(Strings.headingSignsAndSymptoms), H3, SIGNS_AND_SYMPTOMS_HEADING_LOC);
 		signsAndSymptomsHeadingLabel.setVisible(false);
 		final Label generalSymptomsHeadingLabel = createLabel(SymptomGroup.GENERAL.toString(), H4, GENERAL_SIGNS_AND_SYMPTOMS_HEADING_LOC);
+		generalSymptomsHeadingLabel.setVisible(false);
 		final Label respiratorySymptomsHeadingLabel =
 			createLabel(SymptomGroup.RESPIRATORY.toString(), H4, RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC);
 		respiratorySymptomsHeadingLabel.setVisible(false);
@@ -268,6 +270,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		cardiovascularSymptomsHeadingLabel.setVisible(false);
 		final Label gastrointestinalSymptomsHeadingLabel =
 			createLabel(SymptomGroup.GASTROINTESTINAL.toString(), H4, GASTROINTESTINAL_SIGNS_AND_SYMPTOMS_HEADING_LOC);
+		gastrointestinalSymptomsHeadingLabel.setVisible(false);
 		final Label urinarySymptomsHeadingLabel = createLabel(SymptomGroup.URINARY.toString(), H4, URINARY_SIGNS_AND_SYMPTOMS_HEADING_LOC);
 		urinarySymptomsHeadingLabel.setVisible(false);
 		final Label nervousSystemSymptomsHeadingLabel =
@@ -1555,7 +1558,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				} else {
 					onsetSymptom.removeItem(sourceField.getCaption());
 					boolean isOnsetDateFieldEnabled = isAnySymptomSetToYes(getFieldGroup(), allPropertyIds, Arrays.asList(SymptomState.YES));
-					onsetDateField.setEnabled(isOnsetDateFieldEnabled);
+					//onsetDateField.setEnabled(isOnsetDateFieldEnabled);
+					onsetDateField.setEnabled(true);
 					Date onsetDate = getValue().getOnsetDate();
 					if (onsetDate != null) {
 						onsetDateField.setValue(onsetDate);
@@ -1563,11 +1567,11 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 						onsetDateField.setValue(null);
 					}
 				}
-				onsetSymptom.setEnabled(!onsetSymptom.getItemIds().isEmpty());
+				onsetSymptom.setVisible(!onsetSymptom.getItemIds().isEmpty());
 			});
 		}
-		onsetSymptom.setEnabled(false); // will be updated by listener if needed
-		onsetDateField.setEnabled(false); // will be updated by listener if needed
+		onsetSymptom.setEnabled(true); // will be updated by listener if needed
+		onsetDateField.setEnabled(true); // will be updated by listener if needed
 	}
 
 

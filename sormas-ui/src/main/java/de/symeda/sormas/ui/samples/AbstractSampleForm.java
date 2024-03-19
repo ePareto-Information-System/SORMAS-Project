@@ -481,6 +481,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				case MEASLES:
 					handleMeasles();
 					break;
+				case CORONAVIRUS:
+					handleCoronaVirus();
+					break;
 				default:
 			}
 
@@ -739,7 +742,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	private void handleDisease(Disease targetDisease, String labName) {
 		if (disease == targetDisease) {
-			setVisibleAndCheckLab(labName, SampleDto.PATHOGEN_TESTING_REQUESTED);
+			setVisibleAndCheckLab(labName, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.ADDITIONAL_TESTING_REQUESTED);
 		}
 	}
 
@@ -752,7 +755,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	private void handleDiseaseField(Disease targetDisease){
 		if (disease == targetDisease) {
-			setVisible(false, SampleDto.PATHOGEN_TESTING_REQUESTED);
+			setVisible(false, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.ADDITIONAL_TESTING_REQUESTED);
 		}
 	}
 	private void disableField(String field) {
@@ -1111,13 +1114,19 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private void handleMeasles() {
 		if (disease == Disease.MEASLES) {
 			addSampleDispatchFields();
-			setVisible(false, SampleDto.SAMPLING_REASON);
+			setVisible(false, SampleDto.SAMPLING_REASON, SampleDto.SUSPECTED_DISEASE, SampleDto.DATE_LAB_RECEIVED_SPECIMEN, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.DATE_SPECIMEN_SENT_TO_LAB, SampleDto.FIELD_SAMPLE_ID);
 			setVisible(true, SampleDto.RECEIVED, SampleDto.REQUESTED_SAMPLE_MATERIALS);
 			List<PathogenTestType> measelesPathogenTests = PathogenTestType.getMeaslesTestTypes();
 			Arrays.stream(PathogenTestType.values())
 					.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
 					.forEach(pathogenTestType -> requestedPathogenTestsField.removeItem(pathogenTestType));
 
+		}
+	}
+
+	private void handleCoronaVirus() {
+		if (disease == Disease.CORONAVIRUS) {
+			setVisible(false, SampleDto.SUSPECTED_DISEASE, SampleDto.DATE_LAB_RECEIVED_SPECIMEN, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.DATE_SPECIMEN_SENT_TO_LAB, SampleDto.FIELD_SAMPLE_ID);
 		}
 	}
 
