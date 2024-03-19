@@ -929,6 +929,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		if(disease == Disease.MEASLES) {
 			symptomsHide();
+			addField(DATE_OF_ONSET, DateField.class);
 			setVisible(true, SKIN_RASH, FEVER, COUGH,RUNNY_NOSE, CONJUNCTIVITIS, KOPLIKS_SPOTS, NON_VASCULAR);
 
 			setVisible(false, ALTERED_CONSCIOUSNESS, CONFUSED_DISORIENTED, HEMORRHAGIC_SYNDROME, HYPERGLYCEMIA, OTHER_COMPLICATIONS_TEXT, OTHER_COMPLICATIONS, SEIZURES);
