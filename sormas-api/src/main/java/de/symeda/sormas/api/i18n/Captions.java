@@ -2603,6 +2603,7 @@ public interface Captions {
 	String Symptoms_oralUlcers = "Symptoms.oralUlcers";
 	String Symptoms_otherComplications = "Symptoms.otherComplications";
 	String Symptoms_otherComplicationsText = "Symptoms.otherComplicationsText";
+	String Symptoms_nonVascular = "Symptoms.nonVascular";
 	String Symptoms_otherHemorrhagicSymptoms = "Symptoms.otherHemorrhagicSymptoms";
 	String Symptoms_otherHemorrhagicSymptomsText = "Symptoms.otherHemorrhagicSymptomsText";
 	String Symptoms_otherNonHemorrhagicSymptoms = "Symptoms.otherNonHemorrhagicSymptoms";
