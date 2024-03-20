@@ -509,7 +509,6 @@ public final class SymptomsHelper {
 		appendNotNullValue(string, symptomsDto.getOtherLesionAreas(), SymptomsDto.OTHER_LESION_AREAS);*/
 
 		appendYesSymptom(string, SymptomsDto.build().getNonVascular(), SymptomsDto.NON_VASCULAR);
-		appendNotNullDateValue(string, SymptomsDto.build().getNonVascularDate(), SymptomsDto.NON_VASCULAR_DATE, language);
 
 		// symptomsComments;
 

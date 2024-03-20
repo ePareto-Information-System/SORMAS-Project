@@ -635,6 +635,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			setVisible(false, PersonDto.ADDITIONAL_DETAILS);
 			setVisible(false, PersonDto.MOTHERS_MAIDEN_NAME);
 			setVisible(false, PersonDto.NICKNAME);
+			setVisible(true, PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID);
 		}
 
 		if (disease == Disease.AHF) {
@@ -892,6 +893,17 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			}
 		}
 	}*/
+
+	public void hidePassportNumber(){
+		setVisible(false, PersonDto.PASSPORT_NUMBER);
+	}
+
+	public void showPassportNumber(){
+		setVisible(true, PersonDto.PASSPORT_NUMBER);
+	}
+
+
+
 	private void updateFacilityDetailsVisibility(TextField detailsField, FacilityReferenceDto facility) {
 		if (facility == null) {
 			detailsField.setVisible(false);

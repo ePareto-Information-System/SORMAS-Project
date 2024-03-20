@@ -57,6 +57,7 @@ public class CasePersonView extends AbstractCaseView implements PersonSideCompon
 						caseData.getDiseaseDetails(),
 						UserRight.CASE_EDIT,
 						getViewMode(),
+						caseData.getCaseOrigin(),
 						isEditAllowed());
 		DetailSubComponentWrapper componentWrapper = addComponentWrapper(editComponent);
 		CustomLayout layout = addPageLayout(componentWrapper, editComponent);

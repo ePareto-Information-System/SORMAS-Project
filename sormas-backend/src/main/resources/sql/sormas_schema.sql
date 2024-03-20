@@ -13515,5 +13515,16 @@ INSERT INTO schema_version (version_number, comment) VALUES (587, 'Added bodyAch
 ALTER TABLE samples_history ALTER COLUMN sampledatetime DROP NOT NULL;
 
 INSERT INTO schema_version (version_number, comment) VALUES (588, 'Updated sampledatetime');
+
+-- 2024-03-19 DROP nonVascularDate, skinRashDate, feverDate, coughDate, runnyNoseDate, conjunctivitisDate, kopliksSpotsDate
+DROP TRIGGER IF EXISTS nonVascularDate ON symptoms;
+DROP TRIGGER IF EXISTS skinRashDate ON symptoms;
+DROP TRIGGER IF EXISTS feverDate ON symptoms;
+DROP TRIGGER IF EXISTS coughDate ON symptoms;
+DROP TRIGGER IF EXISTS runnyNoseDate ON symptoms;
+DROP TRIGGER IF EXISTS conjunctivitisDate ON symptoms;
+DROP TRIGGER IF EXISTS kopliksSpotsDate ON symptoms;
+INSERT INTO schema_version (version_number, comment) VALUES (589, 'Drop nonVascularDate, skinRashDate, feverDate, coughDate, runnyNoseDate, conjunctivitisDate, kopliksSpotsDate');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 

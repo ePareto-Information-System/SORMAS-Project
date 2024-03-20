@@ -632,10 +632,4 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 
 		return false;
 	}
-
-
-
-
-
-
 }

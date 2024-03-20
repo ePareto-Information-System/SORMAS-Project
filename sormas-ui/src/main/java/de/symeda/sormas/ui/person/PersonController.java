@@ -455,6 +455,45 @@ public class PersonController {
 	}*/
 
 	public CommitDiscardWrapperComponent<PersonEditForm> getPersonEditComponent(
+			PersonContext personContext,
+			PersonDto person,
+			Disease disease,
+			String diseaseDetails,
+			UserRight editUserRight,
+			final ViewMode viewMode,
+			CaseOrigin caseOrigin,
+			boolean isEditAllowed) {
+
+		PersonEditForm editForm = new PersonEditForm(
+				personContext,
+				disease,
+				diseaseDetails,
+				viewMode,
+				person.isPseudonymized(),
+				person.isInJurisdiction(),
+				isEditAllowed && UserProvider.getCurrent().hasUserRight(editUserRight));
+		editForm.setValue(person);
+
+
+		if (caseOrigin == CaseOrigin.IN_COUNTRY) {
+			editForm.hidePassportNumber();
+		} else {
+			editForm.showPassportNumber();
+		}
+
+		final CommitDiscardWrapperComponent<PersonEditForm> editView = new CommitDiscardWrapperComponent<>(editForm, editForm.getFieldGroup());
+
+		editView.addCommitListener(() -> {
+			if (!editForm.getFieldGroup().isModified()) {
+				PersonDto dto = editForm.getValue();
+				savePerson(dto);
+			}
+		});
+
+		return editView;
+	}
+
+	public CommitDiscardWrapperComponent<PersonEditForm> getPersonEditComponent(
 		PersonContext personContext,
 		PersonDto person,
 		Disease disease,

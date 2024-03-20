@@ -90,7 +90,7 @@ public class LocationFacadeEjb implements LocationFacade {
 		target.setLatitude(source.getLatitude());
 		target.setLongitude(source.getLongitude());
 		target.setLatLonAccuracy(source.getLatLonAccuracy());
-
+		target.setLandMark(source.getLandMark());
 		target.setPostalCode(source.getPostalCode());
 		target.setStreet(source.getStreet());
 		target.setHouseNumber(source.getHouseNumber());
@@ -131,6 +131,7 @@ public class LocationFacadeEjb implements LocationFacade {
 		target.setLatitude(source.getLatitude());
 		target.setLongitude(source.getLongitude());
 		target.setLatLonAccuracy(source.getLatLonAccuracy());
+		target.setLandMark(source.getLandMark());
 
 		target.setPostalCode(source.getPostalCode());
 		target.setStreet(source.getStreet());
@@ -247,6 +248,7 @@ public class LocationFacadeEjb implements LocationFacade {
 		target.setLatitude(source.getLatitude());
 		target.setLongitude(source.getLongitude());
 		target.setLatLonAccuracy(source.getLatLonAccuracy());
+		target.setLandMark(source.getLandMark());
 
 		target.setPostalCode(source.getPostalCode());
 		target.setStreet(source.getStreet());
