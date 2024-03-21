@@ -161,7 +161,9 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 
 		if (disease != null && !diseaseCheck() && !diseaseInfluenzaCheck()) {
-			addHeadingsAndInfoTexts();
+			if (disease != Disease.MEASLES) {
+				addHeadingsAndInfoTexts();
+			}
 		}
 
 		NullableOptionGroup recentTravelOutbreak = addField(EpiDataDto.RECENT_TRAVEL_OUTBREAK, NullableOptionGroup.class);
@@ -190,7 +192,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		if (disease == Disease.MEASLES) {
 			ogchildComeInContactWithSymptoms.setVisible(true);
 			setVisible(false, EpiDataDto.EXPOSURES);
-			setVisible(false, EpiDataDto.EXPOSURE_DETAILS_KNOWN);
+			setVisible(false, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, EpiDataDto.LARGE_OUTBREAKS_AREA, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN, EpiDataDto.CHILD_COME_IN_CONTACT_WITH_SYMPTOMS, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN);
+
 		}
 		if (sourceContactsToggleCallback != null) {
 			ogContactWithSourceCaseKnown.addValueChangeListener(e -> {
