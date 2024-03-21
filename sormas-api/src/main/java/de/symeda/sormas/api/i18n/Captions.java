@@ -593,6 +593,8 @@ public interface Captions {
 	String CaseHospitalization_isolationDate = "CaseHospitalization.isolationDate";
 	String CaseHospitalization_leftAgainstAdvice = "CaseHospitalization.leftAgainstAdvice";
 	String CaseHospitalization_otherHospitalizationReason = "CaseHospitalization.otherHospitalizationReason";
+	String CaseHospitalization_seenAtAHealthFacility = "CaseHospitalization.seenAtAHealthFacility";
+	String CaseHospitalization_wasPatientAdmitted = "CaseHospitalization.wasPatientAdmitted";
 	String CaseHospitalization_diseaseOnsetDate = "CaseHospitalization.diseaseOnsetDate";
 	String CaseHospitalization_patientHospitalizedOrDetained = "CaseHospitalization.patientHospitalizedOrDetained";
 	String CaseHospitalization_dateFirstSeen = "CaseHospitalization.dateFirstSeen";
