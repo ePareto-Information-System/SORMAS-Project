@@ -1007,33 +1007,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		vaccinationStatus = addField(CaseDataDto.VACCINATION_STATUS, NullableOptionGroup.class);
 		vaccinatedByCardOrHistory = addField(CaseDataDto.VACCINATION_TYPE, NullableOptionGroup.class);
-
-		FieldHelper.setEnabledWhen(vaccinationStatus, Arrays.asList(VaccinationStatus.VACCINATED), Collections.singletonList(
-				vaccinatedByCardOrHistory
-		), false);
-
-
 		vaccinationStatus.removeItem(VaccinationStatus.UNKNOWN);
+
 		cardDateField.setVisible(false);
-
-		FieldHelper.setEnabledWhen(
-				vaccinatedByCardOrHistory,
-				Arrays.asList(CardOrHistory.CARD, CardOrHistory.HISTORY),
-				Collections.singletonList(
-						cardDateField
-				),
-				false);
-
-		FieldHelper
-				.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
-
-		FieldHelper.setEnabledWhen(
-				vaccinatedByCardOrHistory,
-				Arrays.asList(CardOrHistory.CARD),
-				Collections.singletonList(
-						cardDateField
-				),
-				false);
 
 		vaccineType = addField(CaseDataDto.VACCINE_TYPE, ComboBox.class);
 		numberOfDoses = addField(CaseDataDto.NUMBER_OF_DOSES, TextField.class);
@@ -1513,9 +1489,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			if (disease == Disease.YELLOW_FEVER) {
 
 				nationalLevelDate.setVisible(true);
-				FieldHelper.setEnabledWhen(vaccinationStatus, Arrays.asList(VaccinationStatus.VACCINATED), Collections.singletonList(
-						vaccinatedByCardOrHistory
-				), false);
 
 				FieldHelper
 						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
@@ -1526,11 +1499,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			//CSM
 			if (disease == Disease.CSM) {
 				vaccineType.setVisible(true);
+				vaccinatedByCardOrHistory.setVisible(false);
 				FieldHelper
 						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccineType, numberOfDoses, cardDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
-				FieldHelper.setEnabledWhen(vaccinationStatus, Arrays.asList(VaccinationStatus.VACCINATED), Collections.singletonList(
-						cardDateField
-				), false);
+
+
 			}
 
 			//AHF
