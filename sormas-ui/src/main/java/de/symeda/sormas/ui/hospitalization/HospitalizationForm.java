@@ -103,7 +103,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(HOSPITALIZATION_HEADING_LOC) +
-			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
+			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY, HospitalizationDto.WAS_PATIENT_ADMITTED) +
 					fluidRowLocs(HEALTH_FACILITY, HEALTH_FACILITY_DISTRICT, HospitalizationDto.HOSPITAL_RECORD_NUMBER) +
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW) +
 					fluidRowLocs(HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE, HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY) +
@@ -252,14 +252,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		PreviousHospitalizationsField previousHospitalizationsField =
 				addField(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS, PreviousHospitalizationsField.class);
 
-		if (caze.getDisease() == Disease.MEASLES) {
-			setVisible(false, HospitalizationDto.ISOLATED);
-			setVisible(true, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY);
-			setVisible(true, HospitalizationDto.WAS_PATIENT_ADMITTED);
-			setVisible(false, HospitalizationDto.INTENSIVE_CARE_UNIT);
-			setVisible(false, HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION);
-		}
-
 		admissionDateField.setVisible(false);
 		dischargeDateField.setVisible(false);
 		hospitalRecordNumber.setVisible(false);
@@ -285,7 +277,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
 		}
-
 
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
@@ -456,6 +447,13 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			districtField.setVisible(true);
 			intensiveCareUnit.setVisible(true);
 
+		}
+
+		if (caze.getDisease() == Disease.MEASLES) {
+			setVisible(false, HospitalizationDto.ISOLATED, HospitalizationDto.INTENSIVE_CARE_UNIT, HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION);
+			admissionDateField.setVisible(true);
+			hospitalRecordNumber.setVisible(true);
+			setVisible(true, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY, HospitalizationDto.WAS_PATIENT_ADMITTED);
 		}
 
 		if (caze.getDisease() == Disease.CORONAVIRUS){
