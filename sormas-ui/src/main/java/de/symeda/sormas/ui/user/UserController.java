@@ -449,7 +449,10 @@ public class UserController {
 					Notification.show(I18nProperties.getString(Strings.messageWrongCurrentPassword), Notification.Type.ERROR_MESSAGE);
 				} else if (passwordStrengthDesc.getValue().contains("Weak")) {
 					Notification.show(I18nProperties.getString(Strings.messageNewPasswordFailed), Notification.Type.ERROR_MESSAGE);
-				} 
+				} else{
+					showUpdatePassword(user.getUuid(), user.getUserEmail(), changedUser.getUpdatePassword(), changedUser.getCurrentPassword());
+
+				}
 			}
 		});
 		Button generatePasswordButton = ControllerProvider.getUserController().generatePasswordButton();
