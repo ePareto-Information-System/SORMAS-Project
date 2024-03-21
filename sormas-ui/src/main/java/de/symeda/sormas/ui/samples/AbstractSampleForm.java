@@ -78,6 +78,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	protected static final String REQUESTED_ADDITIONAL_TESTS_READ_LOC = "requestedAdditionalTestsReadLoc";
 	protected static final String REPORT_INFO_LABEL_LOC = "reportInfoLabelLoc";
 	protected static final String REFERRED_FROM_BUTTON_LOC = "referredFromButtonLoc";
+	private ComboBox lab;
 	private Disease disease;
 	private ComboBox diseaseField;
 	public ComboBox sampleMaterialComboBox;
@@ -734,20 +735,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	}
 
-	class FieldSampleIdValidator implements Validator {
-
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void validate(Object value) throws InvalidValueException {
-			if (value == null || value.equals(""))
-				return;
-
-			if (!ControllerProvider.getSampleController().isFieldSampleIdUnique(getValue().getUuid(), (String) value))
-				throw new InvalidValueException(I18nProperties.getString(Strings.messageFieldSampleIdExist));
-		}
-	}
-
 	private void handleDisease(Disease targetDisease, String labName) {
 		if (disease == targetDisease) {
 			setVisibleAndCheckLab(labName, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.ADDITIONAL_TESTING_REQUESTED);
@@ -1124,6 +1111,14 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			if (labName.equals(labItem.getCaption())) {
 				return labItem;
 			}
+		}
+		return null;
+	}
+
+	private Disease getDiseaseFromCase(String caseUuid) {
+		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(caseUuid);
+		if (caseDataDto != null) {
+			return caseDataDto.getDisease();
 		}
 		return null;
 	}
