@@ -171,6 +171,13 @@ public class FacilityFacadeEjb
 
 	@Override
 	@PermitAll
+	public List<FacilityReferenceDto> getAllActiveFacilityByDisease(String diseaseName) {
+		List<Facility> laboratories = service.getAllActiveFacilityByDisease(diseaseName);
+		return laboratories.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
+	}
+
+	@Override
+	@PermitAll
 	public List<FacilityDto> getAllByRegionAfter(String regionUuid, Date date) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();

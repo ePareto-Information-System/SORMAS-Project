@@ -146,7 +146,6 @@ public class CaseFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.ADDITIONAL_DETAILS, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DELETION_REASON, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.OTHER_DELETION_REASON, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.VACCINATION_ROUTINE_DATE, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AFP, Disease.AHF, Disease.NEW_INFLUENZA, Disease.CSM)));
 
     }
 

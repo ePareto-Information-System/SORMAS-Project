@@ -198,8 +198,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		NullableOptionGroup plagueType = addField(CaseDataDto.PLAGUE_TYPE, NullableOptionGroup.class);
 		addField(CaseDataDto.DENGUE_FEVER_TYPE, NullableOptionGroup.class);
 		addField(CaseDataDto.RABIES_TYPE, NullableOptionGroup.class);
-		TextField homeaddrecreational = addField(CaseDataDto.HOME_ADDRESS_RECREATIONAL, TextField.class);
-		homeaddrecreational.setVisible(false);
 		addField(CaseDataDto.RE_INFECTION, NullableOptionGroup.class);
 
 //		personCreateForm = new PersonCreateForm(showHomeAddressForm, true, true, showPersonSearchButton);
@@ -308,8 +306,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		getContent().addComponent(facilityType, CaseDataDto.FACILITY_TYPE);
 		facilityCombo = addInfrastructureField(CaseDataDto.HEALTH_FACILITY);
 		facilityCombo.setImmediate(true);
-		//ComboBox afpFacilityOptions = addField(CaseDataDto.AFP_FACILITY_OPTIONS, ComboBox.class);
-		//afpFacilityOptions.setVisible(false);
 		TextField facilityDetails = addField(CaseDataDto.HEALTH_FACILITY_DETAILS, TextField.class);
 		facilityDetails.setVisible(false);
 		ComboBox cbPointOfEntry = addInfrastructureField(CaseDataDto.POINT_OF_ENTRY);

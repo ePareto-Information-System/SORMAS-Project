@@ -155,7 +155,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					locsCss(VSPACE_3, PATIENT_ILL_LOCATION, SYMPTOMS_COMMENTS) +
 					fluidRowLocs(6, ONSET_SYMPTOM) +
 					fluidRowLocs(6, ONSET_DATE) +
-					createSymptomsDateLayout() +
 					//loc(CLINICAL_HISTORY_HEADING_LOC) +
 					fluidRowLocs(6,OUTCOME)+
 					fluidRowLocs(PROVISONAL_DIAGNOSIS);
@@ -267,12 +266,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		final Label nervousSystemSymptomsHeadingLabel =
 			createLabel(SymptomGroup.NERVOUS_SYSTEM.toString(), H4, NERVOUS_SYSTEM_SIGNS_AND_SYMPTOMS_HEADING_LOC);
 		nervousSystemSymptomsHeadingLabel.setVisible(false);
-		final Label rashSymptomsHeadingLabel = createLabel(SymptomGroup.RASH.toString(), H4, RASH_AND_SYMPTOMS_HEADING_LOC);
-		rashSymptomsHeadingLabel.setVisible(false);
-		final Label rashCharacteristicsSymptomsHeadingLabel =
-			createLabel(SymptomGroup.RASH_CHARACTERISTICS.toString(), H4, RASH_CHARACTERISTICS_AND_SYMPTOMS_HEADING_LOC);
-		final Label rashTypeSymptomsHeadingLabel = createLabel(SymptomGroup.RASH_TYPE.toString(), H4, RASH_TYPE_AND_SYMPTOMS_HEADING_LOC);
-		rashTypeSymptomsHeadingLabel.setVisible(false);
 		final Label skinSymptomsHeadingLabel = createLabel(SymptomGroup.SKIN.toString(), H4, SKIN_SIGNS_AND_SYMPTOMS_HEADING_LOC);
 		skinSymptomsHeadingLabel.setVisible(false);
 		final Label otherSymptomsHeadingLabel = createLabel(SymptomGroup.OTHER.toString(), H4, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC);
@@ -989,28 +982,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			setVisible(true, FEVER, HEADACHE, SKIN_RASH, VOMITING, NAUSEA, INJECTION_SITE_BLEEDING, ANOREXIA_APPETITE_LOSS, GUMS_BLEEDING, DIARRHEA, EYES_BLEEDING, FATIGUE, BLOOD_IN_STOOL, ABDOMINAL_PAIN, RED_BLOOD_VOMIT, JOINT_PAIN, NOSE_BLEEDING, BLEEDING_VAGINA, HICCUPS, BREATHLESSNESS);
 		} 
 		
-		if (disease == Disease.CORONAVIRUS) {
-			symptomsHide();
-			setVisible(true, FEVER, RAPID_BREATHING, MUSCLE_PAIN, CHEST_PAIN, ABDOMINAL_PAIN, JOINT_PAIN, WEAKNESS, DIARRHEA, COUGH, NAUSEA,
-					SORE_THROAT, HEADACHE, RUNNY_NOSE, HEADACHE, CONFUSED_DISORIENTED, OTHER_COMPLICATIONS, PHARYNGEAL_EXUDATE, COMA, ABNORMAL_LUNG_XRAY_FINDINGS,
-					CONJUNCTIVAL_INJECTION, SEIZURES, FLUID_IN_LUNG_CAVITY_AUSCULTATION, DYSPNEA, TACHYPNEA);
-
-		}
-
-		if(disease == Disease.MEASLES) {
-			symptomsHide();
-			setVisible(true, SKIN_RASH, FEVER, COUGH,RUNNY_NOSE, CONJUNCTIVITIS, KOPLIKS_SPOTS, NON_VASCULAR);
-			FieldHelper.setVisibleWhen(getFieldGroup(), FEVER_DATE, FEVER, Arrays.asList(SymptomState.YES), true);
-			FieldHelper.setVisibleWhen(getFieldGroup(), NON_VASCULAR_DATE, NON_VASCULAR, Arrays.asList(SymptomState.YES), true);
-			FieldHelper.setVisibleWhen(getFieldGroup(), SKIN_RASH_DATE, SKIN_RASH, Arrays.asList(SymptomState.YES), true);
-			FieldHelper.setVisibleWhen(getFieldGroup(), COUGH_DATE, COUGH, Arrays.asList(SymptomState.YES), true);
-			FieldHelper.setVisibleWhen(getFieldGroup(), RUNNY_NOSE_DATE, RUNNY_NOSE, Arrays.asList(SymptomState.YES), true);
-			FieldHelper.setVisibleWhen(getFieldGroup(), CONJUNCTIVITIS_DATE, CONJUNCTIVITIS, Arrays.asList(SymptomState.YES), true);
-			FieldHelper.setVisibleWhen(getFieldGroup(), KOPLIKS_SPOTS_DATE, KOPLIKS_SPOTS, Arrays.asList(SymptomState.YES), true);
-
-			setVisible(false, ALTERED_CONSCIOUSNESS, CONFUSED_DISORIENTED, HEMORRHAGIC_SYNDROME, HYPERGLYCEMIA, OTHER_COMPLICATIONS_TEXT, OTHER_COMPLICATIONS, SEIZURES);
-		}
-
 		if (symptomsContext != SymptomsContext.CASE) {
 			getFieldGroup().getField(PATIENT_ILL_LOCATION).setVisible(false);
 		}

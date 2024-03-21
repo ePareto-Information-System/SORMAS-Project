@@ -204,6 +204,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private String labSampleID;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String fieldSampleID;
+	private YesNoUnknown forRetest;
 //	@NotNull(message = Validations.requiredField)
 	private Date sampleDateTime;
 
@@ -944,13 +945,13 @@ public class SampleDto extends SormasToSormasShareableDto {
 	 * referral is created in SORMAS.
 	 */
 	private static void migrateAttributesOfPhysicalSample(SampleDto source, SampleDto target) {
-		target.setSampleDateTime(source.getSampleDateTime());
+	target.setSampleDateTime(source.getSampleDateTime());
 		target.setSampleMaterial(source.getSampleMaterial());
 		target.setSampleMaterialText(source.getSampleMaterialText());
 		target.setSampleSource(source.getSampleSource());
 		target.setPathogenTestingRequested(source.getPathogenTestingRequested());
 		target.setSampleMaterialTestingRequested(source.getSampleMaterialTestingRequested());
-		target.setYellowFeverSampleType(source.isYellowFeverSampleType());
+//		target.setYellowFeverSampleType(source.isYellowFeverSampleType());
 //		target.setDiseaseSampleTests(source.isDiseaseSampleTests());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());

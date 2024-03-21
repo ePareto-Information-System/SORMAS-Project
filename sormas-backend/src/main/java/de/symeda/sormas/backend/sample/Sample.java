@@ -798,6 +798,14 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	}
 
 	@Enumerated(EnumType.STRING)
+	public PathogenTestType getSampleTests() {
+		return sampleTests;
+	}
+
+	public void setSampleTests(PathogenTestType sampleTests) {
+		this.sampleTests = sampleTests;
+	}
+	@Enumerated(EnumType.STRING)
 	public SamplingReason getSamplingReason() {
 		return samplingReason;
 	}

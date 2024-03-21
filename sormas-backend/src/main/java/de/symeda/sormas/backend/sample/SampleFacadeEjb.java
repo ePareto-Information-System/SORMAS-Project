@@ -840,7 +840,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setReferredTo(sampleService.getByReferenceDto(source.getReferredTo()));
 		target.setShipped(source.isShipped());
 //		target.setDiseaseSampleTests(source.isDiseaseSampleTests());
-		target.setYellowFeverSampleType(source.isYellowFeverSampleType());
+//		target.setYellowFeverSampleType(source.isYellowFeverSampleType());
 		target.setReceived(source.isReceived());
 		target.setPathogenTestingRequested(source.getPathogenTestingRequested());
 		target.setSampleMaterialTestingRequested(source.getSampleMaterialTestingRequested());
@@ -1103,7 +1103,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setReceived(source.isReceived());
 		target.setPathogenTestingRequested(source.getPathogenTestingRequested());
 		target.setSampleMaterialTestingRequested(source.getSampleMaterialTestingRequested());
-		target.setYellowFeverSampleType(source.isYellowFeverSampleType());
+//		target.setYellowFeverSampleType(source.isYellowFeverSampleType());
 //		target.setDiseaseSampleTests(source.isDiseaseSampleTests());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());

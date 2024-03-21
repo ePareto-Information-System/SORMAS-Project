@@ -15,6 +15,7 @@
 
 package de.symeda.sormas.backend.symptoms;
 
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
@@ -24,7 +25,8 @@ import de.symeda.sormas.backend.util.DtoHelper;
 
 @Stateless(name = "SymptomsFacade")
 public class SymptomsFacadeEjb implements SymptomsFacade {
-
+	@EJB
+	private SymptomsService service;
 	public Symptoms fillOrBuildEntity(SymptomsDto source, Symptoms target, boolean checkChangeDate) {
 		if (source == null) {
 			return null;
@@ -641,23 +643,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setDizzinessStandingUp(source.getDizzinessStandingUp());
 		target.setHighOrLowBloodPressure(source.getHighOrLowBloodPressure());
 		target.setUrinaryRetention(source.getUrinaryRetention());
-		target.setGeneralBodilyPains(source.getGeneralBodilyPains());
-		target.setLesionsNeck(source.getLesionsNeck());
-		target.setLesionsTrunk(source.getLesionsTrunk());
-		target.setRashes(source.getRashes());
-		target.setPapularRash(source.getPapularRash());
-		target.setMacularRash(source.getMacularRash());
-		target.setVesicularRash(source.getVesicularRash());
-		target.setOtherLesionAreas(source.getOtherLesionAreas());
 		target.setProvisionalDiagnosis(source.getProvisionalDiagnosis());
-		target.setNonVascular(source.getNonVascular());
-		target.setNonVascularDate(source.getNonVascularDate());
-		target.setSkinRashDate(source.getSkinRashDate());
-		target.setFeverDate(source.getFeverDate());
-		target.setCoughDate(source.getCoughDate());
-		target.setRunnyNoseDate(source.getRunnyNoseDate());
-		target.setConjunctivitisDate(source.getConjunctivitisDate());
-		target.setKopliksSpotsDate(source.getKopliksSpotsDate());
 		target.setMuscleTone(source.getMuscleTone());
 		target.setDeepTendonReflex(source.getDeepTendonReflex());
 		target.setMuscleVolume(source.getMuscleVolume());

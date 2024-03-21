@@ -154,6 +154,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private static final String REINFECTION_DETAILS_COL_1_LOC = "reinfectionDetailsCol1Loc";
 	private static final String REINFECTION_DETAILS_COL_2_LOC = "reinfectionDetailsCol2Loc";
 	public static final String CASE_REFER_POINT_OF_ENTRY_BTN_LOC = "caseReferFromPointOfEntryBtnLoc";
+	NullableOptionGroup vaccinatedByCardOrHistory;
 
 	//@formatter:off
 	private static final String MAIN_HTML_LAYOUT =
@@ -294,6 +295,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private ComboBox facilityCombo;
 	private TextField facilityDetails;
 	private boolean quarantineChangedByFollowUpUntilChange = false;
+	private OptionGroup caseOutcome;
+	private TextField otherCaseOutComeDetails;
 	private TextField tfExpectedFollowUpUntilDate;
 	private FollowUpPeriodDto expectedFollowUpPeriodDto;
 	private boolean ignoreDifferentPlaceOfStayJurisdiction = false;
@@ -438,10 +441,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		getContent().addComponent(externalTokenWarningLabel, EXTERNAL_TOKEN_WARNING_LOC);
 
 		TextField internaltoken = addField(CaseDataDto.INTERNAL_TOKEN, TextField.class);
-
-		otherCaseOutComeDetails = addField(CaseDataDto.OTHERCASEOUTCOMEDETAILS, TextField.class);
-		otherCaseOutComeDetails.setVisible(false);
-		otherCaseOutComeDetails.addAttachListener(e -> setOtherOutomeValue());
 
 		NullableOptionGroup investigationstatus = addField(CaseDataDto.INVESTIGATION_STATUS, NullableOptionGroup.class);
 		NullableOptionGroup outcome = new NullableOptionGroup("Outcome");
