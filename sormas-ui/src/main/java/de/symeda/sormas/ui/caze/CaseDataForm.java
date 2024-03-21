@@ -1043,6 +1043,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 
 		vaccinationStatus.removeItem(VaccinationStatus.UNKNOWN);
+
 		cardDateField.setVisible(false);
 
 		FieldHelper.setEnabledWhen(
@@ -1572,9 +1573,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			if (disease == Disease.YELLOW_FEVER) {
 
 				nationalLevelDate.setVisible(true);
-				FieldHelper.setEnabledWhen(vaccinationStatus, Arrays.asList(VaccinationStatus.VACCINATED), Collections.singletonList(
-						vaccinatedByCardOrHistory
-				), false);
 
 				FieldHelper
 						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
@@ -1585,11 +1583,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			//CSM
 			if (disease == Disease.CSM) {
 				vaccineType.setVisible(true);
+				vaccinatedByCardOrHistory.setVisible(false);
 				FieldHelper
 						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccineType, numberOfDoses, cardDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
-				FieldHelper.setEnabledWhen(vaccinationStatus, Arrays.asList(VaccinationStatus.VACCINATED), Collections.singletonList(
-						cardDateField
-				), false);
+
+
 			}
 
 			//AHF

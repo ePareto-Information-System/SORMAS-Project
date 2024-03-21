@@ -2243,6 +2243,7 @@ public interface Captions {
 	String sampleAllSamples = "sampleAllSamples";
 	String sampleAllActiveAndArchivedSamples = "sampleAllActiveAndArchivedSamples";
 	String sampleArchivedSamples = "sampleArchivedSamples";
+	String sampleAllSamples = "sampleAllSamples";
 	String sampleAssociationType = "sampleAssociationType";
 	String sampleCreateNew = "sampleCreateNew";
 	String sampleDashboardAllSamples = "sampleDashboardAllSamples";
