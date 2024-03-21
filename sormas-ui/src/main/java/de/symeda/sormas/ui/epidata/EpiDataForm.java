@@ -264,38 +264,40 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		}
 
+//		PATIENT_TRAVELLED_IN_COUNTRY_ONE, PATIENT_TRAVELLED_IN_COUNTRY_TWO, PATIENT_TRAVELLED_IN_COUNTRY_THREE, PATIENT_TRAVELLED_IN_COUNTRY_FOUR, visible if PATIENT_TRAVELLED_TWO_WEEKS_PRIOR = YES
+		FieldHelper.setVisibleWhen(
+				patientTravelledTwoWeeksPriorYesNoUknownField,
+				Arrays.asList(
+						textFieldPatientTravelledInCountryOne,
+						textFieldPatientTravelledInCountryTwo,
+						textFieldPatientTravelledInCountryThree,
+						textFieldPatientTravelledInCountryFour,
+						textFieldPatientTravelledInternationalOne,
+						textFieldPatientTravelledInternationalTwo,
+						textFieldPatientTravelledInternationalThree,
+						textFieldPatientTravelledInternationalFour),
+				Arrays.asList(YesNoUnknown.YES),
+				true);
+
+		FieldHelper.setVisibleWhen(
+				patientCloseContactWithARIYesNoUnkownField,
+				Arrays.asList(patientCloseContactWithARIContactSettingsField),
+				Arrays.asList(YesNoUnknown.YES),
+				true);
+
+		FieldHelper.setVisibleWhen(
+				patientContactWithConfirmedCaseYesNoField,
+				Arrays.asList(patientContactWithConfirmedCaseExposureLocationsField, patientContactWithConfirmedCaseExposureLocationCityCountryField),
+				Arrays.asList(YesNoUnknown.YES),
+				true);
+
+
 		if (disease == Disease.CORONAVIRUS) {
 			hideAllFields();
 			setVisible(true, EpiDataDto.PATIENT_TRAVELLED_TWO_WEEKS_PRIOR);
 			setVisible(true, EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY);
 			setVisible(true, EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI);
 			setVisible(true, EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE);
-
-
-
-			//check if patient travelled two weeks prior and set the visibility of the fields
-			patientTravelledTwoWeeksPriorYesNoUknownField.addValueChangeListener(e -> {
-				YesNoUnknown patientTravelledTwoWeeksPrior = (YesNoUnknown) FieldHelper.getNullableSourceFieldValue((Field) e.getProperty());
-				if (patientTravelledTwoWeeksPrior == YesNoUnknown.YES) {
-					setVisible(true, EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_ONE, EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_TWO, EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_THREE, EpiDataDto.PATIENT_TRAVELLED_IN_COUNTRY_FOUR);
-					setVisible(true, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_ONE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_TWO, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_THREE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_FOUR);
-				}
-			});
-
-			patientCloseContactWithARIYesNoUnkownField.addValueChangeListener(e -> {
-				YesNoUnknown patientCloseContactWithARI = (YesNoUnknown) FieldHelper.getNullableSourceFieldValue((Field) e.getProperty());
-				if (patientCloseContactWithARI == YesNoUnknown.YES) {
-					setVisible(true, EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI_CONTACT_SETTINGS);
-				}
-			});
-
-			patientContactWithConfirmedCaseYesNoField.addValueChangeListener(e -> {
-				YesNoUnknown patientContactWithConfirmedCase = (YesNoUnknown) FieldHelper.getNullableSourceFieldValue((Field) e.getProperty());
-				if (patientContactWithConfirmedCase == YesNoUnknown.YES) {
-					setVisible(true, EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATIONS, EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATION_CITY_COUNTRY);
-				}
-			});
-
 		}
 
 	}
