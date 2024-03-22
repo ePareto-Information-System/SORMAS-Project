@@ -1512,7 +1512,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			}
 
 			//INFLUENZA
-			if (disease == Disease.NEW_INFLUENZA) {
+			if (disease == Disease.NEW_INFLUENZA || disease == Disease.SARI) {
 				nationalLevelDate.setVisible(true);
 			}
 

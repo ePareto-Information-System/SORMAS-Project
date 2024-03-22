@@ -819,7 +819,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			setVisible(true, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
 
 		}
-		if(disease == Disease.NEW_INFLUENZA){
+		if(disease == Disease.NEW_INFLUENZA || disease == Disease.SARI){
 			addField(DATE_OF_ONSET, DateField.class);
 			OptionGroup feverBodytemp = addField(FEVER_BODY_TEMP_GREATER, OptionGroup.class);
 
@@ -1051,7 +1051,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		//Button setEmptyToUnknownButton = createButtonSetClearedToSymptomState(Captions.symptomsSetClearedToUnknown, SymptomState.UNKNOWN);
 
-		Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.DENGUE, Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA));
+		Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.DENGUE, Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI));
 
 		if (includedDiseases.contains(disease)) {
 			clearAllButton.setVisible(true);

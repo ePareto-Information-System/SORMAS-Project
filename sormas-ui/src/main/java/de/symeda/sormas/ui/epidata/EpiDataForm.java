@@ -196,7 +196,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		}
 
-		if(diseaseInfluenzaCheck()){
+		if(disease == Disease.NEW_INFLUENZA || disease == Disease.SARI){
 			setVisible(false, EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, EpiDataDto.LARGE_OUTBREAKS_AREA, EpiDataDto.AREA_INFECTED_ANIMALS);
 			setVisible(false, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN, EpiDataDto.EXPOSURES, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN);
 
@@ -288,7 +288,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		return disease == Disease.YELLOW_FEVER;
 	}
 	private boolean diseaseCSMCheck(){return disease == Disease.CSM; }
-	private boolean diseaseInfluenzaCheck(){return disease == Disease.NEW_INFLUENZA; }
+	private boolean diseaseInfluenzaCheck(){return disease == Disease.NEW_INFLUENZA || disease == Disease.SARI; }
 
 	//hide all fields
 	public void hideAllFields () {

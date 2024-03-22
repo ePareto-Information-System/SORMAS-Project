@@ -49,8 +49,8 @@ public class PersonFormConfiguration {
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.NATIONAL_HEALTH_ID, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.GHANA_CARD, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.PASSPORT_NUMBER, new HashSet<>(Arrays.asList()));
-            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.NUMBER_OF_PEOPLE, new HashSet<>(Arrays.asList(Disease.CSM, Disease.NEW_INFLUENZA, Disease.AFP, Disease.YELLOW_FEVER)));
-            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.NUMBER_OF_OTHER_CONTACTS, new HashSet<>(Arrays.asList(Disease.CSM, Disease.NEW_INFLUENZA, Disease.AFP, Disease.YELLOW_FEVER)));
+            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.NUMBER_OF_PEOPLE, new HashSet<>(Arrays.asList(Disease.CSM, Disease.NEW_INFLUENZA, Disease.SARI, Disease.AFP, Disease.YELLOW_FEVER)));
+            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.NUMBER_OF_OTHER_CONTACTS, new HashSet<>(Arrays.asList(Disease.CSM, Disease.NEW_INFLUENZA, Disease.SARI, Disease.AFP, Disease.YELLOW_FEVER)));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.HAS_COVID_APP, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.COVID_CODE_DELIVERED, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(OCCUPATION_HEADER, new HashSet<>(Arrays.asList()));

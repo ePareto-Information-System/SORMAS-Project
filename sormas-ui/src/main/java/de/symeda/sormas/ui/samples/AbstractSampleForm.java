@@ -473,6 +473,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					handleYellowFever();
 					break;
 				case NEW_INFLUENZA:
+				case SARI:
 					handleNewInfluenza();
 					break;
 				// Handle default case, maybe log an error or set default visibility
@@ -706,6 +707,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		handleDisease(Disease.AFP, "Noguchi Memorial Institute for Medical Research");
 		handleDiseaseField(Disease.CSM);
 		handleDiseaseField(Disease.NEW_INFLUENZA);
+		handleDiseaseField(Disease.SARI);
 
 		if (getValue() != null && canOnlyReadRequests) {
 			CssLayout requestedPathogenTestsLayout = new CssLayout();
