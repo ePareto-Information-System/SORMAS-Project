@@ -90,7 +90,8 @@ public enum Disease
 	ZIKA(true, true, true, false, false,6, true, false, false),
 	MARBURG(true, true, true, false, false,0, true, false, false),
 	UNDEFINED(true, true, true, true, false,0, false, false, false),
-	UNSPECIFIED_VHF(true, true, true, true, false,0, false, false, false);
+	UNSPECIFIED_VHF(true, true, true, true, false,0, false, false, false),
+	SARI(true, true, true, true, false,17, true, false, false);
 
 
 	private final boolean defaultActive;
