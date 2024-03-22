@@ -1590,6 +1590,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			if(disease == Disease.NEW_INFLUENZA){
 				nationalLevelDate.setVisible(true);
 			}
+
+			if(disease == Disease.NEONATAL_TETANUS){
+				notifiedBy.setVisible(true);
+				dateOfNotification.setVisible(true);
+				dateOfInvestigation.setVisible(true);
+			}
 		});
 	}
 
