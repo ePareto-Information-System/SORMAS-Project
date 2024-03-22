@@ -292,6 +292,7 @@ public class PersonDto extends PseudonymizableDto {
 		Disease.GUINEA_WORM,
 		Disease.POLIO,
 		Disease.AHF,
+		Disease.DENGUE,
 		Disease.CORONAVIRUS,
 		Disease.UNDEFINED,
 		Disease.OTHER })
@@ -302,6 +303,7 @@ public class PersonDto extends PseudonymizableDto {
 		Disease.GUINEA_WORM,
 		Disease.POLIO,
 		Disease.AHF,
+		Disease.DENGUE,
 		Disease.CORONAVIRUS,
 		Disease.UNDEFINED,
 		Disease.OTHER })
@@ -315,6 +317,7 @@ public class PersonDto extends PseudonymizableDto {
 		Disease.LASSA,
 		Disease.POLIO,
 		Disease.AHF,
+		Disease.DENGUE,
 		Disease.UNDEFINED,
 		Disease.OTHER })
 	@HideForCountries
@@ -326,6 +329,7 @@ public class PersonDto extends PseudonymizableDto {
 		Disease.LASSA,
 		Disease.POLIO,
 		Disease.AHF,
+		Disease.DENGUE,
 		Disease.UNDEFINED,
 		Disease.OTHER })
 	@SensitiveData
@@ -339,6 +343,7 @@ public class PersonDto extends PseudonymizableDto {
 		Disease.LASSA,
 		Disease.POLIO,
 		Disease.AHF,
+		Disease.DENGUE,
 		Disease.UNDEFINED,
 		Disease.OTHER })
 	@HideForCountries

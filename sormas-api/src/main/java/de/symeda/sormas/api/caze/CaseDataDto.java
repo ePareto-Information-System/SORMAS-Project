@@ -397,6 +397,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		Disease.CSM,
 		Disease.RABIES,
 		Disease.AHF,
+		Disease.DENGUE,
 		Disease.ANTHRAX,
 		Disease.CORONAVIRUS,
 		Disease.OTHER })

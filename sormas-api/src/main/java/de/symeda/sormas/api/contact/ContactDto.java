@@ -346,6 +346,7 @@ public class ContactDto extends SormasToSormasShareableDto {
 		Disease.CSM,
 		Disease.RABIES,
 		Disease.AHF,
+		Disease.DENGUE,
 		Disease.ANTHRAX,
 		Disease.CORONAVIRUS,
 		Disease.OTHER })
