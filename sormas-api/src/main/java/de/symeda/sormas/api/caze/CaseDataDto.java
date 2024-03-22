@@ -623,12 +623,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	private CardOrHistory vaccinationType;
 	private Date vaccinationDate;
 	private Date lastVaccinationDate;
-	private Date vaccinationRoutineDate;
 
-
-	private NewExisting existingCase;
-
-	//private PickMerge importUpdateCaseStatus;
 	private String notifiedBy;
 	private Date dateOfNotification;
 	private Date dateOfInvestigation;
@@ -1930,12 +1925,6 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 
 	public void setDateOfInvestigation(Date dateOfInvestigation) {
 		this.dateOfInvestigation = dateOfInvestigation;
-	}
-	public Date getSecondVaccinationDate() {
-		return secondVaccinationDate;
-	}
-	public void setSecondVaccinationDate(Date secondVaccinationDate) {
-		this.secondVaccinationDate = secondVaccinationDate;
 	}
 
 	public Date getLastVaccinationDate() {
