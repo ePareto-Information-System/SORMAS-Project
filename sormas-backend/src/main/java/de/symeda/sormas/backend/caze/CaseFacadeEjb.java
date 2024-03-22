@@ -3455,7 +3455,6 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setVaccinationRoutine(source.getVaccinationRoutine());
 		target.setVaccinationRoutineDate(source.getVaccinationRoutineDate());
 
-		target.setSecondVaccinationDate(source.getSecondVaccinationDate());
 		target.setLastVaccinationDate(source.getLastVaccinationDate());
 
 		target.setMotherVaccinatedWithTT(source.getMotherVaccinatedWithTT());
