@@ -157,14 +157,15 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6,SITE_OF_PARALYSIS) +
 					fluidRowLocs(PARALYSED_LIMB_SENSITIVE_TO_PAIN, INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
 					fluidRowLocs(RIGHT_INJECTION_SITE, LEFT_INJECTION_SITE) +
-					fluidRowLocs(6, TRUEAFP) +
 
 					locsCss(VSPACE_3, PATIENT_ILL_LOCATION, SYMPTOMS_COMMENTS) +
 					fluidRowLocs(6, ONSET_SYMPTOM) +
 					fluidRowLocs(6, ONSET_DATE) +
 					//loc(CLINICAL_HISTORY_HEADING_LOC) +
 					fluidRowLocs(6,OUTCOME)+
-					fluidRowLocs(PROVISONAL_DIAGNOSIS);
+					fluidRowLocs(PROVISONAL_DIAGNOSIS)+
+					fluidRowLocs(6, TRUEAFP);
+
 	//@formatter:on
 
 	private static String createSymptomGroupLayout(SymptomGroup symptomGroup, String loc) {
