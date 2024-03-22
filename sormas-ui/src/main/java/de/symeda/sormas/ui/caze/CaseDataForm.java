@@ -1029,10 +1029,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		vaccinationStatus = addField(CaseDataDto.VACCINATION_STATUS, NullableOptionGroup.class);
 		vaccinatedByCardOrHistory = addField(CaseDataDto.VACCINATION_TYPE, NullableOptionGroup.class);
 
-		FieldHelper.setEnabledWhen(vaccinationStatus, Arrays.asList(VaccinationStatus.VACCINATED), Collections.singletonList(
-				vaccinatedByCardOrHistory
-		), false);
-
 		vaccinationRoutine = addField(CaseDataDto.VACCINATION_ROUTINE, NullableOptionGroup.class);
 		vaccinationRoutine.addItems(VaccinationRoutine.MR1, VaccinationRoutine.MR2, VaccinationRoutine.SIA);
 		vaccinationRoutine.setVisible(disease == Disease.MEASLES);
@@ -1041,42 +1037,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				vaccinationRoutineDate
 		), false);
 
-
 		vaccinationStatus.removeItem(VaccinationStatus.UNKNOWN);
-
 		cardDateField.setVisible(false);
-
-		FieldHelper.setEnabledWhen(
-				vaccinatedByCardOrHistory,
-				Arrays.asList(CardOrHistory.CARD, CardOrHistory.HISTORY),
-				Collections.singletonList(
-						cardDateField
-				),
-				false);
 
 		secondVaccinationDateField = addField(CaseDataDto.SECOND_VACCINATION_DATE, DateField.class);
 		secondVaccinationDateField.setVisible(false);
-
-
-		FieldHelper
-				.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
-
-		FieldHelper.setEnabledWhen(
-				vaccinatedByCardOrHistory,
-				Arrays.asList(CardOrHistory.CARD),
-				Collections.singletonList(
-						cardDateField
-				),
-				false);
-
-		FieldHelper.setEnabledWhen(
-				vaccinatedByCardOrHistory,
-				Arrays.asList(CardOrHistory.CARD),
-				Collections.singletonList(
-						secondVaccinationDateField
-				),
-				false);
-
 
 		vaccineType = addField(CaseDataDto.VACCINE_TYPE, ComboBox.class);
 		numberOfDoses = addField(CaseDataDto.NUMBER_OF_DOSES, TextField.class);
@@ -1573,21 +1538,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			if (disease == Disease.YELLOW_FEVER) {
 
 				nationalLevelDate.setVisible(true);
-
-				FieldHelper
-						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
-				FieldHelper
-						.setVisibleWhen(vaccinatedByCardOrHistory, Arrays.asList(cardDateField), Arrays.asList(CardOrHistory.CARD), true);
+				setVaccinatedByCardOrHistoryVisibility();
 			}
 
 			//CSM
 			if (disease == Disease.CSM) {
-				vaccineType.setVisible(true);
-				vaccinatedByCardOrHistory.setVisible(false);
-				FieldHelper
-						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccineType, numberOfDoses, cardDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
-
-
+				setVaccinationHelperVisibility();
 			}
 
 			//AHF
@@ -1617,11 +1573,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 						vaccinatedByCardOrHistory
 				), false);
 
-				FieldHelper
-						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
-				cardDateField.setVisible(false);
-				FieldHelper
-						.setVisibleWhen(vaccinatedByCardOrHistory, Arrays.asList(cardDateField), Arrays.asList(CardOrHistory.CARD), true);
+				setVaccinatedByCardOrHistoryVisibility();
 				}
 
 			if (CaseDataDto.HOSPITALIZATION == null) {
@@ -1629,6 +1581,20 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					caseOutcome.setRequired(false);
 			}
 		});
+	}
+
+	private void setVaccinationHelperVisibility(){
+		vaccineType.setVisible(true);
+		vaccinatedByCardOrHistory.setVisible(false);
+		FieldHelper
+				.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccineType, numberOfDoses, cardDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
+	}
+
+	private void setVaccinatedByCardOrHistoryVisibility(){
+		FieldHelper
+				.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
+		FieldHelper
+				.setVisibleWhen(vaccinatedByCardOrHistory, Arrays.asList(cardDateField), Arrays.asList(CardOrHistory.CARD), true);
 	}
 
 	public void hideFieldsForSelectedDisease(Disease disease) {
