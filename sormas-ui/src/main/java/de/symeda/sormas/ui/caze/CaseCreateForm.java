@@ -560,7 +560,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			FieldHelper.removeItems(facilityCombo);
 
 
-			investigated.setVisible(disease == Disease.NEW_INFLUENZA);
+			investigated.setVisible(disease == Disease.NEW_INFLUENZA || disease == Disease.SARI);
 			personCreateForm.updatePresentConditionEnum((Disease) valueChangeEvent.getProperty().getValue());
 
 

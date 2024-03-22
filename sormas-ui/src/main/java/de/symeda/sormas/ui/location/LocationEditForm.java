@@ -907,6 +907,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 				handleCSM();
 				break;
 			case NEW_INFLUENZA:
+			case SARI:
 				handleNewInfluenza();
 				break;
 			case AFP:
