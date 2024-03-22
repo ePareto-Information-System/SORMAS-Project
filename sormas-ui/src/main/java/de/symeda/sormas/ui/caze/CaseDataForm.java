@@ -1008,7 +1008,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		vaccinationStatus = addField(CaseDataDto.VACCINATION_STATUS, NullableOptionGroup.class);
 		vaccinatedByCardOrHistory = addField(CaseDataDto.VACCINATION_TYPE, NullableOptionGroup.class);
 		vaccinationStatus.removeItem(VaccinationStatus.UNKNOWN);
-
 		cardDateField.setVisible(false);
 
 		vaccineType = addField(CaseDataDto.VACCINE_TYPE, ComboBox.class);
@@ -1489,21 +1488,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			if (disease == Disease.YELLOW_FEVER) {
 
 				nationalLevelDate.setVisible(true);
-
-				FieldHelper
-						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
-				FieldHelper
-						.setVisibleWhen(vaccinatedByCardOrHistory, Arrays.asList(cardDateField), Arrays.asList(CardOrHistory.CARD), true);
+				setVaccinatedByCardOrHistoryVisibility();
 			}
 
 			//CSM
 			if (disease == Disease.CSM) {
-				vaccineType.setVisible(true);
-				vaccinatedByCardOrHistory.setVisible(false);
-				FieldHelper
-						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccineType, numberOfDoses, cardDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
-
-
+				setVaccinationHelperVisibility();
 			}
 
 			//AHF
@@ -1526,6 +1516,20 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					caseOutcome.setRequired(false);
 			}
 		});
+	}
+
+	private void setVaccinationHelperVisibility(){
+		vaccineType.setVisible(true);
+		vaccinatedByCardOrHistory.setVisible(false);
+		FieldHelper
+				.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccineType, numberOfDoses, cardDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
+	}
+
+	private void setVaccinatedByCardOrHistoryVisibility(){
+		FieldHelper
+				.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
+		FieldHelper
+				.setVisibleWhen(vaccinatedByCardOrHistory, Arrays.asList(cardDateField), Arrays.asList(CardOrHistory.CARD), true);
 	}
 
 	public void hideFieldsForSelectedDisease(Disease disease) {
