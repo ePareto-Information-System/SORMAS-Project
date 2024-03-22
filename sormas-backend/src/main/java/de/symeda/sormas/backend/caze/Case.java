@@ -444,6 +444,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	private Map<String, String> externalData;
 	private Date secondVaccinationDate;
+	private Date lastVaccinationDate;
 
 	public static Case build() {
 		Case caze = new Case();
@@ -1967,6 +1968,14 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.secondVaccinationDate = secondVaccinationDate;
 	}
 
+	@Temporal(TemporalType.DATE)
+	public Date getLastVaccinationDate() {
+		return lastVaccinationDate;
+	}
+
+	public void setLastVaccinationDate(Date lastVaccinationDate) {
+		this.lastVaccinationDate = lastVaccinationDate;
+	}
 	public Double buildCaseLatitudeCoordination() {
 		return reportLat;
 	}

@@ -255,6 +255,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(CaseDataDto.VACCINATION_ROUTINE, CaseDataDto.VACCINATION_ROUTINE_DATE) +
 					fluidRowLocs(CaseDataDto.VACCINATION_STATUS, CaseDataDto.VACCINATION_TYPE) +
 					fluidRowLocs(CaseDataDto.VACCINE_TYPE, CaseDataDto.NUMBER_OF_DOSES, CaseDataDto.VACCINATION_DATE, CaseDataDto.SECOND_VACCINATION_DATE) +
+					fluidRowLocs(6, CaseDataDto.LAST_VACCINATION_DATE) +
 					fluidRowLocs(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED, CaseDataDto.SMALLPOX_VACCINATION_SCAR) +
 					fluidRowLocs(SMALLPOX_VACCINATION_SCAR_IMG) +
 					fluidRowLocs(CaseDataDto.SMALLPOX_LAST_VACCINATION_DATE, "") +
@@ -305,6 +306,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private NullableOptionGroup vaccinationStatus;
 	private NullableOptionGroup vaccinationRoutine;
 	private DateField vaccinationRoutineDate;
+	private DateField lastVaccinationDate;
 	private ComboBox responsibleCommunity;
 	private ComboBox districtCombo;
 	private ComboBox communityCombo;
@@ -1028,11 +1030,13 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		vaccinationStatus = addField(CaseDataDto.VACCINATION_STATUS, NullableOptionGroup.class);
 		vaccinatedByCardOrHistory = addField(CaseDataDto.VACCINATION_TYPE, NullableOptionGroup.class);
+		vaccinatedByCardOrHistory.setVisible(false);
 
 		vaccinationRoutine = addField(CaseDataDto.VACCINATION_ROUTINE, NullableOptionGroup.class);
 		vaccinationRoutine.addItems(VaccinationRoutine.MR1, VaccinationRoutine.MR2, VaccinationRoutine.SIA);
 		vaccinationRoutine.setVisible(disease == Disease.MEASLES);
 		vaccinationRoutineDate = addDateField(CaseDataDto.VACCINATION_ROUTINE_DATE, DateField.class, -1);
+		vaccinationRoutineDate.setVisible(false);
 		FieldHelper.setEnabledWhen(vaccinationRoutine, Arrays.asList(VaccinationRoutine.MR1, VaccinationRoutine.MR2, VaccinationRoutine.SIA), Collections.singletonList(
 				vaccinationRoutineDate
 		), false);
@@ -1045,9 +1049,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		vaccineType = addField(CaseDataDto.VACCINE_TYPE, ComboBox.class);
 		numberOfDoses = addField(CaseDataDto.NUMBER_OF_DOSES, TextField.class);
+		lastVaccinationDate = addField(CaseDataDto.LAST_VACCINATION_DATE, DateField.class);
 
 		vaccineType.setVisible(false);
-		numberOfDoses.setVisible(false);
+		numberOfDoses.setVisible(true);
 
 		addFields(CaseDataDto.SMALLPOX_VACCINATION_SCAR, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
 		addDateField(CaseDataDto.SMALLPOX_LAST_VACCINATION_DATE, DateField.class, 0);
@@ -1591,6 +1596,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	}
 
 	private void setVaccinatedByCardOrHistoryVisibility(){
+		vaccinatedByCardOrHistory.setVisible(true);
 		FieldHelper
 				.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
 		FieldHelper

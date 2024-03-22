@@ -13526,5 +13526,9 @@ DROP TRIGGER IF EXISTS conjunctivitisDate ON symptoms;
 DROP TRIGGER IF EXISTS kopliksSpotsDate ON symptoms;
 INSERT INTO schema_version (version_number, comment) VALUES (589, 'Drop nonVascularDate, skinRashDate, feverDate, coughDate, runnyNoseDate, conjunctivitisDate, kopliksSpotsDate');
 
+-- 2024-03-13 Added bodyAche in symptoms for yellow fever #53
+ALTER TABLE cases ADD COLUMN lastvaccinationdate date;
+
+INSERT INTO schema_version (version_number, comment) VALUES (590, 'Added last vaccination date for IDSR 53');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 

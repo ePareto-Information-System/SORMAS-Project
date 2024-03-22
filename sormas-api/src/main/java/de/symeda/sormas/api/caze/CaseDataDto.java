@@ -140,6 +140,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String VACCINE_TYPE = "vaccineType";
 	public static final String NUMBER_OF_DOSES = "numberOfDoses";
 	public static final String VACCINATION_DATE = "vaccinationDate";
+	public static final String LAST_VACCINATION_DATE = "lastVaccinationDate";
 	public static final String SMALLPOX_VACCINATION_SCAR = "smallpoxVaccinationScar";
 	public static final String SMALLPOX_VACCINATION_RECEIVED = "smallpoxVaccinationReceived";
 	public static final String SMALLPOX_LAST_VACCINATION_DATE = "smallpoxLastVaccinationDate";
@@ -624,6 +625,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	@Outbreaks
 	private CardOrHistory vaccinationType;
 	private Date vaccinationDate;
+	private Date lastVaccinationDate;
 	private Date vaccinationRoutineDate;
 
 
@@ -1973,5 +1975,13 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	}
 	public void setSecondVaccinationDate(Date secondVaccinationDate) {
 		this.secondVaccinationDate = secondVaccinationDate;
+	}
+
+	public Date getLastVaccinationDate() {
+		return lastVaccinationDate;
+	}
+
+	public void setLastVaccinationDate(Date lastVaccinationDate) {
+		this.lastVaccinationDate = lastVaccinationDate;
 	}
 }
