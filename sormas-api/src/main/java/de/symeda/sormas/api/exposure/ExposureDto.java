@@ -155,6 +155,7 @@ public class ExposureDto extends PseudonymizableDto {
 		Disease.POLIO,
 		Disease.CORONAVIRUS,
 		Disease.AHF,
+		Disease.DENGUE,
 		Disease.UNDEFINED,
 		Disease.OTHER })
 	private YesNo percutaneous;
@@ -165,6 +166,7 @@ public class ExposureDto extends PseudonymizableDto {
 		Disease.POLIO,
 		Disease.CORONAVIRUS,
 		Disease.AHF,
+		Disease.DENGUE,
 		Disease.UNDEFINED,
 		Disease.OTHER })
 	private YesNo contactToBodyFluids;
@@ -197,6 +199,7 @@ public class ExposureDto extends PseudonymizableDto {
 		Disease.ANTHRAX,
 		Disease.POLIO,
 		Disease.AHF,
+		Disease.DENGUE,
 		Disease.UNDEFINED,
 		Disease.OTHER })
 	private YesNo handlingAnimals;

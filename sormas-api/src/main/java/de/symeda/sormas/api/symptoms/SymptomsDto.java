@@ -270,6 +270,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		ANTHRAX,
 		CORONAVIRUS,
 		AHF,
+		DENGUE,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -286,6 +287,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		YELLOW_FEVER,
 		AHF,
+		DENGUE,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -299,6 +301,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		YELLOW_FEVER,
 		AHF,
+		DENGUE,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -334,6 +337,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		POLIO,
 		AHF,
+		DENGUE,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
@@ -349,6 +353,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		YELLOW_FEVER,
 		ANTHRAX,
 		AHF,
+		DENGUE,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -366,6 +371,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		POLIO,
 		AHF,
+		DENGUE,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
@@ -380,6 +386,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		POLIO,
 		AHF,
+		DENGUE,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
@@ -421,6 +428,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		ANTHRAX,
 		CORONAVIRUS,
 		AHF,
+		DENGUE,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -452,6 +460,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		MONKEYPOX,
 		POLIO,
 		AHF,
+		DENGUE,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries(countries = {
@@ -472,6 +481,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		ANTHRAX,
 		AHF,
+		DENGUE,
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
@@ -501,6 +511,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		PLAGUE,
 		POLIO,
 		AHF,
+		DENGUE,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -529,6 +540,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CHOLERA,
 		POLIO,
 		AHF,
+		DENGUE,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -565,6 +577,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		PLAGUE,
 		POLIO,
 		AHF,
+		DENGUE,
 		RABIES,
 		ANTHRAX,
 		CORONAVIRUS,
@@ -580,6 +593,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		POLIO,
 		AHF,
+		DENGUE,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
@@ -612,6 +626,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		YELLOW_FEVER,
 		AHF,
+		DENGUE,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
@@ -1024,7 +1039,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -1079,7 +1094,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -1152,7 +1167,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		POLIO,
 		YELLOW_FEVER,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
@@ -1165,7 +1180,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -1211,7 +1226,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		PLAGUE,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
@@ -1228,7 +1243,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		PLAGUE,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(OTHER_HEMORRHAGIC_SYMPTOMS)
@@ -1317,7 +1332,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -1329,7 +1344,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -1352,7 +1367,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -1364,7 +1379,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -1377,7 +1392,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		DENGUE,
 		GUINEA_WORM,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -1406,7 +1421,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CSM,
 		CHOLERA,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		RABIES,
 		UNDEFINED,
 		OTHER })
@@ -1433,7 +1448,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -1446,7 +1461,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
@@ -1486,7 +1501,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		ANTHRAX,
 		POLIO,
 		CORONAVIRUS,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -1526,7 +1541,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		POLIO,
 		YELLOW_FEVER,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
@@ -1539,7 +1554,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -1551,7 +1566,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		DENGUE,
 		GUINEA_WORM,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -1633,7 +1648,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -1645,7 +1660,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -2047,7 +2062,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CHOLERA,
 		MEASLES,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		RABIES,
 		UNDEFINED,
 		OTHER })
@@ -2067,7 +2082,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		MEASLES,
 		PLAGUE,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		RABIES,
 		CORONAVIRUS,
 		UNDEFINED,
@@ -2100,7 +2115,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -2114,7 +2129,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -2128,7 +2143,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		RABIES,
 		UNDEFINED,
 		OTHER })
@@ -2198,7 +2213,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CHOLERA,
 		MEASLES,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		RABIES,
 		CORONAVIRUS,
 		UNDEFINED,
@@ -2218,7 +2233,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CHOLERA,
 		MEASLES,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -2238,7 +2253,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		PLAGUE,
 		ANTHRAX,
 		POLIO,
-		AHF,
+		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -2277,7 +2292,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
-		AHF,
+		AHF, DENGUE,
 		OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.GENERAL)
