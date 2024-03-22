@@ -114,7 +114,7 @@ public class CaseFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.VACCINATION_STATUS, new HashSet<>(Arrays.asList(Disease.AHF)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.VACCINATION_TYPE, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.VACCINE_TYPE, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.NUMBER_OF_DOSES, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.NUMBER_OF_DOSES, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA, Disease.MEASLES)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.VACCINATION_DATE, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.SMALLPOX_VACCINATION_SCAR, new HashSet<>(Arrays.asList()));
@@ -145,6 +145,7 @@ public class CaseFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.ADDITIONAL_DETAILS, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DELETION_REASON, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.OTHER_DELETION_REASON, new HashSet<>(Arrays.asList()));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.LAST_VACCINATION_DATE, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AFP, Disease.AHF, Disease.NEW_INFLUENZA, Disease.CSM, Disease.CORONAVIRUS, Disease.AFP)));
 
     }
 

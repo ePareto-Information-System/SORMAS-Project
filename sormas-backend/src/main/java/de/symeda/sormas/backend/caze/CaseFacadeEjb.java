@@ -3158,6 +3158,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setOtherDeletionReason(source.getOtherDeletionReason());
 		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
 
+		target.setSecondVaccinationDate(source.getSecondVaccinationDate());
+		target.setLastVaccinationDate(source.getLastVaccinationDate());
+
 		return target;
 	}
 
@@ -3374,6 +3377,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setDeleted(source.isDeleted());
 		target.setDeletionReason(source.getDeletionReason());
 		target.setOtherDeletionReason(source.getOtherDeletionReason());
+
+		target.setVaccinationRoutine(source.getVaccinationRoutine());
+		target.setVaccinationRoutineDate(source.getVaccinationRoutineDate());
 
 		return target;
 	}

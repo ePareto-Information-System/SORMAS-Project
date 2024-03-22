@@ -137,6 +137,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String VACCINE_TYPE = "vaccineType";
 	public static final String NUMBER_OF_DOSES = "numberOfDoses";
 	public static final String VACCINATION_DATE = "vaccinationDate";
+	public static final String LAST_VACCINATION_DATE = "lastVaccinationDate";
 	public static final String SMALLPOX_VACCINATION_SCAR = "smallpoxVaccinationScar";
 	public static final String SMALLPOX_VACCINATION_RECEIVED = "smallpoxVaccinationReceived";
 	public static final String SMALLPOX_LAST_VACCINATION_DATE = "smallpoxLastVaccinationDate";
@@ -621,6 +622,13 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	@Outbreaks
 	private CardOrHistory vaccinationType;
 	private Date vaccinationDate;
+	private Date lastVaccinationDate;
+	private Date vaccinationRoutineDate;
+
+
+	private NewExisting existingCase;
+
+	//private PickMerge importUpdateCaseStatus;
 	private String notifiedBy;
 	private Date dateOfNotification;
 	private Date dateOfInvestigation;
@@ -1922,5 +1930,19 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 
 	public void setDateOfInvestigation(Date dateOfInvestigation) {
 		this.dateOfInvestigation = dateOfInvestigation;
+	}
+	public Date getSecondVaccinationDate() {
+		return secondVaccinationDate;
+	}
+	public void setSecondVaccinationDate(Date secondVaccinationDate) {
+		this.secondVaccinationDate = secondVaccinationDate;
+	}
+
+	public Date getLastVaccinationDate() {
+		return lastVaccinationDate;
+	}
+
+	public void setLastVaccinationDate(Date lastVaccinationDate) {
+		this.lastVaccinationDate = lastVaccinationDate;
 	}
 }

@@ -12930,5 +12930,10 @@ INSERT INTO schema_version (version_number, comment) VALUES (565, 'Added bodyAch
 ALTER TABLE samples_history ALTER COLUMN sampledatetime DROP NOT NULL;
 
 INSERT INTO schema_version (version_number, comment) VALUES (566, 'Updated sampledatetime');
+
+-- 2024-03-13 Added bodyAche in symptoms for yellow fever #53
+ALTER TABLE cases ADD COLUMN lastvaccinationdate date;
+
+INSERT INTO schema_version (version_number, comment) VALUES (567, 'Added last vaccination date for IDSR 53');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``
