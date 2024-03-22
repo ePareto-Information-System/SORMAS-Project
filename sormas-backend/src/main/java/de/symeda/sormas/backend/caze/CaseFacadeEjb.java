@@ -3158,6 +3158,17 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
 		target.setSecondVaccinationDate(source.getSecondVaccinationDate());
 
+		target.setMotherVaccinatedWithTT(source.getMotherVaccinatedWithTT());
+		target.setMotherHaveCard(source.getMotherHaveCard());
+		target.setMotherNumberOfDoses(source.getMotherNumberOfDoses());
+		target.setMotherVaccinationStatus(source.getMotherVaccinationStatus());
+		target.setMotherTTDateOne(source.getMotherTTDateOne());
+		target.setMotherTTDateTwo(source.getMotherTTDateTwo());
+		target.setMotherTTDateThree(source.getMotherTTDateThree());
+		target.setMotherTTDateFour(source.getMotherTTDateFour());
+		target.setMotherTTDateFive(source.getMotherTTDateFive());
+		target.setMotherLastDoseDate(source.getMotherLastDoseDate());
+
 		return target;
 	}
 
@@ -3376,6 +3387,17 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setDeletionReason(source.getDeletionReason());
 		target.setOtherDeletionReason(source.getOtherDeletionReason());
 		target.setSecondVaccinationDate(source.getSecondVaccinationDate());
+
+		target.setMotherVaccinatedWithTT(source.getMotherVaccinatedWithTT());
+		target.setMotherHaveCard(source.getMotherHaveCard());
+		target.setMotherNumberOfDoses(source.getMotherNumberOfDoses());
+		target.setMotherVaccinationStatus(source.getMotherVaccinationStatus());
+		target.setMotherTTDateOne(source.getMotherTTDateOne());
+		target.setMotherTTDateTwo(source.getMotherTTDateTwo());
+		target.setMotherTTDateThree(source.getMotherTTDateThree());
+		target.setMotherTTDateFour(source.getMotherTTDateFour());
+		target.setMotherTTDateFive(source.getMotherTTDateFive());
+		target.setMotherLastDoseDate(source.getMotherLastDoseDate());
 
 		return target;
 	}

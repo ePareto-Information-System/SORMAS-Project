@@ -236,6 +236,17 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String CASE_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
 	public static final String SECOND_VACCINATION_DATE = "secondVaccinationDate";
 
+	public static final String MOTHER_VACCINATED_WITH_TT = "motherVaccinatedWithTT";
+	public static final String MOTHER_HAVE_CARD = "motherHaveCard";
+	public static final String MOTHER_NUMBER_OF_DOSES = "motherNumberOfDoses";
+	public static final String MOTHER_VACCINATION_STATUS = "motherVaccinationStatus";
+	public static final String MOTHER_TT_DATE_ONE = "motherTTDateOne";
+	public static final String MOTHER_TT_DATE_TWO = "motherTTDateTwo";
+	public static final String MOTHER_TT_DATE_THREE = "motherTTDateThree";
+	public static final String MOTHER_TT_DATE_FOUR = "motherTTDateFour";
+	public static final String MOTHER_TT_DATE_FIVE = "motherTTDateFive";
+	public static final String MOTHER_LAST_DOSE_DATE = "motherLastDoseDate";
+
 	// Fields are declared in the order they should appear in the import template
 
 	@Outbreaks
@@ -626,6 +637,17 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	private Date dateOfNotification;
 	private Date dateOfInvestigation;
 	private  Date secondVaccinationDate;
+
+	private YesNoUnknown motherVaccinatedWithTT;
+	private YesNoUnknown motherHaveCard;
+	private String motherNumberOfDoses;
+	private YesNoUnknown motherVaccinationStatus;
+	private Date motherTTDateOne;
+	private Date motherTTDateTwo;
+	private Date motherTTDateThree;
+	private Date motherTTDateFour;
+	private Date motherTTDateFive;
+	private Date motherLastDoseDate;
 
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		return build(person, disease, HealthConditionsDto.build());
@@ -1930,5 +1952,85 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	}
 	public void setSecondVaccinationDate(Date secondVaccinationDate) {
 		this.secondVaccinationDate = secondVaccinationDate;
+	}
+
+	public YesNoUnknown getMotherVaccinatedWithTT() {
+		return motherVaccinatedWithTT;
+	}
+
+	public void setMotherVaccinatedWithTT(YesNoUnknown motherVaccinatedWithTT) {
+		this.motherVaccinatedWithTT = motherVaccinatedWithTT;
+	}
+
+	public YesNoUnknown getMotherHaveCard() {
+		return motherHaveCard;
+	}
+
+	public void setMotherHaveCard(YesNoUnknown motherHaveCard) {
+		this.motherHaveCard = motherHaveCard;
+	}
+
+	public String getMotherNumberOfDoses() {
+		return motherNumberOfDoses;
+	}
+
+	public void setMotherNumberOfDoses(String motherNumberOfDoses) {
+		this.motherNumberOfDoses = motherNumberOfDoses;
+	}
+
+	public YesNoUnknown getMotherVaccinationStatus() {
+		return motherVaccinationStatus;
+	}
+
+	public void setMotherVaccinationStatus(YesNoUnknown motherVaccinationStatus) {
+		this.motherVaccinationStatus = motherVaccinationStatus;
+	}
+
+	public Date getMotherTTDateOne() {
+		return motherTTDateOne;
+	}
+
+	public void setMotherTTDateOne(Date motherTTDateOne) {
+		this.motherTTDateOne = motherTTDateOne;
+	}
+
+	public Date getMotherTTDateTwo() {
+		return motherTTDateTwo;
+	}
+
+	public void setMotherTTDateTwo(Date motherTTDateTwo) {
+		this.motherTTDateTwo = motherTTDateTwo;
+	}
+
+	public Date getMotherTTDateThree() {
+		return motherTTDateThree;
+	}
+
+	public void setMotherTTDateThree(Date motherTTDateThree) {
+		this.motherTTDateThree = motherTTDateThree;
+	}
+
+	public Date getMotherTTDateFour() {
+		return motherTTDateFour;
+	}
+
+	public void setMotherTTDateFour(Date motherTTDateFour) {
+		this.motherTTDateFour = motherTTDateFour;
+	}
+
+	public Date getMotherTTDateFive() {
+		return motherTTDateFive;
+	}
+
+	public void setMotherTTDateFive(Date motherTTDateFive) {
+		this.motherTTDateFive = motherTTDateFive;
+	}
+
+	public Date getMotherLastDoseDate() {
+		return motherLastDoseDate;
+	}
+
+	public void setMotherLastDoseDate(Date motherLastDoseDate) {
+		this.motherLastDoseDate = motherLastDoseDate;
 	}
 }

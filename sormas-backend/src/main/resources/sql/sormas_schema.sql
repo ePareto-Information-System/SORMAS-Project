@@ -12931,5 +12931,17 @@ ALTER TABLE healthconditions ADD COLUMN stroke varchar(255);
 ALTER TABLE healthconditions ADD COLUMN cancer varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (564, 'Added columns to symptoms, hospitalization, healthconditions to implement patientVisitedHealthCareFacility #26');
 
--- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+-- 565
+ALTER TABLE cases ADD COLUMN motherVaccinatedWithTT varchar(255);
+ALTER TABLE cases ADD COLUMN motherHaveCard varchar(255);
+ALTER TABLE cases ADD COLUMN motherNumberOfDoses integer;
+ALTER TABLE cases ADD COLUMN motherVaccinationStatus varchar(255);
+ALTER TABLE cases ADD COLUMN motherTTDateOne date;
+ALTER TABLE cases ADD COLUMN motherTTDateTwo date;
+ALTER TABLE cases ADD COLUMN motherTTDateThree date;
+ALTER TABLE cases ADD COLUMN motherTTDateFour date;
+ALTER TABLE cases ADD COLUMN motherTTDateFive date;
+ALTER TABLE cases ADD COLUMN motherLastDoseDate date;
+INSERT INTO schema_version (version_number, comment) VALUES (565, 'Added columns to cases to implement MOTHER VACCINATION HISTORY #26');
+-- *** Insert new sql commands BEFORE this line. Remember to alway
 ``
