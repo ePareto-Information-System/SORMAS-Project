@@ -646,8 +646,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			setVisible(false, PersonDto.NICKNAME);
 			setVisible(true, PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID);
 		}
-
-		if (disease == Disease.AHF) {
+		if (disease == Disease.AHF || disease == Disease.DENGUE) {
+//			setVisible(false, PersonDto.BIRTH_COUNTRY);
 			setVisible(true, PersonDto.NUMBER_OF_PEOPLE, PersonDto.NUMBER_OF_OTHER_CONTACTS);
 			additionalDetails.setVisible(true);
 			additionalDetails.setCaption("Other Notes and Observations");
@@ -822,7 +822,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		ComboBox presentConditionField = getField(PersonDto.PRESENT_CONDITION);
 		if (this.disease != null || FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease() != null) {
 			Disease disease = this.disease != null ? this.disease : FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease();
-			if (disease == Disease.AHF) {
+			if (disease == Disease.AHF || disease == Disease.DENGUE) {
 				List<PresentCondition> validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);
 				FieldHelper.updateEnumData(presentConditionField, validValues);
 			} else if (disease == Disease.AFP) {

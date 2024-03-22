@@ -470,6 +470,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					handleAFP();
 					break;
 				case AHF:
+				case DENGUE:
 					handleAHF();
 					break;
 				case YELLOW_FEVER:
@@ -692,6 +693,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		handleDisease(Disease.YELLOW_FEVER, "National Public Health Reference Laboratory");
 		handleDisease(Disease.AHF, "Noguchi Memorial Institute for Medical Research");
+		handleDisease(Disease.DENGUE, "Noguchi Memorial Institute for Medical Research");
 		handleDisease(Disease.AFP, "Noguchi Memorial Institute for Medical Research");
 		handleDiseaseField(Disease.CSM);
 		handleDiseaseField(Disease.NEW_INFLUENZA);
