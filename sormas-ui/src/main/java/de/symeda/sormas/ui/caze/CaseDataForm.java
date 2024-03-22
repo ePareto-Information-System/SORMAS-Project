@@ -1502,7 +1502,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			}
 
 			//AHF
-			if (disease == Disease.AHF) {
+			if (disease == Disease.AHF || disease == Disease.DENGUE) {
 				setVisible(true, CaseDataDto.POSTPARTUM, CaseDataDto.PREGNANT);
 			}
 

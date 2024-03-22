@@ -351,7 +351,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		}
 
-		if(caze.getDisease() == Disease.AHF){
+		if(caze.getDisease() == Disease.AHF || caze.getDisease() == Disease.DENGUE){
 			setVisible(false, HospitalizationDto.ADMISSION_DATE,HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT);
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);

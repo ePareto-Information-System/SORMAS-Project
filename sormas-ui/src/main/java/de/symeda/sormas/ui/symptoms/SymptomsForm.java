@@ -841,7 +841,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
 
 		}
-		if (disease == Disease.AHF) {
+		if (disease == Disease.AHF || disease == Disease.DENGUE) {
 
 			setVisible(false,
 					SORE_THROAT,
@@ -1051,7 +1051,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		//Button setEmptyToUnknownButton = createButtonSetClearedToSymptomState(Captions.symptomsSetClearedToUnknown, SymptomState.UNKNOWN);
 
-		Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA));
+		Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.DENGUE, Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA));
 
 		if (includedDiseases.contains(disease)) {
 			clearAllButton.setVisible(true);

@@ -901,6 +901,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			case YELLOW_FEVER:
 				handleYellowFever();
 			case AHF:
+			case DENGUE:
 				handleAHF();
 			case CSM:
 				handleCSM();
