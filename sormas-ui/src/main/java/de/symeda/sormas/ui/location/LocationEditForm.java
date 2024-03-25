@@ -164,7 +164,6 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	public ComboBox getFacilityType() {
 		return facilityType;
 	}
-	public ComboBox getDhimsFacilityType() {return dhimsFacilityType;}
 
 	private void setConvertedValue(String propertyId, Object value) {
 		((AbstractField<?>) getField(propertyId)).setConvertedValue(value);
@@ -268,10 +267,11 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		final AccessibleTextField tfAccuracy = addField(LocationDto.LAT_LON_ACCURACY, AccessibleTextField.class);
 		final StringToAngularLocationConverter stringToAngularLocationConverter = new StringToAngularLocationConverter();
 		tfLatitude.setConverter(stringToAngularLocationConverter);
-		tfLatitude.setVisible(false);
 		tfLongitude.setConverter(stringToAngularLocationConverter);
-		tfLongitude.setVisible(false);
 		tfAccuracy.setConverter(stringToAngularLocationConverter);
+
+		tfLatitude.setVisible(false);
+		tfLongitude.setVisible(false);
 		tfAccuracy.setVisible(false);
 
 		continent = addInfrastructureField(LocationDto.CONTINENT);
@@ -897,6 +897,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	public void getIncomingDisease(Disease incomingDisease){
 		newDisease = incomingDisease;
 
+
 		switch (newDisease){
 			case YELLOW_FEVER:
 				handleYellowFever();
@@ -929,6 +930,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		setVisible(false,
 				LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY, LocationDto.LOCALITY);
 		additionalInformationField.setCaption("Address (Location)");
+
 	}
 	public void handleAFP(){
 		additionalInformationField.setCaption("Village");
