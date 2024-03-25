@@ -12943,5 +12943,19 @@ ALTER TABLE cases ADD COLUMN motherTTDateFour date;
 ALTER TABLE cases ADD COLUMN motherTTDateFive date;
 ALTER TABLE cases ADD COLUMN motherLastDoseDate date;
 INSERT INTO schema_version (version_number, comment) VALUES (565, 'Added columns to cases to implement MOTHER VACCINATION HISTORY #26');
+
+
+ALTER TABLE person ADD COLUMN receivedAntenatalCare varchar(255);
+ALTER TABLE person ADD COLUMN prenatalTotalVisits integer;
+ALTER TABLE person ADD COLUMN attendedByTrainedTBA varchar(255);
+ALTER TABLE person ADD COLUMN attendedByTrainedTBAMidwifeName varchar(255);
+ALTER TABLE person ADD COLUMN attendedByDoctorNurse varchar(255);
+ALTER TABLE person ADD COLUMN locationOfDelivery varchar(255);
+ALTER TABLE person ADD COLUMN birthByInstitution varchar(255);
+ALTER TABLE person ADD COLUMN birthByInstitutionName varchar(255);
+ALTER TABLE person ADD COLUMN cutCordWithSterileBlade varchar(255);
+ALTER TABLE person ADD COLUMN cordTreatedWithAnything varchar(255);
+ALTER TABLE person ADD COLUMN cordTreatedWithAnythingWhere varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (566, 'Added columns to person to implement BIRTH OF INFANT #26');
 -- *** Insert new sql commands BEFORE this line. Remember to alway
 ``

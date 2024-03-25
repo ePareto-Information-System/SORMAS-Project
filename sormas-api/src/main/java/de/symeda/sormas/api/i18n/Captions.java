@@ -1904,6 +1904,14 @@ public interface Captions {
 	String Person_placeOfBirthFacilityDetails = "Person.placeOfBirthFacilityDetails";
 	String Person_placeOfBirthFacilityType = "Person.placeOfBirthFacilityType";
 	String Person_placeOfBirthRegion = "Person.placeOfBirthRegion";
+	String Person_receivedAntenatalCare = "Person.receivedAntenatalCare";
+	String Person_prenatalTotalVisits = "Person.prenatalTotalVisits";
+	String Person_attendedByTrainedTBA = "Person.attendedByTrainedTBA";
+	String Person_attendedByTrainedTBAMidwifeName = "Person.attendedByTrainedTBAMidwifeName";
+	String Person_attendedByDoctorNurse = "Person.attendedByDoctorNurse";
+	String Person_cutCordWithSterileBlade = "Person.cutCordWithSterileBlade";
+	String Person_cordTreatedWithAnything = "Person.cordTreatedWithAnything";
+	String Person_cordTreatedWithAnythingWhere = "Person.cordTreatedWithAnythingWhere";
 	String Person_presentCondition = "Person.presentCondition";
 	String Person_salutation = "Person.salutation";
 	String Person_sex = "Person.sex";

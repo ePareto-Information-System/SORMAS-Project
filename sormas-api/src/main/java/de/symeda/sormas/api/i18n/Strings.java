@@ -668,6 +668,7 @@ public interface Strings {
 	String headingPersonData = "headingPersonData";
 	String headingPersonInformation = "headingPersonInformation";
 	String headingPersonOccupation = "headingPersonOccupation";
+	String headingBirthOfInfant = "headingBirthOfInfant";
 	String headingPickEventGroup = "headingPickEventGroup";
 	String headingPickEventParticipants = "headingPickEventParticipants";
 	String headingPickEventParticipantsIncompleteSelection = "headingPickEventParticipantsIncompleteSelection";
