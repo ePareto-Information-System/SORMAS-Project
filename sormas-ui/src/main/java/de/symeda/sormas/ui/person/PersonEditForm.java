@@ -617,6 +617,19 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		TextField occuDetails = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
 		occuDetails.setCaption("Please Specify Occupation");
 
+		TextField investigatorName = addField(PersonDto.INVESTIGATOR_NAME, TextField.class);
+		TextField investigatorTitle = addField(PersonDto.INVESTIGATOR_TITLE, TextField.class);
+		TextField investigatorUnit = addField(PersonDto.INVESTIGATOR_UNIT, TextField.class);
+		TextField investigatorAddress = addField(PersonDto.INVESTIGATOR_ADDRESS, TextField.class);
+		TextField investigatorTel = addField(PersonDto.INVESTIGATOR_TEL, TextField.class);
+
+		investigatorName.setVisible(false);
+		investigatorTitle.setVisible(false);
+		investigatorUnit.setVisible(false);
+		investigatorAddress.setVisible(false);
+		investigatorTel.setVisible(false);
+
+
 		addressesHeader.setVisible(false);
 		contactInformationHeader.setVisible(false);
 		homeaddrecreational.setVisible(false);
@@ -646,8 +659,16 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			setVisible(false, PersonDto.NICKNAME);
 			setVisible(true, PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID);
 		}
+		if (disease == Disease.NEW_INFLUENZA) {
+
+			investigatorName.setVisible(true);
+			investigatorTitle.setVisible(true);
+			investigatorUnit.setVisible(true);
+			investigatorAddress.setVisible(true);
+			investigatorTel.setVisible(true);
+		}
+
 		if (disease == Disease.AHF || disease == Disease.DENGUE) {
-//			setVisible(false, PersonDto.BIRTH_COUNTRY);
 			setVisible(true, PersonDto.NUMBER_OF_PEOPLE, PersonDto.NUMBER_OF_OTHER_CONTACTS);
 			additionalDetails.setVisible(true);
 			additionalDetails.setCaption("Other Notes and Observations");
@@ -675,11 +696,12 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			TextField place4 = addField(PersonDto.PLACE4, TextField.class);
 			TextField durationMonths4 = addField(PersonDto.DURATION_MONTHS4, TextField.class);
 			TextField durationDays4 = addField(PersonDto.DURATION_DAYS4, TextField.class);
-			TextField investigatorName = addField(PersonDto.INVESTIGATOR_NAME, TextField.class);
-			TextField investigatorTitle = addField(PersonDto.INVESTIGATOR_TITLE, TextField.class);
-			TextField investigatorUnit = addField(PersonDto.INVESTIGATOR_UNIT, TextField.class);
-			TextField investigatorAddress = addField(PersonDto.INVESTIGATOR_ADDRESS, TextField.class);
-			TextField investigatorTel = addField(PersonDto.INVESTIGATOR_TEL, TextField.class);
+
+			investigatorName.setVisible(true);
+			investigatorTitle.setVisible(true);
+			investigatorUnit.setVisible(true);
+			investigatorAddress.setVisible(true);
+			investigatorTel.setVisible(true);
 
 			TextArea additionalPlacesStayed = addField(PersonDto.ADDITIONAL_PLACES_STAYED, TextArea.class, new ResizableTextAreaWrapper<>(false));
 			additionalDetails.setCaption("Village");
