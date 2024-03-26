@@ -563,6 +563,12 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			investigated.setVisible(disease == Disease.NEW_INFLUENZA || disease == Disease.SARI);
 			personCreateForm.updatePresentConditionEnum((Disease) valueChangeEvent.getProperty().getValue());
 
+			if (diseaseField.getValue() != null && diseaseField.getValue() == Disease.FOODBORNE_ILLNESS) {
+				personCreateForm.hidePresentCondition();
+			}
+			else{
+				personCreateForm.showPresentCondition();
+			}
 
 		});
 

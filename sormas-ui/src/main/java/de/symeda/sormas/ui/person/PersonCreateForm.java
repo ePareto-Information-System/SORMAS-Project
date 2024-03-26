@@ -90,7 +90,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	private static final String HTML_LAYOUT =
 		"%s" + fluidRow(fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD), fluidRowLocs(PersonDto.SEX))
 			+ fluidRowLocs(PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PASSPORT_NUMBER)
-			+ fluidRowLocs(PersonDto.PRESENT_CONDITION, PersonDto.PHONE) + fluidRowLocs(6,PersonDto.EMAIL_ADDRESS)
+			+ fluidRowLocs(PersonDto.PHONE, PersonDto.PRESENT_CONDITION) + fluidRowLocs(6,PersonDto.EMAIL_ADDRESS)
 			+ fluidRowLocs(ENTER_HOME_ADDRESS_NOW) + loc(HOME_ADDRESS_HEADER) + divsCss(VSPACE_3, fluidRowLocs(HOME_ADDRESS_LOC));
 
 	private static final String NAME_ROW_WITH_PERSON_SEARCH = fluidRowLocs(PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.OTHER_NAME, PERSON_SEARCH_LOC);
@@ -493,6 +493,12 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	}
 	public void hidePassportNumber(){
 		setVisible(false, PersonDto.PASSPORT_NUMBER);
+	}
+	public void hidePresentCondition(){
+		setVisible(false, PersonDto.PRESENT_CONDITION);
+	}
+	public void showPresentCondition(){
+		setVisible(true, PersonDto.PRESENT_CONDITION);
 	}
 
 	public void updatePresentConditionEnum(Disease disease) {
