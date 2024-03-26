@@ -901,16 +901,22 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		switch (newDisease){
 			case YELLOW_FEVER:
 				handleYellowFever();
+				break;
 			case AHF:
 			case DENGUE:
 				handleAHF();
+				break;
 			case CSM:
 				handleCSM();
+				break;
 			case NEW_INFLUENZA:
 			case SARI:
 				handleNewInfluenza();
+				break;
 			case AFP:
 				handleAFP();
+				break;
+			default:
 		}
 	}
 
@@ -928,8 +934,8 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	}
 	public void handleNewInfluenza(){
 		setVisible(false,
-				LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY, LocationDto.LOCALITY);
-		additionalInformationField.setCaption("Address (Location)");
+				LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
+		localityField.setCaption("Address (Location)");
 
 	}
 	public void handleAFP(){
