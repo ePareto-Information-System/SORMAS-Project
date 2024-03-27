@@ -2461,6 +2461,13 @@ public interface Captions {
 	String Symptoms_feelingIll = "Symptoms.feelingIll";
 	String Symptoms_fever = "Symptoms.fever";
 	String Symptoms_dyspnea = "Symptoms.dyspnea";
+	String Symptoms_babyDied = "Symptoms.babyDied";
+	String Symptoms_ageAtDeathDays = "Symptoms.ageAtDeathDays";
+	String Symptoms_ageAtOnsetDays = "Symptoms.ageAtOnsetDays";
+	String Symptoms_babyNormalAtBirth = "Symptoms.babyNormalAtBirth";
+	String Symptoms_normalCryAndSuck = "Symptoms.normalCryAndSuck";
+	String Symptoms_stoppedSuckingAfterTwoDays = "Symptoms.stoppedSuckingAfterTwoDays";
+	String Symptoms_stiffness = "Symptoms.stiffness";
 	String Symptoms_tachypnea = "Symptoms.tachypnea";
 	String Symptoms_feverishFeeling = "Symptoms.feverishFeeling";
 	String Symptoms_firstSymptom = "Symptoms.firstSymptom";

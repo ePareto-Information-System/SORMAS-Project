@@ -63,7 +63,7 @@ public enum Disease
 	LYMPHATIC_FILARIASIS(true, false, false, false, false,0, true, false, false),
 	BURULI_ULCER(true, false, false, false, false,0, true, false, false),
 	PERTUSSIS(true, false, false, false, false,0, true, false, false),
-	NEONATAL_TETANUS(true, true, true, false, false,0, true, false, false),
+	NEONATAL_TETANUS(true, true, true, false, false,0, true, true, true),
 	ONCHOCERCIASIS(true, false, false, false, false,0, true, false, false),
 	DIPHTERIA(true, false, false, false, false,0, true, false, false),
 	TRACHOMA(true, false, false, false, false,0, true, false, false),

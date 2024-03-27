@@ -12934,7 +12934,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (564, 'Added columns
 -- 565
 ALTER TABLE cases ADD COLUMN motherVaccinatedWithTT varchar(255);
 ALTER TABLE cases ADD COLUMN motherHaveCard varchar(255);
-ALTER TABLE cases ADD COLUMN motherNumberOfDoses integer;
+ALTER TABLE cases ADD COLUMN motherNumberOfDoses varchar(255);
 ALTER TABLE cases ADD COLUMN motherVaccinationStatus varchar(255);
 ALTER TABLE cases ADD COLUMN motherTTDateOne date;
 ALTER TABLE cases ADD COLUMN motherTTDateTwo date;
@@ -12946,7 +12946,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (565, 'Added columns
 
 
 ALTER TABLE person ADD COLUMN receivedAntenatalCare varchar(255);
-ALTER TABLE person ADD COLUMN prenatalTotalVisits integer;
+ALTER TABLE person ADD COLUMN prenatalTotalVisits varchar(255);
 ALTER TABLE person ADD COLUMN attendedByTrainedTBA varchar(255);
 ALTER TABLE person ADD COLUMN attendedByTrainedTBAMidwifeName varchar(255);
 ALTER TABLE person ADD COLUMN attendedByDoctorNurse varchar(255);
@@ -12957,5 +12957,15 @@ ALTER TABLE person ADD COLUMN cutCordWithSterileBlade varchar(255);
 ALTER TABLE person ADD COLUMN cordTreatedWithAnything varchar(255);
 ALTER TABLE person ADD COLUMN cordTreatedWithAnythingWhere varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (566, 'Added columns to person to implement BIRTH OF INFANT #26');
+
+ALTER TABLE symptoms ADD COLUMN babyNormalAtBirth varchar(255);
+ALTER TABLE symptoms ADD COLUMN normalCryAndSuck varchar(255);
+ALTER TABLE symptoms ADD COLUMN stoppedSuckingAfterTwoDays varchar(255);
+ALTER TABLE symptoms ADD COLUMN archedBack varchar(255);
+ALTER TABLE symptoms ADD COLUMN stiffness varchar(255);
+ALTER TABLE symptoms ADD COLUMN babyDied varchar(255);
+ALTER TABLE symptoms ADD COLUMN ageAtDeathDays varchar(255);
+ALTER TABLE symptoms ADD COLUMN ageAtOnsetDays varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (567, 'Added columns to symptoms to implement CLINICAL HISTORY FOR #26');
 -- *** Insert new sql commands BEFORE this line. Remember to alway
 ``
