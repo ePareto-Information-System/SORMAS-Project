@@ -13640,3 +13640,9 @@ INSERT INTO schema_version (version_number, comment) VALUES (596, 'Added columns
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
 ``
+-- 2024-03-27 Added marital status for Food Borne illness
+ALTER TABLE person ADD COLUMN maritalstatus varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (597, 'Added marital status for Food Borne illness');
+-- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+``

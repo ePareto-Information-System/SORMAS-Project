@@ -260,6 +260,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private TreatmentOfCord cordTreatedWithAnythingWhere;
 
 	private Cadre cadre;
+	private MaritalStatus maritalStatus;
 
 	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getFirstName() {
@@ -1010,6 +1011,14 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 
 	public void setInvestigatorTel(String investigatorTel) {
 		this.investigatorTel = investigatorTel;
+	}
+
+	public MaritalStatus getMaritalStatus() {
+		return maritalStatus;
+	}
+
+	public void setMaritalStatus(MaritalStatus maritalStatus) {
+		this.maritalStatus = maritalStatus;
 	}
 
 	private void setPersonContactInformation(String contactInfo, PersonContactDetailType personContactDetailType) {

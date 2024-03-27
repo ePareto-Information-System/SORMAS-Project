@@ -922,6 +922,8 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			case CORONAVIRUS:
 				handleCoronavirus();
 				break;
+			case FOODBORNE_ILLNESS:
+				handleFBI();
 			default:
 				break;
 			}
@@ -964,5 +966,9 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		setVisible(true, LocationDto.POSTAL_CODE, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK);
 	}
 
+
+	public void handleFBI(){
+		setVisible(false, LocationDto.LOCALITY, LocationDto.AREA_TYPE);
+	}
 
 }
