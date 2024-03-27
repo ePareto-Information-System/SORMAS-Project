@@ -12936,4 +12936,10 @@ ALTER TABLE cases ADD COLUMN lastvaccinationdate date;
 
 INSERT INTO schema_version (version_number, comment) VALUES (567, 'Added last vaccination date for IDSR 53');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+
+-- 2024-03-27 Added marital status for Food Borne illness
+ALTER TABLE person ADD COLUMN maritalstatus varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (568, 'Added marital status for Food Borne illness');
+-- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``

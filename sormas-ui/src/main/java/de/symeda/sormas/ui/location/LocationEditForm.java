@@ -916,6 +916,8 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			case AFP:
 				handleAFP();
 				break;
+			case FOODBORNE_ILLNESS:
+				handleFBI();
 			default:
 		}
 	}
@@ -945,6 +947,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 				LocationDto.STREET,
 				LocationDto.CONTACT_PERSON_FIRST_NAME, LocationDto.LOCALITY);
 		setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE);
+	}
+
+	public void handleFBI(){
+		setVisible(false, LocationDto.LOCALITY, LocationDto.AREA_TYPE);
 	}
 
 }

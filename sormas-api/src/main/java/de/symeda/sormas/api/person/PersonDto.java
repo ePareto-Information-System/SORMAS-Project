@@ -155,6 +155,7 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String INVESTIGATOR_UNIT = "investigatorUnit";
 	public static final String INVESTIGATOR_ADDRESS = "investigatorAddress";
 	public static final String INVESTIGATOR_TEL = "investigatorTel";
+	public static final String MARITAL_STATUS = "maritalStatus";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -454,6 +455,7 @@ public class PersonDto extends PseudonymizableDto {
 	private String investigatorUnit;
 	private String investigatorAddress;
 	private String investigatorTel;
+	private MaritalStatus maritalStatus;
 
 
 	@SuppressWarnings("serial")
@@ -1316,6 +1318,14 @@ public class PersonDto extends PseudonymizableDto {
 
 	public void setDurationDays4(String durationDays4) {
 		this.durationDays4 = durationDays4;
+	}
+
+	public MaritalStatus getMaritalStatus() {
+		return maritalStatus;
+	}
+
+	public void setMaritalStatus(MaritalStatus maritalStatus) {
+		this.maritalStatus = maritalStatus;
 	}
 
 }

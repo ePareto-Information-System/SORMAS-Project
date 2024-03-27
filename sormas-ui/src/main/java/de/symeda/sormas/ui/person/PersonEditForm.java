@@ -93,7 +93,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_REGION, PersonDto.PLACE_OF_BIRTH_DISTRICT, PersonDto.PLACE_OF_BIRTH_COMMUNITY) +
 					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_FACILITY_TYPE, PersonDto.PLACE_OF_BIRTH_FACILITY, PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS) +
 					fluidRowLocs(PersonDto.GESTATION_AGE_AT_BIRTH, PersonDto.BIRTH_WEIGHT) +
-					fluidRowLocs(PersonDto.SEX, PersonDto.PRESENT_CONDITION) +
+					fluidRowLocs(PersonDto.SEX, PersonDto.PRESENT_CONDITION, PersonDto.MARITAL_STATUS) +
 					fluidRow(
 							oneOfFourCol(PersonDto.DEATH_DATE),
 							oneOfFourCol(PersonDto.CAUSE_OF_DEATH),
@@ -287,6 +287,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			setVisible(false, PersonDto.PASSPORT_NUMBER);
 		}
 
+		ComboBox maritalStatus = addField(PersonDto.MARITAL_STATUS, ComboBox.class);
 		addField(PersonDto.GHANA_CARD);
 		TextField numberOfPeople = addField(PersonDto.NUMBER_OF_PEOPLE, TextField.class);
 		TextField numberOfOtherContacts = addField(PersonDto.NUMBER_OF_OTHER_CONTACTS, TextField.class);
