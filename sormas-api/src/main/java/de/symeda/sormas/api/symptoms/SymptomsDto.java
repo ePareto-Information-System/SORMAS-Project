@@ -294,6 +294,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		AHF,
 		DENGUE,
 		UNDEFINED,
+		FOODBORNE_ILLNESS,
 		OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -378,6 +379,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		AHF,
 		DENGUE,
 		UNDEFINED,
+		FOODBORNE_ILLNESS,
 		OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -468,6 +470,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CORONAVIRUS,
 		UNDEFINED,
 		YELLOW_FEVER,
+		FOODBORNE_ILLNESS,
 		OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -565,6 +568,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		AHF,
 		DENGUE,
 		UNDEFINED,
+		FOODBORNE_ILLNESS,
 		OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -585,6 +589,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CORONAVIRUS,
 		AHF,
 		UNDEFINED,
+		FOODBORNE_ILLNESS,
 		OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -703,6 +708,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		ANTHRAX,
 		CORONAVIRUS,
 		UNDEFINED,
+		FOODBORNE_ILLNESS,
 		OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -758,6 +764,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		ANTHRAX,
 		CORONAVIRUS,
 		UNDEFINED,
+		FOODBORNE_ILLNESS,
 		OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -820,6 +827,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		AHF,
 		CONGENITAL_RUBELLA,
 		UNDEFINED,
+		FOODBORNE_ILLNESS,
 		OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -1143,6 +1151,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CORONAVIRUS,
 		AHF,
 		UNDEFINED,
+		FOODBORNE_ILLNESS,
 		OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -1166,6 +1175,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		ANTHRAX,
 		CORONAVIRUS,
 		UNDEFINED,
+		FOODBORNE_ILLNESS,
 		OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -1877,6 +1887,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		POLIO,
 		CORONAVIRUS,
+		FOODBORNE_ILLNESS,
 		OTHER })
 	@Outbreaks
 	@HideForCountries
@@ -1994,9 +2005,10 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		ANTHRAX,
-		CSM})
+		ANTHRAX,
+		FOODBORNE_ILLNESS})
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.NERVOUS_SYSTEM)
+	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState convulsion;
 
 	@Diseases({
@@ -2268,6 +2280,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CORONAVIRUS,
 		UNDEFINED,
 		NEONATAL_TETANUS,
+		FOODBORNE_ILLNESS,
 		OTHER })
 	@Complication
 	@HideForCountries
@@ -2293,6 +2306,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CORONAVIRUS,
 		UNDEFINED,
 		NEONATAL_TETANUS,
+		FOODBORNE_ILLNESS,
 		OTHER })
 	@DependantOn(OTHER_COMPLICATIONS)
 	@Complication
@@ -2370,8 +2384,9 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
+		FOODBORNE_ILLNESS,
 		OTHER })
-	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
+	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState weakness;
 	@Diseases({
