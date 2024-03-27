@@ -12967,5 +12967,14 @@ ALTER TABLE symptoms ADD COLUMN babyDied varchar(255);
 ALTER TABLE symptoms ADD COLUMN ageAtDeathDays varchar(255);
 ALTER TABLE symptoms ADD COLUMN ageAtOnsetDays varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (567, 'Added columns to symptoms to implement CLINICAL HISTORY FOR #26');
+
+ALTER TABLE cases ADD COLUMN seenInOPD varchar(255);
+ALTER TABLE cases ADD COLUMN admittedInOPD varchar(255);
+ALTER TABLE cases ADD COLUMN motherGivenProtectiveDoseTT varchar(255);
+ALTER TABLE cases ADD COLUMN motherGivenProtectiveDoseTTDate date;
+ALTER TABLE cases ADD COLUMN supplementalImmunization varchar(255);
+ALTER TABLE cases ADD COLUMN supplementalImmunizationDetails varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (568, 'Added columns to cases');
+
 -- *** Insert new sql commands BEFORE this line. Remember to alway
 ``

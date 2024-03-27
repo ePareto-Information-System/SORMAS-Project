@@ -482,6 +482,12 @@ public interface Captions {
 	String CaseData_motherTTDateFour = "CaseData.motherTTDateFour";
 	String CaseData_motherTTDateFive = "CaseData.motherTTDateFive";
 	String CaseData_motherLastDoseDate = "CaseData.motherLastDoseDate";
+	String CaseData_seenInOPD = "CaseData.seenInOPD";
+	String CaseData_admittedInOPD = "CaseData.admittedInOPD";
+	String CaseData_motherGivenProtectiveDoseTT = "CaseData.motherGivenProtectiveDoseTT";
+	String CaseData_motherGivenProtectiveDoseTTDate = "CaseData.motherGivenProtectiveDoseTTDate";
+	String CaseData_supplementalImmunization = "CaseData.supplementalImmunization";
+	String CaseData_supplementalImmunizationDetails = "CaseData.supplementalImmunizationDetails";
 	String caseDefaultView = "caseDefaultView";
 	String caseDeletedCases = "caseDeletedCases";
 	String caseDetailedView = "caseDetailedView";

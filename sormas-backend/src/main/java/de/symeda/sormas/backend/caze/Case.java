@@ -470,6 +470,12 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private Date motherTTDateFour;
 	private Date motherTTDateFive;
 	private Date motherLastDoseDate;
+	private YesNoUnknown seenInOPD;
+	private YesNoUnknown admittedInOPD;
+	private YesNoUnknown motherGivenProtectiveDoseTT;
+	private Date motherGivenProtectiveDoseTTDate;
+	private YesNoUnknown supplementalImmunization;
+	private String supplementalImmunizationDetails;
 
 
 
@@ -2053,6 +2059,54 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setMotherLastDoseDate(Date motherLastDoseDate) {
 		this.motherLastDoseDate = motherLastDoseDate;
+	}
+
+	public YesNoUnknown getSeenInOPD() {
+		return seenInOPD;
+	}
+
+	public void setSeenInOPD(YesNoUnknown seenInOPD) {
+		this.seenInOPD = seenInOPD;
+	}
+
+	public YesNoUnknown getAdmittedInOPD() {
+		return admittedInOPD;
+	}
+
+	public void setAdmittedInOPD(YesNoUnknown admittedInOPD) {
+		this.admittedInOPD = admittedInOPD;
+	}
+
+	public YesNoUnknown getMotherGivenProtectiveDoseTT() {
+		return motherGivenProtectiveDoseTT;
+	}
+
+	public void setMotherGivenProtectiveDoseTT(YesNoUnknown motherGivenProtectiveDoseTT) {
+		this.motherGivenProtectiveDoseTT = motherGivenProtectiveDoseTT;
+	}
+
+	public Date getMotherGivenProtectiveDoseTTDate() {
+		return motherGivenProtectiveDoseTTDate;
+	}
+
+	public void setMotherGivenProtectiveDoseTTDate(Date motherGivenProtectiveDoseTTDate) {
+		this.motherGivenProtectiveDoseTTDate = motherGivenProtectiveDoseTTDate;
+	}
+
+	public YesNoUnknown getSupplementalImmunization() {
+		return supplementalImmunization;
+	}
+
+	public void setSupplementalImmunization(YesNoUnknown supplementalImmunization) {
+		this.supplementalImmunization = supplementalImmunization;
+	}
+
+	public String getSupplementalImmunizationDetails() {
+		return supplementalImmunizationDetails;
+	}
+
+	public void setSupplementalImmunizationDetails(String supplementalImmunizationDetails) {
+		this.supplementalImmunizationDetails = supplementalImmunizationDetails;
 	}
 
 	public String buildCaseGpsCoordinationCaption() {

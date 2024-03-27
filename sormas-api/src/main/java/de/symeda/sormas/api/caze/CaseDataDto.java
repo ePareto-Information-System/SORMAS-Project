@@ -247,6 +247,14 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String MOTHER_TT_DATE_FIVE = "motherTTDateFive";
 	public static final String MOTHER_LAST_DOSE_DATE = "motherLastDoseDate";
 
+	public static final String SEEN_IN_OPD = "seenInOPD";
+	public static final String ADMITTED_IN_OPD = "admittedInOPD";
+	public static final String MOTHER_GIVEN_PROTECTIVE_DOSE_TT = "motherGivenProtectiveDoseTT";
+	public static final String MOTHER_GIVEN_PROTECTIVE_DOSE_TT_DATE = "motherGivenProtectiveDoseTTDate";
+	public static final String SUPPLEMENTAL_IMMUNIZATION = "supplementalImmunization";
+	public static final String SUPPLEMENTAL_IMMUNIZATION_DETAILS = "supplementalImmunizationDetails";
+
+
 	// Fields are declared in the order they should appear in the import template
 
 	@Outbreaks
@@ -648,6 +656,12 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	private Date motherTTDateFour;
 	private Date motherTTDateFive;
 	private Date motherLastDoseDate;
+	private YesNoUnknown seenInOPD;
+	private YesNoUnknown admittedInOPD;
+	private YesNoUnknown motherGivenProtectiveDoseTT;
+	private Date motherGivenProtectiveDoseTTDate;
+	private YesNoUnknown supplementalImmunization;
+	private String supplementalImmunizationDetails;
 
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		return build(person, disease, HealthConditionsDto.build());
@@ -2028,6 +2042,53 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 
 	public Date getMotherLastDoseDate() {
 		return motherLastDoseDate;
+	}
+	public YesNoUnknown getSeenInOPD() {
+		return seenInOPD;
+	}
+
+	public void setSeenInOPD(YesNoUnknown seenInOPD) {
+		this.seenInOPD = seenInOPD;
+	}
+
+	public YesNoUnknown getAdmittedInOPD() {
+		return admittedInOPD;
+	}
+
+	public void setAdmittedInOPD(YesNoUnknown admittedInOPD) {
+		this.admittedInOPD = admittedInOPD;
+	}
+
+	public YesNoUnknown getMotherGivenProtectiveDoseTT() {
+		return motherGivenProtectiveDoseTT;
+	}
+
+	public void setMotherGivenProtectiveDoseTT(YesNoUnknown motherGivenProtectiveDoseTT) {
+		this.motherGivenProtectiveDoseTT = motherGivenProtectiveDoseTT;
+	}
+
+	public Date getMotherGivenProtectiveDoseTTDate() {
+		return motherGivenProtectiveDoseTTDate;
+	}
+
+	public void setMotherGivenProtectiveDoseTTDate(Date motherGivenProtectiveDoseTTDate) {
+		this.motherGivenProtectiveDoseTTDate = motherGivenProtectiveDoseTTDate;
+	}
+
+	public YesNoUnknown getSupplementalImmunization() {
+		return supplementalImmunization;
+	}
+
+	public void setSupplementalImmunization(YesNoUnknown supplementalImmunization) {
+		this.supplementalImmunization = supplementalImmunization;
+	}
+
+	public String getSupplementalImmunizationDetails() {
+		return supplementalImmunizationDetails;
+	}
+
+	public void setSupplementalImmunizationDetails(String supplementalImmunizationDetails) {
+		this.supplementalImmunizationDetails = supplementalImmunizationDetails;
 	}
 
 	public void setMotherLastDoseDate(Date motherLastDoseDate) {

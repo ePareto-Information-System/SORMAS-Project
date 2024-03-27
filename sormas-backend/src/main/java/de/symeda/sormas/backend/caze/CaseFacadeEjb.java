@@ -3169,6 +3169,13 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setMotherTTDateFive(source.getMotherTTDateFive());
 		target.setMotherLastDoseDate(source.getMotherLastDoseDate());
 
+		target.setSeenInOPD(source.getSeenInOPD());
+		target.setAdmittedInOPD(source.getAdmittedInOPD());
+		target.setMotherGivenProtectiveDoseTT(source.getMotherGivenProtectiveDoseTT());
+		target.setMotherGivenProtectiveDoseTTDate(source.getMotherGivenProtectiveDoseTTDate());
+		target.setSupplementalImmunization(source.getSupplementalImmunization());
+		target.setSupplementalImmunizationDetails(source.getSupplementalImmunizationDetails());
+
 		return target;
 	}
 
@@ -3398,6 +3405,13 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setMotherTTDateFour(source.getMotherTTDateFour());
 		target.setMotherTTDateFive(source.getMotherTTDateFive());
 		target.setMotherLastDoseDate(source.getMotherLastDoseDate());
+
+		target.setSeenInOPD(source.getSeenInOPD());
+		target.setAdmittedInOPD(source.getAdmittedInOPD());
+		target.setMotherGivenProtectiveDoseTT(source.getMotherGivenProtectiveDoseTT());
+		target.setMotherGivenProtectiveDoseTTDate(source.getMotherGivenProtectiveDoseTTDate());
+		target.setSupplementalImmunization(source.getSupplementalImmunization());
+		target.setSupplementalImmunizationDetails(source.getSupplementalImmunizationDetails());
 
 		return target;
 	}

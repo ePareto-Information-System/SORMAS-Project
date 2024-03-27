@@ -14,7 +14,6 @@
  */
 package de.symeda.sormas.ui.caze;
 
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.OTHER_CONDITIONS;
 import static de.symeda.sormas.ui.utils.CssStyles.ERROR_COLOR_PRIMARY;
 import static de.symeda.sormas.ui.utils.CssStyles.FORCE_CAPTION;
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
@@ -40,11 +39,7 @@ import java.util.stream.Collectors;
 import com.vaadin.ui.*;
 import com.vaadin.v7.data.validator.RegexpValidator;
 import de.symeda.sormas.api.caze.*;
-import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
-import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.infrastructure.facility.*;
-import de.symeda.sormas.api.person.PresentCondition;
-import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -242,6 +237,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(CaseDataDto.MOTHER_TT_DATE_ONE, CaseDataDto.MOTHER_TT_DATE_TWO) +
 					fluidRowLocs(CaseDataDto.MOTHER_TT_DATE_THREE + CaseDataDto.MOTHER_TT_DATE_FOUR) +
 					fluidRowLocs(CaseDataDto.MOTHER_TT_DATE_FIVE + CaseDataDto.MOTHER_LAST_DOSE_DATE) +
+					fluidRowLocs(CaseDataDto.SEEN_IN_OPD, CaseDataDto.ADMITTED_IN_OPD) +
+					fluidRowLocs(6, CaseDataDto.MOTHER_GIVEN_PROTECTIVE_DOSE_TT, 3, CaseDataDto.MOTHER_GIVEN_PROTECTIVE_DOSE_TT_DATE, 3, CaseDataDto.SUPPLEMENTAL_IMMUNIZATION) +
+					fluidRowLocs(CaseDataDto.SUPPLEMENTAL_IMMUNIZATION_DETAILS) +
 					fluidRowLocs(CaseDataDto.VACCINE_TYPE, CaseDataDto.NUMBER_OF_DOSES, CaseDataDto.VACCINATION_DATE, CaseDataDto.SECOND_VACCINATION_DATE) +
 					fluidRowLocs(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED, CaseDataDto.SMALLPOX_VACCINATION_SCAR) +
 					fluidRowLocs(CaseDataDto.SMALLPOX_LAST_VACCINATION_DATE, "") +
@@ -321,6 +319,13 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private DateField motherTTDateFour;
 	private DateField motherTTDateFive;
 	private DateField motherLastDoseDate;
+	private NullableOptionGroup seenInOPD;
+	private NullableOptionGroup admittedInOPD;
+	private NullableOptionGroup motherGivenProtectiveDoseTT;
+	private DateField motherGivenProtectiveDoseTTDate;
+	private NullableOptionGroup supplementalImmunizationField;
+	private TextArea supplementalImmunizationDetails;
+
 
 
 
@@ -1627,6 +1632,34 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				motherTTDateFour = addField(CaseDataDto.MOTHER_TT_DATE_FOUR, DateField.class);
 				motherTTDateFive = addField(CaseDataDto.MOTHER_TT_DATE_FIVE, DateField.class);
 				motherLastDoseDate = addField(CaseDataDto.MOTHER_LAST_DOSE_DATE, DateField.class);
+
+				//	seenInOPD, admittedInOPD, motherGivenProtectiveDoseTT, motherGivenProtectiveDoseTTDate, supplementalImmunization, supplementalImmunizationDetails
+				seenInOPD = addField(CaseDataDto.SEEN_IN_OPD, NullableOptionGroup.class);
+				admittedInOPD = addField(CaseDataDto.ADMITTED_IN_OPD, NullableOptionGroup.class);
+				motherGivenProtectiveDoseTT = addField(CaseDataDto.MOTHER_GIVEN_PROTECTIVE_DOSE_TT, NullableOptionGroup.class);
+				motherGivenProtectiveDoseTTDate = addField(CaseDataDto.MOTHER_GIVEN_PROTECTIVE_DOSE_TT_DATE, DateField.class);
+				supplementalImmunizationField = addField(CaseDataDto.SUPPLEMENTAL_IMMUNIZATION, NullableOptionGroup.class);
+				supplementalImmunizationDetails = addField(CaseDataDto.SUPPLEMENTAL_IMMUNIZATION_DETAILS, TextArea.class);
+
+				FieldHelper.setVisibleWhen(
+						seenInOPD,
+						Arrays.asList(admittedInOPD),
+						Arrays.asList(YesNoUnknown.YES),
+						true);
+
+				FieldHelper.setVisibleWhen(
+						motherGivenProtectiveDoseTT,
+						Arrays.asList(motherGivenProtectiveDoseTTDate),
+						Arrays.asList(YesNoUnknown.YES),
+						true
+				);
+
+				FieldHelper.setVisibleWhen(
+						supplementalImmunizationField,
+						Arrays.asList(supplementalImmunizationDetails),
+						Arrays.asList(YesNoUnknown.YES),
+						true
+				);
 
 				FieldHelper.setVisibleWhen(
 						motherVaccinatedWithTT,
