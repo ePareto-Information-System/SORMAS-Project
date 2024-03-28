@@ -55,6 +55,7 @@ import com.vaadin.v7.data.util.converter.Converter.ConversionException;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.i18n.Captions;
@@ -167,7 +168,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					//loc(CLINICAL_HISTORY_HEADING_LOC) +
 					fluidRowLocs(6,OUTCOME)+
 					fluidRowLocs(PROVISONAL_DIAGNOSIS)+
-					fluidRowLocs(6, TRUEAFP);
+					fluidRowLocs(6, TRUEAFP)+
+					fluidRowLocs(SYMPTOMS_ONGOING, DURATION_HOURS, YES_NAME_OF_HEALTH_FACILITY);
 
 	//@formatter:on
 
@@ -353,6 +355,14 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		ComboBox glasgowComaScale = addField(GLASGOW_COMA_SCALE, ComboBox.class);
 		glasgowComaScale.addItems(SymptomsHelper.getGlasgowComaScaleValues());
 
+		NullableOptionGroup symptomsOngoing = addField(SYMPTOMS_ONGOING, NullableOptionGroup.class);
+		ComboBox durationHours = addField(DURATION_HOURS, ComboBox.class);
+		TextField nameOfHealthFacility = addField(YES_NAME_OF_HEALTH_FACILITY, TextField.class);
+
+		symptomsOngoing.setVisible(false);
+		durationHours.setVisible(false);
+		nameOfHealthFacility.setVisible(false);
+
 		addFields(
 			VOMITING,
 			DIARRHEA,
@@ -520,7 +530,11 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			BABY_NORMAL_AT_BIRTH,
 			NORMAL_CRY_AND_SUCK,
 			STOPPED_SUCKING_AFTER_TWO_DAYS,
-			STIFFNESS);
+			STIFFNESS,
+			BODY_ACHE,
+			DIZZINESS,
+			EXCESSIVE_SWEATING,
+			NUMBNES);
 
 		TextField babyAgeAtDeath = addField(AGE_AT_DEATH_DAYS, TextField.class);
 		TextField ageOfOnsetDays =  addField(AGE_AT_ONSET_DAYS, TextField.class);
@@ -1058,7 +1072,17 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		if(disease == Disease.FOODBORNE_ILLNESS){
 			setVisible(true,
-					ABDOMINAL_PAIN,	BLOOD_IN_STOOL, CHILLS_SWEATS, CONVULSION, DEHYDRATION, DIARRHEA, FEVER, HEADACHE, JAUNDICE, MUSCLE_PAIN, NAUSEA, VOMITING, WEAKNESS, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC);
+					ABDOMINAL_PAIN,	BLOOD_IN_STOOL, CHILLS_SWEATS, CONVULSION, DEHYDRATION, DIARRHEA, DIZZINESS, FEVER, EXCESSIVE_SWEATING, HEADACHE, JAUNDICE, MUSCLE_PAIN, NAUSEA, NUMBNESS, VOMITING, WEAKNESS, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC);
+
+			symptomsOngoing.setVisible(true);
+			durationHours.setVisible(true);
+			nameOfHealthFacility.setVisible(true);
+
+			FieldHelper
+					.setVisibleWhen(symptomsOngoing, Arrays.asList(nameOfHealthFacility), Arrays.asList(YesNo.YES), true);
+			FieldHelper
+					.setVisibleWhen(symptomsOngoing, Arrays.asList(durationHours), Arrays.asList(YesNo.NO), true);
+
 		}
 		
 		if (disease == Disease.CORONAVIRUS) {
@@ -1368,7 +1392,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				BABY_NORMAL_AT_BIRTH,
 				NORMAL_CRY_AND_SUCK,
 				STOPPED_SUCKING_AFTER_TWO_DAYS,
-				STIFFNESS);
+				STIFFNESS,
+				SHOCK, DIZZINESS,
+				EXCESSIVE_SWEATING,
+				NUMBNESS);
 	}
 
 	private void toggleFeverComponentError(NullableOptionGroup feverField, ComboBox temperatureField) {
