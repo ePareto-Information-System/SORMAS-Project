@@ -495,7 +495,11 @@ public final class SymptomsHelper {
 		appendYesSymptom(string, symptomsDto.getPalpitations(), SymptomsDto.PALPITATIONS);
 		appendYesSymptom(string, symptomsDto.getDizzinessStandingUp(), SymptomsDto.DIZZINESS_STANDING_UP);
 		appendYesSymptom(string, symptomsDto.getHighOrLowBloodPressure(), SymptomsDto.HIGH_OR_LOW_BLOOD_PRESSURE);
+		appendYesSymptom(string, symptomsDto.getUrinaryRetention(), SymptomsDto.BODY_ACHE);
+		appendYesSymptom(string, symptomsDto.getUrinaryRetention(), SymptomsDto.DIZZINESS);
 		appendYesSymptom(string, symptomsDto.getUrinaryRetention(), SymptomsDto.URINARY_RETENTION);
+		appendYesSymptom(string, symptomsDto.getUrinaryRetention(), SymptomsDto.EXCESSIVE_SWEATING);
+		appendYesSymptom(string, symptomsDto.getUrinaryRetention(), SymptomsDto.NUMBNESS);
 
 		appendNotNullValue(string, symptomsDto.getOtherComplicationsText(), SymptomsDto.OTHER_COMPLICATIONS_TEXT);
 

@@ -2587,6 +2587,12 @@ public interface Captions {
 	String symptomsMaxTemperature = "symptomsMaxTemperature";
 	String symptomsSetClearedToNo = "symptomsSetClearedToNo";
 	String symptomsSetClearedToUnknown = "symptomsSetClearedToUnknown";
+	String Symptoms_symptomsOngoing = "Symptoms.symptomsOngoing";
+	String Symptoms_durationHours = "Symptoms.durationHours";
+	String Symptoms_dizziness = "Symptoms.dizziness";
+	String Symptoms_excessiveSweating = "Symptoms.excessiveSweating";
+	String Symptoms_numbness = "Symptoms.numbness";
+	String Symptoms_nameOfHealthFacility = "Symptoms.nameOfHealthFacility";
 	String sync = "sync";
 	String syncErrors = "syncErrors";
 	String syncProcessed = "syncProcessed";

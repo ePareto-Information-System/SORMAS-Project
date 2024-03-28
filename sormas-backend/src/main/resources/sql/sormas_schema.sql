@@ -12942,4 +12942,15 @@ ALTER TABLE person ADD COLUMN maritalstatus varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (568, 'Added marital status for Food Borne illness');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+
+-- 2024-03-27 Added symptoms for Food Borne illness
+ALTER TABLE symptoms ADD COLUMN dizziness varchar(255);
+ALTER TABLE symptoms ADD COLUMN excessivesweating varchar(255);
+ALTER TABLE symptoms ADD COLUMN numbness varchar(255);
+ALTER TABLE symptoms ADD COLUMN symptomsongoing varchar(255);
+ALTER TABLE symptoms ADD COLUMN durationhours varchar(255);
+ALTER TABLE symptoms ADD COLUMN nameOfHealthFacility varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (569, ' Added symptoms and properties for Food Borne illness ');
+-- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``

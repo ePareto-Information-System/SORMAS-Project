@@ -263,6 +263,12 @@ public class Symptoms extends AbstractDomainObject {
 	private InjectionSite leftInjectionSite;
 	private YesNo trueAfp;
 	private SymptomState bodyAche;
+	private SymptomState dizziness;
+	private SymptomState excessiveSweating;
+	private SymptomState numbness;
+	private YesNo symptomsOngoing;
+	private DurationHours durationHours;
+	private String nameOfHealthFacility;
 
 	// when adding new fields make sure to extend toHumanString
 
@@ -2027,5 +2033,50 @@ public class Symptoms extends AbstractDomainObject {
 
 	public void setBodyAche(SymptomState bodyAche) {
 		this.bodyAche = bodyAche;
+	}
+
+	public SymptomState getDizziness() {
+		return dizziness;
+	}
+
+	public void setDizziness(SymptomState dizziness) {
+		this.dizziness = dizziness;
+	}
+	public SymptomState getExcessiveSweating() {
+		return excessiveSweating;
+	}
+
+	public void setExcessiveSweating(SymptomState excessiveSweating) {
+		this.excessiveSweating = excessiveSweating;
+	}
+	public SymptomState getNumbness() {
+		return numbness;
+	}
+	public void setNumbness(SymptomState numbness) {
+		this.numbness = numbness;
+	}
+
+	public YesNo getSymptomsOngoing(){
+		return symptomsOngoing;
+	}
+
+	public void setSymptomsOngoing(YesNo symptomsOngoing){
+		this.symptomsOngoing = symptomsOngoing;
+	}
+
+	public DurationHours getDurationHours(){
+		return durationHours;
+	}
+
+	public void setDurationHours(DurationHours durationHours){
+		this.durationHours = durationHours;
+	}
+
+	public String getNameOfHealthFacility(){
+		return nameOfHealthFacility;
+	}
+
+	public void setNameOfHealthFacility(String nameOfHealthFacility){
+		this.nameOfHealthFacility = nameOfHealthFacility;
 	}
 }

@@ -247,6 +247,12 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String RIGHT_INJECTION_SITE = "rightInjectionSite";
 	public static final String LEFT_INJECTION_SITE = "leftInjectionSite";
 	public static final String TRUEAFP = "trueAfp";
+	public static final String SYMPTOMS_ONGOING = "symptomsOngoing";
+	public static final String DURATION_HOURS = "durationHours";
+	public static final String YES_NAME_OF_HEALTH_FACILITY = "nameOfHealthFacility";
+	public static final String DIZZINESS = "dizziness";
+	public static final String EXCESSIVE_SWEATING = "excessiveSweating";
+	public static final String NUMBNESS = "numbness";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -2375,6 +2381,21 @@ public class SymptomsDto extends PseudonymizableDto {
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState shivering;
 
+	@Diseases({
+		FOODBORNE_ILLNESS,
+		OTHER })
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState dizziness;
+	@Diseases({
+		FOODBORNE_ILLNESS,
+		OTHER })
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState excessiveSweating;
+	@Diseases({
+		FOODBORNE_ILLNESS,
+		OTHER })
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState numbness;
 	private YesNoUnknown feverBodyTempGreater;
 	@Outbreaks
 	private CaseOutcome outcome;
@@ -2391,6 +2412,9 @@ public class SymptomsDto extends PseudonymizableDto {
 	private InjectionSite rightInjectionSite;
 	private InjectionSite leftInjectionSite;
 	private YesNo trueAfp;
+	private YesNo symptomsOngoing;
+	private DurationHours durationHours;
+	private String nameOfHealthFacility;
 
 	@Order(0)
 	public Float getTemperature() {
@@ -3185,6 +3209,15 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Order(331)
 	public SymptomState getBodyAche() {return  bodyAche;}
+
+	@Order(332)
+	public SymptomState getDizziness() {return  dizziness;}
+
+	@Order(333)
+	public SymptomState getExcessiveSweating() {return  excessiveSweating;}
+
+	@Order(334)
+	public SymptomState getNumbness() {return  numbness;}
 	public void setAbdominalPain(SymptomState abdominalPain) {
 		this.abdominalPain = abdominalPain;
 	}
@@ -3325,6 +3358,17 @@ public class SymptomsDto extends PseudonymizableDto {
 	}
 	public void setBodyAche(SymptomState bodyAche) {
 		this.bodyAche = bodyAche;
+	}
+	public void setDizziness(SymptomState dizziness) {
+		this.dizziness = dizziness;
+	}
+
+	public void setExcessiveSweating(SymptomState excessiveSweating) {
+		this.excessiveSweating = excessiveSweating;
+	}
+
+	public void setNumbness(SymptomState numbness) {
+		this.numbness = numbness;
 	}
 
 	public void setHeartRate(Integer heartRate) {
@@ -3932,6 +3976,12 @@ public class SymptomsDto extends PseudonymizableDto {
 	public YesNo getTrueAfp(){return trueAfp;}
 	@Order(368)
 	public CaseOutcome getOutcome() { return outcome;}
+	@Order(369)
+	public YesNo getSymptomsOngoing() { return symptomsOngoing;}
+	@Order(370)
+	public DurationHours getDurationHours() { return durationHours;}
+	@Order(371)
+	public String getNameOfHealthFacility() { return nameOfHealthFacility;}
 
 	public void setComa(SymptomState coma) {
 		this.coma = coma;
@@ -4128,5 +4178,15 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setTrueAfp(YesNo trueAfp) {
 		this.trueAfp = trueAfp;
+	}
+
+	public void setSymptomsOngoing(YesNo symptomsOngoing) {
+		this.symptomsOngoing = symptomsOngoing;
+	}
+	public void setDurationHours(DurationHours durationHours) {
+		this.durationHours = durationHours;
+	}
+	public void setNameOfHealthFacility(String nameOfHealthFacility) {
+		this.nameOfHealthFacility = nameOfHealthFacility;
 	}
 }
