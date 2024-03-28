@@ -13639,13 +13639,11 @@ INSERT INTO schema_version (version_number, comment) VALUES (596, 'Added columns
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
-``
 -- 2024-03-27 Added marital status for Food Borne illness
 ALTER TABLE person ADD COLUMN maritalstatus varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (597, 'Added marital status for Food Borne illness');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
-``
 
 -- 2024-03-27 Added symptoms for Food Borne illness
 ALTER TABLE symptoms ADD COLUMN dizziness varchar(255);
@@ -13655,6 +13653,17 @@ ALTER TABLE symptoms ADD COLUMN symptomsongoing varchar(255);
 ALTER TABLE symptoms ADD COLUMN durationhours varchar(255);
 ALTER TABLE symptoms ADD COLUMN nameOfHealthFacility varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (598, ' Added symptoms and properties for Food Borne illness ');
+INSERT INTO schema_version (version_number, comment) VALUES (598, ' Added symptoms and properties for Food Borne illness');
+
+ALTER TABLE hospitalization ADD COLUMN soughtmedicalattention VARCHAR(255);
+ALTER TABLE hospitalization ADD COLUMN nameoffacility VARCHAR(255);
+ALTER TABLE hospitalization ADD COLUMN locationaddress VARCHAR(255);
+ALTER TABLE hospitalization ADD COLUMN dateofvisithospital DATE;
+ALTER TABLE hospitalization ADD COLUMN physicianname VARCHAR(255);
+ALTER TABLE hospitalization ADD COLUMN physiciannumber VARCHAR(255);
+ALTER TABLE hospitalization ADD COLUMN labtestconducted VARCHAR(255);
+ALTER TABLE hospitalization ADD COLUMN typeofsample VARCHAR(255);
+ALTER TABLE hospitalization ADD COLUMN agentidentified VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (599, ' Added hospitalization properties for Food Borne illness');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
-``

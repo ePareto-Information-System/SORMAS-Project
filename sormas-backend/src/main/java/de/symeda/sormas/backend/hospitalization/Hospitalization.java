@@ -111,6 +111,15 @@ public class Hospitalization extends AbstractDomainObject {
 	private String hospitalRecordNumber;
 	private YesNoUnknown patientVentilated;
 	private Date dateFormSentToDistrict;
+	private YesNo soughtMedicalAttention;
+	private String nameOfFacility;
+	private String locationAddress;
+	private Date dateOfVisitHospital;
+	private String physicianName;
+	private String physicianNumber;
+	private YesNo labTestConducted;
+	private String typeOfSample;
+	private String agentIdentified;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getAdmissionDate() {
@@ -439,5 +448,76 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setPatientVentilated(YesNoUnknown patientVentilated) {
 		this.patientVentilated = patientVentilated;
+	}
+	public YesNo getSoughtMedicalAttention() {
+		return soughtMedicalAttention;
+	}
+
+	public void setSoughtMedicalAttention(YesNo soughtMedicalAttention) {
+		this.soughtMedicalAttention = soughtMedicalAttention;
+	}
+
+	public String getNameOfFacility() {
+		return nameOfFacility;
+	}
+
+	public void setNameOfFacility(String nameOfFacility) {
+		this.nameOfFacility = nameOfFacility;
+	}
+
+	public String getLocationAddress() {
+		return locationAddress;
+	}
+
+	public void setLocationAddress(String locationAddress) {
+		this.locationAddress = locationAddress;
+	}
+
+	public Date getDateOfVisitHospital() {
+		return dateOfVisitHospital;
+	}
+
+	public void setDateOfVisitHospital(Date dateOfVisitHospital) {
+		this.dateOfVisitHospital = dateOfVisitHospital;
+	}
+
+	public String getPhysicianName() {
+		return physicianName;
+	}
+
+	public void setPhysicianName(String physicianName) {
+		this.physicianName = physicianName;
+	}
+
+	public String getPhysicianNumber() {
+		return physicianNumber;
+	}
+
+	public void setPhysicianNumber(String physicianNumber) {
+		this.physicianNumber = physicianNumber;
+	}
+
+	public YesNo getLabTestConducted() {
+		return labTestConducted;
+	}
+
+	public void setLabTestConducted(YesNo labTestConducted) {
+		this.labTestConducted = labTestConducted;
+	}
+
+	public String getTypeOfSample() {
+		return typeOfSample;
+	}
+
+	public void setTypeOfSample(String typeOfSample) {
+		this.typeOfSample = typeOfSample;
+	}
+
+	public String getAgentIdentified() {
+		return agentIdentified;
+	}
+
+	public void setAgentIdentified(String agentIdentified) {
+		this.agentIdentified = agentIdentified;
 	}
 }

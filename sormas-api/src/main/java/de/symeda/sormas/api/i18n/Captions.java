@@ -634,6 +634,17 @@ public interface Captions {
 	String CaseHospitalization_investigatorTel = "CaseHospitalization.investigatorTel";
 	String CaseHospitalization_hospitalRecordNumber = "CaseHospitalization.hospitalRecordNumber";
 	String CaseHospitalization_patientVentilated = "CaseHospitalization.patientVentilated";
+	String CaseHospitalization_soughtMedicalAttention = "CaseHospitalization.soughtMedicalAttention";
+	String CaseHospitalization_nameOfFacility = "CaseHospitalization.nameOfFacility";
+	String CaseHospitalization_locationAddress = "CaseHospitalization.locationAddress";
+	String CaseHospitalization_dateOfVisitHospital = "CaseHospitalization.dateOfVisitHospital";
+	String CaseHospitalization_physicianName = "CaseHospitalization.physicianName";
+	String CaseHospitalization_physicianNumber = "CaseHospitalization.physicianNumber";
+	String CaseHospitalization_labTestConducted = "CaseHospitalization.labTestConducted";
+	String CaseHospitalization_typeOfSample = "CaseHospitalization.typeOfSample";
+	String CaseHospitalization_agentIdentified = "CaseHospitalization.agentIdentified";
+
+
 	String CaseHospitalization_previousHospitalizations = "CaseHospitalization.previousHospitalizations";
 	String caseImportErrorDescription = "caseImportErrorDescription";
 	String caseImportMergeCase = "caseImportMergeCase";
