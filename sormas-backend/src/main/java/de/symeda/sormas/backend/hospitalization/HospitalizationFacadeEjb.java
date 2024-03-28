@@ -106,6 +106,16 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setInvestigatorTel(source.getInvestigatorTel());
 		target.setHospitalRecordNumber(source.getHospitalRecordNumber());
 		target.setDateFormSentToDistrict(source.getDateFormSentToDistrict());
+		target.setSoughtMedicalAttention(source.getSoughtMedicalAttention());
+		target.setNameOfFacility(source.getNameOfFacility());
+		target.setLocationAddress(source.getLocationAddress());
+		target.setDateOfVisitHospital(source.getDateOfVisitHospital());
+		target.setPhysicianName(source.getPhysicianName());
+		target.setPhysicianNumber(source.getPhysicianNumber());
+		target.setLabTestConducted(source.getLabTestConducted());
+		target.setTypeOfSample(source.getTypeOfSample());
+		target.setAgentIdentified(source.getAgentIdentified());
+
 
 		return target;
 	}
@@ -193,6 +203,16 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setTerminationDateHospitalStay(source.getTerminationDateHospitalStay());
 		target.setHospitalRecordNumber(source.getHospitalRecordNumber());
 		target.setDateFormSentToDistrict(source.getDateFormSentToDistrict());
+		target.setSoughtMedicalAttention(source.getSoughtMedicalAttention());
+		target.setNameOfFacility(source.getNameOfFacility());
+		target.setLocationAddress(source.getLocationAddress());
+		target.setDateOfVisitHospital(source.getDateOfVisitHospital());
+		target.setPhysicianName(source.getPhysicianName());
+		target.setPhysicianNumber(source.getPhysicianNumber());
+		target.setLabTestConducted(source.getLabTestConducted());
+		target.setTypeOfSample(source.getTypeOfSample());
+		target.setAgentIdentified(source.getAgentIdentified());
+
 
 		return target;
 	}

@@ -71,6 +71,16 @@ public class HospitalizationDto extends EntityDto {
 	public static final String OTHER_HOSPITALIZATION_REASON = "otherHospitalizationReason";
 	public static final String DESCRIPTION = "description";
 	public static final String HOSPITAL_RECORD_NUMBER = "hospitalRecordNumber";
+	public static final String SOUGHT_MEDICAL_ATTENTION = "soughtMedicalAttention";
+	public static final String NAME_OF_FACILITY = "nameOfFacility";
+	public static final String LOCATION_ADDRESS = "locationAddress";
+	public static final String DATE_OF_VISIT_HOSPITAL = "dateOfVisitHospital";
+	public static final String PHYSICIAN_NAME = "physicianName";
+	public static final String PHYSICIAN_NUMBER = "physicianNumber";
+	public static final String LAB_TEST_CONDUCTED = "labTestConducted";
+	public static final String TYPE_OF_SAMPLE = "typeOfSample";
+	public static final String AGENT_IDENTIFIED = "agentIdentified";
+
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -114,6 +124,16 @@ public class HospitalizationDto extends EntityDto {
 	private String investigatorAddress;
 	private String investigatorTel;
 	private String hospitalRecordNumber;
+	private YesNo soughtMedicalAttention;
+	private String nameOfFacility;
+	private String locationAddress;
+	private Date dateOfVisitHospital;
+	private String physicianName;
+	private String physicianNumber;
+	private YesNo labTestConducted;
+	private String typeOfSample;
+	private String agentIdentified;
+
 
 	public static HospitalizationDto build() {
 		HospitalizationDto hospitalization = new HospitalizationDto();
@@ -383,5 +403,77 @@ public class HospitalizationDto extends EntityDto {
 
 	public void setDateFormSentToDistrict(Date dateFormSentToDistrict) {
 		this.dateFormSentToDistrict = dateFormSentToDistrict;
+	}
+
+	public YesNo getSoughtMedicalAttention() {
+		return soughtMedicalAttention;
+	}
+
+	public void setSoughtMedicalAttention(YesNo soughtMedicalAttention) {
+		this.soughtMedicalAttention = soughtMedicalAttention;
+	}
+
+	public String getNameOfFacility() {
+		return nameOfFacility;
+	}
+
+	public void setNameOfFacility(String nameOfFacility) {
+		this.nameOfFacility = nameOfFacility;
+	}
+
+	public String getLocationAddress() {
+		return locationAddress;
+	}
+
+	public void setLocationAddress(String locationAddress) {
+		this.locationAddress = locationAddress;
+	}
+
+	public Date getDateOfVisitHospital() {
+		return dateOfVisitHospital;
+	}
+
+	public void setDateOfVisitHospital(Date dateOfVisitHospital) {
+		this.dateOfVisitHospital = dateOfVisitHospital;
+	}
+
+	public String getPhysicianName() {
+		return physicianName;
+	}
+
+	public void setPhysicianName(String physicianName) {
+		this.physicianName = physicianName;
+	}
+
+	public String getPhysicianNumber() {
+		return physicianNumber;
+	}
+
+	public void setPhysicianNumber(String physicianNumber) {
+		this.physicianNumber = physicianNumber;
+	}
+
+	public YesNo getLabTestConducted() {
+		return labTestConducted;
+	}
+
+	public void setLabTestConducted(YesNo labTestConducted) {
+		this.labTestConducted = labTestConducted;
+	}
+
+	public String getTypeOfSample() {
+		return typeOfSample;
+	}
+
+	public void setTypeOfSample(String typeOfSample) {
+		this.typeOfSample = typeOfSample;
+	}
+
+	public String getAgentIdentified() {
+		return agentIdentified;
+	}
+
+	public void setAgentIdentified(String agentIdentified) {
+		this.agentIdentified = agentIdentified;
 	}
 }

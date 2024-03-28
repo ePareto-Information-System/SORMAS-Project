@@ -77,7 +77,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			loc(HOSPITALIZATION_HEADING_LOC) +
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
 					fluidRowLocs(HEALTH_FACILITY, HEALTH_FACILITY_DISTRICT, HospitalizationDto.HOSPITAL_RECORD_NUMBER) +
-			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW) +
+			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, HospitalizationDto.PHYSICIAN_NAME) +
 					fluidRowLocs(HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE, HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY) +
 			fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
 			fluidRowLocs(HospitalizationDto.NOTIFY_DISTRICT_DATE, HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT) +
@@ -95,13 +95,18 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			fluidRowLocs(HospitalizationDto.PATIENT_HOSPITALIZED_DETAINED) +
 
 					//AFP
-					loc(FILL_SECTION_HEADING_LOC) +
-					loc(SEEK_HELP_HEADING_LOC) +
-					fluidRowLocs(HospitalizationDto.PLACE, HospitalizationDto.DURATION_MONTHS, HospitalizationDto.DURATION_DAYS) +
-					fluidRowLocs(HospitalizationDto.PLACE2, HospitalizationDto.DURATION_MONTHS2, HospitalizationDto.DURATION_DAYS2) +
-					locCss(VSPACE_TOP_3, HospitalizationDto.INVESTIGATOR_NAME) +
-					fluidRowLocs(HospitalizationDto.INVESTIGATOR_TITLE, HospitalizationDto.INVESTIGATOR_UNIT) +
-					fluidRowLocs(HospitalizationDto.INVESTIGATOR_ADDRESS, HospitalizationDto.INVESTIGATOR_TEL);
+			/*loc(FILL_SECTION_HEADING_LOC) +
+			loc(SEEK_HELP_HEADING_LOC) +
+			fluidRowLocs(HospitalizationDto.PLACE, HospitalizationDto.DURATION_MONTHS, HospitalizationDto.DURATION_DAYS) +
+			fluidRowLocs(HospitalizationDto.PLACE2, HospitalizationDto.DURATION_MONTHS2, HospitalizationDto.DURATION_DAYS2) +
+			locCss(VSPACE_TOP_3, HospitalizationDto.INVESTIGATOR_NAME) +
+			fluidRowLocs(HospitalizationDto.INVESTIGATOR_TITLE, HospitalizationDto.INVESTIGATOR_UNIT) +
+			fluidRowLocs(HospitalizationDto.INVESTIGATOR_ADDRESS, HospitalizationDto.INVESTIGATOR_TEL)+*/
+
+			fluidRowLocs(HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.NAME_OF_FACILITY)+
+			fluidRowLocs(HospitalizationDto.LOCATION_ADDRESS, HospitalizationDto.DATE_OF_VISIT_HOSPITAL)+
+			fluidRowLocs(6, HospitalizationDto.PHYSICIAN_NUMBER)+
+			fluidRowLocs(HospitalizationDto.LAB_TEST_CONDUCTED, HospitalizationDto.TYPE_OF_SAMPLE, HospitalizationDto.AGENT_IDENTIFIED);
 	private final CaseDataDto caze;
 	private final ViewMode viewMode;
 	private NullableOptionGroup intensiveCareUnit;
@@ -202,6 +207,19 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		PreviousHospitalizationsField previousHospitalizationsField =
 			addField(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS, PreviousHospitalizationsField.class);
 
+		NullableOptionGroup soughtMedicalAttentionField = addField(HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, NullableOptionGroup.class);
+		TextField nameOfFacilityField = addField(HospitalizationDto.NAME_OF_FACILITY, TextField.class);
+		TextField locationAddressField = addField(HospitalizationDto.LOCATION_ADDRESS, TextField.class);
+		DateField dateOfVisitHospitalField = addField(HospitalizationDto.DATE_OF_VISIT_HOSPITAL, DateField.class);
+		TextField physicianNameField = addField(HospitalizationDto.PHYSICIAN_NAME, TextField.class);
+		TextField physicianNumberField = addField(HospitalizationDto.PHYSICIAN_NUMBER, TextField.class);
+		NullableOptionGroup labTestConductedField = addField(HospitalizationDto.LAB_TEST_CONDUCTED, NullableOptionGroup.class);
+		TextField typeOfSampleField = addField(HospitalizationDto.TYPE_OF_SAMPLE, TextField.class);
+		TextField agentIdentifiedField = addField(HospitalizationDto.AGENT_IDENTIFIED, TextField.class);
+
+		setVisible(false, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.NAME_OF_FACILITY, HospitalizationDto.LOCATION_ADDRESS, HospitalizationDto.DATE_OF_VISIT_HOSPITAL,
+				HospitalizationDto.PHYSICIAN_NAME, HospitalizationDto.PHYSICIAN_NUMBER, HospitalizationDto.LAB_TEST_CONDUCTED, HospitalizationDto.TYPE_OF_SAMPLE, HospitalizationDto.AGENT_IDENTIFIED);
+
 		admissionDateField.setVisible(false);
 		dischargeDateField.setVisible(false);
 		hospitalRecordNumber.setVisible(false);
@@ -209,8 +227,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		intensiveCareUnit.setVisible(false);
 		isolatedField.setVisible(false);
 		descriptionField.setVisible(false);
-//		intensiveCareUnitStart.setVisible(false);
-//		intensiveCareUnitEnd.setVisible(false);
 		terminationDateHospitalStay.setVisible(false);
 		leftAgainstAdviceField.setVisible(false);
 		hospitalizationReason.setVisible(false);
@@ -395,6 +411,15 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			facilityField.setVisible(true);
 			districtField.setVisible(true);
 			intensiveCareUnit.setVisible(true);
+
+		}
+
+		if(caze.getDisease() == Disease.FOODBORNE_ILLNESS){
+			notifyDistrictDate.setVisible(false);
+			dateFormSentToDistrict.setVisible(false);
+
+			setVisible(true, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.NAME_OF_FACILITY, HospitalizationDto.LOCATION_ADDRESS, HospitalizationDto.DATE_OF_VISIT_HOSPITAL,
+					HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, HospitalizationDto.PHYSICIAN_NAME, HospitalizationDto.PHYSICIAN_NUMBER, HospitalizationDto.LAB_TEST_CONDUCTED, HospitalizationDto.TYPE_OF_SAMPLE, HospitalizationDto.AGENT_IDENTIFIED);
 
 		}
 	}
