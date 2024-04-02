@@ -2215,6 +2215,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public void setDistrictOfResidence(String districtOfResidence) {
 		this.districtOfResidence = districtOfResidence;
 	}
+//	Riskfactor on
 
 
 	@Override
