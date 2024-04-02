@@ -81,6 +81,17 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String EXPOSED_TO_RISK_FACTOR = "exposedToRiskFactor";
 	public static final String WATER_USED_BY_PATIENT_AFTER_EXPOSURE = "waterUsedByPatientAfterExposure";
 
+	public static final String INTL_TRAVEL = "intlTravel";
+	public static final String SPECIFY_COUNTRIES = "specifyCountries";
+	public static final String DATE_OF_DEPARTURE = "dateOfDeparture";
+	public static final String DATE_OF_ARRIVAL = "dateOfArrival";
+	public static final String DOMESTIC_TRAVEL = "domesticTravel";
+	public static final String SPECIFY_LOCATION = "specifyLocation";
+	public static final String DATE_OF_DEPARTURE2 = "dateOfDeparture2";
+	public static final String DATE_OF_ARRIVAL2 = "dateOfArrival2";
+	public static final String CONTACT_ILL_PERSON = "contactIllPerson";
+	public static final String CONTACT_DATE = "contactDate";
+	public static final String SPECIFY_ILLNESS = "specifyIllness";
 
 	@Enumerated(EnumType.STRING)
 	private Disease disease;
@@ -108,6 +119,18 @@ public class EpiDataDto extends PseudonymizableDto {
 	private YesNo vistedPlacesConfirmedPandemic;
 	private RiskFactorInfluenza riskFactorsSevereDisease;
 	private String otherSpecify;
+	private YesNo intlTravel;
+	private String specifyCountries;
+	private Date dateOfDeparture;
+	private Date dateOfArrival;
+	private YesNo domesticTravel;
+	private String specifyLocation;
+	private Date dateOfDeparture2;
+	private Date dateOfArrival2;
+	private YesNo contactIllPerson;
+	private Date contactDate;
+	private String specifyIllness;
+
 	@Valid
 	private List<ExposureDto> exposures = new ArrayList<>();
 
@@ -355,6 +378,93 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public void setPatientTravelledInternationalFour(String patientTravelledInternationalFour) {
 		this.patientTravelledInternationalFour = patientTravelledInternationalFour;
+	}
+	public YesNo getIntlTravel() {
+		return intlTravel;
+	}
+
+	public void setIntlTravel(YesNo intlTravel) {
+		this.intlTravel = intlTravel;
+	}
+
+	public String getSpecifyCountries() {
+		return specifyCountries;
+	}
+
+	public void setSpecifyCountries(String specifyCountries) {
+		this.specifyCountries = specifyCountries;
+	}
+
+	public Date getDateOfDeparture() {
+		return dateOfDeparture;
+	}
+
+	public void setDateOfDeparture(Date dateOfDeparture) {
+		this.dateOfDeparture = dateOfDeparture;
+	}
+
+	public Date getDateOfArrival() {
+		return dateOfArrival;
+	}
+
+	public void setDateOfArrival(Date dateOfArrival) {
+		this.dateOfArrival = dateOfArrival;
+	}
+
+	public YesNo getDomesticTravel() {
+		return domesticTravel;
+	}
+
+	public void setDomesticTravel(YesNo domesticTravel) {
+		this.domesticTravel = domesticTravel;
+	}
+
+	public String getSpecifyLocation() {
+		return specifyLocation;
+	}
+
+	public void setSpecifyLocation(String specifyLocation) {
+		this.specifyLocation = specifyLocation;
+	}
+
+	public Date getDateOfDeparture2() {
+		return dateOfDeparture2;
+	}
+
+	public void setDateOfDeparture2(Date dateOfDeparture2) {
+		this.dateOfDeparture2 = dateOfDeparture2;
+	}
+
+	public Date getDateOfArrival2() {
+		return dateOfArrival2;
+	}
+
+	public void setDateOfArrival2(Date dateOfArrival2) {
+		this.dateOfArrival2 = dateOfArrival2;
+	}
+
+	public YesNo getContactIllPerson() {
+		return contactIllPerson;
+	}
+
+	public void setContactIllPerson(YesNo contactIllPerson) {
+		this.contactIllPerson = contactIllPerson;
+	}
+
+	public Date getContactDate() {
+		return contactDate;
+	}
+
+	public void setContactDate(Date contactDate) {
+		this.contactDate = contactDate;
+	}
+
+	public String getSpecifyIllness() {
+		return specifyIllness;
+	}
+
+	public void setSpecifyIllness(String specifyIllness) {
+		this.specifyIllness = specifyIllness;
 	}
 
 	public static EpiDataDto build() {

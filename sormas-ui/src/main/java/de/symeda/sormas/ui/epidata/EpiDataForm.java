@@ -108,8 +108,12 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			locCss(VSPACE_TOP_3, LOC_EPI_DATA_FIELDS_HINT) +
 			loc(EpiDataDto.HIGH_TRANSMISSION_RISK_AREA) +
 			loc(EpiDataDto.LARGE_OUTBREAKS_AREA) + 
-			loc(EpiDataDto.AREA_INFECTED_ANIMALS);
-	
+			loc(EpiDataDto.AREA_INFECTED_ANIMALS) +
+					fluidRowLocs(EpiDataDto.INTL_TRAVEL, EpiDataDto.SPECIFY_COUNTRIES, EpiDataDto.DATE_OF_DEPARTURE, EpiDataDto.DATE_OF_ARRIVAL) +
+					fluidRowLocs(EpiDataDto.DOMESTIC_TRAVEL, EpiDataDto.SPECIFY_LOCATION, EpiDataDto.DATE_OF_DEPARTURE2, EpiDataDto.DATE_OF_ARRIVAL2) +
+					fluidRowLocs(EpiDataDto.CONTACT_ILL_PERSON, EpiDataDto.CONTACT_DATE, EpiDataDto.SPECIFY_ILLNESS) +
+					fluidRowLocs(EpiDataDto.AREA_INFECTED_ANIMALS);
+
 	private static final String SOURCE_CONTACTS_HTML_LAYOUT =
 			locCss(VSPACE_TOP_3, LOC_SOURCE_CASE_CONTACTS_HEADING) +
 			loc(EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN) + loc(EpiDataDto.CHILD_COME_IN_CONTACT_WITH_SYMPTOMS);
@@ -161,10 +165,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	protected void addFields() {
 
 
-		if (disease != null && !diseaseCheck() && !diseaseInfluenzaCheck()) {
-			if (disease != Disease.MEASLES) {
-				addHeadingsAndInfoTexts();
-			}
+		if (disease != null && !diseaseCheck() && !diseaseInfluenzaCheck() && disease!= Disease.FOODBORNE_ILLNESS) {
+			addHeadingsAndInfoTexts();
 		}
 
 		NullableOptionGroup recentTravelOutbreak = addField(EpiDataDto.RECENT_TRAVEL_OUTBREAK, NullableOptionGroup.class);
@@ -258,6 +260,20 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			Collections.singletonList(YesNo.YES),
 			true);
 
+		addField(EpiDataDto.INTL_TRAVEL, NullableOptionGroup.class);
+		addField(EpiDataDto.SPECIFY_COUNTRIES, TextField.class);
+		addField(EpiDataDto.DATE_OF_DEPARTURE, DateField.class);
+		addField(EpiDataDto.DATE_OF_ARRIVAL, DateField.class);
+		addField(EpiDataDto.DOMESTIC_TRAVEL, NullableOptionGroup.class);
+		addField(EpiDataDto.SPECIFY_LOCATION, TextField.class);
+		addField(EpiDataDto.DATE_OF_DEPARTURE2, DateField.class);
+		addField(EpiDataDto.DATE_OF_ARRIVAL2, DateField.class);
+		addField(EpiDataDto.CONTACT_ILL_PERSON, TextField.class);
+		addField(EpiDataDto.CONTACT_DATE, DateField.class);
+		addField(EpiDataDto.SPECIFY_ILLNESS, TextField.class);
+
+		setVisible(false, EpiDataDto.INTL_TRAVEL, EpiDataDto.SPECIFY_COUNTRIES, EpiDataDto.DATE_OF_DEPARTURE, EpiDataDto.DATE_OF_ARRIVAL, EpiDataDto.DOMESTIC_TRAVEL, EpiDataDto.SPECIFY_LOCATION, EpiDataDto.DATE_OF_DEPARTURE2, EpiDataDto.DATE_OF_ARRIVAL2, EpiDataDto.CONTACT_ILL_PERSON, EpiDataDto.CONTACT_DATE, EpiDataDto.SPECIFY_ILLNESS);
+
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
 
@@ -345,6 +361,11 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		if (disease == Disease.CHOLERA) {
 //			hideAllFields();
 			setVisible(true, EpiDataDto.EXPOSED_TO_RISK_FACTOR, EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE);
+		}
+		if(disease == Disease.FOODBORNE_ILLNESS){
+			setVisible(false, EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, EpiDataDto.LARGE_OUTBREAKS_AREA, EpiDataDto.AREA_INFECTED_ANIMALS, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN, EpiDataDto.EXPOSURES, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN, EpiDataDto.RECENT_TRAVEL_OUTBREAK, EpiDataDto.CONTACT_SIMILAR_SYMPTOMS, EpiDataDto.CONTACT_SICK_ANIMALS, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN, EpiDataDto.ACTIVITIES_AS_CASE, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN);
+
+			setVisible(true, EpiDataDto.INTL_TRAVEL, EpiDataDto.SPECIFY_COUNTRIES, EpiDataDto.DATE_OF_DEPARTURE, EpiDataDto.DATE_OF_ARRIVAL, EpiDataDto.DOMESTIC_TRAVEL, EpiDataDto.SPECIFY_LOCATION, EpiDataDto.DATE_OF_DEPARTURE2, EpiDataDto.DATE_OF_ARRIVAL2, EpiDataDto.CONTACT_ILL_PERSON, EpiDataDto.CONTACT_DATE, EpiDataDto.SPECIFY_ILLNESS);
 		}
 
 	}

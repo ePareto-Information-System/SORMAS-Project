@@ -1198,6 +1198,17 @@ public interface Captions {
 	String EpiData_exposedToRiskFactor = "EpiData.exposedToRiskFactor";
 	String EpiData_waterUsedByPatientAfterExposure = "EpiData.waterUsedByPatientAfterExposure";
 	String EpiData_otherSpecify = "EpiData.otherSpecify";
+	String EpiData_intlTravel = "EpiData.intlTravel";
+	String EpiData_specifyCountries = "EpiData.specifyCountries";
+	String EpiData_dateOfDeparture = "EpiData.dateOfDeparture";
+	String EpiData_dateOfArrival = "EpiData.dateOfArrival";
+	String EpiData_domesticTravel = "EpiData.domesticTravel";
+	String EpiData_specifyLocation = "EpiData.specifyLocation";
+	String EpiData_dateOfDeparture2 = "EpiData.dateOfDeparture2";
+	String EpiData_dateOfArrival2 = "EpiData.dateOfArrival2";
+	String EpiData_contactIllPerson = "EpiData.contactIllPerson";
+	String EpiData_contactDate = "EpiData.contactDate";
+	String EpiData_specifyIllness = "EpiData.specifyIllness";
 	String EpiData_exposureDetailsKnown = "EpiData.exposureDetailsKnown";
 	String EpiData_exposures = "EpiData.exposures";
 	String EpiData_highTransmissionRiskArea = "EpiData.highTransmissionRiskArea";

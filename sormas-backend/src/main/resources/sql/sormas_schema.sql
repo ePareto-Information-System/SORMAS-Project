@@ -13637,13 +13637,10 @@ ALTER TABLE cases ADD COLUMN supplementalImmunization varchar(255);
 ALTER TABLE cases ADD COLUMN supplementalImmunizationDetails varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (596, 'Added columns to cases');
 
--- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
-
 -- 2024-03-27 Added marital status for Food Borne illness
 ALTER TABLE person ADD COLUMN maritalstatus varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (597, 'Added marital status for Food Borne illness');
--- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
 -- 2024-03-27 Added symptoms for Food Borne illness
 ALTER TABLE symptoms ADD COLUMN dizziness varchar(255);
@@ -13665,5 +13662,20 @@ ALTER TABLE hospitalization ADD COLUMN labtestconducted VARCHAR(255);
 ALTER TABLE hospitalization ADD COLUMN typeofsample VARCHAR(255);
 ALTER TABLE hospitalization ADD COLUMN agentidentified VARCHAR(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (599, ' Added hospitalization properties for Food Borne illness');
+INSERT INTO schema_version (version_number, comment) VALUES (599, 'Added hospitalization properties for Food Borne illness');
+
+-- 2024-03-01 Added exposure history for Food Borne illness
+ALTER TABLE epidata ADD COLUMN intltravel varchar(255);
+ALTER TABLE epidata ADD COLUMN specifycountries varchar(512);
+ALTER TABLE epidata ADD COLUMN dateofdeparture date;
+ALTER TABLE epidata ADD COLUMN dateofarrival date;
+ALTER TABLE epidata ADD COLUMN domestictravel varchar(255);
+ALTER TABLE epidata ADD COLUMN specifylocation varchar(255);
+ALTER TABLE epidata ADD COLUMN dateofdeparture2 date;
+ALTER TABLE epidata ADD COLUMN dateofarrival2 date;
+ALTER TABLE epidata ADD COLUMN contactillperson varchar(255);
+ALTER TABLE epidata ADD COLUMN contactdate date;
+ALTER TABLE epidata ADD COLUMN specifyillness varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (600, 'Added exposure history for Food Borne illness ');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
