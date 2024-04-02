@@ -12931,5 +12931,58 @@ ALTER TABLE healthconditions ADD COLUMN stroke varchar(255);
 ALTER TABLE healthconditions ADD COLUMN cancer varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (564, 'Added columns to symptoms, hospitalization, healthconditions to implement patientVisitedHealthCareFacility #26');
 
+-- VibrioRiskFactors create new table
+CREATE TABLE riskfactors (
+    id BIGINT PRIMARY KEY NOT NULL,
+    drinkingWaterSourceOne VARCHAR(255),
+    drinkingWaterSourceTwo VARCHAR(255),
+    drinkingWaterSourceThree VARCHAR(255),
+    drinkingWaterSourceFour VARCHAR(255),
+--     non drinking water source
+    nonDrinkingWaterSourceOne VARCHAR(255),
+    nonDrinkingWaterSourceTwo VARCHAR(255),
+    nonDrinkingWaterSourceThree VARCHAR(255),
+    nonDrinkingWaterSourceFour VARCHAR(255),
+--     food items
+    foodItemsOne VARCHAR(255),
+    foodItemsTwo VARCHAR(255),
+    foodItemsThree VARCHAR(255),
+    foodItemsFour VARCHAR(255),
+    foodItemsFive VARCHAR(255),
+    foodItemsSix VARCHAR(255),
+    foodItemsSeven VARCHAR(255),
+    foodItemsEight VARCHAR(255),
+    drinkingWaterInfectedByVibrio VARCHAR(255),
+    nonDrinkingWaterInfectedByVibrio VARCHAR(255),
+    foodItemsInfectedByVibrio VARCHAR(255),
+
+    waterUsedForDrinking VARCHAR(255),
+
+    threeDaysPriorToDiseaseWaterSourceOne VARCHAR(255),
+    threeDaysPriorToDiseaseWaterSourceTwo VARCHAR(255),
+    threeDaysPriorToDiseaseWaterSourceThree VARCHAR(255),
+    threeDaysPriorToDiseaseWaterSourceFour VARCHAR(255),
+    threeDaysPriorToDiseaseWaterSourceFive VARCHAR(255),
+
+--     Within 3 days prior to the onset of the disease did the patient eat …………………..
+    threeDaysPriorToDiseaseFoodItemsOne VARCHAR(255),
+    threeDaysPriorToDiseaseFoodItemsTwo VARCHAR(255),
+    threeDaysPriorToDiseaseFoodItemsThree VARCHAR(255),
+    threeDaysPriorToDiseaseFoodItemsFour VARCHAR(255),
+    threeDaysPriorToDiseaseFoodItemsFive VARCHAR(255),
+
+    threeDaysPriorToDiseaseAttendAnyFuneral VARCHAR(255),
+    threeDaysPriorToDiseaseAttendAnySocialEvent VARCHAR(255),
+    otherSocialEventDetails VARCHAR(255),
+    changedate TIMESTAMP(3),
+    change_user_id BIGINT,
+    creationdate DATE,
+    uuid VARCHAR(512)
+);
+
+ALTER TABLE cases ADD COLUMN riskfactors_id BIGINT;
+INSERT INTO schema_version (version_number, comment) VALUES (565, 'Added riskfactors_id to cases');
+
+
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
-``

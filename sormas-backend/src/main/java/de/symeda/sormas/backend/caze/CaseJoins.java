@@ -39,6 +39,7 @@ import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.person.PersonJoins;
+import de.symeda.sormas.backend.riskfactor.RiskFactor;
 import de.symeda.sormas.backend.sample.Sample;
 import de.symeda.sormas.backend.sample.SampleJoins;
 import de.symeda.sormas.backend.share.ExternalShareInfo;
@@ -69,6 +70,7 @@ public class CaseJoins extends QueryJoins<Case> {
 	private Join<Case, Symptoms> symptoms;
 	private Join<Case, ClinicalCourse> clinicalCourse;
 	private Join<Case, HealthConditions> healthConditions;
+	private Join<Case, RiskFactor> riskFactor;
 	private Join<Case, EventParticipant> eventParticipants;
 	private Join<Case, Sample> samples;
 	private Join<Case, SormasToSormasShareInfo> sormasToSormasShareInfo;
@@ -248,6 +250,14 @@ public class CaseJoins extends QueryJoins<Case> {
 
 	private void setHealthConditions(Join<Case, HealthConditions> healthConditions) {
 		this.healthConditions = healthConditions;
+	}
+
+	public Join<Case, RiskFactor> getRiskFactor() {
+		return getOrCreate(riskFactor, Case.RISK_FACTOR, JoinType.LEFT, this::setRiskFactor);
+	}
+
+	private void setRiskFactor(Join<Case, RiskFactor> riskFactor) {
+		this.riskFactor = riskFactor;
 	}
 
 	public Join<Case, EventParticipant> getEventParticipants() {
