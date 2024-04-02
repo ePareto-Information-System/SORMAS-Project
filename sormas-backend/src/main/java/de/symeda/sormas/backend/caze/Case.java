@@ -47,6 +47,7 @@ import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
 import de.symeda.sormas.api.utils.*;
+import de.symeda.sormas.backend.riskfactor.RiskFactor;
 import de.symeda.sormas.backend.sixtyday.SixtyDay;
 import org.hibernate.annotations.Type;
 
@@ -166,6 +167,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public static final String PORT_HEALTH_INFO = "portHealthInfo";
 
 	public static final String HEALTH_CONDITIONS = "healthConditions";
+	public static final String RISK_FACTOR = "riskFactor";
 
 	public static final String PREGNANT = "pregnant";
 	public static final String VACCINATION_STATUS = "vaccinationStatus";
@@ -288,6 +290,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	private InvestigationStatus investigationStatus;
 	private Hospitalization hospitalization;
+	private RiskFactor riskFactor;
 	private SixtyDay sixtyDay;
 	private EpiData epiData;
 	private Therapy therapy;
@@ -961,6 +964,18 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 	public void setSixtyDay(SixtyDay sixtyDay) {this.sixtyDay = sixtyDay; }
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	public RiskFactor getRiskFactor() {
+		if (riskFactor == null) {
+			riskFactor = new RiskFactor();
+		}
+		return riskFactor;
+	}
+
+	public void setRiskFactor(RiskFactor riskFactor) {
+		this.riskFactor = riskFactor;
+	}
 
 	// It's necessary to do a lazy fetch here because having three eager fetching
 	// one to one relations
@@ -2056,6 +2071,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public void setDistrictOfResidence(String districtOfResidence) {
 		this.districtOfResidence = districtOfResidence;
 	}
+//	Riskfactor on
 
 
 	@Override
