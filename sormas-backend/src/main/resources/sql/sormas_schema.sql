@@ -12964,5 +12964,20 @@ ALTER TABLE hospitalization ADD COLUMN typeofsample VARCHAR(255);
 ALTER TABLE hospitalization ADD COLUMN agentidentified VARCHAR(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (570, ' Added hospitalization properties for Food Borne illness ');
+
+-- 2024-03-01 Added exposure history for Food Borne illness
+ALTER TABLE epidata ADD COLUMN intltravel varchar(255);
+ALTER TABLE epidata ADD COLUMN specifycountries varchar(512);
+ALTER TABLE epidata ADD COLUMN dateofdeparture date;
+ALTER TABLE epidata ADD COLUMN dateofarrival date;
+ALTER TABLE epidata ADD COLUMN domestictravel varchar(255);
+ALTER TABLE epidata ADD COLUMN specifylocation varchar(255);
+ALTER TABLE epidata ADD COLUMN dateofdeparture2 date;
+ALTER TABLE epidata ADD COLUMN dateofarrival2 date;
+ALTER TABLE epidata ADD COLUMN contactillperson varchar(255);
+ALTER TABLE epidata ADD COLUMN contactdate date;
+ALTER TABLE epidata ADD COLUMN specifyillness varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (571, 'Added exposure history for Food Borne illness ');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``

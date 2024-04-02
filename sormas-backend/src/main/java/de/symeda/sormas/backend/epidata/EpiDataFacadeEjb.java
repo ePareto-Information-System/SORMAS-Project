@@ -82,6 +82,17 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setVistedPlacesConfirmedPandemic(source.getVistedPlacesConfirmedPandemic());
 		target.setRiskFactorsSevereDisease(source.getRiskFactorsSevereDisease());
 		target.setOtherSpecify(source.getOtherSpecify());
+		target.setIntlTravel(source.getIntlTravel());
+		target.setSpecifyCountries(source.getSpecifyCountries());
+		target.setDateOfDeparture(source.getDateOfDeparture());
+		target.setDateOfArrival(source.getDateOfArrival());
+		target.setDomesticTravel(source.getDomesticTravel());
+		target.setSpecifyLocation(source.getSpecifyLocation());
+		target.setDateOfDeparture2(source.getDateOfDeparture2());
+		target.setDateOfArrival2(source.getDateOfArrival2());
+		target.setContactIllPerson(source.getContactIllPerson());
+		target.setContactDate(source.getContactDate());
+		target.setSpecifyIllness(source.getSpecifyIllness());
 
 		List<Exposure> exposures = new ArrayList<>();
 		for (ExposureDto exposureDto : source.getExposures()) {
@@ -247,6 +258,17 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setVistedPlacesConfirmedPandemic(source.getVistedPlacesConfirmedPandemic());
 		target.setRiskFactorsSevereDisease(source.getRiskFactorsSevereDisease());
 		target.setOtherSpecify(source.getOtherSpecify());
+		target.setIntlTravel(source.getIntlTravel());
+		target.setSpecifyCountries(source.getSpecifyCountries());
+		target.setDateOfDeparture(source.getDateOfDeparture());
+		target.setDateOfArrival(source.getDateOfArrival());
+		target.setDomesticTravel(source.getDomesticTravel());
+		target.setSpecifyLocation(source.getSpecifyLocation());
+		target.setDateOfDeparture2(source.getDateOfDeparture2());
+		target.setDateOfArrival2(source.getDateOfArrival2());
+		target.setContactIllPerson(source.getContactIllPerson());
+		target.setContactDate(source.getContactDate());
+		target.setSpecifyIllness(source.getSpecifyIllness());
 
 		List<ExposureDto> exposureDtos = new ArrayList<>();
 		for (Exposure exposure : source.getExposures()) {

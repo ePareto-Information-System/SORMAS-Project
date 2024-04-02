@@ -476,6 +476,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				case SARI:
 					handleNewInfluenza();
 					break;
+				case FOODBORNE_ILLNESS:
+					handleFBI();
+					break;
 				// Handle default case, maybe log an error or set default visibility
 				default:
 			}
@@ -757,6 +760,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			setVisible(false, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.ADDITIONAL_TESTING_REQUESTED);
 		}
 	}
+
+
 	private void disableField(String field) {
 		setVisible(false, field);
 	}
@@ -1087,6 +1092,14 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		pathogenTestingRequestedField.setVisible(false);
 	}
 
+	private void handleFBI(){
+		setPropertiesVisibility();
+		setVisible(false, SampleDto.SUSPECTED_DISEASE, SampleDto.LAB_LOCATION, SampleDto.DATE_LAB_RECEIVED_SPECIMEN, SampleDto.LABORATORY_SAMPLE_CONDITION, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.ADDITIONAL_TESTING_REQUESTED, SampleDto.LAB, SampleDto.DATE_SPECIMEN_SENT_TO_LAB, SampleDto.SAMPLE_MATERIAL, SampleDto.SAMPLE_DATE_TIME,SampleDto.SHIPPED, SampleDto.RECEIVED, SampleDto.ADDITIONAL_TESTING_REQUESTED, SampleDto.LAB);
+
+		setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
+		hideFields();
+	}
+
 	private void addSampleDispatchFields() {
 		OptionGroup outcome = new OptionGroup("Sample Dispatch Modes");
 
@@ -1245,6 +1258,16 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 								.filter( c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
 								.collect(Collectors.toList()));
 				break;
+		}
+	}
+
+	private void hideFields(){
+		for(Disease d : Disease.values()){
+			if(disease == d){
+				setVisible(false, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.ADDITIONAL_TESTING_REQUESTED, SampleDto.SHIPPED, SampleDto.RECEIVED);
+				lab.setVisible(false);
+				lab.setRequired(false);
+			}
 		}
 	}
 
