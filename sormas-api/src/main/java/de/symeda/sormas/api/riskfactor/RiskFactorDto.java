@@ -96,11 +96,6 @@ public class RiskFactorDto extends PseudonymizableDto {
         return riskFactorDto;
     }
 
-    public static RiskFactorDto build() {
-        RiskFactorDto riskFactorDto  = new RiskFactorDto();
-        riskFactorDto.setUuid(DataHelper.createUuid());
-        return riskFactorDto;
-    }
 
     public String getDrinkingWaterSourceOne() {
         return drinkingWaterSourceOne;

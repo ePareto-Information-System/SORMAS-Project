@@ -40,6 +40,7 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
     private static final String HTML_LAYOUT =
             loc(RISK_FACTOR_HEADING_LOC) +
                     fluidRowLocs(4, RiskFactorDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, 4, RiskFactorDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, 4, RiskFactorDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN) +
+
                     loc(POTENTIAL_VIBRIO_VEHICLES_DRINKING_WATER) +
                     fluidRowLocs(RiskFactorDto.DRINKING_WATER_SOURCE_ONE,RiskFactorDto.DRINKING_WATER_SOURCE_TWO) +
                     fluidRowLocs(RiskFactorDto.DRINKING_WATER_SOURCE_THREE,RiskFactorDto.DRINKING_WATER_SOURCE_FOUR) +
