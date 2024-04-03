@@ -12932,7 +12932,7 @@ ALTER TABLE healthconditions ADD COLUMN cancer varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (564, 'Added columns to symptoms, hospitalization, healthconditions to implement patientVisitedHealthCareFacility #26');
 
 -- VibrioRiskFactors create new table
-CREATE TABLE riskfactors (
+CREATE TABLE riskfactor (
     id BIGINT PRIMARY KEY NOT NULL,
     drinkingWaterSourceOne VARCHAR(255),
     drinkingWaterSourceTwo VARCHAR(255),
@@ -12980,8 +12980,8 @@ CREATE TABLE riskfactors (
     uuid VARCHAR(512)
 );
 
-ALTER TABLE cases ADD COLUMN riskfactors_id BIGINT;
-INSERT INTO schema_version (version_number, comment) VALUES (565, 'Added riskfactors_id to cases');
+ALTER TABLE cases ADD COLUMN riskfactor_id BIGINT;
+INSERT INTO schema_version (version_number, comment) VALUES (565, 'Added riskfactor_id to cases');
 
 
 

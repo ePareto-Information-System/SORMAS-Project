@@ -26,6 +26,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.utils.*;
+import de.symeda.sormas.ui.riskfactor.RiskFactorForm;
+import de.symeda.sormas.ui.riskfactor.RiskFactorView;
 import de.symeda.sormas.ui.sixtydayfollowup.SixtyDayFollowupView;
 import de.symeda.sormas.ui.sixtydayfollowup.SixtyDayForm;
 import org.apache.commons.collections.CollectionUtils;
@@ -172,6 +174,8 @@ public class CaseController {
 		navigator.addView(CaseEpiDataView.VIEW_NAME, CaseEpiDataView.class);
 
 		navigator.addView(SixtyDayFollowupView.VIEW_NAME, SixtyDayFollowupView.class);
+
+		navigator.addView(RiskFactorView.VIEW_NAME, RiskFactorView.class);
 
 		if (userProvider.hasUserRight(UserRight.THERAPY_VIEW)) {
 			navigator.addView(TherapyView.VIEW_NAME, TherapyView.class);
@@ -1281,6 +1285,30 @@ public class CaseController {
 			}
 			cazeDto.setSixtyDay(sixtyDayForm.getValue());
 			saveCase(cazeDto);
+		});
+
+		return editView;
+	}
+
+	public CommitDiscardWrapperComponent<RiskFactorForm> getRiskFactorComponent(final String caseUuid, ViewMode viewMode, boolean isEditAllowed) {
+		CaseDataDto caze = findCase(caseUuid);
+		RiskFactorForm riskFactorForm = new RiskFactorForm(
+				caze.getDisease(),
+				CaseDataDto.class,
+				caze.isPseudonymized(),
+				caze.isInJurisdiction(),
+				isEditAllowed);
+		riskFactorForm.setValue(caze.getRiskFactor());
+
+		final CommitDiscardWrapperComponent<RiskFactorForm> editView = new CommitDiscardWrapperComponent<RiskFactorForm>(
+				riskFactorForm,
+				riskFactorForm.getFieldGroup());
+
+		editView.addCommitListener(() -> {
+			CaseDataDto cazeDto = findCase(caseUuid);
+			cazeDto.setRiskFactor(riskFactorForm.getValue());
+			saveCase(cazeDto);
+
 		});
 
 		return editView;
