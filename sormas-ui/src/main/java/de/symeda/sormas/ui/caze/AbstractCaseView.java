@@ -46,6 +46,7 @@ import de.symeda.sormas.ui.clinicalcourse.ClinicalCourseView;
 import de.symeda.sormas.ui.epidata.CaseEpiDataView;
 import de.symeda.sormas.ui.externalmessage.ExternalMessagesView;
 import de.symeda.sormas.ui.hospitalization.HospitalizationView;
+import de.symeda.sormas.ui.riskfactor.RiskFactorView;
 import de.symeda.sormas.ui.sixtydayfollowup.SixtyDayFollowupView;
 import de.symeda.sormas.ui.therapy.TherapyView;
 import de.symeda.sormas.ui.utils.AbstractEditAllowedDetailView;
@@ -182,6 +183,21 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 					menu.addView(HospitalizationView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.ILLNESS_INFO), params);
 				}
 			}
+
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
+					&& !caze.checkIsUnreferredPortHealthCase()
+					&& !UserProvider.getCurrent().isPortHealthUser()) {
+
+				if (caze.getDisease() == Disease.CHOLERA || caze.getDisease() == Disease.MONKEYPOX) {
+					menu.addView(
+						RiskFactorView.VIEW_NAME,
+						I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.RISK_FACTOR),
+						params);
+				}
+			}
+
+
+
 			if (caze.getCaseOrigin() == CaseOrigin.POINT_OF_ENTRY
 				&& ControllerProvider.getCaseController().hasPointOfEntry(caze)
 				&& UserProvider.getCurrent().hasUserRight(UserRight.PORT_HEALTH_INFO_VIEW)) {

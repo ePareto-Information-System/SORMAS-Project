@@ -31,6 +31,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
+import de.symeda.sormas.api.riskfactor.RiskFactorDto;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
 import de.symeda.sormas.api.utils.*;
 import org.apache.commons.lang3.StringUtils;
@@ -124,6 +125,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String SYMPTOMS = "symptoms";
 	public static final String HOSPITALIZATION = "hospitalization";
 	public static final String ILLNESS_INFO = "illnessInformation";
+	public static final String RISK_FACTOR = "riskFactor";
 	public static final String SIXTY_DAY = "sixtyDay";
 	public static final String FOOD_SAMPLE_TESTING = "foodSampleTesting";
 	public static final String EPI_DATA = "epiData";
@@ -445,6 +447,8 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	@Valid
 	private SixtyDayDto sixtyDay;
 	@Valid
+	private RiskFactorDto riskFactor;
+	@Valid
 	private SymptomsDto symptoms;
 	@Valid
 	private EpiDataDto epiData;
@@ -657,6 +661,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 		caze.setPerson(person);
 		caze.setHospitalization(HospitalizationDto.build());
 		caze.setSixtyDay(SixtyDayDto.build());
+		caze.setRiskFactor(RiskFactorDto.build());
 		caze.setEpiData(EpiDataDto.build());
 		caze.setSymptoms(SymptomsDto.build());
 		caze.setTherapy(TherapyDto.build());
@@ -1126,6 +1131,14 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 
 	public void setSixtyDay(SixtyDayDto sixtyDay) {
 		this.sixtyDay = sixtyDay;
+	}
+
+	public RiskFactorDto getRiskFactor() {
+		return riskFactor;
+	}
+
+	public void setRiskFactor(RiskFactorDto riskFactor) {
+		this.riskFactor = riskFactor;
 	}
 
 	public EpiDataDto getEpiData() {

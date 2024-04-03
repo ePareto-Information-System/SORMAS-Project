@@ -7,14 +7,16 @@ import de.symeda.sormas.backend.infrastructure.community.CommunityService;
 import de.symeda.sormas.backend.infrastructure.district.DistrictService;
 import de.symeda.sormas.backend.infrastructure.facility.FacilityService;
 import de.symeda.sormas.backend.infrastructure.region.RegionService;
-import de.symeda.sormas.backend.sixtyday.SixtyDayService;
 import de.symeda.sormas.backend.util.DtoHelper;
 
 import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 
+@Stateless(name = "RiskFactorFacade")
 public class RiskFactorFacadeEjb implements RiskFactorFacade {
     @EJB
-    private SixtyDayService service;
+    private RiskFactorService service;
     @EJB
     private CaseService caseService;
     @EJB
@@ -114,7 +116,8 @@ public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boo
         return target;
     }
 
-
-
-
+    @LocalBean
+    @Stateless
+    public static class RiskFactorFacadeEjbLocal extends RiskFactorFacadeEjb {
+    }
 }
