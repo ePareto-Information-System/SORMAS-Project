@@ -86,15 +86,31 @@ public class SampleEditForm extends AbstractSampleForm {
 
 		addValueChangeListener(e -> {
 			defaultValueChangeListener();
+
+			if (FacadeProvider.getPathogenTestFacade().hasPathogenTest(getValue().toReference())) {
+				getField(SampleDto.PATHOGEN_TEST_RESULT).setRequired(true);
+			} else {
+				getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
+			}
+
 			fillPathogenTestResult();
+
+			getField(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS).setEnabled(false);
+			getField(SampleDto.REQUESTED_PATHOGEN_TESTS).setEnabled(false);
+			getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
+			getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
+			getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
+			getField(SampleDto.PATHOGEN_TESTING_REQUESTED).setEnabled(false);
+			getField(SampleDto.ADDITIONAL_TESTING_REQUESTED).setEnabled(false);
+
 			UserReferenceDto reportingUser = getValue().getReportingUser();
-			if (!(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
-				|| (reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid())))) {
+//			if (!(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
+//				|| (reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid())))) {
 				getField(SampleDto.SAMPLE_PURPOSE).setEnabled(false);
 				getField(SampleDto.SAMPLING_REASON).setEnabled(false);
 				getField(SampleDto.SAMPLING_REASON_DETAILS).setEnabled(false);
 				getField(SampleDto.FIELD_SAMPLE_ID).setEnabled(false);
-			}
+//			}
 		});
 	}
 

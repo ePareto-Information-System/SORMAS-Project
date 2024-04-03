@@ -2121,6 +2121,20 @@ public interface Captions {
 	String Sample_dateFormReceivedAtNational = "Sample.dateFormReceivedAtNational";
 	String Sample_dateSpecimenSentToLab = "Sample.dateSpecimenSentToLab";
 	String Sample_sampleTests = "Sample.sampleTests";
+	String Sample_foodAvailableTesting = "Sample.foodAvailableTesting";
+	String Sample_specifyFoodsSources = "Sample.specifyFoodsSources";
+	String Sample_productName = "Sample.productName";
+	String Sample_batchNumber = "Sample.batchNumber";
+	String Sample_dateOfManufacture = "Sample.dateOfManufacture";
+	String Sample_expirationDate = "Sample.expirationDate";
+	String Sample_packageSize = "Sample.packageSize";
+	String Sample_packagingType = "Sample.packagingType";
+	String Sample_packagingTypeOther = "Sample.packagingTypeOther";
+	String Sample_placeOfPurchase = "Sample.placeOfPurchase";
+	String Sample_nameOfManufacturer = "Sample.nameOfManufacturer";
+	String Sample_address = "Sample.address";
+	String Sample_labTestConducted = "Sample.labTestConducted";
+
 
 
 	String Sample_laboratoryName = "Sample.laboratoryName";

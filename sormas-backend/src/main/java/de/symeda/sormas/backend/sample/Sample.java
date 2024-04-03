@@ -332,6 +332,19 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private Date dateResultsSentToClinician;
 	private Date dateSpecimenSentToLab;
 	private Long pathogenTestCount;
+	private YesNo foodAvailableTesting;
+	private String specifyFoodsSources;
+	private String productName;
+	private String batchNumber;
+	private Date dateOfManufacture;
+	private Date expirationDate;
+	private String packageSize;
+	private PackagingType packagingType;
+	private String packagingTypeOther;
+	private String placeOfPurchase;
+	private String nameOfManufacturer;
+	private String address;
+	private YesNo labTestConducted;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -1667,5 +1680,109 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setDateSpecimenSentToLab(Date dateSpecimenSentToLab) {
 		this.dateSpecimenSentToLab = dateSpecimenSentToLab;
+	}
+
+	public YesNo getFoodAvailableTesting() {
+		return foodAvailableTesting;
+	}
+
+	public void setFoodAvailableTesting(YesNo foodAvailableTesting) {
+		this.foodAvailableTesting = foodAvailableTesting;
+	}
+
+	public String getSpecifyFoodsSources() {
+		return specifyFoodsSources;
+	}
+
+	public void setSpecifyFoodsSources(String specifyFoodsSources) {
+		this.specifyFoodsSources = specifyFoodsSources;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public String getBatchNumber() {
+		return batchNumber;
+	}
+
+	public void setBatchNumber(String batchNumber) {
+		this.batchNumber = batchNumber;
+	}
+
+	public Date getDateOfManufacture() {
+		return dateOfManufacture;
+	}
+
+	public void setDateOfManufacture(Date dateOfManufacture) {
+		this.dateOfManufacture = dateOfManufacture;
+	}
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+
+	public String getPackageSize() {
+		return packageSize;
+	}
+
+	public void setPackageSize(String packageSize) {
+		this.packageSize = packageSize;
+	}
+
+	public PackagingType getPackagingType() {
+		return packagingType;
+	}
+
+	public void setPackagingType(PackagingType packagingType) {
+		this.packagingType = packagingType;
+	}
+
+	public String getPackagingTypeOther() {
+		return packagingTypeOther;
+	}
+
+	public void setPackagingTypeOther(String packagingTypeOther) {
+		this.packagingTypeOther = packagingTypeOther;
+	}
+
+	public String getPlaceOfPurchase() {
+		return placeOfPurchase;
+	}
+
+	public void setPlaceOfPurchase(String placeOfPurchase) {
+		this.placeOfPurchase = placeOfPurchase;
+	}
+
+	public String getNameOfManufacturer() {
+		return nameOfManufacturer;
+	}
+
+	public void setNameOfManufacturer(String nameOfManufacturer) {
+		this.nameOfManufacturer = nameOfManufacturer;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public YesNo getLabTestConducted() {
+		return labTestConducted;
+	}
+
+	public void setLabTestConducted(YesNo labTestConducted) {
+		this.labTestConducted = labTestConducted;
 	}
 }

@@ -121,7 +121,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +
                     fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_NATIONAL, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
 
-					fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
 					fluidRowLocs(SampleDto.SUSPECTED_DISEASE, SampleDto.DATE_LAB_RECEIVED_SPECIMEN) +
 					fluidRowLocs(SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.DATE_SPECIMEN_SENT_TO_LAB) +
                     fluidRowLocs(6,SampleDto.SAMPLE_MATERIAL) +
@@ -145,6 +144,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.SAMPLE_DISPATCH_MODE) +
 					fluidRowLocs(6,SampleDto.SAMPLE_DISPATCH_DATE) +
 					fluidRowLocs(SampleDto.RDT_PERFORMED, SampleDto.RDT_RESULTS) +
+					fluidRowLocs(SampleDto.FOOD_AVAILABLE_TESTING, SampleDto.SPECIFY_FOODS_SOURCES, SampleDto.LAB_TEST_CONDUCTED) +
+					fluidRowLocs(SampleDto.PRODUCT_NAME, SampleDto.BATCH_NUMBER) +
+					fluidRowLocs(SampleDto.DATE_OF_MANUFACTURE, SampleDto.EXPIRATION_DATE) +
+					fluidRowLocs(SampleDto.PACKAGE_SIZE, SampleDto.PACKAGING_TYPE, SampleDto.PACKAGING_TYPE_OTHER) +
+					fluidRowLocs(SampleDto.PLACE_OF_PURCHASE, SampleDto.NAME_OF_MANUFACTURER) +
+					fluidRowLocs(6,SampleDto.ADDRESS)+
 					fluidRowLocs(SampleDto.DISTRICT_NOTIFICATION_DATE, SampleDto.NAME_OF_PERSON, SampleDto.TEL_NUMBER) +
 					fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT) +
 					fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +
@@ -243,6 +248,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.DATE_FOLLOWUP_EXAM, SampleDto.RESIDUAL_ANALYSIS, SampleDto.RESULT_EXAM) +
 					fluidRowLocs(6,SampleDto.IMMUNOCOMPROMISED_STATUS_SUSPECTED) +
 					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION);
+//	Food Borne Illness
+
 
 
     //@formatter:on
@@ -298,8 +305,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		comment.setDescription(
 			I18nProperties.getPrefixDescription(SampleDto.I18N_PREFIX, SampleDto.COMMENT, "") + "\n"
 				+ I18nProperties.getDescription(Descriptions.descGdpr));
-		CheckBox check = addField(SampleDto.SHIPPED, CheckBox.class);
-
+		addField(SampleDto.SHIPPED, CheckBox.class);
 		addField(SampleDto.RECEIVED, CheckBox.class);
 
 		OptionGroup ipSampleSent = new OptionGroup("YesNo");
@@ -311,7 +317,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		}
 		addField(SampleDto.IPSAMPLESENT, ipSampleSent);
 
-		ComboBox ipSampleResults = addField(SampleDto.IPSAMPLERESULTS);
+		addField(SampleDto.IPSAMPLERESULTS);
 		testResultField = addField(SampleDto.PATHOGEN_TEST_RESULT, ComboBox.class);
 		testResultField.removeItem(PathogenTestResultType.NOT_DONE);
 		testResultField.removeItem(PathogenTestResultType.INDETERMINATE);
@@ -336,6 +342,24 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		addField(SampleDto.OTHER_DELETION_REASON, TextArea.class).setRows(3);
 		setVisible(false, SampleDto.DELETION_REASON, SampleDto.OTHER_DELETION_REASON);
 
+		addField(SampleDto.FOOD_AVAILABLE_TESTING, NullableOptionGroup.class);
+		addField(SampleDto.LAB_TEST_CONDUCTED, NullableOptionGroup.class);
+		addField(SampleDto.SPECIFY_FOODS_SOURCES, TextField.class);
+		addField(SampleDto.PRODUCT_NAME, TextField.class);
+		addField(SampleDto.BATCH_NUMBER, TextField.class);
+		addField(SampleDto.DATE_OF_MANUFACTURE, DateField.class);
+		addField(SampleDto.EXPIRATION_DATE, DateField.class);
+		addField(SampleDto.PACKAGE_SIZE, TextField.class);
+		addField(SampleDto.PACKAGING_TYPE, ComboBox.class);
+		addField(SampleDto.PACKAGING_TYPE_OTHER, TextField.class);
+		addField(SampleDto.PLACE_OF_PURCHASE, TextField.class);
+		addField(SampleDto.NAME_OF_MANUFACTURER, TextField.class);
+		addField(SampleDto.ADDRESS, TextField.class);
+
+		setVisible(false,
+				SampleDto.FOOD_AVAILABLE_TESTING, SampleDto.SPECIFY_FOODS_SOURCES, SampleDto.PRODUCT_NAME, SampleDto.BATCH_NUMBER, SampleDto.DATE_OF_MANUFACTURE, SampleDto.EXPIRATION_DATE, SampleDto.PACKAGE_SIZE,
+				SampleDto.PACKAGING_TYPE, SampleDto.PACKAGING_TYPE_OTHER, SampleDto.PLACE_OF_PURCHASE, SampleDto.NAME_OF_MANUFACTURER, SampleDto.ADDRESS, SampleDto.LAB_TEST_CONDUCTED);
+
 		diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
 			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
 
@@ -351,7 +375,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					break;
             }
 		});
-
 	}
 
 	protected void defaultValueChangeListener() {
@@ -649,25 +672,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		FieldHelper.updateEnumData(sampleTestsField, validValues);
 	}
 
-	private void updateSampleMaterialFields() {
-
-		boolean sampleMaterialsRequested = Boolean.TRUE.equals(sampleMaterialTestingField.getValue());
-		setVisible(sampleMaterialsRequested, SampleDto.REQUESTED_SAMPLE_MATERIALS);
-
-		getContent().getComponent(SAMPLE_MATERIAL_INFO_LOC).setVisible(sampleMaterialsRequested);
-
-		if (getValue() != null ) {
-			CssLayout requestedSampleMaterialsLayout = new CssLayout();
-			CssStyles.style(requestedSampleMaterialsLayout, VSPACE_3);
-			for (SampleMaterial sampleType : SampleMaterial.values()) {
-				Label testLabel = new Label(sampleType.toString());
-				testLabel.setWidthUndefined();
-				CssStyles.style(testLabel, CssStyles.LABEL_ROUNDED_CORNERS, CssStyles.LABEL_BACKGROUND_FOCUS_LIGHT, VSPACE_4, HSPACE_RIGHT_4);
-				requestedSampleMaterialsLayout.addComponent(testLabel);
-			}
-			getContent().addComponent(requestedSampleMaterialsLayout, SAMPLE_MATERIAL_INFO_LOC);
-		}
-	}
 
 	private void updateRequestedTestFields() {
 
@@ -708,9 +712,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		handleDisease(Disease.AHF, "Noguchi Memorial Institute for Medical Research");
 		handleDisease(Disease.DENGUE, "Noguchi Memorial Institute for Medical Research");
 		handleDisease(Disease.AFP, "Noguchi Memorial Institute for Medical Research");
-		handleDiseaseField(Disease.CSM);
-		handleDiseaseField(Disease.NEW_INFLUENZA);
-		handleDiseaseField(Disease.SARI);
+		handleDiseaseField(Disease.NEW_INFLUENZA, Disease.CSM, Disease.SARI, Disease.FOODBORNE_ILLNESS);
 
 		if (getValue() != null && canOnlyReadRequests) {
 			CssLayout requestedPathogenTestsLayout = new CssLayout();
@@ -742,24 +744,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	}
 
-	private void handleDisease(Disease targetDisease, String labName) {
-		if (disease == targetDisease) {
-			setVisibleAndCheckLab(labName, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.ADDITIONAL_TESTING_REQUESTED);
-		}
-	}
 
-	public void hideFieldsForSelectedDisease(Disease disease) {
-		Set<String> disabledFields = SampleFormConfiguration.getDisabledFieldsForDisease(disease);
-		for (String field : disabledFields) {
-			disableField(field);
-		}
-	}
-
-	private void handleDiseaseField(Disease targetDisease){
-		if (disease == targetDisease) {
-			setVisible(false, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.ADDITIONAL_TESTING_REQUESTED);
-		}
-	}
 
 
 	private void disableField(String field) {
@@ -773,7 +758,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		laboType.setRequired(true);
 
 		OptionGroup csfSampleCollected = addField(SampleDto.CSF_SAMPLE_COLLECTED, OptionGroup.class);
-		NullableOptionGroup csfReason = addField(SampleDto.CSF_REASON, NullableOptionGroup.class);
+		ComboBox csfReason = addField(SampleDto.CSF_REASON, ComboBox.class);
 		NullableOptionGroup appearanceOfCsf = addField(SampleDto.APPEARANCE_OF_CSF, NullableOptionGroup.class);
 		addField(SampleDto.INOCULATION_TIME_TRANSPORT_MEDIA, DateField.class);
 		OptionGroup sampleSentToLab = addField(SampleDto.SAMPLE_SENT_TO_LAB, OptionGroup.class);
@@ -1004,7 +989,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		setRequired(false, SampleDto.SAMPLE_PURPOSE);
 
-		setVisible(false, SampleDto.SAMPLE_PURPOSE, SampleDto.REQUESTED_SAMPLE_MATERIALS, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLE_MATERIAL_TEXT, SampleDto.SAMPLE_MATERIAL_REQUESTED, SampleDto.SHIPPED, SampleDto.RECEIVED, SampleDto.COMMENT, SampleDto.SAMPLE_TESTS, SampleDto.DISEASE, SampleDto.SAMPLING_REASON, SampleDto.IPSAMPLESENT, SampleDto.SAMPLE_MATERIAL, SampleDto.PATHOGEN_TEST_RESULT, SampleDto.SAMPLE_SOURCE);
+		setVisible(false, SampleDto.SAMPLE_PURPOSE, SampleDto.REQUESTED_SAMPLE_MATERIALS, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLE_MATERIAL_TEXT, SampleDto.SAMPLE_MATERIAL_REQUESTED, SampleDto.COMMENT, SampleDto.SAMPLE_TESTS, SampleDto.DISEASE, SampleDto.SAMPLING_REASON, SampleDto.IPSAMPLESENT, SampleDto.SAMPLE_MATERIAL, SampleDto.PATHOGEN_TEST_RESULT, SampleDto.SAMPLE_SOURCE);
 
 		suspectedDisease.setVisible(false);
 		labLocation.setVisible(false);
@@ -1019,7 +1004,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	private void handleAHF(){
 		setVisible(false,SampleDto.SAMPLE_SOURCE,
-				SampleDto.SAMPLE_PURPOSE,SampleDto.SAMPLING_REASON, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLE_MATERIAL_REQUESTED, SampleDto.SHIPPED, SampleDto.RECEIVED, SampleDto.COMMENT, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.REQUESTED_SAMPLE_MATERIALS);
+				SampleDto.SAMPLE_PURPOSE,SampleDto.SAMPLING_REASON, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLE_MATERIAL_REQUESTED, SampleDto.COMMENT, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.REQUESTED_SAMPLE_MATERIALS);
 
 		suspectedDisease.setVisible(false);
 		labLocation.setVisible(false);
@@ -1093,11 +1078,16 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	}
 
 	private void handleFBI(){
-		setPropertiesVisibility();
-		setVisible(false, SampleDto.SUSPECTED_DISEASE, SampleDto.LAB_LOCATION, SampleDto.DATE_LAB_RECEIVED_SPECIMEN, SampleDto.LABORATORY_SAMPLE_CONDITION, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.ADDITIONAL_TESTING_REQUESTED, SampleDto.LAB, SampleDto.DATE_SPECIMEN_SENT_TO_LAB, SampleDto.SAMPLE_MATERIAL, SampleDto.SAMPLE_DATE_TIME,SampleDto.SHIPPED, SampleDto.RECEIVED, SampleDto.ADDITIONAL_TESTING_REQUESTED, SampleDto.LAB);
+		//setPropertiesVisibility();
+		setVisible(false, SampleDto.SUSPECTED_DISEASE, SampleDto.LAB_LOCATION, SampleDto.DATE_LAB_RECEIVED_SPECIMEN, SampleDto.LABORATORY_SAMPLE_CONDITION, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.ADDITIONAL_TESTING_REQUESTED, SampleDto.DATE_SPECIMEN_SENT_TO_LAB, SampleDto.SAMPLE_MATERIAL, SampleDto.SAMPLE_DATE_TIME);
 
 		setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
-		hideFields();
+
+		setVisible(true,
+				SampleDto.FOOD_AVAILABLE_TESTING, SampleDto.SPECIFY_FOODS_SOURCES, SampleDto.PRODUCT_NAME, SampleDto.BATCH_NUMBER, SampleDto.DATE_OF_MANUFACTURE, SampleDto.EXPIRATION_DATE, SampleDto.PACKAGE_SIZE,
+				SampleDto.PACKAGING_TYPE, SampleDto.PACKAGING_TYPE_OTHER, SampleDto.PLACE_OF_PURCHASE, SampleDto.NAME_OF_MANUFACTURER, SampleDto.ADDRESS, SampleDto.LAB_TEST_CONDUCTED, SampleDto.SHIPPED);
+
+		addField(SampleDto.TEL_NUMBER);
 	}
 
 	private void addSampleDispatchFields() {
@@ -1198,13 +1188,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				SampleDto.SAMPLE_TESTS,
 				SampleDto.COMMENT,
 				SampleDto.PATHOGEN_TEST_RESULT,
-				SampleDto.SHIPPED,
-				SampleDto.SHIPMENT_DATE,
-				SampleDto.SHIPMENT_DETAILS,
-				SampleDto.RECEIVED,
-				SampleDto.RECEIVED_DATE,
-				SampleDto.LAB_SAMPLE_ID,
-				SampleDto.SPECIMEN_CONDITION,
 				SampleDto.NO_TEST_POSSIBLE_REASON,
 				CaseDataDto.DELETION_REASON,
 				CaseDataDto.OTHER_DELETION_REASON
@@ -1261,13 +1244,24 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		}
 	}
 
-	private void hideFields(){
-		for(Disease d : Disease.values()){
-			if(disease == d){
-				setVisible(false, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.ADDITIONAL_TESTING_REQUESTED, SampleDto.SHIPPED, SampleDto.RECEIVED);
-				lab.setVisible(false);
-				lab.setRequired(false);
+	private void handleDisease(Disease targetDisease, String labName) {
+		if (disease == targetDisease) {
+			setVisibleAndCheckLab(labName, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.ADDITIONAL_TESTING_REQUESTED);
+		}
+	}
+
+	private void handleDiseaseField(Disease ...targetDiseases){
+		for(Disease targetDisease : targetDiseases){
+			if(disease == targetDisease){
+				setVisible(false, SampleDto.PATHOGEN_TESTING_REQUESTED);
 			}
+		}
+	}
+
+	public void hideFieldsForSelectedDisease(Disease disease) {
+		Set<String> disabledFields = SampleFormConfiguration.getDisabledFieldsForDisease(disease);
+		for (String field : disabledFields) {
+			disableField(field);
 		}
 	}
 
