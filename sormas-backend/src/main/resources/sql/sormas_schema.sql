@@ -12983,6 +12983,12 @@ CREATE TABLE riskfactor (
 ALTER TABLE cases ADD COLUMN riskfactor_id BIGINT;
 INSERT INTO schema_version (version_number, comment) VALUES (565, 'Added riskfactor_id to cases');
 
+ALTER TABLE epidata ADD COLUMN exposedToRiskFactor VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN waterUsedByPatientAfterExposure VARCHAR(255);
+ALTER TABLE riskfactor ADD COLUMN vibrioCholeraeIdentifiedInStools VARCHAR(255);
+ALTER TABLE riskfactor ADD COLUMN drugsSensitiveToVibrioStrain VARCHAR(255);
+ALTER TABLE riskfactor ADD COLUMN drugsResistantToVibrioStrain VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (566, 'Added columns to epiData, riskfactor to implement patientVisitedHealthCareFacility #26');
 
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
