@@ -129,6 +129,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String HOSPITALIZATION = "hospitalization";
 	public static final String RISK_FACTOR = "riskFactor";
 	public static final String ILLNESS_INFO = "illnessInformation";
+	public static final String RISK_FACTOR = "riskFactor";
 	public static final String SIXTY_DAY = "sixtyDay";
 	public static final String FOOD_SAMPLE_TESTING = "foodSampleTesting";
 	public static final String EPI_DATA = "epiData";

@@ -616,6 +616,7 @@ public interface Strings {
 	String notifyInvestigate = "headingnotifyInvestigate";
 	String headingIndicateCategory = "headingIndicateCategory";
 	String headingPersonCompleting = "headingPersonCompleting";
+	String headingRiskFactor = "headingRiskFactor";
 	String headingFillThis = "headingFillThis";
 	String headingChildSeek = "headingChildSeek";
 	String headingHowToMergeCases = "headingHowToMergeCases";

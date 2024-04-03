@@ -19,6 +19,7 @@
 package de.symeda.sormas.backend.riskfactor;
 import de.symeda.sormas.api.riskfactor.DrinkingWaterSource;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -30,7 +31,6 @@ public class RiskFactor extends AbstractDomainObject {
     private static final long serialVersionUID = -8576270649634034245L;
 
     public static final String TABLE_NAME = "riskfactor";
-    public static final String TABLE_NAME = "riskfactors";
     private String drinkingWaterSourceOne;
     private String drinkingWaterSourceTwo;
     private String drinkingWaterSourceThree;
@@ -338,131 +338,134 @@ public class RiskFactor extends AbstractDomainObject {
     }
 
     public void setThreeDaysPriorToDiseaseAttendAnySocialEvent(YesNo threeDaysPriorToDiseaseAttendAnySocialEvent) {
+        this.threeDaysPriorToDiseaseAttendAnySocialEvent = threeDaysPriorToDiseaseAttendAnySocialEvent;
+    }
+
     public YesNoUnknown getDrinkingWaterInfectedByVibrio() {
         return drinkingWaterInfectedByVibrio;
     }
 
-    public void setDrinkingWaterInfectedByVibrio(YesNoUnknown drinkingWaterInfectedByVibrio) {
+    public void setDrinkingWaterInfectedByVibrio(YesNo drinkingWaterInfectedByVibrio) {
         this.drinkingWaterInfectedByVibrio = drinkingWaterInfectedByVibrio;
     }
-
-    public YesNoUnknown getNonDrinkingWaterInfectedByVibrio() {
+    @Enumerated(EnumType.STRING)
+    public YesNo getNonDrinkingWaterInfectedByVibrio() {
         return nonDrinkingWaterInfectedByVibrio;
     }
 
-    public void setNonDrinkingWaterInfectedByVibrio(YesNoUnknown nonDrinkingWaterInfectedByVibrio) {
+    public void setNonDrinkingWaterInfectedByVibrio(YesNo nonDrinkingWaterInfectedByVibrio) {
         this.nonDrinkingWaterInfectedByVibrio = nonDrinkingWaterInfectedByVibrio;
     }
 
-    public YesNoUnknown getFoodItemsInfectedByVibrio() {
+    public YesNo getFoodItemsInfectedByVibrio() {
         return foodItemsInfectedByVibrio;
     }
 
-    public void setFoodItemsInfectedByVibrio(YesNoUnknown foodItemsInfectedByVibrio) {
+    public void setFoodItemsInfectedByVibrio(YesNo foodItemsInfectedByVibrio) {
         this.foodItemsInfectedByVibrio = foodItemsInfectedByVibrio;
     }
 
-    public String getWaterUsedForDrinking() {
+    public DrinkingWaterSource getWaterUsedForDrinking() {
         return waterUsedForDrinking;
     }
 
-    public void setWaterUsedForDrinking(String waterUsedForDrinking) {
+    public void setWaterUsedForDrinking(DrinkingWaterSource waterUsedForDrinking) {
         this.waterUsedForDrinking = waterUsedForDrinking;
     }
 
-    public YesNoUnknown getThreeDaysPriorToDiseaseWaterSourceOne() {
+    public YesNo getThreeDaysPriorToDiseaseWaterSourceOne() {
         return threeDaysPriorToDiseaseWaterSourceOne;
     }
 
-    public void setThreeDaysPriorToDiseaseWaterSourceOne(YesNoUnknown threeDaysPriorToDiseaseWaterSourceOne) {
+    public void setThreeDaysPriorToDiseaseWaterSourceOne(YesNo threeDaysPriorToDiseaseWaterSourceOne) {
         this.threeDaysPriorToDiseaseWaterSourceOne = threeDaysPriorToDiseaseWaterSourceOne;
     }
 
-    public YesNoUnknown getThreeDaysPriorToDiseaseWaterSourceTwo() {
+    public YesNo getThreeDaysPriorToDiseaseWaterSourceTwo() {
         return threeDaysPriorToDiseaseWaterSourceTwo;
     }
 
-    public void setThreeDaysPriorToDiseaseWaterSourceTwo(YesNoUnknown threeDaysPriorToDiseaseWaterSourceTwo) {
+    public void setThreeDaysPriorToDiseaseWaterSourceTwo(YesNo threeDaysPriorToDiseaseWaterSourceTwo) {
         this.threeDaysPriorToDiseaseWaterSourceTwo = threeDaysPriorToDiseaseWaterSourceTwo;
     }
 
-    public YesNoUnknown getThreeDaysPriorToDiseaseWaterSourceThree() {
+    public YesNo getThreeDaysPriorToDiseaseWaterSourceThree() {
         return threeDaysPriorToDiseaseWaterSourceThree;
     }
 
-    public void setThreeDaysPriorToDiseaseWaterSourceThree(YesNoUnknown threeDaysPriorToDiseaseWaterSourceThree) {
+    public void setThreeDaysPriorToDiseaseWaterSourceThree(YesNo threeDaysPriorToDiseaseWaterSourceThree) {
         this.threeDaysPriorToDiseaseWaterSourceThree = threeDaysPriorToDiseaseWaterSourceThree;
     }
 
-    public YesNoUnknown getThreeDaysPriorToDiseaseWaterSourceFour() {
+    public YesNo getThreeDaysPriorToDiseaseWaterSourceFour() {
         return threeDaysPriorToDiseaseWaterSourceFour;
     }
 
-    public void setThreeDaysPriorToDiseaseWaterSourceFour(YesNoUnknown threeDaysPriorToDiseaseWaterSourceFour) {
+    public void setThreeDaysPriorToDiseaseWaterSourceFour(YesNo threeDaysPriorToDiseaseWaterSourceFour) {
         this.threeDaysPriorToDiseaseWaterSourceFour = threeDaysPriorToDiseaseWaterSourceFour;
     }
 
-    public YesNoUnknown getThreeDaysPriorToDiseaseWaterSourceFive() {
+    public YesNo getThreeDaysPriorToDiseaseWaterSourceFive() {
         return threeDaysPriorToDiseaseWaterSourceFive;
     }
 
-    public void setThreeDaysPriorToDiseaseWaterSourceFive(YesNoUnknown threeDaysPriorToDiseaseWaterSourceFive) {
+    public void setThreeDaysPriorToDiseaseWaterSourceFive(YesNo threeDaysPriorToDiseaseWaterSourceFive) {
         this.threeDaysPriorToDiseaseWaterSourceFive = threeDaysPriorToDiseaseWaterSourceFive;
     }
 
-    public YesNoUnknown getThreeDaysPriorToDiseaseFoodItemsOne() {
+    public YesNo getThreeDaysPriorToDiseaseFoodItemsOne() {
         return threeDaysPriorToDiseaseFoodItemsOne;
     }
 
-    public void setThreeDaysPriorToDiseaseFoodItemsOne(YesNoUnknown threeDaysPriorToDiseaseFoodItemsOne) {
+    public void setThreeDaysPriorToDiseaseFoodItemsOne(YesNo threeDaysPriorToDiseaseFoodItemsOne) {
         this.threeDaysPriorToDiseaseFoodItemsOne = threeDaysPriorToDiseaseFoodItemsOne;
     }
 
-    public YesNoUnknown getThreeDaysPriorToDiseaseFoodItemsTwo() {
+    public YesNo getThreeDaysPriorToDiseaseFoodItemsTwo() {
         return threeDaysPriorToDiseaseFoodItemsTwo;
     }
 
-    public void setThreeDaysPriorToDiseaseFoodItemsTwo(YesNoUnknown threeDaysPriorToDiseaseFoodItemsTwo) {
+    public void setThreeDaysPriorToDiseaseFoodItemsTwo(YesNo threeDaysPriorToDiseaseFoodItemsTwo) {
         this.threeDaysPriorToDiseaseFoodItemsTwo = threeDaysPriorToDiseaseFoodItemsTwo;
     }
 
-    public YesNoUnknown getThreeDaysPriorToDiseaseFoodItemsThree() {
+    public YesNo getThreeDaysPriorToDiseaseFoodItemsThree() {
         return threeDaysPriorToDiseaseFoodItemsThree;
     }
 
-    public void setThreeDaysPriorToDiseaseFoodItemsThree(YesNoUnknown threeDaysPriorToDiseaseFoodItemsThree) {
+    public void setThreeDaysPriorToDiseaseFoodItemsThree(YesNo threeDaysPriorToDiseaseFoodItemsThree) {
         this.threeDaysPriorToDiseaseFoodItemsThree = threeDaysPriorToDiseaseFoodItemsThree;
     }
 
-    public YesNoUnknown getThreeDaysPriorToDiseaseFoodItemsFour() {
+    public YesNo getThreeDaysPriorToDiseaseFoodItemsFour() {
         return threeDaysPriorToDiseaseFoodItemsFour;
     }
 
-    public void setThreeDaysPriorToDiseaseFoodItemsFour(YesNoUnknown threeDaysPriorToDiseaseFoodItemsFour) {
+    public void setThreeDaysPriorToDiseaseFoodItemsFour(YesNo threeDaysPriorToDiseaseFoodItemsFour) {
         this.threeDaysPriorToDiseaseFoodItemsFour = threeDaysPriorToDiseaseFoodItemsFour;
     }
 
-    public YesNoUnknown getThreeDaysPriorToDiseaseFoodItemsFive() {
+    public YesNo getThreeDaysPriorToDiseaseFoodItemsFive() {
         return threeDaysPriorToDiseaseFoodItemsFive;
     }
 
-    public void setThreeDaysPriorToDiseaseFoodItemsFive(YesNoUnknown threeDaysPriorToDiseaseFoodItemsFive) {
+    public void setThreeDaysPriorToDiseaseFoodItemsFive(YesNo threeDaysPriorToDiseaseFoodItemsFive) {
         this.threeDaysPriorToDiseaseFoodItemsFive = threeDaysPriorToDiseaseFoodItemsFive;
     }
 
-    public YesNoUnknown getThreeDaysPriorToDiseaseAttendAnyFuneral() {
+    public YesNo getThreeDaysPriorToDiseaseAttendAnyFuneral() {
         return threeDaysPriorToDiseaseAttendAnyFuneral;
     }
 
-    public void setThreeDaysPriorToDiseaseAttendAnyFuneral(YesNoUnknown threeDaysPriorToDiseaseAttendAnyFuneral) {
+    public void setThreeDaysPriorToDiseaseAttendAnyFuneral(YesNo threeDaysPriorToDiseaseAttendAnyFuneral) {
         this.threeDaysPriorToDiseaseAttendAnyFuneral = threeDaysPriorToDiseaseAttendAnyFuneral;
     }
 
-    public YesNoUnknown getThreeDaysPriorToDiseaseAttendAnySocialEvent() {
+    public YesNo getThreeDaysPriorToDiseaseAttendAnySocialEvent() {
         return threeDaysPriorToDiseaseAttendAnySocialEvent;
     }
 
-    public void setThreeDaysPriorToDiseaseAttendAnySocialEvent(YesNoUnknown threeDaysPriorToDiseaseAttendAnySocialEvent) {
+    public void setThreeDaysPriorToDiseaseAttendAnySocialEvent(YesNo threeDaysPriorToDiseaseAttendAnySocialEvent) {
         this.threeDaysPriorToDiseaseAttendAnySocialEvent = threeDaysPriorToDiseaseAttendAnySocialEvent;
     }
 

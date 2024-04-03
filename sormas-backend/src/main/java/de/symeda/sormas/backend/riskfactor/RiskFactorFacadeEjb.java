@@ -19,7 +19,7 @@ import javax.ejb.Stateless;
 public class RiskFactorFacadeEjb implements RiskFactorFacade {
 
     @EJB
-    private SixtyDayService service;
+    private RiskFactorService service;
     @EJB
     private CaseService caseService;
     @EJB

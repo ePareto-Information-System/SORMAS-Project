@@ -13862,7 +13862,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (581, 'Added 9 prope
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 -- VibrioRiskFactors create new table
-CREATE TABLE riskfactors (
+CREATE TABLE riskfactor (
     id BIGINT PRIMARY KEY NOT NULL,
     drinkingWaterSourceOne VARCHAR(255),
     drinkingWaterSourceTwo VARCHAR(255),
@@ -13911,8 +13911,11 @@ CREATE TABLE riskfactors (
 );
 
 ALTER TABLE cases ADD COLUMN riskfactors_id BIGINT;
+
 INSERT INTO schema_version (version_number, comment) VALUES (582, 'Added riskfactors_id to cases');
 
+ALTER TABLE cases ADD COLUMN riskfactor_id BIGINT;
 
+INSERT INTO schema_version (version_number, comment) VALUES (583, 'Added riskfactor_id to cases');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
