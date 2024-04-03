@@ -45,6 +45,9 @@ public class RiskFactorDto extends PseudonymizableDto {
     public static final String THREE_DAYS_PRIOR_TO_DISEASE_ATTEND_ANY_FUNERAL = "threeDaysPriorToDiseaseAttendAnyFuneral";
     public static final String THREE_DAYS_PRIOR_TO_DISEASE_ATTEND_ANY_SOCIAL_EVENT = "threeDaysPriorToDiseaseAttendAnySocialEvent";
     public static final String OTHER_SOCIAL_EVENT_DETAILS = "otherSocialEventDetails";
+    public static final String VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS = "vibrioCholeraeIdentifiedInStools";
+    public static final String DRUGS_SENSITIVE_TO_VIBRIO_STRAIN = "drugsSensitiveToVibrioStrain";
+    public static final String DRUGS_RESISTANT_TO_VIBRIO_STRAIN = "drugsResistantToVibrioStrain";
 
     private String drinkingWaterSourceOne;
     private String drinkingWaterSourceTwo;
@@ -79,6 +82,9 @@ public class RiskFactorDto extends PseudonymizableDto {
     private YesNo threeDaysPriorToDiseaseAttendAnyFuneral;
     private YesNo threeDaysPriorToDiseaseAttendAnySocialEvent;
     private String otherSocialEventDetails;
+    private YesNo vibrioCholeraeIdentifiedInStools;
+    private YesNo drugsSensitiveToVibrioStrain;
+    private YesNo drugsResistantToVibrioStrain;
 
     public static RiskFactorDto build() {
         RiskFactorDto riskFactorDto  = new RiskFactorDto();
@@ -350,4 +356,27 @@ public class RiskFactorDto extends PseudonymizableDto {
         this.otherSocialEventDetails = otherSocialEventDetails;
     }
 
+    public YesNo getVibrioCholeraeIdentifiedInStools() {
+        return vibrioCholeraeIdentifiedInStools;
+    }
+
+    public void setVibrioCholeraeIdentifiedInStools(YesNo vibrioCholeraeIdentifiedInStools) {
+        this.vibrioCholeraeIdentifiedInStools = vibrioCholeraeIdentifiedInStools;
+    }
+
+    public YesNo getDrugsSensitiveToVibrioStrain() {
+        return drugsSensitiveToVibrioStrain;
+    }
+
+    public void setDrugsSensitiveToVibrioStrain(YesNo drugsSensitiveToVibrioStrain) {
+        this.drugsSensitiveToVibrioStrain = drugsSensitiveToVibrioStrain;
+    }
+
+    public YesNo getDrugsResistantToVibrioStrain() {
+        return drugsResistantToVibrioStrain;
+    }
+
+    public void setDrugsResistantToVibrioStrain(YesNo drugsResistantToVibrioStrain) {
+        this.drugsResistantToVibrioStrain = drugsResistantToVibrioStrain;
+    }
 }
