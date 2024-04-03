@@ -94,7 +94,6 @@ public class SampleEditForm extends AbstractSampleForm {
 			} else {
 				getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
 			}
-			//fillPathogenTestResult();
 
 				fillPathogenTestResult();
 
@@ -117,6 +116,15 @@ public class SampleEditForm extends AbstractSampleForm {
 
 
 			fillPathogenTestResult();
+
+			getField(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS).setEnabled(false);
+			getField(SampleDto.REQUESTED_PATHOGEN_TESTS).setEnabled(false);
+			getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
+			getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
+			getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
+			getField(SampleDto.PATHOGEN_TESTING_REQUESTED).setEnabled(false);
+			getField(SampleDto.ADDITIONAL_TESTING_REQUESTED).setEnabled(false);
+
 			UserReferenceDto reportingUser = getValue().getReportingUser();
 //			if (!(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
 //				|| (reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid())))) {

@@ -13678,4 +13678,21 @@ ALTER TABLE epidata ADD COLUMN contactdate date;
 ALTER TABLE epidata ADD COLUMN specifyillness varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (600, 'Added exposure history for Food Borne illness ');
+
+-- 2024-04-02 Added food sample fields for Food Borne illness
+ALTER TABLE samples ADD COLUMN foodavailabletesting varchar(255);
+ALTER TABLE samples ADD COLUMN specifyfoodssources varchar(512);
+ALTER TABLE samples ADD COLUMN productname varchar(255);
+ALTER TABLE samples ADD COLUMN batchnumber varchar(255);
+ALTER TABLE samples ADD COLUMN dateofmanufacture DATE;
+ALTER TABLE samples ADD COLUMN expirationdate DATE;
+ALTER TABLE samples ADD COLUMN packagesize varchar(255);
+ALTER TABLE samples ADD COLUMN packagingtype varchar(255);
+ALTER TABLE samples ADD COLUMN packagingtypeother varchar(255);
+ALTER TABLE samples ADD COLUMN placeofpurchase varchar(255);
+ALTER TABLE samples ADD COLUMN nameofmanufacturer varchar(255);
+ALTER TABLE samples ADD COLUMN address varchar(255);
+ALTER TABLE samples ADD COLUMN labtestconducted varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (601, 'Added sample fields for Food Borne illness ');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
