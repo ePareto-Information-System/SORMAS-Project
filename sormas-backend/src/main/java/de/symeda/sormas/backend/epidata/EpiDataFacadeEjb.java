@@ -93,6 +93,22 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setContactIllPerson(source.getContactIllPerson());
 		target.setContactDate(source.getContactDate());
 		target.setSpecifyIllness(source.getSpecifyIllness());
+		target.setNameOfAffectedPerson(source.getNameOfAffectedPerson());
+		target.setNameOfAffectedPerson2(source.getNameOfAffectedPerson2());
+		target.setNameOfAffectedPerson3(source.getNameOfAffectedPerson3());
+		target.setNameOfAffectedPerson4(source.getNameOfAffectedPerson4());
+		target.setTelNo(source.getTelNo());
+		target.setTelNo2(source.getTelNo2());
+		target.setTelNo3(source.getTelNo3());
+		target.setTelNo4(source.getTelNo4());
+		target.setDateTime(source.getDateTime());
+		target.setDateTime2(source.getDateTime2());
+		target.setDateTime3(source.getDateTime3());
+		target.setDateTime4(source.getDateTime4());
+		target.setAge(source.getAge());
+		target.setAge2(source.getAge2());
+		target.setAge3(source.getAge3());
+		target.setAge4(source.getAge4());
 
 		List<Exposure> exposures = new ArrayList<>();
 		for (ExposureDto exposureDto : source.getExposures()) {
@@ -269,6 +285,22 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setContactIllPerson(source.getContactIllPerson());
 		target.setContactDate(source.getContactDate());
 		target.setSpecifyIllness(source.getSpecifyIllness());
+		target.setNameOfAffectedPerson(source.getNameOfAffectedPerson());
+		target.setNameOfAffectedPerson2(source.getNameOfAffectedPerson2());
+		target.setNameOfAffectedPerson3(source.getNameOfAffectedPerson3());
+		target.setNameOfAffectedPerson4(source.getNameOfAffectedPerson4());
+		target.setTelNo(source.getTelNo());
+		target.setTelNo2(source.getTelNo2());
+		target.setTelNo3(source.getTelNo3());
+		target.setTelNo4(source.getTelNo4());
+		target.setDateTime(source.getDateTime());
+		target.setDateTime2(source.getDateTime2());
+		target.setDateTime3(source.getDateTime3());
+		target.setDateTime4(source.getDateTime4());
+		target.setAge(source.getAge());
+		target.setAge2(source.getAge2());
+		target.setAge3(source.getAge3());
+		target.setAge4(source.getAge4());
 
 		List<ExposureDto> exposureDtos = new ArrayList<>();
 		for (Exposure exposure : source.getExposures()) {

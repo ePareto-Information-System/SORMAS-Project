@@ -433,6 +433,10 @@ public interface Strings {
 	String headingChangeCaseDisease = "headingChangeCaseDisease";
 	String headingChangePathogenTestResult = "headingChangePathogenTestResult";
 	String headingClinicalMeasurements = "headingClinicalMeasurements";
+	String headingFoodHistory = "headingFoodHistory";
+	String headingExposureHistory = "headingExposureHistory";
+	String headingOtherPersons = "headingOtherPersons";
+	String headingNumberOfPersonsAffected = "headingNumberOfPersonsAffected";
 	String headingClinicalHistory = "headingClinicalHistory";
 	String headingClinicalVisitsDeleted = "headingClinicalVisitsDeleted";
 	String headingComparisonCase = "headingComparisonCase";

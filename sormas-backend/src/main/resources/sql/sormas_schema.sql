@@ -12999,5 +12999,24 @@ INSERT INTO schema_version (version_number, comment) VALUES (572, 'Added exposur
 ALTER TABLE samples ADD COLUMN labtestconducted varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (573, 'Added labtestconducted for Food Borne illness ');
+
+ALTER TABLE epidata ADD COLUMN nameofaffectedperson varchar(255);
+ALTER TABLE epidata ADD COLUMN nameofaffectedperson2 varchar(255);
+ALTER TABLE epidata ADD COLUMN nameofaffectedperson3 varchar(512);
+ALTER TABLE epidata ADD COLUMN nameofaffectedperson4 varchar(255);
+ALTER TABLE epidata ADD COLUMN telno varchar(255);
+ALTER TABLE epidata ADD COLUMN telno2 varchar(255);
+ALTER TABLE epidata ADD COLUMN telno3 varchar(255);
+ALTER TABLE epidata ADD COLUMN telno4 varchar(255);
+ALTER TABLE epidata ADD COLUMN datetime DATE;
+ALTER TABLE epidata ADD COLUMN datetime2 DATE;
+ALTER TABLE epidata ADD COLUMN datetime3 DATE;
+ALTER TABLE epidata ADD COLUMN datetime4 DATE;
+ALTER TABLE epidata ADD COLUMN age varchar(255);
+ALTER TABLE epidata ADD COLUMN age2 varchar(255);
+ALTER TABLE epidata ADD COLUMN age3 varchar(255);
+ALTER TABLE epidata ADD COLUMN age4 varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (574, 'Added four columns in epidata for Food Borne illness ');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``
