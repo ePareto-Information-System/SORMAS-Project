@@ -86,6 +86,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					locCss(VSPACE_TOP_3, "") +
 					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_ONE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_TWO) +
 					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_THREE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_FOUR) +
+					fluidRowLocs(EpiDataDto.EXPOSED_TO_RISK_FACTOR + EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE)+
 					loc(EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY)+
 					loc(EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI)+
 					loc(EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI_CONTACT_SETTINGS)+
@@ -182,6 +183,9 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		addField(EpiDataDto.LARGE_OUTBREAKS_AREA, NullableOptionGroup.class);
 		addField(EpiDataDto.AREA_INFECTED_ANIMALS, NullableOptionGroup.class);
 		NullableOptionGroup ogContactWithSourceCaseKnown = addField(EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN, NullableOptionGroup.class);
+
+		addField(EpiDataDto.EXPOSED_TO_RISK_FACTOR, OptionGroup.class);
+		addField(EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE, ComboBox.class);
 
 		if (sourceContactsToggleCallback != null) {
 			ogContactWithSourceCaseKnown.addValueChangeListener(e -> {
@@ -296,6 +300,11 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 				}
 			});
 
+		}
+
+		if (disease == Disease.CHOLERA) {
+//			hideAllFields();
+			setVisible(true, EpiDataDto.EXPOSED_TO_RISK_FACTOR, EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE);
 		}
 
 	}

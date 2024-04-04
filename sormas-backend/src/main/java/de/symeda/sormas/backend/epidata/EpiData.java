@@ -25,6 +25,7 @@ import javax.persistence.*;
 //import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.epidata.ContactSetting;
+import de.symeda.sormas.api.riskfactor.DrinkingWaterSource;
 import de.symeda.sormas.api.utils.RiskFactorInfluenza;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -83,6 +84,9 @@ public class EpiData extends AbstractDomainObject {
 	private Set<ContactSetting> patientContactWithConfirmedCaseExposureLocations;
 	private String patientContactWithConfirmedCaseExposureLocationsString;
 	private String patientContactWithConfirmedCaseExposureLocationCityCountry;
+	private YesNo exposedToRiskFactor;
+	private DrinkingWaterSource waterUsedByPatientAfterExposure;
+
 
 	@Enumerated(EnumType.STRING)
 	public YesNo getExposureDetailsKnown() {
@@ -433,5 +437,23 @@ public class EpiData extends AbstractDomainObject {
 
 	public void setPatientContactWithConfirmedCaseExposureLocationCityCountry(String patientContactWithConfirmedCaseExposureLocationCityCountry) {
 		this.patientContactWithConfirmedCaseExposureLocationCityCountry = patientContactWithConfirmedCaseExposureLocationCityCountry;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNo getExposedToRiskFactor() {
+		return exposedToRiskFactor;
+	}
+
+	public void setExposedToRiskFactor(YesNo exposedToRiskFactor) {
+		this.exposedToRiskFactor = exposedToRiskFactor;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public DrinkingWaterSource getWaterUsedByPatientAfterExposure() {
+		return waterUsedByPatientAfterExposure;
+	}
+
+	public void setWaterUsedByPatientAfterExposure(DrinkingWaterSource waterUsedByPatientAfterExposure) {
+		this.waterUsedByPatientAfterExposure = waterUsedByPatientAfterExposure;
 	}
 }
