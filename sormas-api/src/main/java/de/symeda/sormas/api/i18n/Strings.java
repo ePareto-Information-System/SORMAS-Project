@@ -447,6 +447,10 @@ public interface Strings {
 	String headingChangePathogenTestResult = "headingChangePathogenTestResult";
 	String headingTakeNewTestForRubella = "headingTakeNewTestForRubella";
 	String headingClinicalMeasurements = "headingClinicalMeasurements";
+	String headingFoodHistory = "headingFoodHistory";
+	String headingExposureHistory = "headingExposureHistory";
+	String headingOtherPersons = "headingOtherPersons";
+	String headingNumberOfPersonsAffected = "headingNumberOfPersonsAffected";
 	String headingClinicalHistory = "headingClinicalHistory";
 	String headingClinicalVisitsDeleted = "headingClinicalVisitsDeleted";
 	String headingComparisonCase = "headingComparisonCase";

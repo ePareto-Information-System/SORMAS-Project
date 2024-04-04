@@ -73,6 +73,22 @@ public class EpiData extends AbstractDomainObject {
 	private YesNo contactIllPerson;
 	private Date contactDate;
 	private String specifyIllness;
+	private String nameOfAffectedPerson;
+	private String nameOfAffectedPerson2;
+	private String nameOfAffectedPerson3;
+	private String nameOfAffectedPerson4;
+	private String telNo;
+	private String telNo2;
+	private String telNo3;
+	private String telNo4;
+	private Date dateTime;
+	private Date dateTime2;
+	private Date dateTime3;
+	private Date dateTime4;
+	private String age;
+	private String age2;
+	private String age3;
+	private String age4;
 
 	private List<Exposure> exposures = new ArrayList<>();
 	private List<ActivityAsCase> activitiesAsCase = new ArrayList<>();
@@ -563,4 +579,124 @@ public class EpiData extends AbstractDomainObject {
 	public void setSpecifyIllness(String specifyIllness) {
 		this.specifyIllness = specifyIllness;
 	}
+
+	public String getNameOfAffectedPerson() {
+		return nameOfAffectedPerson;
+	}
+
+	public void setNameOfAffectedPerson(String nameOfAffectedPerson) {
+		this.nameOfAffectedPerson = nameOfAffectedPerson;
+	}
+
+	public String getNameOfAffectedPerson2() {
+		return nameOfAffectedPerson2;
+	}
+
+	public void setNameOfAffectedPerson2(String nameOfAffectedPerson2) {
+		this.nameOfAffectedPerson2 = nameOfAffectedPerson2;
+	}
+	public String getNameOfAffectedPerson3() {
+		return nameOfAffectedPerson3;
+	}
+
+	public void setNameOfAffectedPerson3(String nameOfAffectedPerson3) {
+		this.nameOfAffectedPerson3 = nameOfAffectedPerson3;
+	}
+	public String getNameOfAffectedPerson4() {
+		return nameOfAffectedPerson4;
+	}
+
+	public void setNameOfAffectedPerson4(String nameOfAffectedPerson4) {
+		this.nameOfAffectedPerson4 = nameOfAffectedPerson4;
+	}
+
+	public String getTelNo() {
+		return telNo;
+	}
+
+	public void setTelNo(String telNo) {
+		this.telNo = telNo;
+	}
+
+	public String getTelNo2() {
+		return telNo2;
+	}
+
+	public void setTelNo2(String telNo2) {
+		this.telNo2 = telNo2;
+	}
+	public String getTelNo3() {
+		return telNo3;
+	}
+
+	public void setTelNo3(String telNo3) {
+		this.telNo3 = telNo3;
+	}
+	public String getTelNo4() {
+		return telNo4;
+	}
+
+	public void setTelNo4(String telNo4) {
+		this.telNo4 = telNo4;
+	}
+	public Date getDateTime() {
+		return dateTime;
+	}
+
+	public void setDateTime(Date dateTime) {
+		this.dateTime = dateTime;
+	}
+
+	public Date getDateTime2() {
+		return dateTime2;
+	}
+
+	public void setDateTime2(Date dateTime2) {
+		this.dateTime2 = dateTime2;
+	}
+
+	public Date getDateTime3() {
+		return dateTime3;
+	}
+
+	public void setDateTime3(Date dateTime3) {
+		this.dateTime3 = dateTime3;
+	}
+
+	public Date getDateTime4() {
+		return dateTime4;
+	}
+
+	public void setDateTime4(Date dateTime4) {
+		this.dateTime4 = dateTime4;
+	}
+	public String getAge() {
+		return age;
+	}
+
+	public void setAge(String age) {
+		this.age = age;
+	}
+	public String getAge2() {
+		return age2;
+	}
+
+	public void setAge2(String age2) {
+		this.age2 = age;
+	}
+	public String getAge3() {
+		return age3;
+	}
+
+	public void setAge3(String age3) {
+		this.age3 = age3;
+	}
+	public String getAge4() {
+		return age4;
+	}
+
+	public void setAge4(String age4) {
+		this.age4 = age4;
+	}
+
 }
