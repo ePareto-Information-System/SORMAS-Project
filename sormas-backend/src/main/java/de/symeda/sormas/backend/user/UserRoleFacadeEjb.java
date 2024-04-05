@@ -230,7 +230,7 @@ public class UserRoleFacadeEjb implements UserRoleFacade {
 		UserRoleDto previousCheckedRole = null;
 		for (UserRoleDto userRole : roles) {
 			final JurisdictionLevel jurisdictionLevel = userRole.getJurisdictionLevel();
-			if (jurisdictionLevel != JurisdictionLevel.NONE && jurisdictionLevel != JurisdictionLevel.LABORATORY) {
+			if (jurisdictionLevel != JurisdictionLevel.NONE && jurisdictionLevel != JurisdictionLevel.LABORATORY && jurisdictionLevel != JurisdictionLevel.DISTRICT) {
 				if (previousCheckedRole != null && previousCheckedRole.getJurisdictionLevel() != jurisdictionLevel) {
 					throw new UserRoleDto.UserRoleValidationException(userRole, previousCheckedRole);
 				} else {
