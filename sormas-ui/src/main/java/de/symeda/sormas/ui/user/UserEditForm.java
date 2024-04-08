@@ -204,6 +204,7 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
 
 		final boolean usePointOfEntry = (isPortHealthUser && hasAssociatedDistrictUser) || jurisdictionLevel == JurisdictionLevel.POINT_OF_ENTRY;
 		final boolean useHealthFacility = jurisdictionLevel == JurisdictionLevel.HEALTH_FACILITY;
+		final boolean showHealthFacility = jurisdictionLevel == JurisdictionLevel.DISTRICT;
         final boolean useLaboratory = jurisdictionLevel == JurisdictionLevel.LABORATORY || jurisdictionLevel == JurisdictionLevel.EXTERNAL_LABORATORY;
 		final boolean useCommunity = jurisdictionLevel == JurisdictionLevel.COMMUNITY;
 		final boolean useDistrict = hasAssociatedDistrictUser || jurisdictionLevel == JurisdictionLevel.DISTRICT || useCommunity || useHealthFacility || usePointOfEntry;
@@ -224,18 +225,23 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
 		}
 
 		final ComboBox healthFacility = (ComboBox) getFieldGroup().getField(UserDto.HEALTH_FACILITY);
-		healthFacility.setVisible(hasOptionalHealthFacility || useHealthFacility);
+		healthFacility.setVisible(hasOptionalHealthFacility || useHealthFacility || showHealthFacility);
 
         //set to false here
         boolean isSurveillanceSupervisor = false;
+        boolean isContactOfficer = false;
         for (UserRoleReferenceDto role : userRolesFieldValue) {
             if (role.getCaption().equals("Surveillance Officer")) {
                 isSurveillanceSupervisor = true;
                 break;
             }
+            if (role.getCaption().equals("Contact Officer")) {
+                isContactOfficer = true;
+                break;
+            }
         }
 
-        if (isSurveillanceSupervisor) {
+        if (isSurveillanceSupervisor || isContactOfficer) {
             setRequired(false, UserDto.HEALTH_FACILITY);
         } else {
             setRequired(useHealthFacility, UserDto.HEALTH_FACILITY);

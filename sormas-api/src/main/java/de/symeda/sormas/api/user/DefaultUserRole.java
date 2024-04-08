@@ -149,7 +149,7 @@ public enum DefaultUserRole {
 					NotificationType.TASK_UPDATED_ASSIGNEE,
 					NotificationType.VISIT_COMPLETED,
 					NotificationType.CONTACT_SYMPTOMATIC)),
-	CONTACT_OFFICER(false, true, false, false, JurisdictionLevel.DISTRICT, Collections.emptyList(), Collections.emptyList()),
+	CONTACT_OFFICER(false, false, false, false, JurisdictionLevel.DISTRICT, Collections.emptyList(), Collections.emptyList()),
 	EVENT_OFFICER(true,
 			false,
 			false,
@@ -978,6 +978,7 @@ public enum DefaultUserRole {
 								SEE_SENSITIVE_DATA_IN_JURISDICTION,
 								SORMAS_REST,
 								SORMAS_UI));
+
 				break;
 			case HOSPITAL_INFORMANT:
 				userRights.addAll(
