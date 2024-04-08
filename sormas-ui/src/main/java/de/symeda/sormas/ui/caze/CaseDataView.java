@@ -117,47 +117,47 @@ public class CaseDataView extends AbstractCaseView {
 		final EditPermissionType caseEditAllowed = FacadeProvider.getCaseFacade().getEditPermissionType(uuid);
 		boolean isEditAllowed = isEditAllowed();
 
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.TASK_MANAGEMENT)
-				&& UserProvider.getCurrent().hasUserRight(UserRight.TASK_VIEW)) {
-			TaskListComponent taskList =
-					new TaskListComponent(TaskContext.CASE, getCaseRef(), caze.getDisease(), this::showUnsavedChangesPopup, isEditAllowed);
-			taskList.addStyleName(CssStyles.SIDE_COMPONENT);
-			layout.addSidePanelComponent(taskList, TASKS_LOC);
+		if(disease != Disease.FOODBORNE_ILLNESS) {
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.TASK_MANAGEMENT)
+					&& UserProvider.getCurrent().hasUserRight(UserRight.TASK_VIEW)) {
+				TaskListComponent taskList =
+						new TaskListComponent(TaskContext.CASE, getCaseRef(), caze.getDisease(), this::showUnsavedChangesPopup, isEditAllowed);
+				taskList.addStyleName(CssStyles.SIDE_COMPONENT);
+				layout.addSidePanelComponent(taskList, TASKS_LOC);
+			}
+
+			final boolean externalMessagesEnabled = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.MANUAL_EXTERNAL_MESSAGES);
+			final boolean isSmsServiceSetUp = FacadeProvider.getConfigFacade().isSmsServiceSetUp();
+			if (isSmsServiceSetUp && externalMessagesEnabled && UserProvider.getCurrent().hasUserRight(UserRight.SEND_MANUAL_EXTERNAL_MESSAGES)) {
+				SmsListComponent smsList = new SmsListComponent(getCaseRef(), caze.getPerson(), isEditAllowed);
+				smsList.addStyleName(CssStyles.SIDE_COMPONENT);
+				layout.addSidePanelComponent(smsList, SMS_LOC);
+			}
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SAMPLES_LAB)
+					&& UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)
+					&& !caze.checkIsUnreferredPortHealthCase()) {
+				SampleListComponent sampleList = new SampleListComponent(
+						new SampleCriteria().caze(getCaseRef()).sampleAssociationType(SampleAssociationType.CASE).disease(caze.getDisease()),
+						this::showUnsavedChangesPopup,
+						isEditAllowed);
+				SampleListComponentLayout sampleListComponentLayout =
+						new SampleListComponentLayout(sampleList, I18nProperties.getString(Strings.infoCreateNewSampleDiscardsChangesCase), isEditAllowed);
+				layout.addSidePanelComponent(sampleListComponentLayout, SAMPLES_LOC);
+			}
+
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EVENT_SURVEILLANCE)
+					&& UserProvider.getCurrent().hasUserRight(UserRight.EVENT_VIEW)) {
+				VerticalLayout eventLayout = new VerticalLayout();
+				eventLayout.setMargin(false);
+				eventLayout.setSpacing(false);
+
+				EventListComponent eventList = new EventListComponent(getCaseRef(), this::showUnsavedChangesPopup, isEditAllowed);
+				eventList.addStyleName(CssStyles.SIDE_COMPONENT);
+				eventLayout.addComponent(eventList);
+				layout.addSidePanelComponent(eventLayout, EVENTS_LOC);
+			}
 		}
-
-		final boolean externalMessagesEnabled = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.MANUAL_EXTERNAL_MESSAGES);
-		final boolean isSmsServiceSetUp = FacadeProvider.getConfigFacade().isSmsServiceSetUp();
-		if (isSmsServiceSetUp && externalMessagesEnabled && UserProvider.getCurrent().hasUserRight(UserRight.SEND_MANUAL_EXTERNAL_MESSAGES)) {
-			SmsListComponent smsList = new SmsListComponent(getCaseRef(), caze.getPerson(), isEditAllowed);
-			smsList.addStyleName(CssStyles.SIDE_COMPONENT);
-			layout.addSidePanelComponent(smsList, SMS_LOC);
-		}
-
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SAMPLES_LAB)
-				&& UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)
-				&& !caze.checkIsUnreferredPortHealthCase()) {
-			SampleListComponent sampleList = new SampleListComponent(
-					new SampleCriteria().caze(getCaseRef()).sampleAssociationType(SampleAssociationType.CASE).disease(caze.getDisease()),
-					this::showUnsavedChangesPopup,
-					isEditAllowed);
-			SampleListComponentLayout sampleListComponentLayout =
-					new SampleListComponentLayout(sampleList, I18nProperties.getString(Strings.infoCreateNewSampleDiscardsChangesCase), isEditAllowed);
-			layout.addSidePanelComponent(sampleListComponentLayout, SAMPLES_LOC);
-		}
-
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EVENT_SURVEILLANCE)
-				&& UserProvider.getCurrent().hasUserRight(UserRight.EVENT_VIEW)) {
-			VerticalLayout eventLayout = new VerticalLayout();
-			eventLayout.setMargin(false);
-			eventLayout.setSpacing(false);
-
-			EventListComponent eventList = new EventListComponent(getCaseRef(), this::showUnsavedChangesPopup, isEditAllowed);
-			eventList.addStyleName(CssStyles.SIDE_COMPONENT);
-			eventLayout.addComponent(eventList);
-			layout.addSidePanelComponent(eventLayout, EVENTS_LOC);
-		}
-
-		if (disease != Disease.CSM) {
+		if (disease != Disease.CSM && disease != Disease.FOODBORNE_ILLNESS) {
 			if (UserProvider.getCurrent().hasUserRight(UserRight.IMMUNIZATION_VIEW)
 					&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.IMMUNIZATION_MANAGEMENT)) {
 				if (!FacadeProvider.getFeatureConfigurationFacade()
