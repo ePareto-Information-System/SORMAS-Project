@@ -565,7 +565,10 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			personCreateForm.updatePresentConditionEnum((Disease) valueChangeEvent.getProperty().getValue());
 
 			if (diseaseField.getValue() != null && diseaseField.getValue() == Disease.FOODBORNE_ILLNESS) {
-				personCreateForm.hidePresentCondition();
+				personCreateForm.hideFields();
+				placeOfStayHeadingLabel.setVisible(false);
+				ogCaseOrigin.setReadOnly(true);
+				setVisible(false, FACILITY_OR_HOME_LOC, DIFFERENT_PLACE_OF_STAY_JURISDICTION);
 			}
 			else{
 				personCreateForm.showPresentCondition();
@@ -761,15 +764,5 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		personCreateForm.setSearchedPerson(searchedPerson);
 	}
 
-	private static final Disease[] caseDiseases = {Disease.MEASLES, Disease.YELLOW_FEVER, Disease.CSM, Disease.AHF, Disease.AFP};
-
-	private boolean isCaseDisease(Disease disease) {
-		for (Disease caseDisease : caseDiseases) {
-			if (disease == caseDisease) {
-				return true;
-			}
-		}
-		return false;
-	}
 }
 
