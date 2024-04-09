@@ -1491,7 +1491,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 			//YELLOW FEVER
 			if (disease == Disease.YELLOW_FEVER) {
-
 				nationalLevelDate.setVisible(true);
 				setVaccinatedByCardOrHistoryVisibility();
 			}
@@ -1519,6 +1518,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			if (CaseDataDto.HOSPITALIZATION == null) {
 					caseOutcome.setEnabled(false);
 					caseOutcome.setRequired(false);
+			}
+			if(disease ==Disease.FOODBORNE_ILLNESS){
+				placeOfStayHeadingLabel.setVisible(false);
 			}
 		});
 	}
