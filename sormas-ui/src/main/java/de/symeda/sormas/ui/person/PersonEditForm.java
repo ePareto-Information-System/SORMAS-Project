@@ -734,6 +734,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 			setVisible(true, PersonDto.PLACE_OF_BIRTH_REGION, PersonDto.PLACE_OF_BIRTH_DISTRICT, PersonDto.PLACE_OF_BIRTH_COMMUNITY, PersonDto.PLACE_OF_BIRTH_FACILITY_TYPE, PersonDto.PLACE_OF_BIRTH_FACILITY, PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS);
 		}
+		if(disease == Disease.FOODBORNE_ILLNESS){
+			addressHeader.setVisible(false);
+		}
 
 	}
 

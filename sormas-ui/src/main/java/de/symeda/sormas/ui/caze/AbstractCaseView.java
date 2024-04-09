@@ -160,7 +160,12 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 			|| !caze.getDisease().usesSimpleViewForOutbreaks()
 			|| viewConfiguration.getViewMode() != ViewMode.SIMPLE;
 		if (showExtraMenuEntries) {
-			menu.addView(CasePersonView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.PERSON), params);
+			if(caze.getDisease() != Disease.FOODBORNE_ILLNESS){
+				menu.addView(CasePersonView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.PERSON), params);
+			}
+			else{
+				menu.addView(CasePersonView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.PATIENT_CLIENT), params);
+			}
 			if (caze.getDisease() == Disease.CONGENITAL_RUBELLA) {
 				menu.addView(
 					MaternalHistoryView.VIEW_NAME,
@@ -209,8 +214,10 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 					I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.PORT_HEALTH_INFO),
 					params);
 			}
-			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_SYMPTOMS)) {
-				menu.addView(CaseSymptomsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.SYMPTOMS), params);
+			if(caze.getDisease() != Disease.FOODBORNE_ILLNESS) {
+				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_SYMPTOMS)) {
+					menu.addView(CaseSymptomsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.SYMPTOMS), params);
+				}
 			}
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_EPIDEMIOLOGICAL_DATA)
 				&& caze.getDisease() != Disease.CONGENITAL_RUBELLA) {
