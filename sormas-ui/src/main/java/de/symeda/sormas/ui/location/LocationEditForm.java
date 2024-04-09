@@ -129,7 +129,6 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private ComboBox addressType;
 	private ComboBoxWithPlaceholder facilityTypeGroup;
 	private ComboBox facilityType;
-	private ComboBox dhimsFacilityType;
 	private ComboBox facility;
 	private TextField facilityDetails;
 	private ComboBox continent;
@@ -950,7 +949,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	}
 
 	public void handleFBI(){
-		setVisible(false, LocationDto.LOCALITY, LocationDto.AREA_TYPE);
+		setVisible(false, LocationDto.LOCALITY, LocationDto.AREA_TYPE, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY, LocationDto.HOUSE_NUMBER, LocationDto.CITY, LocationDto.POSTAL_CODE);
 	}
 
 }

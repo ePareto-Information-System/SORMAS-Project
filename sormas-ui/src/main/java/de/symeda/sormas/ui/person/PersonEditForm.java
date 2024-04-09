@@ -682,6 +682,10 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 		}
 
+		if(disease == Disease.FOODBORNE_ILLNESS){
+			addressHeader.setVisible(false);
+		}
+
 	}
 
 	public void hideFieldsForSelectedDisease(Disease disease) {
