@@ -494,8 +494,8 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	public void hidePassportNumber(){
 		setVisible(false, PersonDto.PASSPORT_NUMBER);
 	}
-	public void hidePresentCondition(){
-		setVisible(false, PersonDto.PRESENT_CONDITION);
+	public void hideFields(){
+		setVisible(false, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PRESENT_CONDITION, PersonDto.EMAIL_ADDRESS, PersonDto.PHONE);
 	}
 	public void showPresentCondition(){
 		setVisible(true, PersonDto.PRESENT_CONDITION);
