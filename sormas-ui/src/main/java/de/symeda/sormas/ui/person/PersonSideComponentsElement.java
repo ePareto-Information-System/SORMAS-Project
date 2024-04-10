@@ -5,14 +5,21 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.vaadin.server.Sizeable;
+import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.CustomLayout;
 
 import de.symeda.sormas.api.CountryHelper;
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseListEntryDto;
+import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.common.CoreEntityType;
 import de.symeda.sormas.api.contact.ContactListEntryDto;
+import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.event.EventParticipantListEntryDto;
+import de.symeda.sormas.api.event.EventParticipantReferenceDto;
+import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.feature.FeatureTypeProperty;
 import de.symeda.sormas.api.immunization.ImmunizationListCriteria;
@@ -84,6 +91,7 @@ public interface PersonSideComponentsElement {
 		return layout;
 	}
 
+
 	default void addSideComponents(
 		CustomLayout layout,
 		CoreEntityType entityType,
@@ -96,102 +104,105 @@ public interface PersonSideComponentsElement {
 		CaseListComponent caseListComponent = null;
 		ContactListComponent contactListComponent = null;
 		EventParticipantListComponent eventParticipantListComponent = null;
+		Disease personDataView = FacadeProvider.getCaseFacade().getCaseDataByUuid(entityUuid).getDisease();
 
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
-			&& currentUser != null
-			&& currentUser.hasUserRight(UserRight.CASE_VIEW)) {
-			caseListComponent =
-				new CaseListComponent(person, entityType == CoreEntityType.CASE ? entityUuid : null, showUnsavedChangesPopup, isEditAllowed);
-			layout.addComponent(new SideComponentLayout(caseListComponent), CASES_LOC);
-		}
+		if (personDataView != null && !personDataView.name().equals(Disease.FOODBORNE_ILLNESS.toString().toUpperCase())) {
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
+					&& currentUser != null
+					&& currentUser.hasUserRight(UserRight.CASE_VIEW)) {
+				caseListComponent =
+						new CaseListComponent(person, entityType == CoreEntityType.CASE ? entityUuid : null, showUnsavedChangesPopup, isEditAllowed);
+				layout.addComponent(new SideComponentLayout(caseListComponent), CASES_LOC);
+			}
 
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CONTACT_TRACING)
-			&& currentUser != null
-			&& currentUser.hasUserRight(UserRight.CONTACT_VIEW)) {
-			contactListComponent =
-				new ContactListComponent(person, entityType == CoreEntityType.CONTACT ? entityUuid : null, showUnsavedChangesPopup, isEditAllowed);
-			layout.addComponent(new SideComponentLayout(contactListComponent), CONTACTS_LOC);
-		}
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CONTACT_TRACING)
+					&& currentUser != null
+					&& currentUser.hasUserRight(UserRight.CONTACT_VIEW)) {
+				contactListComponent =
+						new ContactListComponent(person, entityType == CoreEntityType.CONTACT ? entityUuid : null, showUnsavedChangesPopup, isEditAllowed);
+				layout.addComponent(new SideComponentLayout(contactListComponent), CONTACTS_LOC);
+			}
 
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EVENT_SURVEILLANCE)
-			&& currentUser != null
-			&& currentUser.hasUserRight(UserRight.EVENT_VIEW)
-			&& currentUser.hasUserRight(UserRight.EVENTPARTICIPANT_VIEW)) {
-			eventParticipantListComponent = new EventParticipantListComponent(
-				person,
-				entityType == CoreEntityType.EVENT_PARTICIPANT ? entityUuid : null,
-				showUnsavedChangesPopup,
-				isEditAllowed);
-			layout.addComponent(new SideComponentLayout(eventParticipantListComponent), EVENT_PARTICIPANTS_LOC);
-		}
-
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SAMPLES_LAB)
-			&& currentUser != null
-			&& currentUser.hasUserRight(UserRight.SAMPLE_VIEW)
-			//restricts the sample component to be shown only on Person View
-			&& getClass().equals(PersonDataView.class)) {
-
-			List<String> caseList = caseListComponent == null
-				? null
-				: caseListComponent.getEntries().stream().map(CaseListEntryDto::getUuid).collect(Collectors.toList());
-
-			List<String> contactList = contactListComponent == null
-				? null
-				: contactListComponent.getEntries().stream().map(ContactListEntryDto::getUuid).collect(Collectors.toList());
-
-			List<String> eventParticipantList = eventParticipantListComponent == null
-				? null
-				: eventParticipantListComponent.getEntries().stream().map(EventParticipantListEntryDto::getUuid).collect(Collectors.toList());
-
-			SampleCriteria sampleCriteria = new SampleCriteria();
-			sampleCriteria.caseUuids(caseList)
-				.contactUuids(contactList)
-				.eventParticipantUuids(eventParticipantList)
-				.sampleAssociationType(SampleAssociationType.PERSON);
-
-			SampleListComponent sampleList = new SampleListComponent(sampleCriteria, showUnsavedChangesPopup, isEditAllowed);
-			SampleListComponentLayout sampleListComponentLayout = new SampleListComponentLayout(sampleList, null, isEditAllowed);
-			layout.addComponent(sampleListComponentLayout, SAMPLES_LOC);
-		}
-
-		if (FacadeProvider.getConfigFacade().isConfiguredCountry(CountryHelper.COUNTRY_CODE_GERMANY)
-			&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.TRAVEL_ENTRIES)
-			&& currentUser != null
-			&& currentUser.hasUserRight(UserRight.TRAVEL_ENTRY_VIEW)) {
-			TravelEntryListCriteria travelEntryListCriteria = new TravelEntryListCriteria.Builder().withPerson(person).build();
-			layout.addComponent(
-				new SideComponentLayout(
-					new TravelEntryListComponent(
-						travelEntryListCriteria,
-						entityType == CoreEntityType.TRAVEL_ENTRY ? entityUuid : null,
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EVENT_SURVEILLANCE)
+					&& currentUser != null
+					&& currentUser.hasUserRight(UserRight.EVENT_VIEW)
+					&& currentUser.hasUserRight(UserRight.EVENTPARTICIPANT_VIEW)) {
+				eventParticipantListComponent = new EventParticipantListComponent(
+						person,
+						entityType == CoreEntityType.EVENT_PARTICIPANT ? entityUuid : null,
 						showUnsavedChangesPopup,
-						isEditAllowed)),
-				TRAVEL_ENTRIES_LOC);
-		}
+						isEditAllowed);
+				layout.addComponent(new SideComponentLayout(eventParticipantListComponent), EVENT_PARTICIPANTS_LOC);
+			}
 
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.IMMUNIZATION_MANAGEMENT)
-			&& currentUser != null
-			&& currentUser.hasUserRight(UserRight.IMMUNIZATION_VIEW)) {
-			if (!FacadeProvider.getFeatureConfigurationFacade()
-				.isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SAMPLES_LAB)
+					&& currentUser != null
+					&& currentUser.hasUserRight(UserRight.SAMPLE_VIEW)
+					//restricts the sample component to be shown only on Person View
+					&& getClass().equals(PersonDataView.class)) {
+
+				List<String> caseList = caseListComponent == null
+						? null
+						: caseListComponent.getEntries().stream().map(CaseListEntryDto::getUuid).collect(Collectors.toList());
+
+				List<String> contactList = contactListComponent == null
+						? null
+						: contactListComponent.getEntries().stream().map(ContactListEntryDto::getUuid).collect(Collectors.toList());
+
+				List<String> eventParticipantList = eventParticipantListComponent == null
+						? null
+						: eventParticipantListComponent.getEntries().stream().map(EventParticipantListEntryDto::getUuid).collect(Collectors.toList());
+
+				SampleCriteria sampleCriteria = new SampleCriteria();
+				sampleCriteria.caseUuids(caseList)
+						.contactUuids(contactList)
+						.eventParticipantUuids(eventParticipantList)
+						.sampleAssociationType(SampleAssociationType.PERSON);
+
+				SampleListComponent sampleList = new SampleListComponent(sampleCriteria, showUnsavedChangesPopup, isEditAllowed);
+				SampleListComponentLayout sampleListComponentLayout = new SampleListComponentLayout(sampleList, null, isEditAllowed);
+				layout.addComponent(sampleListComponentLayout, SAMPLES_LOC);
+			}
+
+			if (FacadeProvider.getConfigFacade().isConfiguredCountry(CountryHelper.COUNTRY_CODE_GERMANY)
+					&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.TRAVEL_ENTRIES)
+					&& currentUser != null
+					&& currentUser.hasUserRight(UserRight.TRAVEL_ENTRY_VIEW)) {
+				TravelEntryListCriteria travelEntryListCriteria = new TravelEntryListCriteria.Builder().withPerson(person).build();
 				layout.addComponent(
-					new SideComponentLayout(
-						new ImmunizationListComponent(
-							() -> new ImmunizationListCriteria.Builder(person).build(),
-							entityType == CoreEntityType.IMMUNIZATION ? entityUuid : null,
-							showUnsavedChangesPopup,
-							isEditAllowed)),
-					IMMUNIZATION_LOC);
-			} else {
-				layout.addComponent(
-					new SideComponentLayout(
-						new VaccinationListComponent(
-							() -> new VaccinationCriteria.Builder(person).build(),
-							entityType == CoreEntityType.IMMUNIZATION ? entityUuid : null,
-							showUnsavedChangesPopup,
-							false,
-							isEditAllowed)),
-					VACCINATIONS_LOC);
+						new SideComponentLayout(
+								new TravelEntryListComponent(
+										travelEntryListCriteria,
+										entityType == CoreEntityType.TRAVEL_ENTRY ? entityUuid : null,
+										showUnsavedChangesPopup,
+										isEditAllowed)),
+						TRAVEL_ENTRIES_LOC);
+			}
+
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.IMMUNIZATION_MANAGEMENT)
+					&& currentUser != null
+					&& currentUser.hasUserRight(UserRight.IMMUNIZATION_VIEW)) {
+				if (!FacadeProvider.getFeatureConfigurationFacade()
+						.isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
+					layout.addComponent(
+							new SideComponentLayout(
+									new ImmunizationListComponent(
+											() -> new ImmunizationListCriteria.Builder(person).build(),
+											entityType == CoreEntityType.IMMUNIZATION ? entityUuid : null,
+											showUnsavedChangesPopup,
+											isEditAllowed)),
+							IMMUNIZATION_LOC);
+				} else {
+					layout.addComponent(
+							new SideComponentLayout(
+									new VaccinationListComponent(
+											() -> new VaccinationCriteria.Builder(person).build(),
+											entityType == CoreEntityType.IMMUNIZATION ? entityUuid : null,
+											showUnsavedChangesPopup,
+											false,
+											isEditAllowed)),
+							VACCINATIONS_LOC);
+				}
 			}
 		}
 	}

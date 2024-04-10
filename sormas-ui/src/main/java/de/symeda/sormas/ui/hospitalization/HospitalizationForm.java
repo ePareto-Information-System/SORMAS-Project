@@ -20,14 +20,15 @@ import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_TOP_3;
 import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.sample.SampleDto;
+import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.utils.YesNo;
 
 import com.vaadin.server.ErrorMessage;
@@ -61,13 +62,8 @@ import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
-import de.symeda.sormas.ui.utils.AbstractEditForm;
-import de.symeda.sormas.ui.utils.CssStyles;
-import de.symeda.sormas.ui.utils.DateComparisonValidator;
-import de.symeda.sormas.ui.utils.FieldHelper;
-import de.symeda.sormas.ui.utils.NullableOptionGroup;
-import de.symeda.sormas.ui.utils.OutbreakFieldVisibilityChecker;
-import de.symeda.sormas.ui.utils.ViewMode;
+import de.symeda.sormas.ui.caze.CaseFormConfiguration;
+import de.symeda.sormas.ui.utils.*;
 
 public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
@@ -99,7 +95,11 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 
 	private static final String HEALTH_FACILITY_DISTRICT = Captions.CaseHospitalization_healthFacilityDistrict;
+	public static final String HEALTH_FACILITY = Captions.CaseHospitalization_healthFacility;
+	public static final String HEALTH_FACILITY_DISTRICT = Captions.CaseHospitalization_healthFacilityDistrict;
 	private static final String HOSPITAL_NAME_DETAIL = " ( %s )";
+	private static final String SYMPTOMS_HEADING_LOC = " symptomsHeading";
+	OptionGroup tickSymptomField;
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(HOSPITALIZATION_HEADING_LOC) +
@@ -132,6 +132,11 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					fluidRowLocs(HospitalizationDto.INVESTIGATOR_TITLE, HospitalizationDto.INVESTIGATOR_UNIT) +
 					fluidRowLocs(HospitalizationDto.INVESTIGATOR_ADDRESS, HospitalizationDto.INVESTIGATOR_TEL);
 
+			loc(SYMPTOMS_HEADING_LOC) +
+			fluidRowLocs(HospitalizationDto.SYMPTOMS_SELECTED)+
+			fluidRowLocs(6,HospitalizationDto.OTHER_SYMPTOM_SELECTED)+
+			fluidRowLocs(HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING)+
+			fluidRowLocs(6, HospitalizationDto.DURATION_HOURS)+
 			fluidRowLocs(HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.NAME_OF_FACILITY)+
 			fluidRowLocs(HospitalizationDto.LOCATION_ADDRESS, HospitalizationDto.DATE_OF_VISIT_HOSPITAL)+
 			fluidRowLocs(6, HospitalizationDto.PHYSICIAN_NUMBER)+
@@ -184,6 +189,11 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		Label previousHospitalizationsHeadingLabel = new Label(I18nProperties.getString(Strings.headingPreviousHospitalizations));
 		previousHospitalizationsHeadingLabel.addStyleName(H3);
 		getContent().addComponent(previousHospitalizationsHeadingLabel, PREVIOUS_HOSPITALIZATIONS_HEADING_LOC);
+
+		Label symptomsHeadingLabel = new Label(I18nProperties.getString(Strings.headingSymptoms));
+		symptomsHeadingLabel.addStyleName(H3);
+		getContent().addComponent(symptomsHeadingLabel, SYMPTOMS_HEADING_LOC);
+		symptomsHeadingLabel.setVisible(false);
 
 		TextField districtField = addCustomField(HEALTH_FACILITY_DISTRICT, DistrictReferenceDto.class, TextField.class);
 		DistrictReferenceDto districtReferenceDto = caze.getResponsibleDistrict();
@@ -271,8 +281,23 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		TextField typeOfSampleField = addField(HospitalizationDto.TYPE_OF_SAMPLE, TextField.class);
 		TextField agentIdentifiedField = addField(HospitalizationDto.AGENT_IDENTIFIED, TextField.class);
 
+		tickSymptomField = addField(HospitalizationDto.SYMPTOMS_SELECTED, OptionGroup.class);
+		CssStyles.style(tickSymptomField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+		tickSymptomField.setMultiSelect(true);
+		addField(HospitalizationDto.OTHER_SYMPTOM_SELECTED, TextField.class);
+		addField(HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, DateTimeField.class);
+		addField(HospitalizationDto.SYMPTOMS_ONGOING, NullableOptionGroup.class);
+		addField(HospitalizationDto.DURATION_HOURS, ComboBox.class);
+
+		tickSymptomField.addItems(
+				Arrays.stream(SymptomsList.values())
+						.filter( c -> fieldVisibilityCheckers.isVisible(SymptomsList.class, c.name()))
+						.collect(Collectors.toList()));
+
+		tickSymptomField.setVisible(false);
+
 		setVisible(false, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.NAME_OF_FACILITY, HospitalizationDto.LOCATION_ADDRESS, HospitalizationDto.DATE_OF_VISIT_HOSPITAL,
-				HospitalizationDto.PHYSICIAN_NAME, HospitalizationDto.PHYSICIAN_NUMBER, HospitalizationDto.LAB_TEST_CONDUCTED, HospitalizationDto.TYPE_OF_SAMPLE, HospitalizationDto.AGENT_IDENTIFIED);
+				HospitalizationDto.PHYSICIAN_NAME, HospitalizationDto.PHYSICIAN_NUMBER, HospitalizationDto.LAB_TEST_CONDUCTED, HospitalizationDto.TYPE_OF_SAMPLE, HospitalizationDto.AGENT_IDENTIFIED, HospitalizationDto.OTHER_SYMPTOM_SELECTED, HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING, HospitalizationDto.DURATION_HOURS);
 
 		admissionDateField.setVisible(false);
 		dischargeDateField.setVisible(false);
@@ -407,14 +432,16 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		/*caseOutcome.addValueChangeListener(e -> addSequelaeValue());
 		sequelae.addValueChangeListener(e -> addSequelaeDetailsValue());*/
 
+		hideFieldsForSelectedDisease(caze.getDisease());
+
 		if(caze.getDisease() == Disease.CSM){
 			addField(HospitalizationDto.DISEASE_ONSET_DATE, DateField.class);
 			addField(HospitalizationDto.PATIENT_HOSPITALIZED_DETAINED, NullableOptionGroup.class);
 
-			setVisible(false, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE,
+/*			setVisible(false, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE,
 					HospitalizationDto.INTENSIVE_CARE_UNIT, HospitalizationDto.ISOLATED, HospitalizationDto.DESCRIPTION, HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT);
 
-			notifyDistrictDate.setVisible(false);
+			notifyDistrictDate.setVisible(false);*/
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
@@ -424,12 +451,23 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		}
 
-		if(caze.getDisease() == Disease.AHF || caze.getDisease() == Disease.DENGUE){
-			setVisible(false, HospitalizationDto.ADMISSION_DATE,HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT);
+		if(caze.getDisease() == Disease.AFP){
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
-			notifyDistrictDate.setVisible(false);
+
+			admittedToHealthFacilityFieldNew.setVisible(true);
+			hospitalRecordNumber.setVisible(true);
+			dateFirstSeen.setVisible(true);
+			dateFirstSeen.setCaption("Date of admission to hospital, if applicable:");
+		}
+
+		if(caze.getDisease() == Disease.AHF || caze.getDisease() == Disease.DENGUE){
+//			setVisible(false, HospitalizationDto.ADMISSION_DATE,HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT);
+			hospitalizationReason.setVisible(false);
+			hospitalizedPreviouslyField.setVisible(false);
+			previousHospitalizationsHeadingLabel.setVisible(false);
+//			notifyDistrictDate.setVisible(false);
 
 			hospitalRecordNumber.setVisible(true);
 			intensiveCareUnit.setVisible(true);
@@ -444,7 +482,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
-			dateFormSentToDistrict.setVisible(false);
+//			dateFormSentToDistrict.setVisible(false);
 		}
 
 		if(caze.getDisease() == Disease.NEW_INFLUENZA || caze.getDisease() == Disease.SARI){
@@ -452,11 +490,11 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
-			leftAgainstAdviceField.setVisible(false);
+		/*	leftAgainstAdviceField.setVisible(false);
 			isolatedField.setVisible(false);
 			descriptionField.setVisible(false);
 			notifyDistrictDate.setVisible(false);
-			dateFormSentToDistrict.setVisible(false);
+			dateFormSentToDistrict.setVisible(false);*/
 
 			admittedToHealthFacilityFieldNew.setVisible(true);
 			admissionDateField.setVisible(true);
@@ -494,11 +532,13 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		}
 
 		if(caze.getDisease() == Disease.FOODBORNE_ILLNESS){
-			notifyDistrictDate.setVisible(false);
-			dateFormSentToDistrict.setVisible(false);
+			hospitalizationHeadingLabel.setVisible(false);
+			facilityField.setVisible(false);
+			symptomsHeadingLabel.setVisible(true);
+			tickSymptomField.setVisible(true);
 
 			setVisible(true, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.NAME_OF_FACILITY, HospitalizationDto.LOCATION_ADDRESS, HospitalizationDto.DATE_OF_VISIT_HOSPITAL,
-					HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, HospitalizationDto.PHYSICIAN_NAME, HospitalizationDto.PHYSICIAN_NUMBER, HospitalizationDto.LAB_TEST_CONDUCTED, HospitalizationDto.TYPE_OF_SAMPLE, HospitalizationDto.AGENT_IDENTIFIED);
+					 HospitalizationDto.PHYSICIAN_NUMBER, HospitalizationDto.LAB_TEST_CONDUCTED, HospitalizationDto.TYPE_OF_SAMPLE, HospitalizationDto.AGENT_IDENTIFIED, HospitalizationDto.OTHER_SYMPTOM_SELECTED, HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING, HospitalizationDto.DURATION_HOURS);
 
 		}
 	}
@@ -634,5 +674,15 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		for (Object propertyId : getFieldGroup().getUnboundPropertyIds()) {
 			setVisible(false, propertyId.toString());
 		}
+	}
+	public void hideFieldsForSelectedDisease(Disease disease) {
+		Set<String> disabledFields = HospitalizationFormConfiguration.getDisabledFieldsForDisease(disease);
+		for (String field : disabledFields) {
+			disableField(field);
+		}
+	}
+
+	private void disableField(String field) {
+		setVisible(false, field);
 	}
 }

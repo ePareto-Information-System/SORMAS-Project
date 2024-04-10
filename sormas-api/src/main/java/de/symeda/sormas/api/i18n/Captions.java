@@ -643,6 +643,11 @@ public interface Captions {
 	String CaseHospitalization_labTestConducted = "CaseHospitalization.labTestConducted";
 	String CaseHospitalization_typeOfSample = "CaseHospitalization.typeOfSample";
 	String CaseHospitalization_agentIdentified = "CaseHospitalization.agentIdentified";
+	String CaseHospitalization_symptomsSelected = "CaseHospitalization.symptomsSelected";
+	String CaseHospitalization_otherSymptomSelected = "CaseHospitalization.otherSymptomSelected";
+	String CaseHospitalization_onsetOfSymptomDatetime = "CaseHospitalization.onsetOfSymptomDatetime";
+	String CaseHospitalization_symptomsOngoing = "CaseHospitalization.symptomsOngoing";
+	String CaseHospitalization_durationHours = "CaseHospitalization.durationHours";
 
 
 	String CaseHospitalization_previousHospitalizations = "CaseHospitalization.previousHospitalizations";

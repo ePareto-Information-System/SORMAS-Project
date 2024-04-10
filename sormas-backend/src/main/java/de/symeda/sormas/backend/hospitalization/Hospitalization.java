@@ -19,28 +19,20 @@ package de.symeda.sormas.backend.hospitalization;
 
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.OneToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
 import de.symeda.sormas.api.utils.MildModerateSevereCritical;
+import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.i18n.Validations;
-import de.symeda.sormas.api.utils.FieldConstraints;
-import de.symeda.sormas.api.utils.HospOut;
-import de.symeda.sormas.api.utils.YesNo;
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.sample.SampleMaterial;
+import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import org.apache.commons.lang3.StringUtils;
 
 @Entity
 public class Hospitalization extends AbstractDomainObject {
@@ -68,6 +60,7 @@ public class Hospitalization extends AbstractDomainObject {
 	public static final String HEALTH_FACILITY_RECORD = "healthFacilityRecordNumber";
 	public static final String DISEASE_ONSET_DATE = "diseaseOnsetDate";
 	public static final String PATIENT_HOSPITALIZED_DETAINED = "patientHospitalizedOrDetained";
+	public static final String REQUESTED_SYMPTOMS_SELECTED_STRING = "requestedSymptomsSelectedString";
 
 	private YesNo admittedToHealthFacility;
 	private YesNo admittedToHealthFacilityNew;
@@ -120,6 +113,12 @@ public class Hospitalization extends AbstractDomainObject {
 	private YesNo labTestConducted;
 	private String typeOfSample;
 	private String agentIdentified;
+	private Set<SymptomsList> symptomsSelected;
+	private String requestedSymptomsSelectedString;
+	private String otherSymptomSelected;
+	private Date onsetOfSymptomDatetime;
+	private YesNo symptomsOngoing;
+	private DurationHours durationHours;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getAdmissionDate() {
@@ -519,5 +518,77 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setAgentIdentified(String agentIdentified) {
 		this.agentIdentified = agentIdentified;
+	}
+
+	@Transient
+	public Set<SymptomsList> getSymptomsSelected() {
+		if (symptomsSelected == null) {
+			if (StringUtils.isEmpty(requestedSymptomsSelectedString)) {
+				symptomsSelected = new HashSet<>();
+			} else {
+				symptomsSelected =
+						Arrays.stream(requestedSymptomsSelectedString.split(",")).map(SymptomsList::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return symptomsSelected;
+	}
+
+	public void setSymptomsSelected(Set<SymptomsList> symptomsSelected) {
+		this.symptomsSelected = symptomsSelected;
+
+		if (this.symptomsSelected == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		symptomsSelected.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		requestedSymptomsSelectedString = sb.toString();
+	}
+
+	public String getOtherSymptomSelected() {
+		return otherSymptomSelected;
+	}
+
+	public void setOtherSymptomSelected(String otherSymptomSelected) {
+		this.otherSymptomSelected = otherSymptomSelected;
+	}
+
+	public Date getOnsetOfSymptomDatetime() {
+		return onsetOfSymptomDatetime;
+	}
+
+	public void setOnsetOfSymptomDatetime(Date onsetOfSymptomDatetime) {
+		this.onsetOfSymptomDatetime = onsetOfSymptomDatetime;
+	}
+
+	public YesNo getSymptomsOngoing() {
+		return symptomsOngoing;
+	}
+
+	public void setSymptomsOngoing(YesNo symptomsOngoing) {
+		this.symptomsOngoing = symptomsOngoing;
+	}
+
+	public DurationHours getDurationHours() {
+		return durationHours;
+	}
+
+	public void setDurationHours(DurationHours durationHours) {
+		this.durationHours = durationHours;
+	}
+
+	public String getRequestedSymptomsSelectedString() {
+		return requestedSymptomsSelectedString;
+	}
+
+	public void setRequestedSymptomsSelectedString(String requestedSymptomsSelectedString) {
+		this.requestedSymptomsSelectedString = requestedSymptomsSelectedString;
+		symptomsSelected = null;
 	}
 }

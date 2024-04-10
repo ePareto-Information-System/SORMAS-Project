@@ -13714,4 +13714,12 @@ ALTER TABLE epidata ADD COLUMN age3 varchar(255);
 ALTER TABLE epidata ADD COLUMN age4 varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (602, 'Added four columns in epidata for Food Borne illness ');
+
+ALTER TABLE hospitalization ADD COLUMN requestedsymptomsselectedstring varchar(512);
+ALTER TABLE hospitalization ADD COLUMN othersymptomselected varchar(255);
+ALTER TABLE hospitalization ADD COLUMN onsetofsymptomdatetime DATE;
+ALTER TABLE hospitalization ADD COLUMN symptomsongoing varchar(255);
+ALTER TABLE hospitalization ADD COLUMN durationhours varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (603, 'Added hospitalization fields for Food Borne illness ');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

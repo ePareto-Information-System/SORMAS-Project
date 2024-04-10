@@ -131,6 +131,11 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setLabTestConducted(source.getLabTestConducted());
 		target.setTypeOfSample(source.getTypeOfSample());
 		target.setAgentIdentified(source.getAgentIdentified());
+		target.setSymptomsSelected(source.getSymptomsSelected());
+		target.setOtherSymptomSelected(source.getOtherSymptomSelected());
+		target.setOnsetOfSymptomDatetime(source.getOnsetOfSymptomDatetime());
+		target.setSymptomsOngoing(source.getSymptomsOngoing());
+		target.setDurationHours(source.getDurationHours());
 
 
 		return target;
@@ -235,6 +240,11 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setLabTestConducted(source.getLabTestConducted());
 		target.setTypeOfSample(source.getTypeOfSample());
 		target.setAgentIdentified(source.getAgentIdentified());
+		target.setSymptomsSelected(source.getSymptomsSelected());
+		target.setOtherSymptomSelected(source.getOtherSymptomSelected());
+		target.setOnsetOfSymptomDatetime(source.getOnsetOfSymptomDatetime());
+		target.setSymptomsOngoing(source.getSymptomsOngoing());
+		target.setDurationHours(source.getDurationHours());
 
 
 		return target;
