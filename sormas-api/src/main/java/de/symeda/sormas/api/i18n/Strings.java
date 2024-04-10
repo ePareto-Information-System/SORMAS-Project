@@ -691,6 +691,7 @@ public interface Strings {
 	String headingPointOfEntryInformation = "headingPointOfEntryInformation";
 	String headingPrescriptionsDeleted = "headingPrescriptionsDeleted";
 	String headingPreviousHospitalizations = "headingPreviousHospitalizations";
+	String headingSymptoms = "headingSymptoms";
 	String headingPreviousPathogenTestInformation = "headingPreviousPathogenTestInformation";
 	String headingPreviousPersonInformation = "headingPreviousPersonInformation";
 	String headingPreviousSampleInformation = "headingPreviousSampleInformation";

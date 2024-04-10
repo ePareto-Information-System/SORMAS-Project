@@ -23,6 +23,7 @@ import de.symeda.sormas.api.utils.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
@@ -80,6 +81,11 @@ public class HospitalizationDto extends EntityDto {
 	public static final String LAB_TEST_CONDUCTED = "labTestConducted";
 	public static final String TYPE_OF_SAMPLE = "typeOfSample";
 	public static final String AGENT_IDENTIFIED = "agentIdentified";
+	public static final String SYMPTOMS_SELECTED = "symptomsSelected";
+	public static final String OTHER_SYMPTOM_SELECTED = "otherSymptomSelected";
+	public static final String ONSET_OF_SYMPTOM_DATETIME = "onsetOfSymptomDatetime";
+	public static final String SYMPTOMS_ONGOING = "symptomsOngoing";
+	public static final String DURATION_HOURS = "durationHours";
 
 
 	// Fields are declared in the order they should appear in the import template
@@ -133,6 +139,11 @@ public class HospitalizationDto extends EntityDto {
 	private YesNo labTestConducted;
 	private String typeOfSample;
 	private String agentIdentified;
+	private Set<SymptomsList> symptomsSelected;
+	private String otherSymptomSelected;
+	private Date onsetOfSymptomDatetime;
+	private YesNo symptomsOngoing;
+	private DurationHours durationHours;
 
 
 	public static HospitalizationDto build() {
@@ -476,4 +487,44 @@ public class HospitalizationDto extends EntityDto {
 	public void setAgentIdentified(String agentIdentified) {
 		this.agentIdentified = agentIdentified;
 	}
+	@ImportIgnore
+	public Set<SymptomsList> getSymptomsSelected() {
+		return symptomsSelected;
+	}
+
+	public void setSymptomsSelected(Set<SymptomsList> symptomsSelected) {
+		this.symptomsSelected = symptomsSelected;
+	}
+
+	public String getOtherSymptomSelected() {
+		return otherSymptomSelected;
+	}
+
+	public void setOtherSymptomSelected(String otherSymptomSelected) {
+		this.otherSymptomSelected = otherSymptomSelected;
+	}
+
+	public Date getOnsetOfSymptomDatetime() {
+		return onsetOfSymptomDatetime;
+	}
+
+	public void setOnsetOfSymptomDatetime(Date onsetOfSymptomDatetime) {
+		this.onsetOfSymptomDatetime = onsetOfSymptomDatetime;
+	}
+	public YesNo getSymptomsOngoing() {
+		return symptomsOngoing;
+	}
+
+	public void setSymptomsOngoing(YesNo symptomsOngoing) {
+		this.symptomsOngoing = symptomsOngoing;
+	}
+
+	public DurationHours getDurationHours() {
+		return durationHours;
+	}
+
+	public void setDurationHours(DurationHours durationHours) {
+		this.durationHours = durationHours;
+	}
+
 }
