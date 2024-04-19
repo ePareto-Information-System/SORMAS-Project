@@ -180,7 +180,7 @@ public class DashboardService {
 		return result;
 	}
 
-/*	public Map<CaseClassification, Integer> getCasesCountByClassification(DashboardCriteria dashboardCriteria) {
+	public Map<CaseClassification, Integer> getCasesCountByClassification(DashboardCriteria dashboardCriteria) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
@@ -206,47 +206,7 @@ public class DashboardService {
 		}
 
 		return result;
-	}*/
-
-	public Map<CaseClassification, Integer> getCasesCountByClassification(DashboardCriteria dashboardCriteria) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
-		Root<Case> caze = cq.from(Case.class);
-
-		final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, caze);
-
-		Predicate filter = caseService.createUserFilter(caseQueryContext, new CaseUserFilterCriteria().excludeCasesFromContacts(true));
-		Predicate criteriaFilter = createCaseCriteriaFilter(dashboardCriteria, caseQueryContext);
-		filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
-
-		Map<CaseClassification, Integer> result;
-
-		if (filter != null) {
-			cq.multiselect(caze.get(Case.CASE_CLASSIFICATION), cb.count(caze));
-			cq.where(filter);
-			cq.groupBy(caze.get(Case.CASE_CLASSIFICATION));
-
-			List<Object[]> resultList = em.createQuery(cq).getResultList();
-			result = aggregateCountsByClassification(resultList);
-		} else {
-			result = Collections.emptyMap();
-		}
-
-		return result;
 	}
-
-	private Map<CaseClassification, Integer> aggregateCountsByClassification(List<Object[]> resultList) {
-		Map<CaseClassification, Integer> countsByClassification = new HashMap<>();
-
-		for (Object[] row : resultList) {
-			CaseClassification classification = (CaseClassification) row[0];
-			Long count = (Long) row[1];
-			countsByClassification.put(classification, count.intValue());
-		}
-
-		return countsByClassification;
-	}
-
 
 	static Map<CaseClassification, Integer> getCasesCountByClassification(List<Object[]> classificationCountList, boolean aggregateConfirmed) {
 
@@ -272,7 +232,7 @@ public class DashboardService {
 		return result;
 	}
 
-/*	public Map<Disease, Long> getCaseCountByDisease(DashboardCriteria dashboardCriteria) {
+	public Map<Disease, Long> getCaseCountByDisease(DashboardCriteria dashboardCriteria) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
@@ -292,41 +252,6 @@ public class DashboardService {
 		List<Object[]> results = em.createQuery(cq).getResultList();
 
 		Map<Disease, Long> resultMap = results.stream().collect(Collectors.toMap(e -> (Disease) e[0], e -> (Long) e[1]));
-
-		return resultMap;
-	}*/
-
-	public Map<Disease, Long> getCaseCountByDisease(DashboardCriteria dashboardCriteria) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
-		Root<Case> caze = cq.from(Case.class);
-		final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, caze);
-
-		Predicate filter = caseService.createUserFilter(caseQueryContext, new CaseUserFilterCriteria().excludeCasesFromContacts(true));
-		filter = CriteriaBuilderHelper.and(cb, filter, createCaseCriteriaFilter(dashboardCriteria, caseQueryContext));
-
-		if (filter != null) {
-			cq.where(filter);
-		}
-
-		cq.groupBy(caze.get(Case.DISEASE));
-		cq.multiselect(caze.get(Case.DISEASE), cb.count(caze));
-
-		List<Object[]> results = em.createQuery(cq).getResultList();
-
-		Map<Disease, Long> resultMap = aggregateCountsByDisease(results);
-
-		return resultMap;
-	}
-
-	private Map<Disease, Long> aggregateCountsByDisease(List<Object[]> results) {
-		Map<Disease, Long> resultMap = new HashMap<>();
-
-		for (Object[] row : results) {
-			Disease disease = (Disease) row[0];
-			Long count = (Long) row[1];
-			resultMap.put(disease, count);
-		}
 
 		return resultMap;
 	}

@@ -373,9 +373,9 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 			// Cases
 			//setCases(FacadeProvider.getDashboardFacade().getCases(caseDashboardCriteria));
 			setLastReportedDistrict(FacadeProvider.getDashboardFacade().getLastReportedDistrictName(caseDashboardCriteria));
-			/*setCasesCountByClassification(
+			setCasesCountByClassification(
 					FacadeProvider.getDashboardFacade()
-							.getCasesCountByClassification(buildDashboardCriteria(fromDate, toDate).includeNotACaseClassification(true)));*/
+							.getCasesCountByClassification(buildDashboardCriteria(fromDate, toDate).includeNotACaseClassification(true)));
 
 			//setPreviousCases(FacadeProvider.getDashboardFacade().getCases(buildDashboardCriteria(previousFromDate, previousToDate)));
 
@@ -536,7 +536,7 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 	public void setDisease(Disease disease) {
 		this.disease = disease;
 
-		this.refreshDataForSelectedDisease();
+		//this.refreshDataForSelectedDisease();
 	}
 
 	public CaseClassification getCaseClassification() {
