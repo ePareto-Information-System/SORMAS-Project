@@ -210,6 +210,20 @@ public class TestDataCreator {
 			roles);
 	}
 
+	public UserDto createSurveillanceOfficer(RDCF rdcf) {
+		if (rdcf == null) {
+			rdcf = createRDCF("Region", "District", "Community", "Facility");
+		}
+
+		return createUser(
+				rdcf.region.getUuid(),
+				rdcf.district.getUuid(),
+				rdcf.facility.getUuid(),
+				"Surv",
+				"Off",
+				getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER));
+	}
+
 	public UserDto createUser(RDCF rdcf, UserRoleReferenceDto... roles) {
 		return createUser(
 			rdcf.region.getUuid(),

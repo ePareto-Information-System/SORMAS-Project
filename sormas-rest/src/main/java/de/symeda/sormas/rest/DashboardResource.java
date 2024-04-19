@@ -1,3 +1,18 @@
+/*
+ * SORMAS® - Surveillance Outbreak Response Management & Analysis System
+ * Copyright © 2016-2023 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package de.symeda.sormas.rest;
 
 import java.util.Date;
@@ -30,21 +45,21 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 @Path("/dashboard")
 @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 @Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-public class DashboardResource extends EntityDtoResource {
+public class DashboardResource {
 
 	@POST
 	@Path("/diseaseBurden")
 	public List<DiseaseBurdenDto> getAll(@RequestBody DashboardCriteria criteria) {
 		return FacadeProvider.getDashboardFacade()
-			.getDiseaseBurden(
-				criteria.getRegion(),
-				criteria.getDistrict(),
-				criteria.getDateFrom(),
-				criteria.getDateTo(),
-				criteria.getPreviousDateFrom(),
-				criteria.getPreviousDateTo(),
-				criteria.getNewCaseDateType(),
-				criteria.getCaseClassification());
+				.getDiseaseBurden(
+						criteria.getRegion(),
+						criteria.getDistrict(),
+						criteria.getDateFrom(),
+						criteria.getDateTo(),
+						criteria.getPreviousDateFrom(),
+						criteria.getPreviousDateTo(),
+						criteria.getNewCaseDateType(),
+						criteria.getCaseClassification());
 	}
 
 	@POST
@@ -62,27 +77,27 @@ public class DashboardResource extends EntityDtoResource {
 	@POST
 	@Path("/testResults")
 	public Map<PathogenTestResultType, Long> getTestResultCountByResultType(@RequestBody DashboardCriteria dashboardCriteria) {
-		return FacadeProvider.getDashboardFacade().getTestResultCountByResultType(dashboardCriteria);
+		return FacadeProvider.getDashboardFacade().getNewCasesFinalLabResultCountByResultType(dashboardCriteria);
 	}
 
 	@POST
 	@Path("/epiCurveDataPerCaseClassification")
 	public Map<Date, Map<CaseClassification, Integer>> getEpidemiologicalCurveDataPerCaseClassification(
-		@RequestBody DashboardCriteria dashboardCriteria) {
+			@RequestBody DashboardCriteria dashboardCriteria) {
 		return FacadeProvider.getDashboardFacade().getEpiCurveSeriesElementsPerCaseClassification(dashboardCriteria);
 	}
 
 	@POST
 	@Path("/epiCurveDataPerPresentCondition")
 	public Map<Date, Map<PresentCondition, Integer>> getEpidemiologicalCurveDataPerPresentCondition(
-		@RequestBody DashboardCriteria dashboardCriteria) {
+			@RequestBody DashboardCriteria dashboardCriteria) {
 		return FacadeProvider.getDashboardFacade().getEpiCurveSeriesElementsPerPresentCondition(dashboardCriteria);
 	}
 
 	@POST
 	@Path("/epiCurveElementsContactClassification")
 	public Map<Date, Map<ContactClassification, Long>> getEpiCurveSeriesElementsPerContactClassification(
-		@RequestBody DashboardCriteria dashboardCriteria) {
+			@RequestBody DashboardCriteria dashboardCriteria) {
 		return FacadeProvider.getDashboardFacade().getEpiCurveSeriesElementsPerContactClassification(dashboardCriteria);
 	}
 
@@ -108,25 +123,25 @@ public class DashboardResource extends EntityDtoResource {
 	@Path("/loadMapCaseData")
 	public List<MapCaseDto> getMapCaseData(@RequestBody SurveillanceDashboardCriteria dashboardCriteria) {
 		return FacadeProvider.getCaseFacade()
-			.getCasesForMap(
-				dashboardCriteria.getRegion(),
-				dashboardCriteria.getDistrict(),
-				dashboardCriteria.getDisease(),
-				dashboardCriteria.getDateFrom(),
-				dashboardCriteria.getDateTo(),
-				dashboardCriteria.getNewCaseDateType());
+				.getCasesForMap(
+						dashboardCriteria.getRegion(),
+						dashboardCriteria.getDistrict(),
+						dashboardCriteria.getDisease(),
+						dashboardCriteria.getDateFrom(),
+						dashboardCriteria.getDateTo(),
+						dashboardCriteria.getNewCaseDateType());
 	}
 
 	@POST
 	@Path("/loadMapContactData")
 	public List<MapContactDto> getMapContactData(@RequestBody DashboardCriteria dashboardCriteria) {
 		return FacadeProvider.getContactFacade()
-			.getContactsForMap(
-				dashboardCriteria.getRegion(),
-				dashboardCriteria.getDistrict(),
-				dashboardCriteria.getDisease(),
-				dashboardCriteria.getDateFrom(),
-				dashboardCriteria.getDateTo());
+				.getContactsForMap(
+						dashboardCriteria.getRegion(),
+						dashboardCriteria.getDistrict(),
+						dashboardCriteria.getDisease(),
+						dashboardCriteria.getDateFrom(),
+						dashboardCriteria.getDateTo());
 	}
 
 	@POST

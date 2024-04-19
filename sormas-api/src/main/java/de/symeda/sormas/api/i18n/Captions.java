@@ -879,6 +879,7 @@ public interface Captions {
 	String dashboardNew = "dashboardNew";
 	String dashboardNewCases = "dashboardNewCases";
 	String dashboardNewEvents = "dashboardNewEvents";
+	String dashboardNewFinalLaboratoryResults = "dashboardNewFinalLaboratoryResults";
 	String dashboardNewTestResults = "dashboardNewTestResults";
 	String dashboardNoPopulationData = "dashboardNoPopulationData";
 	String dashboardNormal = "dashboardNormal";
@@ -939,6 +940,7 @@ public interface Captions {
 	String dashboardWeekBefore = "dashboardWeekBefore";
 	String dashboardYesterday = "dashboardYesterday";
 	String dashboardHealthFacilities = "dashboardHealthFacilities";
+	String dashboardNotDone = "dashboardNotDone";
 	String dataProtectionAllFieldsSheet = "dataProtectionAllFieldsSheet";
 	String date = "date";
 	String days = "days";

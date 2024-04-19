@@ -19,10 +19,12 @@ package de.symeda.sormas.ui.dashboard.surveillance;
 
 import com.vaadin.ui.CustomLayout;
 
+import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
 import de.symeda.sormas.ui.dashboard.surveillance.components.statistics.CaseStatisticsComponent;
 import de.symeda.sormas.ui.dashboard.surveillance.components.statistics.EventStatisticsComponent;
-import de.symeda.sormas.ui.dashboard.surveillance.components.statistics.TestResultsStatisticsComponent;
+import de.symeda.sormas.ui.dashboard.surveillance.components.statistics.LaboratoryResultsStatisticsComponent;
 import de.symeda.sormas.ui.dashboard.surveillance.components.statistics.summary.DiseaseSummaryComponent;
 import de.symeda.sormas.ui.utils.LayoutUtil;
 
@@ -35,7 +37,7 @@ public class DiseaseStatisticsComponent extends CustomLayout {
 	private final CaseStatisticsComponent caseStatisticsComponent;
 	private final DiseaseSummaryComponent diseaseSummaryComponent;
 	private final EventStatisticsComponent eventStatisticsComponent;
-	private final TestResultsStatisticsComponent testResultsStatisticsComponent;
+	private final LaboratoryResultsStatisticsComponent labResultsStatisticsComponent;
 
 	private static final String CASE_LOC = "case";
 	private static final String OUTBREAK_LOC = "outbreak";
@@ -48,26 +50,32 @@ public class DiseaseStatisticsComponent extends CustomLayout {
 		setWidth(100, Unit.PERCENTAGE);
 
 		setTemplateContents(
-			LayoutUtil.fluidRow(
-				LayoutUtil.fluidColumn(3, 0, 12, 0, LayoutUtil.fluidRowLocs(CASE_LOC)),
-				LayoutUtil.fluidColumn(4, 0, 12, 0, LayoutUtil.fluidRowLocs(OUTBREAK_LOC)),
-				LayoutUtil.fluidColumn(5, 0, 12, 0, LayoutUtil.fluidRowLocs(EVENT_LOC, SAMPLE_LOC))));
+				LayoutUtil.fluidRow(
+						LayoutUtil.fluidColumn(3, 0, 12, 0, LayoutUtil.fluidRowLocs(CASE_LOC)),
+						LayoutUtil.fluidColumn(4, 0, 12, 0, LayoutUtil.fluidRowLocs(OUTBREAK_LOC)),
+						LayoutUtil.fluidColumn(5, 0, 12, 0, LayoutUtil.fluidRowLocs(EVENT_LOC, SAMPLE_LOC))));
 
 		caseStatisticsComponent = new CaseStatisticsComponent();
 		diseaseSummaryComponent = new DiseaseSummaryComponent();
 		eventStatisticsComponent = new EventStatisticsComponent();
-		testResultsStatisticsComponent = new TestResultsStatisticsComponent();
+		labResultsStatisticsComponent = new LaboratoryResultsStatisticsComponent(
+				Captions.dashboardNewFinalLaboratoryResults,
+				Descriptions.descDashboardNewFinalLaboratoryResults,
+				null,
+				false,
+				true);
+		labResultsStatisticsComponent.setWithPercentage(false);
 
 		addComponent(caseStatisticsComponent, CASE_LOC);
 		addComponent(diseaseSummaryComponent, OUTBREAK_LOC);
 		addComponent(eventStatisticsComponent, EVENT_LOC);
-		addComponent(testResultsStatisticsComponent, SAMPLE_LOC);
+		addComponent(labResultsStatisticsComponent, SAMPLE_LOC);
 	}
 
 	public void refresh() {
 		caseStatisticsComponent.update(dashboardDataProvider.getCasesCountByClassification());
 		diseaseSummaryComponent.update(dashboardDataProvider);
 		eventStatisticsComponent.update(dashboardDataProvider.getEventCountByStatus());
-		testResultsStatisticsComponent.update(dashboardDataProvider.getTestResultCountByResultType());
+		labResultsStatisticsComponent.update(dashboardDataProvider.getNewCasesFinalLabResultCountByResultType());
 	}
 }

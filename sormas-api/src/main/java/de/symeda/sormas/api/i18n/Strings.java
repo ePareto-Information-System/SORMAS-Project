@@ -891,6 +891,7 @@ public interface Strings {
 	String infoSpecificCaseSearch = "infoSpecificCaseSearch";
 	String infoSpecificEventSearch = "infoSpecificEventSearch";
 	String infoStatisticsDisclaimer = "infoStatisticsDisclaimer";
+	String infoDashboardFinalLaboratoryResult = "infoDashboardFinalLaboratoryResult";
 	String infoStatisticsContactDisclaimer = "infoStatisticsContactDisclaimer";
 	String infoStatisticsFilter = "infoStatisticsFilter";
 	String infoContactsStatisticsFilter = "infoContactsStatisticsFilter";

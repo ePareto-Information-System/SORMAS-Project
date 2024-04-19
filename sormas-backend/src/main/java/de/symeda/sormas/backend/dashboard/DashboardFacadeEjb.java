@@ -97,46 +97,46 @@ public class DashboardFacadeEjb implements DashboardFacade {
 
 	@Override
 	@RightsAllowed({
-		UserRight._DASHBOARD_SURVEILLANCE_VIEW,
-		UserRight._DASHBOARD_CONTACT_VIEW })
+			UserRight._DASHBOARD_SURVEILLANCE_VIEW,
+			UserRight._DASHBOARD_CONTACT_VIEW })
 	public List<DashboardCaseDto> getCases(DashboardCriteria dashboardCriteria) {
 		return dashboardService.getCases(dashboardCriteria);
 	}
 
 	@Override
 	@RightsAllowed({
-		UserRight._DASHBOARD_SURVEILLANCE_VIEW,
-		UserRight._DASHBOARD_CONTACT_VIEW })
+			UserRight._DASHBOARD_SURVEILLANCE_VIEW,
+			UserRight._DASHBOARD_CONTACT_VIEW })
 	public Map<CaseClassification, Integer> getCasesCountByClassification(DashboardCriteria dashboardCriteria) {
 		return dashboardService.getCasesCountByClassification(dashboardCriteria);
 	}
 
 	@Override
 	@RightsAllowed({
-		UserRight._DASHBOARD_SURVEILLANCE_VIEW,
-		UserRight._DASHBOARD_CONTACT_VIEW })
+			UserRight._DASHBOARD_SURVEILLANCE_VIEW,
+			UserRight._DASHBOARD_CONTACT_VIEW })
 	public String getLastReportedDistrictName(DashboardCriteria dashboardCriteria) {
 		return dashboardService.getLastReportedDistrictName(dashboardCriteria);
 	}
 
 	@Override
 	@RightsAllowed({
-		UserRight._DASHBOARD_SURVEILLANCE_VIEW,
-		UserRight._DASHBOARD_CONTACT_VIEW })
-	public Map<PathogenTestResultType, Long> getTestResultCountByResultType(DashboardCriteria dashboardCriteria) {
+			UserRight._DASHBOARD_SURVEILLANCE_VIEW,
+			UserRight._DASHBOARD_CONTACT_VIEW })
+	public Map<PathogenTestResultType, Long> getNewCasesFinalLabResultCountByResultType(DashboardCriteria dashboardCriteria) {
 		return dashboardService.getNewTestResultCountByResultType(dashboardCriteria);
 	}
 
 	@RightsAllowed({
-		UserRight._DASHBOARD_SURVEILLANCE_VIEW,
-		UserRight._DASHBOARD_CONTACT_VIEW })
+			UserRight._DASHBOARD_SURVEILLANCE_VIEW,
+			UserRight._DASHBOARD_CONTACT_VIEW })
 	public Map<Date, Map<CaseClassification, Integer>> getEpiCurveSeriesElementsPerCaseClassification(DashboardCriteria dashboardCriteria) {
 		Map<Date, Map<CaseClassification, Integer>> epiCurveSeriesElements = new TreeMap<>();
 		List<Date> dates = buildListOfFilteredDates(
-			dashboardCriteria.getDateFrom(),
-			dashboardCriteria.getDateTo(),
-			dashboardCriteria.getEpiCurveGrouping(),
-			dashboardCriteria.isShowMinimumEntries());
+				dashboardCriteria.getDateFrom(),
+				dashboardCriteria.getDateTo(),
+				dashboardCriteria.getEpiCurveGrouping(),
+				dashboardCriteria.isShowMinimumEntries());
 		for (int i = 0; i < dates.size(); i++) {
 			dashboardCriteria = setNewCaseDatesInCaseCriteria(dates.get(i), dashboardCriteria);
 			Map<CaseClassification, Integer> caseCounts = getCasesCountByClassification(dashboardCriteria);
@@ -151,10 +151,10 @@ public class DashboardFacadeEjb implements DashboardFacade {
 	public Map<Date, Map<PresentCondition, Integer>> getEpiCurveSeriesElementsPerPresentCondition(DashboardCriteria dashboardCriteria) {
 		Map<Date, Map<PresentCondition, Integer>> epiCurveSeriesElements = new TreeMap<>();
 		List<Date> dates = buildListOfFilteredDates(
-			dashboardCriteria.getDateFrom(),
-			dashboardCriteria.getDateTo(),
-			dashboardCriteria.getEpiCurveGrouping(),
-			dashboardCriteria.isShowMinimumEntries());
+				dashboardCriteria.getDateFrom(),
+				dashboardCriteria.getDateTo(),
+				dashboardCriteria.getEpiCurveGrouping(),
+				dashboardCriteria.isShowMinimumEntries());
 		for (int i = 0; i < dates.size(); i++) {
 			dashboardCriteria = setNewCaseDatesInCaseCriteria(dates.get(i), dashboardCriteria);
 
@@ -171,14 +171,14 @@ public class DashboardFacadeEjb implements DashboardFacade {
 	public Map<Date, Map<ContactClassification, Long>> getEpiCurveSeriesElementsPerContactClassification(DashboardCriteria dashboardCriteria) {
 		Map<Date, Map<ContactClassification, Long>> epiCurveSeriesElements = new TreeMap<>();
 		List<Date> criteriaIntervalStartDates = buildListOfFilteredDates(
-			dashboardCriteria.getDateFrom(),
-			dashboardCriteria.getDateTo(),
-			dashboardCriteria.getEpiCurveGrouping(),
-			dashboardCriteria.isShowMinimumEntries());
+				dashboardCriteria.getDateFrom(),
+				dashboardCriteria.getDateTo(),
+				dashboardCriteria.getEpiCurveGrouping(),
+				dashboardCriteria.isShowMinimumEntries());
 
 		ContactCriteria contactCriteria = new ContactCriteria().disease(dashboardCriteria.getDisease())
-			.region(dashboardCriteria.getRegion())
-			.district(dashboardCriteria.getDistrict());
+				.region(dashboardCriteria.getRegion())
+				.district(dashboardCriteria.getDistrict());
 
 		criteriaIntervalStartDates.forEach(intervalStartDate -> {
 			contactCriteria.reportDateBetween(intervalStartDate, getIntervalEndDate(intervalStartDate, dashboardCriteria.getEpiCurveGrouping()));
@@ -193,20 +193,20 @@ public class DashboardFacadeEjb implements DashboardFacade {
 	public Map<Date, Map<String, Long>> getEpiCurveSeriesElementsPerContactFollowUpStatus(DashboardCriteria dashboardCriteria) {
 		Map<Date, Map<String, Long>> epiCurveSeriesElements = new TreeMap<>();
 		List<Date> criteriaIntervalStartDates = buildListOfFilteredDates(
-			dashboardCriteria.getDateFrom(),
-			dashboardCriteria.getDateTo(),
-			dashboardCriteria.getEpiCurveGrouping(),
-			dashboardCriteria.isShowMinimumEntries());
+				dashboardCriteria.getDateFrom(),
+				dashboardCriteria.getDateTo(),
+				dashboardCriteria.getEpiCurveGrouping(),
+				dashboardCriteria.isShowMinimumEntries());
 
 		ContactCriteria contactCriteria = new ContactCriteria().disease(dashboardCriteria.getDisease())
-			.region(dashboardCriteria.getRegion())
-			.district(dashboardCriteria.getDistrict());
+				.region(dashboardCriteria.getRegion())
+				.district(dashboardCriteria.getDistrict());
 
 		criteriaIntervalStartDates.forEach(intervalStartDate -> {
 			contactCriteria.reportDateBetween(intervalStartDate, getIntervalEndDate(intervalStartDate, dashboardCriteria.getEpiCurveGrouping()));
 			Map<FollowUpStatus, Long> contactCounts = contactFacade.getNewContactCountPerFollowUpStatus(contactCriteria);
 			Map<String, Long> followUpClassificationMap =
-				contactCounts.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().toShortString(), e -> e.getValue()));
+					contactCounts.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().toShortString(), e -> e.getValue()));
 			Map<ContactStatus, Long> contactStatusCounts = contactFacade.getNewContactCountPerStatus(contactCriteria);
 			followUpClassificationMap.put(ContactStatus.CONVERTED.toString(), contactStatusCounts.get(ContactStatus.CONVERTED));
 			epiCurveSeriesElements.put(intervalStartDate, followUpClassificationMap);
@@ -219,14 +219,14 @@ public class DashboardFacadeEjb implements DashboardFacade {
 	public Map<Date, Integer> getEpiCurveSeriesElementsPerContactFollowUpUntil(DashboardCriteria dashboardCriteria) {
 		Map<Date, Integer> epiCurveSeriesElements = new TreeMap<>();
 		List<Date> criteriaIntervalStartDates = buildListOfFilteredDates(
-			dashboardCriteria.getDateFrom(),
-			dashboardCriteria.getDateTo(),
-			dashboardCriteria.getEpiCurveGrouping(),
-			dashboardCriteria.isShowMinimumEntries());
+				dashboardCriteria.getDateFrom(),
+				dashboardCriteria.getDateTo(),
+				dashboardCriteria.getEpiCurveGrouping(),
+				dashboardCriteria.isShowMinimumEntries());
 
 		ContactCriteria contactCriteria = new ContactCriteria().disease(dashboardCriteria.getDisease())
-			.region(dashboardCriteria.getRegion())
-			.district(dashboardCriteria.getDistrict());
+				.region(dashboardCriteria.getRegion())
+				.district(dashboardCriteria.getDistrict());
 
 		criteriaIntervalStartDates.forEach(intervalStartDate -> {
 			contactCriteria.reportDateBetween(intervalStartDate, getIntervalEndDate(intervalStartDate, dashboardCriteria.getEpiCurveGrouping()));
@@ -243,21 +243,21 @@ public class DashboardFacadeEjb implements DashboardFacade {
 		BigDecimal districtValuesUpperQuartile;
 
 		List<DataHelper.Pair<DistrictDto, BigDecimal>> caseMeasurePerDistrict = caseFacade.getCaseMeasurePerDistrict(
-			dashboardCriteria.getDateFrom(),
-			dashboardCriteria.getDateTo(),
-			dashboardCriteria.getDisease(),
-			dashboardCriteria.getCaseMeasure());
+				dashboardCriteria.getDateFrom(),
+				dashboardCriteria.getDateTo(),
+				dashboardCriteria.getDisease(),
+				dashboardCriteria.getCaseMeasure());
 
 		if (dashboardCriteria.getCaseMeasure() == CaseMeasure.CASE_COUNT) {
 			caseMeasurePerDistrictMap =
-				caseMeasurePerDistrict.stream().collect(Collectors.toMap(DataHelper.Pair::getElement0, DataHelper.Pair::getElement1));
+					caseMeasurePerDistrict.stream().collect(Collectors.toMap(DataHelper.Pair::getElement0, DataHelper.Pair::getElement1));
 
 			districtValuesLowerQuartile =
-				caseMeasurePerDistrict.size() > 0 ? caseMeasurePerDistrict.get((int) (caseMeasurePerDistrict.size() * 0.25)).getElement1() : null;
+					caseMeasurePerDistrict.size() > 0 ? caseMeasurePerDistrict.get((int) (caseMeasurePerDistrict.size() * 0.25)).getElement1() : null;
 			districtValuesMedianQuartile =
-				caseMeasurePerDistrict.size() > 0 ? caseMeasurePerDistrict.get((int) (caseMeasurePerDistrict.size() * 0.5)).getElement1() : null;
+					caseMeasurePerDistrict.size() > 0 ? caseMeasurePerDistrict.get((int) (caseMeasurePerDistrict.size() * 0.5)).getElement1() : null;
 			districtValuesUpperQuartile =
-				caseMeasurePerDistrict.size() > 0 ? caseMeasurePerDistrict.get((int) (caseMeasurePerDistrict.size() * 0.75)).getElement1() : null;
+					caseMeasurePerDistrict.size() > 0 ? caseMeasurePerDistrict.get((int) (caseMeasurePerDistrict.size() * 0.75)).getElement1() : null;
 
 		} else {
 			// For case incidence, districts without or with a population <= 0 should not be
@@ -268,30 +268,30 @@ public class DashboardFacadeEjb implements DashboardFacade {
 			measurePerDistrictWithoutMissingPopulations.removeIf(d -> d.getElement1() == null || d.getElement1().intValue() <= 0);
 
 			caseMeasurePerDistrictMap = measurePerDistrictWithoutMissingPopulations.stream()
-				.collect(Collectors.toMap(DataHelper.Pair::getElement0, DataHelper.Pair::getElement1));
+					.collect(Collectors.toMap(DataHelper.Pair::getElement0, DataHelper.Pair::getElement1));
 
 			districtValuesLowerQuartile = measurePerDistrictWithoutMissingPopulations.size() > 0
-				? measurePerDistrictWithoutMissingPopulations.get((int) (measurePerDistrictWithoutMissingPopulations.size() * 0.25)).getElement1()
-				: null;
+					? measurePerDistrictWithoutMissingPopulations.get((int) (measurePerDistrictWithoutMissingPopulations.size() * 0.25)).getElement1()
+					: null;
 			districtValuesMedianQuartile = measurePerDistrictWithoutMissingPopulations.size() > 0
-				? measurePerDistrictWithoutMissingPopulations.get((int) (measurePerDistrictWithoutMissingPopulations.size() * 0.5)).getElement1()
-				: null;
+					? measurePerDistrictWithoutMissingPopulations.get((int) (measurePerDistrictWithoutMissingPopulations.size() * 0.5)).getElement1()
+					: null;
 			districtValuesUpperQuartile = measurePerDistrictWithoutMissingPopulations.size() > 0
-				? measurePerDistrictWithoutMissingPopulations.get((int) (measurePerDistrictWithoutMissingPopulations.size() * 0.75)).getElement1()
-				: null;
+					? measurePerDistrictWithoutMissingPopulations.get((int) (measurePerDistrictWithoutMissingPopulations.size() * 0.75)).getElement1()
+					: null;
 		}
 
 		return new DashboardCaseMeasureDto(
-			caseMeasurePerDistrictMap,
-			districtValuesLowerQuartile,
-			districtValuesMedianQuartile,
-			districtValuesUpperQuartile);
+				caseMeasurePerDistrictMap,
+				districtValuesLowerQuartile,
+				districtValuesMedianQuartile,
+				districtValuesUpperQuartile);
 	}
 
 	@Override
 	@RightsAllowed({
-		UserRight._DASHBOARD_SURVEILLANCE_VIEW,
-		UserRight._DASHBOARD_CONTACT_VIEW })
+			UserRight._DASHBOARD_SURVEILLANCE_VIEW,
+			UserRight._DASHBOARD_CONTACT_VIEW })
 	public long countCasesConvertedFromContacts(DashboardCriteria dashboardCriteria) {
 		return dashboardService.countCasesConvertedFromContacts(dashboardCriteria);
 	}
@@ -304,16 +304,16 @@ public class DashboardFacadeEjb implements DashboardFacade {
 
 	@Override
 	@RightsAllowed({
-		UserRight._DASHBOARD_SURVEILLANCE_VIEW,
-		UserRight._DASHBOARD_CONTACT_VIEW })
+			UserRight._DASHBOARD_SURVEILLANCE_VIEW,
+			UserRight._DASHBOARD_CONTACT_VIEW })
 	public List<DashboardEventDto> getNewEvents(DashboardCriteria dashboardCriteria) {
 		return dashboardService.getNewEvents(dashboardCriteria);
 	}
 
 	@Override
 	@RightsAllowed({
-		UserRight._DASHBOARD_SURVEILLANCE_VIEW,
-		UserRight._DASHBOARD_CONTACT_VIEW })
+			UserRight._DASHBOARD_SURVEILLANCE_VIEW,
+			UserRight._DASHBOARD_CONTACT_VIEW })
 	public Map<EventStatus, Long> getEventCountByStatus(DashboardCriteria dashboardCriteria) {
 		return dashboardService.getEventCountByStatus(dashboardCriteria);
 	}
@@ -331,39 +331,39 @@ public class DashboardFacadeEjb implements DashboardFacade {
 		Date currentDate;
 
 		switch (epiCurveGrouping) {
-		case DAY:
-			if (!showMinimumEntries || DateHelper.getDaysBetween(fromDateDayStart, toDateDayStart) >= 7) {
-				currentDate = fromDateDayStart;
-			} else {
-				currentDate = DateHelper.subtractDays(toDateDayStart, 6);
-			}
-			while (!currentDate.after(toDateDayStart)) {
-				filteredDates.add(currentDate);
-				currentDate = DateHelper.addDays(currentDate, 1);
-			}
-			break;
-		case WEEK:
-			if (!showMinimumEntries || DateHelper.getWeeksBetween(fromDateDayStart, toDateDayStart) >= 7) {
-				currentDate = fromDateDayStart;
-			} else {
-				currentDate = DateHelper.subtractWeeks(toDateDayStart, 6);
-			}
-			while (!currentDate.after(toDateDayStart)) {
-				filteredDates.add(currentDate);
-				currentDate = DateHelper.addWeeks(currentDate, 1);
-			}
-			break;
-		default:
-			if (!showMinimumEntries || DateHelper.getMonthsBetween(fromDateDayStart, toDateDayStart) >= 7) {
-				currentDate = fromDateDayStart;
-			} else {
-				currentDate = DateHelper.subtractMonths(toDateDayStart, 6);
-			}
-			while (!currentDate.after(toDateDayStart)) {
-				filteredDates.add(currentDate);
-				currentDate = DateHelper.addMonths(currentDate, 1);
-			}
-			break;
+			case DAY:
+				if (!showMinimumEntries || DateHelper.getDaysBetween(fromDateDayStart, toDateDayStart) >= 7) {
+					currentDate = fromDateDayStart;
+				} else {
+					currentDate = DateHelper.subtractDays(toDateDayStart, 6);
+				}
+				while (!currentDate.after(toDateDayStart)) {
+					filteredDates.add(currentDate);
+					currentDate = DateHelper.addDays(currentDate, 1);
+				}
+				break;
+			case WEEK:
+				if (!showMinimumEntries || DateHelper.getWeeksBetween(fromDateDayStart, toDateDayStart) >= 7) {
+					currentDate = fromDateDayStart;
+				} else {
+					currentDate = DateHelper.subtractWeeks(toDateDayStart, 6);
+				}
+				while (!currentDate.after(toDateDayStart)) {
+					filteredDates.add(currentDate);
+					currentDate = DateHelper.addWeeks(currentDate, 1);
+				}
+				break;
+			default:
+				if (!showMinimumEntries || DateHelper.getMonthsBetween(fromDateDayStart, toDateDayStart) >= 7) {
+					currentDate = fromDateDayStart;
+				} else {
+					currentDate = DateHelper.subtractMonths(toDateDayStart, 6);
+				}
+				while (!currentDate.after(toDateDayStart)) {
+					filteredDates.add(currentDate);
+					currentDate = DateHelper.addMonths(currentDate, 1);
+				}
+				break;
 		}
 
 		return filteredDates;
@@ -371,26 +371,26 @@ public class DashboardFacadeEjb implements DashboardFacade {
 
 	protected Date getIntervalEndDate(Date intervalStartDate, EpiCurveGrouping epiCurveGrouping) {
 		switch (epiCurveGrouping) {
-		case DAY:
-			return DateHelper.getEndOfDay(intervalStartDate);
-		case WEEK:
-			return DateHelper.getEndOfWeek(intervalStartDate);
-		default:
-			return DateHelper.getEndOfMonth(intervalStartDate);
+			case DAY:
+				return DateHelper.getEndOfDay(intervalStartDate);
+			case WEEK:
+				return DateHelper.getEndOfWeek(intervalStartDate);
+			default:
+				return DateHelper.getEndOfMonth(intervalStartDate);
 		}
 	}
 
 	protected DashboardCriteria setNewCaseDatesInCaseCriteria(Date date, DashboardCriteria dashboardCriteria) {
 		EpiCurveGrouping epiCurveGrouping = dashboardCriteria.getEpiCurveGrouping();
 		switch (epiCurveGrouping) {
-		case DAY:
-			dashboardCriteria.dateBetween(DateHelper.getStartOfDay(date), DateHelper.getEndOfDay(date));
-			break;
-		case WEEK:
-			dashboardCriteria.dateBetween(DateHelper.getStartOfWeek(date), DateHelper.getEndOfWeek(date));
-			break;
-		default:
-			dashboardCriteria.dateBetween(DateHelper.getStartOfMonth(date), DateHelper.getEndOfMonth(date));
+			case DAY:
+				dashboardCriteria.dateBetween(DateHelper.getStartOfDay(date), DateHelper.getEndOfDay(date));
+				break;
+			case WEEK:
+				dashboardCriteria.dateBetween(DateHelper.getStartOfWeek(date), DateHelper.getEndOfWeek(date));
+				break;
+			default:
+				dashboardCriteria.dateBetween(DateHelper.getStartOfMonth(date), DateHelper.getEndOfMonth(date));
 
 		}
 		return dashboardCriteria;
@@ -437,79 +437,79 @@ public class DashboardFacadeEjb implements DashboardFacade {
 		fatalityRate = Math.round(fatalityRate * 100) / 100f;
 
 		List<DashboardQuarantineDataDto> casesInQuarantineDtos = dashboardCases.stream()
-			.map(DashboardCaseDto::getDashboardQuarantineDataDto)
-			.filter(quarantineData(dashboardCriteria.getDateFrom(), dashboardCriteria.getDateTo()))
-			.collect(Collectors.toList());
+				.map(DashboardCaseDto::getDashboardQuarantineDataDto)
+				.filter(quarantineData(dashboardCriteria.getDateFrom(), dashboardCriteria.getDateTo()))
+				.collect(Collectors.toList());
 
 		long casesInQuarantineCount = casesInQuarantineDtos.size();
 		long casesPlacedInQuarantineCount = casesInQuarantineDtos.stream()
-			.filter(
-				dashboardQuarantineDataDto -> (dashboardQuarantineDataDto.getQuarantineFrom() != null
-					&& dashboardCriteria.getDateFrom().before(DateUtils.addDays(dashboardQuarantineDataDto.getQuarantineFrom(), 1))
-					&& dashboardQuarantineDataDto.getQuarantineFrom().before(dashboardCriteria.getDateTo())))
-			.count();
+				.filter(
+						dashboardQuarantineDataDto -> (dashboardQuarantineDataDto.getQuarantineFrom() != null
+								&& dashboardCriteria.getDateFrom().before(DateUtils.addDays(dashboardQuarantineDataDto.getQuarantineFrom(), 1))
+								&& dashboardQuarantineDataDto.getQuarantineFrom().before(dashboardCriteria.getDateTo())))
+				.count();
 
 		long casesWithReferenceDefinitionFulfilledCount =
-			dashboardCases.stream().filter(cases -> cases.getCaseReferenceDefinition() == CaseReferenceDefinition.FULFILLED).count();
+				dashboardCases.stream().filter(cases -> cases.getCaseReferenceDefinition() == CaseReferenceDefinition.FULFILLED).count();
 
 		long outbreakDistrictCount = outbreakFacade.getOutbreakDistrictCount(
-			new OutbreakCriteria().region(dashboardCriteria.getRegion())
-				.district(dashboardCriteria.getDistrict())
-				.disease(dashboardCriteria.getDisease())
-				.reportedBetween(dashboardCriteria.getDateFrom(), dashboardCriteria.getDateTo())
-				.caseClassification(dashboardCriteria.getCaseClassification()));
+				new OutbreakCriteria().region(dashboardCriteria.getRegion())
+						.district(dashboardCriteria.getDistrict())
+						.disease(dashboardCriteria.getDisease())
+						.reportedBetween(dashboardCriteria.getDateFrom(), dashboardCriteria.getDateTo())
+						.caseClassification(dashboardCriteria.getCaseClassification()));
 
 		Map<CaseClassification, Integer> casesCountByClassification =
-			dashboardService.getCasesCountByClassification(dashboardCriteria.includeNotACaseClassification(true));
+				dashboardService.getCasesCountByClassification(dashboardCriteria.includeNotACaseClassification(true));
 
 		return new DashboardCaseStatisticDto(
-			casesCountByClassification,
-			casesCountByClassification.values().stream().reduce(0, Integer::sum),
-			fatalCasesCount,
-			fatalityRate,
-			outbreakDistrictCount,
-			casesInQuarantineCount,
-			casesPlacedInQuarantineCount,
-			casesWithReferenceDefinitionFulfilledCount,
-			dashboardService.countCasesConvertedFromContacts(dashboardCriteria),
-			dashboardService.getLastReportedDistrictName(dashboardCriteria));
+				casesCountByClassification,
+				casesCountByClassification.values().stream().reduce(0, Integer::sum),
+				fatalCasesCount,
+				fatalityRate,
+				outbreakDistrictCount,
+				casesInQuarantineCount,
+				casesPlacedInQuarantineCount,
+				casesWithReferenceDefinitionFulfilledCount,
+				dashboardService.countCasesConvertedFromContacts(dashboardCriteria),
+				dashboardService.getLastReportedDistrictName(dashboardCriteria));
 	}
 
 	@RightsAllowed(UserRight._DASHBOARD_CONTACT_VIEW)
 	public DashboardContactStatisticDto getDashboardContactStatistic(DashboardCriteria dashboardCriteria) {
 
 		List<DashboardContactDto> dashboardContacts = contactFacade.getContactsForDashboard(
-			dashboardCriteria.getRegion(),
-			dashboardCriteria.getDistrict(),
-			dashboardCriteria.getDisease(),
-			dashboardCriteria.getDateFrom(),
-			dashboardCriteria.getDateTo(),
-			dashboardCriteria.getCaseClassification());
-		
+				dashboardCriteria.getRegion(),
+				dashboardCriteria.getDistrict(),
+				dashboardCriteria.getDisease(),
+				dashboardCriteria.getDateFrom(),
+				dashboardCriteria.getDateTo(),
+				dashboardCriteria.getCaseClassification());
+
 		List<DashboardContactDto> previousDashboardContacts = contactFacade.getContactsForDashboard(
-			dashboardCriteria.getRegion(),
-			dashboardCriteria.getDistrict(),
-			dashboardCriteria.getDisease(),
-			dashboardCriteria.getPreviousDateFrom(),
-			dashboardCriteria.getPreviousDateTo(),
-			dashboardCriteria.getCaseClassification());
+				dashboardCriteria.getRegion(),
+				dashboardCriteria.getDistrict(),
+				dashboardCriteria.getDisease(),
+				dashboardCriteria.getPreviousDateFrom(),
+				dashboardCriteria.getPreviousDateTo(),
+				dashboardCriteria.getCaseClassification());
 
 		int contactsCount = dashboardContacts.size();
 
 		int newContactsCount = (int) dashboardContacts.stream()
-			.filter(c -> c.getReportDate().after(dashboardCriteria.getDateFrom()) || c.getReportDate().equals(dashboardCriteria.getDateFrom()))
-			.count();
+				.filter(c -> c.getReportDate().after(dashboardCriteria.getDateFrom()) || c.getReportDate().equals(dashboardCriteria.getDateFrom()))
+				.count();
 		int newContactsPercentage = calculatePercentage(newContactsCount, contactsCount);
 		int symptomaticContactsCount = (int) dashboardContacts.stream().filter(c -> Boolean.TRUE.equals(c.getSymptomatic())).count();
 		int symptomaticContactsPercentage = calculatePercentage(symptomaticContactsCount, contactsCount);
 		int contactClassificationUnconfirmedCount =
-			(int) dashboardContacts.stream().filter(c -> c.getContactClassification() == ContactClassification.UNCONFIRMED).count();
+				(int) dashboardContacts.stream().filter(c -> c.getContactClassification() == ContactClassification.UNCONFIRMED).count();
 		int contactClassificationUnconfirmedPercentage = calculatePercentage(contactClassificationUnconfirmedCount, contactsCount);
 		int contactClassificationConfirmedCount =
-			(int) dashboardContacts.stream().filter(c -> c.getContactClassification() == ContactClassification.CONFIRMED).count();
+				(int) dashboardContacts.stream().filter(c -> c.getContactClassification() == ContactClassification.CONFIRMED).count();
 		int contactClassificationConfirmedPercentage = calculatePercentage(contactClassificationConfirmedCount, contactsCount);
 		int contactClassificationNotAContactCount =
-			(int) dashboardContacts.stream().filter(c -> c.getContactClassification() == ContactClassification.NO_CONTACT).count();
+				(int) dashboardContacts.stream().filter(c -> c.getContactClassification() == ContactClassification.NO_CONTACT).count();
 		int contactClassificationNotAContactPercentage = calculatePercentage(contactClassificationNotAContactCount, contactsCount);
 		Map<Disease, Map<String, Integer>> diseaseMap = new TreeMap<>();
 		for (Disease disease : diseaseConfigurationFacade.getAllDiseasesWithFollowUp()) {
@@ -520,36 +520,36 @@ public class DashboardFacadeEjb implements DashboardFacade {
 		}
 
 		Map<Disease, Map<String, Integer>> orderedDiseaseMap = diseaseMap.entrySet()
-			.stream()
-			.sorted(Map.Entry.comparingByValue((o1, o2) -> -Integer.compare(o1.get(CURRENT_CONTACTS), o2.get(CURRENT_CONTACTS))))
-			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+				.stream()
+				.sorted(Map.Entry.comparingByValue((o1, o2) -> -Integer.compare(o1.get(CURRENT_CONTACTS), o2.get(CURRENT_CONTACTS))))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
 
 		DashboardContactFollowUpDto dashboardContactFollowUp = calculateContactFollowUpStatistics(dashboardContacts, dashboardCriteria.getDateTo());
 		DashboardContactStoppedFollowUpDto dashboardContactStoppedFollowUp = calculateContactStoppedFollowUpStatistics(dashboardContacts);
 		DashboardContactVisitDto dashboardContactVisit = calculateContactVisitStatistics(dashboardContacts, previousDashboardContacts);
 
 		return new DashboardContactStatisticDto(
-			contactsCount,
-			newContactsCount,
-			newContactsPercentage,
-			symptomaticContactsCount,
-			symptomaticContactsPercentage,
-			contactClassificationConfirmedCount,
-			contactClassificationConfirmedPercentage,
-			contactClassificationUnconfirmedCount,
-			contactClassificationUnconfirmedPercentage,
-			contactClassificationNotAContactCount,
-			contactClassificationNotAContactPercentage,
-			orderedDiseaseMap,
-			dashboardContactFollowUp,
-			dashboardContactStoppedFollowUp,
-			dashboardContactVisit);
+				contactsCount,
+				newContactsCount,
+				newContactsPercentage,
+				symptomaticContactsCount,
+				symptomaticContactsPercentage,
+				contactClassificationConfirmedCount,
+				contactClassificationConfirmedPercentage,
+				contactClassificationUnconfirmedCount,
+				contactClassificationUnconfirmedPercentage,
+				contactClassificationNotAContactCount,
+				contactClassificationNotAContactPercentage,
+				orderedDiseaseMap,
+				dashboardContactFollowUp,
+				dashboardContactStoppedFollowUp,
+				dashboardContactVisit);
 	}
 
 	private DashboardContactFollowUpDto calculateContactFollowUpStatistics(List<DashboardContactDto> contacts, Date dateTo) {
 
 		List<DashboardContactDto> followUpContacts =
-			contacts.stream().filter(c -> c.getFollowUpStatus() == FollowUpStatus.FOLLOW_UP).collect(Collectors.toList());
+				contacts.stream().filter(c -> c.getFollowUpStatus() == FollowUpStatus.FOLLOW_UP).collect(Collectors.toList());
 
 		int followUpContactsCount = followUpContacts.size();
 
@@ -575,45 +575,45 @@ public class DashboardFacadeEjb implements DashboardFacade {
 			int missedDays = DateHelper.getFullDaysBetween(lastVisitDateTime, referenceDate);
 
 			switch (missedDays <= 3 ? missedDays : 4) {
-			case 1:
-				missedVisitsOneDayCount++;
-				break;
-			case 2:
-				missedVisitsTwoDaysCount++;
-				break;
-			case 3:
-				missedVisitsThreeDaysCount++;
-				break;
-			case 4:
-				missedVisitsGtThreeDaysCount++;
-				break;
-			default:
-				break;
+				case 1:
+					missedVisitsOneDayCount++;
+					break;
+				case 2:
+					missedVisitsTwoDaysCount++;
+					break;
+				case 3:
+					missedVisitsThreeDaysCount++;
+					break;
+				case 4:
+					missedVisitsGtThreeDaysCount++;
+					break;
+				default:
+					break;
 			}
 
 		}
 
 		return new DashboardContactFollowUpDto(
-			followUpContactsCount,
-			cooperativeContactsCount,
-			cooperativeContactsPercentage,
-			uncooperativeContactsCount,
-			uncooperativeContactsPercentage,
-			unavailableContactsCount,
-			unavailableContactsPercentage,
-			notVisitedContactsCount,
-			notVisitedContactsPercentage,
-			missedVisitsOneDayCount,
-			missedVisitsTwoDaysCount,
-			missedVisitsThreeDaysCount,
-			missedVisitsGtThreeDaysCount);
+				followUpContactsCount,
+				cooperativeContactsCount,
+				cooperativeContactsPercentage,
+				uncooperativeContactsCount,
+				uncooperativeContactsPercentage,
+				unavailableContactsCount,
+				unavailableContactsPercentage,
+				notVisitedContactsCount,
+				notVisitedContactsPercentage,
+				missedVisitsOneDayCount,
+				missedVisitsTwoDaysCount,
+				missedVisitsThreeDaysCount,
+				missedVisitsGtThreeDaysCount);
 	}
 
 	private DashboardContactStoppedFollowUpDto calculateContactStoppedFollowUpStatistics(List<DashboardContactDto> contacts) {
 
 		List<DashboardContactDto> stoppedFollowUpContacts = contacts.stream()
-			.filter(c -> c.getFollowUpStatus() != FollowUpStatus.NO_FOLLOW_UP && c.getFollowUpStatus() != FollowUpStatus.FOLLOW_UP)
-			.collect(Collectors.toList());
+				.filter(c -> c.getFollowUpStatus() != FollowUpStatus.NO_FOLLOW_UP && c.getFollowUpStatus() != FollowUpStatus.FOLLOW_UP)
+				.collect(Collectors.toList());
 
 		int stoppedFollowUpContactsCount = stoppedFollowUpContacts.size();
 
@@ -628,15 +628,15 @@ public class DashboardFacadeEjb implements DashboardFacade {
 		int contactStatusConvertedPercentage = calculatePercentage(contactStatusConvertedCount, stoppedFollowUpContactsCount);
 
 		return new DashboardContactStoppedFollowUpDto(
-			stoppedFollowUpContactsCount,
-			followUpCompletedCount,
-			followUpCompletedPercentage,
-			followUpCanceledCount,
-			followUpCanceledPercentage,
-			lostToFollowUpCount,
-			lostToFollowUpPercentage,
-			contactStatusConvertedCount,
-			contactStatusConvertedPercentage);
+				stoppedFollowUpContactsCount,
+				followUpCompletedCount,
+				followUpCompletedPercentage,
+				followUpCanceledCount,
+				followUpCanceledPercentage,
+				lostToFollowUpCount,
+				lostToFollowUpPercentage,
+				contactStatusConvertedCount,
+				contactStatusConvertedPercentage);
 	}
 
 	private DashboardContactVisitDto calculateContactVisitStatistics(List<DashboardContactDto> contacts, List<DashboardContactDto> previousContacts) {
@@ -658,8 +658,8 @@ public class DashboardFacadeEjb implements DashboardFacade {
 			}
 			if (contact.getFollowUpUntil() != null) {
 				int contactFollowUpDays = Math.min(
-					DateHelper.getDaysBetween(contact.getReportDate(), now),
-					DateHelper.getDaysBetween(contact.getReportDate(), contact.getFollowUpUntil()));
+						DateHelper.getDaysBetween(contact.getReportDate(), now),
+						DateHelper.getDaysBetween(contact.getReportDate(), contact.getFollowUpUntil()));
 				totalFollowUpDays += contactFollowUpDays;
 				int visitCount = contact.getVisitStatusMap().values().stream().reduce(0, Integer::sum);
 				doneEssentialVisitsCount += (Math.min(visitCount, contactFollowUpDays));
@@ -676,8 +676,8 @@ public class DashboardFacadeEjb implements DashboardFacade {
 			}
 			if (contact.getFollowUpUntil() != null) {
 				int contactFollowUpDays = Math.min(
-					DateHelper.getDaysBetween(contact.getReportDate(), now),
-					DateHelper.getDaysBetween(contact.getReportDate(), contact.getFollowUpUntil()));
+						DateHelper.getDaysBetween(contact.getReportDate(), now),
+						DateHelper.getDaysBetween(contact.getReportDate(), contact.getFollowUpUntil()));
 				previousTotalFollowUpDays += contactFollowUpDays;
 				int visitCount = contact.getVisitStatusMap().values().stream().reduce(0, Integer::sum);
 				previousDoneEssentialVisitsCount += (Math.min(visitCount, contactFollowUpDays));
@@ -701,26 +701,26 @@ public class DashboardFacadeEjb implements DashboardFacade {
 		int cooperativeVisitsGrowth = calculateGrowth(cooperativeVisitsCount, previousCooperativeVisitsCount);
 
 		return new DashboardContactVisitDto(
-			visitsCount,
-			missedVisitsCount,
-			missedVisitsGrowth,
-			unavailableVisitsCount,
-			unavailableVisitsGrowth,
-			uncooperativeVisitsCount,
-			uncooperativeVisitsGrowth,
-			cooperativeVisitsCount,
-			cooperativeVisitsGrowth,
-			previousMissedVisitsCount,
-			previousUnavailableVisitsCount,
-			previousUncooperativeVisitsCount,
-			previousCooperativeVisitsCount);
+				visitsCount,
+				missedVisitsCount,
+				missedVisitsGrowth,
+				unavailableVisitsCount,
+				unavailableVisitsGrowth,
+				uncooperativeVisitsCount,
+				uncooperativeVisitsGrowth,
+				cooperativeVisitsCount,
+				cooperativeVisitsGrowth,
+				previousMissedVisitsCount,
+				previousUnavailableVisitsCount,
+				previousUncooperativeVisitsCount,
+				previousCooperativeVisitsCount);
 
 	}
 
 	private int calculateGrowth(int currentCount, int previousCount) {
 		return currentCount == 0
-			? (previousCount > 0 ? -100 : 0)
-			: previousCount == 0
+				? (previousCount > 0 ? -100 : 0)
+				: previousCount == 0
 				? (currentCount > 0 ? Integer.MIN_VALUE : 0)
 				: Math.round(((currentCount - previousCount * 1.0f) / previousCount) * 100.0f);
 	}
@@ -731,41 +731,42 @@ public class DashboardFacadeEjb implements DashboardFacade {
 
 	@Override
 	@RightsAllowed({
-		UserRight._DASHBOARD_SURVEILLANCE_VIEW,
-		UserRight._DASHBOARD_CONTACT_VIEW })
+			UserRight._DASHBOARD_SURVEILLANCE_VIEW,
+			UserRight._DASHBOARD_CONTACT_VIEW })
 	public List<DiseaseBurdenDto> getDiseaseBurden(
-		RegionReferenceDto region,
-		DistrictReferenceDto district,
-		Date fromDate,
-		Date toDate,
-		Date previousFromDate,
-		Date previousToDate,
-		CriteriaDateType newCaseDateType,
-		CaseClassification caseClassification) {
+			RegionReferenceDto region,
+			DistrictReferenceDto district,
+			Date fromDate,
+			Date toDate,
+			Date previousFromDate,
+			Date previousToDate,
+			CriteriaDateType newCaseDateType,
+			CaseClassification caseClassification) {
 
 		//diseases
 		List<Disease> diseases = diseaseConfigurationFacade.getAllDiseases(true, true, true);
 
 		//new cases
-		DashboardCriteria dashboardCriteria = new DashboardCriteria().region(region)
-			.district(district)
-			.newCaseDateType(newCaseDateType)
-			.dateBetween(fromDate, toDate)
-			.caseClassification(caseClassification)
-			.previousDateFrom(previousFromDate)
-			.previousDateTo(previousToDate);
-		
+		DashboardCriteria dashboardCriteria = new DashboardCriteria()
+				.region(region)
+				.district(district)
+				.newCaseDateType(newCaseDateType)
+				.dateBetween(fromDate, toDate)
+				.caseClassification(caseClassification)
+				.previousDateFrom(previousFromDate)
+				.previousDateTo(previousToDate);
+
 		Map<Disease, Long> newCases = dashboardService.getCaseCountByDisease(dashboardCriteria);
 
 		//events
 		Map<Disease, Long> events = eventFacade
-			.getEventCountByDisease(new EventCriteria().region(region).district(district).eventDateType(null).eventDateBetween(fromDate, toDate));
+				.getEventCountByDisease(new EventCriteria().region(region).district(district).eventDateType(null).eventDateBetween(fromDate, toDate));
 
 		//outbreaks
 		Map<Disease, Long> outbreakDistrictsCount;
 		if (featureConfigurationFacade.isFeatureEnabled(FeatureType.OUTBREAKS)) {
 			outbreakDistrictsCount = outbreakFacade.getOutbreakDistrictCountByDisease(
-				new OutbreakCriteria().region(region).district(district).reportedBetween(fromDate, toDate).caseClassification(caseClassification));
+					new OutbreakCriteria().region(region).district(district).reportedBetween(fromDate, toDate).caseClassification(caseClassification));
 		} else {
 			outbreakDistrictsCount = new HashMap<>();
 		}
@@ -792,14 +793,14 @@ public class DashboardFacadeEjb implements DashboardFacade {
 			String lastReportedDistrictName = lastReportedDistrict == null ? "" : lastReportedDistrict.getName();
 
 			return new DiseaseBurdenDto(
-				disease,
-				caseCount,
-				previousCaseCount,
-				eventCount,
-				outbreakDistrictCount,
-				caseFatalityCount,
-				lastReportedDistrictName,
-				caseClassification);
+					disease,
+					caseCount,
+					previousCaseCount,
+					eventCount,
+					outbreakDistrictCount,
+					caseFatalityCount,
+					lastReportedDistrictName,
+					caseClassification);
 
 		}).collect(Collectors.toList());
 

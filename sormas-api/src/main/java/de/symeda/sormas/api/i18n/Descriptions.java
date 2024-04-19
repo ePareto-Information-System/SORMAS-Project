@@ -51,6 +51,7 @@ public interface Descriptions {
 	String descDashboardConvertedToCase = "descDashboardConvertedToCase";
 	String descDashboardFatalityRateInfo = "descDashboardFatalityRateInfo";
 	String descDashboardFollowUpInfo = "descDashboardFollowUpInfo";
+	String descDashboardNewFinalLaboratoryResults = "descDashboardNewFinalLaboratoryResults";
 	String descDashboardNewTestResults = "descDashboardNewTestResults";
 	String descDetailedExportButton = "descDetailedExportButton";
 	String descDistrictFilter = "descDistrictFilter";

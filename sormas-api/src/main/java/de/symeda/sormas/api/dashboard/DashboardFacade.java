@@ -37,7 +37,7 @@ public interface DashboardFacade {
 
 	DashboardContactStatisticDto getDashboardContactStatistic(DashboardCriteria dashboardCriteria);
 
-	Map<PathogenTestResultType, Long> getTestResultCountByResultType(DashboardCriteria dashboardCriteria);
+	Map<PathogenTestResultType, Long> getNewCasesFinalLabResultCountByResultType(DashboardCriteria dashboardCriteria);
 
 	Map<Date, Map<CaseClassification, Integer>> getEpiCurveSeriesElementsPerCaseClassification(DashboardCriteria dashboardCriteria);
 
@@ -52,12 +52,12 @@ public interface DashboardFacade {
 	DashboardCaseMeasureDto getCaseMeasurePerDistrict(DashboardCriteria dashboardCriteria);
 
 	List<DiseaseBurdenDto> getDiseaseBurden(
-		RegionReferenceDto region,
-		DistrictReferenceDto district,
-		Date fromDate,
-		Date toDate,
-		Date previousFromDate,
-		Date previousToDate,
-		CriteriaDateType newCaseDateType,
-		CaseClassification caseClassification);
+			RegionReferenceDto region,
+			DistrictReferenceDto district,
+			Date fromDate,
+			Date toDate,
+			Date previousFromDate,
+			Date previousToDate,
+			CriteriaDateType newCaseDateType,
+			CaseClassification caseClassification);
 }

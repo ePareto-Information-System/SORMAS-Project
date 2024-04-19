@@ -1,30 +1,5 @@
 package de.symeda.sormas.backend.dashboard;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
-import org.apache.commons.lang3.StringUtils;
-
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseClassification;
@@ -36,11 +11,7 @@ import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.backend.caze.Case;
-import de.symeda.sormas.backend.caze.CaseJoins;
-import de.symeda.sormas.backend.caze.CaseQueryContext;
-import de.symeda.sormas.backend.caze.CaseService;
-import de.symeda.sormas.backend.caze.CaseUserFilterCriteria;
+import de.symeda.sormas.backend.caze.*;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.ConfigFacadeEjb;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
@@ -54,10 +25,23 @@ import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.sample.Sample;
+import de.symeda.sormas.backend.sample.SampleService;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.JurisdictionHelper;
 import de.symeda.sormas.backend.util.ModelConstants;
 import de.symeda.sormas.backend.util.QueryHelper;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Tuple;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Stateless
 @LocalBean
@@ -71,9 +55,11 @@ public class DashboardService {
 	@EJB
 	private EventService eventService;
 	@EJB
+	private SampleService sampleService;
+	@EJB
 	private ConfigFacadeEjb.ConfigFacadeEjbLocal configFacade;
 
-	public List<DashboardCaseDto> getCases(DashboardCriteria dashboardCriteria) {
+/*	public List<DashboardCaseDto> getCases(DashboardCriteria dashboardCriteria) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<DashboardCaseDto> cq = cb.createQuery(DashboardCaseDto.class);
@@ -91,16 +77,16 @@ public class DashboardService {
 		if (filter != null) {
 			cq.where(filter);
 			cq.multiselect(
-				caze.get(Case.ID),
-				caze.get(Case.UUID),
-				caze.get(Case.REPORT_DATE),
-				caze.get(Case.CASE_CLASSIFICATION),
-				caze.get(Case.DISEASE),
-				person.get(Person.PRESENT_CONDITION),
-				person.get(Person.CAUSE_OF_DEATH_DISEASE),
-				caze.get(Case.QUARANTINE_FROM),
-				caze.get(Case.QUARANTINE_TO),
-				caze.get(Case.CASE_REFERENCE_DEFINITION));
+					caze.get(Case.ID),
+					caze.get(Case.UUID),
+					caze.get(Case.REPORT_DATE),
+					caze.get(Case.CASE_CLASSIFICATION),
+					caze.get(Case.DISEASE),
+					person.get(Person.PRESENT_CONDITION),
+					person.get(Person.CAUSE_OF_DEATH_DISEASE),
+					caze.get(Case.QUARANTINE_FROM),
+					caze.get(Case.QUARANTINE_TO),
+					caze.get(Case.CASE_REFERENCE_DEFINITION));
 
 			result = em.createQuery(cq).getResultList();
 		} else {
@@ -108,7 +94,47 @@ public class DashboardService {
 		}
 
 		return result;
+	}*/
+
+	public List<DashboardCaseDto> getCases(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<DashboardCaseDto> cq = cb.createQuery(DashboardCaseDto.class);
+		Root<Case> caze = cq.from(Case.class);
+
+		final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, caze);
+		final CaseJoins joins = caseQueryContext.getJoins();
+		Join<Case, Person> person = joins.getPerson();
+
+		Predicate filter = caseService.createUserFilter(caseQueryContext, new CaseUserFilterCriteria().excludeCasesFromContacts(true));
+		Predicate criteriaFilter = createCaseCriteriaFilter(dashboardCriteria, caseQueryContext);
+		filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
+
+		if (filter != null) {
+			cq.where(filter);
+			cq.multiselect(
+					caze.get(Case.ID),
+					caze.get(Case.UUID),
+					caze.get(Case.REPORT_DATE),
+					caze.get(Case.CASE_CLASSIFICATION),
+					caze.get(Case.DISEASE),
+					person.get(Person.PRESENT_CONDITION),
+					person.get(Person.CAUSE_OF_DEATH_DISEASE),
+					caze.get(Case.QUARANTINE_FROM),
+					caze.get(Case.QUARANTINE_TO),
+					caze.get(Case.CASE_REFERENCE_DEFINITION));
+
+			// Create a TypedQuery
+			TypedQuery<DashboardCaseDto> typedQuery = em.createQuery(cq);
+
+			// Set a limit on the number of results returned
+			typedQuery.setMaxResults(10); // Change the value as per your requirement
+
+			return typedQuery.getResultList();
+		} else {
+			return Collections.emptyList();
+		}
 	}
+
 
 	public Map<PathogenTestResultType, Long> getNewTestResultCountByResultType(DashboardCriteria dashboardCriteria) {
 
@@ -126,8 +152,8 @@ public class DashboardService {
 		final Predicate userFilter = caseService.createUserFilter(caseQueryContext, new CaseUserFilterCriteria().excludeCasesFromContacts(true));
 		final Predicate criteriaFilter = createCaseCriteriaFilter(dashboardCriteria, caseQueryContext);
 		final Predicate sampleFilter = cb.and(
-			cb.isFalse(sample.get(Sample.DELETED)),
-			cb.or(cb.isNull(sample.get(Sample.SPECIMEN_CONDITION)), cb.equal(sample.get(Sample.SPECIMEN_CONDITION), SpecimenCondition.ADEQUATE)));
+				cb.isFalse(sample.get(Sample.DELETED)),
+				cb.or(cb.isNull(sample.get(Sample.SPECIMEN_CONDITION)), cb.equal(sample.get(Sample.SPECIMEN_CONDITION), SpecimenCondition.ADEQUATE)));
 		cq.where(CriteriaBuilderHelper.and(cb, userFilter, criteriaFilter, sampleFilter));
 
 		final List<PathogenTestResultDto> queryResult = QueryHelper.getResultList(em, cq, null, null);
@@ -145,7 +171,7 @@ public class DashboardService {
 		final Map<PathogenTestResultType, Long> result = new HashMap<>();
 		for (PathogenTestResultType pathogenTestResultType : PathogenTestResultType.values()) {
 			long count =
-				caseTestResults.values().stream().filter(caseTestsDto -> caseTestsDto.getPathogenTestResultType() == pathogenTestResultType).count();
+					caseTestResults.values().stream().filter(caseTestsDto -> caseTestsDto.getPathogenTestResultType() == pathogenTestResultType).count();
 			if (count > 0) {
 				result.put(pathogenTestResultType, count);
 			}
@@ -154,7 +180,7 @@ public class DashboardService {
 		return result;
 	}
 
-	public Map<CaseClassification, Integer> getCasesCountByClassification(DashboardCriteria dashboardCriteria) {
+/*	public Map<CaseClassification, Integer> getCasesCountByClassification(DashboardCriteria dashboardCriteria) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
@@ -180,20 +206,60 @@ public class DashboardService {
 		}
 
 		return result;
+	}*/
+
+	public Map<CaseClassification, Integer> getCasesCountByClassification(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+		Root<Case> caze = cq.from(Case.class);
+
+		final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, caze);
+
+		Predicate filter = caseService.createUserFilter(caseQueryContext, new CaseUserFilterCriteria().excludeCasesFromContacts(true));
+		Predicate criteriaFilter = createCaseCriteriaFilter(dashboardCriteria, caseQueryContext);
+		filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
+
+		Map<CaseClassification, Integer> result;
+
+		if (filter != null) {
+			cq.multiselect(caze.get(Case.CASE_CLASSIFICATION), cb.count(caze));
+			cq.where(filter);
+			cq.groupBy(caze.get(Case.CASE_CLASSIFICATION));
+
+			List<Object[]> resultList = em.createQuery(cq).getResultList();
+			result = aggregateCountsByClassification(resultList);
+		} else {
+			result = Collections.emptyMap();
+		}
+
+		return result;
 	}
+
+	private Map<CaseClassification, Integer> aggregateCountsByClassification(List<Object[]> resultList) {
+		Map<CaseClassification, Integer> countsByClassification = new HashMap<>();
+
+		for (Object[] row : resultList) {
+			CaseClassification classification = (CaseClassification) row[0];
+			Long count = (Long) row[1];
+			countsByClassification.put(classification, count.intValue());
+		}
+
+		return countsByClassification;
+	}
+
 
 	static Map<CaseClassification, Integer> getCasesCountByClassification(List<Object[]> classificationCountList, boolean aggregateConfirmed) {
 
 		Map<CaseClassification, Integer> result = classificationCountList.stream()
-			.collect(Collectors.toMap(tuple -> (CaseClassification) tuple[0], tuple -> ((Number) tuple[1]).intValue()));
+				.collect(Collectors.toMap(tuple -> (CaseClassification) tuple[0], tuple -> ((Number) tuple[1]).intValue()));
 
 		if (aggregateConfirmed) {
 			CaseClassification confirmedKey = CaseClassification.CONFIRMED;
 			int confirmedSum = result.entrySet()
-				.stream()
-				.filter(e -> CaseClassification.getConfirmedClassifications().contains(e.getKey()))
-				.mapToInt(e -> e.getValue())
-				.sum();
+					.stream()
+					.filter(e -> CaseClassification.getConfirmedClassifications().contains(e.getKey()))
+					.mapToInt(e -> e.getValue())
+					.sum();
 			for (CaseClassification caseClassification : CaseClassification.getConfirmedClassifications()) {
 				if (caseClassification == confirmedKey && confirmedSum > 0) {
 					result.put(confirmedKey, confirmedSum);
@@ -206,7 +272,7 @@ public class DashboardService {
 		return result;
 	}
 
-	public Map<Disease, Long> getCaseCountByDisease(DashboardCriteria dashboardCriteria) {
+/*	public Map<Disease, Long> getCaseCountByDisease(DashboardCriteria dashboardCriteria) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
@@ -228,9 +294,45 @@ public class DashboardService {
 		Map<Disease, Long> resultMap = results.stream().collect(Collectors.toMap(e -> (Disease) e[0], e -> (Long) e[1]));
 
 		return resultMap;
+	}*/
+
+	public Map<Disease, Long> getCaseCountByDisease(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+		Root<Case> caze = cq.from(Case.class);
+		final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, caze);
+
+		Predicate filter = caseService.createUserFilter(caseQueryContext, new CaseUserFilterCriteria().excludeCasesFromContacts(true));
+		filter = CriteriaBuilderHelper.and(cb, filter, createCaseCriteriaFilter(dashboardCriteria, caseQueryContext));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.groupBy(caze.get(Case.DISEASE));
+		cq.multiselect(caze.get(Case.DISEASE), cb.count(caze));
+
+		List<Object[]> results = em.createQuery(cq).getResultList();
+
+		Map<Disease, Long> resultMap = aggregateCountsByDisease(results);
+
+		return resultMap;
 	}
 
-	public String getLastReportedDistrictName(DashboardCriteria dashboardCriteria) {
+	private Map<Disease, Long> aggregateCountsByDisease(List<Object[]> results) {
+		Map<Disease, Long> resultMap = new HashMap<>();
+
+		for (Object[] row : results) {
+			Disease disease = (Disease) row[0];
+			Long count = (Long) row[1];
+			resultMap.put(disease, count);
+		}
+
+		return resultMap;
+	}
+
+
+	/*public String getLastReportedDistrictName(DashboardCriteria dashboardCriteria) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<String> cq = cb.createQuery(String.class);
@@ -248,12 +350,32 @@ public class DashboardService {
 		}
 
 		cq.select(district.get(District.NAME));
-		List<Order> order = new ArrayList<>();
+		*//*List<Order> order = new ArrayList<>();
 		order.add(cb.desc(caze.get(Case.REPORT_DATE)));
 		order.add(cb.desc(caze.get(Case.CREATION_DATE)));
-		cq.orderBy(order);
+		cq.orderBy(order);*//*
 
-		return QueryHelper.getFirstResult(em, cq, t -> t == null ? StringUtils.EMPTY : t);
+//		return QueryHelper.getFirstResult(em, cq, t -> t == null ? StringUtils.EMPTY : t);
+		return QueryHelper.getFirstResult(em, cq);
+	}*/
+	public String getLastReportedDistrictName(DashboardCriteria dashboardCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<String> cq = cb.createQuery(String.class);
+		Root<Case> caze = cq.from(Case.class);
+		final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, caze);
+		final CaseJoins joins = caseQueryContext.getJoins();
+		Join<Case, District> district = joins.getResponsibleDistrict();
+
+		Predicate filter = caseService.createUserFilter(caseQueryContext, new CaseUserFilterCriteria().excludeCasesFromContacts(true));
+		filter = CriteriaBuilderHelper.and(cb, filter, createCaseCriteriaFilter(dashboardCriteria, caseQueryContext));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.select(district.get(District.NAME));
+
+		return QueryHelper.getFirstResult(em, cq);
 	}
 
 	public Map<Disease, District> getLastReportedDistrictByDisease(DashboardCriteria dashboardCriteria) {
@@ -273,14 +395,14 @@ public class DashboardService {
 			cq.where(filter);
 		}
 
-		Expression<Number> maxReportDate = cb.max(caze.get(Case.REPORT_DATE));
-		Expression<Number> maxCreationDate = cb.max(caze.get(Case.CREATION_DATE));
+		//Expression<Number> maxReportDate = cb.max(caze.get(Case.REPORT_DATE));
+		//Expression<Number> maxCreationDate = cb.max(caze.get(Case.CREATION_DATE));
 		cq.multiselect(caze.get(Case.DISEASE), districtJoin);
 		cq.groupBy(caze.get(Case.DISEASE), districtJoin);
 
 		List<Order> order = new ArrayList<>();
-		order.add(cb.desc(maxReportDate));
-		order.add(cb.desc(maxCreationDate));
+		//order.add(cb.desc(maxReportDate));
+		//order.add(cb.desc(maxCreationDate));
 		cq.orderBy(order);
 
 		List<Object[]> results = em.createQuery(cq).getResultList();
@@ -296,6 +418,7 @@ public class DashboardService {
 
 		return resultMap;
 	}
+
 
 	public Map<Disease, Long> getDeathCountByDisease(DashboardCriteria dashboardCriteria) {
 
@@ -369,11 +492,11 @@ public class DashboardService {
 		List<Object[]> results = em.createQuery(cq).getResultList();
 
 		Map<PresentCondition, Integer> resultMap = results.stream()
-			.collect(
-				Collectors.toMap(
-					e -> e[0] != null ? (PresentCondition) e[0] : PresentCondition.UNKNOWN,
-					e -> ((Number) e[1]).intValue(),
-					(v1, v2) -> v1 + v2));
+				.collect(
+						Collectors.toMap(
+								e -> e[0] != null ? (PresentCondition) e[0] : PresentCondition.UNKNOWN,
+								e -> ((Number) e[1]).intValue(),
+								(v1, v2) -> v1 + v2));
 		return resultMap;
 	}
 
@@ -396,23 +519,23 @@ public class DashboardService {
 		if (filter != null) {
 			cq.where(filter);
 			cq.multiselect(
-				event.get(Event.UUID),
-				event.get(Event.EVENT_STATUS),
-				event.get(Event.EVENT_INVESTIGATION_STATUS),
-				event.get(Event.DISEASE),
-				event.get(Event.DISEASE_DETAILS),
-				event.get(Event.START_DATE),
-				event.get(Event.REPORT_LAT),
-				event.get(Event.REPORT_LON),
-				eventLocation.get(Location.LATITUDE),
-				eventLocation.get(Location.LONGITUDE),
-				eventJoins.getReportingUser().get(User.UUID),
-				eventJoins.getResponsibleUser().get(User.UUID),
-				eventJoins.getRegion().get(Region.UUID),
-				eventDistrict.get(District.NAME),
-				eventDistrict.get(District.UUID),
-				eventJoins.getCommunity().get(Community.UUID),
-				JurisdictionHelper.booleanSelector(cb, eventService.inJurisdictionOrOwned(eventQueryContext)));
+					event.get(Event.UUID),
+					event.get(Event.EVENT_STATUS),
+					event.get(Event.EVENT_INVESTIGATION_STATUS),
+					event.get(Event.DISEASE),
+					event.get(Event.DISEASE_DETAILS),
+					event.get(Event.START_DATE),
+					event.get(Event.REPORT_LAT),
+					event.get(Event.REPORT_LON),
+					eventLocation.get(Location.LATITUDE),
+					eventLocation.get(Location.LONGITUDE),
+					eventJoins.getReportingUser().get(User.UUID),
+					eventJoins.getResponsibleUser().get(User.UUID),
+					eventJoins.getRegion().get(Region.UUID),
+					eventDistrict.get(District.NAME),
+					eventDistrict.get(District.UUID),
+					eventJoins.getCommunity().get(Community.UUID),
+					JurisdictionHelper.booleanSelector(cb, eventService.inJurisdictionOrOwned(eventQueryContext)));
 
 			result = em.createQuery(cq).getResultList();
 
@@ -445,8 +568,8 @@ public class DashboardService {
 	}
 
 	private <T extends AbstractDomainObject> Predicate createCaseCriteriaFilter(
-		DashboardCriteria dashboardCriteria,
-		CaseQueryContext caseQueryContext) {
+			DashboardCriteria dashboardCriteria,
+			CaseQueryContext caseQueryContext) {
 
 		final From<?, Case> from = caseQueryContext.getRoot();
 		final CriteriaBuilder cb = caseQueryContext.getCriteriaBuilder();
@@ -467,23 +590,23 @@ public class DashboardService {
 		}
 		if (dashboardCriteria.getDistrict() != null) {
 			filter =
-				CriteriaBuilderHelper.and(cb, filter, cb.equal(responsibleDistrict.get(District.UUID), dashboardCriteria.getDistrict().getUuid()));
+					CriteriaBuilderHelper.and(cb, filter, cb.equal(responsibleDistrict.get(District.UUID), dashboardCriteria.getDistrict().getUuid()));
 		}
 		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
 			filter = CriteriaBuilderHelper.and(
-				cb,
-				filter,
-				caseService.createNewCaseFilter(
-					caseQueryContext,
-					DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
-					DateHelper.getEndOfDay(dashboardCriteria.getDateTo()),
-					dashboardCriteria.getNewCaseDateType()));
+					cb,
+					filter,
+					caseService.createNewCaseFilter(
+							caseQueryContext,
+							DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+							DateHelper.getEndOfDay(dashboardCriteria.getDateTo()),
+							dashboardCriteria.getNewCaseDateType()));
 		}
 		//if (!dashboardCriteria.shouldIncludeNotACaseClassification()) {
 
-			if (dashboardCriteria.isIncludeNotACaseClassification()==null||dashboardCriteria.isIncludeNotACaseClassification()==false) {
+		if (dashboardCriteria.isIncludeNotACaseClassification()==null||dashboardCriteria.isIncludeNotACaseClassification()==false) {
 			filter = CriteriaBuilderHelper
-				.and(cb, filter, cb.notEqual(caseQueryContext.getRoot().get(Case.CASE_CLASSIFICATION), CaseClassification.NO_CASE));
+					.and(cb, filter, cb.notEqual(caseQueryContext.getRoot().get(Case.CASE_CLASSIFICATION), CaseClassification.NO_CASE));
 		}
 
 		// Exclude deleted cases. Archived cases should stay included
@@ -503,19 +626,19 @@ public class DashboardService {
 		}
 		if (dashboardCriteria.getRegion() != null) {
 			filter = CriteriaBuilderHelper.and(
-				cb,
-				filter,
-				cb.equal(
-					from.join(Event.EVENT_LOCATION, JoinType.LEFT).join(Location.REGION, JoinType.LEFT).get(Region.UUID),
-					dashboardCriteria.getRegion().getUuid()));
+					cb,
+					filter,
+					cb.equal(
+							from.join(Event.EVENT_LOCATION, JoinType.LEFT).join(Location.REGION, JoinType.LEFT).get(Region.UUID),
+							dashboardCriteria.getRegion().getUuid()));
 		}
 		if (dashboardCriteria.getDistrict() != null) {
 			filter = CriteriaBuilderHelper.and(
-				cb,
-				filter,
-				cb.equal(
-					from.join(Event.EVENT_LOCATION, JoinType.LEFT).join(Location.DISTRICT, JoinType.LEFT).get(District.UUID),
-					dashboardCriteria.getDistrict().getUuid()));
+					cb,
+					filter,
+					cb.equal(
+							from.join(Event.EVENT_LOCATION, JoinType.LEFT).join(Location.DISTRICT, JoinType.LEFT).get(District.UUID),
+							dashboardCriteria.getDistrict().getUuid()));
 		}
 
 		filter = CriteriaBuilderHelper.and(cb, filter, createEventDateFilter(eventQueryContext.getQuery(), cb, from, dashboardCriteria));
@@ -536,26 +659,26 @@ public class DashboardService {
 
 		if (eventDateFrom != null && eventDateTo != null) {
 			eventDateFilter = cb.or(
-				cb.and(cb.isNull(from.get(Event.END_DATE)), cb.between(from.get(Event.START_DATE), eventDateFrom, eventDateTo)),
-				cb.and(cb.isNull(from.get(Event.START_DATE)), cb.between(from.get(Event.END_DATE), eventDateFrom, eventDateTo)),
-				cb.and(
-					cb.greaterThanOrEqualTo(from.get(Event.END_DATE), eventDateFrom),
-					cb.lessThanOrEqualTo(from.get(Event.START_DATE), eventDateTo)));
+					cb.and(cb.isNull(from.get(Event.END_DATE)), cb.between(from.get(Event.START_DATE), eventDateFrom, eventDateTo)),
+					cb.and(cb.isNull(from.get(Event.START_DATE)), cb.between(from.get(Event.END_DATE), eventDateFrom, eventDateTo)),
+					cb.and(
+							cb.greaterThanOrEqualTo(from.get(Event.END_DATE), eventDateFrom),
+							cb.lessThanOrEqualTo(from.get(Event.START_DATE), eventDateTo)));
 		} else if (eventDateFrom != null) {
 			eventDateFilter = cb.or(
-				cb.and(cb.isNull(from.get(Event.END_DATE)), cb.greaterThanOrEqualTo(from.get(Event.START_DATE), eventDateFrom)),
-				cb.and(cb.isNull(from.get(Event.START_DATE)), cb.greaterThanOrEqualTo(from.get(Event.END_DATE), eventDateFrom)));
+					cb.and(cb.isNull(from.get(Event.END_DATE)), cb.greaterThanOrEqualTo(from.get(Event.START_DATE), eventDateFrom)),
+					cb.and(cb.isNull(from.get(Event.START_DATE)), cb.greaterThanOrEqualTo(from.get(Event.END_DATE), eventDateFrom)));
 		} else if (eventDateTo != null) {
 			eventDateFilter = cb.or(
-				cb.and(cb.isNull(from.get(Event.START_DATE)), cb.lessThanOrEqualTo(from.get(Event.END_DATE), eventDateTo)),
-				cb.and(cb.isNull(from.get(Event.END_DATE)), cb.lessThanOrEqualTo(from.get(Event.START_DATE), eventDateTo)));
+					cb.and(cb.isNull(from.get(Event.START_DATE)), cb.lessThanOrEqualTo(from.get(Event.END_DATE), eventDateTo)),
+					cb.and(cb.isNull(from.get(Event.END_DATE)), cb.lessThanOrEqualTo(from.get(Event.START_DATE), eventDateTo)));
 		}
 
 		if (eventDateFrom != null || eventDateTo != null) {
 			Predicate reportFilter = cb.and(
-				cb.isNull(from.get(Event.START_DATE)),
-				cb.isNull(from.get(Event.END_DATE)),
-				cb.between(from.get(Event.REPORT_DATE_TIME), eventDateFrom, eventDateTo));
+					cb.isNull(from.get(Event.START_DATE)),
+					cb.isNull(from.get(Event.END_DATE)),
+					cb.between(from.get(Event.REPORT_DATE_TIME), eventDateFrom, eventDateTo));
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.or(eventDateFilter, reportFilter));
 		}
 
