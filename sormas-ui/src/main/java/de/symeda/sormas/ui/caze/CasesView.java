@@ -416,6 +416,22 @@ public class CasesView extends AbstractView {
 			}
 
 			{
+				StreamResource exportStreamResource = CaseDownloadUtil.createCaseSamplesExportResource(
+						grid.getCriteria(),
+						this::getSelectedRows,
+						CaseExportType.CASE_SURVEILLANCE,
+						detailedExportConfiguration);
+
+				addExportButton(
+						exportStreamResource,
+						exportPopupButton,
+						exportLayout,
+						VaadinIcons.FILE_TEXT,
+						Captions.exportCaseSamplesDetailed,
+						Strings.infoDetailedExport);
+			}
+
+			{
 				// Warning if no filters have been selected
 				Label warningLabel = new Label(I18nProperties.getString(Strings.infoExportNoFilters), ContentMode.HTML);
 				warningLabel.setWidth(100, Unit.PERCENTAGE);

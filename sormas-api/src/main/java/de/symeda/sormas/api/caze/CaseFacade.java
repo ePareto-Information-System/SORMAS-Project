@@ -260,6 +260,15 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 
 	String getLastReportedDistrictName(CaseCriteria caseCriteria, boolean b, boolean c);
 
+	List<CaseExportDetailedSampleDto> getExportListDetailed(
+			CaseCriteria caseCriteria,
+			Collection<String> selectedRows,
+			CaseExportType exportType,
+			int first,
+			int max,
+			ExportConfigurationDto exportConfiguration,
+			Language userLanguage);
+
 //	Map<Disease, Long> getCaseCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases,
 //			boolean excludeCasesFromContacts);
 
