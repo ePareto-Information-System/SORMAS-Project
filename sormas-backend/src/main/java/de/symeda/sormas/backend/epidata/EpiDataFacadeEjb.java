@@ -109,6 +109,60 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setAge2(source.getAge2());
 		target.setAge3(source.getAge3());
 		target.setAge4(source.getAge4());
+		target.setSuspectedFood(source.getSuspectedFood());
+		target.setDateConsumed(source.getDateConsumed());
+		target.setFoodSource(source.getFoodSource());
+		target.setEventType(source.getEventType());
+		target.setEventOtherSpecify(source.getEventOtherSpecify());
+		target.setBreakfast(source.getBreakfast());
+		target.setTotalNoPersons(source.getTotalNoPersons());
+		target.setFoodConsumed(source.getFoodConsumed());
+		target.setSourceOfFood(source.getSourceOfFood());
+		target.setConsumedAtPlace(source.getConsumedAtPlace());
+		target.setLunch(source.getLunch());
+		target.setTotalNoPersonsL1(source.getTotalNoPersonsL1());
+		target.setFoodConsumedL1(source.getFoodConsumedL1());
+		target.setSourceOfFoodL1(source.getSourceOfFoodL1());
+		target.setConsumedAtPlaceL1(source.getConsumedAtPlaceL1());
+		target.setSupper(source.getSupper());
+		target.setTotalNoPersonsS1(source.getTotalNoPersonsS1());
+		target.setFoodConsumedS1(source.getFoodConsumedS1());
+		target.setSourceOfFoodsS1(source.getSourceOfFoodsS1());
+		target.setConsumedAtPlaceS1(source.getConsumedAtPlaceS1());
+
+		target.setBreakfast2(source.getBreakfast2());
+		target.setTotalNoPersons2(source.getTotalNoPersons2());
+		target.setFoodConsumed2(source.getFoodConsumed2());
+		target.setSourceOfFood2(source.getSourceOfFood2());
+		target.setConsumedAtPlace2(source.getConsumedAtPlace2());
+		target.setLunchL2(source.getLunchL2());
+		target.setTotalNoPersonsL2(source.getTotalNoPersonsL2());
+		target.setFoodConsumedL2(source.getFoodConsumedL2());
+		target.setSourceOfFoodL2(source.getSourceOfFoodL2());
+		target.setConsumedAtPlaceL2(source.getConsumedAtPlaceL2());
+		target.setSupperS2(source.getSupperS2());
+		target.setTotalNoPersonsS2(source.getTotalNoPersonsS2());
+		target.setFoodConsumedS2(source.getFoodConsumedS2());
+		target.setSourceOfFoodS2(source.getSourceOfFoodS2());
+		target.setConsumedAtPlaceS2(source.getConsumedAtPlaceS2());
+		target.setBreakfast3(source.getBreakfast3());
+		target.setTotalNoPersons3(source.getTotalNoPersons3());
+		target.setFoodConsumed3(source.getFoodConsumed3());
+		target.setSourceOfFood3(source.getSourceOfFood3());
+		target.setConsumedAtPlace3(source.getConsumedAtPlace3());
+		target.setLunchL3(source.getLunchL3());
+		target.setTotalNoPersonsL3(source.getTotalNoPersonsL3());
+		target.setFoodConsumedL3(source.getFoodConsumedL3());
+		target.setSourceOfFoodL3(source.getSourceOfFoodL3());
+		target.setConsumedAtPlaceL3(source.getConsumedAtPlaceL3());
+		target.setSupperS3(source.getSupperS3());
+		target.setTotalNoPersonsS3(source.getTotalNoPersonsS3());
+		target.setFoodConsumedS3(source.getFoodConsumedS3());
+		target.setSourceOfFoodS3(source.getSourceOfFoodS3());
+		target.setConsumedAtPlaceS3(source.getConsumedAtPlaceS3());
+
+
+
 
 		List<Exposure> exposures = new ArrayList<>();
 		for (ExposureDto exposureDto : source.getExposures()) {
@@ -301,6 +355,57 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setAge2(source.getAge2());
 		target.setAge3(source.getAge3());
 		target.setAge4(source.getAge4());
+		target.setSuspectedFood(source.getSuspectedFood());
+		target.setDateConsumed(source.getDateConsumed());
+		target.setFoodSource(source.getFoodSource());
+		target.setEventType(source.getEventType());
+		target.setEventOtherSpecify(source.getEventOtherSpecify());
+		target.setBreakfast(source.getBreakfast());
+		target.setTotalNoPersons(source.getTotalNoPersons());
+		target.setFoodConsumed(source.getFoodConsumed());
+		target.setSourceOfFood(source.getSourceOfFood());
+		target.setConsumedAtPlace(source.getConsumedAtPlace());
+		target.setLunch(source.getLunch());
+		target.setTotalNoPersonsL1(source.getTotalNoPersonsL1());
+		target.setFoodConsumedL1(source.getFoodConsumedL1());
+		target.setSourceOfFoodL1(source.getSourceOfFoodL1());
+		target.setConsumedAtPlaceL1(source.getConsumedAtPlaceL1());
+		target.setSupper(source.getSupper());
+		target.setTotalNoPersonsS1(source.getTotalNoPersonsS1());
+		target.setFoodConsumedS1(source.getFoodConsumedS1());
+		target.setSourceOfFoodsS1(source.getSourceOfFoodsS1());
+		target.setConsumedAtPlaceS1(source.getConsumedAtPlaceS1());
+
+		target.setBreakfast2(source.getBreakfast2());
+		target.setTotalNoPersons2(source.getTotalNoPersons2());
+		target.setFoodConsumed2(source.getFoodConsumed2());
+		target.setSourceOfFood2(source.getSourceOfFood2());
+		target.setConsumedAtPlace2(source.getConsumedAtPlace2());
+		target.setLunchL2(source.getLunchL2());
+		target.setTotalNoPersonsL2(source.getTotalNoPersonsL2());
+		target.setFoodConsumedL2(source.getFoodConsumedL2());
+		target.setSourceOfFoodL2(source.getSourceOfFoodL2());
+		target.setConsumedAtPlaceL2(source.getConsumedAtPlaceL2());
+		target.setSupperS2(source.getSupperS2());
+		target.setTotalNoPersonsS2(source.getTotalNoPersonsS2());
+		target.setFoodConsumedS2(source.getFoodConsumedS2());
+		target.setSourceOfFoodS2(source.getSourceOfFoodS2());
+		target.setConsumedAtPlaceS2(source.getConsumedAtPlaceS2());
+		target.setBreakfast3(source.getBreakfast3());
+		target.setTotalNoPersons3(source.getTotalNoPersons3());
+		target.setFoodConsumed3(source.getFoodConsumed3());
+		target.setSourceOfFood3(source.getSourceOfFood3());
+		target.setConsumedAtPlace3(source.getConsumedAtPlace3());
+		target.setLunchL3(source.getLunchL3());
+		target.setTotalNoPersonsL3(source.getTotalNoPersonsL3());
+		target.setFoodConsumedL3(source.getFoodConsumedL3());
+		target.setSourceOfFoodL3(source.getSourceOfFoodL3());
+		target.setConsumedAtPlaceL3(source.getConsumedAtPlaceL3());
+		target.setSupperS3(source.getSupperS3());
+		target.setTotalNoPersonsS3(source.getTotalNoPersonsS3());
+		target.setFoodConsumedS3(source.getFoodConsumedS3());
+		target.setSourceOfFoodS3(source.getSourceOfFoodS3());
+		target.setConsumedAtPlaceS3(source.getConsumedAtPlaceS3());
 
 		List<ExposureDto> exposureDtos = new ArrayList<>();
 		for (Exposure exposure : source.getExposures()) {

@@ -13026,5 +13026,59 @@ ALTER TABLE hospitalization ADD COLUMN symptomsongoing varchar(255);
 ALTER TABLE hospitalization ADD COLUMN durationhours varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (575, 'Food Borne illness ');
+
+-- 2024-04-22 Added food history section for Food Borne illness
+ALTER TABLE epidata ADD COLUMN suspectedfood VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN dateconsumed DATE;
+ALTER TABLE epidata ADD COLUMN foodsource VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN eventtype VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN eventotherspecify VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN breakfast VARCHAR(55);
+ALTER TABLE epidata ADD COLUMN totalnopersons VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumed VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffood VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplace VARCHAR(3);
+ALTER TABLE epidata ADD COLUMN lunch VARCHAR(55);
+ALTER TABLE epidata ADD COLUMN totalnopersonsl1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumedl1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffoodl1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplacel1 VARCHAR(3);
+ALTER TABLE epidata ADD COLUMN supper VARCHAR(55);
+ALTER TABLE epidata ADD COLUMN totalnopersonss1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumeds1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffoodss1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplaces1 VARCHAR(3);
+ALTER TABLE epidata ADD COLUMN breakfast2 VARCHAR(3);
+ALTER TABLE epidata ADD COLUMN totalnopersons2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumed2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffood2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplace2 VARCHAR(3);
+
+ALTER TABLE epidata ADD COLUMN lunchl2 VARCHAR(55);
+ALTER TABLE epidata ADD COLUMN totalnopersonsl2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumedl2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffoodl2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplacel2 VARCHAR(3);
+ALTER TABLE epidata ADD COLUMN suppers2 VARCHAR(55);
+ALTER TABLE epidata ADD COLUMN totalnopersonss2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumeds2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffoods2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplaces2 VARCHAR(3);
+ALTER TABLE epidata ADD COLUMN breakfast3 VARCHAR(55);
+ALTER TABLE epidata ADD COLUMN totalnopersons3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumed3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffood3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplace3 VARCHAR(3);
+ALTER TABLE epidata ADD COLUMN lunchl3 VARCHAR(55);
+ALTER TABLE epidata ADD COLUMN totalnopersonsl3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumedl3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffoodl3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplacel3 VARCHAR(3);
+ALTER TABLE epidata ADD COLUMN suppers3 VARCHAR(55);
+ALTER TABLE epidata ADD COLUMN totalnopersonss3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumeds3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffoods3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplaces3 VARCHAR(55);
+
+INSERT INTO schema_version (version_number, comment) VALUES (576, 'Added food history section for Food Borne illness');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
-``
