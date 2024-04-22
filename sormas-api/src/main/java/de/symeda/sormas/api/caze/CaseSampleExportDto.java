@@ -61,7 +61,8 @@ public class CaseSampleExportDto implements Serializable {
     private AdditionalTestDto additionalTest;
     private String otherAdditionalTestsDetails = "";
     private Long caseId;
-    private String afpAntiBodyDetection;
+
+    private String afpAntibodyDetection;
     private String afpAntigenDetection;
     private String afpRapidTest;
     private String afpCulture;
@@ -72,17 +73,38 @@ public class CaseSampleExportDto implements Serializable {
     private String afpIgaSerumAntibody;
     private String afpIncubationTime;
     private String afpIndirectFluorescentAntibody;
+    private String afpDirectFluorescentAntibody;
     private String afpMicroscopy;
     private String afpNeutralizingAntibodies;
-    private String afpPcr;
+    private String afpPcrRtPcr;
     private String afpGramStain;
     private String afpLatexAgglutination;
     private String afpCqValueDetection;
-    private String afpSeQuencing;
-    private String afpDnaMicroArray;
+    private String afpSequencing;
+    private String afpDnaMicroarray;
     private String afpOther;
-
-    private String choleraAntiBodyDetection;
+    private String afpAntibodyDetectionDetails;
+    private String afpAntigenDetectionDetails;
+    private String afpRapidTestDetails;
+    private String afpCultureDetails;
+    private String afpHistopathologyDetails;
+    private String afpIsolationDetails;
+    private String afpIgmSerumAntibodyDetails;
+    private String afpIggSerumAntibodyDetails;
+    private String afpIgaSerumAntibodyDetails;
+    private String afpIncubationTimeDetails;
+    private String afpIndirectFluorescentAntibodyDetails;
+    private String afpDirectFluorescentAntibodyDetails;
+    private String afpMicroscopyDetails;
+    private String afpNeutralizingAntibodiesDetails;
+    private String afpPcrRtPcrDetails;
+    private String afpGramStainDetails;
+    private String afpLatexAgglutinationDetails;
+    private String afpCqValueDetectionDetails;
+    private String afpSequencingDetails;
+    private String afpDnaMicroarrayDetails;
+    private String afpOtherDetails;
+    private String choleraAntibodyDetection;
     private String choleraAntigenDetection;
     private String choleraRapidTest;
     private String choleraCulture;
@@ -93,17 +115,38 @@ public class CaseSampleExportDto implements Serializable {
     private String choleraIgaSerumAntibody;
     private String choleraIncubationTime;
     private String choleraIndirectFluorescentAntibody;
+    private String choleraDirectFluorescentAntibody;
     private String choleraMicroscopy;
     private String choleraNeutralizingAntibodies;
-    private String choleraPcr;
+    private String choleraPcrRtPcr;
     private String choleraGramStain;
     private String choleraLatexAgglutination;
     private String choleraCqValueDetection;
-    private String choleraSeQuencing;
-    private String choleraDnaMicroArray;
+    private String choleraSequencing;
+    private String choleraDnaMicroarray;
     private String choleraOther;
-
-    private String congenitalRubellaAntiBodyDetection;
+    private String choleraAntibodyDetectionDetails;
+    private String choleraAntigenDetectionDetails;
+    private String choleraRapidTestDetails;
+    private String choleraCultureDetails;
+    private String choleraHistopathologyDetails;
+    private String choleraIsolationDetails;
+    private String choleraIgmSerumAntibodyDetails;
+    private String choleraIggSerumAntibodyDetails;
+    private String choleraIgaSerumAntibodyDetails;
+    private String choleraIncubationTimeDetails;
+    private String choleraIndirectFluorescentAntibodyDetails;
+    private String choleraDirectFluorescentAntibodyDetails;
+    private String choleraMicroscopyDetails;
+    private String choleraNeutralizingAntibodiesDetails;
+    private String choleraPcrRtPcrDetails;
+    private String choleraGramStainDetails;
+    private String choleraLatexAgglutinationDetails;
+    private String choleraCqValueDetectionDetails;
+    private String choleraSequencingDetails;
+    private String choleraDnaMicroarrayDetails;
+    private String choleraOtherDetails;
+    private String congenitalRubellaAntibodyDetection;
     private String congenitalRubellaAntigenDetection;
     private String congenitalRubellaRapidTest;
     private String congenitalRubellaCulture;
@@ -114,17 +157,38 @@ public class CaseSampleExportDto implements Serializable {
     private String congenitalRubellaIgaSerumAntibody;
     private String congenitalRubellaIncubationTime;
     private String congenitalRubellaIndirectFluorescentAntibody;
+    private String congenitalRubellaDirectFluorescentAntibody;
     private String congenitalRubellaMicroscopy;
     private String congenitalRubellaNeutralizingAntibodies;
-    private String congenitalRubellaPcr;
+    private String congenitalRubellaPcrRtPcr;
     private String congenitalRubellaGramStain;
     private String congenitalRubellaLatexAgglutination;
     private String congenitalRubellaCqValueDetection;
-    private String congenitalRubellaSeQuencing;
-    private String congenitalRubellaDnaMicroArray;
+    private String congenitalRubellaSequencing;
+    private String congenitalRubellaDnaMicroarray;
     private String congenitalRubellaOther;
-
-    private String csmAntiBodyDetection;
+    private String congenitalRubellaAntibodyDetectionDetails;
+    private String congenitalRubellaAntigenDetectionDetails;
+    private String congenitalRubellaRapidTestDetails;
+    private String congenitalRubellaCultureDetails;
+    private String congenitalRubellaHistopathologyDetails;
+    private String congenitalRubellaIsolationDetails;
+    private String congenitalRubellaIgmSerumAntibodyDetails;
+    private String congenitalRubellaIggSerumAntibodyDetails;
+    private String congenitalRubellaIgaSerumAntibodyDetails;
+    private String congenitalRubellaIncubationTimeDetails;
+    private String congenitalRubellaIndirectFluorescentAntibodyDetails;
+    private String congenitalRubellaDirectFluorescentAntibodyDetails;
+    private String congenitalRubellaMicroscopyDetails;
+    private String congenitalRubellaNeutralizingAntibodiesDetails;
+    private String congenitalRubellaPcrRtPcrDetails;
+    private String congenitalRubellaGramStainDetails;
+    private String congenitalRubellaLatexAgglutinationDetails;
+    private String congenitalRubellaCqValueDetectionDetails;
+    private String congenitalRubellaSequencingDetails;
+    private String congenitalRubellaDnaMicroarrayDetails;
+    private String congenitalRubellaOtherDetails;
+    private String csmAntibodyDetection;
     private String csmAntigenDetection;
     private String csmRapidTest;
     private String csmCulture;
@@ -135,17 +199,38 @@ public class CaseSampleExportDto implements Serializable {
     private String csmIgaSerumAntibody;
     private String csmIncubationTime;
     private String csmIndirectFluorescentAntibody;
+    private String csmDirectFluorescentAntibody;
     private String csmMicroscopy;
     private String csmNeutralizingAntibodies;
-    private String csmPcr;
+    private String csmPcrRtPcr;
     private String csmGramStain;
     private String csmLatexAgglutination;
     private String csmCqValueDetection;
-    private String csmSeQuencing;
-    private String csmDnaMicroArray;
+    private String csmSequencing;
+    private String csmDnaMicroarray;
     private String csmOther;
-
-    private String dengueAntiBodyDetection;
+    private String csmAntibodyDetectionDetails;
+    private String csmAntigenDetectionDetails;
+    private String csmRapidTestDetails;
+    private String csmCultureDetails;
+    private String csmHistopathologyDetails;
+    private String csmIsolationDetails;
+    private String csmIgmSerumAntibodyDetails;
+    private String csmIggSerumAntibodyDetails;
+    private String csmIgaSerumAntibodyDetails;
+    private String csmIncubationTimeDetails;
+    private String csmIndirectFluorescentAntibodyDetails;
+    private String csmDirectFluorescentAntibodyDetails;
+    private String csmMicroscopyDetails;
+    private String csmNeutralizingAntibodiesDetails;
+    private String csmPcrRtPcrDetails;
+    private String csmGramStainDetails;
+    private String csmLatexAgglutinationDetails;
+    private String csmCqValueDetectionDetails;
+    private String csmSequencingDetails;
+    private String csmDnaMicroarrayDetails;
+    private String csmOtherDetails;
+    private String dengueAntibodyDetection;
     private String dengueAntigenDetection;
     private String dengueRapidTest;
     private String dengueCulture;
@@ -156,17 +241,38 @@ public class CaseSampleExportDto implements Serializable {
     private String dengueIgaSerumAntibody;
     private String dengueIncubationTime;
     private String dengueIndirectFluorescentAntibody;
+    private String dengueDirectFluorescentAntibody;
     private String dengueMicroscopy;
     private String dengueNeutralizingAntibodies;
-    private String denguePcr;
+    private String denguePcrRtPcr;
     private String dengueGramStain;
     private String dengueLatexAgglutination;
     private String dengueCqValueDetection;
-    private String dengueSeQuencing;
-    private String dengueDnaMicroArray;
+    private String dengueSequencing;
+    private String dengueDnaMicroarray;
     private String dengueOther;
-
-    private String evdAntiBodyDetection;
+    private String dengueAntibodyDetectionDetails;
+    private String dengueAntigenDetectionDetails;
+    private String dengueRapidTestDetails;
+    private String dengueCultureDetails;
+    private String dengueHistopathologyDetails;
+    private String dengueIsolationDetails;
+    private String dengueIgmSerumAntibodyDetails;
+    private String dengueIggSerumAntibodyDetails;
+    private String dengueIgaSerumAntibodyDetails;
+    private String dengueIncubationTimeDetails;
+    private String dengueIndirectFluorescentAntibodyDetails;
+    private String dengueDirectFluorescentAntibodyDetails;
+    private String dengueMicroscopyDetails;
+    private String dengueNeutralizingAntibodiesDetails;
+    private String denguePcrRtPcrDetails;
+    private String dengueGramStainDetails;
+    private String dengueLatexAgglutinationDetails;
+    private String dengueCqValueDetectionDetails;
+    private String dengueSequencingDetails;
+    private String dengueDnaMicroarrayDetails;
+    private String dengueOtherDetails;
+    private String evdAntibodyDetection;
     private String evdAntigenDetection;
     private String evdRapidTest;
     private String evdCulture;
@@ -177,16 +283,38 @@ public class CaseSampleExportDto implements Serializable {
     private String evdIgaSerumAntibody;
     private String evdIncubationTime;
     private String evdIndirectFluorescentAntibody;
+    private String evdDirectFluorescentAntibody;
     private String evdMicroscopy;
     private String evdNeutralizingAntibodies;
-    private String evdPcr;
+    private String evdPcrRtPcr;
     private String evdGramStain;
     private String evdLatexAgglutination;
     private String evdCqValueDetection;
-    private String evdSeQuencing;
-    private String evdDnaMicroArray;
+    private String evdSequencing;
+    private String evdDnaMicroarray;
     private String evdOther;
-    private String guineaWormAntiBodyDetection;
+    private String evdAntibodyDetectionDetails;
+    private String evdAntigenDetectionDetails;
+    private String evdRapidTestDetails;
+    private String evdCultureDetails;
+    private String evdHistopathologyDetails;
+    private String evdIsolationDetails;
+    private String evdIgmSerumAntibodyDetails;
+    private String evdIggSerumAntibodyDetails;
+    private String evdIgaSerumAntibodyDetails;
+    private String evdIncubationTimeDetails;
+    private String evdIndirectFluorescentAntibodyDetails;
+    private String evdDirectFluorescentAntibodyDetails;
+    private String evdMicroscopyDetails;
+    private String evdNeutralizingAntibodiesDetails;
+    private String evdPcrRtPcrDetails;
+    private String evdGramStainDetails;
+    private String evdLatexAgglutinationDetails;
+    private String evdCqValueDetectionDetails;
+    private String evdSequencingDetails;
+    private String evdDnaMicroarrayDetails;
+    private String evdOtherDetails;
+    private String guineaWormAntibodyDetection;
     private String guineaWormAntigenDetection;
     private String guineaWormRapidTest;
     private String guineaWormCulture;
@@ -197,16 +325,38 @@ public class CaseSampleExportDto implements Serializable {
     private String guineaWormIgaSerumAntibody;
     private String guineaWormIncubationTime;
     private String guineaWormIndirectFluorescentAntibody;
+    private String guineaWormDirectFluorescentAntibody;
     private String guineaWormMicroscopy;
     private String guineaWormNeutralizingAntibodies;
-    private String guineaWormPcr;
+    private String guineaWormPcrRtPcr;
     private String guineaWormGramStain;
     private String guineaWormLatexAgglutination;
     private String guineaWormCqValueDetection;
-    private String guineaWormSeQuencing;
-    private String guineaWormDnaMicroArray;
+    private String guineaWormSequencing;
+    private String guineaWormDnaMicroarray;
     private String guineaWormOther;
-    private String lassaAntiBodyDetection;
+    private String guineaWormAntibodyDetectionDetails;
+    private String guineaWormAntigenDetectionDetails;
+    private String guineaWormRapidTestDetails;
+    private String guineaWormCultureDetails;
+    private String guineaWormHistopathologyDetails;
+    private String guineaWormIsolationDetails;
+    private String guineaWormIgmSerumAntibodyDetails;
+    private String guineaWormIggSerumAntibodyDetails;
+    private String guineaWormIgaSerumAntibodyDetails;
+    private String guineaWormIncubationTimeDetails;
+    private String guineaWormIndirectFluorescentAntibodyDetails;
+    private String guineaWormDirectFluorescentAntibodyDetails;
+    private String guineaWormMicroscopyDetails;
+    private String guineaWormNeutralizingAntibodiesDetails;
+    private String guineaWormPcrRtPcrDetails;
+    private String guineaWormGramStainDetails;
+    private String guineaWormLatexAgglutinationDetails;
+    private String guineaWormCqValueDetectionDetails;
+    private String guineaWormSequencingDetails;
+    private String guineaWormDnaMicroarrayDetails;
+    private String guineaWormOtherDetails;
+    private String lassaAntibodyDetection;
     private String lassaAntigenDetection;
     private String lassaRapidTest;
     private String lassaCulture;
@@ -217,16 +367,38 @@ public class CaseSampleExportDto implements Serializable {
     private String lassaIgaSerumAntibody;
     private String lassaIncubationTime;
     private String lassaIndirectFluorescentAntibody;
+    private String lassaDirectFluorescentAntibody;
     private String lassaMicroscopy;
     private String lassaNeutralizingAntibodies;
-    private String lassaPcr;
+    private String lassaPcrRtPcr;
     private String lassaGramStain;
     private String lassaLatexAgglutination;
     private String lassaCqValueDetection;
-    private String lassaSeQuencing;
-    private String lassaDnaMicroArray;
+    private String lassaSequencing;
+    private String lassaDnaMicroarray;
     private String lassaOther;
-    private String measlesAntiBodyDetection;
+    private String lassaAntibodyDetectionDetails;
+    private String lassaAntigenDetectionDetails;
+    private String lassaRapidTestDetails;
+    private String lassaCultureDetails;
+    private String lassaHistopathologyDetails;
+    private String lassaIsolationDetails;
+    private String lassaIgmSerumAntibodyDetails;
+    private String lassaIggSerumAntibodyDetails;
+    private String lassaIgaSerumAntibodyDetails;
+    private String lassaIncubationTimeDetails;
+    private String lassaIndirectFluorescentAntibodyDetails;
+    private String lassaDirectFluorescentAntibodyDetails;
+    private String lassaMicroscopyDetails;
+    private String lassaNeutralizingAntibodiesDetails;
+    private String lassaPcrRtPcrDetails;
+    private String lassaGramStainDetails;
+    private String lassaLatexAgglutinationDetails;
+    private String lassaCqValueDetectionDetails;
+    private String lassaSequencingDetails;
+    private String lassaDnaMicroarrayDetails;
+    private String lassaOtherDetails;
+    private String measlesAntibodyDetection;
     private String measlesAntigenDetection;
     private String measlesRapidTest;
     private String measlesCulture;
@@ -237,36 +409,38 @@ public class CaseSampleExportDto implements Serializable {
     private String measlesIgaSerumAntibody;
     private String measlesIncubationTime;
     private String measlesIndirectFluorescentAntibody;
+    private String measlesDirectFluorescentAntibody;
     private String measlesMicroscopy;
     private String measlesNeutralizingAntibodies;
-    private String measlesPcr;
+    private String measlesPcrRtPcr;
     private String measlesGramStain;
     private String measlesLatexAgglutination;
     private String measlesCqValueDetection;
-    private String measlesSeQuencing;
-    private String measlesDnaMicroArray;
+    private String measlesSequencing;
+    private String measlesDnaMicroarray;
     private String measlesOther;
-    private String monkeyPoxAntiBodyDetection;
-    private String monkeyPoxAntigenDetection;
-    private String monkeyPoxRapidTest;
-    private String monkeyPoxCulture;
-    private String monkeyPoxHistopathology;
-    private String monkeyPoxIsolation;
-    private String monkeyPoxIgmSerumAntibody;
-    private String monkeyPoxIggSerumAntibody;
-    private String monkeyPoxIgaSerumAntibody;
-    private String monkeyPoxIncubationTime;
-    private String monkeyPoxIndirectFluorescentAntibody;
-    private String monkeyPoxMicroscopy;
-    private String monkeyPoxNeutralizingAntibodies;
-    private String monkeyPoxPcr;
-    private String monkeyPoxGramStain;
-    private String monkeyPoxLatexAgglutination;
-    private String monkeyPoxCqValueDetection;
-    private String monkeyPoxSeQuencing;
-    private String monkeyPoxDnaMicroArray;
-    private String monkeyPoxOther;
-    private String monkeypoxAntiBodyDetection;
+    private String measlesAntibodyDetectionDetails;
+    private String measlesAntigenDetectionDetails;
+    private String measlesRapidTestDetails;
+    private String measlesCultureDetails;
+    private String measlesHistopathologyDetails;
+    private String measlesIsolationDetails;
+    private String measlesIgmSerumAntibodyDetails;
+    private String measlesIggSerumAntibodyDetails;
+    private String measlesIgaSerumAntibodyDetails;
+    private String measlesIncubationTimeDetails;
+    private String measlesIndirectFluorescentAntibodyDetails;
+    private String measlesDirectFluorescentAntibodyDetails;
+    private String measlesMicroscopyDetails;
+    private String measlesNeutralizingAntibodiesDetails;
+    private String measlesPcrRtPcrDetails;
+    private String measlesGramStainDetails;
+    private String measlesLatexAgglutinationDetails;
+    private String measlesCqValueDetectionDetails;
+    private String measlesSequencingDetails;
+    private String measlesDnaMicroarrayDetails;
+    private String measlesOtherDetails;
+    private String monkeypoxAntibodyDetection;
     private String monkeypoxAntigenDetection;
     private String monkeypoxRapidTest;
     private String monkeypoxCulture;
@@ -277,16 +451,38 @@ public class CaseSampleExportDto implements Serializable {
     private String monkeypoxIgaSerumAntibody;
     private String monkeypoxIncubationTime;
     private String monkeypoxIndirectFluorescentAntibody;
+    private String monkeypoxDirectFluorescentAntibody;
     private String monkeypoxMicroscopy;
     private String monkeypoxNeutralizingAntibodies;
-    private String monkeypoxPcr;
+    private String monkeypoxPcrRtPcr;
     private String monkeypoxGramStain;
     private String monkeypoxLatexAgglutination;
     private String monkeypoxCqValueDetection;
-    private String monkeypoxSeQuencing;
-    private String monkeypoxDnaMicroArray;
+    private String monkeypoxSequencing;
+    private String monkeypoxDnaMicroarray;
     private String monkeypoxOther;
-    private String newInfluenzaAntiBodyDetection;
+    private String monkeypoxAntibodyDetectionDetails;
+    private String monkeypoxAntigenDetectionDetails;
+    private String monkeypoxRapidTestDetails;
+    private String monkeypoxCultureDetails;
+    private String monkeypoxHistopathologyDetails;
+    private String monkeypoxIsolationDetails;
+    private String monkeypoxIgmSerumAntibodyDetails;
+    private String monkeypoxIggSerumAntibodyDetails;
+    private String monkeypoxIgaSerumAntibodyDetails;
+    private String monkeypoxIncubationTimeDetails;
+    private String monkeypoxIndirectFluorescentAntibodyDetails;
+    private String monkeypoxDirectFluorescentAntibodyDetails;
+    private String monkeypoxMicroscopyDetails;
+    private String monkeypoxNeutralizingAntibodiesDetails;
+    private String monkeypoxPcrRtPcrDetails;
+    private String monkeypoxGramStainDetails;
+    private String monkeypoxLatexAgglutinationDetails;
+    private String monkeypoxCqValueDetectionDetails;
+    private String monkeypoxSequencingDetails;
+    private String monkeypoxDnaMicroarrayDetails;
+    private String monkeypoxOtherDetails;
+    private String newInfluenzaAntibodyDetection;
     private String newInfluenzaAntigenDetection;
     private String newInfluenzaRapidTest;
     private String newInfluenzaCulture;
@@ -297,16 +493,38 @@ public class CaseSampleExportDto implements Serializable {
     private String newInfluenzaIgaSerumAntibody;
     private String newInfluenzaIncubationTime;
     private String newInfluenzaIndirectFluorescentAntibody;
+    private String newInfluenzaDirectFluorescentAntibody;
     private String newInfluenzaMicroscopy;
     private String newInfluenzaNeutralizingAntibodies;
-    private String newInfluenzaPcr;
+    private String newInfluenzaPcrRtPcr;
     private String newInfluenzaGramStain;
     private String newInfluenzaLatexAgglutination;
     private String newInfluenzaCqValueDetection;
-    private String newInfluenzaSeQuencing;
-    private String newInfluenzaDnaMicroArray;
+    private String newInfluenzaSequencing;
+    private String newInfluenzaDnaMicroarray;
     private String newInfluenzaOther;
-    private String plagueAntiBodyDetection;
+    private String newInfluenzaAntibodyDetectionDetails;
+    private String newInfluenzaAntigenDetectionDetails;
+    private String newInfluenzaRapidTestDetails;
+    private String newInfluenzaCultureDetails;
+    private String newInfluenzaHistopathologyDetails;
+    private String newInfluenzaIsolationDetails;
+    private String newInfluenzaIgmSerumAntibodyDetails;
+    private String newInfluenzaIggSerumAntibodyDetails;
+    private String newInfluenzaIgaSerumAntibodyDetails;
+    private String newInfluenzaIncubationTimeDetails;
+    private String newInfluenzaIndirectFluorescentAntibodyDetails;
+    private String newInfluenzaDirectFluorescentAntibodyDetails;
+    private String newInfluenzaMicroscopyDetails;
+    private String newInfluenzaNeutralizingAntibodiesDetails;
+    private String newInfluenzaPcrRtPcrDetails;
+    private String newInfluenzaGramStainDetails;
+    private String newInfluenzaLatexAgglutinationDetails;
+    private String newInfluenzaCqValueDetectionDetails;
+    private String newInfluenzaSequencingDetails;
+    private String newInfluenzaDnaMicroarrayDetails;
+    private String newInfluenzaOtherDetails;
+    private String plagueAntibodyDetection;
     private String plagueAntigenDetection;
     private String plagueRapidTest;
     private String plagueCulture;
@@ -317,16 +535,38 @@ public class CaseSampleExportDto implements Serializable {
     private String plagueIgaSerumAntibody;
     private String plagueIncubationTime;
     private String plagueIndirectFluorescentAntibody;
+    private String plagueDirectFluorescentAntibody;
     private String plagueMicroscopy;
     private String plagueNeutralizingAntibodies;
-    private String plaguePcr;
+    private String plaguePcrRtPcr;
     private String plagueGramStain;
     private String plagueLatexAgglutination;
     private String plagueCqValueDetection;
-    private String plagueSeQuencing;
-    private String plagueDnaMicroArray;
+    private String plagueSequencing;
+    private String plagueDnaMicroarray;
     private String plagueOther;
-    private String polioAntiBodyDetection;
+    private String plagueAntibodyDetectionDetails;
+    private String plagueAntigenDetectionDetails;
+    private String plagueRapidTestDetails;
+    private String plagueCultureDetails;
+    private String plagueHistopathologyDetails;
+    private String plagueIsolationDetails;
+    private String plagueIgmSerumAntibodyDetails;
+    private String plagueIggSerumAntibodyDetails;
+    private String plagueIgaSerumAntibodyDetails;
+    private String plagueIncubationTimeDetails;
+    private String plagueIndirectFluorescentAntibodyDetails;
+    private String plagueDirectFluorescentAntibodyDetails;
+    private String plagueMicroscopyDetails;
+    private String plagueNeutralizingAntibodiesDetails;
+    private String plaguePcrRtPcrDetails;
+    private String plagueGramStainDetails;
+    private String plagueLatexAgglutinationDetails;
+    private String plagueCqValueDetectionDetails;
+    private String plagueSequencingDetails;
+    private String plagueDnaMicroarrayDetails;
+    private String plagueOtherDetails;
+    private String polioAntibodyDetection;
     private String polioAntigenDetection;
     private String polioRapidTest;
     private String polioCulture;
@@ -337,16 +577,38 @@ public class CaseSampleExportDto implements Serializable {
     private String polioIgaSerumAntibody;
     private String polioIncubationTime;
     private String polioIndirectFluorescentAntibody;
+    private String polioDirectFluorescentAntibody;
     private String polioMicroscopy;
     private String polioNeutralizingAntibodies;
-    private String polioPcr;
+    private String polioPcrRtPcr;
     private String polioGramStain;
     private String polioLatexAgglutination;
     private String polioCqValueDetection;
-    private String polioSeQuencing;
-    private String polioDnaMicroArray;
+    private String polioSequencing;
+    private String polioDnaMicroarray;
     private String polioOther;
-    private String unspecifiedVhfAntiBodyDetection;
+    private String polioAntibodyDetectionDetails;
+    private String polioAntigenDetectionDetails;
+    private String polioRapidTestDetails;
+    private String polioCultureDetails;
+    private String polioHistopathologyDetails;
+    private String polioIsolationDetails;
+    private String polioIgmSerumAntibodyDetails;
+    private String polioIggSerumAntibodyDetails;
+    private String polioIgaSerumAntibodyDetails;
+    private String polioIncubationTimeDetails;
+    private String polioIndirectFluorescentAntibodyDetails;
+    private String polioDirectFluorescentAntibodyDetails;
+    private String polioMicroscopyDetails;
+    private String polioNeutralizingAntibodiesDetails;
+    private String polioPcrRtPcrDetails;
+    private String polioGramStainDetails;
+    private String polioLatexAgglutinationDetails;
+    private String polioCqValueDetectionDetails;
+    private String polioSequencingDetails;
+    private String polioDnaMicroarrayDetails;
+    private String polioOtherDetails;
+    private String unspecifiedVhfAntibodyDetection;
     private String unspecifiedVhfAntigenDetection;
     private String unspecifiedVhfRapidTest;
     private String unspecifiedVhfCulture;
@@ -357,16 +619,80 @@ public class CaseSampleExportDto implements Serializable {
     private String unspecifiedVhfIgaSerumAntibody;
     private String unspecifiedVhfIncubationTime;
     private String unspecifiedVhfIndirectFluorescentAntibody;
+    private String unspecifiedVhfDirectFluorescentAntibody;
     private String unspecifiedVhfMicroscopy;
     private String unspecifiedVhfNeutralizingAntibodies;
-    private String unspecifiedVhfPcr;
+    private String unspecifiedVhfPcrRtPcr;
     private String unspecifiedVhfGramStain;
     private String unspecifiedVhfLatexAgglutination;
     private String unspecifiedVhfCqValueDetection;
-    private String unspecifiedVhfSeQuencing;
-    private String unspecifiedVhfDnaMicroArray;
+    private String unspecifiedVhfSequencing;
+    private String unspecifiedVhfDnaMicroarray;
     private String unspecifiedVhfOther;
-    private String yellowFeverAntiBodyDetection;
+    private String unspecifiedVhfAntibodyDetectionDetails;
+    private String unspecifiedVhfAntigenDetectionDetails;
+    private String unspecifiedVhfRapidTestDetails;
+    private String unspecifiedVhfCultureDetails;
+    private String unspecifiedVhfHistopathologyDetails;
+    private String unspecifiedVhfIsolationDetails;
+    private String unspecifiedVhfIgmSerumAntibodyDetails;
+    private String unspecifiedVhfIggSerumAntibodyDetails;
+    private String unspecifiedVhfIgaSerumAntibodyDetails;
+    private String unspecifiedVhfIncubationTimeDetails;
+    private String unspecifiedVhfIndirectFluorescentAntibodyDetails;
+    private String unspecifiedVhfDirectFluorescentAntibodyDetails;
+    private String unspecifiedVhfMicroscopyDetails;
+    private String unspecifiedVhfNeutralizingAntibodiesDetails;
+    private String unspecifiedVhfPcrRtPcrDetails;
+    private String unspecifiedVhfGramStainDetails;
+    private String unspecifiedVhfLatexAgglutinationDetails;
+    private String unspecifiedVhfCqValueDetectionDetails;
+    private String unspecifiedVhfSequencingDetails;
+    private String unspecifiedVhfDnaMicroarrayDetails;
+    private String unspecifiedVhfOtherDetails;
+    private String westNileFeverAntibodyDetection;
+    private String westNileFeverAntigenDetection;
+    private String westNileFeverRapidTest;
+    private String westNileFeverCulture;
+    private String westNileFeverHistopathology;
+    private String westNileFeverIsolation;
+    private String westNileFeverIgmSerumAntibody;
+    private String westNileFeverIggSerumAntibody;
+    private String westNileFeverIgaSerumAntibody;
+    private String westNileFeverIncubationTime;
+    private String westNileFeverIndirectFluorescentAntibody;
+    private String westNileFeverDirectFluorescentAntibody;
+    private String westNileFeverMicroscopy;
+    private String westNileFeverNeutralizingAntibodies;
+    private String westNileFeverPcrRtPcr;
+    private String westNileFeverGramStain;
+    private String westNileFeverLatexAgglutination;
+    private String westNileFeverCqValueDetection;
+    private String westNileFeverSequencing;
+    private String westNileFeverDnaMicroarray;
+    private String westNileFeverOther;
+    private String westNileFeverAntibodyDetectionDetails;
+    private String westNileFeverAntigenDetectionDetails;
+    private String westNileFeverRapidTestDetails;
+    private String westNileFeverCultureDetails;
+    private String westNileFeverHistopathologyDetails;
+    private String westNileFeverIsolationDetails;
+    private String westNileFeverIgmSerumAntibodyDetails;
+    private String westNileFeverIggSerumAntibodyDetails;
+    private String westNileFeverIgaSerumAntibodyDetails;
+    private String westNileFeverIncubationTimeDetails;
+    private String westNileFeverIndirectFluorescentAntibodyDetails;
+    private String westNileFeverDirectFluorescentAntibodyDetails;
+    private String westNileFeverMicroscopyDetails;
+    private String westNileFeverNeutralizingAntibodiesDetails;
+    private String westNileFeverPcrRtPcrDetails;
+    private String westNileFeverGramStainDetails;
+    private String westNileFeverLatexAgglutinationDetails;
+    private String westNileFeverCqValueDetectionDetails;
+    private String westNileFeverSequencingDetails;
+    private String westNileFeverDnaMicroarrayDetails;
+    private String westNileFeverOtherDetails;
+    private String yellowFeverAntibodyDetection;
     private String yellowFeverAntigenDetection;
     private String yellowFeverRapidTest;
     private String yellowFeverCulture;
@@ -377,16 +703,38 @@ public class CaseSampleExportDto implements Serializable {
     private String yellowFeverIgaSerumAntibody;
     private String yellowFeverIncubationTime;
     private String yellowFeverIndirectFluorescentAntibody;
+    private String yellowFeverDirectFluorescentAntibody;
     private String yellowFeverMicroscopy;
     private String yellowFeverNeutralizingAntibodies;
-    private String yellowFeverPcr;
+    private String yellowFeverPcrRtPcr;
     private String yellowFeverGramStain;
     private String yellowFeverLatexAgglutination;
     private String yellowFeverCqValueDetection;
-    private String yellowFeverSeQuencing;
-    private String yellowFeverDnaMicroArray;
+    private String yellowFeverSequencing;
+    private String yellowFeverDnaMicroarray;
     private String yellowFeverOther;
-    private String rabiesAntiBodyDetection;
+    private String yellowFeverAntibodyDetectionDetails;
+    private String yellowFeverAntigenDetectionDetails;
+    private String yellowFeverRapidTestDetails;
+    private String yellowFeverCultureDetails;
+    private String yellowFeverHistopathologyDetails;
+    private String yellowFeverIsolationDetails;
+    private String yellowFeverIgmSerumAntibodyDetails;
+    private String yellowFeverIggSerumAntibodyDetails;
+    private String yellowFeverIgaSerumAntibodyDetails;
+    private String yellowFeverIncubationTimeDetails;
+    private String yellowFeverIndirectFluorescentAntibodyDetails;
+    private String yellowFeverDirectFluorescentAntibodyDetails;
+    private String yellowFeverMicroscopyDetails;
+    private String yellowFeverNeutralizingAntibodiesDetails;
+    private String yellowFeverPcrRtPcrDetails;
+    private String yellowFeverGramStainDetails;
+    private String yellowFeverLatexAgglutinationDetails;
+    private String yellowFeverCqValueDetectionDetails;
+    private String yellowFeverSequencingDetails;
+    private String yellowFeverDnaMicroarrayDetails;
+    private String yellowFeverOtherDetails;
+    private String rabiesAntibodyDetection;
     private String rabiesAntigenDetection;
     private String rabiesRapidTest;
     private String rabiesCulture;
@@ -397,16 +745,38 @@ public class CaseSampleExportDto implements Serializable {
     private String rabiesIgaSerumAntibody;
     private String rabiesIncubationTime;
     private String rabiesIndirectFluorescentAntibody;
+    private String rabiesDirectFluorescentAntibody;
     private String rabiesMicroscopy;
     private String rabiesNeutralizingAntibodies;
-    private String rabiesPcr;
+    private String rabiesPcrRtPcr;
     private String rabiesGramStain;
     private String rabiesLatexAgglutination;
     private String rabiesCqValueDetection;
-    private String rabiesSeQuencing;
-    private String rabiesDnaMicroArray;
+    private String rabiesSequencing;
+    private String rabiesDnaMicroarray;
     private String rabiesOther;
-    private String anthraxAntiBodyDetection;
+    private String rabiesAntibodyDetectionDetails;
+    private String rabiesAntigenDetectionDetails;
+    private String rabiesRapidTestDetails;
+    private String rabiesCultureDetails;
+    private String rabiesHistopathologyDetails;
+    private String rabiesIsolationDetails;
+    private String rabiesIgmSerumAntibodyDetails;
+    private String rabiesIggSerumAntibodyDetails;
+    private String rabiesIgaSerumAntibodyDetails;
+    private String rabiesIncubationTimeDetails;
+    private String rabiesIndirectFluorescentAntibodyDetails;
+    private String rabiesDirectFluorescentAntibodyDetails;
+    private String rabiesMicroscopyDetails;
+    private String rabiesNeutralizingAntibodiesDetails;
+    private String rabiesPcrRtPcrDetails;
+    private String rabiesGramStainDetails;
+    private String rabiesLatexAgglutinationDetails;
+    private String rabiesCqValueDetectionDetails;
+    private String rabiesSequencingDetails;
+    private String rabiesDnaMicroarrayDetails;
+    private String rabiesOtherDetails;
+    private String anthraxAntibodyDetection;
     private String anthraxAntigenDetection;
     private String anthraxRapidTest;
     private String anthraxCulture;
@@ -417,16 +787,38 @@ public class CaseSampleExportDto implements Serializable {
     private String anthraxIgaSerumAntibody;
     private String anthraxIncubationTime;
     private String anthraxIndirectFluorescentAntibody;
+    private String anthraxDirectFluorescentAntibody;
     private String anthraxMicroscopy;
     private String anthraxNeutralizingAntibodies;
-    private String anthraxPcr;
+    private String anthraxPcrRtPcr;
     private String anthraxGramStain;
     private String anthraxLatexAgglutination;
     private String anthraxCqValueDetection;
-    private String anthraxSeQuencing;
-    private String anthraxDnaMicroArray;
+    private String anthraxSequencing;
+    private String anthraxDnaMicroarray;
     private String anthraxOther;
-    private String coronavirusAntiBodyDetection;
+    private String anthraxAntibodyDetectionDetails;
+    private String anthraxAntigenDetectionDetails;
+    private String anthraxRapidTestDetails;
+    private String anthraxCultureDetails;
+    private String anthraxHistopathologyDetails;
+    private String anthraxIsolationDetails;
+    private String anthraxIgmSerumAntibodyDetails;
+    private String anthraxIggSerumAntibodyDetails;
+    private String anthraxIgaSerumAntibodyDetails;
+    private String anthraxIncubationTimeDetails;
+    private String anthraxIndirectFluorescentAntibodyDetails;
+    private String anthraxDirectFluorescentAntibodyDetails;
+    private String anthraxMicroscopyDetails;
+    private String anthraxNeutralizingAntibodiesDetails;
+    private String anthraxPcrRtPcrDetails;
+    private String anthraxGramStainDetails;
+    private String anthraxLatexAgglutinationDetails;
+    private String anthraxCqValueDetectionDetails;
+    private String anthraxSequencingDetails;
+    private String anthraxDnaMicroarrayDetails;
+    private String anthraxOtherDetails;
+    private String coronavirusAntibodyDetection;
     private String coronavirusAntigenDetection;
     private String coronavirusRapidTest;
     private String coronavirusCulture;
@@ -437,16 +829,38 @@ public class CaseSampleExportDto implements Serializable {
     private String coronavirusIgaSerumAntibody;
     private String coronavirusIncubationTime;
     private String coronavirusIndirectFluorescentAntibody;
+    private String coronavirusDirectFluorescentAntibody;
     private String coronavirusMicroscopy;
     private String coronavirusNeutralizingAntibodies;
-    private String coronavirusPcr;
+    private String coronavirusPcrRtPcr;
     private String coronavirusGramStain;
     private String coronavirusLatexAgglutination;
     private String coronavirusCqValueDetection;
-    private String coronavirusSeQuencing;
-    private String coronavirusDnaMicroArray;
+    private String coronavirusSequencing;
+    private String coronavirusDnaMicroarray;
     private String coronavirusOther;
-    private String pneumoniaAntiBodyDetection;
+    private String coronavirusAntibodyDetectionDetails;
+    private String coronavirusAntigenDetectionDetails;
+    private String coronavirusRapidTestDetails;
+    private String coronavirusCultureDetails;
+    private String coronavirusHistopathologyDetails;
+    private String coronavirusIsolationDetails;
+    private String coronavirusIgmSerumAntibodyDetails;
+    private String coronavirusIggSerumAntibodyDetails;
+    private String coronavirusIgaSerumAntibodyDetails;
+    private String coronavirusIncubationTimeDetails;
+    private String coronavirusIndirectFluorescentAntibodyDetails;
+    private String coronavirusDirectFluorescentAntibodyDetails;
+    private String coronavirusMicroscopyDetails;
+    private String coronavirusNeutralizingAntibodiesDetails;
+    private String coronavirusPcrRtPcrDetails;
+    private String coronavirusGramStainDetails;
+    private String coronavirusLatexAgglutinationDetails;
+    private String coronavirusCqValueDetectionDetails;
+    private String coronavirusSequencingDetails;
+    private String coronavirusDnaMicroarrayDetails;
+    private String coronavirusOtherDetails;
+    private String pneumoniaAntibodyDetection;
     private String pneumoniaAntigenDetection;
     private String pneumoniaRapidTest;
     private String pneumoniaCulture;
@@ -457,16 +871,38 @@ public class CaseSampleExportDto implements Serializable {
     private String pneumoniaIgaSerumAntibody;
     private String pneumoniaIncubationTime;
     private String pneumoniaIndirectFluorescentAntibody;
+    private String pneumoniaDirectFluorescentAntibody;
     private String pneumoniaMicroscopy;
     private String pneumoniaNeutralizingAntibodies;
-    private String pneumoniaPcr;
+    private String pneumoniaPcrRtPcr;
     private String pneumoniaGramStain;
     private String pneumoniaLatexAgglutination;
     private String pneumoniaCqValueDetection;
-    private String pneumoniaSeQuencing;
-    private String pneumoniaDnaMicroArray;
+    private String pneumoniaSequencing;
+    private String pneumoniaDnaMicroarray;
     private String pneumoniaOther;
-    private String malariaAntiBodyDetection;
+    private String pneumoniaAntibodyDetectionDetails;
+    private String pneumoniaAntigenDetectionDetails;
+    private String pneumoniaRapidTestDetails;
+    private String pneumoniaCultureDetails;
+    private String pneumoniaHistopathologyDetails;
+    private String pneumoniaIsolationDetails;
+    private String pneumoniaIgmSerumAntibodyDetails;
+    private String pneumoniaIggSerumAntibodyDetails;
+    private String pneumoniaIgaSerumAntibodyDetails;
+    private String pneumoniaIncubationTimeDetails;
+    private String pneumoniaIndirectFluorescentAntibodyDetails;
+    private String pneumoniaDirectFluorescentAntibodyDetails;
+    private String pneumoniaMicroscopyDetails;
+    private String pneumoniaNeutralizingAntibodiesDetails;
+    private String pneumoniaPcrRtPcrDetails;
+    private String pneumoniaGramStainDetails;
+    private String pneumoniaLatexAgglutinationDetails;
+    private String pneumoniaCqValueDetectionDetails;
+    private String pneumoniaSequencingDetails;
+    private String pneumoniaDnaMicroarrayDetails;
+    private String pneumoniaOtherDetails;
+    private String malariaAntibodyDetection;
     private String malariaAntigenDetection;
     private String malariaRapidTest;
     private String malariaCulture;
@@ -477,16 +913,38 @@ public class CaseSampleExportDto implements Serializable {
     private String malariaIgaSerumAntibody;
     private String malariaIncubationTime;
     private String malariaIndirectFluorescentAntibody;
+    private String malariaDirectFluorescentAntibody;
     private String malariaMicroscopy;
     private String malariaNeutralizingAntibodies;
-    private String malariaPcr;
+    private String malariaPcrRtPcr;
     private String malariaGramStain;
     private String malariaLatexAgglutination;
     private String malariaCqValueDetection;
-    private String malariaSeQuencing;
-    private String malariaDnaMicroArray;
+    private String malariaSequencing;
+    private String malariaDnaMicroarray;
     private String malariaOther;
-    private String typhoidFeverAntiBodyDetection;
+    private String malariaAntibodyDetectionDetails;
+    private String malariaAntigenDetectionDetails;
+    private String malariaRapidTestDetails;
+    private String malariaCultureDetails;
+    private String malariaHistopathologyDetails;
+    private String malariaIsolationDetails;
+    private String malariaIgmSerumAntibodyDetails;
+    private String malariaIggSerumAntibodyDetails;
+    private String malariaIgaSerumAntibodyDetails;
+    private String malariaIncubationTimeDetails;
+    private String malariaIndirectFluorescentAntibodyDetails;
+    private String malariaDirectFluorescentAntibodyDetails;
+    private String malariaMicroscopyDetails;
+    private String malariaNeutralizingAntibodiesDetails;
+    private String malariaPcrRtPcrDetails;
+    private String malariaGramStainDetails;
+    private String malariaLatexAgglutinationDetails;
+    private String malariaCqValueDetectionDetails;
+    private String malariaSequencingDetails;
+    private String malariaDnaMicroarrayDetails;
+    private String malariaOtherDetails;
+    private String typhoidFeverAntibodyDetection;
     private String typhoidFeverAntigenDetection;
     private String typhoidFeverRapidTest;
     private String typhoidFeverCulture;
@@ -497,16 +955,38 @@ public class CaseSampleExportDto implements Serializable {
     private String typhoidFeverIgaSerumAntibody;
     private String typhoidFeverIncubationTime;
     private String typhoidFeverIndirectFluorescentAntibody;
+    private String typhoidFeverDirectFluorescentAntibody;
     private String typhoidFeverMicroscopy;
     private String typhoidFeverNeutralizingAntibodies;
-    private String typhoidFeverPcr;
+    private String typhoidFeverPcrRtPcr;
     private String typhoidFeverGramStain;
     private String typhoidFeverLatexAgglutination;
     private String typhoidFeverCqValueDetection;
-    private String typhoidFeverSeQuencing;
-    private String typhoidFeverDnaMicroArray;
+    private String typhoidFeverSequencing;
+    private String typhoidFeverDnaMicroarray;
     private String typhoidFeverOther;
-    private String acuteViralHepatitisAntiBodyDetection;
+    private String typhoidFeverAntibodyDetectionDetails;
+    private String typhoidFeverAntigenDetectionDetails;
+    private String typhoidFeverRapidTestDetails;
+    private String typhoidFeverCultureDetails;
+    private String typhoidFeverHistopathologyDetails;
+    private String typhoidFeverIsolationDetails;
+    private String typhoidFeverIgmSerumAntibodyDetails;
+    private String typhoidFeverIggSerumAntibodyDetails;
+    private String typhoidFeverIgaSerumAntibodyDetails;
+    private String typhoidFeverIncubationTimeDetails;
+    private String typhoidFeverIndirectFluorescentAntibodyDetails;
+    private String typhoidFeverDirectFluorescentAntibodyDetails;
+    private String typhoidFeverMicroscopyDetails;
+    private String typhoidFeverNeutralizingAntibodiesDetails;
+    private String typhoidFeverPcrRtPcrDetails;
+    private String typhoidFeverGramStainDetails;
+    private String typhoidFeverLatexAgglutinationDetails;
+    private String typhoidFeverCqValueDetectionDetails;
+    private String typhoidFeverSequencingDetails;
+    private String typhoidFeverDnaMicroarrayDetails;
+    private String typhoidFeverOtherDetails;
+    private String acuteViralHepatitisAntibodyDetection;
     private String acuteViralHepatitisAntigenDetection;
     private String acuteViralHepatitisRapidTest;
     private String acuteViralHepatitisCulture;
@@ -517,17 +997,38 @@ public class CaseSampleExportDto implements Serializable {
     private String acuteViralHepatitisIgaSerumAntibody;
     private String acuteViralHepatitisIncubationTime;
     private String acuteViralHepatitisIndirectFluorescentAntibody;
+    private String acuteViralHepatitisDirectFluorescentAntibody;
     private String acuteViralHepatitisMicroscopy;
     private String acuteViralHepatitisNeutralizingAntibodies;
-    private String acuteViralHepatitisPcr;
+    private String acuteViralHepatitisPcrRtPcr;
     private String acuteViralHepatitisGramStain;
     private String acuteViralHepatitisLatexAgglutination;
     private String acuteViralHepatitisCqValueDetection;
-    private String acuteViralHepatitisSeQuencing;
-    private String acuteViralHepatitisDnaMicroArray;
+    private String acuteViralHepatitisSequencing;
+    private String acuteViralHepatitisDnaMicroarray;
     private String acuteViralHepatitisOther;
-//    NON_NEONATAL_TETANUS
-    private String nonNeonatalTetanusAntiBodyDetection;
+    private String acuteViralHepatitisAntibodyDetectionDetails;
+    private String acuteViralHepatitisAntigenDetectionDetails;
+    private String acuteViralHepatitisRapidTestDetails;
+    private String acuteViralHepatitisCultureDetails;
+    private String acuteViralHepatitisHistopathologyDetails;
+    private String acuteViralHepatitisIsolationDetails;
+    private String acuteViralHepatitisIgmSerumAntibodyDetails;
+    private String acuteViralHepatitisIggSerumAntibodyDetails;
+    private String acuteViralHepatitisIgaSerumAntibodyDetails;
+    private String acuteViralHepatitisIncubationTimeDetails;
+    private String acuteViralHepatitisIndirectFluorescentAntibodyDetails;
+    private String acuteViralHepatitisDirectFluorescentAntibodyDetails;
+    private String acuteViralHepatitisMicroscopyDetails;
+    private String acuteViralHepatitisNeutralizingAntibodiesDetails;
+    private String acuteViralHepatitisPcrRtPcrDetails;
+    private String acuteViralHepatitisGramStainDetails;
+    private String acuteViralHepatitisLatexAgglutinationDetails;
+    private String acuteViralHepatitisCqValueDetectionDetails;
+    private String acuteViralHepatitisSequencingDetails;
+    private String acuteViralHepatitisDnaMicroarrayDetails;
+    private String acuteViralHepatitisOtherDetails;
+    private String nonNeonatalTetanusAntibodyDetection;
     private String nonNeonatalTetanusAntigenDetection;
     private String nonNeonatalTetanusRapidTest;
     private String nonNeonatalTetanusCulture;
@@ -538,16 +1039,38 @@ public class CaseSampleExportDto implements Serializable {
     private String nonNeonatalTetanusIgaSerumAntibody;
     private String nonNeonatalTetanusIncubationTime;
     private String nonNeonatalTetanusIndirectFluorescentAntibody;
+    private String nonNeonatalTetanusDirectFluorescentAntibody;
     private String nonNeonatalTetanusMicroscopy;
     private String nonNeonatalTetanusNeutralizingAntibodies;
-    private String nonNeonatalTetanusPcr;
+    private String nonNeonatalTetanusPcrRtPcr;
     private String nonNeonatalTetanusGramStain;
     private String nonNeonatalTetanusLatexAgglutination;
     private String nonNeonatalTetanusCqValueDetection;
-    private String nonNeonatalTetanusSeQuencing;
-    private String nonNeonatalTetanusDnaMicroArray;
+    private String nonNeonatalTetanusSequencing;
+    private String nonNeonatalTetanusDnaMicroarray;
     private String nonNeonatalTetanusOther;
-    private String hivAntiBodyDetection;
+    private String nonNeonatalTetanusAntibodyDetectionDetails;
+    private String nonNeonatalTetanusAntigenDetectionDetails;
+    private String nonNeonatalTetanusRapidTestDetails;
+    private String nonNeonatalTetanusCultureDetails;
+    private String nonNeonatalTetanusHistopathologyDetails;
+    private String nonNeonatalTetanusIsolationDetails;
+    private String nonNeonatalTetanusIgmSerumAntibodyDetails;
+    private String nonNeonatalTetanusIggSerumAntibodyDetails;
+    private String nonNeonatalTetanusIgaSerumAntibodyDetails;
+    private String nonNeonatalTetanusIncubationTimeDetails;
+    private String nonNeonatalTetanusIndirectFluorescentAntibodyDetails;
+    private String nonNeonatalTetanusDirectFluorescentAntibodyDetails;
+    private String nonNeonatalTetanusMicroscopyDetails;
+    private String nonNeonatalTetanusNeutralizingAntibodiesDetails;
+    private String nonNeonatalTetanusPcrRtPcrDetails;
+    private String nonNeonatalTetanusGramStainDetails;
+    private String nonNeonatalTetanusLatexAgglutinationDetails;
+    private String nonNeonatalTetanusCqValueDetectionDetails;
+    private String nonNeonatalTetanusSequencingDetails;
+    private String nonNeonatalTetanusDnaMicroarrayDetails;
+    private String nonNeonatalTetanusOtherDetails;
+    private String hivAntibodyDetection;
     private String hivAntigenDetection;
     private String hivRapidTest;
     private String hivCulture;
@@ -558,16 +1081,38 @@ public class CaseSampleExportDto implements Serializable {
     private String hivIgaSerumAntibody;
     private String hivIncubationTime;
     private String hivIndirectFluorescentAntibody;
+    private String hivDirectFluorescentAntibody;
     private String hivMicroscopy;
     private String hivNeutralizingAntibodies;
-    private String hivPcr;
+    private String hivPcrRtPcr;
     private String hivGramStain;
     private String hivLatexAgglutination;
     private String hivCqValueDetection;
-    private String hivSeQuencing;
-    private String hivDnaMicroArray;
+    private String hivSequencing;
+    private String hivDnaMicroarray;
     private String hivOther;
-    private String schistosomiasisAntiBodyDetection;
+    private String hivAntibodyDetectionDetails;
+    private String hivAntigenDetectionDetails;
+    private String hivRapidTestDetails;
+    private String hivCultureDetails;
+    private String hivHistopathologyDetails;
+    private String hivIsolationDetails;
+    private String hivIgmSerumAntibodyDetails;
+    private String hivIggSerumAntibodyDetails;
+    private String hivIgaSerumAntibodyDetails;
+    private String hivIncubationTimeDetails;
+    private String hivIndirectFluorescentAntibodyDetails;
+    private String hivDirectFluorescentAntibodyDetails;
+    private String hivMicroscopyDetails;
+    private String hivNeutralizingAntibodiesDetails;
+    private String hivPcrRtPcrDetails;
+    private String hivGramStainDetails;
+    private String hivLatexAgglutinationDetails;
+    private String hivCqValueDetectionDetails;
+    private String hivSequencingDetails;
+    private String hivDnaMicroarrayDetails;
+    private String hivOtherDetails;
+    private String schistosomiasisAntibodyDetection;
     private String schistosomiasisAntigenDetection;
     private String schistosomiasisRapidTest;
     private String schistosomiasisCulture;
@@ -578,16 +1123,38 @@ public class CaseSampleExportDto implements Serializable {
     private String schistosomiasisIgaSerumAntibody;
     private String schistosomiasisIncubationTime;
     private String schistosomiasisIndirectFluorescentAntibody;
+    private String schistosomiasisDirectFluorescentAntibody;
     private String schistosomiasisMicroscopy;
     private String schistosomiasisNeutralizingAntibodies;
-    private String schistosomiasisPcr;
+    private String schistosomiasisPcrRtPcr;
     private String schistosomiasisGramStain;
     private String schistosomiasisLatexAgglutination;
     private String schistosomiasisCqValueDetection;
-    private String schistosomiasisSeQuencing;
-    private String schistosomiasisDnaMicroArray;
+    private String schistosomiasisSequencing;
+    private String schistosomiasisDnaMicroarray;
     private String schistosomiasisOther;
-    private String soilTransmittedHelminthsAntiBodyDetection;
+    private String schistosomiasisAntibodyDetectionDetails;
+    private String schistosomiasisAntigenDetectionDetails;
+    private String schistosomiasisRapidTestDetails;
+    private String schistosomiasisCultureDetails;
+    private String schistosomiasisHistopathologyDetails;
+    private String schistosomiasisIsolationDetails;
+    private String schistosomiasisIgmSerumAntibodyDetails;
+    private String schistosomiasisIggSerumAntibodyDetails;
+    private String schistosomiasisIgaSerumAntibodyDetails;
+    private String schistosomiasisIncubationTimeDetails;
+    private String schistosomiasisIndirectFluorescentAntibodyDetails;
+    private String schistosomiasisDirectFluorescentAntibodyDetails;
+    private String schistosomiasisMicroscopyDetails;
+    private String schistosomiasisNeutralizingAntibodiesDetails;
+    private String schistosomiasisPcrRtPcrDetails;
+    private String schistosomiasisGramStainDetails;
+    private String schistosomiasisLatexAgglutinationDetails;
+    private String schistosomiasisCqValueDetectionDetails;
+    private String schistosomiasisSequencingDetails;
+    private String schistosomiasisDnaMicroarrayDetails;
+    private String schistosomiasisOtherDetails;
+    private String soilTransmittedHelminthsAntibodyDetection;
     private String soilTransmittedHelminthsAntigenDetection;
     private String soilTransmittedHelminthsRapidTest;
     private String soilTransmittedHelminthsCulture;
@@ -598,16 +1165,38 @@ public class CaseSampleExportDto implements Serializable {
     private String soilTransmittedHelminthsIgaSerumAntibody;
     private String soilTransmittedHelminthsIncubationTime;
     private String soilTransmittedHelminthsIndirectFluorescentAntibody;
+    private String soilTransmittedHelminthsDirectFluorescentAntibody;
     private String soilTransmittedHelminthsMicroscopy;
     private String soilTransmittedHelminthsNeutralizingAntibodies;
-    private String soilTransmittedHelminthsPcr;
+    private String soilTransmittedHelminthsPcrRtPcr;
     private String soilTransmittedHelminthsGramStain;
     private String soilTransmittedHelminthsLatexAgglutination;
     private String soilTransmittedHelminthsCqValueDetection;
-    private String soilTransmittedHelminthsSeQuencing;
-    private String soilTransmittedHelminthsDnaMicroArray;
+    private String soilTransmittedHelminthsSequencing;
+    private String soilTransmittedHelminthsDnaMicroarray;
     private String soilTransmittedHelminthsOther;
-    private String trypanosomiasisAntiBodyDetection;
+    private String soilTransmittedHelminthsAntibodyDetectionDetails;
+    private String soilTransmittedHelminthsAntigenDetectionDetails;
+    private String soilTransmittedHelminthsRapidTestDetails;
+    private String soilTransmittedHelminthsCultureDetails;
+    private String soilTransmittedHelminthsHistopathologyDetails;
+    private String soilTransmittedHelminthsIsolationDetails;
+    private String soilTransmittedHelminthsIgmSerumAntibodyDetails;
+    private String soilTransmittedHelminthsIggSerumAntibodyDetails;
+    private String soilTransmittedHelminthsIgaSerumAntibodyDetails;
+    private String soilTransmittedHelminthsIncubationTimeDetails;
+    private String soilTransmittedHelminthsIndirectFluorescentAntibodyDetails;
+    private String soilTransmittedHelminthsDirectFluorescentAntibodyDetails;
+    private String soilTransmittedHelminthsMicroscopyDetails;
+    private String soilTransmittedHelminthsNeutralizingAntibodiesDetails;
+    private String soilTransmittedHelminthsPcrRtPcrDetails;
+    private String soilTransmittedHelminthsGramStainDetails;
+    private String soilTransmittedHelminthsLatexAgglutinationDetails;
+    private String soilTransmittedHelminthsCqValueDetectionDetails;
+    private String soilTransmittedHelminthsSequencingDetails;
+    private String soilTransmittedHelminthsDnaMicroarrayDetails;
+    private String soilTransmittedHelminthsOtherDetails;
+    private String trypanosomiasisAntibodyDetection;
     private String trypanosomiasisAntigenDetection;
     private String trypanosomiasisRapidTest;
     private String trypanosomiasisCulture;
@@ -618,16 +1207,38 @@ public class CaseSampleExportDto implements Serializable {
     private String trypanosomiasisIgaSerumAntibody;
     private String trypanosomiasisIncubationTime;
     private String trypanosomiasisIndirectFluorescentAntibody;
+    private String trypanosomiasisDirectFluorescentAntibody;
     private String trypanosomiasisMicroscopy;
     private String trypanosomiasisNeutralizingAntibodies;
-    private String trypanosomiasisPcr;
+    private String trypanosomiasisPcrRtPcr;
     private String trypanosomiasisGramStain;
     private String trypanosomiasisLatexAgglutination;
     private String trypanosomiasisCqValueDetection;
-    private String trypanosomiasisSeQuencing;
-    private String trypanosomiasisDnaMicroArray;
+    private String trypanosomiasisSequencing;
+    private String trypanosomiasisDnaMicroarray;
     private String trypanosomiasisOther;
-    private String diarrheaDehydrationAntiBodyDetection;
+    private String trypanosomiasisAntibodyDetectionDetails;
+    private String trypanosomiasisAntigenDetectionDetails;
+    private String trypanosomiasisRapidTestDetails;
+    private String trypanosomiasisCultureDetails;
+    private String trypanosomiasisHistopathologyDetails;
+    private String trypanosomiasisIsolationDetails;
+    private String trypanosomiasisIgmSerumAntibodyDetails;
+    private String trypanosomiasisIggSerumAntibodyDetails;
+    private String trypanosomiasisIgaSerumAntibodyDetails;
+    private String trypanosomiasisIncubationTimeDetails;
+    private String trypanosomiasisIndirectFluorescentAntibodyDetails;
+    private String trypanosomiasisDirectFluorescentAntibodyDetails;
+    private String trypanosomiasisMicroscopyDetails;
+    private String trypanosomiasisNeutralizingAntibodiesDetails;
+    private String trypanosomiasisPcrRtPcrDetails;
+    private String trypanosomiasisGramStainDetails;
+    private String trypanosomiasisLatexAgglutinationDetails;
+    private String trypanosomiasisCqValueDetectionDetails;
+    private String trypanosomiasisSequencingDetails;
+    private String trypanosomiasisDnaMicroarrayDetails;
+    private String trypanosomiasisOtherDetails;
+    private String diarrheaDehydrationAntibodyDetection;
     private String diarrheaDehydrationAntigenDetection;
     private String diarrheaDehydrationRapidTest;
     private String diarrheaDehydrationCulture;
@@ -638,16 +1249,38 @@ public class CaseSampleExportDto implements Serializable {
     private String diarrheaDehydrationIgaSerumAntibody;
     private String diarrheaDehydrationIncubationTime;
     private String diarrheaDehydrationIndirectFluorescentAntibody;
+    private String diarrheaDehydrationDirectFluorescentAntibody;
     private String diarrheaDehydrationMicroscopy;
     private String diarrheaDehydrationNeutralizingAntibodies;
-    private String diarrheaDehydrationPcr;
+    private String diarrheaDehydrationPcrRtPcr;
     private String diarrheaDehydrationGramStain;
     private String diarrheaDehydrationLatexAgglutination;
     private String diarrheaDehydrationCqValueDetection;
-    private String diarrheaDehydrationSeQuencing;
-    private String diarrheaDehydrationDnaMicroArray;
+    private String diarrheaDehydrationSequencing;
+    private String diarrheaDehydrationDnaMicroarray;
     private String diarrheaDehydrationOther;
-    private String diarrheaBloodAntiBodyDetection;
+    private String diarrheaDehydrationAntibodyDetectionDetails;
+    private String diarrheaDehydrationAntigenDetectionDetails;
+    private String diarrheaDehydrationRapidTestDetails;
+    private String diarrheaDehydrationCultureDetails;
+    private String diarrheaDehydrationHistopathologyDetails;
+    private String diarrheaDehydrationIsolationDetails;
+    private String diarrheaDehydrationIgmSerumAntibodyDetails;
+    private String diarrheaDehydrationIggSerumAntibodyDetails;
+    private String diarrheaDehydrationIgaSerumAntibodyDetails;
+    private String diarrheaDehydrationIncubationTimeDetails;
+    private String diarrheaDehydrationIndirectFluorescentAntibodyDetails;
+    private String diarrheaDehydrationDirectFluorescentAntibodyDetails;
+    private String diarrheaDehydrationMicroscopyDetails;
+    private String diarrheaDehydrationNeutralizingAntibodiesDetails;
+    private String diarrheaDehydrationPcrRtPcrDetails;
+    private String diarrheaDehydrationGramStainDetails;
+    private String diarrheaDehydrationLatexAgglutinationDetails;
+    private String diarrheaDehydrationCqValueDetectionDetails;
+    private String diarrheaDehydrationSequencingDetails;
+    private String diarrheaDehydrationDnaMicroarrayDetails;
+    private String diarrheaDehydrationOtherDetails;
+    private String diarrheaBloodAntibodyDetection;
     private String diarrheaBloodAntigenDetection;
     private String diarrheaBloodRapidTest;
     private String diarrheaBloodCulture;
@@ -658,16 +1291,38 @@ public class CaseSampleExportDto implements Serializable {
     private String diarrheaBloodIgaSerumAntibody;
     private String diarrheaBloodIncubationTime;
     private String diarrheaBloodIndirectFluorescentAntibody;
+    private String diarrheaBloodDirectFluorescentAntibody;
     private String diarrheaBloodMicroscopy;
     private String diarrheaBloodNeutralizingAntibodies;
-    private String diarrheaBloodPcr;
+    private String diarrheaBloodPcrRtPcr;
     private String diarrheaBloodGramStain;
     private String diarrheaBloodLatexAgglutination;
     private String diarrheaBloodCqValueDetection;
-    private String diarrheaBloodSeQuencing;
-    private String diarrheaBloodDnaMicroArray;
+    private String diarrheaBloodSequencing;
+    private String diarrheaBloodDnaMicroarray;
     private String diarrheaBloodOther;
-    private String snakeBiteAntiBodyDetection;
+    private String diarrheaBloodAntibodyDetectionDetails;
+    private String diarrheaBloodAntigenDetectionDetails;
+    private String diarrheaBloodRapidTestDetails;
+    private String diarrheaBloodCultureDetails;
+    private String diarrheaBloodHistopathologyDetails;
+    private String diarrheaBloodIsolationDetails;
+    private String diarrheaBloodIgmSerumAntibodyDetails;
+    private String diarrheaBloodIggSerumAntibodyDetails;
+    private String diarrheaBloodIgaSerumAntibodyDetails;
+    private String diarrheaBloodIncubationTimeDetails;
+    private String diarrheaBloodIndirectFluorescentAntibodyDetails;
+    private String diarrheaBloodDirectFluorescentAntibodyDetails;
+    private String diarrheaBloodMicroscopyDetails;
+    private String diarrheaBloodNeutralizingAntibodiesDetails;
+    private String diarrheaBloodPcrRtPcrDetails;
+    private String diarrheaBloodGramStainDetails;
+    private String diarrheaBloodLatexAgglutinationDetails;
+    private String diarrheaBloodCqValueDetectionDetails;
+    private String diarrheaBloodSequencingDetails;
+    private String diarrheaBloodDnaMicroarrayDetails;
+    private String diarrheaBloodOtherDetails;
+    private String snakeBiteAntibodyDetection;
     private String snakeBiteAntigenDetection;
     private String snakeBiteRapidTest;
     private String snakeBiteCulture;
@@ -678,16 +1333,38 @@ public class CaseSampleExportDto implements Serializable {
     private String snakeBiteIgaSerumAntibody;
     private String snakeBiteIncubationTime;
     private String snakeBiteIndirectFluorescentAntibody;
+    private String snakeBiteDirectFluorescentAntibody;
     private String snakeBiteMicroscopy;
     private String snakeBiteNeutralizingAntibodies;
-    private String snakeBitePcr;
+    private String snakeBitePcrRtPcr;
     private String snakeBiteGramStain;
     private String snakeBiteLatexAgglutination;
     private String snakeBiteCqValueDetection;
-    private String snakeBiteSeQuencing;
-    private String snakeBiteDnaMicroArray;
+    private String snakeBiteSequencing;
+    private String snakeBiteDnaMicroarray;
     private String snakeBiteOther;
-    private String rubellaAntiBodyDetection;
+    private String snakeBiteAntibodyDetectionDetails;
+    private String snakeBiteAntigenDetectionDetails;
+    private String snakeBiteRapidTestDetails;
+    private String snakeBiteCultureDetails;
+    private String snakeBiteHistopathologyDetails;
+    private String snakeBiteIsolationDetails;
+    private String snakeBiteIgmSerumAntibodyDetails;
+    private String snakeBiteIggSerumAntibodyDetails;
+    private String snakeBiteIgaSerumAntibodyDetails;
+    private String snakeBiteIncubationTimeDetails;
+    private String snakeBiteIndirectFluorescentAntibodyDetails;
+    private String snakeBiteDirectFluorescentAntibodyDetails;
+    private String snakeBiteMicroscopyDetails;
+    private String snakeBiteNeutralizingAntibodiesDetails;
+    private String snakeBitePcrRtPcrDetails;
+    private String snakeBiteGramStainDetails;
+    private String snakeBiteLatexAgglutinationDetails;
+    private String snakeBiteCqValueDetectionDetails;
+    private String snakeBiteSequencingDetails;
+    private String snakeBiteDnaMicroarrayDetails;
+    private String snakeBiteOtherDetails;
+    private String rubellaAntibodyDetection;
     private String rubellaAntigenDetection;
     private String rubellaRapidTest;
     private String rubellaCulture;
@@ -698,16 +1375,38 @@ public class CaseSampleExportDto implements Serializable {
     private String rubellaIgaSerumAntibody;
     private String rubellaIncubationTime;
     private String rubellaIndirectFluorescentAntibody;
+    private String rubellaDirectFluorescentAntibody;
     private String rubellaMicroscopy;
     private String rubellaNeutralizingAntibodies;
-    private String rubellaPcr;
+    private String rubellaPcrRtPcr;
     private String rubellaGramStain;
     private String rubellaLatexAgglutination;
     private String rubellaCqValueDetection;
-    private String rubellaSeQuencing;
-    private String rubellaDnaMicroArray;
+    private String rubellaSequencing;
+    private String rubellaDnaMicroarray;
     private String rubellaOther;
-    private String tuberculosisAntiBodyDetection;
+    private String rubellaAntibodyDetectionDetails;
+    private String rubellaAntigenDetectionDetails;
+    private String rubellaRapidTestDetails;
+    private String rubellaCultureDetails;
+    private String rubellaHistopathologyDetails;
+    private String rubellaIsolationDetails;
+    private String rubellaIgmSerumAntibodyDetails;
+    private String rubellaIggSerumAntibodyDetails;
+    private String rubellaIgaSerumAntibodyDetails;
+    private String rubellaIncubationTimeDetails;
+    private String rubellaIndirectFluorescentAntibodyDetails;
+    private String rubellaDirectFluorescentAntibodyDetails;
+    private String rubellaMicroscopyDetails;
+    private String rubellaNeutralizingAntibodiesDetails;
+    private String rubellaPcrRtPcrDetails;
+    private String rubellaGramStainDetails;
+    private String rubellaLatexAgglutinationDetails;
+    private String rubellaCqValueDetectionDetails;
+    private String rubellaSequencingDetails;
+    private String rubellaDnaMicroarrayDetails;
+    private String rubellaOtherDetails;
+    private String tuberculosisAntibodyDetection;
     private String tuberculosisAntigenDetection;
     private String tuberculosisRapidTest;
     private String tuberculosisCulture;
@@ -718,16 +1417,38 @@ public class CaseSampleExportDto implements Serializable {
     private String tuberculosisIgaSerumAntibody;
     private String tuberculosisIncubationTime;
     private String tuberculosisIndirectFluorescentAntibody;
+    private String tuberculosisDirectFluorescentAntibody;
     private String tuberculosisMicroscopy;
     private String tuberculosisNeutralizingAntibodies;
-    private String tuberculosisPcr;
+    private String tuberculosisPcrRtPcr;
     private String tuberculosisGramStain;
     private String tuberculosisLatexAgglutination;
     private String tuberculosisCqValueDetection;
-    private String tuberculosisSeQuencing;
-    private String tuberculosisDnaMicroArray;
+    private String tuberculosisSequencing;
+    private String tuberculosisDnaMicroarray;
     private String tuberculosisOther;
-    private String leprosyAntiBodyDetection;
+    private String tuberculosisAntibodyDetectionDetails;
+    private String tuberculosisAntigenDetectionDetails;
+    private String tuberculosisRapidTestDetails;
+    private String tuberculosisCultureDetails;
+    private String tuberculosisHistopathologyDetails;
+    private String tuberculosisIsolationDetails;
+    private String tuberculosisIgmSerumAntibodyDetails;
+    private String tuberculosisIggSerumAntibodyDetails;
+    private String tuberculosisIgaSerumAntibodyDetails;
+    private String tuberculosisIncubationTimeDetails;
+    private String tuberculosisIndirectFluorescentAntibodyDetails;
+    private String tuberculosisDirectFluorescentAntibodyDetails;
+    private String tuberculosisMicroscopyDetails;
+    private String tuberculosisNeutralizingAntibodiesDetails;
+    private String tuberculosisPcrRtPcrDetails;
+    private String tuberculosisGramStainDetails;
+    private String tuberculosisLatexAgglutinationDetails;
+    private String tuberculosisCqValueDetectionDetails;
+    private String tuberculosisSequencingDetails;
+    private String tuberculosisDnaMicroarrayDetails;
+    private String tuberculosisOtherDetails;
+    private String leprosyAntibodyDetection;
     private String leprosyAntigenDetection;
     private String leprosyRapidTest;
     private String leprosyCulture;
@@ -738,16 +1459,38 @@ public class CaseSampleExportDto implements Serializable {
     private String leprosyIgaSerumAntibody;
     private String leprosyIncubationTime;
     private String leprosyIndirectFluorescentAntibody;
+    private String leprosyDirectFluorescentAntibody;
     private String leprosyMicroscopy;
     private String leprosyNeutralizingAntibodies;
-    private String leprosyPcr;
+    private String leprosyPcrRtPcr;
     private String leprosyGramStain;
     private String leprosyLatexAgglutination;
     private String leprosyCqValueDetection;
-    private String leprosySeQuencing;
-    private String leprosyDnaMicroArray;
+    private String leprosySequencing;
+    private String leprosyDnaMicroarray;
     private String leprosyOther;
-    private String lymphaticFilariasisAntiBodyDetection;
+    private String leprosyAntibodyDetectionDetails;
+    private String leprosyAntigenDetectionDetails;
+    private String leprosyRapidTestDetails;
+    private String leprosyCultureDetails;
+    private String leprosyHistopathologyDetails;
+    private String leprosyIsolationDetails;
+    private String leprosyIgmSerumAntibodyDetails;
+    private String leprosyIggSerumAntibodyDetails;
+    private String leprosyIgaSerumAntibodyDetails;
+    private String leprosyIncubationTimeDetails;
+    private String leprosyIndirectFluorescentAntibodyDetails;
+    private String leprosyDirectFluorescentAntibodyDetails;
+    private String leprosyMicroscopyDetails;
+    private String leprosyNeutralizingAntibodiesDetails;
+    private String leprosyPcrRtPcrDetails;
+    private String leprosyGramStainDetails;
+    private String leprosyLatexAgglutinationDetails;
+    private String leprosyCqValueDetectionDetails;
+    private String leprosySequencingDetails;
+    private String leprosyDnaMicroarrayDetails;
+    private String leprosyOtherDetails;
+    private String lymphaticFilariasisAntibodyDetection;
     private String lymphaticFilariasisAntigenDetection;
     private String lymphaticFilariasisRapidTest;
     private String lymphaticFilariasisCulture;
@@ -758,16 +1501,38 @@ public class CaseSampleExportDto implements Serializable {
     private String lymphaticFilariasisIgaSerumAntibody;
     private String lymphaticFilariasisIncubationTime;
     private String lymphaticFilariasisIndirectFluorescentAntibody;
+    private String lymphaticFilariasisDirectFluorescentAntibody;
     private String lymphaticFilariasisMicroscopy;
     private String lymphaticFilariasisNeutralizingAntibodies;
-    private String lymphaticFilariasisPcr;
+    private String lymphaticFilariasisPcrRtPcr;
     private String lymphaticFilariasisGramStain;
     private String lymphaticFilariasisLatexAgglutination;
     private String lymphaticFilariasisCqValueDetection;
-    private String lymphaticFilariasisSeQuencing;
-    private String lymphaticFilariasisDnaMicroArray;
+    private String lymphaticFilariasisSequencing;
+    private String lymphaticFilariasisDnaMicroarray;
     private String lymphaticFilariasisOther;
-    private String buruliUlcerAntiBodyDetection;
+    private String lymphaticFilariasisAntibodyDetectionDetails;
+    private String lymphaticFilariasisAntigenDetectionDetails;
+    private String lymphaticFilariasisRapidTestDetails;
+    private String lymphaticFilariasisCultureDetails;
+    private String lymphaticFilariasisHistopathologyDetails;
+    private String lymphaticFilariasisIsolationDetails;
+    private String lymphaticFilariasisIgmSerumAntibodyDetails;
+    private String lymphaticFilariasisIggSerumAntibodyDetails;
+    private String lymphaticFilariasisIgaSerumAntibodyDetails;
+    private String lymphaticFilariasisIncubationTimeDetails;
+    private String lymphaticFilariasisIndirectFluorescentAntibodyDetails;
+    private String lymphaticFilariasisDirectFluorescentAntibodyDetails;
+    private String lymphaticFilariasisMicroscopyDetails;
+    private String lymphaticFilariasisNeutralizingAntibodiesDetails;
+    private String lymphaticFilariasisPcrRtPcrDetails;
+    private String lymphaticFilariasisGramStainDetails;
+    private String lymphaticFilariasisLatexAgglutinationDetails;
+    private String lymphaticFilariasisCqValueDetectionDetails;
+    private String lymphaticFilariasisSequencingDetails;
+    private String lymphaticFilariasisDnaMicroarrayDetails;
+    private String lymphaticFilariasisOtherDetails;
+    private String buruliUlcerAntibodyDetection;
     private String buruliUlcerAntigenDetection;
     private String buruliUlcerRapidTest;
     private String buruliUlcerCulture;
@@ -778,16 +1543,38 @@ public class CaseSampleExportDto implements Serializable {
     private String buruliUlcerIgaSerumAntibody;
     private String buruliUlcerIncubationTime;
     private String buruliUlcerIndirectFluorescentAntibody;
+    private String buruliUlcerDirectFluorescentAntibody;
     private String buruliUlcerMicroscopy;
     private String buruliUlcerNeutralizingAntibodies;
-    private String buruliUlcerPcr;
+    private String buruliUlcerPcrRtPcr;
     private String buruliUlcerGramStain;
     private String buruliUlcerLatexAgglutination;
     private String buruliUlcerCqValueDetection;
-    private String buruliUlcerSeQuencing;
-    private String buruliUlcerDnaMicroArray;
+    private String buruliUlcerSequencing;
+    private String buruliUlcerDnaMicroarray;
     private String buruliUlcerOther;
-    private String pertussisAntiBodyDetection;
+    private String buruliUlcerAntibodyDetectionDetails;
+    private String buruliUlcerAntigenDetectionDetails;
+    private String buruliUlcerRapidTestDetails;
+    private String buruliUlcerCultureDetails;
+    private String buruliUlcerHistopathologyDetails;
+    private String buruliUlcerIsolationDetails;
+    private String buruliUlcerIgmSerumAntibodyDetails;
+    private String buruliUlcerIggSerumAntibodyDetails;
+    private String buruliUlcerIgaSerumAntibodyDetails;
+    private String buruliUlcerIncubationTimeDetails;
+    private String buruliUlcerIndirectFluorescentAntibodyDetails;
+    private String buruliUlcerDirectFluorescentAntibodyDetails;
+    private String buruliUlcerMicroscopyDetails;
+    private String buruliUlcerNeutralizingAntibodiesDetails;
+    private String buruliUlcerPcrRtPcrDetails;
+    private String buruliUlcerGramStainDetails;
+    private String buruliUlcerLatexAgglutinationDetails;
+    private String buruliUlcerCqValueDetectionDetails;
+    private String buruliUlcerSequencingDetails;
+    private String buruliUlcerDnaMicroarrayDetails;
+    private String buruliUlcerOtherDetails;
+    private String pertussisAntibodyDetection;
     private String pertussisAntigenDetection;
     private String pertussisRapidTest;
     private String pertussisCulture;
@@ -798,36 +1585,80 @@ public class CaseSampleExportDto implements Serializable {
     private String pertussisIgaSerumAntibody;
     private String pertussisIncubationTime;
     private String pertussisIndirectFluorescentAntibody;
+    private String pertussisDirectFluorescentAntibody;
     private String pertussisMicroscopy;
     private String pertussisNeutralizingAntibodies;
-    private String pertussisPcr;
+    private String pertussisPcrRtPcr;
     private String pertussisGramStain;
     private String pertussisLatexAgglutination;
     private String pertussisCqValueDetection;
-    private String pertussisSeQuencing;
-    private String pertussisDnaMicroArray;
+    private String pertussisSequencing;
+    private String pertussisDnaMicroarray;
     private String pertussisOther;
-    private String neonatalAntiBodyDetection;
-    private String neonatalAntigenDetection;
-    private String neonatalRapidTest;
-    private String neonatalCulture;
-    private String neonatalHistopathology;
-    private String neonatalIsolation;
-    private String neonatalIgmSerumAntibody;
-    private String neonatalIggSerumAntibody;
-    private String neonatalIgaSerumAntibody;
-    private String neonatalIncubationTime;
-    private String neonatalIndirectFluorescentAntibody;
-    private String neonatalMicroscopy;
-    private String neonatalNeutralizingAntibodies;
-    private String neonatalPcr;
-    private String neonatalGramStain;
-    private String neonatalLatexAgglutination;
-    private String neonatalCqValueDetection;
-    private String neonatalSeQuencing;
-    private String neonatalDnaMicroArray;
-    private String neonatalOther;
-    private String onchocerciasisAntiBodyDetection;
+    private String pertussisAntibodyDetectionDetails;
+    private String pertussisAntigenDetectionDetails;
+    private String pertussisRapidTestDetails;
+    private String pertussisCultureDetails;
+    private String pertussisHistopathologyDetails;
+    private String pertussisIsolationDetails;
+    private String pertussisIgmSerumAntibodyDetails;
+    private String pertussisIggSerumAntibodyDetails;
+    private String pertussisIgaSerumAntibodyDetails;
+    private String pertussisIncubationTimeDetails;
+    private String pertussisIndirectFluorescentAntibodyDetails;
+    private String pertussisDirectFluorescentAntibodyDetails;
+    private String pertussisMicroscopyDetails;
+    private String pertussisNeutralizingAntibodiesDetails;
+    private String pertussisPcrRtPcrDetails;
+    private String pertussisGramStainDetails;
+    private String pertussisLatexAgglutinationDetails;
+    private String pertussisCqValueDetectionDetails;
+    private String pertussisSequencingDetails;
+    private String pertussisDnaMicroarrayDetails;
+    private String pertussisOtherDetails;
+    private String neonatalTetanusAntibodyDetection;
+    private String neonatalTetanusAntigenDetection;
+    private String neonatalTetanusRapidTest;
+    private String neonatalTetanusCulture;
+    private String neonatalTetanusHistopathology;
+    private String neonatalTetanusIsolation;
+    private String neonatalTetanusIgmSerumAntibody;
+    private String neonatalTetanusIggSerumAntibody;
+    private String neonatalTetanusIgaSerumAntibody;
+    private String neonatalTetanusIncubationTime;
+    private String neonatalTetanusIndirectFluorescentAntibody;
+    private String neonatalTetanusDirectFluorescentAntibody;
+    private String neonatalTetanusMicroscopy;
+    private String neonatalTetanusNeutralizingAntibodies;
+    private String neonatalTetanusPcrRtPcr;
+    private String neonatalTetanusGramStain;
+    private String neonatalTetanusLatexAgglutination;
+    private String neonatalTetanusCqValueDetection;
+    private String neonatalTetanusSequencing;
+    private String neonatalTetanusDnaMicroarray;
+    private String neonatalTetanusOther;
+    private String neonatalTetanusAntibodyDetectionDetails;
+    private String neonatalTetanusAntigenDetectionDetails;
+    private String neonatalTetanusRapidTestDetails;
+    private String neonatalTetanusCultureDetails;
+    private String neonatalTetanusHistopathologyDetails;
+    private String neonatalTetanusIsolationDetails;
+    private String neonatalTetanusIgmSerumAntibodyDetails;
+    private String neonatalTetanusIggSerumAntibodyDetails;
+    private String neonatalTetanusIgaSerumAntibodyDetails;
+    private String neonatalTetanusIncubationTimeDetails;
+    private String neonatalTetanusIndirectFluorescentAntibodyDetails;
+    private String neonatalTetanusDirectFluorescentAntibodyDetails;
+    private String neonatalTetanusMicroscopyDetails;
+    private String neonatalTetanusNeutralizingAntibodiesDetails;
+    private String neonatalTetanusPcrRtPcrDetails;
+    private String neonatalTetanusGramStainDetails;
+    private String neonatalTetanusLatexAgglutinationDetails;
+    private String neonatalTetanusCqValueDetectionDetails;
+    private String neonatalTetanusSequencingDetails;
+    private String neonatalTetanusDnaMicroarrayDetails;
+    private String neonatalTetanusOtherDetails;
+    private String onchocerciasisAntibodyDetection;
     private String onchocerciasisAntigenDetection;
     private String onchocerciasisRapidTest;
     private String onchocerciasisCulture;
@@ -838,36 +1669,80 @@ public class CaseSampleExportDto implements Serializable {
     private String onchocerciasisIgaSerumAntibody;
     private String onchocerciasisIncubationTime;
     private String onchocerciasisIndirectFluorescentAntibody;
+    private String onchocerciasisDirectFluorescentAntibody;
     private String onchocerciasisMicroscopy;
     private String onchocerciasisNeutralizingAntibodies;
-    private String onchocerciasisPcr;
+    private String onchocerciasisPcrRtPcr;
     private String onchocerciasisGramStain;
     private String onchocerciasisLatexAgglutination;
     private String onchocerciasisCqValueDetection;
-    private String onchocerciasisSeQuencing;
-    private String onchocerciasisDnaMicroArray;
+    private String onchocerciasisSequencing;
+    private String onchocerciasisDnaMicroarray;
     private String onchocerciasisOther;
-    private String diphtheriaAntiBodyDetection;
-    private String diphtheriaAntigenDetection;
-    private String diphtheriaRapidTest;
-    private String diphtheriaCulture;
-    private String diphtheriaHistopathology;
-    private String diphtheriaIsolation;
-    private String diphtheriaIgmSerumAntibody;
-    private String diphtheriaIggSerumAntibody;
-    private String diphtheriaIgaSerumAntibody;
-    private String diphtheriaIncubationTime;
-    private String diphtheriaIndirectFluorescentAntibody;
-    private String diphtheriaMicroscopy;
-    private String diphtheriaNeutralizingAntibodies;
-    private String diphtheriaPcr;
-    private String diphtheriaGramStain;
-    private String diphtheriaLatexAgglutination;
-    private String diphtheriaCqValueDetection;
-    private String diphtheriaSeQuencing;
-    private String diphtheriaDnaMicroArray;
-    private String diphtheriaOther;
-    private String trachomaAntiBodyDetection;
+    private String onchocerciasisAntibodyDetectionDetails;
+    private String onchocerciasisAntigenDetectionDetails;
+    private String onchocerciasisRapidTestDetails;
+    private String onchocerciasisCultureDetails;
+    private String onchocerciasisHistopathologyDetails;
+    private String onchocerciasisIsolationDetails;
+    private String onchocerciasisIgmSerumAntibodyDetails;
+    private String onchocerciasisIggSerumAntibodyDetails;
+    private String onchocerciasisIgaSerumAntibodyDetails;
+    private String onchocerciasisIncubationTimeDetails;
+    private String onchocerciasisIndirectFluorescentAntibodyDetails;
+    private String onchocerciasisDirectFluorescentAntibodyDetails;
+    private String onchocerciasisMicroscopyDetails;
+    private String onchocerciasisNeutralizingAntibodiesDetails;
+    private String onchocerciasisPcrRtPcrDetails;
+    private String onchocerciasisGramStainDetails;
+    private String onchocerciasisLatexAgglutinationDetails;
+    private String onchocerciasisCqValueDetectionDetails;
+    private String onchocerciasisSequencingDetails;
+    private String onchocerciasisDnaMicroarrayDetails;
+    private String onchocerciasisOtherDetails;
+    private String diphteriaAntibodyDetection;
+    private String diphteriaAntigenDetection;
+    private String diphteriaRapidTest;
+    private String diphteriaCulture;
+    private String diphteriaHistopathology;
+    private String diphteriaIsolation;
+    private String diphteriaIgmSerumAntibody;
+    private String diphteriaIggSerumAntibody;
+    private String diphteriaIgaSerumAntibody;
+    private String diphteriaIncubationTime;
+    private String diphteriaIndirectFluorescentAntibody;
+    private String diphteriaDirectFluorescentAntibody;
+    private String diphteriaMicroscopy;
+    private String diphteriaNeutralizingAntibodies;
+    private String diphteriaPcrRtPcr;
+    private String diphteriaGramStain;
+    private String diphteriaLatexAgglutination;
+    private String diphteriaCqValueDetection;
+    private String diphteriaSequencing;
+    private String diphteriaDnaMicroarray;
+    private String diphteriaOther;
+    private String diphteriaAntibodyDetectionDetails;
+    private String diphteriaAntigenDetectionDetails;
+    private String diphteriaRapidTestDetails;
+    private String diphteriaCultureDetails;
+    private String diphteriaHistopathologyDetails;
+    private String diphteriaIsolationDetails;
+    private String diphteriaIgmSerumAntibodyDetails;
+    private String diphteriaIggSerumAntibodyDetails;
+    private String diphteriaIgaSerumAntibodyDetails;
+    private String diphteriaIncubationTimeDetails;
+    private String diphteriaIndirectFluorescentAntibodyDetails;
+    private String diphteriaDirectFluorescentAntibodyDetails;
+    private String diphteriaMicroscopyDetails;
+    private String diphteriaNeutralizingAntibodiesDetails;
+    private String diphteriaPcrRtPcrDetails;
+    private String diphteriaGramStainDetails;
+    private String diphteriaLatexAgglutinationDetails;
+    private String diphteriaCqValueDetectionDetails;
+    private String diphteriaSequencingDetails;
+    private String diphteriaDnaMicroarrayDetails;
+    private String diphteriaOtherDetails;
+    private String trachomaAntibodyDetection;
     private String trachomaAntigenDetection;
     private String trachomaRapidTest;
     private String trachomaCulture;
@@ -878,16 +1753,38 @@ public class CaseSampleExportDto implements Serializable {
     private String trachomaIgaSerumAntibody;
     private String trachomaIncubationTime;
     private String trachomaIndirectFluorescentAntibody;
+    private String trachomaDirectFluorescentAntibody;
     private String trachomaMicroscopy;
     private String trachomaNeutralizingAntibodies;
-    private String trachomaPcr;
+    private String trachomaPcrRtPcr;
     private String trachomaGramStain;
     private String trachomaLatexAgglutination;
     private String trachomaCqValueDetection;
-    private String trachomaSeQuencing;
-    private String trachomaDnaMicroArray;
+    private String trachomaSequencing;
+    private String trachomaDnaMicroarray;
     private String trachomaOther;
-    private String yawsEndemicSyphilisAntiBodyDetection;
+    private String trachomaAntibodyDetectionDetails;
+    private String trachomaAntigenDetectionDetails;
+    private String trachomaRapidTestDetails;
+    private String trachomaCultureDetails;
+    private String trachomaHistopathologyDetails;
+    private String trachomaIsolationDetails;
+    private String trachomaIgmSerumAntibodyDetails;
+    private String trachomaIggSerumAntibodyDetails;
+    private String trachomaIgaSerumAntibodyDetails;
+    private String trachomaIncubationTimeDetails;
+    private String trachomaIndirectFluorescentAntibodyDetails;
+    private String trachomaDirectFluorescentAntibodyDetails;
+    private String trachomaMicroscopyDetails;
+    private String trachomaNeutralizingAntibodiesDetails;
+    private String trachomaPcrRtPcrDetails;
+    private String trachomaGramStainDetails;
+    private String trachomaLatexAgglutinationDetails;
+    private String trachomaCqValueDetectionDetails;
+    private String trachomaSequencingDetails;
+    private String trachomaDnaMicroarrayDetails;
+    private String trachomaOtherDetails;
+    private String yawsEndemicSyphilisAntibodyDetection;
     private String yawsEndemicSyphilisAntigenDetection;
     private String yawsEndemicSyphilisRapidTest;
     private String yawsEndemicSyphilisCulture;
@@ -898,16 +1795,38 @@ public class CaseSampleExportDto implements Serializable {
     private String yawsEndemicSyphilisIgaSerumAntibody;
     private String yawsEndemicSyphilisIncubationTime;
     private String yawsEndemicSyphilisIndirectFluorescentAntibody;
+    private String yawsEndemicSyphilisDirectFluorescentAntibody;
     private String yawsEndemicSyphilisMicroscopy;
     private String yawsEndemicSyphilisNeutralizingAntibodies;
-    private String yawsEndemicSyphilisPcr;
+    private String yawsEndemicSyphilisPcrRtPcr;
     private String yawsEndemicSyphilisGramStain;
     private String yawsEndemicSyphilisLatexAgglutination;
     private String yawsEndemicSyphilisCqValueDetection;
-    private String yawsEndemicSyphilisSeQuencing;
-    private String yawsEndemicSyphilisDnaMicroArray;
+    private String yawsEndemicSyphilisSequencing;
+    private String yawsEndemicSyphilisDnaMicroarray;
     private String yawsEndemicSyphilisOther;
-    private String maternalDeathsAntiBodyDetection;
+    private String yawsEndemicSyphilisAntibodyDetectionDetails;
+    private String yawsEndemicSyphilisAntigenDetectionDetails;
+    private String yawsEndemicSyphilisRapidTestDetails;
+    private String yawsEndemicSyphilisCultureDetails;
+    private String yawsEndemicSyphilisHistopathologyDetails;
+    private String yawsEndemicSyphilisIsolationDetails;
+    private String yawsEndemicSyphilisIgmSerumAntibodyDetails;
+    private String yawsEndemicSyphilisIggSerumAntibodyDetails;
+    private String yawsEndemicSyphilisIgaSerumAntibodyDetails;
+    private String yawsEndemicSyphilisIncubationTimeDetails;
+    private String yawsEndemicSyphilisIndirectFluorescentAntibodyDetails;
+    private String yawsEndemicSyphilisDirectFluorescentAntibodyDetails;
+    private String yawsEndemicSyphilisMicroscopyDetails;
+    private String yawsEndemicSyphilisNeutralizingAntibodiesDetails;
+    private String yawsEndemicSyphilisPcrRtPcrDetails;
+    private String yawsEndemicSyphilisGramStainDetails;
+    private String yawsEndemicSyphilisLatexAgglutinationDetails;
+    private String yawsEndemicSyphilisCqValueDetectionDetails;
+    private String yawsEndemicSyphilisSequencingDetails;
+    private String yawsEndemicSyphilisDnaMicroarrayDetails;
+    private String yawsEndemicSyphilisOtherDetails;
+    private String maternalDeathsAntibodyDetection;
     private String maternalDeathsAntigenDetection;
     private String maternalDeathsRapidTest;
     private String maternalDeathsCulture;
@@ -918,16 +1837,38 @@ public class CaseSampleExportDto implements Serializable {
     private String maternalDeathsIgaSerumAntibody;
     private String maternalDeathsIncubationTime;
     private String maternalDeathsIndirectFluorescentAntibody;
+    private String maternalDeathsDirectFluorescentAntibody;
     private String maternalDeathsMicroscopy;
     private String maternalDeathsNeutralizingAntibodies;
-    private String maternalDeathsPcr;
+    private String maternalDeathsPcrRtPcr;
     private String maternalDeathsGramStain;
     private String maternalDeathsLatexAgglutination;
     private String maternalDeathsCqValueDetection;
-    private String maternalDeathsSeQuencing;
-    private String maternalDeathsDnaMicroArray;
+    private String maternalDeathsSequencing;
+    private String maternalDeathsDnaMicroarray;
     private String maternalDeathsOther;
-    private String perinatalDeathsAntiBodyDetection;
+    private String maternalDeathsAntibodyDetectionDetails;
+    private String maternalDeathsAntigenDetectionDetails;
+    private String maternalDeathsRapidTestDetails;
+    private String maternalDeathsCultureDetails;
+    private String maternalDeathsHistopathologyDetails;
+    private String maternalDeathsIsolationDetails;
+    private String maternalDeathsIgmSerumAntibodyDetails;
+    private String maternalDeathsIggSerumAntibodyDetails;
+    private String maternalDeathsIgaSerumAntibodyDetails;
+    private String maternalDeathsIncubationTimeDetails;
+    private String maternalDeathsIndirectFluorescentAntibodyDetails;
+    private String maternalDeathsDirectFluorescentAntibodyDetails;
+    private String maternalDeathsMicroscopyDetails;
+    private String maternalDeathsNeutralizingAntibodiesDetails;
+    private String maternalDeathsPcrRtPcrDetails;
+    private String maternalDeathsGramStainDetails;
+    private String maternalDeathsLatexAgglutinationDetails;
+    private String maternalDeathsCqValueDetectionDetails;
+    private String maternalDeathsSequencingDetails;
+    private String maternalDeathsDnaMicroarrayDetails;
+    private String maternalDeathsOtherDetails;
+    private String perinatalDeathsAntibodyDetection;
     private String perinatalDeathsAntigenDetection;
     private String perinatalDeathsRapidTest;
     private String perinatalDeathsCulture;
@@ -938,16 +1879,38 @@ public class CaseSampleExportDto implements Serializable {
     private String perinatalDeathsIgaSerumAntibody;
     private String perinatalDeathsIncubationTime;
     private String perinatalDeathsIndirectFluorescentAntibody;
+    private String perinatalDeathsDirectFluorescentAntibody;
     private String perinatalDeathsMicroscopy;
     private String perinatalDeathsNeutralizingAntibodies;
-    private String perinatalDeathsPcr;
+    private String perinatalDeathsPcrRtPcr;
     private String perinatalDeathsGramStain;
     private String perinatalDeathsLatexAgglutination;
     private String perinatalDeathsCqValueDetection;
-    private String perinatalDeathsSeQuencing;
-    private String perinatalDeathsDnaMicroArray;
+    private String perinatalDeathsSequencing;
+    private String perinatalDeathsDnaMicroarray;
     private String perinatalDeathsOther;
-    private String influenzaAAntiBodyDetection;
+    private String perinatalDeathsAntibodyDetectionDetails;
+    private String perinatalDeathsAntigenDetectionDetails;
+    private String perinatalDeathsRapidTestDetails;
+    private String perinatalDeathsCultureDetails;
+    private String perinatalDeathsHistopathologyDetails;
+    private String perinatalDeathsIsolationDetails;
+    private String perinatalDeathsIgmSerumAntibodyDetails;
+    private String perinatalDeathsIggSerumAntibodyDetails;
+    private String perinatalDeathsIgaSerumAntibodyDetails;
+    private String perinatalDeathsIncubationTimeDetails;
+    private String perinatalDeathsIndirectFluorescentAntibodyDetails;
+    private String perinatalDeathsDirectFluorescentAntibodyDetails;
+    private String perinatalDeathsMicroscopyDetails;
+    private String perinatalDeathsNeutralizingAntibodiesDetails;
+    private String perinatalDeathsPcrRtPcrDetails;
+    private String perinatalDeathsGramStainDetails;
+    private String perinatalDeathsLatexAgglutinationDetails;
+    private String perinatalDeathsCqValueDetectionDetails;
+    private String perinatalDeathsSequencingDetails;
+    private String perinatalDeathsDnaMicroarrayDetails;
+    private String perinatalDeathsOtherDetails;
+    private String influenzaAAntibodyDetection;
     private String influenzaAAntigenDetection;
     private String influenzaARapidTest;
     private String influenzaACulture;
@@ -958,16 +1921,38 @@ public class CaseSampleExportDto implements Serializable {
     private String influenzaAIgaSerumAntibody;
     private String influenzaAIncubationTime;
     private String influenzaAIndirectFluorescentAntibody;
+    private String influenzaADirectFluorescentAntibody;
     private String influenzaAMicroscopy;
     private String influenzaANeutralizingAntibodies;
-    private String influenzaAPcr;
+    private String influenzaAPcrRtPcr;
     private String influenzaAGramStain;
     private String influenzaALatexAgglutination;
     private String influenzaACqValueDetection;
-    private String influenzaASeQuencing;
-    private String influenzaADnaMicroArray;
+    private String influenzaASequencing;
+    private String influenzaADnaMicroarray;
     private String influenzaAOther;
-    private String influenzaBAntiBodyDetection;
+    private String influenzaAAntibodyDetectionDetails;
+    private String influenzaAAntigenDetectionDetails;
+    private String influenzaARapidTestDetails;
+    private String influenzaACultureDetails;
+    private String influenzaAHistopathologyDetails;
+    private String influenzaAIsolationDetails;
+    private String influenzaAIgmSerumAntibodyDetails;
+    private String influenzaAIggSerumAntibodyDetails;
+    private String influenzaAIgaSerumAntibodyDetails;
+    private String influenzaAIncubationTimeDetails;
+    private String influenzaAIndirectFluorescentAntibodyDetails;
+    private String influenzaADirectFluorescentAntibodyDetails;
+    private String influenzaAMicroscopyDetails;
+    private String influenzaANeutralizingAntibodiesDetails;
+    private String influenzaAPcrRtPcrDetails;
+    private String influenzaAGramStainDetails;
+    private String influenzaALatexAgglutinationDetails;
+    private String influenzaACqValueDetectionDetails;
+    private String influenzaASequencingDetails;
+    private String influenzaADnaMicroarrayDetails;
+    private String influenzaAOtherDetails;
+    private String influenzaBAntibodyDetection;
     private String influenzaBAntigenDetection;
     private String influenzaBRapidTest;
     private String influenzaBCulture;
@@ -978,16 +1963,38 @@ public class CaseSampleExportDto implements Serializable {
     private String influenzaBIgaSerumAntibody;
     private String influenzaBIncubationTime;
     private String influenzaBIndirectFluorescentAntibody;
+    private String influenzaBDirectFluorescentAntibody;
     private String influenzaBMicroscopy;
     private String influenzaBNeutralizingAntibodies;
-    private String influenzaBPcr;
+    private String influenzaBPcrRtPcr;
     private String influenzaBGramStain;
     private String influenzaBLatexAgglutination;
     private String influenzaBCqValueDetection;
-    private String influenzaBSeQuencing;
-    private String influenzaBDnaMicroArray;
+    private String influenzaBSequencing;
+    private String influenzaBDnaMicroarray;
     private String influenzaBOther;
-    private String hMetapneumovirusAntiBodyDetection;
+    private String influenzaBAntibodyDetectionDetails;
+    private String influenzaBAntigenDetectionDetails;
+    private String influenzaBRapidTestDetails;
+    private String influenzaBCultureDetails;
+    private String influenzaBHistopathologyDetails;
+    private String influenzaBIsolationDetails;
+    private String influenzaBIgmSerumAntibodyDetails;
+    private String influenzaBIggSerumAntibodyDetails;
+    private String influenzaBIgaSerumAntibodyDetails;
+    private String influenzaBIncubationTimeDetails;
+    private String influenzaBIndirectFluorescentAntibodyDetails;
+    private String influenzaBDirectFluorescentAntibodyDetails;
+    private String influenzaBMicroscopyDetails;
+    private String influenzaBNeutralizingAntibodiesDetails;
+    private String influenzaBPcrRtPcrDetails;
+    private String influenzaBGramStainDetails;
+    private String influenzaBLatexAgglutinationDetails;
+    private String influenzaBCqValueDetectionDetails;
+    private String influenzaBSequencingDetails;
+    private String influenzaBDnaMicroarrayDetails;
+    private String influenzaBOtherDetails;
+    private String hMetapneumovirusAntibodyDetection;
     private String hMetapneumovirusAntigenDetection;
     private String hMetapneumovirusRapidTest;
     private String hMetapneumovirusCulture;
@@ -998,16 +2005,38 @@ public class CaseSampleExportDto implements Serializable {
     private String hMetapneumovirusIgaSerumAntibody;
     private String hMetapneumovirusIncubationTime;
     private String hMetapneumovirusIndirectFluorescentAntibody;
+    private String hMetapneumovirusDirectFluorescentAntibody;
     private String hMetapneumovirusMicroscopy;
     private String hMetapneumovirusNeutralizingAntibodies;
-    private String hMetapneumovirusPcr;
+    private String hMetapneumovirusPcrRtPcr;
     private String hMetapneumovirusGramStain;
     private String hMetapneumovirusLatexAgglutination;
     private String hMetapneumovirusCqValueDetection;
-    private String hMetapneumovirusSeQuencing;
-    private String hMetapneumovirusDnaMicroArray;
+    private String hMetapneumovirusSequencing;
+    private String hMetapneumovirusDnaMicroarray;
     private String hMetapneumovirusOther;
-    private String respiratorySyncytialVirusAntiBodyDetection;
+    private String hMetapneumovirusAntibodyDetectionDetails;
+    private String hMetapneumovirusAntigenDetectionDetails;
+    private String hMetapneumovirusRapidTestDetails;
+    private String hMetapneumovirusCultureDetails;
+    private String hMetapneumovirusHistopathologyDetails;
+    private String hMetapneumovirusIsolationDetails;
+    private String hMetapneumovirusIgmSerumAntibodyDetails;
+    private String hMetapneumovirusIggSerumAntibodyDetails;
+    private String hMetapneumovirusIgaSerumAntibodyDetails;
+    private String hMetapneumovirusIncubationTimeDetails;
+    private String hMetapneumovirusIndirectFluorescentAntibodyDetails;
+    private String hMetapneumovirusDirectFluorescentAntibodyDetails;
+    private String hMetapneumovirusMicroscopyDetails;
+    private String hMetapneumovirusNeutralizingAntibodiesDetails;
+    private String hMetapneumovirusPcrRtPcrDetails;
+    private String hMetapneumovirusGramStainDetails;
+    private String hMetapneumovirusLatexAgglutinationDetails;
+    private String hMetapneumovirusCqValueDetectionDetails;
+    private String hMetapneumovirusSequencingDetails;
+    private String hMetapneumovirusDnaMicroarrayDetails;
+    private String hMetapneumovirusOtherDetails;
+    private String respiratorySyncytialVirusAntibodyDetection;
     private String respiratorySyncytialVirusAntigenDetection;
     private String respiratorySyncytialVirusRapidTest;
     private String respiratorySyncytialVirusCulture;
@@ -1018,36 +2047,80 @@ public class CaseSampleExportDto implements Serializable {
     private String respiratorySyncytialVirusIgaSerumAntibody;
     private String respiratorySyncytialVirusIncubationTime;
     private String respiratorySyncytialVirusIndirectFluorescentAntibody;
+    private String respiratorySyncytialVirusDirectFluorescentAntibody;
     private String respiratorySyncytialVirusMicroscopy;
     private String respiratorySyncytialVirusNeutralizingAntibodies;
-    private String respiratorySyncytialVirusPcr;
+    private String respiratorySyncytialVirusPcrRtPcr;
     private String respiratorySyncytialVirusGramStain;
     private String respiratorySyncytialVirusLatexAgglutination;
     private String respiratorySyncytialVirusCqValueDetection;
-    private String respiratorySyncytialVirusSeQuencing;
-    private String respiratorySyncytialVirusDnaMicroArray;
+    private String respiratorySyncytialVirusSequencing;
+    private String respiratorySyncytialVirusDnaMicroarray;
     private String respiratorySyncytialVirusOther;
-    private String parainfluenza1_4AntiBodyDetection;
-    private String parainfluenza1_4AntigenDetection;
-    private String parainfluenza1_4RapidTest;
-    private String parainfluenza1_4Culture;
-    private String parainfluenza1_4Histopathology;
-    private String parainfluenza1_4Isolation;
-    private String parainfluenza1_4IgmSerumAntibody;
-    private String parainfluenza1_4IggSerumAntibody;
-    private String parainfluenza1_4IgaSerumAntibody;
-    private String parainfluenza1_4IncubationTime;
-    private String parainfluenza1_4IndirectFluorescentAntibody;
-    private String parainfluenza1_4Microscopy;
-    private String parainfluenza1_4NeutralizingAntibodies;
-    private String parainfluenza1_4Pcr;
-    private String parainfluenza1_4GramStain;
-    private String parainfluenza1_4LatexAgglutination;
-    private String parainfluenza1_4CqValueDetection;
-    private String parainfluenza1_4SeQuencing;
-    private String parainfluenza1_4DnaMicroArray;
-    private String parainfluenza1_4Other;
-    private String adenovirusAntiBodyDetection;
+    private String respiratorySyncytialVirusAntibodyDetectionDetails;
+    private String respiratorySyncytialVirusAntigenDetectionDetails;
+    private String respiratorySyncytialVirusRapidTestDetails;
+    private String respiratorySyncytialVirusCultureDetails;
+    private String respiratorySyncytialVirusHistopathologyDetails;
+    private String respiratorySyncytialVirusIsolationDetails;
+    private String respiratorySyncytialVirusIgmSerumAntibodyDetails;
+    private String respiratorySyncytialVirusIggSerumAntibodyDetails;
+    private String respiratorySyncytialVirusIgaSerumAntibodyDetails;
+    private String respiratorySyncytialVirusIncubationTimeDetails;
+    private String respiratorySyncytialVirusIndirectFluorescentAntibodyDetails;
+    private String respiratorySyncytialVirusDirectFluorescentAntibodyDetails;
+    private String respiratorySyncytialVirusMicroscopyDetails;
+    private String respiratorySyncytialVirusNeutralizingAntibodiesDetails;
+    private String respiratorySyncytialVirusPcrRtPcrDetails;
+    private String respiratorySyncytialVirusGramStainDetails;
+    private String respiratorySyncytialVirusLatexAgglutinationDetails;
+    private String respiratorySyncytialVirusCqValueDetectionDetails;
+    private String respiratorySyncytialVirusSequencingDetails;
+    private String respiratorySyncytialVirusDnaMicroarrayDetails;
+    private String respiratorySyncytialVirusOtherDetails;
+    private String parainfluenzaAntibodyDetection;
+    private String parainfluenzaAntigenDetection;
+    private String parainfluenzaRapidTest;
+    private String parainfluenzaCulture;
+    private String parainfluenzaHistopathology;
+    private String parainfluenzaIsolation;
+    private String parainfluenzaIgmSerumAntibody;
+    private String parainfluenzaIggSerumAntibody;
+    private String parainfluenzaIgaSerumAntibody;
+    private String parainfluenzaIncubationTime;
+    private String parainfluenzaIndirectFluorescentAntibody;
+    private String parainfluenzaDirectFluorescentAntibody;
+    private String parainfluenzaMicroscopy;
+    private String parainfluenzaNeutralizingAntibodies;
+    private String parainfluenzaPcrRtPcr;
+    private String parainfluenzaGramStain;
+    private String parainfluenzaLatexAgglutination;
+    private String parainfluenzaCqValueDetection;
+    private String parainfluenzaSequencing;
+    private String parainfluenzaDnaMicroarray;
+    private String parainfluenzaOther;
+    private String parainfluenzaAntibodyDetectionDetails;
+    private String parainfluenzaAntigenDetectionDetails;
+    private String parainfluenzaRapidTestDetails;
+    private String parainfluenzaCultureDetails;
+    private String parainfluenzaHistopathologyDetails;
+    private String parainfluenzaIsolationDetails;
+    private String parainfluenzaIgmSerumAntibodyDetails;
+    private String parainfluenzaIggSerumAntibodyDetails;
+    private String parainfluenzaIgaSerumAntibodyDetails;
+    private String parainfluenzaIncubationTimeDetails;
+    private String parainfluenzaIndirectFluorescentAntibodyDetails;
+    private String parainfluenzaDirectFluorescentAntibodyDetails;
+    private String parainfluenzaMicroscopyDetails;
+    private String parainfluenzaNeutralizingAntibodiesDetails;
+    private String parainfluenzaPcrRtPcrDetails;
+    private String parainfluenzaGramStainDetails;
+    private String parainfluenzaLatexAgglutinationDetails;
+    private String parainfluenzaCqValueDetectionDetails;
+    private String parainfluenzaSequencingDetails;
+    private String parainfluenzaDnaMicroarrayDetails;
+    private String parainfluenzaOtherDetails;
+    private String adenovirusAntibodyDetection;
     private String adenovirusAntigenDetection;
     private String adenovirusRapidTest;
     private String adenovirusCulture;
@@ -1058,16 +2131,38 @@ public class CaseSampleExportDto implements Serializable {
     private String adenovirusIgaSerumAntibody;
     private String adenovirusIncubationTime;
     private String adenovirusIndirectFluorescentAntibody;
+    private String adenovirusDirectFluorescentAntibody;
     private String adenovirusMicroscopy;
     private String adenovirusNeutralizingAntibodies;
-    private String adenovirusPcr;
+    private String adenovirusPcrRtPcr;
     private String adenovirusGramStain;
     private String adenovirusLatexAgglutination;
     private String adenovirusCqValueDetection;
-    private String adenovirusSeQuencing;
-    private String adenovirusDnaMicroArray;
+    private String adenovirusSequencing;
+    private String adenovirusDnaMicroarray;
     private String adenovirusOther;
-    private String rhinovirusAntiBodyDetection;
+    private String adenovirusAntibodyDetectionDetails;
+    private String adenovirusAntigenDetectionDetails;
+    private String adenovirusRapidTestDetails;
+    private String adenovirusCultureDetails;
+    private String adenovirusHistopathologyDetails;
+    private String adenovirusIsolationDetails;
+    private String adenovirusIgmSerumAntibodyDetails;
+    private String adenovirusIggSerumAntibodyDetails;
+    private String adenovirusIgaSerumAntibodyDetails;
+    private String adenovirusIncubationTimeDetails;
+    private String adenovirusIndirectFluorescentAntibodyDetails;
+    private String adenovirusDirectFluorescentAntibodyDetails;
+    private String adenovirusMicroscopyDetails;
+    private String adenovirusNeutralizingAntibodiesDetails;
+    private String adenovirusPcrRtPcrDetails;
+    private String adenovirusGramStainDetails;
+    private String adenovirusLatexAgglutinationDetails;
+    private String adenovirusCqValueDetectionDetails;
+    private String adenovirusSequencingDetails;
+    private String adenovirusDnaMicroarrayDetails;
+    private String adenovirusOtherDetails;
+    private String rhinovirusAntibodyDetection;
     private String rhinovirusAntigenDetection;
     private String rhinovirusRapidTest;
     private String rhinovirusCulture;
@@ -1078,16 +2173,38 @@ public class CaseSampleExportDto implements Serializable {
     private String rhinovirusIgaSerumAntibody;
     private String rhinovirusIncubationTime;
     private String rhinovirusIndirectFluorescentAntibody;
+    private String rhinovirusDirectFluorescentAntibody;
     private String rhinovirusMicroscopy;
     private String rhinovirusNeutralizingAntibodies;
-    private String rhinovirusPcr;
+    private String rhinovirusPcrRtPcr;
     private String rhinovirusGramStain;
     private String rhinovirusLatexAgglutination;
     private String rhinovirusCqValueDetection;
-    private String rhinovirusSeQuencing;
-    private String rhinovirusDnaMicroArray;
+    private String rhinovirusSequencing;
+    private String rhinovirusDnaMicroarray;
     private String rhinovirusOther;
-    private String enterovirusAntiBodyDetection;
+    private String rhinovirusAntibodyDetectionDetails;
+    private String rhinovirusAntigenDetectionDetails;
+    private String rhinovirusRapidTestDetails;
+    private String rhinovirusCultureDetails;
+    private String rhinovirusHistopathologyDetails;
+    private String rhinovirusIsolationDetails;
+    private String rhinovirusIgmSerumAntibodyDetails;
+    private String rhinovirusIggSerumAntibodyDetails;
+    private String rhinovirusIgaSerumAntibodyDetails;
+    private String rhinovirusIncubationTimeDetails;
+    private String rhinovirusIndirectFluorescentAntibodyDetails;
+    private String rhinovirusDirectFluorescentAntibodyDetails;
+    private String rhinovirusMicroscopyDetails;
+    private String rhinovirusNeutralizingAntibodiesDetails;
+    private String rhinovirusPcrRtPcrDetails;
+    private String rhinovirusGramStainDetails;
+    private String rhinovirusLatexAgglutinationDetails;
+    private String rhinovirusCqValueDetectionDetails;
+    private String rhinovirusSequencingDetails;
+    private String rhinovirusDnaMicroarrayDetails;
+    private String rhinovirusOtherDetails;
+    private String enterovirusAntibodyDetection;
     private String enterovirusAntigenDetection;
     private String enterovirusRapidTest;
     private String enterovirusCulture;
@@ -1098,16 +2215,38 @@ public class CaseSampleExportDto implements Serializable {
     private String enterovirusIgaSerumAntibody;
     private String enterovirusIncubationTime;
     private String enterovirusIndirectFluorescentAntibody;
+    private String enterovirusDirectFluorescentAntibody;
     private String enterovirusMicroscopy;
     private String enterovirusNeutralizingAntibodies;
-    private String enterovirusPcr;
+    private String enterovirusPcrRtPcr;
     private String enterovirusGramStain;
     private String enterovirusLatexAgglutination;
     private String enterovirusCqValueDetection;
-    private String enterovirusSeQuencing;
-    private String enterovirusDnaMicroArray;
+    private String enterovirusSequencing;
+    private String enterovirusDnaMicroarray;
     private String enterovirusOther;
-    private String mPneumoniaeAntiBodyDetection;
+    private String enterovirusAntibodyDetectionDetails;
+    private String enterovirusAntigenDetectionDetails;
+    private String enterovirusRapidTestDetails;
+    private String enterovirusCultureDetails;
+    private String enterovirusHistopathologyDetails;
+    private String enterovirusIsolationDetails;
+    private String enterovirusIgmSerumAntibodyDetails;
+    private String enterovirusIggSerumAntibodyDetails;
+    private String enterovirusIgaSerumAntibodyDetails;
+    private String enterovirusIncubationTimeDetails;
+    private String enterovirusIndirectFluorescentAntibodyDetails;
+    private String enterovirusDirectFluorescentAntibodyDetails;
+    private String enterovirusMicroscopyDetails;
+    private String enterovirusNeutralizingAntibodiesDetails;
+    private String enterovirusPcrRtPcrDetails;
+    private String enterovirusGramStainDetails;
+    private String enterovirusLatexAgglutinationDetails;
+    private String enterovirusCqValueDetectionDetails;
+    private String enterovirusSequencingDetails;
+    private String enterovirusDnaMicroarrayDetails;
+    private String enterovirusOtherDetails;
+    private String mPneumoniaeAntibodyDetection;
     private String mPneumoniaeAntigenDetection;
     private String mPneumoniaeRapidTest;
     private String mPneumoniaeCulture;
@@ -1118,16 +2257,38 @@ public class CaseSampleExportDto implements Serializable {
     private String mPneumoniaeIgaSerumAntibody;
     private String mPneumoniaeIncubationTime;
     private String mPneumoniaeIndirectFluorescentAntibody;
+    private String mPneumoniaeDirectFluorescentAntibody;
     private String mPneumoniaeMicroscopy;
     private String mPneumoniaeNeutralizingAntibodies;
-    private String mPneumoniaePcr;
+    private String mPneumoniaePcrRtPcr;
     private String mPneumoniaeGramStain;
     private String mPneumoniaeLatexAgglutination;
     private String mPneumoniaeCqValueDetection;
-    private String mPneumoniaeSeQuencing;
-    private String mPneumoniaeDnaMicroArray;
+    private String mPneumoniaeSequencing;
+    private String mPneumoniaeDnaMicroarray;
     private String mPneumoniaeOther;
-    private String cPneumoniaeAntiBodyDetection;
+    private String mPneumoniaeAntibodyDetectionDetails;
+    private String mPneumoniaeAntigenDetectionDetails;
+    private String mPneumoniaeRapidTestDetails;
+    private String mPneumoniaeCultureDetails;
+    private String mPneumoniaeHistopathologyDetails;
+    private String mPneumoniaeIsolationDetails;
+    private String mPneumoniaeIgmSerumAntibodyDetails;
+    private String mPneumoniaeIggSerumAntibodyDetails;
+    private String mPneumoniaeIgaSerumAntibodyDetails;
+    private String mPneumoniaeIncubationTimeDetails;
+    private String mPneumoniaeIndirectFluorescentAntibodyDetails;
+    private String mPneumoniaeDirectFluorescentAntibodyDetails;
+    private String mPneumoniaeMicroscopyDetails;
+    private String mPneumoniaeNeutralizingAntibodiesDetails;
+    private String mPneumoniaePcrRtPcrDetails;
+    private String mPneumoniaeGramStainDetails;
+    private String mPneumoniaeLatexAgglutinationDetails;
+    private String mPneumoniaeCqValueDetectionDetails;
+    private String mPneumoniaeSequencingDetails;
+    private String mPneumoniaeDnaMicroarrayDetails;
+    private String mPneumoniaeOtherDetails;
+    private String cPneumoniaeAntibodyDetection;
     private String cPneumoniaeAntigenDetection;
     private String cPneumoniaeRapidTest;
     private String cPneumoniaeCulture;
@@ -1138,16 +2299,38 @@ public class CaseSampleExportDto implements Serializable {
     private String cPneumoniaeIgaSerumAntibody;
     private String cPneumoniaeIncubationTime;
     private String cPneumoniaeIndirectFluorescentAntibody;
+    private String cPneumoniaeDirectFluorescentAntibody;
     private String cPneumoniaeMicroscopy;
     private String cPneumoniaeNeutralizingAntibodies;
-    private String cPneumoniaePcr;
+    private String cPneumoniaePcrRtPcr;
     private String cPneumoniaeGramStain;
     private String cPneumoniaeLatexAgglutination;
     private String cPneumoniaeCqValueDetection;
-    private String cPneumoniaeSeQuencing;
-    private String cPneumoniaeDnaMicroArray;
+    private String cPneumoniaeSequencing;
+    private String cPneumoniaeDnaMicroarray;
     private String cPneumoniaeOther;
-    private String ariAntiBodyDetection;
+    private String cPneumoniaeAntibodyDetectionDetails;
+    private String cPneumoniaeAntigenDetectionDetails;
+    private String cPneumoniaeRapidTestDetails;
+    private String cPneumoniaeCultureDetails;
+    private String cPneumoniaeHistopathologyDetails;
+    private String cPneumoniaeIsolationDetails;
+    private String cPneumoniaeIgmSerumAntibodyDetails;
+    private String cPneumoniaeIggSerumAntibodyDetails;
+    private String cPneumoniaeIgaSerumAntibodyDetails;
+    private String cPneumoniaeIncubationTimeDetails;
+    private String cPneumoniaeIndirectFluorescentAntibodyDetails;
+    private String cPneumoniaeDirectFluorescentAntibodyDetails;
+    private String cPneumoniaeMicroscopyDetails;
+    private String cPneumoniaeNeutralizingAntibodiesDetails;
+    private String cPneumoniaePcrRtPcrDetails;
+    private String cPneumoniaeGramStainDetails;
+    private String cPneumoniaeLatexAgglutinationDetails;
+    private String cPneumoniaeCqValueDetectionDetails;
+    private String cPneumoniaeSequencingDetails;
+    private String cPneumoniaeDnaMicroarrayDetails;
+    private String cPneumoniaeOtherDetails;
+    private String ariAntibodyDetection;
     private String ariAntigenDetection;
     private String ariRapidTest;
     private String ariCulture;
@@ -1158,16 +2341,38 @@ public class CaseSampleExportDto implements Serializable {
     private String ariIgaSerumAntibody;
     private String ariIncubationTime;
     private String ariIndirectFluorescentAntibody;
+    private String ariDirectFluorescentAntibody;
     private String ariMicroscopy;
     private String ariNeutralizingAntibodies;
-    private String ariPcr;
+    private String ariPcrRtPcr;
     private String ariGramStain;
     private String ariLatexAgglutination;
     private String ariCqValueDetection;
-    private String ariSeQuencing;
-    private String ariDnaMicroArray;
+    private String ariSequencing;
+    private String ariDnaMicroarray;
     private String ariOther;
-    private String chikungunyaAntiBodyDetection;
+    private String ariAntibodyDetectionDetails;
+    private String ariAntigenDetectionDetails;
+    private String ariRapidTestDetails;
+    private String ariCultureDetails;
+    private String ariHistopathologyDetails;
+    private String ariIsolationDetails;
+    private String ariIgmSerumAntibodyDetails;
+    private String ariIggSerumAntibodyDetails;
+    private String ariIgaSerumAntibodyDetails;
+    private String ariIncubationTimeDetails;
+    private String ariIndirectFluorescentAntibodyDetails;
+    private String ariDirectFluorescentAntibodyDetails;
+    private String ariMicroscopyDetails;
+    private String ariNeutralizingAntibodiesDetails;
+    private String ariPcrRtPcrDetails;
+    private String ariGramStainDetails;
+    private String ariLatexAgglutinationDetails;
+    private String ariCqValueDetectionDetails;
+    private String ariSequencingDetails;
+    private String ariDnaMicroarrayDetails;
+    private String ariOtherDetails;
+    private String chikungunyaAntibodyDetection;
     private String chikungunyaAntigenDetection;
     private String chikungunyaRapidTest;
     private String chikungunyaCulture;
@@ -1178,16 +2383,38 @@ public class CaseSampleExportDto implements Serializable {
     private String chikungunyaIgaSerumAntibody;
     private String chikungunyaIncubationTime;
     private String chikungunyaIndirectFluorescentAntibody;
+    private String chikungunyaDirectFluorescentAntibody;
     private String chikungunyaMicroscopy;
     private String chikungunyaNeutralizingAntibodies;
-    private String chikungunyaPcr;
+    private String chikungunyaPcrRtPcr;
     private String chikungunyaGramStain;
     private String chikungunyaLatexAgglutination;
     private String chikungunyaCqValueDetection;
-    private String chikungunyaSeQuencing;
-    private String chikungunyaDnaMicroArray;
+    private String chikungunyaSequencing;
+    private String chikungunyaDnaMicroarray;
     private String chikungunyaOther;
-    private String postImmunizationAdverseEventsMildAntiBodyDetection;
+    private String chikungunyaAntibodyDetectionDetails;
+    private String chikungunyaAntigenDetectionDetails;
+    private String chikungunyaRapidTestDetails;
+    private String chikungunyaCultureDetails;
+    private String chikungunyaHistopathologyDetails;
+    private String chikungunyaIsolationDetails;
+    private String chikungunyaIgmSerumAntibodyDetails;
+    private String chikungunyaIggSerumAntibodyDetails;
+    private String chikungunyaIgaSerumAntibodyDetails;
+    private String chikungunyaIncubationTimeDetails;
+    private String chikungunyaIndirectFluorescentAntibodyDetails;
+    private String chikungunyaDirectFluorescentAntibodyDetails;
+    private String chikungunyaMicroscopyDetails;
+    private String chikungunyaNeutralizingAntibodiesDetails;
+    private String chikungunyaPcrRtPcrDetails;
+    private String chikungunyaGramStainDetails;
+    private String chikungunyaLatexAgglutinationDetails;
+    private String chikungunyaCqValueDetectionDetails;
+    private String chikungunyaSequencingDetails;
+    private String chikungunyaDnaMicroarrayDetails;
+    private String chikungunyaOtherDetails;
+    private String postImmunizationAdverseEventsMildAntibodyDetection;
     private String postImmunizationAdverseEventsMildAntigenDetection;
     private String postImmunizationAdverseEventsMildRapidTest;
     private String postImmunizationAdverseEventsMildCulture;
@@ -1198,36 +2425,80 @@ public class CaseSampleExportDto implements Serializable {
     private String postImmunizationAdverseEventsMildIgaSerumAntibody;
     private String postImmunizationAdverseEventsMildIncubationTime;
     private String postImmunizationAdverseEventsMildIndirectFluorescentAntibody;
+    private String postImmunizationAdverseEventsMildDirectFluorescentAntibody;
     private String postImmunizationAdverseEventsMildMicroscopy;
     private String postImmunizationAdverseEventsMildNeutralizingAntibodies;
-    private String postImmunizationAdverseEventsMildPcr;
+    private String postImmunizationAdverseEventsMildPcrRtPcr;
     private String postImmunizationAdverseEventsMildGramStain;
     private String postImmunizationAdverseEventsMildLatexAgglutination;
     private String postImmunizationAdverseEventsMildCqValueDetection;
-    private String postImmunizationAdverseEventsMildSeQuencing;
-    private String postImmunizationAdverseEventsMildDnaMicroArray;
+    private String postImmunizationAdverseEventsMildSequencing;
+    private String postImmunizationAdverseEventsMildDnaMicroarray;
     private String postImmunizationAdverseEventsMildOther;
-    private String PostImmunizationAdverseEventsSevereAntiBodyDetection;
-    private String PostImmunizationAdverseEventsSevereAntigenDetection;
-    private String PostImmunizationAdverseEventsSevereRapidTest;
-    private String PostImmunizationAdverseEventsSevereCulture;
-    private String PostImmunizationAdverseEventsSevereHistopathology;
-    private String PostImmunizationAdverseEventsSevereIsolation;
-    private String PostImmunizationAdverseEventsSevereIgmSerumAntibody;
-    private String PostImmunizationAdverseEventsSevereIggSerumAntibody;
-    private String PostImmunizationAdverseEventsSevereIgaSerumAntibody;
-    private String PostImmunizationAdverseEventsSevereIncubationTime;
-    private String PostImmunizationAdverseEventsSevereIndirectFluorescentAntibody;
-    private String PostImmunizationAdverseEventsSevereMicroscopy;
-    private String PostImmunizationAdverseEventsSevereNeutralizingAntibodies;
-    private String PostImmunizationAdverseEventsSeverePcr;
-    private String PostImmunizationAdverseEventsSevereGramStain;
-    private String PostImmunizationAdverseEventsSevereLatexAgglutination;
-    private String PostImmunizationAdverseEventsSevereCqValueDetection;
-    private String PostImmunizationAdverseEventsSevereSeQuencing;
-    private String PostImmunizationAdverseEventsSevereDnaMicroArray;
-    private String PostImmunizationAdverseEventsSevereOther;
-    private String fhaAntiBodyDetection;
+    private String postImmunizationAdverseEventsMildAntibodyDetectionDetails;
+    private String postImmunizationAdverseEventsMildAntigenDetectionDetails;
+    private String postImmunizationAdverseEventsMildRapidTestDetails;
+    private String postImmunizationAdverseEventsMildCultureDetails;
+    private String postImmunizationAdverseEventsMildHistopathologyDetails;
+    private String postImmunizationAdverseEventsMildIsolationDetails;
+    private String postImmunizationAdverseEventsMildIgmSerumAntibodyDetails;
+    private String postImmunizationAdverseEventsMildIggSerumAntibodyDetails;
+    private String postImmunizationAdverseEventsMildIgaSerumAntibodyDetails;
+    private String postImmunizationAdverseEventsMildIncubationTimeDetails;
+    private String postImmunizationAdverseEventsMildIndirectFluorescentAntibodyDetails;
+    private String postImmunizationAdverseEventsMildDirectFluorescentAntibodyDetails;
+    private String postImmunizationAdverseEventsMildMicroscopyDetails;
+    private String postImmunizationAdverseEventsMildNeutralizingAntibodiesDetails;
+    private String postImmunizationAdverseEventsMildPcrRtPcrDetails;
+    private String postImmunizationAdverseEventsMildGramStainDetails;
+    private String postImmunizationAdverseEventsMildLatexAgglutinationDetails;
+    private String postImmunizationAdverseEventsMildCqValueDetectionDetails;
+    private String postImmunizationAdverseEventsMildSequencingDetails;
+    private String postImmunizationAdverseEventsMildDnaMicroarrayDetails;
+    private String postImmunizationAdverseEventsMildOtherDetails;
+    private String postImmunizationAdverseEventsSevereAntibodyDetection;
+    private String postImmunizationAdverseEventsSevereAntigenDetection;
+    private String postImmunizationAdverseEventsSevereRapidTest;
+    private String postImmunizationAdverseEventsSevereCulture;
+    private String postImmunizationAdverseEventsSevereHistopathology;
+    private String postImmunizationAdverseEventsSevereIsolation;
+    private String postImmunizationAdverseEventsSevereIgmSerumAntibody;
+    private String postImmunizationAdverseEventsSevereIggSerumAntibody;
+    private String postImmunizationAdverseEventsSevereIgaSerumAntibody;
+    private String postImmunizationAdverseEventsSevereIncubationTime;
+    private String postImmunizationAdverseEventsSevereIndirectFluorescentAntibody;
+    private String postImmunizationAdverseEventsSevereDirectFluorescentAntibody;
+    private String postImmunizationAdverseEventsSevereMicroscopy;
+    private String postImmunizationAdverseEventsSevereNeutralizingAntibodies;
+    private String postImmunizationAdverseEventsSeverePcrRtPcr;
+    private String postImmunizationAdverseEventsSevereGramStain;
+    private String postImmunizationAdverseEventsSevereLatexAgglutination;
+    private String postImmunizationAdverseEventsSevereCqValueDetection;
+    private String postImmunizationAdverseEventsSevereSequencing;
+    private String postImmunizationAdverseEventsSevereDnaMicroarray;
+    private String postImmunizationAdverseEventsSevereOther;
+    private String postImmunizationAdverseEventsSevereAntibodyDetectionDetails;
+    private String postImmunizationAdverseEventsSevereAntigenDetectionDetails;
+    private String postImmunizationAdverseEventsSevereRapidTestDetails;
+    private String postImmunizationAdverseEventsSevereCultureDetails;
+    private String postImmunizationAdverseEventsSevereHistopathologyDetails;
+    private String postImmunizationAdverseEventsSevereIsolationDetails;
+    private String postImmunizationAdverseEventsSevereIgmSerumAntibodyDetails;
+    private String postImmunizationAdverseEventsSevereIggSerumAntibodyDetails;
+    private String postImmunizationAdverseEventsSevereIgaSerumAntibodyDetails;
+    private String postImmunizationAdverseEventsSevereIncubationTimeDetails;
+    private String postImmunizationAdverseEventsSevereIndirectFluorescentAntibodyDetails;
+    private String postImmunizationAdverseEventsSevereDirectFluorescentAntibodyDetails;
+    private String postImmunizationAdverseEventsSevereMicroscopyDetails;
+    private String postImmunizationAdverseEventsSevereNeutralizingAntibodiesDetails;
+    private String postImmunizationAdverseEventsSeverePcrRtPcrDetails;
+    private String postImmunizationAdverseEventsSevereGramStainDetails;
+    private String postImmunizationAdverseEventsSevereLatexAgglutinationDetails;
+    private String postImmunizationAdverseEventsSevereCqValueDetectionDetails;
+    private String postImmunizationAdverseEventsSevereSequencingDetails;
+    private String postImmunizationAdverseEventsSevereDnaMicroarrayDetails;
+    private String postImmunizationAdverseEventsSevereOtherDetails;
+    private String fhaAntibodyDetection;
     private String fhaAntigenDetection;
     private String fhaRapidTest;
     private String fhaCulture;
@@ -1238,16 +2509,38 @@ public class CaseSampleExportDto implements Serializable {
     private String fhaIgaSerumAntibody;
     private String fhaIncubationTime;
     private String fhaIndirectFluorescentAntibody;
+    private String fhaDirectFluorescentAntibody;
     private String fhaMicroscopy;
     private String fhaNeutralizingAntibodies;
-    private String fhaPcr;
+    private String fhaPcrRtPcr;
     private String fhaGramStain;
     private String fhaLatexAgglutination;
     private String fhaCqValueDetection;
-    private String fhaSeQuencing;
-    private String fhaDnaMicroArray;
+    private String fhaSequencing;
+    private String fhaDnaMicroarray;
     private String fhaOther;
-    private String otherAntiBodyDetection;
+    private String fhaAntibodyDetectionDetails;
+    private String fhaAntigenDetectionDetails;
+    private String fhaRapidTestDetails;
+    private String fhaCultureDetails;
+    private String fhaHistopathologyDetails;
+    private String fhaIsolationDetails;
+    private String fhaIgmSerumAntibodyDetails;
+    private String fhaIggSerumAntibodyDetails;
+    private String fhaIgaSerumAntibodyDetails;
+    private String fhaIncubationTimeDetails;
+    private String fhaIndirectFluorescentAntibodyDetails;
+    private String fhaDirectFluorescentAntibodyDetails;
+    private String fhaMicroscopyDetails;
+    private String fhaNeutralizingAntibodiesDetails;
+    private String fhaPcrRtPcrDetails;
+    private String fhaGramStainDetails;
+    private String fhaLatexAgglutinationDetails;
+    private String fhaCqValueDetectionDetails;
+    private String fhaSequencingDetails;
+    private String fhaDnaMicroarrayDetails;
+    private String fhaOtherDetails;
+    private String otherAntibodyDetection;
     private String otherAntigenDetection;
     private String otherRapidTest;
     private String otherCulture;
@@ -1258,16 +2551,38 @@ public class CaseSampleExportDto implements Serializable {
     private String otherIgaSerumAntibody;
     private String otherIncubationTime;
     private String otherIndirectFluorescentAntibody;
+    private String otherDirectFluorescentAntibody;
     private String otherMicroscopy;
     private String otherNeutralizingAntibodies;
-    private String otherPcr;
+    private String otherPcrRtPcr;
     private String otherGramStain;
     private String otherLatexAgglutination;
     private String otherCqValueDetection;
-    private String otherSeQuencing;
-    private String otherDnaMicroArray;
+    private String otherSequencing;
+    private String otherDnaMicroarray;
     private String otherOther;
-    private String undefinedAntiBodyDetection;
+    private String otherAntibodyDetectionDetails;
+    private String otherAntigenDetectionDetails;
+    private String otherRapidTestDetails;
+    private String otherCultureDetails;
+    private String otherHistopathologyDetails;
+    private String otherIsolationDetails;
+    private String otherIgmSerumAntibodyDetails;
+    private String otherIggSerumAntibodyDetails;
+    private String otherIgaSerumAntibodyDetails;
+    private String otherIncubationTimeDetails;
+    private String otherIndirectFluorescentAntibodyDetails;
+    private String otherDirectFluorescentAntibodyDetails;
+    private String otherMicroscopyDetails;
+    private String otherNeutralizingAntibodiesDetails;
+    private String otherPcrRtPcrDetails;
+    private String otherGramStainDetails;
+    private String otherLatexAgglutinationDetails;
+    private String otherCqValueDetectionDetails;
+    private String otherSequencingDetails;
+    private String otherDnaMicroarrayDetails;
+    private String otherOtherDetails;
+    private String undefinedAntibodyDetection;
     private String undefinedAntigenDetection;
     private String undefinedRapidTest;
     private String undefinedCulture;
@@ -1278,15 +2593,37 @@ public class CaseSampleExportDto implements Serializable {
     private String undefinedIgaSerumAntibody;
     private String undefinedIncubationTime;
     private String undefinedIndirectFluorescentAntibody;
+    private String undefinedDirectFluorescentAntibody;
     private String undefinedMicroscopy;
     private String undefinedNeutralizingAntibodies;
-    private String undefinedPcr;
+    private String undefinedPcrRtPcr;
     private String undefinedGramStain;
     private String undefinedLatexAgglutination;
     private String undefinedCqValueDetection;
-    private String undefinedSeQuencing;
-    private String undefinedDnaMicroArray;
+    private String undefinedSequencing;
+    private String undefinedDnaMicroarray;
     private String undefinedOther;
+    private String undefinedAntibodyDetectionDetails;
+    private String undefinedAntigenDetectionDetails;
+    private String undefinedRapidTestDetails;
+    private String undefinedCultureDetails;
+    private String undefinedHistopathologyDetails;
+    private String undefinedIsolationDetails;
+    private String undefinedIgmSerumAntibodyDetails;
+    private String undefinedIggSerumAntibodyDetails;
+    private String undefinedIgaSerumAntibodyDetails;
+    private String undefinedIncubationTimeDetails;
+    private String undefinedIndirectFluorescentAntibodyDetails;
+    private String undefinedDirectFluorescentAntibodyDetails;
+    private String undefinedMicroscopyDetails;
+    private String undefinedNeutralizingAntibodiesDetails;
+    private String undefinedPcrRtPcrDetails;
+    private String undefinedGramStainDetails;
+    private String undefinedLatexAgglutinationDetails;
+    private String undefinedCqValueDetectionDetails;
+    private String undefinedSequencingDetails;
+    private String undefinedDnaMicroarrayDetails;
+    private String undefinedOtherDetails;
     //@formatter:off
     public CaseSampleExportDto(
             String uuid,
@@ -1833,8 +3170,8 @@ public class CaseSampleExportDto implements Serializable {
         this.otherPathogenTests = otherPathogenTests;
     }
 
-    public void setAfpAntiBodyDetection(String afpAntiBodyDetection) {
-        this.afpAntiBodyDetection = afpAntiBodyDetection;
+    public void setAfpAntibodyDetection(String afpAntibodyDetection) {
+        this.afpAntibodyDetection = afpAntibodyDetection;
     }
 
     public void setAfpAntigenDetection(String afpAntigenDetection) {
@@ -1877,6 +3214,10 @@ public class CaseSampleExportDto implements Serializable {
         this.afpIndirectFluorescentAntibody = afpIndirectFluorescentAntibody;
     }
 
+    public void setAfpDirectFluorescentAntibody(String afpDirectFluorescentAntibody) {
+        this.afpDirectFluorescentAntibody = afpDirectFluorescentAntibody;
+    }
+
     public void setAfpMicroscopy(String afpMicroscopy) {
         this.afpMicroscopy = afpMicroscopy;
     }
@@ -1885,8 +3226,8 @@ public class CaseSampleExportDto implements Serializable {
         this.afpNeutralizingAntibodies = afpNeutralizingAntibodies;
     }
 
-    public void setAfpPcr(String afpPcr) {
-        this.afpPcr = afpPcr;
+    public void setAfpPcrRtPcr(String afpPcrRtPcr) {
+        this.afpPcrRtPcr = afpPcrRtPcr;
     }
 
     public void setAfpGramStain(String afpGramStain) {
@@ -1901,20 +3242,104 @@ public class CaseSampleExportDto implements Serializable {
         this.afpCqValueDetection = afpCqValueDetection;
     }
 
-    public void setAfpSeQuencing(String afpSeQuencing) {
-        this.afpSeQuencing = afpSeQuencing;
+    public void setAfpSequencing(String afpSequencing) {
+        this.afpSequencing = afpSequencing;
     }
 
-    public void setAfpDnaMicroArray(String afpDnaMicroArray) {
-        this.afpDnaMicroArray = afpDnaMicroArray;
+    public void setAfpDnaMicroarray(String afpDnaMicroarray) {
+        this.afpDnaMicroarray = afpDnaMicroarray;
     }
 
     public void setAfpOther(String afpOther) {
         this.afpOther = afpOther;
     }
 
-    public void setCholeraAntiBodyDetection(String choleraAntiBodyDetection) {
-        this.choleraAntiBodyDetection = choleraAntiBodyDetection;
+    public void setAfpAntibodyDetectionDetails(String afpAntibodyDetectionDetails) {
+        this.afpAntibodyDetectionDetails = afpAntibodyDetectionDetails;
+    }
+
+    public void setAfpAntigenDetectionDetails(String afpAntigenDetectionDetails) {
+        this.afpAntigenDetectionDetails = afpAntigenDetectionDetails;
+    }
+
+    public void setAfpRapidTestDetails(String afpRapidTestDetails) {
+        this.afpRapidTestDetails = afpRapidTestDetails;
+    }
+
+    public void setAfpCultureDetails(String afpCultureDetails) {
+        this.afpCultureDetails = afpCultureDetails;
+    }
+
+    public void setAfpHistopathologyDetails(String afpHistopathologyDetails) {
+        this.afpHistopathologyDetails = afpHistopathologyDetails;
+    }
+
+    public void setAfpIsolationDetails(String afpIsolationDetails) {
+        this.afpIsolationDetails = afpIsolationDetails;
+    }
+
+    public void setAfpIgmSerumAntibodyDetails(String afpIgmSerumAntibodyDetails) {
+        this.afpIgmSerumAntibodyDetails = afpIgmSerumAntibodyDetails;
+    }
+
+    public void setAfpIggSerumAntibodyDetails(String afpIggSerumAntibodyDetails) {
+        this.afpIggSerumAntibodyDetails = afpIggSerumAntibodyDetails;
+    }
+
+    public void setAfpIgaSerumAntibodyDetails(String afpIgaSerumAntibodyDetails) {
+        this.afpIgaSerumAntibodyDetails = afpIgaSerumAntibodyDetails;
+    }
+
+    public void setAfpIncubationTimeDetails(String afpIncubationTimeDetails) {
+        this.afpIncubationTimeDetails = afpIncubationTimeDetails;
+    }
+
+    public void setAfpIndirectFluorescentAntibodyDetails(String afpIndirectFluorescentAntibodyDetails) {
+        this.afpIndirectFluorescentAntibodyDetails = afpIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setAfpDirectFluorescentAntibodyDetails(String afpDirectFluorescentAntibodyDetails) {
+        this.afpDirectFluorescentAntibodyDetails = afpDirectFluorescentAntibodyDetails;
+    }
+
+    public void setAfpMicroscopyDetails(String afpMicroscopyDetails) {
+        this.afpMicroscopyDetails = afpMicroscopyDetails;
+    }
+
+    public void setAfpNeutralizingAntibodiesDetails(String afpNeutralizingAntibodiesDetails) {
+        this.afpNeutralizingAntibodiesDetails = afpNeutralizingAntibodiesDetails;
+    }
+
+    public void setAfpPcrRtPcrDetails(String afpPcrRtPcrDetails) {
+        this.afpPcrRtPcrDetails = afpPcrRtPcrDetails;
+    }
+
+    public void setAfpGramStainDetails(String afpGramStainDetails) {
+        this.afpGramStainDetails = afpGramStainDetails;
+    }
+
+    public void setAfpLatexAgglutinationDetails(String afpLatexAgglutinationDetails) {
+        this.afpLatexAgglutinationDetails = afpLatexAgglutinationDetails;
+    }
+
+    public void setAfpCqValueDetectionDetails(String afpCqValueDetectionDetails) {
+        this.afpCqValueDetectionDetails = afpCqValueDetectionDetails;
+    }
+
+    public void setAfpSequencingDetails(String afpSequencingDetails) {
+        this.afpSequencingDetails = afpSequencingDetails;
+    }
+
+    public void setAfpDnaMicroarrayDetails(String afpDnaMicroarrayDetails) {
+        this.afpDnaMicroarrayDetails = afpDnaMicroarrayDetails;
+    }
+
+    public void setAfpOtherDetails(String afpOtherDetails) {
+        this.afpOtherDetails = afpOtherDetails;
+    }
+
+    public void setCholeraAntibodyDetection(String choleraAntibodyDetection) {
+        this.choleraAntibodyDetection = choleraAntibodyDetection;
     }
 
     public void setCholeraAntigenDetection(String choleraAntigenDetection) {
@@ -1957,6 +3382,10 @@ public class CaseSampleExportDto implements Serializable {
         this.choleraIndirectFluorescentAntibody = choleraIndirectFluorescentAntibody;
     }
 
+    public void setCholeraDirectFluorescentAntibody(String choleraDirectFluorescentAntibody) {
+        this.choleraDirectFluorescentAntibody = choleraDirectFluorescentAntibody;
+    }
+
     public void setCholeraMicroscopy(String choleraMicroscopy) {
         this.choleraMicroscopy = choleraMicroscopy;
     }
@@ -1965,8 +3394,8 @@ public class CaseSampleExportDto implements Serializable {
         this.choleraNeutralizingAntibodies = choleraNeutralizingAntibodies;
     }
 
-    public void setCholeraPcr(String choleraPcr) {
-        this.choleraPcr = choleraPcr;
+    public void setCholeraPcrRtPcr(String choleraPcrRtPcr) {
+        this.choleraPcrRtPcr = choleraPcrRtPcr;
     }
 
     public void setCholeraGramStain(String choleraGramStain) {
@@ -1981,20 +3410,104 @@ public class CaseSampleExportDto implements Serializable {
         this.choleraCqValueDetection = choleraCqValueDetection;
     }
 
-    public void setCholeraSeQuencing(String choleraSeQuencing) {
-        this.choleraSeQuencing = choleraSeQuencing;
+    public void setCholeraSequencing(String choleraSequencing) {
+        this.choleraSequencing = choleraSequencing;
     }
 
-    public void setCholeraDnaMicroArray(String choleraDnaMicroArray) {
-        this.choleraDnaMicroArray = choleraDnaMicroArray;
+    public void setCholeraDnaMicroarray(String choleraDnaMicroarray) {
+        this.choleraDnaMicroarray = choleraDnaMicroarray;
     }
 
     public void setCholeraOther(String choleraOther) {
         this.choleraOther = choleraOther;
     }
 
-    public void setCongenitalRubellaAntiBodyDetection(String congenitalRubellaAntiBodyDetection) {
-        this.congenitalRubellaAntiBodyDetection = congenitalRubellaAntiBodyDetection;
+    public void setCholeraAntibodyDetectionDetails(String choleraAntibodyDetectionDetails) {
+        this.choleraAntibodyDetectionDetails = choleraAntibodyDetectionDetails;
+    }
+
+    public void setCholeraAntigenDetectionDetails(String choleraAntigenDetectionDetails) {
+        this.choleraAntigenDetectionDetails = choleraAntigenDetectionDetails;
+    }
+
+    public void setCholeraRapidTestDetails(String choleraRapidTestDetails) {
+        this.choleraRapidTestDetails = choleraRapidTestDetails;
+    }
+
+    public void setCholeraCultureDetails(String choleraCultureDetails) {
+        this.choleraCultureDetails = choleraCultureDetails;
+    }
+
+    public void setCholeraHistopathologyDetails(String choleraHistopathologyDetails) {
+        this.choleraHistopathologyDetails = choleraHistopathologyDetails;
+    }
+
+    public void setCholeraIsolationDetails(String choleraIsolationDetails) {
+        this.choleraIsolationDetails = choleraIsolationDetails;
+    }
+
+    public void setCholeraIgmSerumAntibodyDetails(String choleraIgmSerumAntibodyDetails) {
+        this.choleraIgmSerumAntibodyDetails = choleraIgmSerumAntibodyDetails;
+    }
+
+    public void setCholeraIggSerumAntibodyDetails(String choleraIggSerumAntibodyDetails) {
+        this.choleraIggSerumAntibodyDetails = choleraIggSerumAntibodyDetails;
+    }
+
+    public void setCholeraIgaSerumAntibodyDetails(String choleraIgaSerumAntibodyDetails) {
+        this.choleraIgaSerumAntibodyDetails = choleraIgaSerumAntibodyDetails;
+    }
+
+    public void setCholeraIncubationTimeDetails(String choleraIncubationTimeDetails) {
+        this.choleraIncubationTimeDetails = choleraIncubationTimeDetails;
+    }
+
+    public void setCholeraIndirectFluorescentAntibodyDetails(String choleraIndirectFluorescentAntibodyDetails) {
+        this.choleraIndirectFluorescentAntibodyDetails = choleraIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setCholeraDirectFluorescentAntibodyDetails(String choleraDirectFluorescentAntibodyDetails) {
+        this.choleraDirectFluorescentAntibodyDetails = choleraDirectFluorescentAntibodyDetails;
+    }
+
+    public void setCholeraMicroscopyDetails(String choleraMicroscopyDetails) {
+        this.choleraMicroscopyDetails = choleraMicroscopyDetails;
+    }
+
+    public void setCholeraNeutralizingAntibodiesDetails(String choleraNeutralizingAntibodiesDetails) {
+        this.choleraNeutralizingAntibodiesDetails = choleraNeutralizingAntibodiesDetails;
+    }
+
+    public void setCholeraPcrRtPcrDetails(String choleraPcrRtPcrDetails) {
+        this.choleraPcrRtPcrDetails = choleraPcrRtPcrDetails;
+    }
+
+    public void setCholeraGramStainDetails(String choleraGramStainDetails) {
+        this.choleraGramStainDetails = choleraGramStainDetails;
+    }
+
+    public void setCholeraLatexAgglutinationDetails(String choleraLatexAgglutinationDetails) {
+        this.choleraLatexAgglutinationDetails = choleraLatexAgglutinationDetails;
+    }
+
+    public void setCholeraCqValueDetectionDetails(String choleraCqValueDetectionDetails) {
+        this.choleraCqValueDetectionDetails = choleraCqValueDetectionDetails;
+    }
+
+    public void setCholeraSequencingDetails(String choleraSequencingDetails) {
+        this.choleraSequencingDetails = choleraSequencingDetails;
+    }
+
+    public void setCholeraDnaMicroarrayDetails(String choleraDnaMicroarrayDetails) {
+        this.choleraDnaMicroarrayDetails = choleraDnaMicroarrayDetails;
+    }
+
+    public void setCholeraOtherDetails(String choleraOtherDetails) {
+        this.choleraOtherDetails = choleraOtherDetails;
+    }
+
+    public void setCongenitalRubellaAntibodyDetection(String congenitalRubellaAntibodyDetection) {
+        this.congenitalRubellaAntibodyDetection = congenitalRubellaAntibodyDetection;
     }
 
     public void setCongenitalRubellaAntigenDetection(String congenitalRubellaAntigenDetection) {
@@ -2037,6 +3550,10 @@ public class CaseSampleExportDto implements Serializable {
         this.congenitalRubellaIndirectFluorescentAntibody = congenitalRubellaIndirectFluorescentAntibody;
     }
 
+    public void setCongenitalRubellaDirectFluorescentAntibody(String congenitalRubellaDirectFluorescentAntibody) {
+        this.congenitalRubellaDirectFluorescentAntibody = congenitalRubellaDirectFluorescentAntibody;
+    }
+
     public void setCongenitalRubellaMicroscopy(String congenitalRubellaMicroscopy) {
         this.congenitalRubellaMicroscopy = congenitalRubellaMicroscopy;
     }
@@ -2045,8 +3562,8 @@ public class CaseSampleExportDto implements Serializable {
         this.congenitalRubellaNeutralizingAntibodies = congenitalRubellaNeutralizingAntibodies;
     }
 
-    public void setCongenitalRubellaPcr(String congenitalRubellaPcr) {
-        this.congenitalRubellaPcr = congenitalRubellaPcr;
+    public void setCongenitalRubellaPcrRtPcr(String congenitalRubellaPcrRtPcr) {
+        this.congenitalRubellaPcrRtPcr = congenitalRubellaPcrRtPcr;
     }
 
     public void setCongenitalRubellaGramStain(String congenitalRubellaGramStain) {
@@ -2061,20 +3578,104 @@ public class CaseSampleExportDto implements Serializable {
         this.congenitalRubellaCqValueDetection = congenitalRubellaCqValueDetection;
     }
 
-    public void setCongenitalRubellaSeQuencing(String congenitalRubellaSeQuencing) {
-        this.congenitalRubellaSeQuencing = congenitalRubellaSeQuencing;
+    public void setCongenitalRubellaSequencing(String congenitalRubellaSequencing) {
+        this.congenitalRubellaSequencing = congenitalRubellaSequencing;
     }
 
-    public void setCongenitalRubellaDnaMicroArray(String congenitalRubellaDnaMicroArray) {
-        this.congenitalRubellaDnaMicroArray = congenitalRubellaDnaMicroArray;
+    public void setCongenitalRubellaDnaMicroarray(String congenitalRubellaDnaMicroarray) {
+        this.congenitalRubellaDnaMicroarray = congenitalRubellaDnaMicroarray;
     }
 
     public void setCongenitalRubellaOther(String congenitalRubellaOther) {
         this.congenitalRubellaOther = congenitalRubellaOther;
     }
 
-    public void setCsmAntiBodyDetection(String csmAntiBodyDetection) {
-        this.csmAntiBodyDetection = csmAntiBodyDetection;
+    public void setCongenitalRubellaAntibodyDetectionDetails(String congenitalRubellaAntibodyDetectionDetails) {
+        this.congenitalRubellaAntibodyDetectionDetails = congenitalRubellaAntibodyDetectionDetails;
+    }
+
+    public void setCongenitalRubellaAntigenDetectionDetails(String congenitalRubellaAntigenDetectionDetails) {
+        this.congenitalRubellaAntigenDetectionDetails = congenitalRubellaAntigenDetectionDetails;
+    }
+
+    public void setCongenitalRubellaRapidTestDetails(String congenitalRubellaRapidTestDetails) {
+        this.congenitalRubellaRapidTestDetails = congenitalRubellaRapidTestDetails;
+    }
+
+    public void setCongenitalRubellaCultureDetails(String congenitalRubellaCultureDetails) {
+        this.congenitalRubellaCultureDetails = congenitalRubellaCultureDetails;
+    }
+
+    public void setCongenitalRubellaHistopathologyDetails(String congenitalRubellaHistopathologyDetails) {
+        this.congenitalRubellaHistopathologyDetails = congenitalRubellaHistopathologyDetails;
+    }
+
+    public void setCongenitalRubellaIsolationDetails(String congenitalRubellaIsolationDetails) {
+        this.congenitalRubellaIsolationDetails = congenitalRubellaIsolationDetails;
+    }
+
+    public void setCongenitalRubellaIgmSerumAntibodyDetails(String congenitalRubellaIgmSerumAntibodyDetails) {
+        this.congenitalRubellaIgmSerumAntibodyDetails = congenitalRubellaIgmSerumAntibodyDetails;
+    }
+
+    public void setCongenitalRubellaIggSerumAntibodyDetails(String congenitalRubellaIggSerumAntibodyDetails) {
+        this.congenitalRubellaIggSerumAntibodyDetails = congenitalRubellaIggSerumAntibodyDetails;
+    }
+
+    public void setCongenitalRubellaIgaSerumAntibodyDetails(String congenitalRubellaIgaSerumAntibodyDetails) {
+        this.congenitalRubellaIgaSerumAntibodyDetails = congenitalRubellaIgaSerumAntibodyDetails;
+    }
+
+    public void setCongenitalRubellaIncubationTimeDetails(String congenitalRubellaIncubationTimeDetails) {
+        this.congenitalRubellaIncubationTimeDetails = congenitalRubellaIncubationTimeDetails;
+    }
+
+    public void setCongenitalRubellaIndirectFluorescentAntibodyDetails(String congenitalRubellaIndirectFluorescentAntibodyDetails) {
+        this.congenitalRubellaIndirectFluorescentAntibodyDetails = congenitalRubellaIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setCongenitalRubellaDirectFluorescentAntibodyDetails(String congenitalRubellaDirectFluorescentAntibodyDetails) {
+        this.congenitalRubellaDirectFluorescentAntibodyDetails = congenitalRubellaDirectFluorescentAntibodyDetails;
+    }
+
+    public void setCongenitalRubellaMicroscopyDetails(String congenitalRubellaMicroscopyDetails) {
+        this.congenitalRubellaMicroscopyDetails = congenitalRubellaMicroscopyDetails;
+    }
+
+    public void setCongenitalRubellaNeutralizingAntibodiesDetails(String congenitalRubellaNeutralizingAntibodiesDetails) {
+        this.congenitalRubellaNeutralizingAntibodiesDetails = congenitalRubellaNeutralizingAntibodiesDetails;
+    }
+
+    public void setCongenitalRubellaPcrRtPcrDetails(String congenitalRubellaPcrRtPcrDetails) {
+        this.congenitalRubellaPcrRtPcrDetails = congenitalRubellaPcrRtPcrDetails;
+    }
+
+    public void setCongenitalRubellaGramStainDetails(String congenitalRubellaGramStainDetails) {
+        this.congenitalRubellaGramStainDetails = congenitalRubellaGramStainDetails;
+    }
+
+    public void setCongenitalRubellaLatexAgglutinationDetails(String congenitalRubellaLatexAgglutinationDetails) {
+        this.congenitalRubellaLatexAgglutinationDetails = congenitalRubellaLatexAgglutinationDetails;
+    }
+
+    public void setCongenitalRubellaCqValueDetectionDetails(String congenitalRubellaCqValueDetectionDetails) {
+        this.congenitalRubellaCqValueDetectionDetails = congenitalRubellaCqValueDetectionDetails;
+    }
+
+    public void setCongenitalRubellaSequencingDetails(String congenitalRubellaSequencingDetails) {
+        this.congenitalRubellaSequencingDetails = congenitalRubellaSequencingDetails;
+    }
+
+    public void setCongenitalRubellaDnaMicroarrayDetails(String congenitalRubellaDnaMicroarrayDetails) {
+        this.congenitalRubellaDnaMicroarrayDetails = congenitalRubellaDnaMicroarrayDetails;
+    }
+
+    public void setCongenitalRubellaOtherDetails(String congenitalRubellaOtherDetails) {
+        this.congenitalRubellaOtherDetails = congenitalRubellaOtherDetails;
+    }
+
+    public void setCsmAntibodyDetection(String csmAntibodyDetection) {
+        this.csmAntibodyDetection = csmAntibodyDetection;
     }
 
     public void setCsmAntigenDetection(String csmAntigenDetection) {
@@ -2117,6 +3718,10 @@ public class CaseSampleExportDto implements Serializable {
         this.csmIndirectFluorescentAntibody = csmIndirectFluorescentAntibody;
     }
 
+    public void setCsmDirectFluorescentAntibody(String csmDirectFluorescentAntibody) {
+        this.csmDirectFluorescentAntibody = csmDirectFluorescentAntibody;
+    }
+
     public void setCsmMicroscopy(String csmMicroscopy) {
         this.csmMicroscopy = csmMicroscopy;
     }
@@ -2125,8 +3730,8 @@ public class CaseSampleExportDto implements Serializable {
         this.csmNeutralizingAntibodies = csmNeutralizingAntibodies;
     }
 
-    public void setCsmPcr(String csmPcr) {
-        this.csmPcr = csmPcr;
+    public void setCsmPcrRtPcr(String csmPcrRtPcr) {
+        this.csmPcrRtPcr = csmPcrRtPcr;
     }
 
     public void setCsmGramStain(String csmGramStain) {
@@ -2141,20 +3746,104 @@ public class CaseSampleExportDto implements Serializable {
         this.csmCqValueDetection = csmCqValueDetection;
     }
 
-    public void setCsmSeQuencing(String csmSeQuencing) {
-        this.csmSeQuencing = csmSeQuencing;
+    public void setCsmSequencing(String csmSequencing) {
+        this.csmSequencing = csmSequencing;
     }
 
-    public void setCsmDnaMicroArray(String csmDnaMicroArray) {
-        this.csmDnaMicroArray = csmDnaMicroArray;
+    public void setCsmDnaMicroarray(String csmDnaMicroarray) {
+        this.csmDnaMicroarray = csmDnaMicroarray;
     }
 
     public void setCsmOther(String csmOther) {
         this.csmOther = csmOther;
     }
 
-    public void setDengueAntiBodyDetection(String dengueAntiBodyDetection) {
-        this.dengueAntiBodyDetection = dengueAntiBodyDetection;
+    public void setCsmAntibodyDetectionDetails(String csmAntibodyDetectionDetails) {
+        this.csmAntibodyDetectionDetails = csmAntibodyDetectionDetails;
+    }
+
+    public void setCsmAntigenDetectionDetails(String csmAntigenDetectionDetails) {
+        this.csmAntigenDetectionDetails = csmAntigenDetectionDetails;
+    }
+
+    public void setCsmRapidTestDetails(String csmRapidTestDetails) {
+        this.csmRapidTestDetails = csmRapidTestDetails;
+    }
+
+    public void setCsmCultureDetails(String csmCultureDetails) {
+        this.csmCultureDetails = csmCultureDetails;
+    }
+
+    public void setCsmHistopathologyDetails(String csmHistopathologyDetails) {
+        this.csmHistopathologyDetails = csmHistopathologyDetails;
+    }
+
+    public void setCsmIsolationDetails(String csmIsolationDetails) {
+        this.csmIsolationDetails = csmIsolationDetails;
+    }
+
+    public void setCsmIgmSerumAntibodyDetails(String csmIgmSerumAntibodyDetails) {
+        this.csmIgmSerumAntibodyDetails = csmIgmSerumAntibodyDetails;
+    }
+
+    public void setCsmIggSerumAntibodyDetails(String csmIggSerumAntibodyDetails) {
+        this.csmIggSerumAntibodyDetails = csmIggSerumAntibodyDetails;
+    }
+
+    public void setCsmIgaSerumAntibodyDetails(String csmIgaSerumAntibodyDetails) {
+        this.csmIgaSerumAntibodyDetails = csmIgaSerumAntibodyDetails;
+    }
+
+    public void setCsmIncubationTimeDetails(String csmIncubationTimeDetails) {
+        this.csmIncubationTimeDetails = csmIncubationTimeDetails;
+    }
+
+    public void setCsmIndirectFluorescentAntibodyDetails(String csmIndirectFluorescentAntibodyDetails) {
+        this.csmIndirectFluorescentAntibodyDetails = csmIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setCsmDirectFluorescentAntibodyDetails(String csmDirectFluorescentAntibodyDetails) {
+        this.csmDirectFluorescentAntibodyDetails = csmDirectFluorescentAntibodyDetails;
+    }
+
+    public void setCsmMicroscopyDetails(String csmMicroscopyDetails) {
+        this.csmMicroscopyDetails = csmMicroscopyDetails;
+    }
+
+    public void setCsmNeutralizingAntibodiesDetails(String csmNeutralizingAntibodiesDetails) {
+        this.csmNeutralizingAntibodiesDetails = csmNeutralizingAntibodiesDetails;
+    }
+
+    public void setCsmPcrRtPcrDetails(String csmPcrRtPcrDetails) {
+        this.csmPcrRtPcrDetails = csmPcrRtPcrDetails;
+    }
+
+    public void setCsmGramStainDetails(String csmGramStainDetails) {
+        this.csmGramStainDetails = csmGramStainDetails;
+    }
+
+    public void setCsmLatexAgglutinationDetails(String csmLatexAgglutinationDetails) {
+        this.csmLatexAgglutinationDetails = csmLatexAgglutinationDetails;
+    }
+
+    public void setCsmCqValueDetectionDetails(String csmCqValueDetectionDetails) {
+        this.csmCqValueDetectionDetails = csmCqValueDetectionDetails;
+    }
+
+    public void setCsmSequencingDetails(String csmSequencingDetails) {
+        this.csmSequencingDetails = csmSequencingDetails;
+    }
+
+    public void setCsmDnaMicroarrayDetails(String csmDnaMicroarrayDetails) {
+        this.csmDnaMicroarrayDetails = csmDnaMicroarrayDetails;
+    }
+
+    public void setCsmOtherDetails(String csmOtherDetails) {
+        this.csmOtherDetails = csmOtherDetails;
+    }
+
+    public void setDengueAntibodyDetection(String dengueAntibodyDetection) {
+        this.dengueAntibodyDetection = dengueAntibodyDetection;
     }
 
     public void setDengueAntigenDetection(String dengueAntigenDetection) {
@@ -2197,6 +3886,10 @@ public class CaseSampleExportDto implements Serializable {
         this.dengueIndirectFluorescentAntibody = dengueIndirectFluorescentAntibody;
     }
 
+    public void setDengueDirectFluorescentAntibody(String dengueDirectFluorescentAntibody) {
+        this.dengueDirectFluorescentAntibody = dengueDirectFluorescentAntibody;
+    }
+
     public void setDengueMicroscopy(String dengueMicroscopy) {
         this.dengueMicroscopy = dengueMicroscopy;
     }
@@ -2205,8 +3898,8 @@ public class CaseSampleExportDto implements Serializable {
         this.dengueNeutralizingAntibodies = dengueNeutralizingAntibodies;
     }
 
-    public void setDenguePcr(String denguePcr) {
-        this.denguePcr = denguePcr;
+    public void setDenguePcrRtPcr(String denguePcrRtPcr) {
+        this.denguePcrRtPcr = denguePcrRtPcr;
     }
 
     public void setDengueGramStain(String dengueGramStain) {
@@ -2221,20 +3914,104 @@ public class CaseSampleExportDto implements Serializable {
         this.dengueCqValueDetection = dengueCqValueDetection;
     }
 
-    public void setDengueSeQuencing(String dengueSeQuencing) {
-        this.dengueSeQuencing = dengueSeQuencing;
+    public void setDengueSequencing(String dengueSequencing) {
+        this.dengueSequencing = dengueSequencing;
     }
 
-    public void setDengueDnaMicroArray(String dengueDnaMicroArray) {
-        this.dengueDnaMicroArray = dengueDnaMicroArray;
+    public void setDengueDnaMicroarray(String dengueDnaMicroarray) {
+        this.dengueDnaMicroarray = dengueDnaMicroarray;
     }
 
     public void setDengueOther(String dengueOther) {
         this.dengueOther = dengueOther;
     }
 
-    public void setEvdAntiBodyDetection(String evdAntiBodyDetection) {
-        this.evdAntiBodyDetection = evdAntiBodyDetection;
+    public void setDengueAntibodyDetectionDetails(String dengueAntibodyDetectionDetails) {
+        this.dengueAntibodyDetectionDetails = dengueAntibodyDetectionDetails;
+    }
+
+    public void setDengueAntigenDetectionDetails(String dengueAntigenDetectionDetails) {
+        this.dengueAntigenDetectionDetails = dengueAntigenDetectionDetails;
+    }
+
+    public void setDengueRapidTestDetails(String dengueRapidTestDetails) {
+        this.dengueRapidTestDetails = dengueRapidTestDetails;
+    }
+
+    public void setDengueCultureDetails(String dengueCultureDetails) {
+        this.dengueCultureDetails = dengueCultureDetails;
+    }
+
+    public void setDengueHistopathologyDetails(String dengueHistopathologyDetails) {
+        this.dengueHistopathologyDetails = dengueHistopathologyDetails;
+    }
+
+    public void setDengueIsolationDetails(String dengueIsolationDetails) {
+        this.dengueIsolationDetails = dengueIsolationDetails;
+    }
+
+    public void setDengueIgmSerumAntibodyDetails(String dengueIgmSerumAntibodyDetails) {
+        this.dengueIgmSerumAntibodyDetails = dengueIgmSerumAntibodyDetails;
+    }
+
+    public void setDengueIggSerumAntibodyDetails(String dengueIggSerumAntibodyDetails) {
+        this.dengueIggSerumAntibodyDetails = dengueIggSerumAntibodyDetails;
+    }
+
+    public void setDengueIgaSerumAntibodyDetails(String dengueIgaSerumAntibodyDetails) {
+        this.dengueIgaSerumAntibodyDetails = dengueIgaSerumAntibodyDetails;
+    }
+
+    public void setDengueIncubationTimeDetails(String dengueIncubationTimeDetails) {
+        this.dengueIncubationTimeDetails = dengueIncubationTimeDetails;
+    }
+
+    public void setDengueIndirectFluorescentAntibodyDetails(String dengueIndirectFluorescentAntibodyDetails) {
+        this.dengueIndirectFluorescentAntibodyDetails = dengueIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setDengueDirectFluorescentAntibodyDetails(String dengueDirectFluorescentAntibodyDetails) {
+        this.dengueDirectFluorescentAntibodyDetails = dengueDirectFluorescentAntibodyDetails;
+    }
+
+    public void setDengueMicroscopyDetails(String dengueMicroscopyDetails) {
+        this.dengueMicroscopyDetails = dengueMicroscopyDetails;
+    }
+
+    public void setDengueNeutralizingAntibodiesDetails(String dengueNeutralizingAntibodiesDetails) {
+        this.dengueNeutralizingAntibodiesDetails = dengueNeutralizingAntibodiesDetails;
+    }
+
+    public void setDenguePcrRtPcrDetails(String denguePcrRtPcrDetails) {
+        this.denguePcrRtPcrDetails = denguePcrRtPcrDetails;
+    }
+
+    public void setDengueGramStainDetails(String dengueGramStainDetails) {
+        this.dengueGramStainDetails = dengueGramStainDetails;
+    }
+
+    public void setDengueLatexAgglutinationDetails(String dengueLatexAgglutinationDetails) {
+        this.dengueLatexAgglutinationDetails = dengueLatexAgglutinationDetails;
+    }
+
+    public void setDengueCqValueDetectionDetails(String dengueCqValueDetectionDetails) {
+        this.dengueCqValueDetectionDetails = dengueCqValueDetectionDetails;
+    }
+
+    public void setDengueSequencingDetails(String dengueSequencingDetails) {
+        this.dengueSequencingDetails = dengueSequencingDetails;
+    }
+
+    public void setDengueDnaMicroarrayDetails(String dengueDnaMicroarrayDetails) {
+        this.dengueDnaMicroarrayDetails = dengueDnaMicroarrayDetails;
+    }
+
+    public void setDengueOtherDetails(String dengueOtherDetails) {
+        this.dengueOtherDetails = dengueOtherDetails;
+    }
+
+    public void setEvdAntibodyDetection(String evdAntibodyDetection) {
+        this.evdAntibodyDetection = evdAntibodyDetection;
     }
 
     public void setEvdAntigenDetection(String evdAntigenDetection) {
@@ -2277,6 +4054,10 @@ public class CaseSampleExportDto implements Serializable {
         this.evdIndirectFluorescentAntibody = evdIndirectFluorescentAntibody;
     }
 
+    public void setEvdDirectFluorescentAntibody(String evdDirectFluorescentAntibody) {
+        this.evdDirectFluorescentAntibody = evdDirectFluorescentAntibody;
+    }
+
     public void setEvdMicroscopy(String evdMicroscopy) {
         this.evdMicroscopy = evdMicroscopy;
     }
@@ -2285,8 +4066,8 @@ public class CaseSampleExportDto implements Serializable {
         this.evdNeutralizingAntibodies = evdNeutralizingAntibodies;
     }
 
-    public void setEvdPcr(String evdPcr) {
-        this.evdPcr = evdPcr;
+    public void setEvdPcrRtPcr(String evdPcrRtPcr) {
+        this.evdPcrRtPcr = evdPcrRtPcr;
     }
 
     public void setEvdGramStain(String evdGramStain) {
@@ -2301,20 +4082,104 @@ public class CaseSampleExportDto implements Serializable {
         this.evdCqValueDetection = evdCqValueDetection;
     }
 
-    public void setEvdSeQuencing(String evdSeQuencing) {
-        this.evdSeQuencing = evdSeQuencing;
+    public void setEvdSequencing(String evdSequencing) {
+        this.evdSequencing = evdSequencing;
     }
 
-    public void setEvdDnaMicroArray(String evdDnaMicroArray) {
-        this.evdDnaMicroArray = evdDnaMicroArray;
+    public void setEvdDnaMicroarray(String evdDnaMicroarray) {
+        this.evdDnaMicroarray = evdDnaMicroarray;
     }
 
     public void setEvdOther(String evdOther) {
         this.evdOther = evdOther;
     }
 
-    public void setGuineaWormAntiBodyDetection(String guineaWormAntiBodyDetection) {
-        this.guineaWormAntiBodyDetection = guineaWormAntiBodyDetection;
+    public void setEvdAntibodyDetectionDetails(String evdAntibodyDetectionDetails) {
+        this.evdAntibodyDetectionDetails = evdAntibodyDetectionDetails;
+    }
+
+    public void setEvdAntigenDetectionDetails(String evdAntigenDetectionDetails) {
+        this.evdAntigenDetectionDetails = evdAntigenDetectionDetails;
+    }
+
+    public void setEvdRapidTestDetails(String evdRapidTestDetails) {
+        this.evdRapidTestDetails = evdRapidTestDetails;
+    }
+
+    public void setEvdCultureDetails(String evdCultureDetails) {
+        this.evdCultureDetails = evdCultureDetails;
+    }
+
+    public void setEvdHistopathologyDetails(String evdHistopathologyDetails) {
+        this.evdHistopathologyDetails = evdHistopathologyDetails;
+    }
+
+    public void setEvdIsolationDetails(String evdIsolationDetails) {
+        this.evdIsolationDetails = evdIsolationDetails;
+    }
+
+    public void setEvdIgmSerumAntibodyDetails(String evdIgmSerumAntibodyDetails) {
+        this.evdIgmSerumAntibodyDetails = evdIgmSerumAntibodyDetails;
+    }
+
+    public void setEvdIggSerumAntibodyDetails(String evdIggSerumAntibodyDetails) {
+        this.evdIggSerumAntibodyDetails = evdIggSerumAntibodyDetails;
+    }
+
+    public void setEvdIgaSerumAntibodyDetails(String evdIgaSerumAntibodyDetails) {
+        this.evdIgaSerumAntibodyDetails = evdIgaSerumAntibodyDetails;
+    }
+
+    public void setEvdIncubationTimeDetails(String evdIncubationTimeDetails) {
+        this.evdIncubationTimeDetails = evdIncubationTimeDetails;
+    }
+
+    public void setEvdIndirectFluorescentAntibodyDetails(String evdIndirectFluorescentAntibodyDetails) {
+        this.evdIndirectFluorescentAntibodyDetails = evdIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setEvdDirectFluorescentAntibodyDetails(String evdDirectFluorescentAntibodyDetails) {
+        this.evdDirectFluorescentAntibodyDetails = evdDirectFluorescentAntibodyDetails;
+    }
+
+    public void setEvdMicroscopyDetails(String evdMicroscopyDetails) {
+        this.evdMicroscopyDetails = evdMicroscopyDetails;
+    }
+
+    public void setEvdNeutralizingAntibodiesDetails(String evdNeutralizingAntibodiesDetails) {
+        this.evdNeutralizingAntibodiesDetails = evdNeutralizingAntibodiesDetails;
+    }
+
+    public void setEvdPcrRtPcrDetails(String evdPcrRtPcrDetails) {
+        this.evdPcrRtPcrDetails = evdPcrRtPcrDetails;
+    }
+
+    public void setEvdGramStainDetails(String evdGramStainDetails) {
+        this.evdGramStainDetails = evdGramStainDetails;
+    }
+
+    public void setEvdLatexAgglutinationDetails(String evdLatexAgglutinationDetails) {
+        this.evdLatexAgglutinationDetails = evdLatexAgglutinationDetails;
+    }
+
+    public void setEvdCqValueDetectionDetails(String evdCqValueDetectionDetails) {
+        this.evdCqValueDetectionDetails = evdCqValueDetectionDetails;
+    }
+
+    public void setEvdSequencingDetails(String evdSequencingDetails) {
+        this.evdSequencingDetails = evdSequencingDetails;
+    }
+
+    public void setEvdDnaMicroarrayDetails(String evdDnaMicroarrayDetails) {
+        this.evdDnaMicroarrayDetails = evdDnaMicroarrayDetails;
+    }
+
+    public void setEvdOtherDetails(String evdOtherDetails) {
+        this.evdOtherDetails = evdOtherDetails;
+    }
+
+    public void setGuineaWormAntibodyDetection(String guineaWormAntibodyDetection) {
+        this.guineaWormAntibodyDetection = guineaWormAntibodyDetection;
     }
 
     public void setGuineaWormAntigenDetection(String guineaWormAntigenDetection) {
@@ -2357,6 +4222,10 @@ public class CaseSampleExportDto implements Serializable {
         this.guineaWormIndirectFluorescentAntibody = guineaWormIndirectFluorescentAntibody;
     }
 
+    public void setGuineaWormDirectFluorescentAntibody(String guineaWormDirectFluorescentAntibody) {
+        this.guineaWormDirectFluorescentAntibody = guineaWormDirectFluorescentAntibody;
+    }
+
     public void setGuineaWormMicroscopy(String guineaWormMicroscopy) {
         this.guineaWormMicroscopy = guineaWormMicroscopy;
     }
@@ -2365,8 +4234,8 @@ public class CaseSampleExportDto implements Serializable {
         this.guineaWormNeutralizingAntibodies = guineaWormNeutralizingAntibodies;
     }
 
-    public void setGuineaWormPcr(String guineaWormPcr) {
-        this.guineaWormPcr = guineaWormPcr;
+    public void setGuineaWormPcrRtPcr(String guineaWormPcrRtPcr) {
+        this.guineaWormPcrRtPcr = guineaWormPcrRtPcr;
     }
 
     public void setGuineaWormGramStain(String guineaWormGramStain) {
@@ -2381,20 +4250,104 @@ public class CaseSampleExportDto implements Serializable {
         this.guineaWormCqValueDetection = guineaWormCqValueDetection;
     }
 
-    public void setGuineaWormSeQuencing(String guineaWormSeQuencing) {
-        this.guineaWormSeQuencing = guineaWormSeQuencing;
+    public void setGuineaWormSequencing(String guineaWormSequencing) {
+        this.guineaWormSequencing = guineaWormSequencing;
     }
 
-    public void setGuineaWormDnaMicroArray(String guineaWormDnaMicroArray) {
-        this.guineaWormDnaMicroArray = guineaWormDnaMicroArray;
+    public void setGuineaWormDnaMicroarray(String guineaWormDnaMicroarray) {
+        this.guineaWormDnaMicroarray = guineaWormDnaMicroarray;
     }
 
     public void setGuineaWormOther(String guineaWormOther) {
         this.guineaWormOther = guineaWormOther;
     }
 
-    public void setLassaAntiBodyDetection(String lassaAntiBodyDetection) {
-        this.lassaAntiBodyDetection = lassaAntiBodyDetection;
+    public void setGuineaWormAntibodyDetectionDetails(String guineaWormAntibodyDetectionDetails) {
+        this.guineaWormAntibodyDetectionDetails = guineaWormAntibodyDetectionDetails;
+    }
+
+    public void setGuineaWormAntigenDetectionDetails(String guineaWormAntigenDetectionDetails) {
+        this.guineaWormAntigenDetectionDetails = guineaWormAntigenDetectionDetails;
+    }
+
+    public void setGuineaWormRapidTestDetails(String guineaWormRapidTestDetails) {
+        this.guineaWormRapidTestDetails = guineaWormRapidTestDetails;
+    }
+
+    public void setGuineaWormCultureDetails(String guineaWormCultureDetails) {
+        this.guineaWormCultureDetails = guineaWormCultureDetails;
+    }
+
+    public void setGuineaWormHistopathologyDetails(String guineaWormHistopathologyDetails) {
+        this.guineaWormHistopathologyDetails = guineaWormHistopathologyDetails;
+    }
+
+    public void setGuineaWormIsolationDetails(String guineaWormIsolationDetails) {
+        this.guineaWormIsolationDetails = guineaWormIsolationDetails;
+    }
+
+    public void setGuineaWormIgmSerumAntibodyDetails(String guineaWormIgmSerumAntibodyDetails) {
+        this.guineaWormIgmSerumAntibodyDetails = guineaWormIgmSerumAntibodyDetails;
+    }
+
+    public void setGuineaWormIggSerumAntibodyDetails(String guineaWormIggSerumAntibodyDetails) {
+        this.guineaWormIggSerumAntibodyDetails = guineaWormIggSerumAntibodyDetails;
+    }
+
+    public void setGuineaWormIgaSerumAntibodyDetails(String guineaWormIgaSerumAntibodyDetails) {
+        this.guineaWormIgaSerumAntibodyDetails = guineaWormIgaSerumAntibodyDetails;
+    }
+
+    public void setGuineaWormIncubationTimeDetails(String guineaWormIncubationTimeDetails) {
+        this.guineaWormIncubationTimeDetails = guineaWormIncubationTimeDetails;
+    }
+
+    public void setGuineaWormIndirectFluorescentAntibodyDetails(String guineaWormIndirectFluorescentAntibodyDetails) {
+        this.guineaWormIndirectFluorescentAntibodyDetails = guineaWormIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setGuineaWormDirectFluorescentAntibodyDetails(String guineaWormDirectFluorescentAntibodyDetails) {
+        this.guineaWormDirectFluorescentAntibodyDetails = guineaWormDirectFluorescentAntibodyDetails;
+    }
+
+    public void setGuineaWormMicroscopyDetails(String guineaWormMicroscopyDetails) {
+        this.guineaWormMicroscopyDetails = guineaWormMicroscopyDetails;
+    }
+
+    public void setGuineaWormNeutralizingAntibodiesDetails(String guineaWormNeutralizingAntibodiesDetails) {
+        this.guineaWormNeutralizingAntibodiesDetails = guineaWormNeutralizingAntibodiesDetails;
+    }
+
+    public void setGuineaWormPcrRtPcrDetails(String guineaWormPcrRtPcrDetails) {
+        this.guineaWormPcrRtPcrDetails = guineaWormPcrRtPcrDetails;
+    }
+
+    public void setGuineaWormGramStainDetails(String guineaWormGramStainDetails) {
+        this.guineaWormGramStainDetails = guineaWormGramStainDetails;
+    }
+
+    public void setGuineaWormLatexAgglutinationDetails(String guineaWormLatexAgglutinationDetails) {
+        this.guineaWormLatexAgglutinationDetails = guineaWormLatexAgglutinationDetails;
+    }
+
+    public void setGuineaWormCqValueDetectionDetails(String guineaWormCqValueDetectionDetails) {
+        this.guineaWormCqValueDetectionDetails = guineaWormCqValueDetectionDetails;
+    }
+
+    public void setGuineaWormSequencingDetails(String guineaWormSequencingDetails) {
+        this.guineaWormSequencingDetails = guineaWormSequencingDetails;
+    }
+
+    public void setGuineaWormDnaMicroarrayDetails(String guineaWormDnaMicroarrayDetails) {
+        this.guineaWormDnaMicroarrayDetails = guineaWormDnaMicroarrayDetails;
+    }
+
+    public void setGuineaWormOtherDetails(String guineaWormOtherDetails) {
+        this.guineaWormOtherDetails = guineaWormOtherDetails;
+    }
+
+    public void setLassaAntibodyDetection(String lassaAntibodyDetection) {
+        this.lassaAntibodyDetection = lassaAntibodyDetection;
     }
 
     public void setLassaAntigenDetection(String lassaAntigenDetection) {
@@ -2437,6 +4390,10 @@ public class CaseSampleExportDto implements Serializable {
         this.lassaIndirectFluorescentAntibody = lassaIndirectFluorescentAntibody;
     }
 
+    public void setLassaDirectFluorescentAntibody(String lassaDirectFluorescentAntibody) {
+        this.lassaDirectFluorescentAntibody = lassaDirectFluorescentAntibody;
+    }
+
     public void setLassaMicroscopy(String lassaMicroscopy) {
         this.lassaMicroscopy = lassaMicroscopy;
     }
@@ -2445,8 +4402,8 @@ public class CaseSampleExportDto implements Serializable {
         this.lassaNeutralizingAntibodies = lassaNeutralizingAntibodies;
     }
 
-    public void setLassaPcr(String lassaPcr) {
-        this.lassaPcr = lassaPcr;
+    public void setLassaPcrRtPcr(String lassaPcrRtPcr) {
+        this.lassaPcrRtPcr = lassaPcrRtPcr;
     }
 
     public void setLassaGramStain(String lassaGramStain) {
@@ -2461,20 +4418,104 @@ public class CaseSampleExportDto implements Serializable {
         this.lassaCqValueDetection = lassaCqValueDetection;
     }
 
-    public void setLassaSeQuencing(String lassaSeQuencing) {
-        this.lassaSeQuencing = lassaSeQuencing;
+    public void setLassaSequencing(String lassaSequencing) {
+        this.lassaSequencing = lassaSequencing;
     }
 
-    public void setLassaDnaMicroArray(String lassaDnaMicroArray) {
-        this.lassaDnaMicroArray = lassaDnaMicroArray;
+    public void setLassaDnaMicroarray(String lassaDnaMicroarray) {
+        this.lassaDnaMicroarray = lassaDnaMicroarray;
     }
 
     public void setLassaOther(String lassaOther) {
         this.lassaOther = lassaOther;
     }
 
-    public void setMeaslesAntiBodyDetection(String measlesAntiBodyDetection) {
-        this.measlesAntiBodyDetection = measlesAntiBodyDetection;
+    public void setLassaAntibodyDetectionDetails(String lassaAntibodyDetectionDetails) {
+        this.lassaAntibodyDetectionDetails = lassaAntibodyDetectionDetails;
+    }
+
+    public void setLassaAntigenDetectionDetails(String lassaAntigenDetectionDetails) {
+        this.lassaAntigenDetectionDetails = lassaAntigenDetectionDetails;
+    }
+
+    public void setLassaRapidTestDetails(String lassaRapidTestDetails) {
+        this.lassaRapidTestDetails = lassaRapidTestDetails;
+    }
+
+    public void setLassaCultureDetails(String lassaCultureDetails) {
+        this.lassaCultureDetails = lassaCultureDetails;
+    }
+
+    public void setLassaHistopathologyDetails(String lassaHistopathologyDetails) {
+        this.lassaHistopathologyDetails = lassaHistopathologyDetails;
+    }
+
+    public void setLassaIsolationDetails(String lassaIsolationDetails) {
+        this.lassaIsolationDetails = lassaIsolationDetails;
+    }
+
+    public void setLassaIgmSerumAntibodyDetails(String lassaIgmSerumAntibodyDetails) {
+        this.lassaIgmSerumAntibodyDetails = lassaIgmSerumAntibodyDetails;
+    }
+
+    public void setLassaIggSerumAntibodyDetails(String lassaIggSerumAntibodyDetails) {
+        this.lassaIggSerumAntibodyDetails = lassaIggSerumAntibodyDetails;
+    }
+
+    public void setLassaIgaSerumAntibodyDetails(String lassaIgaSerumAntibodyDetails) {
+        this.lassaIgaSerumAntibodyDetails = lassaIgaSerumAntibodyDetails;
+    }
+
+    public void setLassaIncubationTimeDetails(String lassaIncubationTimeDetails) {
+        this.lassaIncubationTimeDetails = lassaIncubationTimeDetails;
+    }
+
+    public void setLassaIndirectFluorescentAntibodyDetails(String lassaIndirectFluorescentAntibodyDetails) {
+        this.lassaIndirectFluorescentAntibodyDetails = lassaIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setLassaDirectFluorescentAntibodyDetails(String lassaDirectFluorescentAntibodyDetails) {
+        this.lassaDirectFluorescentAntibodyDetails = lassaDirectFluorescentAntibodyDetails;
+    }
+
+    public void setLassaMicroscopyDetails(String lassaMicroscopyDetails) {
+        this.lassaMicroscopyDetails = lassaMicroscopyDetails;
+    }
+
+    public void setLassaNeutralizingAntibodiesDetails(String lassaNeutralizingAntibodiesDetails) {
+        this.lassaNeutralizingAntibodiesDetails = lassaNeutralizingAntibodiesDetails;
+    }
+
+    public void setLassaPcrRtPcrDetails(String lassaPcrRtPcrDetails) {
+        this.lassaPcrRtPcrDetails = lassaPcrRtPcrDetails;
+    }
+
+    public void setLassaGramStainDetails(String lassaGramStainDetails) {
+        this.lassaGramStainDetails = lassaGramStainDetails;
+    }
+
+    public void setLassaLatexAgglutinationDetails(String lassaLatexAgglutinationDetails) {
+        this.lassaLatexAgglutinationDetails = lassaLatexAgglutinationDetails;
+    }
+
+    public void setLassaCqValueDetectionDetails(String lassaCqValueDetectionDetails) {
+        this.lassaCqValueDetectionDetails = lassaCqValueDetectionDetails;
+    }
+
+    public void setLassaSequencingDetails(String lassaSequencingDetails) {
+        this.lassaSequencingDetails = lassaSequencingDetails;
+    }
+
+    public void setLassaDnaMicroarrayDetails(String lassaDnaMicroarrayDetails) {
+        this.lassaDnaMicroarrayDetails = lassaDnaMicroarrayDetails;
+    }
+
+    public void setLassaOtherDetails(String lassaOtherDetails) {
+        this.lassaOtherDetails = lassaOtherDetails;
+    }
+
+    public void setMeaslesAntibodyDetection(String measlesAntibodyDetection) {
+        this.measlesAntibodyDetection = measlesAntibodyDetection;
     }
 
     public void setMeaslesAntigenDetection(String measlesAntigenDetection) {
@@ -2517,6 +4558,10 @@ public class CaseSampleExportDto implements Serializable {
         this.measlesIndirectFluorescentAntibody = measlesIndirectFluorescentAntibody;
     }
 
+    public void setMeaslesDirectFluorescentAntibody(String measlesDirectFluorescentAntibody) {
+        this.measlesDirectFluorescentAntibody = measlesDirectFluorescentAntibody;
+    }
+
     public void setMeaslesMicroscopy(String measlesMicroscopy) {
         this.measlesMicroscopy = measlesMicroscopy;
     }
@@ -2525,8 +4570,8 @@ public class CaseSampleExportDto implements Serializable {
         this.measlesNeutralizingAntibodies = measlesNeutralizingAntibodies;
     }
 
-    public void setMeaslesPcr(String measlesPcr) {
-        this.measlesPcr = measlesPcr;
+    public void setMeaslesPcrRtPcr(String measlesPcrRtPcr) {
+        this.measlesPcrRtPcr = measlesPcrRtPcr;
     }
 
     public void setMeaslesGramStain(String measlesGramStain) {
@@ -2541,100 +4586,104 @@ public class CaseSampleExportDto implements Serializable {
         this.measlesCqValueDetection = measlesCqValueDetection;
     }
 
-    public void setMeaslesSeQuencing(String measlesSeQuencing) {
-        this.measlesSeQuencing = measlesSeQuencing;
+    public void setMeaslesSequencing(String measlesSequencing) {
+        this.measlesSequencing = measlesSequencing;
     }
 
-    public void setMeaslesDnaMicroArray(String measlesDnaMicroArray) {
-        this.measlesDnaMicroArray = measlesDnaMicroArray;
+    public void setMeaslesDnaMicroarray(String measlesDnaMicroarray) {
+        this.measlesDnaMicroarray = measlesDnaMicroarray;
     }
 
     public void setMeaslesOther(String measlesOther) {
         this.measlesOther = measlesOther;
     }
 
-    public void setMonkeyPoxAntiBodyDetection(String monkeyPoxAntiBodyDetection) {
-        this.monkeyPoxAntiBodyDetection = monkeyPoxAntiBodyDetection;
+    public void setMeaslesAntibodyDetectionDetails(String measlesAntibodyDetectionDetails) {
+        this.measlesAntibodyDetectionDetails = measlesAntibodyDetectionDetails;
     }
 
-    public void setMonkeyPoxAntigenDetection(String monkeyPoxAntigenDetection) {
-        this.monkeyPoxAntigenDetection = monkeyPoxAntigenDetection;
+    public void setMeaslesAntigenDetectionDetails(String measlesAntigenDetectionDetails) {
+        this.measlesAntigenDetectionDetails = measlesAntigenDetectionDetails;
     }
 
-    public void setMonkeyPoxRapidTest(String monkeyPoxRapidTest) {
-        this.monkeyPoxRapidTest = monkeyPoxRapidTest;
+    public void setMeaslesRapidTestDetails(String measlesRapidTestDetails) {
+        this.measlesRapidTestDetails = measlesRapidTestDetails;
     }
 
-    public void setMonkeyPoxCulture(String monkeyPoxCulture) {
-        this.monkeyPoxCulture = monkeyPoxCulture;
+    public void setMeaslesCultureDetails(String measlesCultureDetails) {
+        this.measlesCultureDetails = measlesCultureDetails;
     }
 
-    public void setMonkeyPoxHistopathology(String monkeyPoxHistopathology) {
-        this.monkeyPoxHistopathology = monkeyPoxHistopathology;
+    public void setMeaslesHistopathologyDetails(String measlesHistopathologyDetails) {
+        this.measlesHistopathologyDetails = measlesHistopathologyDetails;
     }
 
-    public void setMonkeyPoxIsolation(String monkeyPoxIsolation) {
-        this.monkeyPoxIsolation = monkeyPoxIsolation;
+    public void setMeaslesIsolationDetails(String measlesIsolationDetails) {
+        this.measlesIsolationDetails = measlesIsolationDetails;
     }
 
-    public void setMonkeyPoxIgmSerumAntibody(String monkeyPoxIgmSerumAntibody) {
-        this.monkeyPoxIgmSerumAntibody = monkeyPoxIgmSerumAntibody;
+    public void setMeaslesIgmSerumAntibodyDetails(String measlesIgmSerumAntibodyDetails) {
+        this.measlesIgmSerumAntibodyDetails = measlesIgmSerumAntibodyDetails;
     }
 
-    public void setMonkeyPoxIggSerumAntibody(String monkeyPoxIggSerumAntibody) {
-        this.monkeyPoxIggSerumAntibody = monkeyPoxIggSerumAntibody;
+    public void setMeaslesIggSerumAntibodyDetails(String measlesIggSerumAntibodyDetails) {
+        this.measlesIggSerumAntibodyDetails = measlesIggSerumAntibodyDetails;
     }
 
-    public void setMonkeyPoxIgaSerumAntibody(String monkeyPoxIgaSerumAntibody) {
-        this.monkeyPoxIgaSerumAntibody = monkeyPoxIgaSerumAntibody;
+    public void setMeaslesIgaSerumAntibodyDetails(String measlesIgaSerumAntibodyDetails) {
+        this.measlesIgaSerumAntibodyDetails = measlesIgaSerumAntibodyDetails;
     }
 
-    public void setMonkeyPoxIncubationTime(String monkeyPoxIncubationTime) {
-        this.monkeyPoxIncubationTime = monkeyPoxIncubationTime;
+    public void setMeaslesIncubationTimeDetails(String measlesIncubationTimeDetails) {
+        this.measlesIncubationTimeDetails = measlesIncubationTimeDetails;
     }
 
-    public void setMonkeyPoxIndirectFluorescentAntibody(String monkeyPoxIndirectFluorescentAntibody) {
-        this.monkeyPoxIndirectFluorescentAntibody = monkeyPoxIndirectFluorescentAntibody;
+    public void setMeaslesIndirectFluorescentAntibodyDetails(String measlesIndirectFluorescentAntibodyDetails) {
+        this.measlesIndirectFluorescentAntibodyDetails = measlesIndirectFluorescentAntibodyDetails;
     }
 
-    public void setMonkeyPoxMicroscopy(String monkeyPoxMicroscopy) {
-        this.monkeyPoxMicroscopy = monkeyPoxMicroscopy;
+    public void setMeaslesDirectFluorescentAntibodyDetails(String measlesDirectFluorescentAntibodyDetails) {
+        this.measlesDirectFluorescentAntibodyDetails = measlesDirectFluorescentAntibodyDetails;
     }
 
-    public void setMonkeyPoxNeutralizingAntibodies(String monkeyPoxNeutralizingAntibodies) {
-        this.monkeyPoxNeutralizingAntibodies = monkeyPoxNeutralizingAntibodies;
+    public void setMeaslesMicroscopyDetails(String measlesMicroscopyDetails) {
+        this.measlesMicroscopyDetails = measlesMicroscopyDetails;
     }
 
-    public void setMonkeyPoxPcr(String monkeyPoxPcr) {
-        this.monkeyPoxPcr = monkeyPoxPcr;
+    public void setMeaslesNeutralizingAntibodiesDetails(String measlesNeutralizingAntibodiesDetails) {
+        this.measlesNeutralizingAntibodiesDetails = measlesNeutralizingAntibodiesDetails;
     }
 
-    public void setMonkeyPoxGramStain(String monkeyPoxGramStain) {
-        this.monkeyPoxGramStain = monkeyPoxGramStain;
+    public void setMeaslesPcrRtPcrDetails(String measlesPcrRtPcrDetails) {
+        this.measlesPcrRtPcrDetails = measlesPcrRtPcrDetails;
     }
 
-    public void setMonkeyPoxLatexAgglutination(String monkeyPoxLatexAgglutination) {
-        this.monkeyPoxLatexAgglutination = monkeyPoxLatexAgglutination;
+    public void setMeaslesGramStainDetails(String measlesGramStainDetails) {
+        this.measlesGramStainDetails = measlesGramStainDetails;
     }
 
-    public void setMonkeyPoxCqValueDetection(String monkeyPoxCqValueDetection) {
-        this.monkeyPoxCqValueDetection = monkeyPoxCqValueDetection;
+    public void setMeaslesLatexAgglutinationDetails(String measlesLatexAgglutinationDetails) {
+        this.measlesLatexAgglutinationDetails = measlesLatexAgglutinationDetails;
     }
 
-    public void setMonkeyPoxSeQuencing(String monkeyPoxSeQuencing) {
-        this.monkeyPoxSeQuencing = monkeyPoxSeQuencing;
+    public void setMeaslesCqValueDetectionDetails(String measlesCqValueDetectionDetails) {
+        this.measlesCqValueDetectionDetails = measlesCqValueDetectionDetails;
     }
 
-    public void setMonkeyPoxDnaMicroArray(String monkeyPoxDnaMicroArray) {
-        this.monkeyPoxDnaMicroArray = monkeyPoxDnaMicroArray;
+    public void setMeaslesSequencingDetails(String measlesSequencingDetails) {
+        this.measlesSequencingDetails = measlesSequencingDetails;
     }
 
-    public void setMonkeyPoxOther(String monkeyPoxOther) {
-        this.monkeyPoxOther = monkeyPoxOther;
+    public void setMeaslesDnaMicroarrayDetails(String measlesDnaMicroarrayDetails) {
+        this.measlesDnaMicroarrayDetails = measlesDnaMicroarrayDetails;
     }
 
-    public void setMonkeypoxAntiBodyDetection(String monkeypoxAntiBodyDetection) {
-        this.monkeypoxAntiBodyDetection = monkeypoxAntiBodyDetection;
+    public void setMeaslesOtherDetails(String measlesOtherDetails) {
+        this.measlesOtherDetails = measlesOtherDetails;
+    }
+
+    public void setMonkeypoxAntibodyDetection(String monkeypoxAntibodyDetection) {
+        this.monkeypoxAntibodyDetection = monkeypoxAntibodyDetection;
     }
 
     public void setMonkeypoxAntigenDetection(String monkeypoxAntigenDetection) {
@@ -2677,6 +4726,10 @@ public class CaseSampleExportDto implements Serializable {
         this.monkeypoxIndirectFluorescentAntibody = monkeypoxIndirectFluorescentAntibody;
     }
 
+    public void setMonkeypoxDirectFluorescentAntibody(String monkeypoxDirectFluorescentAntibody) {
+        this.monkeypoxDirectFluorescentAntibody = monkeypoxDirectFluorescentAntibody;
+    }
+
     public void setMonkeypoxMicroscopy(String monkeypoxMicroscopy) {
         this.monkeypoxMicroscopy = monkeypoxMicroscopy;
     }
@@ -2685,8 +4738,8 @@ public class CaseSampleExportDto implements Serializable {
         this.monkeypoxNeutralizingAntibodies = monkeypoxNeutralizingAntibodies;
     }
 
-    public void setMonkeypoxPcr(String monkeypoxPcr) {
-        this.monkeypoxPcr = monkeypoxPcr;
+    public void setMonkeypoxPcrRtPcr(String monkeypoxPcrRtPcr) {
+        this.monkeypoxPcrRtPcr = monkeypoxPcrRtPcr;
     }
 
     public void setMonkeypoxGramStain(String monkeypoxGramStain) {
@@ -2701,20 +4754,104 @@ public class CaseSampleExportDto implements Serializable {
         this.monkeypoxCqValueDetection = monkeypoxCqValueDetection;
     }
 
-    public void setMonkeypoxSeQuencing(String monkeypoxSeQuencing) {
-        this.monkeypoxSeQuencing = monkeypoxSeQuencing;
+    public void setMonkeypoxSequencing(String monkeypoxSequencing) {
+        this.monkeypoxSequencing = monkeypoxSequencing;
     }
 
-    public void setMonkeypoxDnaMicroArray(String monkeypoxDnaMicroArray) {
-        this.monkeypoxDnaMicroArray = monkeypoxDnaMicroArray;
+    public void setMonkeypoxDnaMicroarray(String monkeypoxDnaMicroarray) {
+        this.monkeypoxDnaMicroarray = monkeypoxDnaMicroarray;
     }
 
     public void setMonkeypoxOther(String monkeypoxOther) {
         this.monkeypoxOther = monkeypoxOther;
     }
 
-    public void setNewInfluenzaAntiBodyDetection(String newInfluenzaAntiBodyDetection) {
-        this.newInfluenzaAntiBodyDetection = newInfluenzaAntiBodyDetection;
+    public void setMonkeypoxAntibodyDetectionDetails(String monkeypoxAntibodyDetectionDetails) {
+        this.monkeypoxAntibodyDetectionDetails = monkeypoxAntibodyDetectionDetails;
+    }
+
+    public void setMonkeypoxAntigenDetectionDetails(String monkeypoxAntigenDetectionDetails) {
+        this.monkeypoxAntigenDetectionDetails = monkeypoxAntigenDetectionDetails;
+    }
+
+    public void setMonkeypoxRapidTestDetails(String monkeypoxRapidTestDetails) {
+        this.monkeypoxRapidTestDetails = monkeypoxRapidTestDetails;
+    }
+
+    public void setMonkeypoxCultureDetails(String monkeypoxCultureDetails) {
+        this.monkeypoxCultureDetails = monkeypoxCultureDetails;
+    }
+
+    public void setMonkeypoxHistopathologyDetails(String monkeypoxHistopathologyDetails) {
+        this.monkeypoxHistopathologyDetails = monkeypoxHistopathologyDetails;
+    }
+
+    public void setMonkeypoxIsolationDetails(String monkeypoxIsolationDetails) {
+        this.monkeypoxIsolationDetails = monkeypoxIsolationDetails;
+    }
+
+    public void setMonkeypoxIgmSerumAntibodyDetails(String monkeypoxIgmSerumAntibodyDetails) {
+        this.monkeypoxIgmSerumAntibodyDetails = monkeypoxIgmSerumAntibodyDetails;
+    }
+
+    public void setMonkeypoxIggSerumAntibodyDetails(String monkeypoxIggSerumAntibodyDetails) {
+        this.monkeypoxIggSerumAntibodyDetails = monkeypoxIggSerumAntibodyDetails;
+    }
+
+    public void setMonkeypoxIgaSerumAntibodyDetails(String monkeypoxIgaSerumAntibodyDetails) {
+        this.monkeypoxIgaSerumAntibodyDetails = monkeypoxIgaSerumAntibodyDetails;
+    }
+
+    public void setMonkeypoxIncubationTimeDetails(String monkeypoxIncubationTimeDetails) {
+        this.monkeypoxIncubationTimeDetails = monkeypoxIncubationTimeDetails;
+    }
+
+    public void setMonkeypoxIndirectFluorescentAntibodyDetails(String monkeypoxIndirectFluorescentAntibodyDetails) {
+        this.monkeypoxIndirectFluorescentAntibodyDetails = monkeypoxIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setMonkeypoxDirectFluorescentAntibodyDetails(String monkeypoxDirectFluorescentAntibodyDetails) {
+        this.monkeypoxDirectFluorescentAntibodyDetails = monkeypoxDirectFluorescentAntibodyDetails;
+    }
+
+    public void setMonkeypoxMicroscopyDetails(String monkeypoxMicroscopyDetails) {
+        this.monkeypoxMicroscopyDetails = monkeypoxMicroscopyDetails;
+    }
+
+    public void setMonkeypoxNeutralizingAntibodiesDetails(String monkeypoxNeutralizingAntibodiesDetails) {
+        this.monkeypoxNeutralizingAntibodiesDetails = monkeypoxNeutralizingAntibodiesDetails;
+    }
+
+    public void setMonkeypoxPcrRtPcrDetails(String monkeypoxPcrRtPcrDetails) {
+        this.monkeypoxPcrRtPcrDetails = monkeypoxPcrRtPcrDetails;
+    }
+
+    public void setMonkeypoxGramStainDetails(String monkeypoxGramStainDetails) {
+        this.monkeypoxGramStainDetails = monkeypoxGramStainDetails;
+    }
+
+    public void setMonkeypoxLatexAgglutinationDetails(String monkeypoxLatexAgglutinationDetails) {
+        this.monkeypoxLatexAgglutinationDetails = monkeypoxLatexAgglutinationDetails;
+    }
+
+    public void setMonkeypoxCqValueDetectionDetails(String monkeypoxCqValueDetectionDetails) {
+        this.monkeypoxCqValueDetectionDetails = monkeypoxCqValueDetectionDetails;
+    }
+
+    public void setMonkeypoxSequencingDetails(String monkeypoxSequencingDetails) {
+        this.monkeypoxSequencingDetails = monkeypoxSequencingDetails;
+    }
+
+    public void setMonkeypoxDnaMicroarrayDetails(String monkeypoxDnaMicroarrayDetails) {
+        this.monkeypoxDnaMicroarrayDetails = monkeypoxDnaMicroarrayDetails;
+    }
+
+    public void setMonkeypoxOtherDetails(String monkeypoxOtherDetails) {
+        this.monkeypoxOtherDetails = monkeypoxOtherDetails;
+    }
+
+    public void setNewInfluenzaAntibodyDetection(String newInfluenzaAntibodyDetection) {
+        this.newInfluenzaAntibodyDetection = newInfluenzaAntibodyDetection;
     }
 
     public void setNewInfluenzaAntigenDetection(String newInfluenzaAntigenDetection) {
@@ -2757,6 +4894,10 @@ public class CaseSampleExportDto implements Serializable {
         this.newInfluenzaIndirectFluorescentAntibody = newInfluenzaIndirectFluorescentAntibody;
     }
 
+    public void setNewInfluenzaDirectFluorescentAntibody(String newInfluenzaDirectFluorescentAntibody) {
+        this.newInfluenzaDirectFluorescentAntibody = newInfluenzaDirectFluorescentAntibody;
+    }
+
     public void setNewInfluenzaMicroscopy(String newInfluenzaMicroscopy) {
         this.newInfluenzaMicroscopy = newInfluenzaMicroscopy;
     }
@@ -2765,8 +4906,8 @@ public class CaseSampleExportDto implements Serializable {
         this.newInfluenzaNeutralizingAntibodies = newInfluenzaNeutralizingAntibodies;
     }
 
-    public void setNewInfluenzaPcr(String newInfluenzaPcr) {
-        this.newInfluenzaPcr = newInfluenzaPcr;
+    public void setNewInfluenzaPcrRtPcr(String newInfluenzaPcrRtPcr) {
+        this.newInfluenzaPcrRtPcr = newInfluenzaPcrRtPcr;
     }
 
     public void setNewInfluenzaGramStain(String newInfluenzaGramStain) {
@@ -2781,20 +4922,104 @@ public class CaseSampleExportDto implements Serializable {
         this.newInfluenzaCqValueDetection = newInfluenzaCqValueDetection;
     }
 
-    public void setNewInfluenzaSeQuencing(String newInfluenzaSeQuencing) {
-        this.newInfluenzaSeQuencing = newInfluenzaSeQuencing;
+    public void setNewInfluenzaSequencing(String newInfluenzaSequencing) {
+        this.newInfluenzaSequencing = newInfluenzaSequencing;
     }
 
-    public void setNewInfluenzaDnaMicroArray(String newInfluenzaDnaMicroArray) {
-        this.newInfluenzaDnaMicroArray = newInfluenzaDnaMicroArray;
+    public void setNewInfluenzaDnaMicroarray(String newInfluenzaDnaMicroarray) {
+        this.newInfluenzaDnaMicroarray = newInfluenzaDnaMicroarray;
     }
 
     public void setNewInfluenzaOther(String newInfluenzaOther) {
         this.newInfluenzaOther = newInfluenzaOther;
     }
 
-    public void setPlagueAntiBodyDetection(String plagueAntiBodyDetection) {
-        this.plagueAntiBodyDetection = plagueAntiBodyDetection;
+    public void setNewInfluenzaAntibodyDetectionDetails(String newInfluenzaAntibodyDetectionDetails) {
+        this.newInfluenzaAntibodyDetectionDetails = newInfluenzaAntibodyDetectionDetails;
+    }
+
+    public void setNewInfluenzaAntigenDetectionDetails(String newInfluenzaAntigenDetectionDetails) {
+        this.newInfluenzaAntigenDetectionDetails = newInfluenzaAntigenDetectionDetails;
+    }
+
+    public void setNewInfluenzaRapidTestDetails(String newInfluenzaRapidTestDetails) {
+        this.newInfluenzaRapidTestDetails = newInfluenzaRapidTestDetails;
+    }
+
+    public void setNewInfluenzaCultureDetails(String newInfluenzaCultureDetails) {
+        this.newInfluenzaCultureDetails = newInfluenzaCultureDetails;
+    }
+
+    public void setNewInfluenzaHistopathologyDetails(String newInfluenzaHistopathologyDetails) {
+        this.newInfluenzaHistopathologyDetails = newInfluenzaHistopathologyDetails;
+    }
+
+    public void setNewInfluenzaIsolationDetails(String newInfluenzaIsolationDetails) {
+        this.newInfluenzaIsolationDetails = newInfluenzaIsolationDetails;
+    }
+
+    public void setNewInfluenzaIgmSerumAntibodyDetails(String newInfluenzaIgmSerumAntibodyDetails) {
+        this.newInfluenzaIgmSerumAntibodyDetails = newInfluenzaIgmSerumAntibodyDetails;
+    }
+
+    public void setNewInfluenzaIggSerumAntibodyDetails(String newInfluenzaIggSerumAntibodyDetails) {
+        this.newInfluenzaIggSerumAntibodyDetails = newInfluenzaIggSerumAntibodyDetails;
+    }
+
+    public void setNewInfluenzaIgaSerumAntibodyDetails(String newInfluenzaIgaSerumAntibodyDetails) {
+        this.newInfluenzaIgaSerumAntibodyDetails = newInfluenzaIgaSerumAntibodyDetails;
+    }
+
+    public void setNewInfluenzaIncubationTimeDetails(String newInfluenzaIncubationTimeDetails) {
+        this.newInfluenzaIncubationTimeDetails = newInfluenzaIncubationTimeDetails;
+    }
+
+    public void setNewInfluenzaIndirectFluorescentAntibodyDetails(String newInfluenzaIndirectFluorescentAntibodyDetails) {
+        this.newInfluenzaIndirectFluorescentAntibodyDetails = newInfluenzaIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setNewInfluenzaDirectFluorescentAntibodyDetails(String newInfluenzaDirectFluorescentAntibodyDetails) {
+        this.newInfluenzaDirectFluorescentAntibodyDetails = newInfluenzaDirectFluorescentAntibodyDetails;
+    }
+
+    public void setNewInfluenzaMicroscopyDetails(String newInfluenzaMicroscopyDetails) {
+        this.newInfluenzaMicroscopyDetails = newInfluenzaMicroscopyDetails;
+    }
+
+    public void setNewInfluenzaNeutralizingAntibodiesDetails(String newInfluenzaNeutralizingAntibodiesDetails) {
+        this.newInfluenzaNeutralizingAntibodiesDetails = newInfluenzaNeutralizingAntibodiesDetails;
+    }
+
+    public void setNewInfluenzaPcrRtPcrDetails(String newInfluenzaPcrRtPcrDetails) {
+        this.newInfluenzaPcrRtPcrDetails = newInfluenzaPcrRtPcrDetails;
+    }
+
+    public void setNewInfluenzaGramStainDetails(String newInfluenzaGramStainDetails) {
+        this.newInfluenzaGramStainDetails = newInfluenzaGramStainDetails;
+    }
+
+    public void setNewInfluenzaLatexAgglutinationDetails(String newInfluenzaLatexAgglutinationDetails) {
+        this.newInfluenzaLatexAgglutinationDetails = newInfluenzaLatexAgglutinationDetails;
+    }
+
+    public void setNewInfluenzaCqValueDetectionDetails(String newInfluenzaCqValueDetectionDetails) {
+        this.newInfluenzaCqValueDetectionDetails = newInfluenzaCqValueDetectionDetails;
+    }
+
+    public void setNewInfluenzaSequencingDetails(String newInfluenzaSequencingDetails) {
+        this.newInfluenzaSequencingDetails = newInfluenzaSequencingDetails;
+    }
+
+    public void setNewInfluenzaDnaMicroarrayDetails(String newInfluenzaDnaMicroarrayDetails) {
+        this.newInfluenzaDnaMicroarrayDetails = newInfluenzaDnaMicroarrayDetails;
+    }
+
+    public void setNewInfluenzaOtherDetails(String newInfluenzaOtherDetails) {
+        this.newInfluenzaOtherDetails = newInfluenzaOtherDetails;
+    }
+
+    public void setPlagueAntibodyDetection(String plagueAntibodyDetection) {
+        this.plagueAntibodyDetection = plagueAntibodyDetection;
     }
 
     public void setPlagueAntigenDetection(String plagueAntigenDetection) {
@@ -2837,6 +5062,10 @@ public class CaseSampleExportDto implements Serializable {
         this.plagueIndirectFluorescentAntibody = plagueIndirectFluorescentAntibody;
     }
 
+    public void setPlagueDirectFluorescentAntibody(String plagueDirectFluorescentAntibody) {
+        this.plagueDirectFluorescentAntibody = plagueDirectFluorescentAntibody;
+    }
+
     public void setPlagueMicroscopy(String plagueMicroscopy) {
         this.plagueMicroscopy = plagueMicroscopy;
     }
@@ -2845,8 +5074,8 @@ public class CaseSampleExportDto implements Serializable {
         this.plagueNeutralizingAntibodies = plagueNeutralizingAntibodies;
     }
 
-    public void setPlaguePcr(String plaguePcr) {
-        this.plaguePcr = plaguePcr;
+    public void setPlaguePcrRtPcr(String plaguePcrRtPcr) {
+        this.plaguePcrRtPcr = plaguePcrRtPcr;
     }
 
     public void setPlagueGramStain(String plagueGramStain) {
@@ -2861,20 +5090,104 @@ public class CaseSampleExportDto implements Serializable {
         this.plagueCqValueDetection = plagueCqValueDetection;
     }
 
-    public void setPlagueSeQuencing(String plagueSeQuencing) {
-        this.plagueSeQuencing = plagueSeQuencing;
+    public void setPlagueSequencing(String plagueSequencing) {
+        this.plagueSequencing = plagueSequencing;
     }
 
-    public void setPlagueDnaMicroArray(String plagueDnaMicroArray) {
-        this.plagueDnaMicroArray = plagueDnaMicroArray;
+    public void setPlagueDnaMicroarray(String plagueDnaMicroarray) {
+        this.plagueDnaMicroarray = plagueDnaMicroarray;
     }
 
     public void setPlagueOther(String plagueOther) {
         this.plagueOther = plagueOther;
     }
 
-    public void setPolioAntiBodyDetection(String polioAntiBodyDetection) {
-        this.polioAntiBodyDetection = polioAntiBodyDetection;
+    public void setPlagueAntibodyDetectionDetails(String plagueAntibodyDetectionDetails) {
+        this.plagueAntibodyDetectionDetails = plagueAntibodyDetectionDetails;
+    }
+
+    public void setPlagueAntigenDetectionDetails(String plagueAntigenDetectionDetails) {
+        this.plagueAntigenDetectionDetails = plagueAntigenDetectionDetails;
+    }
+
+    public void setPlagueRapidTestDetails(String plagueRapidTestDetails) {
+        this.plagueRapidTestDetails = plagueRapidTestDetails;
+    }
+
+    public void setPlagueCultureDetails(String plagueCultureDetails) {
+        this.plagueCultureDetails = plagueCultureDetails;
+    }
+
+    public void setPlagueHistopathologyDetails(String plagueHistopathologyDetails) {
+        this.plagueHistopathologyDetails = plagueHistopathologyDetails;
+    }
+
+    public void setPlagueIsolationDetails(String plagueIsolationDetails) {
+        this.plagueIsolationDetails = plagueIsolationDetails;
+    }
+
+    public void setPlagueIgmSerumAntibodyDetails(String plagueIgmSerumAntibodyDetails) {
+        this.plagueIgmSerumAntibodyDetails = plagueIgmSerumAntibodyDetails;
+    }
+
+    public void setPlagueIggSerumAntibodyDetails(String plagueIggSerumAntibodyDetails) {
+        this.plagueIggSerumAntibodyDetails = plagueIggSerumAntibodyDetails;
+    }
+
+    public void setPlagueIgaSerumAntibodyDetails(String plagueIgaSerumAntibodyDetails) {
+        this.plagueIgaSerumAntibodyDetails = plagueIgaSerumAntibodyDetails;
+    }
+
+    public void setPlagueIncubationTimeDetails(String plagueIncubationTimeDetails) {
+        this.plagueIncubationTimeDetails = plagueIncubationTimeDetails;
+    }
+
+    public void setPlagueIndirectFluorescentAntibodyDetails(String plagueIndirectFluorescentAntibodyDetails) {
+        this.plagueIndirectFluorescentAntibodyDetails = plagueIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setPlagueDirectFluorescentAntibodyDetails(String plagueDirectFluorescentAntibodyDetails) {
+        this.plagueDirectFluorescentAntibodyDetails = plagueDirectFluorescentAntibodyDetails;
+    }
+
+    public void setPlagueMicroscopyDetails(String plagueMicroscopyDetails) {
+        this.plagueMicroscopyDetails = plagueMicroscopyDetails;
+    }
+
+    public void setPlagueNeutralizingAntibodiesDetails(String plagueNeutralizingAntibodiesDetails) {
+        this.plagueNeutralizingAntibodiesDetails = plagueNeutralizingAntibodiesDetails;
+    }
+
+    public void setPlaguePcrRtPcrDetails(String plaguePcrRtPcrDetails) {
+        this.plaguePcrRtPcrDetails = plaguePcrRtPcrDetails;
+    }
+
+    public void setPlagueGramStainDetails(String plagueGramStainDetails) {
+        this.plagueGramStainDetails = plagueGramStainDetails;
+    }
+
+    public void setPlagueLatexAgglutinationDetails(String plagueLatexAgglutinationDetails) {
+        this.plagueLatexAgglutinationDetails = plagueLatexAgglutinationDetails;
+    }
+
+    public void setPlagueCqValueDetectionDetails(String plagueCqValueDetectionDetails) {
+        this.plagueCqValueDetectionDetails = plagueCqValueDetectionDetails;
+    }
+
+    public void setPlagueSequencingDetails(String plagueSequencingDetails) {
+        this.plagueSequencingDetails = plagueSequencingDetails;
+    }
+
+    public void setPlagueDnaMicroarrayDetails(String plagueDnaMicroarrayDetails) {
+        this.plagueDnaMicroarrayDetails = plagueDnaMicroarrayDetails;
+    }
+
+    public void setPlagueOtherDetails(String plagueOtherDetails) {
+        this.plagueOtherDetails = plagueOtherDetails;
+    }
+
+    public void setPolioAntibodyDetection(String polioAntibodyDetection) {
+        this.polioAntibodyDetection = polioAntibodyDetection;
     }
 
     public void setPolioAntigenDetection(String polioAntigenDetection) {
@@ -2917,6 +5230,10 @@ public class CaseSampleExportDto implements Serializable {
         this.polioIndirectFluorescentAntibody = polioIndirectFluorescentAntibody;
     }
 
+    public void setPolioDirectFluorescentAntibody(String polioDirectFluorescentAntibody) {
+        this.polioDirectFluorescentAntibody = polioDirectFluorescentAntibody;
+    }
+
     public void setPolioMicroscopy(String polioMicroscopy) {
         this.polioMicroscopy = polioMicroscopy;
     }
@@ -2925,8 +5242,8 @@ public class CaseSampleExportDto implements Serializable {
         this.polioNeutralizingAntibodies = polioNeutralizingAntibodies;
     }
 
-    public void setPolioPcr(String polioPcr) {
-        this.polioPcr = polioPcr;
+    public void setPolioPcrRtPcr(String polioPcrRtPcr) {
+        this.polioPcrRtPcr = polioPcrRtPcr;
     }
 
     public void setPolioGramStain(String polioGramStain) {
@@ -2941,20 +5258,104 @@ public class CaseSampleExportDto implements Serializable {
         this.polioCqValueDetection = polioCqValueDetection;
     }
 
-    public void setPolioSeQuencing(String polioSeQuencing) {
-        this.polioSeQuencing = polioSeQuencing;
+    public void setPolioSequencing(String polioSequencing) {
+        this.polioSequencing = polioSequencing;
     }
 
-    public void setPolioDnaMicroArray(String polioDnaMicroArray) {
-        this.polioDnaMicroArray = polioDnaMicroArray;
+    public void setPolioDnaMicroarray(String polioDnaMicroarray) {
+        this.polioDnaMicroarray = polioDnaMicroarray;
     }
 
     public void setPolioOther(String polioOther) {
         this.polioOther = polioOther;
     }
 
-    public void setUnspecifiedVhfAntiBodyDetection(String unspecifiedVhfAntiBodyDetection) {
-        this.unspecifiedVhfAntiBodyDetection = unspecifiedVhfAntiBodyDetection;
+    public void setPolioAntibodyDetectionDetails(String polioAntibodyDetectionDetails) {
+        this.polioAntibodyDetectionDetails = polioAntibodyDetectionDetails;
+    }
+
+    public void setPolioAntigenDetectionDetails(String polioAntigenDetectionDetails) {
+        this.polioAntigenDetectionDetails = polioAntigenDetectionDetails;
+    }
+
+    public void setPolioRapidTestDetails(String polioRapidTestDetails) {
+        this.polioRapidTestDetails = polioRapidTestDetails;
+    }
+
+    public void setPolioCultureDetails(String polioCultureDetails) {
+        this.polioCultureDetails = polioCultureDetails;
+    }
+
+    public void setPolioHistopathologyDetails(String polioHistopathologyDetails) {
+        this.polioHistopathologyDetails = polioHistopathologyDetails;
+    }
+
+    public void setPolioIsolationDetails(String polioIsolationDetails) {
+        this.polioIsolationDetails = polioIsolationDetails;
+    }
+
+    public void setPolioIgmSerumAntibodyDetails(String polioIgmSerumAntibodyDetails) {
+        this.polioIgmSerumAntibodyDetails = polioIgmSerumAntibodyDetails;
+    }
+
+    public void setPolioIggSerumAntibodyDetails(String polioIggSerumAntibodyDetails) {
+        this.polioIggSerumAntibodyDetails = polioIggSerumAntibodyDetails;
+    }
+
+    public void setPolioIgaSerumAntibodyDetails(String polioIgaSerumAntibodyDetails) {
+        this.polioIgaSerumAntibodyDetails = polioIgaSerumAntibodyDetails;
+    }
+
+    public void setPolioIncubationTimeDetails(String polioIncubationTimeDetails) {
+        this.polioIncubationTimeDetails = polioIncubationTimeDetails;
+    }
+
+    public void setPolioIndirectFluorescentAntibodyDetails(String polioIndirectFluorescentAntibodyDetails) {
+        this.polioIndirectFluorescentAntibodyDetails = polioIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setPolioDirectFluorescentAntibodyDetails(String polioDirectFluorescentAntibodyDetails) {
+        this.polioDirectFluorescentAntibodyDetails = polioDirectFluorescentAntibodyDetails;
+    }
+
+    public void setPolioMicroscopyDetails(String polioMicroscopyDetails) {
+        this.polioMicroscopyDetails = polioMicroscopyDetails;
+    }
+
+    public void setPolioNeutralizingAntibodiesDetails(String polioNeutralizingAntibodiesDetails) {
+        this.polioNeutralizingAntibodiesDetails = polioNeutralizingAntibodiesDetails;
+    }
+
+    public void setPolioPcrRtPcrDetails(String polioPcrRtPcrDetails) {
+        this.polioPcrRtPcrDetails = polioPcrRtPcrDetails;
+    }
+
+    public void setPolioGramStainDetails(String polioGramStainDetails) {
+        this.polioGramStainDetails = polioGramStainDetails;
+    }
+
+    public void setPolioLatexAgglutinationDetails(String polioLatexAgglutinationDetails) {
+        this.polioLatexAgglutinationDetails = polioLatexAgglutinationDetails;
+    }
+
+    public void setPolioCqValueDetectionDetails(String polioCqValueDetectionDetails) {
+        this.polioCqValueDetectionDetails = polioCqValueDetectionDetails;
+    }
+
+    public void setPolioSequencingDetails(String polioSequencingDetails) {
+        this.polioSequencingDetails = polioSequencingDetails;
+    }
+
+    public void setPolioDnaMicroarrayDetails(String polioDnaMicroarrayDetails) {
+        this.polioDnaMicroarrayDetails = polioDnaMicroarrayDetails;
+    }
+
+    public void setPolioOtherDetails(String polioOtherDetails) {
+        this.polioOtherDetails = polioOtherDetails;
+    }
+
+    public void setUnspecifiedVhfAntibodyDetection(String unspecifiedVhfAntibodyDetection) {
+        this.unspecifiedVhfAntibodyDetection = unspecifiedVhfAntibodyDetection;
     }
 
     public void setUnspecifiedVhfAntigenDetection(String unspecifiedVhfAntigenDetection) {
@@ -2997,6 +5398,10 @@ public class CaseSampleExportDto implements Serializable {
         this.unspecifiedVhfIndirectFluorescentAntibody = unspecifiedVhfIndirectFluorescentAntibody;
     }
 
+    public void setUnspecifiedVhfDirectFluorescentAntibody(String unspecifiedVhfDirectFluorescentAntibody) {
+        this.unspecifiedVhfDirectFluorescentAntibody = unspecifiedVhfDirectFluorescentAntibody;
+    }
+
     public void setUnspecifiedVhfMicroscopy(String unspecifiedVhfMicroscopy) {
         this.unspecifiedVhfMicroscopy = unspecifiedVhfMicroscopy;
     }
@@ -3005,8 +5410,8 @@ public class CaseSampleExportDto implements Serializable {
         this.unspecifiedVhfNeutralizingAntibodies = unspecifiedVhfNeutralizingAntibodies;
     }
 
-    public void setUnspecifiedVhfPcr(String unspecifiedVhfPcr) {
-        this.unspecifiedVhfPcr = unspecifiedVhfPcr;
+    public void setUnspecifiedVhfPcrRtPcr(String unspecifiedVhfPcrRtPcr) {
+        this.unspecifiedVhfPcrRtPcr = unspecifiedVhfPcrRtPcr;
     }
 
     public void setUnspecifiedVhfGramStain(String unspecifiedVhfGramStain) {
@@ -3021,20 +5426,272 @@ public class CaseSampleExportDto implements Serializable {
         this.unspecifiedVhfCqValueDetection = unspecifiedVhfCqValueDetection;
     }
 
-    public void setUnspecifiedVhfSeQuencing(String unspecifiedVhfSeQuencing) {
-        this.unspecifiedVhfSeQuencing = unspecifiedVhfSeQuencing;
+    public void setUnspecifiedVhfSequencing(String unspecifiedVhfSequencing) {
+        this.unspecifiedVhfSequencing = unspecifiedVhfSequencing;
     }
 
-    public void setUnspecifiedVhfDnaMicroArray(String unspecifiedVhfDnaMicroArray) {
-        this.unspecifiedVhfDnaMicroArray = unspecifiedVhfDnaMicroArray;
+    public void setUnspecifiedVhfDnaMicroarray(String unspecifiedVhfDnaMicroarray) {
+        this.unspecifiedVhfDnaMicroarray = unspecifiedVhfDnaMicroarray;
     }
 
     public void setUnspecifiedVhfOther(String unspecifiedVhfOther) {
         this.unspecifiedVhfOther = unspecifiedVhfOther;
     }
 
-    public void setYellowFeverAntiBodyDetection(String yellowFeverAntiBodyDetection) {
-        this.yellowFeverAntiBodyDetection = yellowFeverAntiBodyDetection;
+    public void setUnspecifiedVhfAntibodyDetectionDetails(String unspecifiedVhfAntibodyDetectionDetails) {
+        this.unspecifiedVhfAntibodyDetectionDetails = unspecifiedVhfAntibodyDetectionDetails;
+    }
+
+    public void setUnspecifiedVhfAntigenDetectionDetails(String unspecifiedVhfAntigenDetectionDetails) {
+        this.unspecifiedVhfAntigenDetectionDetails = unspecifiedVhfAntigenDetectionDetails;
+    }
+
+    public void setUnspecifiedVhfRapidTestDetails(String unspecifiedVhfRapidTestDetails) {
+        this.unspecifiedVhfRapidTestDetails = unspecifiedVhfRapidTestDetails;
+    }
+
+    public void setUnspecifiedVhfCultureDetails(String unspecifiedVhfCultureDetails) {
+        this.unspecifiedVhfCultureDetails = unspecifiedVhfCultureDetails;
+    }
+
+    public void setUnspecifiedVhfHistopathologyDetails(String unspecifiedVhfHistopathologyDetails) {
+        this.unspecifiedVhfHistopathologyDetails = unspecifiedVhfHistopathologyDetails;
+    }
+
+    public void setUnspecifiedVhfIsolationDetails(String unspecifiedVhfIsolationDetails) {
+        this.unspecifiedVhfIsolationDetails = unspecifiedVhfIsolationDetails;
+    }
+
+    public void setUnspecifiedVhfIgmSerumAntibodyDetails(String unspecifiedVhfIgmSerumAntibodyDetails) {
+        this.unspecifiedVhfIgmSerumAntibodyDetails = unspecifiedVhfIgmSerumAntibodyDetails;
+    }
+
+    public void setUnspecifiedVhfIggSerumAntibodyDetails(String unspecifiedVhfIggSerumAntibodyDetails) {
+        this.unspecifiedVhfIggSerumAntibodyDetails = unspecifiedVhfIggSerumAntibodyDetails;
+    }
+
+    public void setUnspecifiedVhfIgaSerumAntibodyDetails(String unspecifiedVhfIgaSerumAntibodyDetails) {
+        this.unspecifiedVhfIgaSerumAntibodyDetails = unspecifiedVhfIgaSerumAntibodyDetails;
+    }
+
+    public void setUnspecifiedVhfIncubationTimeDetails(String unspecifiedVhfIncubationTimeDetails) {
+        this.unspecifiedVhfIncubationTimeDetails = unspecifiedVhfIncubationTimeDetails;
+    }
+
+    public void setUnspecifiedVhfIndirectFluorescentAntibodyDetails(String unspecifiedVhfIndirectFluorescentAntibodyDetails) {
+        this.unspecifiedVhfIndirectFluorescentAntibodyDetails = unspecifiedVhfIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setUnspecifiedVhfDirectFluorescentAntibodyDetails(String unspecifiedVhfDirectFluorescentAntibodyDetails) {
+        this.unspecifiedVhfDirectFluorescentAntibodyDetails = unspecifiedVhfDirectFluorescentAntibodyDetails;
+    }
+
+    public void setUnspecifiedVhfMicroscopyDetails(String unspecifiedVhfMicroscopyDetails) {
+        this.unspecifiedVhfMicroscopyDetails = unspecifiedVhfMicroscopyDetails;
+    }
+
+    public void setUnspecifiedVhfNeutralizingAntibodiesDetails(String unspecifiedVhfNeutralizingAntibodiesDetails) {
+        this.unspecifiedVhfNeutralizingAntibodiesDetails = unspecifiedVhfNeutralizingAntibodiesDetails;
+    }
+
+    public void setUnspecifiedVhfPcrRtPcrDetails(String unspecifiedVhfPcrRtPcrDetails) {
+        this.unspecifiedVhfPcrRtPcrDetails = unspecifiedVhfPcrRtPcrDetails;
+    }
+
+    public void setUnspecifiedVhfGramStainDetails(String unspecifiedVhfGramStainDetails) {
+        this.unspecifiedVhfGramStainDetails = unspecifiedVhfGramStainDetails;
+    }
+
+    public void setUnspecifiedVhfLatexAgglutinationDetails(String unspecifiedVhfLatexAgglutinationDetails) {
+        this.unspecifiedVhfLatexAgglutinationDetails = unspecifiedVhfLatexAgglutinationDetails;
+    }
+
+    public void setUnspecifiedVhfCqValueDetectionDetails(String unspecifiedVhfCqValueDetectionDetails) {
+        this.unspecifiedVhfCqValueDetectionDetails = unspecifiedVhfCqValueDetectionDetails;
+    }
+
+    public void setUnspecifiedVhfSequencingDetails(String unspecifiedVhfSequencingDetails) {
+        this.unspecifiedVhfSequencingDetails = unspecifiedVhfSequencingDetails;
+    }
+
+    public void setUnspecifiedVhfDnaMicroarrayDetails(String unspecifiedVhfDnaMicroarrayDetails) {
+        this.unspecifiedVhfDnaMicroarrayDetails = unspecifiedVhfDnaMicroarrayDetails;
+    }
+
+    public void setUnspecifiedVhfOtherDetails(String unspecifiedVhfOtherDetails) {
+        this.unspecifiedVhfOtherDetails = unspecifiedVhfOtherDetails;
+    }
+
+    public void setWestNileFeverAntibodyDetection(String westNileFeverAntibodyDetection) {
+        this.westNileFeverAntibodyDetection = westNileFeverAntibodyDetection;
+    }
+
+    public void setWestNileFeverAntigenDetection(String westNileFeverAntigenDetection) {
+        this.westNileFeverAntigenDetection = westNileFeverAntigenDetection;
+    }
+
+    public void setWestNileFeverRapidTest(String westNileFeverRapidTest) {
+        this.westNileFeverRapidTest = westNileFeverRapidTest;
+    }
+
+    public void setWestNileFeverCulture(String westNileFeverCulture) {
+        this.westNileFeverCulture = westNileFeverCulture;
+    }
+
+    public void setWestNileFeverHistopathology(String westNileFeverHistopathology) {
+        this.westNileFeverHistopathology = westNileFeverHistopathology;
+    }
+
+    public void setWestNileFeverIsolation(String westNileFeverIsolation) {
+        this.westNileFeverIsolation = westNileFeverIsolation;
+    }
+
+    public void setWestNileFeverIgmSerumAntibody(String westNileFeverIgmSerumAntibody) {
+        this.westNileFeverIgmSerumAntibody = westNileFeverIgmSerumAntibody;
+    }
+
+    public void setWestNileFeverIggSerumAntibody(String westNileFeverIggSerumAntibody) {
+        this.westNileFeverIggSerumAntibody = westNileFeverIggSerumAntibody;
+    }
+
+    public void setWestNileFeverIgaSerumAntibody(String westNileFeverIgaSerumAntibody) {
+        this.westNileFeverIgaSerumAntibody = westNileFeverIgaSerumAntibody;
+    }
+
+    public void setWestNileFeverIncubationTime(String westNileFeverIncubationTime) {
+        this.westNileFeverIncubationTime = westNileFeverIncubationTime;
+    }
+
+    public void setWestNileFeverIndirectFluorescentAntibody(String westNileFeverIndirectFluorescentAntibody) {
+        this.westNileFeverIndirectFluorescentAntibody = westNileFeverIndirectFluorescentAntibody;
+    }
+
+    public void setWestNileFeverDirectFluorescentAntibody(String westNileFeverDirectFluorescentAntibody) {
+        this.westNileFeverDirectFluorescentAntibody = westNileFeverDirectFluorescentAntibody;
+    }
+
+    public void setWestNileFeverMicroscopy(String westNileFeverMicroscopy) {
+        this.westNileFeverMicroscopy = westNileFeverMicroscopy;
+    }
+
+    public void setWestNileFeverNeutralizingAntibodies(String westNileFeverNeutralizingAntibodies) {
+        this.westNileFeverNeutralizingAntibodies = westNileFeverNeutralizingAntibodies;
+    }
+
+    public void setWestNileFeverPcrRtPcr(String westNileFeverPcrRtPcr) {
+        this.westNileFeverPcrRtPcr = westNileFeverPcrRtPcr;
+    }
+
+    public void setWestNileFeverGramStain(String westNileFeverGramStain) {
+        this.westNileFeverGramStain = westNileFeverGramStain;
+    }
+
+    public void setWestNileFeverLatexAgglutination(String westNileFeverLatexAgglutination) {
+        this.westNileFeverLatexAgglutination = westNileFeverLatexAgglutination;
+    }
+
+    public void setWestNileFeverCqValueDetection(String westNileFeverCqValueDetection) {
+        this.westNileFeverCqValueDetection = westNileFeverCqValueDetection;
+    }
+
+    public void setWestNileFeverSequencing(String westNileFeverSequencing) {
+        this.westNileFeverSequencing = westNileFeverSequencing;
+    }
+
+    public void setWestNileFeverDnaMicroarray(String westNileFeverDnaMicroarray) {
+        this.westNileFeverDnaMicroarray = westNileFeverDnaMicroarray;
+    }
+
+    public void setWestNileFeverOther(String westNileFeverOther) {
+        this.westNileFeverOther = westNileFeverOther;
+    }
+
+    public void setWestNileFeverAntibodyDetectionDetails(String westNileFeverAntibodyDetectionDetails) {
+        this.westNileFeverAntibodyDetectionDetails = westNileFeverAntibodyDetectionDetails;
+    }
+
+    public void setWestNileFeverAntigenDetectionDetails(String westNileFeverAntigenDetectionDetails) {
+        this.westNileFeverAntigenDetectionDetails = westNileFeverAntigenDetectionDetails;
+    }
+
+    public void setWestNileFeverRapidTestDetails(String westNileFeverRapidTestDetails) {
+        this.westNileFeverRapidTestDetails = westNileFeverRapidTestDetails;
+    }
+
+    public void setWestNileFeverCultureDetails(String westNileFeverCultureDetails) {
+        this.westNileFeverCultureDetails = westNileFeverCultureDetails;
+    }
+
+    public void setWestNileFeverHistopathologyDetails(String westNileFeverHistopathologyDetails) {
+        this.westNileFeverHistopathologyDetails = westNileFeverHistopathologyDetails;
+    }
+
+    public void setWestNileFeverIsolationDetails(String westNileFeverIsolationDetails) {
+        this.westNileFeverIsolationDetails = westNileFeverIsolationDetails;
+    }
+
+    public void setWestNileFeverIgmSerumAntibodyDetails(String westNileFeverIgmSerumAntibodyDetails) {
+        this.westNileFeverIgmSerumAntibodyDetails = westNileFeverIgmSerumAntibodyDetails;
+    }
+
+    public void setWestNileFeverIggSerumAntibodyDetails(String westNileFeverIggSerumAntibodyDetails) {
+        this.westNileFeverIggSerumAntibodyDetails = westNileFeverIggSerumAntibodyDetails;
+    }
+
+    public void setWestNileFeverIgaSerumAntibodyDetails(String westNileFeverIgaSerumAntibodyDetails) {
+        this.westNileFeverIgaSerumAntibodyDetails = westNileFeverIgaSerumAntibodyDetails;
+    }
+
+    public void setWestNileFeverIncubationTimeDetails(String westNileFeverIncubationTimeDetails) {
+        this.westNileFeverIncubationTimeDetails = westNileFeverIncubationTimeDetails;
+    }
+
+    public void setWestNileFeverIndirectFluorescentAntibodyDetails(String westNileFeverIndirectFluorescentAntibodyDetails) {
+        this.westNileFeverIndirectFluorescentAntibodyDetails = westNileFeverIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setWestNileFeverDirectFluorescentAntibodyDetails(String westNileFeverDirectFluorescentAntibodyDetails) {
+        this.westNileFeverDirectFluorescentAntibodyDetails = westNileFeverDirectFluorescentAntibodyDetails;
+    }
+
+    public void setWestNileFeverMicroscopyDetails(String westNileFeverMicroscopyDetails) {
+        this.westNileFeverMicroscopyDetails = westNileFeverMicroscopyDetails;
+    }
+
+    public void setWestNileFeverNeutralizingAntibodiesDetails(String westNileFeverNeutralizingAntibodiesDetails) {
+        this.westNileFeverNeutralizingAntibodiesDetails = westNileFeverNeutralizingAntibodiesDetails;
+    }
+
+    public void setWestNileFeverPcrRtPcrDetails(String westNileFeverPcrRtPcrDetails) {
+        this.westNileFeverPcrRtPcrDetails = westNileFeverPcrRtPcrDetails;
+    }
+
+    public void setWestNileFeverGramStainDetails(String westNileFeverGramStainDetails) {
+        this.westNileFeverGramStainDetails = westNileFeverGramStainDetails;
+    }
+
+    public void setWestNileFeverLatexAgglutinationDetails(String westNileFeverLatexAgglutinationDetails) {
+        this.westNileFeverLatexAgglutinationDetails = westNileFeverLatexAgglutinationDetails;
+    }
+
+    public void setWestNileFeverCqValueDetectionDetails(String westNileFeverCqValueDetectionDetails) {
+        this.westNileFeverCqValueDetectionDetails = westNileFeverCqValueDetectionDetails;
+    }
+
+    public void setWestNileFeverSequencingDetails(String westNileFeverSequencingDetails) {
+        this.westNileFeverSequencingDetails = westNileFeverSequencingDetails;
+    }
+
+    public void setWestNileFeverDnaMicroarrayDetails(String westNileFeverDnaMicroarrayDetails) {
+        this.westNileFeverDnaMicroarrayDetails = westNileFeverDnaMicroarrayDetails;
+    }
+
+    public void setWestNileFeverOtherDetails(String westNileFeverOtherDetails) {
+        this.westNileFeverOtherDetails = westNileFeverOtherDetails;
+    }
+
+    public void setYellowFeverAntibodyDetection(String yellowFeverAntibodyDetection) {
+        this.yellowFeverAntibodyDetection = yellowFeverAntibodyDetection;
     }
 
     public void setYellowFeverAntigenDetection(String yellowFeverAntigenDetection) {
@@ -3077,6 +5734,10 @@ public class CaseSampleExportDto implements Serializable {
         this.yellowFeverIndirectFluorescentAntibody = yellowFeverIndirectFluorescentAntibody;
     }
 
+    public void setYellowFeverDirectFluorescentAntibody(String yellowFeverDirectFluorescentAntibody) {
+        this.yellowFeverDirectFluorescentAntibody = yellowFeverDirectFluorescentAntibody;
+    }
+
     public void setYellowFeverMicroscopy(String yellowFeverMicroscopy) {
         this.yellowFeverMicroscopy = yellowFeverMicroscopy;
     }
@@ -3085,8 +5746,8 @@ public class CaseSampleExportDto implements Serializable {
         this.yellowFeverNeutralizingAntibodies = yellowFeverNeutralizingAntibodies;
     }
 
-    public void setYellowFeverPcr(String yellowFeverPcr) {
-        this.yellowFeverPcr = yellowFeverPcr;
+    public void setYellowFeverPcrRtPcr(String yellowFeverPcrRtPcr) {
+        this.yellowFeverPcrRtPcr = yellowFeverPcrRtPcr;
     }
 
     public void setYellowFeverGramStain(String yellowFeverGramStain) {
@@ -3101,20 +5762,104 @@ public class CaseSampleExportDto implements Serializable {
         this.yellowFeverCqValueDetection = yellowFeverCqValueDetection;
     }
 
-    public void setYellowFeverSeQuencing(String yellowFeverSeQuencing) {
-        this.yellowFeverSeQuencing = yellowFeverSeQuencing;
+    public void setYellowFeverSequencing(String yellowFeverSequencing) {
+        this.yellowFeverSequencing = yellowFeverSequencing;
     }
 
-    public void setYellowFeverDnaMicroArray(String yellowFeverDnaMicroArray) {
-        this.yellowFeverDnaMicroArray = yellowFeverDnaMicroArray;
+    public void setYellowFeverDnaMicroarray(String yellowFeverDnaMicroarray) {
+        this.yellowFeverDnaMicroarray = yellowFeverDnaMicroarray;
     }
 
     public void setYellowFeverOther(String yellowFeverOther) {
         this.yellowFeverOther = yellowFeverOther;
     }
 
-    public void setRabiesAntiBodyDetection(String rabiesAntiBodyDetection) {
-        this.rabiesAntiBodyDetection = rabiesAntiBodyDetection;
+    public void setYellowFeverAntibodyDetectionDetails(String yellowFeverAntibodyDetectionDetails) {
+        this.yellowFeverAntibodyDetectionDetails = yellowFeverAntibodyDetectionDetails;
+    }
+
+    public void setYellowFeverAntigenDetectionDetails(String yellowFeverAntigenDetectionDetails) {
+        this.yellowFeverAntigenDetectionDetails = yellowFeverAntigenDetectionDetails;
+    }
+
+    public void setYellowFeverRapidTestDetails(String yellowFeverRapidTestDetails) {
+        this.yellowFeverRapidTestDetails = yellowFeverRapidTestDetails;
+    }
+
+    public void setYellowFeverCultureDetails(String yellowFeverCultureDetails) {
+        this.yellowFeverCultureDetails = yellowFeverCultureDetails;
+    }
+
+    public void setYellowFeverHistopathologyDetails(String yellowFeverHistopathologyDetails) {
+        this.yellowFeverHistopathologyDetails = yellowFeverHistopathologyDetails;
+    }
+
+    public void setYellowFeverIsolationDetails(String yellowFeverIsolationDetails) {
+        this.yellowFeverIsolationDetails = yellowFeverIsolationDetails;
+    }
+
+    public void setYellowFeverIgmSerumAntibodyDetails(String yellowFeverIgmSerumAntibodyDetails) {
+        this.yellowFeverIgmSerumAntibodyDetails = yellowFeverIgmSerumAntibodyDetails;
+    }
+
+    public void setYellowFeverIggSerumAntibodyDetails(String yellowFeverIggSerumAntibodyDetails) {
+        this.yellowFeverIggSerumAntibodyDetails = yellowFeverIggSerumAntibodyDetails;
+    }
+
+    public void setYellowFeverIgaSerumAntibodyDetails(String yellowFeverIgaSerumAntibodyDetails) {
+        this.yellowFeverIgaSerumAntibodyDetails = yellowFeverIgaSerumAntibodyDetails;
+    }
+
+    public void setYellowFeverIncubationTimeDetails(String yellowFeverIncubationTimeDetails) {
+        this.yellowFeverIncubationTimeDetails = yellowFeverIncubationTimeDetails;
+    }
+
+    public void setYellowFeverIndirectFluorescentAntibodyDetails(String yellowFeverIndirectFluorescentAntibodyDetails) {
+        this.yellowFeverIndirectFluorescentAntibodyDetails = yellowFeverIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setYellowFeverDirectFluorescentAntibodyDetails(String yellowFeverDirectFluorescentAntibodyDetails) {
+        this.yellowFeverDirectFluorescentAntibodyDetails = yellowFeverDirectFluorescentAntibodyDetails;
+    }
+
+    public void setYellowFeverMicroscopyDetails(String yellowFeverMicroscopyDetails) {
+        this.yellowFeverMicroscopyDetails = yellowFeverMicroscopyDetails;
+    }
+
+    public void setYellowFeverNeutralizingAntibodiesDetails(String yellowFeverNeutralizingAntibodiesDetails) {
+        this.yellowFeverNeutralizingAntibodiesDetails = yellowFeverNeutralizingAntibodiesDetails;
+    }
+
+    public void setYellowFeverPcrRtPcrDetails(String yellowFeverPcrRtPcrDetails) {
+        this.yellowFeverPcrRtPcrDetails = yellowFeverPcrRtPcrDetails;
+    }
+
+    public void setYellowFeverGramStainDetails(String yellowFeverGramStainDetails) {
+        this.yellowFeverGramStainDetails = yellowFeverGramStainDetails;
+    }
+
+    public void setYellowFeverLatexAgglutinationDetails(String yellowFeverLatexAgglutinationDetails) {
+        this.yellowFeverLatexAgglutinationDetails = yellowFeverLatexAgglutinationDetails;
+    }
+
+    public void setYellowFeverCqValueDetectionDetails(String yellowFeverCqValueDetectionDetails) {
+        this.yellowFeverCqValueDetectionDetails = yellowFeverCqValueDetectionDetails;
+    }
+
+    public void setYellowFeverSequencingDetails(String yellowFeverSequencingDetails) {
+        this.yellowFeverSequencingDetails = yellowFeverSequencingDetails;
+    }
+
+    public void setYellowFeverDnaMicroarrayDetails(String yellowFeverDnaMicroarrayDetails) {
+        this.yellowFeverDnaMicroarrayDetails = yellowFeverDnaMicroarrayDetails;
+    }
+
+    public void setYellowFeverOtherDetails(String yellowFeverOtherDetails) {
+        this.yellowFeverOtherDetails = yellowFeverOtherDetails;
+    }
+
+    public void setRabiesAntibodyDetection(String rabiesAntibodyDetection) {
+        this.rabiesAntibodyDetection = rabiesAntibodyDetection;
     }
 
     public void setRabiesAntigenDetection(String rabiesAntigenDetection) {
@@ -3157,6 +5902,10 @@ public class CaseSampleExportDto implements Serializable {
         this.rabiesIndirectFluorescentAntibody = rabiesIndirectFluorescentAntibody;
     }
 
+    public void setRabiesDirectFluorescentAntibody(String rabiesDirectFluorescentAntibody) {
+        this.rabiesDirectFluorescentAntibody = rabiesDirectFluorescentAntibody;
+    }
+
     public void setRabiesMicroscopy(String rabiesMicroscopy) {
         this.rabiesMicroscopy = rabiesMicroscopy;
     }
@@ -3165,8 +5914,8 @@ public class CaseSampleExportDto implements Serializable {
         this.rabiesNeutralizingAntibodies = rabiesNeutralizingAntibodies;
     }
 
-    public void setRabiesPcr(String rabiesPcr) {
-        this.rabiesPcr = rabiesPcr;
+    public void setRabiesPcrRtPcr(String rabiesPcrRtPcr) {
+        this.rabiesPcrRtPcr = rabiesPcrRtPcr;
     }
 
     public void setRabiesGramStain(String rabiesGramStain) {
@@ -3181,20 +5930,104 @@ public class CaseSampleExportDto implements Serializable {
         this.rabiesCqValueDetection = rabiesCqValueDetection;
     }
 
-    public void setRabiesSeQuencing(String rabiesSeQuencing) {
-        this.rabiesSeQuencing = rabiesSeQuencing;
+    public void setRabiesSequencing(String rabiesSequencing) {
+        this.rabiesSequencing = rabiesSequencing;
     }
 
-    public void setRabiesDnaMicroArray(String rabiesDnaMicroArray) {
-        this.rabiesDnaMicroArray = rabiesDnaMicroArray;
+    public void setRabiesDnaMicroarray(String rabiesDnaMicroarray) {
+        this.rabiesDnaMicroarray = rabiesDnaMicroarray;
     }
 
     public void setRabiesOther(String rabiesOther) {
         this.rabiesOther = rabiesOther;
     }
 
-    public void setAnthraxAntiBodyDetection(String anthraxAntiBodyDetection) {
-        this.anthraxAntiBodyDetection = anthraxAntiBodyDetection;
+    public void setRabiesAntibodyDetectionDetails(String rabiesAntibodyDetectionDetails) {
+        this.rabiesAntibodyDetectionDetails = rabiesAntibodyDetectionDetails;
+    }
+
+    public void setRabiesAntigenDetectionDetails(String rabiesAntigenDetectionDetails) {
+        this.rabiesAntigenDetectionDetails = rabiesAntigenDetectionDetails;
+    }
+
+    public void setRabiesRapidTestDetails(String rabiesRapidTestDetails) {
+        this.rabiesRapidTestDetails = rabiesRapidTestDetails;
+    }
+
+    public void setRabiesCultureDetails(String rabiesCultureDetails) {
+        this.rabiesCultureDetails = rabiesCultureDetails;
+    }
+
+    public void setRabiesHistopathologyDetails(String rabiesHistopathologyDetails) {
+        this.rabiesHistopathologyDetails = rabiesHistopathologyDetails;
+    }
+
+    public void setRabiesIsolationDetails(String rabiesIsolationDetails) {
+        this.rabiesIsolationDetails = rabiesIsolationDetails;
+    }
+
+    public void setRabiesIgmSerumAntibodyDetails(String rabiesIgmSerumAntibodyDetails) {
+        this.rabiesIgmSerumAntibodyDetails = rabiesIgmSerumAntibodyDetails;
+    }
+
+    public void setRabiesIggSerumAntibodyDetails(String rabiesIggSerumAntibodyDetails) {
+        this.rabiesIggSerumAntibodyDetails = rabiesIggSerumAntibodyDetails;
+    }
+
+    public void setRabiesIgaSerumAntibodyDetails(String rabiesIgaSerumAntibodyDetails) {
+        this.rabiesIgaSerumAntibodyDetails = rabiesIgaSerumAntibodyDetails;
+    }
+
+    public void setRabiesIncubationTimeDetails(String rabiesIncubationTimeDetails) {
+        this.rabiesIncubationTimeDetails = rabiesIncubationTimeDetails;
+    }
+
+    public void setRabiesIndirectFluorescentAntibodyDetails(String rabiesIndirectFluorescentAntibodyDetails) {
+        this.rabiesIndirectFluorescentAntibodyDetails = rabiesIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setRabiesDirectFluorescentAntibodyDetails(String rabiesDirectFluorescentAntibodyDetails) {
+        this.rabiesDirectFluorescentAntibodyDetails = rabiesDirectFluorescentAntibodyDetails;
+    }
+
+    public void setRabiesMicroscopyDetails(String rabiesMicroscopyDetails) {
+        this.rabiesMicroscopyDetails = rabiesMicroscopyDetails;
+    }
+
+    public void setRabiesNeutralizingAntibodiesDetails(String rabiesNeutralizingAntibodiesDetails) {
+        this.rabiesNeutralizingAntibodiesDetails = rabiesNeutralizingAntibodiesDetails;
+    }
+
+    public void setRabiesPcrRtPcrDetails(String rabiesPcrRtPcrDetails) {
+        this.rabiesPcrRtPcrDetails = rabiesPcrRtPcrDetails;
+    }
+
+    public void setRabiesGramStainDetails(String rabiesGramStainDetails) {
+        this.rabiesGramStainDetails = rabiesGramStainDetails;
+    }
+
+    public void setRabiesLatexAgglutinationDetails(String rabiesLatexAgglutinationDetails) {
+        this.rabiesLatexAgglutinationDetails = rabiesLatexAgglutinationDetails;
+    }
+
+    public void setRabiesCqValueDetectionDetails(String rabiesCqValueDetectionDetails) {
+        this.rabiesCqValueDetectionDetails = rabiesCqValueDetectionDetails;
+    }
+
+    public void setRabiesSequencingDetails(String rabiesSequencingDetails) {
+        this.rabiesSequencingDetails = rabiesSequencingDetails;
+    }
+
+    public void setRabiesDnaMicroarrayDetails(String rabiesDnaMicroarrayDetails) {
+        this.rabiesDnaMicroarrayDetails = rabiesDnaMicroarrayDetails;
+    }
+
+    public void setRabiesOtherDetails(String rabiesOtherDetails) {
+        this.rabiesOtherDetails = rabiesOtherDetails;
+    }
+
+    public void setAnthraxAntibodyDetection(String anthraxAntibodyDetection) {
+        this.anthraxAntibodyDetection = anthraxAntibodyDetection;
     }
 
     public void setAnthraxAntigenDetection(String anthraxAntigenDetection) {
@@ -3237,6 +6070,10 @@ public class CaseSampleExportDto implements Serializable {
         this.anthraxIndirectFluorescentAntibody = anthraxIndirectFluorescentAntibody;
     }
 
+    public void setAnthraxDirectFluorescentAntibody(String anthraxDirectFluorescentAntibody) {
+        this.anthraxDirectFluorescentAntibody = anthraxDirectFluorescentAntibody;
+    }
+
     public void setAnthraxMicroscopy(String anthraxMicroscopy) {
         this.anthraxMicroscopy = anthraxMicroscopy;
     }
@@ -3245,8 +6082,8 @@ public class CaseSampleExportDto implements Serializable {
         this.anthraxNeutralizingAntibodies = anthraxNeutralizingAntibodies;
     }
 
-    public void setAnthraxPcr(String anthraxPcr) {
-        this.anthraxPcr = anthraxPcr;
+    public void setAnthraxPcrRtPcr(String anthraxPcrRtPcr) {
+        this.anthraxPcrRtPcr = anthraxPcrRtPcr;
     }
 
     public void setAnthraxGramStain(String anthraxGramStain) {
@@ -3261,20 +6098,104 @@ public class CaseSampleExportDto implements Serializable {
         this.anthraxCqValueDetection = anthraxCqValueDetection;
     }
 
-    public void setAnthraxSeQuencing(String anthraxSeQuencing) {
-        this.anthraxSeQuencing = anthraxSeQuencing;
+    public void setAnthraxSequencing(String anthraxSequencing) {
+        this.anthraxSequencing = anthraxSequencing;
     }
 
-    public void setAnthraxDnaMicroArray(String anthraxDnaMicroArray) {
-        this.anthraxDnaMicroArray = anthraxDnaMicroArray;
+    public void setAnthraxDnaMicroarray(String anthraxDnaMicroarray) {
+        this.anthraxDnaMicroarray = anthraxDnaMicroarray;
     }
 
     public void setAnthraxOther(String anthraxOther) {
         this.anthraxOther = anthraxOther;
     }
 
-    public void setCoronavirusAntiBodyDetection(String coronavirusAntiBodyDetection) {
-        this.coronavirusAntiBodyDetection = coronavirusAntiBodyDetection;
+    public void setAnthraxAntibodyDetectionDetails(String anthraxAntibodyDetectionDetails) {
+        this.anthraxAntibodyDetectionDetails = anthraxAntibodyDetectionDetails;
+    }
+
+    public void setAnthraxAntigenDetectionDetails(String anthraxAntigenDetectionDetails) {
+        this.anthraxAntigenDetectionDetails = anthraxAntigenDetectionDetails;
+    }
+
+    public void setAnthraxRapidTestDetails(String anthraxRapidTestDetails) {
+        this.anthraxRapidTestDetails = anthraxRapidTestDetails;
+    }
+
+    public void setAnthraxCultureDetails(String anthraxCultureDetails) {
+        this.anthraxCultureDetails = anthraxCultureDetails;
+    }
+
+    public void setAnthraxHistopathologyDetails(String anthraxHistopathologyDetails) {
+        this.anthraxHistopathologyDetails = anthraxHistopathologyDetails;
+    }
+
+    public void setAnthraxIsolationDetails(String anthraxIsolationDetails) {
+        this.anthraxIsolationDetails = anthraxIsolationDetails;
+    }
+
+    public void setAnthraxIgmSerumAntibodyDetails(String anthraxIgmSerumAntibodyDetails) {
+        this.anthraxIgmSerumAntibodyDetails = anthraxIgmSerumAntibodyDetails;
+    }
+
+    public void setAnthraxIggSerumAntibodyDetails(String anthraxIggSerumAntibodyDetails) {
+        this.anthraxIggSerumAntibodyDetails = anthraxIggSerumAntibodyDetails;
+    }
+
+    public void setAnthraxIgaSerumAntibodyDetails(String anthraxIgaSerumAntibodyDetails) {
+        this.anthraxIgaSerumAntibodyDetails = anthraxIgaSerumAntibodyDetails;
+    }
+
+    public void setAnthraxIncubationTimeDetails(String anthraxIncubationTimeDetails) {
+        this.anthraxIncubationTimeDetails = anthraxIncubationTimeDetails;
+    }
+
+    public void setAnthraxIndirectFluorescentAntibodyDetails(String anthraxIndirectFluorescentAntibodyDetails) {
+        this.anthraxIndirectFluorescentAntibodyDetails = anthraxIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setAnthraxDirectFluorescentAntibodyDetails(String anthraxDirectFluorescentAntibodyDetails) {
+        this.anthraxDirectFluorescentAntibodyDetails = anthraxDirectFluorescentAntibodyDetails;
+    }
+
+    public void setAnthraxMicroscopyDetails(String anthraxMicroscopyDetails) {
+        this.anthraxMicroscopyDetails = anthraxMicroscopyDetails;
+    }
+
+    public void setAnthraxNeutralizingAntibodiesDetails(String anthraxNeutralizingAntibodiesDetails) {
+        this.anthraxNeutralizingAntibodiesDetails = anthraxNeutralizingAntibodiesDetails;
+    }
+
+    public void setAnthraxPcrRtPcrDetails(String anthraxPcrRtPcrDetails) {
+        this.anthraxPcrRtPcrDetails = anthraxPcrRtPcrDetails;
+    }
+
+    public void setAnthraxGramStainDetails(String anthraxGramStainDetails) {
+        this.anthraxGramStainDetails = anthraxGramStainDetails;
+    }
+
+    public void setAnthraxLatexAgglutinationDetails(String anthraxLatexAgglutinationDetails) {
+        this.anthraxLatexAgglutinationDetails = anthraxLatexAgglutinationDetails;
+    }
+
+    public void setAnthraxCqValueDetectionDetails(String anthraxCqValueDetectionDetails) {
+        this.anthraxCqValueDetectionDetails = anthraxCqValueDetectionDetails;
+    }
+
+    public void setAnthraxSequencingDetails(String anthraxSequencingDetails) {
+        this.anthraxSequencingDetails = anthraxSequencingDetails;
+    }
+
+    public void setAnthraxDnaMicroarrayDetails(String anthraxDnaMicroarrayDetails) {
+        this.anthraxDnaMicroarrayDetails = anthraxDnaMicroarrayDetails;
+    }
+
+    public void setAnthraxOtherDetails(String anthraxOtherDetails) {
+        this.anthraxOtherDetails = anthraxOtherDetails;
+    }
+
+    public void setCoronavirusAntibodyDetection(String coronavirusAntibodyDetection) {
+        this.coronavirusAntibodyDetection = coronavirusAntibodyDetection;
     }
 
     public void setCoronavirusAntigenDetection(String coronavirusAntigenDetection) {
@@ -3317,6 +6238,10 @@ public class CaseSampleExportDto implements Serializable {
         this.coronavirusIndirectFluorescentAntibody = coronavirusIndirectFluorescentAntibody;
     }
 
+    public void setCoronavirusDirectFluorescentAntibody(String coronavirusDirectFluorescentAntibody) {
+        this.coronavirusDirectFluorescentAntibody = coronavirusDirectFluorescentAntibody;
+    }
+
     public void setCoronavirusMicroscopy(String coronavirusMicroscopy) {
         this.coronavirusMicroscopy = coronavirusMicroscopy;
     }
@@ -3325,8 +6250,8 @@ public class CaseSampleExportDto implements Serializable {
         this.coronavirusNeutralizingAntibodies = coronavirusNeutralizingAntibodies;
     }
 
-    public void setCoronavirusPcr(String coronavirusPcr) {
-        this.coronavirusPcr = coronavirusPcr;
+    public void setCoronavirusPcrRtPcr(String coronavirusPcrRtPcr) {
+        this.coronavirusPcrRtPcr = coronavirusPcrRtPcr;
     }
 
     public void setCoronavirusGramStain(String coronavirusGramStain) {
@@ -3341,20 +6266,104 @@ public class CaseSampleExportDto implements Serializable {
         this.coronavirusCqValueDetection = coronavirusCqValueDetection;
     }
 
-    public void setCoronavirusSeQuencing(String coronavirusSeQuencing) {
-        this.coronavirusSeQuencing = coronavirusSeQuencing;
+    public void setCoronavirusSequencing(String coronavirusSequencing) {
+        this.coronavirusSequencing = coronavirusSequencing;
     }
 
-    public void setCoronavirusDnaMicroArray(String coronavirusDnaMicroArray) {
-        this.coronavirusDnaMicroArray = coronavirusDnaMicroArray;
+    public void setCoronavirusDnaMicroarray(String coronavirusDnaMicroarray) {
+        this.coronavirusDnaMicroarray = coronavirusDnaMicroarray;
     }
 
     public void setCoronavirusOther(String coronavirusOther) {
         this.coronavirusOther = coronavirusOther;
     }
 
-    public void setPneumoniaAntiBodyDetection(String pneumoniaAntiBodyDetection) {
-        this.pneumoniaAntiBodyDetection = pneumoniaAntiBodyDetection;
+    public void setCoronavirusAntibodyDetectionDetails(String coronavirusAntibodyDetectionDetails) {
+        this.coronavirusAntibodyDetectionDetails = coronavirusAntibodyDetectionDetails;
+    }
+
+    public void setCoronavirusAntigenDetectionDetails(String coronavirusAntigenDetectionDetails) {
+        this.coronavirusAntigenDetectionDetails = coronavirusAntigenDetectionDetails;
+    }
+
+    public void setCoronavirusRapidTestDetails(String coronavirusRapidTestDetails) {
+        this.coronavirusRapidTestDetails = coronavirusRapidTestDetails;
+    }
+
+    public void setCoronavirusCultureDetails(String coronavirusCultureDetails) {
+        this.coronavirusCultureDetails = coronavirusCultureDetails;
+    }
+
+    public void setCoronavirusHistopathologyDetails(String coronavirusHistopathologyDetails) {
+        this.coronavirusHistopathologyDetails = coronavirusHistopathologyDetails;
+    }
+
+    public void setCoronavirusIsolationDetails(String coronavirusIsolationDetails) {
+        this.coronavirusIsolationDetails = coronavirusIsolationDetails;
+    }
+
+    public void setCoronavirusIgmSerumAntibodyDetails(String coronavirusIgmSerumAntibodyDetails) {
+        this.coronavirusIgmSerumAntibodyDetails = coronavirusIgmSerumAntibodyDetails;
+    }
+
+    public void setCoronavirusIggSerumAntibodyDetails(String coronavirusIggSerumAntibodyDetails) {
+        this.coronavirusIggSerumAntibodyDetails = coronavirusIggSerumAntibodyDetails;
+    }
+
+    public void setCoronavirusIgaSerumAntibodyDetails(String coronavirusIgaSerumAntibodyDetails) {
+        this.coronavirusIgaSerumAntibodyDetails = coronavirusIgaSerumAntibodyDetails;
+    }
+
+    public void setCoronavirusIncubationTimeDetails(String coronavirusIncubationTimeDetails) {
+        this.coronavirusIncubationTimeDetails = coronavirusIncubationTimeDetails;
+    }
+
+    public void setCoronavirusIndirectFluorescentAntibodyDetails(String coronavirusIndirectFluorescentAntibodyDetails) {
+        this.coronavirusIndirectFluorescentAntibodyDetails = coronavirusIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setCoronavirusDirectFluorescentAntibodyDetails(String coronavirusDirectFluorescentAntibodyDetails) {
+        this.coronavirusDirectFluorescentAntibodyDetails = coronavirusDirectFluorescentAntibodyDetails;
+    }
+
+    public void setCoronavirusMicroscopyDetails(String coronavirusMicroscopyDetails) {
+        this.coronavirusMicroscopyDetails = coronavirusMicroscopyDetails;
+    }
+
+    public void setCoronavirusNeutralizingAntibodiesDetails(String coronavirusNeutralizingAntibodiesDetails) {
+        this.coronavirusNeutralizingAntibodiesDetails = coronavirusNeutralizingAntibodiesDetails;
+    }
+
+    public void setCoronavirusPcrRtPcrDetails(String coronavirusPcrRtPcrDetails) {
+        this.coronavirusPcrRtPcrDetails = coronavirusPcrRtPcrDetails;
+    }
+
+    public void setCoronavirusGramStainDetails(String coronavirusGramStainDetails) {
+        this.coronavirusGramStainDetails = coronavirusGramStainDetails;
+    }
+
+    public void setCoronavirusLatexAgglutinationDetails(String coronavirusLatexAgglutinationDetails) {
+        this.coronavirusLatexAgglutinationDetails = coronavirusLatexAgglutinationDetails;
+    }
+
+    public void setCoronavirusCqValueDetectionDetails(String coronavirusCqValueDetectionDetails) {
+        this.coronavirusCqValueDetectionDetails = coronavirusCqValueDetectionDetails;
+    }
+
+    public void setCoronavirusSequencingDetails(String coronavirusSequencingDetails) {
+        this.coronavirusSequencingDetails = coronavirusSequencingDetails;
+    }
+
+    public void setCoronavirusDnaMicroarrayDetails(String coronavirusDnaMicroarrayDetails) {
+        this.coronavirusDnaMicroarrayDetails = coronavirusDnaMicroarrayDetails;
+    }
+
+    public void setCoronavirusOtherDetails(String coronavirusOtherDetails) {
+        this.coronavirusOtherDetails = coronavirusOtherDetails;
+    }
+
+    public void setPneumoniaAntibodyDetection(String pneumoniaAntibodyDetection) {
+        this.pneumoniaAntibodyDetection = pneumoniaAntibodyDetection;
     }
 
     public void setPneumoniaAntigenDetection(String pneumoniaAntigenDetection) {
@@ -3397,6 +6406,10 @@ public class CaseSampleExportDto implements Serializable {
         this.pneumoniaIndirectFluorescentAntibody = pneumoniaIndirectFluorescentAntibody;
     }
 
+    public void setPneumoniaDirectFluorescentAntibody(String pneumoniaDirectFluorescentAntibody) {
+        this.pneumoniaDirectFluorescentAntibody = pneumoniaDirectFluorescentAntibody;
+    }
+
     public void setPneumoniaMicroscopy(String pneumoniaMicroscopy) {
         this.pneumoniaMicroscopy = pneumoniaMicroscopy;
     }
@@ -3405,8 +6418,8 @@ public class CaseSampleExportDto implements Serializable {
         this.pneumoniaNeutralizingAntibodies = pneumoniaNeutralizingAntibodies;
     }
 
-    public void setPneumoniaPcr(String pneumoniaPcr) {
-        this.pneumoniaPcr = pneumoniaPcr;
+    public void setPneumoniaPcrRtPcr(String pneumoniaPcrRtPcr) {
+        this.pneumoniaPcrRtPcr = pneumoniaPcrRtPcr;
     }
 
     public void setPneumoniaGramStain(String pneumoniaGramStain) {
@@ -3421,20 +6434,104 @@ public class CaseSampleExportDto implements Serializable {
         this.pneumoniaCqValueDetection = pneumoniaCqValueDetection;
     }
 
-    public void setPneumoniaSeQuencing(String pneumoniaSeQuencing) {
-        this.pneumoniaSeQuencing = pneumoniaSeQuencing;
+    public void setPneumoniaSequencing(String pneumoniaSequencing) {
+        this.pneumoniaSequencing = pneumoniaSequencing;
     }
 
-    public void setPneumoniaDnaMicroArray(String pneumoniaDnaMicroArray) {
-        this.pneumoniaDnaMicroArray = pneumoniaDnaMicroArray;
+    public void setPneumoniaDnaMicroarray(String pneumoniaDnaMicroarray) {
+        this.pneumoniaDnaMicroarray = pneumoniaDnaMicroarray;
     }
 
     public void setPneumoniaOther(String pneumoniaOther) {
         this.pneumoniaOther = pneumoniaOther;
     }
 
-    public void setMalariaAntiBodyDetection(String malariaAntiBodyDetection) {
-        this.malariaAntiBodyDetection = malariaAntiBodyDetection;
+    public void setPneumoniaAntibodyDetectionDetails(String pneumoniaAntibodyDetectionDetails) {
+        this.pneumoniaAntibodyDetectionDetails = pneumoniaAntibodyDetectionDetails;
+    }
+
+    public void setPneumoniaAntigenDetectionDetails(String pneumoniaAntigenDetectionDetails) {
+        this.pneumoniaAntigenDetectionDetails = pneumoniaAntigenDetectionDetails;
+    }
+
+    public void setPneumoniaRapidTestDetails(String pneumoniaRapidTestDetails) {
+        this.pneumoniaRapidTestDetails = pneumoniaRapidTestDetails;
+    }
+
+    public void setPneumoniaCultureDetails(String pneumoniaCultureDetails) {
+        this.pneumoniaCultureDetails = pneumoniaCultureDetails;
+    }
+
+    public void setPneumoniaHistopathologyDetails(String pneumoniaHistopathologyDetails) {
+        this.pneumoniaHistopathologyDetails = pneumoniaHistopathologyDetails;
+    }
+
+    public void setPneumoniaIsolationDetails(String pneumoniaIsolationDetails) {
+        this.pneumoniaIsolationDetails = pneumoniaIsolationDetails;
+    }
+
+    public void setPneumoniaIgmSerumAntibodyDetails(String pneumoniaIgmSerumAntibodyDetails) {
+        this.pneumoniaIgmSerumAntibodyDetails = pneumoniaIgmSerumAntibodyDetails;
+    }
+
+    public void setPneumoniaIggSerumAntibodyDetails(String pneumoniaIggSerumAntibodyDetails) {
+        this.pneumoniaIggSerumAntibodyDetails = pneumoniaIggSerumAntibodyDetails;
+    }
+
+    public void setPneumoniaIgaSerumAntibodyDetails(String pneumoniaIgaSerumAntibodyDetails) {
+        this.pneumoniaIgaSerumAntibodyDetails = pneumoniaIgaSerumAntibodyDetails;
+    }
+
+    public void setPneumoniaIncubationTimeDetails(String pneumoniaIncubationTimeDetails) {
+        this.pneumoniaIncubationTimeDetails = pneumoniaIncubationTimeDetails;
+    }
+
+    public void setPneumoniaIndirectFluorescentAntibodyDetails(String pneumoniaIndirectFluorescentAntibodyDetails) {
+        this.pneumoniaIndirectFluorescentAntibodyDetails = pneumoniaIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setPneumoniaDirectFluorescentAntibodyDetails(String pneumoniaDirectFluorescentAntibodyDetails) {
+        this.pneumoniaDirectFluorescentAntibodyDetails = pneumoniaDirectFluorescentAntibodyDetails;
+    }
+
+    public void setPneumoniaMicroscopyDetails(String pneumoniaMicroscopyDetails) {
+        this.pneumoniaMicroscopyDetails = pneumoniaMicroscopyDetails;
+    }
+
+    public void setPneumoniaNeutralizingAntibodiesDetails(String pneumoniaNeutralizingAntibodiesDetails) {
+        this.pneumoniaNeutralizingAntibodiesDetails = pneumoniaNeutralizingAntibodiesDetails;
+    }
+
+    public void setPneumoniaPcrRtPcrDetails(String pneumoniaPcrRtPcrDetails) {
+        this.pneumoniaPcrRtPcrDetails = pneumoniaPcrRtPcrDetails;
+    }
+
+    public void setPneumoniaGramStainDetails(String pneumoniaGramStainDetails) {
+        this.pneumoniaGramStainDetails = pneumoniaGramStainDetails;
+    }
+
+    public void setPneumoniaLatexAgglutinationDetails(String pneumoniaLatexAgglutinationDetails) {
+        this.pneumoniaLatexAgglutinationDetails = pneumoniaLatexAgglutinationDetails;
+    }
+
+    public void setPneumoniaCqValueDetectionDetails(String pneumoniaCqValueDetectionDetails) {
+        this.pneumoniaCqValueDetectionDetails = pneumoniaCqValueDetectionDetails;
+    }
+
+    public void setPneumoniaSequencingDetails(String pneumoniaSequencingDetails) {
+        this.pneumoniaSequencingDetails = pneumoniaSequencingDetails;
+    }
+
+    public void setPneumoniaDnaMicroarrayDetails(String pneumoniaDnaMicroarrayDetails) {
+        this.pneumoniaDnaMicroarrayDetails = pneumoniaDnaMicroarrayDetails;
+    }
+
+    public void setPneumoniaOtherDetails(String pneumoniaOtherDetails) {
+        this.pneumoniaOtherDetails = pneumoniaOtherDetails;
+    }
+
+    public void setMalariaAntibodyDetection(String malariaAntibodyDetection) {
+        this.malariaAntibodyDetection = malariaAntibodyDetection;
     }
 
     public void setMalariaAntigenDetection(String malariaAntigenDetection) {
@@ -3477,6 +6574,10 @@ public class CaseSampleExportDto implements Serializable {
         this.malariaIndirectFluorescentAntibody = malariaIndirectFluorescentAntibody;
     }
 
+    public void setMalariaDirectFluorescentAntibody(String malariaDirectFluorescentAntibody) {
+        this.malariaDirectFluorescentAntibody = malariaDirectFluorescentAntibody;
+    }
+
     public void setMalariaMicroscopy(String malariaMicroscopy) {
         this.malariaMicroscopy = malariaMicroscopy;
     }
@@ -3485,8 +6586,8 @@ public class CaseSampleExportDto implements Serializable {
         this.malariaNeutralizingAntibodies = malariaNeutralizingAntibodies;
     }
 
-    public void setMalariaPcr(String malariaPcr) {
-        this.malariaPcr = malariaPcr;
+    public void setMalariaPcrRtPcr(String malariaPcrRtPcr) {
+        this.malariaPcrRtPcr = malariaPcrRtPcr;
     }
 
     public void setMalariaGramStain(String malariaGramStain) {
@@ -3501,20 +6602,104 @@ public class CaseSampleExportDto implements Serializable {
         this.malariaCqValueDetection = malariaCqValueDetection;
     }
 
-    public void setMalariaSeQuencing(String malariaSeQuencing) {
-        this.malariaSeQuencing = malariaSeQuencing;
+    public void setMalariaSequencing(String malariaSequencing) {
+        this.malariaSequencing = malariaSequencing;
     }
 
-    public void setMalariaDnaMicroArray(String malariaDnaMicroArray) {
-        this.malariaDnaMicroArray = malariaDnaMicroArray;
+    public void setMalariaDnaMicroarray(String malariaDnaMicroarray) {
+        this.malariaDnaMicroarray = malariaDnaMicroarray;
     }
 
     public void setMalariaOther(String malariaOther) {
         this.malariaOther = malariaOther;
     }
 
-    public void setTyphoidFeverAntiBodyDetection(String typhoidFeverAntiBodyDetection) {
-        this.typhoidFeverAntiBodyDetection = typhoidFeverAntiBodyDetection;
+    public void setMalariaAntibodyDetectionDetails(String malariaAntibodyDetectionDetails) {
+        this.malariaAntibodyDetectionDetails = malariaAntibodyDetectionDetails;
+    }
+
+    public void setMalariaAntigenDetectionDetails(String malariaAntigenDetectionDetails) {
+        this.malariaAntigenDetectionDetails = malariaAntigenDetectionDetails;
+    }
+
+    public void setMalariaRapidTestDetails(String malariaRapidTestDetails) {
+        this.malariaRapidTestDetails = malariaRapidTestDetails;
+    }
+
+    public void setMalariaCultureDetails(String malariaCultureDetails) {
+        this.malariaCultureDetails = malariaCultureDetails;
+    }
+
+    public void setMalariaHistopathologyDetails(String malariaHistopathologyDetails) {
+        this.malariaHistopathologyDetails = malariaHistopathologyDetails;
+    }
+
+    public void setMalariaIsolationDetails(String malariaIsolationDetails) {
+        this.malariaIsolationDetails = malariaIsolationDetails;
+    }
+
+    public void setMalariaIgmSerumAntibodyDetails(String malariaIgmSerumAntibodyDetails) {
+        this.malariaIgmSerumAntibodyDetails = malariaIgmSerumAntibodyDetails;
+    }
+
+    public void setMalariaIggSerumAntibodyDetails(String malariaIggSerumAntibodyDetails) {
+        this.malariaIggSerumAntibodyDetails = malariaIggSerumAntibodyDetails;
+    }
+
+    public void setMalariaIgaSerumAntibodyDetails(String malariaIgaSerumAntibodyDetails) {
+        this.malariaIgaSerumAntibodyDetails = malariaIgaSerumAntibodyDetails;
+    }
+
+    public void setMalariaIncubationTimeDetails(String malariaIncubationTimeDetails) {
+        this.malariaIncubationTimeDetails = malariaIncubationTimeDetails;
+    }
+
+    public void setMalariaIndirectFluorescentAntibodyDetails(String malariaIndirectFluorescentAntibodyDetails) {
+        this.malariaIndirectFluorescentAntibodyDetails = malariaIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setMalariaDirectFluorescentAntibodyDetails(String malariaDirectFluorescentAntibodyDetails) {
+        this.malariaDirectFluorescentAntibodyDetails = malariaDirectFluorescentAntibodyDetails;
+    }
+
+    public void setMalariaMicroscopyDetails(String malariaMicroscopyDetails) {
+        this.malariaMicroscopyDetails = malariaMicroscopyDetails;
+    }
+
+    public void setMalariaNeutralizingAntibodiesDetails(String malariaNeutralizingAntibodiesDetails) {
+        this.malariaNeutralizingAntibodiesDetails = malariaNeutralizingAntibodiesDetails;
+    }
+
+    public void setMalariaPcrRtPcrDetails(String malariaPcrRtPcrDetails) {
+        this.malariaPcrRtPcrDetails = malariaPcrRtPcrDetails;
+    }
+
+    public void setMalariaGramStainDetails(String malariaGramStainDetails) {
+        this.malariaGramStainDetails = malariaGramStainDetails;
+    }
+
+    public void setMalariaLatexAgglutinationDetails(String malariaLatexAgglutinationDetails) {
+        this.malariaLatexAgglutinationDetails = malariaLatexAgglutinationDetails;
+    }
+
+    public void setMalariaCqValueDetectionDetails(String malariaCqValueDetectionDetails) {
+        this.malariaCqValueDetectionDetails = malariaCqValueDetectionDetails;
+    }
+
+    public void setMalariaSequencingDetails(String malariaSequencingDetails) {
+        this.malariaSequencingDetails = malariaSequencingDetails;
+    }
+
+    public void setMalariaDnaMicroarrayDetails(String malariaDnaMicroarrayDetails) {
+        this.malariaDnaMicroarrayDetails = malariaDnaMicroarrayDetails;
+    }
+
+    public void setMalariaOtherDetails(String malariaOtherDetails) {
+        this.malariaOtherDetails = malariaOtherDetails;
+    }
+
+    public void setTyphoidFeverAntibodyDetection(String typhoidFeverAntibodyDetection) {
+        this.typhoidFeverAntibodyDetection = typhoidFeverAntibodyDetection;
     }
 
     public void setTyphoidFeverAntigenDetection(String typhoidFeverAntigenDetection) {
@@ -3557,6 +6742,10 @@ public class CaseSampleExportDto implements Serializable {
         this.typhoidFeverIndirectFluorescentAntibody = typhoidFeverIndirectFluorescentAntibody;
     }
 
+    public void setTyphoidFeverDirectFluorescentAntibody(String typhoidFeverDirectFluorescentAntibody) {
+        this.typhoidFeverDirectFluorescentAntibody = typhoidFeverDirectFluorescentAntibody;
+    }
+
     public void setTyphoidFeverMicroscopy(String typhoidFeverMicroscopy) {
         this.typhoidFeverMicroscopy = typhoidFeverMicroscopy;
     }
@@ -3565,8 +6754,8 @@ public class CaseSampleExportDto implements Serializable {
         this.typhoidFeverNeutralizingAntibodies = typhoidFeverNeutralizingAntibodies;
     }
 
-    public void setTyphoidFeverPcr(String typhoidFeverPcr) {
-        this.typhoidFeverPcr = typhoidFeverPcr;
+    public void setTyphoidFeverPcrRtPcr(String typhoidFeverPcrRtPcr) {
+        this.typhoidFeverPcrRtPcr = typhoidFeverPcrRtPcr;
     }
 
     public void setTyphoidFeverGramStain(String typhoidFeverGramStain) {
@@ -3581,20 +6770,104 @@ public class CaseSampleExportDto implements Serializable {
         this.typhoidFeverCqValueDetection = typhoidFeverCqValueDetection;
     }
 
-    public void setTyphoidFeverSeQuencing(String typhoidFeverSeQuencing) {
-        this.typhoidFeverSeQuencing = typhoidFeverSeQuencing;
+    public void setTyphoidFeverSequencing(String typhoidFeverSequencing) {
+        this.typhoidFeverSequencing = typhoidFeverSequencing;
     }
 
-    public void setTyphoidFeverDnaMicroArray(String typhoidFeverDnaMicroArray) {
-        this.typhoidFeverDnaMicroArray = typhoidFeverDnaMicroArray;
+    public void setTyphoidFeverDnaMicroarray(String typhoidFeverDnaMicroarray) {
+        this.typhoidFeverDnaMicroarray = typhoidFeverDnaMicroarray;
     }
 
     public void setTyphoidFeverOther(String typhoidFeverOther) {
         this.typhoidFeverOther = typhoidFeverOther;
     }
 
-    public void setAcuteViralHepatitisAntiBodyDetection(String acuteViralHepatitisAntiBodyDetection) {
-        this.acuteViralHepatitisAntiBodyDetection = acuteViralHepatitisAntiBodyDetection;
+    public void setTyphoidFeverAntibodyDetectionDetails(String typhoidFeverAntibodyDetectionDetails) {
+        this.typhoidFeverAntibodyDetectionDetails = typhoidFeverAntibodyDetectionDetails;
+    }
+
+    public void setTyphoidFeverAntigenDetectionDetails(String typhoidFeverAntigenDetectionDetails) {
+        this.typhoidFeverAntigenDetectionDetails = typhoidFeverAntigenDetectionDetails;
+    }
+
+    public void setTyphoidFeverRapidTestDetails(String typhoidFeverRapidTestDetails) {
+        this.typhoidFeverRapidTestDetails = typhoidFeverRapidTestDetails;
+    }
+
+    public void setTyphoidFeverCultureDetails(String typhoidFeverCultureDetails) {
+        this.typhoidFeverCultureDetails = typhoidFeverCultureDetails;
+    }
+
+    public void setTyphoidFeverHistopathologyDetails(String typhoidFeverHistopathologyDetails) {
+        this.typhoidFeverHistopathologyDetails = typhoidFeverHistopathologyDetails;
+    }
+
+    public void setTyphoidFeverIsolationDetails(String typhoidFeverIsolationDetails) {
+        this.typhoidFeverIsolationDetails = typhoidFeverIsolationDetails;
+    }
+
+    public void setTyphoidFeverIgmSerumAntibodyDetails(String typhoidFeverIgmSerumAntibodyDetails) {
+        this.typhoidFeverIgmSerumAntibodyDetails = typhoidFeverIgmSerumAntibodyDetails;
+    }
+
+    public void setTyphoidFeverIggSerumAntibodyDetails(String typhoidFeverIggSerumAntibodyDetails) {
+        this.typhoidFeverIggSerumAntibodyDetails = typhoidFeverIggSerumAntibodyDetails;
+    }
+
+    public void setTyphoidFeverIgaSerumAntibodyDetails(String typhoidFeverIgaSerumAntibodyDetails) {
+        this.typhoidFeverIgaSerumAntibodyDetails = typhoidFeverIgaSerumAntibodyDetails;
+    }
+
+    public void setTyphoidFeverIncubationTimeDetails(String typhoidFeverIncubationTimeDetails) {
+        this.typhoidFeverIncubationTimeDetails = typhoidFeverIncubationTimeDetails;
+    }
+
+    public void setTyphoidFeverIndirectFluorescentAntibodyDetails(String typhoidFeverIndirectFluorescentAntibodyDetails) {
+        this.typhoidFeverIndirectFluorescentAntibodyDetails = typhoidFeverIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setTyphoidFeverDirectFluorescentAntibodyDetails(String typhoidFeverDirectFluorescentAntibodyDetails) {
+        this.typhoidFeverDirectFluorescentAntibodyDetails = typhoidFeverDirectFluorescentAntibodyDetails;
+    }
+
+    public void setTyphoidFeverMicroscopyDetails(String typhoidFeverMicroscopyDetails) {
+        this.typhoidFeverMicroscopyDetails = typhoidFeverMicroscopyDetails;
+    }
+
+    public void setTyphoidFeverNeutralizingAntibodiesDetails(String typhoidFeverNeutralizingAntibodiesDetails) {
+        this.typhoidFeverNeutralizingAntibodiesDetails = typhoidFeverNeutralizingAntibodiesDetails;
+    }
+
+    public void setTyphoidFeverPcrRtPcrDetails(String typhoidFeverPcrRtPcrDetails) {
+        this.typhoidFeverPcrRtPcrDetails = typhoidFeverPcrRtPcrDetails;
+    }
+
+    public void setTyphoidFeverGramStainDetails(String typhoidFeverGramStainDetails) {
+        this.typhoidFeverGramStainDetails = typhoidFeverGramStainDetails;
+    }
+
+    public void setTyphoidFeverLatexAgglutinationDetails(String typhoidFeverLatexAgglutinationDetails) {
+        this.typhoidFeverLatexAgglutinationDetails = typhoidFeverLatexAgglutinationDetails;
+    }
+
+    public void setTyphoidFeverCqValueDetectionDetails(String typhoidFeverCqValueDetectionDetails) {
+        this.typhoidFeverCqValueDetectionDetails = typhoidFeverCqValueDetectionDetails;
+    }
+
+    public void setTyphoidFeverSequencingDetails(String typhoidFeverSequencingDetails) {
+        this.typhoidFeverSequencingDetails = typhoidFeverSequencingDetails;
+    }
+
+    public void setTyphoidFeverDnaMicroarrayDetails(String typhoidFeverDnaMicroarrayDetails) {
+        this.typhoidFeverDnaMicroarrayDetails = typhoidFeverDnaMicroarrayDetails;
+    }
+
+    public void setTyphoidFeverOtherDetails(String typhoidFeverOtherDetails) {
+        this.typhoidFeverOtherDetails = typhoidFeverOtherDetails;
+    }
+
+    public void setAcuteViralHepatitisAntibodyDetection(String acuteViralHepatitisAntibodyDetection) {
+        this.acuteViralHepatitisAntibodyDetection = acuteViralHepatitisAntibodyDetection;
     }
 
     public void setAcuteViralHepatitisAntigenDetection(String acuteViralHepatitisAntigenDetection) {
@@ -3637,6 +6910,10 @@ public class CaseSampleExportDto implements Serializable {
         this.acuteViralHepatitisIndirectFluorescentAntibody = acuteViralHepatitisIndirectFluorescentAntibody;
     }
 
+    public void setAcuteViralHepatitisDirectFluorescentAntibody(String acuteViralHepatitisDirectFluorescentAntibody) {
+        this.acuteViralHepatitisDirectFluorescentAntibody = acuteViralHepatitisDirectFluorescentAntibody;
+    }
+
     public void setAcuteViralHepatitisMicroscopy(String acuteViralHepatitisMicroscopy) {
         this.acuteViralHepatitisMicroscopy = acuteViralHepatitisMicroscopy;
     }
@@ -3645,8 +6922,8 @@ public class CaseSampleExportDto implements Serializable {
         this.acuteViralHepatitisNeutralizingAntibodies = acuteViralHepatitisNeutralizingAntibodies;
     }
 
-    public void setAcuteViralHepatitisPcr(String acuteViralHepatitisPcr) {
-        this.acuteViralHepatitisPcr = acuteViralHepatitisPcr;
+    public void setAcuteViralHepatitisPcrRtPcr(String acuteViralHepatitisPcrRtPcr) {
+        this.acuteViralHepatitisPcrRtPcr = acuteViralHepatitisPcrRtPcr;
     }
 
     public void setAcuteViralHepatitisGramStain(String acuteViralHepatitisGramStain) {
@@ -3661,20 +6938,104 @@ public class CaseSampleExportDto implements Serializable {
         this.acuteViralHepatitisCqValueDetection = acuteViralHepatitisCqValueDetection;
     }
 
-    public void setAcuteViralHepatitisSeQuencing(String acuteViralHepatitisSeQuencing) {
-        this.acuteViralHepatitisSeQuencing = acuteViralHepatitisSeQuencing;
+    public void setAcuteViralHepatitisSequencing(String acuteViralHepatitisSequencing) {
+        this.acuteViralHepatitisSequencing = acuteViralHepatitisSequencing;
     }
 
-    public void setAcuteViralHepatitisDnaMicroArray(String acuteViralHepatitisDnaMicroArray) {
-        this.acuteViralHepatitisDnaMicroArray = acuteViralHepatitisDnaMicroArray;
+    public void setAcuteViralHepatitisDnaMicroarray(String acuteViralHepatitisDnaMicroarray) {
+        this.acuteViralHepatitisDnaMicroarray = acuteViralHepatitisDnaMicroarray;
     }
 
     public void setAcuteViralHepatitisOther(String acuteViralHepatitisOther) {
         this.acuteViralHepatitisOther = acuteViralHepatitisOther;
     }
 
-    public void setNonNeonatalTetanusAntiBodyDetection(String nonNeonatalTetanusAntiBodyDetection) {
-        this.nonNeonatalTetanusAntiBodyDetection = nonNeonatalTetanusAntiBodyDetection;
+    public void setAcuteViralHepatitisAntibodyDetectionDetails(String acuteViralHepatitisAntibodyDetectionDetails) {
+        this.acuteViralHepatitisAntibodyDetectionDetails = acuteViralHepatitisAntibodyDetectionDetails;
+    }
+
+    public void setAcuteViralHepatitisAntigenDetectionDetails(String acuteViralHepatitisAntigenDetectionDetails) {
+        this.acuteViralHepatitisAntigenDetectionDetails = acuteViralHepatitisAntigenDetectionDetails;
+    }
+
+    public void setAcuteViralHepatitisRapidTestDetails(String acuteViralHepatitisRapidTestDetails) {
+        this.acuteViralHepatitisRapidTestDetails = acuteViralHepatitisRapidTestDetails;
+    }
+
+    public void setAcuteViralHepatitisCultureDetails(String acuteViralHepatitisCultureDetails) {
+        this.acuteViralHepatitisCultureDetails = acuteViralHepatitisCultureDetails;
+    }
+
+    public void setAcuteViralHepatitisHistopathologyDetails(String acuteViralHepatitisHistopathologyDetails) {
+        this.acuteViralHepatitisHistopathologyDetails = acuteViralHepatitisHistopathologyDetails;
+    }
+
+    public void setAcuteViralHepatitisIsolationDetails(String acuteViralHepatitisIsolationDetails) {
+        this.acuteViralHepatitisIsolationDetails = acuteViralHepatitisIsolationDetails;
+    }
+
+    public void setAcuteViralHepatitisIgmSerumAntibodyDetails(String acuteViralHepatitisIgmSerumAntibodyDetails) {
+        this.acuteViralHepatitisIgmSerumAntibodyDetails = acuteViralHepatitisIgmSerumAntibodyDetails;
+    }
+
+    public void setAcuteViralHepatitisIggSerumAntibodyDetails(String acuteViralHepatitisIggSerumAntibodyDetails) {
+        this.acuteViralHepatitisIggSerumAntibodyDetails = acuteViralHepatitisIggSerumAntibodyDetails;
+    }
+
+    public void setAcuteViralHepatitisIgaSerumAntibodyDetails(String acuteViralHepatitisIgaSerumAntibodyDetails) {
+        this.acuteViralHepatitisIgaSerumAntibodyDetails = acuteViralHepatitisIgaSerumAntibodyDetails;
+    }
+
+    public void setAcuteViralHepatitisIncubationTimeDetails(String acuteViralHepatitisIncubationTimeDetails) {
+        this.acuteViralHepatitisIncubationTimeDetails = acuteViralHepatitisIncubationTimeDetails;
+    }
+
+    public void setAcuteViralHepatitisIndirectFluorescentAntibodyDetails(String acuteViralHepatitisIndirectFluorescentAntibodyDetails) {
+        this.acuteViralHepatitisIndirectFluorescentAntibodyDetails = acuteViralHepatitisIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setAcuteViralHepatitisDirectFluorescentAntibodyDetails(String acuteViralHepatitisDirectFluorescentAntibodyDetails) {
+        this.acuteViralHepatitisDirectFluorescentAntibodyDetails = acuteViralHepatitisDirectFluorescentAntibodyDetails;
+    }
+
+    public void setAcuteViralHepatitisMicroscopyDetails(String acuteViralHepatitisMicroscopyDetails) {
+        this.acuteViralHepatitisMicroscopyDetails = acuteViralHepatitisMicroscopyDetails;
+    }
+
+    public void setAcuteViralHepatitisNeutralizingAntibodiesDetails(String acuteViralHepatitisNeutralizingAntibodiesDetails) {
+        this.acuteViralHepatitisNeutralizingAntibodiesDetails = acuteViralHepatitisNeutralizingAntibodiesDetails;
+    }
+
+    public void setAcuteViralHepatitisPcrRtPcrDetails(String acuteViralHepatitisPcrRtPcrDetails) {
+        this.acuteViralHepatitisPcrRtPcrDetails = acuteViralHepatitisPcrRtPcrDetails;
+    }
+
+    public void setAcuteViralHepatitisGramStainDetails(String acuteViralHepatitisGramStainDetails) {
+        this.acuteViralHepatitisGramStainDetails = acuteViralHepatitisGramStainDetails;
+    }
+
+    public void setAcuteViralHepatitisLatexAgglutinationDetails(String acuteViralHepatitisLatexAgglutinationDetails) {
+        this.acuteViralHepatitisLatexAgglutinationDetails = acuteViralHepatitisLatexAgglutinationDetails;
+    }
+
+    public void setAcuteViralHepatitisCqValueDetectionDetails(String acuteViralHepatitisCqValueDetectionDetails) {
+        this.acuteViralHepatitisCqValueDetectionDetails = acuteViralHepatitisCqValueDetectionDetails;
+    }
+
+    public void setAcuteViralHepatitisSequencingDetails(String acuteViralHepatitisSequencingDetails) {
+        this.acuteViralHepatitisSequencingDetails = acuteViralHepatitisSequencingDetails;
+    }
+
+    public void setAcuteViralHepatitisDnaMicroarrayDetails(String acuteViralHepatitisDnaMicroarrayDetails) {
+        this.acuteViralHepatitisDnaMicroarrayDetails = acuteViralHepatitisDnaMicroarrayDetails;
+    }
+
+    public void setAcuteViralHepatitisOtherDetails(String acuteViralHepatitisOtherDetails) {
+        this.acuteViralHepatitisOtherDetails = acuteViralHepatitisOtherDetails;
+    }
+
+    public void setNonNeonatalTetanusAntibodyDetection(String nonNeonatalTetanusAntibodyDetection) {
+        this.nonNeonatalTetanusAntibodyDetection = nonNeonatalTetanusAntibodyDetection;
     }
 
     public void setNonNeonatalTetanusAntigenDetection(String nonNeonatalTetanusAntigenDetection) {
@@ -3717,6 +7078,10 @@ public class CaseSampleExportDto implements Serializable {
         this.nonNeonatalTetanusIndirectFluorescentAntibody = nonNeonatalTetanusIndirectFluorescentAntibody;
     }
 
+    public void setNonNeonatalTetanusDirectFluorescentAntibody(String nonNeonatalTetanusDirectFluorescentAntibody) {
+        this.nonNeonatalTetanusDirectFluorescentAntibody = nonNeonatalTetanusDirectFluorescentAntibody;
+    }
+
     public void setNonNeonatalTetanusMicroscopy(String nonNeonatalTetanusMicroscopy) {
         this.nonNeonatalTetanusMicroscopy = nonNeonatalTetanusMicroscopy;
     }
@@ -3725,8 +7090,8 @@ public class CaseSampleExportDto implements Serializable {
         this.nonNeonatalTetanusNeutralizingAntibodies = nonNeonatalTetanusNeutralizingAntibodies;
     }
 
-    public void setNonNeonatalTetanusPcr(String nonNeonatalTetanusPcr) {
-        this.nonNeonatalTetanusPcr = nonNeonatalTetanusPcr;
+    public void setNonNeonatalTetanusPcrRtPcr(String nonNeonatalTetanusPcrRtPcr) {
+        this.nonNeonatalTetanusPcrRtPcr = nonNeonatalTetanusPcrRtPcr;
     }
 
     public void setNonNeonatalTetanusGramStain(String nonNeonatalTetanusGramStain) {
@@ -3741,20 +7106,104 @@ public class CaseSampleExportDto implements Serializable {
         this.nonNeonatalTetanusCqValueDetection = nonNeonatalTetanusCqValueDetection;
     }
 
-    public void setNonNeonatalTetanusSeQuencing(String nonNeonatalTetanusSeQuencing) {
-        this.nonNeonatalTetanusSeQuencing = nonNeonatalTetanusSeQuencing;
+    public void setNonNeonatalTetanusSequencing(String nonNeonatalTetanusSequencing) {
+        this.nonNeonatalTetanusSequencing = nonNeonatalTetanusSequencing;
     }
 
-    public void setNonNeonatalTetanusDnaMicroArray(String nonNeonatalTetanusDnaMicroArray) {
-        this.nonNeonatalTetanusDnaMicroArray = nonNeonatalTetanusDnaMicroArray;
+    public void setNonNeonatalTetanusDnaMicroarray(String nonNeonatalTetanusDnaMicroarray) {
+        this.nonNeonatalTetanusDnaMicroarray = nonNeonatalTetanusDnaMicroarray;
     }
 
     public void setNonNeonatalTetanusOther(String nonNeonatalTetanusOther) {
         this.nonNeonatalTetanusOther = nonNeonatalTetanusOther;
     }
 
-    public void setHivAntiBodyDetection(String hivAntiBodyDetection) {
-        this.hivAntiBodyDetection = hivAntiBodyDetection;
+    public void setNonNeonatalTetanusAntibodyDetectionDetails(String nonNeonatalTetanusAntibodyDetectionDetails) {
+        this.nonNeonatalTetanusAntibodyDetectionDetails = nonNeonatalTetanusAntibodyDetectionDetails;
+    }
+
+    public void setNonNeonatalTetanusAntigenDetectionDetails(String nonNeonatalTetanusAntigenDetectionDetails) {
+        this.nonNeonatalTetanusAntigenDetectionDetails = nonNeonatalTetanusAntigenDetectionDetails;
+    }
+
+    public void setNonNeonatalTetanusRapidTestDetails(String nonNeonatalTetanusRapidTestDetails) {
+        this.nonNeonatalTetanusRapidTestDetails = nonNeonatalTetanusRapidTestDetails;
+    }
+
+    public void setNonNeonatalTetanusCultureDetails(String nonNeonatalTetanusCultureDetails) {
+        this.nonNeonatalTetanusCultureDetails = nonNeonatalTetanusCultureDetails;
+    }
+
+    public void setNonNeonatalTetanusHistopathologyDetails(String nonNeonatalTetanusHistopathologyDetails) {
+        this.nonNeonatalTetanusHistopathologyDetails = nonNeonatalTetanusHistopathologyDetails;
+    }
+
+    public void setNonNeonatalTetanusIsolationDetails(String nonNeonatalTetanusIsolationDetails) {
+        this.nonNeonatalTetanusIsolationDetails = nonNeonatalTetanusIsolationDetails;
+    }
+
+    public void setNonNeonatalTetanusIgmSerumAntibodyDetails(String nonNeonatalTetanusIgmSerumAntibodyDetails) {
+        this.nonNeonatalTetanusIgmSerumAntibodyDetails = nonNeonatalTetanusIgmSerumAntibodyDetails;
+    }
+
+    public void setNonNeonatalTetanusIggSerumAntibodyDetails(String nonNeonatalTetanusIggSerumAntibodyDetails) {
+        this.nonNeonatalTetanusIggSerumAntibodyDetails = nonNeonatalTetanusIggSerumAntibodyDetails;
+    }
+
+    public void setNonNeonatalTetanusIgaSerumAntibodyDetails(String nonNeonatalTetanusIgaSerumAntibodyDetails) {
+        this.nonNeonatalTetanusIgaSerumAntibodyDetails = nonNeonatalTetanusIgaSerumAntibodyDetails;
+    }
+
+    public void setNonNeonatalTetanusIncubationTimeDetails(String nonNeonatalTetanusIncubationTimeDetails) {
+        this.nonNeonatalTetanusIncubationTimeDetails = nonNeonatalTetanusIncubationTimeDetails;
+    }
+
+    public void setNonNeonatalTetanusIndirectFluorescentAntibodyDetails(String nonNeonatalTetanusIndirectFluorescentAntibodyDetails) {
+        this.nonNeonatalTetanusIndirectFluorescentAntibodyDetails = nonNeonatalTetanusIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setNonNeonatalTetanusDirectFluorescentAntibodyDetails(String nonNeonatalTetanusDirectFluorescentAntibodyDetails) {
+        this.nonNeonatalTetanusDirectFluorescentAntibodyDetails = nonNeonatalTetanusDirectFluorescentAntibodyDetails;
+    }
+
+    public void setNonNeonatalTetanusMicroscopyDetails(String nonNeonatalTetanusMicroscopyDetails) {
+        this.nonNeonatalTetanusMicroscopyDetails = nonNeonatalTetanusMicroscopyDetails;
+    }
+
+    public void setNonNeonatalTetanusNeutralizingAntibodiesDetails(String nonNeonatalTetanusNeutralizingAntibodiesDetails) {
+        this.nonNeonatalTetanusNeutralizingAntibodiesDetails = nonNeonatalTetanusNeutralizingAntibodiesDetails;
+    }
+
+    public void setNonNeonatalTetanusPcrRtPcrDetails(String nonNeonatalTetanusPcrRtPcrDetails) {
+        this.nonNeonatalTetanusPcrRtPcrDetails = nonNeonatalTetanusPcrRtPcrDetails;
+    }
+
+    public void setNonNeonatalTetanusGramStainDetails(String nonNeonatalTetanusGramStainDetails) {
+        this.nonNeonatalTetanusGramStainDetails = nonNeonatalTetanusGramStainDetails;
+    }
+
+    public void setNonNeonatalTetanusLatexAgglutinationDetails(String nonNeonatalTetanusLatexAgglutinationDetails) {
+        this.nonNeonatalTetanusLatexAgglutinationDetails = nonNeonatalTetanusLatexAgglutinationDetails;
+    }
+
+    public void setNonNeonatalTetanusCqValueDetectionDetails(String nonNeonatalTetanusCqValueDetectionDetails) {
+        this.nonNeonatalTetanusCqValueDetectionDetails = nonNeonatalTetanusCqValueDetectionDetails;
+    }
+
+    public void setNonNeonatalTetanusSequencingDetails(String nonNeonatalTetanusSequencingDetails) {
+        this.nonNeonatalTetanusSequencingDetails = nonNeonatalTetanusSequencingDetails;
+    }
+
+    public void setNonNeonatalTetanusDnaMicroarrayDetails(String nonNeonatalTetanusDnaMicroarrayDetails) {
+        this.nonNeonatalTetanusDnaMicroarrayDetails = nonNeonatalTetanusDnaMicroarrayDetails;
+    }
+
+    public void setNonNeonatalTetanusOtherDetails(String nonNeonatalTetanusOtherDetails) {
+        this.nonNeonatalTetanusOtherDetails = nonNeonatalTetanusOtherDetails;
+    }
+
+    public void setHivAntibodyDetection(String hivAntibodyDetection) {
+        this.hivAntibodyDetection = hivAntibodyDetection;
     }
 
     public void setHivAntigenDetection(String hivAntigenDetection) {
@@ -3797,6 +7246,10 @@ public class CaseSampleExportDto implements Serializable {
         this.hivIndirectFluorescentAntibody = hivIndirectFluorescentAntibody;
     }
 
+    public void setHivDirectFluorescentAntibody(String hivDirectFluorescentAntibody) {
+        this.hivDirectFluorescentAntibody = hivDirectFluorescentAntibody;
+    }
+
     public void setHivMicroscopy(String hivMicroscopy) {
         this.hivMicroscopy = hivMicroscopy;
     }
@@ -3805,8 +7258,8 @@ public class CaseSampleExportDto implements Serializable {
         this.hivNeutralizingAntibodies = hivNeutralizingAntibodies;
     }
 
-    public void setHivPcr(String hivPcr) {
-        this.hivPcr = hivPcr;
+    public void setHivPcrRtPcr(String hivPcrRtPcr) {
+        this.hivPcrRtPcr = hivPcrRtPcr;
     }
 
     public void setHivGramStain(String hivGramStain) {
@@ -3821,20 +7274,104 @@ public class CaseSampleExportDto implements Serializable {
         this.hivCqValueDetection = hivCqValueDetection;
     }
 
-    public void setHivSeQuencing(String hivSeQuencing) {
-        this.hivSeQuencing = hivSeQuencing;
+    public void setHivSequencing(String hivSequencing) {
+        this.hivSequencing = hivSequencing;
     }
 
-    public void setHivDnaMicroArray(String hivDnaMicroArray) {
-        this.hivDnaMicroArray = hivDnaMicroArray;
+    public void setHivDnaMicroarray(String hivDnaMicroarray) {
+        this.hivDnaMicroarray = hivDnaMicroarray;
     }
 
     public void setHivOther(String hivOther) {
         this.hivOther = hivOther;
     }
 
-    public void setSchistosomiasisAntiBodyDetection(String schistosomiasisAntiBodyDetection) {
-        this.schistosomiasisAntiBodyDetection = schistosomiasisAntiBodyDetection;
+    public void setHivAntibodyDetectionDetails(String hivAntibodyDetectionDetails) {
+        this.hivAntibodyDetectionDetails = hivAntibodyDetectionDetails;
+    }
+
+    public void setHivAntigenDetectionDetails(String hivAntigenDetectionDetails) {
+        this.hivAntigenDetectionDetails = hivAntigenDetectionDetails;
+    }
+
+    public void setHivRapidTestDetails(String hivRapidTestDetails) {
+        this.hivRapidTestDetails = hivRapidTestDetails;
+    }
+
+    public void setHivCultureDetails(String hivCultureDetails) {
+        this.hivCultureDetails = hivCultureDetails;
+    }
+
+    public void setHivHistopathologyDetails(String hivHistopathologyDetails) {
+        this.hivHistopathologyDetails = hivHistopathologyDetails;
+    }
+
+    public void setHivIsolationDetails(String hivIsolationDetails) {
+        this.hivIsolationDetails = hivIsolationDetails;
+    }
+
+    public void setHivIgmSerumAntibodyDetails(String hivIgmSerumAntibodyDetails) {
+        this.hivIgmSerumAntibodyDetails = hivIgmSerumAntibodyDetails;
+    }
+
+    public void setHivIggSerumAntibodyDetails(String hivIggSerumAntibodyDetails) {
+        this.hivIggSerumAntibodyDetails = hivIggSerumAntibodyDetails;
+    }
+
+    public void setHivIgaSerumAntibodyDetails(String hivIgaSerumAntibodyDetails) {
+        this.hivIgaSerumAntibodyDetails = hivIgaSerumAntibodyDetails;
+    }
+
+    public void setHivIncubationTimeDetails(String hivIncubationTimeDetails) {
+        this.hivIncubationTimeDetails = hivIncubationTimeDetails;
+    }
+
+    public void setHivIndirectFluorescentAntibodyDetails(String hivIndirectFluorescentAntibodyDetails) {
+        this.hivIndirectFluorescentAntibodyDetails = hivIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setHivDirectFluorescentAntibodyDetails(String hivDirectFluorescentAntibodyDetails) {
+        this.hivDirectFluorescentAntibodyDetails = hivDirectFluorescentAntibodyDetails;
+    }
+
+    public void setHivMicroscopyDetails(String hivMicroscopyDetails) {
+        this.hivMicroscopyDetails = hivMicroscopyDetails;
+    }
+
+    public void setHivNeutralizingAntibodiesDetails(String hivNeutralizingAntibodiesDetails) {
+        this.hivNeutralizingAntibodiesDetails = hivNeutralizingAntibodiesDetails;
+    }
+
+    public void setHivPcrRtPcrDetails(String hivPcrRtPcrDetails) {
+        this.hivPcrRtPcrDetails = hivPcrRtPcrDetails;
+    }
+
+    public void setHivGramStainDetails(String hivGramStainDetails) {
+        this.hivGramStainDetails = hivGramStainDetails;
+    }
+
+    public void setHivLatexAgglutinationDetails(String hivLatexAgglutinationDetails) {
+        this.hivLatexAgglutinationDetails = hivLatexAgglutinationDetails;
+    }
+
+    public void setHivCqValueDetectionDetails(String hivCqValueDetectionDetails) {
+        this.hivCqValueDetectionDetails = hivCqValueDetectionDetails;
+    }
+
+    public void setHivSequencingDetails(String hivSequencingDetails) {
+        this.hivSequencingDetails = hivSequencingDetails;
+    }
+
+    public void setHivDnaMicroarrayDetails(String hivDnaMicroarrayDetails) {
+        this.hivDnaMicroarrayDetails = hivDnaMicroarrayDetails;
+    }
+
+    public void setHivOtherDetails(String hivOtherDetails) {
+        this.hivOtherDetails = hivOtherDetails;
+    }
+
+    public void setSchistosomiasisAntibodyDetection(String schistosomiasisAntibodyDetection) {
+        this.schistosomiasisAntibodyDetection = schistosomiasisAntibodyDetection;
     }
 
     public void setSchistosomiasisAntigenDetection(String schistosomiasisAntigenDetection) {
@@ -3877,6 +7414,10 @@ public class CaseSampleExportDto implements Serializable {
         this.schistosomiasisIndirectFluorescentAntibody = schistosomiasisIndirectFluorescentAntibody;
     }
 
+    public void setSchistosomiasisDirectFluorescentAntibody(String schistosomiasisDirectFluorescentAntibody) {
+        this.schistosomiasisDirectFluorescentAntibody = schistosomiasisDirectFluorescentAntibody;
+    }
+
     public void setSchistosomiasisMicroscopy(String schistosomiasisMicroscopy) {
         this.schistosomiasisMicroscopy = schistosomiasisMicroscopy;
     }
@@ -3885,8 +7426,8 @@ public class CaseSampleExportDto implements Serializable {
         this.schistosomiasisNeutralizingAntibodies = schistosomiasisNeutralizingAntibodies;
     }
 
-    public void setSchistosomiasisPcr(String schistosomiasisPcr) {
-        this.schistosomiasisPcr = schistosomiasisPcr;
+    public void setSchistosomiasisPcrRtPcr(String schistosomiasisPcrRtPcr) {
+        this.schistosomiasisPcrRtPcr = schistosomiasisPcrRtPcr;
     }
 
     public void setSchistosomiasisGramStain(String schistosomiasisGramStain) {
@@ -3901,20 +7442,104 @@ public class CaseSampleExportDto implements Serializable {
         this.schistosomiasisCqValueDetection = schistosomiasisCqValueDetection;
     }
 
-    public void setSchistosomiasisSeQuencing(String schistosomiasisSeQuencing) {
-        this.schistosomiasisSeQuencing = schistosomiasisSeQuencing;
+    public void setSchistosomiasisSequencing(String schistosomiasisSequencing) {
+        this.schistosomiasisSequencing = schistosomiasisSequencing;
     }
 
-    public void setSchistosomiasisDnaMicroArray(String schistosomiasisDnaMicroArray) {
-        this.schistosomiasisDnaMicroArray = schistosomiasisDnaMicroArray;
+    public void setSchistosomiasisDnaMicroarray(String schistosomiasisDnaMicroarray) {
+        this.schistosomiasisDnaMicroarray = schistosomiasisDnaMicroarray;
     }
 
     public void setSchistosomiasisOther(String schistosomiasisOther) {
         this.schistosomiasisOther = schistosomiasisOther;
     }
 
-    public void setSoilTransmittedHelminthsAntiBodyDetection(String soilTransmittedHelminthsAntiBodyDetection) {
-        this.soilTransmittedHelminthsAntiBodyDetection = soilTransmittedHelminthsAntiBodyDetection;
+    public void setSchistosomiasisAntibodyDetectionDetails(String schistosomiasisAntibodyDetectionDetails) {
+        this.schistosomiasisAntibodyDetectionDetails = schistosomiasisAntibodyDetectionDetails;
+    }
+
+    public void setSchistosomiasisAntigenDetectionDetails(String schistosomiasisAntigenDetectionDetails) {
+        this.schistosomiasisAntigenDetectionDetails = schistosomiasisAntigenDetectionDetails;
+    }
+
+    public void setSchistosomiasisRapidTestDetails(String schistosomiasisRapidTestDetails) {
+        this.schistosomiasisRapidTestDetails = schistosomiasisRapidTestDetails;
+    }
+
+    public void setSchistosomiasisCultureDetails(String schistosomiasisCultureDetails) {
+        this.schistosomiasisCultureDetails = schistosomiasisCultureDetails;
+    }
+
+    public void setSchistosomiasisHistopathologyDetails(String schistosomiasisHistopathologyDetails) {
+        this.schistosomiasisHistopathologyDetails = schistosomiasisHistopathologyDetails;
+    }
+
+    public void setSchistosomiasisIsolationDetails(String schistosomiasisIsolationDetails) {
+        this.schistosomiasisIsolationDetails = schistosomiasisIsolationDetails;
+    }
+
+    public void setSchistosomiasisIgmSerumAntibodyDetails(String schistosomiasisIgmSerumAntibodyDetails) {
+        this.schistosomiasisIgmSerumAntibodyDetails = schistosomiasisIgmSerumAntibodyDetails;
+    }
+
+    public void setSchistosomiasisIggSerumAntibodyDetails(String schistosomiasisIggSerumAntibodyDetails) {
+        this.schistosomiasisIggSerumAntibodyDetails = schistosomiasisIggSerumAntibodyDetails;
+    }
+
+    public void setSchistosomiasisIgaSerumAntibodyDetails(String schistosomiasisIgaSerumAntibodyDetails) {
+        this.schistosomiasisIgaSerumAntibodyDetails = schistosomiasisIgaSerumAntibodyDetails;
+    }
+
+    public void setSchistosomiasisIncubationTimeDetails(String schistosomiasisIncubationTimeDetails) {
+        this.schistosomiasisIncubationTimeDetails = schistosomiasisIncubationTimeDetails;
+    }
+
+    public void setSchistosomiasisIndirectFluorescentAntibodyDetails(String schistosomiasisIndirectFluorescentAntibodyDetails) {
+        this.schistosomiasisIndirectFluorescentAntibodyDetails = schistosomiasisIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setSchistosomiasisDirectFluorescentAntibodyDetails(String schistosomiasisDirectFluorescentAntibodyDetails) {
+        this.schistosomiasisDirectFluorescentAntibodyDetails = schistosomiasisDirectFluorescentAntibodyDetails;
+    }
+
+    public void setSchistosomiasisMicroscopyDetails(String schistosomiasisMicroscopyDetails) {
+        this.schistosomiasisMicroscopyDetails = schistosomiasisMicroscopyDetails;
+    }
+
+    public void setSchistosomiasisNeutralizingAntibodiesDetails(String schistosomiasisNeutralizingAntibodiesDetails) {
+        this.schistosomiasisNeutralizingAntibodiesDetails = schistosomiasisNeutralizingAntibodiesDetails;
+    }
+
+    public void setSchistosomiasisPcrRtPcrDetails(String schistosomiasisPcrRtPcrDetails) {
+        this.schistosomiasisPcrRtPcrDetails = schistosomiasisPcrRtPcrDetails;
+    }
+
+    public void setSchistosomiasisGramStainDetails(String schistosomiasisGramStainDetails) {
+        this.schistosomiasisGramStainDetails = schistosomiasisGramStainDetails;
+    }
+
+    public void setSchistosomiasisLatexAgglutinationDetails(String schistosomiasisLatexAgglutinationDetails) {
+        this.schistosomiasisLatexAgglutinationDetails = schistosomiasisLatexAgglutinationDetails;
+    }
+
+    public void setSchistosomiasisCqValueDetectionDetails(String schistosomiasisCqValueDetectionDetails) {
+        this.schistosomiasisCqValueDetectionDetails = schistosomiasisCqValueDetectionDetails;
+    }
+
+    public void setSchistosomiasisSequencingDetails(String schistosomiasisSequencingDetails) {
+        this.schistosomiasisSequencingDetails = schistosomiasisSequencingDetails;
+    }
+
+    public void setSchistosomiasisDnaMicroarrayDetails(String schistosomiasisDnaMicroarrayDetails) {
+        this.schistosomiasisDnaMicroarrayDetails = schistosomiasisDnaMicroarrayDetails;
+    }
+
+    public void setSchistosomiasisOtherDetails(String schistosomiasisOtherDetails) {
+        this.schistosomiasisOtherDetails = schistosomiasisOtherDetails;
+    }
+
+    public void setSoilTransmittedHelminthsAntibodyDetection(String soilTransmittedHelminthsAntibodyDetection) {
+        this.soilTransmittedHelminthsAntibodyDetection = soilTransmittedHelminthsAntibodyDetection;
     }
 
     public void setSoilTransmittedHelminthsAntigenDetection(String soilTransmittedHelminthsAntigenDetection) {
@@ -3957,6 +7582,10 @@ public class CaseSampleExportDto implements Serializable {
         this.soilTransmittedHelminthsIndirectFluorescentAntibody = soilTransmittedHelminthsIndirectFluorescentAntibody;
     }
 
+    public void setSoilTransmittedHelminthsDirectFluorescentAntibody(String soilTransmittedHelminthsDirectFluorescentAntibody) {
+        this.soilTransmittedHelminthsDirectFluorescentAntibody = soilTransmittedHelminthsDirectFluorescentAntibody;
+    }
+
     public void setSoilTransmittedHelminthsMicroscopy(String soilTransmittedHelminthsMicroscopy) {
         this.soilTransmittedHelminthsMicroscopy = soilTransmittedHelminthsMicroscopy;
     }
@@ -3965,8 +7594,8 @@ public class CaseSampleExportDto implements Serializable {
         this.soilTransmittedHelminthsNeutralizingAntibodies = soilTransmittedHelminthsNeutralizingAntibodies;
     }
 
-    public void setSoilTransmittedHelminthsPcr(String soilTransmittedHelminthsPcr) {
-        this.soilTransmittedHelminthsPcr = soilTransmittedHelminthsPcr;
+    public void setSoilTransmittedHelminthsPcrRtPcr(String soilTransmittedHelminthsPcrRtPcr) {
+        this.soilTransmittedHelminthsPcrRtPcr = soilTransmittedHelminthsPcrRtPcr;
     }
 
     public void setSoilTransmittedHelminthsGramStain(String soilTransmittedHelminthsGramStain) {
@@ -3981,20 +7610,104 @@ public class CaseSampleExportDto implements Serializable {
         this.soilTransmittedHelminthsCqValueDetection = soilTransmittedHelminthsCqValueDetection;
     }
 
-    public void setSoilTransmittedHelminthsSeQuencing(String soilTransmittedHelminthsSeQuencing) {
-        this.soilTransmittedHelminthsSeQuencing = soilTransmittedHelminthsSeQuencing;
+    public void setSoilTransmittedHelminthsSequencing(String soilTransmittedHelminthsSequencing) {
+        this.soilTransmittedHelminthsSequencing = soilTransmittedHelminthsSequencing;
     }
 
-    public void setSoilTransmittedHelminthsDnaMicroArray(String soilTransmittedHelminthsDnaMicroArray) {
-        this.soilTransmittedHelminthsDnaMicroArray = soilTransmittedHelminthsDnaMicroArray;
+    public void setSoilTransmittedHelminthsDnaMicroarray(String soilTransmittedHelminthsDnaMicroarray) {
+        this.soilTransmittedHelminthsDnaMicroarray = soilTransmittedHelminthsDnaMicroarray;
     }
 
     public void setSoilTransmittedHelminthsOther(String soilTransmittedHelminthsOther) {
         this.soilTransmittedHelminthsOther = soilTransmittedHelminthsOther;
     }
 
-    public void setTrypanosomiasisAntiBodyDetection(String trypanosomiasisAntiBodyDetection) {
-        this.trypanosomiasisAntiBodyDetection = trypanosomiasisAntiBodyDetection;
+    public void setSoilTransmittedHelminthsAntibodyDetectionDetails(String soilTransmittedHelminthsAntibodyDetectionDetails) {
+        this.soilTransmittedHelminthsAntibodyDetectionDetails = soilTransmittedHelminthsAntibodyDetectionDetails;
+    }
+
+    public void setSoilTransmittedHelminthsAntigenDetectionDetails(String soilTransmittedHelminthsAntigenDetectionDetails) {
+        this.soilTransmittedHelminthsAntigenDetectionDetails = soilTransmittedHelminthsAntigenDetectionDetails;
+    }
+
+    public void setSoilTransmittedHelminthsRapidTestDetails(String soilTransmittedHelminthsRapidTestDetails) {
+        this.soilTransmittedHelminthsRapidTestDetails = soilTransmittedHelminthsRapidTestDetails;
+    }
+
+    public void setSoilTransmittedHelminthsCultureDetails(String soilTransmittedHelminthsCultureDetails) {
+        this.soilTransmittedHelminthsCultureDetails = soilTransmittedHelminthsCultureDetails;
+    }
+
+    public void setSoilTransmittedHelminthsHistopathologyDetails(String soilTransmittedHelminthsHistopathologyDetails) {
+        this.soilTransmittedHelminthsHistopathologyDetails = soilTransmittedHelminthsHistopathologyDetails;
+    }
+
+    public void setSoilTransmittedHelminthsIsolationDetails(String soilTransmittedHelminthsIsolationDetails) {
+        this.soilTransmittedHelminthsIsolationDetails = soilTransmittedHelminthsIsolationDetails;
+    }
+
+    public void setSoilTransmittedHelminthsIgmSerumAntibodyDetails(String soilTransmittedHelminthsIgmSerumAntibodyDetails) {
+        this.soilTransmittedHelminthsIgmSerumAntibodyDetails = soilTransmittedHelminthsIgmSerumAntibodyDetails;
+    }
+
+    public void setSoilTransmittedHelminthsIggSerumAntibodyDetails(String soilTransmittedHelminthsIggSerumAntibodyDetails) {
+        this.soilTransmittedHelminthsIggSerumAntibodyDetails = soilTransmittedHelminthsIggSerumAntibodyDetails;
+    }
+
+    public void setSoilTransmittedHelminthsIgaSerumAntibodyDetails(String soilTransmittedHelminthsIgaSerumAntibodyDetails) {
+        this.soilTransmittedHelminthsIgaSerumAntibodyDetails = soilTransmittedHelminthsIgaSerumAntibodyDetails;
+    }
+
+    public void setSoilTransmittedHelminthsIncubationTimeDetails(String soilTransmittedHelminthsIncubationTimeDetails) {
+        this.soilTransmittedHelminthsIncubationTimeDetails = soilTransmittedHelminthsIncubationTimeDetails;
+    }
+
+    public void setSoilTransmittedHelminthsIndirectFluorescentAntibodyDetails(String soilTransmittedHelminthsIndirectFluorescentAntibodyDetails) {
+        this.soilTransmittedHelminthsIndirectFluorescentAntibodyDetails = soilTransmittedHelminthsIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setSoilTransmittedHelminthsDirectFluorescentAntibodyDetails(String soilTransmittedHelminthsDirectFluorescentAntibodyDetails) {
+        this.soilTransmittedHelminthsDirectFluorescentAntibodyDetails = soilTransmittedHelminthsDirectFluorescentAntibodyDetails;
+    }
+
+    public void setSoilTransmittedHelminthsMicroscopyDetails(String soilTransmittedHelminthsMicroscopyDetails) {
+        this.soilTransmittedHelminthsMicroscopyDetails = soilTransmittedHelminthsMicroscopyDetails;
+    }
+
+    public void setSoilTransmittedHelminthsNeutralizingAntibodiesDetails(String soilTransmittedHelminthsNeutralizingAntibodiesDetails) {
+        this.soilTransmittedHelminthsNeutralizingAntibodiesDetails = soilTransmittedHelminthsNeutralizingAntibodiesDetails;
+    }
+
+    public void setSoilTransmittedHelminthsPcrRtPcrDetails(String soilTransmittedHelminthsPcrRtPcrDetails) {
+        this.soilTransmittedHelminthsPcrRtPcrDetails = soilTransmittedHelminthsPcrRtPcrDetails;
+    }
+
+    public void setSoilTransmittedHelminthsGramStainDetails(String soilTransmittedHelminthsGramStainDetails) {
+        this.soilTransmittedHelminthsGramStainDetails = soilTransmittedHelminthsGramStainDetails;
+    }
+
+    public void setSoilTransmittedHelminthsLatexAgglutinationDetails(String soilTransmittedHelminthsLatexAgglutinationDetails) {
+        this.soilTransmittedHelminthsLatexAgglutinationDetails = soilTransmittedHelminthsLatexAgglutinationDetails;
+    }
+
+    public void setSoilTransmittedHelminthsCqValueDetectionDetails(String soilTransmittedHelminthsCqValueDetectionDetails) {
+        this.soilTransmittedHelminthsCqValueDetectionDetails = soilTransmittedHelminthsCqValueDetectionDetails;
+    }
+
+    public void setSoilTransmittedHelminthsSequencingDetails(String soilTransmittedHelminthsSequencingDetails) {
+        this.soilTransmittedHelminthsSequencingDetails = soilTransmittedHelminthsSequencingDetails;
+    }
+
+    public void setSoilTransmittedHelminthsDnaMicroarrayDetails(String soilTransmittedHelminthsDnaMicroarrayDetails) {
+        this.soilTransmittedHelminthsDnaMicroarrayDetails = soilTransmittedHelminthsDnaMicroarrayDetails;
+    }
+
+    public void setSoilTransmittedHelminthsOtherDetails(String soilTransmittedHelminthsOtherDetails) {
+        this.soilTransmittedHelminthsOtherDetails = soilTransmittedHelminthsOtherDetails;
+    }
+
+    public void setTrypanosomiasisAntibodyDetection(String trypanosomiasisAntibodyDetection) {
+        this.trypanosomiasisAntibodyDetection = trypanosomiasisAntibodyDetection;
     }
 
     public void setTrypanosomiasisAntigenDetection(String trypanosomiasisAntigenDetection) {
@@ -4037,6 +7750,10 @@ public class CaseSampleExportDto implements Serializable {
         this.trypanosomiasisIndirectFluorescentAntibody = trypanosomiasisIndirectFluorescentAntibody;
     }
 
+    public void setTrypanosomiasisDirectFluorescentAntibody(String trypanosomiasisDirectFluorescentAntibody) {
+        this.trypanosomiasisDirectFluorescentAntibody = trypanosomiasisDirectFluorescentAntibody;
+    }
+
     public void setTrypanosomiasisMicroscopy(String trypanosomiasisMicroscopy) {
         this.trypanosomiasisMicroscopy = trypanosomiasisMicroscopy;
     }
@@ -4045,8 +7762,8 @@ public class CaseSampleExportDto implements Serializable {
         this.trypanosomiasisNeutralizingAntibodies = trypanosomiasisNeutralizingAntibodies;
     }
 
-    public void setTrypanosomiasisPcr(String trypanosomiasisPcr) {
-        this.trypanosomiasisPcr = trypanosomiasisPcr;
+    public void setTrypanosomiasisPcrRtPcr(String trypanosomiasisPcrRtPcr) {
+        this.trypanosomiasisPcrRtPcr = trypanosomiasisPcrRtPcr;
     }
 
     public void setTrypanosomiasisGramStain(String trypanosomiasisGramStain) {
@@ -4061,20 +7778,104 @@ public class CaseSampleExportDto implements Serializable {
         this.trypanosomiasisCqValueDetection = trypanosomiasisCqValueDetection;
     }
 
-    public void setTrypanosomiasisSeQuencing(String trypanosomiasisSeQuencing) {
-        this.trypanosomiasisSeQuencing = trypanosomiasisSeQuencing;
+    public void setTrypanosomiasisSequencing(String trypanosomiasisSequencing) {
+        this.trypanosomiasisSequencing = trypanosomiasisSequencing;
     }
 
-    public void setTrypanosomiasisDnaMicroArray(String trypanosomiasisDnaMicroArray) {
-        this.trypanosomiasisDnaMicroArray = trypanosomiasisDnaMicroArray;
+    public void setTrypanosomiasisDnaMicroarray(String trypanosomiasisDnaMicroarray) {
+        this.trypanosomiasisDnaMicroarray = trypanosomiasisDnaMicroarray;
     }
 
     public void setTrypanosomiasisOther(String trypanosomiasisOther) {
         this.trypanosomiasisOther = trypanosomiasisOther;
     }
 
-    public void setDiarrheaDehydrationAntiBodyDetection(String diarrheaDehydrationAntiBodyDetection) {
-        this.diarrheaDehydrationAntiBodyDetection = diarrheaDehydrationAntiBodyDetection;
+    public void setTrypanosomiasisAntibodyDetectionDetails(String trypanosomiasisAntibodyDetectionDetails) {
+        this.trypanosomiasisAntibodyDetectionDetails = trypanosomiasisAntibodyDetectionDetails;
+    }
+
+    public void setTrypanosomiasisAntigenDetectionDetails(String trypanosomiasisAntigenDetectionDetails) {
+        this.trypanosomiasisAntigenDetectionDetails = trypanosomiasisAntigenDetectionDetails;
+    }
+
+    public void setTrypanosomiasisRapidTestDetails(String trypanosomiasisRapidTestDetails) {
+        this.trypanosomiasisRapidTestDetails = trypanosomiasisRapidTestDetails;
+    }
+
+    public void setTrypanosomiasisCultureDetails(String trypanosomiasisCultureDetails) {
+        this.trypanosomiasisCultureDetails = trypanosomiasisCultureDetails;
+    }
+
+    public void setTrypanosomiasisHistopathologyDetails(String trypanosomiasisHistopathologyDetails) {
+        this.trypanosomiasisHistopathologyDetails = trypanosomiasisHistopathologyDetails;
+    }
+
+    public void setTrypanosomiasisIsolationDetails(String trypanosomiasisIsolationDetails) {
+        this.trypanosomiasisIsolationDetails = trypanosomiasisIsolationDetails;
+    }
+
+    public void setTrypanosomiasisIgmSerumAntibodyDetails(String trypanosomiasisIgmSerumAntibodyDetails) {
+        this.trypanosomiasisIgmSerumAntibodyDetails = trypanosomiasisIgmSerumAntibodyDetails;
+    }
+
+    public void setTrypanosomiasisIggSerumAntibodyDetails(String trypanosomiasisIggSerumAntibodyDetails) {
+        this.trypanosomiasisIggSerumAntibodyDetails = trypanosomiasisIggSerumAntibodyDetails;
+    }
+
+    public void setTrypanosomiasisIgaSerumAntibodyDetails(String trypanosomiasisIgaSerumAntibodyDetails) {
+        this.trypanosomiasisIgaSerumAntibodyDetails = trypanosomiasisIgaSerumAntibodyDetails;
+    }
+
+    public void setTrypanosomiasisIncubationTimeDetails(String trypanosomiasisIncubationTimeDetails) {
+        this.trypanosomiasisIncubationTimeDetails = trypanosomiasisIncubationTimeDetails;
+    }
+
+    public void setTrypanosomiasisIndirectFluorescentAntibodyDetails(String trypanosomiasisIndirectFluorescentAntibodyDetails) {
+        this.trypanosomiasisIndirectFluorescentAntibodyDetails = trypanosomiasisIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setTrypanosomiasisDirectFluorescentAntibodyDetails(String trypanosomiasisDirectFluorescentAntibodyDetails) {
+        this.trypanosomiasisDirectFluorescentAntibodyDetails = trypanosomiasisDirectFluorescentAntibodyDetails;
+    }
+
+    public void setTrypanosomiasisMicroscopyDetails(String trypanosomiasisMicroscopyDetails) {
+        this.trypanosomiasisMicroscopyDetails = trypanosomiasisMicroscopyDetails;
+    }
+
+    public void setTrypanosomiasisNeutralizingAntibodiesDetails(String trypanosomiasisNeutralizingAntibodiesDetails) {
+        this.trypanosomiasisNeutralizingAntibodiesDetails = trypanosomiasisNeutralizingAntibodiesDetails;
+    }
+
+    public void setTrypanosomiasisPcrRtPcrDetails(String trypanosomiasisPcrRtPcrDetails) {
+        this.trypanosomiasisPcrRtPcrDetails = trypanosomiasisPcrRtPcrDetails;
+    }
+
+    public void setTrypanosomiasisGramStainDetails(String trypanosomiasisGramStainDetails) {
+        this.trypanosomiasisGramStainDetails = trypanosomiasisGramStainDetails;
+    }
+
+    public void setTrypanosomiasisLatexAgglutinationDetails(String trypanosomiasisLatexAgglutinationDetails) {
+        this.trypanosomiasisLatexAgglutinationDetails = trypanosomiasisLatexAgglutinationDetails;
+    }
+
+    public void setTrypanosomiasisCqValueDetectionDetails(String trypanosomiasisCqValueDetectionDetails) {
+        this.trypanosomiasisCqValueDetectionDetails = trypanosomiasisCqValueDetectionDetails;
+    }
+
+    public void setTrypanosomiasisSequencingDetails(String trypanosomiasisSequencingDetails) {
+        this.trypanosomiasisSequencingDetails = trypanosomiasisSequencingDetails;
+    }
+
+    public void setTrypanosomiasisDnaMicroarrayDetails(String trypanosomiasisDnaMicroarrayDetails) {
+        this.trypanosomiasisDnaMicroarrayDetails = trypanosomiasisDnaMicroarrayDetails;
+    }
+
+    public void setTrypanosomiasisOtherDetails(String trypanosomiasisOtherDetails) {
+        this.trypanosomiasisOtherDetails = trypanosomiasisOtherDetails;
+    }
+
+    public void setDiarrheaDehydrationAntibodyDetection(String diarrheaDehydrationAntibodyDetection) {
+        this.diarrheaDehydrationAntibodyDetection = diarrheaDehydrationAntibodyDetection;
     }
 
     public void setDiarrheaDehydrationAntigenDetection(String diarrheaDehydrationAntigenDetection) {
@@ -4117,6 +7918,10 @@ public class CaseSampleExportDto implements Serializable {
         this.diarrheaDehydrationIndirectFluorescentAntibody = diarrheaDehydrationIndirectFluorescentAntibody;
     }
 
+    public void setDiarrheaDehydrationDirectFluorescentAntibody(String diarrheaDehydrationDirectFluorescentAntibody) {
+        this.diarrheaDehydrationDirectFluorescentAntibody = diarrheaDehydrationDirectFluorescentAntibody;
+    }
+
     public void setDiarrheaDehydrationMicroscopy(String diarrheaDehydrationMicroscopy) {
         this.diarrheaDehydrationMicroscopy = diarrheaDehydrationMicroscopy;
     }
@@ -4125,8 +7930,8 @@ public class CaseSampleExportDto implements Serializable {
         this.diarrheaDehydrationNeutralizingAntibodies = diarrheaDehydrationNeutralizingAntibodies;
     }
 
-    public void setDiarrheaDehydrationPcr(String diarrheaDehydrationPcr) {
-        this.diarrheaDehydrationPcr = diarrheaDehydrationPcr;
+    public void setDiarrheaDehydrationPcrRtPcr(String diarrheaDehydrationPcrRtPcr) {
+        this.diarrheaDehydrationPcrRtPcr = diarrheaDehydrationPcrRtPcr;
     }
 
     public void setDiarrheaDehydrationGramStain(String diarrheaDehydrationGramStain) {
@@ -4141,20 +7946,104 @@ public class CaseSampleExportDto implements Serializable {
         this.diarrheaDehydrationCqValueDetection = diarrheaDehydrationCqValueDetection;
     }
 
-    public void setDiarrheaDehydrationSeQuencing(String diarrheaDehydrationSeQuencing) {
-        this.diarrheaDehydrationSeQuencing = diarrheaDehydrationSeQuencing;
+    public void setDiarrheaDehydrationSequencing(String diarrheaDehydrationSequencing) {
+        this.diarrheaDehydrationSequencing = diarrheaDehydrationSequencing;
     }
 
-    public void setDiarrheaDehydrationDnaMicroArray(String diarrheaDehydrationDnaMicroArray) {
-        this.diarrheaDehydrationDnaMicroArray = diarrheaDehydrationDnaMicroArray;
+    public void setDiarrheaDehydrationDnaMicroarray(String diarrheaDehydrationDnaMicroarray) {
+        this.diarrheaDehydrationDnaMicroarray = diarrheaDehydrationDnaMicroarray;
     }
 
     public void setDiarrheaDehydrationOther(String diarrheaDehydrationOther) {
         this.diarrheaDehydrationOther = diarrheaDehydrationOther;
     }
 
-    public void setDiarrheaBloodAntiBodyDetection(String diarrheaBloodAntiBodyDetection) {
-        this.diarrheaBloodAntiBodyDetection = diarrheaBloodAntiBodyDetection;
+    public void setDiarrheaDehydrationAntibodyDetectionDetails(String diarrheaDehydrationAntibodyDetectionDetails) {
+        this.diarrheaDehydrationAntibodyDetectionDetails = diarrheaDehydrationAntibodyDetectionDetails;
+    }
+
+    public void setDiarrheaDehydrationAntigenDetectionDetails(String diarrheaDehydrationAntigenDetectionDetails) {
+        this.diarrheaDehydrationAntigenDetectionDetails = diarrheaDehydrationAntigenDetectionDetails;
+    }
+
+    public void setDiarrheaDehydrationRapidTestDetails(String diarrheaDehydrationRapidTestDetails) {
+        this.diarrheaDehydrationRapidTestDetails = diarrheaDehydrationRapidTestDetails;
+    }
+
+    public void setDiarrheaDehydrationCultureDetails(String diarrheaDehydrationCultureDetails) {
+        this.diarrheaDehydrationCultureDetails = diarrheaDehydrationCultureDetails;
+    }
+
+    public void setDiarrheaDehydrationHistopathologyDetails(String diarrheaDehydrationHistopathologyDetails) {
+        this.diarrheaDehydrationHistopathologyDetails = diarrheaDehydrationHistopathologyDetails;
+    }
+
+    public void setDiarrheaDehydrationIsolationDetails(String diarrheaDehydrationIsolationDetails) {
+        this.diarrheaDehydrationIsolationDetails = diarrheaDehydrationIsolationDetails;
+    }
+
+    public void setDiarrheaDehydrationIgmSerumAntibodyDetails(String diarrheaDehydrationIgmSerumAntibodyDetails) {
+        this.diarrheaDehydrationIgmSerumAntibodyDetails = diarrheaDehydrationIgmSerumAntibodyDetails;
+    }
+
+    public void setDiarrheaDehydrationIggSerumAntibodyDetails(String diarrheaDehydrationIggSerumAntibodyDetails) {
+        this.diarrheaDehydrationIggSerumAntibodyDetails = diarrheaDehydrationIggSerumAntibodyDetails;
+    }
+
+    public void setDiarrheaDehydrationIgaSerumAntibodyDetails(String diarrheaDehydrationIgaSerumAntibodyDetails) {
+        this.diarrheaDehydrationIgaSerumAntibodyDetails = diarrheaDehydrationIgaSerumAntibodyDetails;
+    }
+
+    public void setDiarrheaDehydrationIncubationTimeDetails(String diarrheaDehydrationIncubationTimeDetails) {
+        this.diarrheaDehydrationIncubationTimeDetails = diarrheaDehydrationIncubationTimeDetails;
+    }
+
+    public void setDiarrheaDehydrationIndirectFluorescentAntibodyDetails(String diarrheaDehydrationIndirectFluorescentAntibodyDetails) {
+        this.diarrheaDehydrationIndirectFluorescentAntibodyDetails = diarrheaDehydrationIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setDiarrheaDehydrationDirectFluorescentAntibodyDetails(String diarrheaDehydrationDirectFluorescentAntibodyDetails) {
+        this.diarrheaDehydrationDirectFluorescentAntibodyDetails = diarrheaDehydrationDirectFluorescentAntibodyDetails;
+    }
+
+    public void setDiarrheaDehydrationMicroscopyDetails(String diarrheaDehydrationMicroscopyDetails) {
+        this.diarrheaDehydrationMicroscopyDetails = diarrheaDehydrationMicroscopyDetails;
+    }
+
+    public void setDiarrheaDehydrationNeutralizingAntibodiesDetails(String diarrheaDehydrationNeutralizingAntibodiesDetails) {
+        this.diarrheaDehydrationNeutralizingAntibodiesDetails = diarrheaDehydrationNeutralizingAntibodiesDetails;
+    }
+
+    public void setDiarrheaDehydrationPcrRtPcrDetails(String diarrheaDehydrationPcrRtPcrDetails) {
+        this.diarrheaDehydrationPcrRtPcrDetails = diarrheaDehydrationPcrRtPcrDetails;
+    }
+
+    public void setDiarrheaDehydrationGramStainDetails(String diarrheaDehydrationGramStainDetails) {
+        this.diarrheaDehydrationGramStainDetails = diarrheaDehydrationGramStainDetails;
+    }
+
+    public void setDiarrheaDehydrationLatexAgglutinationDetails(String diarrheaDehydrationLatexAgglutinationDetails) {
+        this.diarrheaDehydrationLatexAgglutinationDetails = diarrheaDehydrationLatexAgglutinationDetails;
+    }
+
+    public void setDiarrheaDehydrationCqValueDetectionDetails(String diarrheaDehydrationCqValueDetectionDetails) {
+        this.diarrheaDehydrationCqValueDetectionDetails = diarrheaDehydrationCqValueDetectionDetails;
+    }
+
+    public void setDiarrheaDehydrationSequencingDetails(String diarrheaDehydrationSequencingDetails) {
+        this.diarrheaDehydrationSequencingDetails = diarrheaDehydrationSequencingDetails;
+    }
+
+    public void setDiarrheaDehydrationDnaMicroarrayDetails(String diarrheaDehydrationDnaMicroarrayDetails) {
+        this.diarrheaDehydrationDnaMicroarrayDetails = diarrheaDehydrationDnaMicroarrayDetails;
+    }
+
+    public void setDiarrheaDehydrationOtherDetails(String diarrheaDehydrationOtherDetails) {
+        this.diarrheaDehydrationOtherDetails = diarrheaDehydrationOtherDetails;
+    }
+
+    public void setDiarrheaBloodAntibodyDetection(String diarrheaBloodAntibodyDetection) {
+        this.diarrheaBloodAntibodyDetection = diarrheaBloodAntibodyDetection;
     }
 
     public void setDiarrheaBloodAntigenDetection(String diarrheaBloodAntigenDetection) {
@@ -4197,6 +8086,10 @@ public class CaseSampleExportDto implements Serializable {
         this.diarrheaBloodIndirectFluorescentAntibody = diarrheaBloodIndirectFluorescentAntibody;
     }
 
+    public void setDiarrheaBloodDirectFluorescentAntibody(String diarrheaBloodDirectFluorescentAntibody) {
+        this.diarrheaBloodDirectFluorescentAntibody = diarrheaBloodDirectFluorescentAntibody;
+    }
+
     public void setDiarrheaBloodMicroscopy(String diarrheaBloodMicroscopy) {
         this.diarrheaBloodMicroscopy = diarrheaBloodMicroscopy;
     }
@@ -4205,8 +8098,8 @@ public class CaseSampleExportDto implements Serializable {
         this.diarrheaBloodNeutralizingAntibodies = diarrheaBloodNeutralizingAntibodies;
     }
 
-    public void setDiarrheaBloodPcr(String diarrheaBloodPcr) {
-        this.diarrheaBloodPcr = diarrheaBloodPcr;
+    public void setDiarrheaBloodPcrRtPcr(String diarrheaBloodPcrRtPcr) {
+        this.diarrheaBloodPcrRtPcr = diarrheaBloodPcrRtPcr;
     }
 
     public void setDiarrheaBloodGramStain(String diarrheaBloodGramStain) {
@@ -4221,20 +8114,104 @@ public class CaseSampleExportDto implements Serializable {
         this.diarrheaBloodCqValueDetection = diarrheaBloodCqValueDetection;
     }
 
-    public void setDiarrheaBloodSeQuencing(String diarrheaBloodSeQuencing) {
-        this.diarrheaBloodSeQuencing = diarrheaBloodSeQuencing;
+    public void setDiarrheaBloodSequencing(String diarrheaBloodSequencing) {
+        this.diarrheaBloodSequencing = diarrheaBloodSequencing;
     }
 
-    public void setDiarrheaBloodDnaMicroArray(String diarrheaBloodDnaMicroArray) {
-        this.diarrheaBloodDnaMicroArray = diarrheaBloodDnaMicroArray;
+    public void setDiarrheaBloodDnaMicroarray(String diarrheaBloodDnaMicroarray) {
+        this.diarrheaBloodDnaMicroarray = diarrheaBloodDnaMicroarray;
     }
 
     public void setDiarrheaBloodOther(String diarrheaBloodOther) {
         this.diarrheaBloodOther = diarrheaBloodOther;
     }
 
-    public void setSnakeBiteAntiBodyDetection(String snakeBiteAntiBodyDetection) {
-        this.snakeBiteAntiBodyDetection = snakeBiteAntiBodyDetection;
+    public void setDiarrheaBloodAntibodyDetectionDetails(String diarrheaBloodAntibodyDetectionDetails) {
+        this.diarrheaBloodAntibodyDetectionDetails = diarrheaBloodAntibodyDetectionDetails;
+    }
+
+    public void setDiarrheaBloodAntigenDetectionDetails(String diarrheaBloodAntigenDetectionDetails) {
+        this.diarrheaBloodAntigenDetectionDetails = diarrheaBloodAntigenDetectionDetails;
+    }
+
+    public void setDiarrheaBloodRapidTestDetails(String diarrheaBloodRapidTestDetails) {
+        this.diarrheaBloodRapidTestDetails = diarrheaBloodRapidTestDetails;
+    }
+
+    public void setDiarrheaBloodCultureDetails(String diarrheaBloodCultureDetails) {
+        this.diarrheaBloodCultureDetails = diarrheaBloodCultureDetails;
+    }
+
+    public void setDiarrheaBloodHistopathologyDetails(String diarrheaBloodHistopathologyDetails) {
+        this.diarrheaBloodHistopathologyDetails = diarrheaBloodHistopathologyDetails;
+    }
+
+    public void setDiarrheaBloodIsolationDetails(String diarrheaBloodIsolationDetails) {
+        this.diarrheaBloodIsolationDetails = diarrheaBloodIsolationDetails;
+    }
+
+    public void setDiarrheaBloodIgmSerumAntibodyDetails(String diarrheaBloodIgmSerumAntibodyDetails) {
+        this.diarrheaBloodIgmSerumAntibodyDetails = diarrheaBloodIgmSerumAntibodyDetails;
+    }
+
+    public void setDiarrheaBloodIggSerumAntibodyDetails(String diarrheaBloodIggSerumAntibodyDetails) {
+        this.diarrheaBloodIggSerumAntibodyDetails = diarrheaBloodIggSerumAntibodyDetails;
+    }
+
+    public void setDiarrheaBloodIgaSerumAntibodyDetails(String diarrheaBloodIgaSerumAntibodyDetails) {
+        this.diarrheaBloodIgaSerumAntibodyDetails = diarrheaBloodIgaSerumAntibodyDetails;
+    }
+
+    public void setDiarrheaBloodIncubationTimeDetails(String diarrheaBloodIncubationTimeDetails) {
+        this.diarrheaBloodIncubationTimeDetails = diarrheaBloodIncubationTimeDetails;
+    }
+
+    public void setDiarrheaBloodIndirectFluorescentAntibodyDetails(String diarrheaBloodIndirectFluorescentAntibodyDetails) {
+        this.diarrheaBloodIndirectFluorescentAntibodyDetails = diarrheaBloodIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setDiarrheaBloodDirectFluorescentAntibodyDetails(String diarrheaBloodDirectFluorescentAntibodyDetails) {
+        this.diarrheaBloodDirectFluorescentAntibodyDetails = diarrheaBloodDirectFluorescentAntibodyDetails;
+    }
+
+    public void setDiarrheaBloodMicroscopyDetails(String diarrheaBloodMicroscopyDetails) {
+        this.diarrheaBloodMicroscopyDetails = diarrheaBloodMicroscopyDetails;
+    }
+
+    public void setDiarrheaBloodNeutralizingAntibodiesDetails(String diarrheaBloodNeutralizingAntibodiesDetails) {
+        this.diarrheaBloodNeutralizingAntibodiesDetails = diarrheaBloodNeutralizingAntibodiesDetails;
+    }
+
+    public void setDiarrheaBloodPcrRtPcrDetails(String diarrheaBloodPcrRtPcrDetails) {
+        this.diarrheaBloodPcrRtPcrDetails = diarrheaBloodPcrRtPcrDetails;
+    }
+
+    public void setDiarrheaBloodGramStainDetails(String diarrheaBloodGramStainDetails) {
+        this.diarrheaBloodGramStainDetails = diarrheaBloodGramStainDetails;
+    }
+
+    public void setDiarrheaBloodLatexAgglutinationDetails(String diarrheaBloodLatexAgglutinationDetails) {
+        this.diarrheaBloodLatexAgglutinationDetails = diarrheaBloodLatexAgglutinationDetails;
+    }
+
+    public void setDiarrheaBloodCqValueDetectionDetails(String diarrheaBloodCqValueDetectionDetails) {
+        this.diarrheaBloodCqValueDetectionDetails = diarrheaBloodCqValueDetectionDetails;
+    }
+
+    public void setDiarrheaBloodSequencingDetails(String diarrheaBloodSequencingDetails) {
+        this.diarrheaBloodSequencingDetails = diarrheaBloodSequencingDetails;
+    }
+
+    public void setDiarrheaBloodDnaMicroarrayDetails(String diarrheaBloodDnaMicroarrayDetails) {
+        this.diarrheaBloodDnaMicroarrayDetails = diarrheaBloodDnaMicroarrayDetails;
+    }
+
+    public void setDiarrheaBloodOtherDetails(String diarrheaBloodOtherDetails) {
+        this.diarrheaBloodOtherDetails = diarrheaBloodOtherDetails;
+    }
+
+    public void setSnakeBiteAntibodyDetection(String snakeBiteAntibodyDetection) {
+        this.snakeBiteAntibodyDetection = snakeBiteAntibodyDetection;
     }
 
     public void setSnakeBiteAntigenDetection(String snakeBiteAntigenDetection) {
@@ -4277,6 +8254,10 @@ public class CaseSampleExportDto implements Serializable {
         this.snakeBiteIndirectFluorescentAntibody = snakeBiteIndirectFluorescentAntibody;
     }
 
+    public void setSnakeBiteDirectFluorescentAntibody(String snakeBiteDirectFluorescentAntibody) {
+        this.snakeBiteDirectFluorescentAntibody = snakeBiteDirectFluorescentAntibody;
+    }
+
     public void setSnakeBiteMicroscopy(String snakeBiteMicroscopy) {
         this.snakeBiteMicroscopy = snakeBiteMicroscopy;
     }
@@ -4285,8 +8266,8 @@ public class CaseSampleExportDto implements Serializable {
         this.snakeBiteNeutralizingAntibodies = snakeBiteNeutralizingAntibodies;
     }
 
-    public void setSnakeBitePcr(String snakeBitePcr) {
-        this.snakeBitePcr = snakeBitePcr;
+    public void setSnakeBitePcrRtPcr(String snakeBitePcrRtPcr) {
+        this.snakeBitePcrRtPcr = snakeBitePcrRtPcr;
     }
 
     public void setSnakeBiteGramStain(String snakeBiteGramStain) {
@@ -4301,20 +8282,104 @@ public class CaseSampleExportDto implements Serializable {
         this.snakeBiteCqValueDetection = snakeBiteCqValueDetection;
     }
 
-    public void setSnakeBiteSeQuencing(String snakeBiteSeQuencing) {
-        this.snakeBiteSeQuencing = snakeBiteSeQuencing;
+    public void setSnakeBiteSequencing(String snakeBiteSequencing) {
+        this.snakeBiteSequencing = snakeBiteSequencing;
     }
 
-    public void setSnakeBiteDnaMicroArray(String snakeBiteDnaMicroArray) {
-        this.snakeBiteDnaMicroArray = snakeBiteDnaMicroArray;
+    public void setSnakeBiteDnaMicroarray(String snakeBiteDnaMicroarray) {
+        this.snakeBiteDnaMicroarray = snakeBiteDnaMicroarray;
     }
 
     public void setSnakeBiteOther(String snakeBiteOther) {
         this.snakeBiteOther = snakeBiteOther;
     }
 
-    public void setRubellaAntiBodyDetection(String rubellaAntiBodyDetection) {
-        this.rubellaAntiBodyDetection = rubellaAntiBodyDetection;
+    public void setSnakeBiteAntibodyDetectionDetails(String snakeBiteAntibodyDetectionDetails) {
+        this.snakeBiteAntibodyDetectionDetails = snakeBiteAntibodyDetectionDetails;
+    }
+
+    public void setSnakeBiteAntigenDetectionDetails(String snakeBiteAntigenDetectionDetails) {
+        this.snakeBiteAntigenDetectionDetails = snakeBiteAntigenDetectionDetails;
+    }
+
+    public void setSnakeBiteRapidTestDetails(String snakeBiteRapidTestDetails) {
+        this.snakeBiteRapidTestDetails = snakeBiteRapidTestDetails;
+    }
+
+    public void setSnakeBiteCultureDetails(String snakeBiteCultureDetails) {
+        this.snakeBiteCultureDetails = snakeBiteCultureDetails;
+    }
+
+    public void setSnakeBiteHistopathologyDetails(String snakeBiteHistopathologyDetails) {
+        this.snakeBiteHistopathologyDetails = snakeBiteHistopathologyDetails;
+    }
+
+    public void setSnakeBiteIsolationDetails(String snakeBiteIsolationDetails) {
+        this.snakeBiteIsolationDetails = snakeBiteIsolationDetails;
+    }
+
+    public void setSnakeBiteIgmSerumAntibodyDetails(String snakeBiteIgmSerumAntibodyDetails) {
+        this.snakeBiteIgmSerumAntibodyDetails = snakeBiteIgmSerumAntibodyDetails;
+    }
+
+    public void setSnakeBiteIggSerumAntibodyDetails(String snakeBiteIggSerumAntibodyDetails) {
+        this.snakeBiteIggSerumAntibodyDetails = snakeBiteIggSerumAntibodyDetails;
+    }
+
+    public void setSnakeBiteIgaSerumAntibodyDetails(String snakeBiteIgaSerumAntibodyDetails) {
+        this.snakeBiteIgaSerumAntibodyDetails = snakeBiteIgaSerumAntibodyDetails;
+    }
+
+    public void setSnakeBiteIncubationTimeDetails(String snakeBiteIncubationTimeDetails) {
+        this.snakeBiteIncubationTimeDetails = snakeBiteIncubationTimeDetails;
+    }
+
+    public void setSnakeBiteIndirectFluorescentAntibodyDetails(String snakeBiteIndirectFluorescentAntibodyDetails) {
+        this.snakeBiteIndirectFluorescentAntibodyDetails = snakeBiteIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setSnakeBiteDirectFluorescentAntibodyDetails(String snakeBiteDirectFluorescentAntibodyDetails) {
+        this.snakeBiteDirectFluorescentAntibodyDetails = snakeBiteDirectFluorescentAntibodyDetails;
+    }
+
+    public void setSnakeBiteMicroscopyDetails(String snakeBiteMicroscopyDetails) {
+        this.snakeBiteMicroscopyDetails = snakeBiteMicroscopyDetails;
+    }
+
+    public void setSnakeBiteNeutralizingAntibodiesDetails(String snakeBiteNeutralizingAntibodiesDetails) {
+        this.snakeBiteNeutralizingAntibodiesDetails = snakeBiteNeutralizingAntibodiesDetails;
+    }
+
+    public void setSnakeBitePcrRtPcrDetails(String snakeBitePcrRtPcrDetails) {
+        this.snakeBitePcrRtPcrDetails = snakeBitePcrRtPcrDetails;
+    }
+
+    public void setSnakeBiteGramStainDetails(String snakeBiteGramStainDetails) {
+        this.snakeBiteGramStainDetails = snakeBiteGramStainDetails;
+    }
+
+    public void setSnakeBiteLatexAgglutinationDetails(String snakeBiteLatexAgglutinationDetails) {
+        this.snakeBiteLatexAgglutinationDetails = snakeBiteLatexAgglutinationDetails;
+    }
+
+    public void setSnakeBiteCqValueDetectionDetails(String snakeBiteCqValueDetectionDetails) {
+        this.snakeBiteCqValueDetectionDetails = snakeBiteCqValueDetectionDetails;
+    }
+
+    public void setSnakeBiteSequencingDetails(String snakeBiteSequencingDetails) {
+        this.snakeBiteSequencingDetails = snakeBiteSequencingDetails;
+    }
+
+    public void setSnakeBiteDnaMicroarrayDetails(String snakeBiteDnaMicroarrayDetails) {
+        this.snakeBiteDnaMicroarrayDetails = snakeBiteDnaMicroarrayDetails;
+    }
+
+    public void setSnakeBiteOtherDetails(String snakeBiteOtherDetails) {
+        this.snakeBiteOtherDetails = snakeBiteOtherDetails;
+    }
+
+    public void setRubellaAntibodyDetection(String rubellaAntibodyDetection) {
+        this.rubellaAntibodyDetection = rubellaAntibodyDetection;
     }
 
     public void setRubellaAntigenDetection(String rubellaAntigenDetection) {
@@ -4357,6 +8422,10 @@ public class CaseSampleExportDto implements Serializable {
         this.rubellaIndirectFluorescentAntibody = rubellaIndirectFluorescentAntibody;
     }
 
+    public void setRubellaDirectFluorescentAntibody(String rubellaDirectFluorescentAntibody) {
+        this.rubellaDirectFluorescentAntibody = rubellaDirectFluorescentAntibody;
+    }
+
     public void setRubellaMicroscopy(String rubellaMicroscopy) {
         this.rubellaMicroscopy = rubellaMicroscopy;
     }
@@ -4365,8 +8434,8 @@ public class CaseSampleExportDto implements Serializable {
         this.rubellaNeutralizingAntibodies = rubellaNeutralizingAntibodies;
     }
 
-    public void setRubellaPcr(String rubellaPcr) {
-        this.rubellaPcr = rubellaPcr;
+    public void setRubellaPcrRtPcr(String rubellaPcrRtPcr) {
+        this.rubellaPcrRtPcr = rubellaPcrRtPcr;
     }
 
     public void setRubellaGramStain(String rubellaGramStain) {
@@ -4381,20 +8450,104 @@ public class CaseSampleExportDto implements Serializable {
         this.rubellaCqValueDetection = rubellaCqValueDetection;
     }
 
-    public void setRubellaSeQuencing(String rubellaSeQuencing) {
-        this.rubellaSeQuencing = rubellaSeQuencing;
+    public void setRubellaSequencing(String rubellaSequencing) {
+        this.rubellaSequencing = rubellaSequencing;
     }
 
-    public void setRubellaDnaMicroArray(String rubellaDnaMicroArray) {
-        this.rubellaDnaMicroArray = rubellaDnaMicroArray;
+    public void setRubellaDnaMicroarray(String rubellaDnaMicroarray) {
+        this.rubellaDnaMicroarray = rubellaDnaMicroarray;
     }
 
     public void setRubellaOther(String rubellaOther) {
         this.rubellaOther = rubellaOther;
     }
 
-    public void setTuberculosisAntiBodyDetection(String tuberculosisAntiBodyDetection) {
-        this.tuberculosisAntiBodyDetection = tuberculosisAntiBodyDetection;
+    public void setRubellaAntibodyDetectionDetails(String rubellaAntibodyDetectionDetails) {
+        this.rubellaAntibodyDetectionDetails = rubellaAntibodyDetectionDetails;
+    }
+
+    public void setRubellaAntigenDetectionDetails(String rubellaAntigenDetectionDetails) {
+        this.rubellaAntigenDetectionDetails = rubellaAntigenDetectionDetails;
+    }
+
+    public void setRubellaRapidTestDetails(String rubellaRapidTestDetails) {
+        this.rubellaRapidTestDetails = rubellaRapidTestDetails;
+    }
+
+    public void setRubellaCultureDetails(String rubellaCultureDetails) {
+        this.rubellaCultureDetails = rubellaCultureDetails;
+    }
+
+    public void setRubellaHistopathologyDetails(String rubellaHistopathologyDetails) {
+        this.rubellaHistopathologyDetails = rubellaHistopathologyDetails;
+    }
+
+    public void setRubellaIsolationDetails(String rubellaIsolationDetails) {
+        this.rubellaIsolationDetails = rubellaIsolationDetails;
+    }
+
+    public void setRubellaIgmSerumAntibodyDetails(String rubellaIgmSerumAntibodyDetails) {
+        this.rubellaIgmSerumAntibodyDetails = rubellaIgmSerumAntibodyDetails;
+    }
+
+    public void setRubellaIggSerumAntibodyDetails(String rubellaIggSerumAntibodyDetails) {
+        this.rubellaIggSerumAntibodyDetails = rubellaIggSerumAntibodyDetails;
+    }
+
+    public void setRubellaIgaSerumAntibodyDetails(String rubellaIgaSerumAntibodyDetails) {
+        this.rubellaIgaSerumAntibodyDetails = rubellaIgaSerumAntibodyDetails;
+    }
+
+    public void setRubellaIncubationTimeDetails(String rubellaIncubationTimeDetails) {
+        this.rubellaIncubationTimeDetails = rubellaIncubationTimeDetails;
+    }
+
+    public void setRubellaIndirectFluorescentAntibodyDetails(String rubellaIndirectFluorescentAntibodyDetails) {
+        this.rubellaIndirectFluorescentAntibodyDetails = rubellaIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setRubellaDirectFluorescentAntibodyDetails(String rubellaDirectFluorescentAntibodyDetails) {
+        this.rubellaDirectFluorescentAntibodyDetails = rubellaDirectFluorescentAntibodyDetails;
+    }
+
+    public void setRubellaMicroscopyDetails(String rubellaMicroscopyDetails) {
+        this.rubellaMicroscopyDetails = rubellaMicroscopyDetails;
+    }
+
+    public void setRubellaNeutralizingAntibodiesDetails(String rubellaNeutralizingAntibodiesDetails) {
+        this.rubellaNeutralizingAntibodiesDetails = rubellaNeutralizingAntibodiesDetails;
+    }
+
+    public void setRubellaPcrRtPcrDetails(String rubellaPcrRtPcrDetails) {
+        this.rubellaPcrRtPcrDetails = rubellaPcrRtPcrDetails;
+    }
+
+    public void setRubellaGramStainDetails(String rubellaGramStainDetails) {
+        this.rubellaGramStainDetails = rubellaGramStainDetails;
+    }
+
+    public void setRubellaLatexAgglutinationDetails(String rubellaLatexAgglutinationDetails) {
+        this.rubellaLatexAgglutinationDetails = rubellaLatexAgglutinationDetails;
+    }
+
+    public void setRubellaCqValueDetectionDetails(String rubellaCqValueDetectionDetails) {
+        this.rubellaCqValueDetectionDetails = rubellaCqValueDetectionDetails;
+    }
+
+    public void setRubellaSequencingDetails(String rubellaSequencingDetails) {
+        this.rubellaSequencingDetails = rubellaSequencingDetails;
+    }
+
+    public void setRubellaDnaMicroarrayDetails(String rubellaDnaMicroarrayDetails) {
+        this.rubellaDnaMicroarrayDetails = rubellaDnaMicroarrayDetails;
+    }
+
+    public void setRubellaOtherDetails(String rubellaOtherDetails) {
+        this.rubellaOtherDetails = rubellaOtherDetails;
+    }
+
+    public void setTuberculosisAntibodyDetection(String tuberculosisAntibodyDetection) {
+        this.tuberculosisAntibodyDetection = tuberculosisAntibodyDetection;
     }
 
     public void setTuberculosisAntigenDetection(String tuberculosisAntigenDetection) {
@@ -4437,6 +8590,10 @@ public class CaseSampleExportDto implements Serializable {
         this.tuberculosisIndirectFluorescentAntibody = tuberculosisIndirectFluorescentAntibody;
     }
 
+    public void setTuberculosisDirectFluorescentAntibody(String tuberculosisDirectFluorescentAntibody) {
+        this.tuberculosisDirectFluorescentAntibody = tuberculosisDirectFluorescentAntibody;
+    }
+
     public void setTuberculosisMicroscopy(String tuberculosisMicroscopy) {
         this.tuberculosisMicroscopy = tuberculosisMicroscopy;
     }
@@ -4445,8 +8602,8 @@ public class CaseSampleExportDto implements Serializable {
         this.tuberculosisNeutralizingAntibodies = tuberculosisNeutralizingAntibodies;
     }
 
-    public void setTuberculosisPcr(String tuberculosisPcr) {
-        this.tuberculosisPcr = tuberculosisPcr;
+    public void setTuberculosisPcrRtPcr(String tuberculosisPcrRtPcr) {
+        this.tuberculosisPcrRtPcr = tuberculosisPcrRtPcr;
     }
 
     public void setTuberculosisGramStain(String tuberculosisGramStain) {
@@ -4461,20 +8618,104 @@ public class CaseSampleExportDto implements Serializable {
         this.tuberculosisCqValueDetection = tuberculosisCqValueDetection;
     }
 
-    public void setTuberculosisSeQuencing(String tuberculosisSeQuencing) {
-        this.tuberculosisSeQuencing = tuberculosisSeQuencing;
+    public void setTuberculosisSequencing(String tuberculosisSequencing) {
+        this.tuberculosisSequencing = tuberculosisSequencing;
     }
 
-    public void setTuberculosisDnaMicroArray(String tuberculosisDnaMicroArray) {
-        this.tuberculosisDnaMicroArray = tuberculosisDnaMicroArray;
+    public void setTuberculosisDnaMicroarray(String tuberculosisDnaMicroarray) {
+        this.tuberculosisDnaMicroarray = tuberculosisDnaMicroarray;
     }
 
     public void setTuberculosisOther(String tuberculosisOther) {
         this.tuberculosisOther = tuberculosisOther;
     }
 
-    public void setLeprosyAntiBodyDetection(String leprosyAntiBodyDetection) {
-        this.leprosyAntiBodyDetection = leprosyAntiBodyDetection;
+    public void setTuberculosisAntibodyDetectionDetails(String tuberculosisAntibodyDetectionDetails) {
+        this.tuberculosisAntibodyDetectionDetails = tuberculosisAntibodyDetectionDetails;
+    }
+
+    public void setTuberculosisAntigenDetectionDetails(String tuberculosisAntigenDetectionDetails) {
+        this.tuberculosisAntigenDetectionDetails = tuberculosisAntigenDetectionDetails;
+    }
+
+    public void setTuberculosisRapidTestDetails(String tuberculosisRapidTestDetails) {
+        this.tuberculosisRapidTestDetails = tuberculosisRapidTestDetails;
+    }
+
+    public void setTuberculosisCultureDetails(String tuberculosisCultureDetails) {
+        this.tuberculosisCultureDetails = tuberculosisCultureDetails;
+    }
+
+    public void setTuberculosisHistopathologyDetails(String tuberculosisHistopathologyDetails) {
+        this.tuberculosisHistopathologyDetails = tuberculosisHistopathologyDetails;
+    }
+
+    public void setTuberculosisIsolationDetails(String tuberculosisIsolationDetails) {
+        this.tuberculosisIsolationDetails = tuberculosisIsolationDetails;
+    }
+
+    public void setTuberculosisIgmSerumAntibodyDetails(String tuberculosisIgmSerumAntibodyDetails) {
+        this.tuberculosisIgmSerumAntibodyDetails = tuberculosisIgmSerumAntibodyDetails;
+    }
+
+    public void setTuberculosisIggSerumAntibodyDetails(String tuberculosisIggSerumAntibodyDetails) {
+        this.tuberculosisIggSerumAntibodyDetails = tuberculosisIggSerumAntibodyDetails;
+    }
+
+    public void setTuberculosisIgaSerumAntibodyDetails(String tuberculosisIgaSerumAntibodyDetails) {
+        this.tuberculosisIgaSerumAntibodyDetails = tuberculosisIgaSerumAntibodyDetails;
+    }
+
+    public void setTuberculosisIncubationTimeDetails(String tuberculosisIncubationTimeDetails) {
+        this.tuberculosisIncubationTimeDetails = tuberculosisIncubationTimeDetails;
+    }
+
+    public void setTuberculosisIndirectFluorescentAntibodyDetails(String tuberculosisIndirectFluorescentAntibodyDetails) {
+        this.tuberculosisIndirectFluorescentAntibodyDetails = tuberculosisIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setTuberculosisDirectFluorescentAntibodyDetails(String tuberculosisDirectFluorescentAntibodyDetails) {
+        this.tuberculosisDirectFluorescentAntibodyDetails = tuberculosisDirectFluorescentAntibodyDetails;
+    }
+
+    public void setTuberculosisMicroscopyDetails(String tuberculosisMicroscopyDetails) {
+        this.tuberculosisMicroscopyDetails = tuberculosisMicroscopyDetails;
+    }
+
+    public void setTuberculosisNeutralizingAntibodiesDetails(String tuberculosisNeutralizingAntibodiesDetails) {
+        this.tuberculosisNeutralizingAntibodiesDetails = tuberculosisNeutralizingAntibodiesDetails;
+    }
+
+    public void setTuberculosisPcrRtPcrDetails(String tuberculosisPcrRtPcrDetails) {
+        this.tuberculosisPcrRtPcrDetails = tuberculosisPcrRtPcrDetails;
+    }
+
+    public void setTuberculosisGramStainDetails(String tuberculosisGramStainDetails) {
+        this.tuberculosisGramStainDetails = tuberculosisGramStainDetails;
+    }
+
+    public void setTuberculosisLatexAgglutinationDetails(String tuberculosisLatexAgglutinationDetails) {
+        this.tuberculosisLatexAgglutinationDetails = tuberculosisLatexAgglutinationDetails;
+    }
+
+    public void setTuberculosisCqValueDetectionDetails(String tuberculosisCqValueDetectionDetails) {
+        this.tuberculosisCqValueDetectionDetails = tuberculosisCqValueDetectionDetails;
+    }
+
+    public void setTuberculosisSequencingDetails(String tuberculosisSequencingDetails) {
+        this.tuberculosisSequencingDetails = tuberculosisSequencingDetails;
+    }
+
+    public void setTuberculosisDnaMicroarrayDetails(String tuberculosisDnaMicroarrayDetails) {
+        this.tuberculosisDnaMicroarrayDetails = tuberculosisDnaMicroarrayDetails;
+    }
+
+    public void setTuberculosisOtherDetails(String tuberculosisOtherDetails) {
+        this.tuberculosisOtherDetails = tuberculosisOtherDetails;
+    }
+
+    public void setLeprosyAntibodyDetection(String leprosyAntibodyDetection) {
+        this.leprosyAntibodyDetection = leprosyAntibodyDetection;
     }
 
     public void setLeprosyAntigenDetection(String leprosyAntigenDetection) {
@@ -4517,6 +8758,10 @@ public class CaseSampleExportDto implements Serializable {
         this.leprosyIndirectFluorescentAntibody = leprosyIndirectFluorescentAntibody;
     }
 
+    public void setLeprosyDirectFluorescentAntibody(String leprosyDirectFluorescentAntibody) {
+        this.leprosyDirectFluorescentAntibody = leprosyDirectFluorescentAntibody;
+    }
+
     public void setLeprosyMicroscopy(String leprosyMicroscopy) {
         this.leprosyMicroscopy = leprosyMicroscopy;
     }
@@ -4525,8 +8770,8 @@ public class CaseSampleExportDto implements Serializable {
         this.leprosyNeutralizingAntibodies = leprosyNeutralizingAntibodies;
     }
 
-    public void setLeprosyPcr(String leprosyPcr) {
-        this.leprosyPcr = leprosyPcr;
+    public void setLeprosyPcrRtPcr(String leprosyPcrRtPcr) {
+        this.leprosyPcrRtPcr = leprosyPcrRtPcr;
     }
 
     public void setLeprosyGramStain(String leprosyGramStain) {
@@ -4541,20 +8786,104 @@ public class CaseSampleExportDto implements Serializable {
         this.leprosyCqValueDetection = leprosyCqValueDetection;
     }
 
-    public void setLeprosySeQuencing(String leprosySeQuencing) {
-        this.leprosySeQuencing = leprosySeQuencing;
+    public void setLeprosySequencing(String leprosySequencing) {
+        this.leprosySequencing = leprosySequencing;
     }
 
-    public void setLeprosyDnaMicroArray(String leprosyDnaMicroArray) {
-        this.leprosyDnaMicroArray = leprosyDnaMicroArray;
+    public void setLeprosyDnaMicroarray(String leprosyDnaMicroarray) {
+        this.leprosyDnaMicroarray = leprosyDnaMicroarray;
     }
 
     public void setLeprosyOther(String leprosyOther) {
         this.leprosyOther = leprosyOther;
     }
 
-    public void setLymphaticFilariasisAntiBodyDetection(String lymphaticFilariasisAntiBodyDetection) {
-        this.lymphaticFilariasisAntiBodyDetection = lymphaticFilariasisAntiBodyDetection;
+    public void setLeprosyAntibodyDetectionDetails(String leprosyAntibodyDetectionDetails) {
+        this.leprosyAntibodyDetectionDetails = leprosyAntibodyDetectionDetails;
+    }
+
+    public void setLeprosyAntigenDetectionDetails(String leprosyAntigenDetectionDetails) {
+        this.leprosyAntigenDetectionDetails = leprosyAntigenDetectionDetails;
+    }
+
+    public void setLeprosyRapidTestDetails(String leprosyRapidTestDetails) {
+        this.leprosyRapidTestDetails = leprosyRapidTestDetails;
+    }
+
+    public void setLeprosyCultureDetails(String leprosyCultureDetails) {
+        this.leprosyCultureDetails = leprosyCultureDetails;
+    }
+
+    public void setLeprosyHistopathologyDetails(String leprosyHistopathologyDetails) {
+        this.leprosyHistopathologyDetails = leprosyHistopathologyDetails;
+    }
+
+    public void setLeprosyIsolationDetails(String leprosyIsolationDetails) {
+        this.leprosyIsolationDetails = leprosyIsolationDetails;
+    }
+
+    public void setLeprosyIgmSerumAntibodyDetails(String leprosyIgmSerumAntibodyDetails) {
+        this.leprosyIgmSerumAntibodyDetails = leprosyIgmSerumAntibodyDetails;
+    }
+
+    public void setLeprosyIggSerumAntibodyDetails(String leprosyIggSerumAntibodyDetails) {
+        this.leprosyIggSerumAntibodyDetails = leprosyIggSerumAntibodyDetails;
+    }
+
+    public void setLeprosyIgaSerumAntibodyDetails(String leprosyIgaSerumAntibodyDetails) {
+        this.leprosyIgaSerumAntibodyDetails = leprosyIgaSerumAntibodyDetails;
+    }
+
+    public void setLeprosyIncubationTimeDetails(String leprosyIncubationTimeDetails) {
+        this.leprosyIncubationTimeDetails = leprosyIncubationTimeDetails;
+    }
+
+    public void setLeprosyIndirectFluorescentAntibodyDetails(String leprosyIndirectFluorescentAntibodyDetails) {
+        this.leprosyIndirectFluorescentAntibodyDetails = leprosyIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setLeprosyDirectFluorescentAntibodyDetails(String leprosyDirectFluorescentAntibodyDetails) {
+        this.leprosyDirectFluorescentAntibodyDetails = leprosyDirectFluorescentAntibodyDetails;
+    }
+
+    public void setLeprosyMicroscopyDetails(String leprosyMicroscopyDetails) {
+        this.leprosyMicroscopyDetails = leprosyMicroscopyDetails;
+    }
+
+    public void setLeprosyNeutralizingAntibodiesDetails(String leprosyNeutralizingAntibodiesDetails) {
+        this.leprosyNeutralizingAntibodiesDetails = leprosyNeutralizingAntibodiesDetails;
+    }
+
+    public void setLeprosyPcrRtPcrDetails(String leprosyPcrRtPcrDetails) {
+        this.leprosyPcrRtPcrDetails = leprosyPcrRtPcrDetails;
+    }
+
+    public void setLeprosyGramStainDetails(String leprosyGramStainDetails) {
+        this.leprosyGramStainDetails = leprosyGramStainDetails;
+    }
+
+    public void setLeprosyLatexAgglutinationDetails(String leprosyLatexAgglutinationDetails) {
+        this.leprosyLatexAgglutinationDetails = leprosyLatexAgglutinationDetails;
+    }
+
+    public void setLeprosyCqValueDetectionDetails(String leprosyCqValueDetectionDetails) {
+        this.leprosyCqValueDetectionDetails = leprosyCqValueDetectionDetails;
+    }
+
+    public void setLeprosySequencingDetails(String leprosySequencingDetails) {
+        this.leprosySequencingDetails = leprosySequencingDetails;
+    }
+
+    public void setLeprosyDnaMicroarrayDetails(String leprosyDnaMicroarrayDetails) {
+        this.leprosyDnaMicroarrayDetails = leprosyDnaMicroarrayDetails;
+    }
+
+    public void setLeprosyOtherDetails(String leprosyOtherDetails) {
+        this.leprosyOtherDetails = leprosyOtherDetails;
+    }
+
+    public void setLymphaticFilariasisAntibodyDetection(String lymphaticFilariasisAntibodyDetection) {
+        this.lymphaticFilariasisAntibodyDetection = lymphaticFilariasisAntibodyDetection;
     }
 
     public void setLymphaticFilariasisAntigenDetection(String lymphaticFilariasisAntigenDetection) {
@@ -4597,6 +8926,10 @@ public class CaseSampleExportDto implements Serializable {
         this.lymphaticFilariasisIndirectFluorescentAntibody = lymphaticFilariasisIndirectFluorescentAntibody;
     }
 
+    public void setLymphaticFilariasisDirectFluorescentAntibody(String lymphaticFilariasisDirectFluorescentAntibody) {
+        this.lymphaticFilariasisDirectFluorescentAntibody = lymphaticFilariasisDirectFluorescentAntibody;
+    }
+
     public void setLymphaticFilariasisMicroscopy(String lymphaticFilariasisMicroscopy) {
         this.lymphaticFilariasisMicroscopy = lymphaticFilariasisMicroscopy;
     }
@@ -4605,8 +8938,8 @@ public class CaseSampleExportDto implements Serializable {
         this.lymphaticFilariasisNeutralizingAntibodies = lymphaticFilariasisNeutralizingAntibodies;
     }
 
-    public void setLymphaticFilariasisPcr(String lymphaticFilariasisPcr) {
-        this.lymphaticFilariasisPcr = lymphaticFilariasisPcr;
+    public void setLymphaticFilariasisPcrRtPcr(String lymphaticFilariasisPcrRtPcr) {
+        this.lymphaticFilariasisPcrRtPcr = lymphaticFilariasisPcrRtPcr;
     }
 
     public void setLymphaticFilariasisGramStain(String lymphaticFilariasisGramStain) {
@@ -4621,20 +8954,104 @@ public class CaseSampleExportDto implements Serializable {
         this.lymphaticFilariasisCqValueDetection = lymphaticFilariasisCqValueDetection;
     }
 
-    public void setLymphaticFilariasisSeQuencing(String lymphaticFilariasisSeQuencing) {
-        this.lymphaticFilariasisSeQuencing = lymphaticFilariasisSeQuencing;
+    public void setLymphaticFilariasisSequencing(String lymphaticFilariasisSequencing) {
+        this.lymphaticFilariasisSequencing = lymphaticFilariasisSequencing;
     }
 
-    public void setLymphaticFilariasisDnaMicroArray(String lymphaticFilariasisDnaMicroArray) {
-        this.lymphaticFilariasisDnaMicroArray = lymphaticFilariasisDnaMicroArray;
+    public void setLymphaticFilariasisDnaMicroarray(String lymphaticFilariasisDnaMicroarray) {
+        this.lymphaticFilariasisDnaMicroarray = lymphaticFilariasisDnaMicroarray;
     }
 
     public void setLymphaticFilariasisOther(String lymphaticFilariasisOther) {
         this.lymphaticFilariasisOther = lymphaticFilariasisOther;
     }
 
-    public void setBuruliUlcerAntiBodyDetection(String buruliUlcerAntiBodyDetection) {
-        this.buruliUlcerAntiBodyDetection = buruliUlcerAntiBodyDetection;
+    public void setLymphaticFilariasisAntibodyDetectionDetails(String lymphaticFilariasisAntibodyDetectionDetails) {
+        this.lymphaticFilariasisAntibodyDetectionDetails = lymphaticFilariasisAntibodyDetectionDetails;
+    }
+
+    public void setLymphaticFilariasisAntigenDetectionDetails(String lymphaticFilariasisAntigenDetectionDetails) {
+        this.lymphaticFilariasisAntigenDetectionDetails = lymphaticFilariasisAntigenDetectionDetails;
+    }
+
+    public void setLymphaticFilariasisRapidTestDetails(String lymphaticFilariasisRapidTestDetails) {
+        this.lymphaticFilariasisRapidTestDetails = lymphaticFilariasisRapidTestDetails;
+    }
+
+    public void setLymphaticFilariasisCultureDetails(String lymphaticFilariasisCultureDetails) {
+        this.lymphaticFilariasisCultureDetails = lymphaticFilariasisCultureDetails;
+    }
+
+    public void setLymphaticFilariasisHistopathologyDetails(String lymphaticFilariasisHistopathologyDetails) {
+        this.lymphaticFilariasisHistopathologyDetails = lymphaticFilariasisHistopathologyDetails;
+    }
+
+    public void setLymphaticFilariasisIsolationDetails(String lymphaticFilariasisIsolationDetails) {
+        this.lymphaticFilariasisIsolationDetails = lymphaticFilariasisIsolationDetails;
+    }
+
+    public void setLymphaticFilariasisIgmSerumAntibodyDetails(String lymphaticFilariasisIgmSerumAntibodyDetails) {
+        this.lymphaticFilariasisIgmSerumAntibodyDetails = lymphaticFilariasisIgmSerumAntibodyDetails;
+    }
+
+    public void setLymphaticFilariasisIggSerumAntibodyDetails(String lymphaticFilariasisIggSerumAntibodyDetails) {
+        this.lymphaticFilariasisIggSerumAntibodyDetails = lymphaticFilariasisIggSerumAntibodyDetails;
+    }
+
+    public void setLymphaticFilariasisIgaSerumAntibodyDetails(String lymphaticFilariasisIgaSerumAntibodyDetails) {
+        this.lymphaticFilariasisIgaSerumAntibodyDetails = lymphaticFilariasisIgaSerumAntibodyDetails;
+    }
+
+    public void setLymphaticFilariasisIncubationTimeDetails(String lymphaticFilariasisIncubationTimeDetails) {
+        this.lymphaticFilariasisIncubationTimeDetails = lymphaticFilariasisIncubationTimeDetails;
+    }
+
+    public void setLymphaticFilariasisIndirectFluorescentAntibodyDetails(String lymphaticFilariasisIndirectFluorescentAntibodyDetails) {
+        this.lymphaticFilariasisIndirectFluorescentAntibodyDetails = lymphaticFilariasisIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setLymphaticFilariasisDirectFluorescentAntibodyDetails(String lymphaticFilariasisDirectFluorescentAntibodyDetails) {
+        this.lymphaticFilariasisDirectFluorescentAntibodyDetails = lymphaticFilariasisDirectFluorescentAntibodyDetails;
+    }
+
+    public void setLymphaticFilariasisMicroscopyDetails(String lymphaticFilariasisMicroscopyDetails) {
+        this.lymphaticFilariasisMicroscopyDetails = lymphaticFilariasisMicroscopyDetails;
+    }
+
+    public void setLymphaticFilariasisNeutralizingAntibodiesDetails(String lymphaticFilariasisNeutralizingAntibodiesDetails) {
+        this.lymphaticFilariasisNeutralizingAntibodiesDetails = lymphaticFilariasisNeutralizingAntibodiesDetails;
+    }
+
+    public void setLymphaticFilariasisPcrRtPcrDetails(String lymphaticFilariasisPcrRtPcrDetails) {
+        this.lymphaticFilariasisPcrRtPcrDetails = lymphaticFilariasisPcrRtPcrDetails;
+    }
+
+    public void setLymphaticFilariasisGramStainDetails(String lymphaticFilariasisGramStainDetails) {
+        this.lymphaticFilariasisGramStainDetails = lymphaticFilariasisGramStainDetails;
+    }
+
+    public void setLymphaticFilariasisLatexAgglutinationDetails(String lymphaticFilariasisLatexAgglutinationDetails) {
+        this.lymphaticFilariasisLatexAgglutinationDetails = lymphaticFilariasisLatexAgglutinationDetails;
+    }
+
+    public void setLymphaticFilariasisCqValueDetectionDetails(String lymphaticFilariasisCqValueDetectionDetails) {
+        this.lymphaticFilariasisCqValueDetectionDetails = lymphaticFilariasisCqValueDetectionDetails;
+    }
+
+    public void setLymphaticFilariasisSequencingDetails(String lymphaticFilariasisSequencingDetails) {
+        this.lymphaticFilariasisSequencingDetails = lymphaticFilariasisSequencingDetails;
+    }
+
+    public void setLymphaticFilariasisDnaMicroarrayDetails(String lymphaticFilariasisDnaMicroarrayDetails) {
+        this.lymphaticFilariasisDnaMicroarrayDetails = lymphaticFilariasisDnaMicroarrayDetails;
+    }
+
+    public void setLymphaticFilariasisOtherDetails(String lymphaticFilariasisOtherDetails) {
+        this.lymphaticFilariasisOtherDetails = lymphaticFilariasisOtherDetails;
+    }
+
+    public void setBuruliUlcerAntibodyDetection(String buruliUlcerAntibodyDetection) {
+        this.buruliUlcerAntibodyDetection = buruliUlcerAntibodyDetection;
     }
 
     public void setBuruliUlcerAntigenDetection(String buruliUlcerAntigenDetection) {
@@ -4677,6 +9094,10 @@ public class CaseSampleExportDto implements Serializable {
         this.buruliUlcerIndirectFluorescentAntibody = buruliUlcerIndirectFluorescentAntibody;
     }
 
+    public void setBuruliUlcerDirectFluorescentAntibody(String buruliUlcerDirectFluorescentAntibody) {
+        this.buruliUlcerDirectFluorescentAntibody = buruliUlcerDirectFluorescentAntibody;
+    }
+
     public void setBuruliUlcerMicroscopy(String buruliUlcerMicroscopy) {
         this.buruliUlcerMicroscopy = buruliUlcerMicroscopy;
     }
@@ -4685,8 +9106,8 @@ public class CaseSampleExportDto implements Serializable {
         this.buruliUlcerNeutralizingAntibodies = buruliUlcerNeutralizingAntibodies;
     }
 
-    public void setBuruliUlcerPcr(String buruliUlcerPcr) {
-        this.buruliUlcerPcr = buruliUlcerPcr;
+    public void setBuruliUlcerPcrRtPcr(String buruliUlcerPcrRtPcr) {
+        this.buruliUlcerPcrRtPcr = buruliUlcerPcrRtPcr;
     }
 
     public void setBuruliUlcerGramStain(String buruliUlcerGramStain) {
@@ -4701,20 +9122,104 @@ public class CaseSampleExportDto implements Serializable {
         this.buruliUlcerCqValueDetection = buruliUlcerCqValueDetection;
     }
 
-    public void setBuruliUlcerSeQuencing(String buruliUlcerSeQuencing) {
-        this.buruliUlcerSeQuencing = buruliUlcerSeQuencing;
+    public void setBuruliUlcerSequencing(String buruliUlcerSequencing) {
+        this.buruliUlcerSequencing = buruliUlcerSequencing;
     }
 
-    public void setBuruliUlcerDnaMicroArray(String buruliUlcerDnaMicroArray) {
-        this.buruliUlcerDnaMicroArray = buruliUlcerDnaMicroArray;
+    public void setBuruliUlcerDnaMicroarray(String buruliUlcerDnaMicroarray) {
+        this.buruliUlcerDnaMicroarray = buruliUlcerDnaMicroarray;
     }
 
     public void setBuruliUlcerOther(String buruliUlcerOther) {
         this.buruliUlcerOther = buruliUlcerOther;
     }
 
-    public void setPertussisAntiBodyDetection(String pertussisAntiBodyDetection) {
-        this.pertussisAntiBodyDetection = pertussisAntiBodyDetection;
+    public void setBuruliUlcerAntibodyDetectionDetails(String buruliUlcerAntibodyDetectionDetails) {
+        this.buruliUlcerAntibodyDetectionDetails = buruliUlcerAntibodyDetectionDetails;
+    }
+
+    public void setBuruliUlcerAntigenDetectionDetails(String buruliUlcerAntigenDetectionDetails) {
+        this.buruliUlcerAntigenDetectionDetails = buruliUlcerAntigenDetectionDetails;
+    }
+
+    public void setBuruliUlcerRapidTestDetails(String buruliUlcerRapidTestDetails) {
+        this.buruliUlcerRapidTestDetails = buruliUlcerRapidTestDetails;
+    }
+
+    public void setBuruliUlcerCultureDetails(String buruliUlcerCultureDetails) {
+        this.buruliUlcerCultureDetails = buruliUlcerCultureDetails;
+    }
+
+    public void setBuruliUlcerHistopathologyDetails(String buruliUlcerHistopathologyDetails) {
+        this.buruliUlcerHistopathologyDetails = buruliUlcerHistopathologyDetails;
+    }
+
+    public void setBuruliUlcerIsolationDetails(String buruliUlcerIsolationDetails) {
+        this.buruliUlcerIsolationDetails = buruliUlcerIsolationDetails;
+    }
+
+    public void setBuruliUlcerIgmSerumAntibodyDetails(String buruliUlcerIgmSerumAntibodyDetails) {
+        this.buruliUlcerIgmSerumAntibodyDetails = buruliUlcerIgmSerumAntibodyDetails;
+    }
+
+    public void setBuruliUlcerIggSerumAntibodyDetails(String buruliUlcerIggSerumAntibodyDetails) {
+        this.buruliUlcerIggSerumAntibodyDetails = buruliUlcerIggSerumAntibodyDetails;
+    }
+
+    public void setBuruliUlcerIgaSerumAntibodyDetails(String buruliUlcerIgaSerumAntibodyDetails) {
+        this.buruliUlcerIgaSerumAntibodyDetails = buruliUlcerIgaSerumAntibodyDetails;
+    }
+
+    public void setBuruliUlcerIncubationTimeDetails(String buruliUlcerIncubationTimeDetails) {
+        this.buruliUlcerIncubationTimeDetails = buruliUlcerIncubationTimeDetails;
+    }
+
+    public void setBuruliUlcerIndirectFluorescentAntibodyDetails(String buruliUlcerIndirectFluorescentAntibodyDetails) {
+        this.buruliUlcerIndirectFluorescentAntibodyDetails = buruliUlcerIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setBuruliUlcerDirectFluorescentAntibodyDetails(String buruliUlcerDirectFluorescentAntibodyDetails) {
+        this.buruliUlcerDirectFluorescentAntibodyDetails = buruliUlcerDirectFluorescentAntibodyDetails;
+    }
+
+    public void setBuruliUlcerMicroscopyDetails(String buruliUlcerMicroscopyDetails) {
+        this.buruliUlcerMicroscopyDetails = buruliUlcerMicroscopyDetails;
+    }
+
+    public void setBuruliUlcerNeutralizingAntibodiesDetails(String buruliUlcerNeutralizingAntibodiesDetails) {
+        this.buruliUlcerNeutralizingAntibodiesDetails = buruliUlcerNeutralizingAntibodiesDetails;
+    }
+
+    public void setBuruliUlcerPcrRtPcrDetails(String buruliUlcerPcrRtPcrDetails) {
+        this.buruliUlcerPcrRtPcrDetails = buruliUlcerPcrRtPcrDetails;
+    }
+
+    public void setBuruliUlcerGramStainDetails(String buruliUlcerGramStainDetails) {
+        this.buruliUlcerGramStainDetails = buruliUlcerGramStainDetails;
+    }
+
+    public void setBuruliUlcerLatexAgglutinationDetails(String buruliUlcerLatexAgglutinationDetails) {
+        this.buruliUlcerLatexAgglutinationDetails = buruliUlcerLatexAgglutinationDetails;
+    }
+
+    public void setBuruliUlcerCqValueDetectionDetails(String buruliUlcerCqValueDetectionDetails) {
+        this.buruliUlcerCqValueDetectionDetails = buruliUlcerCqValueDetectionDetails;
+    }
+
+    public void setBuruliUlcerSequencingDetails(String buruliUlcerSequencingDetails) {
+        this.buruliUlcerSequencingDetails = buruliUlcerSequencingDetails;
+    }
+
+    public void setBuruliUlcerDnaMicroarrayDetails(String buruliUlcerDnaMicroarrayDetails) {
+        this.buruliUlcerDnaMicroarrayDetails = buruliUlcerDnaMicroarrayDetails;
+    }
+
+    public void setBuruliUlcerOtherDetails(String buruliUlcerOtherDetails) {
+        this.buruliUlcerOtherDetails = buruliUlcerOtherDetails;
+    }
+
+    public void setPertussisAntibodyDetection(String pertussisAntibodyDetection) {
+        this.pertussisAntibodyDetection = pertussisAntibodyDetection;
     }
 
     public void setPertussisAntigenDetection(String pertussisAntigenDetection) {
@@ -4757,6 +9262,10 @@ public class CaseSampleExportDto implements Serializable {
         this.pertussisIndirectFluorescentAntibody = pertussisIndirectFluorescentAntibody;
     }
 
+    public void setPertussisDirectFluorescentAntibody(String pertussisDirectFluorescentAntibody) {
+        this.pertussisDirectFluorescentAntibody = pertussisDirectFluorescentAntibody;
+    }
+
     public void setPertussisMicroscopy(String pertussisMicroscopy) {
         this.pertussisMicroscopy = pertussisMicroscopy;
     }
@@ -4765,8 +9274,8 @@ public class CaseSampleExportDto implements Serializable {
         this.pertussisNeutralizingAntibodies = pertussisNeutralizingAntibodies;
     }
 
-    public void setPertussisPcr(String pertussisPcr) {
-        this.pertussisPcr = pertussisPcr;
+    public void setPertussisPcrRtPcr(String pertussisPcrRtPcr) {
+        this.pertussisPcrRtPcr = pertussisPcrRtPcr;
     }
 
     public void setPertussisGramStain(String pertussisGramStain) {
@@ -4781,100 +9290,272 @@ public class CaseSampleExportDto implements Serializable {
         this.pertussisCqValueDetection = pertussisCqValueDetection;
     }
 
-    public void setPertussisSeQuencing(String pertussisSeQuencing) {
-        this.pertussisSeQuencing = pertussisSeQuencing;
+    public void setPertussisSequencing(String pertussisSequencing) {
+        this.pertussisSequencing = pertussisSequencing;
     }
 
-    public void setPertussisDnaMicroArray(String pertussisDnaMicroArray) {
-        this.pertussisDnaMicroArray = pertussisDnaMicroArray;
+    public void setPertussisDnaMicroarray(String pertussisDnaMicroarray) {
+        this.pertussisDnaMicroarray = pertussisDnaMicroarray;
     }
 
     public void setPertussisOther(String pertussisOther) {
         this.pertussisOther = pertussisOther;
     }
 
-    public void setNeonatalAntiBodyDetection(String neonatalAntiBodyDetection) {
-        this.neonatalAntiBodyDetection = neonatalAntiBodyDetection;
+    public void setPertussisAntibodyDetectionDetails(String pertussisAntibodyDetectionDetails) {
+        this.pertussisAntibodyDetectionDetails = pertussisAntibodyDetectionDetails;
     }
 
-    public void setNeonatalAntigenDetection(String neonatalAntigenDetection) {
-        this.neonatalAntigenDetection = neonatalAntigenDetection;
+    public void setPertussisAntigenDetectionDetails(String pertussisAntigenDetectionDetails) {
+        this.pertussisAntigenDetectionDetails = pertussisAntigenDetectionDetails;
     }
 
-    public void setNeonatalRapidTest(String neonatalRapidTest) {
-        this.neonatalRapidTest = neonatalRapidTest;
+    public void setPertussisRapidTestDetails(String pertussisRapidTestDetails) {
+        this.pertussisRapidTestDetails = pertussisRapidTestDetails;
     }
 
-    public void setNeonatalCulture(String neonatalCulture) {
-        this.neonatalCulture = neonatalCulture;
+    public void setPertussisCultureDetails(String pertussisCultureDetails) {
+        this.pertussisCultureDetails = pertussisCultureDetails;
     }
 
-    public void setNeonatalHistopathology(String neonatalHistopathology) {
-        this.neonatalHistopathology = neonatalHistopathology;
+    public void setPertussisHistopathologyDetails(String pertussisHistopathologyDetails) {
+        this.pertussisHistopathologyDetails = pertussisHistopathologyDetails;
     }
 
-    public void setNeonatalIsolation(String neonatalIsolation) {
-        this.neonatalIsolation = neonatalIsolation;
+    public void setPertussisIsolationDetails(String pertussisIsolationDetails) {
+        this.pertussisIsolationDetails = pertussisIsolationDetails;
     }
 
-    public void setNeonatalIgmSerumAntibody(String neonatalIgmSerumAntibody) {
-        this.neonatalIgmSerumAntibody = neonatalIgmSerumAntibody;
+    public void setPertussisIgmSerumAntibodyDetails(String pertussisIgmSerumAntibodyDetails) {
+        this.pertussisIgmSerumAntibodyDetails = pertussisIgmSerumAntibodyDetails;
     }
 
-    public void setNeonatalIggSerumAntibody(String neonatalIggSerumAntibody) {
-        this.neonatalIggSerumAntibody = neonatalIggSerumAntibody;
+    public void setPertussisIggSerumAntibodyDetails(String pertussisIggSerumAntibodyDetails) {
+        this.pertussisIggSerumAntibodyDetails = pertussisIggSerumAntibodyDetails;
     }
 
-    public void setNeonatalIgaSerumAntibody(String neonatalIgaSerumAntibody) {
-        this.neonatalIgaSerumAntibody = neonatalIgaSerumAntibody;
+    public void setPertussisIgaSerumAntibodyDetails(String pertussisIgaSerumAntibodyDetails) {
+        this.pertussisIgaSerumAntibodyDetails = pertussisIgaSerumAntibodyDetails;
     }
 
-    public void setNeonatalIncubationTime(String neonatalIncubationTime) {
-        this.neonatalIncubationTime = neonatalIncubationTime;
+    public void setPertussisIncubationTimeDetails(String pertussisIncubationTimeDetails) {
+        this.pertussisIncubationTimeDetails = pertussisIncubationTimeDetails;
     }
 
-    public void setNeonatalIndirectFluorescentAntibody(String neonatalIndirectFluorescentAntibody) {
-        this.neonatalIndirectFluorescentAntibody = neonatalIndirectFluorescentAntibody;
+    public void setPertussisIndirectFluorescentAntibodyDetails(String pertussisIndirectFluorescentAntibodyDetails) {
+        this.pertussisIndirectFluorescentAntibodyDetails = pertussisIndirectFluorescentAntibodyDetails;
     }
 
-    public void setNeonatalMicroscopy(String neonatalMicroscopy) {
-        this.neonatalMicroscopy = neonatalMicroscopy;
+    public void setPertussisDirectFluorescentAntibodyDetails(String pertussisDirectFluorescentAntibodyDetails) {
+        this.pertussisDirectFluorescentAntibodyDetails = pertussisDirectFluorescentAntibodyDetails;
     }
 
-    public void setNeonatalNeutralizingAntibodies(String neonatalNeutralizingAntibodies) {
-        this.neonatalNeutralizingAntibodies = neonatalNeutralizingAntibodies;
+    public void setPertussisMicroscopyDetails(String pertussisMicroscopyDetails) {
+        this.pertussisMicroscopyDetails = pertussisMicroscopyDetails;
     }
 
-    public void setNeonatalPcr(String neonatalPcr) {
-        this.neonatalPcr = neonatalPcr;
+    public void setPertussisNeutralizingAntibodiesDetails(String pertussisNeutralizingAntibodiesDetails) {
+        this.pertussisNeutralizingAntibodiesDetails = pertussisNeutralizingAntibodiesDetails;
     }
 
-    public void setNeonatalGramStain(String neonatalGramStain) {
-        this.neonatalGramStain = neonatalGramStain;
+    public void setPertussisPcrRtPcrDetails(String pertussisPcrRtPcrDetails) {
+        this.pertussisPcrRtPcrDetails = pertussisPcrRtPcrDetails;
     }
 
-    public void setNeonatalLatexAgglutination(String neonatalLatexAgglutination) {
-        this.neonatalLatexAgglutination = neonatalLatexAgglutination;
+    public void setPertussisGramStainDetails(String pertussisGramStainDetails) {
+        this.pertussisGramStainDetails = pertussisGramStainDetails;
     }
 
-    public void setNeonatalCqValueDetection(String neonatalCqValueDetection) {
-        this.neonatalCqValueDetection = neonatalCqValueDetection;
+    public void setPertussisLatexAgglutinationDetails(String pertussisLatexAgglutinationDetails) {
+        this.pertussisLatexAgglutinationDetails = pertussisLatexAgglutinationDetails;
     }
 
-    public void setNeonatalSeQuencing(String neonatalSeQuencing) {
-        this.neonatalSeQuencing = neonatalSeQuencing;
+    public void setPertussisCqValueDetectionDetails(String pertussisCqValueDetectionDetails) {
+        this.pertussisCqValueDetectionDetails = pertussisCqValueDetectionDetails;
     }
 
-    public void setNeonatalDnaMicroArray(String neonatalDnaMicroArray) {
-        this.neonatalDnaMicroArray = neonatalDnaMicroArray;
+    public void setPertussisSequencingDetails(String pertussisSequencingDetails) {
+        this.pertussisSequencingDetails = pertussisSequencingDetails;
     }
 
-    public void setNeonatalOther(String neonatalOther) {
-        this.neonatalOther = neonatalOther;
+    public void setPertussisDnaMicroarrayDetails(String pertussisDnaMicroarrayDetails) {
+        this.pertussisDnaMicroarrayDetails = pertussisDnaMicroarrayDetails;
     }
 
-    public void setOnchocerciasisAntiBodyDetection(String onchocerciasisAntiBodyDetection) {
-        this.onchocerciasisAntiBodyDetection = onchocerciasisAntiBodyDetection;
+    public void setPertussisOtherDetails(String pertussisOtherDetails) {
+        this.pertussisOtherDetails = pertussisOtherDetails;
+    }
+
+    public void setNeonatalTetanusAntibodyDetection(String neonatalTetanusAntibodyDetection) {
+        this.neonatalTetanusAntibodyDetection = neonatalTetanusAntibodyDetection;
+    }
+
+    public void setNeonatalTetanusAntigenDetection(String neonatalTetanusAntigenDetection) {
+        this.neonatalTetanusAntigenDetection = neonatalTetanusAntigenDetection;
+    }
+
+    public void setNeonatalTetanusRapidTest(String neonatalTetanusRapidTest) {
+        this.neonatalTetanusRapidTest = neonatalTetanusRapidTest;
+    }
+
+    public void setNeonatalTetanusCulture(String neonatalTetanusCulture) {
+        this.neonatalTetanusCulture = neonatalTetanusCulture;
+    }
+
+    public void setNeonatalTetanusHistopathology(String neonatalTetanusHistopathology) {
+        this.neonatalTetanusHistopathology = neonatalTetanusHistopathology;
+    }
+
+    public void setNeonatalTetanusIsolation(String neonatalTetanusIsolation) {
+        this.neonatalTetanusIsolation = neonatalTetanusIsolation;
+    }
+
+    public void setNeonatalTetanusIgmSerumAntibody(String neonatalTetanusIgmSerumAntibody) {
+        this.neonatalTetanusIgmSerumAntibody = neonatalTetanusIgmSerumAntibody;
+    }
+
+    public void setNeonatalTetanusIggSerumAntibody(String neonatalTetanusIggSerumAntibody) {
+        this.neonatalTetanusIggSerumAntibody = neonatalTetanusIggSerumAntibody;
+    }
+
+    public void setNeonatalTetanusIgaSerumAntibody(String neonatalTetanusIgaSerumAntibody) {
+        this.neonatalTetanusIgaSerumAntibody = neonatalTetanusIgaSerumAntibody;
+    }
+
+    public void setNeonatalTetanusIncubationTime(String neonatalTetanusIncubationTime) {
+        this.neonatalTetanusIncubationTime = neonatalTetanusIncubationTime;
+    }
+
+    public void setNeonatalTetanusIndirectFluorescentAntibody(String neonatalTetanusIndirectFluorescentAntibody) {
+        this.neonatalTetanusIndirectFluorescentAntibody = neonatalTetanusIndirectFluorescentAntibody;
+    }
+
+    public void setNeonatalTetanusDirectFluorescentAntibody(String neonatalTetanusDirectFluorescentAntibody) {
+        this.neonatalTetanusDirectFluorescentAntibody = neonatalTetanusDirectFluorescentAntibody;
+    }
+
+    public void setNeonatalTetanusMicroscopy(String neonatalTetanusMicroscopy) {
+        this.neonatalTetanusMicroscopy = neonatalTetanusMicroscopy;
+    }
+
+    public void setNeonatalTetanusNeutralizingAntibodies(String neonatalTetanusNeutralizingAntibodies) {
+        this.neonatalTetanusNeutralizingAntibodies = neonatalTetanusNeutralizingAntibodies;
+    }
+
+    public void setNeonatalTetanusPcrRtPcr(String neonatalTetanusPcrRtPcr) {
+        this.neonatalTetanusPcrRtPcr = neonatalTetanusPcrRtPcr;
+    }
+
+    public void setNeonatalTetanusGramStain(String neonatalTetanusGramStain) {
+        this.neonatalTetanusGramStain = neonatalTetanusGramStain;
+    }
+
+    public void setNeonatalTetanusLatexAgglutination(String neonatalTetanusLatexAgglutination) {
+        this.neonatalTetanusLatexAgglutination = neonatalTetanusLatexAgglutination;
+    }
+
+    public void setNeonatalTetanusCqValueDetection(String neonatalTetanusCqValueDetection) {
+        this.neonatalTetanusCqValueDetection = neonatalTetanusCqValueDetection;
+    }
+
+    public void setNeonatalTetanusSequencing(String neonatalTetanusSequencing) {
+        this.neonatalTetanusSequencing = neonatalTetanusSequencing;
+    }
+
+    public void setNeonatalTetanusDnaMicroarray(String neonatalTetanusDnaMicroarray) {
+        this.neonatalTetanusDnaMicroarray = neonatalTetanusDnaMicroarray;
+    }
+
+    public void setNeonatalTetanusOther(String neonatalTetanusOther) {
+        this.neonatalTetanusOther = neonatalTetanusOther;
+    }
+
+    public void setNeonatalTetanusAntibodyDetectionDetails(String neonatalTetanusAntibodyDetectionDetails) {
+        this.neonatalTetanusAntibodyDetectionDetails = neonatalTetanusAntibodyDetectionDetails;
+    }
+
+    public void setNeonatalTetanusAntigenDetectionDetails(String neonatalTetanusAntigenDetectionDetails) {
+        this.neonatalTetanusAntigenDetectionDetails = neonatalTetanusAntigenDetectionDetails;
+    }
+
+    public void setNeonatalTetanusRapidTestDetails(String neonatalTetanusRapidTestDetails) {
+        this.neonatalTetanusRapidTestDetails = neonatalTetanusRapidTestDetails;
+    }
+
+    public void setNeonatalTetanusCultureDetails(String neonatalTetanusCultureDetails) {
+        this.neonatalTetanusCultureDetails = neonatalTetanusCultureDetails;
+    }
+
+    public void setNeonatalTetanusHistopathologyDetails(String neonatalTetanusHistopathologyDetails) {
+        this.neonatalTetanusHistopathologyDetails = neonatalTetanusHistopathologyDetails;
+    }
+
+    public void setNeonatalTetanusIsolationDetails(String neonatalTetanusIsolationDetails) {
+        this.neonatalTetanusIsolationDetails = neonatalTetanusIsolationDetails;
+    }
+
+    public void setNeonatalTetanusIgmSerumAntibodyDetails(String neonatalTetanusIgmSerumAntibodyDetails) {
+        this.neonatalTetanusIgmSerumAntibodyDetails = neonatalTetanusIgmSerumAntibodyDetails;
+    }
+
+    public void setNeonatalTetanusIggSerumAntibodyDetails(String neonatalTetanusIggSerumAntibodyDetails) {
+        this.neonatalTetanusIggSerumAntibodyDetails = neonatalTetanusIggSerumAntibodyDetails;
+    }
+
+    public void setNeonatalTetanusIgaSerumAntibodyDetails(String neonatalTetanusIgaSerumAntibodyDetails) {
+        this.neonatalTetanusIgaSerumAntibodyDetails = neonatalTetanusIgaSerumAntibodyDetails;
+    }
+
+    public void setNeonatalTetanusIncubationTimeDetails(String neonatalTetanusIncubationTimeDetails) {
+        this.neonatalTetanusIncubationTimeDetails = neonatalTetanusIncubationTimeDetails;
+    }
+
+    public void setNeonatalTetanusIndirectFluorescentAntibodyDetails(String neonatalTetanusIndirectFluorescentAntibodyDetails) {
+        this.neonatalTetanusIndirectFluorescentAntibodyDetails = neonatalTetanusIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setNeonatalTetanusDirectFluorescentAntibodyDetails(String neonatalTetanusDirectFluorescentAntibodyDetails) {
+        this.neonatalTetanusDirectFluorescentAntibodyDetails = neonatalTetanusDirectFluorescentAntibodyDetails;
+    }
+
+    public void setNeonatalTetanusMicroscopyDetails(String neonatalTetanusMicroscopyDetails) {
+        this.neonatalTetanusMicroscopyDetails = neonatalTetanusMicroscopyDetails;
+    }
+
+    public void setNeonatalTetanusNeutralizingAntibodiesDetails(String neonatalTetanusNeutralizingAntibodiesDetails) {
+        this.neonatalTetanusNeutralizingAntibodiesDetails = neonatalTetanusNeutralizingAntibodiesDetails;
+    }
+
+    public void setNeonatalTetanusPcrRtPcrDetails(String neonatalTetanusPcrRtPcrDetails) {
+        this.neonatalTetanusPcrRtPcrDetails = neonatalTetanusPcrRtPcrDetails;
+    }
+
+    public void setNeonatalTetanusGramStainDetails(String neonatalTetanusGramStainDetails) {
+        this.neonatalTetanusGramStainDetails = neonatalTetanusGramStainDetails;
+    }
+
+    public void setNeonatalTetanusLatexAgglutinationDetails(String neonatalTetanusLatexAgglutinationDetails) {
+        this.neonatalTetanusLatexAgglutinationDetails = neonatalTetanusLatexAgglutinationDetails;
+    }
+
+    public void setNeonatalTetanusCqValueDetectionDetails(String neonatalTetanusCqValueDetectionDetails) {
+        this.neonatalTetanusCqValueDetectionDetails = neonatalTetanusCqValueDetectionDetails;
+    }
+
+    public void setNeonatalTetanusSequencingDetails(String neonatalTetanusSequencingDetails) {
+        this.neonatalTetanusSequencingDetails = neonatalTetanusSequencingDetails;
+    }
+
+    public void setNeonatalTetanusDnaMicroarrayDetails(String neonatalTetanusDnaMicroarrayDetails) {
+        this.neonatalTetanusDnaMicroarrayDetails = neonatalTetanusDnaMicroarrayDetails;
+    }
+
+    public void setNeonatalTetanusOtherDetails(String neonatalTetanusOtherDetails) {
+        this.neonatalTetanusOtherDetails = neonatalTetanusOtherDetails;
+    }
+
+    public void setOnchocerciasisAntibodyDetection(String onchocerciasisAntibodyDetection) {
+        this.onchocerciasisAntibodyDetection = onchocerciasisAntibodyDetection;
     }
 
     public void setOnchocerciasisAntigenDetection(String onchocerciasisAntigenDetection) {
@@ -4917,6 +9598,10 @@ public class CaseSampleExportDto implements Serializable {
         this.onchocerciasisIndirectFluorescentAntibody = onchocerciasisIndirectFluorescentAntibody;
     }
 
+    public void setOnchocerciasisDirectFluorescentAntibody(String onchocerciasisDirectFluorescentAntibody) {
+        this.onchocerciasisDirectFluorescentAntibody = onchocerciasisDirectFluorescentAntibody;
+    }
+
     public void setOnchocerciasisMicroscopy(String onchocerciasisMicroscopy) {
         this.onchocerciasisMicroscopy = onchocerciasisMicroscopy;
     }
@@ -4925,8 +9610,8 @@ public class CaseSampleExportDto implements Serializable {
         this.onchocerciasisNeutralizingAntibodies = onchocerciasisNeutralizingAntibodies;
     }
 
-    public void setOnchocerciasisPcr(String onchocerciasisPcr) {
-        this.onchocerciasisPcr = onchocerciasisPcr;
+    public void setOnchocerciasisPcrRtPcr(String onchocerciasisPcrRtPcr) {
+        this.onchocerciasisPcrRtPcr = onchocerciasisPcrRtPcr;
     }
 
     public void setOnchocerciasisGramStain(String onchocerciasisGramStain) {
@@ -4941,100 +9626,272 @@ public class CaseSampleExportDto implements Serializable {
         this.onchocerciasisCqValueDetection = onchocerciasisCqValueDetection;
     }
 
-    public void setOnchocerciasisSeQuencing(String onchocerciasisSeQuencing) {
-        this.onchocerciasisSeQuencing = onchocerciasisSeQuencing;
+    public void setOnchocerciasisSequencing(String onchocerciasisSequencing) {
+        this.onchocerciasisSequencing = onchocerciasisSequencing;
     }
 
-    public void setOnchocerciasisDnaMicroArray(String onchocerciasisDnaMicroArray) {
-        this.onchocerciasisDnaMicroArray = onchocerciasisDnaMicroArray;
+    public void setOnchocerciasisDnaMicroarray(String onchocerciasisDnaMicroarray) {
+        this.onchocerciasisDnaMicroarray = onchocerciasisDnaMicroarray;
     }
 
     public void setOnchocerciasisOther(String onchocerciasisOther) {
         this.onchocerciasisOther = onchocerciasisOther;
     }
 
-    public void setDiphtheriaAntiBodyDetection(String diphtheriaAntiBodyDetection) {
-        this.diphtheriaAntiBodyDetection = diphtheriaAntiBodyDetection;
+    public void setOnchocerciasisAntibodyDetectionDetails(String onchocerciasisAntibodyDetectionDetails) {
+        this.onchocerciasisAntibodyDetectionDetails = onchocerciasisAntibodyDetectionDetails;
     }
 
-    public void setDiphtheriaAntigenDetection(String diphtheriaAntigenDetection) {
-        this.diphtheriaAntigenDetection = diphtheriaAntigenDetection;
+    public void setOnchocerciasisAntigenDetectionDetails(String onchocerciasisAntigenDetectionDetails) {
+        this.onchocerciasisAntigenDetectionDetails = onchocerciasisAntigenDetectionDetails;
     }
 
-    public void setDiphtheriaRapidTest(String diphtheriaRapidTest) {
-        this.diphtheriaRapidTest = diphtheriaRapidTest;
+    public void setOnchocerciasisRapidTestDetails(String onchocerciasisRapidTestDetails) {
+        this.onchocerciasisRapidTestDetails = onchocerciasisRapidTestDetails;
     }
 
-    public void setDiphtheriaCulture(String diphtheriaCulture) {
-        this.diphtheriaCulture = diphtheriaCulture;
+    public void setOnchocerciasisCultureDetails(String onchocerciasisCultureDetails) {
+        this.onchocerciasisCultureDetails = onchocerciasisCultureDetails;
     }
 
-    public void setDiphtheriaHistopathology(String diphtheriaHistopathology) {
-        this.diphtheriaHistopathology = diphtheriaHistopathology;
+    public void setOnchocerciasisHistopathologyDetails(String onchocerciasisHistopathologyDetails) {
+        this.onchocerciasisHistopathologyDetails = onchocerciasisHistopathologyDetails;
     }
 
-    public void setDiphtheriaIsolation(String diphtheriaIsolation) {
-        this.diphtheriaIsolation = diphtheriaIsolation;
+    public void setOnchocerciasisIsolationDetails(String onchocerciasisIsolationDetails) {
+        this.onchocerciasisIsolationDetails = onchocerciasisIsolationDetails;
     }
 
-    public void setDiphtheriaIgmSerumAntibody(String diphtheriaIgmSerumAntibody) {
-        this.diphtheriaIgmSerumAntibody = diphtheriaIgmSerumAntibody;
+    public void setOnchocerciasisIgmSerumAntibodyDetails(String onchocerciasisIgmSerumAntibodyDetails) {
+        this.onchocerciasisIgmSerumAntibodyDetails = onchocerciasisIgmSerumAntibodyDetails;
     }
 
-    public void setDiphtheriaIggSerumAntibody(String diphtheriaIggSerumAntibody) {
-        this.diphtheriaIggSerumAntibody = diphtheriaIggSerumAntibody;
+    public void setOnchocerciasisIggSerumAntibodyDetails(String onchocerciasisIggSerumAntibodyDetails) {
+        this.onchocerciasisIggSerumAntibodyDetails = onchocerciasisIggSerumAntibodyDetails;
     }
 
-    public void setDiphtheriaIgaSerumAntibody(String diphtheriaIgaSerumAntibody) {
-        this.diphtheriaIgaSerumAntibody = diphtheriaIgaSerumAntibody;
+    public void setOnchocerciasisIgaSerumAntibodyDetails(String onchocerciasisIgaSerumAntibodyDetails) {
+        this.onchocerciasisIgaSerumAntibodyDetails = onchocerciasisIgaSerumAntibodyDetails;
     }
 
-    public void setDiphtheriaIncubationTime(String diphtheriaIncubationTime) {
-        this.diphtheriaIncubationTime = diphtheriaIncubationTime;
+    public void setOnchocerciasisIncubationTimeDetails(String onchocerciasisIncubationTimeDetails) {
+        this.onchocerciasisIncubationTimeDetails = onchocerciasisIncubationTimeDetails;
     }
 
-    public void setDiphtheriaIndirectFluorescentAntibody(String diphtheriaIndirectFluorescentAntibody) {
-        this.diphtheriaIndirectFluorescentAntibody = diphtheriaIndirectFluorescentAntibody;
+    public void setOnchocerciasisIndirectFluorescentAntibodyDetails(String onchocerciasisIndirectFluorescentAntibodyDetails) {
+        this.onchocerciasisIndirectFluorescentAntibodyDetails = onchocerciasisIndirectFluorescentAntibodyDetails;
     }
 
-    public void setDiphtheriaMicroscopy(String diphtheriaMicroscopy) {
-        this.diphtheriaMicroscopy = diphtheriaMicroscopy;
+    public void setOnchocerciasisDirectFluorescentAntibodyDetails(String onchocerciasisDirectFluorescentAntibodyDetails) {
+        this.onchocerciasisDirectFluorescentAntibodyDetails = onchocerciasisDirectFluorescentAntibodyDetails;
     }
 
-    public void setDiphtheriaNeutralizingAntibodies(String diphtheriaNeutralizingAntibodies) {
-        this.diphtheriaNeutralizingAntibodies = diphtheriaNeutralizingAntibodies;
+    public void setOnchocerciasisMicroscopyDetails(String onchocerciasisMicroscopyDetails) {
+        this.onchocerciasisMicroscopyDetails = onchocerciasisMicroscopyDetails;
     }
 
-    public void setDiphtheriaPcr(String diphtheriaPcr) {
-        this.diphtheriaPcr = diphtheriaPcr;
+    public void setOnchocerciasisNeutralizingAntibodiesDetails(String onchocerciasisNeutralizingAntibodiesDetails) {
+        this.onchocerciasisNeutralizingAntibodiesDetails = onchocerciasisNeutralizingAntibodiesDetails;
     }
 
-    public void setDiphtheriaGramStain(String diphtheriaGramStain) {
-        this.diphtheriaGramStain = diphtheriaGramStain;
+    public void setOnchocerciasisPcrRtPcrDetails(String onchocerciasisPcrRtPcrDetails) {
+        this.onchocerciasisPcrRtPcrDetails = onchocerciasisPcrRtPcrDetails;
     }
 
-    public void setDiphtheriaLatexAgglutination(String diphtheriaLatexAgglutination) {
-        this.diphtheriaLatexAgglutination = diphtheriaLatexAgglutination;
+    public void setOnchocerciasisGramStainDetails(String onchocerciasisGramStainDetails) {
+        this.onchocerciasisGramStainDetails = onchocerciasisGramStainDetails;
     }
 
-    public void setDiphtheriaCqValueDetection(String diphtheriaCqValueDetection) {
-        this.diphtheriaCqValueDetection = diphtheriaCqValueDetection;
+    public void setOnchocerciasisLatexAgglutinationDetails(String onchocerciasisLatexAgglutinationDetails) {
+        this.onchocerciasisLatexAgglutinationDetails = onchocerciasisLatexAgglutinationDetails;
     }
 
-    public void setDiphtheriaSeQuencing(String diphtheriaSeQuencing) {
-        this.diphtheriaSeQuencing = diphtheriaSeQuencing;
+    public void setOnchocerciasisCqValueDetectionDetails(String onchocerciasisCqValueDetectionDetails) {
+        this.onchocerciasisCqValueDetectionDetails = onchocerciasisCqValueDetectionDetails;
     }
 
-    public void setDiphtheriaDnaMicroArray(String diphtheriaDnaMicroArray) {
-        this.diphtheriaDnaMicroArray = diphtheriaDnaMicroArray;
+    public void setOnchocerciasisSequencingDetails(String onchocerciasisSequencingDetails) {
+        this.onchocerciasisSequencingDetails = onchocerciasisSequencingDetails;
     }
 
-    public void setDiphtheriaOther(String diphtheriaOther) {
-        this.diphtheriaOther = diphtheriaOther;
+    public void setOnchocerciasisDnaMicroarrayDetails(String onchocerciasisDnaMicroarrayDetails) {
+        this.onchocerciasisDnaMicroarrayDetails = onchocerciasisDnaMicroarrayDetails;
     }
 
-    public void setTrachomaAntiBodyDetection(String trachomaAntiBodyDetection) {
-        this.trachomaAntiBodyDetection = trachomaAntiBodyDetection;
+    public void setOnchocerciasisOtherDetails(String onchocerciasisOtherDetails) {
+        this.onchocerciasisOtherDetails = onchocerciasisOtherDetails;
+    }
+
+    public void setDiphteriaAntibodyDetection(String diphteriaAntibodyDetection) {
+        this.diphteriaAntibodyDetection = diphteriaAntibodyDetection;
+    }
+
+    public void setDiphteriaAntigenDetection(String diphteriaAntigenDetection) {
+        this.diphteriaAntigenDetection = diphteriaAntigenDetection;
+    }
+
+    public void setDiphteriaRapidTest(String diphteriaRapidTest) {
+        this.diphteriaRapidTest = diphteriaRapidTest;
+    }
+
+    public void setDiphteriaCulture(String diphteriaCulture) {
+        this.diphteriaCulture = diphteriaCulture;
+    }
+
+    public void setDiphteriaHistopathology(String diphteriaHistopathology) {
+        this.diphteriaHistopathology = diphteriaHistopathology;
+    }
+
+    public void setDiphteriaIsolation(String diphteriaIsolation) {
+        this.diphteriaIsolation = diphteriaIsolation;
+    }
+
+    public void setDiphteriaIgmSerumAntibody(String diphteriaIgmSerumAntibody) {
+        this.diphteriaIgmSerumAntibody = diphteriaIgmSerumAntibody;
+    }
+
+    public void setDiphteriaIggSerumAntibody(String diphteriaIggSerumAntibody) {
+        this.diphteriaIggSerumAntibody = diphteriaIggSerumAntibody;
+    }
+
+    public void setDiphteriaIgaSerumAntibody(String diphteriaIgaSerumAntibody) {
+        this.diphteriaIgaSerumAntibody = diphteriaIgaSerumAntibody;
+    }
+
+    public void setDiphteriaIncubationTime(String diphteriaIncubationTime) {
+        this.diphteriaIncubationTime = diphteriaIncubationTime;
+    }
+
+    public void setDiphteriaIndirectFluorescentAntibody(String diphteriaIndirectFluorescentAntibody) {
+        this.diphteriaIndirectFluorescentAntibody = diphteriaIndirectFluorescentAntibody;
+    }
+
+    public void setDiphteriaDirectFluorescentAntibody(String diphteriaDirectFluorescentAntibody) {
+        this.diphteriaDirectFluorescentAntibody = diphteriaDirectFluorescentAntibody;
+    }
+
+    public void setDiphteriaMicroscopy(String diphteriaMicroscopy) {
+        this.diphteriaMicroscopy = diphteriaMicroscopy;
+    }
+
+    public void setDiphteriaNeutralizingAntibodies(String diphteriaNeutralizingAntibodies) {
+        this.diphteriaNeutralizingAntibodies = diphteriaNeutralizingAntibodies;
+    }
+
+    public void setDiphteriaPcrRtPcr(String diphteriaPcrRtPcr) {
+        this.diphteriaPcrRtPcr = diphteriaPcrRtPcr;
+    }
+
+    public void setDiphteriaGramStain(String diphteriaGramStain) {
+        this.diphteriaGramStain = diphteriaGramStain;
+    }
+
+    public void setDiphteriaLatexAgglutination(String diphteriaLatexAgglutination) {
+        this.diphteriaLatexAgglutination = diphteriaLatexAgglutination;
+    }
+
+    public void setDiphteriaCqValueDetection(String diphteriaCqValueDetection) {
+        this.diphteriaCqValueDetection = diphteriaCqValueDetection;
+    }
+
+    public void setDiphteriaSequencing(String diphteriaSequencing) {
+        this.diphteriaSequencing = diphteriaSequencing;
+    }
+
+    public void setDiphteriaDnaMicroarray(String diphteriaDnaMicroarray) {
+        this.diphteriaDnaMicroarray = diphteriaDnaMicroarray;
+    }
+
+    public void setDiphteriaOther(String diphteriaOther) {
+        this.diphteriaOther = diphteriaOther;
+    }
+
+    public void setDiphteriaAntibodyDetectionDetails(String diphteriaAntibodyDetectionDetails) {
+        this.diphteriaAntibodyDetectionDetails = diphteriaAntibodyDetectionDetails;
+    }
+
+    public void setDiphteriaAntigenDetectionDetails(String diphteriaAntigenDetectionDetails) {
+        this.diphteriaAntigenDetectionDetails = diphteriaAntigenDetectionDetails;
+    }
+
+    public void setDiphteriaRapidTestDetails(String diphteriaRapidTestDetails) {
+        this.diphteriaRapidTestDetails = diphteriaRapidTestDetails;
+    }
+
+    public void setDiphteriaCultureDetails(String diphteriaCultureDetails) {
+        this.diphteriaCultureDetails = diphteriaCultureDetails;
+    }
+
+    public void setDiphteriaHistopathologyDetails(String diphteriaHistopathologyDetails) {
+        this.diphteriaHistopathologyDetails = diphteriaHistopathologyDetails;
+    }
+
+    public void setDiphteriaIsolationDetails(String diphteriaIsolationDetails) {
+        this.diphteriaIsolationDetails = diphteriaIsolationDetails;
+    }
+
+    public void setDiphteriaIgmSerumAntibodyDetails(String diphteriaIgmSerumAntibodyDetails) {
+        this.diphteriaIgmSerumAntibodyDetails = diphteriaIgmSerumAntibodyDetails;
+    }
+
+    public void setDiphteriaIggSerumAntibodyDetails(String diphteriaIggSerumAntibodyDetails) {
+        this.diphteriaIggSerumAntibodyDetails = diphteriaIggSerumAntibodyDetails;
+    }
+
+    public void setDiphteriaIgaSerumAntibodyDetails(String diphteriaIgaSerumAntibodyDetails) {
+        this.diphteriaIgaSerumAntibodyDetails = diphteriaIgaSerumAntibodyDetails;
+    }
+
+    public void setDiphteriaIncubationTimeDetails(String diphteriaIncubationTimeDetails) {
+        this.diphteriaIncubationTimeDetails = diphteriaIncubationTimeDetails;
+    }
+
+    public void setDiphteriaIndirectFluorescentAntibodyDetails(String diphteriaIndirectFluorescentAntibodyDetails) {
+        this.diphteriaIndirectFluorescentAntibodyDetails = diphteriaIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setDiphteriaDirectFluorescentAntibodyDetails(String diphteriaDirectFluorescentAntibodyDetails) {
+        this.diphteriaDirectFluorescentAntibodyDetails = diphteriaDirectFluorescentAntibodyDetails;
+    }
+
+    public void setDiphteriaMicroscopyDetails(String diphteriaMicroscopyDetails) {
+        this.diphteriaMicroscopyDetails = diphteriaMicroscopyDetails;
+    }
+
+    public void setDiphteriaNeutralizingAntibodiesDetails(String diphteriaNeutralizingAntibodiesDetails) {
+        this.diphteriaNeutralizingAntibodiesDetails = diphteriaNeutralizingAntibodiesDetails;
+    }
+
+    public void setDiphteriaPcrRtPcrDetails(String diphteriaPcrRtPcrDetails) {
+        this.diphteriaPcrRtPcrDetails = diphteriaPcrRtPcrDetails;
+    }
+
+    public void setDiphteriaGramStainDetails(String diphteriaGramStainDetails) {
+        this.diphteriaGramStainDetails = diphteriaGramStainDetails;
+    }
+
+    public void setDiphteriaLatexAgglutinationDetails(String diphteriaLatexAgglutinationDetails) {
+        this.diphteriaLatexAgglutinationDetails = diphteriaLatexAgglutinationDetails;
+    }
+
+    public void setDiphteriaCqValueDetectionDetails(String diphteriaCqValueDetectionDetails) {
+        this.diphteriaCqValueDetectionDetails = diphteriaCqValueDetectionDetails;
+    }
+
+    public void setDiphteriaSequencingDetails(String diphteriaSequencingDetails) {
+        this.diphteriaSequencingDetails = diphteriaSequencingDetails;
+    }
+
+    public void setDiphteriaDnaMicroarrayDetails(String diphteriaDnaMicroarrayDetails) {
+        this.diphteriaDnaMicroarrayDetails = diphteriaDnaMicroarrayDetails;
+    }
+
+    public void setDiphteriaOtherDetails(String diphteriaOtherDetails) {
+        this.diphteriaOtherDetails = diphteriaOtherDetails;
+    }
+
+    public void setTrachomaAntibodyDetection(String trachomaAntibodyDetection) {
+        this.trachomaAntibodyDetection = trachomaAntibodyDetection;
     }
 
     public void setTrachomaAntigenDetection(String trachomaAntigenDetection) {
@@ -5077,6 +9934,10 @@ public class CaseSampleExportDto implements Serializable {
         this.trachomaIndirectFluorescentAntibody = trachomaIndirectFluorescentAntibody;
     }
 
+    public void setTrachomaDirectFluorescentAntibody(String trachomaDirectFluorescentAntibody) {
+        this.trachomaDirectFluorescentAntibody = trachomaDirectFluorescentAntibody;
+    }
+
     public void setTrachomaMicroscopy(String trachomaMicroscopy) {
         this.trachomaMicroscopy = trachomaMicroscopy;
     }
@@ -5085,8 +9946,8 @@ public class CaseSampleExportDto implements Serializable {
         this.trachomaNeutralizingAntibodies = trachomaNeutralizingAntibodies;
     }
 
-    public void setTrachomaPcr(String trachomaPcr) {
-        this.trachomaPcr = trachomaPcr;
+    public void setTrachomaPcrRtPcr(String trachomaPcrRtPcr) {
+        this.trachomaPcrRtPcr = trachomaPcrRtPcr;
     }
 
     public void setTrachomaGramStain(String trachomaGramStain) {
@@ -5101,20 +9962,104 @@ public class CaseSampleExportDto implements Serializable {
         this.trachomaCqValueDetection = trachomaCqValueDetection;
     }
 
-    public void setTrachomaSeQuencing(String trachomaSeQuencing) {
-        this.trachomaSeQuencing = trachomaSeQuencing;
+    public void setTrachomaSequencing(String trachomaSequencing) {
+        this.trachomaSequencing = trachomaSequencing;
     }
 
-    public void setTrachomaDnaMicroArray(String trachomaDnaMicroArray) {
-        this.trachomaDnaMicroArray = trachomaDnaMicroArray;
+    public void setTrachomaDnaMicroarray(String trachomaDnaMicroarray) {
+        this.trachomaDnaMicroarray = trachomaDnaMicroarray;
     }
 
     public void setTrachomaOther(String trachomaOther) {
         this.trachomaOther = trachomaOther;
     }
 
-    public void setYawsEndemicSyphilisAntiBodyDetection(String yawsEndemicSyphilisAntiBodyDetection) {
-        this.yawsEndemicSyphilisAntiBodyDetection = yawsEndemicSyphilisAntiBodyDetection;
+    public void setTrachomaAntibodyDetectionDetails(String trachomaAntibodyDetectionDetails) {
+        this.trachomaAntibodyDetectionDetails = trachomaAntibodyDetectionDetails;
+    }
+
+    public void setTrachomaAntigenDetectionDetails(String trachomaAntigenDetectionDetails) {
+        this.trachomaAntigenDetectionDetails = trachomaAntigenDetectionDetails;
+    }
+
+    public void setTrachomaRapidTestDetails(String trachomaRapidTestDetails) {
+        this.trachomaRapidTestDetails = trachomaRapidTestDetails;
+    }
+
+    public void setTrachomaCultureDetails(String trachomaCultureDetails) {
+        this.trachomaCultureDetails = trachomaCultureDetails;
+    }
+
+    public void setTrachomaHistopathologyDetails(String trachomaHistopathologyDetails) {
+        this.trachomaHistopathologyDetails = trachomaHistopathologyDetails;
+    }
+
+    public void setTrachomaIsolationDetails(String trachomaIsolationDetails) {
+        this.trachomaIsolationDetails = trachomaIsolationDetails;
+    }
+
+    public void setTrachomaIgmSerumAntibodyDetails(String trachomaIgmSerumAntibodyDetails) {
+        this.trachomaIgmSerumAntibodyDetails = trachomaIgmSerumAntibodyDetails;
+    }
+
+    public void setTrachomaIggSerumAntibodyDetails(String trachomaIggSerumAntibodyDetails) {
+        this.trachomaIggSerumAntibodyDetails = trachomaIggSerumAntibodyDetails;
+    }
+
+    public void setTrachomaIgaSerumAntibodyDetails(String trachomaIgaSerumAntibodyDetails) {
+        this.trachomaIgaSerumAntibodyDetails = trachomaIgaSerumAntibodyDetails;
+    }
+
+    public void setTrachomaIncubationTimeDetails(String trachomaIncubationTimeDetails) {
+        this.trachomaIncubationTimeDetails = trachomaIncubationTimeDetails;
+    }
+
+    public void setTrachomaIndirectFluorescentAntibodyDetails(String trachomaIndirectFluorescentAntibodyDetails) {
+        this.trachomaIndirectFluorescentAntibodyDetails = trachomaIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setTrachomaDirectFluorescentAntibodyDetails(String trachomaDirectFluorescentAntibodyDetails) {
+        this.trachomaDirectFluorescentAntibodyDetails = trachomaDirectFluorescentAntibodyDetails;
+    }
+
+    public void setTrachomaMicroscopyDetails(String trachomaMicroscopyDetails) {
+        this.trachomaMicroscopyDetails = trachomaMicroscopyDetails;
+    }
+
+    public void setTrachomaNeutralizingAntibodiesDetails(String trachomaNeutralizingAntibodiesDetails) {
+        this.trachomaNeutralizingAntibodiesDetails = trachomaNeutralizingAntibodiesDetails;
+    }
+
+    public void setTrachomaPcrRtPcrDetails(String trachomaPcrRtPcrDetails) {
+        this.trachomaPcrRtPcrDetails = trachomaPcrRtPcrDetails;
+    }
+
+    public void setTrachomaGramStainDetails(String trachomaGramStainDetails) {
+        this.trachomaGramStainDetails = trachomaGramStainDetails;
+    }
+
+    public void setTrachomaLatexAgglutinationDetails(String trachomaLatexAgglutinationDetails) {
+        this.trachomaLatexAgglutinationDetails = trachomaLatexAgglutinationDetails;
+    }
+
+    public void setTrachomaCqValueDetectionDetails(String trachomaCqValueDetectionDetails) {
+        this.trachomaCqValueDetectionDetails = trachomaCqValueDetectionDetails;
+    }
+
+    public void setTrachomaSequencingDetails(String trachomaSequencingDetails) {
+        this.trachomaSequencingDetails = trachomaSequencingDetails;
+    }
+
+    public void setTrachomaDnaMicroarrayDetails(String trachomaDnaMicroarrayDetails) {
+        this.trachomaDnaMicroarrayDetails = trachomaDnaMicroarrayDetails;
+    }
+
+    public void setTrachomaOtherDetails(String trachomaOtherDetails) {
+        this.trachomaOtherDetails = trachomaOtherDetails;
+    }
+
+    public void setYawsEndemicSyphilisAntibodyDetection(String yawsEndemicSyphilisAntibodyDetection) {
+        this.yawsEndemicSyphilisAntibodyDetection = yawsEndemicSyphilisAntibodyDetection;
     }
 
     public void setYawsEndemicSyphilisAntigenDetection(String yawsEndemicSyphilisAntigenDetection) {
@@ -5157,6 +10102,10 @@ public class CaseSampleExportDto implements Serializable {
         this.yawsEndemicSyphilisIndirectFluorescentAntibody = yawsEndemicSyphilisIndirectFluorescentAntibody;
     }
 
+    public void setYawsEndemicSyphilisDirectFluorescentAntibody(String yawsEndemicSyphilisDirectFluorescentAntibody) {
+        this.yawsEndemicSyphilisDirectFluorescentAntibody = yawsEndemicSyphilisDirectFluorescentAntibody;
+    }
+
     public void setYawsEndemicSyphilisMicroscopy(String yawsEndemicSyphilisMicroscopy) {
         this.yawsEndemicSyphilisMicroscopy = yawsEndemicSyphilisMicroscopy;
     }
@@ -5165,8 +10114,8 @@ public class CaseSampleExportDto implements Serializable {
         this.yawsEndemicSyphilisNeutralizingAntibodies = yawsEndemicSyphilisNeutralizingAntibodies;
     }
 
-    public void setYawsEndemicSyphilisPcr(String yawsEndemicSyphilisPcr) {
-        this.yawsEndemicSyphilisPcr = yawsEndemicSyphilisPcr;
+    public void setYawsEndemicSyphilisPcrRtPcr(String yawsEndemicSyphilisPcrRtPcr) {
+        this.yawsEndemicSyphilisPcrRtPcr = yawsEndemicSyphilisPcrRtPcr;
     }
 
     public void setYawsEndemicSyphilisGramStain(String yawsEndemicSyphilisGramStain) {
@@ -5181,20 +10130,104 @@ public class CaseSampleExportDto implements Serializable {
         this.yawsEndemicSyphilisCqValueDetection = yawsEndemicSyphilisCqValueDetection;
     }
 
-    public void setYawsEndemicSyphilisSeQuencing(String yawsEndemicSyphilisSeQuencing) {
-        this.yawsEndemicSyphilisSeQuencing = yawsEndemicSyphilisSeQuencing;
+    public void setYawsEndemicSyphilisSequencing(String yawsEndemicSyphilisSequencing) {
+        this.yawsEndemicSyphilisSequencing = yawsEndemicSyphilisSequencing;
     }
 
-    public void setYawsEndemicSyphilisDnaMicroArray(String yawsEndemicSyphilisDnaMicroArray) {
-        this.yawsEndemicSyphilisDnaMicroArray = yawsEndemicSyphilisDnaMicroArray;
+    public void setYawsEndemicSyphilisDnaMicroarray(String yawsEndemicSyphilisDnaMicroarray) {
+        this.yawsEndemicSyphilisDnaMicroarray = yawsEndemicSyphilisDnaMicroarray;
     }
 
     public void setYawsEndemicSyphilisOther(String yawsEndemicSyphilisOther) {
         this.yawsEndemicSyphilisOther = yawsEndemicSyphilisOther;
     }
 
-    public void setMaternalDeathsAntiBodyDetection(String maternalDeathsAntiBodyDetection) {
-        this.maternalDeathsAntiBodyDetection = maternalDeathsAntiBodyDetection;
+    public void setYawsEndemicSyphilisAntibodyDetectionDetails(String yawsEndemicSyphilisAntibodyDetectionDetails) {
+        this.yawsEndemicSyphilisAntibodyDetectionDetails = yawsEndemicSyphilisAntibodyDetectionDetails;
+    }
+
+    public void setYawsEndemicSyphilisAntigenDetectionDetails(String yawsEndemicSyphilisAntigenDetectionDetails) {
+        this.yawsEndemicSyphilisAntigenDetectionDetails = yawsEndemicSyphilisAntigenDetectionDetails;
+    }
+
+    public void setYawsEndemicSyphilisRapidTestDetails(String yawsEndemicSyphilisRapidTestDetails) {
+        this.yawsEndemicSyphilisRapidTestDetails = yawsEndemicSyphilisRapidTestDetails;
+    }
+
+    public void setYawsEndemicSyphilisCultureDetails(String yawsEndemicSyphilisCultureDetails) {
+        this.yawsEndemicSyphilisCultureDetails = yawsEndemicSyphilisCultureDetails;
+    }
+
+    public void setYawsEndemicSyphilisHistopathologyDetails(String yawsEndemicSyphilisHistopathologyDetails) {
+        this.yawsEndemicSyphilisHistopathologyDetails = yawsEndemicSyphilisHistopathologyDetails;
+    }
+
+    public void setYawsEndemicSyphilisIsolationDetails(String yawsEndemicSyphilisIsolationDetails) {
+        this.yawsEndemicSyphilisIsolationDetails = yawsEndemicSyphilisIsolationDetails;
+    }
+
+    public void setYawsEndemicSyphilisIgmSerumAntibodyDetails(String yawsEndemicSyphilisIgmSerumAntibodyDetails) {
+        this.yawsEndemicSyphilisIgmSerumAntibodyDetails = yawsEndemicSyphilisIgmSerumAntibodyDetails;
+    }
+
+    public void setYawsEndemicSyphilisIggSerumAntibodyDetails(String yawsEndemicSyphilisIggSerumAntibodyDetails) {
+        this.yawsEndemicSyphilisIggSerumAntibodyDetails = yawsEndemicSyphilisIggSerumAntibodyDetails;
+    }
+
+    public void setYawsEndemicSyphilisIgaSerumAntibodyDetails(String yawsEndemicSyphilisIgaSerumAntibodyDetails) {
+        this.yawsEndemicSyphilisIgaSerumAntibodyDetails = yawsEndemicSyphilisIgaSerumAntibodyDetails;
+    }
+
+    public void setYawsEndemicSyphilisIncubationTimeDetails(String yawsEndemicSyphilisIncubationTimeDetails) {
+        this.yawsEndemicSyphilisIncubationTimeDetails = yawsEndemicSyphilisIncubationTimeDetails;
+    }
+
+    public void setYawsEndemicSyphilisIndirectFluorescentAntibodyDetails(String yawsEndemicSyphilisIndirectFluorescentAntibodyDetails) {
+        this.yawsEndemicSyphilisIndirectFluorescentAntibodyDetails = yawsEndemicSyphilisIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setYawsEndemicSyphilisDirectFluorescentAntibodyDetails(String yawsEndemicSyphilisDirectFluorescentAntibodyDetails) {
+        this.yawsEndemicSyphilisDirectFluorescentAntibodyDetails = yawsEndemicSyphilisDirectFluorescentAntibodyDetails;
+    }
+
+    public void setYawsEndemicSyphilisMicroscopyDetails(String yawsEndemicSyphilisMicroscopyDetails) {
+        this.yawsEndemicSyphilisMicroscopyDetails = yawsEndemicSyphilisMicroscopyDetails;
+    }
+
+    public void setYawsEndemicSyphilisNeutralizingAntibodiesDetails(String yawsEndemicSyphilisNeutralizingAntibodiesDetails) {
+        this.yawsEndemicSyphilisNeutralizingAntibodiesDetails = yawsEndemicSyphilisNeutralizingAntibodiesDetails;
+    }
+
+    public void setYawsEndemicSyphilisPcrRtPcrDetails(String yawsEndemicSyphilisPcrRtPcrDetails) {
+        this.yawsEndemicSyphilisPcrRtPcrDetails = yawsEndemicSyphilisPcrRtPcrDetails;
+    }
+
+    public void setYawsEndemicSyphilisGramStainDetails(String yawsEndemicSyphilisGramStainDetails) {
+        this.yawsEndemicSyphilisGramStainDetails = yawsEndemicSyphilisGramStainDetails;
+    }
+
+    public void setYawsEndemicSyphilisLatexAgglutinationDetails(String yawsEndemicSyphilisLatexAgglutinationDetails) {
+        this.yawsEndemicSyphilisLatexAgglutinationDetails = yawsEndemicSyphilisLatexAgglutinationDetails;
+    }
+
+    public void setYawsEndemicSyphilisCqValueDetectionDetails(String yawsEndemicSyphilisCqValueDetectionDetails) {
+        this.yawsEndemicSyphilisCqValueDetectionDetails = yawsEndemicSyphilisCqValueDetectionDetails;
+    }
+
+    public void setYawsEndemicSyphilisSequencingDetails(String yawsEndemicSyphilisSequencingDetails) {
+        this.yawsEndemicSyphilisSequencingDetails = yawsEndemicSyphilisSequencingDetails;
+    }
+
+    public void setYawsEndemicSyphilisDnaMicroarrayDetails(String yawsEndemicSyphilisDnaMicroarrayDetails) {
+        this.yawsEndemicSyphilisDnaMicroarrayDetails = yawsEndemicSyphilisDnaMicroarrayDetails;
+    }
+
+    public void setYawsEndemicSyphilisOtherDetails(String yawsEndemicSyphilisOtherDetails) {
+        this.yawsEndemicSyphilisOtherDetails = yawsEndemicSyphilisOtherDetails;
+    }
+
+    public void setMaternalDeathsAntibodyDetection(String maternalDeathsAntibodyDetection) {
+        this.maternalDeathsAntibodyDetection = maternalDeathsAntibodyDetection;
     }
 
     public void setMaternalDeathsAntigenDetection(String maternalDeathsAntigenDetection) {
@@ -5237,6 +10270,10 @@ public class CaseSampleExportDto implements Serializable {
         this.maternalDeathsIndirectFluorescentAntibody = maternalDeathsIndirectFluorescentAntibody;
     }
 
+    public void setMaternalDeathsDirectFluorescentAntibody(String maternalDeathsDirectFluorescentAntibody) {
+        this.maternalDeathsDirectFluorescentAntibody = maternalDeathsDirectFluorescentAntibody;
+    }
+
     public void setMaternalDeathsMicroscopy(String maternalDeathsMicroscopy) {
         this.maternalDeathsMicroscopy = maternalDeathsMicroscopy;
     }
@@ -5245,8 +10282,8 @@ public class CaseSampleExportDto implements Serializable {
         this.maternalDeathsNeutralizingAntibodies = maternalDeathsNeutralizingAntibodies;
     }
 
-    public void setMaternalDeathsPcr(String maternalDeathsPcr) {
-        this.maternalDeathsPcr = maternalDeathsPcr;
+    public void setMaternalDeathsPcrRtPcr(String maternalDeathsPcrRtPcr) {
+        this.maternalDeathsPcrRtPcr = maternalDeathsPcrRtPcr;
     }
 
     public void setMaternalDeathsGramStain(String maternalDeathsGramStain) {
@@ -5261,20 +10298,104 @@ public class CaseSampleExportDto implements Serializable {
         this.maternalDeathsCqValueDetection = maternalDeathsCqValueDetection;
     }
 
-    public void setMaternalDeathsSeQuencing(String maternalDeathsSeQuencing) {
-        this.maternalDeathsSeQuencing = maternalDeathsSeQuencing;
+    public void setMaternalDeathsSequencing(String maternalDeathsSequencing) {
+        this.maternalDeathsSequencing = maternalDeathsSequencing;
     }
 
-    public void setMaternalDeathsDnaMicroArray(String maternalDeathsDnaMicroArray) {
-        this.maternalDeathsDnaMicroArray = maternalDeathsDnaMicroArray;
+    public void setMaternalDeathsDnaMicroarray(String maternalDeathsDnaMicroarray) {
+        this.maternalDeathsDnaMicroarray = maternalDeathsDnaMicroarray;
     }
 
     public void setMaternalDeathsOther(String maternalDeathsOther) {
         this.maternalDeathsOther = maternalDeathsOther;
     }
 
-    public void setPerinatalDeathsAntiBodyDetection(String perinatalDeathsAntiBodyDetection) {
-        this.perinatalDeathsAntiBodyDetection = perinatalDeathsAntiBodyDetection;
+    public void setMaternalDeathsAntibodyDetectionDetails(String maternalDeathsAntibodyDetectionDetails) {
+        this.maternalDeathsAntibodyDetectionDetails = maternalDeathsAntibodyDetectionDetails;
+    }
+
+    public void setMaternalDeathsAntigenDetectionDetails(String maternalDeathsAntigenDetectionDetails) {
+        this.maternalDeathsAntigenDetectionDetails = maternalDeathsAntigenDetectionDetails;
+    }
+
+    public void setMaternalDeathsRapidTestDetails(String maternalDeathsRapidTestDetails) {
+        this.maternalDeathsRapidTestDetails = maternalDeathsRapidTestDetails;
+    }
+
+    public void setMaternalDeathsCultureDetails(String maternalDeathsCultureDetails) {
+        this.maternalDeathsCultureDetails = maternalDeathsCultureDetails;
+    }
+
+    public void setMaternalDeathsHistopathologyDetails(String maternalDeathsHistopathologyDetails) {
+        this.maternalDeathsHistopathologyDetails = maternalDeathsHistopathologyDetails;
+    }
+
+    public void setMaternalDeathsIsolationDetails(String maternalDeathsIsolationDetails) {
+        this.maternalDeathsIsolationDetails = maternalDeathsIsolationDetails;
+    }
+
+    public void setMaternalDeathsIgmSerumAntibodyDetails(String maternalDeathsIgmSerumAntibodyDetails) {
+        this.maternalDeathsIgmSerumAntibodyDetails = maternalDeathsIgmSerumAntibodyDetails;
+    }
+
+    public void setMaternalDeathsIggSerumAntibodyDetails(String maternalDeathsIggSerumAntibodyDetails) {
+        this.maternalDeathsIggSerumAntibodyDetails = maternalDeathsIggSerumAntibodyDetails;
+    }
+
+    public void setMaternalDeathsIgaSerumAntibodyDetails(String maternalDeathsIgaSerumAntibodyDetails) {
+        this.maternalDeathsIgaSerumAntibodyDetails = maternalDeathsIgaSerumAntibodyDetails;
+    }
+
+    public void setMaternalDeathsIncubationTimeDetails(String maternalDeathsIncubationTimeDetails) {
+        this.maternalDeathsIncubationTimeDetails = maternalDeathsIncubationTimeDetails;
+    }
+
+    public void setMaternalDeathsIndirectFluorescentAntibodyDetails(String maternalDeathsIndirectFluorescentAntibodyDetails) {
+        this.maternalDeathsIndirectFluorescentAntibodyDetails = maternalDeathsIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setMaternalDeathsDirectFluorescentAntibodyDetails(String maternalDeathsDirectFluorescentAntibodyDetails) {
+        this.maternalDeathsDirectFluorescentAntibodyDetails = maternalDeathsDirectFluorescentAntibodyDetails;
+    }
+
+    public void setMaternalDeathsMicroscopyDetails(String maternalDeathsMicroscopyDetails) {
+        this.maternalDeathsMicroscopyDetails = maternalDeathsMicroscopyDetails;
+    }
+
+    public void setMaternalDeathsNeutralizingAntibodiesDetails(String maternalDeathsNeutralizingAntibodiesDetails) {
+        this.maternalDeathsNeutralizingAntibodiesDetails = maternalDeathsNeutralizingAntibodiesDetails;
+    }
+
+    public void setMaternalDeathsPcrRtPcrDetails(String maternalDeathsPcrRtPcrDetails) {
+        this.maternalDeathsPcrRtPcrDetails = maternalDeathsPcrRtPcrDetails;
+    }
+
+    public void setMaternalDeathsGramStainDetails(String maternalDeathsGramStainDetails) {
+        this.maternalDeathsGramStainDetails = maternalDeathsGramStainDetails;
+    }
+
+    public void setMaternalDeathsLatexAgglutinationDetails(String maternalDeathsLatexAgglutinationDetails) {
+        this.maternalDeathsLatexAgglutinationDetails = maternalDeathsLatexAgglutinationDetails;
+    }
+
+    public void setMaternalDeathsCqValueDetectionDetails(String maternalDeathsCqValueDetectionDetails) {
+        this.maternalDeathsCqValueDetectionDetails = maternalDeathsCqValueDetectionDetails;
+    }
+
+    public void setMaternalDeathsSequencingDetails(String maternalDeathsSequencingDetails) {
+        this.maternalDeathsSequencingDetails = maternalDeathsSequencingDetails;
+    }
+
+    public void setMaternalDeathsDnaMicroarrayDetails(String maternalDeathsDnaMicroarrayDetails) {
+        this.maternalDeathsDnaMicroarrayDetails = maternalDeathsDnaMicroarrayDetails;
+    }
+
+    public void setMaternalDeathsOtherDetails(String maternalDeathsOtherDetails) {
+        this.maternalDeathsOtherDetails = maternalDeathsOtherDetails;
+    }
+
+    public void setPerinatalDeathsAntibodyDetection(String perinatalDeathsAntibodyDetection) {
+        this.perinatalDeathsAntibodyDetection = perinatalDeathsAntibodyDetection;
     }
 
     public void setPerinatalDeathsAntigenDetection(String perinatalDeathsAntigenDetection) {
@@ -5317,6 +10438,10 @@ public class CaseSampleExportDto implements Serializable {
         this.perinatalDeathsIndirectFluorescentAntibody = perinatalDeathsIndirectFluorescentAntibody;
     }
 
+    public void setPerinatalDeathsDirectFluorescentAntibody(String perinatalDeathsDirectFluorescentAntibody) {
+        this.perinatalDeathsDirectFluorescentAntibody = perinatalDeathsDirectFluorescentAntibody;
+    }
+
     public void setPerinatalDeathsMicroscopy(String perinatalDeathsMicroscopy) {
         this.perinatalDeathsMicroscopy = perinatalDeathsMicroscopy;
     }
@@ -5325,8 +10450,8 @@ public class CaseSampleExportDto implements Serializable {
         this.perinatalDeathsNeutralizingAntibodies = perinatalDeathsNeutralizingAntibodies;
     }
 
-    public void setPerinatalDeathsPcr(String perinatalDeathsPcr) {
-        this.perinatalDeathsPcr = perinatalDeathsPcr;
+    public void setPerinatalDeathsPcrRtPcr(String perinatalDeathsPcrRtPcr) {
+        this.perinatalDeathsPcrRtPcr = perinatalDeathsPcrRtPcr;
     }
 
     public void setPerinatalDeathsGramStain(String perinatalDeathsGramStain) {
@@ -5341,20 +10466,104 @@ public class CaseSampleExportDto implements Serializable {
         this.perinatalDeathsCqValueDetection = perinatalDeathsCqValueDetection;
     }
 
-    public void setPerinatalDeathsSeQuencing(String perinatalDeathsSeQuencing) {
-        this.perinatalDeathsSeQuencing = perinatalDeathsSeQuencing;
+    public void setPerinatalDeathsSequencing(String perinatalDeathsSequencing) {
+        this.perinatalDeathsSequencing = perinatalDeathsSequencing;
     }
 
-    public void setPerinatalDeathsDnaMicroArray(String perinatalDeathsDnaMicroArray) {
-        this.perinatalDeathsDnaMicroArray = perinatalDeathsDnaMicroArray;
+    public void setPerinatalDeathsDnaMicroarray(String perinatalDeathsDnaMicroarray) {
+        this.perinatalDeathsDnaMicroarray = perinatalDeathsDnaMicroarray;
     }
 
     public void setPerinatalDeathsOther(String perinatalDeathsOther) {
         this.perinatalDeathsOther = perinatalDeathsOther;
     }
 
-    public void setInfluenzaAAntiBodyDetection(String influenzaAAntiBodyDetection) {
-        this.influenzaAAntiBodyDetection = influenzaAAntiBodyDetection;
+    public void setPerinatalDeathsAntibodyDetectionDetails(String perinatalDeathsAntibodyDetectionDetails) {
+        this.perinatalDeathsAntibodyDetectionDetails = perinatalDeathsAntibodyDetectionDetails;
+    }
+
+    public void setPerinatalDeathsAntigenDetectionDetails(String perinatalDeathsAntigenDetectionDetails) {
+        this.perinatalDeathsAntigenDetectionDetails = perinatalDeathsAntigenDetectionDetails;
+    }
+
+    public void setPerinatalDeathsRapidTestDetails(String perinatalDeathsRapidTestDetails) {
+        this.perinatalDeathsRapidTestDetails = perinatalDeathsRapidTestDetails;
+    }
+
+    public void setPerinatalDeathsCultureDetails(String perinatalDeathsCultureDetails) {
+        this.perinatalDeathsCultureDetails = perinatalDeathsCultureDetails;
+    }
+
+    public void setPerinatalDeathsHistopathologyDetails(String perinatalDeathsHistopathologyDetails) {
+        this.perinatalDeathsHistopathologyDetails = perinatalDeathsHistopathologyDetails;
+    }
+
+    public void setPerinatalDeathsIsolationDetails(String perinatalDeathsIsolationDetails) {
+        this.perinatalDeathsIsolationDetails = perinatalDeathsIsolationDetails;
+    }
+
+    public void setPerinatalDeathsIgmSerumAntibodyDetails(String perinatalDeathsIgmSerumAntibodyDetails) {
+        this.perinatalDeathsIgmSerumAntibodyDetails = perinatalDeathsIgmSerumAntibodyDetails;
+    }
+
+    public void setPerinatalDeathsIggSerumAntibodyDetails(String perinatalDeathsIggSerumAntibodyDetails) {
+        this.perinatalDeathsIggSerumAntibodyDetails = perinatalDeathsIggSerumAntibodyDetails;
+    }
+
+    public void setPerinatalDeathsIgaSerumAntibodyDetails(String perinatalDeathsIgaSerumAntibodyDetails) {
+        this.perinatalDeathsIgaSerumAntibodyDetails = perinatalDeathsIgaSerumAntibodyDetails;
+    }
+
+    public void setPerinatalDeathsIncubationTimeDetails(String perinatalDeathsIncubationTimeDetails) {
+        this.perinatalDeathsIncubationTimeDetails = perinatalDeathsIncubationTimeDetails;
+    }
+
+    public void setPerinatalDeathsIndirectFluorescentAntibodyDetails(String perinatalDeathsIndirectFluorescentAntibodyDetails) {
+        this.perinatalDeathsIndirectFluorescentAntibodyDetails = perinatalDeathsIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setPerinatalDeathsDirectFluorescentAntibodyDetails(String perinatalDeathsDirectFluorescentAntibodyDetails) {
+        this.perinatalDeathsDirectFluorescentAntibodyDetails = perinatalDeathsDirectFluorescentAntibodyDetails;
+    }
+
+    public void setPerinatalDeathsMicroscopyDetails(String perinatalDeathsMicroscopyDetails) {
+        this.perinatalDeathsMicroscopyDetails = perinatalDeathsMicroscopyDetails;
+    }
+
+    public void setPerinatalDeathsNeutralizingAntibodiesDetails(String perinatalDeathsNeutralizingAntibodiesDetails) {
+        this.perinatalDeathsNeutralizingAntibodiesDetails = perinatalDeathsNeutralizingAntibodiesDetails;
+    }
+
+    public void setPerinatalDeathsPcrRtPcrDetails(String perinatalDeathsPcrRtPcrDetails) {
+        this.perinatalDeathsPcrRtPcrDetails = perinatalDeathsPcrRtPcrDetails;
+    }
+
+    public void setPerinatalDeathsGramStainDetails(String perinatalDeathsGramStainDetails) {
+        this.perinatalDeathsGramStainDetails = perinatalDeathsGramStainDetails;
+    }
+
+    public void setPerinatalDeathsLatexAgglutinationDetails(String perinatalDeathsLatexAgglutinationDetails) {
+        this.perinatalDeathsLatexAgglutinationDetails = perinatalDeathsLatexAgglutinationDetails;
+    }
+
+    public void setPerinatalDeathsCqValueDetectionDetails(String perinatalDeathsCqValueDetectionDetails) {
+        this.perinatalDeathsCqValueDetectionDetails = perinatalDeathsCqValueDetectionDetails;
+    }
+
+    public void setPerinatalDeathsSequencingDetails(String perinatalDeathsSequencingDetails) {
+        this.perinatalDeathsSequencingDetails = perinatalDeathsSequencingDetails;
+    }
+
+    public void setPerinatalDeathsDnaMicroarrayDetails(String perinatalDeathsDnaMicroarrayDetails) {
+        this.perinatalDeathsDnaMicroarrayDetails = perinatalDeathsDnaMicroarrayDetails;
+    }
+
+    public void setPerinatalDeathsOtherDetails(String perinatalDeathsOtherDetails) {
+        this.perinatalDeathsOtherDetails = perinatalDeathsOtherDetails;
+    }
+
+    public void setInfluenzaAAntibodyDetection(String influenzaAAntibodyDetection) {
+        this.influenzaAAntibodyDetection = influenzaAAntibodyDetection;
     }
 
     public void setInfluenzaAAntigenDetection(String influenzaAAntigenDetection) {
@@ -5397,6 +10606,10 @@ public class CaseSampleExportDto implements Serializable {
         this.influenzaAIndirectFluorescentAntibody = influenzaAIndirectFluorescentAntibody;
     }
 
+    public void setInfluenzaADirectFluorescentAntibody(String influenzaADirectFluorescentAntibody) {
+        this.influenzaADirectFluorescentAntibody = influenzaADirectFluorescentAntibody;
+    }
+
     public void setInfluenzaAMicroscopy(String influenzaAMicroscopy) {
         this.influenzaAMicroscopy = influenzaAMicroscopy;
     }
@@ -5405,8 +10618,8 @@ public class CaseSampleExportDto implements Serializable {
         this.influenzaANeutralizingAntibodies = influenzaANeutralizingAntibodies;
     }
 
-    public void setInfluenzaAPcr(String influenzaAPcr) {
-        this.influenzaAPcr = influenzaAPcr;
+    public void setInfluenzaAPcrRtPcr(String influenzaAPcrRtPcr) {
+        this.influenzaAPcrRtPcr = influenzaAPcrRtPcr;
     }
 
     public void setInfluenzaAGramStain(String influenzaAGramStain) {
@@ -5421,20 +10634,104 @@ public class CaseSampleExportDto implements Serializable {
         this.influenzaACqValueDetection = influenzaACqValueDetection;
     }
 
-    public void setInfluenzaASeQuencing(String influenzaASeQuencing) {
-        this.influenzaASeQuencing = influenzaASeQuencing;
+    public void setInfluenzaASequencing(String influenzaASequencing) {
+        this.influenzaASequencing = influenzaASequencing;
     }
 
-    public void setInfluenzaADnaMicroArray(String influenzaADnaMicroArray) {
-        this.influenzaADnaMicroArray = influenzaADnaMicroArray;
+    public void setInfluenzaADnaMicroarray(String influenzaADnaMicroarray) {
+        this.influenzaADnaMicroarray = influenzaADnaMicroarray;
     }
 
     public void setInfluenzaAOther(String influenzaAOther) {
         this.influenzaAOther = influenzaAOther;
     }
 
-    public void setInfluenzaBAntiBodyDetection(String influenzaBAntiBodyDetection) {
-        this.influenzaBAntiBodyDetection = influenzaBAntiBodyDetection;
+    public void setInfluenzaAAntibodyDetectionDetails(String influenzaAAntibodyDetectionDetails) {
+        this.influenzaAAntibodyDetectionDetails = influenzaAAntibodyDetectionDetails;
+    }
+
+    public void setInfluenzaAAntigenDetectionDetails(String influenzaAAntigenDetectionDetails) {
+        this.influenzaAAntigenDetectionDetails = influenzaAAntigenDetectionDetails;
+    }
+
+    public void setInfluenzaARapidTestDetails(String influenzaARapidTestDetails) {
+        this.influenzaARapidTestDetails = influenzaARapidTestDetails;
+    }
+
+    public void setInfluenzaACultureDetails(String influenzaACultureDetails) {
+        this.influenzaACultureDetails = influenzaACultureDetails;
+    }
+
+    public void setInfluenzaAHistopathologyDetails(String influenzaAHistopathologyDetails) {
+        this.influenzaAHistopathologyDetails = influenzaAHistopathologyDetails;
+    }
+
+    public void setInfluenzaAIsolationDetails(String influenzaAIsolationDetails) {
+        this.influenzaAIsolationDetails = influenzaAIsolationDetails;
+    }
+
+    public void setInfluenzaAIgmSerumAntibodyDetails(String influenzaAIgmSerumAntibodyDetails) {
+        this.influenzaAIgmSerumAntibodyDetails = influenzaAIgmSerumAntibodyDetails;
+    }
+
+    public void setInfluenzaAIggSerumAntibodyDetails(String influenzaAIggSerumAntibodyDetails) {
+        this.influenzaAIggSerumAntibodyDetails = influenzaAIggSerumAntibodyDetails;
+    }
+
+    public void setInfluenzaAIgaSerumAntibodyDetails(String influenzaAIgaSerumAntibodyDetails) {
+        this.influenzaAIgaSerumAntibodyDetails = influenzaAIgaSerumAntibodyDetails;
+    }
+
+    public void setInfluenzaAIncubationTimeDetails(String influenzaAIncubationTimeDetails) {
+        this.influenzaAIncubationTimeDetails = influenzaAIncubationTimeDetails;
+    }
+
+    public void setInfluenzaAIndirectFluorescentAntibodyDetails(String influenzaAIndirectFluorescentAntibodyDetails) {
+        this.influenzaAIndirectFluorescentAntibodyDetails = influenzaAIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setInfluenzaADirectFluorescentAntibodyDetails(String influenzaADirectFluorescentAntibodyDetails) {
+        this.influenzaADirectFluorescentAntibodyDetails = influenzaADirectFluorescentAntibodyDetails;
+    }
+
+    public void setInfluenzaAMicroscopyDetails(String influenzaAMicroscopyDetails) {
+        this.influenzaAMicroscopyDetails = influenzaAMicroscopyDetails;
+    }
+
+    public void setInfluenzaANeutralizingAntibodiesDetails(String influenzaANeutralizingAntibodiesDetails) {
+        this.influenzaANeutralizingAntibodiesDetails = influenzaANeutralizingAntibodiesDetails;
+    }
+
+    public void setInfluenzaAPcrRtPcrDetails(String influenzaAPcrRtPcrDetails) {
+        this.influenzaAPcrRtPcrDetails = influenzaAPcrRtPcrDetails;
+    }
+
+    public void setInfluenzaAGramStainDetails(String influenzaAGramStainDetails) {
+        this.influenzaAGramStainDetails = influenzaAGramStainDetails;
+    }
+
+    public void setInfluenzaALatexAgglutinationDetails(String influenzaALatexAgglutinationDetails) {
+        this.influenzaALatexAgglutinationDetails = influenzaALatexAgglutinationDetails;
+    }
+
+    public void setInfluenzaACqValueDetectionDetails(String influenzaACqValueDetectionDetails) {
+        this.influenzaACqValueDetectionDetails = influenzaACqValueDetectionDetails;
+    }
+
+    public void setInfluenzaASequencingDetails(String influenzaASequencingDetails) {
+        this.influenzaASequencingDetails = influenzaASequencingDetails;
+    }
+
+    public void setInfluenzaADnaMicroarrayDetails(String influenzaADnaMicroarrayDetails) {
+        this.influenzaADnaMicroarrayDetails = influenzaADnaMicroarrayDetails;
+    }
+
+    public void setInfluenzaAOtherDetails(String influenzaAOtherDetails) {
+        this.influenzaAOtherDetails = influenzaAOtherDetails;
+    }
+
+    public void setInfluenzaBAntibodyDetection(String influenzaBAntibodyDetection) {
+        this.influenzaBAntibodyDetection = influenzaBAntibodyDetection;
     }
 
     public void setInfluenzaBAntigenDetection(String influenzaBAntigenDetection) {
@@ -5477,6 +10774,10 @@ public class CaseSampleExportDto implements Serializable {
         this.influenzaBIndirectFluorescentAntibody = influenzaBIndirectFluorescentAntibody;
     }
 
+    public void setInfluenzaBDirectFluorescentAntibody(String influenzaBDirectFluorescentAntibody) {
+        this.influenzaBDirectFluorescentAntibody = influenzaBDirectFluorescentAntibody;
+    }
+
     public void setInfluenzaBMicroscopy(String influenzaBMicroscopy) {
         this.influenzaBMicroscopy = influenzaBMicroscopy;
     }
@@ -5485,8 +10786,8 @@ public class CaseSampleExportDto implements Serializable {
         this.influenzaBNeutralizingAntibodies = influenzaBNeutralizingAntibodies;
     }
 
-    public void setInfluenzaBPcr(String influenzaBPcr) {
-        this.influenzaBPcr = influenzaBPcr;
+    public void setInfluenzaBPcrRtPcr(String influenzaBPcrRtPcr) {
+        this.influenzaBPcrRtPcr = influenzaBPcrRtPcr;
     }
 
     public void setInfluenzaBGramStain(String influenzaBGramStain) {
@@ -5501,20 +10802,104 @@ public class CaseSampleExportDto implements Serializable {
         this.influenzaBCqValueDetection = influenzaBCqValueDetection;
     }
 
-    public void setInfluenzaBSeQuencing(String influenzaBSeQuencing) {
-        this.influenzaBSeQuencing = influenzaBSeQuencing;
+    public void setInfluenzaBSequencing(String influenzaBSequencing) {
+        this.influenzaBSequencing = influenzaBSequencing;
     }
 
-    public void setInfluenzaBDnaMicroArray(String influenzaBDnaMicroArray) {
-        this.influenzaBDnaMicroArray = influenzaBDnaMicroArray;
+    public void setInfluenzaBDnaMicroarray(String influenzaBDnaMicroarray) {
+        this.influenzaBDnaMicroarray = influenzaBDnaMicroarray;
     }
 
     public void setInfluenzaBOther(String influenzaBOther) {
         this.influenzaBOther = influenzaBOther;
     }
 
-    public void sethMetapneumovirusAntiBodyDetection(String hMetapneumovirusAntiBodyDetection) {
-        this.hMetapneumovirusAntiBodyDetection = hMetapneumovirusAntiBodyDetection;
+    public void setInfluenzaBAntibodyDetectionDetails(String influenzaBAntibodyDetectionDetails) {
+        this.influenzaBAntibodyDetectionDetails = influenzaBAntibodyDetectionDetails;
+    }
+
+    public void setInfluenzaBAntigenDetectionDetails(String influenzaBAntigenDetectionDetails) {
+        this.influenzaBAntigenDetectionDetails = influenzaBAntigenDetectionDetails;
+    }
+
+    public void setInfluenzaBRapidTestDetails(String influenzaBRapidTestDetails) {
+        this.influenzaBRapidTestDetails = influenzaBRapidTestDetails;
+    }
+
+    public void setInfluenzaBCultureDetails(String influenzaBCultureDetails) {
+        this.influenzaBCultureDetails = influenzaBCultureDetails;
+    }
+
+    public void setInfluenzaBHistopathologyDetails(String influenzaBHistopathologyDetails) {
+        this.influenzaBHistopathologyDetails = influenzaBHistopathologyDetails;
+    }
+
+    public void setInfluenzaBIsolationDetails(String influenzaBIsolationDetails) {
+        this.influenzaBIsolationDetails = influenzaBIsolationDetails;
+    }
+
+    public void setInfluenzaBIgmSerumAntibodyDetails(String influenzaBIgmSerumAntibodyDetails) {
+        this.influenzaBIgmSerumAntibodyDetails = influenzaBIgmSerumAntibodyDetails;
+    }
+
+    public void setInfluenzaBIggSerumAntibodyDetails(String influenzaBIggSerumAntibodyDetails) {
+        this.influenzaBIggSerumAntibodyDetails = influenzaBIggSerumAntibodyDetails;
+    }
+
+    public void setInfluenzaBIgaSerumAntibodyDetails(String influenzaBIgaSerumAntibodyDetails) {
+        this.influenzaBIgaSerumAntibodyDetails = influenzaBIgaSerumAntibodyDetails;
+    }
+
+    public void setInfluenzaBIncubationTimeDetails(String influenzaBIncubationTimeDetails) {
+        this.influenzaBIncubationTimeDetails = influenzaBIncubationTimeDetails;
+    }
+
+    public void setInfluenzaBIndirectFluorescentAntibodyDetails(String influenzaBIndirectFluorescentAntibodyDetails) {
+        this.influenzaBIndirectFluorescentAntibodyDetails = influenzaBIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setInfluenzaBDirectFluorescentAntibodyDetails(String influenzaBDirectFluorescentAntibodyDetails) {
+        this.influenzaBDirectFluorescentAntibodyDetails = influenzaBDirectFluorescentAntibodyDetails;
+    }
+
+    public void setInfluenzaBMicroscopyDetails(String influenzaBMicroscopyDetails) {
+        this.influenzaBMicroscopyDetails = influenzaBMicroscopyDetails;
+    }
+
+    public void setInfluenzaBNeutralizingAntibodiesDetails(String influenzaBNeutralizingAntibodiesDetails) {
+        this.influenzaBNeutralizingAntibodiesDetails = influenzaBNeutralizingAntibodiesDetails;
+    }
+
+    public void setInfluenzaBPcrRtPcrDetails(String influenzaBPcrRtPcrDetails) {
+        this.influenzaBPcrRtPcrDetails = influenzaBPcrRtPcrDetails;
+    }
+
+    public void setInfluenzaBGramStainDetails(String influenzaBGramStainDetails) {
+        this.influenzaBGramStainDetails = influenzaBGramStainDetails;
+    }
+
+    public void setInfluenzaBLatexAgglutinationDetails(String influenzaBLatexAgglutinationDetails) {
+        this.influenzaBLatexAgglutinationDetails = influenzaBLatexAgglutinationDetails;
+    }
+
+    public void setInfluenzaBCqValueDetectionDetails(String influenzaBCqValueDetectionDetails) {
+        this.influenzaBCqValueDetectionDetails = influenzaBCqValueDetectionDetails;
+    }
+
+    public void setInfluenzaBSequencingDetails(String influenzaBSequencingDetails) {
+        this.influenzaBSequencingDetails = influenzaBSequencingDetails;
+    }
+
+    public void setInfluenzaBDnaMicroarrayDetails(String influenzaBDnaMicroarrayDetails) {
+        this.influenzaBDnaMicroarrayDetails = influenzaBDnaMicroarrayDetails;
+    }
+
+    public void setInfluenzaBOtherDetails(String influenzaBOtherDetails) {
+        this.influenzaBOtherDetails = influenzaBOtherDetails;
+    }
+
+    public void sethMetapneumovirusAntibodyDetection(String hMetapneumovirusAntibodyDetection) {
+        this.hMetapneumovirusAntibodyDetection = hMetapneumovirusAntibodyDetection;
     }
 
     public void sethMetapneumovirusAntigenDetection(String hMetapneumovirusAntigenDetection) {
@@ -5557,6 +10942,10 @@ public class CaseSampleExportDto implements Serializable {
         this.hMetapneumovirusIndirectFluorescentAntibody = hMetapneumovirusIndirectFluorescentAntibody;
     }
 
+    public void sethMetapneumovirusDirectFluorescentAntibody(String hMetapneumovirusDirectFluorescentAntibody) {
+        this.hMetapneumovirusDirectFluorescentAntibody = hMetapneumovirusDirectFluorescentAntibody;
+    }
+
     public void sethMetapneumovirusMicroscopy(String hMetapneumovirusMicroscopy) {
         this.hMetapneumovirusMicroscopy = hMetapneumovirusMicroscopy;
     }
@@ -5565,8 +10954,8 @@ public class CaseSampleExportDto implements Serializable {
         this.hMetapneumovirusNeutralizingAntibodies = hMetapneumovirusNeutralizingAntibodies;
     }
 
-    public void sethMetapneumovirusPcr(String hMetapneumovirusPcr) {
-        this.hMetapneumovirusPcr = hMetapneumovirusPcr;
+    public void sethMetapneumovirusPcrRtPcr(String hMetapneumovirusPcrRtPcr) {
+        this.hMetapneumovirusPcrRtPcr = hMetapneumovirusPcrRtPcr;
     }
 
     public void sethMetapneumovirusGramStain(String hMetapneumovirusGramStain) {
@@ -5581,20 +10970,104 @@ public class CaseSampleExportDto implements Serializable {
         this.hMetapneumovirusCqValueDetection = hMetapneumovirusCqValueDetection;
     }
 
-    public void sethMetapneumovirusSeQuencing(String hMetapneumovirusSeQuencing) {
-        this.hMetapneumovirusSeQuencing = hMetapneumovirusSeQuencing;
+    public void sethMetapneumovirusSequencing(String hMetapneumovirusSequencing) {
+        this.hMetapneumovirusSequencing = hMetapneumovirusSequencing;
     }
 
-    public void sethMetapneumovirusDnaMicroArray(String hMetapneumovirusDnaMicroArray) {
-        this.hMetapneumovirusDnaMicroArray = hMetapneumovirusDnaMicroArray;
+    public void sethMetapneumovirusDnaMicroarray(String hMetapneumovirusDnaMicroarray) {
+        this.hMetapneumovirusDnaMicroarray = hMetapneumovirusDnaMicroarray;
     }
 
     public void sethMetapneumovirusOther(String hMetapneumovirusOther) {
         this.hMetapneumovirusOther = hMetapneumovirusOther;
     }
 
-    public void setRespiratorySyncytialVirusAntiBodyDetection(String respiratorySyncytialVirusAntiBodyDetection) {
-        this.respiratorySyncytialVirusAntiBodyDetection = respiratorySyncytialVirusAntiBodyDetection;
+    public void sethMetapneumovirusAntibodyDetectionDetails(String hMetapneumovirusAntibodyDetectionDetails) {
+        this.hMetapneumovirusAntibodyDetectionDetails = hMetapneumovirusAntibodyDetectionDetails;
+    }
+
+    public void sethMetapneumovirusAntigenDetectionDetails(String hMetapneumovirusAntigenDetectionDetails) {
+        this.hMetapneumovirusAntigenDetectionDetails = hMetapneumovirusAntigenDetectionDetails;
+    }
+
+    public void sethMetapneumovirusRapidTestDetails(String hMetapneumovirusRapidTestDetails) {
+        this.hMetapneumovirusRapidTestDetails = hMetapneumovirusRapidTestDetails;
+    }
+
+    public void sethMetapneumovirusCultureDetails(String hMetapneumovirusCultureDetails) {
+        this.hMetapneumovirusCultureDetails = hMetapneumovirusCultureDetails;
+    }
+
+    public void sethMetapneumovirusHistopathologyDetails(String hMetapneumovirusHistopathologyDetails) {
+        this.hMetapneumovirusHistopathologyDetails = hMetapneumovirusHistopathologyDetails;
+    }
+
+    public void sethMetapneumovirusIsolationDetails(String hMetapneumovirusIsolationDetails) {
+        this.hMetapneumovirusIsolationDetails = hMetapneumovirusIsolationDetails;
+    }
+
+    public void sethMetapneumovirusIgmSerumAntibodyDetails(String hMetapneumovirusIgmSerumAntibodyDetails) {
+        this.hMetapneumovirusIgmSerumAntibodyDetails = hMetapneumovirusIgmSerumAntibodyDetails;
+    }
+
+    public void sethMetapneumovirusIggSerumAntibodyDetails(String hMetapneumovirusIggSerumAntibodyDetails) {
+        this.hMetapneumovirusIggSerumAntibodyDetails = hMetapneumovirusIggSerumAntibodyDetails;
+    }
+
+    public void sethMetapneumovirusIgaSerumAntibodyDetails(String hMetapneumovirusIgaSerumAntibodyDetails) {
+        this.hMetapneumovirusIgaSerumAntibodyDetails = hMetapneumovirusIgaSerumAntibodyDetails;
+    }
+
+    public void sethMetapneumovirusIncubationTimeDetails(String hMetapneumovirusIncubationTimeDetails) {
+        this.hMetapneumovirusIncubationTimeDetails = hMetapneumovirusIncubationTimeDetails;
+    }
+
+    public void sethMetapneumovirusIndirectFluorescentAntibodyDetails(String hMetapneumovirusIndirectFluorescentAntibodyDetails) {
+        this.hMetapneumovirusIndirectFluorescentAntibodyDetails = hMetapneumovirusIndirectFluorescentAntibodyDetails;
+    }
+
+    public void sethMetapneumovirusDirectFluorescentAntibodyDetails(String hMetapneumovirusDirectFluorescentAntibodyDetails) {
+        this.hMetapneumovirusDirectFluorescentAntibodyDetails = hMetapneumovirusDirectFluorescentAntibodyDetails;
+    }
+
+    public void sethMetapneumovirusMicroscopyDetails(String hMetapneumovirusMicroscopyDetails) {
+        this.hMetapneumovirusMicroscopyDetails = hMetapneumovirusMicroscopyDetails;
+    }
+
+    public void sethMetapneumovirusNeutralizingAntibodiesDetails(String hMetapneumovirusNeutralizingAntibodiesDetails) {
+        this.hMetapneumovirusNeutralizingAntibodiesDetails = hMetapneumovirusNeutralizingAntibodiesDetails;
+    }
+
+    public void sethMetapneumovirusPcrRtPcrDetails(String hMetapneumovirusPcrRtPcrDetails) {
+        this.hMetapneumovirusPcrRtPcrDetails = hMetapneumovirusPcrRtPcrDetails;
+    }
+
+    public void sethMetapneumovirusGramStainDetails(String hMetapneumovirusGramStainDetails) {
+        this.hMetapneumovirusGramStainDetails = hMetapneumovirusGramStainDetails;
+    }
+
+    public void sethMetapneumovirusLatexAgglutinationDetails(String hMetapneumovirusLatexAgglutinationDetails) {
+        this.hMetapneumovirusLatexAgglutinationDetails = hMetapneumovirusLatexAgglutinationDetails;
+    }
+
+    public void sethMetapneumovirusCqValueDetectionDetails(String hMetapneumovirusCqValueDetectionDetails) {
+        this.hMetapneumovirusCqValueDetectionDetails = hMetapneumovirusCqValueDetectionDetails;
+    }
+
+    public void sethMetapneumovirusSequencingDetails(String hMetapneumovirusSequencingDetails) {
+        this.hMetapneumovirusSequencingDetails = hMetapneumovirusSequencingDetails;
+    }
+
+    public void sethMetapneumovirusDnaMicroarrayDetails(String hMetapneumovirusDnaMicroarrayDetails) {
+        this.hMetapneumovirusDnaMicroarrayDetails = hMetapneumovirusDnaMicroarrayDetails;
+    }
+
+    public void sethMetapneumovirusOtherDetails(String hMetapneumovirusOtherDetails) {
+        this.hMetapneumovirusOtherDetails = hMetapneumovirusOtherDetails;
+    }
+
+    public void setRespiratorySyncytialVirusAntibodyDetection(String respiratorySyncytialVirusAntibodyDetection) {
+        this.respiratorySyncytialVirusAntibodyDetection = respiratorySyncytialVirusAntibodyDetection;
     }
 
     public void setRespiratorySyncytialVirusAntigenDetection(String respiratorySyncytialVirusAntigenDetection) {
@@ -5637,6 +11110,10 @@ public class CaseSampleExportDto implements Serializable {
         this.respiratorySyncytialVirusIndirectFluorescentAntibody = respiratorySyncytialVirusIndirectFluorescentAntibody;
     }
 
+    public void setRespiratorySyncytialVirusDirectFluorescentAntibody(String respiratorySyncytialVirusDirectFluorescentAntibody) {
+        this.respiratorySyncytialVirusDirectFluorescentAntibody = respiratorySyncytialVirusDirectFluorescentAntibody;
+    }
+
     public void setRespiratorySyncytialVirusMicroscopy(String respiratorySyncytialVirusMicroscopy) {
         this.respiratorySyncytialVirusMicroscopy = respiratorySyncytialVirusMicroscopy;
     }
@@ -5645,8 +11122,8 @@ public class CaseSampleExportDto implements Serializable {
         this.respiratorySyncytialVirusNeutralizingAntibodies = respiratorySyncytialVirusNeutralizingAntibodies;
     }
 
-    public void setRespiratorySyncytialVirusPcr(String respiratorySyncytialVirusPcr) {
-        this.respiratorySyncytialVirusPcr = respiratorySyncytialVirusPcr;
+    public void setRespiratorySyncytialVirusPcrRtPcr(String respiratorySyncytialVirusPcrRtPcr) {
+        this.respiratorySyncytialVirusPcrRtPcr = respiratorySyncytialVirusPcrRtPcr;
     }
 
     public void setRespiratorySyncytialVirusGramStain(String respiratorySyncytialVirusGramStain) {
@@ -5661,100 +11138,272 @@ public class CaseSampleExportDto implements Serializable {
         this.respiratorySyncytialVirusCqValueDetection = respiratorySyncytialVirusCqValueDetection;
     }
 
-    public void setRespiratorySyncytialVirusSeQuencing(String respiratorySyncytialVirusSeQuencing) {
-        this.respiratorySyncytialVirusSeQuencing = respiratorySyncytialVirusSeQuencing;
+    public void setRespiratorySyncytialVirusSequencing(String respiratorySyncytialVirusSequencing) {
+        this.respiratorySyncytialVirusSequencing = respiratorySyncytialVirusSequencing;
     }
 
-    public void setRespiratorySyncytialVirusDnaMicroArray(String respiratorySyncytialVirusDnaMicroArray) {
-        this.respiratorySyncytialVirusDnaMicroArray = respiratorySyncytialVirusDnaMicroArray;
+    public void setRespiratorySyncytialVirusDnaMicroarray(String respiratorySyncytialVirusDnaMicroarray) {
+        this.respiratorySyncytialVirusDnaMicroarray = respiratorySyncytialVirusDnaMicroarray;
     }
 
     public void setRespiratorySyncytialVirusOther(String respiratorySyncytialVirusOther) {
         this.respiratorySyncytialVirusOther = respiratorySyncytialVirusOther;
     }
 
-    public void setParainfluenza1_4AntiBodyDetection(String parainfluenza1_4AntiBodyDetection) {
-        this.parainfluenza1_4AntiBodyDetection = parainfluenza1_4AntiBodyDetection;
+    public void setRespiratorySyncytialVirusAntibodyDetectionDetails(String respiratorySyncytialVirusAntibodyDetectionDetails) {
+        this.respiratorySyncytialVirusAntibodyDetectionDetails = respiratorySyncytialVirusAntibodyDetectionDetails;
     }
 
-    public void setParainfluenza1_4AntigenDetection(String parainfluenza1_4AntigenDetection) {
-        this.parainfluenza1_4AntigenDetection = parainfluenza1_4AntigenDetection;
+    public void setRespiratorySyncytialVirusAntigenDetectionDetails(String respiratorySyncytialVirusAntigenDetectionDetails) {
+        this.respiratorySyncytialVirusAntigenDetectionDetails = respiratorySyncytialVirusAntigenDetectionDetails;
     }
 
-    public void setParainfluenza1_4RapidTest(String parainfluenza1_4RapidTest) {
-        this.parainfluenza1_4RapidTest = parainfluenza1_4RapidTest;
+    public void setRespiratorySyncytialVirusRapidTestDetails(String respiratorySyncytialVirusRapidTestDetails) {
+        this.respiratorySyncytialVirusRapidTestDetails = respiratorySyncytialVirusRapidTestDetails;
     }
 
-    public void setParainfluenza1_4Culture(String parainfluenza1_4Culture) {
-        this.parainfluenza1_4Culture = parainfluenza1_4Culture;
+    public void setRespiratorySyncytialVirusCultureDetails(String respiratorySyncytialVirusCultureDetails) {
+        this.respiratorySyncytialVirusCultureDetails = respiratorySyncytialVirusCultureDetails;
     }
 
-    public void setParainfluenza1_4Histopathology(String parainfluenza1_4Histopathology) {
-        this.parainfluenza1_4Histopathology = parainfluenza1_4Histopathology;
+    public void setRespiratorySyncytialVirusHistopathologyDetails(String respiratorySyncytialVirusHistopathologyDetails) {
+        this.respiratorySyncytialVirusHistopathologyDetails = respiratorySyncytialVirusHistopathologyDetails;
     }
 
-    public void setParainfluenza1_4Isolation(String parainfluenza1_4Isolation) {
-        this.parainfluenza1_4Isolation = parainfluenza1_4Isolation;
+    public void setRespiratorySyncytialVirusIsolationDetails(String respiratorySyncytialVirusIsolationDetails) {
+        this.respiratorySyncytialVirusIsolationDetails = respiratorySyncytialVirusIsolationDetails;
     }
 
-    public void setParainfluenza1_4IgmSerumAntibody(String parainfluenza1_4IgmSerumAntibody) {
-        this.parainfluenza1_4IgmSerumAntibody = parainfluenza1_4IgmSerumAntibody;
+    public void setRespiratorySyncytialVirusIgmSerumAntibodyDetails(String respiratorySyncytialVirusIgmSerumAntibodyDetails) {
+        this.respiratorySyncytialVirusIgmSerumAntibodyDetails = respiratorySyncytialVirusIgmSerumAntibodyDetails;
     }
 
-    public void setParainfluenza1_4IggSerumAntibody(String parainfluenza1_4IggSerumAntibody) {
-        this.parainfluenza1_4IggSerumAntibody = parainfluenza1_4IggSerumAntibody;
+    public void setRespiratorySyncytialVirusIggSerumAntibodyDetails(String respiratorySyncytialVirusIggSerumAntibodyDetails) {
+        this.respiratorySyncytialVirusIggSerumAntibodyDetails = respiratorySyncytialVirusIggSerumAntibodyDetails;
     }
 
-    public void setParainfluenza1_4IgaSerumAntibody(String parainfluenza1_4IgaSerumAntibody) {
-        this.parainfluenza1_4IgaSerumAntibody = parainfluenza1_4IgaSerumAntibody;
+    public void setRespiratorySyncytialVirusIgaSerumAntibodyDetails(String respiratorySyncytialVirusIgaSerumAntibodyDetails) {
+        this.respiratorySyncytialVirusIgaSerumAntibodyDetails = respiratorySyncytialVirusIgaSerumAntibodyDetails;
     }
 
-    public void setParainfluenza1_4IncubationTime(String parainfluenza1_4IncubationTime) {
-        this.parainfluenza1_4IncubationTime = parainfluenza1_4IncubationTime;
+    public void setRespiratorySyncytialVirusIncubationTimeDetails(String respiratorySyncytialVirusIncubationTimeDetails) {
+        this.respiratorySyncytialVirusIncubationTimeDetails = respiratorySyncytialVirusIncubationTimeDetails;
     }
 
-    public void setParainfluenza1_4IndirectFluorescentAntibody(String parainfluenza1_4IndirectFluorescentAntibody) {
-        this.parainfluenza1_4IndirectFluorescentAntibody = parainfluenza1_4IndirectFluorescentAntibody;
+    public void setRespiratorySyncytialVirusIndirectFluorescentAntibodyDetails(String respiratorySyncytialVirusIndirectFluorescentAntibodyDetails) {
+        this.respiratorySyncytialVirusIndirectFluorescentAntibodyDetails = respiratorySyncytialVirusIndirectFluorescentAntibodyDetails;
     }
 
-    public void setParainfluenza1_4Microscopy(String parainfluenza1_4Microscopy) {
-        this.parainfluenza1_4Microscopy = parainfluenza1_4Microscopy;
+    public void setRespiratorySyncytialVirusDirectFluorescentAntibodyDetails(String respiratorySyncytialVirusDirectFluorescentAntibodyDetails) {
+        this.respiratorySyncytialVirusDirectFluorescentAntibodyDetails = respiratorySyncytialVirusDirectFluorescentAntibodyDetails;
     }
 
-    public void setParainfluenza1_4NeutralizingAntibodies(String parainfluenza1_4NeutralizingAntibodies) {
-        this.parainfluenza1_4NeutralizingAntibodies = parainfluenza1_4NeutralizingAntibodies;
+    public void setRespiratorySyncytialVirusMicroscopyDetails(String respiratorySyncytialVirusMicroscopyDetails) {
+        this.respiratorySyncytialVirusMicroscopyDetails = respiratorySyncytialVirusMicroscopyDetails;
     }
 
-    public void setParainfluenza1_4Pcr(String parainfluenza1_4Pcr) {
-        this.parainfluenza1_4Pcr = parainfluenza1_4Pcr;
+    public void setRespiratorySyncytialVirusNeutralizingAntibodiesDetails(String respiratorySyncytialVirusNeutralizingAntibodiesDetails) {
+        this.respiratorySyncytialVirusNeutralizingAntibodiesDetails = respiratorySyncytialVirusNeutralizingAntibodiesDetails;
     }
 
-    public void setParainfluenza1_4GramStain(String parainfluenza1_4GramStain) {
-        this.parainfluenza1_4GramStain = parainfluenza1_4GramStain;
+    public void setRespiratorySyncytialVirusPcrRtPcrDetails(String respiratorySyncytialVirusPcrRtPcrDetails) {
+        this.respiratorySyncytialVirusPcrRtPcrDetails = respiratorySyncytialVirusPcrRtPcrDetails;
     }
 
-    public void setParainfluenza1_4LatexAgglutination(String parainfluenza1_4LatexAgglutination) {
-        this.parainfluenza1_4LatexAgglutination = parainfluenza1_4LatexAgglutination;
+    public void setRespiratorySyncytialVirusGramStainDetails(String respiratorySyncytialVirusGramStainDetails) {
+        this.respiratorySyncytialVirusGramStainDetails = respiratorySyncytialVirusGramStainDetails;
     }
 
-    public void setParainfluenza1_4CqValueDetection(String parainfluenza1_4CqValueDetection) {
-        this.parainfluenza1_4CqValueDetection = parainfluenza1_4CqValueDetection;
+    public void setRespiratorySyncytialVirusLatexAgglutinationDetails(String respiratorySyncytialVirusLatexAgglutinationDetails) {
+        this.respiratorySyncytialVirusLatexAgglutinationDetails = respiratorySyncytialVirusLatexAgglutinationDetails;
     }
 
-    public void setParainfluenza1_4SeQuencing(String parainfluenza1_4SeQuencing) {
-        this.parainfluenza1_4SeQuencing = parainfluenza1_4SeQuencing;
+    public void setRespiratorySyncytialVirusCqValueDetectionDetails(String respiratorySyncytialVirusCqValueDetectionDetails) {
+        this.respiratorySyncytialVirusCqValueDetectionDetails = respiratorySyncytialVirusCqValueDetectionDetails;
     }
 
-    public void setParainfluenza1_4DnaMicroArray(String parainfluenza1_4DnaMicroArray) {
-        this.parainfluenza1_4DnaMicroArray = parainfluenza1_4DnaMicroArray;
+    public void setRespiratorySyncytialVirusSequencingDetails(String respiratorySyncytialVirusSequencingDetails) {
+        this.respiratorySyncytialVirusSequencingDetails = respiratorySyncytialVirusSequencingDetails;
     }
 
-    public void setParainfluenza1_4Other(String parainfluenza1_4Other) {
-        this.parainfluenza1_4Other = parainfluenza1_4Other;
+    public void setRespiratorySyncytialVirusDnaMicroarrayDetails(String respiratorySyncytialVirusDnaMicroarrayDetails) {
+        this.respiratorySyncytialVirusDnaMicroarrayDetails = respiratorySyncytialVirusDnaMicroarrayDetails;
     }
 
-    public void setAdenovirusAntiBodyDetection(String adenovirusAntiBodyDetection) {
-        this.adenovirusAntiBodyDetection = adenovirusAntiBodyDetection;
+    public void setRespiratorySyncytialVirusOtherDetails(String respiratorySyncytialVirusOtherDetails) {
+        this.respiratorySyncytialVirusOtherDetails = respiratorySyncytialVirusOtherDetails;
+    }
+
+    public void setParainfluenzaAntibodyDetection(String parainfluenzaAntibodyDetection) {
+        this.parainfluenzaAntibodyDetection = parainfluenzaAntibodyDetection;
+    }
+
+    public void setParainfluenzaAntigenDetection(String parainfluenzaAntigenDetection) {
+        this.parainfluenzaAntigenDetection = parainfluenzaAntigenDetection;
+    }
+
+    public void setParainfluenzaRapidTest(String parainfluenzaRapidTest) {
+        this.parainfluenzaRapidTest = parainfluenzaRapidTest;
+    }
+
+    public void setParainfluenzaCulture(String parainfluenzaCulture) {
+        this.parainfluenzaCulture = parainfluenzaCulture;
+    }
+
+    public void setParainfluenzaHistopathology(String parainfluenzaHistopathology) {
+        this.parainfluenzaHistopathology = parainfluenzaHistopathology;
+    }
+
+    public void setParainfluenzaIsolation(String parainfluenzaIsolation) {
+        this.parainfluenzaIsolation = parainfluenzaIsolation;
+    }
+
+    public void setParainfluenzaIgmSerumAntibody(String parainfluenzaIgmSerumAntibody) {
+        this.parainfluenzaIgmSerumAntibody = parainfluenzaIgmSerumAntibody;
+    }
+
+    public void setParainfluenzaIggSerumAntibody(String parainfluenzaIggSerumAntibody) {
+        this.parainfluenzaIggSerumAntibody = parainfluenzaIggSerumAntibody;
+    }
+
+    public void setParainfluenzaIgaSerumAntibody(String parainfluenzaIgaSerumAntibody) {
+        this.parainfluenzaIgaSerumAntibody = parainfluenzaIgaSerumAntibody;
+    }
+
+    public void setParainfluenzaIncubationTime(String parainfluenzaIncubationTime) {
+        this.parainfluenzaIncubationTime = parainfluenzaIncubationTime;
+    }
+
+    public void setParainfluenzaIndirectFluorescentAntibody(String parainfluenzaIndirectFluorescentAntibody) {
+        this.parainfluenzaIndirectFluorescentAntibody = parainfluenzaIndirectFluorescentAntibody;
+    }
+
+    public void setParainfluenzaDirectFluorescentAntibody(String parainfluenzaDirectFluorescentAntibody) {
+        this.parainfluenzaDirectFluorescentAntibody = parainfluenzaDirectFluorescentAntibody;
+    }
+
+    public void setParainfluenzaMicroscopy(String parainfluenzaMicroscopy) {
+        this.parainfluenzaMicroscopy = parainfluenzaMicroscopy;
+    }
+
+    public void setParainfluenzaNeutralizingAntibodies(String parainfluenzaNeutralizingAntibodies) {
+        this.parainfluenzaNeutralizingAntibodies = parainfluenzaNeutralizingAntibodies;
+    }
+
+    public void setParainfluenzaPcrRtPcr(String parainfluenzaPcrRtPcr) {
+        this.parainfluenzaPcrRtPcr = parainfluenzaPcrRtPcr;
+    }
+
+    public void setParainfluenzaGramStain(String parainfluenzaGramStain) {
+        this.parainfluenzaGramStain = parainfluenzaGramStain;
+    }
+
+    public void setParainfluenzaLatexAgglutination(String parainfluenzaLatexAgglutination) {
+        this.parainfluenzaLatexAgglutination = parainfluenzaLatexAgglutination;
+    }
+
+    public void setParainfluenzaCqValueDetection(String parainfluenzaCqValueDetection) {
+        this.parainfluenzaCqValueDetection = parainfluenzaCqValueDetection;
+    }
+
+    public void setParainfluenzaSequencing(String parainfluenzaSequencing) {
+        this.parainfluenzaSequencing = parainfluenzaSequencing;
+    }
+
+    public void setParainfluenzaDnaMicroarray(String parainfluenzaDnaMicroarray) {
+        this.parainfluenzaDnaMicroarray = parainfluenzaDnaMicroarray;
+    }
+
+    public void setParainfluenzaOther(String parainfluenzaOther) {
+        this.parainfluenzaOther = parainfluenzaOther;
+    }
+
+    public void setParainfluenzaAntibodyDetectionDetails(String parainfluenzaAntibodyDetectionDetails) {
+        this.parainfluenzaAntibodyDetectionDetails = parainfluenzaAntibodyDetectionDetails;
+    }
+
+    public void setParainfluenzaAntigenDetectionDetails(String parainfluenzaAntigenDetectionDetails) {
+        this.parainfluenzaAntigenDetectionDetails = parainfluenzaAntigenDetectionDetails;
+    }
+
+    public void setParainfluenzaRapidTestDetails(String parainfluenzaRapidTestDetails) {
+        this.parainfluenzaRapidTestDetails = parainfluenzaRapidTestDetails;
+    }
+
+    public void setParainfluenzaCultureDetails(String parainfluenzaCultureDetails) {
+        this.parainfluenzaCultureDetails = parainfluenzaCultureDetails;
+    }
+
+    public void setParainfluenzaHistopathologyDetails(String parainfluenzaHistopathologyDetails) {
+        this.parainfluenzaHistopathologyDetails = parainfluenzaHistopathologyDetails;
+    }
+
+    public void setParainfluenzaIsolationDetails(String parainfluenzaIsolationDetails) {
+        this.parainfluenzaIsolationDetails = parainfluenzaIsolationDetails;
+    }
+
+    public void setParainfluenzaIgmSerumAntibodyDetails(String parainfluenzaIgmSerumAntibodyDetails) {
+        this.parainfluenzaIgmSerumAntibodyDetails = parainfluenzaIgmSerumAntibodyDetails;
+    }
+
+    public void setParainfluenzaIggSerumAntibodyDetails(String parainfluenzaIggSerumAntibodyDetails) {
+        this.parainfluenzaIggSerumAntibodyDetails = parainfluenzaIggSerumAntibodyDetails;
+    }
+
+    public void setParainfluenzaIgaSerumAntibodyDetails(String parainfluenzaIgaSerumAntibodyDetails) {
+        this.parainfluenzaIgaSerumAntibodyDetails = parainfluenzaIgaSerumAntibodyDetails;
+    }
+
+    public void setParainfluenzaIncubationTimeDetails(String parainfluenzaIncubationTimeDetails) {
+        this.parainfluenzaIncubationTimeDetails = parainfluenzaIncubationTimeDetails;
+    }
+
+    public void setParainfluenzaIndirectFluorescentAntibodyDetails(String parainfluenzaIndirectFluorescentAntibodyDetails) {
+        this.parainfluenzaIndirectFluorescentAntibodyDetails = parainfluenzaIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setParainfluenzaDirectFluorescentAntibodyDetails(String parainfluenzaDirectFluorescentAntibodyDetails) {
+        this.parainfluenzaDirectFluorescentAntibodyDetails = parainfluenzaDirectFluorescentAntibodyDetails;
+    }
+
+    public void setParainfluenzaMicroscopyDetails(String parainfluenzaMicroscopyDetails) {
+        this.parainfluenzaMicroscopyDetails = parainfluenzaMicroscopyDetails;
+    }
+
+    public void setParainfluenzaNeutralizingAntibodiesDetails(String parainfluenzaNeutralizingAntibodiesDetails) {
+        this.parainfluenzaNeutralizingAntibodiesDetails = parainfluenzaNeutralizingAntibodiesDetails;
+    }
+
+    public void setParainfluenzaPcrRtPcrDetails(String parainfluenzaPcrRtPcrDetails) {
+        this.parainfluenzaPcrRtPcrDetails = parainfluenzaPcrRtPcrDetails;
+    }
+
+    public void setParainfluenzaGramStainDetails(String parainfluenzaGramStainDetails) {
+        this.parainfluenzaGramStainDetails = parainfluenzaGramStainDetails;
+    }
+
+    public void setParainfluenzaLatexAgglutinationDetails(String parainfluenzaLatexAgglutinationDetails) {
+        this.parainfluenzaLatexAgglutinationDetails = parainfluenzaLatexAgglutinationDetails;
+    }
+
+    public void setParainfluenzaCqValueDetectionDetails(String parainfluenzaCqValueDetectionDetails) {
+        this.parainfluenzaCqValueDetectionDetails = parainfluenzaCqValueDetectionDetails;
+    }
+
+    public void setParainfluenzaSequencingDetails(String parainfluenzaSequencingDetails) {
+        this.parainfluenzaSequencingDetails = parainfluenzaSequencingDetails;
+    }
+
+    public void setParainfluenzaDnaMicroarrayDetails(String parainfluenzaDnaMicroarrayDetails) {
+        this.parainfluenzaDnaMicroarrayDetails = parainfluenzaDnaMicroarrayDetails;
+    }
+
+    public void setParainfluenzaOtherDetails(String parainfluenzaOtherDetails) {
+        this.parainfluenzaOtherDetails = parainfluenzaOtherDetails;
+    }
+
+    public void setAdenovirusAntibodyDetection(String adenovirusAntibodyDetection) {
+        this.adenovirusAntibodyDetection = adenovirusAntibodyDetection;
     }
 
     public void setAdenovirusAntigenDetection(String adenovirusAntigenDetection) {
@@ -5797,6 +11446,10 @@ public class CaseSampleExportDto implements Serializable {
         this.adenovirusIndirectFluorescentAntibody = adenovirusIndirectFluorescentAntibody;
     }
 
+    public void setAdenovirusDirectFluorescentAntibody(String adenovirusDirectFluorescentAntibody) {
+        this.adenovirusDirectFluorescentAntibody = adenovirusDirectFluorescentAntibody;
+    }
+
     public void setAdenovirusMicroscopy(String adenovirusMicroscopy) {
         this.adenovirusMicroscopy = adenovirusMicroscopy;
     }
@@ -5805,8 +11458,8 @@ public class CaseSampleExportDto implements Serializable {
         this.adenovirusNeutralizingAntibodies = adenovirusNeutralizingAntibodies;
     }
 
-    public void setAdenovirusPcr(String adenovirusPcr) {
-        this.adenovirusPcr = adenovirusPcr;
+    public void setAdenovirusPcrRtPcr(String adenovirusPcrRtPcr) {
+        this.adenovirusPcrRtPcr = adenovirusPcrRtPcr;
     }
 
     public void setAdenovirusGramStain(String adenovirusGramStain) {
@@ -5821,20 +11474,104 @@ public class CaseSampleExportDto implements Serializable {
         this.adenovirusCqValueDetection = adenovirusCqValueDetection;
     }
 
-    public void setAdenovirusSeQuencing(String adenovirusSeQuencing) {
-        this.adenovirusSeQuencing = adenovirusSeQuencing;
+    public void setAdenovirusSequencing(String adenovirusSequencing) {
+        this.adenovirusSequencing = adenovirusSequencing;
     }
 
-    public void setAdenovirusDnaMicroArray(String adenovirusDnaMicroArray) {
-        this.adenovirusDnaMicroArray = adenovirusDnaMicroArray;
+    public void setAdenovirusDnaMicroarray(String adenovirusDnaMicroarray) {
+        this.adenovirusDnaMicroarray = adenovirusDnaMicroarray;
     }
 
     public void setAdenovirusOther(String adenovirusOther) {
         this.adenovirusOther = adenovirusOther;
     }
 
-    public void setRhinovirusAntiBodyDetection(String rhinovirusAntiBodyDetection) {
-        this.rhinovirusAntiBodyDetection = rhinovirusAntiBodyDetection;
+    public void setAdenovirusAntibodyDetectionDetails(String adenovirusAntibodyDetectionDetails) {
+        this.adenovirusAntibodyDetectionDetails = adenovirusAntibodyDetectionDetails;
+    }
+
+    public void setAdenovirusAntigenDetectionDetails(String adenovirusAntigenDetectionDetails) {
+        this.adenovirusAntigenDetectionDetails = adenovirusAntigenDetectionDetails;
+    }
+
+    public void setAdenovirusRapidTestDetails(String adenovirusRapidTestDetails) {
+        this.adenovirusRapidTestDetails = adenovirusRapidTestDetails;
+    }
+
+    public void setAdenovirusCultureDetails(String adenovirusCultureDetails) {
+        this.adenovirusCultureDetails = adenovirusCultureDetails;
+    }
+
+    public void setAdenovirusHistopathologyDetails(String adenovirusHistopathologyDetails) {
+        this.adenovirusHistopathologyDetails = adenovirusHistopathologyDetails;
+    }
+
+    public void setAdenovirusIsolationDetails(String adenovirusIsolationDetails) {
+        this.adenovirusIsolationDetails = adenovirusIsolationDetails;
+    }
+
+    public void setAdenovirusIgmSerumAntibodyDetails(String adenovirusIgmSerumAntibodyDetails) {
+        this.adenovirusIgmSerumAntibodyDetails = adenovirusIgmSerumAntibodyDetails;
+    }
+
+    public void setAdenovirusIggSerumAntibodyDetails(String adenovirusIggSerumAntibodyDetails) {
+        this.adenovirusIggSerumAntibodyDetails = adenovirusIggSerumAntibodyDetails;
+    }
+
+    public void setAdenovirusIgaSerumAntibodyDetails(String adenovirusIgaSerumAntibodyDetails) {
+        this.adenovirusIgaSerumAntibodyDetails = adenovirusIgaSerumAntibodyDetails;
+    }
+
+    public void setAdenovirusIncubationTimeDetails(String adenovirusIncubationTimeDetails) {
+        this.adenovirusIncubationTimeDetails = adenovirusIncubationTimeDetails;
+    }
+
+    public void setAdenovirusIndirectFluorescentAntibodyDetails(String adenovirusIndirectFluorescentAntibodyDetails) {
+        this.adenovirusIndirectFluorescentAntibodyDetails = adenovirusIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setAdenovirusDirectFluorescentAntibodyDetails(String adenovirusDirectFluorescentAntibodyDetails) {
+        this.adenovirusDirectFluorescentAntibodyDetails = adenovirusDirectFluorescentAntibodyDetails;
+    }
+
+    public void setAdenovirusMicroscopyDetails(String adenovirusMicroscopyDetails) {
+        this.adenovirusMicroscopyDetails = adenovirusMicroscopyDetails;
+    }
+
+    public void setAdenovirusNeutralizingAntibodiesDetails(String adenovirusNeutralizingAntibodiesDetails) {
+        this.adenovirusNeutralizingAntibodiesDetails = adenovirusNeutralizingAntibodiesDetails;
+    }
+
+    public void setAdenovirusPcrRtPcrDetails(String adenovirusPcrRtPcrDetails) {
+        this.adenovirusPcrRtPcrDetails = adenovirusPcrRtPcrDetails;
+    }
+
+    public void setAdenovirusGramStainDetails(String adenovirusGramStainDetails) {
+        this.adenovirusGramStainDetails = adenovirusGramStainDetails;
+    }
+
+    public void setAdenovirusLatexAgglutinationDetails(String adenovirusLatexAgglutinationDetails) {
+        this.adenovirusLatexAgglutinationDetails = adenovirusLatexAgglutinationDetails;
+    }
+
+    public void setAdenovirusCqValueDetectionDetails(String adenovirusCqValueDetectionDetails) {
+        this.adenovirusCqValueDetectionDetails = adenovirusCqValueDetectionDetails;
+    }
+
+    public void setAdenovirusSequencingDetails(String adenovirusSequencingDetails) {
+        this.adenovirusSequencingDetails = adenovirusSequencingDetails;
+    }
+
+    public void setAdenovirusDnaMicroarrayDetails(String adenovirusDnaMicroarrayDetails) {
+        this.adenovirusDnaMicroarrayDetails = adenovirusDnaMicroarrayDetails;
+    }
+
+    public void setAdenovirusOtherDetails(String adenovirusOtherDetails) {
+        this.adenovirusOtherDetails = adenovirusOtherDetails;
+    }
+
+    public void setRhinovirusAntibodyDetection(String rhinovirusAntibodyDetection) {
+        this.rhinovirusAntibodyDetection = rhinovirusAntibodyDetection;
     }
 
     public void setRhinovirusAntigenDetection(String rhinovirusAntigenDetection) {
@@ -5877,6 +11614,10 @@ public class CaseSampleExportDto implements Serializable {
         this.rhinovirusIndirectFluorescentAntibody = rhinovirusIndirectFluorescentAntibody;
     }
 
+    public void setRhinovirusDirectFluorescentAntibody(String rhinovirusDirectFluorescentAntibody) {
+        this.rhinovirusDirectFluorescentAntibody = rhinovirusDirectFluorescentAntibody;
+    }
+
     public void setRhinovirusMicroscopy(String rhinovirusMicroscopy) {
         this.rhinovirusMicroscopy = rhinovirusMicroscopy;
     }
@@ -5885,8 +11626,8 @@ public class CaseSampleExportDto implements Serializable {
         this.rhinovirusNeutralizingAntibodies = rhinovirusNeutralizingAntibodies;
     }
 
-    public void setRhinovirusPcr(String rhinovirusPcr) {
-        this.rhinovirusPcr = rhinovirusPcr;
+    public void setRhinovirusPcrRtPcr(String rhinovirusPcrRtPcr) {
+        this.rhinovirusPcrRtPcr = rhinovirusPcrRtPcr;
     }
 
     public void setRhinovirusGramStain(String rhinovirusGramStain) {
@@ -5901,20 +11642,104 @@ public class CaseSampleExportDto implements Serializable {
         this.rhinovirusCqValueDetection = rhinovirusCqValueDetection;
     }
 
-    public void setRhinovirusSeQuencing(String rhinovirusSeQuencing) {
-        this.rhinovirusSeQuencing = rhinovirusSeQuencing;
+    public void setRhinovirusSequencing(String rhinovirusSequencing) {
+        this.rhinovirusSequencing = rhinovirusSequencing;
     }
 
-    public void setRhinovirusDnaMicroArray(String rhinovirusDnaMicroArray) {
-        this.rhinovirusDnaMicroArray = rhinovirusDnaMicroArray;
+    public void setRhinovirusDnaMicroarray(String rhinovirusDnaMicroarray) {
+        this.rhinovirusDnaMicroarray = rhinovirusDnaMicroarray;
     }
 
     public void setRhinovirusOther(String rhinovirusOther) {
         this.rhinovirusOther = rhinovirusOther;
     }
 
-    public void setEnterovirusAntiBodyDetection(String enterovirusAntiBodyDetection) {
-        this.enterovirusAntiBodyDetection = enterovirusAntiBodyDetection;
+    public void setRhinovirusAntibodyDetectionDetails(String rhinovirusAntibodyDetectionDetails) {
+        this.rhinovirusAntibodyDetectionDetails = rhinovirusAntibodyDetectionDetails;
+    }
+
+    public void setRhinovirusAntigenDetectionDetails(String rhinovirusAntigenDetectionDetails) {
+        this.rhinovirusAntigenDetectionDetails = rhinovirusAntigenDetectionDetails;
+    }
+
+    public void setRhinovirusRapidTestDetails(String rhinovirusRapidTestDetails) {
+        this.rhinovirusRapidTestDetails = rhinovirusRapidTestDetails;
+    }
+
+    public void setRhinovirusCultureDetails(String rhinovirusCultureDetails) {
+        this.rhinovirusCultureDetails = rhinovirusCultureDetails;
+    }
+
+    public void setRhinovirusHistopathologyDetails(String rhinovirusHistopathologyDetails) {
+        this.rhinovirusHistopathologyDetails = rhinovirusHistopathologyDetails;
+    }
+
+    public void setRhinovirusIsolationDetails(String rhinovirusIsolationDetails) {
+        this.rhinovirusIsolationDetails = rhinovirusIsolationDetails;
+    }
+
+    public void setRhinovirusIgmSerumAntibodyDetails(String rhinovirusIgmSerumAntibodyDetails) {
+        this.rhinovirusIgmSerumAntibodyDetails = rhinovirusIgmSerumAntibodyDetails;
+    }
+
+    public void setRhinovirusIggSerumAntibodyDetails(String rhinovirusIggSerumAntibodyDetails) {
+        this.rhinovirusIggSerumAntibodyDetails = rhinovirusIggSerumAntibodyDetails;
+    }
+
+    public void setRhinovirusIgaSerumAntibodyDetails(String rhinovirusIgaSerumAntibodyDetails) {
+        this.rhinovirusIgaSerumAntibodyDetails = rhinovirusIgaSerumAntibodyDetails;
+    }
+
+    public void setRhinovirusIncubationTimeDetails(String rhinovirusIncubationTimeDetails) {
+        this.rhinovirusIncubationTimeDetails = rhinovirusIncubationTimeDetails;
+    }
+
+    public void setRhinovirusIndirectFluorescentAntibodyDetails(String rhinovirusIndirectFluorescentAntibodyDetails) {
+        this.rhinovirusIndirectFluorescentAntibodyDetails = rhinovirusIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setRhinovirusDirectFluorescentAntibodyDetails(String rhinovirusDirectFluorescentAntibodyDetails) {
+        this.rhinovirusDirectFluorescentAntibodyDetails = rhinovirusDirectFluorescentAntibodyDetails;
+    }
+
+    public void setRhinovirusMicroscopyDetails(String rhinovirusMicroscopyDetails) {
+        this.rhinovirusMicroscopyDetails = rhinovirusMicroscopyDetails;
+    }
+
+    public void setRhinovirusNeutralizingAntibodiesDetails(String rhinovirusNeutralizingAntibodiesDetails) {
+        this.rhinovirusNeutralizingAntibodiesDetails = rhinovirusNeutralizingAntibodiesDetails;
+    }
+
+    public void setRhinovirusPcrRtPcrDetails(String rhinovirusPcrRtPcrDetails) {
+        this.rhinovirusPcrRtPcrDetails = rhinovirusPcrRtPcrDetails;
+    }
+
+    public void setRhinovirusGramStainDetails(String rhinovirusGramStainDetails) {
+        this.rhinovirusGramStainDetails = rhinovirusGramStainDetails;
+    }
+
+    public void setRhinovirusLatexAgglutinationDetails(String rhinovirusLatexAgglutinationDetails) {
+        this.rhinovirusLatexAgglutinationDetails = rhinovirusLatexAgglutinationDetails;
+    }
+
+    public void setRhinovirusCqValueDetectionDetails(String rhinovirusCqValueDetectionDetails) {
+        this.rhinovirusCqValueDetectionDetails = rhinovirusCqValueDetectionDetails;
+    }
+
+    public void setRhinovirusSequencingDetails(String rhinovirusSequencingDetails) {
+        this.rhinovirusSequencingDetails = rhinovirusSequencingDetails;
+    }
+
+    public void setRhinovirusDnaMicroarrayDetails(String rhinovirusDnaMicroarrayDetails) {
+        this.rhinovirusDnaMicroarrayDetails = rhinovirusDnaMicroarrayDetails;
+    }
+
+    public void setRhinovirusOtherDetails(String rhinovirusOtherDetails) {
+        this.rhinovirusOtherDetails = rhinovirusOtherDetails;
+    }
+
+    public void setEnterovirusAntibodyDetection(String enterovirusAntibodyDetection) {
+        this.enterovirusAntibodyDetection = enterovirusAntibodyDetection;
     }
 
     public void setEnterovirusAntigenDetection(String enterovirusAntigenDetection) {
@@ -5957,6 +11782,10 @@ public class CaseSampleExportDto implements Serializable {
         this.enterovirusIndirectFluorescentAntibody = enterovirusIndirectFluorescentAntibody;
     }
 
+    public void setEnterovirusDirectFluorescentAntibody(String enterovirusDirectFluorescentAntibody) {
+        this.enterovirusDirectFluorescentAntibody = enterovirusDirectFluorescentAntibody;
+    }
+
     public void setEnterovirusMicroscopy(String enterovirusMicroscopy) {
         this.enterovirusMicroscopy = enterovirusMicroscopy;
     }
@@ -5965,8 +11794,8 @@ public class CaseSampleExportDto implements Serializable {
         this.enterovirusNeutralizingAntibodies = enterovirusNeutralizingAntibodies;
     }
 
-    public void setEnterovirusPcr(String enterovirusPcr) {
-        this.enterovirusPcr = enterovirusPcr;
+    public void setEnterovirusPcrRtPcr(String enterovirusPcrRtPcr) {
+        this.enterovirusPcrRtPcr = enterovirusPcrRtPcr;
     }
 
     public void setEnterovirusGramStain(String enterovirusGramStain) {
@@ -5981,20 +11810,104 @@ public class CaseSampleExportDto implements Serializable {
         this.enterovirusCqValueDetection = enterovirusCqValueDetection;
     }
 
-    public void setEnterovirusSeQuencing(String enterovirusSeQuencing) {
-        this.enterovirusSeQuencing = enterovirusSeQuencing;
+    public void setEnterovirusSequencing(String enterovirusSequencing) {
+        this.enterovirusSequencing = enterovirusSequencing;
     }
 
-    public void setEnterovirusDnaMicroArray(String enterovirusDnaMicroArray) {
-        this.enterovirusDnaMicroArray = enterovirusDnaMicroArray;
+    public void setEnterovirusDnaMicroarray(String enterovirusDnaMicroarray) {
+        this.enterovirusDnaMicroarray = enterovirusDnaMicroarray;
     }
 
     public void setEnterovirusOther(String enterovirusOther) {
         this.enterovirusOther = enterovirusOther;
     }
 
-    public void setmPneumoniaeAntiBodyDetection(String mPneumoniaeAntiBodyDetection) {
-        this.mPneumoniaeAntiBodyDetection = mPneumoniaeAntiBodyDetection;
+    public void setEnterovirusAntibodyDetectionDetails(String enterovirusAntibodyDetectionDetails) {
+        this.enterovirusAntibodyDetectionDetails = enterovirusAntibodyDetectionDetails;
+    }
+
+    public void setEnterovirusAntigenDetectionDetails(String enterovirusAntigenDetectionDetails) {
+        this.enterovirusAntigenDetectionDetails = enterovirusAntigenDetectionDetails;
+    }
+
+    public void setEnterovirusRapidTestDetails(String enterovirusRapidTestDetails) {
+        this.enterovirusRapidTestDetails = enterovirusRapidTestDetails;
+    }
+
+    public void setEnterovirusCultureDetails(String enterovirusCultureDetails) {
+        this.enterovirusCultureDetails = enterovirusCultureDetails;
+    }
+
+    public void setEnterovirusHistopathologyDetails(String enterovirusHistopathologyDetails) {
+        this.enterovirusHistopathologyDetails = enterovirusHistopathologyDetails;
+    }
+
+    public void setEnterovirusIsolationDetails(String enterovirusIsolationDetails) {
+        this.enterovirusIsolationDetails = enterovirusIsolationDetails;
+    }
+
+    public void setEnterovirusIgmSerumAntibodyDetails(String enterovirusIgmSerumAntibodyDetails) {
+        this.enterovirusIgmSerumAntibodyDetails = enterovirusIgmSerumAntibodyDetails;
+    }
+
+    public void setEnterovirusIggSerumAntibodyDetails(String enterovirusIggSerumAntibodyDetails) {
+        this.enterovirusIggSerumAntibodyDetails = enterovirusIggSerumAntibodyDetails;
+    }
+
+    public void setEnterovirusIgaSerumAntibodyDetails(String enterovirusIgaSerumAntibodyDetails) {
+        this.enterovirusIgaSerumAntibodyDetails = enterovirusIgaSerumAntibodyDetails;
+    }
+
+    public void setEnterovirusIncubationTimeDetails(String enterovirusIncubationTimeDetails) {
+        this.enterovirusIncubationTimeDetails = enterovirusIncubationTimeDetails;
+    }
+
+    public void setEnterovirusIndirectFluorescentAntibodyDetails(String enterovirusIndirectFluorescentAntibodyDetails) {
+        this.enterovirusIndirectFluorescentAntibodyDetails = enterovirusIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setEnterovirusDirectFluorescentAntibodyDetails(String enterovirusDirectFluorescentAntibodyDetails) {
+        this.enterovirusDirectFluorescentAntibodyDetails = enterovirusDirectFluorescentAntibodyDetails;
+    }
+
+    public void setEnterovirusMicroscopyDetails(String enterovirusMicroscopyDetails) {
+        this.enterovirusMicroscopyDetails = enterovirusMicroscopyDetails;
+    }
+
+    public void setEnterovirusNeutralizingAntibodiesDetails(String enterovirusNeutralizingAntibodiesDetails) {
+        this.enterovirusNeutralizingAntibodiesDetails = enterovirusNeutralizingAntibodiesDetails;
+    }
+
+    public void setEnterovirusPcrRtPcrDetails(String enterovirusPcrRtPcrDetails) {
+        this.enterovirusPcrRtPcrDetails = enterovirusPcrRtPcrDetails;
+    }
+
+    public void setEnterovirusGramStainDetails(String enterovirusGramStainDetails) {
+        this.enterovirusGramStainDetails = enterovirusGramStainDetails;
+    }
+
+    public void setEnterovirusLatexAgglutinationDetails(String enterovirusLatexAgglutinationDetails) {
+        this.enterovirusLatexAgglutinationDetails = enterovirusLatexAgglutinationDetails;
+    }
+
+    public void setEnterovirusCqValueDetectionDetails(String enterovirusCqValueDetectionDetails) {
+        this.enterovirusCqValueDetectionDetails = enterovirusCqValueDetectionDetails;
+    }
+
+    public void setEnterovirusSequencingDetails(String enterovirusSequencingDetails) {
+        this.enterovirusSequencingDetails = enterovirusSequencingDetails;
+    }
+
+    public void setEnterovirusDnaMicroarrayDetails(String enterovirusDnaMicroarrayDetails) {
+        this.enterovirusDnaMicroarrayDetails = enterovirusDnaMicroarrayDetails;
+    }
+
+    public void setEnterovirusOtherDetails(String enterovirusOtherDetails) {
+        this.enterovirusOtherDetails = enterovirusOtherDetails;
+    }
+
+    public void setmPneumoniaeAntibodyDetection(String mPneumoniaeAntibodyDetection) {
+        this.mPneumoniaeAntibodyDetection = mPneumoniaeAntibodyDetection;
     }
 
     public void setmPneumoniaeAntigenDetection(String mPneumoniaeAntigenDetection) {
@@ -6037,6 +11950,10 @@ public class CaseSampleExportDto implements Serializable {
         this.mPneumoniaeIndirectFluorescentAntibody = mPneumoniaeIndirectFluorescentAntibody;
     }
 
+    public void setmPneumoniaeDirectFluorescentAntibody(String mPneumoniaeDirectFluorescentAntibody) {
+        this.mPneumoniaeDirectFluorescentAntibody = mPneumoniaeDirectFluorescentAntibody;
+    }
+
     public void setmPneumoniaeMicroscopy(String mPneumoniaeMicroscopy) {
         this.mPneumoniaeMicroscopy = mPneumoniaeMicroscopy;
     }
@@ -6045,8 +11962,8 @@ public class CaseSampleExportDto implements Serializable {
         this.mPneumoniaeNeutralizingAntibodies = mPneumoniaeNeutralizingAntibodies;
     }
 
-    public void setmPneumoniaePcr(String mPneumoniaePcr) {
-        this.mPneumoniaePcr = mPneumoniaePcr;
+    public void setmPneumoniaePcrRtPcr(String mPneumoniaePcrRtPcr) {
+        this.mPneumoniaePcrRtPcr = mPneumoniaePcrRtPcr;
     }
 
     public void setmPneumoniaeGramStain(String mPneumoniaeGramStain) {
@@ -6061,20 +11978,104 @@ public class CaseSampleExportDto implements Serializable {
         this.mPneumoniaeCqValueDetection = mPneumoniaeCqValueDetection;
     }
 
-    public void setmPneumoniaeSeQuencing(String mPneumoniaeSeQuencing) {
-        this.mPneumoniaeSeQuencing = mPneumoniaeSeQuencing;
+    public void setmPneumoniaeSequencing(String mPneumoniaeSequencing) {
+        this.mPneumoniaeSequencing = mPneumoniaeSequencing;
     }
 
-    public void setmPneumoniaeDnaMicroArray(String mPneumoniaeDnaMicroArray) {
-        this.mPneumoniaeDnaMicroArray = mPneumoniaeDnaMicroArray;
+    public void setmPneumoniaeDnaMicroarray(String mPneumoniaeDnaMicroarray) {
+        this.mPneumoniaeDnaMicroarray = mPneumoniaeDnaMicroarray;
     }
 
     public void setmPneumoniaeOther(String mPneumoniaeOther) {
         this.mPneumoniaeOther = mPneumoniaeOther;
     }
 
-    public void setcPneumoniaeAntiBodyDetection(String cPneumoniaeAntiBodyDetection) {
-        this.cPneumoniaeAntiBodyDetection = cPneumoniaeAntiBodyDetection;
+    public void setmPneumoniaeAntibodyDetectionDetails(String mPneumoniaeAntibodyDetectionDetails) {
+        this.mPneumoniaeAntibodyDetectionDetails = mPneumoniaeAntibodyDetectionDetails;
+    }
+
+    public void setmPneumoniaeAntigenDetectionDetails(String mPneumoniaeAntigenDetectionDetails) {
+        this.mPneumoniaeAntigenDetectionDetails = mPneumoniaeAntigenDetectionDetails;
+    }
+
+    public void setmPneumoniaeRapidTestDetails(String mPneumoniaeRapidTestDetails) {
+        this.mPneumoniaeRapidTestDetails = mPneumoniaeRapidTestDetails;
+    }
+
+    public void setmPneumoniaeCultureDetails(String mPneumoniaeCultureDetails) {
+        this.mPneumoniaeCultureDetails = mPneumoniaeCultureDetails;
+    }
+
+    public void setmPneumoniaeHistopathologyDetails(String mPneumoniaeHistopathologyDetails) {
+        this.mPneumoniaeHistopathologyDetails = mPneumoniaeHistopathologyDetails;
+    }
+
+    public void setmPneumoniaeIsolationDetails(String mPneumoniaeIsolationDetails) {
+        this.mPneumoniaeIsolationDetails = mPneumoniaeIsolationDetails;
+    }
+
+    public void setmPneumoniaeIgmSerumAntibodyDetails(String mPneumoniaeIgmSerumAntibodyDetails) {
+        this.mPneumoniaeIgmSerumAntibodyDetails = mPneumoniaeIgmSerumAntibodyDetails;
+    }
+
+    public void setmPneumoniaeIggSerumAntibodyDetails(String mPneumoniaeIggSerumAntibodyDetails) {
+        this.mPneumoniaeIggSerumAntibodyDetails = mPneumoniaeIggSerumAntibodyDetails;
+    }
+
+    public void setmPneumoniaeIgaSerumAntibodyDetails(String mPneumoniaeIgaSerumAntibodyDetails) {
+        this.mPneumoniaeIgaSerumAntibodyDetails = mPneumoniaeIgaSerumAntibodyDetails;
+    }
+
+    public void setmPneumoniaeIncubationTimeDetails(String mPneumoniaeIncubationTimeDetails) {
+        this.mPneumoniaeIncubationTimeDetails = mPneumoniaeIncubationTimeDetails;
+    }
+
+    public void setmPneumoniaeIndirectFluorescentAntibodyDetails(String mPneumoniaeIndirectFluorescentAntibodyDetails) {
+        this.mPneumoniaeIndirectFluorescentAntibodyDetails = mPneumoniaeIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setmPneumoniaeDirectFluorescentAntibodyDetails(String mPneumoniaeDirectFluorescentAntibodyDetails) {
+        this.mPneumoniaeDirectFluorescentAntibodyDetails = mPneumoniaeDirectFluorescentAntibodyDetails;
+    }
+
+    public void setmPneumoniaeMicroscopyDetails(String mPneumoniaeMicroscopyDetails) {
+        this.mPneumoniaeMicroscopyDetails = mPneumoniaeMicroscopyDetails;
+    }
+
+    public void setmPneumoniaeNeutralizingAntibodiesDetails(String mPneumoniaeNeutralizingAntibodiesDetails) {
+        this.mPneumoniaeNeutralizingAntibodiesDetails = mPneumoniaeNeutralizingAntibodiesDetails;
+    }
+
+    public void setmPneumoniaePcrRtPcrDetails(String mPneumoniaePcrRtPcrDetails) {
+        this.mPneumoniaePcrRtPcrDetails = mPneumoniaePcrRtPcrDetails;
+    }
+
+    public void setmPneumoniaeGramStainDetails(String mPneumoniaeGramStainDetails) {
+        this.mPneumoniaeGramStainDetails = mPneumoniaeGramStainDetails;
+    }
+
+    public void setmPneumoniaeLatexAgglutinationDetails(String mPneumoniaeLatexAgglutinationDetails) {
+        this.mPneumoniaeLatexAgglutinationDetails = mPneumoniaeLatexAgglutinationDetails;
+    }
+
+    public void setmPneumoniaeCqValueDetectionDetails(String mPneumoniaeCqValueDetectionDetails) {
+        this.mPneumoniaeCqValueDetectionDetails = mPneumoniaeCqValueDetectionDetails;
+    }
+
+    public void setmPneumoniaeSequencingDetails(String mPneumoniaeSequencingDetails) {
+        this.mPneumoniaeSequencingDetails = mPneumoniaeSequencingDetails;
+    }
+
+    public void setmPneumoniaeDnaMicroarrayDetails(String mPneumoniaeDnaMicroarrayDetails) {
+        this.mPneumoniaeDnaMicroarrayDetails = mPneumoniaeDnaMicroarrayDetails;
+    }
+
+    public void setmPneumoniaeOtherDetails(String mPneumoniaeOtherDetails) {
+        this.mPneumoniaeOtherDetails = mPneumoniaeOtherDetails;
+    }
+
+    public void setcPneumoniaeAntibodyDetection(String cPneumoniaeAntibodyDetection) {
+        this.cPneumoniaeAntibodyDetection = cPneumoniaeAntibodyDetection;
     }
 
     public void setcPneumoniaeAntigenDetection(String cPneumoniaeAntigenDetection) {
@@ -6117,6 +12118,10 @@ public class CaseSampleExportDto implements Serializable {
         this.cPneumoniaeIndirectFluorescentAntibody = cPneumoniaeIndirectFluorescentAntibody;
     }
 
+    public void setcPneumoniaeDirectFluorescentAntibody(String cPneumoniaeDirectFluorescentAntibody) {
+        this.cPneumoniaeDirectFluorescentAntibody = cPneumoniaeDirectFluorescentAntibody;
+    }
+
     public void setcPneumoniaeMicroscopy(String cPneumoniaeMicroscopy) {
         this.cPneumoniaeMicroscopy = cPneumoniaeMicroscopy;
     }
@@ -6125,8 +12130,8 @@ public class CaseSampleExportDto implements Serializable {
         this.cPneumoniaeNeutralizingAntibodies = cPneumoniaeNeutralizingAntibodies;
     }
 
-    public void setcPneumoniaePcr(String cPneumoniaePcr) {
-        this.cPneumoniaePcr = cPneumoniaePcr;
+    public void setcPneumoniaePcrRtPcr(String cPneumoniaePcrRtPcr) {
+        this.cPneumoniaePcrRtPcr = cPneumoniaePcrRtPcr;
     }
 
     public void setcPneumoniaeGramStain(String cPneumoniaeGramStain) {
@@ -6141,20 +12146,104 @@ public class CaseSampleExportDto implements Serializable {
         this.cPneumoniaeCqValueDetection = cPneumoniaeCqValueDetection;
     }
 
-    public void setcPneumoniaeSeQuencing(String cPneumoniaeSeQuencing) {
-        this.cPneumoniaeSeQuencing = cPneumoniaeSeQuencing;
+    public void setcPneumoniaeSequencing(String cPneumoniaeSequencing) {
+        this.cPneumoniaeSequencing = cPneumoniaeSequencing;
     }
 
-    public void setcPneumoniaeDnaMicroArray(String cPneumoniaeDnaMicroArray) {
-        this.cPneumoniaeDnaMicroArray = cPneumoniaeDnaMicroArray;
+    public void setcPneumoniaeDnaMicroarray(String cPneumoniaeDnaMicroarray) {
+        this.cPneumoniaeDnaMicroarray = cPneumoniaeDnaMicroarray;
     }
 
     public void setcPneumoniaeOther(String cPneumoniaeOther) {
         this.cPneumoniaeOther = cPneumoniaeOther;
     }
 
-    public void setAriAntiBodyDetection(String ariAntiBodyDetection) {
-        this.ariAntiBodyDetection = ariAntiBodyDetection;
+    public void setcPneumoniaeAntibodyDetectionDetails(String cPneumoniaeAntibodyDetectionDetails) {
+        this.cPneumoniaeAntibodyDetectionDetails = cPneumoniaeAntibodyDetectionDetails;
+    }
+
+    public void setcPneumoniaeAntigenDetectionDetails(String cPneumoniaeAntigenDetectionDetails) {
+        this.cPneumoniaeAntigenDetectionDetails = cPneumoniaeAntigenDetectionDetails;
+    }
+
+    public void setcPneumoniaeRapidTestDetails(String cPneumoniaeRapidTestDetails) {
+        this.cPneumoniaeRapidTestDetails = cPneumoniaeRapidTestDetails;
+    }
+
+    public void setcPneumoniaeCultureDetails(String cPneumoniaeCultureDetails) {
+        this.cPneumoniaeCultureDetails = cPneumoniaeCultureDetails;
+    }
+
+    public void setcPneumoniaeHistopathologyDetails(String cPneumoniaeHistopathologyDetails) {
+        this.cPneumoniaeHistopathologyDetails = cPneumoniaeHistopathologyDetails;
+    }
+
+    public void setcPneumoniaeIsolationDetails(String cPneumoniaeIsolationDetails) {
+        this.cPneumoniaeIsolationDetails = cPneumoniaeIsolationDetails;
+    }
+
+    public void setcPneumoniaeIgmSerumAntibodyDetails(String cPneumoniaeIgmSerumAntibodyDetails) {
+        this.cPneumoniaeIgmSerumAntibodyDetails = cPneumoniaeIgmSerumAntibodyDetails;
+    }
+
+    public void setcPneumoniaeIggSerumAntibodyDetails(String cPneumoniaeIggSerumAntibodyDetails) {
+        this.cPneumoniaeIggSerumAntibodyDetails = cPneumoniaeIggSerumAntibodyDetails;
+    }
+
+    public void setcPneumoniaeIgaSerumAntibodyDetails(String cPneumoniaeIgaSerumAntibodyDetails) {
+        this.cPneumoniaeIgaSerumAntibodyDetails = cPneumoniaeIgaSerumAntibodyDetails;
+    }
+
+    public void setcPneumoniaeIncubationTimeDetails(String cPneumoniaeIncubationTimeDetails) {
+        this.cPneumoniaeIncubationTimeDetails = cPneumoniaeIncubationTimeDetails;
+    }
+
+    public void setcPneumoniaeIndirectFluorescentAntibodyDetails(String cPneumoniaeIndirectFluorescentAntibodyDetails) {
+        this.cPneumoniaeIndirectFluorescentAntibodyDetails = cPneumoniaeIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setcPneumoniaeDirectFluorescentAntibodyDetails(String cPneumoniaeDirectFluorescentAntibodyDetails) {
+        this.cPneumoniaeDirectFluorescentAntibodyDetails = cPneumoniaeDirectFluorescentAntibodyDetails;
+    }
+
+    public void setcPneumoniaeMicroscopyDetails(String cPneumoniaeMicroscopyDetails) {
+        this.cPneumoniaeMicroscopyDetails = cPneumoniaeMicroscopyDetails;
+    }
+
+    public void setcPneumoniaeNeutralizingAntibodiesDetails(String cPneumoniaeNeutralizingAntibodiesDetails) {
+        this.cPneumoniaeNeutralizingAntibodiesDetails = cPneumoniaeNeutralizingAntibodiesDetails;
+    }
+
+    public void setcPneumoniaePcrRtPcrDetails(String cPneumoniaePcrRtPcrDetails) {
+        this.cPneumoniaePcrRtPcrDetails = cPneumoniaePcrRtPcrDetails;
+    }
+
+    public void setcPneumoniaeGramStainDetails(String cPneumoniaeGramStainDetails) {
+        this.cPneumoniaeGramStainDetails = cPneumoniaeGramStainDetails;
+    }
+
+    public void setcPneumoniaeLatexAgglutinationDetails(String cPneumoniaeLatexAgglutinationDetails) {
+        this.cPneumoniaeLatexAgglutinationDetails = cPneumoniaeLatexAgglutinationDetails;
+    }
+
+    public void setcPneumoniaeCqValueDetectionDetails(String cPneumoniaeCqValueDetectionDetails) {
+        this.cPneumoniaeCqValueDetectionDetails = cPneumoniaeCqValueDetectionDetails;
+    }
+
+    public void setcPneumoniaeSequencingDetails(String cPneumoniaeSequencingDetails) {
+        this.cPneumoniaeSequencingDetails = cPneumoniaeSequencingDetails;
+    }
+
+    public void setcPneumoniaeDnaMicroarrayDetails(String cPneumoniaeDnaMicroarrayDetails) {
+        this.cPneumoniaeDnaMicroarrayDetails = cPneumoniaeDnaMicroarrayDetails;
+    }
+
+    public void setcPneumoniaeOtherDetails(String cPneumoniaeOtherDetails) {
+        this.cPneumoniaeOtherDetails = cPneumoniaeOtherDetails;
+    }
+
+    public void setAriAntibodyDetection(String ariAntibodyDetection) {
+        this.ariAntibodyDetection = ariAntibodyDetection;
     }
 
     public void setAriAntigenDetection(String ariAntigenDetection) {
@@ -6197,6 +12286,10 @@ public class CaseSampleExportDto implements Serializable {
         this.ariIndirectFluorescentAntibody = ariIndirectFluorescentAntibody;
     }
 
+    public void setAriDirectFluorescentAntibody(String ariDirectFluorescentAntibody) {
+        this.ariDirectFluorescentAntibody = ariDirectFluorescentAntibody;
+    }
+
     public void setAriMicroscopy(String ariMicroscopy) {
         this.ariMicroscopy = ariMicroscopy;
     }
@@ -6205,8 +12298,8 @@ public class CaseSampleExportDto implements Serializable {
         this.ariNeutralizingAntibodies = ariNeutralizingAntibodies;
     }
 
-    public void setAriPcr(String ariPcr) {
-        this.ariPcr = ariPcr;
+    public void setAriPcrRtPcr(String ariPcrRtPcr) {
+        this.ariPcrRtPcr = ariPcrRtPcr;
     }
 
     public void setAriGramStain(String ariGramStain) {
@@ -6221,20 +12314,104 @@ public class CaseSampleExportDto implements Serializable {
         this.ariCqValueDetection = ariCqValueDetection;
     }
 
-    public void setAriSeQuencing(String ariSeQuencing) {
-        this.ariSeQuencing = ariSeQuencing;
+    public void setAriSequencing(String ariSequencing) {
+        this.ariSequencing = ariSequencing;
     }
 
-    public void setAriDnaMicroArray(String ariDnaMicroArray) {
-        this.ariDnaMicroArray = ariDnaMicroArray;
+    public void setAriDnaMicroarray(String ariDnaMicroarray) {
+        this.ariDnaMicroarray = ariDnaMicroarray;
     }
 
     public void setAriOther(String ariOther) {
         this.ariOther = ariOther;
     }
 
-    public void setChikungunyaAntiBodyDetection(String chikungunyaAntiBodyDetection) {
-        this.chikungunyaAntiBodyDetection = chikungunyaAntiBodyDetection;
+    public void setAriAntibodyDetectionDetails(String ariAntibodyDetectionDetails) {
+        this.ariAntibodyDetectionDetails = ariAntibodyDetectionDetails;
+    }
+
+    public void setAriAntigenDetectionDetails(String ariAntigenDetectionDetails) {
+        this.ariAntigenDetectionDetails = ariAntigenDetectionDetails;
+    }
+
+    public void setAriRapidTestDetails(String ariRapidTestDetails) {
+        this.ariRapidTestDetails = ariRapidTestDetails;
+    }
+
+    public void setAriCultureDetails(String ariCultureDetails) {
+        this.ariCultureDetails = ariCultureDetails;
+    }
+
+    public void setAriHistopathologyDetails(String ariHistopathologyDetails) {
+        this.ariHistopathologyDetails = ariHistopathologyDetails;
+    }
+
+    public void setAriIsolationDetails(String ariIsolationDetails) {
+        this.ariIsolationDetails = ariIsolationDetails;
+    }
+
+    public void setAriIgmSerumAntibodyDetails(String ariIgmSerumAntibodyDetails) {
+        this.ariIgmSerumAntibodyDetails = ariIgmSerumAntibodyDetails;
+    }
+
+    public void setAriIggSerumAntibodyDetails(String ariIggSerumAntibodyDetails) {
+        this.ariIggSerumAntibodyDetails = ariIggSerumAntibodyDetails;
+    }
+
+    public void setAriIgaSerumAntibodyDetails(String ariIgaSerumAntibodyDetails) {
+        this.ariIgaSerumAntibodyDetails = ariIgaSerumAntibodyDetails;
+    }
+
+    public void setAriIncubationTimeDetails(String ariIncubationTimeDetails) {
+        this.ariIncubationTimeDetails = ariIncubationTimeDetails;
+    }
+
+    public void setAriIndirectFluorescentAntibodyDetails(String ariIndirectFluorescentAntibodyDetails) {
+        this.ariIndirectFluorescentAntibodyDetails = ariIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setAriDirectFluorescentAntibodyDetails(String ariDirectFluorescentAntibodyDetails) {
+        this.ariDirectFluorescentAntibodyDetails = ariDirectFluorescentAntibodyDetails;
+    }
+
+    public void setAriMicroscopyDetails(String ariMicroscopyDetails) {
+        this.ariMicroscopyDetails = ariMicroscopyDetails;
+    }
+
+    public void setAriNeutralizingAntibodiesDetails(String ariNeutralizingAntibodiesDetails) {
+        this.ariNeutralizingAntibodiesDetails = ariNeutralizingAntibodiesDetails;
+    }
+
+    public void setAriPcrRtPcrDetails(String ariPcrRtPcrDetails) {
+        this.ariPcrRtPcrDetails = ariPcrRtPcrDetails;
+    }
+
+    public void setAriGramStainDetails(String ariGramStainDetails) {
+        this.ariGramStainDetails = ariGramStainDetails;
+    }
+
+    public void setAriLatexAgglutinationDetails(String ariLatexAgglutinationDetails) {
+        this.ariLatexAgglutinationDetails = ariLatexAgglutinationDetails;
+    }
+
+    public void setAriCqValueDetectionDetails(String ariCqValueDetectionDetails) {
+        this.ariCqValueDetectionDetails = ariCqValueDetectionDetails;
+    }
+
+    public void setAriSequencingDetails(String ariSequencingDetails) {
+        this.ariSequencingDetails = ariSequencingDetails;
+    }
+
+    public void setAriDnaMicroarrayDetails(String ariDnaMicroarrayDetails) {
+        this.ariDnaMicroarrayDetails = ariDnaMicroarrayDetails;
+    }
+
+    public void setAriOtherDetails(String ariOtherDetails) {
+        this.ariOtherDetails = ariOtherDetails;
+    }
+
+    public void setChikungunyaAntibodyDetection(String chikungunyaAntibodyDetection) {
+        this.chikungunyaAntibodyDetection = chikungunyaAntibodyDetection;
     }
 
     public void setChikungunyaAntigenDetection(String chikungunyaAntigenDetection) {
@@ -6277,6 +12454,10 @@ public class CaseSampleExportDto implements Serializable {
         this.chikungunyaIndirectFluorescentAntibody = chikungunyaIndirectFluorescentAntibody;
     }
 
+    public void setChikungunyaDirectFluorescentAntibody(String chikungunyaDirectFluorescentAntibody) {
+        this.chikungunyaDirectFluorescentAntibody = chikungunyaDirectFluorescentAntibody;
+    }
+
     public void setChikungunyaMicroscopy(String chikungunyaMicroscopy) {
         this.chikungunyaMicroscopy = chikungunyaMicroscopy;
     }
@@ -6285,8 +12466,8 @@ public class CaseSampleExportDto implements Serializable {
         this.chikungunyaNeutralizingAntibodies = chikungunyaNeutralizingAntibodies;
     }
 
-    public void setChikungunyaPcr(String chikungunyaPcr) {
-        this.chikungunyaPcr = chikungunyaPcr;
+    public void setChikungunyaPcrRtPcr(String chikungunyaPcrRtPcr) {
+        this.chikungunyaPcrRtPcr = chikungunyaPcrRtPcr;
     }
 
     public void setChikungunyaGramStain(String chikungunyaGramStain) {
@@ -6301,20 +12482,104 @@ public class CaseSampleExportDto implements Serializable {
         this.chikungunyaCqValueDetection = chikungunyaCqValueDetection;
     }
 
-    public void setChikungunyaSeQuencing(String chikungunyaSeQuencing) {
-        this.chikungunyaSeQuencing = chikungunyaSeQuencing;
+    public void setChikungunyaSequencing(String chikungunyaSequencing) {
+        this.chikungunyaSequencing = chikungunyaSequencing;
     }
 
-    public void setChikungunyaDnaMicroArray(String chikungunyaDnaMicroArray) {
-        this.chikungunyaDnaMicroArray = chikungunyaDnaMicroArray;
+    public void setChikungunyaDnaMicroarray(String chikungunyaDnaMicroarray) {
+        this.chikungunyaDnaMicroarray = chikungunyaDnaMicroarray;
     }
 
     public void setChikungunyaOther(String chikungunyaOther) {
         this.chikungunyaOther = chikungunyaOther;
     }
 
-    public void setPostImmunizationAdverseEventsMildAntiBodyDetection(String postImmunizationAdverseEventsMildAntiBodyDetection) {
-        this.postImmunizationAdverseEventsMildAntiBodyDetection = postImmunizationAdverseEventsMildAntiBodyDetection;
+    public void setChikungunyaAntibodyDetectionDetails(String chikungunyaAntibodyDetectionDetails) {
+        this.chikungunyaAntibodyDetectionDetails = chikungunyaAntibodyDetectionDetails;
+    }
+
+    public void setChikungunyaAntigenDetectionDetails(String chikungunyaAntigenDetectionDetails) {
+        this.chikungunyaAntigenDetectionDetails = chikungunyaAntigenDetectionDetails;
+    }
+
+    public void setChikungunyaRapidTestDetails(String chikungunyaRapidTestDetails) {
+        this.chikungunyaRapidTestDetails = chikungunyaRapidTestDetails;
+    }
+
+    public void setChikungunyaCultureDetails(String chikungunyaCultureDetails) {
+        this.chikungunyaCultureDetails = chikungunyaCultureDetails;
+    }
+
+    public void setChikungunyaHistopathologyDetails(String chikungunyaHistopathologyDetails) {
+        this.chikungunyaHistopathologyDetails = chikungunyaHistopathologyDetails;
+    }
+
+    public void setChikungunyaIsolationDetails(String chikungunyaIsolationDetails) {
+        this.chikungunyaIsolationDetails = chikungunyaIsolationDetails;
+    }
+
+    public void setChikungunyaIgmSerumAntibodyDetails(String chikungunyaIgmSerumAntibodyDetails) {
+        this.chikungunyaIgmSerumAntibodyDetails = chikungunyaIgmSerumAntibodyDetails;
+    }
+
+    public void setChikungunyaIggSerumAntibodyDetails(String chikungunyaIggSerumAntibodyDetails) {
+        this.chikungunyaIggSerumAntibodyDetails = chikungunyaIggSerumAntibodyDetails;
+    }
+
+    public void setChikungunyaIgaSerumAntibodyDetails(String chikungunyaIgaSerumAntibodyDetails) {
+        this.chikungunyaIgaSerumAntibodyDetails = chikungunyaIgaSerumAntibodyDetails;
+    }
+
+    public void setChikungunyaIncubationTimeDetails(String chikungunyaIncubationTimeDetails) {
+        this.chikungunyaIncubationTimeDetails = chikungunyaIncubationTimeDetails;
+    }
+
+    public void setChikungunyaIndirectFluorescentAntibodyDetails(String chikungunyaIndirectFluorescentAntibodyDetails) {
+        this.chikungunyaIndirectFluorescentAntibodyDetails = chikungunyaIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setChikungunyaDirectFluorescentAntibodyDetails(String chikungunyaDirectFluorescentAntibodyDetails) {
+        this.chikungunyaDirectFluorescentAntibodyDetails = chikungunyaDirectFluorescentAntibodyDetails;
+    }
+
+    public void setChikungunyaMicroscopyDetails(String chikungunyaMicroscopyDetails) {
+        this.chikungunyaMicroscopyDetails = chikungunyaMicroscopyDetails;
+    }
+
+    public void setChikungunyaNeutralizingAntibodiesDetails(String chikungunyaNeutralizingAntibodiesDetails) {
+        this.chikungunyaNeutralizingAntibodiesDetails = chikungunyaNeutralizingAntibodiesDetails;
+    }
+
+    public void setChikungunyaPcrRtPcrDetails(String chikungunyaPcrRtPcrDetails) {
+        this.chikungunyaPcrRtPcrDetails = chikungunyaPcrRtPcrDetails;
+    }
+
+    public void setChikungunyaGramStainDetails(String chikungunyaGramStainDetails) {
+        this.chikungunyaGramStainDetails = chikungunyaGramStainDetails;
+    }
+
+    public void setChikungunyaLatexAgglutinationDetails(String chikungunyaLatexAgglutinationDetails) {
+        this.chikungunyaLatexAgglutinationDetails = chikungunyaLatexAgglutinationDetails;
+    }
+
+    public void setChikungunyaCqValueDetectionDetails(String chikungunyaCqValueDetectionDetails) {
+        this.chikungunyaCqValueDetectionDetails = chikungunyaCqValueDetectionDetails;
+    }
+
+    public void setChikungunyaSequencingDetails(String chikungunyaSequencingDetails) {
+        this.chikungunyaSequencingDetails = chikungunyaSequencingDetails;
+    }
+
+    public void setChikungunyaDnaMicroarrayDetails(String chikungunyaDnaMicroarrayDetails) {
+        this.chikungunyaDnaMicroarrayDetails = chikungunyaDnaMicroarrayDetails;
+    }
+
+    public void setChikungunyaOtherDetails(String chikungunyaOtherDetails) {
+        this.chikungunyaOtherDetails = chikungunyaOtherDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsMildAntibodyDetection(String postImmunizationAdverseEventsMildAntibodyDetection) {
+        this.postImmunizationAdverseEventsMildAntibodyDetection = postImmunizationAdverseEventsMildAntibodyDetection;
     }
 
     public void setPostImmunizationAdverseEventsMildAntigenDetection(String postImmunizationAdverseEventsMildAntigenDetection) {
@@ -6357,6 +12622,10 @@ public class CaseSampleExportDto implements Serializable {
         this.postImmunizationAdverseEventsMildIndirectFluorescentAntibody = postImmunizationAdverseEventsMildIndirectFluorescentAntibody;
     }
 
+    public void setPostImmunizationAdverseEventsMildDirectFluorescentAntibody(String postImmunizationAdverseEventsMildDirectFluorescentAntibody) {
+        this.postImmunizationAdverseEventsMildDirectFluorescentAntibody = postImmunizationAdverseEventsMildDirectFluorescentAntibody;
+    }
+
     public void setPostImmunizationAdverseEventsMildMicroscopy(String postImmunizationAdverseEventsMildMicroscopy) {
         this.postImmunizationAdverseEventsMildMicroscopy = postImmunizationAdverseEventsMildMicroscopy;
     }
@@ -6365,8 +12634,8 @@ public class CaseSampleExportDto implements Serializable {
         this.postImmunizationAdverseEventsMildNeutralizingAntibodies = postImmunizationAdverseEventsMildNeutralizingAntibodies;
     }
 
-    public void setPostImmunizationAdverseEventsMildPcr(String postImmunizationAdverseEventsMildPcr) {
-        this.postImmunizationAdverseEventsMildPcr = postImmunizationAdverseEventsMildPcr;
+    public void setPostImmunizationAdverseEventsMildPcrRtPcr(String postImmunizationAdverseEventsMildPcrRtPcr) {
+        this.postImmunizationAdverseEventsMildPcrRtPcr = postImmunizationAdverseEventsMildPcrRtPcr;
     }
 
     public void setPostImmunizationAdverseEventsMildGramStain(String postImmunizationAdverseEventsMildGramStain) {
@@ -6381,100 +12650,272 @@ public class CaseSampleExportDto implements Serializable {
         this.postImmunizationAdverseEventsMildCqValueDetection = postImmunizationAdverseEventsMildCqValueDetection;
     }
 
-    public void setPostImmunizationAdverseEventsMildSeQuencing(String postImmunizationAdverseEventsMildSeQuencing) {
-        this.postImmunizationAdverseEventsMildSeQuencing = postImmunizationAdverseEventsMildSeQuencing;
+    public void setPostImmunizationAdverseEventsMildSequencing(String postImmunizationAdverseEventsMildSequencing) {
+        this.postImmunizationAdverseEventsMildSequencing = postImmunizationAdverseEventsMildSequencing;
     }
 
-    public void setPostImmunizationAdverseEventsMildDnaMicroArray(String postImmunizationAdverseEventsMildDnaMicroArray) {
-        this.postImmunizationAdverseEventsMildDnaMicroArray = postImmunizationAdverseEventsMildDnaMicroArray;
+    public void setPostImmunizationAdverseEventsMildDnaMicroarray(String postImmunizationAdverseEventsMildDnaMicroarray) {
+        this.postImmunizationAdverseEventsMildDnaMicroarray = postImmunizationAdverseEventsMildDnaMicroarray;
     }
 
     public void setPostImmunizationAdverseEventsMildOther(String postImmunizationAdverseEventsMildOther) {
         this.postImmunizationAdverseEventsMildOther = postImmunizationAdverseEventsMildOther;
     }
 
-    public void setPostImmunizationAdverseEventsSevereAntiBodyDetection(String PostImmunizationAdverseEventsSevereAntiBodyDetection) {
-        this.PostImmunizationAdverseEventsSevereAntiBodyDetection = PostImmunizationAdverseEventsSevereAntiBodyDetection;
+    public void setPostImmunizationAdverseEventsMildAntibodyDetectionDetails(String postImmunizationAdverseEventsMildAntibodyDetectionDetails) {
+        this.postImmunizationAdverseEventsMildAntibodyDetectionDetails = postImmunizationAdverseEventsMildAntibodyDetectionDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereAntigenDetection(String PostImmunizationAdverseEventsSevereAntigenDetection) {
-        this.PostImmunizationAdverseEventsSevereAntigenDetection = PostImmunizationAdverseEventsSevereAntigenDetection;
+    public void setPostImmunizationAdverseEventsMildAntigenDetectionDetails(String postImmunizationAdverseEventsMildAntigenDetectionDetails) {
+        this.postImmunizationAdverseEventsMildAntigenDetectionDetails = postImmunizationAdverseEventsMildAntigenDetectionDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereRapidTest(String PostImmunizationAdverseEventsSevereRapidTest) {
-        this.PostImmunizationAdverseEventsSevereRapidTest = PostImmunizationAdverseEventsSevereRapidTest;
+    public void setPostImmunizationAdverseEventsMildRapidTestDetails(String postImmunizationAdverseEventsMildRapidTestDetails) {
+        this.postImmunizationAdverseEventsMildRapidTestDetails = postImmunizationAdverseEventsMildRapidTestDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereCulture(String PostImmunizationAdverseEventsSevereCulture) {
-        this.PostImmunizationAdverseEventsSevereCulture = PostImmunizationAdverseEventsSevereCulture;
+    public void setPostImmunizationAdverseEventsMildCultureDetails(String postImmunizationAdverseEventsMildCultureDetails) {
+        this.postImmunizationAdverseEventsMildCultureDetails = postImmunizationAdverseEventsMildCultureDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereHistopathology(String PostImmunizationAdverseEventsSevereHistopathology) {
-        this.PostImmunizationAdverseEventsSevereHistopathology = PostImmunizationAdverseEventsSevereHistopathology;
+    public void setPostImmunizationAdverseEventsMildHistopathologyDetails(String postImmunizationAdverseEventsMildHistopathologyDetails) {
+        this.postImmunizationAdverseEventsMildHistopathologyDetails = postImmunizationAdverseEventsMildHistopathologyDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereIsolation(String PostImmunizationAdverseEventsSevereIsolation) {
-        this.PostImmunizationAdverseEventsSevereIsolation = PostImmunizationAdverseEventsSevereIsolation;
+    public void setPostImmunizationAdverseEventsMildIsolationDetails(String postImmunizationAdverseEventsMildIsolationDetails) {
+        this.postImmunizationAdverseEventsMildIsolationDetails = postImmunizationAdverseEventsMildIsolationDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereIgmSerumAntibody(String PostImmunizationAdverseEventsSevereIgmSerumAntibody) {
-        this.PostImmunizationAdverseEventsSevereIgmSerumAntibody = PostImmunizationAdverseEventsSevereIgmSerumAntibody;
+    public void setPostImmunizationAdverseEventsMildIgmSerumAntibodyDetails(String postImmunizationAdverseEventsMildIgmSerumAntibodyDetails) {
+        this.postImmunizationAdverseEventsMildIgmSerumAntibodyDetails = postImmunizationAdverseEventsMildIgmSerumAntibodyDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereIggSerumAntibody(String PostImmunizationAdverseEventsSevereIggSerumAntibody) {
-        this.PostImmunizationAdverseEventsSevereIggSerumAntibody = PostImmunizationAdverseEventsSevereIggSerumAntibody;
+    public void setPostImmunizationAdverseEventsMildIggSerumAntibodyDetails(String postImmunizationAdverseEventsMildIggSerumAntibodyDetails) {
+        this.postImmunizationAdverseEventsMildIggSerumAntibodyDetails = postImmunizationAdverseEventsMildIggSerumAntibodyDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereIgaSerumAntibody(String PostImmunizationAdverseEventsSevereIgaSerumAntibody) {
-        this.PostImmunizationAdverseEventsSevereIgaSerumAntibody = PostImmunizationAdverseEventsSevereIgaSerumAntibody;
+    public void setPostImmunizationAdverseEventsMildIgaSerumAntibodyDetails(String postImmunizationAdverseEventsMildIgaSerumAntibodyDetails) {
+        this.postImmunizationAdverseEventsMildIgaSerumAntibodyDetails = postImmunizationAdverseEventsMildIgaSerumAntibodyDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereIncubationTime(String PostImmunizationAdverseEventsSevereIncubationTime) {
-        this.PostImmunizationAdverseEventsSevereIncubationTime = PostImmunizationAdverseEventsSevereIncubationTime;
+    public void setPostImmunizationAdverseEventsMildIncubationTimeDetails(String postImmunizationAdverseEventsMildIncubationTimeDetails) {
+        this.postImmunizationAdverseEventsMildIncubationTimeDetails = postImmunizationAdverseEventsMildIncubationTimeDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereIndirectFluorescentAntibody(String PostImmunizationAdverseEventsSevereIndirectFluorescentAntibody) {
-        this.PostImmunizationAdverseEventsSevereIndirectFluorescentAntibody = PostImmunizationAdverseEventsSevereIndirectFluorescentAntibody;
+    public void setPostImmunizationAdverseEventsMildIndirectFluorescentAntibodyDetails(String postImmunizationAdverseEventsMildIndirectFluorescentAntibodyDetails) {
+        this.postImmunizationAdverseEventsMildIndirectFluorescentAntibodyDetails = postImmunizationAdverseEventsMildIndirectFluorescentAntibodyDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereMicroscopy(String PostImmunizationAdverseEventsSevereMicroscopy) {
-        this.PostImmunizationAdverseEventsSevereMicroscopy = PostImmunizationAdverseEventsSevereMicroscopy;
+    public void setPostImmunizationAdverseEventsMildDirectFluorescentAntibodyDetails(String postImmunizationAdverseEventsMildDirectFluorescentAntibodyDetails) {
+        this.postImmunizationAdverseEventsMildDirectFluorescentAntibodyDetails = postImmunizationAdverseEventsMildDirectFluorescentAntibodyDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereNeutralizingAntibodies(String PostImmunizationAdverseEventsSevereNeutralizingAntibodies) {
-        this.PostImmunizationAdverseEventsSevereNeutralizingAntibodies = PostImmunizationAdverseEventsSevereNeutralizingAntibodies;
+    public void setPostImmunizationAdverseEventsMildMicroscopyDetails(String postImmunizationAdverseEventsMildMicroscopyDetails) {
+        this.postImmunizationAdverseEventsMildMicroscopyDetails = postImmunizationAdverseEventsMildMicroscopyDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSeverePcr(String PostImmunizationAdverseEventsSeverePcr) {
-        this.PostImmunizationAdverseEventsSeverePcr = PostImmunizationAdverseEventsSeverePcr;
+    public void setPostImmunizationAdverseEventsMildNeutralizingAntibodiesDetails(String postImmunizationAdverseEventsMildNeutralizingAntibodiesDetails) {
+        this.postImmunizationAdverseEventsMildNeutralizingAntibodiesDetails = postImmunizationAdverseEventsMildNeutralizingAntibodiesDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereGramStain(String PostImmunizationAdverseEventsSevereGramStain) {
-        this.PostImmunizationAdverseEventsSevereGramStain = PostImmunizationAdverseEventsSevereGramStain;
+    public void setPostImmunizationAdverseEventsMildPcrRtPcrDetails(String postImmunizationAdverseEventsMildPcrRtPcrDetails) {
+        this.postImmunizationAdverseEventsMildPcrRtPcrDetails = postImmunizationAdverseEventsMildPcrRtPcrDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereLatexAgglutination(String PostImmunizationAdverseEventsSevereLatexAgglutination) {
-        this.PostImmunizationAdverseEventsSevereLatexAgglutination = PostImmunizationAdverseEventsSevereLatexAgglutination;
+    public void setPostImmunizationAdverseEventsMildGramStainDetails(String postImmunizationAdverseEventsMildGramStainDetails) {
+        this.postImmunizationAdverseEventsMildGramStainDetails = postImmunizationAdverseEventsMildGramStainDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereCqValueDetection(String PostImmunizationAdverseEventsSevereCqValueDetection) {
-        this.PostImmunizationAdverseEventsSevereCqValueDetection = PostImmunizationAdverseEventsSevereCqValueDetection;
+    public void setPostImmunizationAdverseEventsMildLatexAgglutinationDetails(String postImmunizationAdverseEventsMildLatexAgglutinationDetails) {
+        this.postImmunizationAdverseEventsMildLatexAgglutinationDetails = postImmunizationAdverseEventsMildLatexAgglutinationDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereSeQuencing(String PostImmunizationAdverseEventsSevereSeQuencing) {
-        this.PostImmunizationAdverseEventsSevereSeQuencing = PostImmunizationAdverseEventsSevereSeQuencing;
+    public void setPostImmunizationAdverseEventsMildCqValueDetectionDetails(String postImmunizationAdverseEventsMildCqValueDetectionDetails) {
+        this.postImmunizationAdverseEventsMildCqValueDetectionDetails = postImmunizationAdverseEventsMildCqValueDetectionDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereDnaMicroArray(String PostImmunizationAdverseEventsSevereDnaMicroArray) {
-        this.PostImmunizationAdverseEventsSevereDnaMicroArray = PostImmunizationAdverseEventsSevereDnaMicroArray;
+    public void setPostImmunizationAdverseEventsMildSequencingDetails(String postImmunizationAdverseEventsMildSequencingDetails) {
+        this.postImmunizationAdverseEventsMildSequencingDetails = postImmunizationAdverseEventsMildSequencingDetails;
     }
 
-    public void setPostImmunizationAdverseEventsSevereOther(String PostImmunizationAdverseEventsSevereOther) {
-        this.PostImmunizationAdverseEventsSevereOther = PostImmunizationAdverseEventsSevereOther;
+    public void setPostImmunizationAdverseEventsMildDnaMicroarrayDetails(String postImmunizationAdverseEventsMildDnaMicroarrayDetails) {
+        this.postImmunizationAdverseEventsMildDnaMicroarrayDetails = postImmunizationAdverseEventsMildDnaMicroarrayDetails;
     }
 
-    public void setFhaAntiBodyDetection(String fhaAntiBodyDetection) {
-        this.fhaAntiBodyDetection = fhaAntiBodyDetection;
+    public void setPostImmunizationAdverseEventsMildOtherDetails(String postImmunizationAdverseEventsMildOtherDetails) {
+        this.postImmunizationAdverseEventsMildOtherDetails = postImmunizationAdverseEventsMildOtherDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereAntibodyDetection(String postImmunizationAdverseEventsSevereAntibodyDetection) {
+        this.postImmunizationAdverseEventsSevereAntibodyDetection = postImmunizationAdverseEventsSevereAntibodyDetection;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereAntigenDetection(String postImmunizationAdverseEventsSevereAntigenDetection) {
+        this.postImmunizationAdverseEventsSevereAntigenDetection = postImmunizationAdverseEventsSevereAntigenDetection;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereRapidTest(String postImmunizationAdverseEventsSevereRapidTest) {
+        this.postImmunizationAdverseEventsSevereRapidTest = postImmunizationAdverseEventsSevereRapidTest;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereCulture(String postImmunizationAdverseEventsSevereCulture) {
+        this.postImmunizationAdverseEventsSevereCulture = postImmunizationAdverseEventsSevereCulture;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereHistopathology(String postImmunizationAdverseEventsSevereHistopathology) {
+        this.postImmunizationAdverseEventsSevereHistopathology = postImmunizationAdverseEventsSevereHistopathology;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereIsolation(String postImmunizationAdverseEventsSevereIsolation) {
+        this.postImmunizationAdverseEventsSevereIsolation = postImmunizationAdverseEventsSevereIsolation;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereIgmSerumAntibody(String postImmunizationAdverseEventsSevereIgmSerumAntibody) {
+        this.postImmunizationAdverseEventsSevereIgmSerumAntibody = postImmunizationAdverseEventsSevereIgmSerumAntibody;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereIggSerumAntibody(String postImmunizationAdverseEventsSevereIggSerumAntibody) {
+        this.postImmunizationAdverseEventsSevereIggSerumAntibody = postImmunizationAdverseEventsSevereIggSerumAntibody;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereIgaSerumAntibody(String postImmunizationAdverseEventsSevereIgaSerumAntibody) {
+        this.postImmunizationAdverseEventsSevereIgaSerumAntibody = postImmunizationAdverseEventsSevereIgaSerumAntibody;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereIncubationTime(String postImmunizationAdverseEventsSevereIncubationTime) {
+        this.postImmunizationAdverseEventsSevereIncubationTime = postImmunizationAdverseEventsSevereIncubationTime;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereIndirectFluorescentAntibody(String postImmunizationAdverseEventsSevereIndirectFluorescentAntibody) {
+        this.postImmunizationAdverseEventsSevereIndirectFluorescentAntibody = postImmunizationAdverseEventsSevereIndirectFluorescentAntibody;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereDirectFluorescentAntibody(String postImmunizationAdverseEventsSevereDirectFluorescentAntibody) {
+        this.postImmunizationAdverseEventsSevereDirectFluorescentAntibody = postImmunizationAdverseEventsSevereDirectFluorescentAntibody;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereMicroscopy(String postImmunizationAdverseEventsSevereMicroscopy) {
+        this.postImmunizationAdverseEventsSevereMicroscopy = postImmunizationAdverseEventsSevereMicroscopy;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereNeutralizingAntibodies(String postImmunizationAdverseEventsSevereNeutralizingAntibodies) {
+        this.postImmunizationAdverseEventsSevereNeutralizingAntibodies = postImmunizationAdverseEventsSevereNeutralizingAntibodies;
+    }
+
+    public void setPostImmunizationAdverseEventsSeverePcrRtPcr(String postImmunizationAdverseEventsSeverePcrRtPcr) {
+        this.postImmunizationAdverseEventsSeverePcrRtPcr = postImmunizationAdverseEventsSeverePcrRtPcr;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereGramStain(String postImmunizationAdverseEventsSevereGramStain) {
+        this.postImmunizationAdverseEventsSevereGramStain = postImmunizationAdverseEventsSevereGramStain;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereLatexAgglutination(String postImmunizationAdverseEventsSevereLatexAgglutination) {
+        this.postImmunizationAdverseEventsSevereLatexAgglutination = postImmunizationAdverseEventsSevereLatexAgglutination;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereCqValueDetection(String postImmunizationAdverseEventsSevereCqValueDetection) {
+        this.postImmunizationAdverseEventsSevereCqValueDetection = postImmunizationAdverseEventsSevereCqValueDetection;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereSequencing(String postImmunizationAdverseEventsSevereSequencing) {
+        this.postImmunizationAdverseEventsSevereSequencing = postImmunizationAdverseEventsSevereSequencing;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereDnaMicroarray(String postImmunizationAdverseEventsSevereDnaMicroarray) {
+        this.postImmunizationAdverseEventsSevereDnaMicroarray = postImmunizationAdverseEventsSevereDnaMicroarray;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereOther(String postImmunizationAdverseEventsSevereOther) {
+        this.postImmunizationAdverseEventsSevereOther = postImmunizationAdverseEventsSevereOther;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereAntibodyDetectionDetails(String postImmunizationAdverseEventsSevereAntibodyDetectionDetails) {
+        this.postImmunizationAdverseEventsSevereAntibodyDetectionDetails = postImmunizationAdverseEventsSevereAntibodyDetectionDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereAntigenDetectionDetails(String postImmunizationAdverseEventsSevereAntigenDetectionDetails) {
+        this.postImmunizationAdverseEventsSevereAntigenDetectionDetails = postImmunizationAdverseEventsSevereAntigenDetectionDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereRapidTestDetails(String postImmunizationAdverseEventsSevereRapidTestDetails) {
+        this.postImmunizationAdverseEventsSevereRapidTestDetails = postImmunizationAdverseEventsSevereRapidTestDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereCultureDetails(String postImmunizationAdverseEventsSevereCultureDetails) {
+        this.postImmunizationAdverseEventsSevereCultureDetails = postImmunizationAdverseEventsSevereCultureDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereHistopathologyDetails(String postImmunizationAdverseEventsSevereHistopathologyDetails) {
+        this.postImmunizationAdverseEventsSevereHistopathologyDetails = postImmunizationAdverseEventsSevereHistopathologyDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereIsolationDetails(String postImmunizationAdverseEventsSevereIsolationDetails) {
+        this.postImmunizationAdverseEventsSevereIsolationDetails = postImmunizationAdverseEventsSevereIsolationDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereIgmSerumAntibodyDetails(String postImmunizationAdverseEventsSevereIgmSerumAntibodyDetails) {
+        this.postImmunizationAdverseEventsSevereIgmSerumAntibodyDetails = postImmunizationAdverseEventsSevereIgmSerumAntibodyDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereIggSerumAntibodyDetails(String postImmunizationAdverseEventsSevereIggSerumAntibodyDetails) {
+        this.postImmunizationAdverseEventsSevereIggSerumAntibodyDetails = postImmunizationAdverseEventsSevereIggSerumAntibodyDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereIgaSerumAntibodyDetails(String postImmunizationAdverseEventsSevereIgaSerumAntibodyDetails) {
+        this.postImmunizationAdverseEventsSevereIgaSerumAntibodyDetails = postImmunizationAdverseEventsSevereIgaSerumAntibodyDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereIncubationTimeDetails(String postImmunizationAdverseEventsSevereIncubationTimeDetails) {
+        this.postImmunizationAdverseEventsSevereIncubationTimeDetails = postImmunizationAdverseEventsSevereIncubationTimeDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereIndirectFluorescentAntibodyDetails(String postImmunizationAdverseEventsSevereIndirectFluorescentAntibodyDetails) {
+        this.postImmunizationAdverseEventsSevereIndirectFluorescentAntibodyDetails = postImmunizationAdverseEventsSevereIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereDirectFluorescentAntibodyDetails(String postImmunizationAdverseEventsSevereDirectFluorescentAntibodyDetails) {
+        this.postImmunizationAdverseEventsSevereDirectFluorescentAntibodyDetails = postImmunizationAdverseEventsSevereDirectFluorescentAntibodyDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereMicroscopyDetails(String postImmunizationAdverseEventsSevereMicroscopyDetails) {
+        this.postImmunizationAdverseEventsSevereMicroscopyDetails = postImmunizationAdverseEventsSevereMicroscopyDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereNeutralizingAntibodiesDetails(String postImmunizationAdverseEventsSevereNeutralizingAntibodiesDetails) {
+        this.postImmunizationAdverseEventsSevereNeutralizingAntibodiesDetails = postImmunizationAdverseEventsSevereNeutralizingAntibodiesDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSeverePcrRtPcrDetails(String postImmunizationAdverseEventsSeverePcrRtPcrDetails) {
+        this.postImmunizationAdverseEventsSeverePcrRtPcrDetails = postImmunizationAdverseEventsSeverePcrRtPcrDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereGramStainDetails(String postImmunizationAdverseEventsSevereGramStainDetails) {
+        this.postImmunizationAdverseEventsSevereGramStainDetails = postImmunizationAdverseEventsSevereGramStainDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereLatexAgglutinationDetails(String postImmunizationAdverseEventsSevereLatexAgglutinationDetails) {
+        this.postImmunizationAdverseEventsSevereLatexAgglutinationDetails = postImmunizationAdverseEventsSevereLatexAgglutinationDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereCqValueDetectionDetails(String postImmunizationAdverseEventsSevereCqValueDetectionDetails) {
+        this.postImmunizationAdverseEventsSevereCqValueDetectionDetails = postImmunizationAdverseEventsSevereCqValueDetectionDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereSequencingDetails(String postImmunizationAdverseEventsSevereSequencingDetails) {
+        this.postImmunizationAdverseEventsSevereSequencingDetails = postImmunizationAdverseEventsSevereSequencingDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereDnaMicroarrayDetails(String postImmunizationAdverseEventsSevereDnaMicroarrayDetails) {
+        this.postImmunizationAdverseEventsSevereDnaMicroarrayDetails = postImmunizationAdverseEventsSevereDnaMicroarrayDetails;
+    }
+
+    public void setPostImmunizationAdverseEventsSevereOtherDetails(String postImmunizationAdverseEventsSevereOtherDetails) {
+        this.postImmunizationAdverseEventsSevereOtherDetails = postImmunizationAdverseEventsSevereOtherDetails;
+    }
+
+    public void setFhaAntibodyDetection(String fhaAntibodyDetection) {
+        this.fhaAntibodyDetection = fhaAntibodyDetection;
     }
 
     public void setFhaAntigenDetection(String fhaAntigenDetection) {
@@ -6517,6 +12958,10 @@ public class CaseSampleExportDto implements Serializable {
         this.fhaIndirectFluorescentAntibody = fhaIndirectFluorescentAntibody;
     }
 
+    public void setFhaDirectFluorescentAntibody(String fhaDirectFluorescentAntibody) {
+        this.fhaDirectFluorescentAntibody = fhaDirectFluorescentAntibody;
+    }
+
     public void setFhaMicroscopy(String fhaMicroscopy) {
         this.fhaMicroscopy = fhaMicroscopy;
     }
@@ -6525,8 +12970,8 @@ public class CaseSampleExportDto implements Serializable {
         this.fhaNeutralizingAntibodies = fhaNeutralizingAntibodies;
     }
 
-    public void setFhaPcr(String fhaPcr) {
-        this.fhaPcr = fhaPcr;
+    public void setFhaPcrRtPcr(String fhaPcrRtPcr) {
+        this.fhaPcrRtPcr = fhaPcrRtPcr;
     }
 
     public void setFhaGramStain(String fhaGramStain) {
@@ -6541,20 +12986,104 @@ public class CaseSampleExportDto implements Serializable {
         this.fhaCqValueDetection = fhaCqValueDetection;
     }
 
-    public void setFhaSeQuencing(String fhaSeQuencing) {
-        this.fhaSeQuencing = fhaSeQuencing;
+    public void setFhaSequencing(String fhaSequencing) {
+        this.fhaSequencing = fhaSequencing;
     }
 
-    public void setFhaDnaMicroArray(String fhaDnaMicroArray) {
-        this.fhaDnaMicroArray = fhaDnaMicroArray;
+    public void setFhaDnaMicroarray(String fhaDnaMicroarray) {
+        this.fhaDnaMicroarray = fhaDnaMicroarray;
     }
 
     public void setFhaOther(String fhaOther) {
         this.fhaOther = fhaOther;
     }
 
-    public void setOtherAntiBodyDetection(String otherAntiBodyDetection) {
-        this.otherAntiBodyDetection = otherAntiBodyDetection;
+    public void setFhaAntibodyDetectionDetails(String fhaAntibodyDetectionDetails) {
+        this.fhaAntibodyDetectionDetails = fhaAntibodyDetectionDetails;
+    }
+
+    public void setFhaAntigenDetectionDetails(String fhaAntigenDetectionDetails) {
+        this.fhaAntigenDetectionDetails = fhaAntigenDetectionDetails;
+    }
+
+    public void setFhaRapidTestDetails(String fhaRapidTestDetails) {
+        this.fhaRapidTestDetails = fhaRapidTestDetails;
+    }
+
+    public void setFhaCultureDetails(String fhaCultureDetails) {
+        this.fhaCultureDetails = fhaCultureDetails;
+    }
+
+    public void setFhaHistopathologyDetails(String fhaHistopathologyDetails) {
+        this.fhaHistopathologyDetails = fhaHistopathologyDetails;
+    }
+
+    public void setFhaIsolationDetails(String fhaIsolationDetails) {
+        this.fhaIsolationDetails = fhaIsolationDetails;
+    }
+
+    public void setFhaIgmSerumAntibodyDetails(String fhaIgmSerumAntibodyDetails) {
+        this.fhaIgmSerumAntibodyDetails = fhaIgmSerumAntibodyDetails;
+    }
+
+    public void setFhaIggSerumAntibodyDetails(String fhaIggSerumAntibodyDetails) {
+        this.fhaIggSerumAntibodyDetails = fhaIggSerumAntibodyDetails;
+    }
+
+    public void setFhaIgaSerumAntibodyDetails(String fhaIgaSerumAntibodyDetails) {
+        this.fhaIgaSerumAntibodyDetails = fhaIgaSerumAntibodyDetails;
+    }
+
+    public void setFhaIncubationTimeDetails(String fhaIncubationTimeDetails) {
+        this.fhaIncubationTimeDetails = fhaIncubationTimeDetails;
+    }
+
+    public void setFhaIndirectFluorescentAntibodyDetails(String fhaIndirectFluorescentAntibodyDetails) {
+        this.fhaIndirectFluorescentAntibodyDetails = fhaIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setFhaDirectFluorescentAntibodyDetails(String fhaDirectFluorescentAntibodyDetails) {
+        this.fhaDirectFluorescentAntibodyDetails = fhaDirectFluorescentAntibodyDetails;
+    }
+
+    public void setFhaMicroscopyDetails(String fhaMicroscopyDetails) {
+        this.fhaMicroscopyDetails = fhaMicroscopyDetails;
+    }
+
+    public void setFhaNeutralizingAntibodiesDetails(String fhaNeutralizingAntibodiesDetails) {
+        this.fhaNeutralizingAntibodiesDetails = fhaNeutralizingAntibodiesDetails;
+    }
+
+    public void setFhaPcrRtPcrDetails(String fhaPcrRtPcrDetails) {
+        this.fhaPcrRtPcrDetails = fhaPcrRtPcrDetails;
+    }
+
+    public void setFhaGramStainDetails(String fhaGramStainDetails) {
+        this.fhaGramStainDetails = fhaGramStainDetails;
+    }
+
+    public void setFhaLatexAgglutinationDetails(String fhaLatexAgglutinationDetails) {
+        this.fhaLatexAgglutinationDetails = fhaLatexAgglutinationDetails;
+    }
+
+    public void setFhaCqValueDetectionDetails(String fhaCqValueDetectionDetails) {
+        this.fhaCqValueDetectionDetails = fhaCqValueDetectionDetails;
+    }
+
+    public void setFhaSequencingDetails(String fhaSequencingDetails) {
+        this.fhaSequencingDetails = fhaSequencingDetails;
+    }
+
+    public void setFhaDnaMicroarrayDetails(String fhaDnaMicroarrayDetails) {
+        this.fhaDnaMicroarrayDetails = fhaDnaMicroarrayDetails;
+    }
+
+    public void setFhaOtherDetails(String fhaOtherDetails) {
+        this.fhaOtherDetails = fhaOtherDetails;
+    }
+
+    public void setOtherAntibodyDetection(String otherAntibodyDetection) {
+        this.otherAntibodyDetection = otherAntibodyDetection;
     }
 
     public void setOtherAntigenDetection(String otherAntigenDetection) {
@@ -6597,6 +13126,10 @@ public class CaseSampleExportDto implements Serializable {
         this.otherIndirectFluorescentAntibody = otherIndirectFluorescentAntibody;
     }
 
+    public void setOtherDirectFluorescentAntibody(String otherDirectFluorescentAntibody) {
+        this.otherDirectFluorescentAntibody = otherDirectFluorescentAntibody;
+    }
+
     public void setOtherMicroscopy(String otherMicroscopy) {
         this.otherMicroscopy = otherMicroscopy;
     }
@@ -6605,8 +13138,8 @@ public class CaseSampleExportDto implements Serializable {
         this.otherNeutralizingAntibodies = otherNeutralizingAntibodies;
     }
 
-    public void setOtherPcr(String otherPcr) {
-        this.otherPcr = otherPcr;
+    public void setOtherPcrRtPcr(String otherPcrRtPcr) {
+        this.otherPcrRtPcr = otherPcrRtPcr;
     }
 
     public void setOtherGramStain(String otherGramStain) {
@@ -6621,20 +13154,104 @@ public class CaseSampleExportDto implements Serializable {
         this.otherCqValueDetection = otherCqValueDetection;
     }
 
-    public void setOtherSeQuencing(String otherSeQuencing) {
-        this.otherSeQuencing = otherSeQuencing;
+    public void setOtherSequencing(String otherSequencing) {
+        this.otherSequencing = otherSequencing;
     }
 
-    public void setOtherDnaMicroArray(String otherDnaMicroArray) {
-        this.otherDnaMicroArray = otherDnaMicroArray;
+    public void setOtherDnaMicroarray(String otherDnaMicroarray) {
+        this.otherDnaMicroarray = otherDnaMicroarray;
     }
 
     public void setOtherOther(String otherOther) {
         this.otherOther = otherOther;
     }
 
-    public void setUndefinedAntiBodyDetection(String undefinedAntiBodyDetection) {
-        this.undefinedAntiBodyDetection = undefinedAntiBodyDetection;
+    public void setOtherAntibodyDetectionDetails(String otherAntibodyDetectionDetails) {
+        this.otherAntibodyDetectionDetails = otherAntibodyDetectionDetails;
+    }
+
+    public void setOtherAntigenDetectionDetails(String otherAntigenDetectionDetails) {
+        this.otherAntigenDetectionDetails = otherAntigenDetectionDetails;
+    }
+
+    public void setOtherRapidTestDetails(String otherRapidTestDetails) {
+        this.otherRapidTestDetails = otherRapidTestDetails;
+    }
+
+    public void setOtherCultureDetails(String otherCultureDetails) {
+        this.otherCultureDetails = otherCultureDetails;
+    }
+
+    public void setOtherHistopathologyDetails(String otherHistopathologyDetails) {
+        this.otherHistopathologyDetails = otherHistopathologyDetails;
+    }
+
+    public void setOtherIsolationDetails(String otherIsolationDetails) {
+        this.otherIsolationDetails = otherIsolationDetails;
+    }
+
+    public void setOtherIgmSerumAntibodyDetails(String otherIgmSerumAntibodyDetails) {
+        this.otherIgmSerumAntibodyDetails = otherIgmSerumAntibodyDetails;
+    }
+
+    public void setOtherIggSerumAntibodyDetails(String otherIggSerumAntibodyDetails) {
+        this.otherIggSerumAntibodyDetails = otherIggSerumAntibodyDetails;
+    }
+
+    public void setOtherIgaSerumAntibodyDetails(String otherIgaSerumAntibodyDetails) {
+        this.otherIgaSerumAntibodyDetails = otherIgaSerumAntibodyDetails;
+    }
+
+    public void setOtherIncubationTimeDetails(String otherIncubationTimeDetails) {
+        this.otherIncubationTimeDetails = otherIncubationTimeDetails;
+    }
+
+    public void setOtherIndirectFluorescentAntibodyDetails(String otherIndirectFluorescentAntibodyDetails) {
+        this.otherIndirectFluorescentAntibodyDetails = otherIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setOtherDirectFluorescentAntibodyDetails(String otherDirectFluorescentAntibodyDetails) {
+        this.otherDirectFluorescentAntibodyDetails = otherDirectFluorescentAntibodyDetails;
+    }
+
+    public void setOtherMicroscopyDetails(String otherMicroscopyDetails) {
+        this.otherMicroscopyDetails = otherMicroscopyDetails;
+    }
+
+    public void setOtherNeutralizingAntibodiesDetails(String otherNeutralizingAntibodiesDetails) {
+        this.otherNeutralizingAntibodiesDetails = otherNeutralizingAntibodiesDetails;
+    }
+
+    public void setOtherPcrRtPcrDetails(String otherPcrRtPcrDetails) {
+        this.otherPcrRtPcrDetails = otherPcrRtPcrDetails;
+    }
+
+    public void setOtherGramStainDetails(String otherGramStainDetails) {
+        this.otherGramStainDetails = otherGramStainDetails;
+    }
+
+    public void setOtherLatexAgglutinationDetails(String otherLatexAgglutinationDetails) {
+        this.otherLatexAgglutinationDetails = otherLatexAgglutinationDetails;
+    }
+
+    public void setOtherCqValueDetectionDetails(String otherCqValueDetectionDetails) {
+        this.otherCqValueDetectionDetails = otherCqValueDetectionDetails;
+    }
+
+    public void setOtherSequencingDetails(String otherSequencingDetails) {
+        this.otherSequencingDetails = otherSequencingDetails;
+    }
+
+    public void setOtherDnaMicroarrayDetails(String otherDnaMicroarrayDetails) {
+        this.otherDnaMicroarrayDetails = otherDnaMicroarrayDetails;
+    }
+
+    public void setOtherOtherDetails(String otherOtherDetails) {
+        this.otherOtherDetails = otherOtherDetails;
+    }
+
+    public void setUndefinedAntibodyDetection(String undefinedAntibodyDetection) {
+        this.undefinedAntibodyDetection = undefinedAntibodyDetection;
     }
 
     public void setUndefinedAntigenDetection(String undefinedAntigenDetection) {
@@ -6677,6 +13294,10 @@ public class CaseSampleExportDto implements Serializable {
         this.undefinedIndirectFluorescentAntibody = undefinedIndirectFluorescentAntibody;
     }
 
+    public void setUndefinedDirectFluorescentAntibody(String undefinedDirectFluorescentAntibody) {
+        this.undefinedDirectFluorescentAntibody = undefinedDirectFluorescentAntibody;
+    }
+
     public void setUndefinedMicroscopy(String undefinedMicroscopy) {
         this.undefinedMicroscopy = undefinedMicroscopy;
     }
@@ -6685,8 +13306,8 @@ public class CaseSampleExportDto implements Serializable {
         this.undefinedNeutralizingAntibodies = undefinedNeutralizingAntibodies;
     }
 
-    public void setUndefinedPcr(String undefinedPcr) {
-        this.undefinedPcr = undefinedPcr;
+    public void setUndefinedPcrRtPcr(String undefinedPcrRtPcr) {
+        this.undefinedPcrRtPcr = undefinedPcrRtPcr;
     }
 
     public void setUndefinedGramStain(String undefinedGramStain) {
@@ -6701,21 +13322,104 @@ public class CaseSampleExportDto implements Serializable {
         this.undefinedCqValueDetection = undefinedCqValueDetection;
     }
 
-    public void setUndefinedSeQuencing(String undefinedSeQuencing) {
-        this.undefinedSeQuencing = undefinedSeQuencing;
+    public void setUndefinedSequencing(String undefinedSequencing) {
+        this.undefinedSequencing = undefinedSequencing;
     }
 
-    public void setUndefinedDnaMicroArray(String undefinedDnaMicroArray) {
-        this.undefinedDnaMicroArray = undefinedDnaMicroArray;
+    public void setUndefinedDnaMicroarray(String undefinedDnaMicroarray) {
+        this.undefinedDnaMicroarray = undefinedDnaMicroarray;
     }
 
     public void setUndefinedOther(String undefinedOther) {
         this.undefinedOther = undefinedOther;
     }
 
+    public void setUndefinedAntibodyDetectionDetails(String undefinedAntibodyDetectionDetails) {
+        this.undefinedAntibodyDetectionDetails = undefinedAntibodyDetectionDetails;
+    }
 
-    public String getAfpAntiBodyDetection() {
-        return afpAntiBodyDetection;
+    public void setUndefinedAntigenDetectionDetails(String undefinedAntigenDetectionDetails) {
+        this.undefinedAntigenDetectionDetails = undefinedAntigenDetectionDetails;
+    }
+
+    public void setUndefinedRapidTestDetails(String undefinedRapidTestDetails) {
+        this.undefinedRapidTestDetails = undefinedRapidTestDetails;
+    }
+
+    public void setUndefinedCultureDetails(String undefinedCultureDetails) {
+        this.undefinedCultureDetails = undefinedCultureDetails;
+    }
+
+    public void setUndefinedHistopathologyDetails(String undefinedHistopathologyDetails) {
+        this.undefinedHistopathologyDetails = undefinedHistopathologyDetails;
+    }
+
+    public void setUndefinedIsolationDetails(String undefinedIsolationDetails) {
+        this.undefinedIsolationDetails = undefinedIsolationDetails;
+    }
+
+    public void setUndefinedIgmSerumAntibodyDetails(String undefinedIgmSerumAntibodyDetails) {
+        this.undefinedIgmSerumAntibodyDetails = undefinedIgmSerumAntibodyDetails;
+    }
+
+    public void setUndefinedIggSerumAntibodyDetails(String undefinedIggSerumAntibodyDetails) {
+        this.undefinedIggSerumAntibodyDetails = undefinedIggSerumAntibodyDetails;
+    }
+
+    public void setUndefinedIgaSerumAntibodyDetails(String undefinedIgaSerumAntibodyDetails) {
+        this.undefinedIgaSerumAntibodyDetails = undefinedIgaSerumAntibodyDetails;
+    }
+
+    public void setUndefinedIncubationTimeDetails(String undefinedIncubationTimeDetails) {
+        this.undefinedIncubationTimeDetails = undefinedIncubationTimeDetails;
+    }
+
+    public void setUndefinedIndirectFluorescentAntibodyDetails(String undefinedIndirectFluorescentAntibodyDetails) {
+        this.undefinedIndirectFluorescentAntibodyDetails = undefinedIndirectFluorescentAntibodyDetails;
+    }
+
+    public void setUndefinedDirectFluorescentAntibodyDetails(String undefinedDirectFluorescentAntibodyDetails) {
+        this.undefinedDirectFluorescentAntibodyDetails = undefinedDirectFluorescentAntibodyDetails;
+    }
+
+    public void setUndefinedMicroscopyDetails(String undefinedMicroscopyDetails) {
+        this.undefinedMicroscopyDetails = undefinedMicroscopyDetails;
+    }
+
+    public void setUndefinedNeutralizingAntibodiesDetails(String undefinedNeutralizingAntibodiesDetails) {
+        this.undefinedNeutralizingAntibodiesDetails = undefinedNeutralizingAntibodiesDetails;
+    }
+
+    public void setUndefinedPcrRtPcrDetails(String undefinedPcrRtPcrDetails) {
+        this.undefinedPcrRtPcrDetails = undefinedPcrRtPcrDetails;
+    }
+
+    public void setUndefinedGramStainDetails(String undefinedGramStainDetails) {
+        this.undefinedGramStainDetails = undefinedGramStainDetails;
+    }
+
+    public void setUndefinedLatexAgglutinationDetails(String undefinedLatexAgglutinationDetails) {
+        this.undefinedLatexAgglutinationDetails = undefinedLatexAgglutinationDetails;
+    }
+
+    public void setUndefinedCqValueDetectionDetails(String undefinedCqValueDetectionDetails) {
+        this.undefinedCqValueDetectionDetails = undefinedCqValueDetectionDetails;
+    }
+
+    public void setUndefinedSequencingDetails(String undefinedSequencingDetails) {
+        this.undefinedSequencingDetails = undefinedSequencingDetails;
+    }
+
+    public void setUndefinedDnaMicroarrayDetails(String undefinedDnaMicroarrayDetails) {
+        this.undefinedDnaMicroarrayDetails = undefinedDnaMicroarrayDetails;
+    }
+
+    public void setUndefinedOtherDetails(String undefinedOtherDetails) {
+        this.undefinedOtherDetails = undefinedOtherDetails;
+    }
+
+    public String getAfpAntibodyDetection() {
+        return afpAntibodyDetection;
     }
 
     public String getAfpAntigenDetection() {
@@ -6758,6 +13462,10 @@ public class CaseSampleExportDto implements Serializable {
         return afpIndirectFluorescentAntibody;
     }
 
+    public String getAfpDirectFluorescentAntibody() {
+        return afpDirectFluorescentAntibody;
+    }
+
     public String getAfpMicroscopy() {
         return afpMicroscopy;
     }
@@ -6766,8 +13474,8 @@ public class CaseSampleExportDto implements Serializable {
         return afpNeutralizingAntibodies;
     }
 
-    public String getAfpPcr() {
-        return afpPcr;
+    public String getAfpPcrRtPcr() {
+        return afpPcrRtPcr;
     }
 
     public String getAfpGramStain() {
@@ -6782,20 +13490,104 @@ public class CaseSampleExportDto implements Serializable {
         return afpCqValueDetection;
     }
 
-    public String getAfpSeQuencing() {
-        return afpSeQuencing;
+    public String getAfpSequencing() {
+        return afpSequencing;
     }
 
-    public String getAfpDnaMicroArray() {
-        return afpDnaMicroArray;
+    public String getAfpDnaMicroarray() {
+        return afpDnaMicroarray;
     }
 
     public String getAfpOther() {
         return afpOther;
     }
 
-    public String getCholeraAntiBodyDetection() {
-        return choleraAntiBodyDetection;
+    public String getAfpAntibodyDetectionDetails() {
+        return afpAntibodyDetectionDetails;
+    }
+
+    public String getAfpAntigenDetectionDetails() {
+        return afpAntigenDetectionDetails;
+    }
+
+    public String getAfpRapidTestDetails() {
+        return afpRapidTestDetails;
+    }
+
+    public String getAfpCultureDetails() {
+        return afpCultureDetails;
+    }
+
+    public String getAfpHistopathologyDetails() {
+        return afpHistopathologyDetails;
+    }
+
+    public String getAfpIsolationDetails() {
+        return afpIsolationDetails;
+    }
+
+    public String getAfpIgmSerumAntibodyDetails() {
+        return afpIgmSerumAntibodyDetails;
+    }
+
+    public String getAfpIggSerumAntibodyDetails() {
+        return afpIggSerumAntibodyDetails;
+    }
+
+    public String getAfpIgaSerumAntibodyDetails() {
+        return afpIgaSerumAntibodyDetails;
+    }
+
+    public String getAfpIncubationTimeDetails() {
+        return afpIncubationTimeDetails;
+    }
+
+    public String getAfpIndirectFluorescentAntibodyDetails() {
+        return afpIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getAfpDirectFluorescentAntibodyDetails() {
+        return afpDirectFluorescentAntibodyDetails;
+    }
+
+    public String getAfpMicroscopyDetails() {
+        return afpMicroscopyDetails;
+    }
+
+    public String getAfpNeutralizingAntibodiesDetails() {
+        return afpNeutralizingAntibodiesDetails;
+    }
+
+    public String getAfpPcrRtPcrDetails() {
+        return afpPcrRtPcrDetails;
+    }
+
+    public String getAfpGramStainDetails() {
+        return afpGramStainDetails;
+    }
+
+    public String getAfpLatexAgglutinationDetails() {
+        return afpLatexAgglutinationDetails;
+    }
+
+    public String getAfpCqValueDetectionDetails() {
+        return afpCqValueDetectionDetails;
+    }
+
+    public String getAfpSequencingDetails() {
+        return afpSequencingDetails;
+    }
+
+    public String getAfpDnaMicroarrayDetails() {
+        return afpDnaMicroarrayDetails;
+    }
+
+    public String getAfpOtherDetails() {
+        return afpOtherDetails;
+    }
+
+    public String getCholeraAntibodyDetection() {
+        return choleraAntibodyDetection;
     }
 
     public String getCholeraAntigenDetection() {
@@ -6838,6 +13630,10 @@ public class CaseSampleExportDto implements Serializable {
         return choleraIndirectFluorescentAntibody;
     }
 
+    public String getCholeraDirectFluorescentAntibody() {
+        return choleraDirectFluorescentAntibody;
+    }
+
     public String getCholeraMicroscopy() {
         return choleraMicroscopy;
     }
@@ -6846,8 +13642,8 @@ public class CaseSampleExportDto implements Serializable {
         return choleraNeutralizingAntibodies;
     }
 
-    public String getCholeraPcr() {
-        return choleraPcr;
+    public String getCholeraPcrRtPcr() {
+        return choleraPcrRtPcr;
     }
 
     public String getCholeraGramStain() {
@@ -6862,20 +13658,104 @@ public class CaseSampleExportDto implements Serializable {
         return choleraCqValueDetection;
     }
 
-    public String getCholeraSeQuencing() {
-        return choleraSeQuencing;
+    public String getCholeraSequencing() {
+        return choleraSequencing;
     }
 
-    public String getCholeraDnaMicroArray() {
-        return choleraDnaMicroArray;
+    public String getCholeraDnaMicroarray() {
+        return choleraDnaMicroarray;
     }
 
     public String getCholeraOther() {
         return choleraOther;
     }
 
-    public String getCongenitalRubellaAntiBodyDetection() {
-        return congenitalRubellaAntiBodyDetection;
+    public String getCholeraAntibodyDetectionDetails() {
+        return choleraAntibodyDetectionDetails;
+    }
+
+    public String getCholeraAntigenDetectionDetails() {
+        return choleraAntigenDetectionDetails;
+    }
+
+    public String getCholeraRapidTestDetails() {
+        return choleraRapidTestDetails;
+    }
+
+    public String getCholeraCultureDetails() {
+        return choleraCultureDetails;
+    }
+
+    public String getCholeraHistopathologyDetails() {
+        return choleraHistopathologyDetails;
+    }
+
+    public String getCholeraIsolationDetails() {
+        return choleraIsolationDetails;
+    }
+
+    public String getCholeraIgmSerumAntibodyDetails() {
+        return choleraIgmSerumAntibodyDetails;
+    }
+
+    public String getCholeraIggSerumAntibodyDetails() {
+        return choleraIggSerumAntibodyDetails;
+    }
+
+    public String getCholeraIgaSerumAntibodyDetails() {
+        return choleraIgaSerumAntibodyDetails;
+    }
+
+    public String getCholeraIncubationTimeDetails() {
+        return choleraIncubationTimeDetails;
+    }
+
+    public String getCholeraIndirectFluorescentAntibodyDetails() {
+        return choleraIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getCholeraDirectFluorescentAntibodyDetails() {
+        return choleraDirectFluorescentAntibodyDetails;
+    }
+
+    public String getCholeraMicroscopyDetails() {
+        return choleraMicroscopyDetails;
+    }
+
+    public String getCholeraNeutralizingAntibodiesDetails() {
+        return choleraNeutralizingAntibodiesDetails;
+    }
+
+    public String getCholeraPcrRtPcrDetails() {
+        return choleraPcrRtPcrDetails;
+    }
+
+    public String getCholeraGramStainDetails() {
+        return choleraGramStainDetails;
+    }
+
+    public String getCholeraLatexAgglutinationDetails() {
+        return choleraLatexAgglutinationDetails;
+    }
+
+    public String getCholeraCqValueDetectionDetails() {
+        return choleraCqValueDetectionDetails;
+    }
+
+    public String getCholeraSequencingDetails() {
+        return choleraSequencingDetails;
+    }
+
+    public String getCholeraDnaMicroarrayDetails() {
+        return choleraDnaMicroarrayDetails;
+    }
+
+    public String getCholeraOtherDetails() {
+        return choleraOtherDetails;
+    }
+
+    public String getCongenitalRubellaAntibodyDetection() {
+        return congenitalRubellaAntibodyDetection;
     }
 
     public String getCongenitalRubellaAntigenDetection() {
@@ -6918,6 +13798,10 @@ public class CaseSampleExportDto implements Serializable {
         return congenitalRubellaIndirectFluorescentAntibody;
     }
 
+    public String getCongenitalRubellaDirectFluorescentAntibody() {
+        return congenitalRubellaDirectFluorescentAntibody;
+    }
+
     public String getCongenitalRubellaMicroscopy() {
         return congenitalRubellaMicroscopy;
     }
@@ -6926,8 +13810,8 @@ public class CaseSampleExportDto implements Serializable {
         return congenitalRubellaNeutralizingAntibodies;
     }
 
-    public String getCongenitalRubellaPcr() {
-        return congenitalRubellaPcr;
+    public String getCongenitalRubellaPcrRtPcr() {
+        return congenitalRubellaPcrRtPcr;
     }
 
     public String getCongenitalRubellaGramStain() {
@@ -6942,20 +13826,104 @@ public class CaseSampleExportDto implements Serializable {
         return congenitalRubellaCqValueDetection;
     }
 
-    public String getCongenitalRubellaSeQuencing() {
-        return congenitalRubellaSeQuencing;
+    public String getCongenitalRubellaSequencing() {
+        return congenitalRubellaSequencing;
     }
 
-    public String getCongenitalRubellaDnaMicroArray() {
-        return congenitalRubellaDnaMicroArray;
+    public String getCongenitalRubellaDnaMicroarray() {
+        return congenitalRubellaDnaMicroarray;
     }
 
     public String getCongenitalRubellaOther() {
         return congenitalRubellaOther;
     }
 
-    public String getCsmAntiBodyDetection() {
-        return csmAntiBodyDetection;
+    public String getCongenitalRubellaAntibodyDetectionDetails() {
+        return congenitalRubellaAntibodyDetectionDetails;
+    }
+
+    public String getCongenitalRubellaAntigenDetectionDetails() {
+        return congenitalRubellaAntigenDetectionDetails;
+    }
+
+    public String getCongenitalRubellaRapidTestDetails() {
+        return congenitalRubellaRapidTestDetails;
+    }
+
+    public String getCongenitalRubellaCultureDetails() {
+        return congenitalRubellaCultureDetails;
+    }
+
+    public String getCongenitalRubellaHistopathologyDetails() {
+        return congenitalRubellaHistopathologyDetails;
+    }
+
+    public String getCongenitalRubellaIsolationDetails() {
+        return congenitalRubellaIsolationDetails;
+    }
+
+    public String getCongenitalRubellaIgmSerumAntibodyDetails() {
+        return congenitalRubellaIgmSerumAntibodyDetails;
+    }
+
+    public String getCongenitalRubellaIggSerumAntibodyDetails() {
+        return congenitalRubellaIggSerumAntibodyDetails;
+    }
+
+    public String getCongenitalRubellaIgaSerumAntibodyDetails() {
+        return congenitalRubellaIgaSerumAntibodyDetails;
+    }
+
+    public String getCongenitalRubellaIncubationTimeDetails() {
+        return congenitalRubellaIncubationTimeDetails;
+    }
+
+    public String getCongenitalRubellaIndirectFluorescentAntibodyDetails() {
+        return congenitalRubellaIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getCongenitalRubellaDirectFluorescentAntibodyDetails() {
+        return congenitalRubellaDirectFluorescentAntibodyDetails;
+    }
+
+    public String getCongenitalRubellaMicroscopyDetails() {
+        return congenitalRubellaMicroscopyDetails;
+    }
+
+    public String getCongenitalRubellaNeutralizingAntibodiesDetails() {
+        return congenitalRubellaNeutralizingAntibodiesDetails;
+    }
+
+    public String getCongenitalRubellaPcrRtPcrDetails() {
+        return congenitalRubellaPcrRtPcrDetails;
+    }
+
+    public String getCongenitalRubellaGramStainDetails() {
+        return congenitalRubellaGramStainDetails;
+    }
+
+    public String getCongenitalRubellaLatexAgglutinationDetails() {
+        return congenitalRubellaLatexAgglutinationDetails;
+    }
+
+    public String getCongenitalRubellaCqValueDetectionDetails() {
+        return congenitalRubellaCqValueDetectionDetails;
+    }
+
+    public String getCongenitalRubellaSequencingDetails() {
+        return congenitalRubellaSequencingDetails;
+    }
+
+    public String getCongenitalRubellaDnaMicroarrayDetails() {
+        return congenitalRubellaDnaMicroarrayDetails;
+    }
+
+    public String getCongenitalRubellaOtherDetails() {
+        return congenitalRubellaOtherDetails;
+    }
+
+    public String getCsmAntibodyDetection() {
+        return csmAntibodyDetection;
     }
 
     public String getCsmAntigenDetection() {
@@ -6998,6 +13966,10 @@ public class CaseSampleExportDto implements Serializable {
         return csmIndirectFluorescentAntibody;
     }
 
+    public String getCsmDirectFluorescentAntibody() {
+        return csmDirectFluorescentAntibody;
+    }
+
     public String getCsmMicroscopy() {
         return csmMicroscopy;
     }
@@ -7006,8 +13978,8 @@ public class CaseSampleExportDto implements Serializable {
         return csmNeutralizingAntibodies;
     }
 
-    public String getCsmPcr() {
-        return csmPcr;
+    public String getCsmPcrRtPcr() {
+        return csmPcrRtPcr;
     }
 
     public String getCsmGramStain() {
@@ -7022,20 +13994,104 @@ public class CaseSampleExportDto implements Serializable {
         return csmCqValueDetection;
     }
 
-    public String getCsmSeQuencing() {
-        return csmSeQuencing;
+    public String getCsmSequencing() {
+        return csmSequencing;
     }
 
-    public String getCsmDnaMicroArray() {
-        return csmDnaMicroArray;
+    public String getCsmDnaMicroarray() {
+        return csmDnaMicroarray;
     }
 
     public String getCsmOther() {
         return csmOther;
     }
 
-    public String getDengueAntiBodyDetection() {
-        return dengueAntiBodyDetection;
+    public String getCsmAntibodyDetectionDetails() {
+        return csmAntibodyDetectionDetails;
+    }
+
+    public String getCsmAntigenDetectionDetails() {
+        return csmAntigenDetectionDetails;
+    }
+
+    public String getCsmRapidTestDetails() {
+        return csmRapidTestDetails;
+    }
+
+    public String getCsmCultureDetails() {
+        return csmCultureDetails;
+    }
+
+    public String getCsmHistopathologyDetails() {
+        return csmHistopathologyDetails;
+    }
+
+    public String getCsmIsolationDetails() {
+        return csmIsolationDetails;
+    }
+
+    public String getCsmIgmSerumAntibodyDetails() {
+        return csmIgmSerumAntibodyDetails;
+    }
+
+    public String getCsmIggSerumAntibodyDetails() {
+        return csmIggSerumAntibodyDetails;
+    }
+
+    public String getCsmIgaSerumAntibodyDetails() {
+        return csmIgaSerumAntibodyDetails;
+    }
+
+    public String getCsmIncubationTimeDetails() {
+        return csmIncubationTimeDetails;
+    }
+
+    public String getCsmIndirectFluorescentAntibodyDetails() {
+        return csmIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getCsmDirectFluorescentAntibodyDetails() {
+        return csmDirectFluorescentAntibodyDetails;
+    }
+
+    public String getCsmMicroscopyDetails() {
+        return csmMicroscopyDetails;
+    }
+
+    public String getCsmNeutralizingAntibodiesDetails() {
+        return csmNeutralizingAntibodiesDetails;
+    }
+
+    public String getCsmPcrRtPcrDetails() {
+        return csmPcrRtPcrDetails;
+    }
+
+    public String getCsmGramStainDetails() {
+        return csmGramStainDetails;
+    }
+
+    public String getCsmLatexAgglutinationDetails() {
+        return csmLatexAgglutinationDetails;
+    }
+
+    public String getCsmCqValueDetectionDetails() {
+        return csmCqValueDetectionDetails;
+    }
+
+    public String getCsmSequencingDetails() {
+        return csmSequencingDetails;
+    }
+
+    public String getCsmDnaMicroarrayDetails() {
+        return csmDnaMicroarrayDetails;
+    }
+
+    public String getCsmOtherDetails() {
+        return csmOtherDetails;
+    }
+
+    public String getDengueAntibodyDetection() {
+        return dengueAntibodyDetection;
     }
 
     public String getDengueAntigenDetection() {
@@ -7078,6 +14134,10 @@ public class CaseSampleExportDto implements Serializable {
         return dengueIndirectFluorescentAntibody;
     }
 
+    public String getDengueDirectFluorescentAntibody() {
+        return dengueDirectFluorescentAntibody;
+    }
+
     public String getDengueMicroscopy() {
         return dengueMicroscopy;
     }
@@ -7086,8 +14146,8 @@ public class CaseSampleExportDto implements Serializable {
         return dengueNeutralizingAntibodies;
     }
 
-    public String getDenguePcr() {
-        return denguePcr;
+    public String getDenguePcrRtPcr() {
+        return denguePcrRtPcr;
     }
 
     public String getDengueGramStain() {
@@ -7102,20 +14162,104 @@ public class CaseSampleExportDto implements Serializable {
         return dengueCqValueDetection;
     }
 
-    public String getDengueSeQuencing() {
-        return dengueSeQuencing;
+    public String getDengueSequencing() {
+        return dengueSequencing;
     }
 
-    public String getDengueDnaMicroArray() {
-        return dengueDnaMicroArray;
+    public String getDengueDnaMicroarray() {
+        return dengueDnaMicroarray;
     }
 
     public String getDengueOther() {
         return dengueOther;
     }
 
-    public String getEvdAntiBodyDetection() {
-        return evdAntiBodyDetection;
+    public String getDengueAntibodyDetectionDetails() {
+        return dengueAntibodyDetectionDetails;
+    }
+
+    public String getDengueAntigenDetectionDetails() {
+        return dengueAntigenDetectionDetails;
+    }
+
+    public String getDengueRapidTestDetails() {
+        return dengueRapidTestDetails;
+    }
+
+    public String getDengueCultureDetails() {
+        return dengueCultureDetails;
+    }
+
+    public String getDengueHistopathologyDetails() {
+        return dengueHistopathologyDetails;
+    }
+
+    public String getDengueIsolationDetails() {
+        return dengueIsolationDetails;
+    }
+
+    public String getDengueIgmSerumAntibodyDetails() {
+        return dengueIgmSerumAntibodyDetails;
+    }
+
+    public String getDengueIggSerumAntibodyDetails() {
+        return dengueIggSerumAntibodyDetails;
+    }
+
+    public String getDengueIgaSerumAntibodyDetails() {
+        return dengueIgaSerumAntibodyDetails;
+    }
+
+    public String getDengueIncubationTimeDetails() {
+        return dengueIncubationTimeDetails;
+    }
+
+    public String getDengueIndirectFluorescentAntibodyDetails() {
+        return dengueIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getDengueDirectFluorescentAntibodyDetails() {
+        return dengueDirectFluorescentAntibodyDetails;
+    }
+
+    public String getDengueMicroscopyDetails() {
+        return dengueMicroscopyDetails;
+    }
+
+    public String getDengueNeutralizingAntibodiesDetails() {
+        return dengueNeutralizingAntibodiesDetails;
+    }
+
+    public String getDenguePcrRtPcrDetails() {
+        return denguePcrRtPcrDetails;
+    }
+
+    public String getDengueGramStainDetails() {
+        return dengueGramStainDetails;
+    }
+
+    public String getDengueLatexAgglutinationDetails() {
+        return dengueLatexAgglutinationDetails;
+    }
+
+    public String getDengueCqValueDetectionDetails() {
+        return dengueCqValueDetectionDetails;
+    }
+
+    public String getDengueSequencingDetails() {
+        return dengueSequencingDetails;
+    }
+
+    public String getDengueDnaMicroarrayDetails() {
+        return dengueDnaMicroarrayDetails;
+    }
+
+    public String getDengueOtherDetails() {
+        return dengueOtherDetails;
+    }
+
+    public String getEvdAntibodyDetection() {
+        return evdAntibodyDetection;
     }
 
     public String getEvdAntigenDetection() {
@@ -7158,6 +14302,10 @@ public class CaseSampleExportDto implements Serializable {
         return evdIndirectFluorescentAntibody;
     }
 
+    public String getEvdDirectFluorescentAntibody() {
+        return evdDirectFluorescentAntibody;
+    }
+
     public String getEvdMicroscopy() {
         return evdMicroscopy;
     }
@@ -7166,8 +14314,8 @@ public class CaseSampleExportDto implements Serializable {
         return evdNeutralizingAntibodies;
     }
 
-    public String getEvdPcr() {
-        return evdPcr;
+    public String getEvdPcrRtPcr() {
+        return evdPcrRtPcr;
     }
 
     public String getEvdGramStain() {
@@ -7182,20 +14330,104 @@ public class CaseSampleExportDto implements Serializable {
         return evdCqValueDetection;
     }
 
-    public String getEvdSeQuencing() {
-        return evdSeQuencing;
+    public String getEvdSequencing() {
+        return evdSequencing;
     }
 
-    public String getEvdDnaMicroArray() {
-        return evdDnaMicroArray;
+    public String getEvdDnaMicroarray() {
+        return evdDnaMicroarray;
     }
 
     public String getEvdOther() {
         return evdOther;
     }
 
-    public String getGuineaWormAntiBodyDetection() {
-        return guineaWormAntiBodyDetection;
+    public String getEvdAntibodyDetectionDetails() {
+        return evdAntibodyDetectionDetails;
+    }
+
+    public String getEvdAntigenDetectionDetails() {
+        return evdAntigenDetectionDetails;
+    }
+
+    public String getEvdRapidTestDetails() {
+        return evdRapidTestDetails;
+    }
+
+    public String getEvdCultureDetails() {
+        return evdCultureDetails;
+    }
+
+    public String getEvdHistopathologyDetails() {
+        return evdHistopathologyDetails;
+    }
+
+    public String getEvdIsolationDetails() {
+        return evdIsolationDetails;
+    }
+
+    public String getEvdIgmSerumAntibodyDetails() {
+        return evdIgmSerumAntibodyDetails;
+    }
+
+    public String getEvdIggSerumAntibodyDetails() {
+        return evdIggSerumAntibodyDetails;
+    }
+
+    public String getEvdIgaSerumAntibodyDetails() {
+        return evdIgaSerumAntibodyDetails;
+    }
+
+    public String getEvdIncubationTimeDetails() {
+        return evdIncubationTimeDetails;
+    }
+
+    public String getEvdIndirectFluorescentAntibodyDetails() {
+        return evdIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getEvdDirectFluorescentAntibodyDetails() {
+        return evdDirectFluorescentAntibodyDetails;
+    }
+
+    public String getEvdMicroscopyDetails() {
+        return evdMicroscopyDetails;
+    }
+
+    public String getEvdNeutralizingAntibodiesDetails() {
+        return evdNeutralizingAntibodiesDetails;
+    }
+
+    public String getEvdPcrRtPcrDetails() {
+        return evdPcrRtPcrDetails;
+    }
+
+    public String getEvdGramStainDetails() {
+        return evdGramStainDetails;
+    }
+
+    public String getEvdLatexAgglutinationDetails() {
+        return evdLatexAgglutinationDetails;
+    }
+
+    public String getEvdCqValueDetectionDetails() {
+        return evdCqValueDetectionDetails;
+    }
+
+    public String getEvdSequencingDetails() {
+        return evdSequencingDetails;
+    }
+
+    public String getEvdDnaMicroarrayDetails() {
+        return evdDnaMicroarrayDetails;
+    }
+
+    public String getEvdOtherDetails() {
+        return evdOtherDetails;
+    }
+
+    public String getGuineaWormAntibodyDetection() {
+        return guineaWormAntibodyDetection;
     }
 
     public String getGuineaWormAntigenDetection() {
@@ -7238,6 +14470,10 @@ public class CaseSampleExportDto implements Serializable {
         return guineaWormIndirectFluorescentAntibody;
     }
 
+    public String getGuineaWormDirectFluorescentAntibody() {
+        return guineaWormDirectFluorescentAntibody;
+    }
+
     public String getGuineaWormMicroscopy() {
         return guineaWormMicroscopy;
     }
@@ -7246,8 +14482,8 @@ public class CaseSampleExportDto implements Serializable {
         return guineaWormNeutralizingAntibodies;
     }
 
-    public String getGuineaWormPcr() {
-        return guineaWormPcr;
+    public String getGuineaWormPcrRtPcr() {
+        return guineaWormPcrRtPcr;
     }
 
     public String getGuineaWormGramStain() {
@@ -7262,20 +14498,104 @@ public class CaseSampleExportDto implements Serializable {
         return guineaWormCqValueDetection;
     }
 
-    public String getGuineaWormSeQuencing() {
-        return guineaWormSeQuencing;
+    public String getGuineaWormSequencing() {
+        return guineaWormSequencing;
     }
 
-    public String getGuineaWormDnaMicroArray() {
-        return guineaWormDnaMicroArray;
+    public String getGuineaWormDnaMicroarray() {
+        return guineaWormDnaMicroarray;
     }
 
     public String getGuineaWormOther() {
         return guineaWormOther;
     }
 
-    public String getLassaAntiBodyDetection() {
-        return lassaAntiBodyDetection;
+    public String getGuineaWormAntibodyDetectionDetails() {
+        return guineaWormAntibodyDetectionDetails;
+    }
+
+    public String getGuineaWormAntigenDetectionDetails() {
+        return guineaWormAntigenDetectionDetails;
+    }
+
+    public String getGuineaWormRapidTestDetails() {
+        return guineaWormRapidTestDetails;
+    }
+
+    public String getGuineaWormCultureDetails() {
+        return guineaWormCultureDetails;
+    }
+
+    public String getGuineaWormHistopathologyDetails() {
+        return guineaWormHistopathologyDetails;
+    }
+
+    public String getGuineaWormIsolationDetails() {
+        return guineaWormIsolationDetails;
+    }
+
+    public String getGuineaWormIgmSerumAntibodyDetails() {
+        return guineaWormIgmSerumAntibodyDetails;
+    }
+
+    public String getGuineaWormIggSerumAntibodyDetails() {
+        return guineaWormIggSerumAntibodyDetails;
+    }
+
+    public String getGuineaWormIgaSerumAntibodyDetails() {
+        return guineaWormIgaSerumAntibodyDetails;
+    }
+
+    public String getGuineaWormIncubationTimeDetails() {
+        return guineaWormIncubationTimeDetails;
+    }
+
+    public String getGuineaWormIndirectFluorescentAntibodyDetails() {
+        return guineaWormIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getGuineaWormDirectFluorescentAntibodyDetails() {
+        return guineaWormDirectFluorescentAntibodyDetails;
+    }
+
+    public String getGuineaWormMicroscopyDetails() {
+        return guineaWormMicroscopyDetails;
+    }
+
+    public String getGuineaWormNeutralizingAntibodiesDetails() {
+        return guineaWormNeutralizingAntibodiesDetails;
+    }
+
+    public String getGuineaWormPcrRtPcrDetails() {
+        return guineaWormPcrRtPcrDetails;
+    }
+
+    public String getGuineaWormGramStainDetails() {
+        return guineaWormGramStainDetails;
+    }
+
+    public String getGuineaWormLatexAgglutinationDetails() {
+        return guineaWormLatexAgglutinationDetails;
+    }
+
+    public String getGuineaWormCqValueDetectionDetails() {
+        return guineaWormCqValueDetectionDetails;
+    }
+
+    public String getGuineaWormSequencingDetails() {
+        return guineaWormSequencingDetails;
+    }
+
+    public String getGuineaWormDnaMicroarrayDetails() {
+        return guineaWormDnaMicroarrayDetails;
+    }
+
+    public String getGuineaWormOtherDetails() {
+        return guineaWormOtherDetails;
+    }
+
+    public String getLassaAntibodyDetection() {
+        return lassaAntibodyDetection;
     }
 
     public String getLassaAntigenDetection() {
@@ -7318,6 +14638,10 @@ public class CaseSampleExportDto implements Serializable {
         return lassaIndirectFluorescentAntibody;
     }
 
+    public String getLassaDirectFluorescentAntibody() {
+        return lassaDirectFluorescentAntibody;
+    }
+
     public String getLassaMicroscopy() {
         return lassaMicroscopy;
     }
@@ -7326,8 +14650,8 @@ public class CaseSampleExportDto implements Serializable {
         return lassaNeutralizingAntibodies;
     }
 
-    public String getLassaPcr() {
-        return lassaPcr;
+    public String getLassaPcrRtPcr() {
+        return lassaPcrRtPcr;
     }
 
     public String getLassaGramStain() {
@@ -7342,20 +14666,104 @@ public class CaseSampleExportDto implements Serializable {
         return lassaCqValueDetection;
     }
 
-    public String getLassaSeQuencing() {
-        return lassaSeQuencing;
+    public String getLassaSequencing() {
+        return lassaSequencing;
     }
 
-    public String getLassaDnaMicroArray() {
-        return lassaDnaMicroArray;
+    public String getLassaDnaMicroarray() {
+        return lassaDnaMicroarray;
     }
 
     public String getLassaOther() {
         return lassaOther;
     }
 
-    public String getMeaslesAntiBodyDetection() {
-        return measlesAntiBodyDetection;
+    public String getLassaAntibodyDetectionDetails() {
+        return lassaAntibodyDetectionDetails;
+    }
+
+    public String getLassaAntigenDetectionDetails() {
+        return lassaAntigenDetectionDetails;
+    }
+
+    public String getLassaRapidTestDetails() {
+        return lassaRapidTestDetails;
+    }
+
+    public String getLassaCultureDetails() {
+        return lassaCultureDetails;
+    }
+
+    public String getLassaHistopathologyDetails() {
+        return lassaHistopathologyDetails;
+    }
+
+    public String getLassaIsolationDetails() {
+        return lassaIsolationDetails;
+    }
+
+    public String getLassaIgmSerumAntibodyDetails() {
+        return lassaIgmSerumAntibodyDetails;
+    }
+
+    public String getLassaIggSerumAntibodyDetails() {
+        return lassaIggSerumAntibodyDetails;
+    }
+
+    public String getLassaIgaSerumAntibodyDetails() {
+        return lassaIgaSerumAntibodyDetails;
+    }
+
+    public String getLassaIncubationTimeDetails() {
+        return lassaIncubationTimeDetails;
+    }
+
+    public String getLassaIndirectFluorescentAntibodyDetails() {
+        return lassaIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getLassaDirectFluorescentAntibodyDetails() {
+        return lassaDirectFluorescentAntibodyDetails;
+    }
+
+    public String getLassaMicroscopyDetails() {
+        return lassaMicroscopyDetails;
+    }
+
+    public String getLassaNeutralizingAntibodiesDetails() {
+        return lassaNeutralizingAntibodiesDetails;
+    }
+
+    public String getLassaPcrRtPcrDetails() {
+        return lassaPcrRtPcrDetails;
+    }
+
+    public String getLassaGramStainDetails() {
+        return lassaGramStainDetails;
+    }
+
+    public String getLassaLatexAgglutinationDetails() {
+        return lassaLatexAgglutinationDetails;
+    }
+
+    public String getLassaCqValueDetectionDetails() {
+        return lassaCqValueDetectionDetails;
+    }
+
+    public String getLassaSequencingDetails() {
+        return lassaSequencingDetails;
+    }
+
+    public String getLassaDnaMicroarrayDetails() {
+        return lassaDnaMicroarrayDetails;
+    }
+
+    public String getLassaOtherDetails() {
+        return lassaOtherDetails;
+    }
+
+    public String getMeaslesAntibodyDetection() {
+        return measlesAntibodyDetection;
     }
 
     public String getMeaslesAntigenDetection() {
@@ -7398,6 +14806,10 @@ public class CaseSampleExportDto implements Serializable {
         return measlesIndirectFluorescentAntibody;
     }
 
+    public String getMeaslesDirectFluorescentAntibody() {
+        return measlesDirectFluorescentAntibody;
+    }
+
     public String getMeaslesMicroscopy() {
         return measlesMicroscopy;
     }
@@ -7406,8 +14818,8 @@ public class CaseSampleExportDto implements Serializable {
         return measlesNeutralizingAntibodies;
     }
 
-    public String getMeaslesPcr() {
-        return measlesPcr;
+    public String getMeaslesPcrRtPcr() {
+        return measlesPcrRtPcr;
     }
 
     public String getMeaslesGramStain() {
@@ -7422,100 +14834,104 @@ public class CaseSampleExportDto implements Serializable {
         return measlesCqValueDetection;
     }
 
-    public String getMeaslesSeQuencing() {
-        return measlesSeQuencing;
+    public String getMeaslesSequencing() {
+        return measlesSequencing;
     }
 
-    public String getMeaslesDnaMicroArray() {
-        return measlesDnaMicroArray;
+    public String getMeaslesDnaMicroarray() {
+        return measlesDnaMicroarray;
     }
 
     public String getMeaslesOther() {
         return measlesOther;
     }
 
-    public String getMonkeyPoxAntiBodyDetection() {
-        return monkeyPoxAntiBodyDetection;
+    public String getMeaslesAntibodyDetectionDetails() {
+        return measlesAntibodyDetectionDetails;
     }
 
-    public String getMonkeyPoxAntigenDetection() {
-        return monkeyPoxAntigenDetection;
+    public String getMeaslesAntigenDetectionDetails() {
+        return measlesAntigenDetectionDetails;
     }
 
-    public String getMonkeyPoxRapidTest() {
-        return monkeyPoxRapidTest;
+    public String getMeaslesRapidTestDetails() {
+        return measlesRapidTestDetails;
     }
 
-    public String getMonkeyPoxCulture() {
-        return monkeyPoxCulture;
+    public String getMeaslesCultureDetails() {
+        return measlesCultureDetails;
     }
 
-    public String getMonkeyPoxHistopathology() {
-        return monkeyPoxHistopathology;
+    public String getMeaslesHistopathologyDetails() {
+        return measlesHistopathologyDetails;
     }
 
-    public String getMonkeyPoxIsolation() {
-        return monkeyPoxIsolation;
+    public String getMeaslesIsolationDetails() {
+        return measlesIsolationDetails;
     }
 
-    public String getMonkeyPoxIgmSerumAntibody() {
-        return monkeyPoxIgmSerumAntibody;
+    public String getMeaslesIgmSerumAntibodyDetails() {
+        return measlesIgmSerumAntibodyDetails;
     }
 
-    public String getMonkeyPoxIggSerumAntibody() {
-        return monkeyPoxIggSerumAntibody;
+    public String getMeaslesIggSerumAntibodyDetails() {
+        return measlesIggSerumAntibodyDetails;
     }
 
-    public String getMonkeyPoxIgaSerumAntibody() {
-        return monkeyPoxIgaSerumAntibody;
+    public String getMeaslesIgaSerumAntibodyDetails() {
+        return measlesIgaSerumAntibodyDetails;
     }
 
-    public String getMonkeyPoxIncubationTime() {
-        return monkeyPoxIncubationTime;
+    public String getMeaslesIncubationTimeDetails() {
+        return measlesIncubationTimeDetails;
     }
 
-    public String getMonkeyPoxIndirectFluorescentAntibody() {
-        return monkeyPoxIndirectFluorescentAntibody;
+    public String getMeaslesIndirectFluorescentAntibodyDetails() {
+        return measlesIndirectFluorescentAntibodyDetails;
     }
 
-    public String getMonkeyPoxMicroscopy() {
-        return monkeyPoxMicroscopy;
+    public String getMeaslesDirectFluorescentAntibodyDetails() {
+        return measlesDirectFluorescentAntibodyDetails;
     }
 
-    public String getMonkeyPoxNeutralizingAntibodies() {
-        return monkeyPoxNeutralizingAntibodies;
+    public String getMeaslesMicroscopyDetails() {
+        return measlesMicroscopyDetails;
     }
 
-    public String getMonkeyPoxPcr() {
-        return monkeyPoxPcr;
+    public String getMeaslesNeutralizingAntibodiesDetails() {
+        return measlesNeutralizingAntibodiesDetails;
     }
 
-    public String getMonkeyPoxGramStain() {
-        return monkeyPoxGramStain;
+    public String getMeaslesPcrRtPcrDetails() {
+        return measlesPcrRtPcrDetails;
     }
 
-    public String getMonkeyPoxLatexAgglutination() {
-        return monkeyPoxLatexAgglutination;
+    public String getMeaslesGramStainDetails() {
+        return measlesGramStainDetails;
     }
 
-    public String getMonkeyPoxCqValueDetection() {
-        return monkeyPoxCqValueDetection;
+    public String getMeaslesLatexAgglutinationDetails() {
+        return measlesLatexAgglutinationDetails;
     }
 
-    public String getMonkeyPoxSeQuencing() {
-        return monkeyPoxSeQuencing;
+    public String getMeaslesCqValueDetectionDetails() {
+        return measlesCqValueDetectionDetails;
     }
 
-    public String getMonkeyPoxDnaMicroArray() {
-        return monkeyPoxDnaMicroArray;
+    public String getMeaslesSequencingDetails() {
+        return measlesSequencingDetails;
     }
 
-    public String getMonkeyPoxOther() {
-        return monkeyPoxOther;
+    public String getMeaslesDnaMicroarrayDetails() {
+        return measlesDnaMicroarrayDetails;
     }
 
-    public String getMonkeypoxAntiBodyDetection() {
-        return monkeypoxAntiBodyDetection;
+    public String getMeaslesOtherDetails() {
+        return measlesOtherDetails;
+    }
+
+    public String getMonkeypoxAntibodyDetection() {
+        return monkeypoxAntibodyDetection;
     }
 
     public String getMonkeypoxAntigenDetection() {
@@ -7558,6 +14974,10 @@ public class CaseSampleExportDto implements Serializable {
         return monkeypoxIndirectFluorescentAntibody;
     }
 
+    public String getMonkeypoxDirectFluorescentAntibody() {
+        return monkeypoxDirectFluorescentAntibody;
+    }
+
     public String getMonkeypoxMicroscopy() {
         return monkeypoxMicroscopy;
     }
@@ -7566,8 +14986,8 @@ public class CaseSampleExportDto implements Serializable {
         return monkeypoxNeutralizingAntibodies;
     }
 
-    public String getMonkeypoxPcr() {
-        return monkeypoxPcr;
+    public String getMonkeypoxPcrRtPcr() {
+        return monkeypoxPcrRtPcr;
     }
 
     public String getMonkeypoxGramStain() {
@@ -7582,20 +15002,104 @@ public class CaseSampleExportDto implements Serializable {
         return monkeypoxCqValueDetection;
     }
 
-    public String getMonkeypoxSeQuencing() {
-        return monkeypoxSeQuencing;
+    public String getMonkeypoxSequencing() {
+        return monkeypoxSequencing;
     }
 
-    public String getMonkeypoxDnaMicroArray() {
-        return monkeypoxDnaMicroArray;
+    public String getMonkeypoxDnaMicroarray() {
+        return monkeypoxDnaMicroarray;
     }
 
     public String getMonkeypoxOther() {
         return monkeypoxOther;
     }
 
-    public String getNewInfluenzaAntiBodyDetection() {
-        return newInfluenzaAntiBodyDetection;
+    public String getMonkeypoxAntibodyDetectionDetails() {
+        return monkeypoxAntibodyDetectionDetails;
+    }
+
+    public String getMonkeypoxAntigenDetectionDetails() {
+        return monkeypoxAntigenDetectionDetails;
+    }
+
+    public String getMonkeypoxRapidTestDetails() {
+        return monkeypoxRapidTestDetails;
+    }
+
+    public String getMonkeypoxCultureDetails() {
+        return monkeypoxCultureDetails;
+    }
+
+    public String getMonkeypoxHistopathologyDetails() {
+        return monkeypoxHistopathologyDetails;
+    }
+
+    public String getMonkeypoxIsolationDetails() {
+        return monkeypoxIsolationDetails;
+    }
+
+    public String getMonkeypoxIgmSerumAntibodyDetails() {
+        return monkeypoxIgmSerumAntibodyDetails;
+    }
+
+    public String getMonkeypoxIggSerumAntibodyDetails() {
+        return monkeypoxIggSerumAntibodyDetails;
+    }
+
+    public String getMonkeypoxIgaSerumAntibodyDetails() {
+        return monkeypoxIgaSerumAntibodyDetails;
+    }
+
+    public String getMonkeypoxIncubationTimeDetails() {
+        return monkeypoxIncubationTimeDetails;
+    }
+
+    public String getMonkeypoxIndirectFluorescentAntibodyDetails() {
+        return monkeypoxIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getMonkeypoxDirectFluorescentAntibodyDetails() {
+        return monkeypoxDirectFluorescentAntibodyDetails;
+    }
+
+    public String getMonkeypoxMicroscopyDetails() {
+        return monkeypoxMicroscopyDetails;
+    }
+
+    public String getMonkeypoxNeutralizingAntibodiesDetails() {
+        return monkeypoxNeutralizingAntibodiesDetails;
+    }
+
+    public String getMonkeypoxPcrRtPcrDetails() {
+        return monkeypoxPcrRtPcrDetails;
+    }
+
+    public String getMonkeypoxGramStainDetails() {
+        return monkeypoxGramStainDetails;
+    }
+
+    public String getMonkeypoxLatexAgglutinationDetails() {
+        return monkeypoxLatexAgglutinationDetails;
+    }
+
+    public String getMonkeypoxCqValueDetectionDetails() {
+        return monkeypoxCqValueDetectionDetails;
+    }
+
+    public String getMonkeypoxSequencingDetails() {
+        return monkeypoxSequencingDetails;
+    }
+
+    public String getMonkeypoxDnaMicroarrayDetails() {
+        return monkeypoxDnaMicroarrayDetails;
+    }
+
+    public String getMonkeypoxOtherDetails() {
+        return monkeypoxOtherDetails;
+    }
+
+    public String getNewInfluenzaAntibodyDetection() {
+        return newInfluenzaAntibodyDetection;
     }
 
     public String getNewInfluenzaAntigenDetection() {
@@ -7638,6 +15142,10 @@ public class CaseSampleExportDto implements Serializable {
         return newInfluenzaIndirectFluorescentAntibody;
     }
 
+    public String getNewInfluenzaDirectFluorescentAntibody() {
+        return newInfluenzaDirectFluorescentAntibody;
+    }
+
     public String getNewInfluenzaMicroscopy() {
         return newInfluenzaMicroscopy;
     }
@@ -7646,8 +15154,8 @@ public class CaseSampleExportDto implements Serializable {
         return newInfluenzaNeutralizingAntibodies;
     }
 
-    public String getNewInfluenzaPcr() {
-        return newInfluenzaPcr;
+    public String getNewInfluenzaPcrRtPcr() {
+        return newInfluenzaPcrRtPcr;
     }
 
     public String getNewInfluenzaGramStain() {
@@ -7662,20 +15170,104 @@ public class CaseSampleExportDto implements Serializable {
         return newInfluenzaCqValueDetection;
     }
 
-    public String getNewInfluenzaSeQuencing() {
-        return newInfluenzaSeQuencing;
+    public String getNewInfluenzaSequencing() {
+        return newInfluenzaSequencing;
     }
 
-    public String getNewInfluenzaDnaMicroArray() {
-        return newInfluenzaDnaMicroArray;
+    public String getNewInfluenzaDnaMicroarray() {
+        return newInfluenzaDnaMicroarray;
     }
 
     public String getNewInfluenzaOther() {
         return newInfluenzaOther;
     }
 
-    public String getPlagueAntiBodyDetection() {
-        return plagueAntiBodyDetection;
+    public String getNewInfluenzaAntibodyDetectionDetails() {
+        return newInfluenzaAntibodyDetectionDetails;
+    }
+
+    public String getNewInfluenzaAntigenDetectionDetails() {
+        return newInfluenzaAntigenDetectionDetails;
+    }
+
+    public String getNewInfluenzaRapidTestDetails() {
+        return newInfluenzaRapidTestDetails;
+    }
+
+    public String getNewInfluenzaCultureDetails() {
+        return newInfluenzaCultureDetails;
+    }
+
+    public String getNewInfluenzaHistopathologyDetails() {
+        return newInfluenzaHistopathologyDetails;
+    }
+
+    public String getNewInfluenzaIsolationDetails() {
+        return newInfluenzaIsolationDetails;
+    }
+
+    public String getNewInfluenzaIgmSerumAntibodyDetails() {
+        return newInfluenzaIgmSerumAntibodyDetails;
+    }
+
+    public String getNewInfluenzaIggSerumAntibodyDetails() {
+        return newInfluenzaIggSerumAntibodyDetails;
+    }
+
+    public String getNewInfluenzaIgaSerumAntibodyDetails() {
+        return newInfluenzaIgaSerumAntibodyDetails;
+    }
+
+    public String getNewInfluenzaIncubationTimeDetails() {
+        return newInfluenzaIncubationTimeDetails;
+    }
+
+    public String getNewInfluenzaIndirectFluorescentAntibodyDetails() {
+        return newInfluenzaIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getNewInfluenzaDirectFluorescentAntibodyDetails() {
+        return newInfluenzaDirectFluorescentAntibodyDetails;
+    }
+
+    public String getNewInfluenzaMicroscopyDetails() {
+        return newInfluenzaMicroscopyDetails;
+    }
+
+    public String getNewInfluenzaNeutralizingAntibodiesDetails() {
+        return newInfluenzaNeutralizingAntibodiesDetails;
+    }
+
+    public String getNewInfluenzaPcrRtPcrDetails() {
+        return newInfluenzaPcrRtPcrDetails;
+    }
+
+    public String getNewInfluenzaGramStainDetails() {
+        return newInfluenzaGramStainDetails;
+    }
+
+    public String getNewInfluenzaLatexAgglutinationDetails() {
+        return newInfluenzaLatexAgglutinationDetails;
+    }
+
+    public String getNewInfluenzaCqValueDetectionDetails() {
+        return newInfluenzaCqValueDetectionDetails;
+    }
+
+    public String getNewInfluenzaSequencingDetails() {
+        return newInfluenzaSequencingDetails;
+    }
+
+    public String getNewInfluenzaDnaMicroarrayDetails() {
+        return newInfluenzaDnaMicroarrayDetails;
+    }
+
+    public String getNewInfluenzaOtherDetails() {
+        return newInfluenzaOtherDetails;
+    }
+
+    public String getPlagueAntibodyDetection() {
+        return plagueAntibodyDetection;
     }
 
     public String getPlagueAntigenDetection() {
@@ -7718,6 +15310,10 @@ public class CaseSampleExportDto implements Serializable {
         return plagueIndirectFluorescentAntibody;
     }
 
+    public String getPlagueDirectFluorescentAntibody() {
+        return plagueDirectFluorescentAntibody;
+    }
+
     public String getPlagueMicroscopy() {
         return plagueMicroscopy;
     }
@@ -7726,8 +15322,8 @@ public class CaseSampleExportDto implements Serializable {
         return plagueNeutralizingAntibodies;
     }
 
-    public String getPlaguePcr() {
-        return plaguePcr;
+    public String getPlaguePcrRtPcr() {
+        return plaguePcrRtPcr;
     }
 
     public String getPlagueGramStain() {
@@ -7742,20 +15338,104 @@ public class CaseSampleExportDto implements Serializable {
         return plagueCqValueDetection;
     }
 
-    public String getPlagueSeQuencing() {
-        return plagueSeQuencing;
+    public String getPlagueSequencing() {
+        return plagueSequencing;
     }
 
-    public String getPlagueDnaMicroArray() {
-        return plagueDnaMicroArray;
+    public String getPlagueDnaMicroarray() {
+        return plagueDnaMicroarray;
     }
 
     public String getPlagueOther() {
         return plagueOther;
     }
 
-    public String getPolioAntiBodyDetection() {
-        return polioAntiBodyDetection;
+    public String getPlagueAntibodyDetectionDetails() {
+        return plagueAntibodyDetectionDetails;
+    }
+
+    public String getPlagueAntigenDetectionDetails() {
+        return plagueAntigenDetectionDetails;
+    }
+
+    public String getPlagueRapidTestDetails() {
+        return plagueRapidTestDetails;
+    }
+
+    public String getPlagueCultureDetails() {
+        return plagueCultureDetails;
+    }
+
+    public String getPlagueHistopathologyDetails() {
+        return plagueHistopathologyDetails;
+    }
+
+    public String getPlagueIsolationDetails() {
+        return plagueIsolationDetails;
+    }
+
+    public String getPlagueIgmSerumAntibodyDetails() {
+        return plagueIgmSerumAntibodyDetails;
+    }
+
+    public String getPlagueIggSerumAntibodyDetails() {
+        return plagueIggSerumAntibodyDetails;
+    }
+
+    public String getPlagueIgaSerumAntibodyDetails() {
+        return plagueIgaSerumAntibodyDetails;
+    }
+
+    public String getPlagueIncubationTimeDetails() {
+        return plagueIncubationTimeDetails;
+    }
+
+    public String getPlagueIndirectFluorescentAntibodyDetails() {
+        return plagueIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getPlagueDirectFluorescentAntibodyDetails() {
+        return plagueDirectFluorescentAntibodyDetails;
+    }
+
+    public String getPlagueMicroscopyDetails() {
+        return plagueMicroscopyDetails;
+    }
+
+    public String getPlagueNeutralizingAntibodiesDetails() {
+        return plagueNeutralizingAntibodiesDetails;
+    }
+
+    public String getPlaguePcrRtPcrDetails() {
+        return plaguePcrRtPcrDetails;
+    }
+
+    public String getPlagueGramStainDetails() {
+        return plagueGramStainDetails;
+    }
+
+    public String getPlagueLatexAgglutinationDetails() {
+        return plagueLatexAgglutinationDetails;
+    }
+
+    public String getPlagueCqValueDetectionDetails() {
+        return plagueCqValueDetectionDetails;
+    }
+
+    public String getPlagueSequencingDetails() {
+        return plagueSequencingDetails;
+    }
+
+    public String getPlagueDnaMicroarrayDetails() {
+        return plagueDnaMicroarrayDetails;
+    }
+
+    public String getPlagueOtherDetails() {
+        return plagueOtherDetails;
+    }
+
+    public String getPolioAntibodyDetection() {
+        return polioAntibodyDetection;
     }
 
     public String getPolioAntigenDetection() {
@@ -7798,6 +15478,10 @@ public class CaseSampleExportDto implements Serializable {
         return polioIndirectFluorescentAntibody;
     }
 
+    public String getPolioDirectFluorescentAntibody() {
+        return polioDirectFluorescentAntibody;
+    }
+
     public String getPolioMicroscopy() {
         return polioMicroscopy;
     }
@@ -7806,8 +15490,8 @@ public class CaseSampleExportDto implements Serializable {
         return polioNeutralizingAntibodies;
     }
 
-    public String getPolioPcr() {
-        return polioPcr;
+    public String getPolioPcrRtPcr() {
+        return polioPcrRtPcr;
     }
 
     public String getPolioGramStain() {
@@ -7822,20 +15506,104 @@ public class CaseSampleExportDto implements Serializable {
         return polioCqValueDetection;
     }
 
-    public String getPolioSeQuencing() {
-        return polioSeQuencing;
+    public String getPolioSequencing() {
+        return polioSequencing;
     }
 
-    public String getPolioDnaMicroArray() {
-        return polioDnaMicroArray;
+    public String getPolioDnaMicroarray() {
+        return polioDnaMicroarray;
     }
 
     public String getPolioOther() {
         return polioOther;
     }
 
-    public String getUnspecifiedVhfAntiBodyDetection() {
-        return unspecifiedVhfAntiBodyDetection;
+    public String getPolioAntibodyDetectionDetails() {
+        return polioAntibodyDetectionDetails;
+    }
+
+    public String getPolioAntigenDetectionDetails() {
+        return polioAntigenDetectionDetails;
+    }
+
+    public String getPolioRapidTestDetails() {
+        return polioRapidTestDetails;
+    }
+
+    public String getPolioCultureDetails() {
+        return polioCultureDetails;
+    }
+
+    public String getPolioHistopathologyDetails() {
+        return polioHistopathologyDetails;
+    }
+
+    public String getPolioIsolationDetails() {
+        return polioIsolationDetails;
+    }
+
+    public String getPolioIgmSerumAntibodyDetails() {
+        return polioIgmSerumAntibodyDetails;
+    }
+
+    public String getPolioIggSerumAntibodyDetails() {
+        return polioIggSerumAntibodyDetails;
+    }
+
+    public String getPolioIgaSerumAntibodyDetails() {
+        return polioIgaSerumAntibodyDetails;
+    }
+
+    public String getPolioIncubationTimeDetails() {
+        return polioIncubationTimeDetails;
+    }
+
+    public String getPolioIndirectFluorescentAntibodyDetails() {
+        return polioIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getPolioDirectFluorescentAntibodyDetails() {
+        return polioDirectFluorescentAntibodyDetails;
+    }
+
+    public String getPolioMicroscopyDetails() {
+        return polioMicroscopyDetails;
+    }
+
+    public String getPolioNeutralizingAntibodiesDetails() {
+        return polioNeutralizingAntibodiesDetails;
+    }
+
+    public String getPolioPcrRtPcrDetails() {
+        return polioPcrRtPcrDetails;
+    }
+
+    public String getPolioGramStainDetails() {
+        return polioGramStainDetails;
+    }
+
+    public String getPolioLatexAgglutinationDetails() {
+        return polioLatexAgglutinationDetails;
+    }
+
+    public String getPolioCqValueDetectionDetails() {
+        return polioCqValueDetectionDetails;
+    }
+
+    public String getPolioSequencingDetails() {
+        return polioSequencingDetails;
+    }
+
+    public String getPolioDnaMicroarrayDetails() {
+        return polioDnaMicroarrayDetails;
+    }
+
+    public String getPolioOtherDetails() {
+        return polioOtherDetails;
+    }
+
+    public String getUnspecifiedVhfAntibodyDetection() {
+        return unspecifiedVhfAntibodyDetection;
     }
 
     public String getUnspecifiedVhfAntigenDetection() {
@@ -7878,6 +15646,10 @@ public class CaseSampleExportDto implements Serializable {
         return unspecifiedVhfIndirectFluorescentAntibody;
     }
 
+    public String getUnspecifiedVhfDirectFluorescentAntibody() {
+        return unspecifiedVhfDirectFluorescentAntibody;
+    }
+
     public String getUnspecifiedVhfMicroscopy() {
         return unspecifiedVhfMicroscopy;
     }
@@ -7886,8 +15658,8 @@ public class CaseSampleExportDto implements Serializable {
         return unspecifiedVhfNeutralizingAntibodies;
     }
 
-    public String getUnspecifiedVhfPcr() {
-        return unspecifiedVhfPcr;
+    public String getUnspecifiedVhfPcrRtPcr() {
+        return unspecifiedVhfPcrRtPcr;
     }
 
     public String getUnspecifiedVhfGramStain() {
@@ -7902,20 +15674,272 @@ public class CaseSampleExportDto implements Serializable {
         return unspecifiedVhfCqValueDetection;
     }
 
-    public String getUnspecifiedVhfSeQuencing() {
-        return unspecifiedVhfSeQuencing;
+    public String getUnspecifiedVhfSequencing() {
+        return unspecifiedVhfSequencing;
     }
 
-    public String getUnspecifiedVhfDnaMicroArray() {
-        return unspecifiedVhfDnaMicroArray;
+    public String getUnspecifiedVhfDnaMicroarray() {
+        return unspecifiedVhfDnaMicroarray;
     }
 
     public String getUnspecifiedVhfOther() {
         return unspecifiedVhfOther;
     }
 
-    public String getYellowFeverAntiBodyDetection() {
-        return yellowFeverAntiBodyDetection;
+    public String getUnspecifiedVhfAntibodyDetectionDetails() {
+        return unspecifiedVhfAntibodyDetectionDetails;
+    }
+
+    public String getUnspecifiedVhfAntigenDetectionDetails() {
+        return unspecifiedVhfAntigenDetectionDetails;
+    }
+
+    public String getUnspecifiedVhfRapidTestDetails() {
+        return unspecifiedVhfRapidTestDetails;
+    }
+
+    public String getUnspecifiedVhfCultureDetails() {
+        return unspecifiedVhfCultureDetails;
+    }
+
+    public String getUnspecifiedVhfHistopathologyDetails() {
+        return unspecifiedVhfHistopathologyDetails;
+    }
+
+    public String getUnspecifiedVhfIsolationDetails() {
+        return unspecifiedVhfIsolationDetails;
+    }
+
+    public String getUnspecifiedVhfIgmSerumAntibodyDetails() {
+        return unspecifiedVhfIgmSerumAntibodyDetails;
+    }
+
+    public String getUnspecifiedVhfIggSerumAntibodyDetails() {
+        return unspecifiedVhfIggSerumAntibodyDetails;
+    }
+
+    public String getUnspecifiedVhfIgaSerumAntibodyDetails() {
+        return unspecifiedVhfIgaSerumAntibodyDetails;
+    }
+
+    public String getUnspecifiedVhfIncubationTimeDetails() {
+        return unspecifiedVhfIncubationTimeDetails;
+    }
+
+    public String getUnspecifiedVhfIndirectFluorescentAntibodyDetails() {
+        return unspecifiedVhfIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getUnspecifiedVhfDirectFluorescentAntibodyDetails() {
+        return unspecifiedVhfDirectFluorescentAntibodyDetails;
+    }
+
+    public String getUnspecifiedVhfMicroscopyDetails() {
+        return unspecifiedVhfMicroscopyDetails;
+    }
+
+    public String getUnspecifiedVhfNeutralizingAntibodiesDetails() {
+        return unspecifiedVhfNeutralizingAntibodiesDetails;
+    }
+
+    public String getUnspecifiedVhfPcrRtPcrDetails() {
+        return unspecifiedVhfPcrRtPcrDetails;
+    }
+
+    public String getUnspecifiedVhfGramStainDetails() {
+        return unspecifiedVhfGramStainDetails;
+    }
+
+    public String getUnspecifiedVhfLatexAgglutinationDetails() {
+        return unspecifiedVhfLatexAgglutinationDetails;
+    }
+
+    public String getUnspecifiedVhfCqValueDetectionDetails() {
+        return unspecifiedVhfCqValueDetectionDetails;
+    }
+
+    public String getUnspecifiedVhfSequencingDetails() {
+        return unspecifiedVhfSequencingDetails;
+    }
+
+    public String getUnspecifiedVhfDnaMicroarrayDetails() {
+        return unspecifiedVhfDnaMicroarrayDetails;
+    }
+
+    public String getUnspecifiedVhfOtherDetails() {
+        return unspecifiedVhfOtherDetails;
+    }
+
+    public String getWestNileFeverAntibodyDetection() {
+        return westNileFeverAntibodyDetection;
+    }
+
+    public String getWestNileFeverAntigenDetection() {
+        return westNileFeverAntigenDetection;
+    }
+
+    public String getWestNileFeverRapidTest() {
+        return westNileFeverRapidTest;
+    }
+
+    public String getWestNileFeverCulture() {
+        return westNileFeverCulture;
+    }
+
+    public String getWestNileFeverHistopathology() {
+        return westNileFeverHistopathology;
+    }
+
+    public String getWestNileFeverIsolation() {
+        return westNileFeverIsolation;
+    }
+
+    public String getWestNileFeverIgmSerumAntibody() {
+        return westNileFeverIgmSerumAntibody;
+    }
+
+    public String getWestNileFeverIggSerumAntibody() {
+        return westNileFeverIggSerumAntibody;
+    }
+
+    public String getWestNileFeverIgaSerumAntibody() {
+        return westNileFeverIgaSerumAntibody;
+    }
+
+    public String getWestNileFeverIncubationTime() {
+        return westNileFeverIncubationTime;
+    }
+
+    public String getWestNileFeverIndirectFluorescentAntibody() {
+        return westNileFeverIndirectFluorescentAntibody;
+    }
+
+    public String getWestNileFeverDirectFluorescentAntibody() {
+        return westNileFeverDirectFluorescentAntibody;
+    }
+
+    public String getWestNileFeverMicroscopy() {
+        return westNileFeverMicroscopy;
+    }
+
+    public String getWestNileFeverNeutralizingAntibodies() {
+        return westNileFeverNeutralizingAntibodies;
+    }
+
+    public String getWestNileFeverPcrRtPcr() {
+        return westNileFeverPcrRtPcr;
+    }
+
+    public String getWestNileFeverGramStain() {
+        return westNileFeverGramStain;
+    }
+
+    public String getWestNileFeverLatexAgglutination() {
+        return westNileFeverLatexAgglutination;
+    }
+
+    public String getWestNileFeverCqValueDetection() {
+        return westNileFeverCqValueDetection;
+    }
+
+    public String getWestNileFeverSequencing() {
+        return westNileFeverSequencing;
+    }
+
+    public String getWestNileFeverDnaMicroarray() {
+        return westNileFeverDnaMicroarray;
+    }
+
+    public String getWestNileFeverOther() {
+        return westNileFeverOther;
+    }
+
+    public String getWestNileFeverAntibodyDetectionDetails() {
+        return westNileFeverAntibodyDetectionDetails;
+    }
+
+    public String getWestNileFeverAntigenDetectionDetails() {
+        return westNileFeverAntigenDetectionDetails;
+    }
+
+    public String getWestNileFeverRapidTestDetails() {
+        return westNileFeverRapidTestDetails;
+    }
+
+    public String getWestNileFeverCultureDetails() {
+        return westNileFeverCultureDetails;
+    }
+
+    public String getWestNileFeverHistopathologyDetails() {
+        return westNileFeverHistopathologyDetails;
+    }
+
+    public String getWestNileFeverIsolationDetails() {
+        return westNileFeverIsolationDetails;
+    }
+
+    public String getWestNileFeverIgmSerumAntibodyDetails() {
+        return westNileFeverIgmSerumAntibodyDetails;
+    }
+
+    public String getWestNileFeverIggSerumAntibodyDetails() {
+        return westNileFeverIggSerumAntibodyDetails;
+    }
+
+    public String getWestNileFeverIgaSerumAntibodyDetails() {
+        return westNileFeverIgaSerumAntibodyDetails;
+    }
+
+    public String getWestNileFeverIncubationTimeDetails() {
+        return westNileFeverIncubationTimeDetails;
+    }
+
+    public String getWestNileFeverIndirectFluorescentAntibodyDetails() {
+        return westNileFeverIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getWestNileFeverDirectFluorescentAntibodyDetails() {
+        return westNileFeverDirectFluorescentAntibodyDetails;
+    }
+
+    public String getWestNileFeverMicroscopyDetails() {
+        return westNileFeverMicroscopyDetails;
+    }
+
+    public String getWestNileFeverNeutralizingAntibodiesDetails() {
+        return westNileFeverNeutralizingAntibodiesDetails;
+    }
+
+    public String getWestNileFeverPcrRtPcrDetails() {
+        return westNileFeverPcrRtPcrDetails;
+    }
+
+    public String getWestNileFeverGramStainDetails() {
+        return westNileFeverGramStainDetails;
+    }
+
+    public String getWestNileFeverLatexAgglutinationDetails() {
+        return westNileFeverLatexAgglutinationDetails;
+    }
+
+    public String getWestNileFeverCqValueDetectionDetails() {
+        return westNileFeverCqValueDetectionDetails;
+    }
+
+    public String getWestNileFeverSequencingDetails() {
+        return westNileFeverSequencingDetails;
+    }
+
+    public String getWestNileFeverDnaMicroarrayDetails() {
+        return westNileFeverDnaMicroarrayDetails;
+    }
+
+    public String getWestNileFeverOtherDetails() {
+        return westNileFeverOtherDetails;
+    }
+
+    public String getYellowFeverAntibodyDetection() {
+        return yellowFeverAntibodyDetection;
     }
 
     public String getYellowFeverAntigenDetection() {
@@ -7958,6 +15982,10 @@ public class CaseSampleExportDto implements Serializable {
         return yellowFeverIndirectFluorescentAntibody;
     }
 
+    public String getYellowFeverDirectFluorescentAntibody() {
+        return yellowFeverDirectFluorescentAntibody;
+    }
+
     public String getYellowFeverMicroscopy() {
         return yellowFeverMicroscopy;
     }
@@ -7966,8 +15994,8 @@ public class CaseSampleExportDto implements Serializable {
         return yellowFeverNeutralizingAntibodies;
     }
 
-    public String getYellowFeverPcr() {
-        return yellowFeverPcr;
+    public String getYellowFeverPcrRtPcr() {
+        return yellowFeverPcrRtPcr;
     }
 
     public String getYellowFeverGramStain() {
@@ -7982,20 +16010,104 @@ public class CaseSampleExportDto implements Serializable {
         return yellowFeverCqValueDetection;
     }
 
-    public String getYellowFeverSeQuencing() {
-        return yellowFeverSeQuencing;
+    public String getYellowFeverSequencing() {
+        return yellowFeverSequencing;
     }
 
-    public String getYellowFeverDnaMicroArray() {
-        return yellowFeverDnaMicroArray;
+    public String getYellowFeverDnaMicroarray() {
+        return yellowFeverDnaMicroarray;
     }
 
     public String getYellowFeverOther() {
         return yellowFeverOther;
     }
 
-    public String getRabiesAntiBodyDetection() {
-        return rabiesAntiBodyDetection;
+    public String getYellowFeverAntibodyDetectionDetails() {
+        return yellowFeverAntibodyDetectionDetails;
+    }
+
+    public String getYellowFeverAntigenDetectionDetails() {
+        return yellowFeverAntigenDetectionDetails;
+    }
+
+    public String getYellowFeverRapidTestDetails() {
+        return yellowFeverRapidTestDetails;
+    }
+
+    public String getYellowFeverCultureDetails() {
+        return yellowFeverCultureDetails;
+    }
+
+    public String getYellowFeverHistopathologyDetails() {
+        return yellowFeverHistopathologyDetails;
+    }
+
+    public String getYellowFeverIsolationDetails() {
+        return yellowFeverIsolationDetails;
+    }
+
+    public String getYellowFeverIgmSerumAntibodyDetails() {
+        return yellowFeverIgmSerumAntibodyDetails;
+    }
+
+    public String getYellowFeverIggSerumAntibodyDetails() {
+        return yellowFeverIggSerumAntibodyDetails;
+    }
+
+    public String getYellowFeverIgaSerumAntibodyDetails() {
+        return yellowFeverIgaSerumAntibodyDetails;
+    }
+
+    public String getYellowFeverIncubationTimeDetails() {
+        return yellowFeverIncubationTimeDetails;
+    }
+
+    public String getYellowFeverIndirectFluorescentAntibodyDetails() {
+        return yellowFeverIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getYellowFeverDirectFluorescentAntibodyDetails() {
+        return yellowFeverDirectFluorescentAntibodyDetails;
+    }
+
+    public String getYellowFeverMicroscopyDetails() {
+        return yellowFeverMicroscopyDetails;
+    }
+
+    public String getYellowFeverNeutralizingAntibodiesDetails() {
+        return yellowFeverNeutralizingAntibodiesDetails;
+    }
+
+    public String getYellowFeverPcrRtPcrDetails() {
+        return yellowFeverPcrRtPcrDetails;
+    }
+
+    public String getYellowFeverGramStainDetails() {
+        return yellowFeverGramStainDetails;
+    }
+
+    public String getYellowFeverLatexAgglutinationDetails() {
+        return yellowFeverLatexAgglutinationDetails;
+    }
+
+    public String getYellowFeverCqValueDetectionDetails() {
+        return yellowFeverCqValueDetectionDetails;
+    }
+
+    public String getYellowFeverSequencingDetails() {
+        return yellowFeverSequencingDetails;
+    }
+
+    public String getYellowFeverDnaMicroarrayDetails() {
+        return yellowFeverDnaMicroarrayDetails;
+    }
+
+    public String getYellowFeverOtherDetails() {
+        return yellowFeverOtherDetails;
+    }
+
+    public String getRabiesAntibodyDetection() {
+        return rabiesAntibodyDetection;
     }
 
     public String getRabiesAntigenDetection() {
@@ -8038,6 +16150,10 @@ public class CaseSampleExportDto implements Serializable {
         return rabiesIndirectFluorescentAntibody;
     }
 
+    public String getRabiesDirectFluorescentAntibody() {
+        return rabiesDirectFluorescentAntibody;
+    }
+
     public String getRabiesMicroscopy() {
         return rabiesMicroscopy;
     }
@@ -8046,8 +16162,8 @@ public class CaseSampleExportDto implements Serializable {
         return rabiesNeutralizingAntibodies;
     }
 
-    public String getRabiesPcr() {
-        return rabiesPcr;
+    public String getRabiesPcrRtPcr() {
+        return rabiesPcrRtPcr;
     }
 
     public String getRabiesGramStain() {
@@ -8062,20 +16178,104 @@ public class CaseSampleExportDto implements Serializable {
         return rabiesCqValueDetection;
     }
 
-    public String getRabiesSeQuencing() {
-        return rabiesSeQuencing;
+    public String getRabiesSequencing() {
+        return rabiesSequencing;
     }
 
-    public String getRabiesDnaMicroArray() {
-        return rabiesDnaMicroArray;
+    public String getRabiesDnaMicroarray() {
+        return rabiesDnaMicroarray;
     }
 
     public String getRabiesOther() {
         return rabiesOther;
     }
 
-    public String getAnthraxAntiBodyDetection() {
-        return anthraxAntiBodyDetection;
+    public String getRabiesAntibodyDetectionDetails() {
+        return rabiesAntibodyDetectionDetails;
+    }
+
+    public String getRabiesAntigenDetectionDetails() {
+        return rabiesAntigenDetectionDetails;
+    }
+
+    public String getRabiesRapidTestDetails() {
+        return rabiesRapidTestDetails;
+    }
+
+    public String getRabiesCultureDetails() {
+        return rabiesCultureDetails;
+    }
+
+    public String getRabiesHistopathologyDetails() {
+        return rabiesHistopathologyDetails;
+    }
+
+    public String getRabiesIsolationDetails() {
+        return rabiesIsolationDetails;
+    }
+
+    public String getRabiesIgmSerumAntibodyDetails() {
+        return rabiesIgmSerumAntibodyDetails;
+    }
+
+    public String getRabiesIggSerumAntibodyDetails() {
+        return rabiesIggSerumAntibodyDetails;
+    }
+
+    public String getRabiesIgaSerumAntibodyDetails() {
+        return rabiesIgaSerumAntibodyDetails;
+    }
+
+    public String getRabiesIncubationTimeDetails() {
+        return rabiesIncubationTimeDetails;
+    }
+
+    public String getRabiesIndirectFluorescentAntibodyDetails() {
+        return rabiesIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getRabiesDirectFluorescentAntibodyDetails() {
+        return rabiesDirectFluorescentAntibodyDetails;
+    }
+
+    public String getRabiesMicroscopyDetails() {
+        return rabiesMicroscopyDetails;
+    }
+
+    public String getRabiesNeutralizingAntibodiesDetails() {
+        return rabiesNeutralizingAntibodiesDetails;
+    }
+
+    public String getRabiesPcrRtPcrDetails() {
+        return rabiesPcrRtPcrDetails;
+    }
+
+    public String getRabiesGramStainDetails() {
+        return rabiesGramStainDetails;
+    }
+
+    public String getRabiesLatexAgglutinationDetails() {
+        return rabiesLatexAgglutinationDetails;
+    }
+
+    public String getRabiesCqValueDetectionDetails() {
+        return rabiesCqValueDetectionDetails;
+    }
+
+    public String getRabiesSequencingDetails() {
+        return rabiesSequencingDetails;
+    }
+
+    public String getRabiesDnaMicroarrayDetails() {
+        return rabiesDnaMicroarrayDetails;
+    }
+
+    public String getRabiesOtherDetails() {
+        return rabiesOtherDetails;
+    }
+
+    public String getAnthraxAntibodyDetection() {
+        return anthraxAntibodyDetection;
     }
 
     public String getAnthraxAntigenDetection() {
@@ -8118,6 +16318,10 @@ public class CaseSampleExportDto implements Serializable {
         return anthraxIndirectFluorescentAntibody;
     }
 
+    public String getAnthraxDirectFluorescentAntibody() {
+        return anthraxDirectFluorescentAntibody;
+    }
+
     public String getAnthraxMicroscopy() {
         return anthraxMicroscopy;
     }
@@ -8126,8 +16330,8 @@ public class CaseSampleExportDto implements Serializable {
         return anthraxNeutralizingAntibodies;
     }
 
-    public String getAnthraxPcr() {
-        return anthraxPcr;
+    public String getAnthraxPcrRtPcr() {
+        return anthraxPcrRtPcr;
     }
 
     public String getAnthraxGramStain() {
@@ -8142,20 +16346,104 @@ public class CaseSampleExportDto implements Serializable {
         return anthraxCqValueDetection;
     }
 
-    public String getAnthraxSeQuencing() {
-        return anthraxSeQuencing;
+    public String getAnthraxSequencing() {
+        return anthraxSequencing;
     }
 
-    public String getAnthraxDnaMicroArray() {
-        return anthraxDnaMicroArray;
+    public String getAnthraxDnaMicroarray() {
+        return anthraxDnaMicroarray;
     }
 
     public String getAnthraxOther() {
         return anthraxOther;
     }
 
-    public String getCoronavirusAntiBodyDetection() {
-        return coronavirusAntiBodyDetection;
+    public String getAnthraxAntibodyDetectionDetails() {
+        return anthraxAntibodyDetectionDetails;
+    }
+
+    public String getAnthraxAntigenDetectionDetails() {
+        return anthraxAntigenDetectionDetails;
+    }
+
+    public String getAnthraxRapidTestDetails() {
+        return anthraxRapidTestDetails;
+    }
+
+    public String getAnthraxCultureDetails() {
+        return anthraxCultureDetails;
+    }
+
+    public String getAnthraxHistopathologyDetails() {
+        return anthraxHistopathologyDetails;
+    }
+
+    public String getAnthraxIsolationDetails() {
+        return anthraxIsolationDetails;
+    }
+
+    public String getAnthraxIgmSerumAntibodyDetails() {
+        return anthraxIgmSerumAntibodyDetails;
+    }
+
+    public String getAnthraxIggSerumAntibodyDetails() {
+        return anthraxIggSerumAntibodyDetails;
+    }
+
+    public String getAnthraxIgaSerumAntibodyDetails() {
+        return anthraxIgaSerumAntibodyDetails;
+    }
+
+    public String getAnthraxIncubationTimeDetails() {
+        return anthraxIncubationTimeDetails;
+    }
+
+    public String getAnthraxIndirectFluorescentAntibodyDetails() {
+        return anthraxIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getAnthraxDirectFluorescentAntibodyDetails() {
+        return anthraxDirectFluorescentAntibodyDetails;
+    }
+
+    public String getAnthraxMicroscopyDetails() {
+        return anthraxMicroscopyDetails;
+    }
+
+    public String getAnthraxNeutralizingAntibodiesDetails() {
+        return anthraxNeutralizingAntibodiesDetails;
+    }
+
+    public String getAnthraxPcrRtPcrDetails() {
+        return anthraxPcrRtPcrDetails;
+    }
+
+    public String getAnthraxGramStainDetails() {
+        return anthraxGramStainDetails;
+    }
+
+    public String getAnthraxLatexAgglutinationDetails() {
+        return anthraxLatexAgglutinationDetails;
+    }
+
+    public String getAnthraxCqValueDetectionDetails() {
+        return anthraxCqValueDetectionDetails;
+    }
+
+    public String getAnthraxSequencingDetails() {
+        return anthraxSequencingDetails;
+    }
+
+    public String getAnthraxDnaMicroarrayDetails() {
+        return anthraxDnaMicroarrayDetails;
+    }
+
+    public String getAnthraxOtherDetails() {
+        return anthraxOtherDetails;
+    }
+
+    public String getCoronavirusAntibodyDetection() {
+        return coronavirusAntibodyDetection;
     }
 
     public String getCoronavirusAntigenDetection() {
@@ -8198,6 +16486,10 @@ public class CaseSampleExportDto implements Serializable {
         return coronavirusIndirectFluorescentAntibody;
     }
 
+    public String getCoronavirusDirectFluorescentAntibody() {
+        return coronavirusDirectFluorescentAntibody;
+    }
+
     public String getCoronavirusMicroscopy() {
         return coronavirusMicroscopy;
     }
@@ -8206,8 +16498,8 @@ public class CaseSampleExportDto implements Serializable {
         return coronavirusNeutralizingAntibodies;
     }
 
-    public String getCoronavirusPcr() {
-        return coronavirusPcr;
+    public String getCoronavirusPcrRtPcr() {
+        return coronavirusPcrRtPcr;
     }
 
     public String getCoronavirusGramStain() {
@@ -8222,20 +16514,104 @@ public class CaseSampleExportDto implements Serializable {
         return coronavirusCqValueDetection;
     }
 
-    public String getCoronavirusSeQuencing() {
-        return coronavirusSeQuencing;
+    public String getCoronavirusSequencing() {
+        return coronavirusSequencing;
     }
 
-    public String getCoronavirusDnaMicroArray() {
-        return coronavirusDnaMicroArray;
+    public String getCoronavirusDnaMicroarray() {
+        return coronavirusDnaMicroarray;
     }
 
     public String getCoronavirusOther() {
         return coronavirusOther;
     }
 
-    public String getPneumoniaAntiBodyDetection() {
-        return pneumoniaAntiBodyDetection;
+    public String getCoronavirusAntibodyDetectionDetails() {
+        return coronavirusAntibodyDetectionDetails;
+    }
+
+    public String getCoronavirusAntigenDetectionDetails() {
+        return coronavirusAntigenDetectionDetails;
+    }
+
+    public String getCoronavirusRapidTestDetails() {
+        return coronavirusRapidTestDetails;
+    }
+
+    public String getCoronavirusCultureDetails() {
+        return coronavirusCultureDetails;
+    }
+
+    public String getCoronavirusHistopathologyDetails() {
+        return coronavirusHistopathologyDetails;
+    }
+
+    public String getCoronavirusIsolationDetails() {
+        return coronavirusIsolationDetails;
+    }
+
+    public String getCoronavirusIgmSerumAntibodyDetails() {
+        return coronavirusIgmSerumAntibodyDetails;
+    }
+
+    public String getCoronavirusIggSerumAntibodyDetails() {
+        return coronavirusIggSerumAntibodyDetails;
+    }
+
+    public String getCoronavirusIgaSerumAntibodyDetails() {
+        return coronavirusIgaSerumAntibodyDetails;
+    }
+
+    public String getCoronavirusIncubationTimeDetails() {
+        return coronavirusIncubationTimeDetails;
+    }
+
+    public String getCoronavirusIndirectFluorescentAntibodyDetails() {
+        return coronavirusIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getCoronavirusDirectFluorescentAntibodyDetails() {
+        return coronavirusDirectFluorescentAntibodyDetails;
+    }
+
+    public String getCoronavirusMicroscopyDetails() {
+        return coronavirusMicroscopyDetails;
+    }
+
+    public String getCoronavirusNeutralizingAntibodiesDetails() {
+        return coronavirusNeutralizingAntibodiesDetails;
+    }
+
+    public String getCoronavirusPcrRtPcrDetails() {
+        return coronavirusPcrRtPcrDetails;
+    }
+
+    public String getCoronavirusGramStainDetails() {
+        return coronavirusGramStainDetails;
+    }
+
+    public String getCoronavirusLatexAgglutinationDetails() {
+        return coronavirusLatexAgglutinationDetails;
+    }
+
+    public String getCoronavirusCqValueDetectionDetails() {
+        return coronavirusCqValueDetectionDetails;
+    }
+
+    public String getCoronavirusSequencingDetails() {
+        return coronavirusSequencingDetails;
+    }
+
+    public String getCoronavirusDnaMicroarrayDetails() {
+        return coronavirusDnaMicroarrayDetails;
+    }
+
+    public String getCoronavirusOtherDetails() {
+        return coronavirusOtherDetails;
+    }
+
+    public String getPneumoniaAntibodyDetection() {
+        return pneumoniaAntibodyDetection;
     }
 
     public String getPneumoniaAntigenDetection() {
@@ -8278,6 +16654,10 @@ public class CaseSampleExportDto implements Serializable {
         return pneumoniaIndirectFluorescentAntibody;
     }
 
+    public String getPneumoniaDirectFluorescentAntibody() {
+        return pneumoniaDirectFluorescentAntibody;
+    }
+
     public String getPneumoniaMicroscopy() {
         return pneumoniaMicroscopy;
     }
@@ -8286,8 +16666,8 @@ public class CaseSampleExportDto implements Serializable {
         return pneumoniaNeutralizingAntibodies;
     }
 
-    public String getPneumoniaPcr() {
-        return pneumoniaPcr;
+    public String getPneumoniaPcrRtPcr() {
+        return pneumoniaPcrRtPcr;
     }
 
     public String getPneumoniaGramStain() {
@@ -8302,20 +16682,104 @@ public class CaseSampleExportDto implements Serializable {
         return pneumoniaCqValueDetection;
     }
 
-    public String getPneumoniaSeQuencing() {
-        return pneumoniaSeQuencing;
+    public String getPneumoniaSequencing() {
+        return pneumoniaSequencing;
     }
 
-    public String getPneumoniaDnaMicroArray() {
-        return pneumoniaDnaMicroArray;
+    public String getPneumoniaDnaMicroarray() {
+        return pneumoniaDnaMicroarray;
     }
 
     public String getPneumoniaOther() {
         return pneumoniaOther;
     }
 
-    public String getMalariaAntiBodyDetection() {
-        return malariaAntiBodyDetection;
+    public String getPneumoniaAntibodyDetectionDetails() {
+        return pneumoniaAntibodyDetectionDetails;
+    }
+
+    public String getPneumoniaAntigenDetectionDetails() {
+        return pneumoniaAntigenDetectionDetails;
+    }
+
+    public String getPneumoniaRapidTestDetails() {
+        return pneumoniaRapidTestDetails;
+    }
+
+    public String getPneumoniaCultureDetails() {
+        return pneumoniaCultureDetails;
+    }
+
+    public String getPneumoniaHistopathologyDetails() {
+        return pneumoniaHistopathologyDetails;
+    }
+
+    public String getPneumoniaIsolationDetails() {
+        return pneumoniaIsolationDetails;
+    }
+
+    public String getPneumoniaIgmSerumAntibodyDetails() {
+        return pneumoniaIgmSerumAntibodyDetails;
+    }
+
+    public String getPneumoniaIggSerumAntibodyDetails() {
+        return pneumoniaIggSerumAntibodyDetails;
+    }
+
+    public String getPneumoniaIgaSerumAntibodyDetails() {
+        return pneumoniaIgaSerumAntibodyDetails;
+    }
+
+    public String getPneumoniaIncubationTimeDetails() {
+        return pneumoniaIncubationTimeDetails;
+    }
+
+    public String getPneumoniaIndirectFluorescentAntibodyDetails() {
+        return pneumoniaIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getPneumoniaDirectFluorescentAntibodyDetails() {
+        return pneumoniaDirectFluorescentAntibodyDetails;
+    }
+
+    public String getPneumoniaMicroscopyDetails() {
+        return pneumoniaMicroscopyDetails;
+    }
+
+    public String getPneumoniaNeutralizingAntibodiesDetails() {
+        return pneumoniaNeutralizingAntibodiesDetails;
+    }
+
+    public String getPneumoniaPcrRtPcrDetails() {
+        return pneumoniaPcrRtPcrDetails;
+    }
+
+    public String getPneumoniaGramStainDetails() {
+        return pneumoniaGramStainDetails;
+    }
+
+    public String getPneumoniaLatexAgglutinationDetails() {
+        return pneumoniaLatexAgglutinationDetails;
+    }
+
+    public String getPneumoniaCqValueDetectionDetails() {
+        return pneumoniaCqValueDetectionDetails;
+    }
+
+    public String getPneumoniaSequencingDetails() {
+        return pneumoniaSequencingDetails;
+    }
+
+    public String getPneumoniaDnaMicroarrayDetails() {
+        return pneumoniaDnaMicroarrayDetails;
+    }
+
+    public String getPneumoniaOtherDetails() {
+        return pneumoniaOtherDetails;
+    }
+
+    public String getMalariaAntibodyDetection() {
+        return malariaAntibodyDetection;
     }
 
     public String getMalariaAntigenDetection() {
@@ -8358,6 +16822,10 @@ public class CaseSampleExportDto implements Serializable {
         return malariaIndirectFluorescentAntibody;
     }
 
+    public String getMalariaDirectFluorescentAntibody() {
+        return malariaDirectFluorescentAntibody;
+    }
+
     public String getMalariaMicroscopy() {
         return malariaMicroscopy;
     }
@@ -8366,8 +16834,8 @@ public class CaseSampleExportDto implements Serializable {
         return malariaNeutralizingAntibodies;
     }
 
-    public String getMalariaPcr() {
-        return malariaPcr;
+    public String getMalariaPcrRtPcr() {
+        return malariaPcrRtPcr;
     }
 
     public String getMalariaGramStain() {
@@ -8382,20 +16850,104 @@ public class CaseSampleExportDto implements Serializable {
         return malariaCqValueDetection;
     }
 
-    public String getMalariaSeQuencing() {
-        return malariaSeQuencing;
+    public String getMalariaSequencing() {
+        return malariaSequencing;
     }
 
-    public String getMalariaDnaMicroArray() {
-        return malariaDnaMicroArray;
+    public String getMalariaDnaMicroarray() {
+        return malariaDnaMicroarray;
     }
 
     public String getMalariaOther() {
         return malariaOther;
     }
 
-    public String getTyphoidFeverAntiBodyDetection() {
-        return typhoidFeverAntiBodyDetection;
+    public String getMalariaAntibodyDetectionDetails() {
+        return malariaAntibodyDetectionDetails;
+    }
+
+    public String getMalariaAntigenDetectionDetails() {
+        return malariaAntigenDetectionDetails;
+    }
+
+    public String getMalariaRapidTestDetails() {
+        return malariaRapidTestDetails;
+    }
+
+    public String getMalariaCultureDetails() {
+        return malariaCultureDetails;
+    }
+
+    public String getMalariaHistopathologyDetails() {
+        return malariaHistopathologyDetails;
+    }
+
+    public String getMalariaIsolationDetails() {
+        return malariaIsolationDetails;
+    }
+
+    public String getMalariaIgmSerumAntibodyDetails() {
+        return malariaIgmSerumAntibodyDetails;
+    }
+
+    public String getMalariaIggSerumAntibodyDetails() {
+        return malariaIggSerumAntibodyDetails;
+    }
+
+    public String getMalariaIgaSerumAntibodyDetails() {
+        return malariaIgaSerumAntibodyDetails;
+    }
+
+    public String getMalariaIncubationTimeDetails() {
+        return malariaIncubationTimeDetails;
+    }
+
+    public String getMalariaIndirectFluorescentAntibodyDetails() {
+        return malariaIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getMalariaDirectFluorescentAntibodyDetails() {
+        return malariaDirectFluorescentAntibodyDetails;
+    }
+
+    public String getMalariaMicroscopyDetails() {
+        return malariaMicroscopyDetails;
+    }
+
+    public String getMalariaNeutralizingAntibodiesDetails() {
+        return malariaNeutralizingAntibodiesDetails;
+    }
+
+    public String getMalariaPcrRtPcrDetails() {
+        return malariaPcrRtPcrDetails;
+    }
+
+    public String getMalariaGramStainDetails() {
+        return malariaGramStainDetails;
+    }
+
+    public String getMalariaLatexAgglutinationDetails() {
+        return malariaLatexAgglutinationDetails;
+    }
+
+    public String getMalariaCqValueDetectionDetails() {
+        return malariaCqValueDetectionDetails;
+    }
+
+    public String getMalariaSequencingDetails() {
+        return malariaSequencingDetails;
+    }
+
+    public String getMalariaDnaMicroarrayDetails() {
+        return malariaDnaMicroarrayDetails;
+    }
+
+    public String getMalariaOtherDetails() {
+        return malariaOtherDetails;
+    }
+
+    public String getTyphoidFeverAntibodyDetection() {
+        return typhoidFeverAntibodyDetection;
     }
 
     public String getTyphoidFeverAntigenDetection() {
@@ -8438,6 +16990,10 @@ public class CaseSampleExportDto implements Serializable {
         return typhoidFeverIndirectFluorescentAntibody;
     }
 
+    public String getTyphoidFeverDirectFluorescentAntibody() {
+        return typhoidFeverDirectFluorescentAntibody;
+    }
+
     public String getTyphoidFeverMicroscopy() {
         return typhoidFeverMicroscopy;
     }
@@ -8446,8 +17002,8 @@ public class CaseSampleExportDto implements Serializable {
         return typhoidFeverNeutralizingAntibodies;
     }
 
-    public String getTyphoidFeverPcr() {
-        return typhoidFeverPcr;
+    public String getTyphoidFeverPcrRtPcr() {
+        return typhoidFeverPcrRtPcr;
     }
 
     public String getTyphoidFeverGramStain() {
@@ -8462,20 +17018,104 @@ public class CaseSampleExportDto implements Serializable {
         return typhoidFeverCqValueDetection;
     }
 
-    public String getTyphoidFeverSeQuencing() {
-        return typhoidFeverSeQuencing;
+    public String getTyphoidFeverSequencing() {
+        return typhoidFeverSequencing;
     }
 
-    public String getTyphoidFeverDnaMicroArray() {
-        return typhoidFeverDnaMicroArray;
+    public String getTyphoidFeverDnaMicroarray() {
+        return typhoidFeverDnaMicroarray;
     }
 
     public String getTyphoidFeverOther() {
         return typhoidFeverOther;
     }
 
-    public String getAcuteViralHepatitisAntiBodyDetection() {
-        return acuteViralHepatitisAntiBodyDetection;
+    public String getTyphoidFeverAntibodyDetectionDetails() {
+        return typhoidFeverAntibodyDetectionDetails;
+    }
+
+    public String getTyphoidFeverAntigenDetectionDetails() {
+        return typhoidFeverAntigenDetectionDetails;
+    }
+
+    public String getTyphoidFeverRapidTestDetails() {
+        return typhoidFeverRapidTestDetails;
+    }
+
+    public String getTyphoidFeverCultureDetails() {
+        return typhoidFeverCultureDetails;
+    }
+
+    public String getTyphoidFeverHistopathologyDetails() {
+        return typhoidFeverHistopathologyDetails;
+    }
+
+    public String getTyphoidFeverIsolationDetails() {
+        return typhoidFeverIsolationDetails;
+    }
+
+    public String getTyphoidFeverIgmSerumAntibodyDetails() {
+        return typhoidFeverIgmSerumAntibodyDetails;
+    }
+
+    public String getTyphoidFeverIggSerumAntibodyDetails() {
+        return typhoidFeverIggSerumAntibodyDetails;
+    }
+
+    public String getTyphoidFeverIgaSerumAntibodyDetails() {
+        return typhoidFeverIgaSerumAntibodyDetails;
+    }
+
+    public String getTyphoidFeverIncubationTimeDetails() {
+        return typhoidFeverIncubationTimeDetails;
+    }
+
+    public String getTyphoidFeverIndirectFluorescentAntibodyDetails() {
+        return typhoidFeverIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getTyphoidFeverDirectFluorescentAntibodyDetails() {
+        return typhoidFeverDirectFluorescentAntibodyDetails;
+    }
+
+    public String getTyphoidFeverMicroscopyDetails() {
+        return typhoidFeverMicroscopyDetails;
+    }
+
+    public String getTyphoidFeverNeutralizingAntibodiesDetails() {
+        return typhoidFeverNeutralizingAntibodiesDetails;
+    }
+
+    public String getTyphoidFeverPcrRtPcrDetails() {
+        return typhoidFeverPcrRtPcrDetails;
+    }
+
+    public String getTyphoidFeverGramStainDetails() {
+        return typhoidFeverGramStainDetails;
+    }
+
+    public String getTyphoidFeverLatexAgglutinationDetails() {
+        return typhoidFeverLatexAgglutinationDetails;
+    }
+
+    public String getTyphoidFeverCqValueDetectionDetails() {
+        return typhoidFeverCqValueDetectionDetails;
+    }
+
+    public String getTyphoidFeverSequencingDetails() {
+        return typhoidFeverSequencingDetails;
+    }
+
+    public String getTyphoidFeverDnaMicroarrayDetails() {
+        return typhoidFeverDnaMicroarrayDetails;
+    }
+
+    public String getTyphoidFeverOtherDetails() {
+        return typhoidFeverOtherDetails;
+    }
+
+    public String getAcuteViralHepatitisAntibodyDetection() {
+        return acuteViralHepatitisAntibodyDetection;
     }
 
     public String getAcuteViralHepatitisAntigenDetection() {
@@ -8518,6 +17158,10 @@ public class CaseSampleExportDto implements Serializable {
         return acuteViralHepatitisIndirectFluorescentAntibody;
     }
 
+    public String getAcuteViralHepatitisDirectFluorescentAntibody() {
+        return acuteViralHepatitisDirectFluorescentAntibody;
+    }
+
     public String getAcuteViralHepatitisMicroscopy() {
         return acuteViralHepatitisMicroscopy;
     }
@@ -8526,8 +17170,8 @@ public class CaseSampleExportDto implements Serializable {
         return acuteViralHepatitisNeutralizingAntibodies;
     }
 
-    public String getAcuteViralHepatitisPcr() {
-        return acuteViralHepatitisPcr;
+    public String getAcuteViralHepatitisPcrRtPcr() {
+        return acuteViralHepatitisPcrRtPcr;
     }
 
     public String getAcuteViralHepatitisGramStain() {
@@ -8542,20 +17186,104 @@ public class CaseSampleExportDto implements Serializable {
         return acuteViralHepatitisCqValueDetection;
     }
 
-    public String getAcuteViralHepatitisSeQuencing() {
-        return acuteViralHepatitisSeQuencing;
+    public String getAcuteViralHepatitisSequencing() {
+        return acuteViralHepatitisSequencing;
     }
 
-    public String getAcuteViralHepatitisDnaMicroArray() {
-        return acuteViralHepatitisDnaMicroArray;
+    public String getAcuteViralHepatitisDnaMicroarray() {
+        return acuteViralHepatitisDnaMicroarray;
     }
 
     public String getAcuteViralHepatitisOther() {
         return acuteViralHepatitisOther;
     }
 
-    public String getNonNeonatalTetanusAntiBodyDetection() {
-        return nonNeonatalTetanusAntiBodyDetection;
+    public String getAcuteViralHepatitisAntibodyDetectionDetails() {
+        return acuteViralHepatitisAntibodyDetectionDetails;
+    }
+
+    public String getAcuteViralHepatitisAntigenDetectionDetails() {
+        return acuteViralHepatitisAntigenDetectionDetails;
+    }
+
+    public String getAcuteViralHepatitisRapidTestDetails() {
+        return acuteViralHepatitisRapidTestDetails;
+    }
+
+    public String getAcuteViralHepatitisCultureDetails() {
+        return acuteViralHepatitisCultureDetails;
+    }
+
+    public String getAcuteViralHepatitisHistopathologyDetails() {
+        return acuteViralHepatitisHistopathologyDetails;
+    }
+
+    public String getAcuteViralHepatitisIsolationDetails() {
+        return acuteViralHepatitisIsolationDetails;
+    }
+
+    public String getAcuteViralHepatitisIgmSerumAntibodyDetails() {
+        return acuteViralHepatitisIgmSerumAntibodyDetails;
+    }
+
+    public String getAcuteViralHepatitisIggSerumAntibodyDetails() {
+        return acuteViralHepatitisIggSerumAntibodyDetails;
+    }
+
+    public String getAcuteViralHepatitisIgaSerumAntibodyDetails() {
+        return acuteViralHepatitisIgaSerumAntibodyDetails;
+    }
+
+    public String getAcuteViralHepatitisIncubationTimeDetails() {
+        return acuteViralHepatitisIncubationTimeDetails;
+    }
+
+    public String getAcuteViralHepatitisIndirectFluorescentAntibodyDetails() {
+        return acuteViralHepatitisIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getAcuteViralHepatitisDirectFluorescentAntibodyDetails() {
+        return acuteViralHepatitisDirectFluorescentAntibodyDetails;
+    }
+
+    public String getAcuteViralHepatitisMicroscopyDetails() {
+        return acuteViralHepatitisMicroscopyDetails;
+    }
+
+    public String getAcuteViralHepatitisNeutralizingAntibodiesDetails() {
+        return acuteViralHepatitisNeutralizingAntibodiesDetails;
+    }
+
+    public String getAcuteViralHepatitisPcrRtPcrDetails() {
+        return acuteViralHepatitisPcrRtPcrDetails;
+    }
+
+    public String getAcuteViralHepatitisGramStainDetails() {
+        return acuteViralHepatitisGramStainDetails;
+    }
+
+    public String getAcuteViralHepatitisLatexAgglutinationDetails() {
+        return acuteViralHepatitisLatexAgglutinationDetails;
+    }
+
+    public String getAcuteViralHepatitisCqValueDetectionDetails() {
+        return acuteViralHepatitisCqValueDetectionDetails;
+    }
+
+    public String getAcuteViralHepatitisSequencingDetails() {
+        return acuteViralHepatitisSequencingDetails;
+    }
+
+    public String getAcuteViralHepatitisDnaMicroarrayDetails() {
+        return acuteViralHepatitisDnaMicroarrayDetails;
+    }
+
+    public String getAcuteViralHepatitisOtherDetails() {
+        return acuteViralHepatitisOtherDetails;
+    }
+
+    public String getNonNeonatalTetanusAntibodyDetection() {
+        return nonNeonatalTetanusAntibodyDetection;
     }
 
     public String getNonNeonatalTetanusAntigenDetection() {
@@ -8598,6 +17326,10 @@ public class CaseSampleExportDto implements Serializable {
         return nonNeonatalTetanusIndirectFluorescentAntibody;
     }
 
+    public String getNonNeonatalTetanusDirectFluorescentAntibody() {
+        return nonNeonatalTetanusDirectFluorescentAntibody;
+    }
+
     public String getNonNeonatalTetanusMicroscopy() {
         return nonNeonatalTetanusMicroscopy;
     }
@@ -8606,8 +17338,8 @@ public class CaseSampleExportDto implements Serializable {
         return nonNeonatalTetanusNeutralizingAntibodies;
     }
 
-    public String getNonNeonatalTetanusPcr() {
-        return nonNeonatalTetanusPcr;
+    public String getNonNeonatalTetanusPcrRtPcr() {
+        return nonNeonatalTetanusPcrRtPcr;
     }
 
     public String getNonNeonatalTetanusGramStain() {
@@ -8622,20 +17354,104 @@ public class CaseSampleExportDto implements Serializable {
         return nonNeonatalTetanusCqValueDetection;
     }
 
-    public String getNonNeonatalTetanusSeQuencing() {
-        return nonNeonatalTetanusSeQuencing;
+    public String getNonNeonatalTetanusSequencing() {
+        return nonNeonatalTetanusSequencing;
     }
 
-    public String getNonNeonatalTetanusDnaMicroArray() {
-        return nonNeonatalTetanusDnaMicroArray;
+    public String getNonNeonatalTetanusDnaMicroarray() {
+        return nonNeonatalTetanusDnaMicroarray;
     }
 
     public String getNonNeonatalTetanusOther() {
         return nonNeonatalTetanusOther;
     }
 
-    public String getHivAntiBodyDetection() {
-        return hivAntiBodyDetection;
+    public String getNonNeonatalTetanusAntibodyDetectionDetails() {
+        return nonNeonatalTetanusAntibodyDetectionDetails;
+    }
+
+    public String getNonNeonatalTetanusAntigenDetectionDetails() {
+        return nonNeonatalTetanusAntigenDetectionDetails;
+    }
+
+    public String getNonNeonatalTetanusRapidTestDetails() {
+        return nonNeonatalTetanusRapidTestDetails;
+    }
+
+    public String getNonNeonatalTetanusCultureDetails() {
+        return nonNeonatalTetanusCultureDetails;
+    }
+
+    public String getNonNeonatalTetanusHistopathologyDetails() {
+        return nonNeonatalTetanusHistopathologyDetails;
+    }
+
+    public String getNonNeonatalTetanusIsolationDetails() {
+        return nonNeonatalTetanusIsolationDetails;
+    }
+
+    public String getNonNeonatalTetanusIgmSerumAntibodyDetails() {
+        return nonNeonatalTetanusIgmSerumAntibodyDetails;
+    }
+
+    public String getNonNeonatalTetanusIggSerumAntibodyDetails() {
+        return nonNeonatalTetanusIggSerumAntibodyDetails;
+    }
+
+    public String getNonNeonatalTetanusIgaSerumAntibodyDetails() {
+        return nonNeonatalTetanusIgaSerumAntibodyDetails;
+    }
+
+    public String getNonNeonatalTetanusIncubationTimeDetails() {
+        return nonNeonatalTetanusIncubationTimeDetails;
+    }
+
+    public String getNonNeonatalTetanusIndirectFluorescentAntibodyDetails() {
+        return nonNeonatalTetanusIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getNonNeonatalTetanusDirectFluorescentAntibodyDetails() {
+        return nonNeonatalTetanusDirectFluorescentAntibodyDetails;
+    }
+
+    public String getNonNeonatalTetanusMicroscopyDetails() {
+        return nonNeonatalTetanusMicroscopyDetails;
+    }
+
+    public String getNonNeonatalTetanusNeutralizingAntibodiesDetails() {
+        return nonNeonatalTetanusNeutralizingAntibodiesDetails;
+    }
+
+    public String getNonNeonatalTetanusPcrRtPcrDetails() {
+        return nonNeonatalTetanusPcrRtPcrDetails;
+    }
+
+    public String getNonNeonatalTetanusGramStainDetails() {
+        return nonNeonatalTetanusGramStainDetails;
+    }
+
+    public String getNonNeonatalTetanusLatexAgglutinationDetails() {
+        return nonNeonatalTetanusLatexAgglutinationDetails;
+    }
+
+    public String getNonNeonatalTetanusCqValueDetectionDetails() {
+        return nonNeonatalTetanusCqValueDetectionDetails;
+    }
+
+    public String getNonNeonatalTetanusSequencingDetails() {
+        return nonNeonatalTetanusSequencingDetails;
+    }
+
+    public String getNonNeonatalTetanusDnaMicroarrayDetails() {
+        return nonNeonatalTetanusDnaMicroarrayDetails;
+    }
+
+    public String getNonNeonatalTetanusOtherDetails() {
+        return nonNeonatalTetanusOtherDetails;
+    }
+
+    public String getHivAntibodyDetection() {
+        return hivAntibodyDetection;
     }
 
     public String getHivAntigenDetection() {
@@ -8678,6 +17494,10 @@ public class CaseSampleExportDto implements Serializable {
         return hivIndirectFluorescentAntibody;
     }
 
+    public String getHivDirectFluorescentAntibody() {
+        return hivDirectFluorescentAntibody;
+    }
+
     public String getHivMicroscopy() {
         return hivMicroscopy;
     }
@@ -8686,8 +17506,8 @@ public class CaseSampleExportDto implements Serializable {
         return hivNeutralizingAntibodies;
     }
 
-    public String getHivPcr() {
-        return hivPcr;
+    public String getHivPcrRtPcr() {
+        return hivPcrRtPcr;
     }
 
     public String getHivGramStain() {
@@ -8702,20 +17522,104 @@ public class CaseSampleExportDto implements Serializable {
         return hivCqValueDetection;
     }
 
-    public String getHivSeQuencing() {
-        return hivSeQuencing;
+    public String getHivSequencing() {
+        return hivSequencing;
     }
 
-    public String getHivDnaMicroArray() {
-        return hivDnaMicroArray;
+    public String getHivDnaMicroarray() {
+        return hivDnaMicroarray;
     }
 
     public String getHivOther() {
         return hivOther;
     }
 
-    public String getSchistosomiasisAntiBodyDetection() {
-        return schistosomiasisAntiBodyDetection;
+    public String getHivAntibodyDetectionDetails() {
+        return hivAntibodyDetectionDetails;
+    }
+
+    public String getHivAntigenDetectionDetails() {
+        return hivAntigenDetectionDetails;
+    }
+
+    public String getHivRapidTestDetails() {
+        return hivRapidTestDetails;
+    }
+
+    public String getHivCultureDetails() {
+        return hivCultureDetails;
+    }
+
+    public String getHivHistopathologyDetails() {
+        return hivHistopathologyDetails;
+    }
+
+    public String getHivIsolationDetails() {
+        return hivIsolationDetails;
+    }
+
+    public String getHivIgmSerumAntibodyDetails() {
+        return hivIgmSerumAntibodyDetails;
+    }
+
+    public String getHivIggSerumAntibodyDetails() {
+        return hivIggSerumAntibodyDetails;
+    }
+
+    public String getHivIgaSerumAntibodyDetails() {
+        return hivIgaSerumAntibodyDetails;
+    }
+
+    public String getHivIncubationTimeDetails() {
+        return hivIncubationTimeDetails;
+    }
+
+    public String getHivIndirectFluorescentAntibodyDetails() {
+        return hivIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getHivDirectFluorescentAntibodyDetails() {
+        return hivDirectFluorescentAntibodyDetails;
+    }
+
+    public String getHivMicroscopyDetails() {
+        return hivMicroscopyDetails;
+    }
+
+    public String getHivNeutralizingAntibodiesDetails() {
+        return hivNeutralizingAntibodiesDetails;
+    }
+
+    public String getHivPcrRtPcrDetails() {
+        return hivPcrRtPcrDetails;
+    }
+
+    public String getHivGramStainDetails() {
+        return hivGramStainDetails;
+    }
+
+    public String getHivLatexAgglutinationDetails() {
+        return hivLatexAgglutinationDetails;
+    }
+
+    public String getHivCqValueDetectionDetails() {
+        return hivCqValueDetectionDetails;
+    }
+
+    public String getHivSequencingDetails() {
+        return hivSequencingDetails;
+    }
+
+    public String getHivDnaMicroarrayDetails() {
+        return hivDnaMicroarrayDetails;
+    }
+
+    public String getHivOtherDetails() {
+        return hivOtherDetails;
+    }
+
+    public String getSchistosomiasisAntibodyDetection() {
+        return schistosomiasisAntibodyDetection;
     }
 
     public String getSchistosomiasisAntigenDetection() {
@@ -8758,6 +17662,10 @@ public class CaseSampleExportDto implements Serializable {
         return schistosomiasisIndirectFluorescentAntibody;
     }
 
+    public String getSchistosomiasisDirectFluorescentAntibody() {
+        return schistosomiasisDirectFluorescentAntibody;
+    }
+
     public String getSchistosomiasisMicroscopy() {
         return schistosomiasisMicroscopy;
     }
@@ -8766,8 +17674,8 @@ public class CaseSampleExportDto implements Serializable {
         return schistosomiasisNeutralizingAntibodies;
     }
 
-    public String getSchistosomiasisPcr() {
-        return schistosomiasisPcr;
+    public String getSchistosomiasisPcrRtPcr() {
+        return schistosomiasisPcrRtPcr;
     }
 
     public String getSchistosomiasisGramStain() {
@@ -8782,20 +17690,104 @@ public class CaseSampleExportDto implements Serializable {
         return schistosomiasisCqValueDetection;
     }
 
-    public String getSchistosomiasisSeQuencing() {
-        return schistosomiasisSeQuencing;
+    public String getSchistosomiasisSequencing() {
+        return schistosomiasisSequencing;
     }
 
-    public String getSchistosomiasisDnaMicroArray() {
-        return schistosomiasisDnaMicroArray;
+    public String getSchistosomiasisDnaMicroarray() {
+        return schistosomiasisDnaMicroarray;
     }
 
     public String getSchistosomiasisOther() {
         return schistosomiasisOther;
     }
 
-    public String getSoilTransmittedHelminthsAntiBodyDetection() {
-        return soilTransmittedHelminthsAntiBodyDetection;
+    public String getSchistosomiasisAntibodyDetectionDetails() {
+        return schistosomiasisAntibodyDetectionDetails;
+    }
+
+    public String getSchistosomiasisAntigenDetectionDetails() {
+        return schistosomiasisAntigenDetectionDetails;
+    }
+
+    public String getSchistosomiasisRapidTestDetails() {
+        return schistosomiasisRapidTestDetails;
+    }
+
+    public String getSchistosomiasisCultureDetails() {
+        return schistosomiasisCultureDetails;
+    }
+
+    public String getSchistosomiasisHistopathologyDetails() {
+        return schistosomiasisHistopathologyDetails;
+    }
+
+    public String getSchistosomiasisIsolationDetails() {
+        return schistosomiasisIsolationDetails;
+    }
+
+    public String getSchistosomiasisIgmSerumAntibodyDetails() {
+        return schistosomiasisIgmSerumAntibodyDetails;
+    }
+
+    public String getSchistosomiasisIggSerumAntibodyDetails() {
+        return schistosomiasisIggSerumAntibodyDetails;
+    }
+
+    public String getSchistosomiasisIgaSerumAntibodyDetails() {
+        return schistosomiasisIgaSerumAntibodyDetails;
+    }
+
+    public String getSchistosomiasisIncubationTimeDetails() {
+        return schistosomiasisIncubationTimeDetails;
+    }
+
+    public String getSchistosomiasisIndirectFluorescentAntibodyDetails() {
+        return schistosomiasisIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getSchistosomiasisDirectFluorescentAntibodyDetails() {
+        return schistosomiasisDirectFluorescentAntibodyDetails;
+    }
+
+    public String getSchistosomiasisMicroscopyDetails() {
+        return schistosomiasisMicroscopyDetails;
+    }
+
+    public String getSchistosomiasisNeutralizingAntibodiesDetails() {
+        return schistosomiasisNeutralizingAntibodiesDetails;
+    }
+
+    public String getSchistosomiasisPcrRtPcrDetails() {
+        return schistosomiasisPcrRtPcrDetails;
+    }
+
+    public String getSchistosomiasisGramStainDetails() {
+        return schistosomiasisGramStainDetails;
+    }
+
+    public String getSchistosomiasisLatexAgglutinationDetails() {
+        return schistosomiasisLatexAgglutinationDetails;
+    }
+
+    public String getSchistosomiasisCqValueDetectionDetails() {
+        return schistosomiasisCqValueDetectionDetails;
+    }
+
+    public String getSchistosomiasisSequencingDetails() {
+        return schistosomiasisSequencingDetails;
+    }
+
+    public String getSchistosomiasisDnaMicroarrayDetails() {
+        return schistosomiasisDnaMicroarrayDetails;
+    }
+
+    public String getSchistosomiasisOtherDetails() {
+        return schistosomiasisOtherDetails;
+    }
+
+    public String getSoilTransmittedHelminthsAntibodyDetection() {
+        return soilTransmittedHelminthsAntibodyDetection;
     }
 
     public String getSoilTransmittedHelminthsAntigenDetection() {
@@ -8838,6 +17830,10 @@ public class CaseSampleExportDto implements Serializable {
         return soilTransmittedHelminthsIndirectFluorescentAntibody;
     }
 
+    public String getSoilTransmittedHelminthsDirectFluorescentAntibody() {
+        return soilTransmittedHelminthsDirectFluorescentAntibody;
+    }
+
     public String getSoilTransmittedHelminthsMicroscopy() {
         return soilTransmittedHelminthsMicroscopy;
     }
@@ -8846,8 +17842,8 @@ public class CaseSampleExportDto implements Serializable {
         return soilTransmittedHelminthsNeutralizingAntibodies;
     }
 
-    public String getSoilTransmittedHelminthsPcr() {
-        return soilTransmittedHelminthsPcr;
+    public String getSoilTransmittedHelminthsPcrRtPcr() {
+        return soilTransmittedHelminthsPcrRtPcr;
     }
 
     public String getSoilTransmittedHelminthsGramStain() {
@@ -8862,20 +17858,104 @@ public class CaseSampleExportDto implements Serializable {
         return soilTransmittedHelminthsCqValueDetection;
     }
 
-    public String getSoilTransmittedHelminthsSeQuencing() {
-        return soilTransmittedHelminthsSeQuencing;
+    public String getSoilTransmittedHelminthsSequencing() {
+        return soilTransmittedHelminthsSequencing;
     }
 
-    public String getSoilTransmittedHelminthsDnaMicroArray() {
-        return soilTransmittedHelminthsDnaMicroArray;
+    public String getSoilTransmittedHelminthsDnaMicroarray() {
+        return soilTransmittedHelminthsDnaMicroarray;
     }
 
     public String getSoilTransmittedHelminthsOther() {
         return soilTransmittedHelminthsOther;
     }
 
-    public String getTrypanosomiasisAntiBodyDetection() {
-        return trypanosomiasisAntiBodyDetection;
+    public String getSoilTransmittedHelminthsAntibodyDetectionDetails() {
+        return soilTransmittedHelminthsAntibodyDetectionDetails;
+    }
+
+    public String getSoilTransmittedHelminthsAntigenDetectionDetails() {
+        return soilTransmittedHelminthsAntigenDetectionDetails;
+    }
+
+    public String getSoilTransmittedHelminthsRapidTestDetails() {
+        return soilTransmittedHelminthsRapidTestDetails;
+    }
+
+    public String getSoilTransmittedHelminthsCultureDetails() {
+        return soilTransmittedHelminthsCultureDetails;
+    }
+
+    public String getSoilTransmittedHelminthsHistopathologyDetails() {
+        return soilTransmittedHelminthsHistopathologyDetails;
+    }
+
+    public String getSoilTransmittedHelminthsIsolationDetails() {
+        return soilTransmittedHelminthsIsolationDetails;
+    }
+
+    public String getSoilTransmittedHelminthsIgmSerumAntibodyDetails() {
+        return soilTransmittedHelminthsIgmSerumAntibodyDetails;
+    }
+
+    public String getSoilTransmittedHelminthsIggSerumAntibodyDetails() {
+        return soilTransmittedHelminthsIggSerumAntibodyDetails;
+    }
+
+    public String getSoilTransmittedHelminthsIgaSerumAntibodyDetails() {
+        return soilTransmittedHelminthsIgaSerumAntibodyDetails;
+    }
+
+    public String getSoilTransmittedHelminthsIncubationTimeDetails() {
+        return soilTransmittedHelminthsIncubationTimeDetails;
+    }
+
+    public String getSoilTransmittedHelminthsIndirectFluorescentAntibodyDetails() {
+        return soilTransmittedHelminthsIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getSoilTransmittedHelminthsDirectFluorescentAntibodyDetails() {
+        return soilTransmittedHelminthsDirectFluorescentAntibodyDetails;
+    }
+
+    public String getSoilTransmittedHelminthsMicroscopyDetails() {
+        return soilTransmittedHelminthsMicroscopyDetails;
+    }
+
+    public String getSoilTransmittedHelminthsNeutralizingAntibodiesDetails() {
+        return soilTransmittedHelminthsNeutralizingAntibodiesDetails;
+    }
+
+    public String getSoilTransmittedHelminthsPcrRtPcrDetails() {
+        return soilTransmittedHelminthsPcrRtPcrDetails;
+    }
+
+    public String getSoilTransmittedHelminthsGramStainDetails() {
+        return soilTransmittedHelminthsGramStainDetails;
+    }
+
+    public String getSoilTransmittedHelminthsLatexAgglutinationDetails() {
+        return soilTransmittedHelminthsLatexAgglutinationDetails;
+    }
+
+    public String getSoilTransmittedHelminthsCqValueDetectionDetails() {
+        return soilTransmittedHelminthsCqValueDetectionDetails;
+    }
+
+    public String getSoilTransmittedHelminthsSequencingDetails() {
+        return soilTransmittedHelminthsSequencingDetails;
+    }
+
+    public String getSoilTransmittedHelminthsDnaMicroarrayDetails() {
+        return soilTransmittedHelminthsDnaMicroarrayDetails;
+    }
+
+    public String getSoilTransmittedHelminthsOtherDetails() {
+        return soilTransmittedHelminthsOtherDetails;
+    }
+
+    public String getTrypanosomiasisAntibodyDetection() {
+        return trypanosomiasisAntibodyDetection;
     }
 
     public String getTrypanosomiasisAntigenDetection() {
@@ -8918,6 +17998,10 @@ public class CaseSampleExportDto implements Serializable {
         return trypanosomiasisIndirectFluorescentAntibody;
     }
 
+    public String getTrypanosomiasisDirectFluorescentAntibody() {
+        return trypanosomiasisDirectFluorescentAntibody;
+    }
+
     public String getTrypanosomiasisMicroscopy() {
         return trypanosomiasisMicroscopy;
     }
@@ -8926,8 +18010,8 @@ public class CaseSampleExportDto implements Serializable {
         return trypanosomiasisNeutralizingAntibodies;
     }
 
-    public String getTrypanosomiasisPcr() {
-        return trypanosomiasisPcr;
+    public String getTrypanosomiasisPcrRtPcr() {
+        return trypanosomiasisPcrRtPcr;
     }
 
     public String getTrypanosomiasisGramStain() {
@@ -8942,20 +18026,104 @@ public class CaseSampleExportDto implements Serializable {
         return trypanosomiasisCqValueDetection;
     }
 
-    public String getTrypanosomiasisSeQuencing() {
-        return trypanosomiasisSeQuencing;
+    public String getTrypanosomiasisSequencing() {
+        return trypanosomiasisSequencing;
     }
 
-    public String getTrypanosomiasisDnaMicroArray() {
-        return trypanosomiasisDnaMicroArray;
+    public String getTrypanosomiasisDnaMicroarray() {
+        return trypanosomiasisDnaMicroarray;
     }
 
     public String getTrypanosomiasisOther() {
         return trypanosomiasisOther;
     }
 
-    public String getDiarrheaDehydrationAntiBodyDetection() {
-        return diarrheaDehydrationAntiBodyDetection;
+    public String getTrypanosomiasisAntibodyDetectionDetails() {
+        return trypanosomiasisAntibodyDetectionDetails;
+    }
+
+    public String getTrypanosomiasisAntigenDetectionDetails() {
+        return trypanosomiasisAntigenDetectionDetails;
+    }
+
+    public String getTrypanosomiasisRapidTestDetails() {
+        return trypanosomiasisRapidTestDetails;
+    }
+
+    public String getTrypanosomiasisCultureDetails() {
+        return trypanosomiasisCultureDetails;
+    }
+
+    public String getTrypanosomiasisHistopathologyDetails() {
+        return trypanosomiasisHistopathologyDetails;
+    }
+
+    public String getTrypanosomiasisIsolationDetails() {
+        return trypanosomiasisIsolationDetails;
+    }
+
+    public String getTrypanosomiasisIgmSerumAntibodyDetails() {
+        return trypanosomiasisIgmSerumAntibodyDetails;
+    }
+
+    public String getTrypanosomiasisIggSerumAntibodyDetails() {
+        return trypanosomiasisIggSerumAntibodyDetails;
+    }
+
+    public String getTrypanosomiasisIgaSerumAntibodyDetails() {
+        return trypanosomiasisIgaSerumAntibodyDetails;
+    }
+
+    public String getTrypanosomiasisIncubationTimeDetails() {
+        return trypanosomiasisIncubationTimeDetails;
+    }
+
+    public String getTrypanosomiasisIndirectFluorescentAntibodyDetails() {
+        return trypanosomiasisIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getTrypanosomiasisDirectFluorescentAntibodyDetails() {
+        return trypanosomiasisDirectFluorescentAntibodyDetails;
+    }
+
+    public String getTrypanosomiasisMicroscopyDetails() {
+        return trypanosomiasisMicroscopyDetails;
+    }
+
+    public String getTrypanosomiasisNeutralizingAntibodiesDetails() {
+        return trypanosomiasisNeutralizingAntibodiesDetails;
+    }
+
+    public String getTrypanosomiasisPcrRtPcrDetails() {
+        return trypanosomiasisPcrRtPcrDetails;
+    }
+
+    public String getTrypanosomiasisGramStainDetails() {
+        return trypanosomiasisGramStainDetails;
+    }
+
+    public String getTrypanosomiasisLatexAgglutinationDetails() {
+        return trypanosomiasisLatexAgglutinationDetails;
+    }
+
+    public String getTrypanosomiasisCqValueDetectionDetails() {
+        return trypanosomiasisCqValueDetectionDetails;
+    }
+
+    public String getTrypanosomiasisSequencingDetails() {
+        return trypanosomiasisSequencingDetails;
+    }
+
+    public String getTrypanosomiasisDnaMicroarrayDetails() {
+        return trypanosomiasisDnaMicroarrayDetails;
+    }
+
+    public String getTrypanosomiasisOtherDetails() {
+        return trypanosomiasisOtherDetails;
+    }
+
+    public String getDiarrheaDehydrationAntibodyDetection() {
+        return diarrheaDehydrationAntibodyDetection;
     }
 
     public String getDiarrheaDehydrationAntigenDetection() {
@@ -8998,6 +18166,10 @@ public class CaseSampleExportDto implements Serializable {
         return diarrheaDehydrationIndirectFluorescentAntibody;
     }
 
+    public String getDiarrheaDehydrationDirectFluorescentAntibody() {
+        return diarrheaDehydrationDirectFluorescentAntibody;
+    }
+
     public String getDiarrheaDehydrationMicroscopy() {
         return diarrheaDehydrationMicroscopy;
     }
@@ -9006,8 +18178,8 @@ public class CaseSampleExportDto implements Serializable {
         return diarrheaDehydrationNeutralizingAntibodies;
     }
 
-    public String getDiarrheaDehydrationPcr() {
-        return diarrheaDehydrationPcr;
+    public String getDiarrheaDehydrationPcrRtPcr() {
+        return diarrheaDehydrationPcrRtPcr;
     }
 
     public String getDiarrheaDehydrationGramStain() {
@@ -9022,20 +18194,104 @@ public class CaseSampleExportDto implements Serializable {
         return diarrheaDehydrationCqValueDetection;
     }
 
-    public String getDiarrheaDehydrationSeQuencing() {
-        return diarrheaDehydrationSeQuencing;
+    public String getDiarrheaDehydrationSequencing() {
+        return diarrheaDehydrationSequencing;
     }
 
-    public String getDiarrheaDehydrationDnaMicroArray() {
-        return diarrheaDehydrationDnaMicroArray;
+    public String getDiarrheaDehydrationDnaMicroarray() {
+        return diarrheaDehydrationDnaMicroarray;
     }
 
     public String getDiarrheaDehydrationOther() {
         return diarrheaDehydrationOther;
     }
 
-    public String getDiarrheaBloodAntiBodyDetection() {
-        return diarrheaBloodAntiBodyDetection;
+    public String getDiarrheaDehydrationAntibodyDetectionDetails() {
+        return diarrheaDehydrationAntibodyDetectionDetails;
+    }
+
+    public String getDiarrheaDehydrationAntigenDetectionDetails() {
+        return diarrheaDehydrationAntigenDetectionDetails;
+    }
+
+    public String getDiarrheaDehydrationRapidTestDetails() {
+        return diarrheaDehydrationRapidTestDetails;
+    }
+
+    public String getDiarrheaDehydrationCultureDetails() {
+        return diarrheaDehydrationCultureDetails;
+    }
+
+    public String getDiarrheaDehydrationHistopathologyDetails() {
+        return diarrheaDehydrationHistopathologyDetails;
+    }
+
+    public String getDiarrheaDehydrationIsolationDetails() {
+        return diarrheaDehydrationIsolationDetails;
+    }
+
+    public String getDiarrheaDehydrationIgmSerumAntibodyDetails() {
+        return diarrheaDehydrationIgmSerumAntibodyDetails;
+    }
+
+    public String getDiarrheaDehydrationIggSerumAntibodyDetails() {
+        return diarrheaDehydrationIggSerumAntibodyDetails;
+    }
+
+    public String getDiarrheaDehydrationIgaSerumAntibodyDetails() {
+        return diarrheaDehydrationIgaSerumAntibodyDetails;
+    }
+
+    public String getDiarrheaDehydrationIncubationTimeDetails() {
+        return diarrheaDehydrationIncubationTimeDetails;
+    }
+
+    public String getDiarrheaDehydrationIndirectFluorescentAntibodyDetails() {
+        return diarrheaDehydrationIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getDiarrheaDehydrationDirectFluorescentAntibodyDetails() {
+        return diarrheaDehydrationDirectFluorescentAntibodyDetails;
+    }
+
+    public String getDiarrheaDehydrationMicroscopyDetails() {
+        return diarrheaDehydrationMicroscopyDetails;
+    }
+
+    public String getDiarrheaDehydrationNeutralizingAntibodiesDetails() {
+        return diarrheaDehydrationNeutralizingAntibodiesDetails;
+    }
+
+    public String getDiarrheaDehydrationPcrRtPcrDetails() {
+        return diarrheaDehydrationPcrRtPcrDetails;
+    }
+
+    public String getDiarrheaDehydrationGramStainDetails() {
+        return diarrheaDehydrationGramStainDetails;
+    }
+
+    public String getDiarrheaDehydrationLatexAgglutinationDetails() {
+        return diarrheaDehydrationLatexAgglutinationDetails;
+    }
+
+    public String getDiarrheaDehydrationCqValueDetectionDetails() {
+        return diarrheaDehydrationCqValueDetectionDetails;
+    }
+
+    public String getDiarrheaDehydrationSequencingDetails() {
+        return diarrheaDehydrationSequencingDetails;
+    }
+
+    public String getDiarrheaDehydrationDnaMicroarrayDetails() {
+        return diarrheaDehydrationDnaMicroarrayDetails;
+    }
+
+    public String getDiarrheaDehydrationOtherDetails() {
+        return diarrheaDehydrationOtherDetails;
+    }
+
+    public String getDiarrheaBloodAntibodyDetection() {
+        return diarrheaBloodAntibodyDetection;
     }
 
     public String getDiarrheaBloodAntigenDetection() {
@@ -9078,6 +18334,10 @@ public class CaseSampleExportDto implements Serializable {
         return diarrheaBloodIndirectFluorescentAntibody;
     }
 
+    public String getDiarrheaBloodDirectFluorescentAntibody() {
+        return diarrheaBloodDirectFluorescentAntibody;
+    }
+
     public String getDiarrheaBloodMicroscopy() {
         return diarrheaBloodMicroscopy;
     }
@@ -9086,8 +18346,8 @@ public class CaseSampleExportDto implements Serializable {
         return diarrheaBloodNeutralizingAntibodies;
     }
 
-    public String getDiarrheaBloodPcr() {
-        return diarrheaBloodPcr;
+    public String getDiarrheaBloodPcrRtPcr() {
+        return diarrheaBloodPcrRtPcr;
     }
 
     public String getDiarrheaBloodGramStain() {
@@ -9102,20 +18362,104 @@ public class CaseSampleExportDto implements Serializable {
         return diarrheaBloodCqValueDetection;
     }
 
-    public String getDiarrheaBloodSeQuencing() {
-        return diarrheaBloodSeQuencing;
+    public String getDiarrheaBloodSequencing() {
+        return diarrheaBloodSequencing;
     }
 
-    public String getDiarrheaBloodDnaMicroArray() {
-        return diarrheaBloodDnaMicroArray;
+    public String getDiarrheaBloodDnaMicroarray() {
+        return diarrheaBloodDnaMicroarray;
     }
 
     public String getDiarrheaBloodOther() {
         return diarrheaBloodOther;
     }
 
-    public String getSnakeBiteAntiBodyDetection() {
-        return snakeBiteAntiBodyDetection;
+    public String getDiarrheaBloodAntibodyDetectionDetails() {
+        return diarrheaBloodAntibodyDetectionDetails;
+    }
+
+    public String getDiarrheaBloodAntigenDetectionDetails() {
+        return diarrheaBloodAntigenDetectionDetails;
+    }
+
+    public String getDiarrheaBloodRapidTestDetails() {
+        return diarrheaBloodRapidTestDetails;
+    }
+
+    public String getDiarrheaBloodCultureDetails() {
+        return diarrheaBloodCultureDetails;
+    }
+
+    public String getDiarrheaBloodHistopathologyDetails() {
+        return diarrheaBloodHistopathologyDetails;
+    }
+
+    public String getDiarrheaBloodIsolationDetails() {
+        return diarrheaBloodIsolationDetails;
+    }
+
+    public String getDiarrheaBloodIgmSerumAntibodyDetails() {
+        return diarrheaBloodIgmSerumAntibodyDetails;
+    }
+
+    public String getDiarrheaBloodIggSerumAntibodyDetails() {
+        return diarrheaBloodIggSerumAntibodyDetails;
+    }
+
+    public String getDiarrheaBloodIgaSerumAntibodyDetails() {
+        return diarrheaBloodIgaSerumAntibodyDetails;
+    }
+
+    public String getDiarrheaBloodIncubationTimeDetails() {
+        return diarrheaBloodIncubationTimeDetails;
+    }
+
+    public String getDiarrheaBloodIndirectFluorescentAntibodyDetails() {
+        return diarrheaBloodIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getDiarrheaBloodDirectFluorescentAntibodyDetails() {
+        return diarrheaBloodDirectFluorescentAntibodyDetails;
+    }
+
+    public String getDiarrheaBloodMicroscopyDetails() {
+        return diarrheaBloodMicroscopyDetails;
+    }
+
+    public String getDiarrheaBloodNeutralizingAntibodiesDetails() {
+        return diarrheaBloodNeutralizingAntibodiesDetails;
+    }
+
+    public String getDiarrheaBloodPcrRtPcrDetails() {
+        return diarrheaBloodPcrRtPcrDetails;
+    }
+
+    public String getDiarrheaBloodGramStainDetails() {
+        return diarrheaBloodGramStainDetails;
+    }
+
+    public String getDiarrheaBloodLatexAgglutinationDetails() {
+        return diarrheaBloodLatexAgglutinationDetails;
+    }
+
+    public String getDiarrheaBloodCqValueDetectionDetails() {
+        return diarrheaBloodCqValueDetectionDetails;
+    }
+
+    public String getDiarrheaBloodSequencingDetails() {
+        return diarrheaBloodSequencingDetails;
+    }
+
+    public String getDiarrheaBloodDnaMicroarrayDetails() {
+        return diarrheaBloodDnaMicroarrayDetails;
+    }
+
+    public String getDiarrheaBloodOtherDetails() {
+        return diarrheaBloodOtherDetails;
+    }
+
+    public String getSnakeBiteAntibodyDetection() {
+        return snakeBiteAntibodyDetection;
     }
 
     public String getSnakeBiteAntigenDetection() {
@@ -9158,6 +18502,10 @@ public class CaseSampleExportDto implements Serializable {
         return snakeBiteIndirectFluorescentAntibody;
     }
 
+    public String getSnakeBiteDirectFluorescentAntibody() {
+        return snakeBiteDirectFluorescentAntibody;
+    }
+
     public String getSnakeBiteMicroscopy() {
         return snakeBiteMicroscopy;
     }
@@ -9166,8 +18514,8 @@ public class CaseSampleExportDto implements Serializable {
         return snakeBiteNeutralizingAntibodies;
     }
 
-    public String getSnakeBitePcr() {
-        return snakeBitePcr;
+    public String getSnakeBitePcrRtPcr() {
+        return snakeBitePcrRtPcr;
     }
 
     public String getSnakeBiteGramStain() {
@@ -9182,20 +18530,104 @@ public class CaseSampleExportDto implements Serializable {
         return snakeBiteCqValueDetection;
     }
 
-    public String getSnakeBiteSeQuencing() {
-        return snakeBiteSeQuencing;
+    public String getSnakeBiteSequencing() {
+        return snakeBiteSequencing;
     }
 
-    public String getSnakeBiteDnaMicroArray() {
-        return snakeBiteDnaMicroArray;
+    public String getSnakeBiteDnaMicroarray() {
+        return snakeBiteDnaMicroarray;
     }
 
     public String getSnakeBiteOther() {
         return snakeBiteOther;
     }
 
-    public String getRubellaAntiBodyDetection() {
-        return rubellaAntiBodyDetection;
+    public String getSnakeBiteAntibodyDetectionDetails() {
+        return snakeBiteAntibodyDetectionDetails;
+    }
+
+    public String getSnakeBiteAntigenDetectionDetails() {
+        return snakeBiteAntigenDetectionDetails;
+    }
+
+    public String getSnakeBiteRapidTestDetails() {
+        return snakeBiteRapidTestDetails;
+    }
+
+    public String getSnakeBiteCultureDetails() {
+        return snakeBiteCultureDetails;
+    }
+
+    public String getSnakeBiteHistopathologyDetails() {
+        return snakeBiteHistopathologyDetails;
+    }
+
+    public String getSnakeBiteIsolationDetails() {
+        return snakeBiteIsolationDetails;
+    }
+
+    public String getSnakeBiteIgmSerumAntibodyDetails() {
+        return snakeBiteIgmSerumAntibodyDetails;
+    }
+
+    public String getSnakeBiteIggSerumAntibodyDetails() {
+        return snakeBiteIggSerumAntibodyDetails;
+    }
+
+    public String getSnakeBiteIgaSerumAntibodyDetails() {
+        return snakeBiteIgaSerumAntibodyDetails;
+    }
+
+    public String getSnakeBiteIncubationTimeDetails() {
+        return snakeBiteIncubationTimeDetails;
+    }
+
+    public String getSnakeBiteIndirectFluorescentAntibodyDetails() {
+        return snakeBiteIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getSnakeBiteDirectFluorescentAntibodyDetails() {
+        return snakeBiteDirectFluorescentAntibodyDetails;
+    }
+
+    public String getSnakeBiteMicroscopyDetails() {
+        return snakeBiteMicroscopyDetails;
+    }
+
+    public String getSnakeBiteNeutralizingAntibodiesDetails() {
+        return snakeBiteNeutralizingAntibodiesDetails;
+    }
+
+    public String getSnakeBitePcrRtPcrDetails() {
+        return snakeBitePcrRtPcrDetails;
+    }
+
+    public String getSnakeBiteGramStainDetails() {
+        return snakeBiteGramStainDetails;
+    }
+
+    public String getSnakeBiteLatexAgglutinationDetails() {
+        return snakeBiteLatexAgglutinationDetails;
+    }
+
+    public String getSnakeBiteCqValueDetectionDetails() {
+        return snakeBiteCqValueDetectionDetails;
+    }
+
+    public String getSnakeBiteSequencingDetails() {
+        return snakeBiteSequencingDetails;
+    }
+
+    public String getSnakeBiteDnaMicroarrayDetails() {
+        return snakeBiteDnaMicroarrayDetails;
+    }
+
+    public String getSnakeBiteOtherDetails() {
+        return snakeBiteOtherDetails;
+    }
+
+    public String getRubellaAntibodyDetection() {
+        return rubellaAntibodyDetection;
     }
 
     public String getRubellaAntigenDetection() {
@@ -9238,6 +18670,10 @@ public class CaseSampleExportDto implements Serializable {
         return rubellaIndirectFluorescentAntibody;
     }
 
+    public String getRubellaDirectFluorescentAntibody() {
+        return rubellaDirectFluorescentAntibody;
+    }
+
     public String getRubellaMicroscopy() {
         return rubellaMicroscopy;
     }
@@ -9246,8 +18682,8 @@ public class CaseSampleExportDto implements Serializable {
         return rubellaNeutralizingAntibodies;
     }
 
-    public String getRubellaPcr() {
-        return rubellaPcr;
+    public String getRubellaPcrRtPcr() {
+        return rubellaPcrRtPcr;
     }
 
     public String getRubellaGramStain() {
@@ -9262,20 +18698,104 @@ public class CaseSampleExportDto implements Serializable {
         return rubellaCqValueDetection;
     }
 
-    public String getRubellaSeQuencing() {
-        return rubellaSeQuencing;
+    public String getRubellaSequencing() {
+        return rubellaSequencing;
     }
 
-    public String getRubellaDnaMicroArray() {
-        return rubellaDnaMicroArray;
+    public String getRubellaDnaMicroarray() {
+        return rubellaDnaMicroarray;
     }
 
     public String getRubellaOther() {
         return rubellaOther;
     }
 
-    public String getTuberculosisAntiBodyDetection() {
-        return tuberculosisAntiBodyDetection;
+    public String getRubellaAntibodyDetectionDetails() {
+        return rubellaAntibodyDetectionDetails;
+    }
+
+    public String getRubellaAntigenDetectionDetails() {
+        return rubellaAntigenDetectionDetails;
+    }
+
+    public String getRubellaRapidTestDetails() {
+        return rubellaRapidTestDetails;
+    }
+
+    public String getRubellaCultureDetails() {
+        return rubellaCultureDetails;
+    }
+
+    public String getRubellaHistopathologyDetails() {
+        return rubellaHistopathologyDetails;
+    }
+
+    public String getRubellaIsolationDetails() {
+        return rubellaIsolationDetails;
+    }
+
+    public String getRubellaIgmSerumAntibodyDetails() {
+        return rubellaIgmSerumAntibodyDetails;
+    }
+
+    public String getRubellaIggSerumAntibodyDetails() {
+        return rubellaIggSerumAntibodyDetails;
+    }
+
+    public String getRubellaIgaSerumAntibodyDetails() {
+        return rubellaIgaSerumAntibodyDetails;
+    }
+
+    public String getRubellaIncubationTimeDetails() {
+        return rubellaIncubationTimeDetails;
+    }
+
+    public String getRubellaIndirectFluorescentAntibodyDetails() {
+        return rubellaIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getRubellaDirectFluorescentAntibodyDetails() {
+        return rubellaDirectFluorescentAntibodyDetails;
+    }
+
+    public String getRubellaMicroscopyDetails() {
+        return rubellaMicroscopyDetails;
+    }
+
+    public String getRubellaNeutralizingAntibodiesDetails() {
+        return rubellaNeutralizingAntibodiesDetails;
+    }
+
+    public String getRubellaPcrRtPcrDetails() {
+        return rubellaPcrRtPcrDetails;
+    }
+
+    public String getRubellaGramStainDetails() {
+        return rubellaGramStainDetails;
+    }
+
+    public String getRubellaLatexAgglutinationDetails() {
+        return rubellaLatexAgglutinationDetails;
+    }
+
+    public String getRubellaCqValueDetectionDetails() {
+        return rubellaCqValueDetectionDetails;
+    }
+
+    public String getRubellaSequencingDetails() {
+        return rubellaSequencingDetails;
+    }
+
+    public String getRubellaDnaMicroarrayDetails() {
+        return rubellaDnaMicroarrayDetails;
+    }
+
+    public String getRubellaOtherDetails() {
+        return rubellaOtherDetails;
+    }
+
+    public String getTuberculosisAntibodyDetection() {
+        return tuberculosisAntibodyDetection;
     }
 
     public String getTuberculosisAntigenDetection() {
@@ -9318,6 +18838,10 @@ public class CaseSampleExportDto implements Serializable {
         return tuberculosisIndirectFluorescentAntibody;
     }
 
+    public String getTuberculosisDirectFluorescentAntibody() {
+        return tuberculosisDirectFluorescentAntibody;
+    }
+
     public String getTuberculosisMicroscopy() {
         return tuberculosisMicroscopy;
     }
@@ -9326,8 +18850,8 @@ public class CaseSampleExportDto implements Serializable {
         return tuberculosisNeutralizingAntibodies;
     }
 
-    public String getTuberculosisPcr() {
-        return tuberculosisPcr;
+    public String getTuberculosisPcrRtPcr() {
+        return tuberculosisPcrRtPcr;
     }
 
     public String getTuberculosisGramStain() {
@@ -9342,20 +18866,104 @@ public class CaseSampleExportDto implements Serializable {
         return tuberculosisCqValueDetection;
     }
 
-    public String getTuberculosisSeQuencing() {
-        return tuberculosisSeQuencing;
+    public String getTuberculosisSequencing() {
+        return tuberculosisSequencing;
     }
 
-    public String getTuberculosisDnaMicroArray() {
-        return tuberculosisDnaMicroArray;
+    public String getTuberculosisDnaMicroarray() {
+        return tuberculosisDnaMicroarray;
     }
 
     public String getTuberculosisOther() {
         return tuberculosisOther;
     }
 
-    public String getLeprosyAntiBodyDetection() {
-        return leprosyAntiBodyDetection;
+    public String getTuberculosisAntibodyDetectionDetails() {
+        return tuberculosisAntibodyDetectionDetails;
+    }
+
+    public String getTuberculosisAntigenDetectionDetails() {
+        return tuberculosisAntigenDetectionDetails;
+    }
+
+    public String getTuberculosisRapidTestDetails() {
+        return tuberculosisRapidTestDetails;
+    }
+
+    public String getTuberculosisCultureDetails() {
+        return tuberculosisCultureDetails;
+    }
+
+    public String getTuberculosisHistopathologyDetails() {
+        return tuberculosisHistopathologyDetails;
+    }
+
+    public String getTuberculosisIsolationDetails() {
+        return tuberculosisIsolationDetails;
+    }
+
+    public String getTuberculosisIgmSerumAntibodyDetails() {
+        return tuberculosisIgmSerumAntibodyDetails;
+    }
+
+    public String getTuberculosisIggSerumAntibodyDetails() {
+        return tuberculosisIggSerumAntibodyDetails;
+    }
+
+    public String getTuberculosisIgaSerumAntibodyDetails() {
+        return tuberculosisIgaSerumAntibodyDetails;
+    }
+
+    public String getTuberculosisIncubationTimeDetails() {
+        return tuberculosisIncubationTimeDetails;
+    }
+
+    public String getTuberculosisIndirectFluorescentAntibodyDetails() {
+        return tuberculosisIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getTuberculosisDirectFluorescentAntibodyDetails() {
+        return tuberculosisDirectFluorescentAntibodyDetails;
+    }
+
+    public String getTuberculosisMicroscopyDetails() {
+        return tuberculosisMicroscopyDetails;
+    }
+
+    public String getTuberculosisNeutralizingAntibodiesDetails() {
+        return tuberculosisNeutralizingAntibodiesDetails;
+    }
+
+    public String getTuberculosisPcrRtPcrDetails() {
+        return tuberculosisPcrRtPcrDetails;
+    }
+
+    public String getTuberculosisGramStainDetails() {
+        return tuberculosisGramStainDetails;
+    }
+
+    public String getTuberculosisLatexAgglutinationDetails() {
+        return tuberculosisLatexAgglutinationDetails;
+    }
+
+    public String getTuberculosisCqValueDetectionDetails() {
+        return tuberculosisCqValueDetectionDetails;
+    }
+
+    public String getTuberculosisSequencingDetails() {
+        return tuberculosisSequencingDetails;
+    }
+
+    public String getTuberculosisDnaMicroarrayDetails() {
+        return tuberculosisDnaMicroarrayDetails;
+    }
+
+    public String getTuberculosisOtherDetails() {
+        return tuberculosisOtherDetails;
+    }
+
+    public String getLeprosyAntibodyDetection() {
+        return leprosyAntibodyDetection;
     }
 
     public String getLeprosyAntigenDetection() {
@@ -9398,6 +19006,10 @@ public class CaseSampleExportDto implements Serializable {
         return leprosyIndirectFluorescentAntibody;
     }
 
+    public String getLeprosyDirectFluorescentAntibody() {
+        return leprosyDirectFluorescentAntibody;
+    }
+
     public String getLeprosyMicroscopy() {
         return leprosyMicroscopy;
     }
@@ -9406,8 +19018,8 @@ public class CaseSampleExportDto implements Serializable {
         return leprosyNeutralizingAntibodies;
     }
 
-    public String getLeprosyPcr() {
-        return leprosyPcr;
+    public String getLeprosyPcrRtPcr() {
+        return leprosyPcrRtPcr;
     }
 
     public String getLeprosyGramStain() {
@@ -9422,20 +19034,104 @@ public class CaseSampleExportDto implements Serializable {
         return leprosyCqValueDetection;
     }
 
-    public String getLeprosySeQuencing() {
-        return leprosySeQuencing;
+    public String getLeprosySequencing() {
+        return leprosySequencing;
     }
 
-    public String getLeprosyDnaMicroArray() {
-        return leprosyDnaMicroArray;
+    public String getLeprosyDnaMicroarray() {
+        return leprosyDnaMicroarray;
     }
 
     public String getLeprosyOther() {
         return leprosyOther;
     }
 
-    public String getLymphaticFilariasisAntiBodyDetection() {
-        return lymphaticFilariasisAntiBodyDetection;
+    public String getLeprosyAntibodyDetectionDetails() {
+        return leprosyAntibodyDetectionDetails;
+    }
+
+    public String getLeprosyAntigenDetectionDetails() {
+        return leprosyAntigenDetectionDetails;
+    }
+
+    public String getLeprosyRapidTestDetails() {
+        return leprosyRapidTestDetails;
+    }
+
+    public String getLeprosyCultureDetails() {
+        return leprosyCultureDetails;
+    }
+
+    public String getLeprosyHistopathologyDetails() {
+        return leprosyHistopathologyDetails;
+    }
+
+    public String getLeprosyIsolationDetails() {
+        return leprosyIsolationDetails;
+    }
+
+    public String getLeprosyIgmSerumAntibodyDetails() {
+        return leprosyIgmSerumAntibodyDetails;
+    }
+
+    public String getLeprosyIggSerumAntibodyDetails() {
+        return leprosyIggSerumAntibodyDetails;
+    }
+
+    public String getLeprosyIgaSerumAntibodyDetails() {
+        return leprosyIgaSerumAntibodyDetails;
+    }
+
+    public String getLeprosyIncubationTimeDetails() {
+        return leprosyIncubationTimeDetails;
+    }
+
+    public String getLeprosyIndirectFluorescentAntibodyDetails() {
+        return leprosyIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getLeprosyDirectFluorescentAntibodyDetails() {
+        return leprosyDirectFluorescentAntibodyDetails;
+    }
+
+    public String getLeprosyMicroscopyDetails() {
+        return leprosyMicroscopyDetails;
+    }
+
+    public String getLeprosyNeutralizingAntibodiesDetails() {
+        return leprosyNeutralizingAntibodiesDetails;
+    }
+
+    public String getLeprosyPcrRtPcrDetails() {
+        return leprosyPcrRtPcrDetails;
+    }
+
+    public String getLeprosyGramStainDetails() {
+        return leprosyGramStainDetails;
+    }
+
+    public String getLeprosyLatexAgglutinationDetails() {
+        return leprosyLatexAgglutinationDetails;
+    }
+
+    public String getLeprosyCqValueDetectionDetails() {
+        return leprosyCqValueDetectionDetails;
+    }
+
+    public String getLeprosySequencingDetails() {
+        return leprosySequencingDetails;
+    }
+
+    public String getLeprosyDnaMicroarrayDetails() {
+        return leprosyDnaMicroarrayDetails;
+    }
+
+    public String getLeprosyOtherDetails() {
+        return leprosyOtherDetails;
+    }
+
+    public String getLymphaticFilariasisAntibodyDetection() {
+        return lymphaticFilariasisAntibodyDetection;
     }
 
     public String getLymphaticFilariasisAntigenDetection() {
@@ -9478,6 +19174,10 @@ public class CaseSampleExportDto implements Serializable {
         return lymphaticFilariasisIndirectFluorescentAntibody;
     }
 
+    public String getLymphaticFilariasisDirectFluorescentAntibody() {
+        return lymphaticFilariasisDirectFluorescentAntibody;
+    }
+
     public String getLymphaticFilariasisMicroscopy() {
         return lymphaticFilariasisMicroscopy;
     }
@@ -9486,8 +19186,8 @@ public class CaseSampleExportDto implements Serializable {
         return lymphaticFilariasisNeutralizingAntibodies;
     }
 
-    public String getLymphaticFilariasisPcr() {
-        return lymphaticFilariasisPcr;
+    public String getLymphaticFilariasisPcrRtPcr() {
+        return lymphaticFilariasisPcrRtPcr;
     }
 
     public String getLymphaticFilariasisGramStain() {
@@ -9502,20 +19202,104 @@ public class CaseSampleExportDto implements Serializable {
         return lymphaticFilariasisCqValueDetection;
     }
 
-    public String getLymphaticFilariasisSeQuencing() {
-        return lymphaticFilariasisSeQuencing;
+    public String getLymphaticFilariasisSequencing() {
+        return lymphaticFilariasisSequencing;
     }
 
-    public String getLymphaticFilariasisDnaMicroArray() {
-        return lymphaticFilariasisDnaMicroArray;
+    public String getLymphaticFilariasisDnaMicroarray() {
+        return lymphaticFilariasisDnaMicroarray;
     }
 
     public String getLymphaticFilariasisOther() {
         return lymphaticFilariasisOther;
     }
 
-    public String getBuruliUlcerAntiBodyDetection() {
-        return buruliUlcerAntiBodyDetection;
+    public String getLymphaticFilariasisAntibodyDetectionDetails() {
+        return lymphaticFilariasisAntibodyDetectionDetails;
+    }
+
+    public String getLymphaticFilariasisAntigenDetectionDetails() {
+        return lymphaticFilariasisAntigenDetectionDetails;
+    }
+
+    public String getLymphaticFilariasisRapidTestDetails() {
+        return lymphaticFilariasisRapidTestDetails;
+    }
+
+    public String getLymphaticFilariasisCultureDetails() {
+        return lymphaticFilariasisCultureDetails;
+    }
+
+    public String getLymphaticFilariasisHistopathologyDetails() {
+        return lymphaticFilariasisHistopathologyDetails;
+    }
+
+    public String getLymphaticFilariasisIsolationDetails() {
+        return lymphaticFilariasisIsolationDetails;
+    }
+
+    public String getLymphaticFilariasisIgmSerumAntibodyDetails() {
+        return lymphaticFilariasisIgmSerumAntibodyDetails;
+    }
+
+    public String getLymphaticFilariasisIggSerumAntibodyDetails() {
+        return lymphaticFilariasisIggSerumAntibodyDetails;
+    }
+
+    public String getLymphaticFilariasisIgaSerumAntibodyDetails() {
+        return lymphaticFilariasisIgaSerumAntibodyDetails;
+    }
+
+    public String getLymphaticFilariasisIncubationTimeDetails() {
+        return lymphaticFilariasisIncubationTimeDetails;
+    }
+
+    public String getLymphaticFilariasisIndirectFluorescentAntibodyDetails() {
+        return lymphaticFilariasisIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getLymphaticFilariasisDirectFluorescentAntibodyDetails() {
+        return lymphaticFilariasisDirectFluorescentAntibodyDetails;
+    }
+
+    public String getLymphaticFilariasisMicroscopyDetails() {
+        return lymphaticFilariasisMicroscopyDetails;
+    }
+
+    public String getLymphaticFilariasisNeutralizingAntibodiesDetails() {
+        return lymphaticFilariasisNeutralizingAntibodiesDetails;
+    }
+
+    public String getLymphaticFilariasisPcrRtPcrDetails() {
+        return lymphaticFilariasisPcrRtPcrDetails;
+    }
+
+    public String getLymphaticFilariasisGramStainDetails() {
+        return lymphaticFilariasisGramStainDetails;
+    }
+
+    public String getLymphaticFilariasisLatexAgglutinationDetails() {
+        return lymphaticFilariasisLatexAgglutinationDetails;
+    }
+
+    public String getLymphaticFilariasisCqValueDetectionDetails() {
+        return lymphaticFilariasisCqValueDetectionDetails;
+    }
+
+    public String getLymphaticFilariasisSequencingDetails() {
+        return lymphaticFilariasisSequencingDetails;
+    }
+
+    public String getLymphaticFilariasisDnaMicroarrayDetails() {
+        return lymphaticFilariasisDnaMicroarrayDetails;
+    }
+
+    public String getLymphaticFilariasisOtherDetails() {
+        return lymphaticFilariasisOtherDetails;
+    }
+
+    public String getBuruliUlcerAntibodyDetection() {
+        return buruliUlcerAntibodyDetection;
     }
 
     public String getBuruliUlcerAntigenDetection() {
@@ -9558,6 +19342,10 @@ public class CaseSampleExportDto implements Serializable {
         return buruliUlcerIndirectFluorescentAntibody;
     }
 
+    public String getBuruliUlcerDirectFluorescentAntibody() {
+        return buruliUlcerDirectFluorescentAntibody;
+    }
+
     public String getBuruliUlcerMicroscopy() {
         return buruliUlcerMicroscopy;
     }
@@ -9566,8 +19354,8 @@ public class CaseSampleExportDto implements Serializable {
         return buruliUlcerNeutralizingAntibodies;
     }
 
-    public String getBuruliUlcerPcr() {
-        return buruliUlcerPcr;
+    public String getBuruliUlcerPcrRtPcr() {
+        return buruliUlcerPcrRtPcr;
     }
 
     public String getBuruliUlcerGramStain() {
@@ -9582,20 +19370,104 @@ public class CaseSampleExportDto implements Serializable {
         return buruliUlcerCqValueDetection;
     }
 
-    public String getBuruliUlcerSeQuencing() {
-        return buruliUlcerSeQuencing;
+    public String getBuruliUlcerSequencing() {
+        return buruliUlcerSequencing;
     }
 
-    public String getBuruliUlcerDnaMicroArray() {
-        return buruliUlcerDnaMicroArray;
+    public String getBuruliUlcerDnaMicroarray() {
+        return buruliUlcerDnaMicroarray;
     }
 
     public String getBuruliUlcerOther() {
         return buruliUlcerOther;
     }
 
-    public String getPertussisAntiBodyDetection() {
-        return pertussisAntiBodyDetection;
+    public String getBuruliUlcerAntibodyDetectionDetails() {
+        return buruliUlcerAntibodyDetectionDetails;
+    }
+
+    public String getBuruliUlcerAntigenDetectionDetails() {
+        return buruliUlcerAntigenDetectionDetails;
+    }
+
+    public String getBuruliUlcerRapidTestDetails() {
+        return buruliUlcerRapidTestDetails;
+    }
+
+    public String getBuruliUlcerCultureDetails() {
+        return buruliUlcerCultureDetails;
+    }
+
+    public String getBuruliUlcerHistopathologyDetails() {
+        return buruliUlcerHistopathologyDetails;
+    }
+
+    public String getBuruliUlcerIsolationDetails() {
+        return buruliUlcerIsolationDetails;
+    }
+
+    public String getBuruliUlcerIgmSerumAntibodyDetails() {
+        return buruliUlcerIgmSerumAntibodyDetails;
+    }
+
+    public String getBuruliUlcerIggSerumAntibodyDetails() {
+        return buruliUlcerIggSerumAntibodyDetails;
+    }
+
+    public String getBuruliUlcerIgaSerumAntibodyDetails() {
+        return buruliUlcerIgaSerumAntibodyDetails;
+    }
+
+    public String getBuruliUlcerIncubationTimeDetails() {
+        return buruliUlcerIncubationTimeDetails;
+    }
+
+    public String getBuruliUlcerIndirectFluorescentAntibodyDetails() {
+        return buruliUlcerIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getBuruliUlcerDirectFluorescentAntibodyDetails() {
+        return buruliUlcerDirectFluorescentAntibodyDetails;
+    }
+
+    public String getBuruliUlcerMicroscopyDetails() {
+        return buruliUlcerMicroscopyDetails;
+    }
+
+    public String getBuruliUlcerNeutralizingAntibodiesDetails() {
+        return buruliUlcerNeutralizingAntibodiesDetails;
+    }
+
+    public String getBuruliUlcerPcrRtPcrDetails() {
+        return buruliUlcerPcrRtPcrDetails;
+    }
+
+    public String getBuruliUlcerGramStainDetails() {
+        return buruliUlcerGramStainDetails;
+    }
+
+    public String getBuruliUlcerLatexAgglutinationDetails() {
+        return buruliUlcerLatexAgglutinationDetails;
+    }
+
+    public String getBuruliUlcerCqValueDetectionDetails() {
+        return buruliUlcerCqValueDetectionDetails;
+    }
+
+    public String getBuruliUlcerSequencingDetails() {
+        return buruliUlcerSequencingDetails;
+    }
+
+    public String getBuruliUlcerDnaMicroarrayDetails() {
+        return buruliUlcerDnaMicroarrayDetails;
+    }
+
+    public String getBuruliUlcerOtherDetails() {
+        return buruliUlcerOtherDetails;
+    }
+
+    public String getPertussisAntibodyDetection() {
+        return pertussisAntibodyDetection;
     }
 
     public String getPertussisAntigenDetection() {
@@ -9638,6 +19510,10 @@ public class CaseSampleExportDto implements Serializable {
         return pertussisIndirectFluorescentAntibody;
     }
 
+    public String getPertussisDirectFluorescentAntibody() {
+        return pertussisDirectFluorescentAntibody;
+    }
+
     public String getPertussisMicroscopy() {
         return pertussisMicroscopy;
     }
@@ -9646,8 +19522,8 @@ public class CaseSampleExportDto implements Serializable {
         return pertussisNeutralizingAntibodies;
     }
 
-    public String getPertussisPcr() {
-        return pertussisPcr;
+    public String getPertussisPcrRtPcr() {
+        return pertussisPcrRtPcr;
     }
 
     public String getPertussisGramStain() {
@@ -9662,100 +19538,272 @@ public class CaseSampleExportDto implements Serializable {
         return pertussisCqValueDetection;
     }
 
-    public String getPertussisSeQuencing() {
-        return pertussisSeQuencing;
+    public String getPertussisSequencing() {
+        return pertussisSequencing;
     }
 
-    public String getPertussisDnaMicroArray() {
-        return pertussisDnaMicroArray;
+    public String getPertussisDnaMicroarray() {
+        return pertussisDnaMicroarray;
     }
 
     public String getPertussisOther() {
         return pertussisOther;
     }
 
-    public String getNeonatalAntiBodyDetection() {
-        return neonatalAntiBodyDetection;
+    public String getPertussisAntibodyDetectionDetails() {
+        return pertussisAntibodyDetectionDetails;
     }
 
-    public String getNeonatalAntigenDetection() {
-        return neonatalAntigenDetection;
+    public String getPertussisAntigenDetectionDetails() {
+        return pertussisAntigenDetectionDetails;
     }
 
-    public String getNeonatalRapidTest() {
-        return neonatalRapidTest;
+    public String getPertussisRapidTestDetails() {
+        return pertussisRapidTestDetails;
     }
 
-    public String getNeonatalCulture() {
-        return neonatalCulture;
+    public String getPertussisCultureDetails() {
+        return pertussisCultureDetails;
     }
 
-    public String getNeonatalHistopathology() {
-        return neonatalHistopathology;
+    public String getPertussisHistopathologyDetails() {
+        return pertussisHistopathologyDetails;
     }
 
-    public String getNeonatalIsolation() {
-        return neonatalIsolation;
+    public String getPertussisIsolationDetails() {
+        return pertussisIsolationDetails;
     }
 
-    public String getNeonatalIgmSerumAntibody() {
-        return neonatalIgmSerumAntibody;
+    public String getPertussisIgmSerumAntibodyDetails() {
+        return pertussisIgmSerumAntibodyDetails;
     }
 
-    public String getNeonatalIggSerumAntibody() {
-        return neonatalIggSerumAntibody;
+    public String getPertussisIggSerumAntibodyDetails() {
+        return pertussisIggSerumAntibodyDetails;
     }
 
-    public String getNeonatalIgaSerumAntibody() {
-        return neonatalIgaSerumAntibody;
+    public String getPertussisIgaSerumAntibodyDetails() {
+        return pertussisIgaSerumAntibodyDetails;
     }
 
-    public String getNeonatalIncubationTime() {
-        return neonatalIncubationTime;
+    public String getPertussisIncubationTimeDetails() {
+        return pertussisIncubationTimeDetails;
     }
 
-    public String getNeonatalIndirectFluorescentAntibody() {
-        return neonatalIndirectFluorescentAntibody;
+    public String getPertussisIndirectFluorescentAntibodyDetails() {
+        return pertussisIndirectFluorescentAntibodyDetails;
     }
 
-    public String getNeonatalMicroscopy() {
-        return neonatalMicroscopy;
+    public String getPertussisDirectFluorescentAntibodyDetails() {
+        return pertussisDirectFluorescentAntibodyDetails;
     }
 
-    public String getNeonatalNeutralizingAntibodies() {
-        return neonatalNeutralizingAntibodies;
+    public String getPertussisMicroscopyDetails() {
+        return pertussisMicroscopyDetails;
     }
 
-    public String getNeonatalPcr() {
-        return neonatalPcr;
+    public String getPertussisNeutralizingAntibodiesDetails() {
+        return pertussisNeutralizingAntibodiesDetails;
     }
 
-    public String getNeonatalGramStain() {
-        return neonatalGramStain;
+    public String getPertussisPcrRtPcrDetails() {
+        return pertussisPcrRtPcrDetails;
     }
 
-    public String getNeonatalLatexAgglutination() {
-        return neonatalLatexAgglutination;
+    public String getPertussisGramStainDetails() {
+        return pertussisGramStainDetails;
     }
 
-    public String getNeonatalCqValueDetection() {
-        return neonatalCqValueDetection;
+    public String getPertussisLatexAgglutinationDetails() {
+        return pertussisLatexAgglutinationDetails;
     }
 
-    public String getNeonatalSeQuencing() {
-        return neonatalSeQuencing;
+    public String getPertussisCqValueDetectionDetails() {
+        return pertussisCqValueDetectionDetails;
     }
 
-    public String getNeonatalDnaMicroArray() {
-        return neonatalDnaMicroArray;
+    public String getPertussisSequencingDetails() {
+        return pertussisSequencingDetails;
     }
 
-    public String getNeonatalOther() {
-        return neonatalOther;
+    public String getPertussisDnaMicroarrayDetails() {
+        return pertussisDnaMicroarrayDetails;
     }
 
-    public String getOnchocerciasisAntiBodyDetection() {
-        return onchocerciasisAntiBodyDetection;
+    public String getPertussisOtherDetails() {
+        return pertussisOtherDetails;
+    }
+
+    public String getNeonatalTetanusAntibodyDetection() {
+        return neonatalTetanusAntibodyDetection;
+    }
+
+    public String getNeonatalTetanusAntigenDetection() {
+        return neonatalTetanusAntigenDetection;
+    }
+
+    public String getNeonatalTetanusRapidTest() {
+        return neonatalTetanusRapidTest;
+    }
+
+    public String getNeonatalTetanusCulture() {
+        return neonatalTetanusCulture;
+    }
+
+    public String getNeonatalTetanusHistopathology() {
+        return neonatalTetanusHistopathology;
+    }
+
+    public String getNeonatalTetanusIsolation() {
+        return neonatalTetanusIsolation;
+    }
+
+    public String getNeonatalTetanusIgmSerumAntibody() {
+        return neonatalTetanusIgmSerumAntibody;
+    }
+
+    public String getNeonatalTetanusIggSerumAntibody() {
+        return neonatalTetanusIggSerumAntibody;
+    }
+
+    public String getNeonatalTetanusIgaSerumAntibody() {
+        return neonatalTetanusIgaSerumAntibody;
+    }
+
+    public String getNeonatalTetanusIncubationTime() {
+        return neonatalTetanusIncubationTime;
+    }
+
+    public String getNeonatalTetanusIndirectFluorescentAntibody() {
+        return neonatalTetanusIndirectFluorescentAntibody;
+    }
+
+    public String getNeonatalTetanusDirectFluorescentAntibody() {
+        return neonatalTetanusDirectFluorescentAntibody;
+    }
+
+    public String getNeonatalTetanusMicroscopy() {
+        return neonatalTetanusMicroscopy;
+    }
+
+    public String getNeonatalTetanusNeutralizingAntibodies() {
+        return neonatalTetanusNeutralizingAntibodies;
+    }
+
+    public String getNeonatalTetanusPcrRtPcr() {
+        return neonatalTetanusPcrRtPcr;
+    }
+
+    public String getNeonatalTetanusGramStain() {
+        return neonatalTetanusGramStain;
+    }
+
+    public String getNeonatalTetanusLatexAgglutination() {
+        return neonatalTetanusLatexAgglutination;
+    }
+
+    public String getNeonatalTetanusCqValueDetection() {
+        return neonatalTetanusCqValueDetection;
+    }
+
+    public String getNeonatalTetanusSequencing() {
+        return neonatalTetanusSequencing;
+    }
+
+    public String getNeonatalTetanusDnaMicroarray() {
+        return neonatalTetanusDnaMicroarray;
+    }
+
+    public String getNeonatalTetanusOther() {
+        return neonatalTetanusOther;
+    }
+
+    public String getNeonatalTetanusAntibodyDetectionDetails() {
+        return neonatalTetanusAntibodyDetectionDetails;
+    }
+
+    public String getNeonatalTetanusAntigenDetectionDetails() {
+        return neonatalTetanusAntigenDetectionDetails;
+    }
+
+    public String getNeonatalTetanusRapidTestDetails() {
+        return neonatalTetanusRapidTestDetails;
+    }
+
+    public String getNeonatalTetanusCultureDetails() {
+        return neonatalTetanusCultureDetails;
+    }
+
+    public String getNeonatalTetanusHistopathologyDetails() {
+        return neonatalTetanusHistopathologyDetails;
+    }
+
+    public String getNeonatalTetanusIsolationDetails() {
+        return neonatalTetanusIsolationDetails;
+    }
+
+    public String getNeonatalTetanusIgmSerumAntibodyDetails() {
+        return neonatalTetanusIgmSerumAntibodyDetails;
+    }
+
+    public String getNeonatalTetanusIggSerumAntibodyDetails() {
+        return neonatalTetanusIggSerumAntibodyDetails;
+    }
+
+    public String getNeonatalTetanusIgaSerumAntibodyDetails() {
+        return neonatalTetanusIgaSerumAntibodyDetails;
+    }
+
+    public String getNeonatalTetanusIncubationTimeDetails() {
+        return neonatalTetanusIncubationTimeDetails;
+    }
+
+    public String getNeonatalTetanusIndirectFluorescentAntibodyDetails() {
+        return neonatalTetanusIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getNeonatalTetanusDirectFluorescentAntibodyDetails() {
+        return neonatalTetanusDirectFluorescentAntibodyDetails;
+    }
+
+    public String getNeonatalTetanusMicroscopyDetails() {
+        return neonatalTetanusMicroscopyDetails;
+    }
+
+    public String getNeonatalTetanusNeutralizingAntibodiesDetails() {
+        return neonatalTetanusNeutralizingAntibodiesDetails;
+    }
+
+    public String getNeonatalTetanusPcrRtPcrDetails() {
+        return neonatalTetanusPcrRtPcrDetails;
+    }
+
+    public String getNeonatalTetanusGramStainDetails() {
+        return neonatalTetanusGramStainDetails;
+    }
+
+    public String getNeonatalTetanusLatexAgglutinationDetails() {
+        return neonatalTetanusLatexAgglutinationDetails;
+    }
+
+    public String getNeonatalTetanusCqValueDetectionDetails() {
+        return neonatalTetanusCqValueDetectionDetails;
+    }
+
+    public String getNeonatalTetanusSequencingDetails() {
+        return neonatalTetanusSequencingDetails;
+    }
+
+    public String getNeonatalTetanusDnaMicroarrayDetails() {
+        return neonatalTetanusDnaMicroarrayDetails;
+    }
+
+    public String getNeonatalTetanusOtherDetails() {
+        return neonatalTetanusOtherDetails;
+    }
+
+    public String getOnchocerciasisAntibodyDetection() {
+        return onchocerciasisAntibodyDetection;
     }
 
     public String getOnchocerciasisAntigenDetection() {
@@ -9798,6 +19846,10 @@ public class CaseSampleExportDto implements Serializable {
         return onchocerciasisIndirectFluorescentAntibody;
     }
 
+    public String getOnchocerciasisDirectFluorescentAntibody() {
+        return onchocerciasisDirectFluorescentAntibody;
+    }
+
     public String getOnchocerciasisMicroscopy() {
         return onchocerciasisMicroscopy;
     }
@@ -9806,8 +19858,8 @@ public class CaseSampleExportDto implements Serializable {
         return onchocerciasisNeutralizingAntibodies;
     }
 
-    public String getOnchocerciasisPcr() {
-        return onchocerciasisPcr;
+    public String getOnchocerciasisPcrRtPcr() {
+        return onchocerciasisPcrRtPcr;
     }
 
     public String getOnchocerciasisGramStain() {
@@ -9822,100 +19874,272 @@ public class CaseSampleExportDto implements Serializable {
         return onchocerciasisCqValueDetection;
     }
 
-    public String getOnchocerciasisSeQuencing() {
-        return onchocerciasisSeQuencing;
+    public String getOnchocerciasisSequencing() {
+        return onchocerciasisSequencing;
     }
 
-    public String getOnchocerciasisDnaMicroArray() {
-        return onchocerciasisDnaMicroArray;
+    public String getOnchocerciasisDnaMicroarray() {
+        return onchocerciasisDnaMicroarray;
     }
 
     public String getOnchocerciasisOther() {
         return onchocerciasisOther;
     }
 
-    public String getDiphtheriaAntiBodyDetection() {
-        return diphtheriaAntiBodyDetection;
+    public String getOnchocerciasisAntibodyDetectionDetails() {
+        return onchocerciasisAntibodyDetectionDetails;
     }
 
-    public String getDiphtheriaAntigenDetection() {
-        return diphtheriaAntigenDetection;
+    public String getOnchocerciasisAntigenDetectionDetails() {
+        return onchocerciasisAntigenDetectionDetails;
     }
 
-    public String getDiphtheriaRapidTest() {
-        return diphtheriaRapidTest;
+    public String getOnchocerciasisRapidTestDetails() {
+        return onchocerciasisRapidTestDetails;
     }
 
-    public String getDiphtheriaCulture() {
-        return diphtheriaCulture;
+    public String getOnchocerciasisCultureDetails() {
+        return onchocerciasisCultureDetails;
     }
 
-    public String getDiphtheriaHistopathology() {
-        return diphtheriaHistopathology;
+    public String getOnchocerciasisHistopathologyDetails() {
+        return onchocerciasisHistopathologyDetails;
     }
 
-    public String getDiphtheriaIsolation() {
-        return diphtheriaIsolation;
+    public String getOnchocerciasisIsolationDetails() {
+        return onchocerciasisIsolationDetails;
     }
 
-    public String getDiphtheriaIgmSerumAntibody() {
-        return diphtheriaIgmSerumAntibody;
+    public String getOnchocerciasisIgmSerumAntibodyDetails() {
+        return onchocerciasisIgmSerumAntibodyDetails;
     }
 
-    public String getDiphtheriaIggSerumAntibody() {
-        return diphtheriaIggSerumAntibody;
+    public String getOnchocerciasisIggSerumAntibodyDetails() {
+        return onchocerciasisIggSerumAntibodyDetails;
     }
 
-    public String getDiphtheriaIgaSerumAntibody() {
-        return diphtheriaIgaSerumAntibody;
+    public String getOnchocerciasisIgaSerumAntibodyDetails() {
+        return onchocerciasisIgaSerumAntibodyDetails;
     }
 
-    public String getDiphtheriaIncubationTime() {
-        return diphtheriaIncubationTime;
+    public String getOnchocerciasisIncubationTimeDetails() {
+        return onchocerciasisIncubationTimeDetails;
     }
 
-    public String getDiphtheriaIndirectFluorescentAntibody() {
-        return diphtheriaIndirectFluorescentAntibody;
+    public String getOnchocerciasisIndirectFluorescentAntibodyDetails() {
+        return onchocerciasisIndirectFluorescentAntibodyDetails;
     }
 
-    public String getDiphtheriaMicroscopy() {
-        return diphtheriaMicroscopy;
+    public String getOnchocerciasisDirectFluorescentAntibodyDetails() {
+        return onchocerciasisDirectFluorescentAntibodyDetails;
     }
 
-    public String getDiphtheriaNeutralizingAntibodies() {
-        return diphtheriaNeutralizingAntibodies;
+    public String getOnchocerciasisMicroscopyDetails() {
+        return onchocerciasisMicroscopyDetails;
     }
 
-    public String getDiphtheriaPcr() {
-        return diphtheriaPcr;
+    public String getOnchocerciasisNeutralizingAntibodiesDetails() {
+        return onchocerciasisNeutralizingAntibodiesDetails;
     }
 
-    public String getDiphtheriaGramStain() {
-        return diphtheriaGramStain;
+    public String getOnchocerciasisPcrRtPcrDetails() {
+        return onchocerciasisPcrRtPcrDetails;
     }
 
-    public String getDiphtheriaLatexAgglutination() {
-        return diphtheriaLatexAgglutination;
+    public String getOnchocerciasisGramStainDetails() {
+        return onchocerciasisGramStainDetails;
     }
 
-    public String getDiphtheriaCqValueDetection() {
-        return diphtheriaCqValueDetection;
+    public String getOnchocerciasisLatexAgglutinationDetails() {
+        return onchocerciasisLatexAgglutinationDetails;
     }
 
-    public String getDiphtheriaSeQuencing() {
-        return diphtheriaSeQuencing;
+    public String getOnchocerciasisCqValueDetectionDetails() {
+        return onchocerciasisCqValueDetectionDetails;
     }
 
-    public String getDiphtheriaDnaMicroArray() {
-        return diphtheriaDnaMicroArray;
+    public String getOnchocerciasisSequencingDetails() {
+        return onchocerciasisSequencingDetails;
     }
 
-    public String getDiphtheriaOther() {
-        return diphtheriaOther;
+    public String getOnchocerciasisDnaMicroarrayDetails() {
+        return onchocerciasisDnaMicroarrayDetails;
     }
 
-    public String getTrachomaAntiBodyDetection() {
-        return trachomaAntiBodyDetection;
+    public String getOnchocerciasisOtherDetails() {
+        return onchocerciasisOtherDetails;
+    }
+
+    public String getDiphteriaAntibodyDetection() {
+        return diphteriaAntibodyDetection;
+    }
+
+    public String getDiphteriaAntigenDetection() {
+        return diphteriaAntigenDetection;
+    }
+
+    public String getDiphteriaRapidTest() {
+        return diphteriaRapidTest;
+    }
+
+    public String getDiphteriaCulture() {
+        return diphteriaCulture;
+    }
+
+    public String getDiphteriaHistopathology() {
+        return diphteriaHistopathology;
+    }
+
+    public String getDiphteriaIsolation() {
+        return diphteriaIsolation;
+    }
+
+    public String getDiphteriaIgmSerumAntibody() {
+        return diphteriaIgmSerumAntibody;
+    }
+
+    public String getDiphteriaIggSerumAntibody() {
+        return diphteriaIggSerumAntibody;
+    }
+
+    public String getDiphteriaIgaSerumAntibody() {
+        return diphteriaIgaSerumAntibody;
+    }
+
+    public String getDiphteriaIncubationTime() {
+        return diphteriaIncubationTime;
+    }
+
+    public String getDiphteriaIndirectFluorescentAntibody() {
+        return diphteriaIndirectFluorescentAntibody;
+    }
+
+    public String getDiphteriaDirectFluorescentAntibody() {
+        return diphteriaDirectFluorescentAntibody;
+    }
+
+    public String getDiphteriaMicroscopy() {
+        return diphteriaMicroscopy;
+    }
+
+    public String getDiphteriaNeutralizingAntibodies() {
+        return diphteriaNeutralizingAntibodies;
+    }
+
+    public String getDiphteriaPcrRtPcr() {
+        return diphteriaPcrRtPcr;
+    }
+
+    public String getDiphteriaGramStain() {
+        return diphteriaGramStain;
+    }
+
+    public String getDiphteriaLatexAgglutination() {
+        return diphteriaLatexAgglutination;
+    }
+
+    public String getDiphteriaCqValueDetection() {
+        return diphteriaCqValueDetection;
+    }
+
+    public String getDiphteriaSequencing() {
+        return diphteriaSequencing;
+    }
+
+    public String getDiphteriaDnaMicroarray() {
+        return diphteriaDnaMicroarray;
+    }
+
+    public String getDiphteriaOther() {
+        return diphteriaOther;
+    }
+
+    public String getDiphteriaAntibodyDetectionDetails() {
+        return diphteriaAntibodyDetectionDetails;
+    }
+
+    public String getDiphteriaAntigenDetectionDetails() {
+        return diphteriaAntigenDetectionDetails;
+    }
+
+    public String getDiphteriaRapidTestDetails() {
+        return diphteriaRapidTestDetails;
+    }
+
+    public String getDiphteriaCultureDetails() {
+        return diphteriaCultureDetails;
+    }
+
+    public String getDiphteriaHistopathologyDetails() {
+        return diphteriaHistopathologyDetails;
+    }
+
+    public String getDiphteriaIsolationDetails() {
+        return diphteriaIsolationDetails;
+    }
+
+    public String getDiphteriaIgmSerumAntibodyDetails() {
+        return diphteriaIgmSerumAntibodyDetails;
+    }
+
+    public String getDiphteriaIggSerumAntibodyDetails() {
+        return diphteriaIggSerumAntibodyDetails;
+    }
+
+    public String getDiphteriaIgaSerumAntibodyDetails() {
+        return diphteriaIgaSerumAntibodyDetails;
+    }
+
+    public String getDiphteriaIncubationTimeDetails() {
+        return diphteriaIncubationTimeDetails;
+    }
+
+    public String getDiphteriaIndirectFluorescentAntibodyDetails() {
+        return diphteriaIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getDiphteriaDirectFluorescentAntibodyDetails() {
+        return diphteriaDirectFluorescentAntibodyDetails;
+    }
+
+    public String getDiphteriaMicroscopyDetails() {
+        return diphteriaMicroscopyDetails;
+    }
+
+    public String getDiphteriaNeutralizingAntibodiesDetails() {
+        return diphteriaNeutralizingAntibodiesDetails;
+    }
+
+    public String getDiphteriaPcrRtPcrDetails() {
+        return diphteriaPcrRtPcrDetails;
+    }
+
+    public String getDiphteriaGramStainDetails() {
+        return diphteriaGramStainDetails;
+    }
+
+    public String getDiphteriaLatexAgglutinationDetails() {
+        return diphteriaLatexAgglutinationDetails;
+    }
+
+    public String getDiphteriaCqValueDetectionDetails() {
+        return diphteriaCqValueDetectionDetails;
+    }
+
+    public String getDiphteriaSequencingDetails() {
+        return diphteriaSequencingDetails;
+    }
+
+    public String getDiphteriaDnaMicroarrayDetails() {
+        return diphteriaDnaMicroarrayDetails;
+    }
+
+    public String getDiphteriaOtherDetails() {
+        return diphteriaOtherDetails;
+    }
+
+    public String getTrachomaAntibodyDetection() {
+        return trachomaAntibodyDetection;
     }
 
     public String getTrachomaAntigenDetection() {
@@ -9958,6 +20182,10 @@ public class CaseSampleExportDto implements Serializable {
         return trachomaIndirectFluorescentAntibody;
     }
 
+    public String getTrachomaDirectFluorescentAntibody() {
+        return trachomaDirectFluorescentAntibody;
+    }
+
     public String getTrachomaMicroscopy() {
         return trachomaMicroscopy;
     }
@@ -9966,8 +20194,8 @@ public class CaseSampleExportDto implements Serializable {
         return trachomaNeutralizingAntibodies;
     }
 
-    public String getTrachomaPcr() {
-        return trachomaPcr;
+    public String getTrachomaPcrRtPcr() {
+        return trachomaPcrRtPcr;
     }
 
     public String getTrachomaGramStain() {
@@ -9982,20 +20210,104 @@ public class CaseSampleExportDto implements Serializable {
         return trachomaCqValueDetection;
     }
 
-    public String getTrachomaSeQuencing() {
-        return trachomaSeQuencing;
+    public String getTrachomaSequencing() {
+        return trachomaSequencing;
     }
 
-    public String getTrachomaDnaMicroArray() {
-        return trachomaDnaMicroArray;
+    public String getTrachomaDnaMicroarray() {
+        return trachomaDnaMicroarray;
     }
 
     public String getTrachomaOther() {
         return trachomaOther;
     }
 
-    public String getYawsEndemicSyphilisAntiBodyDetection() {
-        return yawsEndemicSyphilisAntiBodyDetection;
+    public String getTrachomaAntibodyDetectionDetails() {
+        return trachomaAntibodyDetectionDetails;
+    }
+
+    public String getTrachomaAntigenDetectionDetails() {
+        return trachomaAntigenDetectionDetails;
+    }
+
+    public String getTrachomaRapidTestDetails() {
+        return trachomaRapidTestDetails;
+    }
+
+    public String getTrachomaCultureDetails() {
+        return trachomaCultureDetails;
+    }
+
+    public String getTrachomaHistopathologyDetails() {
+        return trachomaHistopathologyDetails;
+    }
+
+    public String getTrachomaIsolationDetails() {
+        return trachomaIsolationDetails;
+    }
+
+    public String getTrachomaIgmSerumAntibodyDetails() {
+        return trachomaIgmSerumAntibodyDetails;
+    }
+
+    public String getTrachomaIggSerumAntibodyDetails() {
+        return trachomaIggSerumAntibodyDetails;
+    }
+
+    public String getTrachomaIgaSerumAntibodyDetails() {
+        return trachomaIgaSerumAntibodyDetails;
+    }
+
+    public String getTrachomaIncubationTimeDetails() {
+        return trachomaIncubationTimeDetails;
+    }
+
+    public String getTrachomaIndirectFluorescentAntibodyDetails() {
+        return trachomaIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getTrachomaDirectFluorescentAntibodyDetails() {
+        return trachomaDirectFluorescentAntibodyDetails;
+    }
+
+    public String getTrachomaMicroscopyDetails() {
+        return trachomaMicroscopyDetails;
+    }
+
+    public String getTrachomaNeutralizingAntibodiesDetails() {
+        return trachomaNeutralizingAntibodiesDetails;
+    }
+
+    public String getTrachomaPcrRtPcrDetails() {
+        return trachomaPcrRtPcrDetails;
+    }
+
+    public String getTrachomaGramStainDetails() {
+        return trachomaGramStainDetails;
+    }
+
+    public String getTrachomaLatexAgglutinationDetails() {
+        return trachomaLatexAgglutinationDetails;
+    }
+
+    public String getTrachomaCqValueDetectionDetails() {
+        return trachomaCqValueDetectionDetails;
+    }
+
+    public String getTrachomaSequencingDetails() {
+        return trachomaSequencingDetails;
+    }
+
+    public String getTrachomaDnaMicroarrayDetails() {
+        return trachomaDnaMicroarrayDetails;
+    }
+
+    public String getTrachomaOtherDetails() {
+        return trachomaOtherDetails;
+    }
+
+    public String getYawsEndemicSyphilisAntibodyDetection() {
+        return yawsEndemicSyphilisAntibodyDetection;
     }
 
     public String getYawsEndemicSyphilisAntigenDetection() {
@@ -10038,6 +20350,10 @@ public class CaseSampleExportDto implements Serializable {
         return yawsEndemicSyphilisIndirectFluorescentAntibody;
     }
 
+    public String getYawsEndemicSyphilisDirectFluorescentAntibody() {
+        return yawsEndemicSyphilisDirectFluorescentAntibody;
+    }
+
     public String getYawsEndemicSyphilisMicroscopy() {
         return yawsEndemicSyphilisMicroscopy;
     }
@@ -10046,8 +20362,8 @@ public class CaseSampleExportDto implements Serializable {
         return yawsEndemicSyphilisNeutralizingAntibodies;
     }
 
-    public String getYawsEndemicSyphilisPcr() {
-        return yawsEndemicSyphilisPcr;
+    public String getYawsEndemicSyphilisPcrRtPcr() {
+        return yawsEndemicSyphilisPcrRtPcr;
     }
 
     public String getYawsEndemicSyphilisGramStain() {
@@ -10062,20 +20378,104 @@ public class CaseSampleExportDto implements Serializable {
         return yawsEndemicSyphilisCqValueDetection;
     }
 
-    public String getYawsEndemicSyphilisSeQuencing() {
-        return yawsEndemicSyphilisSeQuencing;
+    public String getYawsEndemicSyphilisSequencing() {
+        return yawsEndemicSyphilisSequencing;
     }
 
-    public String getYawsEndemicSyphilisDnaMicroArray() {
-        return yawsEndemicSyphilisDnaMicroArray;
+    public String getYawsEndemicSyphilisDnaMicroarray() {
+        return yawsEndemicSyphilisDnaMicroarray;
     }
 
     public String getYawsEndemicSyphilisOther() {
         return yawsEndemicSyphilisOther;
     }
 
-    public String getMaternalDeathsAntiBodyDetection() {
-        return maternalDeathsAntiBodyDetection;
+    public String getYawsEndemicSyphilisAntibodyDetectionDetails() {
+        return yawsEndemicSyphilisAntibodyDetectionDetails;
+    }
+
+    public String getYawsEndemicSyphilisAntigenDetectionDetails() {
+        return yawsEndemicSyphilisAntigenDetectionDetails;
+    }
+
+    public String getYawsEndemicSyphilisRapidTestDetails() {
+        return yawsEndemicSyphilisRapidTestDetails;
+    }
+
+    public String getYawsEndemicSyphilisCultureDetails() {
+        return yawsEndemicSyphilisCultureDetails;
+    }
+
+    public String getYawsEndemicSyphilisHistopathologyDetails() {
+        return yawsEndemicSyphilisHistopathologyDetails;
+    }
+
+    public String getYawsEndemicSyphilisIsolationDetails() {
+        return yawsEndemicSyphilisIsolationDetails;
+    }
+
+    public String getYawsEndemicSyphilisIgmSerumAntibodyDetails() {
+        return yawsEndemicSyphilisIgmSerumAntibodyDetails;
+    }
+
+    public String getYawsEndemicSyphilisIggSerumAntibodyDetails() {
+        return yawsEndemicSyphilisIggSerumAntibodyDetails;
+    }
+
+    public String getYawsEndemicSyphilisIgaSerumAntibodyDetails() {
+        return yawsEndemicSyphilisIgaSerumAntibodyDetails;
+    }
+
+    public String getYawsEndemicSyphilisIncubationTimeDetails() {
+        return yawsEndemicSyphilisIncubationTimeDetails;
+    }
+
+    public String getYawsEndemicSyphilisIndirectFluorescentAntibodyDetails() {
+        return yawsEndemicSyphilisIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getYawsEndemicSyphilisDirectFluorescentAntibodyDetails() {
+        return yawsEndemicSyphilisDirectFluorescentAntibodyDetails;
+    }
+
+    public String getYawsEndemicSyphilisMicroscopyDetails() {
+        return yawsEndemicSyphilisMicroscopyDetails;
+    }
+
+    public String getYawsEndemicSyphilisNeutralizingAntibodiesDetails() {
+        return yawsEndemicSyphilisNeutralizingAntibodiesDetails;
+    }
+
+    public String getYawsEndemicSyphilisPcrRtPcrDetails() {
+        return yawsEndemicSyphilisPcrRtPcrDetails;
+    }
+
+    public String getYawsEndemicSyphilisGramStainDetails() {
+        return yawsEndemicSyphilisGramStainDetails;
+    }
+
+    public String getYawsEndemicSyphilisLatexAgglutinationDetails() {
+        return yawsEndemicSyphilisLatexAgglutinationDetails;
+    }
+
+    public String getYawsEndemicSyphilisCqValueDetectionDetails() {
+        return yawsEndemicSyphilisCqValueDetectionDetails;
+    }
+
+    public String getYawsEndemicSyphilisSequencingDetails() {
+        return yawsEndemicSyphilisSequencingDetails;
+    }
+
+    public String getYawsEndemicSyphilisDnaMicroarrayDetails() {
+        return yawsEndemicSyphilisDnaMicroarrayDetails;
+    }
+
+    public String getYawsEndemicSyphilisOtherDetails() {
+        return yawsEndemicSyphilisOtherDetails;
+    }
+
+    public String getMaternalDeathsAntibodyDetection() {
+        return maternalDeathsAntibodyDetection;
     }
 
     public String getMaternalDeathsAntigenDetection() {
@@ -10118,6 +20518,10 @@ public class CaseSampleExportDto implements Serializable {
         return maternalDeathsIndirectFluorescentAntibody;
     }
 
+    public String getMaternalDeathsDirectFluorescentAntibody() {
+        return maternalDeathsDirectFluorescentAntibody;
+    }
+
     public String getMaternalDeathsMicroscopy() {
         return maternalDeathsMicroscopy;
     }
@@ -10126,8 +20530,8 @@ public class CaseSampleExportDto implements Serializable {
         return maternalDeathsNeutralizingAntibodies;
     }
 
-    public String getMaternalDeathsPcr() {
-        return maternalDeathsPcr;
+    public String getMaternalDeathsPcrRtPcr() {
+        return maternalDeathsPcrRtPcr;
     }
 
     public String getMaternalDeathsGramStain() {
@@ -10142,20 +20546,104 @@ public class CaseSampleExportDto implements Serializable {
         return maternalDeathsCqValueDetection;
     }
 
-    public String getMaternalDeathsSeQuencing() {
-        return maternalDeathsSeQuencing;
+    public String getMaternalDeathsSequencing() {
+        return maternalDeathsSequencing;
     }
 
-    public String getMaternalDeathsDnaMicroArray() {
-        return maternalDeathsDnaMicroArray;
+    public String getMaternalDeathsDnaMicroarray() {
+        return maternalDeathsDnaMicroarray;
     }
 
     public String getMaternalDeathsOther() {
         return maternalDeathsOther;
     }
 
-    public String getPerinatalDeathsAntiBodyDetection() {
-        return perinatalDeathsAntiBodyDetection;
+    public String getMaternalDeathsAntibodyDetectionDetails() {
+        return maternalDeathsAntibodyDetectionDetails;
+    }
+
+    public String getMaternalDeathsAntigenDetectionDetails() {
+        return maternalDeathsAntigenDetectionDetails;
+    }
+
+    public String getMaternalDeathsRapidTestDetails() {
+        return maternalDeathsRapidTestDetails;
+    }
+
+    public String getMaternalDeathsCultureDetails() {
+        return maternalDeathsCultureDetails;
+    }
+
+    public String getMaternalDeathsHistopathologyDetails() {
+        return maternalDeathsHistopathologyDetails;
+    }
+
+    public String getMaternalDeathsIsolationDetails() {
+        return maternalDeathsIsolationDetails;
+    }
+
+    public String getMaternalDeathsIgmSerumAntibodyDetails() {
+        return maternalDeathsIgmSerumAntibodyDetails;
+    }
+
+    public String getMaternalDeathsIggSerumAntibodyDetails() {
+        return maternalDeathsIggSerumAntibodyDetails;
+    }
+
+    public String getMaternalDeathsIgaSerumAntibodyDetails() {
+        return maternalDeathsIgaSerumAntibodyDetails;
+    }
+
+    public String getMaternalDeathsIncubationTimeDetails() {
+        return maternalDeathsIncubationTimeDetails;
+    }
+
+    public String getMaternalDeathsIndirectFluorescentAntibodyDetails() {
+        return maternalDeathsIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getMaternalDeathsDirectFluorescentAntibodyDetails() {
+        return maternalDeathsDirectFluorescentAntibodyDetails;
+    }
+
+    public String getMaternalDeathsMicroscopyDetails() {
+        return maternalDeathsMicroscopyDetails;
+    }
+
+    public String getMaternalDeathsNeutralizingAntibodiesDetails() {
+        return maternalDeathsNeutralizingAntibodiesDetails;
+    }
+
+    public String getMaternalDeathsPcrRtPcrDetails() {
+        return maternalDeathsPcrRtPcrDetails;
+    }
+
+    public String getMaternalDeathsGramStainDetails() {
+        return maternalDeathsGramStainDetails;
+    }
+
+    public String getMaternalDeathsLatexAgglutinationDetails() {
+        return maternalDeathsLatexAgglutinationDetails;
+    }
+
+    public String getMaternalDeathsCqValueDetectionDetails() {
+        return maternalDeathsCqValueDetectionDetails;
+    }
+
+    public String getMaternalDeathsSequencingDetails() {
+        return maternalDeathsSequencingDetails;
+    }
+
+    public String getMaternalDeathsDnaMicroarrayDetails() {
+        return maternalDeathsDnaMicroarrayDetails;
+    }
+
+    public String getMaternalDeathsOtherDetails() {
+        return maternalDeathsOtherDetails;
+    }
+
+    public String getPerinatalDeathsAntibodyDetection() {
+        return perinatalDeathsAntibodyDetection;
     }
 
     public String getPerinatalDeathsAntigenDetection() {
@@ -10198,6 +20686,10 @@ public class CaseSampleExportDto implements Serializable {
         return perinatalDeathsIndirectFluorescentAntibody;
     }
 
+    public String getPerinatalDeathsDirectFluorescentAntibody() {
+        return perinatalDeathsDirectFluorescentAntibody;
+    }
+
     public String getPerinatalDeathsMicroscopy() {
         return perinatalDeathsMicroscopy;
     }
@@ -10206,8 +20698,8 @@ public class CaseSampleExportDto implements Serializable {
         return perinatalDeathsNeutralizingAntibodies;
     }
 
-    public String getPerinatalDeathsPcr() {
-        return perinatalDeathsPcr;
+    public String getPerinatalDeathsPcrRtPcr() {
+        return perinatalDeathsPcrRtPcr;
     }
 
     public String getPerinatalDeathsGramStain() {
@@ -10222,20 +20714,104 @@ public class CaseSampleExportDto implements Serializable {
         return perinatalDeathsCqValueDetection;
     }
 
-    public String getPerinatalDeathsSeQuencing() {
-        return perinatalDeathsSeQuencing;
+    public String getPerinatalDeathsSequencing() {
+        return perinatalDeathsSequencing;
     }
 
-    public String getPerinatalDeathsDnaMicroArray() {
-        return perinatalDeathsDnaMicroArray;
+    public String getPerinatalDeathsDnaMicroarray() {
+        return perinatalDeathsDnaMicroarray;
     }
 
     public String getPerinatalDeathsOther() {
         return perinatalDeathsOther;
     }
 
-    public String getInfluenzaAAntiBodyDetection() {
-        return influenzaAAntiBodyDetection;
+    public String getPerinatalDeathsAntibodyDetectionDetails() {
+        return perinatalDeathsAntibodyDetectionDetails;
+    }
+
+    public String getPerinatalDeathsAntigenDetectionDetails() {
+        return perinatalDeathsAntigenDetectionDetails;
+    }
+
+    public String getPerinatalDeathsRapidTestDetails() {
+        return perinatalDeathsRapidTestDetails;
+    }
+
+    public String getPerinatalDeathsCultureDetails() {
+        return perinatalDeathsCultureDetails;
+    }
+
+    public String getPerinatalDeathsHistopathologyDetails() {
+        return perinatalDeathsHistopathologyDetails;
+    }
+
+    public String getPerinatalDeathsIsolationDetails() {
+        return perinatalDeathsIsolationDetails;
+    }
+
+    public String getPerinatalDeathsIgmSerumAntibodyDetails() {
+        return perinatalDeathsIgmSerumAntibodyDetails;
+    }
+
+    public String getPerinatalDeathsIggSerumAntibodyDetails() {
+        return perinatalDeathsIggSerumAntibodyDetails;
+    }
+
+    public String getPerinatalDeathsIgaSerumAntibodyDetails() {
+        return perinatalDeathsIgaSerumAntibodyDetails;
+    }
+
+    public String getPerinatalDeathsIncubationTimeDetails() {
+        return perinatalDeathsIncubationTimeDetails;
+    }
+
+    public String getPerinatalDeathsIndirectFluorescentAntibodyDetails() {
+        return perinatalDeathsIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getPerinatalDeathsDirectFluorescentAntibodyDetails() {
+        return perinatalDeathsDirectFluorescentAntibodyDetails;
+    }
+
+    public String getPerinatalDeathsMicroscopyDetails() {
+        return perinatalDeathsMicroscopyDetails;
+    }
+
+    public String getPerinatalDeathsNeutralizingAntibodiesDetails() {
+        return perinatalDeathsNeutralizingAntibodiesDetails;
+    }
+
+    public String getPerinatalDeathsPcrRtPcrDetails() {
+        return perinatalDeathsPcrRtPcrDetails;
+    }
+
+    public String getPerinatalDeathsGramStainDetails() {
+        return perinatalDeathsGramStainDetails;
+    }
+
+    public String getPerinatalDeathsLatexAgglutinationDetails() {
+        return perinatalDeathsLatexAgglutinationDetails;
+    }
+
+    public String getPerinatalDeathsCqValueDetectionDetails() {
+        return perinatalDeathsCqValueDetectionDetails;
+    }
+
+    public String getPerinatalDeathsSequencingDetails() {
+        return perinatalDeathsSequencingDetails;
+    }
+
+    public String getPerinatalDeathsDnaMicroarrayDetails() {
+        return perinatalDeathsDnaMicroarrayDetails;
+    }
+
+    public String getPerinatalDeathsOtherDetails() {
+        return perinatalDeathsOtherDetails;
+    }
+
+    public String getInfluenzaAAntibodyDetection() {
+        return influenzaAAntibodyDetection;
     }
 
     public String getInfluenzaAAntigenDetection() {
@@ -10278,6 +20854,10 @@ public class CaseSampleExportDto implements Serializable {
         return influenzaAIndirectFluorescentAntibody;
     }
 
+    public String getInfluenzaADirectFluorescentAntibody() {
+        return influenzaADirectFluorescentAntibody;
+    }
+
     public String getInfluenzaAMicroscopy() {
         return influenzaAMicroscopy;
     }
@@ -10286,8 +20866,8 @@ public class CaseSampleExportDto implements Serializable {
         return influenzaANeutralizingAntibodies;
     }
 
-    public String getInfluenzaAPcr() {
-        return influenzaAPcr;
+    public String getInfluenzaAPcrRtPcr() {
+        return influenzaAPcrRtPcr;
     }
 
     public String getInfluenzaAGramStain() {
@@ -10302,20 +20882,104 @@ public class CaseSampleExportDto implements Serializable {
         return influenzaACqValueDetection;
     }
 
-    public String getInfluenzaASeQuencing() {
-        return influenzaASeQuencing;
+    public String getInfluenzaASequencing() {
+        return influenzaASequencing;
     }
 
-    public String getInfluenzaADnaMicroArray() {
-        return influenzaADnaMicroArray;
+    public String getInfluenzaADnaMicroarray() {
+        return influenzaADnaMicroarray;
     }
 
     public String getInfluenzaAOther() {
         return influenzaAOther;
     }
 
-    public String getInfluenzaBAntiBodyDetection() {
-        return influenzaBAntiBodyDetection;
+    public String getInfluenzaAAntibodyDetectionDetails() {
+        return influenzaAAntibodyDetectionDetails;
+    }
+
+    public String getInfluenzaAAntigenDetectionDetails() {
+        return influenzaAAntigenDetectionDetails;
+    }
+
+    public String getInfluenzaARapidTestDetails() {
+        return influenzaARapidTestDetails;
+    }
+
+    public String getInfluenzaACultureDetails() {
+        return influenzaACultureDetails;
+    }
+
+    public String getInfluenzaAHistopathologyDetails() {
+        return influenzaAHistopathologyDetails;
+    }
+
+    public String getInfluenzaAIsolationDetails() {
+        return influenzaAIsolationDetails;
+    }
+
+    public String getInfluenzaAIgmSerumAntibodyDetails() {
+        return influenzaAIgmSerumAntibodyDetails;
+    }
+
+    public String getInfluenzaAIggSerumAntibodyDetails() {
+        return influenzaAIggSerumAntibodyDetails;
+    }
+
+    public String getInfluenzaAIgaSerumAntibodyDetails() {
+        return influenzaAIgaSerumAntibodyDetails;
+    }
+
+    public String getInfluenzaAIncubationTimeDetails() {
+        return influenzaAIncubationTimeDetails;
+    }
+
+    public String getInfluenzaAIndirectFluorescentAntibodyDetails() {
+        return influenzaAIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getInfluenzaADirectFluorescentAntibodyDetails() {
+        return influenzaADirectFluorescentAntibodyDetails;
+    }
+
+    public String getInfluenzaAMicroscopyDetails() {
+        return influenzaAMicroscopyDetails;
+    }
+
+    public String getInfluenzaANeutralizingAntibodiesDetails() {
+        return influenzaANeutralizingAntibodiesDetails;
+    }
+
+    public String getInfluenzaAPcrRtPcrDetails() {
+        return influenzaAPcrRtPcrDetails;
+    }
+
+    public String getInfluenzaAGramStainDetails() {
+        return influenzaAGramStainDetails;
+    }
+
+    public String getInfluenzaALatexAgglutinationDetails() {
+        return influenzaALatexAgglutinationDetails;
+    }
+
+    public String getInfluenzaACqValueDetectionDetails() {
+        return influenzaACqValueDetectionDetails;
+    }
+
+    public String getInfluenzaASequencingDetails() {
+        return influenzaASequencingDetails;
+    }
+
+    public String getInfluenzaADnaMicroarrayDetails() {
+        return influenzaADnaMicroarrayDetails;
+    }
+
+    public String getInfluenzaAOtherDetails() {
+        return influenzaAOtherDetails;
+    }
+
+    public String getInfluenzaBAntibodyDetection() {
+        return influenzaBAntibodyDetection;
     }
 
     public String getInfluenzaBAntigenDetection() {
@@ -10358,6 +21022,10 @@ public class CaseSampleExportDto implements Serializable {
         return influenzaBIndirectFluorescentAntibody;
     }
 
+    public String getInfluenzaBDirectFluorescentAntibody() {
+        return influenzaBDirectFluorescentAntibody;
+    }
+
     public String getInfluenzaBMicroscopy() {
         return influenzaBMicroscopy;
     }
@@ -10366,8 +21034,8 @@ public class CaseSampleExportDto implements Serializable {
         return influenzaBNeutralizingAntibodies;
     }
 
-    public String getInfluenzaBPcr() {
-        return influenzaBPcr;
+    public String getInfluenzaBPcrRtPcr() {
+        return influenzaBPcrRtPcr;
     }
 
     public String getInfluenzaBGramStain() {
@@ -10382,100 +21050,272 @@ public class CaseSampleExportDto implements Serializable {
         return influenzaBCqValueDetection;
     }
 
-    public String getInfluenzaBSeQuencing() {
-        return influenzaBSeQuencing;
+    public String getInfluenzaBSequencing() {
+        return influenzaBSequencing;
     }
 
-    public String getInfluenzaBDnaMicroArray() {
-        return influenzaBDnaMicroArray;
+    public String getInfluenzaBDnaMicroarray() {
+        return influenzaBDnaMicroarray;
     }
 
     public String getInfluenzaBOther() {
         return influenzaBOther;
     }
 
-    public String gethMetapneumovirusAntiBodyDetection() {
-        return hMetapneumovirusAntiBodyDetection;
+    public String getInfluenzaBAntibodyDetectionDetails() {
+        return influenzaBAntibodyDetectionDetails;
     }
 
-    public String gethMetapneumovirusAntigenDetection() {
+    public String getInfluenzaBAntigenDetectionDetails() {
+        return influenzaBAntigenDetectionDetails;
+    }
+
+    public String getInfluenzaBRapidTestDetails() {
+        return influenzaBRapidTestDetails;
+    }
+
+    public String getInfluenzaBCultureDetails() {
+        return influenzaBCultureDetails;
+    }
+
+    public String getInfluenzaBHistopathologyDetails() {
+        return influenzaBHistopathologyDetails;
+    }
+
+    public String getInfluenzaBIsolationDetails() {
+        return influenzaBIsolationDetails;
+    }
+
+    public String getInfluenzaBIgmSerumAntibodyDetails() {
+        return influenzaBIgmSerumAntibodyDetails;
+    }
+
+    public String getInfluenzaBIggSerumAntibodyDetails() {
+        return influenzaBIggSerumAntibodyDetails;
+    }
+
+    public String getInfluenzaBIgaSerumAntibodyDetails() {
+        return influenzaBIgaSerumAntibodyDetails;
+    }
+
+    public String getInfluenzaBIncubationTimeDetails() {
+        return influenzaBIncubationTimeDetails;
+    }
+
+    public String getInfluenzaBIndirectFluorescentAntibodyDetails() {
+        return influenzaBIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getInfluenzaBDirectFluorescentAntibodyDetails() {
+        return influenzaBDirectFluorescentAntibodyDetails;
+    }
+
+    public String getInfluenzaBMicroscopyDetails() {
+        return influenzaBMicroscopyDetails;
+    }
+
+    public String getInfluenzaBNeutralizingAntibodiesDetails() {
+        return influenzaBNeutralizingAntibodiesDetails;
+    }
+
+    public String getInfluenzaBPcrRtPcrDetails() {
+        return influenzaBPcrRtPcrDetails;
+    }
+
+    public String getInfluenzaBGramStainDetails() {
+        return influenzaBGramStainDetails;
+    }
+
+    public String getInfluenzaBLatexAgglutinationDetails() {
+        return influenzaBLatexAgglutinationDetails;
+    }
+
+    public String getInfluenzaBCqValueDetectionDetails() {
+        return influenzaBCqValueDetectionDetails;
+    }
+
+    public String getInfluenzaBSequencingDetails() {
+        return influenzaBSequencingDetails;
+    }
+
+    public String getInfluenzaBDnaMicroarrayDetails() {
+        return influenzaBDnaMicroarrayDetails;
+    }
+
+    public String getInfluenzaBOtherDetails() {
+        return influenzaBOtherDetails;
+    }
+
+    public String getHMetapneumovirusAntibodyDetection() {
+        return hMetapneumovirusAntibodyDetection;
+    }
+
+    public String getHMetapneumovirusAntigenDetection() {
         return hMetapneumovirusAntigenDetection;
     }
 
-    public String gethMetapneumovirusRapidTest() {
+    public String getHMetapneumovirusRapidTest() {
         return hMetapneumovirusRapidTest;
     }
 
-    public String gethMetapneumovirusCulture() {
+    public String getHMetapneumovirusCulture() {
         return hMetapneumovirusCulture;
     }
 
-    public String gethMetapneumovirusHistopathology() {
+    public String getHMetapneumovirusHistopathology() {
         return hMetapneumovirusHistopathology;
     }
 
-    public String gethMetapneumovirusIsolation() {
+    public String getHMetapneumovirusIsolation() {
         return hMetapneumovirusIsolation;
     }
 
-    public String gethMetapneumovirusIgmSerumAntibody() {
+    public String getHMetapneumovirusIgmSerumAntibody() {
         return hMetapneumovirusIgmSerumAntibody;
     }
 
-    public String gethMetapneumovirusIggSerumAntibody() {
+    public String getHMetapneumovirusIggSerumAntibody() {
         return hMetapneumovirusIggSerumAntibody;
     }
 
-    public String gethMetapneumovirusIgaSerumAntibody() {
+    public String getHMetapneumovirusIgaSerumAntibody() {
         return hMetapneumovirusIgaSerumAntibody;
     }
 
-    public String gethMetapneumovirusIncubationTime() {
+    public String getHMetapneumovirusIncubationTime() {
         return hMetapneumovirusIncubationTime;
     }
 
-    public String gethMetapneumovirusIndirectFluorescentAntibody() {
+    public String getHMetapneumovirusIndirectFluorescentAntibody() {
         return hMetapneumovirusIndirectFluorescentAntibody;
     }
 
-    public String gethMetapneumovirusMicroscopy() {
+    public String getHMetapneumovirusDirectFluorescentAntibody() {
+        return hMetapneumovirusDirectFluorescentAntibody;
+    }
+
+    public String getHMetapneumovirusMicroscopy() {
         return hMetapneumovirusMicroscopy;
     }
 
-    public String gethMetapneumovirusNeutralizingAntibodies() {
+    public String getHMetapneumovirusNeutralizingAntibodies() {
         return hMetapneumovirusNeutralizingAntibodies;
     }
 
-    public String gethMetapneumovirusPcr() {
-        return hMetapneumovirusPcr;
+    public String getHMetapneumovirusPcrRtPcr() {
+        return hMetapneumovirusPcrRtPcr;
     }
 
-    public String gethMetapneumovirusGramStain() {
+    public String getHMetapneumovirusGramStain() {
         return hMetapneumovirusGramStain;
     }
 
-    public String gethMetapneumovirusLatexAgglutination() {
+    public String getHMetapneumovirusLatexAgglutination() {
         return hMetapneumovirusLatexAgglutination;
     }
 
-    public String gethMetapneumovirusCqValueDetection() {
+    public String getHMetapneumovirusCqValueDetection() {
         return hMetapneumovirusCqValueDetection;
     }
 
-    public String gethMetapneumovirusSeQuencing() {
-        return hMetapneumovirusSeQuencing;
+    public String getHMetapneumovirusSequencing() {
+        return hMetapneumovirusSequencing;
     }
 
-    public String gethMetapneumovirusDnaMicroArray() {
-        return hMetapneumovirusDnaMicroArray;
+    public String getHMetapneumovirusDnaMicroarray() {
+        return hMetapneumovirusDnaMicroarray;
     }
 
-    public String gethMetapneumovirusOther() {
+    public String getHMetapneumovirusOther() {
         return hMetapneumovirusOther;
     }
 
-    public String getRespiratorySyncytialVirusAntiBodyDetection() {
-        return respiratorySyncytialVirusAntiBodyDetection;
+    public String getHMetapneumovirusAntibodyDetectionDetails() {
+        return hMetapneumovirusAntibodyDetectionDetails;
+    }
+
+    public String getHMetapneumovirusAntigenDetectionDetails() {
+        return hMetapneumovirusAntigenDetectionDetails;
+    }
+
+    public String getHMetapneumovirusRapidTestDetails() {
+        return hMetapneumovirusRapidTestDetails;
+    }
+
+    public String getHMetapneumovirusCultureDetails() {
+        return hMetapneumovirusCultureDetails;
+    }
+
+    public String getHMetapneumovirusHistopathologyDetails() {
+        return hMetapneumovirusHistopathologyDetails;
+    }
+
+    public String getHMetapneumovirusIsolationDetails() {
+        return hMetapneumovirusIsolationDetails;
+    }
+
+    public String getHMetapneumovirusIgmSerumAntibodyDetails() {
+        return hMetapneumovirusIgmSerumAntibodyDetails;
+    }
+
+    public String getHMetapneumovirusIggSerumAntibodyDetails() {
+        return hMetapneumovirusIggSerumAntibodyDetails;
+    }
+
+    public String getHMetapneumovirusIgaSerumAntibodyDetails() {
+        return hMetapneumovirusIgaSerumAntibodyDetails;
+    }
+
+    public String getHMetapneumovirusIncubationTimeDetails() {
+        return hMetapneumovirusIncubationTimeDetails;
+    }
+
+    public String getHMetapneumovirusIndirectFluorescentAntibodyDetails() {
+        return hMetapneumovirusIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getHMetapneumovirusDirectFluorescentAntibodyDetails() {
+        return hMetapneumovirusDirectFluorescentAntibodyDetails;
+    }
+
+    public String getHMetapneumovirusMicroscopyDetails() {
+        return hMetapneumovirusMicroscopyDetails;
+    }
+
+    public String getHMetapneumovirusNeutralizingAntibodiesDetails() {
+        return hMetapneumovirusNeutralizingAntibodiesDetails;
+    }
+
+    public String getHMetapneumovirusPcrRtPcrDetails() {
+        return hMetapneumovirusPcrRtPcrDetails;
+    }
+
+    public String getHMetapneumovirusGramStainDetails() {
+        return hMetapneumovirusGramStainDetails;
+    }
+
+    public String getHMetapneumovirusLatexAgglutinationDetails() {
+        return hMetapneumovirusLatexAgglutinationDetails;
+    }
+
+    public String getHMetapneumovirusCqValueDetectionDetails() {
+        return hMetapneumovirusCqValueDetectionDetails;
+    }
+
+    public String getHMetapneumovirusSequencingDetails() {
+        return hMetapneumovirusSequencingDetails;
+    }
+
+    public String getHMetapneumovirusDnaMicroarrayDetails() {
+        return hMetapneumovirusDnaMicroarrayDetails;
+    }
+
+    public String getHMetapneumovirusOtherDetails() {
+        return hMetapneumovirusOtherDetails;
+    }
+
+    public String getRespiratorySyncytialVirusAntibodyDetection() {
+        return respiratorySyncytialVirusAntibodyDetection;
     }
 
     public String getRespiratorySyncytialVirusAntigenDetection() {
@@ -10518,6 +21358,10 @@ public class CaseSampleExportDto implements Serializable {
         return respiratorySyncytialVirusIndirectFluorescentAntibody;
     }
 
+    public String getRespiratorySyncytialVirusDirectFluorescentAntibody() {
+        return respiratorySyncytialVirusDirectFluorescentAntibody;
+    }
+
     public String getRespiratorySyncytialVirusMicroscopy() {
         return respiratorySyncytialVirusMicroscopy;
     }
@@ -10526,8 +21370,8 @@ public class CaseSampleExportDto implements Serializable {
         return respiratorySyncytialVirusNeutralizingAntibodies;
     }
 
-    public String getRespiratorySyncytialVirusPcr() {
-        return respiratorySyncytialVirusPcr;
+    public String getRespiratorySyncytialVirusPcrRtPcr() {
+        return respiratorySyncytialVirusPcrRtPcr;
     }
 
     public String getRespiratorySyncytialVirusGramStain() {
@@ -10542,100 +21386,272 @@ public class CaseSampleExportDto implements Serializable {
         return respiratorySyncytialVirusCqValueDetection;
     }
 
-    public String getRespiratorySyncytialVirusSeQuencing() {
-        return respiratorySyncytialVirusSeQuencing;
+    public String getRespiratorySyncytialVirusSequencing() {
+        return respiratorySyncytialVirusSequencing;
     }
 
-    public String getRespiratorySyncytialVirusDnaMicroArray() {
-        return respiratorySyncytialVirusDnaMicroArray;
+    public String getRespiratorySyncytialVirusDnaMicroarray() {
+        return respiratorySyncytialVirusDnaMicroarray;
     }
 
     public String getRespiratorySyncytialVirusOther() {
         return respiratorySyncytialVirusOther;
     }
 
-    public String getParainfluenza1_4AntiBodyDetection() {
-        return parainfluenza1_4AntiBodyDetection;
+    public String getRespiratorySyncytialVirusAntibodyDetectionDetails() {
+        return respiratorySyncytialVirusAntibodyDetectionDetails;
     }
 
-    public String getParainfluenza1_4AntigenDetection() {
-        return parainfluenza1_4AntigenDetection;
+    public String getRespiratorySyncytialVirusAntigenDetectionDetails() {
+        return respiratorySyncytialVirusAntigenDetectionDetails;
     }
 
-    public String getParainfluenza1_4RapidTest() {
-        return parainfluenza1_4RapidTest;
+    public String getRespiratorySyncytialVirusRapidTestDetails() {
+        return respiratorySyncytialVirusRapidTestDetails;
     }
 
-    public String getParainfluenza1_4Culture() {
-        return parainfluenza1_4Culture;
+    public String getRespiratorySyncytialVirusCultureDetails() {
+        return respiratorySyncytialVirusCultureDetails;
     }
 
-    public String getParainfluenza1_4Histopathology() {
-        return parainfluenza1_4Histopathology;
+    public String getRespiratorySyncytialVirusHistopathologyDetails() {
+        return respiratorySyncytialVirusHistopathologyDetails;
     }
 
-    public String getParainfluenza1_4Isolation() {
-        return parainfluenza1_4Isolation;
+    public String getRespiratorySyncytialVirusIsolationDetails() {
+        return respiratorySyncytialVirusIsolationDetails;
     }
 
-    public String getParainfluenza1_4IgmSerumAntibody() {
-        return parainfluenza1_4IgmSerumAntibody;
+    public String getRespiratorySyncytialVirusIgmSerumAntibodyDetails() {
+        return respiratorySyncytialVirusIgmSerumAntibodyDetails;
     }
 
-    public String getParainfluenza1_4IggSerumAntibody() {
-        return parainfluenza1_4IggSerumAntibody;
+    public String getRespiratorySyncytialVirusIggSerumAntibodyDetails() {
+        return respiratorySyncytialVirusIggSerumAntibodyDetails;
     }
 
-    public String getParainfluenza1_4IgaSerumAntibody() {
-        return parainfluenza1_4IgaSerumAntibody;
+    public String getRespiratorySyncytialVirusIgaSerumAntibodyDetails() {
+        return respiratorySyncytialVirusIgaSerumAntibodyDetails;
     }
 
-    public String getParainfluenza1_4IncubationTime() {
-        return parainfluenza1_4IncubationTime;
+    public String getRespiratorySyncytialVirusIncubationTimeDetails() {
+        return respiratorySyncytialVirusIncubationTimeDetails;
     }
 
-    public String getParainfluenza1_4IndirectFluorescentAntibody() {
-        return parainfluenza1_4IndirectFluorescentAntibody;
+    public String getRespiratorySyncytialVirusIndirectFluorescentAntibodyDetails() {
+        return respiratorySyncytialVirusIndirectFluorescentAntibodyDetails;
     }
 
-    public String getParainfluenza1_4Microscopy() {
-        return parainfluenza1_4Microscopy;
+    public String getRespiratorySyncytialVirusDirectFluorescentAntibodyDetails() {
+        return respiratorySyncytialVirusDirectFluorescentAntibodyDetails;
     }
 
-    public String getParainfluenza1_4NeutralizingAntibodies() {
-        return parainfluenza1_4NeutralizingAntibodies;
+    public String getRespiratorySyncytialVirusMicroscopyDetails() {
+        return respiratorySyncytialVirusMicroscopyDetails;
     }
 
-    public String getParainfluenza1_4Pcr() {
-        return parainfluenza1_4Pcr;
+    public String getRespiratorySyncytialVirusNeutralizingAntibodiesDetails() {
+        return respiratorySyncytialVirusNeutralizingAntibodiesDetails;
     }
 
-    public String getParainfluenza1_4GramStain() {
-        return parainfluenza1_4GramStain;
+    public String getRespiratorySyncytialVirusPcrRtPcrDetails() {
+        return respiratorySyncytialVirusPcrRtPcrDetails;
     }
 
-    public String getParainfluenza1_4LatexAgglutination() {
-        return parainfluenza1_4LatexAgglutination;
+    public String getRespiratorySyncytialVirusGramStainDetails() {
+        return respiratorySyncytialVirusGramStainDetails;
     }
 
-    public String getParainfluenza1_4CqValueDetection() {
-        return parainfluenza1_4CqValueDetection;
+    public String getRespiratorySyncytialVirusLatexAgglutinationDetails() {
+        return respiratorySyncytialVirusLatexAgglutinationDetails;
     }
 
-    public String getParainfluenza1_4SeQuencing() {
-        return parainfluenza1_4SeQuencing;
+    public String getRespiratorySyncytialVirusCqValueDetectionDetails() {
+        return respiratorySyncytialVirusCqValueDetectionDetails;
     }
 
-    public String getParainfluenza1_4DnaMicroArray() {
-        return parainfluenza1_4DnaMicroArray;
+    public String getRespiratorySyncytialVirusSequencingDetails() {
+        return respiratorySyncytialVirusSequencingDetails;
     }
 
-    public String getParainfluenza1_4Other() {
-        return parainfluenza1_4Other;
+    public String getRespiratorySyncytialVirusDnaMicroarrayDetails() {
+        return respiratorySyncytialVirusDnaMicroarrayDetails;
     }
 
-    public String getAdenovirusAntiBodyDetection() {
-        return adenovirusAntiBodyDetection;
+    public String getRespiratorySyncytialVirusOtherDetails() {
+        return respiratorySyncytialVirusOtherDetails;
+    }
+
+    public String getParainfluenzaAntibodyDetection() {
+        return parainfluenzaAntibodyDetection;
+    }
+
+    public String getParainfluenzaAntigenDetection() {
+        return parainfluenzaAntigenDetection;
+    }
+
+    public String getParainfluenzaRapidTest() {
+        return parainfluenzaRapidTest;
+    }
+
+    public String getParainfluenzaCulture() {
+        return parainfluenzaCulture;
+    }
+
+    public String getParainfluenzaHistopathology() {
+        return parainfluenzaHistopathology;
+    }
+
+    public String getParainfluenzaIsolation() {
+        return parainfluenzaIsolation;
+    }
+
+    public String getParainfluenzaIgmSerumAntibody() {
+        return parainfluenzaIgmSerumAntibody;
+    }
+
+    public String getParainfluenzaIggSerumAntibody() {
+        return parainfluenzaIggSerumAntibody;
+    }
+
+    public String getParainfluenzaIgaSerumAntibody() {
+        return parainfluenzaIgaSerumAntibody;
+    }
+
+    public String getParainfluenzaIncubationTime() {
+        return parainfluenzaIncubationTime;
+    }
+
+    public String getParainfluenzaIndirectFluorescentAntibody() {
+        return parainfluenzaIndirectFluorescentAntibody;
+    }
+
+    public String getParainfluenzaDirectFluorescentAntibody() {
+        return parainfluenzaDirectFluorescentAntibody;
+    }
+
+    public String getParainfluenzaMicroscopy() {
+        return parainfluenzaMicroscopy;
+    }
+
+    public String getParainfluenzaNeutralizingAntibodies() {
+        return parainfluenzaNeutralizingAntibodies;
+    }
+
+    public String getParainfluenzaPcrRtPcr() {
+        return parainfluenzaPcrRtPcr;
+    }
+
+    public String getParainfluenzaGramStain() {
+        return parainfluenzaGramStain;
+    }
+
+    public String getParainfluenzaLatexAgglutination() {
+        return parainfluenzaLatexAgglutination;
+    }
+
+    public String getParainfluenzaCqValueDetection() {
+        return parainfluenzaCqValueDetection;
+    }
+
+    public String getParainfluenzaSequencing() {
+        return parainfluenzaSequencing;
+    }
+
+    public String getParainfluenzaDnaMicroarray() {
+        return parainfluenzaDnaMicroarray;
+    }
+
+    public String getParainfluenzaOther() {
+        return parainfluenzaOther;
+    }
+
+    public String getParainfluenzaAntibodyDetectionDetails() {
+        return parainfluenzaAntibodyDetectionDetails;
+    }
+
+    public String getParainfluenzaAntigenDetectionDetails() {
+        return parainfluenzaAntigenDetectionDetails;
+    }
+
+    public String getParainfluenzaRapidTestDetails() {
+        return parainfluenzaRapidTestDetails;
+    }
+
+    public String getParainfluenzaCultureDetails() {
+        return parainfluenzaCultureDetails;
+    }
+
+    public String getParainfluenzaHistopathologyDetails() {
+        return parainfluenzaHistopathologyDetails;
+    }
+
+    public String getParainfluenzaIsolationDetails() {
+        return parainfluenzaIsolationDetails;
+    }
+
+    public String getParainfluenzaIgmSerumAntibodyDetails() {
+        return parainfluenzaIgmSerumAntibodyDetails;
+    }
+
+    public String getParainfluenzaIggSerumAntibodyDetails() {
+        return parainfluenzaIggSerumAntibodyDetails;
+    }
+
+    public String getParainfluenzaIgaSerumAntibodyDetails() {
+        return parainfluenzaIgaSerumAntibodyDetails;
+    }
+
+    public String getParainfluenzaIncubationTimeDetails() {
+        return parainfluenzaIncubationTimeDetails;
+    }
+
+    public String getParainfluenzaIndirectFluorescentAntibodyDetails() {
+        return parainfluenzaIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getParainfluenzaDirectFluorescentAntibodyDetails() {
+        return parainfluenzaDirectFluorescentAntibodyDetails;
+    }
+
+    public String getParainfluenzaMicroscopyDetails() {
+        return parainfluenzaMicroscopyDetails;
+    }
+
+    public String getParainfluenzaNeutralizingAntibodiesDetails() {
+        return parainfluenzaNeutralizingAntibodiesDetails;
+    }
+
+    public String getParainfluenzaPcrRtPcrDetails() {
+        return parainfluenzaPcrRtPcrDetails;
+    }
+
+    public String getParainfluenzaGramStainDetails() {
+        return parainfluenzaGramStainDetails;
+    }
+
+    public String getParainfluenzaLatexAgglutinationDetails() {
+        return parainfluenzaLatexAgglutinationDetails;
+    }
+
+    public String getParainfluenzaCqValueDetectionDetails() {
+        return parainfluenzaCqValueDetectionDetails;
+    }
+
+    public String getParainfluenzaSequencingDetails() {
+        return parainfluenzaSequencingDetails;
+    }
+
+    public String getParainfluenzaDnaMicroarrayDetails() {
+        return parainfluenzaDnaMicroarrayDetails;
+    }
+
+    public String getParainfluenzaOtherDetails() {
+        return parainfluenzaOtherDetails;
+    }
+
+    public String getAdenovirusAntibodyDetection() {
+        return adenovirusAntibodyDetection;
     }
 
     public String getAdenovirusAntigenDetection() {
@@ -10678,6 +21694,10 @@ public class CaseSampleExportDto implements Serializable {
         return adenovirusIndirectFluorescentAntibody;
     }
 
+    public String getAdenovirusDirectFluorescentAntibody() {
+        return adenovirusDirectFluorescentAntibody;
+    }
+
     public String getAdenovirusMicroscopy() {
         return adenovirusMicroscopy;
     }
@@ -10686,8 +21706,8 @@ public class CaseSampleExportDto implements Serializable {
         return adenovirusNeutralizingAntibodies;
     }
 
-    public String getAdenovirusPcr() {
-        return adenovirusPcr;
+    public String getAdenovirusPcrRtPcr() {
+        return adenovirusPcrRtPcr;
     }
 
     public String getAdenovirusGramStain() {
@@ -10702,20 +21722,104 @@ public class CaseSampleExportDto implements Serializable {
         return adenovirusCqValueDetection;
     }
 
-    public String getAdenovirusSeQuencing() {
-        return adenovirusSeQuencing;
+    public String getAdenovirusSequencing() {
+        return adenovirusSequencing;
     }
 
-    public String getAdenovirusDnaMicroArray() {
-        return adenovirusDnaMicroArray;
+    public String getAdenovirusDnaMicroarray() {
+        return adenovirusDnaMicroarray;
     }
 
     public String getAdenovirusOther() {
         return adenovirusOther;
     }
 
-    public String getRhinovirusAntiBodyDetection() {
-        return rhinovirusAntiBodyDetection;
+    public String getAdenovirusAntibodyDetectionDetails() {
+        return adenovirusAntibodyDetectionDetails;
+    }
+
+    public String getAdenovirusAntigenDetectionDetails() {
+        return adenovirusAntigenDetectionDetails;
+    }
+
+    public String getAdenovirusRapidTestDetails() {
+        return adenovirusRapidTestDetails;
+    }
+
+    public String getAdenovirusCultureDetails() {
+        return adenovirusCultureDetails;
+    }
+
+    public String getAdenovirusHistopathologyDetails() {
+        return adenovirusHistopathologyDetails;
+    }
+
+    public String getAdenovirusIsolationDetails() {
+        return adenovirusIsolationDetails;
+    }
+
+    public String getAdenovirusIgmSerumAntibodyDetails() {
+        return adenovirusIgmSerumAntibodyDetails;
+    }
+
+    public String getAdenovirusIggSerumAntibodyDetails() {
+        return adenovirusIggSerumAntibodyDetails;
+    }
+
+    public String getAdenovirusIgaSerumAntibodyDetails() {
+        return adenovirusIgaSerumAntibodyDetails;
+    }
+
+    public String getAdenovirusIncubationTimeDetails() {
+        return adenovirusIncubationTimeDetails;
+    }
+
+    public String getAdenovirusIndirectFluorescentAntibodyDetails() {
+        return adenovirusIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getAdenovirusDirectFluorescentAntibodyDetails() {
+        return adenovirusDirectFluorescentAntibodyDetails;
+    }
+
+    public String getAdenovirusMicroscopyDetails() {
+        return adenovirusMicroscopyDetails;
+    }
+
+    public String getAdenovirusNeutralizingAntibodiesDetails() {
+        return adenovirusNeutralizingAntibodiesDetails;
+    }
+
+    public String getAdenovirusPcrRtPcrDetails() {
+        return adenovirusPcrRtPcrDetails;
+    }
+
+    public String getAdenovirusGramStainDetails() {
+        return adenovirusGramStainDetails;
+    }
+
+    public String getAdenovirusLatexAgglutinationDetails() {
+        return adenovirusLatexAgglutinationDetails;
+    }
+
+    public String getAdenovirusCqValueDetectionDetails() {
+        return adenovirusCqValueDetectionDetails;
+    }
+
+    public String getAdenovirusSequencingDetails() {
+        return adenovirusSequencingDetails;
+    }
+
+    public String getAdenovirusDnaMicroarrayDetails() {
+        return adenovirusDnaMicroarrayDetails;
+    }
+
+    public String getAdenovirusOtherDetails() {
+        return adenovirusOtherDetails;
+    }
+
+    public String getRhinovirusAntibodyDetection() {
+        return rhinovirusAntibodyDetection;
     }
 
     public String getRhinovirusAntigenDetection() {
@@ -10758,6 +21862,10 @@ public class CaseSampleExportDto implements Serializable {
         return rhinovirusIndirectFluorescentAntibody;
     }
 
+    public String getRhinovirusDirectFluorescentAntibody() {
+        return rhinovirusDirectFluorescentAntibody;
+    }
+
     public String getRhinovirusMicroscopy() {
         return rhinovirusMicroscopy;
     }
@@ -10766,8 +21874,8 @@ public class CaseSampleExportDto implements Serializable {
         return rhinovirusNeutralizingAntibodies;
     }
 
-    public String getRhinovirusPcr() {
-        return rhinovirusPcr;
+    public String getRhinovirusPcrRtPcr() {
+        return rhinovirusPcrRtPcr;
     }
 
     public String getRhinovirusGramStain() {
@@ -10782,20 +21890,104 @@ public class CaseSampleExportDto implements Serializable {
         return rhinovirusCqValueDetection;
     }
 
-    public String getRhinovirusSeQuencing() {
-        return rhinovirusSeQuencing;
+    public String getRhinovirusSequencing() {
+        return rhinovirusSequencing;
     }
 
-    public String getRhinovirusDnaMicroArray() {
-        return rhinovirusDnaMicroArray;
+    public String getRhinovirusDnaMicroarray() {
+        return rhinovirusDnaMicroarray;
     }
 
     public String getRhinovirusOther() {
         return rhinovirusOther;
     }
 
-    public String getEnterovirusAntiBodyDetection() {
-        return enterovirusAntiBodyDetection;
+    public String getRhinovirusAntibodyDetectionDetails() {
+        return rhinovirusAntibodyDetectionDetails;
+    }
+
+    public String getRhinovirusAntigenDetectionDetails() {
+        return rhinovirusAntigenDetectionDetails;
+    }
+
+    public String getRhinovirusRapidTestDetails() {
+        return rhinovirusRapidTestDetails;
+    }
+
+    public String getRhinovirusCultureDetails() {
+        return rhinovirusCultureDetails;
+    }
+
+    public String getRhinovirusHistopathologyDetails() {
+        return rhinovirusHistopathologyDetails;
+    }
+
+    public String getRhinovirusIsolationDetails() {
+        return rhinovirusIsolationDetails;
+    }
+
+    public String getRhinovirusIgmSerumAntibodyDetails() {
+        return rhinovirusIgmSerumAntibodyDetails;
+    }
+
+    public String getRhinovirusIggSerumAntibodyDetails() {
+        return rhinovirusIggSerumAntibodyDetails;
+    }
+
+    public String getRhinovirusIgaSerumAntibodyDetails() {
+        return rhinovirusIgaSerumAntibodyDetails;
+    }
+
+    public String getRhinovirusIncubationTimeDetails() {
+        return rhinovirusIncubationTimeDetails;
+    }
+
+    public String getRhinovirusIndirectFluorescentAntibodyDetails() {
+        return rhinovirusIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getRhinovirusDirectFluorescentAntibodyDetails() {
+        return rhinovirusDirectFluorescentAntibodyDetails;
+    }
+
+    public String getRhinovirusMicroscopyDetails() {
+        return rhinovirusMicroscopyDetails;
+    }
+
+    public String getRhinovirusNeutralizingAntibodiesDetails() {
+        return rhinovirusNeutralizingAntibodiesDetails;
+    }
+
+    public String getRhinovirusPcrRtPcrDetails() {
+        return rhinovirusPcrRtPcrDetails;
+    }
+
+    public String getRhinovirusGramStainDetails() {
+        return rhinovirusGramStainDetails;
+    }
+
+    public String getRhinovirusLatexAgglutinationDetails() {
+        return rhinovirusLatexAgglutinationDetails;
+    }
+
+    public String getRhinovirusCqValueDetectionDetails() {
+        return rhinovirusCqValueDetectionDetails;
+    }
+
+    public String getRhinovirusSequencingDetails() {
+        return rhinovirusSequencingDetails;
+    }
+
+    public String getRhinovirusDnaMicroarrayDetails() {
+        return rhinovirusDnaMicroarrayDetails;
+    }
+
+    public String getRhinovirusOtherDetails() {
+        return rhinovirusOtherDetails;
+    }
+
+    public String getEnterovirusAntibodyDetection() {
+        return enterovirusAntibodyDetection;
     }
 
     public String getEnterovirusAntigenDetection() {
@@ -10838,6 +22030,10 @@ public class CaseSampleExportDto implements Serializable {
         return enterovirusIndirectFluorescentAntibody;
     }
 
+    public String getEnterovirusDirectFluorescentAntibody() {
+        return enterovirusDirectFluorescentAntibody;
+    }
+
     public String getEnterovirusMicroscopy() {
         return enterovirusMicroscopy;
     }
@@ -10846,8 +22042,8 @@ public class CaseSampleExportDto implements Serializable {
         return enterovirusNeutralizingAntibodies;
     }
 
-    public String getEnterovirusPcr() {
-        return enterovirusPcr;
+    public String getEnterovirusPcrRtPcr() {
+        return enterovirusPcrRtPcr;
     }
 
     public String getEnterovirusGramStain() {
@@ -10862,180 +22058,440 @@ public class CaseSampleExportDto implements Serializable {
         return enterovirusCqValueDetection;
     }
 
-    public String getEnterovirusSeQuencing() {
-        return enterovirusSeQuencing;
+    public String getEnterovirusSequencing() {
+        return enterovirusSequencing;
     }
 
-    public String getEnterovirusDnaMicroArray() {
-        return enterovirusDnaMicroArray;
+    public String getEnterovirusDnaMicroarray() {
+        return enterovirusDnaMicroarray;
     }
 
     public String getEnterovirusOther() {
         return enterovirusOther;
     }
 
-    public String getmPneumoniaeAntiBodyDetection() {
-        return mPneumoniaeAntiBodyDetection;
+    public String getEnterovirusAntibodyDetectionDetails() {
+        return enterovirusAntibodyDetectionDetails;
     }
 
-    public String getmPneumoniaeAntigenDetection() {
+    public String getEnterovirusAntigenDetectionDetails() {
+        return enterovirusAntigenDetectionDetails;
+    }
+
+    public String getEnterovirusRapidTestDetails() {
+        return enterovirusRapidTestDetails;
+    }
+
+    public String getEnterovirusCultureDetails() {
+        return enterovirusCultureDetails;
+    }
+
+    public String getEnterovirusHistopathologyDetails() {
+        return enterovirusHistopathologyDetails;
+    }
+
+    public String getEnterovirusIsolationDetails() {
+        return enterovirusIsolationDetails;
+    }
+
+    public String getEnterovirusIgmSerumAntibodyDetails() {
+        return enterovirusIgmSerumAntibodyDetails;
+    }
+
+    public String getEnterovirusIggSerumAntibodyDetails() {
+        return enterovirusIggSerumAntibodyDetails;
+    }
+
+    public String getEnterovirusIgaSerumAntibodyDetails() {
+        return enterovirusIgaSerumAntibodyDetails;
+    }
+
+    public String getEnterovirusIncubationTimeDetails() {
+        return enterovirusIncubationTimeDetails;
+    }
+
+    public String getEnterovirusIndirectFluorescentAntibodyDetails() {
+        return enterovirusIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getEnterovirusDirectFluorescentAntibodyDetails() {
+        return enterovirusDirectFluorescentAntibodyDetails;
+    }
+
+    public String getEnterovirusMicroscopyDetails() {
+        return enterovirusMicroscopyDetails;
+    }
+
+    public String getEnterovirusNeutralizingAntibodiesDetails() {
+        return enterovirusNeutralizingAntibodiesDetails;
+    }
+
+    public String getEnterovirusPcrRtPcrDetails() {
+        return enterovirusPcrRtPcrDetails;
+    }
+
+    public String getEnterovirusGramStainDetails() {
+        return enterovirusGramStainDetails;
+    }
+
+    public String getEnterovirusLatexAgglutinationDetails() {
+        return enterovirusLatexAgglutinationDetails;
+    }
+
+    public String getEnterovirusCqValueDetectionDetails() {
+        return enterovirusCqValueDetectionDetails;
+    }
+
+    public String getEnterovirusSequencingDetails() {
+        return enterovirusSequencingDetails;
+    }
+
+    public String getEnterovirusDnaMicroarrayDetails() {
+        return enterovirusDnaMicroarrayDetails;
+    }
+
+    public String getEnterovirusOtherDetails() {
+        return enterovirusOtherDetails;
+    }
+
+    public String getMPneumoniaeAntibodyDetection() {
+        return mPneumoniaeAntibodyDetection;
+    }
+
+    public String getMPneumoniaeAntigenDetection() {
         return mPneumoniaeAntigenDetection;
     }
 
-    public String getmPneumoniaeRapidTest() {
+    public String getMPneumoniaeRapidTest() {
         return mPneumoniaeRapidTest;
     }
 
-    public String getmPneumoniaeCulture() {
+    public String getMPneumoniaeCulture() {
         return mPneumoniaeCulture;
     }
 
-    public String getmPneumoniaeHistopathology() {
+    public String getMPneumoniaeHistopathology() {
         return mPneumoniaeHistopathology;
     }
 
-    public String getmPneumoniaeIsolation() {
+    public String getMPneumoniaeIsolation() {
         return mPneumoniaeIsolation;
     }
 
-    public String getmPneumoniaeIgmSerumAntibody() {
+    public String getMPneumoniaeIgmSerumAntibody() {
         return mPneumoniaeIgmSerumAntibody;
     }
 
-    public String getmPneumoniaeIggSerumAntibody() {
+    public String getMPneumoniaeIggSerumAntibody() {
         return mPneumoniaeIggSerumAntibody;
     }
 
-    public String getmPneumoniaeIgaSerumAntibody() {
+    public String getMPneumoniaeIgaSerumAntibody() {
         return mPneumoniaeIgaSerumAntibody;
     }
 
-    public String getmPneumoniaeIncubationTime() {
+    public String getMPneumoniaeIncubationTime() {
         return mPneumoniaeIncubationTime;
     }
 
-    public String getmPneumoniaeIndirectFluorescentAntibody() {
+    public String getMPneumoniaeIndirectFluorescentAntibody() {
         return mPneumoniaeIndirectFluorescentAntibody;
     }
 
-    public String getmPneumoniaeMicroscopy() {
+    public String getMPneumoniaeDirectFluorescentAntibody() {
+        return mPneumoniaeDirectFluorescentAntibody;
+    }
+
+    public String getMPneumoniaeMicroscopy() {
         return mPneumoniaeMicroscopy;
     }
 
-    public String getmPneumoniaeNeutralizingAntibodies() {
+    public String getMPneumoniaeNeutralizingAntibodies() {
         return mPneumoniaeNeutralizingAntibodies;
     }
 
-    public String getmPneumoniaePcr() {
-        return mPneumoniaePcr;
+    public String getMPneumoniaePcrRtPcr() {
+        return mPneumoniaePcrRtPcr;
     }
 
-    public String getmPneumoniaeGramStain() {
+    public String getMPneumoniaeGramStain() {
         return mPneumoniaeGramStain;
     }
 
-    public String getmPneumoniaeLatexAgglutination() {
+    public String getMPneumoniaeLatexAgglutination() {
         return mPneumoniaeLatexAgglutination;
     }
 
-    public String getmPneumoniaeCqValueDetection() {
+    public String getMPneumoniaeCqValueDetection() {
         return mPneumoniaeCqValueDetection;
     }
 
-    public String getmPneumoniaeSeQuencing() {
-        return mPneumoniaeSeQuencing;
+    public String getMPneumoniaeSequencing() {
+        return mPneumoniaeSequencing;
     }
 
-    public String getmPneumoniaeDnaMicroArray() {
-        return mPneumoniaeDnaMicroArray;
+    public String getMPneumoniaeDnaMicroarray() {
+        return mPneumoniaeDnaMicroarray;
     }
 
-    public String getmPneumoniaeOther() {
+    public String getMPneumoniaeOther() {
         return mPneumoniaeOther;
     }
 
-    public String getcPneumoniaeAntiBodyDetection() {
-        return cPneumoniaeAntiBodyDetection;
+    public String getMPneumoniaeAntibodyDetectionDetails() {
+        return mPneumoniaeAntibodyDetectionDetails;
     }
 
-    public String getcPneumoniaeAntigenDetection() {
+    public String getMPneumoniaeAntigenDetectionDetails() {
+        return mPneumoniaeAntigenDetectionDetails;
+    }
+
+    public String getMPneumoniaeRapidTestDetails() {
+        return mPneumoniaeRapidTestDetails;
+    }
+
+    public String getMPneumoniaeCultureDetails() {
+        return mPneumoniaeCultureDetails;
+    }
+
+    public String getMPneumoniaeHistopathologyDetails() {
+        return mPneumoniaeHistopathologyDetails;
+    }
+
+    public String getMPneumoniaeIsolationDetails() {
+        return mPneumoniaeIsolationDetails;
+    }
+
+    public String getMPneumoniaeIgmSerumAntibodyDetails() {
+        return mPneumoniaeIgmSerumAntibodyDetails;
+    }
+
+    public String getMPneumoniaeIggSerumAntibodyDetails() {
+        return mPneumoniaeIggSerumAntibodyDetails;
+    }
+
+    public String getMPneumoniaeIgaSerumAntibodyDetails() {
+        return mPneumoniaeIgaSerumAntibodyDetails;
+    }
+
+    public String getMPneumoniaeIncubationTimeDetails() {
+        return mPneumoniaeIncubationTimeDetails;
+    }
+
+    public String getMPneumoniaeIndirectFluorescentAntibodyDetails() {
+        return mPneumoniaeIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getMPneumoniaeDirectFluorescentAntibodyDetails() {
+        return mPneumoniaeDirectFluorescentAntibodyDetails;
+    }
+
+    public String getMPneumoniaeMicroscopyDetails() {
+        return mPneumoniaeMicroscopyDetails;
+    }
+
+    public String getMPneumoniaeNeutralizingAntibodiesDetails() {
+        return mPneumoniaeNeutralizingAntibodiesDetails;
+    }
+
+    public String getMPneumoniaePcrRtPcrDetails() {
+        return mPneumoniaePcrRtPcrDetails;
+    }
+
+    public String getMPneumoniaeGramStainDetails() {
+        return mPneumoniaeGramStainDetails;
+    }
+
+    public String getMPneumoniaeLatexAgglutinationDetails() {
+        return mPneumoniaeLatexAgglutinationDetails;
+    }
+
+    public String getMPneumoniaeCqValueDetectionDetails() {
+        return mPneumoniaeCqValueDetectionDetails;
+    }
+
+    public String getMPneumoniaeSequencingDetails() {
+        return mPneumoniaeSequencingDetails;
+    }
+
+    public String getMPneumoniaeDnaMicroarrayDetails() {
+        return mPneumoniaeDnaMicroarrayDetails;
+    }
+
+    public String getMPneumoniaeOtherDetails() {
+        return mPneumoniaeOtherDetails;
+    }
+
+    public String getCPneumoniaeAntibodyDetection() {
+        return cPneumoniaeAntibodyDetection;
+    }
+
+    public String getCPneumoniaeAntigenDetection() {
         return cPneumoniaeAntigenDetection;
     }
 
-    public String getcPneumoniaeRapidTest() {
+    public String getCPneumoniaeRapidTest() {
         return cPneumoniaeRapidTest;
     }
 
-    public String getcPneumoniaeCulture() {
+    public String getCPneumoniaeCulture() {
         return cPneumoniaeCulture;
     }
 
-    public String getcPneumoniaeHistopathology() {
+    public String getCPneumoniaeHistopathology() {
         return cPneumoniaeHistopathology;
     }
 
-    public String getcPneumoniaeIsolation() {
+    public String getCPneumoniaeIsolation() {
         return cPneumoniaeIsolation;
     }
 
-    public String getcPneumoniaeIgmSerumAntibody() {
+    public String getCPneumoniaeIgmSerumAntibody() {
         return cPneumoniaeIgmSerumAntibody;
     }
 
-    public String getcPneumoniaeIggSerumAntibody() {
+    public String getCPneumoniaeIggSerumAntibody() {
         return cPneumoniaeIggSerumAntibody;
     }
 
-    public String getcPneumoniaeIgaSerumAntibody() {
+    public String getCPneumoniaeIgaSerumAntibody() {
         return cPneumoniaeIgaSerumAntibody;
     }
 
-    public String getcPneumoniaeIncubationTime() {
+    public String getCPneumoniaeIncubationTime() {
         return cPneumoniaeIncubationTime;
     }
 
-    public String getcPneumoniaeIndirectFluorescentAntibody() {
+    public String getCPneumoniaeIndirectFluorescentAntibody() {
         return cPneumoniaeIndirectFluorescentAntibody;
     }
 
-    public String getcPneumoniaeMicroscopy() {
+    public String getCPneumoniaeDirectFluorescentAntibody() {
+        return cPneumoniaeDirectFluorescentAntibody;
+    }
+
+    public String getCPneumoniaeMicroscopy() {
         return cPneumoniaeMicroscopy;
     }
 
-    public String getcPneumoniaeNeutralizingAntibodies() {
+    public String getCPneumoniaeNeutralizingAntibodies() {
         return cPneumoniaeNeutralizingAntibodies;
     }
 
-    public String getcPneumoniaePcr() {
-        return cPneumoniaePcr;
+    public String getCPneumoniaePcrRtPcr() {
+        return cPneumoniaePcrRtPcr;
     }
 
-    public String getcPneumoniaeGramStain() {
+    public String getCPneumoniaeGramStain() {
         return cPneumoniaeGramStain;
     }
 
-    public String getcPneumoniaeLatexAgglutination() {
+    public String getCPneumoniaeLatexAgglutination() {
         return cPneumoniaeLatexAgglutination;
     }
 
-    public String getcPneumoniaeCqValueDetection() {
+    public String getCPneumoniaeCqValueDetection() {
         return cPneumoniaeCqValueDetection;
     }
 
-    public String getcPneumoniaeSeQuencing() {
-        return cPneumoniaeSeQuencing;
+    public String getCPneumoniaeSequencing() {
+        return cPneumoniaeSequencing;
     }
 
-    public String getcPneumoniaeDnaMicroArray() {
-        return cPneumoniaeDnaMicroArray;
+    public String getCPneumoniaeDnaMicroarray() {
+        return cPneumoniaeDnaMicroarray;
     }
 
-    public String getcPneumoniaeOther() {
+    public String getCPneumoniaeOther() {
         return cPneumoniaeOther;
     }
 
-    public String getAriAntiBodyDetection() {
-        return ariAntiBodyDetection;
+    public String getCPneumoniaeAntibodyDetectionDetails() {
+        return cPneumoniaeAntibodyDetectionDetails;
+    }
+
+    public String getCPneumoniaeAntigenDetectionDetails() {
+        return cPneumoniaeAntigenDetectionDetails;
+    }
+
+    public String getCPneumoniaeRapidTestDetails() {
+        return cPneumoniaeRapidTestDetails;
+    }
+
+    public String getCPneumoniaeCultureDetails() {
+        return cPneumoniaeCultureDetails;
+    }
+
+    public String getCPneumoniaeHistopathologyDetails() {
+        return cPneumoniaeHistopathologyDetails;
+    }
+
+    public String getCPneumoniaeIsolationDetails() {
+        return cPneumoniaeIsolationDetails;
+    }
+
+    public String getCPneumoniaeIgmSerumAntibodyDetails() {
+        return cPneumoniaeIgmSerumAntibodyDetails;
+    }
+
+    public String getCPneumoniaeIggSerumAntibodyDetails() {
+        return cPneumoniaeIggSerumAntibodyDetails;
+    }
+
+    public String getCPneumoniaeIgaSerumAntibodyDetails() {
+        return cPneumoniaeIgaSerumAntibodyDetails;
+    }
+
+    public String getCPneumoniaeIncubationTimeDetails() {
+        return cPneumoniaeIncubationTimeDetails;
+    }
+
+    public String getCPneumoniaeIndirectFluorescentAntibodyDetails() {
+        return cPneumoniaeIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getCPneumoniaeDirectFluorescentAntibodyDetails() {
+        return cPneumoniaeDirectFluorescentAntibodyDetails;
+    }
+
+    public String getCPneumoniaeMicroscopyDetails() {
+        return cPneumoniaeMicroscopyDetails;
+    }
+
+    public String getCPneumoniaeNeutralizingAntibodiesDetails() {
+        return cPneumoniaeNeutralizingAntibodiesDetails;
+    }
+
+    public String getCPneumoniaePcrRtPcrDetails() {
+        return cPneumoniaePcrRtPcrDetails;
+    }
+
+    public String getCPneumoniaeGramStainDetails() {
+        return cPneumoniaeGramStainDetails;
+    }
+
+    public String getCPneumoniaeLatexAgglutinationDetails() {
+        return cPneumoniaeLatexAgglutinationDetails;
+    }
+
+    public String getCPneumoniaeCqValueDetectionDetails() {
+        return cPneumoniaeCqValueDetectionDetails;
+    }
+
+    public String getCPneumoniaeSequencingDetails() {
+        return cPneumoniaeSequencingDetails;
+    }
+
+    public String getCPneumoniaeDnaMicroarrayDetails() {
+        return cPneumoniaeDnaMicroarrayDetails;
+    }
+
+    public String getCPneumoniaeOtherDetails() {
+        return cPneumoniaeOtherDetails;
+    }
+
+    public String getAriAntibodyDetection() {
+        return ariAntibodyDetection;
     }
 
     public String getAriAntigenDetection() {
@@ -11078,6 +22534,10 @@ public class CaseSampleExportDto implements Serializable {
         return ariIndirectFluorescentAntibody;
     }
 
+    public String getAriDirectFluorescentAntibody() {
+        return ariDirectFluorescentAntibody;
+    }
+
     public String getAriMicroscopy() {
         return ariMicroscopy;
     }
@@ -11086,8 +22546,8 @@ public class CaseSampleExportDto implements Serializable {
         return ariNeutralizingAntibodies;
     }
 
-    public String getAriPcr() {
-        return ariPcr;
+    public String getAriPcrRtPcr() {
+        return ariPcrRtPcr;
     }
 
     public String getAriGramStain() {
@@ -11102,20 +22562,104 @@ public class CaseSampleExportDto implements Serializable {
         return ariCqValueDetection;
     }
 
-    public String getAriSeQuencing() {
-        return ariSeQuencing;
+    public String getAriSequencing() {
+        return ariSequencing;
     }
 
-    public String getAriDnaMicroArray() {
-        return ariDnaMicroArray;
+    public String getAriDnaMicroarray() {
+        return ariDnaMicroarray;
     }
 
     public String getAriOther() {
         return ariOther;
     }
 
-    public String getChikungunyaAntiBodyDetection() {
-        return chikungunyaAntiBodyDetection;
+    public String getAriAntibodyDetectionDetails() {
+        return ariAntibodyDetectionDetails;
+    }
+
+    public String getAriAntigenDetectionDetails() {
+        return ariAntigenDetectionDetails;
+    }
+
+    public String getAriRapidTestDetails() {
+        return ariRapidTestDetails;
+    }
+
+    public String getAriCultureDetails() {
+        return ariCultureDetails;
+    }
+
+    public String getAriHistopathologyDetails() {
+        return ariHistopathologyDetails;
+    }
+
+    public String getAriIsolationDetails() {
+        return ariIsolationDetails;
+    }
+
+    public String getAriIgmSerumAntibodyDetails() {
+        return ariIgmSerumAntibodyDetails;
+    }
+
+    public String getAriIggSerumAntibodyDetails() {
+        return ariIggSerumAntibodyDetails;
+    }
+
+    public String getAriIgaSerumAntibodyDetails() {
+        return ariIgaSerumAntibodyDetails;
+    }
+
+    public String getAriIncubationTimeDetails() {
+        return ariIncubationTimeDetails;
+    }
+
+    public String getAriIndirectFluorescentAntibodyDetails() {
+        return ariIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getAriDirectFluorescentAntibodyDetails() {
+        return ariDirectFluorescentAntibodyDetails;
+    }
+
+    public String getAriMicroscopyDetails() {
+        return ariMicroscopyDetails;
+    }
+
+    public String getAriNeutralizingAntibodiesDetails() {
+        return ariNeutralizingAntibodiesDetails;
+    }
+
+    public String getAriPcrRtPcrDetails() {
+        return ariPcrRtPcrDetails;
+    }
+
+    public String getAriGramStainDetails() {
+        return ariGramStainDetails;
+    }
+
+    public String getAriLatexAgglutinationDetails() {
+        return ariLatexAgglutinationDetails;
+    }
+
+    public String getAriCqValueDetectionDetails() {
+        return ariCqValueDetectionDetails;
+    }
+
+    public String getAriSequencingDetails() {
+        return ariSequencingDetails;
+    }
+
+    public String getAriDnaMicroarrayDetails() {
+        return ariDnaMicroarrayDetails;
+    }
+
+    public String getAriOtherDetails() {
+        return ariOtherDetails;
+    }
+
+    public String getChikungunyaAntibodyDetection() {
+        return chikungunyaAntibodyDetection;
     }
 
     public String getChikungunyaAntigenDetection() {
@@ -11158,6 +22702,10 @@ public class CaseSampleExportDto implements Serializable {
         return chikungunyaIndirectFluorescentAntibody;
     }
 
+    public String getChikungunyaDirectFluorescentAntibody() {
+        return chikungunyaDirectFluorescentAntibody;
+    }
+
     public String getChikungunyaMicroscopy() {
         return chikungunyaMicroscopy;
     }
@@ -11166,8 +22714,8 @@ public class CaseSampleExportDto implements Serializable {
         return chikungunyaNeutralizingAntibodies;
     }
 
-    public String getChikungunyaPcr() {
-        return chikungunyaPcr;
+    public String getChikungunyaPcrRtPcr() {
+        return chikungunyaPcrRtPcr;
     }
 
     public String getChikungunyaGramStain() {
@@ -11182,20 +22730,104 @@ public class CaseSampleExportDto implements Serializable {
         return chikungunyaCqValueDetection;
     }
 
-    public String getChikungunyaSeQuencing() {
-        return chikungunyaSeQuencing;
+    public String getChikungunyaSequencing() {
+        return chikungunyaSequencing;
     }
 
-    public String getChikungunyaDnaMicroArray() {
-        return chikungunyaDnaMicroArray;
+    public String getChikungunyaDnaMicroarray() {
+        return chikungunyaDnaMicroarray;
     }
 
     public String getChikungunyaOther() {
         return chikungunyaOther;
     }
 
-    public String getPostImmunizationAdverseEventsMildAntiBodyDetection() {
-        return postImmunizationAdverseEventsMildAntiBodyDetection;
+    public String getChikungunyaAntibodyDetectionDetails() {
+        return chikungunyaAntibodyDetectionDetails;
+    }
+
+    public String getChikungunyaAntigenDetectionDetails() {
+        return chikungunyaAntigenDetectionDetails;
+    }
+
+    public String getChikungunyaRapidTestDetails() {
+        return chikungunyaRapidTestDetails;
+    }
+
+    public String getChikungunyaCultureDetails() {
+        return chikungunyaCultureDetails;
+    }
+
+    public String getChikungunyaHistopathologyDetails() {
+        return chikungunyaHistopathologyDetails;
+    }
+
+    public String getChikungunyaIsolationDetails() {
+        return chikungunyaIsolationDetails;
+    }
+
+    public String getChikungunyaIgmSerumAntibodyDetails() {
+        return chikungunyaIgmSerumAntibodyDetails;
+    }
+
+    public String getChikungunyaIggSerumAntibodyDetails() {
+        return chikungunyaIggSerumAntibodyDetails;
+    }
+
+    public String getChikungunyaIgaSerumAntibodyDetails() {
+        return chikungunyaIgaSerumAntibodyDetails;
+    }
+
+    public String getChikungunyaIncubationTimeDetails() {
+        return chikungunyaIncubationTimeDetails;
+    }
+
+    public String getChikungunyaIndirectFluorescentAntibodyDetails() {
+        return chikungunyaIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getChikungunyaDirectFluorescentAntibodyDetails() {
+        return chikungunyaDirectFluorescentAntibodyDetails;
+    }
+
+    public String getChikungunyaMicroscopyDetails() {
+        return chikungunyaMicroscopyDetails;
+    }
+
+    public String getChikungunyaNeutralizingAntibodiesDetails() {
+        return chikungunyaNeutralizingAntibodiesDetails;
+    }
+
+    public String getChikungunyaPcrRtPcrDetails() {
+        return chikungunyaPcrRtPcrDetails;
+    }
+
+    public String getChikungunyaGramStainDetails() {
+        return chikungunyaGramStainDetails;
+    }
+
+    public String getChikungunyaLatexAgglutinationDetails() {
+        return chikungunyaLatexAgglutinationDetails;
+    }
+
+    public String getChikungunyaCqValueDetectionDetails() {
+        return chikungunyaCqValueDetectionDetails;
+    }
+
+    public String getChikungunyaSequencingDetails() {
+        return chikungunyaSequencingDetails;
+    }
+
+    public String getChikungunyaDnaMicroarrayDetails() {
+        return chikungunyaDnaMicroarrayDetails;
+    }
+
+    public String getChikungunyaOtherDetails() {
+        return chikungunyaOtherDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildAntibodyDetection() {
+        return postImmunizationAdverseEventsMildAntibodyDetection;
     }
 
     public String getPostImmunizationAdverseEventsMildAntigenDetection() {
@@ -11238,6 +22870,10 @@ public class CaseSampleExportDto implements Serializable {
         return postImmunizationAdverseEventsMildIndirectFluorescentAntibody;
     }
 
+    public String getPostImmunizationAdverseEventsMildDirectFluorescentAntibody() {
+        return postImmunizationAdverseEventsMildDirectFluorescentAntibody;
+    }
+
     public String getPostImmunizationAdverseEventsMildMicroscopy() {
         return postImmunizationAdverseEventsMildMicroscopy;
     }
@@ -11246,8 +22882,8 @@ public class CaseSampleExportDto implements Serializable {
         return postImmunizationAdverseEventsMildNeutralizingAntibodies;
     }
 
-    public String getPostImmunizationAdverseEventsMildPcr() {
-        return postImmunizationAdverseEventsMildPcr;
+    public String getPostImmunizationAdverseEventsMildPcrRtPcr() {
+        return postImmunizationAdverseEventsMildPcrRtPcr;
     }
 
     public String getPostImmunizationAdverseEventsMildGramStain() {
@@ -11262,100 +22898,272 @@ public class CaseSampleExportDto implements Serializable {
         return postImmunizationAdverseEventsMildCqValueDetection;
     }
 
-    public String getPostImmunizationAdverseEventsMildSeQuencing() {
-        return postImmunizationAdverseEventsMildSeQuencing;
+    public String getPostImmunizationAdverseEventsMildSequencing() {
+        return postImmunizationAdverseEventsMildSequencing;
     }
 
-    public String getPostImmunizationAdverseEventsMildDnaMicroArray() {
-        return postImmunizationAdverseEventsMildDnaMicroArray;
+    public String getPostImmunizationAdverseEventsMildDnaMicroarray() {
+        return postImmunizationAdverseEventsMildDnaMicroarray;
     }
 
     public String getPostImmunizationAdverseEventsMildOther() {
         return postImmunizationAdverseEventsMildOther;
     }
 
-    public String getPostImmunizationAdverseEventsSevereAntiBodyDetection() {
-        return PostImmunizationAdverseEventsSevereAntiBodyDetection;
+    public String getPostImmunizationAdverseEventsMildAntibodyDetectionDetails() {
+        return postImmunizationAdverseEventsMildAntibodyDetectionDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildAntigenDetectionDetails() {
+        return postImmunizationAdverseEventsMildAntigenDetectionDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildRapidTestDetails() {
+        return postImmunizationAdverseEventsMildRapidTestDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildCultureDetails() {
+        return postImmunizationAdverseEventsMildCultureDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildHistopathologyDetails() {
+        return postImmunizationAdverseEventsMildHistopathologyDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildIsolationDetails() {
+        return postImmunizationAdverseEventsMildIsolationDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildIgmSerumAntibodyDetails() {
+        return postImmunizationAdverseEventsMildIgmSerumAntibodyDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildIggSerumAntibodyDetails() {
+        return postImmunizationAdverseEventsMildIggSerumAntibodyDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildIgaSerumAntibodyDetails() {
+        return postImmunizationAdverseEventsMildIgaSerumAntibodyDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildIncubationTimeDetails() {
+        return postImmunizationAdverseEventsMildIncubationTimeDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildIndirectFluorescentAntibodyDetails() {
+        return postImmunizationAdverseEventsMildIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildDirectFluorescentAntibodyDetails() {
+        return postImmunizationAdverseEventsMildDirectFluorescentAntibodyDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildMicroscopyDetails() {
+        return postImmunizationAdverseEventsMildMicroscopyDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildNeutralizingAntibodiesDetails() {
+        return postImmunizationAdverseEventsMildNeutralizingAntibodiesDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildPcrRtPcrDetails() {
+        return postImmunizationAdverseEventsMildPcrRtPcrDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildGramStainDetails() {
+        return postImmunizationAdverseEventsMildGramStainDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildLatexAgglutinationDetails() {
+        return postImmunizationAdverseEventsMildLatexAgglutinationDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildCqValueDetectionDetails() {
+        return postImmunizationAdverseEventsMildCqValueDetectionDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildSequencingDetails() {
+        return postImmunizationAdverseEventsMildSequencingDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildDnaMicroarrayDetails() {
+        return postImmunizationAdverseEventsMildDnaMicroarrayDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsMildOtherDetails() {
+        return postImmunizationAdverseEventsMildOtherDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereAntibodyDetection() {
+        return postImmunizationAdverseEventsSevereAntibodyDetection;
     }
 
     public String getPostImmunizationAdverseEventsSevereAntigenDetection() {
-        return PostImmunizationAdverseEventsSevereAntigenDetection;
+        return postImmunizationAdverseEventsSevereAntigenDetection;
     }
 
     public String getPostImmunizationAdverseEventsSevereRapidTest() {
-        return PostImmunizationAdverseEventsSevereRapidTest;
+        return postImmunizationAdverseEventsSevereRapidTest;
     }
 
     public String getPostImmunizationAdverseEventsSevereCulture() {
-        return PostImmunizationAdverseEventsSevereCulture;
+        return postImmunizationAdverseEventsSevereCulture;
     }
 
     public String getPostImmunizationAdverseEventsSevereHistopathology() {
-        return PostImmunizationAdverseEventsSevereHistopathology;
+        return postImmunizationAdverseEventsSevereHistopathology;
     }
 
     public String getPostImmunizationAdverseEventsSevereIsolation() {
-        return PostImmunizationAdverseEventsSevereIsolation;
+        return postImmunizationAdverseEventsSevereIsolation;
     }
 
     public String getPostImmunizationAdverseEventsSevereIgmSerumAntibody() {
-        return PostImmunizationAdverseEventsSevereIgmSerumAntibody;
+        return postImmunizationAdverseEventsSevereIgmSerumAntibody;
     }
 
     public String getPostImmunizationAdverseEventsSevereIggSerumAntibody() {
-        return PostImmunizationAdverseEventsSevereIggSerumAntibody;
+        return postImmunizationAdverseEventsSevereIggSerumAntibody;
     }
 
     public String getPostImmunizationAdverseEventsSevereIgaSerumAntibody() {
-        return PostImmunizationAdverseEventsSevereIgaSerumAntibody;
+        return postImmunizationAdverseEventsSevereIgaSerumAntibody;
     }
 
     public String getPostImmunizationAdverseEventsSevereIncubationTime() {
-        return PostImmunizationAdverseEventsSevereIncubationTime;
+        return postImmunizationAdverseEventsSevereIncubationTime;
     }
 
     public String getPostImmunizationAdverseEventsSevereIndirectFluorescentAntibody() {
-        return PostImmunizationAdverseEventsSevereIndirectFluorescentAntibody;
+        return postImmunizationAdverseEventsSevereIndirectFluorescentAntibody;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereDirectFluorescentAntibody() {
+        return postImmunizationAdverseEventsSevereDirectFluorescentAntibody;
     }
 
     public String getPostImmunizationAdverseEventsSevereMicroscopy() {
-        return PostImmunizationAdverseEventsSevereMicroscopy;
+        return postImmunizationAdverseEventsSevereMicroscopy;
     }
 
     public String getPostImmunizationAdverseEventsSevereNeutralizingAntibodies() {
-        return PostImmunizationAdverseEventsSevereNeutralizingAntibodies;
+        return postImmunizationAdverseEventsSevereNeutralizingAntibodies;
     }
 
-    public String getPostImmunizationAdverseEventsSeverePcr() {
-        return PostImmunizationAdverseEventsSeverePcr;
+    public String getPostImmunizationAdverseEventsSeverePcrRtPcr() {
+        return postImmunizationAdverseEventsSeverePcrRtPcr;
     }
 
     public String getPostImmunizationAdverseEventsSevereGramStain() {
-        return PostImmunizationAdverseEventsSevereGramStain;
+        return postImmunizationAdverseEventsSevereGramStain;
     }
 
     public String getPostImmunizationAdverseEventsSevereLatexAgglutination() {
-        return PostImmunizationAdverseEventsSevereLatexAgglutination;
+        return postImmunizationAdverseEventsSevereLatexAgglutination;
     }
 
     public String getPostImmunizationAdverseEventsSevereCqValueDetection() {
-        return PostImmunizationAdverseEventsSevereCqValueDetection;
+        return postImmunizationAdverseEventsSevereCqValueDetection;
     }
 
-    public String getPostImmunizationAdverseEventsSevereSeQuencing() {
-        return PostImmunizationAdverseEventsSevereSeQuencing;
+    public String getPostImmunizationAdverseEventsSevereSequencing() {
+        return postImmunizationAdverseEventsSevereSequencing;
     }
 
-    public String getPostImmunizationAdverseEventsSevereDnaMicroArray() {
-        return PostImmunizationAdverseEventsSevereDnaMicroArray;
+    public String getPostImmunizationAdverseEventsSevereDnaMicroarray() {
+        return postImmunizationAdverseEventsSevereDnaMicroarray;
     }
 
     public String getPostImmunizationAdverseEventsSevereOther() {
-        return PostImmunizationAdverseEventsSevereOther;
+        return postImmunizationAdverseEventsSevereOther;
     }
 
-    public String getFhaAntiBodyDetection() {
-        return fhaAntiBodyDetection;
+    public String getPostImmunizationAdverseEventsSevereAntibodyDetectionDetails() {
+        return postImmunizationAdverseEventsSevereAntibodyDetectionDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereAntigenDetectionDetails() {
+        return postImmunizationAdverseEventsSevereAntigenDetectionDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereRapidTestDetails() {
+        return postImmunizationAdverseEventsSevereRapidTestDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereCultureDetails() {
+        return postImmunizationAdverseEventsSevereCultureDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereHistopathologyDetails() {
+        return postImmunizationAdverseEventsSevereHistopathologyDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereIsolationDetails() {
+        return postImmunizationAdverseEventsSevereIsolationDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereIgmSerumAntibodyDetails() {
+        return postImmunizationAdverseEventsSevereIgmSerumAntibodyDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereIggSerumAntibodyDetails() {
+        return postImmunizationAdverseEventsSevereIggSerumAntibodyDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereIgaSerumAntibodyDetails() {
+        return postImmunizationAdverseEventsSevereIgaSerumAntibodyDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereIncubationTimeDetails() {
+        return postImmunizationAdverseEventsSevereIncubationTimeDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereIndirectFluorescentAntibodyDetails() {
+        return postImmunizationAdverseEventsSevereIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereDirectFluorescentAntibodyDetails() {
+        return postImmunizationAdverseEventsSevereDirectFluorescentAntibodyDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereMicroscopyDetails() {
+        return postImmunizationAdverseEventsSevereMicroscopyDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereNeutralizingAntibodiesDetails() {
+        return postImmunizationAdverseEventsSevereNeutralizingAntibodiesDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSeverePcrRtPcrDetails() {
+        return postImmunizationAdverseEventsSeverePcrRtPcrDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereGramStainDetails() {
+        return postImmunizationAdverseEventsSevereGramStainDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereLatexAgglutinationDetails() {
+        return postImmunizationAdverseEventsSevereLatexAgglutinationDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereCqValueDetectionDetails() {
+        return postImmunizationAdverseEventsSevereCqValueDetectionDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereSequencingDetails() {
+        return postImmunizationAdverseEventsSevereSequencingDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereDnaMicroarrayDetails() {
+        return postImmunizationAdverseEventsSevereDnaMicroarrayDetails;
+    }
+
+    public String getPostImmunizationAdverseEventsSevereOtherDetails() {
+        return postImmunizationAdverseEventsSevereOtherDetails;
+    }
+
+    public String getFhaAntibodyDetection() {
+        return fhaAntibodyDetection;
     }
 
     public String getFhaAntigenDetection() {
@@ -11398,6 +23206,10 @@ public class CaseSampleExportDto implements Serializable {
         return fhaIndirectFluorescentAntibody;
     }
 
+    public String getFhaDirectFluorescentAntibody() {
+        return fhaDirectFluorescentAntibody;
+    }
+
     public String getFhaMicroscopy() {
         return fhaMicroscopy;
     }
@@ -11406,8 +23218,8 @@ public class CaseSampleExportDto implements Serializable {
         return fhaNeutralizingAntibodies;
     }
 
-    public String getFhaPcr() {
-        return fhaPcr;
+    public String getFhaPcrRtPcr() {
+        return fhaPcrRtPcr;
     }
 
     public String getFhaGramStain() {
@@ -11422,20 +23234,104 @@ public class CaseSampleExportDto implements Serializable {
         return fhaCqValueDetection;
     }
 
-    public String getFhaSeQuencing() {
-        return fhaSeQuencing;
+    public String getFhaSequencing() {
+        return fhaSequencing;
     }
 
-    public String getFhaDnaMicroArray() {
-        return fhaDnaMicroArray;
+    public String getFhaDnaMicroarray() {
+        return fhaDnaMicroarray;
     }
 
     public String getFhaOther() {
         return fhaOther;
     }
 
-    public String getOtherAntiBodyDetection() {
-        return otherAntiBodyDetection;
+    public String getFhaAntibodyDetectionDetails() {
+        return fhaAntibodyDetectionDetails;
+    }
+
+    public String getFhaAntigenDetectionDetails() {
+        return fhaAntigenDetectionDetails;
+    }
+
+    public String getFhaRapidTestDetails() {
+        return fhaRapidTestDetails;
+    }
+
+    public String getFhaCultureDetails() {
+        return fhaCultureDetails;
+    }
+
+    public String getFhaHistopathologyDetails() {
+        return fhaHistopathologyDetails;
+    }
+
+    public String getFhaIsolationDetails() {
+        return fhaIsolationDetails;
+    }
+
+    public String getFhaIgmSerumAntibodyDetails() {
+        return fhaIgmSerumAntibodyDetails;
+    }
+
+    public String getFhaIggSerumAntibodyDetails() {
+        return fhaIggSerumAntibodyDetails;
+    }
+
+    public String getFhaIgaSerumAntibodyDetails() {
+        return fhaIgaSerumAntibodyDetails;
+    }
+
+    public String getFhaIncubationTimeDetails() {
+        return fhaIncubationTimeDetails;
+    }
+
+    public String getFhaIndirectFluorescentAntibodyDetails() {
+        return fhaIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getFhaDirectFluorescentAntibodyDetails() {
+        return fhaDirectFluorescentAntibodyDetails;
+    }
+
+    public String getFhaMicroscopyDetails() {
+        return fhaMicroscopyDetails;
+    }
+
+    public String getFhaNeutralizingAntibodiesDetails() {
+        return fhaNeutralizingAntibodiesDetails;
+    }
+
+    public String getFhaPcrRtPcrDetails() {
+        return fhaPcrRtPcrDetails;
+    }
+
+    public String getFhaGramStainDetails() {
+        return fhaGramStainDetails;
+    }
+
+    public String getFhaLatexAgglutinationDetails() {
+        return fhaLatexAgglutinationDetails;
+    }
+
+    public String getFhaCqValueDetectionDetails() {
+        return fhaCqValueDetectionDetails;
+    }
+
+    public String getFhaSequencingDetails() {
+        return fhaSequencingDetails;
+    }
+
+    public String getFhaDnaMicroarrayDetails() {
+        return fhaDnaMicroarrayDetails;
+    }
+
+    public String getFhaOtherDetails() {
+        return fhaOtherDetails;
+    }
+
+    public String getOtherAntibodyDetection() {
+        return otherAntibodyDetection;
     }
 
     public String getOtherAntigenDetection() {
@@ -11478,6 +23374,10 @@ public class CaseSampleExportDto implements Serializable {
         return otherIndirectFluorescentAntibody;
     }
 
+    public String getOtherDirectFluorescentAntibody() {
+        return otherDirectFluorescentAntibody;
+    }
+
     public String getOtherMicroscopy() {
         return otherMicroscopy;
     }
@@ -11486,8 +23386,8 @@ public class CaseSampleExportDto implements Serializable {
         return otherNeutralizingAntibodies;
     }
 
-    public String getOtherPcr() {
-        return otherPcr;
+    public String getOtherPcrRtPcr() {
+        return otherPcrRtPcr;
     }
 
     public String getOtherGramStain() {
@@ -11502,20 +23402,104 @@ public class CaseSampleExportDto implements Serializable {
         return otherCqValueDetection;
     }
 
-    public String getOtherSeQuencing() {
-        return otherSeQuencing;
+    public String getOtherSequencing() {
+        return otherSequencing;
     }
 
-    public String getOtherDnaMicroArray() {
-        return otherDnaMicroArray;
+    public String getOtherDnaMicroarray() {
+        return otherDnaMicroarray;
     }
 
     public String getOtherOther() {
         return otherOther;
     }
 
-    public String getUndefinedAntiBodyDetection() {
-        return undefinedAntiBodyDetection;
+    public String getOtherAntibodyDetectionDetails() {
+        return otherAntibodyDetectionDetails;
+    }
+
+    public String getOtherAntigenDetectionDetails() {
+        return otherAntigenDetectionDetails;
+    }
+
+    public String getOtherRapidTestDetails() {
+        return otherRapidTestDetails;
+    }
+
+    public String getOtherCultureDetails() {
+        return otherCultureDetails;
+    }
+
+    public String getOtherHistopathologyDetails() {
+        return otherHistopathologyDetails;
+    }
+
+    public String getOtherIsolationDetails() {
+        return otherIsolationDetails;
+    }
+
+    public String getOtherIgmSerumAntibodyDetails() {
+        return otherIgmSerumAntibodyDetails;
+    }
+
+    public String getOtherIggSerumAntibodyDetails() {
+        return otherIggSerumAntibodyDetails;
+    }
+
+    public String getOtherIgaSerumAntibodyDetails() {
+        return otherIgaSerumAntibodyDetails;
+    }
+
+    public String getOtherIncubationTimeDetails() {
+        return otherIncubationTimeDetails;
+    }
+
+    public String getOtherIndirectFluorescentAntibodyDetails() {
+        return otherIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getOtherDirectFluorescentAntibodyDetails() {
+        return otherDirectFluorescentAntibodyDetails;
+    }
+
+    public String getOtherMicroscopyDetails() {
+        return otherMicroscopyDetails;
+    }
+
+    public String getOtherNeutralizingAntibodiesDetails() {
+        return otherNeutralizingAntibodiesDetails;
+    }
+
+    public String getOtherPcrRtPcrDetails() {
+        return otherPcrRtPcrDetails;
+    }
+
+    public String getOtherGramStainDetails() {
+        return otherGramStainDetails;
+    }
+
+    public String getOtherLatexAgglutinationDetails() {
+        return otherLatexAgglutinationDetails;
+    }
+
+    public String getOtherCqValueDetectionDetails() {
+        return otherCqValueDetectionDetails;
+    }
+
+    public String getOtherSequencingDetails() {
+        return otherSequencingDetails;
+    }
+
+    public String getOtherDnaMicroarrayDetails() {
+        return otherDnaMicroarrayDetails;
+    }
+
+    public String getOtherOtherDetails() {
+        return otherOtherDetails;
+    }
+
+    public String getUndefinedAntibodyDetection() {
+        return undefinedAntibodyDetection;
     }
 
     public String getUndefinedAntigenDetection() {
@@ -11558,6 +23542,10 @@ public class CaseSampleExportDto implements Serializable {
         return undefinedIndirectFluorescentAntibody;
     }
 
+    public String getUndefinedDirectFluorescentAntibody() {
+        return undefinedDirectFluorescentAntibody;
+    }
+
     public String getUndefinedMicroscopy() {
         return undefinedMicroscopy;
     }
@@ -11566,8 +23554,8 @@ public class CaseSampleExportDto implements Serializable {
         return undefinedNeutralizingAntibodies;
     }
 
-    public String getUndefinedPcr() {
-        return undefinedPcr;
+    public String getUndefinedPcrRtPcr() {
+        return undefinedPcrRtPcr;
     }
 
     public String getUndefinedGramStain() {
@@ -11582,15 +23570,103 @@ public class CaseSampleExportDto implements Serializable {
         return undefinedCqValueDetection;
     }
 
-    public String getUndefinedSeQuencing() {
-        return undefinedSeQuencing;
+    public String getUndefinedSequencing() {
+        return undefinedSequencing;
     }
 
-    public String getUndefinedDnaMicroArray() {
-        return undefinedDnaMicroArray;
+    public String getUndefinedDnaMicroarray() {
+        return undefinedDnaMicroarray;
     }
 
     public String getUndefinedOther() {
         return undefinedOther;
     }
+
+    public String getUndefinedAntibodyDetectionDetails() {
+        return undefinedAntibodyDetectionDetails;
+    }
+
+    public String getUndefinedAntigenDetectionDetails() {
+        return undefinedAntigenDetectionDetails;
+    }
+
+    public String getUndefinedRapidTestDetails() {
+        return undefinedRapidTestDetails;
+    }
+
+    public String getUndefinedCultureDetails() {
+        return undefinedCultureDetails;
+    }
+
+    public String getUndefinedHistopathologyDetails() {
+        return undefinedHistopathologyDetails;
+    }
+
+    public String getUndefinedIsolationDetails() {
+        return undefinedIsolationDetails;
+    }
+
+    public String getUndefinedIgmSerumAntibodyDetails() {
+        return undefinedIgmSerumAntibodyDetails;
+    }
+
+    public String getUndefinedIggSerumAntibodyDetails() {
+        return undefinedIggSerumAntibodyDetails;
+    }
+
+    public String getUndefinedIgaSerumAntibodyDetails() {
+        return undefinedIgaSerumAntibodyDetails;
+    }
+
+    public String getUndefinedIncubationTimeDetails() {
+        return undefinedIncubationTimeDetails;
+    }
+
+    public String getUndefinedIndirectFluorescentAntibodyDetails() {
+        return undefinedIndirectFluorescentAntibodyDetails;
+    }
+
+    public String getUndefinedDirectFluorescentAntibodyDetails() {
+        return undefinedDirectFluorescentAntibodyDetails;
+    }
+
+    public String getUndefinedMicroscopyDetails() {
+        return undefinedMicroscopyDetails;
+    }
+
+    public String getUndefinedNeutralizingAntibodiesDetails() {
+        return undefinedNeutralizingAntibodiesDetails;
+    }
+
+    public String getUndefinedPcrRtPcrDetails() {
+        return undefinedPcrRtPcrDetails;
+    }
+
+    public String getUndefinedGramStainDetails() {
+        return undefinedGramStainDetails;
+    }
+
+    public String getUndefinedLatexAgglutinationDetails() {
+        return undefinedLatexAgglutinationDetails;
+    }
+
+    public String getUndefinedCqValueDetectionDetails() {
+        return undefinedCqValueDetectionDetails;
+    }
+
+    public String getUndefinedSequencingDetails() {
+        return undefinedSequencingDetails;
+    }
+
+    public String getUndefinedDnaMicroarrayDetails() {
+        return undefinedDnaMicroarrayDetails;
+    }
+
+    public String getUndefinedOtherDetails() {
+        return undefinedOtherDetails;
+    }
+
+
+
+
 }

@@ -60,9 +60,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.caze.*;
-import de.symeda.sormas.api.caze.caseimport.CaseDtoComparator;
-import de.symeda.sormas.api.caze.caseimport.CaseMDDataDtoComparator;
-import de.symeda.sormas.api.caze.caseimport.GenericComparator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.engine.spi.SessionImplementor;
@@ -1376,7 +1373,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
         return outbreakSubquery;
     }
 
-    private Subquery<Long> clinicalVisitSq(CriteriaBuilder cb, CriteriaQuery<CaseExportDto> cq, Root<Case> caseRoot) {
+    private <T> Subquery<Long> clinicalVisitSq(CriteriaBuilder cb, CriteriaQuery<T> cq, Root<Case> caseRoot) {
         Subquery<Long> clinicalVisitCountSq = cq.subquery(Long.class);
         Root<ClinicalVisit> clinicalVisitRoot = clinicalVisitCountSq.from(ClinicalVisit.class);
         Join<ClinicalVisit, ClinicalCourse> clinicalVisitClinicalCourseJoin = clinicalVisitRoot.join(ClinicalVisit.CLINICAL_COURSE, JoinType.LEFT);
@@ -4590,5 +4587,8732 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
             return "";
         }
     }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @RightsAllowed(UserRight._CASE_EXPORT)
+    public List<CaseExportDetailedSampleDto> getExportListDetailed(
+            CaseCriteria caseCriteria,
+            Collection<String> selectedRows,
+            CaseExportType exportType,
+            int first,
+            int max,
+            ExportConfigurationDto exportConfiguration,
+            Language userLanguage) {
+
+        List<CaseSampleExportDto> allSamples = null;
+
+        Boolean previousCaseManagementDataCriteria = caseCriteria.getMustHaveCaseManagementData();
+        if (CaseExportType.CASE_MANAGEMENT == exportType) {
+            caseCriteria.setMustHaveCaseManagementData(Boolean.TRUE);
+        }
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<CaseExportDetailedSampleDto> cq = cb.createQuery(CaseExportDetailedSampleDto.class);
+        Root<Case> caseRoot = cq.from(Case.class);
+
+        final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, caseRoot);
+        final CaseJoins joins = caseQueryContext.getJoins();
+
+        // Events count subquery
+        Subquery<Long> eventCountSq = cq.subquery(Long.class);
+        Root<EventParticipant> eventCountRoot = eventCountSq.from(EventParticipant.class);
+        Join<EventParticipant, Event> event = eventCountRoot.join(EventParticipant.EVENT, JoinType.INNER);
+        Join<EventParticipant, Case> resultingCase = eventCountRoot.join(EventParticipant.RESULTING_CASE, JoinType.INNER);
+        eventCountSq.where(
+                cb.and(
+                        cb.equal(resultingCase.get(Case.ID), caseRoot.get(Case.ID)),
+                        cb.isFalse(event.get(Event.DELETED)),
+                        cb.isFalse(eventCountRoot.get(EventParticipant.DELETED))));
+        eventCountSq.select(cb.countDistinct(event.get(Event.ID)));
+
+        Subquery<Long> prescriptionCountSq = cq.subquery(Long.class);
+        Root<Prescription> prescriptionCountRoot = prescriptionCountSq.from(Prescription.class);
+        Join<Prescription, Therapy> prescriptionTherapyJoin = prescriptionCountRoot.join(Prescription.THERAPY, JoinType.LEFT);
+        prescriptionCountSq.where(cb.and(cb.equal(prescriptionTherapyJoin.get(Therapy.ID), caseRoot.get(Case.THERAPY).get(Therapy.ID))));
+        prescriptionCountSq.select(cb.countDistinct(prescriptionCountRoot.get(Prescription.ID)));
+
+        Subquery<Long> treatmentCountSq = cq.subquery(Long.class);
+        Root<Treatment> treatmentCountRoot = treatmentCountSq.from(Treatment.class);
+        Join<Treatment, Therapy> treatmentTherapyJoin = treatmentCountRoot.join(Treatment.THERAPY, JoinType.LEFT);
+        treatmentCountSq.where(cb.and(cb.equal(treatmentTherapyJoin.get(Therapy.ID), caseRoot.get(Case.THERAPY).get(Therapy.ID))));
+        treatmentCountSq.select(cb.countDistinct(treatmentCountRoot.get(Treatment.ID)));
+
+        boolean exportGpsCoordinates = ExportHelper.shouldExportFields(exportConfiguration, PersonDto.ADDRESS, CaseExportDetailedSampleDto.ADDRESS_GPS_COORDINATES);
+        boolean exportPrescriptionNumber = (exportType == null || exportType == CaseExportType.CASE_MANAGEMENT)
+                && ExportHelper.shouldExportFields(exportConfiguration, CaseExportDetailedSampleDto.NUMBER_OF_PRESCRIPTIONS);
+        boolean exportTreatmentNumber = (exportType == null || exportType == CaseExportType.CASE_MANAGEMENT)
+                && ExportHelper.shouldExportFields(exportConfiguration, CaseExportDetailedSampleDto.NUMBER_OF_TREATMENTS);
+        boolean exportClinicalVisitNumber = (exportType == null || exportType == CaseExportType.CASE_MANAGEMENT)
+                && ExportHelper.shouldExportFields(exportConfiguration, CaseExportDetailedSampleDto.NUMBER_OF_CLINICAL_VISITS);
+        boolean exportOutbreakInfo = ExportHelper.shouldExportFields(exportConfiguration, CaseExportDetailedSampleDto.ASSOCIATED_WITH_OUTBREAK);
+
+        //@formatter:off
+        cq.multiselect(caseRoot.get(Case.ID), joins.getPerson().get(Person.ID),
+                exportGpsCoordinates ? joins.getPersonAddress().get(Location.LATITUDE) : cb.nullLiteral(Double.class),
+                exportGpsCoordinates ? joins.getPersonAddress().get(Location.LONGITUDE) : cb.nullLiteral(Double.class),
+                exportGpsCoordinates ? joins.getPersonAddress().get(Location.LATLONACCURACY) : cb.nullLiteral(Float.class),
+                joins.getEpiData().get(EpiData.ID),
+                joins.getRoot().get(Case.SYMPTOMS).get(Symptoms.ID),
+                joins.getHospitalization().get(Hospitalization.ID),
+                joins.getRoot().get(Case.HEALTH_CONDITIONS).get(HealthConditions.ID),
+                caseRoot.get(Case.UUID),
+                caseRoot.get(Case.EPID_NUMBER), caseRoot.get(Case.DISEASE), caseRoot.get(Case.DISEASE_VARIANT), caseRoot.get(Case.DISEASE_DETAILS),
+                caseRoot.get(Case.DISEASE_VARIANT_DETAILS), joins.getPerson().get(Person.UUID), joins.getPerson().get(Person.FIRST_NAME), joins.getPerson().get(Person.LAST_NAME),
+                joins.getPerson().get(Person.SALUTATION), joins.getPerson().get(Person.OTHER_SALUTATION), joins.getPerson().get(Person.SEX),
+                caseRoot.get(Case.PREGNANT), joins.getPerson().get(Person.APPROXIMATE_AGE),
+                joins.getPerson().get(Person.APPROXIMATE_AGE_TYPE), joins.getPerson().get(Person.BIRTHDATE_DD),
+                joins.getPerson().get(Person.BIRTHDATE_MM), joins.getPerson().get(Person.BIRTHDATE_YYYY),
+                caseRoot.get(Case.REPORT_DATE), joins.getRegion().get(Region.NAME),
+                joins.getDistrict().get(District.NAME), joins.getCommunity().get(Community.NAME),
+                caseRoot.get(Case.FACILITY_TYPE),
+                joins.getFacility().get(Facility.NAME), joins.getFacility().get(Facility.UUID), caseRoot.get(Case.HEALTH_FACILITY_DETAILS),
+                joins.getPointOfEntry().get(PointOfEntry.NAME), joins.getPointOfEntry().get(PointOfEntry.UUID), caseRoot.get(Case.POINT_OF_ENTRY_DETAILS),
+                caseRoot.get(Case.CASE_CLASSIFICATION),
+                caseRoot.get(Case.CLINICAL_CONFIRMATION), caseRoot.get(Case.EPIDEMIOLOGICAL_CONFIRMATION), caseRoot.get(Case.LABORATORY_DIAGNOSTIC_CONFIRMATION),
+                caseRoot.get(Case.NOT_A_CASE_REASON_NEGATIVE_TEST),
+                caseRoot.get(Case.NOT_A_CASE_REASON_PHYSICIAN_INFORMATION), caseRoot.get(Case.NOT_A_CASE_REASON_DIFFERENT_PATHOGEN),
+                caseRoot.get(Case.NOT_A_CASE_REASON_OTHER), caseRoot.get(Case.NOT_A_CASE_REASON_DETAILS),
+                caseRoot.get(Case.INVESTIGATION_STATUS), caseRoot.get(Case.INVESTIGATED_DATE),
+                caseRoot.get(Case.OUTCOME), caseRoot.get(Case.OUTCOME_DATE),
+                caseRoot.get(Case.SEQUELAE), caseRoot.get(Case.SEQUELAE_DETAILS),
+                caseRoot.get(Case.BLOOD_ORGAN_OR_TISSUE_DONATED),
+                caseRoot.get(Case.FOLLOW_UP_STATUS), caseRoot.get(Case.FOLLOW_UP_UNTIL),
+                caseRoot.get(Case.NOSOCOMIAL_OUTBREAK), caseRoot.get(Case.INFECTION_SETTING),
+                caseRoot.get(Case.PROHIBITION_TO_WORK), caseRoot.get(Case.PROHIBITION_TO_WORK_FROM), caseRoot.get(Case.PROHIBITION_TO_WORK_UNTIL),
+                caseRoot.get(Case.RE_INFECTION), caseRoot.get(Case.PREVIOUS_INFECTION_DATE), caseRoot.get(Case.REINFECTION_STATUS), caseRoot.get(Case.REINFECTION_DETAILS),
+                // quarantine
+                caseRoot.get(Case.QUARANTINE), caseRoot.get(Case.QUARANTINE_TYPE_DETAILS), caseRoot.get(Case.QUARANTINE_FROM), caseRoot.get(Case.QUARANTINE_TO),
+                caseRoot.get(Case.QUARANTINE_HELP_NEEDED),
+                caseRoot.get(Case.QUARANTINE_ORDERED_VERBALLY),
+                caseRoot.get(Case.QUARANTINE_ORDERED_OFFICIAL_DOCUMENT),
+                caseRoot.get(Case.QUARANTINE_ORDERED_VERBALLY_DATE),
+                caseRoot.get(Case.QUARANTINE_ORDERED_OFFICIAL_DOCUMENT_DATE),
+                caseRoot.get(Case.QUARANTINE_EXTENDED),
+                caseRoot.get(Case.QUARANTINE_REDUCED),
+                caseRoot.get(Case.QUARANTINE_OFFICIAL_ORDER_SENT),
+                caseRoot.get(Case.QUARANTINE_OFFICIAL_ORDER_SENT_DATE),
+
+                joins.getHospitalization().get(Hospitalization.ADMITTED_TO_HEALTH_FACILITY), joins.getHospitalization().get(Hospitalization.ADMISSION_DATE),
+                joins.getHospitalization().get(Hospitalization.DISCHARGE_DATE), joins.getHospitalization().get(Hospitalization.LEFT_AGAINST_ADVICE),
+                joins.getPerson().get(Person.PRESENT_CONDITION), joins.getPerson().get(Person.DEATH_DATE), joins.getPerson().get(Person.BURIAL_DATE),
+                joins.getPerson().get(Person.BURIAL_CONDUCTOR), joins.getPerson().get(Person.BURIAL_PLACE_DESCRIPTION),
+                // address
+                joins.getPersonAddressRegion().get(Region.NAME), joins.getPersonAddressDistrict().get(District.NAME), joins.getPersonAddressCommunity().get(Community.NAME),
+                joins.getPersonAddress().get(Location.CITY), joins.getPersonAddress().get(Location.STREET), joins.getPersonAddress().get(Location.HOUSE_NUMBER),
+                joins.getPersonAddress().get(Location.ADDITIONAL_INFORMATION), joins.getPersonAddress().get(Location.POSTAL_CODE),
+                joins.getPersonAddressFacility().get(Facility.NAME), joins.getPersonAddressFacility().get(Facility.UUID), joins.getPersonAddress().get(Location.FACILITY_DETAILS),
+                // phone
+                caseQueryContext.getSubqueryExpression(CaseQueryContext.PERSON_PHONE_SUBQUERY),
+                caseQueryContext.getSubqueryExpression(CaseQueryContext.PERSON_PHONE_OWNER_SUBQUERY),
+                caseQueryContext.getSubqueryExpression(CaseQueryContext.PERSON_EMAIL_SUBQUERY),
+                caseQueryContext.getSubqueryExpression(CaseQueryContext.PERSON_OTHER_CONTACT_DETAILS_SUBQUERY),
+                joins.getPerson().get(Person.EDUCATION_TYPE),
+                joins.getPerson().get(Person.EDUCATION_DETAILS), joins.getPerson().get(Person.OCCUPATION_TYPE),
+                joins.getPerson().get(Person.OCCUPATION_DETAILS), joins.getPerson().get(Person.ARMED_FORCES_RELATION_TYPE), joins.getEpiData().get(EpiData.CONTACT_WITH_SOURCE_CASE_KNOWN),
+                caseRoot.get(Case.VACCINATION_STATUS), caseRoot.get(Case.POSTPARTUM), caseRoot.get(Case.TRIMESTER),
+                eventCountSq,
+                exportPrescriptionNumber ? prescriptionCountSq : cb.nullLiteral(Long.class),
+                exportTreatmentNumber ? treatmentCountSq : cb.nullLiteral(Long.class),
+                exportClinicalVisitNumber ? clinicalVisitSq(cb, cq, caseRoot) : cb.nullLiteral(Long.class),
+                caseRoot.get(Case.EXTERNAL_ID),
+                caseRoot.get(Case.EXTERNAL_TOKEN),
+                caseRoot.get(Case.INTERNAL_TOKEN),
+                joins.getPerson().get(Person.BIRTH_NAME),
+                joins.getPersonBirthCountry().get(Country.ISO_CODE),
+                joins.getPersonBirthCountry().get(Country.DEFAULT_NAME),
+                joins.getPersonCitizenship().get(Country.ISO_CODE),
+                joins.getPersonCitizenship().get(Country.DEFAULT_NAME),
+                caseRoot.get(Case.CASE_IDENTIFICATION_SOURCE),
+                caseRoot.get(Case.SCREENING_TYPE),
+                // responsible jurisdiction
+                joins.getResponsibleRegion().get(Region.NAME),
+                joins.getResponsibleDistrict().get(District.NAME),
+                joins.getResponsibleCommunity().get(Community.NAME),
+                caseRoot.get(Case.CLINICIAN_NAME),
+                caseRoot.get(Case.CLINICIAN_PHONE),
+                caseRoot.get(Case.CLINICIAN_EMAIL),
+                caseRoot.get(Case.REPORTING_USER).get(User.ID),
+                caseRoot.get(Case.FOLLOW_UP_STATUS_CHANGE_USER).get(User.ID),
+                caseRoot.get(Case.PREVIOUS_QUARANTINE_TO),
+                caseRoot.get(Case.QUARANTINE_CHANGE_COMMENT),
+                exportOutbreakInfo ? cb.selectCase().when(cb.exists(outbreakSq(caseQueryContext)), cb.literal(I18nProperties.getString(Strings.yes)))
+                        .otherwise(cb.literal(I18nProperties.getString(Strings.no))) : cb.nullLiteral(String.class),
+                JurisdictionHelper.booleanSelector(cb, service.inJurisdictionOrOwned(caseQueryContext)));
+        //@formatter:on
+
+        cq.distinct(true);
+
+        Predicate filter = service.createUserFilter(caseQueryContext);
+
+        if (caseCriteria != null) {
+            Predicate criteriaFilter = service.createCriteriaFilter(caseCriteria, caseQueryContext);
+            filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
+        }
+        filter = CriteriaBuilderHelper.andInValues(selectedRows, filter, cb, caseRoot.get(Case.UUID));
+
+        if (filter != null) {
+            cq.where(filter);
+        }
+
+        /*
+         * Sort by report date DESC, but also by id for stable Sorting in case of equal report dates.
+         * Since this method supports paging, values might jump between pages when sorting is unstable.
+         */
+        cq.orderBy(cb.desc(caseRoot.get(Case.REPORT_DATE)), cb.desc(caseRoot.get(Case.ID)));
+
+        List<CaseExportDetailedSampleDto> resultList = QueryHelper.getResultList(em, cq, first, max);
+
+        List<Long> resultCaseIds = resultList.stream().map(CaseExportDetailedSampleDto::getId).collect(Collectors.toList());
+        if (!resultList.isEmpty()) {
+            List<Symptoms> symptomsList = null;
+            CriteriaQuery<Symptoms> symptomsCq = cb.createQuery(Symptoms.class);
+            Root<Symptoms> symptomsRoot = symptomsCq.from(Symptoms.class);
+            Expression<String> symptomsIdsExpr = symptomsRoot.get(Symptoms.ID);
+            symptomsCq.where(symptomsIdsExpr.in(resultList.stream().map(CaseExportDetailedSampleDto::getSymptomsId).collect(Collectors.toList())));
+            symptomsList = em.createQuery(symptomsCq).setHint(ModelConstants.HINT_HIBERNATE_READ_ONLY, true).getResultList();
+            Map<Long, Symptoms> symptoms = symptomsList.stream().collect(Collectors.toMap(Symptoms::getId, Function.identity()));
+
+            Map<Long, HealthConditions> healthConditions = null;
+            if (exportType == null || exportType == CaseExportType.CASE_MANAGEMENT) {
+                if (ExportHelper.shouldExportFields(exportConfiguration, CaseDataDto.HEALTH_CONDITIONS)) {
+                    List<HealthConditions> healthConditionsList = null;
+                    CriteriaQuery<HealthConditions> healthConditionsCq = cb.createQuery(HealthConditions.class);
+                    Root<HealthConditions> healthConditionsRoot = healthConditionsCq.from(HealthConditions.class);
+                    Expression<String> healthConditionsIdsExpr = healthConditionsRoot.get(HealthConditions.ID);
+                    healthConditionsCq.where(
+                            healthConditionsIdsExpr.in(resultList.stream().map(CaseExportDetailedSampleDto::getHealthConditionsId).collect(Collectors.toList())));
+                    healthConditionsList = em.createQuery(healthConditionsCq).setHint(ModelConstants.HINT_HIBERNATE_READ_ONLY, true).getResultList();
+                    healthConditions = healthConditionsList.stream().collect(Collectors.toMap(HealthConditions::getId, Function.identity()));
+                }
+            }
+
+            Map<Long, PreviousHospitalization> firstPreviousHospitalizations = null;
+            if (ExportHelper.shouldExportFields(exportConfiguration, CaseExportDetailedSampleDto.INITIAL_DETECTION_PLACE)) {
+                List<PreviousHospitalization> prevHospsList = null;
+                CriteriaQuery<PreviousHospitalization> prevHospsCq = cb.createQuery(PreviousHospitalization.class);
+                Root<PreviousHospitalization> prevHospsRoot = prevHospsCq.from(PreviousHospitalization.class);
+                Join<PreviousHospitalization, Hospitalization> prevHospsHospitalizationJoin =
+                        prevHospsRoot.join(PreviousHospitalization.HOSPITALIZATION, JoinType.LEFT);
+                Expression<String> hospitalizationIdsExpr = prevHospsHospitalizationJoin.get(Hospitalization.ID);
+                prevHospsCq
+                        .where(hospitalizationIdsExpr.in(resultList.stream().map(CaseExportDetailedSampleDto::getHospitalizationId).collect(Collectors.toList())));
+                prevHospsCq.orderBy(cb.asc(prevHospsRoot.get(PreviousHospitalization.ADMISSION_DATE)));
+                prevHospsList = em.createQuery(prevHospsCq).setHint(ModelConstants.HINT_HIBERNATE_READ_ONLY, true).getResultList();
+                firstPreviousHospitalizations =
+                        prevHospsList.stream().collect(Collectors.toMap(p -> p.getHospitalization().getId(), Function.identity(), (id1, id2) -> id1));
+            }
+
+            Map<Long, CaseClassification> sourceCaseClassifications = null;
+            if (ExportHelper.shouldExportFields(exportConfiguration, CaseExportDetailedSampleDto.MAX_SOURCE_CASE_CLASSIFICATION)) {
+                sourceCaseClassifications = contactService.getSourceCaseClassifications(resultCaseIds)
+                        .stream()
+                        .collect(
+                                Collectors
+                                        .toMap(e -> (Long) e[0], e -> (CaseClassification) e[1], (c1, c2) -> c1.getSeverity() >= c2.getSeverity() ? c1 : c2));
+            }
+
+            Map<Long, List<Exposure>> exposures = null;
+            if ((exportType == null || exportType == CaseExportType.CASE_SURVEILLANCE)
+                    && ExportHelper
+                    .shouldExportFields(exportConfiguration, CaseExportDetailedSampleDto.TRAVELED, CaseExportDetailedSampleDto.TRAVEL_HISTORY, CaseExportDetailedSampleDto.BURIAL_ATTENDED)) {
+                CriteriaQuery<Exposure> exposuresCq = cb.createQuery(Exposure.class);
+                Root<Exposure> exposuresRoot = exposuresCq.from(Exposure.class);
+                Join<Exposure, EpiData> exposuresEpiDataJoin = exposuresRoot.join(Exposure.EPI_DATA, JoinType.LEFT);
+                Expression<String> epiDataIdsExpr = exposuresEpiDataJoin.get(EpiData.ID);
+                Predicate exposuresPredicate = cb.and(
+                        epiDataIdsExpr.in(resultList.stream().map(CaseExportDetailedSampleDto::getEpiDataId).collect(Collectors.toList())),
+                        cb.or(
+                                cb.equal(exposuresRoot.get(Exposure.EXPOSURE_TYPE), ExposureType.TRAVEL),
+                                cb.equal(exposuresRoot.get(Exposure.EXPOSURE_TYPE), ExposureType.BURIAL)));
+                exposuresCq.where(exposuresPredicate);
+                exposuresCq.orderBy(cb.asc(exposuresEpiDataJoin.get(EpiData.ID)));
+                List<Exposure> exposureList = em.createQuery(exposuresCq).setHint(ModelConstants.HINT_HIBERNATE_READ_ONLY, true).getResultList();
+                exposures = exposureList.stream().collect(Collectors.groupingBy(e -> e.getEpiData().getId()));
+            }
+
+            Map<Long, List<CaseSampleExportDto>> samples = null;
+            if ((exportType == null || exportType == CaseExportType.CASE_SURVEILLANCE)
+                    && ExportHelper.shouldExportFields(exportConfiguration, CaseExportDetailedSampleDto.SAMPLE_INFORMATION)) {
+                List<CaseSampleExportDto> samplesList = null;
+                CriteriaQuery<CaseSampleExportDto> samplesCq = cb.createQuery(CaseSampleExportDto.class);
+                Root<Sample> samplesRoot = samplesCq.from(Sample.class);
+                Join<Sample, Case> samplesCaseJoin = samplesRoot.join(Sample.ASSOCIATED_CASE, JoinType.LEFT);
+                Expression<String> caseIdsExpr = samplesCaseJoin.get(Case.ID);
+                samplesCq.multiselect(
+                        samplesRoot.get(Sample.UUID),
+                        samplesRoot.get(Sample.LAB_SAMPLE_ID),
+                        samplesRoot.get(Sample.SAMPLE_DATE_TIME),
+                        samplesRoot.get(Sample.REPORT_DATE_TIME),
+                        samplesRoot.get(Sample.SAMPLE_MATERIAL),
+                        samplesRoot.get(Sample.SAMPLE_MATERIAL_TEXT),
+                        samplesRoot.get(Sample.SAMPLE_PURPOSE),
+                        samplesRoot.get(Sample.SAMPLE_SOURCE),
+                        samplesRoot.get(Sample.SAMPLING_REASON),
+                        samplesRoot.get(Sample.SAMPLING_REASON_DETAILS),
+                        samplesRoot.get(Sample.LAB).get(Facility.NAME),
+                        samplesRoot.get(Sample.LAB_DETAILS),
+                        samplesRoot.get(Sample.PATHOGEN_TEST_RESULT),
+                        samplesRoot.get(Sample.PATHOGEN_TESTING_REQUESTED),
+                        samplesRoot.get(Sample.REQUESTED_PATHOGEN_TESTS_STRING),
+                        samplesRoot.get(Sample.REQUESTED_OTHER_PATHOGEN_TESTS),
+                        samplesRoot.get(Sample.ADDITIONAL_TESTING_REQUESTED),
+                        samplesRoot.get(Sample.REQUESTED_ADDITIONAL_TESTS_STRING),
+                        samplesRoot.get(Sample.REQUESTED_OTHER_ADDITIONAL_TESTS),
+                        samplesRoot.get(Sample.SHIPPED),
+                        samplesRoot.get(Sample.SHIPMENT_DATE),
+                        samplesRoot.get(Sample.SHIPMENT_DETAILS),
+                        samplesRoot.get(Sample.RECEIVED),
+                        samplesRoot.get(Sample.RECEIVED_DATE),
+                        samplesRoot.get(Sample.SPECIMEN_CONDITION),
+                        samplesRoot.get(Sample.NO_TEST_POSSIBLE_REASON),
+                        samplesRoot.get(Sample.COMMENT),
+                        samplesRoot.get(Sample.LAB).get(Facility.UUID),
+                        caseIdsExpr);
+
+                Predicate eliminateDeletedSamplesFilter = cb.equal(samplesRoot.get(Sample.DELETED), false);
+                samplesCq.where(caseIdsExpr.in(resultCaseIds), eliminateDeletedSamplesFilter);
+                samplesList = em.createQuery(samplesCq).setHint(ModelConstants.HINT_HIBERNATE_READ_ONLY, true).getResultList();
+                samples = samplesList.stream().collect(Collectors.groupingBy(s -> s.getCaseId()));
+                if (samplesList != null) {
+                    allSamples = samplesList.stream()
+                            .sorted(Comparator.comparing(s -> s.getCaseId()))
+                            .collect(Collectors.toList());
+                }
+            }
+
+            List<VisitSummaryExportDetails> visitSummaries = null;
+            if (featureConfigurationFacade.isFeatureEnabled(FeatureType.CASE_FOLLOWUP)
+                    && ExportHelper.shouldExportFields(
+                    exportConfiguration,
+                    CaseExportDetailedSampleDto.NUMBER_OF_VISITS,
+                    CaseExportDetailedSampleDto.LAST_COOPERATIVE_VISIT_DATE,
+                    CaseExportDetailedSampleDto.LAST_COOPERATIVE_VISIT_SYMPTOMATIC,
+                    CaseExportDetailedSampleDto.LAST_COOPERATIVE_VISIT_SYMPTOMS)) {
+                CriteriaQuery<VisitSummaryExportDetails> visitsCq = cb.createQuery(VisitSummaryExportDetails.class);
+                Root<Case> visitsCqRoot = visitsCq.from(Case.class);
+                Join<Case, Visit> visitsJoin = visitsCqRoot.join(Case.VISITS, JoinType.LEFT);
+                Join<Visit, Symptoms> visitSymptomsJoin = visitsJoin.join(Visit.SYMPTOMS, JoinType.LEFT);
+
+                visitsCq.where(
+                        CriteriaBuilderHelper
+                                .and(cb, visitsCqRoot.get(AbstractDomainObject.ID).in(resultCaseIds), cb.isNotEmpty(visitsCqRoot.get(Case.VISITS))));
+                visitsCq.multiselect(
+                        visitsCqRoot.get(AbstractDomainObject.ID),
+                        visitsJoin.get(Visit.VISIT_DATE_TIME),
+                        visitsJoin.get(Visit.VISIT_STATUS),
+                        visitSymptomsJoin);
+
+                visitSummaries = em.createQuery(visitsCq).getResultList();
+            }
+
+            Map<Long, List<Immunization>> immunizations = null;
+            if ((exportType == null || exportType == CaseExportType.CASE_SURVEILLANCE)
+                    && (exportConfiguration == null
+                    || exportConfiguration.getProperties()
+                    .stream()
+                    .anyMatch(p -> StringUtils.equalsAny(p, ExportHelper.getVaccinationExportProperties())))) {
+                List<Immunization> immunizationList;
+                CriteriaQuery<Immunization> immunizationsCq = cb.createQuery(Immunization.class);
+                Root<Immunization> immunizationsCqRoot = immunizationsCq.from(Immunization.class);
+                Join<Immunization, Person> personJoin = immunizationsCqRoot.join(Immunization.PERSON, JoinType.LEFT);
+                Expression<String> personIdsExpr = personJoin.get(Person.ID);
+                immunizationsCq.where(
+                        CriteriaBuilderHelper.and(
+                                cb,
+                                cb.or(
+                                        cb.equal(immunizationsCqRoot.get(Immunization.MEANS_OF_IMMUNIZATION), MeansOfImmunization.VACCINATION),
+                                        cb.equal(immunizationsCqRoot.get(Immunization.MEANS_OF_IMMUNIZATION), MeansOfImmunization.VACCINATION_RECOVERY)),
+                                personIdsExpr.in(resultList.stream().map(CaseExportDetailedSampleDto::getPersonId).collect(Collectors.toList()))));
+                immunizationsCq.select(immunizationsCqRoot);
+                immunizationList = em.createQuery(immunizationsCq).setHint(ModelConstants.HINT_HIBERNATE_READ_ONLY, true).getResultList();
+                immunizations = immunizationList.stream().collect(Collectors.groupingBy(i -> i.getPerson().getId()));
+            }
+
+            // Load latest events info
+            // Adding a second query here is not perfect, but selecting the last event with a criteria query
+            // doesn't seem to be possible and using a native query is not an option because of user filters
+            List<EventSummaryDetails> eventSummaries = null;
+            if (ExportHelper.shouldExportFields(
+                    exportConfiguration,
+                    CaseExportDetailedSampleDto.LATEST_EVENT_ID,
+                    CaseExportDetailedSampleDto.LATEST_EVENT_STATUS,
+                    CaseExportDetailedSampleDto.LATEST_EVENT_TITLE)) {
+
+                eventSummaries = eventService.getEventSummaryDetailsByCases(resultCaseIds);
+            }
+
+            Map<Long, UserReference> caseUsers = getCaseUsersForDetailedExport(resultList, exportConfiguration);
+
+            Pseudonymizer pseudonymizer = getPseudonymizerForDtoWithClinician(I18nProperties.getCaption(Captions.inaccessibleValue));
+
+            for (CaseExportDetailedSampleDto exportDto : resultList) {
+                final boolean inJurisdiction = exportDto.getInJurisdiction();
+
+                if (exportConfiguration == null || exportConfiguration.getProperties().contains(CaseExportDetailedSampleDto.COUNTRY)) {
+                    exportDto.setCountry(configFacade.getEpidPrefix());
+                }
+                if (ExportHelper.shouldExportFields(exportConfiguration, CaseDataDto.SYMPTOMS)) {
+                    Optional.ofNullable(symptoms.get(exportDto.getSymptomsId()))
+                            .ifPresent(symptom -> exportDto.setSymptoms(SymptomsFacadeEjb.toDto(symptom)));
+                }
+                if (healthConditions != null) {
+                    Optional.ofNullable(healthConditions.get(exportDto.getHealthConditionsId()))
+                            .ifPresent(healthCondition -> exportDto.setHealthConditions(HealthConditionsMapper.toDto(healthCondition)));
+                }
+                if (firstPreviousHospitalizations != null) {
+                    Optional.ofNullable(firstPreviousHospitalizations.get(exportDto.getHospitalizationId()))
+                            .ifPresent(firstPreviousHospitalization -> {
+                                if (firstPreviousHospitalization.getHealthFacility() != null) {
+                                    exportDto.setInitialDetectionPlace(
+                                            FacilityHelper.buildFacilityString(
+                                                    firstPreviousHospitalization.getHealthFacility().getUuid(),
+                                                    firstPreviousHospitalization.getHealthFacility().getName(),
+                                                    firstPreviousHospitalization.getHealthFacilityDetails()));
+                                } else {
+                                    exportDto.setInitialDetectionPlace(I18nProperties.getCaption(Captions.unknown));
+                                }
+                            });
+                    if (StringUtils.isEmpty(exportDto.getInitialDetectionPlace())) {
+                        if (!StringUtils.isEmpty(exportDto.getHealthFacility())) {
+                            exportDto.setInitialDetectionPlace(exportDto.getHealthFacility());
+                        } else {
+                            exportDto.setInitialDetectionPlace(exportDto.getPointOfEntry());
+                        }
+                    }
+                }
+                if (sourceCaseClassifications != null) {
+                    Optional.ofNullable(sourceCaseClassifications.get(exportDto.getId()))
+                            .ifPresent(sourceCaseClassification -> exportDto.setMaxSourceCaseClassification(sourceCaseClassification));
+                }
+                if (exposures != null) {
+                    Optional.ofNullable(exposures.get(exportDto.getEpiDataId())).ifPresent(caseExposures -> {
+                        StringBuilder travelHistoryBuilder = new StringBuilder();
+                        if (caseExposures.stream().anyMatch(e -> ExposureType.BURIAL.equals(e.getExposureType()))) {
+                            exportDto.setBurialAttended(true);
+                        }
+                        caseExposures.stream().filter(e -> ExposureType.TRAVEL.equals(e.getExposureType())).forEach(exposure -> {
+                            Location location = exposure.getLocation();
+                            travelHistoryBuilder.append(
+                                            EpiDataHelper.buildDetailedTravelString(
+                                                    LocationReferenceDto.buildCaption(
+                                                            location.getRegion() != null ? location.getRegion().getName() : null,
+                                                            location.getDistrict() != null ? location.getDistrict().getName() : null,
+                                                            location.getCommunity() != null ? location.getCommunity().getName() : null,
+                                                            location.getCity(),
+                                                            location.getStreet(),
+                                                            location.getHouseNumber(),
+                                                            location.getAdditionalInformation()),
+                                                    exposure.getDescription(),
+                                                    exposure.getStartDate(),
+                                                    exposure.getEndDate(),
+                                                    userLanguage))
+                                    .append(", ");
+                        });
+                        if (travelHistoryBuilder.length() > 0) {
+                            exportDto.setTraveled(true);
+                            travelHistoryBuilder.delete(travelHistoryBuilder.lastIndexOf(", "), travelHistoryBuilder.length() - 1);
+                        }
+                        exportDto.setTravelHistory(travelHistoryBuilder.toString());
+                    });
+                }
+
+                if (immunizations != null) {
+                    Optional.ofNullable(immunizations.get(exportDto.getPersonId())).ifPresent(caseImmunizations -> {
+                        List<Immunization> filteredImmunizations =
+                                caseImmunizations.stream().filter(i -> i.getDisease() == exportDto.getDisease()).collect(Collectors.toList());
+                        if (!filteredImmunizations.isEmpty()) {
+                            filteredImmunizations.sort(Comparator.comparing(i -> ImmunizationEntityHelper.getDateForComparison(i, false)));
+                            Immunization mostRecentImmunization = filteredImmunizations.get(filteredImmunizations.size() - 1);
+                            Integer numberOfDoses = mostRecentImmunization.getNumberOfDoses();
+                            Date onsetDate = Optional.ofNullable(symptoms.get(exportDto.getSymptomsId())).map(Symptoms::getOnsetDate).orElse(null);
+
+                            List<Vaccination> relevantSortedVaccinations = vaccinationService.getRelevantSortedVaccinations(
+                                    filteredImmunizations.stream().flatMap(i -> i.getVaccinations().stream()).collect(Collectors.toList()),
+                                    onsetDate,
+                                    exportDto.getReportDate());
+                            Vaccination firstVaccination = null;
+                            Vaccination lastVaccination = null;
+
+                            if (CollectionUtils.isNotEmpty(relevantSortedVaccinations)) {
+                                firstVaccination = relevantSortedVaccinations.get(0);
+                                lastVaccination = relevantSortedVaccinations.get(relevantSortedVaccinations.size() - 1);
+                                exportDto.setFirstVaccinationDate(firstVaccination.getVaccinationDate());
+                                exportDto.setLastVaccinationDate(lastVaccination.getVaccinationDate());
+                                exportDto.setVaccineName(lastVaccination.getVaccineName());
+                                exportDto.setOtherVaccineName(lastVaccination.getOtherVaccineName());
+                                exportDto.setVaccineManufacturer(lastVaccination.getVaccineManufacturer());
+                                exportDto.setOtherVaccineManufacturer(lastVaccination.getOtherVaccineManufacturer());
+                                exportDto.setVaccinationInfoSource(lastVaccination.getVaccinationInfoSource());
+                                exportDto.setVaccineAtcCode(lastVaccination.getVaccineAtcCode());
+                                exportDto.setVaccineBatchNumber(lastVaccination.getVaccineBatchNumber());
+                                exportDto.setVaccineUniiCode(lastVaccination.getVaccineUniiCode());
+                                exportDto.setVaccineInn(lastVaccination.getVaccineInn());
+                            }
+
+                            exportDto.setNumberOfDoses(
+                                    numberOfDoses != null ? String.valueOf(numberOfDoses) : getNumberOfDosesFromVaccinations(lastVaccination));
+                        }
+                    });
+                }
+                if (visitSummaries != null) {
+                    List<VisitSummaryExportDetails> visits =
+                            visitSummaries.stream().filter(v -> v.getContactId() == exportDto.getId()).collect(Collectors.toList());
+
+                    VisitSummaryExportDetails lastCooperativeVisit = visits.stream()
+                            .filter(v -> v.getVisitStatus() == VisitStatus.COOPERATIVE)
+                            .max(Comparator.comparing(VisitSummaryExportDetails::getVisitDateTime))
+                            .orElse(null);
+
+                    exportDto.setNumberOfVisits(visits.size());
+                    if (lastCooperativeVisit != null) {
+                        exportDto.setLastCooperativeVisitDate(lastCooperativeVisit.getVisitDateTime());
+
+                        SymptomsDto visitSymptoms = SymptomsFacadeEjb.toDto(lastCooperativeVisit.getSymptoms());
+                        pseudonymizer.pseudonymizeDto(SymptomsDto.class, visitSymptoms, inJurisdiction, null);
+
+                        exportDto.setLastCooperativeVisitSymptoms(SymptomsHelper.buildSymptomsHumanString(visitSymptoms, true, userLanguage));
+                        exportDto.setLastCooperativeVisitSymptomatic(
+                                visitSymptoms.getSymptomatic() == null
+                                        ? YesNoUnknown.UNKNOWN
+                                        : (visitSymptoms.getSymptomatic() ? YesNoUnknown.YES : YesNoUnknown.NO));
+                    }
+                }
+
+                if (eventSummaries != null && exportDto.getEventCount() != 0) {
+                    eventSummaries.stream()
+                            .filter(v -> v.getCaseId() == exportDto.getId())
+                            .max(Comparator.comparing(EventSummaryDetails::getEventDate))
+                            .ifPresent(eventSummary -> {
+                                exportDto.setLatestEventId(eventSummary.getEventUuid());
+                                exportDto.setLatestEventStatus(eventSummary.getEventStatus());
+                                exportDto.setLatestEventTitle(eventSummary.getEventTitle());
+                            });
+                }
+
+                if (!caseUsers.isEmpty()) {
+                    if (exportDto.getReportingUserId() != null) {
+                        UserReference user = caseUsers.get(exportDto.getReportingUserId());
+
+                        exportDto.setReportingUserName(user.getName());
+                        exportDto.setReportingUserRoles(
+                                user.getUserRoles().stream().map(userRole -> UserRoleFacadeEjb.toReferenceDto(userRole)).collect(Collectors.toSet()));
+                    }
+
+                    if (exportDto.getFollowUpStatusChangeUserId() != null) {
+                        UserReference user = caseUsers.get(exportDto.getFollowUpStatusChangeUserId());
+
+                        exportDto.setFollowUpStatusChangeUserName(user.getName());
+                        exportDto.setFollowUpStatusChangeUserRoles(
+                                user.getUserRoles().stream().map(userRole -> UserRoleFacadeEjb.toReferenceDto(userRole)).collect(Collectors.toSet()));
+                    }
+                }
+            }
+
+
+        }
+
+////        allSamples != null
+//        if (allSamples != null) {
+//            //get all ids of samples
+//            List<Long> sampleIds = allSamples.stream().map(CaseSampleExportDto::getCaseId).collect(Collectors.toList());
+//            //get all pathogen tests with the sample ids
+//            List<PathogenTest> pathogenTests = pathogenTestService.getPathogenTestsBySampleIds(sampleIds);
+//
+//            //group pathogen tests by sample id
+//            Map<Long, List<PathogenTest>> pathogenTestsBySampleId = pathogenTests.stream().collect(Collectors.groupingBy(PathogenTest::getSample));
+//
+//
+//        }
+
+
+        if (allSamples != null) {
+            List<CaseExportDetailedSampleDto> newResult = new ArrayList<>();
+            for (CaseExportDetailedSampleDto exportDto : resultList) {
+                for(CaseSampleExportDto embeddedDetailedSampleExportDto : allSamples) {
+                    Sample sampleFromExportDto = sampleService.getByUuid(embeddedDetailedSampleExportDto.getUuid());
+                    List<PathogenTest> pathogenTests = sampleFromExportDto.getPathogenTests();
+
+                    for (PathogenTest pathogenTest : pathogenTests) {
+                        switch (pathogenTest.getTestedDisease().getName()) {
+                            case "AFP":
+                                mapAfpTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "CHOLERA":
+                                mapCholeraTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "CONGENITAL_RUBELLA":
+                                mapCongenitalRubellaTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "CSM":
+                                mapCsmTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "DENGUE":
+                                mapDengueTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "EVD":
+                                mapEvdTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "GUINEA_WORM":
+                                mapGuineaWormTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "LASSA":
+                                mapLassaTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "MEASLES":
+                                mapMeaslesTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "MONKEYPOX":
+                                mapMonkeyPoxTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "NEW_INFLUENZA":
+                                mapNewInfluenzaTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "POLIO":
+                                mapPolioTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            //	UNSPECIFIED_VHF(true, true, true, true, 21, true, false, false),
+                            case "UNSPECIFIED_VHF":
+                                mapUnspecifiedVhfTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "YELLOW_FEVER":
+                                mapYellowFeverTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "RABIES":
+                                mapRabiesTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "ANTHRAX":
+                                mapAnthraxTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "CORONAVIRUS":
+                                mapCoronavirusTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "PNEUMONIA":
+                                mapPneumoniaTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "MALARIA":
+                                mapMalariaTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "TYPHOID_FEVER":
+                                mapTyphoidFeverTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "ACUTE_VIRAL_HEPATITIS":
+                                mapAcuteViralHepatitisTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "NON_NEONATAL_TETANUS":
+                                mapNonNeonatalTetanusTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "HIV":
+                                mapHivTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "SCHISTOSOMIASIS":
+                                mapSchistosomiasisTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "SOIL_TRANSMITTED_HELMINTHS":
+                                mapSoilTransmittedHelminthsTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "TRYPANOSOMIASIS":
+                                mapTrypanosomiasisTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "DIARRHEA_BLOOD":
+                                mapDiarrheaBloodTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "SNAKE_BITE":
+                                mapSnakeBiteTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "RUBELLA":
+                                mapRubellaTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "TUBERCULOSIS":
+                                mapTuberculosisTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "LEPROSY":
+                                mapLeprosyTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "LYMPHATIC_FILARIASIS":
+                                mapLymphaticFilariasisTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "BURULI_ULCER":
+                                mapBuruliUlcerTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "PERTUSSIS":
+                                mapPertussisTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "NEONATAL_TETANUS":
+                                mapNeonatalTetanusTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "ONCHOCERCIASIS":
+                                mapOnchocerciasisTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "DIPHTERIA":
+                                mapDiphtheriaTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "TRACHOMA":
+                                mapTrachomaTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "YAWS_ENDEMIC_SYPHILIS":
+                                mapYawsEndemicSyphilisTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "MATERNAL_DEATHS":
+                                mapMaternalDeathsTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "PERINATAL_DEATHS":
+                                mapPerinatalDeathsTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "INFLUENZA_A":
+                                mapInfluenzaATestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "INFLUENZA_B":
+                                mapInfluenzaBTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "H_METAPNEUMOVIRUS":
+                                maphMetapneumovirusTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "RESPIRATORY_SYNCYTIAL_VIRUS":
+                                mapRespiratorySyncytialVirusTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "PARAINFLUENZA_1_4":
+                                mapParainfluenza1_4TestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "ADENOVIRUS":
+                                mapAdenovirusTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "RHINOVIRUS":
+                                mapRhinovirusTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "ENTEROVIRUS":
+                                mapEnterovirusTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "M_PNEUMONIAE":
+                                mapmPneumoniaeTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "C_PNEUMONIAE":
+                                mapcPneumoniaeTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "ARI":
+                                mapAriTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "CHIKUNGUNYA":
+                                mapChikungunyaTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "POST_IMMUNIZATION_ADVERSE_EVENTS_MILD":
+                                mapPostImmunizationAdverseEventsMildTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "POST_IMMUNIZATION_ADVERSE_EVENTS_SEVERE":
+                                mapPostImmunizationAdverseEventsSevereTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "FHA":
+                                mapFhaTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "OTHER":
+                                mapOtherTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            case "UNDEFINED":
+                                mapUndefinedTestsToSampleAndCase(exportDto, pathogenTest);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
+
+//                    for (PathogenTest pathogenTest : pathogenTests) {
+//                        String lab = pathogenTest.getLab() != null
+//                                ? FacilityHelper
+//                                .buildFacilityString(pathogenTest.getLab().getUuid(), pathogenTest.getLab().getName(), pathogenTest.getLabDetails())
+//                                : null;
+//                        CaseSampleExportDto.SampleExportPathogenTest sampleExportPathogenTest = new CaseSampleExportDto.SampleExportPathogenTest(
+//                                pathogenTest.getTestType(),
+//                                pathogenTest.getTestTypeText(),
+//                                DiseaseHelper.toString(pathogenTest.getTestedDisease(), pathogenTest.getTestedDiseaseDetails()),
+//                                pathogenTest.getTestDateTime(),
+//                                lab,
+//                                pathogenTest.getTestResult(),
+//                                pathogenTest.getTestResultVerified());
+//
+//                        switch (++count) {
+//                            case 1:
+//                                embeddedDetailedSampleExportDto.setPathogenTest1(sampleExportPathogenTest);
+//                                break;
+//                            case 2:
+//                                embeddedDetailedSampleExportDto.setPathogenTest2(sampleExportPathogenTest);
+//                                break;
+//                            case 3:
+//                                embeddedDetailedSampleExportDto.setPathogenTest3(sampleExportPathogenTest);
+//                                break;
+//                            default:
+//                                embeddedDetailedSampleExportDto.addOtherPathogenTest(sampleExportPathogenTest);
+//                                break;
+//                        }
+//                    }
+
+                    if (exportDto.getId() == embeddedDetailedSampleExportDto.getCaseId()) {
+
+                        CaseExportDetailedSampleDto caseExportDetailedDto = new CaseExportDetailedSampleDto();
+                        caseExportDetailedDto.setId(exportDto.getId());
+                        caseExportDetailedDto.setPersonId(exportDto.getPersonId());
+                        caseExportDetailedDto.setAddressGpsCoordinates(exportDto.getAddressGpsCoordinates());
+                        caseExportDetailedDto.setEpiDataId(exportDto.getEpiDataId());
+                        caseExportDetailedDto.setSymptomsId(exportDto.getSymptomsId());
+                        caseExportDetailedDto.setHospitalizationId(exportDto.getHospitalizationId());
+                        caseExportDetailedDto.setHealthConditionsId(exportDto.getHealthConditionsId());
+                        caseExportDetailedDto.setUuid(exportDto.getUuid());
+                        caseExportDetailedDto.setEpidNumber(exportDto.getEpidNumber());
+                        caseExportDetailedDto.setArmedForcesRelationType(exportDto.getArmedForcesRelationType());
+                        caseExportDetailedDto.setDisease(exportDto.getDisease());
+                        caseExportDetailedDto.setDiseaseDetails(exportDto.getDiseaseDetails());
+                        caseExportDetailedDto.setDiseaseVariant(exportDto.getDiseaseVariant());
+                        caseExportDetailedDto.setDiseaseVariantDetails(exportDto.getDiseaseVariantDetails());
+                        caseExportDetailedDto.setPersonUuid(exportDto.getPersonUuid());
+                        caseExportDetailedDto.setPersonUuid(exportDto.getPersonUuid());
+                        caseExportDetailedDto.setFirstName(exportDto.getFirstName());
+                        caseExportDetailedDto.setLastName(exportDto.getLastName());
+                        caseExportDetailedDto.setSalutation(exportDto.getSalutation());
+                        caseExportDetailedDto.setOtherSalutation(exportDto.getOtherSalutation());
+                        caseExportDetailedDto.setSex(exportDto.getSex());
+                        caseExportDetailedDto.setPregnant(exportDto.getPregnant());
+                        caseExportDetailedDto.setApproximateAge(exportDto.getApproximateAge());
+                        caseExportDetailedDto.setAgeGroup(exportDto.getAgeGroup());
+                        caseExportDetailedDto.setBirthdate(exportDto.getBirthdate());
+                        caseExportDetailedDto.setReportDate(exportDto.getReportDate());
+                        caseExportDetailedDto.setRegion(exportDto.getRegion());
+                        caseExportDetailedDto.setDistrict(exportDto.getDistrict());
+                        caseExportDetailedDto.setCommunity(exportDto.getCommunity());
+                        caseExportDetailedDto.setCaseClassification(exportDto.getCaseClassification());
+                        caseExportDetailedDto.setClinicalConfirmation(exportDto.getClinicalConfirmation());
+                        caseExportDetailedDto.setEpidemiologicalConfirmation(exportDto.getEpidemiologicalConfirmation());
+                        caseExportDetailedDto.setLaboratoryDiagnosticConfirmation(exportDto.getLaboratoryDiagnosticConfirmation());
+                        caseExportDetailedDto.setNotACaseReasonNegativeTest(exportDto.getNotACaseReasonNegativeTest());
+                        caseExportDetailedDto.setNotACaseReasonPhysicianInformation(exportDto.getNotACaseReasonPhysicianInformation());
+                        caseExportDetailedDto.setNotACaseReasonDifferentPathogen(exportDto.getNotACaseReasonDifferentPathogen());
+                        caseExportDetailedDto.setNotACaseReasonOther(exportDto.getNotACaseReasonOther());
+                        caseExportDetailedDto.setNotACaseReasonDetails(exportDto.getNotACaseReasonDetails());
+                        caseExportDetailedDto.setInvestigationStatus(exportDto.getInvestigationStatus());
+                        caseExportDetailedDto.setInvestigatedDate(exportDto.getInvestigatedDate());
+                        caseExportDetailedDto.setOutcome(exportDto.getOutcome());
+                        caseExportDetailedDto.setOutcomeDate(exportDto.getOutcomeDate());
+                        caseExportDetailedDto.setSequelae(exportDto.getSequelae());
+                        caseExportDetailedDto.setSequelaeDetails(exportDto.getSequelaeDetails());
+                        caseExportDetailedDto.setBloodOrganOrTissueDonated(exportDto.getBloodOrganOrTissueDonated());
+                        caseExportDetailedDto.setNosocomialOutbreak(exportDto.getNosocomialOutbreak());
+                        caseExportDetailedDto.setInfectionSetting(exportDto.getInfectionSetting());
+                        caseExportDetailedDto.setProhibitionToWork(exportDto.getProhibitionToWork());
+                        caseExportDetailedDto.setProhibitionToWorkFrom(exportDto.getProhibitionToWorkFrom());
+                        caseExportDetailedDto.setProhibitionToWorkUntil(exportDto.getProhibitionToWorkUntil());
+                        caseExportDetailedDto.setReInfection(exportDto.getReInfection());
+                        caseExportDetailedDto.setPreviousInfectionDate(exportDto.getPreviousInfectionDate());
+                        caseExportDetailedDto.setReinfectionStatus(exportDto.getReinfectionStatus());
+                        caseExportDetailedDto.setReinfectionDetails(exportDto.getReinfectionDetails());
+                        caseExportDetailedDto.setQuarantine(exportDto.getQuarantine());
+                        caseExportDetailedDto.setQuarantineTypeDetails(exportDto.getQuarantineTypeDetails());
+                        caseExportDetailedDto.setQuarantineFrom(exportDto.getQuarantineFrom());
+                        caseExportDetailedDto.setQuarantineTo(exportDto.getQuarantineTo());
+                        caseExportDetailedDto.setQuarantineHelpNeeded(exportDto.getQuarantineHelpNeeded());
+                        caseExportDetailedDto.setQuarantineOrderedVerbally(exportDto.isQuarantineOrderedVerbally());
+                        caseExportDetailedDto.setQuarantineOrderedOfficialDocument(exportDto.isQuarantineOrderedOfficialDocument());
+                        caseExportDetailedDto.setQuarantineOrderedVerballyDate(exportDto.getQuarantineOrderedVerballyDate());
+                        caseExportDetailedDto.setQuarantineOrderedOfficialDocumentDate(exportDto.getQuarantineOrderedOfficialDocumentDate());
+                        caseExportDetailedDto.setQuarantineExtended(exportDto.isQuarantineExtended());
+                        caseExportDetailedDto.setQuarantineReduced(exportDto.isQuarantineReduced());
+                        caseExportDetailedDto.setQuarantineOfficialOrderSent(exportDto.isQuarantineOfficialOrderSent());
+                        caseExportDetailedDto.setQuarantineOfficialOrderSentDate(exportDto.getQuarantineOfficialOrderSentDate());
+                        caseExportDetailedDto.setFacilityType(exportDto.getFacilityType());
+                        caseExportDetailedDto.setHealthFacility(exportDto.getHealthFacility());
+                        caseExportDetailedDto.setHealthFacilityDetails(exportDto.getHealthFacilityDetails());
+                        caseExportDetailedDto.setPointOfEntry(exportDto.getPointOfEntry());
+                        caseExportDetailedDto.setPointOfEntryDetails(exportDto.getPointOfEntryDetails());
+                        caseExportDetailedDto.setAdmittedToHealthFacility(exportDto.getAdmittedToHealthFacility());
+                        caseExportDetailedDto.setAdmissionDate(exportDto.getAdmissionDate());
+                        caseExportDetailedDto.setDischargeDate(exportDto.getDischargeDate());
+                        caseExportDetailedDto.setLeftAgainstAdvice(exportDto.getLeftAgainstAdvice());
+                        caseExportDetailedDto.setPresentCondition(exportDto.getPresentCondition());
+                        caseExportDetailedDto.setDeathDate(exportDto.getDeathDate());
+                        caseExportDetailedDto.setBurialInfo(exportDto.getBurialInfo());
+                        caseExportDetailedDto.setAddressRegion(exportDto.getAddressRegion());
+                        caseExportDetailedDto.setAddressDistrict(exportDto.getAddressDistrict());
+                        caseExportDetailedDto.setAddressCommunity(exportDto.getAddressCommunity());
+                        caseExportDetailedDto.setCity(exportDto.getCity());
+                        caseExportDetailedDto.setStreet(exportDto.getStreet());
+                        caseExportDetailedDto.setHouseNumber(exportDto.getHouseNumber());
+                        caseExportDetailedDto.setAdditionalInformation(exportDto.getAdditionalInformation());
+                        caseExportDetailedDto.setPostalCode(exportDto.getPostalCode());
+                        caseExportDetailedDto.setFacility(exportDto.getFacility());
+                        caseExportDetailedDto.setFacilityDetails(exportDto.getFacilityDetails());
+                        caseExportDetailedDto.setPhone(exportDto.getPhone());
+                        caseExportDetailedDto.setPhoneOwner(exportDto.getPhoneOwner());
+                        caseExportDetailedDto.setEmailAddress(exportDto.getEmailAddress());
+                        caseExportDetailedDto.setOtherContactDetails(exportDto.getOtherContactDetails());
+                        caseExportDetailedDto.setEducationType(exportDto.getEducationType());
+                        caseExportDetailedDto.setEducationDetails(exportDto.getEducationDetails());
+                        caseExportDetailedDto.setOccupationType(exportDto.getOccupationType());
+                        caseExportDetailedDto.setOccupationDetails(exportDto.getOccupationDetails());
+                        caseExportDetailedDto.setContactWithSourceCaseKnown(exportDto.getContactWithSourceCaseKnown());
+                        caseExportDetailedDto.setVaccinationStatus(exportDto.getVaccinationStatus());
+                        caseExportDetailedDto.setPostpartum(exportDto.getPostpartum());
+                        caseExportDetailedDto.setTrimester(exportDto.getTrimester());
+                        caseExportDetailedDto.setFollowUpStatus(exportDto.getFollowUpStatus());
+                        caseExportDetailedDto.setFollowUpUntil(exportDto.getFollowUpUntil());
+                        caseExportDetailedDto.setEventCount(exportDto.getEventCount());
+                        caseExportDetailedDto.setNumberOfPrescriptions(exportDto.getNumberOfPrescriptions());
+                        caseExportDetailedDto.setNumberOfTreatments(exportDto.getNumberOfTreatments());
+                        caseExportDetailedDto.setNumberOfClinicalVisits(exportDto.getNumberOfClinicalVisits());
+                        caseExportDetailedDto.setExternalID(exportDto.getExternalID());
+                        caseExportDetailedDto.setExternalToken(exportDto.getExternalToken());
+                        caseExportDetailedDto.setInternalToken(exportDto.getInternalToken());
+                        caseExportDetailedDto.setBirthName(exportDto.getBirthName());
+                        caseExportDetailedDto.setBirthCountry(exportDto.getBirthCountry());
+                        caseExportDetailedDto.setCitizenship(exportDto.getCitizenship());
+                        caseExportDetailedDto.setCaseIdentificationSource(exportDto.getCaseIdentificationSource());
+                        caseExportDetailedDto.setScreeningType(exportDto.getScreeningType());
+                        caseExportDetailedDto.setResponsibleRegion(exportDto.getResponsibleRegion());
+                        caseExportDetailedDto.setResponsibleDistrict(exportDto.getResponsibleDistrict());
+                        caseExportDetailedDto.setResponsibleCommunity(exportDto.getResponsibleCommunity());
+                        caseExportDetailedDto.setClinicianName(exportDto.getClinicianName());
+                        caseExportDetailedDto.setClinicianPhone(exportDto.getClinicianPhone());
+                        caseExportDetailedDto.setClinicianEmail(exportDto.getClinicianEmail());
+                        caseExportDetailedDto.setReportingUserId(exportDto.getReportingUserId());
+                        caseExportDetailedDto.setFollowUpStatusChangeUserId(exportDto.getFollowUpStatusChangeUserId());
+                        caseExportDetailedDto.setPreviousQuarantineTo(exportDto.getPreviousQuarantineTo());
+                        caseExportDetailedDto.setQuarantineChangeComment(exportDto.getQuarantineChangeComment());
+                        caseExportDetailedDto.setAssociatedWithOutbreak(exportDto.getAssociatedWithOutbreak());
+                        caseExportDetailedDto.setInJurisdiction(exportDto.getInJurisdiction());
+
+                        //adding sample data
+                        caseExportDetailedDto.setSampleUuid(embeddedDetailedSampleExportDto.getUuid());
+                        caseExportDetailedDto.setLabSampleId(embeddedDetailedSampleExportDto.getLabSampleID());
+                        caseExportDetailedDto.setSampleReportDate(embeddedDetailedSampleExportDto.getSampleReportDate());
+                        caseExportDetailedDto.setSampleDateTime(embeddedDetailedSampleExportDto.getSampleDateTime());
+                        caseExportDetailedDto.setSampleSource(embeddedDetailedSampleExportDto.getSampleSource());
+                        caseExportDetailedDto.setSampleMaterialString(embeddedDetailedSampleExportDto.getSampleMaterialString());
+                        caseExportDetailedDto.setSamplePurpose(embeddedDetailedSampleExportDto.getSamplePurpose());
+                        caseExportDetailedDto.setSampleSource(embeddedDetailedSampleExportDto.getSampleSource());
+                        caseExportDetailedDto.setSamplingReason(embeddedDetailedSampleExportDto.getSamplingReason());
+                        caseExportDetailedDto.setSamplingReasonDetails(embeddedDetailedSampleExportDto.getSamplingReasonDetails());
+                        caseExportDetailedDto.setLaboratory(embeddedDetailedSampleExportDto.getLab());
+                        caseExportDetailedDto.setPathogenTestResult(embeddedDetailedSampleExportDto.getPathogenTestResult());
+                        caseExportDetailedDto.setPathogenTestingRequested(embeddedDetailedSampleExportDto.getPathogenTestingRequested());
+                        caseExportDetailedDto.setRequestedPathogenTests(embeddedDetailedSampleExportDto.getRequestedPathogenTests());
+                        caseExportDetailedDto.setRequestedOtherPathogenTests(embeddedDetailedSampleExportDto.getRequestedOtherPathogenTests());
+                        caseExportDetailedDto.setRequestedOtherAdditionalTests(embeddedDetailedSampleExportDto.getRequestedOtherAdditionalTests());
+                        caseExportDetailedDto.setAdditionalTestingRequested(embeddedDetailedSampleExportDto.getAdditionalTestingRequested());
+                        caseExportDetailedDto.setRequestedAdditionalTests(embeddedDetailedSampleExportDto.getRequestedAdditionalTests());
+                        caseExportDetailedDto.setRequestedOtherAdditionalTests(embeddedDetailedSampleExportDto.getRequestedOtherAdditionalTests());
+                        caseExportDetailedDto.setShipped(embeddedDetailedSampleExportDto.isShipped());
+                        caseExportDetailedDto.setShipmentDate(embeddedDetailedSampleExportDto.getShipmentDate());
+                        caseExportDetailedDto.setShipmentDetails(embeddedDetailedSampleExportDto.getShipmentDetails());
+                        caseExportDetailedDto.setReceived(embeddedDetailedSampleExportDto.isReceived());
+                        caseExportDetailedDto.setReceivedDate(embeddedDetailedSampleExportDto.getReceivedDate());
+                        caseExportDetailedDto.setSpecimenCondition(embeddedDetailedSampleExportDto.getSpecimenCondition());
+                        caseExportDetailedDto.setNoTestPossibleReason(embeddedDetailedSampleExportDto.getNoTestPossibleReason());
+                        caseExportDetailedDto.setComment(embeddedDetailedSampleExportDto.getComment());
+
+                        caseExportDetailedDto.setAfpAntibodyDetection(exportDto.getAfpAntibodyDetection());
+                        caseExportDetailedDto.setAfpAntigenDetection(exportDto.getAfpAntigenDetection());
+                        caseExportDetailedDto.setAfpRapidTest(exportDto.getAfpRapidTest());
+                        caseExportDetailedDto.setAfpCulture(exportDto.getAfpCulture());
+                        caseExportDetailedDto.setAfpHistopathology(exportDto.getAfpHistopathology());
+                        caseExportDetailedDto.setAfpIsolation(exportDto.getAfpIsolation());
+                        caseExportDetailedDto.setAfpIgmSerumAntibody(exportDto.getAfpIgmSerumAntibody());
+                        caseExportDetailedDto.setAfpIggSerumAntibody(exportDto.getAfpIggSerumAntibody());
+                        caseExportDetailedDto.setAfpIgaSerumAntibody(exportDto.getAfpIgaSerumAntibody());
+                        caseExportDetailedDto.setAfpIncubationTime(exportDto.getAfpIncubationTime());
+                        caseExportDetailedDto.setAfpIndirectFluorescentAntibody(exportDto.getAfpIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setAfpDirectFluorescentAntibody(exportDto.getAfpDirectFluorescentAntibody());
+                        caseExportDetailedDto.setAfpMicroscopy(exportDto.getAfpMicroscopy());
+                        caseExportDetailedDto.setAfpNeutralizingAntibodies(exportDto.getAfpNeutralizingAntibodies());
+                        caseExportDetailedDto.setAfpPcrRtPcr(exportDto.getAfpPcrRtPcr());
+                        caseExportDetailedDto.setAfpGramStain(exportDto.getAfpGramStain());
+                        caseExportDetailedDto.setAfpLatexAgglutination(exportDto.getAfpLatexAgglutination());
+                        caseExportDetailedDto.setAfpCqValueDetection(exportDto.getAfpCqValueDetection());
+                        caseExportDetailedDto.setAfpSequencing(exportDto.getAfpSequencing());
+                        caseExportDetailedDto.setAfpDnaMicroarray(exportDto.getAfpDnaMicroarray());
+                        caseExportDetailedDto.setAfpOther(exportDto.getAfpOther());
+                        caseExportDetailedDto.setAfpAntibodyDetectionDetails(exportDto.getAfpAntibodyDetectionDetails());
+                        caseExportDetailedDto.setAfpAntigenDetectionDetails(exportDto.getAfpAntigenDetectionDetails());
+                        caseExportDetailedDto.setAfpRapidTestDetails(exportDto.getAfpRapidTestDetails());
+                        caseExportDetailedDto.setAfpCultureDetails(exportDto.getAfpCultureDetails());
+                        caseExportDetailedDto.setAfpHistopathologyDetails(exportDto.getAfpHistopathologyDetails());
+                        caseExportDetailedDto.setAfpIsolationDetails(exportDto.getAfpIsolationDetails());
+                        caseExportDetailedDto.setAfpIgmSerumAntibodyDetails(exportDto.getAfpIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setAfpIggSerumAntibodyDetails(exportDto.getAfpIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setAfpIgaSerumAntibodyDetails(exportDto.getAfpIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setAfpIncubationTimeDetails(exportDto.getAfpIncubationTimeDetails());
+                        caseExportDetailedDto.setAfpIndirectFluorescentAntibodyDetails(exportDto.getAfpIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setAfpDirectFluorescentAntibodyDetails(exportDto.getAfpDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setAfpMicroscopyDetails(exportDto.getAfpMicroscopyDetails());
+                        caseExportDetailedDto.setAfpNeutralizingAntibodiesDetails(exportDto.getAfpNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setAfpPcrRtPcrDetails(exportDto.getAfpPcrRtPcrDetails());
+                        caseExportDetailedDto.setAfpGramStainDetails(exportDto.getAfpGramStainDetails());
+                        caseExportDetailedDto.setAfpLatexAgglutinationDetails(exportDto.getAfpLatexAgglutinationDetails());
+                        caseExportDetailedDto.setAfpCqValueDetectionDetails(exportDto.getAfpCqValueDetectionDetails());
+                        caseExportDetailedDto.setAfpSequencingDetails(exportDto.getAfpSequencingDetails());
+                        caseExportDetailedDto.setAfpDnaMicroarrayDetails(exportDto.getAfpDnaMicroarrayDetails());
+                        caseExportDetailedDto.setAfpOtherDetails(exportDto.getAfpOtherDetails());
+                        caseExportDetailedDto.setCholeraAntibodyDetection(exportDto.getCholeraAntibodyDetection());
+                        caseExportDetailedDto.setCholeraAntigenDetection(exportDto.getCholeraAntigenDetection());
+                        caseExportDetailedDto.setCholeraRapidTest(exportDto.getCholeraRapidTest());
+                        caseExportDetailedDto.setCholeraCulture(exportDto.getCholeraCulture());
+                        caseExportDetailedDto.setCholeraHistopathology(exportDto.getCholeraHistopathology());
+                        caseExportDetailedDto.setCholeraIsolation(exportDto.getCholeraIsolation());
+                        caseExportDetailedDto.setCholeraIgmSerumAntibody(exportDto.getCholeraIgmSerumAntibody());
+                        caseExportDetailedDto.setCholeraIggSerumAntibody(exportDto.getCholeraIggSerumAntibody());
+                        caseExportDetailedDto.setCholeraIgaSerumAntibody(exportDto.getCholeraIgaSerumAntibody());
+                        caseExportDetailedDto.setCholeraIncubationTime(exportDto.getCholeraIncubationTime());
+                        caseExportDetailedDto.setCholeraIndirectFluorescentAntibody(exportDto.getCholeraIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setCholeraDirectFluorescentAntibody(exportDto.getCholeraDirectFluorescentAntibody());
+                        caseExportDetailedDto.setCholeraMicroscopy(exportDto.getCholeraMicroscopy());
+                        caseExportDetailedDto.setCholeraNeutralizingAntibodies(exportDto.getCholeraNeutralizingAntibodies());
+                        caseExportDetailedDto.setCholeraPcrRtPcr(exportDto.getCholeraPcrRtPcr());
+                        caseExportDetailedDto.setCholeraGramStain(exportDto.getCholeraGramStain());
+                        caseExportDetailedDto.setCholeraLatexAgglutination(exportDto.getCholeraLatexAgglutination());
+                        caseExportDetailedDto.setCholeraCqValueDetection(exportDto.getCholeraCqValueDetection());
+                        caseExportDetailedDto.setCholeraSequencing(exportDto.getCholeraSequencing());
+                        caseExportDetailedDto.setCholeraDnaMicroarray(exportDto.getCholeraDnaMicroarray());
+                        caseExportDetailedDto.setCholeraOther(exportDto.getCholeraOther());
+                        caseExportDetailedDto.setCholeraAntibodyDetectionDetails(exportDto.getCholeraAntibodyDetectionDetails());
+                        caseExportDetailedDto.setCholeraAntigenDetectionDetails(exportDto.getCholeraAntigenDetectionDetails());
+                        caseExportDetailedDto.setCholeraRapidTestDetails(exportDto.getCholeraRapidTestDetails());
+                        caseExportDetailedDto.setCholeraCultureDetails(exportDto.getCholeraCultureDetails());
+                        caseExportDetailedDto.setCholeraHistopathologyDetails(exportDto.getCholeraHistopathologyDetails());
+                        caseExportDetailedDto.setCholeraIsolationDetails(exportDto.getCholeraIsolationDetails());
+                        caseExportDetailedDto.setCholeraIgmSerumAntibodyDetails(exportDto.getCholeraIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setCholeraIggSerumAntibodyDetails(exportDto.getCholeraIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setCholeraIgaSerumAntibodyDetails(exportDto.getCholeraIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setCholeraIncubationTimeDetails(exportDto.getCholeraIncubationTimeDetails());
+                        caseExportDetailedDto.setCholeraIndirectFluorescentAntibodyDetails(exportDto.getCholeraIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setCholeraDirectFluorescentAntibodyDetails(exportDto.getCholeraDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setCholeraMicroscopyDetails(exportDto.getCholeraMicroscopyDetails());
+                        caseExportDetailedDto.setCholeraNeutralizingAntibodiesDetails(exportDto.getCholeraNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setCholeraPcrRtPcrDetails(exportDto.getCholeraPcrRtPcrDetails());
+                        caseExportDetailedDto.setCholeraGramStainDetails(exportDto.getCholeraGramStainDetails());
+                        caseExportDetailedDto.setCholeraLatexAgglutinationDetails(exportDto.getCholeraLatexAgglutinationDetails());
+                        caseExportDetailedDto.setCholeraCqValueDetectionDetails(exportDto.getCholeraCqValueDetectionDetails());
+                        caseExportDetailedDto.setCholeraSequencingDetails(exportDto.getCholeraSequencingDetails());
+                        caseExportDetailedDto.setCholeraDnaMicroarrayDetails(exportDto.getCholeraDnaMicroarrayDetails());
+                        caseExportDetailedDto.setCholeraOtherDetails(exportDto.getCholeraOtherDetails());
+                        caseExportDetailedDto.setCongenitalRubellaAntibodyDetection(exportDto.getCongenitalRubellaAntibodyDetection());
+                        caseExportDetailedDto.setCongenitalRubellaAntigenDetection(exportDto.getCongenitalRubellaAntigenDetection());
+                        caseExportDetailedDto.setCongenitalRubellaRapidTest(exportDto.getCongenitalRubellaRapidTest());
+                        caseExportDetailedDto.setCongenitalRubellaCulture(exportDto.getCongenitalRubellaCulture());
+                        caseExportDetailedDto.setCongenitalRubellaHistopathology(exportDto.getCongenitalRubellaHistopathology());
+                        caseExportDetailedDto.setCongenitalRubellaIsolation(exportDto.getCongenitalRubellaIsolation());
+                        caseExportDetailedDto.setCongenitalRubellaIgmSerumAntibody(exportDto.getCongenitalRubellaIgmSerumAntibody());
+                        caseExportDetailedDto.setCongenitalRubellaIggSerumAntibody(exportDto.getCongenitalRubellaIggSerumAntibody());
+                        caseExportDetailedDto.setCongenitalRubellaIgaSerumAntibody(exportDto.getCongenitalRubellaIgaSerumAntibody());
+                        caseExportDetailedDto.setCongenitalRubellaIncubationTime(exportDto.getCongenitalRubellaIncubationTime());
+                        caseExportDetailedDto.setCongenitalRubellaIndirectFluorescentAntibody(exportDto.getCongenitalRubellaIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setCongenitalRubellaDirectFluorescentAntibody(exportDto.getCongenitalRubellaDirectFluorescentAntibody());
+                        caseExportDetailedDto.setCongenitalRubellaMicroscopy(exportDto.getCongenitalRubellaMicroscopy());
+                        caseExportDetailedDto.setCongenitalRubellaNeutralizingAntibodies(exportDto.getCongenitalRubellaNeutralizingAntibodies());
+                        caseExportDetailedDto.setCongenitalRubellaPcrRtPcr(exportDto.getCongenitalRubellaPcrRtPcr());
+                        caseExportDetailedDto.setCongenitalRubellaGramStain(exportDto.getCongenitalRubellaGramStain());
+                        caseExportDetailedDto.setCongenitalRubellaLatexAgglutination(exportDto.getCongenitalRubellaLatexAgglutination());
+                        caseExportDetailedDto.setCongenitalRubellaCqValueDetection(exportDto.getCongenitalRubellaCqValueDetection());
+                        caseExportDetailedDto.setCongenitalRubellaSequencing(exportDto.getCongenitalRubellaSequencing());
+                        caseExportDetailedDto.setCongenitalRubellaDnaMicroarray(exportDto.getCongenitalRubellaDnaMicroarray());
+                        caseExportDetailedDto.setCongenitalRubellaOther(exportDto.getCongenitalRubellaOther());
+                        caseExportDetailedDto.setCongenitalRubellaAntibodyDetectionDetails(exportDto.getCongenitalRubellaAntibodyDetectionDetails());
+                        caseExportDetailedDto.setCongenitalRubellaAntigenDetectionDetails(exportDto.getCongenitalRubellaAntigenDetectionDetails());
+                        caseExportDetailedDto.setCongenitalRubellaRapidTestDetails(exportDto.getCongenitalRubellaRapidTestDetails());
+                        caseExportDetailedDto.setCongenitalRubellaCultureDetails(exportDto.getCongenitalRubellaCultureDetails());
+                        caseExportDetailedDto.setCongenitalRubellaHistopathologyDetails(exportDto.getCongenitalRubellaHistopathologyDetails());
+                        caseExportDetailedDto.setCongenitalRubellaIsolationDetails(exportDto.getCongenitalRubellaIsolationDetails());
+                        caseExportDetailedDto.setCongenitalRubellaIgmSerumAntibodyDetails(exportDto.getCongenitalRubellaIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setCongenitalRubellaIggSerumAntibodyDetails(exportDto.getCongenitalRubellaIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setCongenitalRubellaIgaSerumAntibodyDetails(exportDto.getCongenitalRubellaIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setCongenitalRubellaIncubationTimeDetails(exportDto.getCongenitalRubellaIncubationTimeDetails());
+                        caseExportDetailedDto.setCongenitalRubellaIndirectFluorescentAntibodyDetails(exportDto.getCongenitalRubellaIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setCongenitalRubellaDirectFluorescentAntibodyDetails(exportDto.getCongenitalRubellaDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setCongenitalRubellaMicroscopyDetails(exportDto.getCongenitalRubellaMicroscopyDetails());
+                        caseExportDetailedDto.setCongenitalRubellaNeutralizingAntibodiesDetails(exportDto.getCongenitalRubellaNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setCongenitalRubellaPcrRtPcrDetails(exportDto.getCongenitalRubellaPcrRtPcrDetails());
+                        caseExportDetailedDto.setCongenitalRubellaGramStainDetails(exportDto.getCongenitalRubellaGramStainDetails());
+                        caseExportDetailedDto.setCongenitalRubellaLatexAgglutinationDetails(exportDto.getCongenitalRubellaLatexAgglutinationDetails());
+                        caseExportDetailedDto.setCongenitalRubellaCqValueDetectionDetails(exportDto.getCongenitalRubellaCqValueDetectionDetails());
+                        caseExportDetailedDto.setCongenitalRubellaSequencingDetails(exportDto.getCongenitalRubellaSequencingDetails());
+                        caseExportDetailedDto.setCongenitalRubellaDnaMicroarrayDetails(exportDto.getCongenitalRubellaDnaMicroarrayDetails());
+                        caseExportDetailedDto.setCongenitalRubellaOtherDetails(exportDto.getCongenitalRubellaOtherDetails());
+                        caseExportDetailedDto.setCsmAntibodyDetection(exportDto.getCsmAntibodyDetection());
+                        caseExportDetailedDto.setCsmAntigenDetection(exportDto.getCsmAntigenDetection());
+                        caseExportDetailedDto.setCsmRapidTest(exportDto.getCsmRapidTest());
+                        caseExportDetailedDto.setCsmCulture(exportDto.getCsmCulture());
+                        caseExportDetailedDto.setCsmHistopathology(exportDto.getCsmHistopathology());
+                        caseExportDetailedDto.setCsmIsolation(exportDto.getCsmIsolation());
+                        caseExportDetailedDto.setCsmIgmSerumAntibody(exportDto.getCsmIgmSerumAntibody());
+                        caseExportDetailedDto.setCsmIggSerumAntibody(exportDto.getCsmIggSerumAntibody());
+                        caseExportDetailedDto.setCsmIgaSerumAntibody(exportDto.getCsmIgaSerumAntibody());
+                        caseExportDetailedDto.setCsmIncubationTime(exportDto.getCsmIncubationTime());
+                        caseExportDetailedDto.setCsmIndirectFluorescentAntibody(exportDto.getCsmIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setCsmDirectFluorescentAntibody(exportDto.getCsmDirectFluorescentAntibody());
+                        caseExportDetailedDto.setCsmMicroscopy(exportDto.getCsmMicroscopy());
+                        caseExportDetailedDto.setCsmNeutralizingAntibodies(exportDto.getCsmNeutralizingAntibodies());
+                        caseExportDetailedDto.setCsmPcrRtPcr(exportDto.getCsmPcrRtPcr());
+                        caseExportDetailedDto.setCsmGramStain(exportDto.getCsmGramStain());
+                        caseExportDetailedDto.setCsmLatexAgglutination(exportDto.getCsmLatexAgglutination());
+                        caseExportDetailedDto.setCsmCqValueDetection(exportDto.getCsmCqValueDetection());
+                        caseExportDetailedDto.setCsmSequencing(exportDto.getCsmSequencing());
+                        caseExportDetailedDto.setCsmDnaMicroarray(exportDto.getCsmDnaMicroarray());
+                        caseExportDetailedDto.setCsmOther(exportDto.getCsmOther());
+                        caseExportDetailedDto.setCsmAntibodyDetectionDetails(exportDto.getCsmAntibodyDetectionDetails());
+                        caseExportDetailedDto.setCsmAntigenDetectionDetails(exportDto.getCsmAntigenDetectionDetails());
+                        caseExportDetailedDto.setCsmRapidTestDetails(exportDto.getCsmRapidTestDetails());
+                        caseExportDetailedDto.setCsmCultureDetails(exportDto.getCsmCultureDetails());
+                        caseExportDetailedDto.setCsmHistopathologyDetails(exportDto.getCsmHistopathologyDetails());
+                        caseExportDetailedDto.setCsmIsolationDetails(exportDto.getCsmIsolationDetails());
+                        caseExportDetailedDto.setCsmIgmSerumAntibodyDetails(exportDto.getCsmIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setCsmIggSerumAntibodyDetails(exportDto.getCsmIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setCsmIgaSerumAntibodyDetails(exportDto.getCsmIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setCsmIncubationTimeDetails(exportDto.getCsmIncubationTimeDetails());
+                        caseExportDetailedDto.setCsmIndirectFluorescentAntibodyDetails(exportDto.getCsmIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setCsmDirectFluorescentAntibodyDetails(exportDto.getCsmDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setCsmMicroscopyDetails(exportDto.getCsmMicroscopyDetails());
+                        caseExportDetailedDto.setCsmNeutralizingAntibodiesDetails(exportDto.getCsmNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setCsmPcrRtPcrDetails(exportDto.getCsmPcrRtPcrDetails());
+                        caseExportDetailedDto.setCsmGramStainDetails(exportDto.getCsmGramStainDetails());
+                        caseExportDetailedDto.setCsmLatexAgglutinationDetails(exportDto.getCsmLatexAgglutinationDetails());
+                        caseExportDetailedDto.setCsmCqValueDetectionDetails(exportDto.getCsmCqValueDetectionDetails());
+                        caseExportDetailedDto.setCsmSequencingDetails(exportDto.getCsmSequencingDetails());
+                        caseExportDetailedDto.setCsmDnaMicroarrayDetails(exportDto.getCsmDnaMicroarrayDetails());
+                        caseExportDetailedDto.setCsmOtherDetails(exportDto.getCsmOtherDetails());
+                        caseExportDetailedDto.setDengueAntibodyDetection(exportDto.getDengueAntibodyDetection());
+                        caseExportDetailedDto.setDengueAntigenDetection(exportDto.getDengueAntigenDetection());
+                        caseExportDetailedDto.setDengueRapidTest(exportDto.getDengueRapidTest());
+                        caseExportDetailedDto.setDengueCulture(exportDto.getDengueCulture());
+                        caseExportDetailedDto.setDengueHistopathology(exportDto.getDengueHistopathology());
+                        caseExportDetailedDto.setDengueIsolation(exportDto.getDengueIsolation());
+                        caseExportDetailedDto.setDengueIgmSerumAntibody(exportDto.getDengueIgmSerumAntibody());
+                        caseExportDetailedDto.setDengueIggSerumAntibody(exportDto.getDengueIggSerumAntibody());
+                        caseExportDetailedDto.setDengueIgaSerumAntibody(exportDto.getDengueIgaSerumAntibody());
+                        caseExportDetailedDto.setDengueIncubationTime(exportDto.getDengueIncubationTime());
+                        caseExportDetailedDto.setDengueIndirectFluorescentAntibody(exportDto.getDengueIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setDengueDirectFluorescentAntibody(exportDto.getDengueDirectFluorescentAntibody());
+                        caseExportDetailedDto.setDengueMicroscopy(exportDto.getDengueMicroscopy());
+                        caseExportDetailedDto.setDengueNeutralizingAntibodies(exportDto.getDengueNeutralizingAntibodies());
+                        caseExportDetailedDto.setDenguePcrRtPcr(exportDto.getDenguePcrRtPcr());
+                        caseExportDetailedDto.setDengueGramStain(exportDto.getDengueGramStain());
+                        caseExportDetailedDto.setDengueLatexAgglutination(exportDto.getDengueLatexAgglutination());
+                        caseExportDetailedDto.setDengueCqValueDetection(exportDto.getDengueCqValueDetection());
+                        caseExportDetailedDto.setDengueSequencing(exportDto.getDengueSequencing());
+                        caseExportDetailedDto.setDengueDnaMicroarray(exportDto.getDengueDnaMicroarray());
+                        caseExportDetailedDto.setDengueOther(exportDto.getDengueOther());
+                        caseExportDetailedDto.setDengueAntibodyDetectionDetails(exportDto.getDengueAntibodyDetectionDetails());
+                        caseExportDetailedDto.setDengueAntigenDetectionDetails(exportDto.getDengueAntigenDetectionDetails());
+                        caseExportDetailedDto.setDengueRapidTestDetails(exportDto.getDengueRapidTestDetails());
+                        caseExportDetailedDto.setDengueCultureDetails(exportDto.getDengueCultureDetails());
+                        caseExportDetailedDto.setDengueHistopathologyDetails(exportDto.getDengueHistopathologyDetails());
+                        caseExportDetailedDto.setDengueIsolationDetails(exportDto.getDengueIsolationDetails());
+                        caseExportDetailedDto.setDengueIgmSerumAntibodyDetails(exportDto.getDengueIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setDengueIggSerumAntibodyDetails(exportDto.getDengueIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setDengueIgaSerumAntibodyDetails(exportDto.getDengueIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setDengueIncubationTimeDetails(exportDto.getDengueIncubationTimeDetails());
+                        caseExportDetailedDto.setDengueIndirectFluorescentAntibodyDetails(exportDto.getDengueIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setDengueDirectFluorescentAntibodyDetails(exportDto.getDengueDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setDengueMicroscopyDetails(exportDto.getDengueMicroscopyDetails());
+                        caseExportDetailedDto.setDengueNeutralizingAntibodiesDetails(exportDto.getDengueNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setDenguePcrRtPcrDetails(exportDto.getDenguePcrRtPcrDetails());
+                        caseExportDetailedDto.setDengueGramStainDetails(exportDto.getDengueGramStainDetails());
+                        caseExportDetailedDto.setDengueLatexAgglutinationDetails(exportDto.getDengueLatexAgglutinationDetails());
+                        caseExportDetailedDto.setDengueCqValueDetectionDetails(exportDto.getDengueCqValueDetectionDetails());
+                        caseExportDetailedDto.setDengueSequencingDetails(exportDto.getDengueSequencingDetails());
+                        caseExportDetailedDto.setDengueDnaMicroarrayDetails(exportDto.getDengueDnaMicroarrayDetails());
+                        caseExportDetailedDto.setDengueOtherDetails(exportDto.getDengueOtherDetails());
+                        caseExportDetailedDto.setEvdAntibodyDetection(exportDto.getEvdAntibodyDetection());
+                        caseExportDetailedDto.setEvdAntigenDetection(exportDto.getEvdAntigenDetection());
+                        caseExportDetailedDto.setEvdRapidTest(exportDto.getEvdRapidTest());
+                        caseExportDetailedDto.setEvdCulture(exportDto.getEvdCulture());
+                        caseExportDetailedDto.setEvdHistopathology(exportDto.getEvdHistopathology());
+                        caseExportDetailedDto.setEvdIsolation(exportDto.getEvdIsolation());
+                        caseExportDetailedDto.setEvdIgmSerumAntibody(exportDto.getEvdIgmSerumAntibody());
+                        caseExportDetailedDto.setEvdIggSerumAntibody(exportDto.getEvdIggSerumAntibody());
+                        caseExportDetailedDto.setEvdIgaSerumAntibody(exportDto.getEvdIgaSerumAntibody());
+                        caseExportDetailedDto.setEvdIncubationTime(exportDto.getEvdIncubationTime());
+                        caseExportDetailedDto.setEvdIndirectFluorescentAntibody(exportDto.getEvdIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setEvdDirectFluorescentAntibody(exportDto.getEvdDirectFluorescentAntibody());
+                        caseExportDetailedDto.setEvdMicroscopy(exportDto.getEvdMicroscopy());
+                        caseExportDetailedDto.setEvdNeutralizingAntibodies(exportDto.getEvdNeutralizingAntibodies());
+                        caseExportDetailedDto.setEvdPcrRtPcr(exportDto.getEvdPcrRtPcr());
+                        caseExportDetailedDto.setEvdGramStain(exportDto.getEvdGramStain());
+                        caseExportDetailedDto.setEvdLatexAgglutination(exportDto.getEvdLatexAgglutination());
+                        caseExportDetailedDto.setEvdCqValueDetection(exportDto.getEvdCqValueDetection());
+                        caseExportDetailedDto.setEvdSequencing(exportDto.getEvdSequencing());
+                        caseExportDetailedDto.setEvdDnaMicroarray(exportDto.getEvdDnaMicroarray());
+                        caseExportDetailedDto.setEvdOther(exportDto.getEvdOther());
+                        caseExportDetailedDto.setEvdAntibodyDetectionDetails(exportDto.getEvdAntibodyDetectionDetails());
+                        caseExportDetailedDto.setEvdAntigenDetectionDetails(exportDto.getEvdAntigenDetectionDetails());
+                        caseExportDetailedDto.setEvdRapidTestDetails(exportDto.getEvdRapidTestDetails());
+                        caseExportDetailedDto.setEvdCultureDetails(exportDto.getEvdCultureDetails());
+                        caseExportDetailedDto.setEvdHistopathologyDetails(exportDto.getEvdHistopathologyDetails());
+                        caseExportDetailedDto.setEvdIsolationDetails(exportDto.getEvdIsolationDetails());
+                        caseExportDetailedDto.setEvdIgmSerumAntibodyDetails(exportDto.getEvdIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setEvdIggSerumAntibodyDetails(exportDto.getEvdIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setEvdIgaSerumAntibodyDetails(exportDto.getEvdIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setEvdIncubationTimeDetails(exportDto.getEvdIncubationTimeDetails());
+                        caseExportDetailedDto.setEvdIndirectFluorescentAntibodyDetails(exportDto.getEvdIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setEvdDirectFluorescentAntibodyDetails(exportDto.getEvdDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setEvdMicroscopyDetails(exportDto.getEvdMicroscopyDetails());
+                        caseExportDetailedDto.setEvdNeutralizingAntibodiesDetails(exportDto.getEvdNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setEvdPcrRtPcrDetails(exportDto.getEvdPcrRtPcrDetails());
+                        caseExportDetailedDto.setEvdGramStainDetails(exportDto.getEvdGramStainDetails());
+                        caseExportDetailedDto.setEvdLatexAgglutinationDetails(exportDto.getEvdLatexAgglutinationDetails());
+                        caseExportDetailedDto.setEvdCqValueDetectionDetails(exportDto.getEvdCqValueDetectionDetails());
+                        caseExportDetailedDto.setEvdSequencingDetails(exportDto.getEvdSequencingDetails());
+                        caseExportDetailedDto.setEvdDnaMicroarrayDetails(exportDto.getEvdDnaMicroarrayDetails());
+                        caseExportDetailedDto.setEvdOtherDetails(exportDto.getEvdOtherDetails());
+                        caseExportDetailedDto.setGuineaWormAntibodyDetection(exportDto.getGuineaWormAntibodyDetection());
+                        caseExportDetailedDto.setGuineaWormAntigenDetection(exportDto.getGuineaWormAntigenDetection());
+                        caseExportDetailedDto.setGuineaWormRapidTest(exportDto.getGuineaWormRapidTest());
+                        caseExportDetailedDto.setGuineaWormCulture(exportDto.getGuineaWormCulture());
+                        caseExportDetailedDto.setGuineaWormHistopathology(exportDto.getGuineaWormHistopathology());
+                        caseExportDetailedDto.setGuineaWormIsolation(exportDto.getGuineaWormIsolation());
+                        caseExportDetailedDto.setGuineaWormIgmSerumAntibody(exportDto.getGuineaWormIgmSerumAntibody());
+                        caseExportDetailedDto.setGuineaWormIggSerumAntibody(exportDto.getGuineaWormIggSerumAntibody());
+                        caseExportDetailedDto.setGuineaWormIgaSerumAntibody(exportDto.getGuineaWormIgaSerumAntibody());
+                        caseExportDetailedDto.setGuineaWormIncubationTime(exportDto.getGuineaWormIncubationTime());
+                        caseExportDetailedDto.setGuineaWormIndirectFluorescentAntibody(exportDto.getGuineaWormIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setGuineaWormDirectFluorescentAntibody(exportDto.getGuineaWormDirectFluorescentAntibody());
+                        caseExportDetailedDto.setGuineaWormMicroscopy(exportDto.getGuineaWormMicroscopy());
+                        caseExportDetailedDto.setGuineaWormNeutralizingAntibodies(exportDto.getGuineaWormNeutralizingAntibodies());
+                        caseExportDetailedDto.setGuineaWormPcrRtPcr(exportDto.getGuineaWormPcrRtPcr());
+                        caseExportDetailedDto.setGuineaWormGramStain(exportDto.getGuineaWormGramStain());
+                        caseExportDetailedDto.setGuineaWormLatexAgglutination(exportDto.getGuineaWormLatexAgglutination());
+                        caseExportDetailedDto.setGuineaWormCqValueDetection(exportDto.getGuineaWormCqValueDetection());
+                        caseExportDetailedDto.setGuineaWormSequencing(exportDto.getGuineaWormSequencing());
+                        caseExportDetailedDto.setGuineaWormDnaMicroarray(exportDto.getGuineaWormDnaMicroarray());
+                        caseExportDetailedDto.setGuineaWormOther(exportDto.getGuineaWormOther());
+                        caseExportDetailedDto.setGuineaWormAntibodyDetectionDetails(exportDto.getGuineaWormAntibodyDetectionDetails());
+                        caseExportDetailedDto.setGuineaWormAntigenDetectionDetails(exportDto.getGuineaWormAntigenDetectionDetails());
+                        caseExportDetailedDto.setGuineaWormRapidTestDetails(exportDto.getGuineaWormRapidTestDetails());
+                        caseExportDetailedDto.setGuineaWormCultureDetails(exportDto.getGuineaWormCultureDetails());
+                        caseExportDetailedDto.setGuineaWormHistopathologyDetails(exportDto.getGuineaWormHistopathologyDetails());
+                        caseExportDetailedDto.setGuineaWormIsolationDetails(exportDto.getGuineaWormIsolationDetails());
+                        caseExportDetailedDto.setGuineaWormIgmSerumAntibodyDetails(exportDto.getGuineaWormIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setGuineaWormIggSerumAntibodyDetails(exportDto.getGuineaWormIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setGuineaWormIgaSerumAntibodyDetails(exportDto.getGuineaWormIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setGuineaWormIncubationTimeDetails(exportDto.getGuineaWormIncubationTimeDetails());
+                        caseExportDetailedDto.setGuineaWormIndirectFluorescentAntibodyDetails(exportDto.getGuineaWormIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setGuineaWormDirectFluorescentAntibodyDetails(exportDto.getGuineaWormDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setGuineaWormMicroscopyDetails(exportDto.getGuineaWormMicroscopyDetails());
+                        caseExportDetailedDto.setGuineaWormNeutralizingAntibodiesDetails(exportDto.getGuineaWormNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setGuineaWormPcrRtPcrDetails(exportDto.getGuineaWormPcrRtPcrDetails());
+                        caseExportDetailedDto.setGuineaWormGramStainDetails(exportDto.getGuineaWormGramStainDetails());
+                        caseExportDetailedDto.setGuineaWormLatexAgglutinationDetails(exportDto.getGuineaWormLatexAgglutinationDetails());
+                        caseExportDetailedDto.setGuineaWormCqValueDetectionDetails(exportDto.getGuineaWormCqValueDetectionDetails());
+                        caseExportDetailedDto.setGuineaWormSequencingDetails(exportDto.getGuineaWormSequencingDetails());
+                        caseExportDetailedDto.setGuineaWormDnaMicroarrayDetails(exportDto.getGuineaWormDnaMicroarrayDetails());
+                        caseExportDetailedDto.setGuineaWormOtherDetails(exportDto.getGuineaWormOtherDetails());
+                        caseExportDetailedDto.setLassaAntibodyDetection(exportDto.getLassaAntibodyDetection());
+                        caseExportDetailedDto.setLassaAntigenDetection(exportDto.getLassaAntigenDetection());
+                        caseExportDetailedDto.setLassaRapidTest(exportDto.getLassaRapidTest());
+                        caseExportDetailedDto.setLassaCulture(exportDto.getLassaCulture());
+                        caseExportDetailedDto.setLassaHistopathology(exportDto.getLassaHistopathology());
+                        caseExportDetailedDto.setLassaIsolation(exportDto.getLassaIsolation());
+                        caseExportDetailedDto.setLassaIgmSerumAntibody(exportDto.getLassaIgmSerumAntibody());
+                        caseExportDetailedDto.setLassaIggSerumAntibody(exportDto.getLassaIggSerumAntibody());
+                        caseExportDetailedDto.setLassaIgaSerumAntibody(exportDto.getLassaIgaSerumAntibody());
+                        caseExportDetailedDto.setLassaIncubationTime(exportDto.getLassaIncubationTime());
+                        caseExportDetailedDto.setLassaIndirectFluorescentAntibody(exportDto.getLassaIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setLassaDirectFluorescentAntibody(exportDto.getLassaDirectFluorescentAntibody());
+                        caseExportDetailedDto.setLassaMicroscopy(exportDto.getLassaMicroscopy());
+                        caseExportDetailedDto.setLassaNeutralizingAntibodies(exportDto.getLassaNeutralizingAntibodies());
+                        caseExportDetailedDto.setLassaPcrRtPcr(exportDto.getLassaPcrRtPcr());
+                        caseExportDetailedDto.setLassaGramStain(exportDto.getLassaGramStain());
+                        caseExportDetailedDto.setLassaLatexAgglutination(exportDto.getLassaLatexAgglutination());
+                        caseExportDetailedDto.setLassaCqValueDetection(exportDto.getLassaCqValueDetection());
+                        caseExportDetailedDto.setLassaSequencing(exportDto.getLassaSequencing());
+                        caseExportDetailedDto.setLassaDnaMicroarray(exportDto.getLassaDnaMicroarray());
+                        caseExportDetailedDto.setLassaOther(exportDto.getLassaOther());
+                        caseExportDetailedDto.setLassaAntibodyDetectionDetails(exportDto.getLassaAntibodyDetectionDetails());
+                        caseExportDetailedDto.setLassaAntigenDetectionDetails(exportDto.getLassaAntigenDetectionDetails());
+                        caseExportDetailedDto.setLassaRapidTestDetails(exportDto.getLassaRapidTestDetails());
+                        caseExportDetailedDto.setLassaCultureDetails(exportDto.getLassaCultureDetails());
+                        caseExportDetailedDto.setLassaHistopathologyDetails(exportDto.getLassaHistopathologyDetails());
+                        caseExportDetailedDto.setLassaIsolationDetails(exportDto.getLassaIsolationDetails());
+                        caseExportDetailedDto.setLassaIgmSerumAntibodyDetails(exportDto.getLassaIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setLassaIggSerumAntibodyDetails(exportDto.getLassaIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setLassaIgaSerumAntibodyDetails(exportDto.getLassaIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setLassaIncubationTimeDetails(exportDto.getLassaIncubationTimeDetails());
+                        caseExportDetailedDto.setLassaIndirectFluorescentAntibodyDetails(exportDto.getLassaIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setLassaDirectFluorescentAntibodyDetails(exportDto.getLassaDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setLassaMicroscopyDetails(exportDto.getLassaMicroscopyDetails());
+                        caseExportDetailedDto.setLassaNeutralizingAntibodiesDetails(exportDto.getLassaNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setLassaPcrRtPcrDetails(exportDto.getLassaPcrRtPcrDetails());
+                        caseExportDetailedDto.setLassaGramStainDetails(exportDto.getLassaGramStainDetails());
+                        caseExportDetailedDto.setLassaLatexAgglutinationDetails(exportDto.getLassaLatexAgglutinationDetails());
+                        caseExportDetailedDto.setLassaCqValueDetectionDetails(exportDto.getLassaCqValueDetectionDetails());
+                        caseExportDetailedDto.setLassaSequencingDetails(exportDto.getLassaSequencingDetails());
+                        caseExportDetailedDto.setLassaDnaMicroarrayDetails(exportDto.getLassaDnaMicroarrayDetails());
+                        caseExportDetailedDto.setLassaOtherDetails(exportDto.getLassaOtherDetails());
+                        caseExportDetailedDto.setMeaslesAntibodyDetection(exportDto.getMeaslesAntibodyDetection());
+                        caseExportDetailedDto.setMeaslesAntigenDetection(exportDto.getMeaslesAntigenDetection());
+                        caseExportDetailedDto.setMeaslesRapidTest(exportDto.getMeaslesRapidTest());
+                        caseExportDetailedDto.setMeaslesCulture(exportDto.getMeaslesCulture());
+                        caseExportDetailedDto.setMeaslesHistopathology(exportDto.getMeaslesHistopathology());
+                        caseExportDetailedDto.setMeaslesIsolation(exportDto.getMeaslesIsolation());
+                        caseExportDetailedDto.setMeaslesIgmSerumAntibody(exportDto.getMeaslesIgmSerumAntibody());
+                        caseExportDetailedDto.setMeaslesIggSerumAntibody(exportDto.getMeaslesIggSerumAntibody());
+                        caseExportDetailedDto.setMeaslesIgaSerumAntibody(exportDto.getMeaslesIgaSerumAntibody());
+                        caseExportDetailedDto.setMeaslesIncubationTime(exportDto.getMeaslesIncubationTime());
+                        caseExportDetailedDto.setMeaslesIndirectFluorescentAntibody(exportDto.getMeaslesIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setMeaslesDirectFluorescentAntibody(exportDto.getMeaslesDirectFluorescentAntibody());
+                        caseExportDetailedDto.setMeaslesMicroscopy(exportDto.getMeaslesMicroscopy());
+                        caseExportDetailedDto.setMeaslesNeutralizingAntibodies(exportDto.getMeaslesNeutralizingAntibodies());
+                        caseExportDetailedDto.setMeaslesPcrRtPcr(exportDto.getMeaslesPcrRtPcr());
+                        caseExportDetailedDto.setMeaslesGramStain(exportDto.getMeaslesGramStain());
+                        caseExportDetailedDto.setMeaslesLatexAgglutination(exportDto.getMeaslesLatexAgglutination());
+                        caseExportDetailedDto.setMeaslesCqValueDetection(exportDto.getMeaslesCqValueDetection());
+                        caseExportDetailedDto.setMeaslesSequencing(exportDto.getMeaslesSequencing());
+                        caseExportDetailedDto.setMeaslesDnaMicroarray(exportDto.getMeaslesDnaMicroarray());
+                        caseExportDetailedDto.setMeaslesOther(exportDto.getMeaslesOther());
+                        caseExportDetailedDto.setMeaslesAntibodyDetectionDetails(exportDto.getMeaslesAntibodyDetectionDetails());
+                        caseExportDetailedDto.setMeaslesAntigenDetectionDetails(exportDto.getMeaslesAntigenDetectionDetails());
+                        caseExportDetailedDto.setMeaslesRapidTestDetails(exportDto.getMeaslesRapidTestDetails());
+                        caseExportDetailedDto.setMeaslesCultureDetails(exportDto.getMeaslesCultureDetails());
+                        caseExportDetailedDto.setMeaslesHistopathologyDetails(exportDto.getMeaslesHistopathologyDetails());
+                        caseExportDetailedDto.setMeaslesIsolationDetails(exportDto.getMeaslesIsolationDetails());
+                        caseExportDetailedDto.setMeaslesIgmSerumAntibodyDetails(exportDto.getMeaslesIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setMeaslesIggSerumAntibodyDetails(exportDto.getMeaslesIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setMeaslesIgaSerumAntibodyDetails(exportDto.getMeaslesIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setMeaslesIncubationTimeDetails(exportDto.getMeaslesIncubationTimeDetails());
+                        caseExportDetailedDto.setMeaslesIndirectFluorescentAntibodyDetails(exportDto.getMeaslesIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setMeaslesDirectFluorescentAntibodyDetails(exportDto.getMeaslesDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setMeaslesMicroscopyDetails(exportDto.getMeaslesMicroscopyDetails());
+                        caseExportDetailedDto.setMeaslesNeutralizingAntibodiesDetails(exportDto.getMeaslesNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setMeaslesPcrRtPcrDetails(exportDto.getMeaslesPcrRtPcrDetails());
+                        caseExportDetailedDto.setMeaslesGramStainDetails(exportDto.getMeaslesGramStainDetails());
+                        caseExportDetailedDto.setMeaslesLatexAgglutinationDetails(exportDto.getMeaslesLatexAgglutinationDetails());
+                        caseExportDetailedDto.setMeaslesCqValueDetectionDetails(exportDto.getMeaslesCqValueDetectionDetails());
+                        caseExportDetailedDto.setMeaslesSequencingDetails(exportDto.getMeaslesSequencingDetails());
+                        caseExportDetailedDto.setMeaslesDnaMicroarrayDetails(exportDto.getMeaslesDnaMicroarrayDetails());
+                        caseExportDetailedDto.setMeaslesOtherDetails(exportDto.getMeaslesOtherDetails());
+                        caseExportDetailedDto.setMonkeypoxAntibodyDetection(exportDto.getMonkeypoxAntibodyDetection());
+                        caseExportDetailedDto.setMonkeypoxAntigenDetection(exportDto.getMonkeypoxAntigenDetection());
+                        caseExportDetailedDto.setMonkeypoxRapidTest(exportDto.getMonkeypoxRapidTest());
+                        caseExportDetailedDto.setMonkeypoxCulture(exportDto.getMonkeypoxCulture());
+                        caseExportDetailedDto.setMonkeypoxHistopathology(exportDto.getMonkeypoxHistopathology());
+                        caseExportDetailedDto.setMonkeypoxIsolation(exportDto.getMonkeypoxIsolation());
+                        caseExportDetailedDto.setMonkeypoxIgmSerumAntibody(exportDto.getMonkeypoxIgmSerumAntibody());
+                        caseExportDetailedDto.setMonkeypoxIggSerumAntibody(exportDto.getMonkeypoxIggSerumAntibody());
+                        caseExportDetailedDto.setMonkeypoxIgaSerumAntibody(exportDto.getMonkeypoxIgaSerumAntibody());
+                        caseExportDetailedDto.setMonkeypoxIncubationTime(exportDto.getMonkeypoxIncubationTime());
+                        caseExportDetailedDto.setMonkeypoxIndirectFluorescentAntibody(exportDto.getMonkeypoxIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setMonkeypoxDirectFluorescentAntibody(exportDto.getMonkeypoxDirectFluorescentAntibody());
+                        caseExportDetailedDto.setMonkeypoxMicroscopy(exportDto.getMonkeypoxMicroscopy());
+                        caseExportDetailedDto.setMonkeypoxNeutralizingAntibodies(exportDto.getMonkeypoxNeutralizingAntibodies());
+                        caseExportDetailedDto.setMonkeypoxPcrRtPcr(exportDto.getMonkeypoxPcrRtPcr());
+                        caseExportDetailedDto.setMonkeypoxGramStain(exportDto.getMonkeypoxGramStain());
+                        caseExportDetailedDto.setMonkeypoxLatexAgglutination(exportDto.getMonkeypoxLatexAgglutination());
+                        caseExportDetailedDto.setMonkeypoxCqValueDetection(exportDto.getMonkeypoxCqValueDetection());
+                        caseExportDetailedDto.setMonkeypoxSequencing(exportDto.getMonkeypoxSequencing());
+                        caseExportDetailedDto.setMonkeypoxDnaMicroarray(exportDto.getMonkeypoxDnaMicroarray());
+                        caseExportDetailedDto.setMonkeypoxOther(exportDto.getMonkeypoxOther());
+                        caseExportDetailedDto.setMonkeypoxAntibodyDetectionDetails(exportDto.getMonkeypoxAntibodyDetectionDetails());
+                        caseExportDetailedDto.setMonkeypoxAntigenDetectionDetails(exportDto.getMonkeypoxAntigenDetectionDetails());
+                        caseExportDetailedDto.setMonkeypoxRapidTestDetails(exportDto.getMonkeypoxRapidTestDetails());
+                        caseExportDetailedDto.setMonkeypoxCultureDetails(exportDto.getMonkeypoxCultureDetails());
+                        caseExportDetailedDto.setMonkeypoxHistopathologyDetails(exportDto.getMonkeypoxHistopathologyDetails());
+                        caseExportDetailedDto.setMonkeypoxIsolationDetails(exportDto.getMonkeypoxIsolationDetails());
+                        caseExportDetailedDto.setMonkeypoxIgmSerumAntibodyDetails(exportDto.getMonkeypoxIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setMonkeypoxIggSerumAntibodyDetails(exportDto.getMonkeypoxIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setMonkeypoxIgaSerumAntibodyDetails(exportDto.getMonkeypoxIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setMonkeypoxIncubationTimeDetails(exportDto.getMonkeypoxIncubationTimeDetails());
+                        caseExportDetailedDto.setMonkeypoxIndirectFluorescentAntibodyDetails(exportDto.getMonkeypoxIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setMonkeypoxDirectFluorescentAntibodyDetails(exportDto.getMonkeypoxDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setMonkeypoxMicroscopyDetails(exportDto.getMonkeypoxMicroscopyDetails());
+                        caseExportDetailedDto.setMonkeypoxNeutralizingAntibodiesDetails(exportDto.getMonkeypoxNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setMonkeypoxPcrRtPcrDetails(exportDto.getMonkeypoxPcrRtPcrDetails());
+                        caseExportDetailedDto.setMonkeypoxGramStainDetails(exportDto.getMonkeypoxGramStainDetails());
+                        caseExportDetailedDto.setMonkeypoxLatexAgglutinationDetails(exportDto.getMonkeypoxLatexAgglutinationDetails());
+                        caseExportDetailedDto.setMonkeypoxCqValueDetectionDetails(exportDto.getMonkeypoxCqValueDetectionDetails());
+                        caseExportDetailedDto.setMonkeypoxSequencingDetails(exportDto.getMonkeypoxSequencingDetails());
+                        caseExportDetailedDto.setMonkeypoxDnaMicroarrayDetails(exportDto.getMonkeypoxDnaMicroarrayDetails());
+                        caseExportDetailedDto.setMonkeypoxOtherDetails(exportDto.getMonkeypoxOtherDetails());
+                        caseExportDetailedDto.setNewInfluenzaAntibodyDetection(exportDto.getNewInfluenzaAntibodyDetection());
+                        caseExportDetailedDto.setNewInfluenzaAntigenDetection(exportDto.getNewInfluenzaAntigenDetection());
+                        caseExportDetailedDto.setNewInfluenzaRapidTest(exportDto.getNewInfluenzaRapidTest());
+                        caseExportDetailedDto.setNewInfluenzaCulture(exportDto.getNewInfluenzaCulture());
+                        caseExportDetailedDto.setNewInfluenzaHistopathology(exportDto.getNewInfluenzaHistopathology());
+                        caseExportDetailedDto.setNewInfluenzaIsolation(exportDto.getNewInfluenzaIsolation());
+                        caseExportDetailedDto.setNewInfluenzaIgmSerumAntibody(exportDto.getNewInfluenzaIgmSerumAntibody());
+                        caseExportDetailedDto.setNewInfluenzaIggSerumAntibody(exportDto.getNewInfluenzaIggSerumAntibody());
+                        caseExportDetailedDto.setNewInfluenzaIgaSerumAntibody(exportDto.getNewInfluenzaIgaSerumAntibody());
+                        caseExportDetailedDto.setNewInfluenzaIncubationTime(exportDto.getNewInfluenzaIncubationTime());
+                        caseExportDetailedDto.setNewInfluenzaIndirectFluorescentAntibody(exportDto.getNewInfluenzaIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setNewInfluenzaDirectFluorescentAntibody(exportDto.getNewInfluenzaDirectFluorescentAntibody());
+                        caseExportDetailedDto.setNewInfluenzaMicroscopy(exportDto.getNewInfluenzaMicroscopy());
+                        caseExportDetailedDto.setNewInfluenzaNeutralizingAntibodies(exportDto.getNewInfluenzaNeutralizingAntibodies());
+                        caseExportDetailedDto.setNewInfluenzaPcrRtPcr(exportDto.getNewInfluenzaPcrRtPcr());
+                        caseExportDetailedDto.setNewInfluenzaGramStain(exportDto.getNewInfluenzaGramStain());
+                        caseExportDetailedDto.setNewInfluenzaLatexAgglutination(exportDto.getNewInfluenzaLatexAgglutination());
+                        caseExportDetailedDto.setNewInfluenzaCqValueDetection(exportDto.getNewInfluenzaCqValueDetection());
+                        caseExportDetailedDto.setNewInfluenzaSequencing(exportDto.getNewInfluenzaSequencing());
+                        caseExportDetailedDto.setNewInfluenzaDnaMicroarray(exportDto.getNewInfluenzaDnaMicroarray());
+                        caseExportDetailedDto.setNewInfluenzaOther(exportDto.getNewInfluenzaOther());
+                        caseExportDetailedDto.setNewInfluenzaAntibodyDetectionDetails(exportDto.getNewInfluenzaAntibodyDetectionDetails());
+                        caseExportDetailedDto.setNewInfluenzaAntigenDetectionDetails(exportDto.getNewInfluenzaAntigenDetectionDetails());
+                        caseExportDetailedDto.setNewInfluenzaRapidTestDetails(exportDto.getNewInfluenzaRapidTestDetails());
+                        caseExportDetailedDto.setNewInfluenzaCultureDetails(exportDto.getNewInfluenzaCultureDetails());
+                        caseExportDetailedDto.setNewInfluenzaHistopathologyDetails(exportDto.getNewInfluenzaHistopathologyDetails());
+                        caseExportDetailedDto.setNewInfluenzaIsolationDetails(exportDto.getNewInfluenzaIsolationDetails());
+                        caseExportDetailedDto.setNewInfluenzaIgmSerumAntibodyDetails(exportDto.getNewInfluenzaIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setNewInfluenzaIggSerumAntibodyDetails(exportDto.getNewInfluenzaIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setNewInfluenzaIgaSerumAntibodyDetails(exportDto.getNewInfluenzaIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setNewInfluenzaIncubationTimeDetails(exportDto.getNewInfluenzaIncubationTimeDetails());
+                        caseExportDetailedDto.setNewInfluenzaIndirectFluorescentAntibodyDetails(exportDto.getNewInfluenzaIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setNewInfluenzaDirectFluorescentAntibodyDetails(exportDto.getNewInfluenzaDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setNewInfluenzaMicroscopyDetails(exportDto.getNewInfluenzaMicroscopyDetails());
+                        caseExportDetailedDto.setNewInfluenzaNeutralizingAntibodiesDetails(exportDto.getNewInfluenzaNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setNewInfluenzaPcrRtPcrDetails(exportDto.getNewInfluenzaPcrRtPcrDetails());
+                        caseExportDetailedDto.setNewInfluenzaGramStainDetails(exportDto.getNewInfluenzaGramStainDetails());
+                        caseExportDetailedDto.setNewInfluenzaLatexAgglutinationDetails(exportDto.getNewInfluenzaLatexAgglutinationDetails());
+                        caseExportDetailedDto.setNewInfluenzaCqValueDetectionDetails(exportDto.getNewInfluenzaCqValueDetectionDetails());
+                        caseExportDetailedDto.setNewInfluenzaSequencingDetails(exportDto.getNewInfluenzaSequencingDetails());
+                        caseExportDetailedDto.setNewInfluenzaDnaMicroarrayDetails(exportDto.getNewInfluenzaDnaMicroarrayDetails());
+                        caseExportDetailedDto.setNewInfluenzaOtherDetails(exportDto.getNewInfluenzaOtherDetails());
+                        caseExportDetailedDto.setPlagueAntibodyDetection(exportDto.getPlagueAntibodyDetection());
+                        caseExportDetailedDto.setPlagueAntigenDetection(exportDto.getPlagueAntigenDetection());
+                        caseExportDetailedDto.setPlagueRapidTest(exportDto.getPlagueRapidTest());
+                        caseExportDetailedDto.setPlagueCulture(exportDto.getPlagueCulture());
+                        caseExportDetailedDto.setPlagueHistopathology(exportDto.getPlagueHistopathology());
+                        caseExportDetailedDto.setPlagueIsolation(exportDto.getPlagueIsolation());
+                        caseExportDetailedDto.setPlagueIgmSerumAntibody(exportDto.getPlagueIgmSerumAntibody());
+                        caseExportDetailedDto.setPlagueIggSerumAntibody(exportDto.getPlagueIggSerumAntibody());
+                        caseExportDetailedDto.setPlagueIgaSerumAntibody(exportDto.getPlagueIgaSerumAntibody());
+                        caseExportDetailedDto.setPlagueIncubationTime(exportDto.getPlagueIncubationTime());
+                        caseExportDetailedDto.setPlagueIndirectFluorescentAntibody(exportDto.getPlagueIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setPlagueDirectFluorescentAntibody(exportDto.getPlagueDirectFluorescentAntibody());
+                        caseExportDetailedDto.setPlagueMicroscopy(exportDto.getPlagueMicroscopy());
+                        caseExportDetailedDto.setPlagueNeutralizingAntibodies(exportDto.getPlagueNeutralizingAntibodies());
+                        caseExportDetailedDto.setPlaguePcrRtPcr(exportDto.getPlaguePcrRtPcr());
+                        caseExportDetailedDto.setPlagueGramStain(exportDto.getPlagueGramStain());
+                        caseExportDetailedDto.setPlagueLatexAgglutination(exportDto.getPlagueLatexAgglutination());
+                        caseExportDetailedDto.setPlagueCqValueDetection(exportDto.getPlagueCqValueDetection());
+                        caseExportDetailedDto.setPlagueSequencing(exportDto.getPlagueSequencing());
+                        caseExportDetailedDto.setPlagueDnaMicroarray(exportDto.getPlagueDnaMicroarray());
+                        caseExportDetailedDto.setPlagueOther(exportDto.getPlagueOther());
+                        caseExportDetailedDto.setPlagueAntibodyDetectionDetails(exportDto.getPlagueAntibodyDetectionDetails());
+                        caseExportDetailedDto.setPlagueAntigenDetectionDetails(exportDto.getPlagueAntigenDetectionDetails());
+                        caseExportDetailedDto.setPlagueRapidTestDetails(exportDto.getPlagueRapidTestDetails());
+                        caseExportDetailedDto.setPlagueCultureDetails(exportDto.getPlagueCultureDetails());
+                        caseExportDetailedDto.setPlagueHistopathologyDetails(exportDto.getPlagueHistopathologyDetails());
+                        caseExportDetailedDto.setPlagueIsolationDetails(exportDto.getPlagueIsolationDetails());
+                        caseExportDetailedDto.setPlagueIgmSerumAntibodyDetails(exportDto.getPlagueIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setPlagueIggSerumAntibodyDetails(exportDto.getPlagueIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setPlagueIgaSerumAntibodyDetails(exportDto.getPlagueIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setPlagueIncubationTimeDetails(exportDto.getPlagueIncubationTimeDetails());
+                        caseExportDetailedDto.setPlagueIndirectFluorescentAntibodyDetails(exportDto.getPlagueIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setPlagueDirectFluorescentAntibodyDetails(exportDto.getPlagueDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setPlagueMicroscopyDetails(exportDto.getPlagueMicroscopyDetails());
+                        caseExportDetailedDto.setPlagueNeutralizingAntibodiesDetails(exportDto.getPlagueNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setPlaguePcrRtPcrDetails(exportDto.getPlaguePcrRtPcrDetails());
+                        caseExportDetailedDto.setPlagueGramStainDetails(exportDto.getPlagueGramStainDetails());
+                        caseExportDetailedDto.setPlagueLatexAgglutinationDetails(exportDto.getPlagueLatexAgglutinationDetails());
+                        caseExportDetailedDto.setPlagueCqValueDetectionDetails(exportDto.getPlagueCqValueDetectionDetails());
+                        caseExportDetailedDto.setPlagueSequencingDetails(exportDto.getPlagueSequencingDetails());
+                        caseExportDetailedDto.setPlagueDnaMicroarrayDetails(exportDto.getPlagueDnaMicroarrayDetails());
+                        caseExportDetailedDto.setPlagueOtherDetails(exportDto.getPlagueOtherDetails());
+                        caseExportDetailedDto.setPolioAntibodyDetection(exportDto.getPolioAntibodyDetection());
+                        caseExportDetailedDto.setPolioAntigenDetection(exportDto.getPolioAntigenDetection());
+                        caseExportDetailedDto.setPolioRapidTest(exportDto.getPolioRapidTest());
+                        caseExportDetailedDto.setPolioCulture(exportDto.getPolioCulture());
+                        caseExportDetailedDto.setPolioHistopathology(exportDto.getPolioHistopathology());
+                        caseExportDetailedDto.setPolioIsolation(exportDto.getPolioIsolation());
+                        caseExportDetailedDto.setPolioIgmSerumAntibody(exportDto.getPolioIgmSerumAntibody());
+                        caseExportDetailedDto.setPolioIggSerumAntibody(exportDto.getPolioIggSerumAntibody());
+                        caseExportDetailedDto.setPolioIgaSerumAntibody(exportDto.getPolioIgaSerumAntibody());
+                        caseExportDetailedDto.setPolioIncubationTime(exportDto.getPolioIncubationTime());
+                        caseExportDetailedDto.setPolioIndirectFluorescentAntibody(exportDto.getPolioIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setPolioDirectFluorescentAntibody(exportDto.getPolioDirectFluorescentAntibody());
+                        caseExportDetailedDto.setPolioMicroscopy(exportDto.getPolioMicroscopy());
+                        caseExportDetailedDto.setPolioNeutralizingAntibodies(exportDto.getPolioNeutralizingAntibodies());
+                        caseExportDetailedDto.setPolioPcrRtPcr(exportDto.getPolioPcrRtPcr());
+                        caseExportDetailedDto.setPolioGramStain(exportDto.getPolioGramStain());
+                        caseExportDetailedDto.setPolioLatexAgglutination(exportDto.getPolioLatexAgglutination());
+                        caseExportDetailedDto.setPolioCqValueDetection(exportDto.getPolioCqValueDetection());
+                        caseExportDetailedDto.setPolioSequencing(exportDto.getPolioSequencing());
+                        caseExportDetailedDto.setPolioDnaMicroarray(exportDto.getPolioDnaMicroarray());
+                        caseExportDetailedDto.setPolioOther(exportDto.getPolioOther());
+                        caseExportDetailedDto.setPolioAntibodyDetectionDetails(exportDto.getPolioAntibodyDetectionDetails());
+                        caseExportDetailedDto.setPolioAntigenDetectionDetails(exportDto.getPolioAntigenDetectionDetails());
+                        caseExportDetailedDto.setPolioRapidTestDetails(exportDto.getPolioRapidTestDetails());
+                        caseExportDetailedDto.setPolioCultureDetails(exportDto.getPolioCultureDetails());
+                        caseExportDetailedDto.setPolioHistopathologyDetails(exportDto.getPolioHistopathologyDetails());
+                        caseExportDetailedDto.setPolioIsolationDetails(exportDto.getPolioIsolationDetails());
+                        caseExportDetailedDto.setPolioIgmSerumAntibodyDetails(exportDto.getPolioIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setPolioIggSerumAntibodyDetails(exportDto.getPolioIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setPolioIgaSerumAntibodyDetails(exportDto.getPolioIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setPolioIncubationTimeDetails(exportDto.getPolioIncubationTimeDetails());
+                        caseExportDetailedDto.setPolioIndirectFluorescentAntibodyDetails(exportDto.getPolioIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setPolioDirectFluorescentAntibodyDetails(exportDto.getPolioDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setPolioMicroscopyDetails(exportDto.getPolioMicroscopyDetails());
+                        caseExportDetailedDto.setPolioNeutralizingAntibodiesDetails(exportDto.getPolioNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setPolioPcrRtPcrDetails(exportDto.getPolioPcrRtPcrDetails());
+                        caseExportDetailedDto.setPolioGramStainDetails(exportDto.getPolioGramStainDetails());
+                        caseExportDetailedDto.setPolioLatexAgglutinationDetails(exportDto.getPolioLatexAgglutinationDetails());
+                        caseExportDetailedDto.setPolioCqValueDetectionDetails(exportDto.getPolioCqValueDetectionDetails());
+                        caseExportDetailedDto.setPolioSequencingDetails(exportDto.getPolioSequencingDetails());
+                        caseExportDetailedDto.setPolioDnaMicroarrayDetails(exportDto.getPolioDnaMicroarrayDetails());
+                        caseExportDetailedDto.setPolioOtherDetails(exportDto.getPolioOtherDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfAntibodyDetection(exportDto.getUnspecifiedVhfAntibodyDetection());
+                        caseExportDetailedDto.setUnspecifiedVhfAntigenDetection(exportDto.getUnspecifiedVhfAntigenDetection());
+                        caseExportDetailedDto.setUnspecifiedVhfRapidTest(exportDto.getUnspecifiedVhfRapidTest());
+                        caseExportDetailedDto.setUnspecifiedVhfCulture(exportDto.getUnspecifiedVhfCulture());
+                        caseExportDetailedDto.setUnspecifiedVhfHistopathology(exportDto.getUnspecifiedVhfHistopathology());
+                        caseExportDetailedDto.setUnspecifiedVhfIsolation(exportDto.getUnspecifiedVhfIsolation());
+                        caseExportDetailedDto.setUnspecifiedVhfIgmSerumAntibody(exportDto.getUnspecifiedVhfIgmSerumAntibody());
+                        caseExportDetailedDto.setUnspecifiedVhfIggSerumAntibody(exportDto.getUnspecifiedVhfIggSerumAntibody());
+                        caseExportDetailedDto.setUnspecifiedVhfIgaSerumAntibody(exportDto.getUnspecifiedVhfIgaSerumAntibody());
+                        caseExportDetailedDto.setUnspecifiedVhfIncubationTime(exportDto.getUnspecifiedVhfIncubationTime());
+                        caseExportDetailedDto.setUnspecifiedVhfIndirectFluorescentAntibody(exportDto.getUnspecifiedVhfIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setUnspecifiedVhfDirectFluorescentAntibody(exportDto.getUnspecifiedVhfDirectFluorescentAntibody());
+                        caseExportDetailedDto.setUnspecifiedVhfMicroscopy(exportDto.getUnspecifiedVhfMicroscopy());
+                        caseExportDetailedDto.setUnspecifiedVhfNeutralizingAntibodies(exportDto.getUnspecifiedVhfNeutralizingAntibodies());
+                        caseExportDetailedDto.setUnspecifiedVhfPcrRtPcr(exportDto.getUnspecifiedVhfPcrRtPcr());
+                        caseExportDetailedDto.setUnspecifiedVhfGramStain(exportDto.getUnspecifiedVhfGramStain());
+                        caseExportDetailedDto.setUnspecifiedVhfLatexAgglutination(exportDto.getUnspecifiedVhfLatexAgglutination());
+                        caseExportDetailedDto.setUnspecifiedVhfCqValueDetection(exportDto.getUnspecifiedVhfCqValueDetection());
+                        caseExportDetailedDto.setUnspecifiedVhfSequencing(exportDto.getUnspecifiedVhfSequencing());
+                        caseExportDetailedDto.setUnspecifiedVhfDnaMicroarray(exportDto.getUnspecifiedVhfDnaMicroarray());
+                        caseExportDetailedDto.setUnspecifiedVhfOther(exportDto.getUnspecifiedVhfOther());
+                        caseExportDetailedDto.setUnspecifiedVhfAntibodyDetectionDetails(exportDto.getUnspecifiedVhfAntibodyDetectionDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfAntigenDetectionDetails(exportDto.getUnspecifiedVhfAntigenDetectionDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfRapidTestDetails(exportDto.getUnspecifiedVhfRapidTestDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfCultureDetails(exportDto.getUnspecifiedVhfCultureDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfHistopathologyDetails(exportDto.getUnspecifiedVhfHistopathologyDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfIsolationDetails(exportDto.getUnspecifiedVhfIsolationDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfIgmSerumAntibodyDetails(exportDto.getUnspecifiedVhfIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfIggSerumAntibodyDetails(exportDto.getUnspecifiedVhfIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfIgaSerumAntibodyDetails(exportDto.getUnspecifiedVhfIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfIncubationTimeDetails(exportDto.getUnspecifiedVhfIncubationTimeDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfIndirectFluorescentAntibodyDetails(exportDto.getUnspecifiedVhfIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfDirectFluorescentAntibodyDetails(exportDto.getUnspecifiedVhfDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfMicroscopyDetails(exportDto.getUnspecifiedVhfMicroscopyDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfNeutralizingAntibodiesDetails(exportDto.getUnspecifiedVhfNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfPcrRtPcrDetails(exportDto.getUnspecifiedVhfPcrRtPcrDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfGramStainDetails(exportDto.getUnspecifiedVhfGramStainDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfLatexAgglutinationDetails(exportDto.getUnspecifiedVhfLatexAgglutinationDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfCqValueDetectionDetails(exportDto.getUnspecifiedVhfCqValueDetectionDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfSequencingDetails(exportDto.getUnspecifiedVhfSequencingDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfDnaMicroarrayDetails(exportDto.getUnspecifiedVhfDnaMicroarrayDetails());
+                        caseExportDetailedDto.setUnspecifiedVhfOtherDetails(exportDto.getUnspecifiedVhfOtherDetails());
+                        caseExportDetailedDto.setWestNileFeverAntibodyDetection(exportDto.getWestNileFeverAntibodyDetection());
+                        caseExportDetailedDto.setWestNileFeverAntigenDetection(exportDto.getWestNileFeverAntigenDetection());
+                        caseExportDetailedDto.setWestNileFeverRapidTest(exportDto.getWestNileFeverRapidTest());
+                        caseExportDetailedDto.setWestNileFeverCulture(exportDto.getWestNileFeverCulture());
+                        caseExportDetailedDto.setWestNileFeverHistopathology(exportDto.getWestNileFeverHistopathology());
+                        caseExportDetailedDto.setWestNileFeverIsolation(exportDto.getWestNileFeverIsolation());
+                        caseExportDetailedDto.setWestNileFeverIgmSerumAntibody(exportDto.getWestNileFeverIgmSerumAntibody());
+                        caseExportDetailedDto.setWestNileFeverIggSerumAntibody(exportDto.getWestNileFeverIggSerumAntibody());
+                        caseExportDetailedDto.setWestNileFeverIgaSerumAntibody(exportDto.getWestNileFeverIgaSerumAntibody());
+                        caseExportDetailedDto.setWestNileFeverIncubationTime(exportDto.getWestNileFeverIncubationTime());
+                        caseExportDetailedDto.setWestNileFeverIndirectFluorescentAntibody(exportDto.getWestNileFeverIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setWestNileFeverDirectFluorescentAntibody(exportDto.getWestNileFeverDirectFluorescentAntibody());
+                        caseExportDetailedDto.setWestNileFeverMicroscopy(exportDto.getWestNileFeverMicroscopy());
+                        caseExportDetailedDto.setWestNileFeverNeutralizingAntibodies(exportDto.getWestNileFeverNeutralizingAntibodies());
+                        caseExportDetailedDto.setWestNileFeverPcrRtPcr(exportDto.getWestNileFeverPcrRtPcr());
+                        caseExportDetailedDto.setWestNileFeverGramStain(exportDto.getWestNileFeverGramStain());
+                        caseExportDetailedDto.setWestNileFeverLatexAgglutination(exportDto.getWestNileFeverLatexAgglutination());
+                        caseExportDetailedDto.setWestNileFeverCqValueDetection(exportDto.getWestNileFeverCqValueDetection());
+                        caseExportDetailedDto.setWestNileFeverSequencing(exportDto.getWestNileFeverSequencing());
+                        caseExportDetailedDto.setWestNileFeverDnaMicroarray(exportDto.getWestNileFeverDnaMicroarray());
+                        caseExportDetailedDto.setWestNileFeverOther(exportDto.getWestNileFeverOther());
+                        caseExportDetailedDto.setWestNileFeverAntibodyDetectionDetails(exportDto.getWestNileFeverAntibodyDetectionDetails());
+                        caseExportDetailedDto.setWestNileFeverAntigenDetectionDetails(exportDto.getWestNileFeverAntigenDetectionDetails());
+                        caseExportDetailedDto.setWestNileFeverRapidTestDetails(exportDto.getWestNileFeverRapidTestDetails());
+                        caseExportDetailedDto.setWestNileFeverCultureDetails(exportDto.getWestNileFeverCultureDetails());
+                        caseExportDetailedDto.setWestNileFeverHistopathologyDetails(exportDto.getWestNileFeverHistopathologyDetails());
+                        caseExportDetailedDto.setWestNileFeverIsolationDetails(exportDto.getWestNileFeverIsolationDetails());
+                        caseExportDetailedDto.setWestNileFeverIgmSerumAntibodyDetails(exportDto.getWestNileFeverIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setWestNileFeverIggSerumAntibodyDetails(exportDto.getWestNileFeverIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setWestNileFeverIgaSerumAntibodyDetails(exportDto.getWestNileFeverIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setWestNileFeverIncubationTimeDetails(exportDto.getWestNileFeverIncubationTimeDetails());
+                        caseExportDetailedDto.setWestNileFeverIndirectFluorescentAntibodyDetails(exportDto.getWestNileFeverIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setWestNileFeverDirectFluorescentAntibodyDetails(exportDto.getWestNileFeverDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setWestNileFeverMicroscopyDetails(exportDto.getWestNileFeverMicroscopyDetails());
+                        caseExportDetailedDto.setWestNileFeverNeutralizingAntibodiesDetails(exportDto.getWestNileFeverNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setWestNileFeverPcrRtPcrDetails(exportDto.getWestNileFeverPcrRtPcrDetails());
+                        caseExportDetailedDto.setWestNileFeverGramStainDetails(exportDto.getWestNileFeverGramStainDetails());
+                        caseExportDetailedDto.setWestNileFeverLatexAgglutinationDetails(exportDto.getWestNileFeverLatexAgglutinationDetails());
+                        caseExportDetailedDto.setWestNileFeverCqValueDetectionDetails(exportDto.getWestNileFeverCqValueDetectionDetails());
+                        caseExportDetailedDto.setWestNileFeverSequencingDetails(exportDto.getWestNileFeverSequencingDetails());
+                        caseExportDetailedDto.setWestNileFeverDnaMicroarrayDetails(exportDto.getWestNileFeverDnaMicroarrayDetails());
+                        caseExportDetailedDto.setWestNileFeverOtherDetails(exportDto.getWestNileFeverOtherDetails());
+                        caseExportDetailedDto.setYellowFeverAntibodyDetection(exportDto.getYellowFeverAntibodyDetection());
+                        caseExportDetailedDto.setYellowFeverAntigenDetection(exportDto.getYellowFeverAntigenDetection());
+                        caseExportDetailedDto.setYellowFeverRapidTest(exportDto.getYellowFeverRapidTest());
+                        caseExportDetailedDto.setYellowFeverCulture(exportDto.getYellowFeverCulture());
+                        caseExportDetailedDto.setYellowFeverHistopathology(exportDto.getYellowFeverHistopathology());
+                        caseExportDetailedDto.setYellowFeverIsolation(exportDto.getYellowFeverIsolation());
+                        caseExportDetailedDto.setYellowFeverIgmSerumAntibody(exportDto.getYellowFeverIgmSerumAntibody());
+                        caseExportDetailedDto.setYellowFeverIggSerumAntibody(exportDto.getYellowFeverIggSerumAntibody());
+                        caseExportDetailedDto.setYellowFeverIgaSerumAntibody(exportDto.getYellowFeverIgaSerumAntibody());
+                        caseExportDetailedDto.setYellowFeverIncubationTime(exportDto.getYellowFeverIncubationTime());
+                        caseExportDetailedDto.setYellowFeverIndirectFluorescentAntibody(exportDto.getYellowFeverIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setYellowFeverDirectFluorescentAntibody(exportDto.getYellowFeverDirectFluorescentAntibody());
+                        caseExportDetailedDto.setYellowFeverMicroscopy(exportDto.getYellowFeverMicroscopy());
+                        caseExportDetailedDto.setYellowFeverNeutralizingAntibodies(exportDto.getYellowFeverNeutralizingAntibodies());
+                        caseExportDetailedDto.setYellowFeverPcrRtPcr(exportDto.getYellowFeverPcrRtPcr());
+                        caseExportDetailedDto.setYellowFeverGramStain(exportDto.getYellowFeverGramStain());
+                        caseExportDetailedDto.setYellowFeverLatexAgglutination(exportDto.getYellowFeverLatexAgglutination());
+                        caseExportDetailedDto.setYellowFeverCqValueDetection(exportDto.getYellowFeverCqValueDetection());
+                        caseExportDetailedDto.setYellowFeverSequencing(exportDto.getYellowFeverSequencing());
+                        caseExportDetailedDto.setYellowFeverDnaMicroarray(exportDto.getYellowFeverDnaMicroarray());
+                        caseExportDetailedDto.setYellowFeverOther(exportDto.getYellowFeverOther());
+                        caseExportDetailedDto.setYellowFeverAntibodyDetectionDetails(exportDto.getYellowFeverAntibodyDetectionDetails());
+                        caseExportDetailedDto.setYellowFeverAntigenDetectionDetails(exportDto.getYellowFeverAntigenDetectionDetails());
+                        caseExportDetailedDto.setYellowFeverRapidTestDetails(exportDto.getYellowFeverRapidTestDetails());
+                        caseExportDetailedDto.setYellowFeverCultureDetails(exportDto.getYellowFeverCultureDetails());
+                        caseExportDetailedDto.setYellowFeverHistopathologyDetails(exportDto.getYellowFeverHistopathologyDetails());
+                        caseExportDetailedDto.setYellowFeverIsolationDetails(exportDto.getYellowFeverIsolationDetails());
+                        caseExportDetailedDto.setYellowFeverIgmSerumAntibodyDetails(exportDto.getYellowFeverIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setYellowFeverIggSerumAntibodyDetails(exportDto.getYellowFeverIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setYellowFeverIgaSerumAntibodyDetails(exportDto.getYellowFeverIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setYellowFeverIncubationTimeDetails(exportDto.getYellowFeverIncubationTimeDetails());
+                        caseExportDetailedDto.setYellowFeverIndirectFluorescentAntibodyDetails(exportDto.getYellowFeverIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setYellowFeverDirectFluorescentAntibodyDetails(exportDto.getYellowFeverDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setYellowFeverMicroscopyDetails(exportDto.getYellowFeverMicroscopyDetails());
+                        caseExportDetailedDto.setYellowFeverNeutralizingAntibodiesDetails(exportDto.getYellowFeverNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setYellowFeverPcrRtPcrDetails(exportDto.getYellowFeverPcrRtPcrDetails());
+                        caseExportDetailedDto.setYellowFeverGramStainDetails(exportDto.getYellowFeverGramStainDetails());
+                        caseExportDetailedDto.setYellowFeverLatexAgglutinationDetails(exportDto.getYellowFeverLatexAgglutinationDetails());
+                        caseExportDetailedDto.setYellowFeverCqValueDetectionDetails(exportDto.getYellowFeverCqValueDetectionDetails());
+                        caseExportDetailedDto.setYellowFeverSequencingDetails(exportDto.getYellowFeverSequencingDetails());
+                        caseExportDetailedDto.setYellowFeverDnaMicroarrayDetails(exportDto.getYellowFeverDnaMicroarrayDetails());
+                        caseExportDetailedDto.setYellowFeverOtherDetails(exportDto.getYellowFeverOtherDetails());
+                        caseExportDetailedDto.setRabiesAntibodyDetection(exportDto.getRabiesAntibodyDetection());
+                        caseExportDetailedDto.setRabiesAntigenDetection(exportDto.getRabiesAntigenDetection());
+                        caseExportDetailedDto.setRabiesRapidTest(exportDto.getRabiesRapidTest());
+                        caseExportDetailedDto.setRabiesCulture(exportDto.getRabiesCulture());
+                        caseExportDetailedDto.setRabiesHistopathology(exportDto.getRabiesHistopathology());
+                        caseExportDetailedDto.setRabiesIsolation(exportDto.getRabiesIsolation());
+                        caseExportDetailedDto.setRabiesIgmSerumAntibody(exportDto.getRabiesIgmSerumAntibody());
+                        caseExportDetailedDto.setRabiesIggSerumAntibody(exportDto.getRabiesIggSerumAntibody());
+                        caseExportDetailedDto.setRabiesIgaSerumAntibody(exportDto.getRabiesIgaSerumAntibody());
+                        caseExportDetailedDto.setRabiesIncubationTime(exportDto.getRabiesIncubationTime());
+                        caseExportDetailedDto.setRabiesIndirectFluorescentAntibody(exportDto.getRabiesIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setRabiesDirectFluorescentAntibody(exportDto.getRabiesDirectFluorescentAntibody());
+                        caseExportDetailedDto.setRabiesMicroscopy(exportDto.getRabiesMicroscopy());
+                        caseExportDetailedDto.setRabiesNeutralizingAntibodies(exportDto.getRabiesNeutralizingAntibodies());
+                        caseExportDetailedDto.setRabiesPcrRtPcr(exportDto.getRabiesPcrRtPcr());
+                        caseExportDetailedDto.setRabiesGramStain(exportDto.getRabiesGramStain());
+                        caseExportDetailedDto.setRabiesLatexAgglutination(exportDto.getRabiesLatexAgglutination());
+                        caseExportDetailedDto.setRabiesCqValueDetection(exportDto.getRabiesCqValueDetection());
+                        caseExportDetailedDto.setRabiesSequencing(exportDto.getRabiesSequencing());
+                        caseExportDetailedDto.setRabiesDnaMicroarray(exportDto.getRabiesDnaMicroarray());
+                        caseExportDetailedDto.setRabiesOther(exportDto.getRabiesOther());
+                        caseExportDetailedDto.setRabiesAntibodyDetectionDetails(exportDto.getRabiesAntibodyDetectionDetails());
+                        caseExportDetailedDto.setRabiesAntigenDetectionDetails(exportDto.getRabiesAntigenDetectionDetails());
+                        caseExportDetailedDto.setRabiesRapidTestDetails(exportDto.getRabiesRapidTestDetails());
+                        caseExportDetailedDto.setRabiesCultureDetails(exportDto.getRabiesCultureDetails());
+                        caseExportDetailedDto.setRabiesHistopathologyDetails(exportDto.getRabiesHistopathologyDetails());
+                        caseExportDetailedDto.setRabiesIsolationDetails(exportDto.getRabiesIsolationDetails());
+                        caseExportDetailedDto.setRabiesIgmSerumAntibodyDetails(exportDto.getRabiesIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setRabiesIggSerumAntibodyDetails(exportDto.getRabiesIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setRabiesIgaSerumAntibodyDetails(exportDto.getRabiesIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setRabiesIncubationTimeDetails(exportDto.getRabiesIncubationTimeDetails());
+                        caseExportDetailedDto.setRabiesIndirectFluorescentAntibodyDetails(exportDto.getRabiesIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setRabiesDirectFluorescentAntibodyDetails(exportDto.getRabiesDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setRabiesMicroscopyDetails(exportDto.getRabiesMicroscopyDetails());
+                        caseExportDetailedDto.setRabiesNeutralizingAntibodiesDetails(exportDto.getRabiesNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setRabiesPcrRtPcrDetails(exportDto.getRabiesPcrRtPcrDetails());
+                        caseExportDetailedDto.setRabiesGramStainDetails(exportDto.getRabiesGramStainDetails());
+                        caseExportDetailedDto.setRabiesLatexAgglutinationDetails(exportDto.getRabiesLatexAgglutinationDetails());
+                        caseExportDetailedDto.setRabiesCqValueDetectionDetails(exportDto.getRabiesCqValueDetectionDetails());
+                        caseExportDetailedDto.setRabiesSequencingDetails(exportDto.getRabiesSequencingDetails());
+                        caseExportDetailedDto.setRabiesDnaMicroarrayDetails(exportDto.getRabiesDnaMicroarrayDetails());
+                        caseExportDetailedDto.setRabiesOtherDetails(exportDto.getRabiesOtherDetails());
+                        caseExportDetailedDto.setAnthraxAntibodyDetection(exportDto.getAnthraxAntibodyDetection());
+                        caseExportDetailedDto.setAnthraxAntigenDetection(exportDto.getAnthraxAntigenDetection());
+                        caseExportDetailedDto.setAnthraxRapidTest(exportDto.getAnthraxRapidTest());
+                        caseExportDetailedDto.setAnthraxCulture(exportDto.getAnthraxCulture());
+                        caseExportDetailedDto.setAnthraxHistopathology(exportDto.getAnthraxHistopathology());
+                        caseExportDetailedDto.setAnthraxIsolation(exportDto.getAnthraxIsolation());
+                        caseExportDetailedDto.setAnthraxIgmSerumAntibody(exportDto.getAnthraxIgmSerumAntibody());
+                        caseExportDetailedDto.setAnthraxIggSerumAntibody(exportDto.getAnthraxIggSerumAntibody());
+                        caseExportDetailedDto.setAnthraxIgaSerumAntibody(exportDto.getAnthraxIgaSerumAntibody());
+                        caseExportDetailedDto.setAnthraxIncubationTime(exportDto.getAnthraxIncubationTime());
+                        caseExportDetailedDto.setAnthraxIndirectFluorescentAntibody(exportDto.getAnthraxIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setAnthraxDirectFluorescentAntibody(exportDto.getAnthraxDirectFluorescentAntibody());
+                        caseExportDetailedDto.setAnthraxMicroscopy(exportDto.getAnthraxMicroscopy());
+                        caseExportDetailedDto.setAnthraxNeutralizingAntibodies(exportDto.getAnthraxNeutralizingAntibodies());
+                        caseExportDetailedDto.setAnthraxPcrRtPcr(exportDto.getAnthraxPcrRtPcr());
+                        caseExportDetailedDto.setAnthraxGramStain(exportDto.getAnthraxGramStain());
+                        caseExportDetailedDto.setAnthraxLatexAgglutination(exportDto.getAnthraxLatexAgglutination());
+                        caseExportDetailedDto.setAnthraxCqValueDetection(exportDto.getAnthraxCqValueDetection());
+                        caseExportDetailedDto.setAnthraxSequencing(exportDto.getAnthraxSequencing());
+                        caseExportDetailedDto.setAnthraxDnaMicroarray(exportDto.getAnthraxDnaMicroarray());
+                        caseExportDetailedDto.setAnthraxOther(exportDto.getAnthraxOther());
+                        caseExportDetailedDto.setAnthraxAntibodyDetectionDetails(exportDto.getAnthraxAntibodyDetectionDetails());
+                        caseExportDetailedDto.setAnthraxAntigenDetectionDetails(exportDto.getAnthraxAntigenDetectionDetails());
+                        caseExportDetailedDto.setAnthraxRapidTestDetails(exportDto.getAnthraxRapidTestDetails());
+                        caseExportDetailedDto.setAnthraxCultureDetails(exportDto.getAnthraxCultureDetails());
+                        caseExportDetailedDto.setAnthraxHistopathologyDetails(exportDto.getAnthraxHistopathologyDetails());
+                        caseExportDetailedDto.setAnthraxIsolationDetails(exportDto.getAnthraxIsolationDetails());
+                        caseExportDetailedDto.setAnthraxIgmSerumAntibodyDetails(exportDto.getAnthraxIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setAnthraxIggSerumAntibodyDetails(exportDto.getAnthraxIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setAnthraxIgaSerumAntibodyDetails(exportDto.getAnthraxIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setAnthraxIncubationTimeDetails(exportDto.getAnthraxIncubationTimeDetails());
+                        caseExportDetailedDto.setAnthraxIndirectFluorescentAntibodyDetails(exportDto.getAnthraxIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setAnthraxDirectFluorescentAntibodyDetails(exportDto.getAnthraxDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setAnthraxMicroscopyDetails(exportDto.getAnthraxMicroscopyDetails());
+                        caseExportDetailedDto.setAnthraxNeutralizingAntibodiesDetails(exportDto.getAnthraxNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setAnthraxPcrRtPcrDetails(exportDto.getAnthraxPcrRtPcrDetails());
+                        caseExportDetailedDto.setAnthraxGramStainDetails(exportDto.getAnthraxGramStainDetails());
+                        caseExportDetailedDto.setAnthraxLatexAgglutinationDetails(exportDto.getAnthraxLatexAgglutinationDetails());
+                        caseExportDetailedDto.setAnthraxCqValueDetectionDetails(exportDto.getAnthraxCqValueDetectionDetails());
+                        caseExportDetailedDto.setAnthraxSequencingDetails(exportDto.getAnthraxSequencingDetails());
+                        caseExportDetailedDto.setAnthraxDnaMicroarrayDetails(exportDto.getAnthraxDnaMicroarrayDetails());
+                        caseExportDetailedDto.setAnthraxOtherDetails(exportDto.getAnthraxOtherDetails());
+                        caseExportDetailedDto.setCoronavirusAntibodyDetection(exportDto.getCoronavirusAntibodyDetection());
+                        caseExportDetailedDto.setCoronavirusAntigenDetection(exportDto.getCoronavirusAntigenDetection());
+                        caseExportDetailedDto.setCoronavirusRapidTest(exportDto.getCoronavirusRapidTest());
+                        caseExportDetailedDto.setCoronavirusCulture(exportDto.getCoronavirusCulture());
+                        caseExportDetailedDto.setCoronavirusHistopathology(exportDto.getCoronavirusHistopathology());
+                        caseExportDetailedDto.setCoronavirusIsolation(exportDto.getCoronavirusIsolation());
+                        caseExportDetailedDto.setCoronavirusIgmSerumAntibody(exportDto.getCoronavirusIgmSerumAntibody());
+                        caseExportDetailedDto.setCoronavirusIggSerumAntibody(exportDto.getCoronavirusIggSerumAntibody());
+                        caseExportDetailedDto.setCoronavirusIgaSerumAntibody(exportDto.getCoronavirusIgaSerumAntibody());
+                        caseExportDetailedDto.setCoronavirusIncubationTime(exportDto.getCoronavirusIncubationTime());
+                        caseExportDetailedDto.setCoronavirusIndirectFluorescentAntibody(exportDto.getCoronavirusIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setCoronavirusDirectFluorescentAntibody(exportDto.getCoronavirusDirectFluorescentAntibody());
+                        caseExportDetailedDto.setCoronavirusMicroscopy(exportDto.getCoronavirusMicroscopy());
+                        caseExportDetailedDto.setCoronavirusNeutralizingAntibodies(exportDto.getCoronavirusNeutralizingAntibodies());
+                        caseExportDetailedDto.setCoronavirusPcrRtPcr(exportDto.getCoronavirusPcrRtPcr());
+                        caseExportDetailedDto.setCoronavirusGramStain(exportDto.getCoronavirusGramStain());
+                        caseExportDetailedDto.setCoronavirusLatexAgglutination(exportDto.getCoronavirusLatexAgglutination());
+                        caseExportDetailedDto.setCoronavirusCqValueDetection(exportDto.getCoronavirusCqValueDetection());
+                        caseExportDetailedDto.setCoronavirusSequencing(exportDto.getCoronavirusSequencing());
+                        caseExportDetailedDto.setCoronavirusDnaMicroarray(exportDto.getCoronavirusDnaMicroarray());
+                        caseExportDetailedDto.setCoronavirusOther(exportDto.getCoronavirusOther());
+                        caseExportDetailedDto.setCoronavirusAntibodyDetectionDetails(exportDto.getCoronavirusAntibodyDetectionDetails());
+                        caseExportDetailedDto.setCoronavirusAntigenDetectionDetails(exportDto.getCoronavirusAntigenDetectionDetails());
+                        caseExportDetailedDto.setCoronavirusRapidTestDetails(exportDto.getCoronavirusRapidTestDetails());
+                        caseExportDetailedDto.setCoronavirusCultureDetails(exportDto.getCoronavirusCultureDetails());
+                        caseExportDetailedDto.setCoronavirusHistopathologyDetails(exportDto.getCoronavirusHistopathologyDetails());
+                        caseExportDetailedDto.setCoronavirusIsolationDetails(exportDto.getCoronavirusIsolationDetails());
+                        caseExportDetailedDto.setCoronavirusIgmSerumAntibodyDetails(exportDto.getCoronavirusIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setCoronavirusIggSerumAntibodyDetails(exportDto.getCoronavirusIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setCoronavirusIgaSerumAntibodyDetails(exportDto.getCoronavirusIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setCoronavirusIncubationTimeDetails(exportDto.getCoronavirusIncubationTimeDetails());
+                        caseExportDetailedDto.setCoronavirusIndirectFluorescentAntibodyDetails(exportDto.getCoronavirusIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setCoronavirusDirectFluorescentAntibodyDetails(exportDto.getCoronavirusDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setCoronavirusMicroscopyDetails(exportDto.getCoronavirusMicroscopyDetails());
+                        caseExportDetailedDto.setCoronavirusNeutralizingAntibodiesDetails(exportDto.getCoronavirusNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setCoronavirusPcrRtPcrDetails(exportDto.getCoronavirusPcrRtPcrDetails());
+                        caseExportDetailedDto.setCoronavirusGramStainDetails(exportDto.getCoronavirusGramStainDetails());
+                        caseExportDetailedDto.setCoronavirusLatexAgglutinationDetails(exportDto.getCoronavirusLatexAgglutinationDetails());
+                        caseExportDetailedDto.setCoronavirusCqValueDetectionDetails(exportDto.getCoronavirusCqValueDetectionDetails());
+                        caseExportDetailedDto.setCoronavirusSequencingDetails(exportDto.getCoronavirusSequencingDetails());
+                        caseExportDetailedDto.setCoronavirusDnaMicroarrayDetails(exportDto.getCoronavirusDnaMicroarrayDetails());
+                        caseExportDetailedDto.setCoronavirusOtherDetails(exportDto.getCoronavirusOtherDetails());
+                        caseExportDetailedDto.setPneumoniaAntibodyDetection(exportDto.getPneumoniaAntibodyDetection());
+                        caseExportDetailedDto.setPneumoniaAntigenDetection(exportDto.getPneumoniaAntigenDetection());
+                        caseExportDetailedDto.setPneumoniaRapidTest(exportDto.getPneumoniaRapidTest());
+                        caseExportDetailedDto.setPneumoniaCulture(exportDto.getPneumoniaCulture());
+                        caseExportDetailedDto.setPneumoniaHistopathology(exportDto.getPneumoniaHistopathology());
+                        caseExportDetailedDto.setPneumoniaIsolation(exportDto.getPneumoniaIsolation());
+                        caseExportDetailedDto.setPneumoniaIgmSerumAntibody(exportDto.getPneumoniaIgmSerumAntibody());
+                        caseExportDetailedDto.setPneumoniaIggSerumAntibody(exportDto.getPneumoniaIggSerumAntibody());
+                        caseExportDetailedDto.setPneumoniaIgaSerumAntibody(exportDto.getPneumoniaIgaSerumAntibody());
+                        caseExportDetailedDto.setPneumoniaIncubationTime(exportDto.getPneumoniaIncubationTime());
+                        caseExportDetailedDto.setPneumoniaIndirectFluorescentAntibody(exportDto.getPneumoniaIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setPneumoniaDirectFluorescentAntibody(exportDto.getPneumoniaDirectFluorescentAntibody());
+                        caseExportDetailedDto.setPneumoniaMicroscopy(exportDto.getPneumoniaMicroscopy());
+                        caseExportDetailedDto.setPneumoniaNeutralizingAntibodies(exportDto.getPneumoniaNeutralizingAntibodies());
+                        caseExportDetailedDto.setPneumoniaPcrRtPcr(exportDto.getPneumoniaPcrRtPcr());
+                        caseExportDetailedDto.setPneumoniaGramStain(exportDto.getPneumoniaGramStain());
+                        caseExportDetailedDto.setPneumoniaLatexAgglutination(exportDto.getPneumoniaLatexAgglutination());
+                        caseExportDetailedDto.setPneumoniaCqValueDetection(exportDto.getPneumoniaCqValueDetection());
+                        caseExportDetailedDto.setPneumoniaSequencing(exportDto.getPneumoniaSequencing());
+                        caseExportDetailedDto.setPneumoniaDnaMicroarray(exportDto.getPneumoniaDnaMicroarray());
+                        caseExportDetailedDto.setPneumoniaOther(exportDto.getPneumoniaOther());
+                        caseExportDetailedDto.setPneumoniaAntibodyDetectionDetails(exportDto.getPneumoniaAntibodyDetectionDetails());
+                        caseExportDetailedDto.setPneumoniaAntigenDetectionDetails(exportDto.getPneumoniaAntigenDetectionDetails());
+                        caseExportDetailedDto.setPneumoniaRapidTestDetails(exportDto.getPneumoniaRapidTestDetails());
+                        caseExportDetailedDto.setPneumoniaCultureDetails(exportDto.getPneumoniaCultureDetails());
+                        caseExportDetailedDto.setPneumoniaHistopathologyDetails(exportDto.getPneumoniaHistopathologyDetails());
+                        caseExportDetailedDto.setPneumoniaIsolationDetails(exportDto.getPneumoniaIsolationDetails());
+                        caseExportDetailedDto.setPneumoniaIgmSerumAntibodyDetails(exportDto.getPneumoniaIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setPneumoniaIggSerumAntibodyDetails(exportDto.getPneumoniaIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setPneumoniaIgaSerumAntibodyDetails(exportDto.getPneumoniaIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setPneumoniaIncubationTimeDetails(exportDto.getPneumoniaIncubationTimeDetails());
+                        caseExportDetailedDto.setPneumoniaIndirectFluorescentAntibodyDetails(exportDto.getPneumoniaIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setPneumoniaDirectFluorescentAntibodyDetails(exportDto.getPneumoniaDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setPneumoniaMicroscopyDetails(exportDto.getPneumoniaMicroscopyDetails());
+                        caseExportDetailedDto.setPneumoniaNeutralizingAntibodiesDetails(exportDto.getPneumoniaNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setPneumoniaPcrRtPcrDetails(exportDto.getPneumoniaPcrRtPcrDetails());
+                        caseExportDetailedDto.setPneumoniaGramStainDetails(exportDto.getPneumoniaGramStainDetails());
+                        caseExportDetailedDto.setPneumoniaLatexAgglutinationDetails(exportDto.getPneumoniaLatexAgglutinationDetails());
+                        caseExportDetailedDto.setPneumoniaCqValueDetectionDetails(exportDto.getPneumoniaCqValueDetectionDetails());
+                        caseExportDetailedDto.setPneumoniaSequencingDetails(exportDto.getPneumoniaSequencingDetails());
+                        caseExportDetailedDto.setPneumoniaDnaMicroarrayDetails(exportDto.getPneumoniaDnaMicroarrayDetails());
+                        caseExportDetailedDto.setPneumoniaOtherDetails(exportDto.getPneumoniaOtherDetails());
+                        caseExportDetailedDto.setMalariaAntibodyDetection(exportDto.getMalariaAntibodyDetection());
+                        caseExportDetailedDto.setMalariaAntigenDetection(exportDto.getMalariaAntigenDetection());
+                        caseExportDetailedDto.setMalariaRapidTest(exportDto.getMalariaRapidTest());
+                        caseExportDetailedDto.setMalariaCulture(exportDto.getMalariaCulture());
+                        caseExportDetailedDto.setMalariaHistopathology(exportDto.getMalariaHistopathology());
+                        caseExportDetailedDto.setMalariaIsolation(exportDto.getMalariaIsolation());
+                        caseExportDetailedDto.setMalariaIgmSerumAntibody(exportDto.getMalariaIgmSerumAntibody());
+                        caseExportDetailedDto.setMalariaIggSerumAntibody(exportDto.getMalariaIggSerumAntibody());
+                        caseExportDetailedDto.setMalariaIgaSerumAntibody(exportDto.getMalariaIgaSerumAntibody());
+                        caseExportDetailedDto.setMalariaIncubationTime(exportDto.getMalariaIncubationTime());
+                        caseExportDetailedDto.setMalariaIndirectFluorescentAntibody(exportDto.getMalariaIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setMalariaDirectFluorescentAntibody(exportDto.getMalariaDirectFluorescentAntibody());
+                        caseExportDetailedDto.setMalariaMicroscopy(exportDto.getMalariaMicroscopy());
+                        caseExportDetailedDto.setMalariaNeutralizingAntibodies(exportDto.getMalariaNeutralizingAntibodies());
+                        caseExportDetailedDto.setMalariaPcrRtPcr(exportDto.getMalariaPcrRtPcr());
+                        caseExportDetailedDto.setMalariaGramStain(exportDto.getMalariaGramStain());
+                        caseExportDetailedDto.setMalariaLatexAgglutination(exportDto.getMalariaLatexAgglutination());
+                        caseExportDetailedDto.setMalariaCqValueDetection(exportDto.getMalariaCqValueDetection());
+                        caseExportDetailedDto.setMalariaSequencing(exportDto.getMalariaSequencing());
+                        caseExportDetailedDto.setMalariaDnaMicroarray(exportDto.getMalariaDnaMicroarray());
+                        caseExportDetailedDto.setMalariaOther(exportDto.getMalariaOther());
+                        caseExportDetailedDto.setMalariaAntibodyDetectionDetails(exportDto.getMalariaAntibodyDetectionDetails());
+                        caseExportDetailedDto.setMalariaAntigenDetectionDetails(exportDto.getMalariaAntigenDetectionDetails());
+                        caseExportDetailedDto.setMalariaRapidTestDetails(exportDto.getMalariaRapidTestDetails());
+                        caseExportDetailedDto.setMalariaCultureDetails(exportDto.getMalariaCultureDetails());
+                        caseExportDetailedDto.setMalariaHistopathologyDetails(exportDto.getMalariaHistopathologyDetails());
+                        caseExportDetailedDto.setMalariaIsolationDetails(exportDto.getMalariaIsolationDetails());
+                        caseExportDetailedDto.setMalariaIgmSerumAntibodyDetails(exportDto.getMalariaIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setMalariaIggSerumAntibodyDetails(exportDto.getMalariaIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setMalariaIgaSerumAntibodyDetails(exportDto.getMalariaIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setMalariaIncubationTimeDetails(exportDto.getMalariaIncubationTimeDetails());
+                        caseExportDetailedDto.setMalariaIndirectFluorescentAntibodyDetails(exportDto.getMalariaIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setMalariaDirectFluorescentAntibodyDetails(exportDto.getMalariaDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setMalariaMicroscopyDetails(exportDto.getMalariaMicroscopyDetails());
+                        caseExportDetailedDto.setMalariaNeutralizingAntibodiesDetails(exportDto.getMalariaNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setMalariaPcrRtPcrDetails(exportDto.getMalariaPcrRtPcrDetails());
+                        caseExportDetailedDto.setMalariaGramStainDetails(exportDto.getMalariaGramStainDetails());
+                        caseExportDetailedDto.setMalariaLatexAgglutinationDetails(exportDto.getMalariaLatexAgglutinationDetails());
+                        caseExportDetailedDto.setMalariaCqValueDetectionDetails(exportDto.getMalariaCqValueDetectionDetails());
+                        caseExportDetailedDto.setMalariaSequencingDetails(exportDto.getMalariaSequencingDetails());
+                        caseExportDetailedDto.setMalariaDnaMicroarrayDetails(exportDto.getMalariaDnaMicroarrayDetails());
+                        caseExportDetailedDto.setMalariaOtherDetails(exportDto.getMalariaOtherDetails());
+                        caseExportDetailedDto.setTyphoidFeverAntibodyDetection(exportDto.getTyphoidFeverAntibodyDetection());
+                        caseExportDetailedDto.setTyphoidFeverAntigenDetection(exportDto.getTyphoidFeverAntigenDetection());
+                        caseExportDetailedDto.setTyphoidFeverRapidTest(exportDto.getTyphoidFeverRapidTest());
+                        caseExportDetailedDto.setTyphoidFeverCulture(exportDto.getTyphoidFeverCulture());
+                        caseExportDetailedDto.setTyphoidFeverHistopathology(exportDto.getTyphoidFeverHistopathology());
+                        caseExportDetailedDto.setTyphoidFeverIsolation(exportDto.getTyphoidFeverIsolation());
+                        caseExportDetailedDto.setTyphoidFeverIgmSerumAntibody(exportDto.getTyphoidFeverIgmSerumAntibody());
+                        caseExportDetailedDto.setTyphoidFeverIggSerumAntibody(exportDto.getTyphoidFeverIggSerumAntibody());
+                        caseExportDetailedDto.setTyphoidFeverIgaSerumAntibody(exportDto.getTyphoidFeverIgaSerumAntibody());
+                        caseExportDetailedDto.setTyphoidFeverIncubationTime(exportDto.getTyphoidFeverIncubationTime());
+                        caseExportDetailedDto.setTyphoidFeverIndirectFluorescentAntibody(exportDto.getTyphoidFeverIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setTyphoidFeverDirectFluorescentAntibody(exportDto.getTyphoidFeverDirectFluorescentAntibody());
+                        caseExportDetailedDto.setTyphoidFeverMicroscopy(exportDto.getTyphoidFeverMicroscopy());
+                        caseExportDetailedDto.setTyphoidFeverNeutralizingAntibodies(exportDto.getTyphoidFeverNeutralizingAntibodies());
+                        caseExportDetailedDto.setTyphoidFeverPcrRtPcr(exportDto.getTyphoidFeverPcrRtPcr());
+                        caseExportDetailedDto.setTyphoidFeverGramStain(exportDto.getTyphoidFeverGramStain());
+                        caseExportDetailedDto.setTyphoidFeverLatexAgglutination(exportDto.getTyphoidFeverLatexAgglutination());
+                        caseExportDetailedDto.setTyphoidFeverCqValueDetection(exportDto.getTyphoidFeverCqValueDetection());
+                        caseExportDetailedDto.setTyphoidFeverSequencing(exportDto.getTyphoidFeverSequencing());
+                        caseExportDetailedDto.setTyphoidFeverDnaMicroarray(exportDto.getTyphoidFeverDnaMicroarray());
+                        caseExportDetailedDto.setTyphoidFeverOther(exportDto.getTyphoidFeverOther());
+                        caseExportDetailedDto.setTyphoidFeverAntibodyDetectionDetails(exportDto.getTyphoidFeverAntibodyDetectionDetails());
+                        caseExportDetailedDto.setTyphoidFeverAntigenDetectionDetails(exportDto.getTyphoidFeverAntigenDetectionDetails());
+                        caseExportDetailedDto.setTyphoidFeverRapidTestDetails(exportDto.getTyphoidFeverRapidTestDetails());
+                        caseExportDetailedDto.setTyphoidFeverCultureDetails(exportDto.getTyphoidFeverCultureDetails());
+                        caseExportDetailedDto.setTyphoidFeverHistopathologyDetails(exportDto.getTyphoidFeverHistopathologyDetails());
+                        caseExportDetailedDto.setTyphoidFeverIsolationDetails(exportDto.getTyphoidFeverIsolationDetails());
+                        caseExportDetailedDto.setTyphoidFeverIgmSerumAntibodyDetails(exportDto.getTyphoidFeverIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setTyphoidFeverIggSerumAntibodyDetails(exportDto.getTyphoidFeverIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setTyphoidFeverIgaSerumAntibodyDetails(exportDto.getTyphoidFeverIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setTyphoidFeverIncubationTimeDetails(exportDto.getTyphoidFeverIncubationTimeDetails());
+                        caseExportDetailedDto.setTyphoidFeverIndirectFluorescentAntibodyDetails(exportDto.getTyphoidFeverIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setTyphoidFeverDirectFluorescentAntibodyDetails(exportDto.getTyphoidFeverDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setTyphoidFeverMicroscopyDetails(exportDto.getTyphoidFeverMicroscopyDetails());
+                        caseExportDetailedDto.setTyphoidFeverNeutralizingAntibodiesDetails(exportDto.getTyphoidFeverNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setTyphoidFeverPcrRtPcrDetails(exportDto.getTyphoidFeverPcrRtPcrDetails());
+                        caseExportDetailedDto.setTyphoidFeverGramStainDetails(exportDto.getTyphoidFeverGramStainDetails());
+                        caseExportDetailedDto.setTyphoidFeverLatexAgglutinationDetails(exportDto.getTyphoidFeverLatexAgglutinationDetails());
+                        caseExportDetailedDto.setTyphoidFeverCqValueDetectionDetails(exportDto.getTyphoidFeverCqValueDetectionDetails());
+                        caseExportDetailedDto.setTyphoidFeverSequencingDetails(exportDto.getTyphoidFeverSequencingDetails());
+                        caseExportDetailedDto.setTyphoidFeverDnaMicroarrayDetails(exportDto.getTyphoidFeverDnaMicroarrayDetails());
+                        caseExportDetailedDto.setTyphoidFeverOtherDetails(exportDto.getTyphoidFeverOtherDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisAntibodyDetection(exportDto.getAcuteViralHepatitisAntibodyDetection());
+                        caseExportDetailedDto.setAcuteViralHepatitisAntigenDetection(exportDto.getAcuteViralHepatitisAntigenDetection());
+                        caseExportDetailedDto.setAcuteViralHepatitisRapidTest(exportDto.getAcuteViralHepatitisRapidTest());
+                        caseExportDetailedDto.setAcuteViralHepatitisCulture(exportDto.getAcuteViralHepatitisCulture());
+                        caseExportDetailedDto.setAcuteViralHepatitisHistopathology(exportDto.getAcuteViralHepatitisHistopathology());
+                        caseExportDetailedDto.setAcuteViralHepatitisIsolation(exportDto.getAcuteViralHepatitisIsolation());
+                        caseExportDetailedDto.setAcuteViralHepatitisIgmSerumAntibody(exportDto.getAcuteViralHepatitisIgmSerumAntibody());
+                        caseExportDetailedDto.setAcuteViralHepatitisIggSerumAntibody(exportDto.getAcuteViralHepatitisIggSerumAntibody());
+                        caseExportDetailedDto.setAcuteViralHepatitisIgaSerumAntibody(exportDto.getAcuteViralHepatitisIgaSerumAntibody());
+                        caseExportDetailedDto.setAcuteViralHepatitisIncubationTime(exportDto.getAcuteViralHepatitisIncubationTime());
+                        caseExportDetailedDto.setAcuteViralHepatitisIndirectFluorescentAntibody(exportDto.getAcuteViralHepatitisIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setAcuteViralHepatitisDirectFluorescentAntibody(exportDto.getAcuteViralHepatitisDirectFluorescentAntibody());
+                        caseExportDetailedDto.setAcuteViralHepatitisMicroscopy(exportDto.getAcuteViralHepatitisMicroscopy());
+                        caseExportDetailedDto.setAcuteViralHepatitisNeutralizingAntibodies(exportDto.getAcuteViralHepatitisNeutralizingAntibodies());
+                        caseExportDetailedDto.setAcuteViralHepatitisPcrRtPcr(exportDto.getAcuteViralHepatitisPcrRtPcr());
+                        caseExportDetailedDto.setAcuteViralHepatitisGramStain(exportDto.getAcuteViralHepatitisGramStain());
+                        caseExportDetailedDto.setAcuteViralHepatitisLatexAgglutination(exportDto.getAcuteViralHepatitisLatexAgglutination());
+                        caseExportDetailedDto.setAcuteViralHepatitisCqValueDetection(exportDto.getAcuteViralHepatitisCqValueDetection());
+                        caseExportDetailedDto.setAcuteViralHepatitisSequencing(exportDto.getAcuteViralHepatitisSequencing());
+                        caseExportDetailedDto.setAcuteViralHepatitisDnaMicroarray(exportDto.getAcuteViralHepatitisDnaMicroarray());
+                        caseExportDetailedDto.setAcuteViralHepatitisOther(exportDto.getAcuteViralHepatitisOther());
+                        caseExportDetailedDto.setAcuteViralHepatitisAntibodyDetectionDetails(exportDto.getAcuteViralHepatitisAntibodyDetectionDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisAntigenDetectionDetails(exportDto.getAcuteViralHepatitisAntigenDetectionDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisRapidTestDetails(exportDto.getAcuteViralHepatitisRapidTestDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisCultureDetails(exportDto.getAcuteViralHepatitisCultureDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisHistopathologyDetails(exportDto.getAcuteViralHepatitisHistopathologyDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisIsolationDetails(exportDto.getAcuteViralHepatitisIsolationDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisIgmSerumAntibodyDetails(exportDto.getAcuteViralHepatitisIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisIggSerumAntibodyDetails(exportDto.getAcuteViralHepatitisIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisIgaSerumAntibodyDetails(exportDto.getAcuteViralHepatitisIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisIncubationTimeDetails(exportDto.getAcuteViralHepatitisIncubationTimeDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisIndirectFluorescentAntibodyDetails(exportDto.getAcuteViralHepatitisIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisDirectFluorescentAntibodyDetails(exportDto.getAcuteViralHepatitisDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisMicroscopyDetails(exportDto.getAcuteViralHepatitisMicroscopyDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisNeutralizingAntibodiesDetails(exportDto.getAcuteViralHepatitisNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisPcrRtPcrDetails(exportDto.getAcuteViralHepatitisPcrRtPcrDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisGramStainDetails(exportDto.getAcuteViralHepatitisGramStainDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisLatexAgglutinationDetails(exportDto.getAcuteViralHepatitisLatexAgglutinationDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisCqValueDetectionDetails(exportDto.getAcuteViralHepatitisCqValueDetectionDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisSequencingDetails(exportDto.getAcuteViralHepatitisSequencingDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisDnaMicroarrayDetails(exportDto.getAcuteViralHepatitisDnaMicroarrayDetails());
+                        caseExportDetailedDto.setAcuteViralHepatitisOtherDetails(exportDto.getAcuteViralHepatitisOtherDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusAntibodyDetection(exportDto.getNonNeonatalTetanusAntibodyDetection());
+                        caseExportDetailedDto.setNonNeonatalTetanusAntigenDetection(exportDto.getNonNeonatalTetanusAntigenDetection());
+                        caseExportDetailedDto.setNonNeonatalTetanusRapidTest(exportDto.getNonNeonatalTetanusRapidTest());
+                        caseExportDetailedDto.setNonNeonatalTetanusCulture(exportDto.getNonNeonatalTetanusCulture());
+                        caseExportDetailedDto.setNonNeonatalTetanusHistopathology(exportDto.getNonNeonatalTetanusHistopathology());
+                        caseExportDetailedDto.setNonNeonatalTetanusIsolation(exportDto.getNonNeonatalTetanusIsolation());
+                        caseExportDetailedDto.setNonNeonatalTetanusIgmSerumAntibody(exportDto.getNonNeonatalTetanusIgmSerumAntibody());
+                        caseExportDetailedDto.setNonNeonatalTetanusIggSerumAntibody(exportDto.getNonNeonatalTetanusIggSerumAntibody());
+                        caseExportDetailedDto.setNonNeonatalTetanusIgaSerumAntibody(exportDto.getNonNeonatalTetanusIgaSerumAntibody());
+                        caseExportDetailedDto.setNonNeonatalTetanusIncubationTime(exportDto.getNonNeonatalTetanusIncubationTime());
+                        caseExportDetailedDto.setNonNeonatalTetanusIndirectFluorescentAntibody(exportDto.getNonNeonatalTetanusIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setNonNeonatalTetanusDirectFluorescentAntibody(exportDto.getNonNeonatalTetanusDirectFluorescentAntibody());
+                        caseExportDetailedDto.setNonNeonatalTetanusMicroscopy(exportDto.getNonNeonatalTetanusMicroscopy());
+                        caseExportDetailedDto.setNonNeonatalTetanusNeutralizingAntibodies(exportDto.getNonNeonatalTetanusNeutralizingAntibodies());
+                        caseExportDetailedDto.setNonNeonatalTetanusPcrRtPcr(exportDto.getNonNeonatalTetanusPcrRtPcr());
+                        caseExportDetailedDto.setNonNeonatalTetanusGramStain(exportDto.getNonNeonatalTetanusGramStain());
+                        caseExportDetailedDto.setNonNeonatalTetanusLatexAgglutination(exportDto.getNonNeonatalTetanusLatexAgglutination());
+                        caseExportDetailedDto.setNonNeonatalTetanusCqValueDetection(exportDto.getNonNeonatalTetanusCqValueDetection());
+                        caseExportDetailedDto.setNonNeonatalTetanusSequencing(exportDto.getNonNeonatalTetanusSequencing());
+                        caseExportDetailedDto.setNonNeonatalTetanusDnaMicroarray(exportDto.getNonNeonatalTetanusDnaMicroarray());
+                        caseExportDetailedDto.setNonNeonatalTetanusOther(exportDto.getNonNeonatalTetanusOther());
+                        caseExportDetailedDto.setNonNeonatalTetanusAntibodyDetectionDetails(exportDto.getNonNeonatalTetanusAntibodyDetectionDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusAntigenDetectionDetails(exportDto.getNonNeonatalTetanusAntigenDetectionDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusRapidTestDetails(exportDto.getNonNeonatalTetanusRapidTestDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusCultureDetails(exportDto.getNonNeonatalTetanusCultureDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusHistopathologyDetails(exportDto.getNonNeonatalTetanusHistopathologyDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusIsolationDetails(exportDto.getNonNeonatalTetanusIsolationDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusIgmSerumAntibodyDetails(exportDto.getNonNeonatalTetanusIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusIggSerumAntibodyDetails(exportDto.getNonNeonatalTetanusIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusIgaSerumAntibodyDetails(exportDto.getNonNeonatalTetanusIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusIncubationTimeDetails(exportDto.getNonNeonatalTetanusIncubationTimeDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusIndirectFluorescentAntibodyDetails(exportDto.getNonNeonatalTetanusIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusDirectFluorescentAntibodyDetails(exportDto.getNonNeonatalTetanusDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusMicroscopyDetails(exportDto.getNonNeonatalTetanusMicroscopyDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusNeutralizingAntibodiesDetails(exportDto.getNonNeonatalTetanusNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusPcrRtPcrDetails(exportDto.getNonNeonatalTetanusPcrRtPcrDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusGramStainDetails(exportDto.getNonNeonatalTetanusGramStainDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusLatexAgglutinationDetails(exportDto.getNonNeonatalTetanusLatexAgglutinationDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusCqValueDetectionDetails(exportDto.getNonNeonatalTetanusCqValueDetectionDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusSequencingDetails(exportDto.getNonNeonatalTetanusSequencingDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusDnaMicroarrayDetails(exportDto.getNonNeonatalTetanusDnaMicroarrayDetails());
+                        caseExportDetailedDto.setNonNeonatalTetanusOtherDetails(exportDto.getNonNeonatalTetanusOtherDetails());
+                        caseExportDetailedDto.setHivAntibodyDetection(exportDto.getHivAntibodyDetection());
+                        caseExportDetailedDto.setHivAntigenDetection(exportDto.getHivAntigenDetection());
+                        caseExportDetailedDto.setHivRapidTest(exportDto.getHivRapidTest());
+                        caseExportDetailedDto.setHivCulture(exportDto.getHivCulture());
+                        caseExportDetailedDto.setHivHistopathology(exportDto.getHivHistopathology());
+                        caseExportDetailedDto.setHivIsolation(exportDto.getHivIsolation());
+                        caseExportDetailedDto.setHivIgmSerumAntibody(exportDto.getHivIgmSerumAntibody());
+                        caseExportDetailedDto.setHivIggSerumAntibody(exportDto.getHivIggSerumAntibody());
+                        caseExportDetailedDto.setHivIgaSerumAntibody(exportDto.getHivIgaSerumAntibody());
+                        caseExportDetailedDto.setHivIncubationTime(exportDto.getHivIncubationTime());
+                        caseExportDetailedDto.setHivIndirectFluorescentAntibody(exportDto.getHivIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setHivDirectFluorescentAntibody(exportDto.getHivDirectFluorescentAntibody());
+                        caseExportDetailedDto.setHivMicroscopy(exportDto.getHivMicroscopy());
+                        caseExportDetailedDto.setHivNeutralizingAntibodies(exportDto.getHivNeutralizingAntibodies());
+                        caseExportDetailedDto.setHivPcrRtPcr(exportDto.getHivPcrRtPcr());
+                        caseExportDetailedDto.setHivGramStain(exportDto.getHivGramStain());
+                        caseExportDetailedDto.setHivLatexAgglutination(exportDto.getHivLatexAgglutination());
+                        caseExportDetailedDto.setHivCqValueDetection(exportDto.getHivCqValueDetection());
+                        caseExportDetailedDto.setHivSequencing(exportDto.getHivSequencing());
+                        caseExportDetailedDto.setHivDnaMicroarray(exportDto.getHivDnaMicroarray());
+                        caseExportDetailedDto.setHivOther(exportDto.getHivOther());
+                        caseExportDetailedDto.setHivAntibodyDetectionDetails(exportDto.getHivAntibodyDetectionDetails());
+                        caseExportDetailedDto.setHivAntigenDetectionDetails(exportDto.getHivAntigenDetectionDetails());
+                        caseExportDetailedDto.setHivRapidTestDetails(exportDto.getHivRapidTestDetails());
+                        caseExportDetailedDto.setHivCultureDetails(exportDto.getHivCultureDetails());
+                        caseExportDetailedDto.setHivHistopathologyDetails(exportDto.getHivHistopathologyDetails());
+                        caseExportDetailedDto.setHivIsolationDetails(exportDto.getHivIsolationDetails());
+                        caseExportDetailedDto.setHivIgmSerumAntibodyDetails(exportDto.getHivIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setHivIggSerumAntibodyDetails(exportDto.getHivIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setHivIgaSerumAntibodyDetails(exportDto.getHivIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setHivIncubationTimeDetails(exportDto.getHivIncubationTimeDetails());
+                        caseExportDetailedDto.setHivIndirectFluorescentAntibodyDetails(exportDto.getHivIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setHivDirectFluorescentAntibodyDetails(exportDto.getHivDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setHivMicroscopyDetails(exportDto.getHivMicroscopyDetails());
+                        caseExportDetailedDto.setHivNeutralizingAntibodiesDetails(exportDto.getHivNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setHivPcrRtPcrDetails(exportDto.getHivPcrRtPcrDetails());
+                        caseExportDetailedDto.setHivGramStainDetails(exportDto.getHivGramStainDetails());
+                        caseExportDetailedDto.setHivLatexAgglutinationDetails(exportDto.getHivLatexAgglutinationDetails());
+                        caseExportDetailedDto.setHivCqValueDetectionDetails(exportDto.getHivCqValueDetectionDetails());
+                        caseExportDetailedDto.setHivSequencingDetails(exportDto.getHivSequencingDetails());
+                        caseExportDetailedDto.setHivDnaMicroarrayDetails(exportDto.getHivDnaMicroarrayDetails());
+                        caseExportDetailedDto.setHivOtherDetails(exportDto.getHivOtherDetails());
+                        caseExportDetailedDto.setSchistosomiasisAntibodyDetection(exportDto.getSchistosomiasisAntibodyDetection());
+                        caseExportDetailedDto.setSchistosomiasisAntigenDetection(exportDto.getSchistosomiasisAntigenDetection());
+                        caseExportDetailedDto.setSchistosomiasisRapidTest(exportDto.getSchistosomiasisRapidTest());
+                        caseExportDetailedDto.setSchistosomiasisCulture(exportDto.getSchistosomiasisCulture());
+                        caseExportDetailedDto.setSchistosomiasisHistopathology(exportDto.getSchistosomiasisHistopathology());
+                        caseExportDetailedDto.setSchistosomiasisIsolation(exportDto.getSchistosomiasisIsolation());
+                        caseExportDetailedDto.setSchistosomiasisIgmSerumAntibody(exportDto.getSchistosomiasisIgmSerumAntibody());
+                        caseExportDetailedDto.setSchistosomiasisIggSerumAntibody(exportDto.getSchistosomiasisIggSerumAntibody());
+                        caseExportDetailedDto.setSchistosomiasisIgaSerumAntibody(exportDto.getSchistosomiasisIgaSerumAntibody());
+                        caseExportDetailedDto.setSchistosomiasisIncubationTime(exportDto.getSchistosomiasisIncubationTime());
+                        caseExportDetailedDto.setSchistosomiasisIndirectFluorescentAntibody(exportDto.getSchistosomiasisIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setSchistosomiasisDirectFluorescentAntibody(exportDto.getSchistosomiasisDirectFluorescentAntibody());
+                        caseExportDetailedDto.setSchistosomiasisMicroscopy(exportDto.getSchistosomiasisMicroscopy());
+                        caseExportDetailedDto.setSchistosomiasisNeutralizingAntibodies(exportDto.getSchistosomiasisNeutralizingAntibodies());
+                        caseExportDetailedDto.setSchistosomiasisPcrRtPcr(exportDto.getSchistosomiasisPcrRtPcr());
+                        caseExportDetailedDto.setSchistosomiasisGramStain(exportDto.getSchistosomiasisGramStain());
+                        caseExportDetailedDto.setSchistosomiasisLatexAgglutination(exportDto.getSchistosomiasisLatexAgglutination());
+                        caseExportDetailedDto.setSchistosomiasisCqValueDetection(exportDto.getSchistosomiasisCqValueDetection());
+                        caseExportDetailedDto.setSchistosomiasisSequencing(exportDto.getSchistosomiasisSequencing());
+                        caseExportDetailedDto.setSchistosomiasisDnaMicroarray(exportDto.getSchistosomiasisDnaMicroarray());
+                        caseExportDetailedDto.setSchistosomiasisOther(exportDto.getSchistosomiasisOther());
+                        caseExportDetailedDto.setSchistosomiasisAntibodyDetectionDetails(exportDto.getSchistosomiasisAntibodyDetectionDetails());
+                        caseExportDetailedDto.setSchistosomiasisAntigenDetectionDetails(exportDto.getSchistosomiasisAntigenDetectionDetails());
+                        caseExportDetailedDto.setSchistosomiasisRapidTestDetails(exportDto.getSchistosomiasisRapidTestDetails());
+                        caseExportDetailedDto.setSchistosomiasisCultureDetails(exportDto.getSchistosomiasisCultureDetails());
+                        caseExportDetailedDto.setSchistosomiasisHistopathologyDetails(exportDto.getSchistosomiasisHistopathologyDetails());
+                        caseExportDetailedDto.setSchistosomiasisIsolationDetails(exportDto.getSchistosomiasisIsolationDetails());
+                        caseExportDetailedDto.setSchistosomiasisIgmSerumAntibodyDetails(exportDto.getSchistosomiasisIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setSchistosomiasisIggSerumAntibodyDetails(exportDto.getSchistosomiasisIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setSchistosomiasisIgaSerumAntibodyDetails(exportDto.getSchistosomiasisIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setSchistosomiasisIncubationTimeDetails(exportDto.getSchistosomiasisIncubationTimeDetails());
+                        caseExportDetailedDto.setSchistosomiasisIndirectFluorescentAntibodyDetails(exportDto.getSchistosomiasisIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setSchistosomiasisDirectFluorescentAntibodyDetails(exportDto.getSchistosomiasisDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setSchistosomiasisMicroscopyDetails(exportDto.getSchistosomiasisMicroscopyDetails());
+                        caseExportDetailedDto.setSchistosomiasisNeutralizingAntibodiesDetails(exportDto.getSchistosomiasisNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setSchistosomiasisPcrRtPcrDetails(exportDto.getSchistosomiasisPcrRtPcrDetails());
+                        caseExportDetailedDto.setSchistosomiasisGramStainDetails(exportDto.getSchistosomiasisGramStainDetails());
+                        caseExportDetailedDto.setSchistosomiasisLatexAgglutinationDetails(exportDto.getSchistosomiasisLatexAgglutinationDetails());
+                        caseExportDetailedDto.setSchistosomiasisCqValueDetectionDetails(exportDto.getSchistosomiasisCqValueDetectionDetails());
+                        caseExportDetailedDto.setSchistosomiasisSequencingDetails(exportDto.getSchistosomiasisSequencingDetails());
+                        caseExportDetailedDto.setSchistosomiasisDnaMicroarrayDetails(exportDto.getSchistosomiasisDnaMicroarrayDetails());
+                        caseExportDetailedDto.setSchistosomiasisOtherDetails(exportDto.getSchistosomiasisOtherDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsAntibodyDetection(exportDto.getSoilTransmittedHelminthsAntibodyDetection());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsAntigenDetection(exportDto.getSoilTransmittedHelminthsAntigenDetection());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsRapidTest(exportDto.getSoilTransmittedHelminthsRapidTest());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsCulture(exportDto.getSoilTransmittedHelminthsCulture());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsHistopathology(exportDto.getSoilTransmittedHelminthsHistopathology());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsIsolation(exportDto.getSoilTransmittedHelminthsIsolation());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsIgmSerumAntibody(exportDto.getSoilTransmittedHelminthsIgmSerumAntibody());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsIggSerumAntibody(exportDto.getSoilTransmittedHelminthsIggSerumAntibody());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsIgaSerumAntibody(exportDto.getSoilTransmittedHelminthsIgaSerumAntibody());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsIncubationTime(exportDto.getSoilTransmittedHelminthsIncubationTime());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsIndirectFluorescentAntibody(exportDto.getSoilTransmittedHelminthsIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsDirectFluorescentAntibody(exportDto.getSoilTransmittedHelminthsDirectFluorescentAntibody());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsMicroscopy(exportDto.getSoilTransmittedHelminthsMicroscopy());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsNeutralizingAntibodies(exportDto.getSoilTransmittedHelminthsNeutralizingAntibodies());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsPcrRtPcr(exportDto.getSoilTransmittedHelminthsPcrRtPcr());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsGramStain(exportDto.getSoilTransmittedHelminthsGramStain());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsLatexAgglutination(exportDto.getSoilTransmittedHelminthsLatexAgglutination());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsCqValueDetection(exportDto.getSoilTransmittedHelminthsCqValueDetection());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsSequencing(exportDto.getSoilTransmittedHelminthsSequencing());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsDnaMicroarray(exportDto.getSoilTransmittedHelminthsDnaMicroarray());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsOther(exportDto.getSoilTransmittedHelminthsOther());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsAntibodyDetectionDetails(exportDto.getSoilTransmittedHelminthsAntibodyDetectionDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsAntigenDetectionDetails(exportDto.getSoilTransmittedHelminthsAntigenDetectionDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsRapidTestDetails(exportDto.getSoilTransmittedHelminthsRapidTestDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsCultureDetails(exportDto.getSoilTransmittedHelminthsCultureDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsHistopathologyDetails(exportDto.getSoilTransmittedHelminthsHistopathologyDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsIsolationDetails(exportDto.getSoilTransmittedHelminthsIsolationDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsIgmSerumAntibodyDetails(exportDto.getSoilTransmittedHelminthsIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsIggSerumAntibodyDetails(exportDto.getSoilTransmittedHelminthsIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsIgaSerumAntibodyDetails(exportDto.getSoilTransmittedHelminthsIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsIncubationTimeDetails(exportDto.getSoilTransmittedHelminthsIncubationTimeDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsIndirectFluorescentAntibodyDetails(exportDto.getSoilTransmittedHelminthsIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsDirectFluorescentAntibodyDetails(exportDto.getSoilTransmittedHelminthsDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsMicroscopyDetails(exportDto.getSoilTransmittedHelminthsMicroscopyDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsNeutralizingAntibodiesDetails(exportDto.getSoilTransmittedHelminthsNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsPcrRtPcrDetails(exportDto.getSoilTransmittedHelminthsPcrRtPcrDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsGramStainDetails(exportDto.getSoilTransmittedHelminthsGramStainDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsLatexAgglutinationDetails(exportDto.getSoilTransmittedHelminthsLatexAgglutinationDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsCqValueDetectionDetails(exportDto.getSoilTransmittedHelminthsCqValueDetectionDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsSequencingDetails(exportDto.getSoilTransmittedHelminthsSequencingDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsDnaMicroarrayDetails(exportDto.getSoilTransmittedHelminthsDnaMicroarrayDetails());
+                        caseExportDetailedDto.setSoilTransmittedHelminthsOtherDetails(exportDto.getSoilTransmittedHelminthsOtherDetails());
+                        caseExportDetailedDto.setTrypanosomiasisAntibodyDetection(exportDto.getTrypanosomiasisAntibodyDetection());
+                        caseExportDetailedDto.setTrypanosomiasisAntigenDetection(exportDto.getTrypanosomiasisAntigenDetection());
+                        caseExportDetailedDto.setTrypanosomiasisRapidTest(exportDto.getTrypanosomiasisRapidTest());
+                        caseExportDetailedDto.setTrypanosomiasisCulture(exportDto.getTrypanosomiasisCulture());
+                        caseExportDetailedDto.setTrypanosomiasisHistopathology(exportDto.getTrypanosomiasisHistopathology());
+                        caseExportDetailedDto.setTrypanosomiasisIsolation(exportDto.getTrypanosomiasisIsolation());
+                        caseExportDetailedDto.setTrypanosomiasisIgmSerumAntibody(exportDto.getTrypanosomiasisIgmSerumAntibody());
+                        caseExportDetailedDto.setTrypanosomiasisIggSerumAntibody(exportDto.getTrypanosomiasisIggSerumAntibody());
+                        caseExportDetailedDto.setTrypanosomiasisIgaSerumAntibody(exportDto.getTrypanosomiasisIgaSerumAntibody());
+                        caseExportDetailedDto.setTrypanosomiasisIncubationTime(exportDto.getTrypanosomiasisIncubationTime());
+                        caseExportDetailedDto.setTrypanosomiasisIndirectFluorescentAntibody(exportDto.getTrypanosomiasisIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setTrypanosomiasisDirectFluorescentAntibody(exportDto.getTrypanosomiasisDirectFluorescentAntibody());
+                        caseExportDetailedDto.setTrypanosomiasisMicroscopy(exportDto.getTrypanosomiasisMicroscopy());
+                        caseExportDetailedDto.setTrypanosomiasisNeutralizingAntibodies(exportDto.getTrypanosomiasisNeutralizingAntibodies());
+                        caseExportDetailedDto.setTrypanosomiasisPcrRtPcr(exportDto.getTrypanosomiasisPcrRtPcr());
+                        caseExportDetailedDto.setTrypanosomiasisGramStain(exportDto.getTrypanosomiasisGramStain());
+                        caseExportDetailedDto.setTrypanosomiasisLatexAgglutination(exportDto.getTrypanosomiasisLatexAgglutination());
+                        caseExportDetailedDto.setTrypanosomiasisCqValueDetection(exportDto.getTrypanosomiasisCqValueDetection());
+                        caseExportDetailedDto.setTrypanosomiasisSequencing(exportDto.getTrypanosomiasisSequencing());
+                        caseExportDetailedDto.setTrypanosomiasisDnaMicroarray(exportDto.getTrypanosomiasisDnaMicroarray());
+                        caseExportDetailedDto.setTrypanosomiasisOther(exportDto.getTrypanosomiasisOther());
+                        caseExportDetailedDto.setTrypanosomiasisAntibodyDetectionDetails(exportDto.getTrypanosomiasisAntibodyDetectionDetails());
+                        caseExportDetailedDto.setTrypanosomiasisAntigenDetectionDetails(exportDto.getTrypanosomiasisAntigenDetectionDetails());
+                        caseExportDetailedDto.setTrypanosomiasisRapidTestDetails(exportDto.getTrypanosomiasisRapidTestDetails());
+                        caseExportDetailedDto.setTrypanosomiasisCultureDetails(exportDto.getTrypanosomiasisCultureDetails());
+                        caseExportDetailedDto.setTrypanosomiasisHistopathologyDetails(exportDto.getTrypanosomiasisHistopathologyDetails());
+                        caseExportDetailedDto.setTrypanosomiasisIsolationDetails(exportDto.getTrypanosomiasisIsolationDetails());
+                        caseExportDetailedDto.setTrypanosomiasisIgmSerumAntibodyDetails(exportDto.getTrypanosomiasisIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setTrypanosomiasisIggSerumAntibodyDetails(exportDto.getTrypanosomiasisIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setTrypanosomiasisIgaSerumAntibodyDetails(exportDto.getTrypanosomiasisIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setTrypanosomiasisIncubationTimeDetails(exportDto.getTrypanosomiasisIncubationTimeDetails());
+                        caseExportDetailedDto.setTrypanosomiasisIndirectFluorescentAntibodyDetails(exportDto.getTrypanosomiasisIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setTrypanosomiasisDirectFluorescentAntibodyDetails(exportDto.getTrypanosomiasisDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setTrypanosomiasisMicroscopyDetails(exportDto.getTrypanosomiasisMicroscopyDetails());
+                        caseExportDetailedDto.setTrypanosomiasisNeutralizingAntibodiesDetails(exportDto.getTrypanosomiasisNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setTrypanosomiasisPcrRtPcrDetails(exportDto.getTrypanosomiasisPcrRtPcrDetails());
+                        caseExportDetailedDto.setTrypanosomiasisGramStainDetails(exportDto.getTrypanosomiasisGramStainDetails());
+                        caseExportDetailedDto.setTrypanosomiasisLatexAgglutinationDetails(exportDto.getTrypanosomiasisLatexAgglutinationDetails());
+                        caseExportDetailedDto.setTrypanosomiasisCqValueDetectionDetails(exportDto.getTrypanosomiasisCqValueDetectionDetails());
+                        caseExportDetailedDto.setTrypanosomiasisSequencingDetails(exportDto.getTrypanosomiasisSequencingDetails());
+                        caseExportDetailedDto.setTrypanosomiasisDnaMicroarrayDetails(exportDto.getTrypanosomiasisDnaMicroarrayDetails());
+                        caseExportDetailedDto.setTrypanosomiasisOtherDetails(exportDto.getTrypanosomiasisOtherDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationAntibodyDetection(exportDto.getDiarrheaDehydrationAntibodyDetection());
+                        caseExportDetailedDto.setDiarrheaDehydrationAntigenDetection(exportDto.getDiarrheaDehydrationAntigenDetection());
+                        caseExportDetailedDto.setDiarrheaDehydrationRapidTest(exportDto.getDiarrheaDehydrationRapidTest());
+                        caseExportDetailedDto.setDiarrheaDehydrationCulture(exportDto.getDiarrheaDehydrationCulture());
+                        caseExportDetailedDto.setDiarrheaDehydrationHistopathology(exportDto.getDiarrheaDehydrationHistopathology());
+                        caseExportDetailedDto.setDiarrheaDehydrationIsolation(exportDto.getDiarrheaDehydrationIsolation());
+                        caseExportDetailedDto.setDiarrheaDehydrationIgmSerumAntibody(exportDto.getDiarrheaDehydrationIgmSerumAntibody());
+                        caseExportDetailedDto.setDiarrheaDehydrationIggSerumAntibody(exportDto.getDiarrheaDehydrationIggSerumAntibody());
+                        caseExportDetailedDto.setDiarrheaDehydrationIgaSerumAntibody(exportDto.getDiarrheaDehydrationIgaSerumAntibody());
+                        caseExportDetailedDto.setDiarrheaDehydrationIncubationTime(exportDto.getDiarrheaDehydrationIncubationTime());
+                        caseExportDetailedDto.setDiarrheaDehydrationIndirectFluorescentAntibody(exportDto.getDiarrheaDehydrationIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setDiarrheaDehydrationDirectFluorescentAntibody(exportDto.getDiarrheaDehydrationDirectFluorescentAntibody());
+                        caseExportDetailedDto.setDiarrheaDehydrationMicroscopy(exportDto.getDiarrheaDehydrationMicroscopy());
+                        caseExportDetailedDto.setDiarrheaDehydrationNeutralizingAntibodies(exportDto.getDiarrheaDehydrationNeutralizingAntibodies());
+                        caseExportDetailedDto.setDiarrheaDehydrationPcrRtPcr(exportDto.getDiarrheaDehydrationPcrRtPcr());
+                        caseExportDetailedDto.setDiarrheaDehydrationGramStain(exportDto.getDiarrheaDehydrationGramStain());
+                        caseExportDetailedDto.setDiarrheaDehydrationLatexAgglutination(exportDto.getDiarrheaDehydrationLatexAgglutination());
+                        caseExportDetailedDto.setDiarrheaDehydrationCqValueDetection(exportDto.getDiarrheaDehydrationCqValueDetection());
+                        caseExportDetailedDto.setDiarrheaDehydrationSequencing(exportDto.getDiarrheaDehydrationSequencing());
+                        caseExportDetailedDto.setDiarrheaDehydrationDnaMicroarray(exportDto.getDiarrheaDehydrationDnaMicroarray());
+                        caseExportDetailedDto.setDiarrheaDehydrationOther(exportDto.getDiarrheaDehydrationOther());
+                        caseExportDetailedDto.setDiarrheaDehydrationAntibodyDetectionDetails(exportDto.getDiarrheaDehydrationAntibodyDetectionDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationAntigenDetectionDetails(exportDto.getDiarrheaDehydrationAntigenDetectionDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationRapidTestDetails(exportDto.getDiarrheaDehydrationRapidTestDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationCultureDetails(exportDto.getDiarrheaDehydrationCultureDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationHistopathologyDetails(exportDto.getDiarrheaDehydrationHistopathologyDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationIsolationDetails(exportDto.getDiarrheaDehydrationIsolationDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationIgmSerumAntibodyDetails(exportDto.getDiarrheaDehydrationIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationIggSerumAntibodyDetails(exportDto.getDiarrheaDehydrationIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationIgaSerumAntibodyDetails(exportDto.getDiarrheaDehydrationIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationIncubationTimeDetails(exportDto.getDiarrheaDehydrationIncubationTimeDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationIndirectFluorescentAntibodyDetails(exportDto.getDiarrheaDehydrationIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationDirectFluorescentAntibodyDetails(exportDto.getDiarrheaDehydrationDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationMicroscopyDetails(exportDto.getDiarrheaDehydrationMicroscopyDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationNeutralizingAntibodiesDetails(exportDto.getDiarrheaDehydrationNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationPcrRtPcrDetails(exportDto.getDiarrheaDehydrationPcrRtPcrDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationGramStainDetails(exportDto.getDiarrheaDehydrationGramStainDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationLatexAgglutinationDetails(exportDto.getDiarrheaDehydrationLatexAgglutinationDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationCqValueDetectionDetails(exportDto.getDiarrheaDehydrationCqValueDetectionDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationSequencingDetails(exportDto.getDiarrheaDehydrationSequencingDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationDnaMicroarrayDetails(exportDto.getDiarrheaDehydrationDnaMicroarrayDetails());
+                        caseExportDetailedDto.setDiarrheaDehydrationOtherDetails(exportDto.getDiarrheaDehydrationOtherDetails());
+                        caseExportDetailedDto.setDiarrheaBloodAntibodyDetection(exportDto.getDiarrheaBloodAntibodyDetection());
+                        caseExportDetailedDto.setDiarrheaBloodAntigenDetection(exportDto.getDiarrheaBloodAntigenDetection());
+                        caseExportDetailedDto.setDiarrheaBloodRapidTest(exportDto.getDiarrheaBloodRapidTest());
+                        caseExportDetailedDto.setDiarrheaBloodCulture(exportDto.getDiarrheaBloodCulture());
+                        caseExportDetailedDto.setDiarrheaBloodHistopathology(exportDto.getDiarrheaBloodHistopathology());
+                        caseExportDetailedDto.setDiarrheaBloodIsolation(exportDto.getDiarrheaBloodIsolation());
+                        caseExportDetailedDto.setDiarrheaBloodIgmSerumAntibody(exportDto.getDiarrheaBloodIgmSerumAntibody());
+                        caseExportDetailedDto.setDiarrheaBloodIggSerumAntibody(exportDto.getDiarrheaBloodIggSerumAntibody());
+                        caseExportDetailedDto.setDiarrheaBloodIgaSerumAntibody(exportDto.getDiarrheaBloodIgaSerumAntibody());
+                        caseExportDetailedDto.setDiarrheaBloodIncubationTime(exportDto.getDiarrheaBloodIncubationTime());
+                        caseExportDetailedDto.setDiarrheaBloodIndirectFluorescentAntibody(exportDto.getDiarrheaBloodIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setDiarrheaBloodDirectFluorescentAntibody(exportDto.getDiarrheaBloodDirectFluorescentAntibody());
+                        caseExportDetailedDto.setDiarrheaBloodMicroscopy(exportDto.getDiarrheaBloodMicroscopy());
+                        caseExportDetailedDto.setDiarrheaBloodNeutralizingAntibodies(exportDto.getDiarrheaBloodNeutralizingAntibodies());
+                        caseExportDetailedDto.setDiarrheaBloodPcrRtPcr(exportDto.getDiarrheaBloodPcrRtPcr());
+                        caseExportDetailedDto.setDiarrheaBloodGramStain(exportDto.getDiarrheaBloodGramStain());
+                        caseExportDetailedDto.setDiarrheaBloodLatexAgglutination(exportDto.getDiarrheaBloodLatexAgglutination());
+                        caseExportDetailedDto.setDiarrheaBloodCqValueDetection(exportDto.getDiarrheaBloodCqValueDetection());
+                        caseExportDetailedDto.setDiarrheaBloodSequencing(exportDto.getDiarrheaBloodSequencing());
+                        caseExportDetailedDto.setDiarrheaBloodDnaMicroarray(exportDto.getDiarrheaBloodDnaMicroarray());
+                        caseExportDetailedDto.setDiarrheaBloodOther(exportDto.getDiarrheaBloodOther());
+                        caseExportDetailedDto.setDiarrheaBloodAntibodyDetectionDetails(exportDto.getDiarrheaBloodAntibodyDetectionDetails());
+                        caseExportDetailedDto.setDiarrheaBloodAntigenDetectionDetails(exportDto.getDiarrheaBloodAntigenDetectionDetails());
+                        caseExportDetailedDto.setDiarrheaBloodRapidTestDetails(exportDto.getDiarrheaBloodRapidTestDetails());
+                        caseExportDetailedDto.setDiarrheaBloodCultureDetails(exportDto.getDiarrheaBloodCultureDetails());
+                        caseExportDetailedDto.setDiarrheaBloodHistopathologyDetails(exportDto.getDiarrheaBloodHistopathologyDetails());
+                        caseExportDetailedDto.setDiarrheaBloodIsolationDetails(exportDto.getDiarrheaBloodIsolationDetails());
+                        caseExportDetailedDto.setDiarrheaBloodIgmSerumAntibodyDetails(exportDto.getDiarrheaBloodIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setDiarrheaBloodIggSerumAntibodyDetails(exportDto.getDiarrheaBloodIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setDiarrheaBloodIgaSerumAntibodyDetails(exportDto.getDiarrheaBloodIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setDiarrheaBloodIncubationTimeDetails(exportDto.getDiarrheaBloodIncubationTimeDetails());
+                        caseExportDetailedDto.setDiarrheaBloodIndirectFluorescentAntibodyDetails(exportDto.getDiarrheaBloodIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setDiarrheaBloodDirectFluorescentAntibodyDetails(exportDto.getDiarrheaBloodDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setDiarrheaBloodMicroscopyDetails(exportDto.getDiarrheaBloodMicroscopyDetails());
+                        caseExportDetailedDto.setDiarrheaBloodNeutralizingAntibodiesDetails(exportDto.getDiarrheaBloodNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setDiarrheaBloodPcrRtPcrDetails(exportDto.getDiarrheaBloodPcrRtPcrDetails());
+                        caseExportDetailedDto.setDiarrheaBloodGramStainDetails(exportDto.getDiarrheaBloodGramStainDetails());
+                        caseExportDetailedDto.setDiarrheaBloodLatexAgglutinationDetails(exportDto.getDiarrheaBloodLatexAgglutinationDetails());
+                        caseExportDetailedDto.setDiarrheaBloodCqValueDetectionDetails(exportDto.getDiarrheaBloodCqValueDetectionDetails());
+                        caseExportDetailedDto.setDiarrheaBloodSequencingDetails(exportDto.getDiarrheaBloodSequencingDetails());
+                        caseExportDetailedDto.setDiarrheaBloodDnaMicroarrayDetails(exportDto.getDiarrheaBloodDnaMicroarrayDetails());
+                        caseExportDetailedDto.setDiarrheaBloodOtherDetails(exportDto.getDiarrheaBloodOtherDetails());
+                        caseExportDetailedDto.setSnakeBiteAntibodyDetection(exportDto.getSnakeBiteAntibodyDetection());
+                        caseExportDetailedDto.setSnakeBiteAntigenDetection(exportDto.getSnakeBiteAntigenDetection());
+                        caseExportDetailedDto.setSnakeBiteRapidTest(exportDto.getSnakeBiteRapidTest());
+                        caseExportDetailedDto.setSnakeBiteCulture(exportDto.getSnakeBiteCulture());
+                        caseExportDetailedDto.setSnakeBiteHistopathology(exportDto.getSnakeBiteHistopathology());
+                        caseExportDetailedDto.setSnakeBiteIsolation(exportDto.getSnakeBiteIsolation());
+                        caseExportDetailedDto.setSnakeBiteIgmSerumAntibody(exportDto.getSnakeBiteIgmSerumAntibody());
+                        caseExportDetailedDto.setSnakeBiteIggSerumAntibody(exportDto.getSnakeBiteIggSerumAntibody());
+                        caseExportDetailedDto.setSnakeBiteIgaSerumAntibody(exportDto.getSnakeBiteIgaSerumAntibody());
+                        caseExportDetailedDto.setSnakeBiteIncubationTime(exportDto.getSnakeBiteIncubationTime());
+                        caseExportDetailedDto.setSnakeBiteIndirectFluorescentAntibody(exportDto.getSnakeBiteIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setSnakeBiteDirectFluorescentAntibody(exportDto.getSnakeBiteDirectFluorescentAntibody());
+                        caseExportDetailedDto.setSnakeBiteMicroscopy(exportDto.getSnakeBiteMicroscopy());
+                        caseExportDetailedDto.setSnakeBiteNeutralizingAntibodies(exportDto.getSnakeBiteNeutralizingAntibodies());
+                        caseExportDetailedDto.setSnakeBitePcrRtPcr(exportDto.getSnakeBitePcrRtPcr());
+                        caseExportDetailedDto.setSnakeBiteGramStain(exportDto.getSnakeBiteGramStain());
+                        caseExportDetailedDto.setSnakeBiteLatexAgglutination(exportDto.getSnakeBiteLatexAgglutination());
+                        caseExportDetailedDto.setSnakeBiteCqValueDetection(exportDto.getSnakeBiteCqValueDetection());
+                        caseExportDetailedDto.setSnakeBiteSequencing(exportDto.getSnakeBiteSequencing());
+                        caseExportDetailedDto.setSnakeBiteDnaMicroarray(exportDto.getSnakeBiteDnaMicroarray());
+                        caseExportDetailedDto.setSnakeBiteOther(exportDto.getSnakeBiteOther());
+                        caseExportDetailedDto.setSnakeBiteAntibodyDetectionDetails(exportDto.getSnakeBiteAntibodyDetectionDetails());
+                        caseExportDetailedDto.setSnakeBiteAntigenDetectionDetails(exportDto.getSnakeBiteAntigenDetectionDetails());
+                        caseExportDetailedDto.setSnakeBiteRapidTestDetails(exportDto.getSnakeBiteRapidTestDetails());
+                        caseExportDetailedDto.setSnakeBiteCultureDetails(exportDto.getSnakeBiteCultureDetails());
+                        caseExportDetailedDto.setSnakeBiteHistopathologyDetails(exportDto.getSnakeBiteHistopathologyDetails());
+                        caseExportDetailedDto.setSnakeBiteIsolationDetails(exportDto.getSnakeBiteIsolationDetails());
+                        caseExportDetailedDto.setSnakeBiteIgmSerumAntibodyDetails(exportDto.getSnakeBiteIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setSnakeBiteIggSerumAntibodyDetails(exportDto.getSnakeBiteIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setSnakeBiteIgaSerumAntibodyDetails(exportDto.getSnakeBiteIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setSnakeBiteIncubationTimeDetails(exportDto.getSnakeBiteIncubationTimeDetails());
+                        caseExportDetailedDto.setSnakeBiteIndirectFluorescentAntibodyDetails(exportDto.getSnakeBiteIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setSnakeBiteDirectFluorescentAntibodyDetails(exportDto.getSnakeBiteDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setSnakeBiteMicroscopyDetails(exportDto.getSnakeBiteMicroscopyDetails());
+                        caseExportDetailedDto.setSnakeBiteNeutralizingAntibodiesDetails(exportDto.getSnakeBiteNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setSnakeBitePcrRtPcrDetails(exportDto.getSnakeBitePcrRtPcrDetails());
+                        caseExportDetailedDto.setSnakeBiteGramStainDetails(exportDto.getSnakeBiteGramStainDetails());
+                        caseExportDetailedDto.setSnakeBiteLatexAgglutinationDetails(exportDto.getSnakeBiteLatexAgglutinationDetails());
+                        caseExportDetailedDto.setSnakeBiteCqValueDetectionDetails(exportDto.getSnakeBiteCqValueDetectionDetails());
+                        caseExportDetailedDto.setSnakeBiteSequencingDetails(exportDto.getSnakeBiteSequencingDetails());
+                        caseExportDetailedDto.setSnakeBiteDnaMicroarrayDetails(exportDto.getSnakeBiteDnaMicroarrayDetails());
+                        caseExportDetailedDto.setSnakeBiteOtherDetails(exportDto.getSnakeBiteOtherDetails());
+                        caseExportDetailedDto.setRubellaAntibodyDetection(exportDto.getRubellaAntibodyDetection());
+                        caseExportDetailedDto.setRubellaAntigenDetection(exportDto.getRubellaAntigenDetection());
+                        caseExportDetailedDto.setRubellaRapidTest(exportDto.getRubellaRapidTest());
+                        caseExportDetailedDto.setRubellaCulture(exportDto.getRubellaCulture());
+                        caseExportDetailedDto.setRubellaHistopathology(exportDto.getRubellaHistopathology());
+                        caseExportDetailedDto.setRubellaIsolation(exportDto.getRubellaIsolation());
+                        caseExportDetailedDto.setRubellaIgmSerumAntibody(exportDto.getRubellaIgmSerumAntibody());
+                        caseExportDetailedDto.setRubellaIggSerumAntibody(exportDto.getRubellaIggSerumAntibody());
+                        caseExportDetailedDto.setRubellaIgaSerumAntibody(exportDto.getRubellaIgaSerumAntibody());
+                        caseExportDetailedDto.setRubellaIncubationTime(exportDto.getRubellaIncubationTime());
+                        caseExportDetailedDto.setRubellaIndirectFluorescentAntibody(exportDto.getRubellaIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setRubellaDirectFluorescentAntibody(exportDto.getRubellaDirectFluorescentAntibody());
+                        caseExportDetailedDto.setRubellaMicroscopy(exportDto.getRubellaMicroscopy());
+                        caseExportDetailedDto.setRubellaNeutralizingAntibodies(exportDto.getRubellaNeutralizingAntibodies());
+                        caseExportDetailedDto.setRubellaPcrRtPcr(exportDto.getRubellaPcrRtPcr());
+                        caseExportDetailedDto.setRubellaGramStain(exportDto.getRubellaGramStain());
+                        caseExportDetailedDto.setRubellaLatexAgglutination(exportDto.getRubellaLatexAgglutination());
+                        caseExportDetailedDto.setRubellaCqValueDetection(exportDto.getRubellaCqValueDetection());
+                        caseExportDetailedDto.setRubellaSequencing(exportDto.getRubellaSequencing());
+                        caseExportDetailedDto.setRubellaDnaMicroarray(exportDto.getRubellaDnaMicroarray());
+                        caseExportDetailedDto.setRubellaOther(exportDto.getRubellaOther());
+                        caseExportDetailedDto.setRubellaAntibodyDetectionDetails(exportDto.getRubellaAntibodyDetectionDetails());
+                        caseExportDetailedDto.setRubellaAntigenDetectionDetails(exportDto.getRubellaAntigenDetectionDetails());
+                        caseExportDetailedDto.setRubellaRapidTestDetails(exportDto.getRubellaRapidTestDetails());
+                        caseExportDetailedDto.setRubellaCultureDetails(exportDto.getRubellaCultureDetails());
+                        caseExportDetailedDto.setRubellaHistopathologyDetails(exportDto.getRubellaHistopathologyDetails());
+                        caseExportDetailedDto.setRubellaIsolationDetails(exportDto.getRubellaIsolationDetails());
+                        caseExportDetailedDto.setRubellaIgmSerumAntibodyDetails(exportDto.getRubellaIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setRubellaIggSerumAntibodyDetails(exportDto.getRubellaIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setRubellaIgaSerumAntibodyDetails(exportDto.getRubellaIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setRubellaIncubationTimeDetails(exportDto.getRubellaIncubationTimeDetails());
+                        caseExportDetailedDto.setRubellaIndirectFluorescentAntibodyDetails(exportDto.getRubellaIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setRubellaDirectFluorescentAntibodyDetails(exportDto.getRubellaDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setRubellaMicroscopyDetails(exportDto.getRubellaMicroscopyDetails());
+                        caseExportDetailedDto.setRubellaNeutralizingAntibodiesDetails(exportDto.getRubellaNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setRubellaPcrRtPcrDetails(exportDto.getRubellaPcrRtPcrDetails());
+                        caseExportDetailedDto.setRubellaGramStainDetails(exportDto.getRubellaGramStainDetails());
+                        caseExportDetailedDto.setRubellaLatexAgglutinationDetails(exportDto.getRubellaLatexAgglutinationDetails());
+                        caseExportDetailedDto.setRubellaCqValueDetectionDetails(exportDto.getRubellaCqValueDetectionDetails());
+                        caseExportDetailedDto.setRubellaSequencingDetails(exportDto.getRubellaSequencingDetails());
+                        caseExportDetailedDto.setRubellaDnaMicroarrayDetails(exportDto.getRubellaDnaMicroarrayDetails());
+                        caseExportDetailedDto.setRubellaOtherDetails(exportDto.getRubellaOtherDetails());
+                        caseExportDetailedDto.setTuberculosisAntibodyDetection(exportDto.getTuberculosisAntibodyDetection());
+                        caseExportDetailedDto.setTuberculosisAntigenDetection(exportDto.getTuberculosisAntigenDetection());
+                        caseExportDetailedDto.setTuberculosisRapidTest(exportDto.getTuberculosisRapidTest());
+                        caseExportDetailedDto.setTuberculosisCulture(exportDto.getTuberculosisCulture());
+                        caseExportDetailedDto.setTuberculosisHistopathology(exportDto.getTuberculosisHistopathology());
+                        caseExportDetailedDto.setTuberculosisIsolation(exportDto.getTuberculosisIsolation());
+                        caseExportDetailedDto.setTuberculosisIgmSerumAntibody(exportDto.getTuberculosisIgmSerumAntibody());
+                        caseExportDetailedDto.setTuberculosisIggSerumAntibody(exportDto.getTuberculosisIggSerumAntibody());
+                        caseExportDetailedDto.setTuberculosisIgaSerumAntibody(exportDto.getTuberculosisIgaSerumAntibody());
+                        caseExportDetailedDto.setTuberculosisIncubationTime(exportDto.getTuberculosisIncubationTime());
+                        caseExportDetailedDto.setTuberculosisIndirectFluorescentAntibody(exportDto.getTuberculosisIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setTuberculosisDirectFluorescentAntibody(exportDto.getTuberculosisDirectFluorescentAntibody());
+                        caseExportDetailedDto.setTuberculosisMicroscopy(exportDto.getTuberculosisMicroscopy());
+                        caseExportDetailedDto.setTuberculosisNeutralizingAntibodies(exportDto.getTuberculosisNeutralizingAntibodies());
+                        caseExportDetailedDto.setTuberculosisPcrRtPcr(exportDto.getTuberculosisPcrRtPcr());
+                        caseExportDetailedDto.setTuberculosisGramStain(exportDto.getTuberculosisGramStain());
+                        caseExportDetailedDto.setTuberculosisLatexAgglutination(exportDto.getTuberculosisLatexAgglutination());
+                        caseExportDetailedDto.setTuberculosisCqValueDetection(exportDto.getTuberculosisCqValueDetection());
+                        caseExportDetailedDto.setTuberculosisSequencing(exportDto.getTuberculosisSequencing());
+                        caseExportDetailedDto.setTuberculosisDnaMicroarray(exportDto.getTuberculosisDnaMicroarray());
+                        caseExportDetailedDto.setTuberculosisOther(exportDto.getTuberculosisOther());
+                        caseExportDetailedDto.setTuberculosisAntibodyDetectionDetails(exportDto.getTuberculosisAntibodyDetectionDetails());
+                        caseExportDetailedDto.setTuberculosisAntigenDetectionDetails(exportDto.getTuberculosisAntigenDetectionDetails());
+                        caseExportDetailedDto.setTuberculosisRapidTestDetails(exportDto.getTuberculosisRapidTestDetails());
+                        caseExportDetailedDto.setTuberculosisCultureDetails(exportDto.getTuberculosisCultureDetails());
+                        caseExportDetailedDto.setTuberculosisHistopathologyDetails(exportDto.getTuberculosisHistopathologyDetails());
+                        caseExportDetailedDto.setTuberculosisIsolationDetails(exportDto.getTuberculosisIsolationDetails());
+                        caseExportDetailedDto.setTuberculosisIgmSerumAntibodyDetails(exportDto.getTuberculosisIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setTuberculosisIggSerumAntibodyDetails(exportDto.getTuberculosisIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setTuberculosisIgaSerumAntibodyDetails(exportDto.getTuberculosisIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setTuberculosisIncubationTimeDetails(exportDto.getTuberculosisIncubationTimeDetails());
+                        caseExportDetailedDto.setTuberculosisIndirectFluorescentAntibodyDetails(exportDto.getTuberculosisIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setTuberculosisDirectFluorescentAntibodyDetails(exportDto.getTuberculosisDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setTuberculosisMicroscopyDetails(exportDto.getTuberculosisMicroscopyDetails());
+                        caseExportDetailedDto.setTuberculosisNeutralizingAntibodiesDetails(exportDto.getTuberculosisNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setTuberculosisPcrRtPcrDetails(exportDto.getTuberculosisPcrRtPcrDetails());
+                        caseExportDetailedDto.setTuberculosisGramStainDetails(exportDto.getTuberculosisGramStainDetails());
+                        caseExportDetailedDto.setTuberculosisLatexAgglutinationDetails(exportDto.getTuberculosisLatexAgglutinationDetails());
+                        caseExportDetailedDto.setTuberculosisCqValueDetectionDetails(exportDto.getTuberculosisCqValueDetectionDetails());
+                        caseExportDetailedDto.setTuberculosisSequencingDetails(exportDto.getTuberculosisSequencingDetails());
+                        caseExportDetailedDto.setTuberculosisDnaMicroarrayDetails(exportDto.getTuberculosisDnaMicroarrayDetails());
+                        caseExportDetailedDto.setTuberculosisOtherDetails(exportDto.getTuberculosisOtherDetails());
+                        caseExportDetailedDto.setLeprosyAntibodyDetection(exportDto.getLeprosyAntibodyDetection());
+                        caseExportDetailedDto.setLeprosyAntigenDetection(exportDto.getLeprosyAntigenDetection());
+                        caseExportDetailedDto.setLeprosyRapidTest(exportDto.getLeprosyRapidTest());
+                        caseExportDetailedDto.setLeprosyCulture(exportDto.getLeprosyCulture());
+                        caseExportDetailedDto.setLeprosyHistopathology(exportDto.getLeprosyHistopathology());
+                        caseExportDetailedDto.setLeprosyIsolation(exportDto.getLeprosyIsolation());
+                        caseExportDetailedDto.setLeprosyIgmSerumAntibody(exportDto.getLeprosyIgmSerumAntibody());
+                        caseExportDetailedDto.setLeprosyIggSerumAntibody(exportDto.getLeprosyIggSerumAntibody());
+                        caseExportDetailedDto.setLeprosyIgaSerumAntibody(exportDto.getLeprosyIgaSerumAntibody());
+                        caseExportDetailedDto.setLeprosyIncubationTime(exportDto.getLeprosyIncubationTime());
+                        caseExportDetailedDto.setLeprosyIndirectFluorescentAntibody(exportDto.getLeprosyIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setLeprosyDirectFluorescentAntibody(exportDto.getLeprosyDirectFluorescentAntibody());
+                        caseExportDetailedDto.setLeprosyMicroscopy(exportDto.getLeprosyMicroscopy());
+                        caseExportDetailedDto.setLeprosyNeutralizingAntibodies(exportDto.getLeprosyNeutralizingAntibodies());
+                        caseExportDetailedDto.setLeprosyPcrRtPcr(exportDto.getLeprosyPcrRtPcr());
+                        caseExportDetailedDto.setLeprosyGramStain(exportDto.getLeprosyGramStain());
+                        caseExportDetailedDto.setLeprosyLatexAgglutination(exportDto.getLeprosyLatexAgglutination());
+                        caseExportDetailedDto.setLeprosyCqValueDetection(exportDto.getLeprosyCqValueDetection());
+                        caseExportDetailedDto.setLeprosySequencing(exportDto.getLeprosySequencing());
+                        caseExportDetailedDto.setLeprosyDnaMicroarray(exportDto.getLeprosyDnaMicroarray());
+                        caseExportDetailedDto.setLeprosyOther(exportDto.getLeprosyOther());
+                        caseExportDetailedDto.setLeprosyAntibodyDetectionDetails(exportDto.getLeprosyAntibodyDetectionDetails());
+                        caseExportDetailedDto.setLeprosyAntigenDetectionDetails(exportDto.getLeprosyAntigenDetectionDetails());
+                        caseExportDetailedDto.setLeprosyRapidTestDetails(exportDto.getLeprosyRapidTestDetails());
+                        caseExportDetailedDto.setLeprosyCultureDetails(exportDto.getLeprosyCultureDetails());
+                        caseExportDetailedDto.setLeprosyHistopathologyDetails(exportDto.getLeprosyHistopathologyDetails());
+                        caseExportDetailedDto.setLeprosyIsolationDetails(exportDto.getLeprosyIsolationDetails());
+                        caseExportDetailedDto.setLeprosyIgmSerumAntibodyDetails(exportDto.getLeprosyIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setLeprosyIggSerumAntibodyDetails(exportDto.getLeprosyIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setLeprosyIgaSerumAntibodyDetails(exportDto.getLeprosyIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setLeprosyIncubationTimeDetails(exportDto.getLeprosyIncubationTimeDetails());
+                        caseExportDetailedDto.setLeprosyIndirectFluorescentAntibodyDetails(exportDto.getLeprosyIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setLeprosyDirectFluorescentAntibodyDetails(exportDto.getLeprosyDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setLeprosyMicroscopyDetails(exportDto.getLeprosyMicroscopyDetails());
+                        caseExportDetailedDto.setLeprosyNeutralizingAntibodiesDetails(exportDto.getLeprosyNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setLeprosyPcrRtPcrDetails(exportDto.getLeprosyPcrRtPcrDetails());
+                        caseExportDetailedDto.setLeprosyGramStainDetails(exportDto.getLeprosyGramStainDetails());
+                        caseExportDetailedDto.setLeprosyLatexAgglutinationDetails(exportDto.getLeprosyLatexAgglutinationDetails());
+                        caseExportDetailedDto.setLeprosyCqValueDetectionDetails(exportDto.getLeprosyCqValueDetectionDetails());
+                        caseExportDetailedDto.setLeprosySequencingDetails(exportDto.getLeprosySequencingDetails());
+                        caseExportDetailedDto.setLeprosyDnaMicroarrayDetails(exportDto.getLeprosyDnaMicroarrayDetails());
+                        caseExportDetailedDto.setLeprosyOtherDetails(exportDto.getLeprosyOtherDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisAntibodyDetection(exportDto.getLymphaticFilariasisAntibodyDetection());
+                        caseExportDetailedDto.setLymphaticFilariasisAntigenDetection(exportDto.getLymphaticFilariasisAntigenDetection());
+                        caseExportDetailedDto.setLymphaticFilariasisRapidTest(exportDto.getLymphaticFilariasisRapidTest());
+                        caseExportDetailedDto.setLymphaticFilariasisCulture(exportDto.getLymphaticFilariasisCulture());
+                        caseExportDetailedDto.setLymphaticFilariasisHistopathology(exportDto.getLymphaticFilariasisHistopathology());
+                        caseExportDetailedDto.setLymphaticFilariasisIsolation(exportDto.getLymphaticFilariasisIsolation());
+                        caseExportDetailedDto.setLymphaticFilariasisIgmSerumAntibody(exportDto.getLymphaticFilariasisIgmSerumAntibody());
+                        caseExportDetailedDto.setLymphaticFilariasisIggSerumAntibody(exportDto.getLymphaticFilariasisIggSerumAntibody());
+                        caseExportDetailedDto.setLymphaticFilariasisIgaSerumAntibody(exportDto.getLymphaticFilariasisIgaSerumAntibody());
+                        caseExportDetailedDto.setLymphaticFilariasisIncubationTime(exportDto.getLymphaticFilariasisIncubationTime());
+                        caseExportDetailedDto.setLymphaticFilariasisIndirectFluorescentAntibody(exportDto.getLymphaticFilariasisIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setLymphaticFilariasisDirectFluorescentAntibody(exportDto.getLymphaticFilariasisDirectFluorescentAntibody());
+                        caseExportDetailedDto.setLymphaticFilariasisMicroscopy(exportDto.getLymphaticFilariasisMicroscopy());
+                        caseExportDetailedDto.setLymphaticFilariasisNeutralizingAntibodies(exportDto.getLymphaticFilariasisNeutralizingAntibodies());
+                        caseExportDetailedDto.setLymphaticFilariasisPcrRtPcr(exportDto.getLymphaticFilariasisPcrRtPcr());
+                        caseExportDetailedDto.setLymphaticFilariasisGramStain(exportDto.getLymphaticFilariasisGramStain());
+                        caseExportDetailedDto.setLymphaticFilariasisLatexAgglutination(exportDto.getLymphaticFilariasisLatexAgglutination());
+                        caseExportDetailedDto.setLymphaticFilariasisCqValueDetection(exportDto.getLymphaticFilariasisCqValueDetection());
+                        caseExportDetailedDto.setLymphaticFilariasisSequencing(exportDto.getLymphaticFilariasisSequencing());
+                        caseExportDetailedDto.setLymphaticFilariasisDnaMicroarray(exportDto.getLymphaticFilariasisDnaMicroarray());
+                        caseExportDetailedDto.setLymphaticFilariasisOther(exportDto.getLymphaticFilariasisOther());
+                        caseExportDetailedDto.setLymphaticFilariasisAntibodyDetectionDetails(exportDto.getLymphaticFilariasisAntibodyDetectionDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisAntigenDetectionDetails(exportDto.getLymphaticFilariasisAntigenDetectionDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisRapidTestDetails(exportDto.getLymphaticFilariasisRapidTestDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisCultureDetails(exportDto.getLymphaticFilariasisCultureDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisHistopathologyDetails(exportDto.getLymphaticFilariasisHistopathologyDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisIsolationDetails(exportDto.getLymphaticFilariasisIsolationDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisIgmSerumAntibodyDetails(exportDto.getLymphaticFilariasisIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisIggSerumAntibodyDetails(exportDto.getLymphaticFilariasisIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisIgaSerumAntibodyDetails(exportDto.getLymphaticFilariasisIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisIncubationTimeDetails(exportDto.getLymphaticFilariasisIncubationTimeDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisIndirectFluorescentAntibodyDetails(exportDto.getLymphaticFilariasisIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisDirectFluorescentAntibodyDetails(exportDto.getLymphaticFilariasisDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisMicroscopyDetails(exportDto.getLymphaticFilariasisMicroscopyDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisNeutralizingAntibodiesDetails(exportDto.getLymphaticFilariasisNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisPcrRtPcrDetails(exportDto.getLymphaticFilariasisPcrRtPcrDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisGramStainDetails(exportDto.getLymphaticFilariasisGramStainDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisLatexAgglutinationDetails(exportDto.getLymphaticFilariasisLatexAgglutinationDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisCqValueDetectionDetails(exportDto.getLymphaticFilariasisCqValueDetectionDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisSequencingDetails(exportDto.getLymphaticFilariasisSequencingDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisDnaMicroarrayDetails(exportDto.getLymphaticFilariasisDnaMicroarrayDetails());
+                        caseExportDetailedDto.setLymphaticFilariasisOtherDetails(exportDto.getLymphaticFilariasisOtherDetails());
+                        caseExportDetailedDto.setBuruliUlcerAntibodyDetection(exportDto.getBuruliUlcerAntibodyDetection());
+                        caseExportDetailedDto.setBuruliUlcerAntigenDetection(exportDto.getBuruliUlcerAntigenDetection());
+                        caseExportDetailedDto.setBuruliUlcerRapidTest(exportDto.getBuruliUlcerRapidTest());
+                        caseExportDetailedDto.setBuruliUlcerCulture(exportDto.getBuruliUlcerCulture());
+                        caseExportDetailedDto.setBuruliUlcerHistopathology(exportDto.getBuruliUlcerHistopathology());
+                        caseExportDetailedDto.setBuruliUlcerIsolation(exportDto.getBuruliUlcerIsolation());
+                        caseExportDetailedDto.setBuruliUlcerIgmSerumAntibody(exportDto.getBuruliUlcerIgmSerumAntibody());
+                        caseExportDetailedDto.setBuruliUlcerIggSerumAntibody(exportDto.getBuruliUlcerIggSerumAntibody());
+                        caseExportDetailedDto.setBuruliUlcerIgaSerumAntibody(exportDto.getBuruliUlcerIgaSerumAntibody());
+                        caseExportDetailedDto.setBuruliUlcerIncubationTime(exportDto.getBuruliUlcerIncubationTime());
+                        caseExportDetailedDto.setBuruliUlcerIndirectFluorescentAntibody(exportDto.getBuruliUlcerIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setBuruliUlcerDirectFluorescentAntibody(exportDto.getBuruliUlcerDirectFluorescentAntibody());
+                        caseExportDetailedDto.setBuruliUlcerMicroscopy(exportDto.getBuruliUlcerMicroscopy());
+                        caseExportDetailedDto.setBuruliUlcerNeutralizingAntibodies(exportDto.getBuruliUlcerNeutralizingAntibodies());
+                        caseExportDetailedDto.setBuruliUlcerPcrRtPcr(exportDto.getBuruliUlcerPcrRtPcr());
+                        caseExportDetailedDto.setBuruliUlcerGramStain(exportDto.getBuruliUlcerGramStain());
+                        caseExportDetailedDto.setBuruliUlcerLatexAgglutination(exportDto.getBuruliUlcerLatexAgglutination());
+                        caseExportDetailedDto.setBuruliUlcerCqValueDetection(exportDto.getBuruliUlcerCqValueDetection());
+                        caseExportDetailedDto.setBuruliUlcerSequencing(exportDto.getBuruliUlcerSequencing());
+                        caseExportDetailedDto.setBuruliUlcerDnaMicroarray(exportDto.getBuruliUlcerDnaMicroarray());
+                        caseExportDetailedDto.setBuruliUlcerOther(exportDto.getBuruliUlcerOther());
+                        caseExportDetailedDto.setBuruliUlcerAntibodyDetectionDetails(exportDto.getBuruliUlcerAntibodyDetectionDetails());
+                        caseExportDetailedDto.setBuruliUlcerAntigenDetectionDetails(exportDto.getBuruliUlcerAntigenDetectionDetails());
+                        caseExportDetailedDto.setBuruliUlcerRapidTestDetails(exportDto.getBuruliUlcerRapidTestDetails());
+                        caseExportDetailedDto.setBuruliUlcerCultureDetails(exportDto.getBuruliUlcerCultureDetails());
+                        caseExportDetailedDto.setBuruliUlcerHistopathologyDetails(exportDto.getBuruliUlcerHistopathologyDetails());
+                        caseExportDetailedDto.setBuruliUlcerIsolationDetails(exportDto.getBuruliUlcerIsolationDetails());
+                        caseExportDetailedDto.setBuruliUlcerIgmSerumAntibodyDetails(exportDto.getBuruliUlcerIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setBuruliUlcerIggSerumAntibodyDetails(exportDto.getBuruliUlcerIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setBuruliUlcerIgaSerumAntibodyDetails(exportDto.getBuruliUlcerIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setBuruliUlcerIncubationTimeDetails(exportDto.getBuruliUlcerIncubationTimeDetails());
+                        caseExportDetailedDto.setBuruliUlcerIndirectFluorescentAntibodyDetails(exportDto.getBuruliUlcerIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setBuruliUlcerDirectFluorescentAntibodyDetails(exportDto.getBuruliUlcerDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setBuruliUlcerMicroscopyDetails(exportDto.getBuruliUlcerMicroscopyDetails());
+                        caseExportDetailedDto.setBuruliUlcerNeutralizingAntibodiesDetails(exportDto.getBuruliUlcerNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setBuruliUlcerPcrRtPcrDetails(exportDto.getBuruliUlcerPcrRtPcrDetails());
+                        caseExportDetailedDto.setBuruliUlcerGramStainDetails(exportDto.getBuruliUlcerGramStainDetails());
+                        caseExportDetailedDto.setBuruliUlcerLatexAgglutinationDetails(exportDto.getBuruliUlcerLatexAgglutinationDetails());
+                        caseExportDetailedDto.setBuruliUlcerCqValueDetectionDetails(exportDto.getBuruliUlcerCqValueDetectionDetails());
+                        caseExportDetailedDto.setBuruliUlcerSequencingDetails(exportDto.getBuruliUlcerSequencingDetails());
+                        caseExportDetailedDto.setBuruliUlcerDnaMicroarrayDetails(exportDto.getBuruliUlcerDnaMicroarrayDetails());
+                        caseExportDetailedDto.setBuruliUlcerOtherDetails(exportDto.getBuruliUlcerOtherDetails());
+                        caseExportDetailedDto.setPertussisAntibodyDetection(exportDto.getPertussisAntibodyDetection());
+                        caseExportDetailedDto.setPertussisAntigenDetection(exportDto.getPertussisAntigenDetection());
+                        caseExportDetailedDto.setPertussisRapidTest(exportDto.getPertussisRapidTest());
+                        caseExportDetailedDto.setPertussisCulture(exportDto.getPertussisCulture());
+                        caseExportDetailedDto.setPertussisHistopathology(exportDto.getPertussisHistopathology());
+                        caseExportDetailedDto.setPertussisIsolation(exportDto.getPertussisIsolation());
+                        caseExportDetailedDto.setPertussisIgmSerumAntibody(exportDto.getPertussisIgmSerumAntibody());
+                        caseExportDetailedDto.setPertussisIggSerumAntibody(exportDto.getPertussisIggSerumAntibody());
+                        caseExportDetailedDto.setPertussisIgaSerumAntibody(exportDto.getPertussisIgaSerumAntibody());
+                        caseExportDetailedDto.setPertussisIncubationTime(exportDto.getPertussisIncubationTime());
+                        caseExportDetailedDto.setPertussisIndirectFluorescentAntibody(exportDto.getPertussisIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setPertussisDirectFluorescentAntibody(exportDto.getPertussisDirectFluorescentAntibody());
+                        caseExportDetailedDto.setPertussisMicroscopy(exportDto.getPertussisMicroscopy());
+                        caseExportDetailedDto.setPertussisNeutralizingAntibodies(exportDto.getPertussisNeutralizingAntibodies());
+                        caseExportDetailedDto.setPertussisPcrRtPcr(exportDto.getPertussisPcrRtPcr());
+                        caseExportDetailedDto.setPertussisGramStain(exportDto.getPertussisGramStain());
+                        caseExportDetailedDto.setPertussisLatexAgglutination(exportDto.getPertussisLatexAgglutination());
+                        caseExportDetailedDto.setPertussisCqValueDetection(exportDto.getPertussisCqValueDetection());
+                        caseExportDetailedDto.setPertussisSequencing(exportDto.getPertussisSequencing());
+                        caseExportDetailedDto.setPertussisDnaMicroarray(exportDto.getPertussisDnaMicroarray());
+                        caseExportDetailedDto.setPertussisOther(exportDto.getPertussisOther());
+                        caseExportDetailedDto.setPertussisAntibodyDetectionDetails(exportDto.getPertussisAntibodyDetectionDetails());
+                        caseExportDetailedDto.setPertussisAntigenDetectionDetails(exportDto.getPertussisAntigenDetectionDetails());
+                        caseExportDetailedDto.setPertussisRapidTestDetails(exportDto.getPertussisRapidTestDetails());
+                        caseExportDetailedDto.setPertussisCultureDetails(exportDto.getPertussisCultureDetails());
+                        caseExportDetailedDto.setPertussisHistopathologyDetails(exportDto.getPertussisHistopathologyDetails());
+                        caseExportDetailedDto.setPertussisIsolationDetails(exportDto.getPertussisIsolationDetails());
+                        caseExportDetailedDto.setPertussisIgmSerumAntibodyDetails(exportDto.getPertussisIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setPertussisIggSerumAntibodyDetails(exportDto.getPertussisIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setPertussisIgaSerumAntibodyDetails(exportDto.getPertussisIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setPertussisIncubationTimeDetails(exportDto.getPertussisIncubationTimeDetails());
+                        caseExportDetailedDto.setPertussisIndirectFluorescentAntibodyDetails(exportDto.getPertussisIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setPertussisDirectFluorescentAntibodyDetails(exportDto.getPertussisDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setPertussisMicroscopyDetails(exportDto.getPertussisMicroscopyDetails());
+                        caseExportDetailedDto.setPertussisNeutralizingAntibodiesDetails(exportDto.getPertussisNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setPertussisPcrRtPcrDetails(exportDto.getPertussisPcrRtPcrDetails());
+                        caseExportDetailedDto.setPertussisGramStainDetails(exportDto.getPertussisGramStainDetails());
+                        caseExportDetailedDto.setPertussisLatexAgglutinationDetails(exportDto.getPertussisLatexAgglutinationDetails());
+                        caseExportDetailedDto.setPertussisCqValueDetectionDetails(exportDto.getPertussisCqValueDetectionDetails());
+                        caseExportDetailedDto.setPertussisSequencingDetails(exportDto.getPertussisSequencingDetails());
+                        caseExportDetailedDto.setPertussisDnaMicroarrayDetails(exportDto.getPertussisDnaMicroarrayDetails());
+                        caseExportDetailedDto.setPertussisOtherDetails(exportDto.getPertussisOtherDetails());
+                        caseExportDetailedDto.setNeonatalTetanusAntibodyDetection(exportDto.getNeonatalTetanusAntibodyDetection());
+                        caseExportDetailedDto.setNeonatalTetanusAntigenDetection(exportDto.getNeonatalTetanusAntigenDetection());
+                        caseExportDetailedDto.setNeonatalTetanusRapidTest(exportDto.getNeonatalTetanusRapidTest());
+                        caseExportDetailedDto.setNeonatalTetanusCulture(exportDto.getNeonatalTetanusCulture());
+                        caseExportDetailedDto.setNeonatalTetanusHistopathology(exportDto.getNeonatalTetanusHistopathology());
+                        caseExportDetailedDto.setNeonatalTetanusIsolation(exportDto.getNeonatalTetanusIsolation());
+                        caseExportDetailedDto.setNeonatalTetanusIgmSerumAntibody(exportDto.getNeonatalTetanusIgmSerumAntibody());
+                        caseExportDetailedDto.setNeonatalTetanusIggSerumAntibody(exportDto.getNeonatalTetanusIggSerumAntibody());
+                        caseExportDetailedDto.setNeonatalTetanusIgaSerumAntibody(exportDto.getNeonatalTetanusIgaSerumAntibody());
+                        caseExportDetailedDto.setNeonatalTetanusIncubationTime(exportDto.getNeonatalTetanusIncubationTime());
+                        caseExportDetailedDto.setNeonatalTetanusIndirectFluorescentAntibody(exportDto.getNeonatalTetanusIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setNeonatalTetanusDirectFluorescentAntibody(exportDto.getNeonatalTetanusDirectFluorescentAntibody());
+                        caseExportDetailedDto.setNeonatalTetanusMicroscopy(exportDto.getNeonatalTetanusMicroscopy());
+                        caseExportDetailedDto.setNeonatalTetanusNeutralizingAntibodies(exportDto.getNeonatalTetanusNeutralizingAntibodies());
+                        caseExportDetailedDto.setNeonatalTetanusPcrRtPcr(exportDto.getNeonatalTetanusPcrRtPcr());
+                        caseExportDetailedDto.setNeonatalTetanusGramStain(exportDto.getNeonatalTetanusGramStain());
+                        caseExportDetailedDto.setNeonatalTetanusLatexAgglutination(exportDto.getNeonatalTetanusLatexAgglutination());
+                        caseExportDetailedDto.setNeonatalTetanusCqValueDetection(exportDto.getNeonatalTetanusCqValueDetection());
+                        caseExportDetailedDto.setNeonatalTetanusSequencing(exportDto.getNeonatalTetanusSequencing());
+                        caseExportDetailedDto.setNeonatalTetanusDnaMicroarray(exportDto.getNeonatalTetanusDnaMicroarray());
+                        caseExportDetailedDto.setNeonatalTetanusOther(exportDto.getNeonatalTetanusOther());
+                        caseExportDetailedDto.setNeonatalTetanusAntibodyDetectionDetails(exportDto.getNeonatalTetanusAntibodyDetectionDetails());
+                        caseExportDetailedDto.setNeonatalTetanusAntigenDetectionDetails(exportDto.getNeonatalTetanusAntigenDetectionDetails());
+                        caseExportDetailedDto.setNeonatalTetanusRapidTestDetails(exportDto.getNeonatalTetanusRapidTestDetails());
+                        caseExportDetailedDto.setNeonatalTetanusCultureDetails(exportDto.getNeonatalTetanusCultureDetails());
+                        caseExportDetailedDto.setNeonatalTetanusHistopathologyDetails(exportDto.getNeonatalTetanusHistopathologyDetails());
+                        caseExportDetailedDto.setNeonatalTetanusIsolationDetails(exportDto.getNeonatalTetanusIsolationDetails());
+                        caseExportDetailedDto.setNeonatalTetanusIgmSerumAntibodyDetails(exportDto.getNeonatalTetanusIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setNeonatalTetanusIggSerumAntibodyDetails(exportDto.getNeonatalTetanusIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setNeonatalTetanusIgaSerumAntibodyDetails(exportDto.getNeonatalTetanusIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setNeonatalTetanusIncubationTimeDetails(exportDto.getNeonatalTetanusIncubationTimeDetails());
+                        caseExportDetailedDto.setNeonatalTetanusIndirectFluorescentAntibodyDetails(exportDto.getNeonatalTetanusIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setNeonatalTetanusDirectFluorescentAntibodyDetails(exportDto.getNeonatalTetanusDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setNeonatalTetanusMicroscopyDetails(exportDto.getNeonatalTetanusMicroscopyDetails());
+                        caseExportDetailedDto.setNeonatalTetanusNeutralizingAntibodiesDetails(exportDto.getNeonatalTetanusNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setNeonatalTetanusPcrRtPcrDetails(exportDto.getNeonatalTetanusPcrRtPcrDetails());
+                        caseExportDetailedDto.setNeonatalTetanusGramStainDetails(exportDto.getNeonatalTetanusGramStainDetails());
+                        caseExportDetailedDto.setNeonatalTetanusLatexAgglutinationDetails(exportDto.getNeonatalTetanusLatexAgglutinationDetails());
+                        caseExportDetailedDto.setNeonatalTetanusCqValueDetectionDetails(exportDto.getNeonatalTetanusCqValueDetectionDetails());
+                        caseExportDetailedDto.setNeonatalTetanusSequencingDetails(exportDto.getNeonatalTetanusSequencingDetails());
+                        caseExportDetailedDto.setNeonatalTetanusDnaMicroarrayDetails(exportDto.getNeonatalTetanusDnaMicroarrayDetails());
+                        caseExportDetailedDto.setNeonatalTetanusOtherDetails(exportDto.getNeonatalTetanusOtherDetails());
+                        caseExportDetailedDto.setOnchocerciasisAntibodyDetection(exportDto.getOnchocerciasisAntibodyDetection());
+                        caseExportDetailedDto.setOnchocerciasisAntigenDetection(exportDto.getOnchocerciasisAntigenDetection());
+                        caseExportDetailedDto.setOnchocerciasisRapidTest(exportDto.getOnchocerciasisRapidTest());
+                        caseExportDetailedDto.setOnchocerciasisCulture(exportDto.getOnchocerciasisCulture());
+                        caseExportDetailedDto.setOnchocerciasisHistopathology(exportDto.getOnchocerciasisHistopathology());
+                        caseExportDetailedDto.setOnchocerciasisIsolation(exportDto.getOnchocerciasisIsolation());
+                        caseExportDetailedDto.setOnchocerciasisIgmSerumAntibody(exportDto.getOnchocerciasisIgmSerumAntibody());
+                        caseExportDetailedDto.setOnchocerciasisIggSerumAntibody(exportDto.getOnchocerciasisIggSerumAntibody());
+                        caseExportDetailedDto.setOnchocerciasisIgaSerumAntibody(exportDto.getOnchocerciasisIgaSerumAntibody());
+                        caseExportDetailedDto.setOnchocerciasisIncubationTime(exportDto.getOnchocerciasisIncubationTime());
+                        caseExportDetailedDto.setOnchocerciasisIndirectFluorescentAntibody(exportDto.getOnchocerciasisIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setOnchocerciasisDirectFluorescentAntibody(exportDto.getOnchocerciasisDirectFluorescentAntibody());
+                        caseExportDetailedDto.setOnchocerciasisMicroscopy(exportDto.getOnchocerciasisMicroscopy());
+                        caseExportDetailedDto.setOnchocerciasisNeutralizingAntibodies(exportDto.getOnchocerciasisNeutralizingAntibodies());
+                        caseExportDetailedDto.setOnchocerciasisPcrRtPcr(exportDto.getOnchocerciasisPcrRtPcr());
+                        caseExportDetailedDto.setOnchocerciasisGramStain(exportDto.getOnchocerciasisGramStain());
+                        caseExportDetailedDto.setOnchocerciasisLatexAgglutination(exportDto.getOnchocerciasisLatexAgglutination());
+                        caseExportDetailedDto.setOnchocerciasisCqValueDetection(exportDto.getOnchocerciasisCqValueDetection());
+                        caseExportDetailedDto.setOnchocerciasisSequencing(exportDto.getOnchocerciasisSequencing());
+                        caseExportDetailedDto.setOnchocerciasisDnaMicroarray(exportDto.getOnchocerciasisDnaMicroarray());
+                        caseExportDetailedDto.setOnchocerciasisOther(exportDto.getOnchocerciasisOther());
+                        caseExportDetailedDto.setOnchocerciasisAntibodyDetectionDetails(exportDto.getOnchocerciasisAntibodyDetectionDetails());
+                        caseExportDetailedDto.setOnchocerciasisAntigenDetectionDetails(exportDto.getOnchocerciasisAntigenDetectionDetails());
+                        caseExportDetailedDto.setOnchocerciasisRapidTestDetails(exportDto.getOnchocerciasisRapidTestDetails());
+                        caseExportDetailedDto.setOnchocerciasisCultureDetails(exportDto.getOnchocerciasisCultureDetails());
+                        caseExportDetailedDto.setOnchocerciasisHistopathologyDetails(exportDto.getOnchocerciasisHistopathologyDetails());
+                        caseExportDetailedDto.setOnchocerciasisIsolationDetails(exportDto.getOnchocerciasisIsolationDetails());
+                        caseExportDetailedDto.setOnchocerciasisIgmSerumAntibodyDetails(exportDto.getOnchocerciasisIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setOnchocerciasisIggSerumAntibodyDetails(exportDto.getOnchocerciasisIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setOnchocerciasisIgaSerumAntibodyDetails(exportDto.getOnchocerciasisIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setOnchocerciasisIncubationTimeDetails(exportDto.getOnchocerciasisIncubationTimeDetails());
+                        caseExportDetailedDto.setOnchocerciasisIndirectFluorescentAntibodyDetails(exportDto.getOnchocerciasisIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setOnchocerciasisDirectFluorescentAntibodyDetails(exportDto.getOnchocerciasisDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setOnchocerciasisMicroscopyDetails(exportDto.getOnchocerciasisMicroscopyDetails());
+                        caseExportDetailedDto.setOnchocerciasisNeutralizingAntibodiesDetails(exportDto.getOnchocerciasisNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setOnchocerciasisPcrRtPcrDetails(exportDto.getOnchocerciasisPcrRtPcrDetails());
+                        caseExportDetailedDto.setOnchocerciasisGramStainDetails(exportDto.getOnchocerciasisGramStainDetails());
+                        caseExportDetailedDto.setOnchocerciasisLatexAgglutinationDetails(exportDto.getOnchocerciasisLatexAgglutinationDetails());
+                        caseExportDetailedDto.setOnchocerciasisCqValueDetectionDetails(exportDto.getOnchocerciasisCqValueDetectionDetails());
+                        caseExportDetailedDto.setOnchocerciasisSequencingDetails(exportDto.getOnchocerciasisSequencingDetails());
+                        caseExportDetailedDto.setOnchocerciasisDnaMicroarrayDetails(exportDto.getOnchocerciasisDnaMicroarrayDetails());
+                        caseExportDetailedDto.setOnchocerciasisOtherDetails(exportDto.getOnchocerciasisOtherDetails());
+                        caseExportDetailedDto.setDiphteriaAntibodyDetection(exportDto.getDiphteriaAntibodyDetection());
+                        caseExportDetailedDto.setDiphteriaAntigenDetection(exportDto.getDiphteriaAntigenDetection());
+                        caseExportDetailedDto.setDiphteriaRapidTest(exportDto.getDiphteriaRapidTest());
+                        caseExportDetailedDto.setDiphteriaCulture(exportDto.getDiphteriaCulture());
+                        caseExportDetailedDto.setDiphteriaHistopathology(exportDto.getDiphteriaHistopathology());
+                        caseExportDetailedDto.setDiphteriaIsolation(exportDto.getDiphteriaIsolation());
+                        caseExportDetailedDto.setDiphteriaIgmSerumAntibody(exportDto.getDiphteriaIgmSerumAntibody());
+                        caseExportDetailedDto.setDiphteriaIggSerumAntibody(exportDto.getDiphteriaIggSerumAntibody());
+                        caseExportDetailedDto.setDiphteriaIgaSerumAntibody(exportDto.getDiphteriaIgaSerumAntibody());
+                        caseExportDetailedDto.setDiphteriaIncubationTime(exportDto.getDiphteriaIncubationTime());
+                        caseExportDetailedDto.setDiphteriaIndirectFluorescentAntibody(exportDto.getDiphteriaIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setDiphteriaDirectFluorescentAntibody(exportDto.getDiphteriaDirectFluorescentAntibody());
+                        caseExportDetailedDto.setDiphteriaMicroscopy(exportDto.getDiphteriaMicroscopy());
+                        caseExportDetailedDto.setDiphteriaNeutralizingAntibodies(exportDto.getDiphteriaNeutralizingAntibodies());
+                        caseExportDetailedDto.setDiphteriaPcrRtPcr(exportDto.getDiphteriaPcrRtPcr());
+                        caseExportDetailedDto.setDiphteriaGramStain(exportDto.getDiphteriaGramStain());
+                        caseExportDetailedDto.setDiphteriaLatexAgglutination(exportDto.getDiphteriaLatexAgglutination());
+                        caseExportDetailedDto.setDiphteriaCqValueDetection(exportDto.getDiphteriaCqValueDetection());
+                        caseExportDetailedDto.setDiphteriaSequencing(exportDto.getDiphteriaSequencing());
+                        caseExportDetailedDto.setDiphteriaDnaMicroarray(exportDto.getDiphteriaDnaMicroarray());
+                        caseExportDetailedDto.setDiphteriaOther(exportDto.getDiphteriaOther());
+                        caseExportDetailedDto.setDiphteriaAntibodyDetectionDetails(exportDto.getDiphteriaAntibodyDetectionDetails());
+                        caseExportDetailedDto.setDiphteriaAntigenDetectionDetails(exportDto.getDiphteriaAntigenDetectionDetails());
+                        caseExportDetailedDto.setDiphteriaRapidTestDetails(exportDto.getDiphteriaRapidTestDetails());
+                        caseExportDetailedDto.setDiphteriaCultureDetails(exportDto.getDiphteriaCultureDetails());
+                        caseExportDetailedDto.setDiphteriaHistopathologyDetails(exportDto.getDiphteriaHistopathologyDetails());
+                        caseExportDetailedDto.setDiphteriaIsolationDetails(exportDto.getDiphteriaIsolationDetails());
+                        caseExportDetailedDto.setDiphteriaIgmSerumAntibodyDetails(exportDto.getDiphteriaIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setDiphteriaIggSerumAntibodyDetails(exportDto.getDiphteriaIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setDiphteriaIgaSerumAntibodyDetails(exportDto.getDiphteriaIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setDiphteriaIncubationTimeDetails(exportDto.getDiphteriaIncubationTimeDetails());
+                        caseExportDetailedDto.setDiphteriaIndirectFluorescentAntibodyDetails(exportDto.getDiphteriaIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setDiphteriaDirectFluorescentAntibodyDetails(exportDto.getDiphteriaDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setDiphteriaMicroscopyDetails(exportDto.getDiphteriaMicroscopyDetails());
+                        caseExportDetailedDto.setDiphteriaNeutralizingAntibodiesDetails(exportDto.getDiphteriaNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setDiphteriaPcrRtPcrDetails(exportDto.getDiphteriaPcrRtPcrDetails());
+                        caseExportDetailedDto.setDiphteriaGramStainDetails(exportDto.getDiphteriaGramStainDetails());
+                        caseExportDetailedDto.setDiphteriaLatexAgglutinationDetails(exportDto.getDiphteriaLatexAgglutinationDetails());
+                        caseExportDetailedDto.setDiphteriaCqValueDetectionDetails(exportDto.getDiphteriaCqValueDetectionDetails());
+                        caseExportDetailedDto.setDiphteriaSequencingDetails(exportDto.getDiphteriaSequencingDetails());
+                        caseExportDetailedDto.setDiphteriaDnaMicroarrayDetails(exportDto.getDiphteriaDnaMicroarrayDetails());
+                        caseExportDetailedDto.setDiphteriaOtherDetails(exportDto.getDiphteriaOtherDetails());
+                        caseExportDetailedDto.setTrachomaAntibodyDetection(exportDto.getTrachomaAntibodyDetection());
+                        caseExportDetailedDto.setTrachomaAntigenDetection(exportDto.getTrachomaAntigenDetection());
+                        caseExportDetailedDto.setTrachomaRapidTest(exportDto.getTrachomaRapidTest());
+                        caseExportDetailedDto.setTrachomaCulture(exportDto.getTrachomaCulture());
+                        caseExportDetailedDto.setTrachomaHistopathology(exportDto.getTrachomaHistopathology());
+                        caseExportDetailedDto.setTrachomaIsolation(exportDto.getTrachomaIsolation());
+                        caseExportDetailedDto.setTrachomaIgmSerumAntibody(exportDto.getTrachomaIgmSerumAntibody());
+                        caseExportDetailedDto.setTrachomaIggSerumAntibody(exportDto.getTrachomaIggSerumAntibody());
+                        caseExportDetailedDto.setTrachomaIgaSerumAntibody(exportDto.getTrachomaIgaSerumAntibody());
+                        caseExportDetailedDto.setTrachomaIncubationTime(exportDto.getTrachomaIncubationTime());
+                        caseExportDetailedDto.setTrachomaIndirectFluorescentAntibody(exportDto.getTrachomaIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setTrachomaDirectFluorescentAntibody(exportDto.getTrachomaDirectFluorescentAntibody());
+                        caseExportDetailedDto.setTrachomaMicroscopy(exportDto.getTrachomaMicroscopy());
+                        caseExportDetailedDto.setTrachomaNeutralizingAntibodies(exportDto.getTrachomaNeutralizingAntibodies());
+                        caseExportDetailedDto.setTrachomaPcrRtPcr(exportDto.getTrachomaPcrRtPcr());
+                        caseExportDetailedDto.setTrachomaGramStain(exportDto.getTrachomaGramStain());
+                        caseExportDetailedDto.setTrachomaLatexAgglutination(exportDto.getTrachomaLatexAgglutination());
+                        caseExportDetailedDto.setTrachomaCqValueDetection(exportDto.getTrachomaCqValueDetection());
+                        caseExportDetailedDto.setTrachomaSequencing(exportDto.getTrachomaSequencing());
+                        caseExportDetailedDto.setTrachomaDnaMicroarray(exportDto.getTrachomaDnaMicroarray());
+                        caseExportDetailedDto.setTrachomaOther(exportDto.getTrachomaOther());
+                        caseExportDetailedDto.setTrachomaAntibodyDetectionDetails(exportDto.getTrachomaAntibodyDetectionDetails());
+                        caseExportDetailedDto.setTrachomaAntigenDetectionDetails(exportDto.getTrachomaAntigenDetectionDetails());
+                        caseExportDetailedDto.setTrachomaRapidTestDetails(exportDto.getTrachomaRapidTestDetails());
+                        caseExportDetailedDto.setTrachomaCultureDetails(exportDto.getTrachomaCultureDetails());
+                        caseExportDetailedDto.setTrachomaHistopathologyDetails(exportDto.getTrachomaHistopathologyDetails());
+                        caseExportDetailedDto.setTrachomaIsolationDetails(exportDto.getTrachomaIsolationDetails());
+                        caseExportDetailedDto.setTrachomaIgmSerumAntibodyDetails(exportDto.getTrachomaIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setTrachomaIggSerumAntibodyDetails(exportDto.getTrachomaIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setTrachomaIgaSerumAntibodyDetails(exportDto.getTrachomaIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setTrachomaIncubationTimeDetails(exportDto.getTrachomaIncubationTimeDetails());
+                        caseExportDetailedDto.setTrachomaIndirectFluorescentAntibodyDetails(exportDto.getTrachomaIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setTrachomaDirectFluorescentAntibodyDetails(exportDto.getTrachomaDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setTrachomaMicroscopyDetails(exportDto.getTrachomaMicroscopyDetails());
+                        caseExportDetailedDto.setTrachomaNeutralizingAntibodiesDetails(exportDto.getTrachomaNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setTrachomaPcrRtPcrDetails(exportDto.getTrachomaPcrRtPcrDetails());
+                        caseExportDetailedDto.setTrachomaGramStainDetails(exportDto.getTrachomaGramStainDetails());
+                        caseExportDetailedDto.setTrachomaLatexAgglutinationDetails(exportDto.getTrachomaLatexAgglutinationDetails());
+                        caseExportDetailedDto.setTrachomaCqValueDetectionDetails(exportDto.getTrachomaCqValueDetectionDetails());
+                        caseExportDetailedDto.setTrachomaSequencingDetails(exportDto.getTrachomaSequencingDetails());
+                        caseExportDetailedDto.setTrachomaDnaMicroarrayDetails(exportDto.getTrachomaDnaMicroarrayDetails());
+                        caseExportDetailedDto.setTrachomaOtherDetails(exportDto.getTrachomaOtherDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisAntibodyDetection(exportDto.getYawsEndemicSyphilisAntibodyDetection());
+                        caseExportDetailedDto.setYawsEndemicSyphilisAntigenDetection(exportDto.getYawsEndemicSyphilisAntigenDetection());
+                        caseExportDetailedDto.setYawsEndemicSyphilisRapidTest(exportDto.getYawsEndemicSyphilisRapidTest());
+                        caseExportDetailedDto.setYawsEndemicSyphilisCulture(exportDto.getYawsEndemicSyphilisCulture());
+                        caseExportDetailedDto.setYawsEndemicSyphilisHistopathology(exportDto.getYawsEndemicSyphilisHistopathology());
+                        caseExportDetailedDto.setYawsEndemicSyphilisIsolation(exportDto.getYawsEndemicSyphilisIsolation());
+                        caseExportDetailedDto.setYawsEndemicSyphilisIgmSerumAntibody(exportDto.getYawsEndemicSyphilisIgmSerumAntibody());
+                        caseExportDetailedDto.setYawsEndemicSyphilisIggSerumAntibody(exportDto.getYawsEndemicSyphilisIggSerumAntibody());
+                        caseExportDetailedDto.setYawsEndemicSyphilisIgaSerumAntibody(exportDto.getYawsEndemicSyphilisIgaSerumAntibody());
+                        caseExportDetailedDto.setYawsEndemicSyphilisIncubationTime(exportDto.getYawsEndemicSyphilisIncubationTime());
+                        caseExportDetailedDto.setYawsEndemicSyphilisIndirectFluorescentAntibody(exportDto.getYawsEndemicSyphilisIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setYawsEndemicSyphilisDirectFluorescentAntibody(exportDto.getYawsEndemicSyphilisDirectFluorescentAntibody());
+                        caseExportDetailedDto.setYawsEndemicSyphilisMicroscopy(exportDto.getYawsEndemicSyphilisMicroscopy());
+                        caseExportDetailedDto.setYawsEndemicSyphilisNeutralizingAntibodies(exportDto.getYawsEndemicSyphilisNeutralizingAntibodies());
+                        caseExportDetailedDto.setYawsEndemicSyphilisPcrRtPcr(exportDto.getYawsEndemicSyphilisPcrRtPcr());
+                        caseExportDetailedDto.setYawsEndemicSyphilisGramStain(exportDto.getYawsEndemicSyphilisGramStain());
+                        caseExportDetailedDto.setYawsEndemicSyphilisLatexAgglutination(exportDto.getYawsEndemicSyphilisLatexAgglutination());
+                        caseExportDetailedDto.setYawsEndemicSyphilisCqValueDetection(exportDto.getYawsEndemicSyphilisCqValueDetection());
+                        caseExportDetailedDto.setYawsEndemicSyphilisSequencing(exportDto.getYawsEndemicSyphilisSequencing());
+                        caseExportDetailedDto.setYawsEndemicSyphilisDnaMicroarray(exportDto.getYawsEndemicSyphilisDnaMicroarray());
+                        caseExportDetailedDto.setYawsEndemicSyphilisOther(exportDto.getYawsEndemicSyphilisOther());
+                        caseExportDetailedDto.setYawsEndemicSyphilisAntibodyDetectionDetails(exportDto.getYawsEndemicSyphilisAntibodyDetectionDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisAntigenDetectionDetails(exportDto.getYawsEndemicSyphilisAntigenDetectionDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisRapidTestDetails(exportDto.getYawsEndemicSyphilisRapidTestDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisCultureDetails(exportDto.getYawsEndemicSyphilisCultureDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisHistopathologyDetails(exportDto.getYawsEndemicSyphilisHistopathologyDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisIsolationDetails(exportDto.getYawsEndemicSyphilisIsolationDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisIgmSerumAntibodyDetails(exportDto.getYawsEndemicSyphilisIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisIggSerumAntibodyDetails(exportDto.getYawsEndemicSyphilisIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisIgaSerumAntibodyDetails(exportDto.getYawsEndemicSyphilisIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisIncubationTimeDetails(exportDto.getYawsEndemicSyphilisIncubationTimeDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisIndirectFluorescentAntibodyDetails(exportDto.getYawsEndemicSyphilisIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisDirectFluorescentAntibodyDetails(exportDto.getYawsEndemicSyphilisDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisMicroscopyDetails(exportDto.getYawsEndemicSyphilisMicroscopyDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisNeutralizingAntibodiesDetails(exportDto.getYawsEndemicSyphilisNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisPcrRtPcrDetails(exportDto.getYawsEndemicSyphilisPcrRtPcrDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisGramStainDetails(exportDto.getYawsEndemicSyphilisGramStainDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisLatexAgglutinationDetails(exportDto.getYawsEndemicSyphilisLatexAgglutinationDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisCqValueDetectionDetails(exportDto.getYawsEndemicSyphilisCqValueDetectionDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisSequencingDetails(exportDto.getYawsEndemicSyphilisSequencingDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisDnaMicroarrayDetails(exportDto.getYawsEndemicSyphilisDnaMicroarrayDetails());
+                        caseExportDetailedDto.setYawsEndemicSyphilisOtherDetails(exportDto.getYawsEndemicSyphilisOtherDetails());
+                        caseExportDetailedDto.setMaternalDeathsAntibodyDetection(exportDto.getMaternalDeathsAntibodyDetection());
+                        caseExportDetailedDto.setMaternalDeathsAntigenDetection(exportDto.getMaternalDeathsAntigenDetection());
+                        caseExportDetailedDto.setMaternalDeathsRapidTest(exportDto.getMaternalDeathsRapidTest());
+                        caseExportDetailedDto.setMaternalDeathsCulture(exportDto.getMaternalDeathsCulture());
+                        caseExportDetailedDto.setMaternalDeathsHistopathology(exportDto.getMaternalDeathsHistopathology());
+                        caseExportDetailedDto.setMaternalDeathsIsolation(exportDto.getMaternalDeathsIsolation());
+                        caseExportDetailedDto.setMaternalDeathsIgmSerumAntibody(exportDto.getMaternalDeathsIgmSerumAntibody());
+                        caseExportDetailedDto.setMaternalDeathsIggSerumAntibody(exportDto.getMaternalDeathsIggSerumAntibody());
+                        caseExportDetailedDto.setMaternalDeathsIgaSerumAntibody(exportDto.getMaternalDeathsIgaSerumAntibody());
+                        caseExportDetailedDto.setMaternalDeathsIncubationTime(exportDto.getMaternalDeathsIncubationTime());
+                        caseExportDetailedDto.setMaternalDeathsIndirectFluorescentAntibody(exportDto.getMaternalDeathsIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setMaternalDeathsDirectFluorescentAntibody(exportDto.getMaternalDeathsDirectFluorescentAntibody());
+                        caseExportDetailedDto.setMaternalDeathsMicroscopy(exportDto.getMaternalDeathsMicroscopy());
+                        caseExportDetailedDto.setMaternalDeathsNeutralizingAntibodies(exportDto.getMaternalDeathsNeutralizingAntibodies());
+                        caseExportDetailedDto.setMaternalDeathsPcrRtPcr(exportDto.getMaternalDeathsPcrRtPcr());
+                        caseExportDetailedDto.setMaternalDeathsGramStain(exportDto.getMaternalDeathsGramStain());
+                        caseExportDetailedDto.setMaternalDeathsLatexAgglutination(exportDto.getMaternalDeathsLatexAgglutination());
+                        caseExportDetailedDto.setMaternalDeathsCqValueDetection(exportDto.getMaternalDeathsCqValueDetection());
+                        caseExportDetailedDto.setMaternalDeathsSequencing(exportDto.getMaternalDeathsSequencing());
+                        caseExportDetailedDto.setMaternalDeathsDnaMicroarray(exportDto.getMaternalDeathsDnaMicroarray());
+                        caseExportDetailedDto.setMaternalDeathsOther(exportDto.getMaternalDeathsOther());
+                        caseExportDetailedDto.setMaternalDeathsAntibodyDetectionDetails(exportDto.getMaternalDeathsAntibodyDetectionDetails());
+                        caseExportDetailedDto.setMaternalDeathsAntigenDetectionDetails(exportDto.getMaternalDeathsAntigenDetectionDetails());
+                        caseExportDetailedDto.setMaternalDeathsRapidTestDetails(exportDto.getMaternalDeathsRapidTestDetails());
+                        caseExportDetailedDto.setMaternalDeathsCultureDetails(exportDto.getMaternalDeathsCultureDetails());
+                        caseExportDetailedDto.setMaternalDeathsHistopathologyDetails(exportDto.getMaternalDeathsHistopathologyDetails());
+                        caseExportDetailedDto.setMaternalDeathsIsolationDetails(exportDto.getMaternalDeathsIsolationDetails());
+                        caseExportDetailedDto.setMaternalDeathsIgmSerumAntibodyDetails(exportDto.getMaternalDeathsIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setMaternalDeathsIggSerumAntibodyDetails(exportDto.getMaternalDeathsIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setMaternalDeathsIgaSerumAntibodyDetails(exportDto.getMaternalDeathsIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setMaternalDeathsIncubationTimeDetails(exportDto.getMaternalDeathsIncubationTimeDetails());
+                        caseExportDetailedDto.setMaternalDeathsIndirectFluorescentAntibodyDetails(exportDto.getMaternalDeathsIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setMaternalDeathsDirectFluorescentAntibodyDetails(exportDto.getMaternalDeathsDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setMaternalDeathsMicroscopyDetails(exportDto.getMaternalDeathsMicroscopyDetails());
+                        caseExportDetailedDto.setMaternalDeathsNeutralizingAntibodiesDetails(exportDto.getMaternalDeathsNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setMaternalDeathsPcrRtPcrDetails(exportDto.getMaternalDeathsPcrRtPcrDetails());
+                        caseExportDetailedDto.setMaternalDeathsGramStainDetails(exportDto.getMaternalDeathsGramStainDetails());
+                        caseExportDetailedDto.setMaternalDeathsLatexAgglutinationDetails(exportDto.getMaternalDeathsLatexAgglutinationDetails());
+                        caseExportDetailedDto.setMaternalDeathsCqValueDetectionDetails(exportDto.getMaternalDeathsCqValueDetectionDetails());
+                        caseExportDetailedDto.setMaternalDeathsSequencingDetails(exportDto.getMaternalDeathsSequencingDetails());
+                        caseExportDetailedDto.setMaternalDeathsDnaMicroarrayDetails(exportDto.getMaternalDeathsDnaMicroarrayDetails());
+                        caseExportDetailedDto.setMaternalDeathsOtherDetails(exportDto.getMaternalDeathsOtherDetails());
+                        caseExportDetailedDto.setPerinatalDeathsAntibodyDetection(exportDto.getPerinatalDeathsAntibodyDetection());
+                        caseExportDetailedDto.setPerinatalDeathsAntigenDetection(exportDto.getPerinatalDeathsAntigenDetection());
+                        caseExportDetailedDto.setPerinatalDeathsRapidTest(exportDto.getPerinatalDeathsRapidTest());
+                        caseExportDetailedDto.setPerinatalDeathsCulture(exportDto.getPerinatalDeathsCulture());
+                        caseExportDetailedDto.setPerinatalDeathsHistopathology(exportDto.getPerinatalDeathsHistopathology());
+                        caseExportDetailedDto.setPerinatalDeathsIsolation(exportDto.getPerinatalDeathsIsolation());
+                        caseExportDetailedDto.setPerinatalDeathsIgmSerumAntibody(exportDto.getPerinatalDeathsIgmSerumAntibody());
+                        caseExportDetailedDto.setPerinatalDeathsIggSerumAntibody(exportDto.getPerinatalDeathsIggSerumAntibody());
+                        caseExportDetailedDto.setPerinatalDeathsIgaSerumAntibody(exportDto.getPerinatalDeathsIgaSerumAntibody());
+                        caseExportDetailedDto.setPerinatalDeathsIncubationTime(exportDto.getPerinatalDeathsIncubationTime());
+                        caseExportDetailedDto.setPerinatalDeathsIndirectFluorescentAntibody(exportDto.getPerinatalDeathsIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setPerinatalDeathsDirectFluorescentAntibody(exportDto.getPerinatalDeathsDirectFluorescentAntibody());
+                        caseExportDetailedDto.setPerinatalDeathsMicroscopy(exportDto.getPerinatalDeathsMicroscopy());
+                        caseExportDetailedDto.setPerinatalDeathsNeutralizingAntibodies(exportDto.getPerinatalDeathsNeutralizingAntibodies());
+                        caseExportDetailedDto.setPerinatalDeathsPcrRtPcr(exportDto.getPerinatalDeathsPcrRtPcr());
+                        caseExportDetailedDto.setPerinatalDeathsGramStain(exportDto.getPerinatalDeathsGramStain());
+                        caseExportDetailedDto.setPerinatalDeathsLatexAgglutination(exportDto.getPerinatalDeathsLatexAgglutination());
+                        caseExportDetailedDto.setPerinatalDeathsCqValueDetection(exportDto.getPerinatalDeathsCqValueDetection());
+                        caseExportDetailedDto.setPerinatalDeathsSequencing(exportDto.getPerinatalDeathsSequencing());
+                        caseExportDetailedDto.setPerinatalDeathsDnaMicroarray(exportDto.getPerinatalDeathsDnaMicroarray());
+                        caseExportDetailedDto.setPerinatalDeathsOther(exportDto.getPerinatalDeathsOther());
+                        caseExportDetailedDto.setPerinatalDeathsAntibodyDetectionDetails(exportDto.getPerinatalDeathsAntibodyDetectionDetails());
+                        caseExportDetailedDto.setPerinatalDeathsAntigenDetectionDetails(exportDto.getPerinatalDeathsAntigenDetectionDetails());
+                        caseExportDetailedDto.setPerinatalDeathsRapidTestDetails(exportDto.getPerinatalDeathsRapidTestDetails());
+                        caseExportDetailedDto.setPerinatalDeathsCultureDetails(exportDto.getPerinatalDeathsCultureDetails());
+                        caseExportDetailedDto.setPerinatalDeathsHistopathologyDetails(exportDto.getPerinatalDeathsHistopathologyDetails());
+                        caseExportDetailedDto.setPerinatalDeathsIsolationDetails(exportDto.getPerinatalDeathsIsolationDetails());
+                        caseExportDetailedDto.setPerinatalDeathsIgmSerumAntibodyDetails(exportDto.getPerinatalDeathsIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setPerinatalDeathsIggSerumAntibodyDetails(exportDto.getPerinatalDeathsIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setPerinatalDeathsIgaSerumAntibodyDetails(exportDto.getPerinatalDeathsIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setPerinatalDeathsIncubationTimeDetails(exportDto.getPerinatalDeathsIncubationTimeDetails());
+                        caseExportDetailedDto.setPerinatalDeathsIndirectFluorescentAntibodyDetails(exportDto.getPerinatalDeathsIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setPerinatalDeathsDirectFluorescentAntibodyDetails(exportDto.getPerinatalDeathsDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setPerinatalDeathsMicroscopyDetails(exportDto.getPerinatalDeathsMicroscopyDetails());
+                        caseExportDetailedDto.setPerinatalDeathsNeutralizingAntibodiesDetails(exportDto.getPerinatalDeathsNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setPerinatalDeathsPcrRtPcrDetails(exportDto.getPerinatalDeathsPcrRtPcrDetails());
+                        caseExportDetailedDto.setPerinatalDeathsGramStainDetails(exportDto.getPerinatalDeathsGramStainDetails());
+                        caseExportDetailedDto.setPerinatalDeathsLatexAgglutinationDetails(exportDto.getPerinatalDeathsLatexAgglutinationDetails());
+                        caseExportDetailedDto.setPerinatalDeathsCqValueDetectionDetails(exportDto.getPerinatalDeathsCqValueDetectionDetails());
+                        caseExportDetailedDto.setPerinatalDeathsSequencingDetails(exportDto.getPerinatalDeathsSequencingDetails());
+                        caseExportDetailedDto.setPerinatalDeathsDnaMicroarrayDetails(exportDto.getPerinatalDeathsDnaMicroarrayDetails());
+                        caseExportDetailedDto.setPerinatalDeathsOtherDetails(exportDto.getPerinatalDeathsOtherDetails());
+                        caseExportDetailedDto.setInfluenzaAAntibodyDetection(exportDto.getInfluenzaAAntibodyDetection());
+                        caseExportDetailedDto.setInfluenzaAAntigenDetection(exportDto.getInfluenzaAAntigenDetection());
+                        caseExportDetailedDto.setInfluenzaARapidTest(exportDto.getInfluenzaARapidTest());
+                        caseExportDetailedDto.setInfluenzaACulture(exportDto.getInfluenzaACulture());
+                        caseExportDetailedDto.setInfluenzaAHistopathology(exportDto.getInfluenzaAHistopathology());
+                        caseExportDetailedDto.setInfluenzaAIsolation(exportDto.getInfluenzaAIsolation());
+                        caseExportDetailedDto.setInfluenzaAIgmSerumAntibody(exportDto.getInfluenzaAIgmSerumAntibody());
+                        caseExportDetailedDto.setInfluenzaAIggSerumAntibody(exportDto.getInfluenzaAIggSerumAntibody());
+                        caseExportDetailedDto.setInfluenzaAIgaSerumAntibody(exportDto.getInfluenzaAIgaSerumAntibody());
+                        caseExportDetailedDto.setInfluenzaAIncubationTime(exportDto.getInfluenzaAIncubationTime());
+                        caseExportDetailedDto.setInfluenzaAIndirectFluorescentAntibody(exportDto.getInfluenzaAIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setInfluenzaADirectFluorescentAntibody(exportDto.getInfluenzaADirectFluorescentAntibody());
+                        caseExportDetailedDto.setInfluenzaAMicroscopy(exportDto.getInfluenzaAMicroscopy());
+                        caseExportDetailedDto.setInfluenzaANeutralizingAntibodies(exportDto.getInfluenzaANeutralizingAntibodies());
+                        caseExportDetailedDto.setInfluenzaAPcrRtPcr(exportDto.getInfluenzaAPcrRtPcr());
+                        caseExportDetailedDto.setInfluenzaAGramStain(exportDto.getInfluenzaAGramStain());
+                        caseExportDetailedDto.setInfluenzaALatexAgglutination(exportDto.getInfluenzaALatexAgglutination());
+                        caseExportDetailedDto.setInfluenzaACqValueDetection(exportDto.getInfluenzaACqValueDetection());
+                        caseExportDetailedDto.setInfluenzaASequencing(exportDto.getInfluenzaASequencing());
+                        caseExportDetailedDto.setInfluenzaADnaMicroarray(exportDto.getInfluenzaADnaMicroarray());
+                        caseExportDetailedDto.setInfluenzaAOther(exportDto.getInfluenzaAOther());
+                        caseExportDetailedDto.setInfluenzaAAntibodyDetectionDetails(exportDto.getInfluenzaAAntibodyDetectionDetails());
+                        caseExportDetailedDto.setInfluenzaAAntigenDetectionDetails(exportDto.getInfluenzaAAntigenDetectionDetails());
+                        caseExportDetailedDto.setInfluenzaARapidTestDetails(exportDto.getInfluenzaARapidTestDetails());
+                        caseExportDetailedDto.setInfluenzaACultureDetails(exportDto.getInfluenzaACultureDetails());
+                        caseExportDetailedDto.setInfluenzaAHistopathologyDetails(exportDto.getInfluenzaAHistopathologyDetails());
+                        caseExportDetailedDto.setInfluenzaAIsolationDetails(exportDto.getInfluenzaAIsolationDetails());
+                        caseExportDetailedDto.setInfluenzaAIgmSerumAntibodyDetails(exportDto.getInfluenzaAIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setInfluenzaAIggSerumAntibodyDetails(exportDto.getInfluenzaAIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setInfluenzaAIgaSerumAntibodyDetails(exportDto.getInfluenzaAIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setInfluenzaAIncubationTimeDetails(exportDto.getInfluenzaAIncubationTimeDetails());
+                        caseExportDetailedDto.setInfluenzaAIndirectFluorescentAntibodyDetails(exportDto.getInfluenzaAIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setInfluenzaADirectFluorescentAntibodyDetails(exportDto.getInfluenzaADirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setInfluenzaAMicroscopyDetails(exportDto.getInfluenzaAMicroscopyDetails());
+                        caseExportDetailedDto.setInfluenzaANeutralizingAntibodiesDetails(exportDto.getInfluenzaANeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setInfluenzaAPcrRtPcrDetails(exportDto.getInfluenzaAPcrRtPcrDetails());
+                        caseExportDetailedDto.setInfluenzaAGramStainDetails(exportDto.getInfluenzaAGramStainDetails());
+                        caseExportDetailedDto.setInfluenzaALatexAgglutinationDetails(exportDto.getInfluenzaALatexAgglutinationDetails());
+                        caseExportDetailedDto.setInfluenzaACqValueDetectionDetails(exportDto.getInfluenzaACqValueDetectionDetails());
+                        caseExportDetailedDto.setInfluenzaASequencingDetails(exportDto.getInfluenzaASequencingDetails());
+                        caseExportDetailedDto.setInfluenzaADnaMicroarrayDetails(exportDto.getInfluenzaADnaMicroarrayDetails());
+                        caseExportDetailedDto.setInfluenzaAOtherDetails(exportDto.getInfluenzaAOtherDetails());
+                        caseExportDetailedDto.setInfluenzaBAntibodyDetection(exportDto.getInfluenzaBAntibodyDetection());
+                        caseExportDetailedDto.setInfluenzaBAntigenDetection(exportDto.getInfluenzaBAntigenDetection());
+                        caseExportDetailedDto.setInfluenzaBRapidTest(exportDto.getInfluenzaBRapidTest());
+                        caseExportDetailedDto.setInfluenzaBCulture(exportDto.getInfluenzaBCulture());
+                        caseExportDetailedDto.setInfluenzaBHistopathology(exportDto.getInfluenzaBHistopathology());
+                        caseExportDetailedDto.setInfluenzaBIsolation(exportDto.getInfluenzaBIsolation());
+                        caseExportDetailedDto.setInfluenzaBIgmSerumAntibody(exportDto.getInfluenzaBIgmSerumAntibody());
+                        caseExportDetailedDto.setInfluenzaBIggSerumAntibody(exportDto.getInfluenzaBIggSerumAntibody());
+                        caseExportDetailedDto.setInfluenzaBIgaSerumAntibody(exportDto.getInfluenzaBIgaSerumAntibody());
+                        caseExportDetailedDto.setInfluenzaBIncubationTime(exportDto.getInfluenzaBIncubationTime());
+                        caseExportDetailedDto.setInfluenzaBIndirectFluorescentAntibody(exportDto.getInfluenzaBIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setInfluenzaBDirectFluorescentAntibody(exportDto.getInfluenzaBDirectFluorescentAntibody());
+                        caseExportDetailedDto.setInfluenzaBMicroscopy(exportDto.getInfluenzaBMicroscopy());
+                        caseExportDetailedDto.setInfluenzaBNeutralizingAntibodies(exportDto.getInfluenzaBNeutralizingAntibodies());
+                        caseExportDetailedDto.setInfluenzaBPcrRtPcr(exportDto.getInfluenzaBPcrRtPcr());
+                        caseExportDetailedDto.setInfluenzaBGramStain(exportDto.getInfluenzaBGramStain());
+                        caseExportDetailedDto.setInfluenzaBLatexAgglutination(exportDto.getInfluenzaBLatexAgglutination());
+                        caseExportDetailedDto.setInfluenzaBCqValueDetection(exportDto.getInfluenzaBCqValueDetection());
+                        caseExportDetailedDto.setInfluenzaBSequencing(exportDto.getInfluenzaBSequencing());
+                        caseExportDetailedDto.setInfluenzaBDnaMicroarray(exportDto.getInfluenzaBDnaMicroarray());
+                        caseExportDetailedDto.setInfluenzaBOther(exportDto.getInfluenzaBOther());
+                        caseExportDetailedDto.setInfluenzaBAntibodyDetectionDetails(exportDto.getInfluenzaBAntibodyDetectionDetails());
+                        caseExportDetailedDto.setInfluenzaBAntigenDetectionDetails(exportDto.getInfluenzaBAntigenDetectionDetails());
+                        caseExportDetailedDto.setInfluenzaBRapidTestDetails(exportDto.getInfluenzaBRapidTestDetails());
+                        caseExportDetailedDto.setInfluenzaBCultureDetails(exportDto.getInfluenzaBCultureDetails());
+                        caseExportDetailedDto.setInfluenzaBHistopathologyDetails(exportDto.getInfluenzaBHistopathologyDetails());
+                        caseExportDetailedDto.setInfluenzaBIsolationDetails(exportDto.getInfluenzaBIsolationDetails());
+                        caseExportDetailedDto.setInfluenzaBIgmSerumAntibodyDetails(exportDto.getInfluenzaBIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setInfluenzaBIggSerumAntibodyDetails(exportDto.getInfluenzaBIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setInfluenzaBIgaSerumAntibodyDetails(exportDto.getInfluenzaBIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setInfluenzaBIncubationTimeDetails(exportDto.getInfluenzaBIncubationTimeDetails());
+                        caseExportDetailedDto.setInfluenzaBIndirectFluorescentAntibodyDetails(exportDto.getInfluenzaBIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setInfluenzaBDirectFluorescentAntibodyDetails(exportDto.getInfluenzaBDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setInfluenzaBMicroscopyDetails(exportDto.getInfluenzaBMicroscopyDetails());
+                        caseExportDetailedDto.setInfluenzaBNeutralizingAntibodiesDetails(exportDto.getInfluenzaBNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setInfluenzaBPcrRtPcrDetails(exportDto.getInfluenzaBPcrRtPcrDetails());
+                        caseExportDetailedDto.setInfluenzaBGramStainDetails(exportDto.getInfluenzaBGramStainDetails());
+                        caseExportDetailedDto.setInfluenzaBLatexAgglutinationDetails(exportDto.getInfluenzaBLatexAgglutinationDetails());
+                        caseExportDetailedDto.setInfluenzaBCqValueDetectionDetails(exportDto.getInfluenzaBCqValueDetectionDetails());
+                        caseExportDetailedDto.setInfluenzaBSequencingDetails(exportDto.getInfluenzaBSequencingDetails());
+                        caseExportDetailedDto.setInfluenzaBDnaMicroarrayDetails(exportDto.getInfluenzaBDnaMicroarrayDetails());
+                        caseExportDetailedDto.setInfluenzaBOtherDetails(exportDto.getInfluenzaBOtherDetails());
+                        caseExportDetailedDto.sethMetapneumovirusAntibodyDetection(exportDto.getHMetapneumovirusAntibodyDetection());
+                        caseExportDetailedDto.sethMetapneumovirusAntigenDetection(exportDto.getHMetapneumovirusAntigenDetection());
+                        caseExportDetailedDto.sethMetapneumovirusRapidTest(exportDto.getHMetapneumovirusRapidTest());
+                        caseExportDetailedDto.sethMetapneumovirusCulture(exportDto.getHMetapneumovirusCulture());
+                        caseExportDetailedDto.sethMetapneumovirusHistopathology(exportDto.getHMetapneumovirusHistopathology());
+                        caseExportDetailedDto.sethMetapneumovirusIsolation(exportDto.getHMetapneumovirusIsolation());
+                        caseExportDetailedDto.sethMetapneumovirusIgmSerumAntibody(exportDto.getHMetapneumovirusIgmSerumAntibody());
+                        caseExportDetailedDto.sethMetapneumovirusIggSerumAntibody(exportDto.getHMetapneumovirusIggSerumAntibody());
+                        caseExportDetailedDto.sethMetapneumovirusIgaSerumAntibody(exportDto.getHMetapneumovirusIgaSerumAntibody());
+                        caseExportDetailedDto.sethMetapneumovirusIncubationTime(exportDto.getHMetapneumovirusIncubationTime());
+                        caseExportDetailedDto.sethMetapneumovirusIndirectFluorescentAntibody(exportDto.getHMetapneumovirusIndirectFluorescentAntibody());
+                        caseExportDetailedDto.sethMetapneumovirusDirectFluorescentAntibody(exportDto.getHMetapneumovirusDirectFluorescentAntibody());
+                        caseExportDetailedDto.sethMetapneumovirusMicroscopy(exportDto.getHMetapneumovirusMicroscopy());
+                        caseExportDetailedDto.sethMetapneumovirusNeutralizingAntibodies(exportDto.getHMetapneumovirusNeutralizingAntibodies());
+                        caseExportDetailedDto.sethMetapneumovirusPcrRtPcr(exportDto.getHMetapneumovirusPcrRtPcr());
+                        caseExportDetailedDto.sethMetapneumovirusGramStain(exportDto.getHMetapneumovirusGramStain());
+                        caseExportDetailedDto.sethMetapneumovirusLatexAgglutination(exportDto.getHMetapneumovirusLatexAgglutination());
+                        caseExportDetailedDto.sethMetapneumovirusCqValueDetection(exportDto.getHMetapneumovirusCqValueDetection());
+                        caseExportDetailedDto.sethMetapneumovirusSequencing(exportDto.getHMetapneumovirusSequencing());
+                        caseExportDetailedDto.sethMetapneumovirusDnaMicroarray(exportDto.getHMetapneumovirusDnaMicroarray());
+                        caseExportDetailedDto.sethMetapneumovirusOther(exportDto.getHMetapneumovirusOther());
+                        caseExportDetailedDto.sethMetapneumovirusAntibodyDetectionDetails(exportDto.getHMetapneumovirusAntibodyDetectionDetails());
+                        caseExportDetailedDto.sethMetapneumovirusAntigenDetectionDetails(exportDto.getHMetapneumovirusAntigenDetectionDetails());
+                        caseExportDetailedDto.sethMetapneumovirusRapidTestDetails(exportDto.getHMetapneumovirusRapidTestDetails());
+                        caseExportDetailedDto.sethMetapneumovirusCultureDetails(exportDto.getHMetapneumovirusCultureDetails());
+                        caseExportDetailedDto.sethMetapneumovirusHistopathologyDetails(exportDto.getHMetapneumovirusHistopathologyDetails());
+                        caseExportDetailedDto.sethMetapneumovirusIsolationDetails(exportDto.getHMetapneumovirusIsolationDetails());
+                        caseExportDetailedDto.sethMetapneumovirusIgmSerumAntibodyDetails(exportDto.getHMetapneumovirusIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.sethMetapneumovirusIggSerumAntibodyDetails(exportDto.getHMetapneumovirusIggSerumAntibodyDetails());
+                        caseExportDetailedDto.sethMetapneumovirusIgaSerumAntibodyDetails(exportDto.getHMetapneumovirusIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.sethMetapneumovirusIncubationTimeDetails(exportDto.getHMetapneumovirusIncubationTimeDetails());
+                        caseExportDetailedDto.sethMetapneumovirusIndirectFluorescentAntibodyDetails(exportDto.getHMetapneumovirusIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.sethMetapneumovirusDirectFluorescentAntibodyDetails(exportDto.getHMetapneumovirusDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.sethMetapneumovirusMicroscopyDetails(exportDto.getHMetapneumovirusMicroscopyDetails());
+                        caseExportDetailedDto.sethMetapneumovirusNeutralizingAntibodiesDetails(exportDto.getHMetapneumovirusNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.sethMetapneumovirusPcrRtPcrDetails(exportDto.getHMetapneumovirusPcrRtPcrDetails());
+                        caseExportDetailedDto.sethMetapneumovirusGramStainDetails(exportDto.getHMetapneumovirusGramStainDetails());
+                        caseExportDetailedDto.sethMetapneumovirusLatexAgglutinationDetails(exportDto.getHMetapneumovirusLatexAgglutinationDetails());
+                        caseExportDetailedDto.sethMetapneumovirusCqValueDetectionDetails(exportDto.getHMetapneumovirusCqValueDetectionDetails());
+                        caseExportDetailedDto.sethMetapneumovirusSequencingDetails(exportDto.getHMetapneumovirusSequencingDetails());
+                        caseExportDetailedDto.sethMetapneumovirusDnaMicroarrayDetails(exportDto.getHMetapneumovirusDnaMicroarrayDetails());
+                        caseExportDetailedDto.sethMetapneumovirusOtherDetails(exportDto.getHMetapneumovirusOtherDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusAntibodyDetection(exportDto.getRespiratorySyncytialVirusAntibodyDetection());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusAntigenDetection(exportDto.getRespiratorySyncytialVirusAntigenDetection());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusRapidTest(exportDto.getRespiratorySyncytialVirusRapidTest());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusCulture(exportDto.getRespiratorySyncytialVirusCulture());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusHistopathology(exportDto.getRespiratorySyncytialVirusHistopathology());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusIsolation(exportDto.getRespiratorySyncytialVirusIsolation());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusIgmSerumAntibody(exportDto.getRespiratorySyncytialVirusIgmSerumAntibody());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusIggSerumAntibody(exportDto.getRespiratorySyncytialVirusIggSerumAntibody());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusIgaSerumAntibody(exportDto.getRespiratorySyncytialVirusIgaSerumAntibody());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusIncubationTime(exportDto.getRespiratorySyncytialVirusIncubationTime());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusIndirectFluorescentAntibody(exportDto.getRespiratorySyncytialVirusIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusDirectFluorescentAntibody(exportDto.getRespiratorySyncytialVirusDirectFluorescentAntibody());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusMicroscopy(exportDto.getRespiratorySyncytialVirusMicroscopy());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusNeutralizingAntibodies(exportDto.getRespiratorySyncytialVirusNeutralizingAntibodies());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusPcrRtPcr(exportDto.getRespiratorySyncytialVirusPcrRtPcr());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusGramStain(exportDto.getRespiratorySyncytialVirusGramStain());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusLatexAgglutination(exportDto.getRespiratorySyncytialVirusLatexAgglutination());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusCqValueDetection(exportDto.getRespiratorySyncytialVirusCqValueDetection());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusSequencing(exportDto.getRespiratorySyncytialVirusSequencing());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusDnaMicroarray(exportDto.getRespiratorySyncytialVirusDnaMicroarray());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusOther(exportDto.getRespiratorySyncytialVirusOther());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusAntibodyDetectionDetails(exportDto.getRespiratorySyncytialVirusAntibodyDetectionDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusAntigenDetectionDetails(exportDto.getRespiratorySyncytialVirusAntigenDetectionDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusRapidTestDetails(exportDto.getRespiratorySyncytialVirusRapidTestDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusCultureDetails(exportDto.getRespiratorySyncytialVirusCultureDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusHistopathologyDetails(exportDto.getRespiratorySyncytialVirusHistopathologyDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusIsolationDetails(exportDto.getRespiratorySyncytialVirusIsolationDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusIgmSerumAntibodyDetails(exportDto.getRespiratorySyncytialVirusIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusIggSerumAntibodyDetails(exportDto.getRespiratorySyncytialVirusIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusIgaSerumAntibodyDetails(exportDto.getRespiratorySyncytialVirusIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusIncubationTimeDetails(exportDto.getRespiratorySyncytialVirusIncubationTimeDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusIndirectFluorescentAntibodyDetails(exportDto.getRespiratorySyncytialVirusIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusDirectFluorescentAntibodyDetails(exportDto.getRespiratorySyncytialVirusDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusMicroscopyDetails(exportDto.getRespiratorySyncytialVirusMicroscopyDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusNeutralizingAntibodiesDetails(exportDto.getRespiratorySyncytialVirusNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusPcrRtPcrDetails(exportDto.getRespiratorySyncytialVirusPcrRtPcrDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusGramStainDetails(exportDto.getRespiratorySyncytialVirusGramStainDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusLatexAgglutinationDetails(exportDto.getRespiratorySyncytialVirusLatexAgglutinationDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusCqValueDetectionDetails(exportDto.getRespiratorySyncytialVirusCqValueDetectionDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusSequencingDetails(exportDto.getRespiratorySyncytialVirusSequencingDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusDnaMicroarrayDetails(exportDto.getRespiratorySyncytialVirusDnaMicroarrayDetails());
+                        caseExportDetailedDto.setRespiratorySyncytialVirusOtherDetails(exportDto.getRespiratorySyncytialVirusOtherDetails());
+                        caseExportDetailedDto.setParainfluenzaAntibodyDetection(exportDto.getParainfluenzaAntibodyDetection());
+                        caseExportDetailedDto.setParainfluenzaAntigenDetection(exportDto.getParainfluenzaAntigenDetection());
+                        caseExportDetailedDto.setParainfluenzaRapidTest(exportDto.getParainfluenzaRapidTest());
+                        caseExportDetailedDto.setParainfluenzaCulture(exportDto.getParainfluenzaCulture());
+                        caseExportDetailedDto.setParainfluenzaHistopathology(exportDto.getParainfluenzaHistopathology());
+                        caseExportDetailedDto.setParainfluenzaIsolation(exportDto.getParainfluenzaIsolation());
+                        caseExportDetailedDto.setParainfluenzaIgmSerumAntibody(exportDto.getParainfluenzaIgmSerumAntibody());
+                        caseExportDetailedDto.setParainfluenzaIggSerumAntibody(exportDto.getParainfluenzaIggSerumAntibody());
+                        caseExportDetailedDto.setParainfluenzaIgaSerumAntibody(exportDto.getParainfluenzaIgaSerumAntibody());
+                        caseExportDetailedDto.setParainfluenzaIncubationTime(exportDto.getParainfluenzaIncubationTime());
+                        caseExportDetailedDto.setParainfluenzaIndirectFluorescentAntibody(exportDto.getParainfluenzaIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setParainfluenzaDirectFluorescentAntibody(exportDto.getParainfluenzaDirectFluorescentAntibody());
+                        caseExportDetailedDto.setParainfluenzaMicroscopy(exportDto.getParainfluenzaMicroscopy());
+                        caseExportDetailedDto.setParainfluenzaNeutralizingAntibodies(exportDto.getParainfluenzaNeutralizingAntibodies());
+                        caseExportDetailedDto.setParainfluenzaPcrRtPcr(exportDto.getParainfluenzaPcrRtPcr());
+                        caseExportDetailedDto.setParainfluenzaGramStain(exportDto.getParainfluenzaGramStain());
+                        caseExportDetailedDto.setParainfluenzaLatexAgglutination(exportDto.getParainfluenzaLatexAgglutination());
+                        caseExportDetailedDto.setParainfluenzaCqValueDetection(exportDto.getParainfluenzaCqValueDetection());
+                        caseExportDetailedDto.setParainfluenzaSequencing(exportDto.getParainfluenzaSequencing());
+                        caseExportDetailedDto.setParainfluenzaDnaMicroarray(exportDto.getParainfluenzaDnaMicroarray());
+                        caseExportDetailedDto.setParainfluenzaOther(exportDto.getParainfluenzaOther());
+                        caseExportDetailedDto.setParainfluenzaAntibodyDetectionDetails(exportDto.getParainfluenzaAntibodyDetectionDetails());
+                        caseExportDetailedDto.setParainfluenzaAntigenDetectionDetails(exportDto.getParainfluenzaAntigenDetectionDetails());
+                        caseExportDetailedDto.setParainfluenzaRapidTestDetails(exportDto.getParainfluenzaRapidTestDetails());
+                        caseExportDetailedDto.setParainfluenzaCultureDetails(exportDto.getParainfluenzaCultureDetails());
+                        caseExportDetailedDto.setParainfluenzaHistopathologyDetails(exportDto.getParainfluenzaHistopathologyDetails());
+                        caseExportDetailedDto.setParainfluenzaIsolationDetails(exportDto.getParainfluenzaIsolationDetails());
+                        caseExportDetailedDto.setParainfluenzaIgmSerumAntibodyDetails(exportDto.getParainfluenzaIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setParainfluenzaIggSerumAntibodyDetails(exportDto.getParainfluenzaIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setParainfluenzaIgaSerumAntibodyDetails(exportDto.getParainfluenzaIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setParainfluenzaIncubationTimeDetails(exportDto.getParainfluenzaIncubationTimeDetails());
+                        caseExportDetailedDto.setParainfluenzaIndirectFluorescentAntibodyDetails(exportDto.getParainfluenzaIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setParainfluenzaDirectFluorescentAntibodyDetails(exportDto.getParainfluenzaDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setParainfluenzaMicroscopyDetails(exportDto.getParainfluenzaMicroscopyDetails());
+                        caseExportDetailedDto.setParainfluenzaNeutralizingAntibodiesDetails(exportDto.getParainfluenzaNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setParainfluenzaPcrRtPcrDetails(exportDto.getParainfluenzaPcrRtPcrDetails());
+                        caseExportDetailedDto.setParainfluenzaGramStainDetails(exportDto.getParainfluenzaGramStainDetails());
+                        caseExportDetailedDto.setParainfluenzaLatexAgglutinationDetails(exportDto.getParainfluenzaLatexAgglutinationDetails());
+                        caseExportDetailedDto.setParainfluenzaCqValueDetectionDetails(exportDto.getParainfluenzaCqValueDetectionDetails());
+                        caseExportDetailedDto.setParainfluenzaSequencingDetails(exportDto.getParainfluenzaSequencingDetails());
+                        caseExportDetailedDto.setParainfluenzaDnaMicroarrayDetails(exportDto.getParainfluenzaDnaMicroarrayDetails());
+                        caseExportDetailedDto.setParainfluenzaOtherDetails(exportDto.getParainfluenzaOtherDetails());
+                        caseExportDetailedDto.setAdenovirusAntibodyDetection(exportDto.getAdenovirusAntibodyDetection());
+                        caseExportDetailedDto.setAdenovirusAntigenDetection(exportDto.getAdenovirusAntigenDetection());
+                        caseExportDetailedDto.setAdenovirusRapidTest(exportDto.getAdenovirusRapidTest());
+                        caseExportDetailedDto.setAdenovirusCulture(exportDto.getAdenovirusCulture());
+                        caseExportDetailedDto.setAdenovirusHistopathology(exportDto.getAdenovirusHistopathology());
+                        caseExportDetailedDto.setAdenovirusIsolation(exportDto.getAdenovirusIsolation());
+                        caseExportDetailedDto.setAdenovirusIgmSerumAntibody(exportDto.getAdenovirusIgmSerumAntibody());
+                        caseExportDetailedDto.setAdenovirusIggSerumAntibody(exportDto.getAdenovirusIggSerumAntibody());
+                        caseExportDetailedDto.setAdenovirusIgaSerumAntibody(exportDto.getAdenovirusIgaSerumAntibody());
+                        caseExportDetailedDto.setAdenovirusIncubationTime(exportDto.getAdenovirusIncubationTime());
+                        caseExportDetailedDto.setAdenovirusIndirectFluorescentAntibody(exportDto.getAdenovirusIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setAdenovirusDirectFluorescentAntibody(exportDto.getAdenovirusDirectFluorescentAntibody());
+                        caseExportDetailedDto.setAdenovirusMicroscopy(exportDto.getAdenovirusMicroscopy());
+                        caseExportDetailedDto.setAdenovirusNeutralizingAntibodies(exportDto.getAdenovirusNeutralizingAntibodies());
+                        caseExportDetailedDto.setAdenovirusPcrRtPcr(exportDto.getAdenovirusPcrRtPcr());
+                        caseExportDetailedDto.setAdenovirusGramStain(exportDto.getAdenovirusGramStain());
+                        caseExportDetailedDto.setAdenovirusLatexAgglutination(exportDto.getAdenovirusLatexAgglutination());
+                        caseExportDetailedDto.setAdenovirusCqValueDetection(exportDto.getAdenovirusCqValueDetection());
+                        caseExportDetailedDto.setAdenovirusSequencing(exportDto.getAdenovirusSequencing());
+                        caseExportDetailedDto.setAdenovirusDnaMicroarray(exportDto.getAdenovirusDnaMicroarray());
+                        caseExportDetailedDto.setAdenovirusOther(exportDto.getAdenovirusOther());
+                        caseExportDetailedDto.setAdenovirusAntibodyDetectionDetails(exportDto.getAdenovirusAntibodyDetectionDetails());
+                        caseExportDetailedDto.setAdenovirusAntigenDetectionDetails(exportDto.getAdenovirusAntigenDetectionDetails());
+                        caseExportDetailedDto.setAdenovirusRapidTestDetails(exportDto.getAdenovirusRapidTestDetails());
+                        caseExportDetailedDto.setAdenovirusCultureDetails(exportDto.getAdenovirusCultureDetails());
+                        caseExportDetailedDto.setAdenovirusHistopathologyDetails(exportDto.getAdenovirusHistopathologyDetails());
+                        caseExportDetailedDto.setAdenovirusIsolationDetails(exportDto.getAdenovirusIsolationDetails());
+                        caseExportDetailedDto.setAdenovirusIgmSerumAntibodyDetails(exportDto.getAdenovirusIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setAdenovirusIggSerumAntibodyDetails(exportDto.getAdenovirusIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setAdenovirusIgaSerumAntibodyDetails(exportDto.getAdenovirusIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setAdenovirusIncubationTimeDetails(exportDto.getAdenovirusIncubationTimeDetails());
+                        caseExportDetailedDto.setAdenovirusIndirectFluorescentAntibodyDetails(exportDto.getAdenovirusIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setAdenovirusDirectFluorescentAntibodyDetails(exportDto.getAdenovirusDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setAdenovirusMicroscopyDetails(exportDto.getAdenovirusMicroscopyDetails());
+                        caseExportDetailedDto.setAdenovirusNeutralizingAntibodiesDetails(exportDto.getAdenovirusNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setAdenovirusPcrRtPcrDetails(exportDto.getAdenovirusPcrRtPcrDetails());
+                        caseExportDetailedDto.setAdenovirusGramStainDetails(exportDto.getAdenovirusGramStainDetails());
+                        caseExportDetailedDto.setAdenovirusLatexAgglutinationDetails(exportDto.getAdenovirusLatexAgglutinationDetails());
+                        caseExportDetailedDto.setAdenovirusCqValueDetectionDetails(exportDto.getAdenovirusCqValueDetectionDetails());
+                        caseExportDetailedDto.setAdenovirusSequencingDetails(exportDto.getAdenovirusSequencingDetails());
+                        caseExportDetailedDto.setAdenovirusDnaMicroarrayDetails(exportDto.getAdenovirusDnaMicroarrayDetails());
+                        caseExportDetailedDto.setAdenovirusOtherDetails(exportDto.getAdenovirusOtherDetails());
+                        caseExportDetailedDto.setRhinovirusAntibodyDetection(exportDto.getRhinovirusAntibodyDetection());
+                        caseExportDetailedDto.setRhinovirusAntigenDetection(exportDto.getRhinovirusAntigenDetection());
+                        caseExportDetailedDto.setRhinovirusRapidTest(exportDto.getRhinovirusRapidTest());
+                        caseExportDetailedDto.setRhinovirusCulture(exportDto.getRhinovirusCulture());
+                        caseExportDetailedDto.setRhinovirusHistopathology(exportDto.getRhinovirusHistopathology());
+                        caseExportDetailedDto.setRhinovirusIsolation(exportDto.getRhinovirusIsolation());
+                        caseExportDetailedDto.setRhinovirusIgmSerumAntibody(exportDto.getRhinovirusIgmSerumAntibody());
+                        caseExportDetailedDto.setRhinovirusIggSerumAntibody(exportDto.getRhinovirusIggSerumAntibody());
+                        caseExportDetailedDto.setRhinovirusIgaSerumAntibody(exportDto.getRhinovirusIgaSerumAntibody());
+                        caseExportDetailedDto.setRhinovirusIncubationTime(exportDto.getRhinovirusIncubationTime());
+                        caseExportDetailedDto.setRhinovirusIndirectFluorescentAntibody(exportDto.getRhinovirusIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setRhinovirusDirectFluorescentAntibody(exportDto.getRhinovirusDirectFluorescentAntibody());
+                        caseExportDetailedDto.setRhinovirusMicroscopy(exportDto.getRhinovirusMicroscopy());
+                        caseExportDetailedDto.setRhinovirusNeutralizingAntibodies(exportDto.getRhinovirusNeutralizingAntibodies());
+                        caseExportDetailedDto.setRhinovirusPcrRtPcr(exportDto.getRhinovirusPcrRtPcr());
+                        caseExportDetailedDto.setRhinovirusGramStain(exportDto.getRhinovirusGramStain());
+                        caseExportDetailedDto.setRhinovirusLatexAgglutination(exportDto.getRhinovirusLatexAgglutination());
+                        caseExportDetailedDto.setRhinovirusCqValueDetection(exportDto.getRhinovirusCqValueDetection());
+                        caseExportDetailedDto.setRhinovirusSequencing(exportDto.getRhinovirusSequencing());
+                        caseExportDetailedDto.setRhinovirusDnaMicroarray(exportDto.getRhinovirusDnaMicroarray());
+                        caseExportDetailedDto.setRhinovirusOther(exportDto.getRhinovirusOther());
+                        caseExportDetailedDto.setRhinovirusAntibodyDetectionDetails(exportDto.getRhinovirusAntibodyDetectionDetails());
+                        caseExportDetailedDto.setRhinovirusAntigenDetectionDetails(exportDto.getRhinovirusAntigenDetectionDetails());
+                        caseExportDetailedDto.setRhinovirusRapidTestDetails(exportDto.getRhinovirusRapidTestDetails());
+                        caseExportDetailedDto.setRhinovirusCultureDetails(exportDto.getRhinovirusCultureDetails());
+                        caseExportDetailedDto.setRhinovirusHistopathologyDetails(exportDto.getRhinovirusHistopathologyDetails());
+                        caseExportDetailedDto.setRhinovirusIsolationDetails(exportDto.getRhinovirusIsolationDetails());
+                        caseExportDetailedDto.setRhinovirusIgmSerumAntibodyDetails(exportDto.getRhinovirusIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setRhinovirusIggSerumAntibodyDetails(exportDto.getRhinovirusIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setRhinovirusIgaSerumAntibodyDetails(exportDto.getRhinovirusIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setRhinovirusIncubationTimeDetails(exportDto.getRhinovirusIncubationTimeDetails());
+                        caseExportDetailedDto.setRhinovirusIndirectFluorescentAntibodyDetails(exportDto.getRhinovirusIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setRhinovirusDirectFluorescentAntibodyDetails(exportDto.getRhinovirusDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setRhinovirusMicroscopyDetails(exportDto.getRhinovirusMicroscopyDetails());
+                        caseExportDetailedDto.setRhinovirusNeutralizingAntibodiesDetails(exportDto.getRhinovirusNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setRhinovirusPcrRtPcrDetails(exportDto.getRhinovirusPcrRtPcrDetails());
+                        caseExportDetailedDto.setRhinovirusGramStainDetails(exportDto.getRhinovirusGramStainDetails());
+                        caseExportDetailedDto.setRhinovirusLatexAgglutinationDetails(exportDto.getRhinovirusLatexAgglutinationDetails());
+                        caseExportDetailedDto.setRhinovirusCqValueDetectionDetails(exportDto.getRhinovirusCqValueDetectionDetails());
+                        caseExportDetailedDto.setRhinovirusSequencingDetails(exportDto.getRhinovirusSequencingDetails());
+                        caseExportDetailedDto.setRhinovirusDnaMicroarrayDetails(exportDto.getRhinovirusDnaMicroarrayDetails());
+                        caseExportDetailedDto.setRhinovirusOtherDetails(exportDto.getRhinovirusOtherDetails());
+                        caseExportDetailedDto.setEnterovirusAntibodyDetection(exportDto.getEnterovirusAntibodyDetection());
+                        caseExportDetailedDto.setEnterovirusAntigenDetection(exportDto.getEnterovirusAntigenDetection());
+                        caseExportDetailedDto.setEnterovirusRapidTest(exportDto.getEnterovirusRapidTest());
+                        caseExportDetailedDto.setEnterovirusCulture(exportDto.getEnterovirusCulture());
+                        caseExportDetailedDto.setEnterovirusHistopathology(exportDto.getEnterovirusHistopathology());
+                        caseExportDetailedDto.setEnterovirusIsolation(exportDto.getEnterovirusIsolation());
+                        caseExportDetailedDto.setEnterovirusIgmSerumAntibody(exportDto.getEnterovirusIgmSerumAntibody());
+                        caseExportDetailedDto.setEnterovirusIggSerumAntibody(exportDto.getEnterovirusIggSerumAntibody());
+                        caseExportDetailedDto.setEnterovirusIgaSerumAntibody(exportDto.getEnterovirusIgaSerumAntibody());
+                        caseExportDetailedDto.setEnterovirusIncubationTime(exportDto.getEnterovirusIncubationTime());
+                        caseExportDetailedDto.setEnterovirusIndirectFluorescentAntibody(exportDto.getEnterovirusIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setEnterovirusDirectFluorescentAntibody(exportDto.getEnterovirusDirectFluorescentAntibody());
+                        caseExportDetailedDto.setEnterovirusMicroscopy(exportDto.getEnterovirusMicroscopy());
+                        caseExportDetailedDto.setEnterovirusNeutralizingAntibodies(exportDto.getEnterovirusNeutralizingAntibodies());
+                        caseExportDetailedDto.setEnterovirusPcrRtPcr(exportDto.getEnterovirusPcrRtPcr());
+                        caseExportDetailedDto.setEnterovirusGramStain(exportDto.getEnterovirusGramStain());
+                        caseExportDetailedDto.setEnterovirusLatexAgglutination(exportDto.getEnterovirusLatexAgglutination());
+                        caseExportDetailedDto.setEnterovirusCqValueDetection(exportDto.getEnterovirusCqValueDetection());
+                        caseExportDetailedDto.setEnterovirusSequencing(exportDto.getEnterovirusSequencing());
+                        caseExportDetailedDto.setEnterovirusDnaMicroarray(exportDto.getEnterovirusDnaMicroarray());
+                        caseExportDetailedDto.setEnterovirusOther(exportDto.getEnterovirusOther());
+                        caseExportDetailedDto.setEnterovirusAntibodyDetectionDetails(exportDto.getEnterovirusAntibodyDetectionDetails());
+                        caseExportDetailedDto.setEnterovirusAntigenDetectionDetails(exportDto.getEnterovirusAntigenDetectionDetails());
+                        caseExportDetailedDto.setEnterovirusRapidTestDetails(exportDto.getEnterovirusRapidTestDetails());
+                        caseExportDetailedDto.setEnterovirusCultureDetails(exportDto.getEnterovirusCultureDetails());
+                        caseExportDetailedDto.setEnterovirusHistopathologyDetails(exportDto.getEnterovirusHistopathologyDetails());
+                        caseExportDetailedDto.setEnterovirusIsolationDetails(exportDto.getEnterovirusIsolationDetails());
+                        caseExportDetailedDto.setEnterovirusIgmSerumAntibodyDetails(exportDto.getEnterovirusIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setEnterovirusIggSerumAntibodyDetails(exportDto.getEnterovirusIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setEnterovirusIgaSerumAntibodyDetails(exportDto.getEnterovirusIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setEnterovirusIncubationTimeDetails(exportDto.getEnterovirusIncubationTimeDetails());
+                        caseExportDetailedDto.setEnterovirusIndirectFluorescentAntibodyDetails(exportDto.getEnterovirusIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setEnterovirusDirectFluorescentAntibodyDetails(exportDto.getEnterovirusDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setEnterovirusMicroscopyDetails(exportDto.getEnterovirusMicroscopyDetails());
+                        caseExportDetailedDto.setEnterovirusNeutralizingAntibodiesDetails(exportDto.getEnterovirusNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setEnterovirusPcrRtPcrDetails(exportDto.getEnterovirusPcrRtPcrDetails());
+                        caseExportDetailedDto.setEnterovirusGramStainDetails(exportDto.getEnterovirusGramStainDetails());
+                        caseExportDetailedDto.setEnterovirusLatexAgglutinationDetails(exportDto.getEnterovirusLatexAgglutinationDetails());
+                        caseExportDetailedDto.setEnterovirusCqValueDetectionDetails(exportDto.getEnterovirusCqValueDetectionDetails());
+                        caseExportDetailedDto.setEnterovirusSequencingDetails(exportDto.getEnterovirusSequencingDetails());
+                        caseExportDetailedDto.setEnterovirusDnaMicroarrayDetails(exportDto.getEnterovirusDnaMicroarrayDetails());
+                        caseExportDetailedDto.setEnterovirusOtherDetails(exportDto.getEnterovirusOtherDetails());
+                        caseExportDetailedDto.setmPneumoniaeAntibodyDetection(exportDto.getMPneumoniaeAntibodyDetection());
+                        caseExportDetailedDto.setmPneumoniaeAntigenDetection(exportDto.getMPneumoniaeAntigenDetection());
+                        caseExportDetailedDto.setmPneumoniaeRapidTest(exportDto.getMPneumoniaeRapidTest());
+                        caseExportDetailedDto.setmPneumoniaeCulture(exportDto.getMPneumoniaeCulture());
+                        caseExportDetailedDto.setmPneumoniaeHistopathology(exportDto.getMPneumoniaeHistopathology());
+                        caseExportDetailedDto.setmPneumoniaeIsolation(exportDto.getMPneumoniaeIsolation());
+                        caseExportDetailedDto.setmPneumoniaeIgmSerumAntibody(exportDto.getMPneumoniaeIgmSerumAntibody());
+                        caseExportDetailedDto.setmPneumoniaeIggSerumAntibody(exportDto.getMPneumoniaeIggSerumAntibody());
+                        caseExportDetailedDto.setmPneumoniaeIgaSerumAntibody(exportDto.getMPneumoniaeIgaSerumAntibody());
+                        caseExportDetailedDto.setmPneumoniaeIncubationTime(exportDto.getMPneumoniaeIncubationTime());
+                        caseExportDetailedDto.setmPneumoniaeIndirectFluorescentAntibody(exportDto.getMPneumoniaeIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setmPneumoniaeDirectFluorescentAntibody(exportDto.getMPneumoniaeDirectFluorescentAntibody());
+                        caseExportDetailedDto.setmPneumoniaeMicroscopy(exportDto.getMPneumoniaeMicroscopy());
+                        caseExportDetailedDto.setmPneumoniaeNeutralizingAntibodies(exportDto.getMPneumoniaeNeutralizingAntibodies());
+                        caseExportDetailedDto.setmPneumoniaePcrRtPcr(exportDto.getMPneumoniaePcrRtPcr());
+                        caseExportDetailedDto.setmPneumoniaeGramStain(exportDto.getMPneumoniaeGramStain());
+                        caseExportDetailedDto.setmPneumoniaeLatexAgglutination(exportDto.getMPneumoniaeLatexAgglutination());
+                        caseExportDetailedDto.setmPneumoniaeCqValueDetection(exportDto.getMPneumoniaeCqValueDetection());
+                        caseExportDetailedDto.setmPneumoniaeSequencing(exportDto.getMPneumoniaeSequencing());
+                        caseExportDetailedDto.setmPneumoniaeDnaMicroarray(exportDto.getMPneumoniaeDnaMicroarray());
+                        caseExportDetailedDto.setmPneumoniaeOther(exportDto.getMPneumoniaeOther());
+                        caseExportDetailedDto.setmPneumoniaeAntibodyDetectionDetails(exportDto.getMPneumoniaeAntibodyDetectionDetails());
+                        caseExportDetailedDto.setmPneumoniaeAntigenDetectionDetails(exportDto.getMPneumoniaeAntigenDetectionDetails());
+                        caseExportDetailedDto.setmPneumoniaeRapidTestDetails(exportDto.getMPneumoniaeRapidTestDetails());
+                        caseExportDetailedDto.setmPneumoniaeCultureDetails(exportDto.getMPneumoniaeCultureDetails());
+                        caseExportDetailedDto.setmPneumoniaeHistopathologyDetails(exportDto.getMPneumoniaeHistopathologyDetails());
+                        caseExportDetailedDto.setmPneumoniaeIsolationDetails(exportDto.getMPneumoniaeIsolationDetails());
+                        caseExportDetailedDto.setmPneumoniaeIgmSerumAntibodyDetails(exportDto.getMPneumoniaeIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setmPneumoniaeIggSerumAntibodyDetails(exportDto.getMPneumoniaeIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setmPneumoniaeIgaSerumAntibodyDetails(exportDto.getMPneumoniaeIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setmPneumoniaeIncubationTimeDetails(exportDto.getMPneumoniaeIncubationTimeDetails());
+                        caseExportDetailedDto.setmPneumoniaeIndirectFluorescentAntibodyDetails(exportDto.getMPneumoniaeIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setmPneumoniaeDirectFluorescentAntibodyDetails(exportDto.getMPneumoniaeDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setmPneumoniaeMicroscopyDetails(exportDto.getMPneumoniaeMicroscopyDetails());
+                        caseExportDetailedDto.setmPneumoniaeNeutralizingAntibodiesDetails(exportDto.getMPneumoniaeNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setmPneumoniaePcrRtPcrDetails(exportDto.getMPneumoniaePcrRtPcrDetails());
+                        caseExportDetailedDto.setmPneumoniaeGramStainDetails(exportDto.getMPneumoniaeGramStainDetails());
+                        caseExportDetailedDto.setmPneumoniaeLatexAgglutinationDetails(exportDto.getMPneumoniaeLatexAgglutinationDetails());
+                        caseExportDetailedDto.setmPneumoniaeCqValueDetectionDetails(exportDto.getMPneumoniaeCqValueDetectionDetails());
+                        caseExportDetailedDto.setmPneumoniaeSequencingDetails(exportDto.getMPneumoniaeSequencingDetails());
+                        caseExportDetailedDto.setmPneumoniaeDnaMicroarrayDetails(exportDto.getMPneumoniaeDnaMicroarrayDetails());
+                        caseExportDetailedDto.setmPneumoniaeOtherDetails(exportDto.getMPneumoniaeOtherDetails());
+                        caseExportDetailedDto.setcPneumoniaeAntibodyDetection(exportDto.getCPneumoniaeAntibodyDetection());
+                        caseExportDetailedDto.setcPneumoniaeAntigenDetection(exportDto.getCPneumoniaeAntigenDetection());
+                        caseExportDetailedDto.setcPneumoniaeRapidTest(exportDto.getCPneumoniaeRapidTest());
+                        caseExportDetailedDto.setcPneumoniaeCulture(exportDto.getCPneumoniaeCulture());
+                        caseExportDetailedDto.setcPneumoniaeHistopathology(exportDto.getCPneumoniaeHistopathology());
+                        caseExportDetailedDto.setcPneumoniaeIsolation(exportDto.getCPneumoniaeIsolation());
+                        caseExportDetailedDto.setcPneumoniaeIgmSerumAntibody(exportDto.getCPneumoniaeIgmSerumAntibody());
+                        caseExportDetailedDto.setcPneumoniaeIggSerumAntibody(exportDto.getCPneumoniaeIggSerumAntibody());
+                        caseExportDetailedDto.setcPneumoniaeIgaSerumAntibody(exportDto.getCPneumoniaeIgaSerumAntibody());
+                        caseExportDetailedDto.setcPneumoniaeIncubationTime(exportDto.getCPneumoniaeIncubationTime());
+                        caseExportDetailedDto.setcPneumoniaeIndirectFluorescentAntibody(exportDto.getCPneumoniaeIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setcPneumoniaeDirectFluorescentAntibody(exportDto.getCPneumoniaeDirectFluorescentAntibody());
+                        caseExportDetailedDto.setcPneumoniaeMicroscopy(exportDto.getCPneumoniaeMicroscopy());
+                        caseExportDetailedDto.setcPneumoniaeNeutralizingAntibodies(exportDto.getCPneumoniaeNeutralizingAntibodies());
+                        caseExportDetailedDto.setcPneumoniaePcrRtPcr(exportDto.getCPneumoniaePcrRtPcr());
+                        caseExportDetailedDto.setcPneumoniaeGramStain(exportDto.getCPneumoniaeGramStain());
+                        caseExportDetailedDto.setcPneumoniaeLatexAgglutination(exportDto.getCPneumoniaeLatexAgglutination());
+                        caseExportDetailedDto.setcPneumoniaeCqValueDetection(exportDto.getCPneumoniaeCqValueDetection());
+                        caseExportDetailedDto.setcPneumoniaeSequencing(exportDto.getCPneumoniaeSequencing());
+                        caseExportDetailedDto.setcPneumoniaeDnaMicroarray(exportDto.getCPneumoniaeDnaMicroarray());
+                        caseExportDetailedDto.setcPneumoniaeOther(exportDto.getCPneumoniaeOther());
+                        caseExportDetailedDto.setcPneumoniaeAntibodyDetectionDetails(exportDto.getCPneumoniaeAntibodyDetectionDetails());
+                        caseExportDetailedDto.setcPneumoniaeAntigenDetectionDetails(exportDto.getCPneumoniaeAntigenDetectionDetails());
+                        caseExportDetailedDto.setcPneumoniaeRapidTestDetails(exportDto.getCPneumoniaeRapidTestDetails());
+                        caseExportDetailedDto.setcPneumoniaeCultureDetails(exportDto.getCPneumoniaeCultureDetails());
+                        caseExportDetailedDto.setcPneumoniaeHistopathologyDetails(exportDto.getCPneumoniaeHistopathologyDetails());
+                        caseExportDetailedDto.setcPneumoniaeIsolationDetails(exportDto.getCPneumoniaeIsolationDetails());
+                        caseExportDetailedDto.setcPneumoniaeIgmSerumAntibodyDetails(exportDto.getCPneumoniaeIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setcPneumoniaeIggSerumAntibodyDetails(exportDto.getCPneumoniaeIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setcPneumoniaeIgaSerumAntibodyDetails(exportDto.getCPneumoniaeIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setcPneumoniaeIncubationTimeDetails(exportDto.getCPneumoniaeIncubationTimeDetails());
+                        caseExportDetailedDto.setcPneumoniaeIndirectFluorescentAntibodyDetails(exportDto.getCPneumoniaeIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setcPneumoniaeDirectFluorescentAntibodyDetails(exportDto.getCPneumoniaeDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setcPneumoniaeMicroscopyDetails(exportDto.getCPneumoniaeMicroscopyDetails());
+                        caseExportDetailedDto.setcPneumoniaeNeutralizingAntibodiesDetails(exportDto.getCPneumoniaeNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setcPneumoniaePcrRtPcrDetails(exportDto.getCPneumoniaePcrRtPcrDetails());
+                        caseExportDetailedDto.setcPneumoniaeGramStainDetails(exportDto.getCPneumoniaeGramStainDetails());
+                        caseExportDetailedDto.setcPneumoniaeLatexAgglutinationDetails(exportDto.getCPneumoniaeLatexAgglutinationDetails());
+                        caseExportDetailedDto.setcPneumoniaeCqValueDetectionDetails(exportDto.getCPneumoniaeCqValueDetectionDetails());
+                        caseExportDetailedDto.setcPneumoniaeSequencingDetails(exportDto.getCPneumoniaeSequencingDetails());
+                        caseExportDetailedDto.setcPneumoniaeDnaMicroarrayDetails(exportDto.getCPneumoniaeDnaMicroarrayDetails());
+                        caseExportDetailedDto.setcPneumoniaeOtherDetails(exportDto.getCPneumoniaeOtherDetails());
+                        caseExportDetailedDto.setAriAntibodyDetection(exportDto.getAriAntibodyDetection());
+                        caseExportDetailedDto.setAriAntigenDetection(exportDto.getAriAntigenDetection());
+                        caseExportDetailedDto.setAriRapidTest(exportDto.getAriRapidTest());
+                        caseExportDetailedDto.setAriCulture(exportDto.getAriCulture());
+                        caseExportDetailedDto.setAriHistopathology(exportDto.getAriHistopathology());
+                        caseExportDetailedDto.setAriIsolation(exportDto.getAriIsolation());
+                        caseExportDetailedDto.setAriIgmSerumAntibody(exportDto.getAriIgmSerumAntibody());
+                        caseExportDetailedDto.setAriIggSerumAntibody(exportDto.getAriIggSerumAntibody());
+                        caseExportDetailedDto.setAriIgaSerumAntibody(exportDto.getAriIgaSerumAntibody());
+                        caseExportDetailedDto.setAriIncubationTime(exportDto.getAriIncubationTime());
+                        caseExportDetailedDto.setAriIndirectFluorescentAntibody(exportDto.getAriIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setAriDirectFluorescentAntibody(exportDto.getAriDirectFluorescentAntibody());
+                        caseExportDetailedDto.setAriMicroscopy(exportDto.getAriMicroscopy());
+                        caseExportDetailedDto.setAriNeutralizingAntibodies(exportDto.getAriNeutralizingAntibodies());
+                        caseExportDetailedDto.setAriPcrRtPcr(exportDto.getAriPcrRtPcr());
+                        caseExportDetailedDto.setAriGramStain(exportDto.getAriGramStain());
+                        caseExportDetailedDto.setAriLatexAgglutination(exportDto.getAriLatexAgglutination());
+                        caseExportDetailedDto.setAriCqValueDetection(exportDto.getAriCqValueDetection());
+                        caseExportDetailedDto.setAriSequencing(exportDto.getAriSequencing());
+                        caseExportDetailedDto.setAriDnaMicroarray(exportDto.getAriDnaMicroarray());
+                        caseExportDetailedDto.setAriOther(exportDto.getAriOther());
+                        caseExportDetailedDto.setAriAntibodyDetectionDetails(exportDto.getAriAntibodyDetectionDetails());
+                        caseExportDetailedDto.setAriAntigenDetectionDetails(exportDto.getAriAntigenDetectionDetails());
+                        caseExportDetailedDto.setAriRapidTestDetails(exportDto.getAriRapidTestDetails());
+                        caseExportDetailedDto.setAriCultureDetails(exportDto.getAriCultureDetails());
+                        caseExportDetailedDto.setAriHistopathologyDetails(exportDto.getAriHistopathologyDetails());
+                        caseExportDetailedDto.setAriIsolationDetails(exportDto.getAriIsolationDetails());
+                        caseExportDetailedDto.setAriIgmSerumAntibodyDetails(exportDto.getAriIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setAriIggSerumAntibodyDetails(exportDto.getAriIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setAriIgaSerumAntibodyDetails(exportDto.getAriIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setAriIncubationTimeDetails(exportDto.getAriIncubationTimeDetails());
+                        caseExportDetailedDto.setAriIndirectFluorescentAntibodyDetails(exportDto.getAriIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setAriDirectFluorescentAntibodyDetails(exportDto.getAriDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setAriMicroscopyDetails(exportDto.getAriMicroscopyDetails());
+                        caseExportDetailedDto.setAriNeutralizingAntibodiesDetails(exportDto.getAriNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setAriPcrRtPcrDetails(exportDto.getAriPcrRtPcrDetails());
+                        caseExportDetailedDto.setAriGramStainDetails(exportDto.getAriGramStainDetails());
+                        caseExportDetailedDto.setAriLatexAgglutinationDetails(exportDto.getAriLatexAgglutinationDetails());
+                        caseExportDetailedDto.setAriCqValueDetectionDetails(exportDto.getAriCqValueDetectionDetails());
+                        caseExportDetailedDto.setAriSequencingDetails(exportDto.getAriSequencingDetails());
+                        caseExportDetailedDto.setAriDnaMicroarrayDetails(exportDto.getAriDnaMicroarrayDetails());
+                        caseExportDetailedDto.setAriOtherDetails(exportDto.getAriOtherDetails());
+                        caseExportDetailedDto.setChikungunyaAntibodyDetection(exportDto.getChikungunyaAntibodyDetection());
+                        caseExportDetailedDto.setChikungunyaAntigenDetection(exportDto.getChikungunyaAntigenDetection());
+                        caseExportDetailedDto.setChikungunyaRapidTest(exportDto.getChikungunyaRapidTest());
+                        caseExportDetailedDto.setChikungunyaCulture(exportDto.getChikungunyaCulture());
+                        caseExportDetailedDto.setChikungunyaHistopathology(exportDto.getChikungunyaHistopathology());
+                        caseExportDetailedDto.setChikungunyaIsolation(exportDto.getChikungunyaIsolation());
+                        caseExportDetailedDto.setChikungunyaIgmSerumAntibody(exportDto.getChikungunyaIgmSerumAntibody());
+                        caseExportDetailedDto.setChikungunyaIggSerumAntibody(exportDto.getChikungunyaIggSerumAntibody());
+                        caseExportDetailedDto.setChikungunyaIgaSerumAntibody(exportDto.getChikungunyaIgaSerumAntibody());
+                        caseExportDetailedDto.setChikungunyaIncubationTime(exportDto.getChikungunyaIncubationTime());
+                        caseExportDetailedDto.setChikungunyaIndirectFluorescentAntibody(exportDto.getChikungunyaIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setChikungunyaDirectFluorescentAntibody(exportDto.getChikungunyaDirectFluorescentAntibody());
+                        caseExportDetailedDto.setChikungunyaMicroscopy(exportDto.getChikungunyaMicroscopy());
+                        caseExportDetailedDto.setChikungunyaNeutralizingAntibodies(exportDto.getChikungunyaNeutralizingAntibodies());
+                        caseExportDetailedDto.setChikungunyaPcrRtPcr(exportDto.getChikungunyaPcrRtPcr());
+                        caseExportDetailedDto.setChikungunyaGramStain(exportDto.getChikungunyaGramStain());
+                        caseExportDetailedDto.setChikungunyaLatexAgglutination(exportDto.getChikungunyaLatexAgglutination());
+                        caseExportDetailedDto.setChikungunyaCqValueDetection(exportDto.getChikungunyaCqValueDetection());
+                        caseExportDetailedDto.setChikungunyaSequencing(exportDto.getChikungunyaSequencing());
+                        caseExportDetailedDto.setChikungunyaDnaMicroarray(exportDto.getChikungunyaDnaMicroarray());
+                        caseExportDetailedDto.setChikungunyaOther(exportDto.getChikungunyaOther());
+                        caseExportDetailedDto.setChikungunyaAntibodyDetectionDetails(exportDto.getChikungunyaAntibodyDetectionDetails());
+                        caseExportDetailedDto.setChikungunyaAntigenDetectionDetails(exportDto.getChikungunyaAntigenDetectionDetails());
+                        caseExportDetailedDto.setChikungunyaRapidTestDetails(exportDto.getChikungunyaRapidTestDetails());
+                        caseExportDetailedDto.setChikungunyaCultureDetails(exportDto.getChikungunyaCultureDetails());
+                        caseExportDetailedDto.setChikungunyaHistopathologyDetails(exportDto.getChikungunyaHistopathologyDetails());
+                        caseExportDetailedDto.setChikungunyaIsolationDetails(exportDto.getChikungunyaIsolationDetails());
+                        caseExportDetailedDto.setChikungunyaIgmSerumAntibodyDetails(exportDto.getChikungunyaIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setChikungunyaIggSerumAntibodyDetails(exportDto.getChikungunyaIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setChikungunyaIgaSerumAntibodyDetails(exportDto.getChikungunyaIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setChikungunyaIncubationTimeDetails(exportDto.getChikungunyaIncubationTimeDetails());
+                        caseExportDetailedDto.setChikungunyaIndirectFluorescentAntibodyDetails(exportDto.getChikungunyaIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setChikungunyaDirectFluorescentAntibodyDetails(exportDto.getChikungunyaDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setChikungunyaMicroscopyDetails(exportDto.getChikungunyaMicroscopyDetails());
+                        caseExportDetailedDto.setChikungunyaNeutralizingAntibodiesDetails(exportDto.getChikungunyaNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setChikungunyaPcrRtPcrDetails(exportDto.getChikungunyaPcrRtPcrDetails());
+                        caseExportDetailedDto.setChikungunyaGramStainDetails(exportDto.getChikungunyaGramStainDetails());
+                        caseExportDetailedDto.setChikungunyaLatexAgglutinationDetails(exportDto.getChikungunyaLatexAgglutinationDetails());
+                        caseExportDetailedDto.setChikungunyaCqValueDetectionDetails(exportDto.getChikungunyaCqValueDetectionDetails());
+                        caseExportDetailedDto.setChikungunyaSequencingDetails(exportDto.getChikungunyaSequencingDetails());
+                        caseExportDetailedDto.setChikungunyaDnaMicroarrayDetails(exportDto.getChikungunyaDnaMicroarrayDetails());
+                        caseExportDetailedDto.setChikungunyaOtherDetails(exportDto.getChikungunyaOtherDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildAntibodyDetection(exportDto.getPostImmunizationAdverseEventsMildAntibodyDetection());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildAntigenDetection(exportDto.getPostImmunizationAdverseEventsMildAntigenDetection());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildRapidTest(exportDto.getPostImmunizationAdverseEventsMildRapidTest());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildCulture(exportDto.getPostImmunizationAdverseEventsMildCulture());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildHistopathology(exportDto.getPostImmunizationAdverseEventsMildHistopathology());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildIsolation(exportDto.getPostImmunizationAdverseEventsMildIsolation());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildIgmSerumAntibody(exportDto.getPostImmunizationAdverseEventsMildIgmSerumAntibody());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildIggSerumAntibody(exportDto.getPostImmunizationAdverseEventsMildIggSerumAntibody());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildIgaSerumAntibody(exportDto.getPostImmunizationAdverseEventsMildIgaSerumAntibody());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildIncubationTime(exportDto.getPostImmunizationAdverseEventsMildIncubationTime());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildIndirectFluorescentAntibody(exportDto.getPostImmunizationAdverseEventsMildIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildDirectFluorescentAntibody(exportDto.getPostImmunizationAdverseEventsMildDirectFluorescentAntibody());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildMicroscopy(exportDto.getPostImmunizationAdverseEventsMildMicroscopy());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildNeutralizingAntibodies(exportDto.getPostImmunizationAdverseEventsMildNeutralizingAntibodies());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildPcrRtPcr(exportDto.getPostImmunizationAdverseEventsMildPcrRtPcr());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildGramStain(exportDto.getPostImmunizationAdverseEventsMildGramStain());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildLatexAgglutination(exportDto.getPostImmunizationAdverseEventsMildLatexAgglutination());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildCqValueDetection(exportDto.getPostImmunizationAdverseEventsMildCqValueDetection());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildSequencing(exportDto.getPostImmunizationAdverseEventsMildSequencing());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildDnaMicroarray(exportDto.getPostImmunizationAdverseEventsMildDnaMicroarray());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildOther(exportDto.getPostImmunizationAdverseEventsMildOther());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildAntibodyDetectionDetails(exportDto.getPostImmunizationAdverseEventsMildAntibodyDetectionDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildAntigenDetectionDetails(exportDto.getPostImmunizationAdverseEventsMildAntigenDetectionDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildRapidTestDetails(exportDto.getPostImmunizationAdverseEventsMildRapidTestDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildCultureDetails(exportDto.getPostImmunizationAdverseEventsMildCultureDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildHistopathologyDetails(exportDto.getPostImmunizationAdverseEventsMildHistopathologyDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildIsolationDetails(exportDto.getPostImmunizationAdverseEventsMildIsolationDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildIgmSerumAntibodyDetails(exportDto.getPostImmunizationAdverseEventsMildIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildIggSerumAntibodyDetails(exportDto.getPostImmunizationAdverseEventsMildIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildIgaSerumAntibodyDetails(exportDto.getPostImmunizationAdverseEventsMildIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildIncubationTimeDetails(exportDto.getPostImmunizationAdverseEventsMildIncubationTimeDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildIndirectFluorescentAntibodyDetails(exportDto.getPostImmunizationAdverseEventsMildIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildDirectFluorescentAntibodyDetails(exportDto.getPostImmunizationAdverseEventsMildDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildMicroscopyDetails(exportDto.getPostImmunizationAdverseEventsMildMicroscopyDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildNeutralizingAntibodiesDetails(exportDto.getPostImmunizationAdverseEventsMildNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildPcrRtPcrDetails(exportDto.getPostImmunizationAdverseEventsMildPcrRtPcrDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildGramStainDetails(exportDto.getPostImmunizationAdverseEventsMildGramStainDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildLatexAgglutinationDetails(exportDto.getPostImmunizationAdverseEventsMildLatexAgglutinationDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildCqValueDetectionDetails(exportDto.getPostImmunizationAdverseEventsMildCqValueDetectionDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildSequencingDetails(exportDto.getPostImmunizationAdverseEventsMildSequencingDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildDnaMicroarrayDetails(exportDto.getPostImmunizationAdverseEventsMildDnaMicroarrayDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsMildOtherDetails(exportDto.getPostImmunizationAdverseEventsMildOtherDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereAntibodyDetection(exportDto.getPostImmunizationAdverseEventsSevereAntibodyDetection());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereAntigenDetection(exportDto.getPostImmunizationAdverseEventsSevereAntigenDetection());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereRapidTest(exportDto.getPostImmunizationAdverseEventsSevereRapidTest());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereCulture(exportDto.getPostImmunizationAdverseEventsSevereCulture());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereHistopathology(exportDto.getPostImmunizationAdverseEventsSevereHistopathology());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereIsolation(exportDto.getPostImmunizationAdverseEventsSevereIsolation());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereIgmSerumAntibody(exportDto.getPostImmunizationAdverseEventsSevereIgmSerumAntibody());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereIggSerumAntibody(exportDto.getPostImmunizationAdverseEventsSevereIggSerumAntibody());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereIgaSerumAntibody(exportDto.getPostImmunizationAdverseEventsSevereIgaSerumAntibody());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereIncubationTime(exportDto.getPostImmunizationAdverseEventsSevereIncubationTime());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereIndirectFluorescentAntibody(exportDto.getPostImmunizationAdverseEventsSevereIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereDirectFluorescentAntibody(exportDto.getPostImmunizationAdverseEventsSevereDirectFluorescentAntibody());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereMicroscopy(exportDto.getPostImmunizationAdverseEventsSevereMicroscopy());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereNeutralizingAntibodies(exportDto.getPostImmunizationAdverseEventsSevereNeutralizingAntibodies());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSeverePcrRtPcr(exportDto.getPostImmunizationAdverseEventsSeverePcrRtPcr());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereGramStain(exportDto.getPostImmunizationAdverseEventsSevereGramStain());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereLatexAgglutination(exportDto.getPostImmunizationAdverseEventsSevereLatexAgglutination());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereCqValueDetection(exportDto.getPostImmunizationAdverseEventsSevereCqValueDetection());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereSequencing(exportDto.getPostImmunizationAdverseEventsSevereSequencing());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereDnaMicroarray(exportDto.getPostImmunizationAdverseEventsSevereDnaMicroarray());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereOther(exportDto.getPostImmunizationAdverseEventsSevereOther());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereAntibodyDetectionDetails(exportDto.getPostImmunizationAdverseEventsSevereAntibodyDetectionDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereAntigenDetectionDetails(exportDto.getPostImmunizationAdverseEventsSevereAntigenDetectionDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereRapidTestDetails(exportDto.getPostImmunizationAdverseEventsSevereRapidTestDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereCultureDetails(exportDto.getPostImmunizationAdverseEventsSevereCultureDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereHistopathologyDetails(exportDto.getPostImmunizationAdverseEventsSevereHistopathologyDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereIsolationDetails(exportDto.getPostImmunizationAdverseEventsSevereIsolationDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereIgmSerumAntibodyDetails(exportDto.getPostImmunizationAdverseEventsSevereIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereIggSerumAntibodyDetails(exportDto.getPostImmunizationAdverseEventsSevereIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereIgaSerumAntibodyDetails(exportDto.getPostImmunizationAdverseEventsSevereIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereIncubationTimeDetails(exportDto.getPostImmunizationAdverseEventsSevereIncubationTimeDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereIndirectFluorescentAntibodyDetails(exportDto.getPostImmunizationAdverseEventsSevereIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereDirectFluorescentAntibodyDetails(exportDto.getPostImmunizationAdverseEventsSevereDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereMicroscopyDetails(exportDto.getPostImmunizationAdverseEventsSevereMicroscopyDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereNeutralizingAntibodiesDetails(exportDto.getPostImmunizationAdverseEventsSevereNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSeverePcrRtPcrDetails(exportDto.getPostImmunizationAdverseEventsSeverePcrRtPcrDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereGramStainDetails(exportDto.getPostImmunizationAdverseEventsSevereGramStainDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereLatexAgglutinationDetails(exportDto.getPostImmunizationAdverseEventsSevereLatexAgglutinationDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereCqValueDetectionDetails(exportDto.getPostImmunizationAdverseEventsSevereCqValueDetectionDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereSequencingDetails(exportDto.getPostImmunizationAdverseEventsSevereSequencingDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereDnaMicroarrayDetails(exportDto.getPostImmunizationAdverseEventsSevereDnaMicroarrayDetails());
+                        caseExportDetailedDto.setPostImmunizationAdverseEventsSevereOtherDetails(exportDto.getPostImmunizationAdverseEventsSevereOtherDetails());
+                        caseExportDetailedDto.setFhaAntibodyDetection(exportDto.getFhaAntibodyDetection());
+                        caseExportDetailedDto.setFhaAntigenDetection(exportDto.getFhaAntigenDetection());
+                        caseExportDetailedDto.setFhaRapidTest(exportDto.getFhaRapidTest());
+                        caseExportDetailedDto.setFhaCulture(exportDto.getFhaCulture());
+                        caseExportDetailedDto.setFhaHistopathology(exportDto.getFhaHistopathology());
+                        caseExportDetailedDto.setFhaIsolation(exportDto.getFhaIsolation());
+                        caseExportDetailedDto.setFhaIgmSerumAntibody(exportDto.getFhaIgmSerumAntibody());
+                        caseExportDetailedDto.setFhaIggSerumAntibody(exportDto.getFhaIggSerumAntibody());
+                        caseExportDetailedDto.setFhaIgaSerumAntibody(exportDto.getFhaIgaSerumAntibody());
+                        caseExportDetailedDto.setFhaIncubationTime(exportDto.getFhaIncubationTime());
+                        caseExportDetailedDto.setFhaIndirectFluorescentAntibody(exportDto.getFhaIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setFhaDirectFluorescentAntibody(exportDto.getFhaDirectFluorescentAntibody());
+                        caseExportDetailedDto.setFhaMicroscopy(exportDto.getFhaMicroscopy());
+                        caseExportDetailedDto.setFhaNeutralizingAntibodies(exportDto.getFhaNeutralizingAntibodies());
+                        caseExportDetailedDto.setFhaPcrRtPcr(exportDto.getFhaPcrRtPcr());
+                        caseExportDetailedDto.setFhaGramStain(exportDto.getFhaGramStain());
+                        caseExportDetailedDto.setFhaLatexAgglutination(exportDto.getFhaLatexAgglutination());
+                        caseExportDetailedDto.setFhaCqValueDetection(exportDto.getFhaCqValueDetection());
+                        caseExportDetailedDto.setFhaSequencing(exportDto.getFhaSequencing());
+                        caseExportDetailedDto.setFhaDnaMicroarray(exportDto.getFhaDnaMicroarray());
+                        caseExportDetailedDto.setFhaOther(exportDto.getFhaOther());
+                        caseExportDetailedDto.setFhaAntibodyDetectionDetails(exportDto.getFhaAntibodyDetectionDetails());
+                        caseExportDetailedDto.setFhaAntigenDetectionDetails(exportDto.getFhaAntigenDetectionDetails());
+                        caseExportDetailedDto.setFhaRapidTestDetails(exportDto.getFhaRapidTestDetails());
+                        caseExportDetailedDto.setFhaCultureDetails(exportDto.getFhaCultureDetails());
+                        caseExportDetailedDto.setFhaHistopathologyDetails(exportDto.getFhaHistopathologyDetails());
+                        caseExportDetailedDto.setFhaIsolationDetails(exportDto.getFhaIsolationDetails());
+                        caseExportDetailedDto.setFhaIgmSerumAntibodyDetails(exportDto.getFhaIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setFhaIggSerumAntibodyDetails(exportDto.getFhaIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setFhaIgaSerumAntibodyDetails(exportDto.getFhaIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setFhaIncubationTimeDetails(exportDto.getFhaIncubationTimeDetails());
+                        caseExportDetailedDto.setFhaIndirectFluorescentAntibodyDetails(exportDto.getFhaIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setFhaDirectFluorescentAntibodyDetails(exportDto.getFhaDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setFhaMicroscopyDetails(exportDto.getFhaMicroscopyDetails());
+                        caseExportDetailedDto.setFhaNeutralizingAntibodiesDetails(exportDto.getFhaNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setFhaPcrRtPcrDetails(exportDto.getFhaPcrRtPcrDetails());
+                        caseExportDetailedDto.setFhaGramStainDetails(exportDto.getFhaGramStainDetails());
+                        caseExportDetailedDto.setFhaLatexAgglutinationDetails(exportDto.getFhaLatexAgglutinationDetails());
+                        caseExportDetailedDto.setFhaCqValueDetectionDetails(exportDto.getFhaCqValueDetectionDetails());
+                        caseExportDetailedDto.setFhaSequencingDetails(exportDto.getFhaSequencingDetails());
+                        caseExportDetailedDto.setFhaDnaMicroarrayDetails(exportDto.getFhaDnaMicroarrayDetails());
+                        caseExportDetailedDto.setFhaOtherDetails(exportDto.getFhaOtherDetails());
+                        caseExportDetailedDto.setOtherAntibodyDetection(exportDto.getOtherAntibodyDetection());
+                        caseExportDetailedDto.setOtherAntigenDetection(exportDto.getOtherAntigenDetection());
+                        caseExportDetailedDto.setOtherRapidTest(exportDto.getOtherRapidTest());
+                        caseExportDetailedDto.setOtherCulture(exportDto.getOtherCulture());
+                        caseExportDetailedDto.setOtherHistopathology(exportDto.getOtherHistopathology());
+                        caseExportDetailedDto.setOtherIsolation(exportDto.getOtherIsolation());
+                        caseExportDetailedDto.setOtherIgmSerumAntibody(exportDto.getOtherIgmSerumAntibody());
+                        caseExportDetailedDto.setOtherIggSerumAntibody(exportDto.getOtherIggSerumAntibody());
+                        caseExportDetailedDto.setOtherIgaSerumAntibody(exportDto.getOtherIgaSerumAntibody());
+                        caseExportDetailedDto.setOtherIncubationTime(exportDto.getOtherIncubationTime());
+                        caseExportDetailedDto.setOtherIndirectFluorescentAntibody(exportDto.getOtherIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setOtherDirectFluorescentAntibody(exportDto.getOtherDirectFluorescentAntibody());
+                        caseExportDetailedDto.setOtherMicroscopy(exportDto.getOtherMicroscopy());
+                        caseExportDetailedDto.setOtherNeutralizingAntibodies(exportDto.getOtherNeutralizingAntibodies());
+                        caseExportDetailedDto.setOtherPcrRtPcr(exportDto.getOtherPcrRtPcr());
+                        caseExportDetailedDto.setOtherGramStain(exportDto.getOtherGramStain());
+                        caseExportDetailedDto.setOtherLatexAgglutination(exportDto.getOtherLatexAgglutination());
+                        caseExportDetailedDto.setOtherCqValueDetection(exportDto.getOtherCqValueDetection());
+                        caseExportDetailedDto.setOtherSequencing(exportDto.getOtherSequencing());
+                        caseExportDetailedDto.setOtherDnaMicroarray(exportDto.getOtherDnaMicroarray());
+                        caseExportDetailedDto.setOtherOther(exportDto.getOtherOther());
+                        caseExportDetailedDto.setOtherAntibodyDetectionDetails(exportDto.getOtherAntibodyDetectionDetails());
+                        caseExportDetailedDto.setOtherAntigenDetectionDetails(exportDto.getOtherAntigenDetectionDetails());
+                        caseExportDetailedDto.setOtherRapidTestDetails(exportDto.getOtherRapidTestDetails());
+                        caseExportDetailedDto.setOtherCultureDetails(exportDto.getOtherCultureDetails());
+                        caseExportDetailedDto.setOtherHistopathologyDetails(exportDto.getOtherHistopathologyDetails());
+                        caseExportDetailedDto.setOtherIsolationDetails(exportDto.getOtherIsolationDetails());
+                        caseExportDetailedDto.setOtherIgmSerumAntibodyDetails(exportDto.getOtherIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setOtherIggSerumAntibodyDetails(exportDto.getOtherIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setOtherIgaSerumAntibodyDetails(exportDto.getOtherIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setOtherIncubationTimeDetails(exportDto.getOtherIncubationTimeDetails());
+                        caseExportDetailedDto.setOtherIndirectFluorescentAntibodyDetails(exportDto.getOtherIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setOtherDirectFluorescentAntibodyDetails(exportDto.getOtherDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setOtherMicroscopyDetails(exportDto.getOtherMicroscopyDetails());
+                        caseExportDetailedDto.setOtherNeutralizingAntibodiesDetails(exportDto.getOtherNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setOtherPcrRtPcrDetails(exportDto.getOtherPcrRtPcrDetails());
+                        caseExportDetailedDto.setOtherGramStainDetails(exportDto.getOtherGramStainDetails());
+                        caseExportDetailedDto.setOtherLatexAgglutinationDetails(exportDto.getOtherLatexAgglutinationDetails());
+                        caseExportDetailedDto.setOtherCqValueDetectionDetails(exportDto.getOtherCqValueDetectionDetails());
+                        caseExportDetailedDto.setOtherSequencingDetails(exportDto.getOtherSequencingDetails());
+                        caseExportDetailedDto.setOtherDnaMicroarrayDetails(exportDto.getOtherDnaMicroarrayDetails());
+                        caseExportDetailedDto.setOtherOtherDetails(exportDto.getOtherOtherDetails());
+                        caseExportDetailedDto.setUndefinedAntibodyDetection(exportDto.getUndefinedAntibodyDetection());
+                        caseExportDetailedDto.setUndefinedAntigenDetection(exportDto.getUndefinedAntigenDetection());
+                        caseExportDetailedDto.setUndefinedRapidTest(exportDto.getUndefinedRapidTest());
+                        caseExportDetailedDto.setUndefinedCulture(exportDto.getUndefinedCulture());
+                        caseExportDetailedDto.setUndefinedHistopathology(exportDto.getUndefinedHistopathology());
+                        caseExportDetailedDto.setUndefinedIsolation(exportDto.getUndefinedIsolation());
+                        caseExportDetailedDto.setUndefinedIgmSerumAntibody(exportDto.getUndefinedIgmSerumAntibody());
+                        caseExportDetailedDto.setUndefinedIggSerumAntibody(exportDto.getUndefinedIggSerumAntibody());
+                        caseExportDetailedDto.setUndefinedIgaSerumAntibody(exportDto.getUndefinedIgaSerumAntibody());
+                        caseExportDetailedDto.setUndefinedIncubationTime(exportDto.getUndefinedIncubationTime());
+                        caseExportDetailedDto.setUndefinedIndirectFluorescentAntibody(exportDto.getUndefinedIndirectFluorescentAntibody());
+                        caseExportDetailedDto.setUndefinedDirectFluorescentAntibody(exportDto.getUndefinedDirectFluorescentAntibody());
+                        caseExportDetailedDto.setUndefinedMicroscopy(exportDto.getUndefinedMicroscopy());
+                        caseExportDetailedDto.setUndefinedNeutralizingAntibodies(exportDto.getUndefinedNeutralizingAntibodies());
+                        caseExportDetailedDto.setUndefinedPcrRtPcr(exportDto.getUndefinedPcrRtPcr());
+                        caseExportDetailedDto.setUndefinedGramStain(exportDto.getUndefinedGramStain());
+                        caseExportDetailedDto.setUndefinedLatexAgglutination(exportDto.getUndefinedLatexAgglutination());
+                        caseExportDetailedDto.setUndefinedCqValueDetection(exportDto.getUndefinedCqValueDetection());
+                        caseExportDetailedDto.setUndefinedSequencing(exportDto.getUndefinedSequencing());
+                        caseExportDetailedDto.setUndefinedDnaMicroarray(exportDto.getUndefinedDnaMicroarray());
+                        caseExportDetailedDto.setUndefinedOther(exportDto.getUndefinedOther());
+                        caseExportDetailedDto.setUndefinedAntibodyDetectionDetails(exportDto.getUndefinedAntibodyDetectionDetails());
+                        caseExportDetailedDto.setUndefinedAntigenDetectionDetails(exportDto.getUndefinedAntigenDetectionDetails());
+                        caseExportDetailedDto.setUndefinedRapidTestDetails(exportDto.getUndefinedRapidTestDetails());
+                        caseExportDetailedDto.setUndefinedCultureDetails(exportDto.getUndefinedCultureDetails());
+                        caseExportDetailedDto.setUndefinedHistopathologyDetails(exportDto.getUndefinedHistopathologyDetails());
+                        caseExportDetailedDto.setUndefinedIsolationDetails(exportDto.getUndefinedIsolationDetails());
+                        caseExportDetailedDto.setUndefinedIgmSerumAntibodyDetails(exportDto.getUndefinedIgmSerumAntibodyDetails());
+                        caseExportDetailedDto.setUndefinedIggSerumAntibodyDetails(exportDto.getUndefinedIggSerumAntibodyDetails());
+                        caseExportDetailedDto.setUndefinedIgaSerumAntibodyDetails(exportDto.getUndefinedIgaSerumAntibodyDetails());
+                        caseExportDetailedDto.setUndefinedIncubationTimeDetails(exportDto.getUndefinedIncubationTimeDetails());
+                        caseExportDetailedDto.setUndefinedIndirectFluorescentAntibodyDetails(exportDto.getUndefinedIndirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setUndefinedDirectFluorescentAntibodyDetails(exportDto.getUndefinedDirectFluorescentAntibodyDetails());
+                        caseExportDetailedDto.setUndefinedMicroscopyDetails(exportDto.getUndefinedMicroscopyDetails());
+                        caseExportDetailedDto.setUndefinedNeutralizingAntibodiesDetails(exportDto.getUndefinedNeutralizingAntibodiesDetails());
+                        caseExportDetailedDto.setUndefinedPcrRtPcrDetails(exportDto.getUndefinedPcrRtPcrDetails());
+                        caseExportDetailedDto.setUndefinedGramStainDetails(exportDto.getUndefinedGramStainDetails());
+                        caseExportDetailedDto.setUndefinedLatexAgglutinationDetails(exportDto.getUndefinedLatexAgglutinationDetails());
+                        caseExportDetailedDto.setUndefinedCqValueDetectionDetails(exportDto.getUndefinedCqValueDetectionDetails());
+                        caseExportDetailedDto.setUndefinedSequencingDetails(exportDto.getUndefinedSequencingDetails());
+                        caseExportDetailedDto.setUndefinedDnaMicroarrayDetails(exportDto.getUndefinedDnaMicroarrayDetails());
+                        caseExportDetailedDto.setUndefinedOtherDetails(exportDto.getUndefinedOtherDetails());
+
+
+
+
+
+//                        caseExportDetailedDto.setPathogenTest1(new CaseExportDetailedSampleDto.SampleExportPathogenTest(
+//                                embeddedDetailedSampleExportDto.getPathogenTestType1(),
+//                                embeddedDetailedSampleExportDto.getPathogenTestDisease1(),
+//                                embeddedDetailedSampleExportDto.getPathogenTestDateTime1(),
+//                                embeddedDetailedSampleExportDto.getPathogenTestLab1(),
+//                                embeddedDetailedSampleExportDto.getPathogenTestResult1(),
+//                                embeddedDetailedSampleExportDto.getPathogenTestVerified1())
+//                        );
+//
+//                        caseExportDetailedDto.setPathogenTest2(new CaseExportDetailedSampleDto.SampleExportPathogenTest(
+//                                embeddedDetailedSampleExportDto.getPathogenTestType2(),
+//                                embeddedDetailedSampleExportDto.getPathogenTestDisease2(),
+//                                embeddedDetailedSampleExportDto.getPathogenTestDateTime2(),
+//                                embeddedDetailedSampleExportDto.getPathogenTestLab2(),
+//                                embeddedDetailedSampleExportDto.getPathogenTestResult2(),
+//                                embeddedDetailedSampleExportDto.getPathogenTestVerified2())
+//                        );
+//
+//                        caseExportDetailedDto.setPathogenTest3(new CaseExportDetailedSampleDto.SampleExportPathogenTest(
+//                                embeddedDetailedSampleExportDto.getPathogenTestType3(),
+//                                embeddedDetailedSampleExportDto.getPathogenTestDisease3(),
+//                                embeddedDetailedSampleExportDto.getPathogenTestDateTime3(),
+//                                embeddedDetailedSampleExportDto.getPathogenTestLab3(),
+//                                embeddedDetailedSampleExportDto.getPathogenTestResult3(),
+//                                embeddedDetailedSampleExportDto.getPathogenTestVerified3())
+//                        );
+
+                        caseExportDetailedDto.setOtherPathogenTests(embeddedDetailedSampleExportDto.getOtherPathogenTestsDetails());
+
+                        newResult.add(caseExportDetailedDto);
+                    }
+                }
+            }
+            return newResult;
+        }
+        return resultList;
+    }
+
+    private Map<Long, UserReference> getCaseUsersForDetailedExport(List<CaseExportDetailedSampleDto> resultList, ExportConfigurationDto exportConfiguration) {
+        Map<Long, UserReference> caseUsers = Collections.emptyMap();
+        if (exportConfiguration == null
+                || exportConfiguration.getProperties().contains(CaseDataDto.REPORTING_USER)
+                || exportConfiguration.getProperties().contains(CaseDataDto.FOLLOW_UP_STATUS_CHANGE_USER)) {
+            Set<Long> userIds = resultList.stream()
+                    .map((c -> Arrays.asList(c.getReportingUserId(), c.getFollowUpStatusChangeUserId())))
+                    .flatMap(Collection::stream)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+            caseUsers = userService.getUserReferencesByIds(userIds).stream().collect(Collectors.toMap(UserReference::getId, Function.identity()));
+        }
+
+        return caseUsers;
+    }
+
+    public void mapAfpTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setAfpAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setAfpAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setAfpRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setAfpCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setAfpHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setAfpIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAfpIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAfpIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAfpIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setAfpIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAfpIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setAfpMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setAfpNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setAfpPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setAfpGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setAfpLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setAfpCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setAfpSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setAfpDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setAfpOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAfpOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+
+//    Cholera
+    public void mapCholeraTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setCholeraAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setCholeraAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setCholeraRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setCholeraCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setCholeraHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setCholeraIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setCholeraIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setCholeraIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setCholeraIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setCholeraIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setCholeraIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setCholeraMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setCholeraNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setCholeraPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setCholeraGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setCholeraLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setCholeraCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setCholeraSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setCholeraDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setCholeraOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCholeraOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+
+//    CONGENITAL_RUBELLA
+    public void mapCongenitalRubellaTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setCongenitalRubellaOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCongenitalRubellaOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+
+//    CSM
+    public void mapCsmTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setCsmAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setCsmAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setCsmRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setCsmCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setCsmHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setCsmIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setCsmIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setCsmIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setCsmIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setCsmIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setCsmIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setCsmMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setCsmNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setCsmPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setCsmGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setCsmLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setCsmCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setCsmSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setCsmDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setCsmOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCsmOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+
+//    DENGUE
+    public void mapDengueTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setDengueAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setDengueAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setDengueRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setDengueCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setDengueHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setDengueIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setDengueIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setDengueIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setDengueIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setDengueIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setDengueIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setDengueMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setDengueNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setDenguePcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDenguePcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setDengueGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setDengueLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setDengueCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setDengueSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setDengueDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setDengueOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDengueOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void mapEvdTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setEvdAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setEvdAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setEvdRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setEvdCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setEvdHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setEvdIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setEvdIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setEvdIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setEvdIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setEvdIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setEvdIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setEvdMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setEvdNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setEvdPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setEvdGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setEvdLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setEvdCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setEvdSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setEvdDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setEvdOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEvdOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void mapGuineaWormTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setGuineaWormAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setGuineaWormAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setGuineaWormRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setGuineaWormCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setGuineaWormHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setGuineaWormIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setGuineaWormIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setGuineaWormIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setGuineaWormIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setGuineaWormIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setGuineaWormIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setGuineaWormMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setGuineaWormNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setGuineaWormPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setGuineaWormGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setGuineaWormLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setGuineaWormCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setGuineaWormSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setGuineaWormDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setGuineaWormOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setGuineaWormOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    public void mapLassaTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setLassaAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setLassaAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setLassaRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setLassaCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setLassaHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setLassaIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setLassaIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setLassaIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setLassaIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setLassaIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setLassaIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setLassaMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setLassaNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setLassaPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setLassaGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setLassaLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setLassaCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setLassaSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setLassaDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setLassaOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLassaOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    public void mapMeaslesTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setMeaslesAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setMeaslesAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setMeaslesRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setMeaslesCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setMeaslesHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setMeaslesIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setMeaslesIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setMeaslesIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setMeaslesIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setMeaslesIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setMeaslesIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setMeaslesMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setMeaslesNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setMeaslesPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setMeaslesGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setMeaslesLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setMeaslesCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setMeaslesSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setMeaslesDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setMeaslesOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMeaslesOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapMonkeyPoxTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setMonkeypoxAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setMonkeypoxAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setMonkeypoxRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setMonkeypoxCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setMonkeypoxHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setMonkeypoxIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setMonkeypoxIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setMonkeypoxIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setMonkeypoxIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setMonkeypoxIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setMonkeypoxIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setMonkeypoxMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setMonkeypoxNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setMonkeypoxPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setMonkeypoxGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setMonkeypoxLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setMonkeypoxCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setMonkeypoxSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setMonkeypoxDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setMonkeypoxOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMonkeypoxOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapNewInfluenzaTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setNewInfluenzaAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setNewInfluenzaAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setNewInfluenzaRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setNewInfluenzaCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setNewInfluenzaHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setNewInfluenzaIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setNewInfluenzaIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setNewInfluenzaIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setNewInfluenzaIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setNewInfluenzaIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setNewInfluenzaIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setNewInfluenzaMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setNewInfluenzaNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setNewInfluenzaPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setNewInfluenzaGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setNewInfluenzaLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setNewInfluenzaCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setNewInfluenzaSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setNewInfluenzaDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setNewInfluenzaOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNewInfluenzaOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapPlagueTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setPlagueAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setPlagueAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setPlagueRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setPlagueCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setPlagueHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setPlagueIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPlagueIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPlagueIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPlagueIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setPlagueIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPlagueIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setPlagueMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setPlagueNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setPlaguePcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlaguePcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setPlagueGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setPlagueLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setPlagueCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setPlagueSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setPlagueDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setPlagueOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void mapPolioTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setPlagueAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setPlagueAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setPlagueRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setPlagueCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setPlagueHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setPlagueIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPlagueIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPlagueIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPlagueIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setPlagueIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPlagueIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setPlagueMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setPlagueNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setPlaguePcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlaguePcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setPlagueGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setPlagueLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setPlagueCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setPlagueSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setPlagueDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setPlagueOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPlagueOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapUnspecifiedVhfTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUnspecifiedVhfOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapYellowFeverTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setYellowFeverAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setYellowFeverAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setYellowFeverRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setYellowFeverCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setYellowFeverHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setYellowFeverIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setYellowFeverIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setYellowFeverIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setYellowFeverIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setYellowFeverIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setYellowFeverIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setYellowFeverMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setYellowFeverNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setYellowFeverPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setYellowFeverGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setYellowFeverLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setYellowFeverCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setYellowFeverSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setYellowFeverDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setYellowFeverOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYellowFeverOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapRabiesTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setRabiesAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setRabiesAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setRabiesRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setRabiesCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setRabiesHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setRabiesIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setRabiesIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setRabiesIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setRabiesIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setRabiesIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setRabiesIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setRabiesMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setRabiesNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setRabiesPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setRabiesGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setRabiesLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setRabiesCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setRabiesSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setRabiesDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setRabiesOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRabiesOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapAnthraxTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setAnthraxAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setAnthraxAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setAnthraxRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setAnthraxCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setAnthraxHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setAnthraxIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAnthraxIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAnthraxIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAnthraxIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setAnthraxIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAnthraxIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setAnthraxMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setAnthraxNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setAnthraxPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setAnthraxGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setAnthraxLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setAnthraxCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setAnthraxSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setAnthraxDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setAnthraxOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAnthraxOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapCoronavirusTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setCoronavirusAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setCoronavirusAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setCoronavirusRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setCoronavirusCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setCoronavirusHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setCoronavirusIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setCoronavirusIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setCoronavirusIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setCoronavirusIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setCoronavirusIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setCoronavirusIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setCoronavirusMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setCoronavirusNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setCoronavirusPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setCoronavirusGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setCoronavirusLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setCoronavirusCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setCoronavirusSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setCoronavirusDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setCoronavirusOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setCoronavirusOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapPneumoniaTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setPneumoniaAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setPneumoniaAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setPneumoniaRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setPneumoniaCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setPneumoniaHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setPneumoniaIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPneumoniaIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPneumoniaIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPneumoniaIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setPneumoniaIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPneumoniaIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setPneumoniaMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setPneumoniaNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setPneumoniaPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setPneumoniaGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setPneumoniaLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setPneumoniaCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setPneumoniaSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setPneumoniaDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setPneumoniaOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPneumoniaOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapMalariaTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setMalariaAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setMalariaAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setMalariaRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setMalariaCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setMalariaHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setMalariaIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setMalariaIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setMalariaIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setMalariaIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setMalariaIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setMalariaIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setMalariaMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setMalariaNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setMalariaPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setMalariaGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setMalariaLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setMalariaCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setMalariaSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setMalariaDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setMalariaOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMalariaOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapTyphoidFeverTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setTyphoidFeverAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setTyphoidFeverAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setTyphoidFeverRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setTyphoidFeverCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setTyphoidFeverHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setTyphoidFeverIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setTyphoidFeverIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setTyphoidFeverIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setTyphoidFeverIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setTyphoidFeverIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setTyphoidFeverIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setTyphoidFeverMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setTyphoidFeverNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setTyphoidFeverPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setTyphoidFeverGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setTyphoidFeverLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setTyphoidFeverCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setTyphoidFeverSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setTyphoidFeverDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setTyphoidFeverOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTyphoidFeverOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapAcuteViralHepatitisTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAcuteViralHepatitisOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapNonNeonatalTetanusTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNonNeonatalTetanusOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapHivTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setHivAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setHivAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setHivRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setHivCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setHivHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setHivIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setHivIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setHivIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setHivIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setHivIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setHivIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setHivMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setHivNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setHivPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setHivGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setHivLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setHivCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setHivSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setHivDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setHivOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setHivOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapSchistosomiasisTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setSchistosomiasisAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setSchistosomiasisAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setSchistosomiasisRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setSchistosomiasisCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setSchistosomiasisHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setSchistosomiasisIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setSchistosomiasisIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setSchistosomiasisIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setSchistosomiasisIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setSchistosomiasisIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setSchistosomiasisIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setSchistosomiasisMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setSchistosomiasisNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setSchistosomiasisPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setSchistosomiasisGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setSchistosomiasisLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setSchistosomiasisCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setSchistosomiasisSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setSchistosomiasisDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setSchistosomiasisOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSchistosomiasisOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapSoilTransmittedHelminthsTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSoilTransmittedHelminthsOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapTrypanosomiasisTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setTrypanosomiasisOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrypanosomiasisOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapDiarrheaDehydrationTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaDehydrationOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapDiarrheaBloodTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setDiarrheaBloodOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiarrheaBloodOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapSnakeBiteTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setSnakeBiteAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setSnakeBiteAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setSnakeBiteRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setSnakeBiteCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setSnakeBiteHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setSnakeBiteIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setSnakeBiteIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setSnakeBiteIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setSnakeBiteIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setSnakeBiteIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setSnakeBiteIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setSnakeBiteMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setSnakeBiteNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setSnakeBitePcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBitePcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setSnakeBiteGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setSnakeBiteLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setSnakeBiteCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setSnakeBiteSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setSnakeBiteDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setSnakeBiteOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setSnakeBiteOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapRubellaTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setRubellaAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setRubellaAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setRubellaRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setRubellaCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setRubellaHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setRubellaIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setRubellaIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setRubellaIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setRubellaIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setRubellaIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setRubellaIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setRubellaMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setRubellaNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setRubellaPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setRubellaGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setRubellaLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setRubellaCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setRubellaSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setRubellaDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setRubellaOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRubellaOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void mapTuberculosisTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setTuberculosisAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setTuberculosisAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setTuberculosisRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setTuberculosisCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setTuberculosisHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setTuberculosisIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setTuberculosisIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setTuberculosisIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setTuberculosisIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setTuberculosisIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setTuberculosisIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setTuberculosisMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setTuberculosisNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setTuberculosisPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setTuberculosisGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setTuberculosisLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setTuberculosisCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setTuberculosisSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setTuberculosisDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setTuberculosisOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTuberculosisOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapLeprosyTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setLeprosyAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setLeprosyAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setLeprosyRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setLeprosyCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setLeprosyHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setLeprosyIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setLeprosyIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setLeprosyIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setLeprosyIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setLeprosyIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setLeprosyIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setLeprosyMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setLeprosyNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setLeprosyPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setLeprosyGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setLeprosyLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setLeprosyCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setLeprosySequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosySequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setLeprosyDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setLeprosyOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLeprosyOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapLymphaticFilariasisTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setLymphaticFilariasisOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapBuruliUlcerTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setBuruliUlcerAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setBuruliUlcerAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setBuruliUlcerRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setBuruliUlcerCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setBuruliUlcerHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setBuruliUlcerIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setBuruliUlcerIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setBuruliUlcerIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setBuruliUlcerIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setBuruliUlcerIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setBuruliUlcerIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setBuruliUlcerMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setBuruliUlcerNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setBuruliUlcerPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setBuruliUlcerGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setBuruliUlcerLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setBuruliUlcerCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setBuruliUlcerSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setBuruliUlcerDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setBuruliUlcerOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setBuruliUlcerOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapPertussisTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setPertussisAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setPertussisAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setPertussisRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setPertussisCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setPertussisHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setPertussisIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPertussisIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPertussisIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPertussisIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setPertussisIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPertussisIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setPertussisMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setPertussisNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setPertussisPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setPertussisGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setPertussisLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setPertussisCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setPertussisSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setPertussisDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setPertussisOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPertussisOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapNeonatalTetanusTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setNeonatalTetanusOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setNeonatalTetanusOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapOnchocerciasisTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setOnchocerciasisAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setOnchocerciasisAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setOnchocerciasisRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setOnchocerciasisCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setOnchocerciasisHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setOnchocerciasisIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setOnchocerciasisIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setOnchocerciasisIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setOnchocerciasisIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setOnchocerciasisIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setOnchocerciasisIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setOnchocerciasisMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setOnchocerciasisNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setOnchocerciasisPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setOnchocerciasisGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setOnchocerciasisLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setOnchocerciasisCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setOnchocerciasisSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setOnchocerciasisDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setOnchocerciasisOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOnchocerciasisOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapDiphtheriaTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setDiphteriaAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setDiphteriaAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setDiphteriaRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setDiphteriaCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setDiphteriaHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setDiphteriaIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setDiphteriaIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setDiphteriaIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setDiphteriaIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setDiphteriaIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setDiphteriaIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setDiphteriaMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setDiphteriaNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setDiphteriaPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setDiphteriaGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setDiphteriaLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setDiphteriaCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setDiphteriaSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setDiphteriaDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setDiphteriaOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setDiphteriaOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapTrachomaTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setTrachomaAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setTrachomaAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setTrachomaRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setTrachomaCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setTrachomaHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setTrachomaIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setTrachomaIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setTrachomaIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setTrachomaIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setTrachomaIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setTrachomaIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setTrachomaMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setTrachomaNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setTrachomaPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setTrachomaGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setTrachomaLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setTrachomaCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setTrachomaSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setTrachomaDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setTrachomaOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setTrachomaOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapYawsEndemicSyphilisTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setYawsEndemicSyphilisOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapMaternalDeathsTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setMaternalDeathsAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setMaternalDeathsAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setMaternalDeathsRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setMaternalDeathsCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setMaternalDeathsHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setMaternalDeathsIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setMaternalDeathsIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setMaternalDeathsIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setMaternalDeathsIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setMaternalDeathsIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setMaternalDeathsIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setMaternalDeathsMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setMaternalDeathsNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setMaternalDeathsPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setMaternalDeathsGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setMaternalDeathsLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setMaternalDeathsCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setMaternalDeathsSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setMaternalDeathsDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setMaternalDeathsOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setMaternalDeathsOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapPerinatalDeathsTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setPerinatalDeathsOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPerinatalDeathsOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapInfluenzaATestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setInfluenzaAAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaAAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setInfluenzaAAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaAAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setInfluenzaARapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaARapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setInfluenzaACulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaACultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setInfluenzaAHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaAHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setInfluenzaAIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaAIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setInfluenzaAIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaAIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setInfluenzaAIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaAIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setInfluenzaAIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaAIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setInfluenzaAIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaAIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setInfluenzaAIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaAIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setInfluenzaAMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaAMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setInfluenzaANeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaANeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setInfluenzaAPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaAPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setInfluenzaAGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaAGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setInfluenzaALatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaALatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setInfluenzaACqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaACqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setInfluenzaASequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaASequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setInfluenzaADnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaADnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setInfluenzaAOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaAOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapInfluenzaBTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setInfluenzaBAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setInfluenzaBAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setInfluenzaBRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setInfluenzaBCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setInfluenzaBHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setInfluenzaBIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setInfluenzaBIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setInfluenzaBIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setInfluenzaBIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setInfluenzaBIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setInfluenzaBIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setInfluenzaBMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setInfluenzaBNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setInfluenzaBPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setInfluenzaBGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setInfluenzaBLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setInfluenzaBCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setInfluenzaBSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setInfluenzaBDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setInfluenzaBOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setInfluenzaBOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void maphMetapneumovirusTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.sethMetapneumovirusOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.sethMetapneumovirusOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapRespiratorySyncytialVirusTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRespiratorySyncytialVirusOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapParainfluenza1_4TestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setParainfluenzaAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setParainfluenzaAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setParainfluenzaRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setParainfluenzaCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setParainfluenzaHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setParainfluenzaIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setParainfluenzaIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setParainfluenzaIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setParainfluenzaIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setParainfluenzaIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setParainfluenzaIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setParainfluenzaMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setParainfluenzaNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setParainfluenzaPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setParainfluenzaGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setParainfluenzaLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setParainfluenzaCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setParainfluenzaSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setParainfluenzaDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setParainfluenzaOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setParainfluenzaOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapAdenovirusTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setAdenovirusAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setAdenovirusAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setAdenovirusRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setAdenovirusCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setAdenovirusHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setAdenovirusIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAdenovirusIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAdenovirusIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAdenovirusIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setAdenovirusIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAdenovirusIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setAdenovirusMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setAdenovirusNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setAdenovirusPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setAdenovirusGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setAdenovirusLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setAdenovirusCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setAdenovirusSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setAdenovirusDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setAdenovirusOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAdenovirusOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapRhinovirusTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setRhinovirusAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setRhinovirusAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setRhinovirusRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setRhinovirusCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setRhinovirusHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setRhinovirusIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setRhinovirusIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setRhinovirusIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setRhinovirusIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setRhinovirusIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setRhinovirusIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setRhinovirusMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setRhinovirusNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setRhinovirusPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setRhinovirusGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setRhinovirusLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setRhinovirusCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setRhinovirusSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setRhinovirusDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setRhinovirusOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setRhinovirusOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapEnterovirusTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setEnterovirusAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setEnterovirusAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setEnterovirusRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setEnterovirusCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setEnterovirusHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setEnterovirusIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setEnterovirusIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setEnterovirusIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setEnterovirusIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setEnterovirusIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setEnterovirusIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setEnterovirusMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setEnterovirusNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setEnterovirusPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setEnterovirusGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setEnterovirusLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setEnterovirusCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setEnterovirusSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setEnterovirusDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setEnterovirusOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setEnterovirusOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapmPneumoniaeTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setmPneumoniaeAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setmPneumoniaeAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setmPneumoniaeRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setmPneumoniaeCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setmPneumoniaeHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setmPneumoniaeIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setmPneumoniaeIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setmPneumoniaeIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setmPneumoniaeIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setmPneumoniaeIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setmPneumoniaeIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setmPneumoniaeMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setmPneumoniaeNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setmPneumoniaePcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaePcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setmPneumoniaeGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setmPneumoniaeLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setmPneumoniaeCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setmPneumoniaeSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setmPneumoniaeDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setmPneumoniaeOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setmPneumoniaeOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapcPneumoniaeTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setcPneumoniaeAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setcPneumoniaeAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setcPneumoniaeRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setcPneumoniaeCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setcPneumoniaeHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setcPneumoniaeIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setcPneumoniaeIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setcPneumoniaeIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setcPneumoniaeIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setcPneumoniaeIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setcPneumoniaeIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setcPneumoniaeMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setcPneumoniaeNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setcPneumoniaePcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaePcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setcPneumoniaeGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setcPneumoniaeLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setcPneumoniaeCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setcPneumoniaeSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setcPneumoniaeDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setcPneumoniaeOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setcPneumoniaeOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapAriTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setAriAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setAriAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setAriRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setAriCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setAriHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setAriIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAriIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAriIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAriIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setAriIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setAriIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setAriMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setAriNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setAriPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setAriGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setAriLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setAriCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setAriSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setAriDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setAriOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setAriOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapChikungunyaTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setChikungunyaAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setChikungunyaAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setChikungunyaRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setChikungunyaCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setChikungunyaHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setChikungunyaIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setChikungunyaIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setChikungunyaIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setChikungunyaIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setChikungunyaIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setChikungunyaIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setChikungunyaMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setChikungunyaNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setChikungunyaPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setChikungunyaGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setChikungunyaLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setChikungunyaCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setChikungunyaSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setChikungunyaDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setChikungunyaOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setChikungunyaOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapPostImmunizationAdverseEventsMildTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsMildOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapPostImmunizationAdverseEventsSevereTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSeverePcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSeverePcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setPostImmunizationAdverseEventsSevereOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapFhaTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setFhaAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setFhaAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setFhaRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setFhaCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setFhaHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setFhaIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setFhaIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setFhaIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setFhaIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setFhaIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setFhaIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setFhaMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setFhaNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setFhaPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setFhaGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setFhaLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setFhaCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setFhaSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setFhaDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setFhaOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setFhaOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+    public void mapOtherTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setOtherAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setOtherAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setOtherRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setOtherCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setOtherHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setOtherIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setOtherIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setOtherIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setOtherIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setOtherIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setOtherIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setOtherMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setOtherNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setOtherPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setOtherGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setOtherLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setOtherCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setOtherSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setOtherDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setOtherOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setOtherOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void mapUndefinedTestsToSampleAndCase(CaseExportDetailedSampleDto embeddedDetailedSampleExportDto, PathogenTest pathogenTest) {
+        switch (pathogenTest.getTestType().name()) {
+            case "ANTIBODY_DETECTION":
+                embeddedDetailedSampleExportDto.setUndefinedAntibodyDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ANTIGEN_DETECTION":
+                embeddedDetailedSampleExportDto.setUndefinedAntigenDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedAntibodyDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "RAPID_TEST":
+                embeddedDetailedSampleExportDto.setUndefinedRapidTest(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedRapidTestDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CULTURE":
+                embeddedDetailedSampleExportDto.setUndefinedCulture(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedCultureDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "HISTOPATHOLOGY":
+                embeddedDetailedSampleExportDto.setUndefinedHistopathology(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedHistopathologyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "ISOLATION":
+                embeddedDetailedSampleExportDto.setUndefinedIsolation(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedIsolationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGM_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setUndefinedIgmSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedIgmSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGG_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setUndefinedIggSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedIggSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "IGA_SERUM_ANTIBODY":
+                embeddedDetailedSampleExportDto.setUndefinedIgaSerumAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedIgaSerumAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INCUBATION_TIME":
+                embeddedDetailedSampleExportDto.setUndefinedIncubationTime(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedIncubationTimeDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "INDIRECT_FLUORESCENT_ANTIBODY":
+                embeddedDetailedSampleExportDto.setUndefinedIndirectFluorescentAntibody(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedIndirectFluorescentAntibodyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "MICROSCOPY":
+                embeddedDetailedSampleExportDto.setUndefinedMicroscopy(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedMicroscopyDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "NEUTRALIZING_ANTIBODIES":
+                embeddedDetailedSampleExportDto.setUndefinedNeutralizingAntibodies(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedNeutralizingAntibodiesDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "PCR_RT_PCR":
+                embeddedDetailedSampleExportDto.setUndefinedPcrRtPcr(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedPcrRtPcrDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "GRAM_STAIN":
+                embeddedDetailedSampleExportDto.setUndefinedGramStain(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedGramStainDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "LATEX_AGGLUTINATION":
+                embeddedDetailedSampleExportDto.setUndefinedLatexAgglutination(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedLatexAgglutinationDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "CQ_VALUE_DETECTION":
+                embeddedDetailedSampleExportDto.setUndefinedCqValueDetection(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedCqValueDetectionDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "SEQUENCING":
+                embeddedDetailedSampleExportDto.setUndefinedSequencing(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedSequencingDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "DNA_MICROARRAY":
+                embeddedDetailedSampleExportDto.setUndefinedDnaMicroarray(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedDnaMicroarrayDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            case "OTHER":
+                embeddedDetailedSampleExportDto.setUndefinedOther(pathogenTest.getTestResult().name());
+                embeddedDetailedSampleExportDto.setUndefinedOtherDetails(pathogenTest.getTestedDiseaseDetails());
+                break;
+            default:
+                break;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 
 }

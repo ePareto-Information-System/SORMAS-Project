@@ -454,4 +454,22 @@ public class PathogenTestService extends AbstractDeletableAdoService<PathogenTes
 
 		return QueryHelper.getFirstResult(em, cq);
 	}
+
+//	getPathogenTestsBySampleIds
+	public List<PathogenTest> getPathogenTestsBySampleIds(List<Long> sampleIds) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<PathogenTest> cq = cb.createQuery(getElementClass());
+		Root<PathogenTest> from = cq.from(getElementClass());
+
+		Predicate filter = createDefaultFilter(cb, from);
+
+		if (sampleIds != null) {
+			filter = cb.and(filter, from.get(PathogenTest.SAMPLE).get(Sample.ID).in(sampleIds));
+		}
+
+		cq.where(filter);
+		cq.orderBy(cb.desc(from.get(PathogenTest.TEST_DATE_TIME)));
+
+		return em.createQuery(cq).getResultList();
+	}
 }
