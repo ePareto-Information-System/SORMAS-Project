@@ -180,29 +180,6 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
         initializeAccessAndAllowedAccesses();
 
 
-    /*    personExamineCase.setCaption("Name of Person Examining Case");
-        admissionDateField.setCaption("Date of Follow-up");
-        dateOfBirthField.setCaption("Date of Birth");
-        residentialLocationField.setCaption("Residential Location");
-        patientFoundField.setCaption("Was the Patient Found?");
-        patientFoundReasonField.setCaption("If no, why?");
-        locateChildAttemptField.setCaption("Describe attempt to Locate Child");
-        paralysisWeaknessPresentField.setCaption("Is Paralysis or Weakness Present (Yes/No)");
-        paralysisWeaknessPresentSiteField.setCaption("If yes, site of paralysis");
-        paralysisWeaknessResponse.setCaption("Paralyzed Other Part");
-        paralysisWeaknessFloppyField.setCaption("Paralysis or Weakness Floppy?");
-        paralyzedPartField.setCaption("Muscle Tone - In Paralyzed Part");
-        otherPartBodyField.setCaption("Muscle Tone - Other Part of Body");
-        deepTendonReflexSelectionField.setCaption("Deep Tendon Reflex");
-        muscleVolumeSelectionField.setCaption("Muscle Volume");
-        sensoryLossSelectionField.setCaption("Sensory Loss");
-        provisionalDiagnosisField.setCaption("Provisional Diagnosis");
-        commentsField.setCaption("Comments");
-        contactDetailsNumberField.setCaption("Contact Details of Person - Phone Number");
-        contactDetailsEmailField.setCaption("Contact Details of Person - Email Address");
-        signatureField.setCaption("Signature");
-        dateSubmissionFormsField.setCaption("Date of Submission of Forms");*/
-
         if(disease == Disease.FOODBORNE_ILLNESS){
 
             setVisible(false,
