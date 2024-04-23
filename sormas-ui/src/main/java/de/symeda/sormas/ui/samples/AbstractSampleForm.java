@@ -134,24 +134,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.SAMPLE_SOURCE, "") +
 					//fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
 
-			/*		fluidRowLocs(6,SampleDto.SAMPLE_MATERIAL) +
-					fluidRowLocs(SampleDto.CSF_SAMPLE_COLLECTED) +
-					fluidRowLocs(6, SampleDto.CSF_REASON) +
-					fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
-					fluidRowLocs(SampleDto.APPEARANCE_OF_CSF) +
-					fluidRowLocs(6,SampleDto.INOCULATION_TIME_TRANSPORT_MEDIA) +
-					fluidRowLocs(SampleDto.SAMPLE_SENT_TO_LAB, SampleDto.REASON_NOT_SENT_TO_LAB) +
-					fluidRowLocs(6,SampleDto.DATE_SAMPLE_SENT_TO_LAB) +
-					fluidRowLocs(SampleDto.SAMPLE_CONTAINER_USED) +*/
+
 					fluidRowLocs(SampleDto.SAMPLE_DISPATCH_MODE) +
 					fluidRowLocs(6,SampleDto.SAMPLE_DISPATCH_DATE) +
-					fluidRowLocs(SampleDto.RDT_PERFORMED, SampleDto.RDT_RESULTS) +
-
-					fluidRowLocs(SampleDto.DISTRICT_NOTIFICATION_DATE, SampleDto.NAME_OF_PERSON, SampleDto.TEL_NUMBER) +
-					fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT) +
-					fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +
-					fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_NATIONAL, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
-
 					fluidRowLocs(6,SampleDto.LABORATORY_TYPE) +
 					fluidRowLocs(DISTRICT_LABORATORY_HEADLINE_LOC) +
 					fluidRowLocs(REGIONAL_LABORATORY_HEADLINE_LOC) +
