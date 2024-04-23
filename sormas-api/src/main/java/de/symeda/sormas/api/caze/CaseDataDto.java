@@ -125,6 +125,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String HOSPITALIZATION = "hospitalization";
 	public static final String ILLNESS_INFO = "illnessInformation";
 	public static final String SIXTY_DAY = "sixtyDay";
+	public static final String FOOD_SAMPLE_TESTING = "foodSampleTesting";
 	public static final String EPI_DATA = "epiData";
 	public static final String FOOD_HISTORY = "foodHistory";
 	public static final String THERAPY = "therapy";

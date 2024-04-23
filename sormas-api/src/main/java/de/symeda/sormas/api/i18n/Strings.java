@@ -592,6 +592,8 @@ public interface Strings {
 	String headingHealthConditions = "headingHealthConditions";
 	String headingHospitalization = "headingHospitalization";
 	String headingSixtyDay = "headingSixtyDay";
+	String headingofficialUse = "headingofficialUse";
+	String headingPersonCompleting = "headingPersonCompleting";
 	String headingFillThis = "headingFillThis";
 	String headingChildSeek = "headingChildSeek";
 	String headingHowToMergeCases = "headingHowToMergeCases";
