@@ -1088,19 +1088,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 		target.setDateLabReceivedSpecimen(source.getDateLabReceivedSpecimen());
 		target.setDateResultsSentToClinician(source.getDateResultsSentToClinician());
 		target.setDateSpecimenSentToLab(source.getDateSpecimenSentToLab());
-		target.setFoodAvailableTesting(source.getFoodAvailableTesting());
-		target.setSpecifyFoodsSources(source.getSpecifyFoodsSources());
-		target.setProductName(source.getProductName());
-		target.setBatchNumber(source.getBatchNumber());
-		target.setDateOfManufacture(source.getDateOfManufacture());
-		target.setExpirationDate(source.getExpirationDate());
-		target.setPackageSize(source.getPackageSize());
-		target.setPackagingType(source.getPackagingType());
-		target.setPackagingTypeOther(source.getPackagingTypeOther());
-		target.setPlaceOfPurchase(source.getPlaceOfPurchase());
-		target.setNameOfManufacturer(source.getNameOfManufacturer());
-		target.setAddress(source.getAddress());
-		target.setLabTestConducted(source.getLabTestConducted());
+
 
 
 

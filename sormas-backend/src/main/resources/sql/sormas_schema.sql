@@ -13776,4 +13776,34 @@ ALTER TABLE epidata ADD COLUMN sourceoffoods3 VARCHAR(255);
 ALTER TABLE epidata ADD COLUMN consumedatplaces3 VARCHAR(55);
 
 INSERT INTO schema_version (version_number, comment) VALUES (604, 'Added food history section for Food Borne illness');
+
+-- 2024-04-22 Added food sample testing section for Food Borne illness
+ALTER TABLE sixtyday ADD COLUMN foodavailabletesting VARCHAR(3);
+ALTER TABLE sixtyday ADD COLUMN labtestconducted VARCHAR(3);
+ALTER TABLE sixtyday ADD COLUMN specifyfoodssources VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN productname VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN batchnumber VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN dateofmanufacture DATE;
+ALTER TABLE sixtyday ADD COLUMN expirationdate DATE;
+ALTER TABLE sixtyday ADD COLUMN packagesize VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN packagingtype VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN packagingtypeother VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN placeofpurchase VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN nameofmanufacturer VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN address VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN foodtel VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN investigationnotes VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN suspecteddiagnosis VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN confirmeddiagnosis VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN investigatedby VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN investigatorsignature VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN investigatordate DATE;
+ALTER TABLE sixtyday ADD COLUMN surname VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN firstname VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN middlename VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN telno VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN dateofcompletionofform DATE;
+ALTER TABLE sixtyday ADD COLUMN nameofhealthfacility VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (605, 'Added food sample testing section for Food Borne illness');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

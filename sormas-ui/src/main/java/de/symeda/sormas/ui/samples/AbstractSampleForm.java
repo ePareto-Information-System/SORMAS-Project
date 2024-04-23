@@ -146,12 +146,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.SAMPLE_DISPATCH_MODE) +
 					fluidRowLocs(6,SampleDto.SAMPLE_DISPATCH_DATE) +
 					fluidRowLocs(SampleDto.RDT_PERFORMED, SampleDto.RDT_RESULTS) +
-					fluidRowLocs(SampleDto.FOOD_AVAILABLE_TESTING, SampleDto.SPECIFY_FOODS_SOURCES, SampleDto.LAB_TEST_CONDUCTED) +
-					fluidRowLocs(SampleDto.PRODUCT_NAME, SampleDto.BATCH_NUMBER) +
-					fluidRowLocs(SampleDto.DATE_OF_MANUFACTURE, SampleDto.EXPIRATION_DATE) +
-					fluidRowLocs(SampleDto.PACKAGE_SIZE, SampleDto.PACKAGING_TYPE, SampleDto.PACKAGING_TYPE_OTHER) +
-					fluidRowLocs(SampleDto.PLACE_OF_PURCHASE, SampleDto.NAME_OF_MANUFACTURER) +
-					fluidRowLocs(6,SampleDto.ADDRESS)+
+
 					fluidRowLocs(SampleDto.DISTRICT_NOTIFICATION_DATE, SampleDto.NAME_OF_PERSON, SampleDto.TEL_NUMBER) +
 					fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT) +
 					fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +

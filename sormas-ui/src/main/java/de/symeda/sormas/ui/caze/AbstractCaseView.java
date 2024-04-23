@@ -181,17 +181,7 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 					menu.addView(HospitalizationView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.ILLNESS_INFO), params);
 				}
 			}
-			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
-					&& !caze.checkIsUnreferredPortHealthCase()
-					&& !UserProvider.getCurrent().isPortHealthUser()) {
-				if(caze.getDisease() == Disease.AFP){
-					menu.addView(
-						SixtyDayFollowupView.VIEW_NAME,
-						I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.SIXTY_DAY),
-						params);
-				}
 
-			}
 
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
 					&& !caze.checkIsUnreferredPortHealthCase()
@@ -226,6 +216,26 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 					menu.addView(CaseEpiDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EPI_DATA), params);
 				}else{
 					menu.addView(CaseEpiDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.FOOD_HISTORY), params);
+				}
+			}
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
+					&& !caze.checkIsUnreferredPortHealthCase()
+					&& !UserProvider.getCurrent().isPortHealthUser()) {
+				if(caze.getDisease() == Disease.AFP){
+					menu.addView(
+							SixtyDayFollowupView.VIEW_NAME,
+							I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.SIXTY_DAY),
+							params);
+				}
+			}
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
+					&& !caze.checkIsUnreferredPortHealthCase()
+					&& !UserProvider.getCurrent().isPortHealthUser()) {
+				if(caze.getDisease() == Disease.FOODBORNE_ILLNESS){
+					menu.addView(
+							SixtyDayFollowupView.VIEW_NAME,
+							I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.FOOD_SAMPLE_TESTING),
+							params);
 				}
 			}
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_THERAPY)

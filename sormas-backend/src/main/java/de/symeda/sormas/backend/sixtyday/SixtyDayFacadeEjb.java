@@ -81,6 +81,33 @@ public class SixtyDayFacadeEjb implements SixtyDayFacade {
         target.setSignature(source.getSignature());
         target.setDateSubmissionForms(source.getDateSubmissionForms());
 
+        target.setFoodAvailableTesting(source.getFoodAvailableTesting());
+        target.setLabTestConducted(source.getLabTestConducted());
+        target.setSpecifyFoodsSources(source.getSpecifyFoodsSources());
+        target.setProductName(source.getProductName());
+        target.setBatchNumber(source.getBatchNumber());
+        target.setDateOfManufacture(source.getDateOfManufacture());
+        target.setExpirationDate(source.getExpirationDate());
+        target.setPackageSize(source.getPackageSize());
+        target.setPackagingType(source.getPackagingType());
+        target.setPackagingTypeOther(source.getPackagingTypeOther());
+        target.setPlaceOfPurchase(source.getPlaceOfPurchase());
+        target.setNameOfManufacturer(source.getNameOfManufacturer());
+        target.setAddress(source.getAddress());
+        target.setFoodTel(source.getFoodTel());
+        target.setInvestigationNotes(source.getInvestigationNotes());
+        target.setSuspectedDiagnosis(source.getSuspectedDiagnosis());
+        target.setConfirmedDiagnosis(source.getConfirmedDiagnosis());
+        target.setInvestigatedBy(source.getInvestigatedBy());
+        target.setInvestigatorSignature(source.getInvestigatorSignature());
+        target.setInvestigatorDate(source.getInvestigatorDate());
+        target.setSurname(source.getSurname());
+        target.setFirstName(source.getFirstName());
+        target.setMiddleName(source.getMiddleName());
+        target.setTelNo(source.getTelNo());
+        target.setDateOfCompletionOfForm(source.getDateOfCompletionOfForm());
+        target.setNameOfHealthFacility(source.getNameOfHealthFacility());
+
         return target;
     }
 
@@ -118,6 +145,34 @@ public class SixtyDayFacadeEjb implements SixtyDayFacade {
         target.setContactDetailsEmail(source.getContactDetailsEmail());
         target.setSignature(source.getSignature());
         target.setDateSubmissionForms(source.getDateSubmissionForms());
+
+        target.setFoodAvailableTesting(source.getFoodAvailableTesting());
+        target.setLabTestConducted(source.getLabTestConducted());
+        target.setSpecifyFoodsSources(source.getSpecifyFoodsSources());
+        target.setProductName(source.getProductName());
+        target.setBatchNumber(source.getBatchNumber());
+        target.setDateOfManufacture(source.getDateOfManufacture());
+        target.setExpirationDate(source.getExpirationDate());
+        target.setPackageSize(source.getPackageSize());
+        target.setPackagingType(source.getPackagingType());
+        target.setPackagingTypeOther(source.getPackagingTypeOther());
+        target.setPlaceOfPurchase(source.getPlaceOfPurchase());
+        target.setNameOfManufacturer(source.getNameOfManufacturer());
+        target.setAddress(source.getAddress());
+        target.setFoodTel(source.getFoodTel());
+        target.setInvestigationNotes(source.getInvestigationNotes());
+        target.setSuspectedDiagnosis(source.getSuspectedDiagnosis());
+        target.setConfirmedDiagnosis(source.getConfirmedDiagnosis());
+        target.setInvestigatedBy(source.getInvestigatedBy());
+        target.setInvestigatorSignature(source.getInvestigatorSignature());
+        target.setInvestigatorDate(source.getInvestigatorDate());
+        target.setSurname(source.getSurname());
+        target.setFirstName(source.getFirstName());
+        target.setMiddleName(source.getMiddleName());
+        target.setTelNo(source.getTelNo());
+        target.setDateOfCompletionOfForm(source.getDateOfCompletionOfForm());
+        target.setNameOfHealthFacility(source.getNameOfHealthFacility());
+
 
         return target;
     }
