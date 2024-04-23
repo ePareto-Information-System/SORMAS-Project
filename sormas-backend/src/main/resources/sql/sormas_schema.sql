@@ -13806,4 +13806,21 @@ ALTER TABLE sixtyday ADD COLUMN dateofcompletionofform DATE;
 ALTER TABLE sixtyday ADD COLUMN nameofhealthfacility VARCHAR(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (605, 'Added food sample testing section for Food Borne illness');
+
+-- 2024-04-02 Removed food sample fields for Food Borne illness in Sample
+ALTER TABLE samples DROP COLUMN foodavailabletesting;
+ALTER TABLE samples DROP COLUMN specifyfoodssources;
+ALTER TABLE samples DROP COLUMN productname;
+ALTER TABLE samples DROP COLUMN batchnumber;
+ALTER TABLE samples DROP COLUMN dateofmanufacture ;
+ALTER TABLE samples DROP COLUMN expirationdate;
+ALTER TABLE samples DROP COLUMN packagesize;
+ALTER TABLE samples DROP COLUMN packagingtype;
+ALTER TABLE samples DROP COLUMN packagingtypeother;
+ALTER TABLE samples DROP COLUMN placeofpurchase;
+ALTER TABLE samples DROP COLUMN nameofmanufacturer;
+ALTER TABLE samples DROP COLUMN address;
+
+INSERT INTO schema_version (version_number, comment) VALUES (606, 'Added food sample testing section for Food Borne illness in Sample');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

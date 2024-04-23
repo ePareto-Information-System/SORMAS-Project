@@ -198,20 +198,6 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String OTHER_INFLUENZA_VIRUS = "otherInfluenzaVirus";
 	public static final String TREATMENT = "treatment";
 	public static final String STATE_TREATMENT_ADMINISTERED = "stateTreatmentAdministered";
-	public static final String FOOD_AVAILABLE_TESTING = "foodAvailableTesting";
-	public static final String SPECIFY_FOODS_SOURCES = "specifyFoodsSources";
-	public static final String PRODUCT_NAME = "productName";
-	public static final String BATCH_NUMBER = "batchNumber";
-	public static final String DATE_OF_MANUFACTURE = "dateOfManufacture";
-	public static final String EXPIRATION_DATE = "expirationDate";
-	public static final String PACKAGE_SIZE = "packageSize";
-	public static final String PACKAGING_TYPE = "packagingType";
-	public static final String PACKAGING_TYPE_OTHER = "packagingTypeOther";
-	public static final String PLACE_OF_PURCHASE = "placeOfPurchase";
-	public static final String NAME_OF_MANUFACTURER = "nameOfManufacturer";
-	public static final String ADDRESS = "address";
-	public static final String LAB_TEST_CONDUCTED = "labTestConducted";
-
 
 	private CaseReferenceDto associatedCase;
 	private ContactReferenceDto associatedContact;
@@ -404,19 +390,6 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private Disease suspectedDisease;
 	private String labLocation;
 	private Date dateLabReceivedSpecimen;
-	private YesNo foodAvailableTesting;
-	private String specifyFoodsSources;
-	private String productName;
-	private String batchNumber;
-	private Date dateOfManufacture;
-	private Date expirationDate;
-	private String packageSize;
-	private PackagingType packagingType;
-	private String packagingTypeOther;
-	private String placeOfPurchase;
-	private String nameOfManufacturer;
-	private String address;
-	private YesNo labTestConducted;
 
 
 
@@ -1746,107 +1719,4 @@ public class SampleDto extends SormasToSormasShareableDto {
 		this.dateSpecimenSentToLab = dateSpecimenSentToLab;
 	}
 
-	public YesNo getFoodAvailableTesting() {
-		return foodAvailableTesting;
-	}
-
-	public void setFoodAvailableTesting(YesNo foodAvailableTesting) {
-		this.foodAvailableTesting = foodAvailableTesting;
-	}
-
-	public String getSpecifyFoodsSources() {
-		return specifyFoodsSources;
-	}
-
-	public void setSpecifyFoodsSources(String specifyFoodsSources) {
-		this.specifyFoodsSources = specifyFoodsSources;
-	}
-
-	public String getProductName() {
-		return productName;
-	}
-
-	public void setProductName(String productName) {
-		this.productName = productName;
-	}
-
-	public String getBatchNumber() {
-		return batchNumber;
-	}
-
-	public void setBatchNumber(String batchNumber) {
-		this.batchNumber = batchNumber;
-	}
-
-	public Date getDateOfManufacture() {
-		return dateOfManufacture;
-	}
-
-	public void setDateOfManufacture(Date dateOfManufacture) {
-		this.dateOfManufacture = dateOfManufacture;
-	}
-
-	public Date getExpirationDate() {
-		return expirationDate;
-	}
-
-	public void setExpirationDate(Date expirationDate) {
-		this.expirationDate = expirationDate;
-	}
-
-	public String getPackageSize() {
-		return packageSize;
-	}
-
-	public void setPackageSize(String packageSize) {
-		this.packageSize = packageSize;
-	}
-
-	public PackagingType getPackagingType() {
-		return packagingType;
-	}
-
-	public void setPackagingType(PackagingType packagingType) {
-		this.packagingType = packagingType;
-	}
-
-	public String getPackagingTypeOther() {
-		return packagingTypeOther;
-	}
-
-	public void setPackagingTypeOther(String packagingTypeOther) {
-		this.packagingTypeOther = packagingTypeOther;
-	}
-
-	public String getPlaceOfPurchase() {
-		return placeOfPurchase;
-	}
-
-	public void setPlaceOfPurchase(String placeOfPurchase) {
-		this.placeOfPurchase = placeOfPurchase;
-	}
-
-	public String getNameOfManufacturer() {
-		return nameOfManufacturer;
-	}
-
-	public void setNameOfManufacturer(String nameOfManufacturer) {
-		this.nameOfManufacturer = nameOfManufacturer;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public YesNo getLabTestConducted() {
-		return labTestConducted;
-	}
-
-	public void setLabTestConducted(YesNo labTestConducted) {
-		this.labTestConducted = labTestConducted;
-	}
 }

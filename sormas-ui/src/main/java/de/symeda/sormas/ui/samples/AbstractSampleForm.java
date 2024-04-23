@@ -134,7 +134,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.SAMPLE_SOURCE, "") +
 					//fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
 
-					fluidRowLocs(6,SampleDto.SAMPLE_MATERIAL) +
+			/*		fluidRowLocs(6,SampleDto.SAMPLE_MATERIAL) +
 					fluidRowLocs(SampleDto.CSF_SAMPLE_COLLECTED) +
 					fluidRowLocs(6, SampleDto.CSF_REASON) +
 					fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
@@ -142,7 +142,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(6,SampleDto.INOCULATION_TIME_TRANSPORT_MEDIA) +
 					fluidRowLocs(SampleDto.SAMPLE_SENT_TO_LAB, SampleDto.REASON_NOT_SENT_TO_LAB) +
 					fluidRowLocs(6,SampleDto.DATE_SAMPLE_SENT_TO_LAB) +
-					fluidRowLocs(SampleDto.SAMPLE_CONTAINER_USED) +
+					fluidRowLocs(SampleDto.SAMPLE_CONTAINER_USED) +*/
 					fluidRowLocs(SampleDto.SAMPLE_DISPATCH_MODE) +
 					fluidRowLocs(6,SampleDto.SAMPLE_DISPATCH_DATE) +
 					fluidRowLocs(SampleDto.RDT_PERFORMED, SampleDto.RDT_RESULTS) +
@@ -245,7 +245,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.DATE_FOLLOWUP_EXAM, SampleDto.RESIDUAL_ANALYSIS, SampleDto.RESULT_EXAM) +
 					fluidRowLocs(6,SampleDto.IMMUNOCOMPROMISED_STATUS_SUSPECTED) +
 					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION);
-//	Food Borne Illness
 
 
 
@@ -340,24 +339,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		addField(SampleDto.DELETION_REASON);
 		addField(SampleDto.OTHER_DELETION_REASON, TextArea.class).setRows(3);
 		setVisible(false, SampleDto.DELETION_REASON, SampleDto.OTHER_DELETION_REASON);
-
-		addField(SampleDto.FOOD_AVAILABLE_TESTING, NullableOptionGroup.class);
-		addField(SampleDto.LAB_TEST_CONDUCTED, NullableOptionGroup.class);
-		addField(SampleDto.SPECIFY_FOODS_SOURCES, TextField.class);
-		addField(SampleDto.PRODUCT_NAME, TextField.class);
-		addField(SampleDto.BATCH_NUMBER, TextField.class);
-		addField(SampleDto.DATE_OF_MANUFACTURE, DateField.class);
-		addField(SampleDto.EXPIRATION_DATE, DateField.class);
-		addField(SampleDto.PACKAGE_SIZE, TextField.class);
-		addField(SampleDto.PACKAGING_TYPE, ComboBox.class);
-		addField(SampleDto.PACKAGING_TYPE_OTHER, TextField.class);
-		addField(SampleDto.PLACE_OF_PURCHASE, TextField.class);
-		addField(SampleDto.NAME_OF_MANUFACTURER, TextField.class);
-		addField(SampleDto.ADDRESS, TextField.class);
-
-		setVisible(false,
-				SampleDto.FOOD_AVAILABLE_TESTING, SampleDto.SPECIFY_FOODS_SOURCES, SampleDto.PRODUCT_NAME, SampleDto.BATCH_NUMBER, SampleDto.DATE_OF_MANUFACTURE, SampleDto.EXPIRATION_DATE, SampleDto.PACKAGE_SIZE,
-				SampleDto.PACKAGING_TYPE, SampleDto.PACKAGING_TYPE_OTHER, SampleDto.PLACE_OF_PURCHASE, SampleDto.NAME_OF_MANUFACTURER, SampleDto.ADDRESS, SampleDto.LAB_TEST_CONDUCTED);
 
 		diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
 			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
@@ -1117,16 +1098,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	}
 
 	private void handleFBI(){
-		//setPropertiesVisibility();
 		setVisible(false, SampleDto.SUSPECTED_DISEASE, SampleDto.LAB_LOCATION, SampleDto.DATE_LAB_RECEIVED_SPECIMEN, SampleDto.LABORATORY_SAMPLE_CONDITION, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.ADDITIONAL_TESTING_REQUESTED, SampleDto.DATE_SPECIMEN_SENT_TO_LAB, SampleDto.SAMPLE_MATERIAL, SampleDto.SAMPLE_DATE_TIME);
 
 		setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
-
-		setVisible(true,
-				SampleDto.FOOD_AVAILABLE_TESTING, SampleDto.SPECIFY_FOODS_SOURCES, SampleDto.PRODUCT_NAME, SampleDto.BATCH_NUMBER, SampleDto.DATE_OF_MANUFACTURE, SampleDto.EXPIRATION_DATE, SampleDto.PACKAGE_SIZE,
-				SampleDto.PACKAGING_TYPE, SampleDto.PACKAGING_TYPE_OTHER, SampleDto.PLACE_OF_PURCHASE, SampleDto.NAME_OF_MANUFACTURER, SampleDto.ADDRESS, SampleDto.LAB_TEST_CONDUCTED, SampleDto.SHIPPED);
-
-		addField(SampleDto.TEL_NUMBER);
 	}
 
 	private void addSampleDispatchFields() {
