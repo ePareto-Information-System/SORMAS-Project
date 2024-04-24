@@ -368,4 +368,11 @@
   .flex-wrap{
     flex-wrap: wrap;
   }
+  
+  .v-caption-v-captiontext-foodborne > .v-captiontext {
+    text-wrap: wrap;
+    position: absolute;
+    top: -14px;
+  }
+
 }
