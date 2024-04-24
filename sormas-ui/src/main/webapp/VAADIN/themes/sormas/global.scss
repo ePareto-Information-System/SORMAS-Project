@@ -361,4 +361,11 @@
     font-style: italic;
     opacity: 0.5;
   }
+
+  .v-caption-v-captiontext-foodborne > .v-captiontext {
+    text-wrap: wrap;
+    position: absolute;
+    top: -14px;
+  }
+
 }
