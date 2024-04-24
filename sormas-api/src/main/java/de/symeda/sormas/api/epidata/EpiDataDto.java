@@ -31,6 +31,7 @@ import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.riskfactor.DrinkingWaterSource;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
@@ -77,6 +78,8 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String PATIENT_CONTACT_WITH_CONFIRMED_CASE = "patientContactWithConfirmedCase";
 	public static final String PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATIONS = "patientContactWithConfirmedCaseExposureLocations";
 	public static final String PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATION_CITY_COUNTRY = "patientContactWithConfirmedCaseExposureLocationCityCountry";
+	public static final String EXPOSED_TO_RISK_FACTOR = "exposedToRiskFactor";
+	public static final String WATER_USED_BY_PATIENT_AFTER_EXPOSURE = "waterUsedByPatientAfterExposure";
 
 
 	@Enumerated(EnumType.STRING)
@@ -123,6 +126,15 @@ public class EpiDataDto extends PseudonymizableDto {
 	private YesNoUnknown patientContactWithConfirmedCase;
 	private Set<ContactSetting> patientContactWithConfirmedCaseExposureLocations;
 	private String patientContactWithConfirmedCaseExposureLocationCityCountry;
+	@Diseases({
+			Disease.CHOLERA
+	})
+	private YesNo exposedToRiskFactor;
+	@Diseases({
+			Disease.CHOLERA
+	})
+	private DrinkingWaterSource waterUsedByPatientAfterExposure;
+
 	@Valid
 	private List<ActivityAsCaseDto> activitiesAsCase = new ArrayList<>();
 
@@ -425,5 +437,21 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public void setPatientContactWithConfirmedCaseExposureLocationCityCountry(String patientContactWithConfirmedCaseExposureLocationCityCountry) {
 		this.patientContactWithConfirmedCaseExposureLocationCityCountry = patientContactWithConfirmedCaseExposureLocationCityCountry;
+	}
+
+	public YesNo getExposedToRiskFactor() {
+		return exposedToRiskFactor;
+	}
+
+	public void setExposedToRiskFactor(YesNo exposedToRiskFactor) {
+		this.exposedToRiskFactor = exposedToRiskFactor;
+	}
+
+	public DrinkingWaterSource getWaterUsedByPatientAfterExposure() {
+		return waterUsedByPatientAfterExposure;
+	}
+
+	public void setWaterUsedByPatientAfterExposure(DrinkingWaterSource waterUsedByPatientAfterExposure) {
+		this.waterUsedByPatientAfterExposure = waterUsedByPatientAfterExposure;
 	}
 }

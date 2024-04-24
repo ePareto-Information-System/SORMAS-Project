@@ -70,8 +70,10 @@ import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.backend.common.*;
 import de.symeda.sormas.backend.sample.*;
 import de.symeda.sormas.backend.user.*;
+import de.symeda.sormas.api.riskfactor.RiskFactorDto;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
 import de.symeda.sormas.api.utils.*;
+import de.symeda.sormas.backend.riskfactor.RiskFactorFacadeEjb;
 import de.symeda.sormas.backend.sixtyday.SixtyDay;
 import de.symeda.sormas.backend.sixtyday.SixtyDayFacadeEjb;
 import org.apache.commons.collections.CollectionUtils;
@@ -396,6 +398,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	private HospitalizationFacadeEjbLocal hospitalizationFacade;
 	@EJB
 	private SixtyDayFacadeEjbLocal sixtyDayFacade;
+	@EJB
+	private RiskFactorFacadeEjb.RiskFactorFacadeEjbLocal riskFactorFacade;
 	@EJB
 	private EpiDataFacadeEjbLocal epiDataFacade;
 	@EJB
@@ -3234,6 +3238,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			pseudonymizer.restorePseudonymizedValues(SymptomsDto.class, dto.getSymptoms(), existingCaseDto.getSymptoms(), inJurisdiction);
 			pseudonymizer.restorePseudonymizedValues(MaternalHistoryDto.class, dto.getMaternalHistory(), existingCaseDto.getMaternalHistory(), inJurisdiction);
 			pseudonymizer.restorePseudonymizedValues(SixtyDayDto.class, dto.getSixtyDay(), existingCaseDto.getSixtyDay(), inJurisdiction);
+			pseudonymizer.restorePseudonymizedValues(RiskFactorDto.class, dto.getRiskFactor(), existingCaseDto.getRiskFactor(), inJurisdiction);
 		}
 	}
 
@@ -3287,6 +3292,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setPerson(PersonFacadeEjb.toReferenceDto(source.getPerson()));
 		target.setHospitalization(HospitalizationFacadeEjb.toDto(source.getHospitalization()));
 		target.setSixtyDay(SixtyDayFacadeEjb.toDto(source.getSixtyDay()));
+		target.setRiskFactor(RiskFactorFacadeEjb.toDto(source.getRiskFactor()));
 		target.setEpiData(EpiDataFacadeEjb.toDto(source.getEpiData()));
 		if (source.getTherapy() != null) {
 			target.setTherapy(TherapyFacadeEjb.toDto(source.getTherapy()));
@@ -3470,6 +3476,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			FacadeHelper.setUuidIfDtoExists(target.getEpiData(), source.getEpiData());
 			FacadeHelper.setUuidIfDtoExists(target.getSymptoms(), source.getSymptoms());
 			FacadeHelper.setUuidIfDtoExists(target.getSixtyDay(), source.getSixtyDay());
+			FacadeHelper.setUuidIfDtoExists(target.getRiskFactor(), source.getRiskFactor());
 		}
 
 		target.setDisease(source.getDisease());
@@ -3503,7 +3510,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setInvestigationStatus(source.getInvestigationStatus());
 		target.setHospitalization(hospitalizationFacade.fillOrBuildEntity(source.getHospitalization(), target.getHospitalization(),checkChangeDate));
 		target.setSixtyDay(sixtyDayFacade.fillOrBuildEntity(source.getSixtyDay(), target.getSixtyDay(),checkChangeDate));
-
+		target.setRiskFactor(riskFactorFacade.fillOrBuildEntity(source.getRiskFactor(), target.getRiskFactor(), checkChangeDate));
+		target.setHospitalization(hospitalizationFacade.fillOrBuildEntity(source.getHospitalization(), target.getHospitalization(), checkChangeDate));
 		target.setEpiData(epiDataFacade.fillOrBuildEntity(source.getEpiData(), target.getEpiData(), checkChangeDate));
 		if (source.getTherapy() == null) {
 			source.setTherapy(TherapyDto.build());

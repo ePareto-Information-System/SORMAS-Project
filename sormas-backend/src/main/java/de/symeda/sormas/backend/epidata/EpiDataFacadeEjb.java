@@ -130,6 +130,8 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setPatientContactWithConfirmedCase(source.getPatientContactWithConfirmedCase());
 		target.setPatientContactWithConfirmedCaseExposureLocations(source.getPatientContactWithConfirmedCaseExposureLocations());
 		target.setPatientContactWithConfirmedCaseExposureLocationCityCountry(source.getPatientContactWithConfirmedCaseExposureLocationCityCountry());
+		target.setExposedToRiskFactor(source.getExposedToRiskFactor());
+		target.setWaterUsedByPatientAfterExposure(source.getWaterUsedByPatientAfterExposure());
 
 		return target;
 	}
@@ -297,6 +299,8 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setPatientContactWithConfirmedCase(source.getPatientContactWithConfirmedCase());
 		target.setPatientContactWithConfirmedCaseExposureLocations(source.getPatientContactWithConfirmedCaseExposureLocations());
 		target.setPatientContactWithConfirmedCaseExposureLocationCityCountry(source.getPatientContactWithConfirmedCaseExposureLocationCityCountry());
+		target.setExposedToRiskFactor(source.getExposedToRiskFactor());
+		target.setWaterUsedByPatientAfterExposure(source.getWaterUsedByPatientAfterExposure());
 
 		return target;
 	}

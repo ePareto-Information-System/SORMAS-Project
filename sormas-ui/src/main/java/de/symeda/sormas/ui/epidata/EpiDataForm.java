@@ -88,6 +88,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					locCss(VSPACE_TOP_3, "") +
 					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_ONE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_TWO) +
 					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_THREE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_FOUR) +
+					fluidRowLocs(EpiDataDto.EXPOSED_TO_RISK_FACTOR + EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE)+
 					loc(EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY)+
 					loc(EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI)+
 					loc(EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI_CONTACT_SETTINGS)+
@@ -195,6 +196,10 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			setVisible(false, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, EpiDataDto.LARGE_OUTBREAKS_AREA, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN, EpiDataDto.CHILD_COME_IN_CONTACT_WITH_SYMPTOMS, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN);
 
 		}
+		
+		addField(EpiDataDto.EXPOSED_TO_RISK_FACTOR, OptionGroup.class);
+		addField(EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE, ComboBox.class);
+
 		if (sourceContactsToggleCallback != null) {
 			ogContactWithSourceCaseKnown.addValueChangeListener(e -> {
 				YesNo sourceContactsKnown = (YesNo) FieldHelper.getNullableSourceFieldValue((Field) e.getProperty());
@@ -335,6 +340,11 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			setVisible(true, EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY);
 			setVisible(true, EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI);
 			setVisible(true, EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE);
+		}
+
+		if (disease == Disease.CHOLERA) {
+//			hideAllFields();
+			setVisible(true, EpiDataDto.EXPOSED_TO_RISK_FACTOR, EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE);
 		}
 
 	}

@@ -13532,3 +13532,64 @@ ALTER TABLE cases ADD COLUMN lastvaccinationdate date;
 INSERT INTO schema_version (version_number, comment) VALUES (590, 'Added last vaccination date for IDSR 53');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
+-- VibrioRiskFactors create new table
+CREATE TABLE riskfactor (
+    id BIGINT PRIMARY KEY NOT NULL,
+    drinkingWaterSourceOne VARCHAR(255),
+    drinkingWaterSourceTwo VARCHAR(255),
+    drinkingWaterSourceThree VARCHAR(255),
+    drinkingWaterSourceFour VARCHAR(255),
+--     non drinking water source
+    nonDrinkingWaterSourceOne VARCHAR(255),
+    nonDrinkingWaterSourceTwo VARCHAR(255),
+    nonDrinkingWaterSourceThree VARCHAR(255),
+    nonDrinkingWaterSourceFour VARCHAR(255),
+--     food items
+    foodItemsOne VARCHAR(255),
+    foodItemsTwo VARCHAR(255),
+    foodItemsThree VARCHAR(255),
+    foodItemsFour VARCHAR(255),
+    foodItemsFive VARCHAR(255),
+    foodItemsSix VARCHAR(255),
+    foodItemsSeven VARCHAR(255),
+    foodItemsEight VARCHAR(255),
+    drinkingWaterInfectedByVibrio VARCHAR(255),
+    nonDrinkingWaterInfectedByVibrio VARCHAR(255),
+    foodItemsInfectedByVibrio VARCHAR(255),
+
+    waterUsedForDrinking VARCHAR(255),
+
+    threeDaysPriorToDiseaseWaterSourceOne VARCHAR(255),
+    threeDaysPriorToDiseaseWaterSourceTwo VARCHAR(255),
+    threeDaysPriorToDiseaseWaterSourceThree VARCHAR(255),
+    threeDaysPriorToDiseaseWaterSourceFour VARCHAR(255),
+    threeDaysPriorToDiseaseWaterSourceFive VARCHAR(255),
+
+--     Within 3 days prior to the onset of the disease did the patient eat …………………..
+    threeDaysPriorToDiseaseFoodItemsOne VARCHAR(255),
+    threeDaysPriorToDiseaseFoodItemsTwo VARCHAR(255),
+    threeDaysPriorToDiseaseFoodItemsThree VARCHAR(255),
+    threeDaysPriorToDiseaseFoodItemsFour VARCHAR(255),
+    threeDaysPriorToDiseaseFoodItemsFive VARCHAR(255),
+
+    threeDaysPriorToDiseaseAttendAnyFuneral VARCHAR(255),
+    threeDaysPriorToDiseaseAttendAnySocialEvent VARCHAR(255),
+    otherSocialEventDetails VARCHAR(255),
+    changedate TIMESTAMP(3),
+    change_user_id BIGINT,
+    creationdate DATE,
+    uuid VARCHAR(512)
+);
+
+ALTER TABLE cases ADD COLUMN riskfactor_id BIGINT;
+INSERT INTO schema_version (version_number, comment) VALUES (591, 'Added riskfactor_id to cases');
+
+ALTER TABLE epidata ADD COLUMN exposedToRiskFactor VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN waterUsedByPatientAfterExposure VARCHAR(255);
+ALTER TABLE riskfactor ADD COLUMN vibrioCholeraeIdentifiedInStools VARCHAR(255);
+ALTER TABLE riskfactor ADD COLUMN drugsSensitiveToVibrioStrain VARCHAR(255);
+ALTER TABLE riskfactor ADD COLUMN drugsResistantToVibrioStrain VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (592, 'Added columns to epiData, riskfactor to implement patientVisitedHealthCareFacility #26');
+
+
+-- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
