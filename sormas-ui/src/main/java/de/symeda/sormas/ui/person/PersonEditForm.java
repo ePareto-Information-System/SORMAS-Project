@@ -81,11 +81,11 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private static final long serialVersionUID = -1L;
 	public static final String PERSON_INFORMATION_HEADING_LOC = "personInformationHeadingLoc";
 	private static final String CADRE_HEADER = "headingPersonCadre";
-	private static final String OCCUPATION_HEADER = "occupationHeader";
+	public static final String OCCUPATION_HEADER = "occupationHeader";
 	private static final String BIRTH_OF_INFANT_HEADING_LOC = "headingBirthOfInfant";
-	private static final String ADDRESS_HEADER = "addressHeader";
+	public static final String ADDRESS_HEADER = "addressHeader";
 	private static final String ADDRESSES_HEADER = "addressesHeader";
-	private static final String CONTACT_INFORMATION_HEADER = "contactInformationHeader";
+	public static final String CONTACT_INFORMATION_HEADER = "contactInformationHeader";
 	private static final String EXTERNAL_TOKEN_WARNING_LOC = "externalTokenWarningLoc";
 	public static final String GENERAL_COMMENT_LOC = "generalCommentLoc";
 	private static final String FILL_SECTION_HEADING_LOC = "fillSectionHeadingLoc";
