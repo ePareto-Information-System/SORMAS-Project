@@ -257,6 +257,14 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String TRUEAFP = "trueAfp";
 	public static final String DYSPNEA = "dyspnea";
 	public static final String TACHYPNEA = "tachypnea";
+	public static final String BABY_DIED = "babyDied";
+	public static final String AGE_AT_DEATH_DAYS = "ageAtDeathDays";
+	public static final String AGE_AT_ONSET_DAYS = "ageAtOnsetDays";
+	public static final String BABY_NORMAL_AT_BIRTH = "babyNormalAtBirth";
+	public static final String NORMAL_CRY_AND_SUCK = "normalCryAndSuck";
+	public static final String STOPPED_SUCKING_AFTER_TWO_DAYS = "stoppedSuckingAfterTwoDays";
+	public static final String STIFFNESS = "stiffness";
+
 
 	public static final String NON_VASCULAR = "nonVascular";
 
@@ -313,6 +321,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		YELLOW_FEVER,
 		AHF,
 		UNDEFINED,
+		NEONATAL_TETANUS,
 		OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -1660,6 +1669,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		AHF,
 		CONGENITAL_RUBELLA,
 		CORONAVIRUS,
+		NEONATAL_TETANUS,
 		UNDEFINED,
 		OTHER })
 	@SensitiveData
@@ -2241,6 +2251,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		ANTHRAX,
 		CORONAVIRUS,
 		UNDEFINED,
+		NEONATAL_TETANUS,
 		OTHER })
 	@Complication
 	@HideForCountries
@@ -2265,6 +2276,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		ANTHRAX,
 		CORONAVIRUS,
 		UNDEFINED,
+		NEONATAL_TETANUS,
 		OTHER })
 	@DependantOn(OTHER_COMPLICATIONS)
 	@Complication
@@ -2287,6 +2299,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		RABIES,
 		CORONAVIRUS,
 		UNDEFINED,
+		NEONATAL_TETANUS,
 		OTHER })
 	@Outbreaks
 	@Complication
@@ -2478,7 +2491,38 @@ public class SymptomsDto extends PseudonymizableDto {
 	private YesNo trueAfp;
 	private SymptomState dyspnea;
 	private SymptomState tachypnea;
-
+	@Diseases({
+			NEONATAL_TETANUS
+	})
+	@Outbreaks
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState babyDied;
+	private Integer ageAtDeathDays;
+	private Integer ageAtOnsetDays;
+	@Diseases({
+			NEONATAL_TETANUS
+	})
+	@Outbreaks
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState babyNormalAtBirth;
+	@Diseases({
+			NEONATAL_TETANUS
+	})
+	@Outbreaks
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState normalCryAndSuck;
+	@Diseases({
+			NEONATAL_TETANUS
+	})
+	@Outbreaks
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState stoppedSuckingAfterTwoDays;
+	@Diseases({
+			NEONATAL_TETANUS
+	})
+	@Outbreaks
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState stiffness;
 	@Order(0)
 	public Float getTemperature() {
 		return temperature;
@@ -4309,5 +4353,61 @@ public class SymptomsDto extends PseudonymizableDto {
 	}
 	public void setTachypnea(SymptomState tachypnea) {
 		this.tachypnea = tachypnea;
+	}
+
+	public SymptomState getBabyDied() {
+		return babyDied;
+	}
+
+	public void setBabyDied(SymptomState babyDied) {
+		this.babyDied = babyDied;
+	}
+
+	public Integer getAgeAtDeathDays() {
+		return ageAtDeathDays;
+	}
+
+	public void setAgeAtDeathDays(Integer ageAtDeathDays) {
+		this.ageAtDeathDays = ageAtDeathDays;
+	}
+
+	public Integer getAgeAtOnsetDays() {
+		return ageAtOnsetDays;
+	}
+
+	public void setAgeAtOnsetDays(Integer ageAtOnsetDays) {
+		this.ageAtOnsetDays = ageAtOnsetDays;
+	}
+
+	public SymptomState getBabyNormalAtBirth() {
+		return babyNormalAtBirth;
+	}
+
+	public void setBabyNormalAtBirth(SymptomState babyNormalAtBirth) {
+		this.babyNormalAtBirth = babyNormalAtBirth;
+	}
+
+	public SymptomState getNormalCryAndSuck() {
+		return normalCryAndSuck;
+	}
+
+	public void setNormalCryAndSuck(SymptomState normalCryAndSuck) {
+		this.normalCryAndSuck = normalCryAndSuck;
+	}
+
+	public SymptomState getStoppedSuckingAfterTwoDays() {
+		return stoppedSuckingAfterTwoDays;
+	}
+
+	public void setStoppedSuckingAfterTwoDays(SymptomState stoppedSuckingAfterTwoDays) {
+		this.stoppedSuckingAfterTwoDays = stoppedSuckingAfterTwoDays;
+	}
+
+	public SymptomState getStiffness() {
+		return stiffness;
+	}
+
+	public void setStiffness(SymptomState stiffness) {
+		this.stiffness = stiffness;
 	}
 }

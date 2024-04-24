@@ -499,6 +499,12 @@ public final class SymptomsHelper {
 		appendYesSymptom(string, symptomsDto.getHighOrLowBloodPressure(), SymptomsDto.HIGH_OR_LOW_BLOOD_PRESSURE);
 		appendYesSymptom(string, symptomsDto.getUrinaryRetention(), SymptomsDto.URINARY_RETENTION);
 
+		appendYesSymptom(string, symptomsDto.getBabyDied(), SymptomsDto.BABY_DIED);
+		appendYesSymptom(string, symptomsDto.getBabyNormalAtBirth(), SymptomsDto.BABY_NORMAL_AT_BIRTH);
+		appendYesSymptom(string, symptomsDto.getNormalCryAndSuck(), SymptomsDto.NORMAL_CRY_AND_SUCK);
+		appendYesSymptom(string, symptomsDto.getStoppedSuckingAfterTwoDays(), SymptomsDto.STOPPED_SUCKING_AFTER_TWO_DAYS);
+		appendYesSymptom(string, symptomsDto.getStiffness(), SymptomsDto.STIFFNESS);
+
 		appendNotNullValue(string, symptomsDto.getOtherComplicationsText(), SymptomsDto.OTHER_COMPLICATIONS_TEXT);
 		/*appendYesSymptom(string, symptomsDto.getGeneralBodilyPains(), SymptomsDto.GENERAL_BODILY_PAINS);
 		appendYesSymptom(string, symptomsDto.getGeneralBodilyPains(), SymptomsDto.LESIONS_NECK);

@@ -71,10 +71,7 @@ import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.SymptomsContext;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.symptoms.SymptomsHelper;
-import de.symeda.sormas.api.utils.DateComparator;
-import de.symeda.sormas.api.utils.InjectionSite;
-import de.symeda.sormas.api.utils.SymptomGroup;
-import de.symeda.sormas.api.utils.SymptomGrouping;
+import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
@@ -130,7 +127,12 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6,FEVER_BODY_TEMP_GREATER) +
 					fluidRow(fluidColumn(8,4, locCss(CssStyles.ALIGN_RIGHT,BUTTONS_LOC)))+
 					createSymptomGroupLayout(SymptomGroup.GENERAL, GENERAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
-
+					fluidRowLocs(FEVER_ONSET_PARALYSIS, PROGRESSIVE_PARALYSIS) +
+					fluidRowLocs(DATE_ONSET_PARALYSIS, PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
+					fluidRowLocs(SITE_OF_PARALYSIS) +
+					fluidRowLocs(PARALYSED_LIMB_SENSITIVE_TO_PAIN, INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
+					fluidRowLocs(RIGHT_INJECTION_SITE, LEFT_INJECTION_SITE) +
+					fluidRowLocs(6, TRUEAFP) +
 					fluidRowLocs(6,ALTERED_CONSCIOUSNESS) +
 					fluidRowLocs(6,CONFUSED_DISORIENTED) +
 					fluidRowLocs(6,HEMORRHAGIC_SYNDROME) +
@@ -139,6 +141,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6,SEIZURES) +
 					fluidRowLocs(6,SEPSIS) +
 					fluidRowLocs(6,SHOCK) +
+					fluidRowLocs(AGE_AT_DEATH_DAYS, AGE_AT_ONSET_DAYS) +
 					fluidRowLocs(6,OTHER_COMPLICATIONS) +
 					fluidRowLocs(6,OTHER_COMPLICATIONS_TEXT) +
 					createSymptomGroupLayout(SymptomGroup.RESPIRATORY, RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
@@ -512,7 +515,16 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			VESICULAR_RASH,
 			OTHER_LESION_AREAS,
 			NON_VASCULAR,
-			BODY_ACHE);
+			BODY_ACHE,
+			BABY_DIED,
+			BABY_NORMAL_AT_BIRTH,
+			NORMAL_CRY_AND_SUCK,
+			STOPPED_SUCKING_AFTER_TWO_DAYS,
+			STIFFNESS);
+
+		TextField babyAgeAtDeath = addField(AGE_AT_DEATH_DAYS, TextField.class);
+		TextField ageOfOnsetDays =  addField(AGE_AT_ONSET_DAYS, TextField.class);
+		setVisible(false, AGE_AT_DEATH_DAYS, AGE_AT_ONSET_DAYS);
 
 		addField(SYMPTOMS_COMMENTS, TextField.class).setDescription(
 			I18nProperties.getPrefixDescription(I18N_PREFIX, SYMPTOMS_COMMENTS, "") + "\n" + I18nProperties.getDescription(Descriptions.descGdpr));
@@ -729,7 +741,12 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			SEPSIS,
 			SHOCK,
 			GENERAL_BODILY_PAINS,
-			NON_VASCULAR);
+			NON_VASCULAR,
+			BABY_DIED,
+			BABY_NORMAL_AT_BIRTH,
+			NORMAL_CRY_AND_SUCK,
+			STOPPED_SUCKING_AFTER_TWO_DAYS,
+			STIFFNESS);
 
 		// Set visibilities
 
@@ -1046,6 +1063,24 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					SORE_THROAT, HEADACHE, RUNNY_NOSE, HEADACHE, CONFUSED_DISORIENTED, OTHER_COMPLICATIONS, PHARYNGEAL_EXUDATE, COMA, ABNORMAL_LUNG_XRAY_FINDINGS,
 					CONJUNCTIVAL_INJECTION, SEIZURES, FLUID_IN_LUNG_CAVITY_AUSCULTATION, DIFFICULTY_BREATHING, TACHYPNEA);
 
+		} else if (disease == Disease.NEONATAL_TETANUS) {
+			symptomsHide();
+			setVisible(true,
+					SYMPTOMS_COMMENTS,
+					ONSET_DATE,
+					AGE_AT_DEATH_DAYS,
+					AGE_AT_ONSET_DAYS,
+					SEIZURES,
+					OTHER_COMPLICATIONS,
+					BABY_DIED,
+					BABY_NORMAL_AT_BIRTH,
+					NORMAL_CRY_AND_SUCK,
+					STOPPED_SUCKING_AFTER_TWO_DAYS,
+					STIFFNESS,
+					BACKACHE,
+					OTHER_COMPLICATIONS);
+			FieldHelper.setVisibleWhen(getFieldGroup(), Arrays.asList(AGE_AT_DEATH_DAYS, AGE_AT_ONSET_DAYS), BABY_DIED, Arrays.asList(SymptomState.YES), true);
+
 		}
 
 		if(disease == Disease.MEASLES) {
@@ -1324,7 +1359,12 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				SEPSIS,
 				SHOCK,
 				LESIONS_ONSET_DATE,
-				NON_VASCULAR);
+				NON_VASCULAR,
+				BABY_DIED,
+				BABY_NORMAL_AT_BIRTH,
+				NORMAL_CRY_AND_SUCK,
+				STOPPED_SUCKING_AFTER_TWO_DAYS,
+				STIFFNESS);
 	}
 
 	private void toggleFeverComponentError(NullableOptionGroup feverField, ComboBox temperatureField) {

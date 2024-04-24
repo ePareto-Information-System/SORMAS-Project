@@ -62,7 +62,9 @@ import de.symeda.sormas.api.person.Salutation;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.person.SymptomJournalStatus;
 import de.symeda.sormas.backend.cadre.Cadre;
+import de.symeda.sormas.api.person.*;
 import de.symeda.sormas.api.utils.FieldConstraints;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.messaging.ManualMessageLog;
@@ -248,6 +250,14 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private String investigatorUnit;
 	private String investigatorAddress;
 	private String investigatorTel;
+	private YesNoUnknown receivedAntenatalCare;
+	private Integer prenatalTotalVisits;
+	private YesNoUnknown attendedByTrainedTBA;
+	private String attendedByTrainedTBAMidwifeName;
+	private AttendedBy attendedByDoctorNurse;
+	private YesNoUnknown cutCordWithSterileBlade;
+	private YesNoUnknown cordTreatedWithAnything;
+	private TreatmentOfCord cordTreatedWithAnythingWhere;
 
 	private Cadre cadre;
 
@@ -1042,5 +1052,69 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 
 	public void setCadre(Cadre cadre) {
 		this.cadre = cadre;
+	}
+
+	public YesNoUnknown getReceivedAntenatalCare() {
+		return receivedAntenatalCare;
+	}
+
+	public void setReceivedAntenatalCare(YesNoUnknown receivedAntenatalCare) {
+		this.receivedAntenatalCare = receivedAntenatalCare;
+	}
+
+	public Integer getPrenatalTotalVisits() {
+		return prenatalTotalVisits;
+	}
+
+	public void setPrenatalTotalVisits(Integer prenatalTotalVisits) {
+		this.prenatalTotalVisits = prenatalTotalVisits;
+	}
+
+	public YesNoUnknown getAttendedByTrainedTBA() {
+		return attendedByTrainedTBA;
+	}
+
+	public void setAttendedByTrainedTBA(YesNoUnknown attendedByTrainedTBA) {
+		this.attendedByTrainedTBA = attendedByTrainedTBA;
+	}
+
+	public String getAttendedByTrainedTBAMidwifeName() {
+		return attendedByTrainedTBAMidwifeName;
+	}
+
+	public void setAttendedByTrainedTBAMidwifeName(String attendedByTrainedTBAMidwifeName) {
+		this.attendedByTrainedTBAMidwifeName = attendedByTrainedTBAMidwifeName;
+	}
+
+	public AttendedBy getAttendedByDoctorNurse() {
+		return attendedByDoctorNurse;
+	}
+
+	public void setAttendedByDoctorNurse(AttendedBy attendedByDoctorNurse) {
+		this.attendedByDoctorNurse = attendedByDoctorNurse;
+	}
+
+	public YesNoUnknown getCutCordWithSterileBlade() {
+		return cutCordWithSterileBlade;
+	}
+
+	public void setCutCordWithSterileBlade(YesNoUnknown cutCordWithSterileBlade) {
+		this.cutCordWithSterileBlade = cutCordWithSterileBlade;
+	}
+
+	public YesNoUnknown getCordTreatedWithAnything() {
+		return cordTreatedWithAnything;
+	}
+
+	public void setCordTreatedWithAnything(YesNoUnknown cordTreatedWithAnything) {
+		this.cordTreatedWithAnything = cordTreatedWithAnything;
+	}
+
+	public TreatmentOfCord getCordTreatedWithAnythingWhere() {
+		return cordTreatedWithAnythingWhere;
+	}
+
+	public void setCordTreatedWithAnythingWhere(TreatmentOfCord cordTreatedWithAnythingWhere) {
+		this.cordTreatedWithAnythingWhere = cordTreatedWithAnythingWhere;
 	}
 }

@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.person.*;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.ui.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import com.vaadin.ui.CustomLayout;
@@ -80,10 +81,11 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private static final long serialVersionUID = -1L;
 	public static final String PERSON_INFORMATION_HEADING_LOC = "personInformationHeadingLoc";
 	private static final String CADRE_HEADER = "headingPersonCadre";
-	public static final String OCCUPATION_HEADER = "occupationHeader";
-	public static final String ADDRESS_HEADER = "addressHeader";
-	public static final String ADDRESSES_HEADER = "addressesHeader";
-	public static final String CONTACT_INFORMATION_HEADER = "contactInformationHeader";
+	private static final String OCCUPATION_HEADER = "occupationHeader";
+	private static final String BIRTH_OF_INFANT_HEADING_LOC = "headingBirthOfInfant";
+	private static final String ADDRESS_HEADER = "addressHeader";
+	private static final String ADDRESSES_HEADER = "addressesHeader";
+	private static final String CONTACT_INFORMATION_HEADER = "contactInformationHeader";
 	private static final String EXTERNAL_TOKEN_WARNING_LOC = "externalTokenWarningLoc";
 	public static final String GENERAL_COMMENT_LOC = "generalCommentLoc";
 	private static final String FILL_SECTION_HEADING_LOC = "fillSectionHeadingLoc";
@@ -101,6 +103,11 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_REGION, PersonDto.PLACE_OF_BIRTH_DISTRICT, PersonDto.PLACE_OF_BIRTH_COMMUNITY) +
 					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_FACILITY_TYPE, PersonDto.PLACE_OF_BIRTH_FACILITY, PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS) +
 					fluidRowLocs(PersonDto.GESTATION_AGE_AT_BIRTH, PersonDto.BIRTH_WEIGHT) +
+					loc(BIRTH_OF_INFANT_HEADING_LOC) +
+					fluidRowLocs(PersonDto.RECEIVED_ANTENATAL_CARE, PersonDto.PRENATAL_TOTAL_VISITS)+
+					fluidRowLocs(PersonDto.ATTENDED_BY_TRAINED_TBA, PersonDto.ATTENDED_BY_TRAINED_TBA_MIDWIFE_NAME)+
+					fluidRowLocs(PersonDto.ATTENDED_BY_DOCTOR_NURSE, PersonDto.CUT_CORD_WITH_STERILE_BLADE)+
+					fluidRowLocs(PersonDto.CORD_TREATED_WITH_ANYTHING, PersonDto.CORD_TREATED_WITH_ANYTHING_WHERE)+
 					fluidRowLocs(PersonDto.SEX, PersonDto.PRESENT_CONDITION) +
 					fluidRow(
 							oneOfFourCol(PersonDto.DEATH_DATE),
@@ -157,6 +164,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private final Label addressHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESS));
 	private final Label addressesHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESSES));
 	private final Label contactInformationHeader = new Label(I18nProperties.getString(Strings.headingContactInformation));
+	private Label headingBirthOfInfant = new Label(I18nProperties.getString(Strings.headingBirthOfInfant));
 	private Label personInformationHeadingLabel;
 	private TextField firstNameField;
 	private TextField lastNameField;
@@ -190,8 +198,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		this.diseaseDetails = diseaseDetails;
 		this.isPseudonymized = isPseudonymized;
 		this.caseOrigin = caseOrigin;
-		CssStyles.style(CssStyles.H3, occupationHeader, addressHeader, addressesHeader, contactInformationHeader);
+		CssStyles.style(CssStyles.H3, occupationHeader, addressHeader, addressesHeader, contactInformationHeader, headingBirthOfInfant);
 		getContent().addComponent(occupationHeader, OCCUPATION_HEADER);
+		getContent().addComponent(headingBirthOfInfant, BIRTH_OF_INFANT_HEADING_LOC);
 		getContent().addComponent(addressHeader, ADDRESS_HEADER);
 		getContent().addComponent(addressesHeader, ADDRESSES_HEADER);
 		getContent().addComponent(contactInformationHeader, CONTACT_INFORMATION_HEADER);
@@ -681,6 +690,26 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			contactInformationHeader.setVisible(false);
 			homeaddrecreational.setVisible(true);
 
+		}
+
+		if (disease == Disease.NEONATAL_TETANUS) {
+			NullableOptionGroup receivedAntenatalCare = addField(PersonDto.RECEIVED_ANTENATAL_CARE, NullableOptionGroup.class);
+			TextField prenatalTotalVisits = addField(PersonDto.PRENATAL_TOTAL_VISITS, TextField.class);
+			prenatalTotalVisits.setConversionError(I18nProperties.getValidationError(Validations.onlyIntegerNumbersAllowed, prenatalTotalVisits.getCaption()));
+			NullableOptionGroup attendedByTrainedTba = addField(PersonDto.ATTENDED_BY_TRAINED_TBA, NullableOptionGroup.class);
+			TextField attendedByTrainedTbaMidwifeName = addField(PersonDto.ATTENDED_BY_TRAINED_TBA_MIDWIFE_NAME, TextField.class);
+			NullableOptionGroup attendedByDoctorNurse = addField(PersonDto.ATTENDED_BY_DOCTOR_NURSE, NullableOptionGroup.class);
+			attendedByDoctorNurse.addItems(AttendedBy.values());
+
+			NullableOptionGroup cutCordWithSterileBlade = addField(PersonDto.CUT_CORD_WITH_STERILE_BLADE, NullableOptionGroup.class);
+			NullableOptionGroup cordTreatedWithAnything = addField(PersonDto.CORD_TREATED_WITH_ANYTHING, NullableOptionGroup.class);
+			ComboBox cordTreatedWithAnythingWhere = addField(PersonDto.CORD_TREATED_WITH_ANYTHING_WHERE, ComboBox.class);
+
+			FieldHelper.setVisibleWhen(getFieldGroup(), PersonDto.ATTENDED_BY_TRAINED_TBA_MIDWIFE_NAME, PersonDto.ATTENDED_BY_TRAINED_TBA, YesNoUnknown.YES, true);
+			FieldHelper.setVisibleWhen(getFieldGroup(), PersonDto.CORD_TREATED_WITH_ANYTHING_WHERE, PersonDto.CORD_TREATED_WITH_ANYTHING, YesNoUnknown.YES, true);
+
+
+			setVisible(true, PersonDto.PLACE_OF_BIRTH_REGION, PersonDto.PLACE_OF_BIRTH_DISTRICT, PersonDto.PLACE_OF_BIRTH_COMMUNITY, PersonDto.PLACE_OF_BIRTH_FACILITY_TYPE, PersonDto.PLACE_OF_BIRTH_FACILITY, PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS);
 		}
 
 	}

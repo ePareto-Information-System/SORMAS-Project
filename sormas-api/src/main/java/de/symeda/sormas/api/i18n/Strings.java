@@ -700,6 +700,7 @@ public interface Strings {
 	String headingPersonInformation = "headingPersonInformation";
 	String headingPersonOccupation = "headingPersonOccupation";
 	String headingPersonCadre = "headingCadre";
+	String headingBirthOfInfant = "headingBirthOfInfant";
 	String headingPickEventGroup = "headingPickEventGroup";
 	String headingPickEventParticipants = "headingPickEventParticipants";
 	String headingPickEventParticipantsIncompleteSelection = "headingPickEventParticipantsIncompleteSelection";

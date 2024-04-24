@@ -3458,6 +3458,24 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setSecondVaccinationDate(source.getSecondVaccinationDate());
 		target.setLastVaccinationDate(source.getLastVaccinationDate());
 
+		target.setMotherVaccinatedWithTT(source.getMotherVaccinatedWithTT());
+		target.setMotherHaveCard(source.getMotherHaveCard());
+		target.setMotherNumberOfDoses(source.getMotherNumberOfDoses());
+		target.setMotherVaccinationStatus(source.getMotherVaccinationStatus());
+		target.setMotherTTDateOne(source.getMotherTTDateOne());
+		target.setMotherTTDateTwo(source.getMotherTTDateTwo());
+		target.setMotherTTDateThree(source.getMotherTTDateThree());
+		target.setMotherTTDateFour(source.getMotherTTDateFour());
+		target.setMotherTTDateFive(source.getMotherTTDateFive());
+		target.setMotherLastDoseDate(source.getMotherLastDoseDate());
+
+		target.setSeenInOPD(source.getSeenInOPD());
+		target.setAdmittedInOPD(source.getAdmittedInOPD());
+		target.setMotherGivenProtectiveDoseTT(source.getMotherGivenProtectiveDoseTT());
+		target.setMotherGivenProtectiveDoseTTDate(source.getMotherGivenProtectiveDoseTTDate());
+		target.setSupplementalImmunization(source.getSupplementalImmunization());
+		target.setSupplementalImmunizationDetails(source.getSupplementalImmunizationDetails());
+
 		return target;
 	}
 
@@ -3681,6 +3699,24 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		target.setVaccinationRoutine(source.getVaccinationRoutine());
 		target.setVaccinationRoutineDate(source.getVaccinationRoutineDate());
+
+		target.setMotherVaccinatedWithTT(source.getMotherVaccinatedWithTT());
+		target.setMotherHaveCard(source.getMotherHaveCard());
+		target.setMotherNumberOfDoses(source.getMotherNumberOfDoses());
+		target.setMotherVaccinationStatus(source.getMotherVaccinationStatus());
+		target.setMotherTTDateOne(source.getMotherTTDateOne());
+		target.setMotherTTDateTwo(source.getMotherTTDateTwo());
+		target.setMotherTTDateThree(source.getMotherTTDateThree());
+		target.setMotherTTDateFour(source.getMotherTTDateFour());
+		target.setMotherTTDateFive(source.getMotherTTDateFive());
+		target.setMotherLastDoseDate(source.getMotherLastDoseDate());
+
+		target.setSeenInOPD(source.getSeenInOPD());
+		target.setAdmittedInOPD(source.getAdmittedInOPD());
+		target.setMotherGivenProtectiveDoseTT(source.getMotherGivenProtectiveDoseTT());
+		target.setMotherGivenProtectiveDoseTTDate(source.getMotherGivenProtectiveDoseTTDate());
+		target.setSupplementalImmunization(source.getSupplementalImmunization());
+		target.setSupplementalImmunizationDetails(source.getSupplementalImmunizationDetails());
 
 		return target;
 	}

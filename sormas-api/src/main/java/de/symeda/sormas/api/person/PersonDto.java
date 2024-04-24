@@ -27,6 +27,7 @@ import javax.validation.constraints.Size;
 import de.symeda.sormas.api.infrastructure.cadre.CadreDto;
 import de.symeda.sormas.api.infrastructure.cadre.CadreReferenceDto;
 import de.symeda.sormas.api.caze.CaseOrigin;
+import de.symeda.sormas.api.utils.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -48,17 +49,6 @@ import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.sormastosormas.S2SIgnoreProperty;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasConfig;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DependingOnFeatureType;
-import de.symeda.sormas.api.utils.Diseases;
-import de.symeda.sormas.api.utils.EmbeddedPersonalData;
-import de.symeda.sormas.api.utils.EmbeddedSensitiveData;
-import de.symeda.sormas.api.utils.FieldConstraints;
-import de.symeda.sormas.api.utils.HideForCountries;
-import de.symeda.sormas.api.utils.HideForCountriesExcept;
-import de.symeda.sormas.api.utils.Outbreaks;
-import de.symeda.sormas.api.utils.PersonalData;
-import de.symeda.sormas.api.utils.SensitiveData;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
 @DependingOnFeatureType(featureType = {
@@ -158,6 +148,15 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String INVESTIGATOR_UNIT = "investigatorUnit";
 	public static final String INVESTIGATOR_ADDRESS = "investigatorAddress";
 	public static final String INVESTIGATOR_TEL = "investigatorTel";
+	public static final String RECEIVED_ANTENATAL_CARE = "receivedAntenatalCare";
+	public static final String PRENATAL_TOTAL_VISITS = "prenatalTotalVisits";
+	public static final String ATTENDED_BY_TRAINED_TBA = "attendedByTrainedTBA";
+	public static final String ATTENDED_BY_TRAINED_TBA_MIDWIFE_NAME = "attendedByTrainedTBAMidwifeName";
+	public static final String ATTENDED_BY_DOCTOR_NURSE = "attendedByDoctorNurse";
+	public static final String CUT_CORD_WITH_STERILE_BLADE = "cutCordWithSterileBlade";
+	public static final String CORD_TREATED_WITH_ANYTHING = "cordTreatedWithAnything";
+	public static final String CORD_TREATED_WITH_ANYTHING_WHERE = "cordTreatedWithAnythingWhere";
+
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -454,6 +453,14 @@ public class PersonDto extends PseudonymizableDto {
 	private String investigatorUnit;
 	private String investigatorAddress;
 	private String investigatorTel;
+	private YesNoUnknown receivedAntenatalCare;
+	private Integer prenatalTotalVisits;
+	private YesNoUnknown attendedByTrainedTBA;
+	private String attendedByTrainedTBAMidwifeName;
+	private AttendedBy attendedByDoctorNurse;
+	private YesNoUnknown cutCordWithSterileBlade;
+	private YesNoUnknown cordTreatedWithAnything;
+	private TreatmentOfCord cordTreatedWithAnythingWhere;
 
 
 	@SuppressWarnings("serial")
@@ -1325,4 +1332,67 @@ public class PersonDto extends PseudonymizableDto {
 		this.durationDays4 = durationDays4;
 	}
 
+	public YesNoUnknown getReceivedAntenatalCare() {
+		return receivedAntenatalCare;
+	}
+
+	public void setReceivedAntenatalCare(YesNoUnknown receivedAntenatalCare) {
+		this.receivedAntenatalCare = receivedAntenatalCare;
+	}
+
+	public Integer getPrenatalTotalVisits() {
+		return prenatalTotalVisits;
+	}
+
+	public void setPrenatalTotalVisits(Integer prenatalTotalVisits) {
+		this.prenatalTotalVisits = prenatalTotalVisits;
+	}
+
+	public YesNoUnknown getAttendedByTrainedTBA() {
+		return attendedByTrainedTBA;
+	}
+
+	public void setAttendedByTrainedTBA(YesNoUnknown attendedByTrainedTBA) {
+		this.attendedByTrainedTBA = attendedByTrainedTBA;
+	}
+
+	public String getAttendedByTrainedTBAMidwifeName() {
+		return attendedByTrainedTBAMidwifeName;
+	}
+
+	public void setAttendedByTrainedTBAMidwifeName(String attendedByTrainedTBAMidwifeName) {
+		this.attendedByTrainedTBAMidwifeName = attendedByTrainedTBAMidwifeName;
+	}
+
+	public AttendedBy getAttendedByDoctorNurse() {
+		return attendedByDoctorNurse;
+	}
+
+	public void setAttendedByDoctorNurse(AttendedBy attendedByDoctorNurse) {
+		this.attendedByDoctorNurse = attendedByDoctorNurse;
+	}
+
+	public YesNoUnknown getCutCordWithSterileBlade() {
+		return cutCordWithSterileBlade;
+	}
+
+	public void setCutCordWithSterileBlade(YesNoUnknown cutCordWithSterileBlade) {
+		this.cutCordWithSterileBlade = cutCordWithSterileBlade;
+	}
+
+	public YesNoUnknown getCordTreatedWithAnything() {
+		return cordTreatedWithAnything;
+	}
+
+	public void setCordTreatedWithAnything(YesNoUnknown cordTreatedWithAnything) {
+		this.cordTreatedWithAnything = cordTreatedWithAnything;
+	}
+
+	public TreatmentOfCord getCordTreatedWithAnythingWhere() {
+		return cordTreatedWithAnythingWhere;
+	}
+
+	public void setCordTreatedWithAnythingWhere(TreatmentOfCord cordTreatedWithAnythingWhere) {
+		this.cordTreatedWithAnythingWhere = cordTreatedWithAnythingWhere;
+	}
 }

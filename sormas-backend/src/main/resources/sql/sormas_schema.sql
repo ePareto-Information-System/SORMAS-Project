@@ -13592,4 +13592,51 @@ ALTER TABLE riskfactor ADD COLUMN drugsResistantToVibrioStrain VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (592, 'Added columns to epiData, riskfactor to implement patientVisitedHealthCareFacility #26');
 
 
+-- 565
+ALTER TABLE cases ADD COLUMN motherVaccinatedWithTT varchar(255);
+ALTER TABLE cases ADD COLUMN motherHaveCard varchar(255);
+ALTER TABLE cases ADD COLUMN motherNumberOfDoses varchar(255);
+ALTER TABLE cases ADD COLUMN motherVaccinationStatus varchar(255);
+ALTER TABLE cases ADD COLUMN motherTTDateOne date;
+ALTER TABLE cases ADD COLUMN motherTTDateTwo date;
+ALTER TABLE cases ADD COLUMN motherTTDateThree date;
+ALTER TABLE cases ADD COLUMN motherTTDateFour date;
+ALTER TABLE cases ADD COLUMN motherTTDateFive date;
+ALTER TABLE cases ADD COLUMN motherLastDoseDate date;
+INSERT INTO schema_version (version_number, comment) VALUES (593, 'Added columns to cases to implement MOTHER VACCINATION HISTORY #26');
+
+
+ALTER TABLE person ADD COLUMN receivedAntenatalCare varchar(255);
+ALTER TABLE person ADD COLUMN prenatalTotalVisits varchar(255);
+ALTER TABLE person ADD COLUMN attendedByTrainedTBA varchar(255);
+ALTER TABLE person ADD COLUMN attendedByTrainedTBAMidwifeName varchar(255);
+ALTER TABLE person ADD COLUMN attendedByDoctorNurse varchar(255);
+ALTER TABLE person ADD COLUMN locationOfDelivery varchar(255);
+ALTER TABLE person ADD COLUMN birthByInstitution varchar(255);
+ALTER TABLE person ADD COLUMN birthByInstitutionName varchar(255);
+ALTER TABLE person ADD COLUMN cutCordWithSterileBlade varchar(255);
+ALTER TABLE person ADD COLUMN cordTreatedWithAnything varchar(255);
+ALTER TABLE person ADD COLUMN cordTreatedWithAnythingWhere varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (594, 'Added columns to person to implement BIRTH OF INFANT #26');
+
+ALTER TABLE symptoms ADD COLUMN babyNormalAtBirth varchar(255);
+ALTER TABLE symptoms ADD COLUMN normalCryAndSuck varchar(255);
+ALTER TABLE symptoms ADD COLUMN stoppedSuckingAfterTwoDays varchar(255);
+ALTER TABLE symptoms ADD COLUMN archedBack varchar(255);
+ALTER TABLE symptoms ADD COLUMN stiffness varchar(255);
+ALTER TABLE symptoms ADD COLUMN babyDied varchar(255);
+ALTER TABLE symptoms ADD COLUMN ageAtDeathDays varchar(255);
+ALTER TABLE symptoms ADD COLUMN ageAtOnsetDays varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (595, 'Added columns to symptoms to implement CLINICAL HISTORY FOR #26');
+
+ALTER TABLE cases ADD COLUMN seenInOPD varchar(255);
+ALTER TABLE cases ADD COLUMN admittedInOPD varchar(255);
+ALTER TABLE cases ADD COLUMN motherGivenProtectiveDoseTT varchar(255);
+ALTER TABLE cases ADD COLUMN motherGivenProtectiveDoseTTDate date;
+ALTER TABLE cases ADD COLUMN supplementalImmunization varchar(255);
+ALTER TABLE cases ADD COLUMN supplementalImmunizationDetails varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (596, 'Added columns to cases');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+
+``

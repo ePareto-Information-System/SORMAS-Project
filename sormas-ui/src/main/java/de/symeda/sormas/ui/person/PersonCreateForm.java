@@ -517,6 +517,8 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD);
 		} else if (disease == Disease.CHOLERA) {
 			validValues = Arrays.asList(PresentCondition.DEAD, PresentCondition.ALIVE, PresentCondition.UNKNOWN);
+		} else if (disease == Disease.NEONATAL_TETANUS) {
+			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD);
 		} else {
 			validValues = Arrays.asList(PresentCondition.values());
 		}

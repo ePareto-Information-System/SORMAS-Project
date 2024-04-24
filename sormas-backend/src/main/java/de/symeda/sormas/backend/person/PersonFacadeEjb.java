@@ -1152,6 +1152,14 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setInvestigatorUnit(source.getInvestigatorUnit());
 		target.setInvestigatorAddress(source.getInvestigatorAddress());
 		target.setInvestigatorTel(source.getInvestigatorTel());
+		target.setReceivedAntenatalCare(source.getReceivedAntenatalCare());
+		target.setPrenatalTotalVisits(source.getPrenatalTotalVisits());
+		target.setAttendedByTrainedTBA(source.getAttendedByTrainedTBA());
+		target.setAttendedByTrainedTBAMidwifeName(source.getAttendedByTrainedTBAMidwifeName());
+		target.setAttendedByDoctorNurse(source.getAttendedByDoctorNurse());
+		target.setCutCordWithSterileBlade(source.getCutCordWithSterileBlade());
+		target.setCordTreatedWithAnything(source.getCordTreatedWithAnything());
+		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
 
 		//target.setCadre(CadreFacadeEjb.toReferenceDto(source.getCadre()));
 
@@ -1978,6 +1986,15 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setInvestigatorUnit(source.getInvestigatorUnit());
 		target.setInvestigatorAddress(source.getInvestigatorAddress());
 		target.setInvestigatorTel(source.getInvestigatorTel());
+		target.setReceivedAntenatalCare(source.getReceivedAntenatalCare());
+		target.setPrenatalTotalVisits(source.getPrenatalTotalVisits());
+		target.setAttendedByTrainedTBA(source.getAttendedByTrainedTBA());
+		target.setAttendedByTrainedTBAMidwifeName(source.getAttendedByTrainedTBAMidwifeName());
+		target.setAttendedByDoctorNurse(source.getAttendedByDoctorNurse());
+		target.setCutCordWithSterileBlade(source.getCutCordWithSterileBlade());
+		target.setCordTreatedWithAnything(source.getCordTreatedWithAnything());
+		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
+
 
 		return target;
 	}

@@ -275,6 +275,14 @@ public class Symptoms extends AbstractDomainObject {
 	private SymptomState dyspnea;
 	private SymptomState tachypnea;
 
+	private SymptomState babyDied;
+	private Integer ageAtDeathDays;
+	private Integer ageAtOnsetDays;
+	private SymptomState babyNormalAtBirth;
+	private SymptomState normalCryAndSuck;
+	private SymptomState stoppedSuckingAfterTwoDays;
+	private SymptomState stiffness;
+
 	public Symptoms() {
 	}
 	private SymptomState bodyAche;
@@ -2126,5 +2134,61 @@ public class Symptoms extends AbstractDomainObject {
 
 	public void setBodyAche(SymptomState bodyAche) {
 		this.bodyAche = bodyAche;
+	}
+
+	public SymptomState getBabyDied() {
+		return babyDied;
+	}
+
+	public void setBabyDied(SymptomState babyDied) {
+		this.babyDied = babyDied;
+	}
+
+	public Integer getAgeAtDeathDays() {
+		return ageAtDeathDays;
+	}
+
+	public void setAgeAtDeathDays(Integer ageAtDeathDays) {
+		this.ageAtDeathDays = ageAtDeathDays;
+	}
+
+	public Integer getAgeAtOnsetDays() {
+		return ageAtOnsetDays;
+	}
+
+	public void setAgeAtOnsetDays(Integer ageAtOnsetDays) {
+		this.ageAtOnsetDays = ageAtOnsetDays;
+	}
+
+	public SymptomState getBabyNormalAtBirth() {
+		return babyNormalAtBirth;
+	}
+
+	public void setBabyNormalAtBirth(SymptomState babyNormalAtBirth) {
+		this.babyNormalAtBirth = babyNormalAtBirth;
+	}
+
+	public SymptomState getNormalCryAndSuck() {
+		return normalCryAndSuck;
+	}
+
+	public void setNormalCryAndSuck(SymptomState normalCryAndSuck) {
+		this.normalCryAndSuck = normalCryAndSuck;
+	}
+
+	public SymptomState getStoppedSuckingAfterTwoDays() {
+		return stoppedSuckingAfterTwoDays;
+	}
+
+	public void setStoppedSuckingAfterTwoDays(SymptomState stoppedSuckingAfterTwoDays) {
+		this.stoppedSuckingAfterTwoDays = stoppedSuckingAfterTwoDays;
+	}
+
+	public SymptomState getStiffness() {
+		return stiffness;
+	}
+
+	public void setStiffness(SymptomState stiffness) {
+		this.stiffness = stiffness;
 	}
 }

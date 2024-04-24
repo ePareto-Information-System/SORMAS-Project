@@ -449,6 +449,25 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private Date secondVaccinationDate;
 	private Date lastVaccinationDate;
 
+	private YesNoUnknown motherVaccinatedWithTT;
+	private YesNoUnknown motherHaveCard;
+	private String motherNumberOfDoses;
+	private YesNoUnknown motherVaccinationStatus;
+	private Date motherTTDateOne;
+	private Date motherTTDateTwo;
+	private Date motherTTDateThree;
+	private Date motherTTDateFour;
+	private Date motherTTDateFive;
+	private Date motherLastDoseDate;
+	private YesNoUnknown seenInOPD;
+	private YesNoUnknown admittedInOPD;
+	private YesNoUnknown motherGivenProtectiveDoseTT;
+	private Date motherGivenProtectiveDoseTTDate;
+	private YesNoUnknown supplementalImmunization;
+	private String supplementalImmunizationDetails;
+
+
+
 	public static Case build() {
 		Case caze = new Case();
 		caze.setSystemCaseClassification(CaseClassification.NOT_CLASSIFIED);
@@ -1963,6 +1982,134 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.externalData = externalData;
 	}
 
+	public YesNoUnknown getMotherVaccinatedWithTT() {
+		return motherVaccinatedWithTT;
+	}
+
+	public void setMotherVaccinatedWithTT(YesNoUnknown motherVaccinatedWithTT) {
+		this.motherVaccinatedWithTT = motherVaccinatedWithTT;
+	}
+
+	public YesNoUnknown getMotherHaveCard() {
+		return motherHaveCard;
+	}
+
+	public void setMotherHaveCard(YesNoUnknown motherHaveCard) {
+		this.motherHaveCard = motherHaveCard;
+	}
+
+	public String getMotherNumberOfDoses() {
+		return motherNumberOfDoses;
+	}
+
+	public void setMotherNumberOfDoses(String motherNumberOfDoses) {
+		this.motherNumberOfDoses = motherNumberOfDoses;
+	}
+
+	public YesNoUnknown getMotherVaccinationStatus() {
+		return motherVaccinationStatus;
+	}
+
+	public void setMotherVaccinationStatus(YesNoUnknown motherVaccinationStatus) {
+		this.motherVaccinationStatus = motherVaccinationStatus;
+	}
+
+	public Date getMotherTTDateOne() {
+		return motherTTDateOne;
+	}
+
+	public void setMotherTTDateOne(Date motherTTDateOne) {
+		this.motherTTDateOne = motherTTDateOne;
+	}
+
+	public Date getMotherTTDateTwo() {
+		return motherTTDateTwo;
+	}
+
+	public void setMotherTTDateTwo(Date motherTTDateTwo) {
+		this.motherTTDateTwo = motherTTDateTwo;
+	}
+
+	public Date getMotherTTDateThree() {
+		return motherTTDateThree;
+	}
+
+	public void setMotherTTDateThree(Date motherTTDateThree) {
+		this.motherTTDateThree = motherTTDateThree;
+	}
+
+	public Date getMotherTTDateFour() {
+		return motherTTDateFour;
+	}
+
+	public void setMotherTTDateFour(Date motherTTDateFour) {
+		this.motherTTDateFour = motherTTDateFour;
+	}
+
+	public Date getMotherTTDateFive() {
+		return motherTTDateFive;
+	}
+
+	public void setMotherTTDateFive(Date motherTTDateFive) {
+		this.motherTTDateFive = motherTTDateFive;
+	}
+
+	public Date getMotherLastDoseDate() {
+		return motherLastDoseDate;
+	}
+
+	public void setMotherLastDoseDate(Date motherLastDoseDate) {
+		this.motherLastDoseDate = motherLastDoseDate;
+	}
+
+	public YesNoUnknown getSeenInOPD() {
+		return seenInOPD;
+	}
+
+	public void setSeenInOPD(YesNoUnknown seenInOPD) {
+		this.seenInOPD = seenInOPD;
+	}
+
+	public YesNoUnknown getAdmittedInOPD() {
+		return admittedInOPD;
+	}
+
+	public void setAdmittedInOPD(YesNoUnknown admittedInOPD) {
+		this.admittedInOPD = admittedInOPD;
+	}
+
+	public YesNoUnknown getMotherGivenProtectiveDoseTT() {
+		return motherGivenProtectiveDoseTT;
+	}
+
+	public void setMotherGivenProtectiveDoseTT(YesNoUnknown motherGivenProtectiveDoseTT) {
+		this.motherGivenProtectiveDoseTT = motherGivenProtectiveDoseTT;
+	}
+
+	public Date getMotherGivenProtectiveDoseTTDate() {
+		return motherGivenProtectiveDoseTTDate;
+	}
+
+	public void setMotherGivenProtectiveDoseTTDate(Date motherGivenProtectiveDoseTTDate) {
+		this.motherGivenProtectiveDoseTTDate = motherGivenProtectiveDoseTTDate;
+	}
+
+	public YesNoUnknown getSupplementalImmunization() {
+		return supplementalImmunization;
+	}
+
+	public void setSupplementalImmunization(YesNoUnknown supplementalImmunization) {
+		this.supplementalImmunization = supplementalImmunization;
+	}
+
+	public String getSupplementalImmunizationDetails() {
+		return supplementalImmunizationDetails;
+	}
+
+	public void setSupplementalImmunizationDetails(String supplementalImmunizationDetails) {
+		this.supplementalImmunizationDetails = supplementalImmunizationDetails;
+	}
+
 	public String buildCaseGpsCoordinationCaption() {
 		if (reportLat == null || reportLon == null) {
 			return I18nProperties.getString(Strings.messageIncompleteGpsCoordinates);
@@ -2005,6 +2152,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 //	Riskfactor on
+
 
 
 	@Override

@@ -39,12 +39,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.vaadin.ui.*;
+import com.vaadin.v7.data.validator.RegexpValidator;
 import de.symeda.sormas.api.caze.*;
-import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
-import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.infrastructure.facility.*;
-import de.symeda.sormas.api.person.PresentCondition;
-import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -253,7 +250,15 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(CaseDataDto.BLOOD_ORGAN_OR_TISSUE_DONATED) +
 					fluidRowLocs(CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM) + fluidRowLocs(CaseDataDto.TRIMESTER, "") +
 					fluidRowLocs(CaseDataDto.VACCINATION_ROUTINE, CaseDataDto.VACCINATION_ROUTINE_DATE) +
-					fluidRowLocs(CaseDataDto.VACCINATION_STATUS, CaseDataDto.VACCINATION_TYPE) +
+					fluidRowLocs(CaseDataDto.VACCINATION_STATUS, CaseDataDto.VACCINATION_TYPE, CaseDataDto.VACCINATION_DATE) +
+					fluidRowLocs(CaseDataDto.MOTHER_VACCINATED_WITH_TT, CaseDataDto.MOTHER_HAVE_CARD) +
+					fluidRowLocs(CaseDataDto.MOTHER_NUMBER_OF_DOSES, CaseDataDto.MOTHER_VACCINATION_STATUS) +
+					fluidRowLocs(CaseDataDto.MOTHER_TT_DATE_ONE, CaseDataDto.MOTHER_TT_DATE_TWO) +
+					fluidRowLocs(CaseDataDto.MOTHER_TT_DATE_THREE + CaseDataDto.MOTHER_TT_DATE_FOUR) +
+					fluidRowLocs(CaseDataDto.MOTHER_TT_DATE_FIVE + CaseDataDto.MOTHER_LAST_DOSE_DATE) +
+					fluidRowLocs(CaseDataDto.SEEN_IN_OPD, CaseDataDto.ADMITTED_IN_OPD) +
+					fluidRowLocs(6, CaseDataDto.MOTHER_GIVEN_PROTECTIVE_DOSE_TT, 3, CaseDataDto.MOTHER_GIVEN_PROTECTIVE_DOSE_TT_DATE, 3, CaseDataDto.SUPPLEMENTAL_IMMUNIZATION) +
+					fluidRowLocs(CaseDataDto.SUPPLEMENTAL_IMMUNIZATION_DETAILS) +
 					fluidRowLocs(CaseDataDto.VACCINE_TYPE, CaseDataDto.NUMBER_OF_DOSES, CaseDataDto.VACCINATION_DATE, CaseDataDto.SECOND_VACCINATION_DATE) +
 					fluidRowLocs(6, CaseDataDto.LAST_VACCINATION_DATE) +
 					fluidRowLocs(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED, CaseDataDto.SMALLPOX_VACCINATION_SCAR) +
@@ -327,6 +332,24 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private ComboBox cbCaseClassification;
 	private TextField hospitalName;
 	private DateField secondVaccinationDateField;
+	private NullableOptionGroup motherVaccinatedWithTT;
+	private NullableOptionGroup motherHaveCard;
+	private TextField motherNumberOfDoses;
+	private NullableOptionGroup motherVaccinationStatus;
+	private DateField motherTTDateOne;
+	private DateField motherTTDateTwo;
+	private DateField motherTTDateThree;
+	private DateField motherTTDateFour;
+	private DateField motherTTDateFive;
+	private DateField motherLastDoseDate;
+	private NullableOptionGroup seenInOPD;
+	private NullableOptionGroup admittedInOPD;
+	private NullableOptionGroup motherGivenProtectiveDoseTT;
+	private DateField motherGivenProtectiveDoseTTDate;
+	private NullableOptionGroup supplementalImmunizationField;
+	private TextArea supplementalImmunizationDetails;
+
+
 
 
 	private final Map<ReinfectionDetailGroup, CaseReinfectionCheckBoxTree> reinfectionTrees = new EnumMap<>(ReinfectionDetailGroup.class);
@@ -1584,6 +1607,67 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			if (CaseDataDto.HOSPITALIZATION == null) {
 					caseOutcome.setEnabled(false);
 					caseOutcome.setRequired(false);
+			}
+
+			if(disease == Disease.NEONATAL_TETANUS){
+				setVisible(false, CaseDataDto.VACCINATION_STATUS);
+				notifiedBy.setVisible(true);
+				dateOfNotification.setVisible(true);
+				dateOfInvestigation.setVisible(true);
+
+				setVisible(true, CaseDataDto.SURVEILLANCE_OFFICER, CaseDataDto.REPORTING_OFFICER_NAME, CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE);
+
+				motherVaccinatedWithTT = addField(CaseDataDto.MOTHER_VACCINATED_WITH_TT, NullableOptionGroup.class);
+				motherHaveCard = addField(CaseDataDto.MOTHER_HAVE_CARD, NullableOptionGroup.class);
+				motherNumberOfDoses = addField(CaseDataDto.MOTHER_NUMBER_OF_DOSES, TextField.class);
+				motherNumberOfDoses.addValidator(new RegexpValidator("[0-9]*", I18nProperties.getValidationError(Validations.onlyIntegerNumbersAllowed, motherNumberOfDoses.getCaption())));
+				motherVaccinationStatus = addField(CaseDataDto.MOTHER_VACCINATION_STATUS, NullableOptionGroup.class);
+				motherTTDateOne = addField(CaseDataDto.MOTHER_TT_DATE_ONE, DateField.class);
+				motherTTDateTwo = addField(CaseDataDto.MOTHER_TT_DATE_TWO, DateField.class);
+				motherTTDateThree = addField(CaseDataDto.MOTHER_TT_DATE_THREE, DateField.class);
+				motherTTDateFour = addField(CaseDataDto.MOTHER_TT_DATE_FOUR, DateField.class);
+				motherTTDateFive = addField(CaseDataDto.MOTHER_TT_DATE_FIVE, DateField.class);
+				motherLastDoseDate = addField(CaseDataDto.MOTHER_LAST_DOSE_DATE, DateField.class);
+
+				//	seenInOPD, admittedInOPD, motherGivenProtectiveDoseTT, motherGivenProtectiveDoseTTDate, supplementalImmunization, supplementalImmunizationDetails
+				seenInOPD = addField(CaseDataDto.SEEN_IN_OPD, NullableOptionGroup.class);
+				admittedInOPD = addField(CaseDataDto.ADMITTED_IN_OPD, NullableOptionGroup.class);
+				motherGivenProtectiveDoseTT = addField(CaseDataDto.MOTHER_GIVEN_PROTECTIVE_DOSE_TT, NullableOptionGroup.class);
+				motherGivenProtectiveDoseTTDate = addField(CaseDataDto.MOTHER_GIVEN_PROTECTIVE_DOSE_TT_DATE, DateField.class);
+				supplementalImmunizationField = addField(CaseDataDto.SUPPLEMENTAL_IMMUNIZATION, NullableOptionGroup.class);
+				supplementalImmunizationDetails = addField(CaseDataDto.SUPPLEMENTAL_IMMUNIZATION_DETAILS, TextArea.class);
+
+				FieldHelper.setVisibleWhen(
+						seenInOPD,
+						Arrays.asList(admittedInOPD),
+						Arrays.asList(YesNoUnknown.YES),
+						true);
+
+				FieldHelper.setVisibleWhen(
+						motherGivenProtectiveDoseTT,
+						Arrays.asList(motherGivenProtectiveDoseTTDate),
+						Arrays.asList(YesNoUnknown.YES),
+						true
+				);
+
+				FieldHelper.setVisibleWhen(
+						supplementalImmunizationField,
+						Arrays.asList(supplementalImmunizationDetails),
+						Arrays.asList(YesNoUnknown.YES),
+						true
+				);
+
+				FieldHelper.setVisibleWhen(
+						motherVaccinatedWithTT,
+						Arrays.asList(motherHaveCard),
+						Arrays.asList(YesNoUnknown.YES),
+						true);
+
+				FieldHelper.setVisibleWhen(
+						motherHaveCard,
+						Arrays.asList(motherNumberOfDoses, motherTTDateOne, motherTTDateTwo, motherTTDateThree, motherTTDateFour, motherTTDateFive, motherLastDoseDate),
+						Arrays.asList(YesNoUnknown.YES),
+						true);
 			}
 		});
 	}
