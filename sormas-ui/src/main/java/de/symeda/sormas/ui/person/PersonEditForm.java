@@ -77,6 +77,8 @@ import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilit
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.location.LocationEditForm;
+import org.hl7.fhir.r4.model.Person;
+
 public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private static final long serialVersionUID = -1L;
 	public static final String PERSON_INFORMATION_HEADING_LOC = "personInformationHeadingLoc";
@@ -376,6 +378,34 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 		addressForm = addField(PersonDto.ADDRESS, LocationEditForm.class);
 		addressForm.getIncomingDisease(disease);
+
+		if (disease != null) {
+			switch (disease) {
+				case CSM:
+					addressForm.setOnlyUnknownForCSM(disease);
+					break;
+				case AFP:
+					addressForm.setOnlyUnknownForAFP(disease);
+					break;
+				case NEW_INFLUENZA:
+					addressForm.setOnlyUnknownForInfluenza(disease);
+					break;
+				case YELLOW_FEVER:
+					addressForm.setOnlyUnknownForYellowFever(disease);
+					break;
+				case AHF:
+					addressForm.setOnlyUnknownForAHF(disease);
+					break;
+				case CORONAVIRUS:
+					addressForm.setOnlyUnknownForCovid(disease);
+					break;
+				case GUINEA_WORM:
+					addressForm.setOnlyUnknownForGuineaWorm();
+					break;
+				default:
+					break;
+			}
+		}
 
 		addressForm.setCaption(null);
 		addField(PersonDto.ADDRESSES, LocationsField.class).setCaption(null);
@@ -714,6 +744,14 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			contactInformationHeader.setVisible(false);
 			homeaddrecreational.setVisible(true);
 
+			setVisible(false,PersonDto.BIRTH_COUNTRY, PersonDto.NAMES_OF_GUARDIANS, PersonDto.BIRTH_NAME, PersonDto.PASSPORT_NUMBER);
+		}
+		
+		if (disease == Disease.GUINEA_WORM) {
+			addFields(PersonDto.INVESTIGATOR_NAME, PersonDto.INVESTIGATOR_TITLE);
+			generalCommentLabel.setVisible(false);
+			setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER, PersonDto.BIRTH_DATE_YYYY,
+					PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD, PersonDto.ADDITIONAL_DETAILS, PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS, PersonDto.MOTHERS_NAME);
 		}
 
 		if (disease == Disease.NEONATAL_TETANUS) {
@@ -894,7 +932,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 	@Override
 	protected String createHtmlLayout() {
-		return HTML_LAYOUT;
+		return disease == Disease.GUINEA_WORM ? "" : HTML_LAYOUT;
 	}
 	private void updateReadyOnlyApproximateAge() {
 		boolean readonly = false;

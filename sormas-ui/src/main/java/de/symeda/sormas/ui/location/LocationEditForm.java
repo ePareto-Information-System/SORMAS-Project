@@ -33,6 +33,7 @@ import de.symeda.sormas.api.InfrastructureDataReferenceDto;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.infrastructure.area.AreaType;
 import de.symeda.sormas.api.infrastructure.facility.*;
+import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.ui.caze.CaseDataForm;
 import de.symeda.sormas.ui.caze.CasePersonView;
 import de.symeda.sormas.ui.person.PersonEditForm;
@@ -970,4 +971,8 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		setVisible(false, LocationDto.LOCALITY, LocationDto.AREA_TYPE, LocationDto.HOUSE_NUMBER, LocationDto.CITY, LocationDto.POSTAL_CODE);
 	}
 
+	public void setOnlyUnknownForGuineaWorm() {
+		setVisible(false, LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.ADDITIONAL_INFORMATION, LocationDto.CITY, LocationDto.HOUSE_NUMBER);
+			setVisible(true, LocationDto.LAND_MARK, LocationDto.AREA_TYPE);
+	}
 }

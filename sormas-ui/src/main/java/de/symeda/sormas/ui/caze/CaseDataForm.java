@@ -1686,6 +1686,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					setVisible(true, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
 					createLabel(I18nProperties.getString(Strings.headingIndicateCategory), H3, INDICATE_CATEGORY_LOC);
 				}
+				if (disease == Disease.GUINEA_WORM) {
+					dateOfInvestigation.setVisible(true);
+					surveillanceOfficerField.setVisible(true);
+					setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.TRIMESTER, CaseDataDto.VACCINATION_STATUS);
+				}
 			});
 		}
 
