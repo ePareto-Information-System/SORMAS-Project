@@ -73,18 +73,16 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private static final String PREVIOUS_HOSPITALIZATIONS_HEADING_LOC = "previousHospitalizationsHeadingLoc";
 	private static final String FILL_SECTION_HEADING_LOC = "fillSectionHeadingLoc";
 	private static final String SEEK_HELP_HEADING_LOC = "seekHelpHeadingLoc";
-	private static final String HEALTH_FACILITY = Captions.CaseHospitalization_healthFacility;
 	private static final String OUTCOME = Captions.CaseData_outcome;
 	private static final String SEQUELAE = Captions.CaseData_sequelae;
 	private static final String SEQUELAE_DETAILS = Captions.CaseData_sequelaeDetails;
 	private static final String OTHERCASEOUTCOMEDETAIL = Captions.CaseData_specify_other_outcome;
+	public static final String HEALTH_FACILITY = Captions.CaseHospitalization_healthFacility;
+	public static final String HEALTH_FACILITY_DISTRICT = Captions.CaseHospitalization_healthFacilityDistrict;
+	private static final String HOSPITAL_NAME_DETAIL = " ( %s )";
+	private static final String SYMPTOMS_HEADING_LOC = " symptomsHeading";
 
-	private final CaseDataDto caze;
-	private final ViewMode viewMode;
 
-	private NullableOptionGroup intensiveCareUnit;
-	private DateField intensiveCareUnitStart;
-	private DateField intensiveCareUnitEnd;
 	private DateField dischargeDateField;
 
 	private OptionGroup caseOutcome;
@@ -92,13 +90,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private NullableOptionGroup sequelae;
 	private TextField sequelaeDetails;
 	private NullableOptionGroup patientVentilated;
+	private final CaseDataDto caze;
+	private final ViewMode viewMode;
+	private NullableOptionGroup intensiveCareUnit;
+	private DateField intensiveCareUnitStart;
+	private DateField intensiveCareUnitEnd;
 
-
-	private static final String HEALTH_FACILITY_DISTRICT = Captions.CaseHospitalization_healthFacilityDistrict;
-	public static final String HEALTH_FACILITY = Captions.CaseHospitalization_healthFacility;
-	public static final String HEALTH_FACILITY_DISTRICT = Captions.CaseHospitalization_healthFacilityDistrict;
-	private static final String HOSPITAL_NAME_DETAIL = " ( %s )";
-	private static final String SYMPTOMS_HEADING_LOC = " symptomsHeading";
 	OptionGroup tickSymptomField;
 	//@formatter:off
 	private static final String HTML_LAYOUT =
@@ -130,26 +127,20 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					fluidRowLocs(HospitalizationDto.PLACE2, HospitalizationDto.DURATION_MONTHS2, HospitalizationDto.DURATION_DAYS2) +
 					locCss(VSPACE_TOP_3, HospitalizationDto.INVESTIGATOR_NAME) +
 					fluidRowLocs(HospitalizationDto.INVESTIGATOR_TITLE, HospitalizationDto.INVESTIGATOR_UNIT) +
-					fluidRowLocs(HospitalizationDto.INVESTIGATOR_ADDRESS, HospitalizationDto.INVESTIGATOR_TEL);
+					fluidRowLocs(HospitalizationDto.INVESTIGATOR_ADDRESS, HospitalizationDto.INVESTIGATOR_TEL)+
 
-			loc(SYMPTOMS_HEADING_LOC) +
-			fluidRowLocs(HospitalizationDto.SYMPTOMS_SELECTED)+
-			fluidRowLocs(6,HospitalizationDto.OTHER_SYMPTOM_SELECTED)+
-			fluidRowLocs(HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING)+
-			fluidRowLocs(6, HospitalizationDto.DURATION_HOURS)+
-			fluidRowLocs(HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.NAME_OF_FACILITY)+
-			fluidRowLocs(HospitalizationDto.LOCATION_ADDRESS, HospitalizationDto.DATE_OF_VISIT_HOSPITAL)+
-			fluidRowLocs(6, HospitalizationDto.PHYSICIAN_NUMBER)+
-			fluidRowLocs(HospitalizationDto.LAB_TEST_CONDUCTED, HospitalizationDto.TYPE_OF_SAMPLE, HospitalizationDto.AGENT_IDENTIFIED);
-	private final CaseDataDto caze;
-	private final ViewMode viewMode;
-	private NullableOptionGroup intensiveCareUnit;
-	private DateField intensiveCareUnitStart;
-	private DateField intensiveCareUnitEnd;
+					loc(SYMPTOMS_HEADING_LOC) +
+					fluidRowLocs(HospitalizationDto.SYMPTOMS_SELECTED)+
+					fluidRowLocs(6,HospitalizationDto.OTHER_SYMPTOM_SELECTED)+
+					fluidRowLocs(HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING)+
+					fluidRowLocs(6, HospitalizationDto.DURATION_HOURS)+
+					fluidRowLocs(HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.NAME_OF_FACILITY)+
+					fluidRowLocs(HospitalizationDto.LOCATION_ADDRESS, HospitalizationDto.DATE_OF_VISIT_HOSPITAL)+
+					fluidRowLocs(6, HospitalizationDto.PHYSICIAN_NUMBER)+
+					fluidRowLocs(HospitalizationDto.LAB_TEST_CONDUCTED, HospitalizationDto.TYPE_OF_SAMPLE, HospitalizationDto.AGENT_IDENTIFIED);
+
 	//@formatter:on
-
 	public HospitalizationForm(CaseDataDto caze, ViewMode viewMode, boolean isPseudonymized, boolean inJurisdiction, boolean isEditAllowed) {
-
 		super(
 				HospitalizationDto.class,
 				HospitalizationDto.I18N_PREFIX,

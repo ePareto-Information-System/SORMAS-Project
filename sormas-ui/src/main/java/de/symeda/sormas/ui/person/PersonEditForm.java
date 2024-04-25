@@ -288,6 +288,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		firstNameField = addField(PersonDto.FIRST_NAME, TextField.class);
 		lastNameField = addField(PersonDto.LAST_NAME, TextField.class);
 		otherNameField = addField(PersonDto.OTHER_NAME, TextField.class);
+		addField(PersonDto.MARITAL_STATUS, ComboBox.class);
 		ComboBox salutation = addField(PersonDto.SALUTATION, ComboBox.class);
 		ComboBox otherSalutation = addField(PersonDto.OTHER_SALUTATION, ComboBox.class);
 		FieldHelper.setVisibleWhen(getFieldGroup(), PersonDto.OTHER_SALUTATION, PersonDto.SALUTATION, Salutation.OTHER, true);
@@ -304,7 +305,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			setVisible(false, PersonDto.PASSPORT_NUMBER);
 		}
 
-		ComboBox maritalStatus = addField(PersonDto.MARITAL_STATUS, ComboBox.class);
 		addField(PersonDto.GHANA_CARD);
 		TextField numberOfPeople = addField(PersonDto.NUMBER_OF_PEOPLE, TextField.class);
 		TextField numberOfOtherContacts = addField(PersonDto.NUMBER_OF_OTHER_CONTACTS, TextField.class);

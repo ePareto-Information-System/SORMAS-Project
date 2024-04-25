@@ -64,6 +64,7 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String FIRST_NAME = "firstName";
 	public static final String LAST_NAME = "lastName";
 	public static final String OTHER_NAME = "otherName";
+	public static final String MARITAL_STATUS = "maritalStatus";
 	public static final String SALUTATION = "salutation";
 	public static final String OTHER_SALUTATION = "otherSalutation";
 	public static final String PRESENT_CONDITION = "presentCondition";
@@ -156,8 +157,6 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String CUT_CORD_WITH_STERILE_BLADE = "cutCordWithSterileBlade";
 	public static final String CORD_TREATED_WITH_ANYTHING = "cordTreatedWithAnything";
 	public static final String CORD_TREATED_WITH_ANYTHING_WHERE = "cordTreatedWithAnythingWhere";
-	public static final String MARITAL_STATUS = "maritalStatus";
-
 	// Fields are declared in the order they should appear in the import template
 
 	@Outbreaks
@@ -177,6 +176,12 @@ public class PersonDto extends PseudonymizableDto {
 	@SensitiveData(mandatoryField = false)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String otherName;
+
+	@Outbreaks
+	@PersonalData(mandatoryField = false)
+	@SensitiveData(mandatoryField = false)
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
+	private MaritalStatus maritalStatus;
 	@HideForCountriesExcept
 	@PersonalData
 	@SensitiveData
@@ -466,7 +471,6 @@ public class PersonDto extends PseudonymizableDto {
 	private YesNoUnknown cutCordWithSterileBlade;
 	private YesNoUnknown cordTreatedWithAnything;
 	private TreatmentOfCord cordTreatedWithAnythingWhere;
-	private MaritalStatus maritalStatus;
 
 
 	@SuppressWarnings("serial")

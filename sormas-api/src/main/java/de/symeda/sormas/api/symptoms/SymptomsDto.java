@@ -2509,7 +2509,7 @@ public class SymptomsDto extends PseudonymizableDto {
 			MEASLES})
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState nonVascular;
-
+	@Diseases({
 		FOODBORNE_ILLNESS,
 		OTHER })
 	@SymptomGrouping(SymptomGroup.GENERAL)

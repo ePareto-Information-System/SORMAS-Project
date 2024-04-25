@@ -442,6 +442,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private String reportingOfficerEmail;
 	private String homeAddressRecreational;
 	private String hospitalName;
+	private Date vaccinationRoutineDate;
 	@Diseases({
 		Disease.CONGENITAL_RUBELLA })
 	private HospitalWardType notifyingClinic;
@@ -1940,14 +1941,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		this.healthConditions = healthConditions;
 	}
 
-
-	public NewExisting getExistingCase() {
-		return existingCase;
-	}
-
-	public void setExistingCase(NewExisting existingCase) {
-		this.existingCase = existingCase;
-	}
 	@JsonIgnore
 	public String i18nPrefix() {
 		return I18N_PREFIX;
@@ -2153,5 +2146,12 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	public void setMotherLastDoseDate(Date motherLastDoseDate) {
 		this.motherLastDoseDate = motherLastDoseDate;
+	}
+
+	public Date getSecondVaccinationDate() {
+		return secondVaccinationDate;
+	}
+	public void setSecondVaccinationDate(Date secondVaccinationDate) {
+		this.secondVaccinationDate = secondVaccinationDate;
 	}
 }

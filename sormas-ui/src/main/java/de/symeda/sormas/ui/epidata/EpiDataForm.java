@@ -471,7 +471,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 
 		if (disease == Disease.CORONAVIRUS) {
-			hideAllFields();
+//			hideAllFields();
 			setVisible(true, EpiDataDto.PATIENT_TRAVELLED_TWO_WEEKS_PRIOR);
 			setVisible(true, EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY);
 			setVisible(true, EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI);

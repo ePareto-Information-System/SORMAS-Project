@@ -541,7 +541,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			BODY_ACHE,
 			DIZZINESS,
 			EXCESSIVE_SWEATING,
-			NUMBNES);
+			NUMBNESS);
 
 		TextField babyAgeAtDeath = addField(AGE_AT_DEATH_DAYS, TextField.class);
 		TextField ageOfOnsetDays =  addField(AGE_AT_ONSET_DAYS, TextField.class);

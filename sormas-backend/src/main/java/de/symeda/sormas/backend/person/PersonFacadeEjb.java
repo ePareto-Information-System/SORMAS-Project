@@ -1160,8 +1160,8 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setCutCordWithSterileBlade(source.getCutCordWithSterileBlade());
 		target.setCordTreatedWithAnything(source.getCordTreatedWithAnything());
 		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
-
 		//target.setCadre(CadreFacadeEjb.toReferenceDto(source.getCadre()));
+
 		target.setMaritalStatus(source.getMaritalStatus());
 
 		return target;
