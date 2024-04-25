@@ -68,6 +68,8 @@ import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilit
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.location.LocationEditForm;
+import org.hl7.fhir.r4.model.Person;
+
 public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private static final long serialVersionUID = -1L;
 	private static final String PERSON_INFORMATION_HEADING_LOC = "personInformationHeadingLoc";
@@ -374,6 +376,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					break;
 				case CORONAVIRUS:
 					addressForm.setOnlyUnknownForCovid(disease);
+					break;
+				case GUINEA_WORM:
+					addressForm.setOnlyUnknownForGuineaWorm();
 					break;
 				default:
 					break;
@@ -698,6 +703,11 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			homeaddrecreational.setVisible(true);
 
 			setVisible(false,PersonDto.BIRTH_COUNTRY, PersonDto.NAMES_OF_GUARDIANS, PersonDto.BIRTH_NAME, PersonDto.PASSPORT_NUMBER);
+		} else if (disease == Disease.GUINEA_WORM) {
+			addFields(PersonDto.INVESTIGATOR_NAME, PersonDto.INVESTIGATOR_TITLE);
+			generalCommentLabel.setVisible(false);
+			setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER, PersonDto.BIRTH_DATE_YYYY,
+					PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD, PersonDto.ADDITIONAL_DETAILS, PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS, PersonDto.MOTHERS_NAME);
 		}
 
 	}
@@ -838,7 +848,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 	@Override
 	protected String createHtmlLayout() {
-		return HTML_LAYOUT;
+		return disease == Disease.GUINEA_WORM ? "" : HTML_LAYOUT;
 	}
 	private void updateReadyOnlyApproximateAge() {
 		boolean readonly = false;

@@ -1578,6 +1578,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				FieldHelper
 						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccineType, numberOfDoses, cardDateField, secondVaccinationDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
 
+			} else if (disease == Disease.GUINEA_WORM) {
+				dateOfInvestigation.setVisible(true);
+				surveillanceOfficerField.setVisible(true);
+				setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.TRIMESTER, CaseDataDto.VACCINATION_STATUS);
 			}
 			//AFP
 			if(disease == Disease.AFP){
