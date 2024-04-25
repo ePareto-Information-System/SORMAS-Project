@@ -932,7 +932,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 	@Override
 	protected String createHtmlLayout() {
-		return disease == Disease.GUINEA_WORM ? "" : HTML_LAYOUT;
+		return HTML_LAYOUT;
 	}
 	private void updateReadyOnlyApproximateAge() {
 		boolean readonly = false;
