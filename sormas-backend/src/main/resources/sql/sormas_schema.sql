@@ -13821,6 +13821,6 @@ ALTER TABLE samples DROP COLUMN placeofpurchase;
 ALTER TABLE samples DROP COLUMN nameofmanufacturer;
 ALTER TABLE samples DROP COLUMN address;
 
-INSERT INTO schema_version (version_number, comment) VALUES (606, 'Added food sample testing section for Food Borne illness in Sample');
+INSERT INTO schema_version (version_number, comment) VALUES (606, 'Removed food sample testing section for Food Borne illness in Sample');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
