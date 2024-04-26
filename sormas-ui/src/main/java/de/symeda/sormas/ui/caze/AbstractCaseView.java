@@ -246,7 +246,7 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 				//menu.addView(TherapyView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.THERAPY), params);
 			}
 		}
-
+		if(caze.getDisease() != Disease.FOODBORNE_ILLNESS) {
 		if (caseFollowupEnabled
 			&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_FOLLOW_UP)
 			&& caze.getFollowUpStatus() != FollowUpStatus.NO_FOLLOW_UP) {
@@ -271,14 +271,15 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 			menu.addView(CaseContactsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, Captions.caseContacts), params);
 		}
 
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SAMPLES_LAB)
-				&& UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)
-				&& !caze.checkIsUnreferredPortHealthCase()) {
-			menu.addView(CaseSampleView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, Captions.caseSamples), params);
-		}
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SAMPLES_LAB)
+					&& UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)
+					&& !caze.checkIsUnreferredPortHealthCase()) {
+				menu.addView(CaseSampleView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, Captions.caseSamples), params);
+			}
 
-		if (caze.getExternalData() != null && !caze.getExternalData().isEmpty()) {
-			menu.addView(CaseExternalDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EXTERNAL_DATA), params);
+			if (caze.getExternalData() != null && !caze.getExternalData().isEmpty()) {
+				menu.addView(CaseExternalDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EXTERNAL_DATA), params);
+			}
 		}
 
 		setMainHeaderComponent(ControllerProvider.getCaseController().getCaseViewTitleLayout(caze));

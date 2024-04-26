@@ -13823,4 +13823,10 @@ ALTER TABLE samples DROP COLUMN address;
 
 INSERT INTO schema_version (version_number, comment) VALUES (606, 'Removed food sample testing section for Food Borne illness in Sample');
 
+ALTER TABLE person DROP COLUMN maritalstatus;
+ALTER TABLE person ADD COLUMN marriagestatus VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (607, 'Removed maritalstatus and added marriagestatus to person for Food Borne illness in Sample');
+
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

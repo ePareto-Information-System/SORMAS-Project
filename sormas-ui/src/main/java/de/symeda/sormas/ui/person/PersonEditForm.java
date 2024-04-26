@@ -108,7 +108,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					fluidRowLocs(PersonDto.ATTENDED_BY_TRAINED_TBA, PersonDto.ATTENDED_BY_TRAINED_TBA_MIDWIFE_NAME)+
 					fluidRowLocs(PersonDto.ATTENDED_BY_DOCTOR_NURSE, PersonDto.CUT_CORD_WITH_STERILE_BLADE)+
 					fluidRowLocs(PersonDto.CORD_TREATED_WITH_ANYTHING, PersonDto.CORD_TREATED_WITH_ANYTHING_WHERE)+
-					fluidRowLocs(PersonDto.SEX, PersonDto.PRESENT_CONDITION, PersonDto.MARITAL_STATUS) +
+					fluidRowLocs(PersonDto.SEX, PersonDto.PRESENT_CONDITION, PersonDto.MARRIAGE_STATUS) +
 					fluidRow(
 							oneOfFourCol(PersonDto.DEATH_DATE),
 							oneOfFourCol(PersonDto.CAUSE_OF_DEATH),
@@ -288,7 +288,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		firstNameField = addField(PersonDto.FIRST_NAME, TextField.class);
 		lastNameField = addField(PersonDto.LAST_NAME, TextField.class);
 		otherNameField = addField(PersonDto.OTHER_NAME, TextField.class);
-		addField(PersonDto.MARITAL_STATUS, ComboBox.class);
 		ComboBox salutation = addField(PersonDto.SALUTATION, ComboBox.class);
 		ComboBox otherSalutation = addField(PersonDto.OTHER_SALUTATION, ComboBox.class);
 		FieldHelper.setVisibleWhen(getFieldGroup(), PersonDto.OTHER_SALUTATION, PersonDto.SALUTATION, Salutation.OTHER, true);
@@ -316,6 +315,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		addFields(PersonDto.MOTHERS_NAME, PersonDto.FATHERS_NAME);
 		addFields(PersonDto.NAMES_OF_GUARDIANS);
 		ComboBox presentCondition = addField(PersonDto.PRESENT_CONDITION, ComboBox.class);
+		ComboBox marriageStatus = addField(PersonDto.MARRIAGE_STATUS, ComboBox.class);
 		birthDateDay = addField(PersonDto.BIRTH_DATE_DD, ComboBox.class);
 		// @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
 		birthDateDay.setNullSelectionAllowed(true);

@@ -187,6 +187,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private Sex sex;
 
 	private PresentCondition presentCondition;
+	private MaritalStatus marriageStatus;
 	private Integer birthdateDD;
 	private Integer birthdateMM;
 	private Integer birthdateYYYY;
@@ -260,7 +261,6 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private TreatmentOfCord cordTreatedWithAnythingWhere;
 
 	private Cadre cadre;
-	private MaritalStatus maritalStatus;
 
 	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getFirstName() {
@@ -438,6 +438,13 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 
 	public void setPresentCondition(PresentCondition presentCondition) {
 		this.presentCondition = presentCondition;
+	}
+	public MaritalStatus getMarriageStatus() {
+		return marriageStatus;
+	}
+
+	public void setMarriageStatus(MaritalStatus marriageStatus) {
+		this.marriageStatus = marriageStatus;
 	}
 
 	@Temporal(TemporalType.DATE)
@@ -1013,13 +1020,6 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 		this.investigatorTel = investigatorTel;
 	}
 
-	public MaritalStatus getMaritalStatus() {
-		return maritalStatus;
-	}
-
-	public void setMaritalStatus(MaritalStatus maritalStatus) {
-		this.maritalStatus = maritalStatus;
-	}
 
 	private void setPersonContactInformation(String contactInfo, PersonContactDetailType personContactDetailType) {
 		final PersonContactDetail pcd =

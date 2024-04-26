@@ -106,7 +106,7 @@ public interface PersonSideComponentsElement {
 		EventParticipantListComponent eventParticipantListComponent = null;
 		Disease personDataView = FacadeProvider.getCaseFacade().getCaseDataByUuid(entityUuid).getDisease();
 
-		if (personDataView != null && !personDataView.name().equals(Disease.FOODBORNE_ILLNESS.toString().toUpperCase())) {
+		if (personDataView != null && !personDataView.name().equals("FOODBORNE_ILLNESS")) {
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
 					&& currentUser != null
 					&& currentUser.hasUserRight(UserRight.CASE_VIEW)) {

@@ -64,10 +64,10 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String FIRST_NAME = "firstName";
 	public static final String LAST_NAME = "lastName";
 	public static final String OTHER_NAME = "otherName";
-	public static final String MARITAL_STATUS = "maritalStatus";
 	public static final String SALUTATION = "salutation";
 	public static final String OTHER_SALUTATION = "otherSalutation";
 	public static final String PRESENT_CONDITION = "presentCondition";
+	public static final String MARRIAGE_STATUS = "marriageStatus";
 	public static final String HOME_ADDRESS_RECREATIONAL = "homeAddressRecreational";
 	public static final String CASE_ORIGIN = "caseOrigin";
 	public static final String BIRTH_DATE = "birthdate";
@@ -177,11 +177,6 @@ public class PersonDto extends PseudonymizableDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String otherName;
 
-	@Outbreaks
-	@PersonalData(mandatoryField = false)
-	@SensitiveData(mandatoryField = false)
-	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
-	private MaritalStatus maritalStatus;
 	@HideForCountriesExcept
 	@PersonalData
 	@SensitiveData
@@ -282,6 +277,7 @@ public class PersonDto extends PseudonymizableDto {
 
 	@Outbreaks
 	private PresentCondition presentCondition;
+	private MaritalStatus marriageStatus;
 
 	@Outbreaks
 	private CaseOrigin caseOrigin;
@@ -616,6 +612,14 @@ public class PersonDto extends PseudonymizableDto {
 
 	public void setPresentCondition(PresentCondition presentCondition) {
 		this.presentCondition = presentCondition;
+	}
+
+	public MaritalStatus getMarriageStatus() {
+		return marriageStatus;
+	}
+
+	public void setMarriageStatus(MaritalStatus marriageStatus) {
+		this.marriageStatus = marriageStatus;
 	}
 
 	public CaseOrigin getCaseOrigin() {return caseOrigin;}
@@ -1404,13 +1408,6 @@ public class PersonDto extends PseudonymizableDto {
 
 	public void setCordTreatedWithAnythingWhere(TreatmentOfCord cordTreatedWithAnythingWhere) {
 		this.cordTreatedWithAnythingWhere = cordTreatedWithAnythingWhere;
-	}
-	public MaritalStatus getMaritalStatus() {
-		return maritalStatus;
-	}
-
-	public void setMaritalStatus(MaritalStatus maritalStatus) {
-		this.maritalStatus = maritalStatus;
 	}
 
 }

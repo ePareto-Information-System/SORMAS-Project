@@ -275,6 +275,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setSex(source.getSex());
 
 		target.setPresentCondition(source.getPresentCondition());
+		target.setMarriageStatus(source.getMarriageStatus());
 		target.setBirthdateDD(source.getBirthdateDD());
 		target.setBirthdateMM(source.getBirthdateMM());
 		target.setBirthdateYYYY(source.getBirthdateYYYY());
@@ -1037,6 +1038,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setSex(source.getSex());
 
 		target.setPresentCondition(source.getPresentCondition());
+		target.setMarriageStatus(source.getMarriageStatus());
 		target.setBirthdateDD(source.getBirthdateDD());
 		target.setBirthdateMM(source.getBirthdateMM());
 		target.setBirthdateYYYY(source.getBirthdateYYYY());
@@ -1161,8 +1163,6 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setCordTreatedWithAnything(source.getCordTreatedWithAnything());
 		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
 		//target.setCadre(CadreFacadeEjb.toReferenceDto(source.getCadre()));
-
-		target.setMaritalStatus(source.getMaritalStatus());
 
 		return target;
 	}
@@ -1873,6 +1873,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setSex(source.getSex());
 
 		target.setPresentCondition(source.getPresentCondition());
+		target.setMarriageStatus(source.getMarriageStatus());
 		target.setBirthdateDD(source.getBirthdateDD());
 		target.setBirthdateMM(source.getBirthdateMM());
 		target.setBirthdateYYYY(source.getBirthdateYYYY());
@@ -1996,7 +1997,6 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setCordTreatedWithAnything(source.getCordTreatedWithAnything());
 		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
 
-		target.setMaritalStatus(source.getMaritalStatus());
 
 		return target;
 	}
