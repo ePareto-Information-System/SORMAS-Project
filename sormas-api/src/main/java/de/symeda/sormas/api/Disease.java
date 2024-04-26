@@ -218,4 +218,8 @@ public enum Disease
 			YELLOW_FEVER
 	);
 
+	public static List<Disease> hideFollowUp = Arrays.asList(
+			YELLOW_FEVER, AHF, CSM, AFP, NEW_INFLUENZA, CHOLERA, MEASLES, CORONAVIRUS, FOODBORNE_ILLNESS, GUINEA_WORM, MONKEYPOX, NEONATAL_TETANUS
+	);
+
 }

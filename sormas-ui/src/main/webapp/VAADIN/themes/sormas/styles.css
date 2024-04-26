@@ -15630,6 +15630,14 @@ div.v-layout.v-horizontal.v-widget {
 	opacity: 0.5;
 }
 
+.sormas .d-flex {
+	display: flex;
+}
+
+.sormas .flex-wrap {
+	flex-wrap: wrap;
+}
+
 .sormas .v-caption-v-captiontext-foodborne > .v-captiontext {
 	text-wrap: wrap;
 	position: absolute;
@@ -17603,6 +17611,63 @@ div.v-layout.v-horizontal.v-widget {
 	filled: #b0796b;
 }
 
+.sormas .disease-detail-card-display-top {
+	display: inline-grid;
+	overflow: hidden;
+}
+
+.sormas .disease-detail-card-display-down {
+	display: block;
+}
+
+.sormas .old-disease-detail-outbreak-display {
+	text-align: center;
+	font-size: smaller;
+	font-weight: 700;
+	width: 100px;
+	background: #DE5555;
+	-ms-transform: rotate(-135deg);
+	-o-transform: rotate(-135deg);
+	-webkit-transform: rotate(45deg);
+	color: white;
+	transform-origin: bottom;
+	float: right;
+	margin-right: -57px;
+	margin-top: -7px;
+}
+
+.sormas .map-border-layout .leaflet-container {
+	border: 2px solid #CDD8EC;
+}
+
+.sormas .container-death-cfr {
+	width: 100%;
+}
+
+.sormas .container-float-left {
+	float: left;
+	display: inline-flex;
+}
+
+.sormas .container-float-right {
+	float: right;
+}
+
+.sormas .disease-detail-outbreak-display {
+	text-align: center;
+	font-size: smaller;
+	font-weight: 700;
+	width: 100px;
+	background: #e33232;
+	-ms-transform: rotate(-135deg);
+	-o-transform: rotate(-135deg);
+	-webkit-transform: rotate(45deg);
+	color: white;
+	float: right;
+	margin-right: -57px;
+	margin-top: -7px;
+}
+
 .sormas .lab-message-details {
 	word-break: break-word;
 	user-select: text;
@@ -17846,9 +17911,282 @@ div.v-layout.v-horizontal.v-widget {
 	margin-top: -28px;
 }
 
+.sormas .background-sample-count-total {
+	background-color: #00b3b3;
+	fill: #00b3b3;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-total.background-darker {
+	background-color: #008B8B;
+	fill: #008B8B;
+}
+
+.sormas .background-sample-count-adequate {
+	background-color: #40bf79;
+	fill: #40bf79;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-adequate.background-darker {
+	background-color: #2d8655;
+	fill: #2d8655;
+}
+
+.sormas .background-sample-count-inadequate {
+	background-color: #EF5A6C;
+	fill: #EF5A6C;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-inadequate.background-darker {
+	background-color: #E04A5B;
+	fill: #E04A5B;
+}
+
+.sormas .background-sample-count-positive {
+	background-color: #EF5A6C;
+	fill: #EF5A6C;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-positive.background-darker {
+	background-color: #E04A5B;
+	fill: #E04A5B;
+}
+
+.sormas .background-sample-count-negative {
+	background-color: #40BF79;
+	fill: #40BF79;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-negative.background-darker {
+	background-color: #2D8655;
+	fill: #2D8655;
+}
+
+.sormas .background-sample-count-indeterminate {
+	background-color: #888888;
+	fill: #888888;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-indeterminate.background-darker {
+	background-color: #6D6D6D;
+	fill: #6D6D6D;
+}
+
+.sormas .background-sample-count-pending {
+	background-color: #FEBA01;
+	fill: #FEBA01;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-pending.background-darker {
+	background-color: #D69C0A;
+	fill: #D69C0A;
+}
+
+.sormas .background-sample-count-shipped {
+	background-color: #40BF79;
+	fill: #40BF79;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-shipped.background-darker {
+	background-color: #2D8655;
+	fill: #2D8655;
+}
+
+.sormas .background-sample-count-not-shipped {
+	background-color: #EF5A6C;
+	fill: #EF5A6C;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-not-shipped.background-darker {
+	background-color: #E04A5B;
+	fill: #E04A5B;
+}
+
+.sormas .background-sample-count-received {
+	background-color: #40BF79;
+	fill: #40BF79;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-received.background-darker {
+	background-color: #2D8655;
+	fill: #2D8655;
+}
+
+.sormas .background-sample-count-not-received {
+	background-color: #EF5A6C;
+	fill: #EF5A6C;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-not-received.background-darker {
+	background-color: #E04A5B;
+	fill: #E04A5B;
+}
+
+.sormas #sample-card-wrapper .v-layout.v-horizontal.v-widget {
+	display: flex !important;
+	flex-wrap: wrap !important;
+	white-space: normal !important;
+	width: 100%;
+}
+
 .sormas .view-header {
 	border-bottom: 2px solid #CDD8EC;
 	border-bottom-width: 3px;
+}
+
+.sormas .background-sample-count-total {
+	background-color: #00b3b3;
+	fill: #00b3b3;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-total.background-darker {
+	background-color: #008B8B;
+	fill: #008B8B;
+}
+
+.sormas .background-sample-count-adequate {
+	background-color: #40bf79;
+	fill: #40bf79;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-adequate.background-darker {
+	background-color: #2d8655;
+	fill: #2d8655;
+}
+
+.sormas .background-sample-count-inadequate {
+	background-color: #EF5A6C;
+	fill: #EF5A6C;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-inadequate.background-darker {
+	background-color: #E04A5B;
+	fill: #E04A5B;
+}
+
+.sormas .background-sample-count-positive {
+	background-color: #EF5A6C;
+	fill: #EF5A6C;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-positive.background-darker {
+	background-color: #E04A5B;
+	fill: #E04A5B;
+}
+
+.sormas .background-sample-count-negative {
+	background-color: #40BF79;
+	fill: #40BF79;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-negative.background-darker {
+	background-color: #2D8655;
+	fill: #2D8655;
+}
+
+.sormas .background-sample-count-indeterminate {
+	background-color: #888888;
+	fill: #888888;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-indeterminate.background-darker {
+	background-color: #6D6D6D;
+	fill: #6D6D6D;
+}
+
+.sormas .background-sample-count-pending {
+	background-color: #FEBA01;
+	fill: #FEBA01;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-pending.background-darker {
+	background-color: #D69C0A;
+	fill: #D69C0A;
+}
+
+.sormas .background-sample-count-shipped {
+	background-color: #40BF79;
+	fill: #40BF79;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-shipped.background-darker {
+	background-color: #2D8655;
+	fill: #2D8655;
+}
+
+.sormas .background-sample-count-not-shipped {
+	background-color: #EF5A6C;
+	fill: #EF5A6C;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-not-shipped.background-darker {
+	background-color: #E04A5B;
+	fill: #E04A5B;
+}
+
+.sormas .background-sample-count-received {
+	background-color: #40BF79;
+	fill: #40BF79;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-received.background-darker {
+	background-color: #2D8655;
+	fill: #2D8655;
+}
+
+.sormas .background-sample-count-not-received {
+	background-color: #EF5A6C;
+	fill: #EF5A6C;
+	margin-bottom: 20px;
+}
+
+.sormas .background-sample-count-not-received.background-darker {
+	background-color: #E04A5B;
+	fill: #E04A5B;
+}
+
+.sormas #sample-card-wrapper .v-layout.v-horizontal.v-widget {
+	display: flex !important;
+	flex-wrap: wrap !important;
+	white-space: normal !important;
+	width: 100%;
+}
+
+.sormas .height-auto {
+	height: auto !important;
+}
+
+.sormas .width-auto {
+	width: auto !important;
+}
+
+.sormas div.v-slot-stripes > div > * {
+	margin: 5px;
+	padding: 5px;
+}
+
+.sormas div.v-slot-stripes > div:nth-of-type(even) {
+	background: #EDF2FD;
 }
 
 .sormas .row div[location].hide-invisble:empty {

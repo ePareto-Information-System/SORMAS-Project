@@ -377,7 +377,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		this.person = person;
 		this.disease = disease;
 		this.symptoms = symptoms;
-		this.caseFollowUpEnabled = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_FOLLOWUP);
+		this.caseFollowUpEnabled = !Disease.hideFollowUp.contains(disease) && FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_FOLLOWUP);
 
 		addFields();
 		//addField(SMALLPOX_VACCINATION_SCAR_IMG);
