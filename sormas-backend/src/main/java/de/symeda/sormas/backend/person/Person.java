@@ -232,6 +232,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private String investigatorAddress;
 	private String investigatorTel;
 	private MaritalStatus maritalStatus;
+	private String telNumber;
 
 	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getFirstName() {
@@ -990,6 +991,14 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 
 	public void setMaritalStatus(MaritalStatus maritalStatus) {
 		this.maritalStatus = maritalStatus;
+	}
+
+	public String getTelNumber() {
+		return telNumber;
+	}
+
+	public void setTelNumber(String telNumber) {
+		this.telNumber = telNumber;
 	}
 
 	private void setPersonContactInformation(String contactInfo, PersonContactDetailType personContactDetailType) {

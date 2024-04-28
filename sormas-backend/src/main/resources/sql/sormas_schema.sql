@@ -13128,4 +13128,9 @@ ALTER TABLE samples DROP COLUMN address;
 
 INSERT INTO schema_version (version_number, comment) VALUES (578, 'Added food sample testing section for Food Borne illness in Sample');
 
+-- 2024-04-27 Added Tel Number for Food Borne illness at Person
+ALTER TABLE person ADD COLUMN telnumber VARCHAR(55);
+
+INSERT INTO schema_version (version_number, comment) VALUES (579, 'Added Tel Number for Food Borne illness at Person');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

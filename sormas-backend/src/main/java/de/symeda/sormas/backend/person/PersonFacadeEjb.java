@@ -1036,6 +1036,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setInvestigatorAddress(source.getInvestigatorAddress());
 		target.setInvestigatorTel(source.getInvestigatorTel());
 		target.setMaritalStatus(source.getMaritalStatus());
+		target.setTelNumber(source.getTelNumber());
 
 		return target;
 	}
@@ -1861,6 +1862,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setInvestigatorAddress(source.getInvestigatorAddress());
 		target.setInvestigatorTel(source.getInvestigatorTel());
 		target.setMaritalStatus(source.getMaritalStatus());
+		target.setTelNumber(source.getTelNumber());
 
 		return target;
 	}

@@ -593,6 +593,7 @@ public interface Strings {
 	String headingHospitalization = "headingHospitalization";
 	String headingSixtyDay = "headingSixtyDay";
 	String headingofficialUse = "headingofficialUse";
+	String headingProvide = "headingProvide";
 	String headingPersonCompleting = "headingPersonCompleting";
 	String headingFillThis = "headingFillThis";
 	String headingChildSeek = "headingChildSeek";

@@ -94,6 +94,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_FACILITY_TYPE, PersonDto.PLACE_OF_BIRTH_FACILITY, PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS) +
 					fluidRowLocs(PersonDto.GESTATION_AGE_AT_BIRTH, PersonDto.BIRTH_WEIGHT) +
 					fluidRowLocs(PersonDto.SEX, PersonDto.PRESENT_CONDITION, PersonDto.MARITAL_STATUS) +
+					fluidRowLocs(6, PersonDto.TEL_NUMBER) +
 					fluidRow(
 							oneOfFourCol(PersonDto.DEATH_DATE),
 							oneOfFourCol(PersonDto.CAUSE_OF_DEATH),
@@ -685,6 +686,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		if(disease == Disease.FOODBORNE_ILLNESS){
 			addressHeader.setVisible(false);
 			personContactDetailsField.setVisible(false);
+			addField(PersonDto.TEL_NUMBER, TextField.class);
 		}
 
 	}
