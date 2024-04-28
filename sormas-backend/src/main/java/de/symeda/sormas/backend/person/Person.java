@@ -261,7 +261,6 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private TreatmentOfCord cordTreatedWithAnythingWhere;
 
 	private Cadre cadre;
-	private MaritalStatus maritalStatus;
 	private String telNumber;
 
 	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)

@@ -470,7 +470,6 @@ public class PersonDto extends PseudonymizableDto {
 	private YesNoUnknown cutCordWithSterileBlade;
 	private YesNoUnknown cordTreatedWithAnything;
 	private TreatmentOfCord cordTreatedWithAnythingWhere;
-	private MaritalStatus maritalStatus;
 	private String telNumber;
 
 
