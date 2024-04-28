@@ -109,6 +109,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					fluidRowLocs(PersonDto.ATTENDED_BY_DOCTOR_NURSE, PersonDto.CUT_CORD_WITH_STERILE_BLADE)+
 					fluidRowLocs(PersonDto.CORD_TREATED_WITH_ANYTHING, PersonDto.CORD_TREATED_WITH_ANYTHING_WHERE)+
 					fluidRowLocs(PersonDto.SEX, PersonDto.PRESENT_CONDITION, PersonDto.MARRIAGE_STATUS) +
+					fluidRowLocs(6, PersonDto.TEL_NUMBER) +
 					fluidRow(
 							oneOfFourCol(PersonDto.DEATH_DATE),
 							oneOfFourCol(PersonDto.CAUSE_OF_DEATH),
@@ -737,6 +738,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		if(disease == Disease.FOODBORNE_ILLNESS){
 			addressHeader.setVisible(false);
 			personContactDetailsField.setVisible(false);
+			addField(PersonDto.TEL_NUMBER, TextField.class);
 		}
 
 	}

@@ -27,10 +27,13 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.*;
+
+import java.util.Arrays;
 
 import static de.symeda.sormas.ui.utils.CssStyles.H2;
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
@@ -43,6 +46,7 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
     private static final String SIXTYDAY_HEADING_LOC = "hospitalizationHeadingLoc";
     private static final String OFFICIAL_HEADING_LOC = "officialHeadingLoc";
     private static final String PERSON_COMPLETING_HEADING_LOC = "personCompletingHeadingLoc";
+    private static final String PROVIDE_HEADING_LOC = "provideHeadingLoc";
 
     private static final String HTML_LAYOUT =
             loc(SIXTYDAY_HEADING_LOC) +
@@ -66,6 +70,7 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
                     fluidRowLocs(SixtyDayDto.SIGNATURE, SixtyDayDto.DATE_SUBMISSION_FORMS)+
 
                     //FBI
+                    loc(PROVIDE_HEADING_LOC)+
                     fluidRowLocs(SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.SPECIFY_FOODS_SOURCES, SixtyDayDto.LAB_TEST_CONDUCTED) +
                     fluidRowLocs(SixtyDayDto.PRODUCT_NAME, SixtyDayDto.BATCH_NUMBER) +
                     fluidRowLocs(SixtyDayDto.DATE_OF_MANUFACTURE, SixtyDayDto.EXPIRATION_DATE) +
@@ -107,14 +112,6 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
         sixtyDayHeadingLabel.addStyleName(H3);
         getContent().addComponent(sixtyDayHeadingLabel, SIXTYDAY_HEADING_LOC);
 
-        Label officialHeadingLabel = new Label(I18nProperties.getString(Strings.headingofficialUse));
-        sixtyDayHeadingLabel.addStyleName(H2);
-        getContent().addComponent(officialHeadingLabel, OFFICIAL_HEADING_LOC);
-
-        Label personHeadingLabel = new Label(I18nProperties.getString(Strings.headingPersonCompleting));
-        sixtyDayHeadingLabel.addStyleName(H2);
-        getContent().addComponent(personHeadingLabel, PERSON_COMPLETING_HEADING_LOC);
-
         TextField personExamineCase = addField(SixtyDayDto.PERSON_EXAMINE_CASE, TextField.class);
         DateField admissionDateField = addField(SixtyDayDto.DATE_OF_FOLLOWUP, DateField.class);
         DateField dateOfBirthField = addField(SixtyDayDto.DATE_BIRTH, DateField.class);
@@ -143,9 +140,9 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
         TextField signatureField = addField(SixtyDayDto.SIGNATURE, TextField.class);
         DateField dateSubmissionFormsField = addField(SixtyDayDto.DATE_SUBMISSION_FORMS, DateField.class);
 
-        addField(SixtyDayDto.FOOD_AVAILABLE_TESTING, NullableOptionGroup.class);
+        NullableOptionGroup foodAvailable = addField(SixtyDayDto.FOOD_AVAILABLE_TESTING, NullableOptionGroup.class);
         addField(SixtyDayDto.LAB_TEST_CONDUCTED, NullableOptionGroup.class);
-        addField(SixtyDayDto.SPECIFY_FOODS_SOURCES, TextField.class);
+        TextField foodSources =  addField(SixtyDayDto.SPECIFY_FOODS_SOURCES, TextField.class);
         addField(SixtyDayDto.PRODUCT_NAME, TextField.class);
         addField(SixtyDayDto.BATCH_NUMBER, TextField.class);
         addField(SixtyDayDto.DATE_OF_MANUFACTURE, DateField.class);
@@ -190,11 +187,25 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
                     SixtyDayDto.SIGNATURE, SixtyDayDto.DATE_SUBMISSION_FORMS);
             sixtyDayHeadingLabel.setVisible(false);
 
+            createLabel(I18nProperties.getString(Strings.headingProvide), H3, PROVIDE_HEADING_LOC);
+            createLabel(I18nProperties.getString(Strings.headingofficialUse), H3, OFFICIAL_HEADING_LOC);
+            createLabel(I18nProperties.getString(Strings.headingPersonCompleting), H3, PERSON_COMPLETING_HEADING_LOC);
+
             setVisible(true,
                     SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED, SixtyDayDto.SPECIFY_FOODS_SOURCES, SixtyDayDto.PRODUCT_NAME, SixtyDayDto.BATCH_NUMBER, SixtyDayDto.DATE_OF_MANUFACTURE, SixtyDayDto.EXPIRATION_DATE, SixtyDayDto.PACKAGE_SIZE, SixtyDayDto.PACKAGING_TYPE, SixtyDayDto.PACKAGING_TYPE_OTHER, SixtyDayDto.PLACE_OF_PURCHASE, SixtyDayDto.NAME_OF_MANUFACTURER,
                     SixtyDayDto.ADDRESS, SixtyDayDto.FOOD_TEL, SixtyDayDto.INVESTIGATION_NOTES, SixtyDayDto.SUSPECTED_DIAGNOSIS, SixtyDayDto.CONFIRMED_DIAGNOSIS, SixtyDayDto.INVESTIGATED_BY,
                     SixtyDayDto.INVESTIGATOR_SIGNATURE, SixtyDayDto.INVESTIGATOR_DATE, SixtyDayDto.SURNAME, SixtyDayDto.FIRSTNAME, SixtyDayDto.MIDDLENAME, SixtyDayDto.TEL_NO, SixtyDayDto.DATE_OF_COMPLETION_OF_FORM, SixtyDayDto.NAME_OF_HEALTH_FACILITY);
         }
+
+        FieldHelper.setVisibleWhen(foodAvailable, Arrays.asList(foodSources), Arrays.asList(YesNo.YES), true);
+    }
+
+    private Label createLabel(String text, String h4, String location) {
+        final Label label = new Label(text);
+        label.setId(text);
+        label.addStyleName(h4);
+        getContent().addComponent(label, location);
+        return label;
     }
 
 

@@ -311,8 +311,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		addField(EpiDataDto.SPECIFY_LOCATION, TextField.class);
 		addField(EpiDataDto.DATE_OF_DEPARTURE2, DateField.class);
 		addField(EpiDataDto.DATE_OF_ARRIVAL2, DateField.class);
-		addField(EpiDataDto.CONTACT_ILL_PERSON, TextField.class);
-		addField(EpiDataDto.CONTACT_DATE, DateField.class);
+		NullableOptionGroup illPerson = addField(EpiDataDto.CONTACT_ILL_PERSON, NullableOptionGroup.class);
+		DateField contactDate = addField(EpiDataDto.CONTACT_DATE, DateField.class);
 		addField(EpiDataDto.SPECIFY_ILLNESS, TextField.class);
 
 		addField(EpiDataDto.SUSPECTED_FOOD, TextField.class);
@@ -512,6 +512,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					EpiDataDto.LUNCH_L3, EpiDataDto.TOTAL_NO_PERSONS_L3, EpiDataDto.FOOD_CONSUMED_L3, EpiDataDto.SOURCE_OF_FOOD_L3, EpiDataDto.CONSUMED_AT_PLACE_L3,
 					EpiDataDto.SUPPER_S3, EpiDataDto.TOTAL_NO_PERSONS_S3, EpiDataDto.FOOD_CONSUMED_S3, EpiDataDto.SOURCE_OF_FOOD_S3, EpiDataDto.CONSUMED_AT_PLACE_S3
 			);
+
+			FieldHelper.setVisibleWhen(illPerson, Arrays.asList(contactDate), Arrays.asList(YesNo.YES), true);
 		}
 
 	}

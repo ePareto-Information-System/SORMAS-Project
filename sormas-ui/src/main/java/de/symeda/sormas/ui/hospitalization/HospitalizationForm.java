@@ -277,8 +277,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		tickSymptomField.setMultiSelect(true);
 		addField(HospitalizationDto.OTHER_SYMPTOM_SELECTED, TextField.class);
 		addField(HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, DateTimeField.class);
-		addField(HospitalizationDto.SYMPTOMS_ONGOING, NullableOptionGroup.class);
-		addField(HospitalizationDto.DURATION_HOURS, ComboBox.class);
+		NullableOptionGroup ongoing = addField(HospitalizationDto.SYMPTOMS_ONGOING, NullableOptionGroup.class);
+		ComboBox durationHours = addField(HospitalizationDto.DURATION_HOURS, ComboBox.class);
 
 		tickSymptomField.addItems(
 				Arrays.stream(SymptomsList.values())
@@ -530,6 +530,9 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 			setVisible(true, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.NAME_OF_FACILITY, HospitalizationDto.LOCATION_ADDRESS, HospitalizationDto.DATE_OF_VISIT_HOSPITAL,
 					 HospitalizationDto.PHYSICIAN_NUMBER, HospitalizationDto.LAB_TEST_CONDUCTED, HospitalizationDto.TYPE_OF_SAMPLE, HospitalizationDto.AGENT_IDENTIFIED, HospitalizationDto.OTHER_SYMPTOM_SELECTED, HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING, HospitalizationDto.DURATION_HOURS);
+
+			FieldHelper.setVisibleWhen(ongoing, Arrays.asList(durationHours), Arrays.asList(YesNo.NO), true);
+			FieldHelper.setVisibleWhen(soughtMedicalAttentionField, Arrays.asList(nameOfFacilityField), Arrays.asList(YesNo.YES), true);
 
 		}
 	}

@@ -2069,6 +2069,7 @@ public interface Captions {
 	String Person_investigatorAddress = "Person.investigatorAddress";
 	String Person_investigatorTel = "Person.investigatorTel";
 	String Person_marriageStatus = "Person.marriageStatus";
+	String Person_telNumber = "Person.telNumber";
 	String Person_uuid = "Person.uuid";
 	String personAgeAndBirthdate = "personAgeAndBirthdate";
 	String PersonContactDetail = "PersonContactDetail";
