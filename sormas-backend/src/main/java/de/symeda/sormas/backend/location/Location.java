@@ -113,6 +113,8 @@ public class Location extends AbstractDomainObject {
 	private String contactPersonEmail;
 
 	private Person person;
+	private String village;
+	private String zone;
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getDetails() {
@@ -356,8 +358,8 @@ public class Location extends AbstractDomainObject {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinTable(name = PERSON_LOCATIONS_TABLE_NAME,
-		joinColumns = @JoinColumn(name = "location_id"),
-		inverseJoinColumns = @JoinColumn(name = "person_id"))
+			joinColumns = @JoinColumn(name = "location_id"),
+			inverseJoinColumns = @JoinColumn(name = "person_id"))
 	public Person getPerson() {
 		return person;
 	}
@@ -368,5 +370,21 @@ public class Location extends AbstractDomainObject {
 
 	public String buildGpsCoordinatesCaption() {
 		return LocationHelper.buildGpsCoordinatesCaption(latitude, longitude, latLonAccuracy);
+	}
+
+	public String getVillage() {
+		return village;
+	}
+
+	public void setVillage(String village) {
+		this.village = village;
+	}
+
+	public String getZone() {
+		return zone;
+	}
+
+	public void setZone(String zone) {
+		this.zone = zone;
 	}
 }

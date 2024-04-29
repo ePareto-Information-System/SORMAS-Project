@@ -12990,5 +12990,8 @@ ALTER TABLE riskfactor ADD COLUMN drugsSensitiveToVibrioStrain VARCHAR(255);
 ALTER TABLE riskfactor ADD COLUMN drugsResistantToVibrioStrain VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (566, 'Added columns to epiData, riskfactor to implement patientVisitedHealthCareFacility #26');
 
+ALTER TABLE location ADD COLUMN village varchar(255);
+ALTER TABLE location ADD COLUMN zone varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (567, 'Added village, zone to location');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

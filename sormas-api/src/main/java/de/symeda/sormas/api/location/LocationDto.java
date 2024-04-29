@@ -53,9 +53,9 @@ import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.Longitude
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.PostalCodePseudonymizer;
 
 @DependingOnFeatureType(featureType = {
-	FeatureType.CASE_SURVEILANCE,
-	FeatureType.CONTACT_TRACING,
-	FeatureType.EVENT_SURVEILLANCE })
+		FeatureType.CASE_SURVEILANCE,
+		FeatureType.CONTACT_TRACING,
+		FeatureType.EVENT_SURVEILLANCE })
 public class LocationDto extends PseudonymizableDto {
 
 	private static final long serialVersionUID = -1399197327930368752L;
@@ -89,6 +89,8 @@ public class LocationDto extends PseudonymizableDto {
 	public static final String CONTACT_PERSON_LAST_NAME = "contactPersonLastName";
 	public static final String CONTACT_PERSON_PHONE = "contactPersonPhone";
 	public static final String CONTACT_PERSON_EMAIL = "contactPersonEmail";
+	public static final String VILLAGE = "village";
+	public static final String ZONE = "zone";
 
 	private ContinentReferenceDto continent;
 	private SubcontinentReferenceDto subcontinent;
@@ -103,8 +105,8 @@ public class LocationDto extends PseudonymizableDto {
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_FRANCE })
+			CountryHelper.COUNTRY_CODE_GERMANY,
+			CountryHelper.COUNTRY_CODE_FRANCE })
 	private String details;
 	@PersonalData
 	@SensitiveData
@@ -179,6 +181,15 @@ public class LocationDto extends PseudonymizableDto {
 	@PersonalData
 	@SensitiveData
 	private String contactPersonEmail;
+
+	@PersonalData
+	@SensitiveData
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
+	private String village;
+	@PersonalData
+	@SensitiveData
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
+	private String zone;
 
 	public String getDetails() {
 		return details;
@@ -400,16 +411,32 @@ public class LocationDto extends PseudonymizableDto {
 		this.contactPersonEmail = contactPersonEmail;
 	}
 
+	public String getVillage() {
+		return village;
+	}
+
+	public void setVillage(String village) {
+		this.village = village;
+	}
+
+	public String getZone() {
+		return zone;
+	}
+
+	public void setZone(String zone) {
+		this.zone = zone;
+	}
+
 	@Override
 	public String buildCaption() {
 		return LocationReferenceDto.buildCaption(
-			region != null ? region.getCaption() : null,
-			district != null ? district.getCaption() : null,
-			community != null ? community.getCaption() : null,
-			city,
-			street,
-			houseNumber,
-			additionalInformation);
+				region != null ? region.getCaption() : null,
+				district != null ? district.getCaption() : null,
+				community != null ? community.getCaption() : null,
+				city,
+				street,
+				houseNumber,
+				additionalInformation);
 	}
 
 	@JsonIgnore
@@ -420,14 +447,14 @@ public class LocationDto extends PseudonymizableDto {
 	public LocationReferenceDto toReference() {
 
 		return new LocationReferenceDto(
-			getUuid(),
-			region != null ? region.getCaption() : null,
-			district != null ? district.getCaption() : null,
-			community != null ? community.getCaption() : null,
-			city,
-			street,
-			houseNumber,
-			additionalInformation);
+				getUuid(),
+				region != null ? region.getCaption() : null,
+				district != null ? district.getCaption() : null,
+				community != null ? community.getCaption() : null,
+				city,
+				street,
+				houseNumber,
+				additionalInformation);
 	}
 
 	public static LocationDto build() {
