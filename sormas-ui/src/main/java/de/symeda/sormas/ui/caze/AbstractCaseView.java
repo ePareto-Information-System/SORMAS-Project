@@ -159,11 +159,13 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 			|| !caze.getDisease().usesSimpleViewForOutbreaks()
 			|| viewConfiguration.getViewMode() != ViewMode.SIMPLE;
 		if (showExtraMenuEntries) {
-			if(caze.getDisease() != Disease.FOODBORNE_ILLNESS){
-				menu.addView(CasePersonView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.PERSON), params);
-			}
-			else{
-				menu.addView(CasePersonView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.PATIENT_CLIENT), params);
+			Disease disease = caze.getDisease();
+			if (disease != Disease.MONKEYPOX) {
+				if (disease != Disease.FOODBORNE_ILLNESS) {
+					menu.addView(CasePersonView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.PERSON), params);
+				} else {
+					menu.addView(CasePersonView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.PATIENT_CLIENT), params);
+				}
 			}
 			if (caze.getDisease() == Disease.CONGENITAL_RUBELLA) {
 				menu.addView(
