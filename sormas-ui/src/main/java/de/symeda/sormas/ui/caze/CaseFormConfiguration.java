@@ -13,8 +13,8 @@ public class CaseFormConfiguration {
 
     static {
         // Associate diseases with fields
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.CLASSIFICATION_DATE, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS)));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.CLASSIFICATION_USER, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.CLASSIFICATION_DATE, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.CLASSIFICATION_USER, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.CLINICAL_CONFIRMATION, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.EPIDEMIOLOGICAL_CONFIRMATION, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.NOT_A_CASE_REASON_NEGATIVE_TEST, new HashSet<>(Arrays.asList()));
@@ -34,7 +34,7 @@ public class CaseFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(EXTERNAL_TOKEN_WARNING_LOC, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.CASE_ID_ISM, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.INTERNAL_TOKEN, new HashSet<>(Arrays.asList(Disease.MEASLES)));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DISEASE, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DISEASE, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DISEASE_DETAILS, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.PLAGUE_TYPE, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DENGUE_FEVER_TYPE, new HashSet<>(Arrays.asList()));
@@ -45,27 +45,27 @@ public class CaseFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(REINFECTION_INFO_LOC, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REINFECTION_STATUS, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.PREVIOUS_INFECTION_DATE, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.OUTCOME, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.OUTCOME, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.OUTCOME_DATE, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.SEQUELAE, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.SEQUELAE_DETAILS, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.CASE_IDENTIFICATION_SOURCE, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.SCREENING_TYPE, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.CASE_ORIGIN, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.CASE_ORIGIN, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(RESPONSIBLE_JURISDICTION_HEADING_LOC, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.RESPONSIBLE_REGION, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.RESPONSIBLE_DISTRICT, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.RESPONSIBLE_COMMUNITY, new HashSet<>(Arrays.asList()));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.RESPONSIBLE_REGION, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.RESPONSIBLE_DISTRICT, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.RESPONSIBLE_COMMUNITY, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DONT_SHARE_WITH_REPORTING_TOOL, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(DIFFERENT_PLACE_OF_STAY_JURISDICTION, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS)));
+        DISABLED_FIELDS_BY_DISEASE.put(DIFFERENT_PLACE_OF_STAY_JURISDICTION, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
 
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.HOME_ADDRESS_RECREATIONAL, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(PLACE_OF_STAY_HEADING_LOC, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(FACILITY_OR_HOME_LOC, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REGION, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DISTRICT, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.COMMUNITY, new HashSet<>(Arrays.asList()));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REGION, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DISTRICT, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.COMMUNITY, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(TYPE_GROUP_LOC, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.FACILITY_TYPE, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.HEALTH_FACILITY, new HashSet<>(Arrays.asList()));
@@ -108,17 +108,16 @@ public class CaseFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORT_LAT_LON_ACCURACY, new HashSet<>(Arrays.asList(Disease.CSM)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.HEALTH_CONDITIONS, new HashSet<>(Arrays.asList(Disease.MEASLES)));
 
-        DISABLED_FIELDS_BY_DISEASE.put(MEDICAL_INFORMATION_LOC, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.BLOOD_ORGAN_OR_TISSUE_DONATED, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.PREGNANT, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.CSM, Disease.MEASLES)));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.POSTPARTUM, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.CSM, Disease.MEASLES)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.PREGNANT, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.CSM, Disease.MEASLES, Disease.MONKEYPOX)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.POSTPARTUM, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.CSM, Disease.MEASLES, Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.TRIMESTER, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.VACCINATION_STATUS, new HashSet<>(Arrays.asList(Disease.AHF, Disease.DENGUE)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.VACCINATION_TYPE, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.VACCINE_TYPE, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.NUMBER_OF_DOSES, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.DENGUE, Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI, Disease.MEASLES, Disease.FOODBORNE_ILLNESS)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.NUMBER_OF_DOSES, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.DENGUE, Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI, Disease.MEASLES, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.VACCINATION_DATE, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI, Disease.FOODBORNE_ILLNESS)));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED, new HashSet<>(Arrays.asList()));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.SMALLPOX_VACCINATION_SCAR, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.SMALLPOX_LAST_VACCINATION_DATE, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.CLINICIAN_NAME, new HashSet<>(Arrays.asList()));
@@ -135,11 +134,11 @@ public class CaseFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.OVERWRITE_FOLLOW_UP_UNTIL, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.FOLLOW_UP_COMMENT, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.SURVEILLANCE_OFFICER, new HashSet<>(Arrays.asList(Disease.MEASLES)));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_NAME, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER,Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI,Disease.AHF, Disease.DENGUE, Disease.FOODBORNE_ILLNESS)));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_TITLE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI,Disease.AHF, Disease.DENGUE, Disease.FOODBORNE_ILLNESS)));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.FUNCTION_OF_REPORTING_OFFICER, new HashSet<>(Arrays.asList(Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI,Disease.AHF, Disease.DENGUE, Disease.FOODBORNE_ILLNESS)));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.NEW_INFLUENZA,Disease.SARI, Disease.AHF, Disease.DENGUE, Disease.FOODBORNE_ILLNESS)));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_EMAIL, new HashSet<>(Arrays.asList(Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI,Disease.AHF, Disease.DENGUE, Disease.FOODBORNE_ILLNESS)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_NAME, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER,Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI,Disease.AHF, Disease.DENGUE, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_TITLE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI,Disease.AHF, Disease.DENGUE, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.FUNCTION_OF_REPORTING_OFFICER, new HashSet<>(Arrays.asList(Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI,Disease.AHF, Disease.DENGUE, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.NEW_INFLUENZA,Disease.SARI, Disease.AHF, Disease.DENGUE, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_EMAIL, new HashSet<>(Arrays.asList(Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI,Disease.AHF, Disease.DENGUE, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(PAPER_FORM_DATES_LOC, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DISTRICT_LEVEL_DATE, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REGION_LEVEL_DATE, new HashSet<>(Arrays.asList()));
@@ -149,7 +148,7 @@ public class CaseFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DELETION_REASON, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.OTHER_DELETION_REASON, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.VACCINATION_ROUTINE_DATE, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AFP, Disease.AHF, Disease.NEW_INFLUENZA, Disease.CSM)));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.LAST_VACCINATION_DATE, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AFP, Disease.AHF, Disease.DENGUE, Disease.NEW_INFLUENZA, Disease.SARI, Disease.CSM, Disease.CORONAVIRUS, Disease.AFP, Disease.FOODBORNE_ILLNESS)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.LAST_VACCINATION_DATE, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AFP, Disease.AHF, Disease.DENGUE, Disease.NEW_INFLUENZA, Disease.SARI, Disease.CSM, Disease.CORONAVIRUS, Disease.AFP, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
 
     }
 
