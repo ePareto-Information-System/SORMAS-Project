@@ -1325,6 +1325,19 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					break;
 				}
 			}
+
+			// Automatic case classification rules button - invisible for other diseases
+			DiseaseClassificationCriteriaDto diseaseClassificationCriteria = FacadeProvider.getCaseClassificationFacade().getByDisease(disease);
+			if (diseaseClassificationExists()) {
+				Button classificationRulesButton = ButtonHelper.createIconButton(
+						Captions.info,
+						VaadinIcons.INFO_CIRCLE,
+						e -> ControllerProvider.getCaseController().openClassificationRulesPopup(diseaseClassificationCriteria),
+						ValoTheme.BUTTON_PRIMARY,
+						FORCE_CAPTION);
+
+				getContent().addComponent(classificationRulesButton, CLASSIFICATION_RULES_LOC);
+			}
 		}
 
 		if (!shouldHidePaperFormDates()) {
@@ -1334,18 +1347,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		}
 
-		// Automatic case classification rules button - invisible for other diseases
-		DiseaseClassificationCriteriaDto diseaseClassificationCriteria = FacadeProvider.getCaseClassificationFacade().getByDisease(disease);
-		if (diseaseClassificationExists()) {
-			Button classificationRulesButton = ButtonHelper.createIconButton(
-					Captions.info,
-					VaadinIcons.INFO_CIRCLE,
-					e -> ControllerProvider.getCaseController().openClassificationRulesPopup(diseaseClassificationCriteria),
-					ValoTheme.BUTTON_PRIMARY,
-					FORCE_CAPTION);
-
-			getContent().addComponent(classificationRulesButton, CLASSIFICATION_RULES_LOC);
-		}
 
 		addField(CaseDataDto.DELETION_REASON);
 		addField(CaseDataDto.OTHER_DELETION_REASON, TextArea.class).setRows(3);
