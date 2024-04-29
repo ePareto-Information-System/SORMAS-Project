@@ -514,19 +514,22 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			ComboBox caseReferenceDefinition = addField(CaseDataDto.CASE_REFERENCE_DEFINITION, ComboBox.class);
 			caseReferenceDefinition.setReadOnly(true);
 
-			if (diseaseClassificationExists()) {
-				Button caseClassificationCalculationButton = ButtonHelper.createButton(Captions.caseClassificationCalculationButton, e -> {
-					CaseClassification classification = FacadeProvider.getCaseClassificationFacade().getClassification(getValue());
-					((Field<CaseClassification>) getField(CaseDataDto.CASE_CLASSIFICATION)).setValue(classification);
-				}, ValoTheme.BUTTON_PRIMARY, FORCE_CAPTION);
+			if(disease != Disease.MONKEYPOX){
+				if (diseaseClassificationExists()) {
+					Button caseClassificationCalculationButton = ButtonHelper.createButton(Captions.caseClassificationCalculationButton, e -> {
+						CaseClassification classification = FacadeProvider.getCaseClassificationFacade().getClassification(getValue());
+						((Field<CaseClassification>) getField(CaseDataDto.CASE_CLASSIFICATION)).setValue(classification);
+					}, ValoTheme.BUTTON_PRIMARY, FORCE_CAPTION);
 
-				getContent().addComponent(caseClassificationCalculationButton, CASE_CLASSIFICATION_CALCULATE_BTN_LOC);
+					getContent().addComponent(caseClassificationCalculationButton, CASE_CLASSIFICATION_CALCULATE_BTN_LOC);
 
-				if (!UserProvider.getCurrent().hasUserRight(UserRight.CASE_CLASSIFY)) {
-					caseClassificationCalculationButton.setEnabled(false);
+					if (!UserProvider.getCurrent().hasUserRight(UserRight.CASE_CLASSIFY)) {
+						caseClassificationCalculationButton.setEnabled(false);
+					}
+
 				}
-
 			}
+
 
 			//if(cbCaseClassification.getCaption())
 			addField(CaseDataDto.NOT_A_CASE_REASON_NEGATIVE_TEST, CheckBox.class);
@@ -1283,7 +1286,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		}*/
 
 		// Other initializations
-		if (disease == Disease.MONKEYPOX) {
+		//Not Required in Gh-dsd requirements
+		/*if (disease == Disease.MONKEYPOX) {
 			Image smallpoxVaccinationScarImg = new Image(null, new ThemeResource("img/smallpox-vaccination-scar.jpg"));
 			style(smallpoxVaccinationScarImg, VSPACE_3);
 			getContent().addComponent(smallpoxVaccinationScarImg, SMALLPOX_VACCINATION_SCAR_IMG);
@@ -1301,23 +1305,23 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				getContent().getComponent(CaseDataDto.SMALLPOX_VACCINATION_SCAR)
 						.setVisible(FieldHelper.getNullableSourceFieldValue((Field) e.getProperty()) == YesNoUnknown.YES);
 			});
-		}
+		}*/
+		if(disease != Disease.MONKEYPOX){
+			List<String> medicalInformationFields =
+					Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.VACCINATION_STATUS, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
 
-		List<String> medicalInformationFields =
-				Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.VACCINATION_STATUS, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
+			HealthConditionsForm healthConditionsField = addField(CaseDataDto.HEALTH_CONDITIONS, HealthConditionsForm.class);
+			healthConditionsField.setVisible(false);
 
-		HealthConditionsForm healthConditionsField = addField(CaseDataDto.HEALTH_CONDITIONS, HealthConditionsForm.class);
-		healthConditionsField.setVisible(false);
-
-		for (String medicalInformationField : medicalInformationFields) {
-			if (getFieldGroup().getField(medicalInformationField).isVisible()) {
-				Label medicalInformationCaptionLabel = new Label(I18nProperties.getString(Strings.headingMedicalInformation));
-				medicalInformationCaptionLabel.addStyleName(H3);
-				getContent().addComponent(medicalInformationCaptionLabel, MEDICAL_INFORMATION_LOC);
-				break;
+			for (String medicalInformationField : medicalInformationFields) {
+				if (getFieldGroup().getField(medicalInformationField).isVisible()) {
+					Label medicalInformationCaptionLabel = new Label(I18nProperties.getString(Strings.headingMedicalInformation));
+					medicalInformationCaptionLabel.addStyleName(H3);
+					getContent().addComponent(medicalInformationCaptionLabel, MEDICAL_INFORMATION_LOC);
+					break;
+				}
 			}
 		}
-
 
 		if (!shouldHidePaperFormDates()) {
 			Label paperFormDatesLabel = new Label(I18nProperties.getString(Strings.headingPaperFormDates));
@@ -1520,6 +1524,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					caseOutcome.setRequired(false);
 			}
 			if(disease ==Disease.FOODBORNE_ILLNESS){
+				placeOfStayHeadingLabel.setVisible(false);
+			}
+			if(disease ==Disease.MONKEYPOX){
 				placeOfStayHeadingLabel.setVisible(false);
 			}
 		});
