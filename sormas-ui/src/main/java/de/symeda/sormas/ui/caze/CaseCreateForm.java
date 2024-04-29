@@ -122,9 +122,8 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 					locs(CaseDataDto.DISEASE_DETAILS, CaseDataDto.PLAGUE_TYPE, CaseDataDto.DENGUE_FEVER_TYPE,
 							CaseDataDto.RABIES_TYPE)))
 			+ fluidRowLocs(CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION) +
-			fluidRowLocs(4, CaseDataDto.CASE_ORIGIN)
-			// private static final String HTML_LAYOUT = fluidRowLocs(CaseDataDto.CASE_ORIGIN, "")
-			+ fluidRowLocs(CaseDataDto.REPORT_DATE, CaseDataDto.EPID_NUMBER, CaseDataDto.INVESTIGATED_DATE)
+			fluidRowLocs(CaseDataDto.CASE_ORIGIN, CaseDataDto.EPID_NUMBER)
+			+ fluidRowLocs(CaseDataDto.REPORT_DATE, CaseDataDto.INVESTIGATED_DATE)
 			+ fluidRowLocs(6,CaseDataDto.EXTERNAL_ID)
 			+ fluidRowLocs(CaseDataDto.DISEASE_VARIANT, CaseDataDto.DISEASE_VARIANT_DETAILS)
 			+ fluidRowLocs(RESPONSIBLE_JURISDICTION_HEADING_LOC)
@@ -139,6 +138,10 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			+ fluidRowLocs(CaseDataDto.FACILITY_TYPE, CaseDataDto.HEALTH_FACILITY)
 			+ fluidRowLocs(6, CaseDataDto.HEALTH_FACILITY_DETAILS)
 			+ fluidRowLocs(6, CaseDataDto.HOME_ADDRESS_RECREATIONAL)
+			+ fluidRowLocs(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY)
+			+ fluidRowLocs(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT)
+			+ fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY)
+			+ fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE)
 			+ fluidRowLocs(6,CaseDataDto.AFP_FACILITY_OPTIONS)
 			+ fluidRowLocs(DIFFERENT_POINT_OF_ENTRY_JURISDICTION)
 			+ fluidRowLocs(POINT_OF_ENTRY_REGION, POINT_OF_ENTRY_DISTRICT)
@@ -572,6 +575,17 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			}
 			else{
 				personCreateForm.showPresentCondition();
+			}
+
+			if (diseaseField.getValue() != null && diseaseField.getValue() == Disease.MONKEYPOX) {
+				personCreateForm.hideFields();
+				reportDate.setVisible(false);
+				reportDate.setRequired(false);
+
+				addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
+				addFields(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT);
+				addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
+				addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
 			}
 
 		});

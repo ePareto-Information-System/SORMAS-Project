@@ -473,6 +473,13 @@ public interface Captions {
 	String CaseData_notifiedBy = "CaseData.notifiedBy";
 	String CaseData_dateOfNotification = "CaseData.dateOfNotification";
 	String CaseData_dateOfInvestigation = "CaseData.dateOfInvestigation";
+	String CaseData_addressMpox = "CaseData.addressMpox";
+	String CaseData_village = "CaseData.village";
+	String CaseData_city = "CaseData.city";
+	String CaseData_nationality = "CaseData.nationality";
+	String CaseData_ethnicity = "CaseData.ethnicity";
+	String CaseData_occupation = "CaseData.occupation";
+	String CaseData_districtOfResidence = "CaseData.districtOfResidence";
 	String CaseData_wasInQuarantineBeforeIsolation = "CaseData.wasInQuarantineBeforeIsolation";
 	String caseDataEnterHomeAddressNow = "caseDataEnterHomeAddressNow";
 	String caseDefaultView = "caseDefaultView";

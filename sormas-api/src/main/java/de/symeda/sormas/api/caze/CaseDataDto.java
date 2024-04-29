@@ -239,6 +239,13 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String DELETION_REASON = "deletionReason";
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
 	public static final String CASE_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
+	public static final String ADDRESS_MPOX = "addressMpox";
+	public static final String VILLAGE = "village";
+	public static final String CITY = "city";
+	public static final String NATIONALITY = "nationality";
+	public static final String ETHNICITY = "ethnicity";
+	public static final String OCCUPATION = "occupation";
+	public static final String DISTRICT_OF_RESIDENCE = "districtOfResidence";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -274,7 +281,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String epidNumber;
 	@Outbreaks
-	@NotNull(message = Validations.validReportDateTime)
+//	@NotNull(message = Validations.validReportDateTime)
 	private Date reportDate;
 	@Outbreaks
 	private UserReferenceDto reportingUser;
@@ -632,6 +639,13 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	private String notifiedBy;
 	private Date dateOfNotification;
 	private Date dateOfInvestigation;
+	private String addressMpox;
+	private String village;
+	private String city;
+	private String nationality;
+	private String ethnicity;
+	private String occupation;
+	private String districtOfResidence;
 
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		return build(person, disease, HealthConditionsDto.build());
@@ -1938,5 +1952,61 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 
 	public void setLastVaccinationDate(Date lastVaccinationDate) {
 		this.lastVaccinationDate = lastVaccinationDate;
+	}
+
+	public String getAddressMpox() {
+		return addressMpox;
+	}
+
+	public void setAddressMpox(String addressMpox) {
+		this.addressMpox = addressMpox;
+	}
+
+	public String getVillage() {
+		return village;
+	}
+
+	public void setVillage(String village) {
+		this.village = village;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getNationality() {
+		return nationality;
+	}
+
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
+
+	public String getEthnicity() {
+		return ethnicity;
+	}
+
+	public void setEthnicity(String ethnicity) {
+		this.ethnicity = ethnicity;
+	}
+
+	public String getOccupation() {
+		return occupation;
+	}
+
+	public void setOccupation(String occupation) {
+		this.occupation = occupation;
+	}
+
+	public String getDistrictOfResidence() {
+		return districtOfResidence;
+	}
+
+	public void setDistrictOfResidence(String districtOfResidence) {
+		this.districtOfResidence = districtOfResidence;
 	}
 }
