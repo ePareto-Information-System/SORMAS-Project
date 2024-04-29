@@ -307,6 +307,11 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			setVisible(true, EpiDataDto.EXPOSED_TO_RISK_FACTOR, EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE);
 		}
 
+		if (disease == Disease.GUINEA_WORM) {
+			hideAllFields();
+
+		}
+
 	}
 
 	private void addActivityAsCaseFields() {
@@ -388,5 +393,13 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 				field.setVisible(false);
 
 		}
+
+		//get headings if not null hide create a list of headings
+		Arrays.asList(LOC_EXPOSURE_INVESTIGATION_HEADING, LOC_EXPOSURE_TRAVEL_HISTORY_HEADING, LOC_ACTIVITY_AS_CASE_INVESTIGATION_HEADING, LOC_SOURCE_CASE_CONTACTS_HEADING, LOC_EPI_DATA_FIELDS_HINT)
+				.stream()
+				.filter(heading -> getContent().getComponent(heading) != null)
+				.forEach(heading -> getContent().getComponent(heading).setVisible(false));
+
+
 	}
 }

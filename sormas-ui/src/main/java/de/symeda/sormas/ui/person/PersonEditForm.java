@@ -281,6 +281,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		placeStayedInLast10_14MonthsLabel = new Label(I18nProperties.getString(Strings.headingPlaceStayedInLast10_14Months));
 		placeStayedInLast10_14MonthsLabel.addStyleName(H3);
 		getContent().addComponent(placeStayedInLast10_14MonthsLabel, PLACE_STAYED_IN_LAST_10_14_MONTHS);
+		placeStayedInLast10_14MonthsLabel.setVisible(false);
 
 
 		addField(PersonDto.UUID).setReadOnly(true);
@@ -736,6 +737,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			setVisible(true, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION);
 			addFields(PersonDto.INVESTIGATOR_NAME, PersonDto.INVESTIGATOR_TITLE);
 			generalCommentLabel.setVisible(false);
+			placeStayedInLast10_14MonthsLabel.setVisible(true);
 			setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER, PersonDto.BIRTH_DATE_YYYY,
 					PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD, PersonDto.ADDITIONAL_DETAILS, PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS, PersonDto.MOTHERS_NAME);
 		}
