@@ -221,6 +221,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(4, CaseDataDto.CASE_ORIGIN, 8, CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION) +
 					fluidRowLocs(RESPONSIBLE_JURISDICTION_HEADING_LOC) +
 					fluidRowLocs(CaseDataDto.RESPONSIBLE_REGION, CaseDataDto.RESPONSIBLE_DISTRICT, CaseDataDto.RESPONSIBLE_COMMUNITY) +
+					fluidRowLocs(6, CaseDataDto.REPORTING_VILLAGE, 6, CaseDataDto.REPORTING_ZONE) +
 					fluidRowLocs(CaseDataDto.DONT_SHARE_WITH_REPORTING_TOOL) +
 					fluidRowLocs(DONT_SHARE_WARNING_LOC) +
 					fluidRowLocs(DIFFERENT_PLACE_OF_STAY_JURISDICTION) +
@@ -352,6 +353,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private DateField motherGivenProtectiveDoseTTDate;
 	private NullableOptionGroup supplementalImmunizationField;
 	private TextArea supplementalImmunizationDetails;
+	private TextField reportingVillage;
+	private TextField reportingZone;
 
 
 	private final Map<ReinfectionDetailGroup, CaseReinfectionCheckBoxTree> reinfectionTrees = new EnumMap<>(ReinfectionDetailGroup.class);
@@ -1076,6 +1079,32 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		secondVaccinationDateField = addField(CaseDataDto.SECOND_VACCINATION_DATE, DateField.class);
 		secondVaccinationDateField.setVisible(false);
 
+
+		reportingVillage = addField(CaseDataDto.REPORTING_VILLAGE, TextField.class);
+		reportingZone = addField(CaseDataDto.REPORTING_ZONE, TextField.class);
+		setVisible(false, CaseDataDto.REPORTING_VILLAGE, CaseDataDto.REPORTING_ZONE);
+
+
+		FieldHelper
+				.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
+
+		FieldHelper.setEnabledWhen(
+				vaccinatedByCardOrHistory,
+				Arrays.asList(CardOrHistory.CARD),
+				Collections.singletonList(
+						cardDateField
+				),
+				false);
+
+		FieldHelper.setEnabledWhen(
+				vaccinatedByCardOrHistory,
+				Arrays.asList(CardOrHistory.CARD),
+				Collections.singletonList(
+						secondVaccinationDateField
+				),
+				false);
+
+
 		vaccineType = addField(CaseDataDto.VACCINE_TYPE, ComboBox.class);
 		numberOfDoses = addField(CaseDataDto.NUMBER_OF_DOSES, TextField.class);
 		lastVaccinationDate = addField(CaseDataDto.LAST_VACCINATION_DATE, DateField.class);
@@ -1344,6 +1373,14 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				Arrays.asList(FacilityType.HOSPITAL, FacilityType.OTHER_MEDICAL_FACILITY),
 				true);
 		}*/
+
+		//zone and village activr when diseaseField is = Guinea worm
+			FieldHelper.setVisibleWhen(
+				getFieldGroup(),
+				Arrays.asList(CaseDataDto.REPORTING_VILLAGE, CaseDataDto.REPORTING_ZONE),
+				diseaseField,
+				Arrays.asList(Disease.GUINEA_WORM),
+				true);
 
 		// Other initializations
 		//Not Required in Gh-dsd requirements

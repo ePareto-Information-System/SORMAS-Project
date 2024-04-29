@@ -274,6 +274,8 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String ETHNICITY = "ethnicity";
 	public static final String OCCUPATION = "occupation";
 	public static final String DISTRICT_OF_RESIDENCE = "districtOfResidence";
+	public static final String REPORTING_VILLAGE = "reportingVillage";
+	public static final String REPORTING_ZONE = "reportingZone";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -667,6 +669,8 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private Date dateOfNotification;
 	private Date dateOfInvestigation;
 	private  Date secondVaccinationDate;
+	private String reportingVillage;
+	private String reportingZone;
 
 	private YesNoUnknown motherVaccinatedWithTT;
 	private YesNoUnknown motherHaveCard;
@@ -2222,5 +2226,21 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	public void setDistrictOfResidence(String districtOfResidence) {
 		this.districtOfResidence = districtOfResidence;
+	}
+
+	public String getReportingVillage() {
+		return reportingVillage;
+	}
+
+	public void setReportingVillage(String reportingVillage) {
+		this.reportingVillage = reportingVillage;
+	}
+
+	public String getReportingZone() {
+		return reportingZone;
+	}
+
+	public void setReportingZone(String reportingZone) {
+		this.reportingZone = reportingZone;
 	}
 }
