@@ -22,8 +22,8 @@ public class HospitalizationFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.ADMISSION_DATE, new HashSet<>(Arrays.asList(Disease.AHF)));
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.DISCHARGE_DATE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.AHF)));
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.LEFT_AGAINST_ADVICE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.AHF, Disease.NEW_INFLUENZA)));
-        DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.NOTIFY_DISTRICT_DATE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.AHF, Disease.NEW_INFLUENZA, Disease.FOODBORNE_ILLNESS)));
-        DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.AHF, Disease.YELLOW_FEVER, Disease.NEW_INFLUENZA, Disease.FOODBORNE_ILLNESS)));
+        DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.NOTIFY_DISTRICT_DATE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.AHF, Disease.NEW_INFLUENZA, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
+        DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.AHF, Disease.YELLOW_FEVER, Disease.NEW_INFLUENZA, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.HOSPITALIZATION_REASON, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.OTHER_HOSPITALIZATION_REASON, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.INTENSIVE_CARE_UNIT, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM)));

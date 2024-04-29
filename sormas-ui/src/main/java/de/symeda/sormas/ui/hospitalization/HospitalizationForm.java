@@ -440,6 +440,9 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			FieldHelper.setVisibleWhen(soughtMedicalAttentionField, Arrays.asList(nameOfFacilityField), Arrays.asList(YesNo.YES), true);
 
 		}
+		if(caze.getDisease() == Disease.MONKEYPOX){
+			setVisible(true, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, HospitalizationDto.ADMISSION_DATE, HospitalizationDto.HOSPITAL_RECORD_NUMBER);
+		}
 	}
 
 	private void updatePrevHospHint(NullableOptionGroup hospitalizedPreviouslyField, PreviousHospitalizationsField previousHospitalizationsField) {
