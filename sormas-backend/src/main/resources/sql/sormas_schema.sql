@@ -12994,4 +12994,8 @@ ALTER TABLE location ADD COLUMN village varchar(255);
 ALTER TABLE location ADD COLUMN zone varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (567, 'Added village, zone to location');
 
+ALTER TABLE cases ADD COLUMN reportingVillage varchar(255);
+ALTER TABLE cases ADD COLUMN reportingZone varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (568, 'Added reportingVillage, reportingZone to cases');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
