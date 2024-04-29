@@ -243,6 +243,13 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private String investigatorUnit;
 	private String investigatorAddress;
 	private String investigatorTel;
+	private String ethnicity;
+	private String placeStayedtenToFourteenMonthsVillage;
+	private String placeStayedtenToFourteenMonthsZone;
+	private Community placeStayedtenToFourteenMonthsCommunity;
+	private District placeStayedtenToFourteenMonthsDistrict;
+	private Region placeStayedtenToFourteenMonthsRegion;
+	private Country placeStayedtenToFourteenMonthsCountry;
 
 	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getFirstName() {
@@ -1019,5 +1026,66 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	@Transient
 	public boolean isEnrolledInExternalJournal() {
 		return SymptomJournalStatus.ACCEPTED.equals(symptomJournalStatus) || SymptomJournalStatus.REGISTERED.equals(symptomJournalStatus);
+	}
+
+	public String getEthnicity() {
+		return ethnicity;
+	}
+
+	public void setEthnicity(String ethnicity) {
+		this.ethnicity = ethnicity;
+	}
+
+	public String getPlaceStayedtenToFourteenMonthsVillage() {
+		return placeStayedtenToFourteenMonthsVillage;
+	}
+
+	public void setPlaceStayedtenToFourteenMonthsVillage(String placeStayedtenToFourteenMonthsVillage) {
+		this.placeStayedtenToFourteenMonthsVillage = placeStayedtenToFourteenMonthsVillage;
+	}
+
+	public String getPlaceStayedtenToFourteenMonthsZone() {
+		return placeStayedtenToFourteenMonthsZone;
+	}
+
+	public void setPlaceStayedtenToFourteenMonthsZone(String placeStayedtenToFourteenMonthsZone) {
+		this.placeStayedtenToFourteenMonthsZone = placeStayedtenToFourteenMonthsZone;
+	}
+
+	@OneToOne(cascade = CascadeType.ALL)
+
+	public Community getPlaceStayedtenToFourteenMonthsCommunity() {
+		return placeStayedtenToFourteenMonthsCommunity;
+	}
+
+	public void setPlaceStayedtenToFourteenMonthsCommunity(Community placeStayedtenToFourteenMonthsCommunity) {
+		this.placeStayedtenToFourteenMonthsCommunity = placeStayedtenToFourteenMonthsCommunity;
+	}
+
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	public District getPlaceStayedtenToFourteenMonthsDistrict() {
+		return placeStayedtenToFourteenMonthsDistrict;
+	}
+
+	public void setPlaceStayedtenToFourteenMonthsDistrict(District placeStayedtenToFourteenMonthsDistrict) {
+		this.placeStayedtenToFourteenMonthsDistrict = placeStayedtenToFourteenMonthsDistrict;
+	}
+
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	public Region getPlaceStayedtenToFourteenMonthsRegion() {
+		return placeStayedtenToFourteenMonthsRegion;
+	}
+
+	public void setPlaceStayedtenToFourteenMonthsRegion(Region placeStayedtenToFourteenMonthsRegion) {
+		this.placeStayedtenToFourteenMonthsRegion = placeStayedtenToFourteenMonthsRegion;
+	}
+
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	public Country getPlaceStayedtenToFourteenMonthsCountry() {
+		return placeStayedtenToFourteenMonthsCountry;
+	}
+
+	public void setPlaceStayedtenToFourteenMonthsCountry(Country placeStayedtenToFourteenMonthsCountry) {
+		this.placeStayedtenToFourteenMonthsCountry = placeStayedtenToFourteenMonthsCountry;
 	}
 }

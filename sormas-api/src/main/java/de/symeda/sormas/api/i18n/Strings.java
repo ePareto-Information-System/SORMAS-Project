@@ -677,6 +677,7 @@ public interface Strings {
 	String headingPathogenTestsDeleted = "headingPathogenTestsDeleted";
 	String headingPersonData = "headingPersonData";
 	String headingPersonInformation = "headingPersonInformation";
+	String headingPlaceStayedInLast10_14Months = "headingPlaceStayedInLast10_14Months";
 	String headingPersonOccupation = "headingPersonOccupation";
 	String headingPickEventGroup = "headingPickEventGroup";
 	String headingPickEventParticipants = "headingPickEventParticipants";

@@ -1035,6 +1035,12 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setInvestigatorUnit(source.getInvestigatorUnit());
 		target.setInvestigatorAddress(source.getInvestigatorAddress());
 		target.setInvestigatorTel(source.getInvestigatorTel());
+		target.setEthnicity(source.getEthnicity());
+		target.setPlaceStayedtenToFourteenMonthsVillage(source.getPlaceStayedtenToFourteenMonthsVillage());
+		target.setPlaceStayedtenToFourteenMonthsZone(source.getPlaceStayedtenToFourteenMonthsZone());
+		target.setPlaceStayedtenToFourteenMonthsCommunity(CommunityFacadeEjb.toReferenceDto(source.getPlaceStayedtenToFourteenMonthsCommunity()));
+		target.setPlaceStayedtenToFourteenMonthsDistrict(DistrictFacadeEjb.toReferenceDto(source.getPlaceStayedtenToFourteenMonthsDistrict()));
+		target.setPlaceStayedtenToFourteenMonthsRegion(RegionFacadeEjb.toReferenceDto(source.getPlaceStayedtenToFourteenMonthsRegion()));
 
 		return target;
 	}
