@@ -13834,4 +13834,15 @@ ALTER TABLE person ADD COLUMN telnumber VARCHAR(55);
 
 INSERT INTO schema_version (version_number, comment) VALUES (608, 'Added Tel Number for Food Borne illness at Person');
 
+-- 2024-04-29 Added 7 properties to case create for MPox
+ALTER TABLE cases ADD COLUMN addressmpox VARCHAR(255);
+ALTER TABLE cases ADD COLUMN village VARCHAR(255);
+ALTER TABLE cases ADD COLUMN city VARCHAR(255);
+ALTER TABLE cases ADD COLUMN nationality VARCHAR(255);
+ALTER TABLE cases ADD COLUMN ethnicity VARCHAR(255);
+ALTER TABLE cases ADD COLUMN occupation VARCHAR(255);
+ALTER TABLE cases ADD COLUMN districtofresidence VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (580, 'Added 7 properties to case create for MPox');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

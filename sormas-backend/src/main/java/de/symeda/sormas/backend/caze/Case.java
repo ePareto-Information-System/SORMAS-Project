@@ -467,6 +467,13 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private String supplementalImmunizationDetails;
 
 
+	private String addressMpox;
+	private String village;
+	private String city;
+	private String nationality;
+	private String ethnicity;
+	private String occupation;
+	private String districtOfResidence;
 
 	public static Case build() {
 		Case caze = new Case();
@@ -665,7 +672,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
+	@Column(nullable = true)
 	public Date getReportDate() {
 		return reportDate;
 	}
@@ -2153,6 +2160,61 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 //	Riskfactor on
 
+	public String getAddressMpox() {
+		return addressMpox;
+	}
+
+	public void setAddressMpox(String addressMpox) {
+		this.addressMpox = addressMpox;
+	}
+
+	public String getVillage() {
+		return village;
+	}
+
+	public void setVillage(String village) {
+		this.village = village;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getNationality() {
+		return nationality;
+	}
+
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
+
+	public String getEthnicity() {
+		return ethnicity;
+	}
+
+	public void setEthnicity(String ethnicity) {
+		this.ethnicity = ethnicity;
+	}
+
+	public String getOccupation() {
+		return occupation;
+	}
+
+	public void setOccupation(String occupation) {
+		this.occupation = occupation;
+	}
+
+	public String getDistrictOfResidence() {
+		return districtOfResidence;
+	}
+
+	public void setDistrictOfResidence(String districtOfResidence) {
+		this.districtOfResidence = districtOfResidence;
+	}
 
 
 	@Override

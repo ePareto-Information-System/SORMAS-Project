@@ -740,6 +740,10 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			personContactDetailsField.setVisible(false);
 			addField(PersonDto.TEL_NUMBER, TextField.class);
 		}
+		if(disease == Disease.MONKEYPOX){
+			setVisible(false, PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID);
+			personContactDetailsField.setVisible(false);
+		}
 
 	}
 

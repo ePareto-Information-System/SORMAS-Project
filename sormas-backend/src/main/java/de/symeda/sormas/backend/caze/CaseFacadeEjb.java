@@ -3456,6 +3456,13 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setVaccinationRoutineDate(source.getVaccinationRoutineDate());
 
 		target.setLastVaccinationDate(source.getLastVaccinationDate());
+		target.setAddressMpox(source.getAddressMpox());
+		target.setVillage(source.getVillage());
+		target.setCity(source.getCity());
+		target.setNationality(source.getNationality());
+		target.setEthnicity(source.getEthnicity());
+		target.setOccupation(source.getOccupation());
+		target.setDistrictOfResidence(source.getDistrictOfResidence());
 
 		target.setMotherVaccinatedWithTT(source.getMotherVaccinatedWithTT());
 		target.setMotherHaveCard(source.getMotherHaveCard());
@@ -3716,6 +3723,13 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setMotherGivenProtectiveDoseTTDate(source.getMotherGivenProtectiveDoseTTDate());
 		target.setSupplementalImmunization(source.getSupplementalImmunization());
 		target.setSupplementalImmunizationDetails(source.getSupplementalImmunizationDetails());
+		target.setAddressMpox(source.getAddressMpox());
+		target.setVillage(source.getVillage());
+		target.setCity(source.getCity());
+		target.setNationality(source.getNationality());
+		target.setEthnicity(source.getEthnicity());
+		target.setOccupation(source.getOccupation());
+		target.setDistrictOfResidence(source.getDistrictOfResidence());
 
 		return target;
 	}
