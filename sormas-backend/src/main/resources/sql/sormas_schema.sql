@@ -13591,7 +13591,6 @@ ALTER TABLE riskfactor ADD COLUMN drugsSensitiveToVibrioStrain VARCHAR(255);
 ALTER TABLE riskfactor ADD COLUMN drugsResistantToVibrioStrain VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (592, 'Added columns to epiData, riskfactor to implement patientVisitedHealthCareFacility #26');
 
-
 -- 565
 ALTER TABLE cases ADD COLUMN motherVaccinatedWithTT varchar(255);
 ALTER TABLE cases ADD COLUMN motherHaveCard varchar(255);
@@ -13945,4 +13944,8 @@ ALTER TABLE riskfactor ADD COLUMN investigatortel VARCHAR(55);
 ALTER TABLE riskfactor ADD COLUMN email VARCHAR(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (613, 'Added columns to risk factor assessment for MonkeyPox');
+
+ALTER TABLE location ADD COLUMN village varchar(255);
+ALTER TABLE location ADD COLUMN zone varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (614, 'Added village, zone to location');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

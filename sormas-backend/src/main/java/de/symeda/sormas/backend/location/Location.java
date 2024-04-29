@@ -118,6 +118,8 @@ public class Location extends AbstractDomainObject {
 	private String contactPersonEmail;
 	private String locality;
 	private Person person;
+	private String village;
+	private String zone;
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getDetails() {
@@ -360,8 +362,8 @@ public class Location extends AbstractDomainObject {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinTable(name = PERSON_LOCATIONS_TABLE_NAME,
-		joinColumns = @JoinColumn(name = "location_id"),
-		inverseJoinColumns = @JoinColumn(name = "person_id"))
+			joinColumns = @JoinColumn(name = "location_id"),
+			inverseJoinColumns = @JoinColumn(name = "person_id"))
 	public Person getPerson() {
 		return person;
 	}
@@ -393,12 +395,27 @@ public class Location extends AbstractDomainObject {
 	@Override
 	public String toString() {
 		return LocationReferenceDto.buildCaption(
-			region != null ? region.getName() : null,
-			district != null ? district.getName() : null,
-			community != null ? community.getName() : null,
-			city,
-			street,
-			houseNumber,
-			additionalInformation);
+				region != null ? region.getName() : null,
+				district != null ? district.getName() : null,
+				community != null ? community.getName() : null,
+				city,
+				street,
+				houseNumber,
+				additionalInformation);
+	}
+	public String getVillage() {
+		return village;
+	}
+
+	public void setVillage(String village) {
+		this.village = village;
+	}
+
+	public String getZone() {
+		return zone;
+	}
+
+	public void setZone(String zone) {
+		this.zone = zone;
 	}
 }

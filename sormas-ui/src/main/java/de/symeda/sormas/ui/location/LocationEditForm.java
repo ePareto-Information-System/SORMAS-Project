@@ -115,6 +115,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			fluidRowLocs(6,LocationDto.ADDITIONAL_INFORMATION),
 			fluidRowLocs(6,LocationDto.HOUSE_NUMBER),
 			fluidRowLocs(LocationDto.CITY, LocationDto.AREA_TYPE),
+			fluidRowLocs(LocationDto.VILLAGE, LocationDto.ZONE),
 			fluidRowLocs(6,LocationDto.POSTAL_CODE),
 			fluidRowLocs(6,LocationDto.LAND_MARK),
 			fluidRowLocs(LocationDto.CONTACT_PERSON_FIRST_NAME, LocationDto.CONTACT_PERSON_LAST_NAME),
@@ -149,6 +150,8 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private boolean skipFacilityTypeUpdate;
 	private boolean disableFacilityAddressCheck;
 	private boolean hasEventParticipantsWithoutJurisdiction;
+	private TextField zoneTextField;
+	private TextField villageTextField;
 
 	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers) {
 		super(LocationDto.class, LocationDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers);
@@ -252,6 +255,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		areaType.removeItem(AreaType.UNKNOWN);
 		areaType.setVisible(true);
 		areaType.setDescription(I18nProperties.getDescription(getPropertyI18nPrefix() + "." + LocationDto.AREA_TYPE));
+
+		zoneTextField = addField(LocationDto.ZONE, TextField.class);
+		villageTextField = addField(LocationDto.VILLAGE, TextField.class);
+		setVisible(false, LocationDto.ZONE, LocationDto.VILLAGE);
 
 		contactPersonFirstName = addField(LocationDto.CONTACT_PERSON_FIRST_NAME, TextField.class);
 		contactPersonLastName = addField(LocationDto.CONTACT_PERSON_LAST_NAME, TextField.class);
@@ -973,6 +980,6 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	public void setOnlyUnknownForGuineaWorm() {
 		setVisible(false, LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.ADDITIONAL_INFORMATION, LocationDto.CITY, LocationDto.HOUSE_NUMBER);
-			setVisible(true, LocationDto.LAND_MARK, LocationDto.AREA_TYPE);
+			setVisible(true, LocationDto.LAND_MARK, LocationDto.AREA_TYPE, LocationDto.ZONE, LocationDto.VILLAGE);
 	}
 }
