@@ -1164,6 +1164,12 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
 		//target.setCadre(CadreFacadeEjb.toReferenceDto(source.getCadre()));
 		target.setTelNumber(source.getTelNumber());
+		target.setEthnicity(source.getEthnicity());
+		target.setPlaceStayedtenToFourteenMonthsVillage(source.getPlaceStayedtenToFourteenMonthsVillage());
+		target.setPlaceStayedtenToFourteenMonthsZone(source.getPlaceStayedtenToFourteenMonthsZone());
+		target.setPlaceStayedtenToFourteenMonthsCommunity(CommunityFacadeEjb.toReferenceDto(source.getPlaceStayedtenToFourteenMonthsCommunity()));
+		target.setPlaceStayedtenToFourteenMonthsDistrict(DistrictFacadeEjb.toReferenceDto(source.getPlaceStayedtenToFourteenMonthsDistrict()));
+		target.setPlaceStayedtenToFourteenMonthsRegion(RegionFacadeEjb.toReferenceDto(source.getPlaceStayedtenToFourteenMonthsRegion()));
 
 		return target;
 	}

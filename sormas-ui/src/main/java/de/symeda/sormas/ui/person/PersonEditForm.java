@@ -92,6 +92,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	public static final String GENERAL_COMMENT_LOC = "generalCommentLoc";
 	private static final String FILL_SECTION_HEADING_LOC = "fillSectionHeadingLoc";
 	private static final String SEEK_HELP_HEADING_LOC = "seekHelpHeadingLoc";
+	private static final String PLACE_STAYED_IN_LAST_10_14_MONTHS = "placeStayedInLast10-14Months";
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(PERSON_INFORMATION_HEADING_LOC) +
@@ -141,6 +142,14 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					loc(ADDRESS_HEADER) +
 					fluidRowLocs(6,PersonDto.HOME_ADDRESS_RECREATIONAL) +
 					divsCss(VSPACE_3, fluidRowLocs(PersonDto.ADDRESS)) +
+					loc(PLACE_STAYED_IN_LAST_10_14_MONTHS) +
+					divsCss(VSPACE_3,
+							fluidRowLocs(PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY),
+							fluidRowLocs(PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE),
+							loc(VSPACE_TOP_5)
+					) +
+//					line and space
+
 					loc(CONTACT_INFORMATION_HEADER) +
 					divsCss(
 							VSPACE_3,
@@ -186,6 +195,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private PresentConditionChangeListener presentConditionChangeListener;
 	private DateField burialDate;
 	private TextField burialPlaceDesc;
+	private Label placeStayedInLast10_14MonthsLabel;
 	//@formatter:on
 	public PersonEditForm(PersonContext personContext, Disease disease, String diseaseDetails, ViewMode viewMode, boolean isPseudonymized, CaseOrigin caseOrigin) {
 		super(
@@ -287,6 +297,12 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		personInformationHeadingLabel = new Label(I18nProperties.getString(Strings.headingPersonInformation));
 		personInformationHeadingLabel.addStyleName(H3);
 		getContent().addComponent(personInformationHeadingLabel, PERSON_INFORMATION_HEADING_LOC);
+
+		placeStayedInLast10_14MonthsLabel = new Label(I18nProperties.getString(Strings.headingPlaceStayedInLast10_14Months));
+		placeStayedInLast10_14MonthsLabel.addStyleName(H3);
+		getContent().addComponent(placeStayedInLast10_14MonthsLabel, PLACE_STAYED_IN_LAST_10_14_MONTHS);
+
+
 		addField(PersonDto.UUID).setReadOnly(true);
 		firstNameField = addField(PersonDto.FIRST_NAME, TextField.class);
 		lastNameField = addField(PersonDto.LAST_NAME, TextField.class);
@@ -462,6 +478,19 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		causeOfDeathDiseaseField = addDiseaseField(PersonDto.CAUSE_OF_DEATH_DISEASE, true);
 		causeOfDeathDetailsField = addField(PersonDto.CAUSE_OF_DEATH_DETAILS, TextField.class);
 		// Set requirements that don't need visibility changes and read only status
+
+		ComboBox placeStayedTenToFourteenRegion = addInfrastructureField(PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION);
+		ComboBox placeStayedTenToFourteenDistrict = addInfrastructureField(PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT);
+		ComboBox placeStayedTenToFourteenCommunity = addInfrastructureField(PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY);
+		TextField placeStayedTenToFourteenVillage = addField(PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE, TextField.class);
+		TextField placeStayedTenToFourteenMonthsZone = addField(PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, TextField.class);
+		setVisible(false, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION);
+
+		addListnersToPlaceStayed10TO14MonthsFields(
+				placeStayedTenToFourteenRegion,
+				placeStayedTenToFourteenDistrict,
+				placeStayedTenToFourteenCommunity);
+		placeStayedTenToFourteenRegion.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 
 		setReadOnly(true, PersonDto.APPROXIMATE_AGE_REFERENCE_DATE);
 		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.SEX);
@@ -748,6 +777,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		}
 		
 		if (disease == Disease.GUINEA_WORM) {
+			setVisible(true, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION);
 			addFields(PersonDto.INVESTIGATOR_NAME, PersonDto.INVESTIGATOR_TITLE);
 			generalCommentLabel.setVisible(false);
 			setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER, PersonDto.BIRTH_DATE_YYYY,
@@ -794,6 +824,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 	private void disableField(String field) {
 		setVisible(false, field);
+
 	}
 	@Override
 	public void setValue(PersonDto newFieldValue) {
@@ -836,6 +867,25 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		// Set initial visibility
 		updateFacilityDetailsVisibility(detailsField, (FacilityReferenceDto) facilityField.getValue());
 	}
+
+	private void addListnersToPlaceStayed10TO14MonthsFields(
+			ComboBox regionField,
+			ComboBox districtField,
+			ComboBox communityField) {
+
+		regionField.addValueChangeListener(e -> {
+			RegionReferenceDto regionDto = (RegionReferenceDto) e.getProperty().getValue();
+			FieldHelper.updateItems(districtField, regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
+		});
+		districtField.addValueChangeListener(e -> {
+			DistrictReferenceDto districtDto = (DistrictReferenceDto) e.getProperty().getValue();
+			FieldHelper.updateItems(
+					communityField,
+					districtDto != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(districtDto.getUuid()) : null);
+		});
+	}
+
+
 	private void updateFacilities(
 			ComboBox facilityField,
 			ComboBox typeField,

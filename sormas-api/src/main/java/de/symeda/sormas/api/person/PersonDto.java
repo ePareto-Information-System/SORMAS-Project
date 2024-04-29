@@ -159,6 +159,13 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String CORD_TREATED_WITH_ANYTHING_WHERE = "cordTreatedWithAnythingWhere";
 	public static final String MARITAL_STATUS = "maritalStatus";
 	public static final String TEL_NUMBER = "telNumber";
+	public static final String ETHNICITY = "ethnicity";
+	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE = "placeStayedtenToFourteenMonthsVillage";
+	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE = "placeStayedtenToFourteenMonthsZone";
+	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY = "placeStayedtenToFourteenMonthsCommunity";
+	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT = "placeStayedtenToFourteenMonthsDistrict";
+	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION = "placeStayedtenToFourteenMonthsRegion";
+	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COUNTRY = "placeStayedtenToFourteenMonthsCountry";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -471,6 +478,41 @@ public class PersonDto extends PseudonymizableDto {
 	private YesNoUnknown cordTreatedWithAnything;
 	private TreatmentOfCord cordTreatedWithAnythingWhere;
 	private String telNumber;
+	@Diseases({
+			Disease.GUINEA_WORM })
+	@HideForCountries
+	@SensitiveData
+	private String ethnicity;
+	@Diseases({
+			Disease.GUINEA_WORM })
+	@HideForCountries
+	@SensitiveData
+	private String placeStayedtenToFourteenMonthsVillage;
+	@Diseases({
+			Disease.GUINEA_WORM })
+	@HideForCountries
+	@SensitiveData
+	private String placeStayedtenToFourteenMonthsZone;
+	@Diseases({
+			Disease.GUINEA_WORM })
+	@HideForCountries
+	@SensitiveData
+	private CommunityReferenceDto placeStayedtenToFourteenMonthsCommunity;
+	@Diseases({
+			Disease.GUINEA_WORM })
+	@HideForCountries
+	@SensitiveData
+	private DistrictReferenceDto placeStayedtenToFourteenMonthsDistrict;
+	@Diseases({
+			Disease.GUINEA_WORM })
+	@HideForCountries
+	@SensitiveData
+	private RegionReferenceDto placeStayedtenToFourteenMonthsRegion;
+	@Diseases({
+			Disease.GUINEA_WORM })
+	@HideForCountries
+	@SensitiveData
+	private CountryReferenceDto placeStayedtenToFourteenMonthsCountry;
 
 
 	@SuppressWarnings("serial")
@@ -1348,6 +1390,61 @@ public class PersonDto extends PseudonymizableDto {
 
 	public void setDurationDays4(String durationDays4) {
 		this.durationDays4 = durationDays4;
+	}
+	public String getEthnicity() {
+		return ethnicity;
+	}
+
+	public void setEthnicity(String ethnicity) {
+		this.ethnicity = ethnicity;
+	}
+
+	public String getPlaceStayedtenToFourteenMonthsVillage() {
+		return placeStayedtenToFourteenMonthsVillage;
+	}
+
+	public void setPlaceStayedtenToFourteenMonthsVillage(String placeStayedtenToFourteenMonthsVillage) {
+		this.placeStayedtenToFourteenMonthsVillage = placeStayedtenToFourteenMonthsVillage;
+	}
+
+	public String getPlaceStayedtenToFourteenMonthsZone() {
+		return placeStayedtenToFourteenMonthsZone;
+	}
+
+	public void setPlaceStayedtenToFourteenMonthsZone(String placeStayedtenToFourteenMonthsZone) {
+		this.placeStayedtenToFourteenMonthsZone = placeStayedtenToFourteenMonthsZone;
+	}
+
+	public CommunityReferenceDto getPlaceStayedtenToFourteenMonthsCommunity() {
+		return placeStayedtenToFourteenMonthsCommunity;
+	}
+
+	public void setPlaceStayedtenToFourteenMonthsCommunity(CommunityReferenceDto placeStayedtenToFourteenMonthsCommunity) {
+		this.placeStayedtenToFourteenMonthsCommunity = placeStayedtenToFourteenMonthsCommunity;
+	}
+
+	public DistrictReferenceDto getPlaceStayedtenToFourteenMonthsDistrict() {
+		return placeStayedtenToFourteenMonthsDistrict;
+	}
+
+	public void setPlaceStayedtenToFourteenMonthsDistrict(DistrictReferenceDto placeStayedtenToFourteenMonthsDistrict) {
+		this.placeStayedtenToFourteenMonthsDistrict = placeStayedtenToFourteenMonthsDistrict;
+	}
+
+	public RegionReferenceDto getPlaceStayedtenToFourteenMonthsRegion() {
+		return placeStayedtenToFourteenMonthsRegion;
+	}
+
+	public void setPlaceStayedtenToFourteenMonthsRegion(RegionReferenceDto placeStayedtenToFourteenMonthsRegion) {
+		this.placeStayedtenToFourteenMonthsRegion = placeStayedtenToFourteenMonthsRegion;
+	}
+
+	public CountryReferenceDto getPlaceStayedtenToFourteenMonthsCountry() {
+		return placeStayedtenToFourteenMonthsCountry;
+	}
+
+	public void setPlaceStayedtenToFourteenMonthsCountry(CountryReferenceDto placeStayedtenToFourteenMonthsCountry) {
+		this.placeStayedtenToFourteenMonthsCountry = placeStayedtenToFourteenMonthsCountry;
 	}
 
 	public YesNoUnknown getReceivedAntenatalCare() {

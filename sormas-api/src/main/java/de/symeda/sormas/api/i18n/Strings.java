@@ -714,6 +714,7 @@ public interface Strings {
 	String confirmPassword = "confirmPassword";
 	String passwordStrength = "passwordStrength";
 	String headingPersonInformation = "headingPersonInformation";
+	String headingPlaceStayedInLast10_14Months = "headingPlaceStayedInLast10_14Months";
 	String headingPersonOccupation = "headingPersonOccupation";
 	String headingPersonCadre = "headingCadre";
 	String headingBirthOfInfant = "headingBirthOfInfant";

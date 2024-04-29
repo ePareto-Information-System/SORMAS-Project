@@ -13953,4 +13953,13 @@ ALTER TABLE cases ADD COLUMN reportingVillage varchar(255);
 ALTER TABLE cases ADD COLUMN reportingZone varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (615, 'Added reportingVillage, reportingZone to cases');
 
+ALTER TABLE person ADD COLUMN ethnicity varchar(255);
+ALTER TABLE person ADD COLUMN placeStayedtenToFourteenMonthsVillage varchar(255);
+ALTER TABLE person ADD COLUMN placeStayedtenToFourteenMonthsZone varchar(255);
+ALTER TABLE person ADD COLUMN placeStayedtenToFourteenMonthsCommunity_id BIGINT;
+ALTER TABLE person ADD COLUMN placeStayedtenToFourteenMonthsDistrict_id BIGINT;
+ALTER TABLE person ADD COLUMN placeStayedtenToFourteenMonthsRegion_id BIGINT;
+ALTER TABLE person ADD COLUMN placeStayedtenToFourteenMonthsCountry_id BIGINT;
+INSERT INTO schema_version (version_number, comment) VALUES (616, 'Added fields to person to implement placeStayedtenToFourteenMonths #26');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
