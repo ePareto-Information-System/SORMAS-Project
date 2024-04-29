@@ -594,6 +594,8 @@ public interface Strings {
 	String headingSixtyDay = "headingSixtyDay";
 	String headingofficialUse = "headingofficialUse";
 	String headingProvide = "headingProvide";
+	String notifyInvestigate = "headingnotifyInvestigate";
+	String headingIndicateCategory = "headingIndicateCategory";
 	String headingPersonCompleting = "headingPersonCompleting";
 	String headingFillThis = "headingFillThis";
 	String headingChildSeek = "headingChildSeek";

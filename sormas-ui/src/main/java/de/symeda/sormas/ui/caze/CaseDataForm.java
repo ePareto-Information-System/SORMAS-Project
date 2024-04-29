@@ -135,6 +135,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private static final String CLASSIFIED_BY_SYSTEM_LOC = "classifiedBySystemLoc";
 	public static final String ASSIGN_NEW_EPID_NUMBER_LOC = "assignNewEpidNumberLoc";
 	private static final String EPID_NUMBER_WARNING_LOC = "epidNumberWarningLoc";
+	private static final String NOTIFY_INVESTIGATE = "notifyInvestigateLoc";
+	private static final String INDICATE_CATEGORY_LOC = "indicateCategoryLoc";
 	public static final String EXTERNAL_TOKEN_WARNING_LOC = "externalTokenWarningLoc";
 	public static final String GENERAL_COMMENT_LOC = "generalCommentLoc";
 	private static final String FOLLOW_UP_STATUS_HEADING_LOC = "followUpStatusHeadingLoc";
@@ -173,7 +175,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(9, CaseDataDto.INVESTIGATION_STATUS, 3, CaseDataDto.INVESTIGATED_DATE) +
 					fluidRowLocs(6, CaseDataDto.EPID_NUMBER, 3, ASSIGN_NEW_EPID_NUMBER_LOC) +
 					loc(EPID_NUMBER_WARNING_LOC) +
+					loc(NOTIFY_INVESTIGATE) +
 					fluidRowLocs(CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION) +
+					loc(INDICATE_CATEGORY_LOC) +
 					fluidRowLocs(CaseDataDto.EXTERNAL_ID, CaseDataDto.EXTERNAL_TOKEN) +
 					fluidRowLocs("", EXTERNAL_TOKEN_WARNING_LOC) +
 					fluidRowLocs(6, CaseDataDto.CASE_ID_ISM, 6, CaseDataDto.INTERNAL_TOKEN) +
@@ -1528,6 +1532,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			}
 			if(disease ==Disease.MONKEYPOX){
 				placeOfStayHeadingLabel.setVisible(false);
+				createLabel(I18nProperties.getString(Strings.notifyInvestigate), H3, NOTIFY_INVESTIGATE);
+				setVisible(true, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
+				createLabel(I18nProperties.getString(Strings.headingIndicateCategory), H3, INDICATE_CATEGORY_LOC);
 			}
 		});
 	}
@@ -2036,5 +2043,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			quarantineChangeComment.clear();
 			setVisible(false, CaseDataDto.PREVIOUS_QUARANTINE_TO, CaseDataDto.QUARANTINE_CHANGE_COMMENT);
 		}
+	}
+	private Label createLabel(String text, String h4, String location) {
+		final Label label = new Label(text);
+		label.setId(text);
+		label.addStyleName(h4);
+		getContent().addComponent(label, location);
+		return label;
 	}
 }
