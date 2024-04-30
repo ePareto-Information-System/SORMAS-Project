@@ -1018,9 +1018,13 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			addField(ARE_LESIONS_SAME_SIZE, NullableOptionGroup.class);
 			addField(ARE_LESIONS_DEEP, NullableOptionGroup.class);
 			addField(ARE_ULCERS_AMONG_LESIONS, NullableOptionGroup.class);
-			addField(TYPE_OF_RASH, ComboBox.class);
 
+			ComboBox typeOfRash = new ComboBox("Rash");
+			for (SymptomsList list : SymptomsList.MpoxRashList()) {
+				typeOfRash.addItem(list);
+			}
 
+			addField(TYPE_OF_RASH, typeOfRash);
 		}
 		
 		if (disease == Disease.CORONAVIRUS) {
