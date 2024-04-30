@@ -1268,7 +1268,7 @@ public interface Captions {
 	String exportInfrastructureData = "exportInfrastructureData";
 	String exportNewExportConfiguration = "exportNewExportConfiguration";
 	String exportSamples = "exportSamples";
-	String exportCaseSamplesDetailed="Detailed Sample Export";
+	String exportCaseSamplesDetailed="Detailed Case And Sample Export";
 	String exportSelectSormasData = "exportSelectSormasData";
 	String exportSormasData = "exportSormasData";
 	String exportUserRoles = "exportUserRoles";

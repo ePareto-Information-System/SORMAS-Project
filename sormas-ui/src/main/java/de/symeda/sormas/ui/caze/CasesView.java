@@ -28,6 +28,8 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import de.symeda.sormas.api.user.DefaultUserRole;
+import de.symeda.sormas.api.user.UserRoleDto;
 import de.symeda.sormas.ui.caze.importer.DuplicateMergeExcelImportLayout;
 import org.vaadin.hene.popupbutton.PopupButton;
 
@@ -314,22 +316,6 @@ public class CasesView extends AbstractView {
 				addExportButton(streamResource, exportPopupButton, exportLayout, VaadinIcons.TABLE, Captions.exportBasic, Strings.infoBasicExport);
 			}
 
-			{
-				StreamResource exportStreamResource = CaseDownloadUtil.createCaseExportResource(
-					grid.getCriteria(),
-					this::getSelectedRows,
-					CaseExportType.CASE_SURVEILLANCE,
-					detailedExportConfiguration);
-
-				addExportButton(
-					exportStreamResource,
-					exportPopupButton,
-					exportLayout,
-					VaadinIcons.FILE_TEXT,
-					Captions.exportDetailed,
-					Strings.infoDetailedExport);
-			}
-
 			if (hasClinicalCourseRight || hasTherapyRight) {
 				StreamResource caseManagementExportStreamResource =
 					DownloadUtil.createCaseManagementExportResource(grid.getCriteria(), this::getSelectedRows, ExportEntityName.CONTACTS);
@@ -415,20 +401,48 @@ public class CasesView extends AbstractView {
 				exportLayout.addComponent(btnCustomCaseExport);
 			}
 
-			{
-				StreamResource exportStreamResource = CaseDownloadUtil.createCaseSamplesExportResource(
-						grid.getCriteria(),
-						this::getSelectedRows,
-						CaseExportType.CASE_SURVEILLANCE,
-						detailedExportConfiguration);
+//			{
+//				StreamResource exportStreamResource = CaseDownloadUtil.createCaseSamplesExportResource(
+//						grid.getCriteria(),
+//						this::getSelectedRows,
+//						CaseExportType.CASE_SURVEILLANCE,
+//						detailedExportConfiguration);
+//
+//				addExportButton(
+//						exportStreamResource,
+//						exportPopupButton,
+//						exportLayout,
+//						VaadinIcons.FILE_TEXT,
+//						Captions.exportCaseSamplesDetailed,
+//						Strings.infoDetailedExport);
+//			}
 
-				addExportButton(
-						exportStreamResource,
-						exportPopupButton,
-						exportLayout,
-						VaadinIcons.FILE_TEXT,
-						Captions.exportCaseSamplesDetailed,
-						Strings.infoDetailedExport);
+			{
+
+				//	TODO: Fix hasUserRole method in UserProvider.java
+
+				Set<UserRoleDto> userRoles = UserProvider.getCurrent().getUserRoles();
+				UserRoleDto nationalUserRole = userRoles.stream()
+						.filter(userRoleDto -> userRoleDto.getCaption().equals(I18nProperties.getEnumCaption(DefaultUserRole.NATIONAL_USER)))
+						.findFirst()
+						.orElse(null);
+
+				if (nationalUserRole != null) {
+
+					StreamResource exportStreamResource = CaseDownloadUtil.createCaseExportResource(
+							grid.getCriteria(),
+							this::getSelectedRows,
+							CaseExportType.CASE_SURVEILLANCE,
+							detailedExportConfiguration);
+
+					addExportButton(
+							exportStreamResource,
+							exportPopupButton,
+							exportLayout,
+							VaadinIcons.FILE_TEXT,
+							Captions.exportCaseSamplesDetailed,
+							Strings.infoDetailedExport);
+				}
 			}
 
 			{
