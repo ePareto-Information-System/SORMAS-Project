@@ -429,7 +429,7 @@ public class CasesView extends AbstractView {
 
 				if (nationalUserRole != null) {
 
-					StreamResource exportStreamResource = CaseDownloadUtil.createCaseExportResource(
+					StreamResource exportStreamResource = CaseDownloadUtil.createCaseSamplesExportResource(
 							grid.getCriteria(),
 							this::getSelectedRows,
 							CaseExportType.CASE_SURVEILLANCE,
