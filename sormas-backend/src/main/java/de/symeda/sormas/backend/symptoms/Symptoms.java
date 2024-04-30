@@ -20,22 +20,23 @@ package de.symeda.sormas.backend.symptoms;
 import static de.symeda.sormas.api.Disease.*;
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 //import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.TemperatureSource;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import org.apache.commons.lang3.StringUtils;
 
 @Entity
 public class Symptoms extends AbstractDomainObject {
@@ -269,6 +270,18 @@ public class Symptoms extends AbstractDomainObject {
 	private YesNo symptomsOngoing;
 	private DurationHours durationHours;
 	private String nameOfHealthFacility;
+	private Set<SymptomsList> symptomsSelected;
+	private String requestedSymptomsSelectedString;
+	private Date dateOfOnsetRash;
+	private Set<MpoxRashArea> rashSymptoms;
+	private String requestedRashSymptomsString;
+	private String rashSymptomsOtherAreas;
+	private YesNo areLesionsSameState;
+	private YesNo areLesionsSameSize;
+	private YesNo areLesionsDeep;
+	private YesNo areUlcersAmong;
+	private SymptomsList typeOfRash;
+	private String symptomsSelectedOther;
 
 	// when adding new fields make sure to extend toHumanString
 
@@ -2079,4 +2092,135 @@ public class Symptoms extends AbstractDomainObject {
 	public void setNameOfHealthFacility(String nameOfHealthFacility){
 		this.nameOfHealthFacility = nameOfHealthFacility;
 	}
+
+	@Transient
+	public Set<SymptomsList> getSymptomsSelected() {
+		if (symptomsSelected == null) {
+			if (StringUtils.isEmpty(requestedSymptomsSelectedString)) {
+				symptomsSelected = new HashSet<>();
+			} else {
+				symptomsSelected =
+						Arrays.stream(requestedSymptomsSelectedString.split(",")).map(SymptomsList::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return symptomsSelected;
+	}
+
+	public void setSymptomsSelected(Set<SymptomsList> symptomsSelected) {
+		this.symptomsSelected = symptomsSelected;
+
+		if (this.symptomsSelected == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		symptomsSelected.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		requestedSymptomsSelectedString = sb.toString();
+	}
+
+	public String getRequestedSymptomsSelectedString() {
+		return requestedSymptomsSelectedString;
+	}
+
+	public void setRequestedSymptomsSelectedString(String requestedSymptomsSelectedString) {
+		this.requestedSymptomsSelectedString = requestedSymptomsSelectedString;
+		symptomsSelected = null;
+	}
+	public Date getDateOfOnsetRash(){
+		return dateOfOnsetRash;
+	}
+	public void setDateOfOnsetRash(Date dateOfOnsetRash) {
+		this.dateOfOnsetRash = dateOfOnsetRash;
+	}
+
+	@Transient
+	public Set<MpoxRashArea> getRashSymptoms() {
+		if (rashSymptoms == null) {
+			if (StringUtils.isEmpty(requestedRashSymptomsString)) {
+				rashSymptoms = new HashSet<>();
+			} else {
+				rashSymptoms =
+						Arrays.stream(requestedRashSymptomsString.split(",")).map(MpoxRashArea::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return rashSymptoms;
+	}
+	public void setRashSymptoms(Set<MpoxRashArea> rashSymptoms) {
+		this.rashSymptoms = rashSymptoms;
+
+		if (this.rashSymptoms == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		rashSymptoms.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		requestedRashSymptomsString = sb.toString();
+	}
+
+	public String getRashSymptomsOtherAreas(){
+		return rashSymptomsOtherAreas;
+	}
+	public void setRashSymptomsOtherAreas(String rashSymptomsOtherAreas) {
+		this.rashSymptomsOtherAreas = rashSymptomsOtherAreas;
+	}
+
+	public YesNo getAreLesionsSameState(){
+		return areLesionsSameState;
+	}
+	public void setAreLesionsSameState(YesNo areLesionsSameState) {
+		this.areLesionsSameState = areLesionsSameState;
+	}
+	public YesNo getAreLesionsSameSize(){
+		return areLesionsSameSize;
+	}
+	public void setAreLesionsSameSize(YesNo areLesionsSameSize) {
+		this.areLesionsSameSize = areLesionsSameSize;
+	}
+	public YesNo getAreLesionsDeep(){
+		return areLesionsDeep;
+	}
+	public void setAreLesionsDeep(YesNo areLesionsDeep) {
+		this.areLesionsDeep = areLesionsDeep;
+	}
+	public YesNo getAreUlcersAmong(){
+		return areUlcersAmong;
+	}
+	public void setAreUlcersAmong(YesNo areUlcersAmong) {
+		this.areUlcersAmong = areUlcersAmong;
+	}
+	public SymptomsList getTypeOfRash(){
+		return typeOfRash;
+	}
+	public void setTypeOfRash(SymptomsList typeOfRash) {
+		this.typeOfRash = typeOfRash;
+	}
+
+	public String getSymptomsSelectedOther(){
+		return symptomsSelectedOther;
+	}
+	public void setSymptomsSelectedOther(String symptomsSelectedOther) {
+		this.symptomsSelectedOther = symptomsSelectedOther;
+	}
+
+	public String getRequestedRashSymptomsString() {
+		return requestedRashSymptomsString;
+	}
+
+	public void setRequestedRashSymptomsString(String requestedRashSymptomsString) {
+		this.requestedRashSymptomsString = requestedRashSymptomsString;
+		rashSymptoms = null;
+	}
+
 }

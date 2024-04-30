@@ -22,6 +22,7 @@ import static de.symeda.sormas.api.CountryHelper.COUNTRY_CODE_SWITZERLAND;
 import static de.symeda.sormas.api.Disease.*;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.validation.constraints.Size;
 
@@ -29,6 +30,7 @@ import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
@@ -253,6 +255,16 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String DIZZINESS = "dizziness";
 	public static final String EXCESSIVE_SWEATING = "excessiveSweating";
 	public static final String NUMBNESS = "numbness";
+	public static final String SYMPTOMS_SELECTED = "symptomsSelected";
+	public static final String SYMPTOMS_SELECTED_OTHER = "symptomsSelectedOther";
+	public static final String DATE_OF_ONSET_RASH = "dateOfOnsetRash";
+	public static final String RASH_SYMPTOMS = "rashSymptoms";
+	public static final String RASH_SYMPTOMS_OTHER_AREAS = "rashSymptomsOtherAreas";
+	public static final String ARE_LESIONS_IN_SAME_STATE = "areLesionsSameState";
+	public static final String ARE_LESIONS_SAME_SIZE = "areLesionsSameSize";
+	public static final String ARE_LESIONS_DEEP = "areLesionsDeep";
+	public static final String ARE_ULCERS_AMONG_LESIONS = "areUlcersAmong";
+	public static final String TYPE_OF_RASH = "typeOfRash";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -2191,6 +2203,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CORONAVIRUS,
 		UNDEFINED,
 		FOODBORNE_ILLNESS,
+		MONKEYPOX,
 		OTHER })
 	@Complication
 	@HideForCountries
@@ -2216,6 +2229,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CORONAVIRUS,
 		UNDEFINED,
 		FOODBORNE_ILLNESS,
+		MONKEYPOX,
 		OTHER })
 	@DependantOn(OTHER_COMPLICATIONS)
 	@Complication
@@ -2415,6 +2429,16 @@ public class SymptomsDto extends PseudonymizableDto {
 	private YesNo symptomsOngoing;
 	private DurationHours durationHours;
 	private String nameOfHealthFacility;
+	private Set<SymptomsList> symptomsSelected;
+	private String symptomsSelectedOther;
+	private Date dateOfOnsetRash;
+	private Set<MpoxRashArea> rashSymptoms;
+	private String rashSymptomsOtherAreas;
+	private YesNo areLesionsSameState;
+	private YesNo areLesionsSameSize;
+	private YesNo areLesionsDeep;
+	private YesNo areUlcersAmong;
+	private SymptomsList typeOfRash;
 
 	@Order(0)
 	public Float getTemperature() {
@@ -3982,6 +4006,47 @@ public class SymptomsDto extends PseudonymizableDto {
 	public DurationHours getDurationHours() { return durationHours;}
 	@Order(371)
 	public String getNameOfHealthFacility() { return nameOfHealthFacility;}
+	@Order(372)
+	@ImportIgnore
+	public Set<SymptomsList> getSymptomsSelected() {
+		return symptomsSelected;
+	}
+	@Order(373)
+	public Date getDateOfOnsetRash(){
+		return dateOfOnsetRash;
+	}
+	@Order(374)
+	public Set<MpoxRashArea> getRashSymptoms(){
+		return rashSymptoms;
+	}
+	@Order(375)
+	public String getRashSymptomsOtherAreas(){
+		return rashSymptomsOtherAreas;
+	}
+	@Order(376)
+	public YesNo getAreLesionsSameState(){
+		return areLesionsSameState;
+	}
+	@Order(377)
+	public YesNo getAreLesionsSameSize(){
+		return areLesionsSameSize;
+	}
+	@Order(378)
+	public YesNo getAreLesionsDeep(){
+		return areLesionsDeep;
+	}
+	@Order(379)
+	public YesNo getAreUlcersAmong(){
+		return areUlcersAmong;
+	}
+	@Order(380)
+	public SymptomsList getTypeOfRash(){
+		return typeOfRash;
+	}
+	@Order(381)
+	public String getSymptomsSelectedOther(){
+		return symptomsSelectedOther;
+	}
 
 	public void setComa(SymptomState coma) {
 		this.coma = coma;
@@ -4188,5 +4253,35 @@ public class SymptomsDto extends PseudonymizableDto {
 	}
 	public void setNameOfHealthFacility(String nameOfHealthFacility) {
 		this.nameOfHealthFacility = nameOfHealthFacility;
+	}
+	public void setSymptomsSelected(Set<SymptomsList> symptomsSelected) {
+		this.symptomsSelected = symptomsSelected;
+	}
+	public void setDateOfOnsetRash(Date dateOfOnsetRash) {
+		this.dateOfOnsetRash = dateOfOnsetRash;
+	}
+	public void setRashSymptoms(Set<MpoxRashArea> rashSymptoms) {
+		this.rashSymptoms = rashSymptoms;
+	}
+	public void setRashSymptomsOtherAreas(String rashSymptomsOtherAreas) {
+		this.rashSymptomsOtherAreas = rashSymptomsOtherAreas;
+	}
+	public void setAreLesionsSameState(YesNo areLesionsSameState) {
+		this.areLesionsSameState = areLesionsSameState;
+	}
+	public void setAreLesionsSameSize(YesNo areLesionsSameSize) {
+		this.areLesionsSameSize = areLesionsSameSize;
+	}
+	public void setAreLesionsDeep(YesNo areLesionsDeep) {
+		this.areLesionsDeep = areLesionsDeep;
+	}
+	public void setAreUlcersAmong(YesNo areUlcersAmong) {
+		this.areUlcersAmong = areUlcersAmong;
+	}
+	public void setTypeOfRash(SymptomsList typeOfRash) {
+		this.typeOfRash = typeOfRash;
+	}
+	public void setSymptomsSelectedOther(String symptomsSelectedOther) {
+		this.symptomsSelectedOther = symptomsSelectedOther;
 	}
 }

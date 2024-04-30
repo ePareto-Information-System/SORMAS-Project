@@ -2679,6 +2679,7 @@ public interface Captions {
 	String Symptoms_swollenGlands = "Symptoms.swollenGlands";
 	String Symptoms_symptomatic = "Symptoms.symptomatic";
 	String Symptoms_symptomOnset = "Symptoms.symptomOnset";
+	String Symptoms_symptomsSelected = "Symptoms.symptomsSelected";
 	String Symptoms_symptomsComments = "Symptoms.symptomsComments";
 	String Symptoms_symptomsNotOccurred = "Symptoms.symptomsNotOccurred";
 	String Symptoms_symptomsOccurred = "Symptoms.symptomsOccurred";
@@ -2717,6 +2718,15 @@ public interface Captions {
 	String Symptoms_dizziness = "Symptoms.dizziness";
 	String Symptoms_excessiveSweating = "Symptoms.excessiveSweating";
 	String Symptoms_numbness = "Symptoms.numbness";
+	String Symptoms_dateOfOnsetRash = "Symptoms.dateOfOnsetRash";
+	String Symptoms_rashSymptoms = "Symptoms.rashSymptoms";
+	String Symptoms_rashSymptomsOtherAreas = "Symptoms.rashSymptomsOtherAreas";
+	String Symptoms_areLesionsSameState = "Symptoms.areLesionsSameState";
+	String Symptoms_areLesionsSameSize = "Symptoms.areLesionsSameSize";
+	String Symptoms_areLesionsDeep = "Symptoms.areLesionsDeep";
+	String Symptoms_areUlcersAmong = "Symptoms.areUlcersAmong";
+	String Symptoms_typeOfRash = "Symptoms.typeOfRash";
+	String Symptoms_symptomsSelectedOther = "Symptoms.symptomsSelectedOther";
 	String Symptoms_nameOfHealthFacility = "Symptoms.nameOfHealthFacility";
 	String sync = "sync";
 	String syncErrors = "syncErrors";

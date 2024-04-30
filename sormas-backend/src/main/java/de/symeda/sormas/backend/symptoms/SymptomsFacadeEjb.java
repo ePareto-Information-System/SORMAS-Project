@@ -240,6 +240,16 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setSymptomsOngoing(source.getSymptomsOngoing());
 		target.setDurationHours(source.getDurationHours());
 		target.setNameOfHealthFacility(source.getNameOfHealthFacility());
+		target.setSymptomsSelected(source.getSymptomsSelected());
+		target.setDateOfOnsetRash(source.getDateOfOnsetRash());
+		target.setRashSymptoms(source.getRashSymptoms());
+		target.setRashSymptomsOtherAreas(source.getRashSymptomsOtherAreas());
+		target.setAreLesionsSameState(source.getAreLesionsSameState());
+		target.setAreLesionsSameSize(source.getAreLesionsSameSize());
+		target.setAreLesionsDeep(source.getAreLesionsDeep());
+		target.setAreUlcersAmong(source.getAreUlcersAmong());
+		target.setTypeOfRash(source.getTypeOfRash());
+		target.setSymptomsSelectedOther(source.getSymptomsSelectedOther());
 
 		return target;
 	}
@@ -461,6 +471,16 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setSymptomsOngoing(source.getSymptomsOngoing());
 		target.setDurationHours(source.getDurationHours());
 		target.setNameOfHealthFacility(source.getNameOfHealthFacility());
+		target.setSymptomsSelected(source.getSymptomsSelected());
+		target.setDateOfOnsetRash(source.getDateOfOnsetRash());
+		target.setRashSymptoms(source.getRashSymptoms());
+		target.setRashSymptomsOtherAreas(source.getRashSymptomsOtherAreas());
+		target.setAreLesionsSameState(source.getAreLesionsSameState());
+		target.setAreLesionsSameSize(source.getAreLesionsSameSize());
+		target.setAreLesionsDeep(source.getAreLesionsDeep());
+		target.setAreUlcersAmong(source.getAreUlcersAmong());
+		target.setTypeOfRash(source.getTypeOfRash());
+		target.setSymptomsSelectedOther(source.getSymptomsSelectedOther());
 
 
 		return target;
@@ -674,7 +694,6 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setLeftInjectionSite(source.getLeftInjectionSite());
 		target.setTrueAfp(source.getTrueAfp());
 		target.setOutcome(source.getOutcome());
-		target.setOutcome(source.getOutcome());
 		target.setBodyAche(source.getBodyAche());
 		target.setDizziness(source.getDizziness());
 		target.setExcessiveSweating(source.getExcessiveSweating());
@@ -682,6 +701,16 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setSymptomsOngoing(source.getSymptomsOngoing());
 		target.setDurationHours(source.getDurationHours());
 		target.setNameOfHealthFacility(source.getNameOfHealthFacility());
+		target.setSymptomsSelected(source.getSymptomsSelected());
+		target.setDateOfOnsetRash(source.getDateOfOnsetRash());
+		target.setRashSymptoms(source.getRashSymptoms());
+		target.setRashSymptomsOtherAreas(source.getRashSymptomsOtherAreas());
+		target.setAreLesionsSameState(source.getAreLesionsSameState());
+		target.setAreLesionsSameSize(source.getAreLesionsSameSize());
+		target.setAreLesionsDeep(source.getAreLesionsDeep());
+		target.setAreUlcersAmong(source.getAreUlcersAmong());
+		target.setTypeOfRash(source.getTypeOfRash());
+		target.setSymptomsSelectedOther(source.getSymptomsSelectedOther());
 
 		return target;
 	}

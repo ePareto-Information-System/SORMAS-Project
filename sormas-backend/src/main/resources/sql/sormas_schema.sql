@@ -13144,4 +13144,19 @@ ALTER TABLE cases ADD COLUMN districtofresidence VARCHAR(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (580, 'Added 7 properties to case create for MPox');
 
+-- 2024-04-29 Added requestedsymptomsselectedstring to symptoms for MPox
+
+ALTER TABLE symptoms ADD COLUMN requestedsymptomsselectedstring varchar(512);
+ALTER TABLE symptoms ADD COLUMN requestedrashsymptomsstring varchar(512);
+ALTER TABLE symptoms ADD COLUMN dateofonsetrash Date;
+ALTER TABLE symptoms ADD COLUMN rashsymptomsotherareas varchar(255);
+ALTER TABLE symptoms ADD COLUMN arelesionssamestate varchar(55);
+ALTER TABLE symptoms ADD COLUMN arelesionssamesize varchar(55);
+ALTER TABLE symptoms ADD COLUMN arelesionsdeep varchar(55);
+ALTER TABLE symptoms ADD COLUMN areulcersamong varchar(55);
+ALTER TABLE symptoms ADD COLUMN typeofrash varchar(512);
+ALTER TABLE symptoms ADD COLUMN symptomsselectedother varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (581, 'Added 9 properties to symptoms for MPox');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
