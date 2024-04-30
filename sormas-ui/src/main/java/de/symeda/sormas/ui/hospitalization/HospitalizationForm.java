@@ -281,7 +281,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		ComboBox durationHours = addField(HospitalizationDto.DURATION_HOURS, ComboBox.class);
 
 		tickSymptomField.addItems(
-				Arrays.stream(SymptomsList.values())
+				Arrays.stream(SymptomsList.FoodBorne())
 						.filter( c -> fieldVisibilityCheckers.isVisible(SymptomsList.class, c.name()))
 						.collect(Collectors.toList()));
 

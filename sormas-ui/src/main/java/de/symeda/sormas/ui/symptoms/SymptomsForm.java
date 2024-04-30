@@ -58,6 +58,7 @@ import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
+import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -67,6 +68,7 @@ import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.sample.SampleDto;
+import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.SymptomsContext;
@@ -77,13 +79,7 @@ import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import de.symeda.sormas.api.visit.VisitStatus;
-import de.symeda.sormas.ui.utils.AbstractEditForm;
-import de.symeda.sormas.ui.utils.ButtonHelper;
-import de.symeda.sormas.ui.utils.CssStyles;
-import de.symeda.sormas.ui.utils.FieldHelper;
-import de.symeda.sormas.ui.utils.NullableOptionGroup;
-import de.symeda.sormas.ui.utils.OutbreakFieldVisibilityChecker;
-import de.symeda.sormas.ui.utils.ViewMode;
+import de.symeda.sormas.ui.utils.*;
 
 public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
@@ -112,6 +108,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	private static final String MONKEYPOX_LESIONS_IMG4 = "monkeypoxLesionsImg4";
 	private static final String SYMPTOMS_HINT_LOC = "symptomsHintLoc";
 	private static final String COMPLICATIONS_HEADING = "complicationsHeading";
+	private static final String MPOX_SYMPTOMS_HEADING_LOC = " symptomsHeading";
 
 	private static Map<String, List<String>> symptomGroupMap = new HashMap();
 
@@ -125,6 +122,17 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowCss(VSPACE_3,
 							//XXX #1620 fluidColumnLoc?
 							fluidColumn(8, 0, loc(SYMPTOMS_HINT_LOC))) +
+					loc(MPOX_SYMPTOMS_HEADING_LOC) +
+					fluidRowLocs(SymptomsDto.SYMPTOMS_SELECTED)+
+					fluidRowLocs(6,SymptomsDto.SYMPTOMS_SELECTED_OTHER)+
+					fluidRowLocs(8, DATE_OF_ONSET_RASH)+
+					fluidRowLocs(RASH_SYMPTOMS)+
+					fluidRowLocs(6, RASH_SYMPTOMS_OTHER_AREAS)+
+					fluidRowLocs(ARE_LESIONS_IN_SAME_STATE)+
+					fluidRowLocs(ARE_LESIONS_SAME_SIZE)+
+					fluidRowLocs(ARE_LESIONS_DEEP)+
+					fluidRowLocs(ARE_ULCERS_AMONG_LESIONS)+
+					fluidRowLocs(6, TYPE_OF_RASH)+
 					fluidRowLocs(6,DATE_OF_ONSET) +
 					fluidRowLocs(6,FEVER_BODY_TEMP_GREATER) +
 					fluidRow(fluidColumn(8,4, locCss(CssStyles.ALIGN_RIGHT,BUTTONS_LOC)))+
@@ -217,6 +225,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	private List<String> monkeypoxImageFieldIds;
 	private Button clearAllButton;
 	private Button setEmptyToNoButton;
+	OptionGroup tickSymptomField;
+	OptionGroup tickRashCharacteristicsField;
 
 	public SymptomsForm(
 		CaseDataDto caze,
@@ -770,6 +780,33 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			STOPPED_SUCKING_AFTER_TWO_DAYS,
 			STIFFNESS);
 
+		Label symptomsHeadingLabel = new Label(I18nProperties.getString(Strings.headingSymptoms));
+		symptomsHeadingLabel.addStyleName(H3);
+		getContent().addComponent(symptomsHeadingLabel, MPOX_SYMPTOMS_HEADING_LOC);
+		symptomsHeadingLabel.setVisible(false);
+
+		tickSymptomField = addField(SymptomsDto.SYMPTOMS_SELECTED, OptionGroup.class);
+		CssStyles.style(tickSymptomField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+		tickSymptomField.setMultiSelect(true);
+
+		tickSymptomField.addItems(
+				Arrays.stream(SymptomsList.MpoxList())
+						.filter( c -> fieldVisibilityCheckers.isVisible(SymptomsList.class, c.name()))
+						.collect(Collectors.toList()));
+
+		tickSymptomField.setVisible(false);
+
+		tickRashCharacteristicsField = addField(SymptomsDto.RASH_SYMPTOMS, OptionGroup.class);
+		CssStyles.style(tickRashCharacteristicsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+		tickRashCharacteristicsField.setMultiSelect(true);
+
+		tickRashCharacteristicsField.addItems(
+				Arrays.stream(MpoxRashArea.values())
+						.filter( c -> fieldVisibilityCheckers.isVisible(MpoxRashArea.class, c.name()))
+						.collect(Collectors.toList()));
+
+		tickRashCharacteristicsField.setVisible(false);
+
 		// Set visibilities
 
 		NullableOptionGroup feverField = (NullableOptionGroup) getFieldGroup().getField(FEVER);
@@ -960,6 +997,29 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					.setVisibleWhen(symptomsOngoing, Arrays.asList(durationHours), Arrays.asList(YesNo.NO), true);
 
 			foodHistoryHeadingLabel.setVisible(true);
+
+		}
+
+		if(disease == Disease.MONKEYPOX){
+			setVisible(false, SYMPTOMS_COMMENTS);
+
+			symptomsHeadingLabel.setVisible(true);
+			tickSymptomField.setVisible(true);
+			onsetSymptom.setVisible(true);
+			setVisible(true, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
+
+			addField(SYMPTOMS_SELECTED_OTHER, TextField.class);
+			addField(DATE_OF_ONSET_RASH, DateField.class);
+
+			tickRashCharacteristicsField.setVisible(true);
+
+			addField(RASH_SYMPTOMS_OTHER_AREAS, TextField.class);
+			addField(ARE_LESIONS_IN_SAME_STATE, NullableOptionGroup.class);
+			addField(ARE_LESIONS_SAME_SIZE, NullableOptionGroup.class);
+			addField(ARE_LESIONS_DEEP, NullableOptionGroup.class);
+			addField(ARE_ULCERS_AMONG_LESIONS, NullableOptionGroup.class);
+			addField(TYPE_OF_RASH, ComboBox.class);
+
 
 		}
 		
