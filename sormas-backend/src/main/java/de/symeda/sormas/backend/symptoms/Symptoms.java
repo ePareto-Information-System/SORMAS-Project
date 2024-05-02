@@ -32,6 +32,7 @@ import javax.persistence.TemporalType;
 //import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
+import de.symeda.sormas.api.symptoms.GuineaWormFirstSymptom;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.TemperatureSource;
 import de.symeda.sormas.api.utils.*;
@@ -264,6 +265,14 @@ public class Symptoms extends AbstractDomainObject {
 	private YesNo trueAfp;
 	private SymptomState dyspnea;
 	private SymptomState tachypnea;
+
+	private GuineaWormFirstSymptom firstSignOrSymptomsBeforeWorm;
+	private String firstSignOrSymptomsBeforeWormOthers;
+	private SymptomState emergenceOfGuineaWorm;
+	private String numberOfWorms;
+	private SymptomState firstWormThisYear;
+	private Date dateFirstWormEmergence;
+	private SymptomState caseDetectedBeforeWormEmergence;
 
 	public Symptoms() {
 	}
@@ -2036,5 +2045,61 @@ public class Symptoms extends AbstractDomainObject {
 	}
 	public void setTachypnea(SymptomState tachypnea) {
 		this.tachypnea = tachypnea;
+	}
+
+	public GuineaWormFirstSymptom getFirstSignOrSymptomsBeforeWorm() {
+		return firstSignOrSymptomsBeforeWorm;
+	}
+
+	public void setFirstSignOrSymptomsBeforeWorm(GuineaWormFirstSymptom firstSignOrSymptomsBeforeWorm) {
+		this.firstSignOrSymptomsBeforeWorm = firstSignOrSymptomsBeforeWorm;
+	}
+
+	public String getFirstSignOrSymptomsBeforeWormOthers() {
+		return firstSignOrSymptomsBeforeWormOthers;
+	}
+
+	public void setFirstSignOrSymptomsBeforeWormOthers(String firstSignOrSymptomsBeforeWormOthers) {
+		this.firstSignOrSymptomsBeforeWormOthers = firstSignOrSymptomsBeforeWormOthers;
+	}
+
+	public SymptomState getEmergenceOfGuineaWorm() {
+		return emergenceOfGuineaWorm;
+	}
+
+	public void setEmergenceOfGuineaWorm(SymptomState emergenceOfGuineaWorm) {
+		this.emergenceOfGuineaWorm = emergenceOfGuineaWorm;
+	}
+
+	public String getNumberOfWorms() {
+		return numberOfWorms;
+	}
+
+	public void setNumberOfWorms(String numberOfWorms) {
+		this.numberOfWorms = numberOfWorms;
+	}
+
+	public SymptomState getFirstWormThisYear() {
+		return firstWormThisYear;
+	}
+
+	public void setFirstWormThisYear(SymptomState firstWormThisYear) {
+		this.firstWormThisYear = firstWormThisYear;
+	}
+
+	public Date getDateFirstWormEmergence() {
+		return dateFirstWormEmergence;
+	}
+
+	public void setDateFirstWormEmergence(Date dateFirstWormEmergence) {
+		this.dateFirstWormEmergence = dateFirstWormEmergence;
+	}
+
+	public SymptomState getCaseDetectedBeforeWormEmergence() {
+		return caseDetectedBeforeWormEmergence;
+	}
+
+	public void setCaseDetectedBeforeWormEmergence(SymptomState caseDetectedBeforeWormEmergence) {
+		this.caseDetectedBeforeWormEmergence = caseDetectedBeforeWormEmergence;
 	}
 }

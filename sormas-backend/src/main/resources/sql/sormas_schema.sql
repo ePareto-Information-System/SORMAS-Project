@@ -13036,4 +13036,12 @@ ALTER TABLE persontravelhistory ADD COLUMN change_user_id BIGINT,
 
 INSERT INTO schema_version (version_number, comment) VALUES (571, 'Added change_user_id to persontravelhistory');
 
+ALTER TABLE symptoms ADD COLUMN firstSignOrSymptomsBeforeWorm varchar(255);
+ALTER TABLE symptoms ADD COLUMN firstSignOrSymptomsBeforeWormOthers varchar(255);
+ALTER TABLE symptoms ADD COLUMN emergenceOfGuineaWorm varchar(255);
+ALTER TABLE symptoms ADD COLUMN numberOfWorms varchar(255);
+ALTER TABLE symptoms ADD COLUMN firstWormThisYear varchar(255);
+ALTER TABLE symptoms ADD COLUMN dateFirstWormEmergence DATE;
+ALTER TABLE symptoms ADD COLUMN caseDetectedBeforeWormEmergence varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (572, 'Added columns to symptoms to implement guinea worm symptoms data');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

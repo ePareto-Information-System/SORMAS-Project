@@ -496,7 +496,10 @@ public final class SymptomsHelper {
 		appendYesSymptom(string, symptomsDto.getDizzinessStandingUp(), SymptomsDto.DIZZINESS_STANDING_UP);
 		appendYesSymptom(string, symptomsDto.getHighOrLowBloodPressure(), SymptomsDto.HIGH_OR_LOW_BLOOD_PRESSURE);
 		appendYesSymptom(string, symptomsDto.getUrinaryRetention(), SymptomsDto.URINARY_RETENTION);
-
+//		emergenceOfGuineaWorm
+		appendYesSymptom(string, symptomsDto.getEmergenceOfGuineaWorm(), SymptomsDto.EMERGENCE_OF_GUINEA_WORM);
+		appendYesSymptom(string, symptomsDto.getFirstWormThisYear(), SymptomsDto.FIRST_WORM_THIS_YEAR);
+		appendYesSymptom(string, symptomsDto.getCaseDetectedBeforeWormEmergence(), SymptomsDto.CASE_DETECTED_BEFORE_WORM_EMERGENCE);
 		appendNotNullValue(string, symptomsDto.getOtherComplicationsText(), SymptomsDto.OTHER_COMPLICATIONS_TEXT);
 
 		// symptomsComments;
