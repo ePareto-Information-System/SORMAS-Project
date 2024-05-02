@@ -17,7 +17,9 @@
  *******************************************************************************/
 
 package de.symeda.sormas.backend.riskfactor;
+import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.riskfactor.DrinkingWaterSource;
+import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
@@ -25,6 +27,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import java.util.Date;
 
 @Entity
 public class RiskFactor extends AbstractDomainObject {
@@ -67,23 +70,28 @@ public class RiskFactor extends AbstractDomainObject {
     private YesNo vibrioCholeraeIdentifiedInStools;
     private YesNo drugsSensitiveToVibrioStrain;
     private YesNo drugsResistantToVibrioStrain;
-    private YesNoUnknown drinkingWaterInfectedByVibrio;
-    private YesNoUnknown nonDrinkingWaterInfectedByVibrio;
-    private YesNoUnknown foodItemsInfectedByVibrio;
-    private String waterUsedForDrinking;
-    private YesNoUnknown threeDaysPriorToDiseaseWaterSourceOne;
-    private YesNoUnknown threeDaysPriorToDiseaseWaterSourceTwo;
-    private YesNoUnknown threeDaysPriorToDiseaseWaterSourceThree;
-    private YesNoUnknown threeDaysPriorToDiseaseWaterSourceFour;
-    private YesNoUnknown threeDaysPriorToDiseaseWaterSourceFive;
-    private YesNoUnknown threeDaysPriorToDiseaseFoodItemsOne;
-    private YesNoUnknown threeDaysPriorToDiseaseFoodItemsTwo;
-    private YesNoUnknown threeDaysPriorToDiseaseFoodItemsThree;
-    private YesNoUnknown threeDaysPriorToDiseaseFoodItemsFour;
-    private YesNoUnknown threeDaysPriorToDiseaseFoodItemsFive;
-    private YesNoUnknown threeDaysPriorToDiseaseAttendAnyFuneral;
-    private YesNoUnknown threeDaysPriorToDiseaseAttendAnySocialEvent;
-    private String otherSocialEventDetails;
+    private YesNo patientSpoxVaccinationScarPresent;
+    private YesNo patientTravelledAnywhere3WeeksPrior;
+    private String patientTravelled3WeeksIfYesIndicate;
+    private YesNo patientTravelledPeriodOfIllness;
+    private String patientTravelledIllnessIfYesIndicate;
+    private String otherPlaces;
+    private YesNo during3WeeksPatientContactWithSimilarSymptoms;
+    private String during3WeeksPatientContactWithSimilarSymptomsIfYes;
+    private Date dateOfContactWithIllPerson;
+    private YesNo patientTouchDomesticWildAnimal;
+    private String patientTouchDomesticWildAnimalIfYes;
+    private CaseOutcome statusOfPatient;
+    private Date dateOfDeath;
+    private String placeOfDeath;
+    private Date dateOfSpecimenCollection;
+    private SampleMaterial typeOfSpecimenCollection;
+    private String investigatorName;
+    private String investigatorTitle;
+    private String investigatorAddress;
+    private String investigatorTel;
+    private String email;
+
 
     public String getDrinkingWaterSourceOne() {
         return drinkingWaterSourceOne;
@@ -493,5 +501,172 @@ public class RiskFactor extends AbstractDomainObject {
     }
     public void setDrugsResistantToVibrioStrain(YesNo drugsResistantToVibrioStrain) {
         this.drugsResistantToVibrioStrain = drugsResistantToVibrioStrain;
+    }
+    public YesNo getPatientSpoxVaccinationScarPresent() {
+        return patientSpoxVaccinationScarPresent;
+    }
+
+    public void setPatientSpoxVaccinationScarPresent(YesNo patientSpoxVaccinationScarPresent) {
+        this.patientSpoxVaccinationScarPresent = patientSpoxVaccinationScarPresent;
+    }
+
+    public YesNo getPatientTravelledAnywhere3WeeksPrior() {
+        return patientTravelledAnywhere3WeeksPrior;
+    }
+
+    public void setPatientTravelledAnywhere3WeeksPrior(YesNo patientTravelledAnywhere3WeeksPrior) {
+        this.patientTravelledAnywhere3WeeksPrior = patientTravelledAnywhere3WeeksPrior;
+    }
+
+    public String getPatientTravelled3WeeksIfYesIndicate() {
+        return patientTravelled3WeeksIfYesIndicate;
+    }
+
+    public void setPatientTravelled3WeeksIfYesIndicate(String patientTravelled3WeeksIfYesIndicate) {
+        this.patientTravelled3WeeksIfYesIndicate = patientTravelled3WeeksIfYesIndicate;
+    }
+
+    public YesNo getPatientTravelledPeriodOfIllness() {
+        return patientTravelledPeriodOfIllness;
+    }
+
+    public void setPatientTravelledPeriodOfIllness(YesNo patientTravelledPeriodOfIllness) {
+        this.patientTravelledPeriodOfIllness = patientTravelledPeriodOfIllness;
+    }
+
+    public String getPatientTravelledIllnessIfYesIndicate() {
+        return patientTravelledIllnessIfYesIndicate;
+    }
+
+    public void setPatientTravelledIllnessIfYesIndicate(String patientTravelledIllnessIfYesIndicate) {
+        this.patientTravelledIllnessIfYesIndicate = patientTravelledIllnessIfYesIndicate;
+    }
+
+    public String getOtherPlaces() {
+        return otherPlaces;
+    }
+
+    public void setOtherPlaces(String otherPlaces) {
+        this.otherPlaces = otherPlaces;
+    }
+
+    public YesNo getDuring3WeeksPatientContactWithSimilarSymptoms() {
+        return during3WeeksPatientContactWithSimilarSymptoms;
+    }
+
+    public void setDuring3WeeksPatientContactWithSimilarSymptoms(YesNo during3WeeksPatientContactWithSimilarSymptoms) {
+        this.during3WeeksPatientContactWithSimilarSymptoms = during3WeeksPatientContactWithSimilarSymptoms;
+    }
+
+    public String getDuring3WeeksPatientContactWithSimilarSymptomsIfYes() {
+        return during3WeeksPatientContactWithSimilarSymptomsIfYes;
+    }
+
+    public void setDuring3WeeksPatientContactWithSimilarSymptomsIfYes(String during3WeeksPatientContactWithSimilarSymptomsIfYes) {
+        this.during3WeeksPatientContactWithSimilarSymptomsIfYes = during3WeeksPatientContactWithSimilarSymptomsIfYes;
+    }
+
+    public Date getDateOfContactWithIllPerson() {
+        return dateOfContactWithIllPerson;
+    }
+
+    public void setDateOfContactWithIllPerson(Date dateOfContactWithIllPerson) {
+        this.dateOfContactWithIllPerson = dateOfContactWithIllPerson;
+    }
+
+    public YesNo getPatientTouchDomesticWildAnimal() {
+        return patientTouchDomesticWildAnimal;
+    }
+
+    public void setPatientTouchDomesticWildAnimal(YesNo patientTouchDomesticWildAnimal) {
+        this.patientTouchDomesticWildAnimal = patientTouchDomesticWildAnimal;
+    }
+
+    public String getPatientTouchDomesticWildAnimalIfYes() {
+        return patientTouchDomesticWildAnimalIfYes;
+    }
+
+    public void setPatientTouchDomesticWildAnimalIfYes(String patientTouchDomesticWildAnimalIfYes) {
+        this.patientTouchDomesticWildAnimalIfYes = patientTouchDomesticWildAnimalIfYes;
+    }
+
+    public CaseOutcome getStatusOfPatient() {
+        return statusOfPatient;
+    }
+
+    public void setStatusOfPatient(CaseOutcome statusOfPatient) {
+        this.statusOfPatient = statusOfPatient;
+    }
+
+    public Date getDateOfDeath() {
+        return dateOfDeath;
+    }
+
+    public void setDateOfDeath(Date dateOfDeath) {
+        this.dateOfDeath = dateOfDeath;
+    }
+
+    public String getPlaceOfDeath() {
+        return placeOfDeath;
+    }
+
+    public void setPlaceOfDeath(String placeOfDeath) {
+        this.placeOfDeath = placeOfDeath;
+    }
+
+    public Date getDateOfSpecimenCollection() {
+        return dateOfSpecimenCollection;
+    }
+
+    public void setDateOfSpecimenCollection(Date dateOfSpecimenCollection) {
+        this.dateOfSpecimenCollection = dateOfSpecimenCollection;
+    }
+
+    public SampleMaterial getTypeOfSpecimenCollection() {
+        return typeOfSpecimenCollection;
+    }
+
+    public void setTypeOfSpecimenCollection(SampleMaterial typeOfSpecimenCollection) {
+        this.typeOfSpecimenCollection = typeOfSpecimenCollection;
+    }
+
+    public String getInvestigatorName() {
+        return investigatorName;
+    }
+
+    public void setInvestigatorName(String investigatorName) {
+        this.investigatorName = investigatorName;
+    }
+
+    public String getInvestigatorTitle() {
+        return investigatorTitle;
+    }
+
+    public void setInvestigatorTitle(String investigatorTitle) {
+        this.investigatorTitle = investigatorTitle;
+    }
+
+    public String getInvestigatorAddress() {
+        return investigatorAddress;
+    }
+
+    public void setInvestigatorAddress(String investigatorAddress) {
+        this.investigatorAddress = investigatorAddress;
+    }
+
+    public String getInvestigatorTel() {
+        return investigatorTel;
+    }
+
+    public void setInvestigatorTel(String investigatorTel) {
+        this.investigatorTel = investigatorTel;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

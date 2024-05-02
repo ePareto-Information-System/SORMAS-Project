@@ -1,6 +1,9 @@
 package de.symeda.sormas.api.riskfactor;
 
+import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.sample.SampleMaterial;
+import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import de.symeda.sormas.api.utils.YesNo;
@@ -9,6 +12,8 @@ import de.symeda.sormas.api.EntityDto;
 
 
 
+
+import java.util.Date;
 
 @DependingOnFeatureType(featureType = FeatureType.CASE_SURVEILANCE)
 public class RiskFactorDto extends PseudonymizableDto {
@@ -52,6 +57,27 @@ public class RiskFactorDto extends PseudonymizableDto {
     public static final String VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS = "vibrioCholeraeIdentifiedInStools";
     public static final String DRUGS_SENSITIVE_TO_VIBRIO_STRAIN = "drugsSensitiveToVibrioStrain";
     public static final String DRUGS_RESISTANT_TO_VIBRIO_STRAIN = "drugsResistantToVibrioStrain";
+    public static final String PATIENT_SPOX_VACCINATION_SCAR_PRESENT = "patientSpoxVaccinationScarPresent";
+    public static final String PATIENT_TRAVELLED_ANYWHERE_3WEEKS_PRIOR = "patientTravelledAnywhere3WeeksPrior";
+    public static final String PATIENT_TRAVELLED_3WEEKS_IF_YES_INDICATE = "patientTravelled3WeeksIfYesIndicate";
+    public static final String PATIENT_TRAVELLED_PERIOD_OF_ILLNESS = "patientTravelledPeriodOfIllness";
+    public static final String PATIENT_TRAVELLED_ILLNESS_IF_YES_INDICATE = "patientTravelledIllnessIfYesIndicate";
+    public static final String OTHER_PLACES = "otherPlaces";
+    public static final String DURING_3WEEKS_PATIENT_CONTACT_WITH_SIMILAR_SYMPTOMS = "during3WeeksPatientContactWithSimilarSymptoms";
+    public static final String DURING_3WEEKS_PATIENT_CONTACT_WITH_SIMILAR_SYMPTOMS_IF_YES = "during3WeeksPatientContactWithSimilarSymptomsIfYes";
+    public static final String DATE_OF_CONTACT_WITH_ILL_PERSON = "dateOfContactWithIllPerson";
+    public static final String PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL = "patientTouchDomesticWildAnimal";
+    public static final String PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL_IF_YES = "patientTouchDomesticWildAnimalIfYes";
+    public static final String STATUS_OF_PATIENT = "statusOfPatient";
+    public static final String DATE_OF_DEATH = "dateOfDeath";
+    public static final String PLACE_OF_DEATH = "placeOfDeath";
+    public static final String DATE_OF_SPECIMEN_COLLECTION = "dateOfSpecimenCollection";
+    public static final String TYPE_OF_SPECIMEN_COLLECTION = "typeOfSpecimenCollection";
+    public static final String INVESTIGATOR_NAME = "investigatorName";
+    public static final String INVESTIGATOR_TITLE = "investigatorTitle";
+    public static final String INVESTIGATOR_ADDRESS = "investigatorAddress";
+    public static final String INVESTIGATOR_TEL = "investigatorTel";
+    public static final String EMAIL = "email";
 
     private String drinkingWaterSourceOne;
     private String drinkingWaterSourceTwo;
@@ -89,6 +115,28 @@ public class RiskFactorDto extends PseudonymizableDto {
     private YesNo vibrioCholeraeIdentifiedInStools;
     private YesNo drugsSensitiveToVibrioStrain;
     private YesNo drugsResistantToVibrioStrain;
+
+    private YesNo patientSpoxVaccinationScarPresent;
+    private YesNo patientTravelledAnywhere3WeeksPrior;
+    private String patientTravelled3WeeksIfYesIndicate;
+    private YesNo patientTravelledPeriodOfIllness;
+    private String patientTravelledIllnessIfYesIndicate;
+    private String otherPlaces;
+    private YesNo during3WeeksPatientContactWithSimilarSymptoms;
+    private String during3WeeksPatientContactWithSimilarSymptomsIfYes;
+    private Date dateOfContactWithIllPerson;
+    private YesNo patientTouchDomesticWildAnimal;
+    private String patientTouchDomesticWildAnimalIfYes;
+    private CaseOutcome statusOfPatient;
+    private Date dateOfDeath;
+    private String placeOfDeath;
+    private Date dateOfSpecimenCollection;
+    private SampleMaterial typeOfSpecimenCollection;
+    private String investigatorName;
+    private String investigatorTitle;
+    private String investigatorAddress;
+    private String investigatorTel;
+    private String email;
 
     public static RiskFactorDto build() {
         RiskFactorDto riskFactorDto  = new RiskFactorDto();
@@ -511,5 +559,173 @@ public class RiskFactorDto extends PseudonymizableDto {
 
     public void setDrugsResistantToVibrioStrain(YesNo drugsResistantToVibrioStrain) {
         this.drugsResistantToVibrioStrain = drugsResistantToVibrioStrain;
+    }
+
+    public YesNo getPatientSpoxVaccinationScarPresent() {
+        return patientSpoxVaccinationScarPresent;
+    }
+
+    public void setPatientSpoxVaccinationScarPresent(YesNo patientSpoxVaccinationScarPresent) {
+        this.patientSpoxVaccinationScarPresent = patientSpoxVaccinationScarPresent;
+    }
+
+    public YesNo getPatientTravelledAnywhere3WeeksPrior() {
+        return patientTravelledAnywhere3WeeksPrior;
+    }
+
+    public void setPatientTravelledAnywhere3WeeksPrior(YesNo patientTravelledAnywhere3WeeksPrior) {
+        this.patientTravelledAnywhere3WeeksPrior = patientTravelledAnywhere3WeeksPrior;
+    }
+
+    public String getPatientTravelled3WeeksIfYesIndicate() {
+        return patientTravelled3WeeksIfYesIndicate;
+    }
+
+    public void setPatientTravelled3WeeksIfYesIndicate(String patientTravelled3WeeksIfYesIndicate) {
+        this.patientTravelled3WeeksIfYesIndicate = patientTravelled3WeeksIfYesIndicate;
+    }
+
+    public YesNo getPatientTravelledPeriodOfIllness() {
+        return patientTravelledPeriodOfIllness;
+    }
+
+    public void setPatientTravelledPeriodOfIllness(YesNo patientTravelledPeriodOfIllness) {
+        this.patientTravelledPeriodOfIllness = patientTravelledPeriodOfIllness;
+    }
+
+    public String getPatientTravelledIllnessIfYesIndicate() {
+        return patientTravelledIllnessIfYesIndicate;
+    }
+
+    public void setPatientTravelledIllnessIfYesIndicate(String patientTravelledIllnessIfYesIndicate) {
+        this.patientTravelledIllnessIfYesIndicate = patientTravelledIllnessIfYesIndicate;
+    }
+
+    public String getOtherPlaces() {
+        return otherPlaces;
+    }
+
+    public void setOtherPlaces(String otherPlaces) {
+        this.otherPlaces = otherPlaces;
+    }
+
+    public YesNo getDuring3WeeksPatientContactWithSimilarSymptoms() {
+        return during3WeeksPatientContactWithSimilarSymptoms;
+    }
+
+    public void setDuring3WeeksPatientContactWithSimilarSymptoms(YesNo during3WeeksPatientContactWithSimilarSymptoms) {
+        this.during3WeeksPatientContactWithSimilarSymptoms = during3WeeksPatientContactWithSimilarSymptoms;
+    }
+
+    public String getDuring3WeeksPatientContactWithSimilarSymptomsIfYes() {
+        return during3WeeksPatientContactWithSimilarSymptomsIfYes;
+    }
+
+    public void setDuring3WeeksPatientContactWithSimilarSymptomsIfYes(String during3WeeksPatientContactWithSimilarSymptomsIfYes) {
+        this.during3WeeksPatientContactWithSimilarSymptomsIfYes = during3WeeksPatientContactWithSimilarSymptomsIfYes;
+    }
+
+    public Date getDateOfContactWithIllPerson() {
+        return dateOfContactWithIllPerson;
+    }
+
+    public void setDateOfContactWithIllPerson(Date dateOfContactWithIllPerson) {
+        this.dateOfContactWithIllPerson = dateOfContactWithIllPerson;
+    }
+
+    public YesNo getPatientTouchDomesticWildAnimal() {
+        return patientTouchDomesticWildAnimal;
+    }
+
+    public void setPatientTouchDomesticWildAnimal(YesNo patientTouchDomesticWildAnimal) {
+        this.patientTouchDomesticWildAnimal = patientTouchDomesticWildAnimal;
+    }
+
+    public String getPatientTouchDomesticWildAnimalIfYes() {
+        return patientTouchDomesticWildAnimalIfYes;
+    }
+
+    public void setPatientTouchDomesticWildAnimalIfYes(String patientTouchDomesticWildAnimalIfYes) {
+        this.patientTouchDomesticWildAnimalIfYes = patientTouchDomesticWildAnimalIfYes;
+    }
+
+    public CaseOutcome getStatusOfPatient() {
+        return statusOfPatient;
+    }
+
+    public void setStatusOfPatient(CaseOutcome statusOfPatient) {
+        this.statusOfPatient = statusOfPatient;
+    }
+
+    public Date getDateOfDeath() {
+        return dateOfDeath;
+    }
+
+    public void setDateOfDeath(Date dateOfDeath) {
+        this.dateOfDeath = dateOfDeath;
+    }
+
+    public String getPlaceOfDeath() {
+        return placeOfDeath;
+    }
+
+    public void setPlaceOfDeath(String placeOfDeath) {
+        this.placeOfDeath = placeOfDeath;
+    }
+
+    public Date getDateOfSpecimenCollection() {
+        return dateOfSpecimenCollection;
+    }
+
+    public void setDateOfSpecimenCollection(Date dateOfSpecimenCollection) {
+        this.dateOfSpecimenCollection = dateOfSpecimenCollection;
+    }
+
+    public SampleMaterial getTypeOfSpecimenCollection() {
+        return typeOfSpecimenCollection;
+    }
+
+    public void setTypeOfSpecimenCollection(SampleMaterial typeOfSpecimenCollection) {
+        this.typeOfSpecimenCollection = typeOfSpecimenCollection;
+    }
+
+    public String getInvestigatorName() {
+        return investigatorName;
+    }
+
+    public void setInvestigatorName(String investigatorName) {
+        this.investigatorName = investigatorName;
+    }
+
+    public String getInvestigatorTitle() {
+        return investigatorTitle;
+    }
+
+    public void setInvestigatorTitle(String investigatorTitle) {
+        this.investigatorTitle = investigatorTitle;
+    }
+
+    public String getInvestigatorAddress() {
+        return investigatorAddress;
+    }
+
+    public void setInvestigatorAddress(String investigatorAddress) {
+        this.investigatorAddress = investigatorAddress;
+    }
+
+    public String getInvestigatorTel() {
+        return investigatorTel;
+    }
+
+    public void setInvestigatorTel(String investigatorTel) {
+        this.investigatorTel = investigatorTel;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
