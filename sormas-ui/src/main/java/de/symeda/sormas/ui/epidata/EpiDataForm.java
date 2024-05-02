@@ -33,6 +33,7 @@ import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
+import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.epidata.ContactSetting;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.utils.CardOrHistory;
@@ -44,7 +45,6 @@ import de.symeda.sormas.ui.utils.*;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.v7.ui.Field;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityDto;
@@ -80,10 +80,10 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	private static final String OTHER_PERSONS_HEADING = "otherPersonsHeading";
 	private static final String NUMBER_OF_PERSONS_NO_AFFECTED = "numberOfPersonsNoAffected";
 
+	private static final String TRAVEL_HISTORY_HEADING = "travelHistoryHeadingLoc";
 	//@formatter:off
 	private static final String MAIN_HTML_LAYOUT =
 			loc(LOC_EXPOSURE_TRAVEL_HISTORY_HEADING) +
-
 					loc(EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_INFLUENZA)+
 					fluidRowLocs(6, EpiDataDto.YEAR_OF_VACCINATION)+
 					loc(EpiDataDto.PLACES_VISITED_PAST_7DAYS)+
@@ -114,6 +114,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 					loc(EpiDataDto.ACTIVITIES_AS_CASE) +
 					locCss(VSPACE_TOP_3, LOC_EPI_DATA_FIELDS_HINT) +
+					loc(TRAVEL_HISTORY_HEADING) +
+					loc(EpiDataDto.PERSON_TRAVEL_HISTORY)+
 					loc(EpiDataDto.HIGH_TRANSMISSION_RISK_AREA) +
 					loc(EpiDataDto.LARGE_OUTBREAKS_AREA) +
 					loc(EpiDataDto.AREA_INFECTED_ANIMALS) +
@@ -218,6 +220,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		if (parentClass == CaseDataDto.class) {
 			addActivityAsCaseFields();
+			addPersonTravelHistoryFields();
 		}
 
 		addField(EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, NullableOptionGroup.class);
@@ -481,6 +484,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		if (disease == Disease.CHOLERA) {
 //			hideAllFields();
 			setVisible(true, EpiDataDto.EXPOSED_TO_RISK_FACTOR, EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE);
+
 		}
 		if(disease == Disease.FOODBORNE_ILLNESS){
 			Label otherPersonsHeadingLabel =
@@ -518,9 +522,19 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		if (disease == Disease.GUINEA_WORM) {
 //			hideAllFields();
-
+			setVisible(true, EpiDataDto.PERSON_TRAVEL_HISTORY);
+			Label travelHistoryHeading = new Label(I18nProperties.getString(Strings.headingTravelHistoryOfPatientTenToFourteenMonth));
+			travelHistoryHeading.setStyleName(H3);
+			getContent().addComponent(travelHistoryHeading, TRAVEL_HISTORY_HEADING);
 		}
 
+	}
+
+	//addPersonTravelHistoryFields
+	private void addPersonTravelHistoryFields() {
+		PersonTravelHistoryField personTravelHistoryField = addField(EpiDataDto.PERSON_TRAVEL_HISTORY, PersonTravelHistoryField.class);
+		personTravelHistoryField.setWidthFull();
+		personTravelHistoryField.setPseudonymized(isPseudonymized);
 	}
 
 	private void addActivityAsCaseFields() {

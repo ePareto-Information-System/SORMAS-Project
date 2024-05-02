@@ -13962,4 +13962,33 @@ ALTER TABLE person ADD COLUMN placeStayedtenToFourteenMonthsRegion_id BIGINT;
 ALTER TABLE person ADD COLUMN placeStayedtenToFourteenMonthsCountry_id BIGINT;
 INSERT INTO schema_version (version_number, comment) VALUES (616, 'Added fields to person to implement placeStayedtenToFourteenMonths #26');
 
+-- persontravelhistory
+CREATE TABLE persontravelhistory(
+   id bigint not null,
+   uuid varchar(36) not null unique,
+   changedate timestamp not null,
+   creationdate timestamp not null,
+   epidata_id bigint not null,
+   travelPeriodType varchar(255),
+   dateFrom varchar(255),
+   dateTo varchar(255),
+   village varchar(255),
+   subDistrict_id bigint,
+   district_id bigint,
+   region_id varchar(255),
+--    sys_period tstzrange not null,
+   primary key(id)
+);
+
+ALTER TABLE persontravelhistory OWNER TO sormas_user;
+ALTER TABLE persontravelhistory ADD CONSTRAINT fk_persontravelhistory_epidata_id FOREIGN KEY (epidata_id) REFERENCES epidata(id);
+INSERT INTO schema_version (version_number, comment) VALUES (617, 'Added fields to implement persontravel history for epid data');
+
+ALTER TABLE persontravelhistory ADD COLUMN change_user_id BIGINT,
+                           ADD CONSTRAINT fk_change_user_id
+                               FOREIGN KEY (change_user_id)
+                                   REFERENCES users (id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (618, 'Added change_user_id to persontravelhistory');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
