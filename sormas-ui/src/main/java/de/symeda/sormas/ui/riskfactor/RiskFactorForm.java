@@ -1,14 +1,13 @@
 package de.symeda.sormas.ui.riskfactor;
 
+import com.vaadin.ui.Component;
 import com.vaadin.v7.ui.ComboBox;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.riskfactor.RiskFactorDto;
-import de.symeda.sormas.api.sixtyday.SixtyDayDto;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -16,6 +15,8 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.*;
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import com.vaadin.ui.Label;
+
+import java.util.Set;
 
 import static de.symeda.sormas.ui.utils.CssStyles.SPACING_SMALL;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
@@ -192,6 +193,42 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
         addField(RiskFactorDto.FOOD_ITEMS_INFECTED_BY_VIBRIO, NullableOptionGroup.class);
         addField(RiskFactorDto.WATER_USED_FOR_DRINKING, ComboBox.class);
 
+        hideFieldsForSelectedDisease(disease);
+
+        if(disease == Disease.MONKEYPOX){
+
+            setComponentsVisibilityFalse(
+                 riskFactorHeadingLabel,
+                 potentialVibrioVehiclesDrinkingWater,
+                 potentialVibrioVehiclesNonDrinkingWater,
+                 potentialVibrioVehiclesFoodItems,
+                 potentialVibrioVehiclesBacteriologyLabFindings,
+                 lookingOutForExposureToIdentifiedHazards,
+                 threeDaysPriorToOnsetOfDisease,
+                 threeDaysPriorToOnsetOfDiseaseDrinkingWater,
+                 threeDaysPriorToOnsetOfDiseaseEat,
+                 threeDaysPriorToOnsetOfDiseaseAttendAny
+            );
+
+        }
+
+    }
+
+    private void setComponentsVisibilityFalse(Component... components) {
+        for (Component component : components) {
+            component.setVisible(false);
+        }
+    }
+
+    public void hideFieldsForSelectedDisease(Disease disease) {
+        Set<String> disabledFields = RiskFactorFormConfiguration.getDisabledFieldsForDisease(disease);
+        for (String field : disabledFields) {
+            disableField(field);
+        }
+    }
+
+    private void disableField(String field) {
+        setVisible(false, field);
     }
 
 }
