@@ -30,6 +30,7 @@ import javax.ejb.Stateless;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.epidata.EpiDataFacade;
+import de.symeda.sormas.api.epidata.PersonTravelHistoryDto;
 import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.FacadeHelper;
@@ -39,8 +40,16 @@ import de.symeda.sormas.backend.contact.ContactFacadeEjb;
 import de.symeda.sormas.backend.contact.ContactService;
 import de.symeda.sormas.backend.exposure.Exposure;
 import de.symeda.sormas.backend.exposure.ExposureService;
+import de.symeda.sormas.backend.infrastructure.community.CommunityFacadeEjb;
+import de.symeda.sormas.backend.infrastructure.community.CommunityService;
+import de.symeda.sormas.backend.infrastructure.district.DistrictFacadeEjb;
+import de.symeda.sormas.backend.infrastructure.district.DistrictService;
+import de.symeda.sormas.backend.infrastructure.region.RegionFacadeEjb;
+import de.symeda.sormas.backend.infrastructure.region.RegionService;
 import de.symeda.sormas.backend.location.LocationFacadeEjb;
 import de.symeda.sormas.backend.location.LocationFacadeEjb.LocationFacadeEjbLocal;
+import de.symeda.sormas.backend.persontravelhistory.PersonTravelHistory;
+import de.symeda.sormas.backend.persontravelhistory.PersonTravelHistoryService;
 import de.symeda.sormas.backend.user.UserFacadeEjb;
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
@@ -58,6 +67,15 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 	private ContactService contactService;
 	@EJB
 	private UserService userService;
+	@EJB
+	private RegionService regionService;
+	@EJB
+	private DistrictService districtService;
+	@EJB
+	private CommunityService communityService;
+	@EJB
+	private PersonTravelHistoryService personTravelHistoryService;
+
 
 	public EpiData fillOrBuildEntity(EpiDataDto source, EpiData target, boolean checkChangeDate) {
 		if (source == null) {
@@ -110,6 +128,21 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		}
 		target.getActivitiesAsCase().clear();
 		target.getActivitiesAsCase().addAll(activitiesAsCase);
+
+		List<PersonTravelHistory> personTravelHistories = new ArrayList<>();
+		for (PersonTravelHistoryDto personTravelHistoryDto : source.getPersonTravelHistories()) {
+			PersonTravelHistory personTravelHistory = personTravelHistoryService.getByUuid(personTravelHistoryDto.getUuid());
+			personTravelHistory = fillOrBuildPersonTravelHistoryEntity(personTravelHistoryDto, personTravelHistory, checkChangeDate);
+			personTravelHistory.setEpiData(target);
+			personTravelHistories.add(personTravelHistory);
+		}
+		if (!DataHelper.equalContains(target.getPersonTravelHistories(), personTravelHistories)) {
+			// note: DataHelper.equal does not work here, because target.getAddresses may be a PersistentBag when using lazy loading
+			target.setChangeDateOfEmbeddedLists(new Date());
+		}
+
+		target.getPersonTravelHistories().clear();
+		target.getPersonTravelHistories().addAll(personTravelHistories);
 
 		target.setPatientTravelledTwoWeeksPrior(source.getPatientTravelledTwoWeeksPrior());
 		target.setPatientTravelledInCountryOne(source.getPatientTravelledInCountryOne());
@@ -237,6 +270,25 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		return target;
 	}
 
+	//fillOrBuildPersonTravelHistoryEntity
+	public PersonTravelHistory fillOrBuildPersonTravelHistoryEntity(PersonTravelHistoryDto source, PersonTravelHistory target, boolean checkChangeDate) {
+		if (source == null) {
+			return null;
+		}
+
+		target = DtoHelper.fillOrBuildEntity(source, target, PersonTravelHistory::new, checkChangeDate);
+
+		target.setTravelPeriodType(source.getTravelPeriodType());
+		target.setDateFrom(source.getDateFrom());
+		target.setDateTo(source.getDateTo());
+		target.setVillage(source.getVillage());
+		target.setSubDistrict(communityService.getByReferenceDto(source.getSubDistrict()));
+		target.setDistrict(districtService.getByReferenceDto(source.getDistrict()));
+		target.setRegion(regionService.getByReferenceDto(source.getRegion()));
+
+		return target;
+	}
+
 	public static EpiDataDto toDto(EpiData epiData) {
 
 		if (epiData == null) {
@@ -278,6 +330,13 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 			activityAsCaseDtos.add(activityAsCaseDto);
 		}
 		target.setActivitiesAsCase(activityAsCaseDtos);
+
+		List<PersonTravelHistoryDto> personTravelHistoryDtos = new ArrayList<>();
+		for (PersonTravelHistory personTravelHistory : source.getPersonTravelHistories()) {
+			PersonTravelHistoryDto personTravelHistoryDto = toPersonTravelHistoryDto(personTravelHistory);
+			personTravelHistoryDtos.add(personTravelHistoryDto);
+		}
+		target.setPersonTravelHistories(personTravelHistoryDtos);
 
 		target.setPatientTravelledTwoWeeksPrior(source.getPatientTravelledTwoWeeksPrior());
 		target.setPatientTravelledInCountryOne(source.getPatientTravelledInCountryOne());
@@ -397,6 +456,27 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setGatheringDetails(source.getGatheringDetails());
 		target.setHabitationType(source.getHabitationType());
 		target.setHabitationDetails(source.getHabitationDetails());
+
+		return target;
+	}
+
+	public static PersonTravelHistoryDto toPersonTravelHistoryDto(PersonTravelHistory source) {
+
+		if (source == null) {
+			return null;
+		}
+
+		PersonTravelHistoryDto target = new PersonTravelHistoryDto();
+
+		DtoHelper.fillDto(target, source);
+
+		target.setTravelPeriodType(source.getTravelPeriodType());
+		target.setDateFrom(source.getDateFrom());
+		target.setDateTo(source.getDateTo());
+		target.setVillage(source.getVillage());
+		target.setSubDistrict(CommunityFacadeEjb.toReferenceDto(source.getSubDistrict()));
+		target.setDistrict(DistrictFacadeEjb.toReferenceDto(source.getDistrict()));
+		target.setRegion(RegionFacadeEjb.toReferenceDto(source.getRegion()));
 
 		return target;
 	}

@@ -78,6 +78,7 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATION_CITY_COUNTRY = "patientContactWithConfirmedCaseExposureLocationCityCountry";
 	public static final String EXPOSED_TO_RISK_FACTOR = "exposedToRiskFactor";
 	public static final String WATER_USED_BY_PATIENT_AFTER_EXPOSURE = "waterUsedByPatientAfterExposure";
+	public static final String PERSON_TRAVEL_HISTORY = "personTravelHistories";
 
 
 	@Enumerated(EnumType.STRING)
@@ -135,6 +136,11 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	@Valid
 	private List<ActivityAsCaseDto> activitiesAsCase = new ArrayList<>();
+	@Diseases({
+			Disease.GUINEA_WORM
+	})
+	@Valid
+	private List<PersonTravelHistoryDto> personTravelHistories = new ArrayList<>();
 
 	public YesNo getExposureDetailsKnown() {
 		return exposureDetailsKnown;
@@ -190,8 +196,18 @@ public class EpiDataDto extends PseudonymizableDto {
 		return activitiesAsCase;
 	}
 
+
 	public void setActivitiesAsCase(List<ActivityAsCaseDto> activitiesAsCase) {
 		this.activitiesAsCase = activitiesAsCase;
+	}
+
+	@ImportIgnore
+	public List<PersonTravelHistoryDto> getPersonTravelHistories() {
+		return personTravelHistories;
+	}
+
+	public void setPersonTravelHistories(List<PersonTravelHistoryDto> personTravelHistories) {
+		this.personTravelHistories = personTravelHistories;
 	}
 
 	public YesNo getContactWithSourceCaseKnown() {
@@ -373,6 +389,11 @@ public class EpiDataDto extends PseudonymizableDto {
 		List<ExposureDto> exposureDtos = new ArrayList<>();
 		for (ExposureDto exposure : getExposures()) {
 			exposureDtos.add(exposure.clone());
+		}
+
+		List<PersonTravelHistoryDto> personTravelHistoryDtos = new ArrayList<>();
+		for (PersonTravelHistoryDto personTravelHistory : getPersonTravelHistories()) {
+			personTravelHistoryDtos.add(personTravelHistory.clone());
 		}
 		clone.getExposures().clear();
 		clone.getExposures().addAll(exposureDtos);

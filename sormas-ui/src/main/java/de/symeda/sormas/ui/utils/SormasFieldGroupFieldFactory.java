@@ -27,6 +27,7 @@ import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.ActivityAsCase.ActivityAsCaseField;
 import de.symeda.sormas.ui.clinicalcourse.HealthConditionsForm;
+import de.symeda.sormas.ui.epidata.PersonTravelHistoryField;
 import de.symeda.sormas.ui.exposure.ExposuresField;
 import de.symeda.sormas.ui.hospitalization.PreviousHospitalizationsField;
 import de.symeda.sormas.ui.location.LocationEditForm;
@@ -140,7 +141,7 @@ public class SormasFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 		} else if (ExposuresField.class.isAssignableFrom(fieldType)) {
 			return (T) new ExposuresField(fieldVisibilityCheckers, fieldAccessCheckers, isEditAllowed);
 		} else if (ActivityAsCaseField.class.isAssignableFrom(fieldType)) {
-			return (T) new ActivityAsCaseField(fieldVisibilityCheckers, fieldAccessCheckers, isEditAllowed);
+			return (T) new 	ActivityAsCaseField(fieldVisibilityCheckers, fieldAccessCheckers, isEditAllowed);
 		} else if (LocationsField.class.isAssignableFrom(fieldType)) {
 			return (T) new LocationsField(fieldVisibilityCheckers, fieldAccessCheckers, isEditAllowed);
 		} else if (PersonContactDetailsField.class.isAssignableFrom(fieldType)) {
@@ -166,6 +167,8 @@ public class SormasFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 			return (T) new CheckboxSet();
 		} else if (UserRoleNotificationCheckboxSet.class.isAssignableFrom(fieldType)) {
 			return (T) new UserRoleNotificationCheckboxSet();
+		} else if (PersonTravelHistoryField.class.isAssignableFrom(fieldType)) {
+			return (T) new PersonTravelHistoryField(fieldVisibilityCheckers, fieldAccessCheckers, isEditAllowed);
 		}
 		return super.createField(type, fieldType);
 	}
