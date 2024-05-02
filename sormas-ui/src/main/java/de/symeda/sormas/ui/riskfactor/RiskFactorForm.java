@@ -2,25 +2,31 @@ package de.symeda.sormas.ui.riskfactor;
 
 import com.vaadin.ui.Component;
 import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.DateField;
+import com.vaadin.v7.ui.TextArea;
+import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.riskfactor.RiskFactorDto;
+import de.symeda.sormas.api.sample.SampleMaterial;
+import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.*;
-import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import com.vaadin.ui.Label;
 
+import java.util.Arrays;
 import java.util.Set;
 
-import static de.symeda.sormas.ui.utils.CssStyles.SPACING_SMALL;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
-import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
+import static de.symeda.sormas.ui.utils.CssStyles.*;
+import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 
 public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
 
@@ -35,6 +41,9 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
     private static final String THREE_DAYS_PRIOR_TO_ONSET_OF_DISEASE_DRINKING_WATER = "threeDaysPriorToOnsetOfDiseaseDrinkingWaterLoc";
     private static final String THREE_DAYS_PRIOR_TO_ONSET_OF_DISEASE_EAT = "headingCaseRiskFactorThreeDaysPriorToOnsetOfDiseaseEatLoc";
     private static final String THREE_DAYS_PRIOR_TO_ONSET_OF_DISEASE_ATTEND_ANY = "threeDaysPriorToOnsetOfDiseaseAttendAnyLoc";
+    private static final String PATIENT_STATUS = "patientStatusLoc";
+    private static final String LABORATORY = "laboratoryLoc";
+    private static final String INVESTIGATING_OFFICER_INFO = "investigatingOfficerInfoLoc";
 
 
 
@@ -69,7 +78,30 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
 
                     loc(THREE_DAYS_PRIOR_TO_ONSET_OF_DISEASE_ATTEND_ANY) +
                     fluidRowLocs(RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_ATTEND_ANY_FUNERAL, RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_ATTEND_ANY_SOCIAL_EVENT) +
-                    fluidRowLocs(RiskFactorDto.OTHER_SOCIAL_EVENT_DETAILS);
+                    fluidRowLocs(RiskFactorDto.OTHER_SOCIAL_EVENT_DETAILS)+
+
+                    //MONKEYPOX
+                    fluidRowLocs(RiskFactorDto.PATIENT_SPOX_VACCINATION_SCAR_PRESENT) +
+                    fluidRowLocs(RiskFactorDto.PATIENT_TRAVELLED_ANYWHERE_3WEEKS_PRIOR) +
+                    fluidRowLocs(RiskFactorDto.PATIENT_TRAVELLED_3WEEKS_IF_YES_INDICATE) +
+                    fluidRowLocs(RiskFactorDto.PATIENT_TRAVELLED_PERIOD_OF_ILLNESS) +
+                    fluidRowLocs(RiskFactorDto.PATIENT_TRAVELLED_ILLNESS_IF_YES_INDICATE) +
+                    fluidRowLocs(RiskFactorDto.OTHER_PLACES) +
+                    fluidRowLocs(RiskFactorDto.DURING_3WEEKS_PATIENT_CONTACT_WITH_SIMILAR_SYMPTOMS) +
+                    fluidRowLocs(RiskFactorDto.DURING_3WEEKS_PATIENT_CONTACT_WITH_SIMILAR_SYMPTOMS_IF_YES) +
+                    fluidRowLocs(6,RiskFactorDto.DATE_OF_CONTACT_WITH_ILL_PERSON) +
+                    fluidRowLocs(RiskFactorDto.PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL) +
+                    fluidRowLocs(RiskFactorDto.PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL_IF_YES) +
+                    loc(PATIENT_STATUS) +
+                    fluidRowLocs(6,RiskFactorDto.STATUS_OF_PATIENT) +
+                    fluidRowLocs(RiskFactorDto.DATE_OF_DEATH, RiskFactorDto.PLACE_OF_DEATH) +
+                    loc(LABORATORY) +
+                    fluidRowLocs(6,RiskFactorDto.DATE_OF_SPECIMEN_COLLECTION) +
+                    fluidRowLocs(6,RiskFactorDto.TYPE_OF_SPECIMEN_COLLECTION) +
+                    loc(INVESTIGATING_OFFICER_INFO) +
+                    fluidRowLocs(6,RiskFactorDto.INVESTIGATOR_NAME) +
+                    fluidRowLocs(RiskFactorDto.INVESTIGATOR_TITLE, RiskFactorDto.INVESTIGATOR_ADDRESS) +
+                    fluidRowLocs(RiskFactorDto.INVESTIGATOR_TEL, RiskFactorDto.EMAIL);
 
     private final Disease disease;
     private final Class<? extends EntityDto> parentClass;
@@ -198,7 +230,6 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
         if(disease == Disease.MONKEYPOX){
 
             setComponentsVisibilityFalse(
-                 riskFactorHeadingLabel,
                  potentialVibrioVehiclesDrinkingWater,
                  potentialVibrioVehiclesNonDrinkingWater,
                  potentialVibrioVehiclesFoodItems,
@@ -209,6 +240,58 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
                  threeDaysPriorToOnsetOfDiseaseEat,
                  threeDaysPriorToOnsetOfDiseaseAttendAny
             );
+
+            createLabel(I18nProperties.getString(Strings.headingPatientStatus), H3, PATIENT_STATUS);
+            createLabel(I18nProperties.getString(Strings.headingLaboratory), H3, LABORATORY);
+            createLabel(I18nProperties.getString(Strings.headingInvestigatingOfficer), H3, INVESTIGATING_OFFICER_INFO);
+
+            addField(RiskFactorDto.PATIENT_SPOX_VACCINATION_SCAR_PRESENT, NullableOptionGroup.class);
+            NullableOptionGroup travelled3weeks = addField(RiskFactorDto.PATIENT_TRAVELLED_ANYWHERE_3WEEKS_PRIOR, NullableOptionGroup.class);
+            TextArea indicatePlaces = addField(RiskFactorDto.PATIENT_TRAVELLED_3WEEKS_IF_YES_INDICATE, TextArea.class);
+            indicatePlaces.setRows(3);
+            NullableOptionGroup travelledIllness = addField(RiskFactorDto.PATIENT_TRAVELLED_PERIOD_OF_ILLNESS, NullableOptionGroup.class);
+            TextArea indicateTravel = addField(RiskFactorDto.PATIENT_TRAVELLED_ILLNESS_IF_YES_INDICATE, TextArea.class);
+            indicateTravel.setRows(3);
+            TextArea otherPlaces = addField(RiskFactorDto.OTHER_PLACES, TextArea.class);
+            otherPlaces.setRows(3);
+            NullableOptionGroup weeksSymptoms = addField(RiskFactorDto.DURING_3WEEKS_PATIENT_CONTACT_WITH_SIMILAR_SYMPTOMS, NullableOptionGroup.class);
+            TextArea during3Weeks = addField(RiskFactorDto.DURING_3WEEKS_PATIENT_CONTACT_WITH_SIMILAR_SYMPTOMS_IF_YES, TextArea.class);
+            addField(RiskFactorDto.DATE_OF_CONTACT_WITH_ILL_PERSON, DateField.class);
+            NullableOptionGroup patientTouch = addField(RiskFactorDto.PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL, NullableOptionGroup.class);
+            TextArea patientTouchYes = addField(RiskFactorDto.PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL_IF_YES, TextArea.class);
+
+            ComboBox outcome = new ComboBox("Outcome");
+
+            for (CaseOutcome caseOutcome : CaseOutcome.values()) {
+                if (caseOutcome == CaseOutcome.DECEASED || caseOutcome == CaseOutcome.ALIVE) {
+                    outcome.addItem(caseOutcome);
+                }
+            }
+            addField(RiskFactorDto.STATUS_OF_PATIENT, outcome);
+
+            addField(RiskFactorDto.DATE_OF_DEATH, DateField.class);
+            addField(RiskFactorDto.PLACE_OF_DEATH, TextField.class);
+            addField(RiskFactorDto.DATE_OF_SPECIMEN_COLLECTION, DateField.class);
+
+            ComboBox specimen = new ComboBox("Outcome");
+
+            for (SampleMaterial sample : SampleMaterial.values()) {
+                if (sample == SampleMaterial.CRUST || sample == SampleMaterial.SWAB || sample == SampleMaterial.WHOLE_BLOOD) {
+                    specimen.addItem(sample);
+                }
+            }
+            addField(RiskFactorDto.TYPE_OF_SPECIMEN_COLLECTION, specimen);
+
+            addField(RiskFactorDto.INVESTIGATOR_NAME, TextField.class);
+            addField(RiskFactorDto.INVESTIGATOR_TITLE, TextField.class);
+            addField(RiskFactorDto.INVESTIGATOR_ADDRESS, TextField.class);
+            addField(RiskFactorDto.INVESTIGATOR_TEL, TextField.class);
+            addField(RiskFactorDto.EMAIL, TextField.class);
+
+            FieldHelper.setVisibleWhen(travelled3weeks, Arrays.asList(indicatePlaces), Arrays.asList(YesNo.YES), true);
+            FieldHelper.setVisibleWhen(travelledIllness, Arrays.asList(indicateTravel), Arrays.asList(YesNo.YES), true);
+            FieldHelper.setVisibleWhen(weeksSymptoms, Arrays.asList(during3Weeks), Arrays.asList(YesNo.YES), true);
+            FieldHelper.setVisibleWhen(patientTouch, Arrays.asList(patientTouchYes), Arrays.asList(YesNo.YES), true);
 
         }
 
@@ -229,6 +312,14 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
 
     private void disableField(String field) {
         setVisible(false, field);
+    }
+
+    private Label createLabel(String text, String h4, String location) {
+        final Label label = new Label(text);
+        label.setId(text);
+        label.addStyleName(h4);
+        getContent().addComponent(label, location);
+        return label;
     }
 
 }

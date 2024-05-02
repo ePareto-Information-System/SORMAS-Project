@@ -70,8 +70,29 @@ public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boo
         target.setVibrioCholeraeIdentifiedInStools(source.getVibrioCholeraeIdentifiedInStools());
         target.setDrugsSensitiveToVibrioStrain(source.getDrugsSensitiveToVibrioStrain());
         target.setDrugsResistantToVibrioStrain(source.getDrugsResistantToVibrioStrain());
+        target.setPatientSpoxVaccinationScarPresent(source.getPatientSpoxVaccinationScarPresent());
+        target.setPatientTravelledAnywhere3WeeksPrior(source.getPatientTravelledAnywhere3WeeksPrior());
+        target.setPatientTravelled3WeeksIfYesIndicate(source.getPatientTravelled3WeeksIfYesIndicate());
+        target.setPatientTravelledPeriodOfIllness(source.getPatientTravelledPeriodOfIllness());
+        target.setPatientTravelledIllnessIfYesIndicate(source.getPatientTravelledIllnessIfYesIndicate());
+        target.setOtherPlaces(source.getOtherPlaces());
+        target.setDuring3WeeksPatientContactWithSimilarSymptoms(source.getDuring3WeeksPatientContactWithSimilarSymptoms());
+        target.setDuring3WeeksPatientContactWithSimilarSymptomsIfYes(source.getDuring3WeeksPatientContactWithSimilarSymptomsIfYes());
+        target.setDateOfContactWithIllPerson(source.getDateOfContactWithIllPerson());
+        target.setPatientTouchDomesticWildAnimal(source.getPatientTouchDomesticWildAnimal());
+        target.setPatientTouchDomesticWildAnimalIfYes(source.getPatientTouchDomesticWildAnimalIfYes());
+        target.setStatusOfPatient(source.getStatusOfPatient());
+        target.setDateOfDeath(source.getDateOfDeath());
+        target.setPlaceOfDeath(source.getPlaceOfDeath());
+        target.setDateOfSpecimenCollection(source.getDateOfSpecimenCollection());
+        target.setTypeOfSpecimenCollection(source.getTypeOfSpecimenCollection());
+        target.setInvestigatorName(source.getInvestigatorName());
+        target.setInvestigatorTitle(source.getInvestigatorTitle());
+        target.setInvestigatorAddress(source.getInvestigatorAddress());
+        target.setInvestigatorTel(source.getInvestigatorTel());
+        target.setEmail(source.getEmail());
 
-        return target;
+    return target;
     }
 
     public static RiskFactorDto toDto(RiskFactor riskFactor) {
@@ -118,6 +139,28 @@ public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boo
         target.setVibrioCholeraeIdentifiedInStools(source.getVibrioCholeraeIdentifiedInStools());
         target.setDrugsSensitiveToVibrioStrain(source.getDrugsSensitiveToVibrioStrain());
         target.setDrugsResistantToVibrioStrain(source.getDrugsResistantToVibrioStrain());
+        target.setPatientSpoxVaccinationScarPresent(source.getPatientSpoxVaccinationScarPresent());
+        target.setPatientTravelledAnywhere3WeeksPrior(source.getPatientTravelledAnywhere3WeeksPrior());
+        target.setPatientTravelled3WeeksIfYesIndicate(source.getPatientTravelled3WeeksIfYesIndicate());
+        target.setPatientTravelledPeriodOfIllness(source.getPatientTravelledPeriodOfIllness());
+        target.setPatientTravelledIllnessIfYesIndicate(source.getPatientTravelledIllnessIfYesIndicate());
+        target.setOtherPlaces(source.getOtherPlaces());
+        target.setDuring3WeeksPatientContactWithSimilarSymptoms(source.getDuring3WeeksPatientContactWithSimilarSymptoms());
+        target.setDuring3WeeksPatientContactWithSimilarSymptomsIfYes(source.getDuring3WeeksPatientContactWithSimilarSymptomsIfYes());
+        target.setDateOfContactWithIllPerson(source.getDateOfContactWithIllPerson());
+        target.setPatientTouchDomesticWildAnimal(source.getPatientTouchDomesticWildAnimal());
+        target.setPatientTouchDomesticWildAnimalIfYes(source.getPatientTouchDomesticWildAnimalIfYes());
+        target.setStatusOfPatient(source.getStatusOfPatient());
+        target.setDateOfDeath(source.getDateOfDeath());
+        target.setPlaceOfDeath(source.getPlaceOfDeath());
+        target.setDateOfSpecimenCollection(source.getDateOfSpecimenCollection());
+        target.setTypeOfSpecimenCollection(source.getTypeOfSpecimenCollection());
+        target.setInvestigatorName(source.getInvestigatorName());
+        target.setInvestigatorTitle(source.getInvestigatorTitle());
+        target.setInvestigatorAddress(source.getInvestigatorAddress());
+        target.setInvestigatorTel(source.getInvestigatorTel());
+        target.setEmail(source.getEmail());
+
 
         return target;
     }

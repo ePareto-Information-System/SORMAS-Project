@@ -2441,6 +2441,28 @@ public interface Captions {
 	String SixtyDay_telNo = "telNo";
 	String SixtyDay_dateOfCompletionOfForm = "dateOfCompletionOfForm";
 	String SixtyDay_nameOfHealthFacility = "nameOfHealthFacility";
+	String RiskFactor_patientSpoxVaccinationScarPresent = "patientSpoxVaccinationScarPresent";
+	String RiskFactor_patientTravelledAnywhere3WeeksPrior = "patientTravelledAnywhere3WeeksPrior";
+	String RiskFactor_patientTravelled3WeeksIfYesIndicate = "patientTravelled3WeeksIfYesIndicate";
+	String RiskFactor_patientTravelledPeriodOfIllness = "patientTravelledPeriodOfIllness";
+	String RiskFactor_patientTravelledIllnessIfYesIndicate = "patientTravelledIllnessIfYesIndicate";
+	String RiskFactor_otherPlaces = "otherPlaces";
+	String RiskFactor_during3WeeksPatientContactWithSimilarSymptoms = "during3WeeksPatientContactWithSimilarSymptoms";
+	String RiskFactor_during3WeeksPatientContactWithSimilarSymptomsIfYes = "during3WeeksPatientContactWithSimilarSymptomsIfYes";
+	String RiskFactor_dateOfContactWithIllPerson = "dateOfContactWithIllPerson";
+	String RiskFactor_patientTouchDomesticWildAnimal = "patientTouchDomesticWildAnimal";
+	String RiskFactor_patientTouchDomesticWildAnimalIfYes = "patientTouchDomesticWildAnimalIfYes";
+	String RiskFactor_statusOfPatient = "statusOfPatient";
+	String RiskFactor_dateOfDeath = "dateOfDeath";
+	String RiskFactor_placeOfDeath = "placeOfDeath";
+	String RiskFactor_dateOfSpecimenCollection = "dateOfSpecimenCollection";
+	String RiskFactor_typeOfSpecimenCollection = "typeOfSpecimenCollection";
+	String RiskFactor_investigatorName = "investigatorName";
+	String RiskFactor_investigatorTitle = "investigatorTitle";
+	String RiskFactor_investigatorAddress = "investigatorAddress";
+	String RiskFactor_investigatorTel = "investigatorTel";
+	String RiskFactor_email = "email";
+
 
 	String sormasToSormasCaseNotShared = "sormasToSormasCaseNotShared";
 	String sormasToSormasContactNotShared = "sormasToSormasContactNotShared";

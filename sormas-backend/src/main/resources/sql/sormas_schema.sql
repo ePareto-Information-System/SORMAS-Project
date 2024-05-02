@@ -13225,5 +13225,28 @@ ALTER TABLE riskfactor ADD COLUMN drugsResistantToVibrioStrain VARCHAR(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (584, 'Added columns to epiData, riskfactor to implement patientVisitedHealthCareFacility #26');
 
+-- For risk factor assessment
+ALTER TABLE riskfactor ADD COLUMN patientspoxvaccinationscarpresent VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN patienttravelledanywhere3weeksprior VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN patienttravelled3weeksifyesindicate VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN patienttravelledperiodofillness VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN patienttravelledillnessifyesindicate VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN otherplaces VARCHAR(512);
+ALTER TABLE riskfactor ADD COLUMN during3weekspatientcontactwithsimilarsymptoms VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN during3weekspatientcontactwithsimilarsymptomsifyes VARCHAR(512);
+ALTER TABLE riskfactor ADD COLUMN dateofcontactwithillperson Date;
+ALTER TABLE riskfactor ADD COLUMN patienttouchdomesticwildanimal VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN patienttouchdomesticwildanimalifyes VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN statusofpatient VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN dateofdeath Date;
+ALTER TABLE riskfactor ADD COLUMN placeofdeath VARCHAR(255);
+ALTER TABLE riskfactor ADD COLUMN dateofspecimencollection Date;
+ALTER TABLE riskfactor ADD COLUMN typeofspecimencollection VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN investigatorname VARCHAR(255);
+ALTER TABLE riskfactor ADD COLUMN investigatortitle VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN investigatoraddress VARCHAR(255);
+ALTER TABLE riskfactor ADD COLUMN investigatortel VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN email VARCHAR(255);
 
+INSERT INTO schema_version (version_number, comment) VALUES (585, 'Added columns to risk factor assessment for MonkeyPox');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
