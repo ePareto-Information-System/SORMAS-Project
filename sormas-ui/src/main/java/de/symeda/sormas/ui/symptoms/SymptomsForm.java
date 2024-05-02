@@ -75,6 +75,11 @@ import de.symeda.sormas.api.symptoms.SymptomsContext;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.symptoms.SymptomsHelper;
 import de.symeda.sormas.api.utils.*;
+import de.symeda.sormas.api.symptoms.*;
+import de.symeda.sormas.api.utils.DateComparator;
+import de.symeda.sormas.api.utils.InjectionSite;
+import de.symeda.sormas.api.utils.SymptomGroup;
+import de.symeda.sormas.api.utils.SymptomGrouping;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
@@ -176,6 +181,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					locsCss(VSPACE_3, PATIENT_ILL_LOCATION, SYMPTOMS_COMMENTS) +
 					fluidRowLocs(6, ONSET_SYMPTOM) +
 					fluidRowLocs(6, ONSET_DATE) +
+					fluidRowLocsCss(VSPACE_3, ONSET_SYMPTOM, ONSET_DATE) +
+					fluidRowLocsCss(FIRST_WORM_THIS_YEAR, FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS, NUMBER_OF_WORMS, DATE_FIRST_WORM_EMERGENCE) +
 					//loc(CLINICAL_HISTORY_HEADING_LOC) +
 					fluidRowLocs(6,OUTCOME)+
 					fluidRowLocs(PROVISONAL_DIAGNOSIS)+
@@ -552,7 +559,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			STIFFNESS,
 			DIZZINESS,
 			EXCESSIVE_SWEATING,
-			NUMBNESS);
+			NUMBNESS,
+			EMERGENCE_OF_GUINEA_WORM,
+			FIRST_WORM_THIS_YEAR,
+			CASE_DETECTED_BEFORE_WORM_EMERGENCE);
 
 		TextField babyAgeAtDeath = addField(AGE_AT_DEATH_DAYS, TextField.class);
 		TextField ageOfOnsetDays =  addField(AGE_AT_ONSET_DAYS, TextField.class);
@@ -779,7 +789,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			BABY_NORMAL_AT_BIRTH,
 			NORMAL_CRY_AND_SUCK,
 			STOPPED_SUCKING_AFTER_TWO_DAYS,
-			STIFFNESS);
+			STIFFNESS,
+			EMERGENCE_OF_GUINEA_WORM,
+			FIRST_WORM_THIS_YEAR,
+			CASE_DETECTED_BEFORE_WORM_EMERGENCE);
 
 		Label symptomsHeadingLabel = new Label(I18nProperties.getString(Strings.headingSymptoms));
 		symptomsHeadingLabel.addStyleName(H3);
@@ -1066,6 +1079,15 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			setVisible(true, SKIN_RASH, FEVER, COUGH,RUNNY_NOSE, CONJUNCTIVITIS, KOPLIKS_SPOTS, NON_VASCULAR);
 
 			setVisible(false, ALTERED_CONSCIOUSNESS, CONFUSED_DISORIENTED, HEMORRHAGIC_SYNDROME, HYPERGLYCEMIA, OTHER_COMPLICATIONS_TEXT, OTHER_COMPLICATIONS, SEIZURES);
+		} else if (disease == Disease.GUINEA_WORM) {
+			addField(FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM, NullableOptionGroup.class);
+			addField(FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS, TextField.class);
+			FieldHelper.setVisibleWhen(getFieldGroup(), FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS, FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM, Arrays.asList(GuineaWormFirstSymptom.OTHERS), true);
+
+			addField(NUMBER_OF_WORMS, TextField.class);
+			FieldHelper.setVisibleWhen(getFieldGroup(), NUMBER_OF_WORMS, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
+
+			addField(DATE_FIRST_WORM_EMERGENCE, DateField.class);
 		}
 
 		if (symptomsContext != SymptomsContext.CASE) {

@@ -2898,6 +2898,13 @@ public interface Captions {
 	String Symptoms_leftInjectionSite = "Symptoms.leftInjectionSite";
 	String Symptoms_trueAfp = "Symptoms.trueAfp";
 	String Symptoms_wheezing = "Symptoms.wheezing";
+	String Symptoms_firstSignOrSymptomsBeforeWorm = "Symptoms.firstSignOrSymptomsBeforeWorm";
+	String Symptoms_firstSignOrSymptomsBeforeWormOthers = "Symptoms.firstSignOrSymptomsBeforeWormOthers";
+	String Symptoms_emergenceOfGuineaWorm = "Symptoms.emergenceOfGuineaWorm";
+	String Symptoms_numberOfWorms = "Symptoms.numberOfWorms";
+	String Symptoms_firstWormThisYear = "Symptoms.firstWormThisYear";
+	String Symptoms_dateFirstWormEmergence = "Symptoms.dateFirstWormEmergence";
+	String Symptoms_caseDetectedBeforeWormEmergence = "Symptoms.caseDetectedBeforeWormEmergence";
 	String symptomsLesionsLocations = "symptomsLesionsLocations";
 	String symptomsMaxTemperature = "symptomsMaxTemperature";
 	String symptomsSetClearedToNo = "symptomsSetClearedToNo";

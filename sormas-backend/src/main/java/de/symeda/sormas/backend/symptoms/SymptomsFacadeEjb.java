@@ -248,7 +248,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setLeftInjectionSite(source.getLeftInjectionSite());
 		target.setTrueAfp(source.getTrueAfp());
 		target.setDyspnea(source.getDyspnea());
-		target.setDyspnea(source.getTachypnea());
+		target.setTachypnea(source.getTachypnea());
 		target.setBodyAche(source.getBodyAche());
 		target.setBabyDied(source.getBabyDied());
 		target.setAgeAtDeathDays(source.getAgeAtDeathDays());
@@ -274,6 +274,16 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setAreUlcersAmong(source.getAreUlcersAmong());
 		target.setTypeOfRash(source.getTypeOfRash());
 		target.setSymptomsSelectedOther(source.getSymptomsSelectedOther());
+		target.setTachypnea(source.getTachypnea());
+		target.setFirstSignOrSymptomsBeforeWorm(source.getFirstSignOrSymptomsBeforeWorm());
+		target.setFirstSignOrSymptomsBeforeWormOthers(source.getFirstSignOrSymptomsBeforeWormOthers());
+		target.setEmergenceOfGuineaWorm(source.getEmergenceOfGuineaWorm());
+		target.setNumberOfWorms(source.getNumberOfWorms());
+		target.setFirstWormThisYear(source.getFirstWormThisYear());
+		target.setDateFirstWormEmergence(source.getDateFirstWormEmergence());
+		target.setCaseDetectedBeforeWormEmergence(source.getCaseDetectedBeforeWormEmergence());
+
+
 
 		return target;
 	}
@@ -500,7 +510,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setLeftInjectionSite(source.getLeftInjectionSite());
 		target.setTrueAfp(source.getTrueAfp());
 		target.setDyspnea(source.getDyspnea());
-		target.setDyspnea(source.getTachypnea());
+		target.setTachypnea(source.getTachypnea());
 		target.setBodyAche(source.getBodyAche());
 		target.setDizziness(source.getDizziness());
 		target.setExcessiveSweating(source.getExcessiveSweating());
@@ -527,6 +537,13 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setStoppedSuckingAfterTwoDays(source.getStoppedSuckingAfterTwoDays());
 		target.setBackache(source.getBackache());
 		target.setStiffness(source.getStiffness());
+		target.setFirstSignOrSymptomsBeforeWorm(source.getFirstSignOrSymptomsBeforeWorm());
+		target.setFirstSignOrSymptomsBeforeWormOthers(source.getFirstSignOrSymptomsBeforeWormOthers());
+		target.setEmergenceOfGuineaWorm(source.getEmergenceOfGuineaWorm());
+		target.setNumberOfWorms(source.getNumberOfWorms());
+		target.setFirstWormThisYear(source.getFirstWormThisYear());
+		target.setDateFirstWormEmergence(source.getDateFirstWormEmergence());
+		target.setCaseDetectedBeforeWormEmergence(source.getCaseDetectedBeforeWormEmergence());
 
 		return target;
 	}

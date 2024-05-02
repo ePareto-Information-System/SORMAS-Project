@@ -287,6 +287,15 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String ARE_ULCERS_AMONG_LESIONS = "areUlcersAmong";
 	public static final String TYPE_OF_RASH = "typeOfRash";
 
+	public static final String FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM = "firstSignOrSymptomsBeforeWorm";
+	public static final String FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS = "firstSignOrSymptomsBeforeWormOthers";
+	public static final String EMERGENCE_OF_GUINEA_WORM = "emergenceOfGuineaWorm";
+	public static final String NUMBER_OF_WORMS = "numberOfWorms";
+	public static final String FIRST_WORM_THIS_YEAR = "firstWormThisYear";
+	public static final String DATE_FIRST_WORM_EMERGENCE = "dateFirstWormEmergence";
+	public static final String CASE_DETECTED_BEFORE_WORM_EMERGENCE = "caseDetectedBeforeWormEmergence";
+
+
 	// Fields are declared in the order they should appear in the import template
 
 	public static SymptomsDto build() {
@@ -298,7 +307,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA,
 		SARI,
@@ -321,7 +329,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		CSM,
 		CHOLERA,
@@ -338,7 +345,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		POLIO,
 		YELLOW_FEVER,
 		AHF,
@@ -352,7 +358,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
@@ -363,7 +368,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		PLAGUE,
 		POLIO,
 		UNDEFINED,
@@ -375,7 +379,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF,
@@ -390,7 +393,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		CHOLERA,
-		GUINEA_WORM,
 		POLIO,
 		YELLOW_FEVER,
 		ANTHRAX,
@@ -410,7 +412,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF,
@@ -425,7 +426,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF,
@@ -439,7 +439,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		PLAGUE,
 		POLIO,
 		UNDEFINED,
@@ -451,7 +450,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		CSM,
-		GUINEA_WORM,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -463,7 +461,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		PLAGUE,
@@ -480,7 +477,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		PLAGUE,
 		ANTHRAX,
@@ -497,7 +493,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		MEASLES,
@@ -516,7 +511,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		MEASLES,
@@ -550,7 +544,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		PLAGUE,
 		POLIO,
@@ -566,7 +559,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		POLIO,
 		YELLOW_FEVER,
 		AHF,
@@ -579,7 +571,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		CHOLERA,
 		POLIO,
@@ -595,7 +586,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -616,7 +606,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		MEASLES,
@@ -635,7 +624,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF,
@@ -650,7 +638,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -668,7 +655,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		POLIO,
 		YELLOW_FEVER,
 		AHF,
@@ -683,7 +669,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -710,7 +695,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -734,7 +718,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF,
@@ -752,7 +735,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		YELLOW_FEVER,
@@ -768,7 +750,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -791,7 +772,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF,
@@ -813,7 +793,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		POLIO,
 		AHF,
 		UNDEFINED,
@@ -825,7 +804,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF,
@@ -838,7 +816,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		YELLOW_FEVER,
 		LASSA,
 		POLIO,
@@ -860,7 +837,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		NEW_INFLUENZA, SARI,
@@ -880,7 +856,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MEASLES,
 		POLIO,
 		UNDEFINED,
@@ -891,7 +866,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		ANTHRAX,
 		POLIO,
@@ -904,7 +878,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
@@ -916,7 +889,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		ANTHRAX,
 		POLIO,
@@ -929,7 +901,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		ANTHRAX,
 		POLIO,
@@ -942,7 +913,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
@@ -954,7 +924,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
@@ -966,7 +935,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
@@ -986,7 +954,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
@@ -1025,7 +992,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
@@ -1037,7 +1003,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
@@ -1049,7 +1014,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
@@ -1061,7 +1025,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
@@ -1073,7 +1036,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
@@ -1085,7 +1047,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF, DENGUE,
@@ -1107,7 +1068,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
@@ -1118,7 +1078,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
@@ -1129,7 +1088,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
@@ -1140,7 +1098,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF, DENGUE,
@@ -1155,7 +1112,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -1178,7 +1134,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -1202,7 +1157,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		CSM,
-		GUINEA_WORM,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1214,7 +1168,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		YELLOW_FEVER,
@@ -1228,7 +1181,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF, DENGUE,
@@ -1240,7 +1192,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF,
@@ -1261,7 +1212,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
@@ -1273,7 +1223,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		PLAGUE,
 		POLIO,
@@ -1290,7 +1239,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		PLAGUE,
 		POLIO,
@@ -1306,7 +1254,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -1329,7 +1276,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -1352,20 +1298,19 @@ public class SymptomsDto extends PseudonymizableDto {
 	private String otherNonHemorrhagicSymptomsText;
 
 	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		NEW_INFLUENZA, SARI,
-		MEASLES,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+			AFP,
+			GUINEA_WORM,
+			NEW_INFLUENZA, SARI,
+			MEASLES,
+			POLIO,
+			UNDEFINED,
+			OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState otitisMedia;
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		PLAGUE,
 		POLIO,
 		UNDEFINED,
@@ -1377,7 +1322,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF, DENGUE,
@@ -1389,7 +1333,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF, DENGUE,
@@ -1401,7 +1344,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
@@ -1412,7 +1354,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF, DENGUE,
@@ -1424,7 +1365,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF, DENGUE,
@@ -1438,7 +1378,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		AFP,
 		CORONAVIRUS,
 		DENGUE,
-		GUINEA_WORM,
 		POLIO,
 		AHF, DENGUE,
 		UNDEFINED,
@@ -1449,7 +1388,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		DENGUE,
 		POLIO,
@@ -1464,7 +1402,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		CSM,
 		CHOLERA,
@@ -1480,20 +1417,19 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Integer respiratoryRate;
 
 	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		NEW_INFLUENZA, SARI,
-		MEASLES,
-		POLIO,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+			AFP,
+			GUINEA_WORM,
+			NEW_INFLUENZA, SARI,
+			MEASLES,
+			POLIO,
+			CORONAVIRUS,
+			UNDEFINED,
+			OTHER })
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState runnyNose;
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF, DENGUE,
@@ -1506,7 +1442,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF, DENGUE,
@@ -1521,7 +1456,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -1542,7 +1476,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA,
 		CSM,
@@ -1660,7 +1593,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		POLIO,
 		YELLOW_FEVER,
 		AHF, DENGUE,
@@ -1673,7 +1605,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF, DENGUE,
@@ -1686,7 +1617,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		DENGUE,
-		GUINEA_WORM,
 		POLIO,
 		AHF, DENGUE,
 		UNDEFINED,
@@ -1700,7 +1630,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -1723,7 +1652,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -1746,7 +1674,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -1768,7 +1695,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF, DENGUE,
@@ -1780,7 +1706,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF, DENGUE,
@@ -1871,7 +1796,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		YELLOW_FEVER,
 		DENGUE,
@@ -1890,7 +1814,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -2181,7 +2104,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -2200,7 +2122,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -2221,7 +2142,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		YELLOW_FEVER,
@@ -2238,7 +2158,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		CSM,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF, DENGUE,
@@ -2252,7 +2171,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		CSM,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF, DENGUE,
@@ -2266,7 +2184,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		CSM,
-		GUINEA_WORM,
 		LASSA,
 		POLIO,
 		AHF, DENGUE,
@@ -2281,15 +2198,14 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
 		CHOLERA,
 		MEASLES,
+		GUINEA_WORM,
 		POLIO,
 		AHF,
-		GUINEA_WORM,
 		RABIES,
 		YELLOW_FEVER,
 		DENGUE,
@@ -2308,7 +2224,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -2316,7 +2231,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		MEASLES,
 		POLIO,
 		AHF,
-		GUINEA_WORM,
 		RABIES,
 		YELLOW_FEVER,
 		DENGUE,
@@ -2338,7 +2252,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -2359,7 +2272,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -2377,7 +2289,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		EVD,
-		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
@@ -2601,6 +2512,30 @@ public class SymptomsDto extends PseudonymizableDto {
 	private YesNo areLesionsDeep;
 	private YesNo areUlcersAmong;
 	private SymptomsList typeOfRash;
+
+	@Diseases({
+			GUINEA_WORM })
+	@HideForCountries
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private GuineaWormFirstSymptom firstSignOrSymptomsBeforeWorm;
+	private String firstSignOrSymptomsBeforeWormOthers;
+	@Diseases({
+			GUINEA_WORM })
+	@HideForCountries
+	@SymptomGrouping(SymptomGroup.OTHER)
+	private SymptomState emergenceOfGuineaWorm;
+	private String numberOfWorms;
+	@Diseases({
+			GUINEA_WORM })
+	@HideForCountries
+	@SymptomGrouping(SymptomGroup.OTHER)
+	private SymptomState firstWormThisYear;
+	private Date dateFirstWormEmergence;
+	@Diseases({
+			GUINEA_WORM })
+	@HideForCountries
+	@SymptomGrouping(SymptomGroup.OTHER)
+	private SymptomState caseDetectedBeforeWormEmergence;
 
 	@Order(0)
 	public Float getTemperature() {
@@ -4594,5 +4529,61 @@ public class SymptomsDto extends PseudonymizableDto {
 	}
 	public void setSymptomsSelectedOther(String symptomsSelectedOther) {
 		this.symptomsSelectedOther = symptomsSelectedOther;
+	}
+
+	public GuineaWormFirstSymptom getFirstSignOrSymptomsBeforeWorm() {
+		return firstSignOrSymptomsBeforeWorm;
+	}
+
+	public void setFirstSignOrSymptomsBeforeWorm(GuineaWormFirstSymptom firstSignOrSymptomsBeforeWorm) {
+		this.firstSignOrSymptomsBeforeWorm = firstSignOrSymptomsBeforeWorm;
+	}
+
+	public String getFirstSignOrSymptomsBeforeWormOthers() {
+		return firstSignOrSymptomsBeforeWormOthers;
+	}
+
+	public void setFirstSignOrSymptomsBeforeWormOthers(String firstSignOrSymptomsBeforeWormOthers) {
+		this.firstSignOrSymptomsBeforeWormOthers = firstSignOrSymptomsBeforeWormOthers;
+	}
+
+	public SymptomState getEmergenceOfGuineaWorm() {
+		return emergenceOfGuineaWorm;
+	}
+
+	public void setEmergenceOfGuineaWorm(SymptomState emergenceOfGuineaWorm) {
+		this.emergenceOfGuineaWorm = emergenceOfGuineaWorm;
+	}
+
+	public String getNumberOfWorms() {
+		return numberOfWorms;
+	}
+
+	public void setNumberOfWorms(String numberOfWorms) {
+		this.numberOfWorms = numberOfWorms;
+	}
+
+	public SymptomState getFirstWormThisYear() {
+		return firstWormThisYear;
+	}
+
+	public void setFirstWormThisYear(SymptomState firstWormThisYear) {
+		this.firstWormThisYear = firstWormThisYear;
+	}
+
+	public Date getDateFirstWormEmergence() {
+		return dateFirstWormEmergence;
+	}
+
+	public void setDateFirstWormEmergence(Date dateFirstWormEmergence) {
+		this.dateFirstWormEmergence = dateFirstWormEmergence;
+	}
+
+	public SymptomState getCaseDetectedBeforeWormEmergence() {
+		return caseDetectedBeforeWormEmergence;
+	}
+
+	public void setCaseDetectedBeforeWormEmergence(SymptomState caseDetectedBeforeWormEmergence) {
+		this.caseDetectedBeforeWormEmergence = caseDetectedBeforeWormEmergence;
 	}
 }

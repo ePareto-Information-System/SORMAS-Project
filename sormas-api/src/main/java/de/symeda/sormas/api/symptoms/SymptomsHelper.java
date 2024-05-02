@@ -509,6 +509,10 @@ public final class SymptomsHelper {
 		appendYesSymptom(string, symptomsDto.getStoppedSuckingAfterTwoDays(), SymptomsDto.STOPPED_SUCKING_AFTER_TWO_DAYS);
 		appendYesSymptom(string, symptomsDto.getStiffness(), SymptomsDto.STIFFNESS);
 
+//		emergenceOfGuineaWorm
+		appendYesSymptom(string, symptomsDto.getEmergenceOfGuineaWorm(), SymptomsDto.EMERGENCE_OF_GUINEA_WORM);
+		appendYesSymptom(string, symptomsDto.getFirstWormThisYear(), SymptomsDto.FIRST_WORM_THIS_YEAR);
+		appendYesSymptom(string, symptomsDto.getCaseDetectedBeforeWormEmergence(), SymptomsDto.CASE_DETECTED_BEFORE_WORM_EMERGENCE);
 		appendNotNullValue(string, symptomsDto.getOtherComplicationsText(), SymptomsDto.OTHER_COMPLICATIONS_TEXT);
 		/*appendYesSymptom(string, symptomsDto.getGeneralBodilyPains(), SymptomsDto.GENERAL_BODILY_PAINS);
 		appendYesSymptom(string, symptomsDto.getGeneralBodilyPains(), SymptomsDto.LESIONS_NECK);
