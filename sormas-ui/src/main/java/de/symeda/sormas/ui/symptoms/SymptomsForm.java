@@ -548,7 +548,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			NORMAL_CRY_AND_SUCK,
 			STOPPED_SUCKING_AFTER_TWO_DAYS,
 			STIFFNESS,
-			BODY_ACHE,
 			DIZZINESS,
 			EXCESSIVE_SWEATING,
 			NUMBNESS);
