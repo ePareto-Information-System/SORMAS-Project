@@ -33,6 +33,7 @@ import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.NotExposedToApi;
+import de.symeda.sormas.backend.containmentmeasure.ContainmentMeasure;
 import de.symeda.sormas.backend.contaminationsource.ContaminationSource;
 import de.symeda.sormas.backend.exposure.Exposure;
 import de.symeda.sormas.backend.persontravelhistory.PersonTravelHistory;
@@ -147,6 +148,7 @@ public class EpiData extends AbstractDomainObject {
 	private List<ActivityAsCase> activitiesAsCase = new ArrayList<>();
 	private List<PersonTravelHistory> personTravelHistories = new ArrayList<>();
 	private List<ContaminationSource> contaminationSources = new ArrayList<>();
+	private List<ContainmentMeasure> containmentMeasures = new ArrayList<>();
 
 	@NotExposedToApi
 	private Date changeDateOfEmbeddedLists;
@@ -247,6 +249,15 @@ public class EpiData extends AbstractDomainObject {
 
 	public void setContaminationSources(List<ContaminationSource> contaminationSources) {
 		this.contaminationSources = contaminationSources;
+	}
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = ContainmentMeasure.EPI_DATA)
+	public List<ContainmentMeasure> getContainmentMeasures() {
+		return containmentMeasures;
+	}
+
+	public void setContainmentMeasures(List<ContainmentMeasure> containmentMeasures) {
+		this.containmentMeasures = containmentMeasures;
 	}
 
 	/**

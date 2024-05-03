@@ -82,6 +82,7 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String WATER_USED_BY_PATIENT_AFTER_EXPOSURE = "waterUsedByPatientAfterExposure";
 	public static final String PERSON_TRAVEL_HISTORY = "personTravelHistories";
 	public static final String CONTAMINATION_SOURCES = "contaminationSources";
+	public static final String CONTAINMENT_MEASURES = "containmentMeasures";
 
 	public static final String INTL_TRAVEL = "intlTravel";
 	public static final String SPECIFY_COUNTRIES = "specifyCountries";
@@ -311,6 +312,11 @@ public class EpiDataDto extends PseudonymizableDto {
 	})
 	@Valid
 	private List<ContaminationSourceDto> contaminationSources = new ArrayList<>();
+	@Diseases({
+			Disease.GUINEA_WORM
+	})
+	@Valid
+	private List<ContainmentMeasureDto> containmentMeasures = new ArrayList<>();
 
 	public YesNo getExposureDetailsKnown() {
 		return exposureDetailsKnown;
@@ -389,6 +395,15 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public void setContaminationSources(List<ContaminationSourceDto> contaminationSources) {
 		this.contaminationSources = contaminationSources;
+	}
+
+	@ImportIgnore
+	public List<ContainmentMeasureDto> getContainmentMeasures() {
+		return containmentMeasures;
+	}
+
+	public void setContainmentMeasures(List<ContainmentMeasureDto> containmentMeasures) {
+		this.containmentMeasures = containmentMeasures;
 	}
 
 	public YesNo getContactWithSourceCaseKnown() {
@@ -952,6 +967,13 @@ public class EpiDataDto extends PseudonymizableDto {
 		}
 		clone.getPersonTravelHistories().clear();
 		clone.getPersonTravelHistories().addAll(personTravelHistoryDtos);
+
+		List<ContainmentMeasureDto> containmentMeasureDtos = new ArrayList<>();
+		for (ContainmentMeasureDto containmentMeasure : getContainmentMeasures()) {
+			containmentMeasureDtos.add(containmentMeasure.clone());
+		}
+		clone.getContainmentMeasures().clear();
+		clone.getContainmentMeasures().addAll(containmentMeasureDtos);
 
 		return clone;
 	}

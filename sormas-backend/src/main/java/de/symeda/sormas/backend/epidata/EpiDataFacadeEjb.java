@@ -28,10 +28,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
-import de.symeda.sormas.api.epidata.ContaminationSourceDto;
-import de.symeda.sormas.api.epidata.EpiDataDto;
-import de.symeda.sormas.api.epidata.EpiDataFacade;
-import de.symeda.sormas.api.epidata.PersonTravelHistoryDto;
+import de.symeda.sormas.api.epidata.*;
 import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.FacadeHelper;
@@ -39,6 +36,8 @@ import de.symeda.sormas.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.backend.activityascase.ActivityAsCaseService;
 import de.symeda.sormas.backend.contact.ContactFacadeEjb;
 import de.symeda.sormas.backend.contact.ContactService;
+import de.symeda.sormas.backend.containmentmeasure.ContainmentMeasure;
+import de.symeda.sormas.backend.containmentmeasure.ContainmentMeasureService;
 import de.symeda.sormas.backend.contaminationsource.ContaminationSource;
 import de.symeda.sormas.backend.contaminationsource.ContaminationSourceService;
 import de.symeda.sormas.backend.exposure.Exposure;
@@ -80,6 +79,8 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 	private PersonTravelHistoryService personTravelHistoryService;
 	@EJB
 	private ContaminationSourceService contaminationSourceService;
+	@EJB
+	private ContainmentMeasureService containmentMeasureService;
 
 
 	@EJB
@@ -249,6 +250,20 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.getContaminationSources().clear();
 		target.getContaminationSources().addAll(contaminationSources);
 
+		List<ContainmentMeasure> containmentMeasures = new ArrayList<>();
+		for (ContainmentMeasureDto containmentMeasureDto : source.getContainmentMeasures()) {
+			ContainmentMeasure containmentMeasure = containmentMeasureService.getByUuid(containmentMeasureDto.getUuid());
+			containmentMeasure = fillOrBuildContainmentMeasureEntity(containmentMeasureDto, containmentMeasure, checkChangeDate);
+			containmentMeasure.setEpiData(target);
+			containmentMeasures.add(containmentMeasure);
+		}
+		if (!DataHelper.equalContains(target.getContainmentMeasures(), containmentMeasures)) {
+			// note: DataHelper.equal does not work here, because target.getAddresses may be a PersistentBag when using lazy loading
+			target.setChangeDateOfEmbeddedLists(new Date());
+		}
+		target.getContainmentMeasures().clear();
+		target.getContainmentMeasures().addAll(containmentMeasures);
+
 
 		target.setPatientTravelledTwoWeeksPrior(source.getPatientTravelledTwoWeeksPrior());
 		target.setPatientTravelledInCountryOne(source.getPatientTravelledInCountryOne());
@@ -415,6 +430,25 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		return target;
 	}
 
+	public ContainmentMeasure fillOrBuildContainmentMeasureEntity(ContainmentMeasureDto source, ContainmentMeasure target, boolean checkChangeDate) {
+		if (source == null) {
+			return null;
+		}
+
+		target = DtoHelper.fillOrBuildEntity(source, target, ContainmentMeasure::new, checkChangeDate);
+
+		target.setLocationOfWorm(source.getLocationOfWorm());
+		target.setDateWormDetectedEmergence(source.getDateWormDetectedEmergence());
+		target.setDateWormDetectBySupervisor(source.getDateWormDetectBySupervisor());
+		target.setDateConfirmed(source.getDateConfirmed());
+		target.setDateOfGuineaWormExpelled(source.getDateOfGuineaWormExpelled());
+		target.setRegularBandaging(source.getRegularBandaging());
+		target.setCompletelyExtracted(source.getCompletelyExtracted());
+
+		return target;
+	}
+
+
 	public static EpiDataDto toDto(EpiData epiData) {
 
 		if (epiData == null) {
@@ -549,6 +583,14 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 			contaminationSourceDtos.add(contaminationSourceDto);
 		}
 		target.setContaminationSources(contaminationSourceDtos);
+
+		List<ContainmentMeasureDto> containmentMeasureDtos = new ArrayList<>();
+		for (ContainmentMeasure containmentMeasure : source.getContainmentMeasures()) {
+			ContainmentMeasureDto containmentMeasureDto = toContainmentMeasureDto(containmentMeasure);
+			containmentMeasureDtos.add(containmentMeasureDto);
+		}
+		target.setContainmentMeasures(containmentMeasureDtos);
+
 
 
 		target.setPatientTravelledTwoWeeksPrior(source.getPatientTravelledTwoWeeksPrior());
@@ -852,6 +894,26 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setSource(source.getSource());
 		target.setTreatedWithAbate(source.getTreatedWithAbate());
 		target.setAbateTreatmentDate(source.getAbateTreatmentDate());
+
+		return target;
+	}
+
+	public static ContainmentMeasureDto toContainmentMeasureDto(ContainmentMeasure source) {
+
+		if (source == null) {
+			return null;
+		}
+
+		ContainmentMeasureDto target = new ContainmentMeasureDto();
+
+		DtoHelper.fillDto(target, source);
+		target.setLocationOfWorm(source.getLocationOfWorm());
+		target.setDateWormDetectedEmergence(source.getDateWormDetectedEmergence());
+		target.setDateWormDetectBySupervisor(source.getDateWormDetectBySupervisor());
+		target.setDateConfirmed(source.getDateConfirmed());
+		target.setDateOfGuineaWormExpelled(source.getDateOfGuineaWormExpelled());
+		target.setRegularBandaging(source.getRegularBandaging());
+		target.setCompletelyExtracted(source.getCompletelyExtracted());
 
 		return target;
 	}
