@@ -619,7 +619,6 @@ public interface Strings {
 	String notifyInvestigate = "headingnotifyInvestigate";
 	String headingIndicateCategory = "headingIndicateCategory";
 	String headingPersonCompleting = "headingPersonCompleting";
-	String headingRiskFactor = "headingRiskFactor";
 	String headingFillThis = "headingFillThis";
 	String headingChildSeek = "headingChildSeek";
 	String headingHowToMergeCases = "headingHowToMergeCases";
@@ -738,6 +737,7 @@ public interface Strings {
 	String headingPrescriptionsDeleted = "headingPrescriptionsDeleted";
 	String headingPreviousHospitalizations = "headingPreviousHospitalizations";
 	String headingSymptoms = "headingSymptoms";
+	String headingRash = "headingRash";
 	String headingPreviousPathogenTestInformation = "headingPreviousPathogenTestInformation";
 	String headingPreviousPersonInformation = "headingPreviousPersonInformation";
 	String headingPreviousSampleInformation = "headingPreviousSampleInformation";

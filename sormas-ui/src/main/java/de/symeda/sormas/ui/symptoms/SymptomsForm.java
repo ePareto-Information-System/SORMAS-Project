@@ -109,6 +109,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	private static final String SYMPTOMS_HINT_LOC = "symptomsHintLoc";
 	private static final String COMPLICATIONS_HEADING = "complicationsHeading";
 	private static final String MPOX_SYMPTOMS_HEADING_LOC = " symptomsHeading";
+	private static final String MPOX_RASH_HEADING_LOC = " mpozRash";
 
 	private static Map<String, List<String>> symptomGroupMap = new HashMap();
 
@@ -125,7 +126,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					loc(MPOX_SYMPTOMS_HEADING_LOC) +
 					fluidRowLocs(SymptomsDto.SYMPTOMS_SELECTED)+
 					fluidRowLocs(6,SymptomsDto.SYMPTOMS_SELECTED_OTHER)+
-					fluidRowLocs(8, DATE_OF_ONSET_RASH)+
+					loc(MPOX_RASH_HEADING_LOC) +
+					fluidRowLocs(6, DATE_OF_ONSET_RASH)+
 					fluidRowLocs(RASH_SYMPTOMS)+
 					fluidRowLocs(6, RASH_SYMPTOMS_OTHER_AREAS)+
 					fluidRowLocs(ARE_LESIONS_IN_SAME_STATE)+
@@ -784,6 +786,11 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		getContent().addComponent(symptomsHeadingLabel, MPOX_SYMPTOMS_HEADING_LOC);
 		symptomsHeadingLabel.setVisible(false);
 
+		Label rashHeadingLabel = new Label(I18nProperties.getString(Strings.headingRash));
+		rashHeadingLabel.addStyleName(H3);
+		getContent().addComponent(rashHeadingLabel, MPOX_RASH_HEADING_LOC);
+		rashHeadingLabel.setVisible(false);
+
 		tickSymptomField = addField(SymptomsDto.SYMPTOMS_SELECTED, OptionGroup.class);
 		CssStyles.style(tickSymptomField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
 		tickSymptomField.setMultiSelect(true);
@@ -1000,17 +1007,18 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		}
 
 		if(disease == Disease.MONKEYPOX){
-			setVisible(false, SYMPTOMS_COMMENTS);
+			setVisible(false, SYMPTOMS_COMMENTS, GENERAL_BODILY_PAINS);
 
 			symptomsHeadingLabel.setVisible(true);
+			rashHeadingLabel.setVisible(true);
 			tickSymptomField.setVisible(true);
 			onsetSymptom.setVisible(true);
-			setVisible(true, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
+//			setVisible(true, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
 
 			addField(SYMPTOMS_SELECTED_OTHER, TextField.class);
-			addField(DATE_OF_ONSET_RASH, DateField.class);
 
 			tickRashCharacteristicsField.setVisible(true);
+			addField(DATE_OF_ONSET_RASH, DateField.class);
 
 			addField(RASH_SYMPTOMS_OTHER_AREAS, TextField.class);
 			addField(ARE_LESIONS_IN_SAME_STATE, NullableOptionGroup.class);

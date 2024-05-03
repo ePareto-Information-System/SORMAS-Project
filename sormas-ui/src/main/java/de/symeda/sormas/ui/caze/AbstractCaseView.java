@@ -249,7 +249,7 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 				//menu.addView(TherapyView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.THERAPY), params);
 			}
 		}
-		if(caze.getDisease() != Disease.FOODBORNE_ILLNESS) {
+		if(caze.getDisease() != Disease.FOODBORNE_ILLNESS && caze.getDisease() != Disease.MONKEYPOX) {
 		if (caseFollowupEnabled
 			&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_FOLLOW_UP)
 			&& caze.getFollowUpStatus() != FollowUpStatus.NO_FOLLOW_UP) {

@@ -13843,7 +13843,7 @@ ALTER TABLE cases ADD COLUMN ethnicity VARCHAR(255);
 ALTER TABLE cases ADD COLUMN occupation VARCHAR(255);
 ALTER TABLE cases ADD COLUMN districtofresidence VARCHAR(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (580, 'Added 7 properties to case create for MPox');
+INSERT INTO schema_version (version_number, comment) VALUES (609, 'Added 7 properties to case create for MPox');
 
 -- 2024-04-29 Added requestedsymptomsselectedstring to symptoms for MPox
 
@@ -13858,9 +13858,8 @@ ALTER TABLE symptoms ADD COLUMN areulcersamong varchar(55);
 ALTER TABLE symptoms ADD COLUMN typeofrash varchar(512);
 ALTER TABLE symptoms ADD COLUMN symptomsselectedother varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (581, 'Added 9 properties to symptoms for MPox');
+INSERT INTO schema_version (version_number, comment) VALUES (610, 'Added 9 properties to symptoms for MPox');
 
--- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 -- VibrioRiskFactors create new table
 CREATE TABLE riskfactor (
     id BIGINT PRIMARY KEY NOT NULL,
@@ -13910,13 +13909,9 @@ CREATE TABLE riskfactor (
     uuid VARCHAR(512)
 );
 
-ALTER TABLE cases ADD COLUMN riskfactors_id BIGINT;
-
-INSERT INTO schema_version (version_number, comment) VALUES (582, 'Added riskfactors_id to cases');
-
 ALTER TABLE cases ADD COLUMN riskfactor_id BIGINT;
 
-INSERT INTO schema_version (version_number, comment) VALUES (583, 'Added riskfactor_id to cases');
+INSERT INTO schema_version (version_number, comment) VALUES (611, 'Added riskfactor - riskfactors_id to cases');
 
 ALTER TABLE epidata ADD COLUMN exposedToRiskFactor VARCHAR(255);
 ALTER TABLE epidata ADD COLUMN waterUsedByPatientAfterExposure VARCHAR(255);
@@ -13924,7 +13919,7 @@ ALTER TABLE riskfactor ADD COLUMN vibrioCholeraeIdentifiedInStools VARCHAR(255);
 ALTER TABLE riskfactor ADD COLUMN drugsSensitiveToVibrioStrain VARCHAR(255);
 ALTER TABLE riskfactor ADD COLUMN drugsResistantToVibrioStrain VARCHAR(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (584, 'Added columns to epiData, riskfactor to implement patientVisitedHealthCareFacility #26');
+INSERT INTO schema_version (version_number, comment) VALUES (612, 'Added columns to epiData, riskfactor to implement patientVisitedHealthCareFacility #26');
 
 -- For risk factor assessment
 ALTER TABLE riskfactor ADD COLUMN patientspoxvaccinationscarpresent VARCHAR(55);
@@ -13949,5 +13944,5 @@ ALTER TABLE riskfactor ADD COLUMN investigatoraddress VARCHAR(255);
 ALTER TABLE riskfactor ADD COLUMN investigatortel VARCHAR(55);
 ALTER TABLE riskfactor ADD COLUMN email VARCHAR(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (585, 'Added columns to risk factor assessment for MonkeyPox');
+INSERT INTO schema_version (version_number, comment) VALUES (613, 'Added columns to risk factor assessment for MonkeyPox');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
