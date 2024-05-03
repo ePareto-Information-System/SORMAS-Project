@@ -316,6 +316,22 @@ public class CasesView extends AbstractView {
 				addExportButton(streamResource, exportPopupButton, exportLayout, VaadinIcons.TABLE, Captions.exportBasic, Strings.infoBasicExport);
 			}
 
+			{
+				StreamResource exportStreamResource = CaseDownloadUtil.createCaseExportResource(
+						grid.getCriteria(),
+						this::getSelectedRows,
+						CaseExportType.CASE_SURVEILLANCE,
+						detailedExportConfiguration);
+
+				addExportButton(
+						exportStreamResource,
+						exportPopupButton,
+						exportLayout,
+						VaadinIcons.FILE_TEXT,
+						Captions.exportDetailed,
+						Strings.infoDetailedExport);
+			}
+
 			if (hasClinicalCourseRight || hasTherapyRight) {
 				StreamResource caseManagementExportStreamResource =
 					DownloadUtil.createCaseManagementExportResource(grid.getCriteria(), this::getSelectedRows, ExportEntityName.CONTACTS);
