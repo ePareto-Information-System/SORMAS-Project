@@ -88,6 +88,7 @@
 		<class>de.symeda.sormas.backend.cadre.Cadre</class>
 		<class>de.symeda.sormas.backend.externalmessage.labmessage.SampleReport</class>
 		<class>de.symeda.sormas.backend.persontravelhistory.PersonTravelHistory</class>
+		<class>de.symeda.sormas.backend.contaminationsource.ContaminationSource</class>
 
 
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>

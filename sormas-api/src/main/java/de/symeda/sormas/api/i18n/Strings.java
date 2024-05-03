@@ -791,6 +791,7 @@ public interface Strings {
 	String headingSomeContactsAlreadyInEvent = "headingSomeContactsAlreadyInEvent";
 	String headingTravelHistory = "headingTravelHistory";
 	String headingTravelHistoryOfPatientTenToFourteenMonth = "headingTravelHistoryOfPatientTenToFourteenMonth";
+	String headingContaminationSources = "headingContaminationSources";
 	String headingSomeContactsNotDeleted = "headingSomeContactsNotDeleted";
 	String headingSomeContactsNotRestored = "headingSomeContactsNotRestored";
 	String headingSomeEventParticipantsNotDeleted = "headingSomeEventParticipantsNotDeleted";

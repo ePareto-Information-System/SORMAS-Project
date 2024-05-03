@@ -33,6 +33,7 @@ import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.NotExposedToApi;
+import de.symeda.sormas.backend.contaminationsource.ContaminationSource;
 import de.symeda.sormas.backend.exposure.Exposure;
 import de.symeda.sormas.backend.persontravelhistory.PersonTravelHistory;
 import org.apache.commons.lang3.StringUtils;
@@ -145,6 +146,8 @@ public class EpiData extends AbstractDomainObject {
 	private List<Exposure> exposures = new ArrayList<>();
 	private List<ActivityAsCase> activitiesAsCase = new ArrayList<>();
 	private List<PersonTravelHistory> personTravelHistories = new ArrayList<>();
+	private List<ContaminationSource> contaminationSources = new ArrayList<>();
+
 	@NotExposedToApi
 	private Date changeDateOfEmbeddedLists;
 	private YesNoUnknown childComeInContactWithSymptoms;
@@ -237,6 +240,14 @@ public class EpiData extends AbstractDomainObject {
 		this.personTravelHistories = personTravelHistories;
 	}
 
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = ContaminationSource.EPI_DATA)
+	public List<ContaminationSource> getContaminationSources() {
+		return contaminationSources;
+	}
+
+	public void setContaminationSources(List<ContaminationSource> contaminationSources) {
+		this.contaminationSources = contaminationSources;
+	}
 
 	/**
 	 * This change date has to be set whenever exposures are modified

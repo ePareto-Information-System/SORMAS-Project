@@ -40,6 +40,7 @@ import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.utils.RiskFactorInfluenza;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.ui.caze.CaseFormConfiguration;
+import de.symeda.sormas.ui.contaminationsource.ContaminationSourcesField;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -81,6 +82,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	private static final String NUMBER_OF_PERSONS_NO_AFFECTED = "numberOfPersonsNoAffected";
 
 	private static final String TRAVEL_HISTORY_HEADING = "travelHistoryHeadingLoc";
+	private static final String CONTAMINATION_SOURCE_HEADING = "contaminationSourceHeadingLoc";
 	//@formatter:off
 	private static final String MAIN_HTML_LAYOUT =
 			loc(LOC_EXPOSURE_TRAVEL_HISTORY_HEADING) +
@@ -116,6 +118,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					locCss(VSPACE_TOP_3, LOC_EPI_DATA_FIELDS_HINT) +
 					loc(TRAVEL_HISTORY_HEADING) +
 					loc(EpiDataDto.PERSON_TRAVEL_HISTORY)+
+					loc(CONTAMINATION_SOURCE_HEADING) +
+					loc(EpiDataDto.CONTAMINATION_SOURCES) +
 					loc(EpiDataDto.HIGH_TRANSMISSION_RISK_AREA) +
 					loc(EpiDataDto.LARGE_OUTBREAKS_AREA) +
 					loc(EpiDataDto.AREA_INFECTED_ANIMALS) +
@@ -149,7 +153,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					fluidRowLocs(EpiDataDto.DOMESTIC_TRAVEL, EpiDataDto.SPECIFY_LOCATION, EpiDataDto.DATE_OF_DEPARTURE2, EpiDataDto.DATE_OF_ARRIVAL2) +
 					fluidRowLocs(EpiDataDto.CONTACT_ILL_PERSON, EpiDataDto.CONTACT_DATE, EpiDataDto.SPECIFY_ILLNESS) +
 					fluidRowLocs(EpiDataDto.AREA_INFECTED_ANIMALS);
-
+	
 	private static final String SOURCE_CONTACTS_HTML_LAYOUT =
 			locCss(VSPACE_TOP_3, LOC_SOURCE_CASE_CONTACTS_HEADING) +
 			loc(EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN) + loc(EpiDataDto.CHILD_COME_IN_CONTACT_WITH_SYMPTOMS);
@@ -221,6 +225,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		if (parentClass == CaseDataDto.class) {
 			addActivityAsCaseFields();
 			addPersonTravelHistoryFields();
+			addContaminationSourcesFields();
 		}
 
 		addField(EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, NullableOptionGroup.class);
@@ -522,10 +527,14 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		if (disease == Disease.GUINEA_WORM) {
 //			hideAllFields();
-			setVisible(true, EpiDataDto.PERSON_TRAVEL_HISTORY);
+			setVisible(true, EpiDataDto.PERSON_TRAVEL_HISTORY, EpiDataDto.CONTAMINATION_SOURCES);
 			Label travelHistoryHeading = new Label(I18nProperties.getString(Strings.headingTravelHistoryOfPatientTenToFourteenMonth));
 			travelHistoryHeading.setStyleName(H3);
 			getContent().addComponent(travelHistoryHeading, TRAVEL_HISTORY_HEADING);
+
+			Label contaminationSourceHeading = new Label(I18nProperties.getString(Strings.headingContaminationSources));
+			contaminationSourceHeading.setStyleName(H3);
+			getContent().addComponent(contaminationSourceHeading, CONTAMINATION_SOURCE_HEADING);
 		}
 
 	}
@@ -535,6 +544,13 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		PersonTravelHistoryField personTravelHistoryField = addField(EpiDataDto.PERSON_TRAVEL_HISTORY, PersonTravelHistoryField.class);
 		personTravelHistoryField.setWidthFull();
 		personTravelHistoryField.setPseudonymized(isPseudonymized);
+	}
+
+	//addContaminationSourcesFields
+	private void addContaminationSourcesFields() {
+		ContaminationSourcesField contaminationSourcesField = addField(EpiDataDto.CONTAMINATION_SOURCES, ContaminationSourcesField.class);
+		contaminationSourcesField.setWidthFull();
+		contaminationSourcesField.setPseudonymized(isPseudonymized);
 	}
 
 	private void addActivityAsCaseFields() {
