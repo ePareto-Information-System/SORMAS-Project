@@ -13071,5 +13071,27 @@ ALTER TABLE contaminationsources ADD COLUMN change_user_id BIGINT,
 
 INSERT INTO schema_version (version_number, comment) VALUES (573, 'Added fields to implement contaminationsources for epid data');
 
+CREATE TABLE containmentMeasures(
+    id bigint not null,
+    uuid varchar(36) not null unique,
+    changedate timestamp not null,
+    creationdate timestamp not null,
+    epidata_id bigint not null,
+    locationOfWorm varchar(255),
+    dateWormDetectedEmergence varchar(255),
+    dateWormDetectBySupervisor varchar(255),
+    dateConfirmed varchar(255),
+    dateOfGuineaWormExpelled varchar(255),
+    regularBandaging varchar(255),
+    completelyExtracted varchar(255),
+    primary key(id)
+);
+ALTER TABLE containmentMeasures OWNER TO sormas_user;
+ALTER TABLE containmentMeasures ADD CONSTRAINT fk_containmentMeasures_epidata_id FOREIGN KEY (epidata_id) REFERENCES epidata(id);
+ALTER TABLE containmentMeasures ADD COLUMN change_user_id BIGINT,
+                           ADD CONSTRAINT fk_change_user_id
+                               FOREIGN KEY (change_user_id)
+                                   REFERENCES users (id);
+INSERT INTO schema_version(version_number, comment) VALUES (574, 'Added fields to implement containmentMeasures for epid data');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

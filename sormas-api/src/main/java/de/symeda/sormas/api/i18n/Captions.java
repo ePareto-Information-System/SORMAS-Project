@@ -1146,6 +1146,7 @@ public interface Captions {
 	String EpiData_patientContactWithConfirmedCaseExposureLocationCityCountry = "EpiData.patientContactWithConfirmedCaseExposureLocationCityCountry";
 	String EpiData_personTravelHistories = "EpiData.personTravelHistories";
 	String EpidData_contaminationSources = "EpidData.contaminationSources";
+	String epiDataContainmentMeasures = "EpidData.containmentMeasures";
 	String epiDataNoSourceContacts = "epiDataNoSourceContacts";
 	String epiWeekFrom = "epiWeekFrom";
 	String epiWeekTo = "epiWeekTo";

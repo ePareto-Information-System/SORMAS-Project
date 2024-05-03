@@ -750,6 +750,7 @@ public interface Strings {
 	String headingTravelHistory = "headingTravelHistory";
 	String headingTravelHistoryOfPatientTenToFourteenMonth = "headingTravelHistoryOfPatientTenToFourteenMonth";
 	String headingContaminationSources = "headingContaminationSources";
+	String headingContainmentMeasures = "headingContainmentMeasures";
 	String headingSomeContactsNotDeleted = "headingSomeContactsNotDeleted";
 	String headingSomeContactsNotRestored = "headingSomeContactsNotRestored";
 	String headingSomeEventParticipantsNotDeleted = "headingSomeEventParticipantsNotDeleted";

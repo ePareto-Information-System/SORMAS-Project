@@ -30,6 +30,7 @@ import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.epidata.ContactSetting;
 import de.symeda.sormas.api.utils.RiskFactorInfluenza;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.ui.containmentmeasure.ContainmentMeasureField;
 import de.symeda.sormas.ui.contaminationsource.ContaminationSourcesField;
 import de.symeda.sormas.ui.utils.CssStyles;
 import org.apache.commons.collections.CollectionUtils;
@@ -67,6 +68,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	private static final String LOC_EPI_DATA_FIELDS_HINT = "locEpiDataFieldsHint";
 	private static final String TRAVEL_HISTORY_HEADING = "travelHistoryHeadingLoc";
 	private static final String CONTAMINATION_SOURCE_HEADING = "contaminationSourceHeadingLoc";
+	private static final String CONTAINMENT_MEASURES_HEADING = "containmentMeasuresHeadingLoc";
 	//@formatter:off
 	private static final String MAIN_HTML_LAYOUT = 
 			loc(LOC_EXPOSURE_TRAVEL_HISTORY_HEADING) +
@@ -103,6 +105,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			loc(EpiDataDto.PERSON_TRAVEL_HISTORY)+
 			loc(CONTAMINATION_SOURCE_HEADING) +
 			loc(EpiDataDto.CONTAMINATION_SOURCES) +
+			loc(CONTAINMENT_MEASURES_HEADING) +
+			loc(EpiDataDto.CONTAINMENT_MEASURES) +
 			loc(EpiDataDto.HIGH_TRANSMISSION_RISK_AREA) +
 			loc(EpiDataDto.LARGE_OUTBREAKS_AREA) + 
 			loc(EpiDataDto.AREA_INFECTED_ANIMALS);
@@ -178,6 +182,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			addActivityAsCaseFields();
 			addPersonTravelHistoryFields();
 			addContaminationSourcesFields();
+			addContainmentMeasuresFields();
 		}
 
 		addField(EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, NullableOptionGroup.class);
@@ -311,7 +316,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		if (disease == Disease.GUINEA_WORM) {
 			hideAllFields();
-			setVisible(true, EpiDataDto.PERSON_TRAVEL_HISTORY, EpiDataDto.CONTAMINATION_SOURCES);
+			setVisible(true, EpiDataDto.PERSON_TRAVEL_HISTORY, EpiDataDto.CONTAMINATION_SOURCES, EpiDataDto.CONTAINMENT_MEASURES);
 			Label travelHistoryHeading = new Label(I18nProperties.getString(Strings.headingTravelHistoryOfPatientTenToFourteenMonth));
 			travelHistoryHeading.setStyleName(H3);
 			getContent().addComponent(travelHistoryHeading, TRAVEL_HISTORY_HEADING);
@@ -319,22 +324,31 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			Label contaminationSourceHeading = new Label(I18nProperties.getString(Strings.headingContaminationSources));
 			contaminationSourceHeading.setStyleName(H3);
 			getContent().addComponent(contaminationSourceHeading, CONTAMINATION_SOURCE_HEADING);
+
+			Label containmentMeasuresHeading = new Label(I18nProperties.getString(Strings.headingContainmentMeasures));
+			containmentMeasuresHeading.setStyleName(H3);
+			getContent().addComponent(containmentMeasuresHeading, CONTAINMENT_MEASURES_HEADING);
+
 		}
 
 	}
 
-	//addPersonTravelHistoryFields
 	private void addPersonTravelHistoryFields() {
 		PersonTravelHistoryField personTravelHistoryField = addField(EpiDataDto.PERSON_TRAVEL_HISTORY, PersonTravelHistoryField.class);
 		personTravelHistoryField.setWidthFull();
 		personTravelHistoryField.setPseudonymized(isPseudonymized);
 	}
 
-	//addContaminationSourcesFields
 	private void addContaminationSourcesFields() {
 		ContaminationSourcesField contaminationSourcesField = addField(EpiDataDto.CONTAMINATION_SOURCES, ContaminationSourcesField.class);
 		contaminationSourcesField.setWidthFull();
 		contaminationSourcesField.setPseudonymized(isPseudonymized);
+	}
+
+	private void addContainmentMeasuresFields() {
+		ContainmentMeasureField containmentMeasureField = addField(EpiDataDto.CONTAINMENT_MEASURES, ContainmentMeasureField.class);
+		containmentMeasureField.setWidthFull();
+		containmentMeasureField.setPseudonymized(isPseudonymized);
 	}
 
 	private void addActivityAsCaseFields() {

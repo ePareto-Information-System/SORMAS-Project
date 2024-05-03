@@ -27,6 +27,7 @@ import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.ActivityAsCase.ActivityAsCaseField;
 import de.symeda.sormas.ui.clinicalcourse.HealthConditionsForm;
+import de.symeda.sormas.ui.containmentmeasure.ContainmentMeasureField;
 import de.symeda.sormas.ui.contaminationsource.ContaminationSourcesField;
 import de.symeda.sormas.ui.epidata.PersonTravelHistoryField;
 import de.symeda.sormas.ui.exposure.ExposuresField;
@@ -172,6 +173,8 @@ public class SormasFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 			return (T) new PersonTravelHistoryField(fieldVisibilityCheckers, fieldAccessCheckers, isEditAllowed);
 		} else if (ContaminationSourcesField.class.isAssignableFrom(fieldType)) {
 			return (T) new ContaminationSourcesField(fieldVisibilityCheckers, fieldAccessCheckers, isEditAllowed);
+		} else if (ContainmentMeasureField.class.isAssignableFrom(fieldType)) {
+			return (T) new ContainmentMeasureField(fieldVisibilityCheckers, fieldAccessCheckers, isEditAllowed);
 		}
 		return super.createField(type, fieldType);
 	}
