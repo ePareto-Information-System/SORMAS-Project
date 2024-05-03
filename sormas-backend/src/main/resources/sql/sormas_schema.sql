@@ -13044,4 +13044,32 @@ ALTER TABLE symptoms ADD COLUMN firstWormThisYear varchar(255);
 ALTER TABLE symptoms ADD COLUMN dateFirstWormEmergence DATE;
 ALTER TABLE symptoms ADD COLUMN caseDetectedBeforeWormEmergence varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (572, 'Added columns to symptoms to implement guinea worm symptoms data');
+
+CREATE TABLE contaminationsources(
+                                    id bigint not null,
+                                    uuid varchar(36) not null unique,
+                                    changedate timestamp not null,
+                                    creationdate timestamp not null,
+                                    epidata_id bigint not null,
+                                    contaminationType varchar(255),
+                                    name varchar(255),
+                                    longitude varchar(255),
+                                    latitude varchar(255),
+                                    type varchar(255),
+                                    source varchar(255),
+                                    treatedWithAbate varchar(255),
+                                    abateTreatmentDate varchar(255),
+                                    primary key(id)
+);
+
+ALTER TABLE contaminationsources OWNER TO sormas_user;
+ALTER TABLE contaminationsources ADD CONSTRAINT fk_contaminationsources_epidata_id FOREIGN KEY (epidata_id) REFERENCES epidata(id);
+ALTER TABLE contaminationsources ADD COLUMN change_user_id BIGINT,
+                           ADD CONSTRAINT fk_change_user_id
+                               FOREIGN KEY (change_user_id)
+                                   REFERENCES users (id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (573, 'Added fields to implement contaminationsources for epid data');
+
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

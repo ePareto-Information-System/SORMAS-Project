@@ -79,6 +79,7 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String EXPOSED_TO_RISK_FACTOR = "exposedToRiskFactor";
 	public static final String WATER_USED_BY_PATIENT_AFTER_EXPOSURE = "waterUsedByPatientAfterExposure";
 	public static final String PERSON_TRAVEL_HISTORY = "personTravelHistories";
+	public static final String CONTAMINATION_SOURCES = "contaminationSources";
 
 
 	@Enumerated(EnumType.STRING)
@@ -141,6 +142,11 @@ public class EpiDataDto extends PseudonymizableDto {
 	})
 	@Valid
 	private List<PersonTravelHistoryDto> personTravelHistories = new ArrayList<>();
+	@Diseases({
+			Disease.GUINEA_WORM
+	})
+	@Valid
+	private List<ContaminationSourceDto> contaminationSources = new ArrayList<>();
 
 	public YesNo getExposureDetailsKnown() {
 		return exposureDetailsKnown;
@@ -208,6 +214,15 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public void setPersonTravelHistories(List<PersonTravelHistoryDto> personTravelHistories) {
 		this.personTravelHistories = personTravelHistories;
+	}
+
+	@ImportIgnore
+	public List<ContaminationSourceDto> getContaminationSources() {
+		return contaminationSources;
+	}
+
+	public void setContaminationSources(List<ContaminationSourceDto> contaminationSources) {
+		this.contaminationSources = contaminationSources;
 	}
 
 	public YesNo getContactWithSourceCaseKnown() {
@@ -390,13 +405,22 @@ public class EpiDataDto extends PseudonymizableDto {
 		for (ExposureDto exposure : getExposures()) {
 			exposureDtos.add(exposure.clone());
 		}
+		clone.getExposures().clear();
+		clone.getExposures().addAll(exposureDtos);
 
 		List<PersonTravelHistoryDto> personTravelHistoryDtos = new ArrayList<>();
 		for (PersonTravelHistoryDto personTravelHistory : getPersonTravelHistories()) {
 			personTravelHistoryDtos.add(personTravelHistory.clone());
 		}
-		clone.getExposures().clear();
-		clone.getExposures().addAll(exposureDtos);
+		clone.getPersonTravelHistories().clear();
+		clone.getPersonTravelHistories().addAll(personTravelHistoryDtos);
+
+		List<ContaminationSourceDto> contaminationSourcesDtos = new ArrayList<>();
+		for (ContaminationSourceDto contaminationSources : getContaminationSources()) {
+			contaminationSourcesDtos.add(contaminationSources.clone());
+		}
+		clone.getPersonTravelHistories().clear();
+		clone.getPersonTravelHistories().addAll(personTravelHistoryDtos);
 
 		return clone;
 	}

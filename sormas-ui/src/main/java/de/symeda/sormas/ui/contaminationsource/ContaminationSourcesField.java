@@ -18,18 +18,14 @@
  * ******************************************************************************
  */
 
-package de.symeda.sormas.ui.epidata;
-
-import java.util.Collection;
-import java.util.function.Consumer;
-
-import de.symeda.sormas.api.epidata.PersonTravelHistoryDto;
-import de.symeda.sormas.api.epidata.TravelPeriodType;
+package de.symeda.sormas.ui.contaminationsource;
 
 import com.vaadin.ui.Window;
 import com.vaadin.v7.data.Property;
 import com.vaadin.v7.ui.Table;
-
+import de.symeda.sormas.api.epidata.ContaminationSourceDto;
+import de.symeda.sormas.api.epidata.ContaminationSourceDto;
+import de.symeda.sormas.api.epidata.TravelPeriodType;
 import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -41,29 +37,33 @@ import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.caze.AbstractTableField;
+import de.symeda.sormas.ui.epidata.PersonTravelHistoryEditForm;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 import de.symeda.sormas.ui.utils.DateFormatHelper;
 import de.symeda.sormas.ui.utils.FieldAccessCellStyleGenerator;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
-public class PersonTravelHistoryField extends AbstractTableField<PersonTravelHistoryDto> {
+import java.util.Collection;
+import java.util.function.Consumer;
+
+public class ContaminationSourcesField extends AbstractTableField<ContaminationSourceDto> {
 
 //    COLUMN_DATE
     private static final String COLUMN_DATE = Captions.date;
-    private static final String COLUMN_TRAVEL_PERIOD_TYPE = PersonTravelHistoryDto.TRAVEL_PERIOD_TYPE;
-    private static final String DATE_FROM = PersonTravelHistoryDto.DATE_FROM;
-    private static final String DATE_TO = PersonTravelHistoryDto.DATE_TO;
-    private static final String VILLAGE = PersonTravelHistoryDto.VILLAGE;
-    private static final String SUB_DISTRICT = PersonTravelHistoryDto.SUB_DISTRICT;
-    private static final String DISTRICT = PersonTravelHistoryDto.DISTRICT;
-    private static final String REGION = PersonTravelHistoryDto.REGION;
+    private static final String NAME = "name";
+    private static final String LONGITUDE = "longitude";
+    private static final String LATITUDE = "latitude";
+    private static final String TYPE = "type";
+    private static final String SOURCE = "source";
+    private static final String TREATED_WITH_ABATE = "treatedWithAbate";
+    private static final String ABATE_TREATMENT_DATE = "abateTreatmentDate";
 
     private final FieldVisibilityCheckers fieldVisibilityCheckers;
     private boolean isPseudonymized;
     private boolean isEditAllowed;
 
 
-    public PersonTravelHistoryField(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers, boolean isEditAllowed) {
+    public ContaminationSourcesField(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers, boolean isEditAllowed) {
         super(fieldAccessCheckers, isEditAllowed);
         this.fieldVisibilityCheckers = fieldVisibilityCheckers;
         this.isEditAllowed = isEditAllowed;
@@ -77,27 +77,28 @@ public class PersonTravelHistoryField extends AbstractTableField<PersonTravelHis
 
         table.setVisibleColumns(
                 ACTION_COLUMN_ID,
-                DATE_FROM,
-                DATE_TO,
-                VILLAGE,
-                SUB_DISTRICT,
-                DISTRICT,
-                REGION);
+                NAME,
+                LONGITUDE,
+                LATITUDE,
+                TYPE,
+                SOURCE,
+                TREATED_WITH_ABATE,
+                ABATE_TREATMENT_DATE);
 
 
         table.setCellStyleGenerator(
-                FieldAccessCellStyleGenerator.withFieldAccessCheckers(PersonTravelHistoryDto.class, UiFieldAccessCheckers.forSensitiveData(isPseudonymized)));
+                FieldAccessCellStyleGenerator.withFieldAccessCheckers(ContaminationSourceDto.class, UiFieldAccessCheckers.forSensitiveData(isPseudonymized)));
 
         for (Object columnId : table.getVisibleColumns()) {
             if (!columnId.equals(ACTION_COLUMN_ID)) {
-                table.setColumnHeader(columnId, I18nProperties.getPrefixCaption(PersonTravelHistoryDto.I18N_PREFIX, (String) columnId));
+                table.setColumnHeader(columnId, I18nProperties.getPrefixCaption(ContaminationSourceDto.I18N_PREFIX, (String) columnId));
             }
         }
     }
 
     private void addGeneratedColumns(Table table) {
 //        table.addGeneratedColumn(COLUMN_TRAVEL_PERIOD_TYPE, (Table.ColumnGenerator) (source, itemId, columnId) -> {
-//            PersonTravelHistoryDto personTravelHistoryDto = (PersonTravelHistoryDto) itemId;
+//            ContaminationSourceDto personTravelHistoryDto = (ContaminationSourceDto) itemId;
 //            String personTravelHistoryString = TravelPeriodType.OTHER != personTravelHistoryDto.getTravelPeriodType()
 //                    ? personTravelHistoryDto.getTravelPeriodType().toString()
 //                    : TravelPeriodType.OTHER.toString();
@@ -106,45 +107,39 @@ public class PersonTravelHistoryField extends AbstractTableField<PersonTravelHis
 //        });
 
 
-        table.addGeneratedColumn(COLUMN_DATE, (Table.ColumnGenerator) (source, itemId, columnId) -> {
-            PersonTravelHistoryDto personTravelHistory = (PersonTravelHistoryDto) itemId;
-            return DateFormatHelper.buildPeriodString(personTravelHistory.getDateFrom(), personTravelHistory.getDateTo());
-        });
-
-
        
     }
 
     @Override
-    protected boolean isEmpty(PersonTravelHistoryDto entry) {
+    protected boolean isEmpty(ContaminationSourceDto entry) {
         return false;
     }
 
     @Override
-    protected boolean isModified(PersonTravelHistoryDto oldEntry, PersonTravelHistoryDto newEntry) {
-        return isModifiedObject(oldEntry.getTravelPeriodType(), newEntry.getTravelPeriodType())
-                || isModifiedObject(oldEntry.getDateFrom(), newEntry.getDateFrom())
-                || isModifiedObject(oldEntry.getDateTo(), newEntry.getDateTo());
+    protected boolean isModified(ContaminationSourceDto oldEntry, ContaminationSourceDto newEntry) {
+        return isModifiedObject(oldEntry.getName(), newEntry.getName())
+                || isModifiedObject(oldEntry.getLongitude(), newEntry.getLongitude())
+                || isModifiedObject(oldEntry.getLatitude(), newEntry.getLatitude());
     }
 
     @Override
-    public Class<PersonTravelHistoryDto> getEntryType() {
-        return PersonTravelHistoryDto.class;
+    public Class<ContaminationSourceDto> getEntryType() {
+        return ContaminationSourceDto.class;
     }
 
     @Override
-    protected void editEntry(PersonTravelHistoryDto entry, boolean create, Consumer<PersonTravelHistoryDto> commitCallback) {
+    protected void editEntry(ContaminationSourceDto entry, boolean create, Consumer<ContaminationSourceDto> commitCallback) {
         if (create) {
             entry.setUuid(DataHelper.createUuid());
         }
 
-        PersonTravelHistoryEditForm personTravelHistoryForm = new PersonTravelHistoryEditForm(create, fieldVisibilityCheckers, fieldAccessCheckers);
-        personTravelHistoryForm.setValue(entry);
+        ContaminationSourcesEditForm contaminationSourcesEditForm = new ContaminationSourcesEditForm(create, fieldVisibilityCheckers, fieldAccessCheckers);
+        contaminationSourcesEditForm.setValue(entry);
 
-        final CommitDiscardWrapperComponent<PersonTravelHistoryEditForm> component = new CommitDiscardWrapperComponent<>(
-                personTravelHistoryForm,
+        final CommitDiscardWrapperComponent<ContaminationSourcesEditForm> component = new CommitDiscardWrapperComponent<>(
+                contaminationSourcesEditForm,
                 UserProvider.getCurrent().hasUserRight(UserRight.CASE_EDIT) && isEditAllowed,
-                personTravelHistoryForm.getFieldGroup());
+                contaminationSourcesEditForm.getFieldGroup());
         component.getCommitButton().setCaption(I18nProperties.getString(Strings.done));
 
         Window popupWindow = VaadinUiUtil.showModalPopupWindow(component, I18nProperties.getString(Strings.entityActivityAsCase));
@@ -152,15 +147,15 @@ public class PersonTravelHistoryField extends AbstractTableField<PersonTravelHis
 
         if (isEditAllowed) {
             component.addCommitListener(() -> {
-                if (!personTravelHistoryForm.getFieldGroup().isModified()) {
-                    commitCallback.accept(personTravelHistoryForm.getValue());
+                if (!contaminationSourcesEditForm.getFieldGroup().isModified()) {
+                    commitCallback.accept(contaminationSourcesEditForm.getValue());
                 }
             });
 
             if (!create) {
                 component.addDeleteListener(() -> {
                     popupWindow.close();
-                    PersonTravelHistoryField.this.removeEntry(entry);
+                    ContaminationSourcesField.this.removeEntry(entry);
 
                 }, I18nProperties.getCaption(ExposureDto.I18N_PREFIX));
             }
@@ -171,10 +166,10 @@ public class PersonTravelHistoryField extends AbstractTableField<PersonTravelHis
     }
 
     @Override
-    protected PersonTravelHistoryDto createEntry() {
+    protected ContaminationSourceDto createEntry() {
         UserDto user = UserProvider.getCurrent().getUser();
-        PersonTravelHistoryDto personTravelHistory = PersonTravelHistoryDto.build(TravelPeriodType.TEN_TO_FOURTEEN_MONTHS);
-        return personTravelHistory;
+        ContaminationSourceDto contaminationSourceDto = ContaminationSourceDto.build("WATER");
+        return contaminationSourceDto;
     }
 
     @Override
@@ -187,7 +182,7 @@ public class PersonTravelHistoryField extends AbstractTableField<PersonTravelHis
     }
 
     @Override
-    public Property<Collection<PersonTravelHistoryDto>> getPropertyDataSource() {
+    public Property<Collection<ContaminationSourceDto>> getPropertyDataSource() {
         getAddButton().setVisible(!isPseudonymized && isEditAllowed);
         return super.getPropertyDataSource();
     }

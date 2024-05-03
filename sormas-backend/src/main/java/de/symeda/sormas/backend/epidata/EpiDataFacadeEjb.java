@@ -28,6 +28,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
+import de.symeda.sormas.api.epidata.ContaminationSourceDto;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.epidata.EpiDataFacade;
 import de.symeda.sormas.api.epidata.PersonTravelHistoryDto;
@@ -38,6 +39,8 @@ import de.symeda.sormas.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.backend.activityascase.ActivityAsCaseService;
 import de.symeda.sormas.backend.contact.ContactFacadeEjb;
 import de.symeda.sormas.backend.contact.ContactService;
+import de.symeda.sormas.backend.contaminationsource.ContaminationSource;
+import de.symeda.sormas.backend.contaminationsource.ContaminationSourceService;
 import de.symeda.sormas.backend.exposure.Exposure;
 import de.symeda.sormas.backend.exposure.ExposureService;
 import de.symeda.sormas.backend.infrastructure.community.CommunityFacadeEjb;
@@ -75,6 +78,8 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 	private CommunityService communityService;
 	@EJB
 	private PersonTravelHistoryService personTravelHistoryService;
+	@EJB
+	private ContaminationSourceService contaminationSourceService;
 
 
 	public EpiData fillOrBuildEntity(EpiDataDto source, EpiData target, boolean checkChangeDate) {
@@ -140,9 +145,24 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 			// note: DataHelper.equal does not work here, because target.getAddresses may be a PersistentBag when using lazy loading
 			target.setChangeDateOfEmbeddedLists(new Date());
 		}
-
 		target.getPersonTravelHistories().clear();
 		target.getPersonTravelHistories().addAll(personTravelHistories);
+
+		List<ContaminationSource> contaminationSources = new ArrayList<>();
+		for (ContaminationSourceDto contaminationSourceDto : source.getContaminationSources()) {
+			ContaminationSource contaminationSource = contaminationSourceService.getByUuid(contaminationSourceDto.getUuid());
+			contaminationSource = fillOrBuildContaminationSourceEntity(contaminationSourceDto, contaminationSource, checkChangeDate);
+			contaminationSource.setEpiData(target);
+			contaminationSources.add(contaminationSource);
+		}
+		if (!DataHelper.equalContains(target.getContaminationSources(), contaminationSources)) {
+			// note: DataHelper.equal does not work here, because target.getAddresses may be a PersistentBag when using lazy loading
+			target.setChangeDateOfEmbeddedLists(new Date());
+		}
+
+		target.getContaminationSources().clear();
+		target.getContaminationSources().addAll(contaminationSources);
+
 
 		target.setPatientTravelledTwoWeeksPrior(source.getPatientTravelledTwoWeeksPrior());
 		target.setPatientTravelledInCountryOne(source.getPatientTravelledInCountryOne());
@@ -163,6 +183,7 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 
 		return target;
 	}
+
 
 	public Exposure fillOrBuildExposureEntity(ExposureDto source, Exposure target, boolean checkChangeDate) {
 		boolean targetWasNull = isNull(target);
@@ -289,6 +310,25 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		return target;
 	}
 
+	public ContaminationSource fillOrBuildContaminationSourceEntity(ContaminationSourceDto source, ContaminationSource target, boolean checkChangeDate) {
+		if (source == null) {
+			return null;
+		}
+
+		target = DtoHelper.fillOrBuildEntity(source, target, ContaminationSource::new, checkChangeDate);
+
+		target.setContaminationType(source.getContaminationType());
+		target.setName(source.getName());
+		target.setLongitude(source.getLongitude());
+		target.setLatitude(source.getLatitude());
+		target.setType(source.getType());
+		target.setSource(source.getSource());
+		target.setTreatedWithAbate(source.getTreatedWithAbate());
+		target.setAbateTreatmentDate(source.getAbateTreatmentDate());
+
+		return target;
+	}
+
 	public static EpiDataDto toDto(EpiData epiData) {
 
 		if (epiData == null) {
@@ -337,6 +377,14 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 			personTravelHistoryDtos.add(personTravelHistoryDto);
 		}
 		target.setPersonTravelHistories(personTravelHistoryDtos);
+
+		List<ContaminationSourceDto> contaminationSourceDtos = new ArrayList<>();
+		for (ContaminationSource contaminationSource : source.getContaminationSources()) {
+			ContaminationSourceDto contaminationSourceDto = toContaminationSourceDto(contaminationSource);
+			contaminationSourceDtos.add(contaminationSourceDto);
+		}
+		target.setContaminationSources(contaminationSourceDtos);
+
 
 		target.setPatientTravelledTwoWeeksPrior(source.getPatientTravelledTwoWeeksPrior());
 		target.setPatientTravelledInCountryOne(source.getPatientTravelledInCountryOne());
@@ -477,6 +525,27 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setSubDistrict(CommunityFacadeEjb.toReferenceDto(source.getSubDistrict()));
 		target.setDistrict(DistrictFacadeEjb.toReferenceDto(source.getDistrict()));
 		target.setRegion(RegionFacadeEjb.toReferenceDto(source.getRegion()));
+
+		return target;
+	}
+
+	public static ContaminationSourceDto toContaminationSourceDto(ContaminationSource source) {
+
+		if (source == null) {
+			return null;
+		}
+
+		ContaminationSourceDto target = new ContaminationSourceDto();
+
+		DtoHelper.fillDto(target, source);
+		target.setName(source.getName());
+		target.setContaminationType(source.getContaminationType());
+		target.setLongitude(source.getLongitude());
+		target.setLatitude(source.getLatitude());
+		target.setType(source.getType());
+		target.setSource(source.getSource());
+		target.setTreatedWithAbate(source.getTreatedWithAbate());
+		target.setAbateTreatmentDate(source.getAbateTreatmentDate());
 
 		return target;
 	}
