@@ -25,6 +25,7 @@ import javax.persistence.*;
 //import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.epidata.ContactSetting;
+import de.symeda.sormas.api.epidata.PlaceManaged;
 import de.symeda.sormas.api.riskfactor.DrinkingWaterSource;
 import de.symeda.sormas.api.utils.RiskFactorInfluenza;
 import de.symeda.sormas.api.utils.YesNo;
@@ -172,6 +173,10 @@ public class EpiData extends AbstractDomainObject {
 	private String patientContactWithConfirmedCaseExposureLocationCityCountry;
 	private YesNo exposedToRiskFactor;
 	private DrinkingWaterSource waterUsedByPatientAfterExposure;
+
+	private YesNo receivedHealthEducation;
+	private YesNo patientEnteredWaterSource;
+	private PlaceManaged placeManaged;
 
 
 	@Enumerated(EnumType.STRING)
@@ -1182,5 +1187,29 @@ public class EpiData extends AbstractDomainObject {
 
 	public void setConsumedAtPlaceS3(YesNo consumedAtPlaceS3) {
 		this.consumedAtPlaceS3 = consumedAtPlaceS3;
+	}
+
+	public YesNo getReceivedHealthEducation() {
+		return receivedHealthEducation;
+	}
+
+	public void setReceivedHealthEducation(YesNo receivedHealthEducation) {
+		this.receivedHealthEducation = receivedHealthEducation;
+	}
+
+	public YesNo getPatientEnteredWaterSource() {
+		return patientEnteredWaterSource;
+	}
+
+	public void setPatientEnteredWaterSource(YesNo patientEnteredWaterSource) {
+		this.patientEnteredWaterSource = patientEnteredWaterSource;
+	}
+
+	public PlaceManaged getPlaceManaged() {
+		return placeManaged;
+	}
+
+	public void setPlaceManaged(PlaceManaged placeManaged) {
+		this.placeManaged = placeManaged;
 	}
 }

@@ -1234,8 +1234,17 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setDateLabReceivedSpecimen(source.getDateLabReceivedSpecimen());
 		target.setDateResultsSentToClinician(source.getDateResultsSentToClinician());
 		target.setDateSpecimenSentToLab(source.getDateSpecimenSentToLab());
-
-
+		target.setReceivedByRegion(source.getReceivedByRegion());
+		target.setReceivedByNational(source.getReceivedByNational());
+		target.setSpecimenSavedAndPreservedInAlcohol(source.getSpecimenSavedAndPreservedInAlcohol());
+		target.setSpecimenSavedAndPreservedInAlcoholWhy(source.getSpecimenSavedAndPreservedInAlcoholWhy());
+		target.setSentForConfirmationNational(source.getSentForConfirmationNational());
+		target.setSentForConfirmationNationalDate(source.getSentForConfirmationNationalDate());
+		target.setSentForConfirmationTo(source.getSentForConfirmationTo());
+		target.setDateResultReceivedNational(source.getDateResultReceivedNational());
+		target.setUseOfClothFilter(source.getUseOfClothFilter());
+		target.setFrequencyOfChangingFilters(source.getFrequencyOfChangingFilters());
+		target.setRemarks(source.getRemarks());
 
 		if (source.getSormasToSormasOriginInfo() != null) {
 			target.setSormasToSormasOriginInfo(originInfoService.getByUuid(source.getSormasToSormasOriginInfo().getUuid()));
@@ -1502,6 +1511,17 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setDateLabReceivedSpecimen(source.getDateLabReceivedSpecimen());
 		target.setDateResultsSentToClinician(source.getDateResultsSentToClinician());
 		target.setDateSpecimenSentToLab(source.getDateSpecimenSentToLab());
+		target.setReceivedByRegion(source.getReceivedByRegion());
+		target.setReceivedByNational(source.getReceivedByNational());
+		target.setSpecimenSavedAndPreservedInAlcohol(source.getSpecimenSavedAndPreservedInAlcohol());
+		target.setSentForConfirmationNational(source.getSentForConfirmationNational());
+		target.setSentForConfirmationNationalDate(source.getSentForConfirmationNationalDate());
+		target.setSentForConfirmationTo(source.getSentForConfirmationTo());
+		target.setDateResultReceivedNational(source.getDateResultReceivedNational());
+		target.setUseOfClothFilter(source.getUseOfClothFilter());
+		target.setFrequencyOfChangingFilters(source.getFrequencyOfChangingFilters());
+		target.setRemarks(source.getRemarks());
+
 
 
 		return target;

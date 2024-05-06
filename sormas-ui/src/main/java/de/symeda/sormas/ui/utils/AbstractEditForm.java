@@ -15,10 +15,7 @@
 
 package de.symeda.sormas.ui.utils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -584,4 +581,15 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 	public void setHeading(String heading) {
 		throw new RuntimeException("setHeading should be implemented in " + getClass().getSimpleName());
 	}
+
+	public void hideAllFields () {
+		for (Field<?> field : getFieldGroup().getFields()) {
+			if (field != null)
+				//hide the field
+				field.setVisible(false);
+
+		}
+	}
+
+
 }

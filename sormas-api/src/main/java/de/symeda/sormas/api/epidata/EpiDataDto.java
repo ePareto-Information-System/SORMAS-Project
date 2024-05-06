@@ -83,6 +83,9 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String PERSON_TRAVEL_HISTORY = "personTravelHistories";
 	public static final String CONTAMINATION_SOURCES = "contaminationSources";
 	public static final String CONTAINMENT_MEASURES = "containmentMeasures";
+	public static final String RECEIVED_HEALTH_EDUCATION = "receivedHealthEducation";
+	public static final String PATIENT_ENTERED_WATER_SOURCE = "patientEnteredWaterSource";
+	public static final String PLACE_MANAGED = "placeManaged";
 
 	public static final String INTL_TRAVEL = "intlTravel";
 	public static final String SPECIFY_COUNTRIES = "specifyCountries";
@@ -299,6 +302,21 @@ public class EpiDataDto extends PseudonymizableDto {
 			Disease.CHOLERA
 	})
 	private DrinkingWaterSource waterUsedByPatientAfterExposure;
+
+	@Diseases({
+			Disease.GUINEA_WORM
+	})
+	private YesNo receivedHealthEducation;
+
+	@Diseases({
+			Disease.GUINEA_WORM
+	})
+	private YesNo patientEnteredWaterSource;
+
+	@Diseases({
+			Disease.GUINEA_WORM
+	})
+	private PlaceManaged placeManaged;
 
 	@Valid
 	private List<ActivityAsCaseDto> activitiesAsCase = new ArrayList<>();
@@ -1286,5 +1304,29 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public void setConsumedAtPlaceS3(YesNo consumedAtPlaceS3) {
 		this.consumedAtPlaceS3 = consumedAtPlaceS3;
+	}
+
+	public YesNo getReceivedHealthEducation() {
+		return receivedHealthEducation;
+	}
+
+	public void setReceivedHealthEducation(YesNo receivedHealthEducation) {
+		this.receivedHealthEducation = receivedHealthEducation;
+	}
+
+	public YesNo getPatientEnteredWaterSource() {
+		return patientEnteredWaterSource;
+	}
+
+	public void setPatientEnteredWaterSource(YesNo patientEnteredWaterSource) {
+		this.patientEnteredWaterSource = patientEnteredWaterSource;
+	}
+
+	public PlaceManaged getPlaceManaged() {
+		return placeManaged;
+	}
+
+	public void setPlaceManaged(PlaceManaged placeManaged) {
+		this.placeManaged = placeManaged;
 	}
 }
