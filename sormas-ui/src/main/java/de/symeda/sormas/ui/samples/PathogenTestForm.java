@@ -17,37 +17,35 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.samples;
 
-import static de.symeda.sormas.ui.utils.CssStyles.H3;
-import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
-import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_TOP_4;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
-import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
+import static de.symeda.sormas.ui.utils.CssStyles.*;
+import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 
 import java.util.*;
 import java.util.function.Consumer;
 
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserRoleReferenceDto;
+import com.vaadin.v7.ui.*;
+import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.i18n.Descriptions;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.utils.LabType;
+import de.symeda.sormas.api.utils.LatexCulture;
 import de.symeda.sormas.ui.utils.*;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.vaadin.ui.Label;
 import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.ui.AbstractSelect.ItemCaptionMode;
-import com.vaadin.v7.ui.CheckBox;
-import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.DateField;
-import com.vaadin.v7.ui.TextArea;
-import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
@@ -73,6 +71,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private static final String PATHOGEN_TEST_HEADING_LOC = "pathogenTestHeadingLoc";
 	protected static final String LABORATORY_ANTIBIOGRAM_HEADLINE_LOC = "laboratoryAntibiogramHeadlineloc";
 	protected static final String LABORATORY_PCR_HEADLINE_LOC = "laboratoryPcrHeadlineloc";
+	protected static final String DISTRICT_LABORATORY_HEADLINE_LOC = "districtLaboratoryLoc";
+	protected static final String REGIONAL_LABORATORY_HEADLINE_LOC = "regionalLaboratoryLoc";
+	protected static final String REFERENCE_LABORATORY_HEADLINE_LOC = "referenceLaboratoryLoc";
 
 	private List<FacilityReferenceDto> allActiveLabs;
 
@@ -97,11 +98,19 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.DELETION_REASON) +
 			fluidRowLocs(PathogenTestDto.OTHER_DELETION_REASON)+
 
-			//CSM:DISTRICT
+			fluidRowLocs(6,PathogenTestDto.LABORATORY_TYPE) +
+			fluidRowLocs(DISTRICT_LABORATORY_HEADLINE_LOC) +
+			fluidRowLocs(REGIONAL_LABORATORY_HEADLINE_LOC) +
+			fluidRowLocs(REFERENCE_LABORATORY_HEADLINE_LOC) +
+			locCss(VSPACE_TOP_3, PathogenTestDto.LABORATORY_NAME) +
+
+			//CSM:GENERAL
 			fluidRowLocs(PathogenTestDto.LABORATORY_TEST_PERFORMED, PathogenTestDto.LABORATORY_TEST_PERFORMED_OTHER) +
 			fluidRowLocs(PathogenTestDto.LABORATORY_CYTOLOGY, PathogenTestDto.LABORATORY_GRAM, PathogenTestDto.LABORATORY_GRAM_OTHER) +
 			fluidRowLocs(PathogenTestDto.LABORATORY_RDT_PERFORMED, PathogenTestDto.LABORATORY_RDT_RESULTS) +
 			fluidRowLocs(6,PathogenTestDto.LABORATORY_LATEX) +
+
+			//DISTRICT
 			fluidRowLocs(PathogenTestDto.OTHER_TEST) +
 			fluidRowLocs(PathogenTestDto.DATE_SENT_REPORTING_HEALTH_FACILITY, PathogenTestDto.DATE_SAMPLE_SENT_REGREF_LAB) +
 
@@ -112,7 +121,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.LABORATORY_CEFTRIAXONE, PathogenTestDto.LABORATORY_PENICILLIN_G) +
 			fluidRowLocs(PathogenTestDto.LABORATORY_AMOXYCILLIN, PathogenTestDto.LABORATORY_OXACILLIN) +
 			fluidRowLocs(PathogenTestDto.LABORATORY_ANTIBIOGRAM_OTHER) +
-			fluidRowLocs( PathogenTestDto.DATE_SAMPLE_SENT_REF_LAB) +
+			fluidRowLocs(PathogenTestDto.DATE_SAMPLE_SENT_REF_LAB) +
 
 			//REFERENCE
 			loc(LABORATORY_PCR_HEADLINE_LOC) +
@@ -123,7 +132,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.LABORATORY_OBSERVATIONS) +
 			fluidRowLocs(6, PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY) +
 			fluidRowLocs(6, PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
-			fluidRowLocs(6,PathogenTestDto.LABORATORY_FINAL_CLASSIFICATION);
+			fluidRowLocs(6, PathogenTestDto.LABORATORY_FINAL_CLASSIFICATION);
 
 	//@formatter:on
 
@@ -492,13 +501,134 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			
 			setRequired(true, PathogenTestDto.LAB);
 		}
-		if (sample.getSamplePurpose() != SamplePurpose.INTERNAL) { // this only works for already saved samples
-			setRequired(true, PathogenTestDto.LAB);
+
+		if(caseDisease == Disease.CSM){
+
+			Label districtLaboratory = new Label(I18nProperties.getString(Strings.headingDistrictLaboratory));
+			CssStyles.style(districtLaboratory, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_4);
+			getContent().addComponent(districtLaboratory, DISTRICT_LABORATORY_HEADLINE_LOC);
+			districtLaboratory.setVisible(false);
+
+			Label regionalLaboratory = new Label(I18nProperties.getString(Strings.headingRegionalLaboratory));
+			CssStyles.style(regionalLaboratory, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_4);
+			getContent().addComponent(regionalLaboratory, REGIONAL_LABORATORY_HEADLINE_LOC);
+			regionalLaboratory.setVisible(false);
+
+			Label referenceLaboratory = new Label(I18nProperties.getString(Strings.headingReferenceLaboratory));
+			CssStyles.style(referenceLaboratory, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_4);
+			getContent().addComponent(referenceLaboratory, REFERENCE_LABORATORY_HEADLINE_LOC);
+			referenceLaboratory.setVisible(false);
+
+			ComboBox laboType = addField(PathogenTestDto.LABORATORY_TYPE, ComboBox.class);
+			addField(PathogenTestDto.LABORATORY_NAME, TextField.class);
+
+			//General
+			NullableOptionGroup laboratoryTestPerformed = addField(PathogenTestDto.LABORATORY_TEST_PERFORMED, NullableOptionGroup.class);
+			TextField laboratoryTestPerformedOther = addField(PathogenTestDto.LABORATORY_TEST_PERFORMED_OTHER, TextField.class);
+			TextField laboratoryCytology = addField(PathogenTestDto.LABORATORY_CYTOLOGY, TextField.class);
+			NullableOptionGroup laboratoryGram = addField(PathogenTestDto.LABORATORY_GRAM, NullableOptionGroup.class);
+			TextField laboratoryGramOther = addField(PathogenTestDto.LABORATORY_GRAM_OTHER, TextField.class);
+			OptionGroup laboratoryRdtPerformed = addField(PathogenTestDto.LABORATORY_RDT_PERFORMED, OptionGroup.class);
+			TextField laboratoryRdtResults = addField(PathogenTestDto.LABORATORY_RDT_RESULTS, TextField.class);
+
+			ComboBox laboratoryLatex = new ComboBox();
+			for (LatexCulture latexCulture : LatexCulture.LATEX) {
+				laboratoryLatex.addItem(latexCulture);
+				laboratoryLatex.setItemCaption(latexCulture, latexCulture.toString());
+			}
+			addField(PathogenTestDto.LABORATORY_LATEX, laboratoryLatex);
+			addField(PathogenTestDto.OTHER_TEST, TextArea.class);
+
+			//District Section
+			addField(PathogenTestDto.DATE_SENT_REPORTING_HEALTH_FACILITY, DateField.class);
+			addField(PathogenTestDto.DATE_SAMPLE_SENT_REGREF_LAB, DateField.class);
+
+			//Regional Section
+			ComboBox laboratoryCulture = new ComboBox();
+			for (LatexCulture latexCulture : LatexCulture.LAB_CULTURE) {
+				laboratoryCulture.addItem(latexCulture);
+				laboratoryCulture.setItemCaption(latexCulture, latexCulture.toString());
+			}
+			addField(PathogenTestDto.LABORATORY_CULTURE, laboratoryCulture);
+			TextField laboratoryCultureOther = addField(PathogenTestDto.LABORATORY_CULTURE_OTHER, TextField.class);
+			TextField laboratoryOtherTests = addField(PathogenTestDto.LABORATORY_OTHER_TESTS, TextField.class);
+			TextField laboratoryOtherTestsResults = addField(PathogenTestDto.LABORATORY_OTHER_TESTS_RESULTS, TextField.class);
+			ComboBox laboratoryCeftriaxone = addField(PathogenTestDto.LABORATORY_CEFTRIAXONE, ComboBox.class);
+			ComboBox laboratoryPenicillinG = addField(PathogenTestDto.LABORATORY_PENICILLIN_G, ComboBox.class);
+			ComboBox laboratoryAmoxycillin = addField(PathogenTestDto.LABORATORY_AMOXYCILLIN, ComboBox.class);
+			ComboBox laboratoryOxacillin = addField(PathogenTestDto.LABORATORY_OXACILLIN, ComboBox.class);
+			OptionGroup laboratoryAntibiogramOther = addField(PathogenTestDto.LABORATORY_ANTIBIOGRAM_OTHER, OptionGroup.class);
+			addField(PathogenTestDto.DATE_SAMPLE_SENT_REF_LAB, DateField.class);
+
+			//Reference Section
+			DateField laboratoryDatePcrPerformed = addField(PathogenTestDto.LABORATORY_DATE_PCR_PERFORMED, DateField.class);
+			TextField laboratoryPcrType = addField(PathogenTestDto.LABORATORY_PCR_TYPE, TextField.class);
+
+			ComboBox labPcrOptions = new ComboBox();
+			for (LatexCulture latexCulture : LatexCulture.LAB_CULTURE) {
+				labPcrOptions.addItem(latexCulture);
+				labPcrOptions.setItemCaption(latexCulture, latexCulture.toString());
+			}
+			addField(PathogenTestDto.LABORATORY_PCR_OPTIONS, labPcrOptions);
+			TextField laboratorySerotype = addField(PathogenTestDto.LABORATORY_SEROTYPE, TextField.class);
+			TextField laboratorySerotypeType = addField(PathogenTestDto.LABORATORY_SEROTYPE_TYPE, TextField.class);
+			TextField laboratorySerotypeResults = addField(PathogenTestDto.LABORATORY_SEROTYPE_RESULTS, TextField.class);
+
+			TextArea laboratoryObservations = addField(PathogenTestDto.LABORATORY_OBSERVATIONS, TextArea.class);
+			laboratoryObservations.setRows(4);
+			laboratoryObservations.setDescription(
+					I18nProperties.getPrefixDescription(PathogenTestDto.I18N_PREFIX, PathogenTestDto.LABORATORY_OBSERVATIONS, "") + "\n"
+							+ I18nProperties.getDescription(Descriptions.observation));
+
+			DateField laboratoryDateResultsSentHealthFacility = addField(PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY, DateField.class);
+			DateField laboratoryDateResultsSentDSD = addField(PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD, DateField.class);
+
+			OptionGroup laboratoryFinalClassification = new OptionGroup();
+			for (CaseClassification caseClassification : CaseClassification.CASE_CLASSIFY) {
+				laboratoryFinalClassification.addItem(caseClassification);
+				laboratoryFinalClassification.setItemCaption(caseClassification, caseClassification.toString());
+			}
+			addField(PathogenTestDto.LABORATORY_FINAL_CLASSIFICATION, laboratoryFinalClassification);
+			addField(PathogenTestDto.LABORATORY_FINAL_RESULTS, TextField.class);
+
+			//set properties to false for CSM Lab Section
+			setVisible(false, PathogenTestDto.OTHER_TEST, PathogenTestDto.DATE_SENT_REPORTING_HEALTH_FACILITY, PathogenTestDto.DATE_SAMPLE_SENT_REGREF_LAB, PathogenTestDto.LABORATORY_CULTURE, PathogenTestDto.LABORATORY_CULTURE_OTHER,
+					PathogenTestDto.LABORATORY_OTHER_TESTS, PathogenTestDto.LABORATORY_OTHER_TESTS_RESULTS, PathogenTestDto.LABORATORY_CEFTRIAXONE, PathogenTestDto.LABORATORY_PENICILLIN_G,
+					PathogenTestDto.LABORATORY_AMOXYCILLIN, PathogenTestDto.LABORATORY_OXACILLIN, PathogenTestDto.LABORATORY_ANTIBIOGRAM_OTHER, PathogenTestDto.DATE_SAMPLE_SENT_REF_LAB,
+					PathogenTestDto.LABORATORY_DATE_PCR_PERFORMED, PathogenTestDto.LABORATORY_PCR_TYPE, PathogenTestDto.LABORATORY_PCR_OPTIONS,
+					PathogenTestDto.LABORATORY_SEROTYPE, PathogenTestDto.LABORATORY_SEROTYPE_TYPE, PathogenTestDto.LABORATORY_SEROTYPE_RESULTS,  PathogenTestDto.LABORATORY_FINAL_RESULTS,
+					PathogenTestDto.LABORATORY_OBSERVATIONS,PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY,   PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD, PathogenTestDto.LABORATORY_FINAL_CLASSIFICATION);
+
+			laboType.addValueChangeListener(e -> {
+			LabType labType = (LabType) e.getProperty().getValue();
+
+			districtLaboratory.setVisible(false);
+			regionalLaboratory.setVisible(false);
+			referenceLaboratory.setVisible(false);
+
+
+			if (labType == LabType.DISTRICT_LAB) {
+				districtLaboratory.setVisible(true);
+
+				setVisible(true, PathogenTestDto.OTHER_TEST, PathogenTestDto.DATE_SENT_REPORTING_HEALTH_FACILITY, PathogenTestDto.DATE_SAMPLE_SENT_REGREF_LAB);
+			}
+			else if (labType == LabType.REGIONAL_LAB) {
+				regionalLaboratory.setVisible(true);
+
+				setVisible(true,PathogenTestDto.LABORATORY_CULTURE, PathogenTestDto.LABORATORY_CULTURE_OTHER, PathogenTestDto.LABORATORY_OTHER_TESTS, PathogenTestDto.LABORATORY_OTHER_TESTS_RESULTS, PathogenTestDto.LABORATORY_CEFTRIAXONE, PathogenTestDto.LABORATORY_PENICILLIN_G, PathogenTestDto.LABORATORY_AMOXYCILLIN, PathogenTestDto.LABORATORY_OXACILLIN, PathogenTestDto.LABORATORY_ANTIBIOGRAM_OTHER);
+				setVisible(true, PathogenTestDto.DATE_SENT_REPORTING_HEALTH_FACILITY, PathogenTestDto.DATE_SAMPLE_SENT_REF_LAB);
+			}
+			else if (labType == LabType.REFERENCE_LAB) {
+				referenceLaboratory.setVisible(true);
+
+				setVisible(true, PathogenTestDto.LABORATORY_CULTURE, PathogenTestDto.LABORATORY_CULTURE_OTHER, PathogenTestDto.LABORATORY_OTHER_TESTS, PathogenTestDto.LABORATORY_OTHER_TESTS_RESULTS,PathogenTestDto.LABORATORY_CEFTRIAXONE, PathogenTestDto.LABORATORY_PENICILLIN_G, PathogenTestDto.LABORATORY_AMOXYCILLIN, PathogenTestDto.LABORATORY_OXACILLIN, PathogenTestDto.LABORATORY_ANTIBIOGRAM_OTHER);
+
+				setVisible(true, PathogenTestDto.LABORATORY_DATE_PCR_PERFORMED, PathogenTestDto.LABORATORY_PCR_TYPE, PathogenTestDto.LABORATORY_PCR_OPTIONS, PathogenTestDto.LABORATORY_SEROTYPE, PathogenTestDto.LABORATORY_SEROTYPE_TYPE, PathogenTestDto.LABORATORY_SEROTYPE_RESULTS, PathogenTestDto.LABORATORY_FINAL_RESULTS, PathogenTestDto.LABORATORY_OBSERVATIONS, PathogenTestDto.DATE_SENT_REPORTING_HEALTH_FACILITY, PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD, PathogenTestDto.LABORATORY_FINAL_CLASSIFICATION);
+			}
+
+			});
 		}
-		// setRequired(true, PathogenTestDto.TEST_TYPE, PathogenTestDto.TESTED_DISEASE, PathogenTestDto.TEST_RESULT);
 		
-		setRequired(true, PathogenTestDto.TEST_TYPE, PathogenTestDto.TESTED_DISEASE, PathogenTestDto.TEST_DATE_TIME, PathogenTestDto.TEST_RESULT);
-	}
 
 	private Date getSampleDate() {
 		return sample != null ? sample.getSampleDateTime() : (Date) sampleForm.getField(SampleDto.SAMPLE_DATE_TIME).getValue();

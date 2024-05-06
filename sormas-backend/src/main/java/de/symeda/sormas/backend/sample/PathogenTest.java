@@ -127,6 +127,8 @@ public class PathogenTest extends DeletableAdo {
 	private String prescriberPostalCode;
 	private String prescriberCity;
 	private Country prescriberCountry;
+	private LabType laboratoryType;
+	private String laboratoryName;
 	private LabTest laboratoryTestPerformed;
 	private String laboratoryTestPerformedOther;
 	private String laboratoryCytology;
@@ -511,6 +513,21 @@ public class PathogenTest extends DeletableAdo {
 
 	public PathogenTestReferenceDto toReference() {
 		return new PathogenTestReferenceDto(getUuid());
+	}
+
+	public LabType getLaboratoryType() {
+		return laboratoryType;
+	}
+
+	public void setLaboratoryType(LabType laboratoryType) {
+		this.laboratoryType = laboratoryType;
+	}
+	public String getLaboratoryName() {
+		return laboratoryName;
+	}
+
+	public void setLaboratoryName(String laboratoryName) {
+		this.laboratoryName = laboratoryName;
 	}
 
 	public LabTest getLaboratoryTestPerformed() {
