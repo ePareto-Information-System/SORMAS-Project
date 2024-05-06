@@ -87,7 +87,8 @@ public class PathogenTestDto extends PseudonymizableDto {
 	public static final String PRESCRIBER_POSTAL_CODE = "prescriberPostalCode";
 	public static final String PRESCRIBER_CITY = "prescriberCity";
 	public static final String PRESCRIBER_COUNTRY = "prescriberCountry";
-
+	public static final String LABORATORY_TYPE = "laboratoryType";
+	public static final String LABORATORY_NAME = "laboratoryName";
 	public static final String LABORATORY_TEST_PERFORMED = "laboratoryTestPerformed";
 	public static final String LABORATORY_TEST_PERFORMED_OTHER = "laboratoryTestPerformedOther";
 	public static final String LABORATORY_CYTOLOGY = "laboratoryCytology";
@@ -219,6 +220,8 @@ public class PathogenTestDto extends PseudonymizableDto {
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_LUXEMBOURG)
 	private CountryReferenceDto prescriberCountry;
 
+	private LabType laboratoryType;
+	private String laboratoryName;
 	private LabTest laboratoryTestPerformed;
 	private String laboratoryTestPerformedOther;
 	private String laboratoryCytology;
@@ -626,6 +629,20 @@ public class PathogenTestDto extends PseudonymizableDto {
 		return (PathogenTestDto) super.clone();
 	}
 
+	public LabType getLaboratoryType() {
+		return laboratoryType;
+	}
+
+	public void setLaboratoryType(LabType laboratoryType) {
+		this.laboratoryType = laboratoryType;
+	}
+	public String getLaboratoryName() {
+		return laboratoryName;
+	}
+
+	public void setLaboratoryName(String laboratoryName) {
+		this.laboratoryName = laboratoryName;
+	}
 	public LabTest getLaboratoryTestPerformed() {
 		return laboratoryTestPerformed;
 	}
