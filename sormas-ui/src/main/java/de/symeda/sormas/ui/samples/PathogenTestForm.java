@@ -69,6 +69,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private static final long serialVersionUID = -1218707278398543154L;
 
 	private static final String PATHOGEN_TEST_HEADING_LOC = "pathogenTestHeadingLoc";
+	protected static final String LABORATORY_ANTIBIOGRAM_HEADLINE_LOC = "laboratoryAntibiogramHeadlineloc";
+	protected static final String LABORATORY_PCR_HEADLINE_LOC = "laboratoryPcrHeadlineloc";
 
 	//@formatter:off
 	private static final String HTML_LAYOUT =
@@ -89,7 +91,36 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.CQ_VALUE, "") + 
 			fluidRowLocs(PathogenTestDto.TEST_RESULT_TEXT) +
 			fluidRowLocs(PathogenTestDto.DELETION_REASON) +
-			fluidRowLocs(PathogenTestDto.OTHER_DELETION_REASON);
+			fluidRowLocs(PathogenTestDto.OTHER_DELETION_REASON)+
+
+			//CSM:DISTRICT
+			fluidRowLocs(PathogenTestDto.LABORATORY_TEST_PERFORMED, PathogenTestDto.LABORATORY_TEST_PERFORMED_OTHER) +
+			fluidRowLocs(PathogenTestDto.LABORATORY_CYTOLOGY, PathogenTestDto.LABORATORY_GRAM, PathogenTestDto.LABORATORY_GRAM_OTHER) +
+			fluidRowLocs(PathogenTestDto.LABORATORY_RDT_PERFORMED, PathogenTestDto.LABORATORY_RDT_RESULTS) +
+			fluidRowLocs(6,PathogenTestDto.LABORATORY_LATEX) +
+			fluidRowLocs(PathogenTestDto.OTHER_TEST) +
+			fluidRowLocs(PathogenTestDto.DATE_SENT_REPORTING_HEALTH_FACILITY, PathogenTestDto.DATE_SAMPLE_SENT_REGREF_LAB) +
+
+			//REGIONAL
+			fluidRowLocs(PathogenTestDto.LABORATORY_CULTURE, PathogenTestDto.LABORATORY_CULTURE_OTHER) +
+			fluidRowLocs(PathogenTestDto.LABORATORY_OTHER_TESTS, PathogenTestDto.LABORATORY_OTHER_TESTS_RESULTS) +
+			loc(LABORATORY_ANTIBIOGRAM_HEADLINE_LOC) +
+			fluidRowLocs(PathogenTestDto.LABORATORY_CEFTRIAXONE, PathogenTestDto.LABORATORY_PENICILLIN_G) +
+			fluidRowLocs(PathogenTestDto.LABORATORY_AMOXYCILLIN, PathogenTestDto.LABORATORY_OXACILLIN) +
+			fluidRowLocs(PathogenTestDto.LABORATORY_ANTIBIOGRAM_OTHER) +
+			fluidRowLocs( PathogenTestDto.DATE_SAMPLE_SENT_REF_LAB) +
+
+			//REFERENCE
+			loc(LABORATORY_PCR_HEADLINE_LOC) +
+			fluidRowLocs(PathogenTestDto.LABORATORY_DATE_PCR_PERFORMED, PathogenTestDto.LABORATORY_PCR_TYPE) +
+			fluidRowLocs(PathogenTestDto.LABORATORY_PCR_OPTIONS) +
+			fluidRowLocs(PathogenTestDto.LABORATORY_SEROTYPE, PathogenTestDto.LABORATORY_SEROTYPE_TYPE, PathogenTestDto.LABORATORY_SEROTYPE_RESULTS) +
+			fluidRowLocs(6,PathogenTestDto.LABORATORY_FINAL_RESULTS) +
+			fluidRowLocs(PathogenTestDto.LABORATORY_OBSERVATIONS) +
+			fluidRowLocs(6, PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY) +
+			fluidRowLocs(6, PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
+			fluidRowLocs(6,PathogenTestDto.LABORATORY_FINAL_CLASSIFICATION);
+
 	//@formatter:on
 
 	private SampleDto sample;
@@ -103,7 +134,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private ComboBox pcrTestSpecification;
 	private TextField typingIdField;
 	private ComboBox testTypeField;
-
+	private ComboBox diseaseFieldForAll;
 	private Disease caseDisease;
 
 	public PathogenTestForm(AbstractSampleForm sampleForm, boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction) {
@@ -155,14 +186,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		addField(PathogenTestDto.EXTERNAL_ID);
 		addField(PathogenTestDto.EXTERNAL_ORDER_ID);
 
-	/*	testTypeField = ComboBoxHelper.createComboBoxV7();
-
-		for(PathogenTestType pathogenTestType : PathogenTestType.DISEASE_TESTS){
-			testTypeField.addItem(pathogenTestType);
-			testTypeField.setCaption("Test Type");
-		}
-
-		getContent().addComponent(testTypeField, PathogenTestDto.TEST_TYPE);*/
 		ComboBox testBox = new ComboBox("Sex");
 
 		if(caseDisease == Disease.AHF){
@@ -202,15 +225,23 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		typingIdField = addField(PathogenTestDto.TYPING_ID, TextField.class);
 		typingIdField.setVisible(false);
 
-		ComboBox diseaseBox = new ComboBox("Diseases");
+		ComboBox diseaseBox = new ComboBox("Disease");
 
-		for (Disease ahfDisease : Disease.AHF_DISEASES) {
-			diseaseBox.addItem(ahfDisease);
+		if(caseDisease == Disease.CSM){
+			for (Disease selection : Disease.values()) {
+				if (selection == Disease.CSM) {
+					diseaseBox.addItem(selection);
+				}
+			}
+			diseaseFieldForAll = addField(PathogenTestDto.TESTED_DISEASE, diseaseBox);
+		}
+		else {
+			diseaseFieldForAll = addField(PathogenTestDto.TESTED_DISEASE);
+			diseaseFieldForAll.setItemCaptionMode(ItemCaptionMode.ID_TOSTRING);
+			diseaseFieldForAll.setImmediate(true);
+
 		}
 
-		ComboBox diseaseField = addField(PathogenTestDto.TESTED_DISEASE, diseaseBox);
-
-		//ComboBox diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
 		ComboBox diseaseVariantField = addField(PathogenTestDto.TESTED_DISEASE_VARIANT, ComboBox.class);
 		diseaseVariantField.setNullSelectionAllowed(true);
 		addField(PathogenTestDto.TESTED_DISEASE_DETAILS, TextField.class);
@@ -294,9 +325,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		};
 
 		// trigger the update, as the disease may already be set
-		updateDiseaseVariantField.accept((Disease) diseaseField.getValue());
+		updateDiseaseVariantField.accept((Disease) diseaseFieldForAll.getValue());
 
-		diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
+		diseaseFieldForAll.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
 			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
 			updateDiseaseVariantField.accept(disease);
 
@@ -360,6 +391,10 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			setRequired(true, PathogenTestDto.LAB);
 		}
 		setRequired(true, PathogenTestDto.TEST_TYPE, PathogenTestDto.TESTED_DISEASE, PathogenTestDto.TEST_RESULT);
+
+		if(caseDisease == Disease.CSM){
+			//For CSM
+		}
 	}
 
 	private Date getSampleDate() {

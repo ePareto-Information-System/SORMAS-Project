@@ -13249,4 +13249,74 @@ ALTER TABLE riskfactor ADD COLUMN investigatortel VARCHAR(55);
 ALTER TABLE riskfactor ADD COLUMN email VARCHAR(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (585, 'Added columns to risk factor assessment for MonkeyPox');
+
+-- Lab Section for CSM
+ALTER TABLE pathogentest ADD COLUMN laboratorytestperformed varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorytestperformedother varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorycytology varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorygram varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorygramother varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryrdtperformed varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryrdtresults varchar(512);
+ALTER TABLE pathogentest ADD COLUMN laboratorylatex varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorylatexotherresults varchar(255);
+ALTER TABLE pathogentest ADD COLUMN datesentreportinghealthfac date;
+ALTER TABLE pathogentest ADD COLUMN datesamplesentregreflab date;
+ALTER TABLE pathogentest ADD COLUMN laboratoryculture varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorycultureother varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryothertests varchar(512);
+ALTER TABLE pathogentest ADD COLUMN laboratoryothertestsresults varchar(512);
+ALTER TABLE pathogentest ADD COLUMN laboratoryceftriaxone varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorypenicilling varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryamoxycillin varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryoxacillin varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryantibiogramother varchar(255);
+ALTER TABLE pathogentest ADD COLUMN datesamplesentregLab date;
+ALTER TABLE pathogentest ADD COLUMN laboratorydatepcrperformed date;
+ALTER TABLE pathogentest ADD COLUMN laboratorypcrtype varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorypcroptions varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryserotype varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryserotypetype varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryserotyperesults varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryfinalresults varchar(512);
+ALTER TABLE pathogentest ADD COLUMN laboratoryobservations varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorydateresultssenthealthfacility date;
+ALTER TABLE pathogentest ADD COLUMN laboratorydateresultssentdsd date;
+ALTER TABLE pathogentest ADD COLUMN laboratoryfinalclassification varchar(255);
+
+--History
+ALTER TABLE pathogentest_history ADD COLUMN laboratorytestperformed varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorytestperformedother varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorycytology varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorygram varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorygramother varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryrdtperformed varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryrdtresults varchar(512);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorylatex varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorylatexotherresults varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN datesentreportinghealthfac date;
+ALTER TABLE pathogentest_history ADD COLUMN datesamplesentregreflab date;
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryculture varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorycultureother varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryothertests varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryothertestsresults varchar(512);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryceftriaxone varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorypenicilling varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryamoxycillin varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryoxacillin varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryantibiogramother varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN datesamplesentregLab date;
+ALTER TABLE pathogentest_history ADD COLUMN laboratorydatepcrperformed date;
+ALTER TABLE pathogentest_history ADD COLUMN laboratorypcrtype varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorypcroptions varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryserotype varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryserotypetype varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryserotyperesults varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryfinalresults varchar(512);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryobservations varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorydateresultssenthealthfacility date;
+ALTER TABLE pathogentest_history ADD COLUMN laboratorydateresultssentdsd date;
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryfinalclassification varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (586, 'Added columns to lab section for CSM');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
