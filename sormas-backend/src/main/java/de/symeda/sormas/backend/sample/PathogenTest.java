@@ -34,11 +34,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.sample.PCRTestSpecification;
 import de.symeda.sormas.api.sample.PathogenTestReferenceDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
+import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.common.DeletableAdo;
 import de.symeda.sormas.backend.disease.DiseaseVariantConverter;
 import de.symeda.sormas.backend.infrastructure.country.Country;
@@ -125,6 +127,38 @@ public class PathogenTest extends DeletableAdo {
 	private String prescriberPostalCode;
 	private String prescriberCity;
 	private Country prescriberCountry;
+	private LabTest laboratoryTestPerformed;
+	private String laboratoryTestPerformedOther;
+	private String laboratoryCytology;
+	private Gram laboratoryGram;
+	private String laboratoryGramOther;
+	private YesNo laboratoryRdtPerformed;
+	private String laboratoryRdtResults;
+	private LatexCulture laboratoryLatex;
+	private String laboratoryLatexOtherResults;
+	private Date dateSentReportingHealthFac;
+	private Date dateSampleSentRegRefLab;
+	private LatexCulture laboratoryCulture;
+	private String laboratoryCultureOther;
+	private String laboratoryOtherTests;
+	private String laboratoryOtherTestsResults;
+	private Antibiogram laboratoryCeftriaxone;
+	private Antibiogram laboratoryPenicillinG;
+	private Antibiogram laboratoryAmoxycillin;
+	private Antibiogram laboratoryOxacillin;
+	private Antibiogram laboratoryAntibiogramOther;
+	private Date dateSampleSentRegLab;
+	private Date laboratoryDatePcrPerformed;
+	private String laboratoryPcrType;
+	private LatexCulture laboratoryPcrOptions;
+	private String laboratorySerotype;
+	private String laboratorySerotypeType;
+	private String laboratorySerotypeResults;
+	private String laboratoryFinalResults;
+	private String laboratoryObservations;
+	private Date laboratoryDateResultsSentHealthFacility;
+	private Date laboratoryDateResultsSentDSD;
+	private CaseClassification laboratoryFinalClassification;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
@@ -477,5 +511,259 @@ public class PathogenTest extends DeletableAdo {
 
 	public PathogenTestReferenceDto toReference() {
 		return new PathogenTestReferenceDto(getUuid());
+	}
+
+	public LabTest getLaboratoryTestPerformed() {
+		return laboratoryTestPerformed;
+	}
+
+	public void setLaboratoryTestPerformed(LabTest laboratoryTestPerformed) {
+		this.laboratoryTestPerformed = laboratoryTestPerformed;
+	}
+
+	public String getLaboratoryTestPerformedOther() {
+		return laboratoryTestPerformedOther;
+	}
+
+	public void setLaboratoryTestPerformedOther(String laboratoryTestPerformedOther) {
+		this.laboratoryTestPerformedOther = laboratoryTestPerformedOther;
+	}
+
+	public String getLaboratoryCytology() {
+		return laboratoryCytology;
+	}
+
+	public void setLaboratoryCytology(String laboratoryCytology) {
+		this.laboratoryCytology = laboratoryCytology;
+	}
+
+	public Gram getLaboratoryGram() {
+		return laboratoryGram;
+	}
+
+	public void setLaboratoryGram(Gram laboratoryGram) {
+		this.laboratoryGram = laboratoryGram;
+	}
+
+	public String getLaboratoryGramOther() {
+		return laboratoryGramOther;
+	}
+
+	public void setLaboratoryGramOther(String laboratoryGramOther) {
+		this.laboratoryGramOther = laboratoryGramOther;
+	}
+
+	public YesNo getLaboratoryRdtPerformed() {
+		return laboratoryRdtPerformed;
+	}
+
+	public void setLaboratoryRdtPerformed(YesNo laboratoryRdtPerformed) {
+		this.laboratoryRdtPerformed = laboratoryRdtPerformed;
+	}
+
+	public String getLaboratoryRdtResults() {
+		return laboratoryRdtResults;
+	}
+
+	public void setLaboratoryRdtResults(String laboratoryRdtResults) {
+		this.laboratoryRdtResults = laboratoryRdtResults;
+	}
+
+	public LatexCulture getLaboratoryLatex() {
+		return laboratoryLatex;
+	}
+
+	public void setLaboratoryLatex(LatexCulture laboratoryLatex) {
+		this.laboratoryLatex = laboratoryLatex;
+	}
+
+	public String getLaboratoryLatexOtherResults() {
+		return laboratoryLatexOtherResults;
+	}
+
+	public void setLaboratoryLatexOtherResults(String laboratoryLatexOtherResults) {
+		this.laboratoryLatexOtherResults = laboratoryLatexOtherResults;
+	}
+
+	public Date getDateSentReportingHealthFac() {
+		return dateSentReportingHealthFac;
+	}
+
+	public void setDateSentReportingHealthFac(Date dateSentReportingHealthFac) {
+		this.dateSentReportingHealthFac = dateSentReportingHealthFac;
+	}
+
+	public Date getDateSampleSentRegRefLab() {
+		return dateSampleSentRegRefLab;
+	}
+
+	public void setDateSampleSentRegRefLab(Date dateSampleSentRegRefLab) {
+		this.dateSampleSentRegRefLab = dateSampleSentRegRefLab;
+	}
+
+	public LatexCulture getLaboratoryCulture() {
+		return laboratoryCulture;
+	}
+
+	public void setLaboratoryCulture(LatexCulture laboratoryCulture) {
+		this.laboratoryCulture = laboratoryCulture;
+	}
+
+	public String getLaboratoryCultureOther() {
+		return laboratoryCultureOther;
+	}
+
+	public void setLaboratoryCultureOther(String laboratoryCultureOther) {
+		this.laboratoryCultureOther = laboratoryCultureOther;
+	}
+
+	public String getLaboratoryOtherTests() {
+		return laboratoryOtherTests;
+	}
+
+	public void setLaboratoryOtherTests(String laboratoryOtherTests) {
+		this.laboratoryOtherTests = laboratoryOtherTests;
+	}
+
+	public String getLaboratoryOtherTestsResults() {
+		return laboratoryOtherTestsResults;
+	}
+
+	public void setLaboratoryOtherTestsResults(String laboratoryOtherTestsResults) {
+		this.laboratoryOtherTestsResults = laboratoryOtherTestsResults;
+	}
+
+	public Antibiogram getLaboratoryCeftriaxone() {
+		return laboratoryCeftriaxone;
+	}
+
+	public void setLaboratoryCeftriaxone(Antibiogram laboratoryCeftriaxone) {
+		this.laboratoryCeftriaxone = laboratoryCeftriaxone;
+	}
+
+	public Antibiogram getLaboratoryPenicillinG() {
+		return laboratoryPenicillinG;
+	}
+
+	public void setLaboratoryPenicillinG(Antibiogram laboratoryPenicillinG) {
+		this.laboratoryPenicillinG = laboratoryPenicillinG;
+	}
+
+	public Antibiogram getLaboratoryAmoxycillin() {
+		return laboratoryAmoxycillin;
+	}
+
+	public void setLaboratoryAmoxycillin(Antibiogram laboratoryAmoxycillin) {
+		this.laboratoryAmoxycillin = laboratoryAmoxycillin;
+	}
+
+	public Antibiogram getLaboratoryOxacillin() {
+		return laboratoryOxacillin;
+	}
+
+	public void setLaboratoryOxacillin(Antibiogram laboratoryOxacillin) {
+		this.laboratoryOxacillin = laboratoryOxacillin;
+	}
+
+	public Antibiogram getLaboratoryAntibiogramOther() {
+		return laboratoryAntibiogramOther;
+	}
+
+	public void setLaboratoryAntibiogramOther(Antibiogram laboratoryAntibiogramOther) {
+		this.laboratoryAntibiogramOther = laboratoryAntibiogramOther;
+	}
+	public Date getDateSampleSentRegLab() {
+		return dateSampleSentRegLab;
+	}
+
+	public void setDateSampleSentRegLab(Date dateSampleSentRegLab) {
+		this.dateSampleSentRegLab = dateSampleSentRegLab;
+	}
+	public Date getLaboratoryDatePcrPerformed() {
+		return laboratoryDatePcrPerformed;
+	}
+
+	public void setLaboratoryDatePcrPerformed(Date laboratoryDatePcrPerformed) {
+		this.laboratoryDatePcrPerformed = laboratoryDatePcrPerformed;
+	}
+
+	public String getLaboratoryPcrType() {
+		return laboratoryPcrType;
+	}
+
+	public void setLaboratoryPcrType(String laboratoryPcrType) {
+		this.laboratoryPcrType = laboratoryPcrType;
+	}
+
+	public LatexCulture getLaboratoryPcrOptions() {
+		return laboratoryPcrOptions;
+	}
+
+	public void setLaboratoryPcrOptions(LatexCulture laboratoryPcrOptions) {
+		this.laboratoryPcrOptions = laboratoryPcrOptions;
+	}
+
+	public String getLaboratorySerotype() {
+		return laboratorySerotype;
+	}
+
+	public void setLaboratorySerotype(String laboratorySerotype) {
+		this.laboratorySerotype = laboratorySerotype;
+	}
+
+	public String getLaboratorySerotypeType() {
+		return laboratorySerotypeType;
+	}
+
+	public void setLaboratorySerotypeType(String laboratorySerotypeType) {
+		this.laboratorySerotypeType = laboratorySerotypeType;
+	}
+
+	public String getLaboratorySerotypeResults() {
+		return laboratorySerotypeResults;
+	}
+
+	public void setLaboratorySerotypeResults(String laboratorySerotypeResults) {
+		this.laboratorySerotypeResults = laboratorySerotypeResults;
+	}
+
+	public String getLaboratoryFinalResults() {
+		return laboratoryFinalResults;
+	}
+
+	public void setLaboratoryFinalResults(String laboratoryFinalResults) {
+		this.laboratoryFinalResults = laboratoryFinalResults;
+	}
+
+	public String getLaboratoryObservations() {
+		return laboratoryObservations;
+	}
+
+	public void setLaboratoryObservations(String laboratoryObservations) {
+		this.laboratoryObservations = laboratoryObservations;
+	}
+
+	public Date getLaboratoryDateResultsSentHealthFacility() {
+		return laboratoryDateResultsSentHealthFacility;
+	}
+
+	public void setLaboratoryDateResultsSentHealthFacility(Date laboratoryDateResultsSentHealthFacility) {
+		this.laboratoryDateResultsSentHealthFacility = laboratoryDateResultsSentHealthFacility;
+	}
+
+	public Date getLaboratoryDateResultsSentDSD() {
+		return laboratoryDateResultsSentDSD;
+	}
+
+	public void setLaboratoryDateResultsSentDSD(Date laboratoryDateResultsSentDSD) {
+		this.laboratoryDateResultsSentDSD = laboratoryDateResultsSentDSD;
+	}
+
+	public CaseClassification getLaboratoryFinalClassification() {
+		return laboratoryFinalClassification;
+	}
+
+	public void setLaboratoryFinalClassification(CaseClassification laboratoryFinalClassification) {
+		this.laboratoryFinalClassification = laboratoryFinalClassification;
 	}
 }
