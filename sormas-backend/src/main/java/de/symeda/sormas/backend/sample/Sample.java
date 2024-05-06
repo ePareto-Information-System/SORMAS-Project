@@ -32,19 +32,11 @@ import javax.persistence.*;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.sample.*;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import org.apache.commons.lang3.StringUtils;
 
-import de.symeda.sormas.api.sample.AdditionalTestType;
-import de.symeda.sormas.api.sample.PathogenTestResultType;
-import de.symeda.sormas.api.sample.PathogenTestType;
-import de.symeda.sormas.api.sample.SampleMaterial;
-import de.symeda.sormas.api.sample.SamplePurpose;
-import de.symeda.sormas.api.sample.SampleReferenceDto;
-import de.symeda.sormas.api.sample.SampleSource;
-import de.symeda.sormas.api.sample.SamplingReason;
-import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.DeletableAdo;
 import de.symeda.sormas.backend.contact.Contact;
@@ -55,8 +47,6 @@ import de.symeda.sormas.backend.sormastosormas.entities.SormasToSormasShareable;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
 import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo;
 import de.symeda.sormas.backend.user.User;
-import org.bouncycastle.asn1.x509.Time;
-import org.docx4j.org.apache.xpath.operations.Bool;
 
 @Entity(name = "samples")
 public class Sample extends DeletableAdo implements SormasToSormasShareable {
@@ -171,6 +161,14 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public static final String LABORATORY_DATE_RESULTS_SENT_DSD = "laboratoryDateResultsSentDSD";
 	public static final String LABORATORY_FINAL_CLASSIFICATION = "laboratoryFinalClassification";
 	public static final String LABORATORY_TYPE = "laboratoryType";
+	public static final String SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL = "specimenSavedAndPreservedInAlcohol";
+	public static final String SENT_FOR_CONFIRMATION_NATIONAL = "sentForConfirmationNational";
+	public static final String SENT_FOR_CONFIRMATION_NATIONAL_DATE = "sentForConfirmationNationalDate";
+	public static final String SENT_FOR_CONFIRMATION_TO = "sentForConfirmationTo";
+	public static final String DATE_RESULT_RECEIVED_NATIONAL = "dateResultReceivedNational";
+	public static final String USE_OF_CLOTH_FILTER = "useOfClothFilter";
+	public static final String FREQUENCY_OF_CHANGING_FILTERS = "frequencyOfChangingFilters";
+	public static final String REMARKS = "remarks";
 
 
 	private Case associatedCase;
@@ -327,6 +325,21 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private String treatment;
 	private String stateTreatmentAdministered;
 	private Long pathogenTestCount;
+	private String receivedByRegion;
+
+	private String receivedByNational;
+
+	private YesNo specimenSavedAndPreservedInAlcohol;
+	private String specimenSavedAndPreservedInAlcoholWhy;
+	private YesNo sentForConfirmationNational;
+	private Date sentForConfirmationNationalDate;
+	private String sentForConfirmationTo;
+	private Date dateResultReceivedNational;
+	private YesNo useOfClothFilter;
+	private FilterChangingFrequency frequencyOfChangingFilters;
+	private String remarks;
+
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	public Case getAssociatedCase() {
@@ -1617,5 +1630,92 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setPathogenTestCount(Long pathogenTestCount) {
 		this.pathogenTestCount = pathogenTestCount;
+	}
+
+	public String getReceivedByRegion() {
+		return receivedByRegion;
+	}
+
+	public void setReceivedByRegion(String receivedBy) {
+		this.receivedByRegion = receivedBy;
+	}
+
+	public void setReceivedByNational(String receivedByNational) {
+		this.receivedByNational = receivedByNational;
+	}
+
+	public String getReceivedByNational() {
+		return receivedByNational;
+	}
+
+	public YesNo getSpecimenSavedAndPreservedInAlcohol() {
+		return specimenSavedAndPreservedInAlcohol;
+	}
+
+	public void setSpecimenSavedAndPreservedInAlcohol(YesNo specimenSavedAndPreservedInAlcohol) {
+		this.specimenSavedAndPreservedInAlcohol = specimenSavedAndPreservedInAlcohol;
+	}
+	public String getSpecimenSavedAndPreservedInAlcoholWhy() {
+		return specimenSavedAndPreservedInAlcoholWhy;
+	}
+
+	public void setSpecimenSavedAndPreservedInAlcoholWhy(String specimenSavedAndPreservedInAlcoholWhy) {
+		this.specimenSavedAndPreservedInAlcoholWhy = specimenSavedAndPreservedInAlcoholWhy;
+	}
+
+	public YesNo getSentForConfirmationNational() {
+		return sentForConfirmationNational;
+	}
+
+	public void setSentForConfirmationNational(YesNo sentForConfirmationNational) {
+		this.sentForConfirmationNational = sentForConfirmationNational;
+	}
+
+	public Date getSentForConfirmationNationalDate() {
+		return sentForConfirmationNationalDate;
+	}
+
+	public void setSentForConfirmationNationalDate(Date sentForConfirmationNationalDate) {
+		this.sentForConfirmationNationalDate = sentForConfirmationNationalDate;
+	}
+
+	public String getSentForConfirmationTo() {
+		return sentForConfirmationTo;
+	}
+
+	public void setSentForConfirmationTo(String sentForConfirmationTo) {
+		this.sentForConfirmationTo = sentForConfirmationTo;
+	}
+
+	public Date getDateResultReceivedNational() {
+		return dateResultReceivedNational;
+	}
+
+	public void setDateResultReceivedNational(Date dateResultReceivedNational) {
+		this.dateResultReceivedNational = dateResultReceivedNational;
+	}
+
+	public YesNo getUseOfClothFilter() {
+		return useOfClothFilter;
+	}
+
+	public void setUseOfClothFilter(YesNo useOfClothFilter) {
+		this.useOfClothFilter = useOfClothFilter;
+	}
+
+	public FilterChangingFrequency getFrequencyOfChangingFilters() {
+		return frequencyOfChangingFilters;
+	}
+
+	public void setFrequencyOfChangingFilters(FilterChangingFrequency frequencyOfChangingFilters) {
+		this.frequencyOfChangingFilters = frequencyOfChangingFilters;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 }

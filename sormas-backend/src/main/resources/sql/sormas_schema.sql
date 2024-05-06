@@ -13094,4 +13094,21 @@ ALTER TABLE containmentMeasures ADD COLUMN change_user_id BIGINT,
                                    REFERENCES users (id);
 INSERT INTO schema_version(version_number, comment) VALUES (574, 'Added fields to implement containmentMeasures for epid data');
 
+ALTER TABLE samples ADD COLUMN receivedByRegion varchar(255);
+ALTER TABLE samples ADD COLUMN receivedByNational varchar(255);
+ALTER TABLE samples ADD COLUMN specimenSavedAndPreservedInAlcohol varchar(255);
+ALTER TABLE samples ADD COLUMN specimenSavedAndPreservedInAlcoholWhy varchar(255);
+ALTER TABLE samples ADD COLUMN sentForConfirmationNational varchar(255);
+ALTER TABLE samples ADD COLUMN sentForConfirmationNationalDate DATE;
+ALTER TABLE samples ADD COLUMN sentForConfirmationTo varchar(255);
+ALTER TABLE samples ADD COLUMN dateResultReceivedNational DATE;
+ALTER TABLE samples ADD COLUMN useOfClothFilter varchar(255);
+ALTER TABLE samples ADD COLUMN frequencyOfChangingFilters varchar(255);
+ALTER TABLE samples ADD COLUMN remarks varchar(255);
+ALTER TABLE epidata ADD COLUMN receivedHealthEducation varchar(255);
+ALTER TABLE epidata ADD COLUMN patientEnteredWaterSource varchar(255);
+ALTER TABLE epidata ADD COLUMN placeManaged varchar(255);
+ALTER TABLE epidata ADD COLUMN placeManagedOther varchar(255);
+INSERT INTO schema_version(version_number, comment) VALUES (575, 'Added new fields to samples, person and epidata');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

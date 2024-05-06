@@ -385,6 +385,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			intensiveCareUnit.setVisible(false);
 			setVisible(true, HospitalizationDto.ISOLATED, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE);
 		}
+
+		if (caze.getDisease() == Disease.GUINEA_WORM) {
+			hideAllFields();
+			//show discharge date
+			setVisible(true, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.ADMISSION_DATE);
+		}
 	}
 
 	private void updatePrevHospHint(NullableOptionGroup hospitalizedPreviouslyField, PreviousHospitalizationsField previousHospitalizationsField) {

@@ -32,7 +32,6 @@ import javax.persistence.criteria.Selection;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.sample.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -954,8 +953,17 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setOtherInfluenzaVirus(source.getOtherInfluenzaVirus());
 		target.setTreatment(source.getTreatment());
 		target.setStateTreatmentAdministered(source.getStateTreatmentAdministered());
-
-
+		target.setReceivedByRegion(source.getReceivedByRegion());
+		target.setReceivedByNational(source.getReceivedByNational());
+		target.setSpecimenSavedAndPreservedInAlcohol(source.getSpecimenSavedAndPreservedInAlcohol());
+		target.setSpecimenSavedAndPreservedInAlcoholWhy(source.getSpecimenSavedAndPreservedInAlcoholWhy());
+		target.setSentForConfirmationNational(source.getSentForConfirmationNational());
+		target.setSentForConfirmationNationalDate(source.getSentForConfirmationNationalDate());
+		target.setSentForConfirmationTo(source.getSentForConfirmationTo());
+		target.setDateResultReceivedNational(source.getDateResultReceivedNational());
+		target.setUseOfClothFilter(source.getUseOfClothFilter());
+		target.setFrequencyOfChangingFilters(source.getFrequencyOfChangingFilters());
+		target.setRemarks(source.getRemarks());
 
 		if (source.getSormasToSormasOriginInfo() != null) {
 			target.setSormasToSormasOriginInfo(originInfoService.getByUuid(source.getSormasToSormasOriginInfo().getUuid()));
@@ -1215,6 +1223,16 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setFourFoldRise(source.getFourFoldRise());
 		target.setTreatment(source.getTreatment());
 		target.setStateTreatmentAdministered(source.getStateTreatmentAdministered());
+		target.setReceivedByRegion(source.getReceivedByRegion());
+		target.setReceivedByNational(source.getReceivedByNational());
+		target.setSpecimenSavedAndPreservedInAlcohol(source.getSpecimenSavedAndPreservedInAlcohol());
+		target.setSentForConfirmationNational(source.getSentForConfirmationNational());
+		target.setSentForConfirmationNationalDate(source.getSentForConfirmationNationalDate());
+		target.setSentForConfirmationTo(source.getSentForConfirmationTo());
+		target.setDateResultReceivedNational(source.getDateResultReceivedNational());
+		target.setUseOfClothFilter(source.getUseOfClothFilter());
+		target.setFrequencyOfChangingFilters(source.getFrequencyOfChangingFilters());
+		target.setRemarks(source.getRemarks());
 
 
 

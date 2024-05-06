@@ -109,10 +109,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     fluidRowLocs(SampleDto.RDT_PERFORMED, SampleDto.RDT_RESULTS) +
                     fluidRowLocs(SampleDto.DISTRICT_NOTIFICATION_DATE, SampleDto.NAME_OF_PERSON, SampleDto.TEL_NUMBER) +
                     fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT) +
-                    fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +
-                    fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_NATIONAL, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
-
-
+					fluidRowLocs(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL, SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY) +
+                    fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.RECEIVED_BY_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +
+                    fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_NATIONAL, SampleDto.RECEIVED_BY_NATIONAL, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
+					fluidRowLocs(SampleDto.SENT_FOR_CONFIRMATION_NATIONAL, SampleDto.SENT_FOR_CONFIRMATION_NATIONAL_DATE, SampleDto.SENT_FOR_CONFIRMATION_TO) +
+					fluidRowLocs(SampleDto.DATE_RESULT_RECEIVED_NATIONAL, SampleDto.USE_OF_CLOTH_FILTER, SampleDto.FREQUENCY_OF_CHANGING_FILTERS) +
+					fluidRowLocs(SampleDto.REMARKS) +
                     fluidRowLocs(SampleDto.SAMPLE_PURPOSE) +
                     fluidRowLocs(6,SampleDto.SAMPLE_MATERIAL) +
 					fluidRowLocs(SampleDto.FIELD_SAMPLE_ID, REFERRED_FROM_BUTTON_LOC) +
@@ -305,6 +307,26 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		addField(SampleDto.OTHER_DELETION_REASON, TextArea.class).setRows(3);
 		setVisible(false, SampleDto.DELETION_REASON, SampleDto.OTHER_DELETION_REASON);
 
+		addField(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL, NullableOptionGroup.class);
+		addField(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY, TextField.class);
+		addField(SampleDto.SENT_FOR_CONFIRMATION_NATIONAL, NullableOptionGroup.class);
+		addDateField(SampleDto.SENT_FOR_CONFIRMATION_NATIONAL_DATE, DateField.class, 7);
+		addField(SampleDto.SENT_FOR_CONFIRMATION_TO, TextField.class);
+		addDateField(SampleDto.DATE_RESULT_RECEIVED_NATIONAL, DateField.class, 7);
+		addField(SampleDto.USE_OF_CLOTH_FILTER, NullableOptionGroup.class);
+		addField(SampleDto.FREQUENCY_OF_CHANGING_FILTERS, ComboBox.class);
+		addField(SampleDto.REMARKS, TextArea.class).setRows(3);
+		setVisible(false,
+				SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL,
+				SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY,
+				SampleDto.SENT_FOR_CONFIRMATION_NATIONAL,
+				SampleDto.SENT_FOR_CONFIRMATION_NATIONAL_DATE,
+				SampleDto.SENT_FOR_CONFIRMATION_TO,
+				SampleDto.DATE_RESULT_RECEIVED_NATIONAL,
+				SampleDto.USE_OF_CLOTH_FILTER,
+				SampleDto.FREQUENCY_OF_CHANGING_FILTERS,
+				SampleDto.REMARKS);
+
 		diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
 			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
 
@@ -415,7 +437,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				break;
 			case NEW_INFLUENZA:
 				handleNewInfluenza();
-			break;
+				break;
+			case GUINEA_WORM:
+				handleGuineaWorm();
+				break;
 				// Handle default case, maybe log an error or set default visibility
 			default:
 		}
@@ -1068,4 +1093,23 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		);
 	}
 
+	public void handleGuineaWorm() {
+		addField(SampleDto.DATE_FORM_SENT_TO_REGION, DateField.class);
+		addField(SampleDto.DATE_FORM_RECEIVED_AT_REGION, DateField.class);
+		addField(SampleDto.DATE_FORM_SENT_TO_NATIONAL, DateField.class);
+		addField(SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL, DateField.class);
+		addFields(SampleDto.RECEIVED_BY_REGION, SampleDto.RECEIVED_BY_NATIONAL);
+		setVisible(false, SampleDto.IPSAMPLESENT, SampleDto.IPSAMPLERESULTS);
+
+		setVisible(true,
+				SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL,
+				SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY,
+				SampleDto.SENT_FOR_CONFIRMATION_NATIONAL,
+				SampleDto.SENT_FOR_CONFIRMATION_NATIONAL_DATE,
+				SampleDto.SENT_FOR_CONFIRMATION_TO,
+				SampleDto.DATE_RESULT_RECEIVED_NATIONAL,
+				SampleDto.USE_OF_CLOTH_FILTER,
+				SampleDto.FREQUENCY_OF_CHANGING_FILTERS,
+				SampleDto.REMARKS);
+	}
 }

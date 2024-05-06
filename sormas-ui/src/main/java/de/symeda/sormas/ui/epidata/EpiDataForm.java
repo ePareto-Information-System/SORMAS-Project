@@ -84,6 +84,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					locCss(VSPACE_TOP_3, "") +
 					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_ONE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_TWO) +
 					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_THREE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_FOUR) +
+					fluidRowLocs(EpiDataDto.RECEIVED_HEALTH_EDUCATION, EpiDataDto.PATIENT_ENTERED_WATER_SOURCE, EpiDataDto.PLACE_MANAGED) +
 					fluidRowLocs(EpiDataDto.EXPOSED_TO_RISK_FACTOR + EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE)+
 					loc(EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY)+
 					loc(EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI)+
@@ -184,6 +185,11 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			addContaminationSourcesFields();
 			addContainmentMeasuresFields();
 		}
+
+		addField(EpiDataDto.RECEIVED_HEALTH_EDUCATION, NullableOptionGroup.class);
+		addField(EpiDataDto.PATIENT_ENTERED_WATER_SOURCE, NullableOptionGroup.class);
+		addField(EpiDataDto.PLACE_MANAGED, ComboBox.class);
+		setVisible(false, EpiDataDto.RECEIVED_HEALTH_EDUCATION, EpiDataDto.PATIENT_ENTERED_WATER_SOURCE, EpiDataDto.PLACE_MANAGED);
 
 		addField(EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, NullableOptionGroup.class);
 		addField(EpiDataDto.LARGE_OUTBREAKS_AREA, NullableOptionGroup.class);
@@ -328,6 +334,9 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			Label containmentMeasuresHeading = new Label(I18nProperties.getString(Strings.headingContainmentMeasures));
 			containmentMeasuresHeading.setStyleName(H3);
 			getContent().addComponent(containmentMeasuresHeading, CONTAINMENT_MEASURES_HEADING);
+
+			setVisible(true, EpiDataDto.RECEIVED_HEALTH_EDUCATION, EpiDataDto.PATIENT_ENTERED_WATER_SOURCE, EpiDataDto.PLACE_MANAGED);
+
 
 		}
 

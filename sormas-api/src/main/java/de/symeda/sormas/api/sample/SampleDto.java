@@ -19,7 +19,6 @@ import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.utils.*;
 
-import java.security.Timestamp;
 import java.util.Date;
 import java.util.Set;
 
@@ -33,7 +32,6 @@ import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.common.DeletionReason;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
-import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasShareableDto;
@@ -154,9 +152,6 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY = "laboratoryDateResultsSentHealthFacility";
 	public static final String LABORATORY_DATE_RESULTS_SENT_DSD = "laboratoryDateResultsSentDSD";
 	public static final String LABORATORY_FINAL_CLASSIFICATION = "laboratoryFinalClassification";
-
-	//AFP
-
 	public static final String DATE_FIRST_SPECIMEN = "dateFirstSpecimen";
 	public static final String DATE_SECOND_SPECIMEN = "dateSecondSpecimen";
 	public static final String DATE_SPECIMEN_SENT_NATIONAL_LEVEL = "dateSpecimenSentNationalLevel";
@@ -190,6 +185,17 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String OTHER_INFLUENZA_VIRUS = "otherInfluenzaVirus";
 	public static final String TREATMENT = "treatment";
 	public static final String STATE_TREATMENT_ADMINISTERED = "stateTreatmentAdministered";
+	public static final String RECEIVED_BY_REGION = "receivedByRegion";
+	public static final String RECEIVED_BY_NATIONAL = "receivedByNational";
+	public static final String SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL = "specimenSavedAndPreservedInAlcohol";
+	public static final String SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY = "specimenSavedAndPreservedInAlcoholWhy";
+	public static final String SENT_FOR_CONFIRMATION_NATIONAL = "sentForConfirmationNational";
+	public static final String SENT_FOR_CONFIRMATION_NATIONAL_DATE = "sentForConfirmationNationalDate";
+	public static final String SENT_FOR_CONFIRMATION_TO = "sentForConfirmationTo";
+	public static final String DATE_RESULT_RECEIVED_NATIONAL = "dateResultReceivedNational";
+	public static final String USE_OF_CLOTH_FILTER = "useOfClothFilter";
+	public static final String FREQUENCY_OF_CHANGING_FILTERS = "frequencyOfChangingFilters";
+	public static final String REMARKS = "remarks";
 
 
 	private CaseReferenceDto associatedCase;
@@ -374,6 +380,17 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private String otherInfluenzaVirus;
 	private String treatment;
 	private String stateTreatmentAdministered;
+	private String receivedByRegion;
+	private String receivedByNational;
+	private YesNo specimenSavedAndPreservedInAlcohol;
+	private String specimenSavedAndPreservedInAlcoholWhy;
+	private YesNo sentForConfirmationNational;
+	private Date sentForConfirmationNationalDate;
+	private String sentForConfirmationTo;
+	private Date dateResultReceivedNational;
+	private YesNo useOfClothFilter;
+	private FilterChangingFrequency frequencyOfChangingFilters;
+	private String remarks;
 
 
 
@@ -1646,5 +1663,93 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 	public void setStateTreatmentAdministered(String stateTreatmentAdministered) {
 		this.stateTreatmentAdministered = stateTreatmentAdministered;
+	}
+
+	public String getReceivedByRegion() {
+		return receivedByRegion;
+	}
+
+	public void setReceivedByRegion(String receivedByRegion) {
+		this.receivedByRegion = receivedByRegion;
+	}
+
+	public String getReceivedByNational() {
+		return receivedByNational;
+	}
+
+	public void setReceivedByNational(String receivedByNational) {
+		this.receivedByNational = receivedByNational;
+	}
+
+	public YesNo getSpecimenSavedAndPreservedInAlcohol() {
+		return specimenSavedAndPreservedInAlcohol;
+	}
+
+	public void setSpecimenSavedAndPreservedInAlcohol(YesNo specimenSavedAndPreservedInAlcohol) {
+		this.specimenSavedAndPreservedInAlcohol = specimenSavedAndPreservedInAlcohol;
+	}
+
+	public String getSpecimenSavedAndPreservedInAlcoholWhy() {
+		return specimenSavedAndPreservedInAlcoholWhy;
+	}
+
+	public void setSpecimenSavedAndPreservedInAlcoholWhy(String specimenSavedAndPreservedInAlcoholWhy) {
+		this.specimenSavedAndPreservedInAlcoholWhy = specimenSavedAndPreservedInAlcoholWhy;
+	}
+
+	public YesNo getSentForConfirmationNational() {
+		return sentForConfirmationNational;
+	}
+
+	public void setSentForConfirmationNational(YesNo sentForConfirmationNational) {
+		this.sentForConfirmationNational = sentForConfirmationNational;
+	}
+
+	public Date getSentForConfirmationNationalDate() {
+		return sentForConfirmationNationalDate;
+	}
+
+	public void setSentForConfirmationNationalDate(Date sentForConfirmationNationalDate) {
+		this.sentForConfirmationNationalDate = sentForConfirmationNationalDate;
+	}
+
+	public String getSentForConfirmationTo() {
+		return sentForConfirmationTo;
+	}
+
+	public void setSentForConfirmationTo(String sentForConfirmationTo) {
+		this.sentForConfirmationTo = sentForConfirmationTo;
+	}
+
+	public Date getDateResultReceivedNational() {
+		return dateResultReceivedNational;
+	}
+
+	public void setDateResultReceivedNational(Date dateResultReceivedNational) {
+		this.dateResultReceivedNational = dateResultReceivedNational;
+	}
+
+	public YesNo getUseOfClothFilter() {
+		return useOfClothFilter;
+	}
+
+	public void setUseOfClothFilter(YesNo useOfClothFilter) {
+		this.useOfClothFilter = useOfClothFilter;
+	}
+
+	public FilterChangingFrequency getFrequencyOfChangingFilters() {
+		return frequencyOfChangingFilters;
+	}
+
+	public void setFrequencyOfChangingFilters(FilterChangingFrequency frequencyOfChangingFilters) {
+		this.frequencyOfChangingFilters = frequencyOfChangingFilters;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 }
