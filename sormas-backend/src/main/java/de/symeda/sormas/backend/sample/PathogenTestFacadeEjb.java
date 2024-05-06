@@ -414,6 +414,40 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setPrescriberCity(source.getPrescriberCity());
 		target.setPrescriberCountry(CountryFacadeEjb.toReferenceDto(source.getPrescriberCountry()));
 
+		target.setLaboratoryTestPerformed(source.getLaboratoryTestPerformed());
+		target.setLaboratoryTestPerformedOther(source.getLaboratoryTestPerformedOther());
+		target.setLaboratoryCytology(source.getLaboratoryCytology());
+		target.setLaboratoryGram(source.getLaboratoryGram());
+		target.setLaboratoryGramOther(source.getLaboratoryGramOther());
+		target.setLaboratoryRdtPerformed(source.getLaboratoryRdtPerformed());
+		target.setLaboratoryRdtResults(source.getLaboratoryRdtResults());
+		target.setLaboratoryLatex(source.getLaboratoryLatex());
+		target.setLaboratoryLatexOtherResults(source.getLaboratoryLatexOtherResults());
+		target.setDateSentReportingHealthFac(source.getDateSentReportingHealthFac());
+		target.setDateSampleSentRegRefLab(source.getDateSampleSentRegRefLab());
+		target.setLaboratoryCulture(source.getLaboratoryCulture());
+		target.setLaboratoryCultureOther(source.getLaboratoryCultureOther());
+		target.setLaboratoryOtherTests(source.getLaboratoryOtherTests());
+		target.setLaboratoryOtherTestsResults(source.getLaboratoryOtherTestsResults());
+		target.setLaboratoryCeftriaxone(source.getLaboratoryCeftriaxone());
+		target.setLaboratoryPenicillinG(source.getLaboratoryPenicillinG());
+		target.setLaboratoryAmoxycillin(source.getLaboratoryAmoxycillin());
+		target.setLaboratoryOxacillin(source.getLaboratoryOxacillin());
+		target.setLaboratoryAntibiogramOther(source.getLaboratoryAntibiogramOther());
+		target.setDateSampleSentRegLab(source.getDateSampleSentRegLab());
+		target.setLaboratoryDatePcrPerformed(source.getLaboratoryDatePcrPerformed());
+		target.setLaboratoryPcrType(source.getLaboratoryPcrType());
+		target.setLaboratoryPcrOptions(source.getLaboratoryPcrOptions());
+		target.setLaboratorySerotype(source.getLaboratorySerotype());
+		target.setLaboratorySerotypeType(source.getLaboratorySerotypeType());
+		target.setLaboratorySerotypeResults(source.getLaboratorySerotypeResults());
+		target.setLaboratoryFinalResults(source.getLaboratoryFinalResults());
+		target.setLaboratoryObservations(source.getLaboratoryObservations());
+		target.setLaboratoryDateResultsSentHealthFacility(source.getLaboratoryDateResultsSentHealthFacility());
+		target.setLaboratoryDateResultsSentDSD(source.getLaboratoryDateResultsSentDSD());
+		target.setLaboratoryFinalClassification(source.getLaboratoryFinalClassification());
+
+
 		return target;
 	}
 
@@ -497,6 +531,39 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setPrescriberPostalCode(source.getPrescriberPostalCode());
 		target.setPrescriberCity(source.getPrescriberCity());
 		target.setPrescriberCountry(countryService.getByReferenceDto(source.getPrescriberCountry()));
+
+		target.setLaboratoryTestPerformed(source.getLaboratoryTestPerformed());
+		target.setLaboratoryTestPerformedOther(source.getLaboratoryTestPerformedOther());
+		target.setLaboratoryCytology(source.getLaboratoryCytology());
+		target.setLaboratoryGram(source.getLaboratoryGram());
+		target.setLaboratoryGramOther(source.getLaboratoryGramOther());
+		target.setLaboratoryRdtPerformed(source.getLaboratoryRdtPerformed());
+		target.setLaboratoryRdtResults(source.getLaboratoryRdtResults());
+		target.setLaboratoryLatex(source.getLaboratoryLatex());
+		target.setLaboratoryLatexOtherResults(source.getLaboratoryLatexOtherResults());
+		target.setDateSentReportingHealthFac(source.getDateSentReportingHealthFac());
+		target.setDateSampleSentRegRefLab(source.getDateSampleSentRegRefLab());
+		target.setLaboratoryCulture(source.getLaboratoryCulture());
+		target.setLaboratoryCultureOther(source.getLaboratoryCultureOther());
+		target.setLaboratoryOtherTests(source.getLaboratoryOtherTests());
+		target.setLaboratoryOtherTestsResults(source.getLaboratoryOtherTestsResults());
+		target.setLaboratoryCeftriaxone(source.getLaboratoryCeftriaxone());
+		target.setLaboratoryPenicillinG(source.getLaboratoryPenicillinG());
+		target.setLaboratoryAmoxycillin(source.getLaboratoryAmoxycillin());
+		target.setLaboratoryOxacillin(source.getLaboratoryOxacillin());
+		target.setLaboratoryAntibiogramOther(source.getLaboratoryAntibiogramOther());
+		target.setDateSampleSentRegLab(source.getDateSampleSentRegLab());
+		target.setLaboratoryDatePcrPerformed(source.getLaboratoryDatePcrPerformed());
+		target.setLaboratoryPcrType(source.getLaboratoryPcrType());
+		target.setLaboratoryPcrOptions(source.getLaboratoryPcrOptions());
+		target.setLaboratorySerotype(source.getLaboratorySerotype());
+		target.setLaboratorySerotypeType(source.getLaboratorySerotypeType());
+		target.setLaboratorySerotypeResults(source.getLaboratorySerotypeResults());
+		target.setLaboratoryFinalResults(source.getLaboratoryFinalResults());
+		target.setLaboratoryObservations(source.getLaboratoryObservations());
+		target.setLaboratoryDateResultsSentHealthFacility(source.getLaboratoryDateResultsSentHealthFacility());
+		target.setLaboratoryDateResultsSentDSD(source.getLaboratoryDateResultsSentDSD());
+		target.setLaboratoryFinalClassification(source.getLaboratoryFinalClassification());
 
 		return target;
 	}
