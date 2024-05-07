@@ -14,7 +14,7 @@ import java.util.Date;
         FeatureType.CONTACT_TRACING })
 public class ContaminationSourceDto extends PseudonymizableDto  {
 
-    public static String I18N_PREFIX = "PersonTravelHistory";
+    public static String I18N_PREFIX = "ContaminationSource";
 
     private static final long serialVersionUID = 6551672739041643942L;
 

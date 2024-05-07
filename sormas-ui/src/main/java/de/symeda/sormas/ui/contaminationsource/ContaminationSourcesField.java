@@ -142,7 +142,7 @@ public class ContaminationSourcesField extends AbstractTableField<ContaminationS
                 contaminationSourcesEditForm.getFieldGroup());
         component.getCommitButton().setCaption(I18nProperties.getString(Strings.done));
 
-        Window popupWindow = VaadinUiUtil.showModalPopupWindow(component, I18nProperties.getString(Strings.entityActivityAsCase));
+        Window popupWindow = VaadinUiUtil.showModalPopupWindow(component, I18nProperties.getString(Strings.entityContaminationSource));
         popupWindow.setHeight(90, Unit.PERCENTAGE);
 
         if (isEditAllowed) {

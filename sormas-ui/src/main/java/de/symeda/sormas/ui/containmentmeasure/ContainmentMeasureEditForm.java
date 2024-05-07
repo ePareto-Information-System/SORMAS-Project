@@ -31,7 +31,7 @@ public class ContainmentMeasureEditForm extends AbstractEditForm<ContainmentMeas
 
 
     public ContainmentMeasureEditForm(boolean create, FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers) {
-        super(ContainmentMeasureDto.class, PersonContactDetailDto.I18N_PREFIX, create, fieldVisibilityCheckers, fieldAccessCheckers);
+        super(ContainmentMeasureDto.class, ContainmentMeasureDto.I18N_PREFIX, create, fieldVisibilityCheckers, fieldAccessCheckers);
 
         setWidth(960, Unit.PIXELS);
         if (create) {

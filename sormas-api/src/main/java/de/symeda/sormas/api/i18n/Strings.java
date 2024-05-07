@@ -284,6 +284,10 @@ public interface Strings {
 	String entityVaccinations = "entityVaccinations";
 	String entityVisits = "entityVisits";
 	String entityWeeklyReports = "entityWeeklyReports";
+	String entityContainmentMeasure = "entityContainmentMeasure";
+	String entityPersonTravelHistory = "entityPersonTravelHistory";
+	String entityContaminationSource = "entityContaminationSource";
+
 	String epiWeek = "epiWeek";
 	String errorAccessDenied = "errorAccessDenied";
 	String errorCampaignDiagramTotalsCalculationError = "errorCampaignDiagramTotalsCalculationError";

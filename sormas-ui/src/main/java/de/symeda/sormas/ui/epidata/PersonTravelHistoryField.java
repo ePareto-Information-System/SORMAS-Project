@@ -147,7 +147,7 @@ public class PersonTravelHistoryField extends AbstractTableField<PersonTravelHis
                 personTravelHistoryForm.getFieldGroup());
         component.getCommitButton().setCaption(I18nProperties.getString(Strings.done));
 
-        Window popupWindow = VaadinUiUtil.showModalPopupWindow(component, I18nProperties.getString(Strings.entityActivityAsCase));
+        Window popupWindow = VaadinUiUtil.showModalPopupWindow(component, I18nProperties.getString(Strings.entityPersonTravelHistory));
         popupWindow.setHeight(90, Unit.PERCENTAGE);
 
         if (isEditAllowed) {
