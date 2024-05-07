@@ -13327,4 +13327,28 @@ ALTER TABLE pathogentest_history ADD COLUMN laboratorytype varchar(255);
 ALTER TABLE pathogentest_history ADD COLUMN laboratoryname varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (587, 'Added 2 extra columns to lab section for CSM');
+
+-- Creating facility_diseaseconfiguration
+CREATE TABLE facility_diseaseconfiguration (
+        facility_id bigint,
+        diseaseconfiguration_id bigint,
+        PRIMARY KEY (facility_id, diseaseconfiguration_id),
+        FOREIGN KEY (facility_id) REFERENCES facility(id),
+        FOREIGN KEY (diseaseconfiguration_id) REFERENCES diseaseconfiguration(id)
+);
+
+ALTER TABLE facility_diseaseconfiguration ADD COLUMN sys_period tstzrange;
+UPDATE facility_diseaseconfiguration SET sys_period=tstzrange((SELECT diseaseconfiguration.creationdate FROM diseaseconfiguration WHERE diseaseconfiguration.id = facility_diseaseconfiguration.diseaseconfiguration_id),
+    null);
+ALTER TABLE facility_diseaseconfiguration ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE facility_diseaseconfiguration_history (LIKE facility_diseaseconfiguration);
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE OR DELETE ON facility_diseaseconfiguration
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'facility_diseaseconfiguration_history', true);
+ALTER TABLE facility_diseaseconfiguration_history OWNER TO sormas_user;
+
+ALTER TABLE diseaseconfiguration ADD COLUMN archived boolean DEFAULT false;
+ALTER TABLE diseaseconfiguration ADD COLUMN centrally_managed boolean DEFAULT false;
+
+INSERT INTO schema_version (version_number, comment) VALUES (588, 'Added facility_diseaseconfiguration to db');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

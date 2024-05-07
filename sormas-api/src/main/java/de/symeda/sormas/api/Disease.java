@@ -217,4 +217,8 @@ public enum Disease
 			YELLOW_FEVER
 	);
 
+	public static final List<Disease> CSM_ONLY = Arrays.asList(
+			CSM
+	);
+
 }
