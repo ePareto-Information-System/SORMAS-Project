@@ -7,7 +7,8 @@ public enum LabTest {
     CYTOLOGY,
     GRAM_STAIN,
     LATEX,
-    RDT;
+    RDT,
+    OTHER;
     @Override
     public String toString() {
         return I18nProperties.getEnumCaption(this);
