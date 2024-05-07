@@ -92,4 +92,9 @@ public enum PathogenTestType {
 	public static List<PathogenTestType> getMeaslesTestTypes() {
 		return  Arrays.asList(IGM_SERUM_ANTIBODY, IGG_SERUM_ANTIBODY, PCR_RT_PCR);
 	}
+
+	public static List<PathogenTestType> getCSMTestTypes() {
+		return  Arrays.asList(CYTOLOGY, GRAM_STAIN, LATEX, RDT, OTHER);
+	}
+
 }

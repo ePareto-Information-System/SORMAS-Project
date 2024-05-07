@@ -222,5 +222,8 @@ public enum Disease
 	public static List<Disease> hideFollowUp = Arrays.asList(
 			YELLOW_FEVER, AHF, CSM, AFP, NEW_INFLUENZA, CHOLERA, MEASLES, CORONAVIRUS, FOODBORNE_ILLNESS, GUINEA_WORM, MONKEYPOX, NEONATAL_TETANUS
 	);
+	public static final List<Disease> CSM_ONLY = Arrays.asList(
+			CSM
+	);
 
 }
