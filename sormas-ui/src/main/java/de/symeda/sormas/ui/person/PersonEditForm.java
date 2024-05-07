@@ -779,7 +779,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		
 		if (disease == Disease.GUINEA_WORM) {
 			setVisible(true, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION);
-			addFields(PersonDto.INVESTIGATOR_NAME, PersonDto.INVESTIGATOR_TITLE);
+//			addFields(PersonDto.INVESTIGATOR_NAME, PersonDto.INVESTIGATOR_TITLE);
+			setVisible(true, PersonDto.INVESTIGATOR_TITLE, PersonDto.INVESTIGATOR_NAME);
 			generalCommentLabel.setVisible(false);
 			placeStayedInLast10_14MonthsLabel.setVisible(true);
 			setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER, PersonDto.BIRTH_DATE_YYYY,

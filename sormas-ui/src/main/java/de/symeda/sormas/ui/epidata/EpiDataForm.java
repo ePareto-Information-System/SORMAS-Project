@@ -517,7 +517,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		}
 
 		if (disease == Disease.GUINEA_WORM) {
-			hideAllFields();
+//			hideAllFields();
 
 		}
 
