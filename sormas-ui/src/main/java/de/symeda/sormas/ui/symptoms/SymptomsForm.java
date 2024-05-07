@@ -990,6 +990,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			setVisible(true, BULGING_FONTANELLE, FEVER, NECK_STIFFNESS, HEADACHE, CONVULSION, ALTERED_CONSCIOUSNESS, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
 			clinicalMeasurementsHeadingLabel.setVisible(false);
 			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
+			setVisible(false, ONSET_DATE);
 
 		}
 		if (disease == Disease.AHF || disease == Disease.DENGUE) {
