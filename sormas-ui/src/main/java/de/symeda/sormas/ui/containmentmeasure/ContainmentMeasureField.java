@@ -91,11 +91,11 @@ public class ContainmentMeasureField extends AbstractTableField<ContainmentMeasu
 
 
         table.setCellStyleGenerator(
-                FieldAccessCellStyleGenerator.withFieldAccessCheckers(PersonTravelHistoryDto.class, UiFieldAccessCheckers.forSensitiveData(isPseudonymized)));
+                FieldAccessCellStyleGenerator.withFieldAccessCheckers(ContainmentMeasureDto.class, UiFieldAccessCheckers.forSensitiveData(isPseudonymized)));
 
         for (Object columnId : table.getVisibleColumns()) {
             if (!columnId.equals(ACTION_COLUMN_ID)) {
-                table.setColumnHeader(columnId, I18nProperties.getPrefixCaption(PersonTravelHistoryDto.I18N_PREFIX, (String) columnId));
+                table.setColumnHeader(columnId, I18nProperties.getPrefixCaption(ContainmentMeasureDto.I18N_PREFIX, (String) columnId));
             }
         }
     }
@@ -152,7 +152,7 @@ public class ContainmentMeasureField extends AbstractTableField<ContainmentMeasu
                 containmentMeasureEditForm.getFieldGroup());
         component.getCommitButton().setCaption(I18nProperties.getString(Strings.done));
 
-        Window popupWindow = VaadinUiUtil.showModalPopupWindow(component, I18nProperties.getString(Strings.entityActivityAsCase));
+        Window popupWindow = VaadinUiUtil.showModalPopupWindow(component, I18nProperties.getString(Strings.entityContainmentMeasure));
         popupWindow.setHeight(90, Unit.PERCENTAGE);
 
         if (isEditAllowed) {

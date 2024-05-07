@@ -41,7 +41,7 @@ public class PersonTravelHistoryEditForm extends AbstractEditForm<PersonTravelHi
     private TextField textFieldVillage;
 
     public PersonTravelHistoryEditForm(boolean create, FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers) {
-        super(PersonTravelHistoryDto.class, PersonContactDetailDto.I18N_PREFIX, create, fieldVisibilityCheckers, fieldAccessCheckers);
+        super(PersonTravelHistoryDto.class, PersonTravelHistoryDto.I18N_PREFIX, create, fieldVisibilityCheckers, fieldAccessCheckers);
 
         setWidth(960, Unit.PIXELS);
         if (create) {
