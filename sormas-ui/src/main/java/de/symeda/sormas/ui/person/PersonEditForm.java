@@ -31,6 +31,8 @@ import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.person.*;
+import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.ui.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import com.vaadin.ui.CustomLayout;
@@ -70,6 +72,8 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.location.LocationEditForm;
 import org.hl7.fhir.r4.model.Person;
 
+import javax.validation.constraints.Null;
+
 public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private static final long serialVersionUID = -1L;
 	private static final String PERSON_INFORMATION_HEADING_LOC = "personInformationHeadingLoc";
@@ -96,7 +100,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_REGION, PersonDto.PLACE_OF_BIRTH_DISTRICT, PersonDto.PLACE_OF_BIRTH_COMMUNITY) +
 					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_FACILITY_TYPE, PersonDto.PLACE_OF_BIRTH_FACILITY, PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS) +
 					fluidRowLocs(PersonDto.GESTATION_AGE_AT_BIRTH, PersonDto.BIRTH_WEIGHT) +
-					fluidRowLocs(PersonDto.SEX, PersonDto.PRESENT_CONDITION) +
+					fluidRowLocs(PersonDto.SEX, PersonDto.PRESENT_CONDITION, PersonDto.ETHNICITY) +
 					fluidRow(
 							oneOfFourCol(PersonDto.DEATH_DATE),
 							oneOfFourCol(PersonDto.CAUSE_OF_DEATH),
@@ -126,6 +130,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					loc(ADDRESS_HEADER) +
 					fluidRowLocs(6,PersonDto.HOME_ADDRESS_RECREATIONAL) +
 					divsCss(VSPACE_3, fluidRowLocs(PersonDto.ADDRESS)) +
+					fluidRowLocs(PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE, PersonDto.RESIDENCE_SINCE_WHEN_IN_MONTHS) +
 					loc(PLACE_STAYED_IN_LAST_10_14_MONTHS) +
 					divsCss(VSPACE_3,
 							fluidRowLocs(PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY),
@@ -133,7 +138,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 							loc(VSPACE_TOP_5)
 					) +
 //					line and space
-
 					loc(CONTACT_INFORMATION_HEADER) +
 					divsCss(
 							VSPACE_3,
@@ -315,6 +319,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		addFields(PersonDto.MOTHERS_NAME, PersonDto.FATHERS_NAME);
 		addFields(PersonDto.NAMES_OF_GUARDIANS);
 		ComboBox presentCondition = addField(PersonDto.PRESENT_CONDITION, ComboBox.class);
+		TextField ethnicity = addField(PersonDto.ETHNICITY, TextField.class);
+		ethnicity.setVisible(false);
 		birthDateDay = addField(PersonDto.BIRTH_DATE_DD, ComboBox.class);
 		// @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
 		birthDateDay.setNullSelectionAllowed(true);
@@ -457,6 +463,44 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		TextField placeStayedTenToFourteenVillage = addField(PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE, TextField.class);
 		TextField placeStayedTenToFourteenMonthsZone = addField(PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, TextField.class);
 		setVisible(false, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION);
+
+		NullableOptionGroup placeOfResidenceSameAsReportingVillage = addField(PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE, NullableOptionGroup.class);
+		TextField residenceSinceWhenInMonths = addField(PersonDto.RESIDENCE_SINCE_WHEN_IN_MONTHS, TextField.class);
+		setVisible(false, PersonDto.RESIDENCE_SINCE_WHEN_IN_MONTHS, PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE);
+		FieldHelper.setVisibleWhen(
+				getFieldGroup(),
+				PersonDto.RESIDENCE_SINCE_WHEN_IN_MONTHS,
+				PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE,
+				YesNo.YES,
+				true);
+
+		residenceSinceWhenInMonths.setConversionError(I18nProperties.getValidationError(Validations.onlyIntegerNumbersAllowed, residenceSinceWhenInMonths.getCaption()));
+
+
+		residenceSinceWhenInMonths.addValueChangeListener(e -> {
+
+			 boolean isNUmber = DataHelper.isPositiveNumber(residenceSinceWhenInMonths.getValue());
+			 if (!isNUmber) {
+				 residenceSinceWhenInMonths.setValue(null);
+			 }
+
+
+			if (e.getProperty().getValue() != null) {
+				Integer months = Integer.valueOf(e.getProperty().getValue().toString());
+				if (months >= 10 && months <= 14) {
+					placeStayedInLast10_14MonthsLabel.setVisible(true);
+					setVisible(true, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE);
+				} else {
+					placeStayedInLast10_14MonthsLabel.setVisible(false);
+					setVisible(false, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE);
+				}
+			} else {
+				placeStayedInLast10_14MonthsLabel.setVisible(false);
+				setVisible(false, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE);
+			}
+		});
+
+//		add listerners to residenceSinceWhenInMonths get and cast to number and if is greater than
 
 		addListnersToPlaceStayed10TO14MonthsFields(
 				placeStayedTenToFourteenRegion,
@@ -734,12 +778,13 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 			setVisible(false,PersonDto.BIRTH_COUNTRY, PersonDto.NAMES_OF_GUARDIANS, PersonDto.BIRTH_NAME, PersonDto.PASSPORT_NUMBER);
 		} else if (disease == Disease.GUINEA_WORM) {
-			setVisible(true, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION);
+//			setVisible(true, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION);
 			addFields(PersonDto.INVESTIGATOR_NAME, PersonDto.INVESTIGATOR_TITLE);
 			generalCommentLabel.setVisible(false);
-			placeStayedInLast10_14MonthsLabel.setVisible(true);
 			setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER, PersonDto.BIRTH_DATE_YYYY,
 					PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD, PersonDto.ADDITIONAL_DETAILS, PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS, PersonDto.MOTHERS_NAME);
+			setVisible(true, PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE);
+
 		}
 
 

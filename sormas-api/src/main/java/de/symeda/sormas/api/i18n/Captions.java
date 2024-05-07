@@ -1950,6 +1950,8 @@ public interface Captions {
 	String Person_investigatorAddress = "Person.investigatorAddress";
 	String Person_investigatorTel = "Person.investigatorTel";
 	String Person_uuid = "Person.uuid";
+	String Person_placeOfResidenceSameAsReportingVillage = "Person.placeOfResidenceSameAsReportingVillage";
+	String Person_residenceSinceWhenInMonths = "Person.residenceSinceWhenInMonths";
 	String personAgeAndBirthdate = "personAgeAndBirthdate";
 	String PersonContactDetail = "PersonContactDetail";
 	String PersonContactDetail_additionalInformation = "PersonContactDetail.additionalInformation";

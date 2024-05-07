@@ -514,6 +514,9 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD);
 		} else if (disease == Disease.CHOLERA) {
 			validValues = Arrays.asList(PresentCondition.DEAD, PresentCondition.ALIVE, PresentCondition.UNKNOWN);
+		} else if (disease == Disease.GUINEA_WORM) {
+			setVisible(false, PersonDto.PRESENT_CONDITION);
+			validValues = Arrays.asList();
 		} else {
 			validValues = Arrays.asList(PresentCondition.values());
 		}
@@ -545,5 +548,10 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 	public void setSearchedPerson(PersonDto searchedPerson) {
 		this.person = searchedPerson;
+	}
+
+	//hide present condition
+	public void hidePresentCondition(){
+		setVisible(false, PersonDto.PRESENT_CONDITION);
 	}
 }

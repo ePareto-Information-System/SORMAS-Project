@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.caze.CaseOrigin;
+import de.symeda.sormas.api.utils.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -46,17 +47,6 @@ import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.sormastosormas.S2SIgnoreProperty;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasConfig;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DependingOnFeatureType;
-import de.symeda.sormas.api.utils.Diseases;
-import de.symeda.sormas.api.utils.EmbeddedPersonalData;
-import de.symeda.sormas.api.utils.EmbeddedSensitiveData;
-import de.symeda.sormas.api.utils.FieldConstraints;
-import de.symeda.sormas.api.utils.HideForCountries;
-import de.symeda.sormas.api.utils.HideForCountriesExcept;
-import de.symeda.sormas.api.utils.Outbreaks;
-import de.symeda.sormas.api.utils.PersonalData;
-import de.symeda.sormas.api.utils.SensitiveData;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
 @DependingOnFeatureType(featureType = {
@@ -162,7 +152,8 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT = "placeStayedtenToFourteenMonthsDistrict";
 	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION = "placeStayedtenToFourteenMonthsRegion";
 	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COUNTRY = "placeStayedtenToFourteenMonthsCountry";
-
+	public static final String PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE = "placeOfResidenceSameAsReportingVillage";
+	public static final String RESIDENCE_SINCE_WHEN_IN_MONTHS = "residenceSinceWhenInMonths";
 	// Fields are declared in the order they should appear in the import template
 
 	@Outbreaks
@@ -491,6 +482,16 @@ public class PersonDto extends PseudonymizableDto {
 	@HideForCountries
 	@SensitiveData
 	private CountryReferenceDto placeStayedtenToFourteenMonthsCountry;
+
+	@Diseases({
+			Disease.GUINEA_WORM })
+	@HideForCountries
+	private YesNo placeOfResidenceSameAsReportingVillage;
+
+	@Diseases({
+			Disease.GUINEA_WORM })
+	@HideForCountries
+	private String residenceSinceWhenInMonths;
 
 
 	@SuppressWarnings("serial")
@@ -1400,6 +1401,22 @@ public class PersonDto extends PseudonymizableDto {
 
 	public void setPlaceStayedtenToFourteenMonthsRegion(RegionReferenceDto placeStayedtenToFourteenMonthsRegion) {
 		this.placeStayedtenToFourteenMonthsRegion = placeStayedtenToFourteenMonthsRegion;
+	}
+
+	public YesNo getPlaceOfResidenceSameAsReportingVillage() {
+		return placeOfResidenceSameAsReportingVillage;
+	}
+
+	public void setPlaceOfResidenceSameAsReportingVillage(YesNo placeOfResidenceSameAsReportingVillage) {
+		this.placeOfResidenceSameAsReportingVillage = placeOfResidenceSameAsReportingVillage;
+	}
+
+	public String getResidenceSinceWhenInMonths() {
+		return residenceSinceWhenInMonths;
+	}
+
+	public void setResidenceSinceWhenInMonths(String residenceSinceWhenInMonths) {
+		this.residenceSinceWhenInMonths = residenceSinceWhenInMonths;
 	}
 
 	public CountryReferenceDto getPlaceStayedtenToFourteenMonthsCountry() {

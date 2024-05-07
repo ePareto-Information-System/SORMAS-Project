@@ -13111,4 +13111,8 @@ ALTER TABLE epidata ADD COLUMN placeManaged varchar(255);
 ALTER TABLE epidata ADD COLUMN placeManagedOther varchar(255);
 INSERT INTO schema_version(version_number, comment) VALUES (575, 'Added new fields to samples, person and epidata');
 
+ALTER TABLE person ADD COLUMN placeOfResidenceSameAsReportingVillage varchar(255);
+ALTER TABLE person ADD COLUMN residenceSinceWhenInMonths varchar(255);
+INSERT INTO schema_version(version_number, comment) VALUES (576, 'Added new fields to person');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

@@ -61,6 +61,7 @@ import de.symeda.sormas.api.person.Salutation;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.person.SymptomJournalStatus;
 import de.symeda.sormas.api.utils.FieldConstraints;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.messaging.ManualMessageLog;
@@ -250,6 +251,8 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private District placeStayedtenToFourteenMonthsDistrict;
 	private Region placeStayedtenToFourteenMonthsRegion;
 	private Country placeStayedtenToFourteenMonthsCountry;
+	private YesNo placeOfResidenceSameAsReportingVillage;
+	private String residenceSinceWhenInMonths;
 
 	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getFirstName() {
@@ -1065,6 +1068,22 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public District getPlaceStayedtenToFourteenMonthsDistrict() {
 		return placeStayedtenToFourteenMonthsDistrict;
+	}
+
+	public YesNo getPlaceOfResidenceSameAsReportingVillage() {
+		return placeOfResidenceSameAsReportingVillage;
+	}
+
+	public void setPlaceOfResidenceSameAsReportingVillage(YesNo placeOfResidenceSameAsReportingVillage) {
+		this.placeOfResidenceSameAsReportingVillage = placeOfResidenceSameAsReportingVillage;
+	}
+
+	public String getResidenceSinceWhenInMonths() {
+		return residenceSinceWhenInMonths;
+	}
+
+	public void setResidenceSinceWhenInMonths(String residenceSinceWhenInMonths) {
+		this.residenceSinceWhenInMonths = residenceSinceWhenInMonths;
 	}
 
 	public void setPlaceStayedtenToFourteenMonthsDistrict(District placeStayedtenToFourteenMonthsDistrict) {
