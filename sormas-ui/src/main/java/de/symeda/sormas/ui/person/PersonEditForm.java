@@ -382,22 +382,22 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		if (disease != null) {
 			switch (disease) {
 				case CSM:
-					addressForm.setOnlyUnknownForCSM(disease);
+					addressForm.handleCSM();
 					break;
 				case AFP:
-					addressForm.setOnlyUnknownForAFP(disease);
+					addressForm.handleAFP();
 					break;
 				case NEW_INFLUENZA:
-					addressForm.setOnlyUnknownForInfluenza(disease);
+					addressForm.handleNewInfluenza();
 					break;
 				case YELLOW_FEVER:
-					addressForm.setOnlyUnknownForYellowFever(disease);
+					addressForm.handleYellowFever();
 					break;
 				case AHF:
-					addressForm.setOnlyUnknownForAHF(disease);
+					addressForm.handleAFP();
 					break;
 				case CORONAVIRUS:
-					addressForm.setOnlyUnknownForCovid(disease);
+					addressForm.handleCoronavirus();
 					break;
 				case GUINEA_WORM:
 					addressForm.setOnlyUnknownForGuineaWorm();
