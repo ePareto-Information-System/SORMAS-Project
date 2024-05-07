@@ -571,6 +571,9 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				placeOfStayHeadingLabel.setVisible(false);
 				ogCaseOrigin.setReadOnly(true);
 				setVisible(false, FACILITY_OR_HOME_LOC, DIFFERENT_PLACE_OF_STAY_JURISDICTION);
+			} else if (diseaseField.getValue() != null && diseaseField.getValue() == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
+				personCreateForm.hideFields();
+				ogCaseOrigin.setReadOnly(true);
 			}
 			else{
 				personCreateForm.showPresentCondition();

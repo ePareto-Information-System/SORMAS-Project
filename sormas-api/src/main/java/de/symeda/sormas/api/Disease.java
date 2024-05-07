@@ -37,13 +37,13 @@ public enum Disease
 	MEASLES(true, true, true, false, false,21, true, true, false),
 	MONKEYPOX(true, true, true, true, false,21, true, false, false),
 	NEW_INFLUENZA(true, true, true, true, false,17, true, false, false),
-	/*PLAGUE(true, true, true, true, false,7, true, false, false),*/
+	PLAGUE(false, false, false, false, false,7, false, false, false),
 	POLIO(true, true, true, false, false,0, true, false, false),
 	//AHF(true, true, true, true, 21, true, false, false),
 	WEST_NILE_FEVER(true, false, true, false, false,0, true, false, false),
 	YELLOW_FEVER(true, true, true, false, false,6, true, false, false),
-	/*RABIES(true, true, true, true, false,6, true, false, false),
-	ANTHRAX(true, true, true, false, false,0, true, false, false),*/
+	RABIES(false, false, false, false, false,6, false, false, false),
+	ANTHRAX(false, false, false, false, false,0, false, false, false),
 	CORONAVIRUS(true, true, true, true, false,14, true, true, true),
 	PNEUMONIA(true, false, true, false, false,0, true, false, false),
 	MALARIA(true, false, false, false, false,0, true, false, false),
