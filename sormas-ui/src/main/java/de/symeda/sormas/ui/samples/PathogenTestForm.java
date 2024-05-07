@@ -78,8 +78,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	protected static final String REFERENCE_LABORATORY_HEADLINE_LOC = "referenceLaboratoryLoc";
 	private List<FacilityReferenceDto> allActiveLabs;
 
-	private List<FacilityReferenceDto> allActiveLabs;
-
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(PATHOGEN_TEST_HEADING_LOC) +
@@ -225,7 +223,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			hideValidationUntilNextCommit();
 		}
 	}
-	private ComboBox diseaseField;
 
 	public PathogenTestForm(SampleDto sample, boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction, Disease disease) {
 
@@ -276,7 +273,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		}
 
 		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(sample.getAssociatedCase().getUuid());
-		caseDisease =  caseDataDto.getDisease();
+		caseDisease = caseDataDto.getDisease();
 
 		pathogenTestHeadingLabel = new Label();
 		pathogenTestHeadingLabel.addStyleName(H3);
@@ -306,42 +303,33 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 								sampleTestDateField.getCaption(),
 								I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.SAMPLE_DATE_TIME),
 								DateFormatHelper.formatDate(sample.getSampleDateTime()))));
-			// new DateComparisonValidator(1.87.0
-			// 	sampleTestDateField,
-			// 	this::getSampleDate,
-			// 	false,
-			// 	false,
-			// 	I18nProperties.getValidationError(
-			// 		Validations.afterDateWithDate,
-			// 		sampleTestDateField.getCaption(),
-			// 		I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.SAMPLE_DATE_TIME),
-			// 		DateFormatHelper.formatDate(
-			// 			sample != null ? sample.getSampleDateTime() : (Date) sampleForm.getField(SampleDto.SAMPLE_DATE_TIME).getValue()))));
+		// new DateComparisonValidator(1.87.0
+		// 	sampleTestDateField,
+		// 	this::getSampleDate,
+		// 	false,
+		// 	false,
+		// 	I18nProperties.getValidationError(
+		// 		Validations.afterDateWithDate,
+		// 		sampleTestDateField.getCaption(),
+		// 		I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.SAMPLE_DATE_TIME),
+		// 		DateFormatHelper.formatDate(
+		// 			sample != null ? sample.getSampleDateTime() : (Date) sampleForm.getField(SampleDto.SAMPLE_DATE_TIME).getValue()))));
 		ComboBox lab = addInfrastructureField(PathogenTestDto.LAB);
 		allActiveLabs = FacadeProvider.getFacilityFacade().getAllActiveLaboratories(true);
 		TextField labDetails = addField(PathogenTestDto.LAB_DETAILS, TextField.class);
 		labDetails.setVisible(false);
 		typingIdField = addField(PathogenTestDto.TYPING_ID, TextField.class);
 		typingIdField.setVisible(false);
-		//diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
-
-		/*ComboBox diseaseBox = new ComboBox("Diseases");
-
-		if(caseDisease == Disease.AHF){
-			diseaseField.removeAllItems();
-			FieldHelper.updateEnumData(diseaseField, Disease.AHF_DISEASES);
-		} else if (caseDisease == Disease.CSM) {
-			diseaseField.removeAllItems();
-			FieldHelper.updateEnumData(diseaseField, Disease.CSM_ONLY);
-		}
-
-		ComboBox diseaseField = addField(PathogenTestDto.TESTED_DISEASE, diseaseBox);*/
 
 		diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
 
-		if(caseDisease == Disease.AHF){
+		if (caseDisease == Disease.AHF) {
 			diseaseField.removeAllItems();
 			FieldHelper.updateEnumData(diseaseField, Disease.AHF_DISEASES);
+		}
+		else if (caseDisease == Disease.CSM) {
+			diseaseField.removeAllItems();
+			FieldHelper.updateEnumData(diseaseField, Disease.CSM_ONLY);
 		}
 
 		ComboBox diseaseVariantField = addField(PathogenTestDto.TESTED_DISEASE_VARIANT, ComboBox.class);
@@ -357,9 +345,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		cqValueField.setConversionError(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, cqValueField.getCaption()));
 		NullableOptionGroup testResultVerifiedField = addField(PathogenTestDto.TEST_RESULT_VERIFIED, NullableOptionGroup.class);
 		testResultVerifiedField.setRequired(true);
-		Set<UserRoleReferenceDto> userRoles =UserProvider.getCurrent().getUser().getUserRoles();
+		Set<UserRoleReferenceDto> userRoles = UserProvider.getCurrent().getUser().getUserRoles();
 
-		String valLabUser=I18nProperties.getEnumCaption(DefaultUserRole.LAB_USER);
+		String valLabUser = I18nProperties.getEnumCaption(DefaultUserRole.LAB_USER);
 		UserRoleReferenceDto userRoleToFind = new UserRoleReferenceDto(null, valLabUser);
 
 		if (userRoles.contains(userRoleToFind)) {
@@ -442,8 +430,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 					disease != null && isVisibleAllowed(PathogenTestDto.TESTED_DISEASE_VARIANT) && CollectionUtils.isNotEmpty(diseaseVariants));
 		};
 
-			// trigger the update, as the disease may already be set
-			updateDiseaseVariantField.accept((Disease) diseaseField.getValue());
+		// trigger the update, as the disease may already be set
+		updateDiseaseVariantField.accept((Disease) diseaseField.getValue());
 
 		diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
 			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
@@ -467,14 +455,13 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						.filter(pathogenTestType -> !ahfMeaselesPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 
-			} else if(disease == Disease.CSM){
+			} else if (disease == Disease.CSM) {
 				List<PathogenTestType> csmPathogenTests = PathogenTestType.getCSMTestTypes();
 				Arrays.stream(PathogenTestType.values())
-					.filter(pathogenTestType -> !csmPathogenTests.contains(pathogenTestType))
-					.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
-			}
-			else{
-					testTypeField.addItems(PathogenTestType.values());
+						.filter(pathogenTestType -> !csmPathogenTests.contains(pathogenTestType))
+						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
+			} else {
+				testTypeField.addItems(PathogenTestType.values());
 			}
 		});
 
@@ -531,7 +518,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 			lab.addValueChangeListener(event -> {
 				if (event.getProperty().getValue() != null
-					&& ((FacilityReferenceDto) event.getProperty().getValue()).getUuid().equals(FacilityDto.OTHER_LABORATORY_UUID)) {
+						&& ((FacilityReferenceDto) event.getProperty().getValue()).getUuid().equals(FacilityDto.OTHER_LABORATORY_UUID)) {
 					labDetails.setVisible(true);
 					labDetails.setRequired(true);
 				} else {
@@ -540,7 +527,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 					labDetails.clear();
 				}
 			});
-			
+
 			setRequired(true, PathogenTestDto.LAB);
 		}
 		setRequired(true, PathogenTestDto.TEST_TYPE, PathogenTestDto.TESTED_DISEASE, PathogenTestDto.TEST_RESULT);
@@ -594,8 +581,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				laboratoryCulture.setItemCaption(latexCulture, latexCulture.toString());
 			}
 			addField(PathogenTestDto.LABORATORY_CULTURE, laboratoryCulture);
-			 laboratoryCultureOther = addField(PathogenTestDto.LABORATORY_CULTURE_OTHER, TextField.class);
-			 laboratoryOtherTests = addField(PathogenTestDto.LABORATORY_OTHER_TESTS, TextField.class);
+			laboratoryCultureOther = addField(PathogenTestDto.LABORATORY_CULTURE_OTHER, TextField.class);
+			laboratoryOtherTests = addField(PathogenTestDto.LABORATORY_OTHER_TESTS, TextField.class);
 			laboratoryCeftriaxone = addField(PathogenTestDto.LABORATORY_CEFTRIAXONE, ComboBox.class);
 			laboratoryPenicillinG = addField(PathogenTestDto.LABORATORY_PENICILLIN_G, ComboBox.class);
 			laboratoryAmoxycillin = addField(PathogenTestDto.LABORATORY_AMOXYCILLIN, ComboBox.class);
@@ -621,7 +608,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 					I18nProperties.getPrefixDescription(PathogenTestDto.I18N_PREFIX, PathogenTestDto.LABORATORY_OBSERVATIONS, "") + "\n"
 							+ I18nProperties.getDescription(Descriptions.observation));
 
-			labDateResultsSentDSD =  addField(PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD);
+			labDateResultsSentDSD = addField(PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD);
 
 
 			laboratoryFinalClassification = new OptionGroup();
@@ -659,6 +646,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			});
 			setVisible(false, PathogenTestDto.PRELIMINARY, PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, PathogenTestDto.SEROTYPE, PathogenTestDto.CQ_VALUE, PathogenTestDto.TEST_RESULT_TEXT);
 		}
+	}
 		
 
 	// Method to hide all components initially
