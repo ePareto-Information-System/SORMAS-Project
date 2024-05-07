@@ -496,6 +496,8 @@ public interface Captions {
 	String CaseData_occupation = "CaseData.occupation";
 	String CaseData_districtOfResidence = "CaseData.districtOfResidence";
 	String CaseData_wasInQuarantineBeforeIsolation = "CaseData.wasInQuarantineBeforeIsolation";
+	String CaseData_reportingVillage = "CaseData.reportingVillage";
+	String CaseData_reportingZone = "CaseData.reportingZone";
 	String caseDataEnterHomeAddressNow = "caseDataEnterHomeAddressNow";
 	String CaseData_motherVaccinatedWithTT = "CaseData.motherVaccinatedWithTT";
 	String CaseData_motherHaveCard = "CaseData.motherHaveCard";
@@ -705,6 +707,21 @@ public interface Captions {
 	String changeDate = "changeDate";
 	String changeUserEmail = "changeUserEmail";
 	String city = "city";
+	String ContaminationSource_contaminationType = "CaseExport.contaminationType";
+	String ContaminationSource_name = "CaseExport.name";
+	String ContaminationSource_longitude = "CaseExport.longitude";
+	String ContaminationSource_latitude = "CaseExport.latitude";
+	String ContaminationSource_type = "CaseExport.type";
+	String ContaminationSource_source = "CaseExport.source";
+	String ContaminationSource_treatedWithAbate = "CaseExport.treatedWithAbate";
+	String ContaminationSource_abateTreatmentDate = "CaseExport.abateTreatmentDate";
+	String ContainmentMeasure_locationOfWorm = "CaseExport.locationOfWorm";
+	String ContainmentMeasure_dateWormDetectedEmergence = "CaseExport.dateWormDetectedEmergence";
+	String ContainmentMeasure_dateWormDetectBySupervisor = "CaseExport.dateWormDetectBySupervisor";
+	String ContainmentMeasure_dateConfirmed = "CaseExport.dateConfirmed";
+	String ContainmentMeasure_dateOfGuineaWormExpelled = "CaseExport.dateOfGuineaWormExpelled";
+	String ContainmentMeasure_regularBandaging = "CaseExport.regularBandaging";
+	String ContainmentMeasure_completelyExtracted = "CaseExport.completelyExtracted";
 	String ClinicalVisit = "ClinicalVisit";
 	String ClinicalVisit_bloodPressure = "ClinicalVisit.bloodPressure";
 	String ClinicalVisit_heartRate = "ClinicalVisit.heartRate";
@@ -1307,7 +1324,10 @@ public interface Captions {
 	String EpiData_patientContactWithConfirmedCaseExposureLocationCityCountry = "EpiData.patientContactWithConfirmedCaseExposureLocationCityCountry";
 	String EpiData_personTravelHistories = "EpiData.personTravelHistories";
 	String EpidData_contaminationSources = "EpidData.contaminationSources";
-	String epiDataContainmentMeasures = "EpidData.containmentMeasures";
+	String epiData_containmentMeasures = "EpidData.containmentMeasures";
+	String epiData_receivedHealthEducation = "epiData_receivedHealthEducation";
+	String epiData_patientEnteredWaterSource = "epiData_patientEnteredWaterSource";
+	String epiData_placeManaged = "epiData_placeManaged";
 	String epiDataNoSourceContacts = "epiDataNoSourceContacts";
 	String epiWeekFrom = "epiWeekFrom";
 	String epiWeekTo = "epiWeekTo";
@@ -1855,6 +1875,8 @@ public interface Captions {
 	String Location_street = "Location.street";
 	String Location_landmark = "Location.landmark";
 	String Location_subcontinent = "Location.subcontinent";
+	String Location_village = "Location.village";
+	String Location_zone = "Location.zone";
 	String Login_doLogIn = "Login.doLogIn";
 	String Login_login = "Login.login";
 	String Login_password = "Login.password";
@@ -2003,6 +2025,12 @@ public interface Captions {
 	String Person_causeOfDeathDisease = "Person.causeOfDeathDisease";
 	String Person_causeOfDeathDiseaseDetails = "Person.causeOfDeathDiseaseDetails";
 	String Person_citizenship = "Person.citizenship";
+	String Person_placeStayedTenToFourteenMonthsVillage = "Person.placeStayedTenToFourteenMonthsVillage";
+	String Person_placeStayedTenToFourteenMonthsZone = "Person.placeStayedTenToFourteenMonthsZone";
+	String Person_placeStayedTenToFourteenMonthsCommunity = "Person.placeStayedTenToFourteenMonthsCommunity";
+	String Person_placeStayedTenToFourteenMonthsDistrict = "Person.placeStayedTenToFourteenMonthsDistrict";
+	String Person_placeStayedTenToFourteenMonthsRegion = "Person.placeStayedTenToFourteenMonthsRegion";
+	String Person_placeStayedTenToFourteenMonthsCountry = "Person.placeStayedTenToFourteenMonthsCountry";
 	String Person_covidCodeDelivered = "Person.covidCodeDelivered";
 	String Person_deathDate = "Person.deathDate";
 	String Person_deathPlaceDescription = "Person.deathPlaceDescription";
@@ -2177,6 +2205,13 @@ public interface Captions {
 	String prescriptionNewPrescription = "prescriptionNewPrescription";
 	String prescriptionWithTreatment = "prescriptionWithTreatment";
 	String prescriptionWithTreatmentTitleDelete = "prescriptionWithTreatmentTitleDelete";
+	String PersonTravelHistory_travelPeriodType = "PersonTravelHistory.travelPeriodType";
+	String PersonTravelHistory_dateFrom = "PersonTravelHistory.dateFrom";
+	String PersonTravelHistory_dateTo = "PersonTravelHistory.dateTo";
+	String PersonTravelHistory_village = "PersonTravelHistory.village";
+	String PersonTravelHistory_subDistrict = "PersonTravelHistory.subDistrict";
+	String PersonTravelHistory_district = "PersonTravelHistory.district";
+	String PersonTravelHistory_region = "PersonTravelHistory.region";
 	String QueryDetails_resultLimit = "QueryDetails.resultLimit";
 	String Region = "Region";
 	String Region_archived = "Region.archived";
@@ -2217,6 +2252,17 @@ public interface Captions {
 	String Sample_labUser = "Sample.labUser";
 	String Sample_noTestPossibleReason = "Sample.noTestPossibleReason";
 	String Sample_otherDeletionReason = "Sample.otherDeletionReason";
+	String Sample_receivedByRegion = "Sample.receivedByRegion";
+	String Sample_receivedByNational = "Sample.receivedByNational";
+	String Sample_specimenSavedAndPreservedInAlcohol = "Sample.specimenSavedAndPreservedInAlcohol";
+	String Sample_specimenSavedAndPreservedInAlcoholWhy = "Sample.specimenSavedAndPreservedInAlcoholWhy";
+	String Sample_sentForConfirmationNational = "Sample.sentForConfirmationNational";
+	String Sample_sentForConfirmationNationalDate = "Sample.sentForConfirmationNationalDate";
+	String Sample_sentForConfirmationTo = "Sample.sentForConfirmationTo";
+	String Sample_dateResultReceivedNational = "Sample.dateResultReceivedNational";
+	String Sample_useOfClothFilter = "Sample.useOfClothFilter";
+	String Sample_frequencyOfChangingFilters = "Sample.frequencyOfChangingFilters";
+	String Sample_remarks = "Sample.remarks";
 	String Sample_otherLab = "Sample.otherLab";
 	String Sample_pathogenTestCount = "Sample.pathogenTestCount";
 	String Sample_pathogenTestingRequested = "Sample.pathogenTestingRequested";
@@ -3311,3 +3357,4 @@ public interface Captions {
 	String dashboardLastReportedDistrict = "Last Reported District";
     String exportDownloadMergeFile ="exportDownloadMergeFile" ;
 }
+
