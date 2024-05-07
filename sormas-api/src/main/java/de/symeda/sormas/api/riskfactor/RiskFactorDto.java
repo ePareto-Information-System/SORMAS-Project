@@ -19,7 +19,7 @@ import java.util.Date;
 public class RiskFactorDto extends PseudonymizableDto {
     private static final long serialVersionUID = 4846215199480684370L;
 
-    public static final String I18N_PREFIX = "CaseRiskFactor";
+    public static final String I18N_PREFIX = "RiskFactor";
 
     public static final String DRINKING_WATER_SOURCE_ONE = "drinkingWaterSourceOne";
     public static final String DRINKING_WATER_SOURCE_TWO = "drinkingWaterSourceTwo";

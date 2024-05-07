@@ -2450,7 +2450,7 @@ public interface Captions {
 	String sampleDashboardTestResults = "sampleDashboardTestResults";
 	String sampleDeletedSamples = "sampleDeletedSamples";
 	String SampleExport_additionalTestingRequested = "SampleExport.additionalTestingRequested";
-
+	String RiskFactor = "RiskFactor";
 	String RiskFactor_drinkingWaterSourceOne = "RiskFactor.drinkingWaterSourceOne";
 	String RiskFactor_drinkingWaterSourceTwo = "RiskFactor.drinkingWaterSourceTwo";
 	String RiskFactor_drinkingWaterSourceThree = "RiskFactor.drinkingWaterSourceThree";
