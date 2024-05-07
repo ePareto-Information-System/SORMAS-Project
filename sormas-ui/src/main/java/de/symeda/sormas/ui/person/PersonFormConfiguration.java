@@ -75,9 +75,7 @@ public class PersonFormConfiguration {
             DISABLED_FIELDS_BY_DISEASE.put(GENERAL_COMMENT_LOC, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.ADDITIONAL_DETAILS, new HashSet<>(Arrays.asList(Disease.AFP)));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.ADDITIONAL_PLACES_STAYED, new HashSet<>(Arrays.asList()));
-            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.MARRIAGE_STATUS, new HashSet<>(Arrays.asList(Disease.CSM, Disease.NEW_INFLUENZA, Disease.SARI, Disease.AFP, Disease.YELLOW_FEVER, Disease.AHF, Disease.DENGUE, Disease.CORONAVIRUS, Disease.MEASLES)));
-            //Commented because the addfield is only in Food Borne
-            /*DISABLED_FIELDS_BY_DISEASE.put(PersonDto.TEL_NUMBER, new HashSet<>(Arrays.asList(Disease.CSM, Disease.NEW_INFLUENZA, Disease.SARI, Disease.AFP, Disease.YELLOW_FEVER, Disease.AHF, Disease.DENGUE, Disease.CORONAVIRUS, Disease.MEASLES, Disease.NEONATAL_TETANUS, Disease.MONKEYPOX)));*/
+            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.MARITAL_STATUS, new HashSet<>(Arrays.asList(Disease.CSM, Disease.NEW_INFLUENZA, Disease.SARI, Disease.AFP, Disease.YELLOW_FEVER, Disease.AHF, Disease.DENGUE, Disease.CORONAVIRUS, Disease.MEASLES)));
 
     }
     public static Set<String> getDisabledFieldsForDisease(Disease disease) {

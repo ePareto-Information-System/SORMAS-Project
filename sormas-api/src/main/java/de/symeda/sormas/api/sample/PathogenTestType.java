@@ -61,6 +61,9 @@ public enum PathogenTestType {
 	CQ_VALUE_DETECTION,
 	SEQUENCING,
 	DNA_MICROARRAY,
+	CYTOLOGY,
+	LATEX,
+	RDT,
 	OTHER;
 
 	public static final List<PathogenTestType> DISEASE_TESTS = Arrays.asList(
