@@ -414,8 +414,6 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setPrescriberCity(source.getPrescriberCity());
 		target.setPrescriberCountry(CountryFacadeEjb.toReferenceDto(source.getPrescriberCountry()));
 
-		target.setLaboratoryType(source.getLaboratoryType());
-		target.setLaboratoryName(source.getLaboratoryName());
 		target.setLaboratoryTestPerformed(source.getLaboratoryTestPerformed());
 		target.setLaboratoryTestPerformedOther(source.getLaboratoryTestPerformedOther());
 		target.setLaboratoryCytology(source.getLaboratoryCytology());
@@ -534,8 +532,6 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setPrescriberCity(source.getPrescriberCity());
 		target.setPrescriberCountry(countryService.getByReferenceDto(source.getPrescriberCountry()));
 
-		target.setLaboratoryType(source.getLaboratoryType());
-		target.setLaboratoryName(source.getLaboratoryName());
 		target.setLaboratoryTestPerformed(source.getLaboratoryTestPerformed());
 		target.setLaboratoryTestPerformedOther(source.getLaboratoryTestPerformedOther());
 		target.setLaboratoryCytology(source.getLaboratoryCytology());
