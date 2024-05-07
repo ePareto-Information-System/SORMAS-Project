@@ -14143,4 +14143,5 @@ ALTER TABLE pathogentest_history ADD COLUMN laboratorytype varchar(255);
 ALTER TABLE pathogentest_history ADD COLUMN laboratoryname varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (624, 'Added 2 extra columns to lab section for CSM');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
