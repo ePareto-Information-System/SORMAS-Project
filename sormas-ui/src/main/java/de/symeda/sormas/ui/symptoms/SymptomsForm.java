@@ -485,7 +485,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			DIZZINESS_STANDING_UP,
 			HIGH_OR_LOW_BLOOD_PRESSURE,
 			URINARY_RETENTION,
-			FEVER);
+			FEVER,
+			DIARRHOEA,
+			ABDOMINAL_CRAMPS,
+			HEADACHES);
 
 		addField(SYMPTOMS_COMMENTS, TextField.class).setDescription(
 			I18nProperties.getPrefixDescription(I18N_PREFIX, SYMPTOMS_COMMENTS, "") + "\n" + I18nProperties.getDescription(Descriptions.descGdpr));
@@ -690,7 +693,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			MENINGEAL_SIGNS,
 			SEIZURES,
 			SEPSIS,
-			SHOCK);
+			SHOCK,
+			DIARRHOEA,
+			ABDOMINAL_CRAMPS,
+			HEADACHES);
 
 		// Set visibilities
 
@@ -963,7 +969,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					MENINGEAL_SIGNS,
 					//SEIZURES,
 					SEPSIS,
-					SHOCK);
+					SHOCK,
+					DIARRHOEA,
+					ABDOMINAL_CRAMPS,
+					HEADACHES);
 			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
 			clinicalMeasurementsHeadingLabel.setVisible(false);
 		} else if (disease == Disease.CORONAVIRUS) {
@@ -1225,7 +1234,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				HYPOGLYCEMIA,
 				MENINGEAL_SIGNS,
 				SEPSIS,
-				SHOCK);
+				SHOCK,
+				DIARRHOEA,
+				ABDOMINAL_CRAMPS,
+				HEADACHES);
 	}
 
 	private void toggleFeverComponentError(NullableOptionGroup feverField, ComboBox temperatureField) {

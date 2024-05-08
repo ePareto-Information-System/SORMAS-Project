@@ -2624,6 +2624,10 @@ public interface Captions {
 	String Symptoms_leftInjectionSite = "Symptoms.leftInjectionSite";
 	String Symptoms_trueAfp = "Symptoms.trueAfp";
 	String Symptoms_wheezing = "Symptoms.wheezing";
+	String Symptoms_diarrhoea = "Symptoms.diarrhoea";
+	String Symptoms_abdominalCramps = "Symptoms.abdominalCramps";
+	String Symptoms_headaches = "Symptoms.headaches";
+
 	String symptomsLesionsLocations = "symptomsLesionsLocations";
 	String symptomsMaxTemperature = "symptomsMaxTemperature";
 	String symptomsSetClearedToNo = "symptomsSetClearedToNo";

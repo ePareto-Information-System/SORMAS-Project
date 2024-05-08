@@ -233,6 +233,9 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setTrueAfp(source.getTrueAfp());
 		target.setDyspnea(source.getDyspnea());
 		target.setDyspnea(source.getTachypnea());
+		target.setDiarrhoea(source.getDiarrhoea());
+		target.setAbdominalCramps(source.getAbdominalCramps());
+		target.setHeadaches(source.getHeadaches());
 
 		return target;
 	}
@@ -449,7 +452,9 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setTrueAfp(source.getTrueAfp());
 		target.setDyspnea(source.getDyspnea());
 		target.setDyspnea(source.getTachypnea());
-
+		target.setDiarrhoea(source.getDiarrhoea());
+		target.setAbdominalCramps(source.getAbdominalCramps());
+		target.setHeadaches(source.getHeadaches());
 
 		return target;
 	}

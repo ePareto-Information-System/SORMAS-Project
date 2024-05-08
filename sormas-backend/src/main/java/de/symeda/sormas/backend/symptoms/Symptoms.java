@@ -264,6 +264,9 @@ public class Symptoms extends AbstractDomainObject {
 	private YesNo trueAfp;
 	private SymptomState dyspnea;
 	private SymptomState tachypnea;
+	private SymptomState diarrhoea;
+	private SymptomState abdominalCramps;
+	private SymptomState headaches;
 
 	public Symptoms() {
 	}
@@ -2036,5 +2039,29 @@ public class Symptoms extends AbstractDomainObject {
 	}
 	public void setTachypnea(SymptomState tachypnea) {
 		this.tachypnea = tachypnea;
+	}
+
+	public SymptomState getDiarrhoea() {
+		return diarrhoea;
+	}
+
+	public void setDiarrhoea(SymptomState diarrhoea) {
+		this.diarrhoea = diarrhoea;
+	}
+
+	public SymptomState getAbdominalCramps() {
+		return abdominalCramps;
+	}
+
+	public void setAbdominalCramps(SymptomState abdominalCramps) {
+		this.abdominalCramps = abdominalCramps;
+	}
+
+	public SymptomState getHeadaches() {
+		return headaches;
+	}
+
+	public void setHeadaches(SymptomState headaches) {
+		this.headaches = headaches;
 	}
 }
