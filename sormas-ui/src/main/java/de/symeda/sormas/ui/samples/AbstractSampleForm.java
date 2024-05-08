@@ -528,6 +528,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					break;
 				case FOODBORNE_ILLNESS:
 					handleFBI();
+				case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
+					handleIDSR();
 					break;
 				case GUINEA_WORM:
 					handleGuineaWorm();
@@ -762,7 +764,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		handleDisease(Disease.AHF, "Noguchi Memorial Institute for Medical Research");
 		handleDisease(Disease.DENGUE, "Noguchi Memorial Institute for Medical Research");
 		handleDisease(Disease.AFP, "Noguchi Memorial Institute for Medical Research");
-		handleDiseaseField(Disease.NEW_INFLUENZA, Disease.CSM, Disease.SARI, Disease.FOODBORNE_ILLNESS);
+		handleDiseaseField(Disease.NEW_INFLUENZA, Disease.CSM, Disease.SARI, Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS);
 
 		if (getValue() != null && canOnlyReadRequests) {
 			CssLayout requestedPathogenTestsLayout = new CssLayout();
@@ -1137,6 +1139,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		setVisible(false, SampleDto.SUSPECTED_DISEASE, SampleDto.LAB_LOCATION, SampleDto.DATE_LAB_RECEIVED_SPECIMEN, SampleDto.LABORATORY_SAMPLE_CONDITION, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.ADDITIONAL_TESTING_REQUESTED, SampleDto.DATE_SPECIMEN_SENT_TO_LAB, SampleDto.SAMPLE_MATERIAL, SampleDto.SAMPLE_DATE_TIME);
 
 		setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
+	}
+
+	private void handleIDSR(){
+		setVisible(false, SampleDto.LAB_LOCATION, SampleDto.DATE_LAB_RECEIVED_SPECIMEN, SampleDto.SPECIMEN_CONDITION, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT);
 	}
 
 	private void addSampleDispatchFields() {
