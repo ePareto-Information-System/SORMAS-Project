@@ -215,6 +215,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		patientContactWithConfirmedCaseExposureLocationsField.addItems((Object[]) ContactSetting.values());
 		patientContactWithConfirmedCaseExposureLocationsField.setCaption(null);
 		patientContactWithConfirmedCaseExposureLocationCityCountryField = addField(EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATION_CITY_COUNTRY, TextField.class);
+		setVisible(false, EpiDataDto.PATIENT_TRAVELLED_TWO_WEEKS_PRIOR, EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY, EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI, EpiDataDto.PATIENT_CONTACT_WITH_CONFIRMED_CASE);
 
 		FieldHelper.setVisibleWhen(
 			getFieldGroup(),
@@ -294,6 +295,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		if (disease == Disease.CORONAVIRUS) {
 			hideAllFields();
+			hideLabels();
 			setVisible(true, EpiDataDto.PATIENT_TRAVELLED_TWO_WEEKS_PRIOR);
 			setVisible(true, EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY);
 			setVisible(true, EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI);
@@ -382,4 +384,14 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		}
 	}
+
+
+	public void hideLabels () {
+		Arrays.asList(LOC_EXPOSURE_INVESTIGATION_HEADING, LOC_ACTIVITY_AS_CASE_INVESTIGATION_HEADING, LOC_SOURCE_CASE_CONTACTS_HEADING).stream().map(
+				//check if not null then hide
+				label -> getContent().getComponent(label)).filter(
+				label -> label != null).forEach(
+				label -> label.setVisible(false));
+	}
+
 }

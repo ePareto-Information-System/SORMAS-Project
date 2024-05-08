@@ -1575,6 +1575,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			}
 			//CORONAVIRUS
 			else if (disease == Disease.CORONAVIRUS) {
+				setVisible(false, CaseDataDto.REPORT_LAT, CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT_LON_ACCURACY);
 				FieldHelper
 						.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccineType, numberOfDoses, cardDateField, secondVaccinationDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
 
