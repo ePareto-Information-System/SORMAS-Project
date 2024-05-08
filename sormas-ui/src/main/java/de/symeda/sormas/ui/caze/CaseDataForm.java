@@ -157,6 +157,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private static final String REINFECTION_DETAILS_COL_1_LOC = "reinfectionDetailsCol1Loc";
 	private static final String REINFECTION_DETAILS_COL_2_LOC = "reinfectionDetailsCol2Loc";
 	public static final String CASE_REFER_POINT_OF_ENTRY_BTN_LOC = "caseReferFromPointOfEntryBtnLoc";
+	private static final String INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC = "investigateIntoRiskFactorsNavigationLink";
 	NullableOptionGroup vaccinatedByCardOrHistory;
 
 	//@formatter:off
@@ -273,7 +274,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(CaseDataDto.NOTIFYING_CLINIC, CaseDataDto.NOTIFYING_CLINIC_DETAILS) +
 					fluidRowLocs(CaseDataDto.CLINICIAN_PHONE, CaseDataDto.CLINICIAN_EMAIL) +
 					loc(CONTACT_TRACING_FIRST_CONTACT_HEADER_LOC) +
-					fluidRowLocs(CaseDataDto.CONTACT_TRACING_FIRST_CONTACT_TYPE, CaseDataDto.CONTACT_TRACING_FIRST_CONTACT_DATE);
+					fluidRowLocs(CaseDataDto.CONTACT_TRACING_FIRST_CONTACT_TYPE, CaseDataDto.CONTACT_TRACING_FIRST_CONTACT_DATE) +
+					loc(INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC);
 
 	private static final String FOLLOWUP_LAYOUT =
 			loc(FOLLOW_UP_STATUS_HEADING_LOC) +
@@ -1429,6 +1431,13 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				FieldHelper.updateItems(cbCaseClassification, Arrays.asList(CaseClassification.NO_CASE, CaseClassification.SUSPECT, CaseClassification.PROBABLE, CaseClassification.CONFIRMED_BY_LAB, CaseClassification.CONFIRMED_BY_EPI_LINK));
 			
 			}
+
+			Button investigateIntoRiskFactorsNavigationLink = ButtonHelper.createButton(Captions.investigateIntoRiskFactors);
+			getContent().addComponent(investigateIntoRiskFactorsNavigationLink, INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC);
+			investigateIntoRiskFactorsNavigationLink.addClickListener(e -> {
+				ControllerProvider.getCaseController().navigateToRiskFactor(getValue().getUuid());
+			});
+			
 			} else {
 			medicalInformationFields =
 					Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.VACCINATION_STATUS, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);

@@ -3351,6 +3351,7 @@ public interface Captions {
 	String View_user_users = "View.user.users";
 	String View_users_sub = "View.users.sub";
 	String viewMessage = "viewMessage";
+	String investigateIntoRiskFactors = "investigateIntoRiskFactors";
 	String Visit = "Visit";
 	String Visit_disease = "Visit.disease";
 	String Visit_origin = "Visit.origin";
