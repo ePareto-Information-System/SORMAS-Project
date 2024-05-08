@@ -1425,9 +1425,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					Arrays.asList();
 	
 			} else {
-				medicalInformationFields =
-						Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.VACCINATION_STATUS, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
-				healthConditionsField.setVisible(false);
+			medicalInformationFields =
+					Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.VACCINATION_STATUS, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
+			healthConditionsField.setVisible(false);
 
 			}
 
