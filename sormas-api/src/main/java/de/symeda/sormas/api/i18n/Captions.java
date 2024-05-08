@@ -471,6 +471,8 @@ public interface Captions {
 	String CaseData_dateOfInvestigation = "CaseData.dateOfInvestigation";
 	String CaseData_secondVaccinationDate = "CaseData.secondVaccinationDate";
 	String CaseData_wasInQuarantineBeforeIsolation = "CaseData.wasInQuarantineBeforeIsolation";
+	String CaseData_otherNotesAndObservations = "CaseData.otherNotesAndObservations";
+	String CaseData_dateLatestUpdateRecord = "CaseData.dateLatestUpdateRecord";
 	String caseDataEnterHomeAddressNow = "caseDataEnterHomeAddressNow";
 	String caseDefaultView = "caseDefaultView";
 	String caseDeletedCases = "caseDeletedCases";
