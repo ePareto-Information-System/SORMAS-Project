@@ -975,6 +975,12 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			setVisible(false, LocationDto.ADDITIONAL_INFORMATION, LocationDto.STREET, LocationDto.HOUSE_NUMBER, LocationDto.CITY, LocationDto.AREA_TYPE, LocationDto.DETAILS, LocationDto.LAND_MARK);
 	}
 
+	//handle CHOLERA
+	public void handleForCholera() {
+		setVisible(true, LocationDto.POSTAL_CODE);
+		setVisible(false, LocationDto.STREET, LocationDto.ADDITIONAL_INFORMATION, LocationDto.CITY);
+	}
+
 
 	public void handleFBI(){
 		setVisible(false, LocationDto.LOCALITY, LocationDto.AREA_TYPE, LocationDto.HOUSE_NUMBER, LocationDto.CITY, LocationDto.POSTAL_CODE);
