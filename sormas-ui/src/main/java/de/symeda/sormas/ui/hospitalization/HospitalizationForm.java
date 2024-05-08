@@ -545,6 +545,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			//show discharge date
 			setVisible(true, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.ADMISSION_DATE);
 		}
+
+		//Cholera
+		if (caze.getDisease() == Disease.CHOLERA){
+			hideAllFields();
+			setVisible(true, HospitalizationDto.HOSPITAL_RECORD_NUMBER);
+		}
 	}
 
 	private void setDateFieldVisibilties() {
@@ -679,6 +685,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			setVisible(false, propertyId.toString());
 		}
 	}
+	
 	public void hideFieldsForSelectedDisease(Disease disease) {
 		Set<String> disabledFields = HospitalizationFormConfiguration.getDisabledFieldsForDisease(disease);
 		for (String field : disabledFields) {
@@ -688,5 +695,15 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 	private void disableField(String field) {
 		setVisible(false, field);
+	}
+
+	public void hideAllFields () {
+		for (Field<?> field : getFieldGroup().getFields()) {
+			//check if field is not null
+			if (field != null)
+				//hide the field
+				field.setVisible(false);
+
+		}
 	}
 }
