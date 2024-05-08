@@ -692,6 +692,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			setVisible(false, PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID);
 			personContactDetailsField.setVisible(false);
 		}
+		if(disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
+			occupationHeader.setVisible(false);
+		}
 
 	}
 

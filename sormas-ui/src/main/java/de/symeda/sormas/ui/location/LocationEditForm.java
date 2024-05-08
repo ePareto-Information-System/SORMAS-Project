@@ -917,6 +917,8 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 				break;
 			case FOODBORNE_ILLNESS:
 				handleFBI();
+			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
+				handleIDSR();
 			default:
 		}
 	}
@@ -950,6 +952,9 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	public void handleFBI(){
 		setVisible(false, LocationDto.LOCALITY, LocationDto.AREA_TYPE, LocationDto.HOUSE_NUMBER, LocationDto.CITY, LocationDto.POSTAL_CODE);
+	}
+	public void handleIDSR(){
+		setVisible(false, LocationDto.HOUSE_NUMBER, LocationDto.POSTAL_CODE);
 	}
 
 }

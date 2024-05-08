@@ -45,7 +45,7 @@ public class CaseFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(REINFECTION_INFO_LOC, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REINFECTION_STATUS, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.PREVIOUS_INFECTION_DATE, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.OUTCOME, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.OUTCOME, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.OUTCOME_DATE, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.SEQUELAE, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.SEQUELAE_DETAILS, new HashSet<>(Arrays.asList()));
