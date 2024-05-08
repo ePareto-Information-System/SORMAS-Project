@@ -14143,4 +14143,9 @@ ALTER TABLE pathogentest_history ADD COLUMN laboratorytype varchar(255);
 ALTER TABLE pathogentest_history ADD COLUMN laboratoryname varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (624, 'Added 2 extra columns to lab section for CSM');
+
+ALTER TABLE symptoms ADD COLUMN diarrhoea VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN abdominalCramps VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN headaches VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (625, 'Added columns to symptoms to implement patientVisitedHealthCareFacility #26');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

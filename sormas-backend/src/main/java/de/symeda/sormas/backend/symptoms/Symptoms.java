@@ -276,6 +276,9 @@ public class Symptoms extends AbstractDomainObject {
 	private YesNo trueAfp;
 	private SymptomState dyspnea;
 	private SymptomState tachypnea;
+	private SymptomState diarrhoea;
+	private SymptomState abdominalCramps;
+	private SymptomState headaches;
 
 	private SymptomState babyDied;
 	private Integer ageAtDeathDays;
@@ -2448,5 +2451,29 @@ public class Symptoms extends AbstractDomainObject {
 
 	public void setCaseDetectedBeforeWormEmergence(SymptomState caseDetectedBeforeWormEmergence) {
 		this.caseDetectedBeforeWormEmergence = caseDetectedBeforeWormEmergence;
+	}
+	@Enumerated(EnumType.STRING)
+	public SymptomState getDiarrhoea() {
+		return diarrhoea;
+	}
+
+	public void setDiarrhoea(SymptomState diarrhoea) {
+		this.diarrhoea = diarrhoea;
+	}
+	@Enumerated(EnumType.STRING)
+	public SymptomState getAbdominalCramps() {
+		return abdominalCramps;
+	}
+
+	public void setAbdominalCramps(SymptomState abdominalCramps) {
+		this.abdominalCramps = abdominalCramps;
+	}
+	@Enumerated(EnumType.STRING)
+	public SymptomState getHeadaches() {
+		return headaches;
+	}
+
+	public void setHeadaches(SymptomState headaches) {
+		this.headaches = headaches;
 	}
 }

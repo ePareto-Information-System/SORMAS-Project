@@ -502,6 +502,9 @@ public final class SymptomsHelper {
 		appendYesSymptom(string, symptomsDto.getUrinaryRetention(), SymptomsDto.URINARY_RETENTION);
 		appendYesSymptom(string, symptomsDto.getUrinaryRetention(), SymptomsDto.EXCESSIVE_SWEATING);
 		appendYesSymptom(string, symptomsDto.getUrinaryRetention(), SymptomsDto.NUMBNESS);
+		appendYesSymptom(string, symptomsDto.getDiarrhoea(), SymptomsDto.DIARRHOEA);
+		appendYesSymptom(string, symptomsDto.getAbdominalCramps(), SymptomsDto.ABDOMINAL_CRAMPS);
+		appendYesSymptom(string, symptomsDto.getHeadaches(), SymptomsDto.HEADACHES);
 
 		appendYesSymptom(string, symptomsDto.getBabyDied(), SymptomsDto.BABY_DIED);
 		appendYesSymptom(string, symptomsDto.getBabyNormalAtBirth(), SymptomsDto.BABY_NORMAL_AT_BIRTH);

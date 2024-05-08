@@ -284,6 +284,10 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setCaseDetectedBeforeWormEmergence(source.getCaseDetectedBeforeWormEmergence());
 
 
+		target.setDyspnea(source.getTachypnea());
+		target.setDiarrhoea(source.getDiarrhoea());
+		target.setAbdominalCramps(source.getAbdominalCramps());
+		target.setHeadaches(source.getHeadaches());
 
 		return target;
 	}
@@ -544,6 +548,10 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setFirstWormThisYear(source.getFirstWormThisYear());
 		target.setDateFirstWormEmergence(source.getDateFirstWormEmergence());
 		target.setCaseDetectedBeforeWormEmergence(source.getCaseDetectedBeforeWormEmergence());
+		target.setDyspnea(source.getTachypnea());
+		target.setDiarrhoea(source.getDiarrhoea());
+		target.setAbdominalCramps(source.getAbdominalCramps());
+		target.setHeadaches(source.getHeadaches());
 
 		return target;
 	}

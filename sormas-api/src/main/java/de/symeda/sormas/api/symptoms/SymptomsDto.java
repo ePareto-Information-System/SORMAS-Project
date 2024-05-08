@@ -295,6 +295,9 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String DATE_FIRST_WORM_EMERGENCE = "dateFirstWormEmergence";
 	public static final String CASE_DETECTED_BEFORE_WORM_EMERGENCE = "caseDetectedBeforeWormEmergence";
 
+	public static final String DIARRHOEA = "diarrhoea";
+	public static final String ABDOMINAL_CRAMPS = "abdominalCramps";
+	public static final String HEADACHES = "headaches";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -310,7 +313,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA,
 		SARI,
-		CHOLERA,
 		YELLOW_FEVER,
 		DENGUE,
 		PLAGUE,
@@ -321,6 +323,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		DENGUE,
 		UNDEFINED,
 		FOODBORNE_ILLNESS,
+		CHOLERA,
 		OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -331,7 +334,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		EVD,
 		LASSA,
 		CSM,
-		CHOLERA,
 		POLIO,
 		YELLOW_FEVER,
 		AHF,
@@ -392,7 +394,7 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		CHOLERA,
+		GUINEA_WORM,
 		POLIO,
 		YELLOW_FEVER,
 		ANTHRAX,
@@ -572,12 +574,12 @@ public class SymptomsDto extends PseudonymizableDto {
 		AFP,
 		EVD,
 		LASSA,
-		CHOLERA,
 		POLIO,
 		AHF,
 		DENGUE,
 		UNDEFINED,
 		FOODBORNE_ILLNESS,
+		CHOLERA,
 		OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -589,7 +591,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		MEASLES,
 		PLAGUE,
 		POLIO,
@@ -672,7 +673,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		MEASLES,
 		YELLOW_FEVER,
 		DENGUE,
@@ -698,7 +698,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		MEASLES,
 		YELLOW_FEVER,
 		DENGUE,
@@ -711,6 +710,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CORONAVIRUS,
 		UNDEFINED,
 		FOODBORNE_ILLNESS,
+		CHOLERA,
 		OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -1115,7 +1115,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		MEASLES,
 		YELLOW_FEVER,
 		DENGUE,
@@ -1137,7 +1136,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		YELLOW_FEVER,
 		DENGUE,
 		MONKEYPOX,
@@ -1257,7 +1255,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		MEASLES,
 		DENGUE,
 		MONKEYPOX,
@@ -1279,7 +1276,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		MEASLES,
 		DENGUE,
 		MONKEYPOX,
@@ -1404,7 +1400,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		EVD,
 		LASSA,
 		CSM,
-		CHOLERA,
 		POLIO,
 		AHF, DENGUE,
 		RABIES,
@@ -1633,7 +1628,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		MEASLES,
 		DENGUE,
 		MONKEYPOX,
@@ -1655,7 +1649,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		MEASLES,
 		YELLOW_FEVER,
 		DENGUE,
@@ -1677,7 +1670,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		MEASLES,
 		YELLOW_FEVER,
 		DENGUE,
@@ -1817,7 +1809,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		MEASLES,
 		YELLOW_FEVER,
 		DENGUE,
@@ -1829,6 +1820,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		CORONAVIRUS,
 		FOODBORNE_ILLNESS,
+		CHOLERA,
 		OTHER })
 	@Outbreaks
 	@HideForCountries
@@ -2107,7 +2099,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		MEASLES,
 		POLIO,
 		AHF, DENGUE,
@@ -2125,7 +2116,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		MEASLES,
 		PLAGUE,
 		POLIO,
@@ -2201,7 +2191,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		MEASLES,
 		GUINEA_WORM,
 		POLIO,
@@ -2227,7 +2216,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		MEASLES,
 		POLIO,
 		AHF,
@@ -2255,7 +2243,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		MEASLES,
 		POLIO,
 		AHF, DENGUE,
@@ -2275,7 +2262,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		MEASLES,
 		POLIO,
 		AHF, DENGUE,
@@ -2292,7 +2278,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		CHOLERA,
 		MEASLES,
 		PLAGUE,
 		ANTHRAX,
@@ -2323,6 +2308,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
+		CHOLERA,
 		OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -2536,6 +2522,24 @@ public class SymptomsDto extends PseudonymizableDto {
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState caseDetectedBeforeWormEmergence;
+	@Diseases({
+			CHOLERA
+			 })
+	@HideForCountries
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState diarrhoea;
+	@Diseases({
+			CHOLERA
+	})
+	@HideForCountries
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState abdominalCramps;
+	@Diseases({
+			CHOLERA
+	})
+	@HideForCountries
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState headaches;
 
 	@Order(0)
 	public Float getTemperature() {
@@ -4585,5 +4589,29 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setCaseDetectedBeforeWormEmergence(SymptomState caseDetectedBeforeWormEmergence) {
 		this.caseDetectedBeforeWormEmergence = caseDetectedBeforeWormEmergence;
+	}
+
+	public SymptomState getDiarrhoea() {
+		return diarrhoea;
+	}
+
+	public void setDiarrhoea(SymptomState diarrhoea) {
+		this.diarrhoea = diarrhoea;
+	}
+
+	public SymptomState getAbdominalCramps() {
+		return abdominalCramps;
+	}
+
+	public void setAbdominalCramps(SymptomState abdominalCramps) {
+		this.abdominalCramps = abdominalCramps;
+	}
+
+	public SymptomState getHeadaches() {
+		return headaches;
+	}
+
+	public void setHeadaches(SymptomState headaches) {
+		this.headaches = headaches;
 	}
 }
