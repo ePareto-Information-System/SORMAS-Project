@@ -373,7 +373,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					addressForm.setOnlyUnknownForAHF(disease);
 					break;
 				case CORONAVIRUS:
-					addressForm.setOnlyUnknownForCovid(disease);
+					addressForm.handleCovid();
 					break;
 				default:
 					break;
@@ -698,6 +698,12 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			homeaddrecreational.setVisible(true);
 
 			setVisible(false,PersonDto.BIRTH_COUNTRY, PersonDto.NAMES_OF_GUARDIANS, PersonDto.BIRTH_NAME, PersonDto.PASSPORT_NUMBER);
+		}
+
+
+		//coronavius
+		if (disease == Disease.CORONAVIRUS) {
+			setVisible(false, PersonDto.EDUCATION_DETAILS, PersonDto.EDUCATION_TYPE, PersonDto.MOTHERS_NAME, PersonDto.FATHERS_NAME, PersonDto.ADDITIONAL_DETAILS);
 		}
 
 	}
