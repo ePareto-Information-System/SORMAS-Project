@@ -969,8 +969,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			postalCodeField.setVisible(true);
 	}
 
+
 	public void handleCoronavirus() {
-		setVisible(true, LocationDto.POSTAL_CODE, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK);
+			setVisible(true, LocationDto.POSTAL_CODE, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK);
+			setVisible(false, LocationDto.ADDITIONAL_INFORMATION, LocationDto.STREET, LocationDto.HOUSE_NUMBER, LocationDto.CITY, LocationDto.AREA_TYPE, LocationDto.DETAILS, LocationDto.LAND_MARK);
 	}
 
 

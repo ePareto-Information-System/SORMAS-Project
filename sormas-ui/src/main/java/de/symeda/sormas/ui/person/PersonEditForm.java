@@ -828,6 +828,12 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private void disableField(String field) {
 		setVisible(false, field);
 
+
+		//coronavius
+		if (disease == Disease.CORONAVIRUS) {
+			setVisible(false, PersonDto.EDUCATION_DETAILS, PersonDto.EDUCATION_TYPE, PersonDto.MOTHERS_NAME, PersonDto.FATHERS_NAME, PersonDto.ADDITIONAL_DETAILS);
+		}
+
 	}
 	@Override
 	public void setValue(PersonDto newFieldValue) {
