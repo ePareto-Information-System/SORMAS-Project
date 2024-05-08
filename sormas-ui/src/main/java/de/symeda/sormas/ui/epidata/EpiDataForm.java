@@ -105,7 +105,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			loc(EpiDataDto.ACTIVITIES_AS_CASE) +
 			locCss(VSPACE_TOP_3, LOC_EPI_DATA_FIELDS_HINT) +
 			loc(EpiDataDto.HIGH_TRANSMISSION_RISK_AREA) +
-			loc(EpiDataDto.LARGE_OUTBREAKS_AREA) + 
+			loc(EpiDataDto.LARGE_OUTBREAKS_AREA) +
 			loc(EpiDataDto.AREA_INFECTED_ANIMALS);
 	
 	private static final String SOURCE_CONTACTS_HTML_LAYOUT =
@@ -303,7 +303,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		}
 
 		if (disease == Disease.CHOLERA) {
-//			hideAllFields();
+			hideAllFields();
 			setVisible(true, EpiDataDto.EXPOSED_TO_RISK_FACTOR, EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE);
 		}
 
@@ -388,5 +388,10 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 				field.setVisible(false);
 
 		}
+	}
+
+	//hide labels
+	public void hideLabels () {
+		setVisible(false, LOC_EXPOSURE_INVESTIGATION_HEADING);
 	}
 }
