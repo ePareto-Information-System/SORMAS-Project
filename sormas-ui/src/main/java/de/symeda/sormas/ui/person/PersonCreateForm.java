@@ -550,7 +550,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 	//hide fields for CHorlera
 	public void hideFieldsForCholera(){
-		setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.PHONE);
+		setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.PHONE, PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID);
 	}
 
 

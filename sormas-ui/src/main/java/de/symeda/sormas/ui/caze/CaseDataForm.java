@@ -1342,6 +1342,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM);
 			medicalInformationFields =
 					Arrays.asList();
+			FieldHelper.updateItems(outcome, Arrays.asList(CaseOutcome.DECEASED, CaseOutcome.ALIVE, CaseOutcome.UNKNOWN));
 		} else {
 			medicalInformationFields =
 					Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.VACCINATION_STATUS, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
