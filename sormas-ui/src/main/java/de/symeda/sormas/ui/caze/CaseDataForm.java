@@ -1420,9 +1420,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			} else if(disease == Disease.CHOLERA) {
 				
 				healthConditionsField.setVisible(false);
-				setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM);
-				medicalInformationFields =
-						Arrays.asList();
+			setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM);
+			medicalInformationFields =
+					Arrays.asList();
 	
 			} else {
 				medicalInformationFields =
