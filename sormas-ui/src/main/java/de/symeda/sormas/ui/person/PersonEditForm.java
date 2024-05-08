@@ -375,6 +375,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				case CORONAVIRUS:
 					addressForm.setOnlyUnknownForCovid(disease);
 					break;
+				case CHOLERA:
+					addressForm.handleForCholera();
+					break;
 				default:
 					break;
 			}
@@ -811,6 +814,11 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			} else if (disease == Disease.CORONAVIRUS) {
 				List<PresentCondition> validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD);
 				FieldHelper.updateEnumData(presentConditionField, validValues);
+			} else if (disease == Disease.CHOLERA) {
+				List<PresentCondition> validValues = Arrays.asList();
+				FieldHelper.updateEnumData(presentConditionField, validValues);
+				setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.MOTHERS_NAME, PersonDto.FATHERS_NAME, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PASSPORT_NUMBER, PersonDto.GHANA_CARD);
+
 			} else {
 				FieldVisibilityCheckers fieldVisibilityCheckers = FieldVisibilityCheckers.withDisease(disease);
 				List<PresentCondition> validValues = Arrays.stream(PresentCondition.values())
