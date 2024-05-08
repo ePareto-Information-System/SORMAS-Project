@@ -1417,9 +1417,17 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				healthConditionsField.showForCovid19();
 				setVisible(true, CaseDataDto.REPORTING_OFFICER_NAME, CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE);
 
+			} else if(disease == Disease.CHOLERA) {
+				
+				healthConditionsField.setVisible(false);
+				setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM);
+				medicalInformationFields =
+						Arrays.asList();
+	
 			} else {
 				medicalInformationFields =
 						Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.VACCINATION_STATUS, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
+				healthConditionsField.setVisible(false);
 
 			}
 
