@@ -14148,4 +14148,9 @@ ALTER TABLE symptoms ADD COLUMN diarrhoea VARCHAR(255);
 ALTER TABLE symptoms ADD COLUMN abdominalCramps VARCHAR(255);
 ALTER TABLE symptoms ADD COLUMN headaches VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (625, 'Added columns to symptoms to implement patientVisitedHealthCareFacility #26');
+
+-- Other Notes and Observations
+ALTER TABLE cases ADD COLUMN otherNotesAndObservations VARCHAR(255);
+ALTER TABLE cases ADD COLUMN dateLatestUpdateRecord DATE;
+INSERT INTO schema_version (version_number, comment) VALUES (626, 'Added columns to cases to implement patientVisitedHealthCareFacility #26');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

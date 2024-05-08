@@ -498,6 +498,8 @@ public interface Captions {
 	String CaseData_wasInQuarantineBeforeIsolation = "CaseData.wasInQuarantineBeforeIsolation";
 	String CaseData_reportingVillage = "CaseData.reportingVillage";
 	String CaseData_reportingZone = "CaseData.reportingZone";
+	String CaseData_otherNotesAndObservations = "CaseData.otherNotesAndObservations";
+	String CaseData_dateLatestUpdateRecord = "CaseData.dateLatestUpdateRecord";
 	String caseDataEnterHomeAddressNow = "caseDataEnterHomeAddressNow";
 	String CaseData_motherVaccinatedWithTT = "CaseData.motherVaccinatedWithTT";
 	String CaseData_motherHaveCard = "CaseData.motherHaveCard";

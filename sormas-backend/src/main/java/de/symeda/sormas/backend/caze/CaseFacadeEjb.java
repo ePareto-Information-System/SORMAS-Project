@@ -3485,6 +3485,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setReportingVillage(source.getReportingVillage());
 		target.setReportingZone(source.getReportingZone());
 
+		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
+		target.setDateLatestUpdateRecord(source.getDateLatestUpdateRecord());
 		return target;
 	}
 
@@ -3736,6 +3738,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setReportingZone(source.getReportingZone());
 		target.setReportingVillage(source.getReportingVillage());
 
+		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
+		target.setDateLatestUpdateRecord(source.getDateLatestUpdateRecord());
 		return target;
 	}
 

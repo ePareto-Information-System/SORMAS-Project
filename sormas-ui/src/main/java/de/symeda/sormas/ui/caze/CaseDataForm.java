@@ -275,6 +275,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(CaseDataDto.CLINICIAN_PHONE, CaseDataDto.CLINICIAN_EMAIL) +
 					loc(CONTACT_TRACING_FIRST_CONTACT_HEADER_LOC) +
 					fluidRowLocs(CaseDataDto.CONTACT_TRACING_FIRST_CONTACT_TYPE, CaseDataDto.CONTACT_TRACING_FIRST_CONTACT_DATE) +
+					fluidRowLocs(CaseDataDto.DATE_LATEST_UPDATE_RECORD, CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS) +
 					loc(INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC);
 
 	private static final String FOLLOWUP_LAYOUT =
@@ -703,7 +704,13 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		addField(CaseDataDto.INFECTION_SETTING);
 		FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.INFECTION_SETTING, CaseDataDto.NOSOCOMIAL_OUTBREAK, true, true);
 
-		NullableOptionGroup ogReinfection = addField(CaseDataDto.RE_INFECTION, NullableOptionGroup.class);
+		addField(CaseDataDto.DATE_LATEST_UPDATE_RECORD, DateField.class);
+		addField(CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS, TextArea.class).setRows(6);
+		setVisible(false, CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS, CaseDataDto.DATE_LATEST_UPDATE_RECORD);
+
+		// Reinfection
+//		{
+			NullableOptionGroup ogReinfection = addField(CaseDataDto.RE_INFECTION, NullableOptionGroup.class);
 
 		addField(CaseDataDto.PREVIOUS_INFECTION_DATE);
 		ComboBox tfReinfectionStatus = addField(CaseDataDto.REINFECTION_STATUS, ComboBox.class);
@@ -1431,6 +1438,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				FieldHelper.updateItems(cbCaseClassification, Arrays.asList(CaseClassification.NO_CASE, CaseClassification.SUSPECT, CaseClassification.PROBABLE, CaseClassification.CONFIRMED_BY_LAB, CaseClassification.CONFIRMED_BY_EPI_LINK));
 			
 			}
+
+			setVisible(true,  CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS, CaseDataDto.DATE_LATEST_UPDATE_RECORD);
 
 			Button investigateIntoRiskFactorsNavigationLink = ButtonHelper.createButton(Captions.investigateIntoRiskFactors);
 			getContent().addComponent(investigateIntoRiskFactorsNavigationLink, INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC);
