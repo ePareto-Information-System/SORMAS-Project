@@ -819,7 +819,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			personContactDetailsField.setVisible(false);
 		}
 		if(disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
+			addField(PersonDto.TEL_NUMBER, TextField.class);
 			occupationHeader.setVisible(false);
+			personContactDetailsField.setVisible(false);
 		}
 
 	}

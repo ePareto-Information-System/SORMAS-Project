@@ -66,8 +66,8 @@ public class PersonFormConfiguration {
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.BIRTH_NAME, new HashSet<>(Arrays.asList(Disease.AFP)));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.NICKNAME, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.MOTHERS_MAIDEN_NAME, new HashSet<>(Arrays.asList()));
-            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.MOTHERS_NAME, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS)));
-            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.FATHERS_NAME, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS)));
+            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.MOTHERS_NAME, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS)));
+            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.FATHERS_NAME, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS)));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.NAMES_OF_GUARDIANS, new HashSet<>(Arrays.asList(Disease.AFP)));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.BIRTH_COUNTRY, new HashSet<>(Arrays.asList(Disease.AHF, Disease.DENGUE, Disease.AFP)));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.CITIZENSHIP, new HashSet<>(Arrays.asList()));
