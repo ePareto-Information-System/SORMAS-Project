@@ -294,13 +294,8 @@ public class EpiDataDto extends PseudonymizableDto {
 	private YesNoUnknown patientContactWithConfirmedCase;
 	private Set<ContactSetting> patientContactWithConfirmedCaseExposureLocations;
 	private String patientContactWithConfirmedCaseExposureLocationCityCountry;
-	@Diseases({
-			Disease.CHOLERA
-	})
+
 	private YesNo exposedToRiskFactor;
-	@Diseases({
-			Disease.CHOLERA
-	})
 	private DrinkingWaterSource waterUsedByPatientAfterExposure;
 
 	@Diseases({

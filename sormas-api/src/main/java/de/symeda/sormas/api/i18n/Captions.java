@@ -2484,6 +2484,9 @@ public interface Captions {
 	String RiskFactor_threeDaysPriorToDiseaseAttendAnyFuneral = "RiskFactor.threeDaysPriorToDiseaseAttendAnyFuneral";
 	String RiskFactor_threeDaysPriorToDiseaseAttendAnySocialEvent = "RiskFactor.threeDaysPriorToDiseaseAttendAnySocialEvent";
 	String RiskFactor_otherSocialEventDetails = "RiskFactor.otherSocialEventDetails";
+	String RiskFactor_vibrioCholeraeIdentifiedInStools = "RiskFactor.vibrioCholeraeIdentifiedInStools";
+	String RiskFactor_drugsSensitiveToVibrioStrain = "RiskFactor.drugsSensitiveToVibrioStrain";
+	String RiskFactor_drugsResistantToVibrioStrain = "RiskFactor.drugsResistantToVibrioStrain";
 	String SampleExport_altSgpt = "SampleExport.altSgpt";
 	String SampleExport_arterialVenousBloodGas = "SampleExport.arterialVenousBloodGas";
 	String SampleExport_arterialVenousGasHco3 = "SampleExport.arterialVenousGasHco3";
