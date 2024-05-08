@@ -878,6 +878,12 @@ public class CaseController {
 		});
 	}
 
+	//navigate to riskFactor
+	public void navigateToRiskFactor(String caseUuid) {
+		String navigationState = RiskFactorView.VIEW_NAME + "/" + caseUuid;
+		SormasUI.get().getNavigator().navigateTo(navigationState);
+	}
+
 	private void transferDataToPerson(CaseCreateForm createForm, PersonDto person) {
 		createForm.getPersonCreateForm().transferDataToPerson(person);
 	}
