@@ -385,6 +385,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			intensiveCareUnit.setVisible(false);
 			setVisible(true, HospitalizationDto.ISOLATED, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE);
 		}
+
+		//Cholera
+		if (caze.getDisease() == Disease.CHOLERA){
+			hideAllFields();
+			setVisible(true, HospitalizationDto.HOSPITAL_RECORD_NUMBER);
+		}
 	}
 
 	private void updatePrevHospHint(NullableOptionGroup hospitalizedPreviouslyField, PreviousHospitalizationsField previousHospitalizationsField) {
@@ -429,6 +435,16 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		//get field group
 		for (Object propertyId : getFieldGroup().getUnboundPropertyIds()) {
 			setVisible(false, propertyId.toString());
+		}
+	}
+
+	public void hideAllFields () {
+		for (Field<?> field : getFieldGroup().getFields()) {
+			//check if field is not null
+			if (field != null)
+				//hide the field
+				field.setVisible(false);
+
 		}
 	}
 }
