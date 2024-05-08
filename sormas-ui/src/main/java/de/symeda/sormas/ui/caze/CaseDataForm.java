@@ -1424,6 +1424,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			medicalInformationFields =
 					Arrays.asList();
 	
+			FieldHelper.updateItems(outcome, Arrays.asList(CaseOutcome.DECEASED, CaseOutcome.ALIVE, CaseOutcome.UNKNOWN));
+			if (cbCaseClassification != null) {
+				FieldHelper.updateItems(cbCaseClassification, Arrays.asList(CaseClassification.NO_CASE, CaseClassification.SUSPECT, CaseClassification.PROBABLE, CaseClassification.CONFIRMED_BY_LAB, CaseClassification.CONFIRMED_BY_EPI_LINK));
+			
+			}
 			} else {
 			medicalInformationFields =
 					Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.VACCINATION_STATUS, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
