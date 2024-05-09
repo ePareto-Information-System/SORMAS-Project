@@ -226,7 +226,6 @@ public class PathogenTestDto extends PseudonymizableDto {
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_LUXEMBOURG)
 	private CountryReferenceDto prescriberCountry;
 
-	@NotNull(message = Validations.requiredField)
 	private LabType laboratoryType;
 	private String laboratoryName;
 	private LabTest laboratoryTestPerformed;

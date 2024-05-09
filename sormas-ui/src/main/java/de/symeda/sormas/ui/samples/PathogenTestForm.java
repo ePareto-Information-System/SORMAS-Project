@@ -455,6 +455,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			referenceLaboratory.setVisible(false);
 
 			ComboBox laboType = addField(PathogenTestDto.LABORATORY_TYPE, ComboBox.class);
+			laboType.setRequired(true);
 			//addField(PathogenTestDto.LABORATORY_NAME, TextField.class);
 
 			// General fields

@@ -1058,6 +1058,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	private void handleIDSR(){
 		setVisible(false, SampleDto.LAB_LOCATION, SampleDto.DATE_LAB_RECEIVED_SPECIMEN, SampleDto.SPECIMEN_CONDITION, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT);
+
+		List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.PLASMA, SampleMaterial.SERUM, SampleMaterial.ASPIRATE, SampleMaterial.CEREBROSPINAL_FLUID, SampleMaterial.PUS, SampleMaterial.SALIVA, SampleMaterial.BIOPSY, SampleMaterial.STOOL, SampleMaterial.URETHRAL, SampleMaterial.URINE, SampleMaterial.SPUTUM, SampleMaterial.FOOD_WATER);
+		FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
 	}
 
 	private void addSampleDispatchFields() {
@@ -1202,12 +1205,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			case YELLOW_FEVER:
 				requestedSampleMaterialsField.addItems(
 						Arrays.stream(SampleMaterial.getYellowFeverMateriealTypes())
-								.filter( c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
-								.collect(Collectors.toList()));
-				break;
-			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
-				requestedSampleMaterialsField.addItems(
-						Arrays.stream(SampleMaterial.getIDSRMaterialTypes())
 								.filter( c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
 								.collect(Collectors.toList()));
 				break;
