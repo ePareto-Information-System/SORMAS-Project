@@ -197,7 +197,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 										CaseDataDto.DISEASE_DETAILS,
 										CaseDataDto.PLAGUE_TYPE,
 										CaseDataDto.DENGUE_FEVER_TYPE,
-										CaseDataDto.RABIES_TYPE
+										CaseDataDto.RABIES_TYPE,
+										CaseDataDto.IDSR_DIAGNOSIS
 									)
 							)
 					) +
@@ -206,6 +207,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					//  + //
 					// 		fluidColumnLoc(6, 0, CaseDataDto.DISEASE_VARIANT) +
 //									CaseDataDto.RABIES_TYPE))) +
+					fluidRowLocs(CaseDataDto.SPECIFY_EVENT_DIAGNOSIS) +
 					fluidRowLocs(CaseDataDto.DISEASE_VARIANT, CaseDataDto.DISEASE_VARIANT_DETAILS) +
 					fluidRow(
 							fluidColumnLoc(4, 0, CaseDataDto.RE_INFECTION),
@@ -541,6 +543,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		addField(CaseDataDto.RABIES_TYPE, NullableOptionGroup.class);
 		addField(CaseDataDto.CASE_ORIGIN, TextField.class);
 		OptionGroup caseTransmissionClassification = addField(CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
+		ComboBox idsrdiagnosis = addField(CaseDataDto.IDSR_DIAGNOSIS, ComboBox.class);
+		TextField specifyEvent = addField(CaseDataDto.SPECIFY_EVENT_DIAGNOSIS, TextField.class);
+		specifyEvent.setVisible(false);
 
 		quarantine = addField(CaseDataDto.QUARANTINE);
 		quarantine.addValueChangeListener(e -> onValueChange());
@@ -799,6 +804,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				reinfectionDetailsRightLayout.setVisible(false);
 			}
 		});
+
+		idsrdiagnosis.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
+			specifyEvent.setVisible(idsrdiagnosis.getValue() != null && idsrdiagnosis.getValue() == IdsrType.OTHER);
+		});
+
 //		}
 
 		addField(CaseDataDto.QUARANTINE_HOME_POSSIBLE, NullableOptionGroup.class);
