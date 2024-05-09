@@ -12976,5 +12976,7 @@ ALTER TABLE cases ADD COLUMN supplementalImmunization varchar(255);
 ALTER TABLE cases ADD COLUMN supplementalImmunizationDetails varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (568, 'Added columns to cases');
 
+-- Nearest Health Facility to Village
+ALTER TABLE location ADD COLUMN nearestHealthFacilityToVillage varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (569, 'Added nearestHealthFacilityToVillage to location');
 -- *** Insert new sql commands BEFORE this line. Remember to alway
-``

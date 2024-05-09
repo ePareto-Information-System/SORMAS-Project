@@ -117,6 +117,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			fluidRowLocs(LocationDto.CITY, LocationDto.AREA_TYPE),
 			fluidRowLocs(6,LocationDto.POSTAL_CODE),
 			fluidRowLocs(6,LocationDto.LAND_MARK),
+			fluidRowLocs(6, LocationDto.NEAREST_HEALTH_FACILITY_TO_VILLAGE),
 			fluidRowLocs(LocationDto.CONTACT_PERSON_FIRST_NAME, LocationDto.CONTACT_PERSON_LAST_NAME),
 			fluidRowLocs(LocationDto.CONTACT_PERSON_PHONE, LocationDto.CONTACT_PERSON_EMAIL),
 			fluidRow(
@@ -149,6 +150,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private boolean skipFacilityTypeUpdate;
 	private boolean disableFacilityAddressCheck;
 	private boolean hasEventParticipantsWithoutJurisdiction;
+	private TextField nearestHealthFacilityToVillage;
 
 	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers) {
 		super(LocationDto.class, LocationDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers);
@@ -285,6 +287,9 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
+
+		nearestHealthFacilityToVillage = addField(LocationDto.NEAREST_HEALTH_FACILITY_TO_VILLAGE, TextField.class);
+		nearestHealthFacilityToVillage.setVisible(false);
 
 		if (!isEditableAllowed(LocationDto.COMMUNITY)) {
 			setEnabled(false, LocationDto.COUNTRY, LocationDto.REGION, LocationDto.DISTRICT);
@@ -946,6 +951,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	//handleNnt
 	public void handleVisibilityForNNT() {
+		nearestHealthFacilityToVillage.setVisible(true);
 		setVisible(false, LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
 	}
 
