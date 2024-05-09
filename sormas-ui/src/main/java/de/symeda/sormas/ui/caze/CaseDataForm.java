@@ -1429,7 +1429,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			} else if(disease == Disease.CHOLERA) {
 				
 				healthConditionsField.setVisible(false);
-			setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM);
+			setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.LAST_VACCINATION_DATE, CaseDataDto.NUMBER_OF_DOSES, CaseDataDto.SHARED_TO_COUNTRY);
 			medicalInformationFields =
 					Arrays.asList();
 	
