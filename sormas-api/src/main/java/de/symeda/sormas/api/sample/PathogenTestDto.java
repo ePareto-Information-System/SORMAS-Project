@@ -121,6 +121,12 @@ public class PathogenTestDto extends PseudonymizableDto {
 	public static final String LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY = "laboratoryDateResultsSentHealthFacility";
 	public static final String LABORATORY_DATE_RESULTS_SENT_DSD = "laboratoryDateResultsSentDSD";
 	public static final String LABORATORY_FINAL_CLASSIFICATION = "laboratoryFinalClassification";
+	public static final String LAB_LOCATION = "labLocation";
+	public static final String DATE_LAB_RECEIVED_SPECIMEN = "dateLabReceivedSpecimen";
+	public static final String SPECIMEN_CONDITION = "specimenCondition";
+	public static final String DATE_LAB_RESULTS_SENT_DISTRICT = "dateLabResultsSentDistrict";
+	public static final String DATE_LAB_RESULTS_SENT_CLINICIAN = "dateLabResultsSentClinician";
+	public static final String DATE_DISTRICT_RECEIVED_LAB_RESULTS = "dateDistrictReceivedLabResults";
 
 
 
@@ -255,6 +261,12 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private Date laboratoryDateResultsSentHealthFacility;
 	private Date laboratoryDateResultsSentDSD;
 	private CaseClassification laboratoryFinalClassification;
+	private String labLocation;
+	private Date dateLabReceivedSpecimen;
+	private SpecimenCondition specimenCondition;
+	private Date dateLabResultsSentDistrict;
+	private Date dateLabResultsSentClinician;
+	private Date dateDistrictReceivedLabResults;
 
 	public static PathogenTestDto build(SampleDto sample, UserDto currentUser) {
 
@@ -897,5 +909,53 @@ public class PathogenTestDto extends PseudonymizableDto {
 
 	public void setLaboratoryFinalClassification(CaseClassification laboratoryFinalClassification) {
 		this.laboratoryFinalClassification = laboratoryFinalClassification;
+	}
+
+	public String getLabLocation() {
+		return labLocation;
+	}
+
+	public void setLabLocation(String labLocation) {
+		this.labLocation = labLocation;
+	}
+
+	public Date getDateLabReceivedSpecimen() {
+		return dateLabReceivedSpecimen;
+	}
+
+	public void setDateLabReceivedSpecimen(Date dateLabReceivedSpecimen) {
+		this.dateLabReceivedSpecimen = dateLabReceivedSpecimen;
+	}
+
+	public SpecimenCondition getSpecimenCondition() {
+		return specimenCondition;
+	}
+
+	public void setSpecimenCondition(SpecimenCondition specimenCondition) {
+		this.specimenCondition = specimenCondition;
+	}
+
+	public Date getDateLabResultsSentDistrict() {
+		return dateLabResultsSentDistrict;
+	}
+
+	public void setDateLabResultsSentDistrict(Date dateLabResultsSentDistrict) {
+		this.dateLabResultsSentDistrict = dateLabResultsSentDistrict;
+	}
+
+	public Date getDateLabResultsSentClinician() {
+		return dateLabResultsSentClinician;
+	}
+
+	public void setDateLabResultsSentClinician(Date dateLabResultsSentClinician) {
+		this.dateLabResultsSentClinician = dateLabResultsSentClinician;
+	}
+
+	public Date getDateDistrictReceivedLabResults() {
+		return dateDistrictReceivedLabResults;
+	}
+
+	public void setDateDistrictReceivedLabResults(Date dateDistrictReceivedLabResults) {
+		this.dateDistrictReceivedLabResults = dateDistrictReceivedLabResults;
 	}
 }

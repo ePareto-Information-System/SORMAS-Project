@@ -13351,4 +13351,14 @@ ALTER TABLE diseaseconfiguration ADD COLUMN archived boolean DEFAULT false;
 ALTER TABLE diseaseconfiguration ADD COLUMN centrally_managed boolean DEFAULT false;
 
 INSERT INTO schema_version (version_number, comment) VALUES (588, 'Added facility_diseaseconfiguration to db');
+
+-- Adding columns to pathogentest for IDSR 09-05-2024
+ALTER TABLE pathogentest ADD COLUMN lablocation varchar(255);
+ALTER TABLE pathogentest ADD COLUMN dateLabReceivedSpecimen Date;
+ALTER TABLE pathogentest ADD COLUMN specimencondition varchar(255);
+ALTER TABLE pathogentest ADD COLUMN datelabresultssentdistrict Date;
+ALTER TABLE pathogentest ADD COLUMN datelabresultssentclinician Date;
+ALTER TABLE pathogentest ADD COLUMN datedistrictreceivedlabresults Date;
+
+INSERT INTO schema_version (version_number, comment) VALUES (589, 'Added columns to pathogentest for IDSR');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

@@ -1919,6 +1919,12 @@ public interface Captions {
 	String PathogenTest_laboratoryDateResultsSentHealthFacility = "PathogenTest.laboratoryDateResultsSentHealthFacility";
 	String PathogenTest_laboratoryDateResultsSentDSD = "PathogenTest.laboratoryDateResultsSentDSD";
 	String PathogenTest_laboratoryFinalClassification = "PathogenTest.laboratoryFinalClassification";
+	String PathogenTest_labLocation = "PathogenTest.labLocation";
+	String PathogenTest_dateLabReceivedSpecimen = "PathogenTest.dateLabReceivedSpecimen";
+	String PathogenTest_specimenCondition = "PathogenTest.specimenCondition";
+	String PathogenTest_dateLabResultsSentDistrict = "PathogenTest.dateLabResultsSentDistrict";
+	String PathogenTest_dateLabResultsSentClinician = "PathogenTest.dateLabResultsSentClinician";
+	String PathogenTest_dateDistrictReceivedLabResults = "PathogenTest.dateDistrictReceivedLabResults";
 
 
 	String patientDiaryCancelError = "patientDiaryCancelError";

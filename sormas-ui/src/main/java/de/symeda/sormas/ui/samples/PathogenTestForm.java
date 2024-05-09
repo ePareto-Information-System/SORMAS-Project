@@ -86,14 +86,18 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.TEST_TYPE, PathogenTestDto.TEST_TYPE_TEXT) +
 			fluidRowLocs(PathogenTestDto.TESTED_DISEASE_VARIANT, PathogenTestDto.TESTED_DISEASE_VARIANT_DETAILS) +
 			fluidRowLocs(PathogenTestDto.TYPING_ID, "") +
-			fluidRowLocs(PathogenTestDto.TEST_DATE_TIME, PathogenTestDto.LAB) +
-			fluidRowLocs("", PathogenTestDto.LAB_DETAILS) +
+			fluidRowLocs(6,PathogenTestDto.TEST_DATE_TIME) +
+			fluidRowLocs(PathogenTestDto.LAB, PathogenTestDto.LAB_DETAILS) +
+			fluidRowLocs(6,PathogenTestDto.LAB_LOCATION) +
+			fluidRowLocs(PathogenTestDto.DATE_LAB_RECEIVED_SPECIMEN, PathogenTestDto.SPECIMEN_CONDITION) +
 			fluidRowLocs(PathogenTestDto.TEST_RESULT, PathogenTestDto.TEST_RESULT_VERIFIED) +
 			fluidRowLocs(PathogenTestDto.PRELIMINARY, "") +
 			fluidRowLocs(PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, "") +
 			fluidRowLocs(PathogenTestDto.SEROTYPE, "") + 
 			fluidRowLocs(PathogenTestDto.CQ_VALUE, "") + 
 			fluidRowLocs(PathogenTestDto.TEST_RESULT_TEXT) +
+			fluidRowLocs(PathogenTestDto.DATE_LAB_RESULTS_SENT_DISTRICT, PathogenTestDto.DATE_LAB_RESULTS_SENT_CLINICIAN) +
+			fluidRowLocs(6, PathogenTestDto.DATE_DISTRICT_RECEIVED_LAB_RESULTS) +
 			fluidRowLocs(PathogenTestDto.DELETION_REASON) +
 			fluidRowLocs(PathogenTestDto.OTHER_DELETION_REASON)+
 
@@ -546,6 +550,16 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				}
 			});
 			setVisible(false, PathogenTestDto.PRELIMINARY, PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, PathogenTestDto.SEROTYPE, PathogenTestDto.CQ_VALUE, PathogenTestDto.TEST_RESULT_TEXT);
+		}
+
+		if(caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
+			sampleTestDateField.setVisible(false);
+			addField(PathogenTestDto.LAB_LOCATION, TextField.class);
+			addField(PathogenTestDto.DATE_LAB_RECEIVED_SPECIMEN, DateTimeField.class);
+			addField(PathogenTestDto.SPECIMEN_CONDITION, ComboBox.class);
+			addField(PathogenTestDto.DATE_LAB_RESULTS_SENT_DISTRICT, DateTimeField.class);
+			addField(PathogenTestDto.DATE_LAB_RESULTS_SENT_CLINICIAN, DateTimeField.class);
+			addField(PathogenTestDto.DATE_DISTRICT_RECEIVED_LAB_RESULTS, DateTimeField.class);
 		}
 	}
 

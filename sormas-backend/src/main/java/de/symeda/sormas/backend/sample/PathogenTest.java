@@ -36,10 +36,7 @@ import javax.persistence.TemporalType;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.disease.DiseaseVariant;
-import de.symeda.sormas.api.sample.PCRTestSpecification;
-import de.symeda.sormas.api.sample.PathogenTestReferenceDto;
-import de.symeda.sormas.api.sample.PathogenTestResultType;
-import de.symeda.sormas.api.sample.PathogenTestType;
+import de.symeda.sormas.api.sample.*;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.common.DeletableAdo;
 import de.symeda.sormas.backend.disease.DiseaseVariantConverter;
@@ -161,6 +158,13 @@ public class PathogenTest extends DeletableAdo {
 	private Date laboratoryDateResultsSentHealthFacility;
 	private Date laboratoryDateResultsSentDSD;
 	private CaseClassification laboratoryFinalClassification;
+	private String labLocation;
+	private Date dateLabReceivedSpecimen;
+	private SpecimenCondition specimenCondition;
+	private Date dateLabResultsSentDistrict;
+	private Date dateLabResultsSentClinician;
+	private Date dateDistrictReceivedLabResults;
+
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
@@ -782,5 +786,53 @@ public class PathogenTest extends DeletableAdo {
 
 	public void setLaboratoryFinalClassification(CaseClassification laboratoryFinalClassification) {
 		this.laboratoryFinalClassification = laboratoryFinalClassification;
+	}
+
+	public String getLabLocation() {
+		return labLocation;
+	}
+
+	public void setLabLocation(String labLocation) {
+		this.labLocation = labLocation;
+	}
+
+	public Date getDateLabReceivedSpecimen() {
+		return dateLabReceivedSpecimen;
+	}
+
+	public void setDateLabReceivedSpecimen(Date dateLabReceivedSpecimen) {
+		this.dateLabReceivedSpecimen = dateLabReceivedSpecimen;
+	}
+
+	public SpecimenCondition getSpecimenCondition() {
+		return specimenCondition;
+	}
+
+	public void setSpecimenCondition(SpecimenCondition specimenCondition) {
+		this.specimenCondition = specimenCondition;
+	}
+
+	public Date getDateLabResultsSentDistrict() {
+		return dateLabResultsSentDistrict;
+	}
+
+	public void setDateLabResultsSentDistrict(Date dateLabResultsSentDistrict) {
+		this.dateLabResultsSentDistrict = dateLabResultsSentDistrict;
+	}
+
+	public Date getDateLabResultsSentClinician() {
+		return dateLabResultsSentClinician;
+	}
+
+	public void setDateLabResultsSentClinician(Date dateLabResultsSentClinician) {
+		this.dateLabResultsSentClinician = dateLabResultsSentClinician;
+	}
+
+	public Date getDateDistrictReceivedLabResults() {
+		return dateDistrictReceivedLabResults;
+	}
+
+	public void setDateDistrictReceivedLabResults(Date dateDistrictReceivedLabResults) {
+		this.dateDistrictReceivedLabResults = dateDistrictReceivedLabResults;
 	}
 }
