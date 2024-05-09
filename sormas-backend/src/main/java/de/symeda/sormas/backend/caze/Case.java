@@ -43,6 +43,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
@@ -52,27 +53,6 @@ import de.symeda.sormas.backend.sixtyday.SixtyDay;
 import org.hibernate.annotations.Type;
 
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.caze.CaseClassification;
-import de.symeda.sormas.api.caze.CaseIdentificationSource;
-import de.symeda.sormas.api.caze.CaseOrigin;
-import de.symeda.sormas.api.caze.CaseOutcome;
-import de.symeda.sormas.api.caze.CaseReferenceDefinition;
-import de.symeda.sormas.api.caze.CaseReferenceDto;
-import de.symeda.sormas.api.caze.ContactTracingContactType;
-import de.symeda.sormas.api.caze.DengueFeverType;
-import de.symeda.sormas.api.caze.EndOfIsolationReason;
-import de.symeda.sormas.api.caze.HospitalWardType;
-import de.symeda.sormas.api.caze.InfectionSetting;
-import de.symeda.sormas.api.caze.InvestigationStatus;
-import de.symeda.sormas.api.caze.PlagueType;
-import de.symeda.sormas.api.caze.QuarantineReason;
-import de.symeda.sormas.api.caze.RabiesType;
-import de.symeda.sormas.api.caze.ReinfectionDetail;
-import de.symeda.sormas.api.caze.ReinfectionStatus;
-import de.symeda.sormas.api.caze.ScreeningType;
-import de.symeda.sormas.api.caze.TransmissionClassification;
-import de.symeda.sormas.api.caze.Trimester;
-import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
@@ -274,6 +254,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private String diseaseVariantDetails;
 	private PlagueType plagueType;
 	private DengueFeverType dengueFeverType;
+	private IdsrType idsrDiagnosis;
 	private RabiesType rabiesType;
 
 	private CaseClassification caseClassification;
@@ -470,6 +451,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private String ethnicity;
 	private String occupation;
 	private String districtOfResidence;
+	private String specifyEventDiagnosis;
 
 	public static Case build() {
 		Case caze = new Case();
@@ -563,6 +545,14 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setDengueFeverType(DengueFeverType dengueFeverType) {
 		this.dengueFeverType = dengueFeverType;
+	}
+
+	public IdsrType getIdsrDiagnosis() {
+		return idsrDiagnosis;
+	}
+
+	public void setIdsrDiagnosis(IdsrType idsrDiagnosis) {
+		this.idsrDiagnosis = idsrDiagnosis;
 	}
 
 	@Enumerated(EnumType.STRING)
@@ -2071,6 +2061,15 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public void setDistrictOfResidence(String districtOfResidence) {
 		this.districtOfResidence = districtOfResidence;
 	}
+
+	public String getSpecifyEventDiagnosis() {
+		return specifyEventDiagnosis;
+	}
+
+	public void setSpecifyEventDiagnosis(String specifyEventDiagnosis) {
+		this.specifyEventDiagnosis = specifyEventDiagnosis;
+	}
+
 //	Riskfactor on
 
 

@@ -105,6 +105,8 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String DISEASE_VARIANT_DETAILS = "diseaseVariantDetails";
 	public static final String PLAGUE_TYPE = "plagueType";
 	public static final String DENGUE_FEVER_TYPE = "dengueFeverType";
+	public static final String IDSR_DIAGNOSIS = "idsrDiagnosis";
+	public static final String SPECIFY_EVENT_DIAGNOSIS = "specifyEventDiagnosis";
 	public static final String RABIES_TYPE = "rabiesType";
 	public static final String RESPONSIBLE_REGION = "responsibleRegion";
 	public static final String RESPONSIBLE_DISTRICT = "responsibleDistrict";
@@ -269,6 +271,10 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 		Disease.DENGUE })
 	@Outbreaks
 	private DengueFeverType dengueFeverType;
+	@Diseases({
+			Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS })
+	@Outbreaks
+	private IdsrType idsrDiagnosis;
 	@Diseases({
 		Disease.RABIES })
 	@Outbreaks
@@ -650,6 +656,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	private String ethnicity;
 	private String occupation;
 	private String districtOfResidence;
+	private String specifyEventDiagnosis;
 
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		return build(person, disease, HealthConditionsDto.build());
@@ -926,6 +933,14 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 
 	public void setDengueFeverType(DengueFeverType dengueFeverType) {
 		this.dengueFeverType = dengueFeverType;
+	}
+
+	public IdsrType getIdsrDiagnosis() {
+		return idsrDiagnosis;
+	}
+
+	public void setIdsrDiagnosis(IdsrType idsrDiagnosis) {
+		this.idsrDiagnosis = idsrDiagnosis;
 	}
 
 	public RabiesType getRabiesType() {
@@ -2021,5 +2036,13 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 
 	public void setDistrictOfResidence(String districtOfResidence) {
 		this.districtOfResidence = districtOfResidence;
+	}
+
+	public String getSpecifyEventDiagnosis() {
+		return specifyEventDiagnosis;
+	}
+
+	public void setSpecifyEventDiagnosis(String specifyEventDiagnosis) {
+		this.specifyEventDiagnosis = specifyEventDiagnosis;
 	}
 }
