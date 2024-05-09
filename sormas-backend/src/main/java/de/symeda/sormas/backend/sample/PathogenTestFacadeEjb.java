@@ -448,6 +448,12 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setLaboratoryDateResultsSentHealthFacility(source.getLaboratoryDateResultsSentHealthFacility());
 		target.setLaboratoryDateResultsSentDSD(source.getLaboratoryDateResultsSentDSD());
 		target.setLaboratoryFinalClassification(source.getLaboratoryFinalClassification());
+		target.setLabLocation(source.getLabLocation());
+		target.setDateLabReceivedSpecimen(source.getDateLabReceivedSpecimen());
+		target.setSpecimenCondition(source.getSpecimenCondition());
+		target.setDateLabResultsSentDistrict(source.getDateLabResultsSentDistrict());
+		target.setDateLabResultsSentClinician(source.getDateLabResultsSentClinician());
+		target.setDateDistrictReceivedLabResults(source.getDateDistrictReceivedLabResults());
 
 
 		return target;
@@ -568,6 +574,12 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setLaboratoryDateResultsSentHealthFacility(source.getLaboratoryDateResultsSentHealthFacility());
 		target.setLaboratoryDateResultsSentDSD(source.getLaboratoryDateResultsSentDSD());
 		target.setLaboratoryFinalClassification(source.getLaboratoryFinalClassification());
+		target.setLabLocation(source.getLabLocation());
+		target.setDateLabReceivedSpecimen(source.getDateLabReceivedSpecimen());
+		target.setSpecimenCondition(source.getSpecimenCondition());
+		target.setDateLabResultsSentDistrict(source.getDateLabResultsSentDistrict());
+		target.setDateLabResultsSentClinician(source.getDateLabResultsSentClinician());
+		target.setDateDistrictReceivedLabResults(source.getDateDistrictReceivedLabResults());
 
 		return target;
 	}
