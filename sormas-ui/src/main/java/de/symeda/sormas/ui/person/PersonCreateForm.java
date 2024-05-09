@@ -514,6 +514,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD);
 		} else if (disease == Disease.NEONATAL_TETANUS) {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD);
+			handleVisibilityForNNT();
 		} else {
 			validValues = Arrays.asList(PresentCondition.values());
 		}
@@ -545,5 +546,10 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 	public void setSearchedPerson(PersonDto searchedPerson) {
 		this.person = searchedPerson;
+	}
+
+	//handleVisibilityfornnt
+	public void handleVisibilityForNNT() {
+		setVisible(false, PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PASSPORT_NUMBER, PersonDto.PHONE, PersonDto.EMAIL_ADDRESS, PersonDto.PRESENT_CONDITION);
 	}
 }

@@ -384,6 +384,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				case CORONAVIRUS:
 					addressForm.setOnlyUnknownForCovid(disease);
 					break;
+				case NEONATAL_TETANUS:
+					addressForm.handleVisibilityForNNT();
+					break;
 				default:
 					break;
 			}
