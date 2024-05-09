@@ -523,11 +523,10 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD);
 		} else if (disease == Disease.CHOLERA) {
 			validValues = Arrays.asList(PresentCondition.DEAD, PresentCondition.ALIVE, PresentCondition.UNKNOWN);
+			hideFieldsForCholera();
+
 		} else if (disease == Disease.NEONATAL_TETANUS) {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD);
-		} else if (disease == Disease.CHOLERA) {
-			validValues = Arrays.asList();
-			hideFieldsForCholera();
 		} else {
 			validValues = Arrays.asList(PresentCondition.values());
 		}
@@ -563,7 +562,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 	//hide fields for CHorlera
 	public void hideFieldsForCholera(){
-		setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.PHONE, PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID);
+		setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.PHONE, PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PRESENT_CONDITION);
 	}
 
 
