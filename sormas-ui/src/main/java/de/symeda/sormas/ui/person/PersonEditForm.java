@@ -728,8 +728,13 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			FieldHelper.setVisibleWhen(getFieldGroup(), PersonDto.ATTENDED_BY_TRAINED_TBA_MIDWIFE_NAME, PersonDto.ATTENDED_BY_TRAINED_TBA, YesNoUnknown.YES, true);
 			FieldHelper.setVisibleWhen(getFieldGroup(), PersonDto.CORD_TREATED_WITH_ANYTHING_WHERE, PersonDto.CORD_TREATED_WITH_ANYTHING, YesNoUnknown.YES, true);
 
-
-			setVisible(true, PersonDto.PLACE_OF_BIRTH_REGION, PersonDto.PLACE_OF_BIRTH_DISTRICT, PersonDto.PLACE_OF_BIRTH_COMMUNITY, PersonDto.PLACE_OF_BIRTH_FACILITY_TYPE, PersonDto.PLACE_OF_BIRTH_FACILITY, PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS);
+			setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER, PersonDto.EDUCATION_TYPE, PersonDto.OCCUPATION_DETAILS);
+			placeOfBirthFacilityType.setVisible(true);
+			tfPlaceOfBirthFacilityDetails.setVisible(true);
+			cbPlaceOfBirthRegion.setVisible(true);
+			cbPlaceOfBirthCommunity.setVisible(true);
+			cbPlaceOfBirthDistrict.setVisible(true);
+			cbPlaceOfBirthFacility.setVisible(true);
 		}
 
 	}

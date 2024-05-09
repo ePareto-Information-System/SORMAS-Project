@@ -952,7 +952,8 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	//handleNnt
 	public void handleVisibilityForNNT() {
 		nearestHealthFacilityToVillage.setVisible(true);
-		setVisible(false, LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
+		setVisible(true, LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
+		setVisible(false, LocationDto.STREET, LocationDto.HOUSE_NUMBER, LocationDto.ADDITIONAL_INFORMATION);
 	}
 
 
