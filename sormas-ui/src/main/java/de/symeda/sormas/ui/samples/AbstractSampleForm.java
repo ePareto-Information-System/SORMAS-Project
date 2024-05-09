@@ -1311,6 +1311,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 								.filter( c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
 								.collect(Collectors.toList()));
 				break;
+			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
+				requestedSampleMaterialsField.addItems(
+						Arrays.stream(SampleMaterial.getIDSRMaterialTypes())
+								.filter( c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
+								.collect(Collectors.toList()));
+				break;
 			default:
 				requestedSampleMaterialsField.addItems(
 						Arrays.stream(SampleMaterial.values())
