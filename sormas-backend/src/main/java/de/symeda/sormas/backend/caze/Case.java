@@ -464,6 +464,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private Date secondVaccinationDate;
 	private String otherNotesAndObservations;
 	private Date dateLatestUpdateRecord;
+	private Integer numberOfPeopleInSameHousehold;
 
 	public static Case build() {
 		Case caze = new Case();
@@ -2013,6 +2014,14 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setDateLatestUpdateRecord(Date dateLatestUpdateRecord) {
 		this.dateLatestUpdateRecord = dateLatestUpdateRecord;
+	}
+
+	public Integer getNumberOfPeopleInSameHousehold() {
+		return numberOfPeopleInSameHousehold;
+	}
+
+	public void setNumberOfPeopleInSameHousehold(Integer numberOfPeopleInSameHousehold) {
+		this.numberOfPeopleInSameHousehold = numberOfPeopleInSameHousehold;
 	}
 
 	public Double buildCaseLatitudeCoordination() {

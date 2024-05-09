@@ -239,6 +239,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String SECOND_VACCINATION_DATE = "secondVaccinationDate";
 	public static final String OTHER_NOTES_AND_OBSERVATIONS = "otherNotesAndObservations";
 	public static final String DATE_LATEST_UPDATE_RECORD = "dateLatestUpdateRecord";
+	public static final String NUMBER_OF_PEOPLE_IN_SAME_HOUSEHOLD = "numberOfPeopleInSameHousehold";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -634,6 +635,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	private  Date secondVaccinationDate;
 	private String otherNotesAndObservations;
 	private Date dateLatestUpdateRecord;
+	private Integer numberOfPeopleInSameHousehold;
 
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		return build(person, disease, HealthConditionsDto.build());
@@ -1963,5 +1965,13 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 
 	public void setDateLatestUpdateRecord(Date dateLatestUpdateRecord) {
 		this.dateLatestUpdateRecord = dateLatestUpdateRecord;
+	}
+
+	public Integer getNumberOfPeopleInSameHousehold() {
+		return numberOfPeopleInSameHousehold;
+	}
+
+	public void setNumberOfPeopleInSameHousehold(Integer numberOfPeopleInSameHousehold) {
+		this.numberOfPeopleInSameHousehold = numberOfPeopleInSameHousehold;
 	}
 }
