@@ -14172,4 +14172,13 @@ ALTER TABLE pathogentest ADD COLUMN datelabresultssentclinician Date;
 ALTER TABLE pathogentest ADD COLUMN datedistrictreceivedlabresults Date;
 
 INSERT INTO schema_version (version_number, comment) VALUES (629, 'Added columns to pathogentest for IDSR');
+
+-- Adding columns to cases for IDSR 09-05-2024
+ALTER TABLE cases ADD COLUMN idsrdiagnosis character varying(255);
+ALTER TABLE cases ADD COLUMN specifyeventdiagnosis character varying(255);
+
+ALTER TABLE cases_history ADD COLUMN idsrdiagnosis character varying(255);
+ALTER TABLE cases_history ADD COLUMN specifyeventdiagnosis character varying(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (630, 'Added columns to cases for IDSR');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

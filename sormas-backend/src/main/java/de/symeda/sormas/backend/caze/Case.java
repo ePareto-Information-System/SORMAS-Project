@@ -257,6 +257,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private String diseaseVariantDetails;
 	private PlagueType plagueType;
 	private DengueFeverType dengueFeverType;
+	private IdsrType idsrDiagnosis;
 	private RabiesType rabiesType;
 
 	private CaseClassification caseClassification;
@@ -479,6 +480,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private String otherNotesAndObservations;
 	private Date dateLatestUpdateRecord;
 	private Integer numberOfPeopleInSameHousehold;
+	private String specifyEventDiagnosis;
 
 	public static Case build() {
 		Case caze = new Case();
@@ -572,6 +574,14 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setDengueFeverType(DengueFeverType dengueFeverType) {
 		this.dengueFeverType = dengueFeverType;
+	}
+
+	public IdsrType getIdsrDiagnosis() {
+		return idsrDiagnosis;
+	}
+
+	public void setIdsrDiagnosis(IdsrType idsrDiagnosis) {
+		this.idsrDiagnosis = idsrDiagnosis;
 	}
 
 	@Enumerated(EnumType.STRING)
@@ -2260,6 +2270,15 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public void setDistrictOfResidence(String districtOfResidence) {
 		this.districtOfResidence = districtOfResidence;
 	}
+
+	public String getSpecifyEventDiagnosis() {
+		return specifyEventDiagnosis;
+	}
+
+	public void setSpecifyEventDiagnosis(String specifyEventDiagnosis) {
+		this.specifyEventDiagnosis = specifyEventDiagnosis;
+	}
+
 //	Riskfactor on
 
 

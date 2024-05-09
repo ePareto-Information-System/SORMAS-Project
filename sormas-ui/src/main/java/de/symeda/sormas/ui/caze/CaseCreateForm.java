@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import de.symeda.sormas.api.caze.IdsrType;
 import de.symeda.sormas.api.infrastructure.facility.*;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -118,7 +119,8 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			fluidColumnLoc(6, 0, CaseDataDto.DISEASE),
 			fluidColumn(6, 0,
 					locs(CaseDataDto.DISEASE_DETAILS, CaseDataDto.PLAGUE_TYPE, CaseDataDto.DENGUE_FEVER_TYPE,
-							CaseDataDto.RABIES_TYPE)))
+							CaseDataDto.RABIES_TYPE, CaseDataDto.IDSR_DIAGNOSIS)))
+			+ fluidRowLocs(CaseDataDto.SPECIFY_EVENT_DIAGNOSIS)
 			+ fluidRowLocs(CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION) +
 			fluidRowLocs(CaseDataDto.CASE_ORIGIN, CaseDataDto.EPID_NUMBER)
 			+ fluidRowLocs(CaseDataDto.REPORT_DATE, CaseDataDto.INVESTIGATED_DATE)
@@ -201,6 +203,9 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		addField(CaseDataDto.RABIES_TYPE, NullableOptionGroup.class);
 		TextField homeaddrecreational = addField(CaseDataDto.HOME_ADDRESS_RECREATIONAL, TextField.class);
 		homeaddrecreational.setVisible(false);
+		ComboBox idsrdiagnosis = addField(CaseDataDto.IDSR_DIAGNOSIS, ComboBox.class);
+		TextField specifyEvent = addField(CaseDataDto.SPECIFY_EVENT_DIAGNOSIS, TextField.class);
+		specifyEvent.setVisible(false);
 		addField(CaseDataDto.RE_INFECTION, NullableOptionGroup.class);
 
 //		personCreateForm = new PersonCreateForm(showHomeAddressForm, true, true, showPersonSearchButton);
@@ -524,6 +529,8 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		FieldHelper
 				.setVisibleWhen(getFieldGroup(), Arrays.asList(CaseDataDto.DENGUE_FEVER_TYPE), CaseDataDto.DISEASE, Arrays.asList(Disease.DENGUE), true);
 		FieldHelper.setVisibleWhen(getFieldGroup(), Arrays.asList(CaseDataDto.RABIES_TYPE), CaseDataDto.DISEASE, Arrays.asList(Disease.RABIES), true);
+		FieldHelper
+				.setVisibleWhen(getFieldGroup(), Arrays.asList(CaseDataDto.IDSR_DIAGNOSIS), CaseDataDto.DISEASE, Arrays.asList(Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS), true);
 		FieldHelper.setVisibleWhen(
 				facilityOrHome,
 				Arrays.asList(facilityType, facilityCombo),
@@ -590,6 +597,10 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
 			}
 
+		});
+
+		idsrdiagnosis.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
+            specifyEvent.setVisible(idsrdiagnosis.getValue() != null && idsrdiagnosis.getValue() == IdsrType.OTHER);
 		});
 
 		diseaseVariantField.addValueChangeListener(e -> {

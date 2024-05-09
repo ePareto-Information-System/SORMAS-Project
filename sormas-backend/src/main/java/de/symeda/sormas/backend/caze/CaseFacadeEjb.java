@@ -3277,6 +3277,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setDiseaseVariantDetails(source.getDiseaseVariantDetails());
 		target.setPlagueType(source.getPlagueType());
 		target.setDengueFeverType(source.getDengueFeverType());
+		target.setIdsrDiagnosis(source.getIdsrDiagnosis());
 		target.setRabiesType(source.getRabiesType());
 		target.setCaseClassification(source.getCaseClassification() == CaseClassification.NOT_CLASSIFIED ? CaseClassification.SUSPECT : source.getCaseClassification());
 		target.setCaseClassification(source.getCaseClassification());
@@ -3463,6 +3464,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setEthnicity(source.getEthnicity());
 		target.setOccupation(source.getOccupation());
 		target.setDistrictOfResidence(source.getDistrictOfResidence());
+		target.setSpecifyEventDiagnosis(source.getSpecifyEventDiagnosis());
 
 		target.setMotherVaccinatedWithTT(source.getMotherVaccinatedWithTT());
 		target.setMotherHaveCard(source.getMotherHaveCard());
@@ -3515,6 +3517,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setDiseaseVariantDetails(source.getDiseaseVariantDetails());
 		target.setPlagueType(source.getPlagueType());
 		target.setDengueFeverType(source.getDengueFeverType());
+		target.setIdsrDiagnosis(source.getIdsrDiagnosis());
 		target.setRabiesType(source.getRabiesType());
 		if (source.getReportDate() != null) {
 			target.setReportDate(source.getReportDate());
@@ -3738,6 +3741,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setDistrictOfResidence(source.getDistrictOfResidence());
 		target.setReportingZone(source.getReportingZone());
 		target.setReportingVillage(source.getReportingVillage());
+		target.setSpecifyEventDiagnosis(source.getSpecifyEventDiagnosis());
 
 		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
 		target.setDateLatestUpdateRecord(source.getDateLatestUpdateRecord());

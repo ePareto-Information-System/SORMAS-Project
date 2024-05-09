@@ -443,6 +443,8 @@ public interface Captions {
 	String CaseData_reInfection = "CaseData.reInfection";
 	String CaseData_reinfectionStatus = "CaseData.reinfectionStatus";
 	String CaseData_reportDate = "CaseData.reportDate";
+	String CaseData_specifyEventDiagnosis = "CaseData.specifyEventDiagnosis";
+	String CaseData_idsrDiagnosis = "CaseData.idsrDiagnosis";
 	String CaseData_dhimsFacilityType = "CaseData.dhimsFacilityType";
 	String CaseData_reportingDistrict = "CaseData.reportingDistrict";
 	String CaseData_reportingUser = "CaseData.reportingUser";
