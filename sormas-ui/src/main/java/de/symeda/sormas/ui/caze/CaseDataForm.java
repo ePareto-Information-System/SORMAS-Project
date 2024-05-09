@@ -124,6 +124,8 @@ import de.symeda.sormas.ui.utils.ValidationUtils;
 import de.symeda.sormas.ui.utils.ViewMode;
 import org.checkerframework.checker.units.qual.C;
 
+import javax.persistence.criteria.CriteriaBuilder;
+
 public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 	private static final long serialVersionUID = 1L;
@@ -275,6 +277,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(CaseDataDto.CLINICIAN_PHONE, CaseDataDto.CLINICIAN_EMAIL) +
 					loc(CONTACT_TRACING_FIRST_CONTACT_HEADER_LOC) +
 					fluidRowLocs(CaseDataDto.CONTACT_TRACING_FIRST_CONTACT_TYPE, CaseDataDto.CONTACT_TRACING_FIRST_CONTACT_DATE) +
+					fluidRowLocs(4, CaseDataDto.NUMBER_OF_PEOPLE_IN_SAME_HOUSEHOLD) +
 					fluidRowLocs(CaseDataDto.DATE_LATEST_UPDATE_RECORD, CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS) +
 					loc(INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC);
 
@@ -706,7 +709,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		addField(CaseDataDto.DATE_LATEST_UPDATE_RECORD, DateField.class);
 		addField(CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS, TextArea.class).setRows(6);
-		setVisible(false, CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS, CaseDataDto.DATE_LATEST_UPDATE_RECORD);
+		addField(CaseDataDto.NUMBER_OF_PEOPLE_IN_SAME_HOUSEHOLD, TextField.class);
+		setVisible(false, CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS, CaseDataDto.DATE_LATEST_UPDATE_RECORD, CaseDataDto.NUMBER_OF_PEOPLE_IN_SAME_HOUSEHOLD);
 
 		// Reinfection
 //		{
@@ -1439,7 +1443,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			
 			}
 
-			setVisible(true,  CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS, CaseDataDto.DATE_LATEST_UPDATE_RECORD);
+			setVisible(true,  CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS, CaseDataDto.DATE_LATEST_UPDATE_RECORD, CaseDataDto.NUMBER_OF_PEOPLE_IN_SAME_HOUSEHOLD, CaseDataDto.NUMBER_OF_PEOPLE_IN_SAME_HOUSEHOLD);
 
 			Button investigateIntoRiskFactorsNavigationLink = ButtonHelper.createButton(Captions.investigateIntoRiskFactors);
 			getContent().addComponent(investigateIntoRiskFactorsNavigationLink, INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC);

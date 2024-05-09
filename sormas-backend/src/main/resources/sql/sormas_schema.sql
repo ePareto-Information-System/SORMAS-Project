@@ -14152,5 +14152,9 @@ INSERT INTO schema_version (version_number, comment) VALUES (625, 'Added columns
 -- Other Notes and Observations
 ALTER TABLE cases ADD COLUMN otherNotesAndObservations VARCHAR(255);
 ALTER TABLE cases ADD COLUMN dateLatestUpdateRecord DATE;
-INSERT INTO schema_version (version_number, comment) VALUES (626, 'Added columns to cases to implement patientVisitedHealthCareFacility #26');
+INSERT INTO schema_version (version_number, comment) VALUES (626, 'Added columns to cases to implement otherNotesAndObservations #26');
+
+-- Number of people in same household
+ALTER TABLE cases ADD COLUMN numberOfPeopleInSameHousehold VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (627, 'Added columns to cases to implement numberOfPeopleInSameHousehold #26');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
