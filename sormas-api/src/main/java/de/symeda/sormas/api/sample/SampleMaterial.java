@@ -72,6 +72,11 @@ public enum SampleMaterial {
 	POST_MORTEM_LIVER_SPECIMEN,
 	PLASMA_SERUM,
 	OTHER, OROPHARYNGEAL_SWAB,
+	ASPIRATE,
+	PUS,
+	BIOPSY,
+	URETHRAL,
+	FOOD_WATER,
 	SWAB;
 
 	//getYellowFeverMateriealTypes
@@ -83,6 +88,11 @@ public enum SampleMaterial {
 	public static SampleMaterial[] getMeaselsMateriealTypes() {
 		return new SampleMaterial[] { SampleMaterial.NASAL_SWAB, SampleMaterial.THROAT_SWAB, SampleMaterial.WHOLE_BLOOD, SampleMaterial.URINE };
 	}
+	//IDSR
+	public static SampleMaterial[] getIDSRMaterialTypes() {
+		return new SampleMaterial[] { WHOLE_BLOOD, PLASMA, SERUM, ASPIRATE, CEREBROSPINAL_FLUID, PUS, SALIVA, BIOPSY, STOOL, URETHRAL, URINE, SPUTUM, FOOD_WATER };
+	}
+
 
 
 	@Override
