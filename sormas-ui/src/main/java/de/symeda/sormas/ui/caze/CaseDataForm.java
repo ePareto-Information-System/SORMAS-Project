@@ -1448,10 +1448,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					Arrays.asList();
 	
 			FieldHelper.updateItems(outcome, Arrays.asList(CaseOutcome.DECEASED, CaseOutcome.ALIVE, CaseOutcome.UNKNOWN));
-			if (cbCaseClassification != null) {
+			/*if (cbCaseClassification != null) {
 				FieldHelper.updateItems(cbCaseClassification, Arrays.asList(CaseClassification.NO_CASE, CaseClassification.SUSPECT, CaseClassification.PROBABLE, CaseClassification.CONFIRMED_BY_LAB, CaseClassification.CONFIRMED_BY_EPI_LINK));
-			
-			}
+
+			}*/
 
 			setVisible(true,  CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS, CaseDataDto.DATE_LATEST_UPDATE_RECORD, CaseDataDto.NUMBER_OF_PEOPLE_IN_SAME_HOUSEHOLD, CaseDataDto.NUMBER_OF_PEOPLE_IN_SAME_HOUSEHOLD);
 
