@@ -20,6 +20,8 @@ package de.symeda.sormas.api.caze;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 
+import java.util.List;
+
 public enum CaseOutcome
 	implements
 	StatisticsGroupingKey {
@@ -53,5 +55,10 @@ public enum CaseOutcome
 		}
 
 		return this.toString().compareTo(o.toString());
+	}
+
+	//a list for measles alive,deead,unknown
+	public static Iterable<? extends Enum> getMeaslesOutcomes() {
+		return List.of(new CaseOutcome[]{CaseOutcome.ALIVE, CaseOutcome.DECEASED, CaseOutcome.UNKNOWN});
 	}
 }
