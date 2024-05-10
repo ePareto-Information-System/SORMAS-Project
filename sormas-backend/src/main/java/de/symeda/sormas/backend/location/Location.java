@@ -85,6 +85,7 @@ public class Location extends AbstractDomainObject {
 	public static final String CONTACT_PERSON_EMAIL = "contactPersonEmail";
 	public static final String LOCALITY = "locality";
 	public static final String PERSON = "person";
+	public static final String NEAREST_HEALTH_FACILITY_TO_VILLAGE = "nearestHealthFacilityToVillage";
 
 	private String details;
 	private String city;
@@ -120,6 +121,7 @@ public class Location extends AbstractDomainObject {
 	private Person person;
 	private String village;
 	private String zone;
+	private String nearestHealthFacilityToVillage;
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getDetails() {
@@ -417,5 +419,13 @@ public class Location extends AbstractDomainObject {
 
 	public void setZone(String zone) {
 		this.zone = zone;
+	}
+	
+	public String getNearestHealthFacilityToVillage() {
+		return nearestHealthFacilityToVillage;
+	}
+
+	public void setNearestHealthFacilityToVillage(String nearestHealthFacilityToVillage) {
+		this.nearestHealthFacilityToVillage = nearestHealthFacilityToVillage;
 	}
 }

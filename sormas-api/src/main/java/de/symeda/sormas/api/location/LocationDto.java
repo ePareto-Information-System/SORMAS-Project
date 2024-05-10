@@ -91,6 +91,7 @@ public class LocationDto extends PseudonymizableDto {
 	public static final String CONTACT_PERSON_EMAIL = "contactPersonEmail";
 	public static final String VILLAGE = "village";
 	public static final String ZONE = "zone";
+	public static final String NEAREST_HEALTH_FACILITY_TO_VILLAGE = "nearestHealthFacilityToVillage";
 
 	private ContinentReferenceDto continent;
 	private SubcontinentReferenceDto subcontinent;
@@ -190,6 +191,7 @@ public class LocationDto extends PseudonymizableDto {
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
 	private String zone;
+	private String nearestHealthFacilityToVillage;
 
 	public String getDetails() {
 		return details;
@@ -425,6 +427,13 @@ public class LocationDto extends PseudonymizableDto {
 
 	public void setZone(String zone) {
 		this.zone = zone;
+	}
+	public String getNearestHealthFacilityToVillage() {
+		return nearestHealthFacilityToVillage;
+	}
+
+	public void setNearestHealthFacilityToVillage(String nearestHealthFacilityToVillage) {
+		this.nearestHealthFacilityToVillage = nearestHealthFacilityToVillage;
 	}
 
 	@Override

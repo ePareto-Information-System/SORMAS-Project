@@ -1862,6 +1862,7 @@ public interface Captions {
 	String Location_community = "Location.community";
 	String Location_contactPersonEmail = "Location.contactPersonEmail";
 	String Location_locality = "Location.locality";
+	String Location_nearestHealthFacilityToVillage = "Location.nearestHealthFacilityToVillage";
 	String Location_contactPersonFirstName = "Location.contactPersonFirstName";
 	String Location_contactPersonLastName = "Location.contactPersonLastName";
 	String Location_contactPersonPhone = "Location.contactPersonPhone";

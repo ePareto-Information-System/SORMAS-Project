@@ -14176,4 +14176,7 @@ ALTER TABLE cases_history ADD COLUMN idsrdiagnosis character varying(255);
 ALTER TABLE cases_history ADD COLUMN specifyeventdiagnosis character varying(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (629, 'Added columns to cases for IDSR');
--- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+
+ALTER TABLE location ADD COLUMN nearestHealthFacilityToVillage varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (630, 'Added nearestHealthFacilityToVillage to location');
+-- *** Insert new sql commands BEFORE this line. Remember to alway
