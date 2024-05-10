@@ -971,13 +971,6 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE);
 	}
 
-	public void handleMeasles(){
-		setVisible(false, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY, LocationDto.AREA_TYPE);
-			getField(LocationDto.LAND_MARK).setVisible(true);
-			postalCodeField.setVisible(true);
-	}
-
-
 	public void handleCoronavirus() {
 			setVisible(true, LocationDto.POSTAL_CODE, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK);
 			setVisible(false, LocationDto.ADDITIONAL_INFORMATION, LocationDto.STREET, LocationDto.HOUSE_NUMBER, LocationDto.CITY, LocationDto.AREA_TYPE, LocationDto.DETAILS, LocationDto.LAND_MARK);
@@ -987,6 +980,13 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	public void handleForCholera() {
 		setVisible(true, LocationDto.POSTAL_CODE, LocationDto.VILLAGE);
 		setVisible(false, LocationDto.STREET, LocationDto.ADDITIONAL_INFORMATION, LocationDto.CITY, LocationDto.HOUSE_NUMBER, LocationDto.AREA_TYPE);
+	}
+	
+	public void handleMeasles() {
+			setVisible(false, LocationDto.STREET, LocationDto.HOUSE_NUMBER);
+			setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE, LocationDto.LAT_LON_ACCURACY, LocationDto.LAND_MARK, LocationDto.COMMUNITY, LocationDto.DISTRICT, LocationDto.REGION, LocationDto.CITY);
+			additionalInformationField.setCaption("Address (Location)");
+			areaType.setVisible(true);
 	}
 
 	//handleNnt

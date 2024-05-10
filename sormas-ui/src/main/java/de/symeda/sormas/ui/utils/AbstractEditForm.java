@@ -590,6 +590,4 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 
 		}
 	}
-
-
 }

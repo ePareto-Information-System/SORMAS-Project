@@ -518,7 +518,8 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 			hidePersonalEmail();
 		} else if (disease == Disease.MEASLES) {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);
-			hidePersonalEmail();
+			handleMeasles();
+
 		} else if (disease == Disease.CORONAVIRUS) {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD);
 		} else if (disease == Disease.CHOLERA) {
@@ -568,5 +569,10 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 	public void handleVisibilityForNNT() {
 		setVisible(false, PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PASSPORT_NUMBER, PersonDto.PHONE, PersonDto.EMAIL_ADDRESS, PersonDto.PRESENT_CONDITION);
+	}
+
+	public void handleMeasles(){
+		setVisible(true, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE);
+		setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.EMAIL_ADDRESS, PersonDto.PHONE, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD);
 	}
 }
