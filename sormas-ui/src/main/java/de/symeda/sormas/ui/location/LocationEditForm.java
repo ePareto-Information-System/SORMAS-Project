@@ -118,6 +118,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			fluidRowLocs(LocationDto.VILLAGE, LocationDto.ZONE),
 			fluidRowLocs(6,LocationDto.POSTAL_CODE),
 			fluidRowLocs(6,LocationDto.LAND_MARK),
+			fluidRowLocs(6, LocationDto.NEAREST_HEALTH_FACILITY_TO_VILLAGE),
 			fluidRowLocs(LocationDto.CONTACT_PERSON_FIRST_NAME, LocationDto.CONTACT_PERSON_LAST_NAME),
 			fluidRowLocs(LocationDto.CONTACT_PERSON_PHONE, LocationDto.CONTACT_PERSON_EMAIL),
 			fluidRow(
@@ -152,6 +153,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private boolean hasEventParticipantsWithoutJurisdiction;
 	private TextField zoneTextField;
 	private TextField villageTextField;
+	private TextField nearestHealthFacilityToVillage;
 
 	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers) {
 		super(LocationDto.class, LocationDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers);
@@ -295,6 +297,9 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
+
+		nearestHealthFacilityToVillage = addField(LocationDto.NEAREST_HEALTH_FACILITY_TO_VILLAGE, TextField.class);
+		nearestHealthFacilityToVillage.setVisible(false);
 
 		if (!isEditableAllowed(LocationDto.COMMUNITY)) {
 			setEnabled(false, LocationDto.COUNTRY, LocationDto.REGION, LocationDto.DISTRICT);
@@ -981,6 +986,13 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	public void handleForCholera() {
 		setVisible(true, LocationDto.POSTAL_CODE, LocationDto.VILLAGE);
 		setVisible(false, LocationDto.STREET, LocationDto.ADDITIONAL_INFORMATION, LocationDto.CITY, LocationDto.HOUSE_NUMBER, LocationDto.AREA_TYPE);
+	}
+
+	//handleNnt
+	public void handleVisibilityForNNT() {
+		nearestHealthFacilityToVillage.setVisible(true);
+		setVisible(true, LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
+		setVisible(false, LocationDto.STREET, LocationDto.HOUSE_NUMBER, LocationDto.ADDITIONAL_INFORMATION);
 	}
 
 

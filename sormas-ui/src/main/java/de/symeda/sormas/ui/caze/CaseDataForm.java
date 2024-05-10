@@ -1700,7 +1700,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				}
 
 				if (disease == Disease.NEONATAL_TETANUS) {
-					setVisible(false, CaseDataDto.VACCINATION_STATUS);
+					setVisible(false, CaseDataDto.VACCINATION_STATUS, CaseDataDto.OUTCOME, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.LAST_VACCINATION_DATE, CaseDataDto.NUMBER_OF_DOSES);
 					notifiedBy.setVisible(true);
 					dateOfNotification.setVisible(true);
 					dateOfInvestigation.setVisible(true);
