@@ -12817,6 +12817,9 @@ DROP TRIGGER IF EXISTS kopliksSpotsDate ON symptoms;
 
 INSERT INTO schema_version (version_number, comment) VALUES (531, 'Drop nonVascularDate, skinRashDate, feverDate, coughDate, runnyNoseDate, conjunctivitisDate, kopliksSpotsDate');
 
-
+-- redEyes, generalizedRash, swollenLymphNodesBehindEars
+ALTER TABLE symptoms ADD COLUMN redeyes varchar(255) NULL;
+ALTER TABLE symptoms ADD COLUMN generalizedrash varchar(255) NULL;
+ALTER TABLE symptoms ADD COLUMN swollenlymphnodesbehindears varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (532, 'Added column to redEyes, generalizedRash, swollenLymphNodesBehindEars to symptoms');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
-``

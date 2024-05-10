@@ -471,7 +471,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			HIGH_OR_LOW_BLOOD_PRESSURE,
 			URINARY_RETENTION,
 			FEVER,
-			NON_VASCULAR);
+			NON_VASCULAR,
+			GENERALIZED_RASH,
+			RED_EYES,
+			SWOLLEN_LYMPH_NODES_BEHIND_EARS);
 
 		addField(SYMPTOMS_COMMENTS, TextField.class).setDescription(
 			I18nProperties.getPrefixDescription(I18N_PREFIX, SYMPTOMS_COMMENTS, "") + "\n" + I18nProperties.getDescription(Descriptions.descGdpr));
@@ -676,7 +679,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			SEIZURES,
 			SEPSIS,
 			SHOCK,
-			NON_VASCULAR);
+			NON_VASCULAR,
+			GENERALIZED_RASH,
+			RED_EYES,
+			SWOLLEN_LYMPH_NODES_BEHIND_EARS);
 
 		// Set visibilities
 
@@ -922,17 +928,20 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					//SEIZURES,
 					SEPSIS,
 					SHOCK,
-					NON_VASCULAR);
+					NON_VASCULAR,
+					GENERALIZED_RASH,
+					RED_EYES,
+					SWOLLEN_LYMPH_NODES_BEHIND_EARS);
 			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
 			clinicalMeasurementsHeadingLabel.setVisible(false);
 		}
 
 		if(disease == Disease.MEASLES) {
-			symptomsHide();
+//			symptomsHide();
 			addField(DATE_OF_ONSET, DateField.class);
-			setVisible(true, SKIN_RASH, FEVER, COUGH,RUNNY_NOSE, CONJUNCTIVITIS, KOPLIKS_SPOTS, NON_VASCULAR);
-
-			setVisible(false, ALTERED_CONSCIOUSNESS, CONFUSED_DISORIENTED, HEMORRHAGIC_SYNDROME, HYPERGLYCEMIA, OTHER_COMPLICATIONS_TEXT, OTHER_COMPLICATIONS, SEIZURES);
+//			setVisible(true, SKIN_RASH, FEVER, COUGH,RUNNY_NOSE, CONJUNCTIVITIS, KOPLIKS_SPOTS, NON_VASCULAR);
+//
+//			setVisible(false, ALTERED_CONSCIOUSNESS, CONFUSED_DISORIENTED, HEMORRHAGIC_SYNDROME, HYPERGLYCEMIA, OTHER_COMPLICATIONS_TEXT, OTHER_COMPLICATIONS, SEIZURES);
 		}
 
 		if (symptomsContext != SymptomsContext.CASE) {

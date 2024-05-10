@@ -221,6 +221,9 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setMuscleVolume(source.getMuscleVolume());
 		target.setSensoryLoss(source.getSensoryLoss());
 		target.setNonVascular(source.getNonVascular());
+		target.setRedEyes(source.getRedEyes());
+		target.setGeneralizedRash(source.getGeneralizedRash());
+		target.setSwollenLymphNodesBehindEars(source.getSwollenLymphNodesBehindEars());
 
 		return target;
 	}
@@ -425,6 +428,10 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setMuscleVolume(source.getMuscleVolume());
 		target.setSensoryLoss(source.getSensoryLoss());
 		target.setNonVascular(source.getNonVascular());
+		target.setRedEyes(source.getRedEyes());
+		target.setGeneralizedRash(source.getGeneralizedRash());
+		target.setSwollenLymphNodesBehindEars(source.getSwollenLymphNodesBehindEars());
+
 
 		return target;
 	}

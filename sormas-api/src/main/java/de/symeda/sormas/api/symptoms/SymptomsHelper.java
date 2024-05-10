@@ -500,6 +500,9 @@ public final class SymptomsHelper {
 		appendNotNullValue(string, symptomsDto.getOtherComplicationsText(), SymptomsDto.OTHER_COMPLICATIONS_TEXT);
 
 		appendYesSymptom(string, SymptomsDto.build().getNonVascular(), SymptomsDto.NON_VASCULAR);
+		appendYesSymptom(string, SymptomsDto.build().getGeneralizedRash(), SymptomsDto.GENERALIZED_RASH);
+		appendYesSymptom(string, SymptomsDto.build().getRedEyes(), SymptomsDto.RED_EYES);
+		appendYesSymptom(string, SymptomsDto.build().getSwollenLymphNodesBehindEars(), SymptomsDto.SWOLLEN_LYMPH_NODES_BEHIND_EARS);
 
 		// symptomsComments;
 

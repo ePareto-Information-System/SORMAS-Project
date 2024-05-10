@@ -250,6 +250,10 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String PROVISONAL_DIAGNOSIS = "provisionalDiagnosis";
 
 	public static final String NON_VASCULAR = "nonVascular";
+	public static final String GENERALIZED_RASH = "generalizedRash";
+	public static final String RED_EYES = "redEyes";
+	public static final String SWOLLEN_LYMPH_NODES_BEHIND_EARS = "swollenLymphNodesBehindEars";
+
 
 
 	// Fields are declared in the order they should appear in the import template
@@ -451,7 +455,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA,
-		MEASLES,
 		MONKEYPOX,
 		POLIO,
 		AHF,
@@ -469,12 +472,12 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA,
-		MEASLES,
 		MONKEYPOX,
 		PLAGUE,
 		POLIO,
 		ANTHRAX,
 		AHF,
+		MEASLES,
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
@@ -546,7 +549,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		CSM,
 		CHOLERA,
-		MEASLES,
 		PLAGUE,
 		POLIO,
 		ANTHRAX,
@@ -564,7 +566,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA,
-		MEASLES,
 		PLAGUE,
 		POLIO,
 		AHF,
@@ -597,7 +598,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA,
 		CSM,
-		MEASLES,
 		DENGUE,
 		MONKEYPOX,
 		POLIO,
@@ -630,7 +630,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		CSM,
 		CHOLERA,
-		MEASLES,
 		YELLOW_FEVER,
 		DENGUE,
 		MONKEYPOX,
@@ -657,7 +656,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		CSM,
 		CHOLERA,
-		MEASLES,
 		YELLOW_FEVER,
 		DENGUE,
 		MONKEYPOX,
@@ -668,6 +666,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		ANTHRAX,
 		CORONAVIRUS,
 		UNDEFINED,
+		MEASLES,
 		OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -800,10 +799,10 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		NEW_INFLUENZA,
 		CSM,
-		MEASLES,
 		DENGUE,
 		CORONAVIRUS,
 		AHF,
+		MEASLES,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -816,7 +815,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		GUINEA_WORM,
-		MEASLES,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1095,7 +1093,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		CSM,
 		CHOLERA,
-		MEASLES,
 		YELLOW_FEVER,
 		DENGUE,
 		MONKEYPOX,
@@ -1247,7 +1244,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		CSM,
 		CHOLERA,
-		MEASLES,
 		DENGUE,
 		MONKEYPOX,
 		PLAGUE,
@@ -1270,7 +1266,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		CSM,
 		CHOLERA,
-		MEASLES,
 		DENGUE,
 		MONKEYPOX,
 		PLAGUE,
@@ -1291,7 +1286,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		AFP,
 		GUINEA_WORM,
 		NEW_INFLUENZA,
-		MEASLES,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1419,9 +1413,9 @@ public class SymptomsDto extends PseudonymizableDto {
 		AFP,
 		GUINEA_WORM,
 		NEW_INFLUENZA,
-		MEASLES,
 		POLIO,
 		CORONAVIRUS,
+		MEASLES,
 		UNDEFINED,
 		OTHER })
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -1461,11 +1455,11 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA,
 		CSM,
-		MEASLES,
 		DENGUE,
 		POLIO,
 		AHF,
 		UNDEFINED,
+		MEASLES,
 		OTHER,
 		CORONAVIRUS })
 	@Outbreaks
@@ -1475,12 +1469,37 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState skinRash;
 
 	@Diseases({
+		MEASLES})
+	@Outbreaks
+	@HideForCountries
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState generalizedRash;
+
+	@Diseases({
+			MEASLES
+	})
+	@Outbreaks
+	@HideForCountries
+	@SymptomGrouping
+	private SymptomState redEyes;
+
+	@Diseases({
+			MEASLES
+	})
+	@Outbreaks
+	@HideForCountries
+	@SymptomGrouping
+	private SymptomState swollenLymphNodesBehindEars;
+
+
+
+
+	@Diseases({
 		AFP,
 		EVD,
 		GUINEA_WORM,
 		LASSA,
 		NEW_INFLUENZA,
-		MEASLES,
 		MONKEYPOX,
 		ANTHRAX,
 		POLIO,
@@ -1567,7 +1586,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		CSM,
 		CHOLERA,
-		MEASLES,
 		DENGUE,
 		MONKEYPOX,
 		PLAGUE,
@@ -1589,7 +1607,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		CSM,
 		CHOLERA,
-		MEASLES,
 		YELLOW_FEVER,
 		DENGUE,
 		MONKEYPOX,
@@ -1612,7 +1629,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		CSM,
 		CHOLERA,
-		MEASLES,
 		YELLOW_FEVER,
 		DENGUE,
 		MONKEYPOX,
@@ -1756,7 +1772,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		CSM,
 		CHOLERA,
-		MEASLES,
 		YELLOW_FEVER,
 		DENGUE,
 		MONKEYPOX,
@@ -2043,7 +2058,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		CSM,
 		CHOLERA,
-		MEASLES,
 		POLIO,
 		AHF,
 		RABIES,
@@ -2062,7 +2076,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		CSM,
 		CHOLERA,
-		MEASLES,
 		PLAGUE,
 		POLIO,
 		AHF,
@@ -2143,7 +2156,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		CSM,
 		CHOLERA,
-		MEASLES,
 		POLIO,
 		AHF,
 		GUINEA_WORM,
@@ -2167,7 +2179,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		CSM,
 		CHOLERA,
-		MEASLES,
 		POLIO,
 		AHF,
 		GUINEA_WORM,
@@ -2194,7 +2205,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		CSM,
 		CHOLERA,
-		MEASLES,
 		POLIO,
 		AHF,
 		RABIES,
@@ -2214,7 +2224,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		CSM,
 		CHOLERA,
-		MEASLES,
 		POLIO,
 		AHF,
 		UNDEFINED,
@@ -2232,7 +2241,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		NEW_INFLUENZA,
 		CSM,
 		CHOLERA,
-		MEASLES,
 		PLAGUE,
 		ANTHRAX,
 		POLIO,
@@ -2341,8 +2349,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState shivering;
 
-	@Diseases({
-			MEASLES})
+	@Diseases({})
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState nonVascular;
 
@@ -4028,5 +4035,27 @@ public class SymptomsDto extends PseudonymizableDto {
 		return nonVascular;
 	}
 
+	public SymptomState getGeneralizedRash() {
+		return generalizedRash;
+	}
 
+	public void setGeneralizedRash(SymptomState generalizedRash) {
+		this.generalizedRash = generalizedRash;
+	}
+
+	public SymptomState getRedEyes() {
+		return redEyes;
+	}
+
+	public void setRedEyes(SymptomState redEyes) {
+		this.redEyes = redEyes;
+	}
+
+	public SymptomState getSwollenLymphNodesBehindEars() {
+		return swollenLymphNodesBehindEars;
+	}
+
+	public void setSwollenLymphNodesBehindEars(SymptomState swollenLymphNodesBehindEars) {
+		this.swollenLymphNodesBehindEars = swollenLymphNodesBehindEars;
+	}
 }

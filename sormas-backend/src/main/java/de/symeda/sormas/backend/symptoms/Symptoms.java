@@ -256,6 +256,11 @@ public class Symptoms extends AbstractDomainObject {
 	private SymptomState nonVascular;
 	private String provisionalDiagnosis;
 
+	private SymptomState redEyes;
+	private SymptomState generalizedRash;
+	private SymptomState swollenLymphNodesBehindEars;
+
+
 	// when adding new fields make sure to extend toHumanString
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -1932,5 +1937,29 @@ public class Symptoms extends AbstractDomainObject {
 
 	public void setNonVascular(SymptomState nonVascular) {
 		this.nonVascular = nonVascular;
+	}
+
+	public SymptomState getRedEyes() {
+		return redEyes;
+	}
+
+	public void setRedEyes(SymptomState redEyes) {
+		this.redEyes = redEyes;
+	}
+
+	public SymptomState getGeneralizedRash() {
+		return generalizedRash;
+	}
+
+	public void setGeneralizedRash(SymptomState generalizedRash) {
+		this.generalizedRash = generalizedRash;
+	}
+
+	public SymptomState getSwollenLymphNodesBehindEars() {
+		return swollenLymphNodesBehindEars;
+	}
+
+	public void setSwollenLymphNodesBehindEars(SymptomState swollenLymphNodesBehindEars) {
+		this.swollenLymphNodesBehindEars = swollenLymphNodesBehindEars;
 	}
 }
