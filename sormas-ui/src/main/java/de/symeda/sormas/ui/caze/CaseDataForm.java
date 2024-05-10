@@ -1373,6 +1373,22 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			surveillanceOfficerField.setVisible(false);
 			externalTokenField.setVisible(false);
 			quarantine.setVisible(false);
+			tfReportLat.setVisible(true);
+			tfReportLon.setVisible(true);
+			tfReportAccuracy.setVisible(true);
+			investigationstatus.setVisible(true);
+
+			//get the number of doses field
+			if (getContent().getComponent(CaseDataDto.NUMBER_OF_DOSES) == null) {
+				numberOfDoses = addField(CaseDataDto.NUMBER_OF_DOSES, TextField.class);
+			}
+
+			//update outcome value alive,dead,unknown using the outcome field and updateEnumData method
+			FieldHelper.updateEnumData(outcome, CaseOutcome.getMeaslesOutcomes());
+
+			setVisible(true, CaseDataDto.CLINICAL_CONFIRMATION, CaseDataDto.EPIDEMIOLOGICAL_CONFIRMATION, CaseDataDto.LABORATORY_DIAGNOSTIC_CONFIRMATION);
+
+
 		}
 
 		if(disease == Disease.YELLOW_FEVER || disease == Disease.CSM){

@@ -930,13 +930,11 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		}
 	}
 
-	public void setOnlyUnknownForMeasles(Disease incomingDisease) {
-		newDisease = incomingDisease;
-		if (newDisease != null && newDisease.equals(Disease.MEASLES)) {
-			setVisible(false, LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
+	public void handleMeasles() {
+			setVisible(false, LocationDto.STREET, LocationDto.HOUSE_NUMBER);
+			setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE, LocationDto.LAT_LON_ACCURACY, LocationDto.LAND_MARK, LocationDto.COMMUNITY, LocationDto.DISTRICT, LocationDto.REGION, LocationDto.CITY);
 			additionalInformationField.setCaption("Address (Location)");
 			areaType.setVisible(true);
-		}
 	}
 
 }

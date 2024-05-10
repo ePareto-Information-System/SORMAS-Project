@@ -373,7 +373,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		addressForm.setOnlyUnknownForInfluenza(disease);
 		addressForm.setOnlyUnknownForYellowFever(disease);
 		addressForm.setOnlyUnknownForAHF(disease);
-		addressForm.setOnlyUnknownForMeasles(disease);
+		addressForm.handleMeasles();
 
 
 		addressForm.setCaption(null);

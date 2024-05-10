@@ -204,10 +204,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			addField(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS, PreviousHospitalizationsField.class);
 
 		if (caze.getDisease() == Disease.MEASLES) {
-			setVisible(false, HospitalizationDto.ISOLATED);
-			setVisible(true, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY);
-			setVisible(true, HospitalizationDto.WAS_PATIENT_ADMITTED);
-			setVisible(false, HospitalizationDto.INTENSIVE_CARE_UNIT);
+			hideAllFields();
+			setVisible(true, HospitalizationDto.NOTIFY_DISTRICT_DATE, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY, HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE);
 		}
 
 		if(caze.getDisease() == Disease.AFP){
