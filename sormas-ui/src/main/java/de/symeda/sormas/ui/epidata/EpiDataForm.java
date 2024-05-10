@@ -556,6 +556,10 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			setVisible(true, EpiDataDto.RECEIVED_HEALTH_EDUCATION, EpiDataDto.PATIENT_ENTERED_WATER_SOURCE, EpiDataDto.PLACE_MANAGED);
 		}
 
+		if (disease == Disease.NEONATAL_TETANUS) {
+			hideAllFields();
+			hideLabels();
+		}
 	}
 
 	private void addPersonTravelHistoryFields() {
