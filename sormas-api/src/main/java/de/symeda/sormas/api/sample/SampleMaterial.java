@@ -81,7 +81,7 @@ public enum SampleMaterial {
 
 	//MEASELS Sample Types
 	public static SampleMaterial[] getMeaselsMateriealTypes() {
-		return new SampleMaterial[] { SampleMaterial.NASAL_SWAB, SampleMaterial.THROAT_SWAB, SampleMaterial.WHOLE_BLOOD, SampleMaterial.URINE };
+		return new SampleMaterial[] { WHOLE_BLOOD, GINGIVAL_FLUID, THROAT_SWAB, URINE, NASAL_SWAB, OTHER  };
 	}
 
 
