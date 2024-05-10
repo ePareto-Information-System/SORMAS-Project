@@ -2442,6 +2442,9 @@ public interface Captions {
 	String Sample_testType = "Sample.testType";
 	String Sample_typeOfTest = "Sample.typeOfTest";
 	String Sample_uuid = "Sample.uuid";
+	String Sample_dateSurveillanceSentResultsToDistrict = "Sample.dateSurveillanceSentResultsToDistrict";
+	String Sample_dateFormSentToHigherLevel = "Sample.dateFormSentToHigherLevel";
+	String Sample_personCompletingForm = "Sample.personCompletingForm";
 	String sampleActiveSamples = "sampleActiveSamples";
 	String sampleAllSamples = "sampleAllSamples";
 	String sampleAllActiveAndArchivedSamples = "sampleAllActiveAndArchivedSamples";

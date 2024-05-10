@@ -113,6 +113,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private DateField shipmentDate;
 	private TextField shipmentDetails;
 	private CheckBox check;
+	private DateField dateSampleSentToLab;
+	private DateField laboratoryDateResultsSentDSD;
+	private DateField dateFormReceivedAtDistrictField;
 
 	//@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
@@ -305,6 +308,13 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		setVisible(false, SampleDto.LABORATORY_NUMBER, SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER, SampleDto.LABORATORY_APPEARANCE_OF_CSF);
 
+		laboratoryDateResultsSentDSD = addField(SampleDto.LABORATORY_DATE_RESULTS_SENT_DSD, DateField.class);
+		laboratoryDateResultsSentDSD.setVisible(false);
+		dateSampleSentToLab = addField(SampleDto.DATE_SAMPLE_SENT_TO_LAB, DateField.class);
+		dateSampleSentToLab.setVisible(false);
+
+		dateFormReceivedAtDistrictField = addField(SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT, DateField.class);
+
 		lab = addInfrastructureField(SampleDto.LAB);
 		lab.addItems(FacadeProvider.getFacilityFacade().getAllActiveLaboratories(true));
 		labDetails = addField(SampleDto.LAB_DETAILS, TextField.class);
@@ -350,7 +360,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		laboratoryFinalResults = addField(SampleDto.LABORATORY_FINAL_RESULTS, TextField.class);
 		laboratoryFinalResults.setVisible(false);
 		dateFormSentToDistrict = addField(SampleDto.DATE_FORM_SENT_TO_DISTRICT, DateField.class);
-		dateFormReceivedAtDistrict = addField(SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT, DateField.class);
 		dateResultsSentToClinician = addField(SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, DateField.class);
 		dateSpecimenSentToLab = addField(SampleDto.DATE_SPECIMEN_SENT_TO_LAB, DateField.class);
 		dateSpecimenSentToLab.setVisible(false);
@@ -887,7 +896,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		addField(SampleDto.INOCULATION_TIME_TRANSPORT_MEDIA, DateField.class);
 		OptionGroup sampleSentToLab = addField(SampleDto.SAMPLE_SENT_TO_LAB, OptionGroup.class);
 		TextField reasonNotSent = addField(SampleDto.REASON_NOT_SENT_TO_LAB, TextField.class);
-		DateField dateSampleSentToLab = addField(SampleDto.DATE_SAMPLE_SENT_TO_LAB, DateField.class);
 		NullableOptionGroup sampleContainerUsed = addField(SampleDto.SAMPLE_CONTAINER_USED, NullableOptionGroup.class);
 		OptionGroup rdtPerformed = addField(SampleDto.RDT_PERFORMED, OptionGroup.class);
 		addField(SampleDto.RDT_RESULTS, TextField.class);
@@ -895,6 +903,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		addField(SampleDto.NAME_OF_PERSON, TextField.class);
 		addField(SampleDto.TEL_NUMBER, TextField.class);
 
+		dateFormSentToDistrict.setVisible(true);
 		addField(SampleDto.DATE_FORM_SENT_TO_REGION, DateField.class);
 		addField(SampleDto.DATE_FORM_RECEIVED_AT_REGION, DateField.class);
 		addField(SampleDto.DATE_FORM_SENT_TO_NATIONAL, DateField.class);
@@ -910,6 +919,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateLabReceivedSpecimen.setVisible(false);
 		dateResultsSentToClinician.setVisible(false);
 		sampleMaterialComboBox.setVisible(false);
+		setVisible(true, SampleDto.DATE_SAMPLE_SENT_TO_LAB);
+		dateFormReceivedAtDistrictField.setVisible(true);
 
 
 		FieldHelper
@@ -1004,7 +1015,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 						+ I18nProperties.getDescription(Descriptions.observation));
 
 		DateField laboratoryDateResultsSentHealthFacility = addField(SampleDto.LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY, DateField.class);
-		DateField laboratoryDateResultsSentDSD = addField(SampleDto.LABORATORY_DATE_RESULTS_SENT_DSD, DateField.class);
+		laboratoryDateResultsSentDSD.setVisible(true);
 
 		OptionGroup laboratoryFinalClassification = new OptionGroup();
 		for (CaseClassification caseClassification : CaseClassification.CASE_CLASSIFY) {
@@ -1243,16 +1254,20 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	}
 
 	private void handleMeasles() {
-		if (disease == Disease.MEASLES) {
-			addSampleDispatchFields();
-			setVisible(false, SampleDto.SAMPLING_REASON, SampleDto.SUSPECTED_DISEASE, SampleDto.DATE_LAB_RECEIVED_SPECIMEN, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.DATE_SPECIMEN_SENT_TO_LAB, SampleDto.FIELD_SAMPLE_ID);
-			setVisible(true, SampleDto.RECEIVED, SampleDto.REQUESTED_SAMPLE_MATERIALS);
+//			setVisible(false, SampleDto.SAMPLING_REASON);
+//			setVisible(false, SampleDto.SAMPLE_PURPOSE, SampleDto.SAMPLE_MATERIAL);
+//			setVisible(true, SampleDto.RECEIVED, SampleDto.REQUESTED_SAMPLE_MATERIALS);
 			List<PathogenTestType> measelesPathogenTests = PathogenTestType.getMeaslesTestTypes();
 			Arrays.stream(PathogenTestType.values())
 					.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
 					.forEach(pathogenTestType -> requestedPathogenTestsField.removeItem(pathogenTestType));
+			setVisible(false, SampleDto.FIELD_SAMPLE_ID, SampleDto.DISEASE, SampleDto.SAMPLING_REASON, SampleDto.IPSAMPLESENT, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLE_TESTS);
+			laboratoryDateResultsSentDSD.setVisible(true);
+			setVisible(true, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT);
+			dateFormReceivedAtDistrictField.setVisible(true);
+			dateFormSentToDistrict.setVisible(true);
 
-		}
+
 	}
 
 	private void handleCoronaVirus() {
@@ -1377,6 +1392,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 						Arrays.stream(SampleMaterial.getMeaselsMateriealTypes())
 								.filter( c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
 								.collect(Collectors.toList()));
+//				SampleMaterial.getMeaselsMateriealTypes()
+				List<SampleMaterial> sampleMaterials = Arrays.asList(SampleMaterial.getMeaselsMateriealTypes());
+				FieldHelper.updateEnumData(sampleMaterialComboBox, sampleMaterials);
 				break;
 			case YELLOW_FEVER:
 				requestedSampleMaterialsField.addItems(
