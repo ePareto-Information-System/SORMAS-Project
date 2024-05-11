@@ -13370,4 +13370,10 @@ ALTER TABLE cases_history ADD COLUMN idsrdiagnosis character varying(255);
 ALTER TABLE cases_history ADD COLUMN specifyeventdiagnosis character varying(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (590, 'Added columns to cases for IDSR');
+
+ALTER TABLE hospitalization ADD COLUMN selectinpatientoutpatient varchar(255);
+ALTER TABLE person ADD COLUMN applicable varchar(55);
+ALTER TABLE symptoms ADD COLUMN outcomeother varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (591, 'Added 4 columns and dropped telnumber');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
