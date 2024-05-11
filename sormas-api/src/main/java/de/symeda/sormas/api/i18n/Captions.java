@@ -2738,7 +2738,9 @@ public interface Captions {
 	String Symptoms_oralUlcers = "Symptoms.oralUlcers";
 	String Symptoms_otherComplications = "Symptoms.otherComplications";
 	String Symptoms_otherComplicationsText = "Symptoms.otherComplicationsText";
-	String Symptoms_otherHemorrhagicSymptoms = "Symptoms.otherHemorrhagicSymptoms";
+	String CaseHospitalization_selectInpatientOutpatient = "CaseHospitalization.selectInpatientOutpatient";
+	String Person_applicable = "Person.applicable";
+	String Symptoms_outcomeOther = "Symptoms.outcomeOther";
 	String Symptoms_otherHemorrhagicSymptomsText = "Symptoms.otherHemorrhagicSymptomsText";
 	String Symptoms_otherNonHemorrhagicSymptoms = "Symptoms.otherNonHemorrhagicSymptoms";
 	String Symptoms_otherNonHemorrhagicSymptomsText = "Symptoms.otherNonHemorrhagicSymptomsText";
