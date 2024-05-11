@@ -1773,6 +1773,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					surveillanceOfficerField.setVisible(true);
 					setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.TRIMESTER, CaseDataDto.VACCINATION_STATUS);
 				}
+
+				if(disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
+					numberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being Reported");
+				}
 			});
 		}
 
