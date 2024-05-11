@@ -653,6 +653,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		}
 
 		if(caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
+			diseaseField.setVisible(false);
 			sampleTestDateField.setVisible(false);
 			addField(PathogenTestDto.LAB_LOCATION, TextField.class);
 			addField(PathogenTestDto.DATE_LAB_RECEIVED_SPECIMEN, DateTimeField.class);
