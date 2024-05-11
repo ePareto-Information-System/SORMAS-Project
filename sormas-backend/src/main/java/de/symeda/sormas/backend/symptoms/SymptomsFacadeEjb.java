@@ -233,11 +233,11 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setRightInjectionSite(source.getRightInjectionSite());
 		target.setLeftInjectionSite(source.getLeftInjectionSite());
 		target.setTrueAfp(source.getTrueAfp());
+		target.setOutcomeOther(source.getOutcomeOther());
 		target.setBodyAche(source.getBodyAche());
 		target.setDizziness(source.getDizziness());
 		target.setExcessiveSweating(source.getExcessiveSweating());
 		target.setNumbness(source.getNumbness());
-		target.setOutcomeOther(source.getOutcomeOther());
 		target.setSymptomsOngoing(source.getSymptomsOngoing());
 		target.setDurationHours(source.getDurationHours());
 		target.setNameOfHealthFacility(source.getNameOfHealthFacility());
@@ -465,6 +465,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setRightInjectionSite(source.getRightInjectionSite());
 		target.setLeftInjectionSite(source.getLeftInjectionSite());
 		target.setTrueAfp(source.getTrueAfp());
+		target.setOutcomeOther(source.getOutcomeOther());
 		target.setBodyAche(source.getBodyAche());
 		target.setDizziness(source.getDizziness());
 		target.setExcessiveSweating(source.getExcessiveSweating());
@@ -699,7 +700,6 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setDizziness(source.getDizziness());
 		target.setExcessiveSweating(source.getExcessiveSweating());
 		target.setNumbness(source.getNumbness());
-		target.setOutcomeOther(source.getOutcomeOther());
 		target.setSymptomsOngoing(source.getSymptomsOngoing());
 		target.setDurationHours(source.getDurationHours());
 		target.setNameOfHealthFacility(source.getNameOfHealthFacility());

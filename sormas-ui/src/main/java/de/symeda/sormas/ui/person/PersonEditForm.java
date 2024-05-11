@@ -97,7 +97,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					fluidRowLocs(PersonDto.GESTATION_AGE_AT_BIRTH, PersonDto.BIRTH_WEIGHT) +
 					fluidRowLocs(PersonDto.SEX, PersonDto.PRESENT_CONDITION, PersonDto.MARITAL_STATUS) +
 					fluidRowLocs(6, PersonDto.TEL_NUMBER) +
-					fluidRowLocs(6,PersonDto.APPLICABLE) +
 					fluidRow(
 							oneOfFourCol(PersonDto.DEATH_DATE),
 							oneOfFourCol(PersonDto.CAUSE_OF_DEATH),
@@ -132,6 +131,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 							VSPACE_3,
 							fluidRowLocs(PersonDto.BIRTH_NAME, "") +
 									fluidRowLocs(PersonDto.NICKNAME, PersonDto.MOTHERS_MAIDEN_NAME) +
+									fluidRowLocs(6,PersonDto.APPLICABLE) +
 									fluidRowLocs(PersonDto.MOTHERS_NAME, PersonDto.FATHERS_NAME) +
 									fluidRowLocs(PersonDto.NAMES_OF_GUARDIANS) +
 									fluidRowLocs(PersonDto.BIRTH_COUNTRY, PersonDto.CITIZENSHIP) +
