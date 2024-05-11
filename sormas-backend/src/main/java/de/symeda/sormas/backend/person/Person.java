@@ -61,6 +61,7 @@ import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Salutation;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.person.SymptomJournalStatus;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.backend.cadre.Cadre;
 import de.symeda.sormas.api.person.*;
 import de.symeda.sormas.api.utils.FieldConstraints;
@@ -269,6 +270,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private District placeStayedtenToFourteenMonthsDistrict;
 	private Region placeStayedtenToFourteenMonthsRegion;
 	private Country placeStayedtenToFourteenMonthsCountry;
+	private YesNo applicable;
 
 	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getFirstName() {
@@ -1036,6 +1038,13 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	public void setTelNumber(String telNumber) {
 		this.telNumber = telNumber;
 	}
+
+	public YesNo getApplicable() {
+		return applicable;
+	}
+    public void setApplicable(YesNo applicable) {
+         this.applicable = applicable;
+    }
 
 	private void setPersonContactInformation(String contactInfo, PersonContactDetailType personContactDetailType) {
 		final PersonContactDetail pcd =

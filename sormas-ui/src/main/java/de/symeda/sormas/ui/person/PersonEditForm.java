@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.person.*;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.ui.utils.*;
 import org.apache.commons.lang3.StringUtils;
@@ -113,6 +114,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					fluidRowLocs(PersonDto.CORD_TREATED_WITH_ANYTHING, PersonDto.CORD_TREATED_WITH_ANYTHING_WHERE)+
 					fluidRowLocs(PersonDto.SEX, PersonDto.PRESENT_CONDITION, PersonDto.MARRIAGE_STATUS) +
 					fluidRowLocs(6, PersonDto.TEL_NUMBER) +
+					fluidRowLocs(6,PersonDto.APPLICABLE) +
 					fluidRow(
 							oneOfFourCol(PersonDto.DEATH_DATE),
 							oneOfFourCol(PersonDto.CAUSE_OF_DEATH),
@@ -196,6 +198,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private DateField burialDate;
 	private TextField burialPlaceDesc;
 	private Label placeStayedInLast10_14MonthsLabel;
+	private TextField fathername;
+	private TextField mothername;
+	private NullableOptionGroup applicable;
 	//@formatter:on
 	public PersonEditForm(PersonContext personContext, Disease disease, String diseaseDetails, ViewMode viewMode, boolean isPseudonymized, CaseOrigin caseOrigin) {
 		super(
@@ -332,7 +337,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		nickie.setVisible(false);
 		TextField maiden = addField(PersonDto.MOTHERS_MAIDEN_NAME, TextField.class);
 		maiden.setVisible(false);
-		addFields(PersonDto.MOTHERS_NAME, PersonDto.FATHERS_NAME);
+		fathername = addField(PersonDto.FATHERS_NAME);
+		mothername = addField(PersonDto.MOTHERS_NAME);
 		addFields(PersonDto.NAMES_OF_GUARDIANS);
 		ComboBox presentCondition = addField(PersonDto.PRESENT_CONDITION, ComboBox.class);
 		ComboBox marriageStatus = addField(PersonDto.MARRIAGE_STATUS, ComboBox.class);
@@ -411,7 +417,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					addressForm.handleYellowFever();
 					break;
 				case AHF:
-					addressForm.handleAFP();
+					addressForm.handleAHF();
 					break;
 				case CORONAVIRUS:
 					addressForm.handleCoronavirus();
@@ -830,6 +836,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			addField(PersonDto.TEL_NUMBER, TextField.class);
 			occupationHeader.setVisible(false);
 			personContactDetailsField.setVisible(false);
+			ComboBox applicable = addField(PersonDto.APPLICABLE, ComboBox.class);
+			FieldHelper.setVisibleWhen(applicable, Arrays.asList(mothername, fathername), Arrays.asList(YesNo.YES), true);
+
 		}
 
 	}

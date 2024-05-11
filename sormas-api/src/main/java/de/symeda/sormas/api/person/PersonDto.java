@@ -166,6 +166,7 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT = "placeStayedtenToFourteenMonthsDistrict";
 	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION = "placeStayedtenToFourteenMonthsRegion";
 	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COUNTRY = "placeStayedtenToFourteenMonthsCountry";
+	public static final String APPLICABLE = "applicable";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -478,6 +479,7 @@ public class PersonDto extends PseudonymizableDto {
 	private YesNoUnknown cordTreatedWithAnything;
 	private TreatmentOfCord cordTreatedWithAnythingWhere;
 	private String telNumber;
+	private YesNo applicable;
 	@Diseases({
 			Disease.GUINEA_WORM })
 	@HideForCountries
@@ -1518,5 +1520,12 @@ public class PersonDto extends PseudonymizableDto {
 	public void setTelNumber(String telNumber) {
 		this.telNumber = telNumber;
 	}
+
+	public YesNo getApplicable() {
+		return applicable;
+	}
+
+  public void setApplicable(YesNo applicable) {
+      this.applicable = applicable; }
 
 }

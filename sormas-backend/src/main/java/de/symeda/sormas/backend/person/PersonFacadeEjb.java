@@ -276,6 +276,8 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 
 		target.setPresentCondition(source.getPresentCondition());
 		target.setMarriageStatus(source.getMarriageStatus());
+		target.setTelNumber(source.getTelNumber());
+		target.setApplicable(source.getApplicable());
 		target.setBirthdateDD(source.getBirthdateDD());
 		target.setBirthdateMM(source.getBirthdateMM());
 		target.setBirthdateYYYY(source.getBirthdateYYYY());
@@ -1164,6 +1166,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
 		//target.setCadre(CadreFacadeEjb.toReferenceDto(source.getCadre()));
 		target.setTelNumber(source.getTelNumber());
+		target.setApplicable(source.getApplicable());
 		target.setEthnicity(source.getEthnicity());
 		target.setPlaceStayedtenToFourteenMonthsVillage(source.getPlaceStayedtenToFourteenMonthsVillage());
 		target.setPlaceStayedtenToFourteenMonthsZone(source.getPlaceStayedtenToFourteenMonthsZone());
@@ -1900,6 +1903,8 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setBirthName(source.getBirthName());
 		target.setNickname(source.getNickname());
 		target.setMothersMaidenName(source.getMothersMaidenName());
+		target.setTelNumber(source.getTelNumber());
+		target.setApplicable(source.getApplicable());
 
 		target.setAddress(locationFacade.fillOrBuildEntity(source.getAddress(), target.getAddress(), checkChangeDate));
 		List<Location> locations = new ArrayList<>();
@@ -2004,7 +2009,6 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setCordTreatedWithAnything(source.getCordTreatedWithAnything());
 		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
 
-		target.setTelNumber(source.getTelNumber());
 
 		return target;
 	}
