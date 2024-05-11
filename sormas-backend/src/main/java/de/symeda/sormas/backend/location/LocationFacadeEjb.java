@@ -105,6 +105,7 @@ public class LocationFacadeEjb implements LocationFacade {
 		target.setContactPersonPhone(source.getContactPersonPhone());
 		target.setContactPersonEmail(source.getContactPersonEmail());
 		target.setVillage(source.getVillage());
+		target.setLocality(source.getLocality());
 		target.setZone(source.getZone());
 
 		target.setNearestHealthFacilityToVillage(source.getNearestHealthFacilityToVillage());
