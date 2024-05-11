@@ -154,6 +154,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private TextField zoneTextField;
 	private TextField villageTextField;
 	private TextField nearestHealthFacilityToVillage;
+	private TextField  houseNumberField;
 
 	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers) {
 		super(LocationDto.class, LocationDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers);
@@ -244,7 +245,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		TextField streetField = addField(LocationDto.STREET, TextField.class);
 		streetField.setVisible(false);
 		localityField = addField(LocationDto.LOCALITY, TextField.class);
-		TextField houseNumberField = addField(LocationDto.HOUSE_NUMBER, TextField.class);
+		houseNumberField = addField(LocationDto.HOUSE_NUMBER, TextField.class);
 		TextField landMark = addField(LocationDto.LAND_MARK, TextField.class);
 		landMark.setVisible(false);
 		additionalInformationField = addField(LocationDto.ADDITIONAL_INFORMATION, TextField.class);
@@ -1000,7 +1001,8 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		setVisible(false, LocationDto.LOCALITY, LocationDto.AREA_TYPE, LocationDto.HOUSE_NUMBER, LocationDto.CITY, LocationDto.POSTAL_CODE);
 	}
 	public void handleIDSR(){
-		setVisible(false, LocationDto.HOUSE_NUMBER, LocationDto.POSTAL_CODE);
+		setVisible(false, LocationDto.POSTAL_CODE);
+		 houseNumberField.setCaption("House Number/Location");
 	}
 
 	public void setOnlyUnknownForGuineaWorm() {
