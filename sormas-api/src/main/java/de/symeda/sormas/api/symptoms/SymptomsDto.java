@@ -249,6 +249,12 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String RIGHT_INJECTION_SITE = "rightInjectionSite";
 	public static final String LEFT_INJECTION_SITE = "leftInjectionSite";
 	public static final String TRUEAFP = "trueAfp";
+	public static final String DYSPNEA = "dyspnea";
+	public static final String TACHYPNEA = "tachypnea";
+	public static final String OUTCOME_OTHER = "outcomeOther";
+
+
+
 	public static final String SYMPTOMS_ONGOING = "symptomsOngoing";
 	public static final String DURATION_HOURS = "durationHours";
 	public static final String YES_NAME_OF_HEALTH_FACILITY = "nameOfHealthFacility";
@@ -2439,6 +2445,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private YesNo areLesionsDeep;
 	private YesNo areUlcersAmong;
 	private SymptomsList typeOfRash;
+	private String outcomeOther;
 
 	@Order(0)
 	public Float getTemperature() {
@@ -3242,6 +3249,8 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Order(334)
 	public SymptomState getNumbness() {return  numbness;}
+	@Order(335)
+	public String getOutcomeOther() { return outcomeOther;}
 	public void setAbdominalPain(SymptomState abdominalPain) {
 		this.abdominalPain = abdominalPain;
 	}
@@ -4283,5 +4292,8 @@ public class SymptomsDto extends PseudonymizableDto {
 	}
 	public void setSymptomsSelectedOther(String symptomsSelectedOther) {
 		this.symptomsSelectedOther = symptomsSelectedOther;
+	}
+	public void setOutcomeOther(String outcomeOther) {
+		this.outcomeOther = outcomeOther;
 	}
 }

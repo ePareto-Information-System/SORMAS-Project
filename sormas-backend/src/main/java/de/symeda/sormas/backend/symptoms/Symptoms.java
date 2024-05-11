@@ -282,6 +282,7 @@ public class Symptoms extends AbstractDomainObject {
 	private YesNo areUlcersAmong;
 	private SymptomsList typeOfRash;
 	private String symptomsSelectedOther;
+	private String outcomeOther;
 
 	// when adding new fields make sure to extend toHumanString
 
@@ -2068,7 +2069,10 @@ public class Symptoms extends AbstractDomainObject {
 	public void setNumbness(SymptomState numbness) {
 		this.numbness = numbness;
 	}
-
+	public String getOutcomeOther() { return outcomeOther;}
+	public void setOutcomeOther(String outcomeOther) {
+		this.outcomeOther = outcomeOther;
+	}
 	public YesNo getSymptomsOngoing(){
 		return symptomsOngoing;
 	}

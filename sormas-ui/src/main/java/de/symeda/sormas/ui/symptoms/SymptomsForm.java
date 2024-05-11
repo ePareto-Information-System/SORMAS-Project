@@ -130,7 +130,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(ARE_LESIONS_DEEP)+
 					fluidRowLocs(ARE_ULCERS_AMONG_LESIONS)+
 					fluidRowLocs(6, TYPE_OF_RASH)+
-					fluidRowLocs(6,DATE_OF_ONSET) +
+					fluidRowLocs(DATE_OF_ONSET, "") +
 					fluidRowLocs(6,FEVER_BODY_TEMP_GREATER) +
 					fluidRow(fluidColumn(8,4, locCss(CssStyles.ALIGN_RIGHT,BUTTONS_LOC)))+
 					createSymptomGroupLayout(SymptomGroup.GENERAL, GENERAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
@@ -162,7 +162,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6, ONSET_SYMPTOM) +
 					fluidRowLocs(6, ONSET_DATE) +
 					//loc(CLINICAL_HISTORY_HEADING_LOC) +
-					fluidRowLocs(6,OUTCOME)+
+					fluidRowLocs(OUTCOME, OUTCOME_OTHER)+
 					fluidRowLocs(PROVISONAL_DIAGNOSIS)+
 					fluidRowLocs(6, TRUEAFP)+
 					fluidRowLocs(SYMPTOMS_ONGOING, DURATION_HOURS, YES_NAME_OF_HEALTH_FACILITY)+
@@ -328,6 +328,11 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		addField(TEMPERATURE_SOURCE);
 		ComboBox outcome = addField(CaseDataDto.OUTCOME, ComboBox.class);
 		outcome.removeItem(CaseOutcome.UNKNOWN);
+
+		TextField outcomeOther = addField(OUTCOME_OTHER, TextField.class);
+		outcomeOther.setVisible(false);
+
+		FieldHelper.setVisibleWhen(outcome, Arrays.asList(outcomeOther), Arrays.asList(CaseOutcome.OTHER), true);
 
 		ComboBox bloodPressureSystolic = addField(BLOOD_PRESSURE_SYSTOLIC, ComboBox.class);
 		bloodPressureSystolic.addItems(SymptomsHelper.getBloodPressureValues());
