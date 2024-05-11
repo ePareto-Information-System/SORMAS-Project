@@ -1546,6 +1546,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				setVisible(true, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
 				createLabel(I18nProperties.getString(Strings.headingIndicateCategory), H3, INDICATE_CATEGORY_LOC);
 			}
+			
+			if(disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
+					numberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being Reported");
+			}
 		});
 	}
 
