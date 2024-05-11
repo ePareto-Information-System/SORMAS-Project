@@ -93,6 +93,7 @@ public class HospitalizationDto extends EntityDto {
 	public static final String ONSET_OF_SYMPTOM_DATETIME = "onsetOfSymptomDatetime";
 	public static final String SYMPTOMS_ONGOING = "symptomsOngoing";
 	public static final String DURATION_HOURS = "durationHours";
+	public static final String SELECT_INPATIENT_OUTPATIENT = "selectInpatientOutpatient";
 
 
 	// Fields are declared in the order they should appear in the import template
@@ -159,6 +160,7 @@ public class HospitalizationDto extends EntityDto {
 	private Date onsetOfSymptomDatetime;
 	private YesNo symptomsOngoing;
 	private DurationHours durationHours;
+	private HospOut selectInpatientOutpatient;
 
 
 	public static HospitalizationDto build() {
@@ -578,5 +580,10 @@ public class HospitalizationDto extends EntityDto {
 	public void setDurationHours(DurationHours durationHours) {
 		this.durationHours = durationHours;
 	}
+
+	public HospOut getSelectInpatientOutpatient() {
+	     return selectInpatientOutpatient;}
+	public void setSelectInpatientOutpatient(HospOut selectInpatientOutpatient) {
+	     this.selectInpatientOutpatient = selectInpatientOutpatient;}
 
 }

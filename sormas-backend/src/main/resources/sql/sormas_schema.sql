@@ -14179,4 +14179,10 @@ INSERT INTO schema_version (version_number, comment) VALUES (629, 'Added columns
 
 ALTER TABLE location ADD COLUMN nearestHealthFacilityToVillage varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (630, 'Added nearestHealthFacilityToVillage to location');
+
+ALTER TABLE hospitalization ADD COLUMN selectinpatientoutpatient varchar(255);
+ALTER TABLE person ADD COLUMN applicable varchar(55);
+ALTER TABLE symptoms ADD COLUMN outcomeother varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (631, 'Added 4 columns and dropped telnumber');
 -- *** Insert new sql commands BEFORE this line. Remember to alway

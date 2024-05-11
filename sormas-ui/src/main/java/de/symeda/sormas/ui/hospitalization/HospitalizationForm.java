@@ -102,6 +102,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			loc(HOSPITALIZATION_HEADING_LOC) +
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY, HospitalizationDto.WAS_PATIENT_ADMITTED) +
 					fluidRowLocs(HEALTH_FACILITY, HEALTH_FACILITY_DISTRICT, HospitalizationDto.HOSPITAL_RECORD_NUMBER) +
+					fluidRowLocs(6,HospitalizationDto.SELECT_INPATIENT_OUTPATIENT) +
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, HospitalizationDto.PHYSICIAN_NAME) +
 					fluidRowLocs(HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE, HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY) +
 			fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
@@ -551,6 +552,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			admittedToHealthFacilityFieldNew.setCaption("In-patient or Out-patient?");
 			dateFirstSeen.setVisible(true);
 			dateFirstSeen.setCaption("Date seen at health facility");
+			addField(HospitalizationDto.SELECT_INPATIENT_OUTPATIENT ,ComboBox.class);
 		}
 	}
 
