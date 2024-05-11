@@ -31,6 +31,8 @@ import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.person.*;
+import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.ui.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import com.vaadin.ui.CustomLayout;
@@ -95,6 +97,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					fluidRowLocs(PersonDto.GESTATION_AGE_AT_BIRTH, PersonDto.BIRTH_WEIGHT) +
 					fluidRowLocs(PersonDto.SEX, PersonDto.PRESENT_CONDITION, PersonDto.MARITAL_STATUS) +
 					fluidRowLocs(6, PersonDto.TEL_NUMBER) +
+					fluidRowLocs(6,PersonDto.APPLICABLE) +
 					fluidRow(
 							oneOfFourCol(PersonDto.DEATH_DATE),
 							oneOfFourCol(PersonDto.CAUSE_OF_DEATH),
@@ -168,6 +171,10 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private PresentConditionChangeListener presentConditionChangeListener;
 	private DateField burialDate;
 	private TextField burialPlaceDesc;
+	private Label placeStayedInLast10_14MonthsLabel;
+	private TextField fathername;
+	private TextField mothername;
+	private NullableOptionGroup applicable;
 	//@formatter:on
 	public PersonEditForm(PersonContext personContext, Disease disease, String diseaseDetails, ViewMode viewMode, boolean isPseudonymized, CaseOrigin caseOrigin) {
 		super(
@@ -297,7 +304,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		nickie.setVisible(false);
 		TextField maiden = addField(PersonDto.MOTHERS_MAIDEN_NAME, TextField.class);
 		maiden.setVisible(false);
-		addFields(PersonDto.MOTHERS_NAME, PersonDto.FATHERS_NAME);
+		fathername = addField(PersonDto.FATHERS_NAME);
+		mothername = addField(PersonDto.MOTHERS_NAME);
 		addFields(PersonDto.NAMES_OF_GUARDIANS);
 		ComboBox presentCondition = addField(PersonDto.PRESENT_CONDITION, ComboBox.class);
 		birthDateDay = addField(PersonDto.BIRTH_DATE_DD, ComboBox.class);
@@ -359,6 +367,40 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 		addressForm = addField(PersonDto.ADDRESS, LocationEditForm.class);
 		addressForm.getIncomingDisease(disease);
+
+		if (disease != null) {
+			switch (disease) {
+				case CSM:
+					addressForm.handleCSM();
+					break;
+				case AFP:
+					addressForm.handleAFP();
+					break;
+				case NEW_INFLUENZA:
+					addressForm.handleNewInfluenza();
+					break;
+				case YELLOW_FEVER:
+					addressForm.handleYellowFever();
+					break;
+				case AHF:
+					addressForm.handleAHF();
+					break;
+				case CORONAVIRUS:
+					addressForm.handleCoronavirus();
+					break;
+				case GUINEA_WORM:
+					addressForm.setOnlyUnknownForGuineaWorm();
+					break;
+				case CHOLERA:
+					addressForm.handleForCholera();
+					break;
+				case NEONATAL_TETANUS:
+					addressForm.handleVisibilityForNNT();
+					break;
+				default:
+					break;
+			}
+		}
 
 		addressForm.setCaption(null);
 		addField(PersonDto.ADDRESSES, LocationsField.class).setCaption(null);
@@ -696,6 +738,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			addField(PersonDto.TEL_NUMBER, TextField.class);
 			occupationHeader.setVisible(false);
 			personContactDetailsField.setVisible(false);
+			ComboBox applicable = addField(PersonDto.APPLICABLE, ComboBox.class);
+			FieldHelper.setVisibleWhen(applicable, Arrays.asList(mothername, fathername), Arrays.asList(YesNo.YES), true);
+
 		}
 
 	}

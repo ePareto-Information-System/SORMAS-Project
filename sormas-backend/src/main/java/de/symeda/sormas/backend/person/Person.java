@@ -47,6 +47,22 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.externaldata.HasExternalData;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.person.ApproximateAgeType;
+import de.symeda.sormas.api.person.ArmedForcesRelationType;
+import de.symeda.sormas.api.person.BurialConductor;
+import de.symeda.sormas.api.person.CauseOfDeath;
+import de.symeda.sormas.api.person.DeathPlaceType;
+import de.symeda.sormas.api.person.EducationType;
+import de.symeda.sormas.api.person.OccupationType;
+import de.symeda.sormas.api.person.PersonContactDetailType;
+import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.api.person.PersonReferenceDto;
+import de.symeda.sormas.api.person.PresentCondition;
+import de.symeda.sormas.api.person.Salutation;
+import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.person.SymptomJournalStatus;
+import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.backend.cadre.Cadre;
 import de.symeda.sormas.api.person.*;
 import de.symeda.sormas.api.utils.FieldConstraints;
 import de.symeda.sormas.backend.caze.Case;
@@ -233,6 +249,8 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private String investigatorTel;
 	private MaritalStatus maritalStatus;
 	private String telNumber;
+	private String ethnicity;
+	private YesNo applicable;
 
 	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getFirstName() {
@@ -1000,6 +1018,13 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	public void setTelNumber(String telNumber) {
 		this.telNumber = telNumber;
 	}
+
+	public YesNo getApplicable() {
+		return applicable;
+	}
+    public void setApplicable(YesNo applicable) {
+         this.applicable = applicable;
+    }
 
 	private void setPersonContactInformation(String contactInfo, PersonContactDetailType personContactDetailType) {
 		final PersonContactDetail pcd =

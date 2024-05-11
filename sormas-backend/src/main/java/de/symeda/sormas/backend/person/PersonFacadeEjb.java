@@ -256,6 +256,126 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		super(Person.class, PersonDto.class, service);
 	}
 
+	public  PersonDto toDto(Person source) {
+
+		if (source == null) {
+			return null;
+		}
+
+		PersonDto target = new PersonDto();
+		DtoHelper.fillDto(target, source);
+
+		target.setFirstName(source.getFirstName());
+		target.setLastName(source.getLastName());
+		target.setOtherName(source.getOtherName());
+		target.setSalutation(source.getSalutation());
+		target.setOtherSalutation(source.getOtherSalutation());
+		target.setSex(source.getSex());
+
+		target.setPresentCondition(source.getPresentCondition());
+		target.setMarriageStatus(source.getMarriageStatus());
+		target.setTelNumber(source.getTelNumber());
+		target.setApplicable(source.getApplicable());
+		target.setBirthdateDD(source.getBirthdateDD());
+		target.setBirthdateMM(source.getBirthdateMM());
+		target.setBirthdateYYYY(source.getBirthdateYYYY());
+
+		if (source.getBirthdateYYYY() != null) {
+
+			// calculate the approximate age based on the birth date
+			// still not sure whether this is a good solution
+
+			Pair<Integer, ApproximateAgeType> pair = ApproximateAgeHelper
+					.getApproximateAge(source.getBirthdateYYYY(), source.getBirthdateMM(), source.getBirthdateDD(), source.getDeathDate());
+			target.setApproximateAge(pair.getElement0());
+			target.setApproximateAgeType(pair.getElement1());
+			target.setApproximateAgeReferenceDate(source.getDeathDate() != null ? source.getDeathDate() : new Date());
+
+		} else {
+			target.setApproximateAge(source.getApproximateAge());
+			target.setApproximateAgeType(source.getApproximateAgeType());
+			target.setApproximateAgeReferenceDate(source.getApproximateAgeReferenceDate());
+		}
+
+		target.setCauseOfDeath(source.getCauseOfDeath());
+		target.setCauseOfDeathDetails(source.getCauseOfDeathDetails());
+		target.setCauseOfDeathDisease(source.getCauseOfDeathDisease());
+		target.setDeathDate(source.getDeathDate());
+		target.setDeathPlaceType(source.getDeathPlaceType());
+		target.setDeathPlaceDescription(source.getDeathPlaceDescription());
+		target.setBurialDate(source.getBurialDate());
+		target.setBurialPlaceDescription(source.getBurialPlaceDescription());
+		target.setBurialConductor(source.getBurialConductor());
+
+		target.setBirthName(source.getBirthName());
+		target.setNickname(source.getNickname());
+		target.setMothersMaidenName(source.getMothersMaidenName());
+
+		target.setAddress(LocationFacadeEjb.toDto(source.getAddress()));
+		List<LocationDto> locations = new ArrayList<>();
+		for (Location location : source.getAddresses()) {
+			LocationDto locationDto = LocationFacadeEjb.toDto(location);
+			locations.add(locationDto);
+		}
+		target.setAddresses(locations);
+
+		if (!CollectionUtils.isEmpty(source.getPersonContactDetails())) {
+			target.setPersonContactDetails(source.getPersonContactDetails().stream().map(entity -> {
+				final PersonContactDetailDto personContactDetailDto = PersonContactDetailDto.build(
+						source.toReference(),
+						entity.isPrimaryContact(),
+						entity.getPersonContactDetailType(),
+						entity.getPhoneNumberType(),
+						entity.getDetails(),
+						entity.getContactInformation(),
+						entity.getAdditionalInformation(),
+						entity.isThirdParty(),
+						entity.getThirdPartyRole(),
+						entity.getThirdPartyName());
+				DtoHelper.fillDto(personContactDetailDto, entity);
+				return personContactDetailDto;
+			}).collect(Collectors.toList()));
+		}
+
+		target.setEducationType(source.getEducationType());
+		target.setEducationDetails(source.getEducationDetails());
+
+		target.setOccupationType(source.getOccupationType());
+		target.setOccupationDetails(source.getOccupationDetails());
+		target.setArmedForcesRelationType(source.getArmedForcesRelationType());
+
+		target.setMothersName(source.getMothersName());
+		target.setFathersName(source.getFathersName());
+		target.setNamesOfGuardians(source.getNamesOfGuardians());
+		target.setPlaceOfBirthRegion(RegionFacadeEjb.toReferenceDto(source.getPlaceOfBirthRegion()));
+		target.setPlaceOfBirthDistrict(DistrictFacadeEjb.toReferenceDto(source.getPlaceOfBirthDistrict()));
+		target.setPlaceOfBirthCommunity(CommunityFacadeEjb.toReferenceDto(source.getPlaceOfBirthCommunity()));
+		target.setPlaceOfBirthFacility(FacilityFacadeEjb.toReferenceDto(source.getPlaceOfBirthFacility()));
+		target.setPlaceOfBirthFacilityDetails(source.getPlaceOfBirthFacilityDetails());
+		target.setGestationAgeAtBirth(source.getGestationAgeAtBirth());
+		target.setBirthWeight(source.getBirthWeight());
+
+		target.setPassportNumber(source.getPassportNumber());
+		target.setNationalHealthId(source.getNationalHealthId());
+		target.setGhanaCard(source.getGhanaCard());
+		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());
+		target.setSymptomJournalStatus(source.getSymptomJournalStatus());
+
+		target.setHasCovidApp(source.isHasCovidApp());
+		target.setCovidCodeDelivered(source.isCovidCodeDelivered());
+		target.setExternalId(source.getExternalId());
+		target.setExternalToken(source.getExternalToken());
+		target.setInternalToken(source.getInternalToken());
+
+		target.setBirthCountry(CountryFacadeEjb.toReferenceDto(source.getBirthCountry()));
+		target.setCitizenship(CountryFacadeEjb.toReferenceDto(source.getCitizenship()));
+		target.setAdditionalDetails(source.getAdditionalDetails());
+
+		//target.setCadre(CadreFacadeEjb.toReferenceDto(source.getCadre()));
+
+		return target;
+	}
+
 	@Override
 	public Set<PersonAssociation> getPermittedAssociations() {
 		return service.getPermittedAssociations();
@@ -1037,6 +1157,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setInvestigatorTel(source.getInvestigatorTel());
 		target.setMaritalStatus(source.getMaritalStatus());
 		target.setTelNumber(source.getTelNumber());
+		target.setApplicable(source.getApplicable());
 
 		return target;
 	}
@@ -1766,6 +1887,8 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setBirthName(source.getBirthName());
 		target.setNickname(source.getNickname());
 		target.setMothersMaidenName(source.getMothersMaidenName());
+		target.setTelNumber(source.getTelNumber());
+		target.setApplicable(source.getApplicable());
 
 		target.setAddress(locationFacade.fillOrBuildEntity(source.getAddress(), target.getAddress(), checkChangeDate));
 		List<Location> locations = new ArrayList<>();
