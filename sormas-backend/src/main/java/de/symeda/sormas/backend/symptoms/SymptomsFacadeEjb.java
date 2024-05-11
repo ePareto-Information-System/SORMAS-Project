@@ -261,6 +261,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setDizziness(source.getDizziness());
 		target.setExcessiveSweating(source.getExcessiveSweating());
 		target.setNumbness(source.getNumbness());
+		target.setOutcomeOther(source.getOutcomeOther());
 		target.setSymptomsOngoing(source.getSymptomsOngoing());
 		target.setDurationHours(source.getDurationHours());
 		target.setNameOfHealthFacility(source.getNameOfHealthFacility());
@@ -777,6 +778,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setDizziness(source.getDizziness());
 		target.setExcessiveSweating(source.getExcessiveSweating());
 		target.setNumbness(source.getNumbness());
+		target.setOutcomeOther(source.getOutcomeOther());
 		target.setSymptomsOngoing(source.getSymptomsOngoing());
 		target.setDurationHours(source.getDurationHours());
 		target.setNameOfHealthFacility(source.getNameOfHealthFacility());

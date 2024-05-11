@@ -266,6 +266,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String NORMAL_CRY_AND_SUCK = "normalCryAndSuck";
 	public static final String STOPPED_SUCKING_AFTER_TWO_DAYS = "stoppedSuckingAfterTwoDays";
 	public static final String STIFFNESS = "stiffness";
+	public static final String OUTCOME_OTHER = "outcomeOther";
 
 
 	public static final String NON_VASCULAR = "nonVascular";
@@ -2498,6 +2499,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private YesNo areLesionsDeep;
 	private YesNo areUlcersAmong;
 	private SymptomsList typeOfRash;
+	private String outcomeOther;
 
 	@Diseases({
 			GUINEA_WORM })
@@ -3343,6 +3345,8 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Order(334)
 	public SymptomState getNumbness() {return  numbness;}
+	@Order(335)
+	public String getOutcomeOther() { return outcomeOther;}
 	public void setAbdominalPain(SymptomState abdominalPain) {
 		this.abdominalPain = abdominalPain;
 	}
@@ -4613,5 +4617,9 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setHeadaches(SymptomState headaches) {
 		this.headaches = headaches;
+	}
+
+	public void setOutcomeOther(String outcomeOther) {
+		this.outcomeOther = outcomeOther;
 	}
 }
