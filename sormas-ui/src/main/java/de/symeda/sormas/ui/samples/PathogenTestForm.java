@@ -267,9 +267,14 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			diseaseField.removeAllItems();
 			FieldHelper.updateEnumData(diseaseField, Disease.CSM_ONLY);
 		}
-		else if(caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
-			diseaseField.removeAllItems();
-			diseaseField.addItem(suspectedDisease);
+		else if (caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
+			for (Disease disease1 : Disease.values()) {
+				if (disease1.getName().equals(sample.getSuspectedDisease().getName())) {
+					diseaseField.removeAllItems();
+					FieldHelper.updateEnumData(diseaseField, Collections.singleton(disease1));
+					break;
+				}
+			}
 		}
 
 
