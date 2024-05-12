@@ -1153,6 +1153,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		shipmentDetails.setVisible(false);
 		check.setVisible(false);
 		suspectedDisease.setRequired(true);
+		sampleDateField.setRequired(true);
 	}
 
 	private void addSampleDispatchFields() {
