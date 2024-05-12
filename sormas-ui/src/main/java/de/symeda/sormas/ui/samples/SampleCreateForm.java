@@ -1,5 +1,6 @@
 package de.symeda.sormas.ui.samples;
 
+import com.vaadin.v7.ui.CheckBox;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SamplePurpose;
@@ -37,8 +38,4 @@ public class SampleCreateForm extends AbstractSampleForm {
 		return SAMPLE_COMMON_HTML_LAYOUT;
 	}
 
-    @Override
-    protected Disease getDisease() {
-        return this.disease;
-    }
 }

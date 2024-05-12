@@ -132,7 +132,7 @@ public class PathogenTestDto extends PseudonymizableDto {
 
 	@NotNull(message = Validations.validSample)
 	private SampleReferenceDto sample;
-	@NotNull(message = Validations.validDisease)
+//	@NotNull(message = Validations.validDisease)
 	private Disease testedDisease;
 	private DiseaseVariant testedDiseaseVariant;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
