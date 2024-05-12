@@ -811,7 +811,7 @@ public class PathogenTest extends DeletableAdo {
 	public void setSpecimenCondition(SpecimenCondition specimenCondition) {
 		this.specimenCondition = specimenCondition;
 	}
-
+	@Temporal(TemporalType.TIMESTAMP)
 	public Date getDateLabResultsSentDistrict() {
 		return dateLabResultsSentDistrict;
 	}
@@ -819,7 +819,7 @@ public class PathogenTest extends DeletableAdo {
 	public void setDateLabResultsSentDistrict(Date dateLabResultsSentDistrict) {
 		this.dateLabResultsSentDistrict = dateLabResultsSentDistrict;
 	}
-
+	@Temporal(TemporalType.TIMESTAMP)
 	public Date getDateLabResultsSentClinician() {
 		return dateLabResultsSentClinician;
 	}
@@ -827,7 +827,7 @@ public class PathogenTest extends DeletableAdo {
 	public void setDateLabResultsSentClinician(Date dateLabResultsSentClinician) {
 		this.dateLabResultsSentClinician = dateLabResultsSentClinician;
 	}
-
+	@Temporal(TemporalType.TIMESTAMP)
 	public Date getDateDistrictReceivedLabResults() {
 		return dateDistrictReceivedLabResults;
 	}

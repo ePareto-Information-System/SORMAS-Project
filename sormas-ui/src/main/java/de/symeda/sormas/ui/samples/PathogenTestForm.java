@@ -277,6 +277,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		}
 
 		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(sample.getAssociatedCase().getUuid());
+		CaseDataDto suspectedDisease = FacadeProvider.getCaseFacade().getCaseDataByUuid(sample.getSuspectedDisease().name());
 		caseDisease = caseDataDto.getDisease();
 
 		pathogenTestHeadingLabel = new Label();
@@ -334,6 +335,10 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		else if (caseDisease == Disease.CSM) {
 			diseaseField.removeAllItems();
 			FieldHelper.updateEnumData(diseaseField, Disease.CSM_ONLY);
+		}
+		else if(caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
+			diseaseField.removeAllItems();
+			diseaseField.addItem(suspectedDisease);
 		}
 
 		ComboBox diseaseVariantField = addField(PathogenTestDto.TESTED_DISEASE_VARIANT, ComboBox.class);
@@ -653,14 +658,16 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		}
 
 		if(caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
-			diseaseField.setVisible(false);
 			sampleTestDateField.setVisible(false);
 			addField(PathogenTestDto.LAB_LOCATION, TextField.class);
 			addField(PathogenTestDto.DATE_LAB_RECEIVED_SPECIMEN, DateTimeField.class);
 			addField(PathogenTestDto.SPECIMEN_CONDITION, ComboBox.class);
-			addField(PathogenTestDto.DATE_LAB_RESULTS_SENT_DISTRICT, DateTimeField.class);
-			addField(PathogenTestDto.DATE_LAB_RESULTS_SENT_CLINICIAN, DateTimeField.class);
-			addField(PathogenTestDto.DATE_DISTRICT_RECEIVED_LAB_RESULTS, DateTimeField.class);
+			DateField datelabResultsSentDistrict = addField(PathogenTestDto.DATE_LAB_RESULTS_SENT_DISTRICT, DateField.class);
+			datelabResultsSentDistrict.setInvalidCommitted(false);
+			DateField dateLabResultsSentClinician = addField(PathogenTestDto.DATE_LAB_RESULTS_SENT_CLINICIAN, DateField.class);
+			dateLabResultsSentClinician.setInvalidCommitted(false);
+			DateField dateDistrictReceivedLabResults = addField(PathogenTestDto.DATE_DISTRICT_RECEIVED_LAB_RESULTS, DateField.class);
+			dateDistrictReceivedLabResults.setInvalidCommitted(false);
 		}
 	}
 		

@@ -150,10 +150,6 @@ public class SampleBulkTransferForm extends AbstractSampleForm {
 		}
 	}
 
-	@Override
-	protected Disease getDisease() {
-		return null;
-	}
 
 	@Override
 	protected String createHtmlLayout() {

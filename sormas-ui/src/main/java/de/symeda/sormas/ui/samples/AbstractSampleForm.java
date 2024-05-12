@@ -6,6 +6,7 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 import static de.symeda.sormas.ui.utils.LayoutUtil.locCss;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.vaadin.ui.*;
@@ -22,10 +23,12 @@ import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.event.EventReferenceDto;
@@ -106,6 +109,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private OptionGroup laboratorySampleContainerReceived;
 	private TextField laboratorySampleContainerOther;
 	private NullableOptionGroup laboratoryAppearanceOfCSF;
+	private DateField shipmentDate;
+	private TextField shipmentDetails;
+	private CheckBox check;
 
 	//@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
@@ -126,7 +132,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +
                     fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_NATIONAL, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
 					fluidRowLocs(SampleDto.SUSPECTED_DISEASE, SampleDto.DATE_LAB_RECEIVED_SPECIMEN) +
-					fluidRowLocs(SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.DATE_SPECIMEN_SENT_TO_LAB) +
+					fluidRowLocs(6,SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN) +
+					fluidRowLocs(6,SampleDto.DATE_SPECIMEN_SENT_TO_LAB) +
 					fluidRowLocs(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL, SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY) +
                     fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.RECEIVED_BY_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +
                     fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_NATIONAL, SampleDto.RECEIVED_BY_NATIONAL, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
@@ -283,8 +290,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		sampleSource =  addField(SampleDto.SAMPLE_SOURCE, ComboBox.class);
 		addField(SampleDto.FIELD_SAMPLE_ID, TextField.class);
 		addField(SampleDto.FOR_RETEST, OptionGroup.class).setRequired(false);
-		addDateField(SampleDto.SHIPMENT_DATE, DateField.class, 7);
-		addField(SampleDto.SHIPMENT_DETAILS, TextField.class);
+		shipmentDate = addDateField(SampleDto.SHIPMENT_DATE, DateField.class, 7);
+		shipmentDetails = addField(SampleDto.SHIPMENT_DETAILS, TextField.class);
 		addField(SampleDto.RECEIVED_DATE, DateTimeField.class);
 
 		laboratoryNumber = addField(SampleDto.LABORATORY_NUMBER, TextField.class);
@@ -309,7 +316,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		comment.setDescription(
 			I18nProperties.getPrefixDescription(SampleDto.I18N_PREFIX, SampleDto.COMMENT, "") + "\n"
 				+ I18nProperties.getDescription(Descriptions.descGdpr));
-		CheckBox check = addField(SampleDto.SHIPPED, CheckBox.class);
+		check = addField(SampleDto.SHIPPED, CheckBox.class);
 
 		addField(SampleDto.RECEIVED, CheckBox.class);
 
@@ -390,8 +397,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		final Field<?> receivedField = getField(SampleDto.RECEIVED);
 		final Field<?> shippedField = getField(SampleDto.SHIPPED);
 
-		samplePurposeField.setRequired(true);
-
 		final CaseReferenceDto associatedCase = getValue().getAssociatedCase();
 		final ContactReferenceDto associatedContact = getValue().getAssociatedContact();
 		final EventParticipantReferenceDto associatedEventParticipant = getValue().getAssociatedEventParticipant();
@@ -406,8 +411,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				disease = getDiseaseFromEvent(eventReferenceDto.getUuid());
 			}
 		}
-		
-        FieldHelper.setVisibleWhen(
+
+		samplePurposeField.setRequired(true);
+
+		FieldHelper.setVisibleWhen(
                 getFieldGroup(),
                 Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
                 SampleDto.RECEIVED,
@@ -425,7 +432,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		UserReferenceDto reportingUser = getValue().getReportingUser();
 		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
 				|| (reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid()))) {
-			FieldHelper.setVisibleWhen(
+			/*FieldHelper.setVisibleWhen(
 					getFieldGroup(),
 					Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
 					SampleDto.SHIPPED,
@@ -436,7 +443,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					shippedField,
 					Arrays.asList(true),
 					Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
-					true);
+					true);*/
 			FieldHelper.setRequiredWhen(
 					getFieldGroup(),
 					SampleDto.SAMPLE_PURPOSE,
@@ -449,9 +456,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			getField(SampleDto.SAMPLE_MATERIAL).setEnabled(false);
 			getField(SampleDto.SAMPLE_MATERIAL_TEXT).setEnabled(false);
 			getField(SampleDto.LAB).setEnabled(false);
-			shippedField.setEnabled(false);
-			getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
-			getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
+			//shippedField.setEnabled(false);
+			/*getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
+			getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);*/
 			getField(SampleDto.SAMPLE_SOURCE).setEnabled(false);
 		}
 
@@ -483,9 +490,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			getContent().addComponent(referredButton);
 		}
 
-
-		getDisease();
-
 		FieldHelper.setVisibleWhen(
                 getFieldGroup(),
                 Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION, SampleDto.LABORATORY_NUMBER, SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER, SampleDto.LABORATORY_APPEARANCE_OF_CSF),
@@ -500,7 +504,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                 true);
 
 		hidePropertiesVisibility();
-
 
 			switch (disease) {
 				case CSM:
@@ -540,7 +543,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		setSampleMaterialTypesForDisease(disease);
     }
 
-	protected abstract Disease getDisease();
 
 	protected void updateLabDetailsVisibility(TextField labDetails, Property.ValueChangeEvent event) {
 		if (event.getProperty().getValue() != null
@@ -1146,6 +1148,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.PLASMA, SampleMaterial.SERUM, SampleMaterial.ASPIRATE, SampleMaterial.CEREBROSPINAL_FLUID, SampleMaterial.PUS, SampleMaterial.SALIVA, SampleMaterial.BIOPSY, SampleMaterial.STOOL, SampleMaterial.URETHRAL, SampleMaterial.URINE, SampleMaterial.SPUTUM, SampleMaterial.FOOD_WATER);
 		FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
+
+		shipmentDate.setVisible(false);
+		shipmentDetails.setVisible(false);
+		check.setVisible(false);
+		suspectedDisease.setRequired(true);
 	}
 
 	private void addSampleDispatchFields() {

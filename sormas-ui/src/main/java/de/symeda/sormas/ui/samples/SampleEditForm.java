@@ -179,8 +179,4 @@ public class SampleEditForm extends AbstractSampleForm {
 		laboratorySampleHeadingLabel.setValue(heading);
 	}
 
-	@Override
-	protected Disease getDisease() {
-		return null;
-	}
 }
