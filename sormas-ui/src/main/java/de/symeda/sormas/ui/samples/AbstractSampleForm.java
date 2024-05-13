@@ -91,6 +91,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private DateField dateSurveillanceSentResultsToDistrict;
 	private DateField dateFormSentToHigherLevel;
 	private TextField personCompletingForm;
+	private ComboBox finalClassificationField;
 
 	//@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
@@ -186,9 +187,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					//AFP
 					fluidRowLocs(SampleDto.DATE_SENT_NATIONAL_REG_LAB, SampleDto.DATE_DIFFERENTIATION_SENT_EPI, SampleDto.DATE_DIFFERENTIATION_RECEIVED_EPI) +
 					fluidRowLocs(SampleDto.DATE_ISOLATE_SENT_SEQUENCING, SampleDto.DATE_SEQ_RESULTS_SENT_PROGRAM) +
-					fluidRowLocs(6,SampleDto.FINAL_LAB_RESULTS) +
 					fluidRowLocs(6,SampleDto.IMMUNOCOMPROMISED_STATUS_SUSPECTED) +
-					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION);
+					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION) +
+					fluidRowLocs(6,SampleDto.FINAL_CLASSIFICATION) +
+					fluidRowLocs(6,SampleDto.FINAL_LAB_RESULTS);
+
 
 
     //@formatter:on
@@ -247,6 +250,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		labDetails.setVisible(false);
 		lab.addValueChangeListener(event -> updateLabDetailsVisibility(labDetails, event));
 
+		finalClassificationField = addField(SampleDto.FINAL_CLASSIFICATION, ComboBox.class);
+		finalClassificationField.setVisible(false);
+
 		addField(SampleDto.SPECIMEN_CONDITION, ComboBox.class);
 		addField(SampleDto.NO_TEST_POSSIBLE_REASON, TextField.class);
 		TextArea comment = addField(SampleDto.COMMENT, TextArea.class);
@@ -302,6 +308,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                 case ZIKA:
                     selectAHFTests();
 					break;
+				case MEASLES:
+					handleMeasles();
             }
 		});
 
@@ -973,6 +981,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateSurveillanceSentResultsToDistrict.setVisible(true);
 		dateFormSentToHigherLevel.setVisible(true);
 		personCompletingForm.setVisible(true);
+
+		finalClassificationField.setVisible(true);
 
 
 	}

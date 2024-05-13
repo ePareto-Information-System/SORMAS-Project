@@ -32,19 +32,11 @@ import javax.persistence.*;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.sample.*;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import org.apache.commons.lang3.StringUtils;
 
-import de.symeda.sormas.api.sample.AdditionalTestType;
-import de.symeda.sormas.api.sample.PathogenTestResultType;
-import de.symeda.sormas.api.sample.PathogenTestType;
-import de.symeda.sormas.api.sample.SampleMaterial;
-import de.symeda.sormas.api.sample.SamplePurpose;
-import de.symeda.sormas.api.sample.SampleReferenceDto;
-import de.symeda.sormas.api.sample.SampleSource;
-import de.symeda.sormas.api.sample.SamplingReason;
-import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.DeletableAdo;
 import de.symeda.sormas.backend.contact.Contact;
@@ -163,6 +155,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public static final String DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT = "dateSurveillanceSentResultsToDistrict";
 	public static final String DATE_FORM_SENT_TO_HIGHER_LEVEL = "dateFormSentToHigherLevel";
 	public static final String PERSON_COMPLETING_FORM = "personCompletingForm";
+	public static final String FINAL_CLASSIFICATION = "finalClassification";
 
 	private Case associatedCase;
 	private Contact associatedContact;
@@ -295,7 +288,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private Date dateSurveillanceSentResultsToDistrict;
 	private Date dateFormSentToHigherLevel;
 	private String personCompletingForm;
-	private String virusDetectionGenotype;
+	private FinalClassification finalClassification;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -1398,5 +1391,13 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setPersonCompletingForm(String personCompletingForm) {
 		this.personCompletingForm = personCompletingForm;
+	}
+
+	public FinalClassification getFinalClassification() {
+		return finalClassification;
+	}
+
+	public void setFinalClassification(FinalClassification finalClassification) {
+		this.finalClassification = finalClassification;
 	}
 }
