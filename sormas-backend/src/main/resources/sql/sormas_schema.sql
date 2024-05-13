@@ -14185,4 +14185,16 @@ ALTER TABLE person ADD COLUMN applicable varchar(55);
 ALTER TABLE symptoms ADD COLUMN outcomeother varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (631, 'Added 4 columns and dropped telnumber');
+
+ALTER TABLE symptoms ADD COLUMN redeyes varchar(255) NULL;
+ALTER TABLE symptoms ADD COLUMN generalizedrash varchar(255) NULL;
+ALTER TABLE symptoms ADD COLUMN swollenlymphnodesbehindears varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (632, 'Added column to redEyes, generalizedRash, swollenLymphNodesBehindEars to symptoms');
+
+
+ALTER TABLE samples ADD COLUMN datesurveillancesentresultstodistrict date;
+ALTER TABLE samples ADD COLUMN dateformsenttohigherlevel date;
+ALTER TABLE samples ADD COLUMN personcompletingform varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (633, 'Added column to dateSurveillanceSentResultsToDistrict, dateFormSentToHigherLevel, personCompletingForm to samples');
+
 -- *** Insert new sql commands BEFORE this line. Remember to alway

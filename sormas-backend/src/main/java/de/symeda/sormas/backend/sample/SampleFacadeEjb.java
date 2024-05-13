@@ -1245,6 +1245,11 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setUseOfClothFilter(source.getUseOfClothFilter());
 		target.setFrequencyOfChangingFilters(source.getFrequencyOfChangingFilters());
 		target.setRemarks(source.getRemarks());
+		target.setDateSurveillanceSentResultsToDistrict(source.getDateSurveillanceSentResultsToDistrict());
+		target.setDateFormSentToHigherLevel(source.getDateFormSentToHigherLevel());
+		target.setPersonCompletingForm(source.getPersonCompletingForm());
+
+
 
 		if (source.getSormasToSormasOriginInfo() != null) {
 			target.setSormasToSormasOriginInfo(originInfoService.getByUuid(source.getSormasToSormasOriginInfo().getUuid()));
@@ -1522,6 +1527,9 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setFrequencyOfChangingFilters(source.getFrequencyOfChangingFilters());
 		target.setRemarks(source.getRemarks());
 
+		target.setDateSurveillanceSentResultsToDistrict(source.getDateSurveillanceSentResultsToDistrict());
+		target.setDateFormSentToHigherLevel(source.getDateFormSentToHigherLevel());
+		target.setPersonCompletingForm(source.getPersonCompletingForm());
 
 
 		return target;
