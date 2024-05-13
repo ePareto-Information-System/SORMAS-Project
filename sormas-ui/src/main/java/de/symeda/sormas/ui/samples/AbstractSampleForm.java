@@ -427,7 +427,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					|| (reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid()))) {
 				FieldHelper.setVisibleWhen(
 						getFieldGroup(),
-						Arrays.asList(SampleDto.SHIPMENT_DATE),
+						Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
 						SampleDto.SHIPPED,
 						Arrays.asList(true),
 						true);
@@ -435,7 +435,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 						getFieldGroup(),
 						shippedField,
 						Arrays.asList(true),
-						Arrays.asList(SampleDto.SHIPMENT_DATE),
+						Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
 						true);
 				FieldHelper.setRequiredWhen(
 						getFieldGroup(),
@@ -531,7 +531,20 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                 Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION, SampleDto.LABORATORY_NUMBER, SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER, SampleDto.LABORATORY_APPEARANCE_OF_CSF),
                 true);
 		}
-		 else {
+		 else if (disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
+			FieldHelper.setVisibleWhen(
+					getFieldGroup(),
+					Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
+					SampleDto.RECEIVED,
+					Arrays.asList(true),
+					true);
+			FieldHelper.setEnabledWhen(
+					getFieldGroup(),
+					receivedField,
+					Arrays.asList(true),
+					Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
+					true);
+		}{
 
 		FieldHelper.setVisibleWhen(
 				getFieldGroup(),
