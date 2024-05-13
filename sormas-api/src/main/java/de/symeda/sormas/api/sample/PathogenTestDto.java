@@ -148,6 +148,7 @@ public class PathogenTestDto extends PseudonymizableDto {
 
 
 
+	public static final String VIRUS_DETECTION_GENOTYPE = "virusDetectionGenotype";
 
 	@NotNull(message = Validations.validSample)
 	private SampleReferenceDto sample;
@@ -302,6 +303,7 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private Date sampleTestResultIGGDate;
 	private PosNeg sampleTestResultImmuno;
 	private Date sampleTestResultImmunoDate;
+	private String virusDetectionGenotype;
 
 	public static PathogenTestDto build(SampleDto sample, UserDto currentUser) {
 
@@ -670,6 +672,13 @@ public class PathogenTestDto extends PseudonymizableDto {
 
 	public void setPrescriberCountry(CountryReferenceDto prescriberCountry) {
 		this.prescriberCountry = prescriberCountry;
+	}
+	public String getVirusDetectionGenotype() {
+		return virusDetectionGenotype;
+	}
+
+	public void setVirusDetectionGenotype(String virusDetectionGenotype) {
+		this.virusDetectionGenotype = virusDetectionGenotype;
 	}
 
 	@Override

@@ -179,6 +179,7 @@ public class PathogenTest extends DeletableAdo {
 	private Date sampleTestResultImmunoDate;
 	private String sampleTestsString;
 
+	private String virusDetectionGenotype;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
@@ -527,6 +528,14 @@ public class PathogenTest extends DeletableAdo {
 
 	public void setPrescriberCountry(Country prescriberCountry) {
 		this.prescriberCountry = prescriberCountry;
+	}
+
+	public String getVirusDetectionGenotype() {
+		return virusDetectionGenotype;
+	}
+
+	public void setVirusDetectionGenotype(String virusDetectionGenotype) {
+		this.virusDetectionGenotype = virusDetectionGenotype;
 	}
 
 	public PathogenTestReferenceDto toReference() {

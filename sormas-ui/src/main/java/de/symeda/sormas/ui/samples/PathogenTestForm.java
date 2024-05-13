@@ -89,6 +89,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.PCR_TEST_SPECIFICATION, "") +
 			fluidRowLocs(PathogenTestDto.TESTED_DISEASE, PathogenTestDto.TESTED_DISEASE_DETAILS) +
 			fluidRowLocs(PathogenTestDto.TEST_TYPE, PathogenTestDto.TEST_TYPE_TEXT) +
+			fluidRowLocs(PathogenTestDto.VIRUS_DETECTION_GENOTYPE) +
 			fluidRowLocs(PathogenTestDto.TESTED_DISEASE_VARIANT, PathogenTestDto.TESTED_DISEASE_VARIANT_DETAILS) +
 			fluidRowLocs(PathogenTestDto.TYPING_ID, "") +
 			fluidRowLocs(6,PathogenTestDto.TEST_DATE_TIME) +
@@ -203,6 +204,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private ComboBox TestResultForSecondDisease;
 	OptionGroup tickTestField;
 
+	private ComboBox diseaseField;
+	private TextField virusDetectionGenotypeField;
+
 	public PathogenTestForm(AbstractSampleForm sampleForm, boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction) {
 		this(create, caseSampleCount, isPseudonymized, inJurisdiction);
 		this.sampleForm = sampleForm;
@@ -313,6 +317,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 		testResultField = addField(PathogenTestDto.TEST_RESULT, ComboBox.class);
 		testResultField.removeItem(PathogenTestResultType.NOT_DONE);
+
+		virusDetectionGenotypeField = addField(PathogenTestDto.VIRUS_DETECTION_GENOTYPE, TextField.class);
+		virusDetectionGenotypeField.setVisible(false);
 
 		testResultVariant = addField(PathogenTestDto.TEST_RESULT_VARIANT, ComboBox.class);
 		testResultVariant.setVisible(false);
@@ -687,6 +694,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		if(caseDisease == Disease.YELLOW_FEVER){
 			datelabResultsSentDistrict.setVisible(true);
 			dateDistrictReceivedLabResults.setVisible(true);
+			virusDetectionGenotypeField.setVisible(true);
 		}
 
 		if(caseDisease == Disease.AHF){

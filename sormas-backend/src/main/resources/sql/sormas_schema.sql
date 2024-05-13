@@ -13690,3 +13690,7 @@ ALTER TABLE epidata DROP COLUMN consumedatplaces3;
 INSERT INTO schema_version (version_number, comment) VALUES (610, 'Dropped food history section columns in epidata');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+ALTER TABLE pathogentest ADD COLUMN virusDetectionGenotype varchar(255) NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (611, 'Added column to pathogentest to samples');
+-- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
