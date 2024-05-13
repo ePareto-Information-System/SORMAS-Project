@@ -1776,6 +1776,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 				if(disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
 					numberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being Reported");
+					numberOfDoses.addStyleName("v-captiontext-idsr");
 				}
 			});
 		}

@@ -89,6 +89,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	public ComboBox sampleSource;
 	private TextField labDetails;
 	private TextField labLocation;
+	private TextField labSampleId;
 	protected SampleDispatchMode sampleDispatchMode = SampleDispatchMode.REGIONAL_COLDROOM;
 	private DateTimeField sampleDateField;
 	private DateTimeField laboratorySampleDateReceived;
@@ -271,9 +272,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		addField(SampleDto.UUID).setReadOnly(true);
 		addField(SampleDto.REPORTING_USER).setReadOnly(true);
 		samplePurpose.addValueChangeListener(e -> updateRequestedTestFields());
-		addField(SampleDto.LAB_SAMPLE_ID, TextField.class);
+		labSampleId = addField(SampleDto.LAB_SAMPLE_ID, TextField.class);
+		labSampleId.setVisible(false);
 		sampleDateField = addField(SampleDto.SAMPLE_DATE_TIME, DateTimeField.class);
 		sampleDateField.setInvalidCommitted(false);
+		sampleDateField.addStyleName("v-caption-hasdescription-sampledatetimeidsr");
 		suspectedDisease = addField(SampleDto.SUSPECTED_DISEASE);
 		dateLabReceivedSpecimen = addField(SampleDto.DATE_LAB_RECEIVED_SPECIMEN);
 
@@ -350,6 +353,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateFormReceivedAtDistrict = addField(SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT, DateField.class);
 		dateResultsSentToClinician = addField(SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, DateField.class);
 		dateSpecimenSentToLab = addField(SampleDto.DATE_SPECIMEN_SENT_TO_LAB, DateField.class);
+		dateSpecimenSentToLab.setVisible(false);
 		addField(SampleDto.DELETION_REASON);
 		addField(SampleDto.OTHER_DELETION_REASON, TextArea.class).setRows(3);
 		setVisible(false, SampleDto.DELETION_REASON, SampleDto.OTHER_DELETION_REASON);
@@ -414,53 +418,77 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		samplePurposeField.setRequired(true);
 
-		FieldHelper.setVisibleWhen(
-                getFieldGroup(),
-                Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
-                SampleDto.RECEIVED,
-                Arrays.asList(true),
-                true);
-        FieldHelper.setEnabledWhen(
-                getFieldGroup(),
-                receivedField,
-                Arrays.asList(true),
-                Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
-                true);
-
         sampleMaterialComboBox = addField(SampleDto.SAMPLE_MATERIAL);
 
 		UserReferenceDto reportingUser = getValue().getReportingUser();
-		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
-				|| (reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid()))) {
-			/*FieldHelper.setVisibleWhen(
-					getFieldGroup(),
-					Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
-					SampleDto.SHIPPED,
-					Arrays.asList(true),
-					true);
-			FieldHelper.setEnabledWhen(
-					getFieldGroup(),
-					shippedField,
-					Arrays.asList(true),
-					Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
-					true);*/
-			FieldHelper.setRequiredWhen(
-					getFieldGroup(),
-					SampleDto.SAMPLE_PURPOSE,
-					Arrays.asList(SampleDto.LAB),
-					Arrays.asList(SamplePurpose.EXTERNAL, null));
+
+		if(disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
+			if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
+					|| (reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid()))) {
+				FieldHelper.setVisibleWhen(
+						getFieldGroup(),
+						Arrays.asList(SampleDto.SHIPMENT_DATE),
+						SampleDto.SHIPPED,
+						Arrays.asList(true),
+						true);
+				FieldHelper.setEnabledWhen(
+						getFieldGroup(),
+						shippedField,
+						Arrays.asList(true),
+						Arrays.asList(SampleDto.SHIPMENT_DATE),
+						true);
+				FieldHelper.setRequiredWhen(
+						getFieldGroup(),
+						SampleDto.SAMPLE_PURPOSE,
+						Arrays.asList(SampleDto.LAB),
+						Arrays.asList(SamplePurpose.EXTERNAL, null));
 
 
-		} else {
-			getField(SampleDto.SAMPLE_DATE_TIME).setEnabled(false);
-			getField(SampleDto.SAMPLE_MATERIAL).setEnabled(false);
-			getField(SampleDto.SAMPLE_MATERIAL_TEXT).setEnabled(false);
-			getField(SampleDto.LAB).setEnabled(false);
-			//shippedField.setEnabled(false);
-			/*getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
-			getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);*/
-			getField(SampleDto.SAMPLE_SOURCE).setEnabled(false);
+			} else {
+				getField(SampleDto.SAMPLE_DATE_TIME).setEnabled(false);
+				getField(SampleDto.SAMPLE_MATERIAL).setEnabled(false);
+				getField(SampleDto.SAMPLE_MATERIAL_TEXT).setEnabled(false);
+				getField(SampleDto.LAB).setEnabled(false);
+				shippedField.setEnabled(false);
+//				getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
+				getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
+				getField(SampleDto.SAMPLE_SOURCE).setEnabled(false);
+			}
+		}else{
+			if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
+					|| (reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid()))) {
+				FieldHelper.setVisibleWhen(
+						getFieldGroup(),
+						Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
+						SampleDto.SHIPPED,
+						Arrays.asList(true),
+						true);
+				FieldHelper.setEnabledWhen(
+						getFieldGroup(),
+						shippedField,
+						Arrays.asList(true),
+						Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
+						true);
+				FieldHelper.setRequiredWhen(
+						getFieldGroup(),
+						SampleDto.SAMPLE_PURPOSE,
+						Arrays.asList(SampleDto.LAB),
+						Arrays.asList(SamplePurpose.EXTERNAL, null));
+
+
+			} else {
+				getField(SampleDto.SAMPLE_DATE_TIME).setEnabled(false);
+				getField(SampleDto.SAMPLE_MATERIAL).setEnabled(false);
+				getField(SampleDto.SAMPLE_MATERIAL_TEXT).setEnabled(false);
+				getField(SampleDto.LAB).setEnabled(false);
+				shippedField.setEnabled(false);
+				getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
+				getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
+				getField(SampleDto.SAMPLE_SOURCE).setEnabled(false);
+			}
 		}
+
+
 
         StringBuilder reportInfoText = new StringBuilder().append(I18nProperties.getString(Strings.reportedOn))
                 .append(" ")
@@ -489,7 +517,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 			getContent().addComponent(referredButton);
 		}
-
+		if (disease == Disease.CSM) {
 		FieldHelper.setVisibleWhen(
                 getFieldGroup(),
                 Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION, SampleDto.LABORATORY_NUMBER, SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER, SampleDto.LABORATORY_APPEARANCE_OF_CSF),
@@ -502,6 +530,22 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                 Arrays.asList(true),
                 Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION, SampleDto.LABORATORY_NUMBER, SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER, SampleDto.LABORATORY_APPEARANCE_OF_CSF),
                 true);
+		}
+		 else {
+
+		FieldHelper.setVisibleWhen(
+				getFieldGroup(),
+				Arrays.asList(SampleDto.RECEIVED_DATE),
+				SampleDto.RECEIVED,
+				Arrays.asList(true),
+				true);
+		FieldHelper.setEnabledWhen(
+				getFieldGroup(),
+				receivedField,
+				Arrays.asList(true),
+				Arrays.asList(SampleDto.RECEIVED_DATE),
+				true);
+		}
 
 		hidePropertiesVisibility();
 
@@ -632,7 +676,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				Arrays.asList(SpecimenCondition.NOT_ADEQUATE));
 		FieldHelper.setVisibleWhen(
 				getFieldGroup(),
-				Arrays.asList(SampleDto.LAB, SampleDto.SHIPPED, SampleDto.RECEIVED),
+                List.of(SampleDto.LAB),
 				SampleDto.SAMPLE_PURPOSE,
 				Arrays.asList(SamplePurpose.EXTERNAL, null),
 				true);
@@ -1138,7 +1182,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	}
 
 	private void handleFBI(){
-		setVisible(false, SampleDto.SUSPECTED_DISEASE, SampleDto.LAB_LOCATION, SampleDto.DATE_LAB_RECEIVED_SPECIMEN, SampleDto.LABORATORY_SAMPLE_CONDITION, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.ADDITIONAL_TESTING_REQUESTED, SampleDto.DATE_SPECIMEN_SENT_TO_LAB, SampleDto.SAMPLE_MATERIAL, SampleDto.SAMPLE_DATE_TIME);
+		setVisible(false, SampleDto.SUSPECTED_DISEASE, SampleDto.LAB_LOCATION, SampleDto.DATE_LAB_RECEIVED_SPECIMEN, SampleDto.LABORATORY_SAMPLE_CONDITION, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.ADDITIONAL_TESTING_REQUESTED, SampleDto.SAMPLE_MATERIAL, SampleDto.SAMPLE_DATE_TIME);
 
 		setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
 	}
@@ -1151,9 +1195,14 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		shipmentDate.setVisible(false);
 		shipmentDetails.setVisible(false);
-		check.setVisible(false);
 		suspectedDisease.setRequired(true);
 		sampleDateField.setRequired(true);
+		laboratoryNumber.setVisible(false);
+		laboratorySampleContainerReceived.setVisible(false);
+		laboratorySampleContainerOther.setVisible(false);
+		laboratoryAppearanceOfCSF.setVisible(false);
+
+		setVisible(false, SampleDto.FIELD_SAMPLE_ID);
 	}
 
 	private void addSampleDispatchFields() {
