@@ -91,6 +91,7 @@ public class PathogenTestDto extends PseudonymizableDto {
 	public static final String PRESCRIBER_POSTAL_CODE = "prescriberPostalCode";
 	public static final String PRESCRIBER_CITY = "prescriberCity";
 	public static final String PRESCRIBER_COUNTRY = "prescriberCountry";
+	public static final String VIRUS_DETECTION_GENOTYPE = "virusDetectionGenotype";
 
 	@NotNull(message = Validations.validSample)
 	private SampleReferenceDto sample;
@@ -187,6 +188,8 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private String prescriberCity;
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_LUXEMBOURG)
 	private CountryReferenceDto prescriberCountry;
+
+	private String virusDetectionGenotype;
 
 	public static PathogenTestDto build(SampleDto sample, UserDto currentUser) {
 
@@ -555,6 +558,13 @@ public class PathogenTestDto extends PseudonymizableDto {
 
 	public void setPrescriberCountry(CountryReferenceDto prescriberCountry) {
 		this.prescriberCountry = prescriberCountry;
+	}
+	public String getVirusDetectionGenotype() {
+		return virusDetectionGenotype;
+	}
+
+	public void setVirusDetectionGenotype(String virusDetectionGenotype) {
+		this.virusDetectionGenotype = virusDetectionGenotype;
 	}
 
 	@Override

@@ -76,6 +76,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.REPORT_DATE, PathogenTestDto.VIA_LIMS) +
 			fluidRowLocs(PathogenTestDto.EXTERNAL_ID, PathogenTestDto.EXTERNAL_ORDER_ID) +
 			fluidRowLocs(PathogenTestDto.TEST_TYPE, PathogenTestDto.TEST_TYPE_TEXT) +
+			fluidRowLocs(PathogenTestDto.VIRUS_DETECTION_GENOTYPE) +
 			fluidRowLocs(PathogenTestDto.PCR_TEST_SPECIFICATION, "") +
 			fluidRowLocs(PathogenTestDto.TESTED_DISEASE_DETAILS) +
 			fluidRowLocs(PathogenTestDto.TESTED_DISEASE_VARIANT, PathogenTestDto.TESTED_DISEASE_VARIANT_DETAILS) +
@@ -106,6 +107,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private ComboBox testTypeField;
 
 	private ComboBox diseaseField;
+	private TextField virusDetectionGenotypeField;
 
 	public PathogenTestForm(AbstractSampleForm sampleForm, boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction) {
 		this(create, caseSampleCount, isPseudonymized, inJurisdiction);
@@ -221,6 +223,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		TextField diseaseVariantDetailsField = addField(PathogenTestDto.TESTED_DISEASE_VARIANT_DETAILS, TextField.class);
 		diseaseVariantDetailsField.setVisible(false);
 
+		virusDetectionGenotypeField = addField(PathogenTestDto.VIRUS_DETECTION_GENOTYPE, TextField.class);
+		virusDetectionGenotypeField.setVisible(false);
+
 		ComboBox testResultField = addField(PathogenTestDto.TEST_RESULT, ComboBox.class);
 		testResultField.removeItem(PathogenTestResultType.NOT_DONE);
 		addField(PathogenTestDto.SEROTYPE, TextField.class);
@@ -315,6 +320,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				Arrays.stream(PathogenTestType.values())
 						.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
+				virusDetectionGenotypeField.setVisible(true);
 			}
 		});
 
