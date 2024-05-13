@@ -97,6 +97,11 @@ public class Symptoms extends AbstractDomainObject {
 	private SymptomState otherHemorrhagicSymptoms;
 	private String otherHemorrhagicSymptomsText;
 	private SymptomState skinRash;
+	private SymptomState generalizedRash;
+	private SymptomState redEyes;
+
+	private SymptomState swollenLymphNodesBehindEars;
+
 	private SymptomState neckStiffness;
 	private SymptomState soreThroat;
 	private SymptomState cough;
@@ -279,6 +284,9 @@ public class Symptoms extends AbstractDomainObject {
 	private SymptomState diarrhoea;
 	private SymptomState abdominalCramps;
 	private SymptomState headaches;
+	private SymptomState historyOfTravelOutsideTheVillageTownDistrict;
+	private String placeOfExposureMeaslesRubella;
+
 
 	private SymptomState babyDied;
 	private Integer ageAtDeathDays;
@@ -2479,5 +2487,45 @@ public class Symptoms extends AbstractDomainObject {
 
 	public void setHeadaches(SymptomState headaches) {
 		this.headaches = headaches;
+	}
+
+	public SymptomState getHistoryOfTravelOutsideTheVillageTownDistrict() {
+		return historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public void setHistoryOfTravelOutsideTheVillageTownDistrict(SymptomState historyOfTravelOutsideTheVillageTownDistrict) {
+		this.historyOfTravelOutsideTheVillageTownDistrict = historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public String getPlaceOfExposureMeaslesRubella() {
+		return placeOfExposureMeaslesRubella;
+	}
+
+	public void setPlaceOfExposureMeaslesRubella(String placeOfExposureMeaslesRubella) {
+		this.placeOfExposureMeaslesRubella = placeOfExposureMeaslesRubella;
+	}
+
+	public SymptomState getGeneralizedRash() {
+		return generalizedRash;
+	}
+
+	public void setGeneralizedRash(SymptomState generalizedRash) {
+		this.generalizedRash = generalizedRash;
+	}
+
+	public SymptomState getRedEyes() {
+		return redEyes;
+	}
+
+	public void setRedEyes(SymptomState redEyes) {
+		this.redEyes = redEyes;
+	}
+
+	public SymptomState getSwollenLymphNodesBehindEars() {
+		return swollenLymphNodesBehindEars;
+	}
+
+	public void setSwollenLymphNodesBehindEars(SymptomState swollenLymphNodesBehindEars) {
+		this.swollenLymphNodesBehindEars = swollenLymphNodesBehindEars;
 	}
 }

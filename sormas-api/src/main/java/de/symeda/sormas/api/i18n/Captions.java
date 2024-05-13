@@ -2990,6 +2990,8 @@ public interface Captions {
 	String Symptoms_unilateralCataracts = "Symptoms.unilateralCataracts";
 	String Symptoms_uproariousness = "Symptoms.uproariousness";
 	String Symptoms_urinaryRetention = "Symptoms.urinaryRetention";
+	String Symptoms_historyOfTravelOutsideTheVillageTownDistrict = "Symptoms.historyOfTravelOutsideTheVillageTownDistrict";
+	String Symptoms_placeOfExposureMeaslesRubella = "Symptoms.placeOfExposureMeaslesRubella";
 	String Symptoms_vomiting = "Symptoms.vomiting";
 	String Symptoms_weakness = "Symptoms.weakness";
 	String Symptoms_weight = "Symptoms.weight";
@@ -3016,6 +3018,10 @@ public interface Captions {
 	String Symptoms_abdominalCramps = "Symptoms.abdominalCramps";
 	String Symptoms_headaches = "Symptoms.headaches";
 
+	String Symptoms_redEyes = "Symptoms.redEyes";
+	String Symptoms_generalizedRash = "Symptoms.generalizedRash";
+	String Symptoms_swollenLymphNodesBehindEars = "Symptoms.swollenLymphNodesBehindEars";
+	String Symptoms_virusDetectionGenotype = "Symptoms.virusDetectionGenotype";
 	String symptomsLesionsLocations = "symptomsLesionsLocations";
 	String symptomsMaxTemperature = "symptomsMaxTemperature";
 	String symptomsSetClearedToNo = "symptomsSetClearedToNo";

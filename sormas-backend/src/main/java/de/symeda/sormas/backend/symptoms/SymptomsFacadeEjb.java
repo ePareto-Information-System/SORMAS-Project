@@ -289,6 +289,11 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setDiarrhoea(source.getDiarrhoea());
 		target.setAbdominalCramps(source.getAbdominalCramps());
 		target.setHeadaches(source.getHeadaches());
+		target.setRedEyes(source.getRedEyes());
+		target.setGeneralizedRash(source.getGeneralizedRash());
+		target.setSwollenLymphNodesBehindEars(source.getSwollenLymphNodesBehindEars());
+		target.setHistoryOfTravelOutsideTheVillageTownDistrict(source.getHistoryOfTravelOutsideTheVillageTownDistrict());
+		target.setPlaceOfExposureMeaslesRubella(source.getPlaceOfExposureMeaslesRubella());
 
 		return target;
 	}
@@ -534,6 +539,11 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setAreUlcersAmong(source.getAreUlcersAmong());
 		target.setTypeOfRash(source.getTypeOfRash());
 		target.setSymptomsSelectedOther(source.getSymptomsSelectedOther());
+		target.setRedEyes(source.getRedEyes());
+		target.setGeneralizedRash(source.getGeneralizedRash());
+		target.setSwollenLymphNodesBehindEars(source.getSwollenLymphNodesBehindEars());
+		target.setHistoryOfTravelOutsideTheVillageTownDistrict(source.getHistoryOfTravelOutsideTheVillageTownDistrict());
+		target.setPlaceOfExposureMeaslesRubella(source.getPlaceOfExposureMeaslesRubella());
 
 		target.setBabyDied(source.getBabyDied());
 		target.setAgeAtDeathDays(source.getAgeAtDeathDays());

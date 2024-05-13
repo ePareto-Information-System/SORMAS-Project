@@ -1830,7 +1830,6 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
-
 	public Date getDateSurveillanceSentResultsToDistrict() {
 		return dateSurveillanceSentResultsToDistrict;
 	}

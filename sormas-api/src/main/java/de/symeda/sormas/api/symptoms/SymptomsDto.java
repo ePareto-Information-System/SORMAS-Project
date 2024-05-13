@@ -270,6 +270,11 @@ public class SymptomsDto extends PseudonymizableDto {
 
 
 	public static final String NON_VASCULAR = "nonVascular";
+	public static final String GENERALIZED_RASH = "generalizedRash";
+	public static final String RED_EYES = "redEyes";
+	public static final String SWOLLEN_LYMPH_NODES_BEHIND_EARS = "swollenLymphNodesBehindEars";
+	public static final  String HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT = "historyOfTravelOutsideTheVillageTownDistrict";
+	public static final String PLACE_OF_EXPOSURE_MEASLES_RUBELLA = "placeOfExposureMeaslesRubella";
 
 	public static final String SYMPTOMS_ONGOING = "symptomsOngoing";
 	public static final String DURATION_HOURS = "durationHours";
@@ -1470,6 +1475,29 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState skinRash;
 
 	@Diseases({
+			MEASLES})
+	@Outbreaks
+	@HideForCountries
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState generalizedRash;
+
+	@Diseases({
+			MEASLES
+	})
+	@Outbreaks
+	@HideForCountries
+	@SymptomGrouping
+	private SymptomState redEyes;
+
+	@Diseases({
+			MEASLES
+	})
+	@Outbreaks
+	@HideForCountries
+	@SymptomGrouping
+	private SymptomState swollenLymphNodesBehindEars;
+
+	@Diseases({
 		AFP,
 		EVD,
 		LASSA,
@@ -2421,6 +2449,23 @@ public class SymptomsDto extends PseudonymizableDto {
 			MEASLES})
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState nonVascular;
+
+	@Diseases({
+			MEASLES})
+	@Outbreaks
+	@HideForCountries
+	@SymptomGrouping
+	private SymptomState historyOfTravelOutsideTheVillageTownDistrict;
+
+
+
+	@Diseases({
+			MEASLES})
+	@Outbreaks
+	@HideForCountries
+	@SymptomGrouping
+	private String placeOfExposureMeaslesRubella;
+
 	@Diseases({
 		FOODBORNE_ILLNESS,
 		OTHER })
@@ -4621,5 +4666,45 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setOutcomeOther(String outcomeOther) {
 		this.outcomeOther = outcomeOther;
+	}
+
+	public SymptomState getHistoryOfTravelOutsideTheVillageTownDistrict() {
+		return historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public void setHistoryOfTravelOutsideTheVillageTownDistrict(SymptomState historyOfTravelOutsideTheVillageTownDistrict) {
+		this.historyOfTravelOutsideTheVillageTownDistrict = historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public String getPlaceOfExposureMeaslesRubella() {
+		return placeOfExposureMeaslesRubella;
+	}
+
+	public void setPlaceOfExposureMeaslesRubella(String placeOfExposureMeaslesRubella) {
+		this.placeOfExposureMeaslesRubella = placeOfExposureMeaslesRubella;
+	}
+
+	public SymptomState getGeneralizedRash() {
+		return generalizedRash;
+	}
+
+	public void setGeneralizedRash(SymptomState generalizedRash) {
+		this.generalizedRash = generalizedRash;
+	}
+
+	public SymptomState getRedEyes() {
+		return redEyes;
+	}
+
+	public void setRedEyes(SymptomState redEyes) {
+		this.redEyes = redEyes;
+	}
+
+	public SymptomState getSwollenLymphNodesBehindEars() {
+		return swollenLymphNodesBehindEars;
+	}
+
+	public void setSwollenLymphNodesBehindEars(SymptomState swollenLymphNodesBehindEars) {
+		this.swollenLymphNodesBehindEars = swollenLymphNodesBehindEars;
 	}
 }

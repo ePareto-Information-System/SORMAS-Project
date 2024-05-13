@@ -161,6 +161,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(AGE_AT_DEATH_DAYS, AGE_AT_ONSET_DAYS) +
 					fluidRowLocs(6,OTHER_COMPLICATIONS) +
 					fluidRowLocs(6,OTHER_COMPLICATIONS_TEXT) +
+					fluidRowLocs(9, PLACE_OF_EXPOSURE_MEASLES_RUBELLA) +
 					createSymptomGroupLayout(SymptomGroup.RESPIRATORY, RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.CARDIOVASCULAR, CARDIOVASCULAR_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					//createSymptomGroupLayout(SymptomGroup.GASTROINTESTINAL, GASTROINTESTINAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +

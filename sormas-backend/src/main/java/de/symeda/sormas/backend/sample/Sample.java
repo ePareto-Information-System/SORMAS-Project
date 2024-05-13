@@ -361,6 +361,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private Date dateSurveillanceSentResultsToDistrict;
 	private Date dateFormSentToHigherLevel;
 	private String personCompletingForm;
+	private String virusDetectionGenotype;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
