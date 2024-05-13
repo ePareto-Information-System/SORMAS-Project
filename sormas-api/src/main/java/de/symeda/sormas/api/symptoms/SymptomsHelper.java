@@ -503,6 +503,7 @@ public final class SymptomsHelper {
 		appendYesSymptom(string, SymptomsDto.build().getGeneralizedRash(), SymptomsDto.GENERALIZED_RASH);
 		appendYesSymptom(string, SymptomsDto.build().getRedEyes(), SymptomsDto.RED_EYES);
 		appendYesSymptom(string, SymptomsDto.build().getSwollenLymphNodesBehindEars(), SymptomsDto.SWOLLEN_LYMPH_NODES_BEHIND_EARS);
+		appendNotNullValue(string, symptomsDto.getHistoryOfTravelOutsideTheVillageTownDistrict(), SymptomsDto.HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT);
 
 		// symptomsComments;
 

@@ -259,6 +259,9 @@ public class Symptoms extends AbstractDomainObject {
 	private SymptomState redEyes;
 	private SymptomState generalizedRash;
 	private SymptomState swollenLymphNodesBehindEars;
+	private SymptomState historyOfTravelOutsideTheVillageTownDistrict;
+	private String placeOfExposureMeaslesRubella;
+
 
 
 	// when adding new fields make sure to extend toHumanString
@@ -1961,5 +1964,21 @@ public class Symptoms extends AbstractDomainObject {
 
 	public void setSwollenLymphNodesBehindEars(SymptomState swollenLymphNodesBehindEars) {
 		this.swollenLymphNodesBehindEars = swollenLymphNodesBehindEars;
+	}
+
+	public SymptomState getHistoryOfTravelOutsideTheVillageTownDistrict() {
+		return historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public void setHistoryOfTravelOutsideTheVillageTownDistrict(SymptomState historyOfTravelOutsideTheVillageTownDistrict) {
+		this.historyOfTravelOutsideTheVillageTownDistrict = historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public String getPlaceOfExposureMeaslesRubella() {
+		return placeOfExposureMeaslesRubella;
+	}
+
+	public void setPlaceOfExposureMeaslesRubella(String placeOfExposureMeaslesRubella) {
+		this.placeOfExposureMeaslesRubella = placeOfExposureMeaslesRubella;
 	}
 }

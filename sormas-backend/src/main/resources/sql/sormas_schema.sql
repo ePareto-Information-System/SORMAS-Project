@@ -12829,4 +12829,9 @@ ALTER TABLE samples ADD COLUMN dateformsenttohigherlevel date;
 ALTER TABLE samples ADD COLUMN personcompletingform varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (533, 'Added column to dateSurveillanceSentResultsToDistrict, dateFormSentToHigherLevel, personCompletingForm to samples');
 
+-- History of travel outside the village/ town/ district in last 7 – 28 days before onset of rash
+ALTER TABLE symptoms ADD COLUMN historyoftraveloutsidethevillagetowndistrict varchar(255) NULL;
+ALTER TABLE symptoms ADD COLUMN placeOfExposureMeaslesRubella varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (534, 'Added column to historyOfTravelOutsideTheVillageTownDistrict, placeOfExposureMeaslesRubella to symptoms');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

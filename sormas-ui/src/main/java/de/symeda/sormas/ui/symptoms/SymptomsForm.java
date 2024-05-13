@@ -140,6 +140,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6,SHOCK) +
 					fluidRowLocs(6,OTHER_COMPLICATIONS) +
 					fluidRowLocs(6,OTHER_COMPLICATIONS_TEXT) +
+					fluidRowLocs(9, PLACE_OF_EXPOSURE_MEASLES_RUBELLA) +
 					createSymptomGroupLayout(SymptomGroup.RESPIRATORY, RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.CARDIOVASCULAR, CARDIOVASCULAR_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					//createSymptomGroupLayout(SymptomGroup.GASTROINTESTINAL, GASTROINTESTINAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
@@ -474,7 +475,12 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			NON_VASCULAR,
 			GENERALIZED_RASH,
 			RED_EYES,
-			SWOLLEN_LYMPH_NODES_BEHIND_EARS);
+			SWOLLEN_LYMPH_NODES_BEHIND_EARS,
+			HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT);
+
+		TextField placeOfExposureMeaslesRubellaField = addField(PLACE_OF_EXPOSURE_MEASLES_RUBELLA, TextField.class);
+		placeOfExposureMeaslesRubellaField.setVisible(false);
+
 
 		addField(SYMPTOMS_COMMENTS, TextField.class).setDescription(
 			I18nProperties.getPrefixDescription(I18N_PREFIX, SYMPTOMS_COMMENTS, "") + "\n" + I18nProperties.getDescription(Descriptions.descGdpr));
@@ -682,7 +688,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			NON_VASCULAR,
 			GENERALIZED_RASH,
 			RED_EYES,
-			SWOLLEN_LYMPH_NODES_BEHIND_EARS);
+			SWOLLEN_LYMPH_NODES_BEHIND_EARS,
+			HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT);
 
 		// Set visibilities
 
@@ -931,7 +938,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					NON_VASCULAR,
 					GENERALIZED_RASH,
 					RED_EYES,
-					SWOLLEN_LYMPH_NODES_BEHIND_EARS);
+					SWOLLEN_LYMPH_NODES_BEHIND_EARS,
+					HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT);
+
 			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
 			clinicalMeasurementsHeadingLabel.setVisible(false);
 		}
@@ -942,6 +951,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 //			setVisible(true, SKIN_RASH, FEVER, COUGH,RUNNY_NOSE, CONJUNCTIVITIS, KOPLIKS_SPOTS, NON_VASCULAR);
 //
 //			setVisible(false, ALTERED_CONSCIOUSNESS, CONFUSED_DISORIENTED, HEMORRHAGIC_SYNDROME, HYPERGLYCEMIA, OTHER_COMPLICATIONS_TEXT, OTHER_COMPLICATIONS, SEIZURES);
+			setVisible(true, PLACE_OF_EXPOSURE_MEASLES_RUBELLA);
 		}
 
 		if (symptomsContext != SymptomsContext.CASE) {

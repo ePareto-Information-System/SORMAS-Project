@@ -253,6 +253,8 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String GENERALIZED_RASH = "generalizedRash";
 	public static final String RED_EYES = "redEyes";
 	public static final String SWOLLEN_LYMPH_NODES_BEHIND_EARS = "swollenLymphNodesBehindEars";
+	public static final  String HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT = "historyOfTravelOutsideTheVillageTownDistrict";
+	public static final String PLACE_OF_EXPOSURE_MEASLES_RUBELLA = "placeOfExposureMeaslesRubella";
 
 
 
@@ -1491,8 +1493,19 @@ public class SymptomsDto extends PseudonymizableDto {
 	@SymptomGrouping
 	private SymptomState swollenLymphNodesBehindEars;
 
+	@Diseases({
+		MEASLES})
+	@Outbreaks
+	@HideForCountries
+	@SymptomGrouping
+	private SymptomState historyOfTravelOutsideTheVillageTownDistrict;
 
-
+	@Diseases({
+		MEASLES})
+	@Outbreaks
+	@HideForCountries
+	@SymptomGrouping
+	private String placeOfExposureMeaslesRubella;
 
 	@Diseases({
 		AFP,
@@ -4057,5 +4070,21 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setSwollenLymphNodesBehindEars(SymptomState swollenLymphNodesBehindEars) {
 		this.swollenLymphNodesBehindEars = swollenLymphNodesBehindEars;
+	}
+
+	public SymptomState getHistoryOfTravelOutsideTheVillageTownDistrict() {
+		return historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public void setHistoryOfTravelOutsideTheVillageTownDistrict(SymptomState historyOfTravelOutsideTheVillageTownDistrict) {
+		this.historyOfTravelOutsideTheVillageTownDistrict = historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public String getPlaceOfExposureMeaslesRubella() {
+		return placeOfExposureMeaslesRubella;
+	}
+
+	public void setPlaceOfExposureMeaslesRubella(String placeOfExposureMeaslesRubella) {
+		this.placeOfExposureMeaslesRubella = placeOfExposureMeaslesRubella;
 	}
 }
