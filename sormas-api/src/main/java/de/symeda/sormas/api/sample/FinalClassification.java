@@ -6,6 +6,8 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import java.util.Arrays;
 import java.util.List;
 
+import de.symeda.sormas.api.i18n.I18nProperties;
+
 public enum FinalClassification {
 
     CONFIRMED_MEASLES_BY_LAB,
@@ -34,6 +36,7 @@ public enum FinalClassification {
             CONFIRMED_RUBELLA_BY_LAB,
             DISCARDED_NON_MEASLES_NON_RUBELLA_BY_LAB,
             SUSPECTED_MEASLES_RUBELLA_WITH_LAB_RESULTS_AND_OR_CASE_CLASSIFICATION_PENDING  );
+    SUSPECTED_MEASLES_RUBELLA_WITH_LAB_RESULTS_AND_OR_CASE_CLASSIFICATION_PENDING;
 
     @Override
     public String toString() {

@@ -14800,4 +14800,5 @@ INSERT INTO schema_version (version_number, comment) VALUES (673, 'added potenta
 
 ALTER TABLE pathogentest ADD COLUMN virusDetectionGenotype varchar(255) NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (674, 'Added column to pathogentest to samples');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

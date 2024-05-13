@@ -1987,4 +1987,12 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public void setLabLocalDetails(final String labLocalDetails) {
 		this.labLocalDetails = labLocalDetails;
 	}
+	
+	public FinalClassification getFinalClassification() {
+		return finalClassification;
+	}
+
+	public void setFinalClassification(FinalClassification finalClassification) {
+		this.finalClassification = finalClassification;
+	}
 }
