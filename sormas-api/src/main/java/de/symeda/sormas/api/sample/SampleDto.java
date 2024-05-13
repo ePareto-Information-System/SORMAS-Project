@@ -1731,4 +1731,12 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public void setHasSampleBeenCollected(YesNo hasSampleBeenCollected) {
 		this.hasSampleBeenCollected = hasSampleBeenCollected;
 	}
+
+	public FinalClassification getFinalClassification() {
+		return finalClassification;
+	}
+
+	public void setFinalClassification(FinalClassification finalClassification) {
+		this.finalClassification = finalClassification;
+	}
 }

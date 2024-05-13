@@ -32,19 +32,11 @@ import javax.persistence.*;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.sample.*;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import org.apache.commons.lang3.StringUtils;
 
-import de.symeda.sormas.api.sample.AdditionalTestType;
-import de.symeda.sormas.api.sample.PathogenTestResultType;
-import de.symeda.sormas.api.sample.PathogenTestType;
-import de.symeda.sormas.api.sample.SampleMaterial;
-import de.symeda.sormas.api.sample.SamplePurpose;
-import de.symeda.sormas.api.sample.SampleReferenceDto;
-import de.symeda.sormas.api.sample.SampleSource;
-import de.symeda.sormas.api.sample.SamplingReason;
-import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.DeletableAdo;
 import de.symeda.sormas.backend.contact.Contact;
@@ -170,7 +162,6 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public static final String LABORATORY_DATE_RESULTS_SENT_DSD = "laboratoryDateResultsSentDSD";
 	public static final String LABORATORY_FINAL_CLASSIFICATION = "laboratoryFinalClassification";
 	public static final String LABORATORY_TYPE = "laboratoryType";
-
 
 	private Case associatedCase;
 	private Contact associatedContact;

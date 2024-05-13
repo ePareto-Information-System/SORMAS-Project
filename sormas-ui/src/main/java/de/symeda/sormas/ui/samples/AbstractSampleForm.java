@@ -249,7 +249,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					loc(FOLLOW_UP_EXAMINATION_HEADLINE_LOC) +
 					fluidRowLocs(SampleDto.DATE_FOLLOWUP_EXAM, SampleDto.RESIDUAL_ANALYSIS, SampleDto.RESULT_EXAM) +
 					fluidRowLocs(6,SampleDto.IMMUNOCOMPROMISED_STATUS_SUSPECTED) +
-					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION);
+					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION) +
+					fluidRowLocs(6,SampleDto.FINAL_CLASSIFICATION) +
+					fluidRowLocs(6,SampleDto.FINAL_LAB_RESULTS);
+
 
 
 
@@ -311,6 +314,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		labDetails.setVisible(false);
 		lab.addValueChangeListener(event -> updateLabDetailsVisibility(labDetails, event));
 
+		finalClassificationField = addField(SampleDto.FINAL_CLASSIFICATION, ComboBox.class);
+		finalClassificationField.setVisible(false);
+
 		addField(SampleDto.SPECIMEN_CONDITION, ComboBox.class);
 		addField(SampleDto.NO_TEST_POSSIBLE_REASON, TextField.class);
 		TextArea comment = addField(SampleDto.COMMENT, TextArea.class);
@@ -370,6 +376,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                 case ZIKA:
                     selectAHFTests();
 					break;
+				case MEASLES:
+					handleMeasles();
             }
 		});*/
 	}
