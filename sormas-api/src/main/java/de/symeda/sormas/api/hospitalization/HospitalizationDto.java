@@ -145,7 +145,7 @@ public class HospitalizationDto extends EntityDto {
 	private Date onsetOfSymptomDatetime;
 	private YesNo symptomsOngoing;
 	private DurationHours durationHours;
-	private HospOut selectInpatientOutpatient;
+	private InpatOutpat selectInpatientOutpatient;
 
 
 	public static HospitalizationDto build() {
@@ -529,9 +529,9 @@ public class HospitalizationDto extends EntityDto {
 		this.durationHours = durationHours;
 	}
 
-	public HospOut getSelectInpatientOutpatient() {
+	public InpatOutpat getSelectInpatientOutpatient() {
 	     return selectInpatientOutpatient;}
-	public void setSelectInpatientOutpatient(HospOut selectInpatientOutpatient) {
+	public void setSelectInpatientOutpatient(InpatOutpat selectInpatientOutpatient) {
 	     this.selectInpatientOutpatient = selectInpatientOutpatient;}
 
 }

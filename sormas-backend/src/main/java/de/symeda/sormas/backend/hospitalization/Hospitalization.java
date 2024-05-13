@@ -109,7 +109,7 @@ public class Hospitalization extends AbstractDomainObject {
 	private Date onsetOfSymptomDatetime;
 	private YesNo symptomsOngoing;
 	private DurationHours durationHours;
-	private HospOut selectInpatientOutpatient;
+	private InpatOutpat selectInpatientOutpatient;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getAdmissionDate() {
@@ -538,8 +538,8 @@ public class Hospitalization extends AbstractDomainObject {
 		symptomsSelected = null;
 	}
 
-	public HospOut getSelectInpatientOutpatient() {
+	public InpatOutpat getSelectInpatientOutpatient() {
 		return selectInpatientOutpatient;}
-	public void setSelectInpatientOutpatient(HospOut selectInpatientOutpatient) {
+	public void setSelectInpatientOutpatient(InpatOutpat selectInpatientOutpatient) {
 		this.selectInpatientOutpatient = selectInpatientOutpatient;}
 }
