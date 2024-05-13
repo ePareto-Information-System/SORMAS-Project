@@ -566,7 +566,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			sampleTestDateField.setVisible(false);
 			addField(PathogenTestDto.LAB_LOCATION, TextField.class);
 			//addField(PathogenTestDto.DATE_LAB_RECEIVED_SPECIMEN, DateTimeField.class);
-			addField(PathogenTestDto.SPECIMEN_CONDITION, ComboBox.class);
+			//addField(PathogenTestDto.SPECIMEN_CONDITION, ComboBox.class);
 			DateField datelabResultsSentDistrict = addField(PathogenTestDto.DATE_LAB_RESULTS_SENT_DISTRICT, DateField.class);
 			datelabResultsSentDistrict.setInvalidCommitted(false);
 			DateField dateLabResultsSentClinician = addField(PathogenTestDto.DATE_LAB_RESULTS_SENT_CLINICIAN, DateField.class);
