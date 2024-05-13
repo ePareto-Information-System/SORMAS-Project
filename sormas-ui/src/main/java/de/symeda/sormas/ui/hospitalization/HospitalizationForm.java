@@ -452,8 +452,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		}
 
 		if(caze.getDisease() == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
-			setVisible(true, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW);
-			admittedToHealthFacilityFieldNew.setCaption("In-patient or Out-patient?");
 			dateFirstSeen.setVisible(true);
 			dateFirstSeen.setCaption("Date seen at health facility");
 			addField(HospitalizationDto.SELECT_INPATIENT_OUTPATIENT ,ComboBox.class);

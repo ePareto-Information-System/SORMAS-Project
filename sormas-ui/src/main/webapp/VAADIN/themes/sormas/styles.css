@@ -15636,6 +15636,16 @@ div.v-layout.v-horizontal.v-widget {
 	top: -14px;
 }
 
+.sormas .v-caption-v-captiontext-idsr > .v-captiontext {
+	text-wrap: wrap;
+	position: absolute;
+	top: -35px;
+}
+
+.sormas .v-caption .v-caption-hasdescription-sampledatetimeidsr {
+	word-spacing: 40em;
+}
+
 .sormas .v-button, .sormas .v-link.v-link-button {
 	text-transform: uppercase;
 	border-color: #005A9C;
