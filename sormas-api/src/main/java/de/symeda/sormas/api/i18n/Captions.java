@@ -2114,6 +2114,7 @@ public interface Captions {
 	String PathogenTest_otherNotesAndObservations = "PathogenTest.otherNotesAndObservations";
 	String PathogenTest_dateSurveillanceSentResultsToDistrict = "PathogenTest.dateSurveillanceSentResultsToDistrict";
 	String PathogenTest_laboratoryDateResultsSentDSD = "PathogenTest.laboratoryDateResultsSentDSD";
+	String PathogenTest_virusDetectionGenotypeField = "PathogenTest.virusDetectionGenotypeField";
 	String pathogenTestAdd = "pathogenTestAdd";
 	String pathogenTestCreateNew = "pathogenTestCreateNew";
 	String pathogenTestNewResult = "pathogenTestNewResult";

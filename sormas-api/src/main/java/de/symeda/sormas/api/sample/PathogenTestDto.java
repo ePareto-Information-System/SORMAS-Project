@@ -330,6 +330,7 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private Date sampleTestResultIGGDate;
 	private PosNeg sampleTestResultImmuno;
 	private Date sampleTestResultImmunoDate;
+	private String virusDetectionGenotype;
 
 	public static PathogenTestDto build(SampleDto sample, UserDto currentUser) {
 

@@ -177,9 +177,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private TextField typingIdField;
 	private ComboBox testTypeField;
 
-
-
-
 	private ComboBox diseaseField;
 	private Disease caseDisease;
 	private Disease subDisease;
@@ -220,6 +217,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private ComboBox secondTestedDisease;
 	private ComboBox TestResultForSecondDisease;
 	OptionGroup tickTestField;
+	private TextField virusDetectionGenotypeField;
+	private ComboBox finalClassificationField;
+	private TextArea otherNotesAndObservations;
 
 		public PathogenTestForm(SampleDto sample, boolean create, int caseSampleCount, boolean isPseudonymized) {
 		super(
@@ -240,9 +240,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			hideValidationUntilNextCommit();
 		}
 	}
-	private TextField virusDetectionGenotypeField;
-	private ComboBox finalClassificationField;
-	private TextArea otherNotesAndObservations;
 
 
 	public PathogenTestForm(AbstractSampleForm sampleForm, boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction) {
@@ -877,6 +874,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		if(caseDisease == Disease.YELLOW_FEVER){
 			datelabResultsSentDistrict.setVisible(true);
 			dateDistrictReceivedLabResults.setVisible(true);
+			virusDetectionGenotypeField.setVisible(true);
 		}
 
 		FieldHelper.setVisibleWhen(
