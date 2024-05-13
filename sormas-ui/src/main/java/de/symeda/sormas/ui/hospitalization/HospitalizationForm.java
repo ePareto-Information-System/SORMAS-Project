@@ -439,18 +439,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			setVisible(true, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, HospitalizationDto.ADMISSION_DATE, HospitalizationDto.HOSPITAL_RECORD_NUMBER);
 		}
 
-		if (caze.getDisease() == Disease.GUINEA_WORM) {
-			hideAllFields();
-			//show discharge date
-			setVisible(true, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.ADMISSION_DATE);
-		}
-
-		//Cholera
-		if (caze.getDisease() == Disease.CHOLERA){
-			hideAllFields();
-			setVisible(true, HospitalizationDto.HOSPITAL_RECORD_NUMBER);
-		}
-
 		if(caze.getDisease() == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
 			dateFirstSeen.setVisible(true);
 			dateFirstSeen.setCaption("Date seen at health facility");

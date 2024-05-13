@@ -385,18 +385,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				case AHF:
 					addressForm.handleAHF();
 					break;
-				case CORONAVIRUS:
-					addressForm.handleCoronavirus();
-					break;
-				case GUINEA_WORM:
-					addressForm.setOnlyUnknownForGuineaWorm();
-					break;
-				case CHOLERA:
-					addressForm.handleForCholera();
-					break;
-				case NEONATAL_TETANUS:
-					addressForm.handleVisibilityForNNT();
-					break;
 				default:
 					break;
 			}

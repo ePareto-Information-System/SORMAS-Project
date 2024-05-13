@@ -108,9 +108,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private OptionGroup laboratorySampleContainerReceived;
 	private TextField laboratorySampleContainerOther;
 	private NullableOptionGroup laboratoryAppearanceOfCSF;
-	private DateField shipmentDate;
-	private TextField shipmentDetails;
-	private CheckBox check;
 
 	//@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
@@ -532,51 +529,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				Arrays.asList(SampleDto.RECEIVED_DATE),
 				true);
 		}
-
-        sampleMaterialComboBox = addField(SampleDto.SAMPLE_MATERIAL);
-
-        UserReferenceDto reportingUser = getValue().getReportingUser();
-        if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
-                || (reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid()))) {
-            FieldHelper.setVisibleWhen(
-                    getFieldGroup(),
-                    Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
-                    SampleDto.SHIPPED,
-                    Arrays.asList(true),
-                    true);
-            FieldHelper.setEnabledWhen(
-                    getFieldGroup(),
-                    shippedField,
-                    Arrays.asList(true),
-                    Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
-                    true);
-            FieldHelper.setRequiredWhen(
-                    getFieldGroup(),
-                    SampleDto.SAMPLE_PURPOSE,
-                    Arrays.asList(SampleDto.LAB),
-                    Arrays.asList(SamplePurpose.EXTERNAL, null));
-
-
-        } else {
-            getField(SampleDto.SAMPLE_DATE_TIME).setEnabled(false);
-            getField(SampleDto.SAMPLE_MATERIAL).setEnabled(false);
-            getField(SampleDto.SAMPLE_MATERIAL_TEXT).setEnabled(false);
-            getField(SampleDto.LAB).setEnabled(false);
-            shippedField.setEnabled(false);
-            getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
-            getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
-            getField(SampleDto.SAMPLE_SOURCE).setEnabled(false);
-        }
-
-        StringBuilder reportInfoText = new StringBuilder().append(I18nProperties.getString(Strings.reportedOn))
-                .append(" ")
-                .append(DateFormatHelper.formatLocalDateTime(getValue().getReportDateTime()));
-        if (reportingUser != null) {
-            reportInfoText.append(" ").append(I18nProperties.getString(Strings.by)).append(" ").append(reportingUser.toString());
-        }
-        Label reportInfoLabel = new Label(reportInfoText.toString());
-        reportInfoLabel.setEnabled(false);
-        getContent().addComponent(reportInfoLabel, REPORT_INFO_LABEL_LOC);
 
 		hidePropertiesVisibility();
 
@@ -1182,8 +1134,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.PLASMA, SampleMaterial.SERUM, SampleMaterial.ASPIRATE, SampleMaterial.CEREBROSPINAL_FLUID, SampleMaterial.PUS, SampleMaterial.SALIVA, SampleMaterial.BIOPSY, SampleMaterial.STOOL, SampleMaterial.URETHRAL, SampleMaterial.URINE, SampleMaterial.SPUTUM, SampleMaterial.FOOD_WATER);
 		FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
 
-		shipmentDate.setVisible(false);
-		shipmentDetails.setVisible(false);
 		suspectedDisease.setRequired(true);
 		sampleDateField.setRequired(true);
 		laboratoryNumber.setVisible(false);

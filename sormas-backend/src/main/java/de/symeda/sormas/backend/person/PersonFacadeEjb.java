@@ -273,7 +273,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setSex(source.getSex());
 
 		target.setPresentCondition(source.getPresentCondition());
-		target.setMarriageStatus(source.getMarriageStatus());
+		target.setMaritalStatus(source.getMaritalStatus());
 		target.setTelNumber(source.getTelNumber());
 		target.setApplicable(source.getApplicable());
 		target.setBirthdateDD(source.getBirthdateDD());
@@ -1019,11 +1019,6 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		return true;
 	}
 
-	@Override
-	public PersonDto toDto(Person source) {
-		return toPersonDto(source);
-	}
-
 	public static PersonDto toPersonDto(Person source) {
 		if (source == null) {
 			return null;
@@ -1040,6 +1035,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setSex(source.getSex());
 
 		target.setPresentCondition(source.getPresentCondition());
+//		target.setMarriageStatus(source.getMarriageStatus());
 		target.setBirthdateDD(source.getBirthdateDD());
 		target.setBirthdateMM(source.getBirthdateMM());
 		target.setBirthdateYYYY(source.getBirthdateYYYY());

@@ -219,7 +219,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	@Override
 	protected void addFields() {
 
-		CaseDataDto suspectedDisease = FacadeProvider.getCaseFacade().getCaseDataByUuid(sample.getSuspectedDisease().name());
+		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(sample.getAssociatedCase().getUuid());
 		caseDisease = caseDataDto.getDisease();
 
 		pathogenTestHeadingLabel = new Label();
