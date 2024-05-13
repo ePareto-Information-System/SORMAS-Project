@@ -1248,7 +1248,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setDateSurveillanceSentResultsToDistrict(source.getDateSurveillanceSentResultsToDistrict());
 		target.setDateFormSentToHigherLevel(source.getDateFormSentToHigherLevel());
 		target.setPersonCompletingForm(source.getPersonCompletingForm());
-
+		target.setFinalClassification(source.getFinalClassification());
 
 
 		if (source.getSormasToSormasOriginInfo() != null) {
@@ -1530,7 +1530,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setDateSurveillanceSentResultsToDistrict(source.getDateSurveillanceSentResultsToDistrict());
 		target.setDateFormSentToHigherLevel(source.getDateFormSentToHigherLevel());
 		target.setPersonCompletingForm(source.getPersonCompletingForm());
-
+		target.setFinalClassification(source.getFinalClassification());
 
 		return target;
 	}

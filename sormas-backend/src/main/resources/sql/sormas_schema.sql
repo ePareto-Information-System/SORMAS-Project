@@ -14201,7 +14201,10 @@ ALTER TABLE symptoms ADD COLUMN historyoftraveloutsidethevillagetowndistrict var
 ALTER TABLE symptoms ADD COLUMN placeOfExposureMeaslesRubella varchar(255) NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (634, 'Added column to historyOfTravelOutsideTheVillageTownDistrict, placeOfExposureMeaslesRubella to symptoms');
 
--- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ALTER TABLE pathogentest ADD COLUMN virusDetectionGenotype varchar(255) NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (635, 'Added column to pathogentest to samples');
+
+ALTER TABLE samples ADD COLUMN finalClassification varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (636, 'Added column to finalClassification to samples');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

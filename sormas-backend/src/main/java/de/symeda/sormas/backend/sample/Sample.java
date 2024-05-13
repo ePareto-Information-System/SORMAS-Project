@@ -183,6 +183,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public static final String DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT = "dateSurveillanceSentResultsToDistrict";
 	public static final String DATE_FORM_SENT_TO_HIGHER_LEVEL = "dateFormSentToHigherLevel";
 	public static final String PERSON_COMPLETING_FORM = "personCompletingForm";
+	public static final String FINAL_CLASSIFICATION = "finalClassification";
 
 	private Case associatedCase;
 	private Contact associatedContact;
@@ -361,7 +362,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private Date dateSurveillanceSentResultsToDistrict;
 	private Date dateFormSentToHigherLevel;
 	private String personCompletingForm;
-	private String virusDetectionGenotype;
+	private FinalClassification finalClassification;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -1816,5 +1817,13 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setPersonCompletingForm(String personCompletingForm) {
 		this.personCompletingForm = personCompletingForm;
+	}
+
+	public FinalClassification getFinalClassification() {
+		return finalClassification;
+	}
+
+	public void setFinalClassification(FinalClassification finalClassification) {
+		this.finalClassification = finalClassification;
 	}
 }

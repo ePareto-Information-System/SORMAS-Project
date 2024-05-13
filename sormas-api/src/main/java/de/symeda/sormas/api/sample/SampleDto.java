@@ -207,6 +207,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT = "dateSurveillanceSentResultsToDistrict";
 	public static final String DATE_FORM_SENT_TO_HIGHER_LEVEL = "dateFormSentToHigherLevel";
 	public static final String PERSON_COMPLETING_FORM = "personCompletingForm";
+	public static final String FINAL_CLASSIFICATION = "finalClassification";
 
 
 	private CaseReferenceDto associatedCase;
@@ -374,6 +375,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private Date dateSurveillanceSentResultsToDistrict;
 	private Date dateFormSentToHigherLevel;
 	private String personCompletingForm;
+	private FinalClassification finalClassification;
 
 	private Date dateFirstSpecimen;
 	private Date dateSecondSpecimen;
@@ -1852,5 +1854,13 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 	public void setPersonCompletingForm(String personCompletingForm) {
 		this.personCompletingForm = personCompletingForm;
+	}
+
+	public FinalClassification getFinalClassification() {
+		return finalClassification;
+	}
+
+	public void setFinalClassification(FinalClassification finalClassification) {
+		this.finalClassification = finalClassification;
 	}
 }
