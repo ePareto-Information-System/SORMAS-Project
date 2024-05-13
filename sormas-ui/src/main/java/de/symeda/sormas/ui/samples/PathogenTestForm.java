@@ -83,9 +83,11 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			loc(PATHOGEN_TEST_HEADING_LOC) +
 			fluidRowLocs(PathogenTestDto.REPORT_DATE, PathogenTestDto.VIA_LIMS) +
 			fluidRowLocs(PathogenTestDto.EXTERNAL_ID, PathogenTestDto.EXTERNAL_ORDER_ID) +
+			fluidRowLocs(PathogenTestDto.TEST_TYPE, PathogenTestDto.TEST_TYPE_TEXT) +
 			fluidRowLocs(PathogenTestDto.PCR_TEST_SPECIFICATION, "") +
 			fluidRowLocs(PathogenTestDto.TESTED_DISEASE, PathogenTestDto.TESTED_DISEASE_DETAILS) +
 			fluidRowLocs(PathogenTestDto.TEST_TYPE, PathogenTestDto.TEST_TYPE_TEXT) +
+			fluidRowLocs(6, PathogenTestDto.VIRUS_DETECTION_GENOTYPE) +
 			fluidRowLocs(PathogenTestDto.TESTED_DISEASE_VARIANT, PathogenTestDto.TESTED_DISEASE_VARIANT_DETAILS) +
 			fluidRowLocs(PathogenTestDto.TYPING_ID, "") +
 			fluidRowLocs(6,PathogenTestDto.TEST_DATE_TIME) +
@@ -208,6 +210,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			hideValidationUntilNextCommit();
 		}
 	}
+	private TextField virusDetectionGenotypeField;
 
 	public PathogenTestForm(AbstractSampleForm sampleForm, boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction) {
 		this(create, caseSampleCount, isPseudonymized, inJurisdiction);
@@ -277,7 +280,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		}
 
 		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(sample.getAssociatedCase().getUuid());
-		CaseDataDto suspectedDisease = FacadeProvider.getCaseFacade().getCaseDataByUuid(sample.getSuspectedDisease().name());
+//		CaseDataDto suspectedDisease = FacadeProvider.getCaseFacade().getCaseDataByUuid(sample.getSuspectedDisease().name());
 		caseDisease = caseDataDto.getDisease();
 
 		pathogenTestHeadingLabel = new Label();
@@ -352,6 +355,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		addField(PathogenTestDto.TESTED_DISEASE_DETAILS, TextField.class);
 		TextField diseaseVariantDetailsField = addField(PathogenTestDto.TESTED_DISEASE_VARIANT_DETAILS, TextField.class);
 		diseaseVariantDetailsField.setVisible(false);
+
+		virusDetectionGenotypeField = addField(PathogenTestDto.VIRUS_DETECTION_GENOTYPE, TextField.class);
+		virusDetectionGenotypeField.setVisible(false);
 
 		ComboBox testResultField = addField(PathogenTestDto.TEST_RESULT, ComboBox.class);
 		testResultField.removeItem(PathogenTestResultType.NOT_DONE);
@@ -464,7 +470,13 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 					FieldVisibilityCheckers.withDisease(disease),
 					PathogenTestType.class);
 
-			if (disease == Disease.MEASLES || Disease.AHF_DISEASES.contains(disease)) {
+			if (disease == Disease.MEASLES) {
+				List<PathogenTestType> measelesPathogenTests = PathogenTestType.getMeaslesTestTypes();
+				Arrays.stream(PathogenTestType.values())
+						.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
+						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
+				virusDetectionGenotypeField.setVisible(true);
+			} else if (Disease.AHF_DISEASES.contains(disease)) {
 				List<PathogenTestType> ahfMeaselesPathogenTests = PathogenTestType.getMeaslesTestTypes();
 				Arrays.stream(PathogenTestType.values())
 						.filter(pathogenTestType -> !ahfMeaselesPathogenTests.contains(pathogenTestType))
