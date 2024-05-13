@@ -88,6 +88,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private DateField dateSampleSentToLab;
 	private DateField laboratoryDateResultsSentDSD;
 	private DateField dateFormReceivedAtDistrictField;
+	private DateField dateSurveillanceSentResultsToDistrict;
+	private DateField dateFormSentToHigherLevel;
+	private TextField personCompletingForm;
 
 	//@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
@@ -177,6 +180,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.LABORATORY_OBSERVATIONS) +
 					fluidRowLocs(SampleDto.LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY, SampleDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
 					fluidRowLocs(SampleDto.LABORATORY_FINAL_CLASSIFICATION) +
+					fluidRowLocs(SampleDto.DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT, SampleDto.DATE_FORM_SENT_TO_HIGHER_LEVEL, SampleDto.PERSON_COMPLETING_FORM) +
 
 
 					//AFP
@@ -199,6 +203,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	}
 
 	protected void addCommonFields() {
+
+//	-- dateSurveillanceSentResultsToDistrict, dateFormSentToHigherLevel, personCompletingForm
+		dateSurveillanceSentResultsToDistrict = addField(SampleDto.DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT, DateField.class);
+		dateFormSentToHigherLevel = addField(SampleDto.DATE_FORM_SENT_TO_HIGHER_LEVEL, DateField.class);
+		personCompletingForm = addField(SampleDto.PERSON_COMPLETING_FORM, TextField.class);
+		setVisible(false, SampleDto.DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT, SampleDto.DATE_FORM_SENT_TO_HIGHER_LEVEL, SampleDto.PERSON_COMPLETING_FORM);
 
 		final NullableOptionGroup samplePurpose = addField(SampleDto.SAMPLE_PURPOSE, NullableOptionGroup.class);
 		addField(SampleDto.UUID).setReadOnly(true);
@@ -959,6 +969,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			laboratoryDateResultsSentDSD.setVisible(true);
 			setVisible(true, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT);
 			dateFormReceivedAtDistrictField.setVisible(true);
+
+		dateSurveillanceSentResultsToDistrict.setVisible(true);
+		dateFormSentToHigherLevel.setVisible(true);
+		personCompletingForm.setVisible(true);
 
 
 	}

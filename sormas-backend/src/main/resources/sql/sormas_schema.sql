@@ -12822,4 +12822,11 @@ ALTER TABLE symptoms ADD COLUMN redeyes varchar(255) NULL;
 ALTER TABLE symptoms ADD COLUMN generalizedrash varchar(255) NULL;
 ALTER TABLE symptoms ADD COLUMN swollenlymphnodesbehindears varchar(255) NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (532, 'Added column to redEyes, generalizedRash, swollenLymphNodesBehindEars to symptoms');
+
+
+ALTER TABLE samples ADD COLUMN datesurveillancesentresultstodistrict date;
+ALTER TABLE samples ADD COLUMN dateformsenttohigherlevel date;
+ALTER TABLE samples ADD COLUMN personcompletingform varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (533, 'Added column to dateSurveillanceSentResultsToDistrict, dateFormSentToHigherLevel, personCompletingForm to samples');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

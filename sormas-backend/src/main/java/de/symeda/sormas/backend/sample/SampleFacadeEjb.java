@@ -928,6 +928,9 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setFinalLabResults(source.getFinalLabResults());
 		target.setImmunocompromisedStatusSuspected(source.getImmunocompromisedStatusSuspected());
 		target.setAfpFinalClassification(source.getAfpFinalClassification());
+		target.setDateSurveillanceSentResultsToDistrict(source.getDateSurveillanceSentResultsToDistrict());
+		target.setDateFormSentToHigherLevel(source.getDateFormSentToHigherLevel());
+		target.setPersonCompletingForm(source.getPersonCompletingForm());
 
 
 
@@ -1164,7 +1167,9 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setFinalLabResults(source.getFinalLabResults());
 		target.setImmunocompromisedStatusSuspected(source.getImmunocompromisedStatusSuspected());
 		target.setAfpFinalClassification(source.getAfpFinalClassification());
-
+		target.setDateSurveillanceSentResultsToDistrict(source.getDateSurveillanceSentResultsToDistrict());
+		target.setDateFormSentToHigherLevel(source.getDateFormSentToHigherLevel());
+		target.setPersonCompletingForm(source.getPersonCompletingForm());
 
 
 		return target;

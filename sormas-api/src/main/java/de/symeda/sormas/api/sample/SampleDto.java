@@ -163,6 +163,9 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String FINAL_LAB_RESULTS = "finalLabResults";
 	public static final String IMMUNOCOMPROMISED_STATUS_SUSPECTED = "immunocompromisedStatusSuspected";
 	public static final String AFP_FINAL_CLASSIFICATION = "afpFinalClassification";
+	public static final String DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT = "dateSurveillanceSentResultsToDistrict";
+	public static final String DATE_FORM_SENT_TO_HIGHER_LEVEL = "dateFormSentToHigherLevel";
+	public static final String PERSON_COMPLETING_FORM = "personCompletingForm";
 
 
 	private CaseReferenceDto associatedCase;
@@ -321,6 +324,9 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private PosNeg finalLabResults;
 	private YesNoUnknown immunocompromisedStatusSuspected;
 	private AFPClassification afpFinalClassification;
+	private Date dateSurveillanceSentResultsToDistrict;
+	private Date dateFormSentToHigherLevel;
+	private String personCompletingForm;
 
 
 
@@ -1368,5 +1374,29 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 	public void setAfpFinalClassification(AFPClassification afpFinalClassification) {
 		this.afpFinalClassification = afpFinalClassification;
+	}
+
+	public Date getDateSurveillanceSentResultsToDistrict() {
+		return dateSurveillanceSentResultsToDistrict;
+	}
+
+	public void setDateSurveillanceSentResultsToDistrict(Date dateSurveillanceSentResultsToDistrict) {
+		this.dateSurveillanceSentResultsToDistrict = dateSurveillanceSentResultsToDistrict;
+	}
+
+	public Date getDateFormSentToHigherLevel() {
+		return dateFormSentToHigherLevel;
+	}
+
+	public void setDateFormSentToHigherLevel(Date dateFormSentToHigherLevel) {
+		this.dateFormSentToHigherLevel = dateFormSentToHigherLevel;
+	}
+
+	public String getPersonCompletingForm() {
+		return personCompletingForm;
+	}
+
+	public void setPersonCompletingForm(String personCompletingForm) {
+		this.personCompletingForm = personCompletingForm;
 	}
 }

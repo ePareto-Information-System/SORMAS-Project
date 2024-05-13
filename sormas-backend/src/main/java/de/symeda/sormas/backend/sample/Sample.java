@@ -160,7 +160,9 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public static final String LABORATORY_DATE_RESULTS_SENT_DSD = "laboratoryDateResultsSentDSD";
 	public static final String LABORATORY_FINAL_CLASSIFICATION = "laboratoryFinalClassification";
 	public static final String LABORATORY_TYPE = "laboratoryType";
-
+	public static final String DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT = "dateSurveillanceSentResultsToDistrict";
+	public static final String DATE_FORM_SENT_TO_HIGHER_LEVEL = "dateFormSentToHigherLevel";
+	public static final String PERSON_COMPLETING_FORM = "personCompletingForm";
 
 	private Case associatedCase;
 	private Contact associatedContact;
@@ -290,6 +292,9 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private PosNeg finalLabResults;
 	private YesNoUnknown immunocompromisedStatusSuspected;
 	private AFPClassification afpFinalClassification;
+	private Date dateSurveillanceSentResultsToDistrict;
+	private Date dateFormSentToHigherLevel;
+	private String personCompletingForm;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -1368,5 +1373,29 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setAfpFinalClassification(AFPClassification afpFinalClassification) {
 		this.afpFinalClassification = afpFinalClassification;
+	}
+
+	public Date getDateSurveillanceSentResultsToDistrict() {
+		return dateSurveillanceSentResultsToDistrict;
+	}
+
+	public void setDateSurveillanceSentResultsToDistrict(Date dateSurveillanceSentResultsToDistrict) {
+		this.dateSurveillanceSentResultsToDistrict = dateSurveillanceSentResultsToDistrict;
+	}
+
+	public Date getDateFormSentToHigherLevel() {
+		return dateFormSentToHigherLevel;
+	}
+
+	public void setDateFormSentToHigherLevel(Date dateFormSentToHigherLevel) {
+		this.dateFormSentToHigherLevel = dateFormSentToHigherLevel;
+	}
+
+	public String getPersonCompletingForm() {
+		return personCompletingForm;
+	}
+
+	public void setPersonCompletingForm(String personCompletingForm) {
+		this.personCompletingForm = personCompletingForm;
 	}
 }
