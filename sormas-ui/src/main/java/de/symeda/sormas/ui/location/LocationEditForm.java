@@ -983,7 +983,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	}
 	
 	public void handleMeasles() {
-			setVisible(false, LocationDto.STREET, LocationDto.HOUSE_NUMBER);
+			setVisible(false, LocationDto.STREET, LocationDto.HOUSE_NUMBER, LocationDto.LOCALITY);
 			setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE, LocationDto.LAT_LON_ACCURACY, LocationDto.LAND_MARK, LocationDto.COMMUNITY, LocationDto.DISTRICT, LocationDto.REGION, LocationDto.CITY);
 			additionalInformationField.setCaption("Address (Location)");
 			areaType.setVisible(true);

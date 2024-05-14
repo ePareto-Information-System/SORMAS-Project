@@ -245,12 +245,6 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		NullableOptionGroup ogContactWithSourceCaseKnown = addField(EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN, NullableOptionGroup.class);
 		NullableOptionGroup ogchildComeInContactWithSymptoms = addField(EpiDataDto.CHILD_COME_IN_CONTACT_WITH_SYMPTOMS, NullableOptionGroup.class);
 		ogchildComeInContactWithSymptoms.setVisible(false);
-		if (disease == Disease.MEASLES) {
-			ogchildComeInContactWithSymptoms.setVisible(true);
-			setVisible(false, EpiDataDto.EXPOSURES);
-			setVisible(false, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, EpiDataDto.LARGE_OUTBREAKS_AREA, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN, EpiDataDto.CHILD_COME_IN_CONTACT_WITH_SYMPTOMS, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN);
-
-		}
 		
 		addField(EpiDataDto.EXPOSED_TO_RISK_FACTOR, OptionGroup.class);
 		addField(EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE, ComboBox.class);
@@ -430,7 +424,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		}
 
 		if(disease == Disease.MEASLES) {
-			setVisible(false, EpiDataDto.EXPOSURES, EpiDataDto.EXPOSURE_DETAILS_KNOWN);
+			hideAllFields();
 		}
 		if (diseaseCSMCheck()) {
 			recentTravelOutbreak.setVisible(false);

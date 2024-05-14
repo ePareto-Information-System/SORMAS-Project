@@ -2459,11 +2459,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 
 
-	@Diseases({
-			MEASLES})
-	@Outbreaks
-	@HideForCountries
-	@SymptomGrouping
 	private String placeOfExposureMeaslesRubella;
 
 	@Diseases({

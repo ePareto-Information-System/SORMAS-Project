@@ -161,6 +161,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	public static final String CASE_REFER_POINT_OF_ENTRY_BTN_LOC = "caseReferFromPointOfEntryBtnLoc";
 	private static final String INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC = "investigateIntoRiskFactorsNavigationLink";
 	NullableOptionGroup vaccinatedByCardOrHistory;
+	private HealthConditionsForm healthConditionsField;
 
 	//@formatter:off
 	private static final String MAIN_HTML_LAYOUT =
@@ -1427,7 +1428,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		}*/
 		if(disease != Disease.MONKEYPOX) {
 
-			HealthConditionsForm healthConditionsField = addField(CaseDataDto.HEALTH_CONDITIONS, HealthConditionsForm.class);
+			healthConditionsField = addField(CaseDataDto.HEALTH_CONDITIONS, HealthConditionsForm.class);
 			healthConditionsField.setVisible(false);
 
 			List<String> medicalInformationFields;
@@ -1685,6 +1686,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 							.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccineType, numberOfDoses, cardDateField, secondVaccinationDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
 				}
 
+				if (disease == Disease.MEASLES) {
+						FieldHelper.setVisibleWhen(vaccinationStatus, Arrays.asList(numberOfDoses, vaccinationRoutine, lastVaccinationDate), Arrays.asList(VaccinationStatus.VACCINATED), true);
+					}
+
 				//measles
 				if (disease == Disease.MEASLES) {
 					FieldHelper.setEnabledWhen(vaccinationStatus, Arrays.asList(VaccinationStatus.VACCINATED), Collections.singletonList(
@@ -1692,6 +1697,29 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					), false);
 
 					setVaccinatedByCardOrHistoryVisibility();
+
+					healthConditionsField.setVisible(false);
+					internaltoken.setVisible(false);
+					getFieldGroup().getField(CaseDataDto.PREGNANT).setVisible(false);
+					getFieldGroup().getField(CaseDataDto.POSTPARTUM).setVisible(false);
+					healthConditionsField.setVisible(false);
+					surveillanceOfficerField.setVisible(false);
+					externalTokenField.setVisible(false);
+					quarantine.setVisible(false);
+					tfReportLat.setVisible(true);
+					tfReportLon.setVisible(true);
+					tfReportAccuracy.setVisible(true);
+					investigationstatus.setVisible(true);
+
+					//get the number of doses field
+					if (getContent().getComponent(CaseDataDto.NUMBER_OF_DOSES) == null) {
+						numberOfDoses = addField(CaseDataDto.NUMBER_OF_DOSES, TextField.class);
+					}
+
+					//update outcome value alive,dead,unknown using the outcome field and updateEnumData method
+					FieldHelper.updateEnumData(outcome, CaseOutcome.getMeaslesOutcomes());
+					setVisible(true, CaseDataDto.DISTRICT_LEVEL_DATE, CaseDataDto.INVESTIGATED_DATE, CaseDataDto.NOTIFIED_BY);
+					setVisible(false, CaseDataDto.CLINICAL_CONFIRMATION, CaseDataDto.EPIDEMIOLOGICAL_CONFIRMATION, CaseDataDto.LABORATORY_DIAGNOSTIC_CONFIRMATION);
 				}
 
 				if (CaseDataDto.HOSPITALIZATION == null) {

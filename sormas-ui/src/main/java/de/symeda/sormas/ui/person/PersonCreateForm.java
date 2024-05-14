@@ -86,6 +86,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	private final boolean showPresentCondition;
 	private final boolean showSymptomsOnsetDate;
 	private final boolean showPersonSearchButton;
+	private ComboBox presentCondition;
 
 	private static final String HTML_LAYOUT =
 		"%s" + fluidRow(fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD), fluidRowLocs(PersonDto.SEX))
@@ -197,7 +198,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		addField(PersonDto.PASSPORT_NUMBER, TextField.class);
 		addField(PersonDto.NATIONAL_HEALTH_ID, TextField.class);
 
-		ComboBox presentCondition = addField(PersonDto.PRESENT_CONDITION, ComboBox.class);
+		presentCondition = addField(PersonDto.PRESENT_CONDITION, ComboBox.class);
 		presentCondition.setVisible(showPresentCondition);
 		FieldHelper.addSoftRequiredStyle(presentCondition, sexComboBox);
 
@@ -518,6 +519,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 			hidePersonalEmail();
 		} else if (disease == Disease.MEASLES) {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);
+			presentCondition.setVisible(false);
 			handleMeasles();
 
 		} else if (disease == Disease.CORONAVIRUS) {

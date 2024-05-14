@@ -305,7 +305,11 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		previousHospitalizationsHeadingLabel.setVisible(false);
 		if (caze.getDisease() == Disease.MEASLES) {
 			hideAllFields();
-			setVisible(true, HospitalizationDto.NOTIFY_DISTRICT_DATE, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY, HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE);
+
+			if (getContent().getComponent(HospitalizationDto.SELECT_INPATIENT_OUTPATIENT) == null) {
+				addField(HospitalizationDto.SELECT_INPATIENT_OUTPATIENT, ComboBox.class);
+			}
+			setVisible(true, HospitalizationDto.NOTIFY_DISTRICT_DATE, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY);
 		}
 
 		if(caze.getDisease() == Disease.AFP){
@@ -497,13 +501,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			districtField.setVisible(true);
 			intensiveCareUnit.setVisible(true);
 
-		}
-
-		if (caze.getDisease() == Disease.MEASLES) {
-			setVisible(false, HospitalizationDto.ISOLATED, HospitalizationDto.INTENSIVE_CARE_UNIT, HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION);
-			admissionDateField.setVisible(true);
-			hospitalRecordNumber.setVisible(true);
-			setVisible(true, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY, HospitalizationDto.WAS_PATIENT_ADMITTED);
 		}
 
 		if (caze.getDisease() == Disease.CORONAVIRUS){

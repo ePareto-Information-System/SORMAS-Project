@@ -1280,11 +1280,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			Arrays.stream(PathogenTestType.values())
 					.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
 					.forEach(pathogenTestType -> requestedPathogenTestsField.removeItem(pathogenTestType));
-			setVisible(false, SampleDto.FIELD_SAMPLE_ID, SampleDto.DISEASE, SampleDto.SAMPLING_REASON, SampleDto.IPSAMPLESENT, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLE_TESTS);
+			setVisible(false, SampleDto.FIELD_SAMPLE_ID, SampleDto.DISEASE, SampleDto.SAMPLING_REASON, SampleDto.IPSAMPLESENT, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLE_TESTS, SampleDto.LAB_LOCATION, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.SUSPECTED_DISEASE, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN);
 			laboratoryDateResultsSentDSD.setVisible(true);
 			setVisible(true, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT);
 			dateFormReceivedAtDistrictField.setVisible(true);
-			dateFormSentToDistrict.setVisible(true);
+			dateFormSentToDistrict.setVisible(false);
 
 		dateSurveillanceSentResultsToDistrict.setVisible(true);
 		dateFormSentToHigherLevel.setVisible(true);

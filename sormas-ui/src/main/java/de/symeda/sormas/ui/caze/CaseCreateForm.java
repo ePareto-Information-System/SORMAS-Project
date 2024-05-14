@@ -586,6 +586,22 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				personCreateForm.showPresentCondition();
 			}
 
+			if (diseaseField.getValue() != null) {
+				switch ((Disease) diseaseField.getValue()) {
+					case MEASLES:
+						personCreateForm.handleMeasles();
+						break;
+					case CHOLERA:
+						personCreateForm.hideFieldsForCholera();
+					case NEONATAL_TETANUS:
+						personCreateForm.handleVisibilityForNNT();
+						break;
+					default:
+						break;
+
+				}
+			}
+
 			if (diseaseField.getValue() != null && diseaseField.getValue() == Disease.MONKEYPOX) {
 				personCreateForm.hideFields();
 				reportDate.setVisible(false);

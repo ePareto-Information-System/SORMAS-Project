@@ -161,7 +161,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(AGE_AT_DEATH_DAYS, AGE_AT_ONSET_DAYS) +
 					fluidRowLocs(6,OTHER_COMPLICATIONS) +
 					fluidRowLocs(6,OTHER_COMPLICATIONS_TEXT) +
-					fluidRowLocs(9, PLACE_OF_EXPOSURE_MEASLES_RUBELLA) +
 					createSymptomGroupLayout(SymptomGroup.RESPIRATORY, RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.CARDIOVASCULAR, CARDIOVASCULAR_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					//createSymptomGroupLayout(SymptomGroup.GASTROINTESTINAL, GASTROINTESTINAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
@@ -178,7 +177,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6,SITE_OF_PARALYSIS) +
 					fluidRowLocs(PARALYSED_LIMB_SENSITIVE_TO_PAIN, INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
 					fluidRowLocs(RIGHT_INJECTION_SITE, LEFT_INJECTION_SITE) +
-
+					fluidRowLocs( PLACE_OF_EXPOSURE_MEASLES_RUBELLA) +
 					fluidRowLocs(PATIENT_ILL_LOCATION, SYMPTOMS_COMMENTS) +
 					fluidRowLocs(6, ONSET_SYMPTOM) +
 					fluidRowLocs(6, ONSET_DATE) +
@@ -570,7 +569,12 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			CASE_DETECTED_BEFORE_WORM_EMERGENCE,
 			DIARRHOEA,
 			ABDOMINAL_CRAMPS,
-			HEADACHES);
+			HEADACHES,
+			GENERALIZED_RASH,
+			RED_EYES,
+			SWOLLEN_LYMPH_NODES_BEHIND_EARS,
+			HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT
+			);
 
 		TextField babyAgeAtDeath = addField(AGE_AT_DEATH_DAYS, TextField.class);
 		TextField ageOfOnsetDays =  addField(AGE_AT_ONSET_DAYS, TextField.class);
@@ -581,6 +585,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			I18nProperties.getPrefixDescription(I18N_PREFIX, SYMPTOMS_COMMENTS, "") + "\n" + I18nProperties.getDescription(Descriptions.descGdpr));
 
 		addField(LESIONS_ONSET_DATE, DateField.class);
+
+		addField(SymptomsDto.PLACE_OF_EXPOSURE_MEASLES_RUBELLA, TextField.class).setVisible(false);
 
 
 		// complications
@@ -803,7 +809,11 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			CASE_DETECTED_BEFORE_WORM_EMERGENCE,
 			DIARRHOEA,
 			ABDOMINAL_CRAMPS,
-			HEADACHES);
+			HEADACHES,
+			GENERALIZED_RASH,
+			HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT,
+			RED_EYES,
+			SWOLLEN_LYMPH_NODES_BEHIND_EARS);
 
 		Label symptomsHeadingLabel = new Label(I18nProperties.getString(Strings.headingSymptoms));
 		symptomsHeadingLabel.addStyleName(H3);
@@ -860,9 +870,11 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		FieldHelper.setVisibleWhen(getFieldGroup(), lesionsTypeIds, RASHES, Arrays.asList(SymptomState.YES), true);
 
-		FieldHelper.setVisibleWhen(getFieldGroup(), lesionsLocationFieldIds, RASHES, Arrays.asList(SymptomState.YES), true);
-
-		FieldHelper.setVisibleWhen(getFieldGroup(), LESIONS_ONSET_DATE, RASHES, Arrays.asList(SymptomState.YES), true);
+		if (disease != Disease.MEASLES) {
+			FieldHelper.setVisibleWhen(getFieldGroup(), lesionsLocationFieldIds, RASHES, Arrays.asList(SymptomState.YES), true);
+		} else {
+			FieldHelper.setVisibleWhen(getFieldGroup(), LESIONS_ONSET_DATE, GENERALIZED_RASH, Arrays.asList(SymptomState.YES), true);
+		}
 
 		FieldHelper.setVisibleWhen(getFieldGroup(), CONGENITAL_HEART_DISEASE_TYPE, CONGENITAL_HEART_DISEASE, Arrays.asList(SymptomState.YES), true);
 		FieldHelper.setVisibleWhen(
@@ -1087,11 +1099,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		}
 
 		if(disease == Disease.MEASLES) {
-			symptomsHide();
 			addField(DATE_OF_ONSET, DateField.class);
-			setVisible(true, SKIN_RASH, FEVER, COUGH,RUNNY_NOSE, CONJUNCTIVITIS, KOPLIKS_SPOTS, NON_VASCULAR);
-
-			setVisible(false, ALTERED_CONSCIOUSNESS, CONFUSED_DISORIENTED, HEMORRHAGIC_SYNDROME, HYPERGLYCEMIA, OTHER_COMPLICATIONS_TEXT, OTHER_COMPLICATIONS, SEIZURES);
+			setVisible(true, FEVER, GENERALIZED_RASH, COUGH, RUNNY_NOSE, RED_EYES, SWOLLEN_LYMPH_NODES_BEHIND_EARS, JOINT_PAIN, PLACE_OF_EXPOSURE_MEASLES_RUBELLA);
+			setVisible(false, SYMPTOMS_COMMENTS);
 		} else if(disease == Disease.CHOLERA) {
 			setVisible(true, DIARRHOEA, VOMITING, DEHYDRATION, ABDOMINAL_PAIN, ABDOMINAL_CRAMPS, FEVER, HEADACHES, FATIGUE);
 		}else if (disease == Disease.GUINEA_WORM) {
