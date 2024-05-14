@@ -488,6 +488,9 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	public void hidePersonalEmail(){
 		 setVisible(false, PersonDto.EMAIL_ADDRESS);
 	}
+	public void showPersonalEmail(){
+		setVisible(false, PersonDto.EMAIL_ADDRESS);
+	}
 
 	public void showPassportNumber(){
 		setVisible(true, PersonDto.PASSPORT_NUMBER);

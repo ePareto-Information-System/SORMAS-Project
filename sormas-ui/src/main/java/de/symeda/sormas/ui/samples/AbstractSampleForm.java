@@ -102,7 +102,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private OptionGroup laboratorySampleCondition;
 	private TextField laboratoryFinalResults;
 	private DateField dateFormSentToDistrict;
-	private DateField dateFormReceivedAtDistrict;
 	private DateField dateResultsSentToClinician;
 	private DateField dateSpecimenSentToLab;
 	private CheckBox pathogenTestingRequestedField;
@@ -377,7 +376,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		laboratoryFinalResults = addField(SampleDto.LABORATORY_FINAL_RESULTS, TextField.class);
 		laboratoryFinalResults.setVisible(false);
 		dateFormSentToDistrict = addField(SampleDto.DATE_FORM_SENT_TO_DISTRICT, DateField.class);
-		dateFormReceivedAtDistrict = addField(SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT, DateField.class);
 		dateResultsSentToClinician = addField(SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, DateField.class);
 		dateSpecimenSentToLab = addField(SampleDto.DATE_SPECIMEN_SENT_TO_LAB, DateField.class);
 		dateSpecimenSentToLab.setVisible(false);
@@ -577,7 +575,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		FieldHelper.setVisibleWhen(
 				getFieldGroup(),
-				Arrays.asList(SampleDto.RECEIVED_DATE),
+				Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.SPECIMEN_CONDITION),
 				SampleDto.RECEIVED,
 				Arrays.asList(true),
 				true);
@@ -585,7 +583,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				getFieldGroup(),
 				receivedField,
 				Arrays.asList(true),
-				Arrays.asList(SampleDto.RECEIVED_DATE),
+				Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.SPECIMEN_CONDITION),
 				true);
 		}
 
@@ -1036,7 +1034,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateLabReceivedSpecimen.setVisible(false);
 		laboratorySampleCondition.setVisible(false);
 		dateFormSentToDistrict.setVisible(false);
-		dateFormReceivedAtDistrict.setVisible(false);
+		dateFormReceivedAtDistrictField.setVisible(false);
 		dateResultsSentToClinician.setVisible(false);
 		dateSpecimenSentToLab.setVisible(false);
 
@@ -1051,7 +1049,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateLabReceivedSpecimen.setVisible(false);
 		laboratorySampleCondition.setVisible(false);
 		dateFormSentToDistrict.setVisible(false);
-		dateFormReceivedAtDistrict.setVisible(false);
+		dateFormReceivedAtDistrictField.setVisible(false);
 		dateResultsSentToClinician.setVisible(false);
 		dateSpecimenSentToLab.setVisible(false);
 
@@ -1073,7 +1071,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateLabReceivedSpecimen.setVisible(false);
 		laboratorySampleCondition.setVisible(false);
 		dateFormSentToDistrict.setVisible(false);
-		dateFormReceivedAtDistrict.setVisible(false);
+		dateFormReceivedAtDistrictField.setVisible(false);
 		dateResultsSentToClinician.setVisible(false);
 		dateSpecimenSentToLab.setVisible(false);
 		setVisible(false, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLING_REASON, SampleDto.SAMPLE_MATERIAL_TEXT);
@@ -1111,7 +1109,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateLabReceivedSpecimen.setVisible(false);
 		laboratorySampleCondition.setVisible(false);
 		dateFormSentToDistrict.setVisible(false);
-		dateFormReceivedAtDistrict.setVisible(false);
+		dateFormReceivedAtDistrictField.setVisible(false);
 		dateResultsSentToClinician.setVisible(false);
 		dateSpecimenSentToLab.setVisible(false);
 		pathogenTestingRequestedField.setVisible(false);
