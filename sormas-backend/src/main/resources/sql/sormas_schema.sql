@@ -13376,4 +13376,10 @@ ALTER TABLE person ADD COLUMN applicable varchar(55);
 ALTER TABLE symptoms ADD COLUMN outcomeother varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (591, 'Added 4 columns and dropped telnumber');
+
+ALTER TABLE cases ADD COLUMN dateFormSentToDistrict varchar(255) NULL;
+ALTER TABLE cases_history ADD COLUMN dateFormSentToDistrict varchar(255) NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (592, 'Added column to cases');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

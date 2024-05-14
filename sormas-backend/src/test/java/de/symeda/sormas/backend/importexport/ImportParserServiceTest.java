@@ -78,10 +78,10 @@ public class ImportParserServiceTest extends AbstractBeanTest {
 	@Test
 	public void testParseDateFieldValue() throws IntrospectionException, ImportErrorException, ParseException {
 		Object parsed = getImportParserService().parseValue(
-			new PropertyDescriptor(CaseDataDto.DISTRICT_LEVEL_DATE, CaseDataDto.class),
+			new PropertyDescriptor(CaseDataDto.DATE_FORM_RECEIVED_AT_DISTRICT, CaseDataDto.class),
 			"07/30/2021",
 			new String[] {
-				CaseDataDto.DISTRICT_LEVEL_DATE });
+				CaseDataDto.DATE_FORM_RECEIVED_AT_DISTRICT });
 
 		assertThat(parsed, is(UtilDate.of(2021, Month.JULY, 30)));
 	}

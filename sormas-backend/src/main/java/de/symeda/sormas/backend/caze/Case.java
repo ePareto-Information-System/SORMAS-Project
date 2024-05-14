@@ -302,7 +302,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private Date regionLevelDate;
 	private Date nationalLevelDate;
 	private Date districtLevelDate;
-
+	private Date dateFormSentToDistrict;
 	private User surveillanceOfficer;
 	private String clinicianName;
 	private String clinicianPhone;
@@ -701,6 +701,13 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setDistrictLevelDate(Date districtLevelDate) {
 		this.districtLevelDate = districtLevelDate;
+	}
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getDateFormSentToDistrict() {
+		return dateFormSentToDistrict;
+	}
+	public void setDateFormSentToDistrict(Date dateFormSentToDistrict) {
+		this.dateFormSentToDistrict = dateFormSentToDistrict;
 	}
 
 	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)

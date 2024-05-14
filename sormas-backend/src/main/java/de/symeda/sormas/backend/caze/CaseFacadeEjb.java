@@ -3036,6 +3036,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setRegionLevelDate(source.getRegionLevelDate());
 		target.setNationalLevelDate(source.getNationalLevelDate());
 		target.setDistrictLevelDate(source.getDistrictLevelDate());
+		target.setDateFormSentToDistrict(source.getDateFormSentToDistrict());
 
 		target.setSurveillanceOfficer(UserFacadeEjb.toReferenceDto(source.getSurveillanceOfficer()));
 		target.setClinicianName(source.getClinicianName());
@@ -3215,6 +3216,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setRegionLevelDate(source.getRegionLevelDate());
 		target.setNationalLevelDate(source.getNationalLevelDate());
 		target.setDistrictLevelDate(source.getDistrictLevelDate());
+		target.setDateFormSentToDistrict(source.getDateFormSentToDistrict());
 		target.setPerson(personService.getByReferenceDto(source.getPerson()));
 		target.setCaseClassification(source.getCaseClassification() == CaseClassification.NOT_CLASSIFIED ? CaseClassification.SUSPECT : source.getCaseClassification());
 		target.setCaseIdentificationSource(source.getCaseIdentificationSource());
