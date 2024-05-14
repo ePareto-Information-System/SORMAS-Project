@@ -508,9 +508,12 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		PresentCondition currentValue = (PresentCondition) presentConditionField.getValue();
 		List<PresentCondition> validValues;
 
-		if (disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.DENGUE) {
+		if (disease == Disease.AHF) {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);
-			hidePersonalEmail();
+			showPersonalEmail();
+		}else if (disease == Disease.YELLOW_FEVER) {
+			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD);
+			showPersonalEmail();
 		} else if (disease == Disease.CSM) {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD);
 			hidePersonalEmail();
