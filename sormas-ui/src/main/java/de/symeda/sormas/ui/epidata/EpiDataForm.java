@@ -32,6 +32,7 @@ import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.epidata.ContactSetting;
+import de.symeda.sormas.api.riskfactor.RiskFactorDto;
 import de.symeda.sormas.api.utils.RiskFactorInfluenza;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -87,6 +88,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_ONE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_TWO) +
 					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_THREE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_FOUR) +
 					fluidRowLocs(EpiDataDto.EXPOSED_TO_RISK_FACTOR, EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE)+
+					fluidRowLocs(4, EpiDataDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, 4, EpiDataDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, 4, EpiDataDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN) +
 					loc(EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY)+
 					loc(EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI)+
 					loc(EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI_CONTACT_SETTINGS)+
@@ -186,7 +188,10 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		addField(EpiDataDto.EXPOSED_TO_RISK_FACTOR, OptionGroup.class);
 		addField(EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE, ComboBox.class);
-		setVisible(false, EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE, EpiDataDto.EXPOSED_TO_RISK_FACTOR);
+		addField(EpiDataDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, NullableOptionGroup.class);
+		addField(EpiDataDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, NullableOptionGroup.class);
+		addField(EpiDataDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN, NullableOptionGroup.class);
+		setVisible(false, EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE, EpiDataDto.EXPOSED_TO_RISK_FACTOR, EpiDataDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, EpiDataDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, EpiDataDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
 
 		if (sourceContactsToggleCallback != null) {
 			ogContactWithSourceCaseKnown.addValueChangeListener(e -> {
@@ -306,7 +311,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		if (disease == Disease.CHOLERA) {
 			hideAllFields();
 			hideLabels();
-			setVisible(true, EpiDataDto.EXPOSED_TO_RISK_FACTOR, EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE);
+			setVisible(true, EpiDataDto.EXPOSED_TO_RISK_FACTOR, EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE, EpiDataDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, EpiDataDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, EpiDataDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
 		}
 
 	}

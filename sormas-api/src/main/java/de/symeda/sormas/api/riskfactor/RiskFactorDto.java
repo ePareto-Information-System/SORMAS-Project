@@ -45,9 +45,7 @@ public class RiskFactorDto extends PseudonymizableDto {
     public static final String THREE_DAYS_PRIOR_TO_DISEASE_ATTEND_ANY_FUNERAL = "threeDaysPriorToDiseaseAttendAnyFuneral";
     public static final String THREE_DAYS_PRIOR_TO_DISEASE_ATTEND_ANY_SOCIAL_EVENT = "threeDaysPriorToDiseaseAttendAnySocialEvent";
     public static final String OTHER_SOCIAL_EVENT_DETAILS = "otherSocialEventDetails";
-    public static final String VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS = "vibrioCholeraeIdentifiedInStools";
-    public static final String DRUGS_SENSITIVE_TO_VIBRIO_STRAIN = "drugsSensitiveToVibrioStrain";
-    public static final String DRUGS_RESISTANT_TO_VIBRIO_STRAIN = "drugsResistantToVibrioStrain";
+
 
     private String drinkingWaterSourceOne;
     private String drinkingWaterSourceTwo;

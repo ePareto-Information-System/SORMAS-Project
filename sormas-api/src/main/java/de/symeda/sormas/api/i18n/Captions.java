@@ -1147,6 +1147,9 @@ public interface Captions {
 	String EpiData_patientCloseContactWithARI = "EpiData.patientCloseContactWithARI";
 	String EpiData_patientContactWithConfirmedCase = "EpiData.patientContactWithConfirmedCase";
 	String EpiData_patientContactWithConfirmedCaseExposureLocationCityCountry = "EpiData.patientContactWithConfirmedCaseExposureLocationCityCountry";
+	String EpiData_vibrioCholeraeIdentifiedInStools = "EpiData.vibrioCholeraeIdentifiedInStools";
+	String EpiData_drugsSensitiveToVibrioStrain = "EpiData.drugsSensitiveToVibrioStrain";
+	String EpiData_drugsResistantToVibrioStrain = "EpiData.drugsResistantToVibrioStrain";
 
 	String epiDataNoSourceContacts = "epiDataNoSourceContacts";
 	String epiWeekFrom = "epiWeekFrom";
@@ -2231,9 +2234,6 @@ public interface Captions {
 	String RiskFactor_threeDaysPriorToDiseaseAttendAnyFuneral = "RiskFactor.threeDaysPriorToDiseaseAttendAnyFuneral";
 	String RiskFactor_threeDaysPriorToDiseaseAttendAnySocialEvent = "RiskFactor.threeDaysPriorToDiseaseAttendAnySocialEvent";
 	String RiskFactor_otherSocialEventDetails = "RiskFactor.otherSocialEventDetails";
-	String RiskFactor_vibrioCholeraeIdentifiedInStools = "RiskFactor.vibrioCholeraeIdentifiedInStools";
-	String RiskFactor_drugsSensitiveToVibrioStrain = "RiskFactor.drugsSensitiveToVibrioStrain";
-	String RiskFactor_drugsResistantToVibrioStrain = "RiskFactor.drugsResistantToVibrioStrain";
 	String SampleExport_altSgpt = "SampleExport.altSgpt";
 	String SampleExport_arterialVenousBloodGas = "SampleExport.arterialVenousBloodGas";
 	String SampleExport_arterialVenousGasHco3 = "SampleExport.arterialVenousGasHco3";

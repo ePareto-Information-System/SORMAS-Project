@@ -13004,4 +13004,13 @@ INSERT INTO schema_version (version_number, comment) VALUES (568, 'Added columns
 -- Number of people in same household
 ALTER TABLE cases ADD COLUMN numberOfPeopleInSameHousehold VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (569, 'Added columns to cases to implement patientVisitedHealthCareFacility #26');
+
+ALTER TABLE epidata ADD COLUMN vibrioCholeraeIdentifiedInStools VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN drugsSensitiveToVibrioStrain VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN drugsResistantToVibrioStrain VARCHAR(255);
+
+ALTER TABLE riskfactor DROP COLUMN vibrioCholeraeIdentifiedInStools;
+ALTER TABLE riskfactor DROP COLUMN drugsSensitiveToVibrioStrain;
+ALTER TABLE riskfactor DROP COLUMN drugsResistantToVibrioStrain;
+INSERT INTO schema_version (version_number, comment) VALUES (570, 'Added columns to epiData to implement vibrioCholeraeIdentifiedInStools, drugsSensitiveToVibrioStrain, drugsResistantToVibrioStrain and DROP on riskfactor');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

@@ -67,9 +67,7 @@ public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boo
         target.setThreeDaysPriorToDiseaseAttendAnyFuneral(source.getThreeDaysPriorToDiseaseAttendAnyFuneral());
         target.setThreeDaysPriorToDiseaseAttendAnySocialEvent(source.getThreeDaysPriorToDiseaseAttendAnySocialEvent());
         target.setOtherSocialEventDetails(source.getOtherSocialEventDetails());
-        target.setVibrioCholeraeIdentifiedInStools(source.getVibrioCholeraeIdentifiedInStools());
-        target.setDrugsSensitiveToVibrioStrain(source.getDrugsSensitiveToVibrioStrain());
-        target.setDrugsResistantToVibrioStrain(source.getDrugsResistantToVibrioStrain());
+
 
         return target;
     }
@@ -115,9 +113,7 @@ public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boo
         target.setThreeDaysPriorToDiseaseAttendAnyFuneral(source.getThreeDaysPriorToDiseaseAttendAnyFuneral());
         target.setThreeDaysPriorToDiseaseAttendAnySocialEvent(source.getThreeDaysPriorToDiseaseAttendAnySocialEvent());
         target.setOtherSocialEventDetails(source.getOtherSocialEventDetails());
-        target.setVibrioCholeraeIdentifiedInStools(source.getVibrioCholeraeIdentifiedInStools());
-        target.setDrugsSensitiveToVibrioStrain(source.getDrugsSensitiveToVibrioStrain());
-        target.setDrugsResistantToVibrioStrain(source.getDrugsResistantToVibrioStrain());
+
 
         return target;
     }
