@@ -14207,4 +14207,9 @@ INSERT INTO schema_version (version_number, comment) VALUES (635, 'Added column 
 ALTER TABLE samples ADD COLUMN finalClassification varchar(255) NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (636, 'Added column to finalClassification to samples');
 
+ALTER TABLE cases ADD COLUMN dateFormSentToDistrict varchar(255) NULL;
+ALTER TABLE cases_history ADD COLUMN dateFormSentToDistrict varchar(255) NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (637, 'Added column to cases');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

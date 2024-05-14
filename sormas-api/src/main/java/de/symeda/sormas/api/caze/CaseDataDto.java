@@ -123,9 +123,10 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String REPORTING_USER = "reportingUser";
 	public static final String REPORT_DATE = "reportDate";
 	public static final String INVESTIGATED_DATE = "investigatedDate";
-	public static final String DISTRICT_LEVEL_DATE = "districtLevelDate";
-	public static final String REGION_LEVEL_DATE = "regionLevelDate";
-	public static final String NATIONAL_LEVEL_DATE = "nationalLevelDate";
+	public static final String DATE_FORM_SENT_TO_DISTRICT = "dateFormSentToDistrict";
+	public static final String DATE_FORM_RECEIVED_AT_DISTRICT = "districtLevelDate";
+	public static final String DATE_FORM_RECEIVED_AT_REGION = "regionLevelDate";
+	public static final String DATE_FORM_RECEIVED_AT_NATIONAL = "nationalLevelDate";
 	public static final String SURVEILLANCE_OFFICER = "surveillanceOfficer";
 	public static final String SYMPTOMS = "symptoms";
 	public static final String HOSPITALIZATION = "hospitalization";
@@ -340,6 +341,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		COUNTRY_CODE_GERMANY,
 		COUNTRY_CODE_SWITZERLAND })
 	private Date districtLevelDate;
+	private Date dateFormSentToDistrict;
 	@Outbreaks
 	private CaseClassification caseClassification;
 	@HideForCountriesExcept
@@ -1049,6 +1051,14 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	public void setDistrictLevelDate(Date districtLevelDate) {
 		this.districtLevelDate = districtLevelDate;
+	}
+
+	public Date getDateFormSentToDistrict() {
+		return dateFormSentToDistrict;
+	}
+
+	public void setDateFormSentToDistrict(Date dateFormSentToDistrict) {
+		this.dateFormSentToDistrict = dateFormSentToDistrict;
 	}
 
 	public UserReferenceDto getSurveillanceOfficer() {
@@ -2296,4 +2306,5 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public void setSpecifyEventDiagnosis(String specifyEventDiagnosis) {
 		this.specifyEventDiagnosis = specifyEventDiagnosis;
 	}
+
 }

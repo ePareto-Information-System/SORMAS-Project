@@ -440,6 +440,7 @@ public interface Captions {
 	String CaseData_rabiesType = "CaseData.rabiesType";
 	String CaseData_region = "CaseData.region";
 	String CaseData_regionLevelDate = "CaseData.regionLevelDate";
+	String CaseData_dateFormSentToDistrict = "CaseData.dateFormSentToDistrict";
 	String CaseData_reInfection = "CaseData.reInfection";
 	String CaseData_reinfectionStatus = "CaseData.reinfectionStatus";
 	String CaseData_reportDate = "CaseData.reportDate";

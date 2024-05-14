@@ -297,8 +297,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.FUNCTION_OF_REPORTING_OFFICER) +
 					fluidRowLocs(CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE, CaseDataDto.REPORTING_OFFICER_EMAIL) +
 					loc(PAPER_FORM_DATES_LOC) +
-					fluidRowLocs(CaseDataDto.DISTRICT_LEVEL_DATE, CaseDataDto.REGION_LEVEL_DATE) +
-					fluidRowLocs(6,CaseDataDto.NATIONAL_LEVEL_DATE) +
+					fluidRowLocs(CaseDataDto.DATE_FORM_SENT_TO_DISTRICT, CaseDataDto.DATE_FORM_RECEIVED_AT_DISTRICT) +
+					fluidRowLocs(6,CaseDataDto.DATE_FORM_RECEIVED_AT_REGION) +
+					fluidRowLocs(6,CaseDataDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
 					loc(GENERAL_COMMENT_LOC) + fluidRowLocs(CaseDataDto.ADDITIONAL_DETAILS) +
 					fluidRowLocs(CaseDataDto.DELETION_REASON) +
 					fluidRowLocs(CaseDataDto.OTHER_DELETION_REASON);
@@ -460,9 +461,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         TextField clinicianPhone = addField(CaseDataDto.CLINICIAN_PHONE, TextField.class);
         TextField clinicianEmail = addField(CaseDataDto.CLINICIAN_EMAIL, TextField.class);
 
-        DateField districtLevelDate = addField(CaseDataDto.DISTRICT_LEVEL_DATE, DateField.class);
-        DateField regionLevelDate = addField(CaseDataDto.REGION_LEVEL_DATE, DateField.class);
-        DateField nationalLevelDate = addField(CaseDataDto.NATIONAL_LEVEL_DATE, DateField.class);
+        DateField dateFormSentToDistrict = addField(CaseDataDto.DATE_FORM_SENT_TO_DISTRICT, DateField.class);
+        dateFormSentToDistrict.setVisible(false);
+        DateField dateFormReceivedAtDistrict = addField(CaseDataDto.DATE_FORM_RECEIVED_AT_DISTRICT, DateField.class);
+        DateField dateFormReceivedAtRegion = addField(CaseDataDto.DATE_FORM_RECEIVED_AT_REGION, DateField.class);
+        DateField dateFormReceivedAtNational = addField(CaseDataDto.DATE_FORM_RECEIVED_AT_NATIONAL, DateField.class);
 
         TextField notifiedBy = addField(CaseDataDto.NOTIFIED_BY, TextField.class);
         DateField dateOfNotification = addField(CaseDataDto.DATE_OF_NOTIFICATION, DateField.class);
@@ -1278,9 +1281,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         notifiedBy.setVisible(false);
         dateOfNotification.setVisible(false);
         dateOfInvestigation.setVisible(false);
-        districtLevelDate.setVisible(false);
-        regionLevelDate.setVisible(false);
-        nationalLevelDate.setVisible(false);
+        dateFormReceivedAtDistrict.setVisible(false);
+        dateFormReceivedAtRegion.setVisible(false);
+        dateFormReceivedAtNational.setVisible(false);
         caseTransmissionClassification.setVisible(false);
         investigationstatus.setVisible(false);
         homeaddrecreational.setVisible(false);
@@ -1656,8 +1659,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
             //YELLOW FEVER
             if (disease == Disease.YELLOW_FEVER) {
-                nationalLevelDate.setVisible(true);
+                dateFormReceivedAtDistrict.setVisible(true);
+                dateFormReceivedAtNational.setVisible(true);
+                numberOfDoses.setVisible(true);
                 setVaccinatedByCardOrHistoryVisibility();
+                dateFormSentToDistrict.setVisible(true);
             }
 
             //CSM
@@ -1672,18 +1678,18 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
             //AFP
             if (disease == Disease.AFP) {
-                setVisible(true, CaseDataDto.NATIONAL_LEVEL_DATE, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
+                setVisible(true, CaseDataDto.DATE_FORM_RECEIVED_AT_NATIONAL, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
             }
             //YELLOW FEVER
             if (disease == Disease.YELLOW_FEVER) {
-                nationalLevelDate.setVisible(true);
+                dateFormReceivedAtNational.setVisible(true);
                 setVaccinatedByCardOrHistoryVisibility();
                 outcome.setVisible(false);
             }
 
             //INFLUENZA
             if (disease == Disease.NEW_INFLUENZA || disease == Disease.SARI) {
-                nationalLevelDate.setVisible(true);
+                dateFormReceivedAtNational.setVisible(true);
             }
 
             //CORONAVIRUS
@@ -1724,7 +1730,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
                 //update outcome value alive,dead,unknown using the outcome field and updateEnumData method
                 FieldHelper.updateEnumData(outcome, CaseOutcome.getMeaslesOutcomes());
-                setVisible(true, CaseDataDto.DISTRICT_LEVEL_DATE, CaseDataDto.INVESTIGATED_DATE, CaseDataDto.NOTIFIED_BY);
+                setVisible(true, CaseDataDto.DATE_FORM_RECEIVED_AT_DISTRICT, CaseDataDto.INVESTIGATED_DATE, CaseDataDto.NOTIFIED_BY);
                 setVisible(false, CaseDataDto.CLINICAL_CONFIRMATION, CaseDataDto.EPIDEMIOLOGICAL_CONFIRMATION, CaseDataDto.LABORATORY_DIAGNOSTIC_CONFIRMATION);
             }
 
