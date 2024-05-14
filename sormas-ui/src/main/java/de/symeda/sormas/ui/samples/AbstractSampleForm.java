@@ -804,9 +804,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	}
 
 	private void handleCSM() {
-		//sampleMaterialComboBox.setValue(SampleMaterial.CEREBROSPINAL_FLUID);
-
-		//ComboBox laboType = addField(SampleDto.LABORATORY_TYPE, ComboBox.class);
 
 		OptionGroup csfSampleCollected = addField(SampleDto.CSF_SAMPLE_COLLECTED, OptionGroup.class);
 		ComboBox csfReason = addField(SampleDto.CSF_REASON, ComboBox.class);
@@ -865,115 +862,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		getContent().addComponent(referenceLaboratory, REFERENCE_LABORATORY_HEADLINE_LOC);
 		referenceLaboratory.setVisible(false);
 
-//		TextField laboratoryName = addField(SampleDto.LABORATORY_NAME, TextField.class);
 		laboratorySampleDateReceived = addField(SampleDto.LABORATORY_SAMPLE_DATE_RECEIVED, DateTimeField.class);
 		laboratorySampleDateReceived.setInvalidCommitted(false);
 
-//		setVisible(true, SampleDto.LABORATORY_NUMBER, SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER, SampleDto.LABORATORY_APPEARANCE_OF_CSF);
-
-		/*NullableOptionGroup laboratoryTestPerformed = addField(SampleDto.LABORATORY_TEST_PERFORMED, NullableOptionGroup.class);
-		TextField laboratoryTestPerformedOther = addField(SampleDto.LABORATORY_TEST_PERFORMED_OTHER, TextField.class);
-		TextField laboratoryCytology = addField(SampleDto.LABORATORY_CYTOLOGY, TextField.class);
-		NullableOptionGroup laboratoryGram = addField(SampleDto.LABORATORY_GRAM, NullableOptionGroup.class);
-		TextField laboratoryGramOther = addField(SampleDto.LABORATORY_GRAM_OTHER, TextField.class);
-		OptionGroup laboratoryRdtPerformed = addField(SampleDto.LABORATORY_RDT_PERFORMED, OptionGroup.class);
-		TextField laboratoryRdtResults = addField(SampleDto.LABORATORY_RDT_RESULTS, TextField.class);*/
-
 		laboratorySampleContainerOther.setVisible(false);
-		/*laboratoryTestPerformedOther.setVisible(false);
-		laboratoryGramOther.setVisible(false);
-		laboratoryRdtResults.setVisible(false);
-
-		FieldHelper.setVisibleWhen(laboratoryRdtPerformed, Arrays.asList(laboratoryRdtResults), Arrays.asList(YesNo.YES), true);
-		FieldHelper.setVisibleWhen(laboratorySampleContainerReceived, Arrays.asList(laboratorySampleContainerOther), Arrays.asList(SampleContainerUsed.OTHER), true);
-		FieldHelper.setVisibleWhen(laboratoryTestPerformed, Arrays.asList(laboratoryTestPerformedOther), Arrays.asList(LabTest.OTHER), true);
-		FieldHelper.setVisibleWhen(laboratoryGram, Arrays.asList(laboratoryGramOther), Arrays.asList(Gram.OTHER_PATHOGENS), true);*/
-
-
-		/*ComboBox laboratoryLatex = new ComboBox();
-		for (LatexCulture latexCulture : LatexCulture.LATEX) {
-			laboratoryLatex.addItem(latexCulture);
-			laboratoryLatex.setItemCaption(latexCulture, latexCulture.toString());
-		}
-		addField(SampleDto.LABORATORY_LATEX, laboratoryLatex);
-
-		ComboBox laboratoryCulture = new ComboBox();
-		for (LatexCulture latexCulture : LatexCulture.LAB_CULTURE) {
-			laboratoryCulture.addItem(latexCulture);
-			laboratoryCulture.setItemCaption(latexCulture, latexCulture.toString());
-		}
-		addField(SampleDto.LABORATORY_CULTURE, laboratoryCulture);
-		TextField laboratoryCultureOther = addField(SampleDto.LABORATORY_CULTURE_OTHER, TextField.class);
-		TextField laboratoryOtherTests = addField(SampleDto.LABORATORY_OTHER_TESTS, TextField.class);
-		TextField laboratoryOtherTestsResults = addField(SampleDto.LABORATORY_OTHER_TESTS_RESULTS, TextField.class);
-		ComboBox laboratoryCeftriaxone = addField(SampleDto.LABORATORY_CEFTRIAXONE, ComboBox.class);
-		ComboBox laboratoryPenicillinG = addField(SampleDto.LABORATORY_PENICILLIN_G, ComboBox.class);
-		ComboBox laboratoryAmoxycillin = addField(SampleDto.LABORATORY_AMOXYCILLIN, ComboBox.class);
-		ComboBox laboratoryOxacillin = addField(SampleDto.LABORATORY_OXACILLIN, ComboBox.class);
-		OptionGroup laboratoryAntibiogramOther = addField(SampleDto.LABORATORY_ANTIBIOGRAM_OTHER, OptionGroup.class);
-		DateField laboratoryDatePcrPerformed = addField(SampleDto.LABORATORY_DATE_PCR_PERFORMED, DateField.class);
-		TextField laboratoryPcrType = addField(SampleDto.LABORATORY_PCR_TYPE, TextField.class);
-
-		ComboBox labPcrOptions = new ComboBox();
-		for (LatexCulture latexCulture : LatexCulture.LAB_CULTURE) {
-			labPcrOptions.addItem(latexCulture);
-			labPcrOptions.setItemCaption(latexCulture, latexCulture.toString());
-		}
-		addField(SampleDto.LABORATORY_PCR_OPTIONS, labPcrOptions);
-
-		TextField laboratorySerotype = addField(SampleDto.LABORATORY_SEROTYPE, TextField.class);
-		TextField laboratorySerotypeType = addField(SampleDto.LABORATORY_SEROTYPE_TYPE, TextField.class);
-		TextField laboratorySerotypeResults = addField(SampleDto.LABORATORY_SEROTYPE_RESULTS, TextField.class);
-
-		TextArea laboratoryObservations = addField(SampleDto.LABORATORY_OBSERVATIONS, TextArea.class);
-		laboratoryObservations.setRows(4);
-		laboratoryObservations.setDescription(
-				I18nProperties.getPrefixDescription(SampleDto.I18N_PREFIX, SampleDto.LABORATORY_OBSERVATIONS, "") + "\n"
-						+ I18nProperties.getDescription(Descriptions.observation));
-
-		DateField laboratoryDateResultsSentHealthFacility = addField(SampleDto.LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY, DateField.class);
-		DateField laboratoryDateResultsSentDSD = addField(SampleDto.LABORATORY_DATE_RESULTS_SENT_DSD, DateField.class);
-
-		OptionGroup laboratoryFinalClassification = new OptionGroup();
-		for (CaseClassification caseClassification : CaseClassification.CASE_CLASSIFY) {
-			laboratoryFinalClassification.addItem(caseClassification);
-			laboratoryFinalClassification.setItemCaption(caseClassification, caseClassification.toString());
-		}
-		addField(SampleDto.LABORATORY_FINAL_CLASSIFICATION, laboratoryFinalClassification);*/
-
-		/*laboType.addValueChangeListener(e -> {
-			LabType labType = (LabType) e.getProperty().getValue();
-
-			districtLaboratory.setVisible(false);
-			regionalLaboratory.setVisible(false);
-			referenceLaboratory.setVisible(false);
-
-			setVisible(false, SampleDto.LABORATORY_CULTURE, SampleDto.LABORATORY_CULTURE_OTHER, SampleDto.LABORATORY_OTHER_TESTS, SampleDto.LABORATORY_OTHER_TESTS_RESULTS);
-			setVisible(false, SampleDto.LABORATORY_CEFTRIAXONE, SampleDto.LABORATORY_PENICILLIN_G, SampleDto.LABORATORY_AMOXYCILLIN, SampleDto.LABORATORY_OXACILLIN, SampleDto.LABORATORY_ANTIBIOGRAM_OTHER);
-			setVisible(false, SampleDto.LABORATORY_DATE_PCR_PERFORMED, SampleDto.LABORATORY_PCR_TYPE, SampleDto.LABORATORY_PCR_OPTIONS, SampleDto.LABORATORY_SEROTYPE, SampleDto.LABORATORY_SEROTYPE_TYPE,
-					SampleDto.LABORATORY_SEROTYPE_RESULTS, SampleDto.LABORATORY_FINAL_CLASSIFICATION);
-
-			if (labType == LabType.DISTRICT_LAB) {
-				districtLaboratory.setVisible(true);
-			}
-			else if (labType == LabType.REGIONAL_LAB) {
-				regionalLaboratory.setVisible(true);
-				setVisible(true,SampleDto.LABORATORY_CULTURE, SampleDto.LABORATORY_CULTURE_OTHER, SampleDto.LABORATORY_OTHER_TESTS, SampleDto.LABORATORY_OTHER_TESTS_RESULTS);
-				setVisible(true, SampleDto.LABORATORY_CEFTRIAXONE, SampleDto.LABORATORY_PENICILLIN_G, SampleDto.LABORATORY_AMOXYCILLIN, SampleDto.LABORATORY_OXACILLIN, SampleDto.LABORATORY_ANTIBIOGRAM_OTHER);
-				setVisible(true, SampleDto.LABORATORY_DATE_PCR_PERFORMED, SampleDto.LABORATORY_PCR_TYPE, SampleDto.LABORATORY_PCR_OPTIONS, SampleDto.LABORATORY_SEROTYPE, SampleDto.LABORATORY_SEROTYPE_TYPE, SampleDto.LABORATORY_SEROTYPE_RESULTS);
-			}
-			else if (labType == LabType.REFERENCE_LAB) {
-				referenceLaboratory.setVisible(true);
-				// Set all other fields to visible
-				setVisible(true, SampleDto.LABORATORY_CULTURE, SampleDto.LABORATORY_CULTURE_OTHER, SampleDto.LABORATORY_OTHER_TESTS, SampleDto.LABORATORY_OTHER_TESTS_RESULTS);
-				setVisible(true, SampleDto.LABORATORY_CEFTRIAXONE, SampleDto.LABORATORY_PENICILLIN_G, SampleDto.LABORATORY_AMOXYCILLIN, SampleDto.LABORATORY_OXACILLIN, SampleDto.LABORATORY_ANTIBIOGRAM_OTHER);
-				setVisible(true, SampleDto.LABORATORY_DATE_PCR_PERFORMED, SampleDto.LABORATORY_PCR_TYPE, SampleDto.LABORATORY_PCR_OPTIONS, SampleDto.LABORATORY_SEROTYPE, SampleDto.LABORATORY_SEROTYPE_TYPE,
-						SampleDto.LABORATORY_SEROTYPE_RESULTS, SampleDto.LABORATORY_FINAL_CLASSIFICATION);
-			}
-			setVisible(false, SampleDto.PATHOGEN_TESTING_REQUESTED);
-
-		});*/
-		//laboratoryFinalResults.setVisible(true);
 	}
 
 	private void handleAFP() {

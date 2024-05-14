@@ -1511,6 +1511,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			if (disease == Disease.YELLOW_FEVER) {
 				nationalLevelDate.setVisible(true);
 				setVaccinatedByCardOrHistoryVisibility();
+				outcome.setVisible(false);
 			}
 
 			//CSM
@@ -1563,7 +1564,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private void setVaccinatedByCardOrHistoryVisibility(){
 		vaccinatedByCardOrHistory.setVisible(true);
 		FieldHelper
-				.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory), Arrays.asList(VaccinationStatus.VACCINATED), true);
+				.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory, numberOfDoses), Arrays.asList(VaccinationStatus.VACCINATED), true);
 		FieldHelper
 				.setVisibleWhen(vaccinatedByCardOrHistory, Arrays.asList(cardDateField), Arrays.asList(CardOrHistory.CARD), true);
 	}

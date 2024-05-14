@@ -485,6 +485,17 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		}
 		setRequired(true, PathogenTestDto.TEST_TYPE, PathogenTestDto.TESTED_DISEASE, PathogenTestDto.TEST_RESULT);
 
+		DateField datelabResultsSentDistrict = addField(PathogenTestDto.DATE_LAB_RESULTS_SENT_DISTRICT, DateField.class);
+		datelabResultsSentDistrict.setInvalidCommitted(false);
+		DateField dateLabResultsSentClinician = addField(PathogenTestDto.DATE_LAB_RESULTS_SENT_CLINICIAN, DateField.class);
+		dateLabResultsSentClinician.setInvalidCommitted(false);
+		DateField dateDistrictReceivedLabResults = addField(PathogenTestDto.DATE_DISTRICT_RECEIVED_LAB_RESULTS, DateField.class);
+		dateDistrictReceivedLabResults.setInvalidCommitted(false);
+
+		datelabResultsSentDistrict.setVisible(false);
+		dateLabResultsSentClinician.setVisible(false);
+		dateDistrictReceivedLabResults.setVisible(false);
+
 
 		if (caseDisease == Disease.CSM) {
 			districtLaboratory = new Label(I18nProperties.getString(Strings.headingDistrictLaboratory));
@@ -604,14 +615,16 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		if(caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
 			sampleTestDateField.setVisible(false);
 			addField(PathogenTestDto.LAB_LOCATION, TextField.class);
-			//addField(PathogenTestDto.DATE_LAB_RECEIVED_SPECIMEN, DateTimeField.class);
-			//addField(PathogenTestDto.SPECIMEN_CONDITION, ComboBox.class);
-			DateField datelabResultsSentDistrict = addField(PathogenTestDto.DATE_LAB_RESULTS_SENT_DISTRICT, DateField.class);
-			datelabResultsSentDistrict.setInvalidCommitted(false);
-			DateField dateLabResultsSentClinician = addField(PathogenTestDto.DATE_LAB_RESULTS_SENT_CLINICIAN, DateField.class);
-			dateLabResultsSentClinician.setInvalidCommitted(false);
-			DateField dateDistrictReceivedLabResults = addField(PathogenTestDto.DATE_DISTRICT_RECEIVED_LAB_RESULTS, DateField.class);
-			dateDistrictReceivedLabResults.setInvalidCommitted(false);
+
+			datelabResultsSentDistrict.setVisible(true);
+			dateLabResultsSentClinician.setVisible(true);
+			dateDistrictReceivedLabResults.setVisible(true);
+
+		}
+
+		if(caseDisease == Disease.YELLOW_FEVER){
+			datelabResultsSentDistrict.setVisible(true);
+			dateDistrictReceivedLabResults.setVisible(true);
 		}
 	}
 
