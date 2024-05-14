@@ -101,7 +101,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_ONE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_TWO) +
 					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_THREE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_FOUR) +
 					fluidRowLocs(EpiDataDto.RECEIVED_HEALTH_EDUCATION, EpiDataDto.PATIENT_ENTERED_WATER_SOURCE, EpiDataDto.PLACE_MANAGED) +
-					fluidRowLocs(EpiDataDto.EXPOSED_TO_RISK_FACTOR + EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE)+
+					fluidRowLocs(EpiDataDto.EXPOSED_TO_RISK_FACTOR, EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE)+
 					loc(EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY)+
 					loc(EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI)+
 					loc(EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI_CONTACT_SETTINGS)+
@@ -248,6 +248,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		
 		addField(EpiDataDto.EXPOSED_TO_RISK_FACTOR, OptionGroup.class);
 		addField(EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE, ComboBox.class);
+		setVisible(false, EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE, EpiDataDto.EXPOSED_TO_RISK_FACTOR);
 
 		if (sourceContactsToggleCallback != null) {
 			ogContactWithSourceCaseKnown.addValueChangeListener(e -> {
@@ -495,6 +496,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		if (disease == Disease.CHOLERA) {
 			hideAllFields();
+			hideLabels();
 			setVisible(true, EpiDataDto.EXPOSED_TO_RISK_FACTOR, EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE);
 
 		}

@@ -2339,7 +2339,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		CHOLERA,
 		OTHER })
-	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState fatigue;
 	@Diseases({
