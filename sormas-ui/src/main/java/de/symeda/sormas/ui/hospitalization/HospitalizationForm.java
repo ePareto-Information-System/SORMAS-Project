@@ -482,6 +482,10 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
+
+			dateFirstSeen.setVisible(true);
+			dateFirstSeen.setCaption("Date seen at health facility");
+			addField(HospitalizationDto.SELECT_INPATIENT_OUTPATIENT ,ComboBox.class);
 		}
 
 		if(caze.getDisease() == Disease.NEW_INFLUENZA || caze.getDisease() == Disease.SARI){

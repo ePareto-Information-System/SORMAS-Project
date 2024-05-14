@@ -1674,6 +1674,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				if (disease == Disease.AFP) {
 					setVisible(true, CaseDataDto.NATIONAL_LEVEL_DATE, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
 				}
+			//YELLOW FEVER
+			if (disease == Disease.YELLOW_FEVER) {
+				nationalLevelDate.setVisible(true);
+				setVaccinatedByCardOrHistoryVisibility();
+				outcome.setVisible(false);
+			}
 
 				//INFLUENZA
 				if (disease == Disease.NEW_INFLUENZA || disease == Disease.SARI) {
@@ -1725,9 +1731,22 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				if (CaseDataDto.HOSPITALIZATION == null) {
 					caseOutcome.setEnabled(false);
 					caseOutcome.setRequired(false);
-				}
+			}
+			if(disease ==Disease.FOODBORNE_ILLNESS){
+				placeOfStayHeadingLabel.setVisible(false);
+			}
+			if(disease ==Disease.MONKEYPOX){
+				placeOfStayHeadingLabel.setVisible(false);
+				createLabel(I18nProperties.getString(Strings.notifyInvestigate), H3, NOTIFY_INVESTIGATE);
+				setVisible(true, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
+				createLabel(I18nProperties.getString(Strings.headingIndicateCategory), H3, INDICATE_CATEGORY_LOC);
+			}
+			
+			if(disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
+					numberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being Reported");
+			}
 
-				if (disease == Disease.NEONATAL_TETANUS) {
+			if (disease == Disease.NEONATAL_TETANUS) {
 					setVisible(false, CaseDataDto.VACCINATION_STATUS, CaseDataDto.OUTCOME, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.LAST_VACCINATION_DATE, CaseDataDto.NUMBER_OF_DOSES);
 					notifiedBy.setVisible(true);
 					dateOfNotification.setVisible(true);
@@ -1806,8 +1825,35 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					numberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being Reported");
 					numberOfDoses.addStyleName("v-captiontext-idsr");
 				}
-			});
+		});
+	}
+
+	private void setVaccinationHelperVisibility(){
+		vaccineType.setVisible(true);
+		vaccinatedByCardOrHistory.setVisible(false);
+		FieldHelper
+				.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccineType, numberOfDoses, cardDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
+	}
+
+	private void setVaccinatedByCardOrHistoryVisibility(){
+		vaccinatedByCardOrHistory.setVisible(true);
+		FieldHelper
+				.setVisibleWhen(vaccinationStatus, Arrays.asList(vaccinatedByCardOrHistory, numberOfDoses), Arrays.asList(VaccinationStatus.VACCINATED), true);
+		FieldHelper
+				.setVisibleWhen(vaccinatedByCardOrHistory, Arrays.asList(cardDateField), Arrays.asList(CardOrHistory.CARD), true);
+	}
+
+	public void hideFieldsForSelectedDisease(Disease disease) {
+		Set<String> disabledFields = CaseFormConfiguration.getDisabledFieldsForDisease(disease);
+		for (String field : disabledFields) {
+			disableField(field);
 		}
+	}
+
+	private void disableField(String field) {
+		setVisible(false, field);
+	}
+
 
 		private void setVaccinationHelperVisibility () {
 			vaccineType.setVisible(true);
