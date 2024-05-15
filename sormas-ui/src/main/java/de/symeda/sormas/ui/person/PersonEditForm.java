@@ -719,7 +719,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			addField(PersonDto.TEL_NUMBER, TextField.class);
 		}
 		if(disease == Disease.MONKEYPOX){
-			setVisible(false, PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID);
 			personContactDetailsField.setVisible(false);
 		}
 		if(disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
@@ -729,6 +728,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			ComboBox applicable = addField(PersonDto.APPLICABLE, ComboBox.class);
 			FieldHelper.setVisibleWhen(applicable, Arrays.asList(mothername, fathername), Arrays.asList(YesNo.YES), true);
 
+		}
+		if(disease == Disease.YELLOW_FEVER){
+			setVisible(true, PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID);
 		}
 
 	}
