@@ -559,19 +559,21 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				testTypeField.addItems(PathogenTestType.values());
 			}
 
-			if(Arrays.asList(Disease.MEASLES, Disease.CHOLERA).contains(disease)){
+			if (Arrays.asList(Disease.MEASLES, Disease.CHOLERA).contains(disease)) {
 				finalClassificationField.setVisible(true);
-				for (FinalClassification classification : FinalClassification.DEFAULT) {
-					finalClassificationField.addItem(classification);
-				}
-			} else if (disease == Disease.YELLOW_FEVER){
-				for (FinalClassification classification : FinalClassification.YF_CLASSIFICATION) {
-					finalClassificationField.addItem(classification);
-				}
-			}else {
+				finalClassificationField.removeAllItems();
+				FieldHelper.updateEnumData(finalClassificationField, FinalClassification.DEFAULT);
+
+			} else if (disease == Disease.YELLOW_FEVER) {
+				finalClassificationField.setVisible(true);
+				finalClassificationField.removeAllItems();
+				FieldHelper.updateEnumData(finalClassificationField, FinalClassification.YF_CLASSIFICATION);
+
+			} else {
 				finalClassificationField.setVisible(false);
 				virusDetectionGenotypeField.setVisible(false);
 			}
+
 		});
 
 	/*	testTypeField.addValueChangeListener(e -> {
