@@ -77,6 +77,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	protected static final String DISTRICT_LABORATORY_HEADLINE_LOC = "districtLaboratoryLoc";
 	protected static final String REGIONAL_LABORATORY_HEADLINE_LOC = "regionalLaboratoryLoc";
 	protected static final String REFERENCE_LABORATORY_HEADLINE_LOC = "referenceLaboratoryLoc";
+	protected static final String CYTOLOGY_HEADING = "cytologyHeading";
 	private List<FacilityReferenceDto> allActiveLabs;
 	private Disease associatedDisease;
 
@@ -113,7 +114,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 			//CSM:GENERAL
 //			fluidRowLocs(PathogenTestDto.LABORATORY_TEST_PERFORMED, PathogenTestDto.LABORATORY_TEST_PERFORMED_OTHER) +
-			fluidRowLocs(PathogenTestDto.LABORATORY_CYTOLOGY, PathogenTestDto.LABORATORY_GRAM, PathogenTestDto.LABORATORY_GRAM_OTHER) +
+			loc(CYTOLOGY_HEADING) +
+			fluidRowLocs(PathogenTestDto.LABORATORY_CYTOLOGY_LEUCOCYTES, PathogenTestDto.LABORATORY_CYTOLOGY_PMN, PathogenTestDto.LABORATORY_CYTOLOGY_LYMPH) +
+			fluidRowLocs(PathogenTestDto.LABORATORY_GRAM, PathogenTestDto.LABORATORY_GRAM_OTHER) +
 			fluidRowLocs(PathogenTestDto.LABORATORY_RDT_PERFORMED, PathogenTestDto.LABORATORY_RDT_RESULTS) +
 			fluidRowLocs(6,PathogenTestDto.LABORATORY_LATEX) +
 
@@ -155,7 +158,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private ComboBox testTypeField;
 	private Disease caseDisease;
 	private TextField laboratoryTestPerformedOther;
-	private TextField laboratoryCytology;
+	private TextField laboratoryCytology_LEUCOCYTES;
+	private TextField laboratoryCytology_PMN;
+	private TextField laboratoryCytology_LYMPH;
 	private NullableOptionGroup laboratoryGram;
 	private TextField laboratoryGramOther;
 	private OptionGroup laboratoryRdtPerformed;
@@ -518,7 +523,10 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			//addField(PathogenTestDto.LABORATORY_NAME, TextField.class);
 
 			// General fields
-			laboratoryCytology = addField(PathogenTestDto.LABORATORY_CYTOLOGY, TextField.class);
+			Label cytologyHeadingLabel = createLabel(I18nProperties.getString(Strings.headingCytology), H3, CYTOLOGY_HEADING);
+			laboratoryCytology_LEUCOCYTES = addField(PathogenTestDto.LABORATORY_CYTOLOGY_LEUCOCYTES, TextField.class);
+			laboratoryCytology_PMN = addField(PathogenTestDto.LABORATORY_CYTOLOGY_PMN, TextField.class);
+			laboratoryCytology_LYMPH = addField(PathogenTestDto.LABORATORY_CYTOLOGY_LYMPH, TextField.class);
 			laboratoryGram = addField(PathogenTestDto.LABORATORY_GRAM, NullableOptionGroup.class);
 			laboratoryGramOther = addField(PathogenTestDto.LABORATORY_GRAM_OTHER, TextField.class);
 			laboratoryRdtPerformed = addField(PathogenTestDto.LABORATORY_RDT_PERFORMED, OptionGroup.class);
@@ -739,6 +747,14 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			return eventDto.getDisease();
 		}
 		return null;
+	}
+
+	private Label createLabel(String text, String h4, String location) {
+		final Label label = new Label(text);
+		label.setId(text);
+		label.addStyleName(h4);
+		getContent().addComponent(label, location);
+		return label;
 	}
 
 }

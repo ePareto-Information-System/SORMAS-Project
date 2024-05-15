@@ -416,6 +416,8 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setLaboratoryTestPerformed(source.getLaboratoryTestPerformed());
 		target.setLaboratoryTestPerformedOther(source.getLaboratoryTestPerformedOther());
 		target.setLaboratoryCytology(source.getLaboratoryCytology());
+		target.setLaboratoryCytologyPmn(source.getLaboratoryCytologyPmn());
+		target.setLaboratoryCytologyLymph(source.getLaboratoryCytologyLymph());
 		target.setLaboratoryGram(source.getLaboratoryGram());
 		target.setLaboratoryGramOther(source.getLaboratoryGramOther());
 		target.setLaboratoryRdtPerformed(source.getLaboratoryRdtPerformed());
@@ -542,6 +544,8 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setLaboratoryTestPerformed(source.getLaboratoryTestPerformed());
 		target.setLaboratoryTestPerformedOther(source.getLaboratoryTestPerformedOther());
 		target.setLaboratoryCytology(source.getLaboratoryCytology());
+		target.setLaboratoryCytologyPmn(source.getLaboratoryCytologyPmn());
+		target.setLaboratoryCytologyLymph(source.getLaboratoryCytologyLymph());
 		target.setLaboratoryGram(source.getLaboratoryGram());
 		target.setLaboratoryGramOther(source.getLaboratoryGramOther());
 		target.setLaboratoryRdtPerformed(source.getLaboratoryRdtPerformed());

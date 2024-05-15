@@ -129,6 +129,8 @@ public class PathogenTest extends DeletableAdo {
 	private LabTest laboratoryTestPerformed;
 	private String laboratoryTestPerformedOther;
 	private String laboratoryCytology;
+	private String laboratoryCytologyPmn;
+	private String laboratoryCytologyLymph;
 	private Gram laboratoryGram;
 	private String laboratoryGramOther;
 	private YesNo laboratoryRdtPerformed;
@@ -557,7 +559,21 @@ public class PathogenTest extends DeletableAdo {
 	public void setLaboratoryCytology(String laboratoryCytology) {
 		this.laboratoryCytology = laboratoryCytology;
 	}
+	public String getLaboratoryCytologyPmn() {
+		return laboratoryCytologyPmn;
+	}
 
+	public void setLaboratoryCytologyPmn(String laboratoryCytologyPmn) {
+		this.laboratoryCytologyPmn = laboratoryCytologyPmn;
+	}
+
+	public String getLaboratoryCytologyLymph() {
+		return laboratoryCytologyLymph;
+	}
+
+	public void setLaboratoryCytologyLymph(String laboratoryCytologyLymph) {
+		this.laboratoryCytologyLymph = laboratoryCytologyLymph;
+	}
 	public Gram getLaboratoryGram() {
 		return laboratoryGram;
 	}

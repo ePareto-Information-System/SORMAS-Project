@@ -13382,4 +13382,9 @@ ALTER TABLE cases_history ADD COLUMN dateFormSentToDistrict varchar(255) NULL;
 
 INSERT INTO schema_version (version_number, comment) VALUES (592, 'Added column to cases');
 
+ALTER TABLE pathogentest ADD COLUMN laboratorycytologypmn varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorycytologylymph varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (593, 'Added columns to pathogentest for CSM');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

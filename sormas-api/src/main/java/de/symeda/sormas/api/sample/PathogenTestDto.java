@@ -91,7 +91,9 @@ public class PathogenTestDto extends PseudonymizableDto {
 	public static final String LABORATORY_NAME = "laboratoryName";
 	public static final String LABORATORY_TEST_PERFORMED = "laboratoryTestPerformed";
 	public static final String LABORATORY_TEST_PERFORMED_OTHER = "laboratoryTestPerformedOther";
-	public static final String LABORATORY_CYTOLOGY = "laboratoryCytology";
+	public static final String LABORATORY_CYTOLOGY_LEUCOCYTES = "laboratoryCytology";
+	public static final String LABORATORY_CYTOLOGY_PMN = "laboratoryCytologyPmn";
+	public static final String LABORATORY_CYTOLOGY_LYMPH = "laboratoryCytologyLymph";
 	public static final String LABORATORY_GRAM = "laboratoryGram";
 	public static final String LABORATORY_GRAM_OTHER = "laboratoryGramOther";
 	public static final String LABORATORY_RDT_PERFORMED = "laboratoryRdtPerformed";
@@ -231,6 +233,8 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private LabTest laboratoryTestPerformed;
 	private String laboratoryTestPerformedOther;
 	private String laboratoryCytology;
+	private String laboratoryCytologyPmn;
+	private String laboratoryCytologyLymph;
 	private Gram laboratoryGram;
 	private String laboratoryGramOther;
 	private YesNo laboratoryRdtPerformed;
@@ -677,6 +681,22 @@ public class PathogenTestDto extends PseudonymizableDto {
 
 	public void setLaboratoryCytology(String laboratoryCytology) {
 		this.laboratoryCytology = laboratoryCytology;
+	}
+
+	public String getLaboratoryCytologyPmn() {
+		return laboratoryCytologyPmn;
+	}
+
+	public void setLaboratoryCytologyPmn(String laboratoryCytologyPmn) {
+		this.laboratoryCytologyPmn = laboratoryCytologyPmn;
+	}
+
+	public String getLaboratoryCytologyLymph() {
+		return laboratoryCytologyLymph;
+	}
+
+	public void setLaboratoryCytologyLymph(String laboratoryCytologyLymph) {
+		this.laboratoryCytologyLymph = laboratoryCytologyLymph;
 	}
 
 	public Gram getLaboratoryGram() {
