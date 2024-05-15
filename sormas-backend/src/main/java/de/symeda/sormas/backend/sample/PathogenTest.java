@@ -180,6 +180,8 @@ public class PathogenTest extends DeletableAdo {
 	private String sampleTestsString;
 
 	private String virusDetectionGenotype;
+	private FinalClassification finalClassification;
+
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
@@ -536,6 +538,14 @@ public class PathogenTest extends DeletableAdo {
 
 	public void setVirusDetectionGenotype(String virusDetectionGenotype) {
 		this.virusDetectionGenotype = virusDetectionGenotype;
+	}
+
+	public FinalClassification getFinalClassification() {
+		return finalClassification;
+	}
+
+	public void setFinalClassification(FinalClassification finalClassification) {
+		this.finalClassification = finalClassification;
 	}
 
 	public PathogenTestReferenceDto toReference() {
