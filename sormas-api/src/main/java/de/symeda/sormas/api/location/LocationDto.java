@@ -89,6 +89,7 @@ public class LocationDto extends PseudonymizableDto {
 	public static final String CONTACT_PERSON_LAST_NAME = "contactPersonLastName";
 	public static final String CONTACT_PERSON_PHONE = "contactPersonPhone";
 	public static final String CONTACT_PERSON_EMAIL = "contactPersonEmail";
+	public static final String RESIDENTIAL_ADDRESS = "residentialAddress";
 
 	private ContinentReferenceDto continent;
 	private SubcontinentReferenceDto subcontinent;
@@ -179,6 +180,11 @@ public class LocationDto extends PseudonymizableDto {
 	@PersonalData
 	@SensitiveData
 	private String contactPersonEmail;
+	@PersonalData
+	@SensitiveData
+	private String residentialAddress;
+
+
 
 	public String getDetails() {
 		return details;
@@ -398,6 +404,14 @@ public class LocationDto extends PseudonymizableDto {
 
 	public void setContactPersonEmail(String contactPersonEmail) {
 		this.contactPersonEmail = contactPersonEmail;
+	}
+
+	public String getResidentialAddress() {
+		return residentialAddress;
+	}
+
+	public void setResidentialAddress(String residentialAddress) {
+		this.residentialAddress = residentialAddress;
 	}
 
 	@Override

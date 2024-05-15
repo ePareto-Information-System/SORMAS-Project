@@ -101,6 +101,7 @@ public class LocationFacadeEjb implements LocationFacade {
 		target.setContactPersonLastName(source.getContactPersonLastName());
 		target.setContactPersonPhone(source.getContactPersonPhone());
 		target.setContactPersonEmail(source.getContactPersonEmail());
+		target.setResidentialaddress(source.getResidentialAddress());
 
 		return target;
 	}
@@ -144,6 +145,7 @@ public class LocationFacadeEjb implements LocationFacade {
 		target.setContactPersonLastName(source.getContactPersonLastName());
 		target.setContactPersonPhone(source.getContactPersonPhone());
 		target.setContactPersonEmail(source.getContactPersonEmail());
+		target.setResidentialAddress(source.getResidentialaddress());
 
 		return target;
 	}

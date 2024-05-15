@@ -1612,6 +1612,7 @@ public interface Captions {
 	String Location_areaType = "Location.areaType";
 	String Location_community = "Location.community";
 	String Location_contactPersonEmail = "Location.contactPersonEmail";
+	String Location_residentialAddress = "Location.residentialAddress";
 	String Location_contactPersonFirstName = "Location.contactPersonFirstName";
 	String Location_contactPersonLastName = "Location.contactPersonLastName";
 	String Location_contactPersonPhone = "Location.contactPersonPhone";
@@ -1770,6 +1771,7 @@ public interface Captions {
 	String PathogenTest_typingId = "PathogenTest.typingId";
 	String PathogenTest_viaLims = "PathogenTest.viaLims";
 	String PathogenTest_virusDetectionGenotype = "PathogenTest.virusDetectionGenotype";
+	String PathogenTest_otherNotesAndObservations = "PathogenTest.otherNotesAndObservations";
 	String pathogenTestAdd = "pathogenTestAdd";
 	String pathogenTestCreateNew = "pathogenTestCreateNew";
 	String pathogenTestNewResult = "pathogenTestNewResult";

@@ -124,6 +124,7 @@ public class PathogenTest extends DeletableAdo {
 	private Country prescriberCountry;
 	private String virusDetectionGenotype;
 	private FinalClassification finalClassification;
+	private String otherNotesAndObservations;
 
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -489,6 +490,14 @@ public class PathogenTest extends DeletableAdo {
 
 	public void setFinalClassification(FinalClassification finalClassification) {
 		this.finalClassification = finalClassification;
+	}
+
+	public String getOtherNotesAndObservations() {
+		return otherNotesAndObservations;
+	}
+
+	public void setOtherNotesAndObservations(String otherNotesAndObservations) {
+		this.otherNotesAndObservations = otherNotesAndObservations;
 	}
 
 	public PathogenTestReferenceDto toReference() {

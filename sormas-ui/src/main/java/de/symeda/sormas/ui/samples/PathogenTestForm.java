@@ -91,6 +91,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.TEST_RESULT_TEXT) +
 			fluidRowLocs(PathogenTestDto.DELETION_REASON) +
 			fluidRowLocs(PathogenTestDto.OTHER_DELETION_REASON) +
+			fluidRowLocs(PathogenTestDto.OTHER_NOTES_AND_OBSERVATIONS) +
 			fluidRowLocs(PathogenTestDto.FINAL_CLASSIFICATION, "");
 
 	//@formatter:on
@@ -111,6 +112,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private ComboBox diseaseField;
 	private TextField virusDetectionGenotypeField;
 	private ComboBox finalClassificationField;
+	private TextField otherNotesAndObservations;
 
 
 	public PathogenTestForm(AbstractSampleForm sampleForm, boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction) {
@@ -232,6 +234,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 		finalClassificationField = addField(PathogenTestDto.FINAL_CLASSIFICATION, ComboBox.class);
 		finalClassificationField.setVisible(false);
+
+		otherNotesAndObservations = addField(PathogenTestDto.OTHER_NOTES_AND_OBSERVATIONS, TextField.class);
+		otherNotesAndObservations.setVisible(false);
 
 
 		ComboBox testResultField = addField(PathogenTestDto.TEST_RESULT, ComboBox.class);
