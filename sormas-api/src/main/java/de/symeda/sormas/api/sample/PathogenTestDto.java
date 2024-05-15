@@ -168,6 +168,7 @@ public class PathogenTestDto extends PseudonymizableDto {
 	public static final String FINAL_CLASSIFICATION = "finalClassification";
 	public static final String OTHER_NOTES_AND_OBSERVATIONS = "otherNotesAndObservations";
 	public static final String DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT = "dateSurveillanceSentResultsToDistrict";
+	public static final String FINAL_CLASSIFICATION = "finalClassification";
 
 	@NotNull(message = Validations.validSample)
 	private SampleReferenceDto sample;
@@ -331,6 +332,8 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private PosNeg sampleTestResultImmuno;
 	private Date sampleTestResultImmunoDate;
 	private String virusDetectionGenotype;
+	private FinalClassification finalClassification;
+
 
 	public static PathogenTestDto build(SampleDto sample, UserDto currentUser) {
 

@@ -194,6 +194,7 @@ public class PathogenTest extends DeletableAdo {
 	private String drugsSensitiveToVibrioStrain;
 	private String drugsResistantToVibrioStrain;
 
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
 	public Sample getSample() {

@@ -1992,7 +1992,4 @@ public class SampleDto extends SormasToSormasShareableDto {
 		return finalClassification;
 	}
 
-	public void setFinalClassification(FinalClassification finalClassification) {
-		this.finalClassification = finalClassification;
-	}
 }

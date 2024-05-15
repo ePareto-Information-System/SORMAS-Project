@@ -156,7 +156,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.LABORATORY_OBSERVATIONS) +
 			fluidRowLocs(6,PathogenTestDto.DATE_SAMPLE_SENT_REF_LAB) +
 			fluidRowLocs(PathogenTestDto.DATE_SENT_REPORTING_HEALTH_FACILITY, PathogenTestDto.DATE_SAMPLE_SENT_REGREF_LAB) +
-			fluidRowLocs(PathogenTestDto.FINAL_CLASSIFICATION, "") +
 			fluidRowLocs(6, PathogenTestDto.LABORATORY_FINAL_CLASSIFICATION) +
 			fluidRowLocs(PathogenTestDto.OTHER_NOTES_AND_OBSERVATIONS) +
 			fluidRowLocs(6,PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
@@ -414,19 +413,13 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		TextField diseaseVariantDetailsField = addField(PathogenTestDto.TESTED_DISEASE_VARIANT_DETAILS, TextField.class);
 		diseaseVariantDetailsField.setVisible(false);
 
-		virusDetectionGenotypeField = addField(PathogenTestDto.VIRUS_DETECTION_GENOTYPE, TextField.class);
-		virusDetectionGenotypeField.setVisible(false);
-
-		finalClassificationField = addField(PathogenTestDto.FINAL_CLASSIFICATION, ComboBox.class);
-		finalClassificationField.setVisible(false);
+		testResultField = addField(PathogenTestDto.TEST_RESULT, ComboBox.class);
+		testResultField.removeItem(PathogenTestResultType.NOT_DONE);
 
 		otherNotesAndObservations = addField(PathogenTestDto.OTHER_NOTES_AND_OBSERVATIONS, TextArea.class);
 		otherNotesAndObservations.setRows(4);
 		otherNotesAndObservations.setVisible(false);
-
-		testResultField = addField(PathogenTestDto.TEST_RESULT, ComboBox.class);
-		testResultField.removeItem(PathogenTestResultType.NOT_DONE);
-
+		
 		testResultVariant = addField(PathogenTestDto.TEST_RESULT_VARIANT, ComboBox.class);
 		testResultVariant.setVisible(false);
 		TextField variantOther = addField(PathogenTestDto.VARIANT_OTHER_SPECIFY, TextField.class);
@@ -435,6 +428,13 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		secondTestedDisease.setVisible(false);
 		TestResultForSecondDisease.setVisible(false);
 		variantOther.setVisible(false);
+
+		virusDetectionGenotypeField = addField(PathogenTestDto.VIRUS_DETECTION_GENOTYPE, TextField.class);
+		virusDetectionGenotypeField.setVisible(false);
+
+		finalClassificationField = addField(PathogenTestDto.FINAL_CLASSIFICATION, ComboBox.class);
+		finalClassificationField.setVisible(false);
+		
 		addField(PathogenTestDto.SEROTYPE, TextField.class);
 		TextField cqValueField = addField(PathogenTestDto.CQ_VALUE, TextField.class);
 		cqValueField.setConversionError(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, cqValueField.getCaption()));

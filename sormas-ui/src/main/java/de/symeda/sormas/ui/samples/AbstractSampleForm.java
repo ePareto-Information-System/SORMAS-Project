@@ -322,6 +322,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
 					fluidRowLocs(6, SampleDto.RECEIVED_DATE, 6, SampleDto.SPECIMEN_CONDITION) +
 					fluidRowLocs("", SampleDto.PATHOGEN_TEST_RESULT);
+					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION);
 
 
 
@@ -414,9 +415,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		labLocation = addField(SampleDto.LAB_LOCATION, TextField.class);
 		labDetails.setVisible(false);
 		lab.addValueChangeListener(event -> updateLabDetailsVisibility(labDetails, event));
-
-		finalClassificationField = addField(SampleDto.FINAL_CLASSIFICATION, ComboBox.class);
-		finalClassificationField.setVisible(false);
 
 		addField(SampleDto.SPECIMEN_CONDITION, ComboBox.class);
 		addField(SampleDto.NO_TEST_POSSIBLE_REASON, TextField.class);
