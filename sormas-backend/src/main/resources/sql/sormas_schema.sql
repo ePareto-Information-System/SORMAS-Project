@@ -14234,6 +14234,6 @@ INSERT INTO schema_version (version_number, comment) VALUES (640, 'Added column 
 ALTER TABLE pathogentest ADD COLUMN laboratorycytologypmn varchar(255);
 ALTER TABLE pathogentest ADD COLUMN laboratorycytologylymph varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (593, 'Added columns to pathogentest for CSM');
+INSERT INTO schema_version (version_number, comment) VALUES (641, 'Added columns to pathogentest for CSM');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
