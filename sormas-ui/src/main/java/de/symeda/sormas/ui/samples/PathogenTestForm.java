@@ -31,6 +31,7 @@ import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.person.PersonDto;
@@ -80,8 +81,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.TESTED_DISEASE, PathogenTestDto.TESTED_DISEASE_DETAILS) +
 			fluidRowLocs(PathogenTestDto.TESTED_DISEASE_VARIANT, PathogenTestDto.TESTED_DISEASE_VARIANT_DETAILS) +
 			fluidRowLocs(PathogenTestDto.TYPING_ID, "") +
-			fluidRowLocs(PathogenTestDto.TEST_DATE_TIME, PathogenTestDto.LAB) +
-			fluidRowLocs("", PathogenTestDto.LAB_DETAILS) +
+			fluidRowLocs(PathogenTestDto.TEST_DATE_TIME, "") +
+			fluidRowLocs(PathogenTestDto.LAB, PathogenTestDto.LAB_DETAILS) +
+			fluidRowLocs(4, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, 4, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, 4, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN) +
 			fluidRowLocs(PathogenTestDto.TEST_RESULT, PathogenTestDto.TEST_RESULT_VERIFIED) +
 			fluidRowLocs(PathogenTestDto.PRELIMINARY, "") +
 			fluidRowLocs(PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, "") +
@@ -155,6 +157,11 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		addField(PathogenTestDto.EXTERNAL_ID);
 		addField(PathogenTestDto.EXTERNAL_ORDER_ID);
 
+		addField(PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, NullableOptionGroup.class);
+		addFields(PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
+		setVisible(false, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
+
+
 	/*	testTypeField = ComboBoxHelper.createComboBoxV7();
 
 		for(PathogenTestType pathogenTestType : PathogenTestType.DISEASE_TESTS){
@@ -177,6 +184,11 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			testTypeField = addField(PathogenTestDto.TEST_TYPE, ComboBox.class);
 			testTypeField.setItemCaptionMode(ItemCaptionMode.ID_TOSTRING);
 			testTypeField.setImmediate(true);
+		}
+
+		if (caseDisease == Disease.CHOLERA) {
+			setVisible(true, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
+
 		}
 
 		pcrTestSpecification = addField(PathogenTestDto.PCR_TEST_SPECIFICATION, ComboBox.class);

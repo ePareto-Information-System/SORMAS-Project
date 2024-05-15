@@ -78,9 +78,6 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATION_CITY_COUNTRY = "patientContactWithConfirmedCaseExposureLocationCityCountry";
 	public static final String EXPOSED_TO_RISK_FACTOR = "exposedToRiskFactor";
 	public static final String WATER_USED_BY_PATIENT_AFTER_EXPOSURE = "waterUsedByPatientAfterExposure";
-	public static final String VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS = "vibrioCholeraeIdentifiedInStools";
-	public static final String DRUGS_SENSITIVE_TO_VIBRIO_STRAIN = "drugsSensitiveToVibrioStrain";
-	public static final String DRUGS_RESISTANT_TO_VIBRIO_STRAIN = "drugsResistantToVibrioStrain";
 
 
 	@Enumerated(EnumType.STRING)
@@ -130,9 +127,6 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	private YesNo exposedToRiskFactor;
 	private DrinkingWaterSource waterUsedByPatientAfterExposure;
-	private YesNo vibrioCholeraeIdentifiedInStools;
-	private YesNo drugsSensitiveToVibrioStrain;
-	private YesNo drugsResistantToVibrioStrain;
 
 	@Valid
 	private List<ActivityAsCaseDto> activitiesAsCase = new ArrayList<>();
@@ -443,24 +437,5 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public void setWaterUsedByPatientAfterExposure(DrinkingWaterSource waterUsedByPatientAfterExposure) {
 		this.waterUsedByPatientAfterExposure = waterUsedByPatientAfterExposure;
-	}
-
-	public YesNo getVibrioCholeraeIdentifiedInStools() {
-		return vibrioCholeraeIdentifiedInStools;
-	}
-	public void setVibrioCholeraeIdentifiedInStools(YesNo vibrioCholeraeIdentifiedInStools) {
-		this.vibrioCholeraeIdentifiedInStools = vibrioCholeraeIdentifiedInStools;
-	}
-	public YesNo getDrugsSensitiveToVibrioStrain() {
-		return drugsSensitiveToVibrioStrain;
-	}
-	public void setDrugsSensitiveToVibrioStrain(YesNo drugsSensitiveToVibrioStrain) {
-		this.drugsSensitiveToVibrioStrain = drugsSensitiveToVibrioStrain;
-	}
-	public YesNo getDrugsResistantToVibrioStrain() {
-		return drugsResistantToVibrioStrain;
-	}
-	public void setDrugsResistantToVibrioStrain(YesNo drugsResistantToVibrioStrain) {
-		this.drugsResistantToVibrioStrain = drugsResistantToVibrioStrain;
 	}
 }

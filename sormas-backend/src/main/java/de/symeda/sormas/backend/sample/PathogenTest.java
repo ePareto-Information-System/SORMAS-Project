@@ -39,6 +39,7 @@ import de.symeda.sormas.api.sample.PCRTestSpecification;
 import de.symeda.sormas.api.sample.PathogenTestReferenceDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.backend.common.DeletableAdo;
 import de.symeda.sormas.backend.disease.DiseaseVariantConverter;
 import de.symeda.sormas.backend.infrastructure.country.Country;
@@ -125,6 +126,10 @@ public class PathogenTest extends DeletableAdo {
 	private String prescriberPostalCode;
 	private String prescriberCity;
 	private Country prescriberCountry;
+
+	private YesNo vibrioCholeraeIdentifiedInStools;
+	private String drugsSensitiveToVibrioStrain;
+	private String drugsResistantToVibrioStrain;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
@@ -477,5 +482,24 @@ public class PathogenTest extends DeletableAdo {
 
 	public PathogenTestReferenceDto toReference() {
 		return new PathogenTestReferenceDto(getUuid());
+	}
+
+	public YesNo getVibrioCholeraeIdentifiedInStools() {
+		return vibrioCholeraeIdentifiedInStools;
+	}
+	public void setVibrioCholeraeIdentifiedInStools(YesNo vibrioCholeraeIdentifiedInStools) {
+		this.vibrioCholeraeIdentifiedInStools = vibrioCholeraeIdentifiedInStools;
+	}
+	public String getDrugsSensitiveToVibrioStrain() {
+		return drugsSensitiveToVibrioStrain;
+	}
+	public void setDrugsSensitiveToVibrioStrain(String drugsSensitiveToVibrioStrain) {
+		this.drugsSensitiveToVibrioStrain = drugsSensitiveToVibrioStrain;
+	}
+	public String getDrugsResistantToVibrioStrain() {
+		return drugsResistantToVibrioStrain;
+	}
+	public void setDrugsResistantToVibrioStrain(String drugsResistantToVibrioStrain) {
+		this.drugsResistantToVibrioStrain = drugsResistantToVibrioStrain;
 	}
 }

@@ -249,8 +249,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					loc(CONTACT_TRACING_FIRST_CONTACT_HEADER_LOC) +
 					fluidRowLocs(CaseDataDto.CONTACT_TRACING_FIRST_CONTACT_TYPE, CaseDataDto.CONTACT_TRACING_FIRST_CONTACT_DATE) +
 					fluidRowLocs(4, CaseDataDto.NUMBER_OF_PEOPLE_IN_SAME_HOUSEHOLD) +
-					fluidRowLocs(CaseDataDto.DATE_LATEST_UPDATE_RECORD, CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS) +
-					loc(INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC);
+					fluidRowLocs(CaseDataDto.DATE_LATEST_UPDATE_RECORD, CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS);
 
 	private static final String FOLLOWUP_LAYOUT =
 			loc(FOLLOW_UP_STATUS_HEADING_LOC) +
@@ -1980,7 +1979,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 	@Override
 	protected String createHtmlLayout() {
-		return MAIN_HTML_LAYOUT + (caseFollowUpEnabled ? FOLLOWUP_LAYOUT : "") + PAPER_FORM_DATES_AND_HEALTH_CONDITIONS_HTML_LAYOUT;
+		return MAIN_HTML_LAYOUT + (caseFollowUpEnabled ? FOLLOWUP_LAYOUT : "") + PAPER_FORM_DATES_AND_HEALTH_CONDITIONS_HTML_LAYOUT + loc(INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC);
 	}
 
 	public void addButtonListener(String componentId, Button.ClickListener listener) {

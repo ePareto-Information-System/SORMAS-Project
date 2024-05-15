@@ -1147,10 +1147,6 @@ public interface Captions {
 	String EpiData_patientCloseContactWithARI = "EpiData.patientCloseContactWithARI";
 	String EpiData_patientContactWithConfirmedCase = "EpiData.patientContactWithConfirmedCase";
 	String EpiData_patientContactWithConfirmedCaseExposureLocationCityCountry = "EpiData.patientContactWithConfirmedCaseExposureLocationCityCountry";
-	String EpiData_vibrioCholeraeIdentifiedInStools = "EpiData.vibrioCholeraeIdentifiedInStools";
-	String EpiData_drugsSensitiveToVibrioStrain = "EpiData.drugsSensitiveToVibrioStrain";
-	String EpiData_drugsResistantToVibrioStrain = "EpiData.drugsResistantToVibrioStrain";
-
 	String epiDataNoSourceContacts = "epiDataNoSourceContacts";
 	String epiWeekFrom = "epiWeekFrom";
 	String epiWeekTo = "epiWeekTo";
@@ -1822,6 +1818,9 @@ public interface Captions {
 	String PathogenTest_testTypeText = "PathogenTest.testTypeText";
 	String PathogenTest_typingId = "PathogenTest.typingId";
 	String PathogenTest_viaLims = "PathogenTest.viaLims";
+	String PathogenTest_vibrioCholeraeIdentifiedInStools = "PathogenTest.vibrioCholeraeIdentifiedInStools";
+	String PathogenTest_drugsSensitiveToVibrioStrain = "PathogenTest.drugsSensitiveToVibrioStrain";
+	String PathogenTest_drugsResistantToVibrioStrain = "PathogenTest.drugsResistantToVibrioStrain";
 	String pathogenTestAdd = "pathogenTestAdd";
 	String pathogenTestCreateNew = "pathogenTestCreateNew";
 	String pathogenTestNewResult = "pathogenTestNewResult";

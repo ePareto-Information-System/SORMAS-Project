@@ -34,12 +34,7 @@ import de.symeda.sormas.api.sormastosormas.S2SIgnoreProperty;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasConfig;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DateFormatHelper;
-import de.symeda.sormas.api.utils.DependingOnFeatureType;
-import de.symeda.sormas.api.utils.FieldConstraints;
-import de.symeda.sormas.api.utils.HideForCountriesExcept;
-import de.symeda.sormas.api.utils.SensitiveData;
+import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
 @DependingOnFeatureType(featureType = FeatureType.SAMPLES_LAB)
@@ -91,6 +86,9 @@ public class PathogenTestDto extends PseudonymizableDto {
 	public static final String PRESCRIBER_POSTAL_CODE = "prescriberPostalCode";
 	public static final String PRESCRIBER_CITY = "prescriberCity";
 	public static final String PRESCRIBER_COUNTRY = "prescriberCountry";
+	public static final String VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS = "vibrioCholeraeIdentifiedInStools";
+	public static final String DRUGS_SENSITIVE_TO_VIBRIO_STRAIN = "drugsSensitiveToVibrioStrain";
+	public static final String DRUGS_RESISTANT_TO_VIBRIO_STRAIN = "drugsResistantToVibrioStrain";
 
 	@NotNull(message = Validations.validSample)
 	private SampleReferenceDto sample;
@@ -187,6 +185,10 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private String prescriberCity;
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_LUXEMBOURG)
 	private CountryReferenceDto prescriberCountry;
+
+	private YesNo vibrioCholeraeIdentifiedInStools;
+	private String drugsSensitiveToVibrioStrain;
+	private String drugsResistantToVibrioStrain;
 
 	public static PathogenTestDto build(SampleDto sample, UserDto currentUser) {
 
@@ -560,5 +562,24 @@ public class PathogenTestDto extends PseudonymizableDto {
 	@Override
 	public PathogenTestDto clone() throws CloneNotSupportedException {
 		return (PathogenTestDto) super.clone();
+	}
+
+	public YesNo getVibrioCholeraeIdentifiedInStools() {
+		return vibrioCholeraeIdentifiedInStools;
+	}
+	public void setVibrioCholeraeIdentifiedInStools(YesNo vibrioCholeraeIdentifiedInStools) {
+		this.vibrioCholeraeIdentifiedInStools = vibrioCholeraeIdentifiedInStools;
+	}
+	public String getDrugsSensitiveToVibrioStrain() {
+		return drugsSensitiveToVibrioStrain;
+	}
+	public void setDrugsSensitiveToVibrioStrain(String drugsSensitiveToVibrioStrain) {
+		this.drugsSensitiveToVibrioStrain = drugsSensitiveToVibrioStrain;
+	}
+	public String getDrugsResistantToVibrioStrain() {
+		return drugsResistantToVibrioStrain;
+	}
+	public void setDrugsResistantToVibrioStrain(String drugsResistantToVibrioStrain) {
+		this.drugsResistantToVibrioStrain = drugsResistantToVibrioStrain;
 	}
 }

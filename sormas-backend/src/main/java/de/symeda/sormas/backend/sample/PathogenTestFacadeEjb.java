@@ -411,6 +411,10 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setPrescriberCity(source.getPrescriberCity());
 		target.setPrescriberCountry(CountryFacadeEjb.toReferenceDto(source.getPrescriberCountry()));
 
+		target.setVibrioCholeraeIdentifiedInStools(source.getVibrioCholeraeIdentifiedInStools());
+		target.setDrugsSensitiveToVibrioStrain(source.getDrugsSensitiveToVibrioStrain());
+		target.setDrugsResistantToVibrioStrain(source.getDrugsResistantToVibrioStrain());
+
 		return target;
 	}
 
@@ -494,6 +498,10 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setPrescriberPostalCode(source.getPrescriberPostalCode());
 		target.setPrescriberCity(source.getPrescriberCity());
 		target.setPrescriberCountry(countryService.getByReferenceDto(source.getPrescriberCountry()));
+
+		target.setVibrioCholeraeIdentifiedInStools(source.getVibrioCholeraeIdentifiedInStools());
+		target.setDrugsSensitiveToVibrioStrain(source.getDrugsSensitiveToVibrioStrain());
+		target.setDrugsResistantToVibrioStrain(source.getDrugsResistantToVibrioStrain());
 
 		return target;
 	}
