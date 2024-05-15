@@ -411,6 +411,7 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setPrescriberCity(source.getPrescriberCity());
 		target.setPrescriberCountry(CountryFacadeEjb.toReferenceDto(source.getPrescriberCountry()));
 		target.setVirusDetectionGenotype(source.getVirusDetectionGenotype());
+		target.setFinalClassification(source.getFinalClassification());
 
 		return target;
 	}
@@ -496,6 +497,7 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setPrescriberCity(source.getPrescriberCity());
 		target.setPrescriberCountry(countryService.getByReferenceDto(source.getPrescriberCountry()));
 		target.setVirusDetectionGenotype(source.getVirusDetectionGenotype());
+		target.setFinalClassification(source.getFinalClassification());
 
 		return target;
 	}

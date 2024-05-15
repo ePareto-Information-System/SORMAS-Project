@@ -288,7 +288,6 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private Date dateSurveillanceSentResultsToDistrict;
 	private Date dateFormSentToHigherLevel;
 	private String personCompletingForm;
-	private FinalClassification finalClassification;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -1393,11 +1392,4 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 		this.personCompletingForm = personCompletingForm;
 	}
 
-	public FinalClassification getFinalClassification() {
-		return finalClassification;
-	}
-
-	public void setFinalClassification(FinalClassification finalClassification) {
-		this.finalClassification = finalClassification;
-	}
 }

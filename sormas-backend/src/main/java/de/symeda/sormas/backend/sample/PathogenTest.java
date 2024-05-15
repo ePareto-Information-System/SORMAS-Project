@@ -35,10 +35,7 @@ import javax.persistence.TemporalType;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.disease.DiseaseVariant;
-import de.symeda.sormas.api.sample.PCRTestSpecification;
-import de.symeda.sormas.api.sample.PathogenTestReferenceDto;
-import de.symeda.sormas.api.sample.PathogenTestResultType;
-import de.symeda.sormas.api.sample.PathogenTestType;
+import de.symeda.sormas.api.sample.*;
 import de.symeda.sormas.backend.common.DeletableAdo;
 import de.symeda.sormas.backend.disease.DiseaseVariantConverter;
 import de.symeda.sormas.backend.infrastructure.country.Country;
@@ -126,6 +123,8 @@ public class PathogenTest extends DeletableAdo {
 	private String prescriberCity;
 	private Country prescriberCountry;
 	private String virusDetectionGenotype;
+	private FinalClassification finalClassification;
+
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
@@ -482,6 +481,14 @@ public class PathogenTest extends DeletableAdo {
 
 	public void setVirusDetectionGenotype(String virusDetectionGenotype) {
 		this.virusDetectionGenotype = virusDetectionGenotype;
+	}
+
+	public FinalClassification getFinalClassification() {
+		return finalClassification;
+	}
+
+	public void setFinalClassification(FinalClassification finalClassification) {
+		this.finalClassification = finalClassification;
 	}
 
 	public PathogenTestReferenceDto toReference() {

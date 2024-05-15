@@ -90,7 +90,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.CQ_VALUE, "") + 
 			fluidRowLocs(PathogenTestDto.TEST_RESULT_TEXT) +
 			fluidRowLocs(PathogenTestDto.DELETION_REASON) +
-			fluidRowLocs(PathogenTestDto.OTHER_DELETION_REASON);
+			fluidRowLocs(PathogenTestDto.OTHER_DELETION_REASON) +
+			fluidRowLocs(PathogenTestDto.FINAL_CLASSIFICATION, "");
+
 	//@formatter:on
 
 	private SampleDto sample;
@@ -108,6 +110,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 	private ComboBox diseaseField;
 	private TextField virusDetectionGenotypeField;
+	private ComboBox finalClassificationField;
+
 
 	public PathogenTestForm(AbstractSampleForm sampleForm, boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction) {
 		this(create, caseSampleCount, isPseudonymized, inJurisdiction);
@@ -226,6 +230,10 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		virusDetectionGenotypeField = addField(PathogenTestDto.VIRUS_DETECTION_GENOTYPE, TextField.class);
 		virusDetectionGenotypeField.setVisible(false);
 
+		finalClassificationField = addField(PathogenTestDto.FINAL_CLASSIFICATION, ComboBox.class);
+		finalClassificationField.setVisible(false);
+
+
 		ComboBox testResultField = addField(PathogenTestDto.TEST_RESULT, ComboBox.class);
 		testResultField.removeItem(PathogenTestResultType.NOT_DONE);
 		addField(PathogenTestDto.SEROTYPE, TextField.class);
@@ -321,6 +329,12 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 				virusDetectionGenotypeField.setVisible(true);
+			}
+
+			if(Arrays.asList(Disease.MEASLES, Disease.CHOLERA, Disease.YELLOW_FEVER).contains(disease)){
+				finalClassificationField.setVisible(true);
+			} else {
+				finalClassificationField.setVisible(false);
 			}
 		});
 

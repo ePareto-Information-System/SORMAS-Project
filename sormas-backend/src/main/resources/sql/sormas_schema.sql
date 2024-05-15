@@ -12841,4 +12841,9 @@ INSERT INTO schema_version (version_number, comment) VALUES (535, 'Added column 
 ALTER TABLE samples ADD COLUMN finalClassification varchar(255) NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (536, 'Added column to finalClassification to samples');
 
+-- drop finalClassification from samples and add to pathogentest
+ALTER TABLE samples DROP COLUMN finalClassification;
+ALTER TABLE pathogentest ADD COLUMN finalClassification varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (537, 'Drop finalClassification from samples and add to pathogentest');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
