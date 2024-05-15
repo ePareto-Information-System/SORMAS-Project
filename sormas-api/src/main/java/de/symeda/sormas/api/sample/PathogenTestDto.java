@@ -14,6 +14,7 @@
  */
 package de.symeda.sormas.api.sample;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import javax.validation.constraints.NotNull;
@@ -23,8 +24,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.common.DeletionReason;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.feature.FeatureType;
@@ -139,6 +143,9 @@ public class PathogenTestDto extends PseudonymizableDto {
 
 
 	public static final String VIRUS_DETECTION_GENOTYPE = "virusDetectionGenotype";
+	public static final String VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS = "vibrioCholeraeIdentifiedInStools";
+	public static final String DRUGS_SENSITIVE_TO_VIBRIO_STRAIN = "drugsSensitiveToVibrioStrain";
+	public static final String DRUGS_RESISTANT_TO_VIBRIO_STRAIN = "drugsResistantToVibrioStrain";
 
 	@NotNull(message = Validations.validSample)
 	private SampleReferenceDto sample;
@@ -277,6 +284,9 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private Date dateLabResultsSentClinician;
 	private Date dateDistrictReceivedLabResults;
 	private String virusDetectionGenotype;
+	private YesNo vibrioCholeraeIdentifiedInStools;
+	private String drugsSensitiveToVibrioStrain;
+	private String drugsResistantToVibrioStrain;
 
 	public static PathogenTestDto build(SampleDto sample, UserDto currentUser) {
 
@@ -298,6 +308,16 @@ public class PathogenTestDto extends PseudonymizableDto {
 			pathogenTest.setLab(sample.getLab());
 			pathogenTest.setLabDetails(sample.getLabDetails());
 		}
+
+		if (sample.getAssociatedCase() != null) {
+			CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(sample.getAssociatedCase().getUuid());
+			if (caseDataDto != null) {
+				if (Arrays.asList(Disease.MEASLES, Disease.CHOLERA, Disease.GUINEA_WORM, Disease.RUBELLA, Disease.CORONAVIRUS).contains(caseDataDto.getDisease())) {
+					pathogenTest.setTestedDisease(caseDataDto.getDisease());
+				}
+			}
+		}
+
 		pathogenTest.setLabUser(currentUser.toReference());
 		return pathogenTest;
 	}
@@ -981,5 +1001,23 @@ public class PathogenTestDto extends PseudonymizableDto {
 
 	public void setDateDistrictReceivedLabResults(Date dateDistrictReceivedLabResults) {
 		this.dateDistrictReceivedLabResults = dateDistrictReceivedLabResults;
+	}
+	public YesNo getVibrioCholeraeIdentifiedInStools() {
+		return vibrioCholeraeIdentifiedInStools;
+	}
+	public void setVibrioCholeraeIdentifiedInStools(YesNo vibrioCholeraeIdentifiedInStools) {
+		this.vibrioCholeraeIdentifiedInStools = vibrioCholeraeIdentifiedInStools;
+	}
+	public String getDrugsSensitiveToVibrioStrain() {
+		return drugsSensitiveToVibrioStrain;
+	}
+	public void setDrugsSensitiveToVibrioStrain(String drugsSensitiveToVibrioStrain) {
+		this.drugsSensitiveToVibrioStrain = drugsSensitiveToVibrioStrain;
+	}
+	public String getDrugsResistantToVibrioStrain() {
+		return drugsResistantToVibrioStrain;
+	}
+	public void setDrugsResistantToVibrioStrain(String drugsResistantToVibrioStrain) {
+		this.drugsResistantToVibrioStrain = drugsResistantToVibrioStrain;
 	}
 }

@@ -1999,6 +1999,9 @@ public interface Captions {
 	String PathogenTest_typingId = "PathogenTest.typingId";
 	String PathogenTest_viaLims = "PathogenTest.viaLims";
 	String PathogenTest_virusDetectionGenotype = "PathogenTest.virusDetectionGenotype";
+	String PathogenTest_vibrioCholeraeIdentifiedInStools = "PathogenTest.vibrioCholeraeIdentifiedInStools";
+	String PathogenTest_drugsSensitiveToVibrioStrain = "PathogenTest.drugsSensitiveToVibrioStrain";
+	String PathogenTest_drugsResistantToVibrioStrain = "PathogenTest.drugsResistantToVibrioStrain";
 	String pathogenTestAdd = "pathogenTestAdd";
 	String pathogenTestCreateNew = "pathogenTestCreateNew";
 	String pathogenTestNewResult = "pathogenTestNewResult";

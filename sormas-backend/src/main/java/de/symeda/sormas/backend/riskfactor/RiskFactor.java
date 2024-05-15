@@ -67,9 +67,6 @@ public class RiskFactor extends AbstractDomainObject {
     private YesNo threeDaysPriorToDiseaseAttendAnyFuneral;
     private YesNo threeDaysPriorToDiseaseAttendAnySocialEvent;
     private String otherSocialEventDetails;
-    private YesNo vibrioCholeraeIdentifiedInStools;
-    private YesNo drugsSensitiveToVibrioStrain;
-    private YesNo drugsResistantToVibrioStrain;
     private YesNo patientSpoxVaccinationScarPresent;
     private YesNo patientTravelledAnywhere3WeeksPrior;
     private String patientTravelled3WeeksIfYesIndicate;
@@ -356,24 +353,7 @@ public class RiskFactor extends AbstractDomainObject {
     public void setOtherSocialEventDetails(String otherSocialEventDetails) {
         this.otherSocialEventDetails = otherSocialEventDetails;
     }
-    public YesNo getVibrioCholeraeIdentifiedInStools() {
-        return vibrioCholeraeIdentifiedInStools;
-    }
-    public void setVibrioCholeraeIdentifiedInStools(YesNo vibrioCholeraeIdentifiedInStools) {
-        this.vibrioCholeraeIdentifiedInStools = vibrioCholeraeIdentifiedInStools;
-    }
-    public YesNo getDrugsSensitiveToVibrioStrain() {
-        return drugsSensitiveToVibrioStrain;
-    }
-    public void setDrugsSensitiveToVibrioStrain(YesNo drugsSensitiveToVibrioStrain) {
-        this.drugsSensitiveToVibrioStrain = drugsSensitiveToVibrioStrain;
-    }
-    public YesNo getDrugsResistantToVibrioStrain() {
-        return drugsResistantToVibrioStrain;
-    }
-    public void setDrugsResistantToVibrioStrain(YesNo drugsResistantToVibrioStrain) {
-        this.drugsResistantToVibrioStrain = drugsResistantToVibrioStrain;
-    }
+
     public YesNo getPatientSpoxVaccinationScarPresent() {
         return patientSpoxVaccinationScarPresent;
     }

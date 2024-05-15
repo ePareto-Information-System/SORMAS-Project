@@ -49,8 +49,6 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
 
     private static final String HTML_LAYOUT =
             loc(RISK_FACTOR_HEADING_LOC) +
-                    fluidRowLocs(4, RiskFactorDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, 4, RiskFactorDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, 4, RiskFactorDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN) +
-
                     loc(POTENTIAL_VIBRIO_VEHICLES_DRINKING_WATER) +
                     fluidRowLocs(RiskFactorDto.DRINKING_WATER_SOURCE_ONE,RiskFactorDto.DRINKING_WATER_SOURCE_TWO) +
                     fluidRowLocs(RiskFactorDto.DRINKING_WATER_SOURCE_THREE,RiskFactorDto.DRINKING_WATER_SOURCE_FOUR) +
@@ -198,10 +196,6 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
         addField(RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_WATER_SOURCE_THREE, NullableOptionGroup.class);
         addField(RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_WATER_SOURCE_FOUR, NullableOptionGroup.class);
         addField(RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_WATER_SOURCE_FIVE, NullableOptionGroup.class);
-
-        addField(RiskFactorDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, NullableOptionGroup.class);
-        addField(RiskFactorDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, NullableOptionGroup.class);
-        addField(RiskFactorDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN, NullableOptionGroup.class);
 
         addField(RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_FOOD_ITEMS_ONE, NullableOptionGroup.class);
         addField(RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_FOOD_ITEMS_TWO, NullableOptionGroup.class);

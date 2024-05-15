@@ -70,9 +70,6 @@ public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boo
         target.setThreeDaysPriorToDiseaseAttendAnyFuneral(source.getThreeDaysPriorToDiseaseAttendAnyFuneral());
         target.setThreeDaysPriorToDiseaseAttendAnySocialEvent(source.getThreeDaysPriorToDiseaseAttendAnySocialEvent());
         target.setOtherSocialEventDetails(source.getOtherSocialEventDetails());
-        target.setVibrioCholeraeIdentifiedInStools(source.getVibrioCholeraeIdentifiedInStools());
-        target.setDrugsSensitiveToVibrioStrain(source.getDrugsSensitiveToVibrioStrain());
-        target.setDrugsResistantToVibrioStrain(source.getDrugsResistantToVibrioStrain());
         target.setPatientSpoxVaccinationScarPresent(source.getPatientSpoxVaccinationScarPresent());
         target.setPatientTravelledAnywhere3WeeksPrior(source.getPatientTravelledAnywhere3WeeksPrior());
         target.setPatientTravelled3WeeksIfYesIndicate(source.getPatientTravelled3WeeksIfYesIndicate());
@@ -139,9 +136,6 @@ public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boo
         target.setThreeDaysPriorToDiseaseAttendAnyFuneral(source.getThreeDaysPriorToDiseaseAttendAnyFuneral());
         target.setThreeDaysPriorToDiseaseAttendAnySocialEvent(source.getThreeDaysPriorToDiseaseAttendAnySocialEvent());
         target.setOtherSocialEventDetails(source.getOtherSocialEventDetails());
-        target.setVibrioCholeraeIdentifiedInStools(source.getVibrioCholeraeIdentifiedInStools());
-        target.setDrugsSensitiveToVibrioStrain(source.getDrugsSensitiveToVibrioStrain());
-        target.setDrugsResistantToVibrioStrain(source.getDrugsResistantToVibrioStrain());
         target.setPatientSpoxVaccinationScarPresent(source.getPatientSpoxVaccinationScarPresent());
         target.setPatientTravelledAnywhere3WeeksPrior(source.getPatientTravelledAnywhere3WeeksPrior());
         target.setPatientTravelled3WeeksIfYesIndicate(source.getPatientTravelled3WeeksIfYesIndicate());

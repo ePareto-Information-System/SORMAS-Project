@@ -281,8 +281,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					loc(CONTACT_TRACING_FIRST_CONTACT_HEADER_LOC) +
 					fluidRowLocs(CaseDataDto.CONTACT_TRACING_FIRST_CONTACT_TYPE, CaseDataDto.CONTACT_TRACING_FIRST_CONTACT_DATE) +
 					fluidRowLocs(4, CaseDataDto.NUMBER_OF_PEOPLE_IN_SAME_HOUSEHOLD) +
-					fluidRowLocs(CaseDataDto.DATE_LATEST_UPDATE_RECORD, CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS) +
-					loc(INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC);
+					fluidRowLocs(CaseDataDto.DATE_LATEST_UPDATE_RECORD, CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS);
 
 	private static final String FOLLOWUP_LAYOUT =
 			loc(FOLLOW_UP_STATUS_HEADING_LOC) +
@@ -537,6 +536,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 true);
 
         ComboBox diseaseField = addDiseaseField(CaseDataDto.DISEASE, false);
+        diseaseField.setEnabled(false);
         ComboBox diseaseVariantField = addField(CaseDataDto.DISEASE_VARIANT, ComboBox.class);
         TextField diseaseVariantDetailsField = addField(CaseDataDto.DISEASE_VARIANT_DETAILS, TextField.class);
         diseaseVariantDetailsField.setVisible(false);
@@ -1447,7 +1447,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             } else if (disease == Disease.CHOLERA) {
 
                 healthConditionsField.setVisible(false);
-                setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.LAST_VACCINATION_DATE, CaseDataDto.NUMBER_OF_DOSES, CaseDataDto.OUTCOME);
+                setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.LAST_VACCINATION_DATE, CaseDataDto.NUMBER_OF_DOSES);
                 medicalInformationFields =
                         Arrays.asList();
 

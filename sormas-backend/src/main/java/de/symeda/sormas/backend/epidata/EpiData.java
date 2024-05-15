@@ -177,6 +177,9 @@ public class EpiData extends AbstractDomainObject {
 	private YesNo receivedHealthEducation;
 	private YesNo patientEnteredWaterSource;
 	private PlaceManaged placeManaged;
+	private YesNo vibrioCholeraeIdentifiedInStools;
+	private String drugsSensitiveToVibrioStrain;
+	private String drugsResistantToVibrioStrain;
 
 
 	@Enumerated(EnumType.STRING)

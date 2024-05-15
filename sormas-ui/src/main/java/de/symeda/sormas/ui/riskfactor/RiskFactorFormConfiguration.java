@@ -10,9 +10,6 @@ public class RiskFactorFormConfiguration {
     private static final Map<String, Set<Disease>> DISABLED_FIELDS_BY_DISEASE = new HashMap<>();
 
     static {
-        DISABLED_FIELDS_BY_DISEASE.put(RiskFactorDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));
-        DISABLED_FIELDS_BY_DISEASE.put(RiskFactorDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));
-        DISABLED_FIELDS_BY_DISEASE.put(RiskFactorDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(RiskFactorDto.DRINKING_WATER_SOURCE_ONE, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(RiskFactorDto.DRINKING_WATER_SOURCE_TWO, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(RiskFactorDto.DRINKING_WATER_SOURCE_THREE, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));

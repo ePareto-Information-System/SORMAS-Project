@@ -32,6 +32,7 @@ import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.event.EventReferenceDto;
@@ -93,10 +94,11 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(6, PathogenTestDto.VIRUS_DETECTION_GENOTYPE) +
 			fluidRowLocs(PathogenTestDto.TESTED_DISEASE_VARIANT, PathogenTestDto.TESTED_DISEASE_VARIANT_DETAILS) +
 			fluidRowLocs(PathogenTestDto.TYPING_ID, "") +
-			fluidRowLocs(6,PathogenTestDto.TEST_DATE_TIME) +
+			fluidRowLocs(PathogenTestDto.TEST_DATE_TIME, "") +
 			fluidRowLocs(PathogenTestDto.LAB, PathogenTestDto.LAB_DETAILS) +
 			fluidRowLocs(6,PathogenTestDto.LAB_LOCATION) +
 			fluidRowLocs(PathogenTestDto.DATE_LAB_RECEIVED_SPECIMEN, PathogenTestDto.SPECIMEN_CONDITION) +
+			fluidRowLocs(4, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, 4, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, 4, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN) +
 			fluidRowLocs(PathogenTestDto.TEST_RESULT, PathogenTestDto.TEST_RESULT_VERIFIED) +
 			fluidRowLocs(PathogenTestDto.PRELIMINARY, "") +
 			fluidRowLocs(PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, "") +
@@ -299,6 +301,10 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		testTypeField.setItemCaptionMode(ItemCaptionMode.ID_TOSTRING);
 		testTypeField.setImmediate(true);
 
+		addField(PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, NullableOptionGroup.class);
+		addFields(PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
+		setVisible(false, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
+
 		pcrTestSpecification = addField(PathogenTestDto.PCR_TEST_SPECIFICATION, ComboBox.class);
 		testTypeTextField = addField(PathogenTestDto.TEST_TYPE_TEXT, TextField.class);
 		FieldHelper.addSoftRequiredStyle(testTypeTextField);
@@ -350,6 +356,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 					break;
 				}
 			}
+		} else if (Arrays.asList(Disease.MEASLES, Disease.CHOLERA, Disease.CORONAVIRUS, Disease.GUINEA_WORM).contains(caseDisease)) {
+
 		}
 
 
@@ -507,6 +515,12 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						FieldVisibilityCheckers.withDisease(disease),
 						PathogenTestType.class);
 			}
+			if (disease == Disease.CHOLERA) {
+				setVisible(true, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
+			} else {
+				setVisible(false, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
+			}
+
 
 			if (disease == Disease.MEASLES) {
 				List<PathogenTestType> measelesPathogenTests = PathogenTestType.getMeaslesTestTypes();
@@ -739,7 +753,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			dateDistrictReceivedLabResults.setVisible(true);
 		}
 	}
-		
+
 
 	// Method to hide all components initially
 	private void hideAllComponents() {

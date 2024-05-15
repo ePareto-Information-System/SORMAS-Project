@@ -994,7 +994,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				List<PresentCondition> validValues = Arrays.asList();
 				FieldHelper.updateEnumData(presentConditionField, validValues);
 				setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.MOTHERS_NAME, PersonDto.FATHERS_NAME, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PASSPORT_NUMBER, PersonDto.GHANA_CARD, PersonDto.MARRIAGE_STATUS, PersonDto.OCCUPATION_DETAILS, PersonDto.EDUCATION_TYPE);
-
 			} else {
 				FieldVisibilityCheckers fieldVisibilityCheckers = FieldVisibilityCheckers.withDisease(disease);
 				List<PresentCondition> validValues = Arrays.stream(PresentCondition.values())
