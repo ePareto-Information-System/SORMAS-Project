@@ -23,6 +23,8 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 import java.util.*;
 import java.util.function.Consumer;
 
+import de.symeda.sormas.api.event.TypeOfPlace;
+import de.symeda.sormas.api.sample.*;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserRoleReferenceDto;
 import com.vaadin.v7.ui.*;
@@ -61,11 +63,6 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
-import de.symeda.sormas.api.sample.PathogenTestDto;
-import de.symeda.sormas.api.sample.PathogenTestResultType;
-import de.symeda.sormas.api.sample.PathogenTestType;
-import de.symeda.sormas.api.sample.SampleDto;
-import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
@@ -562,9 +559,16 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				testTypeField.addItems(PathogenTestType.values());
 			}
 
-			if(Arrays.asList(Disease.MEASLES, Disease.CHOLERA, Disease.YELLOW_FEVER).contains(disease)){
+			if(Arrays.asList(Disease.MEASLES, Disease.CHOLERA).contains(disease)){
 				finalClassificationField.setVisible(true);
-			} else {
+				for (FinalClassification classification : FinalClassification.DEFAULT) {
+					finalClassificationField.addItem(classification);
+				}
+			} else if (disease == Disease.YELLOW_FEVER){
+				for (FinalClassification classification : FinalClassification.YF_CLASSIFICATION) {
+					finalClassificationField.addItem(classification);
+				}
+			}else {
 				finalClassificationField.setVisible(false);
 				virusDetectionGenotypeField.setVisible(false);
 			}
