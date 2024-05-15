@@ -171,6 +171,8 @@ public class PathogenTest extends DeletableAdo {
 	private Date dateDistrictReceivedLabResults;
 
 	private String virusDetectionGenotype;
+	private FinalClassification finalClassification;
+
 
 	private YesNo vibrioCholeraeIdentifiedInStools;
 	private String drugsSensitiveToVibrioStrain;
@@ -531,6 +533,14 @@ public class PathogenTest extends DeletableAdo {
 
 	public void setVirusDetectionGenotype(String virusDetectionGenotype) {
 		this.virusDetectionGenotype = virusDetectionGenotype;
+	}
+
+	public FinalClassification getFinalClassification() {
+		return finalClassification;
+	}
+
+	public void setFinalClassification(FinalClassification finalClassification) {
+		this.finalClassification = finalClassification;
 	}
 
 	public PathogenTestReferenceDto toReference() {

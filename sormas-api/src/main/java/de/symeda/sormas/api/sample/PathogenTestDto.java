@@ -146,6 +146,7 @@ public class PathogenTestDto extends PseudonymizableDto {
 	public static final String VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS = "vibrioCholeraeIdentifiedInStools";
 	public static final String DRUGS_SENSITIVE_TO_VIBRIO_STRAIN = "drugsSensitiveToVibrioStrain";
 	public static final String DRUGS_RESISTANT_TO_VIBRIO_STRAIN = "drugsResistantToVibrioStrain";
+	public static final String FINAL_CLASSIFICATION = "finalClassification";
 
 	@NotNull(message = Validations.validSample)
 	private SampleReferenceDto sample;
@@ -287,6 +288,8 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private YesNo vibrioCholeraeIdentifiedInStools;
 	private String drugsSensitiveToVibrioStrain;
 	private String drugsResistantToVibrioStrain;
+	private FinalClassification finalClassification;
+
 
 	public static PathogenTestDto build(SampleDto sample, UserDto currentUser) {
 
@@ -679,6 +682,14 @@ public class PathogenTestDto extends PseudonymizableDto {
 
 	public void setVirusDetectionGenotype(String virusDetectionGenotype) {
 		this.virusDetectionGenotype = virusDetectionGenotype;
+	}
+
+	public FinalClassification getFinalClassification() {
+		return finalClassification;
+	}
+
+	public void setFinalClassification(FinalClassification finalClassification) {
+		this.finalClassification = finalClassification;
 	}
 
 	@Override

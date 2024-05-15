@@ -118,7 +118,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private DateField dateSurveillanceSentResultsToDistrict;
 	private DateField dateFormSentToHigherLevel;
 	private TextField personCompletingForm;
-	private ComboBox finalClassificationField;
 
 	//@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
@@ -258,9 +257,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					loc(FOLLOW_UP_EXAMINATION_HEADLINE_LOC) +
 					fluidRowLocs(SampleDto.DATE_FOLLOWUP_EXAM, SampleDto.RESIDUAL_ANALYSIS, SampleDto.RESULT_EXAM) +
 					fluidRowLocs(6,SampleDto.IMMUNOCOMPROMISED_STATUS_SUSPECTED) +
-					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION) +
-					fluidRowLocs(6,SampleDto.FINAL_CLASSIFICATION) +
-					fluidRowLocs(6,SampleDto.FINAL_LAB_RESULTS);
+					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION);
 
 
 
@@ -334,9 +331,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		labLocation = addField(SampleDto.LAB_LOCATION, TextField.class);
 		labDetails.setVisible(false);
 		lab.addValueChangeListener(event -> updateLabDetailsVisibility(labDetails, event));
-
-		finalClassificationField = addField(SampleDto.FINAL_CLASSIFICATION, ComboBox.class);
-		finalClassificationField.setVisible(false);
 
 		addField(SampleDto.SPECIMEN_CONDITION, ComboBox.class);
 		addField(SampleDto.NO_TEST_POSSIBLE_REASON, TextField.class);
@@ -1180,9 +1174,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateSurveillanceSentResultsToDistrict.setVisible(true);
 		dateFormSentToHigherLevel.setVisible(true);
 		personCompletingForm.setVisible(true);
-
-		finalClassificationField.setVisible(true);
-
 
 	}
 

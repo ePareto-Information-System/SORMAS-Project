@@ -143,6 +143,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(6,PathogenTestDto.DATE_SAMPLE_SENT_REF_LAB) +
 			fluidRowLocs(PathogenTestDto.DATE_SENT_REPORTING_HEALTH_FACILITY, PathogenTestDto.DATE_SAMPLE_SENT_REGREF_LAB) +
 			fluidRowLocs(6, PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
+			fluidRowLocs(PathogenTestDto.FINAL_CLASSIFICATION, "") +
 			fluidRowLocs(6, PathogenTestDto.LABORATORY_FINAL_CLASSIFICATION);
 
 	//@formatter:on
@@ -216,6 +217,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		}
 	}
 	private TextField virusDetectionGenotypeField;
+	private ComboBox finalClassificationField;
+
 
 	public PathogenTestForm(AbstractSampleForm sampleForm, boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction) {
 		this(create, caseSampleCount, isPseudonymized, inJurisdiction);
@@ -369,6 +372,10 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 		virusDetectionGenotypeField = addField(PathogenTestDto.VIRUS_DETECTION_GENOTYPE, TextField.class);
 		virusDetectionGenotypeField.setVisible(false);
+
+		finalClassificationField = addField(PathogenTestDto.FINAL_CLASSIFICATION, ComboBox.class);
+		finalClassificationField.setVisible(false);
+
 
 		ComboBox testResultField = addField(PathogenTestDto.TEST_RESULT, ComboBox.class);
 		testResultField.removeItem(PathogenTestResultType.NOT_DONE);
@@ -541,6 +548,12 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 			} else {
 				testTypeField.addItems(PathogenTestType.values());
+			}
+
+			if(Arrays.asList(Disease.MEASLES, Disease.CHOLERA, Disease.YELLOW_FEVER).contains(disease)){
+				finalClassificationField.setVisible(true);
+			} else {
+				finalClassificationField.setVisible(false);
 			}
 		});
 

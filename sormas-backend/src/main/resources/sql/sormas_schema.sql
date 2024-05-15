@@ -14222,4 +14222,9 @@ ALTER TABLE pathogentest ADD COLUMN drugsSensitiveToVibrioStrain VARCHAR(255);
 ALTER TABLE pathogentest ADD COLUMN drugsResistantToVibrioStrain VARCHAR(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (638, 'Added columns to pathogentest to implement vibrioCholeraeIdentifiedInStools, drugsSensitiveToVibrioStrain, drugsResistantToVibrioStrain and DROP on riskfactor');
+
+ALTER TABLE samples DROP COLUMN finalClassification;
+ALTER TABLE pathogentest ADD COLUMN finalClassification varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (639, 'Drop finalClassification from samples and add to pathogentest');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
