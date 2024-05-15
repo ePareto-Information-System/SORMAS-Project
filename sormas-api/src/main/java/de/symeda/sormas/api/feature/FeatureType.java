@@ -40,6 +40,7 @@ public enum FeatureType {
 	// FEATURE MODULES
 	AGGREGATE_REPORTING(true, true, null, null, null),
 	CAMPAIGNS(true, false, null, null, null),
+	DISEASE_DETAILS(true, true, null, null, null),
 	CASE_SURVEILANCE(true, true, null, null, ImmutableMap.of(FeatureTypeProperty.AUTOMATIC_RESPONSIBILITY_ASSIGNMENT, Boolean.TRUE)),
 	CLINICAL_MANAGEMENT(true, true, null, null, null),
 	CONTACT_TRACING(true,
@@ -326,7 +327,24 @@ public enum FeatureType {
 			CASE_SURVEILANCE,
 			CONTACT_TRACING },
 		null,
-		ImmutableMap.of(FeatureTypeProperty.S2S_SHARING, Boolean.FALSE));
+		ImmutableMap.of(FeatureTypeProperty.S2S_SHARING, Boolean.FALSE)),
+	SORMAS_TO_SORMAS_SHARE_CASES_WITH_CONTACTS_AND_SAMPLES(true,
+	   true,
+	   new FeatureType[] {
+		CASE_SURVEILANCE,
+				CONTACT_TRACING,
+				SAMPLES_LAB },
+			null,
+			ImmutableMap.of(
+	FeatureTypeProperty.SHARE_ASSOCIATED_CONTACTS,
+	Boolean.FALSE,
+	FeatureTypeProperty.SHARE_SAMPLES,
+	Boolean.TRUE,
+	FeatureTypeProperty.SHARE_IMMUNIZATIONS,
+	Boolean.TRUE,
+	FeatureTypeProperty.SHARE_REPORTS,
+	Boolean.TRUE));
+
 
 	public static final FeatureType[] SURVEILLANCE_FEATURE_TYPES = {
 		FeatureType.CASE_SURVEILANCE,

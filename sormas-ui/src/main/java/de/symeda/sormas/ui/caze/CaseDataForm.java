@@ -472,11 +472,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         externalTokenWarningLabel.addStyleNames(VSPACE_3, LABEL_WHITE_SPACE_NORMAL);
         getContent().addComponent(externalTokenWarningLabel, EXTERNAL_TOKEN_WARNING_LOC);
 
-        TextField internaltoken = addField(CaseDataDto.INTERNAL_TOKEN, TextField.class);
-
-        otherCaseOutComeDetails = addField(CaseDataDto.OTHERCASEOUTCOMEDETAILS, TextField.class);
-        otherCaseOutComeDetails.setVisible(false);
-        otherCaseOutComeDetails.addAttachListener(e -> setOtherOutomeValue());
+        addField(CaseDataDto.INTERNAL_TOKEN, TextField.class);
 
         NullableOptionGroup investigationstatus = addField(CaseDataDto.INVESTIGATION_STATUS, NullableOptionGroup.class);
         NullableOptionGroup outcome = new NullableOptionGroup("Outcome");
@@ -682,11 +678,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         addField(CaseDataDto.NOSOCOMIAL_OUTBREAK).addStyleNames(CssStyles.FORCE_CAPTION_CHECKBOX);
         addField(CaseDataDto.INFECTION_SETTING);
         FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.INFECTION_SETTING, CaseDataDto.NOSOCOMIAL_OUTBREAK, true, true);
-
-        addField(CaseDataDto.DATE_LATEST_UPDATE_RECORD, DateField.class);
-        addField(CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS, TextArea.class).setRows(6);
-        addField(CaseDataDto.NUMBER_OF_PEOPLE_IN_SAME_HOUSEHOLD, TextField.class);
-        setVisible(false, CaseDataDto.OTHER_NOTES_AND_OBSERVATIONS, CaseDataDto.DATE_LATEST_UPDATE_RECORD, CaseDataDto.NUMBER_OF_PEOPLE_IN_SAME_HOUSEHOLD);
 
         // Reinfection
 //		{
@@ -1231,9 +1222,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		notifiedBy.setVisible(false);
 		dateOfNotification.setVisible(false);
 		dateOfInvestigation.setVisible(false);
-		districtLevelDate.setVisible(false);
-		regionLevelDate.setVisible(false);
-		nationalLevelDate.setVisible(false);
+		dateFormReceivedAtDistrict.setVisible(false);
+		dateFormReceivedAtRegion.setVisible(false);
+		dateFormReceivedAtNational.setVisible(false);
 		caseTransmissionClassification.setVisible(false);
 		investigationstatus.setVisible(false);
 		homeaddrecreational.setVisible(false);
@@ -1561,7 +1552,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 			//YELLOW FEVER
 			if (disease == Disease.YELLOW_FEVER) {
-				nationalLevelDate.setVisible(true);
+				dateFormReceivedAtNational.setVisible(true);
+                dateFormSentToDistrict.setVisible(true);
+                dateFormReceivedAtDistrict.setVisible(true);
 				setVaccinatedByCardOrHistoryVisibility();
 				outcome.setVisible(false);
 			}
@@ -1578,12 +1571,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 			//AFP
 			if (disease == Disease.AFP) {
-				setVisible(true, CaseDataDto.NATIONAL_LEVEL_DATE, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
+				setVisible(true, CaseDataDto.DATE_FORM_RECEIVED_AT_NATIONAL, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
 			}
 
 			//INFLUENZA
 			if (disease == Disease.NEW_INFLUENZA || disease == Disease.SARI) {
-				nationalLevelDate.setVisible(true);
+				dateFormReceivedAtNational.setVisible(true);
 			}
 
 			if (CaseDataDto.HOSPITALIZATION == null) {
