@@ -2016,6 +2016,8 @@ public interface Captions {
 	String PathogenTest_laboratoryTestPerformed = "PathogenTest.laboratoryTestPerformed";
 	String PathogenTest_laboratoryTestPerformedOther = "PathogenTest.laboratoryTestPerformedOther";
 	String PathogenTest_laboratoryCytology = "PathogenTest.laboratoryCytology";
+	String PathogenTest_laboratoryCytologyPmn = "PathogenTest.laboratoryCytologyPmn";
+	String PathogenTest_laboratoryCytologyLymph = "PathogenTest.laboratoryCytologyLymph";
 	String PathogenTest_laboratoryGram = "PathogenTest.laboratoryGram";
 	String PathogenTest_laboratoryGramOther = "PathogenTest.laboratoryGramOther";
 	String PathogenTest_laboratoryRdtPerformed = "PathogenTest.laboratoryRdtPerformed";

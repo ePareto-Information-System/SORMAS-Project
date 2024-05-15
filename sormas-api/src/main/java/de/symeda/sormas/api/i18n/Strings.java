@@ -459,6 +459,7 @@ public interface Strings {
 	String headingDay3 = "headingDay3";
 	String headingOtherPersons = "headingOtherPersons";
 	String headingNumberOfPersonsAffected = "headingNumberOfPersonsAffected";
+	String headingCytology = "headingCytology";
 	String headingClinicalHistory = "headingClinicalHistory";
 	String headingClinicalVisitsDeleted = "headingClinicalVisitsDeleted";
 	String headingComparisonCase = "headingComparisonCase";

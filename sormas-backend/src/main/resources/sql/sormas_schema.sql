@@ -14231,4 +14231,9 @@ ALTER TABLE location ADD COLUMN residentialaddress varchar(255) NULL;
 ALTER TABLE pathogentest ADD COLUMN othernotesandobservations varchar(255) NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (640, 'Added column to residentialAddress to location and otherNotesAndObservations to pathogentest');
 
+ALTER TABLE pathogentest ADD COLUMN laboratorycytologypmn varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorycytologylymph varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (593, 'Added columns to pathogentest for CSM');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
