@@ -107,6 +107,7 @@ public class LocationFacadeEjb implements LocationFacade {
 		target.setVillage(source.getVillage());
 		target.setLocality(source.getLocality());
 		target.setZone(source.getZone());
+		target.setResidentialaddress(source.getResidentialAddress());
 
 		target.setNearestHealthFacilityToVillage(source.getNearestHealthFacilityToVillage());
 		return target;
@@ -154,6 +155,7 @@ public class LocationFacadeEjb implements LocationFacade {
 		target.setLocality(source.getLocality());
 		target.setVillage(source.getVillage());
 		target.setZone(source.getZone());
+		target.setResidentialAddress(source.getResidentialaddress());
 
 		target.setNearestHealthFacilityToVillage(source.getNearestHealthFacilityToVillage());
 		return target;

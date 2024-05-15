@@ -14227,4 +14227,8 @@ ALTER TABLE samples DROP COLUMN finalClassification;
 ALTER TABLE pathogentest ADD COLUMN finalClassification varchar(255) NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (639, 'Drop finalClassification from samples and add to pathogentest');
 
+ALTER TABLE location ADD COLUMN residentialaddress varchar(255) NULL;
+ALTER TABLE pathogentest ADD COLUMN othernotesandobservations varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (640, 'Added column to residentialAddress to location and otherNotesAndObservations to pathogentest');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

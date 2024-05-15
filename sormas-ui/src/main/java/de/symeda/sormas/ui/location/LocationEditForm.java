@@ -114,6 +114,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			fluidRowLocs(LocationDto.STREET, LocationDto.LOCALITY),
 			fluidRowLocs(6,LocationDto.ADDITIONAL_INFORMATION),
 			fluidRowLocs(6,LocationDto.HOUSE_NUMBER),
+			fluidRowLocs(6, LocationDto.RESIDENTIAL_ADDRESS),
 			fluidRowLocs(LocationDto.CITY, LocationDto.AREA_TYPE),
 			fluidRowLocs(LocationDto.VILLAGE, LocationDto.ZONE),
 			fluidRowLocs(6,LocationDto.POSTAL_CODE),
@@ -155,6 +156,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private TextField villageTextField;
 	private TextField nearestHealthFacilityToVillage;
 	private TextField  houseNumberField;
+	private TextField residentialAddress;
 
 	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers) {
 		super(LocationDto.class, LocationDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers);
@@ -253,6 +255,9 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		addField(LocationDto.DETAILS, TextField.class);
 		TextField cityField = addField(LocationDto.CITY, TextField.class);
 		postalCodeField = addField(LocationDto.POSTAL_CODE, TextField.class);
+
+		residentialAddress = addField(LocationDto.RESIDENTIAL_ADDRESS, TextField.class);
+		residentialAddress.setVisible(false);
 
 		areaType = addField(LocationDto.AREA_TYPE, ComboBox.class);
 		areaType.removeItem(AreaType.UNKNOWN);
@@ -985,6 +990,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			setVisible(false, LocationDto.STREET, LocationDto.HOUSE_NUMBER, LocationDto.LOCALITY);
 			setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE, LocationDto.LAT_LON_ACCURACY, LocationDto.LAND_MARK, LocationDto.COMMUNITY, LocationDto.DISTRICT, LocationDto.REGION, LocationDto.CITY);
 			additionalInformationField.setCaption("Address (Location)");
+			residentialAddress.setVisible(true);
 			areaType.setVisible(true);
 	}
 

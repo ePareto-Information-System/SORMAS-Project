@@ -172,6 +172,7 @@ public class PathogenTest extends DeletableAdo {
 
 	private String virusDetectionGenotype;
 	private FinalClassification finalClassification;
+	private String otherNotesAndObservations;
 
 
 	private YesNo vibrioCholeraeIdentifiedInStools;
@@ -541,6 +542,14 @@ public class PathogenTest extends DeletableAdo {
 
 	public void setFinalClassification(FinalClassification finalClassification) {
 		this.finalClassification = finalClassification;
+	}
+
+	public String getOtherNotesAndObservations() {
+		return otherNotesAndObservations;
+	}
+
+	public void setOtherNotesAndObservations(String otherNotesAndObservations) {
+		this.otherNotesAndObservations = otherNotesAndObservations;
 	}
 
 	public PathogenTestReferenceDto toReference() {

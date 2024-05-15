@@ -118,6 +118,8 @@ public class Location extends AbstractDomainObject {
 	private String contactPersonPhone;
 	private String contactPersonEmail;
 	private String locality;
+	private String residentialaddress;
+
 	private Person person;
 	private String village;
 	private String zone;
@@ -360,6 +362,15 @@ public class Location extends AbstractDomainObject {
 
 	public void setLocality(String locality) {
 		this.locality = locality;
+	}
+
+	@Column(columnDefinition = "text")
+	public String getResidentialaddress() {
+		return residentialaddress;
+	}
+
+	public void setResidentialaddress(String residentialaddress) {
+		this.residentialaddress = residentialaddress;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)

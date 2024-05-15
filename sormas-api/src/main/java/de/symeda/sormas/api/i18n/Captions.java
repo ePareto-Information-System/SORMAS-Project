@@ -1864,6 +1864,7 @@ public interface Captions {
 	String Location_contactPersonEmail = "Location.contactPersonEmail";
 	String Location_locality = "Location.locality";
 	String Location_nearestHealthFacilityToVillage = "Location.nearestHealthFacilityToVillage";
+	String Location_residentialAddress = "Location.residentialAddress";
 	String Location_contactPersonFirstName = "Location.contactPersonFirstName";
 	String Location_contactPersonLastName = "Location.contactPersonLastName";
 	String Location_contactPersonPhone = "Location.contactPersonPhone";
@@ -2002,6 +2003,7 @@ public interface Captions {
 	String PathogenTest_vibrioCholeraeIdentifiedInStools = "PathogenTest.vibrioCholeraeIdentifiedInStools";
 	String PathogenTest_drugsSensitiveToVibrioStrain = "PathogenTest.drugsSensitiveToVibrioStrain";
 	String PathogenTest_drugsResistantToVibrioStrain = "PathogenTest.drugsResistantToVibrioStrain";
+	String PathogenTest_otherNotesAndObservations = "PathogenTest.otherNotesAndObservations";
 	String pathogenTestAdd = "pathogenTestAdd";
 	String pathogenTestCreateNew = "pathogenTestCreateNew";
 	String pathogenTestNewResult = "pathogenTestNewResult";

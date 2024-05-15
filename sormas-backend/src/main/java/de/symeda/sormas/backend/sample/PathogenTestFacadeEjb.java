@@ -462,6 +462,7 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setDrugsSensitiveToVibrioStrain(source.getDrugsSensitiveToVibrioStrain());
 		target.setDrugsResistantToVibrioStrain(source.getDrugsResistantToVibrioStrain());
 
+		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
 		return target;
 	}
 
@@ -593,6 +594,7 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setDrugsSensitiveToVibrioStrain(source.getDrugsSensitiveToVibrioStrain());
 		target.setDrugsResistantToVibrioStrain(source.getDrugsResistantToVibrioStrain());
 
+		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
 		return target;
 	}
 

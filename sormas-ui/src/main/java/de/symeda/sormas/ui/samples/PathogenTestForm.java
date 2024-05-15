@@ -144,7 +144,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.DATE_SENT_REPORTING_HEALTH_FACILITY, PathogenTestDto.DATE_SAMPLE_SENT_REGREF_LAB) +
 			fluidRowLocs(6, PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
 			fluidRowLocs(PathogenTestDto.FINAL_CLASSIFICATION, "") +
-			fluidRowLocs(6, PathogenTestDto.LABORATORY_FINAL_CLASSIFICATION);
+			fluidRowLocs(6, PathogenTestDto.LABORATORY_FINAL_CLASSIFICATION) +
+			fluidRowLocs(PathogenTestDto.OTHER_NOTES_AND_OBSERVATIONS) +
+			fluidRowLocs(PathogenTestDto.FINAL_CLASSIFICATION, "");
 
 	//@formatter:on
 
@@ -218,6 +220,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	}
 	private TextField virusDetectionGenotypeField;
 	private ComboBox finalClassificationField;
+	private TextArea otherNotesAndObservations;
 
 
 	public PathogenTestForm(AbstractSampleForm sampleForm, boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction) {
@@ -376,6 +379,10 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		finalClassificationField = addField(PathogenTestDto.FINAL_CLASSIFICATION, ComboBox.class);
 		finalClassificationField.setVisible(false);
 
+		otherNotesAndObservations = addField(PathogenTestDto.OTHER_NOTES_AND_OBSERVATIONS, TextArea.class);
+		otherNotesAndObservations.setRows(4);
+		otherNotesAndObservations.setVisible(false);
+
 
 		ComboBox testResultField = addField(PathogenTestDto.TEST_RESULT, ComboBox.class);
 		testResultField.removeItem(PathogenTestResultType.NOT_DONE);
@@ -523,9 +530,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						PathogenTestType.class);
 			}
 			if (disease == Disease.CHOLERA) {
-				setVisible(true, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
+				setVisible(true, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN, PathogenTestDto.OTHER_NOTES_AND_OBSERVATIONS);
 			} else {
-				setVisible(false, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
+				setVisible(false, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN, PathogenTestDto.OTHER_NOTES_AND_OBSERVATIONS);
 			}
 
 
@@ -554,6 +561,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				finalClassificationField.setVisible(true);
 			} else {
 				finalClassificationField.setVisible(false);
+				virusDetectionGenotypeField.setVisible(false);
 			}
 		});
 
