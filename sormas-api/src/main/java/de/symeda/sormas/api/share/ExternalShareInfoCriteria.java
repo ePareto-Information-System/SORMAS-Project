@@ -18,6 +18,7 @@ package de.symeda.sormas.api.share;
 import java.io.Serializable;
 
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.ebs.EbsReferenceDto;
 import de.symeda.sormas.api.event.EventReferenceDto;
 
 public class ExternalShareInfoCriteria implements Serializable {
@@ -27,6 +28,8 @@ public class ExternalShareInfoCriteria implements Serializable {
 	private CaseReferenceDto caze;
 
 	private EventReferenceDto event;
+	@AuditIncludeProperty
+	private EbsReferenceDto ebs;
 
 	public CaseReferenceDto getCaze() {
 		return caze;
@@ -41,10 +44,17 @@ public class ExternalShareInfoCriteria implements Serializable {
 	public EventReferenceDto getEvent() {
 		return event;
 	}
+	public EbsReferenceDto getEbs() {
+		return ebs;
+	}
 
 	public ExternalShareInfoCriteria event(EventReferenceDto event) {
 		this.event = event;
 
+		return this;
+	}
+	public ExternalShareInfoCriteria ebs(EbsReferenceDto ebs) {
+		this.ebs = ebs;
 		return this;
 	}
 }
