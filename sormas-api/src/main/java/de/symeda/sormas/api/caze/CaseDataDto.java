@@ -283,6 +283,8 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String OTHER_NOTES_AND_OBSERVATIONS = "otherNotesAndObservations";
 	public static final String DATE_LATEST_UPDATE_RECORD = "dateLatestUpdateRecord";
 	public static final String NUMBER_OF_PEOPLE_IN_SAME_HOUSEHOLD = "numberOfPeopleInSameHousehold";
+	public static final String INVESTIGATION_OFFICER_NAME = "investigationOfficerName";
+	public static final String INVESTIGATION_OFFICER_POSITION = "investigationOfficerPosition";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -683,6 +685,8 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private  Date secondVaccinationDate;
 	private String reportingVillage;
 	private String reportingZone;
+	private String investigationOfficerName;
+	private String investigationOfficerPosition;
 
 	private YesNoUnknown motherVaccinatedWithTT;
 	private YesNoUnknown motherHaveCard;
@@ -2308,4 +2312,19 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		this.specifyEventDiagnosis = specifyEventDiagnosis;
 	}
 
+	public String getInvestigationOfficerName() {
+		return investigationOfficerName;
+	}
+
+	public void setInvestigationOfficerName(String investigationOfficerName) {
+		this.investigationOfficerName = investigationOfficerName;
+	}
+
+	public String getInvestigationOfficerPosition() {
+		return investigationOfficerPosition;
+	}
+
+	public void setInvestigationOfficerPosition(String investigationOfficerPosition) {
+		this.investigationOfficerPosition = investigationOfficerPosition;
+	}
 }

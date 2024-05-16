@@ -302,6 +302,19 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					loc(GENERAL_COMMENT_LOC) + fluidRowLocs(CaseDataDto.ADDITIONAL_DETAILS) +
 					fluidRowLocs(CaseDataDto.DELETION_REASON) +
 					fluidRowLocs(CaseDataDto.OTHER_DELETION_REASON);
+
+    private static final String GUINEA_WORM_LAYOUT = loc(CASE_DATA_HEADING_LOC) +
+    loc(CASE_DATA_HEADING_LOC) +
+    fluidRowLocs(4, CaseDataDto.UUID, 5, CaseDataDto.REPORTING_USER) +
+    inlineLocs(CaseDataDto.CASE_CLASSIFICATION,
+            CLASSIFICATION_RULES_LOC,
+            CASE_CONFIRMATION_BASIS,
+            CASE_CLASSIFICATION_CALCULATE_BTN_LOC)
+    + fluidRowLocs(RESPONSIBLE_JURISDICTION_HEADING_LOC)
+    + fluidRowLocs(CaseDataDto.REPORTING_VILLAGE, CaseDataDto.REPORTING_ZONE, CaseDataDto.RESPONSIBLE_REGION, CaseDataDto.RESPONSIBLE_DISTRICT)
+    + fluidRowLocs(CaseDataDto.REPORT_DATE, CaseDataDto.REPORTING_OFFICER_NAME, CaseDataDto.REPORTING_OFFICER_TITLE)
+    + fluidRowLocs(4, CaseDataDto.DATE_OF_INVESTIGATION, 4, CaseDataDto.INVESTIGATION_OFFICER_NAME, 4, CaseDataDto.INVESTIGATION_OFFICER_POSITION);
+    
 	//@formatter:on
 
     private final String caseUuid;
@@ -434,9 +447,19 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             return;
         }
 
-        Label caseDataHeadingLabel = new Label(I18nProperties.getString(Strings.headingCaseData));
-        caseDataHeadingLabel.addStyleName(H3);
-        getContent().addComponent(caseDataHeadingLabel, CASE_DATA_HEADING_LOC);
+		Label caseDataHeadingLabel;
+		switch (disease) {
+			case GUINEA_WORM:
+				caseDataHeadingLabel = new Label(I18nProperties.getString(Strings.headingCaseData));
+				caseDataHeadingLabel.addStyleName(H3);
+				break;
+			default:
+				caseDataHeadingLabel = new Label(I18nProperties.getString(Strings.headingCaseData));
+				caseDataHeadingLabel.addStyleName(H3);
+				break;
+		}
+
+		getContent().addComponent(caseDataHeadingLabel, CASE_DATA_HEADING_LOC);
 
         if (caseFollowUpEnabled) {
             Label followUpStatusHeadingLabel = new Label(I18nProperties.getString(Strings.headingFollowUpStatus));
@@ -469,6 +492,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         TextField notifiedBy = addField(CaseDataDto.NOTIFIED_BY, TextField.class);
         DateField dateOfNotification = addField(CaseDataDto.DATE_OF_NOTIFICATION, DateField.class);
         DateField dateOfInvestigation = addField(CaseDataDto.DATE_OF_INVESTIGATION, DateField.class);
+
+		TextField investigationOfficerNameField = addField(CaseDataDto.INVESTIGATION_OFFICER_NAME, TextField.class);
+		TextField investigationOfficerPositionField = addField(CaseDataDto.INVESTIGATION_OFFICER_POSITION, TextField.class);
+		setVisible(false, CaseDataDto.INVESTIGATION_OFFICER_NAME, CaseDataDto.INVESTIGATION_OFFICER_POSITION);
 
 
         TextField epidField = addField(CaseDataDto.EPID_NUMBER, TextField.class);
@@ -1816,6 +1843,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             if (disease == Disease.GUINEA_WORM) {
                 dateOfInvestigation.setVisible(true);
                 surveillanceOfficerField.setVisible(true);
+                investigationOfficerNameField.setVisible(true);
+				investigationOfficerPositionField.setVisible(true);
                 setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.TRIMESTER, CaseDataDto.VACCINATION_STATUS);
             }
 
@@ -2194,7 +2223,20 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
     @Override
     protected String createHtmlLayout() {
-        return MAIN_HTML_LAYOUT + (caseFollowUpEnabled ? FOLLOWUP_LAYOUT : "") + PAPER_FORM_DATES_AND_HEALTH_CONDITIONS_HTML_LAYOUT;
+        String SORMAS_MAIN_HTML_LAYOUT = MAIN_HTML_LAYOUT + (caseFollowUpEnabled ? FOLLOWUP_LAYOUT : "") + PAPER_FORM_DATES_AND_HEALTH_CONDITIONS_HTML_LAYOUT;
+		String DISEASE_LAYOUT = "";
+
+		switch (disease) {
+			case GUINEA_WORM:
+				DISEASE_LAYOUT = GUINEA_WORM_LAYOUT;
+				break;
+			default:
+				DISEASE_LAYOUT = SORMAS_MAIN_HTML_LAYOUT;
+				break;
+
+		}
+
+		return DISEASE_LAYOUT;
     }
 
     public void addButtonListener(String componentId, Button.ClickListener listener) {

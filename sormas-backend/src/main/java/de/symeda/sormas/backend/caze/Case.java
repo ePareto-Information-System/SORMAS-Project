@@ -481,6 +481,8 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private Date dateLatestUpdateRecord;
 	private Integer numberOfPeopleInSameHousehold;
 	private String specifyEventDiagnosis;
+	private String investigationOfficerName;
+	private String investigationOfficerPosition;
 
 	public static Case build() {
 		Case caze = new Case();
@@ -2205,6 +2207,21 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setNumberOfPeopleInSameHousehold(Integer numberOfPeopleInSameHousehold) {
 		this.numberOfPeopleInSameHousehold = numberOfPeopleInSameHousehold;
+	}
+	public String getInvestigationOfficerName() {
+		return investigationOfficerName;
+	}
+
+	public void setInvestigationOfficerName(String investigationOfficerName) {
+		this.investigationOfficerName = investigationOfficerName;
+	}
+
+	public String getInvestigationOfficerPosition() {
+		return investigationOfficerPosition;
+	}
+
+	public void setInvestigationOfficerPosition(String investigationOfficerPosition) {
+		this.investigationOfficerPosition = investigationOfficerPosition;
 	}
 
 	public Double buildCaseLatitudeCoordination() {
