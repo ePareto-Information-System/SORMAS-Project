@@ -44,6 +44,8 @@ public class PersonTravelHistoryEditForm extends AbstractEditForm<PersonTravelHi
         super(PersonTravelHistoryDto.class, PersonTravelHistoryDto.I18N_PREFIX, create, fieldVisibilityCheckers, fieldAccessCheckers);
 
         setWidth(960, Unit.PIXELS);
+        setHeightUndefined();
+
         if (create) {
             hideValidationUntilNextCommit();
         } else {

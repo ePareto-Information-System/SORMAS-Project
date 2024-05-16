@@ -101,23 +101,29 @@ public class ContainmentMeasureField extends AbstractTableField<ContainmentMeasu
     }
 
     private void addGeneratedColumns(Table table) {
-//        table.addGeneratedColumn(COLUMN_TRAVEL_PERIOD_TYPE, (Table.ColumnGenerator) (source, itemId, columnId) -> {
-//            PersonTravelHistoryDto personTravelHistoryDto = (PersonTravelHistoryDto) itemId;
-//            String personTravelHistoryString = TravelPeriodType.OTHER != personTravelHistoryDto.getTravelPeriodType()
-//                    ? personTravelHistoryDto.getTravelPeriodType().toString()
-//                    : TravelPeriodType.OTHER.toString();
-//
-//            return new Label(personTravelHistoryString, ContentMode.HTML);
-//        });
 
+        table.addGeneratedColumn(DATE_WORM_DETECTED_EMERGENCE, (Table.ColumnGenerator) (source, itemId, columnId) -> {
+            ContainmentMeasureDto containmentMeasure = (ContainmentMeasureDto) itemId;
+            return DateFormatHelper.formatDate(containmentMeasure.getDateWormDetectedEmergence());
+        });
 
-        table.addGeneratedColumn(COLUMN_DATE, (Table.ColumnGenerator) (source, itemId, columnId) -> {
-            PersonTravelHistoryDto personTravelHistory = (PersonTravelHistoryDto) itemId;
-            return DateFormatHelper.buildPeriodString(personTravelHistory.getDateFrom(), personTravelHistory.getDateTo());
+        table.addGeneratedColumn(DATE_WORM_DETECT_BY_SUPERVISOR, (Table.ColumnGenerator) (source, itemId, columnId) -> {
+            ContainmentMeasureDto containmentMeasure = (ContainmentMeasureDto) itemId;
+            return DateFormatHelper.formatDate(containmentMeasure.getDateWormDetectBySupervisor());
+        });
+
+        table.addGeneratedColumn(DATE_CONFIRMED, (Table.ColumnGenerator) (source, itemId, columnId) -> {
+            ContainmentMeasureDto containmentMeasure = (ContainmentMeasureDto) itemId;
+            return DateFormatHelper.formatDate(containmentMeasure.getDateConfirmed());
+        });
+
+        table.addGeneratedColumn(DATE_OF_GUINEA_WORM_EXPULLED, (Table.ColumnGenerator) (source, itemId, columnId) -> {
+            ContainmentMeasureDto containmentMeasure = (ContainmentMeasureDto) itemId;
+            return DateFormatHelper.formatDate(containmentMeasure.getDateOfGuineaWormExpelled());
         });
 
 
-       
+
     }
 
     @Override
