@@ -102,10 +102,13 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			loc(HOSPITALIZATION_HEADING_LOC) +
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY, HospitalizationDto.WAS_PATIENT_ADMITTED) +
 					fluidRowLocs(HEALTH_FACILITY, HEALTH_FACILITY_DISTRICT, HospitalizationDto.HOSPITAL_RECORD_NUMBER) +
+					fluidRowLocs(6,HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW) +
+					fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE) +
+					fluidRowLocs(6,HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY) +
 					fluidRowLocs(6,HospitalizationDto.SELECT_INPATIENT_OUTPATIENT) +
-			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, HospitalizationDto.PHYSICIAN_NAME) +
-					fluidRowLocs(HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE, HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY) +
-			fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
+			fluidRowLocs(6,HospitalizationDto.PHYSICIAN_NAME) +
+					fluidRowLocs(HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE) +
+			fluidRowLocs(HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
 			fluidRowLocs(HospitalizationDto.NOTIFY_DISTRICT_DATE, HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT) +
 			fluidRowLocs(HospitalizationDto.HOSPITALIZATION_REASON, HospitalizationDto.OTHER_HOSPITALIZATION_REASON) +
 					fluidRowLocs(3, HospitalizationDto.INTENSIVE_CARE_UNIT, 3,
@@ -488,7 +491,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			addField(HospitalizationDto.SELECT_INPATIENT_OUTPATIENT ,ComboBox.class);
 		}
 
-		if(caze.getDisease() == Disease.NEW_INFLUENZA || caze.getDisease() == Disease.SARI){
+		if(caze.getDisease() == Disease.NEW_INFLUENZA){
 
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
@@ -497,13 +500,14 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			admittedToHealthFacilityFieldNew.setVisible(true);
 			admissionDateField.setVisible(true);
 			dischargeDateField.setVisible(true);
-			dateFirstSeen.setVisible(true);
 			terminationDateHospitalStay.setVisible(true);
 			dischargeDateField.setCaption("Date person discharged from hospital");
 			admissionDateField.setCaption("Date of admission (in-patient)");
 			facilityField.setVisible(true);
-			districtField.setVisible(true);
 			intensiveCareUnit.setVisible(true);
+
+			FieldHelper
+					.setVisibleWhen(admittedToHealthFacilityFieldNew, Arrays.asList(admissionDateField, dischargeDateField, terminationDateHospitalStay, intensiveCareUnit), Arrays.asList(YesNo.YES), true);
 
 		}
 
