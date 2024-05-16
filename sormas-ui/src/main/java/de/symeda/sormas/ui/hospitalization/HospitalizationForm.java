@@ -103,6 +103,10 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					locCss(VSPACE_TOP_3, HospitalizationDto.INVESTIGATOR_NAME) +
 					fluidRowLocs(HospitalizationDto.INVESTIGATOR_TITLE, HospitalizationDto.INVESTIGATOR_UNIT) +
 					fluidRowLocs(HospitalizationDto.INVESTIGATOR_ADDRESS, HospitalizationDto.INVESTIGATOR_TEL);
+
+	public static final String GUINEA_WORK_LAYOUT = loc(HOSPITALIZATION_HEADING_LOC) +
+			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HEALTH_FACILITY) +
+			fluidRowLocs(HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE);
 	private final CaseDataDto caze;
 	private final ViewMode viewMode;
 	private NullableOptionGroup intensiveCareUnit;
@@ -388,8 +392,14 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		if (caze.getDisease() == Disease.GUINEA_WORM) {
 			hideAllFields();
-			//show discharge date
-			setVisible(true, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.ADMISSION_DATE);
+//			HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY make visble for HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.ADMISSION_DATE, HospitalizationDto.HOSPITAL_RECORD_NUMBER
+			setVisible(true, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY);
+			FieldHelper.setVisibleWhen(
+				admittedToHealthFacilityField,
+				Arrays.asList(admissionDateField, dischargeDateField, hospitalRecordNumber),
+				Arrays.asList(YesNo.YES),
+				true);
+
 		}
 	}
 
@@ -414,7 +424,16 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 	@Override
 	protected String createHtmlLayout() {
-		return HTML_LAYOUT;
+		if (caze.getDisease() != null) {
+			switch (caze.getDisease()) {
+				case GUINEA_WORM:
+					return GUINEA_WORK_LAYOUT;
+				default:
+					return HTML_LAYOUT;
+			}
+		} else {
+			return HTML_LAYOUT;
+		}
 	}
 
 	private String getHospitalName(FacilityReferenceDto healthFacility, CaseDataDto caze) {

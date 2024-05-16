@@ -164,6 +164,15 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(PROVISONAL_DIAGNOSIS);
 	//@formatter:on
 
+	public static final String GUINEA_WORD_LAYOUT =
+			loc(SIGNS_AND_SYMPTOMS_HEADING_LOC) +
+			fluidRowLocs(FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM, FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS) +
+			fluidRowLocs(6, EMERGENCE_OF_GUINEA_WORM) +
+			fluidRowLocs(6, NUMBER_OF_WORMS) +
+			fluidRowLocs(6, FIRST_WORM_THIS_YEAR) +
+			fluidRowLocs(6, DATE_FIRST_WORM_EMERGENCE) +
+			fluidRowLocs(6, CASE_DETECTED_BEFORE_WORM_EMERGENCE);
+
 	private static String createSymptomGroupLayout(SymptomGroup symptomGroup, String loc) {
 
 		final Predicate<java.lang.reflect.Field> groupSymptoms =
@@ -980,11 +989,16 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			addField(FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM, NullableOptionGroup.class);
 			addField(FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS, TextField.class);
 			FieldHelper.setVisibleWhen(getFieldGroup(), FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS, FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM, Arrays.asList(GuineaWormFirstSymptom.OTHERS), true);
-
 			addField(NUMBER_OF_WORMS, TextField.class);
-			FieldHelper.setVisibleWhen(getFieldGroup(), NUMBER_OF_WORMS, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
-
 			addField(DATE_FIRST_WORM_EMERGENCE, DateField.class);
+//			[CASE_DETECTED_BEFORE_WORM_EMERGENCE, FIRST_WORM_THIS_YEAR, NUMBER_OF_WORMS,DATE_FIRST_WORM_EMERGENCE] vsible when EMERGENCE_OF_GUINEA_WORM is SymptomState.YES
+			FieldHelper.setVisibleWhen(getFieldGroup(), FIRST_WORM_THIS_YEAR, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
+			FieldHelper.setVisibleWhen(getFieldGroup(), CASE_DETECTED_BEFORE_WORM_EMERGENCE, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
+			FieldHelper.setVisibleWhen(getFieldGroup(), NUMBER_OF_WORMS, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
+			FieldHelper.setVisibleWhen(getFieldGroup(), DATE_FIRST_WORM_EMERGENCE, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
+
+
+
 		}
 
 		if (symptomsContext != SymptomsContext.CASE) {
@@ -1281,7 +1295,22 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 	@Override
 	protected String createHtmlLayout() {
-		return HTML_LAYOUT;
+		String SELECTED_HTML_LAYOUT = "";
+
+		if (caze.getDisease() != null) {
+			switch (caze.getDisease()) {
+				case GUINEA_WORM:
+					SELECTED_HTML_LAYOUT = GUINEA_WORD_LAYOUT;
+					break;
+				default:
+					SELECTED_HTML_LAYOUT = HTML_LAYOUT;
+					break;
+			}
+
+			return SELECTED_HTML_LAYOUT;
+		} else {
+			return HTML_LAYOUT;
+		}
 	}
 
 	public void initializeSymptomRequirementsForVisit(NullableOptionGroup visitStatus) {
