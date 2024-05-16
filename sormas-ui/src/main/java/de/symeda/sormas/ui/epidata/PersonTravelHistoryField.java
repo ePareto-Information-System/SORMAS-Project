@@ -96,23 +96,17 @@ public class PersonTravelHistoryField extends AbstractTableField<PersonTravelHis
     }
 
     private void addGeneratedColumns(Table table) {
-//        table.addGeneratedColumn(COLUMN_TRAVEL_PERIOD_TYPE, (Table.ColumnGenerator) (source, itemId, columnId) -> {
-//            PersonTravelHistoryDto personTravelHistoryDto = (PersonTravelHistoryDto) itemId;
-//            String personTravelHistoryString = TravelPeriodType.OTHER != personTravelHistoryDto.getTravelPeriodType()
-//                    ? personTravelHistoryDto.getTravelPeriodType().toString()
-//                    : TravelPeriodType.OTHER.toString();
-//
-//            return new Label(personTravelHistoryString, ContentMode.HTML);
-//        });
 
-
-        table.addGeneratedColumn(COLUMN_DATE, (Table.ColumnGenerator) (source, itemId, columnId) -> {
-            PersonTravelHistoryDto personTravelHistory = (PersonTravelHistoryDto) itemId;
-            return DateFormatHelper.buildPeriodString(personTravelHistory.getDateFrom(), personTravelHistory.getDateTo());
+        //format date
+        table.addGeneratedColumn(DATE_FROM, (source, itemId, columnId) -> {
+            PersonTravelHistoryDto personTravelHistoryDto = (PersonTravelHistoryDto) itemId;
+            return DateFormatHelper.buildPeriodString(personTravelHistoryDto.getDateFrom(), personTravelHistoryDto.getDateTo());
         });
 
-
-       
+        table.addGeneratedColumn(DATE_TO, (source, itemId, columnId) -> {
+            PersonTravelHistoryDto personTravelHistoryDto = (PersonTravelHistoryDto) itemId;
+            return DateFormatHelper.buildPeriodString(personTravelHistoryDto.getDateFrom(), personTravelHistoryDto.getDateTo());
+        });
     }
 
     @Override

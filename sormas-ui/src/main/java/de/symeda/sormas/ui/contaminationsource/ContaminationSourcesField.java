@@ -106,6 +106,11 @@ public class ContaminationSourcesField extends AbstractTableField<ContaminationS
 //            return new Label(personTravelHistoryString, ContentMode.HTML);
 //        });
 
+        table.addGeneratedColumn(ABATE_TREATMENT_DATE, (Table.ColumnGenerator) (source, itemId, columnId) -> {
+            ContaminationSourceDto contaminationSourceDto = (ContaminationSourceDto) itemId;
+            return DateFormatHelper.formatDate(contaminationSourceDto.getAbateTreatmentDate());
+        });
+
 
        
     }

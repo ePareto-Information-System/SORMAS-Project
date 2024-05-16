@@ -31,7 +31,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.OptionGroup;
-import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
 import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.epidata.ContactSetting;
@@ -129,6 +128,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					loc(CONTAMINATION_SOURCE_HEADING) +
 					loc(EpiDataDto.CONTAMINATION_SOURCES) +
 					loc(CONTAINMENT_MEASURES_HEADING) +
+					fluidRowLocs(EpiDataDto.RECEIVED_HEALTH_EDUCATION, EpiDataDto.PATIENT_ENTERED_WATER_SOURCE, EpiDataDto.PLACE_MANAGED) +
 					loc(EpiDataDto.CONTAINMENT_MEASURES) +
 					loc(EpiDataDto.HIGH_TRANSMISSION_RISK_AREA) +
 					loc(EpiDataDto.LARGE_OUTBREAKS_AREA) +
