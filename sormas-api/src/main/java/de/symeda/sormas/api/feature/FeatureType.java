@@ -54,6 +54,7 @@ public enum FeatureType {
 			FeatureTypeProperty.ALLOW_FREE_FOLLOW_UP_OVERWRITE,
 			Boolean.FALSE)),
 	EVENT_SURVEILLANCE(true, true, null, null, null),
+	EBS_SURVEILLANCE(true, true, null, null, null),
 	SAMPLES_LAB(true,
 		true,
 		new FeatureType[] {
