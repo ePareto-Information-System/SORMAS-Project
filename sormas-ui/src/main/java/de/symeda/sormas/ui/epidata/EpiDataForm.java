@@ -84,7 +84,9 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			loc(LOC_EXPOSURE_TRAVEL_HISTORY_HEADING) +
 
 					loc(EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_INFLUENZA)+
-					fluidRowLocs(6, EpiDataDto.YEAR_OF_VACCINATION)+
+					fluidRowLocs(EpiDataDto.NAME_OF_VACCINE, EpiDataDto.YEAR_OF_VACCINATION)+
+					loc(EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_COVID)+
+					fluidRowLocs(EpiDataDto.NAME_OF_VACCINE_FOR_COVID, EpiDataDto.YEAR_OF_VACCINATION_FOR_COVID)+
 					loc(EpiDataDto.PLACES_VISITED_PAST_7DAYS)+
 					loc(EpiDataDto.VISITED_PLACES_CONFIRMED_PANDEMIC)+
 					fluidRowLocs(EpiDataDto.RISK_FACTORS_SEVERE_DISEASE, EpiDataDto.OTHER_SPECIFY)+
@@ -92,6 +94,9 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					loc(EpiDataDto.RECENT_TRAVEL_OUTBREAK)+
 					loc(EpiDataDto.CONTACT_SIMILAR_SYMPTOMS)+
 					loc(EpiDataDto.CONTACT_SICK_ANIMALS)+
+					loc(EpiDataDto.IF_YES_SPECIFY_SICK_ANIMAL)+
+					loc(EpiDataDto.CONTACT_DEAD_WILD_ANIMALS)+
+					loc(EpiDataDto.IF_YES_SPECIFY_DEAD_WILD_ANIMAL)+
 					loc(LOC_EXPOSURE_INVESTIGATION_HEADING) +
 					loc(EpiDataDto.EXPOSURE_DETAILS_KNOWN) +
 					loc(EpiDataDto.EXPOSURES) +
@@ -174,11 +179,16 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		}
 
 		NullableOptionGroup recentTravelOutbreak = addField(EpiDataDto.RECENT_TRAVEL_OUTBREAK, NullableOptionGroup.class);
-		recentTravelOutbreak.setCaption("Did the patient travel to a place with a recent history of outbreak?");
 		NullableOptionGroup contactSimilarOutbreak = addField(EpiDataDto.CONTACT_SIMILAR_SYMPTOMS, NullableOptionGroup.class);
-		contactSimilarOutbreak.setCaption("Did the patient come in contact with someone with similar symptoms");
-		NullableOptionGroup contactSickAnimals = addField(EpiDataDto.CONTACT_SICK_ANIMALS, NullableOptionGroup.class);
-		contactSickAnimals.setCaption("Did the patient come in contact with sick animal(s)?");
+
+		NullableOptionGroup contactSickDomesticAnimals = addField(EpiDataDto.CONTACT_SICK_ANIMALS, NullableOptionGroup.class);
+		TextField ifYesSpecifySickDomestic = addField(EpiDataDto.IF_YES_SPECIFY_SICK_ANIMAL, TextField.class);
+		NullableOptionGroup contactDeadWildAnimals = addField(EpiDataDto.CONTACT_DEAD_WILD_ANIMALS, NullableOptionGroup.class);
+		TextField ifYesSpecifyDeadWild = addField(EpiDataDto.IF_YES_SPECIFY_DEAD_WILD_ANIMAL, TextField.class);
+
+		contactDeadWildAnimals.setVisible(false);
+		ifYesSpecifySickDomestic.setVisible(false);
+		ifYesSpecifyDeadWild.setVisible(false);
 
 		NullableOptionGroup ogExposureDetailsKnown = addField(EpiDataDto.EXPOSURE_DETAILS_KNOWN, NullableOptionGroup.class);
 		ExposuresField exposuresField = addField(EpiDataDto.EXPOSURES, ExposuresField.class);
@@ -324,19 +334,29 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		if (diseaseCSMCheck()) {
 			recentTravelOutbreak.setVisible(false);
-			contactSickAnimals.setVisible(false);
+			contactSickDomesticAnimals.setVisible(false);
 
 			setVisible(false, EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, EpiDataDto.LARGE_OUTBREAKS_AREA, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN);
 
 		}
 
-		if(disease == Disease.NEW_INFLUENZA || disease == Disease.SARI){
+		if(disease == Disease.NEW_INFLUENZA){
 			setVisible(false, EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, EpiDataDto.LARGE_OUTBREAKS_AREA, EpiDataDto.AREA_INFECTED_ANIMALS);
 			setVisible(false, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN, EpiDataDto.EXPOSURES, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN);
 
 			NullableOptionGroup previously = addField(EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_INFLUENZA, NullableOptionGroup.class);
+			TextField vaccineName = addField(EpiDataDto.NAME_OF_VACCINE, TextField.class);
 			DateField year = addField(EpiDataDto.YEAR_OF_VACCINATION, DateField.class);
+
+			NullableOptionGroup previouslyCovid = addField(EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_COVID, NullableOptionGroup.class);
+			TextField vaccineNameCovid = addField(EpiDataDto.NAME_OF_VACCINE_FOR_COVID, TextField.class);
+			DateField yearCovid = addField(EpiDataDto.YEAR_OF_VACCINATION_FOR_COVID, DateField.class);
+
+			vaccineName.setVisible(false);
 			year.setVisible(false);
+			vaccineNameCovid.setVisible(false);
+			yearCovid.setVisible(false);
+			contactDeadWildAnimals.setVisible(true);
 
 			addField(EpiDataDto.PLACES_VISITED_PAST_7DAYS, com.vaadin.v7.ui.TextArea.class);
 			addField(EpiDataDto.VISITED_PLACES_CONFIRMED_PANDEMIC, OptionGroup.class);
@@ -344,11 +364,12 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			TextField other = addField(EpiDataDto.OTHER_SPECIFY, com.vaadin.v7.ui.TextField.class);
 			other.setVisible(false);
 
-			FieldHelper
-					.setVisibleWhen(riskFactor, Arrays.asList(other), Arrays.asList(RiskFactorInfluenza.OTHER), true);
+			FieldHelper.setVisibleWhen(riskFactor, Arrays.asList(other), Arrays.asList(RiskFactorInfluenza.OTHER), true);
+			FieldHelper.setVisibleWhen(previously, Arrays.asList(year, vaccineName), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(previouslyCovid, Arrays.asList(yearCovid, vaccineNameCovid), Arrays.asList(YesNo.YES), true);
 
-			FieldHelper
-					.setVisibleWhen(previously, Arrays.asList(year), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(contactSickDomesticAnimals, Arrays.asList(ifYesSpecifySickDomestic), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(contactDeadWildAnimals, Arrays.asList(ifYesSpecifyDeadWild), Arrays.asList(YesNo.YES), true);
 
 		}
 

@@ -139,6 +139,13 @@ public class EpiData extends AbstractDomainObject {
 	private String foodConsumedS3;
 	private String sourceOfFoodS3;
 	private YesNo consumedAtPlaceS3;
+	private String nameOfVaccine;
+	private YesNo previouslyVaccinatedAgainstCovid;
+	private Date yearOfVaccinationCovid;
+	private String nameOfVaccineCovid;
+	private String ifYesSpecifySick;
+	private YesNo contactDeadAnimals;
+	private String ifYesSpecifyDead;
 
 	private List<Exposure> exposures = new ArrayList<>();
 	private List<ActivityAsCase> activitiesAsCase = new ArrayList<>();
@@ -910,5 +917,61 @@ public class EpiData extends AbstractDomainObject {
 
 	public void setConsumedAtPlaceS3(YesNo consumedAtPlaceS3) {
 		this.consumedAtPlaceS3 = consumedAtPlaceS3;
+	}
+
+	public String getNameOfVaccine() {
+		return nameOfVaccine;
+	}
+
+	public void setNameOfVaccine(String nameOfVaccine) {
+		this.nameOfVaccine = nameOfVaccine;
+	}
+
+	public YesNo getPreviouslyVaccinatedAgainstCovid() {
+		return previouslyVaccinatedAgainstCovid;
+	}
+
+	public void setPreviouslyVaccinatedAgainstCovid(YesNo previouslyVaccinatedAgainstCovid) {
+		this.previouslyVaccinatedAgainstCovid = previouslyVaccinatedAgainstCovid;
+	}
+
+	public Date getYearOfVaccinationCovid() {
+		return yearOfVaccinationCovid;
+	}
+
+	public void setYearOfVaccinationCovid(Date yearOfVaccinationCovid) {
+		this.yearOfVaccinationCovid = yearOfVaccinationCovid;
+	}
+
+	public String getNameOfVaccineCovid() {
+		return nameOfVaccineCovid;
+	}
+
+	public void setNameOfVaccineCovid(String nameOfVaccineCovid) {
+		this.nameOfVaccineCovid = nameOfVaccineCovid;
+	}
+
+	public String getIfYesSpecifySick() {
+		return ifYesSpecifySick;
+	}
+
+	public void setIfYesSpecifySick(String ifYesSpecifySick) {
+		this.ifYesSpecifySick = ifYesSpecifySick;
+	}
+
+	public YesNo getContactDeadAnimals() {
+		return contactDeadAnimals;
+	}
+
+	public void setContactDeadAnimals(YesNo contactDeadAnimals) {
+		this.contactDeadAnimals = contactDeadAnimals;
+	}
+
+	public String getIfYesSpecifyDead() {
+		return ifYesSpecifyDead;
+	}
+
+	public void setIfYesSpecifyDead(String ifYesSpecifyDead) {
+		this.ifYesSpecifyDead = ifYesSpecifyDead;
 	}
 }

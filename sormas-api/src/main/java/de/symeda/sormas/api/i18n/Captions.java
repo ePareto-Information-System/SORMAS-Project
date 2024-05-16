@@ -1149,7 +1149,17 @@ public interface Captions {
 	String EpiData_areaInfectedAnimals = "EpiData.areaInfectedAnimals";
 	String EpiData_contactWithSourceCaseKnown = "EpiData.contactWithSourceCaseKnown";
 	String EpiData_previouslyVaccinatedAgainstInfluenza = "EpiData.previouslyVaccinatedAgainstInfluenza";
+	String EpiData_nameOfVaccine = "EpiData.nameOfVaccine";
 	String EpiData_yearOfVaccination = "EpiData.yearOfVaccination";
+	String EpiData_previouslyVaccinatedAgainstCovid = "EpiData.previouslyVaccinatedAgainstCovid";
+	String EpiData_yearOfVaccinationCovid = "EpiData.yearOfVaccinationCovid";
+	String EpiData_nameOfVaccineCovid = "EpiData.nameOfVaccineCovid";
+	String EpiData_ifYesSpecifySick = "EpiData.ifYesSpecifySick";
+	String EpiData_contactDeadAnimals = "EpiData.contactDeadAnimals";
+	String EpiData_contactSickAnimals = "EpiData.contactSickAnimals";
+	String EpiData_contactSimilarOutbreak = "EpiData.contactSimilarOutbreak";
+	String EpiData_recentTravelOutbreak = "EpiData.recentTravelOutbreak";
+	String EpiData_ifYesSpecifyDead = "EpiData.ifYesSpecifyDead";
 	String EpiData_placesVisitedPastSevenDays = "EpiData.placesVisitedPastSevenDays";
 	String EpiData_vistedPlacesConfirmedPandemic = "EpiData.vistedPlacesConfirmedPandemic";
 	String EpiData_riskFactorsSevereDisease = "EpiData.riskFactorsSevereDisease";
