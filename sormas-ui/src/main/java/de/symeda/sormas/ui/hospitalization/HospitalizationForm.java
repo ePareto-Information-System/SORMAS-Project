@@ -37,7 +37,6 @@ import com.vaadin.shared.ui.ErrorLevel;
 import com.vaadin.ui.Label;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
-import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
@@ -142,6 +141,10 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					fluidRowLocs(HospitalizationDto.LOCATION_ADDRESS, HospitalizationDto.DATE_OF_VISIT_HOSPITAL)+
 					fluidRowLocs(6, HospitalizationDto.PHYSICIAN_NUMBER)+
 					fluidRowLocs(HospitalizationDto.LAB_TEST_CONDUCTED, HospitalizationDto.TYPE_OF_SAMPLE, HospitalizationDto.AGENT_IDENTIFIED);
+
+	public static final String GUINEA_WORK_LAYOUT = loc(HOSPITALIZATION_HEADING_LOC) +
+			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HEALTH_FACILITY) +
+			fluidRowLocs(HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE);
 
 	//@formatter:on
 	public HospitalizationForm(CaseDataDto caze, ViewMode viewMode, boolean isPseudonymized, boolean inJurisdiction, boolean isEditAllowed) {
@@ -546,8 +549,14 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		if (caze.getDisease() == Disease.GUINEA_WORM) {
 			hideAllFields();
-			//show discharge date
-			setVisible(true, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.ADMISSION_DATE);
+//			HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY make visble for HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.ADMISSION_DATE, HospitalizationDto.HOSPITAL_RECORD_NUMBER
+			setVisible(true, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY);
+			FieldHelper.setVisibleWhen(
+				admittedToHealthFacilityField,
+				Arrays.asList(admissionDateField, dischargeDateField, hospitalRecordNumber),
+				Arrays.asList(YesNo.YES),
+				true);
+
 		}
 
 		//Cholera
@@ -649,7 +658,16 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 	@Override
 	protected String createHtmlLayout() {
-		return HTML_LAYOUT;
+		if (caze.getDisease() != null) {
+			switch (caze.getDisease()) {
+				case GUINEA_WORM:
+					return GUINEA_WORK_LAYOUT;
+				default:
+					return HTML_LAYOUT;
+			}
+		} else {
+			return HTML_LAYOUT;
+		}
 	}
 
 	public OptionGroup getCaseOutcome() {
