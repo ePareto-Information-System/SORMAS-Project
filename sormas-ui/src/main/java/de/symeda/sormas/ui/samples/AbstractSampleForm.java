@@ -32,6 +32,7 @@ import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.i18n.*;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
@@ -44,6 +45,7 @@ import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.sample.SpecimenCondition;
+import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.*;
@@ -94,6 +96,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	OptionGroup sampleTestsField;
 	OptionGroup requestedPathogenTestsField;
 	OptionGroup requestedSampleMaterialsField;
+	OptionGroup influenzaOroNasoSelection;
 	private ComboBox testResultField;
 	private ComboBox suspectedDisease;
 	private DateField dateLabReceivedSpecimen;
@@ -182,7 +185,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					loc(SampleDto.TREATMENT) +
 					loc(SampleDto.STATE_TREATMENT_ADMINISTERED) +
 
-					fluidRowLocs(SampleDto.LABORATORY_FINAL_CLASSIFICATION) +
+					fluidRowLocs(6, SampleDto.LABORATORY_FINAL_CLASSIFICATION) +
 
 
 					fluidRowLocs(SampleDto.IPSAMPLESENT) + fluidRowLocs(SampleDto.IPSAMPLERESULTS, "")+
@@ -540,14 +543,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					handleAFP();
 					break;
 				case AHF:
-				case DENGUE:
 					handleAHF();
 					break;
 				case YELLOW_FEVER:
 					handleYellowFever();
 					break;
 				case NEW_INFLUENZA:
-				case SARI:
 					handleNewInfluenza();
 					break;
 				case FOODBORNE_ILLNESS:
@@ -764,6 +765,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		handleDisease(Disease.AHF, "Noguchi Memorial Institute for Medical Research");
 		handleDisease(Disease.DENGUE, "Noguchi Memorial Institute for Medical Research");
 		handleDisease(Disease.AFP, "Noguchi Memorial Institute for Medical Research");
+		handleDisease(Disease.NEW_INFLUENZA, "Noguchi Memorial Institute for Medical Research");
 		handleDiseaseField(Disease.NEW_INFLUENZA, Disease.CSM, Disease.SARI, Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS);
 
 		if (getValue() != null && canOnlyReadRequests) {
@@ -982,7 +984,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private void handleNewInfluenza(){
 
 		setPropertiesVisibility();
-		List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.OROPHARYNGEAL_SWAB, SampleMaterial.NP_SWAB, SampleMaterial.SERUM, SampleMaterial.PLASMA);
+		/*List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.OROPHARYNGEAL_SWAB, SampleMaterial.NP_SWAB, SampleMaterial.SERUM, SampleMaterial.PLASMA);
 		FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
 
 		OptionGroup positiveviral = addField(SampleDto.POSITIVE_VIRAL_CULTURE, OptionGroup.class);
@@ -992,7 +994,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		TextField otherVirus = addField(SampleDto.OTHER_INFLUENZA_VIRUS, TextField.class);
 		otherVirus.setVisible(false);
 		TextField treatment = addField(SampleDto.TREATMENT, TextField.class);
-		TextField stateTreatment = addField(SampleDto.STATE_TREATMENT_ADMINISTERED, TextField.class);
+		TextField stateTreatment = addField(SampleDto.STATE_TREATMENT_ADMINISTERED, TextField.class);*/
+
 
 		ComboBox classificationBox = new ComboBox("Final Classification");
 
@@ -1001,8 +1004,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		}
 		ComboBox finalClassification = addField(SampleDto.LABORATORY_FINAL_CLASSIFICATION, classificationBox);
 
-		FieldHelper
-				.setVisibleWhen(Virus, Arrays.asList(otherVirus), Arrays.asList(InfluenzaVirus.OTHER), true);
+		sampleMaterialComboBox.setVisible(false);
 		suspectedDisease.setVisible(false);
 		labLocation.setVisible(false);
 		dateLabReceivedSpecimen.setVisible(false);
@@ -1012,6 +1014,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateResultsSentToClinician.setVisible(false);
 		dateSpecimenSentToLab.setVisible(false);
 		pathogenTestingRequestedField.setVisible(false);
+		setVisible(true, SampleDto.REQUESTED_SAMPLE_MATERIALS);
 	}
 
 	private void handleFBI(){
@@ -1178,6 +1181,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			case YELLOW_FEVER:
 				requestedSampleMaterialsField.addItems(
 						Arrays.stream(SampleMaterial.getYellowFeverMateriealTypes())
+								.filter( c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
+								.collect(Collectors.toList()));
+				break;
+			case NEW_INFLUENZA:
+				requestedSampleMaterialsField.addItems(
+						Arrays.stream(SampleMaterial.getNewInfluenzaType())
 								.filter( c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
 								.collect(Collectors.toList()));
 				break;

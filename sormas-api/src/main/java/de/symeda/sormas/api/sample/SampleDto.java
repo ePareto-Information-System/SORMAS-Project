@@ -258,7 +258,6 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private Boolean additionalTestingRequested;
 	private Set<PathogenTestType> requestedPathogenTests;
 	private Set<SampleMaterial> requestedSampleMaterials;
-//	private Set<PathogenTestType> sampleTests;
 	private PathogenTestType sampleTests;
 	private Set<AdditionalTestType> requestedAdditionalTests;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
@@ -829,7 +828,6 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public void setRequestedSampleMaterials(Set<SampleMaterial> requestedSampleMaterials) {
 		this.requestedSampleMaterials = requestedSampleMaterials;
 	}
-
 	public PathogenTestType getSampleTests() {
 		return sampleTests;
 	}
@@ -950,8 +948,6 @@ public class SampleDto extends SormasToSormasShareableDto {
 		target.setSampleSource(source.getSampleSource());
 		target.setPathogenTestingRequested(source.getPathogenTestingRequested());
 		target.setSampleMaterialTestingRequested(source.getSampleMaterialTestingRequested());
-//		target.setYellowFeverSampleType(source.isYellowFeverSampleType());
-//		target.setDiseaseSampleTests(source.isDiseaseSampleTests());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());
 		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
