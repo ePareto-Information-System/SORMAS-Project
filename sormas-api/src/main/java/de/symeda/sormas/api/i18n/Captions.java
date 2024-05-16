@@ -2817,6 +2817,7 @@ public interface Captions {
 	String Symptoms_wheezing = "Symptoms.wheezing";
 	String symptomsLesionsLocations = "symptomsLesionsLocations";
 	String symptomsMaxTemperature = "symptomsMaxTemperature";
+	String bodyTemperature = "bodyTemperature";
 	String symptomsSetClearedToNo = "symptomsSetClearedToNo";
 	String symptomsSetClearedToUnknown = "symptomsSetClearedToUnknown";
 	String Symptoms_symptomsOngoing = "Symptoms.symptomsOngoing";

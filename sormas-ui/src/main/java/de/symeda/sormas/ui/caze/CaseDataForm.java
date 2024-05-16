@@ -1575,14 +1575,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			}
 
 			//INFLUENZA
-			/*if (disease == Disease.NEW_INFLUENZA || disease == Disease.SARI) {
-				dateFormReceivedAtNational.setVisible(true);
-			}*/
-
-			if (CaseDataDto.HOSPITALIZATION == null) {
-					caseOutcome.setEnabled(false);
-					caseOutcome.setRequired(false);
+			if (disease == Disease.NEW_INFLUENZA) {
+				outcome.setVisible(false);
 			}
+
 			if(disease ==Disease.FOODBORNE_ILLNESS){
 				placeOfStayHeadingLabel.setVisible(false);
 			}
