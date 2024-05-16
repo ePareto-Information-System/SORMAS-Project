@@ -36,6 +36,8 @@ import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseFacade;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactFacade;
+import de.symeda.sormas.api.ebs.EbsDto;
+import de.symeda.sormas.api.ebs.EbsFacade;
 import de.symeda.sormas.api.environment.EnvironmentDto;
 import de.symeda.sormas.api.environment.EnvironmentFacade;
 import de.symeda.sormas.api.event.EventDto;
@@ -76,6 +78,10 @@ public final class ArchiveHandlers {
 
 	public static CoreEntityArchiveHandler<EventDto, EventFacade> forEvent() {
 		return new CoreEntityArchiveHandler<>(FacadeProvider.getEventFacade(), ArchiveMessages.EVENT);
+	}
+
+	public static CoreEntityArchiveHandler<EbsDto, EbsFacade> forEbs() {
+		return new CoreEntityArchiveHandler<>(FacadeProvider.getEbsFacade(), ArchiveMessages.EVENT);
 	}
 
 	public static CoreEntityArchiveHandler<EventParticipantDto, EventParticipantFacade> forEventParticipant() {
