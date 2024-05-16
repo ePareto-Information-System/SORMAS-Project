@@ -36,7 +36,7 @@ public class PersonFormConfiguration {
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.GESTATION_AGE_AT_BIRTH, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.BIRTH_WEIGHT, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.SEX, new HashSet<>(Arrays.asList()));
-            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.PRESENT_CONDITION, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS)));
+            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.PRESENT_CONDITION, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, Disease.NEW_INFLUENZA)));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.DEATH_DATE, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.CAUSE_OF_DEATH, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.CAUSE_OF_DEATH_DISEASE, new HashSet<>(Arrays.asList()));

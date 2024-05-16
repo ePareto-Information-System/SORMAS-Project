@@ -570,7 +570,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			FieldHelper.removeItems(facilityCombo);
 
 
-			investigated.setVisible(disease == Disease.NEW_INFLUENZA || disease == Disease.SARI);
+			investigated.setVisible(disease == Disease.NEW_INFLUENZA);
 			personCreateForm.updatePresentConditionEnum((Disease) valueChangeEvent.getProperty().getValue());
 
 			if (diseaseField.getValue() != null && diseaseField.getValue() == Disease.FOODBORNE_ILLNESS) {
@@ -581,6 +581,8 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			} else if (diseaseField.getValue() != null && diseaseField.getValue() == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
 				personCreateForm.hideFields();
 				ogCaseOrigin.setReadOnly(true);
+			} else if(diseaseField.getValue() != null && diseaseField.getValue() == Disease.NEW_INFLUENZA){
+				personCreateForm.hidePresentCondition();
 			}
 			else{
 				personCreateForm.showPresentCondition();

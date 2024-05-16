@@ -504,6 +504,10 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	public void showPresentCondition(){
 		setVisible(true, PersonDto.PRESENT_CONDITION);
 	}
+	public void hidePresentCondition(){
+		setVisible(false, PersonDto.PRESENT_CONDITION);
+	}
+
 
 	public void updatePresentConditionEnum(Disease disease) {
 
