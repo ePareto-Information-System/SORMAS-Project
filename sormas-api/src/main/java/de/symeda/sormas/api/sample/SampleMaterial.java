@@ -77,7 +77,9 @@ public enum SampleMaterial {
 	BIOPSY,
 	URETHRAL,
 	FOOD_WATER,
-	SWAB;
+	SWAB,
+	NASOPHARYNGEAL_SWAB,
+	ORO_NASO;
 
 	//getYellowFeverMateriealTypes
 	public static SampleMaterial[] getYellowFeverMateriealTypes() {
@@ -93,15 +95,15 @@ public enum SampleMaterial {
 		return new SampleMaterial[] { WHOLE_BLOOD, PLASMA, SERUM, ASPIRATE, CEREBROSPINAL_FLUID, PUS, SALIVA, BIOPSY, STOOL, URETHRAL, URINE, SPUTUM, FOOD_WATER };
 	}
 
+	public static SampleMaterial[] getNewInfluenzaType() {
+		return new SampleMaterial[] { OROPHARYNGEAL_SWAB, NASOPHARYNGEAL_SWAB, ORO_NASO };
+	}
 
 
 	@Override
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);
 	}
-	public static final List<SampleMaterial> YF_TYPES = Arrays.asList(
-			WHOLE_BLOOD, SERUM, POST_MORTEM_LIVER_SPECIMEN);
-
 
 	public static String toString(SampleMaterial value, String details) {
 
