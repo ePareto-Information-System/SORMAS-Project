@@ -59,7 +59,6 @@ import de.symeda.sormas.ui.utils.DateFormatHelper;
 import de.symeda.sormas.ui.utils.DateTimeField;
 import java.util.Date;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.james.mime4j.dom.datetime.DateTime;
 import org.vaadin.hene.popupbutton.PopupButton;
 
 public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {

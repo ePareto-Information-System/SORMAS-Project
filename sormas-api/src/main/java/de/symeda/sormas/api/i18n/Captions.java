@@ -473,6 +473,8 @@ public interface Captions {
 	String CaseData_wasInQuarantineBeforeIsolation = "CaseData.wasInQuarantineBeforeIsolation";
 	String CaseData_reportingVillage = "CaseData.reportingVillage";
 	String CaseData_reportingZone = "CaseData.reportingZone";
+	String CaseData_investigationOfficerName = "CaseData.investigationOfficerName";
+	String CaseData_investigationOfficerPosition = "CaseData.investigationOfficerPosition";
 	String caseDataEnterHomeAddressNow = "caseDataEnterHomeAddressNow";
 	String caseDefaultView = "caseDefaultView";
 	String caseDeletedCases = "caseDeletedCases";

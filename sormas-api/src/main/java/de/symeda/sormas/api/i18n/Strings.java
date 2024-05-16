@@ -421,6 +421,7 @@ public interface Strings {
 	String headingCaseComparison = "headingCaseComparison";
 	String headingCaseConversion = "headingCaseConversion";
 	String headingCaseData = "headingCaseData";
+	String headingCaseDataReportingInvestigationInformationGuineaWorm = "headingCaseDataReportingInvestigationInformationGuineaWorm";
 	String headingCaseFatalityRate = "headingCaseFatalityRate";
 	String headingCaseFound = "headingCaseFound";
 	String headingCaseImport = "headingCaseImport";

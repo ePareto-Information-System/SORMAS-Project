@@ -239,6 +239,8 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String SECOND_VACCINATION_DATE = "secondVaccinationDate";
 	public static final String REPORTING_VILLAGE = "reportingVillage";
 	public static final String REPORTING_ZONE = "reportingZone";
+	public static final String INVESTIGATION_OFFICER_NAME = "investigationOfficerName";
+	public static final String INVESTIGATION_OFFICER_POSITION = "investigationOfficerPosition";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -634,6 +636,8 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	private  Date secondVaccinationDate;
 	private String reportingVillage;
 	private String reportingZone;
+	private String investigationOfficerName;
+	private String investigationOfficerPosition;
 
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		return build(person, disease, HealthConditionsDto.build());
@@ -1963,5 +1967,20 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 
 	public void setReportingZone(String reportingZone) {
 		this.reportingZone = reportingZone;
+	}
+	public String getInvestigationOfficerName() {
+		return investigationOfficerName;
+	}
+
+	public void setInvestigationOfficerName(String investigationOfficerName) {
+		this.investigationOfficerName = investigationOfficerName;
+	}
+
+	public String getInvestigationOfficerPosition() {
+		return investigationOfficerPosition;
+	}
+
+	public void setInvestigationOfficerPosition(String investigationOfficerPosition) {
+		this.investigationOfficerPosition = investigationOfficerPosition;
 	}
 }

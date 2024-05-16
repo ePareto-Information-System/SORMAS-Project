@@ -13115,4 +13115,7 @@ ALTER TABLE person ADD COLUMN placeOfResidenceSameAsReportingVillage varchar(255
 ALTER TABLE person ADD COLUMN residenceSinceWhenInMonths varchar(255);
 INSERT INTO schema_version(version_number, comment) VALUES (576, 'Added new fields to person');
 
+ALTER TABLE cases ADD COLUMN investigationOfficerName varchar(255);
+ALTER TABLE cases ADD COLUMN investigationOfficerPosition varchar(255);
+INSERT INTO schema_version(version_number, comment) VALUES (577, 'Added investigationOfficerName, investigationOfficerPosition to cases');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
