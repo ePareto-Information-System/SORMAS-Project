@@ -10,6 +10,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
+import de.symeda.sormas.api.Disease;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -447,17 +447,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             return;
         }
 
-		Label caseDataHeadingLabel;
-		switch (disease) {
-			case GUINEA_WORM:
-				caseDataHeadingLabel = new Label(I18nProperties.getString(Strings.headingCaseData));
-				caseDataHeadingLabel.addStyleName(H3);
-				break;
-			default:
-				caseDataHeadingLabel = new Label(I18nProperties.getString(Strings.headingCaseData));
-				caseDataHeadingLabel.addStyleName(H3);
-				break;
-		}
+		Label caseDataHeadingLabel = new Label(I18nProperties.getString(Strings.headingCaseData));
 
 		getContent().addComponent(caseDataHeadingLabel, CASE_DATA_HEADING_LOC);
 
@@ -1199,9 +1189,18 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 true);
 
         // jurisdiction fields
-        Label jurisdictionHeadingLabel = new Label(I18nProperties.getString(Strings.headingCaseResponsibleJurisidction));
-        jurisdictionHeadingLabel.addStyleName(H3);
-        getContent().addComponent(jurisdictionHeadingLabel, RESPONSIBLE_JURISDICTION_HEADING_LOC);
+		Label jurisdictionHeadingLabel;
+		switch (disease) {
+			case GUINEA_WORM:
+				jurisdictionHeadingLabel = new Label(I18nProperties.getString(Strings.headingCaseDataReportingInvestigationInformationGuineaWorm));
+				jurisdictionHeadingLabel.addStyleName(H3);
+				break;
+			default:
+				jurisdictionHeadingLabel = new Label(I18nProperties.getString(Strings.headingCaseResponsibleJurisidction));
+				jurisdictionHeadingLabel.addStyleName(H3);
+				break;
+		}
+		getContent().addComponent(jurisdictionHeadingLabel, RESPONSIBLE_JURISDICTION_HEADING_LOC);
 
         ComboBox responsibleRegion = addInfrastructureField(CaseDataDto.RESPONSIBLE_REGION);
         responsibleRegion.setRequired(true);
@@ -1232,6 +1231,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 updateFacility();
             }
         });
+		
 
         // Set initial visibilities & accesses
         initializeVisibilitiesAndAllowedVisibilities();
