@@ -102,6 +102,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String VACCINATION_ROUTINE_DATE = "vaccinationRoutineDate";
 	public static final String PERSON = "person";
 	public static final String PATIENT_CLIENT = "patientClient";
+	public static final String DEMOGRAPHIC = "demographicDetails";
 	public static final String DISEASE = "disease";
 	public static final String DISEASE_VARIANT = "diseaseVariant";
 	public static final String DISEASE_DETAILS = "diseaseDetails";
