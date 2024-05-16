@@ -1776,6 +1776,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 motherGivenProtectiveDoseTTDate = addField(CaseDataDto.MOTHER_GIVEN_PROTECTIVE_DOSE_TT_DATE, DateField.class);
                 supplementalImmunizationField = addField(CaseDataDto.SUPPLEMENTAL_IMMUNIZATION, NullableOptionGroup.class);
                 supplementalImmunizationDetails = addField(CaseDataDto.SUPPLEMENTAL_IMMUNIZATION_DETAILS, TextArea.class);
+			//INFLUENZA
+			/*if (disease == Disease.NEW_INFLUENZA || disease == Disease.SARI) {
+				dateFormReceivedAtNational.setVisible(true);
+			}*/
 
                 FieldHelper.setVisibleWhen(
                         seenInOPD,

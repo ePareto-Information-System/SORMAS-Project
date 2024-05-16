@@ -142,7 +142,7 @@ public class CaseFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(PAPER_FORM_DATES_LOC, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DATE_FORM_RECEIVED_AT_DISTRICT, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DATE_FORM_RECEIVED_AT_REGION, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DATE_FORM_RECEIVED_AT_NATIONAL, new HashSet<>(Arrays.asList()));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DATE_FORM_RECEIVED_AT_NATIONAL, new HashSet<>(Arrays.asList(Disease.NEW_INFLUENZA)));
         DISABLED_FIELDS_BY_DISEASE.put(GENERAL_COMMENT_LOC, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.ADDITIONAL_DETAILS, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DELETION_REASON, new HashSet<>(Arrays.asList()));
