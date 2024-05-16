@@ -351,7 +351,11 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			temperature.setItemCaption(temperatureValue, SymptomsHelper.getTemperatureString(temperatureValue));
 		}
 		if (symptomsContext == SymptomsContext.CASE) {
-			temperature.setCaption(I18nProperties.getCaption(Captions.symptomsMaxTemperature));
+			if(disease != Disease.NEW_INFLUENZA){
+				temperature.setCaption(I18nProperties.getCaption(Captions.symptomsMaxTemperature));
+			} else{
+				temperature.setCaption(I18nProperties.getCaption(Captions.bodyTemperature));
+			}
 		}
 		addField(TEMPERATURE_SOURCE);
 
@@ -1005,7 +1009,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			setVisible(true, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
 
 		}
-		if(disease == Disease.NEW_INFLUENZA || disease == Disease.SARI){
+		if(disease == Disease.NEW_INFLUENZA){
 			addField(DATE_OF_ONSET, DateField.class);
 			OptionGroup feverBodytemp = addField(FEVER_BODY_TEMP_GREATER, OptionGroup.class);
 
@@ -1013,7 +1017,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			setVisible(false, ONSET_DATE);
 			symptomsHide();
 			setVisible(false, FEVER, HEADACHE, ALTERED_CONSCIOUSNESS, CONVULSION, SEIZURES);
-			setVisible(true, COUGH, SORE_THROAT, DIFFICULTY_BREATHING, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
+			setVisible(true, COUGH, SORE_THROAT, DIFFICULTY_BREATHING, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT, TEMPERATURE, TEMPERATURE_SOURCE);
 		}
 
 		if(disease == Disease.YELLOW_FEVER){
@@ -1214,8 +1218,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		buttonsLayout.addComponent(clearAllButton);
 		buttonsLayout.addComponent(setEmptyToNoButton);
 		//buttonsLayout.addComponent(setEmptyToUnknownButton);
-		buttonsLayout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
-		buttonsLayout.setMargin(new MarginInfo(true, false, true, true));
+		buttonsLayout.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
+		buttonsLayout.setMargin(new MarginInfo(true, true, true, false));
 
 		getContent().addComponent(buttonsLayout, BUTTONS_LOC);
 

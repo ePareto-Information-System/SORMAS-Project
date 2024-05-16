@@ -3033,6 +3033,7 @@ public interface Captions {
 	String Symptoms_virusDetectionGenotype = "Symptoms.virusDetectionGenotype";
 	String symptomsLesionsLocations = "symptomsLesionsLocations";
 	String symptomsMaxTemperature = "symptomsMaxTemperature";
+	String bodyTemperature = "bodyTemperature";
 	String symptomsSetClearedToNo = "symptomsSetClearedToNo";
 	String symptomsSetClearedToUnknown = "symptomsSetClearedToUnknown";
 	String Symptoms_symptomsOngoing = "Symptoms.symptomsOngoing";
