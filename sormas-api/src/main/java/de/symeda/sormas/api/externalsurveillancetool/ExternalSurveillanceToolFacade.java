@@ -20,6 +20,7 @@ import java.util.List;
 import javax.ejb.Remote;
 
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.ebs.EbsDto;
 import de.symeda.sormas.api.event.EventDto;
 
 /**
@@ -47,6 +48,8 @@ public interface ExternalSurveillanceToolFacade {
 	void deleteCases(List<CaseDataDto> cases) throws ExternalSurveillanceToolException;
 
 	void deleteEvents(List<EventDto> events) throws ExternalSurveillanceToolException;
+
+	void deleteEbs(List<EbsDto> events) throws ExternalSurveillanceToolException;
 
 	String getVersion() throws ExternalSurveillanceToolException;
 }

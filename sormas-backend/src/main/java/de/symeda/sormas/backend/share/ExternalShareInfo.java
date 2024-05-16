@@ -25,6 +25,7 @@ import javax.persistence.ManyToOne;
 import de.symeda.sormas.api.share.ExternalShareStatus;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.ebs.Ebs;
 import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.user.User;
 
@@ -35,12 +36,15 @@ public class ExternalShareInfo extends AbstractDomainObject {
 
 	public static final String CAZE = "caze";
 	public static final String EVENT = "event";
+	public static final String EBS = "ebs";
 	public static final String STATUS = "status";
 	public static final String SENDER = "sender";
 
 	private Case caze;
 
 	private Event event;
+
+	private Ebs ebs;
 
 	private User sender;
 
@@ -64,6 +68,15 @@ public class ExternalShareInfo extends AbstractDomainObject {
 
 	public void setEvent(Event event) {
 		this.event = event;
+	}
+@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn
+	public Ebs getEbs() {
+		return ebs;
+	}
+
+	public void setEbs(Ebs ebs) {
+		this.ebs = ebs;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
