@@ -126,6 +126,9 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 				fluidColumnLoc(2, 0, LocationDto.LATITUDE),
 				fluidColumnLoc(2, 0, LocationDto.LONGITUDE),
 				fluidColumnLoc(2, 0, LocationDto.LAT_LON_ACCURACY)));
+	private static final String HTML_LAYOUT_GUINEA_WORM = fluidRowLocs(LocationDto.VILLAGE, LocationDto.ZONE) +
+			fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY) +
+			fluidRowLocs(LocationDto.AREA_TYPE, LocationDto.LAND_MARK);
 
 	private MapPopupView leafletMapPopup;
 	private ComboBox addressType;
@@ -152,9 +155,20 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private boolean hasEventParticipantsWithoutJurisdiction;
 	private TextField zoneTextField;
 	private TextField villageTextField;
+	private Disease caseDisease;
 
 	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers) {
 		super(LocationDto.class, LocationDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers);
+
+		if (FacadeProvider.getGeocodingFacade().isEnabled() && isEditableAllowed(LocationDto.LATITUDE) && isEditableAllowed(LocationDto.LONGITUDE)) {
+			getContent().addComponent(createGeoButton(), GEO_BUTTONS_LOC);
+		}
+	}
+
+	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers, Disease disease) {
+		super(LocationDto.class, LocationDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers, disease);
+		this.caseDisease = disease;
+
 
 		if (FacadeProvider.getGeocodingFacade().isEnabled() && isEditableAllowed(LocationDto.LATITUDE) && isEditableAllowed(LocationDto.LONGITUDE)) {
 			getContent().addComponent(createGeoButton(), GEO_BUTTONS_LOC);
@@ -189,6 +203,9 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void addFields() {
+
+		caseDisease = getCaseDisease();
+
 
 		addressType = addField(LocationDto.ADDRESS_TYPE, ComboBox.class);
 		addressType.setVisible(false);
@@ -763,7 +780,17 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	@Override
 	protected String createHtmlLayout() {
-		return HTML_LAYOUT;
+		if (caseDisease !=  null) {
+			switch (caseDisease) {
+				case GUINEA_WORM:
+					return HTML_LAYOUT_GUINEA_WORM;
+				default:
+					return HTML_LAYOUT;
+			}
+
+		} else {
+			return HTML_LAYOUT;
+		}
 	}
 
 	@Override

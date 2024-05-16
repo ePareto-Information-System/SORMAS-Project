@@ -160,6 +160,19 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					locCss(VSPACE_TOP_3, PersonDto.INVESTIGATOR_NAME) +
 					fluidRowLocs(PersonDto.INVESTIGATOR_TITLE, PersonDto.INVESTIGATOR_UNIT) +
 					fluidRowLocs(PersonDto.INVESTIGATOR_ADDRESS, PersonDto.INVESTIGATOR_TEL);
+
+	private final String GUINEA_WORM_LAYOUT = loc(PERSON_INFORMATION_HEADING_LOC) +
+			fluidRowLocs(PersonDto.UUID, "") +
+			fluidRowLocs(PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.OTHER_NAME, PersonDto.FATHERS_NAME) +
+			fluidRowLocs(PersonDto.APPROXIMATE_AGE, PersonDto.SEX, PersonDto.OCCUPATION_DETAILS, PersonDto.ETHNICITY)
+			+ loc(ADDRESS_HEADER)
+			+ fluidRowLocs(PersonDto.ADDRESS)
+			+ fluidRowLocs(PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE, PersonDto.RESIDENCE_SINCE_WHEN_IN_MONTHS) +
+			loc(PLACE_STAYED_IN_LAST_10_14_MONTHS) +
+			divsCss(VSPACE_3,
+					fluidRowLocs(PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY),
+					fluidRowLocs(PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE));
+
 	private final Label occupationHeader = new Label(I18nProperties.getString(Strings.headingPersonOccupation));
 	private final Label addressHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESS));
 	private final Label addressesHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESSES));
@@ -378,7 +391,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		TextField burialPlaceDesc = addField(PersonDto.BURIAL_PLACE_DESCRIPTION, TextField.class);
 		ComboBox burialConductor = addField(PersonDto.BURIAL_CONDUCTOR, ComboBox.class);
 
-		addressForm = addField(PersonDto.ADDRESS, LocationEditForm.class);
+		addressForm = addField(PersonDto.ADDRESS, new LocationEditForm(
+				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
+				UiFieldAccessCheckers.getNoop(), disease));
 
 		if (disease != null) {
 			switch (disease) {
@@ -783,7 +798,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			generalCommentLabel.setVisible(false);
 			setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER, PersonDto.BIRTH_DATE_YYYY,
 					PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD, PersonDto.ADDITIONAL_DETAILS, PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS, PersonDto.MOTHERS_NAME);
-			setVisible(true, PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE);
+			setVisible(true, PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE, PersonDto.ETHNICITY);
 
 		}
 
@@ -945,8 +960,21 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 	@Override
 	protected String createHtmlLayout() {
-		return HTML_LAYOUT;
+		String DISEASE_LAYOUT = "";
+
+		switch (disease) {
+			case GUINEA_WORM:
+				DISEASE_LAYOUT = GUINEA_WORM_LAYOUT;
+				break;
+			default:
+				DISEASE_LAYOUT = HTML_LAYOUT;
+				break;
+
+		}
+
+		return DISEASE_LAYOUT;
 	}
+
 	private void updateReadyOnlyApproximateAge() {
 		boolean readonly = false;
 		if (getFieldGroup().getField(PersonDto.BIRTH_DATE_YYYY).getValue() != null) {
