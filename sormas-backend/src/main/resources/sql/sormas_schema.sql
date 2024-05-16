@@ -14236,4 +14236,14 @@ ALTER TABLE pathogentest ADD COLUMN laboratorycytologylymph varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (641, 'Added columns to pathogentest for CSM');
 
+ALTER TABLE epidata ADD COLUMN nameofvaccine varchar(255);
+ALTER TABLE epidata ADD COLUMN previouslyvaccinatedagainstcovid varchar(55);
+ALTER TABLE epidata ADD COLUMN yearofvaccinationcovid Date;
+ALTER TABLE epidata ADD COLUMN nameofvaccinecovid varchar(255);
+ALTER TABLE epidata ADD COLUMN ifyesspecifysick varchar(255);
+ALTER TABLE epidata ADD COLUMN contactdeadanimals varchar(255);
+ALTER TABLE epidata ADD COLUMN ifyesspecifydead varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (594, 'Added 7 columns to epidata for ILI');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

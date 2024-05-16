@@ -187,6 +187,13 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setFoodConsumedS3(source.getFoodConsumedS3());
 		target.setSourceOfFoodS3(source.getSourceOfFoodS3());
 		target.setConsumedAtPlaceS3(source.getConsumedAtPlaceS3());
+		target.setNameOfVaccine(source.getNameOfVaccine());
+		target.setPreviouslyVaccinatedAgainstCovid(source.getPreviouslyVaccinatedAgainstCovid());
+		target.setYearOfVaccinationCovid(source.getYearOfVaccinationCovid());
+		target.setNameOfVaccineCovid(source.getNameOfVaccineCovid());
+		target.setIfYesSpecifySick(source.getIfYesSpecifySick());
+		target.setContactDeadAnimals(source.getContactDeadAnimals());
+		target.setIfYesSpecifyDead(source.getIfYesSpecifyDead());
 
 
 
@@ -557,6 +564,13 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setFoodConsumedS3(source.getFoodConsumedS3());
 		target.setSourceOfFoodS3(source.getSourceOfFoodS3());
 		target.setConsumedAtPlaceS3(source.getConsumedAtPlaceS3());
+		target.setNameOfVaccine(source.getNameOfVaccine());
+		target.setPreviouslyVaccinatedAgainstCovid(source.getPreviouslyVaccinatedAgainstCovid());
+		target.setYearOfVaccinationCovid(source.getYearOfVaccinationCovid());
+		target.setNameOfVaccineCovid(source.getNameOfVaccineCovid());
+		target.setIfYesSpecifySick(source.getIfYesSpecifySick());
+		target.setContactDeadAnimals(source.getContactDeadAnimals());
+		target.setIfYesSpecifyDead(source.getIfYesSpecifyDead());
 
 		List<ExposureDto> exposureDtos = new ArrayList<>();
 		for (Exposure exposure : source.getExposures()) {

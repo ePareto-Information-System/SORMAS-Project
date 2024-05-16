@@ -49,6 +49,9 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String RECENT_TRAVEL_OUTBREAK = "recentTravelOutbreak";
 	public static final String CONTACT_SIMILAR_SYMPTOMS = "contactSimilarOutbreak";
 	public static final String CONTACT_SICK_ANIMALS = "contactSickAnimals";
+	public static final String IF_YES_SPECIFY_SICK_ANIMAL = "ifYesSpecifySick";
+	public static final String CONTACT_DEAD_WILD_ANIMALS = "contactDeadAnimals";
+	public static final String IF_YES_SPECIFY_DEAD_WILD_ANIMAL = "ifYesSpecifyDead";
 	public static final String CONTACT_WITH_SOURCE_CASE_KNOWN = "contactWithSourceCaseKnown";
 	public static final String EXPOSURES = "exposures";
 	public static final String ACTIVITIES_AS_CASE = "activitiesAsCase";
@@ -59,6 +62,10 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public static final String PREVIOUSLY_VACCINATED_AGAINST_INFLUENZA = "previouslyVaccinatedAgainstInfluenza";
 	public static final String YEAR_OF_VACCINATION = "yearOfVaccination";
+	public static final String NAME_OF_VACCINE = "nameOfVaccine";
+	public static final String PREVIOUSLY_VACCINATED_AGAINST_COVID = "previouslyVaccinatedAgainstCovid";
+	public static final String NAME_OF_VACCINE_FOR_COVID = "nameOfVaccineCovid";
+	public static final String YEAR_OF_VACCINATION_FOR_COVID = "yearOfVaccinationCovid";
 	public static final String PLACES_VISITED_PAST_7DAYS = "placesVisitedPastSevenDays";
 	public static final String VISITED_PLACES_CONFIRMED_PANDEMIC = "vistedPlacesConfirmedPandemic";
 	public static final String RISK_FACTORS_SEVERE_DISEASE = "riskFactorsSevereDisease";
@@ -193,7 +200,11 @@ public class EpiDataDto extends PseudonymizableDto {
 	private YesNo areaInfectedAnimals;
 
 	private YesNo previouslyVaccinatedAgainstInfluenza;
+	private YesNo previouslyVaccinatedAgainstCovid;
 	private Date yearOfVaccination;
+	private Date yearOfVaccinationCovid;
+	private String nameOfVaccine;
+	private String nameOfVaccineCovid;
 	private String placesVisitedPastSevenDays;
 	private YesNo vistedPlacesConfirmedPandemic;
 	private RiskFactorInfluenza riskFactorsSevereDisease;
@@ -275,6 +286,9 @@ public class EpiDataDto extends PseudonymizableDto {
 	private String foodConsumedS3;
 	private String sourceOfFoodS3;
 	private YesNo consumedAtPlaceS3;
+	private String ifYesSpecifySick;
+	private YesNo contactDeadAnimals;
+	private String ifYesSpecifyDead;
 
 	@Valid
 	private List<ExposureDto> exposures = new ArrayList<>();
@@ -1323,5 +1337,59 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public void setPlaceManaged(PlaceManaged placeManaged) {
 		this.placeManaged = placeManaged;
+	}
+	public String getNameOfVaccine() {
+		return nameOfVaccine;
+	}
+	public void setNameOfVaccine(String nameOfVaccine) {
+		this.nameOfVaccine = nameOfVaccine;
+	}
+
+	public YesNo getPreviouslyVaccinatedAgainstCovid() {
+		return previouslyVaccinatedAgainstCovid;
+	}
+
+	public void setPreviouslyVaccinatedAgainstCovid(YesNo previouslyVaccinatedAgainstCovid) {
+		this.previouslyVaccinatedAgainstCovid = previouslyVaccinatedAgainstCovid;
+	}
+
+	public Date getYearOfVaccinationCovid() {
+		return yearOfVaccinationCovid;
+	}
+
+	public void setYearOfVaccinationCovid(Date yearOfVaccinationCovid) {
+		this.yearOfVaccinationCovid = yearOfVaccinationCovid;
+	}
+
+	public String getNameOfVaccineCovid() {
+		return nameOfVaccineCovid;
+	}
+
+	public void setNameOfVaccineCovid(String nameOfVaccineCovid) {
+		this.nameOfVaccineCovid = nameOfVaccineCovid;
+	}
+
+	public String getIfYesSpecifySick() {
+		return ifYesSpecifySick;
+	}
+
+	public void setIfYesSpecifySick(String ifYesSpecifySick) {
+		this.ifYesSpecifySick = ifYesSpecifySick;
+	}
+
+	public YesNo getContactDeadAnimals() {
+		return contactDeadAnimals;
+	}
+
+	public void setContactDeadAnimals(YesNo contactDeadAnimals) {
+		this.contactDeadAnimals = contactDeadAnimals;
+	}
+
+	public String getIfYesSpecifyDead() {
+		return ifYesSpecifyDead;
+	}
+
+	public void setIfYesSpecifyDead(String ifYesSpecifyDead) {
+		this.ifYesSpecifyDead = ifYesSpecifyDead;
 	}
 }
