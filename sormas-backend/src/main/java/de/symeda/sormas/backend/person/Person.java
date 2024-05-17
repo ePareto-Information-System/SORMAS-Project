@@ -245,12 +245,12 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private String investigatorAddress;
 	private String investigatorTel;
 	private String ethnicity;
-	private String placeStayedtenToFourteenMonthsVillage;
-	private String placeStayedtenToFourteenMonthsZone;
-	private Community placeStayedtenToFourteenMonthsCommunity;
-	private District placeStayedtenToFourteenMonthsDistrict;
-	private Region placeStayedtenToFourteenMonthsRegion;
-	private Country placeStayedtenToFourteenMonthsCountry;
+	private String pst14MonthsVillage;
+	private String pst14MonthsZone;
+	private Community pst14MonthsCommunity;
+	private District pst14MonthsDistrict;
+	private Region pst14MonthsRegion;
+	private Country pst14MonthsCountry;
 	private YesNo placeOfResidenceSameAsReportingVillage;
 	private String residenceSinceWhenInMonths;
 
@@ -1039,35 +1039,35 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 		this.ethnicity = ethnicity;
 	}
 
-	public String getPlaceStayedtenToFourteenMonthsVillage() {
-		return placeStayedtenToFourteenMonthsVillage;
+	public String getPst14MonthsVillage() {
+		return pst14MonthsVillage;
 	}
 
-	public void setPlaceStayedtenToFourteenMonthsVillage(String placeStayedtenToFourteenMonthsVillage) {
-		this.placeStayedtenToFourteenMonthsVillage = placeStayedtenToFourteenMonthsVillage;
+	public void setPst14MonthsVillage(String pst14MonthsVillage) {
+		this.pst14MonthsVillage = pst14MonthsVillage;
 	}
 
-	public String getPlaceStayedtenToFourteenMonthsZone() {
-		return placeStayedtenToFourteenMonthsZone;
+	public String getPst14MonthsZone() {
+		return pst14MonthsZone;
 	}
 
-	public void setPlaceStayedtenToFourteenMonthsZone(String placeStayedtenToFourteenMonthsZone) {
-		this.placeStayedtenToFourteenMonthsZone = placeStayedtenToFourteenMonthsZone;
+	public void setPst14MonthsZone(String pst14MonthsZone) {
+		this.pst14MonthsZone = pst14MonthsZone;
 	}
 
 	@OneToOne(cascade = CascadeType.ALL)
 
-	public Community getPlaceStayedtenToFourteenMonthsCommunity() {
-		return placeStayedtenToFourteenMonthsCommunity;
+	public Community getPst14MonthsCommunity() {
+		return pst14MonthsCommunity;
 	}
 
-	public void setPlaceStayedtenToFourteenMonthsCommunity(Community placeStayedtenToFourteenMonthsCommunity) {
-		this.placeStayedtenToFourteenMonthsCommunity = placeStayedtenToFourteenMonthsCommunity;
+	public void setPst14MonthsCommunity(Community pst14MonthsCommunity) {
+		this.pst14MonthsCommunity = pst14MonthsCommunity;
 	}
 
 	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
-	public District getPlaceStayedtenToFourteenMonthsDistrict() {
-		return placeStayedtenToFourteenMonthsDistrict;
+	public District getPst14MonthsDistrict() {
+		return pst14MonthsDistrict;
 	}
 
 	public YesNo getPlaceOfResidenceSameAsReportingVillage() {
@@ -1086,25 +1086,25 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 		this.residenceSinceWhenInMonths = residenceSinceWhenInMonths;
 	}
 
-	public void setPlaceStayedtenToFourteenMonthsDistrict(District placeStayedtenToFourteenMonthsDistrict) {
-		this.placeStayedtenToFourteenMonthsDistrict = placeStayedtenToFourteenMonthsDistrict;
+	public void setPst14MonthsDistrict(District pst14MonthsDistrict) {
+		this.pst14MonthsDistrict = pst14MonthsDistrict;
 	}
 
 	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
-	public Region getPlaceStayedtenToFourteenMonthsRegion() {
-		return placeStayedtenToFourteenMonthsRegion;
+	public Region getPst14MonthsRegion() {
+		return pst14MonthsRegion;
 	}
 
-	public void setPlaceStayedtenToFourteenMonthsRegion(Region placeStayedtenToFourteenMonthsRegion) {
-		this.placeStayedtenToFourteenMonthsRegion = placeStayedtenToFourteenMonthsRegion;
+	public void setPst14MonthsRegion(Region pst14MonthsRegion) {
+		this.pst14MonthsRegion = pst14MonthsRegion;
 	}
 
 	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
-	public Country getPlaceStayedtenToFourteenMonthsCountry() {
-		return placeStayedtenToFourteenMonthsCountry;
+	public Country getPst14MonthsCountry() {
+		return pst14MonthsCountry;
 	}
 
-	public void setPlaceStayedtenToFourteenMonthsCountry(Country placeStayedtenToFourteenMonthsCountry) {
-		this.placeStayedtenToFourteenMonthsCountry = placeStayedtenToFourteenMonthsCountry;
+	public void setPst14MonthsCountry(Country pst14MonthsCountry) {
+		this.pst14MonthsCountry = pst14MonthsCountry;
 	}
 }

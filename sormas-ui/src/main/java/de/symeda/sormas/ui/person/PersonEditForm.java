@@ -486,7 +486,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				getFieldGroup(),
 				PersonDto.RESIDENCE_SINCE_WHEN_IN_MONTHS,
 				PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE,
-				YesNo.YES,
+				YesNo.NO,
 				true);
 
 		residenceSinceWhenInMonths.setConversionError(I18nProperties.getValidationError(Validations.onlyIntegerNumbersAllowed, residenceSinceWhenInMonths.getCaption()));
