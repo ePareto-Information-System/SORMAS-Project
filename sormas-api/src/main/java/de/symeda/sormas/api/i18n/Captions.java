@@ -2005,6 +2005,9 @@ public interface Captions {
 	String PathogenTest_testResult = "PathogenTest.testResult";
 	String PathogenTest_testResultText = "PathogenTest.testResultText";
 	String PathogenTest_testResultVerified = "PathogenTest.testResultVerified";
+
+	String PathogenTest_variantOtherSpecify = "PathogenTest.variantOtherSpecify";
+	String PathogenTest_testResultVariant = "PathogenTest.testResultVariant";
 	String PathogenTest_testType = "PathogenTest.testType";
 	String PathogenTest_testTypeText = "PathogenTest.testTypeText";
 	String PathogenTest_typingId = "PathogenTest.typingId";

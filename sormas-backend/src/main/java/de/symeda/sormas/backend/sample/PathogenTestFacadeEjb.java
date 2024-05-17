@@ -458,6 +458,8 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setDateLabResultsSentDistrict(source.getDateLabResultsSentDistrict());
 		target.setDateLabResultsSentClinician(source.getDateLabResultsSentClinician());
 		target.setDateDistrictReceivedLabResults(source.getDateDistrictReceivedLabResults());
+		target.setTestResultVariant(source.getTestResultVariant());
+		target.setVariantOtherSpecify(source.getVariantOtherSpecify());
 
 
 		target.setVibrioCholeraeIdentifiedInStools(source.getVibrioCholeraeIdentifiedInStools());
@@ -593,6 +595,8 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setDateLabResultsSentDistrict(source.getDateLabResultsSentDistrict());
 		target.setDateLabResultsSentClinician(source.getDateLabResultsSentClinician());
 		target.setDateDistrictReceivedLabResults(source.getDateDistrictReceivedLabResults());
+		target.setTestResultVariant(source.getTestResultVariant());
+		target.setVariantOtherSpecify(source.getVariantOtherSpecify());
 
 		target.setVibrioCholeraeIdentifiedInStools(source.getVibrioCholeraeIdentifiedInStools());
 		target.setDrugsSensitiveToVibrioStrain(source.getDrugsSensitiveToVibrioStrain());

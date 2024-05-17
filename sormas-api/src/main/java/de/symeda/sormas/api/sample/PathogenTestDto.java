@@ -74,6 +74,8 @@ public class PathogenTestDto extends PseudonymizableDto {
 	public static final String LAB_DETAILS = "labDetails";
 	public static final String LAB_USER = "labUser";
 	public static final String TEST_RESULT = "testResult";
+	public static final String TEST_RESULT_VARIANT = "testResultVariant";
+	public static final String VARIANT_OTHER_SPECIFY = "variantOtherSpecify";
 	public static final String TEST_RESULT_TEXT = "testResultText";
 	public static final String TEST_RESULT_VERIFIED = "testResultVerified";
 	public static final String FOUR_FOLD_INCREASE_ANTIBODY_TITER = "fourFoldIncreaseAntibodyTiter";
@@ -178,6 +180,8 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private UserReferenceDto labUser;
 	@NotNull(message = Validations.requiredField)
 	private PathogenTestResultType testResult;
+	private PathogenTestResultVariant testResultVariant;
+	private String variantOtherSpecify;
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
 	private String testResultText;
@@ -1060,5 +1064,21 @@ public class PathogenTestDto extends PseudonymizableDto {
 	}
 	public void setDrugsResistantToVibrioStrain(String drugsResistantToVibrioStrain) {
 		this.drugsResistantToVibrioStrain = drugsResistantToVibrioStrain;
+	}
+
+	public PathogenTestResultVariant getTestResultVariant() {
+		return testResultVariant;
+	}
+
+	public void setTestResultVariant(PathogenTestResultVariant testResultVariant) {
+		this.testResultVariant = testResultVariant;
+	}
+
+	public String getVariantOtherSpecify() {
+		return variantOtherSpecify;
+	}
+
+	public void setVariantOtherSpecify(String variantOtherSpecify) {
+		this.variantOtherSpecify = variantOtherSpecify;
 	}
 }

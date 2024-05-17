@@ -14246,4 +14246,9 @@ ALTER TABLE epidata ADD COLUMN ifyesspecifydead varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (594, 'Added 7 columns to epidata for ILI');
 
+ALTER TABLE pathogentest ADD COLUMN testresultvariant varchar(255);
+ALTER TABLE pathogentest ADD COLUMN variantotherspecify varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (595, 'Added 2 columns to pathogentest for ILI');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

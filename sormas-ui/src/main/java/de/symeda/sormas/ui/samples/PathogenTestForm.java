@@ -43,6 +43,7 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.sample.*;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.Gram;
 import de.symeda.sormas.api.utils.LabType;
@@ -98,6 +99,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.DATE_LAB_RECEIVED_SPECIMEN, PathogenTestDto.SPECIMEN_CONDITION) +
 			fluidRowLocs(4, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, 4, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, 4, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN) +
 			fluidRowLocs(PathogenTestDto.TEST_RESULT, PathogenTestDto.TEST_RESULT_VERIFIED) +
+			fluidRowLocs(PathogenTestDto.TEST_RESULT_VARIANT, PathogenTestDto.VARIANT_OTHER_SPECIFY) +
 			fluidRowLocs(PathogenTestDto.PRELIMINARY, "") +
 			fluidRowLocs(PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, "") +
 			fluidRowLocs(PathogenTestDto.SEROTYPE, "") + 
@@ -200,6 +202,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private DateField regrefLabDate;
 	private DateField dateSentReportHealthFacility;
 	private ComboBox diseaseBox;
+	private ComboBox testResultField;
+	private ComboBox testResultVariant;
 
 		public PathogenTestForm(SampleDto sample, boolean create, int caseSampleCount, boolean isPseudonymized) {
 		super(
@@ -355,6 +359,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		else if (caseDisease == Disease.CSM) {
 			diseaseField.removeAllItems();
 			FieldHelper.updateEnumData(diseaseField, Disease.CSM_ONLY);
+		} else if (caseDisease == Disease.NEW_INFLUENZA) {
+			diseaseField.removeAllItems();
+			FieldHelper.updateEnumData(diseaseField, Disease.NEW_ONLY);
 		}
 		else if (caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
 			for (Disease disease1 : Disease.values()) {
@@ -385,9 +392,13 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		otherNotesAndObservations.setRows(4);
 		otherNotesAndObservations.setVisible(false);
 
-
-		ComboBox testResultField = addField(PathogenTestDto.TEST_RESULT, ComboBox.class);
+		testResultField = addField(PathogenTestDto.TEST_RESULT, ComboBox.class);
 		testResultField.removeItem(PathogenTestResultType.NOT_DONE);
+
+		testResultVariant = addField(PathogenTestDto.TEST_RESULT_VARIANT, ComboBox.class);
+		testResultVariant.setVisible(false);
+		TextField variantOther = addField(PathogenTestDto.VARIANT_OTHER_SPECIFY, TextField.class);
+		variantOther.setVisible(false);
 		addField(PathogenTestDto.SEROTYPE, TextField.class);
 		TextField cqValueField = addField(PathogenTestDto.CQ_VALUE, TextField.class);
 		cqValueField.setConversionError(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, cqValueField.getCaption()));
@@ -415,7 +426,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		fourFoldIncrease.setVisible(false);
 		fourFoldIncrease.setEnabled(false);
 		addField(PathogenTestDto.TEST_RESULT_TEXT, TextArea.class).setRows(6);
-		addField(PathogenTestDto.PRELIMINARY).addStyleName(CssStyles.VSPACE_4);
+		//addField(PathogenTestDto.PRELIMINARY).addStyleName(CssStyles.VSPACE_4);
 
 		addField(PathogenTestDto.DELETION_REASON);
 		addField(PathogenTestDto.OTHER_DELETION_REASON, TextArea.class).setRows(3);
@@ -531,12 +542,13 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						FieldVisibilityCheckers.withDisease(disease),
 						PathogenTestType.class);
 			}
+			
 			if (disease == Disease.CHOLERA) {
 				setVisible(true, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN, PathogenTestDto.OTHER_NOTES_AND_OBSERVATIONS);
-			} else {
+			} 
+			else {
 				setVisible(false, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN, PathogenTestDto.OTHER_NOTES_AND_OBSERVATIONS);
 			}
-
 
 			if (disease == Disease.MEASLES) {
 				List<PathogenTestType> measelesPathogenTests = PathogenTestType.getMeaslesTestTypes();
@@ -544,18 +556,38 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 				virusDetectionGenotypeField.setVisible(true);
-			} else if (Disease.AHF_DISEASES.contains(disease)) {
+			} 
+			else if (Disease.AHF_DISEASES.contains(disease)) {
 				List<PathogenTestType> ahfMeaselesPathogenTests = PathogenTestType.getMeaslesTestTypes();
 				Arrays.stream(PathogenTestType.values())
 						.filter(pathogenTestType -> !ahfMeaselesPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
-
-			} else if (disease == Disease.CSM) {
+			} 
+			else if(disease == Disease.CSM) {
 				List<PathogenTestType> csmPathogenTests = PathogenTestType.getCSMTestTypes();
 				Arrays.stream(PathogenTestType.values())
 						.filter(pathogenTestType -> !csmPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
-			} else {
+			} 	
+			else if(disease == Disease.NEW_INFLUENZA){
+					List<PathogenTestType> iliPathogenTests = PathogenTestType.getILITestTypes();
+					Arrays.stream(PathogenTestType.values())
+							.filter(pathogenTestType -> !iliPathogenTests.contains(pathogenTestType))
+							.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
+
+				testResultField.addValueChangeListener(e -> {
+					PathogenTestResultType testResult = (PathogenTestResultType) e.getProperty().getValue();
+					if(testResult == PathogenTestResultType.POSITIVE){
+						testResultVariant.setVisible(true);
+					}else {
+						testResultVariant.setVisible(false);
+						testResultVariant.clear();
+					}
+				});
+
+				FieldHelper.setVisibleWhen(testResultVariant, Arrays.asList(variantOther), Arrays.asList(PathogenTestResultVariant.OTHER), true);
+			}
+			else {
 				testTypeField.addItems(PathogenTestType.values());
 			}
 
@@ -572,8 +604,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			} else {
 				finalClassificationField.setVisible(false);
 				virusDetectionGenotypeField.setVisible(false);
-			}
-
+			} 
+		
 		});
 
 	/*	testTypeField.addValueChangeListener(e -> {
