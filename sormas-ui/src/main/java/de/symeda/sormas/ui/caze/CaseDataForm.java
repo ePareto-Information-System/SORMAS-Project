@@ -159,6 +159,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
     private static final String REINFECTION_DETAILS_COL_1_LOC = "reinfectionDetailsCol1Loc";
     private static final String REINFECTION_DETAILS_COL_2_LOC = "reinfectionDetailsCol2Loc";
     public static final String CASE_REFER_POINT_OF_ENTRY_BTN_LOC = "caseReferFromPointOfEntryBtnLoc";
+    public static final String PERSON_WHO_COMPLETED_THIS_FORM_HEADING_LOC = "personWhoCompletedThisFormHeadingLoc";
     private static final String INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC = "investigateIntoRiskFactorsNavigationLink";
     NullableOptionGroup vaccinatedByCardOrHistory;
     private HealthConditionsForm healthConditionsField;
@@ -313,7 +314,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
     + fluidRowLocs(RESPONSIBLE_JURISDICTION_HEADING_LOC)
     + fluidRowLocs(CaseDataDto.REPORTING_VILLAGE, CaseDataDto.REPORTING_ZONE, CaseDataDto.RESPONSIBLE_REGION, CaseDataDto.RESPONSIBLE_DISTRICT)
     + fluidRowLocs(CaseDataDto.REPORT_DATE, CaseDataDto.REPORTING_OFFICER_NAME, CaseDataDto.REPORTING_OFFICER_TITLE)
-    + fluidRowLocs(4, CaseDataDto.DATE_OF_INVESTIGATION, 4, CaseDataDto.INVESTIGATION_OFFICER_NAME, 4, CaseDataDto.INVESTIGATION_OFFICER_POSITION);
+    + fluidRowLocs(4, CaseDataDto.DATE_OF_INVESTIGATION, 4, CaseDataDto.INVESTIGATION_OFFICER_NAME, 4, CaseDataDto.INVESTIGATION_OFFICER_POSITION)
+    + fluidRowLocs(4, CaseDataDto.DATE_OF_INVESTIGATION, 4, CaseDataDto.INVESTIGATION_OFFICER_NAME, 4, CaseDataDto.INVESTIGATION_OFFICER_POSITION)
+    + locCss(VSPACE_3, PERSON_WHO_COMPLETED_THIS_FORM_HEADING_LOC)
+    + fluidRowLocs(CaseDataDto.REPORTING_OFFICER_NAME, CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE)
+    + fluidRowLocs(6, CaseDataDto.SURVEILLANCE_OFFICER);
     
 	//@formatter:on
 
@@ -456,6 +461,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             followUpStatusHeadingLabel.addStyleName(H3);
             getContent().addComponent(followUpStatusHeadingLabel, FOLLOW_UP_STATUS_HEADING_LOC);
         }
+
+		Label personWhoCompletedThisFormHeadingLabel = new Label(I18nProperties.getString(Strings.headingPersonWhoCompletedThisForm));
+		personWhoCompletedThisFormHeadingLabel.addStyleName(H3);
+		getContent().addComponent(personWhoCompletedThisFormHeadingLabel, PERSON_WHO_COMPLETED_THIS_FORM_HEADING_LOC);
 
 
         // Add fields
