@@ -87,6 +87,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	protected static final String REPORT_INFO_LABEL_LOC = "reportInfoLabelLoc";
 	protected static final String REFERRED_FROM_BUTTON_LOC = "referredFromButtonLoc";
 	private ComboBox lab;
+	protected static final String NATIONAL_SECRETARIAT_ONLY = "nationalSecretariatOnly";
+	protected static final String OTHER_INFORMATION_HEADLINE_LOC = "otherInformationHeadlineLoc";
+//	headingSpecimenHandling
+	protected static final String HEADING_SPECIMEN_HANDLING = "headingSpecimenHandling";
 	private Disease disease;
 	private ComboBox diseaseField;
 	public ComboBox sampleMaterialComboBox;
@@ -264,18 +268,37 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(6,SampleDto.IMMUNOCOMPROMISED_STATUS_SUSPECTED) +
 					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION);
 
-
-
-
-	//@formatter:on
+			protected static final String GUINEA_WORM_LAYOUT =
+						fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
+						fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
+						fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
+						fluidRowLocs(6, SampleDto.SAMPLE_MATERIAL) +
+						loc(HEADING_SPECIMEN_HANDLING) +
+						fluidRowLocs(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL) +
+						fluidRowLocs(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY) +
+						fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.RECEIVED_BY_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +
+						loc(NATIONAL_SECRETARIAT_ONLY) +
+						fluidRowLocs(SampleDto.SENT_FOR_CONFIRMATION_NATIONAL, SampleDto.DATE_FORM_SENT_TO_NATIONAL) +
+						fluidRowLocs(SampleDto.SENT_FOR_CONFIRMATION_TO, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
+						loc(OTHER_INFORMATION_HEADLINE_LOC) +
+						fluidRowLocs(SampleDto.USE_OF_CLOTH_FILTER, SampleDto.FREQUENCY_OF_CHANGING_FILTERS) +
+						fluidRowLocs(SampleDto.REMARKS) +
+			//				locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
+			//				fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
+			//				locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
+			//				fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.SPECIMEN_CONDITION) +
+						fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT);
+    
+    //@formatter:on
 
 	protected AbstractSampleForm(Class<SampleDto> type, String propertyI18nPrefix, Disease disease, UiFieldAccessCheckers fieldAccessCheckers) {
 		super(
-				type,
-				propertyI18nPrefix,
-				true,
-				FieldVisibilityCheckers.withDisease(disease).andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-				fieldAccessCheckers);
+			type,
+			propertyI18nPrefix,
+			true,
+			FieldVisibilityCheckers.withDisease(disease).andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
+			fieldAccessCheckers,
+			disease);
 	}
 
 	protected void addCommonFields() {
@@ -383,7 +406,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		setVisible(false, SampleDto.DELETION_REASON, SampleDto.OTHER_DELETION_REASON);
 
 		addField(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL, NullableOptionGroup.class);
-		addField(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY, TextField.class);
+		addField(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY, TextArea.class).setRows(4);
 		addField(SampleDto.SENT_FOR_CONFIRMATION_NATIONAL, NullableOptionGroup.class);
 		addDateField(SampleDto.SENT_FOR_CONFIRMATION_NATIONAL_DATE, DateField.class, 7);
 		addField(SampleDto.SENT_FOR_CONFIRMATION_TO, TextField.class);
@@ -769,6 +792,18 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		Label additionalTestsHeading = new Label(I18nProperties.getString(Strings.headingRequestedAdditionalTests));
 		CssStyles.style(additionalTestsHeading, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_4);
 		getContent().addComponent(additionalTestsHeading, ADDITIONAL_TESTING_READ_HEADLINE_LOC);
+
+		Label nationalSecretariatOnly = new Label(I18nProperties.getString(Strings.headingNationalSecretariatOnly));
+		CssStyles.style(nationalSecretariatOnly, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_TOP_5, H3);
+		getContent().addComponent(nationalSecretariatOnly, NATIONAL_SECRETARIAT_ONLY);
+
+		Label otherInformation = new Label(I18nProperties.getString(Strings.headingOtherInformation));
+		CssStyles.style(otherInformation, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_TOP_5, H3);
+		getContent().addComponent(otherInformation, OTHER_INFORMATION_HEADLINE_LOC);
+
+		Label headingSpecimenHandling = new Label(I18nProperties.getString(Strings.headingSpecimenHandling));
+		CssStyles.style(headingSpecimenHandling, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_TOP_5, H3);
+		getContent().addComponent(headingSpecimenHandling, HEADING_SPECIMEN_HANDLING);
 
 		updateRequestedTestFields();
 
@@ -1356,17 +1391,41 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		addField(SampleDto.DATE_FORM_SENT_TO_NATIONAL, DateField.class);
 		addField(SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL, DateField.class);
 		addFields(SampleDto.RECEIVED_BY_REGION, SampleDto.RECEIVED_BY_NATIONAL);
-		setVisible(false, SampleDto.IPSAMPLESENT, SampleDto.IPSAMPLERESULTS);
 
 		setVisible(true,
 				SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL,
-				SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY,
 				SampleDto.SENT_FOR_CONFIRMATION_NATIONAL,
-				SampleDto.SENT_FOR_CONFIRMATION_NATIONAL_DATE,
-				SampleDto.SENT_FOR_CONFIRMATION_TO,
-				SampleDto.DATE_RESULT_RECEIVED_NATIONAL,
 				SampleDto.USE_OF_CLOTH_FILTER,
-				SampleDto.FREQUENCY_OF_CHANGING_FILTERS,
 				SampleDto.REMARKS);
+
+		FieldHelper.setVisibleWhen(
+				getField(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL),
+				Arrays.asList(getField(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY)),
+				Arrays.asList(YesNo.YES),
+				true);
+
+		FieldHelper.setVisibleWhen(
+				getFieldGroup(),
+				Arrays.asList(SampleDto.SENT_FOR_CONFIRMATION_TO, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL, SampleDto.DATE_FORM_SENT_TO_NATIONAL),
+				SampleDto.SENT_FOR_CONFIRMATION_NATIONAL,
+				Arrays.asList(YesNo.YES),
+				true);
+
+		FieldHelper.setVisibleWhen(
+				getFieldGroup(),
+				Arrays.asList(SampleDto.FREQUENCY_OF_CHANGING_FILTERS),
+				SampleDto.USE_OF_CLOTH_FILTER,
+				Arrays.asList(YesNo.YES),
+				true);
+
+		FieldHelper.setVisibleWhen(
+				getFieldGroup(),
+				Arrays.asList(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY),
+				SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL,
+				Arrays.asList(YesNo.NO),
+				true);
+
+
+
 	}
 }

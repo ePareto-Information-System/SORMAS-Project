@@ -778,6 +778,9 @@ public interface Strings {
 	String headingSaveNotification = "headingSaveNotification";
 	String headingSaveUser = "headingSaveUser";
 	String headingSaveUserNotPossible = "headingSaveUserNotPossible";
+	String headingNationalSecretariatOnly = "headingNationalSecretariatOnly";
+	String headingOtherInformation = "headingOtherInformation";
+	String headingSpecimenHandling = "headingSpecimenHandling";
 	String headingSecurityAlert = "headingSecurityAlert";
 	String headingSeeAllPersons = "headingSeeAllPersons";
 	String headingSelectCampaign = "headingSelectCampaign";

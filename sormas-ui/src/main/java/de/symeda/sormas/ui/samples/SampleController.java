@@ -122,6 +122,12 @@ public class SampleController {
 	}
 
 	public void create(CaseReferenceDto caseRef, Disease disease, Runnable callback) {
+		if (disease == null) {
+			CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(caseRef.getUuid());
+			if (caseDataDto != null) {
+				disease = caseDataDto.getDisease();
+			}
+		}
 		createSample(SampleDto.build(UserProvider.getCurrent().getUserReference(), caseRef), disease, callback);
 	}
 
