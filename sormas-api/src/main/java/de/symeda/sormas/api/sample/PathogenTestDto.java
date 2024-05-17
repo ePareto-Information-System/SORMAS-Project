@@ -62,6 +62,7 @@ public class PathogenTestDto extends PseudonymizableDto {
 
 	public static final String SAMPLE = "sample";
 	public static final String TESTED_DISEASE = "testedDisease";
+	public static final String SECOND_TESTED_DISEASE = "secondTestedDisease";
 	public static final String TESTED_DISEASE_VARIANT = "testedDiseaseVariant";
 	public static final String TESTED_DISEASE_VARIANT_DETAILS = "testedDiseaseVariantDetails";
 	public static final String TYPING_ID = "typingId";
@@ -74,6 +75,7 @@ public class PathogenTestDto extends PseudonymizableDto {
 	public static final String LAB_DETAILS = "labDetails";
 	public static final String LAB_USER = "labUser";
 	public static final String TEST_RESULT = "testResult";
+	public static final String TEST_RESULT_FOR_SECOND_DISEASE = "testResultForSecondDisease";
 	public static final String TEST_RESULT_VARIANT = "testResultVariant";
 	public static final String VARIANT_OTHER_SPECIFY = "variantOtherSpecify";
 	public static final String TEST_RESULT_TEXT = "testResultText";
@@ -157,6 +159,7 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private SampleReferenceDto sample;
 //	@NotNull(message = Validations.validDisease)
 	private Disease testedDisease;
+	private Disease secondTestedDisease;
 	private DiseaseVariant testedDiseaseVariant;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String testedDiseaseDetails;
@@ -180,6 +183,7 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private UserReferenceDto labUser;
 	@NotNull(message = Validations.requiredField)
 	private PathogenTestResultType testResult;
+	private PathogenTestResultType testResultForSecondDisease;
 	private PathogenTestResultVariant testResultVariant;
 	private String variantOtherSpecify;
 	@SensitiveData
@@ -1080,5 +1084,21 @@ public class PathogenTestDto extends PseudonymizableDto {
 
 	public void setVariantOtherSpecify(String variantOtherSpecify) {
 		this.variantOtherSpecify = variantOtherSpecify;
+	}
+
+	public Disease getSecondTestedDisease() {
+		return secondTestedDisease;
+	}
+
+	public void setSecondTestedDisease(Disease secondTestedDisease) {
+		this.secondTestedDisease = secondTestedDisease;
+	}
+
+	public PathogenTestResultType getTestResultForSecondDisease() {
+		return testResultForSecondDisease;
+	}
+
+	public void setTestResultForSecondDisease(PathogenTestResultType testResultForSecondDisease) {
+		this.testResultForSecondDisease = testResultForSecondDisease;
 	}
 }

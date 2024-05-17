@@ -100,6 +100,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(4, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, 4, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, 4, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN) +
 			fluidRowLocs(PathogenTestDto.TEST_RESULT, PathogenTestDto.TEST_RESULT_VERIFIED) +
 			fluidRowLocs(PathogenTestDto.TEST_RESULT_VARIANT, PathogenTestDto.VARIANT_OTHER_SPECIFY) +
+			fluidRowLocs(PathogenTestDto.SECOND_TESTED_DISEASE, PathogenTestDto.TEST_RESULT_FOR_SECOND_DISEASE) +
 			fluidRowLocs(PathogenTestDto.PRELIMINARY, "") +
 			fluidRowLocs(PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, "") +
 			fluidRowLocs(PathogenTestDto.SEROTYPE, "") + 
@@ -204,6 +205,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private ComboBox diseaseBox;
 	private ComboBox testResultField;
 	private ComboBox testResultVariant;
+	private ComboBox secondTestedDisease;
+	private ComboBox TestResultForSecondDisease;
 
 		public PathogenTestForm(SampleDto sample, boolean create, int caseSampleCount, boolean isPseudonymized) {
 		super(
@@ -359,9 +362,11 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		else if (caseDisease == Disease.CSM) {
 			diseaseField.removeAllItems();
 			FieldHelper.updateEnumData(diseaseField, Disease.CSM_ONLY);
+			diseaseField.setEnabled(false);
 		} else if (caseDisease == Disease.NEW_INFLUENZA) {
 			diseaseField.removeAllItems();
 			FieldHelper.updateEnumData(diseaseField, Disease.NEW_ONLY);
+			diseaseField.setEnabled(false);
 		}
 		else if (caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
 			for (Disease disease1 : Disease.values()) {
@@ -398,6 +403,10 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		testResultVariant = addField(PathogenTestDto.TEST_RESULT_VARIANT, ComboBox.class);
 		testResultVariant.setVisible(false);
 		TextField variantOther = addField(PathogenTestDto.VARIANT_OTHER_SPECIFY, TextField.class);
+		secondTestedDisease = addField(PathogenTestDto.SECOND_TESTED_DISEASE, ComboBox.class);
+		TestResultForSecondDisease = addField(PathogenTestDto.TEST_RESULT_FOR_SECOND_DISEASE, ComboBox.class);
+		secondTestedDisease.setVisible(false);
+		TestResultForSecondDisease.setVisible(false);
 		variantOther.setVisible(false);
 		addField(PathogenTestDto.SEROTYPE, TextField.class);
 		TextField cqValueField = addField(PathogenTestDto.CQ_VALUE, TextField.class);
@@ -457,12 +466,12 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				PathogenTestDto.TESTED_DISEASE,
 				Arrays.asList(Disease.OTHER),
 				true);
-		FieldHelper.setVisibleWhen(
-				getFieldGroup(),
-				PathogenTestDto.TYPING_ID,
-				PathogenTestDto.TEST_TYPE,
-				Arrays.asList(PathogenTestType.PCR_RT_PCR, PathogenTestType.DNA_MICROARRAY, PathogenTestType.SEQUENCING),
-				true);
+		// FieldHelper.setVisibleWhen(
+		// 		getFieldGroup(),
+		// 		PathogenTestDto.TYPING_ID,
+		// 		PathogenTestDto.TEST_TYPE,
+		// 		Arrays.asList(PathogenTestType.PCR_RT_PCR, PathogenTestType.DNA_MICROARRAY, PathogenTestType.SEQUENCING),
+		// 		true);
 		Map<Object, List<Object>> serotypeVisibilityDependencies = new HashMap<Object, List<Object>>() {
 
 			private static final long serialVersionUID = 1967952323596082247L;
@@ -586,6 +595,16 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				});
 
 				FieldHelper.setVisibleWhen(testResultVariant, Arrays.asList(variantOther), Arrays.asList(PathogenTestResultVariant.OTHER), true);
+				testResultField.removeItem(PathogenTestResultType.PENDING);
+
+
+				secondTestedDisease.setVisible(true);
+				secondTestedDisease.setValue(Disease.CORONAVIRUS);
+				secondTestedDisease.setEnabled(false);
+
+				TestResultForSecondDisease.setVisible(true);
+				TestResultForSecondDisease.removeItem(PathogenTestResultType.PENDING);
+				TestResultForSecondDisease.removeItem(PathogenTestResultType.NOT_DONE);
 			}
 			else {
 				testTypeField.addItems(PathogenTestType.values());
@@ -802,7 +821,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						break;
 				}
 			});
-			setVisible(false, PathogenTestDto.PRELIMINARY, PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, PathogenTestDto.SEROTYPE, PathogenTestDto.CQ_VALUE, PathogenTestDto.TEST_RESULT_TEXT);
+			setVisible(false, PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, PathogenTestDto.SEROTYPE, PathogenTestDto.CQ_VALUE, PathogenTestDto.TEST_RESULT_TEXT);
 		}
 
 		if(caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
