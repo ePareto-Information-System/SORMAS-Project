@@ -13118,4 +13118,9 @@ INSERT INTO schema_version(version_number, comment) VALUES (576, 'Added new fiel
 ALTER TABLE cases ADD COLUMN investigationOfficerName varchar(255);
 ALTER TABLE cases ADD COLUMN investigationOfficerPosition varchar(255);
 INSERT INTO schema_version(version_number, comment) VALUES (577, 'Added investigationOfficerName, investigationOfficerPosition to cases');
+
+ALTER TABLE cases ADD COLUMN formCompletedByName varchar(255);
+ALTER TABLE cases ADD COLUMN formCompletedByPosition varchar(255);
+ALTER TABLE cases ADD COLUMN formCompletedByCellPhoneNo varchar(255);
+INSERT INTO schema_version(version_number, comment) VALUES (578, 'Added formCompletedByName, formCompletedByPosition, formCompletedByCellPhoneNo to cases');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

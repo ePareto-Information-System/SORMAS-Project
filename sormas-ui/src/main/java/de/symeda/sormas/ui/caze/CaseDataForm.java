@@ -280,7 +280,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			+ fluidRowLocs(CaseDataDto.REPORT_DATE, CaseDataDto.REPORTING_OFFICER_NAME, CaseDataDto.REPORTING_OFFICER_TITLE)
 			+ fluidRowLocs(4, CaseDataDto.DATE_OF_INVESTIGATION, 4, CaseDataDto.INVESTIGATION_OFFICER_NAME, 4, CaseDataDto.INVESTIGATION_OFFICER_POSITION)
 			+ locCss(VSPACE_3, PERSON_WHO_COMPLETED_THIS_FORM_HEADING_LOC)
-			+ fluidRowLocs(CaseDataDto.REPORTING_OFFICER_NAME, CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE)
+			+ fluidRowLocs(CaseDataDto.FORM_COMPLETED_BY_NAME, CaseDataDto.FORM_COMPLETED_BY_POSITION, CaseDataDto.FORM_COMPLETED_BY_CELL_PHONE_NO)
 			+ fluidRowLocs(6, CaseDataDto.SURVEILLANCE_OFFICER);
 
 	private final String caseUuid;
@@ -504,6 +504,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		addField(CaseDataDto.RABIES_TYPE, NullableOptionGroup.class);
 		addField(CaseDataDto.CASE_ORIGIN, TextField.class);
 		OptionGroup caseTransmissionClassification = addField(CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
+
+		addFields(CaseDataDto.FORM_COMPLETED_BY_NAME, CaseDataDto.FORM_COMPLETED_BY_POSITION, CaseDataDto.FORM_COMPLETED_BY_CELL_PHONE_NO);
+		setVisible(false, CaseDataDto.FORM_COMPLETED_BY_NAME, CaseDataDto.FORM_COMPLETED_BY_POSITION, CaseDataDto.FORM_COMPLETED_BY_CELL_PHONE_NO);
 
 		quarantine = addField(CaseDataDto.QUARANTINE);
 		quarantine.addValueChangeListener(e -> onValueChange());
@@ -1632,6 +1635,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				surveillanceOfficerField.setVisible(true);
 				investigationOfficerNameField.setVisible(true);
 				investigationOfficerPositionField.setVisible(true);
+				setVisible(true, CaseDataDto.FORM_COMPLETED_BY_NAME, CaseDataDto.FORM_COMPLETED_BY_POSITION, CaseDataDto.FORM_COMPLETED_BY_CELL_PHONE_NO);
 				setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.TRIMESTER, CaseDataDto.VACCINATION_STATUS);
 			}
 			//AFP

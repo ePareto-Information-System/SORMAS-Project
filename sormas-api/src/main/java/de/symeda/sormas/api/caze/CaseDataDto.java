@@ -241,6 +241,9 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String REPORTING_ZONE = "reportingZone";
 	public static final String INVESTIGATION_OFFICER_NAME = "investigationOfficerName";
 	public static final String INVESTIGATION_OFFICER_POSITION = "investigationOfficerPosition";
+	public static final String FORM_COMPLETED_BY_NAME = "formCompletedByName";
+	public static final String FORM_COMPLETED_BY_POSITION = "formCompletedByPosition";
+	public static final String FORM_COMPLETED_BY_CELL_PHONE_NO = "formCompletedByCellPhoneNo";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -638,6 +641,9 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	private String reportingZone;
 	private String investigationOfficerName;
 	private String investigationOfficerPosition;
+	private String formCompletedByName;
+	private String formCompletedByPosition;
+	private String formCompletedByCellPhoneNo;
 
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		return build(person, disease, HealthConditionsDto.build());
@@ -1982,5 +1988,29 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 
 	public void setInvestigationOfficerPosition(String investigationOfficerPosition) {
 		this.investigationOfficerPosition = investigationOfficerPosition;
+	}
+
+	public String getFormCompletedByName() {
+		return this.formCompletedByName;
+	}
+
+	public void setFormCompletedByName(String formCompletedByName) {
+		this.formCompletedByName = formCompletedByName;
+	}
+
+	public String getFormCompletedByPosition() {
+		return this.formCompletedByPosition;
+	}
+
+	public void setFormCompletedByPosition(String formCompletedByPosition) {
+		this.formCompletedByPosition = formCompletedByPosition;
+	}
+
+	public String getFormCompletedByCellPhoneNo() {
+		return this.formCompletedByCellPhoneNo;
+	}
+
+	public void setFormCompletedByCellPhoneNo(String formCompletedByCellPhoneNo) {
+		this.formCompletedByCellPhoneNo = formCompletedByCellPhoneNo;
 	}
 }

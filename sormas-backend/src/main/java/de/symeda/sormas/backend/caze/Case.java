@@ -466,6 +466,9 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private String reportingZone;
 	private String investigationOfficerName;
 	private String investigationOfficerPosition;
+	private String formCompletedByName;
+	private String formCompletedByPosition;
+	private String formCompletedByCellPhoneNo;
 
 	public static Case build() {
 		Case caze = new Case();
@@ -2031,6 +2034,30 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setInvestigationOfficerPosition(String investigationOfficerPosition) {
 		this.investigationOfficerPosition = investigationOfficerPosition;
+	}
+
+	public String getFormCompletedByName() {
+		return this.formCompletedByName;
+	}
+
+	public void setFormCompletedByName(final String formCompletedByName) {
+		this.formCompletedByName = formCompletedByName;
+	}
+
+	public String getFormCompletedByPosition() {
+		return this.formCompletedByPosition;
+	}
+
+	public void setFormCompletedByPosition(final String formCompletedByPosition) {
+		this.formCompletedByPosition = formCompletedByPosition;
+	}
+
+	public String getFormCompletedByCellPhoneNo() {
+		return this.formCompletedByCellPhoneNo;
+	}
+
+	public void setFormCompletedByCellPhoneNo(final String formCompletedByCellPhoneNo) {
+		this.formCompletedByCellPhoneNo = formCompletedByCellPhoneNo;
 	}
 
 	public Double buildCaseLatitudeCoordination() {

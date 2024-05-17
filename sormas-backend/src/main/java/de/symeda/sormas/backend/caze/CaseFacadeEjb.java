@@ -3167,6 +3167,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setReportingZone(source.getReportingZone());
 		target.setInvestigationOfficerName(source.getInvestigationOfficerName());
 		target.setInvestigationOfficerPosition(source.getInvestigationOfficerPosition());
+		target.setFormCompletedByName(source.getFormCompletedByName());
+		target.setFormCompletedByPosition(source.getFormCompletedByPosition());
+		target.setFormCompletedByCellPhoneNo(source.getFormCompletedByCellPhoneNo());
 
 		return target;
 	}
@@ -3391,6 +3394,10 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setReportingVillage(source.getReportingVillage());
 		target.setInvestigationOfficerName(source.getInvestigationOfficerName());
 		target.setInvestigationOfficerPosition(source.getInvestigationOfficerPosition());
+
+		target.setFormCompletedByName(source.getFormCompletedByName());
+		target.setFormCompletedByPosition(source.getFormCompletedByPosition());
+		target.setFormCompletedByCellPhoneNo(source.getFormCompletedByCellPhoneNo());
 
 		return target;
 	}

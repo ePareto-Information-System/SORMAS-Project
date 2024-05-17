@@ -460,6 +460,9 @@ public interface Captions {
 	String CaseData_symptoms = "CaseData.symptoms";
 	String CaseData_therapy = "CaseData.therapy";
 	String CaseData_trimester = "CaseData.trimester";
+	String CaseData_formCompletedByName = "CaseData.formCompletedByName";
+	String CaseData_formCompletedByPosition = "CaseData.formCompletedByPosition";
+	String CaseData_formCompletedByCellPhoneNo = "CaseData.formCompletedByCellPhoneNo";
 	String CaseData_uuid = "CaseData.uuid";
 	String CaseData_vaccinationStatus = "CaseData.vaccinationStatus";
 	String CaseData_vaccinationStatusUpdate = "CaseData.vaccinationStatusUpdate";
