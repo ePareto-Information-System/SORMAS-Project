@@ -38,6 +38,7 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.sample.*;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.Gram;
 import de.symeda.sormas.api.utils.LabType;
@@ -58,11 +59,6 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
-import de.symeda.sormas.api.sample.PathogenTestDto;
-import de.symeda.sormas.api.sample.PathogenTestResultType;
-import de.symeda.sormas.api.sample.PathogenTestType;
-import de.symeda.sormas.api.sample.SampleDto;
-import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
@@ -96,6 +92,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(6,PathogenTestDto.LAB_LOCATION) +
 			fluidRowLocs(PathogenTestDto.DATE_LAB_RECEIVED_SPECIMEN, PathogenTestDto.SPECIMEN_CONDITION) +
 			fluidRowLocs(PathogenTestDto.TEST_RESULT, PathogenTestDto.TEST_RESULT_VERIFIED) +
+			fluidRowLocs(PathogenTestDto.TEST_RESULT_VARIANT, PathogenTestDto.VARIANT_OTHER_SPECIFY) +
 			fluidRowLocs(PathogenTestDto.PRELIMINARY, "") +
 			fluidRowLocs(PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, "") +
 			fluidRowLocs(PathogenTestDto.SEROTYPE, "") + 
@@ -189,6 +186,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private DateField regrefLabDate;
 	private DateField dateSentReportHealthFacility;
 	private ComboBox diseaseBox;
+	private ComboBox testResultField;
+	private ComboBox testResultVariant;
 
 	public PathogenTestForm(AbstractSampleForm sampleForm, boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction) {
 		this(create, caseSampleCount, isPseudonymized, inJurisdiction);
@@ -275,6 +274,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		} else if (caseDisease == Disease.CSM) {
 			diseaseField.removeAllItems();
 			FieldHelper.updateEnumData(diseaseField, Disease.CSM_ONLY);
+		} else if (caseDisease == Disease.NEW_INFLUENZA) {
+			diseaseField.removeAllItems();
+			FieldHelper.updateEnumData(diseaseField, Disease.NEW_ONLY);
 		}
 		else if (caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
 			for (Disease disease1 : Disease.values()) {
@@ -293,8 +295,13 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		TextField diseaseVariantDetailsField = addField(PathogenTestDto.TESTED_DISEASE_VARIANT_DETAILS, TextField.class);
 		diseaseVariantDetailsField.setVisible(false);
 
-		ComboBox testResultField = addField(PathogenTestDto.TEST_RESULT, ComboBox.class);
+		testResultField = addField(PathogenTestDto.TEST_RESULT, ComboBox.class);
 		testResultField.removeItem(PathogenTestResultType.NOT_DONE);
+
+		testResultVariant = addField(PathogenTestDto.TEST_RESULT_VARIANT, ComboBox.class);
+		testResultVariant.setVisible(false);
+		TextField variantOther = addField(PathogenTestDto.VARIANT_OTHER_SPECIFY, TextField.class);
+		variantOther.setVisible(false);
 		addField(PathogenTestDto.SEROTYPE, TextField.class);
 		TextField cqValueField = addField(PathogenTestDto.CQ_VALUE, TextField.class);
 		cqValueField.setConversionError(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, cqValueField.getCaption()));
@@ -306,7 +313,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		fourFoldIncrease.setEnabled(false);
 
 		addField(PathogenTestDto.TEST_RESULT_TEXT, TextArea.class).setRows(6);
-		addField(PathogenTestDto.PRELIMINARY).addStyleName(CssStyles.VSPACE_4);
+		//addField(PathogenTestDto.PRELIMINARY).addStyleName(CssStyles.VSPACE_4);
 
 		addField(PathogenTestDto.DELETION_REASON);
 		addField(PathogenTestDto.OTHER_DELETION_REASON, TextArea.class).setRows(3);
@@ -429,13 +436,30 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						.filter(pathogenTestType -> !ahfMeaselesPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 
-			} else if(disease == Disease.CSM){
+			} else if(disease == Disease.CSM) {
 				List<PathogenTestType> csmPathogenTests = PathogenTestType.getCSMTestTypes();
 				Arrays.stream(PathogenTestType.values())
-					.filter(pathogenTestType -> !csmPathogenTests.contains(pathogenTestType))
-					.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
+						.filter(pathogenTestType -> !csmPathogenTests.contains(pathogenTestType))
+						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
+			} else if(disease == Disease.NEW_INFLUENZA){
+					List<PathogenTestType> iliPathogenTests = PathogenTestType.getILITestTypes();
+					Arrays.stream(PathogenTestType.values())
+							.filter(pathogenTestType -> !iliPathogenTests.contains(pathogenTestType))
+							.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
+
+				testResultField.addValueChangeListener(e -> {
+					PathogenTestResultType testResult = (PathogenTestResultType) e.getProperty().getValue();
+					if(testResult == PathogenTestResultType.POSITIVE){
+						testResultVariant.setVisible(true);
+					}else {
+						testResultVariant.setVisible(false);
+						testResultVariant.clear();
+					}
+				});
+
+				FieldHelper.setVisibleWhen(testResultVariant, Arrays.asList(variantOther), Arrays.asList(PathogenTestResultVariant.OTHER), true);
 			}
-			else{
+			else {
 					testTypeField.addItems(PathogenTestType.values());
 			}
 		});

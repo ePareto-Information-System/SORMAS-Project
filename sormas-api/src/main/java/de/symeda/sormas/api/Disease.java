@@ -19,8 +19,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.sample.PathogenTestResultVariant;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
+import de.symeda.sormas.api.utils.DataHelper;
 
 public enum Disease
 	implements
@@ -218,8 +220,21 @@ public enum Disease
 	);
 
 	public static final List<Disease> CSM_ONLY = Arrays.asList(CSM);
+	public static final List<Disease> NEW_ONLY = List.of(NEW_INFLUENZA);
 
 	public static List<Disease> hideFollowUp = Arrays.asList(
 			YELLOW_FEVER, AHF, CSM, AFP, NEW_INFLUENZA, CHOLERA, MEASLES, CORONAVIRUS, FOODBORNE_ILLNESS, GUINEA_WORM, MONKEYPOX, NEONATAL_TETANUS);
+
+	public static String toString(Disease value, String details) {
+		if (value == null) {
+			return "";
+		}
+
+		if (value == Disease.OTHER) {
+			return DataHelper.toStringNullable(details);
+		}
+
+		return value.toString();
+	}
 
 }

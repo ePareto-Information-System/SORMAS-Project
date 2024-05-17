@@ -453,6 +453,8 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setDateLabResultsSentDistrict(source.getDateLabResultsSentDistrict());
 		target.setDateLabResultsSentClinician(source.getDateLabResultsSentClinician());
 		target.setDateDistrictReceivedLabResults(source.getDateDistrictReceivedLabResults());
+		target.setTestResultVariant(source.getTestResultVariant());
+		target.setVariantOtherSpecify(source.getVariantOtherSpecify());
 
 
 		return target;
@@ -581,6 +583,8 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setDateLabResultsSentDistrict(source.getDateLabResultsSentDistrict());
 		target.setDateLabResultsSentClinician(source.getDateLabResultsSentClinician());
 		target.setDateDistrictReceivedLabResults(source.getDateDistrictReceivedLabResults());
+		target.setTestResultVariant(source.getTestResultVariant());
+		target.setVariantOtherSpecify(source.getVariantOtherSpecify());
 
 		return target;
 	}

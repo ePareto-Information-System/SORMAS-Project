@@ -95,5 +95,8 @@ public enum PathogenTestType {
 	public static List<PathogenTestType> getCSMTestTypes() {
 		return  Arrays.asList(CYTOLOGY, GRAM_STAIN, LATEX, RDT, OTHER);
 	}
+	public static List<PathogenTestType> getILITestTypes() {
+		return  Arrays.asList(PCR_RT_PCR, OTHER);
+	}
 
 }
