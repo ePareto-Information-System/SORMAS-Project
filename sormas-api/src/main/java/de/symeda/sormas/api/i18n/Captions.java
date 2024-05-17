@@ -1890,6 +1890,8 @@ public interface Captions {
 
 	String PathogenTest_variantOtherSpecify = "PathogenTest.variantOtherSpecify";
 	String PathogenTest_testResultVariant = "PathogenTest.testResultVariant";
+	String PathogenTest_secondTestedDisease = "PathogenTest.secondTestedDisease";
+	String PathogenTest_testResultForSecondDisease = "PathogenTest.testResultForSecondDisease";
 	String PathogenTest_testType = "PathogenTest.testType";
 	String PathogenTest_testTypeText = "PathogenTest.testTypeText";
 	String PathogenTest_typingId = "PathogenTest.typingId";

@@ -168,6 +168,8 @@ public class PathogenTest extends DeletableAdo {
 	private Date dateDistrictReceivedLabResults;
 	private PathogenTestResultVariant testResultVariant;
 	private String variantOtherSpecify;
+	private Disease secondTestedDisease;
+	private PathogenTestResultType testResultForSecondDisease;
 
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -868,5 +870,21 @@ public class PathogenTest extends DeletableAdo {
 
 	public void setVariantOtherSpecify(String variantOtherSpecify) {
 		this.variantOtherSpecify = variantOtherSpecify;
+	}
+
+	public Disease getSecondTestedDisease() {
+		return secondTestedDisease;
+	}
+
+	public void setSecondTestedDisease(Disease secondTestedDisease) {
+		this.secondTestedDisease = secondTestedDisease;
+	}
+
+	public PathogenTestResultType getTestResultForSecondDisease() {
+		return testResultForSecondDisease;
+	}
+
+	public void setTestResultForSecondDisease(PathogenTestResultType testResultForSecondDisease) {
+		this.testResultForSecondDisease = testResultForSecondDisease;
 	}
 }

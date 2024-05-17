@@ -13399,7 +13399,9 @@ INSERT INTO schema_version (version_number, comment) VALUES (594, 'Added 7 colum
 
 ALTER TABLE pathogentest ADD COLUMN testresultvariant varchar(255);
 ALTER TABLE pathogentest ADD COLUMN variantotherspecify varchar(255);
+ALTER TABLE pathogentest ADD COLUMN secondtesteddisease varchar(255);
+ALTER TABLE pathogentest ADD COLUMN testresultforseconddisease varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (595, 'Added 2 columns to pathogentest for ILI');
+INSERT INTO schema_version (version_number, comment) VALUES (595, 'Added 4 columns to pathogentest for ILI');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
