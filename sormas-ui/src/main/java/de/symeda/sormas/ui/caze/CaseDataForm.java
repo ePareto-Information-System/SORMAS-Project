@@ -317,7 +317,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
     + fluidRowLocs(4, CaseDataDto.DATE_OF_INVESTIGATION, 4, CaseDataDto.INVESTIGATION_OFFICER_NAME, 4, CaseDataDto.INVESTIGATION_OFFICER_POSITION)
     + fluidRowLocs(4, CaseDataDto.DATE_OF_INVESTIGATION, 4, CaseDataDto.INVESTIGATION_OFFICER_NAME, 4, CaseDataDto.INVESTIGATION_OFFICER_POSITION)
     + locCss(VSPACE_3, PERSON_WHO_COMPLETED_THIS_FORM_HEADING_LOC)
-    + fluidRowLocs(CaseDataDto.REPORTING_OFFICER_NAME, CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE)
+    + fluidRowLocs(CaseDataDto.FORM_COMPLETED_BY_NAME, CaseDataDto.FORM_COMPLETED_BY_POSITION, CaseDataDto.FORM_COMPLETED_BY_CELL_PHONE_NO)
     + fluidRowLocs(6, CaseDataDto.SURVEILLANCE_OFFICER);
     
 	//@formatter:on
@@ -576,6 +576,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         ComboBox idsrdiagnosis = addField(CaseDataDto.IDSR_DIAGNOSIS, ComboBox.class);
         TextField specifyEvent = addField(CaseDataDto.SPECIFY_EVENT_DIAGNOSIS, TextField.class);
         specifyEvent.setVisible(false);
+
+		addFields(CaseDataDto.FORM_COMPLETED_BY_NAME, CaseDataDto.FORM_COMPLETED_BY_POSITION, CaseDataDto.FORM_COMPLETED_BY_CELL_PHONE_NO);
+		setVisible(false, CaseDataDto.FORM_COMPLETED_BY_NAME, CaseDataDto.FORM_COMPLETED_BY_POSITION, CaseDataDto.FORM_COMPLETED_BY_CELL_PHONE_NO);
 
         quarantine = addField(CaseDataDto.QUARANTINE);
         quarantine.addValueChangeListener(e -> onValueChange());
@@ -1855,6 +1858,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 investigationOfficerNameField.setVisible(true);
 				investigationOfficerPositionField.setVisible(true);
                 setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.TRIMESTER, CaseDataDto.VACCINATION_STATUS);
+				setVisible(true, CaseDataDto.FORM_COMPLETED_BY_NAME, CaseDataDto.FORM_COMPLETED_BY_POSITION, CaseDataDto.FORM_COMPLETED_BY_CELL_PHONE_NO);
             }
 
             //INFLUENZA

@@ -285,6 +285,9 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String NUMBER_OF_PEOPLE_IN_SAME_HOUSEHOLD = "numberOfPeopleInSameHousehold";
 	public static final String INVESTIGATION_OFFICER_NAME = "investigationOfficerName";
 	public static final String INVESTIGATION_OFFICER_POSITION = "investigationOfficerPosition";
+	public static final String FORM_COMPLETED_BY_NAME = "formCompletedByName";
+	public static final String FORM_COMPLETED_BY_POSITION = "formCompletedByPosition";
+	public static final String FORM_COMPLETED_BY_CELL_PHONE_NO = "formCompletedByCellPhoneNo";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -687,6 +690,9 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private String reportingZone;
 	private String investigationOfficerName;
 	private String investigationOfficerPosition;
+	private String formCompletedByName;
+	private String formCompletedByPosition;
+	private String formCompletedByCellPhoneNo;
 
 	private YesNoUnknown motherVaccinatedWithTT;
 	private YesNoUnknown motherHaveCard;
@@ -2326,5 +2332,29 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	public void setInvestigationOfficerPosition(String investigationOfficerPosition) {
 		this.investigationOfficerPosition = investigationOfficerPosition;
+	}
+
+	public String getFormCompletedByName() {
+		return this.formCompletedByName;
+	}
+
+	public void setFormCompletedByName(String formCompletedByName) {
+		this.formCompletedByName = formCompletedByName;
+	}
+
+	public String getFormCompletedByPosition() {
+		return this.formCompletedByPosition;
+	}
+
+	public void setFormCompletedByPosition(String formCompletedByPosition) {
+		this.formCompletedByPosition = formCompletedByPosition;
+	}
+
+	public String getFormCompletedByCellPhoneNo() {
+		return this.formCompletedByCellPhoneNo;
+	}
+
+	public void setFormCompletedByCellPhoneNo(String formCompletedByCellPhoneNo) {
+		this.formCompletedByCellPhoneNo = formCompletedByCellPhoneNo;
 	}
 }

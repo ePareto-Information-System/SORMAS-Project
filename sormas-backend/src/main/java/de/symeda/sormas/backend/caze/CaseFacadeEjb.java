@@ -3489,6 +3489,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setReportingZone(source.getReportingZone());
 		target.setInvestigationOfficerName(source.getInvestigationOfficerName());
 		target.setInvestigationOfficerPosition(source.getInvestigationOfficerPosition());
+		target.setFormCompletedByName(source.getFormCompletedByName());
+		target.setFormCompletedByPosition(source.getFormCompletedByPosition());
+		target.setFormCompletedByCellPhoneNo(source.getFormCompletedByCellPhoneNo());
 
 		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
 		target.setDateLatestUpdateRecord(source.getDateLatestUpdateRecord());
@@ -3748,10 +3751,13 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setSpecifyEventDiagnosis(source.getSpecifyEventDiagnosis());
 		target.setInvestigationOfficerName(source.getInvestigationOfficerName());
 		target.setInvestigationOfficerPosition(source.getInvestigationOfficerPosition());
-
 		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
 		target.setDateLatestUpdateRecord(source.getDateLatestUpdateRecord());
 		target.setNumberOfPeopleInSameHousehold(source.getNumberOfPeopleInSameHousehold());
+		target.setFormCompletedByName(source.getFormCompletedByName());
+		target.setFormCompletedByPosition(source.getFormCompletedByPosition());
+		target.setFormCompletedByCellPhoneNo(source.getFormCompletedByCellPhoneNo());
+
 		return target;
 	}
 
