@@ -738,6 +738,7 @@ public interface Strings {
 	String headingNationalSecretariatOnly = "headingNationalSecretariatOnly";
 	String headingOtherInformation = "headingOtherInformation";
 	String headingSpecimenHandling = "headingSpecimenHandling";
+	String headingPersonWhoCompletedThisForm = "headingPersonWhoCompletedThisForm";
 	String headingSecurityAlert = "headingSecurityAlert";
 	String headingSeeAllPersons = "headingSeeAllPersons";
 	String headingSelectCampaign = "headingSelectCampaign";
