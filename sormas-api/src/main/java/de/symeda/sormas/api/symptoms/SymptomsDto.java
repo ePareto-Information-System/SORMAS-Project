@@ -538,6 +538,27 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState cough;
 
 	@Diseases({
+			AFP,
+			EVD,
+			LASSA,
+			NEW_INFLUENZA, SARI,
+			MEASLES,
+			MONKEYPOX,
+			PLAGUE,
+			POLIO,
+			ANTHRAX,
+			AHF,
+			DENGUE,
+			CORONAVIRUS,
+			UNDEFINED,
+			OTHER })
+	@Outbreaks
+	@HideForCountries(countries = {
+			CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState soreThroat;
+
+	@Diseases({
 		CORONAVIRUS })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -1568,23 +1589,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		CORONAVIRUS })
 	@SymptomGrouping(SymptomGroup.RASH_TYPE)
 	private SymptomState macularRash;
-
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA, SARI,
-		MEASLES,
-		MONKEYPOX,
-		ANTHRAX,
-		POLIO,
-		CORONAVIRUS,
-		AHF, DENGUE,
-		UNDEFINED,
-		OTHER })
-	@SymptomGrouping(SymptomGroup.GENERAL)
-	private SymptomState soreThroat;
 
 	@Diseases({
 			AFP,

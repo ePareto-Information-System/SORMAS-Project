@@ -142,7 +142,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6, TYPE_OF_RASH)+
 					fluidRowLocs(DATE_OF_ONSET, "") +
 					fluidRowLocs(6,FEVER_BODY_TEMP_GREATER) +
-					fluidRow(fluidColumn(8,4, locCss(CssStyles.ALIGN_RIGHT,BUTTONS_LOC)))+
+					fluidRowLocs(BUTTONS_LOC)+
 					createSymptomGroupLayout(SymptomGroup.GENERAL, GENERAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					fluidRowLocs(FEVER_ONSET_PARALYSIS, PROGRESSIVE_PARALYSIS) +
 					fluidRowLocs(DATE_ONSET_PARALYSIS, PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
@@ -161,15 +161,15 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(AGE_AT_DEATH_DAYS, AGE_AT_ONSET_DAYS) +
 					fluidRowLocs(6,OTHER_COMPLICATIONS) +
 					fluidRowLocs(6,OTHER_COMPLICATIONS_TEXT) +
-					createSymptomGroupLayout(SymptomGroup.RESPIRATORY, RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
-					createSymptomGroupLayout(SymptomGroup.CARDIOVASCULAR, CARDIOVASCULAR_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
+//					createSymptomGroupLayout(SymptomGroup.RESPIRATORY, RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
+//					createSymptomGroupLayout(SymptomGroup.CARDIOVASCULAR, CARDIOVASCULAR_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					//createSymptomGroupLayout(SymptomGroup.GASTROINTESTINAL, GASTROINTESTINAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
-					createSymptomGroupLayout(SymptomGroup.URINARY, URINARY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
-					createSymptomGroupLayout(SymptomGroup.NERVOUS_SYSTEM, NERVOUS_SYSTEM_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
+//					createSymptomGroupLayout(SymptomGroup.URINARY, URINARY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
+//					createSymptomGroupLayout(SymptomGroup.NERVOUS_SYSTEM, NERVOUS_SYSTEM_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					//createSymptomGroupLayout(SymptomGroup.RASH, RASH_AND_SYMPTOMS_HEADING_LOC) +
 					//createSymptomGroupLayout(SymptomGroup.RASH_CHARACTERISTICS, RASH_CHARACTERISTICS_AND_SYMPTOMS_HEADING_LOC) +
 					//createSymptomGroupLayout(SymptomGroup.RASH_TYPE, RASH_TYPE_AND_SYMPTOMS_HEADING_LOC) +
-					createSymptomGroupLayout(SymptomGroup.SKIN, SKIN_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
+//					createSymptomGroupLayout(SymptomGroup.SKIN, SKIN_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.OTHER, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 
 					fluidRowLocs(FEVER_ONSET_PARALYSIS, PROGRESSIVE_PARALYSIS) +
@@ -178,7 +178,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(PARALYSED_LIMB_SENSITIVE_TO_PAIN, INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
 					fluidRowLocs(RIGHT_INJECTION_SITE, LEFT_INJECTION_SITE) +
 					fluidRowLocs( PLACE_OF_EXPOSURE_MEASLES_RUBELLA) +
-					fluidRowLocs(PATIENT_ILL_LOCATION, SYMPTOMS_COMMENTS) +
+					fluidRowLocs(6, PATIENT_ILL_LOCATION) +
+					fluidRowLocs(6, SYMPTOMS_COMMENTS) +
 					fluidRowLocs(6, ONSET_SYMPTOM) +
 					fluidRowLocs(6, ONSET_DATE) +
 					fluidRowLocsCss(FIRST_WORM_THIS_YEAR, FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS, NUMBER_OF_WORMS, DATE_FIRST_WORM_EMERGENCE) +
@@ -422,8 +423,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			FATIGUE_WEAKNESS,
 			SKIN_RASH,
 			NECK_STIFFNESS,
-			SORE_THROAT,
 			COUGH,
+			SORE_THROAT,
 			COUGH_WITH_SPUTUM,
 			COUGH_WITH_HEAMOPTYSIS,
 			RUNNY_NOSE,
@@ -698,8 +699,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			FATIGUE_WEAKNESS,
 			SKIN_RASH,
 			NECK_STIFFNESS,
-			SORE_THROAT,
 			COUGH,
+			SORE_THROAT,
 			COUGH_WITH_SPUTUM,
 			COUGH_WITH_HEAMOPTYSIS,
 			RUNNY_NOSE,
@@ -1215,6 +1216,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		getContent().addComponent(complicationsHeading, COMPLICATIONS_HEADING);
 
 		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		buttonsLayout.addStyleName("move-to-left");
 		buttonsLayout.addComponent(clearAllButton);
 		buttonsLayout.addComponent(setEmptyToNoButton);
 		//buttonsLayout.addComponent(setEmptyToUnknownButton);
