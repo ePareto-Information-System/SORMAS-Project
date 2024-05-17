@@ -1167,12 +1167,14 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		//target.setCadre(CadreFacadeEjb.toReferenceDto(source.getCadre()));
 		target.setTelNumber(source.getTelNumber());
 		target.setApplicable(source.getApplicable());
+		target.setPst14MonthsVillage(source.getPst14MonthsVillage());
+		target.setPst14MonthsZone(source.getPst14MonthsZone());
+		target.setPst14MonthsCommunity(CommunityFacadeEjb.toReferenceDto(source.getPst14MonthsCommunity()));
+		target.setPst14MonthsDistrict(DistrictFacadeEjb.toReferenceDto(source.getPst14MonthsDistrict()));
+		target.setPst14MonthsRegion(RegionFacadeEjb.toReferenceDto(source.getPst14MonthsRegion()));
+		target.setPlaceOfResidenceSameAsReportingVillage(source.getPlaceOfResidenceSameAsReportingVillage());
+		target.setResidenceSinceWhenInMonths(source.getResidenceSinceWhenInMonths());
 		target.setEthnicity(source.getEthnicity());
-		target.setPlaceStayedtenToFourteenMonthsVillage(source.getPlaceStayedtenToFourteenMonthsVillage());
-		target.setPlaceStayedtenToFourteenMonthsZone(source.getPlaceStayedtenToFourteenMonthsZone());
-		target.setPlaceStayedtenToFourteenMonthsCommunity(CommunityFacadeEjb.toReferenceDto(source.getPlaceStayedtenToFourteenMonthsCommunity()));
-		target.setPlaceStayedtenToFourteenMonthsDistrict(DistrictFacadeEjb.toReferenceDto(source.getPlaceStayedtenToFourteenMonthsDistrict()));
-		target.setPlaceStayedtenToFourteenMonthsRegion(RegionFacadeEjb.toReferenceDto(source.getPlaceStayedtenToFourteenMonthsRegion()));
 
 		return target;
 	}
@@ -1906,6 +1908,14 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setTelNumber(source.getTelNumber());
 		target.setApplicable(source.getApplicable());
 
+		target.setPst14MonthsVillage(source.getPst14MonthsVillage());
+		target.setPst14MonthsZone(source.getPst14MonthsZone());
+		target.setPst14MonthsCommunity(communityService.getByReferenceDto(source.getPst14MonthsCommunity()));
+		target.setPst14MonthsDistrict(districtService.getByReferenceDto(source.getPst14MonthsDistrict()));
+		target.setPst14MonthsRegion(regionService.getByReferenceDto(source.getPst14MonthsRegion()));
+		target.setPlaceOfResidenceSameAsReportingVillage(source.getPlaceOfResidenceSameAsReportingVillage());
+		target.setResidenceSinceWhenInMonths(source.getResidenceSinceWhenInMonths());
+
 		target.setAddress(locationFacade.fillOrBuildEntity(source.getAddress(), target.getAddress(), checkChangeDate));
 		List<Location> locations = new ArrayList<>();
 		for (LocationDto locationDto : source.getAddresses()) {
@@ -2009,12 +2019,14 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setCordTreatedWithAnything(source.getCordTreatedWithAnything());
 		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
 
+		target.setPst14MonthsVillage(source.getPst14MonthsVillage());
+		target.setPst14MonthsZone(source.getPst14MonthsZone());
+		target.setPst14MonthsCommunity(communityService.getByReferenceDto(source.getPst14MonthsCommunity()));
+		target.setPst14MonthsDistrict(districtService.getByReferenceDto(source.getPst14MonthsDistrict()));
+		target.setPst14MonthsRegion(regionService.getByReferenceDto(source.getPst14MonthsRegion()));
+		target.setPlaceOfResidenceSameAsReportingVillage(source.getPlaceOfResidenceSameAsReportingVillage());
+		target.setResidenceSinceWhenInMonths(source.getResidenceSinceWhenInMonths());
 		target.setEthnicity(source.getEthnicity());
-		target.setPlaceStayedtenToFourteenMonthsVillage(source.getPlaceStayedtenToFourteenMonthsVillage());
-		target.setPlaceStayedtenToFourteenMonthsZone(source.getPlaceStayedtenToFourteenMonthsZone());
-		target.setPlaceStayedtenToFourteenMonthsCommunity(communityService.getByReferenceDto(source.getPlaceStayedtenToFourteenMonthsCommunity()));
-		target.setPlaceStayedtenToFourteenMonthsDistrict(districtService.getByReferenceDto(source.getPlaceStayedtenToFourteenMonthsDistrict()));
-		target.setPlaceStayedtenToFourteenMonthsRegion(regionService.getByReferenceDto(source.getPlaceStayedtenToFourteenMonthsRegion()));
 
 		return target;
 	}

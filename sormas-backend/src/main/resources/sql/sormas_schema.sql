@@ -14261,4 +14261,16 @@ ALTER TABLE cases ADD COLUMN formCompletedByName varchar(255);
 ALTER TABLE cases ADD COLUMN formCompletedByPosition varchar(255);
 ALTER TABLE cases ADD COLUMN formCompletedByCellPhoneNo varchar(255);
 INSERT INTO schema_version(version_number, comment) VALUES (645, 'Added formCompletedByName, formCompletedByPosition, formCompletedByCellPhoneNo to cases');
+
+ALTER TABLE person RENAME COLUMN placeStayedtenToFourteenMonthsVillage TO pst14MonthsVillage;
+ALTER TABLE person RENAME COLUMN placeStayedtenToFourteenMonthsZone TO pst14MonthsZone;
+ALTER TABLE person RENAME COLUMN placeStayedtenToFourteenMonthsCommunity_id TO pst14MonthsCommunity_id;
+ALTER TABLE person RENAME COLUMN placeStayedtenToFourteenMonthsDistrict_id TO pst14MonthsDistrict_id;
+ALTER TABLE person RENAME COLUMN placeStayedtenToFourteenMonthsRegion_id TO pst14MonthsRegion_id;
+ALTER TABLE person RENAME COLUMN placeStayedtenToFourteenMonthsCountry_id TO pst14MonthsCountry_id;
+INSERT INTO schema_version(version_number, comment) VALUES (646, 'Renamed placeStayedtenToFourteenMonths fields in person');
+
+ALTER TABLE person ADD COLUMN placeOfResidenceSameAsReportingVillage varchar(255);
+ALTER TABLE person ADD COLUMN residenceSinceWhenInMonths varchar(255);
+INSERT INTO schema_version(version_number, comment) VALUES (647, 'Added new fields to person');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

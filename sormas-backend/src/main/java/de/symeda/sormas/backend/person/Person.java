@@ -263,14 +263,16 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 
 	private Cadre cadre;
 	private String telNumber;
-	private String ethnicity;
-	private String placeStayedtenToFourteenMonthsVillage;
-	private String placeStayedtenToFourteenMonthsZone;
-	private Community placeStayedtenToFourteenMonthsCommunity;
-	private District placeStayedtenToFourteenMonthsDistrict;
-	private Region placeStayedtenToFourteenMonthsRegion;
-	private Country placeStayedtenToFourteenMonthsCountry;
 	private YesNo applicable;
+	private String pst14MonthsVillage;
+	private String pst14MonthsZone;
+	private Community pst14MonthsCommunity;
+	private District pst14MonthsDistrict;
+	private Region pst14MonthsRegion;
+	private Country pst14MonthsCountry;
+	private YesNo placeOfResidenceSameAsReportingVillage;
+	private String residenceSinceWhenInMonths;
+	private String ethnicity;
 
 	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getFirstName() {
@@ -1152,64 +1154,82 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 		this.cordTreatedWithAnythingWhere = cordTreatedWithAnythingWhere;
 	}
 
+
+	public String getPst14MonthsVillage() {
+		return pst14MonthsVillage;
+	}
+
+	public void setPst14MonthsVillage(String pst14MonthsVillage) {
+		this.pst14MonthsVillage = pst14MonthsVillage;
+	}
+
+	public String getPst14MonthsZone() {
+		return pst14MonthsZone;
+	}
+
+	public void setPst14MonthsZone(String pst14MonthsZone) {
+		this.pst14MonthsZone = pst14MonthsZone;
+	}
+
+	@OneToOne(cascade = CascadeType.ALL)
+
+	public Community getPst14MonthsCommunity() {
+		return pst14MonthsCommunity;
+	}
+
+	public void setPst14MonthsCommunity(Community pst14MonthsCommunity) {
+		this.pst14MonthsCommunity = pst14MonthsCommunity;
+	}
+
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	public District getPst14MonthsDistrict() {
+		return pst14MonthsDistrict;
+	}
+
+
+	public YesNo getPlaceOfResidenceSameAsReportingVillage() {
+		return placeOfResidenceSameAsReportingVillage;
+	}
+
+	public void setPlaceOfResidenceSameAsReportingVillage(YesNo placeOfResidenceSameAsReportingVillage) {
+		this.placeOfResidenceSameAsReportingVillage = placeOfResidenceSameAsReportingVillage;
+	}
+
+	public String getResidenceSinceWhenInMonths() {
+		return residenceSinceWhenInMonths;
+	}
+
+	public void setResidenceSinceWhenInMonths(String residenceSinceWhenInMonths) {
+		this.residenceSinceWhenInMonths = residenceSinceWhenInMonths;
+	}
+
+	public void setPst14MonthsDistrict(District pst14MonthsDistrict) {
+		this.pst14MonthsDistrict = pst14MonthsDistrict;
+	}
+
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	public Region getPst14MonthsRegion() {
+		return pst14MonthsRegion;
+	}
+
+	public void setPst14MonthsRegion(Region pst14MonthsRegion) {
+		this.pst14MonthsRegion = pst14MonthsRegion;
+	}
+
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	public Country getPst14MonthsCountry() {
+		return pst14MonthsCountry;
+	}
+
+	public void setPst14MonthsCountry(Country pst14MonthsCountry) {
+		this.pst14MonthsCountry = pst14MonthsCountry;
+	}
+
 	public String getEthnicity() {
 		return ethnicity;
 	}
 
 	public void setEthnicity(String ethnicity) {
 		this.ethnicity = ethnicity;
-	}
-
-	public String getPlaceStayedtenToFourteenMonthsVillage() {
-		return placeStayedtenToFourteenMonthsVillage;
-	}
-
-	public void setPlaceStayedtenToFourteenMonthsVillage(String placeStayedtenToFourteenMonthsVillage) {
-		this.placeStayedtenToFourteenMonthsVillage = placeStayedtenToFourteenMonthsVillage;
-	}
-
-	public String getPlaceStayedtenToFourteenMonthsZone() {
-		return placeStayedtenToFourteenMonthsZone;
-	}
-
-	public void setPlaceStayedtenToFourteenMonthsZone(String placeStayedtenToFourteenMonthsZone) {
-		this.placeStayedtenToFourteenMonthsZone = placeStayedtenToFourteenMonthsZone;
-	}
-
-	@OneToOne(cascade = CascadeType.ALL)
-
-	public Community getPlaceStayedtenToFourteenMonthsCommunity() {
-		return placeStayedtenToFourteenMonthsCommunity;
-	}
-
-	public void setPlaceStayedtenToFourteenMonthsCommunity(Community placeStayedtenToFourteenMonthsCommunity) {
-		this.placeStayedtenToFourteenMonthsCommunity = placeStayedtenToFourteenMonthsCommunity;
-	}
-
-	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
-	public District getPlaceStayedtenToFourteenMonthsDistrict() {
-		return placeStayedtenToFourteenMonthsDistrict;
-	}
-
-	public void setPlaceStayedtenToFourteenMonthsDistrict(District placeStayedtenToFourteenMonthsDistrict) {
-		this.placeStayedtenToFourteenMonthsDistrict = placeStayedtenToFourteenMonthsDistrict;
-	}
-
-	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
-	public Region getPlaceStayedtenToFourteenMonthsRegion() {
-		return placeStayedtenToFourteenMonthsRegion;
-	}
-
-	public void setPlaceStayedtenToFourteenMonthsRegion(Region placeStayedtenToFourteenMonthsRegion) {
-		this.placeStayedtenToFourteenMonthsRegion = placeStayedtenToFourteenMonthsRegion;
-	}
-
-	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
-	public Country getPlaceStayedtenToFourteenMonthsCountry() {
-		return placeStayedtenToFourteenMonthsCountry;
-	}
-
-	public void setPlaceStayedtenToFourteenMonthsCountry(Country placeStayedtenToFourteenMonthsCountry) {
-		this.placeStayedtenToFourteenMonthsCountry = placeStayedtenToFourteenMonthsCountry;
 	}
 }

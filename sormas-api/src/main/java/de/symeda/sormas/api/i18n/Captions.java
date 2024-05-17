@@ -2104,12 +2104,12 @@ public interface Captions {
 	String Person_causeOfDeathDisease = "Person.causeOfDeathDisease";
 	String Person_causeOfDeathDiseaseDetails = "Person.causeOfDeathDiseaseDetails";
 	String Person_citizenship = "Person.citizenship";
-	String Person_placeStayedTenToFourteenMonthsVillage = "Person.placeStayedTenToFourteenMonthsVillage";
-	String Person_placeStayedTenToFourteenMonthsZone = "Person.placeStayedTenToFourteenMonthsZone";
-	String Person_placeStayedTenToFourteenMonthsCommunity = "Person.placeStayedTenToFourteenMonthsCommunity";
-	String Person_placeStayedTenToFourteenMonthsDistrict = "Person.placeStayedTenToFourteenMonthsDistrict";
-	String Person_placeStayedTenToFourteenMonthsRegion = "Person.placeStayedTenToFourteenMonthsRegion";
-	String Person_placeStayedTenToFourteenMonthsCountry = "Person.placeStayedTenToFourteenMonthsCountry";
+	String Person_pst14MonthsVillage = "Person.pst14MonthsVillage";
+	String Person_pst14MonthsZone = "Person.pst14MonthsZone";
+	String Person_pst14MonthsCommunity = "Person.pst14MonthsCommunity";
+	String Person_pst14MonthsDistrict = "Person.pst14MonthsDistrict";
+	String Person_pst14MonthsRegion = "Person.pst14MonthsRegion";
+	String Person_pst14MonthsCountry = "Person.pst14MonthsCountry";
 	String Person_covidCodeDelivered = "Person.covidCodeDelivered";
 	String Person_deathDate = "Person.deathDate";
 	String Person_deathPlaceDescription = "Person.deathPlaceDescription";
@@ -2187,6 +2187,8 @@ public interface Captions {
 	String Person_marriageStatus = "Person.marriageStatus";
 	String Person_telNumber = "Person.telNumber";
 	String Person_uuid = "Person.uuid";
+	String Person_placeOfResidenceSameAsReportingVillage = "Person.placeOfResidenceSameAsReportingVillage";
+	String Person_residenceSinceWhenInMonths = "Person.residenceSinceWhenInMonths";
 	String personAgeAndBirthdate = "personAgeAndBirthdate";
 	String PersonContactDetail = "PersonContactDetail";
 	String PersonContactDetail_additionalInformation = "PersonContactDetail.additionalInformation";

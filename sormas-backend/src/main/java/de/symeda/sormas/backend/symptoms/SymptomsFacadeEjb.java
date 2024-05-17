@@ -257,7 +257,6 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setBabyNormalAtBirth(source.getBabyNormalAtBirth());
 		target.setNormalCryAndSuck(source.getNormalCryAndSuck());
 		target.setStoppedSuckingAfterTwoDays(source.getStoppedSuckingAfterTwoDays());
-		target.setBackache(source.getBackache());
 		target.setStiffness(source.getStiffness());
 		target.setDizziness(source.getDizziness());
 		target.setExcessiveSweating(source.getExcessiveSweating());
@@ -551,7 +550,6 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setBabyNormalAtBirth(source.getBabyNormalAtBirth());
 		target.setNormalCryAndSuck(source.getNormalCryAndSuck());
 		target.setStoppedSuckingAfterTwoDays(source.getStoppedSuckingAfterTwoDays());
-		target.setBackache(source.getBackache());
 		target.setStiffness(source.getStiffness());
 		target.setFirstSignOrSymptomsBeforeWorm(source.getFirstSignOrSymptomsBeforeWorm());
 		target.setFirstSignOrSymptomsBeforeWormOthers(source.getFirstSignOrSymptomsBeforeWormOthers());
@@ -629,7 +627,6 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setThrobocytopenia(source.getThrobocytopenia());
 		target.setUnexplainedBleeding(source.getUnexplainedBleeding());
 		target.setVomiting(source.getVomiting());
-		target.setBackache(source.getBackache());
 		target.setEyesBleeding(source.getEyesBleeding());
 		target.setJaundice(source.getJaundice());
 		target.setDarkUrine(source.getDarkUrine());

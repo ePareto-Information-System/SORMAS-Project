@@ -480,6 +480,14 @@ public final class DataHelper {
 		}
 	}
 
+	public static boolean isPositiveNumber(String number) {
+		try {
+			return Integer.parseInt(number) > 0;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
 	/**
 	 * This method will remove the time from a date and set it to midnight. For example date 22.09.2022 15:32:54.123 will become
 	 * 22.09.2022 0:00:0 .

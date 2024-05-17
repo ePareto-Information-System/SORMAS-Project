@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.person.*;
+import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.ui.utils.*;
@@ -181,7 +182,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			fluidRowLocs(PersonDto.APPROXIMATE_AGE, PersonDto.SEX, PersonDto.OCCUPATION_DETAILS, PersonDto.ETHNICITY)
 			+ loc(ADDRESS_HEADER)
 			+ fluidRowLocs(PersonDto.ADDRESS)
-			+ loc(PLACE_STAYED_IN_LAST_10_14_MONTHS) +
+			+ fluidRowLocs(PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE, PersonDto.RESIDENCE_SINCE_WHEN_IN_MONTHS) +
+			loc(PLACE_STAYED_IN_LAST_10_14_MONTHS) +
 			divsCss(VSPACE_3,
 					fluidRowLocs(PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY),
 					fluidRowLocs(PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE));
@@ -411,9 +413,11 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		burialPlaceDesc = addField(PersonDto.BURIAL_PLACE_DESCRIPTION, TextField.class);
 		ComboBox burialConductor = addField(PersonDto.BURIAL_CONDUCTOR, ComboBox.class);
 
+
 		addressForm = addField(PersonDto.ADDRESS, new LocationEditForm(
 				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
 				UiFieldAccessCheckers.getNoop(), disease));
+		addressForm.getIncomingDisease(disease);
 
 		if (disease != null) {
 			switch (disease) {
@@ -480,7 +484,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		Label externalTokenWarningLabel = new Label(I18nProperties.getString(Strings.messagePersonExternalTokenWarning));
 		externalTokenWarningLabel.addStyleNames(VSPACE_3, LABEL_WHITE_SPACE_NORMAL);
 		getContent().addComponent(externalTokenWarningLabel, EXTERNAL_TOKEN_WARNING_LOC);
-		 addField(PersonDto.INTERNAL_TOKEN);
+		addField(PersonDto.INTERNAL_TOKEN);
 
 		addField(PersonDto.HAS_COVID_APP).addStyleName(CssStyles.FORCE_CAPTION_CHECKBOX);
 		addField(PersonDto.COVID_CODE_DELIVERED).addStyleName(CssStyles.FORCE_CAPTION_CHECKBOX);
@@ -511,6 +515,42 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		TextField placeStayedTenToFourteenVillage = addField(PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE, TextField.class);
 		TextField placeStayedTenToFourteenMonthsZone = addField(PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, TextField.class);
 		setVisible(false, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION);
+
+		NullableOptionGroup placeOfResidenceSameAsReportingVillage = addField(PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE, NullableOptionGroup.class);
+		TextField residenceSinceWhenInMonths = addField(PersonDto.RESIDENCE_SINCE_WHEN_IN_MONTHS, TextField.class);
+		setVisible(false, PersonDto.RESIDENCE_SINCE_WHEN_IN_MONTHS, PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE);
+		FieldHelper.setVisibleWhen(
+				getFieldGroup(),
+				PersonDto.RESIDENCE_SINCE_WHEN_IN_MONTHS,
+				PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE,
+				YesNo.NO,
+				true);
+
+		residenceSinceWhenInMonths.setConversionError(I18nProperties.getValidationError(Validations.onlyIntegerNumbersAllowed, residenceSinceWhenInMonths.getCaption()));
+
+
+		residenceSinceWhenInMonths.addValueChangeListener(e -> {
+
+			boolean isNUmber = DataHelper.isPositiveNumber(residenceSinceWhenInMonths.getValue());
+			if (!isNUmber) {
+				residenceSinceWhenInMonths.setValue(null);
+			}
+
+
+			if (e.getProperty().getValue() != null) {
+				Integer months = Integer.valueOf(e.getProperty().getValue().toString());
+				if (months >= 10 && months <= 14) {
+					placeStayedInLast10_14MonthsLabel.setVisible(true);
+					setVisible(true, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE);
+				} else {
+					placeStayedInLast10_14MonthsLabel.setVisible(false);
+					setVisible(false, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE);
+				}
+			} else {
+				placeStayedInLast10_14MonthsLabel.setVisible(false);
+				setVisible(false, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE);
+			}
+		});
 
 		addListnersToPlaceStayed10TO14MonthsFields(
 				placeStayedTenToFourteenRegion,
@@ -704,6 +744,11 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		TextField occuDetails = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
 		occuDetails.setCaption("Please Specify Occupation");
 
+//		ethnicity
+		TextField ethnicityField = addField(PersonDto.ETHNICITY, TextField.class);
+		ethnicityField.setVisible(false);
+
+
 		TextField investigatorName = addField(PersonDto.INVESTIGATOR_NAME, TextField.class);
 		TextField investigatorTitle = addField(PersonDto.INVESTIGATOR_TITLE, TextField.class);
 		TextField investigatorUnit = addField(PersonDto.INVESTIGATOR_UNIT, TextField.class);
@@ -801,17 +846,13 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 			setVisible(false,PersonDto.BIRTH_COUNTRY, PersonDto.NAMES_OF_GUARDIANS, PersonDto.BIRTH_NAME, PersonDto.PASSPORT_NUMBER);
 		}
-		
+
 		if (disease == Disease.GUINEA_WORM) {
-			setVisible(true, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT, PersonDto.PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION);
-//			addFields(PersonDto.INVESTIGATOR_NAME, PersonDto.INVESTIGATOR_TITLE);
-			setVisible(true, PersonDto.INVESTIGATOR_TITLE, PersonDto.INVESTIGATOR_NAME);
 			generalCommentLabel.setVisible(false);
-			placeStayedInLast10_14MonthsLabel.setVisible(true);
+			ethnicityField.setVisible(true);
 			setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER, PersonDto.BIRTH_DATE_YYYY,
 					PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD, PersonDto.ADDITIONAL_DETAILS, PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS, PersonDto.MOTHERS_NAME);
-			setVisible(true, PersonDto.ETHNICITY);
-
+			setVisible(true, PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE, PersonDto.ETHNICITY);
 		}
 
 		if (disease == Disease.NEONATAL_TETANUS) {
@@ -1056,7 +1097,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 		return DISEASE_LAYOUT;
 	}
-
 	private void updateReadyOnlyApproximateAge() {
 		boolean readonly = false;
 		if (getFieldGroup().getField(PersonDto.BIRTH_DATE_YYYY).getValue() != null) {

@@ -159,14 +159,16 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String CORD_TREATED_WITH_ANYTHING_WHERE = "cordTreatedWithAnythingWhere";
 	public static final String MARITAL_STATUS = "maritalStatus";
 	public static final String TEL_NUMBER = "telNumber";
-	public static final String ETHNICITY = "ethnicity";
-	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE = "placeStayedtenToFourteenMonthsVillage";
-	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE = "placeStayedtenToFourteenMonthsZone";
-	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY = "placeStayedtenToFourteenMonthsCommunity";
-	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT = "placeStayedtenToFourteenMonthsDistrict";
-	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION = "placeStayedtenToFourteenMonthsRegion";
-	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COUNTRY = "placeStayedtenToFourteenMonthsCountry";
+	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_VILLAGE = "pst14MonthsVillage";
+	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_ZONE = "pst14MonthsZone";
+	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COMMUNITY = "pst14MonthsCommunity";
+	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_DISTRICT = "pst14MonthsDistrict";
+	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_REGION = "pst14MonthsRegion";
+	public static final String PLACE_STAYED_TEN_TO_FOURTEEN_MONTHS_COUNTRY = "pst14MonthsCountry";
+	public static final String PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE = "placeOfResidenceSameAsReportingVillage";
+	public static final String RESIDENCE_SINCE_WHEN_IN_MONTHS = "residenceSinceWhenInMonths";
 	public static final String APPLICABLE = "applicable";
+	public static final String ETHNICITY = "ethnicity";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -480,42 +482,21 @@ public class PersonDto extends PseudonymizableDto {
 	private TreatmentOfCord cordTreatedWithAnythingWhere;
 	private String telNumber;
 	private YesNo applicable;
-	@Diseases({
-			Disease.GUINEA_WORM })
-	@HideForCountries
-	@SensitiveData
-	private String ethnicity;
-	@Diseases({
-			Disease.GUINEA_WORM })
-	@HideForCountries
-	@SensitiveData
-	private String placeStayedtenToFourteenMonthsVillage;
-	@Diseases({
-			Disease.GUINEA_WORM })
-	@HideForCountries
-	@SensitiveData
-	private String placeStayedtenToFourteenMonthsZone;
-	@Diseases({
-			Disease.GUINEA_WORM })
-	@HideForCountries
-	@SensitiveData
-	private CommunityReferenceDto placeStayedtenToFourteenMonthsCommunity;
-	@Diseases({
-			Disease.GUINEA_WORM })
-	@HideForCountries
-	@SensitiveData
-	private DistrictReferenceDto placeStayedtenToFourteenMonthsDistrict;
-	@Diseases({
-			Disease.GUINEA_WORM })
-	@HideForCountries
-	@SensitiveData
-	private RegionReferenceDto placeStayedtenToFourteenMonthsRegion;
-	@Diseases({
-			Disease.GUINEA_WORM })
-	@HideForCountries
-	@SensitiveData
-	private CountryReferenceDto placeStayedtenToFourteenMonthsCountry;
 
+	private String pst14MonthsVillage;
+	
+	private String pst14MonthsZone;
+	
+	private CommunityReferenceDto pst14MonthsCommunity;
+	
+	private DistrictReferenceDto pst14MonthsDistrict;
+	
+	private RegionReferenceDto pst14MonthsRegion;
+	
+	private CountryReferenceDto pst14MonthsCountry;
+	private YesNo placeOfResidenceSameAsReportingVillage;
+	private String residenceSinceWhenInMonths;
+	private String ethnicity;
 
 	@SuppressWarnings("serial")
 	public static class SeveralNonPrimaryContactDetailsException extends RuntimeException {
@@ -1393,60 +1374,69 @@ public class PersonDto extends PseudonymizableDto {
 	public void setDurationDays4(String durationDays4) {
 		this.durationDays4 = durationDays4;
 	}
-	public String getEthnicity() {
-		return ethnicity;
+
+	public String getPst14MonthsVillage() {
+		return pst14MonthsVillage;
 	}
 
-	public void setEthnicity(String ethnicity) {
-		this.ethnicity = ethnicity;
+	public void setPst14MonthsVillage(String pst14MonthsVillage) {
+		this.pst14MonthsVillage = pst14MonthsVillage;
 	}
 
-	public String getPlaceStayedtenToFourteenMonthsVillage() {
-		return placeStayedtenToFourteenMonthsVillage;
+	public String getPst14MonthsZone() {
+		return pst14MonthsZone;
 	}
 
-	public void setPlaceStayedtenToFourteenMonthsVillage(String placeStayedtenToFourteenMonthsVillage) {
-		this.placeStayedtenToFourteenMonthsVillage = placeStayedtenToFourteenMonthsVillage;
+	public void setPst14MonthsZone(String pst14MonthsZone) {
+		this.pst14MonthsZone = pst14MonthsZone;
 	}
 
-	public String getPlaceStayedtenToFourteenMonthsZone() {
-		return placeStayedtenToFourteenMonthsZone;
+	public CommunityReferenceDto getPst14MonthsCommunity() {
+		return pst14MonthsCommunity;
 	}
 
-	public void setPlaceStayedtenToFourteenMonthsZone(String placeStayedtenToFourteenMonthsZone) {
-		this.placeStayedtenToFourteenMonthsZone = placeStayedtenToFourteenMonthsZone;
+	public void setPst14MonthsCommunity(CommunityReferenceDto pst14MonthsCommunity) {
+		this.pst14MonthsCommunity = pst14MonthsCommunity;
 	}
 
-	public CommunityReferenceDto getPlaceStayedtenToFourteenMonthsCommunity() {
-		return placeStayedtenToFourteenMonthsCommunity;
+	public DistrictReferenceDto getPst14MonthsDistrict() {
+		return pst14MonthsDistrict;
 	}
 
-	public void setPlaceStayedtenToFourteenMonthsCommunity(CommunityReferenceDto placeStayedtenToFourteenMonthsCommunity) {
-		this.placeStayedtenToFourteenMonthsCommunity = placeStayedtenToFourteenMonthsCommunity;
+	public void setPst14MonthsDistrict(DistrictReferenceDto pst14MonthsDistrict) {
+		this.pst14MonthsDistrict = pst14MonthsDistrict;
 	}
 
-	public DistrictReferenceDto getPlaceStayedtenToFourteenMonthsDistrict() {
-		return placeStayedtenToFourteenMonthsDistrict;
+	public RegionReferenceDto getPst14MonthsRegion() {
+		return pst14MonthsRegion;
 	}
 
-	public void setPlaceStayedtenToFourteenMonthsDistrict(DistrictReferenceDto placeStayedtenToFourteenMonthsDistrict) {
-		this.placeStayedtenToFourteenMonthsDistrict = placeStayedtenToFourteenMonthsDistrict;
+	public void setPst14MonthsRegion(RegionReferenceDto pst14MonthsRegion) {
+		this.pst14MonthsRegion = pst14MonthsRegion;
+	}
+	
+	public YesNo getPlaceOfResidenceSameAsReportingVillage() {
+		return placeOfResidenceSameAsReportingVillage;
 	}
 
-	public RegionReferenceDto getPlaceStayedtenToFourteenMonthsRegion() {
-		return placeStayedtenToFourteenMonthsRegion;
+	public void setPlaceOfResidenceSameAsReportingVillage(YesNo placeOfResidenceSameAsReportingVillage) {
+		this.placeOfResidenceSameAsReportingVillage = placeOfResidenceSameAsReportingVillage;
 	}
 
-	public void setPlaceStayedtenToFourteenMonthsRegion(RegionReferenceDto placeStayedtenToFourteenMonthsRegion) {
-		this.placeStayedtenToFourteenMonthsRegion = placeStayedtenToFourteenMonthsRegion;
+	public String getResidenceSinceWhenInMonths() {
+		return residenceSinceWhenInMonths;
 	}
 
-	public CountryReferenceDto getPlaceStayedtenToFourteenMonthsCountry() {
-		return placeStayedtenToFourteenMonthsCountry;
+	public void setResidenceSinceWhenInMonths(String residenceSinceWhenInMonths) {
+		this.residenceSinceWhenInMonths = residenceSinceWhenInMonths;
 	}
 
-	public void setPlaceStayedtenToFourteenMonthsCountry(CountryReferenceDto placeStayedtenToFourteenMonthsCountry) {
-		this.placeStayedtenToFourteenMonthsCountry = placeStayedtenToFourteenMonthsCountry;
+	public CountryReferenceDto getPst14MonthsCountry() {
+		return pst14MonthsCountry;
+	}
+
+	public void setPst14MonthsCountry(CountryReferenceDto pst14MonthsCountry) {
+		this.pst14MonthsCountry = pst14MonthsCountry;
 	}
 
 	public YesNoUnknown getReceivedAntenatalCare() {
@@ -1526,6 +1516,14 @@ public class PersonDto extends PseudonymizableDto {
 	}
 
   public void setApplicable(YesNo applicable) {
-      this.applicable = applicable; }
+      this.applicable = applicable;
+	}
 
+	public String getEthnicity() {
+		return ethnicity;
+	}
+
+	public void setEthnicity(String ethnicity) {
+		this.ethnicity = ethnicity;
+	}
 }
