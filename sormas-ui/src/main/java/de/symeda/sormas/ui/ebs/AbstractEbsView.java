@@ -72,7 +72,7 @@ public abstract class AbstractEbsView extends AbstractEditAllowedDetailView<EbsR
 		menu.addView(EbsDataView.VIEW_NAME, I18nProperties.getCaption(Captions.SignalInformation), params);
 		menu.addView(TriagingView.VIEW_NAME, I18nProperties.getCaption(Captions.Triaging), params);
 		menu.addView(SignalVerificationView.VIEW_NAME, I18nProperties.getCaption(Captions.SignalVerification), params);
-		menu.addView(RiskAssessmentView.VIEW_NAME, I18nProperties.getCaption(Captions.RiskAssessMent), params);
+		menu.addView(RiskAssessmentView.VIEW_NAME, I18nProperties.getCaption(Captions.RiskAssessment), params);
 
 		setMainHeaderComponent(ControllerProvider.getEbsController().getEbsViewTitleLayout(getReference().getUuid()));
 	}
