@@ -6,15 +6,13 @@ import com.vaadin.v7.data.util.BeanItemContainer;
 import com.vaadin.v7.data.util.GeneratedPropertyContainer;
 import com.vaadin.v7.ui.Grid;
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.ebs.EbsDto;
-import de.symeda.sormas.api.ebs.EbsIndexDto;
+import de.symeda.sormas.api.ebs.EbsReferenceDto;
+import de.symeda.sormas.api.ebs.RiskAssessmentCriteria;
 import de.symeda.sormas.api.ebs.RiskAssessmentDto;
-import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.ui.ControllerProvider;
-import de.symeda.sormas.ui.utils.ShowDetailsListener;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -25,18 +23,20 @@ public class RiskAssessmentGrid extends Grid {
 
 	public RiskAssessmentGrid(RiskAssessmentDto riskAssessment,String ebsUuid) {
 		this.riskAssessment = riskAssessment;
-		setWidth(960, Unit.PIXELS);
+		setWidth(80, Unit.PERCENTAGE);
 		setHeightUndefined();
 		setSelectionMode(SelectionMode.NONE);
 
 		BeanItemContainer<RiskAssessmentDto> container = new BeanItemContainer<RiskAssessmentDto>(RiskAssessmentDto.class);
 		GeneratedPropertyContainer generatedContainer = new GeneratedPropertyContainer(container);
 		setContainerDataSource(generatedContainer);
+
 		VaadinUiUtil.addIconColumn(generatedContainer, INFO, VaadinIcons.EYE);
 		setColumns(RiskAssessmentDto.RISK_ASSESSMENT, RiskAssessmentDto.RESPONSE_DATE, RiskAssessmentDto.RESPONSE_TIME,INFO);
+		VaadinUiUtil.setupActionColumn(getColumn(INFO));
 //		addItemClickListener(new ShowDetailsListener<>(INFO, e -> ControllerProvider.getEbsController().navigateToData(e.getUuid())));
 
-//		reload(ebsUuid);
+		reload(ebsUuid);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -48,7 +48,10 @@ public class RiskAssessmentGrid extends Grid {
 	public void reload(String ebsUuid) {
 		getContainer().removeAllItems();
 		EbsDto ebs = findEbs(ebsUuid);
-		List<RiskAssessmentDto> riskAssessment = (List<RiskAssessmentDto>) ebs.getRiskAssessment();
+		List<RiskAssessmentDto> riskAssessment = FacadeProvider.getRiskAssessmentFacade().findBy(new RiskAssessmentCriteria().Ebs(new EbsReferenceDto(ebsUuid)));
+		if (riskAssessment == null || riskAssessment.isEmpty()) {
+			return;
+		}
 		getContainer().addAll(riskAssessment);
 		this.setHeightByRows(riskAssessment.size());
 	}

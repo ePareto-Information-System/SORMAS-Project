@@ -15,6 +15,7 @@
 package de.symeda.sormas.ui.ebs;
 
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
@@ -42,7 +43,7 @@ public class RiskAssessmentView extends AbstractEbsView {
 	protected void initView(String params) {
 
 		addButton = ButtonHelper.createIconButton(
-				Captions.eventNewEvent,
+				Captions.ebsNewEbs,
 				VaadinIcons.PLUS_CIRCLE,
 				e -> ControllerProvider.getEbsController().createRiskAssessmentComponent(getEbsRef().getUuid(),
 						isEditAllowed() && UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT)),
@@ -52,8 +53,10 @@ public class RiskAssessmentView extends AbstractEbsView {
 		buttonLayout.setSpacing(true);
 		buttonLayout.setMargin(true);
 		buttonLayout.setSizeUndefined();
+		buttonLayout.setWidth(80, Unit.PERCENTAGE);
 
 		buttonLayout.addComponent(addButton);
+		buttonLayout.setComponentAlignment(addButton, Alignment.TOP_RIGHT);
 
 		grid = new RiskAssessmentGrid(new RiskAssessmentDto(), getEbsRef().getUuid());
 
