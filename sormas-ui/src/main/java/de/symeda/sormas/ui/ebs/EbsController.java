@@ -244,7 +244,7 @@ public class EbsController {
 		editView.addCommitListener(() -> {
 			ebs.setRiskAssessment(riskAssessmentDataForm.getValue());
 			riskAssessmentDto.setRiskAssessment(riskAssessmentDataForm.getValue().getRiskAssessment());
-			FacadeProvider.getEbsFacade().setRiskAssessmentAssociations(riskAssessmentDto.getEbs());
+			FacadeProvider.getRiskAssessmentFacade().saveRisk(riskAssessmentDto);
 			FacadeProvider.getEbsFacade().save(ebs);
 			SormasUI.refreshView();
 		});
