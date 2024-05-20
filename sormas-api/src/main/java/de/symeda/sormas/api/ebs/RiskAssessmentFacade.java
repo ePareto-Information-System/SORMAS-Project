@@ -17,9 +17,16 @@
  *******************************************************************************/
 package de.symeda.sormas.api.ebs;
 
+import de.symeda.sormas.api.sample.SampleCriteria;
+import de.symeda.sormas.api.sample.SampleDto;
+
 import javax.ejb.Remote;
+import javax.validation.Valid;
+import java.util.List;
 
 @Remote
 public interface RiskAssessmentFacade {
+    RiskAssessmentDto saveRisk(@Valid RiskAssessmentDto dto);
+    List<RiskAssessmentDto> findBy(RiskAssessmentCriteria criteria);
 
 }

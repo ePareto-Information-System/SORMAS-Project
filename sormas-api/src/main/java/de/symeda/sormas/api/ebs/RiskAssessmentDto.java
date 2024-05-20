@@ -1,11 +1,20 @@
 package de.symeda.sormas.api.ebs;
 
 import de.symeda.sormas.api.EntityDto;
+import de.symeda.sormas.api.ImportIgnore;
+import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.exposure.ExposureDto;
+import de.symeda.sormas.api.location.LocationDto;
+import de.symeda.sormas.api.sample.PathogenTestResultType;
+import de.symeda.sormas.api.sample.SampleDto;
+import de.symeda.sormas.api.user.UserReferenceDto;
+import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
 import java.util.Date;
 
-public class RiskAssessmentDto extends EntityDto {
+public class RiskAssessmentDto extends PseudonymizableDto {
 
     private static final long serialVersionUID = 2430932452606853497L;
 
@@ -26,6 +35,7 @@ public class RiskAssessmentDto extends EntityDto {
     public static String RESPONSE_TIME = "responseTime";
 
     public static String INFO = "info";
+    public static String EBS = "ebs";
 
 
     private YesNo morbidityMortality;
@@ -34,7 +44,7 @@ public class RiskAssessmentDto extends EntityDto {
     private RiskAssesment riskAssessment;
     private Date responseDate;
     private String responseTime;
-    private String info;
+    private EbsReferenceDto ebs;
 
     public YesNo getMorbidityMortality() {
         return morbidityMortality;
@@ -84,11 +94,27 @@ public class RiskAssessmentDto extends EntityDto {
         this.responseTime = responseTime;
     }
 
-    public String getInfo() {
-        return info;
+    @ImportIgnore
+    public  EbsReferenceDto getEbs() {
+        return ebs;
     }
 
-    public void setInfo(String info) {
-        this.info = info;
+    public void setEbs(EbsReferenceDto ebs) {
+        this.ebs = ebs;
+    }
+
+    private static RiskAssessmentDto getRiskassessmentDto() {
+
+        RiskAssessmentDto riskAssessmentDto = new RiskAssessmentDto();
+        riskAssessmentDto.setUuid(DataHelper.createUuid());
+
+        return riskAssessmentDto;
+    }
+
+    public static RiskAssessmentDto build( EbsReferenceDto ebsRef) {
+
+        final RiskAssessmentDto riskAssessmentDto = getRiskassessmentDto();
+        riskAssessmentDto.setEbs(ebsRef);
+        return riskAssessmentDto;
     }
 }
