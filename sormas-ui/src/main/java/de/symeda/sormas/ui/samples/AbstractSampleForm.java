@@ -879,10 +879,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		getContent().getComponent(ADDITIONAL_TESTING_READ_HEADLINE_LOC).setVisible(canOnlyReadRequests && canUseAdditionalTests);
 
 		handleDisease(Disease.YELLOW_FEVER, "National Public Health Reference Laboratory");
-		handleDisease(Disease.AHF, "Noguchi Memorial Institute for Medical Research");
-		handleDisease(Disease.DENGUE, "Noguchi Memorial Institute for Medical Research");
-		handleDisease(Disease.AFP, "Noguchi Memorial Institute for Medical Research");
-		handleDisease(Disease.NEW_INFLUENZA, "Noguchi Memorial Institute for Medical Research");
+		handleDisease(Disease.AHF, "NMIMR");
+		handleDisease(Disease.DENGUE, "NMIMR");
+		handleDisease(Disease.AFP, "NMIMR");
+		handleDisease(Disease.NEW_INFLUENZA, "NMIMR");
 		handleDiseaseField(Disease.NEW_INFLUENZA, Disease.CSM, Disease.SARI, Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS);
 
 		if (getValue() != null && canOnlyReadRequests) {
@@ -1126,7 +1126,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		TextField otherVirus = addField(SampleDto.OTHER_INFLUENZA_VIRUS, TextField.class);
 		otherVirus.setVisible(false);
 		TextField treatment = addField(SampleDto.TREATMENT, TextField.class);
-		TextField stateTreatment = addField(SampleDto.STATE_TREATMENT_ADMINISTERED, TextField.class);*/
+		TextField stateTreatment = addField(SampleDto.STATE_TREATMENT_ADMINISTERED, TextField.class);
 
 
 		ComboBox classificationBox = new ComboBox("Final Classification");
@@ -1134,7 +1134,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		for (CaseClassification validValuesForInfluenza : CaseClassification.CASE_CLASSIFY_INFLUENZA) {
 			classificationBox.addItem(validValuesForInfluenza);
 		}
-		ComboBox finalClassification = addField(SampleDto.LABORATORY_FINAL_CLASSIFICATION, classificationBox);
+		ComboBox finalClassification = addField(SampleDto.LABORATORY_FINAL_CLASSIFICATION, classificationBox);*/
 
 		sampleMaterialComboBox.setVisible(false);
 		suspectedDisease.setVisible(false);
@@ -1250,7 +1250,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			if (facilityLab != null) {
 				lab.addItems(allActiveLaboratories);
 				lab.setValue(facilityLab);
-				lab.setReadOnly(true);
+//				lab.setReadOnly(true);
 				labDetails.setVisible(false);
 				labDetails.setRequired(false);
 			} else {

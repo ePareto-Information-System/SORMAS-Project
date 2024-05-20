@@ -121,6 +121,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(CLINICAL_MEASUREMENTS_HEADING_LOC) +
+					fluidRowLocs(6,FEVER_BODY_TEMP_GREATER) +
 					fluidRowLocs(TEMPERATURE, TEMPERATURE_SOURCE) +
 					fluidRowLocs(BLOOD_PRESSURE_SYSTOLIC, BLOOD_PRESSURE_DIASTOLIC, HEART_RATE, RESPIRATORY_RATE) +
 					fluidRowLocs(GLASGOW_COMA_SCALE, WEIGHT, HEIGHT, MID_UPPER_ARM_CIRCUMFERENCE) +
@@ -141,8 +142,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(ARE_ULCERS_AMONG_LESIONS)+
 					fluidRowLocs(6, TYPE_OF_RASH)+
 					fluidRowLocs(DATE_OF_ONSET, "") +
-					fluidRowLocs(6,FEVER_BODY_TEMP_GREATER) +
-					fluidRowLocs(BUTTONS_LOC)+
+					fluidRow(fluidColumn(8,4, locCss(CssStyles.ALIGN_RIGHT,BUTTONS_LOC)))+
 					createSymptomGroupLayout(SymptomGroup.GENERAL, GENERAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					fluidRowLocs(FEVER_ONSET_PARALYSIS, PROGRESSIVE_PARALYSIS) +
 					fluidRowLocs(DATE_ONSET_PARALYSIS, PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
@@ -367,7 +367,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				temperature.setCaption(I18nProperties.getCaption(Captions.bodyTemperature));
 			}
 		}
-		addField(TEMPERATURE_SOURCE);
+		ComboBox temperatureSource = addField(TEMPERATURE_SOURCE, ComboBox.class);
 
 		ComboBox outcome = new ComboBox("Outcome");
 
@@ -1028,6 +1028,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			symptomsHide();
 			setVisible(false, FEVER, HEADACHE, ALTERED_CONSCIOUSNESS, CONVULSION, SEIZURES);
 			setVisible(true, COUGH, SORE_THROAT, DIFFICULTY_BREATHING, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT, TEMPERATURE, TEMPERATURE_SOURCE);
+
+			FieldHelper.setVisibleWhen(feverBodytemp, Arrays.asList(temperature,temperatureSource), Arrays.asList(YesNoUnknown.YES), true);
+
 		}
 
 		if(disease == Disease.YELLOW_FEVER){
