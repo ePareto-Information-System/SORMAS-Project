@@ -1572,6 +1572,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			//AFP
 			if (disease == Disease.AFP) {
 				setVisible(true, CaseDataDto.DATE_FORM_RECEIVED_AT_NATIONAL, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
+                outcome.setVisible(false);
 			}
 
 			//INFLUENZA
