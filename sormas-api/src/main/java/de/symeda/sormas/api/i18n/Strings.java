@@ -543,6 +543,13 @@ public interface Strings {
 	String headingGenerateContacts = "headingGenerateContacts";
 	String headingHealthConditions = "headingHealthConditions";
 	String headingHospitalization = "headingHospitalization";
+	String headingSignalInformation = "headingSignalInformation";
+	String headingSignalVerification = "headingSignalVerification";
+	String headingEventDetails = "headingEventDetails";
+	String headingTriagingDecision = "headingTriagingDecision";
+	String headingSixtyDay = "headingSixtyDay";
+	String headingFillThis = "headingFillThis";
+	String headingChildSeek = "headingChildSeek";
 	String headingHowToMergeCases = "headingHowToMergeCases";
 	String headingHowToMergeContacts = "headingHowToMergeContacts";
 	String headingImportAllContinents = "headingImportAllContinents";
