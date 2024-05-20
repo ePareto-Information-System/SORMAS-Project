@@ -584,6 +584,9 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			} else if(diseaseField.getValue() != null && diseaseField.getValue() == Disease.NEW_INFLUENZA){
 				personCreateForm.hidePresentCondition();
 			}
+			else if(diseaseField.getValue() != null && diseaseField.getValue() == Disease.AFP){
+				personCreateForm.hidePresentCondition();
+			}
 			else{
 				personCreateForm.showPresentCondition();
 			}

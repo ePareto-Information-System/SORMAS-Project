@@ -1807,6 +1807,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 motherTTDateFour = addField(CaseDataDto.MOTHER_TT_DATE_FOUR, DateField.class);
                 motherTTDateFive = addField(CaseDataDto.MOTHER_TT_DATE_FIVE, DateField.class);
                 motherLastDoseDate = addField(CaseDataDto.MOTHER_LAST_DOSE_DATE, DateField.class);
+		
 
                 //	seenInOPD, admittedInOPD, motherGivenProtectiveDoseTT, motherGivenProtectiveDoseTTDate, supplementalImmunization, supplementalImmunizationDetails
                 seenInOPD = addField(CaseDataDto.SEEN_IN_OPD, NullableOptionGroup.class);
@@ -1848,6 +1849,13 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                         Arrays.asList(YesNoUnknown.YES),
                         true);
             }
+
+            	//AFP
+			if (disease == Disease.AFP) {
+				setVisible(true, CaseDataDto.DATE_FORM_RECEIVED_AT_NATIONAL, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
+                outcome.setVisible(false);
+			}
+            
             if (disease == Disease.FOODBORNE_ILLNESS) {
                 placeOfStayHeadingLabel.setVisible(false);
             }
