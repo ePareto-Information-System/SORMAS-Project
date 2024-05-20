@@ -1441,52 +1441,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			for (CaseReinfectionCheckBoxTree reinfectionTree : reinfectionTrees.values()) {
 				reinfectionTree.initCheckboxes();
 			}
-
-			hideFieldsForSelectedDisease(disease);
-
-			//YELLOW FEVER
-			if (disease == Disease.YELLOW_FEVER) {
-				dateFormReceivedAtNational.setVisible(true);
-                dateFormSentToDistrict.setVisible(true);
-                dateFormReceivedAtDistrict.setVisible(true);
-				setVaccinatedByCardOrHistoryVisibility();
-				outcome.setVisible(false);
-			}
-
-			//CSM
-			if (disease == Disease.CSM) {
-				setVaccinationHelperVisibility();
-			}
-
-			//AHF
-			if (disease == Disease.AHF || disease == Disease.DENGUE) {
-				setVisible(true, CaseDataDto.POSTPARTUM, CaseDataDto.PREGNANT);
-			}
-
-			//AFP
-			if (disease == Disease.AFP) {
-				setVisible(true, CaseDataDto.DATE_FORM_RECEIVED_AT_NATIONAL, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
-                outcome.setVisible(false);
-			}
-
-			//INFLUENZA
-			if (disease == Disease.NEW_INFLUENZA) {
-				outcome.setVisible(false);
-			}
-
-			if(disease ==Disease.FOODBORNE_ILLNESS){
-				placeOfStayHeadingLabel.setVisible(false);
-			}
-			if(disease ==Disease.MONKEYPOX){
-				placeOfStayHeadingLabel.setVisible(false);
-				createLabel(I18nProperties.getString(Strings.notifyInvestigate), H3, NOTIFY_INVESTIGATE);
-				setVisible(true, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
-				createLabel(I18nProperties.getString(Strings.headingIndicateCategory), H3, INDICATE_CATEGORY_LOC);
-			}
-			
-			if(disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
-					numberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being Reported");
-			}
 		});
 		if (CaseDataDto.HOSPITALIZATION == null) {
 			caseOutcome.setEnabled(false);

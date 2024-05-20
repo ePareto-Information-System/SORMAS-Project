@@ -497,40 +497,6 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 		diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
 			updateDiseaseVariant((Disease) valueChangeEvent.getProperty().getValue());
 			personCreateForm.updatePresentConditionEnum((Disease) valueChangeEvent.getProperty().getValue());
-
-			if (diseaseField.getValue() != null && diseaseField.getValue() == Disease.FOODBORNE_ILLNESS) {
-				personCreateForm.hideFields();
-				placeOfStayHeadingLabel.setVisible(false);
-				ogCaseOrigin.setReadOnly(true);
-				setVisible(false, FACILITY_OR_HOME_LOC, DIFFERENT_PLACE_OF_STAY_JURISDICTION);
-			} else if (diseaseField.getValue() != null && diseaseField.getValue() == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
-				personCreateForm.hideFields();
-				ogCaseOrigin.setReadOnly(true);
-			} else if(diseaseField.getValue() != null && diseaseField.getValue() == Disease.NEW_INFLUENZA){
-				personCreateForm.hidePresentCondition();
-			}
-			else if(diseaseField.getValue() != null && diseaseField.getValue() == Disease.AFP){
-				personCreateForm.hidePresentCondition();
-			}
-			else{
-				personCreateForm.showPresentCondition();
-			}
-
-			if (diseaseField.getValue() != null && diseaseField.getValue() == Disease.MONKEYPOX) {
-				personCreateForm.hideFields();
-				reportDate.setVisible(false);
-				reportDate.setRequired(false);
-
-				addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
-				addFields(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT);
-				addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
-				addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
-			}
-
-		});
-
-		idsrdiagnosis.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
-            specifyEvent.setVisible(idsrdiagnosis.getValue() != null && idsrdiagnosis.getValue() == IdsrType.OTHER);
 		});
 
 		diseaseVariantField.addValueChangeListener(e -> {
