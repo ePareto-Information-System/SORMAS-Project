@@ -124,6 +124,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(CLINICAL_MEASUREMENTS_HEADING_LOC) +
+					fluidRowLocs(6,FEVER_BODY_TEMP_GREATER) +
 					fluidRowLocs(TEMPERATURE, TEMPERATURE_SOURCE) +
 					fluidRowLocs(BLOOD_PRESSURE_SYSTOLIC, BLOOD_PRESSURE_DIASTOLIC, HEART_RATE, RESPIRATORY_RATE) +
 					fluidRowLocs(GLASGOW_COMA_SCALE, WEIGHT, HEIGHT, MID_UPPER_ARM_CIRCUMFERENCE) +
@@ -131,6 +132,18 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowCss(VSPACE_3,
 							//XXX #1620 fluidColumnLoc?
 							fluidColumn(8, 0, loc(SYMPTOMS_HINT_LOC))) +
+					loc(MPOX_SYMPTOMS_HEADING_LOC) +
+					fluidRowLocs(SymptomsDto.SYMPTOMS_SELECTED)+
+					fluidRowLocs(6,SymptomsDto.SYMPTOMS_SELECTED_OTHER)+
+					fluidRowLocs(8, DATE_OF_ONSET_RASH)+
+					fluidRowLocs(RASH_SYMPTOMS)+
+					fluidRowLocs(6, RASH_SYMPTOMS_OTHER_AREAS)+
+					fluidRowLocs(ARE_LESIONS_IN_SAME_STATE)+
+					fluidRowLocs(ARE_LESIONS_SAME_SIZE)+
+					fluidRowLocs(ARE_LESIONS_DEEP)+
+					fluidRowLocs(ARE_ULCERS_AMONG_LESIONS)+
+					fluidRowLocs(6, TYPE_OF_RASH)+
+					fluidRowLocs(DATE_OF_ONSET, "") +
 					fluidRow(fluidColumn(8,4, locCss(CssStyles.ALIGN_RIGHT,BUTTONS_LOC)))+
 					createSymptomGroupLayout(SymptomGroup.GENERAL, GENERAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.RESPIRATORY, RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
@@ -300,7 +313,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		if (symptomsContext == SymptomsContext.CASE) {
 			temperature.setCaption(I18nProperties.getCaption(Captions.symptomsMaxTemperature));
 		}
-		addField(TEMPERATURE_SOURCE);
+		ComboBox temperatureSource = addField(TEMPERATURE_SOURCE, ComboBox.class);
 
 		ComboBox bloodPressureSystolic = addField(BLOOD_PRESSURE_SYSTOLIC, ComboBox.class);
 		bloodPressureSystolic.addItems(SymptomsHelper.getBloodPressureValues());
@@ -793,6 +806,123 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			setUpMonkeypoxVisibilities();
 		}
 
+			NullableOptionGroup siteParalysisBox = new NullableOptionGroup("Site of Paralysis");
+			for (InjectionSite injectionSite : InjectionSite.ParalysisSite) {
+				siteParalysisBox.addItem(injectionSite);
+			}
+			NullableOptionGroup siteOfParalysis = addField(SITE_OF_PARALYSIS, siteParalysisBox);
+			OptionGroup paralysedLimbSensitiveToPain = addField(PARALYSED_LIMB_SENSITIVE_TO_PAIN, OptionGroup.class);
+			OptionGroup injectionSiteBeforeOnsetParalysis = addField(INJECTION_SITE_BEFORE_ONSET_PARALYSIS, OptionGroup.class);
+
+			NullableOptionGroup rightInjectionSiteBox = new NullableOptionGroup("Right Injection Site");
+			for (InjectionSite injectionSiteRight : InjectionSite.InjectionSiteRight) {
+				rightInjectionSiteBox.addItem(injectionSiteRight);
+			}
+			NullableOptionGroup rightInjectionSite = addField(RIGHT_INJECTION_SITE, rightInjectionSiteBox);
+
+			NullableOptionGroup leftInjectionSiteBox = new NullableOptionGroup("Left Injection Site");
+			for (InjectionSite injectionSiteLeft : InjectionSite.InjectionSiteLeft) {
+				leftInjectionSiteBox.addItem(injectionSiteLeft);
+			}
+			NullableOptionGroup leftInjectionSite = addField(LEFT_INJECTION_SITE, leftInjectionSiteBox);
+			OptionGroup trueAFP = addField(TRUEAFP, OptionGroup.class);
+			TextArea provisionalDiagnosis = addField(PROVISONAL_DIAGNOSIS, TextArea.class);
+			provisionalDiagnosis.setRows(4);
+
+			addFields(
+					MUSCLE_TONE,
+					DEEP_TENDON_REFLEX,
+					MUSCLE_VOLUME,
+					SENSORY_LOSS);
+
+			clinicalMeasurementsHeadingLabel.setVisible(false);
+			setVisible(false, FEVER,
+					ALTERED_CONSCIOUSNESS,
+					SEIZURES,
+					HEADACHE,
+					NECK_STIFFNESS);
+
+			symptomsHide();
+			setVisible(true, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
+
+		}
+		if(disease == Disease.NEW_INFLUENZA){
+			addField(DATE_OF_ONSET, DateField.class);
+			OptionGroup feverBodytemp = addField(FEVER_BODY_TEMP_GREATER, OptionGroup.class);
+
+			clinicalMeasurementsHeadingLabel.setVisible(false);
+			setVisible(false, ONSET_DATE);
+			symptomsHide();
+			setVisible(false, FEVER, HEADACHE, ALTERED_CONSCIOUSNESS, CONVULSION, SEIZURES);
+			setVisible(true, COUGH, SORE_THROAT, DIFFICULTY_BREATHING, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT, TEMPERATURE, TEMPERATURE_SOURCE);
+
+			FieldHelper.setVisibleWhen(feverBodytemp, Arrays.asList(temperature,temperatureSource), Arrays.asList(YesNoUnknown.YES), true);
+
+		}
+		if(disease == Disease.YELLOW_FEVER){
+			setVisible(true, HEADACHE, BACKACHE, NAUSEA, VOMITING, FEVER, JAUNDICE, CHILLS_SWEATS, FATIGUE_WEAKNESS, FATIGUE, WEAKNESS, BODY_ACHE);
+			setVisible(true, TEMPERATURE, TEMPERATURE_SOURCE, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
+		}
+
+		if(disease == Disease.CSM){
+			symptomsHide();
+			setVisible(true, BULGING_FONTANELLE, FEVER, NECK_STIFFNESS, HEADACHE, CONVULSION, ALTERED_CONSCIOUSNESS, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
+			clinicalMeasurementsHeadingLabel.setVisible(false);
+
+		}
+		if (disease == Disease.AHF || disease == Disease.DENGUE) {
+
+			setVisible(false,
+					SORE_THROAT, COUGH, COUGH_WITH_SPUTUM, COUGH_WITH_HEAMOPTYSIS, RUNNY_NOSE, CHEST_PAIN, CONJUNCTIVITIS, EYE_PAIN_LIGHT_SENSITIVE, KOPLIKS_SPOTS, THROBOCYTOPENIA, OTITIS_MEDIA, HEARINGLOSS, DEHYDRATION, REFUSAL_FEEDOR_DRINK, BACKACHE, JAUNDICE, DARK_URINE, STOMACH_BLEEDING, RAPID_BREATHING, SWOLLEN_GLANDS, UNEXPLAINED_BLEEDING, COUGHING_BLOOD, SKIN_BRUISING, BLOOD_URINE, OTHER_HEMORRHAGIC_SYMPTOMS, OTHER_HEMORRHAGIC_SYMPTOMS_TEXT, OTHER_NON_HEMORRHAGIC_SYMPTOMS, OTHER_NON_HEMORRHAGIC_SYMPTOMS_TEXT, LESIONS, LESIONS_THAT_ITCH, LESIONS_SAME_STATE, LESIONS_SAME_SIZE, LESIONS_DEEP_PROFOUND, LESIONS_FACE, LESIONS_LEGS, LESIONS_SOLES_FEET, LESIONS_PALMS_HANDS, LESIONS_THORAX, LESIONS_ARMS, LESIONS_GENITALS, LESIONS_ALL_OVER_BODY, LYMPHADENOPATHY, LYMPHADENOPATHY_AXILLARY, LYMPHADENOPATHY_CERVICAL, LYMPHADENOPATHY_INGUINAL, CHILLS_SWEATS, BEDRIDDEN, ORAL_ULCERS, PAINFUL_LYMPHADENITIS, BLACKENING_DEATH_OF_TISSUE, BUBOES_GROIN_ARMPIT_NECK, PHARYNGEAL_ERYTHEMA, PHARYNGEAL_EXUDATE, OEDEMA_FACE_NECK, OEDEMA_LOWER_EXTREMITY, LOSS_SKIN_TURGOR, PALPABLE_LIVER, PALPABLE_SPLEEN, MALAISE, SUNKEN_EYES_FONTANELLE, SIDE_PAIN, FLUID_IN_LUNG_CAVITY, TREMOR, BILATERAL_CATARACTS, UNILATERAL_CATARACTS, CONGENITAL_GLAUCOMA, CONGENITAL_HEART_DISEASE, PIGMENTARY_RETINOPATHY, RADIOLUCENT_BONE_DISEASE, SPLENOMEGALY, MICROCEPHALY, MENINGOENCEPHALITIS, DEVELOPMENTAL_DELAY, CONGENITAL_HEART_DISEASE_TYPE, CONGENITAL_HEART_DISEASE_DETAILS, JAUNDICE_WITHIN_24_HOURS_OF_BIRTH, PATIENT_ILL_LOCATION, HYDROPHOBIA, OPISTHOTONUS, ANXIETY_STATES, DELIRIUM, UPROARIOUSNESS, PARASTHESIA_AROUND_WOUND, EXCESS_SALIVATION, INSOMNIA, PARALYSIS, EXCITATION, DYSPHAGIA, AEROPHOBIA, HYPERACTIVITY, PARESIS, AGITATION, ASCENDING_FLACCID_PARALYSIS, ERRATIC_BEHAVIOUR, COMA, CONVULSION, FLUID_IN_LUNG_CAVITY_AUSCULTATION, FLUID_IN_LUNG_CAVITY_XRAY, ABNORMAL_LUNG_XRAY_FINDINGS, CONJUNCTIVAL_INJECTION, ACUTE_RESPIRATORY_DISTRESS_SYNDROME, PNEUMONIA_CLINICAL_OR_RADIOLOGIC, LOSS_OF_TASTE, LOSS_OF_SMELL, WHEEZING, SKIN_ULCERS, INABILITY_TO_WALK, IN_DRAWING_OF_CHEST_WALL, FEELING_ILL, SHIVERING, RESPIRATORY_DISEASE_VENTILATION, FAST_HEART_RATE, OXYGEN_SATURATION_LOWER_94, WEAKNESS, COUGH_WITHOUT_SPUTUM, CHEST_PRESSURE, BLUE_LIPS, BLOOD_CIRCULATION_PROBLEMS, PALPITATIONS, DIZZINESS_STANDING_UP, HIGH_OR_LOW_BLOOD_PRESSURE, URINARY_RETENTION, CONFUSED_DISORIENTED, HEMORRHAGIC_SYNDROME, HYPERGLYCEMIA, HYPOGLYCEMIA, MENINGEAL_SIGNS, SEPSIS, SHOCK
+			);
+			clinicalMeasurementsHeadingLabel.setVisible(false);
+			setVisible(true, FEVER, HEADACHE, SKIN_RASH, VOMITING, NAUSEA, INJECTION_SITE_BLEEDING, ANOREXIA_APPETITE_LOSS, GUMS_BLEEDING, DIARRHEA, EYES_BLEEDING, FATIGUE, BLOOD_IN_STOOL, ABDOMINAL_PAIN, RED_BLOOD_VOMIT, JOINT_PAIN, NOSE_BLEEDING, BLEEDING_VAGINA, HICCUPS, BREATHLESSNESS);
+		}
+
+		if(disease == Disease.FOODBORNE_ILLNESS){
+			setVisible(true,
+					ABDOMINAL_PAIN,	BLOOD_IN_STOOL, CHILLS_SWEATS, CONVULSION, DEHYDRATION, DIARRHEA, DIZZINESS, FEVER, EXCESSIVE_SWEATING, HEADACHE, JAUNDICE, MUSCLE_PAIN, NAUSEA, NUMBNESS, VOMITING, WEAKNESS, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC);
+
+			symptomsOngoing.setVisible(true);
+			durationHours.setVisible(true);
+			nameOfHealthFacility.setVisible(true);
+
+			FieldHelper
+					.setVisibleWhen(symptomsOngoing, Arrays.asList(nameOfHealthFacility), Arrays.asList(YesNo.YES), true);
+			FieldHelper
+					.setVisibleWhen(symptomsOngoing, Arrays.asList(durationHours), Arrays.asList(YesNo.NO), true);
+
+			foodHistoryHeadingLabel.setVisible(true);
+
+		}
+
+		if(disease == Disease.MONKEYPOX){
+			setVisible(false, SYMPTOMS_COMMENTS);
+
+			symptomsHeadingLabel.setVisible(true);
+			tickSymptomField.setVisible(true);
+			onsetSymptom.setVisible(true);
+			setVisible(true, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
+
+			addField(SYMPTOMS_SELECTED_OTHER, TextField.class);
+			addField(DATE_OF_ONSET_RASH, DateField.class);
+
+			tickRashCharacteristicsField.setVisible(true);
+
+			addField(RASH_SYMPTOMS_OTHER_AREAS, TextField.class);
+			addField(ARE_LESIONS_IN_SAME_STATE, NullableOptionGroup.class);
+			addField(ARE_LESIONS_SAME_SIZE, NullableOptionGroup.class);
+			addField(ARE_LESIONS_DEEP, NullableOptionGroup.class);
+			addField(ARE_ULCERS_AMONG_LESIONS, NullableOptionGroup.class);
+
+			ComboBox typeOfRash = new ComboBox("Rash");
+			for (SymptomsList list : SymptomsList.MpoxRashList()) {
+				typeOfRash.addItem(list);
+			}
+
+			addField(TYPE_OF_RASH, typeOfRash);
+		}
+		
 		if (symptomsContext != SymptomsContext.CASE) {
 			getFieldGroup().getField(PATIENT_ILL_LOCATION).setVisible(false);
 		}

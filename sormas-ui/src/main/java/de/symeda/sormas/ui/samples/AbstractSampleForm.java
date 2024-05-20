@@ -486,6 +486,13 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		getContent().getComponent(PATHOGEN_TESTING_READ_HEADLINE_LOC).setVisible(canOnlyReadRequests);
 		getContent().getComponent(ADDITIONAL_TESTING_READ_HEADLINE_LOC).setVisible(canOnlyReadRequests && canUseAdditionalTests);
 
+		handleDisease(Disease.YELLOW_FEVER, "National Public Health Reference Laboratory");
+		handleDisease(Disease.AHF, "NMIMR");
+		handleDisease(Disease.DENGUE, "NMIMR");
+		handleDisease(Disease.AFP, "NMIMR");
+		handleDisease(Disease.NEW_INFLUENZA, "NMIMR");
+		handleDiseaseField(Disease.NEW_INFLUENZA, Disease.CSM, Disease.SARI, Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS);
+
 		if (getValue() != null && canOnlyReadRequests) {
 			CssLayout requestedPathogenTestsLayout = new CssLayout();
 			CssStyles.style(requestedPathogenTestsLayout, VSPACE_3);
@@ -527,6 +534,220 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			if (!ControllerProvider.getSampleController().isFieldSampleIdUnique(getValue().getUuid(), (String) value))
 				throw new InvalidValueException(I18nProperties.getString(Strings.messageFieldSampleIdExist));
 		}
+	private void disableField(String field) {
+		setVisible(false, field);
+	}
+
+	private void handleCSM() {
+
+		OptionGroup csfSampleCollected = addField(SampleDto.CSF_SAMPLE_COLLECTED, OptionGroup.class);
+		ComboBox csfReason = addField(SampleDto.CSF_REASON, ComboBox.class);
+		NullableOptionGroup appearanceOfCsf = addField(SampleDto.APPEARANCE_OF_CSF, NullableOptionGroup.class);
+		addField(SampleDto.INOCULATION_TIME_TRANSPORT_MEDIA, DateField.class);
+		OptionGroup sampleSentToLab = addField(SampleDto.SAMPLE_SENT_TO_LAB, OptionGroup.class);
+		TextField reasonNotSent = addField(SampleDto.REASON_NOT_SENT_TO_LAB, TextField.class);
+		DateField dateSampleSentToLab = addField(SampleDto.DATE_SAMPLE_SENT_TO_LAB, DateField.class);
+		NullableOptionGroup sampleContainerUsed = addField(SampleDto.SAMPLE_CONTAINER_USED, NullableOptionGroup.class);
+		OptionGroup rdtPerformed = addField(SampleDto.RDT_PERFORMED, OptionGroup.class);
+		addField(SampleDto.RDT_RESULTS, TextField.class);
+		addField(SampleDto.DISTRICT_NOTIFICATION_DATE, DateField.class);
+		addField(SampleDto.NAME_OF_PERSON, TextField.class);
+		addField(SampleDto.TEL_NUMBER, TextField.class);
+
+		addField(SampleDto.DATE_FORM_SENT_TO_REGION, DateField.class);
+		addField(SampleDto.DATE_FORM_RECEIVED_AT_REGION, DateField.class);
+		addField(SampleDto.DATE_FORM_SENT_TO_NATIONAL, DateField.class);
+		addField(SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL, DateField.class);
+
+		csfReason.setVisible(false);
+		reasonNotSent.setVisible(false);
+		dateSampleSentToLab.setVisible(false);
+		sampleDateField.setVisible(false);
+		suspectedDisease.setVisible(false);
+		labLocation.setVisible(false);
+		dateSpecimenSentToLab.setVisible(false);
+		dateLabReceivedSpecimen.setVisible(false);
+		dateResultsSentToClinician.setVisible(false);
+		sampleMaterialComboBox.setVisible(false);
+
+
+		FieldHelper
+				.setVisibleWhen(csfSampleCollected, Arrays.asList(sampleDateField), Arrays.asList(YesNo.YES), true);
+		FieldHelper
+				.setVisibleWhen(sampleSentToLab, Arrays.asList(reasonNotSent), Arrays.asList(YesNo.NO), true);
+		FieldHelper
+				.setVisibleWhen(sampleSentToLab, Arrays.asList(dateSampleSentToLab), Arrays.asList(YesNo.YES), true);
+		FieldHelper
+				.setVisibleWhen(csfSampleCollected, Arrays.asList(csfReason), Arrays.asList(YesNo.NO), true);
+
+		setPropertiesVisibility();
+
+		Label districtLaboratory = new Label(I18nProperties.getString(Strings.headingDistrictLaboratory));
+		CssStyles.style(districtLaboratory, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_4);
+		getContent().addComponent(districtLaboratory, DISTRICT_LABORATORY_HEADLINE_LOC);
+		districtLaboratory.setVisible(false);
+
+		Label regionalLaboratory = new Label(I18nProperties.getString(Strings.headingRegionalLaboratory));
+		CssStyles.style(regionalLaboratory, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_4);
+		getContent().addComponent(regionalLaboratory, REGIONAL_LABORATORY_HEADLINE_LOC);
+		regionalLaboratory.setVisible(false);
+
+		Label referenceLaboratory = new Label(I18nProperties.getString(Strings.headingReferenceLaboratory));
+		CssStyles.style(referenceLaboratory, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_4);
+		getContent().addComponent(referenceLaboratory, REFERENCE_LABORATORY_HEADLINE_LOC);
+		referenceLaboratory.setVisible(false);
+
+		laboratorySampleDateReceived = addField(SampleDto.LABORATORY_SAMPLE_DATE_RECEIVED, DateTimeField.class);
+		laboratorySampleDateReceived.setInvalidCommitted(false);
+
+		laboratorySampleContainerOther.setVisible(false);
+	}
+
+	private void handleAFP() {
+
+		Label stoolSpecimenCollection = new Label(I18nProperties.getString(Strings.headingStoolSpecimenCollection));
+		CssStyles.style(stoolSpecimenCollection, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_4);
+		getContent().addComponent(stoolSpecimenCollection, STOOL_SPECIMEN_COLLECTION_HEADLINE_LOC);
+		stoolSpecimenCollection.setVisible(false);
+
+		Label stoolSpecimenResults = new Label(I18nProperties.getString(Strings.headingStoolSpecimenResults));
+		CssStyles.style(stoolSpecimenResults, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_4);
+		getContent().addComponent(stoolSpecimenResults, STOOL_SPECIMEN_RESULTS_HEADLINE_LOC);
+		stoolSpecimenResults.setVisible(false);
+
+		Label followUpExamination = new Label(I18nProperties.getString(Strings.headingFollowUpExamination));
+		CssStyles.style(followUpExamination, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_4);
+		getContent().addComponent(followUpExamination, FOLLOW_UP_EXAMINATION_HEADLINE_LOC);
+		followUpExamination.setVisible(false);
+
+		stoolSpecimenCollection.setVisible(true);
+		DateField dateFirstSpecimen = addField(SampleDto.DATE_FIRST_SPECIMEN, DateField.class);
+		DateField dateSecondSpecimen = addField(SampleDto.DATE_SECOND_SPECIMEN, DateField.class);
+		DateField dateSpecimenSentNationalLevel = addField(SampleDto.DATE_SPECIMEN_SENT_NATIONAL_LEVEL, DateField.class);
+		DateField dateSpecimenReceivedNationalLevel = addField(SampleDto.DATE_SPECIMEN_RECEIVED_NATIONAL_LEVEL, DateField.class);
+		DateField dateSpecimenSentInter = addField(SampleDto.DATE_SPECIMEN_SENT_INTERCOUNTY_NATLAB, DateField.class);
+		DateField dateSpecimenReceivedInter = addField(SampleDto.DATE_SPECIMEN_RECEIVED_INTERCOUNTY_NATLAB, DateField.class);
+
+		stoolSpecimenResults.setVisible(true);
+		OptionGroup statusSpecimenReceptionAtLab = addField(SampleDto.STATUS_SPECIMEN_RECEPTION_AT_LAB, OptionGroup.class);
+		DateField dateCombinedCellCultureResults = addField(SampleDto.DATE_COMBINED_CELL_CULTURE_RESULTS, DateField.class);
+		OptionGroup w1 = addField(SampleDto.W1, OptionGroup.class);
+		OptionGroup w2 = addField(SampleDto.W2, OptionGroup.class);
+		OptionGroup w3 = addField(SampleDto.W3, OptionGroup.class);
+		OptionGroup s1 = addField(SampleDto.SL1, OptionGroup.class);
+		OptionGroup s2 = addField(SampleDto.SL2, OptionGroup.class);
+		OptionGroup s3 = addField(SampleDto.SL3, OptionGroup.class);
+		NullableOptionGroup discordant = addField(SampleDto.DISCORDANT, NullableOptionGroup.class);
+
+		followUpExamination.setVisible(true);
+		DateField dateFollowUpExam = addField(SampleDto.DATE_FOLLOWUP_EXAM, DateField.class);
+		NullableOptionGroup residualAnalysis = addField(SampleDto.RESIDUAL_ANALYSIS, NullableOptionGroup.class);
+		residualAnalysis.removeItem(InjectionSite.RIGHT_FOREARM);
+		residualAnalysis.removeItem(InjectionSite.RIGHT_BUTTOCKS);
+		residualAnalysis.removeItem(InjectionSite.RIGHT_THIGH);
+		residualAnalysis.removeItem(InjectionSite.LEFT_FOREARM);
+		residualAnalysis.removeItem(InjectionSite.LEFT_BUTTOCKS);
+		residualAnalysis.removeItem(InjectionSite.LEFT_THIGH);
+		ComboBox resultExam = addField(SampleDto.RESULT_EXAM, ComboBox.class);
+
+		DateField dateSentNationalRegLab = addField(SampleDto.DATE_SENT_NATIONAL_REG_LAB, DateField.class);
+		DateField dateDifferentiationSentEpi = addField(SampleDto.DATE_DIFFERENTIATION_SENT_EPI, DateField.class);
+		DateField dateDifferentiationReceivedEpi = addField(SampleDto.DATE_DIFFERENTIATION_RECEIVED_EPI, DateField.class);
+		DateField dateIsolateSentSequencing = addField(SampleDto.DATE_ISOLATE_SENT_SEQUENCING, DateField.class);
+		DateField dateSeqResultsSentProgram = addField(SampleDto.DATE_SEQ_RESULTS_SENT_PROGRAM, DateField.class);
+		NullableOptionGroup finalLabResults = addField(SampleDto.FINAL_LAB_RESULTS, NullableOptionGroup.class);
+		NullableOptionGroup immunocompromisedStatusSuspected = addField(SampleDto.IMMUNOCOMPROMISED_STATUS_SUSPECTED, NullableOptionGroup.class);
+		ComboBox afpFinalClassification = addField(SampleDto.AFP_FINAL_CLASSIFICATION, ComboBox.class);
+
+		setRequired(false, SampleDto.SAMPLE_PURPOSE);
+
+		setVisible(false, SampleDto.SAMPLE_PURPOSE, SampleDto.REQUESTED_SAMPLE_MATERIALS, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLE_MATERIAL_TEXT, SampleDto.SAMPLE_MATERIAL_REQUESTED, SampleDto.COMMENT, SampleDto.SAMPLE_TESTS, SampleDto.DISEASE, SampleDto.SAMPLING_REASON, SampleDto.IPSAMPLESENT, SampleDto.SAMPLE_MATERIAL, SampleDto.PATHOGEN_TEST_RESULT, SampleDto.SAMPLE_SOURCE);
+
+		suspectedDisease.setVisible(false);
+		labLocation.setVisible(false);
+		dateLabReceivedSpecimen.setVisible(false);
+		laboratorySampleCondition.setVisible(false);
+		dateFormSentToDistrict.setVisible(false);
+		dateFormReceivedAtDistrict.setVisible(false);
+		dateResultsSentToClinician.setVisible(false);
+		dateSpecimenSentToLab.setVisible(false);
+
+	}
+
+	private void handleAHF(){
+		setVisible(false,SampleDto.SAMPLE_SOURCE,
+				SampleDto.SAMPLE_PURPOSE,SampleDto.SAMPLING_REASON, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLE_MATERIAL_REQUESTED, SampleDto.COMMENT, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.REQUESTED_SAMPLE_MATERIALS);
+
+		suspectedDisease.setVisible(false);
+		labLocation.setVisible(false);
+		dateLabReceivedSpecimen.setVisible(false);
+		laboratorySampleCondition.setVisible(false);
+		dateFormSentToDistrict.setVisible(false);
+		dateFormReceivedAtDistrict.setVisible(false);
+		dateResultsSentToClinician.setVisible(false);
+		dateSpecimenSentToLab.setVisible(false);
+
+		diseaseField.setVisible(true);
+		List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.PLASMA_SERUM);
+		FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
+
+	}
+
+	private void handleYellowFever(){
+
+		addSampleDispatchFields();
+
+		setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
+
+		sampleMaterialComboBox.setVisible(false);
+		suspectedDisease.setVisible(false);
+		labLocation.setVisible(false);
+		dateLabReceivedSpecimen.setVisible(false);
+		laboratorySampleCondition.setVisible(false);
+		dateFormSentToDistrict.setVisible(false);
+		dateFormReceivedAtDistrict.setVisible(false);
+		dateResultsSentToClinician.setVisible(false);
+		dateSpecimenSentToLab.setVisible(false);
+		setVisible(false, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLING_REASON, SampleDto.SAMPLE_MATERIAL_TEXT);
+
+		setVisible(true, SampleDto.IPSAMPLESENT, SampleDto.IPSAMPLERESULTS, SampleDto.REQUESTED_SAMPLE_MATERIALS);
+		testResultField.setVisible(true);
+
+	}
+	private void handleNewInfluenza(){
+
+		setPropertiesVisibility();
+		/*List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.OROPHARYNGEAL_SWAB, SampleMaterial.NP_SWAB, SampleMaterial.SERUM, SampleMaterial.PLASMA);
+		FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
+
+		OptionGroup positiveviral = addField(SampleDto.POSITIVE_VIRAL_CULTURE, OptionGroup.class);
+		OptionGroup positiveRealTime = addField(SampleDto.POSITIVE_REAL_TIME, OptionGroup.class);
+		OptionGroup foldRise = addField(SampleDto.FOUR_FOLD_RISE, OptionGroup.class);
+		ComboBox Virus = addField(SampleDto.INFLUENZA_VIRUS, ComboBox.class);
+		TextField otherVirus = addField(SampleDto.OTHER_INFLUENZA_VIRUS, TextField.class);
+		otherVirus.setVisible(false);
+		TextField treatment = addField(SampleDto.TREATMENT, TextField.class);
+		TextField stateTreatment = addField(SampleDto.STATE_TREATMENT_ADMINISTERED, TextField.class);
+
+
+		ComboBox classificationBox = new ComboBox("Final Classification");
+
+		for (CaseClassification validValuesForInfluenza : CaseClassification.CASE_CLASSIFY_INFLUENZA) {
+			classificationBox.addItem(validValuesForInfluenza);
+		}
+		ComboBox finalClassification = addField(SampleDto.LABORATORY_FINAL_CLASSIFICATION, classificationBox);*/
+
+		sampleMaterialComboBox.setVisible(false);
+		suspectedDisease.setVisible(false);
+		labLocation.setVisible(false);
+		dateLabReceivedSpecimen.setVisible(false);
+		laboratorySampleCondition.setVisible(false);
+		dateFormSentToDistrict.setVisible(false);
+		dateFormReceivedAtDistrict.setVisible(false);
+		dateResultsSentToClinician.setVisible(false);
+		dateSpecimenSentToLab.setVisible(false);
+		pathogenTestingRequestedField.setVisible(false);
+		setVisible(true, SampleDto.REQUESTED_SAMPLE_MATERIALS);
 	}
 	
 	private Disease getDiseaseFromCase(String caseUuid) {
@@ -536,6 +757,27 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		}
 		return null;
 	}
+
+	private void setVisibleAndCheckLab(String labName, String...fieldsToHide) {
+		setVisible(false, fieldsToHide);
+		List<FacilityReferenceDto> allActiveLaboratories = FacadeProvider.getFacilityFacade().getAllActiveLaboratories(false);
+		FacilityReferenceDto facilityLab = findLabByName(allActiveLaboratories, labName);
+
+		if (lab != null) {
+			if (facilityLab != null) {
+				lab.addItems(allActiveLaboratories);
+				lab.setValue(facilityLab);
+//				lab.setReadOnly(true);
+				labDetails.setVisible(false);
+				labDetails.setRequired(false);
+			} else {
+				System.out.println("Please add " + labName + " to Facility Configuration");
+			}
+		} else {
+			System.out.println("Lab dropdown is null. Please contact system admin.");
+		}
+	}
+
 
 	private Disease getDiseaseFromContact(String contactUuid) {
 		ContactDto contactDto = FacadeProvider.getContactFacade().getByUuid(contactUuid);
