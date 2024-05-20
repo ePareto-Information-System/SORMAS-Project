@@ -13532,3 +13532,210 @@ ALTER TABLE cases ADD COLUMN lastvaccinationdate date;
 INSERT INTO schema_version (version_number, comment) VALUES (590, 'Added last vaccination date for IDSR 53');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
+-- Step 1: Define the ebs table
+CREATE TABLE ebs (
+                     id bigint not null,
+                     uuid VARCHAR(36) NOT NULL UNIQUE,
+                     changedate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                     creationdate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                     ebstype VARCHAR(255) NOT NULL,
+                     ebsdesc VARCHAR(4096) NOT NULL,
+                     ebstdate TIMESTAMP,
+                     reportdatetime TIMESTAMP NOT NULL,
+                     reportinguser_id BIGINT,
+                     location_id BIGINT,
+                     risklevel VARCHAR(255),
+                     externaltoken VARCHAR(512),
+                     internaltoken TEXT,
+                     deleted BOOLEAN DEFAULT FALSE,
+                     endofprocessingdate TIMESTAMP WITHOUT TIME ZONE,
+                     archiveundonereason VARCHAR(512),
+                     change_user_id BIGINT,
+                     deletionreason VARCHAR(255),
+                     otherdeletionreason TEXT,
+                     contactName VARCHAR(512),
+                     contactPhone VARCHAR(512),
+                     triageDate TIMESTAMP,
+                     automaticScanningType VARCHAR(512),
+                     manualScanningType VARCHAR(512),
+                     scanningType VARCHAR(512),
+                     descriptionOccurrence VARCHAR(512),
+                     sourceName VARCHAR(512),
+                     sourceUrl VARCHAR(512),
+                     dateOnset TIMESTAMP,
+                     personRegistering VARCHAR(512),
+                     personDesignation VARCHAR(512),
+                     personPhone VARCHAR(512),
+                     other VARCHAR(512),
+                     ebsLongitude DOUBLE PRECISION,
+                     ebsLatitude DOUBLE PRECISION,
+                     ebsLatLon DOUBLE PRECISION,
+                     srctype VARCHAR(255),
+                     triagingdecision VARCHAR(512),
+                     signalCategory VARCHAR(512),
+                     verified VARCHAR(512),
+                     cases VARCHAR(512),
+                     death VARCHAR(512),
+                     personReporting VARCHAR(512),
+                     triaging BIGINT,
+                     primary key(id)
+);
+
+-- Step 2: Define the triaging table
+CREATE TABLE triaging (
+                          id bigint not null,
+                          earlyWarning VARCHAR(3),
+                          specificSignal VARCHAR(3),
+                          signalCategory VARCHAR(255),
+                          healthConcern VARCHAR(3),
+                          categoryDetails VARCHAR(255),
+                          occurrencePreviously VARCHAR(3),
+                          triagingDecision VARCHAR(255),
+                          decisionDate DATE,
+                          referredTo VARCHAR(255),
+                          primary key(id)
+);
+
+-- Step 3: Add foreign key constraints
+ALTER TABLE ebs ADD CONSTRAINT fk_ebs_reportinguser_id FOREIGN KEY (reportinguser_id) REFERENCES users (id);
+ALTER TABLE ebs ADD CONSTRAINT fk_ebs_location_id FOREIGN KEY (location_id) REFERENCES location (id);
+ALTER TABLE ebs ADD CONSTRAINT fk_ebs_change_user_id FOREIGN KEY (change_user_id) REFERENCES users (id);
+ALTER TABLE ebs ADD CONSTRAINT fk_ebs_triaging FOREIGN KEY (triaging) REFERENCES triaging (id);
+
+-- Step 4: Add missing columns to ebs_history table
+CREATE TABLE ebs_history (
+                             LIKE ebs INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
+);
+
+-- Step 5: Create the versioning_trigger function if not exists
+
+-- Step 6: Insert schema version for the changes made
+INSERT INTO schema_version (version_number, comment) VALUES (591, 'Updated ebs and ebs_history tables');
+ALTER TABLE ebs ADD COLUMN archived boolean DEFAULT false;
+
+ALTER TABLE ebs ADD COLUMN sormasToSormasOriginInfo_id bigint;
+INSERT INTO schema_version (version_number, comment) VALUES (592, 'Updated ebs and ebs_history tables');
+ALTER TABLE ebs ADD COLUMN contactPhoneNumber varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (593, 'Updated ebs and ebs_history tables');
+
+ALTER TABLE ebs ADD COLUMN ebslocation_id BIGINT;
+ALTER TABLE ebs ADD CONSTRAINT fk_ebs_ebslocation_id FOREIGN KEY (ebslocation_id) REFERENCES location (id);
+INSERT INTO schema_version (version_number, comment) VALUES (594, 'Updated ebs and ebs_history tables');
+
+ALTER TABLE ebs ADD COLUMN enddate timestamp;
+INSERT INTO schema_version (version_number, comment) VALUES (595, 'Updated ebs and ebs_history tables');
+
+ALTER TABLE ebs_history ADD COLUMN externalid varchar(512);
+ALTER TABLE ebs ADD COLUMN externalid varchar(512);
+INSERT INTO schema_version (version_number, comment) VALUES (596, 'Updated ebs and ebs_history tables');
+ALTER TABLE ebs ADD COLUMN responsibleuser_id bigint;
+INSERT INTO schema_version (version_number, comment) VALUES (597, 'Updated ebs and ebs_history tables');
+
+ALTER TABLE ebs ADD COLUMN specificrisk TEXT;
+INSERT INTO schema_version (version_number, comment) VALUES (598, 'Updated ebs and ebs_history tables');
+
+ALTER TABLE ebs DROP CONSTRAINT fk_ebs_triaging;
+INSERT INTO schema_version (version_number, comment) VALUES (599, 'Updated ebs and ebs_history tables');
+
+ALTER TABLE ebs ADD COLUMN triagingDecisionString varchar(255);
+ALTER TABLE ebs ADD COLUMN categoryDetailsString varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (600, 'Updated ebs and ebs_history tables');
+
+ALTER TABLE triaging ADD COLUMN changedate timestamp not null;
+ALTER TABLE triaging ADD COLUMN creationdate timestamp not null;
+INSERT INTO schema_version (version_number, comment) VALUES (601, 'Updated ebs and ebs_history tables');
+
+ALTER TABLE triaging ADD COLUMN change_user_id BIGINT;
+ALTER TABLE triaging ADD CONSTRAINT fk_ebs_change_user_id FOREIGN KEY (change_user_id) REFERENCES users (id);
+INSERT INTO schema_version (version_number, comment) VALUES (602, 'Updated ebs and ebs_history tables');
+
+ALTER TABLE triaging ADD COLUMN uuid VARCHAR(36) NOT NULL UNIQUE;
+INSERT INTO schema_version (version_number, comment) VALUES (603, 'Updated ebs and ebs_history tables');
+
+ALTER TABLE ebs ADD COLUMN triaging_id BIGINT;
+ALTER TABLE ebs ADD CONSTRAINT fk_ebs_triaging_id FOREIGN KEY (triaging_id) REFERENCES triaging (id);
+INSERT INTO schema_version (version_number, comment) VALUES (604, 'Updated ebs and ebs_history tables');
+
+ALTER TABLE ebs ALTER COLUMN ebstype DROP NOT NULL;
+ALTER TABLE ebs ALTER COLUMN ebsdesc DROP NOT NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (605, 'Updated ebs and ebs_history tables');
+
+ALTER TABLE triaging ADD COLUMN responsibleuser_id bigint;
+INSERT INTO schema_version (version_number, comment) VALUES (606, 'Updated ebs and ebs_history tables');
+
+ALTER TABLE triaging ADD COLUMN triagingDecisionString varchar(255);
+ALTER TABLE triaging ADD COLUMN categoryDetailsString varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (607, 'Updated ebs and ebs_history tables');
+
+ALTER TABLE triaging ADD COLUMN outcomeSupervisor varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (608, 'Updated ebs and ebs_history tables');
+
+CREATE TABLE signalVerification (
+                          id bigint not null,
+                          verificationSent VARCHAR(3),
+                          verified VARCHAR(3),
+                          verificationSentDate DATE,
+                          verificationCompleteDate DATE,
+                          dateOfOccurrence DATE,
+                          numberOfPersonAnimal VARCHAR(255),
+                          numberOfDeath VARCHAR(255),
+                          description VARCHAR(255),
+                          whyNotVerify VARCHAR(255),
+                          archived boolean DEFAULT false,
+                          sormasToSormasOriginInfo_id bigint,
+                          externalid varchar(512),
+                          responsibleuser_id bigint,
+                          changedate timestamp not null,
+                          creationdate timestamp not null,
+                          change_user_id BIGINT,
+                          uuid VARCHAR(36) NOT NULL UNIQUE,
+                          primary key(id)
+);
+
+ALTER TABLE signalVerification ADD CONSTRAINT fk_ebs_change_user_id FOREIGN KEY (change_user_id) REFERENCES users (id);
+ALTER TABLE ebs ADD COLUMN signalVerification_id BIGINT;
+ALTER TABLE ebs ADD CONSTRAINT fk_ebs_signalVerification_id FOREIGN KEY (signalVerification_id) REFERENCES signalVerification (id);
+CREATE TABLE signalVerification_history (
+                             LIKE signalVerification INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
+);
+INSERT INTO schema_version (version_number, comment) VALUES (609, 'Updated signal_verification and signal_verification_history tables');
+
+CREATE TABLE riskAssessment(
+    id bigint not null,
+    morbidityMortality VARCHAR(3),
+    spreadProbability VARCHAR(3),
+    controlMeasures VARCHAR(3),
+    riskAssessment VARCHAR(255),
+    responseDate DATE,
+    responseTime timestamp,
+    archived boolean DEFAULT false,
+    sormasToSormasOriginInfo_id bigint,
+    externalid varchar(512),
+    responsibleuser_id bigint,
+    changedate timestamp not null,
+    creationdate timestamp not null,
+    change_user_id BIGINT,
+    uuid VARCHAR(36) NOT NULL UNIQUE,
+    primary key(id)
+);
+
+ALTER TABLE riskAssessment ADD CONSTRAINT fk_ebs_change_user_id FOREIGN KEY (change_user_id) REFERENCES users (id);
+ALTER TABLE ebs ADD COLUMN riskAssessment_id BIGINT;
+ALTER TABLE ebs ADD CONSTRAINT fk_ebs_riskAssessment_id FOREIGN KEY (riskAssessment_id) REFERENCES riskAssessment (id);
+CREATE TABLE riskAssessment_history (
+                             LIKE riskAssessment INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
+);
+INSERT INTO schema_version (version_number, comment) VALUES (610, 'Updated riskAssessment and riskAssessment_history tables');
+
+ALTER TABLE riskAssessment ADD uuid VARCHAR(36) NOT NULL UNIQUE;
+INSERT INTO schema_version (version_number, comment) VALUES (611, 'Updated riskAssessment and riskAssessment_history tables');
+
+ALTER TABLE riskAssessment ALTER COLUMN responseTime TYPE varchar;
+INSERT INTO schema_version (version_number, comment) VALUES (612, 'Updated riskAssessment and riskAssessment_history tables');
+
+
+
+ALTER TABLE riskAssessment ADD COLUMN ebs_id bigint;
+ALTER TABLE riskAssessment ADD CONSTRAINT fk_riskAssessment_ebs_id FOREIGN KEY (ebs_id) REFERENCES ebs (id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (613, 'Ebs added to riskAssessment');
