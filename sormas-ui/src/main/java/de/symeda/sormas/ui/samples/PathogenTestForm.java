@@ -345,7 +345,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			getFieldGroup(),
 			PathogenTestDto.TEST_TYPE_TEXT,
 			PathogenTestDto.TEST_TYPE,
-			Arrays.asList(PathogenTestType.PCR_RT_PCR, PathogenTestType.OTHER),
+			Arrays.asList(PathogenTestType.OTHER),
 			true);
 		FieldHelper.setVisibleWhen(
 			getFieldGroup(),

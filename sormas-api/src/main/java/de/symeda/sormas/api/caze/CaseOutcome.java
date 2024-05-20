@@ -24,14 +24,14 @@ public enum CaseOutcome
 	implements
 	StatisticsGroupingKey {
 
-	NO_OUTCOME,
+	ALIVE,
 	DECEASED,
+	NO_OUTCOME,
+	ON_TREATMENT,
+	REFERRED,
 	RECOVERED,
 	UNKNOWN,
-	OTHER,
-	ALIVE,
-	REFERRED,
-	ON_TREATMENT;
+	OTHER;
 
 	public String getName() {
 		return this.name();
