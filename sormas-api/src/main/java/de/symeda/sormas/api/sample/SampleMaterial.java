@@ -25,7 +25,22 @@ import de.symeda.sormas.api.utils.Diseases;
 import java.util.Arrays;
 import java.util.List;
 
+import static de.symeda.sormas.api.Disease.*;
+import static de.symeda.sormas.api.Disease.OTHER;
+
 public enum SampleMaterial {
+	@Diseases({
+	NEW_INFLUENZA,
+	 })
+	NASOPHARYNGEAL_SWAB,
+	@Diseases({
+			NEW_INFLUENZA,
+	})
+	OROPHARYNGEAL_SWAB,
+	@Diseases({
+			NEW_INFLUENZA,
+	})
+	ORO_NASO,
 
 	WHOLE_BLOOD,
 	SERA,
@@ -34,7 +49,7 @@ public enum SampleMaterial {
 	STOOL,
 	NASAL_SWAB,
 	THROAT_SWAB,
-	NP_SWAB,
+//	NP_SWAB,
 	@Diseases(value = {
 		Disease.CORONAVIRUS }, hide = true)
 	RECTAL_SWAB,
@@ -71,15 +86,13 @@ public enum SampleMaterial {
 	POST_MORTEM_LIVER_SPECIMEN,
 	GINGIVAL_FLUID,
 	PLASMA_SERUM,
-	OTHER, OROPHARYNGEAL_SWAB,
+	OTHER,
 	ASPIRATE,
 	PUS,
 	BIOPSY,
 	URETHRAL,
 	FOOD_WATER,
-	SWAB,
-	NASOPHARYNGEAL_SWAB,
-	ORO_NASO;
+	SWAB;
 
 	//getYellowFeverMateriealTypes
 	public static SampleMaterial[] getYellowFeverMateriealTypes() {
