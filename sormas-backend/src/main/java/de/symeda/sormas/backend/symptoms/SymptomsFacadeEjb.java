@@ -801,6 +801,14 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setTypeOfRash(source.getTypeOfRash());
 		target.setSymptomsSelectedOther(source.getSymptomsSelectedOther());
 
+		target.setFirstSignOrSymptomsBeforeWorm(source.getFirstSignOrSymptomsBeforeWorm());
+		target.setFirstSignOrSymptomsBeforeWormOthers(source.getFirstSignOrSymptomsBeforeWormOthers());
+		target.setEmergenceOfGuineaWorm(source.getEmergenceOfGuineaWorm());
+		target.setNumberOfWorms(source.getNumberOfWorms());
+		target.setFirstWormThisYear(source.getFirstWormThisYear());
+		target.setDateFirstWormEmergence(source.getDateFirstWormEmergence());
+		target.setCaseDetectedBeforeWormEmergence(source.getCaseDetectedBeforeWormEmergence());
+
 		return target;
 	}
 
