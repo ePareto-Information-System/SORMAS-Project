@@ -1004,7 +1004,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		}
 		ComboBox finalClassification = addField(SampleDto.LABORATORY_FINAL_CLASSIFICATION, classificationBox);*/
 
-		sampleMaterialComboBox.setVisible(false);
+		//sampleMaterialComboBox.setVisible(false);
 		suspectedDisease.setVisible(false);
 		labLocation.setVisible(false);
 		dateLabReceivedSpecimen.setVisible(false);
@@ -1014,7 +1014,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateResultsSentToClinician.setVisible(false);
 		dateSpecimenSentToLab.setVisible(false);
 		pathogenTestingRequestedField.setVisible(false);
-		setVisible(true, SampleDto.REQUESTED_SAMPLE_MATERIALS);
 	}
 
 	private void handleFBI(){
@@ -1184,12 +1183,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 								.filter( c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
 								.collect(Collectors.toList()));
 				break;
-			case NEW_INFLUENZA:
+			/*case NEW_INFLUENZA:
 				requestedSampleMaterialsField.addItems(
 						Arrays.stream(SampleMaterial.getNewInfluenzaType())
 								.filter( c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
 								.collect(Collectors.toList()));
-				break;
+				break;*/
 			default:
 				requestedSampleMaterialsField.addItems(
 						Arrays.stream(SampleMaterial.values())
