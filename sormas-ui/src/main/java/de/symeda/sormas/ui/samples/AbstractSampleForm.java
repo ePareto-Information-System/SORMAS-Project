@@ -354,11 +354,31 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateFormReceivedAtDistrictField = addField(SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT, DateField.class);
 
 		lab = addInfrastructureField(SampleDto.LAB);
-		lab.addItems(FacadeProvider.getFacilityFacade().getAllActiveLaboratories(true));
+		List<FacilityReferenceDto> allActiveLabs = FacadeProvider.getFacilityFacade().getAllActiveLaboratories(true);
+		lab.addItems(allActiveLabs);
 		labDetails = addField(SampleDto.LAB_DETAILS, TextField.class);
 		labLocation = addField(SampleDto.LAB_LOCATION, TextField.class);
 		labDetails.setVisible(false);
 		lab.addValueChangeListener(event -> updateLabDetailsVisibility(labDetails, event));
+
+		disease = getCaseDisease();
+
+		if (disease != null) {
+			String diseaseName = disease.getName();
+			FacilityReferenceDto selectedLab = (FacilityReferenceDto) lab.getValue();
+			lab.removeAllItems();
+
+			List<FacilityReferenceDto> facilities = FacadeProvider.getFacilityFacade().getAllActiveFacilityByDisease(diseaseName);
+			if (facilities.isEmpty()) {
+				facilities = allActiveLabs;
+			}
+			lab.addItems(facilities);
+			if (selectedLab != null && facilities.contains(selectedLab)) {
+				lab.setValue(selectedLab);
+			} else {
+				lab.setValue(facilities.size() > 0 ? facilities.get(0) : null);
+			}
+		}
 
 		addField(SampleDto.SPECIMEN_CONDITION, ComboBox.class);
 		addField(SampleDto.NO_TEST_POSSIBLE_REASON, TextField.class);
@@ -878,11 +898,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		getContent().getComponent(PATHOGEN_TESTING_READ_HEADLINE_LOC).setVisible(canOnlyReadRequests);
 		getContent().getComponent(ADDITIONAL_TESTING_READ_HEADLINE_LOC).setVisible(canOnlyReadRequests && canUseAdditionalTests);
 
-		handleDisease(Disease.YELLOW_FEVER, "National Public Health Reference Laboratory");
-		handleDisease(Disease.AHF, "NMIMR");
-		handleDisease(Disease.DENGUE, "NMIMR");
-		handleDisease(Disease.AFP, "NMIMR");
-		handleDisease(Disease.NEW_INFLUENZA, "NMIMR");
+//		handleDisease(Disease.YELLOW_FEVER, "National Public Health Reference Laboratory");
+//		handleDisease(Disease.AHF, "NMIMR");
+//		handleDisease(Disease.DENGUE, "NMIMR");
+//		handleDisease(Disease.AFP, "NMIMR");
+//		handleDisease(Disease.NEW_INFLUENZA, "NMIMR");
 		handleDiseaseField(Disease.NEW_INFLUENZA, Disease.CSM, Disease.SARI, Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS);
 
 		if (getValue() != null && canOnlyReadRequests) {
