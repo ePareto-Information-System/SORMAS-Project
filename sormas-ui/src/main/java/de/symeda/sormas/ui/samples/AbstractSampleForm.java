@@ -111,6 +111,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private OptionGroup laboratorySampleContainerReceived;
 	private TextField laboratorySampleContainerOther;
 	private NullableOptionGroup laboratoryAppearanceOfCSF;
+	private ComboBox ipsampleResults;
+	private OptionGroup ipSampleSent;
 
 	//@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
@@ -189,7 +191,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(6, SampleDto.LABORATORY_FINAL_CLASSIFICATION) +
 
 
-					fluidRowLocs(SampleDto.IPSAMPLESENT) + fluidRowLocs(SampleDto.IPSAMPLERESULTS, "")+
 					loc(SAMPLE_MATERIAL_READ_HEADLINE_LOC) +
 					loc(SampleDto.REQUESTED_SAMPLE_MATERIALS) +
 
@@ -215,6 +216,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER) +
 					fluidRowLocs(6,SampleDto.LAB_SAMPLE_ID) +
 					fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
+					fluidRowLocs(SampleDto.IPSAMPLESENT) +
+					fluidRowLocs(6, SampleDto.IPSAMPLERESULTS)+
 					fluidRowLocs(6,SampleDto.LABORATORY_APPEARANCE_OF_CSF) +
 					fluidRowLocs(SampleDto.COMMENT) +
 
@@ -314,7 +317,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		addField(SampleDto.SHIPPED, CheckBox.class);
 		addField(SampleDto.RECEIVED, CheckBox.class);
 
-		OptionGroup ipSampleSent = new OptionGroup("YesNo");
+		ipSampleSent = new OptionGroup("YesNo");
 
 		for (YesNo val : YesNo.values()) {
 			if (val == YesNo.YES || val == YesNo.NO) {
@@ -322,8 +325,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			}
 		}
 		addField(SampleDto.IPSAMPLESENT, ipSampleSent);
+		ipSampleSent.setVisible(false);
 
-		addField(SampleDto.IPSAMPLERESULTS);
+		ipsampleResults = addField(SampleDto.IPSAMPLERESULTS, ComboBox.class);
+
 		testResultField = addField(SampleDto.PATHOGEN_TEST_RESULT, ComboBox.class);
 		testResultField.removeItem(PathogenTestResultType.NOT_DONE);
 		testResultField.removeItem(PathogenTestResultType.INDETERMINATE);
@@ -336,7 +341,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			Collections.singletonList(SamplingReason.OTHER_REASON),
 			true);
 
-		FieldHelper.setVisibleWhen(getFieldGroup(), SampleDto.IPSAMPLERESULTS, SampleDto.IPSAMPLESENT, Collections.singletonList(YesNo.YES), true);
 		laboratorySampleCondition = addField(SampleDto.LABORATORY_SAMPLE_CONDITION, OptionGroup.class);
 		laboratoryFinalResults = addField(SampleDto.LABORATORY_FINAL_RESULTS, TextField.class);
 		laboratoryFinalResults.setVisible(false);
@@ -518,7 +522,22 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					Arrays.asList(true),
 					Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
 					true);
-		}{
+		}else if (disease == Disease.YELLOW_FEVER) {
+			ipsampleResults.setVisible(false);
+			FieldHelper.setVisibleWhen(
+					getFieldGroup(),
+					Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION, SampleDto.IPSAMPLESENT),
+					SampleDto.RECEIVED,
+					Arrays.asList(true),
+					true);
+			FieldHelper.setEnabledWhen(
+					getFieldGroup(),
+					receivedField,
+					Arrays.asList(true),
+					Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION, SampleDto.IPSAMPLESENT),
+					true);
+			FieldHelper.setVisibleWhen(ipSampleSent, Arrays.asList(ipsampleResults), Arrays.asList(YesNo.YES), true);
+		} else {
 
 		FieldHelper.setVisibleWhen(
 				getFieldGroup(),
@@ -978,7 +997,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateSpecimenSentToLab.setVisible(false);
 		setVisible(false, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLING_REASON, SampleDto.SAMPLE_MATERIAL_TEXT);
 
-		setVisible(true, SampleDto.IPSAMPLESENT, SampleDto.IPSAMPLERESULTS, SampleDto.REQUESTED_SAMPLE_MATERIALS);
+		setVisible(true, SampleDto.REQUESTED_SAMPLE_MATERIALS);
 		testResultField.setVisible(true);
 
 	}
