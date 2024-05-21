@@ -15,11 +15,14 @@
 package de.symeda.sormas.api.sample;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.utils.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.Max;
@@ -911,6 +914,25 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static SampleDto build(UserReferenceDto userRef, CaseReferenceDto caseRef) {
 
 		final SampleDto sampleDto = getSampleDto(userRef);
+		//get associated caseDto
+		CaseDataDto caseDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(caseRef.getUuid());
+		//get disease
+		Disease disease = caseDto.getDisease();
+		//check not null
+		if (disease != null) {
+			//get labs by disease select first and get id
+			List<FacilityReferenceDto> labs = FacadeProvider.getFacilityFacade().getAllActiveFacilityByDisease(disease.getName());
+			if (labs.size() > 0) {
+				sampleDto.setLab(labs.get(0));
+			} else {
+				//get all labs
+				List<FacilityReferenceDto> allLabs = FacadeProvider.getFacilityFacade().getAllActiveLaboratories(false);
+				if (allLabs.size() > 0) {
+					sampleDto.setLab(allLabs.get(0));
+				}
+			}
+
+		}
 		sampleDto.setAssociatedCase(caseRef);
 		return sampleDto;
 	}
