@@ -269,27 +269,27 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(6,SampleDto.IMMUNOCOMPROMISED_STATUS_SUSPECTED) +
 					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION);
 
-			protected static final String GUINEA_WORM_LAYOUT =
-						fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
-						fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
-						fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
-						fluidRowLocs(6, SampleDto.SAMPLE_MATERIAL) +
-						loc(HEADING_SPECIMEN_HANDLING) +
-						fluidRowLocs(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL) +
-						fluidRowLocs(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY) +
-						fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.RECEIVED_BY_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +
-						loc(NATIONAL_SECRETARIAT_ONLY) +
-						fluidRowLocs(SampleDto.SENT_FOR_CONFIRMATION_NATIONAL, SampleDto.DATE_FORM_SENT_TO_NATIONAL) +
-						fluidRowLocs(SampleDto.SENT_FOR_CONFIRMATION_TO, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
-						loc(OTHER_INFORMATION_HEADLINE_LOC) +
-						fluidRowLocs(SampleDto.USE_OF_CLOTH_FILTER, SampleDto.FREQUENCY_OF_CHANGING_FILTERS) +
-						fluidRowLocs(SampleDto.REMARKS) +
-			//				locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
-			//				fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
-			//				locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
-			//				fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.SPECIMEN_CONDITION) +
-						fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT);
-    
+    protected static final String GUINEA_WORM_LAYOUT =
+				fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
+                fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
+				fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
+				fluidRowLocs(6, SampleDto.SAMPLE_MATERIAL) +
+				loc(HEADING_SPECIMEN_HANDLING) +
+				fluidRowLocs(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL) +
+				fluidRowLocs(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY) +
+				fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.RECEIVED_BY_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +
+				fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_NATIONAL, SampleDto.RECEIVED_BY_NATIONAL, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
+				loc(NATIONAL_SECRETARIAT_ONLY) +
+				fluidRowLocs(SampleDto.SENT_FOR_CONFIRMATION_NATIONAL, SampleDto.SENT_FOR_CONFIRMATION_NATIONAL_DATE, SampleDto.SENT_FOR_CONFIRMATION_TO) +
+				fluidRowLocs(6, SampleDto.DATE_RESULT_RECEIVED_NATIONAL) +
+				loc(OTHER_INFORMATION_HEADLINE_LOC) +
+				fluidRowLocs(SampleDto.USE_OF_CLOTH_FILTER, SampleDto.FREQUENCY_OF_CHANGING_FILTERS) +
+				fluidRowLocs(SampleDto.REMARKS) +
+//				locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
+//				fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
+//				locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
+//				fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.SPECIMEN_CONDITION) +
+				fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT);
     //@formatter:on
 
 	protected AbstractSampleForm(Class<SampleDto> type, String propertyI18nPrefix, Disease disease, UiFieldAccessCheckers fieldAccessCheckers) {
@@ -430,7 +430,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL,
 				SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY,
 				SampleDto.SENT_FOR_CONFIRMATION_NATIONAL,
-				SampleDto.SENT_FOR_CONFIRMATION_NATIONAL_DATE,
 				SampleDto.SENT_FOR_CONFIRMATION_TO,
 				SampleDto.DATE_RESULT_RECEIVED_NATIONAL,
 				SampleDto.USE_OF_CLOTH_FILTER,
@@ -1417,6 +1416,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		setVisible(true,
 				SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL,
 				SampleDto.SENT_FOR_CONFIRMATION_NATIONAL,
+				SampleDto.DATE_FORM_SENT_TO_NATIONAL,
 				SampleDto.USE_OF_CLOTH_FILTER,
 				SampleDto.REMARKS);
 
@@ -1428,7 +1428,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		FieldHelper.setVisibleWhen(
 				getFieldGroup(),
-				Arrays.asList(SampleDto.SENT_FOR_CONFIRMATION_TO, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL, SampleDto.DATE_FORM_SENT_TO_NATIONAL),
+				Arrays.asList(SampleDto.SENT_FOR_CONFIRMATION_TO, SampleDto.SENT_FOR_CONFIRMATION_NATIONAL_DATE, SampleDto.DATE_RESULT_RECEIVED_NATIONAL),
 				SampleDto.SENT_FOR_CONFIRMATION_NATIONAL,
 				Arrays.asList(YesNo.YES),
 				true);
