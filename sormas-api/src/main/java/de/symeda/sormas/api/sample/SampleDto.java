@@ -190,7 +190,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String POSITIVE_REAL_TIME = "positiveRealTime";
 	public static final String FOUR_FOLD_RISE = "fourFoldRise";
 	public static final String INFLUENZA_VIRUS = "influenzaVirus";
-	public static final String OTHER_INFLUENZA_VIRUS = "otherInfluenzaVirus";
+	public static final String OTHER_TYPE = "otherInfluenzaVirus";
 	public static final String TREATMENT = "treatment";
 	public static final String STATE_TREATMENT_ADMINISTERED = "stateTreatmentAdministered";
 	public static final String RECEIVED_BY_REGION = "receivedByRegion";

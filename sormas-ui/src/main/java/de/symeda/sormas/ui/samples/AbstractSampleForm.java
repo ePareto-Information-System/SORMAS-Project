@@ -163,6 +163,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs("", SampleDto.SAMPLE_MATERIAL_TEXT) +
 					fluidRowLocs(SampleDto.SAMPLING_REASON, SampleDto.SAMPLING_REASON_DETAILS) +
 					fluidRowLocs(SampleDto.SAMPLE_SOURCE, "") +
+					fluidRowLocs(6,SampleDto.OTHER_TYPE) +
 					//fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
 
 
@@ -203,7 +204,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					loc(SampleDto.POSITIVE_VIRAL_CULTURE) +
 					loc(SampleDto.POSITIVE_REAL_TIME) +
 					loc(SampleDto.FOUR_FOLD_RISE) +
-					fluidRowLocs(SampleDto.INFLUENZA_VIRUS, SampleDto.OTHER_INFLUENZA_VIRUS) +
+					fluidRowLocs(6,SampleDto.INFLUENZA_VIRUS) +
 					loc(SampleDto.TREATMENT) +
 					loc(SampleDto.STATE_TREATMENT_ADMINISTERED) +
 
@@ -1143,7 +1144,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		OptionGroup positiveRealTime = addField(SampleDto.POSITIVE_REAL_TIME, OptionGroup.class);
 		OptionGroup foldRise = addField(SampleDto.FOUR_FOLD_RISE, OptionGroup.class);
 		ComboBox Virus = addField(SampleDto.INFLUENZA_VIRUS, ComboBox.class);
-		TextField otherVirus = addField(SampleDto.OTHER_INFLUENZA_VIRUS, TextField.class);
+
 		otherVirus.setVisible(false);
 		TextField treatment = addField(SampleDto.TREATMENT, TextField.class);
 		TextField stateTreatment = addField(SampleDto.STATE_TREATMENT_ADMINISTERED, TextField.class);
@@ -1166,6 +1167,17 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateResultsSentToClinician.setVisible(false);
 		dateSpecimenSentToLab.setVisible(false);
 		pathogenTestingRequestedField.setVisible(false);
+
+		List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.NASOPHARYNGEAL_SWAB, SampleMaterial.OROPHARYNGEAL_SWAB, SampleMaterial.ORO_NASO, SampleMaterial.SERA, SampleMaterial.PLASMA, SampleMaterial.OTHER);
+		FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
+
+		TextField otherType = addField(SampleDto.OTHER_TYPE, TextField.class);
+		otherType.setVisible(false);
+		otherType.setCaption("Specify for other type");
+
+		sampleMaterialComboBox.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
+			otherType.setVisible(sampleMaterialComboBox.getValue() != null && sampleMaterialComboBox.getValue() == SampleMaterial.OTHER);
+		});
 	}
 
 	private void handleFBI(){

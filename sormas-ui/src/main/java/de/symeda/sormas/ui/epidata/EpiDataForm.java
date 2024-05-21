@@ -91,8 +91,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					fluidRowLocs(EpiDataDto.NAME_OF_VACCINE, EpiDataDto.YEAR_OF_VACCINATION)+
 					loc(EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_COVID)+
 					fluidRowLocs(EpiDataDto.NAME_OF_VACCINE_FOR_COVID, EpiDataDto.YEAR_OF_VACCINATION_FOR_COVID)+
-					loc(EpiDataDto.PLACES_VISITED_PAST_7DAYS)+
 					loc(EpiDataDto.VISITED_PLACES_CONFIRMED_PANDEMIC)+
+					loc(EpiDataDto.PLACES_VISITED_PAST_7DAYS)+
 					fluidRowLocs(EpiDataDto.RISK_FACTORS_SEVERE_DISEASE, EpiDataDto.OTHER_SPECIFY)+
 					loc(EpiDataDto.PATIENT_TRAVELLED_TWO_WEEKS_PRIOR)+
 					locCss(VSPACE_TOP_3, "") +
@@ -463,8 +463,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			yearCovid.setVisible(false);
 			contactDeadWildAnimals.setVisible(true);
 
-			addField(EpiDataDto.PLACES_VISITED_PAST_7DAYS, com.vaadin.v7.ui.TextArea.class);
-			addField(EpiDataDto.VISITED_PLACES_CONFIRMED_PANDEMIC, OptionGroup.class);
+			TextArea placesVisited = addField(EpiDataDto.PLACES_VISITED_PAST_7DAYS, com.vaadin.v7.ui.TextArea.class);
+			OptionGroup visitedPlace = addField(EpiDataDto.VISITED_PLACES_CONFIRMED_PANDEMIC, OptionGroup.class);
 			ComboBox riskFactor = addField(EpiDataDto.RISK_FACTORS_SEVERE_DISEASE, ComboBox.class);
 			TextField other = addField(EpiDataDto.OTHER_SPECIFY, com.vaadin.v7.ui.TextField.class);
 			other.setVisible(false);
@@ -475,6 +475,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 			FieldHelper.setVisibleWhen(contactSickDomesticAnimals, Arrays.asList(ifYesSpecifySickDomestic), Arrays.asList(YesNo.YES), true);
 			FieldHelper.setVisibleWhen(contactDeadWildAnimals, Arrays.asList(ifYesSpecifyDeadWild), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(visitedPlace, Arrays.asList(placesVisited), Arrays.asList(YesNo.YES), true);
 
 		}
 
