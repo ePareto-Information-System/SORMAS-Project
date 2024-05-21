@@ -100,12 +100,12 @@ public class PersonTravelHistoryField extends AbstractTableField<PersonTravelHis
         //format date
         table.addGeneratedColumn(DATE_FROM, (source, itemId, columnId) -> {
             PersonTravelHistoryDto personTravelHistoryDto = (PersonTravelHistoryDto) itemId;
-            return DateFormatHelper.buildPeriodString(personTravelHistoryDto.getDateFrom(), personTravelHistoryDto.getDateTo());
+            return DateFormatHelper.formatDate(personTravelHistoryDto.getDateFrom());
         });
 
         table.addGeneratedColumn(DATE_TO, (source, itemId, columnId) -> {
             PersonTravelHistoryDto personTravelHistoryDto = (PersonTravelHistoryDto) itemId;
-            return DateFormatHelper.buildPeriodString(personTravelHistoryDto.getDateFrom(), personTravelHistoryDto.getDateTo());
+            return DateFormatHelper.formatDate(personTravelHistoryDto.getDateFrom());
         });
     }
 

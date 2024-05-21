@@ -228,9 +228,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				fluidRowLocs(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL) +
 				fluidRowLocs(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY) +
 				fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.RECEIVED_BY_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +
+				fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_NATIONAL, SampleDto.RECEIVED_BY_NATIONAL, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
 				loc(NATIONAL_SECRETARIAT_ONLY) +
-				fluidRowLocs(SampleDto.SENT_FOR_CONFIRMATION_NATIONAL, SampleDto.DATE_FORM_SENT_TO_NATIONAL) +
-				fluidRowLocs(SampleDto.SENT_FOR_CONFIRMATION_TO, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
+				fluidRowLocs(SampleDto.SENT_FOR_CONFIRMATION_NATIONAL, SampleDto.SENT_FOR_CONFIRMATION_NATIONAL_DATE, SampleDto.SENT_FOR_CONFIRMATION_TO) +
+				fluidRowLocs(6, SampleDto.DATE_RESULT_RECEIVED_NATIONAL) +
 				loc(OTHER_INFORMATION_HEADLINE_LOC) +
 				fluidRowLocs(SampleDto.USE_OF_CLOTH_FILTER, SampleDto.FREQUENCY_OF_CHANGING_FILTERS) +
 				fluidRowLocs(SampleDto.REMARKS) +
@@ -340,7 +341,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL,
 				SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY,
 				SampleDto.SENT_FOR_CONFIRMATION_NATIONAL,
-				SampleDto.SENT_FOR_CONFIRMATION_NATIONAL_DATE,
 				SampleDto.SENT_FOR_CONFIRMATION_TO,
 				SampleDto.DATE_RESULT_RECEIVED_NATIONAL,
 				SampleDto.USE_OF_CLOTH_FILTER,
@@ -1135,6 +1135,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		setVisible(true,
 				SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL,
 				SampleDto.SENT_FOR_CONFIRMATION_NATIONAL,
+				SampleDto.DATE_FORM_SENT_TO_NATIONAL,
 				SampleDto.USE_OF_CLOTH_FILTER,
 				SampleDto.REMARKS);
 
@@ -1146,7 +1147,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		FieldHelper.setVisibleWhen(
 				getFieldGroup(),
-				Arrays.asList(SampleDto.SENT_FOR_CONFIRMATION_TO, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL, SampleDto.DATE_FORM_SENT_TO_NATIONAL),
+				Arrays.asList(SampleDto.SENT_FOR_CONFIRMATION_TO, SampleDto.SENT_FOR_CONFIRMATION_NATIONAL_DATE, SampleDto.DATE_RESULT_RECEIVED_NATIONAL),
 				SampleDto.SENT_FOR_CONFIRMATION_NATIONAL,
 				Arrays.asList(YesNo.YES),
 				true);
