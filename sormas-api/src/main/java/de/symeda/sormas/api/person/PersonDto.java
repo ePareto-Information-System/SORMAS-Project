@@ -153,6 +153,7 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String CUT_CORD_WITH_STERILE_BLADE = "cutCordWithSterileBlade";
 	public static final String CORD_TREATED_WITH_ANYTHING = "cordTreatedWithAnything";
 	public static final String CORD_TREATED_WITH_ANYTHING_WHERE = "cordTreatedWithAnythingWhere";
+	public static final String LOCATION_OF_BIRTH = "locationOfBirth";
 
 
 	// Fields are declared in the order they should appear in the import template
@@ -456,6 +457,7 @@ public class PersonDto extends PseudonymizableDto {
 	private YesNoUnknown cutCordWithSterileBlade;
 	private YesNoUnknown cordTreatedWithAnything;
 	private String cordTreatedWithAnythingWhere;
+	private LocationOfBirth locationOfBirth;
 
 
 	@SuppressWarnings("serial")
@@ -1382,5 +1384,13 @@ public class PersonDto extends PseudonymizableDto {
 
 	public void setCordTreatedWithAnythingWhere(String cordTreatedWithAnythingWhere) {
 		this.cordTreatedWithAnythingWhere = cordTreatedWithAnythingWhere;
+	}
+
+	public LocationOfBirth getLocationOfBirth() {
+		return this.locationOfBirth;
+	}
+
+	public void setLocationOfBirth(final LocationOfBirth locationOfBirth) {
+		this.locationOfBirth = locationOfBirth;
 	}
 }

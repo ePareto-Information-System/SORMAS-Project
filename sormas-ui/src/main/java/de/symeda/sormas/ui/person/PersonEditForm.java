@@ -94,6 +94,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					) +
 					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_REGION, PersonDto.PLACE_OF_BIRTH_DISTRICT, PersonDto.PLACE_OF_BIRTH_COMMUNITY) +
 					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_FACILITY_TYPE, PersonDto.PLACE_OF_BIRTH_FACILITY, PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS) +
+					fluidRowLocs(6, PersonDto.LOCATION_OF_BIRTH) +
 					fluidRowLocs(PersonDto.GESTATION_AGE_AT_BIRTH, PersonDto.BIRTH_WEIGHT) +
 					loc(BIRTH_OF_INFANT_HEADING_LOC) +
 					fluidRowLocs(PersonDto.RECEIVED_ANTENATAL_CARE, PersonDto.PRENATAL_TOTAL_VISITS)+
@@ -169,6 +170,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private TextField causeOfDeathDetailsField;
 	private ComboBox birthDateDay;
 	private ComboBox cbPlaceOfBirthFacility;
+	private ComboBox locationOfBirthField;
 	private PersonContext personContext;
 	private boolean isPseudonymized;
 	private LocationEditForm addressForm;
@@ -435,6 +437,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 		cbPlaceOfBirthFacility = addInfrastructureField(PersonDto.PLACE_OF_BIRTH_FACILITY);
 		TextField tfPlaceOfBirthFacilityDetails = addField(PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS, TextField.class);
+
+		locationOfBirthField = addField(PersonDto.LOCATION_OF_BIRTH, ComboBox.class);
+		locationOfBirthField.setVisible(false);
 
 		causeOfDeathField = addField(PersonDto.CAUSE_OF_DEATH, ComboBox.class);
 		causeOfDeathDiseaseField = addDiseaseField(PersonDto.CAUSE_OF_DEATH_DISEASE, true);
@@ -720,6 +725,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			TextField attendedByTrainedTbaMidwifeName = addField(PersonDto.ATTENDED_BY_TRAINED_TBA_MIDWIFE_NAME, TextField.class);
 			NullableOptionGroup attendedByDoctorNurse = addField(PersonDto.ATTENDED_BY_DOCTOR_NURSE, NullableOptionGroup.class);
 			attendedByDoctorNurse.addItems(AttendedBy.values());
+			locationOfBirthField.setVisible(true);
 
 			NullableOptionGroup cutCordWithSterileBlade = addField(PersonDto.CUT_CORD_WITH_STERILE_BLADE, NullableOptionGroup.class);
 			NullableOptionGroup cordTreatedWithAnything = addField(PersonDto.CORD_TREATED_WITH_ANYTHING, NullableOptionGroup.class);

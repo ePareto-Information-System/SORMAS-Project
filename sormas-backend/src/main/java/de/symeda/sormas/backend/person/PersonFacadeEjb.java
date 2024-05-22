@@ -1043,6 +1043,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setCutCordWithSterileBlade(source.getCutCordWithSterileBlade());
 		target.setCordTreatedWithAnything(source.getCordTreatedWithAnything());
 		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
+		target.setLocationOfBirth(source.getLocationOfBirth());
 
 		return target;
 	}
@@ -1875,6 +1876,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setCutCordWithSterileBlade(source.getCutCordWithSterileBlade());
 		target.setCordTreatedWithAnything(source.getCordTreatedWithAnything());
 		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
+		target.setLocationOfBirth(source.getLocationOfBirth());
 
 
 		return target;

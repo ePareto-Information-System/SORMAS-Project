@@ -1919,6 +1919,7 @@ public interface Captions {
 	String Person_cutCordWithSterileBlade = "Person.cutCordWithSterileBlade";
 	String Person_cordTreatedWithAnything = "Person.cordTreatedWithAnything";
 	String Person_cordTreatedWithAnythingWhere = "Person.cordTreatedWithAnythingWhere";
+	String Person_locationOfBirth = "Person.locationOfBirth";
 	String Person_presentCondition = "Person.presentCondition";
 	String Person_salutation = "Person.salutation";
 	String Person_sex = "Person.sex";
