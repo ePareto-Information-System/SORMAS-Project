@@ -92,10 +92,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 							fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD),
 							fluidRowLocs(PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE_REFERENCE_DATE)
 					) +
-					fluidRowLocs(6, PersonDto.BIRTH_IN_INSTITUTION) +
+					fluidRowLocs(6, PersonDto.LOCATION_OF_BIRTH, 6, PersonDto.BIRTH_IN_INSTITUTION) +
 					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_REGION, PersonDto.PLACE_OF_BIRTH_DISTRICT, PersonDto.PLACE_OF_BIRTH_COMMUNITY) +
-					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_FACILITY_TYPE, PersonDto.PLACE_OF_BIRTH_FACILITY, PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS) +
-					fluidRowLocs(6, PersonDto.LOCATION_OF_BIRTH) +
+					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_FACILITY, PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS) +
 					fluidRowLocs(PersonDto.GESTATION_AGE_AT_BIRTH, PersonDto.BIRTH_WEIGHT) +
 					loc(BIRTH_OF_INFANT_HEADING_LOC) +
 					fluidRowLocs(PersonDto.RECEIVED_ANTENATAL_CARE, PersonDto.PRENATAL_TOTAL_VISITS)+
@@ -737,7 +736,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 //			(cbPlaceOfBirthRegion, cbPlaceOfBirthCommunity, cbPlaceOfBirthCommunity, placeOfBirthFacilityType, cbPlaceOfBirthFacility) visible birthInInstitutionField is yes
 			FieldHelper.setVisibleWhen(
 					birthInInstitutionField,
-					Arrays.asList(cbPlaceOfBirthRegion, cbPlaceOfBirthDistrict, cbPlaceOfBirthCommunity, placeOfBirthFacilityType, cbPlaceOfBirthFacility),
+					Arrays.asList(cbPlaceOfBirthRegion, cbPlaceOfBirthDistrict, cbPlaceOfBirthCommunity, cbPlaceOfBirthFacility),
 					Arrays.asList(YesNoUnknown.YES),
 					true);
 
@@ -801,6 +800,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			ComboBox communityField,
 			ComboBox districtField,
 			boolean allowNoneFacility) {
+		typeField.setValue(FacilityType.HOSPITAL);
 		if (typeField.getValue() != null) {
 			FieldHelper.updateItems(
 					facilityField,
