@@ -892,7 +892,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			FieldHelper.setVisibleWhen(getFieldGroup(), PersonDto.ATTENDED_BY_TRAINED_TBA_MIDWIFE_NAME, PersonDto.ATTENDED_BY_TRAINED_TBA, YesNoUnknown.YES, true);
 			FieldHelper.setVisibleWhen(getFieldGroup(), PersonDto.CORD_TREATED_WITH_ANYTHING_WHERE, PersonDto.CORD_TREATED_WITH_ANYTHING, YesNoUnknown.YES, true);
 
-			setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER, PersonDto.EDUCATION_TYPE, PersonDto.OCCUPATION_DETAILS);
+			setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER, PersonDto.EDUCATION_TYPE, PersonDto.OCCUPATION_DETAILS, PersonDto.MARRIAGE_STATUS);
 		}
 		if(disease == Disease.FOODBORNE_ILLNESS){
 			addressHeader.setVisible(false);

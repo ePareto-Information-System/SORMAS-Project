@@ -56,6 +56,8 @@ import de.symeda.sormas.ui.utils.ExternalJournalUtil;
 import de.symeda.sormas.ui.utils.ViewConfiguration;
 import de.symeda.sormas.ui.utils.ViewMode;
 
+import java.util.Arrays;
+
 
 public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<CaseReferenceDto> {
 
@@ -218,7 +220,9 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_EPIDEMIOLOGICAL_DATA)
 						&& caze.getDisease() != Disease.CONGENITAL_RUBELLA) {
 					if(caze.getDisease() != Disease.FOODBORNE_ILLNESS ) {
+						if (caze.getDisease() != Disease.NEONATAL_TETANUS) {
 						menu.addView(CaseEpiDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EPI_DATA), params);
+						}
 					}else{
 						menu.addView(CaseEpiDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.FOOD_HISTORY), params);
 					}
@@ -280,7 +284,9 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SAMPLES_LAB)
 					&& UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)
 					&& !caze.checkIsUnreferredPortHealthCase()) {
-				menu.addView(CaseSampleView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, Captions.caseSamples), params);
+				if (!Arrays.asList(Disease.NEONATAL_TETANUS).contains(caze.getDisease())) {
+					menu.addView(CaseSampleView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, Captions.caseSamples), params);
+				}
 			}
 
 			if (caze.getExternalData() != null && !caze.getExternalData().isEmpty()) {
