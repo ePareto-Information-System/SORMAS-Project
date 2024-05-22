@@ -1794,7 +1794,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 dateOfNotification.setVisible(true);
                 dateOfInvestigation.setVisible(true);
 
-                setVisible(false, CaseDataDto.SURVEILLANCE_OFFICER, CaseDataDto.REPORTING_OFFICER_NAME, CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE, CaseDataDto.FUNCTION_OF_REPORTING_OFFICER);
+                setVisible(false, CaseDataDto.SURVEILLANCE_OFFICER, CaseDataDto.REPORTING_OFFICER_NAME, CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE, CaseDataDto.FUNCTION_OF_REPORTING_OFFICER, CaseDataDto.REPORTING_OFFICER_EMAIL);
 
                 motherVaccinatedWithTT = addField(CaseDataDto.MOTHER_VACCINATED_WITH_TT, NullableOptionGroup.class);
                 motherHaveCard = addField(CaseDataDto.MOTHER_HAVE_CARD, NullableOptionGroup.class);

@@ -1185,6 +1185,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setResidenceSinceWhenInMonths(source.getResidenceSinceWhenInMonths());
 		target.setEthnicity(source.getEthnicity());
 		target.setLocationOfBirth(source.getLocationOfBirth());
+		target.setBirthInInstitution(source.getBirthInInstitution());
 
 		return target;
 	}
@@ -2037,6 +2038,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setResidenceSinceWhenInMonths(source.getResidenceSinceWhenInMonths());
 		target.setEthnicity(source.getEthnicity());
 		target.setLocationOfBirth(source.getLocationOfBirth());
+		target.setBirthInInstitution(source.getBirthInInstitution());
 
 		return target;
 	}

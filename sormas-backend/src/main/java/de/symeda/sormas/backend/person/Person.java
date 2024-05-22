@@ -261,6 +261,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private YesNoUnknown cordTreatedWithAnything;
 	private String cordTreatedWithAnythingWhere;
 	private LocationOfBirth locationOfBirth;
+	private YesNoUnknown birthInInstitution;
 
 	private Cadre cadre;
 	private String telNumber;
@@ -1240,5 +1241,13 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 
 	public void setLocationOfBirth(final LocationOfBirth locationOfBirth) {
 		this.locationOfBirth = locationOfBirth;
+	}
+
+	public YesNoUnknown getBirthInInstitution() {
+		return this.birthInInstitution;
+	}
+
+	public void setBirthInInstitution(final YesNoUnknown birthInInstitution) {
+		this.birthInInstitution = birthInInstitution;
 	}
 }

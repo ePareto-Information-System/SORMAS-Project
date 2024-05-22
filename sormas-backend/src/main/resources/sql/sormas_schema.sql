@@ -14273,4 +14273,10 @@ INSERT INTO schema_version(version_number, comment) VALUES (646, 'Renamed placeS
 ALTER TABLE person ADD COLUMN placeOfResidenceSameAsReportingVillage varchar(255);
 ALTER TABLE person ADD COLUMN residenceSinceWhenInMonths varchar(255);
 INSERT INTO schema_version(version_number, comment) VALUES (647, 'Added new fields to person');
--- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+
+ALTER TABLE person ADD COLUMN locationOfBirth varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (648, 'Added locationOfBirth to person');
+
+ALTER TABLE person ADD COLUMN birthInInstitution varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (649, 'Added birthInInstitution to person');
+-- *** Insert new sql commands BEFORE this line. Remember to alway
