@@ -455,7 +455,7 @@ public class PersonDto extends PseudonymizableDto {
 	private AttendedBy attendedByDoctorNurse;
 	private YesNoUnknown cutCordWithSterileBlade;
 	private YesNoUnknown cordTreatedWithAnything;
-	private TreatmentOfCord cordTreatedWithAnythingWhere;
+	private String cordTreatedWithAnythingWhere;
 
 
 	@SuppressWarnings("serial")
@@ -1376,11 +1376,11 @@ public class PersonDto extends PseudonymizableDto {
 		this.cordTreatedWithAnything = cordTreatedWithAnything;
 	}
 
-	public TreatmentOfCord getCordTreatedWithAnythingWhere() {
+	public String getCordTreatedWithAnythingWhere() {
 		return cordTreatedWithAnythingWhere;
 	}
 
-	public void setCordTreatedWithAnythingWhere(TreatmentOfCord cordTreatedWithAnythingWhere) {
+	public void setCordTreatedWithAnythingWhere(String cordTreatedWithAnythingWhere) {
 		this.cordTreatedWithAnythingWhere = cordTreatedWithAnythingWhere;
 	}
 }

@@ -233,10 +233,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM) + fluidRowLocs(CaseDataDto.TRIMESTER, "") +
 					fluidRowLocs(CaseDataDto.VACCINATION_STATUS, CaseDataDto.VACCINATION_TYPE, CaseDataDto.VACCINATION_DATE) +
 					fluidRowLocs(CaseDataDto.MOTHER_VACCINATED_WITH_TT, CaseDataDto.MOTHER_HAVE_CARD) +
-					fluidRowLocs(CaseDataDto.MOTHER_NUMBER_OF_DOSES, CaseDataDto.MOTHER_VACCINATION_STATUS) +
+					fluidRowLocs(CaseDataDto.MOTHER_VACCINATION_STATUS, CaseDataDto.MOTHER_NUMBER_OF_DOSES) +
 					fluidRowLocs(CaseDataDto.MOTHER_TT_DATE_ONE, CaseDataDto.MOTHER_TT_DATE_TWO) +
-					fluidRowLocs(CaseDataDto.MOTHER_TT_DATE_THREE + CaseDataDto.MOTHER_TT_DATE_FOUR) +
-					fluidRowLocs(CaseDataDto.MOTHER_TT_DATE_FIVE + CaseDataDto.MOTHER_LAST_DOSE_DATE) +
+					fluidRowLocs(CaseDataDto.MOTHER_TT_DATE_THREE, CaseDataDto.MOTHER_TT_DATE_FOUR) +
+					fluidRowLocs(CaseDataDto.MOTHER_TT_DATE_FIVE, CaseDataDto.MOTHER_LAST_DOSE_DATE) +
 					fluidRowLocs(CaseDataDto.SEEN_IN_OPD, CaseDataDto.ADMITTED_IN_OPD) +
 					fluidRowLocs(6, CaseDataDto.MOTHER_GIVEN_PROTECTIVE_DOSE_TT, 3, CaseDataDto.MOTHER_GIVEN_PROTECTIVE_DOSE_TT_DATE, 3, CaseDataDto.SUPPLEMENTAL_IMMUNIZATION) +
 					fluidRowLocs(CaseDataDto.SUPPLEMENTAL_IMMUNIZATION_DETAILS) +
@@ -1619,12 +1619,17 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				dateOfNotification.setVisible(true);
 				dateOfInvestigation.setVisible(true);
 
-				setVisible(true, CaseDataDto.SURVEILLANCE_OFFICER, CaseDataDto.REPORTING_OFFICER_NAME, CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE);
+				setVisible(false, CaseDataDto.SURVEILLANCE_OFFICER, CaseDataDto.REPORTING_OFFICER_NAME, CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE, CaseDataDto.FUNCTION_OF_REPORTING_OFFICER);
 
 				motherVaccinatedWithTT = addField(CaseDataDto.MOTHER_VACCINATED_WITH_TT, NullableOptionGroup.class);
 				motherHaveCard = addField(CaseDataDto.MOTHER_HAVE_CARD, NullableOptionGroup.class);
 				motherNumberOfDoses = addField(CaseDataDto.MOTHER_NUMBER_OF_DOSES, TextField.class);
 				motherNumberOfDoses.addValidator(new RegexpValidator("[0-9]*", I18nProperties.getValidationError(Validations.onlyIntegerNumbersAllowed, motherNumberOfDoses.getCaption())));
+				motherNumberOfDoses.addValueChangeListener(field -> {
+					if (StringUtils.isNotEmpty(motherNumberOfDoses.getValue())) {
+						handleNumberOfDosesChange(Integer.parseInt(motherNumberOfDoses.getValue()));
+					}
+				});
 				motherVaccinationStatus = addField(CaseDataDto.MOTHER_VACCINATION_STATUS, NullableOptionGroup.class);
 				motherTTDateOne = addField(CaseDataDto.MOTHER_TT_DATE_ONE, DateField.class);
 				motherTTDateTwo = addField(CaseDataDto.MOTHER_TT_DATE_TWO, DateField.class);
@@ -1632,8 +1637,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				motherTTDateFour = addField(CaseDataDto.MOTHER_TT_DATE_FOUR, DateField.class);
 				motherTTDateFive = addField(CaseDataDto.MOTHER_TT_DATE_FIVE, DateField.class);
 				motherLastDoseDate = addField(CaseDataDto.MOTHER_LAST_DOSE_DATE, DateField.class);
-
-				//	seenInOPD, admittedInOPD, motherGivenProtectiveDoseTT, motherGivenProtectiveDoseTTDate, supplementalImmunization, supplementalImmunizationDetails
+				setVisible(false, CaseDataDto.MOTHER_TT_DATE_ONE, CaseDataDto.MOTHER_TT_DATE_TWO, CaseDataDto.MOTHER_TT_DATE_THREE, CaseDataDto.MOTHER_TT_DATE_FOUR, CaseDataDto.MOTHER_TT_DATE_FIVE, CaseDataDto.MOTHER_LAST_DOSE_DATE);
+				handleNumberOfDosesChange(Integer.parseInt(motherNumberOfDoses.getValue()));
 				seenInOPD = addField(CaseDataDto.SEEN_IN_OPD, NullableOptionGroup.class);
 				admittedInOPD = addField(CaseDataDto.ADMITTED_IN_OPD, NullableOptionGroup.class);
 				motherGivenProtectiveDoseTT = addField(CaseDataDto.MOTHER_GIVEN_PROTECTIVE_DOSE_TT, NullableOptionGroup.class);
@@ -1669,7 +1674,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 				FieldHelper.setVisibleWhen(
 						motherHaveCard,
-						Arrays.asList(motherNumberOfDoses, motherTTDateOne, motherTTDateTwo, motherTTDateThree, motherTTDateFour, motherTTDateFive, motherLastDoseDate),
+						Arrays.asList(motherNumberOfDoses),
 						Arrays.asList(YesNoUnknown.YES),
 						true);
 			}
@@ -2154,5 +2159,16 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			quarantineChangeComment.clear();
 			setVisible(false, CaseDataDto.PREVIOUS_QUARANTINE_TO, CaseDataDto.QUARANTINE_CHANGE_COMMENT);
 		}
+	}
+
+
+	private void handleNumberOfDosesChange(Integer selectedNumberOfDoses) {
+			int numberOfDoses = Integer.parseInt(motherNumberOfDoses.getValue());
+			motherTTDateOne.setVisible(selectedNumberOfDoses >= 1);
+			motherTTDateTwo.setVisible(selectedNumberOfDoses >= 2);
+			motherTTDateThree.setVisible(selectedNumberOfDoses >= 3);
+			motherTTDateFour.setVisible(selectedNumberOfDoses >= 4);
+			motherTTDateFive.setVisible(selectedNumberOfDoses >= 5);
+			motherLastDoseDate.setVisible(selectedNumberOfDoses >= 6);
 	}
 }

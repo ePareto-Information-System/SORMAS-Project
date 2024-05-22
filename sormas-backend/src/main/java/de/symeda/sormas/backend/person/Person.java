@@ -239,7 +239,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private AttendedBy attendedByDoctorNurse;
 	private YesNoUnknown cutCordWithSterileBlade;
 	private YesNoUnknown cordTreatedWithAnything;
-	private TreatmentOfCord cordTreatedWithAnythingWhere;
+	private String cordTreatedWithAnythingWhere;
 
 	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getFirstName() {
@@ -1074,11 +1074,11 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 		this.cordTreatedWithAnything = cordTreatedWithAnything;
 	}
 
-	public TreatmentOfCord getCordTreatedWithAnythingWhere() {
+	public String getCordTreatedWithAnythingWhere() {
 		return cordTreatedWithAnythingWhere;
 	}
 
-	public void setCordTreatedWithAnythingWhere(TreatmentOfCord cordTreatedWithAnythingWhere) {
+	public void setCordTreatedWithAnythingWhere(String cordTreatedWithAnythingWhere) {
 		this.cordTreatedWithAnythingWhere = cordTreatedWithAnythingWhere;
 	}
 }
