@@ -12982,4 +12982,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (569, 'Added nearest
 
 ALTER TABLE person ADD COLUMN locationOfBirth varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (570, 'Added locationOfBirth to person');
+
+ALTER TABLE person ADD COLUMN birthInInstitution varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (571, 'Added birthInInstitution to person');
 -- *** Insert new sql commands BEFORE this line. Remember to alway

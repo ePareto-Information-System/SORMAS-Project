@@ -92,6 +92,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 							fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD),
 							fluidRowLocs(PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE_REFERENCE_DATE)
 					) +
+					fluidRowLocs(6, PersonDto.BIRTH_IN_INSTITUTION) +
 					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_REGION, PersonDto.PLACE_OF_BIRTH_DISTRICT, PersonDto.PLACE_OF_BIRTH_COMMUNITY) +
 					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_FACILITY_TYPE, PersonDto.PLACE_OF_BIRTH_FACILITY, PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS) +
 					fluidRowLocs(6, PersonDto.LOCATION_OF_BIRTH) +
@@ -175,6 +176,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private boolean isPseudonymized;
 	private LocationEditForm addressForm;
 	private PresentConditionChangeListener presentConditionChangeListener;
+	private NullableOptionGroup birthInInstitutionField;
 	//@formatter:on
 	public PersonEditForm(PersonContext personContext, Disease disease, String diseaseDetails, ViewMode viewMode, boolean isPseudonymized, CaseOrigin caseOrigin) {
 		super(
@@ -363,6 +365,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		DateField burialDate = addField(PersonDto.BURIAL_DATE, DateField.class);
 		TextField burialPlaceDesc = addField(PersonDto.BURIAL_PLACE_DESCRIPTION, TextField.class);
 		ComboBox burialConductor = addField(PersonDto.BURIAL_CONDUCTOR, ComboBox.class);
+
+		birthInInstitutionField = addField(PersonDto.BIRTH_IN_INSTITUTION, NullableOptionGroup.class);
+		birthInInstitutionField.setVisible(false);
 
 		addressForm = addField(PersonDto.ADDRESS, LocationEditForm.class);
 
@@ -726,6 +731,17 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			NullableOptionGroup attendedByDoctorNurse = addField(PersonDto.ATTENDED_BY_DOCTOR_NURSE, NullableOptionGroup.class);
 			attendedByDoctorNurse.addItems(AttendedBy.values());
 			locationOfBirthField.setVisible(true);
+			birthInInstitutionField.setVisible(true);
+			personContactDetailsField.setVisible(false);
+
+//			(cbPlaceOfBirthRegion, cbPlaceOfBirthCommunity, cbPlaceOfBirthCommunity, placeOfBirthFacilityType, cbPlaceOfBirthFacility) visible birthInInstitutionField is yes
+			FieldHelper.setVisibleWhen(
+					birthInInstitutionField,
+					Arrays.asList(cbPlaceOfBirthRegion, cbPlaceOfBirthDistrict, cbPlaceOfBirthCommunity, placeOfBirthFacilityType, cbPlaceOfBirthFacility),
+					Arrays.asList(YesNoUnknown.YES),
+					true);
+
+
 
 			NullableOptionGroup cutCordWithSterileBlade = addField(PersonDto.CUT_CORD_WITH_STERILE_BLADE, NullableOptionGroup.class);
 			NullableOptionGroup cordTreatedWithAnything = addField(PersonDto.CORD_TREATED_WITH_ANYTHING, NullableOptionGroup.class);
