@@ -1188,6 +1188,7 @@ public interface Captions {
 	String eventLinkToEventsWithinTheSameFacility = "eventLinkToEventsWithinTheSameFacility";
 	String eventNewEvent = "eventNewEvent";
 	String ebsNewEbs = "ebsNewEbs";
+	String ebsAlert = "ebsAlert";
 	String eventNewEventGroup = "eventNewEventGroup";
 	String eventNoDisease = "eventNoDisease";
 	String eventNoEventLinkedToCase = "eventNoEventLinkedToCase";
@@ -1254,6 +1255,7 @@ public interface Captions {
 	String eventUnlinkEvent = "eventUnlinkEvent";
 	String eventUnlinkEventGroup = "eventUnlinkEventGroup";
 	String Ebs_srcType = "Ebs.srcType";
+	String Ebs_personReporting = "Ebs.personReporting";
 	String Ebs_scanningType = "Ebs.scanningType";
 	String Ebs_automaticScanningType = "Ebs.automaticScanningType";
 	String Ebs_manualScanningType = "Ebs.manualScanningType";
@@ -1308,6 +1310,7 @@ public interface Captions {
 	String Triaging = "Triaging.triaging";
 	String SignalVerification = "SignalVerification.signalVerification";
 	String RiskAssessment = "RiskAssessment.riskAssessMent";
+	String Alert = "EbsAlert.alert";
 	String RiskAssessment_morbidityMortality = "RiskAssessment.morbidityMortality";
 	String RiskAssessment_spreadProbability = "RiskAssessment.spreadProbability";
 	String RiskAssessment_controlMeasures = "RiskAssessment.controlMeasures";
@@ -1315,6 +1318,13 @@ public interface Captions {
 	String RiskAssessment_responseDate = "RiskAssessment.responseDate";
 	String RiskAssessment_responseTime = "RiskAssessment.responseTime";
 	String RiskAssessment_info = "RiskAssessment.info";
+	String EbsAlert_actionInitiated = "EbsAlert.actionInitiated";
+	String EbsAlert_responseStatus = "EbsAlert.responseStatus";
+	String EbsAlert_responseDate = "EbsAlert.responseDate";
+	String EbsAlert_detailsResponseActivities = "EbsAlert.detailsResponseActivities";
+	String EbsAlert_detailsGiven = "EbsAlert.detailsGiven";
+	String EbsAlert_alertUsed = "EbsAlert.alertUsed";
+	String EbsAlert_detailsAlertUsed = "EbsAlert.detailsAlertUsed";
 	String export = "export";
 	String exportBasic = "exportBasic";
 	String exportCaseCustom = "exportCaseCustom";
