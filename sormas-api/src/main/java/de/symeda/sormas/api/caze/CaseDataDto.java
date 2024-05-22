@@ -31,6 +31,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.riskfactor.RiskFactorDto;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
@@ -697,7 +698,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private YesNoUnknown motherVaccinatedWithTT;
 	private YesNoUnknown motherHaveCard;
 	private String motherNumberOfDoses;
-	private YesNoUnknown motherVaccinationStatus;
+	private MotherVaccinationStatus motherVaccinationStatus;
 	private Date motherTTDateOne;
 	private Date motherTTDateTwo;
 	private Date motherTTDateThree;
@@ -2106,11 +2107,11 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		this.motherNumberOfDoses = motherNumberOfDoses;
 	}
 
-	public YesNoUnknown getMotherVaccinationStatus() {
+	public MotherVaccinationStatus getMotherVaccinationStatus() {
 		return motherVaccinationStatus;
 	}
 
-	public void setMotherVaccinationStatus(YesNoUnknown motherVaccinationStatus) {
+	public void setMotherVaccinationStatus(MotherVaccinationStatus motherVaccinationStatus) {
 		this.motherVaccinationStatus = motherVaccinationStatus;
 	}
 

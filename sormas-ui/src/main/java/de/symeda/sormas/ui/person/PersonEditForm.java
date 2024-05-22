@@ -866,18 +866,12 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 			NullableOptionGroup cutCordWithSterileBlade = addField(PersonDto.CUT_CORD_WITH_STERILE_BLADE, NullableOptionGroup.class);
 			NullableOptionGroup cordTreatedWithAnything = addField(PersonDto.CORD_TREATED_WITH_ANYTHING, NullableOptionGroup.class);
-			ComboBox cordTreatedWithAnythingWhere = addField(PersonDto.CORD_TREATED_WITH_ANYTHING_WHERE, ComboBox.class);
+			TextField cordTreatedWithAnythingWhere = addField(PersonDto.CORD_TREATED_WITH_ANYTHING_WHERE, TextField.class);
 
 			FieldHelper.setVisibleWhen(getFieldGroup(), PersonDto.ATTENDED_BY_TRAINED_TBA_MIDWIFE_NAME, PersonDto.ATTENDED_BY_TRAINED_TBA, YesNoUnknown.YES, true);
 			FieldHelper.setVisibleWhen(getFieldGroup(), PersonDto.CORD_TREATED_WITH_ANYTHING_WHERE, PersonDto.CORD_TREATED_WITH_ANYTHING, YesNoUnknown.YES, true);
 
 			setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER, PersonDto.EDUCATION_TYPE, PersonDto.OCCUPATION_DETAILS);
-			placeOfBirthFacilityType.setVisible(true);
-			tfPlaceOfBirthFacilityDetails.setVisible(true);
-			cbPlaceOfBirthRegion.setVisible(true);
-			cbPlaceOfBirthCommunity.setVisible(true);
-			cbPlaceOfBirthDistrict.setVisible(true);
-			cbPlaceOfBirthFacility.setVisible(true);
 		}
 		if(disease == Disease.FOODBORNE_ILLNESS){
 			addressHeader.setVisible(false);
