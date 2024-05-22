@@ -154,6 +154,8 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String EPID_NUMBER = "epidNumber";
 	public static final String NOTIFIED_BY = "notifiedBy";
 	public static final String DATE_OF_NOTIFICATION = "dateOfNotification";
+	public static final String NOTIFIED_BY_LIST = "notifiedByList";
+	public static final String NOTIFIED_OTHER = "notifiedOther";
 	public static final String DATE_OF_INVESTIGATION = "dateOfInvestigation";
 	public static final String REPORT_LAT = "reportLat";
 	public static final String REPORT_LON = "reportLon";
@@ -651,6 +653,8 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 
 	private String notifiedBy;
 	private Date dateOfNotification;
+	private NotifiedList notifiedByList;
+	private String notifiedOther;
 	private Date dateOfInvestigation;
 	private String addressMpox;
 	private String village;
@@ -2057,4 +2061,19 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 		this.specifyEventDiagnosis = specifyEventDiagnosis;
 	}
 
+	public NotifiedList getNotifiedByList() {
+		return notifiedByList;
+	}
+
+	public void setNotifiedByList(NotifiedList notifiedByList) {
+		this.notifiedByList = notifiedByList;
+	}
+
+	public String getNotifiedOther() {
+		return notifiedOther;
+	}
+
+	public void setNotifiedOther(String notifiedOther) {
+		this.notifiedOther = notifiedOther;
+	}
 }

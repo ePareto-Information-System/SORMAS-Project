@@ -3175,6 +3175,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setOccupation(source.getOccupation());
 		target.setDistrictOfResidence(source.getDistrictOfResidence());
 		target.setSpecifyEventDiagnosis(source.getSpecifyEventDiagnosis());
+		target.setNotifiedByList(source.getNotifiedByList());
+		target.setNotifiedOther(source.getNotifiedOther());
 
 		return target;
 	}
@@ -3404,6 +3406,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setOccupation(source.getOccupation());
 		target.setDistrictOfResidence(source.getDistrictOfResidence());
 		target.setSpecifyEventDiagnosis(source.getSpecifyEventDiagnosis());
+		target.setNotifiedByList(source.getNotifiedByList());
+		target.setNotifiedOther(source.getNotifiedOther());
 
 		return target;
 	}

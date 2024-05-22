@@ -13404,4 +13404,9 @@ ALTER TABLE pathogentest ADD COLUMN testresultforseconddisease varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (595, 'Added 4 columns to pathogentest for ILI');
 
+ALTER TABLE cases ADD COLUMN notifiedbylist varchar(255);
+ALTER TABLE cases ADD COLUMN notifiedother varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (596, 'Added 2 columns to case for AFP');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
