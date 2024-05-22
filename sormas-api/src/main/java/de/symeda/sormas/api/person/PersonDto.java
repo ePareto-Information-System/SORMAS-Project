@@ -169,6 +169,8 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String RESIDENCE_SINCE_WHEN_IN_MONTHS = "residenceSinceWhenInMonths";
 	public static final String APPLICABLE = "applicable";
 	public static final String ETHNICITY = "ethnicity";
+	public static final String LOCATION_OF_BIRTH = "locationOfBirth";
+
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -482,6 +484,7 @@ public class PersonDto extends PseudonymizableDto {
 	private String cordTreatedWithAnythingWhere;
 	private String telNumber;
 	private YesNo applicable;
+	private LocationOfBirth locationOfBirth;
 
 	private String pst14MonthsVillage;
 	
@@ -1526,5 +1529,13 @@ public class PersonDto extends PseudonymizableDto {
 
 	public void setEthnicity(String ethnicity) {
 		this.ethnicity = ethnicity;
+	}
+	
+	public LocationOfBirth getLocationOfBirth() {
+		return this.locationOfBirth;
+	}
+
+	public void setLocationOfBirth(final LocationOfBirth locationOfBirth) {
+		this.locationOfBirth = locationOfBirth;
 	}
 }

@@ -2,7 +2,7 @@ package de.symeda.sormas.api.person;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
 
-public enum TreatmentOfCord {
+public enum LocationOfBirth {
     HOSPITAL,
     HEALTH_CENTER,
     HOME,

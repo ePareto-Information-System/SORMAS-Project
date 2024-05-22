@@ -382,6 +382,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setPlaceOfResidenceSameAsReportingVillage(source.getPlaceOfResidenceSameAsReportingVillage());
 		target.setResidenceSinceWhenInMonths(source.getResidenceSinceWhenInMonths());
 		target.setEthnicity(source.getEthnicity());
+		target.setLocationOfBirth(source.getLocationOfBirth());
 
 		return target;
 	}
@@ -1183,6 +1184,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setPlaceOfResidenceSameAsReportingVillage(source.getPlaceOfResidenceSameAsReportingVillage());
 		target.setResidenceSinceWhenInMonths(source.getResidenceSinceWhenInMonths());
 		target.setEthnicity(source.getEthnicity());
+		target.setLocationOfBirth(source.getLocationOfBirth());
 
 		return target;
 	}
@@ -2026,7 +2028,6 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setCutCordWithSterileBlade(source.getCutCordWithSterileBlade());
 		target.setCordTreatedWithAnything(source.getCordTreatedWithAnything());
 		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
-
 		target.setPst14MonthsVillage(source.getPst14MonthsVillage());
 		target.setPst14MonthsZone(source.getPst14MonthsZone());
 		target.setPst14MonthsCommunity(communityService.getByReferenceDto(source.getPst14MonthsCommunity()));
@@ -2035,6 +2036,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setPlaceOfResidenceSameAsReportingVillage(source.getPlaceOfResidenceSameAsReportingVillage());
 		target.setResidenceSinceWhenInMonths(source.getResidenceSinceWhenInMonths());
 		target.setEthnicity(source.getEthnicity());
+		target.setLocationOfBirth(source.getLocationOfBirth());
 
 		return target;
 	}
