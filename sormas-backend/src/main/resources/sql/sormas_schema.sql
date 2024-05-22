@@ -14280,3 +14280,9 @@ INSERT INTO schema_version (version_number, comment) VALUES (648, 'Added locatio
 ALTER TABLE person ADD COLUMN birthInInstitution varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (649, 'Added birthInInstitution to person');
 -- *** Insert new sql commands BEFORE this line. Remember to alway
+ALTER TABLE cases ADD COLUMN notifiedbylist varchar(255);
+ALTER TABLE cases ADD COLUMN notifiedother varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (650, 'Added 2 columns to case for AFP');
+
+-- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

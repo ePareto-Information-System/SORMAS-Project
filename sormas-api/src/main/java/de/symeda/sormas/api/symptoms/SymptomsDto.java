@@ -2479,7 +2479,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		OTHER })
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState numbness;
-	private YesNoUnknown feverBodyTempGreater;
+	private YesNo feverBodyTempGreater;
 	@Outbreaks
 	private CaseOutcome outcome;
 	private String provisionalDiagnosis;
@@ -3713,7 +3713,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	public void setDateOfOnset(Date dateOfOnset) {
 		this.dateOfOnset = dateOfOnset;
 	}
-	public void setFeverBodyTempGreater(YesNoUnknown feverBodyTempGreater) {
+	public void setFeverBodyTempGreater(YesNo feverBodyTempGreater) {
 		this.feverBodyTempGreater = feverBodyTempGreater;
 	}
 
@@ -4122,7 +4122,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		return dateOfOnset;
 	}
 	@Order(356)
-	public YesNoUnknown getFeverBodyTempGreater(){return feverBodyTempGreater;}
+	public YesNo getFeverBodyTempGreater(){return feverBodyTempGreater;}
 
 	@Order(357)
 	public YesNoUnknown getFeverOnsetParalysis(){return feverOnsetParalysis;}

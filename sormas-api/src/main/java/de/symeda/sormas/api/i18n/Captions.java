@@ -491,6 +491,8 @@ public interface Captions {
 	String CaseData_vaccinationDate = "CaseData.vaccinationDate";
 	String CaseData_visits = "CaseData.visits";
 	String CaseData_notifiedBy = "CaseData.notifiedBy";
+	String CaseData_notifiedByList = "CaseData.notifiedByList";
+	String CaseData_notifiedOther = "CaseData.notifiedOther";
 	String CaseData_dateOfNotification = "CaseData.dateOfNotification";
 	String CaseData_dateOfInvestigation = "CaseData.dateOfInvestigation";
 	String CaseData_secondVaccinationDate = "CaseData.secondVaccinationDate";

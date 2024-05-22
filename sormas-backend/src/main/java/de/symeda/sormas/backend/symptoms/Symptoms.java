@@ -57,7 +57,7 @@ public class Symptoms extends AbstractDomainObject {
 
 	private Date onsetDate;
 	private Date dateOfOnset;
-	private YesNoUnknown feverBodyTempGreater;
+	private YesNo feverBodyTempGreater;
 	private String onsetSymptom;
 	private Boolean symptomatic;
 	private String patientIllLocation;
@@ -346,11 +346,11 @@ public class Symptoms extends AbstractDomainObject {
 		this.dateOfOnset = dateOfOnset;
 	}
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getFeverBodyTempGreater() {
+	public YesNo getFeverBodyTempGreater() {
 		return feverBodyTempGreater;
 	}
 
-	public void setFeverBodyTempGreater(YesNoUnknown feverBodyTempGreater) {
+	public void setFeverBodyTempGreater(YesNo feverBodyTempGreater) {
 		this.feverBodyTempGreater = feverBodyTempGreater;
 	}
 

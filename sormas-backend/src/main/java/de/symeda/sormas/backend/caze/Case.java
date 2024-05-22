@@ -487,6 +487,8 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private String formCompletedByName;
 	private String formCompletedByPosition;
 	private String formCompletedByCellPhoneNo;
+	private NotifiedList notifiedByList;
+	private String notifiedOther;
 
 	public static Case build() {
 		Case caze = new Case();
@@ -2329,6 +2331,22 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setSpecifyEventDiagnosis(String specifyEventDiagnosis) {
 		this.specifyEventDiagnosis = specifyEventDiagnosis;
+	}
+
+	public NotifiedList getNotifiedByList() {
+		return notifiedByList;
+	}
+
+	public void setNotifiedByList(NotifiedList notifiedByList) {
+		this.notifiedByList = notifiedByList;
+	}
+
+	public String getNotifiedOther() {
+		return notifiedOther;
+	}
+
+	public void setNotifiedOther(String notifiedOther) {
+		this.notifiedOther = notifiedOther;
 	}
 
 //	Riskfactor on

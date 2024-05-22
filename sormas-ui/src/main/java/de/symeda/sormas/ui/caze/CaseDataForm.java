@@ -188,7 +188,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(6, CaseDataDto.EPID_NUMBER, 3, ASSIGN_NEW_EPID_NUMBER_LOC) +
 					loc(EPID_NUMBER_WARNING_LOC) +
 					loc(NOTIFY_INVESTIGATE) +
-					fluidRowLocs(CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION) +
+					fluidRowLocs(CaseDataDto.NOTIFIED_BY_LIST, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION) +
+					fluidRowLocs(6,CaseDataDto.NOTIFIED_OTHER) +
+					fluidRowLocs(6,CaseDataDto.NOTIFIED_BY) +
 					loc(INDICATE_CATEGORY_LOC) +
 					fluidRowLocs(CaseDataDto.EXTERNAL_ID, CaseDataDto.EXTERNAL_TOKEN) +
 					fluidRowLocs("", EXTERNAL_TOKEN_WARNING_LOC) +
@@ -231,10 +233,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(6, CaseDataDto.REPORTING_VILLAGE, 6, CaseDataDto.REPORTING_ZONE) +
 					fluidRowLocs(CaseDataDto.DONT_SHARE_WITH_REPORTING_TOOL) +
 					fluidRowLocs(DONT_SHARE_WARNING_LOC) +
-					fluidRowLocs(DIFFERENT_PLACE_OF_STAY_JURISDICTION) +
+					//fluidRowLocs(DIFFERENT_PLACE_OF_STAY_JURISDICTION) +
+					fluidRowLocs(6, CaseDataDto.HOME_ADDRESS_RECREATIONAL) +
 					fluidRowLocs(PLACE_OF_STAY_HEADING_LOC) +
 					fluidRowLocs(FACILITY_OR_HOME_LOC) +
-					fluidRowLocs(CaseDataDto.REGION, CaseDataDto.DISTRICT, CaseDataDto.COMMUNITY) +
+					//fluidRowLocs(CaseDataDto.REGION, CaseDataDto.DISTRICT, CaseDataDto.COMMUNITY) +
 					fluidRowLocs(6,TYPE_GROUP_LOC) +
 					fluidRowLocs(CaseDataDto.FACILITY_TYPE, CaseDataDto.HEALTH_FACILITY) +
 					fluidRowLocs(6,CaseDataDto.HEALTH_FACILITY_DETAILS) +
@@ -489,8 +492,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         DateField dateFormReceivedAtNational = addField(CaseDataDto.DATE_FORM_RECEIVED_AT_NATIONAL, DateField.class);
 
         TextField notifiedBy = addField(CaseDataDto.NOTIFIED_BY, TextField.class);
+        ComboBox notifiedByList = addField(CaseDataDto.NOTIFIED_BY_LIST, ComboBox.class);
+        TextField notifiedOther = addField(CaseDataDto.NOTIFIED_OTHER, TextField.class);
         DateField dateOfNotification = addField(CaseDataDto.DATE_OF_NOTIFICATION, DateField.class);
         DateField dateOfInvestigation = addField(CaseDataDto.DATE_OF_INVESTIGATION, DateField.class);
+        notifiedOther.setVisible(false);
 
 		TextField investigationOfficerNameField = addField(CaseDataDto.INVESTIGATION_OFFICER_NAME, TextField.class);
 		TextField investigationOfficerPositionField = addField(CaseDataDto.INVESTIGATION_OFFICER_POSITION, TextField.class);
@@ -1860,8 +1866,13 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
             	//AFP
 			if (disease == Disease.AFP) {
-				setVisible(true, CaseDataDto.DATE_FORM_RECEIVED_AT_NATIONAL, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
+				setVisible(true, CaseDataDto.DATE_FORM_RECEIVED_AT_NATIONAL, CaseDataDto.NOTIFIED_BY_LIST, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
                 outcome.setVisible(false);
+
+                notifiedByList.addValueChangeListener((ValueChangeListener) valueChangeEvent-> {
+                    notifiedOther.setVisible(notifiedByList.getValue() != null && notifiedByList.getValue() == NotifiedList.OTHER);
+                });
+
 			}
             
             if (disease == Disease.FOODBORNE_ILLNESS) {

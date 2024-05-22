@@ -158,6 +158,8 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String EPID_NUMBER = "epidNumber";
 	public static final String NOTIFIED_BY = "notifiedBy";
 	public static final String DATE_OF_NOTIFICATION = "dateOfNotification";
+	public static final String NOTIFIED_BY_LIST = "notifiedByList";
+	public static final String NOTIFIED_OTHER = "notifiedOther";
 	public static final String DATE_OF_INVESTIGATION = "dateOfInvestigation";
 	public static final String REPORT_LAT = "reportLat";
 	public static final String REPORT_LON = "reportLon";
@@ -685,6 +687,8 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	private String notifiedBy;
 	private Date dateOfNotification;
+	private NotifiedList notifiedByList;
+	private String notifiedOther;
 	private Date dateOfInvestigation;
 	private  Date secondVaccinationDate;
 	private String reportingVillage;
@@ -2357,5 +2361,20 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	public void setFormCompletedByCellPhoneNo(String formCompletedByCellPhoneNo) {
 		this.formCompletedByCellPhoneNo = formCompletedByCellPhoneNo;
+	}
+	public NotifiedList getNotifiedByList() {
+		return notifiedByList;
+	}
+
+	public void setNotifiedByList(NotifiedList notifiedByList) {
+		this.notifiedByList = notifiedByList;
+	}
+
+	public String getNotifiedOther() {
+		return notifiedOther;
+	}
+
+	public void setNotifiedOther(String notifiedOther) {
+		this.notifiedOther = notifiedOther;
 	}
 }
