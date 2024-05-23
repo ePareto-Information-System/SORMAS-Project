@@ -18,6 +18,7 @@ import java.lang.reflect.Field;
 
 import de.symeda.sormas.api.ConfigFacade;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.afpimmunization.AfpImmunizationFacade;
 import de.symeda.sormas.api.campaign.CampaignFacade;
 import de.symeda.sormas.api.campaign.data.CampaignFormDataFacade;
 import de.symeda.sormas.api.campaign.form.CampaignFormMetaFacade;
@@ -60,6 +61,7 @@ import de.symeda.sormas.api.user.UserRoleFacade;
 import de.symeda.sormas.api.vaccination.VaccinationFacade;
 import de.symeda.sormas.api.visit.VisitFacade;
 import de.symeda.sormas.backend.AbstractBeanTest;
+import de.symeda.sormas.backend.afpimmunization.AfpImmunizationFacadeEjb;
 import de.symeda.sormas.backend.campaign.CampaignFacadeEjb;
 import de.symeda.sormas.backend.campaign.data.CampaignFormDataFacadeEjb;
 import de.symeda.sormas.backend.campaign.form.CampaignFormMetaFacadeEjb;
@@ -160,6 +162,8 @@ public final class FacadeProviderMock extends FacadeProvider {
 			return (P) beanTest.getBean(HospitalizationFacadeEjbLocal.class);
 		} else if (SixtyDayFacade.class == clazz) {
 			return (P) beanTest.getBean(SixtyDayFacadeEjb.SixtyDayFacadeEjbLocal.class);
+		} else if (AfpImmunizationFacade.class == clazz) {
+			return (P) beanTest.getBean(AfpImmunizationFacadeEjb.AfpImmunizationEjbLocal.class);
 		} else if (EpiDataFacade.class == clazz) {
 			return (P) beanTest.getBean(EpiDataFacadeEjbLocal.class);
 		} else if (WeeklyReportFacade.class == clazz) {

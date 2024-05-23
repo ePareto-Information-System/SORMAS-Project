@@ -32,6 +32,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus;
+import de.symeda.sormas.api.afpimmunization.AfpImmunizationDto;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.riskfactor.RiskFactorDto;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
@@ -135,6 +136,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String RISK_FACTOR = "riskFactor";
 	public static final String ILLNESS_INFO = "illnessInformation";
 	public static final String SIXTY_DAY = "sixtyDay";
+	public static final String AFP_IMMUNIZATION = "afpImmunization";
 	public static final String FOOD_SAMPLE_TESTING = "foodSampleTesting";
 	public static final String EPI_DATA = "epiData";
 	public static final String FOOD_HISTORY = "foodHistory";
@@ -499,6 +501,8 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	@Valid
 	private SixtyDayDto sixtyDay;
 	@Valid
+	private AfpImmunizationDto afpImmunization;
+	@Valid
 	private RiskFactorDto riskFactor;
 	@Valid
 	private SymptomsDto symptoms;
@@ -738,6 +742,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		caze.setPerson(person);
 		caze.setHospitalization(HospitalizationDto.build());
 		caze.setSixtyDay(SixtyDayDto.build());
+		caze.setAfpImmunization(AfpImmunizationDto.build());
 		caze.setRiskFactor(RiskFactorDto.build());
 		caze.setEpiData(EpiDataDto.build());
 		caze.setSymptoms(SymptomsDto.build());
@@ -1224,6 +1229,13 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	public void setSixtyDay(SixtyDayDto sixtyDay) {
 		this.sixtyDay = sixtyDay;
+	}
+
+	public AfpImmunizationDto getAfpImmunization() {
+		return afpImmunization;
+	}
+	public void setAfpImmunization(AfpImmunizationDto afpImmunization) {
+		this.afpImmunization = afpImmunization;
 	}
 
 	public RiskFactorDto getRiskFactor() {

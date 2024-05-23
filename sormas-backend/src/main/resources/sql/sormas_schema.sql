@@ -14285,4 +14285,30 @@ ALTER TABLE cases ADD COLUMN notifiedother varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (650, 'Added 2 columns to case for AFP');
 
+CREATE TABLE afpimmunization (
+             id BIGINT PRIMARY KEY NOT NULL,
+             totalnumberdoses INTEGER,
+             opvdoseatbirth VARCHAR(255),
+             seconddose VARCHAR(255),
+             fourthdose VARCHAR(255),
+             firstdose VARCHAR(255),
+             thirddose VARCHAR(255),
+             lastdose VARCHAR(255),
+             totalopvdosesreceivedthroughsia VARCHAR(255),
+             totalopvdosesreceivedthroughri VARCHAR(255),
+             datelastopvdosesreceivedthroughsia VARCHAR(255),
+             totalipvdosesreceivedthroughsia VARCHAR(255),
+             totalipvdosesreceivedthroughri VARCHAR(255),
+             datelastipvreceivedthroughsia DATE,
+             sourcerivaccinationinformation VARCHAR(255),
+             changedate TIMESTAMP(3),
+             change_user_id BIGINT,
+             creationdate DATE,
+             datelastipvdosesreceivedthroughsia varchar(255),
+             uuid VARCHAR(512)
+);
+
+ALTER TABLE cases ADD COLUMN afpimmunization_id BIGINT;
+
+INSERT INTO schema_version (version_number, comment) VALUES (651, 'Created afpimmunization table and altered cases table');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

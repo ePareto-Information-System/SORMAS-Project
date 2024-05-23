@@ -21,6 +21,7 @@ import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 
+import de.symeda.sormas.backend.afpimmunization.AfpImmunization;
 import de.symeda.sormas.backend.caze.surveillancereport.SurveillanceReport;
 import de.symeda.sormas.backend.clinicalcourse.ClinicalCourse;
 import de.symeda.sormas.backend.clinicalcourse.HealthConditions;
@@ -66,6 +67,7 @@ public class CaseJoins extends QueryJoins<Case> {
 	private Join<Case, User> reportingUser;
 	private Join<Case, Hospitalization> hospitalization;
 	private Join<Case, SixtyDay> sixtyDay;
+	private Join<Case, AfpImmunization> afpImmunization;
 	private Join<Case, EpiData> epiData;
 	private Join<Case, Symptoms> symptoms;
 	private Join<Case, ClinicalCourse> clinicalCourse;
@@ -219,6 +221,12 @@ public class CaseJoins extends QueryJoins<Case> {
 	private void setSixtyDay(Join<Case, SixtyDay> sixtyDay) {
 		this.sixtyDay = sixtyDay;
 	}
+
+	public Join<Case, AfpImmunization> getAfpImmunization(){
+		return getOrCreate(afpImmunization, Case.AFP_IMMUNIZATION, JoinType.LEFT, this::setAfpImmunization);
+	}
+
+	private void setAfpImmunization(Join<Case, AfpImmunization> afpImmunization) { this.afpImmunization = afpImmunization;}
 
 	public Join<Case, EpiData> getEpiData() {
 		return getOrCreate(epiData, Case.EPI_DATA, JoinType.LEFT, this::setEpiData);

@@ -2683,6 +2683,22 @@ public interface Captions {
 	String SixtyDay_telNo = "telNo";
 	String SixtyDay_dateOfCompletionOfForm = "dateOfCompletionOfForm";
 	String SixtyDay_nameOfHealthFacility = "nameOfHealthFacility";
+
+	String AfpImmunization_totalNumberDoses = "totalNumberDoses";
+	String AfpImmunization_opvDoseAtBirth = "opvDoseAtBirth";
+	String AfpImmunization_secondDose = "secondDose";
+	String AfpImmunization_fourthDose = "fourthDose";
+	String AfpImmunization_firstDose = "firstDose";
+	String AfpImmunization_thirdDose = "thirdDose";
+	String AfpImmunization_lastDose = "lastDose";
+	String AfpImmunization_totalOpvDosesReceivedThroughSia = "totalOpvDosesReceivedThroughSia";
+	String AfpImmunization_totalOpvDosesReceivedThroughRi = "totalOpvDosesReceivedThroughRi";
+	String AfpImmunization_dateLastOpvDosesReceivedThroughSia = "dateLastOpvDosesReceivedThroughSia";
+	String AfpImmunization_totalIpvDosesReceivedThroughSia = "totalIpvDosesReceivedThroughSia";
+	String AfpImmunization_totalIpvDosesReceivedThroughRi = "totalIpvDosesReceivedThroughRi";
+	String AfpImmunization_dateLastIpvDosesReceivedThroughSia = "dateLastIpvDosesReceivedThroughSia";
+	String AfpImmunization_sourceRiVaccinationInformation = "sourceRiVaccinationInformation";
+
 	String RiskFactor_patientSpoxVaccinationScarPresent = "patientSpoxVaccinationScarPresent";
 	String RiskFactor_patientTravelledAnywhere3WeeksPrior = "patientTravelledAnywhere3WeeksPrior";
 	String RiskFactor_patientTravelled3WeeksIfYesIndicate = "patientTravelled3WeeksIfYesIndicate";
