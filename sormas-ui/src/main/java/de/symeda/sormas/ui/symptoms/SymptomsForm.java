@@ -698,6 +698,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			setUpMonkeypoxVisibilities();
 		}
 		if (disease == Disease.AFP) {
+
+			setVisible(false, SYMPTOMS_COMMENTS);
+
 			NullableOptionGroup feverOnsetParalysis = addField(FEVER_ONSET_PARALYSIS, NullableOptionGroup.class);
 			NullableOptionGroup progressiveParalysis = addField(PROGRESSIVE_PARALYSIS, NullableOptionGroup.class);
 			DateField dateOnsetParalysis = addField(DATE_ONSET_PARALYSIS, DateField.class);
@@ -727,11 +730,11 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			TextArea provisionalDiagnosis = addField(PROVISONAL_DIAGNOSIS, TextArea.class);
 			provisionalDiagnosis.setRows(4);
 
-			addFields(
+			/*addFields(
 					MUSCLE_TONE,
 					DEEP_TENDON_REFLEX,
 					MUSCLE_VOLUME,
-					SENSORY_LOSS);
+					SENSORY_LOSS);*/
 
 			clinicalMeasurementsHeadingLabel.setVisible(false);
 			setVisible(false, FEVER,
