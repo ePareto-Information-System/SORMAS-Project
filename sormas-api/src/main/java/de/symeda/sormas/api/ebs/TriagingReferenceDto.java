@@ -54,6 +54,9 @@ public class TriagingReferenceDto extends ReferenceDto {
 	public static String buildCaption(
 		Date decisionDate) {
 		SimpleDateFormat sdf = new SimpleDateFormat("M/d/yyyy h:mm a");
+		if(decisionDate == null){
+			return "";
+		}
 		String formattedDate = sdf.format(decisionDate);
 		return formattedDate;
 	}
