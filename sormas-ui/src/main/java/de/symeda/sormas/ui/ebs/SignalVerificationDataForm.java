@@ -38,7 +38,8 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
     private static final String HTML_LAYOUT =
     loc(SIGNAL_VERIFICATION_LOC) +
      fluidRowLocs(SignalVerificationDto.VERIFICATION_SENT, SignalVerificationDto.VERIFICATION_SENT_DATE) +
-    fluidRowLocs(SignalVerificationDto.VERIFIED, SignalVerificationDto.VERIFICATION_COMPLETE_DATE) +
+    fluidRowLocs(SignalVerificationDto.VERIFIED) +
+    fluidRowLocs(SignalVerificationDto.VERIFICATION_COMPLETE_DATE) +
             loc(EVENT_DETAILS_LOC) +
     fluidRowLocs(SignalVerificationDto.DATE_OF_OCCURRENCE, SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL, SignalVerificationDto.NUMBER_OF_DEATH) +
     fluidRowLocs(SignalVerificationDto.DESCRIPTION) +
@@ -50,7 +51,7 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
             SignalVerificationDto.I18N_PREFIX,
             false,
             FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-            createFieldAccessCheckers(isPseudonymized, inJurisdiction, true));
+            createFieldAccessCheckers(isPseudonymized, inJurisdiction, true),ebsDto);
         this.ebs = ebsDto;
         this.parentClass = parentClass;
         addFields();
@@ -87,7 +88,7 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
         Label headingEventDetails = new Label(I18nProperties.getString(Strings.headingEventDetails));
         headingEventDetails.addStyleName(H3);
         getContent().addComponent(headingEventDetails, EVENT_DETAILS_LOC);
-        addField(SignalVerificationDto.VERIFICATION_SENT, NullableOptionGroup.class);
+        NullableOptionGroup sentVerification = addField(SignalVerificationDto.VERIFICATION_SENT, NullableOptionGroup.class);
         addField(SignalVerificationDto.VERIFIED, NullableOptionGroup.class);
         addField(SignalVerificationDto.VERIFICATION_SENT_DATE, DateTimeField.class);
         addField(SignalVerificationDto.VERIFICATION_COMPLETE_DATE, DateTimeField.class);
@@ -96,6 +97,13 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
         addField(SignalVerificationDto.NUMBER_OF_DEATH, TextField.class);
         addField(SignalVerificationDto.DESCRIPTION, TextArea.class);
         addField(SignalVerificationDto.WHY_NOT_VERIFY, TextArea.class);
+
+
+        EbsDto selectedEbs = getEbsDto();
+
+        if (selectedEbs.getSignalVerification().getVerificationSent() == YesNo.YES){
+            sentVerification.setReadOnly(true);
+        }
 
         FieldHelper.setVisibleWhen(
                 getFieldGroup(),
@@ -108,6 +116,13 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
                 Arrays.asList(SignalVerificationDto.WHY_NOT_VERIFY),
                 SignalVerificationDto.VERIFIED,
                 Arrays.asList(YesNo.NO),
+                true);
+
+        FieldHelper.setVisibleWhen(
+                getFieldGroup(),
+                Arrays.asList(SignalVerificationDto.VERIFICATION_SENT_DATE),
+                SignalVerificationDto.VERIFICATION_SENT,
+                Arrays.asList(YesNo.YES),
                 true);
     }
 }
