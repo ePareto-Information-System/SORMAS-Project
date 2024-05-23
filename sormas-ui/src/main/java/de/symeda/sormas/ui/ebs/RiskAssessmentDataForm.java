@@ -114,7 +114,7 @@ public class RiskAssessmentDataForm extends AbstractEditForm<RiskAssessmentDto> 
             if (morbidityMortality.getNullableValue() == YesNo.YES && spreadProbability.getNullableValue() == YesNo.YES && controlMeasures.getNullableValue() == YesNo.NO) {
                 riskAssesment.setValue(RiskAssesment.VERY_HIGH);
             }
-            else if(morbidityMortality.getNullableValue() == YesNo.YES && spreadProbability.getNullableValue() == YesNo.YES && controlMeasures.getNullableValue() == YesNo.YES || morbidityMortality.getNullableValue() == YesNo.NO && spreadProbability.getNullableValue() == YesNo.YES && controlMeasures.getNullableValue() == YesNo.NO) {
+            else if(morbidityMortality.getNullableValue() == YesNo.YES && spreadProbability.getNullableValue() == YesNo.YES && controlMeasures.getNullableValue() == YesNo.YES || morbidityMortality.getNullableValue() == YesNo.NO && spreadProbability.getNullableValue() == YesNo.YES && controlMeasures.getNullableValue() == YesNo.NO || morbidityMortality.getNullableValue() == YesNo.YES && spreadProbability.getNullableValue() == YesNo.NO && controlMeasures.getNullableValue() == YesNo.NO) {
                 riskAssesment.setValue(RiskAssesment.HIGH);
             }
             else if(morbidityMortality.getNullableValue() == YesNo.NO && spreadProbability.getNullableValue() == YesNo.NO && controlMeasures.getNullableValue() == YesNo.NO || morbidityMortality.getNullableValue() == YesNo.YES && spreadProbability.getNullableValue() == YesNo.NO && controlMeasures.getNullableValue() == YesNo.YES || morbidityMortality.getNullableValue() == YesNo.NO && spreadProbability.getNullableValue() == YesNo.YES && controlMeasures.getNullableValue() == YesNo.YES) {
