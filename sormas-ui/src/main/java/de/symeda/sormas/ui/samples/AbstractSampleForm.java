@@ -189,6 +189,17 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(6,SampleDto.IMMUNOCOMPROMISED_STATUS_SUSPECTED) +
 					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION);
 
+	protected static final String MEASLES_LAYOUT =
+			fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
+			fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
+			fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
+			fluidRowLocs(6, SampleDto.SAMPLE_MATERIAL) +
+			locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
+			fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
+			locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
+			fluidRowLocs(6, SampleDto.RECEIVED_DATE) +
+			fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT);
+
 
 
     //@formatter:on
@@ -199,7 +210,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			propertyI18nPrefix,
 			true,
 			FieldVisibilityCheckers.withDisease(disease).andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-			fieldAccessCheckers);
+			fieldAccessCheckers,
+				disease);
 	}
 
 	protected void addCommonFields() {
