@@ -2426,7 +2426,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Date dateOnsetParalysis;
 	private YesNoUnknown progressiveFlaccidAcute;
 	private YesNoUnknown assymetric;
-	private Set<InjectionSite> siteOfParalysis;
 	private YesNo paralysedLimbSensitiveToPain;
 	private YesNo injectionSiteBeforeOnsetParalysis;
 	private InjectionSite rightInjectionSite;
@@ -2439,6 +2438,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private String symptomsSelectedOther;
 	private Date dateOfOnsetRash;
 	private Set<MpoxRashArea> rashSymptoms;
+	private Set<InjectionSite> siteOfParalysis;
 	private String rashSymptomsOtherAreas;
 	private YesNo areLesionsSameState;
 	private YesNo areLesionsSameSize;
@@ -3995,8 +3995,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	public YesNoUnknown getProgressiveFlaccidAcute(){return progressiveFlaccidAcute;}
 	@Order(361)
 	public YesNoUnknown getAssymetric(){return  assymetric;}
-	@Order(362)
-	public Set<InjectionSite> getSiteOfParalysis(){return siteOfParalysis;}
 	@Order(363)
 	public YesNo getParalysedLimbSensitiveToPain(){return paralysedLimbSensitiveToPain;}
 	@Order(364)
@@ -4028,6 +4026,8 @@ public class SymptomsDto extends PseudonymizableDto {
 	public Set<MpoxRashArea> getRashSymptoms(){
 		return rashSymptoms;
 	}
+	@Order(362)
+	public Set<InjectionSite> getSiteOfParalysis(){return siteOfParalysis;}
 	@Order(375)
 	public String getRashSymptomsOtherAreas(){
 		return rashSymptomsOtherAreas;

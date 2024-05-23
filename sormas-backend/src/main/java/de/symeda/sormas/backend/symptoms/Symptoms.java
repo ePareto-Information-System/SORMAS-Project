@@ -1994,46 +1994,6 @@ public class Symptoms extends AbstractDomainObject {
 		this.assymetric = assymetric;
 	}
 
-	@Transient
-	public Set<InjectionSite> getSiteOfParalysis() {
-		if (siteOfParalysis == null) {
-			if (StringUtils.isEmpty(requestedSiteOfParalysisString)) {
-				siteOfParalysis = new HashSet<>();
-			} else {
-				siteOfParalysis =
-						Arrays.stream(requestedSiteOfParalysisString.split(",")).map(InjectionSite::valueOf).collect(Collectors.toSet());
-			}
-		}
-		return siteOfParalysis;
-	}
-
-	public void setSiteOfParalysis(Set<InjectionSite> siteOfParalysis) {
-		this.siteOfParalysis = siteOfParalysis;
-
-		if (this.siteOfParalysis == null) {
-			return;
-		}
-
-		StringBuilder sb = new StringBuilder();
-		siteOfParalysis.stream().forEach(t -> {
-			sb.append(t.name());
-			sb.append(",");
-		});
-		if (sb.length() > 0) {
-			sb.substring(0, sb.lastIndexOf(","));
-		}
-		requestedSiteOfParalysisString = sb.toString();
-	}
-
-	public String getRequestedSiteOfParalysisString() {
-		return requestedSiteOfParalysisString;
-	}
-
-	public void setRequestedSiteOfParalysisString(String requestedSymptomsSelectedString) {
-		this.requestedSiteOfParalysisString = requestedSiteOfParalysisString;
-		siteOfParalysis = null;
-	}
-
 	public YesNo getParalysedLimbSensitiveToPain() {
 		return paralysedLimbSensitiveToPain;
 	}
@@ -2206,6 +2166,37 @@ public class Symptoms extends AbstractDomainObject {
 		requestedRashSymptomsString = sb.toString();
 	}
 
+	@Transient
+	public Set<InjectionSite> getSiteOfParalysis() {
+		if (siteOfParalysis == null) {
+			if (StringUtils.isEmpty(requestedSiteOfParalysisString)) {
+				siteOfParalysis = new HashSet<>();
+			} else {
+				siteOfParalysis =
+						Arrays.stream(requestedSiteOfParalysisString.split(",")).map(InjectionSite::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return siteOfParalysis;
+	}
+
+	public void setSiteOfParalysis(Set<InjectionSite> siteOfParalysis) {
+		this.siteOfParalysis = siteOfParalysis;
+
+		if (this.siteOfParalysis == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		siteOfParalysis.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		requestedSiteOfParalysisString = sb.toString();
+	}
+
 	public String getRashSymptomsOtherAreas(){
 		return rashSymptomsOtherAreas;
 	}
@@ -2258,6 +2249,15 @@ public class Symptoms extends AbstractDomainObject {
 	public void setRequestedRashSymptomsString(String requestedRashSymptomsString) {
 		this.requestedRashSymptomsString = requestedRashSymptomsString;
 		rashSymptoms = null;
+	}
+
+	public String getRequestedSiteOfParalysisString() {
+		return requestedSiteOfParalysisString;
+	}
+
+	public void setRequestedSiteOfParalysisString(String requestedSiteOfParalysisString) {
+		this.requestedSiteOfParalysisString = requestedSiteOfParalysisString;
+		siteOfParalysis = null;
 	}
 
 }
