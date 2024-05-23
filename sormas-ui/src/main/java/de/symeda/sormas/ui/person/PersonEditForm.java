@@ -910,6 +910,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			personContactDetailsField.setVisible(false);
 			ComboBox applicable = addField(PersonDto.APPLICABLE, ComboBox.class);
 			FieldHelper.setVisibleWhen(applicable, Arrays.asList(mothername, fathername), Arrays.asList(YesNo.YES), true);
+			setVisible(false, PersonDto.MARRIAGE_STATUS);
 
 		}
 		if(disease == Disease.YELLOW_FEVER){
