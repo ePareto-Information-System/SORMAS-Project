@@ -72,9 +72,12 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.afpimmunization.AfpImmunizationDto;
 import de.symeda.sormas.api.riskfactor.RiskFactorDto;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
 import de.symeda.sormas.api.utils.*;
+import de.symeda.sormas.backend.afpimmunization.AfpImmunization;
+import de.symeda.sormas.backend.afpimmunization.AfpImmunizationFacadeEjb;
 import de.symeda.sormas.backend.riskfactor.RiskFactorFacadeEjb;
 import de.symeda.sormas.backend.sixtyday.SixtyDay;
 import de.symeda.sormas.backend.sixtyday.SixtyDayFacadeEjb;
@@ -271,6 +274,7 @@ import de.symeda.sormas.backend.hospitalization.HospitalizationFacadeEjb;
 import de.symeda.sormas.backend.hospitalization.HospitalizationFacadeEjb.HospitalizationFacadeEjbLocal;
 import de.symeda.sormas.backend.hospitalization.PreviousHospitalization;
 import de.symeda.sormas.backend.sixtyday.SixtyDayFacadeEjb.SixtyDayFacadeEjbLocal;
+import de.symeda.sormas.backend.afpimmunization.AfpImmunizationFacadeEjb.AfpImmunizationEjbLocal;
 import de.symeda.sormas.backend.immunization.ImmunizationEntityHelper;
 import de.symeda.sormas.backend.immunization.entity.Immunization;
 import de.symeda.sormas.backend.importexport.ExportHelper;
@@ -410,6 +414,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	private HospitalizationFacadeEjbLocal hospitalizationFacade;
 	@EJB
 	private SixtyDayFacadeEjbLocal sixtyDayFacade;
+	@EJB
+	private AfpImmunizationEjbLocal afpImmunizationFacade;
 	@EJB
 	private RiskFactorFacadeEjb.RiskFactorFacadeEjbLocal riskFactorFacade;
 	@EJB
@@ -806,6 +812,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				joins.getRoot().get(Case.SYMPTOMS).get(Symptoms.ID),
 				joins.getHospitalization().get(Hospitalization.ID),
 				joins.getSixtyDay().get(SixtyDay.ID),
+				joins.getAfpImmunization().get(AfpImmunization.ID),
 				joins.getRoot().get(Case.HEALTH_CONDITIONS).get(HealthConditions.ID),
 				caseRoot.get(Case.UUID),
 				caseRoot.get(Case.EPID_NUMBER), caseRoot.get(Case.DISEASE), caseRoot.get(Case.DISEASE_VARIANT), caseRoot.get(Case.DISEASE_DETAILS),
@@ -2950,6 +2957,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			pseudonymizer.restorePseudonymizedValues(MaternalHistoryDto.class, dto.getMaternalHistory(), existingCaseDto.getMaternalHistory(), inJurisdiction);
 			pseudonymizer.restorePseudonymizedValues(SixtyDayDto.class, dto.getSixtyDay(), existingCaseDto.getSixtyDay(), inJurisdiction);
 			pseudonymizer.restorePseudonymizedValues(RiskFactorDto.class, dto.getRiskFactor(), existingCaseDto.getRiskFactor(), inJurisdiction);
+			pseudonymizer.restorePseudonymizedValues(AfpImmunizationDto.class, dto.getAfpImmunization(), existingCaseDto.getAfpImmunization(), inJurisdiction);
 		}
 	}
 
@@ -3004,6 +3012,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setPerson(PersonFacadeEjb.toReferenceDto(source.getPerson()));
 		target.setHospitalization(HospitalizationFacadeEjb.toDto(source.getHospitalization()));
 		target.setSixtyDay(SixtyDayFacadeEjb.toDto(source.getSixtyDay()));
+		target.setAfpImmunization(AfpImmunizationFacadeEjb.toDto(source.getAfpImmunization()));
 		target.setRiskFactor(RiskFactorFacadeEjb.toDto(source.getRiskFactor()));
 		target.setEpiData(EpiDataFacadeEjb.toDto(source.getEpiData()));
 		if (source.getTherapy() != null) {
@@ -3197,6 +3206,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			FacadeHelper.setUuidIfDtoExists(target.getSymptoms(), source.getSymptoms());
 			FacadeHelper.setUuidIfDtoExists(target.getSixtyDay(), source.getSixtyDay());
 			FacadeHelper.setUuidIfDtoExists(target.getRiskFactor(), source.getRiskFactor());
+			FacadeHelper.setUuidIfDtoExists(target.getAfpImmunization(), source.getAfpImmunization());
 		}
 
 		target.setDisease(source.getDisease());
@@ -3231,6 +3241,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setLaboratoryDiagnosticConfirmation(source.getLaboratoryDiagnosticConfirmation());
 		target.setInvestigationStatus(source.getInvestigationStatus());
 		target.setSixtyDay(sixtyDayFacade.fillOrBuildEntity(source.getSixtyDay(), target.getSixtyDay(),checkChangeDate));
+		target.setAfpImmunization(afpImmunizationFacade.fillOrBuildEntity(source.getAfpImmunization(), target.getAfpImmunization(),checkChangeDate));
 
 		target.setRiskFactor(riskFactorFacade.fillOrBuildEntity(source.getRiskFactor(), target.getRiskFactor(), checkChangeDate));
 		target.setHospitalization(hospitalizationFacade.fillOrBuildEntity(source.getHospitalization(), target.getHospitalization(), checkChangeDate));

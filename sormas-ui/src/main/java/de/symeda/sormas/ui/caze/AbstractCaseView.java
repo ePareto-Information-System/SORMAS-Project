@@ -40,6 +40,7 @@ import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SubMenu;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
+import de.symeda.sormas.ui.afpimmunization.AfpImmunizationView;
 import de.symeda.sormas.ui.caze.maternalhistory.MaternalHistoryView;
 import de.symeda.sormas.ui.caze.porthealthinfo.PortHealthInfoView;
 import de.symeda.sormas.ui.clinicalcourse.ClinicalCourseView;
@@ -231,6 +232,10 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 					menu.addView(
 							SixtyDayFollowupView.VIEW_NAME,
 							I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.SIXTY_DAY),
+							params);
+					menu.addView(
+							AfpImmunizationView.VIEW_NAME,
+							I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.AFP_IMMUNIZATION),
 							params);
 				}
 			}
