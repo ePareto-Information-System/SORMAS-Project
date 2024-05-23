@@ -1709,6 +1709,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 numberOfDoses.setVisible(true);
                 setVaccinatedByCardOrHistoryVisibility();
                 dateFormSentToDistrict.setVisible(true);
+                outcome.setVisible(false);
             }
 
             //CSM
@@ -1719,22 +1720,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             //AHF
             if (disease == Disease.AHF || disease == Disease.DENGUE) {
                 setVisible(true, CaseDataDto.POSTPARTUM, CaseDataDto.PREGNANT);
-            }
-
-            //AFP
-            if (disease == Disease.AFP) {
-                setVisible(true, CaseDataDto.DATE_FORM_RECEIVED_AT_NATIONAL, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
-            }
-            //YELLOW FEVER
-            if (disease == Disease.YELLOW_FEVER) {
-                dateFormReceivedAtNational.setVisible(true);
-                setVaccinatedByCardOrHistoryVisibility();
-                outcome.setVisible(false);
-            }
-
-            //INFLUENZA
-            if (disease == Disease.NEW_INFLUENZA || disease == Disease.SARI) {
-                dateFormReceivedAtNational.setVisible(false);
             }
 
             //CORONAVIRUS
@@ -1779,9 +1764,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 setVisible(false, CaseDataDto.CLINICAL_CONFIRMATION, CaseDataDto.EPIDEMIOLOGICAL_CONFIRMATION, CaseDataDto.LABORATORY_DIAGNOSTIC_CONFIRMATION);
             }
 
-            if (disease == Disease.FOODBORNE_ILLNESS) {
-                placeOfStayHeadingLabel.setVisible(false);
-            }
             if (disease == Disease.MONKEYPOX) {
                 placeOfStayHeadingLabel.setVisible(false);
                 createLabel(I18nProperties.getString(Strings.notifyInvestigate), H3, NOTIFY_INVESTIGATE);
@@ -1874,7 +1856,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 });
 
 			}
-            
+
             if (disease == Disease.FOODBORNE_ILLNESS) {
                 placeOfStayHeadingLabel.setVisible(false);
             }
@@ -1891,6 +1873,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             //INFLUENZA
 			if (disease == Disease.NEW_INFLUENZA) {
                 outcome.setVisible(false);
+                dateFormReceivedAtNational.setVisible(false);
 			}
 
         });

@@ -1019,8 +1019,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					NECK_STIFFNESS);
 
 			symptomsHide();
-			setVisible(true, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
-
 		}
 		if(disease == Disease.NEW_INFLUENZA){
 			addField(DATE_OF_ONSET, DateField.class);
