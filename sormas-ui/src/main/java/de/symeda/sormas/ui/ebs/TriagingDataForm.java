@@ -1,9 +1,11 @@
 package de.symeda.sormas.ui.ebs;
 
+import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.ebs.*;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.ui.utils.*;
 import com.vaadin.ui.Label;
 import com.vaadin.v7.ui.OptionGroup;
@@ -40,9 +42,17 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                     fluidRowLocs(TriagingDto.SPECIFIC_SIGNAL) +
                     fluidRowLocs(TriagingDto.HEALTH_CONCERN, TriagingDto.OUTCOME_SUPERVISOR) +
                     fluidRowLocs(TriagingDto.SIGNAL_CATEGORY) +
-                    fluidRowLocs(TriagingDto.CATEGORY_DETAILS,"") +
+                    fluidRowLocs(TriagingDto.CATEGORY_DETAILS_LEVEL) +
+                    fluidRowLocs(TriagingDto.HUMAN_COMMUNITY_CATEGORY_DETAILS,"") +
+                    fluidRowLocs(TriagingDto.HUMAN_LABORATORY_CATEGORY_DETAILS,"") +
+                    fluidRowLocs(TriagingDto.HUMAN_FACILITY_CATEGORY_DETAILS,"") +
+                    fluidRowLocs(TriagingDto.ANIMAL_COMMUNITY_CATEGORY_DETAILS,"") +
+                    fluidRowLocs(TriagingDto.ANIMAL_FACILITY_CATEGORY_DETAILS,"") +
+                    fluidRowLocs(TriagingDto.ENVIRONMENTAL_CATEGORY_DETAILS,"") +
+                    fluidRowLocs(TriagingDto.POE_CATEGORY_DETAILS,"") +
+                    fluidRowLocs(TriagingDto.NOT_SIGNAL,"") +
                     fluidRowLocs(TriagingDto.OCCURRENCE_PREVIOUSLY) +
-            loc(TRIAGING_DECISION_LOC) +
+                    loc(TRIAGING_DECISION_LOC) +
                     fluidRowLocs(TriagingDto.TRIAGING_DECISION,TriagingDto.DATE_OF_DECISION) +
                     fluidRowLocs(TriagingDto.REFERRED_TO, "");
 
@@ -53,20 +63,25 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 false,
                 FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
                 createFieldAccessCheckers(isPseudonymized, inJurisdiction, true));
-            this.ebs = ebsDto;
+        this.ebs = ebsDto;
         this.parentClass = parentClass;
-            addFields();
+        addFields();
     }
 
     private NullableOptionGroup signalCategory;
-    private OptionGroup categoryDetails;
+    private OptionGroup humanCommCategoryDetails;
     private OptionGroup triagingDecision;
     private DateTimeField dateOfDecision;
     private TextField referredTo;
-    private Label headingTriagingDecision;
     private NullableOptionGroup previousOccurrence;
     private NullableOptionGroup healthConcern;
     private Label headingSignalInformation;
+    private OptionGroup humanFacCategoryDetails;
+    private OptionGroup humanLabCategoryDetails;
+    private OptionGroup animalCommCategoryDetails;
+    private OptionGroup animalFacCategoryDetails;
+    private OptionGroup environmentalCategoryDetails;
+    private OptionGroup poeCategoryDetails;
 
     private static UiFieldAccessCheckers createFieldAccessCheckers(
             boolean isPseudonymized,
@@ -95,7 +110,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         headingSignalInformation.addStyleName(H3);
         getContent().addComponent(headingSignalInformation, SIGNAL_INFORMATION_LOC);
 
-        headingTriagingDecision = new Label(I18nProperties.getString(Strings.headingTriagingDecision));
+        Label headingTriagingDecision = new Label(I18nProperties.getString(Strings.headingTriagingDecision));
         headingTriagingDecision.addStyleName(H3);
         getContent().addComponent(headingTriagingDecision, TRIAGING_DECISION_LOC);
 
@@ -103,14 +118,71 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         NullableOptionGroup specificSignal = addField(TriagingDto.SPECIFIC_SIGNAL, NullableOptionGroup.class);
         healthConcern = addField(TriagingDto.HEALTH_CONCERN, NullableOptionGroup.class);
         signalCategory = addField(TriagingDto.SIGNAL_CATEGORY, NullableOptionGroup.class);
-        categoryDetails = addField(TriagingDto.CATEGORY_DETAILS, OptionGroup.class);
-        categoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
-        categoryDetails.setMultiSelect(true);
-        categoryDetails.addItems(
-                Arrays.stream(CategoryDetails.values())
-                        .filter(category -> fieldVisibilityCheckers.isVisible(CategoryDetails.class, category.name()))
+        OptionGroup categoryLevel = addField(TriagingDto.CATEGORY_DETAILS_LEVEL, OptionGroup.class);
+        CheckBox notSignal =  addField(TriagingDto.NOT_SIGNAL, CheckBox.class);
+        humanCommCategoryDetails = addField(TriagingDto.HUMAN_COMMUNITY_CATEGORY_DETAILS, OptionGroup.class);
+        humanCommCategoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+        humanCommCategoryDetails.setMultiSelect(true);
+        humanCommCategoryDetails.addItems(
+                Arrays.stream(HumanCommunityCategoryDetails.values())
+                        .filter(category -> fieldVisibilityCheckers.isVisible(HumanCommunityCategoryDetails.class, category.name()))
                         .collect(Collectors.toList())
         );
+        humanCommCategoryDetails.setVisible(false);
+        humanFacCategoryDetails = addField(TriagingDto.HUMAN_FACILITY_CATEGORY_DETAILS, OptionGroup.class);
+        humanFacCategoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+        humanFacCategoryDetails.setMultiSelect(true);
+        humanFacCategoryDetails.addItems(
+                Arrays.stream(HumanFaclityCategoryDetails.values())
+                        .filter(category -> fieldVisibilityCheckers.isVisible(HumanFaclityCategoryDetails.class, category.name()))
+                        .collect(Collectors.toList())
+        );
+        humanFacCategoryDetails.setVisible(false);
+        humanLabCategoryDetails = addField(TriagingDto.HUMAN_LABORATORY_CATEGORY_DETAILS, OptionGroup.class);
+        humanLabCategoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+        humanLabCategoryDetails.setMultiSelect(true);
+        humanLabCategoryDetails.addItems(
+                Arrays.stream(HumanLaboratoryCategoryDetails.values())
+                        .filter(category -> fieldVisibilityCheckers.isVisible(HumanLaboratoryCategoryDetails.class, category.name()))
+                        .collect(Collectors.toList())
+        );
+        humanLabCategoryDetails.setVisible(false);
+        animalCommCategoryDetails = addField(TriagingDto.ANIMAL_COMMUNITY_CATEGORY_DETAILS, OptionGroup.class);
+        animalCommCategoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+        animalCommCategoryDetails.setMultiSelect(true);
+        animalCommCategoryDetails.addItems(
+                Arrays.stream(AnimalCommunityCategoryDetails.values())
+                        .filter(category -> fieldVisibilityCheckers.isVisible(AnimalCommunityCategoryDetails.class, category.name()))
+                        .collect(Collectors.toList())
+        );
+        animalCommCategoryDetails.setVisible(false);
+        animalFacCategoryDetails = addField(TriagingDto.ANIMAL_FACILITY_CATEGORY_DETAILS, OptionGroup.class);
+        animalFacCategoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+        animalFacCategoryDetails.setMultiSelect(true);
+        animalFacCategoryDetails.addItems(
+                Arrays.stream(AnimalFacilityCategoryDetails.values())
+                        .filter(category -> fieldVisibilityCheckers.isVisible(AnimalFacilityCategoryDetails.class, category.name()))
+                        .collect(Collectors.toList())
+        );
+        animalFacCategoryDetails.setVisible(false);
+        environmentalCategoryDetails = addField(TriagingDto.ENVIRONMENTAL_CATEGORY_DETAILS, OptionGroup.class);
+        environmentalCategoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+        environmentalCategoryDetails.setMultiSelect(true);
+        environmentalCategoryDetails.addItems(
+                Arrays.stream(EnvironmentalCategoryDetails.values())
+                        .filter(category -> fieldVisibilityCheckers.isVisible(EnvironmentalCategoryDetails.class, category.name()))
+                        .collect(Collectors.toList())
+        );
+        environmentalCategoryDetails.setVisible(false);
+        poeCategoryDetails = addField(TriagingDto.POE_CATEGORY_DETAILS, OptionGroup.class);
+        poeCategoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+        poeCategoryDetails.setMultiSelect(true);
+        poeCategoryDetails.addItems(
+                Arrays.stream(POE.values())
+                        .filter(category -> fieldVisibilityCheckers.isVisible(POE.class, category.name()))
+                        .collect(Collectors.toList())
+        );
+        poeCategoryDetails.setVisible(false);
         previousOccurrence = addField(TriagingDto.OCCURRENCE_PREVIOUSLY, NullableOptionGroup.class);
         triagingDecision = addField(TriagingDto.TRIAGING_DECISION, OptionGroup.class);
         triagingDecision.setMultiSelect(false);
@@ -124,8 +196,79 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         referredTo = addField(TriagingDto.REFERRED_TO, TextField.class);
         ComboBox outcomeSupervisor = addField(TriagingDto.OUTCOME_SUPERVISOR, ComboBox.class);
 
-        initializeVisibilitiesAndAllowedVisibilities();
-        initializeAccessAndAllowedAccesses();
+        FieldHelper.setVisibleWhen(
+                getFieldGroup(),
+                Arrays.asList(TriagingDto.HEALTH_CONCERN,TriagingDto.SIGNAL_CATEGORY),
+                TriagingDto.SPECIFIC_SIGNAL,
+                Arrays.asList(YesNo.YES),
+                true);
+        FieldHelper.setVisibleWhen(
+                getFieldGroup(),
+                Arrays.asList(TriagingDto.OUTCOME_SUPERVISOR,TriagingDto.NOT_SIGNAL),
+                TriagingDto.SPECIFIC_SIGNAL,
+                Arrays.asList(YesNo.NO),
+                true);
+
+        FieldHelper.setVisibleWhen(
+                getFieldGroup(),
+                Arrays.asList(TriagingDto.CATEGORY_DETAILS_LEVEL),
+                TriagingDto.SIGNAL_CATEGORY,
+                Arrays.asList(SignalCategory.HUMAN,SignalCategory.ANIMAL,SignalCategory.ENVIRONMENT,SignalCategory.POE),
+                true);
+
+        categoryLevel.addValueChangeListener(valueChangeEvent -> {
+            var level = valueChangeEvent.getProperty().getValue().toString();
+            var category = signalCategory.getNullableValue();
+            setVisibility(level, (SignalCategory) category);
+        });
+
+
+
+//        FieldHelper.setVisibleWhen(
+//                getFieldGroup(),
+//                Arrays.asList(TriagingDto.HUMAN_COMMUNITY_CATEGORY_DETAILS),
+//                TriagingDto.CATEGORY_DETAILS_LEVEL,
+//                Arrays.asList(SignalCategory.HUMAN,CategoryDetailsLevel.COMMUNITY),
+//                true);
+//        FieldHelper.setVisibleWhen(
+//                getFieldGroup(),
+//                Arrays.asList(TriagingDto.HUMAN_LABORATORY_CATEGORY_DETAILS),
+//                TriagingDto.CATEGORY_DETAILS_LEVEL,
+//                Arrays.asList(SignalCategory.HUMAN,CategoryDetailsLevel.LABORATORY),
+//                true);
+//        FieldHelper.setVisibleWhen(
+//                getFieldGroup(),
+//                Arrays.asList(TriagingDto.HUMAN_FACILITY_CATEGORY_DETAILS),
+//                TriagingDto.CATEGORY_DETAILS_LEVEL,
+//                Arrays.asList(SignalCategory.HUMAN,CategoryDetailsLevel.FACILITY),
+//                true);
+//
+//
+//        FieldHelper.setVisibleWhen(
+//                getFieldGroup(),
+//                Arrays.asList(TriagingDto.ANIMAL_COMMUNITY_CATEGORY_DETAILS),
+//                TriagingDto.CATEGORY_DETAILS_LEVEL,
+//                Arrays.asList(SignalCategory.ANIMAL,CategoryDetailsLevel.COMMUNITY),
+//                true);
+//        FieldHelper.setVisibleWhen(
+//                getFieldGroup(),
+//                Arrays.asList(TriagingDto.ANIMAL_FACILITY_CATEGORY_DETAILS),
+//                TriagingDto.CATEGORY_DETAILS_LEVEL,
+//                Arrays.asList(SignalCategory.ANIMAL,CategoryDetailsLevel.FACILITY),
+//                true);
+//
+//        FieldHelper.setVisibleWhen(
+//                getFieldGroup(),
+//                Arrays.asList(TriagingDto.ENVIRONMENTAL_CATEGORY_DETAILS),
+//                TriagingDto.CATEGORY_DETAILS_LEVEL,
+//                Arrays.asList(SignalCategory.ENVIRONMENT,CategoryDetailsLevel.COMMUNITY,CategoryDetailsLevel.FACILITY,CategoryDetailsLevel.LABORATORY),
+//                true);
+//        FieldHelper.setVisibleWhen(
+//                getFieldGroup(),
+//                Arrays.asList(TriagingDto.POE_CATEGORY_DETAILS),
+//                TriagingDto.CATEGORY_DETAILS_LEVEL,
+//                Arrays.asList(SignalCategory.POE,CategoryDetailsLevel.COMMUNITY,CategoryDetailsLevel.FACILITY,CategoryDetailsLevel.LABORATORY),
+//                true);
 
         previousOccurrence.addValueChangeListener(e -> {
             if (e.getProperty().getValue().toString().equals("[NO]")) {
@@ -134,7 +277,6 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 triagingDecision.setValue(EbsTriagingDecision.DISCARD);
             }
         });
-
 
         outcomeSupervisor.addValueChangeListener(event -> {
             OutComeSupervisor supervisor = (OutComeSupervisor) event.getProperty().getValue();
@@ -150,39 +292,72 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                     break;
             }
         });
+
+        initializeVisibilitiesAndAllowedVisibilities();
+        initializeAccessAndAllowedAccesses();
     }
+
+
+    private void setVisibility(String level, SignalCategory category) {
+        boolean isCommunityLevel = "Community Level".equals(level);
+        boolean isFacilityLevel = "Facility Level".equals(level);
+        boolean isLaboratoryLevel = "Laboratory Level".equals(level);
+
+        humanCommCategoryDetails.setVisible(isCommunityLevel && category == SignalCategory.HUMAN);
+        humanFacCategoryDetails.setVisible(isFacilityLevel && category == SignalCategory.HUMAN);
+        humanLabCategoryDetails.setVisible(isLaboratoryLevel && category == SignalCategory.HUMAN);
+
+        animalCommCategoryDetails.setVisible(isCommunityLevel && category == SignalCategory.ANIMAL);
+        animalFacCategoryDetails.setVisible((isFacilityLevel || isLaboratoryLevel) && category == SignalCategory.ANIMAL);  // Repeated for lab
+
+        environmentalCategoryDetails.setVisible(category == SignalCategory.ENVIRONMENT);  // Shown for all levels
+
+        poeCategoryDetails.setVisible(category == SignalCategory.POE);  // Shown for all levels
+
+        // Hide all other details that are not set to visible above
+        if (!humanCommCategoryDetails.isVisible()) humanCommCategoryDetails.setVisible(false);
+        if (!humanFacCategoryDetails.isVisible()) humanFacCategoryDetails.setVisible(false);
+        if (!humanLabCategoryDetails.isVisible()) humanLabCategoryDetails.setVisible(false);
+        if (!animalCommCategoryDetails.isVisible()) animalCommCategoryDetails.setVisible(false);
+        if (!animalFacCategoryDetails.isVisible()) animalFacCategoryDetails.setVisible(false);
+        if (!environmentalCategoryDetails.isVisible()) environmentalCategoryDetails.setVisible(false);
+        if (!poeCategoryDetails.isVisible()) poeCategoryDetails.setVisible(false);
+    }
+
     private void showSignalDetails() {
-        signalCategory.setVisible(true);
-        categoryDetails.setVisible(true);
-        triagingDecision.setVisible(true);
-        dateOfDecision.setVisible(true);
-        referredTo.setVisible(true);
-        headingTriagingDecision.setVisible(true);
-        previousOccurrence.setVisible(true);
-        healthConcern.setVisible(true);
+//        signalCategory.setVisible(true);
+//        categoryDetails.setVisible(true);
+//        triagingDecision.setVisible(true);
+//        dateOfDecision.setVisible(true);
+//        referredTo.setVisible(true);
+//        headingSignalInformation.setVisible(true);
+////        headingTriagingDecision.setVisible(true);
+//        previousOccurrence.setVisible(true);
+////        healthConcern.setVisible(true);
     }
 
     private void showNonSignalDetails() {
-        signalCategory.setVisible(false);
-        categoryDetails.setVisible(false);
-        triagingDecision.setVisible(true);
-        headingSignalInformation.setVisible(true);
-        headingTriagingDecision.setVisible(true);
-        dateOfDecision.setVisible(true);
-        previousOccurrence.setVisible(false);
-        healthConcern.setVisible(false);
+//        signalCategory.setVisible(false);
+//        categoryDetails.setVisible(false);
+//        triagingDecision.setVisible(true);
+//        headingSignalInformation.setVisible(true);
+////        headingTriagingDecision.setVisible(true);
+//        dateOfDecision.setVisible(true);
+//        previousOccurrence.setVisible(false);
+////        healthConcern.setVisible(false);
     }
 
     private void hideAllDetails() {
-        signalCategory.setVisible(false);
-        categoryDetails.setVisible(false);
-        triagingDecision.setVisible(false);
-        dateOfDecision.setVisible(false);
-        referredTo.setVisible(false);
-        headingTriagingDecision.setVisible(false);
-        previousOccurrence.setVisible(false);
-        healthConcern.setVisible(false);
+//        signalCategory.setVisible(false);
+//        categoryDetails.setVisible(false);
+//        triagingDecision.setVisible(false);
+//        dateOfDecision.setVisible(false);
+//        referredTo.setVisible(false);
+////        headingTriagingDecision.setVisible(false);
+//        previousOccurrence.setVisible(false);
+////        healthConcern.setVisible(false);
     }
+
 
 }
 
