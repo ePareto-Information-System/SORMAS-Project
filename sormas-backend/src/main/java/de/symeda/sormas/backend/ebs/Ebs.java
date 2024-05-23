@@ -80,6 +80,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public static final String TRIAGING = "triaging";
 	public static final String SIGNAL_VERIFICATION = "signalVerification";
 	public static final String RISK_ASSESSMENT = "riskAssessment";
+	public static final String EBS_ALERT = "ebsAlert";
 
 
 	private RiskLevel riskLevel;
@@ -129,6 +130,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	private Triaging triaging;
 	private SignalVerification signalVerification;
 	private Set<RiskAssessment> riskAssessment = new HashSet<>();
+	private Set<EbsAlert> ebsAlert = new HashSet<>();
 
 	@Column
 	@Enumerated(EnumType.STRING)
@@ -467,6 +469,15 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,mappedBy = RiskAssessment.EBS, fetch = FetchType.LAZY)
 	public Set<RiskAssessment> getRiskAssessment() {
 		return riskAssessment;
+	}
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,mappedBy = EbsAlert.EBS, fetch = FetchType.LAZY)
+	public Set<EbsAlert> getEbsAlert() {
+		return ebsAlert;
+	}
+
+	public void setEbsAlert(Set<EbsAlert> ebsAlert) {
+		this.ebsAlert = ebsAlert;
 	}
 
 	public void setRiskAssessment(Set<RiskAssessment> riskAssessment) {
