@@ -26,12 +26,12 @@ public class EbsAlertDataForm extends AbstractEditForm<EbsAlertDto> {
     private final Class<? extends EntityDto> parentClass;
 
     private static final String HTML_LAYOUT =
+            fluidRowLocs(EbsAlertDto.ALERT_USED) +
+            fluidRowLocs(EbsAlertDto.DETAILS_ALERT_USED) +
             fluidRowLocs(EbsAlertDto.ACTION_INITIATED) +
             fluidRowLocs(EbsAlertDto.RESPONSE_STATUS) +
-            fluidRowLocs(EbsAlertDto.DETAILS_RESPONSE_ACTIVITIES) +
-            fluidRowLocs(EbsAlertDto.DETAILS_ALERT_USED) +
-            fluidRowLocs(EbsAlertDto.ALERT_USED) +
-            fluidRowLocs(EbsAlertDto.DETAILS_ALERT_USED);
+            fluidRowLocs(EbsAlertDto.DETAILS_RESPONSE_ACTIVITIES);
+
 
     EbsAlertDataForm(EbsDto ebsDto, Class<? extends EntityDto> parentClass, boolean isPseudonymized, boolean inJurisdiction, boolean isEditAllowed){
         super(
