@@ -241,7 +241,6 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setDateOnsetParalysis(source.getDateOnsetParalysis());
 		target.setProgressiveFlaccidAcute(source.getProgressiveFlaccidAcute());
 		target.setAssymetric(source.getAssymetric());
-		target.setSiteOfParalysis(source.getSiteOfParalysis());
 		target.setParalysedLimbSensitiveToPain(source.getParalysedLimbSensitiveToPain());
 		target.setInjectionSiteBeforeOnsetParalysis(source.getInjectionSiteBeforeOnsetParalysis());
 		target.setRightInjectionSite(source.getRightInjectionSite());
@@ -267,6 +266,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setSymptomsSelected(source.getSymptomsSelected());
 		target.setDateOfOnsetRash(source.getDateOfOnsetRash());
 		target.setRashSymptoms(source.getRashSymptoms());
+		target.setSiteOfParalysis(source.getSiteOfParalysis());
 		target.setRashSymptomsOtherAreas(source.getRashSymptomsOtherAreas());
 		target.setAreLesionsSameState(source.getAreLesionsSameState());
 		target.setAreLesionsSameSize(source.getAreLesionsSameSize());
@@ -512,7 +512,6 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setDateOnsetParalysis(source.getDateOnsetParalysis());
 		target.setProgressiveFlaccidAcute(source.getProgressiveFlaccidAcute());
 		target.setAssymetric(source.getAssymetric());
-		target.setSiteOfParalysis(source.getSiteOfParalysis());
 		target.setParalysedLimbSensitiveToPain(source.getParalysedLimbSensitiveToPain());
 		target.setInjectionSiteBeforeOnsetParalysis(source.getInjectionSiteBeforeOnsetParalysis());
 		target.setRightInjectionSite(source.getRightInjectionSite());
@@ -531,6 +530,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setSymptomsSelected(source.getSymptomsSelected());
 		target.setDateOfOnsetRash(source.getDateOfOnsetRash());
 		target.setRashSymptoms(source.getRashSymptoms());
+		target.setSiteOfParalysis(source.getSiteOfParalysis());
 		target.setRashSymptomsOtherAreas(source.getRashSymptomsOtherAreas());
 		target.setAreLesionsSameState(source.getAreLesionsSameState());
 		target.setAreLesionsSameSize(source.getAreLesionsSameSize());
@@ -792,6 +792,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setSymptomsSelected(source.getSymptomsSelected());
 		target.setDateOfOnsetRash(source.getDateOfOnsetRash());
 		target.setRashSymptoms(source.getRashSymptoms());
+		target.setSiteOfParalysis(source.getSiteOfParalysis());
 		target.setRashSymptomsOtherAreas(source.getRashSymptomsOtherAreas());
 		target.setAreLesionsSameState(source.getAreLesionsSameState());
 		target.setAreLesionsSameSize(source.getAreLesionsSameSize());
