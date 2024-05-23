@@ -24,11 +24,11 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 import com.vaadin.v7.ui.*;
-import de.symeda.sormas.api.ebs.ManualScanningType;
-import de.symeda.sormas.api.ebs.MediaScannningType;
+import de.symeda.sormas.api.ebs.*;
 import de.symeda.sormas.api.infrastructure.region.RegionDto;
 import de.symeda.sormas.ui.utils.*;
 import org.apache.commons.lang3.StringUtils;
@@ -40,8 +40,6 @@ import com.vaadin.v7.data.validator.EmailValidator;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.event.EpidemiologicalEvidenceDetail;
-import de.symeda.sormas.api.ebs.EbsDto;
-import de.symeda.sormas.api.ebs.EbsSourceType;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
@@ -150,7 +148,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 
 
         DateField reportDate = addField(EbsDto.REPORT_DATE_TIME, DateField.class);
-        addField(EbsDto.PERSON_REPORTING, ComboBox.class);
+        ComboBox categoryInformant = addField(EbsDto.PERSON_REPORTING, ComboBox.class);
 
         ComboBox srcType = addField(EbsDto.SRC_TYPE);
 
@@ -198,9 +196,9 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 
         FieldHelper.setVisibleWhen(
                 getFieldGroup(),
-                Arrays.asList(EbsDto.CONTACT_NAME, EbsDto.CONTACT_PHONE_NUMBER),
+                Arrays.asList(EbsDto.CONTACT_NAME),
                 EbsDto.SRC_TYPE,
-                Arrays.asList(EbsSourceType.CEBS),
+                Arrays.asList(EbsSourceType.CEBS,EbsSourceType.HEBS,EbsSourceType.HOTLINE_PERSON),
                 true);
 
         FieldHelper.setVisibleWhen(
@@ -266,7 +264,58 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
                 srcType,
                 scanningType,
                 automaticScanningType);
+
+        srcType.addValueChangeListener(valueChangeEvent -> {
+            List<PersonReporting> itemsToAdd;
+
+            Object value = srcType.getValue();
+            if (value.equals(EbsSourceType.CEBS)) {
+                itemsToAdd = Arrays.asList(
+                        PersonReporting.COMMUNITY_SURVEILLANCE_VOLUNTEER,
+                        PersonReporting.COMMUNITY_ANIMAL_HEALTH_WORKER,
+                        PersonReporting.OTC_CHEMICAL_WORKER,
+                        PersonReporting.COMMUNITY_MEMBER,
+                        PersonReporting.OTHER
+                );
+            } else if (value.equals(EbsSourceType.HEBS)) {
+                itemsToAdd = Arrays.asList(
+                        PersonReporting.PUBLIC_HEALTHCARE,
+                        PersonReporting.PRIVATE_HEALTH,
+                        PersonReporting.REFERENCE_LABORATORY,
+                        PersonReporting.OTHER
+                );
+            } else if (value.equals(EbsSourceType.MEDIA_NEWS)) {
+                itemsToAdd = Arrays.asList(
+                        PersonReporting.PERSON_DISTRICT,
+                        PersonReporting.PERSON_REGION,
+                        PersonReporting.PERSON_NATIONAL,
+                        PersonReporting.OTHER
+                );
+            } else if (value.equals(EbsSourceType.HOTLINE_PERSON)) {
+                itemsToAdd = Arrays.asList(
+                        PersonReporting.GENERAL_PUBLIC_INFORMANT,
+                        PersonReporting.INSTITUTIONAL_INFORMANT,
+                        PersonReporting.OTHER
+                );
+            } else {
+                itemsToAdd = Collections.emptyList(); // Handle unknown EbsSourceType if necessary
+            }
+
+            categoryInformant.removeAllItems();
+            FieldHelper.updateEnumData(categoryInformant, itemsToAdd);
+        });
+
+        manualScanningType.addValueChangeListener(valueChangeEvent -> {
+            Object value = manualScanningType.getValue();
+            if (value.equals(ManualScanningType.ONLINE)){
+                sourceName.setCaption("NAME OF WEBSITE");
+                contactPhone.setVisible(false);
+            }
+        });
+
     }
+
+
 
     private void addRegionAndDistrict(ComboBox responsibleUserField) {
         List<UserReferenceDto> responsibleUsers = new ArrayList<>();
