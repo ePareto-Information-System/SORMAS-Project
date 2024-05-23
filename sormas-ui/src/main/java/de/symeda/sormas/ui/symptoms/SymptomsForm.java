@@ -969,6 +969,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT,
 					Arrays.asList(SymptomState.YES),
 					true);
+
+			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED, CaseOutcome.UNKNOWN));
 		}
 
 		if (symptomsContext != SymptomsContext.CASE) {
