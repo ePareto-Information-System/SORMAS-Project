@@ -13739,3 +13739,49 @@ ALTER TABLE riskAssessment ADD COLUMN ebs_id bigint;
 ALTER TABLE riskAssessment ADD CONSTRAINT fk_riskAssessment_ebs_id FOREIGN KEY (ebs_id) REFERENCES ebs (id);
 
 INSERT INTO schema_version (version_number, comment) VALUES (613, 'Ebs added to riskAssessment');
+
+CREATE TABLE ebsAlert(
+    id bigint not null,
+    actionInitiated VARCHAR(255),
+    responseStatus VARCHAR(255),
+    responseDate DATE,
+    detailsResponseActivities VARCHAR(255),
+    detailsGiven VARCHAR(255),
+    alertUsed VARCHAR(3),
+    detailsAlertUsed varchar(255),
+    ebs_id  bigint,
+    changedate timestamp not null,
+    creationdate timestamp not null,
+    change_user_id BIGINT,
+    uuid VARCHAR(36) NOT NULL UNIQUE,
+    primary key(id)
+);
+
+ALTER TABLE ebs ADD COLUMN ebsAlert_id BIGINT;
+ALTER TABLE ebsAlert ADD CONSTRAINT fk_ebs_change_user_id FOREIGN KEY (change_user_id) REFERENCES users (id);
+ALTER TABLE ebsAlert ADD CONSTRAINT fk_ebsAlert_ebs_id FOREIGN KEY (ebs_id) REFERENCES ebs (id);
+ALTER TABLE ebs ADD CONSTRAINT fk_ebs_ebsAlert_id FOREIGN KEY (ebsAlert_id) REFERENCES ebsAlert (id);
+
+CREATE TABLE ebsAlert_history (
+                             LIKE ebsAlert INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
+);
+
+INSERT INTO schema_version (version_number, comment) VALUES (614, 'Added ebsAlert');
+
+ALTER TABLE triaging ADD COLUMN notSignal VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (615, 'Added ebsAlert');
+
+ALTER TABLE triaging ALTER COLUMN notSignal TYPE boolean USING (notSignal::boolean);
+ALTER TABLE triaging ALTER COLUMN notSignal SET DEFAULT false;
+INSERT INTO schema_version (version_number, comment) VALUES (616, 'Changed notSignal column to BOOLEAN with default false');
+
+
+ALTER TABLE triaging ADD COLUMN humanCommunityCategoryDetailsString varchar(255);
+ALTER TABLE triaging ADD COLUMN humanFacilityCategoryDetailsString varchar(255);
+ALTER TABLE triaging ADD COLUMN humanLaboratoryCategoryDetailsString varchar(255);
+ALTER TABLE triaging ADD COLUMN animalCommunityCategoryDetailsString varchar(255);
+ALTER TABLE triaging ADD COLUMN animalFacilityCategoryDetailsString varchar(255);
+ALTER TABLE triaging ADD COLUMN environmentalCategoryDetailsString varchar(255);
+ALTER TABLE triaging ADD COLUMN poeCategoryDetailsString varchar(255);
+ALTER TABLE triaging ADD COLUMN categoryDetailsLevel varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (617, 'Changed notSignal column to BOOLEAN with default false');
