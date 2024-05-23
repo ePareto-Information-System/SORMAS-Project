@@ -76,4 +76,7 @@ public interface EbsFacade extends CoreFacade<EbsDto, EbsIndexDto, EbsReferenceD
 	String getUuidByCaseUuidOrPersonUuid(String value);
 
 	void setRiskAssessmentAssociations(EbsReferenceDto ebsRef);
+
+	void setEbsAlertAssociations(EbsReferenceDto ebsRef);
+
 }

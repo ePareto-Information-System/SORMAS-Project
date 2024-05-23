@@ -133,6 +133,8 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	private RiskAssessmentFacadeEjb.RiskAssessmentFacadeEjbLocal riskAssessmentFacade;
 	@EJB
 	private RiskAssessmentService riskAssessmentService;
+	@EJB
+	private EbsAlertService ebsAlertService;
 //	@Resource
 //	private ManagedScheduledExecutorService executorService;
 
@@ -634,7 +636,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 				reportingUser.get(User.UUID),
 				reportingUser.get(User.FIRST_NAME),
 				reportingUser.get(User.LAST_NAME));
-				decisionDate.get(Triaging.DATE_OF_DECISION);
+		decisionDate.get(Triaging.DATE_OF_DECISION);
 
 		cq.distinct(true);
 
@@ -899,16 +901,30 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	@Override
 	public void setRiskAssessmentAssociations(EbsReferenceDto ebsRef) {
 
-			final Ebs ebs = ebsService.getByUuid(ebsRef.getUuid());
-			List<RiskAssessment> riskAssessments = ebs.getRiskAssessment().stream().filter(risks -> risks.getEbs() == null).collect(Collectors.toList());
+		final Ebs ebs = ebsService.getByUuid(ebsRef.getUuid());
+		List<RiskAssessment> riskAssessments = ebs.getRiskAssessment().stream().filter(risks -> risks.getEbs() == null).collect(Collectors.toList());
 
-			if (riskAssessments.size() > 0) {
-				riskAssessments.forEach(risk -> {
-					risk.setEbs(ebs);
-					riskAssessmentService.ensurePersisted(risk);
-				});
+		if (riskAssessments.size() > 0) {
+			riskAssessments.forEach(risk -> {
+				risk.setEbs(ebs);
+				riskAssessmentService.ensurePersisted(risk);
+			});
 		}
+	}
+
+	@Override
+	public void setEbsAlertAssociations(EbsReferenceDto ebsRef) {
+
+		final Ebs ebs = ebsService.getByUuid(ebsRef.getUuid());
+		List<EbsAlert> ebsAlerts = ebs.getEbsAlert().stream().filter(alerts -> alerts.getEbs() == null).collect(Collectors.toList());
+
+		if (ebsAlerts.size() > 0) {
+			ebsAlerts.forEach(alert -> {
+				alert.setEbs(ebs);
+				ebsAlertService.ensurePersisted(alert);
+			});
 		}
+	}
 
 
 	@Override
