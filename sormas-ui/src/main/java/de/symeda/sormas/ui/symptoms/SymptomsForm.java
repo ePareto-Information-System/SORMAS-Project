@@ -16,10 +16,7 @@
 package de.symeda.sormas.ui.symptoms;
 
 import static de.symeda.sormas.api.symptoms.SymptomsDto.*;
-import static de.symeda.sormas.ui.utils.CssStyles.H3;
-import static de.symeda.sormas.ui.utils.CssStyles.H4;
-import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
-import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_NONE;
+import static de.symeda.sormas.ui.utils.CssStyles.*;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumn;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRow;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowCss;
@@ -154,6 +151,19 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6,OUTCOME)+
 					fluidRowLocs(PROVISONAL_DIAGNOSIS);
 	//@formatter:on
+	public static final String MEASLES_LAYOUT =
+			fluidRowLocs(4, FEVER, 4, GENERALIZED_RASH) +
+			fluidRowLocs(4, COUGH, 4, RUNNY_NOSE) +
+			fluidRowLocs(4, RED_EYES, 4, SWOLLEN_LYMPH_NODES_BEHIND_EARS) +
+			fluidRowLocs(4, JOINT_PAIN) +
+			fluidRowLocs(6,OTHER_COMPLICATIONS) +
+			fluidRowLocs(6,OTHER_COMPLICATIONS_TEXT) +
+			fluidRowLocsCss(VSPACE_3) +
+			fluidRowLocs(6, HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT) +
+			fluidRowLocs(6, PLACE_OF_EXPOSURE_MEASLES_RUBELLA) +
+			fluidRowLocsCss(VSPACE_3, ONSET_SYMPTOM, ONSET_DATE) +
+			fluidRowLocs(6,OUTCOME);
+
 
 	private static String createSymptomGroupLayout(SymptomGroup symptomGroup, String loc) {
 
@@ -210,7 +220,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			FieldVisibilityCheckers.withDisease(disease)
 				.andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale())
 				.add(new OutbreakFieldVisibilityChecker(viewMode)),
-			fieldAccessCheckers);
+			fieldAccessCheckers,disease);
 
 		this.caze = caze;
 		this.disease = disease;
@@ -951,7 +961,14 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 //			setVisible(true, SKIN_RASH, FEVER, COUGH,RUNNY_NOSE, CONJUNCTIVITIS, KOPLIKS_SPOTS, NON_VASCULAR);
 //
 //			setVisible(false, ALTERED_CONSCIOUSNESS, CONFUSED_DISORIENTED, HEMORRHAGIC_SYNDROME, HYPERGLYCEMIA, OTHER_COMPLICATIONS_TEXT, OTHER_COMPLICATIONS, SEIZURES);
-			setVisible(true, PLACE_OF_EXPOSURE_MEASLES_RUBELLA);
+			setVisible(true, HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT);
+//			HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT
+			FieldHelper.setVisibleWhen(
+					getFieldGroup(),
+					PLACE_OF_EXPOSURE_MEASLES_RUBELLA,
+					HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT,
+					Arrays.asList(SymptomState.YES),
+					true);
 		}
 
 		if (symptomsContext != SymptomsContext.CASE) {
@@ -1248,7 +1265,22 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 	@Override
 	protected String createHtmlLayout() {
-		return HTML_LAYOUT;
+		String SELECTED_HTML_LAYOUT = "";
+
+		if (caze.getDisease() != null) {
+			switch (caze.getDisease()) {
+				case MEASLES:
+					SELECTED_HTML_LAYOUT = MEASLES_LAYOUT;
+					break;
+				default:
+					SELECTED_HTML_LAYOUT = HTML_LAYOUT;
+					break;
+			}
+
+			return SELECTED_HTML_LAYOUT;
+		} else {
+			return HTML_LAYOUT;
+		}
 	}
 
 	public void initializeSymptomRequirementsForVisit(NullableOptionGroup visitStatus) {
