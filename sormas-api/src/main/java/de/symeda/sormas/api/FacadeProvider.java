@@ -49,6 +49,7 @@ import de.symeda.sormas.api.docgeneneration.DocumentTemplateFacade;
 import de.symeda.sormas.api.docgeneneration.EventDocumentFacade;
 import de.symeda.sormas.api.docgeneneration.QuarantineOrderFacade;
 import de.symeda.sormas.api.document.DocumentFacade;
+import de.symeda.sormas.api.ebs.EbsAlertFacade;
 import de.symeda.sormas.api.ebs.EbsFacade;
 import de.symeda.sormas.api.ebs.EbsGroupFacade;
 import de.symeda.sormas.api.ebs.RiskAssessmentFacade;
@@ -204,6 +205,9 @@ public class FacadeProvider {
 
 	public static RiskAssessmentFacade getRiskAssessmentFacade() {
 		return get().lookupEjbRemote(RiskAssessmentFacade.class);
+	}
+	public static EbsAlertFacade getAlertFacade() {
+		return get().lookupEjbRemote(EbsAlertFacade.class);
 	}
 
 	public static EbsGroupFacade getEbsGroupFacade() {
