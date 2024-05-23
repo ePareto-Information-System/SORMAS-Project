@@ -372,7 +372,14 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setBirthCountry(CountryFacadeEjb.toReferenceDto(source.getBirthCountry()));
 		target.setCitizenship(CountryFacadeEjb.toReferenceDto(source.getCitizenship()));
 		target.setAdditionalDetails(source.getAdditionalDetails());
-
+		target.setReceivedAntenatalCare(source.getReceivedAntenatalCare());
+		target.setPrenatalTotalVisits(source.getPrenatalTotalVisits());
+		target.setAttendedByTrainedTBA(source.getAttendedByTrainedTBA());
+		target.setAttendedByTrainedTBAMidwifeName(source.getAttendedByTrainedTBAMidwifeName());
+		target.setAttendedByDoctorNurse(source.getAttendedByDoctorNurse());
+		target.setCutCordWithSterileBlade(source.getCutCordWithSterileBlade());
+		target.setCordTreatedWithAnything(source.getCordTreatedWithAnything());
+		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
 		//target.setCadre(CadreFacadeEjb.toReferenceDto(source.getCadre()));
 		target.setPst14MonthsVillage(source.getPst14MonthsVillage());
 		target.setPst14MonthsZone(source.getPst14MonthsZone());
@@ -383,7 +390,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setResidenceSinceWhenInMonths(source.getResidenceSinceWhenInMonths());
 		target.setEthnicity(source.getEthnicity());
 		target.setLocationOfBirth(source.getLocationOfBirth());
-
+		target.setBirthInInstitution(source.getBirthInInstitution());
 		return target;
 	}
 

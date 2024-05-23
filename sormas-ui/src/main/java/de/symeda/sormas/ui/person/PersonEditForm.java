@@ -876,6 +876,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			birthInInstitutionField.setVisible(true);
 			personContactDetailsField.setVisible(false);
 
+			occupationHeader.setVisible(false);
+
 //			(cbPlaceOfBirthRegion, cbPlaceOfBirthCommunity, cbPlaceOfBirthCommunity, placeOfBirthFacilityType, cbPlaceOfBirthFacility) visible birthInInstitutionField is yes
 			FieldHelper.setVisibleWhen(
 					birthInInstitutionField,
