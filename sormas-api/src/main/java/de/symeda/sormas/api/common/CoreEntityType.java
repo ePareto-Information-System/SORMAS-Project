@@ -22,6 +22,7 @@ public enum CoreEntityType {
 	CASE,
 	CONTACT,
 	EVENT,
+	EBS,
 	EVENT_PARTICIPANT,
 	IMMUNIZATION,
 	TRAVEL_ENTRY,
