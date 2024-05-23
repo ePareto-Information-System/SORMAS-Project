@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.vaadin.server.Sizeable;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.InfrastructureDataReferenceDto;
 import de.symeda.sormas.api.caze.CaseDataDto;
@@ -746,6 +747,15 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		if (required) {
 			updateRegionCombo(region, country);
 		}
+	}
+
+	//create a function to hide fields in ebs
+	public void hideForEbsForm() {
+		getField(LocationDto.LOCALITY).setVisible(false);
+		getField(LocationDto.HOUSE_NUMBER).setVisible(false);
+		getField(LocationDto.AREA_TYPE).setVisible(false);
+		getField(LocationDto.POSTAL_CODE).setVisible(false);
+		getField(LocationDto.CITY).setVisible(false);
 	}
 
 	public void setCountryDisabledWithHint(String hint) {
