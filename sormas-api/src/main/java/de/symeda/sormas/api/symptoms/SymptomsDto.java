@@ -2426,7 +2426,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Date dateOnsetParalysis;
 	private YesNoUnknown progressiveFlaccidAcute;
 	private YesNoUnknown assymetric;
-	private InjectionSite siteOfParalysis;
+	private Set<InjectionSite> siteOfParalysis;
 	private YesNo paralysedLimbSensitiveToPain;
 	private YesNo injectionSiteBeforeOnsetParalysis;
 	private InjectionSite rightInjectionSite;
@@ -3996,7 +3996,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Order(361)
 	public YesNoUnknown getAssymetric(){return  assymetric;}
 	@Order(362)
-	public InjectionSite getSiteOfParalysis(){return siteOfParalysis;}
+	public Set<InjectionSite> getSiteOfParalysis(){return siteOfParalysis;}
 	@Order(363)
 	public YesNo getParalysedLimbSensitiveToPain(){return paralysedLimbSensitiveToPain;}
 	@Order(364)
@@ -4230,7 +4230,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.assymetric = assymetric;
 	}
 
-	public void setSiteOfParalysis(InjectionSite siteOfParalysis) {
+	public void setSiteOfParalysis(Set<InjectionSite> siteOfParalysis) {
 		this.siteOfParalysis = siteOfParalysis;
 	}
 

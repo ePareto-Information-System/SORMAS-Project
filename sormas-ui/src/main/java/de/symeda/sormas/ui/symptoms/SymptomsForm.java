@@ -707,11 +707,15 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			NullableOptionGroup progressiveFlaccidAcute = addField(PROGRESSIVE_FLACID_ACUTE, NullableOptionGroup.class);
 			NullableOptionGroup assymetric = addField(ASSYMETRIC, NullableOptionGroup.class);
 
-			NullableOptionGroup siteParalysisBox = new NullableOptionGroup("Site of Paralysis");
-			for (InjectionSite injectionSite : InjectionSite.ParalysisSite) {
-				siteParalysisBox.addItem(injectionSite);
-			}
-			NullableOptionGroup siteOfParalysis = addField(SITE_OF_PARALYSIS, siteParalysisBox);
+			OptionGroup siteOfParalysis = addField(SITE_OF_PARALYSIS, OptionGroup.class);
+			CssStyles.style(siteOfParalysis, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+			siteOfParalysis.setMultiSelect(true);
+
+			siteOfParalysis.addItems(
+					Arrays.stream(InjectionSite.ParalysisSite())
+							.filter( c -> fieldVisibilityCheckers.isVisible(InjectionSite.class, c.name()))
+							.collect(Collectors.toList()));
+
 			OptionGroup paralysedLimbSensitiveToPain = addField(PARALYSED_LIMB_SENSITIVE_TO_PAIN, OptionGroup.class);
 			OptionGroup injectionSiteBeforeOnsetParalysis = addField(INJECTION_SITE_BEFORE_ONSET_PARALYSIS, OptionGroup.class);
 
