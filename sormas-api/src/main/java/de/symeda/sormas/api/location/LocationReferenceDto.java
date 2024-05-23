@@ -50,6 +50,15 @@ public class LocationReferenceDto extends ReferenceDto {
 		this.setCaption(buildCaption(regionName, districtName, communityName, city, street, houseNumber, additionalInformation));
 	}
 
+	public LocationReferenceDto(
+		String regionName,
+		String districtName,
+		String communityName,
+		String town,
+		String additionalInformation) {
+		this.setCaption(buildCaption(regionName, districtName, communityName, town, additionalInformation));
+	}
+
 	public static String buildCaption(
 		String regionName,
 		String districtName,
@@ -122,6 +131,58 @@ public class LocationReferenceDto extends ReferenceDto {
 				stringBuilder.append(", ");
 			}
 			stringBuilder.append(houseNumber);
+		}
+		if (!DataHelper.isNullOrEmpty(additionalInformation)) {
+			if (stringBuilder.length() > 0) {
+				stringBuilder.append(", ");
+			}
+			stringBuilder.append(additionalInformation);
+		}
+		return stringBuilder.toString();
+	}
+
+	public static String buildCaption(String town, String additionalInformation) {
+		StringBuilder stringBuilder = new StringBuilder();
+
+		if (!DataHelper.isNullOrEmpty(town)) {
+			if (stringBuilder.length() > 0) {
+				stringBuilder.append(", ");
+			}
+			stringBuilder.append(town);
+		}
+		if (!DataHelper.isNullOrEmpty(additionalInformation)) {
+			if (stringBuilder.length() > 0) {
+				stringBuilder.append(", ");
+			}
+			stringBuilder.append(additionalInformation);
+		}
+
+		return stringBuilder.toString();
+	}
+
+	public static String buildCaption(String regionName, String districtName, String communityName, String town, String additionalInformation) {
+		StringBuilder stringBuilder = new StringBuilder();
+
+		if (!DataHelper.isNullOrEmpty(regionName)) {
+			stringBuilder.append(regionName);
+		}
+		if (!DataHelper.isNullOrEmpty(districtName)) {
+			if (stringBuilder.length() > 0) {
+				stringBuilder.append(", ");
+			}
+			stringBuilder.append(districtName);
+		}
+		if (!DataHelper.isNullOrEmpty(communityName)) {
+			if (stringBuilder.length() > 0) {
+				stringBuilder.append(", ");
+			}
+			stringBuilder.append(communityName);
+		}
+		if (!DataHelper.isNullOrEmpty(town)) {
+			if (stringBuilder.length() > 0) {
+				stringBuilder.append(", ");
+			}
+			stringBuilder.append(town);
 		}
 		if (!DataHelper.isNullOrEmpty(additionalInformation)) {
 			if (stringBuilder.length() > 0) {
