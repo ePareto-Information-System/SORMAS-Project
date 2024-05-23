@@ -69,6 +69,7 @@ public class EbsController {
 		navigator.addView(TriagingView.VIEW_NAME,TriagingView.class);
 		navigator.addView(SignalVerificationView.VIEW_NAME,SignalVerificationView.class);
 		navigator.addView(RiskAssessmentView.VIEW_NAME,RiskAssessmentView.class);
+		navigator.addView(EbsAlertView.VIEW_NAME,EbsAlertView.class);
 	}
 
 	public void navigateToIndex() {
@@ -252,6 +253,32 @@ public class EbsController {
 		return editView;
 	}
 
+	public CommitDiscardWrapperComponent<EbsAlertDataForm> getEbsCreateAlertComponent(final String ebsUuid,
+																						 boolean isEditAllowed) {
+		EbsDto ebs = findEbs(ebsUuid);
+		EbsAlertDto ebsAlertDto = EbsAlertDto.build(ebs.toReference());
+		EbsAlertDataForm alertDataForm = new EbsAlertDataForm(
+				ebs,
+				EbsDto.class,
+				ebs.isPseudonymized(),
+				ebs.isInJurisdiction(),
+				isEditAllowed);
+		alertDataForm.setValue(ebsAlertDto);
+		final CommitDiscardWrapperComponent<EbsAlertDataForm> editView = new CommitDiscardWrapperComponent<EbsAlertDataForm>(
+				alertDataForm,
+				alertDataForm.getFieldGroup());
+
+		editView.addCommitListener(() -> {
+			ebs.setAlert(alertDataForm.getValue());
+			ebsAlertDto.setAlertUsed(alertDataForm.getValue().getAlertUsed());
+			FacadeProvider.getAlertFacade().saveAlert(ebsAlertDto);
+			FacadeProvider.getEbsFacade().save(ebs);
+			SormasUI.refreshView();
+		});
+
+		return editView;
+	}
+
 	private EbsDto findEvent(String uuid) {
 		return FacadeProvider.getEbsFacade().getEbsByUuid(uuid, false);
 	}
@@ -389,6 +416,13 @@ public class EbsController {
 		RiskAssessmentDto riskAssessmentDto = createRiskAssessmentComponent.getWrappedComponent().getValue();
 		VaadinUiUtil.showModalPopupWindow(createRiskAssessmentComponent, I18nProperties.getString(Strings.headingCreateNewEvent));
 		return riskAssessmentDto;
+	}
+	public EbsAlertDto createAlertComponent(final String ebsUuid,
+														   boolean isEditAllowed){
+		CommitDiscardWrapperComponent<EbsAlertDataForm> createAlertComponent = getEbsCreateAlertComponent(ebsUuid, isEditAllowed);
+		EbsAlertDto ebsAlertDto = createAlertComponent.getWrappedComponent().getValue();
+		VaadinUiUtil.showModalPopupWindow(createAlertComponent, I18nProperties.getString(Strings.headingCreateNewEvent));
+		return ebsAlertDto;
 	}
 
 	public TitleLayout getEbsViewTitleLayout(String uuid) {
