@@ -1,5 +1,6 @@
 package de.symeda.sormas.api.utils;
 
+import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 
@@ -33,11 +34,11 @@ public enum InjectionSite {
             RIGHT_THIGH,
             RIGHT_LEG);
 
-    public static final List<InjectionSite> ParalysisSite = Arrays.asList(
-            LEFT_ARM,
-            RIGHT_ARM,
-            LEFT_LEG,
-            RIGHT_LEG);
+    public static InjectionSite[] ParalysisSite() {
+        return new InjectionSite[] {
+                LEFT_ARM, RIGHT_ARM, LEFT_LEG, RIGHT_LEG
+        };
+    }
 
     public static final List<InjectionSite> RemoveParalysisSite = Arrays.asList(
             RIGHT_FOREARM,

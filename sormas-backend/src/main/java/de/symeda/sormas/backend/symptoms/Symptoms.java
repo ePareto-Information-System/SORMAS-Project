@@ -273,7 +273,8 @@ public class Symptoms extends AbstractDomainObject {
 	private Date dateOnsetParalysis;
 	private YesNoUnknown progressiveFlaccidAcute;
 	private YesNoUnknown assymetric;
-	private InjectionSite siteOfParalysis;
+	private Set<InjectionSite> siteOfParalysis;
+	private String requestedSiteOfParalysisString;
 	private YesNo paralysedLimbSensitiveToPain;
 	private YesNo injectionSiteBeforeOnsetParalysis;
 	private InjectionSite rightInjectionSite;
@@ -2107,12 +2108,44 @@ public class Symptoms extends AbstractDomainObject {
 		this.assymetric = assymetric;
 	}
 
-	public InjectionSite getSiteOfParalysis() {
+	@Transient
+	public Set<InjectionSite> getSiteOfParalysis() {
+		if (siteOfParalysis == null) {
+			if (StringUtils.isEmpty(requestedSiteOfParalysisString)) {
+				siteOfParalysis = new HashSet<>();
+			} else {
+				siteOfParalysis =
+						Arrays.stream(requestedSiteOfParalysisString.split(",")).map(InjectionSite::valueOf).collect(Collectors.toSet());
+			}
+		}
 		return siteOfParalysis;
 	}
 
-	public void setSiteOfParalysis(InjectionSite siteOfParalysis) {
+	public void setSiteOfParalysis(Set<InjectionSite> siteOfParalysis) {
 		this.siteOfParalysis = siteOfParalysis;
+
+		if (this.siteOfParalysis == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		siteOfParalysis.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		requestedSiteOfParalysisString = sb.toString();
+	}
+
+	public String getRequestedSiteOfParalysisString() {
+		return requestedSiteOfParalysisString;
+	}
+
+	public void setRequestedSiteOfParalysisString(String requestedSymptomsSelectedString) {
+		this.requestedSiteOfParalysisString = requestedSiteOfParalysisString;
+		siteOfParalysis = null;
 	}
 
 	public YesNo getParalysedLimbSensitiveToPain() {

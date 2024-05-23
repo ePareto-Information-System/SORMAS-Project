@@ -14311,4 +14311,10 @@ CREATE TABLE afpimmunization (
 ALTER TABLE cases ADD COLUMN afpimmunization_id BIGINT;
 
 INSERT INTO schema_version (version_number, comment) VALUES (651, 'Created afpimmunization table and altered cases table');
+
+ALTER TABLE symptoms ADD COLUMN requestedsiteOfparalysisstring varchar(512);
+ALTER TABLE symptoms DROP COLUMN siteofparalysis ;
+
+INSERT INTO schema_version (version_number, comment) VALUES (652, 'updated requestedsiteOfparalysisstring and dropped siteofparalysis for AFP');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
