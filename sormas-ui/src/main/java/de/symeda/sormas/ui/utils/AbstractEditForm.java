@@ -52,6 +52,7 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 
 	protected final FieldVisibilityCheckers fieldVisibilityCheckers;
 	protected final UiFieldAccessCheckers fieldAccessCheckers;
+	private Disease caseDisease;
 
 	private boolean hideValidationUntilNextCommit = false;
 	private List<Field<?>> visibleAllowedFields = new ArrayList<>();
@@ -97,6 +98,31 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 		if (addFields) {
 			addFields();
 		}
+	}
+
+	protected AbstractEditForm(
+			Class<DTO> type,
+			String propertyI18nPrefix,
+			boolean addFields,
+			FieldVisibilityCheckers fieldVisibilityCheckers,
+			UiFieldAccessCheckers fieldAccessCheckers,
+			Disease caseDisease) {
+
+		super(type, propertyI18nPrefix, new SormasFieldGroupFieldFactory(fieldVisibilityCheckers, fieldAccessCheckers), false);
+		this.fieldVisibilityCheckers = fieldVisibilityCheckers;
+		this.fieldAccessCheckers = fieldAccessCheckers;
+		this.caseDisease = caseDisease;
+
+		getFieldGroup().addCommitHandler(this);
+		setWidth(900, Unit.PIXELS);
+
+		if (addFields) {
+			addFields();
+		}
+	}
+
+	public Disease getCaseDisease () {
+		return caseDisease;
 	}
 
 	protected AbstractEditForm(
