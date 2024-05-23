@@ -92,6 +92,7 @@ public class EbsDto extends PseudonymizableDto {
 	public static final String TRIAGING = "triaging";
 	public static final String SIGNAL_VERIFICATION = "signalVerification";
 	public static final String RISK_ASSESSMENT = "riskAssessment";
+	public static final String ALERT = "alert";
 
 
 	private RiskLevel riskLevel;
@@ -154,6 +155,7 @@ public class EbsDto extends PseudonymizableDto {
 	private TriagingDto triaging;
 	private SignalVerificationDto signalVerification;
 	private RiskAssessmentDto riskAssessment;
+	private EbsAlertDto alert;
 
 
 	public static EbsDto build() {
@@ -507,4 +509,11 @@ public ManualScanningType getManualScanningType() {
 		this.riskAssessment = riskAssessment;
 	}
 
+	public EbsAlertDto getAlert() {
+		return alert;
+	}
+
+	public void setAlert(EbsAlertDto alert) {
+		this.alert = alert;
+	}
 }
