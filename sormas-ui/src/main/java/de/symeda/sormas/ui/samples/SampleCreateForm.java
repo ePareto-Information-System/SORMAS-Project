@@ -42,6 +42,8 @@ public class SampleCreateForm extends AbstractSampleForm {
 			switch (disease) {
 				case GUINEA_WORM:
 					SELECTED_LAYOUT = GUINEA_WORM_LAYOUT;
+				case MEASLES:
+					SELECTED_LAYOUT = MEASLES_LAYOUT;
 					break;
 				default:
 					SELECTED_LAYOUT = SAMPLE_COMMON_HTML_LAYOUT;
