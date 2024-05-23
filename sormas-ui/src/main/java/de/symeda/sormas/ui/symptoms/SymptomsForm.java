@@ -19,6 +19,7 @@ import static de.symeda.sormas.api.symptoms.SymptomsDto.*;
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import static de.symeda.sormas.ui.utils.CssStyles.H4;
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
+import static de.symeda.sormas.ui.utils.CssStyles.*;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumn;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRow;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowCss;
@@ -192,6 +193,20 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					loc(FOOD_HISTORY_HEADING_LOC);
 
 	//@formatter:on
+	public static final String MEASLES_LAYOUT =
+			fluidRowLocs(4, FEVER, 4, GENERALIZED_RASH ) +
+			fluidRowLocs(4, "", 4, LESIONS_ONSET_DATE) +
+			fluidRowLocs(4, COUGH, 4, RUNNY_NOSE) +
+			fluidRowLocs(4, RED_EYES, 4, SWOLLEN_LYMPH_NODES_BEHIND_EARS) +
+			fluidRowLocs(4, JOINT_PAIN) +
+			fluidRowLocs(6,OTHER_COMPLICATIONS) +
+			fluidRowLocs(6,OTHER_COMPLICATIONS_TEXT) +
+			fluidRowLocsCss(VSPACE_3) +
+			fluidRowLocs(6, HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT) +
+			fluidRowLocs(6, PLACE_OF_EXPOSURE_MEASLES_RUBELLA) +
+			fluidRowLocsCss(VSPACE_3, ONSET_DATE, ONSET_SYMPTOM) +
+			fluidRowLocs(6,OUTCOME);
+
 
 	public static final String GUINEA_WORD_LAYOUT =
 			loc(SIGNS_AND_SYMPTOMS_HEADING_LOC) +
@@ -262,7 +277,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			FieldVisibilityCheckers.withDisease(disease)
 				.andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale())
 				.add(new OutbreakFieldVisibilityChecker(viewMode)),
-			fieldAccessCheckers);
+			fieldAccessCheckers,disease);
 
 		this.caze = caze;
 		this.disease = disease;
@@ -1149,6 +1164,14 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			FieldHelper.setVisibleWhen(getFieldGroup(), NUMBER_OF_WORMS, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
 			FieldHelper.setVisibleWhen(getFieldGroup(), DATE_FIRST_WORM_EMERGENCE, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
 
+			setVisible(true, HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT);
+//			HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT
+			FieldHelper.setVisibleWhen(
+					getFieldGroup(),
+					PLACE_OF_EXPOSURE_MEASLES_RUBELLA,
+					HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT,
+					Arrays.asList(SymptomState.YES),
+					true);
 
 
 		}
@@ -1483,6 +1506,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			switch (caze.getDisease()) {
 				case GUINEA_WORM:
 					SELECTED_HTML_LAYOUT = GUINEA_WORD_LAYOUT;
+				case MEASLES:
+					SELECTED_HTML_LAYOUT = MEASLES_LAYOUT;
 					break;
 				default:
 					SELECTED_HTML_LAYOUT = HTML_LAYOUT;
