@@ -143,7 +143,7 @@ public class SampleController {
 		final CommitDiscardWrapperComponent<SampleCreateForm> editView = getSampleCreateComponent(sampleDto, disease, callback);
 		// add option to create additional pathogen tests
 
-		if(disease != Disease.CSM && disease != Disease.YELLOW_FEVER && disease != Disease.AFP && disease != Disease.FOODBORNE_ILLNESS){
+		if(disease != Disease.CSM && disease != Disease.YELLOW_FEVER && disease != Disease.AFP && disease != Disease.FOODBORNE_ILLNESS && disease != Disease.NEW_INFLUENZA){
 			SampleEditPathogenTestListHandler pathogenTestHandler = new SampleEditPathogenTestListHandler();
 			addPathogenTestButton(editView,false,null,null, pathogenTestHandler::addPathogenTest);
 		}

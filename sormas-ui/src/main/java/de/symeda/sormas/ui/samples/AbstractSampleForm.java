@@ -425,6 +425,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		addField(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY, TextArea.class).setRows(4);
 		addField(SampleDto.SENT_FOR_CONFIRMATION_NATIONAL, NullableOptionGroup.class);
 		addDateField(SampleDto.SENT_FOR_CONFIRMATION_NATIONAL_DATE, DateField.class, 7);
+		setVisible(false, SampleDto.SENT_FOR_CONFIRMATION_NATIONAL_DATE);
 		addField(SampleDto.SENT_FOR_CONFIRMATION_TO, TextField.class);
 		addDateField(SampleDto.DATE_RESULT_RECEIVED_NATIONAL, DateField.class, 7);
 		addField(SampleDto.USE_OF_CLOTH_FILTER, NullableOptionGroup.class);
