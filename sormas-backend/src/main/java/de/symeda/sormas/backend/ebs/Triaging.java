@@ -50,7 +50,13 @@ public class Triaging extends AbstractDomainObject {
 	public static final String RESPIRATORY_SYMPTOMS = "respiratorySymptoms";
 	public static final String SEVERE_ILLNESS = "severeIllness";
 	public static final String SEVERE_DIARRHOEA = "severeDiarrhoea";
-	public static final String ORIFICES = "orifices";
+	public static final String HUMAN_COMMUNITY_CATEGORY_DETAILS = "humanCommunityCategoryDetails";
+	public static final String HUMAN_FACILITY_CATEGORY_DETAILS = "humanFacilityCategoryDetails";
+	public static final String HUMAN_LABORATORY_CATEGORY_DETAILS = "humanLaboratoryCategoryDetails";
+	public static final String ANIMAL_COMMUNITY_CATEGORY_DETAILS = "animalCommunityCategoryDetails";
+	public static final String ANIMAL_FACILITY_CATEGORY_DETAILS = "animalFacilityCategoryDetails";
+	public static final String ENVIRONMENTAL_CATEGORY_DETAILS = "environmentalCategoryDetails";
+	public static final String POE_CATEGORY_DETAILS = "poeCategoryDetails";
 	public static final String UNABLE_TO_WALK = "unableToWalk";
 	public static final String OTC = "otc";
 	public static final String PREGNANT_WOMAN = "pregnantWoman";
@@ -61,6 +67,8 @@ public class Triaging extends AbstractDomainObject {
 	public static final String REFERRED_TO = "referredTo";
 	public static final String RESPONSIBLE_USER = "responsibleUser";
 	public static final String OUTCOME_SUPERVISOR = "outcomeSupervisor";
+	public static final String NOT_SIGNAL = "notSignal";
+	public static final String CATEGORY_DETAILS_LEVEL = "categoryDetailsLevel";
 
 
 
@@ -68,18 +76,32 @@ public class Triaging extends AbstractDomainObject {
 	private YesNo specificSignal;
 	private SignalCategory signalCategory;
 	private YesNo healthConcern;
-	private Set<CategoryDetails> categoryDetails;
-	private String categoryDetailsString;
+	private Set<HumanCommunityCategoryDetails> humanCommunityCategoryDetails;
+	private Set<HumanFaclityCategoryDetails> humanFacilityCategoryDetails;
+	private Set<HumanLaboratoryCategoryDetails> humanLaboratoryCategoryDetails;
+	private Set<AnimalCommunityCategoryDetails> animalCommunityCategoryDetails;
+	private Set<AnimalFacilityCategoryDetails> animalFacilityCategoryDetails;
+	private Set<EnvironmentalCategoryDetails> environmentalCategoryDetails;
+	private Set<POE> poeCategoryDetails;
+	private String humanCommunityCategoryDetailsString;
+	private String humanFacilityCategoryDetailsString;
+	private String humanLaboratoryCategoryDetailsString;
+	private String animalCommunityCategoryDetailsString;
+	private String animalFacilityCategoryDetailsString;
+	private String environmentalCategoryDetailsString;
+	private String poeCategoryDetailsString;
+	private CategoryDetailsLevel categoryDetailsLevel;
 
 
 
 	private YesNo occurrencePreviously;
-	private Set<EbsTriagingDecision> triagingDecision;
+	private EbsTriagingDecision triagingDecision;
 	private String triagingDecisionString;
 	private Date decisionDate;
 	private String referredTo;
 	private User responsibleUser;
 	private OutComeSupervisor outcomeSupervisor;
+	private boolean notSignal;
 
 	public EbsReferenceDto toReference() {
 		return new EbsReferenceDto(getUuid());
@@ -119,33 +141,260 @@ public class Triaging extends AbstractDomainObject {
 	}
 
 	@Transient
-	public Set<CategoryDetails> getCategoryDetails() {
-		if (categoryDetails == null) {
-			if (StringUtils.isEmpty(categoryDetailsString)) {
-				categoryDetails = new HashSet<>();
+	public Set<HumanCommunityCategoryDetails> getHumanCommunityCategoryDetails() {
+		if (humanCommunityCategoryDetails == null) {
+			if (StringUtils.isEmpty(humanCommunityCategoryDetailsString)) {
+				humanCommunityCategoryDetails = new HashSet<>();
 			} else {
-				categoryDetails =
-						Arrays.stream(categoryDetailsString.split(",")).map(CategoryDetails::valueOf).collect(Collectors.toSet());
+				humanCommunityCategoryDetails =
+						Arrays.stream(humanCommunityCategoryDetailsString.split(",")).map(HumanCommunityCategoryDetails::valueOf).collect(Collectors.toSet());
 			}
 		}
-		return categoryDetails;
+		return humanCommunityCategoryDetails;
 	}
 
-	public void setCategoryDetails(Set<CategoryDetails> categoryDetails) {
-		this.categoryDetails = categoryDetails;
-		if (this.categoryDetails == null) {
+	public void setHumanCommunityCategoryDetails(Set<HumanCommunityCategoryDetails> humanCommunityCategoryDetails) {
+		this.humanCommunityCategoryDetails = humanCommunityCategoryDetails;
+		if (this.humanCommunityCategoryDetails == null) {
 			return;
 		}
 
 		StringBuilder sb = new StringBuilder();
-		categoryDetails.stream().forEach(t -> {
+		humanCommunityCategoryDetails.stream().forEach(t -> {
 			sb.append(t.name());
 			sb.append(",");
 		});
 		if (sb.length() > 0) {
 			sb.substring(0, sb.lastIndexOf(","));
 		}
-		categoryDetailsString = sb.toString();
+		humanCommunityCategoryDetailsString = sb.toString();
+	}
+
+	@Transient
+	public Set<HumanFaclityCategoryDetails> getHumanFacilityCategoryDetails() {
+		if (humanFacilityCategoryDetails == null) {
+			if (StringUtils.isEmpty(humanFacilityCategoryDetailsString)) {
+				humanFacilityCategoryDetails = new HashSet<>();
+			} else {
+				humanFacilityCategoryDetails =
+						Arrays.stream(humanFacilityCategoryDetailsString.split(",")).map(HumanFaclityCategoryDetails::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return humanFacilityCategoryDetails;
+	}
+
+	public void setHumanFacilityCategoryDetails(Set<HumanFaclityCategoryDetails> humanFacilityCategoryDetails) {
+		this.humanFacilityCategoryDetails = humanFacilityCategoryDetails;
+		if (this.humanFacilityCategoryDetails == null){
+			return;
+		}
+		StringBuilder sb = new StringBuilder();
+		humanFacilityCategoryDetails.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		humanFacilityCategoryDetailsString = sb.toString();
+	}
+
+	@Transient
+	public Set<HumanLaboratoryCategoryDetails> getHumanLaboratoryCategoryDetails() {
+		if (humanLaboratoryCategoryDetails == null) {
+			if (StringUtils.isEmpty(humanLaboratoryCategoryDetailsString)) {
+				humanLaboratoryCategoryDetails = new HashSet<>();
+			} else {
+				humanLaboratoryCategoryDetails =
+						Arrays.stream(humanLaboratoryCategoryDetailsString.split(",")).map(HumanLaboratoryCategoryDetails::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return humanLaboratoryCategoryDetails;
+	}
+
+	public void setHumanLaboratoryCategoryDetails(Set<HumanLaboratoryCategoryDetails> humanLaboratoryCategoryDetails) {
+		this.humanLaboratoryCategoryDetails = humanLaboratoryCategoryDetails;
+		if (this.humanLaboratoryCategoryDetails == null){
+			return;
+		}
+		StringBuilder sb = new StringBuilder();
+		humanLaboratoryCategoryDetails.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		humanLaboratoryCategoryDetailsString = sb.toString();
+	}
+
+	@Transient
+	public Set<AnimalCommunityCategoryDetails> getAnimalCommunityCategoryDetails() {
+		if (animalCommunityCategoryDetails == null) {
+			if (StringUtils.isEmpty(animalCommunityCategoryDetailsString)) {
+				animalCommunityCategoryDetails = new HashSet<>();
+			} else {
+				animalCommunityCategoryDetails =
+						Arrays.stream(animalCommunityCategoryDetailsString.split(",")).map(AnimalCommunityCategoryDetails::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return animalCommunityCategoryDetails;
+	}
+
+	public void setAnimalCommunityCategoryDetails(Set<AnimalCommunityCategoryDetails> animalCommunityCategoryDetails) {
+		this.animalCommunityCategoryDetails = animalCommunityCategoryDetails;
+		if (this.animalCommunityCategoryDetails == null){
+			return;
+		}
+		StringBuilder sb = new StringBuilder();
+		animalCommunityCategoryDetails.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		animalCommunityCategoryDetailsString = sb.toString();
+	}
+
+	@Transient
+	public Set<AnimalFacilityCategoryDetails> getAnimalFacilityCategoryDetails() {
+		if (animalFacilityCategoryDetails == null) {
+			if (StringUtils.isEmpty(animalFacilityCategoryDetailsString)) {
+				animalFacilityCategoryDetails = new HashSet<>();
+			} else {
+				animalFacilityCategoryDetails =
+						Arrays.stream(animalFacilityCategoryDetailsString.split(",")).map(AnimalFacilityCategoryDetails::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return animalFacilityCategoryDetails;
+	}
+
+	public void setAnimalFacilityCategoryDetails(Set<AnimalFacilityCategoryDetails> animalFacilityCategoryDetails) {
+		this.animalFacilityCategoryDetails = animalFacilityCategoryDetails;
+		if (this.animalFacilityCategoryDetails == null){
+			return;
+		}
+		StringBuilder sb = new StringBuilder();
+		animalFacilityCategoryDetails.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		animalFacilityCategoryDetailsString = sb.toString();
+	}
+
+	@Transient
+	public Set<EnvironmentalCategoryDetails> getEnvironmentalCategoryDetails() {
+		if (environmentalCategoryDetails == null) {
+			if (StringUtils.isEmpty(environmentalCategoryDetailsString)) {
+				environmentalCategoryDetails = new HashSet<>();
+			} else {
+				environmentalCategoryDetails =
+						Arrays.stream(environmentalCategoryDetailsString.split(",")).map(EnvironmentalCategoryDetails::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return environmentalCategoryDetails;
+	}
+
+	public void setEnvironmentalCategoryDetails(Set<EnvironmentalCategoryDetails> environmentalCategoryDetails) {
+		this.environmentalCategoryDetails = environmentalCategoryDetails;
+		if (this.environmentalCategoryDetails == null){
+			return;
+		}
+		StringBuilder sb = new StringBuilder();
+		environmentalCategoryDetails.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		environmentalCategoryDetailsString = sb.toString();
+	}
+
+	@Transient
+	public Set<POE> getPoeCategoryDetails() {
+		if (poeCategoryDetails == null) {
+			if (StringUtils.isEmpty(poeCategoryDetailsString)) {
+				poeCategoryDetails = new HashSet<>();
+			} else {
+				poeCategoryDetails =
+						Arrays.stream(poeCategoryDetailsString.split(",")).map(POE::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return poeCategoryDetails;
+	}
+
+	public void setPoeCategoryDetails(Set<POE> poeCategoryDetails) {
+		this.poeCategoryDetails = poeCategoryDetails;
+		if (this.poeCategoryDetails == null){
+			return;
+		}
+		StringBuilder sb = new StringBuilder();
+		poeCategoryDetails.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		poeCategoryDetailsString = sb.toString();
+
+	}
+
+	public void setHumanCommunityCategoryDetailsString(String humanCommunityCategoryDetailsString) {
+		this.humanCommunityCategoryDetailsString = humanCommunityCategoryDetailsString;
+	}
+
+	public String getHumanFacilityCategoryDetailsString() {
+		return humanFacilityCategoryDetailsString;
+	}
+
+	public void setHumanFacilityCategoryDetailsString(String humanFacilityCategoryDetailsString) {
+		this.humanFacilityCategoryDetailsString = humanFacilityCategoryDetailsString;
+	}
+
+	public String getHumanLaboratoryCategoryDetailsString() {
+		return humanLaboratoryCategoryDetailsString;
+	}
+
+	public void setHumanLaboratoryCategoryDetailsString(String humanLaboratoryCategoryDetailsString) {
+		this.humanLaboratoryCategoryDetailsString = humanLaboratoryCategoryDetailsString;
+	}
+
+	public String getAnimalCommunityCategoryDetailsString() {
+		return animalCommunityCategoryDetailsString;
+	}
+
+	public void setAnimalCommunityCategoryDetailsString(String animalCommunityCategoryDetailsString) {
+		this.animalCommunityCategoryDetailsString = animalCommunityCategoryDetailsString;
+	}
+
+	public String getAnimalFacilityCategoryDetailsString() {
+		return animalFacilityCategoryDetailsString;
+	}
+
+	public void setAnimalFacilityCategoryDetailsString(String animalFacilityCategoryDetailsString) {
+		this.animalFacilityCategoryDetailsString = animalFacilityCategoryDetailsString;
+	}
+
+	public String getEnvironmentalCategoryDetailsString() {
+		return environmentalCategoryDetailsString;
+	}
+
+	public void setEnvironmentalCategoryDetailsString(String environmentalCategoryDetailsString) {
+		this.environmentalCategoryDetailsString = environmentalCategoryDetailsString;
+	}
+
+	public String getPoeCategoryDetailsString() {
+		return poeCategoryDetailsString;
+	}
+
+	public void setPoeCategoryDetailsString(String poeCategoryDetailsString) {
+		this.poeCategoryDetailsString = poeCategoryDetailsString;
 	}
 
 	public YesNo getOccurrencePreviously() {
@@ -156,34 +405,33 @@ public class Triaging extends AbstractDomainObject {
 		this.occurrencePreviously = occurrencePreviously;
 	}
 
-	@Transient
-	public Set<EbsTriagingDecision> getTriagingDecision() {
-		if (triagingDecision == null) {
-			if (StringUtils.isEmpty(triagingDecisionString)) {
-				triagingDecision = new HashSet<>();
-			} else {
-				triagingDecision =
-						Arrays.stream(triagingDecisionString.split(",")).map(EbsTriagingDecision::valueOf).collect(Collectors.toSet());
-			}
-		}
+	public EbsTriagingDecision getTriagingDecision() {
+//		if (triagingDecision == null) {
+//			if (StringUtils.isEmpty(triagingDecisionString)) {
+//				triagingDecision = new HashSet<>();
+//			} else {
+//				triagingDecision =
+//						Arrays.stream(triagingDecisionString.split(",")).map(EbsTriagingDecision::valueOf).collect(Collectors.toSet());
+//			}
+//		}
 		return triagingDecision;
 	}
 
-	public void setTriagingDecision(Set<EbsTriagingDecision> triagingDecision) {
+	public void setTriagingDecision(EbsTriagingDecision triagingDecision) {
 		this.triagingDecision = triagingDecision;
-		if (this.triagingDecision == null) {
-			return;
-		}
+//		if (this.triagingDecision == null) {
+//			return;
+//		}
 
-		StringBuilder sb = new StringBuilder();
-		triagingDecision.stream().forEach(t -> {
-			sb.append(t.name());
-			sb.append(",");
-		});
-		if (sb.length() > 0) {
-			sb.substring(0, sb.lastIndexOf(","));
-		}
-		triagingDecisionString = sb.toString();
+//		StringBuilder sb = new StringBuilder();
+//		triagingDecision.stream().forEach(t -> {
+//			sb.append(t.name());
+//			sb.append(",");
+//		});
+//		if (sb.length() > 0) {
+//			sb.substring(0, sb.lastIndexOf(","));
+//		}
+//		triagingDecisionString = sb.toString();
 	}
 
 	public Date getDecisionDate() {
@@ -211,12 +459,12 @@ public class Triaging extends AbstractDomainObject {
 		this.responsibleUser = responsibleUser;
 	}
 
-	public String getCategoryDetailsString() {
-		return categoryDetailsString;
+	public String getHumanCommunityCategoryDetailsString() {
+		return humanCommunityCategoryDetailsString;
 	}
 
-	public void setCategoryDetailsString(String categoryDetailsString) {
-		this.categoryDetailsString = categoryDetailsString;
+	public void setHumanCommunityCategoryDetailsStringString(String humanCommunityCategoryDetailsString) {
+		this.humanCommunityCategoryDetailsString = humanCommunityCategoryDetailsString;
 	}
 	public String getTriagingDecisionString() {
 		return triagingDecisionString;
@@ -232,5 +480,22 @@ public class Triaging extends AbstractDomainObject {
 
 	public void setOutcomeSupervisor(OutComeSupervisor outcomeSupervisor) {
 		this.outcomeSupervisor = outcomeSupervisor;
+	}
+
+
+	public boolean getNotSignal() {
+		return notSignal;
+	}
+
+	public void setNotSignal(boolean notSignal) {
+		this.notSignal = notSignal;
+	}
+
+	public CategoryDetailsLevel getCategoryDetailsLevel() {
+		return categoryDetailsLevel;
+	}
+
+	public void setCategoryDetailsLevel(CategoryDetailsLevel categoryDetailsLevel) {
+		this.categoryDetailsLevel = categoryDetailsLevel;
 	}
 }

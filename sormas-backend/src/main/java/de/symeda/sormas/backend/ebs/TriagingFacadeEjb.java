@@ -40,10 +40,18 @@ public class TriagingFacadeEjb implements TriagingFacade {
         target.setOccurrencePreviously(source.getOccurrencePreviously());
         target.setSpecificSignal(source.getSpecificSignal());
 		target.setSignalCategory(source.getSignalCategory());
-		target.setCategoryDetails(source.getCategoryDetails());
+		target.setHumanCommunityCategoryDetails(source.getHumanCommunityCategoryDetails());
+		target.setHumanFacilityCategoryDetails(source.getHumanFacilityCategoryDetails());
+		target.setHumanLaboratoryCategoryDetails(source.getHumanLaboratoryCategoryDetails());
+		target.setAnimalCommunityCategoryDetails(source.getAnimalCommunityCategoryDetails());
+		target.setAnimalFacilityCategoryDetails(source.getAnimalFacilityCategoryDetails());
+		target.setEnvironmentalCategoryDetails(source.getEnvironmentalCategoryDetails());
+		target.setPoeCategoryDetails(source.getPoeCategoryDetails());
 		target.setTriagingDecision(source.getTriagingDecision());
 		target.setResponsibleUser(userService.getByReferenceDto(source.getResponsibleUser()));
 		target.setOutcomeSupervisor(source.getOutcomeSupervisor());
+		target.setNotSignal(source.getNotSignal());
+		target.setCategoryDetailsLevel(source.getCategoryDetailsLevel());
 		return target;
 	}
 
@@ -63,11 +71,24 @@ public class TriagingFacadeEjb implements TriagingFacade {
 		target.setOccurrencePreviously(source.getOccurrencePreviously());
 		target.setSpecificSignal(source.getSpecificSignal());
 		target.setSignalCategory(source.getSignalCategory());
-		target.setCategoryDetails(source.getCategoryDetails());
+		target.setHumanCommunityCategoryDetails(source.getHumanCommunityCategoryDetails());
+		target.setHumanFacilityCategoryDetails(source.getHumanFacilityCategoryDetails());
+		target.setHumanLaboratoryCategoryDetails(source.getHumanLaboratoryCategoryDetails());
+		target.setAnimalCommunityCategoryDetails(source.getAnimalCommunityCategoryDetails());
+		target.setAnimalFacilityCategoryDetails(source.getAnimalFacilityCategoryDetails());
+		target.setEnvironmentalCategoryDetails(source.getEnvironmentalCategoryDetails());
+		target.setPoeCategoryDetails(source.getPoeCategoryDetails());
 		target.setTriagingDecision(source.getTriagingDecision());
-		target.setCategoryDetailsString(source.getCategoryDetailsString());
-		target.setCategoryDetailsString(source.getCategoryDetailsString());
+		target.setHumanCommunityCategoryDetailsString(source.getHumanCommunityCategoryDetailsString());
+		target.setHumanFacilityCategoryDetailsString(source.getHumanFacilityCategoryDetailsString());
+		target.setHumanLaboratoryCategoryDetailsString(source.getHumanLaboratoryCategoryDetailsString());
+		target.setAnimalCommunityCategoryDetailsString(source.getAnimalCommunityCategoryDetailsString());
+		target.setAnimalFacilityCategoryDetailsString(source.getAnimalFacilityCategoryDetailsString());
+		target.setEnvironmentalCategoryDetailsString(source.getEnvironmentalCategoryDetailsString());
+		target.setPoeCategoryDetailsString(source.getPoeCategoryDetailsString());
 		target.setOutcomeSupervisor(source.getOutcomeSupervisor());
+		target.setNotSignal(source.getNotSignal());
+		target.setCategoryDetailsLevel(source.getCategoryDetailsLevel());
 		return target;
 	}
 

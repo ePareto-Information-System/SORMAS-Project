@@ -37,7 +37,13 @@ public class TriagingDto extends EntityDto {
 	public static final String SPECIFIC_SIGNAL = "specificSignal";
 	public static final String HEALTH_CONCERN = "healthConcern";
 	public static final String SIGNAL_CATEGORY = "signalCategory";
-	public static final String CATEGORY_DETAILS = "categoryDetails";
+	public static final String HUMAN_COMMUNITY_CATEGORY_DETAILS = "humanCommunityCategoryDetails";
+	public static final String HUMAN_FACILITY_CATEGORY_DETAILS = "humanFacilityCategoryDetails";
+	public static final String HUMAN_LABORATORY_CATEGORY_DETAILS = "humanLaboratoryCategoryDetails";
+	public static final String ANIMAL_COMMUNITY_CATEGORY_DETAILS = "animalCommunityCategoryDetails";
+	public static final String ANIMAL_FACILITY_CATEGORY_DETAILS = "animalFacilityCategoryDetails";
+	public static final String ENVIRONMENTAL_CATEGORY_DETAILS = "environmentalCategoryDetails";
+	public static final String POE_CATEGORY_DETAILS = "poeCategoryDetails";
 	public static final String RESPIRATORY_SYMPTOMS = "respiratorySymptoms";
 	public static final String SEVERE_ILLNESS = "severeIllness";
 	public static final String SEVERE_DIARRHOEA = "severeDiarrhoea";
@@ -52,6 +58,8 @@ public class TriagingDto extends EntityDto {
 	public static final String REFERRED_TO = "referredTo";
 	public static final String RESPONSIBLE_USER = "responsibleUser";
 	public static final String OUTCOME_SUPERVISOR = "outcomeSupervisor";
+	public static final String NOT_SIGNAL = "notSignal";
+	public static final String CATEGORY_DETAILS_LEVEL = "categoryDetailsLevel";
 
 
 
@@ -59,14 +67,28 @@ public class TriagingDto extends EntityDto {
 	private YesNo specificSignal;
 	private SignalCategory signalCategory;
 	private YesNo healthConcern;
-	private Set<CategoryDetails> categoryDetails;
+	private Set<HumanCommunityCategoryDetails> humanCommunityCategoryDetails;
+	private Set<HumanFaclityCategoryDetails> humanFacilityCategoryDetails;
+	private Set<HumanLaboratoryCategoryDetails> humanLaboratoryCategoryDetails;
+	private Set<AnimalCommunityCategoryDetails> animalCommunityCategoryDetails;
+	private Set<AnimalFacilityCategoryDetails> animalFacilityCategoryDetails;
+	private Set<EnvironmentalCategoryDetails> environmentalCategoryDetails;
+	private Set<POE> poeCategoryDetails;
 	private YesNo occurrencePreviously;
-	private Set<EbsTriagingDecision> triagingDecision;
+	private EbsTriagingDecision triagingDecision;
 	private Date decisionDate;
 	private String referredTo;
 	private UserReferenceDto responsibleUser;
-	private String categoryDetailsString;
+	private String humanCommunityCategoryDetailsString;
+	private String humanFacilityCategoryDetailsString;
+	private String humanLaboratoryCategoryDetailsString;
+	private String animalCommunityCategoryDetailsString;
+	private String animalFacilityCategoryDetailsString;
+	private String environmentalCategoryDetailsString;
+	private String poeCategoryDetailsString;
 	private OutComeSupervisor outcomeSupervisor;
+	private boolean notSignal;
+	private CategoryDetailsLevel categoryDetailsLevel;
 
 
 
@@ -107,12 +129,60 @@ public class TriagingDto extends EntityDto {
 		this.healthConcern = healthConcern;
 	}
 
-	public Set<CategoryDetails> getCategoryDetails() {
-		return categoryDetails;
+	public Set<HumanCommunityCategoryDetails> getHumanCommunityCategoryDetails() {
+		return humanCommunityCategoryDetails;
 	}
 
-	public void setCategoryDetails(Set<CategoryDetails> categoryDetails) {
-		this.categoryDetails = categoryDetails;
+	public void setHumanCommunityCategoryDetails(Set<HumanCommunityCategoryDetails> humanCommunityCategoryDetails) {
+		this.humanCommunityCategoryDetails = humanCommunityCategoryDetails;
+	}
+
+	public Set<HumanFaclityCategoryDetails> getHumanFacilityCategoryDetails() {
+		return humanFacilityCategoryDetails;
+	}
+
+	public void setHumanFacilityCategoryDetails(Set<HumanFaclityCategoryDetails> humanFacilityCategoryDetails) {
+		this.humanFacilityCategoryDetails = humanFacilityCategoryDetails;
+	}
+
+	public Set<HumanLaboratoryCategoryDetails> getHumanLaboratoryCategoryDetails() {
+		return humanLaboratoryCategoryDetails;
+	}
+
+	public void setHumanLaboratoryCategoryDetails(Set<HumanLaboratoryCategoryDetails> humanLaboratoryCategoryDetails) {
+		this.humanLaboratoryCategoryDetails = humanLaboratoryCategoryDetails;
+	}
+
+	public Set<AnimalCommunityCategoryDetails> getAnimalCommunityCategoryDetails() {
+		return animalCommunityCategoryDetails;
+	}
+
+	public void setAnimalCommunityCategoryDetails(Set<AnimalCommunityCategoryDetails> animalCommunityCategoryDetails) {
+		this.animalCommunityCategoryDetails = animalCommunityCategoryDetails;
+	}
+
+	public Set<AnimalFacilityCategoryDetails> getAnimalFacilityCategoryDetails() {
+		return animalFacilityCategoryDetails;
+	}
+
+	public void setAnimalFacilityCategoryDetails(Set<AnimalFacilityCategoryDetails> animalFacilityCategoryDetails) {
+		this.animalFacilityCategoryDetails = animalFacilityCategoryDetails;
+	}
+
+	public Set<EnvironmentalCategoryDetails> getEnvironmentalCategoryDetails() {
+		return environmentalCategoryDetails;
+	}
+
+	public void setEnvironmentalCategoryDetails(Set<EnvironmentalCategoryDetails> environmentalCategoryDetails) {
+		this.environmentalCategoryDetails = environmentalCategoryDetails;
+	}
+
+	public Set<POE> getPoeCategoryDetails() {
+		return poeCategoryDetails;
+	}
+
+	public void setPoeCategoryDetails(Set<POE> poeCategoryDetails) {
+		this.poeCategoryDetails = poeCategoryDetails;
 	}
 
 	public YesNo getOccurrencePreviously() {
@@ -123,11 +193,11 @@ public class TriagingDto extends EntityDto {
 		this.occurrencePreviously = occurrencePreviously;
 	}
 
-	public Set<EbsTriagingDecision> getTriagingDecision() {
+	public EbsTriagingDecision getTriagingDecision() {
 		return triagingDecision;
 	}
 
-	public void setTriagingDecision(Set<EbsTriagingDecision> triagingDecision) {
+	public void setTriagingDecision(EbsTriagingDecision triagingDecision) {
 		this.triagingDecision = triagingDecision;
 	}
 
@@ -155,12 +225,60 @@ public class TriagingDto extends EntityDto {
 		this.responsibleUser = responsibleUser;
 	}
 
-	public String getCategoryDetailsString() {
-		return categoryDetailsString;
+	public String getHumanCommunityCategoryDetailsString() {
+		return humanCommunityCategoryDetailsString;
 	}
 
-	public void setCategoryDetailsString(String categoryDetailsString) {
-		this.categoryDetailsString = categoryDetailsString;
+	public void setHumanCommunityCategoryDetailsString(String humanCommunityCategoryDetailsString) {
+		this.humanCommunityCategoryDetailsString = humanCommunityCategoryDetailsString;
+	}
+
+	public String getHumanFacilityCategoryDetailsString() {
+		return humanFacilityCategoryDetailsString;
+	}
+
+	public void setHumanFacilityCategoryDetailsString(String humanFacilityCategoryDetailsString) {
+		this.humanFacilityCategoryDetailsString = humanFacilityCategoryDetailsString;
+	}
+
+	public String getHumanLaboratoryCategoryDetailsString() {
+		return humanLaboratoryCategoryDetailsString;
+	}
+
+	public void setHumanLaboratoryCategoryDetailsString(String humanLaboratoryCategoryDetailsString) {
+		this.humanLaboratoryCategoryDetailsString = humanLaboratoryCategoryDetailsString;
+	}
+
+	public String getAnimalCommunityCategoryDetailsString() {
+		return animalCommunityCategoryDetailsString;
+	}
+
+	public void setAnimalCommunityCategoryDetailsString(String animalCommunityCategoryDetailsString) {
+		this.animalCommunityCategoryDetailsString = animalCommunityCategoryDetailsString;
+	}
+
+	public String getAnimalFacilityCategoryDetailsString() {
+		return animalFacilityCategoryDetailsString;
+	}
+
+	public void setAnimalFacilityCategoryDetailsString(String animalFacilityCategoryDetailsString) {
+		this.animalFacilityCategoryDetailsString = animalFacilityCategoryDetailsString;
+	}
+
+	public String getEnvironmentalCategoryDetailsString() {
+		return environmentalCategoryDetailsString;
+	}
+
+	public void setEnvironmentalCategoryDetailsString(String environmentalCategoryDetailsString) {
+		this.environmentalCategoryDetailsString = environmentalCategoryDetailsString;
+	}
+
+	public String getPoeCategoryDetailsString() {
+		return poeCategoryDetailsString;
+	}
+
+	public void setPoeCategoryDetailsString(String poeCategoryDetailsString) {
+		this.poeCategoryDetailsString = poeCategoryDetailsString;
 	}
 
 	public OutComeSupervisor getOutcomeSupervisor() {
@@ -169,5 +287,21 @@ public class TriagingDto extends EntityDto {
 
 	public void setOutcomeSupervisor(OutComeSupervisor outcomeSupervisor) {
 		this.outcomeSupervisor = outcomeSupervisor;
+	}
+
+	public boolean getNotSignal() {
+		return notSignal;
+	}
+
+	public void setNotSignal(boolean notSignal) {
+		this.notSignal = notSignal;
+	}
+
+	public CategoryDetailsLevel getCategoryDetailsLevel() {
+		return categoryDetailsLevel;
+	}
+
+	public void setCategoryDetailsLevel(CategoryDetailsLevel categoryDetailsLevel) {
+		this.categoryDetailsLevel = categoryDetailsLevel;
 	}
 }
