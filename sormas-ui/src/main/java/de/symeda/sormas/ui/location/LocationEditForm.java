@@ -707,6 +707,14 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		this.districtRequiredOnDefaultCountry = required;
 	}
 
+	//create a function to hide fields in ebs
+	public void hideForEbsForm() {
+		getField(LocationDto.HOUSE_NUMBER).setVisible(false);
+		getField(LocationDto.AREA_TYPE).setVisible(false);
+		getField(LocationDto.POSTAL_CODE).setVisible(false);
+		getField(LocationDto.CITY).setVisible(false);
+	}
+
 	public void setCountryDisabledWithHint(String hint) {
 		country.setEnabled(false);
 		Label infoLabel = new Label(VaadinIcons.INFO_CIRCLE.getHtml(), ContentMode.HTML);
