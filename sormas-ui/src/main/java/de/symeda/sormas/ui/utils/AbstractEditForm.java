@@ -49,6 +49,7 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 
 	protected final FieldVisibilityCheckers fieldVisibilityCheckers;
 	protected final UiFieldAccessCheckers fieldAccessCheckers;
+	private Disease caseDisease;
 
 	private boolean hideValidationUntilNextCommit = false;
 	private List<Field<?>> visibleAllowedFields = new ArrayList<>();
