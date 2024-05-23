@@ -1173,7 +1173,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					Arrays.asList(SymptomState.YES),
 					true);
 
-
+			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED, CaseOutcome.UNKNOWN));
 		}
 
 		if (symptomsContext != SymptomsContext.CASE) {
