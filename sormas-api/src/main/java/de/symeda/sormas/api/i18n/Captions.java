@@ -322,6 +322,9 @@ public interface Captions {
 	String CaseData_changeDate = "CaseData.changeDate";
 	String CaseData_classificationComment = "CaseData.classificationComment";
 	String CaseData_classificationDate = "CaseData.classificationDate";
+	String CaseData_mobileTeamNo = "CaseData.mobileTeamNo";
+	String CaseData_informationGivenBy = "CaseData.informationGivenBy";
+	String CaseData_familyLinkWithPatient = "CaseData.familyLinkWithPatient";
 	String CaseData_numberOfDoses = "CaseData.numberOfDoses";
 	String CaseData_classificationUser = "CaseData.classificationUser";
 	String CaseData_classifiedBy = "CaseData.classifiedBy";

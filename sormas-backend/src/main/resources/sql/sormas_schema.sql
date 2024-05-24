@@ -14330,4 +14330,12 @@ ALTER TABLE epidata ADD COLUMN historyoftraveldistrict_id varchar(255) NULL;
 ALTER TABLE epidata ADD COLUMN historyOfTravelSubDistrict_id varchar(255) NULL;
 ALTER TABLE epidata ADD COLUMN historyOfTravelVillage varchar(255) NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (655, 'Added column to historyOfTravelRegion, historyOfTravelDistrict, historyOfTravelSubDistrict, historyOfTravelVillage to epidata');
+INSERT INTO schema_version (version_number, comment) VALUES (599, 'Created afpimmunization table and altered cases table');
+
+ALTER TABLE cases ADD COLUMN mobileteamno VARCHAR(255);
+ALTER TABLE cases ADD COLUMN informationgivenby VARCHAR(255);
+ALTER TABLE cases ADD COLUMN familylinkwithpatient VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (655, 'Added mobileteamno to cases table');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

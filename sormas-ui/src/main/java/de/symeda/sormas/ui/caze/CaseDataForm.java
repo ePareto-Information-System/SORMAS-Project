@@ -241,6 +241,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(6,TYPE_GROUP_LOC) +
 					fluidRowLocs(CaseDataDto.FACILITY_TYPE, CaseDataDto.HEALTH_FACILITY) +
 					fluidRowLocs(6,CaseDataDto.HEALTH_FACILITY_DETAILS) +
+					fluidRowLocs(6,CaseDataDto.MOBILE_TEAM_NO) +
 					inlineLocs(CaseDataDto.POINT_OF_ENTRY, CaseDataDto.POINT_OF_ENTRY_DETAILS, CASE_REFER_POINT_OF_ENTRY_BTN_LOC) +
 					fluidRowLocs(CaseDataDto.NOSOCOMIAL_OUTBREAK, CaseDataDto.INFECTION_SETTING) +
 					locCss(VSPACE_3, CaseDataDto.SHARED_TO_COUNTRY) +
@@ -299,6 +300,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			fluidRowLocs(6, CaseDataDto.REPORTING_OFFICER_NAME) +
 					fluidRowLocs(CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.FUNCTION_OF_REPORTING_OFFICER) +
 					fluidRowLocs(CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE, CaseDataDto.REPORTING_OFFICER_EMAIL) +
+					fluidRowLocs(6,CaseDataDto.INFORMATION_GIVEN_BY) +
+					fluidRowLocs(6,CaseDataDto.FAMILY_LINK_WITH_PATIENT) +
 					loc(PAPER_FORM_DATES_LOC) +
 					fluidRowLocs(CaseDataDto.DATE_FORM_SENT_TO_DISTRICT, CaseDataDto.DATE_FORM_RECEIVED_AT_DISTRICT) +
 					fluidRowLocs(6,CaseDataDto.DATE_FORM_RECEIVED_AT_REGION) +
@@ -1700,10 +1703,16 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 reinfectionTree.initCheckboxes();
             }
 
-            hideFieldsForSelectedDisease(disease);
+			hideFieldsForSelectedDisease(disease);
 
-            //YELLOW FEVER
-            if (disease == Disease.YELLOW_FEVER) {
+            notifiedByList.addValueChangeListener((ValueChangeListener) valueChangeEvent-> {
+                notifiedOther.setVisible(notifiedByList.getValue() != null && notifiedByList.getValue() == NotifiedList.OTHER);
+            });
+
+			//YELLOW FEVER
+			if (disease == Disease.YELLOW_FEVER) {
+				dateFormReceivedAtNational.setVisible(true);
+                dateFormSentToDistrict.setVisible(true);
                 dateFormReceivedAtDistrict.setVisible(true);
                 dateFormReceivedAtNational.setVisible(true);
                 numberOfDoses.setVisible(true);
@@ -1718,9 +1727,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             }
 
             //AHF
-            if (disease == Disease.AHF || disease == Disease.DENGUE) {
-                setVisible(true, CaseDataDto.POSTPARTUM, CaseDataDto.PREGNANT);
-            }
+            	if (disease == Disease.AHF) {
+				setVisible(true, CaseDataDto.POSTPARTUM, CaseDataDto.PREGNANT, CaseDataDto.NOTIFIED_BY_LIST);
+                addField(CaseDataDto.MOBILE_TEAM_NO);
+                addField(CaseDataDto.INFORMATION_GIVEN_BY);
+                addField(CaseDataDto.FAMILY_LINK_WITH_PATIENT);
+			}
 
             //CORONAVIRUS
             if (disease == Disease.CORONAVIRUS) {
@@ -1852,10 +1864,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			if (disease == Disease.AFP) {
 				setVisible(true, CaseDataDto.DATE_FORM_RECEIVED_AT_NATIONAL, CaseDataDto.NOTIFIED_BY_LIST, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
                 outcome.setVisible(false);
-
-                notifiedByList.addValueChangeListener((ValueChangeListener) valueChangeEvent-> {
-                    notifiedOther.setVisible(notifiedByList.getValue() != null && notifiedByList.getValue() == NotifiedList.OTHER);
-                });
 
 			}
 
