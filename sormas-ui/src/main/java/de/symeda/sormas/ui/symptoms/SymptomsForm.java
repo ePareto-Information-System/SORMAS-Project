@@ -1150,6 +1150,16 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			addField(DATE_OF_ONSET, DateField.class);
 			setVisible(true, FEVER, GENERALIZED_RASH, COUGH, RUNNY_NOSE, RED_EYES, SWOLLEN_LYMPH_NODES_BEHIND_EARS, JOINT_PAIN, PLACE_OF_EXPOSURE_MEASLES_RUBELLA);
 			setVisible(false, SYMPTOMS_COMMENTS);
+			setVisible(true, HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT);
+//			HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT
+			FieldHelper.setVisibleWhen(
+					getFieldGroup(),
+					PLACE_OF_EXPOSURE_MEASLES_RUBELLA,
+					HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT,
+					Arrays.asList(SymptomState.YES),
+					true);
+
+			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED, CaseOutcome.UNKNOWN));
 		} else if(disease == Disease.CHOLERA) {
 			setVisible(true, DIARRHOEA, VOMITING, DEHYDRATION, ABDOMINAL_PAIN, ABDOMINAL_CRAMPS, FEVER, HEADACHES, FATIGUE);
 		}else if (disease == Disease.GUINEA_WORM) {
@@ -1164,16 +1174,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			FieldHelper.setVisibleWhen(getFieldGroup(), NUMBER_OF_WORMS, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
 			FieldHelper.setVisibleWhen(getFieldGroup(), DATE_FIRST_WORM_EMERGENCE, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
 
-			setVisible(true, HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT);
-//			HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT
-			FieldHelper.setVisibleWhen(
-					getFieldGroup(),
-					PLACE_OF_EXPOSURE_MEASLES_RUBELLA,
-					HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT,
-					Arrays.asList(SymptomState.YES),
-					true);
-
-			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED, CaseOutcome.UNKNOWN));
 		}
 
 		if (symptomsContext != SymptomsContext.CASE) {
