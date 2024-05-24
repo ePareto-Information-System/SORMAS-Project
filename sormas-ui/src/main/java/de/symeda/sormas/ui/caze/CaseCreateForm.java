@@ -580,10 +580,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				setVisible(false, FACILITY_OR_HOME_LOC, DIFFERENT_PLACE_OF_STAY_JURISDICTION);
 			} else if (diseaseField.getValue() != null && diseaseField.getValue() == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
 				personCreateForm.hideFields();
-			} else if(diseaseField.getValue() != null && diseaseField.getValue() == Disease.NEW_INFLUENZA){
-				personCreateForm.hidePresentCondition();
-			}
-			else if(diseaseField.getValue() != null && diseaseField.getValue() == Disease.AFP){
+			} else if(diseaseField.getValue() != null && diseaseField.getValue() == Disease.NEW_INFLUENZA || diseaseField.getValue() == Disease.AFP || diseaseField.getValue() == Disease.AHF){
 				personCreateForm.hidePresentCondition();
 			}
 			else{

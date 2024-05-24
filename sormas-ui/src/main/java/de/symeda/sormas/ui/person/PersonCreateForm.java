@@ -503,6 +503,9 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	public void hidePresentCondition(){
 		setVisible(false, PersonDto.PRESENT_CONDITION);
 	}
+	public void hideSelectedFields(){
+		setVisible(false, PersonDto.PASSPORT_NUMBER, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PRESENT_CONDITION,PersonDto.EMAIL_ADDRESS, PersonDto.PHONE);
+	}
 
 
 	public void updatePresentConditionEnum(Disease disease) {
@@ -513,7 +516,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 		if (disease == Disease.AHF) {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);
-			showPersonalEmail();
+			hideSelectedFields();
 		}else if (disease == Disease.YELLOW_FEVER) {
 			validValues = Arrays.asList(PresentCondition.ALIVE);
 			showPersonalEmail();
