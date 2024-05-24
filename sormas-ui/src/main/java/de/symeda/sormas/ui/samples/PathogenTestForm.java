@@ -565,7 +565,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 				virusDetectionGenotypeField.setVisible(true);
-			} 
+			}
+
 			else if (Disease.AHF_DISEASES.contains(disease)) {
 				List<PathogenTestType> ahfMeaselesPathogenTests = PathogenTestType.getMeaslesTestTypes();
 				Arrays.stream(PathogenTestType.values())
@@ -612,7 +613,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 			if (Arrays.asList(Disease.MEASLES, Disease.CHOLERA).contains(disease)) {
 				finalClassificationField.setVisible(true);
-				finalClassificationField.removeAllItems();
 				FieldHelper.updateEnumData(finalClassificationField, FinalClassification.DEFAULT);
 
 			} else if (disease == Disease.YELLOW_FEVER) {
@@ -623,7 +623,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			} else {
 				finalClassificationField.setVisible(false);
 				virusDetectionGenotypeField.setVisible(false);
-			} 
+			}
 		
 		});
 
@@ -838,6 +838,13 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			datelabResultsSentDistrict.setVisible(true);
 			dateDistrictReceivedLabResults.setVisible(true);
 		}
+
+		FieldHelper.setVisibleWhen(
+				getFieldGroup(),
+				PathogenTestDto.DATE_DISTRICT_RECEIVED_LAB_RESULTS,
+				PathogenTestDto.TESTED_DISEASE,
+				Arrays.asList(Disease.MEASLES),
+				true);
 	}
 
 
