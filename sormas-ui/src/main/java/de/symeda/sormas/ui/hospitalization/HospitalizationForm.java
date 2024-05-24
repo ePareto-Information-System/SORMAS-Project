@@ -103,6 +103,11 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					locCss(VSPACE_TOP_3, HospitalizationDto.INVESTIGATOR_NAME) +
 					fluidRowLocs(HospitalizationDto.INVESTIGATOR_TITLE, HospitalizationDto.INVESTIGATOR_UNIT) +
 					fluidRowLocs(HospitalizationDto.INVESTIGATOR_ADDRESS, HospitalizationDto.INVESTIGATOR_TEL);
+
+	public static final String MEASLES_LAYOUT = loc(HOSPITALIZATION_HEADING_LOC) +
+			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HEALTH_FACILITY) +
+			fluidRowLocs(4, HospitalizationDto.ADMISSION_DATE, 4, HospitalizationDto.DISCHARGE_DATE);
+
 	private final CaseDataDto caze;
 	private final ViewMode viewMode;
 	private NullableOptionGroup intensiveCareUnit;
@@ -204,8 +209,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			addField(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS, PreviousHospitalizationsField.class);
 
 		if (caze.getDisease() == Disease.MEASLES) {
-			hideAllFields();
-			setVisible(true, HospitalizationDto.NOTIFY_DISTRICT_DATE, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY, HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE);
+			setVisible(true, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HospitalizationDto.NOTIFY_DISTRICT_DATE, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY, HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE);
 		}
 
 		if(caze.getDisease() == Disease.AFP){
@@ -433,7 +437,16 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 	@Override
 	protected String createHtmlLayout() {
-		return HTML_LAYOUT;
+		if (caze.getDisease() != null) {
+			switch (caze.getDisease()) {
+				case MEASLES:
+					return MEASLES_LAYOUT;
+				default:
+					return HTML_LAYOUT;
+			}
+		} else {
+			return HTML_LAYOUT;
+		}
 	}
 
 	private String getHospitalName(FacilityReferenceDto healthFacility, CaseDataDto caze) {
