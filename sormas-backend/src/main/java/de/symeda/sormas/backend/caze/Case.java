@@ -434,6 +434,9 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private String specifyEventDiagnosis;
 	private NotifiedList notifiedByList;
 	private String notifiedOther;
+	private String mobileTeamNo;
+	private String informationGivenBy;
+	private String familyLinkWithPatient;
 
 	public static Case build() {
 		Case caze = new Case();
@@ -2084,6 +2087,30 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setNotifiedOther(String notifiedOther) {
 		this.notifiedOther = notifiedOther;
+	}
+
+	public String getMobileTeamNo() {
+		return mobileTeamNo;
+	}
+
+	public void setMobileTeamNo(String mobileTeamNo) {
+		this.mobileTeamNo = mobileTeamNo;
+	}
+
+	public String getInformationGivenBy() {
+		return informationGivenBy;
+	}
+
+	public void setInformationGivenBy(String informationGivenBy) {
+		this.informationGivenBy = informationGivenBy;
+	}
+
+	public String getFamilyLinkWithPatient() {
+		return familyLinkWithPatient;
+	}
+
+	public void setFamilyLinkWithPatient(String familyLinkWithPatient) {
+		this.familyLinkWithPatient = familyLinkWithPatient;
 	}
 
 //	Riskfactor on

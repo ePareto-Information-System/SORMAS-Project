@@ -119,6 +119,9 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String HEALTH_FACILITY = "healthFacility";
 	public static final String HOME_ADDRESS_RECREATIONAL = "homeAddressRecreational";
 	public static final String HEALTH_FACILITY_DETAILS = "healthFacilityDetails";
+	public static final String MOBILE_TEAM_NO = "mobileTeamNo";
+	public static final String INFORMATION_GIVEN_BY = "informationGivenBy";
+	public static final String FAMILY_LINK_WITH_PATIENT = "familyLinkWithPatient";
 	public static final String REPORTING_USER = "reportingUser";
 	public static final String REPORT_DATE = "reportDate";
 	public static final String INVESTIGATED_DATE = "investigatedDate";
@@ -379,6 +382,9 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String healthFacilityDetails;
+	private String mobileTeamNo;
+	private String informationGivenBy;
+	private String familyLinkWithPatient;
 
 	@Valid
 	private HealthConditionsDto healthConditions;
@@ -2087,5 +2093,29 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 
 	public void setNotifiedOther(String notifiedOther) {
 		this.notifiedOther = notifiedOther;
+	}
+
+	public String getMobileTeamNo() {
+		return mobileTeamNo;
+	}
+
+	public void setMobileTeamNo(String mobileTeamNo) {
+		this.mobileTeamNo = mobileTeamNo;
+	}
+
+	public String getInformationGivenBy() {
+		return informationGivenBy;
+	}
+
+	public void setInformationGivenBy(String informationGivenBy) {
+		this.informationGivenBy = informationGivenBy;
+	}
+
+	public String getFamilyLinkWithPatient() {
+		return familyLinkWithPatient;
+	}
+
+	public void setFamilyLinkWithPatient(String familyLinkWithPatient) {
+		this.familyLinkWithPatient = familyLinkWithPatient;
 	}
 }

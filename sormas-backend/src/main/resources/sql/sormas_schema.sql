@@ -13440,4 +13440,11 @@ CREATE TABLE afpimmunization (
 ALTER TABLE cases ADD COLUMN afpimmunization_id BIGINT;
 
 INSERT INTO schema_version (version_number, comment) VALUES (599, 'Created afpimmunization table and altered cases table');
+
+ALTER TABLE cases ADD COLUMN mobileteamno VARCHAR(255);
+ALTER TABLE cases ADD COLUMN informationgivenby VARCHAR(255);
+ALTER TABLE cases ADD COLUMN familylinkwithpatient VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (600, 'Added mobileteamno to cases table');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
