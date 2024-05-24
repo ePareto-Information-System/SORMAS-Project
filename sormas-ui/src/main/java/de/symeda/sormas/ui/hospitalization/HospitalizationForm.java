@@ -146,6 +146,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HEALTH_FACILITY) +
 			fluidRowLocs(HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE);
 
+	public static final String MEASLES_LAYOUT = loc(HOSPITALIZATION_HEADING_LOC) +
+			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HEALTH_FACILITY, HospitalizationDto.SELECT_INPATIENT_OUTPATIENT) +
+			fluidRowLocs(4, HospitalizationDto.ADMISSION_DATE, 4, HospitalizationDto.DISCHARGE_DATE);
+			
+			
+
 	//@formatter:on
 	public HospitalizationForm(CaseDataDto caze, ViewMode viewMode, boolean isPseudonymized, boolean inJurisdiction, boolean isEditAllowed) {
 		super(
@@ -310,12 +316,16 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		hospitalizedPreviouslyField.setVisible(false);
 		previousHospitalizationsHeadingLabel.setVisible(false);
 		if (caze.getDisease() == Disease.MEASLES) {
-			hideAllFields();
 
 			if (getContent().getComponent(HospitalizationDto.SELECT_INPATIENT_OUTPATIENT) == null) {
 				addField(HospitalizationDto.SELECT_INPATIENT_OUTPATIENT, ComboBox.class);
 			}
-			setVisible(true, HospitalizationDto.NOTIFY_DISTRICT_DATE, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY);
+			admittedToHealthFacilityField.setVisible(true);
+			FieldHelper.setVisibleWhen(
+					admittedToHealthFacilityField,
+					Arrays.asList(admissionDateField, dischargeDateField, seenAtAHealthFacility),
+					Arrays.asList(YesNo.YES),
+					true);
 		}
 
 		if(caze.getDisease() == Disease.AFP){
@@ -662,6 +672,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			switch (caze.getDisease()) {
 				case GUINEA_WORM:
 					return GUINEA_WORK_LAYOUT;
+				case MEASLES:
+					return MEASLES_LAYOUT;
 				default:
 					return HTML_LAYOUT;
 			}

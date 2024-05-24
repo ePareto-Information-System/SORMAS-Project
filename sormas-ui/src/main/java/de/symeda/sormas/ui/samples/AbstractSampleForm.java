@@ -309,6 +309,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 
 
+
     //@formatter:on
 
 	protected AbstractSampleForm(Class<SampleDto> type, String propertyI18nPrefix, Disease disease, UiFieldAccessCheckers fieldAccessCheckers) {
