@@ -1112,6 +1112,8 @@ public interface Captions {
 	String EpiData_areaInfectedAnimals = "EpiData.areaInfectedAnimals";
 	String EpiData_contactWithSourceCaseKnown = "EpiData.contactWithSourceCaseKnown";
 	String EpiData_exposureDetailsKnown = "EpiData.exposureDetailsKnown";
+	String EpiData_historyOfTravelOutsideTheVillageTownDistrict = "EpiData.historyOfTravelOutsideTheVillageTownDistrict";
+	String EpiData_historyOfTravelOutsideTheVillageTownDistrictDetails = "EpiData.historyOfTravelOutsideTheVillageTownDistrictDetails";
 	String EpiData_exposures = "EpiData.exposures";
 	String EpiData_highTransmissionRiskArea = "EpiData.highTransmissionRiskArea";
 	String EpiData_largeOutbreaksArea = "EpiData.largeOutbreaksArea";

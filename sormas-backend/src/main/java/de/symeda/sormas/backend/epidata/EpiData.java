@@ -64,6 +64,9 @@ public class EpiData extends AbstractDomainObject {
 	private Date changeDateOfEmbeddedLists;
 	private YesNoUnknown childComeInContactWithSymptoms;
 
+	private YesNo historyOfTravelOutsideTheVillageTownDistrict;
+	private String historyOfTravelOutsideTheVillageTownDistrictDetails;
+
 	@Enumerated(EnumType.STRING)
 	public YesNo getExposureDetailsKnown() {
 		return exposureDetailsKnown;
@@ -182,5 +185,21 @@ public class EpiData extends AbstractDomainObject {
 
 	public void setChildComeInContactWithSymptoms(YesNoUnknown childComeInContactWithSymptoms) {
 		this.childComeInContactWithSymptoms = childComeInContactWithSymptoms;
+	}
+
+	public YesNo getHistoryOfTravelOutsideTheVillageTownDistrict() {
+		return this.historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public void setHistoryOfTravelOutsideTheVillageTownDistrict(final YesNo historyOfTravelOutsideTheVillageTownDistrict) {
+		this.historyOfTravelOutsideTheVillageTownDistrict = historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public String getHistoryOfTravelOutsideTheVillageTownDistrictDetails() {
+		return this.historyOfTravelOutsideTheVillageTownDistrictDetails;
+	}
+
+	public void setHistoryOfTravelOutsideTheVillageTownDistrictDetails(final String historyOfTravelOutsideTheVillageTownDistrictDetails) {
+		this.historyOfTravelOutsideTheVillageTownDistrictDetails = historyOfTravelOutsideTheVillageTownDistrictDetails;
 	}
 }

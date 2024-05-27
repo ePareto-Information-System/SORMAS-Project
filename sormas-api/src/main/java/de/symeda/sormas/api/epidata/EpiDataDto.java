@@ -54,6 +54,8 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String LARGE_OUTBREAKS_AREA = "largeOutbreaksArea";
 	public static final String CHILD_COME_IN_CONTACT_WITH_SYMPTOMS = "childComeInContactWithSymptoms";
 
+	public static final String HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT = "historyOfTravelOutsideTheVillageTownDistrict";
+	public static final String HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT_DETAILS = "historyOfTravelOutsideTheVillageTownDistrictDetails";
 
 	@Enumerated(EnumType.STRING)
 	private Disease disease;
@@ -86,6 +88,9 @@ public class EpiDataDto extends PseudonymizableDto {
 	}
 
 	private YesNoUnknown childComeInContactWithSymptoms;
+
+	private YesNo historyOfTravelOutsideTheVillageTownDistrict;
+	private String historyOfTravelOutsideTheVillageTownDistrictDetails;
 
 	public void setExposureDetailsKnown(YesNo exposureDetailsKnown) {
 		this.exposureDetailsKnown = exposureDetailsKnown;
@@ -213,5 +218,21 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public void setChildComeInContactWithSymptoms(YesNoUnknown childComeInContactWithSymptoms) {
 		this.childComeInContactWithSymptoms = childComeInContactWithSymptoms;
+	}
+
+	public YesNo getHistoryOfTravelOutsideTheVillageTownDistrict() {
+		return this.historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public void setHistoryOfTravelOutsideTheVillageTownDistrict(final YesNo historyOfTravelOutsideTheVillageTownDistrict) {
+		this.historyOfTravelOutsideTheVillageTownDistrict = historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public String getHistoryOfTravelOutsideTheVillageTownDistrictDetails() {
+		return this.historyOfTravelOutsideTheVillageTownDistrictDetails;
+	}
+
+	public void setHistoryOfTravelOutsideTheVillageTownDistrictDetails(final String historyOfTravelOutsideTheVillageTownDistrictDetails) {
+		this.historyOfTravelOutsideTheVillageTownDistrictDetails = historyOfTravelOutsideTheVillageTownDistrictDetails;
 	}
 }

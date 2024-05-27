@@ -12851,4 +12851,8 @@ ALTER TABLE location ADD COLUMN residentialaddress varchar(255) NULL;
 ALTER TABLE pathogentest ADD COLUMN othernotesandobservations varchar(255) NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (538, 'Added column to residentialAddress to location and otherNotesAndObservations to pathogentest');
 
+ALTER TABLE epidata ADD COLUMN historyoftraveloutsidethevillagetowndistrict varchar(255) NULL;
+ALTER TABLE epidata ADD COLUMN historyoftraveloutsidethevillagetowndistrictdetails varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (539, 'Added column to historyOfTravelOutsideTheVillageTownDistrictDetails to epidata');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

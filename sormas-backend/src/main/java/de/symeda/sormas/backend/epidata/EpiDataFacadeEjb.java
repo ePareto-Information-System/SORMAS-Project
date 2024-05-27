@@ -105,6 +105,8 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.getActivitiesAsCase().clear();
 		target.getActivitiesAsCase().addAll(activitiesAsCase);
 		target.setChildComeInContactWithSymptoms(source.getChildComeInContactWithSymptoms());
+		target.setHistoryOfTravelOutsideTheVillageTownDistrict(source.getHistoryOfTravelOutsideTheVillageTownDistrict());
+		target.setHistoryOfTravelOutsideTheVillageTownDistrictDetails(source.getHistoryOfTravelOutsideTheVillageTownDistrictDetails());
 
 
 		return target;
@@ -252,6 +254,8 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		}
 		target.setActivitiesAsCase(activityAsCaseDtos);
 		target.setChildComeInContactWithSymptoms(source.getChildComeInContactWithSymptoms());
+		target.setHistoryOfTravelOutsideTheVillageTownDistrict(source.getHistoryOfTravelOutsideTheVillageTownDistrict());
+		target.setHistoryOfTravelOutsideTheVillageTownDistrictDetails(source.getHistoryOfTravelOutsideTheVillageTownDistrictDetails());
 
 		return target;
 	}
