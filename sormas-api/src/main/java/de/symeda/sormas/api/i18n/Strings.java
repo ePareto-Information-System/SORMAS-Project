@@ -488,6 +488,8 @@ public interface Strings {
 	String headingCreateNewContactIssue = "headingCreateNewContactIssue";
 	String headingCreateNewEnvironment = "headingCreateNewEnvironment";
 	String headingCreateNewEvent = "headingCreateNewEvent";
+	String headingCreateNewAssessment = "headingCreateNewAssessment";
+	String headingCreateNewAlert = "headingCreateNewAlert";
 	String headingCreateNewEventGroup = "headingCreateNewEventGroup";
 	String headingCreateNewEventParticipant = "headingCreateNewEventParticipant";
 	String headingCreateNewFacility = "headingCreateNewFacility";
@@ -1680,4 +1682,23 @@ public interface Strings {
 	String messageSubcontinentsDearchivingNotPossible = "messageSubcontinentsDearchivingNotPossible";
 	String messageCountriesDearchivingNotPossible = "messageCountriesDearchivingNotPossible";
 	String ok = "ok";
+	String VeryHighRisk = "VeryHighRisk";
+	String HighRisk = "HighRisk";
+	String ModerateRisk = "ModerateRisk";
+	String LowRisk = "LowRisk";
+	String RecommendedActions = "RecommendedActions";
+	String NotificationType = "NotificationType";
+	String NotificationAction = "NotificationAction";
+	String VeryHighRiskRecommendation = "VeryHighRiskRecommendation";
+	String VeryHighRiskNotificationType = "VeryHighRiskNotificationType";
+	String VeryHighRiskNotificationAction = "VeryHighRiskNotificationAction";
+	String HighRiskRecommendation = "HighRiskRecommendation";
+	String HighRiskNotificationType = "HighRiskNotificationType";
+	String HighRiskNotificationAction = "HighRiskNotificationAction";
+	String ModerateRiskRecommendation = "ModerateRiskRecommendation";
+	String ModerateRiskNotifcationType = "ModerateRiskNotifcationType";
+	String ModerateRiskNotificationAction = "ModerateRiskNotificationAction";
+	String LowRiskReccomendation = "LowRiskReccomendation";
+	String LowRiskNotificationTYpe = "LowRiskNotificationTYpe";
+	String LowRiskNotificationAction = "LowRiskNotificationAction";
 }
