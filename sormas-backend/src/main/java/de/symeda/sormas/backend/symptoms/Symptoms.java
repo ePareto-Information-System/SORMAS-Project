@@ -1965,20 +1965,4 @@ public class Symptoms extends AbstractDomainObject {
 	public void setSwollenLymphNodesBehindEars(SymptomState swollenLymphNodesBehindEars) {
 		this.swollenLymphNodesBehindEars = swollenLymphNodesBehindEars;
 	}
-
-	public SymptomState getHistoryOfTravelOutsideTheVillageTownDistrict() {
-		return historyOfTravelOutsideTheVillageTownDistrict;
-	}
-
-	public void setHistoryOfTravelOutsideTheVillageTownDistrict(SymptomState historyOfTravelOutsideTheVillageTownDistrict) {
-		this.historyOfTravelOutsideTheVillageTownDistrict = historyOfTravelOutsideTheVillageTownDistrict;
-	}
-
-	public String getPlaceOfExposureMeaslesRubella() {
-		return placeOfExposureMeaslesRubella;
-	}
-
-	public void setPlaceOfExposureMeaslesRubella(String placeOfExposureMeaslesRubella) {
-		this.placeOfExposureMeaslesRubella = placeOfExposureMeaslesRubella;
-	}
 }

@@ -12855,4 +12855,11 @@ ALTER TABLE epidata ADD COLUMN historyoftraveloutsidethevillagetowndistrict varc
 ALTER TABLE epidata ADD COLUMN historyoftraveloutsidethevillagetowndistrictdetails varchar(255) NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (539, 'Added column to historyOfTravelOutsideTheVillageTownDistrictDetails to epidata');
 
+-- DROP historyoftraveloutsidethevillagetowndistrict on symptoms
+ALTER TABLE symptoms DROP COLUMN historyoftraveloutsidethevillagetowndistrict;
+ALTER TABLE symptoms DROP COLUMN placeOfExposureMeaslesRubella;
+INSERT INTO schema_version (version_number, comment) VALUES (540, 'Drop historyOfTravelOutsideTheVillageTownDistrict and placeOfExposureMeaslesRubella on symptoms');
+
+
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

@@ -137,7 +137,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6,SHOCK) +
 					fluidRowLocs(6,OTHER_COMPLICATIONS) +
 					fluidRowLocs(6,OTHER_COMPLICATIONS_TEXT) +
-					fluidRowLocs(9, PLACE_OF_EXPOSURE_MEASLES_RUBELLA) +
 					createSymptomGroupLayout(SymptomGroup.RESPIRATORY, RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.CARDIOVASCULAR, CARDIOVASCULAR_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					//createSymptomGroupLayout(SymptomGroup.GASTROINTESTINAL, GASTROINTESTINAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
@@ -159,8 +158,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			fluidRowLocs(6,OTHER_COMPLICATIONS) +
 			fluidRowLocs(6,OTHER_COMPLICATIONS_TEXT) +
 			fluidRowLocsCss(VSPACE_3) +
-			fluidRowLocs(6, HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT) +
-			fluidRowLocs(6, PLACE_OF_EXPOSURE_MEASLES_RUBELLA) +
 			fluidRowLocsCss(VSPACE_3, ONSET_SYMPTOM, ONSET_DATE) +
 			fluidRowLocs(6,OUTCOME);
 
@@ -485,11 +482,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			NON_VASCULAR,
 			GENERALIZED_RASH,
 			RED_EYES,
-			SWOLLEN_LYMPH_NODES_BEHIND_EARS,
-			HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT);
-
-		TextField placeOfExposureMeaslesRubellaField = addField(PLACE_OF_EXPOSURE_MEASLES_RUBELLA, TextField.class);
-		placeOfExposureMeaslesRubellaField.setVisible(false);
+			SWOLLEN_LYMPH_NODES_BEHIND_EARS);
 
 
 		addField(SYMPTOMS_COMMENTS, TextField.class).setDescription(
@@ -698,8 +691,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			NON_VASCULAR,
 			GENERALIZED_RASH,
 			RED_EYES,
-			SWOLLEN_LYMPH_NODES_BEHIND_EARS,
-			HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT);
+			SWOLLEN_LYMPH_NODES_BEHIND_EARS);
 
 		// Set visibilities
 
@@ -948,27 +940,15 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					NON_VASCULAR,
 					GENERALIZED_RASH,
 					RED_EYES,
-					SWOLLEN_LYMPH_NODES_BEHIND_EARS,
-					HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT);
+					SWOLLEN_LYMPH_NODES_BEHIND_EARS);
 
 			setVisible(false, TEMPERATURE, TEMPERATURE_SOURCE);
 			clinicalMeasurementsHeadingLabel.setVisible(false);
 		}
 
 		if(disease == Disease.MEASLES) {
-//			symptomsHide();
 			addField(DATE_OF_ONSET, DateField.class);
-//			setVisible(true, SKIN_RASH, FEVER, COUGH,RUNNY_NOSE, CONJUNCTIVITIS, KOPLIKS_SPOTS, NON_VASCULAR);
-//
-//			setVisible(false, ALTERED_CONSCIOUSNESS, CONFUSED_DISORIENTED, HEMORRHAGIC_SYNDROME, HYPERGLYCEMIA, OTHER_COMPLICATIONS_TEXT, OTHER_COMPLICATIONS, SEIZURES);
-			setVisible(true, HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT);
-//			HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT
-			FieldHelper.setVisibleWhen(
-					getFieldGroup(),
-					PLACE_OF_EXPOSURE_MEASLES_RUBELLA,
-					HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT,
-					Arrays.asList(SymptomState.YES),
-					true);
+
 
 			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED, CaseOutcome.UNKNOWN));
 		}
