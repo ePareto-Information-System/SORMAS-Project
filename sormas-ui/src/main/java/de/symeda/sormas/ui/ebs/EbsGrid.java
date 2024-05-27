@@ -82,17 +82,6 @@ public class EbsGrid extends FilteredGrid<de.symeda.sormas.api.ebs.EbsIndexDto, 
 
 		Language userLanguage = I18nProperties.getUserLanguage();
 
-		boolean showPendingTasks = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.TASK_MANAGEMENT)
-			&& UserProvider.getCurrent().hasUserRight(UserRight.TASK_VIEW);
-		if (showPendingTasks) {
-			Column<EbsIndexDto, String> pendingTasksColumn = addColumn(
-				entry -> String.format(
-					I18nProperties.getCaption(Captions.formatSimpleNumberFormat),
-					FacadeProvider.getTaskFacade().getPendingTaskCountByEbs(entry.toReference())));
-			pendingTasksColumn.setId(NUMBER_OF_PENDING_TASKS);
-			pendingTasksColumn.setSortable(false);
-		}
-
 		boolean specificRiskEnabled = FacadeProvider.getCustomizableEnumFacade().hasEnumValues(CustomizableEnumType.SPECIFIC_EVENT_RISK, null);
 
 		List<String> columnIds = new ArrayList<>(
