@@ -1730,6 +1730,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
             if (disease == Disease.MEASLES) {
                 vaccinationStatus.setRequired(true);
+                outcome.setVisible(false);
                 FieldHelper.setVisibleWhen(vaccinationStatus, Arrays.asList(numberOfDoses, vaccinationRoutine, lastVaccinationDate), Arrays.asList(VaccinationStatus.VACCINATED), true);
             }
 

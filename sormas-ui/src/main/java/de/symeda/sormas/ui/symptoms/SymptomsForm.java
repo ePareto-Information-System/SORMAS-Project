@@ -199,8 +199,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			fluidRowLocs(4, JOINT_PAIN) +
 			fluidRowLocs(6,OTHER_COMPLICATIONS) +
 			fluidRowLocs(6,OTHER_COMPLICATIONS_TEXT) +
-			fluidRowLocsCss(VSPACE_3) +
-			fluidRowLocsCss(VSPACE_3, ONSET_DATE, ONSET_SYMPTOM) +
+//			fluidRowLocsCss(VSPACE_3) +
+//			fluidRowLocsCss(VSPACE_3, ONSET_SYMPTOM, ONSET_DATE) +
 			fluidRowLocs(6,OUTCOME);
 
 
@@ -1162,7 +1162,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			FieldHelper.setVisibleWhen(getFieldGroup(), FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS, FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM, Arrays.asList(GuineaWormFirstSymptom.OTHERS), true);
 			addField(NUMBER_OF_WORMS, TextField.class);
 			addField(DATE_FIRST_WORM_EMERGENCE, DateField.class);
-//			[CASE_DETECTED_BEFORE_WORM_EMERGENCE, FIRST_WORM_THIS_YEAR, NUMBER_OF_WORMS,DATE_FIRST_WORM_EMERGENCE] vsible when EMERGENCE_OF_GUINEA_WORM is SymptomState.YES
 			FieldHelper.setVisibleWhen(getFieldGroup(), FIRST_WORM_THIS_YEAR, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
 			FieldHelper.setVisibleWhen(getFieldGroup(), CASE_DETECTED_BEFORE_WORM_EMERGENCE, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
 			FieldHelper.setVisibleWhen(getFieldGroup(), NUMBER_OF_WORMS, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);

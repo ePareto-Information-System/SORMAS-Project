@@ -451,9 +451,6 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			setVisible(false, EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, EpiDataDto.LARGE_OUTBREAKS_AREA, EpiDataDto.AREA_INFECTED_ANIMALS);
 		}
 
-		if(disease == Disease.MEASLES) {
-			hideAllFields();
-		}
 		if (diseaseCSMCheck()) {
 			recentTravelOutbreak.setVisible(false);
 			contactSickDomesticAnimals.setVisible(false);
