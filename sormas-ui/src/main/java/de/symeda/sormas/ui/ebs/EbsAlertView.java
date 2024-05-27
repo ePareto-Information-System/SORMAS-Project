@@ -20,13 +20,15 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import de.symeda.sormas.api.ebs.EbsAlertDto;
-import de.symeda.sormas.api.ebs.RiskAssessmentDto;
+import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.ebs.*;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.ButtonHelper;
+
+import java.util.List;
 
 
 public class EbsAlertView extends AbstractEbsView {
@@ -42,6 +44,11 @@ public class EbsAlertView extends AbstractEbsView {
 
 	@Override
 	protected void initView(String params) {
+		List<EbsAlertDto> ebsAlertDto = FacadeProvider.getAlertFacade().findBy(new RiskAssessmentCriteria().Ebs(new EbsReferenceDto(getEbsRef().getUuid())));
+		if (ebsAlertDto.isEmpty()) {
+			ControllerProvider.getEbsController().createAlertComponent(getEbsRef().getUuid(),
+					isEditAllowed() && UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT));
+		}
 
 		addButton = ButtonHelper.createIconButton(
 				Captions.ebsNewEbs,
