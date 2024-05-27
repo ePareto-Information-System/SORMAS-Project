@@ -177,7 +177,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6,SITE_OF_PARALYSIS) +
 					fluidRowLocs(PARALYSED_LIMB_SENSITIVE_TO_PAIN, INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
 					fluidRowLocs(RIGHT_INJECTION_SITE, LEFT_INJECTION_SITE) +
-					fluidRowLocs( PLACE_OF_EXPOSURE_MEASLES_RUBELLA) +
 					fluidRowLocs(6, PATIENT_ILL_LOCATION) +
 					fluidRowLocs(6, SYMPTOMS_COMMENTS) +
 					fluidRowLocs(6, ONSET_SYMPTOM) +
@@ -201,8 +200,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			fluidRowLocs(6,OTHER_COMPLICATIONS) +
 			fluidRowLocs(6,OTHER_COMPLICATIONS_TEXT) +
 			fluidRowLocsCss(VSPACE_3) +
-			fluidRowLocs(6, HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT) +
-			fluidRowLocs(6, PLACE_OF_EXPOSURE_MEASLES_RUBELLA) +
 			fluidRowLocsCss(VSPACE_3, ONSET_DATE, ONSET_SYMPTOM) +
 			fluidRowLocs(6,OUTCOME);
 
@@ -625,9 +622,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			HEADACHES,
 			GENERALIZED_RASH,
 			RED_EYES,
-			SWOLLEN_LYMPH_NODES_BEHIND_EARS,
-			HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT
-			);
+			SWOLLEN_LYMPH_NODES_BEHIND_EARS);
 
 		TextField babyAgeAtDeath = addField(AGE_AT_DEATH_DAYS, TextField.class);
 		TextField ageOfOnsetDays =  addField(AGE_AT_ONSET_DAYS, TextField.class);
@@ -638,9 +633,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			I18nProperties.getPrefixDescription(I18N_PREFIX, SYMPTOMS_COMMENTS, "") + "\n" + I18nProperties.getDescription(Descriptions.descGdpr));
 
 		addField(LESIONS_ONSET_DATE, DateField.class);
-
-		addField(SymptomsDto.PLACE_OF_EXPOSURE_MEASLES_RUBELLA, TextField.class).setVisible(false);
-
 
 		// complications
 		String[] complicationsFieldIds = {
@@ -864,7 +856,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			ABDOMINAL_CRAMPS,
 			HEADACHES,
 			GENERALIZED_RASH,
-			HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT,
 			RED_EYES,
 			SWOLLEN_LYMPH_NODES_BEHIND_EARS,
 			BODY_ACHE);
@@ -1159,16 +1150,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		if(disease == Disease.MEASLES) {
 			addField(DATE_OF_ONSET, DateField.class);
-			setVisible(true, FEVER, GENERALIZED_RASH, COUGH, RUNNY_NOSE, RED_EYES, SWOLLEN_LYMPH_NODES_BEHIND_EARS, JOINT_PAIN, PLACE_OF_EXPOSURE_MEASLES_RUBELLA);
+			setVisible(true, FEVER, GENERALIZED_RASH, COUGH, RUNNY_NOSE, RED_EYES, SWOLLEN_LYMPH_NODES_BEHIND_EARS, JOINT_PAIN);
 			setVisible(false, SYMPTOMS_COMMENTS);
-			setVisible(true, HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT);
-//			HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT
-			FieldHelper.setVisibleWhen(
-					getFieldGroup(),
-					PLACE_OF_EXPOSURE_MEASLES_RUBELLA,
-					HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT,
-					Arrays.asList(SymptomState.YES),
-					true);
 
 			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED, CaseOutcome.UNKNOWN));
 		} else if(disease == Disease.CHOLERA) {

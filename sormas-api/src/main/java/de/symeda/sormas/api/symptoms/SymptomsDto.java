@@ -273,8 +273,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String GENERALIZED_RASH = "generalizedRash";
 	public static final String RED_EYES = "redEyes";
 	public static final String SWOLLEN_LYMPH_NODES_BEHIND_EARS = "swollenLymphNodesBehindEars";
-	public static final  String HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT = "historyOfTravelOutsideTheVillageTownDistrict";
-	public static final String PLACE_OF_EXPOSURE_MEASLES_RUBELLA = "placeOfExposureMeaslesRubella";
 
 	public static final String SYMPTOMS_ONGOING = "symptomsOngoing";
 	public static final String DURATION_HOURS = "durationHours";
@@ -2452,17 +2450,6 @@ public class SymptomsDto extends PseudonymizableDto {
 			MEASLES})
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState nonVascular;
-
-	@Diseases({
-			MEASLES})
-	@Outbreaks
-	@HideForCountries
-	@SymptomGrouping
-	private SymptomState historyOfTravelOutsideTheVillageTownDistrict;
-
-
-
-	private String placeOfExposureMeaslesRubella;
 
 	@Diseases({
 		FOODBORNE_ILLNESS,
@@ -4665,23 +4652,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	public void setOutcomeOther(String outcomeOther) {
 		this.outcomeOther = outcomeOther;
 	}
-
-	public SymptomState getHistoryOfTravelOutsideTheVillageTownDistrict() {
-		return historyOfTravelOutsideTheVillageTownDistrict;
-	}
-
-	public void setHistoryOfTravelOutsideTheVillageTownDistrict(SymptomState historyOfTravelOutsideTheVillageTownDistrict) {
-		this.historyOfTravelOutsideTheVillageTownDistrict = historyOfTravelOutsideTheVillageTownDistrict;
-	}
-
-	public String getPlaceOfExposureMeaslesRubella() {
-		return placeOfExposureMeaslesRubella;
-	}
-
-	public void setPlaceOfExposureMeaslesRubella(String placeOfExposureMeaslesRubella) {
-		this.placeOfExposureMeaslesRubella = placeOfExposureMeaslesRubella;
-	}
-
 	public SymptomState getGeneralizedRash() {
 		return generalizedRash;
 	}

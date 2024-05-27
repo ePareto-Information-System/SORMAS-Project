@@ -285,8 +285,6 @@ public class Symptoms extends AbstractDomainObject {
 	private SymptomState diarrhoea;
 	private SymptomState abdominalCramps;
 	private SymptomState headaches;
-	private SymptomState historyOfTravelOutsideTheVillageTownDistrict;
-	private String placeOfExposureMeaslesRubella;
 
 
 	private SymptomState babyDied;
@@ -2511,22 +2509,6 @@ public class Symptoms extends AbstractDomainObject {
 
 	public void setHeadaches(SymptomState headaches) {
 		this.headaches = headaches;
-	}
-
-	public SymptomState getHistoryOfTravelOutsideTheVillageTownDistrict() {
-		return historyOfTravelOutsideTheVillageTownDistrict;
-	}
-
-	public void setHistoryOfTravelOutsideTheVillageTownDistrict(SymptomState historyOfTravelOutsideTheVillageTownDistrict) {
-		this.historyOfTravelOutsideTheVillageTownDistrict = historyOfTravelOutsideTheVillageTownDistrict;
-	}
-
-	public String getPlaceOfExposureMeaslesRubella() {
-		return placeOfExposureMeaslesRubella;
-	}
-
-	public void setPlaceOfExposureMeaslesRubella(String placeOfExposureMeaslesRubella) {
-		this.placeOfExposureMeaslesRubella = placeOfExposureMeaslesRubella;
 	}
 
 	public SymptomState getGeneralizedRash() {
