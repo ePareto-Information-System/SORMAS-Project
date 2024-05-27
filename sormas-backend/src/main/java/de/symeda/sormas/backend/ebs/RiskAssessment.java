@@ -34,6 +34,12 @@ public class RiskAssessment extends AbstractDomainObject {
 
     public static String RESPONSE_TIME = "responseTime";
 
+    public static String MORBIDITY_MORTALITY_COMMENT = "morbidityMortalityComment";
+
+    public static String SPREAD_PROBABILITY_COMMENT = "spreadProbabilityComment";
+
+    public static String CONTROL_MEASURES_COMMENT = "controlMeasuresComment";
+
     public static final String EBS = "ebs";
 
 
@@ -44,6 +50,9 @@ public class RiskAssessment extends AbstractDomainObject {
     private Date responseDate;
     private String responseTime;
     private Ebs ebs;
+    private String morbidityMortalityComment;
+    private String spreadProbabilityComment;
+    private String controlMeasuresComment;
 
     public YesNo getMorbidityMortality() {
         return morbidityMortality;
@@ -92,6 +101,31 @@ public class RiskAssessment extends AbstractDomainObject {
     public void setResponseTime(String responseTime) {
         this.responseTime = responseTime;
     }
+
+    public String getControlMeasuresComment() {
+        return controlMeasuresComment;
+    }
+
+    public void setControlMeasuresComment(String controlMeasuresComment) {
+        this.controlMeasuresComment = controlMeasuresComment;
+    }
+
+    public String getSpreadProbabilityComment() {
+        return spreadProbabilityComment;
+    }
+
+    public void setSpreadProbabilityComment(String spreadProbabilityComment) {
+        this.spreadProbabilityComment = spreadProbabilityComment;
+    }
+
+    public String getMorbidityMortalityComment() {
+        return morbidityMortalityComment;
+    }
+
+    public void setMorbidityMortalityComment(String morbidityMortalityComment) {
+        this.morbidityMortalityComment = morbidityMortalityComment;
+    }
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)

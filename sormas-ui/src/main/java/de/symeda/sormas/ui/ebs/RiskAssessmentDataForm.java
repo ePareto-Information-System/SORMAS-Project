@@ -50,8 +50,11 @@ public class RiskAssessmentDataForm extends AbstractEditForm<RiskAssessmentDto> 
     loc(RISK_ASSESSMENT_LOC) +
     loc(RISK_CLASSIFICATION_LOC) +
      fluidRowLocs(RiskAssessmentDto.MORBIDITY_MORTALITY) +
+     fluidRowLocs(RiskAssessmentDto.MORBIDITY_MORTALITY_COMMENT) +
         fluidRowLocs(RiskAssessmentDto.SPREAD_PROBABILITY) +
+        fluidRowLocs(RiskAssessmentDto.SPREAD_PROBABILITY_COMMENT) +
         fluidRowLocs(RiskAssessmentDto.CONTROL_MEASURES) +
+        fluidRowLocs(RiskAssessmentDto.CONTROL_MEASURES_COMMENT) +
             fluidRowLocs(RiskAssessmentDto.RISK_ASSESSMENT, RiskAssessmentDto.RESPONSE_DATE, RiskAssessmentDto.RESPONSE_TIME);
 
     RiskAssessmentDataForm(EbsDto ebsDto, Class<? extends EntityDto> parentClass, boolean isPseudonymized, boolean inJurisdiction, boolean isEditAllowed){
@@ -98,30 +101,33 @@ public class RiskAssessmentDataForm extends AbstractEditForm<RiskAssessmentDto> 
         riskClassification.addStyleName(H5);
         getContent().addComponent(riskClassification, RISK_CLASSIFICATION_LOC);
         NullableOptionGroup morbidityMortality = addField(RiskAssessmentDto.MORBIDITY_MORTALITY,NullableOptionGroup.class);
+        TextArea morbidityMortalityComment = addField(RiskAssessmentDto.MORBIDITY_MORTALITY_COMMENT, TextArea.class);
         NullableOptionGroup spreadProbability = addField(RiskAssessmentDto.SPREAD_PROBABILITY,NullableOptionGroup.class);
+        TextArea spreadProbabilityComment = addField(RiskAssessmentDto.SPREAD_PROBABILITY_COMMENT,TextArea.class);
         NullableOptionGroup controlMeasures = addField(RiskAssessmentDto.CONTROL_MEASURES,NullableOptionGroup.class);
+        TextArea controlMeasuresComment = addField(RiskAssessmentDto.CONTROL_MEASURES_COMMENT,TextArea.class);
         ComboBox riskAssesment =  addField(RiskAssessmentDto.RISK_ASSESSMENT, ComboBox.class);
         DateField responseDate = addField(RiskAssessmentDto.RESPONSE_DATE, DateField.class);
         TextField responseTime = addField(RiskAssessmentDto.RESPONSE_TIME, TextField.class);
-
-//        riskAssesment.setVisible(false);
-//        responseDate.setVisible(false);
-//        responseDate.setVisible(false);
 
         ValueChangeListener commonListener = event -> {
 
             // Check if all three fields have YesNo.YES
             if (morbidityMortality.getNullableValue() == YesNo.YES && spreadProbability.getNullableValue() == YesNo.YES && controlMeasures.getNullableValue() == YesNo.NO) {
                 riskAssesment.setValue(RiskAssesment.VERY_HIGH);
+                riskAssesment.setStyleName("very-high-risk-assessment");
             }
             else if(morbidityMortality.getNullableValue() == YesNo.YES && spreadProbability.getNullableValue() == YesNo.YES && controlMeasures.getNullableValue() == YesNo.YES || morbidityMortality.getNullableValue() == YesNo.NO && spreadProbability.getNullableValue() == YesNo.YES && controlMeasures.getNullableValue() == YesNo.NO || morbidityMortality.getNullableValue() == YesNo.YES && spreadProbability.getNullableValue() == YesNo.NO && controlMeasures.getNullableValue() == YesNo.NO) {
                 riskAssesment.setValue(RiskAssesment.HIGH);
+                riskAssesment.setStyleName("high-risk-assessment");
             }
             else if(morbidityMortality.getNullableValue() == YesNo.NO && spreadProbability.getNullableValue() == YesNo.NO && controlMeasures.getNullableValue() == YesNo.NO || morbidityMortality.getNullableValue() == YesNo.YES && spreadProbability.getNullableValue() == YesNo.NO && controlMeasures.getNullableValue() == YesNo.YES || morbidityMortality.getNullableValue() == YesNo.NO && spreadProbability.getNullableValue() == YesNo.YES && controlMeasures.getNullableValue() == YesNo.YES) {
                 riskAssesment.setValue(RiskAssesment.MEDIUM);
+                riskAssesment.setStyleName("moderate-risk-assessment");
             }
             else if(morbidityMortality.getNullableValue() == YesNo.NO && spreadProbability.getNullableValue() == YesNo.NO && controlMeasures.getNullableValue() == YesNo.YES) {
                 riskAssesment.setValue(RiskAssesment.LOW);
+                riskAssesment.setStyleName("low-risk-assessment");
             }
 
             // Set responseDate to the current date
