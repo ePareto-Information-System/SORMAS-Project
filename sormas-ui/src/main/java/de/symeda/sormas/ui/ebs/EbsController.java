@@ -223,7 +223,7 @@ public class EbsController {
 			FacadeProvider.getRiskAssessmentFacade().saveRisk(riskAssessmentDto);
 			FacadeProvider.getEbsFacade().save(ebs);
 			SormasUI.refreshView();
-			Notification.show(I18nProperties.getString(Strings.messageRiskAssessmetnSavedShort), TRAY_NOTIFICATION);
+			Notification.show(I18nProperties.getString(Strings.messageRiskAssessmentSavedShort), TRAY_NOTIFICATION);
 			showAssessmentCaseDialog(riskAssessmentDto);
 		});
 
