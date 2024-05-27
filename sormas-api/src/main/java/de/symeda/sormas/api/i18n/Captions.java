@@ -1459,6 +1459,9 @@ public interface Captions {
 	String RiskAssessment_morbidityMortality = "RiskAssessment.morbidityMortality";
 	String RiskAssessment_spreadProbability = "RiskAssessment.spreadProbability";
 	String RiskAssessment_controlMeasures = "RiskAssessment.controlMeasures";
+	String RiskAssessment_morbidityMortalityComment = "RiskAssessment.morbidityMortalityComment";
+	String RiskAssessment_spreadProbabilityComment = "RiskAssessment.spreadProbabilityComment";
+	String RiskAssessment_controlMeasuresComment = "RiskAssessment.controlMeasuresComment";
 	String RiskAssessment_riskAssessment = "RiskAssessment.riskAssessment";
 	String RiskAssessment_responseDate = "RiskAssessment.responseDate";
 	String RiskAssessment_responseTime = "RiskAssessment.responseTime";
