@@ -254,6 +254,7 @@ public interface Validations {
 	String validPointOfEntry = "validPointOfEntry";
 	String validRegion = "validRegion";
 	String validReportDateTime = "validReportDateTime";
+	String validDateOnset = "validDateOnset";
 	String validReportingUser = "validReportingUser";
 	String validResponsibleDistrict = "validResponsibleDistrict";
 	String validResponsibleRegion = "validResponsibleRegion";
