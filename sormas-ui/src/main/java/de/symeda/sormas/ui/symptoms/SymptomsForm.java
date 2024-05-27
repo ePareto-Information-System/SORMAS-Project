@@ -63,7 +63,6 @@ import com.vaadin.v7.data.util.converter.Converter.ConversionException;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.Descriptions;
@@ -72,8 +71,6 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.SymptomsContext;
@@ -82,7 +79,6 @@ import de.symeda.sormas.api.symptoms.SymptomsHelper;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
-import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import de.symeda.sormas.api.visit.VisitStatus;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.ButtonHelper;
@@ -161,6 +157,20 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					//loc(CLINICAL_HISTORY_HEADING_LOC) +
 					fluidRowLocs(6,OUTCOME)+
 					fluidRowLocs(PROVISONAL_DIAGNOSIS);
+
+	public static final String NNT_LAYOUT = loc(SIGNS_AND_SYMPTOMS_HEADING_LOC) +
+			fluidRowLocs(BACKACHE, NORMAL_CRY_AND_SUCK) +
+			fluidRowLocs(BABY_DIED, STIFFNESS) +
+			fluidRowLocs(AGE_AT_DEATH_DAYS, AGE_AT_ONSET_DAYS) +
+			fluidRowLocs(STOPPED_SUCKING_AFTER_TWO_DAYS, BABY_NORMAL_AT_BIRTH) +
+			fluidRowLocs(SEIZURES, OTHER_COMPLICATIONS) +
+			fluidRowLocs(OTHER_COMPLICATIONS_TEXT) +
+			locsCss(VSPACE_3) +
+			fluidRowLocs(SYMPTOMS_COMMENTS) +
+			fluidRowLocsCss( ONSET_SYMPTOM, ONSET_DATE) +
+			fluidRowLocs(6, OUTCOME);
+
+
 	//@formatter:on
 
 	private static String createSymptomGroupLayout(SymptomGroup symptomGroup, String loc) {
@@ -1301,7 +1311,22 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 	@Override
 	protected String createHtmlLayout() {
-		return HTML_LAYOUT;
+		String SELECTED_HTML_LAYOUT = "";
+
+		if (caze.getDisease() != null) {
+			switch (caze.getDisease()) {
+				case NEONATAL_TETANUS:
+					SELECTED_HTML_LAYOUT = NNT_LAYOUT;
+					break;
+				default:
+					SELECTED_HTML_LAYOUT = HTML_LAYOUT;
+					break;
+			}
+
+			return SELECTED_HTML_LAYOUT;
+		} else {
+			return HTML_LAYOUT;
+		}
 	}
 
 	public void initializeSymptomRequirementsForVisit(NullableOptionGroup visitStatus) {
