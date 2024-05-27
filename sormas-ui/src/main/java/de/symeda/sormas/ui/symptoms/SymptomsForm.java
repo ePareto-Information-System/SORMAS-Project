@@ -157,8 +157,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			fluidRowLocs(4, JOINT_PAIN) +
 			fluidRowLocs(6,OTHER_COMPLICATIONS) +
 			fluidRowLocs(6,OTHER_COMPLICATIONS_TEXT) +
-			fluidRowLocsCss(VSPACE_3) +
-			fluidRowLocsCss(VSPACE_3, ONSET_SYMPTOM, ONSET_DATE) +
+//			fluidRowLocsCss(VSPACE_3) +
+//			fluidRowLocsCss(VSPACE_3, ONSET_SYMPTOM, ONSET_DATE) +
 			fluidRowLocs(6,OUTCOME);
 
 
