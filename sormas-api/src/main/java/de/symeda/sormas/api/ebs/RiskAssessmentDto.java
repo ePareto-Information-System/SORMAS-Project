@@ -24,9 +24,15 @@ public class RiskAssessmentDto extends PseudonymizableDto {
 
     public static String MORBIDITY_MORTALITY = "morbidityMortality";
 
+    public static String MORBIDITY_MORTALITY_COMMENT = "morbidityMortalityComment";
+
     public static String SPREAD_PROBABILITY = "spreadProbability";
 
+    public static String SPREAD_PROBABILITY_COMMENT = "spreadProbabilityComment";
+
     public static String CONTROL_MEASURES = "controlMeasures";
+
+    public static String CONTROL_MEASURES_COMMENT = "controlMeasuresComment";
 
     public static String RISK_ASSESSMENT = "riskAssessment";
 
@@ -39,8 +45,11 @@ public class RiskAssessmentDto extends PseudonymizableDto {
 
 
     private YesNo morbidityMortality;
+    private String morbidityMortalityComment;
     private YesNo spreadProbability;
+    private String spreadProbabilityComment;
     private YesNo controlMeasures;
+    private String controlMeasuresComment;
     private RiskAssesment riskAssessment;
     private Date responseDate;
     private String responseTime;
@@ -92,6 +101,30 @@ public class RiskAssessmentDto extends PseudonymizableDto {
 
     public void setResponseTime(String responseTime) {
         this.responseTime = responseTime;
+    }
+
+    public String getControlMeasuresComment() {
+        return controlMeasuresComment;
+    }
+
+    public void setControlMeasuresComment(String controlMeasuresComment) {
+        this.controlMeasuresComment = controlMeasuresComment;
+    }
+
+    public String getSpreadProbabilityComment() {
+        return spreadProbabilityComment;
+    }
+
+    public void setSpreadProbabilityComment(String spreadProbabilityComment) {
+        this.spreadProbabilityComment = spreadProbabilityComment;
+    }
+
+    public String getMorbidityMortalityComment() {
+        return morbidityMortalityComment;
+    }
+
+    public void setMorbidityMortalityComment(String morbidityMortalityComment) {
+        this.morbidityMortalityComment = morbidityMortalityComment;
     }
 
     @ImportIgnore

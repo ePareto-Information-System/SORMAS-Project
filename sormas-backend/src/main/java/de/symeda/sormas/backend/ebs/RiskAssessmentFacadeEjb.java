@@ -39,6 +39,9 @@ public class RiskAssessmentFacadeEjb implements RiskAssessmentFacade {
         target.setResponseDate(source.getResponseDate());
         target.setResponseTime(source.getResponseTime());
         target.setRiskAssessment(source.getRiskAssessment());
+        target.setControlMeasuresComment(source.getControlMeasuresComment());
+        target.setSpreadProbabilityComment(source.getSpreadProbabilityComment());
+        target.setMorbidityMortalityComment(source.getMorbidityMortalityComment());
         target.setEbs(ebsService.getByReferenceDto(source.getEbs()));
         return target;
     }
@@ -56,6 +59,9 @@ public class RiskAssessmentFacadeEjb implements RiskAssessmentFacade {
         target.setResponseDate(source.getResponseDate());
         target.setResponseTime(source.getResponseTime());
         target.setRiskAssessment(source.getRiskAssessment());
+        target.setControlMeasuresComment(source.getControlMeasuresComment());
+        target.setSpreadProbabilityComment(source.getSpreadProbabilityComment());
+        target.setMorbidityMortalityComment(source.getMorbidityMortalityComment());
         target.setEbs(EbsFacadeEjb.toReferenceDto(source.getEbs()));
         return target;
     }
