@@ -613,6 +613,7 @@ public interface Strings {
 	String headingPersonCompleting = "headingPersonCompleting";
 	String headingRiskFactor = "headingRiskFactor";
 	String headingFillThis = "headingFillThis";
+	String healthStaffDetailsLabel = "healthStaffDetailsLabel";
 	String headingChildSeek = "headingChildSeek";
 	String headingHowToMergeCases = "headingHowToMergeCases";
 	String headingHowToMergeContacts = "headingHowToMergeContacts";

@@ -19,12 +19,8 @@ package de.symeda.sormas.backend.person;
 
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -73,6 +69,7 @@ import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.travelentry.TravelEntry;
+import org.apache.commons.lang3.StringUtils;
 
 @Entity
 public class Person extends AbstractDomainObject implements HasExternalData {
@@ -246,6 +243,14 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private String telNumber;
 	private String ethnicity;
 	private YesNo applicable;
+	private String headHouseHold;
+	private Set<Profession> professionOfPatient;
+	private String professionOfPatientString;
+	private String professionOfPatientOther;
+	private String nameHealthFacility;
+	private String service;
+	private String qualification;
+	private String nameOfVillagePersonGotIll;
 
 	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getFirstName() {
@@ -1016,6 +1021,100 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 
 	public YesNo getApplicable() {
 		return applicable;
+	}
+
+	public String getEthnicity() {
+		return ethnicity;
+	}
+
+	public void setEthnicity(String ethnicity) {
+		this.ethnicity = ethnicity;
+	}
+
+	public String getHeadHouseHold() {
+		return headHouseHold;
+	}
+
+	public void setHeadHouseHold(String headHouseHold) {
+		this.headHouseHold = headHouseHold;
+	}
+	@Transient
+	public Set<Profession> getProfessionOfPatient() {
+		if (professionOfPatient == null){
+			if(StringUtils.isEmpty(professionOfPatientString)){
+				professionOfPatient = new HashSet<>();
+			} else{
+				professionOfPatient =
+						Arrays.stream(professionOfPatientString.split(",")).map(Profession::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return professionOfPatient;
+	}
+
+	public void setProfessionOfPatient(Set<Profession> professionOfPatient) {
+		this.professionOfPatient = professionOfPatient;
+
+		if (this.professionOfPatient == null){
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		professionOfPatient.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if(sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		professionOfPatientString = sb.toString();
+
+	}
+
+	public String getProfessionOfPatientString() {return professionOfPatientString;}
+
+	public void setProfessionOfPatientString(String professionOfPatientString){
+		this.professionOfPatientString = professionOfPatientString;
+		professionOfPatient = null;
+	}
+
+	public String getProfessionOfPatientOther() {
+		return professionOfPatientOther;
+	}
+
+	public void setProfessionOfPatientOther(String professionOfPatientOther) {
+		this.professionOfPatientOther = professionOfPatientOther;
+	}
+
+	public String getNameHealthFacility() {
+		return nameHealthFacility;
+	}
+
+	public void setNameHealthFacility(String nameHealthFacility) {
+		this.nameHealthFacility = nameHealthFacility;
+	}
+
+	public String getService() {
+		return service;
+	}
+
+	public void setService(String service) {
+		this.service = service;
+	}
+
+	public String getQualification() {
+		return qualification;
+	}
+
+	public void setQualification(String qualification) {
+		this.qualification = qualification;
+	}
+
+	public String getNameOfVillagePersonGotIll() {
+		return nameOfVillagePersonGotIll;
+	}
+
+	public void setNameOfVillagePersonGotIll(String nameOfVillagePersonGotIll) {
+		this.nameOfVillagePersonGotIll = nameOfVillagePersonGotIll;
 	}
     public void setApplicable(YesNo applicable) {
          this.applicable = applicable;

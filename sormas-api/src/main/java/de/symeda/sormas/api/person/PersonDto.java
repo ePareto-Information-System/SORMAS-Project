@@ -18,6 +18,7 @@ package de.symeda.sormas.api.person;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -148,6 +149,13 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String MARITAL_STATUS = "maritalStatus";
 	public static final String TEL_NUMBER = "telNumber";
 	public static final String ETHNICITY = "ethnicity";
+	public static final String HEAD_HOUSEHOLD = "headHouseHold";
+	public static final String PROFESSION_OF_PATIENT = "professionOfPatient";
+	public static final String PROFESSION_OF_PATIENT_OTHER = "professionOfPatientOther";
+	public static final String NAME_HEALTH_FACILITY = "nameHealthFacility";
+	public static final String SERVICE = "service";
+	public static final String QUALIFICATION = "qualification";
+	public static final String NAME_OF_VILLAGE_PERSON_GOT_ILL = "nameOfVillagePersonGotIll";
 	public static final String APPLICABLE = "applicable";
 
 	// Fields are declared in the order they should appear in the import template
@@ -451,6 +459,14 @@ public class PersonDto extends PseudonymizableDto {
 	private MaritalStatus maritalStatus;
 	private String telNumber;
 	private YesNo applicable;
+	private String ethnicity;
+	private String headHouseHold;
+	private Set<Profession> professionOfPatient;
+	private String professionOfPatientOther;
+	private String nameHealthFacility;
+	private String service;
+	private String qualification;
+	private String nameOfVillagePersonGotIll;
 
 
 	@SuppressWarnings("serial")
@@ -1329,6 +1345,70 @@ public class PersonDto extends PseudonymizableDto {
 
 	public void setTelNumber(String telNumber) {
 		this.telNumber = telNumber;
+	}
+
+	public String getEthnicity() {
+		return ethnicity;
+	}
+
+	public void setEthnicity(String ethnicity) {
+		this.ethnicity = ethnicity;
+	}
+
+	public String getHeadHouseHold() {
+		return headHouseHold;
+	}
+
+	public void setHeadHouseHold(String headHouseHold) {
+		this.headHouseHold = headHouseHold;
+	}
+	@ImportIgnore
+	public Set<Profession> getProfessionOfPatient() {
+		return professionOfPatient;
+	}
+
+	public void setProfessionOfPatient(Set<Profession> professionOfPatient) {
+		this.professionOfPatient = professionOfPatient;
+	}
+
+	public String getProfessionOfPatientOther() {
+		return professionOfPatientOther;
+	}
+
+	public void setProfessionOfPatientOther(String professionOfPatientOther) {
+		this.professionOfPatientOther = professionOfPatientOther;
+	}
+
+	public String getNameHealthFacility() {
+		return nameHealthFacility;
+	}
+
+	public void setNameHealthFacility(String nameHealthFacility) {
+		this.nameHealthFacility = nameHealthFacility;
+	}
+
+	public String getService() {
+		return service;
+	}
+
+	public void setService(String service) {
+		this.service = service;
+	}
+
+	public String getQualification() {
+		return qualification;
+	}
+
+	public void setQualification(String qualification) {
+		this.qualification = qualification;
+	}
+
+	public String getNameOfVillagePersonGotIll() {
+		return nameOfVillagePersonGotIll;
+	}
+
+	public void setNameOfVillagePersonGotIll(String nameOfVillagePersonGotIll) {
+		this.nameOfVillagePersonGotIll = nameOfVillagePersonGotIll;
 	}
 
 	public YesNo getApplicable() {

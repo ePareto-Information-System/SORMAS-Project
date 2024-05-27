@@ -27,9 +27,12 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 
 import java.time.Month;
 import java.util.*;
+import java.util.Calendar;
 import java.util.stream.Collectors;
 
+import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.caze.CaseOrigin;
+import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.person.*;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -39,13 +42,7 @@ import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.Property;
-import com.vaadin.v7.ui.AbstractSelect;
 import com.vaadin.v7.ui.AbstractSelect.ItemCaptionMode;
-import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.DateField;
-import com.vaadin.v7.ui.Field;
-import com.vaadin.v7.ui.TextArea;
-import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
@@ -82,6 +79,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	public static final String GENERAL_COMMENT_LOC = "generalCommentLoc";
 	private static final String FILL_SECTION_HEADING_LOC = "fillSectionHeadingLoc";
 	private static final String SEEK_HELP_HEADING_LOC = "seekHelpHeadingLoc";
+	private static final String HEALTH_STAFF_DETAILS_LOC = "healthStaffDetailsLoc";
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(PERSON_INFORMATION_HEADING_LOC) +
@@ -97,6 +95,11 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					fluidRowLocs(PersonDto.GESTATION_AGE_AT_BIRTH, PersonDto.BIRTH_WEIGHT) +
 					fluidRowLocs(PersonDto.SEX, PersonDto.PRESENT_CONDITION, PersonDto.MARITAL_STATUS) +
 					fluidRowLocs(6, PersonDto.TEL_NUMBER) +
+					fluidRowLocs(PersonDto.HEAD_HOUSEHOLD, PersonDto.ETHNICITY)+
+					fluidRowLocs(PersonDto.PROFESSION_OF_PATIENT, PersonDto.PROFESSION_OF_PATIENT_OTHER)+
+					loc(HEALTH_STAFF_DETAILS_LOC) +
+					fluidRowLocs(PersonDto.NAME_HEALTH_FACILITY, PersonDto.SERVICE, PersonDto.QUALIFICATION)+
+					fluidRowLocs(6,PersonDto.NAME_OF_VILLAGE_PERSON_GOT_ILL)+
 					fluidRow(
 							oneOfFourCol(PersonDto.DEATH_DATE),
 							oneOfFourCol(PersonDto.CAUSE_OF_DEATH),
@@ -149,6 +152,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					locCss(VSPACE_TOP_3, PersonDto.INVESTIGATOR_NAME) +
 					fluidRowLocs(PersonDto.INVESTIGATOR_TITLE, PersonDto.INVESTIGATOR_UNIT) +
 					fluidRowLocs(PersonDto.INVESTIGATOR_ADDRESS, PersonDto.INVESTIGATOR_TEL);
+					;
 	private final Label occupationHeader = new Label(I18nProperties.getString(Strings.headingPersonOccupation));
 	private final Label addressHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESS));
 	private final Label addressesHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESSES));
@@ -175,6 +179,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private TextField fathername;
 	private TextField mothername;
 	private NullableOptionGroup applicable;
+	OptionGroup tickProfession;
+	TextField professionOther;
 	//@formatter:on
 	public PersonEditForm(PersonContext personContext, Disease disease, String diseaseDetails, ViewMode viewMode, boolean isPseudonymized, CaseOrigin caseOrigin) {
 		super(
@@ -603,12 +609,12 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		});
 
 		addValueChangeListener((e) -> {
-			ValidationUtils.initComponentErrorValidator(
+			/*ValidationUtils.initComponentErrorValidator(
 					externalTokenField,
 					getValue().getExternalToken(),
 					Validations.duplicateExternalToken,
 					externalTokenWarningLabel,
-					(externalToken) -> FacadeProvider.getPersonFacade().doesExternalTokenExist(externalToken, getValue().getUuid()));
+					(externalToken) -> FacadeProvider.getPersonFacade().doesExternalTokenExist(externalToken, getValue().getUuid()));*/
 
 			personContactDetailsField.setThisPerson((PersonDto) e.getProperty().getValue());
 		});
@@ -668,9 +674,41 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		}
 
 		if (disease == Disease.AHF || disease == Disease.DENGUE) {
-			setVisible(true, PersonDto.NUMBER_OF_PEOPLE, PersonDto.NUMBER_OF_OTHER_CONTACTS);
+			/*setVisible(true, PersonDto.NUMBER_OF_PEOPLE, PersonDto.NUMBER_OF_OTHER_CONTACTS);
 			additionalDetails.setVisible(true);
-			additionalDetails.setCaption("Other Notes and Observations");
+			additionalDetails.setCaption("Other Notes and Observations");*/
+
+			Label healthStaffDetailsLabel = new Label(I18nProperties.getString(Strings.healthStaffDetailsLabel));
+			healthStaffDetailsLabel.addStyleName(H3);
+			getContent().addComponent(healthStaffDetailsLabel, HEALTH_STAFF_DETAILS_LOC);
+
+			addField(PersonDto.HEAD_HOUSEHOLD, TextField.class);
+			addField(PersonDto.ETHNICITY, TextField.class);
+
+			tickProfession = addField(PersonDto.PROFESSION_OF_PATIENT, OptionGroup.class);
+			CssStyles.style(tickProfession, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+			tickProfession.setMultiSelect(true);
+
+			tickProfession.addItems(
+					Arrays.stream(Profession.values())
+							.filter( c -> fieldVisibilityCheckers.isVisible(Profession.class, c.name()))
+							.collect(Collectors.toList()));
+
+			professionOther =  addField(PersonDto.PROFESSION_OF_PATIENT_OTHER, TextField.class);
+			professionOther.setVisible(false);
+
+			tickProfession.addValueChangeListener(event -> {
+				Set<Profession> selectedProfessions = (Set<Profession>) event.getProperty().getValue();
+				professionOther.setVisible(selectedProfessions != null && selectedProfessions.contains(Profession.OTHERS));
+			});
+
+			addField(PersonDto.NAME_HEALTH_FACILITY, TextField.class);
+			addField(PersonDto.SERVICE, TextField.class);
+			addField(PersonDto.QUALIFICATION, TextField.class);
+			addField(PersonDto.NAME_OF_VILLAGE_PERSON_GOT_ILL, TextField.class);
+
+			occupationHeader.setVisible(false);
+			personContactDetailsField.setVisible(false);
 		}
 
 		if (disease == Disease.AFP) {
