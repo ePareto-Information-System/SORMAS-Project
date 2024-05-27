@@ -127,38 +127,9 @@ public class EbsController {
 	}
 
 
-
-//	private String getDeleteConfirmationDetails(List<String> ebsUuids) {
-//		boolean hasPendingRequest = FacadeProvider.getSormasToSormasEbsFacade().hasPendingRequest(ebsUuids);
-//
-//		return hasPendingRequest ? "<br/>" + I18nProperties.getString(Strings.messageDeleteWithPendingShareRequest) + "<br/>" : "";
-//	}
-
 	public EbsDto createNewEvent(Disease disease) {
 		return EbsDto.build(FacadeProvider.getCountryFacade().getServerCountry(), UserProvider.getCurrent().getUser());
 	}
-
-//	public CommitDiscardWrapperComponent<EbsDataForm> getEbsCreateComponent() {
-//
-//		EbsDataForm ebsCreateForm = new EbsDataForm(true, false, true); // Valid because jurisdiction doesn't matter for entities that are about to be created
-//		ebsCreateForm.setValue(createNewEvent(null));
-//		final CommitDiscardWrapperComponent<EbsDataForm> editView = new CommitDiscardWrapperComponent<EbsDataForm>(
-//				ebsCreateForm,
-//				UserProvider.getCurrent().hasUserRight(UserRight.EVENT_CREATE),
-//				ebsCreateForm.getFieldGroup());
-//		editView.addCommitListener(() -> {
-//			if (!ebsCreateForm.getFieldGroup().isModified()) {
-//				EbsDto dto = ebsCreateForm.getValue();
-//				FacadeProvider.getEbsFacade().save(dto);
-//				Notification.show(I18nProperties.getString(Strings.messageEventCreated), Type.WARNING_MESSAGE);
-//
-//					navigateToData(dto.getUuid());
-//			}
-//		});
-//
-//		return editView;
-//	}
-
 	public CommitDiscardWrapperComponent<EbsDataForm> getEbsCreateComponent() {
 
 		EbsDataForm form = new EbsDataForm(true, false, true); // Valid because jurisdiction doesn't matter for entities that are about to be created
@@ -176,7 +147,6 @@ public class EbsController {
 
 
 				EbsReferenceDto newEventRef = new EbsReferenceDto(newEvent.getUuid());
-//				FacadeProvider.getEbsFacade().setRiskAssessmentAssociations(newEventRef);
 				Notification.show(I18nProperties.getString(Strings.messageEventCreated), Type.TRAY_NOTIFICATION);
 				navigateToData(newEventRef.getUuid());
 			}
@@ -253,7 +223,7 @@ public class EbsController {
 			FacadeProvider.getRiskAssessmentFacade().saveRisk(riskAssessmentDto);
 			FacadeProvider.getEbsFacade().save(ebs);
 			SormasUI.refreshView();
-			Notification.show(I18nProperties.getString(Strings.messagePathogenTestsSavedShort), TRAY_NOTIFICATION);
+			Notification.show(I18nProperties.getString(Strings.messageRiskAssessmetnSavedShort), TRAY_NOTIFICATION);
 			showAssessmentCaseDialog(riskAssessmentDto);
 		});
 
