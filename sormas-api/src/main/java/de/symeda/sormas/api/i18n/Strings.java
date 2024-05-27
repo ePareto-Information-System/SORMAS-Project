@@ -1469,4 +1469,8 @@ public interface Strings {
 	String yes = "yes";
 	String yesterday = "yesterday";
 	String messageFormHasErrorsPathogenTest = "messageFormHasErrorsPathogenTest";
+	String LowRiskReccomendation = "LowRiskReccomendation";
+	String LowRiskNotificationTYpe = "LowRiskNotificationTYpe";
+	String LowRiskNotificationAction = "LowRiskNotificationAction";
+	String messageRiskAssessmentSavedShort = "messageRiskAssessmentSavedShort";
 }
