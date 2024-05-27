@@ -86,6 +86,10 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 	@EJB
 	private EpiDataService service;
 
+
+
+
+
 	public EpiData fillOrBuildEntity(EpiDataDto source, EpiData target, boolean checkChangeDate) {
 		if (source == null) {
 			return null;
@@ -228,7 +232,10 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setChildComeInContactWithSymptoms(source.getChildComeInContactWithSymptoms());
 		target.setHistoryOfTravelOutsideTheVillageTownDistrict(source.getHistoryOfTravelOutsideTheVillageTownDistrict());
 		target.setHistoryOfTravelOutsideTheVillageTownDistrictDetails(source.getHistoryOfTravelOutsideTheVillageTownDistrictDetails());
-
+		target.setHistoryOfTravelRegion(regionService.getByReferenceDto(source.getHistoryOfTravelRegion()));
+		target.setHistoryOfTravelDistrict(districtService.getByReferenceDto(source.getHistoryOfTravelDistrict()));
+		target.setHistoryOfTravelSubDistrict(communityService.getByReferenceDto(source.getHistoryOfTravelSubDistrict()));
+		target.setHistoryOfTravelVillage(source.getHistoryOfTravelVillage());
 
 		List<PersonTravelHistory> personTravelHistories = new ArrayList<>();
 		for (PersonTravelHistoryDto personTravelHistoryDto : source.getPersonTravelHistories()) {
@@ -634,6 +641,10 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setPatientEnteredWaterSource(source.getPatientEnteredWaterSource());
 		target.setPlaceManaged(source.getPlaceManaged());
 
+		target.setHistoryOfTravelRegion(RegionFacadeEjb.toReferenceDto(source.getHistoryOfTravelRegion()));
+		target.setHistoryOfTravelDistrict(DistrictFacadeEjb.toReferenceDto(source.getHistoryOfTravelDistrict()));
+		target.setHistoryOfTravelSubDistrict(CommunityFacadeEjb.toReferenceDto(source.getHistoryOfTravelSubDistrict()));
+		target.setHistoryOfTravelVillage(source.getHistoryOfTravelVillage());
 		return target;
 	}
 

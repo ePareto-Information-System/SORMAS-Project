@@ -14321,4 +14321,13 @@ ALTER TABLE epidata ADD COLUMN historyoftraveloutsidethevillagetowndistrict varc
 ALTER TABLE epidata ADD COLUMN historyoftraveloutsidethevillagetowndistrictdetails varchar(255) NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (653, 'Added column to historyOfTravelOutsideTheVillageTownDistrictDetails to epidata');
 
+ALTER TABLE symptoms DROP COLUMN historyoftraveloutsidethevillagetowndistrict;
+ALTER TABLE symptoms DROP COLUMN placeOfExposureMeaslesRubella;
+INSERT INTO schema_version (version_number, comment) VALUES (654, 'Drop historyOfTravelOutsideTheVillageTownDistrict and placeOfExposureMeaslesRubella on symptoms');
+
+ALTER TABLE epidata ADD COLUMN historyoftravelregion_id varchar(255) NULL;
+ALTER TABLE epidata ADD COLUMN historyoftraveldistrict_id varchar(255) NULL;
+ALTER TABLE epidata ADD COLUMN historyOfTravelSubDistrict_id varchar(255) NULL;
+ALTER TABLE epidata ADD COLUMN historyOfTravelVillage varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (655, 'Added column to historyOfTravelRegion, historyOfTravelDistrict, historyOfTravelSubDistrict, historyOfTravelVillage to epidata');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

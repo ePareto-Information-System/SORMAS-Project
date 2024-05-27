@@ -38,6 +38,10 @@ import de.symeda.sormas.api.epidata.ContactSetting;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.utils.RiskFactorInfluenza;
+import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.TextField;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.ui.containmentmeasure.ContainmentMeasureField;
 import de.symeda.sormas.ui.contaminationsource.ContaminationSourcesField;
@@ -170,7 +174,9 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 	private static final String MEASLES_LAYOUT =
 			fluidRowLocs(EpiDataDto.HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT) +
-			fluidRowLocs(8, EpiDataDto.HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT_DETAILS);
+			fluidRowLocs(EpiDataDto.HISTORY_OF_TRAVEL_REGION, EpiDataDto.HISTORY_OF_TRAVEL_DISTRICT) +
+			fluidRowLocs(EpiDataDto.HISTORY_OF_TRAVEL_SUB_DISTRICT, EpiDataDto.HISTORY_OF_TRAVEL_VILLAGE);
+//			fluidRowLocs(8, EpiDataDto.HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT_DETAILS);
 
 	//@formatter:on
 
@@ -255,15 +261,35 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		addField(EpiDataDto.PLACE_MANAGED, ComboBox.class);
 		setVisible(false, EpiDataDto.RECEIVED_HEALTH_EDUCATION, EpiDataDto.PATIENT_ENTERED_WATER_SOURCE, EpiDataDto.PLACE_MANAGED);
 		
-		addField(EpiDataDto.HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT, NullableOptionGroup.class);
+		NullableOptionGroup nullableOptionGroupHTVTD = addField(EpiDataDto.HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT, NullableOptionGroup.class);
 		addField(EpiDataDto.HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT_DETAILS, TextField.class);
+
+		ComboBox cmbRegion = addInfrastructureField(EpiDataDto.HISTORY_OF_TRAVEL_REGION);
+		cmbRegion.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
+		ComboBox cmbDistrict = addInfrastructureField(EpiDataDto.HISTORY_OF_TRAVEL_DISTRICT);
+		ComboBox cmbCommunity = addInfrastructureField(EpiDataDto.HISTORY_OF_TRAVEL_SUB_DISTRICT);
+		TextField txtVillage = addField(EpiDataDto.HISTORY_OF_TRAVEL_VILLAGE);
+
+		cmbRegion.addValueChangeListener(e -> {
+			RegionReferenceDto regionDto = (RegionReferenceDto) e.getProperty().getValue();
+			FieldHelper
+					.updateItems(cmbDistrict, regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
+		});
+		cmbDistrict.addValueChangeListener(e -> {
+			DistrictReferenceDto districtDto = (DistrictReferenceDto) e.getProperty().getValue();
+			FieldHelper.updateItems(
+					cmbCommunity,
+					districtDto != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(districtDto.getUuid()) : null);
+		});
+
 		FieldHelper.setVisibleWhen(
-			getFieldGroup(),
-			EpiDataDto.HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT_DETAILS,
-				EpiDataDto.HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT,
-			Collections.singletonList(YesNo.YES),
-			true
-		);
+				nullableOptionGroupHTVTD,
+				Arrays.asList(cmbRegion, cmbDistrict, cmbCommunity, txtVillage),
+				Collections.singletonList(YesNo.YES),
+				true);
+
+
+
 
 
 		addField(EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, NullableOptionGroup.class);
