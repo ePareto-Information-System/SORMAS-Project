@@ -1378,6 +1378,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			tfReportAccuracy.setVisible(true);
 			investigationstatus.setVisible(true);
 
+			vaccinationStatus.setRequired(true);
+
+
 			//get the number of doses field
 			if (getContent().getComponent(CaseDataDto.NUMBER_OF_DOSES) == null) {
 				numberOfDoses = addField(CaseDataDto.NUMBER_OF_DOSES, TextField.class);
