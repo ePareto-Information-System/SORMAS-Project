@@ -29,6 +29,9 @@ import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
@@ -57,6 +60,10 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT = "historyOfTravelOutsideTheVillageTownDistrict";
 	public static final String HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT_DETAILS = "historyOfTravelOutsideTheVillageTownDistrictDetails";
 
+	public static final String HISTORY_OF_TRAVEL_REGION = "historyOfTravelRegion";
+	public static final String HISTORY_OF_TRAVEL_DISTRICT = "historyOfTravelDistrict";
+	public static final String HISTORY_OF_TRAVEL_SUB_DISTRICT = "historyOfTravelSubDistrict";
+	public static final String HISTORY_OF_TRAVEL_VILLAGE = "historyOfTravelVillage";
 	@Enumerated(EnumType.STRING)
 	private Disease disease;
 	private YesNo exposureDetailsKnown;
@@ -91,6 +98,11 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	private YesNo historyOfTravelOutsideTheVillageTownDistrict;
 	private String historyOfTravelOutsideTheVillageTownDistrictDetails;
+	private RegionReferenceDto historyOfTravelRegion;
+	private DistrictReferenceDto historyOfTravelDistrict;
+	private CommunityReferenceDto historyOfTravelSubDistrict;
+	private String historyOfTravelVillage;
+
 
 	public void setExposureDetailsKnown(YesNo exposureDetailsKnown) {
 		this.exposureDetailsKnown = exposureDetailsKnown;
@@ -234,5 +246,37 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public void setHistoryOfTravelOutsideTheVillageTownDistrictDetails(final String historyOfTravelOutsideTheVillageTownDistrictDetails) {
 		this.historyOfTravelOutsideTheVillageTownDistrictDetails = historyOfTravelOutsideTheVillageTownDistrictDetails;
+	}
+
+	public RegionReferenceDto getHistoryOfTravelRegion() {
+		return this.historyOfTravelRegion;
+	}
+
+	public void setHistoryOfTravelRegion(final RegionReferenceDto historyOfTravelRegion) {
+		this.historyOfTravelRegion = historyOfTravelRegion;
+	}
+
+	public DistrictReferenceDto getHistoryOfTravelDistrict() {
+		return this.historyOfTravelDistrict;
+	}
+
+	public void setHistoryOfTravelDistrict(final DistrictReferenceDto historyOfTravelDistrict) {
+		this.historyOfTravelDistrict = historyOfTravelDistrict;
+	}
+
+	public CommunityReferenceDto getHistoryOfTravelSubDistrict() {
+		return this.historyOfTravelSubDistrict;
+	}
+
+	public void setHistoryOfTravelSubDistrict(final CommunityReferenceDto historyOfTravelSubDistrict) {
+		this.historyOfTravelSubDistrict = historyOfTravelSubDistrict;
+	}
+
+	public String getHistoryOfTravelVillage() {
+		return this.historyOfTravelVillage;
+	}
+
+	public void setHistoryOfTravelVillage(final String historyOfTravelVillage) {
+		this.historyOfTravelVillage = historyOfTravelVillage;
 	}
 }

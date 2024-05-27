@@ -21,11 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 //import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.Disease;
@@ -35,6 +31,9 @@ import de.symeda.sormas.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.NotExposedToApi;
 import de.symeda.sormas.backend.exposure.Exposure;
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.region.Region;
 
 @Entity
 public class EpiData extends AbstractDomainObject {
@@ -66,6 +65,11 @@ public class EpiData extends AbstractDomainObject {
 
 	private YesNo historyOfTravelOutsideTheVillageTownDistrict;
 	private String historyOfTravelOutsideTheVillageTownDistrictDetails;
+	private Region historyOfTravelRegion;
+	private District historyOfTravelDistrict;
+	private Community historyOfTravelSubDistrict;
+	private String historyOfTravelVillage;
+
 
 	@Enumerated(EnumType.STRING)
 	public YesNo getExposureDetailsKnown() {
@@ -201,5 +205,37 @@ public class EpiData extends AbstractDomainObject {
 
 	public void setHistoryOfTravelOutsideTheVillageTownDistrictDetails(final String historyOfTravelOutsideTheVillageTownDistrictDetails) {
 		this.historyOfTravelOutsideTheVillageTownDistrictDetails = historyOfTravelOutsideTheVillageTownDistrictDetails;
+	}
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	public Region getHistoryOfTravelRegion() {
+		return this.historyOfTravelRegion;
+	}
+
+	public void setHistoryOfTravelRegion(final Region historyOfTravelRegion) {
+		this.historyOfTravelRegion = historyOfTravelRegion;
+	}
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	public District getHistoryOfTravelDistrict() {
+		return this.historyOfTravelDistrict;
+	}
+
+	public void setHistoryOfTravelDistrict(final District historyOfTravelDistrict) {
+		this.historyOfTravelDistrict = historyOfTravelDistrict;
+	}
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	public Community getHistoryOfTravelSubDistrict() {
+		return this.historyOfTravelSubDistrict;
+	}
+
+	public void setHistoryOfTravelSubDistrict(final Community historyOfTravelSubDistrict) {
+		this.historyOfTravelSubDistrict = historyOfTravelSubDistrict;
+	}
+
+	public String getHistoryOfTravelVillage() {
+		return this.historyOfTravelVillage;
+	}
+
+	public void setHistoryOfTravelVillage(final String historyOfTravelVillage) {
+		this.historyOfTravelVillage = historyOfTravelVillage;
 	}
 }

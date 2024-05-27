@@ -39,6 +39,12 @@ import de.symeda.sormas.backend.contact.ContactFacadeEjb;
 import de.symeda.sormas.backend.contact.ContactService;
 import de.symeda.sormas.backend.exposure.Exposure;
 import de.symeda.sormas.backend.exposure.ExposureService;
+import de.symeda.sormas.backend.infrastructure.community.CommunityFacadeEjb;
+import de.symeda.sormas.backend.infrastructure.community.CommunityService;
+import de.symeda.sormas.backend.infrastructure.district.DistrictFacadeEjb;
+import de.symeda.sormas.backend.infrastructure.district.DistrictService;
+import de.symeda.sormas.backend.infrastructure.region.RegionFacadeEjb;
+import de.symeda.sormas.backend.infrastructure.region.RegionService;
 import de.symeda.sormas.backend.location.LocationFacadeEjb;
 import de.symeda.sormas.backend.location.LocationFacadeEjb.LocationFacadeEjbLocal;
 import de.symeda.sormas.backend.user.UserFacadeEjb;
@@ -58,6 +64,16 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 	private ContactService contactService;
 	@EJB
 	private UserService userService;
+
+	@EJB
+	private RegionService regionService;
+	@EJB
+	private DistrictService districtService;
+	@EJB
+	private CommunityService communityService;
+
+
+
 
 	public EpiData fillOrBuildEntity(EpiDataDto source, EpiData target, boolean checkChangeDate) {
 		if (source == null) {
@@ -107,7 +123,10 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setChildComeInContactWithSymptoms(source.getChildComeInContactWithSymptoms());
 		target.setHistoryOfTravelOutsideTheVillageTownDistrict(source.getHistoryOfTravelOutsideTheVillageTownDistrict());
 		target.setHistoryOfTravelOutsideTheVillageTownDistrictDetails(source.getHistoryOfTravelOutsideTheVillageTownDistrictDetails());
-
+		target.setHistoryOfTravelRegion(regionService.getByReferenceDto(source.getHistoryOfTravelRegion()));
+		target.setHistoryOfTravelDistrict(districtService.getByReferenceDto(source.getHistoryOfTravelDistrict()));
+		target.setHistoryOfTravelSubDistrict(communityService.getByReferenceDto(source.getHistoryOfTravelSubDistrict()));
+		target.setHistoryOfTravelVillage(source.getHistoryOfTravelVillage());
 
 		return target;
 	}
@@ -256,7 +275,10 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setChildComeInContactWithSymptoms(source.getChildComeInContactWithSymptoms());
 		target.setHistoryOfTravelOutsideTheVillageTownDistrict(source.getHistoryOfTravelOutsideTheVillageTownDistrict());
 		target.setHistoryOfTravelOutsideTheVillageTownDistrictDetails(source.getHistoryOfTravelOutsideTheVillageTownDistrictDetails());
-
+		target.setHistoryOfTravelRegion(RegionFacadeEjb.toReferenceDto(source.getHistoryOfTravelRegion()));
+		target.setHistoryOfTravelDistrict(DistrictFacadeEjb.toReferenceDto(source.getHistoryOfTravelDistrict()));
+		target.setHistoryOfTravelSubDistrict(CommunityFacadeEjb.toReferenceDto(source.getHistoryOfTravelSubDistrict()));
+		target.setHistoryOfTravelVillage(source.getHistoryOfTravelVillage());
 		return target;
 	}
 

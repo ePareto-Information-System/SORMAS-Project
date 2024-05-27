@@ -12860,6 +12860,10 @@ ALTER TABLE symptoms DROP COLUMN historyoftraveloutsidethevillagetowndistrict;
 ALTER TABLE symptoms DROP COLUMN placeOfExposureMeaslesRubella;
 INSERT INTO schema_version (version_number, comment) VALUES (540, 'Drop historyOfTravelOutsideTheVillageTownDistrict and placeOfExposureMeaslesRubella on symptoms');
 
-
-
+-- //	historyOfTravelRegion, historyOfTravelDistrict, historyOfTravelSubDistrict, historyOfTravelVillage
+ALTER TABLE epidata ADD COLUMN historyoftravelregion_id varchar(255) NULL;
+ALTER TABLE epidata ADD COLUMN historyoftraveldistrict_id varchar(255) NULL;
+ALTER TABLE epidata ADD COLUMN historyOfTravelSubDistrict_id varchar(255) NULL;
+ALTER TABLE epidata ADD COLUMN historyOfTravelVillage varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (541, 'Added column to historyOfTravelRegion, historyOfTravelDistrict, historyOfTravelSubDistrict, historyOfTravelVillage to epidata');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
