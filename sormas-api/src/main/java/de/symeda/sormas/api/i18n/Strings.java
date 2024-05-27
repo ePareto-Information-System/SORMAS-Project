@@ -627,6 +627,7 @@ public interface Strings {
 	String headingIndicateCategory = "headingIndicateCategory";
 	String headingPersonCompleting = "headingPersonCompleting";
 	String headingFillThis = "headingFillThis";
+	String healthStaffDetailsLabel = "healthStaffDetailsLabel";
 	String headingChildSeek = "headingChildSeek";
 	String headingHowToMergeCases = "headingHowToMergeCases";
 	String headingHowToMergeContacts = "headingHowToMergeContacts";

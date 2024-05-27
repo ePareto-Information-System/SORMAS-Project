@@ -981,7 +981,8 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	}
 	public void handleAHF(){
 		setVisible(false,
-				LocationDto.POSTAL_CODE, LocationDto.ADDITIONAL_INFORMATION, LocationDto.LOCALITY);
+				LocationDto.POSTAL_CODE, LocationDto.ADDITIONAL_INFORMATION, LocationDto.LOCALITY, LocationDto.HOUSE_NUMBER, LocationDto.AREA_TYPE, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
+		setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE);
 	}
 	public void handleCSM(){
 		setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAT_LON_ACCURACY, LocationDto.LAND_MARK);

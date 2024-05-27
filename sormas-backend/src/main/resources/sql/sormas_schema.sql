@@ -14338,4 +14338,24 @@ ALTER TABLE cases ADD COLUMN familylinkwithpatient VARCHAR(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (655, 'Added mobileteamno to cases table');
 
+ALTER TABLE person ADD COLUMN ethnicity VARCHAR(255);
+ALTER TABLE person ADD COLUMN headhousehold VARCHAR(255);
+ALTER TABLE person ADD COLUMN professionofpatientstring VARCHAR(512);
+ALTER TABLE person ADD COLUMN professionofpatientother VARCHAR(255);
+ALTER TABLE person ADD COLUMN namehealthfacility VARCHAR(255);
+ALTER TABLE person ADD COLUMN service VARCHAR(255);
+ALTER TABLE person ADD COLUMN qualification VARCHAR(255);
+ALTER TABLE person ADD COLUMN nameofvillagepersongotIll VARCHAR(255);
+
+ALTER TABLE person_history ADD COLUMN ethnicity VARCHAR(255);
+ALTER TABLE person_history ADD COLUMN headhousehold VARCHAR(255);
+ALTER TABLE person_history ADD COLUMN professionofpatientstring VARCHAR(512);
+ALTER TABLE person_history ADD COLUMN professionofpatientother VARCHAR(255);
+ALTER TABLE person_history ADD COLUMN namehealthfacility VARCHAR(255);
+ALTER TABLE person_history ADD COLUMN service VARCHAR(255);
+ALTER TABLE person_history ADD COLUMN qualification VARCHAR(255);
+ALTER TABLE person_history ADD COLUMN nameofvillagepersongotIll VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (601, 'added columns for AHF fields');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

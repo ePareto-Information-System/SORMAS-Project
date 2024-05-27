@@ -2192,8 +2192,15 @@ public interface Captions {
 	String Person_investigatorUnit = "Person.investigatorUnit";
 	String Person_investigatorAddress = "Person.investigatorAddress";
 	String Person_investigatorTel = "Person.investigatorTel";
-	String Person_marriageStatus = "Person.marriageStatus";
 	String Person_telNumber = "Person.telNumber";
+	String Person_headHouseHold = "Person.headHouseHold";
+	String Person_professionOfPatient = "Person.professionOfPatient";
+	String Person_professionOfPatientOther = "Person.professionOfPatientOther";
+	String Person_nameHealthFacility = "Person.nameHealthFacility";
+	String Person_service = "Person.service";
+	String Person_qualification = "Person.qualification";
+	String Person_nameOfVillagePersonGotIll = "Person.nameOfVillagePersonGotIll";
+	String Person_marriageStatus = "Person.marriageStatus";
 	String Person_uuid = "Person.uuid";
 	String Person_placeOfResidenceSameAsReportingVillage = "Person.placeOfResidenceSameAsReportingVillage";
 	String Person_residenceSinceWhenInMonths = "Person.residenceSinceWhenInMonths";

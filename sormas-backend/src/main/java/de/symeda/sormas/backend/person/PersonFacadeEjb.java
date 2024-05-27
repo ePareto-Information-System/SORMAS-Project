@@ -281,6 +281,14 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setBirthdateDD(source.getBirthdateDD());
 		target.setBirthdateMM(source.getBirthdateMM());
 		target.setBirthdateYYYY(source.getBirthdateYYYY());
+		target.setEthnicity(source.getEthnicity());
+		target.setHeadHouseHold(source.getHeadHouseHold());
+		target.setProfessionOfPatient(source.getProfessionOfPatient());
+		target.setProfessionOfPatientOther(source.getProfessionOfPatientOther());
+		target.setNameHealthFacility(source.getNameHealthFacility());
+		target.setService(source.getService());
+		target.setQualification(source.getQualification());
+		target.setNameOfVillagePersonGotIll(source.getNameOfVillagePersonGotIll());
 
 		if (source.getBirthdateYYYY() != null) {
 
@@ -1193,6 +1201,14 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setEthnicity(source.getEthnicity());
 		target.setLocationOfBirth(source.getLocationOfBirth());
 		target.setBirthInInstitution(source.getBirthInInstitution());
+		target.setEthnicity(source.getEthnicity());
+		target.setHeadHouseHold(source.getHeadHouseHold());
+		target.setProfessionOfPatient(source.getProfessionOfPatient());
+		target.setProfessionOfPatientOther(source.getProfessionOfPatientOther());
+		target.setNameHealthFacility(source.getNameHealthFacility());
+		target.setService(source.getService());
+		target.setQualification(source.getQualification());
+		target.setNameOfVillagePersonGotIll(source.getNameOfVillagePersonGotIll());
 
 		return target;
 	}
@@ -1924,6 +1940,14 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setNickname(source.getNickname());
 		target.setMothersMaidenName(source.getMothersMaidenName());
 		target.setTelNumber(source.getTelNumber());
+		target.setEthnicity(source.getEthnicity());
+		target.setHeadHouseHold(source.getHeadHouseHold());
+		target.setProfessionOfPatient(source.getProfessionOfPatient());
+		target.setProfessionOfPatientOther(source.getProfessionOfPatientOther());
+		target.setNameHealthFacility(source.getNameHealthFacility());
+		target.setService(source.getService());
+		target.setQualification(source.getQualification());
+		target.setNameOfVillagePersonGotIll(source.getNameOfVillagePersonGotIll());
 		target.setApplicable(source.getApplicable());
 
 		target.setPst14MonthsVillage(source.getPst14MonthsVillage());
@@ -2046,6 +2070,16 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setEthnicity(source.getEthnicity());
 		target.setLocationOfBirth(source.getLocationOfBirth());
 		target.setBirthInInstitution(source.getBirthInInstitution());
+		target.setMaritalStatus(source.getMaritalStatus());
+		target.setTelNumber(source.getTelNumber());
+		target.setEthnicity(source.getEthnicity());
+		target.setHeadHouseHold(source.getHeadHouseHold());
+		target.setProfessionOfPatient(source.getProfessionOfPatient());
+		target.setProfessionOfPatientOther(source.getProfessionOfPatientOther());
+		target.setNameHealthFacility(source.getNameHealthFacility());
+		target.setService(source.getService());
+		target.setQualification(source.getQualification());
+		target.setNameOfVillagePersonGotIll(source.getNameOfVillagePersonGotIll());
 
 		return target;
 	}
