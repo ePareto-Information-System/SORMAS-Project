@@ -13785,3 +13785,9 @@ ALTER TABLE triaging ADD COLUMN environmentalCategoryDetailsString varchar(255);
 ALTER TABLE triaging ADD COLUMN poeCategoryDetailsString varchar(255);
 ALTER TABLE triaging ADD COLUMN categoryDetailsLevel varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (617, 'Changed notSignal column to BOOLEAN with default false');
+
+ALTER TABLE riskAssessment ADD COLUMN morbidityMortalityComment VARCHAR(255);
+ALTER TABLE riskAssessment ADD COLUMN controlMeasuresComment VARCHAR(255);
+ALTER TABLE riskAssessment ADD COLUMN spreadProbabilityComment VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (618, 'Added new risk assesment columns');
