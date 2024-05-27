@@ -27,9 +27,11 @@ import com.vaadin.ui.Notification.Type;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ReferenceDto;
+import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.common.DeletionReason;
+import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.deletionconfiguration.DeletionInfoDto;
 import de.symeda.sormas.api.ebs.*;
 import de.symeda.sormas.api.event.EventDto;
@@ -37,6 +39,7 @@ import de.symeda.sormas.api.event.EventIndexDto;
 import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolRuntimeException;
+import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
@@ -60,6 +63,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+
+import static com.vaadin.ui.Notification.Type.TRAY_NOTIFICATION;
 
 public class EbsController {
 
@@ -117,7 +122,7 @@ public class EbsController {
 //		page.setUriFragment("!" + EBSView.VIEW_NAME + "/" + fragmentParameter, false);
 //	}
 
-	private EbsDto findEbs(String uuid) {
+	public EbsDto findEbs(String uuid) {
 		return FacadeProvider.getEbsFacade().getEbsByUuid(uuid, false);
 	}
 
@@ -248,10 +253,113 @@ public class EbsController {
 			FacadeProvider.getRiskAssessmentFacade().saveRisk(riskAssessmentDto);
 			FacadeProvider.getEbsFacade().save(ebs);
 			SormasUI.refreshView();
+			Notification.show(I18nProperties.getString(Strings.messagePathogenTestsSavedShort), TRAY_NOTIFICATION);
+			showAssessmentCaseDialog(riskAssessmentDto);
 		});
+
 
 		return editView;
 	}
+
+	public void showAssessmentCaseDialog(RiskAssessmentDto riskAssessmentDto) {
+		Label riskCaption = new Label();
+		riskCaption.addStyleName(CssStyles.H1);
+		Label recommendedLabel = new Label(
+				String.format(
+						I18nProperties.getString(Strings.RecommendedActions),
+						7, 7),
+				ContentMode.HTML);
+		recommendedLabel.addStyleName(CssStyles.H1);
+		Label recommended = null;
+		Label notificationTypeLabel = new Label(
+				String.format(
+						I18nProperties.getString(Strings.NotificationType),
+						7, 7),
+				ContentMode.HTML);
+		notificationTypeLabel.addStyleName(CssStyles.H1);
+		Label notificationType = null;
+		Label notificationActionLabel = new Label(String.format(	I18nProperties.getString(Strings.NotificationAction), 7, 7), ContentMode.HTML);
+		notificationActionLabel.addStyleName(CssStyles.H1);
+				Label notificaticationAction = null;
+		if (riskAssessmentDto.getRiskAssessment() == RiskAssesment.VERY_HIGH){
+			riskCaption =  new Label( String.format(I18nProperties.getString(Strings.VeryHighRisk),50,50), ContentMode.HTML);
+			recommended =  new Label( String.format(I18nProperties.getString(Strings.VeryHighRiskRecommendation),50,50), ContentMode.HTML);
+			recommended.setStyleName("risk-label");
+			recommended.removeStyleName("v-label-undef-w");
+			notificationType =  new Label( String.format(I18nProperties.getString(Strings.VeryHighRiskNotificationType),50,50), ContentMode.HTML);
+			notificationType.setStyleName("risk-label");
+			notificationType.removeStyleName("v-label-undef-w");
+			notificaticationAction =  new Label( String.format(I18nProperties.getString(Strings.VeryHighRiskNotificationAction),50,50), ContentMode.HTML);
+			notificaticationAction.setStyleName("risk-label");
+			notificaticationAction.removeStyleName("v-label-undef-w");
+			VerticalLayout verticalLayout = new VerticalLayout();
+			verticalLayout.setWidth(80, Sizeable.Unit.PERCENTAGE);
+			verticalLayout.addComponents(recommendedLabel, recommended, notificationTypeLabel, notificationType, notificationActionLabel, notificaticationAction);
+			Window window =  VaadinUiUtil.showPopupWindow(
+					verticalLayout,
+					I18nProperties.getCaption(riskCaption.getValue()));
+			window.setWidth(50, Sizeable.Unit.PERCENTAGE);
+						window.setStyleName("very-high-risk-assessment");
+		}else if (riskAssessmentDto.getRiskAssessment() == RiskAssesment.HIGH){
+			riskCaption =  new Label( String.format(I18nProperties.getString(Strings.HighRisk),50,50), ContentMode.HTML);
+			recommended =  new Label( String.format(I18nProperties.getString(Strings.HighRiskRecommendation),50,50), ContentMode.HTML);
+			recommended.setStyleName("risk-label");
+			recommended.removeStyleName("v-label-undef-w");
+			notificationType =  new Label( String.format(I18nProperties.getString(Strings.HighRiskNotificationType),50,50), ContentMode.HTML);
+			notificationType.setStyleName("risk-label");
+			notificationType.removeStyleName("v-label-undef-w");
+			notificaticationAction =  new Label( String.format(I18nProperties.getString(Strings.HighRiskNotificationAction),50,50), ContentMode.HTML);
+			notificaticationAction.setStyleName("risk-label");
+			notificaticationAction.removeStyleName("v-label-undef-w");
+			VerticalLayout verticalLayout = new VerticalLayout();
+			verticalLayout.setWidth(80, Sizeable.Unit.PERCENTAGE);
+			verticalLayout.addComponents(recommendedLabel, recommended, notificationTypeLabel, notificationType, notificationActionLabel, notificaticationAction);
+			Window window =  VaadinUiUtil.showPopupWindow(
+					verticalLayout,
+					I18nProperties.getCaption(riskCaption.getValue()));
+			window.setWidth(50, Sizeable.Unit.PERCENTAGE);
+			window.setStyleName("high-risk-assessment");
+		} else if (riskAssessmentDto.getRiskAssessment() == RiskAssesment.MEDIUM){
+			riskCaption =  new Label( String.format(I18nProperties.getString(Strings.ModerateRisk),50,50), ContentMode.HTML);
+			recommended =  new Label( String.format(I18nProperties.getString(Strings.ModerateRiskRecommendation),50,50), ContentMode.HTML);
+			recommended.setStyleName("risk-label");
+			recommended.removeStyleName("v-label-undef-w");
+			notificationType =  new Label( String.format(I18nProperties.getString(Strings.ModerateRiskNotifcationType),50,50), ContentMode.HTML);
+			notificationType.setStyleName("risk-label");
+			notificationType.removeStyleName("v-label-undef-w");
+			notificaticationAction =  new Label( String.format(I18nProperties.getString(Strings.ModerateRiskNotificationAction),50,50), ContentMode.HTML);
+			notificaticationAction.setStyleName("risk-label");
+			notificaticationAction.removeStyleName("v-label-undef-w");
+			VerticalLayout verticalLayout = new VerticalLayout();
+			verticalLayout.setWidth(80, Sizeable.Unit.PERCENTAGE);
+			verticalLayout.addComponents(recommendedLabel, recommended, notificationTypeLabel, notificationType, notificationActionLabel, notificaticationAction);
+			Window window =  VaadinUiUtil.showPopupWindow(
+					verticalLayout,
+					I18nProperties.getCaption(riskCaption.getValue()));
+			window.setWidth(50, Sizeable.Unit.PERCENTAGE);
+			window.setStyleName("moderate-risk-assessment");
+		} else if (riskAssessmentDto.getRiskAssessment() == RiskAssesment.LOW){
+			riskCaption =  new Label( String.format(I18nProperties.getString(Strings.LowRisk),50,50), ContentMode.HTML);
+			recommended =  new Label( String.format(I18nProperties.getString(Strings.LowRiskReccomendation),50,50), ContentMode.HTML);
+			recommended.setStyleName("risk-label");
+			recommended.removeStyleName("v-label-undef-w");
+			notificationType =  new Label( String.format(I18nProperties.getString(Strings.LowRiskNotificationTYpe),50,50), ContentMode.HTML);
+			notificationType.setStyleName("risk-label");
+			notificationType.removeStyleName("v-label-undef-w");
+			notificaticationAction =  new Label( String.format(I18nProperties.getString(Strings.LowRiskNotificationAction),50,50), ContentMode.HTML);
+			notificaticationAction.setStyleName("risk-label");
+			notificaticationAction.removeStyleName("v-label-undef-w");
+			VerticalLayout verticalLayout = new VerticalLayout();
+			verticalLayout.setWidth(80, Sizeable.Unit.PERCENTAGE);
+			verticalLayout.addComponents(recommendedLabel, recommended, notificationTypeLabel, notificationType, notificationActionLabel, notificaticationAction);
+			Window window =  VaadinUiUtil.showPopupWindow(
+					verticalLayout,
+					I18nProperties.getCaption(riskCaption.getValue()));
+			window.setWidth(50, Sizeable.Unit.PERCENTAGE);
+			window.setStyleName("low-risk-assessment");
+		}
+	}
+
 
 	public CommitDiscardWrapperComponent<EbsAlertDataForm> getEbsCreateAlertComponent(final String ebsUuid,
 																						 boolean isEditAllowed) {
@@ -414,7 +522,7 @@ public class EbsController {
 														   boolean isEditAllowed){
 		CommitDiscardWrapperComponent<RiskAssessmentDataForm> createRiskAssessmentComponent = getEbsCreateRiskAssessmentComponent(ebsUuid, isEditAllowed);
 		RiskAssessmentDto riskAssessmentDto = createRiskAssessmentComponent.getWrappedComponent().getValue();
-		VaadinUiUtil.showModalPopupWindow(createRiskAssessmentComponent, I18nProperties.getString(Strings.headingCreateNewEvent));
+		VaadinUiUtil.showModalPopupWindow(createRiskAssessmentComponent, I18nProperties.getString(Strings.headingCreateNewAssessment));
 		return riskAssessmentDto;
 	}
 	public EbsAlertDto createAlertComponent(final String ebsUuid,
