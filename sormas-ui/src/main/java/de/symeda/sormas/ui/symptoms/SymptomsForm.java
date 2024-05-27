@@ -83,7 +83,6 @@ import de.symeda.sormas.api.utils.SymptomGroup;
 import de.symeda.sormas.api.utils.SymptomGrouping;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
-import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import de.symeda.sormas.api.visit.VisitStatus;
 import de.symeda.sormas.ui.utils.*;
 
@@ -216,6 +215,18 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			fluidRowLocs(6, FIRST_WORM_THIS_YEAR) +
 			fluidRowLocs(6, DATE_FIRST_WORM_EMERGENCE) +
 			fluidRowLocs(6, CASE_DETECTED_BEFORE_WORM_EMERGENCE);
+
+	public static final String NNT_LAYOUT = loc(SIGNS_AND_SYMPTOMS_HEADING_LOC) +
+			fluidRowLocs(BACKACHE, NORMAL_CRY_AND_SUCK) +
+			fluidRowLocs(BABY_DIED, STIFFNESS) +
+			fluidRowLocs(AGE_AT_DEATH_DAYS, AGE_AT_ONSET_DAYS) +
+			fluidRowLocs(STOPPED_SUCKING_AFTER_TWO_DAYS, BABY_NORMAL_AT_BIRTH) +
+			fluidRowLocs(SEIZURES, OTHER_COMPLICATIONS) +
+			fluidRowLocs(OTHER_COMPLICATIONS_TEXT) +
+			locsCss(VSPACE_3) +
+			fluidRowLocs(SYMPTOMS_COMMENTS) +
+			fluidRowLocsCss( ONSET_SYMPTOM, ONSET_DATE) +
+			fluidRowLocs(6, OUTCOME);
 
 	private static String createSymptomGroupLayout(SymptomGroup symptomGroup, String loc) {
 
@@ -1508,6 +1519,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					SELECTED_HTML_LAYOUT = GUINEA_WORD_LAYOUT;
 				case MEASLES:
 					SELECTED_HTML_LAYOUT = MEASLES_LAYOUT;
+				case NEONATAL_TETANUS:
+					SELECTED_HTML_LAYOUT = NNT_LAYOUT;
 					break;
 				default:
 					SELECTED_HTML_LAYOUT = HTML_LAYOUT;
