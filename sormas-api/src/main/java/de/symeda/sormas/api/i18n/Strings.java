@@ -1701,4 +1701,5 @@ public interface Strings {
 	String LowRiskReccomendation = "LowRiskReccomendation";
 	String LowRiskNotificationTYpe = "LowRiskNotificationTYpe";
 	String LowRiskNotificationAction = "LowRiskNotificationAction";
+	String messageRiskAssessmentSavedShort = "messageRiskAssessmentSavedShort";
 }
