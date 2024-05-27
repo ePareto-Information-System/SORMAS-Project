@@ -189,6 +189,9 @@ public class EpiData extends AbstractDomainObject {
 	private String drugsResistantToVibrioStrain;
 
 
+	private YesNo historyOfTravelOutsideTheVillageTownDistrict;
+	private String historyOfTravelOutsideTheVillageTownDistrictDetails;
+
 	@Enumerated(EnumType.STRING)
 	public YesNo getExposureDetailsKnown() {
 		return exposureDetailsKnown;
@@ -335,6 +338,7 @@ public class EpiData extends AbstractDomainObject {
 	public void setChildComeInContactWithSymptoms(YesNoUnknown childComeInContactWithSymptoms) {
 		this.childComeInContactWithSymptoms = childComeInContactWithSymptoms;
 	}
+	
 	@Enumerated(EnumType.STRING)
 	public YesNo getPreviouslyVaccinatedAgainstInfluenza() {
 		return previouslyVaccinatedAgainstInfluenza;
@@ -1276,5 +1280,21 @@ public class EpiData extends AbstractDomainObject {
 
 	public void setIfYesSpecifyDead(String ifYesSpecifyDead) {
 		this.ifYesSpecifyDead = ifYesSpecifyDead;
+	}
+
+	public YesNo getHistoryOfTravelOutsideTheVillageTownDistrict() {
+		return this.historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public void setHistoryOfTravelOutsideTheVillageTownDistrict(final YesNo historyOfTravelOutsideTheVillageTownDistrict) {
+		this.historyOfTravelOutsideTheVillageTownDistrict = historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public String getHistoryOfTravelOutsideTheVillageTownDistrictDetails() {
+		return this.historyOfTravelOutsideTheVillageTownDistrictDetails;
+	}
+
+	public void setHistoryOfTravelOutsideTheVillageTownDistrictDetails(final String historyOfTravelOutsideTheVillageTownDistrictDetails) {
+		this.historyOfTravelOutsideTheVillageTownDistrictDetails = historyOfTravelOutsideTheVillageTownDistrictDetails;
 	}
 }

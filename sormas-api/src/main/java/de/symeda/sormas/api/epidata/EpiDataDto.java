@@ -178,6 +178,8 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String FOOD_CONSUMED_S3 = "foodConsumedS3";
 	public static final String SOURCE_OF_FOOD_S3 = "sourceOfFoodS3";
 	public static final String CONSUMED_AT_PLACE_S3 = "consumedAtPlaceS3";
+	public static final String HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT = "historyOfTravelOutsideTheVillageTownDistrict";
+	public static final String HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT_DETAILS = "historyOfTravelOutsideTheVillageTownDistrictDetails";
 
 	@Enumerated(EnumType.STRING)
 	private Disease disease;
@@ -350,6 +352,9 @@ public class EpiDataDto extends PseudonymizableDto {
 	}
 
 	private YesNoUnknown childComeInContactWithSymptoms;
+
+	private YesNo historyOfTravelOutsideTheVillageTownDistrict;
+	private String historyOfTravelOutsideTheVillageTownDistrictDetails;
 
 	public void setExposureDetailsKnown(YesNo exposureDetailsKnown) {
 		this.exposureDetailsKnown = exposureDetailsKnown;
@@ -1012,6 +1017,7 @@ public class EpiDataDto extends PseudonymizableDto {
 	public void setChildComeInContactWithSymptoms(YesNoUnknown childComeInContactWithSymptoms) {
 		this.childComeInContactWithSymptoms = childComeInContactWithSymptoms;
 	}
+	
 	public YesNoUnknown getPatientVisitedHealthCareFacility() {
 		return patientVisitedHealthCareFacility;
 	}
@@ -1391,5 +1397,21 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public void setIfYesSpecifyDead(String ifYesSpecifyDead) {
 		this.ifYesSpecifyDead = ifYesSpecifyDead;
+	}
+
+	public YesNo getHistoryOfTravelOutsideTheVillageTownDistrict() {
+		return this.historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public void setHistoryOfTravelOutsideTheVillageTownDistrict(final YesNo historyOfTravelOutsideTheVillageTownDistrict) {
+		this.historyOfTravelOutsideTheVillageTownDistrict = historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public String getHistoryOfTravelOutsideTheVillageTownDistrictDetails() {
+		return this.historyOfTravelOutsideTheVillageTownDistrictDetails;
+	}
+
+	public void setHistoryOfTravelOutsideTheVillageTownDistrictDetails(final String historyOfTravelOutsideTheVillageTownDistrictDetails) {
+		this.historyOfTravelOutsideTheVillageTownDistrictDetails = historyOfTravelOutsideTheVillageTownDistrictDetails;
 	}
 }

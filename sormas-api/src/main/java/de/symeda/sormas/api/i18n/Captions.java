@@ -1331,6 +1331,8 @@ public interface Captions {
 	String consumedAtPlaceS3 = "EpiData.consumedAtPlaceS3";
 
 	String EpiData_exposureDetailsKnown = "EpiData.exposureDetailsKnown";
+	String EpiData_historyOfTravelOutsideTheVillageTownDistrict = "EpiData.historyOfTravelOutsideTheVillageTownDistrict";
+	String EpiData_historyOfTravelOutsideTheVillageTownDistrictDetails = "EpiData.historyOfTravelOutsideTheVillageTownDistrictDetails";
 	String EpiData_exposures = "EpiData.exposures";
 	String EpiData_highTransmissionRiskArea = "EpiData.highTransmissionRiskArea";
 	String EpiData_largeOutbreaksArea = "EpiData.largeOutbreaksArea";

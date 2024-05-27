@@ -226,6 +226,8 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.getActivitiesAsCase().clear();
 		target.getActivitiesAsCase().addAll(activitiesAsCase);
 		target.setChildComeInContactWithSymptoms(source.getChildComeInContactWithSymptoms());
+		target.setHistoryOfTravelOutsideTheVillageTownDistrict(source.getHistoryOfTravelOutsideTheVillageTownDistrict());
+		target.setHistoryOfTravelOutsideTheVillageTownDistrictDetails(source.getHistoryOfTravelOutsideTheVillageTownDistrictDetails());
 
 
 		List<PersonTravelHistory> personTravelHistories = new ArrayList<>();
@@ -586,6 +588,8 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		}
 		target.setActivitiesAsCase(activityAsCaseDtos);
 		target.setChildComeInContactWithSymptoms(source.getChildComeInContactWithSymptoms());
+		target.setHistoryOfTravelOutsideTheVillageTownDistrict(source.getHistoryOfTravelOutsideTheVillageTownDistrict());
+		target.setHistoryOfTravelOutsideTheVillageTownDistrictDetails(source.getHistoryOfTravelOutsideTheVillageTownDistrictDetails());
 
 		List<PersonTravelHistoryDto> personTravelHistoryDtos = new ArrayList<>();
 		for (PersonTravelHistory personTravelHistory : source.getPersonTravelHistories()) {

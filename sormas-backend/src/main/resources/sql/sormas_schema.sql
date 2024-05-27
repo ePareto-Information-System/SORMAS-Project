@@ -14317,4 +14317,8 @@ ALTER TABLE symptoms DROP COLUMN siteofparalysis ;
 
 INSERT INTO schema_version (version_number, comment) VALUES (652, 'updated requestedsiteOfparalysisstring and dropped siteofparalysis for AFP');
 
+ALTER TABLE epidata ADD COLUMN historyoftraveloutsidethevillagetowndistrict varchar(255) NULL;
+ALTER TABLE epidata ADD COLUMN historyoftraveloutsidethevillagetowndistrictdetails varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (653, 'Added column to historyOfTravelOutsideTheVillageTownDistrictDetails to epidata');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

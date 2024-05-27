@@ -1519,6 +1519,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					SELECTED_HTML_LAYOUT = GUINEA_WORD_LAYOUT;
 				case MEASLES:
 					SELECTED_HTML_LAYOUT = MEASLES_LAYOUT;
+					break;
 				case NEONATAL_TETANUS:
 					SELECTED_HTML_LAYOUT = NNT_LAYOUT;
 					break;
