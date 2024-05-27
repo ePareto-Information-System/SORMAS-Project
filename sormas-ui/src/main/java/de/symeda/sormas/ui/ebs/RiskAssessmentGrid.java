@@ -4,12 +4,15 @@ package de.symeda.sormas.ui.ebs;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.v7.data.util.BeanItemContainer;
 import com.vaadin.v7.data.util.GeneratedPropertyContainer;
+import com.vaadin.v7.event.ItemClickEvent;
 import com.vaadin.v7.ui.Grid;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ebs.EbsDto;
 import de.symeda.sormas.api.ebs.EbsReferenceDto;
 import de.symeda.sormas.api.ebs.RiskAssessmentCriteria;
 import de.symeda.sormas.api.ebs.RiskAssessmentDto;
+import de.symeda.sormas.ui.ControllerProvider;
+import de.symeda.sormas.ui.utils.ShowDetailsListener;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
 import java.util.Collections;
@@ -34,9 +37,13 @@ public class RiskAssessmentGrid extends Grid {
 		VaadinUiUtil.addIconColumn(generatedContainer, INFO, VaadinIcons.EYE);
 		setColumns(RiskAssessmentDto.RISK_ASSESSMENT, RiskAssessmentDto.RESPONSE_DATE, RiskAssessmentDto.RESPONSE_TIME,INFO);
 		VaadinUiUtil.setupActionColumn(getColumn(INFO));
-//		addItemClickListener(new ShowDetailsListener<>(INFO, e -> ControllerProvider.getEbsController().navigateToData(e.getUuid())));
-
+		addItemClickListener(e->{
+			if (INFO.equals(e.getPropertyId()) || e.isDoubleClick()) {
+				ControllerProvider.getEbsController().showAssessmentCaseDialog((RiskAssessmentDto) e.getItemId());
+			}
+		});
 		reload(ebsUuid);
+
 	}
 
 	@SuppressWarnings("unchecked")
