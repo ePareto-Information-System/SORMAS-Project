@@ -20,12 +20,18 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.ebs.EbsDto;
+import de.symeda.sormas.api.ebs.EbsReferenceDto;
+import de.symeda.sormas.api.ebs.RiskAssessmentCriteria;
 import de.symeda.sormas.api.ebs.RiskAssessmentDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.ButtonHelper;
+
+import java.util.List;
 
 
 public class RiskAssessmentView extends AbstractEbsView {
@@ -41,7 +47,11 @@ public class RiskAssessmentView extends AbstractEbsView {
 
 	@Override
 	protected void initView(String params) {
-
+		List<RiskAssessmentDto> riskAssessment = FacadeProvider.getRiskAssessmentFacade().findBy(new RiskAssessmentCriteria().Ebs(new EbsReferenceDto(getEbsRef().getUuid())));
+	if (riskAssessment.isEmpty()) {
+		ControllerProvider.getEbsController().createRiskAssessmentComponent(getEbsRef().getUuid(),
+				isEditAllowed() && UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT));
+	}
 		addButton = ButtonHelper.createIconButton(
 				Captions.ebsNewEbs,
 				VaadinIcons.PLUS_CIRCLE,
