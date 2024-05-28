@@ -13515,4 +13515,10 @@ ALTER TABLE epidata ADD COLUMN ifyeswildanimallocation VARCHAR(255);
 ALTER TABLE epidata ADD COLUMN ifyeswildanimaldate DATE;
 
 INSERT INTO schema_version (version_number, comment) VALUES (603, 'added columns for AHF fields at epidata');
+
+ALTER TABLE hospitalization ADD COLUMN receptiondate DATE;
+ALTER TABLE hospitalization ADD COLUMN memberfamilyhelpingpatient VARCHAR(255);
+ALTER TABLE hospitalization ADD COLUMN dateofdeath DATE;
+
+INSERT INTO schema_version (version_number, comment) VALUES (604, 'added columns for AHF fields at hospitalization');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

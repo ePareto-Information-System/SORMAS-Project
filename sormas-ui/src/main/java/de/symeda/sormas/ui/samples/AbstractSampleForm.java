@@ -975,7 +975,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateSpecimenSentToLab.setVisible(false);
 
 		diseaseField.setVisible(true);
-		List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.PLASMA_SERUM);
+		List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.PLASMA_SERUM, SampleMaterial.SALIVA, SampleMaterial.URINE, SampleMaterial.BIOPSY, SampleMaterial.CARDIAC, SampleMaterial.BLOOD_ANTI_COAGULANT, SampleMaterial.OTHER);
 		FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
 
 	}
