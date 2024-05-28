@@ -214,12 +214,12 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			fluidRowLocs(6, CASE_DETECTED_BEFORE_WORM_EMERGENCE);
 
 	public static final String NNT_LAYOUT = loc(SIGNS_AND_SYMPTOMS_HEADING_LOC) +
-			fluidRowLocs(BACKACHE, NORMAL_CRY_AND_SUCK) +
-			fluidRowLocs(BABY_DIED, STIFFNESS) +
-			fluidRowLocs(AGE_AT_DEATH_DAYS, AGE_AT_ONSET_DAYS) +
-			fluidRowLocs(STOPPED_SUCKING_AFTER_TWO_DAYS, BABY_NORMAL_AT_BIRTH) +
 			fluidRowLocs(SEIZURES, OTHER_COMPLICATIONS) +
-			fluidRowLocs(OTHER_COMPLICATIONS_TEXT) +
+			fluidRowLocs(6, BABY_DIED, 6, OTHER_COMPLICATIONS_TEXT) +
+			fluidRowLocs(AGE_AT_DEATH_DAYS, AGE_AT_ONSET_DAYS) +
+			fluidRowLocs(BABY_NORMAL_AT_BIRTH, NORMAL_CRY_AND_SUCK) +
+			fluidRowLocs(STOPPED_SUCKING_AFTER_TWO_DAYS, BACKACHE) +
+			fluidRowLocs("", STIFFNESS) +
 			locsCss(VSPACE_3) +
 			fluidRowLocs(SYMPTOMS_COMMENTS) +
 			fluidRowLocsCss( ONSET_SYMPTOM, ONSET_DATE) +

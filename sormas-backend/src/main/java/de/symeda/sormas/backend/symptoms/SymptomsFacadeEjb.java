@@ -519,6 +519,13 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setDyspnea(source.getDyspnea());
 		target.setTachypnea(source.getTachypnea());
 		target.setBodyAche(source.getBodyAche());
+		target.setBabyDied(source.getBabyDied());
+		target.setAgeAtDeathDays(source.getAgeAtDeathDays());
+		target.setAgeAtOnsetDays(source.getAgeAtOnsetDays());
+		target.setBabyNormalAtBirth(source.getBabyNormalAtBirth());
+		target.setNormalCryAndSuck(source.getNormalCryAndSuck());
+		target.setStoppedSuckingAfterTwoDays(source.getStoppedSuckingAfterTwoDays());
+		target.setStiffness(source.getStiffness());
 		target.setDizziness(source.getDizziness());
 		target.setExcessiveSweating(source.getExcessiveSweating());
 		target.setNumbness(source.getNumbness());
@@ -539,14 +546,6 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setRedEyes(source.getRedEyes());
 		target.setGeneralizedRash(source.getGeneralizedRash());
 		target.setSwollenLymphNodesBehindEars(source.getSwollenLymphNodesBehindEars());
-
-		target.setBabyDied(source.getBabyDied());
-		target.setAgeAtDeathDays(source.getAgeAtDeathDays());
-		target.setAgeAtOnsetDays(source.getAgeAtOnsetDays());
-		target.setBabyNormalAtBirth(source.getBabyNormalAtBirth());
-		target.setNormalCryAndSuck(source.getNormalCryAndSuck());
-		target.setStoppedSuckingAfterTwoDays(source.getStoppedSuckingAfterTwoDays());
-		target.setStiffness(source.getStiffness());
 		target.setFirstSignOrSymptomsBeforeWorm(source.getFirstSignOrSymptomsBeforeWorm());
 		target.setFirstSignOrSymptomsBeforeWormOthers(source.getFirstSignOrSymptomsBeforeWormOthers());
 		target.setEmergenceOfGuineaWorm(source.getEmergenceOfGuineaWorm());
@@ -778,6 +777,13 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setTrueAfp(source.getTrueAfp());
 		target.setOutcome(source.getOutcome());
 		target.setBodyAche(source.getBodyAche());
+		target.setBabyDied(source.getBabyDied());
+		target.setAgeAtDeathDays(source.getAgeAtDeathDays());
+		target.setAgeAtOnsetDays(source.getAgeAtOnsetDays());
+		target.setBabyNormalAtBirth(source.getBabyNormalAtBirth());
+		target.setNormalCryAndSuck(source.getNormalCryAndSuck());
+		target.setStoppedSuckingAfterTwoDays(source.getStoppedSuckingAfterTwoDays());
+		target.setStiffness(source.getStiffness());
 		target.setDizziness(source.getDizziness());
 		target.setExcessiveSweating(source.getExcessiveSweating());
 		target.setNumbness(source.getNumbness());

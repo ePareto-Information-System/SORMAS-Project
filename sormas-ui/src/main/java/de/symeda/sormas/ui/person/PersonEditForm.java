@@ -105,16 +105,16 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 							fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD),
 							fluidRowLocs(PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE_REFERENCE_DATE)
 					) +
-					fluidRowLocs(6, PersonDto.LOCATION_OF_BIRTH, 6, PersonDto.BIRTH_IN_INSTITUTION) +
+					fluidRowLocs(2, PersonDto.SEX, 5, PersonDto.LOCATION_OF_BIRTH, 5, PersonDto.BIRTH_IN_INSTITUTION) +
 					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_REGION, PersonDto.PLACE_OF_BIRTH_DISTRICT, PersonDto.PLACE_OF_BIRTH_COMMUNITY) +
 					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_FACILITY, PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS) +
 					fluidRowLocs(PersonDto.GESTATION_AGE_AT_BIRTH, PersonDto.BIRTH_WEIGHT) +
 					loc(BIRTH_OF_INFANT_HEADING_LOC) +
+					fluidRowLocs(4, PersonDto.PRESENT_CONDITION, 4, PersonDto.MARRIAGE_STATUS) +
 					fluidRowLocs(PersonDto.RECEIVED_ANTENATAL_CARE, PersonDto.PRENATAL_TOTAL_VISITS)+
 					fluidRowLocs(PersonDto.ATTENDED_BY_TRAINED_TBA, PersonDto.ATTENDED_BY_TRAINED_TBA_MIDWIFE_NAME)+
 					fluidRowLocs(PersonDto.ATTENDED_BY_DOCTOR_NURSE, PersonDto.CUT_CORD_WITH_STERILE_BLADE)+
 					fluidRowLocs(PersonDto.CORD_TREATED_WITH_ANYTHING, PersonDto.CORD_TREATED_WITH_ANYTHING_WHERE)+
-					fluidRowLocs(PersonDto.SEX, PersonDto.PRESENT_CONDITION, PersonDto.MARRIAGE_STATUS) +
 					fluidRowLocs(6, PersonDto.TEL_NUMBER) +
 					fluidRow(
 							oneOfFourCol(PersonDto.DEATH_DATE),
