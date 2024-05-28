@@ -205,17 +205,8 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 				}
 			}
 
-			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
-					&& !caze.checkIsUnreferredPortHealthCase()
-					&& !UserProvider.getCurrent().isPortHealthUser()) {
 
-				if (caze.getDisease() == Disease.CHOLERA || caze.getDisease() == Disease.MONKEYPOX) {
-					menu.addView(
-							RiskFactorView.VIEW_NAME,
-							I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.RISK_FACTOR),
-							params);
-				}
-			}
+			
 
 			if(caze.getDisease() != Disease.MONKEYPOX){
 				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_EPIDEMIOLOGICAL_DATA)
@@ -229,6 +220,19 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 					}
 				}
 			}
+
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
+					&& !caze.checkIsUnreferredPortHealthCase()
+					&& !UserProvider.getCurrent().isPortHealthUser()) {
+
+				if (caze.getDisease() == Disease.CHOLERA || caze.getDisease() == Disease.MONKEYPOX) {
+					menu.addView(
+							RiskFactorView.VIEW_NAME,
+							I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.RISK_FACTOR),
+							params);
+				}
+			}
+			
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
 					&& !caze.checkIsUnreferredPortHealthCase()
 					&& !UserProvider.getCurrent().isPortHealthUser()) {
