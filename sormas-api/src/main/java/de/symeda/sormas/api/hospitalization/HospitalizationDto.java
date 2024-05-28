@@ -94,6 +94,9 @@ public class HospitalizationDto extends EntityDto {
 	public static final String SYMPTOMS_ONGOING = "symptomsOngoing";
 	public static final String DURATION_HOURS = "durationHours";
 	public static final String SELECT_INPATIENT_OUTPATIENT = "selectInpatientOutpatient";
+	public static final String RECEPTION_DATE = "receptionDate";
+	public static final String MEMBER_FAMILY_HELPING_PATIENT = "memberFamilyHelpingPatient";
+	public static final String DATE_OF_DEATH = "dateOfDeath";
 
 
 	// Fields are declared in the order they should appear in the import template
@@ -161,6 +164,9 @@ public class HospitalizationDto extends EntityDto {
 	private YesNo symptomsOngoing;
 	private DurationHours durationHours;
 	private InpatOutpat selectInpatientOutpatient;
+	private Date receptionDate;
+	private String memberFamilyHelpingPatient;
+	private Date dateOfDeath;
 
 
 	public static HospitalizationDto build() {
@@ -586,4 +592,27 @@ public class HospitalizationDto extends EntityDto {
 	public void setSelectInpatientOutpatient(InpatOutpat selectInpatientOutpatient) {
 	     this.selectInpatientOutpatient = selectInpatientOutpatient;}
 
+	public Date getReceptionDate() {
+		return receptionDate;
+	}
+
+	public void setReceptionDate(Date receptionDate) {
+		this.receptionDate = receptionDate;
+	}
+
+	public String getMemberFamilyHelpingPatient() {
+		return memberFamilyHelpingPatient;
+	}
+
+	public void setMemberFamilyHelpingPatient(String memberFamilyHelpingPatient) {
+		this.memberFamilyHelpingPatient = memberFamilyHelpingPatient;
+	}
+
+	public Date getDateOfDeath() {
+		return dateOfDeath;
+	}
+
+	public void setDateOfDeath(Date dateOfDeath) {
+		this.dateOfDeath = dateOfDeath;
+	}
 }

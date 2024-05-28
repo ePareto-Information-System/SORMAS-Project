@@ -120,6 +120,9 @@ public class Hospitalization extends AbstractDomainObject {
 	private YesNo symptomsOngoing;
 	private DurationHours durationHours;
 	private InpatOutpat selectInpatientOutpatient;
+	private Date receptionDate;
+	private String memberFamilyHelpingPatient;
+	private Date dateOfDeath;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getAdmissionDate() {
@@ -597,4 +600,28 @@ public class Hospitalization extends AbstractDomainObject {
 		return selectInpatientOutpatient;}
 	public void setSelectInpatientOutpatient(InpatOutpat selectInpatientOutpatient) {
 		this.selectInpatientOutpatient = selectInpatientOutpatient;}
+
+	public Date getReceptionDate() {
+		return receptionDate;
+	}
+
+	public void setReceptionDate(Date receptionDate) {
+		this.receptionDate = receptionDate;
+	}
+
+	public String getMemberFamilyHelpingPatient() {
+		return memberFamilyHelpingPatient;
+	}
+
+	public void setMemberFamilyHelpingPatient(String memberFamilyHelpingPatient) {
+		this.memberFamilyHelpingPatient = memberFamilyHelpingPatient;
+	}
+
+	public Date getDateOfDeath() {
+		return dateOfDeath;
+	}
+
+	public void setDateOfDeath(Date dateOfDeath) {
+		this.dateOfDeath = dateOfDeath;
+	}
 }

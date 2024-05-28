@@ -137,6 +137,9 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setSymptomsOngoing(source.getSymptomsOngoing());
 		target.setDurationHours(source.getDurationHours());
 		target.setSelectInpatientOutpatient(source.getSelectInpatientOutpatient());
+		target.setReceptionDate(source.getReceptionDate());
+		target.setMemberFamilyHelpingPatient(source.getMemberFamilyHelpingPatient());
+		target.setDateOfDeath(source.getDateOfDeath());
 
 
 		return target;
@@ -247,6 +250,9 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setSymptomsOngoing(source.getSymptomsOngoing());
 		target.setDurationHours(source.getDurationHours());
 		target.setSelectInpatientOutpatient(source.getSelectInpatientOutpatient());
+		target.setReceptionDate(source.getReceptionDate());
+		target.setMemberFamilyHelpingPatient(source.getMemberFamilyHelpingPatient());
+		target.setDateOfDeath(source.getDateOfDeath());
 
 
 		return target;

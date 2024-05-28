@@ -92,6 +92,8 @@ public enum SampleMaterial {
 	BIOPSY,
 	URETHRAL,
 	FOOD_WATER,
+	BLOOD_ANTI_COAGULANT,
+	CARDIAC,
 	SWAB;
 
 	//getYellowFeverMateriealTypes

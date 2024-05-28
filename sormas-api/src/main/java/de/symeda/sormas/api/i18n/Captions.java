@@ -673,6 +673,9 @@ public interface Captions {
 	String CaseHospitalization_onsetOfSymptomDatetime = "CaseHospitalization.onsetOfSymptomDatetime";
 	String CaseHospitalization_symptomsOngoing = "CaseHospitalization.symptomsOngoing";
 	String CaseHospitalization_durationHours = "CaseHospitalization.durationHours";
+	String CaseHospitalization_receptionDates = "CaseHospitalization.receptionDate";
+	String CaseHospitalization_memberFamilyHelpingPatient = "CaseHospitalization.memberFamilyHelpingPatient";
+	String CaseHospitalization_dateOfDeath = "CaseHospitalization.dateOfDeath";
 
 
 	String CaseHospitalization_previousHospitalizations = "CaseHospitalization.previousHospitalizations";
