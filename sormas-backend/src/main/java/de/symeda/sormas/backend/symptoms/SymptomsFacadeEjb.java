@@ -291,6 +291,11 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setRedEyes(source.getRedEyes());
 		target.setGeneralizedRash(source.getGeneralizedRash());
 		target.setSwollenLymphNodesBehindEars(source.getSwollenLymphNodesBehindEars());
+		target.setPatientHaveFever(source.getPatientHaveFever());
+		target.setOutcomeDate(source.getOutcomeDate());
+		target.setOutcomePlaceCommVillage(source.getOutcomePlaceCommVillage());
+		target.setNameService(source.getNameService());
+		target.setPlaceOfFuneralNameVillage(source.getPlaceOfFuneralNameVillage());
 
 		return target;
 	}
@@ -557,6 +562,12 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setDiarrhoea(source.getDiarrhoea());
 		target.setAbdominalCramps(source.getAbdominalCramps());
 		target.setHeadaches(source.getHeadaches());
+		target.setPatientHaveFever(source.getPatientHaveFever());
+		target.setOutcomeDate(source.getOutcomeDate());
+		target.setOutcomePlaceCommVillage(source.getOutcomePlaceCommVillage());
+		target.setNameService(source.getNameService());
+		target.setPlaceOfFuneralNameVillage(source.getPlaceOfFuneralNameVillage());
+
 
 		return target;
 	}
@@ -802,6 +813,11 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setAreUlcersAmong(source.getAreUlcersAmong());
 		target.setTypeOfRash(source.getTypeOfRash());
 		target.setSymptomsSelectedOther(source.getSymptomsSelectedOther());
+		target.setPatientHaveFever(source.getPatientHaveFever());
+		target.setOutcomeDate(source.getOutcomeDate());
+		target.setOutcomePlaceCommVillage(source.getOutcomePlaceCommVillage());
+		target.setNameService(source.getNameService());
+		target.setPlaceOfFuneralNameVillage(source.getPlaceOfFuneralNameVillage());
 
 		target.setFirstSignOrSymptomsBeforeWorm(source.getFirstSignOrSymptomsBeforeWorm());
 		target.setFirstSignOrSymptomsBeforeWormOthers(source.getFirstSignOrSymptomsBeforeWormOthers());

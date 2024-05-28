@@ -324,6 +324,11 @@ public class Symptoms extends AbstractDomainObject {
 	private SymptomsList typeOfRash;
 	private String symptomsSelectedOther;
 	private String outcomeOther;
+	private YesNo patientHaveFever;
+	private Date outcomeDate;
+	private String outcomePlaceCommVillage;
+	private String nameService;
+	private String placeOfFuneralNameVillage;
 
 	// when adding new fields make sure to extend toHumanString
 
@@ -2543,4 +2548,35 @@ public class Symptoms extends AbstractDomainObject {
 		siteOfParalysis = null;
 	}
 
+	public YesNo getPatientHaveFever() {
+		return patientHaveFever;
+	}
+	public void setPatientHaveFever(YesNo patientHaveFever) {
+		this.patientHaveFever = patientHaveFever;
+	}
+	public Date getOutcomeDate() {
+		return outcomeDate;
+	}
+	public void setOutcomeDate(Date outcomeDate) {
+		this.outcomeDate = outcomeDate;
+	}
+	public String getNameService() {
+		return nameService;
+	}
+	public void setNameService(String nameService) {
+		this.nameService = nameService;
+	}
+
+	public String getOutcomePlaceCommVillage() {
+		return outcomePlaceCommVillage;
+	}
+	public void setOutcomePlaceCommVillage(String outcomePlaceCommVillage) {
+		this.outcomePlaceCommVillage = outcomePlaceCommVillage;
+	}
+	public String getPlaceOfFuneralNameVillage() {
+		return placeOfFuneralNameVillage;
+	}
+	public void setPlaceOfFuneralNameVillage(String placeOfFuneralNameVillage) {
+		this.placeOfFuneralNameVillage = placeOfFuneralNameVillage;
+	}
 }

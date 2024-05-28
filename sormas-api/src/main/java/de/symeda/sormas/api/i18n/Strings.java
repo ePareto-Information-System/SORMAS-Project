@@ -747,6 +747,7 @@ public interface Strings {
 	String headingPreviousHospitalizations = "headingPreviousHospitalizations";
 	String headingSymptoms = "headingSymptoms";
 	String headingRash = "headingRash";
+	String headingPlaceOfDeath = "headingPlaceOfDeath";
 	String headingPreviousPathogenTestInformation = "headingPreviousPathogenTestInformation";
 	String headingPreviousPersonInformation = "headingPreviousPersonInformation";
 	String headingPreviousSampleInformation = "headingPreviousSampleInformation";
