@@ -306,7 +306,16 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		if (disease == Disease.CHOLERA) {
 			hideAllFields();
 			hideLabels();
-			setVisible(true, EpiDataDto.EXPOSED_TO_RISK_FACTOR, EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE);
+			setVisible(true, EpiDataDto.EXPOSED_TO_RISK_FACTOR);
+
+//			EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE visible when EpiDataDto.EXPOSED_TO_RISK_FACTOR is true
+			FieldHelper.setVisibleWhen(
+					getFieldGroup(),
+					EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE,
+					EpiDataDto.EXPOSED_TO_RISK_FACTOR,
+					Collections.singletonList(YesNo.YES),
+					true);
+
 		}
 
 	}
