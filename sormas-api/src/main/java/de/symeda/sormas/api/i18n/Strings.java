@@ -804,6 +804,7 @@ public interface Strings {
 	String headingTravelHistoryOfPatientTenToFourteenMonth = "headingTravelHistoryOfPatientTenToFourteenMonth";
 	String headingContaminationSources = "headingContaminationSources";
 	String headingContainmentMeasures = "headingContainmentMeasures";
+	String headingNameOfPlaceOfTravel = "headingNameOfPlaceOfTravel";
 	String headingSomeContactsNotDeleted = "headingSomeContactsNotDeleted";
 	String headingSomeContactsNotRestored = "headingSomeContactsNotRestored";
 	String headingSomeEventParticipantsNotDeleted = "headingSomeEventParticipantsNotDeleted";

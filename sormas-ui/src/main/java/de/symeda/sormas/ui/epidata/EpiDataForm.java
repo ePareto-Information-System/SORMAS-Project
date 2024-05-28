@@ -33,6 +33,7 @@ import java.util.function.Supplier;
 import com.vaadin.ui.Label;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.OptionGroup;
+import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
 import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.epidata.ContactSetting;
@@ -45,6 +46,7 @@ import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.ui.containmentmeasure.ContainmentMeasureField;
 import de.symeda.sormas.ui.contaminationsource.ContaminationSourcesField;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -519,7 +521,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			yearCovid.setVisible(false);
 			contactDeadWildAnimals.setVisible(true);
 
-			TextArea placesVisited = addField(EpiDataDto.PLACES_VISITED_PAST_7DAYS, com.vaadin.v7.ui.TextArea.class);
+			TextArea placesVisited = addField(EpiDataDto.PLACES_VISITED_PAST_7DAYS, TextArea.class);
 			OptionGroup visitedPlace = addField(EpiDataDto.VISITED_PLACES_CONFIRMED_PANDEMIC, OptionGroup.class);
 			ComboBox riskFactor = addField(EpiDataDto.RISK_FACTORS_SEVERE_DISEASE, ComboBox.class);
 			TextField other = addField(EpiDataDto.OTHER_SPECIFY, com.vaadin.v7.ui.TextField.class);
