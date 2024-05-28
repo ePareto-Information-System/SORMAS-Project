@@ -90,6 +90,9 @@ public class EpiData extends AbstractDomainObject {
 	private YesNo vibrioCholeraeIdentifiedInStools;
 	private String drugsSensitiveToVibrioStrain;
 	private String drugsResistantToVibrioStrain;
+	private YesNo waterUsedForDrinking;
+	private YesNo waterUsedNotForDrinking;
+	private YesNo foodItems;
 
 
 	@Enumerated(EnumType.STRING)
@@ -460,6 +463,27 @@ public class EpiData extends AbstractDomainObject {
 	public void setWaterUsedByPatientAfterExposure(DrinkingWaterSource waterUsedByPatientAfterExposure) {
 		this.waterUsedByPatientAfterExposure = waterUsedByPatientAfterExposure;
 	}
+	public YesNo getWaterUsedForDrinking() {
+		return this.waterUsedForDrinking;
+	}
 
+	public void setWaterUsedForDrinking(final YesNo waterUsedForDrinking) {
+		this.waterUsedForDrinking = waterUsedForDrinking;
+	}
 
+	public YesNo getWaterUsedNotForDrinking() {
+		return this.waterUsedNotForDrinking;
+	}
+
+	public void setWaterUsedNotForDrinking(final YesNo waterUsedNotForDrinking) {
+		this.waterUsedNotForDrinking = waterUsedNotForDrinking;
+	}
+
+	public YesNo getFoodItems() {
+		return this.foodItems;
+	}
+
+	public void setFoodItems(final YesNo foodItems) {
+		this.foodItems = foodItems;
+	}
 }

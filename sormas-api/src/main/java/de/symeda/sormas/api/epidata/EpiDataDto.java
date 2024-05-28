@@ -78,6 +78,9 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String PATIENT_CONTACT_WITH_CONFIRMED_CASE_EXPOSURE_LOCATION_CITY_COUNTRY = "patientContactWithConfirmedCaseExposureLocationCityCountry";
 	public static final String EXPOSED_TO_RISK_FACTOR = "exposedToRiskFactor";
 	public static final String WATER_USED_BY_PATIENT_AFTER_EXPOSURE = "waterUsedByPatientAfterExposure";
+	public static final String WATER_USED_FOR_DRINKING = "waterUsedForDrinking";
+	public static final String WATER_USED_NOT_FOR_DRINKING = "waterUsedNotForDrinking";
+	public static final String FOOD_ITEMS = "foodItems";
 
 
 	@Enumerated(EnumType.STRING)
@@ -130,6 +133,11 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	@Valid
 	private List<ActivityAsCaseDto> activitiesAsCase = new ArrayList<>();
+
+	private YesNo waterUsedForDrinking;
+	private YesNo waterUsedNotForDrinking;
+	private YesNo foodItems;
+
 
 	public YesNo getExposureDetailsKnown() {
 		return exposureDetailsKnown;
@@ -437,5 +445,29 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public void setWaterUsedByPatientAfterExposure(DrinkingWaterSource waterUsedByPatientAfterExposure) {
 		this.waterUsedByPatientAfterExposure = waterUsedByPatientAfterExposure;
+	}
+
+	public YesNo getWaterUsedForDrinking() {
+		return this.waterUsedForDrinking;
+	}
+
+	public void setWaterUsedForDrinking(final YesNo waterUsedForDrinking) {
+		this.waterUsedForDrinking = waterUsedForDrinking;
+	}
+
+	public YesNo getWaterUsedNotForDrinking() {
+		return this.waterUsedNotForDrinking;
+	}
+
+	public void setWaterUsedNotForDrinking(final YesNo waterUsedNotForDrinking) {
+		this.waterUsedNotForDrinking = waterUsedNotForDrinking;
+	}
+
+	public YesNo getFoodItems() {
+		return this.foodItems;
+	}
+
+	public void setFoodItems(final YesNo foodItems) {
+		this.foodItems = foodItems;
 	}
 }

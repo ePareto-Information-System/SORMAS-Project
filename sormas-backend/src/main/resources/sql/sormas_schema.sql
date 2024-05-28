@@ -13024,4 +13024,9 @@ ALTER TABLE epidata DROP COLUMN vibrioCholeraeIdentifiedInStools;
 ALTER TABLE epidata DROP COLUMN drugsSensitiveToVibrioStrain;
 ALTER TABLE epidata DROP COLUMN drugsResistantToVibrioStrain;
 INSERT INTO schema_version (version_number, comment) VALUES (571, 'Added columns to pathogentest to implement vibrioCholeraeIdentifiedInStools, drugsSensitiveToVibrioStrain, drugsResistantToVibrioStrain and DROP on epidata');
+
+ALTER TABLE epidata ADD COLUMN waterUsedForDrinking VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN waterUsedNotForDrinking VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodItems VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (572, 'Added columns to riskfactor to implement waterUsedForDrinking, waterUsedNotForDrinking, foodItems');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

@@ -1129,6 +1129,9 @@ public interface Captions {
 	String EpiData_riskFactorsSevereDisease = "EpiData.riskFactorsSevereDisease";
 	String EpiData_exposedToRiskFactor = "EpiData.exposedToRiskFactor";
 	String EpiData_waterUsedByPatientAfterExposure = "EpiData.waterUsedByPatientAfterExposure";
+	String EpiData_waterUsedForDrinking = "EpiData.waterUsedForDrinking";
+	String EpiData_waterUsedNotForDrinking = "EpiData.waterUsedNotForDrinking";
+	String EpiData_foodItems = "EpiData.foodItems";
 	String EpiData_otherSpecify = "EpiData.otherSpecify";
 	String EpiData_exposureDetailsKnown = "EpiData.exposureDetailsKnown";
 	String EpiData_exposures = "EpiData.exposures";

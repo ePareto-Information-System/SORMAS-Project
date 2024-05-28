@@ -88,6 +88,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_ONE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_TWO) +
 					fluidRowLocs(EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_THREE, EpiDataDto.PATIENT_TRAVELLED_INTERNATIONAL_FOUR) +
 					fluidRowLocs(EpiDataDto.EXPOSED_TO_RISK_FACTOR, EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE)+
+					fluidRowLocs(EpiDataDto.WATER_USED_FOR_DRINKING, EpiDataDto.WATER_USED_NOT_FOR_DRINKING, EpiDataDto.FOOD_ITEMS)+
 					loc(EpiDataDto.PATIENT_VISITED_HEALTH_CARE_FACILITY)+
 					loc(EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI)+
 					loc(EpiDataDto.PATIENT_CLOSE_CONTACT_WITH_ARI_CONTACT_SETTINGS)+
@@ -231,6 +232,11 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
 
+		NullableOptionGroup waterUsedForDrinkingField = addField(EpiDataDto.WATER_USED_FOR_DRINKING, NullableOptionGroup.class);
+		NullableOptionGroup waterUsedNotForDrinkingField = addField(EpiDataDto.WATER_USED_NOT_FOR_DRINKING, NullableOptionGroup.class);
+		NullableOptionGroup foodItemsField = addField(EpiDataDto.FOOD_ITEMS, NullableOptionGroup.class);
+		setVisible(false, EpiDataDto.WATER_USED_FOR_DRINKING, EpiDataDto.WATER_USED_NOT_FOR_DRINKING, EpiDataDto.FOOD_ITEMS);
+
 		exposuresField.addValueChangeListener(e -> {
 			ogExposureDetailsKnown.setEnabled(CollectionUtils.isEmpty(exposuresField.getValue()));
 		});
@@ -307,8 +313,9 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			hideAllFields();
 			hideLabels();
 			setVisible(true, EpiDataDto.EXPOSED_TO_RISK_FACTOR);
-
-//			EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE visible when EpiDataDto.EXPOSED_TO_RISK_FACTOR is true
+			waterUsedForDrinkingField.setVisible(true);
+			waterUsedNotForDrinkingField.setVisible(true);
+			foodItemsField.setVisible(true);
 			FieldHelper.setVisibleWhen(
 					getFieldGroup(),
 					EpiDataDto.WATER_USED_BY_PATIENT_AFTER_EXPOSURE,
