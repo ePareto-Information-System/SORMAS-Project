@@ -39,6 +39,7 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
 
     private static final String HTML_LAYOUT =
             loc(RISK_FACTOR_HEADING_LOC) +
+                    fluidRowLocs(6, RiskFactorDto.WATER_USED_FOR_DRINKING) +
                     loc(POTENTIAL_VIBRIO_VEHICLES_DRINKING_WATER) +
                     fluidRowLocs(RiskFactorDto.DRINKING_WATER_SOURCE_ONE,RiskFactorDto.DRINKING_WATER_SOURCE_TWO) +
                     fluidRowLocs(RiskFactorDto.DRINKING_WATER_SOURCE_THREE,RiskFactorDto.DRINKING_WATER_SOURCE_FOUR) +
@@ -52,7 +53,7 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
                     fluidRowLocs(RiskFactorDto.FOOD_ITEMS_SEVEN, RiskFactorDto.FOOD_ITEMS_EIGHT) +
                     loc(POTENTIAL_VIBRIO_VEHICLES_BACTERIOLOGY_LAB_FINDINGS) +
                     fluidRowLocs(RiskFactorDto.DRINKING_WATER_INFECTED_BY_VIBRIO, RiskFactorDto.NON_DRINKING_WATER_INFECTED_BY_VIBRIO) +
-                    fluidRowLocs(RiskFactorDto.FOOD_ITEMS_INFECTED_BY_VIBRIO, RiskFactorDto.WATER_USED_FOR_DRINKING) +
+                    fluidRowLocs(RiskFactorDto.FOOD_ITEMS_INFECTED_BY_VIBRIO) +
 
                     loc(THREE_DAYS_PRIOR_TO_ONSET_OF_DISEASE_DRINKING_WATER) +
                     fluidRowLocs(RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_WATER_SOURCE_ONE, RiskFactorDto.THREE_DAYS_PRIOR_TO_DISEASE_WATER_SOURCE_TWO) +
