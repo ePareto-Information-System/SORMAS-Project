@@ -202,7 +202,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 							fluidColumnLoc(6, 0, REINFECTION_DETAILS_COL_1_LOC),
 							fluidColumnLoc(6, 0, REINFECTION_DETAILS_COL_2_LOC)
 					) +
-					fluidRowLocs(9, CaseDataDto.OUTCOME, 3, CaseDataDto.OUTCOME_DATE) +
+					//fluidRowLocs(9, CaseDataDto.OUTCOME, 3, CaseDataDto.OUTCOME_DATE) +
 					fluidRowLocs(3, CaseDataDto.SEQUELAE, 9, CaseDataDto.SEQUELAE_DETAILS) +
 					fluidRowLocs(CaseDataDto.CASE_IDENTIFICATION_SOURCE, CaseDataDto.SCREENING_TYPE) +
 					fluidRowLocs(4, CaseDataDto.CASE_ORIGIN, 8, CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION) +

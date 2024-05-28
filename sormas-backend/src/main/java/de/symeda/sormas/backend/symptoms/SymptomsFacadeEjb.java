@@ -251,6 +251,11 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setAreUlcersAmong(source.getAreUlcersAmong());
 		target.setTypeOfRash(source.getTypeOfRash());
 		target.setSymptomsSelectedOther(source.getSymptomsSelectedOther());
+		target.setPatientHaveFever(source.getPatientHaveFever());
+		target.setOutcomeDate(source.getOutcomeDate());
+		target.setOutcomePlaceCommVillage(source.getOutcomePlaceCommVillage());
+		target.setNameService(source.getNameService());
+		target.setPlaceOfFuneralNameVillage(source.getPlaceOfFuneralNameVillage());
 
 		return target;
 	}
@@ -483,6 +488,11 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setAreUlcersAmong(source.getAreUlcersAmong());
 		target.setTypeOfRash(source.getTypeOfRash());
 		target.setSymptomsSelectedOther(source.getSymptomsSelectedOther());
+		target.setPatientHaveFever(source.getPatientHaveFever());
+		target.setOutcomeDate(source.getOutcomeDate());
+		target.setOutcomePlaceCommVillage(source.getOutcomePlaceCommVillage());
+		target.setNameService(source.getNameService());
+		target.setPlaceOfFuneralNameVillage(source.getPlaceOfFuneralNameVillage());
 
 
 		return target;
@@ -714,6 +724,11 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setAreUlcersAmong(source.getAreUlcersAmong());
 		target.setTypeOfRash(source.getTypeOfRash());
 		target.setSymptomsSelectedOther(source.getSymptomsSelectedOther());
+		target.setPatientHaveFever(source.getPatientHaveFever());
+		target.setOutcomeDate(source.getOutcomeDate());
+		target.setOutcomePlaceCommVillage(source.getOutcomePlaceCommVillage());
+		target.setNameService(source.getNameService());
+		target.setPlaceOfFuneralNameVillage(source.getPlaceOfFuneralNameVillage());
 
 		return target;
 	}

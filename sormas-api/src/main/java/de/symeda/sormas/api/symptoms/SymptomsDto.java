@@ -271,6 +271,12 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String ARE_LESIONS_DEEP = "areLesionsDeep";
 	public static final String ARE_ULCERS_AMONG_LESIONS = "areUlcersAmong";
 	public static final String TYPE_OF_RASH = "typeOfRash";
+	public static final String PATIENT_HAVE_FEVER = "patientHaveFever";
+	public static final String OUTCOME_DATE = "outcomeDate";
+	public static final String OUTCOME_PLACE_COMM_VILLAGE = "outcomePlaceCommVillage";
+	public static final String HOSPITAL = "hospital";
+	public static final String HOSPITAL_NAME_SERVICE = "nameService";
+	public static final String PLACE_OF_FUNERAL_NAME_VILLAGE = "placeOfFuneralNameVillage";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -2446,6 +2452,11 @@ public class SymptomsDto extends PseudonymizableDto {
 	private YesNo areUlcersAmong;
 	private SymptomsList typeOfRash;
 	private String outcomeOther;
+	private YesNo patientHaveFever;
+	private Date outcomeDate;
+	private String outcomePlaceCommVillage;
+	private String nameService;
+	private String placeOfFuneralNameVillage;
 
 	@Order(0)
 	public Float getTemperature() {
@@ -4056,6 +4067,26 @@ public class SymptomsDto extends PseudonymizableDto {
 	public String getSymptomsSelectedOther(){
 		return symptomsSelectedOther;
 	}
+	@Order(382)
+	public YesNo getPatientHaveFever() {
+		return patientHaveFever;
+	}
+	@Order(383)
+	public Date getOutcomeDate() {
+		return outcomeDate;
+	}
+	@Order(384)
+	public String getOutcomePlaceCommVillage() {
+		return outcomePlaceCommVillage;
+	}
+	@Order(385)
+	public String getNameService() {
+		return nameService;
+	}
+	@Order(386)
+	public String getPlaceOfFuneralNameVillage() {
+		return placeOfFuneralNameVillage;
+	}
 
 	public void setComa(SymptomState coma) {
 		this.coma = coma;
@@ -4295,5 +4326,24 @@ public class SymptomsDto extends PseudonymizableDto {
 	}
 	public void setOutcomeOther(String outcomeOther) {
 		this.outcomeOther = outcomeOther;
+	}
+
+	public void setPatientHaveFever(YesNo patientHaveFever) {
+		this.patientHaveFever = patientHaveFever;
+	}
+	public void setOutcomeDate(Date outcomeDate) {
+		this.outcomeDate = outcomeDate;
+	}
+
+	public void setNameService(String nameService) {
+		this.nameService = nameService;
+	}
+
+	public void setOutcomePlaceCommVillage(String outcomePlaceCommVillage) {
+		this.outcomePlaceCommVillage = outcomePlaceCommVillage;
+	}
+
+	public void setPlaceOfFuneralNameVillage(String placeOfFuneralNameVillage) {
+		this.placeOfFuneralNameVillage = placeOfFuneralNameVillage;
 	}
 }

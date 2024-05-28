@@ -2878,6 +2878,11 @@ public interface Captions {
 	String Symptoms_typeOfRash = "Symptoms.typeOfRash";
 	String Symptoms_symptomsSelectedOther = "Symptoms.symptomsSelectedOther";
 	String Symptoms_nameOfHealthFacility = "Symptoms.nameOfHealthFacility";
+	String Symptoms_patientHaveFever = "Symptoms.patientHaveFever";
+	String Symptoms_outcomeDate = "Symptoms.outcomeDate";
+	String Symptoms_outcomePlaceCommVillage = "Symptoms.outcomePlaceCommVillage";
+	String Symptoms_nameService = "Symptoms.nameService";
+	String Symptoms_placeOfFuneralNameVillage = "Symptoms.placeOfFuneralNameVillage";
 	String sync = "sync";
 	String syncErrors = "syncErrors";
 	String syncProcessed = "syncProcessed";

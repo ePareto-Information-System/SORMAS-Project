@@ -13467,4 +13467,17 @@ ALTER TABLE person_history ADD COLUMN nameofvillagepersongotIll VARCHAR(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (601, 'added columns for AHF fields');
 
+ALTER TABLE symptoms ADD COLUMN patientHaveFever VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN outcomeDate Date;
+ALTER TABLE symptoms ADD COLUMN outcomePlaceCommVillage VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN nameService VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN placeOfFuneralNameVillage VARCHAR(255);
+
+ALTER TABLE symptoms_history ADD COLUMN patientHaveFever VARCHAR(255);
+ALTER TABLE symptoms_history ADD COLUMN outcomeDate Date;
+ALTER TABLE symptoms_history ADD COLUMN outcomePlaceCommVillage VARCHAR(255);
+ALTER TABLE symptoms_history ADD COLUMN nameService VARCHAR(255);
+ALTER TABLE symptoms_history ADD COLUMN placeOfFuneralNameVillage VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (602, 'added columns for AHF fields at symptoms');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
