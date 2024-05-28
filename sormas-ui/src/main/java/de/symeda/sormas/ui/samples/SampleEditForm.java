@@ -55,7 +55,7 @@ public class SampleEditForm extends AbstractSampleForm {
 	private List<PathogenTestReferenceDto> testsToBeRemovedOnCommit;
 
 	private Label laboratorySampleHeadingLabel;
-	//private Disease disease;
+	private Disease disease;
 
 
 	public SampleEditForm(boolean isPseudonymized, boolean inJurisdiction, Disease disease) {
@@ -128,7 +128,13 @@ public class SampleEditForm extends AbstractSampleForm {
 
 	@Override
 	protected String createHtmlLayout() {
-		return HTML_LAYOUT;
+		disease = getCaseDisease();
+		switch (disease) {
+			case CHOLERA:
+				return CHOLERA_HTML_LAYOUT;
+			default:
+				return SAMPLE_COMMON_HTML_LAYOUT;
+		}
 	}
 
 	public List<PathogenTestReferenceDto> getTestsToBeRemovedOnCommit() {

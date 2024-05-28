@@ -63,6 +63,7 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 	private boolean setServerDiseaseAsDefault;
 
 	protected String disease;
+	protected Disease caseDisease;
 
 	protected AbstractEditForm(Class<DTO> type, String propertyI18nPrefix) {
 		this(type, propertyI18nPrefix, true, null, null);
@@ -80,6 +81,10 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 		this(type, propertyI18nPrefix, addFields, fieldVisibilityCheckers, null);
 	}
 
+	public Disease getCaseDisease () {
+		return caseDisease;
+	}
+
 	protected AbstractEditForm(
 		Class<DTO> type,
 		String propertyI18nPrefix,
@@ -90,6 +95,27 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 		super(type, propertyI18nPrefix, new SormasFieldGroupFieldFactory(fieldVisibilityCheckers, fieldAccessCheckers), false);
 		this.fieldVisibilityCheckers = fieldVisibilityCheckers;
 		this.fieldAccessCheckers = fieldAccessCheckers;
+
+		getFieldGroup().addCommitHandler(this);
+		setWidth(900, Unit.PIXELS);
+
+		if (addFields) {
+			addFields();
+		}
+	}
+
+	protected AbstractEditForm(
+			Class<DTO> type,
+			String propertyI18nPrefix,
+			boolean addFields,
+			FieldVisibilityCheckers fieldVisibilityCheckers,
+			UiFieldAccessCheckers fieldAccessCheckers,
+			Disease caseDisease) {
+
+		super(type, propertyI18nPrefix, new SormasFieldGroupFieldFactory(fieldVisibilityCheckers, fieldAccessCheckers), false);
+		this.fieldVisibilityCheckers = fieldVisibilityCheckers;
+		this.fieldAccessCheckers = fieldAccessCheckers;
+		this.caseDisease = caseDisease;
 
 		getFieldGroup().addCommitHandler(this);
 		setWidth(900, Unit.PIXELS);

@@ -96,7 +96,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	//@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
-            fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
+            		fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
                     fluidRowLocs(SampleDto.CSF_SAMPLE_COLLECTED) +
                     fluidRowLocs(SampleDto.CSF_REASON) +
 					fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
@@ -217,6 +217,22 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(6,SampleDto.IMMUNOCOMPROMISED_STATUS_SUSPECTED) +
 					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION);
 
+	protected static final String CHOLERA_HTML_LAYOUT =
+					fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
+					fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
+					fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
+					fluidRowLocs(6, SampleDto.SAMPLE_MATERIAL, 6, SampleDto.FIELD_SAMPLE_ID) +
+					fluidRowLocs(SampleDto.PATHOGEN_TESTING_REQUESTED) +
+					loc(SampleDto.REQUESTED_PATHOGEN_TESTS) +
+					loc(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS) +
+					locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
+					fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
+					locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
+					fluidRowLocs(6, SampleDto.RECEIVED_DATE) +
+					fluidRowLocs("", SampleDto.PATHOGEN_TEST_RESULT);
+
+
+
 
     //@formatter:on
 
@@ -226,7 +242,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			propertyI18nPrefix,
 			true,
 			FieldVisibilityCheckers.withDisease(disease).andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-			fieldAccessCheckers);
+			fieldAccessCheckers,
+			disease);
 	}
 
 	protected void addCommonFields() {

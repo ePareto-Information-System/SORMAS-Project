@@ -33,7 +33,13 @@ public class SampleCreateForm extends AbstractSampleForm {
 
 	@Override
 	protected String createHtmlLayout() {
-		return SAMPLE_COMMON_HTML_LAYOUT;
+		disease = getCaseDisease();
+		switch (disease) {
+			case CHOLERA:
+				return CHOLERA_HTML_LAYOUT;
+			default:
+				return SAMPLE_COMMON_HTML_LAYOUT;
+		}
 	}
 
     @Override
