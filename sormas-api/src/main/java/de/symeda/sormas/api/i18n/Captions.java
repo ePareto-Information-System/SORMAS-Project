@@ -1254,13 +1254,14 @@ public interface Captions {
 	String eventSuperordinateEvent = "eventSuperordinateEvent";
 	String eventUnlinkEvent = "eventUnlinkEvent";
 	String eventUnlinkEventGroup = "eventUnlinkEventGroup";
-	String Ebs_srcType = "Ebs.srcType";
-	String Ebs_personReporting = "Ebs.personReporting";
+	String Ebs = "Ebs";
+	String Ebs_sourceInformation = "Ebs.sourceInformation";
+	String Ebs_categoryOfInformant = "Ebs.categoryOfInformant";
 	String Ebs_scanningType = "Ebs.scanningType";
 	String Ebs_automaticScanningType = "Ebs.automaticScanningType";
 	String Ebs_manualScanningType = "Ebs.manualScanningType";
 	String Ebs_other = "Ebs.other";
-	String Ebs_contactName = "Ebs.contactName";
+	String Ebs_informantName = "Ebs.contactName";
 	String Ebs_sourceName = "Ebs.sourceName";
 	String Ebs_sourceUrl = "Ebs.sourceUrl";
 	String Ebs_descriptionOccurrence = "Ebs.descriptionOccurrence";
@@ -1271,7 +1272,7 @@ public interface Captions {
 	String Ebs_ebsLongitude = "Ebs.ebsLongitude";
 	String Ebs_ebsLatitude = "Ebs.ebsLatitude";
 	String Ebs_ebsLatLon = "Ebs.ebsLatLon";
-	String Ebs_contactPhoneNumber = "Ebs.contactPhoneNumber";
+	String Ebs_informantTel = "Ebs.informantTel";
 	String Ebs_responsibleUser = "Ebs.responsibleUser";
 	String Ebs_triagingDecision = "Ebs.triagingDecision";
 	String Ebs_startDate = "Ebs.startDate";
@@ -1327,8 +1328,8 @@ public interface Captions {
 	String RiskAssessment_spreadProbabilityComment = "RiskAssessment.spreadProbabilityComment";
 	String RiskAssessment_controlMeasuresComment = "RiskAssessment.controlMeasuresComment";
 	String RiskAssessment_riskAssessment = "RiskAssessment.riskAssessment";
-	String RiskAssessment_responseDate = "RiskAssessment.responseDate";
-	String RiskAssessment_responseTime = "RiskAssessment.responseTime";
+	String RiskAssessment_assessmentDate = "RiskAssessment.assessmentDate";
+	String RiskAssessment_assessmentTime = "RiskAssessment.assessmentTime";
 	String RiskAssessment_info = "RiskAssessment.info";
 	String EbsAlert_actionInitiated = "EbsAlert.actionInitiated";
 	String EbsAlert_responseStatus = "EbsAlert.responseStatus";
