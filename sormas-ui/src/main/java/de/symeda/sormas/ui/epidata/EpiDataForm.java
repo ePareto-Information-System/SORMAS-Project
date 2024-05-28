@@ -22,6 +22,7 @@ import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_TOP_3;
 import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +39,7 @@ import de.symeda.sormas.api.epidata.ContactSetting;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.utils.RiskFactorInfluenza;
+import com.vaadin.ui.Label;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
@@ -60,7 +62,6 @@ import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
@@ -84,6 +85,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	private static final String EXPOSURE_HISTORY_HEADING = "exposureHistoryHeading";
 	private static final String OTHER_PERSONS_HEADING = "otherPersonsHeading";
 	private static final String NUMBER_OF_PERSONS_NO_AFFECTED = "numberOfPersonsNoAffected";
+	private static final String NAME_OF_PLACE_OF_TRAVEL_HEADING = "headingNameOfPlaceOfTravel";
 
 	private static final String TRAVEL_HISTORY_HEADING = "travelHistoryHeadingLoc";
 	private static final String CONTAMINATION_SOURCE_HEADING = "contaminationSourceHeadingLoc";
@@ -174,6 +176,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 	private static final String MEASLES_LAYOUT =
 			fluidRowLocs(EpiDataDto.HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT) +
+			locCss(VSPACE_TOP_3, NAME_OF_PLACE_OF_TRAVEL_HEADING) +
 			fluidRowLocs(EpiDataDto.HISTORY_OF_TRAVEL_REGION, EpiDataDto.HISTORY_OF_TRAVEL_DISTRICT) +
 			fluidRowLocs(EpiDataDto.HISTORY_OF_TRAVEL_SUB_DISTRICT, EpiDataDto.HISTORY_OF_TRAVEL_VILLAGE);
 //			fluidRowLocs(8, EpiDataDto.HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT_DETAILS);
@@ -270,6 +273,10 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		ComboBox cmbCommunity = addInfrastructureField(EpiDataDto.HISTORY_OF_TRAVEL_SUB_DISTRICT);
 		TextField txtVillage = addField(EpiDataDto.HISTORY_OF_TRAVEL_VILLAGE);
 
+		Label nameOfPlaceOfTravelLabel = new Label(I18nProperties.getString(Strings.headingNameOfPlaceOfTravel));
+		nameOfPlaceOfTravelLabel.setStyleName("h3");
+		getContent().addComponent(nameOfPlaceOfTravelLabel, NAME_OF_PLACE_OF_TRAVEL_HEADING);
+
 		cmbRegion.addValueChangeListener(e -> {
 			RegionReferenceDto regionDto = (RegionReferenceDto) e.getProperty().getValue();
 			FieldHelper
@@ -287,6 +294,15 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 				Arrays.asList(cmbRegion, cmbDistrict, cmbCommunity, txtVillage),
 				Collections.singletonList(YesNo.YES),
 				true);
+
+		nullableOptionGroupHTVTD.addValueChangeListener(e -> {
+			YesNo yesNo = (YesNo) FieldHelper.getNullableSourceFieldValue((Field) e.getProperty());
+			if (yesNo == YesNo.YES) {
+				nameOfPlaceOfTravelLabel.setVisible(true);
+			} else {
+				nameOfPlaceOfTravelLabel.setVisible(false);
+			}
+		});
 
 
 
