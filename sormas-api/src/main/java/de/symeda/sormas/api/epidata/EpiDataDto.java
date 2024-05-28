@@ -29,6 +29,7 @@ import javax.validation.Valid;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
+import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.riskfactor.DrinkingWaterSource;
@@ -188,6 +189,39 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String HISTORY_OF_TRAVEL_DISTRICT = "historyOfTravelDistrict";
 	public static final String HISTORY_OF_TRAVEL_SUB_DISTRICT = "historyOfTravelSubDistrict";
 	public static final String HISTORY_OF_TRAVEL_VILLAGE = "historyOfTravelVillage";
+	public static final String PATIENT_TRAVEL_DURING_ILLNESS = "patientTravelDuringIllness";
+	public static final String COMM1 = "comm1";
+	public static final String HEALTH_CENTER1 = "healthCenter1";
+	public static final String COUNTRY1 = "country1";
+	public static final String COMM2 = "comm2";
+	public static final String HEALTH_CENTER2 = "healthCenter2";
+	public static final String COUNTRY2 = "country2";
+	public static final String WAS_PATIENT_HOSPITALIZED = "wasPatientHospitalized";
+	public static final String IF_YES_WHERE = "ifYesWhere";
+	public static final String HOSPITALIZED_DATE1 = "hospitalizedDate1";
+	public static final String HOSPITALIZED_DATE2 = "hospitalizedDate2";
+	public static final String DID_PATIENT_CONSULT_HEALER = "didPatientConsultHealer";
+	public static final String IF_YES_NAME_HEALER = "ifYesNameHealer";
+	public static final String COMMUNITY = "community";
+	public static final String COUNTRY = "country";
+	public static final String WHEN_WHERE_CONTACT_TAKE_PLACE = "whenWhereContactTakePlace";
+	public static final String DATE_OF_CONTACT = "dateOfContact";
+	public static final String PATIENT_RECEIVE_TRADITIONAL_MEDICINE = "patientReceiveTraditionalMedicine";
+	public static final String IF_YES_EXPLAIN = "ifYesExplain";
+	public static final String PATIENT_ATTEND_FUNERAL_CEREMONIES = "patientAttendFuneralCeremonies";
+	public static final String PATIENT_TRAVEL_ANYTIME_PERIOD_BEFORE_ILL = "patientTravelAnytimePeriodBeforeIll";
+	public static final String IF_TRAVEL_YES_WHERE = "ifTravelYesWhere";
+	public static final String IF_TRAVEL_START_DATE = "ifYesStartDate";
+	public static final String IF_YES_END_DATE = "ifYesEndDate";
+	public static final String PATIENT_CONTACT_KNOWN_SUSPECT = "patientContactKnownSuspect";
+	public static final String SUSPECT_NAME = "suspectName";
+	public static final String ID_CASE = "idCase";
+	public static final String DURING_CONTACT_SUSPECT_CASE = "duringContactSuspectCase";
+	public static final String DATE_OF_DEATH = "dateOfDeath";
+	public static final String DATE_OF_LAST_CONTACT_WITH_SUSPECT_CASE = "dateOfLastContactWithSuspectCase";
+	public static final String IF_YES_WILD_ANIMAL_LOCATION = "ifYesWildAnimalLocation";
+	public static final String IF_YES_WILD_ANIMAL_DATE = "ifYesWildAnimalDate";
+
 	@Enumerated(EnumType.STRING)
 	private Disease disease;
 	private YesNo exposureDetailsKnown;
@@ -298,6 +332,39 @@ public class EpiDataDto extends PseudonymizableDto {
 	private String ifYesSpecifySick;
 	private YesNo contactDeadAnimals;
 	private String ifYesSpecifyDead;
+	private YesNo patientTravelDuringIllness;
+	private String comm1;
+	private String healthCenter1;
+	private String country1;
+	private String comm2;
+	private String healthCenter2;
+	private String country2;
+	private YesNo wasPatientHospitalized;
+	private String ifYesWhere;
+	private Date hospitalizedDate1;
+	private Date hospitalizedDate2;
+	private YesNo didPatientConsultHealer;
+	private String ifYesNameHealer;
+	private String community;
+	private String country;
+	private String whenWhereContactTakePlace;
+	private Date dateOfContact;
+	private YesNo patientReceiveTraditionalMedicine;
+	private String ifYesExplain;
+	private YesNo patientAttendFuneralCeremonies;
+	private YesNo patientTravelAnytimePeriodBeforeIll;
+	private String ifTravelYesWhere;
+	private Date ifYesStartDate;
+	private Date ifYesEndDate;
+	private YesNo patientContactKnownSuspect;
+	private String suspectName;
+	private String idCase;
+	private CaseOutcome duringContactSuspectCase;
+	private Date dateOfDeath;
+	private Date dateOfLastContactWithSuspectCase;
+	private String ifYesWildAnimalLocation;
+	private Date ifYesWildAnimalDate;
+
 
 	@Valid
 	private List<ExposureDto> exposures = new ArrayList<>();
@@ -1457,5 +1524,259 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public void setHistoryOfTravelVillage(final String historyOfTravelVillage) {
 		this.historyOfTravelVillage = historyOfTravelVillage;
+	}
+	public YesNo getPatientTravelDuringIllness() {
+		return patientTravelDuringIllness;
+	}
+
+	public void setPatientTravelDuringIllness(YesNo patientTravelDuringIllness) {
+		this.patientTravelDuringIllness = patientTravelDuringIllness;
+	}
+
+	public String getComm1() {
+		return comm1;
+	}
+
+	public void setComm1(String comm1) {
+		this.comm1 = comm1;
+	}
+
+	public String getHealthCenter1() {
+		return healthCenter1;
+	}
+
+	public void setHealthCenter1(String healthCenter1) {
+		this.healthCenter1 = healthCenter1;
+	}
+
+	public String getCountry1() {
+		return country1;
+	}
+
+	public void setCountry1(String country1) {
+		this.country1 = country1;
+	}
+
+	public String getComm2() {
+		return comm2;
+	}
+
+	public void setComm2(String comm2) {
+		this.comm2 = comm2;
+	}
+
+	public String getHealthCenter2() {
+		return healthCenter2;
+	}
+
+	public void setHealthCenter2(String healthCenter2) {
+		this.healthCenter2 = healthCenter2;
+	}
+
+	public String getCountry2() {
+		return country2;
+	}
+
+	public void setCountry2(String country2) {
+		this.country2 = country2;
+	}
+
+	public YesNo getWasPatientHospitalized() {
+		return wasPatientHospitalized;
+	}
+
+	public void setWasPatientHospitalized(YesNo wasPatientHospitalized) {
+		this.wasPatientHospitalized = wasPatientHospitalized;
+	}
+
+	public String getIfYesWhere() {
+		return ifYesWhere;
+	}
+
+	public void setIfYesWhere(String ifYesWhere) {
+		this.ifYesWhere = ifYesWhere;
+	}
+
+	public Date getHospitalizedDate1() {
+		return hospitalizedDate1;
+	}
+
+	public void setHospitalizedDate1(Date hospitalizedDate1) {
+		this.hospitalizedDate1 = hospitalizedDate1;
+	}
+
+	public Date getHospitalizedDate2() {
+		return hospitalizedDate2;
+	}
+
+	public void setHospitalizedDate2(Date hospitalizedDate2) {
+		this.hospitalizedDate2 = hospitalizedDate2;
+	}
+
+	public YesNo getDidPatientConsultHealer() {
+		return didPatientConsultHealer;
+	}
+
+	public void setDidPatientConsultHealer(YesNo didPatientConsultHealer) {
+		this.didPatientConsultHealer = didPatientConsultHealer;
+	}
+
+	public String getIfYesNameHealer() {
+		return ifYesNameHealer;
+	}
+
+	public void setIfYesNameHealer(String ifYesNameHealer) {
+		this.ifYesNameHealer = ifYesNameHealer;
+	}
+
+	public String getCommunity() {
+		return community;
+	}
+
+	public void setCommunity(String community) {
+		this.community = community;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public String getWhenWhereContactTakePlace() {
+		return whenWhereContactTakePlace;
+	}
+
+	public void setWhenWhereContactTakePlace(String whenWhereContactTakePlace) {
+		this.whenWhereContactTakePlace = whenWhereContactTakePlace;
+	}
+
+	public Date getDateOfContact() {
+		return dateOfContact;
+	}
+
+	public void setDateOfContact(Date dateOfContact) {
+		this.dateOfContact = dateOfContact;
+	}
+
+	public YesNo getPatientReceiveTraditionalMedicine() {
+		return patientReceiveTraditionalMedicine;
+	}
+
+	public void setPatientReceiveTraditionalMedicine(YesNo patientReceiveTraditionalMedicine) {
+		this.patientReceiveTraditionalMedicine = patientReceiveTraditionalMedicine;
+	}
+
+	public String getIfYesExplain() {
+		return ifYesExplain;
+	}
+
+	public void setIfYesExplain(String ifYesExplain) {
+		this.ifYesExplain = ifYesExplain;
+	}
+
+	public YesNo getPatientAttendFuneralCeremonies() {
+		return patientAttendFuneralCeremonies;
+	}
+
+	public void setPatientAttendFuneralCeremonies(YesNo patientAttendFuneralCeremonies) {
+		this.patientAttendFuneralCeremonies = patientAttendFuneralCeremonies;
+	}
+
+	public YesNo getPatientTravelAnytimePeriodBeforeIll() {
+		return patientTravelAnytimePeriodBeforeIll;
+	}
+
+	public void setPatientTravelAnytimePeriodBeforeIll(YesNo patientTravelAnytimePeriodBeforeIll) {
+		this.patientTravelAnytimePeriodBeforeIll = patientTravelAnytimePeriodBeforeIll;
+	}
+
+	public String getIfTravelYesWhere() {
+		return ifTravelYesWhere;
+	}
+
+	public void setIfTravelYesWhere(String ifTravelYesWhere) {
+		this.ifTravelYesWhere = ifTravelYesWhere;
+	}
+
+	public Date getIfYesStartDate() {
+		return ifYesStartDate;
+	}
+
+	public void setIfYesStartDate(Date ifYesStartDate) {
+		this.ifYesStartDate = ifYesStartDate;
+	}
+
+	public Date getIfYesEndDate() {
+		return ifYesEndDate;
+	}
+
+	public void setIfYesEndDate(Date ifYesEndDate) {
+		this.ifYesEndDate = ifYesEndDate;
+	}
+	public YesNo getPatientContactKnownSuspect() {
+		return patientContactKnownSuspect;
+	}
+
+	public void setPatientContactKnownSuspect(YesNo patientContactKnownSuspect) {
+		this.patientContactKnownSuspect = patientContactKnownSuspect;
+	}
+
+	public String getSuspectName() {
+		return suspectName;
+	}
+
+	public void setSuspectName(String suspectName) {
+		this.suspectName = suspectName;
+	}
+
+	public String getIdCase() {
+		return idCase;
+	}
+
+	public void setIdCase(String idCase) {
+		this.idCase = idCase;
+	}
+
+	public CaseOutcome getDuringContactSuspectCase() {
+		return duringContactSuspectCase;
+	}
+
+	public void setDuringContactSuspectCase(CaseOutcome duringContactSuspectCase) {
+		this.duringContactSuspectCase = duringContactSuspectCase;
+	}
+
+	public Date getDateOfDeath() {
+		return dateOfDeath;
+	}
+
+	public void setDateOfDeath(Date dateOfDeath) {
+		this.dateOfDeath = dateOfDeath;
+	}
+
+	public Date getDateOfLastContactWithSuspectCase() {
+		return dateOfLastContactWithSuspectCase;
+	}
+
+	public void setDateOfLastContactWithSuspectCase(Date dateOfLastContactWithSuspectCase) {
+		this.dateOfLastContactWithSuspectCase = dateOfLastContactWithSuspectCase;
+	}
+
+	public String getIfYesWildAnimalLocation() {
+		return ifYesWildAnimalLocation;
+	}
+
+	public void setIfYesWildAnimalLocation(String ifYesWildAnimalLocation) {
+		this.ifYesWildAnimalLocation = ifYesWildAnimalLocation;
+	}
+
+	public Date getIfYesWildAnimalDate() {
+		return ifYesWildAnimalDate;
+	}
+
+	public void setIfYesWildAnimalDate(Date ifYesWildAnimalDate) {
+		this.ifYesWildAnimalDate = ifYesWildAnimalDate;
 	}
 }

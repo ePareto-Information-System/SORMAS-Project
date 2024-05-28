@@ -198,6 +198,38 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setIfYesSpecifySick(source.getIfYesSpecifySick());
 		target.setContactDeadAnimals(source.getContactDeadAnimals());
 		target.setIfYesSpecifyDead(source.getIfYesSpecifyDead());
+		target.setPatientTravelDuringIllness(source.getPatientTravelDuringIllness());
+		target.setComm1(source.getComm1());
+		target.setHealthCenter1(source.getHealthCenter1());
+		target.setCountry1(source.getCountry1());
+		target.setComm2(source.getComm2());
+		target.setHealthCenter2(source.getHealthCenter2());
+		target.setCountry2(source.getCountry2());
+		target.setWasPatientHospitalized(source.getWasPatientHospitalized());
+		target.setIfYesWhere(source.getIfYesWhere());
+		target.setHospitalizedDate1(source.getHospitalizedDate1());
+		target.setHospitalizedDate2(source.getHospitalizedDate2());
+		target.setDidPatientConsultHealer(source.getDidPatientConsultHealer());
+		target.setIfYesNameHealer(source.getIfYesNameHealer());
+		target.setCommunity(source.getCommunity());
+		target.setCountry(source.getCountry());
+		target.setWhenWhereContactTakePlace(source.getWhenWhereContactTakePlace());
+		target.setDateOfContact(source.getDateOfContact());
+		target.setPatientReceiveTraditionalMedicine(source.getPatientReceiveTraditionalMedicine());
+		target.setIfYesExplain(source.getIfYesExplain());
+		target.setPatientAttendFuneralCeremonies(source.getPatientAttendFuneralCeremonies());
+		target.setPatientTravelAnytimePeriodBeforeIll(source.getPatientTravelAnytimePeriodBeforeIll());
+		target.setIfTravelYesWhere(source.getIfTravelYesWhere());
+		target.setIfYesStartDate(source.getIfYesStartDate());
+		target.setIfYesEndDate(source.getIfYesEndDate());
+		target.setPatientContactKnownSuspect(source.getPatientContactKnownSuspect());
+		target.setSuspectName(source.getSuspectName());
+		target.setIdCase(source.getIdCase());
+		target.setDuringContactSuspectCase(source.getDuringContactSuspectCase());
+		target.setDateOfDeath(source.getDateOfDeath());
+		target.setDateOfLastContactWithSuspectCase(source.getDateOfLastContactWithSuspectCase());
+		target.setIfYesWildAnimalLocation(source.getIfYesWildAnimalLocation());
+		target.setIfYesWildAnimalDate(source.getIfYesWildAnimalDate());
 
 
 
@@ -580,6 +612,38 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setIfYesSpecifySick(source.getIfYesSpecifySick());
 		target.setContactDeadAnimals(source.getContactDeadAnimals());
 		target.setIfYesSpecifyDead(source.getIfYesSpecifyDead());
+		target.setPatientTravelDuringIllness(source.getPatientTravelDuringIllness());
+		target.setComm1(source.getComm1());
+		target.setHealthCenter1(source.getHealthCenter1());
+		target.setCountry1(source.getCountry1());
+		target.setComm2(source.getComm2());
+		target.setHealthCenter2(source.getHealthCenter2());
+		target.setCountry2(source.getCountry2());
+		target.setWasPatientHospitalized(source.getWasPatientHospitalized());
+		target.setIfYesWhere(source.getIfYesWhere());
+		target.setHospitalizedDate1(source.getHospitalizedDate1());
+		target.setHospitalizedDate2(source.getHospitalizedDate2());
+		target.setDidPatientConsultHealer(source.getDidPatientConsultHealer());
+		target.setIfYesNameHealer(source.getIfYesNameHealer());
+		target.setCommunity(source.getCommunity());
+		target.setCountry(source.getCountry());
+		target.setWhenWhereContactTakePlace(source.getWhenWhereContactTakePlace());
+		target.setDateOfContact(source.getDateOfContact());
+		target.setPatientReceiveTraditionalMedicine(source.getPatientReceiveTraditionalMedicine());
+		target.setIfYesExplain(source.getIfYesExplain());
+		target.setPatientAttendFuneralCeremonies(source.getPatientAttendFuneralCeremonies());
+		target.setPatientTravelAnytimePeriodBeforeIll(source.getPatientTravelAnytimePeriodBeforeIll());
+		target.setIfTravelYesWhere(source.getIfTravelYesWhere());
+		target.setIfYesStartDate(source.getIfYesStartDate());
+		target.setIfYesEndDate(source.getIfYesEndDate());
+		target.setPatientContactKnownSuspect(source.getPatientContactKnownSuspect());
+		target.setSuspectName(source.getSuspectName());
+		target.setIdCase(source.getIdCase());
+		target.setDuringContactSuspectCase(source.getDuringContactSuspectCase());
+		target.setDateOfDeath(source.getDateOfDeath());
+		target.setDateOfLastContactWithSuspectCase(source.getDateOfLastContactWithSuspectCase());
+		target.setIfYesWildAnimalLocation(source.getIfYesWildAnimalLocation());
+		target.setIfYesWildAnimalDate(source.getIfYesWildAnimalDate());
 
 		List<ExposureDto> exposureDtos = new ArrayList<>();
 		for (Exposure exposure : source.getExposures()) {
