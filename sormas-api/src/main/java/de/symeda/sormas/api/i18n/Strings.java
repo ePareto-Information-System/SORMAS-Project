@@ -444,6 +444,8 @@ public interface Strings {
 	String headingClinicalMeasurements = "headingClinicalMeasurements";
 	String headingFoodHistory = "headingFoodHistory";
 	String headingExposureHistory = "headingExposureHistory";
+	String headingExpositionRisks = "headingExpositionRisks";
+	String indicatePlace = "indicatePlace";
 	String headingObtainHistory = "headingObtainHistory";
 	String headingDay1 = "headingDay1";
 	String headingDay2 = "headingDay2";

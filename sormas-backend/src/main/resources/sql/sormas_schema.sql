@@ -13480,4 +13480,39 @@ ALTER TABLE symptoms_history ADD COLUMN nameService VARCHAR(255);
 ALTER TABLE symptoms_history ADD COLUMN placeOfFuneralNameVillage VARCHAR(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (602, 'added columns for AHF fields at symptoms');
+
+ALTER TABLE epidata ADD COLUMN patienttravelduringillness VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN comm1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN comm2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN healthcenter1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN healthcenter2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN country1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN country2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN waspatienthospitalized VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN ifyeswhere VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN hospitalizeddate1 DATE;
+ALTER TABLE epidata ADD COLUMN hospitalizeddate2 DATE;
+ALTER TABLE epidata ADD COLUMN didpatientconsulthealer VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN ifyesnamehealer VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN community VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN country VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN whenwherecontacttakeplace VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN dateofcontact DATE;
+ALTER TABLE epidata ADD COLUMN patientreceivetraditionalmedicine VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN ifyesexplain VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN patientattendfuneralceremonies VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN patienttravelanytimeperiodbeforeill VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN iftravelyeswhere VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN ifyesstartdate DATE;
+ALTER TABLE epidata ADD COLUMN ifyesenddate DATE;
+ALTER TABLE epidata ADD COLUMN patientcontactknownsuspect VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN suspectname VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN idcase VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN duringcontactsuspectcase VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN dateofdeath DATE;
+ALTER TABLE epidata ADD COLUMN dateoflastcontactwithsuspectcase DATE;
+ALTER TABLE epidata ADD COLUMN ifyeswildanimallocation VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN ifyeswildanimaldate DATE;
+
+INSERT INTO schema_version (version_number, comment) VALUES (603, 'added columns for AHF fields at epidata');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

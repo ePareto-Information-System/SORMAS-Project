@@ -35,6 +35,7 @@ import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
+import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.utils.RiskFactorInfluenza;
@@ -76,6 +77,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	private static final String LOC_SOURCE_CASE_CONTACTS_HEADING = "locSourceCaseContactsHeading";
 	private static final String LOC_EPI_DATA_FIELDS_HINT = "locEpiDataFieldsHint";
 	private static final String EXPOSURE_HISTORY_HEADING = "exposureHistoryHeading";
+	private static final String EXPOSITION_RISKS_HEADING = "expositionRisksHeading";
+	private static final String INDICATE_PLACES_COUNTRY_HEADING = "indicate";
 	private static final String OTHER_PERSONS_HEADING = "otherPersonsHeading";
 	private static final String NUMBER_OF_PERSONS_NO_AFFECTED = "numberOfPersonsNoAffected";
 
@@ -96,7 +99,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					loc(EpiDataDto.CONTACT_SICK_ANIMALS)+
 					loc(EpiDataDto.IF_YES_SPECIFY_SICK_ANIMAL)+
 					loc(EpiDataDto.CONTACT_DEAD_WILD_ANIMALS)+
-					loc(EpiDataDto.IF_YES_SPECIFY_DEAD_WILD_ANIMAL)+
+					fluidRowLocs(EpiDataDto.IF_YES_SPECIFY_DEAD_WILD_ANIMAL, EpiDataDto.IF_YES_WILD_ANIMAL_LOCATION, EpiDataDto.IF_YES_WILD_ANIMAL_DATE)+
 					loc(LOC_EXPOSURE_INVESTIGATION_HEADING) +
 					loc(EpiDataDto.EXPOSURE_DETAILS_KNOWN) +
 					loc(EpiDataDto.EXPOSURES) +
@@ -137,7 +140,25 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					fluidRowLocs(EpiDataDto.INTL_TRAVEL, EpiDataDto.SPECIFY_COUNTRIES, EpiDataDto.DATE_OF_DEPARTURE, EpiDataDto.DATE_OF_ARRIVAL) +
 					fluidRowLocs(EpiDataDto.DOMESTIC_TRAVEL, EpiDataDto.SPECIFY_LOCATION, EpiDataDto.DATE_OF_DEPARTURE2, EpiDataDto.DATE_OF_ARRIVAL2) +
 					fluidRowLocs(EpiDataDto.CONTACT_ILL_PERSON, EpiDataDto.CONTACT_DATE, EpiDataDto.SPECIFY_ILLNESS) +
-					fluidRowLocs(EpiDataDto.AREA_INFECTED_ANIMALS);
+					fluidRowLocs(EpiDataDto.AREA_INFECTED_ANIMALS) +
+
+					fluidRowLocs(EpiDataDto.PATIENT_TRAVEL_DURING_ILLNESS) +
+					loc(INDICATE_PLACES_COUNTRY_HEADING) +
+					fluidRowLocs(EpiDataDto.COMM1, EpiDataDto.HEALTH_CENTER1, EpiDataDto.COUNTRY1) +
+					fluidRowLocs(EpiDataDto.COMM2, EpiDataDto.HEALTH_CENTER2, EpiDataDto.COUNTRY2) +
+					loc(EXPOSITION_RISKS_HEADING) +
+					fluidRowLocs(EpiDataDto.WAS_PATIENT_HOSPITALIZED) +
+					fluidRowLocs(EpiDataDto.IF_YES_WHERE, EpiDataDto.HOSPITALIZED_DATE1, EpiDataDto.HOSPITALIZED_DATE2) +
+					fluidRowLocs(EpiDataDto.DID_PATIENT_CONSULT_HEALER) +
+					fluidRowLocs(EpiDataDto.IF_YES_NAME_HEALER, EpiDataDto.COMMUNITY, EpiDataDto.COUNTRY) +
+					fluidRowLocs(EpiDataDto.WHEN_WHERE_CONTACT_TAKE_PLACE, EpiDataDto.DATE_OF_CONTACT) +
+					fluidRowLocs(EpiDataDto.PATIENT_RECEIVE_TRADITIONAL_MEDICINE, EpiDataDto.IF_YES_EXPLAIN) +
+					fluidRowLocs(EpiDataDto.PATIENT_ATTEND_FUNERAL_CEREMONIES) +
+					fluidRowLocs(EpiDataDto.PATIENT_TRAVEL_ANYTIME_PERIOD_BEFORE_ILL, EpiDataDto.IF_TRAVEL_YES_WHERE) +
+					fluidRowLocs(EpiDataDto.IF_TRAVEL_START_DATE, EpiDataDto.IF_YES_END_DATE) +
+					fluidRowLocs(EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT, EpiDataDto.SUSPECT_NAME, EpiDataDto.ID_CASE) +
+					fluidRowLocs(EpiDataDto.DURING_CONTACT_SUSPECT_CASE, EpiDataDto.DATE_OF_DEATH) +
+					fluidRowLocs(6,EpiDataDto.DATE_OF_LAST_CONTACT_WITH_SUSPECT_CASE);
 
 	private static final String SOURCE_CONTACTS_HTML_LAYOUT =
 			locCss(VSPACE_TOP_3, LOC_SOURCE_CASE_CONTACTS_HEADING) +
@@ -174,7 +195,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	protected void addFields() {
 
 
-		if (disease != null && !diseaseCheck() && !diseaseInfluenzaCheck() && disease!= Disease.FOODBORNE_ILLNESS && disease != Disease.AFP) {
+		if (disease != null && !diseaseCheck() && !diseaseInfluenzaCheck() && disease!= Disease.FOODBORNE_ILLNESS && disease != Disease.AFP && disease != Disease.AHF) {
 			addHeadingsAndInfoTexts();
 		}
 
@@ -185,10 +206,14 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		TextField ifYesSpecifySickDomestic = addField(EpiDataDto.IF_YES_SPECIFY_SICK_ANIMAL, TextField.class);
 		NullableOptionGroup contactDeadWildAnimals = addField(EpiDataDto.CONTACT_DEAD_WILD_ANIMALS, NullableOptionGroup.class);
 		TextField ifYesSpecifyDeadWild = addField(EpiDataDto.IF_YES_SPECIFY_DEAD_WILD_ANIMAL, TextField.class);
+		TextField ifYesWildAnimalLocation = addField(EpiDataDto.IF_YES_WILD_ANIMAL_LOCATION, TextField.class);
+		TextField ifYesWildAnimalDate = addField(EpiDataDto.IF_YES_WILD_ANIMAL_DATE, TextField.class);
 
 		contactDeadWildAnimals.setVisible(false);
 		ifYesSpecifySickDomestic.setVisible(false);
 		ifYesSpecifyDeadWild.setVisible(false);
+		ifYesWildAnimalLocation.setVisible(false);
+		ifYesWildAnimalDate.setVisible(false);
 
 		NullableOptionGroup ogExposureDetailsKnown = addField(EpiDataDto.EXPOSURE_DETAILS_KNOWN, NullableOptionGroup.class);
 		ExposuresField exposuresField = addField(EpiDataDto.EXPOSURES, ExposuresField.class);
@@ -303,6 +328,46 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		addField(EpiDataDto.SOURCE_OF_FOOD_S3, TextField.class);
 		addField(EpiDataDto.CONSUMED_AT_PLACE_S3, TextField.class);
 
+		//AHF
+		NullableOptionGroup patientTravelDuringIllness = addField(EpiDataDto.PATIENT_TRAVEL_DURING_ILLNESS, NullableOptionGroup.class);
+		TextField comm1 = addField(EpiDataDto.COMM1, TextField.class);
+		TextField comm2 = addField(EpiDataDto.COMM2, TextField.class);
+		TextField healthCenter1 = addField(EpiDataDto.HEALTH_CENTER1, TextField.class);
+		TextField healthCenter2 = addField(EpiDataDto.HEALTH_CENTER2, TextField.class);
+		TextField country1 = addField(EpiDataDto.COUNTRY1, TextField.class);
+		TextField country2 = addField(EpiDataDto.COUNTRY2, TextField.class);
+		NullableOptionGroup wasPatientHospitalized = addField(EpiDataDto.WAS_PATIENT_HOSPITALIZED, NullableOptionGroup.class);
+		TextField ifYesWhere = addField(EpiDataDto.IF_YES_WHERE, TextField.class);
+		DateField hospitalizedDate1 = addField(EpiDataDto.HOSPITALIZED_DATE1, DateField.class);
+		DateField hospitalizedDate2 = addField(EpiDataDto.HOSPITALIZED_DATE2, DateField.class);
+		NullableOptionGroup didPatientConsultHealer = addField(EpiDataDto.DID_PATIENT_CONSULT_HEALER, NullableOptionGroup.class);
+		TextField ifYesNameHealer = addField(EpiDataDto.IF_YES_NAME_HEALER, TextField.class);
+		TextField community = addField(EpiDataDto.COMMUNITY, TextField.class);
+		TextField country = addField(EpiDataDto.COUNTRY, TextField.class);
+		TextField whenWhereContactTakePlace = addField(EpiDataDto.WHEN_WHERE_CONTACT_TAKE_PLACE, TextField.class);
+		DateField dateOfContact = addField(EpiDataDto.DATE_OF_CONTACT, DateField.class);
+		NullableOptionGroup patientReceiveTraditionalMedicine = addField(EpiDataDto.PATIENT_RECEIVE_TRADITIONAL_MEDICINE, NullableOptionGroup.class);
+		TextField ifYesExplain = addField(EpiDataDto.IF_YES_EXPLAIN, TextField.class);
+		NullableOptionGroup patientAttendFuneralCeremonies = addField(EpiDataDto.PATIENT_ATTEND_FUNERAL_CEREMONIES, NullableOptionGroup.class);
+		NullableOptionGroup patientTravelAnytimePeriodBeforeIll = addField(EpiDataDto.PATIENT_TRAVEL_ANYTIME_PERIOD_BEFORE_ILL, NullableOptionGroup.class);
+		TextField ifTravelYesWhere = addField(EpiDataDto.IF_TRAVEL_YES_WHERE, TextField.class);
+		DateField ifTravelStartDate = addField(EpiDataDto.IF_TRAVEL_START_DATE, DateField.class);
+		DateField ifYesEndDate = addField(EpiDataDto.IF_YES_END_DATE, DateField.class);
+		NullableOptionGroup patientContactKnownSuspect = addField(EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT, NullableOptionGroup.class);
+		TextField suspectName = addField(EpiDataDto.SUSPECT_NAME, TextField.class);
+		TextField idCase = addField(EpiDataDto.ID_CASE, TextField.class);
+		ComboBox duringContactSuspectCase = new ComboBox("Outcome");
+
+		for (CaseOutcome caseOutcome : CaseOutcome.values()) {
+			if (caseOutcome == CaseOutcome.DECEASED || caseOutcome == CaseOutcome.ALIVE) {
+				duringContactSuspectCase.addItem(caseOutcome);
+			}
+		}
+		addField(EpiDataDto.DURING_CONTACT_SUSPECT_CASE, duringContactSuspectCase);
+
+
+		DateField dateOfDeath = addField(EpiDataDto.DATE_OF_DEATH, DateField.class);
+		DateField dateOfLastContactWithSuspectCase = addField(EpiDataDto.DATE_OF_LAST_CONTACT_WITH_SUSPECT_CASE, DateField.class);
 
 		setVisible(false, EpiDataDto.INTL_TRAVEL, EpiDataDto.SPECIFY_COUNTRIES, EpiDataDto.DATE_OF_DEPARTURE, EpiDataDto.DATE_OF_ARRIVAL, EpiDataDto.DOMESTIC_TRAVEL, EpiDataDto.SPECIFY_LOCATION, EpiDataDto.DATE_OF_DEPARTURE2, EpiDataDto.DATE_OF_ARRIVAL2, EpiDataDto.CONTACT_ILL_PERSON, EpiDataDto.CONTACT_DATE, EpiDataDto.SPECIFY_ILLNESS, EpiDataDto.NAME_OF_AFFECTED_PERSON, EpiDataDto.NAME_OF_AFFECTED_PERSON2, EpiDataDto.NAME_OF_AFFECTED_PERSON3, EpiDataDto.NAME_OF_AFFECTED_PERSON4, EpiDataDto.TEL_NO, EpiDataDto.TEL_NO2, EpiDataDto.TEL_NO3, EpiDataDto.TEL_NO4, EpiDataDto.DATE_TIME, EpiDataDto.DATE_TIME2, EpiDataDto.DATE_TIME3, EpiDataDto.DATE_TIME4, EpiDataDto.AGE,  EpiDataDto.AGE2, EpiDataDto.AGE3, EpiDataDto.AGE4);
 
@@ -318,6 +383,22 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 				EpiDataDto.LUNCH_L3, EpiDataDto.TOTAL_NO_PERSONS_L3, EpiDataDto.FOOD_CONSUMED_L3, EpiDataDto.SOURCE_OF_FOOD_L3, EpiDataDto.CONSUMED_AT_PLACE_L3,
 				EpiDataDto.SUPPER_S3, EpiDataDto.TOTAL_NO_PERSONS_S3, EpiDataDto.FOOD_CONSUMED_S3, EpiDataDto.SOURCE_OF_FOOD_S3, EpiDataDto.CONSUMED_AT_PLACE_S3
 		);
+
+		setVisible(false,
+				EpiDataDto.PATIENT_TRAVEL_DURING_ILLNESS, EpiDataDto.COMM1, EpiDataDto.COMM2,
+				EpiDataDto.HEALTH_CENTER1, EpiDataDto.HEALTH_CENTER2, EpiDataDto.COUNTRY1,
+				EpiDataDto.COUNTRY2, EpiDataDto.WAS_PATIENT_HOSPITALIZED, EpiDataDto.IF_YES_WHERE,
+				EpiDataDto.HOSPITALIZED_DATE1, EpiDataDto.HOSPITALIZED_DATE2, EpiDataDto.DID_PATIENT_CONSULT_HEALER,
+				EpiDataDto.IF_YES_NAME_HEALER, EpiDataDto.COMMUNITY, EpiDataDto.COUNTRY,
+				EpiDataDto.WHEN_WHERE_CONTACT_TAKE_PLACE, EpiDataDto.DATE_OF_CONTACT,
+				EpiDataDto.PATIENT_RECEIVE_TRADITIONAL_MEDICINE, EpiDataDto.IF_YES_EXPLAIN,
+				EpiDataDto.PATIENT_ATTEND_FUNERAL_CEREMONIES, EpiDataDto.PATIENT_TRAVEL_ANYTIME_PERIOD_BEFORE_ILL,
+				EpiDataDto.IF_TRAVEL_YES_WHERE, EpiDataDto.IF_TRAVEL_START_DATE, EpiDataDto.IF_YES_END_DATE,
+				EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT, EpiDataDto.SUSPECT_NAME, EpiDataDto.ID_CASE,
+				EpiDataDto.DURING_CONTACT_SUSPECT_CASE, EpiDataDto.DATE_OF_DEATH,
+				EpiDataDto.DATE_OF_LAST_CONTACT_WITH_SUSPECT_CASE
+		);
+
 
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
@@ -408,11 +489,45 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			FieldHelper.setVisibleWhen(illPerson, Arrays.asList(contactDate), Arrays.asList(YesNo.YES), true);
 		}
 
+		if( disease == Disease.AHF){
+			createLabel(I18nProperties.getString(Strings.headingExpositionRisks), H3, EXPOSITION_RISKS_HEADING);
+			createLabel(I18nProperties.getString(Strings.indicatePlace), H3, INDICATE_PLACES_COUNTRY_HEADING);
+
+			setVisible(true,
+					EpiDataDto.PATIENT_TRAVEL_DURING_ILLNESS, EpiDataDto.COMM1, EpiDataDto.COMM2,
+					EpiDataDto.HEALTH_CENTER1, EpiDataDto.HEALTH_CENTER2, EpiDataDto.COUNTRY1,
+					EpiDataDto.COUNTRY2, EpiDataDto.WAS_PATIENT_HOSPITALIZED, EpiDataDto.IF_YES_WHERE,
+					EpiDataDto.HOSPITALIZED_DATE1, EpiDataDto.HOSPITALIZED_DATE2, EpiDataDto.DID_PATIENT_CONSULT_HEALER,
+					EpiDataDto.IF_YES_NAME_HEALER, EpiDataDto.COMMUNITY, EpiDataDto.COUNTRY,
+					EpiDataDto.WHEN_WHERE_CONTACT_TAKE_PLACE, EpiDataDto.DATE_OF_CONTACT,
+					EpiDataDto.PATIENT_RECEIVE_TRADITIONAL_MEDICINE, EpiDataDto.IF_YES_EXPLAIN,
+					EpiDataDto.PATIENT_ATTEND_FUNERAL_CEREMONIES, EpiDataDto.PATIENT_TRAVEL_ANYTIME_PERIOD_BEFORE_ILL,
+					EpiDataDto.IF_TRAVEL_YES_WHERE, EpiDataDto.IF_TRAVEL_START_DATE, EpiDataDto.IF_YES_END_DATE,
+					EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT, EpiDataDto.SUSPECT_NAME, EpiDataDto.ID_CASE,
+					EpiDataDto.DURING_CONTACT_SUSPECT_CASE, EpiDataDto.DATE_OF_DEATH,
+					EpiDataDto.DATE_OF_LAST_CONTACT_WITH_SUSPECT_CASE);
+
+			dateOfDeath.setVisible(false);
+			ifYesWhere.setVisible(false);
+			hospitalizedDate1.setVisible(false);
+			hospitalizedDate2.setVisible(false);
+			ifYesNameHealer.setVisible(false);
+			community.setVisible(false);
+			country.setVisible(false);
+
+			contactDeadWildAnimals.setVisible(true);
+
+			FieldHelper.setVisibleWhen(contactDeadWildAnimals, Arrays.asList(ifYesSpecifyDeadWild, ifYesWildAnimalLocation, ifYesWildAnimalDate), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(duringContactSuspectCase, Arrays.asList(dateOfDeath), Arrays.asList(CaseOutcome.DECEASED), true);
+			FieldHelper.setVisibleWhen(wasPatientHospitalized, Arrays.asList(ifYesWhere, hospitalizedDate1,hospitalizedDate2), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(didPatientConsultHealer, Arrays.asList(ifYesNameHealer,community,country), Arrays.asList(YesNo.YES), true);
+		}
+
 	}
 
 	private void addActivityAsCaseFields() {
 
-		if(!diseaseCSMCheck() && disease != Disease.FOODBORNE_ILLNESS && disease != Disease.AFP){
+		if(!diseaseCSMCheck() && disease != Disease.FOODBORNE_ILLNESS && disease != Disease.AFP && disease != Disease.AHF){
 			getContent().addComponent(
 					new MultilineLabel(
 							h3(I18nProperties.getString(Strings.headingActivityAsCase))
