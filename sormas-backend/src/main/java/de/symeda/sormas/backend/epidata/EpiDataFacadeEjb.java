@@ -332,6 +332,9 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setReceivedHealthEducation(source.getReceivedHealthEducation());
 		target.setPatientEnteredWaterSource(source.getPatientEnteredWaterSource());
 		target.setPlaceManaged(source.getPlaceManaged());
+		target.setWaterUsedForDrinking(source.getWaterUsedForDrinking());
+		target.setWaterUsedNotForDrinking(source.getWaterUsedNotForDrinking());
+		target.setFoodItems(source.getFoodItems());
 
 		return target;
 	}
@@ -704,6 +707,9 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setReceivedHealthEducation(source.getReceivedHealthEducation());
 		target.setPatientEnteredWaterSource(source.getPatientEnteredWaterSource());
 		target.setPlaceManaged(source.getPlaceManaged());
+		target.setWaterUsedForDrinking(source.getWaterUsedForDrinking());
+		target.setWaterUsedNotForDrinking(source.getWaterUsedNotForDrinking());
+		target.setFoodItems(source.getFoodItems());
 
 		target.setHistoryOfTravelRegion(RegionFacadeEjb.toReferenceDto(source.getHistoryOfTravelRegion()));
 		target.setHistoryOfTravelDistrict(DistrictFacadeEjb.toReferenceDto(source.getHistoryOfTravelDistrict()));

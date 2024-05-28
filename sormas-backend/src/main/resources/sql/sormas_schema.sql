@@ -14628,3 +14628,8 @@ CREATE TABLE ebsAlert_history (
                              LIKE ebsAlert INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
 );
 INSERT INTO schema_version (version_number, comment) VALUES (664, 'added ebs,triaging,signalverification,riskassessment and alert');
+
+ALTER TABLE epidata ADD COLUMN waterUsedForDrinking VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN waterUsedNotForDrinking VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodItems VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (665, 'Added columns to riskfactor to implement waterUsedForDrinking, waterUsedNotForDrinking, foodItems');

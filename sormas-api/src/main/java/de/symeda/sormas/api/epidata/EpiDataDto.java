@@ -97,6 +97,9 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String RECEIVED_HEALTH_EDUCATION = "receivedHealthEducation";
 	public static final String PATIENT_ENTERED_WATER_SOURCE = "patientEnteredWaterSource";
 	public static final String PLACE_MANAGED = "placeManaged";
+	public static final String WATER_USED_FOR_DRINKING = "waterUsedForDrinking";
+	public static final String WATER_USED_NOT_FOR_DRINKING = "waterUsedNotForDrinking";
+	public static final String FOOD_ITEMS = "foodItems";
 
 	public static final String INTL_TRAVEL = "intlTravel";
 	public static final String SPECIFY_COUNTRIES = "specifyCountries";
@@ -420,6 +423,11 @@ public class EpiDataDto extends PseudonymizableDto {
 	})
 	@Valid
 	private List<ContainmentMeasureDto> containmentMeasures = new ArrayList<>();
+
+	private YesNo waterUsedForDrinking;
+	private YesNo waterUsedNotForDrinking;
+	private YesNo foodItems;
+
 
 	public YesNo getExposureDetailsKnown() {
 		return exposureDetailsKnown;
@@ -1778,5 +1786,29 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public void setIfYesWildAnimalDate(Date ifYesWildAnimalDate) {
 		this.ifYesWildAnimalDate = ifYesWildAnimalDate;
+	}
+
+	public YesNo getWaterUsedForDrinking() {
+		return this.waterUsedForDrinking;
+	}
+
+	public void setWaterUsedForDrinking(final YesNo waterUsedForDrinking) {
+		this.waterUsedForDrinking = waterUsedForDrinking;
+	}
+
+	public YesNo getWaterUsedNotForDrinking() {
+		return this.waterUsedNotForDrinking;
+	}
+
+	public void setWaterUsedNotForDrinking(final YesNo waterUsedNotForDrinking) {
+		this.waterUsedNotForDrinking = waterUsedNotForDrinking;
+	}
+
+	public YesNo getFoodItems() {
+		return this.foodItems;
+	}
+
+	public void setFoodItems(final YesNo foodItems) {
+		this.foodItems = foodItems;
 	}
 }
