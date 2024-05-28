@@ -178,6 +178,8 @@ public class SampleEditForm extends AbstractSampleForm {
 				case MEASLES:
 					SELECTED_LAYOUT = loc(LABORATORY_SAMPLE_HEADING_LOC) + MEASLES_LAYOUT;
 					break;
+				case CHOLERA:
+					return CHOLERA_HTML_LAYOUT;
 				default:
 					SELECTED_LAYOUT = HTML_LAYOUT;
 					break;

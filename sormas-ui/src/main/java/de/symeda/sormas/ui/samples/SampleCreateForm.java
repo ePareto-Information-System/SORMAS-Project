@@ -45,6 +45,8 @@ public class SampleCreateForm extends AbstractSampleForm {
 				case MEASLES:
 					SELECTED_LAYOUT = MEASLES_LAYOUT;
 					break;
+				case CHOLERA:
+					return CHOLERA_HTML_LAYOUT;
 				default:
 					SELECTED_LAYOUT = SAMPLE_COMMON_HTML_LAYOUT;
 					break;
