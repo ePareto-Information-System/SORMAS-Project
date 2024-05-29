@@ -1550,6 +1550,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
         }
 
+			outcome.setVisible(false);
+
 
         addField(CaseDataDto.DELETION_REASON);
         addField(CaseDataDto.OTHER_DELETION_REASON, TextArea.class).setRows(3);
