@@ -13537,6 +13537,11 @@ ALTER TABLE pathogentest ADD COLUMN sampletestresultimmunodate DATE;
 INSERT INTO schema_version (version_number, comment) VALUES (605, 'added columns for AHF fields at pathogentest');
 
 ALTER TABLE samples ADD COLUMN containerother VARCHAR(255);
+ALTER TABLE pathogentest ALTER COLUMN testtype DROP NOT NULL;
+ALTER TABLE pathogentest ALTER COLUMN testresult DROP NOT NULL;
 
-INSERT INTO schema_version (version_number, comment) VALUES (606, 'added containerother for CSM field at sample');
+ALTER TABLE pathogentest_history ALTER COLUMN testtype DROP NOT NULL;
+ALTER TABLE pathogentest_history ALTER COLUMN testresult DROP NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (606, 'added containerother for CSM field at sample and made 3 columns nullable');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
