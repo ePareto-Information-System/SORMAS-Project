@@ -117,7 +117,7 @@ public class CaseDataView extends AbstractCaseView {
 		final EditPermissionType caseEditAllowed = FacadeProvider.getCaseFacade().getEditPermissionType(uuid);
 		boolean isEditAllowed = isEditAllowed();
 
-		if(disease != Disease.FOODBORNE_ILLNESS && disease != Disease.MONKEYPOX) {
+		if(disease != Disease.FOODBORNE_ILLNESS && disease != Disease.MONKEYPOX && disease != Disease.AHF) {
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.TASK_MANAGEMENT)
 					&& UserProvider.getCurrent().hasUserRight(UserRight.TASK_VIEW)) {
 				TaskListComponent taskList =
@@ -157,7 +157,7 @@ public class CaseDataView extends AbstractCaseView {
 				layout.addSidePanelComponent(eventLayout, EVENTS_LOC);
 			}
 		}
-		if (disease != Disease.CSM && disease != Disease.FOODBORNE_ILLNESS && disease != Disease.MONKEYPOX) {
+		if (disease != Disease.CSM && disease != Disease.FOODBORNE_ILLNESS && disease != Disease.MONKEYPOX && disease != Disease.AHF) {
 			if (UserProvider.getCurrent().hasUserRight(UserRight.IMMUNIZATION_VIEW)
 					&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.IMMUNIZATION_MANAGEMENT)) {
 				if (!FacadeProvider.getFeatureConfigurationFacade()
