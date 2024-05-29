@@ -323,13 +323,34 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		addField(PathogenTestDto.EXTERNAL_ID);
 		addField(PathogenTestDto.EXTERNAL_ORDER_ID);
 
-		testTypeField = addField(PathogenTestDto.TEST_TYPE, ComboBox.class);
-		testTypeField.setItemCaptionMode(ItemCaptionMode.ID_TOSTRING);
-		testTypeField.setImmediate(true);
-
 		addField(PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, NullableOptionGroup.class);
 		addFields(PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
 		setVisible(false, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
+
+
+	/*	testTypeField = ComboBoxHelper.createComboBoxV7();
+
+		for(PathogenTestType pathogenTestType : PathogenTestType.DISEASE_TESTS){
+			testTypeField.addItem(pathogenTestType);
+			testTypeField.setCaption("Test Type");
+		}
+
+		getContent().addComponent(testTypeField, PathogenTestDto.TEST_TYPE);*/
+		ComboBox testBox = new ComboBox("Sex");
+
+		if(caseDisease == Disease.AHF){
+			for (PathogenTestType test : PathogenTestType.values()) {
+				if (test == PathogenTestType.IGG_SERUM_ANTIBODY || test == PathogenTestType.IGM_SERUM_ANTIBODY || test == PathogenTestType.PCR_RT_PCR) {
+					testBox.addItem(test);
+				}
+			}
+			addField(PathogenTestDto.TEST_TYPE, testBox);
+		}
+		else {
+			testTypeField = addField(PathogenTestDto.TEST_TYPE, ComboBox.class);
+			testTypeField.setItemCaptionMode(ItemCaptionMode.ID_TOSTRING);
+			testTypeField.setImmediate(true);
+		}
 
 		pcrTestSpecification = addField(PathogenTestDto.PCR_TEST_SPECIFICATION, ComboBox.class);
 		testTypeTextField = addField(PathogenTestDto.TEST_TYPE_TEXT, TextField.class);
@@ -585,9 +606,13 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 				virusDetectionGenotypeField.setVisible(true);
-			}
+			} else if (disease == Disease.CHOLERA) {
+				List<PathogenTestType> choleraPathogenTests = PathogenTestType.getCholeraPathogenTests();
+				Arrays.stream(PathogenTestType.values())
+						.filter(pathogenTestType -> !choleraPathogenTests.contains(pathogenTestType))
+						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 
-			else if (Disease.AHF_DISEASES.contains(disease)) {
+			} else if (Disease.AHF_DISEASES.contains(disease)) {
 				List<PathogenTestType> ahfMeaselesPathogenTests = PathogenTestType.getMeaslesTestTypes();
 				Arrays.stream(PathogenTestType.values())
 						.filter(pathogenTestType -> !ahfMeaselesPathogenTests.contains(pathogenTestType))

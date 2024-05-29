@@ -103,7 +103,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private NullableOptionGroup hasSampleBeenCollected;
 	private DateTimeField laboratorySampleDateReceived;
 	OptionGroup sampleTestsField;
-	OptionGroup requestedPathogenTestsField;
 	OptionGroup requestedSampleMaterialsField;
 	OptionGroup influenzaOroNasoSelection;
 	private ComboBox testResultField;
@@ -130,6 +129,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private TextField personCompletingForm;
 	private ComboBox ipsampleResults;
 	private OptionGroup ipSampleSent;
+	OptionGroup requestedPathogenTestsField;
 
 	//@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
