@@ -1082,6 +1082,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	public void handleCholera() {
 		List<SampleMaterial> choleraSampleMaterials = Arrays.asList(SampleMaterial.getCholeraMateriealTypes());
 		FieldHelper.updateEnumData(sampleMaterialComboBox, choleraSampleMaterials);
+
+		List<PathogenTestType> choleraPathogenTests = PathogenTestType.getCholeraPathogenTests();
+		Arrays.stream(PathogenTestType.values())
+				.filter(pathogenTestType -> !choleraPathogenTests.contains(pathogenTestType))
+				.forEach(pathogenTestType -> requestedPathogenTestsField.removeItem(pathogenTestType));
+
 	}
 
 	private void handleAFP() {

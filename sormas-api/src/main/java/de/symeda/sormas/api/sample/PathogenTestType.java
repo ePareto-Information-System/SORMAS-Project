@@ -62,10 +62,9 @@ public enum PathogenTestType {
 	DNA_MICROARRAY,
 	CYTOLOGY,
 	LATEX,
-	RDT,
 	PCR,
 	IMMUNO,
-
+	RDT,
 	OTHER;
 
 	public static final List<PathogenTestType> DISEASE_TESTS = Arrays.asList(
@@ -73,6 +72,10 @@ public enum PathogenTestType {
 			IGG_SERUM_ANTIBODY,
 			PCR_RT_PCR
 	);
+
+	public static List<PathogenTestType> getCholeraPathogenTests() {
+		return  Arrays.asList(CULTURE, RDT, GRAM_STAIN, PCR_RT_PCR);
+	}
 
 	@Override
 	public String toString() {
