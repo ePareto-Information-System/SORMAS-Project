@@ -340,6 +340,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	protected void addCommonFields() {
 
+		disease = getCaseDisease();
+
 //	-- dateSurveillanceSentResultsToDistrict, dateFormSentToHigherLevel, personCompletingForm
 		dateSurveillanceSentResultsToDistrict = addField(SampleDto.DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT, DateField.class);
 		dateFormSentToHigherLevel = addField(SampleDto.DATE_FORM_SENT_TO_HIGHER_LEVEL, DateField.class);
@@ -708,6 +710,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					break;
 				case GUINEA_WORM:
 					handleGuineaWorm();
+				case CHOLERA:
+					handleCholera();
 					break;
 				default:
 			}
@@ -1073,6 +1077,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		laboratorySampleDateReceived.setInvalidCommitted(false);
 
 		laboratorySampleContainerOther.setVisible(false);
+	}
+
+	public void handleCholera() {
+		List<SampleMaterial> choleraSampleMaterials = Arrays.asList(SampleMaterial.getCholeraMateriealTypes());
+		FieldHelper.updateEnumData(sampleMaterialComboBox, choleraSampleMaterials);
 	}
 
 	private void handleAFP() {
