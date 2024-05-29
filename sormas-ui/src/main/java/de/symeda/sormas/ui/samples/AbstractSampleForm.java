@@ -93,6 +93,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	protected SampleDispatchMode sampleDispatchMode = SampleDispatchMode.REGIONAL_COLDROOM;
 	private DateTimeField sampleDateField;
 	private DateTimeField laboratorySampleDateReceived;
+	OptionGroup requestedPathogenTestsField;
 
 	//@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
@@ -560,7 +561,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		additionalTestingRequestedField.addValueChangeListener(e -> updateRequestedTestFields());
 
 		// CheckBox groups to select the requested pathogen/additional tests
-		OptionGroup requestedPathogenTestsField = addField(SampleDto.REQUESTED_PATHOGEN_TESTS, OptionGroup.class);
+		requestedPathogenTestsField = addField(SampleDto.REQUESTED_PATHOGEN_TESTS, OptionGroup.class);
 		CssStyles.style(requestedPathogenTestsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
 		requestedPathogenTestsField.setMultiSelect(true);
 		requestedPathogenTestsField.addItems(
@@ -893,6 +894,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	public void handleCholera() {
 		List<SampleMaterial> choleraSampleMaterials = Arrays.asList(SampleMaterial.getCholeraMateriealTypes());
 		FieldHelper.updateEnumData(sampleMaterialComboBox, choleraSampleMaterials);
+
+		List<PathogenTestType> choleraPathogenTests = PathogenTestType.getCholeraPathogenTests();
+		Arrays.stream(PathogenTestType.values())
+				.filter(pathogenTestType -> !choleraPathogenTests.contains(pathogenTestType))
+				.forEach(pathogenTestType -> requestedPathogenTestsField.removeItem(pathogenTestType));
+
 	}
 
 	private void handleAFP() {

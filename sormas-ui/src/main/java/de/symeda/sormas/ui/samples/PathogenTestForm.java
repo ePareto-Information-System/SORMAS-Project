@@ -188,6 +188,10 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 		if (caseDisease == Disease.CHOLERA) {
 			setVisible(true, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
+			List<PathogenTestType> choleraPathogenTests = PathogenTestType.getCholeraPathogenTests();
+			Arrays.stream(PathogenTestType.values())
+					.filter(pathogenTestType -> !choleraPathogenTests.contains(pathogenTestType))
+					.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 
 		}
 
