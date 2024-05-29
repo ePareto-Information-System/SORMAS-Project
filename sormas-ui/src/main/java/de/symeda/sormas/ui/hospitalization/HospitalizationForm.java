@@ -76,7 +76,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					fluidRowLocs(HEALTH_FACILITY, HEALTH_FACILITY_DISTRICT, HospitalizationDto.HOSPITAL_RECORD_NUMBER) +
 			fluidRowLocs(6,HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
 					fluidRowLocs(6,HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW) +
-					fluidRowLocs(HospitalizationDto.RECEPTION_DATE,HospitalizationDto.MEMBER_FAMILY_HELPING_PATIENT) +
+					fluidRowLocs(6,HospitalizationDto.MEMBER_FAMILY_HELPING_PATIENT) +
 					fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.DATE_OF_DEATH) +
 					fluidRowLocs(6,HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY) +
 					fluidRowLocs(6,HospitalizationDto.SELECT_INPATIENT_OUTPATIENT) +

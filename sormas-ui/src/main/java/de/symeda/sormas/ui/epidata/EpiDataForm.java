@@ -156,7 +156,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					fluidRowLocs(EpiDataDto.PATIENT_ATTEND_FUNERAL_CEREMONIES) +
 					fluidRowLocs(EpiDataDto.PATIENT_TRAVEL_ANYTIME_PERIOD_BEFORE_ILL, EpiDataDto.IF_TRAVEL_YES_WHERE) +
 					fluidRowLocs(EpiDataDto.IF_TRAVEL_START_DATE, EpiDataDto.IF_YES_END_DATE) +
-					fluidRowLocs(EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT, EpiDataDto.SUSPECT_NAME, EpiDataDto.ID_CASE) +
+					fluidRowLocs(6,EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT) +
+					fluidRowLocs(EpiDataDto.SUSPECT_NAME, EpiDataDto.ID_CASE) +
 					fluidRowLocs(EpiDataDto.DURING_CONTACT_SUSPECT_CASE, EpiDataDto.DATE_OF_DEATH) +
 					fluidRowLocs(6,EpiDataDto.DATE_OF_LAST_CONTACT_WITH_SUSPECT_CASE);
 
@@ -519,13 +520,15 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			ifYesEndDate.setVisible(false);
 			suspectName.setVisible(false);
 			idCase.setVisible(false);
+			whenWhereContactTakePlace.setVisible(false);
+			dateOfContact.setVisible(false);
 
 			contactDeadWildAnimals.setVisible(true);
 
 			FieldHelper.setVisibleWhen(contactDeadWildAnimals, Arrays.asList(ifYesSpecifyDeadWild, ifYesWildAnimalLocation, ifYesWildAnimalDate), Arrays.asList(YesNo.YES), true);
 			FieldHelper.setVisibleWhen(duringContactSuspectCase, Arrays.asList(dateOfDeath), Arrays.asList(CaseOutcome.DECEASED), true);
 			FieldHelper.setVisibleWhen(wasPatientHospitalized, Arrays.asList(ifYesWhere, hospitalizedDate1,hospitalizedDate2), Arrays.asList(YesNo.YES), true);
-			FieldHelper.setVisibleWhen(didPatientConsultHealer, Arrays.asList(ifYesNameHealer,community,country), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(didPatientConsultHealer, Arrays.asList(ifYesNameHealer,community,country, whenWhereContactTakePlace, dateOfContact), Arrays.asList(YesNo.YES), true);
 			FieldHelper.setVisibleWhen(patientTravelAnytimePeriodBeforeIll, Arrays.asList(ifTravelYesWhere,ifTravelStartDate, ifYesEndDate), Arrays.asList(YesNo.YES), true);
 			FieldHelper.setVisibleWhen(patientContactKnownSuspect, Arrays.asList(suspectName,idCase), Arrays.asList(YesNo.YES), true);
 		}
