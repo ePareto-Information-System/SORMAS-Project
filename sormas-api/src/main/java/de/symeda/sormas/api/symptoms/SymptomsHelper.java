@@ -361,6 +361,8 @@ public final class SymptomsHelper {
 		appendYesSymptom(string, symptomsDto.getFever(), SymptomsDto.FEVER);
 		appendYesSymptom(string, symptomsDto.getVomiting(), SymptomsDto.VOMITING);
 		appendYesSymptom(string, symptomsDto.getDiarrhea(), SymptomsDto.DIARRHEA);
+		appendYesSymptom(string, symptomsDto.getDifficultySwallow(), SymptomsDto.DIFFICULTY_SWALLOWING);
+		appendYesSymptom(string, symptomsDto.getSkinRashNew(), SymptomsDto.SKIN_RASH_NEW);
 		appendYesSymptom(string, symptomsDto.getBloodInStool(), SymptomsDto.BLOOD_IN_STOOL);
 		appendYesSymptom(string, symptomsDto.getNausea(), SymptomsDto.NAUSEA);
 		appendYesSymptom(string, symptomsDto.getAbdominalPain(), SymptomsDto.ABDOMINAL_PAIN);

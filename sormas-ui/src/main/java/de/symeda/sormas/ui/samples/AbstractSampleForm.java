@@ -92,6 +92,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private TextField labSampleId;
 	protected SampleDispatchMode sampleDispatchMode = SampleDispatchMode.REGIONAL_COLDROOM;
 	private DateTimeField sampleDateField;
+	private NullableOptionGroup hasSampleBeenCollected;
 	private DateTimeField laboratorySampleDateReceived;
 	OptionGroup sampleTestsField;
 	OptionGroup requestedPathogenTestsField;
@@ -120,6 +121,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
             fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
                     fluidRowLocs(SampleDto.CSF_SAMPLE_COLLECTED) +
                     fluidRowLocs(SampleDto.CSF_REASON) +
+					fluidRowLocs(6, SampleDto.HAS_SAMPLE_BEEN_COLLECTED) +
 					fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
                     fluidRowLocs(SampleDto.APPEARANCE_OF_CSF) +
                     fluidRowLocs(6,SampleDto.INOCULATION_TIME_TRANSPORT_MEDIA) +
@@ -270,11 +272,13 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		samplePurpose.addValueChangeListener(e -> updateRequestedTestFields());
 		labSampleId = addField(SampleDto.LAB_SAMPLE_ID, TextField.class);
 		labSampleId.setVisible(false);
+		hasSampleBeenCollected = addField(SampleDto.HAS_SAMPLE_BEEN_COLLECTED, NullableOptionGroup.class);
 		sampleDateField = addField(SampleDto.SAMPLE_DATE_TIME, DateTimeField.class);
 		sampleDateField.setInvalidCommitted(false);
 		sampleDateField.addStyleName("v-caption-hasdescription-sampledatetimeidsr");
 		suspectedDisease = addField(SampleDto.SUSPECTED_DISEASE);
 		dateLabReceivedSpecimen = addField(SampleDto.DATE_LAB_RECEIVED_SPECIMEN);
+		hasSampleBeenCollected.setVisible(false);
 
 		ComboBox diseaseBox = new ComboBox("Diseases");
 
@@ -788,7 +792,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		handleDisease(Disease.DENGUE, "NMIMR");
 		handleDisease(Disease.AFP, "NMIMR");
 		handleDisease(Disease.NEW_INFLUENZA, "NMIMR");
-		handleDiseaseField(Disease.NEW_INFLUENZA, Disease.CSM, Disease.SARI, Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS);
+		handleDiseaseField(Disease.NEW_INFLUENZA, Disease.CSM, Disease.SARI, Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, Disease.AHF);
 
 		if (getValue() != null && canOnlyReadRequests) {
 			CssLayout requestedPathogenTestsLayout = new CssLayout();
@@ -979,10 +983,14 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateFormReceivedAtDistrict.setVisible(false);
 		dateResultsSentToClinician.setVisible(false);
 		dateSpecimenSentToLab.setVisible(false);
+		sampleDateField.setVisible(false);
 
 		diseaseField.setVisible(true);
 		List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.PLASMA_SERUM, SampleMaterial.SALIVA, SampleMaterial.URINE, SampleMaterial.BIOPSY, SampleMaterial.CARDIAC, SampleMaterial.BLOOD_ANTI_COAGULANT, SampleMaterial.OTHER);
 		FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
+
+		hasSampleBeenCollected.setVisible(true);
+		FieldHelper.setVisibleWhen(hasSampleBeenCollected, Arrays.asList(sampleDateField), Arrays.asList(YesNo.YES), true);
 
 	}
 

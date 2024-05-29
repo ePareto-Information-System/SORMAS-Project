@@ -176,6 +176,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private Sex sex;
 
 	private PresentCondition presentCondition;
+	private String nationality;
 	private Integer birthdateDD;
 	private Integer birthdateMM;
 	private Integer birthdateYYYY;
@@ -429,6 +430,15 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	public void setPresentCondition(PresentCondition presentCondition) {
 		this.presentCondition = presentCondition;
 	}
+
+	public String getNationality() {
+		return nationality;
+	}
+
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
+
 
 	@Temporal(TemporalType.DATE)
 	public Date getDeathDate() {

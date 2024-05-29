@@ -1576,12 +1576,14 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				setVaccinationHelperVisibility();
 			}
 
-			//AHF
-			if (disease == Disease.AHF) {
-				setVisible(true, CaseDataDto.POSTPARTUM, CaseDataDto.PREGNANT, CaseDataDto.NOTIFIED_BY_LIST);
+            //AHF
+            	if (disease == Disease.AHF) {
+				setVisible(true, CaseDataDto.NOTIFIED_BY_LIST);
                 addField(CaseDataDto.MOBILE_TEAM_NO);
                 addField(CaseDataDto.INFORMATION_GIVEN_BY);
                 addField(CaseDataDto.FAMILY_LINK_WITH_PATIENT);
+
+                medicalInformationCaptionLabel.setVisible(false);
 			}
 
 			//AFP

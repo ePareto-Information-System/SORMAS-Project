@@ -66,6 +66,7 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String SALUTATION = "salutation";
 	public static final String OTHER_SALUTATION = "otherSalutation";
 	public static final String PRESENT_CONDITION = "presentCondition";
+	public static final String NATIONALITY = "nationality";
 	public static final String HOME_ADDRESS_RECREATIONAL = "homeAddressRecreational";
 	public static final String CASE_ORIGIN = "caseOrigin";
 	public static final String BIRTH_DATE = "birthdate";
@@ -277,6 +278,7 @@ public class PersonDto extends PseudonymizableDto {
 
 	@Outbreaks
 	private PresentCondition presentCondition;
+	private String nationality;
 
 	@Outbreaks
 	private CaseOrigin caseOrigin;
@@ -612,6 +614,14 @@ public class PersonDto extends PseudonymizableDto {
 
 	public void setPresentCondition(PresentCondition presentCondition) {
 		this.presentCondition = presentCondition;
+	}
+
+	public String getNationality() {
+		return nationality;
+	}
+
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
 	}
 
 	public CaseOrigin getCaseOrigin() {return caseOrigin;}
@@ -1345,14 +1355,6 @@ public class PersonDto extends PseudonymizableDto {
 
 	public void setTelNumber(String telNumber) {
 		this.telNumber = telNumber;
-	}
-
-	public String getEthnicity() {
-		return ethnicity;
-	}
-
-	public void setEthnicity(String ethnicity) {
-		this.ethnicity = ethnicity;
 	}
 
 	public String getHeadHouseHold() {

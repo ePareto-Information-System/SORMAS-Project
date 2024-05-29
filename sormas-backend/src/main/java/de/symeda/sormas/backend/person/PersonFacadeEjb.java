@@ -274,6 +274,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 
 		target.setPresentCondition(source.getPresentCondition());
 		target.setMaritalStatus(source.getMaritalStatus());
+		target.setNationality(source.getNationality());
 		target.setTelNumber(source.getTelNumber());
 		target.setApplicable(source.getApplicable());
 		target.setBirthdateDD(source.getBirthdateDD());
@@ -1043,7 +1044,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setSex(source.getSex());
 
 		target.setPresentCondition(source.getPresentCondition());
-//		target.setMarriageStatus(source.getMarriageStatus());
+		target.setNationality(source.getNationality());
 		target.setBirthdateDD(source.getBirthdateDD());
 		target.setBirthdateMM(source.getBirthdateMM());
 		target.setBirthdateYYYY(source.getBirthdateYYYY());
@@ -1880,6 +1881,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setSex(source.getSex());
 
 		target.setPresentCondition(source.getPresentCondition());
+		target.setNationality(source.getNationality());
 		target.setBirthdateDD(source.getBirthdateDD());
 		target.setBirthdateMM(source.getBirthdateMM());
 		target.setBirthdateYYYY(source.getBirthdateYYYY());

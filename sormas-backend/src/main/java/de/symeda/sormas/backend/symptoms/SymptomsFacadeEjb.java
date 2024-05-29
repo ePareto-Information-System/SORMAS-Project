@@ -48,6 +48,8 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setCoughingBlood(source.getCoughingBlood());
 		target.setDehydration(source.getDehydration());
 		target.setDiarrhea(source.getDiarrhea());
+		target.setDifficultySwallow(source.getDifficultySwallow());
+		target.setSkinRashNew(source.getSkinRashNew());
 		target.setDifficultyBreathing(source.getDifficultyBreathing());
 		target.setDigestedBloodVomit(source.getDigestedBloodVomit());
 		target.setEyePainLightSensitive(source.getEyePainLightSensitive());
@@ -286,6 +288,8 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setCoughingBlood(source.getCoughingBlood());
 		target.setDehydration(source.getDehydration());
 		target.setDiarrhea(source.getDiarrhea());
+		target.setDifficultySwallow(source.getDifficultySwallow());
+		target.setSkinRashNew(source.getSkinRashNew());
 		target.setDifficultyBreathing(source.getDifficultyBreathing());
 		target.setDigestedBloodVomit(source.getDigestedBloodVomit());
 		target.setEyePainLightSensitive(source.getEyePainLightSensitive());
@@ -521,6 +525,8 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setCoughingBlood(source.getCoughingBlood());
 		target.setDehydration(source.getDehydration());
 		target.setDiarrhea(source.getDiarrhea());
+		target.setDifficultySwallow(source.getDifficultySwallow());
+		target.setSkinRashNew(source.getSkinRashNew());
 		target.setDifficultyBreathing(source.getDifficultyBreathing());
 		target.setDigestedBloodVomit(source.getDigestedBloodVomit());
 		target.setEyePainLightSensitive(source.getEyePainLightSensitive());

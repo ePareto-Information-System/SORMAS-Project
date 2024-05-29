@@ -314,6 +314,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		mothername = addField(PersonDto.MOTHERS_NAME);
 		addFields(PersonDto.NAMES_OF_GUARDIANS);
 		ComboBox presentCondition = addField(PersonDto.PRESENT_CONDITION, ComboBox.class);
+		TextField nationality = addField(PersonDto.NATIONALITY, TextField.class);
+		nationality.setVisible(false);
 		birthDateDay = addField(PersonDto.BIRTH_DATE_DD, ComboBox.class);
 		// @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
 		birthDateDay.setNullSelectionAllowed(true);
@@ -683,7 +685,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			getContent().addComponent(healthStaffDetailsLabel, HEALTH_STAFF_DETAILS_LOC);
 
 			addField(PersonDto.HEAD_HOUSEHOLD, TextField.class);
-			addField(PersonDto.ETHNICITY, TextField.class);
+			ethnicityField.setVisible(true);
+			nationality.setVisible(true);
+			ethnicityField.setCaption("Ethnic group");
 
 			tickProfession = addField(PersonDto.PROFESSION_OF_PATIENT, OptionGroup.class);
 			CssStyles.style(tickProfession, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);

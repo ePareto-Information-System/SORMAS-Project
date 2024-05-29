@@ -2094,6 +2094,7 @@ public interface Captions {
 	String Person_investigatorTel = "Person.investigatorTel";
 	String Person_telNumber = "Person.telNumber";
 	String Person_headHouseHold = "Person.headHouseHold";
+	String Person_nationality = "Person.nationality";
 	String Person_professionOfPatient = "Person.professionOfPatient";
 	String Person_professionOfPatientOther = "Person.professionOfPatientOther";
 	String Person_nameHealthFacility = "Person.nameHealthFacility";
@@ -2258,6 +2259,7 @@ public interface Captions {
 	String Sample_sampleCode = "Sample.sampleCode";
 	String Sample_sampleDateTime = "Sample.sampleDateTime";
 	String Sample_sampleMaterial = "Sample.sampleMaterial";
+	String Sample_hasSampleBeenCollected = "Sample.hasSampleBeenCollected";
 	String Sample_sampleMaterialText = "Sample.sampleMaterialText";
 	String Sample_suspectedDisease = "Sample.suspectedDisease";
 	String Sample_dateLabReceivedSpecimen = "Sample.dateLabReceivedSpecimen";
@@ -2743,6 +2745,8 @@ public interface Captions {
 	String Symptoms_delirium = "Symptoms.delirium";
 	String Symptoms_developmentalDelay = "Symptoms.developmentalDelay";
 	String Symptoms_diarrhea = "Symptoms.diarrhea";
+	String Symptoms_difficultySwallow = "Symptoms.difficultySwallow";
+	String Symptoms_skinRashNew = "Symptoms.skinRashNew";
 	String Symptoms_difficultyBreathing = "Symptoms.difficultyBreathing";
 	String Symptoms_digestedBloodVomit = "Symptoms.digestedBloodVomit";
 	String Symptoms_dizzinessStandingUp = "Symptoms.dizzinessStandingUp";

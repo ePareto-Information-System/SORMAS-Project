@@ -13447,7 +13447,6 @@ ALTER TABLE cases ADD COLUMN familylinkwithpatient VARCHAR(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (600, 'Added mobileteamno to cases table');
 
-ALTER TABLE person ADD COLUMN ethnicity VARCHAR(255);
 ALTER TABLE person ADD COLUMN headhousehold VARCHAR(255);
 ALTER TABLE person ADD COLUMN professionofpatientstring VARCHAR(512);
 ALTER TABLE person ADD COLUMN professionofpatientother VARCHAR(255);
@@ -13456,7 +13455,6 @@ ALTER TABLE person ADD COLUMN service VARCHAR(255);
 ALTER TABLE person ADD COLUMN qualification VARCHAR(255);
 ALTER TABLE person ADD COLUMN nameofvillagepersongotIll VARCHAR(255);
 
-ALTER TABLE person_history ADD COLUMN ethnicity VARCHAR(255);
 ALTER TABLE person_history ADD COLUMN headhousehold VARCHAR(255);
 ALTER TABLE person_history ADD COLUMN professionofpatientstring VARCHAR(512);
 ALTER TABLE person_history ADD COLUMN professionofpatientother VARCHAR(255);
@@ -13520,7 +13518,7 @@ ALTER TABLE hospitalization ADD COLUMN receptiondate DATE;
 ALTER TABLE hospitalization ADD COLUMN memberfamilyhelpingpatient VARCHAR(255);
 ALTER TABLE hospitalization ADD COLUMN dateofdeath DATE;
 
-INSERT INTO schema_version (version_number, comment) VALUES (604, 'added columns for AHF fields at hospitalization');
+INSERT INTO schema_version (version_number, comment) VALUES (660, 'added columns for AHF fields at hospitalization');
 
 ALTER TABLE pathogentest ADD COLUMN sampletestresultpcr VARCHAR(255);
 ALTER TABLE pathogentest ADD COLUMN sampletestsstring VARCHAR(255);
@@ -13534,7 +13532,7 @@ ALTER TABLE pathogentest ADD COLUMN sampletestresultiggdate DATE;
 ALTER TABLE pathogentest ADD COLUMN sampletestresultimmuno VARCHAR(255);
 ALTER TABLE pathogentest ADD COLUMN sampletestresultimmunodate DATE;
 
-INSERT INTO schema_version (version_number, comment) VALUES (605, 'added columns for AHF fields at pathogentest');
+INSERT INTO schema_version (version_number, comment) VALUES (604, 'added columns for AHF fields at pathogentest');
 
 ALTER TABLE samples ADD COLUMN containerother VARCHAR(255);
 ALTER TABLE pathogentest ALTER COLUMN testtype DROP NOT NULL;
@@ -13543,5 +13541,12 @@ ALTER TABLE pathogentest ALTER COLUMN testresult DROP NOT NULL;
 ALTER TABLE pathogentest_history ALTER COLUMN testtype DROP NOT NULL;
 ALTER TABLE pathogentest_history ALTER COLUMN testresult DROP NOT NULL;
 
-INSERT INTO schema_version (version_number, comment) VALUES (606, 'added containerother for CSM field at sample and made 3 columns nullable');
+INSERT INTO schema_version (version_number, comment) VALUES (605, 'added containerother for CSM field at sample and made 3 columns nullable');
+
+ALTER TABLE person ADD COLUMN nationality VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN difficultyswallow VARCHAR(255);
+ALTER TABLE samples ADD COLUMN hassamplebeencollected VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN skinrashnew VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (606, 'added nationality to persons and difficultyswallow to symptoms');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
