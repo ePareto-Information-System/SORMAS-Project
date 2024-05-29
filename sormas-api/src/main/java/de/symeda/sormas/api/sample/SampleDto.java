@@ -71,6 +71,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String SAMPLE_SENT_TO_LAB = "sampleSentToLab";
 	public static final String DATE_SAMPLE_SENT_TO_LAB = "dateSampleSentToLab";
 	public static final String SAMPLE_CONTAINER_USED = "sampleContainerUsed";
+	public static final String CONTAINER_OTHER = "containerOther";
 	public static final String RDT_PERFORMED = "rdtPerformed";
 	public static final String RDT_RESULTS = "rdtResults";
 	public static final String DISTRICT_NOTIFICATION_DATE = "districtNotificationDate";
@@ -287,6 +288,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private CsfReason csfReason;
 	private CsfAppearance appearanceOfCsf;
 	private SampleContainerUsed sampleContainerUsed;
+	private String containerOther;
 
 	private String rdtResults;
 	private String reasonNotSentToLab;
@@ -1052,6 +1054,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 		target.setDateLabReceivedSpecimen(source.getDateLabReceivedSpecimen());
 		target.setDateResultsSentToClinician(source.getDateResultsSentToClinician());
 		target.setDateSpecimenSentToLab(source.getDateSpecimenSentToLab());
+		target.setContainerOther(source.getContainerOther());
 
 
 
@@ -1710,4 +1713,11 @@ public class SampleDto extends SormasToSormasShareableDto {
 		this.dateSpecimenSentToLab = dateSpecimenSentToLab;
 	}
 
+	public String getContainerOther() {
+		return containerOther;
+	}
+
+	public void setContainerOther(String containerOther) {
+		this.containerOther = containerOther;
+	}
 }

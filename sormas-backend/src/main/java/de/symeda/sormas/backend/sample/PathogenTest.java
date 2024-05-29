@@ -20,18 +20,13 @@ package de.symeda.sormas.backend.sample;
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseClassification;
@@ -43,6 +38,7 @@ import de.symeda.sormas.backend.disease.DiseaseVariantConverter;
 import de.symeda.sormas.backend.infrastructure.country.Country;
 import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.user.User;
+import org.apache.commons.lang3.StringUtils;
 
 @Entity
 public class PathogenTest extends DeletableAdo {
@@ -170,6 +166,18 @@ public class PathogenTest extends DeletableAdo {
 	private String variantOtherSpecify;
 	private Disease secondTestedDisease;
 	private PathogenTestResultType testResultForSecondDisease;
+	private Set<PathogenTestType> sampleTests;
+	private PosNeg sampleTestResultPCR;
+	private Date sampleTestResultPCRDate;
+	private PosNeg sampleTestResultAntigen;
+	private Date sampleTestResultAntigenDate;
+	private PosNeg sampleTestResultIGM;
+	private Date sampleTestResultIGMDate;
+	private PosNeg sampleTestResultIGG;
+	private Date sampleTestResultIGGDate;
+	private PosNeg sampleTestResultImmuno;
+	private Date sampleTestResultImmunoDate;
+	private String sampleTestsString;
 
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -229,7 +237,7 @@ public class PathogenTest extends DeletableAdo {
 	}
 
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
+//	@Column(nullable = false)
 	public PathogenTestType getTestType() {
 		return testType;
 	}
@@ -296,7 +304,7 @@ public class PathogenTest extends DeletableAdo {
 	}
 
 	@Enumerated(EnumType.STRING)
-	@JoinColumn(nullable = false)
+//	@JoinColumn(nullable = false)
 	public PathogenTestResultType getTestResult() {
 		return testResult;
 	}
@@ -886,5 +894,123 @@ public class PathogenTest extends DeletableAdo {
 
 	public void setTestResultForSecondDisease(PathogenTestResultType testResultForSecondDisease) {
 		this.testResultForSecondDisease = testResultForSecondDisease;
+	}
+
+	@Transient
+	public Set<PathogenTestType> getSampleTests() {
+		if(sampleTests == null){
+			if (StringUtils.isEmpty(sampleTestsString)) {
+				sampleTests = new HashSet<>();
+			}else{
+				sampleTests = Arrays.stream(sampleTestsString.split(",")).map(PathogenTestType::valueOf).collect(Collectors.toSet());
+				}
+			}
+		return sampleTests;
+	}
+
+	public void setSampleTests(Set<PathogenTestType> sampleTests) {
+		this.sampleTests = sampleTests;
+
+		if(this.sampleTests == null){
+			return;
+		}
+		StringBuilder sb = new StringBuilder();
+		sampleTests.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		sampleTestsString = sb.toString();
+
+	}
+
+	public String getSampleTestsString() {
+		return sampleTestsString;
+	}
+
+	public void setSampleTestsString(String sampleTestsString) {
+		this.sampleTestsString = sampleTestsString;
+		sampleTests = null;
+	}
+	public PosNeg getSampleTestResultPCR() {
+		return sampleTestResultPCR;
+	}
+
+	public void setSampleTestResultPCR(PosNeg sampleTestResultPCR) {
+		this.sampleTestResultPCR = sampleTestResultPCR;
+	}
+
+	public Date getSampleTestResultPCRDate() {
+		return sampleTestResultPCRDate;
+	}
+
+	public void setSampleTestResultPCRDate(Date sampleTestResultPCRDate) {
+		this.sampleTestResultPCRDate = sampleTestResultPCRDate;
+	}
+
+	public PosNeg getSampleTestResultAntigen() {
+		return sampleTestResultAntigen;
+	}
+
+	public void setSampleTestResultAntigen(PosNeg sampleTestResultAntigen) {
+		this.sampleTestResultAntigen = sampleTestResultAntigen;
+	}
+
+	public Date getSampleTestResultAntigenDate() {
+		return sampleTestResultAntigenDate;
+	}
+
+	public void setSampleTestResultAntigenDate(Date sampleTestResultAntigenDate) {
+		this.sampleTestResultAntigenDate = sampleTestResultAntigenDate;
+	}
+
+	public PosNeg getSampleTestResultIGM() {
+		return sampleTestResultIGM;
+	}
+
+	public void setSampleTestResultIGM(PosNeg sampleTestResultIGM) {
+		this.sampleTestResultIGM = sampleTestResultIGM;
+	}
+
+	public Date getSampleTestResultIGMDate() {
+		return sampleTestResultIGMDate;
+	}
+
+	public void setSampleTestResultIGMDate(Date sampleTestResultIGMDate) {
+		this.sampleTestResultIGMDate = sampleTestResultIGMDate;
+	}
+
+	public PosNeg getSampleTestResultIGG() {
+		return sampleTestResultIGG;
+	}
+
+	public void setSampleTestResultIGG(PosNeg sampleTestResultIGG) {
+		this.sampleTestResultIGG = sampleTestResultIGG;
+	}
+
+	public Date getSampleTestResultIGGDate() {
+		return sampleTestResultIGGDate;
+	}
+
+	public void setSampleTestResultIGGDate(Date sampleTestResultIGGDate) {
+		this.sampleTestResultIGGDate = sampleTestResultIGGDate;
+	}
+
+	public PosNeg getSampleTestResultImmuno() {
+		return sampleTestResultImmuno;
+	}
+
+	public void setSampleTestResultImmuno(PosNeg sampleTestResultImmuno) {
+		this.sampleTestResultImmuno = sampleTestResultImmuno;
+	}
+
+	public Date getSampleTestResultImmunoDate() {
+		return sampleTestResultImmunoDate;
+	}
+
+	public void setSampleTestResultImmunoDate(Date sampleTestResultImmunoDate) {
+		this.sampleTestResultImmunoDate = sampleTestResultImmunoDate;
 	}
 }

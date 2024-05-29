@@ -958,6 +958,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setDateLabReceivedSpecimen(source.getDateLabReceivedSpecimen());
 		target.setDateResultsSentToClinician(source.getDateResultsSentToClinician());
 		target.setDateSpecimenSentToLab(source.getDateSpecimenSentToLab());
+		target.setContainerOther(source.getContainerOther());
 
 
 
@@ -1223,6 +1224,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setDateLabReceivedSpecimen(source.getDateLabReceivedSpecimen());
 		target.setDateResultsSentToClinician(source.getDateResultsSentToClinician());
 		target.setDateSpecimenSentToLab(source.getDateSpecimenSentToLab());
+		target.setContainerOther(source.getContainerOther());
 
 
 		return target;

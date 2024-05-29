@@ -332,6 +332,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private Date dateResultsSentToClinician;
 	private Date dateSpecimenSentToLab;
 	private Long pathogenTestCount;
+	private String containerOther;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -1668,5 +1669,13 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setDateSpecimenSentToLab(Date dateSpecimenSentToLab) {
 		this.dateSpecimenSentToLab = dateSpecimenSentToLab;
 	}
+	public String getContainerOther() {
+		return containerOther;
+	}
+
+	public void setContainerOther(String containerOther) {
+		this.containerOther = containerOther;
+	}
+
 
 }
