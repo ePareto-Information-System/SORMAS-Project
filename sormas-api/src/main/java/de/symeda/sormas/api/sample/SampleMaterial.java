@@ -71,7 +71,11 @@ public enum SampleMaterial {
 	SERUM,
 	POST_MORTEM_LIVER_SPECIMEN,
 	PLASMA_SERUM,
-	OTHER, OROPHARYNGEAL_SWAB;
+	OROPHARYNGEAL_SWAB,
+	VOMITUS,
+	WATER,
+	FOOD_ITEM,
+	OTHER;
 
 	public static SampleMaterial[] YF_TYPES() {
 		return new SampleMaterial[] { SampleMaterial.WHOLE_BLOOD, SampleMaterial.SERUM, SampleMaterial.POST_MORTEM_LIVER_SPECIMEN };
@@ -84,6 +88,11 @@ public enum SampleMaterial {
 	}
 	public static final List<SampleMaterial> YF_TYPES = Arrays.asList(
 			WHOLE_BLOOD, SERUM, POST_MORTEM_LIVER_SPECIMEN);
+
+
+	public static SampleMaterial[] getCholeraMateriealTypes() {
+		return new SampleMaterial[] { STOOL, VOMITUS, WATER, FOOD_ITEM, OTHER  };
+	}
 
 
 	public static String toString(SampleMaterial value, String details) {
