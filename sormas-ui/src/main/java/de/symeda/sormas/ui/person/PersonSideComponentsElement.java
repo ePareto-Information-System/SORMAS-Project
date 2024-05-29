@@ -178,30 +178,31 @@ public interface PersonSideComponentsElement {
 										isEditAllowed)),
 						TRAVEL_ENTRIES_LOC);
 			}
-
-			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.IMMUNIZATION_MANAGEMENT)
-					&& currentUser != null
-					&& currentUser.hasUserRight(UserRight.IMMUNIZATION_VIEW)) {
-				if (!FacadeProvider.getFeatureConfigurationFacade()
-						.isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
-					layout.addComponent(
-							new SideComponentLayout(
-									new ImmunizationListComponent(
-											() -> new ImmunizationListCriteria.Builder(person).build(),
-											entityType == CoreEntityType.IMMUNIZATION ? entityUuid : null,
-											showUnsavedChangesPopup,
-											isEditAllowed)),
-							IMMUNIZATION_LOC);
-				} else {
-					layout.addComponent(
-							new SideComponentLayout(
-									new VaccinationListComponent(
-											() -> new VaccinationCriteria.Builder(person).build(),
-											entityType == CoreEntityType.IMMUNIZATION ? entityUuid : null,
-											showUnsavedChangesPopup,
-											false,
-											isEditAllowed)),
-							VACCINATIONS_LOC);
+			if (personDataView != null && !personDataView.name().equals("AHF")) {
+				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.IMMUNIZATION_MANAGEMENT)
+						&& currentUser != null
+						&& currentUser.hasUserRight(UserRight.IMMUNIZATION_VIEW)) {
+					if (!FacadeProvider.getFeatureConfigurationFacade()
+							.isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
+						layout.addComponent(
+								new SideComponentLayout(
+										new ImmunizationListComponent(
+												() -> new ImmunizationListCriteria.Builder(person).build(),
+												entityType == CoreEntityType.IMMUNIZATION ? entityUuid : null,
+												showUnsavedChangesPopup,
+												isEditAllowed)),
+								IMMUNIZATION_LOC);
+					} else {
+						layout.addComponent(
+								new SideComponentLayout(
+										new VaccinationListComponent(
+												() -> new VaccinationCriteria.Builder(person).build(),
+												entityType == CoreEntityType.IMMUNIZATION ? entityUuid : null,
+												showUnsavedChangesPopup,
+												false,
+												isEditAllowed)),
+								VACCINATIONS_LOC);
+					}
 				}
 			}
 		}
