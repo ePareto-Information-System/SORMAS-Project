@@ -86,7 +86,6 @@ public enum SampleMaterial {
 	POST_MORTEM_LIVER_SPECIMEN,
 	GINGIVAL_FLUID,
 	PLASMA_SERUM,
-	OTHER,
 	ASPIRATE,
 	PUS,
 	BIOPSY,
@@ -94,7 +93,11 @@ public enum SampleMaterial {
 	FOOD_WATER,
 	BLOOD_ANTI_COAGULANT,
 	CARDIAC,
-	SWAB;
+	SWAB,
+	VOMITUS,
+	WATER,
+	FOOD_ITEM,
+	OTHER;
 
 	//getYellowFeverMateriealTypes
 	public static SampleMaterial[] getYellowFeverMateriealTypes() {
@@ -119,6 +122,11 @@ public enum SampleMaterial {
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);
 	}
+
+	public static SampleMaterial[] getCholeraMateriealTypes() {
+		return new SampleMaterial[] { STOOL, VOMITUS, WATER, FOOD_ITEM, OTHER  };
+	}
+
 
 	public static String toString(SampleMaterial value, String details) {
 
