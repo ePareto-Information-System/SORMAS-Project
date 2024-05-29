@@ -1547,8 +1547,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState generalizedRash;
 
 	@Diseases({
-			MEASLES,
-			AHF
+			MEASLES
 	})
 	@Outbreaks
 	@HideForCountries
