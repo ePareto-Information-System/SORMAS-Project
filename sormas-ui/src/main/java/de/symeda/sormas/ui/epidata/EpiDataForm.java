@@ -745,6 +745,11 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			ifYesNameHealer.setVisible(false);
 			community.setVisible(false);
 			country.setVisible(false);
+			ifTravelYesWhere.setVisible(false);
+			ifTravelStartDate.setVisible(false);
+			ifYesEndDate.setVisible(false);
+			suspectName.setVisible(false);
+			idCase.setVisible(false);
 
 			contactDeadWildAnimals.setVisible(true);
 
@@ -752,6 +757,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			FieldHelper.setVisibleWhen(duringContactSuspectCase, Arrays.asList(dateOfDeath), Arrays.asList(CaseOutcome.DECEASED), true);
 			FieldHelper.setVisibleWhen(wasPatientHospitalized, Arrays.asList(ifYesWhere, hospitalizedDate1,hospitalizedDate2), Arrays.asList(YesNo.YES), true);
 			FieldHelper.setVisibleWhen(didPatientConsultHealer, Arrays.asList(ifYesNameHealer,community,country), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(patientTravelAnytimePeriodBeforeIll, Arrays.asList(ifTravelYesWhere,ifTravelStartDate, ifYesEndDate), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(patientContactKnownSuspect, Arrays.asList(suspectName,idCase), Arrays.asList(YesNo.YES), true);
 		}
 
 	}

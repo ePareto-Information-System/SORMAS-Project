@@ -2052,6 +2052,17 @@ public interface Captions {
 	String PathogenTest_testResult = "PathogenTest.testResult";
 	String PathogenTest_testResultText = "PathogenTest.testResultText";
 	String PathogenTest_testResultVerified = "PathogenTest.testResultVerified";
+	String PathogenTest_sampleTests = "PathogenTest.sampleTests";
+	String PathogenTest_sampleTestResultPCR = "PathogenTest.sampleTestResultPCR";
+	String PathogenTest_sampleTestResultPCRDate = "PathogenTest.sampleTestResultPCRDate";
+	String PathogenTest_sampleTestResultAntigen = "PathogenTest.sampleTestResultAntigen";
+	String PathogenTest_sampleTestResultAntigenDate = "PathogenTest.sampleTestResultAntigenDate";
+	String PathogenTest_sampleTestResultIGM = "PathogenTest.sampleTestResultIGM";
+	String PathogenTest_sampleTestResultIGMDate = "PathogenTest.sampleTestResultIGMDate";
+	String PathogenTest_sampleTestResultIGG = "PathogenTest.sampleTestResultIGG";
+	String PathogenTest_sampleTestResultIGGDate = "PathogenTest.sampleTestResultIGGDate";
+	String PathogenTest_sampleTestResultImmuno = "PathogenTest.sampleTestResultImmuno";
+	String PathogenTest_sampleTestResultImmunoDate = "PathogenTest.sampleTestResultImmunoDate";
 
 	String PathogenTest_variantOtherSpecify = "PathogenTest.variantOtherSpecify";
 	String PathogenTest_testResultVariant = "PathogenTest.testResultVariant";
@@ -2439,6 +2450,7 @@ public interface Captions {
 	String Sample_csfReason = "Sample.csfReason";
 	String Sample_appearanceOfCsf = "Sample.appearanceOfCsf";
 	String Sample_sampleContainerUsed = "Sample.sampleContainerUsed";
+	String Sample_containerOther = "Sample.containerOther";
 
 	String Sample_rdtResults = "Sample.rdtResults";
 	String Sample_reasonNotSentToLab = "Sample.reasonNotSentToLab";

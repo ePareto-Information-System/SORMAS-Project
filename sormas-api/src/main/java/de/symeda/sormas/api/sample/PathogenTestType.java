@@ -19,7 +19,6 @@ package de.symeda.sormas.api.sample;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.Diseases;
 
@@ -64,6 +63,9 @@ public enum PathogenTestType {
 	CYTOLOGY,
 	LATEX,
 	RDT,
+	PCR,
+	IMMUNO,
+
 	OTHER;
 
 	public static final List<PathogenTestType> DISEASE_TESTS = Arrays.asList(
@@ -98,6 +100,12 @@ public enum PathogenTestType {
 	}
 	public static List<PathogenTestType> getILITestTypes() {
 		return  Arrays.asList(PCR_RT_PCR, OTHER);
+	}
+
+	public static PathogenTestType[] getAHFTestTypes() {
+		return new PathogenTestType[] {
+				PCR,ANTIGEN_DETECTION, IGM_SERUM_ANTIBODY, IGG_SERUM_ANTIBODY, IMMUNO
+		};
 	}
 
 }

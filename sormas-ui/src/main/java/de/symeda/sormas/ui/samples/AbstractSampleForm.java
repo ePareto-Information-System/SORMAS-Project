@@ -142,7 +142,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     fluidRowLocs(SampleDto.SAMPLE_SENT_TO_LAB, SampleDto.REASON_NOT_SENT_TO_LAB) +
                     fluidRowLocs(6,SampleDto.DATE_SAMPLE_SENT_TO_LAB) +
                     fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS, SampleDto.LAB_LOCATION) +
-                    fluidRowLocs(SampleDto.SAMPLE_CONTAINER_USED) +
+                    fluidRowLocs(SampleDto.SAMPLE_CONTAINER_USED, SampleDto.CONTAINER_OTHER) +
                     fluidRowLocs(SampleDto.RDT_PERFORMED, SampleDto.RDT_RESULTS) +
                     fluidRowLocs(SampleDto.DISTRICT_NOTIFICATION_DATE, SampleDto.NAME_OF_PERSON, SampleDto.TEL_NUMBER) +
                     fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT) +
@@ -458,7 +458,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				SampleDto.FREQUENCY_OF_CHANGING_FILTERS,
 				SampleDto.REMARKS);
 
-		diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
+		/*diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
 			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
 
 			switch(disease){
@@ -474,7 +474,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				case MEASLES:
 					handleMeasles();
             }
-		});
+		});*/
 	}
 
 	protected void defaultValueChangeListener() {
@@ -600,9 +600,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			getContent().addComponent(referredButton);
 		}
 		if (disease == Disease.CSM) {
+			laboratorySampleContainerOther.setVisible(false);
 		FieldHelper.setVisibleWhen(
                 getFieldGroup(),
-                Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION, SampleDto.LABORATORY_NUMBER, SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER, SampleDto.LABORATORY_APPEARANCE_OF_CSF),
+                Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION, SampleDto.LABORATORY_NUMBER, SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_APPEARANCE_OF_CSF),
                 SampleDto.RECEIVED,
                 Arrays.asList(true),
                 true);
@@ -610,8 +611,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                 getFieldGroup(),
                 receivedField,
                 Arrays.asList(true),
-                Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION, SampleDto.LABORATORY_NUMBER, SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER, SampleDto.LABORATORY_APPEARANCE_OF_CSF),
+                Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION, SampleDto.LABORATORY_NUMBER, SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_APPEARANCE_OF_CSF),
                 true);
+			FieldHelper.setVisibleWhen(laboratorySampleContainerReceived, Arrays.asList(laboratorySampleContainerOther), Arrays.asList(SampleContainerUsed.OTHER), true);
 		}
 		 else if (disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
 			FieldHelper.setVisibleWhen(
@@ -993,6 +995,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		OptionGroup sampleSentToLab = addField(SampleDto.SAMPLE_SENT_TO_LAB, OptionGroup.class);
 		TextField reasonNotSent = addField(SampleDto.REASON_NOT_SENT_TO_LAB, TextField.class);
 		NullableOptionGroup sampleContainerUsed = addField(SampleDto.SAMPLE_CONTAINER_USED, NullableOptionGroup.class);
+		TextField otherContainer = addField(SampleDto.CONTAINER_OTHER, TextField.class);
 		OptionGroup rdtPerformed = addField(SampleDto.RDT_PERFORMED, OptionGroup.class);
 		addField(SampleDto.RDT_RESULTS, TextField.class);
 		addField(SampleDto.DISTRICT_NOTIFICATION_DATE, DateField.class);
@@ -1017,6 +1020,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		sampleMaterialComboBox.setVisible(false);
 		setVisible(true, SampleDto.DATE_SAMPLE_SENT_TO_LAB);
 		dateFormReceivedAtDistrictField.setVisible(true);
+		otherContainer.setVisible(false);
 
 
 		FieldHelper
@@ -1027,6 +1031,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				.setVisibleWhen(sampleSentToLab, Arrays.asList(dateSampleSentToLab), Arrays.asList(YesNo.YES), true);
 		FieldHelper
 				.setVisibleWhen(csfSampleCollected, Arrays.asList(csfReason), Arrays.asList(YesNo.NO), true);
+		FieldHelper
+				.setVisibleWhen(sampleContainerUsed, Arrays.asList(otherContainer), Arrays.asList(SampleContainerUsed.OTHER), true);
+
 		setPropertiesVisibility();
 
 		Label districtLaboratory = new Label(I18nProperties.getString(Strings.headingDistrictLaboratory));

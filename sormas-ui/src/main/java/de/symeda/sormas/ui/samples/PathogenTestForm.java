@@ -22,6 +22,7 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.sample.*;
@@ -38,12 +39,15 @@ import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.event.EventReferenceDto;
+import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.api.person.Profession;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.sample.*;
+import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.Gram;
 import de.symeda.sormas.api.utils.LabType;
@@ -95,6 +99,12 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.TYPING_ID, "") +
 			fluidRowLocs(PathogenTestDto.TEST_DATE_TIME, "") +
 			fluidRowLocs(PathogenTestDto.LAB, PathogenTestDto.LAB_DETAILS) +
+			fluidRowLocs(PathogenTestDto.SAMPLE_TESTS) +
+			fluidRowLocs(PathogenTestDto.SAMPLE_TEST_RESULT_PCR, PathogenTestDto.SAMPLE_TEST_RESULT_PCR_DATE) +
+			fluidRowLocs(PathogenTestDto.SAMPLE_TEST_RESULT_ANTIGEN, PathogenTestDto.SAMPLE_TEST_RESULT_ANTIGEN_DATE) +
+			fluidRowLocs(PathogenTestDto.SAMPLE_TEST_RESULT_IGM, PathogenTestDto.SAMPLE_TEST_RESULT_IGM_DATE) +
+			fluidRowLocs(PathogenTestDto.SAMPLE_TEST_RESULT_IGG, PathogenTestDto.SAMPLE_TEST_RESULT_IGG_DATE) +
+			fluidRowLocs(PathogenTestDto.SAMPLE_TEST_RESULT_IMMUNO, PathogenTestDto.SAMPLE_TEST_RESULT_IMMUNO_DATE) +
 			fluidRowLocs(6,PathogenTestDto.LAB_LOCATION) +
 			fluidRowLocs(PathogenTestDto.DATE_LAB_RECEIVED_SPECIMEN, PathogenTestDto.SPECIMEN_CONDITION) +
 			fluidRowLocs(4, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, 4, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, 4, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN) +
@@ -207,6 +217,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private ComboBox testResultVariant;
 	private ComboBox secondTestedDisease;
 	private ComboBox TestResultForSecondDisease;
+	OptionGroup tickTestField;
 
 		public PathogenTestForm(SampleDto sample, boolean create, int caseSampleCount, boolean isPseudonymized) {
 		super(
@@ -845,6 +856,61 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				PathogenTestDto.TESTED_DISEASE,
 				Arrays.asList(Disease.MEASLES),
 				true);
+		if(caseDisease == Disease.AHF){
+			testTypeField.setVisible(false);
+			testTypeField.setRequired(false);
+			testResultField.setVisible(false);
+			testResultField.setRequired(false);
+
+			tickTestField = addField(PathogenTestDto.SAMPLE_TESTS, OptionGroup.class);
+			CssStyles.style(tickTestField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+			tickTestField.setMultiSelect(true);
+
+			tickTestField.addItems(
+					Arrays.stream(PathogenTestType.getAHFTestTypes())
+							.filter(c -> fieldVisibilityCheckers.isVisible(PathogenTestType.class, c.name()))
+							.collect(Collectors.toList()));
+
+			NullableOptionGroup sampleTestResultPCR = addField(PathogenTestDto.SAMPLE_TEST_RESULT_PCR, NullableOptionGroup.class);
+			DateField sampleTestResultPCRDate = addField(PathogenTestDto.SAMPLE_TEST_RESULT_PCR_DATE, DateField.class);
+			NullableOptionGroup sampleTestResultAntigen = addField(PathogenTestDto.SAMPLE_TEST_RESULT_ANTIGEN, NullableOptionGroup.class);
+			DateField sampleTestResultAntigenDate = addField(PathogenTestDto.SAMPLE_TEST_RESULT_ANTIGEN_DATE, DateField.class);
+			NullableOptionGroup sampleTestResultIGM = addField(PathogenTestDto.SAMPLE_TEST_RESULT_IGM, NullableOptionGroup.class);
+			DateField sampleTestResultIGMDate = addField(PathogenTestDto.SAMPLE_TEST_RESULT_IGM_DATE, DateField.class);
+			NullableOptionGroup sampleTestResultIGG = addField(PathogenTestDto.SAMPLE_TEST_RESULT_IGG, NullableOptionGroup.class);
+			DateField sampleTestResultIGGDate = addField(PathogenTestDto.SAMPLE_TEST_RESULT_IGG_DATE, DateField.class);
+			NullableOptionGroup sampleTestResultImmuno = addField(PathogenTestDto.SAMPLE_TEST_RESULT_IMMUNO, NullableOptionGroup.class);
+			DateField sampleTestResultImmunoDate = addField(PathogenTestDto.SAMPLE_TEST_RESULT_IMMUNO_DATE, DateField.class);
+
+			setVisible(false,
+					PathogenTestDto.SAMPLE_TEST_RESULT_PCR, PathogenTestDto.SAMPLE_TEST_RESULT_PCR_DATE, PathogenTestDto.SAMPLE_TEST_RESULT_ANTIGEN, PathogenTestDto.SAMPLE_TEST_RESULT_ANTIGEN_DATE, PathogenTestDto.SAMPLE_TEST_RESULT_IGM, PathogenTestDto.SAMPLE_TEST_RESULT_IGM_DATE, PathogenTestDto.SAMPLE_TEST_RESULT_IGG, PathogenTestDto.SAMPLE_TEST_RESULT_IGG_DATE, PathogenTestDto.SAMPLE_TEST_RESULT_IMMUNO, PathogenTestDto.SAMPLE_TEST_RESULT_IMMUNO_DATE, PathogenTestDto.TEST_RESULT_TEXT);
+
+			tickTestField.addValueChangeListener(event -> {
+				Set<PathogenTestType> selectedTests = (Set<PathogenTestType>) event.getProperty().getValue();
+
+				boolean isPCRSelected = selectedTests != null && selectedTests.contains(PathogenTestType.PCR);
+				sampleTestResultPCR.setVisible(isPCRSelected);
+				sampleTestResultPCRDate.setVisible(isPCRSelected);
+
+				boolean isAntigenSelected = selectedTests != null && selectedTests.contains(PathogenTestType.ANTIGEN_DETECTION);
+				sampleTestResultAntigen.setVisible(isAntigenSelected);
+				sampleTestResultAntigenDate.setVisible(isAntigenSelected);
+
+				boolean isIGMSelected = selectedTests != null && selectedTests.contains(PathogenTestType.IGM_SERUM_ANTIBODY);
+				sampleTestResultIGM.setVisible(isIGMSelected);
+				sampleTestResultIGMDate.setVisible(isIGMSelected);
+
+				boolean isIGGSelected = selectedTests != null && selectedTests.contains(PathogenTestType.IGG_SERUM_ANTIBODY);
+				sampleTestResultIGG.setVisible(isIGGSelected);
+				sampleTestResultIGGDate.setVisible(isIGGSelected);
+
+				boolean isImmunoSelected = selectedTests != null && selectedTests.contains(PathogenTestType.IMMUNO);
+				sampleTestResultImmuno.setVisible(isImmunoSelected);
+				sampleTestResultImmunoDate.setVisible(isImmunoSelected);
+
+			});
+
+		}
 	}
 
 

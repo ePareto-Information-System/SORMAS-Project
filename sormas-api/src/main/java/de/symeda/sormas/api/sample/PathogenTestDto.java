@@ -16,6 +16,7 @@ package de.symeda.sormas.api.sample;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -146,6 +147,18 @@ public class PathogenTestDto extends PseudonymizableDto {
 	public static final String DATE_LAB_RESULTS_SENT_DISTRICT = "dateLabResultsSentDistrict";
 	public static final String DATE_LAB_RESULTS_SENT_CLINICIAN = "dateLabResultsSentClinician";
 	public static final String DATE_DISTRICT_RECEIVED_LAB_RESULTS = "dateDistrictReceivedLabResults";
+	public static final String SAMPLE_TESTS = "sampleTests";
+	public static final String SAMPLE_TEST_RESULT_PCR = "sampleTestResultPCR";
+	public static final String SAMPLE_TEST_RESULT_PCR_DATE = "sampleTestResultPCRDate";
+	public static final String SAMPLE_TEST_RESULT_ANTIGEN = "sampleTestResultAntigen";
+	public static final String SAMPLE_TEST_RESULT_ANTIGEN_DATE = "sampleTestResultAntigenDate";
+	public static final String SAMPLE_TEST_RESULT_IGM = "sampleTestResultIGM";
+	public static final String SAMPLE_TEST_RESULT_IGM_DATE = "sampleTestResultIGMDate";
+	public static final String SAMPLE_TEST_RESULT_IGG = "sampleTestResultIGG";
+	public static final String SAMPLE_TEST_RESULT_IGG_DATE = "sampleTestResultIGGDate";
+	public static final String SAMPLE_TEST_RESULT_IMMUNO = "sampleTestResultImmuno";
+	public static final String SAMPLE_TEST_RESULT_IMMUNO_DATE = "sampleTestResultImmunoDate";
+
 
 
 	public static final String VIRUS_DETECTION_GENOTYPE = "virusDetectionGenotype";
@@ -167,7 +180,7 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private String testedDiseaseVariantDetails;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String typingId;
-	@NotNull(message = Validations.requiredField)
+//	@NotNull(message = Validations.requiredField)
 	private PathogenTestType testType;
 	private PCRTestSpecification pcrTestSpecification;
 	@SensitiveData
@@ -181,7 +194,7 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private String labDetails;
 	@SensitiveData
 	private UserReferenceDto labUser;
-	@NotNull(message = Validations.requiredField)
+//	@NotNull(message = Validations.requiredField)
 	private PathogenTestResultType testResult;
 	private PathogenTestResultType testResultForSecondDisease;
 	private PathogenTestResultVariant testResultVariant;
@@ -304,6 +317,17 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private FinalClassification finalClassification;
 	private String otherNotesAndObservations;
 
+	private Set<PathogenTestType> sampleTests;
+	private PosNeg sampleTestResultPCR;
+	private Date sampleTestResultPCRDate;
+	private PosNeg sampleTestResultAntigen;
+	private Date sampleTestResultAntigenDate;
+	private PosNeg sampleTestResultIGM;
+	private Date sampleTestResultIGMDate;
+	private PosNeg sampleTestResultIGG;
+	private Date sampleTestResultIGGDate;
+	private PosNeg sampleTestResultImmuno;
+	private Date sampleTestResultImmunoDate;
 
 	public static PathogenTestDto build(SampleDto sample, UserDto currentUser) {
 
@@ -1100,5 +1124,92 @@ public class PathogenTestDto extends PseudonymizableDto {
 
 	public void setTestResultForSecondDisease(PathogenTestResultType testResultForSecondDisease) {
 		this.testResultForSecondDisease = testResultForSecondDisease;
+	}
+	public Set<PathogenTestType> getSampleTests() {
+		return sampleTests;
+	}
+
+	public void setSampleTests(Set<PathogenTestType> sampleTests) {
+		this.sampleTests = sampleTests;
+	}
+
+	public PosNeg getSampleTestResultPCR() {
+		return sampleTestResultPCR;
+	}
+
+	public void setSampleTestResultPCR(PosNeg sampleTestResultPCR) {
+		this.sampleTestResultPCR = sampleTestResultPCR;
+	}
+
+	public Date getSampleTestResultPCRDate() {
+		return sampleTestResultPCRDate;
+	}
+
+	public void setSampleTestResultPCRDate(Date sampleTestResultPCRDate) {
+		this.sampleTestResultPCRDate = sampleTestResultPCRDate;
+	}
+
+	public PosNeg getSampleTestResultAntigen() {
+		return sampleTestResultAntigen;
+	}
+
+	public void setSampleTestResultAntigen(PosNeg sampleTestResultAntigen) {
+		this.sampleTestResultAntigen = sampleTestResultAntigen;
+	}
+
+	public Date getSampleTestResultAntigenDate() {
+		return sampleTestResultAntigenDate;
+	}
+
+	public void setSampleTestResultAntigenDate(Date sampleTestResultAntigenDate) {
+		this.sampleTestResultAntigenDate = sampleTestResultAntigenDate;
+	}
+
+	public PosNeg getSampleTestResultIGM() {
+		return sampleTestResultIGM;
+	}
+
+	public void setSampleTestResultIGM(PosNeg sampleTestResultIGM) {
+		this.sampleTestResultIGM = sampleTestResultIGM;
+	}
+
+	public Date getSampleTestResultIGMDate() {
+		return sampleTestResultIGMDate;
+	}
+
+	public void setSampleTestResultIGMDate(Date sampleTestResultIGMDate) {
+		this.sampleTestResultIGMDate = sampleTestResultIGMDate;
+	}
+
+	public PosNeg getSampleTestResultIGG() {
+		return sampleTestResultIGG;
+	}
+
+	public void setSampleTestResultIGG(PosNeg sampleTestResultIGG) {
+		this.sampleTestResultIGG = sampleTestResultIGG;
+	}
+
+	public Date getSampleTestResultIGGDate() {
+		return sampleTestResultIGGDate;
+	}
+
+	public void setSampleTestResultIGGDate(Date sampleTestResultIGGDate) {
+		this.sampleTestResultIGGDate = sampleTestResultIGGDate;
+	}
+
+	public PosNeg getSampleTestResultImmuno() {
+		return sampleTestResultImmuno;
+	}
+
+	public void setSampleTestResultImmuno(PosNeg sampleTestResultImmuno) {
+		this.sampleTestResultImmuno = sampleTestResultImmuno;
+	}
+
+	public Date getSampleTestResultImmunoDate() {
+		return sampleTestResultImmunoDate;
+	}
+
+	public void setSampleTestResultImmunoDate(Date sampleTestResultImmunoDate) {
+		this.sampleTestResultImmunoDate = sampleTestResultImmunoDate;
 	}
 }

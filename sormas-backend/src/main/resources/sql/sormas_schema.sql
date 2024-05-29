@@ -14412,4 +14412,22 @@ ALTER TABLE hospitalization ADD COLUMN memberfamilyhelpingpatient VARCHAR(255);
 ALTER TABLE hospitalization ADD COLUMN dateofdeath DATE;
 
 INSERT INTO schema_version (version_number, comment) VALUES (604, 'added columns for AHF fields at hospitalization');
+
+ALTER TABLE pathogentest ADD COLUMN sampletestresultpcr VARCHAR(255);
+ALTER TABLE pathogentest ADD COLUMN sampletestsstring VARCHAR(255);
+ALTER TABLE pathogentest ADD COLUMN sampletestresultpcrdate DATE;
+ALTER TABLE pathogentest ADD COLUMN sampletestresultantigen VARCHAR(255);
+ALTER TABLE pathogentest ADD COLUMN sampletestresultantigendate DATE;
+ALTER TABLE pathogentest ADD COLUMN sampletestresultigm VARCHAR(255);
+ALTER TABLE pathogentest ADD COLUMN sampletestresultigmdate DATE;
+ALTER TABLE pathogentest ADD COLUMN sampletestresultigg VARCHAR(255);
+ALTER TABLE pathogentest ADD COLUMN sampletestresultiggdate DATE;
+ALTER TABLE pathogentest ADD COLUMN sampletestresultimmuno VARCHAR(255);
+ALTER TABLE pathogentest ADD COLUMN sampletestresultimmunodate DATE;
+
+INSERT INTO schema_version (version_number, comment) VALUES (605, 'added columns for AHF fields at pathogentest');
+
+ALTER TABLE samples ADD COLUMN containerother VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (606, 'added containerother for CSM field at sample');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
