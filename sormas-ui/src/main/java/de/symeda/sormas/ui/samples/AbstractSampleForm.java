@@ -248,6 +248,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	protected void addCommonFields() {
 
+		disease = getCaseDisease();
+
 		final NullableOptionGroup samplePurpose = addField(SampleDto.SAMPLE_PURPOSE, NullableOptionGroup.class);
 		addField(SampleDto.UUID).setReadOnly(true);
 		addField(SampleDto.REPORTING_USER).setReadOnly(true);
@@ -432,7 +434,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				break;
 			case NEW_INFLUENZA:
 				handleNewInfluenza();
-			break;
+				break;
+			case CHOLERA:
+				handleCholera();
 				// Handle default case, maybe log an error or set default visibility
 			default:
 		}
@@ -884,6 +888,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			setVisible(false, SampleDto.PATHOGEN_TESTING_REQUESTED);
 		});
 
+	}
+
+	public void handleCholera() {
+		List<SampleMaterial> choleraSampleMaterials = Arrays.asList(SampleMaterial.getCholeraMateriealTypes());
+		FieldHelper.updateEnumData(sampleMaterialComboBox, choleraSampleMaterials);
 	}
 
 	private void handleAFP() {
