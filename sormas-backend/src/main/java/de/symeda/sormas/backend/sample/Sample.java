@@ -363,6 +363,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private Date dateFormSentToHigherLevel;
 	private String personCompletingForm;
 	private String containerOther;
+	private YesNo hasSampleBeenCollected;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -1716,6 +1717,13 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 		this.containerOther = containerOther;
 	}
 
+	public YesNo getHasSampleBeenCollected() {
+		return hasSampleBeenCollected;
+	}
+
+	public void setHasSampleBeenCollected(YesNo hasSampleBeenCollected) {
+		this.hasSampleBeenCollected = hasSampleBeenCollected;
+	}
 
 	public String getReceivedByRegion() {
 		return receivedByRegion;

@@ -163,6 +163,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
     private static final String INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC = "investigateIntoRiskFactorsNavigationLink";
     NullableOptionGroup vaccinatedByCardOrHistory;
     private HealthConditionsForm healthConditionsField;
+    private Label medicalInformationCaptionLabel;
 
     //@formatter:off
 	private static final String MAIN_HTML_LAYOUT =
@@ -1521,7 +1522,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
             for (String medicalInformationField : medicalInformationFields) {
                 if (getFieldGroup().getField(medicalInformationField).isVisible()) {
-                    Label medicalInformationCaptionLabel = new Label(I18nProperties.getString(Strings.headingMedicalInformation));
+                    medicalInformationCaptionLabel = new Label(I18nProperties.getString(Strings.headingMedicalInformation));
                     medicalInformationCaptionLabel.addStyleName(H3);
                     getContent().addComponent(medicalInformationCaptionLabel, MEDICAL_INFORMATION_LOC);
                     break;
@@ -1727,10 +1728,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
             //AHF
             	if (disease == Disease.AHF) {
-				setVisible(true, CaseDataDto.POSTPARTUM, CaseDataDto.PREGNANT, CaseDataDto.NOTIFIED_BY_LIST);
+				setVisible(true, CaseDataDto.NOTIFIED_BY_LIST);
                 addField(CaseDataDto.MOBILE_TEAM_NO);
                 addField(CaseDataDto.INFORMATION_GIVEN_BY);
                 addField(CaseDataDto.FAMILY_LINK_WITH_PATIENT);
+
+                medicalInformationCaptionLabel.setVisible(false);
 			}
 
             //CORONAVIRUS

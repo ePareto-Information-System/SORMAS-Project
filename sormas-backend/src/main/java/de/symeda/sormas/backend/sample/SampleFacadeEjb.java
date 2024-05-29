@@ -1247,6 +1247,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setDateFormSentToHigherLevel(source.getDateFormSentToHigherLevel());
 		target.setPersonCompletingForm(source.getPersonCompletingForm());
 		target.setContainerOther(source.getContainerOther());
+		target.setHasSampleBeenCollected(source.getHasSampleBeenCollected());
 
 
 
@@ -1524,6 +1525,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setFrequencyOfChangingFilters(source.getFrequencyOfChangingFilters());
 		target.setRemarks(source.getRemarks());
 		target.setContainerOther(source.getContainerOther());
+		target.setHasSampleBeenCollected(source.getHasSampleBeenCollected());
 
 		target.setDateSurveillanceSentResultsToDistrict(source.getDateSurveillanceSentResultsToDistrict());
 		target.setDateFormSentToHigherLevel(source.getDateFormSentToHigherLevel());

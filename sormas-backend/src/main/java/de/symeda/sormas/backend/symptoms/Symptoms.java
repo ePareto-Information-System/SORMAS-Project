@@ -77,6 +77,8 @@ public class Symptoms extends AbstractDomainObject {
 	private SymptomState fever;
 	private SymptomState vomiting;
 	private SymptomState diarrhea;
+	private SymptomState difficultySwallow;
+	private SymptomState skinRashNew;
 	private SymptomState bloodInStool;
 	private SymptomState nausea;
 	private SymptomState abdominalPain;
@@ -427,6 +429,23 @@ public class Symptoms extends AbstractDomainObject {
 		this.diarrhea = diarrhea;
 	}
 
+	@Enumerated(EnumType.STRING)
+	public SymptomState getDifficultySwallow() {
+		return difficultySwallow;
+	}
+
+	public void setDifficultySwallow(SymptomState difficultySwallow) {
+		this.difficultySwallow = difficultySwallow;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SymptomState getSkinRashNew() {
+		return skinRashNew;
+	}
+
+	public void setSkinRashNew(SymptomState skinRashNew) {
+		this.skinRashNew = skinRashNew;
+	}
 	@Enumerated(EnumType.STRING)
 	public SymptomState getAnorexiaAppetiteLoss() {
 		return anorexiaAppetiteLoss;

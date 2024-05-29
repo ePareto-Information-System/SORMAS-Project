@@ -108,7 +108,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_FACILITY, PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS) +
 					fluidRowLocs(PersonDto.GESTATION_AGE_AT_BIRTH, PersonDto.BIRTH_WEIGHT) +
 					loc(BIRTH_OF_INFANT_HEADING_LOC) +
-					fluidRowLocs(4, PersonDto.PRESENT_CONDITION, 4, PersonDto.MARRIAGE_STATUS) +
+					fluidRowLocs(6, PersonDto.PRESENT_CONDITION) +
+					fluidRowLocs(4, PersonDto.MARRIAGE_STATUS, 4, PersonDto.NATIONALITY) +
 					fluidRowLocs(PersonDto.RECEIVED_ANTENATAL_CARE, PersonDto.PRENATAL_TOTAL_VISITS)+
 					fluidRowLocs(PersonDto.ATTENDED_BY_TRAINED_TBA, PersonDto.ATTENDED_BY_TRAINED_TBA_MIDWIFE_NAME)+
 					fluidRowLocs(PersonDto.ATTENDED_BY_DOCTOR_NURSE, PersonDto.CUT_CORD_WITH_STERILE_BLADE)+
@@ -364,6 +365,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		addFields(PersonDto.NAMES_OF_GUARDIANS);
 		ComboBox presentCondition = addField(PersonDto.PRESENT_CONDITION, ComboBox.class);
 		ComboBox marriageStatus = addField(PersonDto.MARRIAGE_STATUS, ComboBox.class);
+		TextField nationality = addField(PersonDto.NATIONALITY, TextField.class);
+		nationality.setVisible(false);
 		birthDateDay = addField(PersonDto.BIRTH_DATE_DD, ComboBox.class);
 		// @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
 		birthDateDay.setNullSelectionAllowed(true);
@@ -824,7 +827,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			getContent().addComponent(healthStaffDetailsLabel, HEALTH_STAFF_DETAILS_LOC);
 
 			addField(PersonDto.HEAD_HOUSEHOLD, TextField.class);
-			addField(PersonDto.ETHNICITY, TextField.class);
+			ethnicityField.setVisible(true);
+			nationality.setVisible(true);
+			ethnicityField.setCaption("Ethnic group");
 
 			tickProfession = addField(PersonDto.PROFESSION_OF_PATIENT, OptionGroup.class);
 			CssStyles.style(tickProfession, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);

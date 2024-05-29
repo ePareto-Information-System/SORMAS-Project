@@ -276,6 +276,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	OptionGroup tickSymptomField;
 	OptionGroup tickRashCharacteristicsField;
 	NullableOptionGroup patientHaveFever;
+	DateField dateOfOnset;
 
     public SymptomsForm(
             CaseDataDto caze,
@@ -468,6 +469,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			COUGH_WITH_HEAMOPTYSIS,
 			RUNNY_NOSE,
 			DIFFICULTY_BREATHING,
+			DIFFICULTY_SWALLOWING,
+			SKIN_RASH_NEW,
+			RED_EYES,
 			CHEST_PAIN,
 			CONJUNCTIVITIS,
 			EYE_PAIN_LIGHT_SENSITIVE,
@@ -628,7 +632,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			ABDOMINAL_CRAMPS,
 			HEADACHES,
 			GENERALIZED_RASH,
-			RED_EYES,
 			SWOLLEN_LYMPH_NODES_BEHIND_EARS);
 
 		TextField babyAgeAtDeath = addField(AGE_AT_DEATH_DAYS, TextField.class);
@@ -738,6 +741,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
                 COUGH_WITH_HEAMOPTYSIS,
                 RUNNY_NOSE,
                 DIFFICULTY_BREATHING,
+				DIFFICULTY_SWALLOWING,
+				SKIN_RASH_NEW,
                 CHEST_PAIN,
                 CONJUNCTIVITIS,
                 EYE_PAIN_LIGHT_SENSITIVE,
@@ -1069,8 +1074,18 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
             );
             clinicalMeasurementsHeadingLabel.setVisible(false);
             patientHaveFever.setVisible(true);
+			dateOfOnset.setCaption("Date of onset for the fever");
 
-            setVisible(true, HEADACHE, VOMITING, ANOREXIA_APPETITE_LOSS, DIARRHEA, FATIGUE, ABDOMINAL_PAIN, MUSCLE_PAIN, JOINT_PAIN, DIFFICULTY_BREATHING, DIFFICULTY_BREATHING, SKIN_RASH, INJECTION_SITE_BLEEDING, GUMS_BLEEDING, EYES_BLEEDING, BLOOD_IN_STOOL, RED_BLOOD_VOMIT, NOSE_BLEEDING, BLEEDING_VAGINA, HICCUPS);
+            setVisible(true, HEADACHE, RED_EYES, VOMITING, ANOREXIA_APPETITE_LOSS, DIARRHEA, FATIGUE, ABDOMINAL_PAIN, MUSCLE_PAIN, JOINT_PAIN, DIFFICULTY_SWALLOWING, SKIN_RASH_NEW, DIFFICULTY_BREATHING, SKIN_RASH, INJECTION_SITE_BLEEDING, GUMS_BLEEDING, EYES_BLEEDING, BLOOD_IN_STOOL, RED_BLOOD_VOMIT, NOSE_BLEEDING, BLEEDING_VAGINA, HICCUPS);
+
+			//Clean this code in branch and re-push
+			outcome.removeItem(CaseOutcome.UNKNOWN);
+			outcome.removeItem(CaseOutcome.NO_OUTCOME);
+			outcome.removeItem(CaseOutcome.ON_TREATMENT);
+			outcome.removeItem(CaseOutcome.RECOVERED);
+			outcome.removeItem(CaseOutcome.REFERRED);
+			outcome.removeItem(CaseOutcome.OTHER);
+
             outcome.addValueChangeListener(event -> {
                 placeDeathHeadingLabel.setVisible(event.getProperty().getValue() == CaseOutcome.DECEASED);
             });
@@ -1450,7 +1465,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				NUMBNESS,
 				DIARRHOEA,
 				ABDOMINAL_CRAMPS,
-				HEADACHES);
+				HEADACHES,
+				DIFFICULTY_SWALLOWING,
+				SKIN_RASH_NEW);
 	}
 
 	private void toggleFeverComponentError(NullableOptionGroup feverField, ComboBox temperatureField) {

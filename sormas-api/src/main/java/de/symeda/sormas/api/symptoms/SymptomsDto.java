@@ -84,6 +84,8 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String DELIRIUM = "delirium";
 	public static final String DEVELOPMENTAL_DELAY = "developmentalDelay";
 	public static final String DIARRHEA = "diarrhea";
+	public static final String DIFFICULTY_SWALLOWING = "difficultySwallow";
+	public static final String SKIN_RASH_NEW = "skinRashNew";
 	public static final String DIFFICULTY_BREATHING = "difficultyBreathing";
 	public static final String DIGESTED_BLOOD_VOMIT = "digestedBloodVomit";
 	public static final String DYSPHAGIA = "dysphagia";
@@ -634,6 +636,44 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState diarrhea;
+
+	@Diseases({
+			AFP,
+			EVD,
+			LASSA,
+			NEW_INFLUENZA, SARI,
+			CSM,
+			MEASLES,
+			PLAGUE,
+			POLIO,
+			ANTHRAX,
+			CORONAVIRUS,
+			AHF,
+			UNDEFINED,
+			FOODBORNE_ILLNESS,
+			OTHER })
+	@Outbreaks
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState difficultySwallow;
+
+	@Diseases({
+			AFP,
+			EVD,
+			LASSA,
+			NEW_INFLUENZA, SARI,
+			CSM,
+			MEASLES,
+			PLAGUE,
+			POLIO,
+			ANTHRAX,
+			CORONAVIRUS,
+			AHF,
+			UNDEFINED,
+			FOODBORNE_ILLNESS,
+			OTHER })
+	@Outbreaks
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState skinRashNew;
 
 	@Diseases({
 		AFP,
@@ -1507,7 +1547,8 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState generalizedRash;
 
 	@Diseases({
-			MEASLES
+			MEASLES,
+			AHF
 	})
 	@Outbreaks
 	@HideForCountries
@@ -2346,6 +2387,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CORONAVIRUS,
 		UNDEFINED,
 		CHOLERA,
+		AHF,
 		OTHER })
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState fatigue;
@@ -3388,6 +3430,12 @@ public class SymptomsDto extends PseudonymizableDto {
 	public SymptomState getNumbness() {return  numbness;}
 	@Order(335)
 	public String getOutcomeOther() { return outcomeOther;}
+
+	@Order(336)
+	public SymptomState getDifficultySwallow() {return  difficultySwallow;}
+
+	@Order(337)
+	public SymptomState getSkinRashNew() {return skinRashNew;}
 	public void setAbdominalPain(SymptomState abdominalPain) {
 		this.abdominalPain = abdominalPain;
 	}
@@ -3481,6 +3529,13 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setDiarrhea(SymptomState diarrhea) {
 		this.diarrhea = diarrhea;
+	}
+	public void setDifficultySwallow(SymptomState difficultySwallow) {
+		this.difficultySwallow = difficultySwallow;
+	}
+
+	public void setSkinRashNew(SymptomState skinRashNew) {
+		this.skinRashNew = skinRashNew;
 	}
 
 	public void setDifficultyBreathing(SymptomState difficultyBreathing) {

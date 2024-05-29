@@ -61,6 +61,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String FIELD_SAMPLE_ID = "fieldSampleID";
 	public static final String FOR_RETEST = "forRetest";
 	public static final String SAMPLE_DATE_TIME = "sampleDateTime";
+	public static final String HAS_SAMPLE_BEEN_COLLECTED = "hasSampleBeenCollected";
 	public static final String REPORT_DATE_TIME = "reportDateTime";
 	public static final String REPORTING_USER = "reportingUser";
 	public static final String SAMPLE_MATERIAL = "sampleMaterial";
@@ -225,6 +226,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	//@Required
 	//@NotNull(message = Validations.requiredField)
 	private Date sampleDateTime;
+	private YesNo hasSampleBeenCollected;
 
 	@NotNull(message = Validations.validReportDateTime)
 	private Date reportDateTime;
@@ -1106,6 +1108,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 		target.setDateResultsSentToClinician(source.getDateResultsSentToClinician());
 		target.setDateSpecimenSentToLab(source.getDateSpecimenSentToLab());
 		target.setContainerOther(source.getContainerOther());
+		target.setHasSampleBeenCollected(source.getHasSampleBeenCollected());
 
 
 
@@ -1882,5 +1885,13 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 	public void setContainerOther(String containerOther) {
 		this.containerOther = containerOther;
+	}
+
+	public YesNo getHasSampleBeenCollected() {
+		return hasSampleBeenCollected;
+	}
+
+	public void setHasSampleBeenCollected(YesNo hasSampleBeenCollected) {
+		this.hasSampleBeenCollected = hasSampleBeenCollected;
 	}
 }

@@ -186,6 +186,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 
 	private PresentCondition presentCondition;
 	private MaritalStatus marriageStatus;
+	private String nationality;
 	private Integer birthdateDD;
 	private Integer birthdateMM;
 	private Integer birthdateYYYY;
@@ -460,6 +461,13 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	}
 	public MaritalStatus getMarriageStatus() {
 		return marriageStatus;
+	}
+	public String getNationality() {
+		return nationality;
+	}
+
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
 	}
 
 	public void setMarriageStatus(MaritalStatus marriageStatus) {
@@ -1326,14 +1334,6 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 		this.pst14MonthsCountry = pst14MonthsCountry;
 	}
 
-	public String getEthnicity() {
-		return ethnicity;
-	}
-
-	public void setEthnicity(String ethnicity) {
-		this.ethnicity = ethnicity;
-	}
-	
 	public LocationOfBirth getLocationOfBirth() {
 		return this.locationOfBirth;
 	}
