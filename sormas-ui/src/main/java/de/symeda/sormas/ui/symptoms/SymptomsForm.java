@@ -981,6 +981,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					SORE_THROAT, HEADACHE, RUNNY_NOSE, HEADACHE, CONFUSED_DISORIENTED, OTHER_COMPLICATIONS, PHARYNGEAL_EXUDATE, COMA, ABNORMAL_LUNG_XRAY_FINDINGS,
 					CONJUNCTIVAL_INJECTION, SEIZURES, FLUID_IN_LUNG_CAVITY_AUSCULTATION, DYSPNEA, TACHYPNEA);
 
+		} else if (disease == Disease.CHOLERA) {
+			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED, CaseOutcome.UNKNOWN));
+
 		}
 
 		if (symptomsContext != SymptomsContext.CASE) {

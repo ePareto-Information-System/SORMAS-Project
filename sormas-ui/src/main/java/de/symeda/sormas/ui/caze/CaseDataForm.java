@@ -1365,6 +1365,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				ControllerProvider.getCaseController().navigateToRiskFactor(getValue().getUuid());
 			});
 
+			outcome.setVisible(false);
+
 
 
 		} else {
