@@ -195,4 +195,11 @@ window.de_symeda_sormas_ui_map_LeafletMap = function () {
 		// call to server
 		connector.onClick(event.target.id, event.layer.id);
 	}
+
+	map.on('dblclick', function(e) {
+		console.log("map clicked at " + e.latlng.lat + ", " + e.latlng.lng);
+		connector.onMapClick(e.latlng.lat, e.latlng.lng);
+	});
+
+
 }
