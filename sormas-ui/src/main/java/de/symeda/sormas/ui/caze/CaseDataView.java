@@ -164,7 +164,7 @@ public class CaseDataView extends AbstractCaseView {
 				layout.addSidePanelComponent(eventLayout, EVENTS_LOC);
 			}
 		}
-		if (disease != Disease.CSM && disease != Disease.FOODBORNE_ILLNESS && disease != Disease.MONKEYPOX && disease != Disease.AHF) {
+		if (disease != Disease.CSM && disease != Disease.FOODBORNE_ILLNESS && disease != Disease.MONKEYPOX && disease != Disease.AHF && disease != Disease.AFP) {
 			if (UserProvider.getCurrent().hasUserRight(UserRight.IMMUNIZATION_VIEW)
 					&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.IMMUNIZATION_MANAGEMENT)) {
 				if (!FacadeProvider.getFeatureConfigurationFacade()
