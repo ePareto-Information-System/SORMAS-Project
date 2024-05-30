@@ -96,6 +96,43 @@ public class EbsController {
 		}
 	}
 
+	public void navigateToTriaging(String ebsUuid, boolean openTab) {
+
+		String navigationState = TriagingView.VIEW_NAME + "/" + ebsUuid;
+		if (openTab) {
+			SormasUI.get().getPage().open(SormasUI.get().getPage().getLocation().getRawPath() + "#!" + navigationState, "_blank", false);
+		} else {
+			SormasUI.get().getNavigator().navigateTo(navigationState);
+		}
+	}
+	public void navigateToSignalVerification(String ebsUuid, boolean openTab) {
+
+		String navigationState = SignalVerificationView.VIEW_NAME + "/" + ebsUuid;
+		if (openTab) {
+			SormasUI.get().getPage().open(SormasUI.get().getPage().getLocation().getRawPath() + "#!" + navigationState, "_blank", false);
+		} else {
+			SormasUI.get().getNavigator().navigateTo(navigationState);
+		}
+	}
+	public void navigateToRiskAssessment(String ebsUuid, boolean openTab) {
+
+		String navigationState = RiskAssessmentView.VIEW_NAME + "/" + ebsUuid;
+		if (openTab) {
+			SormasUI.get().getPage().open(SormasUI.get().getPage().getLocation().getRawPath() + "#!" + navigationState, "_blank", false);
+		} else {
+			SormasUI.get().getNavigator().navigateTo(navigationState);
+		}
+	}
+	public void navigateToAlert(String ebsUuid, boolean openTab) {
+
+		String navigationState = EbsAlertView.VIEW_NAME + "/" + ebsUuid;
+		if (openTab) {
+			SormasUI.get().getPage().open(SormasUI.get().getPage().getLocation().getRawPath() + "#!" + navigationState, "_blank", false);
+		} else {
+			SormasUI.get().getNavigator().navigateTo(navigationState);
+		}
+	}
+
 	public void navigateTo(EbsCriteria ebsCriteria) {
 		navigateTo(ebsCriteria, false);
 	}
@@ -108,19 +145,6 @@ public class EbsController {
 		String navigationState = AbstractView.buildNavigationState(EBSView.VIEW_NAME, ebsCriteria);
 		SormasUI.get().getNavigator().navigateTo(navigationState);
 	}
-
-//	public void setUriFragmentParameter(String ebsUuid) {
-//
-//		String fragmentParameter;
-//		if (ebsUuid == null || ebsUuid.isEmpty()) {
-//			fragmentParameter = "";
-//		} else {
-//			fragmentParameter = ebsUuid;
-//		}
-//
-//		Page page = SormasUI.get().getPage();
-//		page.setUriFragment("!" + EBSView.VIEW_NAME + "/" + fragmentParameter, false);
-//	}
 
 	public EbsDto findEbs(String uuid) {
 		return FacadeProvider.getEbsFacade().getEbsByUuid(uuid, false);
@@ -148,7 +172,8 @@ public class EbsController {
 
 				EbsReferenceDto newEventRef = new EbsReferenceDto(newEvent.getUuid());
 				Notification.show(I18nProperties.getString(Strings.messageEventCreated), Type.TRAY_NOTIFICATION);
-				navigateToData(newEventRef.getUuid());
+//				navigateToData(newEventRef.getUuid());
+				navigateToTriaging(newEventRef.getUuid(),false);
 			}
 		});
 
@@ -169,11 +194,12 @@ public class EbsController {
 		final CommitDiscardWrapperComponent<TriagingDataForm> editView = new CommitDiscardWrapperComponent<TriagingDataForm>(
 				triagingDataForm,
 				triagingDataForm.getFieldGroup());
-
+		TriagingDto newEvent = triagingDataForm.getValue();
 		editView.addCommitListener(() -> {
 			ebs.setTriaging(triagingDataForm.getValue());
 			FacadeProvider.getEbsFacade().save(ebs);
 			SormasUI.refreshView();
+			navigateToSignalVerification(ebs.getUuid(),false);
 		});
 
 		return editView;
@@ -197,6 +223,8 @@ public class EbsController {
 			ebs.setSignalVerification(signalVerificationDataForm.getValue());
 			FacadeProvider.getEbsFacade().save(ebs);
 			SormasUI.refreshView();
+			Notification.show(I18nProperties.getString(Strings.messageSignalVerificationSavedShort), TRAY_NOTIFICATION);
+			navigateToRiskAssessment(ebs.getUuid(),false);
 		});
 
 		return editView;
@@ -225,6 +253,7 @@ public class EbsController {
 			SormasUI.refreshView();
 			Notification.show(I18nProperties.getString(Strings.messageRiskAssessmentSavedShort), TRAY_NOTIFICATION);
 			showAssessmentCaseDialog(riskAssessmentDto);
+			navigateToAlert(ebs.getUuid(),false);
 		});
 
 
