@@ -119,6 +119,10 @@
 	background-image: url("marker/facility-unclassified.png");
 }
 
+.marker.location.marker {
+	background-image: url("marker/location-marker.png");
+}
+
 .marker.event {
 	margin: -25% 0;
 }

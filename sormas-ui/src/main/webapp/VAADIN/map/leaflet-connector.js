@@ -39,6 +39,7 @@ window.de_symeda_sormas_ui_map_LeafletMap = function () {
 		"sample case",
 		"sample contact",
 		"sample event-participant",
+		"location marker"
 		];
 	
 	var connector = this;
@@ -152,11 +153,82 @@ window.de_symeda_sormas_ui_map_LeafletMap = function () {
 					html: count > 1 ? '<div><span>' + marker[3] + '</span></div>' : '&nbsp;', 
 					className: 'marker ' + mapIcons[marker[2]], 
 					iconSize: new L.Point(size,size) }),
-			});
+				draggable: true,
+				autoPan: true
+			}).addTo(map);
 			leafletMarker.id = iter;
 			leafletMarker.iconIndex = marker[2];
 			leafletMarker.count = count;
 			leafletMarker.addTo(markerGroup);
+		}
+	}
+
+
+	this.addMarkerGroupLocation = function(groupId, markers, iconSize) {
+
+		// check prerequisites for clustering icon logic
+		if (mapIcons[4].indexOf("facility") != 0
+			|| mapIcons[7].indexOf("facility") != 0)
+			throw "mapIcons indices 4 to 7 are supposed to be facilities";
+
+		var markerGroup = L.markerClusterGroup({
+
+			maxClusterRadius: 15,
+
+			/** define how marker clusters are rendered **/
+			iconCreateFunction: function(cluster) {
+				children = cluster.getAllChildMarkers();
+				count = 0;
+				var minIconIndex = mapIcons.length;
+				for (i=0; i<children.length; i++) {
+					count += children[i].count;
+					var iconIndex = children[i].iconIndex;
+
+					// facilities are clustered as cases (see check above)
+					if (iconIndex >= 4 && iconIndex <= 7)
+						iconIndex -= 4;
+
+					// use "most important" icon == smallest index
+					if (iconIndex < minIconIndex)
+						minIconIndex = iconIndex;
+				}
+
+				var size = 20 + 5 * Math.min(Math.ceil((count-1)/10), 4);
+
+				var icon = new L.DivIcon({
+					html: count > 1 ? '<div><span>' + count + '</span></div>' : '<div></div>',
+					className: 'marker cluster ' + mapIcons[minIconIndex],
+					iconSize: new L.Point(size,size) });
+				icon.cluster = cluster;
+				return icon;
+			}
+		})
+			//		var markerGroup = L.featureGroup()
+			.addTo(map)
+			.on("click", featureGroupClick);
+		markerGroup.id = groupId;
+
+		for (iter=0; iter<markers.length; iter++) {
+
+			var marker = markers[iter];
+			var count = marker[3];
+			var leafletMarker = L.marker([marker[0], marker[1]], {
+				icon: new L.DivIcon({
+					html: count > 1 ? '<div><span>' + marker[3] + '</span></div>' : '&nbsp;',
+					className: 'marker ' + mapIcons[marker[2]],
+					iconSize: new L.Point(iconSize,iconSize) }),
+				draggable: true,
+				autoPan: true
+			}).addTo(map);
+			leafletMarker.id = iter;
+			leafletMarker.iconIndex = marker[2];
+			leafletMarker.count = count;
+			leafletMarker.addTo(markerGroup);
+			leafletMarker.on('dragend', function(event) {
+				var marker = event.target;
+				var position = marker.getLatLng();
+				connector.onMarkerDragEnd(position.lat, position.lng);
+			});
 		}
 	}
 	
@@ -200,6 +272,14 @@ window.de_symeda_sormas_ui_map_LeafletMap = function () {
 		console.log("map clicked at " + e.latlng.lat + ", " + e.latlng.lng);
 		connector.onMapClick(e.latlng.lat, e.latlng.lng);
 	});
+
+	connector.updateMarkerIconSize = function(size) {
+		var newIcon = L.divIcon({
+			className: 'my-draggable-marker-icon',
+			html: '<div style="background-color: red; width: ' + size + 'px; height: ' + size + 'px; border-radius: 50%;"></div>'
+		});
+		draggableMarker.setIcon(newIcon);
+	};
 
 
 }

@@ -94,12 +94,12 @@ public class LeafletMap extends AbstractJavaScriptComponent {
 			}
 		});
 
-		addFunction("onMapClick", new JavaScriptFunction() {
+		addFunction("onMarkerDragEnd", new JavaScriptFunction() {
 			@Override
 			public void call(JsonArray arguments) {
 				double latitude = arguments.getNumber(0);
 				double longitude = arguments.getNumber(1);
-				LeafletMap.this.fireEvent(new MapClickEvent(LeafletMap.this, latitude, longitude));
+				LeafletMap.this.fireEvent(new MarkerDragEvent(LeafletMap.this, latitude, longitude));
 			}
 		});
 		// credit where credit's due
@@ -152,6 +152,14 @@ public class LeafletMap extends AbstractJavaScriptComponent {
 			markersJson.set(markersJson.length(), marker.toJson());
 		}
 		callFunction("addMarkerGroup", groupId, markersJson);
+	}
+
+	public void addMarkerGroupLocation(String groupId, List<LeafletMarker> markers, int size) {
+		JsonArray markersJson = Json.createArray();
+		for (LeafletMarker marker : markers) {
+			markersJson.set(markersJson.length(), marker.toJson());
+		}
+		callFunction("addMarkerGroupLocation", groupId, markersJson, size);
 	}
 
 	public void addPolygonGroup(String groupId, List<LeafletPolygon> polygons) {
@@ -209,17 +217,17 @@ public class LeafletMap extends AbstractJavaScriptComponent {
 		}
 	}
 
-	public interface MapClickListener extends Serializable {
-		Method MAP_CLICK_METHOD = ReflectTools.findMethod(MapClickListener.class, "mapClick", MapClickEvent.class);
-		void mapClick(MapClickEvent event);
+	public interface MarkerDragListener extends Serializable {
+		Method MARKER_DRAG_METHOD = ReflectTools.findMethod(MarkerDragListener.class, "markerDrag", MarkerDragEvent.class);
+		void markerDrag(MarkerDragEvent event);
 	}
 
-	public static class MapClickEvent extends EventObject {
+	public static class MarkerDragEvent extends EventObject {
 		private static final long serialVersionUID = 1L;
 		private final double latitude;
 		private final double longitude;
 
-		public MapClickEvent(LeafletMap map, double latitude, double longitude) {
+		public MarkerDragEvent(LeafletMap map, double latitude, double longitude) {
 			super(map);
 			this.latitude = latitude;
 			this.longitude = longitude;
@@ -234,7 +242,7 @@ public class LeafletMap extends AbstractJavaScriptComponent {
 		}
 	}
 
-	public void addMapClickListener(MapClickListener listener) {
-		addListener(MapClickEvent.class, listener, MapClickListener.MAP_CLICK_METHOD);
+	public void addMarkerDragListener(MarkerDragListener listener) {
+		addListener(MarkerDragEvent.class, listener, MarkerDragListener.MARKER_DRAG_METHOD);
 	}
 }
