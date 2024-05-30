@@ -9,13 +9,9 @@ import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.OptionGroup;
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.ebs.EbsCriteria;
 import de.symeda.sormas.api.ebs.EbsGroupCriteria;
 import de.symeda.sormas.api.ebs.EbsSourceType;
-import de.symeda.sormas.api.event.EventCriteria;
-import de.symeda.sormas.api.event.EventGroupCriteria;
-import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -28,8 +24,6 @@ import de.symeda.sormas.ui.utils.components.popupmenu.PopupMenu;
 import org.vaadin.hene.popupbutton.PopupButton;
 
 import java.util.*;
-
-import static de.symeda.sormas.ui.ebs.AbstractEbsView.ROOT_VIEW_NAME;
 
 public class EBSView extends AbstractView {
     private static final long serialVersionUID = -3048977745713631500L;
@@ -75,9 +69,11 @@ public class EBSView extends AbstractView {
         }
 
         ebsCriteria = ViewModelProviders.of(EBSView.class).get(EbsCriteria.class);
-
-        grid = new EbsGrid(ebsCriteria, getClass());
-
+        if (isDefaultViewType()) {
+            grid = new EbsSignalGrid(ebsCriteria, getClass());
+        } else {
+            grid = new EbsGrid(ebsCriteria, getClass());
+        }
         gridLayout = new VerticalLayout();
         gridLayout.addComponent(createFilterBar());
         gridLayout.addComponent(grid);
@@ -97,7 +93,10 @@ public class EBSView extends AbstractView {
                 CssStyles.OPTIONGROUP_HORIZONTAL_PRIMARY,
                 CssStyles.VSPACE_TOP_3);
         ebsViewSwitcher.addItem(EbsViewType.DEFAULT);
-        ebsViewSwitcher.setItemCaption(EbsViewType.DEFAULT, I18nProperties.getCaption(Captions.eventDefaultView));
+        ebsViewSwitcher.setItemCaption(EbsViewType.DEFAULT, I18nProperties.getCaption(Captions.ebsSignalView));
+
+        ebsViewSwitcher.addItem(EbsViewType.EVENT);
+        ebsViewSwitcher.setItemCaption(EbsViewType.EVENT, I18nProperties.getCaption(Captions.ebsEventView));
 
         ebsViewSwitcher.setValue(viewConfiguration.getViewType());
         ebsViewSwitcher.addValueChangeListener(e -> {
@@ -139,26 +138,11 @@ public class EBSView extends AbstractView {
                         ExportEntityName.EBS);
                 addExportButton(streamResource, exportPopupButton, exportLayout, VaadinIcons.TABLE, Captions.exportBasic, Strings.infoBasicExport);
             }
-
-            {
-//                if (isDefaultViewType()) {
-//                    StreamResource exportStreamResource = EbsDownloadUtil
-//                            .createEbsExportResource((EbsCriteria) grid.getCriteria(), this::getSelectedRows, buildDetailedExportConfiguration());
-//
-//                    addExportButton(
-//                            exportStreamResource,
-//                            exportPopupButton,
-//                            exportLayout,
-//                            VaadinIcons.FILE_TEXT,
-//                            Captions.exportDetailed,
-//                            Strings.infoDetailedExport);
-//                }
-            }
         }
 
         if (UserProvider.getCurrent().hasUserRight(UserRight.EVENT_CREATE)) {
             createButton = ButtonHelper.createIconButton(
-                    Captions.eventNewEvent,
+                    Captions.ebsCreatEbs,
                     VaadinIcons.PLUS_CIRCLE,
                     e -> ControllerProvider.getEbsController().create(),
                     ValoTheme.BUTTON_PRIMARY);
@@ -168,7 +152,7 @@ public class EBSView extends AbstractView {
 
         final PopupMenu moreButton = new PopupMenu(I18nProperties.getCaption(Captions.moreActions));
 
-        if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS_EVENT) && isDefaultViewType()) {
+        if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS_EVENT)) {
             Button btnEnterBulkEditMode = ButtonHelper.createIconButton(Captions.actionEnterBulkEditMode, VaadinIcons.CHECK_SQUARE_O, null);
             {
                 btnEnterBulkEditMode.setVisible(!viewConfiguration.isInEagerMode());
@@ -184,14 +168,23 @@ public class EBSView extends AbstractView {
                 btnLeaveBulkEditMode.setWidth(100, Unit.PERCENTAGE);
                 moreButton.addMenuEntry(btnLeaveBulkEditMode);
             }
-
-            btnEnterBulkEditMode.addClickListener(e -> {
-                bulkOperationsDropdown.setVisible(true);
-                ViewModelProviders.of(EBSView.class).get(EbsViewConfiguration.class).setInEagerMode(true);
-                btnEnterBulkEditMode.setVisible(false);
-                btnLeaveBulkEditMode.setVisible(true);
-                ((EbsGrid) grid).reload();
+            if (isDefaultViewType()) {
+                btnEnterBulkEditMode.addClickListener(e -> {
+                    bulkOperationsDropdown.setVisible(true);
+                    ViewModelProviders.of(EBSView.class).get(EbsViewConfiguration.class).setInEagerMode(true);
+                    btnEnterBulkEditMode.setVisible(false);
+                    btnLeaveBulkEditMode.setVisible(true);
+                    ((EbsSignalGrid) grid).reload();
+                });
+            }else {
+                btnEnterBulkEditMode.addClickListener(e -> {
+                            bulkOperationsDropdown.setVisible(true);
+                            ViewModelProviders.of(EBSView.class).get(EbsViewConfiguration.class).setInEagerMode(true);
+                            btnEnterBulkEditMode.setVisible(false);
+                            btnLeaveBulkEditMode.setVisible(true);
+                            ((EbsGrid) grid).reload();
             });
+            }
             btnLeaveBulkEditMode.addClickListener(e -> {
                 bulkOperationsDropdown.setVisible(false);
                 ViewModelProviders.of(EBSView.class).get(EbsViewConfiguration.class).setInEagerMode(false);
@@ -200,15 +193,13 @@ public class EBSView extends AbstractView {
                 navigateTo(ebsCriteria);
             });
         }
-
-        if (isDefaultViewType()) {
             Button searchSpecificEbsButton = ButtonHelper.createIconButton(Captions.eventSearchSpecificEvent, VaadinIcons.SEARCH, e -> {
                 buildAndOpenSearchSpecificEbsWindow();
                 moreButton.setPopupVisible(false);
             }, ValoTheme.BUTTON_PRIMARY);
             searchSpecificEbsButton.setWidth(100, Unit.PERCENTAGE);
             moreButton.addMenuEntry(searchSpecificEbsButton);
-        }
+
 
         if (moreButton.hasMenuEntries()) {
             addHeaderComponent(moreButton);
@@ -277,10 +268,15 @@ public class EBSView extends AbstractView {
             ViewModelProviders.of(EBSView.class).remove(EbsCriteria.class);
             navigateTo(null);
         });
-        ebsFilterForm.addApplyHandler(e -> {
+        if (isDefaultViewType()) {
+            ebsFilterForm.addApplyHandler(e -> {
+                ((EbsSignalGrid) grid).reload();
+            });
+        }else {
+            ebsFilterForm.addApplyHandler(e -> {
                 ((EbsGrid) grid).reload();
-        });
-
+            });
+        }
         filterLayout.addComponent(ebsFilterForm);
 
         return filterLayout;
@@ -292,11 +288,17 @@ public class EBSView extends AbstractView {
         if (params.startsWith("?")) {
             params = params.substring(1);
         }
+            if (isDefaultViewType()) {
+                ((EbsSignalGrid) grid).setEagerDataProvider();
 
-            ((EbsGrid) grid).setEagerDataProvider();
+                updateFilterComponents();
+                ((EbsSignalGrid) grid).reload();
+            }else {
+                ((EbsGrid) grid).setEagerDataProvider();
 
-        updateFilterComponents();
-            ((EbsGrid) grid).reload();
+                updateFilterComponents();
+                ((EbsGrid) grid).reload();
+            }
     }
 
     public HorizontalLayout createStatusFilterBar() {
@@ -310,7 +312,7 @@ public class EBSView extends AbstractView {
 
         if (isDefaultViewType()) {
             Button srcAll = ButtonHelper.createButton(Captions.all, e -> {
-                ebsCriteria.setSrcType(null);
+                ebsCriteria.setSourceInformation(null);
                 ebsCriteria.setTriagingDecision(null);
                 navigateTo(ebsCriteria);
             }, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER);
@@ -323,7 +325,7 @@ public class EBSView extends AbstractView {
 
             for (EbsSourceType src : EbsSourceType.values()) {
                 Button srcButton = ButtonHelper.createButton("status-" + src, src.toString(), e -> {
-                    ebsCriteria.setSrcType(src);
+                    ebsCriteria.setSourceInformation(src);
                     navigateTo(ebsCriteria);
                 }, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.BUTTON_FILTER_LIGHT);
                 srcButton.setCaptionAsHtml(true);
