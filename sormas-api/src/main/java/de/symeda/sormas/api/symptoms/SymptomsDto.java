@@ -251,8 +251,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String RIGHT_INJECTION_SITE = "rightInjectionSite";
 	public static final String LEFT_INJECTION_SITE = "leftInjectionSite";
 	public static final String TRUEAFP = "trueAfp";
-	public static final String DYSPNEA = "dyspnea";
-	public static final String TACHYPNEA = "tachypnea";
 	public static final String OUTCOME_OTHER = "outcomeOther";
 
 

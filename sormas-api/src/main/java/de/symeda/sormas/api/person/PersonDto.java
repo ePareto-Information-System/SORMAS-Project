@@ -616,14 +616,6 @@ public class PersonDto extends PseudonymizableDto {
 		this.presentCondition = presentCondition;
 	}
 
-	public String getNationality() {
-		return nationality;
-	}
-
-	public void setNationality(String nationality) {
-		this.nationality = nationality;
-	}
-
 	public CaseOrigin getCaseOrigin() {return caseOrigin;}
 	public void setCaseOrigin(CaseOrigin caseOrigin) {this.caseOrigin = caseOrigin;}
 
@@ -1419,5 +1411,21 @@ public class PersonDto extends PseudonymizableDto {
 
   public void setApplicable(YesNo applicable) {
       this.applicable = applicable; }
+
+	public String getEthnicity() {
+		return ethnicity;
+	}
+
+	public void setEthnicity(String ethnicity) {
+		this.ethnicity = ethnicity;
+	}
+
+	public String getNationality() {
+		return nationality;
+	}
+
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
 
 }

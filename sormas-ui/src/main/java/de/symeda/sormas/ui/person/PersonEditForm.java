@@ -685,6 +685,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			getContent().addComponent(healthStaffDetailsLabel, HEALTH_STAFF_DETAILS_LOC);
 
 			addField(PersonDto.HEAD_HOUSEHOLD, TextField.class);
+			TextField ethnicityField = addField(PersonDto.ETHNICITY, TextField.class);
+			
 			ethnicityField.setVisible(true);
 			nationality.setVisible(true);
 			ethnicityField.setCaption("Ethnic group");

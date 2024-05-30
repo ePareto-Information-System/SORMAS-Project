@@ -296,8 +296,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
     private CheckBox differentPlaceOfStayJurisdiction;
     private ComboBox responsibleDistrict;
     private NullableOptionGroup vaccinationStatus;
-    private NullableOptionGroup vaccinationRoutine;
-    private DateField vaccinationRoutineDate;
     private DateField lastVaccinationDate;
     private ComboBox responsibleCommunity;
     private ComboBox districtCombo;
@@ -317,26 +315,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
     private ComboBox vaccineType;
     private TextField numberOfDoses;
     private ComboBox cbCaseClassification;
-    private TextField hospitalName;
-    private DateField secondVaccinationDateField;
-    private NullableOptionGroup motherVaccinatedWithTT;
-    private NullableOptionGroup motherHaveCard;
-    private TextField motherNumberOfDoses;
-    private NullableOptionGroup motherVaccinationStatus;
-    private DateField motherTTDateOne;
-    private DateField motherTTDateTwo;
-    private DateField motherTTDateThree;
-    private DateField motherTTDateFour;
-    private DateField motherTTDateFive;
-    private DateField motherLastDoseDate;
-    private NullableOptionGroup seenInOPD;
-    private NullableOptionGroup admittedInOPD;
-    private NullableOptionGroup motherGivenProtectiveDoseTT;
-    private DateField motherGivenProtectiveDoseTTDate;
-    private NullableOptionGroup supplementalImmunizationField;
-    private TextArea supplementalImmunizationDetails;
-    private TextField reportingVillage;
-    private TextField reportingZone;
+    private Label medicalInformationCaptionLabel;
 
 
     private final Map<ReinfectionDetailGroup, CaseReinfectionCheckBoxTree> reinfectionTrees = new EnumMap<>(ReinfectionDetailGroup.class);
@@ -1379,7 +1358,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 			for (String medicalInformationField : medicalInformationFields) {
 				if (getFieldGroup().getField(medicalInformationField).isVisible()) {
-					Label medicalInformationCaptionLabel = new Label(I18nProperties.getString(Strings.headingMedicalInformation));
+					medicalInformationCaptionLabel = new Label(I18nProperties.getString(Strings.headingMedicalInformation));
 					medicalInformationCaptionLabel.addStyleName(H3);
 					getContent().addComponent(medicalInformationCaptionLabel, MEDICAL_INFORMATION_LOC);
 					break;

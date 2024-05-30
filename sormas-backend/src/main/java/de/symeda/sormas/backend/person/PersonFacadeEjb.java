@@ -274,13 +274,13 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 
 		target.setPresentCondition(source.getPresentCondition());
 		target.setMaritalStatus(source.getMaritalStatus());
-		target.setNationality(source.getNationality());
 		target.setTelNumber(source.getTelNumber());
 		target.setApplicable(source.getApplicable());
 		target.setBirthdateDD(source.getBirthdateDD());
 		target.setBirthdateMM(source.getBirthdateMM());
 		target.setBirthdateYYYY(source.getBirthdateYYYY());
 		target.setEthnicity(source.getEthnicity());
+		target.setNationality(source.getNationality());
 		target.setHeadHouseHold(source.getHeadHouseHold());
 		target.setProfessionOfPatient(source.getProfessionOfPatient());
 		target.setProfessionOfPatientOther(source.getProfessionOfPatientOther());
@@ -1044,7 +1044,6 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setSex(source.getSex());
 
 		target.setPresentCondition(source.getPresentCondition());
-		target.setNationality(source.getNationality());
 		target.setBirthdateDD(source.getBirthdateDD());
 		target.setBirthdateMM(source.getBirthdateMM());
 		target.setBirthdateYYYY(source.getBirthdateYYYY());
@@ -1164,6 +1163,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setTelNumber(source.getTelNumber());
 		target.setApplicable(source.getApplicable());
 		target.setEthnicity(source.getEthnicity());
+		target.setNationality(source.getNationality());
 		target.setHeadHouseHold(source.getHeadHouseHold());
 		target.setProfessionOfPatient(source.getProfessionOfPatient());
 		target.setProfessionOfPatientOther(source.getProfessionOfPatientOther());
@@ -1881,7 +1881,6 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setSex(source.getSex());
 
 		target.setPresentCondition(source.getPresentCondition());
-		target.setNationality(source.getNationality());
 		target.setBirthdateDD(source.getBirthdateDD());
 		target.setBirthdateMM(source.getBirthdateMM());
 		target.setBirthdateYYYY(source.getBirthdateYYYY());
@@ -1902,7 +1901,6 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setNickname(source.getNickname());
 		target.setMothersMaidenName(source.getMothersMaidenName());
 		target.setTelNumber(source.getTelNumber());
-		target.setEthnicity(source.getEthnicity());
 		target.setHeadHouseHold(source.getHeadHouseHold());
 		target.setProfessionOfPatient(source.getProfessionOfPatient());
 		target.setProfessionOfPatientOther(source.getProfessionOfPatientOther());
@@ -2009,7 +2007,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setMaritalStatus(source.getMaritalStatus());
 		target.setTelNumber(source.getTelNumber());
 		target.setEthnicity(source.getEthnicity());
-		target.setHeadHouseHold(source.getHeadHouseHold());
+		target.setNationality(source.getNationality());
 		target.setProfessionOfPatient(source.getProfessionOfPatient());
 		target.setProfessionOfPatientOther(source.getProfessionOfPatientOther());
 		target.setNameHealthFacility(source.getNameHealthFacility());
