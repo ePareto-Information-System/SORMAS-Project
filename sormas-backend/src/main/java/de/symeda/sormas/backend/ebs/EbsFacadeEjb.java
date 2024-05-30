@@ -16,16 +16,11 @@ package de.symeda.sormas.backend.ebs;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.common.CoreEntityType;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
-import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.deletionconfiguration.DeletionReference;
 import de.symeda.sormas.api.ebs.*;
-import de.symeda.sormas.api.event.EventDto;
-import de.symeda.sormas.api.event.EventIndexDto;
-import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
@@ -42,16 +37,11 @@ import de.symeda.sormas.api.sormastosormas.SormasToSormasException;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasRuntimeException;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.AccessDeniedException;
-import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.backend.FacadeHelper;
-import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.AbstractCoreFacadeEjb;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
-import de.symeda.sormas.backend.contact.Contact;
-import de.symeda.sormas.backend.event.Event;
-import de.symeda.sormas.backend.exposure.Exposure;
 import de.symeda.sormas.backend.externalsurveillancetool.ExternalSurveillanceToolGatewayFacadeEjb.ExternalSurveillanceToolGatewayFacadeEjbLocal;
 import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal;
 import de.symeda.sormas.backend.infrastructure.community.Community;
@@ -64,15 +54,11 @@ import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.location.LocationFacadeEjb;
 import de.symeda.sormas.backend.location.LocationFacadeEjb.LocationFacadeEjbLocal;
 import de.symeda.sormas.backend.person.Person;
-import de.symeda.sormas.backend.sample.Sample;
 import de.symeda.sormas.backend.share.ExternalShareInfoCountAndLatestDate;
 import de.symeda.sormas.backend.share.ExternalShareInfoService;
 import de.symeda.sormas.backend.sormastosormas.SormasToSormasFacadeEjb.SormasToSormasFacadeEjbLocal;
-import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfoFacadeEjb;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfoService;
-import de.symeda.sormas.backend.sormastosormas.share.outgoing.ShareInfoHelper;
 import de.symeda.sormas.backend.user.User;
-import de.symeda.sormas.backend.user.UserFacadeEjb;
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -187,11 +173,11 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 		target.setRiskLevel(source.getRiskLevel());
 		target.setSpecificRisk(source.getSpecificRisk());
-		target.setContactName(source.getContactName());
-		target.setContactPhoneNumber(source.getContactPhoneNumber());
+		target.setInformantName(source.getInformantName());
+		target.setInformantTel(source.getInformantTel());
 		target.setTriageDate(source.getTriageDate());
 		target.setReportDateTime(source.getReportDateTime());
-		target.setPersonReporting((source.getPersonReporting()));
+		target.setCategoryOfInformant((source.getCategoryOfInformant()));
 		target.setEbsLocation(LocationFacadeEjb.toDto(source.getEbsLocation()));
 //        target.setInternalToken(source.getInternalToken());
 		target.setAutomaticScanningType(source.getAutomaticScanningType());
@@ -203,7 +189,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		target.setPersonPhone(source.getPersonPhone());
 		target.setPersonRegistering(source.getPersonRegistering());
 		target.setSourceName(source.getSourceName());
-		target.setSrcType(source.getSrcType());
+		target.setSourceInformation(source.getSourceInformation());
 
 		target.setDateOnset(source.getDateOnset());
 		target.setEbsLongitude(source.getEbsLongitude());
@@ -434,39 +420,47 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 	@Override
 	public List<EbsIndexDto> getIndexList(EbsCriteria ebsCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
-
 		List<Long> indexListIds = getIndexListIds(ebsCriteria, first, max, sortProperties);
 		List<EbsIndexDto> indexList = new ArrayList<>();
-
+		Set<Long> addedIds = new HashSet<>();
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
 		IterableHelper.executeBatched(indexListIds, ModelConstants.PARAMETER_LIMIT, batchedIds -> {
-
 			CriteriaQuery<EbsIndexDto> cq = cb.createQuery(EbsIndexDto.class);
 			Root<Ebs> ebs = cq.from(Ebs.class);
 			Root<Triaging> triaging = cq.from(Triaging.class);
+			Root<RiskAssessment> riskAssessment = cq.from(RiskAssessment.class);
+			Root<SignalVerification> signalVerification = cq.from(SignalVerification.class);
+			Root<EbsAlert> ebsAlert = cq.from(EbsAlert.class);
 
 			EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
-
 			EbsJoins ebsJoins = ebsQueryContext.getJoins();
 
-
+			// Create the selection
 			cq.multiselect(
 					ebs.get(Ebs.ID),
 					ebs.get(Ebs.UUID),
 					ebs.get(Ebs.TRIAGE_DATE),
-					ebs.get(Ebs.SRC_TYPE),
-					ebs.get(Ebs.TRIAGING_DECISION),
+					ebs.get(Ebs.SOURCE_INFORMATION),
+					triaging.get(Triaging.TRIAGING_DECISION),
 					ebs.get(Ebs.REPORT_DATE_TIME),
-					ebs.get(Ebs.PERSON_REPORTING),
-					ebs.get(Ebs.CONTACT_NAME),
-					ebs.get(Ebs.CONTACT_PHONE_NUMBER),
-					ebs.get(Ebs.SIGNAL_CATEGORY),
-					ebs.get(Ebs.VERIFIED),
+					ebs.get(Ebs.CATEGORY_OF_INFORMANT),
+					ebs.get(Ebs.INFORMANT_NAME),
+					ebs.get(Ebs.INFORMANT_TEL),
+					triaging.get(Triaging.SIGNAL_CATEGORY),
+					signalVerification.get(SignalVerification.VERIFIED),
 					ebs.get(Ebs.CASES),
-					ebs.get(Ebs.DEATH),
-					triaging.get(Triaging.DATE_OF_DECISION));
-
+					signalVerification.get(SignalVerification.NUMBER_OF_DEATH),
+					triaging.get(Triaging.DATE_OF_DECISION),
+					ebs.get(Ebs.PERSON_REGISTERING),
+					ebs.get(Ebs.PERSON_DESIGNATION),
+					signalVerification.get(SignalVerification.VERIFICATION_SENT),
+					signalVerification.get(SignalVerification.VERIFICATION_SENT_DATE),
+					signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE),
+					riskAssessment.get(RiskAssessment.RISK_ASSESSMENT),
+					ebsAlert.get(EbsAlert.ACTION_INITIATED),
+					ebsAlert.get(EbsAlert.RESPONSE_STATUS)
+			);
 
 			Predicate filter = ebs.get(Ebs.ID).in(batchedIds);
 
@@ -485,9 +479,16 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			}
 
 			sortBy(sortProperties, ebsQueryContext);
-			cq.distinct(true);
+			cq.distinct(true);  // Ensure distinct results
 
-			indexList.addAll(QueryHelper.getResultList(em, cq, null, null));
+			List<EbsIndexDto> results = QueryHelper.getResultList(em, cq, null, null);
+
+			// Filter duplicates before adding to indexList
+			for (EbsIndexDto dto : results) {
+				if (addedIds.add(dto.getId())) { // add returns false if id is already present
+					indexList.add(dto);
+				}
+			}
 		});
 		Map<String, Long> caseCounts = new HashMap<>();
 		Map<String, Long> deathCounts = new HashMap<>();
@@ -557,6 +558,9 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			EbsJoins ebsJoins = ebsQueryContext.getJoins();
 			Join<Ebs, User> reportingUser = ebsJoins.getReportingUser();
 			Join<Ebs, Triaging> decisionDate = ebsJoins.getTriaging();
+			Join<Ebs, SignalVerification> signalVerification = ebsJoins.getSignalVerification();
+			Join<Ebs, RiskAssessment> riskAssessment = ebsJoins.getRiskAssessment();
+			Join<Ebs, EbsAlert> ebsAlert = ebsJoins.getEbsAlert();
 
 			List<Order> order = new ArrayList<>(sortProperties.size());
 			for (SortProperty sortProperty : sortProperties) {
@@ -564,18 +568,47 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 				switch (sortProperty.propertyName) {
 					case EbsIndexDto.UUID:
 					case EbsIndexDto.TRIAGE_DATE:
-					case EbsIndexDto.CONTACT_NAME:
-					case EbsIndexDto.CONTACT_PHONE_NUMBER:
-					case EbsIndexDto.SRC_TYPE:
+					case EbsIndexDto.INFORMANT_NAME:
+					case EbsIndexDto.INFORMANT_TEL:
+					case EbsIndexDto.SOURCE_INFORMATION:
 					case EbsIndexDto.REPORT_DATE_TIME:
-					case EbsIndexDto.SIGNAL_CATEGORY:
-					case EbsIndexDto.VERIFIED:
-					case EbsIndexDto.DEATH:
-					case EbsIndexDto.PERSON_REPORTING:
+					case EbsIndexDto.CATEGORY_OF_INFORMANT:
+					case EbsIndexDto.PERSON_REGISTERING:
+					case EbsIndexDto.PERSON_DESIGNATION:
 						expression = ebsQueryContext.getRoot().get(sortProperty.propertyName);
 						break;
 					case EbsIndexDto.TRIAGING_DECISION_DATE:
 						expression = decisionDate.get(Triaging.DATE_OF_DECISION);
+						break;
+					case EbsIndexDto.VERIFICATION_SENT:
+						expression = signalVerification.get(SignalVerification.VERIFICATION_SENT);
+						break;
+					case EbsIndexDto.VERIFICATION_SENT_DATE:
+						expression = signalVerification.get(SignalVerification.VERIFICATION_SENT_DATE);
+						break;
+					case EbsIndexDto.VERIFIED_DATE:
+						expression = signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE);
+						break;
+					case EbsIndexDto.RISK_STATUS:
+						expression = riskAssessment.get(RiskAssessment.RISK_ASSESSMENT);
+						break;
+					case EbsIndexDto.ACTION_INITIATED:
+						expression = ebsAlert.get(EbsAlert.ACTION_INITIATED);
+						break;
+					case EbsIndexDto.RESPONSE_STATUS:
+						expression = ebsAlert.get(EbsAlert.RESPONSE_STATUS);
+						break;
+					case EbsIndexDto.VERIFIED:
+						expression = signalVerification.get(SignalVerification.VERIFIED);
+						break;
+					case EbsIndexDto.SIGNAL_CATEGORY:
+						expression = decisionDate.get(Triaging.SIGNAL_CATEGORY);
+						break;
+					case EbsIndexDto.TRIAGING_DECISION:
+						expression = decisionDate.get(Triaging.TRIAGING_DECISION);
+						break;
+					case EbsIndexDto.DEATH:
+						expression = signalVerification.get(SignalVerification.NUMBER_OF_DEATH);
 						break;
 					default:
 						throw new IllegalArgumentException(sortProperty.propertyName);
@@ -614,8 +647,8 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		cq.multiselect(
 				ebs.get(Ebs.UUID),
 				ebs.get(Ebs.EXTERNAL_ID),
-				ebs.get(Ebs.CONTACT_NAME),
-				ebs.get(Ebs.CONTACT_PHONE_NUMBER),
+				ebs.get(Ebs.INFORMANT_NAME),
+				ebs.get(Ebs.INFORMANT_TEL),
 				ebs.get(Ebs.RISK_LEVEL),
 				ebs.get(Ebs.SPECIFIC_RISK),
 				ebs.get(Ebs.TRIAGE_DATE),
@@ -623,7 +656,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 				ebs.get(Ebs.VERIFIED),
 				ebs.get(Ebs.CASES),
 				ebs.get(Ebs.DEATH),
-				ebs.get(Ebs.PERSON_REPORTING),
+				ebs.get(Ebs.CATEGORY_OF_INFORMANT),
 				region.get(Region.UUID),
 				region.get(Region.NAME),
 				district.get(District.UUID),
@@ -631,7 +664,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 				community.get(Community.UUID),
 				community.get(Community.NAME),
 				location.get(Location.ADDITIONAL_INFORMATION),
-				ebs.get(Ebs.SRC_TYPE),
+				ebs.get(Ebs.SOURCE_INFORMATION),
 				ebs.get(Ebs.REPORT_DATE_TIME),
 				reportingUser.get(User.UUID),
 				reportingUser.get(User.FIRST_NAME),
@@ -759,12 +792,12 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 		target.setRiskLevel(source.getRiskLevel());
 		target.setSpecificRisk(source.getSpecificRisk());
-		target.setContactName(source.getContactName());
-		target.setContactPhoneNumber(source.getContactPhoneNumber());
+		target.setInformantName(source.getInformantName());
+		target.setInformantTel(source.getInformantTel());
 		target.setTriageDate(source.getTriageDate());
 		target.setEndDate(source.getEndDate());
 		target.setReportDateTime(source.getReportDateTime());
-		target.setPersonReporting(source.getPersonReporting());
+		target.setCategoryOfInformant(source.getCategoryOfInformant());
 		target.setEbsLocation(locationFacade.fillOrBuildEntity(source.getEbsLocation(), target.getEbsLocation(), checkChangeDate));
 		target.setResponsibleUser(userService.getByReferenceDto(source.getResponsibleUser()));
 
@@ -786,7 +819,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		target.setPersonPhone(source.getPersonPhone());
 		target.setPersonRegistering(source.getPersonRegistering());
 		target.setSourceName(source.getSourceName());
-		target.setSrcType(source.getSrcType());
+		target.setSourceInformation(source.getSourceInformation());
 		target.setDateOnset(source.getDateOnset());
 		target.setEbsLongitude(source.getEbsLongitude());
 		target.setEbsLatitude(source.getEbsLongitude());
