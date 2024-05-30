@@ -90,8 +90,8 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
         getContent().addComponent(headingEventDetails, EVENT_DETAILS_LOC);
         NullableOptionGroup sentVerification = addField(SignalVerificationDto.VERIFICATION_SENT, NullableOptionGroup.class);
         addField(SignalVerificationDto.VERIFIED, NullableOptionGroup.class);
-        addField(SignalVerificationDto.VERIFICATION_SENT_DATE, DateTimeField.class);
-        addField(SignalVerificationDto.VERIFICATION_COMPLETE_DATE, DateTimeField.class);
+        addField(SignalVerificationDto.VERIFICATION_SENT_DATE, DateField.class);
+        addField(SignalVerificationDto.VERIFICATION_COMPLETE_DATE, DateField.class);
         addField(SignalVerificationDto.DATE_OF_OCCURRENCE, DateField.class);
         addField(SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL, TextField.class);
         addField(SignalVerificationDto.NUMBER_OF_DEATH, TextField.class);

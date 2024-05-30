@@ -1,13 +1,6 @@
 package de.symeda.sormas.api.ebs;
 
-import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.ImportIgnore;
-import de.symeda.sormas.api.caze.CaseReferenceDto;
-import de.symeda.sormas.api.exposure.ExposureDto;
-import de.symeda.sormas.api.location.LocationDto;
-import de.symeda.sormas.api.sample.PathogenTestResultType;
-import de.symeda.sormas.api.sample.SampleDto;
-import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
@@ -36,9 +29,9 @@ public class RiskAssessmentDto extends PseudonymizableDto {
 
     public static String RISK_ASSESSMENT = "riskAssessment";
 
-    public static String RESPONSE_DATE = "responseDate";
+    public static String ASSESSMENT_DATE = "assessmentDate";
 
-    public static String RESPONSE_TIME = "responseTime";
+    public static String ASSESSMENT_TIME = "assessmentTime";
 
     public static String INFO = "info";
     public static String EBS = "ebs";
@@ -51,8 +44,8 @@ public class RiskAssessmentDto extends PseudonymizableDto {
     private YesNo controlMeasures;
     private String controlMeasuresComment;
     private RiskAssesment riskAssessment;
-    private Date responseDate;
-    private String responseTime;
+    private Date assessmentDate;
+    private String assessmentTime;
     private EbsReferenceDto ebs;
 
     public YesNo getMorbidityMortality() {
@@ -87,20 +80,20 @@ public class RiskAssessmentDto extends PseudonymizableDto {
         this.riskAssessment = riskAssessment;
     }
 
-    public Date getResponseDate() {
-        return responseDate;
+    public Date getAssessmentDate() {
+        return assessmentDate;
     }
 
-    public void setResponseDate(Date responseDate) {
-        this.responseDate = responseDate;
+    public void setAssessmentDate(Date assessmentDate) {
+        this.assessmentDate = assessmentDate;
     }
 
-    public String getResponseTime() {
-        return responseTime;
+    public String getAssessmentTime() {
+        return assessmentTime;
     }
 
-    public void setResponseTime(String responseTime) {
-        this.responseTime = responseTime;
+    public void setAssessmentTime(String assessmentTime) {
+        this.assessmentTime = assessmentTime;
     }
 
     public String getControlMeasuresComment() {

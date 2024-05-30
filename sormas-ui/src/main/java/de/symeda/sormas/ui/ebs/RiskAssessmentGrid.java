@@ -4,7 +4,6 @@ package de.symeda.sormas.ui.ebs;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.v7.data.util.BeanItemContainer;
 import com.vaadin.v7.data.util.GeneratedPropertyContainer;
-import com.vaadin.v7.event.ItemClickEvent;
 import com.vaadin.v7.ui.Grid;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ebs.EbsDto;
@@ -12,10 +11,8 @@ import de.symeda.sormas.api.ebs.EbsReferenceDto;
 import de.symeda.sormas.api.ebs.RiskAssessmentCriteria;
 import de.symeda.sormas.api.ebs.RiskAssessmentDto;
 import de.symeda.sormas.ui.ControllerProvider;
-import de.symeda.sormas.ui.utils.ShowDetailsListener;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
-import java.util.Collections;
 import java.util.List;
 
 
@@ -35,7 +32,7 @@ public class RiskAssessmentGrid extends Grid {
 		setContainerDataSource(generatedContainer);
 
 		VaadinUiUtil.addIconColumn(generatedContainer, INFO, VaadinIcons.EYE);
-		setColumns(RiskAssessmentDto.RISK_ASSESSMENT, RiskAssessmentDto.RESPONSE_DATE, RiskAssessmentDto.RESPONSE_TIME,INFO);
+		setColumns(RiskAssessmentDto.RISK_ASSESSMENT, RiskAssessmentDto.ASSESSMENT_DATE, RiskAssessmentDto.ASSESSMENT_TIME,INFO);
 		VaadinUiUtil.setupActionColumn(getColumn(INFO));
 		addItemClickListener(e->{
 			if (INFO.equals(e.getPropertyId()) || e.isDoubleClick()) {

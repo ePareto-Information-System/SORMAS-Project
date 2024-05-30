@@ -2,7 +2,6 @@ package de.symeda.sormas.ui.ebs;
 
 
 import com.vaadin.ui.Label;
-import com.vaadin.v7.data.Property;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.TextArea;
@@ -12,7 +11,6 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ebs.EbsDto;
 import de.symeda.sormas.api.ebs.RiskAssesment;
 import de.symeda.sormas.api.ebs.RiskAssessmentDto;
-import de.symeda.sormas.api.ebs.SignalVerificationDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.utils.YesNo;
@@ -20,14 +18,9 @@ import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
-import de.symeda.sormas.ui.utils.DateTimeField;
-import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.NullableOptionGroup;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.Date;
 
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
@@ -55,7 +48,7 @@ public class RiskAssessmentDataForm extends AbstractEditForm<RiskAssessmentDto> 
         fluidRowLocs(RiskAssessmentDto.SPREAD_PROBABILITY_COMMENT) +
         fluidRowLocs(RiskAssessmentDto.CONTROL_MEASURES) +
         fluidRowLocs(RiskAssessmentDto.CONTROL_MEASURES_COMMENT) +
-            fluidRowLocs(RiskAssessmentDto.RISK_ASSESSMENT, RiskAssessmentDto.RESPONSE_DATE, RiskAssessmentDto.RESPONSE_TIME);
+            fluidRowLocs(RiskAssessmentDto.RISK_ASSESSMENT, RiskAssessmentDto.ASSESSMENT_DATE, RiskAssessmentDto.ASSESSMENT_TIME);
 
     RiskAssessmentDataForm(EbsDto ebsDto, Class<? extends EntityDto> parentClass, boolean isPseudonymized, boolean inJurisdiction, boolean isEditAllowed){
         super(
@@ -107,8 +100,8 @@ public class RiskAssessmentDataForm extends AbstractEditForm<RiskAssessmentDto> 
         NullableOptionGroup controlMeasures = addField(RiskAssessmentDto.CONTROL_MEASURES,NullableOptionGroup.class);
         TextArea controlMeasuresComment = addField(RiskAssessmentDto.CONTROL_MEASURES_COMMENT,TextArea.class);
         ComboBox riskAssesment =  addField(RiskAssessmentDto.RISK_ASSESSMENT, ComboBox.class);
-        DateField responseDate = addField(RiskAssessmentDto.RESPONSE_DATE, DateField.class);
-        TextField responseTime = addField(RiskAssessmentDto.RESPONSE_TIME, TextField.class);
+        DateField responseDate = addField(RiskAssessmentDto.ASSESSMENT_DATE, DateField.class);
+        TextField responseTime = addField(RiskAssessmentDto.ASSESSMENT_TIME, TextField.class);
 
         ValueChangeListener commonListener = event -> {
 

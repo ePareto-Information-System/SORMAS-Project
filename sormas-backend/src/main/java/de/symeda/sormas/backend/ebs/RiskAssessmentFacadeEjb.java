@@ -3,19 +3,14 @@ package de.symeda.sormas.backend.ebs;
 import de.symeda.sormas.api.ebs.RiskAssessmentCriteria;
 import de.symeda.sormas.api.ebs.RiskAssessmentDto;
 import de.symeda.sormas.api.ebs.RiskAssessmentFacade;
-import de.symeda.sormas.api.sample.SampleDto;
-import de.symeda.sormas.api.sample.SampleJurisdictionFlagsDto;
-import de.symeda.sormas.backend.sample.Sample;
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
-import de.symeda.sormas.backend.util.Pseudonymizer;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Stateless(name = "RiskAssessmentFacade")
@@ -36,8 +31,8 @@ public class RiskAssessmentFacadeEjb implements RiskAssessmentFacade {
         target.setMorbidityMortality(source.getMorbidityMortality());
         target.setSpreadProbability(source.getSpreadProbability());
         target.setControlMeasures(source.getControlMeasures());
-        target.setResponseDate(source.getResponseDate());
-        target.setResponseTime(source.getResponseTime());
+        target.setAssessmentDate(source.getAssessmentDate());
+        target.setAssessmentTime(source.getAssessmentTime());
         target.setRiskAssessment(source.getRiskAssessment());
         target.setControlMeasuresComment(source.getControlMeasuresComment());
         target.setSpreadProbabilityComment(source.getSpreadProbabilityComment());
@@ -56,8 +51,8 @@ public class RiskAssessmentFacadeEjb implements RiskAssessmentFacade {
         target.setMorbidityMortality(source.getMorbidityMortality());
         target.setSpreadProbability(source.getSpreadProbability());
         target.setControlMeasures(source.getControlMeasures());
-        target.setResponseDate(source.getResponseDate());
-        target.setResponseTime(source.getResponseTime());
+        target.setAssessmentDate(source.getAssessmentDate());
+        target.setAssessmentTime(source.getAssessmentTime());
         target.setRiskAssessment(source.getRiskAssessment());
         target.setControlMeasuresComment(source.getControlMeasuresComment());
         target.setSpreadProbabilityComment(source.getSpreadProbabilityComment());
