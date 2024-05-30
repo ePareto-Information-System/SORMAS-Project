@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import de.symeda.sormas.api.ebs.EbsDto;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +84,25 @@ public class ExternalSurveillanceServiceGateway {
 				FacadeProvider.getExternalSurveillanceToolFacade().deleteEvents(Collections.singletonList(event));
 			} : null,
 			new ExternalShareInfoCriteria().event(event.toReference()));
+	}
+	public static ExternalSurveillanceShareComponent addComponentToLayout(
+		LayoutWithSidePanel targetLayout,
+		DirtyStateComponent editComponent,
+		EbsDto event,
+		boolean isEditAllowed) {
+		return addComponentToLayout(
+			targetLayout,
+			editComponent,
+			I18nProperties.getString(Strings.entityEvent),
+			I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_confirmSendEvent),
+			I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_confirmDeleteEvent),
+			isEditAllowed ? () -> {
+				FacadeProvider.getExternalSurveillanceToolFacade().sendEvents(Collections.singletonList(event.getUuid()));
+			} : null,
+			isEditAllowed ? () -> {
+				FacadeProvider.getExternalSurveillanceToolFacade().deleteEbs(Collections.singletonList(event));
+			} : null,
+			new ExternalShareInfoCriteria().ebs(event.toReference()));
 	}
 
 	private static ExternalSurveillanceShareComponent addComponentToLayout(

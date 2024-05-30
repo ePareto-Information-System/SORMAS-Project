@@ -22,6 +22,11 @@
 		<class>de.symeda.sormas.backend.hospitalization.Hospitalization</class>
 		<class>de.symeda.sormas.backend.sixtyday.SixtyDay</class>
 		<class>de.symeda.sormas.backend.afpimmunization.AfpImmunization</class>
+		<class>de.symeda.sormas.backend.ebs.Ebs</class>
+		<class>de.symeda.sormas.backend.ebs.Triaging</class>
+		<class>de.symeda.sormas.backend.ebs.SignalVerification</class>
+		<class>de.symeda.sormas.backend.ebs.RiskAssessment</class>
+		<class>de.symeda.sormas.backend.ebs.EbsAlert</class>
 		<class>de.symeda.sormas.backend.hospitalization.PreviousHospitalization</class>
 		<class>de.symeda.sormas.backend.location.Location</class>
 		<class>de.symeda.sormas.backend.outbreak.Outbreak</class>

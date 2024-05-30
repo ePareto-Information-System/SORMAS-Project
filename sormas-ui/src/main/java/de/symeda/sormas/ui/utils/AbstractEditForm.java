@@ -15,7 +15,10 @@
 
 package de.symeda.sormas.ui.utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,6 +39,7 @@ import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.InfrastructureDataReferenceDto;
+import de.symeda.sormas.api.ebs.EbsDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -49,6 +53,7 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 
 	protected final FieldVisibilityCheckers fieldVisibilityCheckers;
 	protected final UiFieldAccessCheckers fieldAccessCheckers;
+
 	private boolean hideValidationUntilNextCommit = false;
 	private List<Field<?>> visibleAllowedFields = new ArrayList<>();
 	private boolean visibilitiesInitialized;
@@ -60,6 +65,7 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 
 	protected String disease;
 	private Disease caseDisease;
+	protected EbsDto ebsDto;
 
 	protected AbstractEditForm(Class<DTO> type, String propertyI18nPrefix) {
 		this(type, propertyI18nPrefix, true, null, null);
@@ -100,18 +106,43 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 		}
 	}
 
+	public EbsDto getEbsDto() {
+		return ebsDto;
+	}
+
 	protected AbstractEditForm(
 			Class<DTO> type,
 			String propertyI18nPrefix,
 			boolean addFields,
 			FieldVisibilityCheckers fieldVisibilityCheckers,
 			UiFieldAccessCheckers fieldAccessCheckers,
-			Disease caseDisease) {
+			EbsDto ebsDto) {
 
 		super(type, propertyI18nPrefix, new SormasFieldGroupFieldFactory(fieldVisibilityCheckers, fieldAccessCheckers), false);
 		this.fieldVisibilityCheckers = fieldVisibilityCheckers;
 		this.fieldAccessCheckers = fieldAccessCheckers;
-		this.caseDisease = caseDisease;
+		this.ebsDto = ebsDto;
+
+		getFieldGroup().addCommitHandler(this);
+		setWidth(900, Unit.PIXELS);
+
+		if (addFields) {
+			addFields();
+		}
+	}
+
+	protected AbstractEditForm(
+			Class<DTO> type,
+			String propertyI18nPrefix,
+			boolean addFields,
+			FieldVisibilityCheckers fieldVisibilityCheckers,
+			UiFieldAccessCheckers fieldAccessCheckers,
+			Disease disease) {
+
+		super(type, propertyI18nPrefix, new SormasFieldGroupFieldFactory(fieldVisibilityCheckers, fieldAccessCheckers), false);
+		this.fieldVisibilityCheckers = fieldVisibilityCheckers;
+		this.fieldAccessCheckers = fieldAccessCheckers;
+		this.caseDisease = disease;
 
 		getFieldGroup().addCommitHandler(this);
 		setWidth(900, Unit.PIXELS);

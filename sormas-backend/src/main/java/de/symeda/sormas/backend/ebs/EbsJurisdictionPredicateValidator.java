@@ -1,0 +1,123 @@
+/*
+ * SORMAS® - Surveillance Outbreak Response Management & Analysis System
+ * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package de.symeda.sormas.backend.ebs;
+
+import de.symeda.sormas.backend.event.*;
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.region.Region;
+import de.symeda.sormas.backend.location.Location;
+import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.util.PredicateJurisdictionValidator;
+
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+
+public class EbsJurisdictionPredicateValidator extends PredicateJurisdictionValidator {
+
+	private final EbsJoins joins;
+	private final CriteriaQuery<?> cq;
+
+	private EbsJurisdictionPredicateValidator(EbsQueryContext qc, User user) {
+		super(qc.getCriteriaBuilder(), user, null, null);
+		this.joins = qc.getJoins();
+		this.cq = qc.getQuery();
+	}
+
+	private EbsJurisdictionPredicateValidator(EbsQueryContext qc, Path userPath) {
+		super(qc.getCriteriaBuilder(), null, userPath, null);
+		this.joins = qc.getJoins();
+		this.cq = qc.getQuery();
+	}
+
+	public static EbsJurisdictionPredicateValidator of(EbsQueryContext qc, User user) {
+		return new EbsJurisdictionPredicateValidator(qc, user);
+	}
+
+	public static EbsJurisdictionPredicateValidator of(EbsQueryContext qc, Path userPath) {
+		return new EbsJurisdictionPredicateValidator(qc, userPath);
+	}
+
+	@Override
+	public Predicate isRootInJurisdiction() {
+		return super.isRootInJurisdiction();
+	}
+
+	@Override
+	public Predicate isRootInJurisdictionOrOwned() {
+
+		final Predicate reportedByCurrentUser = cb.and(
+			cb.isNotNull(joins.getRoot().get(Ebs.REPORTING_USER)),
+			user != null
+				? cb.equal(joins.getRoot().get(Ebs.REPORTING_USER).get(User.ID), user.getId())
+				: cb.equal(joins.getRoot().get(Ebs.REPORTING_USER).get(User.ID), userPath.get(User.ID)));
+
+		final Predicate currentUserResponsible = cb.and(
+			cb.isNotNull(joins.getRoot().get(Ebs.RESPONSIBLE_USER)),
+			user != null
+				? cb.equal(joins.getRoot().get(Ebs.RESPONSIBLE_USER).get(User.ID), user.getId())
+				: cb.equal(joins.getRoot().get(Ebs.RESPONSIBLE_USER).get(User.ID), userPath.get(User.ID)));
+
+		return cb.or(reportedByCurrentUser, currentUserResponsible, this.isRootInJurisdiction());
+	}
+
+	@Override
+	protected Predicate whenNotAllowed() {
+		return cb.disjunction();
+	}
+
+	@Override
+	protected Predicate whenNationalLevel() {
+		return cb.conjunction();
+	}
+
+	@Override
+	protected Predicate whenRegionalLevel() {
+		return user != null
+			? cb.equal(joins.getLocation().get(Location.REGION).get(Region.ID), user.getRegion().getId())
+			: cb.equal(joins.getLocation().get(Location.REGION).get(Region.ID), userPath.get(User.REGION).get(Region.ID));
+	}
+
+	@Override
+	protected Predicate whenDistrictLevel() {
+		return user != null
+			? cb.equal(joins.getLocation().get(Location.DISTRICT).get(District.ID), user.getDistrict().getId())
+			: cb.equal(joins.getLocation().get(Location.DISTRICT).get(District.ID), userPath.get(User.DISTRICT).get(District.ID));
+	}
+
+	@Override
+	protected Predicate whenCommunityLevel() {
+		return user != null
+			? cb.equal(joins.getLocation().get(Location.COMMUNITY).get(Community.ID), user.getCommunity().getId())
+			: cb.equal(joins.getLocation().get(Location.COMMUNITY).get(Community.ID), userPath.get(User.COMMUNITY).get(Community.ID));
+	}
+
+	@Override
+	protected Predicate whenFacilityLevel() {
+		return cb.disjunction();
+	}
+
+	@Override
+	protected Predicate whenPointOfEntryLevel() {
+		return cb.disjunction();
+	}
+
+	@Override
+	protected Predicate whenLaboratoryLevel() {
+		return cb.disjunction();
+	}
+}

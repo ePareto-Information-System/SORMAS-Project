@@ -49,6 +49,10 @@ import de.symeda.sormas.api.docgeneneration.DocumentTemplateFacade;
 import de.symeda.sormas.api.docgeneneration.EventDocumentFacade;
 import de.symeda.sormas.api.docgeneneration.QuarantineOrderFacade;
 import de.symeda.sormas.api.document.DocumentFacade;
+import de.symeda.sormas.api.ebs.EbsAlertFacade;
+import de.symeda.sormas.api.ebs.EbsFacade;
+import de.symeda.sormas.api.ebs.EbsGroupFacade;
+import de.symeda.sormas.api.ebs.RiskAssessmentFacade;
 import de.symeda.sormas.api.environment.EnvironmentFacade;
 import de.symeda.sormas.api.epidata.EpiDataFacade;
 import de.symeda.sormas.api.event.EventFacade;
@@ -97,6 +101,7 @@ import de.symeda.sormas.api.sormastosormas.SormasToSormasEncryptionFacade;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasFacade;
 import de.symeda.sormas.api.sormastosormas.entities.caze.SormasToSormasCaseFacade;
 import de.symeda.sormas.api.sormastosormas.entities.contact.SormasToSormasContactFacade;
+import de.symeda.sormas.api.sormastosormas.entities.ebs.SormasToSormasEbsFacade;
 import de.symeda.sormas.api.sormastosormas.entities.event.SormasToSormasEventFacade;
 import de.symeda.sormas.api.sormastosormas.entities.externalmessage.SormasToSormasExternalMessageFacade;
 import de.symeda.sormas.api.sormastosormas.share.incoming.SormasToSormasShareRequestFacade;
@@ -192,6 +197,21 @@ public class FacadeProvider {
 
 	public static EventParticipantFacade getEventParticipantFacade() {
 		return get().lookupEjbRemote(EventParticipantFacade.class);
+	}
+
+	public static EbsFacade getEbsFacade() {
+		return get().lookupEjbRemote(EbsFacade.class);
+	}
+
+	public static RiskAssessmentFacade getRiskAssessmentFacade() {
+		return get().lookupEjbRemote(RiskAssessmentFacade.class);
+	}
+	public static EbsAlertFacade getAlertFacade() {
+		return get().lookupEjbRemote(EbsAlertFacade.class);
+	}
+
+	public static EbsGroupFacade getEbsGroupFacade() {
+		return get().lookupEjbRemote(EbsGroupFacade.class);
 	}
 
 	public static VisitFacade getVisitFacade() {
@@ -416,6 +436,9 @@ public class FacadeProvider {
 
 	public static SormasToSormasEventFacade getSormasToSormasEventFacade() {
 		return get().lookupEjbRemote(SormasToSormasEventFacade.class);
+	}
+	public static SormasToSormasEbsFacade getSormasToSormasEbsFacade() {
+		return get().lookupEjbRemote(SormasToSormasEbsFacade.class);
 	}
 
 	public static SormasToSormasExternalMessageFacade getSormasToSormasLabMessageFacade() {

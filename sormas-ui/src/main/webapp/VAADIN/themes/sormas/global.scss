@@ -315,6 +315,41 @@
     color: $s-critical-color !important;
   }
 
+  .very-high-risk-assessment{
+    border: 3px solid $s-very-high-risk-color !important;
+  }
+  .high-risk-assessment{
+    border: 3px solid $s-high-risk-color !important;
+  }
+  .moderate-risk-assessment{
+    border: 3px solid $s-moderate-risk-color !important;
+  }
+  .low-risk-assessment{
+    border: 3px solid $s-low-risk-color !important;
+  }
+
+  .risk-label{
+    text-wrap: wrap;
+    margin-top: -3em !important;
+    font-size: 1.5rem;
+  }
+  .risk-label::before{
+
+  }
+
+  .very-high-risk-assessment .v-window-outerheader{
+    background: $s-very-high-risk-color !important;
+  }
+  .high-risk-assessment .v-window-outerheader{
+    background: $s-high-risk-color !important;
+  }
+  .moderate-risk-assessment .v-window-outerheader{
+    background: $s-moderate-risk-color !important;
+  }
+  .low-risk-assessment .v-window-outerheader{
+    background: $s-low-risk-color !important;
+  }
+
   .root-component {
     min-width: 640px;
 	max-width: 1280px;

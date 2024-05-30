@@ -137,8 +137,14 @@
 			<artifactId>javaee-api</artifactId>
 			<version>8.0.1</version>
 		</dependency>
+        <dependency>
+            <groupId>com.ibm.icu</groupId>
+            <artifactId>icu4j</artifactId>
+            <version>72.1</version>
+            <scope>compile</scope>
+        </dependency>
 
-		<!-- *** Test dependencies END *** -->
+        <!-- *** Test dependencies END *** -->
 
 	</dependencies>
 

@@ -26,6 +26,7 @@ public enum ExportEntityName {
 	SUBCONTINENTS("entitySubcontinents", "subcontinents"),
 	DISTRICTS("entityDistricts", "districts"),
 	EVENTS("entityEvents", "events"),
+	EBS("entityEbs", "ebs"),
 	EVENT_PARTICIPANTS("entityEventParticipants", "event participants"),
 	EVENT_ACTIONS("entityEventActions", "events actions"),
 	FACILITIES("entityFacilities", "facilities"),

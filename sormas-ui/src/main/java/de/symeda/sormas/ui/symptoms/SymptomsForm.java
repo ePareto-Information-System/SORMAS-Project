@@ -294,7 +294,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			FieldVisibilityCheckers.withDisease(disease)
 				.andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale())
 				.add(new OutbreakFieldVisibilityChecker(viewMode)),
-			fieldAccessCheckers,disease);
+			fieldAccessCheckers,
+				disease);
 
         this.caze = caze;
         this.disease = disease;

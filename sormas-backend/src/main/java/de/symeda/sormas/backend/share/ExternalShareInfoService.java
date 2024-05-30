@@ -37,6 +37,7 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.ebs.EbsReferenceDto;
 import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.share.ExternalShareCriteria;
 import de.symeda.sormas.api.share.ExternalShareInfoCriteria;
@@ -48,6 +49,7 @@ import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.AdoServiceWithUserFilterAndJurisdiction;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.event.Event;
+import de.symeda.sormas.backend.ebs.Ebs;
 import de.symeda.sormas.backend.user.UserService;
 
 @Stateless
@@ -90,12 +92,20 @@ public class ExternalShareInfoService extends AdoServiceWithUserFilterAndJurisdi
 		createAndPersistShareInfo(status, event, ExternalShareInfo::setEvent);
 	}
 
+	public void createAndPersistShareInfo(Ebs ebs, ExternalShareStatus status) {
+		createAndPersistShareInfo(status, ebs, ExternalShareInfo::setEbs);
+	}
+
 	public boolean isCaseShared(Long caseId) {
 		return exists((cb, root, cq) -> cb.equal(root.get(ExternalShareInfo.CAZE).get(Case.ID), caseId));
 	}
 
 	public boolean isEventShared(Long eventId) {
 		return exists((cb, root, cq) -> cb.equal(root.get(ExternalShareInfo.EVENT).get(Event.ID), eventId));
+	}
+
+	public boolean isEbsShared(Long eventId) {
+		return exists((cb, root, cq) -> cb.equal(root.get(ExternalShareInfo.EBS).get(Ebs.ID), eventId));
 	}
 
 	public List<ExternalShareInfo> getShareInfoByCase(String caseUuid) {
@@ -115,6 +125,15 @@ public class ExternalShareInfoService extends AdoServiceWithUserFilterAndJurisdi
 		Root<ExternalShareInfo> root = cq.from(ExternalShareInfo.class);
 
 		cq.where(buildCriteriaFilter(new ExternalShareInfoCriteria().event(new EventReferenceDto(eventUuid)), cb, root));
+		return em.createQuery(cq).getResultList();
+	}
+	public List<ExternalShareInfo> getShareInfoByEbs(String eventUuid) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<ExternalShareInfo> cq = cb.createQuery(ExternalShareInfo.class);
+		Root<ExternalShareInfo> root = cq.from(ExternalShareInfo.class);
+
+		cq.where(buildCriteriaFilter(new ExternalShareInfoCriteria().ebs(new EbsReferenceDto(eventUuid)), cb, root));
 		return em.createQuery(cq).getResultList();
 	}
 
@@ -138,6 +157,9 @@ public class ExternalShareInfoService extends AdoServiceWithUserFilterAndJurisdi
 
 	public List<ExternalShareInfoCountAndLatestDate> getEventShareCountAndLatestDate(List<Long> eventIds) {
 		return getShareCountAndLatestDate(eventIds, ExternalShareInfo.EVENT);
+	}
+	public List<ExternalShareInfoCountAndLatestDate> getEbsShareCountAndLatestDate(List<Long> eventIds) {
+		return getShareCountAndLatestDate(eventIds, ExternalShareInfo.EBS);
 	}
 
 	public List<ExternalShareInfoCountAndLatestDate> getShareCountAndLatestDate(List<Long> ids, String associatedObjectName) {

@@ -297,8 +297,14 @@
 			<artifactId>google-http-client</artifactId>
 			<scope>compile</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-metadata</artifactId>
+            <version>29.2</version>
+            <scope>compile</scope>
+        </dependency>
 
-		<!-- *** Test dependencies END *** -->
+        <!-- *** Test dependencies END *** -->
 
 	</dependencies>
 
