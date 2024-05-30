@@ -1,21 +1,12 @@
 package de.symeda.sormas.api.ebs;
 
-import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.EntityRelevanceStatus;
-import de.symeda.sormas.api.action.ActionStatus;
-import de.symeda.sormas.api.caze.CaseReferenceDto;
-import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.event.*;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
-import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.share.ExternalShareCriteria;
-import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRoleReferenceDto;
-import de.symeda.sormas.api.utils.DateFilterOption;
 import de.symeda.sormas.api.utils.IgnoreForUrl;
-import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
 import de.symeda.sormas.api.utils.criteria.CriteriaWithDateType;
 
 import java.io.Serializable;
@@ -37,7 +28,7 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
     private RegionReferenceDto region;
     private DistrictReferenceDto district;
     private CommunityReferenceDto community;
-    private EbsSourceType srcType;
+    private EbsSourceType sourceInformation;
     private EbsTriagingDecision triagingDecision;
     private Set<String> excludedUuids;
     private Date reportDateTime;
@@ -45,6 +36,8 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
     private Boolean userFilterIncluded = true;
     private TriagingDto triagingDto;
     private SignalVerificationDto signalVerificationDto;
+    private String personRegistering;
+    private String personDesignation;
 
     public EbsCriteria() {
         super(EbsCriteriaDateType.class);
@@ -131,12 +124,12 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
         return this;
     }
 
-    public EbsSourceType getSrcType() {
-        return srcType;
+    public EbsSourceType getSourceInformation() {
+        return sourceInformation;
     }
 
-    public void setSrcType(EbsSourceType srcType) {
-        this.srcType = srcType;
+    public void setSourceInformation(EbsSourceType sourceInformation) {
+        this.sourceInformation = sourceInformation;
     }
 
     public EbsTriagingDecision getTriagingDecision() {
@@ -191,6 +184,22 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
 
     public void setSignalVerificationDto(SignalVerificationDto signalVerificationDto) {
         this.signalVerificationDto = signalVerificationDto;
+    }
+
+    public String getPersonRegistering() {
+        return personRegistering;
+    }
+
+    public void setPersonRegistering(String personRegistering) {
+        this.personRegistering = personRegistering;
+    }
+
+    public String getPersonDesignation() {
+        return personDesignation;
+    }
+
+    public void setPersonDesignation(String personDesignation) {
+        this.personDesignation = personDesignation;
     }
 
     @Override
