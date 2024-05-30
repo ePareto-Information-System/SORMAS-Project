@@ -1236,6 +1236,8 @@ public interface Captions {
 	String environmentEnvironmentsList = "environmentEnvironmentsList";
 	String environmentNewEnvironment = "environmentNewEnvironment";
 	String EpiData = "EpiData";
+	String EpiDataShowMapButton = "EpiDataShowMapButton";
+	String EpiDataHideMapButton = "EpiDataHideMapButton";
 	String EpiData_activitiesAsCase = "EpiData.activitiesAsCase";
 	String EpiData_activityAsCaseDetailsKnown = "EpiData.activityAsCaseDetailsKnown";
 	String EpiData_areaInfectedAnimals = "EpiData.areaInfectedAnimals";
@@ -1391,10 +1393,11 @@ public interface Captions {
 	String EpiData_patientContactWithConfirmedCase = "EpiData.patientContactWithConfirmedCase";
 	String EpiData_patientContactWithConfirmedCaseExposureLocationCityCountry = "EpiData.patientContactWithConfirmedCaseExposureLocationCityCountry";
 	String EpiData_personTravelHistories = "EpiData.personTravelHistories";
-	String EpidData_contaminationSources = "EpidData.contaminationSources";
-	String epiData_containmentMeasures = "EpidData.containmentMeasures";
+	String EpidData_contaminationSources = "EpiData.contaminationSources";
+	String epiData_containmentMeasures = "EpiData.containmentMeasures";
 	String epiData_receivedHealthEducation = "epiData_receivedHealthEducation";
 	String epiData_patientEnteredWaterSource = "epiData_patientEnteredWaterSource";
+
 	String epiData_placeManaged = "epiData_placeManaged";
 	String epiDataNoSourceContacts = "epiDataNoSourceContacts";
 	String epiWeekFrom = "epiWeekFrom";
