@@ -20,14 +20,10 @@ package de.symeda.sormas.ui.ebs;
 import com.vaadin.data.provider.DataProviderListener;
 import com.vaadin.navigator.View;
 import com.vaadin.ui.renderers.DateRenderer;
-import com.vaadin.ui.renderers.HtmlRenderer;
-import de.symeda.sormas.api.DiseaseHelper;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.ebs.*;
-import de.symeda.sormas.api.event.*;
-import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.user.UserRight;
@@ -35,7 +31,6 @@ import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
-import de.symeda.sormas.ui.events.groups.EventGroupsValueProvider;
 import de.symeda.sormas.ui.utils.*;
 
 import java.util.ArrayList;
@@ -74,9 +69,9 @@ public class EbsGrid extends FilteredGrid<de.symeda.sormas.api.ebs.EbsIndexDto, 
 		}
 
 		Column<EbsIndexDto, String> informationSourceColumn = addColumn(
-			ebs -> ebs.getSrcType() == EbsSourceType.HOTLINE_PERSON
+			ebs -> ebs.getSourceInformation() == EbsSourceType.HOTLINE_PERSON
 				? buildSourcePersonText(ebs)
-				: ebs.getSrcType() == EbsSourceType.MEDIA_NEWS ? buildSourceMediaText(ebs) : "");
+				: ebs.getSourceInformation() == EbsSourceType.MEDIA_NEWS ? buildSourceMediaText(ebs) : "");
 		informationSourceColumn.setId(INFORMATION_SOURCE);
 		informationSourceColumn.setSortable(false);
 
@@ -90,17 +85,13 @@ public class EbsGrid extends FilteredGrid<de.symeda.sormas.api.ebs.EbsIndexDto, 
 
 		columnIds.addAll(
 			Arrays.asList(
-				EbsIndexDto.SRC_TYPE,
-				EbsIndexDto.PERSON_REPORTING,
+				EbsIndexDto.SOURCE_INFORMATION,
+				EbsIndexDto.CATEGORY_OF_INFORMANT,
 				EbsIndexDto.REPORT_DATE_TIME,
-				EbsIndexDto.CONTACT_NAME,
-				EbsIndexDto.CONTACT_PHONE_NUMBER,
-				EbsIndexDto.TRIAGING_DECISION,
-				EbsIndexDto.TRIAGE_DATE,
-				EbsIndexDto.SIGNAL_CATEGORY,
-				EbsIndexDto.VERIFIED,
-				EbsIndexDto.DEATH,
-					EbsIndexDto.TRIAGING_DECISION_DATE));
+				EbsIndexDto.INFORMANT_NAME,
+				EbsIndexDto.INFORMANT_TEL,
+				EbsIndexDto.PERSON_REGISTERING,
+				EbsIndexDto.PERSON_DESIGNATION));
 
 
 		setColumns(columnIds.toArray(new String[columnIds.size()]));
@@ -128,8 +119,8 @@ public class EbsGrid extends FilteredGrid<de.symeda.sormas.api.ebs.EbsIndexDto, 
 //	}
 
 	private String buildSourcePersonText(EbsIndexDto ebs) {
-		String srcFirstName = ebs.getContactName();
-		String srcTelNo = ebs.getContactPhoneNumber();
+		String srcFirstName = ebs.getInformantName();
+		String srcTelNo = ebs.getInformantTel();
 
 		if (FieldAccessHelper.isAllInaccessible(srcFirstName, srcTelNo)) {
 			return I18nProperties.getCaption(Captions.inaccessibleValue);
@@ -140,7 +131,7 @@ public class EbsGrid extends FilteredGrid<de.symeda.sormas.api.ebs.EbsIndexDto, 
 	}
 
 	private String buildSourceMediaText(EbsIndexDto ebs) {
-		String srcMediaWebsite = String.valueOf(ebs.getSrcType());
+		String srcMediaWebsite = String.valueOf(ebs.getSourceInformation());
 
 		if (FieldAccessHelper.isAllInaccessible(srcMediaWebsite)) {
 			return I18nProperties.getCaption(Captions.inaccessibleValue);
