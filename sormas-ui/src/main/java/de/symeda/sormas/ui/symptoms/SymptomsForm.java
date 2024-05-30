@@ -1175,7 +1175,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		}else if (disease == Disease.GUINEA_WORM) {
 			addField(FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM, NullableOptionGroup.class);
 			addField(FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS, TextField.class);
-			FieldHelper.setVisibleWhen(getFieldGroup(), FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS, FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM, Arrays.asList(GuineaWormFirstSymptom.OTHERS), true);
+			FieldHelper.setVisibleWhen(getFieldGroup(), FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS, FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM, Arrays.asList(GuineaWormFirstSymptom.OTHER), true);
 			addField(NUMBER_OF_WORMS, TextField.class);
 			addField(DATE_FIRST_WORM_EMERGENCE, DateField.class);
 			FieldHelper.setVisibleWhen(getFieldGroup(), FIRST_WORM_THIS_YEAR, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
