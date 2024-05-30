@@ -17,6 +17,7 @@ package de.symeda.sormas.api.ebs;
 
 
 import de.symeda.sormas.api.utils.HasCaption;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
 
 import java.io.Serializable;
@@ -31,71 +32,102 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	public static final String UUID = "uuid";
 	public static final String TRIAGE_DATE = "triageDate";
 	public static final String EBS_LOCATION = "ebsLocation";
-	public static final String SRC_TYPE = "srcType";
+	public static final String SOURCE_INFORMATION = "sourceInformation";
 	public static final String TRIAGING_DECISION = "triagingDecision";
 	public static final String REPORT_DATE_TIME = "reportDateTime";
 	public static final String REPORTING_USER = "reportingUser";
-	public static final String CONTACT_NAME = "contactName";
-	public static final String CONTACT_PHONE_NUMBER = "contactPhoneNumber";
+	public static final String INFORMANT_NAME = "informantName";
+	public static final String INFORMANT_TEL = "informantTel";
 	public static final String SIGNAL_CATEGORY = "signalCategory";
 	public static final String VERIFIED = "verified";
 	public static final String CASES = "cases";
 	public static final String DEATH = "death";
-	public static final String PERSON_REPORTING = "personReporting";
-
+	public static final String CATEGORY_OF_INFORMANT = "categoryOfInformant";
+	public static final String PERSON_REGISTERING = "personRegistering";
+	public static final String PERSON_DESIGNATION = "personDesignation";
 
 
 	public static final String TRIAGING_DECISION_DATE = "triagingDecisionDate";
+	public static final String VERIFICATION_SENT = "verificationSent";
+	public static final String VERIFICATION_SENT_DATE = "verificationSentDate";
+	public static final String VERIFIED_DATE = "verifiedDate";
+	public static final String RISK_STATUS = "riskStatus";
+	public static final String ACTION_INITIATED = "actionInitiated";
+	public static final String RESPONSE_STATUS = "responseStatus";
 
 	private Long id;
 	/**
 	 * number of contacts whose person is involved in this event, and where the source case is also part of the event
 	 */
 	private Date triageDate;
-	private EbsSourceType srcType;
+	private EbsSourceType sourceInformation;
 	private EbsTriagingDecision triagingDecision;
 	private Date reportDateTime;
-	private PersonReporting personReporting;
-	private String contactName;
-	private String contactPhoneNumber;
+	private PersonReporting categoryOfInformant;
+	private String informantName;
+	private String informantTel;
 	private SignalCategory signalCategory;
-	private String verified;
+	private EbsVerified verified;
 	private String cases;
-	private String death;
+	private EbsDeath death;
 	private EbsIndexTriagingDecisionDate triagingDecisionDate;
+	private String personRegistering;
+	private String personDesignation;
+	private EbsVerificationSent verificationSent;
+	private EbsVerificationSentDate verificationSentDate;
+	private EbsVerifiedDate verifiedDate;
+	private EbsRiskStatus riskStatus;
+	private EbsActionInitiated actionInitiated;
+	private EbsResponseStatus responseStatus;
 
 
 	public EbsIndexDto(
-		Long id,
-		String uuid,
-		Date triageDate,
-		EbsSourceType srcType,
-		EbsTriagingDecision triagingDecision,
-		Date reportDateTime,
-		PersonReporting personReporting,
-		String contactName,
-		String contactPhoneNumber,
-		SignalCategory signalCategory,
-		String verified,
-		String cases,
-		String death,
-		Date decisionDate
-		) {
+			Long id,
+			String uuid,
+			Date triageDate,
+			EbsSourceType sourceInformation,
+			EbsTriagingDecision triagingDecision,
+			Date reportDateTime,
+			PersonReporting categoryOfInformant,
+			String informantName,
+			String informantTel,
+			SignalCategory signalCategory,
+			YesNo verified,
+			String cases,
+			String death,
+			Date decisionDate,
+			String personRegistering,
+			String personDesignation,
+			YesNo verificationSent,
+			Date verificationSentDate,
+			Date verifiedDate,
+			RiskAssesment riskStatus,
+			YesNo actionInitiated,
+			ResponseStatus responseStatus
+	) {
 
 		super(uuid);
 		this.id = id;
 		this.triageDate = triageDate;
-		this.srcType = srcType;
+		this.sourceInformation = sourceInformation;
 		this.triagingDecision = triagingDecision;
 		this.reportDateTime = reportDateTime;
-		this.personReporting = personReporting;
-		this.contactName = contactName;
-		this.contactPhoneNumber = contactPhoneNumber;
+		this.categoryOfInformant = categoryOfInformant;
+		this.informantName = informantName;
+		this.informantTel = informantTel;
 		this.signalCategory = signalCategory;
-		this.verified = verified;
+		this.verified = new EbsVerified(verified);
 		this.cases = cases;
-		this.death = death;
+		this.death = new EbsDeath(death);
 		this.triagingDecisionDate = new EbsIndexTriagingDecisionDate(decisionDate);
+		this.personDesignation = personDesignation;
+		this.personRegistering = personRegistering;
+		this.verificationSent = new EbsVerificationSent(verificationSent);
+		this.verificationSentDate = new EbsVerificationSentDate(verificationSentDate);
+		this.verifiedDate = new EbsVerifiedDate(verifiedDate);
+		this.riskStatus = new EbsRiskStatus(riskStatus);
+		this.actionInitiated = new EbsActionInitiated(actionInitiated);
+		this.responseStatus = new EbsResponseStatus(responseStatus);
 	}
 
 	public EbsIndexDto(String uuid) {
@@ -118,12 +150,12 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		this.triageDate = triageDate;
 	}
 
-	public EbsSourceType getSrcType() {
-		return srcType;
+	public EbsSourceType getSourceInformation() {
+		return sourceInformation;
 	}
 
-	public void setSrcType(EbsSourceType srcType) {
-		this.srcType = srcType;
+	public void setSourceInformation(EbsSourceType sourceInformation) {
+		this.sourceInformation = sourceInformation;
 	}
 
 	public EbsTriagingDecision getTriagingDecision() {
@@ -142,31 +174,51 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		this.reportDateTime = reportDateTime;
 	}
 
-//	public UserReferenceDto getReportingUser() {
-//		return reportingUser;
-//	}
-//
-//	public void setReportingUser(UserReferenceDto reportingUser) {
-//		this.reportingUser = reportingUser;
-//	}
-
 	public Date getDecisionDate() {
 		return getTriagingDecisionDate().getDecisionDate();
 	}
-	public String getContactName() {
-		return contactName;
+
+	public YesNo getVerificationSent() {
+		return getExtensionVerificationSent().getVerificationSent();
 	}
 
-	public void setContactName(String contactName) {
-		this.contactName = contactName;
+	public Date getVerificationSentDate() {
+		return getEbsVerificationSentDate().getVerificationSentDate();
 	}
 
-	public String getContactPhoneNumber() {
-		return contactPhoneNumber;
+	public Date getVerifiedDate() {
+		return getEbsVerifiedDate().getVerifiedDate();
 	}
 
-	public void setContactPhoneNumber(String contactPhoneNumber) {
-		this.contactPhoneNumber = contactPhoneNumber;
+	public RiskAssesment getRiskStatus() {
+		return getEbsRiskStatus().getRiskStatus();
+	}
+
+	public YesNo getResponseAction() {
+		return getEbsActionInitiated().getActionInitiated();
+	}
+
+	public ResponseStatus getResponseStatus() {
+		return getEbsResponseStatus().getResponseStatus();
+	}
+	public String getDeath() {
+		return getEbsDeath().getDeath();
+	}
+
+	public String getInformantName() {
+		return informantName;
+	}
+
+	public void setInformantName(String informantName) {
+		this.informantName = informantName;
+	}
+
+	public String getInformantTel() {
+		return informantTel;
+	}
+
+	public void setInformantTel(String informantTel) {
+		this.informantTel = informantTel;
 	}
 
 	public SignalCategory getSignalCategory() {
@@ -181,12 +233,13 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		return new EbsReferenceDto(getUuid(), getTriageDate());
 	}
 
-	public String getVerified() {
-		return verified;
+	public YesNo getVerified() {
+		return getEbsVerified().getVerified();
 	}
 
-	public void setVerified(String verified) {
-		this.verified = verified;
+
+	public EbsVerified getEbsVerified() {
+		return verified;
 	}
 
 	public String getCases() {
@@ -197,28 +250,66 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		this.cases = cases;
 	}
 
-	public String getDeath() {
+	public EbsDeath getEbsDeath() {
 		return death;
 	}
 
-	public void setDeath(String death) {
-		this.death = death;
+	public PersonReporting getCategoryOfInformant() {
+		return categoryOfInformant;
 	}
 
-	public PersonReporting getPersonReporting() {
-		return personReporting;
-	}
-
-	public void setPersonReporting(PersonReporting personReporting) {
-		this.personReporting = personReporting;
+	public void setCategoryOfInformant(PersonReporting categoryOfInformant) {
+		this.categoryOfInformant = categoryOfInformant;
 	}
 
 	public EbsIndexTriagingDecisionDate getTriagingDecisionDate() {
 		return triagingDecisionDate;
 	}
 
+	public EbsVerificationSent getExtensionVerificationSent() {
+		return verificationSent;
+	}
+
+	public EbsVerificationSentDate getEbsVerificationSentDate() {
+		return verificationSentDate;
+	}
+
+	public EbsVerifiedDate getEbsVerifiedDate() {
+		return verifiedDate;
+	}
+
+	public EbsRiskStatus getEbsRiskStatus() {
+		return riskStatus;
+	}
+
+	public EbsResponseStatus getEbsResponseStatus() {
+		return responseStatus;
+	}
+
+	public EbsActionInitiated getEbsActionInitiated() {return actionInitiated;}
+
+	public String getPersonRegistering() {
+		return personRegistering;
+	}
+
+	public void setPersonRegistering(String personRegistering) {
+		this.personRegistering = personRegistering;
+	}
+
+	public String getPersonDesignation() {
+		return personDesignation;
+	}
+
+	public void setPersonDesignation(String personDesignation) {
+		this.personDesignation = personDesignation;
+	}
+
 	public Date getDecisionDateCaption() {
 		return getTriagingDecisionDate().getDecisionDate();
+	}
+
+	public void setDeath(EbsDeath death) {
+		this.death = death;
 	}
 
 	@Override
@@ -243,7 +334,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 
 	public static class EbsIndexTriagingDecisionDate implements Serializable, HasCaption {
 
-		private Date decisionDate;
+		private final Date decisionDate;
 
 		public EbsIndexTriagingDecisionDate(
 				Date decisionDate) {
@@ -256,6 +347,137 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 
 		public String buildCaption() {
 			return TriagingReferenceDto.buildCaption(decisionDate);
+		}
+	}
+
+	public static class EbsVerificationSent implements Serializable, HasCaption {
+
+		private final YesNo verificationSent;
+
+		public EbsVerificationSent(YesNo verificationSent) {
+			this.verificationSent = verificationSent;
+		}
+
+		public YesNo getVerificationSent() {
+			return verificationSent;
+		}
+
+		public String buildCaption() {
+			return SignalVerificationReferenceDto.buildCaption(verificationSent);
+		}
+	}
+
+	public static class EbsVerified implements Serializable, HasCaption {
+
+		private final YesNo verified;
+
+		public EbsVerified(YesNo verified) {
+			this.verified = verified;
+		}
+
+		public YesNo getVerified() {
+			return verified;
+		}
+
+		public String buildCaption() {
+			return SignalVerificationReferenceDto.buildCaption(verified);
+		}
+	}
+
+	public static class EbsVerificationSentDate implements Serializable, HasCaption {
+		private final Date verificationSentDate;
+
+		public EbsVerificationSentDate(Date verificationSentDate) {
+			this.verificationSentDate = verificationSentDate;
+		}
+
+		public Date getVerificationSentDate() {
+			return verificationSentDate;
+		}
+
+		public String buildCaption() {
+			return SignalVerificationReferenceDto.buildCaption(verificationSentDate);
+		}
+	}
+
+	public static class EbsVerifiedDate implements Serializable, HasCaption {
+		private final Date verfiedDate;
+
+		public EbsVerifiedDate(Date verifiedDate) {
+			this.verfiedDate = verifiedDate;
+		}
+
+		public Date getVerifiedDate() {
+			return verfiedDate;
+		}
+
+		public String buildCaption() {
+			return SignalVerificationReferenceDto.buildCaption(verfiedDate);
+		}
+	}
+
+	public static class EbsRiskStatus implements Serializable, HasCaption {
+		private final RiskAssesment riskStatus;
+
+		public EbsRiskStatus(RiskAssesment riskStatus) {
+			this.riskStatus = riskStatus;
+		}
+
+		public RiskAssesment getRiskStatus() {
+			return riskStatus;
+		}
+
+		public String buildCaption() {
+			return RiskAssessmentReferenceDto.buildCaption(riskStatus);
+		}
+	}
+
+	public static class EbsActionInitiated implements Serializable, HasCaption {
+
+		private final YesNo actionInitiated;
+
+		public EbsActionInitiated(YesNo actionInitiated) {
+			this.actionInitiated = actionInitiated;
+		}
+
+		public YesNo getActionInitiated() {
+			return actionInitiated;
+		}
+
+		public String buildCaption() {
+			return AlertReferenceDto.buildCaption(actionInitiated);
+		}
+	}
+
+	public static class EbsResponseStatus implements Serializable, HasCaption {
+		private final ResponseStatus responseStatus;
+
+		public EbsResponseStatus(ResponseStatus responseStatus) {
+			this.responseStatus = responseStatus;
+		}
+
+		public ResponseStatus getResponseStatus() {
+			return responseStatus;
+		}
+
+		public String buildCaption() {
+			return AlertReferenceDto.buildCaption(responseStatus);
+		}
+	}
+
+	public static class EbsDeath implements Serializable, HasCaption {
+		private final String death;
+
+		public EbsDeath(String death) {
+			this.death = death;
+		}
+
+		public String getDeath() {
+			return death;
+		}
+
+		public String buildCaption() {
+			return SignalVerificationReferenceDto.buildCaption(death);
 		}
 	}
 }
