@@ -1,14 +1,11 @@
 package de.symeda.sormas.ui.ebs;
 
-import com.vaadin.v7.ui.CheckBox;
-import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.TextField;
+import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.ebs.*;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.ui.utils.*;
 import com.vaadin.ui.Label;
-import com.vaadin.v7.ui.OptionGroup;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -76,7 +73,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
     private NullableOptionGroup signalCategory;
     private OptionGroup humanCommCategoryDetails;
     private OptionGroup triagingDecision;
-    private DateTimeField dateOfDecision;
+    private DateField dateOfDecision;
     private TextField referredTo;
     private NullableOptionGroup previousOccurrence;
     private NullableOptionGroup healthConcern;
@@ -197,7 +194,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                         .collect(Collectors.toList())
         );
         triagingDecision.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
-        dateOfDecision = addField(TriagingDto.DATE_OF_DECISION, DateTimeField.class);
+        dateOfDecision = addField(TriagingDto.DATE_OF_DECISION, DateField.class);
         referredTo = addField(TriagingDto.REFERRED_TO, TextField.class);
         ComboBox outcomeSupervisor = addField(TriagingDto.OUTCOME_SUPERVISOR, ComboBox.class);
 
