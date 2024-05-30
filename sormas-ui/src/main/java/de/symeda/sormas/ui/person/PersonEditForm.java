@@ -725,6 +725,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 			Label childSeekhelpHeadingLabel = new Label(I18nProperties.getString(Strings.headingChildSeek));
 			childSeekhelpHeadingLabel.addStyleName(H3);
+			childSeekhelpHeadingLabel.addStyleName("afp-childseek-label");
 			getContent().addComponent(childSeekhelpHeadingLabel, SEEK_HELP_HEADING_LOC);
 
 			TextField place = addField(PersonDto.PLACE, TextField.class);
