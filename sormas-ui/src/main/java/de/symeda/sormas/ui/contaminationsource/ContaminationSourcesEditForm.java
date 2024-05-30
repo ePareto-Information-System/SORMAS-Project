@@ -1,8 +1,11 @@
 package de.symeda.sormas.ui.contaminationsource;
 
+import com.vaadin.ui.Button;
 import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.epidata.ContaminationSourceDto;
 import de.symeda.sormas.api.geo.GeoLatLon;
+import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.map.LeafletMap;
@@ -19,18 +22,20 @@ public class ContaminationSourcesEditForm extends AbstractEditForm<Contamination
 
     public static final String CONTAMINATION_SOURCES_HEADING = "contaminationSourcesHeadingLoc";
     public static final String MAP_LOCATION = "leaftMapLoc" ;
+    public static final String SHOW_MAP_BUTTON = "showMapButtonLoc";
     private GeoLatLon coordinates = null;
     private static final long serialVersionUID = 1L;
     private TextField logitudeField;
     private TextField latitudeField;
 
 //    hide and show map button
-    private NullableOptionGroup showMapButton;
+    private Button showMapButton;
+    private boolean showMap = false;
 
     public static String HTML_LAYOUT = divs(
             loc(CONTAMINATION_SOURCES_HEADING),
             fluidRowLocs(ContaminationSourceDto.NAME),
-            fluidRowLocs(ContaminationSourceDto.LONGITUDE, ContaminationSourceDto.LATITUDE),
+            fluidRowLocs(5, ContaminationSourceDto.LONGITUDE, 5, ContaminationSourceDto.LATITUDE, 2, SHOW_MAP_BUTTON),
             fluidRowLocs(MAP_LOCATION),
             fluidRowLocs(ContaminationSourceDto.TYPE, ContaminationSourceDto.SOURCE),
             fluidRowLocs(ContaminationSourceDto.TREATED_WITH_ABATE, ContaminationSourceDto.ABATE_TREATMENT_DATE)
@@ -67,7 +72,40 @@ public class ContaminationSourcesEditForm extends AbstractEditForm<Contamination
         logitudeField = addField(ContaminationSourceDto.LONGITUDE);
         latitudeField = addField(ContaminationSourceDto.LATITUDE);
 
-        getContent().addComponent(createLeafletMap(), MAP_LOCATION);
+        logitudeField.addDetachListener(event -> {
+            if (showMap) {
+                if (logitudeField.getValue() != null && latitudeField.getValue() != null) {
+                    coordinates = new GeoLatLon(Double.parseDouble(latitudeField.getValue()), Double.parseDouble(logitudeField.getValue()));
+                    getContent().removeComponent(MAP_LOCATION);
+                    getContent().addComponent(createLeafletMap(), MAP_LOCATION);
+
+                }
+            }
+        });
+
+        latitudeField.addDetachListener(event -> {
+            if (showMap) {
+                if (logitudeField.getValue() != null && latitudeField.getValue() != null) {
+                    coordinates = new GeoLatLon(Double.parseDouble(latitudeField.getValue()), Double.parseDouble(logitudeField.getValue()));
+                    getContent().removeComponent(MAP_LOCATION);
+                    getContent().addComponent(createLeafletMap(), MAP_LOCATION);
+                }
+            }
+        });
+
+
+        showMapButton = new Button(I18nProperties.getCaption(Captions.EpiDataShowMapButton));
+        showMapButton.addClickListener(event -> {
+            showMap = !showMap;
+            if (showMap) {
+                getContent().addComponent(createLeafletMap(), MAP_LOCATION);
+                showMapButton.setCaption(I18nProperties.getCaption(Captions.EpiDataHideMapButton));
+            } else {
+                showMapButton.setCaption(I18nProperties.getCaption(Captions.EpiDataShowMapButton));
+                getContent().removeComponent(MAP_LOCATION);
+            }
+        });
+        getContent().addComponent(showMapButton, SHOW_MAP_BUTTON);
     }
 
     private LeafletMap createLeafletMap() {
@@ -77,7 +115,11 @@ public class ContaminationSourcesEditForm extends AbstractEditForm<Contamination
         map.setHeight(420, Unit.PIXELS);
         map.setZoom(12);
 
-        coordinates = new GeoLatLon(5.6380212, -0.1462689);
+        if (logitudeField.getValue() != null && latitudeField.getValue() != null) {
+            coordinates = new GeoLatLon(Double.parseDouble(latitudeField.getValue()), Double.parseDouble(logitudeField.getValue()));
+        } else {
+            coordinates = new GeoLatLon(5.559, -0.202);
+        }
         map.setCenter(coordinates);
 
         LeafletMarker marker = new LeafletMarker();
@@ -91,15 +133,10 @@ public class ContaminationSourcesEditForm extends AbstractEditForm<Contamination
         return map;
     }
 
-    public void setCoordinates(GeoLatLon coordinates) {
-        this.coordinates = coordinates;
-    }
-
     private void markerDrag(LeafletMap.MarkerDragEvent event) {
         GeoLatLon draggedCoordinates = new GeoLatLon(event.getLatitude(), event.getLongitude());
         logitudeField.setValue(String.valueOf(draggedCoordinates.getLon()));
         latitudeField.setValue(String.valueOf(draggedCoordinates.getLat()));
-        setCoordinates(draggedCoordinates);
     }
 
 }
