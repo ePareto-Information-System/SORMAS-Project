@@ -24,7 +24,6 @@ public class EbsAlertFacadeEjb implements EbsAlertFacade {
         }
 
         target = DtoHelper.fillOrBuildEntity(source, target, EbsAlert::new, checkChangeDate);
-        target.setActionInitiated(source.getActionInitiated());
         target.setResponseDate(source.getResponseDate());
         target.setResponseStatus(source.getResponseStatus());
         target.setAlertUsed(source.getAlertUsed());
@@ -32,6 +31,7 @@ public class EbsAlertFacadeEjb implements EbsAlertFacade {
         target.setDetailsResponseActivities(source.getDetailsResponseActivities());
         target.setDetailsGiven(source.getDetailsGiven());
         target.setEbs(ebsService.getByReferenceDto(source.getEbs()));
+        target.setActionInitiated(source.getActionInitiated());
         return target;
     }
 
