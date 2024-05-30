@@ -1319,7 +1319,10 @@ public interface Captions {
 	String eventLinkToEventsWithinTheSameFacility = "eventLinkToEventsWithinTheSameFacility";
 	String eventNewEvent = "eventNewEvent";
 	String ebsNewEbs = "ebsNewEbs";
+	String ebsCreatEbs = "ebsCreatEbs";
 	String ebsAlert = "ebsAlert";
+	String ebsSignalView = "ebsSignalView";
+	String ebsEventView = "ebsEventView";
 	String eventNewEventGroup = "eventNewEventGroup";
 	String eventNoDisease = "eventNoDisease";
 	String eventNoEventLinkedToCase = "eventNoEventLinkedToCase";
@@ -1442,6 +1445,7 @@ public interface Captions {
 	String Triaging_animalCommunityCategoryDetails = "Triaging.animalCommunityCategoryDetails";
 	String Triaging_animalFacilityCategoryDetails = "Triaging.animalFacilityCategoryDetails";
 	String Triaging_environmentalCategoryDetails = "Triaging.environmentalCategoryDetails";
+	String Triaging_categoryDetailsLevel = "Triaging.categoryDetailsLevel";
 	String Triaging_poeCategoryDetails = "Triaging.poeCategoryDetails";
 	String SignalVerification_description = "SignalVerification.description";
 	String SignalVerification_verificationSent = "SignalVerification.verificationSent";
