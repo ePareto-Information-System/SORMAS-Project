@@ -19,6 +19,5 @@ package de.symeda.sormas.ui.ebs;
 
 public enum EbsViewType {
 	DEFAULT,
-	ACTIONS,
-	GROUPS,
+	EVENT
 }
