@@ -386,7 +386,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	}
 
 	@Order(50)
-	@ExportProperty(EbsDto.CONTACT_PHONE_NUMBER)
+	@ExportProperty(EbsDto.INFORMANT_TEL)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getExternalToken() {
 		return externalToken;

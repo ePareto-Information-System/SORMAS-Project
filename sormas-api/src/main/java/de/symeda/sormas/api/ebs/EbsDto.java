@@ -15,12 +15,8 @@
 
 package de.symeda.sormas.api.ebs;
 
-import de.symeda.sormas.api.ImportIgnore;
-import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.common.DeletionReason;
-import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.event.*;
-import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.importexport.format.ImportExportFormat;
@@ -29,18 +25,13 @@ import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.sormastosormas.S2SIgnoreProperty;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasConfig;
-import de.symeda.sormas.api.sormastosormas.SormasToSormasShareableDto;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
-import javax.persistence.Column;
-import javax.validation.Valid;
 import javax.validation.constraints.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 @DependingOnFeatureType(featureType = FeatureType.EVENT_SURVEILLANCE)
@@ -53,10 +44,10 @@ public class EbsDto extends PseudonymizableDto {
 	public static final String I18N_PREFIX = "Ebs";
 
 	public static final String RISK_LEVEL = "riskLevel";
-	public static final String CONTACT_NAME = "contactName";
+	public static final String INFORMANT_NAME = "informantName";
 	public static final String SOURCE_NAME = "sourceName";
 	public static final String SOURCE_URL = "sourceUrl";
-	public static final String CONTACT_PHONE_NUMBER = "contactPhoneNumber";
+	public static final String INFORMANT_TEL = "informantTel";
 	public static final String EBS_TITLE = "ebsTitle";
 	public static final String EBS_DESC = "ebsDesc";
 	public static final String TRIAGE_DATE = "triageDate";
@@ -73,7 +64,7 @@ public class EbsDto extends PseudonymizableDto {
 	public static final String EBS_LONGITUDE = "ebsLongitude";
 	public static final String EBS_LATITUDE = "ebsLatitude";
 	public static final String EBS_LATLONG = "ebsLatLon";
-	public static final String SRC_TYPE = "srcType";
+	public static final String SOURCE_INFORMATION = "sourceInformation";
 	public static final String SCANNING_TYPE = "scanningType";
 	public static final String AUTOMATIC_SCANNING_TYPE = "automaticScanningType";
 	public static final String MANUAL_SCANNING_TYPE = "manualScanningType";
@@ -88,7 +79,7 @@ public class EbsDto extends PseudonymizableDto {
 	public static final String VERIFIED = "verified";
 	public static final String CASES = "cases";
 	public static final String DEATH = "death";
-	public static final String PERSON_REPORTING = "personReporting";
+	public static final String CATEGORY_OF_INFORMANT = "categoryOfInformant";
 	public static final String TRIAGING = "triaging";
 	public static final String SIGNAL_VERIFICATION = "signalVerification";
 	public static final String RISK_ASSESSMENT = "riskAssessment";
@@ -98,12 +89,12 @@ public class EbsDto extends PseudonymizableDto {
 	private RiskLevel riskLevel;
 	private SpecificRisk specificRisk;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
-	private String contactName;
+	private String informantName;
 	private String sourceName;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String sourceUrl;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
-	private String contactPhoneNumber;
+	private String informantTel;
 	private String descriptionOccurrence;
 	private String personRegistering;
 	private String personDesignation;
@@ -123,7 +114,7 @@ public class EbsDto extends PseudonymizableDto {
 	private Double ebsLatitude;
 	private Double ebsLatLon;
 
-	private EbsSourceType srcType;
+	private EbsSourceType sourceInformation;
 	private MediaScannningType scanningType;
 	private AutomaticScanningType automaticScanningType;
 	private ManualScanningType manualScanningType;
@@ -151,7 +142,7 @@ public class EbsDto extends PseudonymizableDto {
 	private String verified;
 	private String cases;
 	private String death;
-	private PersonReporting personReporting;
+	private PersonReporting categoryOfInformant;
 	private TriagingDto triaging;
 	private SignalVerificationDto signalVerification;
 	private RiskAssessmentDto riskAssessment;
@@ -196,12 +187,12 @@ public class EbsDto extends PseudonymizableDto {
 		this.specificRisk = specificRisk;
 	}
 
-	public String getContactName() {
-		return contactName;
+	public String getInformantName() {
+		return informantName;
 	}
 
-	public void setContactName(String contactName) {
-		this.contactName = contactName;
+	public void setInformantName(String informantName) {
+		this.informantName = informantName;
 	}
 
 	public String getSourceName() {
@@ -220,12 +211,12 @@ public class EbsDto extends PseudonymizableDto {
 		this.sourceUrl = sourceUrl;
 	}
 
-	public String getContactPhoneNumber() {
-		return contactPhoneNumber;
+	public String getInformantTel() {
+		return informantTel;
 	}
 
-	public void setContactPhoneNumber(String contactPhoneNumber) {
-		this.contactPhoneNumber = contactPhoneNumber;
+	public void setInformantTel(String informantTel) {
+		this.informantTel = informantTel;
 	}
 
 	public String getDescriptionOccurrence() {
@@ -308,20 +299,20 @@ public class EbsDto extends PseudonymizableDto {
 		this.reportingUser = reportingUser;
 	}
 
-	public PersonReporting getPersonReporting() {
-		return personReporting;
+	public PersonReporting getCategoryOfInformant() {
+		return categoryOfInformant;
 	}
 
-	public void setPersonReporting(PersonReporting personReporting) {
-		this.personReporting = personReporting;
+	public void setCategoryOfInformant(PersonReporting categoryOfInformant) {
+		this.categoryOfInformant = categoryOfInformant;
 	}
 
-	public EbsSourceType getSrcType() {
-		return srcType;
+	public EbsSourceType getSourceInformation() {
+		return sourceInformation;
 	}
 
-	public void setSrcType(EbsSourceType srcType) {
-		this.srcType = srcType;
+	public void setSourceInformation(EbsSourceType sourceInformation) {
+		this.sourceInformation = sourceInformation;
 	}
 public MediaScannningType getScanningType() {
 		return scanningType;

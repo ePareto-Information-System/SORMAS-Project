@@ -24,19 +24,15 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.ebs.*;
-import de.symeda.sormas.api.infrastructure.region.RegionDto;
 import de.symeda.sormas.ui.utils.*;
-import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.v7.data.util.converter.Converter;
-import com.vaadin.v7.data.validator.EmailValidator;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.event.EpidemiologicalEvidenceDetail;
@@ -70,9 +66,9 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
     //@formatter:off
     private static final String HTML_LAYOUT =
             loc(INFORMATION_SOURCE_HEADING_LOC) +
-                    fluidRowLocs(EbsDto.SRC_TYPE, EbsDto.PERSON_REPORTING, EbsDto.REPORT_DATE_TIME) +
+                    fluidRowLocs(EbsDto.SOURCE_INFORMATION, EbsDto.CATEGORY_OF_INFORMANT, EbsDto.REPORT_DATE_TIME) +
                     fluidRowLocs(EbsDto.SCANNING_TYPE, EbsDto.AUTOMATIC_SCANNING_TYPE,EbsDto.MANUAL_SCANNING_TYPE,EbsDto.OTHER) +
-                    fluidRowLocs(EbsDto.SOURCE_NAME,EbsDto.SOURCE_URL,EbsDto.CONTACT_NAME, EbsDto.CONTACT_PHONE_NUMBER) +
+                    fluidRowLocs(EbsDto.SOURCE_NAME,EbsDto.SOURCE_URL,EbsDto.INFORMANT_NAME, EbsDto.INFORMANT_TEL) +
                     fluidRowLocs(EbsDto.RISK_LEVEL) +
 
                     loc(PLACE_DETECTION_HEADING_LOC) +
@@ -138,8 +134,8 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
         Label locationHeadingLabel = new Label(I18nProperties.getString(Strings.headingLocation));
         locationHeadingLabel.addStyleName(H3);
         getContent().addComponent(locationHeadingLabel, PLACE_DETECTION_HEADING_LOC);
-        TextField contactName = addField(EbsDto.CONTACT_NAME,TextField.class);
-        TextField contactPhone = addField(EbsDto.CONTACT_PHONE_NUMBER, TextField.class);
+        TextField contactName = addField(EbsDto.INFORMANT_NAME,TextField.class);
+        TextField contactPhone = addField(EbsDto.INFORMANT_TEL, TextField.class);
         Label contactPhoneLabel = new Label(I18nProperties.getString(Strings.messageEventExternalTokenWarning));
         contactPhoneLabel.addStyleNames(VSPACE_3, LABEL_WHITE_SPACE_NORMAL);
         getContent().addComponent(contactPhoneLabel, CONTACT_PHONE_NUMBER_WARNING_LOC);
@@ -148,9 +144,9 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 
 
         DateField reportDate = addField(EbsDto.REPORT_DATE_TIME, DateField.class);
-        ComboBox categoryInformant = addField(EbsDto.PERSON_REPORTING, ComboBox.class);
+        ComboBox categoryInformant = addField(EbsDto.CATEGORY_OF_INFORMANT, ComboBox.class);
 
-        ComboBox srcType = addField(EbsDto.SRC_TYPE);
+        ComboBox srcType = addField(EbsDto.SOURCE_INFORMATION);
 
         NullableOptionGroup scanningType = addField(EbsDto.SCANNING_TYPE, NullableOptionGroup.class);
         ComboBox automaticScanningType = addField(EbsDto.AUTOMATIC_SCANNING_TYPE, ComboBox.class);
@@ -158,7 +154,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
         TextField other = addField(EbsDto.OTHER, TextField.class);
         TextField sourceName = addField(EbsDto.SOURCE_NAME);
         TextField sourceUrl = addField(EbsDto.SOURCE_URL);
-        DateTimeField dateOnset = addField(EbsDto.DATE_ONSET, DateTimeField.class);
+        DateField dateOnset = addField(EbsDto.DATE_ONSET, DateField.class);
         TextArea descriptionOccurrence = addField(EbsDto.DESCRIPTION_OCCURRENCE, TextArea.class);
         descriptionOccurrence.setRows(4);
         TextField personDesignation = addField(EbsDto.PERSON_DESIGNATION, TextField.class);
@@ -192,19 +188,19 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
         initializeAccessAndAllowedAccesses();
 
 
-        setRequired(true, EbsDto.SRC_TYPE, EbsDto.REPORT_DATE_TIME,EbsDto.END_DATE);
+        setRequired(true, EbsDto.SOURCE_INFORMATION, EbsDto.REPORT_DATE_TIME,EbsDto.END_DATE);
 
         FieldHelper.setVisibleWhen(
                 getFieldGroup(),
-                Arrays.asList(EbsDto.CONTACT_NAME),
-                EbsDto.SRC_TYPE,
+                Arrays.asList(EbsDto.INFORMANT_NAME),
+                EbsDto.SOURCE_INFORMATION,
                 Arrays.asList(EbsSourceType.CEBS,EbsSourceType.HEBS,EbsSourceType.HOTLINE_PERSON),
                 true);
 
         FieldHelper.setVisibleWhen(
                 getFieldGroup(),
                 Arrays.asList(EbsDto.SCANNING_TYPE),
-                EbsDto.SRC_TYPE,
+                EbsDto.SOURCE_INFORMATION,
                 Arrays.asList(EbsSourceType.MEDIA_NEWS),
                 true);
         FieldHelper.setVisibleWhen(
@@ -228,7 +224,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
         FieldHelper.setVisibleWhen(
                 getFieldGroup(),
                 Arrays.asList(EbsDto.SOURCE_NAME),
-                EbsDto.SRC_TYPE,
+                EbsDto.SOURCE_INFORMATION,
                 Arrays.asList(EbsSourceType.MEDIA_NEWS),
                 true);
         FieldHelper.setVisibleWhen(
