@@ -2,16 +2,13 @@ package de.symeda.sormas.ui.ebs;
 
 
 import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.ui.CustomLayout;
 import com.vaadin.v7.data.Property;
 import com.vaadin.v7.ui.Field;
-import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ebs.EbsCriteria;
 import de.symeda.sormas.api.ebs.EbsIndexDto;
 import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.location.LocationDto;
@@ -45,7 +42,7 @@ public class EbsFilterForm extends AbstractFilterForm<EbsCriteria> {
 	protected String[] getMainFilterLocators() {
 
 		return new String[] {
-				EbsIndexDto.SRC_TYPE,
+				EbsIndexDto.SOURCE_INFORMATION,
 				EbsIndexDto.REPORT_DATE_TIME,
 				EbsIndexDto.TRIAGING_DECISION,
 				EbsIndexDto.TRIAGE_DATE,
@@ -54,7 +51,7 @@ public class EbsFilterForm extends AbstractFilterForm<EbsCriteria> {
 
 	@Override
 	protected void addFields() {
-		final ComboBox srcField = addField(FieldConfiguration.pixelSized(EbsIndexDto.SRC_TYPE, 140));
+		final ComboBox srcField = addField(FieldConfiguration.pixelSized(EbsIndexDto.SOURCE_INFORMATION, 140));
 		ComboBox regionField = addField(
 				FieldConfiguration
 						.withCaptionAndPixelSized(LocationDto.REGION, I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.REGION), 140));
