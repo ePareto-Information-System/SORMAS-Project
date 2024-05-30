@@ -30,9 +30,9 @@ public class RiskAssessment extends AbstractDomainObject {
 
     public static String RISK_ASSESSMENT = "riskAssessment";
 
-    public static String RESPONSE_DATE = "responseDate";
+    public static String ASSESSMENT_DATE = "assessmentDate";
 
-    public static String RESPONSE_TIME = "responseTime";
+    public static String ASSESSMENT_TIME = "assessmentTime";
 
     public static String MORBIDITY_MORTALITY_COMMENT = "morbidityMortalityComment";
 
@@ -47,8 +47,8 @@ public class RiskAssessment extends AbstractDomainObject {
     private YesNo spreadProbability;
     private YesNo controlMeasures;
     private RiskAssesment riskAssessment;
-    private Date responseDate;
-    private String responseTime;
+    private Date assessmentDate;
+    private String assessmentTime;
     private Ebs ebs;
     private String morbidityMortalityComment;
     private String spreadProbabilityComment;
@@ -86,20 +86,20 @@ public class RiskAssessment extends AbstractDomainObject {
         this.riskAssessment = riskAssessment;
     }
 
-    public Date getResponseDate() {
-        return responseDate;
+    public Date getAssessmentDate() {
+        return assessmentDate;
     }
 
-    public void setResponseDate(Date responseDate) {
-        this.responseDate = responseDate;
+    public void setAssessmentDate(Date responseDate) {
+        this.assessmentDate = responseDate;
     }
 
-    public String getResponseTime() {
-        return responseTime;
+    public String getAssessmentTime() {
+        return assessmentTime;
     }
 
-    public void setResponseTime(String responseTime) {
-        this.responseTime = responseTime;
+    public void setAssessmentTime(String responseTime) {
+        this.assessmentTime = responseTime;
     }
 
     public String getControlMeasuresComment() {
