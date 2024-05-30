@@ -18,16 +18,13 @@ import de.symeda.sormas.api.ebs.*;
 import de.symeda.sormas.api.event.*;
 import de.symeda.sormas.api.externaldata.HasExternalData;
 import de.symeda.sormas.api.utils.YesNoUnknown;
-import de.symeda.sormas.backend.action.Action;
 import de.symeda.sormas.backend.common.CoreAdo;
 import de.symeda.sormas.backend.event.SpecificRiskConverter;
-import de.symeda.sormas.backend.hospitalization.PreviousHospitalization;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.share.ExternalShareInfo;
 import de.symeda.sormas.backend.sormastosormas.entities.SormasToSormasShareable;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
 import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo;
-import de.symeda.sormas.backend.task.Task;
 import de.symeda.sormas.backend.user.User;
 
 import javax.persistence.*;
@@ -43,8 +40,8 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public static final String TABLE_NAME = "ebs";
 
 	public static final String EXTERNAL_ID = "externalId";
-	public static final String CONTACT_NAME = "contactName";
-	public static final String CONTACT_PHONE_NUMBER = "contactPhoneNumber";
+	public static final String INFORMANT_NAME = "informantName";
+	public static final String INFORMANT_TEL = "informantTel";
 	public static final String RISK_LEVEL = "riskLevel";
 	public static final String SPECIFIC_RISK = "specificRisk";
 	public static final String EVENT_MANAGEMENT_STATUS = "eventManagementStatus";
@@ -60,7 +57,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public static final String PERSON_PHONE = "personPhone";
 	public static final String REPORT_DATE_TIME = "reportDateTime";
 	public static final String REPORTING_USER = "reportingUser";
-	public static final String SRC_TYPE = "srcType";
+	public static final String SOURCE_INFORMATION = "sourceInformation";
 	public static final String TRIAGING_DECISION = "triagingDecision";
 	public static final String RESPONSIBLE_USER = "responsibleUser";
 	public static final String REPORT_LAT = "reportLat";
@@ -76,7 +73,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public static final String VERIFIED = "verified";
 	public static final String CASES = "cases";
 	public static final String DEATH = "death";
-	public static final String PERSON_REPORTING = "personReporting";
+	public static final String CATEGORY_OF_INFORMANT = "categoryOfInformant";
 	public static final String TRIAGING = "triaging";
 	public static final String SIGNAL_VERIFICATION = "signalVerification";
 	public static final String RISK_ASSESSMENT = "riskAssessment";
@@ -85,14 +82,14 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 
 	private RiskLevel riskLevel;
 	private SpecificRisk specificRisk;
-	private String contactName;
-	private String contactPhoneNumber;
+	private String informantName;
+	private String informantTel;
 	private Date triageDate;
 	private Date endDate;
 	private Date reportDateTime;
 	private Date dateOnset;
 	private User reportingUser;
-	private EbsSourceType srcType;
+	private EbsSourceType sourceInformation;
 	private EbsTriagingDecision triagingDecision;
 	private User responsibleUser;
 	private String sourceName;
@@ -126,7 +123,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	private ManualScanningType manualScanningType;
 	private MediaScannningType scanningType;
 	private String other;
-	private PersonReporting personReporting;
+	private PersonReporting categoryOfInformant;
 	private Triaging triaging;
 	private SignalVerification signalVerification;
 	private Set<RiskAssessment> riskAssessment = new HashSet<>();
@@ -153,21 +150,21 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	}
 
 	@Column(columnDefinition = "text")
-	public String getContactName() {
-		return contactName;
+	public String getInformantName() {
+		return informantName;
 	}
 
-	public void setContactName(String contactName) {
-		this.contactName = contactName;
+	public void setInformantName(String contactName) {
+		this.informantName = contactName;
 	}
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
-	public String getContactPhoneNumber() {
-		return contactPhoneNumber;
+	public String getInformantTel() {
+		return informantTel;
 	}
 
-	public void setContactPhoneNumber(String contactPhoneNumber) {
-		this.contactPhoneNumber = contactPhoneNumber;
+	public void setInformantTel(String contactPhoneNumber) {
+		this.informantTel = contactPhoneNumber;
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -209,12 +206,12 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	}
 
 	@Enumerated(EnumType.STRING)
-	public EbsSourceType getSrcType() {
-		return srcType;
+	public EbsSourceType getSourceInformation() {
+		return sourceInformation;
 	}
 
-	public void setSrcType(EbsSourceType srcType) {
-		this.srcType = srcType;
+	public void setSourceInformation(EbsSourceType srcType) {
+		this.sourceInformation = srcType;
 	}
 
 	@Enumerated(EnumType.STRING)
@@ -319,12 +316,12 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 		this.sourceUrl = sourceUrl;
 	}
 
-	public PersonReporting getPersonReporting() {
-		return personReporting;
+	public PersonReporting getCategoryOfInformant() {
+		return categoryOfInformant;
 	}
 
-	public void setPersonReporting(PersonReporting personReporting) {
-		this.personReporting = personReporting;
+	public void setCategoryOfInformant(PersonReporting personReporting) {
+		this.categoryOfInformant = personReporting;
 	}
 
 	@ManyToOne(cascade = {
