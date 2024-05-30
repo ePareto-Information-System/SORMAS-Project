@@ -1702,4 +1702,7 @@ public interface Strings {
 	String LowRiskNotificationTYpe = "LowRiskNotificationTYpe";
 	String LowRiskNotificationAction = "LowRiskNotificationAction";
 	String messageRiskAssessmentSavedShort = "messageRiskAssessmentSavedShort";
+	String messageTriagingSavedShort = "messageTriagingSavedShort";
+	String messageAlertSavedShort = "messageAlertSavedShort";
+	String messageSignalVerificationSavedShort = "messageSignalVerificationSavedShort";
 }
