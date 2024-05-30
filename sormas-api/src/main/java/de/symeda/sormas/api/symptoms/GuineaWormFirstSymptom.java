@@ -6,7 +6,7 @@ public enum GuineaWormFirstSymptom {
     BLISTER,
     ITCHING,
     SWELLING,
-    OTHERS;
+    OTHER;
 
     @Override
     public String toString() {

@@ -63,7 +63,6 @@ import com.vaadin.v7.data.util.converter.Converter.ConversionException;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.Descriptions;
@@ -72,8 +71,6 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.symptoms.*;
 import de.symeda.sormas.api.utils.DateComparator;
 import de.symeda.sormas.api.utils.InjectionSite;
@@ -81,7 +78,6 @@ import de.symeda.sormas.api.utils.SymptomGroup;
 import de.symeda.sormas.api.utils.SymptomGrouping;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
-import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import de.symeda.sormas.api.visit.VisitStatus;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.ButtonHelper;
@@ -988,7 +984,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		} else if (disease == Disease.GUINEA_WORM) {
 			addField(FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM, NullableOptionGroup.class);
 			addField(FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS, TextField.class);
-			FieldHelper.setVisibleWhen(getFieldGroup(), FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS, FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM, Arrays.asList(GuineaWormFirstSymptom.OTHERS), true);
+			FieldHelper.setVisibleWhen(getFieldGroup(), FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS, FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM, Arrays.asList(GuineaWormFirstSymptom.OTHER), true);
 			addField(NUMBER_OF_WORMS, TextField.class);
 			addField(DATE_FIRST_WORM_EMERGENCE, DateField.class);
 //			[CASE_DETECTED_BEFORE_WORM_EMERGENCE, FIRST_WORM_THIS_YEAR, NUMBER_OF_WORMS,DATE_FIRST_WORM_EMERGENCE] vsible when EMERGENCE_OF_GUINEA_WORM is SymptomState.YES
