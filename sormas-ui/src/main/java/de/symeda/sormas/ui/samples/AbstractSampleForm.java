@@ -897,7 +897,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		laboratorySampleDateReceived = addField(SampleDto.LABORATORY_SAMPLE_DATE_RECEIVED, DateTimeField.class);
 		laboratorySampleDateReceived.setInvalidCommitted(false);
 
-		laboratorySampleContainerOther.setVisible(false);
 	}
 
 	private void handleAFP() {
