@@ -93,6 +93,15 @@ public class LeafletMap extends AbstractJavaScriptComponent {
 				LeafletMap.this.fireEvent(new MarkerClickEvent(LeafletMap.this, groupId, markerIndex));
 			}
 		});
+
+		addFunction("onMapClick", new JavaScriptFunction() {
+			@Override
+			public void call(JsonArray arguments) {
+				double latitude = arguments.getNumber(0);
+				double longitude = arguments.getNumber(1);
+				LeafletMap.this.fireEvent(new MapClickEvent(LeafletMap.this, latitude, longitude));
+			}
+		});
 		// credit where credit's due
 		String attribution = FacadeProvider.getGeoShapeProvider().loadShapefileAttributions();
 		this.addShapefileAttribution(attribution);
@@ -198,5 +207,34 @@ public class LeafletMap extends AbstractJavaScriptComponent {
 		public int getMarkerIndex() {
 			return markerIndex;
 		}
+	}
+
+	public interface MapClickListener extends Serializable {
+		Method MAP_CLICK_METHOD = ReflectTools.findMethod(MapClickListener.class, "mapClick", MapClickEvent.class);
+		void mapClick(MapClickEvent event);
+	}
+
+	public static class MapClickEvent extends EventObject {
+		private static final long serialVersionUID = 1L;
+		private final double latitude;
+		private final double longitude;
+
+		public MapClickEvent(LeafletMap map, double latitude, double longitude) {
+			super(map);
+			this.latitude = latitude;
+			this.longitude = longitude;
+		}
+
+		public double getLatitude() {
+			return latitude;
+		}
+
+		public double getLongitude() {
+			return longitude;
+		}
+	}
+
+	public void addMapClickListener(MapClickListener listener) {
+		addListener(MapClickEvent.class, listener, MapClickListener.MAP_CLICK_METHOD);
 	}
 }
