@@ -46,6 +46,12 @@ public class EbsJoins extends QueryJoins<Ebs> {
 
 	private Join<Ebs, Triaging> triaging;
 
+	private Join<Ebs, SignalVerification> signalVerification;
+
+	private Join<Ebs, RiskAssessment> riskAssessment;
+
+	private Join<Ebs, EbsAlert> ebsAlert;
+
 	public EbsJoins(From<?, Ebs> event) {
 		super(event);
 	}
@@ -109,4 +115,29 @@ public class EbsJoins extends QueryJoins<Ebs> {
 	public void setTriaging(Join<Ebs, Triaging> triaging) {
 		this.triaging = triaging;
 	}
+
+
+	public Join<Ebs, SignalVerification> getSignalVerification() {
+		return signalVerification;
+	}
+
+	public void setSignalVerification(Join<Ebs, SignalVerification> signalVerification) {
+		this.signalVerification = signalVerification;
+	}
+
+	public Join<Ebs, RiskAssessment> getRiskAssessment() {
+		return riskAssessment;
+	}
+
+	public void setRiskAssessment(Join<Ebs, RiskAssessment> riskAssessment) {
+		this.riskAssessment = riskAssessment;
+	}
+	public Join<Ebs, EbsAlert> getEbsAlert() {
+		return ebsAlert;
+	}
+
+	public void setEbsAlert(Join<Ebs, EbsAlert> ebsAlert) {
+		this.ebsAlert = ebsAlert;
+	}
+
 }
