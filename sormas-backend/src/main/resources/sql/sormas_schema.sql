@@ -13791,3 +13791,13 @@ ALTER TABLE riskAssessment ADD COLUMN controlMeasuresComment VARCHAR(255);
 ALTER TABLE riskAssessment ADD COLUMN spreadProbabilityComment VARCHAR(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (618, 'Added new risk assesment columns');
+
+ALTER TABLE riskAssessment RENAME COLUMN responseDate TO assessmentDate;
+ALTER TABLE riskAssessment RENAME COLUMN responseTime TO assessmentTIme;
+INSERT INTO schema_version (version_number, comment) VALUES (619, 'Renamed responseDate to assessmentDate in riskAssessment');
+
+ALTER TABLE ebs RENAME COLUMN srcType TO sourceInformation;
+ALTER TABLE ebs RENAME COLUMN personReporting TO categoryOfInformant;
+ALTER TABLE ebs RENAME COLUMN contactName TO informantName;
+ALTER TABLE ebs RENAME COLUMN contactPhoneNumber TO informantTel;
+INSERT INTO schema_version (version_number, comment) VALUES (620, 'Renamed responseDate to assessmentDate in riskAssessment');
