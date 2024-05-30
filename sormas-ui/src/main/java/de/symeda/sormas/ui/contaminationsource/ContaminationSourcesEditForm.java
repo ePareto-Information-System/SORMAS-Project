@@ -9,6 +9,7 @@ import de.symeda.sormas.ui.map.LeafletMap;
 import de.symeda.sormas.ui.map.LeafletMarker;
 import de.symeda.sormas.ui.map.MarkerIcon;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
+import de.symeda.sormas.ui.utils.NullableOptionGroup;
 
 import java.util.Collections;
 
@@ -23,11 +24,14 @@ public class ContaminationSourcesEditForm extends AbstractEditForm<Contamination
     private TextField logitudeField;
     private TextField latitudeField;
 
+//    hide and show map button
+    private NullableOptionGroup showMapButton;
+
     public static String HTML_LAYOUT = divs(
             loc(CONTAMINATION_SOURCES_HEADING),
             fluidRowLocs(ContaminationSourceDto.NAME),
-            fluidRowLocs(MAP_LOCATION),
             fluidRowLocs(ContaminationSourceDto.LONGITUDE, ContaminationSourceDto.LATITUDE),
+            fluidRowLocs(MAP_LOCATION),
             fluidRowLocs(ContaminationSourceDto.TYPE, ContaminationSourceDto.SOURCE),
             fluidRowLocs(ContaminationSourceDto.TREATED_WITH_ABATE, ContaminationSourceDto.ABATE_TREATMENT_DATE)
     );
@@ -78,12 +82,11 @@ public class ContaminationSourcesEditForm extends AbstractEditForm<Contamination
 
         LeafletMarker marker = new LeafletMarker();
         marker.setLatLon(coordinates);
-        marker.setIcon(MarkerIcon.CASE_UNCLASSIFIED);
+        marker.setIcon(MarkerIcon.MARKER);
         marker.setMarkerCount(1);
 
-        map.addMarkerGroup("cases", Collections.singletonList(marker));
-
-        map.addMapClickListener(this::mapClick);
+        map.addMarkerGroupLocation("location", Collections.singletonList(marker), 40);
+        map.addMarkerDragListener(this::markerDrag);
 
         return map;
     }
@@ -92,10 +95,11 @@ public class ContaminationSourcesEditForm extends AbstractEditForm<Contamination
         this.coordinates = coordinates;
     }
 
-    private void mapClick(LeafletMap.MapClickEvent event) {
-        GeoLatLon clickCoordinates = new GeoLatLon(event.getLatitude(), event.getLongitude());
-        logitudeField.setValue(String.valueOf(clickCoordinates.getLon()));
-        latitudeField.setValue(String.valueOf(clickCoordinates.getLat()));
-        setCoordinates(clickCoordinates);
+    private void markerDrag(LeafletMap.MarkerDragEvent event) {
+        GeoLatLon draggedCoordinates = new GeoLatLon(event.getLatitude(), event.getLongitude());
+        logitudeField.setValue(String.valueOf(draggedCoordinates.getLon()));
+        latitudeField.setValue(String.valueOf(draggedCoordinates.getLat()));
+        setCoordinates(draggedCoordinates);
     }
+
 }
