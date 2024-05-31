@@ -473,6 +473,7 @@ public interface Captions {
 	String CaseData_functionOfReportingOfficer = "CaseData.functionOfReportingOfficer";
 	String CaseData_reportingOfficerContactPhone = "CaseData.reportingOfficerContactPhone";
 	String CaseData_reportingOfficerEmail = "CaseData.reportingOfficerEmail";
+	String CaseData_nameOfVillagePersonGotIll = "CaseData.nameOfVillagePersonGotIll";
 	String CaseData_surveillanceToolLastShareDate = "CaseData.surveillanceToolLastShareDate";
 	String CaseData_surveillanceToolShareCount = "CaseData.surveillanceToolShareCount";
 	String CaseData_surveillanceToolStatus = "CaseData.surveillanceToolStatus";
@@ -2344,7 +2345,6 @@ public interface Captions {
 	String Person_nameHealthFacility = "Person.nameHealthFacility";
 	String Person_service = "Person.service";
 	String Person_qualification = "Person.qualification";
-	String Person_nameOfVillagePersonGotIll = "Person.nameOfVillagePersonGotIll";
 	String Person_marriageStatus = "Person.marriageStatus";
 	String Person_uuid = "Person.uuid";
 	String Person_placeOfResidenceSameAsReportingVillage = "Person.placeOfResidenceSameAsReportingVillage";

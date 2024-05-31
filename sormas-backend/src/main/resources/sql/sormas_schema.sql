@@ -14439,6 +14439,14 @@ ALTER TABLE samples ADD COLUMN hassamplebeencollected VARCHAR(255);
 ALTER TABLE symptoms ADD COLUMN skinrashnew VARCHAR(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (663, 'added nationality to persons and difficultyswallow to symptoms');
+
+-- 2024-05-31 Dropped nameofvillagepersongotIll in person and added in cases
+
+ALTER TABLE person DROP COLUMN nameofvillagepersongotIll;
+ALTER TABLE person_history DROP COLUMN nameofvillagepersongotIll;
+ALTER TABLE cases ADD COLUMN nameofvillagepersongotIll VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (664, 'Dropped nameofvillagepersongotIll in person and added in cases');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 -- Define the ebs table
 CREATE TABLE ebs (
@@ -14627,26 +14635,29 @@ ALTER TABLE ebs ADD CONSTRAINT fk_ebs_ebsAlert_id FOREIGN KEY (ebsAlert_id) REFE
 CREATE TABLE ebsAlert_history (
                              LIKE ebsAlert INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
 );
-INSERT INTO schema_version (version_number, comment) VALUES (664, 'added ebs,triaging,signalverification,riskassessment and alert');
+INSERT INTO schema_version (version_number, comment) VALUES (665, 'added ebs,triaging,signalverification,riskassessment and alert');
 
 ALTER TABLE epidata ADD COLUMN waterUsedForDrinking VARCHAR(255);
 ALTER TABLE epidata ADD COLUMN waterUsedNotForDrinking VARCHAR(255);
 ALTER TABLE epidata ADD COLUMN foodItems VARCHAR(255);
-INSERT INTO schema_version (version_number, comment) VALUES (665, 'Added columns to riskfactor to implement waterUsedForDrinking, waterUsedNotForDrinking, foodItems');
+
+INSERT INTO schema_version (version_number, comment) VALUES (666, 'Added columns to riskfactor to implement waterUsedForDrinking, waterUsedNotForDrinking, foodItems');
 
 
 ALTER TABLE samples ADD COLUMN dateSpecimenSentToRegion DATE;
 ALTER TABLE samples ADD COLUMN nameOfPersonWhoReceivedSpecimenAtRegion VARCHAR(255);
 ALTER TABLE samples ADD COLUMN dateSpecimenReceivedAtRegion DATE;
-
 ALTER TABLE samples ADD COLUMN dateSpecimenSentToNational DATE;
 ALTER TABLE samples ADD COLUMN nameOfPersonWhoReceivedSpecimenAtNational VARCHAR(255);
 ALTER TABLE samples ADD COLUMN dateSpecimenReceivedAtNational DATE;
-INSERT INTO schema_version(version_number, comment) VALUES (666, 'Added new fields to samples for specimen handling');
+
+INSERT INTO schema_version(version_number, comment) VALUES (667, 'Added new fields to samples for specimen handling');
 
 ALTER TABLE samples ADD COLUMN confirmedAsGuineaWorm VARCHAR(255);
-INSERT INTO schema_version(version_number, comment) VALUES (667, 'Added confirmedAsGuineaWorm to samples');
+
+INSERT INTO schema_version(version_number, comment) VALUES (668, 'Added confirmedAsGuineaWorm to samples');
 
 ALTER TABLE pathogentest ADD COLUMN datesurveillancesentresultstodistrict date;
-INSERT INTO schema_version (version_number, comment) VALUES (668, 'Added column to dateSurveillanceSentResultsToDistrict to pathogentest');
+
+INSERT INTO schema_version (version_number, comment) VALUES (669, 'Added column to dateSurveillanceSentResultsToDistrict to pathogentest');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

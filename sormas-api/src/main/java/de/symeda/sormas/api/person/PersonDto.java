@@ -176,7 +176,6 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String NAME_HEALTH_FACILITY = "nameHealthFacility";
 	public static final String SERVICE = "service";
 	public static final String QUALIFICATION = "qualification";
-	public static final String NAME_OF_VILLAGE_PERSON_GOT_ILL = "nameOfVillagePersonGotIll";
 	public static final String APPLICABLE = "applicable";
 	public static final String LOCATION_OF_BIRTH = "locationOfBirth";
 	public static final String BIRTH_IN_INSTITUTION = "birthInInstitution";
@@ -504,7 +503,6 @@ public class PersonDto extends PseudonymizableDto {
 	private String nameHealthFacility;
 	private String service;
 	private String qualification;
-	private String nameOfVillagePersonGotIll;
 
 	private String pst14MonthsVillage;
 	
@@ -1588,14 +1586,6 @@ public class PersonDto extends PseudonymizableDto {
 
 	public void setQualification(String qualification) {
 		this.qualification = qualification;
-	}
-
-	public String getNameOfVillagePersonGotIll() {
-		return nameOfVillagePersonGotIll;
-	}
-
-	public void setNameOfVillagePersonGotIll(String nameOfVillagePersonGotIll) {
-		this.nameOfVillagePersonGotIll = nameOfVillagePersonGotIll;
 	}
 
 	public YesNo getApplicable() {

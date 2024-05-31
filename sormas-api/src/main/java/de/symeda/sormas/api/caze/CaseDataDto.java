@@ -296,6 +296,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String FORM_COMPLETED_BY_NAME = "formCompletedByName";
 	public static final String FORM_COMPLETED_BY_POSITION = "formCompletedByPosition";
 	public static final String FORM_COMPLETED_BY_CELL_PHONE_NO = "formCompletedByCellPhoneNo";
+	public static final String NAME_OF_VILLAGE_PERSON_GOT_ILL = "nameOfVillagePersonGotIll";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -733,6 +734,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private String occupation;
 	private String districtOfResidence;
 	private String specifyEventDiagnosis;
+	private String nameOfVillagePersonGotIll;
 
 	private String otherNotesAndObservations;
 	private Date dateLatestUpdateRecord;
@@ -2418,5 +2420,13 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	public void setFamilyLinkWithPatient(String familyLinkWithPatient) {
 		this.familyLinkWithPatient = familyLinkWithPatient;
+	}
+
+	public String getNameOfVillagePersonGotIll() {
+		return nameOfVillagePersonGotIll;
+	}
+
+	public void setNameOfVillagePersonGotIll(String nameOfVillagePersonGotIll) {
+		this.nameOfVillagePersonGotIll = nameOfVillagePersonGotIll;
 	}
 }

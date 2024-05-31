@@ -3480,6 +3480,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setMobileTeamNo(source.getMobileTeamNo());
 		target.setInformationGivenBy(source.getInformationGivenBy());
 		target.setFamilyLinkWithPatient(source.getFamilyLinkWithPatient());
+		target.setNameOfVillagePersonGotIll(source.getNameOfVillagePersonGotIll());
 
 		target.setMotherVaccinatedWithTT(source.getMotherVaccinatedWithTT());
 		target.setMotherHaveCard(source.getMotherHaveCard());
@@ -3778,6 +3779,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setMobileTeamNo(source.getMobileTeamNo());
 		target.setInformationGivenBy(source.getInformationGivenBy());
 		target.setFamilyLinkWithPatient(source.getFamilyLinkWithPatient());
+		target.setNameOfVillagePersonGotIll(source.getNameOfVillagePersonGotIll());
 
 		return target;
 	}

@@ -289,7 +289,6 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setNameHealthFacility(source.getNameHealthFacility());
 		target.setService(source.getService());
 		target.setQualification(source.getQualification());
-		target.setNameOfVillagePersonGotIll(source.getNameOfVillagePersonGotIll());
 
 		if (source.getBirthdateYYYY() != null) {
 
@@ -1210,7 +1209,6 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setNameHealthFacility(source.getNameHealthFacility());
 		target.setService(source.getService());
 		target.setQualification(source.getQualification());
-		target.setNameOfVillagePersonGotIll(source.getNameOfVillagePersonGotIll());
 
 		return target;
 	}
@@ -1950,7 +1948,6 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setNameHealthFacility(source.getNameHealthFacility());
 		target.setService(source.getService());
 		target.setQualification(source.getQualification());
-		target.setNameOfVillagePersonGotIll(source.getNameOfVillagePersonGotIll());
 		target.setApplicable(source.getApplicable());
 
 		target.setPst14MonthsVillage(source.getPst14MonthsVillage());
@@ -2081,7 +2078,6 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setNameHealthFacility(source.getNameHealthFacility());
 		target.setService(source.getService());
 		target.setQualification(source.getQualification());
-		target.setNameOfVillagePersonGotIll(source.getNameOfVillagePersonGotIll());
 
 		return target;
 	}
