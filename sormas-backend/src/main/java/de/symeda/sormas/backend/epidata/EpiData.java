@@ -187,6 +187,7 @@ public class EpiData extends AbstractDomainObject {
 	private Date dateOfLastContactWithSuspectCase;
 	private String ifYesWildAnimalLocation;
 	private Date ifYesWildAnimalDate;
+	private String suspectLastName;
 
 	private List<Exposure> exposures = new ArrayList<>();
 	private List<ActivityAsCase> activitiesAsCase = new ArrayList<>();
@@ -1649,5 +1650,13 @@ public class EpiData extends AbstractDomainObject {
 
 	public void setFoodItems(final YesNo foodItems) {
 		this.foodItems = foodItems;
+	}
+
+	public String getSuspectLastName() {
+		return suspectLastName;
+	}
+
+	public void setSuspectLastName(String suspectLastName) {
+		this.suspectLastName = suspectLastName;
 	}
 }
