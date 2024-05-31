@@ -14633,3 +14633,13 @@ ALTER TABLE epidata ADD COLUMN waterUsedForDrinking VARCHAR(255);
 ALTER TABLE epidata ADD COLUMN waterUsedNotForDrinking VARCHAR(255);
 ALTER TABLE epidata ADD COLUMN foodItems VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (665, 'Added columns to riskfactor to implement waterUsedForDrinking, waterUsedNotForDrinking, foodItems');
+
+
+ALTER TABLE samples ADD COLUMN dateSpecimenSentToRegion DATE;
+ALTER TABLE samples ADD COLUMN nameOfPersonWhoReceivedSpecimenAtRegion VARCHAR(255);
+ALTER TABLE samples ADD COLUMN dateSpecimenReceivedAtRegion DATE;
+
+ALTER TABLE samples ADD COLUMN dateSpecimenSentToNational DATE;
+ALTER TABLE samples ADD COLUMN nameOfPersonWhoReceivedSpecimenAtNational VARCHAR(255);
+ALTER TABLE samples ADD COLUMN dateSpecimenReceivedAtNational DATE;
+INSERT INTO schema_version(version_number, comment) VALUES (666, 'Added new fields to samples for specimen handling');
