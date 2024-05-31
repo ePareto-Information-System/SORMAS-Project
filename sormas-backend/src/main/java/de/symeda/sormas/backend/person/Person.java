@@ -251,7 +251,6 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private String nameHealthFacility;
 	private String service;
 	private String qualification;
-	private String nameOfVillagePersonGotIll;
 
 	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getFirstName() {
@@ -1119,13 +1118,6 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 		this.qualification = qualification;
 	}
 
-	public String getNameOfVillagePersonGotIll() {
-		return nameOfVillagePersonGotIll;
-	}
-
-	public void setNameOfVillagePersonGotIll(String nameOfVillagePersonGotIll) {
-		this.nameOfVillagePersonGotIll = nameOfVillagePersonGotIll;
-	}
     public void setApplicable(YesNo applicable) {
          this.applicable = applicable;
     }

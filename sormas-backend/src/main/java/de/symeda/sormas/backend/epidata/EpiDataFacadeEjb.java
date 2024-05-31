@@ -199,6 +199,8 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setDateOfLastContactWithSuspectCase(source.getDateOfLastContactWithSuspectCase());
 		target.setIfYesWildAnimalLocation(source.getIfYesWildAnimalLocation());
 		target.setIfYesWildAnimalDate(source.getIfYesWildAnimalDate());
+		target.setSuspectLastName(source.getSuspectLastName());
+
 
 
 
@@ -484,6 +486,7 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setDateOfLastContactWithSuspectCase(source.getDateOfLastContactWithSuspectCase());
 		target.setIfYesWildAnimalLocation(source.getIfYesWildAnimalLocation());
 		target.setIfYesWildAnimalDate(source.getIfYesWildAnimalDate());
+		target.setSuspectLastName(source.getSuspectLastName());
 
 		List<ExposureDto> exposureDtos = new ArrayList<>();
 		for (Exposure exposure : source.getExposures()) {

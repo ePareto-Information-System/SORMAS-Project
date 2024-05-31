@@ -178,6 +178,7 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String IF_YES_END_DATE = "ifYesEndDate";
 	public static final String PATIENT_CONTACT_KNOWN_SUSPECT = "patientContactKnownSuspect";
 	public static final String SUSPECT_NAME = "suspectName";
+	public static final String SUSPECT_LAST_NAME = "suspectLastName";
 	public static final String ID_CASE = "idCase";
 	public static final String DURING_CONTACT_SUSPECT_CASE = "duringContactSuspectCase";
 	public static final String DATE_OF_DEATH = "dateOfDeath";
@@ -321,6 +322,7 @@ public class EpiDataDto extends PseudonymizableDto {
 	private Date ifYesEndDate;
 	private YesNo patientContactKnownSuspect;
 	private String suspectName;
+	private String suspectLastName;
 	private String idCase;
 	private CaseOutcome duringContactSuspectCase;
 	private Date dateOfDeath;
@@ -1422,5 +1424,13 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public void setIfYesWildAnimalDate(Date ifYesWildAnimalDate) {
 		this.ifYesWildAnimalDate = ifYesWildAnimalDate;
+	}
+
+	public String getSuspectLastName() {
+		return suspectLastName;
+	}
+
+	public void setSuspectLastName(String suspectLastName) {
+		this.suspectLastName = suspectLastName;
 	}
 }

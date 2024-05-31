@@ -158,7 +158,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					fluidRowLocs(EpiDataDto.PATIENT_TRAVEL_ANYTIME_PERIOD_BEFORE_ILL, EpiDataDto.IF_TRAVEL_YES_WHERE) +
 					fluidRowLocs(EpiDataDto.IF_TRAVEL_START_DATE, EpiDataDto.IF_YES_END_DATE) +
 					fluidRowLocs(6,EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT) +
-					fluidRowLocs(EpiDataDto.SUSPECT_NAME, EpiDataDto.ID_CASE) +
+					fluidRowLocs(EpiDataDto.SUSPECT_LAST_NAME, EpiDataDto.SUSPECT_NAME, EpiDataDto.ID_CASE) +
 					fluidRowLocs(EpiDataDto.DURING_CONTACT_SUSPECT_CASE, EpiDataDto.DATE_OF_DEATH) +
 					fluidRowLocs(6,EpiDataDto.DATE_OF_LAST_CONTACT_WITH_SUSPECT_CASE);
 
@@ -209,7 +209,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		NullableOptionGroup contactDeadWildAnimals = addField(EpiDataDto.CONTACT_DEAD_WILD_ANIMALS, NullableOptionGroup.class);
 		TextField ifYesSpecifyDeadWild = addField(EpiDataDto.IF_YES_SPECIFY_DEAD_WILD_ANIMAL, TextField.class);
 		TextField ifYesWildAnimalLocation = addField(EpiDataDto.IF_YES_WILD_ANIMAL_LOCATION, TextField.class);
-		TextField ifYesWildAnimalDate = addField(EpiDataDto.IF_YES_WILD_ANIMAL_DATE, TextField.class);
+		DateField ifYesWildAnimalDate = addField(EpiDataDto.IF_YES_WILD_ANIMAL_DATE, DateField.class);
 
 		contactDeadWildAnimals.setVisible(false);
 		ifYesSpecifySickDomestic.setVisible(false);
@@ -357,7 +357,9 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		DateField ifYesEndDate = addField(EpiDataDto.IF_YES_END_DATE, DateField.class);
 		NullableOptionGroup patientContactKnownSuspect = addField(EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT, NullableOptionGroup.class);
 		TextField suspectName = addField(EpiDataDto.SUSPECT_NAME, TextField.class);
+		TextField suspectLastName = addField(EpiDataDto.SUSPECT_LAST_NAME, TextField.class);
 		TextField idCase = addField(EpiDataDto.ID_CASE, TextField.class);
+
 		ComboBox duringContactSuspectCase = new ComboBox("Outcome");
 
 		for (CaseOutcome caseOutcome : CaseOutcome.values()) {
@@ -365,7 +367,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 				duringContactSuspectCase.addItem(caseOutcome);
 			}
 		}
-		addField(EpiDataDto.DURING_CONTACT_SUSPECT_CASE, duringContactSuspectCase);
+		 addField(EpiDataDto.DURING_CONTACT_SUSPECT_CASE, duringContactSuspectCase);
 
 
 		DateField dateOfDeath = addField(EpiDataDto.DATE_OF_DEATH, DateField.class);
@@ -523,19 +525,21 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			ifTravelStartDate.setVisible(false);
 			ifYesEndDate.setVisible(false);
 			suspectName.setVisible(false);
+			suspectLastName.setVisible(false);
 			idCase.setVisible(false);
 			whenWhereContactTakePlace.setVisible(false);
 			dateOfContact.setVisible(false);
 			ifYesExplain.setVisible(false);
+			duringContactSuspectCase.setVisible(false);
 
 			contactDeadWildAnimals.setVisible(true);
 
+			FieldHelper.setVisibleWhen(patientContactKnownSuspect, Arrays.asList(suspectName, suspectLastName, idCase, duringContactSuspectCase), Arrays.asList(YesNo.YES), true);
 			FieldHelper.setVisibleWhen(contactDeadWildAnimals, Arrays.asList(ifYesSpecifyDeadWild, ifYesWildAnimalLocation, ifYesWildAnimalDate), Arrays.asList(YesNo.YES), true);
 			FieldHelper.setVisibleWhen(duringContactSuspectCase, Arrays.asList(dateOfDeath), Arrays.asList(CaseOutcome.DECEASED), true);
 			FieldHelper.setVisibleWhen(wasPatientHospitalized, Arrays.asList(ifYesWhere, hospitalizedDate1, hospitalizedDate2), Arrays.asList(YesNo.YES), true);
 			FieldHelper.setVisibleWhen(didPatientConsultHealer, Arrays.asList(ifYesNameHealer, community, country, whenWhereContactTakePlace, dateOfContact), Arrays.asList(YesNo.YES), true);
 			FieldHelper.setVisibleWhen(patientTravelAnytimePeriodBeforeIll, Arrays.asList(ifTravelYesWhere, ifTravelStartDate, ifYesEndDate), Arrays.asList(YesNo.YES), true);
-			FieldHelper.setVisibleWhen(patientContactKnownSuspect, Arrays.asList(suspectName, idCase), Arrays.asList(YesNo.YES), true);
 			FieldHelper.setVisibleWhen(patientReceiveTraditionalMedicine, Arrays.asList(ifYesExplain), Arrays.asList(YesNo.YES), true);
 
 			FieldHelper.setVisibleWhen(patientTravelDuringIllness, Arrays.asList(comm1, comm2, healthCenter1, healthCenter2, country1, country2), Arrays.asList(YesNo.YES), true);

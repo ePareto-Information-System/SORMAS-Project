@@ -13552,9 +13552,8 @@ INSERT INTO schema_version (version_number, comment) VALUES (607, 'added nationa
 
 -- 2024-05-31 Dropped nameofvillagepersongotIll in person and added in cases
 
-ALTER TABLE person DROP COLUMN nameofvillagepersongotIll;
-ALTER TABLE person_history DROP COLUMN nameofvillagepersongotIll;
 ALTER TABLE cases ADD COLUMN nameofvillagepersongotIll VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN suspectlastname VARCHAR(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (608, 'Dropped nameofvillagepersongotIll in person and added in cases');
+INSERT INTO schema_version (version_number, comment) VALUES (608, 'Dropped nameofvillagepersongotIll in person and added in cases and epidata');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

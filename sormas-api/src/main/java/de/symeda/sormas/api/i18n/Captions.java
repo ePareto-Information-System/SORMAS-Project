@@ -1277,6 +1277,7 @@ public interface Captions {
 	String ifYesEndDate = "EpiData.ifYesEndDate";
 	String patientContactKnownSuspect = "EpiData.patientContactKnownSuspect";
 	String suspectName = "EpiData.suspectName";
+	String suspectLastName = "EpiData.suspectLastName";
 	String idCase = "EpiData.idCase";
 	String duringContactSuspectCase = "EpiData.duringContactSuspectCase";
 	String dateOfDeath = "EpiData.dateOfDeath";
