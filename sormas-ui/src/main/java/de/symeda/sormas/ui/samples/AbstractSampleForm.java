@@ -222,13 +222,13 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
     protected static final String GUINEA_WORM_LAYOUT =
 				fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
                 fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
-				fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
-				fluidRowLocs(6, SampleDto.SAMPLE_MATERIAL) +
+//				fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
+//				fluidRowLocs(6, SampleDto.SAMPLE_MATERIAL) +
 				loc(HEADING_SPECIMEN_HANDLING) +
 				fluidRowLocs(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL) +
 				fluidRowLocs(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY) +
-				fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_REGION, SampleDto.RECEIVED_BY_REGION, SampleDto.DATE_FORM_RECEIVED_AT_REGION) +
-				fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_NATIONAL, SampleDto.RECEIVED_BY_NATIONAL, SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL) +
+				fluidRowLocs(SampleDto.DATE_SPECIMEN_SENT_TO_REGION, SampleDto.NAME_OF_PERSON_WHO_RECEIVED_SPECIMEN_AT_REGION, SampleDto.DATE_SPECIMEN_RECEIVED_AT_REGION) +
+				fluidRowLocs(SampleDto.DATE_SPECIMEN_SENT_TO_NATIONAL, SampleDto.NAME_OF_PERSON_WHO_RECEIVED_SPECIMEN_AT_NATIONAL, SampleDto.DATE_SPECIMEN_RECEIVED_AT_NATIONAL) +
 				loc(NATIONAL_SECRETARIAT_ONLY) +
 				fluidRowLocs(SampleDto.SENT_FOR_CONFIRMATION_NATIONAL, SampleDto.SENT_FOR_CONFIRMATION_NATIONAL_DATE, SampleDto.SENT_FOR_CONFIRMATION_TO) +
 				fluidRowLocs(6, SampleDto.DATE_RESULT_RECEIVED_NATIONAL) +
@@ -414,12 +414,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     Arrays.asList(true),
                     Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
                     true);
-            FieldHelper.setRequiredWhen(
-                    getFieldGroup(),
-                    SampleDto.SAMPLE_PURPOSE,
-                    Arrays.asList(SampleDto.LAB),
-                    Arrays.asList(SamplePurpose.EXTERNAL, null));
-
 
         } else {
             getField(SampleDto.SAMPLE_DATE_TIME).setEnabled(false);
@@ -441,6 +435,14 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         Label reportInfoLabel = new Label(reportInfoText.toString());
         reportInfoLabel.setEnabled(false);
         getContent().addComponent(reportInfoLabel, REPORT_INFO_LABEL_LOC);
+
+		if (disease != Disease.GUINEA_WORM) {
+			FieldHelper.setRequiredWhen(
+					getFieldGroup(),
+					SampleDto.SAMPLE_PURPOSE,
+					Arrays.asList(SampleDto.LAB),
+					Arrays.asList(SamplePurpose.EXTERNAL, null));
+		}
 
 		switch (disease) {
 			case CSM:
@@ -1126,16 +1128,18 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	}
 
 	public void handleGuineaWorm() {
-		addField(SampleDto.DATE_FORM_SENT_TO_REGION, DateField.class);
-		addField(SampleDto.DATE_FORM_RECEIVED_AT_REGION, DateField.class);
-		addField(SampleDto.DATE_FORM_SENT_TO_NATIONAL, DateField.class);
-		addField(SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL, DateField.class);
-		addFields(SampleDto.RECEIVED_BY_REGION, SampleDto.RECEIVED_BY_NATIONAL);
+		addFields(
+				SampleDto.DATE_SPECIMEN_SENT_TO_REGION,
+				SampleDto.NAME_OF_PERSON_WHO_RECEIVED_SPECIMEN_AT_REGION,
+				SampleDto.DATE_SPECIMEN_RECEIVED_AT_REGION,
+				SampleDto.DATE_SPECIMEN_SENT_TO_NATIONAL,
+				SampleDto.NAME_OF_PERSON_WHO_RECEIVED_SPECIMEN_AT_NATIONAL,
+				SampleDto.DATE_SPECIMEN_RECEIVED_AT_NATIONAL
+		);
 
 		setVisible(true,
 				SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL,
 				SampleDto.SENT_FOR_CONFIRMATION_NATIONAL,
-				SampleDto.DATE_FORM_SENT_TO_NATIONAL,
 				SampleDto.USE_OF_CLOTH_FILTER,
 				SampleDto.REMARKS);
 

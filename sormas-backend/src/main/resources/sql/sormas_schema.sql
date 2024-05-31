@@ -13131,4 +13131,13 @@ ALTER TABLE person RENAME COLUMN placeStayedtenToFourteenMonthsDistrict_id TO ps
 ALTER TABLE person RENAME COLUMN placeStayedtenToFourteenMonthsRegion_id TO pst14MonthsRegion_id;
 ALTER TABLE person RENAME COLUMN placeStayedtenToFourteenMonthsCountry_id TO pst14MonthsCountry_id;
 INSERT INTO schema_version(version_number, comment) VALUES (579, 'Renamed placeStayedtenToFourteenMonths fields in person');
+
+ALTER TABLE samples ADD COLUMN dateSpecimenSentToRegion DATE;
+ALTER TABLE samples ADD COLUMN nameOfPersonWhoReceivedSpecimenAtRegion VARCHAR(255);
+ALTER TABLE samples ADD COLUMN dateSpecimenReceivedAtRegion DATE;
+
+ALTER TABLE samples ADD COLUMN dateSpecimenSentToNational DATE;
+ALTER TABLE samples ADD COLUMN nameOfPersonWhoReceivedSpecimenAtNational VARCHAR(255);
+ALTER TABLE samples ADD COLUMN dateSpecimenReceivedAtNational DATE;
+INSERT INTO schema_version(version_number, comment) VALUES (580, 'Added new fields to samples for specimen handling');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

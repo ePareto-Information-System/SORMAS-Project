@@ -339,6 +339,13 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private FilterChangingFrequency frequencyOfChangingFilters;
 	private String remarks;
 
+	private Date dateSpecimenSentToRegion;
+	private String nameOfPersonWhoReceivedSpecimenAtRegion;
+	private Date dateSpecimenReceivedAtRegion;
+	private Date dateSpecimenSentToNational;
+	private String nameOfPersonWhoReceivedSpecimenAtNational;
+	private Date dateSpecimenReceivedAtNational;
+
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -1717,5 +1724,53 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public Date getDateSpecimenSentToRegion() {
+		return this.dateSpecimenSentToRegion;
+	}
+
+	public void setDateSpecimenSentToRegion(final Date dateSpecimenSentToRegion) {
+		this.dateSpecimenSentToRegion = dateSpecimenSentToRegion;
+	}
+
+	public String getNameOfPersonWhoReceivedSpecimenAtRegion() {
+		return this.nameOfPersonWhoReceivedSpecimenAtRegion;
+	}
+
+	public void setNameOfPersonWhoReceivedSpecimenAtRegion(final String nameOfPersonWhoReceivedSpecimenAtRegion) {
+		this.nameOfPersonWhoReceivedSpecimenAtRegion = nameOfPersonWhoReceivedSpecimenAtRegion;
+	}
+
+	public Date getDateSpecimenReceivedAtRegion() {
+		return this.dateSpecimenReceivedAtRegion;
+	}
+
+	public void setDateSpecimenReceivedAtRegion(final Date dateSpecimenReceivedAtRegion) {
+		this.dateSpecimenReceivedAtRegion = dateSpecimenReceivedAtRegion;
+	}
+
+	public Date getDateSpecimenSentToNational() {
+		return this.dateSpecimenSentToNational;
+	}
+
+	public void setDateSpecimenSentToNational(final Date dateSpecimenSentToNational) {
+		this.dateSpecimenSentToNational = dateSpecimenSentToNational;
+	}
+
+	public String getNameOfPersonWhoReceivedSpecimenAtNational() {
+		return this.nameOfPersonWhoReceivedSpecimenAtNational;
+	}
+
+	public void setNameOfPersonWhoReceivedSpecimenAtNational(final String nameOfPersonWhoReceivedSpecimenAtNational) {
+		this.nameOfPersonWhoReceivedSpecimenAtNational = nameOfPersonWhoReceivedSpecimenAtNational;
+	}
+
+	public Date getDateSpecimenReceivedAtNational() {
+		return this.dateSpecimenReceivedAtNational;
+	}
+
+	public void setDateSpecimenReceivedAtNational(final Date dateSpecimenReceivedAtNational) {
+		this.dateSpecimenReceivedAtNational = dateSpecimenReceivedAtNational;
 	}
 }

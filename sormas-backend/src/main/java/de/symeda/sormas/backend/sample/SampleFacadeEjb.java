@@ -32,6 +32,8 @@ import javax.persistence.criteria.Selection;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.sample.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -470,8 +472,18 @@ public class SampleFacadeEjb implements SampleFacade {
 					.getValidationError(Validations.required, I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.SAMPLE_PURPOSE)));
 		}*/
 		if (sample.getSamplePurpose() == SamplePurpose.EXTERNAL && sample.getLab() == null) {
-			throw new ValidationRuntimeException(
-				I18nProperties.getValidationError(Validations.required, I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.LAB)));
+			CaseReferenceDto caseReferenceDto = sample.getAssociatedCase();
+					if(caseReferenceDto != null) {
+						CaseDataDto caseDataDto = caseFacade.getCaseDataByUuid(caseReferenceDto.getUuid());
+							Disease disease = caseDataDto.getDisease();
+							if(disease != null && !disease.equals(Disease.GUINEA_WORM)) {
+										throw new ValidationRuntimeException(
+											I18nProperties.getValidationError(Validations.required, I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.LAB)));
+							}
+					} else {
+						throw new ValidationRuntimeException(
+							I18nProperties.getValidationError(Validations.required, I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.LAB)));
+					}
 		}
 
 		if (sample.getSampleMaterial() == SampleMaterial.OTHER && StringUtils.isEmpty(sample.getSampleMaterialText())) {
@@ -964,6 +976,13 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setUseOfClothFilter(source.getUseOfClothFilter());
 		target.setFrequencyOfChangingFilters(source.getFrequencyOfChangingFilters());
 		target.setRemarks(source.getRemarks());
+		target.setDateSpecimenSentToRegion(source.getDateSpecimenSentToRegion());
+		target.setNameOfPersonWhoReceivedSpecimenAtRegion(source.getNameOfPersonWhoReceivedSpecimenAtRegion());
+		target.setDateSpecimenReceivedAtRegion(source.getDateSpecimenReceivedAtRegion());
+		target.setDateSpecimenSentToNational(source.getDateSpecimenSentToNational());
+		target.setNameOfPersonWhoReceivedSpecimenAtNational(source.getNameOfPersonWhoReceivedSpecimenAtNational());
+		target.setDateSpecimenReceivedAtNational(source.getDateSpecimenReceivedAtNational());
+
 
 		if (source.getSormasToSormasOriginInfo() != null) {
 			target.setSormasToSormasOriginInfo(originInfoService.getByUuid(source.getSormasToSormasOriginInfo().getUuid()));
@@ -1233,6 +1252,12 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setUseOfClothFilter(source.getUseOfClothFilter());
 		target.setFrequencyOfChangingFilters(source.getFrequencyOfChangingFilters());
 		target.setRemarks(source.getRemarks());
+		target.setDateSpecimenSentToRegion(source.getDateSpecimenSentToRegion());
+		target.setNameOfPersonWhoReceivedSpecimenAtRegion(source.getNameOfPersonWhoReceivedSpecimenAtRegion());
+		target.setDateSpecimenReceivedAtRegion(source.getDateSpecimenReceivedAtRegion());
+		target.setDateSpecimenSentToNational(source.getDateSpecimenSentToNational());
+		target.setNameOfPersonWhoReceivedSpecimenAtNational(source.getNameOfPersonWhoReceivedSpecimenAtNational());
+		target.setDateSpecimenReceivedAtNational(source.getDateSpecimenReceivedAtNational());
 
 
 

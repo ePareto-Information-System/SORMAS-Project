@@ -196,6 +196,13 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String USE_OF_CLOTH_FILTER = "useOfClothFilter";
 	public static final String FREQUENCY_OF_CHANGING_FILTERS = "frequencyOfChangingFilters";
 	public static final String REMARKS = "remarks";
+	public static final String DATE_SPECIMEN_SENT_TO_REGION = "dateSpecimenSentToRegion";
+	public static final String NAME_OF_PERSON_WHO_RECEIVED_SPECIMEN_AT_REGION = "nameOfPersonWhoReceivedSpecimenAtRegion";
+	public static final String DATE_SPECIMEN_RECEIVED_AT_REGION = "dateSpecimenReceivedAtRegion";
+	public static final String DATE_SPECIMEN_SENT_TO_NATIONAL = "dateSpecimenSentToNational";
+	public static final String NAME_OF_PERSON_WHO_RECEIVED_SPECIMEN_AT_NATIONAL = "nameOfPersonWhoReceivedSpecimenAtNational";
+	public static final String DATE_SPECIMEN_RECEIVED_AT_NATIONAL = "dateSpecimenReceivedAtNational";
+
 
 
 	private CaseReferenceDto associatedCase;
@@ -230,6 +237,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 	private SamplePurpose samplePurpose;
 
+//	not required
 	private FacilityReferenceDto lab;
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
@@ -391,6 +399,13 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private YesNo useOfClothFilter;
 	private FilterChangingFrequency frequencyOfChangingFilters;
 	private String remarks;
+	private Date dateSpecimenSentToRegion;
+	private String nameOfPersonWhoReceivedSpecimenAtRegion;
+	private Date dateSpecimenReceivedAtRegion;
+	private Date dateSpecimenSentToNational;
+	private String nameOfPersonWhoReceivedSpecimenAtNational;
+	private Date dateSpecimenReceivedAtNational;
+
 
 
 
@@ -1751,5 +1766,53 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public Date getDateSpecimenSentToRegion() {
+		return this.dateSpecimenSentToRegion;
+	}
+
+	public void setDateSpecimenSentToRegion(final Date dateSpecimenSentToRegion) {
+		this.dateSpecimenSentToRegion = dateSpecimenSentToRegion;
+	}
+
+	public String getNameOfPersonWhoReceivedSpecimenAtRegion() {
+		return this.nameOfPersonWhoReceivedSpecimenAtRegion;
+	}
+
+	public void setNameOfPersonWhoReceivedSpecimenAtRegion(final String nameOfPersonWhoReceivedSpecimenAtRegion) {
+		this.nameOfPersonWhoReceivedSpecimenAtRegion = nameOfPersonWhoReceivedSpecimenAtRegion;
+	}
+
+	public Date getDateSpecimenReceivedAtRegion() {
+		return this.dateSpecimenReceivedAtRegion;
+	}
+
+	public void setDateSpecimenReceivedAtRegion(final Date dateSpecimenReceivedAtRegion) {
+		this.dateSpecimenReceivedAtRegion = dateSpecimenReceivedAtRegion;
+	}
+
+	public Date getDateSpecimenSentToNational() {
+		return this.dateSpecimenSentToNational;
+	}
+
+	public void setDateSpecimenSentToNational(final Date dateSpecimenSentToNational) {
+		this.dateSpecimenSentToNational = dateSpecimenSentToNational;
+	}
+
+	public String getNameOfPersonWhoReceivedSpecimenAtNational() {
+		return this.nameOfPersonWhoReceivedSpecimenAtNational;
+	}
+
+	public void setNameOfPersonWhoReceivedSpecimenAtNational(final String nameOfPersonWhoReceivedSpecimenAtNational) {
+		this.nameOfPersonWhoReceivedSpecimenAtNational = nameOfPersonWhoReceivedSpecimenAtNational;
+	}
+
+	public Date getDateSpecimenReceivedAtNational() {
+		return this.dateSpecimenReceivedAtNational;
+	}
+
+	public void setDateSpecimenReceivedAtNational(final Date dateSpecimenReceivedAtNational) {
+		this.dateSpecimenReceivedAtNational = dateSpecimenReceivedAtNational;
 	}
 }
