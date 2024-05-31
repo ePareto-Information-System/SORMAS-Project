@@ -550,7 +550,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 	private void addActivityAsCaseFields() {
 
-		if(!diseaseCSMCheck() && disease != Disease.FOODBORNE_ILLNESS && disease != Disease.AFP && disease != Disease.AHF){
+		if(!diseaseCSMCheck() && disease != Disease.FOODBORNE_ILLNESS && disease != Disease.AFP && disease != Disease.AHF && disease != Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
 			getContent().addComponent(
 					new MultilineLabel(
 							h3(I18nProperties.getString(Strings.headingActivityAsCase))

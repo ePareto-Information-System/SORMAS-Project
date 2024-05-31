@@ -69,6 +69,7 @@ public class ExposureForm extends AbstractEditForm<ExposureDto> {
 	private static final long serialVersionUID = 8262753698264714832L;
 
 	private static final String LOC_EXPOSURE_DETAILS_HEADING = "locExposureDetailsHeading";
+	private static final String LOC_RISK_AREAS_HEADING = "riskAreasHeading";
 	private static final String LOC_LOCATION_HEADING = "locLocationHeading";
 	private static final String LOC_ANIMAL_CONTACT_DETAILS_HEADING = "locAnimalContactDetailsHeading";
 	private static final String LOC_BURIAL_DETAILS_HEADING = "locBurialDetailsHeading";
@@ -96,7 +97,8 @@ public class ExposureForm extends AbstractEditForm<ExposureDto> {
 			) +
 			loc(LOC_EXPOSURE_DETAILS_HEADING) +
 			loc(ExposureDto.EXPOSURE_ROLE) +
-			loc(ExposureDto.RISK_AREA) +
+//			loc(ExposureDto.RISK_AREA) +
+			loc(LOC_RISK_AREAS_HEADING) +
 			loc(ExposureDto.LARGE_ATTENDANCE_NUMBER) +
 			loc(ExposureDto.INDOORS) +
 			loc(ExposureDto.OUTDOORS) +
@@ -197,6 +199,9 @@ public class ExposureForm extends AbstractEditForm<ExposureDto> {
 	private void addHeadingsAndInfoTexts() {
 		getContent()
 			.addComponent(new Label(h3(I18nProperties.getString(Strings.headingExposureDetails)), ContentMode.HTML), LOC_EXPOSURE_DETAILS_HEADING);
+
+		getContent()
+				.addComponent(new Label(h3(I18nProperties.getString(Strings.headingRiskAreas)), ContentMode.HTML), LOC_RISK_AREAS_HEADING);
 
 		getContent().addComponent(
 			new Label(h3(I18nProperties.getPrefixCaption(ExposureDto.I18N_PREFIX, ExposureDto.LOCATION)), ContentMode.HTML),
