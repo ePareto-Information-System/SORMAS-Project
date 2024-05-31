@@ -99,7 +99,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					fluidRowLocs(PersonDto.PROFESSION_OF_PATIENT, PersonDto.PROFESSION_OF_PATIENT_OTHER)+
 					loc(HEALTH_STAFF_DETAILS_LOC) +
 					fluidRowLocs(PersonDto.NAME_HEALTH_FACILITY, PersonDto.SERVICE, PersonDto.QUALIFICATION)+
-					fluidRowLocs(6,PersonDto.NAME_OF_VILLAGE_PERSON_GOT_ILL)+
 					fluidRow(
 							oneOfFourCol(PersonDto.DEATH_DATE),
 							oneOfFourCol(PersonDto.CAUSE_OF_DEATH),
@@ -711,7 +710,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			addField(PersonDto.NAME_HEALTH_FACILITY, TextField.class);
 			addField(PersonDto.SERVICE, TextField.class);
 			addField(PersonDto.QUALIFICATION, TextField.class);
-			addField(PersonDto.NAME_OF_VILLAGE_PERSON_GOT_ILL, TextField.class);
 
 			occupationHeader.setVisible(false);
 			personContactDetailsField.setVisible(false);

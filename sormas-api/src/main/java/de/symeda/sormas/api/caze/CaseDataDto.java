@@ -259,6 +259,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String ETHNICITY = "ethnicity";
 	public static final String OCCUPATION = "occupation";
 	public static final String DISTRICT_OF_RESIDENCE = "districtOfResidence";
+	public static final String NAME_OF_VILLAGE_PERSON_GOT_ILL = "nameOfVillagePersonGotIll";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -674,6 +675,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	private String occupation;
 	private String districtOfResidence;
 	private String specifyEventDiagnosis;
+	private String nameOfVillagePersonGotIll;
 
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		return build(person, disease, HealthConditionsDto.build());
@@ -2117,5 +2119,13 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 
 	public void setFamilyLinkWithPatient(String familyLinkWithPatient) {
 		this.familyLinkWithPatient = familyLinkWithPatient;
+	}
+
+	public String getNameOfVillagePersonGotIll() {
+		return nameOfVillagePersonGotIll;
+	}
+
+	public void setNameOfVillagePersonGotIll(String nameOfVillagePersonGotIll) {
+		this.nameOfVillagePersonGotIll = nameOfVillagePersonGotIll;
 	}
 }

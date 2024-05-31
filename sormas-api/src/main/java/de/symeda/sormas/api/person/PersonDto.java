@@ -156,7 +156,6 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String NAME_HEALTH_FACILITY = "nameHealthFacility";
 	public static final String SERVICE = "service";
 	public static final String QUALIFICATION = "qualification";
-	public static final String NAME_OF_VILLAGE_PERSON_GOT_ILL = "nameOfVillagePersonGotIll";
 	public static final String APPLICABLE = "applicable";
 
 	// Fields are declared in the order they should appear in the import template
@@ -468,7 +467,6 @@ public class PersonDto extends PseudonymizableDto {
 	private String nameHealthFacility;
 	private String service;
 	private String qualification;
-	private String nameOfVillagePersonGotIll;
 
 
 	@SuppressWarnings("serial")
@@ -1395,14 +1393,6 @@ public class PersonDto extends PseudonymizableDto {
 
 	public void setQualification(String qualification) {
 		this.qualification = qualification;
-	}
-
-	public String getNameOfVillagePersonGotIll() {
-		return nameOfVillagePersonGotIll;
-	}
-
-	public void setNameOfVillagePersonGotIll(String nameOfVillagePersonGotIll) {
-		this.nameOfVillagePersonGotIll = nameOfVillagePersonGotIll;
 	}
 
 	public YesNo getApplicable() {
