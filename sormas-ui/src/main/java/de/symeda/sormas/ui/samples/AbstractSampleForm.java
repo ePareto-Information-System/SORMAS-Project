@@ -294,6 +294,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 //				fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
 //				locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
 //				fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.SPECIMEN_CONDITION) +
+				fluidRowLocs(SampleDto.CONFIRMED_AS_GUINEA_WORM) +
 				fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT);
 				
 	protected static final String MEASLES_LAYOUT =
@@ -1516,6 +1517,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				SampleDto.NAME_OF_PERSON_WHO_RECEIVED_SPECIMEN_AT_NATIONAL,
 				SampleDto.DATE_SPECIMEN_RECEIVED_AT_NATIONAL
 		);
+
+		addField(SampleDto.CONFIRMED_AS_GUINEA_WORM, NullableOptionGroup.class);
 
 		setVisible(true,
 				SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL,
