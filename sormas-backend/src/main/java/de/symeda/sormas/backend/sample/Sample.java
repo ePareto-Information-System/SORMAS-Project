@@ -346,6 +346,8 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private String nameOfPersonWhoReceivedSpecimenAtNational;
 	private Date dateSpecimenReceivedAtNational;
 
+	private YesNo confirmedAsGuineaWorm;
+
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -1772,5 +1774,13 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setDateSpecimenReceivedAtNational(final Date dateSpecimenReceivedAtNational) {
 		this.dateSpecimenReceivedAtNational = dateSpecimenReceivedAtNational;
+	}
+
+	public YesNo getConfirmedAsGuineaWorm() {
+		return this.confirmedAsGuineaWorm;
+	}
+
+	public void setConfirmedAsGuineaWorm(final YesNo confirmedAsGuineaWorm) {
+		this.confirmedAsGuineaWorm = confirmedAsGuineaWorm;
 	}
 }

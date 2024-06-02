@@ -13140,4 +13140,8 @@ ALTER TABLE samples ADD COLUMN dateSpecimenSentToNational DATE;
 ALTER TABLE samples ADD COLUMN nameOfPersonWhoReceivedSpecimenAtNational VARCHAR(255);
 ALTER TABLE samples ADD COLUMN dateSpecimenReceivedAtNational DATE;
 INSERT INTO schema_version(version_number, comment) VALUES (580, 'Added new fields to samples for specimen handling');
+
+-- Confirmed as Guinea Worm
+ALTER TABLE samples ADD COLUMN confirmedAsGuineaWorm VARCHAR(255);
+INSERT INTO schema_version(version_number, comment) VALUES (581, 'Added confirmedAsGuineaWorm to samples');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

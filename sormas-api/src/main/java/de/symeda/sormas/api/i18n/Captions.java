@@ -2174,6 +2174,7 @@ public interface Captions {
 	String Sample_dateSpecimenSentToNational = "Sample.dateSpecimenSentToNational";
 	String Sample_nameOfPersonWhoReceivedSpecimenAtNational = "Sample.nameOfPersonWhoReceivedSpecimenAtNational";
 	String Sample_dateSpecimenReceivedAtNational = "Sample.dateSpecimenReceivedAtNational";
+	String Sample_confirmedAsGuineaWorm = "Sample.confirmedAsGuineaWorm";
 
 	String Sample_laboratoryName = "Sample.laboratoryName";
 	String Sample_laboratorySampleDateReceived = "Sample.laboratorySampleDateReceived";
