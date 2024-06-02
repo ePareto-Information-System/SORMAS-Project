@@ -95,17 +95,17 @@ public class SampleEditForm extends AbstractSampleForm {
 				getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
 			}
 
-				fillPathogenTestResult();
+//			fillPathogenTestResult();
 
 			//if(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO) ){
 
-				getField(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS).setEnabled(false);
-				getField(SampleDto.REQUESTED_PATHOGEN_TESTS).setEnabled(false);
-				getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
-				getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
-				getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
-				getField(SampleDto.PATHOGEN_TESTING_REQUESTED).setEnabled(false);
-				getField(SampleDto.ADDITIONAL_TESTING_REQUESTED).setEnabled(false);
+//				getField(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS).setEnabled(false);
+//				getField(SampleDto.REQUESTED_PATHOGEN_TESTS).setEnabled(false);
+//				getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
+//				getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
+//				getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
+//				getField(SampleDto.PATHOGEN_TESTING_REQUESTED).setEnabled(false);
+//				getField(SampleDto.ADDITIONAL_TESTING_REQUESTED).setEnabled(false);
 
 				//getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
 				//getField(SampleDto.REFERRED_TO).setEnabled(false);
@@ -117,13 +117,13 @@ public class SampleEditForm extends AbstractSampleForm {
 
 			fillPathogenTestResult();
 
-			getField(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS).setEnabled(false);
-			getField(SampleDto.REQUESTED_PATHOGEN_TESTS).setEnabled(false);
-			getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
-			getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
-			getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
-			getField(SampleDto.PATHOGEN_TESTING_REQUESTED).setEnabled(false);
-			getField(SampleDto.ADDITIONAL_TESTING_REQUESTED).setEnabled(false);
+//			getField(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS).setEnabled(false);
+//			getField(SampleDto.REQUESTED_PATHOGEN_TESTS).setEnabled(false);
+//			getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
+//			getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
+//			getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
+//			getField(SampleDto.PATHOGEN_TESTING_REQUESTED).setEnabled(false);
+//			getField(SampleDto.ADDITIONAL_TESTING_REQUESTED).setEnabled(false);
 
 			UserReferenceDto reportingUser = getValue().getReportingUser();
 //			if (!(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
@@ -170,7 +170,6 @@ public class SampleEditForm extends AbstractSampleForm {
 		disease = getCaseDisease();
 
 		String SELECTED_LAYOUT = "";
-		if (disease != null) {
 			switch (disease) {
 				case GUINEA_WORM:
 					SELECTED_LAYOUT = loc(LABORATORY_SAMPLE_HEADING_LOC) + GUINEA_WORM_LAYOUT;
@@ -179,14 +178,12 @@ public class SampleEditForm extends AbstractSampleForm {
 					SELECTED_LAYOUT = loc(LABORATORY_SAMPLE_HEADING_LOC) + MEASLES_LAYOUT;
 					break;
 				case CHOLERA:
-					return CHOLERA_HTML_LAYOUT;
+					SELECTED_LAYOUT = loc(LABORATORY_SAMPLE_HEADING_LOC)  + CHOLERA_HTML_LAYOUT;
+					break;
 				default:
 					SELECTED_LAYOUT = HTML_LAYOUT;
 					break;
 			}
-		} else {
-			SELECTED_LAYOUT = HTML_LAYOUT;
-		}
 
 		return SELECTED_LAYOUT;
 	}

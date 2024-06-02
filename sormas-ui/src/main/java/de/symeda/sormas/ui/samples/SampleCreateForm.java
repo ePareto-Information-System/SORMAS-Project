@@ -38,22 +38,20 @@ public class SampleCreateForm extends AbstractSampleForm {
 		disease = getCaseDisease();
 
 		String SELECTED_LAYOUT = "";
-		if (disease != null) {
 			switch (disease) {
 				case GUINEA_WORM:
 					SELECTED_LAYOUT = GUINEA_WORM_LAYOUT;
+					break;
 				case MEASLES:
 					SELECTED_LAYOUT = MEASLES_LAYOUT;
 					break;
 				case CHOLERA:
-					return CHOLERA_HTML_LAYOUT;
+					SELECTED_LAYOUT = CHOLERA_HTML_LAYOUT;
+					break;
 				default:
 					SELECTED_LAYOUT = SAMPLE_COMMON_HTML_LAYOUT;
 					break;
 			}
-		}else {
-			SELECTED_LAYOUT = SAMPLE_COMMON_HTML_LAYOUT;
-		}
 
 		return SELECTED_LAYOUT;
 	}

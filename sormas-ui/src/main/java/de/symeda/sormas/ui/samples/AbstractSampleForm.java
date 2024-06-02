@@ -1091,6 +1091,23 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				.filter(pathogenTestType -> !choleraPathogenTests.contains(pathogenTestType))
 				.forEach(pathogenTestType -> requestedPathogenTestsField.removeItem(pathogenTestType));
 
+		setVisible(true, SampleDto.PATHOGEN_TESTING_REQUESTED);
+		FieldHelper.setVisibleWhen(
+				getFieldGroup(),
+				Arrays.asList(SampleDto.REQUESTED_PATHOGEN_TESTS),
+				SampleDto.PATHOGEN_TESTING_REQUESTED,
+				Arrays.asList(true),
+				true
+		);
+
+		FieldHelper.setVisibleWhen(
+				getFieldGroup(),
+				Arrays.asList(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS),
+				SampleDto.PATHOGEN_TESTING_REQUESTED,
+				Arrays.asList(PathogenTestType.OTHER),
+				true
+		);
+
 	}
 
 	private void handleAFP() {
