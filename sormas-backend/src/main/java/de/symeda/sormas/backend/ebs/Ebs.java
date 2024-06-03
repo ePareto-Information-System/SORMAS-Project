@@ -79,9 +79,6 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public static final String RISK_ASSESSMENT = "riskAssessment";
 	public static final String EBS_ALERT = "ebsAlert";
 
-
-	private RiskLevel riskLevel;
-	private SpecificRisk specificRisk;
 	private String informantName;
 	private String informantTel;
 	private Date triageDate;
@@ -102,23 +99,9 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	private String personRegistering;
 	private String personDesignation;
 	private String personPhone;
-	private SignalCategory signalCategory;
-	private String verified;
-	private String cases;
-	private String death;
 	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
 	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
-
-	private YesNoUnknown epidemiologicalEvidence;
-	private Map<EpidemiologicalEvidenceDetail, Boolean> epidemiologicalEvidenceDetails;
-	private YesNoUnknown laboratoryDiagnosticEvidence;
-	private Map<LaboratoryDiagnosticEvidenceDetail, Boolean> laboratoryDiagnosticEvidenceDetails;
-
 	private String internalToken;
-
-	private EventIdentificationSource eventIdentificationSource;
-
-	private List<ExternalShareInfo> externalShares = new ArrayList<>(0);
 	private AutomaticScanningType automaticScanningType;
 	private ManualScanningType manualScanningType;
 	private MediaScannningType scanningType;
@@ -128,26 +111,6 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	private SignalVerification signalVerification;
 	private Set<RiskAssessment> riskAssessment = new HashSet<>();
 	private Set<EbsAlert> ebsAlert = new HashSet<>();
-
-	@Column
-	@Enumerated(EnumType.STRING)
-	public RiskLevel getRiskLevel() {
-		return riskLevel;
-	}
-
-	public void setRiskLevel(RiskLevel riskLevel) {
-		this.riskLevel = riskLevel;
-	}
-
-	@Column
-	@Convert(converter = SpecificRiskConverter.class)
-	public SpecificRisk getSpecificRisk() {
-		return specificRisk;
-	}
-
-	public void setSpecificRisk(SpecificRisk specificRisk) {
-		this.specificRisk = specificRisk;
-	}
 
 	@Column(columnDefinition = "text")
 	public String getInformantName() {
@@ -325,10 +288,10 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	}
 
 	@ManyToOne(cascade = {
-		CascadeType.PERSIST,
-		CascadeType.MERGE,
-		CascadeType.DETACH,
-		CascadeType.REFRESH })
+			CascadeType.PERSIST,
+			CascadeType.MERGE,
+			CascadeType.DETACH,
+			CascadeType.REFRESH })
 	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
 		return sormasToSormasOriginInfo;
 	}
@@ -406,38 +369,6 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 
 	public void setOther(String other) {
 		this.other = other;
-	}
-
-	public SignalCategory getSignalCategory() {
-		return signalCategory;
-	}
-
-	public void setSignalCategory(SignalCategory signalCategory) {
-		this.signalCategory = signalCategory;
-	}
-
-	public String getVerified() {
-		return verified;
-	}
-
-	public void setVerified(String verified) {
-		this.verified = verified;
-	}
-
-	public String getCases() {
-		return cases;
-	}
-
-	public void setCases(String cases) {
-		this.cases = cases;
-	}
-
-	public String getDeath() {
-		return death;
-	}
-
-	public void setDeath(String death) {
-		this.death = death;
 	}
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public Triaging getTriaging() {
