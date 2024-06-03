@@ -20,13 +20,17 @@ import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.RequestContextHolder;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.document.DocumentRelatedEntityType;
-import de.symeda.sormas.api.ebs.EbsCriteria;
+import de.symeda.sormas.api.ebs.*;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolRuntimeException;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.share.ExternalShareStatus;
 import de.symeda.sormas.api.user.JurisdictionLevel;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.backend.caze.CaseService;
 import de.symeda.sormas.backend.common.*;
 import de.symeda.sormas.backend.document.DocumentService;
@@ -393,15 +397,14 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		final EbsJoins joins = ebsQueryContext.getJoins();
 
 		Predicate filter = null;
-		if (ebsCriteria.getRiskLevel() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.RISK_LEVEL), ebsCriteria.getRiskLevel()));
+		if (ebsCriteria.getRiskAssessment() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.RISK_ASSESSMENT), ebsCriteria.getRiskAssessment()));
 		}
-
 		if (ebsCriteria.getReportDateTime() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.REPORT_DATE_TIME), ebsCriteria.getReportDateTime()));
 		}
 		if (ebsCriteria.getTriagingDecision() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.TRIAGE_DATE), ebsCriteria.getTriageDate()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.TRIAGING_DECISION), ebsCriteria.getTriagingDecision()));
 		}
 		if (ebsCriteria.getTriagingDto() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.TRIAGING), ebsCriteria.getTriagingDto()));
@@ -409,12 +412,56 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		if (ebsCriteria.getSignalVerificationDto() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.SIGNAL_VERIFICATION), ebsCriteria.getSignalVerificationDto()));
 		}
-
 		if (ebsCriteria.getSourceInformation() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.SOURCE_INFORMATION), ebsCriteria.getSourceInformation()));
 		}
 		if (ebsCriteria.getTriagingDecision() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.TRIAGING_DECISION), ebsCriteria.getTriagingDecision()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Triaging.TRIAGING_DECISION), ebsCriteria.getTriagingDecision()));
+		}
+		if (ebsCriteria.getTriageDate() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Triaging.DATE_OF_DECISION), ebsCriteria.getTriageDate()));
+		}
+		if (ebsCriteria.getCategoryOfInformant() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.CATEGORY_OF_INFORMANT), ebsCriteria.getCategoryOfInformant()));
+		}
+		if (ebsCriteria.getInformantName() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.INFORMANT_NAME), ebsCriteria.getInformantName()));
+		}
+		if (ebsCriteria.getInformantTel() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.INFORMANT_TEL), ebsCriteria.getInformantTel()));
+		}
+		if (ebsCriteria.getSignalCategory() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.SIGNAL_CATEGORY), ebsCriteria.getSignalCategory()));
+		}
+		if (ebsCriteria.getVerified() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(SignalVerification.VERIFIED), ebsCriteria.getVerified()));
+		}
+		if (ebsCriteria.getDeath() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(SignalVerification.NUMBER_OF_DEATH), ebsCriteria.getDeath()));
+		}
+		if (ebsCriteria.getPersonRegistering() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.PERSON_REGISTERING), ebsCriteria.getPersonRegistering()));
+		}
+		if (ebsCriteria.getPersonDesignation() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.PERSON_DESIGNATION), ebsCriteria.getPersonDesignation()));
+		}
+		if (ebsCriteria.getVerificationSent() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(SignalVerification.VERIFICATION_SENT), ebsCriteria.getVerificationSent()));
+		}
+		if (ebsCriteria.getVerificationSentDate() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(SignalVerification.VERIFICATION_SENT_DATE), ebsCriteria.getVerificationSentDate()));
+		}
+		if (ebsCriteria.getVerifiedDate() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(SignalVerification.VERIFICATION_COMPLETE_DATE), ebsCriteria.getVerifiedDate()));
+		}
+		if (ebsCriteria.getRiskAssessment() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(RiskAssessment.RISK_ASSESSMENT), ebsCriteria.getRiskAssessment()));
+		}
+		if (ebsCriteria.getActionInitiated() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(EbsAlert.ACTION_INITIATED), ebsCriteria.getActionInitiated()));
+		}
+		if (ebsCriteria.getResponseStatus() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(EbsAlert.RESPONSE_STATUS), ebsCriteria.getResponseStatus()));
 		}
 		if (CollectionUtils.isNotEmpty(ebsCriteria.getExcludedUuids())) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.not(from.get(AbstractDomainObject.UUID).in(ebsCriteria.getExcludedUuids())));
