@@ -93,7 +93,6 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 			String informantTel,
 			SignalCategory signalCategory,
 			YesNo verified,
-			String cases,
 			String death,
 			Date decisionDate,
 			String personRegistering,
@@ -117,7 +116,6 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		this.informantTel = informantTel;
 		this.signalCategory = signalCategory;
 		this.verified = new EbsVerified(verified);
-		this.cases = cases;
 		this.death = new EbsDeath(death);
 		this.triagingDecisionDate = new EbsIndexTriagingDecisionDate(decisionDate);
 		this.personDesignation = personDesignation;
