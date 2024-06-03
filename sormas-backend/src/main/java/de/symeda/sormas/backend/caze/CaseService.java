@@ -56,6 +56,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.backend.afpimmunization.AfpImmunization;
+import de.symeda.sormas.backend.foodhistory.FoodHistory;
 import de.symeda.sormas.backend.sixtyday.SixtyDay;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -1326,6 +1327,7 @@ public class CaseService extends AbstractCoreAdoService<Case, CaseJoins> {
 		Join<Case, Hospitalization> hospitalization = joins.getHospitalization();
 		Join<Case, SixtyDay> sixtyDay = joins.getSixtyDay();
 		Join<Case, AfpImmunization> afpImmunization = joins.getAfpImmunization();
+		Join<Case, FoodHistory> foodHistory = joins.getFoodHistory();
 		Join<Case, ClinicalCourse> clinicalCourse = joins.getClinicalCourse();
 
 		builder = super.addChangeDates(builder, joins, includeExtendedChangeDateFilters).add(caseFrom, Case.SYMPTOMS)
@@ -1333,6 +1335,7 @@ public class CaseService extends AbstractCoreAdoService<Case, CaseJoins> {
 				.add(hospitalization, Hospitalization.PREVIOUS_HOSPITALIZATIONS)
 				.add(sixtyDay)
 				.add(afpImmunization)
+				.add(foodHistory)
 				.add(caseFrom, Case.THERAPY)
 				.add(clinicalCourse)
 				.add(caseFrom, Case.HEALTH_CONDITIONS)

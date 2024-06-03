@@ -30,6 +30,7 @@ import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.epidata.EpiData;
 import de.symeda.sormas.backend.event.EventParticipant;
 import de.symeda.sormas.backend.event.EventParticipantJoins;
+import de.symeda.sormas.backend.foodhistory.FoodHistory;
 import de.symeda.sormas.backend.hospitalization.Hospitalization;
 import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.infrastructure.country.Country;
@@ -68,6 +69,7 @@ public class CaseJoins extends QueryJoins<Case> {
 	private Join<Case, Hospitalization> hospitalization;
 	private Join<Case, SixtyDay> sixtyDay;
 	private Join<Case, AfpImmunization> afpImmunization;
+	private Join<Case, FoodHistory> foodHistory;
 	private Join<Case, EpiData> epiData;
 	private Join<Case, Symptoms> symptoms;
 	private Join<Case, ClinicalCourse> clinicalCourse;
@@ -227,6 +229,12 @@ public class CaseJoins extends QueryJoins<Case> {
 	}
 
 	private void setAfpImmunization(Join<Case, AfpImmunization> afpImmunization) { this.afpImmunization = afpImmunization;}
+
+	public Join<Case, FoodHistory> getFoodHistory(){
+		return getOrCreate(foodHistory, Case.FOOD_HISTORY, JoinType.LEFT, this::setFoodHistory);
+	}
+
+	private void setFoodHistory(Join<Case, FoodHistory> foodHistory) { this.foodHistory = foodHistory;}
 
 	public Join<Case, EpiData> getEpiData() {
 		return getOrCreate(epiData, Case.EPI_DATA, JoinType.LEFT, this::setEpiData);

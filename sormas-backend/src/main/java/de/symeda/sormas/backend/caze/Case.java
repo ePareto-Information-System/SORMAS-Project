@@ -39,6 +39,7 @@ import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.disease.DiseaseVariantConverter;
 import de.symeda.sormas.backend.epidata.EpiData;
 import de.symeda.sormas.backend.event.EventParticipant;
+import de.symeda.sormas.backend.foodhistory.FoodHistory;
 import de.symeda.sormas.backend.hospitalization.Hospitalization;
 import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.infrastructure.district.District;
@@ -120,6 +121,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public static final String HOSPITALIZATION = "hospitalization";
 	public static final String SIXTY_DAY = "sixtyDay";
 	public static final String AFP_IMMUNIZATION = "afpImmunization";
+	public static final String FOOD_HISTORY = "foodHistory";
 	public static final String EPI_DATA = "epiData";
 	public static final String CLINICAL_COURSE = "clinicalCourse";
 	public static final String MATERNAL_HISTORY = "maternalHistory";
@@ -253,6 +255,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private RiskFactor riskFactor;
 	private SixtyDay sixtyDay;
 	private AfpImmunization afpImmunization;
+	private FoodHistory foodHistory;
 	private EpiData epiData;
 	private Therapy therapy;
 	private ClinicalCourse clinicalCourse;
@@ -970,6 +973,17 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 	public void setAfpImmunization(AfpImmunization afpImmunization) {this.afpImmunization = afpImmunization; }
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	//@AuditedIgnore
+	public FoodHistory getFoodHistory(){
+		if (foodHistory == null){
+			foodHistory = new FoodHistory();
+		}
+		return foodHistory;
+	}
+
+	public void setFoodHistory(FoodHistory foodHistory) {this.foodHistory = foodHistory; }
 
 	// It's necessary to do a lazy fetch here because having three eager fetching
 	// one to one relations
