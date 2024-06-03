@@ -659,6 +659,7 @@ public interface Captions {
 	String CaseHospitalization_investigatorTel = "CaseHospitalization.investigatorTel";
 	String CaseHospitalization_hospitalRecordNumber = "CaseHospitalization.hospitalRecordNumber";
 	String CaseHospitalization_patientVentilated = "CaseHospitalization.patientVentilated";
+	String CaseHospitalization_selectInpatientOutpatient= "CaseHospitalization.selectInpatientOutpatient";
 	String CaseHospitalization_soughtMedicalAttention = "CaseHospitalization.soughtMedicalAttention";
 	String CaseHospitalization_nameOfFacility = "CaseHospitalization.nameOfFacility";
 	String CaseHospitalization_locationAddress = "CaseHospitalization.locationAddress";
@@ -3144,7 +3145,6 @@ public interface Captions {
 	String Symptoms_oralUlcers = "Symptoms.oralUlcers";
 	String Symptoms_otherComplications = "Symptoms.otherComplications";
 	String Symptoms_otherComplicationsText = "Symptoms.otherComplicationsText";
-	String CaseHospitalization_selectInpatientOutpatient = "CaseHospitalization.selectInpatientOutpatient";
 	String Person_applicable = "Person.applicable";
 	String Symptoms_outcomeOther = "Symptoms.outcomeOther";
 	String Symptoms_nonVascular = "Symptoms.nonVascular";
