@@ -12866,4 +12866,8 @@ ALTER TABLE epidata ADD COLUMN historyoftraveldistrict_id varchar(255) NULL;
 ALTER TABLE epidata ADD COLUMN historyOfTravelSubDistrict_id varchar(255) NULL;
 ALTER TABLE epidata ADD COLUMN historyOfTravelVillage varchar(255) NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (541, 'Added column to historyOfTravelRegion, historyOfTravelDistrict, historyOfTravelSubDistrict, historyOfTravelVillage to epidata');
+
+ALTER TABLE pathogentest ADD COLUMN datesurveillancesentresultstodistrict date;
+ALTER TABLE pathogentest ADD COLUMN laboratorydateresultssentdsd date;
+INSERT INTO schema_version (version_number, comment) VALUES (542, 'Added column to dateSurveillanceSentResultsToDistrict, laboratoryDateResultsSentDSD to pathogentest');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

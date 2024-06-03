@@ -87,7 +87,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.PRELIMINARY, "") +
 			fluidRowLocs(PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, "") +
 			fluidRowLocs(PathogenTestDto.SEROTYPE, "") + 
-			fluidRowLocs(PathogenTestDto.CQ_VALUE, "") + 
+			fluidRowLocs(PathogenTestDto.CQ_VALUE, "") +
+			fluidRowLocs(PathogenTestDto.DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT, PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
 			fluidRowLocs(PathogenTestDto.TEST_RESULT_TEXT) +
 			fluidRowLocs(PathogenTestDto.DELETION_REASON) +
 			fluidRowLocs(PathogenTestDto.OTHER_DELETION_REASON) +
@@ -187,6 +188,10 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		addField(PathogenTestDto.VIA_LIMS);
 		addField(PathogenTestDto.EXTERNAL_ID);
 		addField(PathogenTestDto.EXTERNAL_ORDER_ID);
+
+		addDateField(PathogenTestDto.DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT, DateField.class, 0);
+		addDateField(PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD, DateField.class, 0);
+		setVisible(false, PathogenTestDto.DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT, PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD);
 
 		if(Objects.equals(disease, Disease.AHF.toString())){
 
@@ -334,6 +339,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 				virusDetectionGenotypeField.setVisible(true);
+				setVisible(true, PathogenTestDto.DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT, PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD);
 			}
 
 			if(Arrays.asList(Disease.MEASLES, Disease.CHOLERA, Disease.YELLOW_FEVER).contains(disease)){

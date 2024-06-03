@@ -94,6 +94,8 @@ public class PathogenTestDto extends PseudonymizableDto {
 	public static final String VIRUS_DETECTION_GENOTYPE = "virusDetectionGenotype";
 	public static final String FINAL_CLASSIFICATION = "finalClassification";
 	public static final String OTHER_NOTES_AND_OBSERVATIONS = "otherNotesAndObservations";
+	public static final String DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT = "dateSurveillanceSentResultsToDistrict";
+	public static final String LABORATORY_DATE_RESULTS_SENT_DSD = "laboratoryDateResultsSentDsd";
 
 	@NotNull(message = Validations.validSample)
 	private SampleReferenceDto sample;
@@ -194,6 +196,8 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private String virusDetectionGenotype;
 	private FinalClassification finalClassification;
 	private String otherNotesAndObservations;
+	private Date dateSurveillanceSentResultsToDistrict;
+	private Date laboratoryDateResultsSentDsd;
 
 
 	public static PathogenTestDto build(SampleDto sample, UserDto currentUser) {
@@ -586,6 +590,22 @@ public class PathogenTestDto extends PseudonymizableDto {
 
 	public void setOtherNotesAndObservations(String otherNotesAndObservations) {
 		this.otherNotesAndObservations = otherNotesAndObservations;
+	}
+
+	public Date getDateSurveillanceSentResultsToDistrict() {
+		return this.dateSurveillanceSentResultsToDistrict;
+	}
+
+	public void setDateSurveillanceSentResultsToDistrict(final Date dateSurveillanceSentResultsToDistrict) {
+		this.dateSurveillanceSentResultsToDistrict = dateSurveillanceSentResultsToDistrict;
+	}
+
+	public Date getLaboratoryDateResultsSentDsd() {
+		return this.laboratoryDateResultsSentDsd;
+	}
+
+	public void setLaboratoryDateResultsSentDsd(final Date laboratoryDateResultsSentDsd) {
+		this.laboratoryDateResultsSentDsd = laboratoryDateResultsSentDsd;
 	}
 
 	@Override

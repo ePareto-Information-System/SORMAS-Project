@@ -1774,6 +1774,8 @@ public interface Captions {
 	String PathogenTest_viaLims = "PathogenTest.viaLims";
 	String PathogenTest_virusDetectionGenotype = "PathogenTest.virusDetectionGenotype";
 	String PathogenTest_otherNotesAndObservations = "PathogenTest.otherNotesAndObservations";
+	String PathogenTest_dateSurveillanceSentResultsToDistrict = "PathogenTest.dateSurveillanceSentResultsToDistrict";
+	String PathogenTest_laboratoryDateResultsSentDsd = "PathogenTest.laboratoryDateResultsSentDsd";
 	String pathogenTestAdd = "pathogenTestAdd";
 	String pathogenTestCreateNew = "pathogenTestCreateNew";
 	String pathogenTestNewResult = "pathogenTestNewResult";

@@ -413,6 +413,8 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setVirusDetectionGenotype(source.getVirusDetectionGenotype());
 		target.setFinalClassification(source.getFinalClassification());
 		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
+		target.setDateSurveillanceSentResultsToDistrict(source.getDateSurveillanceSentResultsToDistrict());
+		target.setLaboratoryDateResultsSentDsd(source.getLaboratoryDateResultsSentDsd());
 		return target;
 	}
 
@@ -499,6 +501,8 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setVirusDetectionGenotype(source.getVirusDetectionGenotype());
 		target.setFinalClassification(source.getFinalClassification());
 		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
+		target.setDateSurveillanceSentResultsToDistrict(source.getDateSurveillanceSentResultsToDistrict());
+		target.setLaboratoryDateResultsSentDsd(source.getLaboratoryDateResultsSentDsd());
 		return target;
 	}
 

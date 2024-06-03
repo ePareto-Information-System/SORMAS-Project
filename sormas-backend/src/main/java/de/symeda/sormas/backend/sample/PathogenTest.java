@@ -82,6 +82,8 @@ public class PathogenTest extends DeletableAdo {
 	public static final String PRESCRIBER_POSTAL_CODE = "prescriberPostalCode";
 	public static final String PRESCRIBER_CITY = "prescriberCity";
 	public static final String PRESCRIBER_COUNTRY = "prescriberCountry";
+	public static final String DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT = "dateSurveillanceSentResultsToDistrict";
+	public static final String LABORATORY_DATE_RESULTS_SENT_DSD = "laboratoryDateResultsSentDsd";
 
 	private Sample sample;
 	private Disease testedDisease;
@@ -125,6 +127,8 @@ public class PathogenTest extends DeletableAdo {
 	private String virusDetectionGenotype;
 	private FinalClassification finalClassification;
 	private String otherNotesAndObservations;
+	private Date dateSurveillanceSentResultsToDistrict;
+	private Date laboratoryDateResultsSentDsd;
 
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -498,6 +502,22 @@ public class PathogenTest extends DeletableAdo {
 
 	public void setOtherNotesAndObservations(String otherNotesAndObservations) {
 		this.otherNotesAndObservations = otherNotesAndObservations;
+	}
+
+	public Date getDateSurveillanceSentResultsToDistrict() {
+		return this.dateSurveillanceSentResultsToDistrict;
+	}
+
+	public void setDateSurveillanceSentResultsToDistrict(final Date dateSurveillanceSentResultsToDistrict) {
+		this.dateSurveillanceSentResultsToDistrict = dateSurveillanceSentResultsToDistrict;
+	}
+
+	public Date getLaboratoryDateResultsSentDsd() {
+		return this.laboratoryDateResultsSentDsd;
+	}
+
+	public void setLaboratoryDateResultsSentDsd(final Date laboratoryDateResultsSentDsd) {
+		this.laboratoryDateResultsSentDsd = laboratoryDateResultsSentDsd;
 	}
 
 	public PathogenTestReferenceDto toReference() {
