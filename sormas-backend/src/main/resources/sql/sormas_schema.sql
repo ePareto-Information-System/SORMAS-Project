@@ -14446,6 +14446,85 @@ ALTER TABLE cases ADD COLUMN nameofvillagepersongotIll VARCHAR(255);
 ALTER TABLE epidata ADD COLUMN suspectlastname VARCHAR(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (664, 'Dropped nameofvillagepersongotIll in person and added in cases and epidata');
+
+CREATE TABLE foodhistory (
+              id BIGINT PRIMARY KEY NOT NULL,
+              suspectedfood VARCHAR(255),
+              dateconsumed DATE,
+              foodsource VARCHAR(255),
+              eventtype VARCHAR(255),
+              eventotherspecify VARCHAR(255),
+              nameofaffectedperson VARCHAR(255),
+              nameofaffectedperson2 VARCHAR(255),
+              nameofaffectedperson3 VARCHAR(512),
+              nameofaffectedperson4 VARCHAR(255),
+              telno VARCHAR(255),
+              telno2 VARCHAR(255),
+              telno3 VARCHAR(255),
+              telno4 VARCHAR(255),
+              datetime DATE,
+              datetime2 DATE,
+              datetime3 DATE,
+              datetime4 DATE,
+              age VARCHAR(255),
+              age2 VARCHAR(255),
+              age3 VARCHAR(255),
+              age4 VARCHAR(255),
+              breakfast VARCHAR(3),
+              totalnopersons VARCHAR(255),
+              foodconsumed VARCHAR(255),
+              sourceoffood VARCHAR(255),
+              consumedatplace VARCHAR(3),
+              lunch VARCHAR(55),
+              totalnopersonsl1 VARCHAR(255),
+              foodconsumedl1 VARCHAR(255),
+              sourceoffoodl1 VARCHAR(255),
+              consumedatplacel1 VARCHAR(3),
+              supper VARCHAR(55),
+              totalnopersonss1 VARCHAR(255),
+              foodconsumeds1 VARCHAR(255),
+              sourceoffoodss1 VARCHAR(255),
+              consumedatplaces1 VARCHAR(3),
+              breakfast2 VARCHAR(3),
+              totalnopersons2 VARCHAR(255),
+              foodconsumed2 VARCHAR(255),
+              sourceoffood2 VARCHAR(255),
+              consumedatplace2 VARCHAR(3),
+              lunchl2 VARCHAR(55),
+              totalnopersonsl2 VARCHAR(255),
+              foodconsumedl2 VARCHAR(255),
+              sourceoffoodl2 VARCHAR(255),
+              consumedatplacel2 VARCHAR(3),
+              suppers2 VARCHAR(55),
+              totalnopersonss2 VARCHAR(255),
+              foodconsumeds2 VARCHAR(255),
+              sourceoffoods2 VARCHAR(255),
+              consumedatplaces2 VARCHAR(3),
+              breakfast3 VARCHAR(55),
+              totalnopersons3 VARCHAR(255),
+              foodconsumed3 VARCHAR(255),
+              sourceoffood3 VARCHAR(255),
+              consumedatplace3 VARCHAR(3),
+              lunchl3 VARCHAR(55),
+              totalnopersonsl3 VARCHAR(255),
+              foodconsumedl3 VARCHAR(255),
+              sourceoffoodl3 VARCHAR(255),
+              consumedatplacel3 VARCHAR(3),
+              suppers3 VARCHAR(55),
+              totalnopersonss3 VARCHAR(255),
+              foodconsumeds3 VARCHAR(255),
+              sourceoffoods3 VARCHAR(255),
+              consumedatplaces3 VARCHAR(55),
+              changedate TIMESTAMP(3),
+              change_user_id BIGINT,
+              creationdate DATE,
+              uuid VARCHAR(512)
+);
+
+ALTER TABLE cases ADD COLUMN foodhistory_id BIGINT;
+
+INSERT INTO schema_version (version_number, comment) VALUES (665, 'Created foodhistory table and added foodhistory_id to cases');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 -- Define the ebs table
 CREATE TABLE ebs (
@@ -14634,13 +14713,13 @@ ALTER TABLE ebs ADD CONSTRAINT fk_ebs_ebsAlert_id FOREIGN KEY (ebsAlert_id) REFE
 CREATE TABLE ebsAlert_history (
                              LIKE ebsAlert INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
 );
-INSERT INTO schema_version (version_number, comment) VALUES (665, 'added ebs,triaging,signalverification,riskassessment and alert');
+INSERT INTO schema_version (version_number, comment) VALUES (666, 'added ebs,triaging,signalverification,riskassessment and alert');
 
 ALTER TABLE epidata ADD COLUMN waterUsedForDrinking VARCHAR(255);
 ALTER TABLE epidata ADD COLUMN waterUsedNotForDrinking VARCHAR(255);
 ALTER TABLE epidata ADD COLUMN foodItems VARCHAR(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (666, 'Added columns to riskfactor to implement waterUsedForDrinking, waterUsedNotForDrinking, foodItems');
+INSERT INTO schema_version (version_number, comment) VALUES (667, 'Added columns to riskfactor to implement waterUsedForDrinking, waterUsedNotForDrinking, foodItems');
 
 
 ALTER TABLE samples ADD COLUMN dateSpecimenSentToRegion DATE;
@@ -14650,13 +14729,13 @@ ALTER TABLE samples ADD COLUMN dateSpecimenSentToNational DATE;
 ALTER TABLE samples ADD COLUMN nameOfPersonWhoReceivedSpecimenAtNational VARCHAR(255);
 ALTER TABLE samples ADD COLUMN dateSpecimenReceivedAtNational DATE;
 
-INSERT INTO schema_version(version_number, comment) VALUES (667, 'Added new fields to samples for specimen handling');
+INSERT INTO schema_version(version_number, comment) VALUES (668, 'Added new fields to samples for specimen handling');
 
 ALTER TABLE samples ADD COLUMN confirmedAsGuineaWorm VARCHAR(255);
 
-INSERT INTO schema_version(version_number, comment) VALUES (668, 'Added confirmedAsGuineaWorm to samples');
+INSERT INTO schema_version(version_number, comment) VALUES (669, 'Added confirmedAsGuineaWorm to samples');
 
 ALTER TABLE pathogentest ADD COLUMN datesurveillancesentresultstodistrict date;
 
-INSERT INTO schema_version (version_number, comment) VALUES (669, 'Added column to dateSurveillanceSentResultsToDistrict to pathogentest');
+INSERT INTO schema_version (version_number, comment) VALUES (670, 'Added column to dateSurveillanceSentResultsToDistrict to pathogentest');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

@@ -33,6 +33,7 @@ import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus;
 import de.symeda.sormas.api.afpimmunization.AfpImmunizationDto;
+import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.riskfactor.RiskFactorDto;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
@@ -140,9 +141,9 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String ILLNESS_INFO = "illnessInformation";
 	public static final String SIXTY_DAY = "sixtyDay";
 	public static final String AFP_IMMUNIZATION = "afpImmunization";
+	public static final String FOOD_HISTORY_TAB = "foodHistory";
 	public static final String FOOD_SAMPLE_TESTING = "foodSampleTesting";
 	public static final String EPI_DATA = "epiData";
-	public static final String FOOD_HISTORY = "foodHistory";
 	public static final String THERAPY = "therapy";
 	public static final String CLINICAL_COURSE = "clinicalCourse";
 	public static final String MATERNAL_HISTORY = "maternalHistory";
@@ -510,6 +511,8 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	@Valid
 	private AfpImmunizationDto afpImmunization;
 	@Valid
+	private FoodHistoryDto foodHistory;
+	@Valid
 	private RiskFactorDto riskFactor;
 	@Valid
 	private SymptomsDto symptoms;
@@ -751,6 +754,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		caze.setHospitalization(HospitalizationDto.build());
 		caze.setSixtyDay(SixtyDayDto.build());
 		caze.setAfpImmunization(AfpImmunizationDto.build());
+		caze.setFoodHistory(FoodHistoryDto.build());
 		caze.setRiskFactor(RiskFactorDto.build());
 		caze.setEpiData(EpiDataDto.build());
 		caze.setSymptoms(SymptomsDto.build());
@@ -1244,6 +1248,13 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	}
 	public void setAfpImmunization(AfpImmunizationDto afpImmunization) {
 		this.afpImmunization = afpImmunization;
+	}
+
+	public FoodHistoryDto getFoodHistory() {
+		return foodHistory;
+	}
+	public void setFoodHistory(FoodHistoryDto foodHistory) {
+		this.foodHistory = foodHistory;
 	}
 
 	public RiskFactorDto getRiskFactor() {

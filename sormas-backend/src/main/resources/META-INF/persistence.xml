@@ -27,6 +27,7 @@
 		<class>de.symeda.sormas.backend.ebs.SignalVerification</class>
 		<class>de.symeda.sormas.backend.ebs.RiskAssessment</class>
 		<class>de.symeda.sormas.backend.ebs.EbsAlert</class>
+		<class>de.symeda.sormas.backend.foodhistory.FoodHistory</class>
 		<class>de.symeda.sormas.backend.hospitalization.PreviousHospitalization</class>
 		<class>de.symeda.sormas.backend.location.Location</class>
 		<class>de.symeda.sormas.backend.outbreak.Outbreak</class>

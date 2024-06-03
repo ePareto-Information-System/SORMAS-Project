@@ -30,6 +30,8 @@ import java.util.stream.Collectors;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.ui.afpimmunization.AfpImmunizationForm;
 import de.symeda.sormas.ui.afpimmunization.AfpImmunizationView;
+import de.symeda.sormas.ui.foodhistory.FoodHistoryForm;
+import de.symeda.sormas.ui.foodhistory.FoodHistoryView;
 import de.symeda.sormas.ui.riskfactor.RiskFactorForm;
 import de.symeda.sormas.ui.riskfactor.RiskFactorView;
 import de.symeda.sormas.ui.sixtydayfollowup.SixtyDayFollowupView;
@@ -183,6 +185,7 @@ public class CaseController {
 
 		navigator.addView(SixtyDayFollowupView.VIEW_NAME, SixtyDayFollowupView.class);
 		navigator.addView(AfpImmunizationView.VIEW_NAME, AfpImmunizationView.class);
+		navigator.addView(FoodHistoryView.VIEW_NAME, FoodHistoryView.class);
 
 		navigator.addView(RiskFactorView.VIEW_NAME, RiskFactorView.class);
 
@@ -1346,6 +1349,31 @@ public class CaseController {
 		editView.addCommitListener(() -> {
 			CaseDataDto cazeDto = findCase(caseUuid);
 			cazeDto.setAfpImmunization(afpImmunizationForm.getValue());
+			saveCase(cazeDto);
+
+		});
+
+		return editView;
+	}
+
+	public CommitDiscardWrapperComponent<FoodHistoryForm> getFoodHistoryComponent(final String caseUuid, ViewMode viewMode, boolean isEditAllowed) {
+
+		CaseDataDto caze = findCase(caseUuid);
+		FoodHistoryForm foodHistoryForm = new FoodHistoryForm(
+				caze.getDisease(),
+				CaseDataDto.class,
+				caze.isPseudonymized(),
+				caze.isInJurisdiction(),
+				isEditAllowed);
+		foodHistoryForm.setValue(caze.getFoodHistory());
+
+		final CommitDiscardWrapperComponent<FoodHistoryForm> editView = new CommitDiscardWrapperComponent<FoodHistoryForm>(
+				foodHistoryForm,
+				foodHistoryForm.getFieldGroup());
+
+		editView.addCommitListener(() -> {
+			CaseDataDto cazeDto = findCase(caseUuid);
+			cazeDto.setFoodHistory(foodHistoryForm.getValue());
 			saveCase(cazeDto);
 
 		});

@@ -46,6 +46,7 @@ import de.symeda.sormas.ui.caze.porthealthinfo.PortHealthInfoView;
 import de.symeda.sormas.ui.clinicalcourse.ClinicalCourseView;
 import de.symeda.sormas.ui.epidata.CaseEpiDataView;
 import de.symeda.sormas.ui.externalmessage.ExternalMessagesView;
+import de.symeda.sormas.ui.foodhistory.FoodHistoryView;
 import de.symeda.sormas.ui.hospitalization.HospitalizationView;
 import de.symeda.sormas.ui.riskfactor.RiskFactorView;
 import de.symeda.sormas.ui.sixtydayfollowup.SixtyDayFollowupView;
@@ -237,6 +238,16 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_EPIDEMIOLOGICAL_DATA)
 						&& caze.getDisease() != Disease.CONGENITAL_RUBELLA) {
 						menu.addView(CaseEpiDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EPI_DATA), params);
+				}
+			}
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
+					&& !caze.checkIsUnreferredPortHealthCase()
+					&& !UserProvider.getCurrent().isPortHealthUser()) {
+				if(caze.getDisease() == Disease.FOODBORNE_ILLNESS){
+					menu.addView(
+							FoodHistoryView.VIEW_NAME,
+							I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.FOOD_HISTORY_TAB),
+							params);
 				}
 			}
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)

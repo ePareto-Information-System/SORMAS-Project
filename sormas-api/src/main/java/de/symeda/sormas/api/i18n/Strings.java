@@ -627,6 +627,7 @@ public interface Strings {
 	String headingSixtyDay = "headingSixtyDay";
 	String headingRiskFactor = "headingRiskFactor";
 	String headingAfpImmunization = "headingAfpImmunization";
+	String foodHistoryHeading = "foodHistoryHeading";
 	String headingofficialUse = "headingofficialUse";
 	String headingProvide = "headingProvide";
 	String headingPatientStatus = "headingPatientStatus";
