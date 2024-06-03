@@ -97,6 +97,7 @@ public enum SampleMaterial {
 	VOMITUS,
 	WATER,
 	FOOD_ITEM,
+	WHOLE_BLOOD_SERUM,
 	OTHER;
 
 	//getYellowFeverMateriealTypes
@@ -106,7 +107,7 @@ public enum SampleMaterial {
 
 	//MEASELS Sample Types
 	public static SampleMaterial[] getMeaselsMateriealTypes() {
-		return new SampleMaterial[] { WHOLE_BLOOD, GINGIVAL_FLUID, THROAT_SWAB, URINE, NASAL_SWAB, OTHER  };
+		return new SampleMaterial[] { GINGIVAL_FLUID, THROAT_SWAB, URINE, NASAL_SWAB, WHOLE_BLOOD_SERUM, OTHER };
 	}
 	//IDSR
 	public static SampleMaterial[] getIDSRMaterialTypes() {
