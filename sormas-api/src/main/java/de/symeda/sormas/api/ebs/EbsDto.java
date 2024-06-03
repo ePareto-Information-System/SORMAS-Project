@@ -86,8 +86,6 @@ public class EbsDto extends PseudonymizableDto {
 	public static final String ALERT = "alert";
 
 
-	private RiskLevel riskLevel;
-	private SpecificRisk specificRisk;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String informantName;
 	private String sourceName;
@@ -99,7 +97,6 @@ public class EbsDto extends PseudonymizableDto {
 	private String personRegistering;
 	private String personDesignation;
 	private String personPhone;
-	private Date triageDate;
 	private Date endDate;
 	@NotNull(message = Validations.validReportDateTime)
 	private Date reportDateTime;
@@ -127,7 +124,8 @@ public class EbsDto extends PseudonymizableDto {
 	private YesNoUnknown laboratoryDiagnosticEvidence;
 	@HideForCountriesExcept
 	private Map<LaboratoryDiagnosticEvidenceDetail, Boolean> laboratoryDiagnosticEvidenceDetails;
-
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
+	private String otherDeletionReason;
 	@HideForCountriesExcept
 	@S2SIgnoreProperty(configProperty = SormasToSormasConfig.SORMAS2SORMAS_IGNORE_INTERNAL_TOKEN)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
@@ -135,13 +133,6 @@ public class EbsDto extends PseudonymizableDto {
 
 	private boolean deleted;
 	private DeletionReason deletionReason;
-	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
-	private String otherDeletionReason;
-
-	private SignalCategory signalCategory;
-	private String verified;
-	private String cases;
-	private String death;
 	private PersonReporting categoryOfInformant;
 	private TriagingDto triaging;
 	private SignalVerificationDto signalVerification;
@@ -169,22 +160,6 @@ public class EbsDto extends PseudonymizableDto {
 		ebs.setReportingUser(user.toReference());
 
 		return ebs;
-	}
-
-	public RiskLevel getRiskLevel() {
-		return riskLevel;
-	}
-
-	public void setRiskLevel(RiskLevel riskLevel) {
-		this.riskLevel = riskLevel;
-	}
-
-	public SpecificRisk getSpecificRisk() {
-		return specificRisk;
-	}
-
-	public void setSpecificRisk(SpecificRisk specificRisk) {
-		this.specificRisk = specificRisk;
 	}
 
 	public String getInformantName() {
@@ -248,15 +223,6 @@ public class EbsDto extends PseudonymizableDto {
 		this.personPhone = personPhone;
 	}
 
-	public Date getTriageDate() {
-		return triageDate;
-	}
-
-	@ImportFormat(ImportExportFormat.DATE_TIME)
-	public void setTriageDate(Date triageDate) {
-		this.triageDate = triageDate;
-	}
-
 	public Date getEndDate() {
 		return endDate;
 	}
@@ -314,7 +280,7 @@ public class EbsDto extends PseudonymizableDto {
 	public void setSourceInformation(EbsSourceType sourceInformation) {
 		this.sourceInformation = sourceInformation;
 	}
-public MediaScannningType getScanningType() {
+	public MediaScannningType getScanningType() {
 		return scanningType;
 	}
 
@@ -328,7 +294,7 @@ public MediaScannningType getScanningType() {
 	public void setAutomaticScanningType(AutomaticScanningType automaticScanningType) {
 		this.automaticScanningType = automaticScanningType;
 	}
-public ManualScanningType getManualScanningType() {
+	public ManualScanningType getManualScanningType() {
 		return manualScanningType;
 	}
 
@@ -406,6 +372,14 @@ public ManualScanningType getManualScanningType() {
 		this.laboratoryDiagnosticEvidenceDetails = laboratoryDiagnosticEvidenceDetails;
 	}
 
+	public String getOtherDeletionReason() {
+		return otherDeletionReason;
+	}
+
+	public void setOtherDeletionReason(String otherDeletionReason) {
+		this.otherDeletionReason = otherDeletionReason;
+	}
+
 	public String getInternalToken() {
 		return internalToken;
 	}
@@ -434,47 +408,6 @@ public ManualScanningType getManualScanningType() {
 	public void setDeletionReason(DeletionReason deletionReason) {
 		this.deletionReason = deletionReason;
 	}
-
-	public String getOtherDeletionReason() {
-		return otherDeletionReason;
-	}
-
-	public void setOtherDeletionReason(String otherDeletionReason) {
-		this.otherDeletionReason = otherDeletionReason;
-	}
-
-	public SignalCategory getSignalCategory() {
-		return signalCategory;
-	}
-
-	public void setSignalCategory(SignalCategory signalCategory) {
-		this.signalCategory = signalCategory;
-	}
-
-	public String getVerified() {
-		return verified;
-	}
-
-	public void setVerified(String verified) {
-		this.verified = verified;
-	}
-
-	public String getCases() {
-		return cases;
-	}
-
-	public void setCases(String cases) {
-		this.cases = cases;
-	}
-
-	public String getDeath() {
-		return death;
-	}
-
-	public void setDeath(String death) {
-		this.death = death;
-	}
-
 
 	public TriagingDto getTriaging() {
 		return triaging;
