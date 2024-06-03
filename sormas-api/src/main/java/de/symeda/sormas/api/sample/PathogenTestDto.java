@@ -167,6 +167,7 @@ public class PathogenTestDto extends PseudonymizableDto {
 	public static final String DRUGS_RESISTANT_TO_VIBRIO_STRAIN = "drugsResistantToVibrioStrain";
 	public static final String FINAL_CLASSIFICATION = "finalClassification";
 	public static final String OTHER_NOTES_AND_OBSERVATIONS = "otherNotesAndObservations";
+	public static final String DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT = "dateSurveillanceSentResultsToDistrict";
 
 	@NotNull(message = Validations.validSample)
 	private SampleReferenceDto sample;
@@ -316,6 +317,7 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private String drugsResistantToVibrioStrain;
 	private FinalClassification finalClassification;
 	private String otherNotesAndObservations;
+	private Date dateSurveillanceSentResultsToDistrict;
 
 	private Set<PathogenTestType> sampleTests;
 	private PosNeg sampleTestResultPCR;
@@ -737,6 +739,15 @@ public class PathogenTestDto extends PseudonymizableDto {
 	public void setOtherNotesAndObservations(String otherNotesAndObservations) {
 		this.otherNotesAndObservations = otherNotesAndObservations;
 	}
+
+	public Date getDateSurveillanceSentResultsToDistrict() {
+		return this.dateSurveillanceSentResultsToDistrict;
+	}
+
+	public void setDateSurveillanceSentResultsToDistrict(final Date dateSurveillanceSentResultsToDistrict) {
+		this.dateSurveillanceSentResultsToDistrict = dateSurveillanceSentResultsToDistrict;
+	}
+
 
 	@Override
 	public PathogenTestDto clone() throws CloneNotSupportedException {

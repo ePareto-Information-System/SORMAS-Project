@@ -14646,4 +14646,7 @@ INSERT INTO schema_version(version_number, comment) VALUES (666, 'Added new fiel
 
 ALTER TABLE samples ADD COLUMN confirmedAsGuineaWorm VARCHAR(255);
 INSERT INTO schema_version(version_number, comment) VALUES (667, 'Added confirmedAsGuineaWorm to samples');
+
+ALTER TABLE pathogentest ADD COLUMN datesurveillancesentresultstodistrict date;
+INSERT INTO schema_version (version_number, comment) VALUES (668, 'Added column to dateSurveillanceSentResultsToDistrict to pathogentest');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

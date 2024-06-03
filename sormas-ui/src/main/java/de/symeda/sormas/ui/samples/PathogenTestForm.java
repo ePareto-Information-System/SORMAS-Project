@@ -114,7 +114,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.PRELIMINARY, "") +
 			fluidRowLocs(PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, "") +
 			fluidRowLocs(PathogenTestDto.SEROTYPE, "") + 
-			fluidRowLocs(PathogenTestDto.CQ_VALUE, "") + 
+			fluidRowLocs(PathogenTestDto.CQ_VALUE, "") +
+			fluidRowLocs(PathogenTestDto.DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT, PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
 			fluidRowLocs(PathogenTestDto.TEST_RESULT_TEXT) +
 			fluidRowLocs(PathogenTestDto.DATE_LAB_RESULTS_SENT_DISTRICT, PathogenTestDto.DATE_LAB_RESULTS_SENT_CLINICIAN) +
 			fluidRowLocs(6, PathogenTestDto.DATE_DISTRICT_RECEIVED_LAB_RESULTS) +
@@ -155,7 +156,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.LABORATORY_OBSERVATIONS) +
 			fluidRowLocs(6,PathogenTestDto.DATE_SAMPLE_SENT_REF_LAB) +
 			fluidRowLocs(PathogenTestDto.DATE_SENT_REPORTING_HEALTH_FACILITY, PathogenTestDto.DATE_SAMPLE_SENT_REGREF_LAB) +
-			fluidRowLocs(6, PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
 			fluidRowLocs(PathogenTestDto.FINAL_CLASSIFICATION, "") +
 			fluidRowLocs(6, PathogenTestDto.LABORATORY_FINAL_CLASSIFICATION) +
 			fluidRowLocs(PathogenTestDto.OTHER_NOTES_AND_OBSERVATIONS) +
@@ -326,6 +326,11 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		addField(PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, NullableOptionGroup.class);
 		addFields(PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
 		setVisible(false, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
+
+		addDateField(PathogenTestDto.DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT, DateField.class, 0);
+		setVisible(false, PathogenTestDto.DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT);
+
+		labDateResultsSentDSD = addDateField(PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD, DateField.class, 0);
 
 
 	/*	testTypeField = ComboBoxHelper.createComboBoxV7();
@@ -606,6 +611,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 				virusDetectionGenotypeField.setVisible(true);
+				labDateResultsSentDSD.setVisible(true);
+				setVisible(true, PathogenTestDto.DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT);
 			} else if (disease == Disease.CHOLERA) {
 				List<PathogenTestType> choleraPathogenTests = PathogenTestType.getCholeraPathogenTests();
 				Arrays.stream(PathogenTestType.values())
@@ -829,9 +836,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			laboratoryObservations.setDescription(
 					I18nProperties.getPrefixDescription(PathogenTestDto.I18N_PREFIX, PathogenTestDto.LABORATORY_OBSERVATIONS, "") + "\n"
 							+ I18nProperties.getDescription(Descriptions.observation));
-
-			labDateResultsSentDSD = addField(PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD);
-
 
 			laboratoryFinalClassification = new OptionGroup();
 			for (CaseClassification caseClassification : CaseClassification.CASE_CLASSIFY) {

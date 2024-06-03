@@ -2173,6 +2173,8 @@ public interface Captions {
 	String PathogenTest_drugsSensitiveToVibrioStrain = "PathogenTest.drugsSensitiveToVibrioStrain";
 	String PathogenTest_drugsResistantToVibrioStrain = "PathogenTest.drugsResistantToVibrioStrain";
 	String PathogenTest_otherNotesAndObservations = "PathogenTest.otherNotesAndObservations";
+	String PathogenTest_dateSurveillanceSentResultsToDistrict = "PathogenTest.dateSurveillanceSentResultsToDistrict";
+	String PathogenTest_laboratoryDateResultsSentDSD = "PathogenTest.laboratoryDateResultsSentDSD";
 	String pathogenTestAdd = "pathogenTestAdd";
 	String pathogenTestCreateNew = "pathogenTestCreateNew";
 	String pathogenTestNewResult = "pathogenTestNewResult";
@@ -2214,7 +2216,6 @@ public interface Captions {
 	String PathogenTest_laboratoryFinalResults = "PathogenTest.laboratoryFinalResults";
 	String PathogenTest_laboratoryObservations = "PathogenTest.laboratoryObservations";
 	String PathogenTest_laboratoryDateResultsSentHealthFacility = "PathogenTest.laboratoryDateResultsSentHealthFacility";
-	String PathogenTest_laboratoryDateResultsSentDSD = "PathogenTest.laboratoryDateResultsSentDSD";
 	String PathogenTest_laboratoryFinalClassification = "PathogenTest.laboratoryFinalClassification";
 	String PathogenTest_labLocation = "PathogenTest.labLocation";
 	String PathogenTest_dateLabReceivedSpecimen = "PathogenTest.dateLabReceivedSpecimen";

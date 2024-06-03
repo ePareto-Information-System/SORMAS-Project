@@ -1203,7 +1203,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setLaboratoryAntibiogramOther(source.getLaboratoryAntibiogramOther());
 		target.setLaboratoryType(source.getLaboratoryType());
 		target.setLaboratoryDateResultsSentHealthFacility(source.getLaboratoryDateResultsSentHealthFacility());
-		target.setLaboratoryDateResultsSentDSD(source.getLaboratoryDateResultsSentDSD());
+//		target.setLaboratoryDateResultsSentDSD(source.getLaboratoryDateResultsSentDSD());
 		target.setLaboratorySampleDateReceived(source.getLaboratorySampleDateReceived());
 		target.setLaboratoryDatePcrPerformed(source.getLaboratoryDatePcrPerformed());
 		target.setDateSentToNationalRegLab(source.getDateSentToNationalRegLab());
@@ -1492,7 +1492,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setLaboratoryAntibiogramOther(source.getLaboratoryAntibiogramOther());
 		target.setLaboratoryType(source.getLaboratoryType());
 		target.setLaboratoryDateResultsSentHealthFacility(source.getLaboratoryDateResultsSentHealthFacility());
-		target.setLaboratoryDateResultsSentDSD(source.getLaboratoryDateResultsSentDSD());
+//		target.setLaboratoryDateResultsSentDSD(source.getLaboratoryDateResultsSentDSD());
 		target.setLaboratorySampleDateReceived(source.getLaboratorySampleDateReceived());
 		target.setLaboratoryDatePcrPerformed(source.getLaboratoryDatePcrPerformed());
 		target.setDateSentToNationalRegLab(source.getDateSentToNationalRegLab());

@@ -85,6 +85,7 @@ public class PathogenTest extends DeletableAdo {
 	public static final String PRESCRIBER_POSTAL_CODE = "prescriberPostalCode";
 	public static final String PRESCRIBER_CITY = "prescriberCity";
 	public static final String PRESCRIBER_COUNTRY = "prescriberCountry";
+	public static final String DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT = "dateSurveillanceSentResultsToDistrict";
 
 	private Sample sample;
 	private Disease testedDisease;
@@ -187,7 +188,7 @@ public class PathogenTest extends DeletableAdo {
 	private String virusDetectionGenotype;
 	private FinalClassification finalClassification;
 	private String otherNotesAndObservations;
-
+	private Date dateSurveillanceSentResultsToDistrict;
 
 	private YesNo vibrioCholeraeIdentifiedInStools;
 	private String drugsSensitiveToVibrioStrain;
@@ -564,6 +565,14 @@ public class PathogenTest extends DeletableAdo {
 
 	public void setOtherNotesAndObservations(String otherNotesAndObservations) {
 		this.otherNotesAndObservations = otherNotesAndObservations;
+	}
+
+	public Date getDateSurveillanceSentResultsToDistrict() {
+		return this.dateSurveillanceSentResultsToDistrict;
+	}
+
+	public void setDateSurveillanceSentResultsToDistrict(final Date dateSurveillanceSentResultsToDistrict) {
+		this.dateSurveillanceSentResultsToDistrict = dateSurveillanceSentResultsToDistrict;
 	}
 
 	public PathogenTestReferenceDto toReference() {
