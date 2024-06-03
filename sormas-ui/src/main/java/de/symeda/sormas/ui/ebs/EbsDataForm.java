@@ -67,9 +67,9 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
     private static final String HTML_LAYOUT =
             loc(INFORMATION_SOURCE_HEADING_LOC) +
                     fluidRowLocs(EbsDto.SOURCE_INFORMATION, EbsDto.CATEGORY_OF_INFORMANT, EbsDto.REPORT_DATE_TIME) +
-                    fluidRowLocs(EbsDto.SCANNING_TYPE, EbsDto.AUTOMATIC_SCANNING_TYPE,EbsDto.MANUAL_SCANNING_TYPE,EbsDto.OTHER) +
-                    fluidRowLocs(EbsDto.SOURCE_NAME,EbsDto.SOURCE_URL,EbsDto.INFORMANT_NAME, EbsDto.INFORMANT_TEL) +
-                    fluidRowLocs(EbsDto.RISK_LEVEL) +
+                    fluidRowLocs(EbsDto.INFORMANT_TEL,EbsDto.INFORMANT_NAME, "") +
+                    fluidRowLocs(EbsDto.SCANNING_TYPE, EbsDto.AUTOMATIC_SCANNING_TYPE,EbsDto.OTHER) +
+                    fluidRowLocs(EbsDto.SOURCE_NAME,EbsDto.MANUAL_SCANNING_TYPE,EbsDto.SOURCE_URL) +
 
                     loc(PLACE_DETECTION_HEADING_LOC) +
                     fluidRowLocs(EbsDto.EBS_LOCATION) +
@@ -305,6 +305,9 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
             Object value = manualScanningType.getValue();
             if (value.equals(ManualScanningType.ONLINE)){
                 sourceName.setCaption("NAME OF WEBSITE");
+                contactPhone.setVisible(false);
+            }else{
+                sourceName.setCaption("NAME OF MEDIA");
                 contactPhone.setVisible(false);
             }
         });
