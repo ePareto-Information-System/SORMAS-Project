@@ -72,6 +72,7 @@ public enum SampleMaterial {
 	POST_MORTEM_LIVER_SPECIMEN,
 	GINGIVAL_FLUID,
 	PLASMA_SERUM,
+	WHOLE_BLOOD_SERUM,
 	OTHER;
 
 	//getYellowFeverMateriealTypes
@@ -81,7 +82,7 @@ public enum SampleMaterial {
 
 	//MEASELS Sample Types
 	public static SampleMaterial[] getMeaselsMateriealTypes() {
-		return new SampleMaterial[] { WHOLE_BLOOD, GINGIVAL_FLUID, THROAT_SWAB, URINE, NASAL_SWAB, OTHER  };
+		return new SampleMaterial[] { GINGIVAL_FLUID, THROAT_SWAB, URINE, NASAL_SWAB, WHOLE_BLOOD_SERUM, OTHER };
 	}
 
 
