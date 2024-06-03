@@ -496,10 +496,9 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 			hospitalRecordNumber.setVisible(true);
 			isolatedField.setVisible(true);
-			admissionDateField.setVisible(true);
-			dischargeDateField.setVisible(true);
 
 			setVisible(true, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, HospitalizationDto.DATE_OF_DEATH, HospitalizationDto.MEMBER_FAMILY_HELPING_PATIENT);
+			FieldHelper.setVisibleWhen(admittedToHealthFacilityFieldNew, Arrays.asList(admissionDateField, dischargeDateField, dateOfDeath), Arrays.asList(YesNo.YES), true);
 		}
 
 		if(caze.getDisease() == Disease.YELLOW_FEVER){
