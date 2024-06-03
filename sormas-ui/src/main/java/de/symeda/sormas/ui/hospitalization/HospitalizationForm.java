@@ -81,7 +81,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					fluidRowLocs(6,HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY) +
 					fluidRowLocs(6,HospitalizationDto.SELECT_INPATIENT_OUTPATIENT) +
 			fluidRowLocs(6,HospitalizationDto.PHYSICIAN_NAME) +
-					fluidRowLocs(HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE) +
+					fluidRowLocs(6,HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE) +
 			fluidRowLocs(HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
 			fluidRowLocs(HospitalizationDto.NOTIFY_DISTRICT_DATE, HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT) +
 			fluidRowLocs(HospitalizationDto.HOSPITALIZATION_REASON, HospitalizationDto.OTHER_HOSPITALIZATION_REASON) +
@@ -397,10 +397,9 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 			hospitalRecordNumber.setVisible(true);
 			isolatedField.setVisible(true);
-			admissionDateField.setVisible(true);
-			dischargeDateField.setVisible(true);
 
 			setVisible(true, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, HospitalizationDto.DATE_OF_DEATH, HospitalizationDto.MEMBER_FAMILY_HELPING_PATIENT);
+			FieldHelper.setVisibleWhen(admittedToHealthFacilityFieldNew, Arrays.asList(admissionDateField, dischargeDateField, dateOfDeath), Arrays.asList(YesNo.YES), true);
 		}
 
 		if(caze.getDisease() == Disease.YELLOW_FEVER){

@@ -1306,7 +1306,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 						.setVisible(FieldHelper.getNullableSourceFieldValue((Field) e.getProperty()) == YesNoUnknown.YES);
 			});
 		}*/
-		if(disease != Disease.MONKEYPOX) {
+		if(disease != Disease.MONKEYPOX && disease != Disease.AFP) {
 			List<String> medicalInformationFields =
 					Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.VACCINATION_STATUS, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
 
@@ -1525,7 +1525,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 			//AFP
 			if (disease == Disease.AFP) {
-				setVisible(true, CaseDataDto.DATE_FORM_RECEIVED_AT_NATIONAL, CaseDataDto.NOTIFIED_BY_LIST, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
+				setVisible(true, CaseDataDto.NOTIFIED_BY_LIST, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
                 outcome.setVisible(false);
 
 			}

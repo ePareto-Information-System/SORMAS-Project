@@ -356,8 +356,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		DateField ifTravelStartDate = addField(EpiDataDto.IF_TRAVEL_START_DATE, DateField.class);
 		DateField ifYesEndDate = addField(EpiDataDto.IF_YES_END_DATE, DateField.class);
 		NullableOptionGroup patientContactKnownSuspect = addField(EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT, NullableOptionGroup.class);
-		TextField suspectName = addField(EpiDataDto.SUSPECT_NAME, TextField.class);
 		TextField suspectLastName = addField(EpiDataDto.SUSPECT_LAST_NAME, TextField.class);
+		TextField suspectName = addField(EpiDataDto.SUSPECT_NAME, TextField.class);
 		TextField idCase = addField(EpiDataDto.ID_CASE, TextField.class);
 
 		ComboBox duringContactSuspectCase = new ComboBox("Outcome");
@@ -398,7 +398,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 				EpiDataDto.PATIENT_RECEIVE_TRADITIONAL_MEDICINE, EpiDataDto.IF_YES_EXPLAIN,
 				EpiDataDto.PATIENT_ATTEND_FUNERAL_CEREMONIES, EpiDataDto.PATIENT_TRAVEL_ANYTIME_PERIOD_BEFORE_ILL,
 				EpiDataDto.IF_TRAVEL_YES_WHERE, EpiDataDto.IF_TRAVEL_START_DATE, EpiDataDto.IF_YES_END_DATE,
-				EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT, EpiDataDto.SUSPECT_NAME, EpiDataDto.ID_CASE,
+				EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT, EpiDataDto.SUSPECT_LAST_NAME, EpiDataDto.SUSPECT_NAME, EpiDataDto.ID_CASE,
 				EpiDataDto.DURING_CONTACT_SUSPECT_CASE, EpiDataDto.DATE_OF_DEATH,
 				EpiDataDto.DATE_OF_LAST_CONTACT_WITH_SUSPECT_CASE
 		);
@@ -510,7 +510,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					EpiDataDto.PATIENT_RECEIVE_TRADITIONAL_MEDICINE, EpiDataDto.IF_YES_EXPLAIN,
 					EpiDataDto.PATIENT_ATTEND_FUNERAL_CEREMONIES, EpiDataDto.PATIENT_TRAVEL_ANYTIME_PERIOD_BEFORE_ILL,
 					EpiDataDto.IF_TRAVEL_YES_WHERE, EpiDataDto.IF_TRAVEL_START_DATE, EpiDataDto.IF_YES_END_DATE,
-					EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT, EpiDataDto.SUSPECT_NAME, EpiDataDto.ID_CASE,
+					EpiDataDto.PATIENT_CONTACT_KNOWN_SUSPECT, EpiDataDto.SUSPECT_LAST_NAME, EpiDataDto.SUSPECT_NAME, EpiDataDto.ID_CASE,
 					EpiDataDto.DURING_CONTACT_SUSPECT_CASE, EpiDataDto.DATE_OF_DEATH,
 					EpiDataDto.DATE_OF_LAST_CONTACT_WITH_SUSPECT_CASE);
 

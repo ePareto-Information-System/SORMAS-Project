@@ -133,7 +133,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(ARE_ULCERS_AMONG_LESIONS)+
 					fluidRowLocs(6, TYPE_OF_RASH)+
 					fluidRowLocs(PATIENT_HAVE_FEVER, DATE_OF_ONSET) +
-					fluidRow(fluidColumn(8,4, locCss(CssStyles.ALIGN_RIGHT,BUTTONS_LOC)))+
+					fluidRowLocs(BUTTONS_LOC)+
 					createSymptomGroupLayout(SymptomGroup.GENERAL, GENERAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 
 					fluidRowLocs(FEVER_ONSET_PARALYSIS, PROGRESSIVE_PARALYSIS) +
