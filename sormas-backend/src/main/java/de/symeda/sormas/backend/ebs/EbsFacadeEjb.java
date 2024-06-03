@@ -25,7 +25,6 @@ import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolRuntimeException;
-import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
@@ -53,8 +52,6 @@ import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.location.LocationFacadeEjb;
 import de.symeda.sormas.backend.location.LocationFacadeEjb.LocationFacadeEjbLocal;
-import de.symeda.sormas.backend.person.Person;
-import de.symeda.sormas.backend.share.ExternalShareInfoCountAndLatestDate;
 import de.symeda.sormas.backend.share.ExternalShareInfoService;
 import de.symeda.sormas.backend.sormastosormas.SormasToSormasFacadeEjb.SormasToSormasFacadeEjbLocal;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfoService;
@@ -76,7 +73,6 @@ import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import static java.util.Objects.isNull;
 
@@ -121,8 +117,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	private RiskAssessmentService riskAssessmentService;
 	@EJB
 	private EbsAlertService ebsAlertService;
-//	@Resource
-//	private ManagedScheduledExecutorService executorService;
 
 	public EbsFacadeEjb() {
 	}
@@ -470,14 +464,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			sortBy(sortProperties, ebsQueryContext);
 			cq.distinct(true);  // Ensure distinct results
 
-			List<EbsIndexDto> results = QueryHelper.getResultList(em, cq, null, null);
-
-			// Filter duplicates before adding to indexList
-			for (EbsIndexDto dto : results) {
-				if (addedIds.add(dto.getId())) {
-					indexList.add(dto);
-				}
-			}
+			indexList.addAll(QueryHelper.getResultList(em, cq, null, null));
 		});
 		return indexList;
 	}
@@ -756,10 +743,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		boolean targetWasNull = isNull(target);
 		target = DtoHelper.fillOrBuildEntity(source, target, Ebs::new, checkChangeDate);
 
-//        if (targetWasNull) {
-//            FacadeHelper.setUuidIfDtoExists(target.getEbsLocation(), source.getEbsLocation());
-//        }
-
 		target.setInformantName(source.getInformantName());
 		target.setInformantTel(source.getInformantTel());
 		target.setEndDate(source.getEndDate());
@@ -767,12 +750,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		target.setCategoryOfInformant(source.getCategoryOfInformant());
 		target.setEbsLocation(locationFacade.fillOrBuildEntity(source.getEbsLocation(), target.getEbsLocation(), checkChangeDate));
 		target.setResponsibleUser(userService.getByReferenceDto(source.getResponsibleUser()));
-
-//        target.setInternalToken(source.getInternalToken());
-//        if (source.getSormasToSormasOriginInfo() != null) {
-//            target.setSormasToSormasOriginInfo(originInfoService.getByUuid(source.getSormasToSormasOriginInfo().getUuid()));
-//        }
-
 		target.setDeleted(source.isDeleted());
 		target.setDeletionReason(source.getDeletionReason());
 		target.setEbsLatLon(source.getEbsLatLon());
