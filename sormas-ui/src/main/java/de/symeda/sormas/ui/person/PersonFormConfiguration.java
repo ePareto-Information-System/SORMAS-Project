@@ -57,7 +57,7 @@ public class PersonFormConfiguration {
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.OCCUPATION_DETAILS, new HashSet<>(Arrays.asList(Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, Disease.AHF)));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.OCCUPATION_TYPE, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.ARMED_FORCES_RELATION_TYPE, new HashSet<>(Arrays.asList()));
-            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.EDUCATION_TYPE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, Disease.AHF)));
+            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.EDUCATION_TYPE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, Disease.AHF)));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.EDUCATION_DETAILS, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(ADDRESS_HEADER, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.HOME_ADDRESS_RECREATIONAL, new HashSet<>(Arrays.asList()));
