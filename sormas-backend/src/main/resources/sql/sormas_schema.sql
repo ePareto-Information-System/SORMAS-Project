@@ -14525,6 +14525,60 @@ ALTER TABLE cases ADD COLUMN foodhistory_id BIGINT;
 
 INSERT INTO schema_version (version_number, comment) VALUES (665, 'Created foodhistory table and added foodhistory_id to cases');
 
+-- 2024-03-06 Dropped food history section columns in epidata
+ALTER TABLE epidata DROP COLUMN suspectedfood;
+ALTER TABLE epidata DROP COLUMN dateconsumed;
+ALTER TABLE epidata DROP COLUMN foodsource;
+ALTER TABLE epidata DROP COLUMN eventtype;
+ALTER TABLE epidata DROP COLUMN eventotherspecify;
+ALTER TABLE epidata DROP COLUMN breakfast;
+ALTER TABLE epidata DROP COLUMN totalnopersons;
+ALTER TABLE epidata DROP COLUMN foodconsumed;
+ALTER TABLE epidata DROP COLUMN sourceoffood;
+ALTER TABLE epidata DROP COLUMN consumedatplace;
+ALTER TABLE epidata DROP COLUMN lunch;
+ALTER TABLE epidata DROP COLUMN totalnopersonsl1;
+ALTER TABLE epidata DROP COLUMN foodconsumedl1;
+ALTER TABLE epidata DROP COLUMN sourceoffoodl1;
+ALTER TABLE epidata DROP COLUMN consumedatplacel1;
+ALTER TABLE epidata DROP COLUMN supper;
+ALTER TABLE epidata DROP COLUMN totalnopersonss1;
+ALTER TABLE epidata DROP COLUMN foodconsumeds1;
+ALTER TABLE epidata DROP COLUMN sourceoffoodss1;
+ALTER TABLE epidata DROP COLUMN consumedatplaces1;
+ALTER TABLE epidata DROP COLUMN breakfast2;
+ALTER TABLE epidata DROP COLUMN totalnopersons2;
+ALTER TABLE epidata DROP COLUMN foodconsumed2;
+ALTER TABLE epidata DROP COLUMN sourceoffood2;
+ALTER TABLE epidata DROP COLUMN consumedatplace2;
+ALTER TABLE epidata DROP COLUMN lunchl2;
+ALTER TABLE epidata DROP COLUMN totalnopersonsl2;
+ALTER TABLE epidata DROP COLUMN foodconsumedl2;
+ALTER TABLE epidata DROP COLUMN sourceoffoodl2;
+ALTER TABLE epidata DROP COLUMN consumedatplacel2;
+ALTER TABLE epidata DROP COLUMN suppers2;
+ALTER TABLE epidata DROP COLUMN totalnopersonss2;
+ALTER TABLE epidata DROP COLUMN foodconsumeds2;
+ALTER TABLE epidata DROP COLUMN sourceoffoods2;
+ALTER TABLE epidata DROP COLUMN consumedatplaces2;
+ALTER TABLE epidata DROP COLUMN breakfast3;
+ALTER TABLE epidata DROP COLUMN totalnopersons3;
+ALTER TABLE epidata DROP COLUMN foodconsumed3;
+ALTER TABLE epidata DROP COLUMN sourceoffood3;
+ALTER TABLE epidata DROP COLUMN consumedatplace3;
+ALTER TABLE epidata DROP COLUMN lunchl3;
+ALTER TABLE epidata DROP COLUMN totalnopersonsl3;
+ALTER TABLE epidata DROP COLUMN foodconsumedl3;
+ALTER TABLE epidata DROP COLUMN sourceoffoodl3;
+ALTER TABLE epidata DROP COLUMN consumedatplacel3;
+ALTER TABLE epidata DROP COLUMN suppers3;
+ALTER TABLE epidata DROP COLUMN totalnopersonss3;
+ALTER TABLE epidata DROP COLUMN foodconsumeds3;
+ALTER TABLE epidata DROP COLUMN sourceoffoods3;
+ALTER TABLE epidata DROP COLUMN consumedatplaces3;
+
+INSERT INTO schema_version (version_number, comment) VALUES (610, 'Dropped food history section columns in epidata');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 -- Define the ebs table
 CREATE TABLE ebs (

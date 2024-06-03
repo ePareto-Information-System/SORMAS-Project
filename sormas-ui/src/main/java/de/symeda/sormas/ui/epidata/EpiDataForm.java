@@ -146,30 +146,6 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					loc(EpiDataDto.LARGE_OUTBREAKS_AREA) +
 					loc(EpiDataDto.AREA_INFECTED_ANIMALS) +
 
-					fluidRowLocs(EpiDataDto.SUSPECTED_FOOD, EpiDataDto.DATE_CONSUMED) +
-					fluidRowLocs(EpiDataDto.FOOD_SOURCE, EpiDataDto.EVENT_TYPE, EpiDataDto.EVENT_OTHER_SPECIFY) +
-					loc(OBTAIN_HISTORY_HEADING) +
-					loc(DAY_1_HEADING) +
-					fluidRowLocs(EpiDataDto.BREAKFAST, EpiDataDto.TOTAL_NO_PERSONS, EpiDataDto.FOOD_CONSUMED, EpiDataDto.SOURCE_OF_FOOD, EpiDataDto.CONSUMED_AT_PLACE) +
-					fluidRowLocs(EpiDataDto.LUNCH, EpiDataDto.TOTAL_NO_PERSONS_L1, EpiDataDto.FOOD_CONSUMED_L1, EpiDataDto.SOURCE_OF_FOOD_L1, EpiDataDto.CONSUMED_AT_PLACE_L1) +
-					fluidRowLocs(EpiDataDto.SUPPER, EpiDataDto.TOTAL_NO_PERSONS_S1, EpiDataDto.FOOD_CONSUMED_S1, EpiDataDto.SOURCE_OF_FOODS_S1, EpiDataDto.CONSUMED_AT_PLACE_S1) +
-
-					loc(DAY_2_HEADING) +
-					fluidRowLocs(EpiDataDto.BREAKFAST2, EpiDataDto.TOTAL_NO_PERSONS2, EpiDataDto.FOOD_CONSUMED2, EpiDataDto.SOURCE_OF_FOOD2, EpiDataDto.CONSUMED_AT_PLACE2) +
-					fluidRowLocs(EpiDataDto.LUNCH_L2, EpiDataDto.TOTAL_NO_PERSONS_L2, EpiDataDto.FOOD_CONSUMED_L2, EpiDataDto.SOURCE_OF_FOOD_L2, EpiDataDto.CONSUMED_AT_PLACE_L2) +
-					fluidRowLocs(EpiDataDto.SUPPER_S2, EpiDataDto.TOTAL_NO_PERSONS_S2, EpiDataDto.FOOD_CONSUMED_S2, EpiDataDto.SOURCE_OF_FOOD_S2, EpiDataDto.CONSUMED_AT_PLACE_S2) +
-
-					loc(DAY_3_HEADING) +
-					fluidRowLocs(EpiDataDto.BREAKFAST3, EpiDataDto.TOTAL_NO_PERSONS3, EpiDataDto.FOOD_CONSUMED3, EpiDataDto.SOURCE_OF_FOOD3, EpiDataDto.CONSUMED_AT_PLACE3) +
-					fluidRowLocs(EpiDataDto.LUNCH_L3, EpiDataDto.TOTAL_NO_PERSONS_L3, EpiDataDto.FOOD_CONSUMED_L3, EpiDataDto.SOURCE_OF_FOOD_L3, EpiDataDto.CONSUMED_AT_PLACE_L3) +
-					fluidRowLocs(EpiDataDto.SUPPER_S3, EpiDataDto.TOTAL_NO_PERSONS_S3, EpiDataDto.FOOD_CONSUMED_S3, EpiDataDto.SOURCE_OF_FOOD_S3, EpiDataDto.CONSUMED_AT_PLACE_S3) +
-
-					loc(OTHER_PERSONS_HEADING) +
-					loc(NUMBER_OF_PERSONS_NO_AFFECTED) +
-					fluidRowLocs(EpiDataDto.NAME_OF_AFFECTED_PERSON, EpiDataDto.TEL_NO, EpiDataDto.DATE_TIME, EpiDataDto.AGE) +
-					fluidRowLocs(EpiDataDto.NAME_OF_AFFECTED_PERSON2, EpiDataDto.TEL_NO2, EpiDataDto.DATE_TIME2, EpiDataDto.AGE2) +
-					fluidRowLocs(EpiDataDto.NAME_OF_AFFECTED_PERSON3, EpiDataDto.TEL_NO3, EpiDataDto.DATE_TIME3, EpiDataDto.AGE3) +
-					fluidRowLocs(EpiDataDto.NAME_OF_AFFECTED_PERSON4, EpiDataDto.TEL_NO4, EpiDataDto.DATE_TIME4, EpiDataDto.AGE4) +
 					loc(EXPOSURE_HISTORY_HEADING) +
 					fluidRowLocs(EpiDataDto.INTL_TRAVEL, EpiDataDto.SPECIFY_COUNTRIES, EpiDataDto.DATE_OF_DEPARTURE, EpiDataDto.DATE_OF_ARRIVAL) +
 					fluidRowLocs(EpiDataDto.DOMESTIC_TRAVEL, EpiDataDto.SPECIFY_LOCATION, EpiDataDto.DATE_OF_DEPARTURE2, EpiDataDto.DATE_OF_ARRIVAL2) +
@@ -406,13 +382,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 				true);
 
 		//Food Borne
-		addFields(EpiDataDto.NAME_OF_AFFECTED_PERSON, EpiDataDto.NAME_OF_AFFECTED_PERSON2, EpiDataDto.NAME_OF_AFFECTED_PERSON3, EpiDataDto.NAME_OF_AFFECTED_PERSON4);
-		addFields(EpiDataDto.TEL_NO, EpiDataDto.TEL_NO2, EpiDataDto.TEL_NO3, EpiDataDto.TEL_NO4);
-		addField(EpiDataDto.DATE_TIME, DateTimeField.class);
-		addField(EpiDataDto.DATE_TIME2, DateTimeField.class);
-		addField(EpiDataDto.DATE_TIME3, DateTimeField.class);
-		addField(EpiDataDto.DATE_TIME4, DateTimeField.class);
-		addFields(EpiDataDto.AGE, EpiDataDto.AGE2, EpiDataDto.AGE3, EpiDataDto.AGE4);
+
 
 		addField(EpiDataDto.INTL_TRAVEL, NullableOptionGroup.class);
 		addField(EpiDataDto.SPECIFY_COUNTRIES, TextField.class);
@@ -425,69 +395,6 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		NullableOptionGroup illPerson = addField(EpiDataDto.CONTACT_ILL_PERSON, NullableOptionGroup.class);
 		DateField contactDate = addField(EpiDataDto.CONTACT_DATE, DateField.class);
 		addField(EpiDataDto.SPECIFY_ILLNESS, TextField.class);
-
-		addField(EpiDataDto.SUSPECTED_FOOD, TextField.class);
-		addField(EpiDataDto.DATE_CONSUMED, DateTimeField.class);
-		addField(EpiDataDto.FOOD_SOURCE, ComboBox.class);
-		addField(EpiDataDto.EVENT_TYPE, ComboBox.class);
-		addField(EpiDataDto.EVENT_OTHER_SPECIFY, TextField.class);
-
-		addField(EpiDataDto.BREAKFAST, NullableOptionGroup.class);
-		TextField totalNoPerson = addField(EpiDataDto.TOTAL_NO_PERSONS, TextField.class);
-		totalNoPerson.addStyleName("v-captiontext-foodborne");
-		addField(EpiDataDto.FOOD_CONSUMED, TextField.class);
-		addField(EpiDataDto.SOURCE_OF_FOOD, TextField.class);
-		addField(EpiDataDto.CONSUMED_AT_PLACE, TextField.class);
-		addField(EpiDataDto.LUNCH, NullableOptionGroup.class);
-		TextField totalNoPersonl1 = addField(EpiDataDto.TOTAL_NO_PERSONS_L1, TextField.class);
-		totalNoPersonl1.addStyleName("v-captiontext-foodborne");
-		addField(EpiDataDto.FOOD_CONSUMED_L1, TextField.class);
-		addField(EpiDataDto.SOURCE_OF_FOOD_L1, TextField.class);
-		addField(EpiDataDto.CONSUMED_AT_PLACE_L1, TextField.class);
-		addField(EpiDataDto.SUPPER, NullableOptionGroup.class);
-		TextField totalNoPersons1 = addField(EpiDataDto.TOTAL_NO_PERSONS_S1, TextField.class);
-		totalNoPersons1.addStyleName("v-captiontext-foodborne");
-		addField(EpiDataDto.FOOD_CONSUMED_S1, TextField.class);
-		addField(EpiDataDto.SOURCE_OF_FOODS_S1, TextField.class);
-		addField(EpiDataDto.CONSUMED_AT_PLACE_S1, TextField.class);
-
-		addField(EpiDataDto.BREAKFAST2, NullableOptionGroup.class);
-		TextField totalNoPerson2 = addField(EpiDataDto.TOTAL_NO_PERSONS2, TextField.class);
-		totalNoPerson2.addStyleName("v-captiontext-foodborne");
-		addField(EpiDataDto.FOOD_CONSUMED2, TextField.class);
-		addField(EpiDataDto.SOURCE_OF_FOOD2, TextField.class);
-		addField(EpiDataDto.CONSUMED_AT_PLACE2, TextField.class);
-		addField(EpiDataDto.LUNCH_L2, NullableOptionGroup.class);
-		TextField totalNoPersonl2 = addField(EpiDataDto.TOTAL_NO_PERSONS_L2, TextField.class);
-		totalNoPersonl2.addStyleName("v-captiontext-foodborne");
-		addField(EpiDataDto.FOOD_CONSUMED_L2, TextField.class);
-		addField(EpiDataDto.SOURCE_OF_FOOD_L2, TextField.class);
-		addField(EpiDataDto.CONSUMED_AT_PLACE_L2, TextField.class);
-		addField(EpiDataDto.SUPPER_S2, NullableOptionGroup.class);
-		TextField totalNoPersonls2 = addField(EpiDataDto.TOTAL_NO_PERSONS_S2, TextField.class);
-		totalNoPersonls2.addStyleName("v-captiontext-foodborne");
-		addField(EpiDataDto.FOOD_CONSUMED_S2, TextField.class);
-		addField(EpiDataDto.SOURCE_OF_FOOD_S2, TextField.class);
-		addField(EpiDataDto.CONSUMED_AT_PLACE_S2, TextField.class);
-
-		addField(EpiDataDto.BREAKFAST3, NullableOptionGroup.class);
-		TextField totalNoPerson3 = addField(EpiDataDto.TOTAL_NO_PERSONS3, TextField.class);
-		totalNoPerson3.addStyleName("v-captiontext-foodborne");
-		addField(EpiDataDto.FOOD_CONSUMED3, TextField.class);
-		addField(EpiDataDto.SOURCE_OF_FOOD3, TextField.class);
-		addField(EpiDataDto.CONSUMED_AT_PLACE3, TextField.class);
-		addField(EpiDataDto.LUNCH_L3, NullableOptionGroup.class);
-		TextField totalNoPersonl3 = addField(EpiDataDto.TOTAL_NO_PERSONS_L3, TextField.class);
-		totalNoPersonl3.addStyleName("v-captiontext-foodborne");
-		addField(EpiDataDto.FOOD_CONSUMED_L3, TextField.class);
-		addField(EpiDataDto.SOURCE_OF_FOOD_L3, TextField.class);
-		addField(EpiDataDto.CONSUMED_AT_PLACE_L3, TextField.class);
-		addField(EpiDataDto.SUPPER_S3, NullableOptionGroup.class);
-		TextField totalNoPersons3 = addField(EpiDataDto.TOTAL_NO_PERSONS_S3, TextField.class);
-		totalNoPersons3.addStyleName("v-captiontext-foodborne");
-		addField(EpiDataDto.FOOD_CONSUMED_S3, TextField.class);
-		addField(EpiDataDto.SOURCE_OF_FOOD_S3, TextField.class);
-		addField(EpiDataDto.CONSUMED_AT_PLACE_S3, TextField.class);
 
 		//AHF
 		NullableOptionGroup patientTravelDuringIllness = addField(EpiDataDto.PATIENT_TRAVEL_DURING_ILLNESS, NullableOptionGroup.class);
@@ -532,20 +439,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		DateField dateOfDeath = addField(EpiDataDto.DATE_OF_DEATH, DateField.class);
 		DateField dateOfLastContactWithSuspectCase = addField(EpiDataDto.DATE_OF_LAST_CONTACT_WITH_SUSPECT_CASE, DateField.class);
 
-		setVisible(false, EpiDataDto.INTL_TRAVEL, EpiDataDto.SPECIFY_COUNTRIES, EpiDataDto.DATE_OF_DEPARTURE, EpiDataDto.DATE_OF_ARRIVAL, EpiDataDto.DOMESTIC_TRAVEL, EpiDataDto.SPECIFY_LOCATION, EpiDataDto.DATE_OF_DEPARTURE2, EpiDataDto.DATE_OF_ARRIVAL2, EpiDataDto.CONTACT_ILL_PERSON, EpiDataDto.CONTACT_DATE, EpiDataDto.SPECIFY_ILLNESS, EpiDataDto.NAME_OF_AFFECTED_PERSON, EpiDataDto.NAME_OF_AFFECTED_PERSON2, EpiDataDto.NAME_OF_AFFECTED_PERSON3, EpiDataDto.NAME_OF_AFFECTED_PERSON4, EpiDataDto.TEL_NO, EpiDataDto.TEL_NO2, EpiDataDto.TEL_NO3, EpiDataDto.TEL_NO4, EpiDataDto.DATE_TIME, EpiDataDto.DATE_TIME2, EpiDataDto.DATE_TIME3, EpiDataDto.DATE_TIME4, EpiDataDto.AGE, EpiDataDto.AGE2, EpiDataDto.AGE3, EpiDataDto.AGE4);
+		setVisible(false, EpiDataDto.INTL_TRAVEL, EpiDataDto.SPECIFY_COUNTRIES, EpiDataDto.DATE_OF_DEPARTURE, EpiDataDto.DATE_OF_ARRIVAL, EpiDataDto.DOMESTIC_TRAVEL, EpiDataDto.SPECIFY_LOCATION, EpiDataDto.DATE_OF_DEPARTURE2, EpiDataDto.DATE_OF_ARRIVAL2, EpiDataDto.CONTACT_ILL_PERSON, EpiDataDto.CONTACT_DATE, EpiDataDto.SPECIFY_ILLNESS);
 
-		setVisible(false, EpiDataDto.SUSPECTED_FOOD, EpiDataDto.DATE_CONSUMED,
-				EpiDataDto.FOOD_SOURCE, EpiDataDto.EVENT_TYPE, EpiDataDto.EVENT_OTHER_SPECIFY,
-				EpiDataDto.BREAKFAST, EpiDataDto.TOTAL_NO_PERSONS, EpiDataDto.FOOD_CONSUMED, EpiDataDto.SOURCE_OF_FOOD, EpiDataDto.CONSUMED_AT_PLACE,
-				EpiDataDto.LUNCH, EpiDataDto.TOTAL_NO_PERSONS_L1, EpiDataDto.FOOD_CONSUMED_L1, EpiDataDto.SOURCE_OF_FOOD_L1, EpiDataDto.CONSUMED_AT_PLACE_L1,
-				EpiDataDto.SUPPER, EpiDataDto.TOTAL_NO_PERSONS_S1, EpiDataDto.FOOD_CONSUMED_S1, EpiDataDto.SOURCE_OF_FOODS_S1, EpiDataDto.CONSUMED_AT_PLACE_S1,
-				EpiDataDto.BREAKFAST2, EpiDataDto.TOTAL_NO_PERSONS2, EpiDataDto.FOOD_CONSUMED2, EpiDataDto.SOURCE_OF_FOOD2, EpiDataDto.CONSUMED_AT_PLACE2,
-				EpiDataDto.LUNCH_L2, EpiDataDto.TOTAL_NO_PERSONS_L2, EpiDataDto.FOOD_CONSUMED_L2, EpiDataDto.SOURCE_OF_FOOD_L2, EpiDataDto.CONSUMED_AT_PLACE_L2,
-				EpiDataDto.SUPPER_S2, EpiDataDto.TOTAL_NO_PERSONS_S2, EpiDataDto.FOOD_CONSUMED_S2, EpiDataDto.SOURCE_OF_FOOD_S2, EpiDataDto.CONSUMED_AT_PLACE_S2,
-				EpiDataDto.BREAKFAST3, EpiDataDto.TOTAL_NO_PERSONS3, EpiDataDto.FOOD_CONSUMED3, EpiDataDto.SOURCE_OF_FOOD3, EpiDataDto.CONSUMED_AT_PLACE3,
-				EpiDataDto.LUNCH_L3, EpiDataDto.TOTAL_NO_PERSONS_L3, EpiDataDto.FOOD_CONSUMED_L3, EpiDataDto.SOURCE_OF_FOOD_L3, EpiDataDto.CONSUMED_AT_PLACE_L3,
-				EpiDataDto.SUPPER_S3, EpiDataDto.TOTAL_NO_PERSONS_S3, EpiDataDto.FOOD_CONSUMED_S3, EpiDataDto.SOURCE_OF_FOOD_S3, EpiDataDto.CONSUMED_AT_PLACE_S3
-		);
 
 		setVisible(false,
 				EpiDataDto.PATIENT_TRAVEL_DURING_ILLNESS, EpiDataDto.COMM1, EpiDataDto.COMM2,
@@ -678,36 +573,13 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		}
 
-		if (disease == Disease.FOODBORNE_ILLNESS) {
-			Label otherPersonsHeadingLabel =
-					createLabel(I18nProperties.getString(Strings.headingOtherPersons), H3, OTHER_PERSONS_HEADING);
-
-			Label numberOfPersonsAffected =
-					createLabel(I18nProperties.getString(Strings.headingNumberOfPersonsAffected), H4, NUMBER_OF_PERSONS_NO_AFFECTED);
-			setVisible(true, EpiDataDto.NAME_OF_AFFECTED_PERSON, EpiDataDto.TEL_NO, EpiDataDto.AGE, EpiDataDto.DATE_TIME, EpiDataDto.DATE_TIME2, EpiDataDto.DATE_TIME3, EpiDataDto.DATE_TIME4);
+		if(disease == Disease.FOODBORNE_ILLNESS){
 
 			createLabel(I18nProperties.getString(Strings.headingExposureHistory), H3, EXPOSURE_HISTORY_HEADING);
-			createLabel(I18nProperties.getString(Strings.headingObtainHistory), H3, OBTAIN_HISTORY_HEADING);
-			createLabel(I18nProperties.getString(Strings.headingDay1), H3, DAY_1_HEADING);
-			createLabel(I18nProperties.getString(Strings.headingDay2), H3, DAY_2_HEADING);
-			createLabel(I18nProperties.getString(Strings.headingDay3), H3, DAY_3_HEADING);
 
 			setVisible(false, EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, EpiDataDto.LARGE_OUTBREAKS_AREA, EpiDataDto.AREA_INFECTED_ANIMALS, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN, EpiDataDto.EXPOSURES, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN, EpiDataDto.RECENT_TRAVEL_OUTBREAK, EpiDataDto.CONTACT_SIMILAR_SYMPTOMS, EpiDataDto.CONTACT_SICK_ANIMALS, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN, EpiDataDto.ACTIVITIES_AS_CASE, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN);
 
-			setVisible(true, EpiDataDto.INTL_TRAVEL, EpiDataDto.SPECIFY_COUNTRIES, EpiDataDto.DATE_OF_DEPARTURE, EpiDataDto.DATE_OF_ARRIVAL, EpiDataDto.DOMESTIC_TRAVEL, EpiDataDto.SPECIFY_LOCATION, EpiDataDto.DATE_OF_DEPARTURE2, EpiDataDto.DATE_OF_ARRIVAL2, EpiDataDto.CONTACT_ILL_PERSON, EpiDataDto.CONTACT_DATE, EpiDataDto.SPECIFY_ILLNESS, EpiDataDto.NAME_OF_AFFECTED_PERSON, EpiDataDto.NAME_OF_AFFECTED_PERSON2, EpiDataDto.NAME_OF_AFFECTED_PERSON3, EpiDataDto.NAME_OF_AFFECTED_PERSON4, EpiDataDto.TEL_NO, EpiDataDto.TEL_NO2, EpiDataDto.TEL_NO3, EpiDataDto.TEL_NO4, EpiDataDto.DATE_TIME, EpiDataDto.DATE_TIME2, EpiDataDto.DATE_TIME3, EpiDataDto.DATE_TIME4, EpiDataDto.AGE, EpiDataDto.AGE2, EpiDataDto.AGE3, EpiDataDto.AGE4);
-
-			setVisible(true, EpiDataDto.SUSPECTED_FOOD, EpiDataDto.DATE_CONSUMED,
-					EpiDataDto.FOOD_SOURCE, EpiDataDto.EVENT_TYPE, EpiDataDto.EVENT_OTHER_SPECIFY,
-					EpiDataDto.BREAKFAST, EpiDataDto.TOTAL_NO_PERSONS, EpiDataDto.FOOD_CONSUMED, EpiDataDto.SOURCE_OF_FOOD, EpiDataDto.CONSUMED_AT_PLACE,
-					EpiDataDto.LUNCH, EpiDataDto.TOTAL_NO_PERSONS_L1, EpiDataDto.FOOD_CONSUMED_L1, EpiDataDto.SOURCE_OF_FOOD_L1, EpiDataDto.CONSUMED_AT_PLACE_L1,
-					EpiDataDto.SUPPER, EpiDataDto.TOTAL_NO_PERSONS_S1, EpiDataDto.FOOD_CONSUMED_S1, EpiDataDto.SOURCE_OF_FOODS_S1, EpiDataDto.CONSUMED_AT_PLACE_S1,
-					EpiDataDto.BREAKFAST2, EpiDataDto.TOTAL_NO_PERSONS2, EpiDataDto.FOOD_CONSUMED2, EpiDataDto.SOURCE_OF_FOOD2, EpiDataDto.CONSUMED_AT_PLACE2,
-					EpiDataDto.LUNCH_L2, EpiDataDto.TOTAL_NO_PERSONS_L2, EpiDataDto.FOOD_CONSUMED_L2, EpiDataDto.SOURCE_OF_FOOD_L2, EpiDataDto.CONSUMED_AT_PLACE_L2,
-					EpiDataDto.SUPPER_S2, EpiDataDto.TOTAL_NO_PERSONS_S2, EpiDataDto.FOOD_CONSUMED_S2, EpiDataDto.SOURCE_OF_FOOD_S2, EpiDataDto.CONSUMED_AT_PLACE_S2,
-					EpiDataDto.BREAKFAST3, EpiDataDto.TOTAL_NO_PERSONS3, EpiDataDto.FOOD_CONSUMED3, EpiDataDto.SOURCE_OF_FOOD3, EpiDataDto.CONSUMED_AT_PLACE3,
-					EpiDataDto.LUNCH_L3, EpiDataDto.TOTAL_NO_PERSONS_L3, EpiDataDto.FOOD_CONSUMED_L3, EpiDataDto.SOURCE_OF_FOOD_L3, EpiDataDto.CONSUMED_AT_PLACE_L3,
-					EpiDataDto.SUPPER_S3, EpiDataDto.TOTAL_NO_PERSONS_S3, EpiDataDto.FOOD_CONSUMED_S3, EpiDataDto.SOURCE_OF_FOOD_S3, EpiDataDto.CONSUMED_AT_PLACE_S3
-			);
+			setVisible(true, EpiDataDto.INTL_TRAVEL, EpiDataDto.SPECIFY_COUNTRIES, EpiDataDto.DATE_OF_DEPARTURE, EpiDataDto.DATE_OF_ARRIVAL, EpiDataDto.DOMESTIC_TRAVEL, EpiDataDto.SPECIFY_LOCATION, EpiDataDto.DATE_OF_DEPARTURE2, EpiDataDto.DATE_OF_ARRIVAL2, EpiDataDto.CONTACT_ILL_PERSON, EpiDataDto.CONTACT_DATE, EpiDataDto.SPECIFY_ILLNESS);
 
 			FieldHelper.setVisibleWhen(illPerson, Arrays.asList(contactDate), Arrays.asList(YesNo.YES), true);
 		}
