@@ -72,27 +72,6 @@ public class ContaminationSourcesEditForm extends AbstractEditForm<Contamination
         logitudeField = addField(ContaminationSourceDto.LONGITUDE);
         latitudeField = addField(ContaminationSourceDto.LATITUDE);
 
-        logitudeField.addDetachListener(event -> {
-            if (showMap) {
-                if (logitudeField.getValue() != null && latitudeField.getValue() != null) {
-                    coordinates = new GeoLatLon(Double.parseDouble(latitudeField.getValue()), Double.parseDouble(logitudeField.getValue()));
-                    getContent().removeComponent(MAP_LOCATION);
-                    getContent().addComponent(createLeafletMap(), MAP_LOCATION);
-
-                }
-            }
-        });
-
-        latitudeField.addDetachListener(event -> {
-            if (showMap) {
-                if (logitudeField.getValue() != null && latitudeField.getValue() != null) {
-                    coordinates = new GeoLatLon(Double.parseDouble(latitudeField.getValue()), Double.parseDouble(logitudeField.getValue()));
-                    getContent().removeComponent(MAP_LOCATION);
-                    getContent().addComponent(createLeafletMap(), MAP_LOCATION);
-                }
-            }
-        });
-
 
         showMapButton = new Button(I18nProperties.getCaption(Captions.EpiDataShowMapButton));
         showMapButton.addClickListener(event -> {
