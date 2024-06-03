@@ -171,15 +171,11 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		EbsDto target = new EbsDto();
 		DtoHelper.fillDto(target, source);
 
-		target.setRiskLevel(source.getRiskLevel());
-		target.setSpecificRisk(source.getSpecificRisk());
 		target.setInformantName(source.getInformantName());
 		target.setInformantTel(source.getInformantTel());
-		target.setTriageDate(source.getTriageDate());
 		target.setReportDateTime(source.getReportDateTime());
 		target.setCategoryOfInformant((source.getCategoryOfInformant()));
 		target.setEbsLocation(LocationFacadeEjb.toDto(source.getEbsLocation()));
-//        target.setInternalToken(source.getInternalToken());
 		target.setAutomaticScanningType(source.getAutomaticScanningType());
 		target.setManualScanningType(source.getManualScanningType());
 		target.setScanningType(source.getScanningType());
@@ -197,11 +193,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		target.setEbsLatLon(source.getEbsLatLon());
 		target.setDeleted(source.isDeleted());
 		target.setDeletionReason(source.getDeletionReason());
-		target.setOtherDeletionReason(source.getOtherDeletionReason());
-		target.setSignalCategory(source.getSignalCategory());
-		target.setVerified(source.getVerified());
-		target.setCases(source.getCases());
-		target.setDeath(source.getDeath());
 		target.setTriaging(TriagingFacadeEjb.toDto(source.getTriaging()));
 		target.setSignalVerification(SignalVerificationFacadeEjb.toDto(source.getSignalVerification()));
 		return target;
@@ -428,10 +419,10 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		IterableHelper.executeBatched(indexListIds, ModelConstants.PARAMETER_LIMIT, batchedIds -> {
 			CriteriaQuery<EbsIndexDto> cq = cb.createQuery(EbsIndexDto.class);
 			Root<Ebs> ebs = cq.from(Ebs.class);
-			Root<Triaging> triaging = cq.from(Triaging.class);
-			Root<RiskAssessment> riskAssessment = cq.from(RiskAssessment.class);
-			Root<SignalVerification> signalVerification = cq.from(SignalVerification.class);
-			Root<EbsAlert> ebsAlert = cq.from(EbsAlert.class);
+			Join<Ebs, Triaging> triaging = ebs.join("triaging", JoinType.INNER);
+			Join<Ebs, RiskAssessment> riskAssessment = ebs.join("riskAssessment", JoinType.INNER);
+			Join<Ebs, SignalVerification> signalVerification = ebs.join("signalVerification", JoinType.INNER);
+			Join<Ebs, EbsAlert> ebsAlert = ebs.join("ebsAlert", JoinType.INNER);
 
 			EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
 			EbsJoins ebsJoins = ebsQueryContext.getJoins();
@@ -449,7 +440,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 					ebs.get(Ebs.INFORMANT_TEL),
 					triaging.get(Triaging.SIGNAL_CATEGORY),
 					signalVerification.get(SignalVerification.VERIFIED),
-					ebs.get(Ebs.CASES),
 					signalVerification.get(SignalVerification.NUMBER_OF_DEATH),
 					triaging.get(Triaging.DATE_OF_DECISION),
 					ebs.get(Ebs.PERSON_REGISTERING),
@@ -459,8 +449,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 					signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE),
 					riskAssessment.get(RiskAssessment.RISK_ASSESSMENT),
 					ebsAlert.get(EbsAlert.ACTION_INITIATED),
-					ebsAlert.get(EbsAlert.RESPONSE_STATUS)
-			);
+					ebsAlert.get(EbsAlert.RESPONSE_STATUS));
 
 			Predicate filter = ebs.get(Ebs.ID).in(batchedIds);
 
@@ -485,48 +474,29 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 			// Filter duplicates before adding to indexList
 			for (EbsIndexDto dto : results) {
-				if (addedIds.add(dto.getId())) { // add returns false if id is already present
+				if (addedIds.add(dto.getId())) {
 					indexList.add(dto);
 				}
 			}
 		});
-		Map<String, Long> caseCounts = new HashMap<>();
-		Map<String, Long> deathCounts = new HashMap<>();
-		Map<String, Long> contactCounts = new HashMap<>();
-		Map<String, Long> contactCountsSourceInEvent = new HashMap<>();
-		Map<String, ExternalShareInfoCountAndLatestDate> survToolShareCountAndDates = new HashMap<>();
-
-		if (CollectionUtils.isNotEmpty(indexList)) {
-			List<String> ebsUuids = indexList.stream().map(EbsIndexDto::getUuid).collect(Collectors.toList());
-			List<Long> ebsIds = indexList.stream().map(EbsIndexDto::getId).collect(Collectors.toList());
-
-
-			if (externalSurveillanceToolFacade.isFeatureEnabled()) {
-				survToolShareCountAndDates = externalShareInfoService.getEbsShareCountAndLatestDate(ebsIds)
-						.stream()
-						.collect(Collectors.toMap(ExternalShareInfoCountAndLatestDate::getAssociatedObjectUuid, Function.identity()));
-			}
-		}
-		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight, I18nProperties.getCaption(Captions.inaccessibleValue));
-
 		return indexList;
 	}
 
 
 
 	private List<Long> getIndexListIds(EbsCriteria ebsCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
-
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Tuple> cq = cb.createTupleQuery();
 		Root<Ebs> ebs = cq.from(Ebs.class);
 
 		EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
 
+		// Ensure at least one selection
 		List<Selection<?>> selections = new ArrayList<>();
-		selections.add(ebs.get(Person.ID));
+		selections.add(ebs.get(Ebs.ID)); // Ensure there's always at least one selection
 		selections.addAll(sortBy(sortProperties, ebsQueryContext));
 
-		cq.multiselect(selections);
+		cq.multiselect(selections.toArray(new Selection[0])); // Convert to array
 
 		Predicate filter = null;
 
@@ -790,11 +760,8 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 //            FacadeHelper.setUuidIfDtoExists(target.getEbsLocation(), source.getEbsLocation());
 //        }
 
-		target.setRiskLevel(source.getRiskLevel());
-		target.setSpecificRisk(source.getSpecificRisk());
 		target.setInformantName(source.getInformantName());
 		target.setInformantTel(source.getInformantTel());
-		target.setTriageDate(source.getTriageDate());
 		target.setEndDate(source.getEndDate());
 		target.setReportDateTime(source.getReportDateTime());
 		target.setCategoryOfInformant(source.getCategoryOfInformant());
@@ -808,7 +775,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 		target.setDeleted(source.isDeleted());
 		target.setDeletionReason(source.getDeletionReason());
-		target.setOtherDeletionReason(source.getOtherDeletionReason());
 		target.setEbsLatLon(source.getEbsLatLon());
 		target.setAutomaticScanningType(source.getAutomaticScanningType());
 		target.setManualScanningType(source.getManualScanningType());
@@ -823,10 +789,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		target.setDateOnset(source.getDateOnset());
 		target.setEbsLongitude(source.getEbsLongitude());
 		target.setEbsLatitude(source.getEbsLongitude());
-		target.setSignalCategory(source.getSignalCategory());
-		target.setVerified(source.getVerified());
-		target.setCases(source.getCases());
-		target.setDeath(source.getDeath());
 		target.setTriaging(triagingFacade.fillOrBuildEntity(source.getTriaging(), target.getTriaging(), checkChangeDate));
 		target.setSignalVerification(signalVerificationFacade.fillOrBuildEntity(source.getSignalVerification(), target.getSignalVerification(), checkChangeDate));
 		return target;
@@ -994,5 +956,3 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 
 }
-
-
