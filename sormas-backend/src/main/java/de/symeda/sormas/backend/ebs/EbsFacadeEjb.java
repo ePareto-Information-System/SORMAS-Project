@@ -412,14 +412,19 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 		IterableHelper.executeBatched(indexListIds, ModelConstants.PARAMETER_LIMIT, batchedIds -> {
 			CriteriaQuery<EbsIndexDto> cq = cb.createQuery(EbsIndexDto.class);
+
 			Root<Ebs> ebs = cq.from(Ebs.class);
+			EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
+			EbsJoins ebsJoins = ebsQueryContext.getJoins();
 			Join<Ebs, Triaging> triaging = ebs.join("triaging", JoinType.INNER);
 			Join<Ebs, RiskAssessment> riskAssessment = ebs.join("riskAssessment", JoinType.INNER);
 			Join<Ebs, SignalVerification> signalVerification = ebs.join("signalVerification", JoinType.INNER);
 			Join<Ebs, EbsAlert> ebsAlert = ebs.join("ebsAlert", JoinType.INNER);
+			Join<Ebs, Location> location = ebsJoins.getLocation();
+			Join<Location, Region> region = ebsJoins.getRegion();
+			Join<Location, Community> community = ebsJoins.getCommunity();
 
-			EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
-			EbsJoins ebsJoins = ebsQueryContext.getJoins();
+
 
 			// Create the selection
 			cq.multiselect(
@@ -443,7 +448,12 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 					signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE),
 					riskAssessment.get(RiskAssessment.RISK_ASSESSMENT),
 					ebsAlert.get(EbsAlert.ACTION_INITIATED),
-					ebsAlert.get(EbsAlert.RESPONSE_STATUS));
+					ebsAlert.get(EbsAlert.RESPONSE_STATUS),
+					region.get(Region.UUID),
+					region.get(Region.NAME),
+					community.get(Community.UUID),
+					community.get(Community.NAME),
+					location.get(Location.CITY));
 
 			Predicate filter = ebs.get(Ebs.ID).in(batchedIds);
 
@@ -518,6 +528,9 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			Join<Ebs, SignalVerification> signalVerification = ebsJoins.getSignalVerification();
 			Join<Ebs, RiskAssessment> riskAssessment = ebsJoins.getRiskAssessment();
 			Join<Ebs, EbsAlert> ebsAlert = ebsJoins.getEbsAlert();
+			Join<Ebs, Location> location = ebsJoins.getLocation();
+			Join<Location, Region> region = ebsJoins.getRegion();
+			Join<Location, Community> community = ebsJoins.getCommunity();
 
 			List<Order> order = new ArrayList<>(sortProperties.size());
 			for (SortProperty sortProperty : sortProperties) {
@@ -566,6 +579,21 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 						break;
 					case EbsIndexDto.DEATH:
 						expression = signalVerification.get(SignalVerification.NUMBER_OF_DEATH);
+						break;
+					case EbsIndexDto.EBS_LOCATION:
+						expression = region.get(Region.NAME);
+						order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+						expression = community.get(Community.NAME);
+						break;
+					case EbsIndexDto.REGION:
+						expression = region.get(Region.NAME);
+						break;
+					case EbsIndexDto.COMMUNITY:
+						expression = community.get(Community.NAME);
+						break;
+					case EbsIndexDto.TOWN:
+						expression = location.get(Location.CITY);
+						order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
 						break;
 					default:
 						throw new IllegalArgumentException(sortProperty.propertyName);
