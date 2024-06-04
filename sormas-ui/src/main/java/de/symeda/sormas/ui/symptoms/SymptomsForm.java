@@ -197,6 +197,15 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 					loc(FOOD_HISTORY_HEADING_LOC);
 
+			private static final String CHOLERA_LAYOUT =
+				loc(SIGNS_AND_SYMPTOMS_HEADING_LOC)
+				+ fluidRowLocs(5, DIARRHOEA, 5, VOMITING)
+				+ fluidRowLocs(5, DEHYDRATION, 5, ABDOMINAL_PAIN)
+				+ fluidRowLocs(5, ABDOMINAL_CRAMPS, 5, FEVER)
+				+ fluidRowLocs(5, HEADACHES, 5, FATIGUE)
+				+ fluidRowLocsCss(VSPACE_3, ONSET_SYMPTOM, ONSET_DATE)
+				+ fluidRowLocs(6,OUTCOME);
+
 	//@formatter:on
 	public static final String MEASLES_LAYOUT =
 			fluidRowLocs(4, FEVER, 4, GENERALIZED_RASH ) +
@@ -1516,7 +1525,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	protected String createHtmlLayout() {
 		String SELECTED_HTML_LAYOUT = "";
 
-		if (caze.getDisease() != null) {
 			switch (caze.getDisease()) {
 				case GUINEA_WORM:
 					SELECTED_HTML_LAYOUT = GUINEA_WORD_LAYOUT;
@@ -1527,15 +1535,15 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				case NEONATAL_TETANUS:
 					SELECTED_HTML_LAYOUT = NNT_LAYOUT;
 					break;
+				case CHOLERA:
+					SELECTED_HTML_LAYOUT = CHOLERA_LAYOUT;
+					break;
 				default:
 					SELECTED_HTML_LAYOUT = HTML_LAYOUT;
 					break;
 			}
 
 			return SELECTED_HTML_LAYOUT;
-		} else {
-			return HTML_LAYOUT;
-		}
 	}
 
 	public void initializeSymptomRequirementsForVisit(NullableOptionGroup visitStatus) {
