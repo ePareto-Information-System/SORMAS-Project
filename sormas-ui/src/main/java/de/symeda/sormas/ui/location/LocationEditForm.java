@@ -17,11 +17,6 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.location;
 
-import static de.symeda.sormas.ui.utils.LayoutUtil.divs;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumnLoc;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRow;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -92,6 +87,9 @@ import de.symeda.sormas.ui.utils.PhoneNumberValidator;
 import de.symeda.sormas.ui.utils.StringToAngularLocationConverter;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
+import static de.symeda.sormas.ui.utils.CssStyles.H3;
+import static de.symeda.sormas.ui.utils.LayoutUtil.*;
+
 public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	private static final long serialVersionUID = 1L;
@@ -99,6 +97,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private static final String FACILITY_TYPE_GROUP_LOC = "typeGroupLoc";
 	private static final String GEO_BUTTONS_LOC = "geoButtons";
 	private static final String COUNTRY_HINT_LOC = "countryHintLoc";
+	private static final String HOME_ADDRESS_HEADING = "homeAddress";
 
 	private Disease newDisease;
 	private static final String HTML_LAYOUT =
@@ -110,9 +109,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY),
 			//fluidRowLocs(FACILITY_TYPE_GROUP_LOC, LocationDto.FACILITY_TYPE),
 			//fluidRowLocs(LocationDto.FACILITY, LocationDto.FACILITY_DETAILS),
-			fluidRowLocs(LocationDto.STREET, LocationDto.LOCALITY),
+			fluidRowLocs(6,LocationDto.STREET),
+			loc(HOME_ADDRESS_HEADING),
 			fluidRowLocs(6,LocationDto.ADDITIONAL_INFORMATION),
-			fluidRowLocs(6,LocationDto.HOUSE_NUMBER),
+			fluidRowLocs(LocationDto.HOUSE_NUMBER, LocationDto.LOCALITY),
 			fluidRowLocs(LocationDto.CITY, LocationDto.AREA_TYPE),
 			fluidRowLocs(6,LocationDto.POSTAL_CODE),
 			fluidRowLocs(6,LocationDto.LAND_MARK),
@@ -952,11 +952,23 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	}
 
 	public void handleFBI(){
-		setVisible(false, LocationDto.LOCALITY, LocationDto.AREA_TYPE, LocationDto.HOUSE_NUMBER, LocationDto.CITY, LocationDto.POSTAL_CODE);
+		createLabel(I18nProperties.getString(Strings.homeAddressheading), H3, HOME_ADDRESS_HEADING);
+
+		setVisible(false,
+				LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
+		localityField.setCaption("Address (Location)");
 	}
 	public void handleIDSR(){
 		setVisible(false, LocationDto.POSTAL_CODE);
 		 houseNumberField.setCaption("House Number/Location");
+	}
+
+	private Label createLabel(String text, String h4, String location) {
+		final Label label = new Label(text);
+		label.setId(text);
+		label.addStyleName(h4);
+		getContent().addComponent(label, location);
+		return label;
 	}
 
 }
