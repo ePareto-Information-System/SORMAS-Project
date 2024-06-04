@@ -220,7 +220,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					loc(SampleDto.REQUESTED_SAMPLE_MATERIALS) +
 
 
-					locCss(VSPACE_TOP_3, SampleDto.PATHOGEN_TESTING_REQUESTED) +
+					//locCss(VSPACE_TOP_3, SampleDto.PATHOGEN_TESTING_REQUESTED) +
 					loc(PATHOGEN_TESTING_READ_HEADLINE_LOC) +
 					loc(PATHOGEN_TESTING_INFO_LOC) +
 					loc(SampleDto.REQUESTED_PATHOGEN_TESTS) +
@@ -233,22 +233,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					//loc(SampleDto.REQUESTED_ADDITIONAL_TESTS) +
 				//	loc(SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS) +
 					loc(REQUESTED_ADDITIONAL_TESTS_READ_LOC) +
-
-					locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
-					fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
-					locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
-					fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.LABORATORY_NUMBER) +
-					fluidRowLocs(SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER) +
-					fluidRowLocs(6, SampleDto.LAB_SAMPLE_ID) +
-					fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
-					fluidRowLocs(SampleDto.IPSAMPLESENT) +
-					fluidRowLocs(6, SampleDto.IPSAMPLERESULTS)+
-					fluidRowLocs(6,SampleDto.LABORATORY_APPEARANCE_OF_CSF) +
-					fluidRowLocs(SampleDto.COMMENT) +
-
-					fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT) +
-					fluidRowLocs(CaseDataDto.DELETION_REASON) +
-					fluidRowLocs(CaseDataDto.OTHER_DELETION_REASON) +
 
 					//AFP
 					loc(STOOL_SPECIMEN_COLLECTION_HEADLINE_LOC) +
@@ -272,7 +256,25 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					loc(FOLLOW_UP_EXAMINATION_HEADLINE_LOC) +
 					fluidRowLocs(SampleDto.DATE_FOLLOWUP_EXAM, SampleDto.RESIDUAL_ANALYSIS, SampleDto.RESULT_EXAM) +
 					fluidRowLocs(6,SampleDto.IMMUNOCOMPROMISED_STATUS_SUSPECTED) +
-					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION);
+					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION)+
+
+					locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
+					fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
+					locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
+					fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.LABORATORY_NUMBER) +
+					fluidRowLocs(SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER) +
+					fluidRowLocs(6, SampleDto.LAB_SAMPLE_ID) +
+					fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
+					fluidRowLocs(SampleDto.IPSAMPLESENT) +
+					fluidRowLocs(6, SampleDto.IPSAMPLERESULTS)+
+					fluidRowLocs(6,SampleDto.LABORATORY_APPEARANCE_OF_CSF) +
+					fluidRowLocs(SampleDto.COMMENT) +
+
+					fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT) +
+					fluidRowLocs(CaseDataDto.DELETION_REASON) +
+					fluidRowLocs(CaseDataDto.OTHER_DELETION_REASON);
+
+
 
     protected static final String GUINEA_WORM_LAYOUT =
 				fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
