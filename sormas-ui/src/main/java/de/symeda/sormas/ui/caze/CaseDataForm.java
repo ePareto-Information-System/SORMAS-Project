@@ -40,6 +40,12 @@ import java.util.stream.Collectors;
 
 import com.vaadin.ui.*;
 import com.vaadin.v7.data.validator.RegexpValidator;
+import com.vaadin.v7.ui.CheckBox;
+import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.DateField;
+import com.vaadin.v7.ui.TextArea;
+import com.vaadin.v7.ui.TextField;
+import com.vaadin.v7.ui.VerticalLayout;
 import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.infrastructure.facility.*;
 import de.symeda.sormas.api.utils.*;
@@ -1489,8 +1495,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
             healthConditionsField = addField(CaseDataDto.HEALTH_CONDITIONS, HealthConditionsForm.class);
             healthConditionsField.setVisible(false);
-
-            List<String> medicalInformationFields;
 
             if (disease == Disease.CORONAVIRUS) {
                 medicalInformationFields =
