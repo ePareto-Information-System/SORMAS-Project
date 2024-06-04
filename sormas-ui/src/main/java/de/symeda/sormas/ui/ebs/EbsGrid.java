@@ -90,6 +90,9 @@ public class EbsGrid extends FilteredGrid<de.symeda.sormas.api.ebs.EbsIndexDto, 
 				EbsIndexDto.REPORT_DATE_TIME,
 				EbsIndexDto.INFORMANT_NAME,
 				EbsIndexDto.INFORMANT_TEL,
+				EbsIndexDto.REGION,
+				EbsIndexDto.COMMUNITY,
+				EbsIndexDto.TOWN,
 				EbsIndexDto.PERSON_REGISTERING,
 				EbsIndexDto.PERSON_DESIGNATION));
 

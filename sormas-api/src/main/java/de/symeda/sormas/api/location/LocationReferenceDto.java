@@ -159,6 +159,17 @@ public class LocationReferenceDto extends ReferenceDto {
 
 		return stringBuilder.toString();
 	}
+	public static String buildCaption(String town) {
+		StringBuilder stringBuilder = new StringBuilder();
+
+		if (!DataHelper.isNullOrEmpty(town)) {
+			if (stringBuilder.length() > 0) {
+				stringBuilder.append(", ");
+			}
+			stringBuilder.append(town);
+		}
+		return stringBuilder.toString();
+	}
 
 	public static String buildCaption(String regionName, String districtName, String communityName, String town, String additionalInformation) {
 		StringBuilder stringBuilder = new StringBuilder();
@@ -189,6 +200,27 @@ public class LocationReferenceDto extends ReferenceDto {
 				stringBuilder.append(", ");
 			}
 			stringBuilder.append(additionalInformation);
+		}
+		return stringBuilder.toString();
+	}
+
+	public static String buildCaption(String regionName,  String communityName, String town) {
+		StringBuilder stringBuilder = new StringBuilder();
+
+		if (!DataHelper.isNullOrEmpty(regionName)) {
+			stringBuilder.append(regionName);
+		}
+		if (!DataHelper.isNullOrEmpty(communityName)) {
+			if (stringBuilder.length() > 0) {
+				stringBuilder.append(", ");
+			}
+			stringBuilder.append(communityName);
+		}
+		if (!DataHelper.isNullOrEmpty(town)) {
+			if (stringBuilder.length() > 0) {
+				stringBuilder.append(", ");
+			}
+			stringBuilder.append(town);
 		}
 		return stringBuilder.toString();
 	}
