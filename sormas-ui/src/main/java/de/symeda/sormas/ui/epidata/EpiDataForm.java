@@ -225,17 +225,17 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		//Food Borne
 
 
-		addField(EpiDataDto.INTL_TRAVEL, NullableOptionGroup.class);
-		addField(EpiDataDto.SPECIFY_COUNTRIES, TextField.class);
-		addField(EpiDataDto.DATE_OF_DEPARTURE, DateField.class);
-		addField(EpiDataDto.DATE_OF_ARRIVAL, DateField.class);
-		addField(EpiDataDto.DOMESTIC_TRAVEL, NullableOptionGroup.class);
-		addField(EpiDataDto.SPECIFY_LOCATION, TextField.class);
-		addField(EpiDataDto.DATE_OF_DEPARTURE2, DateField.class);
-		addField(EpiDataDto.DATE_OF_ARRIVAL2, DateField.class);
+		NullableOptionGroup intlTravel = addField(EpiDataDto.INTL_TRAVEL, NullableOptionGroup.class);
+		TextField specifyCountries = addField(EpiDataDto.SPECIFY_COUNTRIES, TextField.class);
+		DateField dateDeparture = addField(EpiDataDto.DATE_OF_DEPARTURE, DateField.class);
+		DateField dateArrival = addField(EpiDataDto.DATE_OF_ARRIVAL, DateField.class);
+		NullableOptionGroup domTravel = addField(EpiDataDto.DOMESTIC_TRAVEL, NullableOptionGroup.class);
+		TextField specifyLocation= addField(EpiDataDto.SPECIFY_LOCATION, TextField.class);
+		DateField dateDepart2= addField(EpiDataDto.DATE_OF_DEPARTURE2, DateField.class);
+		DateField dateArrival2= addField(EpiDataDto.DATE_OF_ARRIVAL2, DateField.class);
 		NullableOptionGroup illPerson = addField(EpiDataDto.CONTACT_ILL_PERSON, NullableOptionGroup.class);
 		DateField contactDate = addField(EpiDataDto.CONTACT_DATE, DateField.class);
-		addField(EpiDataDto.SPECIFY_ILLNESS, TextField.class);
+		TextField specifyIllnessKnown = addField(EpiDataDto.SPECIFY_ILLNESS, TextField.class);
 
 		//AHF
 		NullableOptionGroup patientTravelDuringIllness = addField(EpiDataDto.PATIENT_TRAVEL_DURING_ILLNESS, NullableOptionGroup.class);
@@ -362,7 +362,9 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 			setVisible(true, EpiDataDto.INTL_TRAVEL, EpiDataDto.SPECIFY_COUNTRIES, EpiDataDto.DATE_OF_DEPARTURE, EpiDataDto.DATE_OF_ARRIVAL, EpiDataDto.DOMESTIC_TRAVEL, EpiDataDto.SPECIFY_LOCATION, EpiDataDto.DATE_OF_DEPARTURE2, EpiDataDto.DATE_OF_ARRIVAL2, EpiDataDto.CONTACT_ILL_PERSON, EpiDataDto.CONTACT_DATE, EpiDataDto.SPECIFY_ILLNESS);
 
-			FieldHelper.setVisibleWhen(illPerson, Arrays.asList(contactDate), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(intlTravel, Arrays.asList(specifyCountries,dateDeparture,dateArrival ), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(domTravel, Arrays.asList(specifyLocation, dateDepart2, dateArrival2 ), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(illPerson, Arrays.asList(contactDate, specifyIllnessKnown), Arrays.asList(YesNo.YES), true);
 		}
 
 		if( disease == Disease.AHF){
