@@ -182,6 +182,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 	private ComboBox diseaseField;
 	private Disease caseDisease;
+	private Disease subDisease;
 	private TextField laboratoryTestPerformedOther;
 	private TextField laboratoryCytology_LEUCOCYTES;
 	private TextField laboratoryCytology_PMN;
@@ -314,6 +315,10 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(sample.getAssociatedCase().getUuid());
 		caseDisease = caseDataDto.getDisease();
 
+		if(caseDisease == Disease.AHF){
+			subDisease = sample.getDisease();
+		}
+
 		pathogenTestHeadingLabel = new Label();
 		pathogenTestHeadingLabel.addStyleName(H3);
 		getContent().addComponent(pathogenTestHeadingLabel, PATHOGEN_TEST_HEADING_LOC);
@@ -383,7 +388,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 		if (caseDisease == Disease.AHF) {
 			diseaseField.removeAllItems();
-			FieldHelper.updateEnumData(diseaseField, Disease.AHF_DISEASES);
+			List<Disease> subDiseaseList = Collections.singletonList(subDisease);
+			FieldHelper.updateEnumData(diseaseField, subDiseaseList);
 		} else if (caseDisease == Disease.CSM) {
 			diseaseField.removeAllItems();
 			FieldHelper.updateEnumData(diseaseField, Disease.CSM_ONLY);
