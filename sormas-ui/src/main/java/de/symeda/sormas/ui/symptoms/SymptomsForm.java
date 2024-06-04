@@ -1193,7 +1193,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			FieldHelper.setVisibleWhen(getFieldGroup(), DATE_FIRST_WORM_EMERGENCE, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
 
 		} else if (disease == Disease.CHOLERA) {
-			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED, CaseOutcome.UNKNOWN));
+			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED));
 
 		}
 
