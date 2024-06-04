@@ -115,7 +115,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, "") +
 			fluidRowLocs(PathogenTestDto.SEROTYPE, "") + 
 			fluidRowLocs(PathogenTestDto.CQ_VALUE, "") +
-			fluidRowLocs(PathogenTestDto.DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT, PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
+			fluidRowLocs(PathogenTestDto.DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT) +
 			fluidRowLocs(PathogenTestDto.TEST_RESULT_TEXT) +
 			fluidRowLocs(PathogenTestDto.DATE_LAB_RESULTS_SENT_DISTRICT, PathogenTestDto.DATE_LAB_RESULTS_SENT_CLINICIAN) +
 			fluidRowLocs(6, PathogenTestDto.DATE_DISTRICT_RECEIVED_LAB_RESULTS) +
@@ -141,7 +141,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 			//REGIONAL
 			fluidRowLocs(PathogenTestDto.LABORATORY_CULTURE, PathogenTestDto.LABORATORY_CULTURE_OTHER) +
-			fluidRowLocs(PathogenTestDto.LABORATORY_OTHER_TESTS) +
+			fluidRowLocs(6,PathogenTestDto.LABORATORY_OTHER_TESTS) +
 			loc(LABORATORY_ANTIBIOGRAM_HEADLINE_LOC) +
 			fluidRowLocs(PathogenTestDto.LABORATORY_CEFTRIAXONE, PathogenTestDto.LABORATORY_PENICILLIN_G) +
 			fluidRowLocs(PathogenTestDto.LABORATORY_AMOXYCILLIN, PathogenTestDto.LABORATORY_OXACILLIN) +
@@ -151,7 +151,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			loc(LABORATORY_PCR_HEADLINE_LOC) +
 			fluidRowLocs(PathogenTestDto.LABORATORY_DATE_PCR_PERFORMED, PathogenTestDto.LABORATORY_PCR_TYPE) +
 			fluidRowLocs(6,PathogenTestDto.LABORATORY_PCR_OPTIONS) +
-			fluidRowLocs(PathogenTestDto.LABORATORY_SEROTYPE) +
+			fluidRowLocs(6,PathogenTestDto.LABORATORY_SEROTYPE) +
 			fluidRowLocs(6,PathogenTestDto.LABORATORY_FINAL_RESULTS) +
 			fluidRowLocs(PathogenTestDto.LABORATORY_OBSERVATIONS) +
 			fluidRowLocs(6,PathogenTestDto.DATE_SAMPLE_SENT_REF_LAB) +
@@ -159,6 +159,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			fluidRowLocs(PathogenTestDto.FINAL_CLASSIFICATION, "") +
 			fluidRowLocs(6, PathogenTestDto.LABORATORY_FINAL_CLASSIFICATION) +
 			fluidRowLocs(PathogenTestDto.OTHER_NOTES_AND_OBSERVATIONS) +
+			fluidRowLocs(6,PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD) +
 			fluidRowLocs(PathogenTestDto.FINAL_CLASSIFICATION, "");
 
 	//@formatter:on
@@ -311,7 +312,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		}
 
 		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(sample.getAssociatedCase().getUuid());
-//		CaseDataDto suspectedDisease = FacadeProvider.getCaseFacade().getCaseDataByUuid(sample.getSuspectedDisease().name());
 		caseDisease = caseDataDto.getDisease();
 
 		pathogenTestHeadingLabel = new Label();
@@ -330,32 +330,12 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		addDateField(PathogenTestDto.DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT, DateField.class, 0);
 		setVisible(false, PathogenTestDto.DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT);
 
-		labDateResultsSentDSD = addDateField(PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD, DateField.class, 0);
+		labDateResultsSentDSD =  addField(PathogenTestDto.LABORATORY_DATE_RESULTS_SENT_DSD);
+		labDateResultsSentDSD.setVisible(false);
 
-
-	/*	testTypeField = ComboBoxHelper.createComboBoxV7();
-
-		for(PathogenTestType pathogenTestType : PathogenTestType.DISEASE_TESTS){
-			testTypeField.addItem(pathogenTestType);
-			testTypeField.setCaption("Test Type");
-		}
-
-		getContent().addComponent(testTypeField, PathogenTestDto.TEST_TYPE);*/
-		ComboBox testBox = new ComboBox("Sex");
-
-		if(caseDisease == Disease.AHF){
-			for (PathogenTestType test : PathogenTestType.values()) {
-				if (test == PathogenTestType.IGG_SERUM_ANTIBODY || test == PathogenTestType.IGM_SERUM_ANTIBODY || test == PathogenTestType.PCR_RT_PCR) {
-					testBox.addItem(test);
-				}
-			}
-			addField(PathogenTestDto.TEST_TYPE, testBox);
-		}
-		else {
-			testTypeField = addField(PathogenTestDto.TEST_TYPE, ComboBox.class);
-			testTypeField.setItemCaptionMode(ItemCaptionMode.ID_TOSTRING);
-			testTypeField.setImmediate(true);
-		}
+		testTypeField = addField(PathogenTestDto.TEST_TYPE, ComboBox.class);
+		testTypeField.setItemCaptionMode(ItemCaptionMode.ID_TOSTRING);
+		testTypeField.setImmediate(true);
 
 		pcrTestSpecification = addField(PathogenTestDto.PCR_TEST_SPECIFICATION, ComboBox.class);
 		testTypeTextField = addField(PathogenTestDto.TEST_TYPE_TEXT, TextField.class);
@@ -404,8 +384,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		if (caseDisease == Disease.AHF) {
 			diseaseField.removeAllItems();
 			FieldHelper.updateEnumData(diseaseField, Disease.AHF_DISEASES);
-		}
-		else if (caseDisease == Disease.CSM) {
+		} else if (caseDisease == Disease.CSM) {
 			diseaseField.removeAllItems();
 			FieldHelper.updateEnumData(diseaseField, Disease.CSM_ONLY);
 			diseaseField.setEnabled(false);
@@ -413,8 +392,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			diseaseField.removeAllItems();
 			FieldHelper.updateEnumData(diseaseField, Disease.NEW_ONLY);
 			diseaseField.setEnabled(false);
-		}
-		else if (caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
+		} else if (caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
 			for (Disease disease1 : Disease.values()) {
 				if (disease1.getName().equals(sample.getSuspectedDisease().getName())) {
 					diseaseField.removeAllItems();
@@ -597,10 +575,10 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						FieldVisibilityCheckers.withDisease(disease),
 						PathogenTestType.class);
 			}
-			
+
 			if (disease == Disease.CHOLERA) {
 				setVisible(true, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN, PathogenTestDto.OTHER_NOTES_AND_OBSERVATIONS);
-			} 
+			}
 			else {
 				setVisible(false, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN, PathogenTestDto.OTHER_NOTES_AND_OBSERVATIONS);
 			}
@@ -618,13 +596,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				Arrays.stream(PathogenTestType.values())
 						.filter(pathogenTestType -> !choleraPathogenTests.contains(pathogenTestType))
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
-
-			} else if (Disease.AHF_DISEASES.contains(disease)) {
-				List<PathogenTestType> ahfMeaselesPathogenTests = PathogenTestType.getMeaslesTestTypes();
-				Arrays.stream(PathogenTestType.values())
-						.filter(pathogenTestType -> !ahfMeaselesPathogenTests.contains(pathogenTestType))
-						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
-			} 
+			}
 			else if(disease == Disease.CSM) {
 				List<PathogenTestType> csmPathogenTests = PathogenTestType.getCSMTestTypes();
 				Arrays.stream(PathogenTestType.values())
@@ -649,7 +621,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 				FieldHelper.setVisibleWhen(testResultVariant, Arrays.asList(variantOther), Arrays.asList(PathogenTestResultVariant.OTHER), true);
 				testResultField.removeItem(PathogenTestResultType.PENDING);
-
 
 				secondTestedDisease.setVisible(true);
 				secondTestedDisease.setValue(Disease.CORONAVIRUS);
@@ -837,6 +808,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 					I18nProperties.getPrefixDescription(PathogenTestDto.I18N_PREFIX, PathogenTestDto.LABORATORY_OBSERVATIONS, "") + "\n"
 							+ I18nProperties.getDescription(Descriptions.observation));
 
+			labDateResultsSentDSD.setVisible(true);
+
 			laboratoryFinalClassification = new OptionGroup();
 			for (CaseClassification caseClassification : CaseClassification.CASE_CLASSIFY) {
 				laboratoryFinalClassification.addItem(caseClassification);
@@ -894,6 +867,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				PathogenTestDto.TESTED_DISEASE,
 				Arrays.asList(Disease.MEASLES),
 				true);
+
 		if(caseDisease == Disease.AHF){
 			testTypeField.setVisible(false);
 			testTypeField.setRequired(false);
