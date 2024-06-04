@@ -994,7 +994,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					CONJUNCTIVAL_INJECTION, SEIZURES, FLUID_IN_LUNG_CAVITY_AUSCULTATION, DYSPNEA, TACHYPNEA);
 
 		} else if (disease == Disease.CHOLERA) {
-			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED, CaseOutcome.UNKNOWN));
+			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED));
 
 		}
 
