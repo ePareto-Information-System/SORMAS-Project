@@ -317,6 +317,29 @@ public class EpiData extends AbstractDomainObject {
 	public void setChildComeInContactWithSymptoms(YesNoUnknown childComeInContactWithSymptoms) {
 		this.childComeInContactWithSymptoms = childComeInContactWithSymptoms;
 	}
+	public YesNo getReceivedHealthEducation() {
+		return receivedHealthEducation;
+	}
+
+	public void setReceivedHealthEducation(YesNo receivedHealthEducation) {
+		this.receivedHealthEducation = receivedHealthEducation;
+	}
+
+	public YesNo getPatientEnteredWaterSource() {
+		return patientEnteredWaterSource;
+	}
+
+	public void setPatientEnteredWaterSource(YesNo patientEnteredWaterSource) {
+		this.patientEnteredWaterSource = patientEnteredWaterSource;
+	}
+
+	public PlaceManaged getPlaceManaged() {
+		return placeManaged;
+	}
+
+	public void setPlaceManaged(PlaceManaged placeManaged) {
+		this.placeManaged = placeManaged;
+	}
 	
 	@Enumerated(EnumType.STRING)
 	public YesNo getPreviouslyVaccinatedAgainstInfluenza() {

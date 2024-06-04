@@ -207,18 +207,13 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 			}
 
 
-			
-
 			if(caze.getDisease() != Disease.MONKEYPOX){
 				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_EPIDEMIOLOGICAL_DATA)
 						&& caze.getDisease() != Disease.CONGENITAL_RUBELLA) {
-					if(caze.getDisease() != Disease.FOODBORNE_ILLNESS ) {
 						if (caze.getDisease() != Disease.NEONATAL_TETANUS) {
 						menu.addView(CaseEpiDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EPI_DATA), params);
 						}
-					}else{
-						menu.addView(CaseEpiDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.FOOD_HISTORY), params);
-					}
+
 				}
 			}
 
@@ -234,12 +229,6 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 				}
 			}
 
-			if(caze.getDisease() != Disease.MONKEYPOX){
-				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_EPIDEMIOLOGICAL_DATA)
-						&& caze.getDisease() != Disease.CONGENITAL_RUBELLA) {
-						menu.addView(CaseEpiDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EPI_DATA), params);
-				}
-			}
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
 					&& !caze.checkIsUnreferredPortHealthCase()
 					&& !UserProvider.getCurrent().isPortHealthUser()) {

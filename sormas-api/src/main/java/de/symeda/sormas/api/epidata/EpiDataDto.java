@@ -145,6 +145,13 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String DATE_OF_LAST_CONTACT_WITH_SUSPECT_CASE = "dateOfLastContactWithSuspectCase";
 	public static final String IF_YES_WILD_ANIMAL_LOCATION = "ifYesWildAnimalLocation";
 	public static final String IF_YES_WILD_ANIMAL_DATE = "ifYesWildAnimalDate";
+	public static final String HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT = "historyOfTravelOutsideTheVillageTownDistrict";
+	public static final String HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT_DETAILS = "historyOfTravelOutsideTheVillageTownDistrictDetails";
+
+	public static final String HISTORY_OF_TRAVEL_REGION = "historyOfTravelRegion";
+	public static final String HISTORY_OF_TRAVEL_DISTRICT = "historyOfTravelDistrict";
+	public static final String HISTORY_OF_TRAVEL_SUB_DISTRICT = "historyOfTravelSubDistrict";
+	public static final String HISTORY_OF_TRAVEL_VILLAGE = "historyOfTravelVillage";
 
 	@Enumerated(EnumType.STRING)
 	private Disease disease;
@@ -731,6 +738,97 @@ public class EpiDataDto extends PseudonymizableDto {
 		this.ifYesSpecifyDead = ifYesSpecifyDead;
 	}
 
+	public YesNoUnknown getChildComeInContactWithSymptoms() {
+		return childComeInContactWithSymptoms;
+	}
+	public void setChildComeInContactWithSymptoms(YesNoUnknown childComeInContactWithSymptoms) {
+		this.childComeInContactWithSymptoms = childComeInContactWithSymptoms;
+	}
+	public void setPatientCloseContactWithARI(YesNoUnknown patientCloseContactWithARI) {
+		this.patientCloseContactWithARI = patientCloseContactWithARI;
+	}
+
+	public Set<ContactSetting> getPatientCloseContactWithARIContactSettings() {
+		return patientCloseContactWithARIContactSettings;
+	}
+
+	public void setPatientCloseContactWithARIContactSettings(Set<ContactSetting> patientCloseContactWithARIContactSettings) {
+		this.patientCloseContactWithARIContactSettings = patientCloseContactWithARIContactSettings;
+	}
+
+	public YesNoUnknown getPatientContactWithConfirmedCase() {
+		return patientContactWithConfirmedCase;
+	}
+
+	public void setPatientContactWithConfirmedCase(YesNoUnknown patientContactWithConfirmedCase) {
+		this.patientContactWithConfirmedCase = patientContactWithConfirmedCase;
+	}
+
+	public Set<ContactSetting> getPatientContactWithConfirmedCaseExposureLocations() {
+		return patientContactWithConfirmedCaseExposureLocations;
+	}
+
+	public void setPatientContactWithConfirmedCaseExposureLocations(Set<ContactSetting> patientContactWithConfirmedCaseExposureLocations) {
+		this.patientContactWithConfirmedCaseExposureLocations = patientContactWithConfirmedCaseExposureLocations;
+	}
+
+	public String getPatientContactWithConfirmedCaseExposureLocationCityCountry() {
+		return patientContactWithConfirmedCaseExposureLocationCityCountry;
+	}
+
+	public void setPatientContactWithConfirmedCaseExposureLocationCityCountry(String patientContactWithConfirmedCaseExposureLocationCityCountry) {
+		this.patientContactWithConfirmedCaseExposureLocationCityCountry = patientContactWithConfirmedCaseExposureLocationCityCountry;
+	}
+
+	public YesNo getExposedToRiskFactor() {
+		return exposedToRiskFactor;
+	}
+
+	public void setExposedToRiskFactor(YesNo exposedToRiskFactor) {
+		this.exposedToRiskFactor = exposedToRiskFactor;
+	}
+
+	public DrinkingWaterSource getWaterUsedByPatientAfterExposure() {
+		return waterUsedByPatientAfterExposure;
+	}
+
+	public void setWaterUsedByPatientAfterExposure(DrinkingWaterSource waterUsedByPatientAfterExposure) {
+		this.waterUsedByPatientAfterExposure = waterUsedByPatientAfterExposure;
+	}
+	public YesNoUnknown getPatientVisitedHealthCareFacility() {
+		return patientVisitedHealthCareFacility;
+	}
+
+	public void setPatientVisitedHealthCareFacility(YesNoUnknown patientVisitedHealthCareFacility) {
+		this.patientVisitedHealthCareFacility = patientVisitedHealthCareFacility;
+	}
+
+	public YesNoUnknown getPatientCloseContactWithARI() {
+		return patientCloseContactWithARI;
+	}
+	public YesNo getReceivedHealthEducation() {
+		return receivedHealthEducation;
+	}
+
+	public void setReceivedHealthEducation(YesNo receivedHealthEducation) {
+		this.receivedHealthEducation = receivedHealthEducation;
+	}
+
+	public YesNo getPatientEnteredWaterSource() {
+		return patientEnteredWaterSource;
+	}
+
+	public void setPatientEnteredWaterSource(YesNo patientEnteredWaterSource) {
+		this.patientEnteredWaterSource = patientEnteredWaterSource;
+	}
+
+	public PlaceManaged getPlaceManaged() {
+		return placeManaged;
+	}
+
+	public void setPlaceManaged(PlaceManaged placeManaged) {
+		this.placeManaged = placeManaged;
+	}
 	public YesNo getHistoryOfTravelOutsideTheVillageTownDistrict() {
 		return this.historyOfTravelOutsideTheVillageTownDistrict;
 	}
