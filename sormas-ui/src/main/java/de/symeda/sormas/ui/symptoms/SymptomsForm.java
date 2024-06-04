@@ -165,6 +165,17 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					//loc(CLINICAL_HISTORY_HEADING_LOC) +
 					fluidRowLocs(6,OUTCOME)+
 					fluidRowLocs(PROVISONAL_DIAGNOSIS);
+
+	private static final String CHOLERA_LAYOUT =
+						loc(SIGNS_AND_SYMPTOMS_HEADING_LOC)
+						+ fluidRowLocs(5, DIARRHOEA, 5, VOMITING)
+						+ fluidRowLocs(5, DEHYDRATION, 5, ABDOMINAL_PAIN)
+						+ fluidRowLocs(5, ABDOMINAL_CRAMPS, 5, FEVER)
+						+ fluidRowLocs(5, HEADACHES, 5, FATIGUE)
+						+ fluidRowLocsCss(VSPACE_3, ONSET_SYMPTOM, ONSET_DATE)
+						+ fluidRowLocs(6,OUTCOME);
+
+
 	//@formatter:on
 
 	private static String createSymptomGroupLayout(SymptomGroup symptomGroup, String loc) {
@@ -222,7 +233,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			FieldVisibilityCheckers.withDisease(disease)
 				.andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale())
 				.add(new OutbreakFieldVisibilityChecker(viewMode)),
-			fieldAccessCheckers);
+			fieldAccessCheckers,
+				disease);
 
 		this.caze = caze;
 		this.disease = disease;
@@ -1283,7 +1295,18 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 	@Override
 	protected String createHtmlLayout() {
-		return HTML_LAYOUT;
+		String SELECTED_LAYOUT = "";
+
+		switch (getCaseDisease()) {
+			case CHOLERA:
+				SELECTED_LAYOUT = CHOLERA_LAYOUT;
+				break;
+			default:
+				SELECTED_LAYOUT = HTML_LAYOUT;
+				break;
+		}
+
+		return SELECTED_LAYOUT;
 	}
 
 	public void initializeSymptomRequirementsForVisit(NullableOptionGroup visitStatus) {
