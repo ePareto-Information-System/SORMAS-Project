@@ -861,7 +861,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
                 SEIZURES,
                 SEPSIS,
                 SHOCK,
-                BODY_ACHE);
+                BODY_ACHE,
+				DIARRHOEA,
+				ABDOMINAL_CRAMPS,
+				HEADACHES);
 
         Label placeDeathHeadingLabel = new Label(I18nProperties.getString(Strings.headingPlaceOfDeath));
         placeDeathHeadingLabel.addStyleName(H3);

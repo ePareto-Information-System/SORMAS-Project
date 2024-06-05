@@ -899,7 +899,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 		if (disease == Disease.GUINEA_WORM) {
 			generalCommentLabel.setVisible(false);
-			ethnicityField.setVisible(true);
 			setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER, PersonDto.BIRTH_DATE_YYYY,
 					PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD, PersonDto.ADDITIONAL_DETAILS, PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS, PersonDto.MOTHERS_NAME);
 			setVisible(true, PersonDto.PLACE_OF_RESIDENCE_SAME_AS_REPORTING_VILLAGE, PersonDto.ETHNICITY);

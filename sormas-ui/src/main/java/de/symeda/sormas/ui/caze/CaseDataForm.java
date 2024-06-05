@@ -2270,7 +2270,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
     @Override
     protected String createHtmlLayout() {
-        String SORMAS_MAIN_HTML_LAYOUT = MAIN_HTML_LAYOUT + (caseFollowUpEnabled ? FOLLOWUP_LAYOUT : "") + PAPER_FORM_DATES_AND_HEALTH_CONDITIONS_HTML_LAYOUT + loc(INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC);
+        String SORMAS_MAIN_HTML_LAYOUT = MAIN_HTML_LAYOUT + (caseFollowUpEnabled ? FOLLOWUP_LAYOUT : "") + PAPER_FORM_DATES_AND_HEALTH_CONDITIONS_HTML_LAYOUT + fluidRowLocsCss( VSPACE_3 ,INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC);
 		String DISEASE_LAYOUT = "";
 
 		switch (disease) {
