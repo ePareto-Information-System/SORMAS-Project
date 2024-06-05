@@ -832,6 +832,9 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setFirstWormThisYear(source.getFirstWormThisYear());
 		target.setDateFirstWormEmergence(source.getDateFirstWormEmergence());
 		target.setCaseDetectedBeforeWormEmergence(source.getCaseDetectedBeforeWormEmergence());
+		target.setDiarrhoea(source.getDiarrhoea());
+		target.setAbdominalCramps(source.getAbdominalCramps());
+		target.setHeadaches(source.getHeadaches());
 
 		return target;
 	}
