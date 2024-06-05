@@ -315,7 +315,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
 					fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
 					fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
-					fluidRowLocs(6, SampleDto.SAMPLE_MATERIAL, 6, SampleDto.FIELD_SAMPLE_ID) +
+							fluidRowLocs(6, SampleDto.SAMPLE_MATERIAL, 6, SampleDto.SAMPLE_MATERIAL_TEXT) +
+							fluidRowLocs(6, SampleDto.FIELD_SAMPLE_ID) +
 					fluidRowLocs(SampleDto.PATHOGEN_TESTING_REQUESTED) +
 					loc(SampleDto.REQUESTED_PATHOGEN_TESTS) +
 					loc(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS) +
@@ -1086,6 +1087,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	public void handleCholera() {
 		List<SampleMaterial> choleraSampleMaterials = Arrays.asList(SampleMaterial.getCholeraMateriealTypes());
 		FieldHelper.updateEnumData(sampleMaterialComboBox, choleraSampleMaterials);
+
+		FieldHelper
+				.setVisibleWhen(getFieldGroup(), SampleDto.SAMPLE_MATERIAL_TEXT, SampleDto.SAMPLE_MATERIAL, Arrays.asList(SampleMaterial.OTHER), true);
 
 		List<PathogenTestType> choleraPathogenTests = PathogenTestType.getCholeraPathogenTests();
 		Arrays.stream(PathogenTestType.values())
