@@ -203,6 +203,8 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String NAME_OF_PERSON_WHO_RECEIVED_SPECIMEN_AT_NATIONAL = "nameOfPersonWhoReceivedSpecimenAtNational";
 	public static final String DATE_SPECIMEN_RECEIVED_AT_NATIONAL = "dateSpecimenReceivedAtNational";
 	public static final String CONFIRMED_AS_GUINEA_WORM = "confirmedAsGuineaWorm";
+	public static final String LAB_LOCAL = "labLocal";
+	public static final String LAB_LOCAL_DETAILS = "labLocalDetails";
 
 
 
@@ -407,6 +409,8 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private String nameOfPersonWhoReceivedSpecimenAtNational;
 	private Date dateSpecimenReceivedAtNational;
 	private YesNo confirmedAsGuineaWorm;
+	private LabLocal labLocal;
+	private String labLocalDetails;
 
 
 
@@ -1824,5 +1828,21 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 	public void setConfirmedAsGuineaWorm(final YesNo confirmedAsGuineaWorm) {
 		this.confirmedAsGuineaWorm = confirmedAsGuineaWorm;
+	}
+
+	public LabLocal getLabLocal() {
+		return this.labLocal;
+	}
+
+	public void setLabLocal(final LabLocal labLocal) {
+		this.labLocal = labLocal;
+	}
+
+	public String getLabLocalDetails() {
+		return this.labLocalDetails;
+	}
+
+	public void setLabLocalDetails(final String labLocalDetails) {
+		this.labLocalDetails = labLocalDetails;
 	}
 }

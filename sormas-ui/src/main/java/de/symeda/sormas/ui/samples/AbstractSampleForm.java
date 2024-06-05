@@ -34,14 +34,7 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.sample.AdditionalTestType;
-import de.symeda.sormas.api.sample.PathogenTestResultType;
-import de.symeda.sormas.api.sample.PathogenTestType;
-import de.symeda.sormas.api.sample.SampleDto;
-import de.symeda.sormas.api.sample.SampleMaterial;
-import de.symeda.sormas.api.sample.SamplePurpose;
-import de.symeda.sormas.api.sample.SamplingReason;
-import de.symeda.sormas.api.sample.SpecimenCondition;
+import de.symeda.sormas.api.sample.*;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
@@ -222,8 +215,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
     protected static final String GUINEA_WORM_LAYOUT =
 				fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
                 fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
-//				fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
-//				fluidRowLocs(6, SampleDto.SAMPLE_MATERIAL) +
+				fluidRowLocs(SampleDto.LAB_LOCAL) +
+				fluidRowLocs(6, SampleDto.LAB_LOCAL_DETAILS) +
+				fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
+				fluidRowLocs(6, SampleDto.SAMPLE_MATERIAL) +
 				loc(HEADING_SPECIMEN_HANDLING) +
 				fluidRowLocs(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL) +
 				fluidRowLocs(SampleDto.SPECIMEN_SAVED_AND_PRESEVED_IN_ALCOHOL_WHY) +
@@ -270,6 +265,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		for (Disease ahfDisease : Disease.AHF_DISEASES) {
 			diseaseBox.addItem(ahfDisease);
 		}
+
+		addField(SampleDto.LAB_LOCAL, NullableOptionGroup.class);
+		addField(SampleDto.LAB_LOCAL_DETAILS, TextField.class);
+
 
 		diseaseField = addField(SampleDto.DISEASE, diseaseBox);
 		diseaseField.setVisible(false);
@@ -567,6 +566,20 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			SampleDto.SAMPLE_PURPOSE,
 			Arrays.asList(SamplePurpose.EXTERNAL, null),
 			true);
+
+		FieldHelper.setVisibleWhen(
+				getFieldGroup(),
+				Arrays.asList(SampleDto.LAB_LOCAL_DETAILS),
+				SampleDto.LAB_LOCAL,
+				Arrays.asList(LabLocal.OUTSIDE_COUNTRY),
+				true);
+
+		FieldHelper.setVisibleWhen(
+				getFieldGroup(),
+				Arrays.asList(SampleDto.LAB),
+				SampleDto.LAB_LOCAL,
+				Arrays.asList(LabLocal.IN_COUNTRY),
+				true);
 	}
 
 	protected void initializeRequestedTestFields() {

@@ -13144,4 +13144,9 @@ INSERT INTO schema_version(version_number, comment) VALUES (580, 'Added new fiel
 -- Confirmed as Guinea Worm
 ALTER TABLE samples ADD COLUMN confirmedAsGuineaWorm VARCHAR(255);
 INSERT INTO schema_version(version_number, comment) VALUES (581, 'Added confirmedAsGuineaWorm to samples');
+
+-- IN-COUNTRY OUT-COUNTRY LAB
+ALTER TABLE samples ADD COLUMN labLocal VARCHAR(255);
+ALTER TABLE samples ADD COLUMN labLocalDetails VARCHAR(255);
+INSERT INTO schema_version(version_number, comment) VALUES (582, 'Added labLocal, labLocalDetails to samples');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

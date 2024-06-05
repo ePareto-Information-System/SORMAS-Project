@@ -169,6 +169,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public static final String USE_OF_CLOTH_FILTER = "useOfClothFilter";
 	public static final String FREQUENCY_OF_CHANGING_FILTERS = "frequencyOfChangingFilters";
 	public static final String REMARKS = "remarks";
+	public static final String LAB_LOCAL = "labLocal";
 
 
 	private Case associatedCase;
@@ -347,6 +348,8 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private Date dateSpecimenReceivedAtNational;
 
 	private YesNo confirmedAsGuineaWorm;
+	private LabLocal labLocal;
+	private String labLocalDetails;
 
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -1782,5 +1785,20 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setConfirmedAsGuineaWorm(final YesNo confirmedAsGuineaWorm) {
 		this.confirmedAsGuineaWorm = confirmedAsGuineaWorm;
+	}
+	public LabLocal getLabLocal() {
+		return this.labLocal;
+	}
+
+	public void setLabLocal(final LabLocal labLocal) {
+		this.labLocal = labLocal;
+	}
+
+	public String getLabLocalDetails() {
+		return this.labLocalDetails;
+	}
+
+	public void setLabLocalDetails(final String labLocalDetails) {
+		this.labLocalDetails = labLocalDetails;
 	}
 }
