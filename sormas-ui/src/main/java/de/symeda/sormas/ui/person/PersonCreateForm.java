@@ -581,6 +581,10 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.PHONE, PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PRESENT_CONDITION);
 	}
 
+	public void hideFieldsForGuineaWorm(){
+		setVisible(false, PersonDto.PRESENT_CONDITION);
+	}
+
 
 	public void handleVisibilityForNNT() {
 		setVisible(false, PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PASSPORT_NUMBER, PersonDto.PHONE, PersonDto.EMAIL_ADDRESS, PersonDto.PRESENT_CONDITION);

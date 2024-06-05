@@ -596,6 +596,9 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 					case NEONATAL_TETANUS:
 						personCreateForm.handleVisibilityForNNT();
 						break;
+					case GUINEA_WORM:
+						personCreateForm.hideFieldsForGuineaWorm();
+						break;
 					default:
 						break;
 
