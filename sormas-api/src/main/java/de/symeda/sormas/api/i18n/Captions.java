@@ -2160,8 +2160,7 @@ public interface Captions {
 	String PathogenTest_dateLabResultsSentDistrict = "PathogenTest.dateLabResultsSentDistrict";
 	String PathogenTest_dateLabResultsSentClinician = "PathogenTest.dateLabResultsSentClinician";
 	String PathogenTest_dateDistrictReceivedLabResults = "PathogenTest.dateDistrictReceivedLabResults";
-
-
+	String PathogenTest_finalClassification = "PathogenTest.finalClassification";
 	String patientDiaryCancelError = "patientDiaryCancelError";
 	String patientDiaryOptionsButton = "patientDiaryOptionsButton";
 	String patientDiaryPersonNotExportable = "patientDiaryPersonNotExportable";
