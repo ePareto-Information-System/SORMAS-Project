@@ -376,7 +376,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		typingIdField.setVisible(false);
 
 		if (caseDisease == Disease.CHOLERA) {
-			setVisible(true, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
+			setVisible(true, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS);
 			List<PathogenTestType> choleraPathogenTests = PathogenTestType.getCholeraPathogenTests();
 			Arrays.stream(PathogenTestType.values())
 					.filter(pathogenTestType -> !choleraPathogenTests.contains(pathogenTestType))
@@ -583,10 +583,19 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			}
 
 			if (disease == Disease.CHOLERA) {
-				setVisible(true, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN, PathogenTestDto.OTHER_NOTES_AND_OBSERVATIONS);
-			}
-			else {
-				setVisible(false, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN, PathogenTestDto.OTHER_NOTES_AND_OBSERVATIONS);
+				FieldHelper.setVisibleWhen(
+						getFieldGroup(),
+						PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN,
+						PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS,
+						Arrays.asList(YesNo.YES),
+						true);
+
+				FieldHelper.setVisibleWhen(
+						getFieldGroup(),
+						PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN,
+						PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS,
+						Arrays.asList(YesNo.YES),
+						true);
 			}
 
 			if (disease == Disease.MEASLES) {
