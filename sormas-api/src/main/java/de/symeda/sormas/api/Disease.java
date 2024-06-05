@@ -16,7 +16,9 @@
 package de.symeda.sormas.api;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.sample.PathogenTestResultVariant;
@@ -221,6 +223,16 @@ public enum Disease
 
 	public static final List<Disease> CSM_ONLY = Arrays.asList(CSM);
 	public static final List<Disease> NEW_ONLY = List.of(NEW_INFLUENZA);
+	public static final List<Disease> YF = List.of(YELLOW_FEVER);
+
+	public static final Map<Disease, List<Disease>> diseaseMap = new HashMap<>();
+
+	static {
+		diseaseMap.put(CSM, CSM_ONLY);
+		diseaseMap.put(NEW_INFLUENZA, NEW_ONLY);
+		diseaseMap.put(YELLOW_FEVER, YF);
+		diseaseMap.put(AHF, AHF_DISEASES);
+	}
 
 	public static List<Disease> hideFollowUp = Arrays.asList(
 			YELLOW_FEVER, AHF, CSM, AFP, NEW_INFLUENZA, CHOLERA, MEASLES, CORONAVIRUS, FOODBORNE_ILLNESS, GUINEA_WORM, MONKEYPOX, NEONATAL_TETANUS);
