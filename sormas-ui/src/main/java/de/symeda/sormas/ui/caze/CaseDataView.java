@@ -140,16 +140,18 @@ public class CaseDataView extends AbstractCaseView {
 				smsList.addStyleName(CssStyles.SIDE_COMPONENT);
 				layout.addSidePanelComponent(smsList, SMS_LOC);
 			}
-			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SAMPLES_LAB)
-					&& UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)
-					&& !caze.checkIsUnreferredPortHealthCase()) {
-				SampleListComponent sampleList = new SampleListComponent(
-						new SampleCriteria().caze(getCaseRef()).sampleAssociationType(SampleAssociationType.CASE).disease(caze.getDisease()),
-						this::showUnsavedChangesPopup,
-						isEditAllowed);
-				SampleListComponentLayout sampleListComponentLayout =
-						new SampleListComponentLayout(sampleList, I18nProperties.getString(Strings.infoCreateNewSampleDiscardsChangesCase), isEditAllowed);
-				layout.addSidePanelComponent(sampleListComponentLayout, SAMPLES_LOC);
+			if(disease != Disease.AHF) {
+				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SAMPLES_LAB)
+						&& UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)
+						&& !caze.checkIsUnreferredPortHealthCase()) {
+					SampleListComponent sampleList = new SampleListComponent(
+							new SampleCriteria().caze(getCaseRef()).sampleAssociationType(SampleAssociationType.CASE).disease(caze.getDisease()),
+							this::showUnsavedChangesPopup,
+							isEditAllowed);
+					SampleListComponentLayout sampleListComponentLayout =
+							new SampleListComponentLayout(sampleList, I18nProperties.getString(Strings.infoCreateNewSampleDiscardsChangesCase), isEditAllowed);
+					layout.addSidePanelComponent(sampleListComponentLayout, SAMPLES_LOC);
+				}
 			}
 
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EVENT_SURVEILLANCE)
