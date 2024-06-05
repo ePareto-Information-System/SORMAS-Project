@@ -649,7 +649,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				testTypeField.addItems(PathogenTestType.values());
 			}
 
-			if (Arrays.asList(Disease.MEASLES, Disease.CHOLERA).contains(disease)) {
+			if (Arrays.asList(Disease.MEASLES).contains(disease)) {
 				finalClassificationField.setVisible(true);
 				FieldHelper.updateEnumData(finalClassificationField, FinalClassification.DEFAULT);
 
@@ -658,6 +658,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				finalClassificationField.removeAllItems();
 				FieldHelper.updateEnumData(finalClassificationField, FinalClassification.YF_CLASSIFICATION);
 
+			} else if (disease == Disease.CHOLERA) {
+				finalClassificationField.setVisible(true);
+				FieldHelper.updateEnumData(finalClassificationField, FinalClassification.CHOLERA_CLASSIFICATION);
 			} else {
 				finalClassificationField.setVisible(false);
 				virusDetectionGenotypeField.setVisible(false);
