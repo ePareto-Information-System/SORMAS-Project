@@ -10,7 +10,8 @@ public enum DrinkingWaterSource {
     RIVER,
     DAM,
     LAKE,
-    POND;
+    POND,
+    SACHET_WATER;
 
     @Override
     public String toString() {
