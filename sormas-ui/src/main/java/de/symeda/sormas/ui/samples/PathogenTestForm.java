@@ -36,6 +36,7 @@ import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.ui.utils.*;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -187,11 +188,25 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		}
 
 		if (caseDisease == Disease.CHOLERA) {
-			setVisible(true, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS, PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN, PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN);
+			setVisible(true, PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS);
 			List<PathogenTestType> choleraPathogenTests = PathogenTestType.getCholeraPathogenTests();
 			Arrays.stream(PathogenTestType.values())
 					.filter(pathogenTestType -> !choleraPathogenTests.contains(pathogenTestType))
 					.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
+
+			FieldHelper.setVisibleWhen(
+					getFieldGroup(),
+					PathogenTestDto.DRUGS_SENSITIVE_TO_VIBRIO_STRAIN,
+					PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS,
+					Arrays.asList(YesNo.YES),
+					true);
+
+			FieldHelper.setVisibleWhen(
+					getFieldGroup(),
+					PathogenTestDto.DRUGS_RESISTANT_TO_VIBRIO_STRAIN,
+					PathogenTestDto.VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS,
+					Arrays.asList(YesNo.YES),
+					true);
 
 		}
 
