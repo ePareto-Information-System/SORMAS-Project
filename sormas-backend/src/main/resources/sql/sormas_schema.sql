@@ -14791,4 +14791,7 @@ ALTER TABLE epidata DROP COLUMN consumedatplaces3;
 
 INSERT INTO schema_version (version_number, comment) VALUES (671, 'Dropped food history section columns in epidata');
 
+ALTER TABLE samples ADD COLUMN labLocal VARCHAR(255);
+ALTER TABLE samples ADD COLUMN labLocalDetails VARCHAR(255);
+INSERT INTO schema_version(version_number, comment) VALUES (672, 'Added labLocal, labLocalDetails to samples');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

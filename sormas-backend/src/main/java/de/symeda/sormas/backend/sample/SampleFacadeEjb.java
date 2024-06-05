@@ -1268,7 +1268,8 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setNameOfPersonWhoReceivedSpecimenAtNational(source.getNameOfPersonWhoReceivedSpecimenAtNational());
 		target.setDateSpecimenReceivedAtNational(source.getDateSpecimenReceivedAtNational());
 		target.setConfirmedAsGuineaWorm(source.getConfirmedAsGuineaWorm());
-
+		target.setLabLocal(source.getLabLocal());
+		target.setLabLocalDetails(source.getLabLocalDetails());
 
 		if (source.getSormasToSormasOriginInfo() != null) {
 			target.setSormasToSormasOriginInfo(originInfoService.getByUuid(source.getSormasToSormasOriginInfo().getUuid()));
@@ -1555,7 +1556,8 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setDateFormSentToHigherLevel(source.getDateFormSentToHigherLevel());
 		target.setPersonCompletingForm(source.getPersonCompletingForm());
 		target.setConfirmedAsGuineaWorm(source.getConfirmedAsGuineaWorm());
-
+		target.setLabLocal(source.getLabLocal());
+		target.setLabLocalDetails(source.getLabLocalDetails());
 
 		return target;
 	}

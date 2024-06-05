@@ -2509,7 +2509,8 @@ public interface Captions {
 	String Sample_nameOfPersonWhoReceivedSpecimenAtNational = "Sample.nameOfPersonWhoReceivedSpecimenAtNational";
 	String Sample_dateSpecimenReceivedAtNational = "Sample.dateSpecimenReceivedAtNational";
 	String Sample_confirmedAsGuineaWorm = "Sample.confirmedAsGuineaWorm";
-
+	String Sample_labLocal = "Sample.labLocal";
+	String Sample_labLocalDetails = "Sample.labLocalDetails";
 	String Sample_laboratoryName = "Sample.laboratoryName";
 	String Sample_laboratorySampleDateReceived = "Sample.laboratorySampleDateReceived";
 	String Sample_laboratoryNumber = "Sample.laboratoryNumber";
