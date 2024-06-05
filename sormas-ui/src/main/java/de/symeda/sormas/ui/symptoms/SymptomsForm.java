@@ -1180,7 +1180,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED, CaseOutcome.UNKNOWN));
 		} else if(disease == Disease.CHOLERA) {
 			setVisible(true, DIARRHOEA, VOMITING, DEHYDRATION, ABDOMINAL_PAIN, ABDOMINAL_CRAMPS, FEVER, HEADACHES, FATIGUE);
-			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED, CaseOutcome.UNKNOWN));
+			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED));
 		}else if (disease == Disease.GUINEA_WORM) {
 			addField(FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM, NullableOptionGroup.class);
 			addField(FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS, TextField.class);
