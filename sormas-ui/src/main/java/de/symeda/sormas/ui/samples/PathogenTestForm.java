@@ -381,6 +381,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		}
 
 		diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
+		List<Disease> diseases = Disease.diseaseMap.get(caseDisease);
 
 		if (caseDisease == Disease.AHF) {
 			diseaseField.removeAllItems();
@@ -395,6 +396,9 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			FieldHelper.updateEnumData(diseaseField, Disease.NEW_ONLY);
 			diseaseField.setEnabled(false);
 		} else if (caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
+			FieldHelper.updateEnumData(diseaseField, Disease.AHF_DISEASES);
+		}
+		else if (caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
 			for (Disease disease1 : Disease.values()) {
 				if (disease1.getName().equals(sample.getSuspectedDisease().getName())) {
 					diseaseField.removeAllItems();
@@ -404,6 +408,12 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			}
 		} else if (Arrays.asList(Disease.MEASLES, Disease.CHOLERA, Disease.CORONAVIRUS, Disease.GUINEA_WORM).contains(caseDisease)) {
 
+		} else if (diseases != null) {
+			diseaseField.removeAllItems();
+			FieldHelper.updateEnumData(diseaseField, diseases);
+            diseaseField.setEnabled(caseDisease != Disease.CSM && caseDisease != Disease.NEW_INFLUENZA && caseDisease != Disease.YELLOW_FEVER);
+		} else {
+			diseaseField.setEnabled(true);
 		}
 
 
@@ -610,6 +620,10 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 			}
 			else if(disease == Disease.CSM) {
+				List<FinalClassification> measlesClass = FinalClassification.measlesClass;
+				FieldHelper.updateEnumData(finalClassificationField, measlesClass);
+
+			} else if(disease == Disease.CSM) {
 				List<PathogenTestType> csmPathogenTests = PathogenTestType.getCSMTestTypes();
 				Arrays.stream(PathogenTestType.values())
 						.filter(pathogenTestType -> !csmPathogenTests.contains(pathogenTestType))
@@ -875,6 +889,15 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			datelabResultsSentDistrict.setVisible(true);
 			dateDistrictReceivedLabResults.setVisible(true);
 			virusDetectionGenotypeField.setVisible(true);
+
+			List<FinalClassification> yellowFeverClass = FinalClassification.yellowFeverClass;
+			FieldHelper.updateEnumData(finalClassificationField, yellowFeverClass);
+			finalClassificationField.setCaption("Final Classification");
+
+			List<PathogenTestType> ahfMeaselesPathogenTests = PathogenTestType.getMeaslesTestTypes();
+			Arrays.stream(PathogenTestType.values())
+					.filter(pathogenTestType -> !ahfMeaselesPathogenTests.contains(pathogenTestType))
+					.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
 		}
 
 		FieldHelper.setVisibleWhen(

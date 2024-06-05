@@ -158,9 +158,6 @@ public class PathogenTestDto extends PseudonymizableDto {
 	public static final String SAMPLE_TEST_RESULT_IGG_DATE = "sampleTestResultIGGDate";
 	public static final String SAMPLE_TEST_RESULT_IMMUNO = "sampleTestResultImmuno";
 	public static final String SAMPLE_TEST_RESULT_IMMUNO_DATE = "sampleTestResultImmunoDate";
-
-
-
 	public static final String VIRUS_DETECTION_GENOTYPE = "virusDetectionGenotype";
 	public static final String VIBRIO_CHOLERAE_IDENTIFIED_IN_STOOLS = "vibrioCholeraeIdentifiedInStools";
 	public static final String DRUGS_SENSITIVE_TO_VIBRIO_STRAIN = "drugsSensitiveToVibrioStrain";
