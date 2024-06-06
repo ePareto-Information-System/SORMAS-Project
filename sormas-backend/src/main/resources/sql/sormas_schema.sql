@@ -13696,4 +13696,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (611, 'Added column 
 ALTER TABLE pathogentest ADD COLUMN finalClassification varchar(255) NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (612, 'Added finalClassification to pathogentest');
 
+ALTER TABLE person ADD COLUMN ethnicity VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (613, 'Added ethnicity to person');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
