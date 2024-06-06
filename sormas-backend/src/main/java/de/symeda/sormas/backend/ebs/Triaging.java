@@ -69,6 +69,7 @@ public class Triaging extends AbstractDomainObject {
 	public static final String OUTCOME_SUPERVISOR = "outcomeSupervisor";
 	public static final String NOT_SIGNAL = "notSignal";
 	public static final String CATEGORY_DETAILS_LEVEL = "categoryDetailsLevel";
+	public static final String POTENTIAL_RISK = "potentialRisk";
 
 
 
@@ -102,6 +103,7 @@ public class Triaging extends AbstractDomainObject {
 	private User responsibleUser;
 	private OutComeSupervisor outcomeSupervisor;
 	private boolean notSignal;
+	private YesNo potentialRisk;
 
 	public EbsReferenceDto toReference() {
 		return new EbsReferenceDto(getUuid());
@@ -497,5 +499,13 @@ public class Triaging extends AbstractDomainObject {
 
 	public void setCategoryDetailsLevel(CategoryDetailsLevel categoryDetailsLevel) {
 		this.categoryDetailsLevel = categoryDetailsLevel;
+	}
+
+	public YesNo getPotentialRisk() {
+		return potentialRisk;
+	}
+
+	public void setPotentialRisk(YesNo potentialRisk) {
+		this.potentialRisk = potentialRisk;
 	}
 }
