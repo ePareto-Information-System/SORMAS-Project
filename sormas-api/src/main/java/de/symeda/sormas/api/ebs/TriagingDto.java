@@ -60,6 +60,7 @@ public class TriagingDto extends EntityDto {
 	public static final String OUTCOME_SUPERVISOR = "outcomeSupervisor";
 	public static final String NOT_SIGNAL = "notSignal";
 	public static final String CATEGORY_DETAILS_LEVEL = "categoryDetailsLevel";
+	public static final String POTENTIAL_RISK = "potentialRisk";
 
 
 
@@ -89,6 +90,7 @@ public class TriagingDto extends EntityDto {
 	private OutComeSupervisor outcomeSupervisor;
 	private boolean notSignal;
 	private CategoryDetailsLevel categoryDetailsLevel;
+	private YesNo potentialRisk;
 
 
 
@@ -303,5 +305,13 @@ public class TriagingDto extends EntityDto {
 
 	public void setCategoryDetailsLevel(CategoryDetailsLevel categoryDetailsLevel) {
 		this.categoryDetailsLevel = categoryDetailsLevel;
+	}
+
+	public YesNo getPotentialRisk() {
+		return potentialRisk;
+	}
+
+	public void setPotentialRisk(YesNo potentialRisk) {
+		this.potentialRisk = potentialRisk;
 	}
 }

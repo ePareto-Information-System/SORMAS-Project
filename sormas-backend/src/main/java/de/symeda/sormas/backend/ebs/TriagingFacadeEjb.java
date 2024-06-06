@@ -52,6 +52,7 @@ public class TriagingFacadeEjb implements TriagingFacade {
 		target.setOutcomeSupervisor(source.getOutcomeSupervisor());
 		target.setNotSignal(source.getNotSignal());
 		target.setCategoryDetailsLevel(source.getCategoryDetailsLevel());
+		target.setPotentialRisk(source.getPotentialRisk());
 		return target;
 	}
 
@@ -89,6 +90,7 @@ public class TriagingFacadeEjb implements TriagingFacade {
 		target.setOutcomeSupervisor(source.getOutcomeSupervisor());
 		target.setNotSignal(source.getNotSignal());
 		target.setCategoryDetailsLevel(source.getCategoryDetailsLevel());
+		target.setPotentialRisk(source.getPotentialRisk());
 		return target;
 	}
 
