@@ -250,16 +250,13 @@ public class EBSView extends AbstractView {
 
             ebsFilterForm.addApplyHandler(e -> {
                 if (isDefaultViewType()) {
+                    navigateTo(ebsCriteria);
                 ((EbsSignalGrid) grid).reload();
                 }else {
                     ((EbsGrid) grid).reload();
+                    navigateTo(ebsCriteria);
                 }
             });
-//        else {
-//            ebsFilterForm.addApplyHandler(e -> {
-//                ((EbsGrid) grid).reload();
-//            });
-//        }
         filterLayout.addComponent(ebsFilterForm);
 
         return filterLayout;
