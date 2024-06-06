@@ -177,15 +177,6 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 		this.sourceInformation = srcType;
 	}
 
-	@Enumerated(EnumType.STRING)
-	public EbsTriagingDecision getTriagingDecision() {
-		return triagingDecision;
-	}
-
-	public void setTriagingDecision(EbsTriagingDecision triagingDecision) {
-		this.triagingDecision = triagingDecision;
-	}
-
 	public Date getDateOnset() {
 		return dateOnset;
 	}
@@ -371,6 +362,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 		this.other = other;
 	}
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "triaging_id")
 	public Triaging getTriaging() {
 
 		if (triaging == null) {
@@ -384,6 +376,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	}
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "signalverification_id")
 	public SignalVerification getSignalVerification() {
 		if (signalVerification == null) {
 			signalVerification = new SignalVerification();
