@@ -15,26 +15,18 @@
 
 package de.symeda.sormas.backend.ebs;
 
-import de.symeda.sormas.backend.action.Action;
-import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.QueryJoins;
-import de.symeda.sormas.backend.event.Event;
-import de.symeda.sormas.backend.event.EventGroup;
-import de.symeda.sormas.backend.event.EventParticipant;
-import de.symeda.sormas.backend.event.EventParticipantJoins;
 import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.infrastructure.district.District;
 import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.location.LocationJoins;
-import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.user.User;
 
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
-import java.util.Objects;
 
 public class EbsJoins extends QueryJoins<Ebs> {
 
@@ -45,20 +37,13 @@ public class EbsJoins extends QueryJoins<Ebs> {
 	private LocationJoins locationJoins;
 
 	private Join<Ebs, Triaging> triaging;
-
 	private Join<Ebs, SignalVerification> signalVerification;
-
 	private Join<Ebs, RiskAssessment> riskAssessment;
-
 	private Join<Ebs, EbsAlert> ebsAlert;
 
 	public EbsJoins(From<?, Ebs> event) {
 		super(event);
 	}
-
-	/**
-	 * For use cases where the EventParticipant is the origin for the query
-	 */
 
 	public Join<Ebs, User> getReportingUser() {
 		return getOrCreate(reportingUser, Ebs.REPORTING_USER, JoinType.LEFT, this::setReportingUser);
@@ -109,16 +94,15 @@ public class EbsJoins extends QueryJoins<Ebs> {
 	}
 
 	public Join<Ebs, Triaging> getTriaging() {
-		return triaging;
+		return getOrCreate(triaging, Ebs.TRIAGING, JoinType.LEFT, this::setTriaging);
 	}
 
 	public void setTriaging(Join<Ebs, Triaging> triaging) {
 		this.triaging = triaging;
 	}
 
-
 	public Join<Ebs, SignalVerification> getSignalVerification() {
-		return signalVerification;
+		return getOrCreate(signalVerification, Ebs.SIGNAL_VERIFICATION, JoinType.LEFT, this::setSignalVerification);
 	}
 
 	public void setSignalVerification(Join<Ebs, SignalVerification> signalVerification) {
@@ -132,6 +116,7 @@ public class EbsJoins extends QueryJoins<Ebs> {
 	public void setRiskAssessment(Join<Ebs, RiskAssessment> riskAssessment) {
 		this.riskAssessment = riskAssessment;
 	}
+
 	public Join<Ebs, EbsAlert> getEbsAlert() {
 		return ebsAlert;
 	}
@@ -139,5 +124,4 @@ public class EbsJoins extends QueryJoins<Ebs> {
 	public void setEbsAlert(Join<Ebs, EbsAlert> ebsAlert) {
 		this.ebsAlert = ebsAlert;
 	}
-
 }
