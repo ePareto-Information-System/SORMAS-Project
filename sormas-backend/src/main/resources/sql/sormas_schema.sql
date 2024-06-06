@@ -13720,3 +13720,6 @@ CREATE TABLE ebsAlert_history (
                              LIKE ebsAlert INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
 );
 INSERT INTO schema_version (version_number, comment) VALUES (591, 'added ebs,triaging,signalverification,riskassessment and alert');
+
+ALTER TABLE triaging ADD COLUMN potentialrisk VARCHAR(3);
+INSERT INTO schema_version (version_number, comment) VALUES (592, 'added potentail risk to ebs');
