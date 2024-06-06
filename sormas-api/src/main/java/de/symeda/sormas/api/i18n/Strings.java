@@ -623,6 +623,7 @@ public interface Strings {
 	String headingHospitalization = "headingHospitalization";
 	String headingSignalInformation = "headingSignalInformation";
 	String headingSignalVerification = "headingSignalVerification";
+	String headingRiskVerification = "headingRiskVerification";
 	String headingEventDetails = "headingEventDetails";
 	String headingTriagingDecision = "headingTriagingDecision";
 	String headingSixtyDay = "headingSixtyDay";

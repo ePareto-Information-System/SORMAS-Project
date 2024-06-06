@@ -27,7 +27,7 @@ public class RiskAssessmentDto extends PseudonymizableDto {
 
     public static String CONTROL_MEASURES_COMMENT = "controlMeasuresComment";
 
-    public static String RISK_ASSESSMENT = "riskAssessment";
+    public static String ASSESSMENT_LEVEL = "riskAssessment";
 
     public static String ASSESSMENT_DATE = "assessmentDate";
 

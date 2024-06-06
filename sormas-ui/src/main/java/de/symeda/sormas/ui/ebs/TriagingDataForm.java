@@ -38,9 +38,10 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 
     private static final String HTML_LAYOUT =
             loc(SIGNAL_INFORMATION_LOC) +
-                    fluidRowLocs(TriagingDto.EARLY_WARNING) +
                     fluidRowLocs(TriagingDto.SPECIFIC_SIGNAL) +
+                    fluidRowLocs(TriagingDto.POTENTIAL_RISK) +
                     fluidRowLocs(TriagingDto.HEALTH_CONCERN) +
+                    fluidRowLocs(TriagingDto.REFERRED_TO, "") +
                     fluidRowLocs(TriagingDto.OUTCOME_SUPERVISOR,"") +
                     fluidRowLocs(TriagingDto.SIGNAL_CATEGORY) +
                     fluidRowLocs(TriagingDto.CATEGORY_DETAILS_LEVEL) +
@@ -51,11 +52,10 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                     fluidRowLocs(TriagingDto.ANIMAL_FACILITY_CATEGORY_DETAILS,"") +
                     fluidRowLocs(TriagingDto.ENVIRONMENTAL_CATEGORY_DETAILS,"") +
                     fluidRowLocs(TriagingDto.POE_CATEGORY_DETAILS,"") +
-                    fluidRowLocs(TriagingDto.NOT_SIGNAL,"") +
                     fluidRowLocs(TriagingDto.OCCURRENCE_PREVIOUSLY) +
                     loc(TRIAGING_DECISION_LOC) +
-                    fluidRowLocs(TriagingDto.TRIAGING_DECISION,TriagingDto.DATE_OF_DECISION) +
-                    fluidRowLocs(TriagingDto.REFERRED_TO, "");
+                    fluidRowLocs(TriagingDto.TRIAGING_DECISION,TriagingDto.DATE_OF_DECISION);
+
 
     TriagingDataForm(EbsDto ebsDto, Class<? extends EntityDto> parentClass, boolean isPseudonymized, boolean inJurisdiction, boolean isEditAllowed){
         super(
@@ -77,6 +77,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
     private TextField referredTo;
     private NullableOptionGroup previousOccurrence;
     private NullableOptionGroup healthConcern;
+    private NullableOptionGroup potentialRisk;
     private Label headingSignalInformation;
     private OptionGroup humanFacCategoryDetails;
     private OptionGroup humanLabCategoryDetails;
@@ -116,12 +117,11 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         headingTriagingDecision.addStyleName(H3);
         getContent().addComponent(headingTriagingDecision, TRIAGING_DECISION_LOC);
 
-        NullableOptionGroup earlyWarning = addField(TriagingDto.EARLY_WARNING, NullableOptionGroup.class);
         NullableOptionGroup specificSignal = addField(TriagingDto.SPECIFIC_SIGNAL, NullableOptionGroup.class);
         healthConcern = addField(TriagingDto.HEALTH_CONCERN, NullableOptionGroup.class);
+        potentialRisk = addField(TriagingDto.POTENTIAL_RISK, NullableOptionGroup.class);
         signalCategory = addField(TriagingDto.SIGNAL_CATEGORY, NullableOptionGroup.class);
         OptionGroup categoryLevel = addField(TriagingDto.CATEGORY_DETAILS_LEVEL, OptionGroup.class);
-        CheckBox notSignal =  addField(TriagingDto.NOT_SIGNAL, CheckBox.class);
         humanCommCategoryDetails = addField(TriagingDto.HUMAN_COMMUNITY_CATEGORY_DETAILS, OptionGroup.class);
         humanCommCategoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
         humanCommCategoryDetails.setMultiSelect(true);
@@ -197,19 +197,33 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         dateOfDecision = addField(TriagingDto.DATE_OF_DECISION, DateField.class);
         referredTo = addField(TriagingDto.REFERRED_TO, TextField.class);
         ComboBox outcomeSupervisor = addField(TriagingDto.OUTCOME_SUPERVISOR, ComboBox.class);
-
+        referredTo.setVisible(false);
+        potentialRisk.setVisible(false);
+        healthConcern.setVisible(false);
         EbsDto selectedEbs = getEbsDto();
+
+        FieldHelper.setVisibleWhen(
+                getFieldGroup(),
+                Arrays.asList(TriagingDto.OCCURRENCE_PREVIOUSLY),
+                TriagingDto.POTENTIAL_RISK,
+                Arrays.asList(YesNo.YES),
+                true);
+        FieldHelper.setVisibleWhen(
+                getFieldGroup(),
+                Arrays.asList(TriagingDto.OCCURRENCE_PREVIOUSLY),
+                TriagingDto.SPECIFIC_SIGNAL,
+                Arrays.asList(YesNo.YES),
+                true);
 
         specificSignal.addValueChangeListener(e->{
             if(Objects.equals(e.getProperty().getValue().toString(), "[YES]")){
-                healthConcern.setVisible(true);
+                healthConcern.setVisible(false);
+                potentialRisk.setVisible(false);
                 signalCategory.setVisible(true);
-                notSignal.setVisible(false);
                 outcomeSupervisor.setVisible(false);
             }else if ((Objects.equals(e.getProperty().getValue().toString(), "[NO]"))){
-                healthConcern.setVisible(false);
+                potentialRisk.setVisible(true);
                 signalCategory.setVisible(false);
-                notSignal.setVisible(true);
                 outcomeSupervisor.setVisible(true);
                 categoryLevel.setVisible(false);
                 selectedEbs.getTriaging().setCategoryDetailsLevel(null);
@@ -272,20 +286,25 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             }
         });
 
-//        outcomeSupervisor.addValueChangeListener(event -> {
-//            OutComeSupervisor supervisor = (OutComeSupervisor) event.getProperty().getValue();
-//            switch (supervisor) {
-//                case ISNOTSIGNAL:
-//                    showNonSignalDetails();
-//                    break;
-//                case NOTREVIEWED:
-//                    hideAllDetails();
-//                    break;
-//                default:
-//                    showSignalDetails();
-//                    break;
-//            }
-//        });
+        potentialRisk.addValueChangeListener(e->{
+            if (e.getProperty().getValue().toString().equals("[NO]")) {
+                healthConcern.setVisible(true);
+            }
+            else if (e.getProperty().getValue().toString().equals("[YES]")) {
+                healthConcern.setVisible(false);
+                referredTo.setVisible(false);
+            }
+        });
+        healthConcern.addValueChangeListener(e->{
+            if (e.getProperty().getValue().toString().equals("[NO]")) {
+                triagingDecision.setValue(EbsTriagingDecision.DISCARD);
+                referredTo.setVisible(false);
+            }
+            else if (e.getProperty().getValue().toString().equals("[YES]")) {
+                referredTo.setVisible(true);
+            }
+        });
+
 
         if (selectedEbs != null) {
             TriagingDto selectedTriaging = selectedEbs.getTriaging();
@@ -300,9 +319,9 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 signalCategory.setVisible(true);
             }else if (Objects.equals(selectedEbs.getTriaging().getSpecificSignal().toString(), "NO")) {
                 healthConcern.setVisible(false);
+                potentialRisk.setVisible(false);
                 signalCategory.setVisible(false);
                 categoryLevel.setVisible(false);
-                notSignal.setVisible(true);
                 outcomeSupervisor.setVisible(true);
                 humanCommCategoryDetails.setVisible(false);
                 humanFacCategoryDetails.setVisible(false);
@@ -319,7 +338,6 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             outcomeSupervisor.setVisible(false);
             signalCategory.setVisible(false);
             categoryLevel.setVisible(false);
-            notSignal.setVisible(false);
         }
         initializeVisibilitiesAndAllowedVisibilities();
         initializeAccessAndAllowedAccesses();

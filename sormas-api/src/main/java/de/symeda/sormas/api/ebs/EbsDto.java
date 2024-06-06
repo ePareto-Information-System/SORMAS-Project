@@ -280,7 +280,7 @@ public class EbsDto extends PseudonymizableDto {
 	public void setSourceInformation(EbsSourceType sourceInformation) {
 		this.sourceInformation = sourceInformation;
 	}
-public MediaScannningType getScanningType() {
+	public MediaScannningType getScanningType() {
 		return scanningType;
 	}
 
@@ -294,7 +294,7 @@ public MediaScannningType getScanningType() {
 	public void setAutomaticScanningType(AutomaticScanningType automaticScanningType) {
 		this.automaticScanningType = automaticScanningType;
 	}
-public ManualScanningType getManualScanningType() {
+	public ManualScanningType getManualScanningType() {
 		return manualScanningType;
 	}
 

@@ -15,13 +15,9 @@
 package de.symeda.sormas.backend.ebs;
 
 import de.symeda.sormas.api.ebs.*;
-import de.symeda.sormas.api.event.*;
 import de.symeda.sormas.api.externaldata.HasExternalData;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.common.CoreAdo;
-import de.symeda.sormas.backend.event.SpecificRiskConverter;
 import de.symeda.sormas.backend.location.Location;
-import de.symeda.sormas.backend.share.ExternalShareInfo;
 import de.symeda.sormas.backend.sormastosormas.entities.SormasToSormasShareable;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
 import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo;
@@ -64,7 +60,6 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public static final String REPORT_LON = "reportLon";
 	public static final String SORMAS_TO_SORMAS_ORIGIN_INFO = "sormasToSormasOriginInfo";
 	public static final String SORMAS_TO_SORMAS_SHARES = "sormasToSormasShares";
-	public static final String AUTOMATIC_SCANNING_TYPE = "automaticScanningType";
 	public static final String MANUAL_SCANNING_TYPE = "manualScanningType";
 	public static final String SCANNING_TYPE = "scanningType";
 	public static final String OTHER = "other";
@@ -86,8 +81,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	private Date reportDateTime;
 	private Date dateOnset;
 	private User reportingUser;
-	private EbsSourceType sourceInformation;
-	private EbsTriagingDecision triagingDecision;
+	private EbsSourceType sourceInformation;;
 	private User responsibleUser;
 	private String sourceName;
 	private String sourceUrl;
@@ -175,15 +169,6 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 
 	public void setSourceInformation(EbsSourceType srcType) {
 		this.sourceInformation = srcType;
-	}
-
-	@Enumerated(EnumType.STRING)
-	public EbsTriagingDecision getTriagingDecision() {
-		return triagingDecision;
-	}
-
-	public void setTriagingDecision(EbsTriagingDecision triagingDecision) {
-		this.triagingDecision = triagingDecision;
 	}
 
 	public Date getDateOnset() {
@@ -288,10 +273,10 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	}
 
 	@ManyToOne(cascade = {
-		CascadeType.PERSIST,
-		CascadeType.MERGE,
-		CascadeType.DETACH,
-		CascadeType.REFRESH })
+			CascadeType.PERSIST,
+			CascadeType.MERGE,
+			CascadeType.DETACH,
+			CascadeType.REFRESH })
 	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
 		return sormasToSormasOriginInfo;
 	}
@@ -371,6 +356,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 		this.other = other;
 	}
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "triaging_id")
 	public Triaging getTriaging() {
 
 		if (triaging == null) {
@@ -384,6 +370,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	}
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "signalverification_id")
 	public SignalVerification getSignalVerification() {
 		if (signalVerification == null) {
 			signalVerification = new SignalVerification();

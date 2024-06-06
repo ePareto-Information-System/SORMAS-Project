@@ -22,10 +22,7 @@ import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.user.User;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -69,6 +66,7 @@ public class Triaging extends AbstractDomainObject {
 	public static final String OUTCOME_SUPERVISOR = "outcomeSupervisor";
 	public static final String NOT_SIGNAL = "notSignal";
 	public static final String CATEGORY_DETAILS_LEVEL = "categoryDetailsLevel";
+	public static final String POTENTIAL_RISK = "potentialRisk";
 
 
 
@@ -102,6 +100,7 @@ public class Triaging extends AbstractDomainObject {
 	private User responsibleUser;
 	private OutComeSupervisor outcomeSupervisor;
 	private boolean notSignal;
+	private YesNo potentialRisk;
 
 	public EbsReferenceDto toReference() {
 		return new EbsReferenceDto(getUuid());
@@ -124,6 +123,7 @@ public class Triaging extends AbstractDomainObject {
 		this.specificSignal = specificSignal;
 	}
 
+	@Enumerated(EnumType.STRING)
 	public SignalCategory getSignalCategory() {
 		return signalCategory;
 	}
@@ -405,33 +405,13 @@ public class Triaging extends AbstractDomainObject {
 		this.occurrencePreviously = occurrencePreviously;
 	}
 
+	@Enumerated(EnumType.STRING)
 	public EbsTriagingDecision getTriagingDecision() {
-//		if (triagingDecision == null) {
-//			if (StringUtils.isEmpty(triagingDecisionString)) {
-//				triagingDecision = new HashSet<>();
-//			} else {
-//				triagingDecision =
-//						Arrays.stream(triagingDecisionString.split(",")).map(EbsTriagingDecision::valueOf).collect(Collectors.toSet());
-//			}
-//		}
 		return triagingDecision;
 	}
 
 	public void setTriagingDecision(EbsTriagingDecision triagingDecision) {
 		this.triagingDecision = triagingDecision;
-//		if (this.triagingDecision == null) {
-//			return;
-//		}
-
-//		StringBuilder sb = new StringBuilder();
-//		triagingDecision.stream().forEach(t -> {
-//			sb.append(t.name());
-//			sb.append(",");
-//		});
-//		if (sb.length() > 0) {
-//			sb.substring(0, sb.lastIndexOf(","));
-//		}
-//		triagingDecisionString = sb.toString();
 	}
 
 	public Date getDecisionDate() {
@@ -473,7 +453,7 @@ public class Triaging extends AbstractDomainObject {
 	public void setTriagingDecisionString(String triagingDecisionString) {
 		this.triagingDecisionString = triagingDecisionString;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public OutComeSupervisor getOutcomeSupervisor() {
 		return outcomeSupervisor;
 	}
@@ -490,12 +470,20 @@ public class Triaging extends AbstractDomainObject {
 	public void setNotSignal(boolean notSignal) {
 		this.notSignal = notSignal;
 	}
-
+	@Enumerated(EnumType.STRING)
 	public CategoryDetailsLevel getCategoryDetailsLevel() {
 		return categoryDetailsLevel;
 	}
 
 	public void setCategoryDetailsLevel(CategoryDetailsLevel categoryDetailsLevel) {
 		this.categoryDetailsLevel = categoryDetailsLevel;
+	}
+
+	public YesNo getPotentialRisk() {
+		return potentialRisk;
+	}
+
+	public void setPotentialRisk(YesNo potentialRisk) {
+		this.potentialRisk = potentialRisk;
 	}
 }

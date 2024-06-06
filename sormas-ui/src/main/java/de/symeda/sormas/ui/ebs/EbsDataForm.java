@@ -67,9 +67,9 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
     private static final String HTML_LAYOUT =
             loc(INFORMATION_SOURCE_HEADING_LOC) +
                     fluidRowLocs(EbsDto.SOURCE_INFORMATION, EbsDto.CATEGORY_OF_INFORMANT, EbsDto.REPORT_DATE_TIME) +
-                    fluidRowLocs(EbsDto.SCANNING_TYPE, EbsDto.AUTOMATIC_SCANNING_TYPE,EbsDto.MANUAL_SCANNING_TYPE,EbsDto.OTHER) +
-                    fluidRowLocs(EbsDto.SOURCE_NAME,EbsDto.SOURCE_URL,EbsDto.INFORMANT_NAME, EbsDto.INFORMANT_TEL) +
-                    fluidRowLocs(EbsDto.RISK_LEVEL) +
+                    fluidRowLocs(EbsDto.INFORMANT_TEL,EbsDto.INFORMANT_NAME, "") +
+                    fluidRowLocs(EbsDto.SCANNING_TYPE, EbsDto.AUTOMATIC_SCANNING_TYPE) +
+                    fluidRowLocs(EbsDto.SOURCE_NAME,EbsDto.MANUAL_SCANNING_TYPE,EbsDto.SOURCE_URL,EbsDto.OTHER) +
 
                     loc(PLACE_DETECTION_HEADING_LOC) +
                     fluidRowLocs(EbsDto.EBS_LOCATION) +
@@ -85,16 +85,17 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
     private List<UserReferenceDto> regionEventResponsibles = new ArrayList<>();
     private List<UserReferenceDto> districtEventResponsibles = new ArrayList<>();
     private LocationEditForm locationForm;
-
-    public EbsDataForm(boolean create, boolean isPseudonymized, boolean inJurisdiction) {
+    private final EbsDto ebs;
+    public EbsDataForm(EbsDto ebsDto,boolean create, boolean isPseudonymized, boolean inJurisdiction) {
         super(
                 EbsDto.class,
                 EbsDto.I18N_PREFIX,
                 false,
                 FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-                createFieldAccessCheckers(isPseudonymized, inJurisdiction, true));
+                createFieldAccessCheckers(isPseudonymized, inJurisdiction, true),ebsDto);
 
         isCreateForm = create;
+        this.ebs = ebsDto;
         this.isPseudonymized = isPseudonymized;
         this.inJurisdiction = inJurisdiction;
 
@@ -136,6 +137,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
         getContent().addComponent(locationHeadingLabel, PLACE_DETECTION_HEADING_LOC);
         TextField contactName = addField(EbsDto.INFORMANT_NAME,TextField.class);
         TextField contactPhone = addField(EbsDto.INFORMANT_TEL, TextField.class);
+        contactPhone.addValidator(new PhoneNumberValidator(I18nProperties.getValidationError(Validations.validPhoneNumber, contactPhone.getCaption())));
         Label contactPhoneLabel = new Label(I18nProperties.getString(Strings.messageEventExternalTokenWarning));
         contactPhoneLabel.addStyleNames(VSPACE_3, LABEL_WHITE_SPACE_NORMAL);
         getContent().addComponent(contactPhoneLabel, CONTACT_PHONE_NUMBER_WARNING_LOC);
@@ -160,7 +162,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
         TextField personDesignation = addField(EbsDto.PERSON_DESIGNATION, TextField.class);
         TextField personRegistering = addField(EbsDto.PERSON_REGISTERING, TextField.class);
         TextField personPhone = addField(EbsDto.PERSON_PHONE, TextField.class);
-
+        personPhone.addValidator(new PhoneNumberValidator(I18nProperties.getValidationError(Validations.validPhoneNumber, personPhone.getCaption())));
         addField(
                 EbsDto.EBS_LOCATION,
                 new LocationEditForm(fieldVisibilityCheckers, createFieldAccessCheckers(isPseudonymized, inJurisdiction, false))).setCaption(null);
@@ -187,8 +189,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
         initializeVisibilitiesAndAllowedVisibilities();
         initializeAccessAndAllowedAccesses();
 
-
-        setRequired(true, EbsDto.SOURCE_INFORMATION, EbsDto.REPORT_DATE_TIME,EbsDto.END_DATE);
+        setRequired(true, EbsDto.SOURCE_INFORMATION, EbsDto.REPORT_DATE_TIME,EbsDto.END_DATE,EbsDto.CATEGORY_OF_INFORMANT,EbsDto.INFORMANT_TEL,EbsDto.DESCRIPTION_OCCURRENCE,EbsDto.PERSON_DESIGNATION,EbsDto.PERSON_REGISTERING,EbsDto.PERSON_PHONE);
 
         FieldHelper.setVisibleWhen(
                 getFieldGroup(),
@@ -259,7 +260,11 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
                 responsibleUserField,
                 srcType,
                 scanningType,
-                automaticScanningType);
+                automaticScanningType,
+                categoryInformant,
+                contactPhone,
+                descriptionOccurrence,
+                personDesignation);
 
         srcType.addValueChangeListener(valueChangeEvent -> {
             List<PersonReporting> itemsToAdd;
@@ -297,14 +302,22 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
                 itemsToAdd = Collections.emptyList(); // Handle unknown EbsSourceType if necessary
             }
 
-            categoryInformant.removeAllItems();
-            FieldHelper.updateEnumData(categoryInformant, itemsToAdd);
+            Arrays.stream(PersonReporting.values())
+                    .filter(personReporting -> !itemsToAdd.contains(personReporting))
+                    .forEach(personReporting -> categoryInformant.removeItem(personReporting));
+
+//            FieldHelper.updateEnumData(categoryInformant, itemsToAdd);
+
         });
 
         manualScanningType.addValueChangeListener(valueChangeEvent -> {
             Object value = manualScanningType.getValue();
+            if (value == null) return;
             if (value.equals(ManualScanningType.ONLINE)){
                 sourceName.setCaption("NAME OF WEBSITE");
+                contactPhone.setVisible(false);
+            }else{
+                sourceName.setCaption("NAME OF MEDIA");
                 contactPhone.setVisible(false);
             }
         });

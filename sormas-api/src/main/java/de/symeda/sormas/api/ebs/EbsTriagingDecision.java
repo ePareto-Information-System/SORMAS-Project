@@ -21,8 +21,7 @@ public enum EbsTriagingDecision {
 
 	DISCARD,
 	MORE_INFORMATION,
-	VERIFY,
-	REFER;
+	VERIFY;
 
 	@Override
 	public String toString() {

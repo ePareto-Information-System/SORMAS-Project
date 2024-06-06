@@ -15,20 +15,22 @@
 package de.symeda.sormas.ui.ebs;
 
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ebs.*;
 import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 
 import java.util.List;
+
+import static com.vaadin.ui.Notification.Type.ERROR_MESSAGE;
+import static com.vaadin.ui.Notification.Type.TRAY_NOTIFICATION;
 
 
 public class EbsAlertView extends AbstractEbsView {
@@ -45,6 +47,7 @@ public class EbsAlertView extends AbstractEbsView {
 	@Override
 	protected void initView(String params) {
 		List<EbsAlertDto> ebsAlertDto = FacadeProvider.getAlertFacade().findBy(new RiskAssessmentCriteria().Ebs(new EbsReferenceDto(getEbsRef().getUuid())));
+		EbsDto ebsDto = ControllerProvider.getEbsController().findEbs(getEbsRef().getUuid());
 		if (ebsAlertDto.isEmpty()) {
 			ControllerProvider.getEbsController().createAlertComponent(getEbsRef().getUuid(),
 					isEditAllowed() && UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT));
@@ -56,6 +59,11 @@ public class EbsAlertView extends AbstractEbsView {
 				e -> ControllerProvider.getEbsController().createAlertComponent(getEbsRef().getUuid(),
 						isEditAllowed() && UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT)),
 				ValoTheme.BUTTON_PRIMARY);
+
+		if (ControllerProvider.getEbsController().isSignalVerified(getEbsRef().getUuid())) {
+			addButton.setEnabled(false);
+			Notification.show(I18nProperties.getCaption(Captions.ebsAlertDisabled), ERROR_MESSAGE);
+		}
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setSpacing(true);

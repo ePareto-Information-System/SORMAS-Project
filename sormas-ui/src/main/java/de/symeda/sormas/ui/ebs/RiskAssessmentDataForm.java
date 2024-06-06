@@ -48,7 +48,7 @@ public class RiskAssessmentDataForm extends AbstractEditForm<RiskAssessmentDto> 
         fluidRowLocs(RiskAssessmentDto.SPREAD_PROBABILITY_COMMENT) +
         fluidRowLocs(RiskAssessmentDto.CONTROL_MEASURES) +
         fluidRowLocs(RiskAssessmentDto.CONTROL_MEASURES_COMMENT) +
-            fluidRowLocs(RiskAssessmentDto.RISK_ASSESSMENT, RiskAssessmentDto.ASSESSMENT_DATE, RiskAssessmentDto.ASSESSMENT_TIME);
+            fluidRowLocs(RiskAssessmentDto.ASSESSMENT_LEVEL, RiskAssessmentDto.ASSESSMENT_DATE, RiskAssessmentDto.ASSESSMENT_TIME);
 
     RiskAssessmentDataForm(EbsDto ebsDto, Class<? extends EntityDto> parentClass, boolean isPseudonymized, boolean inJurisdiction, boolean isEditAllowed){
         super(
@@ -86,7 +86,7 @@ public class RiskAssessmentDataForm extends AbstractEditForm<RiskAssessmentDto> 
         if (ebs == null){
             return;
         }
-        Label riskAssessment = new Label(I18nProperties.getString(Strings.headingSignalVerification));
+        Label riskAssessment = new Label(I18nProperties.getString(Strings.headingRiskVerification));
         riskAssessment.addStyleName(H3);
         getContent().addComponent(riskAssessment, RISK_ASSESSMENT_LOC);
 
@@ -99,9 +99,11 @@ public class RiskAssessmentDataForm extends AbstractEditForm<RiskAssessmentDto> 
         TextArea spreadProbabilityComment = addField(RiskAssessmentDto.SPREAD_PROBABILITY_COMMENT,TextArea.class);
         NullableOptionGroup controlMeasures = addField(RiskAssessmentDto.CONTROL_MEASURES,NullableOptionGroup.class);
         TextArea controlMeasuresComment = addField(RiskAssessmentDto.CONTROL_MEASURES_COMMENT,TextArea.class);
-        ComboBox riskAssesment =  addField(RiskAssessmentDto.RISK_ASSESSMENT, ComboBox.class);
+        ComboBox riskAssesment =  addField(RiskAssessmentDto.ASSESSMENT_LEVEL, ComboBox.class);
         DateField responseDate = addField(RiskAssessmentDto.ASSESSMENT_DATE, DateField.class);
         TextField responseTime = addField(RiskAssessmentDto.ASSESSMENT_TIME, TextField.class);
+
+        responseTime.setVisible(false);
 
         ValueChangeListener commonListener = event -> {
 

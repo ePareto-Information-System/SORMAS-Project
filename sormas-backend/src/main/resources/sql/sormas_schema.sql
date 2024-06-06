@@ -14795,3 +14795,5 @@ ALTER TABLE samples ADD COLUMN labLocal VARCHAR(255);
 ALTER TABLE samples ADD COLUMN labLocalDetails VARCHAR(255);
 INSERT INTO schema_version(version_number, comment) VALUES (672, 'Added labLocal, labLocalDetails to samples');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+ALTER TABLE triaging ADD COLUMN potentialrisk VARCHAR(3);
+INSERT INTO schema_version (version_number, comment) VALUES (673, 'added potentail risk to ebs');

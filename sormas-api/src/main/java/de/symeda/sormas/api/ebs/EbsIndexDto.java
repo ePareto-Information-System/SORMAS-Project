@@ -16,6 +16,7 @@
 package de.symeda.sormas.api.ebs;
 
 
+import de.symeda.sormas.api.location.LocationReferenceDto;
 import de.symeda.sormas.api.utils.HasCaption;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
@@ -54,6 +55,10 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	public static final String RISK_STATUS = "riskStatus";
 	public static final String ACTION_INITIATED = "actionInitiated";
 	public static final String RESPONSE_STATUS = "responseStatus";
+	public static final String REGION = "region";
+	public static final String DISTRICT = "district";
+	public static final String COMMUNITY = "community";
+	public static final String TOWN = "address";
 
 	private Long id;
 	/**
@@ -78,6 +83,8 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	private EbsRiskStatus riskStatus;
 	private EbsActionInitiated actionInitiated;
 	private EbsResponseStatus responseStatus;
+	private EbsLocation ebsLocation;
+	private String regionUuid;
 
 
 	public EbsIndexDto(
@@ -101,7 +108,14 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 			Date verifiedDate,
 			RiskAssesment riskStatus,
 			YesNo actionInitiated,
-			ResponseStatus responseStatus
+			ResponseStatus responseStatus,
+			String regionUuid,
+			String regionName,
+			String communityUuid,
+			String communityName,
+			String city,
+			String districtUuid,
+			String districtName
 	) {
 
 		super(uuid);
@@ -125,6 +139,8 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		this.riskStatus = new EbsRiskStatus(riskStatus);
 		this.actionInitiated = new EbsActionInitiated(actionInitiated);
 		this.responseStatus = new EbsResponseStatus(responseStatus);
+		this.ebsLocation = new EbsLocation(regionName, communityName, city,districtName);
+		this.regionUuid = regionUuid;
 	}
 
 	public EbsIndexDto(String uuid) {
@@ -301,6 +317,26 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		this.death = death;
 	}
 
+	public String getRegion() {
+		return getEbsLocation().getRegion();
+	}
+
+	public String getRegionUuid() {
+		return regionUuid;
+	}
+
+	public EbsLocation getEbsLocation() {
+		return ebsLocation;
+	}
+
+	public String getCommunity() {
+		return getEbsLocation().getCommunity();
+	}
+
+	public String getAddress() {
+		return getEbsLocation().getAddress();
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -467,6 +503,45 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 
 		public String buildCaption() {
 			return SignalVerificationReferenceDto.buildCaption(death);
+		}
+	}
+	public static class EbsLocation implements Serializable, HasCaption {
+
+		private String regionName;
+		private String communityName;
+		private String city;
+		private String districtName;
+
+		public EbsLocation(
+				String regionName,
+				String communityName,
+				String city,
+				String districtName
+				) {
+			this.regionName = regionName;
+			this.communityName = communityName;
+			this.city = city;
+			this.districtName = districtName;
+		}
+
+		public String getRegion() {
+			return regionName;
+		}
+
+		public String getDistrict() {
+			return districtName;
+		}
+
+		public String getCommunity() {
+			return communityName;
+		}
+
+		public String getAddress() {
+			return LocationReferenceDto.buildCaption(city);
+		}
+
+		public String buildCaption() {
+			return LocationReferenceDto.buildCaption(regionName,districtName, communityName, city,null,null,null);
 		}
 	}
 }
