@@ -755,7 +755,6 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		getField(LocationDto.HOUSE_NUMBER).setVisible(false);
 		getField(LocationDto.AREA_TYPE).setVisible(false);
 		getField(LocationDto.POSTAL_CODE).setVisible(false);
-		getField(LocationDto.CITY).setVisible(false);
 	}
 
 	public void setCountryDisabledWithHint(String hint) {
