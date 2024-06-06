@@ -13,7 +13,6 @@ import java.util.List;
 
 
 public class EbsAlertGrid extends Grid {
-	public static final String INFO = "info";
 	private EbsAlertDto ebsAlertDto;
 	private EbsDto ebs;
 
@@ -27,9 +26,7 @@ public class EbsAlertGrid extends Grid {
 		GeneratedPropertyContainer generatedContainer = new GeneratedPropertyContainer(container);
 		setContainerDataSource(generatedContainer);
 
-		VaadinUiUtil.addIconColumn(generatedContainer, INFO, VaadinIcons.EYE);
-		setColumns(EbsAlertDto.ACTION_INITIATED, EbsAlertDto.RESPONSE_STATUS, EbsAlertDto.ALERT_USED,INFO);
-		VaadinUiUtil.setupActionColumn(getColumn(INFO));
+		setColumns(EbsAlertDto.ACTION_INITIATED, EbsAlertDto.RESPONSE_STATUS, EbsAlertDto.ALERT_USED);
 //		addItemClickListener(new ShowDetailsListener<>(INFO, e -> ControllerProvider.getEbsController().navigateToData(e.getUuid())));
 
 		reload(ebsUuid);
