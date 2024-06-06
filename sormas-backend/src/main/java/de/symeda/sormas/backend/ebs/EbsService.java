@@ -31,6 +31,9 @@ import de.symeda.sormas.backend.caze.CaseService;
 import de.symeda.sormas.backend.common.*;
 import de.symeda.sormas.backend.document.DocumentService;
 import de.symeda.sormas.backend.externalsurveillancetool.ExternalSurveillanceToolGatewayFacadeEjb;
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.share.ExternalShareInfo;
 import de.symeda.sormas.backend.share.ExternalShareInfoCountAndLatestDate;
@@ -387,35 +390,32 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 	}
 
 	public Predicate buildCriteriaFilter(EbsCriteria ebsCriteria, EbsQueryContext ebsQueryContext) {
-
 		CriteriaBuilder cb = ebsQueryContext.getCriteriaBuilder();
 		From<?, Ebs> from = ebsQueryContext.getRoot();
 		final EbsJoins joins = ebsQueryContext.getJoins();
 
 		Predicate filter = null;
+
 		if (ebsCriteria.getRiskAssessment() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.RISK_ASSESSMENT), ebsCriteria.getRiskAssessment()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getRiskAssessment().get(RiskAssessment.RISK_ASSESSMENT), ebsCriteria.getRiskAssessment()));
 		}
 		if (ebsCriteria.getReportDateTime() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.REPORT_DATE_TIME), ebsCriteria.getReportDateTime()));
 		}
-		if (ebsCriteria.getTriagingDecision() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.TRIAGING_DECISION), ebsCriteria.getTriagingDecision()));
-		}
 		if (ebsCriteria.getTriagingDto() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.TRIAGING), ebsCriteria.getTriagingDto()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getTriaging().get(Ebs.TRIAGING), ebsCriteria.getTriagingDto()));
 		}
 		if (ebsCriteria.getSignalVerificationDto() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.SIGNAL_VERIFICATION), ebsCriteria.getSignalVerificationDto()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getSignalVerification().get(Ebs.SIGNAL_VERIFICATION), ebsCriteria.getSignalVerificationDto()));
 		}
 		if (ebsCriteria.getSourceInformation() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.SOURCE_INFORMATION), ebsCriteria.getSourceInformation()));
 		}
 		if (ebsCriteria.getTriagingDecision() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Triaging.TRIAGING_DECISION), ebsCriteria.getTriagingDecision()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getTriaging().get(Triaging.TRIAGING_DECISION), ebsCriteria.getTriagingDecision()));
 		}
 		if (ebsCriteria.getTriageDate() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Triaging.DATE_OF_DECISION), ebsCriteria.getTriageDate()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getTriaging().get(Triaging.DATE_OF_DECISION), ebsCriteria.getTriageDate()));
 		}
 		if (ebsCriteria.getCategoryOfInformant() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.CATEGORY_OF_INFORMANT), ebsCriteria.getCategoryOfInformant()));
@@ -427,13 +427,13 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.INFORMANT_TEL), ebsCriteria.getInformantTel()));
 		}
 		if (ebsCriteria.getSignalCategory() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.SIGNAL_CATEGORY), ebsCriteria.getSignalCategory()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getTriaging().get(Triaging.SIGNAL_CATEGORY), ebsCriteria.getSignalCategory()));
 		}
 		if (ebsCriteria.getVerified() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(SignalVerification.VERIFIED), ebsCriteria.getVerified()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getSignalVerification().get(SignalVerification.VERIFIED), ebsCriteria.getVerified()));
 		}
 		if (ebsCriteria.getDeath() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(SignalVerification.NUMBER_OF_DEATH), ebsCriteria.getDeath()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getSignalVerification().get(SignalVerification.NUMBER_OF_DEATH), ebsCriteria.getDeath()));
 		}
 		if (ebsCriteria.getPersonRegistering() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.PERSON_REGISTERING), ebsCriteria.getPersonRegistering()));
@@ -442,41 +442,52 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.PERSON_DESIGNATION), ebsCriteria.getPersonDesignation()));
 		}
 		if (ebsCriteria.getVerificationSent() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(SignalVerification.VERIFICATION_SENT), ebsCriteria.getVerificationSent()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getSignalVerification().get(SignalVerification.VERIFICATION_SENT), ebsCriteria.getVerificationSent()));
 		}
 		if (ebsCriteria.getVerificationSentDate() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(SignalVerification.VERIFICATION_SENT_DATE), ebsCriteria.getVerificationSentDate()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getSignalVerification().get(SignalVerification.VERIFICATION_SENT_DATE), ebsCriteria.getVerificationSentDate()));
 		}
 		if (ebsCriteria.getVerifiedDate() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(SignalVerification.VERIFICATION_COMPLETE_DATE), ebsCriteria.getVerifiedDate()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getSignalVerification().get(SignalVerification.VERIFICATION_COMPLETE_DATE), ebsCriteria.getVerifiedDate()));
 		}
 		if (ebsCriteria.getRiskAssessment() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(RiskAssessment.RISK_ASSESSMENT), ebsCriteria.getRiskAssessment()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getRiskAssessment().get(RiskAssessment.RISK_ASSESSMENT), ebsCriteria.getRiskAssessment()));
 		}
 		if (ebsCriteria.getActionInitiated() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(EbsAlert.ACTION_INITIATED), ebsCriteria.getActionInitiated()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getEbsAlert().get(EbsAlert.ACTION_INITIATED), ebsCriteria.getActionInitiated()));
 		}
 		if (ebsCriteria.getResponseStatus() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(EbsAlert.RESPONSE_STATUS), ebsCriteria.getResponseStatus()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getEbsAlert().get(EbsAlert.RESPONSE_STATUS), ebsCriteria.getResponseStatus()));
+		}
+		if (ebsCriteria.getRegion() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getRegion().get(Region.UUID), ebsCriteria.getRegion().getUuid()));
+		}
+		if (ebsCriteria.getDistrict() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getDistrict().get(District.UUID), ebsCriteria.getDistrict().getUuid()));
+		}
+		if (ebsCriteria.getCommunity() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getCommunity().get(Community.UUID), ebsCriteria.getCommunity().getUuid()));
 		}
 		if (CollectionUtils.isNotEmpty(ebsCriteria.getExcludedUuids())) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.not(from.get(AbstractDomainObject.UUID).in(ebsCriteria.getExcludedUuids())));
 		}
 
-
 		filter = CriteriaBuilderHelper.and(
-			cb,
-			filter,
-			externalShareInfoService.buildShareCriteriaFilter(
-				ebsCriteria,
-				ebsQueryContext.getQuery(),
 				cb,
-				from,
-				ExternalShareInfo.EBS,
-				(latestShareDate) -> createChangeDateFilter(cb, joins, latestShareDate)));
+				filter,
+				externalShareInfoService.buildShareCriteriaFilter(
+						ebsCriteria,
+						ebsQueryContext.getQuery(),
+						cb,
+						from,
+						ExternalShareInfo.EBS,
+						(latestShareDate) -> createChangeDateFilter(cb, joins, latestShareDate)
+				)
+		);
 
 		return filter;
 	}
+
 
 	/**
 	 * Creates a filter that excludes all ebss that are either {@link Ebs#isArchived()} or {@link DeletableAdo#isDeleted()}.
