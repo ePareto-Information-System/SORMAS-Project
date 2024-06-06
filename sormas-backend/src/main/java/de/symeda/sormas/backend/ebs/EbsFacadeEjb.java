@@ -420,6 +420,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			Join<Ebs, SignalVerification> signalVerification = ebs.join("signalVerification", JoinType.INNER);
 			Join<Ebs, Location> location = ebsJoins.getLocation();
 			Join<Location, Region> region = ebsJoins.getRegion();
+			Join<Location, District> district = ebsJoins.getDistrict();
 			Join<Location, Community> community = ebsJoins.getCommunity();
 
 			// Subquery for latest ebsAlert
@@ -467,7 +468,9 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 					region.get(Region.NAME),
 					community.get(Community.UUID),
 					community.get(Community.NAME),
-					location.get(Location.CITY)
+					location.get(Location.CITY),
+					district.get(District.UUID),
+					district.get(District.NAME)
 			);
 
 			Predicate filter = ebs.get(Ebs.ID).in(batchedIds);
@@ -551,6 +554,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			Join<Ebs, EbsAlert> ebsAlert = ebsJoins.getEbsAlert();
 			Join<Ebs, Location> location = ebsJoins.getLocation();
 			Join<Location, Region> region = ebsJoins.getRegion();
+			Join<Location, District> district = ebsJoins.getDistrict();
 			Join<Location, Community> community = ebsJoins.getCommunity();
 
 			List<Order> order = new ArrayList<>(sortProperties.size());
@@ -608,6 +612,9 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 						break;
 					case EbsIndexDto.REGION:
 						expression = region.get(Region.NAME);
+						break;
+					case EbsIndexDto.DISTRICT:
+						expression = district.get(District.NAME);
 						break;
 					case EbsIndexDto.COMMUNITY:
 						expression = community.get(Community.NAME);

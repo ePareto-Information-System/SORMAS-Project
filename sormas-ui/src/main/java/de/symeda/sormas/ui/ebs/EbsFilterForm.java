@@ -44,6 +44,7 @@ public class EbsFilterForm extends AbstractFilterForm<EbsCriteria> {
 		return new String[] {
 				EbsIndexDto.SOURCE_INFORMATION,
 				EbsIndexDto.REGION,
+				EbsIndexDto.DISTRICT,
 				EbsIndexDto.COMMUNITY,
 				EbsIndexDto.REPORT_DATE_TIME,
 				EbsIndexDto.TRIAGING_DECISION,

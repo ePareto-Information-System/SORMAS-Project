@@ -56,6 +56,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	public static final String ACTION_INITIATED = "actionInitiated";
 	public static final String RESPONSE_STATUS = "responseStatus";
 	public static final String REGION = "region";
+	public static final String DISTRICT = "district";
 	public static final String COMMUNITY = "community";
 	public static final String TOWN = "address";
 
@@ -113,7 +114,9 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 			String regionName,
 			String communityUuid,
 			String communityName,
-			String city
+			String city,
+			String districtUuid,
+			String districtName
 	) {
 
 		super(uuid);
@@ -137,7 +140,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		this.riskStatus = new EbsRiskStatus(riskStatus);
 		this.actionInitiated = new EbsActionInitiated(actionInitiated);
 		this.responseStatus = new EbsResponseStatus(responseStatus);
-		this.ebsLocation = new EbsLocation(regionName, communityName, city);
+		this.ebsLocation = new EbsLocation(regionName, communityName, city,districtName);
 		this.regionUuid = regionUuid;
 	}
 
@@ -516,18 +519,26 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		private String regionName;
 		private String communityName;
 		private String city;
+		private String districtName;
 
 		public EbsLocation(
 				String regionName,
 				String communityName,
-				String city) {
+				String city,
+				String districtName
+				) {
 			this.regionName = regionName;
 			this.communityName = communityName;
 			this.city = city;
+			this.districtName = districtName;
 		}
 
 		public String getRegion() {
 			return regionName;
+		}
+
+		public String getDistrict() {
+			return districtName;
 		}
 
 		public String getCommunity() {
@@ -539,7 +550,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		}
 
 		public String buildCaption() {
-			return LocationReferenceDto.buildCaption(regionName, communityName, city);
+			return LocationReferenceDto.buildCaption(regionName,districtName, communityName, city,null,null,null);
 		}
 	}
 }
