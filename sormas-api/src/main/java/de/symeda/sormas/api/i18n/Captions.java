@@ -1188,6 +1188,8 @@ public interface Captions {
 	String eventLinkToEventsWithinTheSameFacility = "eventLinkToEventsWithinTheSameFacility";
 	String eventNewEvent = "eventNewEvent";
 	String ebsNewEbs = "ebsNewEbs";
+	String ebsRiskAssessmentDisabled = "ebsRiskAssessmentDisabled";
+	String ebsAlertDisabled = "ebsAlertDisabled";
 	String ebsCreatEbs = "ebsCreatEbs";
 	String ebsAlert = "ebsAlert";
 	String ebsSignalView = "ebsSignalView";
@@ -1284,7 +1286,7 @@ public interface Captions {
 	String Ebs_verified= "Ebs.verified";
 	String Ebs_cases= "Ebs.cases";
 	String Ebs_death= "Ebs.death";
-	String Triaging_earlyWarning = "Triaging.earlyWarning";
+	String Triaging_potentialRisk = "Triaging.potentialRisk";
 	String Triaging_categoryDetails = "Triaging.categoryDetails";
 	String Triaging_specificSignal = "Triaging.specificSignal";
 	String Triaging_triagingDecision = "Triaging.triagingDecision";
@@ -1302,7 +1304,6 @@ public interface Captions {
 	String Triaging_decisionDate = "Triaging.decisionDate";
 	String Triaging_referredTo = "Triaging.referredTo";
 	String Triaging_outcomeSupervisor = "Triaging.outcomeSupervisor";
-	String Triaging_notSignal = "Triaging.notSignal";
 	String Triaging_humanCommunityCategoryDetails = "Triaging.humanCommunityCategoryDetails";
 	String Triaging_humanFacilityCategoryDetails = "Triaging.humanFacilityCategoryDetails";
 	String Triaging_humanLaboratoryCategoryDetails = "Triaging.humanLaboratoryCategoryDetails";
