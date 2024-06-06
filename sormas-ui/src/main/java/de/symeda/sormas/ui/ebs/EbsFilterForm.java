@@ -43,31 +43,27 @@ public class EbsFilterForm extends AbstractFilterForm<EbsCriteria> {
 
 		return new String[] {
 				EbsIndexDto.SOURCE_INFORMATION,
+				EbsIndexDto.REGION,
+				EbsIndexDto.COMMUNITY,
 				EbsIndexDto.REPORT_DATE_TIME,
 				EbsIndexDto.TRIAGING_DECISION,
-				EbsIndexDto.TRIAGE_DATE,
+				EbsIndexDto.SIGNAL_CATEGORY,
+				EbsIndexDto.TRIAGE_DATE
 		};
 	}
 
 	@Override
 	protected void addFields() {
 		final ComboBox srcField = addField(FieldConfiguration.pixelSized(EbsIndexDto.SOURCE_INFORMATION, 140));
-		ComboBox regionField = addField(
-				FieldConfiguration
-						.withCaptionAndPixelSized(LocationDto.REGION, I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.REGION), 140));
+		final ComboBox signalCategory = addField(FieldConfiguration.pixelSized(EbsIndexDto.SIGNAL_CATEGORY, 140));
+		ComboBox regionField = addField(FieldConfiguration.withCaptionAndPixelSized(LocationDto.REGION, I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.REGION), 140));
 		regionField.addItems(FacadeProvider.getRegionFacade().getAllActiveAsReference());
 
-		ComboBox districtField = addField(
-				FieldConfiguration
-						.withCaptionAndPixelSized(LocationDto.DISTRICT, I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.DISTRICT), 140));
+		ComboBox districtField = addField(FieldConfiguration.withCaptionAndPixelSized(LocationDto.DISTRICT, I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.DISTRICT), 140));
 		districtField.setDescription(I18nProperties.getDescription(Descriptions.descDistrictFilter));
 		districtField.setEnabled(false);
 
-		ComboBox communityField = addField(
-				FieldConfiguration.withCaptionAndPixelSized(
-						LocationDto.COMMUNITY,
-						I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.COMMUNITY),
-						140));
+		ComboBox communityField = addField(FieldConfiguration.withCaptionAndPixelSized(LocationDto.COMMUNITY, I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.COMMUNITY), 140));
 		communityField.setDescription(I18nProperties.getDescription(Descriptions.descCommunityFilter));
 		communityField.setEnabled(false);
 		Field<?> reportDate = addField(FieldConfiguration.pixelSized(EbsIndexDto.REPORT_DATE_TIME, 200));
