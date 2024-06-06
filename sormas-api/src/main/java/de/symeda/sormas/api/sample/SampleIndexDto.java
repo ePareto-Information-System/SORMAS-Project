@@ -171,7 +171,7 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.shipmentDate = shipmentDate;
 		this.receivedDate = receivedDate;
 //		this.lab = new FacilityReferenceDto(labUuid, FacilityHelper.buildFacilityString(labUuid, labName), null);
-//		this.lab = new FacilityReferenceDto(labUuid, FacilityHelper.buildFacilityString(labUuid, labName), null);
+		this.lab = new FacilityReferenceDto(labUuid, FacilityHelper.buildFacilityString(labUuid, labName), null);
 		this.sampleMaterial = sampleMaterial;
 		this.samplePurpose = samplePurpose;
 		this.specimenCondition = specimenCondition;
