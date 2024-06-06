@@ -81,5 +81,7 @@ public class EbsAlertDataForm extends AbstractEditForm<EbsAlertDto> {
                 EbsAlertDto.ALERT_USED,
                 Arrays.asList(YesNo.YES),
                 true);
+
+        setRequired(true, EbsAlertDto.ACTION_INITIATED, EbsAlertDto.RESPONSE_STATUS, EbsAlertDto.ALERT_USED, EbsAlertDto.DETAILS_ALERT_USED,EbsAlertDto.DETAILS_RESPONSE_ACTIVITIES);
     }
 }
