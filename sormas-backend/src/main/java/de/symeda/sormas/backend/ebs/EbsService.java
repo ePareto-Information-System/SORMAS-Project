@@ -27,6 +27,7 @@ import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolExc
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolRuntimeException;
 import de.symeda.sormas.api.share.ExternalShareStatus;
 import de.symeda.sormas.api.user.JurisdictionLevel;
+import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.backend.caze.CaseService;
 import de.symeda.sormas.backend.common.*;
 import de.symeda.sormas.backend.document.DocumentService;
@@ -400,7 +401,7 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getRiskAssessment().get(RiskAssessment.RISK_ASSESSMENT), ebsCriteria.getRiskAssessment()));
 		}
 		if (ebsCriteria.getReportDateTime() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.REPORT_DATE_TIME), ebsCriteria.getReportDateTime()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.REPORT_DATE_TIME), DateHelper.getStartOfDay(ebsCriteria.getReportDateTime())));
 		}
 		if (ebsCriteria.getTriagingDto() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getTriaging().get(Ebs.TRIAGING), ebsCriteria.getTriagingDto()));
@@ -415,7 +416,7 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getTriaging().get(Triaging.TRIAGING_DECISION), ebsCriteria.getTriagingDecision()));
 		}
 		if (ebsCriteria.getTriageDate() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getTriaging().get(Triaging.DATE_OF_DECISION), ebsCriteria.getTriageDate()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getTriaging().get(Triaging.DATE_OF_DECISION),DateHelper.getStartOfDay( ebsCriteria.getTriageDate())));
 		}
 		if (ebsCriteria.getCategoryOfInformant() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.CATEGORY_OF_INFORMANT), ebsCriteria.getCategoryOfInformant()));
