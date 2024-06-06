@@ -38,34 +38,16 @@ public class EBSView extends AbstractView {
     private Button activeStatusButton;
     // Filter
     private EbsFilterForm ebsFilterForm;
-    private Label relevanceStatusInfoLabel;
-    private ComboBox ebsRelevanceStatusFilter;
-    private ComboBox groupRelevanceStatusFilter;
-
     private ComboBox contactCountMethod;
 
     private VerticalLayout gridLayout;
 
-    // Bulk operations
-    private MenuBar bulkOperationsDropdown;
-
-//    private Set<String> getSelectedRows() {
-//        EbsGrid ebsGrid = (EbsGrid) this.grid;
-//        return this.viewConfiguration.isInEagerMode()
-//                ? ebsGrid.asMultiSelect().getSelectedItems().stream().map(EbsIndexDto::getUuid).collect(Collectors.toSet())
-//                : Collections.emptySet();
-//    }
     public EBSView() {
         super(VIEW_NAME);
 
         viewConfiguration = ViewModelProviders.of(getClass()).get(EbsViewConfiguration.class);
         if (viewConfiguration.getViewType() == null) {
             viewConfiguration.setViewType(EbsViewType.DEFAULT);
-        }
-
-        ebsGroupCriteria = ViewModelProviders.of(EBSView.class).get(EbsGroupCriteria.class);
-        if (ebsGroupCriteria.getRelevanceStatus() == null) {
-            ebsGroupCriteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
         }
 
         ebsCriteria = ViewModelProviders.of(EBSView.class).get(EbsCriteria.class);
@@ -170,7 +152,6 @@ public class EBSView extends AbstractView {
             }
             if (isDefaultViewType()) {
                 btnEnterBulkEditMode.addClickListener(e -> {
-                    bulkOperationsDropdown.setVisible(true);
                     ViewModelProviders.of(EBSView.class).get(EbsViewConfiguration.class).setInEagerMode(true);
                     btnEnterBulkEditMode.setVisible(false);
                     btnLeaveBulkEditMode.setVisible(true);
@@ -178,7 +159,6 @@ public class EBSView extends AbstractView {
                 });
             }else {
                 btnEnterBulkEditMode.addClickListener(e -> {
-                            bulkOperationsDropdown.setVisible(true);
                             ViewModelProviders.of(EBSView.class).get(EbsViewConfiguration.class).setInEagerMode(true);
                             btnEnterBulkEditMode.setVisible(false);
                             btnLeaveBulkEditMode.setVisible(true);
@@ -186,7 +166,6 @@ public class EBSView extends AbstractView {
             });
             }
             btnLeaveBulkEditMode.addClickListener(e -> {
-                bulkOperationsDropdown.setVisible(false);
                 ViewModelProviders.of(EBSView.class).get(EbsViewConfiguration.class).setInEagerMode(false);
                 btnLeaveBulkEditMode.setVisible(false);
                 btnEnterBulkEditMode.setVisible(true);
@@ -268,15 +247,19 @@ public class EBSView extends AbstractView {
             ViewModelProviders.of(EBSView.class).remove(EbsCriteria.class);
             navigateTo(null);
         });
-        if (isDefaultViewType()) {
+
             ebsFilterForm.addApplyHandler(e -> {
+                if (isDefaultViewType()) {
                 ((EbsSignalGrid) grid).reload();
+                }else {
+                    ((EbsGrid) grid).reload();
+                }
             });
-        }else {
-            ebsFilterForm.addApplyHandler(e -> {
-                ((EbsGrid) grid).reload();
-            });
-        }
+//        else {
+//            ebsFilterForm.addApplyHandler(e -> {
+//                ((EbsGrid) grid).reload();
+//            });
+//        }
         filterLayout.addComponent(ebsFilterForm);
 
         return filterLayout;
