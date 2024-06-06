@@ -107,7 +107,7 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 
         FieldHelper.setVisibleWhen(
                 getFieldGroup(),
-                Arrays.asList(SignalVerificationDto.DESCRIPTION),
+                Arrays.asList(SignalVerificationDto.DESCRIPTION,SignalVerificationDto.VERIFICATION_COMPLETE_DATE,SignalVerificationDto.DATE_OF_OCCURRENCE,SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL,SignalVerificationDto.NUMBER_OF_DEATH),
                 SignalVerificationDto.VERIFIED,
                 Arrays.asList(YesNo.YES),
                 true);
@@ -120,9 +120,13 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 
         FieldHelper.setVisibleWhen(
                 getFieldGroup(),
-                Arrays.asList(SignalVerificationDto.VERIFICATION_SENT_DATE),
+                Arrays.asList(SignalVerificationDto.VERIFICATION_SENT_DATE,SignalVerificationDto.VERIFIED),
                 SignalVerificationDto.VERIFICATION_SENT,
                 Arrays.asList(YesNo.YES),
                 true);
+
+        setRequired(true,SignalVerificationDto.VERIFICATION_SENT);
     }
+
+
 }
