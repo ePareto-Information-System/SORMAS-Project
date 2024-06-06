@@ -217,22 +217,6 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
         return this;
     }
 
-//    public TriagingDto getTriagingDto() {
-//        return triagingDto;
-//    }
-//
-//    public void setTriagingDto(TriagingDto triagingDto) {
-//        this.triagingDto = triagingDto;
-//    }
-
-//    public SignalVerificationDto getSignalVerificationDto() {
-//        return signalVerificationDto;
-//    }
-//
-//    public void setSignalVerificationDto(SignalVerificationDto signalVerificationDto) {
-//        this.signalVerificationDto = signalVerificationDto;
-//    }
-
     public String getPersonRegistering() {
         return personRegistering;
     }
