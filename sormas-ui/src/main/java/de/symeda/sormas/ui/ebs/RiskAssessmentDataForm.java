@@ -103,6 +103,8 @@ public class RiskAssessmentDataForm extends AbstractEditForm<RiskAssessmentDto> 
         DateField responseDate = addField(RiskAssessmentDto.ASSESSMENT_DATE, DateField.class);
         TextField responseTime = addField(RiskAssessmentDto.ASSESSMENT_TIME, TextField.class);
 
+        responseTime.setVisible(false);
+
         ValueChangeListener commonListener = event -> {
 
             // Check if all three fields have YesNo.YES
