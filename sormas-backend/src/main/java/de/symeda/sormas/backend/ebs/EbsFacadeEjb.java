@@ -412,19 +412,33 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 		IterableHelper.executeBatched(indexListIds, ModelConstants.PARAMETER_LIMIT, batchedIds -> {
 			CriteriaQuery<EbsIndexDto> cq = cb.createQuery(EbsIndexDto.class);
-
 			Root<Ebs> ebs = cq.from(Ebs.class);
 			EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
 			EbsJoins ebsJoins = ebsQueryContext.getJoins();
+
 			Join<Ebs, Triaging> triaging = ebs.join("triaging", JoinType.INNER);
-			Join<Ebs, RiskAssessment> riskAssessment = ebs.join("riskAssessment", JoinType.INNER);
 			Join<Ebs, SignalVerification> signalVerification = ebs.join("signalVerification", JoinType.INNER);
-			Join<Ebs, EbsAlert> ebsAlert = ebs.join("ebsAlert", JoinType.INNER);
 			Join<Ebs, Location> location = ebsJoins.getLocation();
 			Join<Location, Region> region = ebsJoins.getRegion();
 			Join<Location, Community> community = ebsJoins.getCommunity();
 
+			// Subquery for latest ebsAlert
+			Subquery<Long> subqueryAlert = cq.subquery(Long.class);
+			Root<EbsAlert> subRootAlert = subqueryAlert.from(EbsAlert.class);
+			subqueryAlert.select(cb.max(subRootAlert.get(EbsAlert.ID)))
+					.where(cb.equal(subRootAlert.get(EbsAlert.EBS), ebs));
 
+			Join<Ebs, EbsAlert> ebsAlert = ebs.join("ebsAlert", JoinType.INNER);
+			cq.where(cb.equal(ebsAlert.get(EbsAlert.ID), subqueryAlert));
+
+			// Subquery for latest riskAssessment
+			Subquery<Long> subqueryRisk = cq.subquery(Long.class);
+			Root<RiskAssessment> subRootRisk = subqueryRisk.from(RiskAssessment.class);
+			subqueryRisk.select(cb.max(subRootRisk.get(RiskAssessment.ID)))
+					.where(cb.equal(subRootRisk.get(RiskAssessment.EBS), ebs));
+
+			Join<Ebs, RiskAssessment> riskAssessment = ebs.join("riskAssessment", JoinType.INNER);
+			cq.where(cb.equal(riskAssessment.get(RiskAssessment.ID), subqueryRisk));
 
 			// Create the selection
 			cq.multiselect(
@@ -453,7 +467,8 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 					region.get(Region.NAME),
 					community.get(Community.UUID),
 					community.get(Community.NAME),
-					location.get(Location.CITY));
+					location.get(Location.CITY)
+			);
 
 			Predicate filter = ebs.get(Ebs.ID).in(batchedIds);
 
@@ -472,9 +487,15 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			}
 
 			sortBy(sortProperties, ebsQueryContext);
-			cq.distinct(true);  // Ensure distinct results
+			cq.distinct(true);
 
-			indexList.addAll(QueryHelper.getResultList(em, cq, null, null));
+			List<EbsIndexDto> results = QueryHelper.getResultList(em, cq, null, null);
+
+			for (EbsIndexDto dto : results) {
+				if (addedIds.add(dto.getId())) {
+					indexList.add(dto);
+				}
+			}
 		});
 		return indexList;
 	}
