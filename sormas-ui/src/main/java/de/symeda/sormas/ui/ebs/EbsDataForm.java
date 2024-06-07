@@ -169,7 +169,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 
         locationForm = (LocationEditForm) getFieldGroup().getField(EbsDto.EBS_LOCATION);
         locationForm.setDistrictRequiredOnDefaultCountry(true);
-        locationForm.hideForEbsForm();
+
         ComboBox regionField = (ComboBox) locationForm.getFieldGroup().getField(LocationDto.REGION);
         ComboBox districtField = (ComboBox) locationForm.getFieldGroup().getField(LocationDto.DISTRICT);
         TextField latitude = addField(EbsDto.EBS_LATITUDE, TextField.class);
@@ -188,7 +188,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 
         initializeVisibilitiesAndAllowedVisibilities();
         initializeAccessAndAllowedAccesses();
-
+        locationForm.hideForEbsForm();
         setRequired(true, EbsDto.SOURCE_INFORMATION, EbsDto.REPORT_DATE_TIME,EbsDto.END_DATE,EbsDto.CATEGORY_OF_INFORMANT,EbsDto.INFORMANT_TEL,EbsDto.DESCRIPTION_OCCURRENCE,EbsDto.PERSON_DESIGNATION,EbsDto.PERSON_REGISTERING,EbsDto.PERSON_PHONE);
 
         FieldHelper.setVisibleWhen(
