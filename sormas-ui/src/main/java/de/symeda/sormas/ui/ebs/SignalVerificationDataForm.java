@@ -89,7 +89,7 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
         headingEventDetails.addStyleName(H3);
         getContent().addComponent(headingEventDetails, EVENT_DETAILS_LOC);
         NullableOptionGroup sentVerification = addField(SignalVerificationDto.VERIFICATION_SENT, NullableOptionGroup.class);
-        addField(SignalVerificationDto.VERIFIED, NullableOptionGroup.class);
+        NullableOptionGroup verified = addField(SignalVerificationDto.VERIFIED, NullableOptionGroup.class);
         addField(SignalVerificationDto.VERIFICATION_SENT_DATE, DateField.class);
         addField(SignalVerificationDto.VERIFICATION_COMPLETE_DATE, DateField.class);
         addField(SignalVerificationDto.DATE_OF_OCCURRENCE, DateField.class);
@@ -124,6 +124,15 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
                 SignalVerificationDto.VERIFICATION_SENT,
                 Arrays.asList(YesNo.YES),
                 true);
+        verified.addValueChangeListener(event -> {
+            if (event.getProperty().getValue().toString().equals("[YES]")){
+                getContent().getComponent(EVENT_DETAILS_LOC).setVisible(true);
+            }else{
+                getContent().getComponent(EVENT_DETAILS_LOC).setVisible(false);
+
+            }
+        });
+
 
         setRequired(true,SignalVerificationDto.VERIFICATION_SENT);
     }
