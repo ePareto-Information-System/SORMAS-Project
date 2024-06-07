@@ -306,7 +306,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
                     .filter(personReporting -> !itemsToAdd.contains(personReporting))
                     .forEach(personReporting -> categoryInformant.removeItem(personReporting));
 
-//            FieldHelper.updateEnumData(categoryInformant, itemsToAdd);
+            FieldHelper.updateEnumData(categoryInformant, itemsToAdd);
 
         });
 
