@@ -430,7 +430,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 					.where(cb.equal(subRootAlert.get(EbsAlert.EBS), ebs));
 
 			Join<Ebs, EbsAlert> ebsAlert = ebs.join("ebsAlert", JoinType.LEFT);
-			cq.where(cb.or(cb.isNull(ebsAlert.get(EbsAlert.ID)), cb.equal(ebsAlert.get(EbsAlert.ID), subqueryAlert)));
+			Predicate alertPredicate = cb.or(cb.isNull(ebsAlert.get(EbsAlert.ID)), cb.equal(ebsAlert.get(EbsAlert.ID), subqueryAlert));
 
 			// Subquery for latest riskAssessment
 			Subquery<Long> subqueryRisk = cq.subquery(Long.class);
@@ -439,7 +439,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 					.where(cb.equal(subRootRisk.get(RiskAssessment.EBS), ebs));
 
 			Join<Ebs, RiskAssessment> riskAssessment = ebs.join("riskAssessment", JoinType.LEFT);
-			cq.where(cb.or(cb.isNull(riskAssessment.get(RiskAssessment.ID)), cb.equal(riskAssessment.get(RiskAssessment.ID), subqueryRisk)));
+			Predicate riskPredicate = cb.or(cb.isNull(riskAssessment.get(RiskAssessment.ID)), cb.equal(riskAssessment.get(RiskAssessment.ID), subqueryRisk));
 
 			// Create the selection
 			cq.multiselect(
@@ -486,7 +486,9 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			}
 
 			if (filter != null) {
-				cq.where(filter);
+				cq.where(cb.and(filter, alertPredicate, riskPredicate));
+			} else {
+				cq.where(cb.and(alertPredicate, riskPredicate));
 			}
 
 			sortBy(sortProperties, ebsQueryContext);
