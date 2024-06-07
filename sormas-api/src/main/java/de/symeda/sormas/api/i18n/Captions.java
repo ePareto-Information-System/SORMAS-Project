@@ -1321,6 +1321,7 @@ public interface Captions {
 	String ebsNewEbs = "ebsNewEbs";
 	String ebsRiskAssessmentDisabled = "ebsRiskAssessmentDisabled";
 	String ebsAlertDisabled = "ebsAlertDisabled";
+	String ebsSignalVerificationDisabled = "ebsSignalVerificationDisabled";
 	String ebsCreatEbs = "ebsCreatEbs";
 	String ebsAlert = "ebsAlert";
 	String ebsSignalView = "ebsSignalView";
