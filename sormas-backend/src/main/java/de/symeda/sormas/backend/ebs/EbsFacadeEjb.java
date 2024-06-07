@@ -416,8 +416,8 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
 			EbsJoins ebsJoins = ebsQueryContext.getJoins();
 
-			Join<Ebs, Triaging> triaging = ebs.join("triaging", JoinType.INNER);
-			Join<Ebs, SignalVerification> signalVerification = ebs.join("signalVerification", JoinType.INNER);
+			Join<Ebs, Triaging> triaging = ebs.join("triaging", JoinType.LEFT);
+			Join<Ebs, SignalVerification> signalVerification = ebs.join("signalVerification", JoinType.LEFT);
 			Join<Ebs, Location> location = ebsJoins.getLocation();
 			Join<Location, Region> region = ebsJoins.getRegion();
 			Join<Location, District> district = ebsJoins.getDistrict();
@@ -429,8 +429,8 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			subqueryAlert.select(cb.max(subRootAlert.get(EbsAlert.ID)))
 					.where(cb.equal(subRootAlert.get(EbsAlert.EBS), ebs));
 
-			Join<Ebs, EbsAlert> ebsAlert = ebs.join("ebsAlert", JoinType.INNER);
-			cq.where(cb.equal(ebsAlert.get(EbsAlert.ID), subqueryAlert));
+			Join<Ebs, EbsAlert> ebsAlert = ebs.join("ebsAlert", JoinType.LEFT);
+			cq.where(cb.or(cb.isNull(ebsAlert.get(EbsAlert.ID)), cb.equal(ebsAlert.get(EbsAlert.ID), subqueryAlert)));
 
 			// Subquery for latest riskAssessment
 			Subquery<Long> subqueryRisk = cq.subquery(Long.class);
@@ -438,8 +438,8 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			subqueryRisk.select(cb.max(subRootRisk.get(RiskAssessment.ID)))
 					.where(cb.equal(subRootRisk.get(RiskAssessment.EBS), ebs));
 
-			Join<Ebs, RiskAssessment> riskAssessment = ebs.join("riskAssessment", JoinType.INNER);
-			cq.where(cb.equal(riskAssessment.get(RiskAssessment.ID), subqueryRisk));
+			Join<Ebs, RiskAssessment> riskAssessment = ebs.join("riskAssessment", JoinType.LEFT);
+			cq.where(cb.or(cb.isNull(riskAssessment.get(RiskAssessment.ID)), cb.equal(riskAssessment.get(RiskAssessment.ID), subqueryRisk)));
 
 			// Create the selection
 			cq.multiselect(
