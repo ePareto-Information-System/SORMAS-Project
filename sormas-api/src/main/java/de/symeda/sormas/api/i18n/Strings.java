@@ -1295,6 +1295,7 @@ public interface Strings {
 	String messageEventParticipantToContactWithoutEventDisease = "messageEventParticipantToContactWithoutEventDisease";
 	String messageEventParticipationUnlinked = "messageEventParticipationUnlinked";
 	String messageEventSaved = "messageEventSaved";
+	String seniorOfficials = "seniorOfficials";
 	String messageEventsDeleted = "messageEventsDeleted";
 	String messageEventsLinkedToGroup = "messageEventsLinkedToGroup";
 	String messageEventsNotDeleted = "messageEventsNotDeleted";
