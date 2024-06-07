@@ -521,7 +521,11 @@ public class EbsController {
 
 	public boolean isSignalVerified(String ebsUuid) {
 		EbsDto ebs = findEbs(ebsUuid);
-        return ebs.getSignalVerification().getVerified() == YesNo.NO || ebs.getSignalVerification().getVerified() == null;
+        return ebs.getSignalVerification().getVerified() == YesNo.NO || ebs.getSignalVerification().getVerified() == null ;
+    }
+	public boolean isTriagingDiscard(String ebsUuid) {
+		EbsDto ebs = findEbs(ebsUuid);
+        return ebs.getTriaging().getTriagingDecision() == EbsTriagingDecision.DISCARD;
     }
 
 	public RiskAssessmentDto createRiskAssessmentComponent(final String ebsUuid,

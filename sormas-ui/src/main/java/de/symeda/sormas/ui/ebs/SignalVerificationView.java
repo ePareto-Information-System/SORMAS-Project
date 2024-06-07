@@ -14,10 +14,16 @@
  */
 package de.symeda.sormas.ui.ebs;
 
+import com.vaadin.ui.Notification;
+import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
+
+import static com.vaadin.ui.Notification.Type.ERROR_MESSAGE;
+import static com.vaadin.ui.Notification.Type.WARNING_MESSAGE;
 
 
 public class SignalVerificationView extends AbstractEbsView {
@@ -29,7 +35,10 @@ public class SignalVerificationView extends AbstractEbsView {
 
 	@Override
 	protected void initView(String params) {
-
+		if (ControllerProvider.getEbsController().isTriagingDiscard(getEbsRef().getUuid())) {
+			Notification.show(I18nProperties.getCaption(Captions.ebsSignalVerificationDisabled), WARNING_MESSAGE);
+			return;
+		}
 		CommitDiscardWrapperComponent<SignalVerificationDataForm> signalVerficationForm = ControllerProvider.getEbsController()
 				.getEbsCreateSignalVerficationComponent(getEbsRef().getUuid(),
 						isEditAllowed() && UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT));
@@ -37,5 +46,6 @@ public class SignalVerificationView extends AbstractEbsView {
 		setEditPermission(
 				signalVerficationForm,
 				UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT));
+
 	}
 }
