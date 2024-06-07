@@ -339,6 +339,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             signalCategory.setVisible(false);
             categoryLevel.setVisible(false);
         }
+        setRequired(true,TriagingDto.DATE_OF_DECISION, TriagingDto.TRIAGING_DECISION);
         initializeVisibilitiesAndAllowedVisibilities();
         initializeAccessAndAllowedAccesses();
     }
