@@ -59,71 +59,56 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
     private static final long serialVersionUID = -2323128076462668517L;
 
-	//	protected static final String REPORT_INFORMATION_LOC = "reportInformationLoc";
-	protected static final String PATHOGEN_TESTING_INFO_LOC = "pathogenTestingInfoLoc";
-	protected static final String SAMPLE_MATERIAL_INFO_LOC = "sampleMaterialInfoLoc";
-	protected static final String ADDITIONAL_TESTING_INFO_LOC = "additionalTestingInfoLoc";
-	protected static final String PATHOGEN_TESTING_READ_HEADLINE_LOC = "pathogenTestingReadHeadlineLoc";
-	protected static final String SAMPLE_MATERIAL_READ_HEADLINE_LOC = "sampleMaterialReadHeadlineLoc";
-	protected static final String ADDITIONAL_TESTING_READ_HEADLINE_LOC = "additionalTestingReadHeadlineLoc";
-	protected static final String REQUESTED_PATHOGEN_TESTS_READ_LOC = "requestedPathogenTestsReadLoc";
-	protected static final String DISTRICT_LABORATORY_HEADLINE_LOC = "districtLaboratoryLoc";
-	protected static final String REGIONAL_LABORATORY_HEADLINE_LOC = "regionalLaboratoryLoc";
-	protected static final String REFERENCE_LABORATORY_HEADLINE_LOC = "referenceLaboratoryLoc";
-	protected static final String STOOL_SPECIMEN_COLLECTION_HEADLINE_LOC = "stoolSpecimenCollectionLoc";
-	protected static final String STOOL_SPECIMEN_RESULTS_HEADLINE_LOC = "stoolSpecimenResultsLoc";
-	protected static final String FINAL_LAB_RESULTS_HEADLINE_LOC = "finalLabResultsLoc";
-	protected static final String FOLLOW_UP_EXAMINATION_HEADLINE_LOC = "followUpExaminationLoc";
-	protected static final String LABORATORY_ANTIBIOGRAM_HEADLINE_LOC = "laboratoryAntibiogramHeadlineloc";
-	protected static final String LABORATORY_PCR_HEADLINE_LOC = "laboratoryPcrHeadlineloc";
-	protected static final String REQUESTED_ADDITIONAL_TESTS_READ_LOC = "requestedAdditionalTestsReadLoc";
-	protected static final String REPORT_INFO_LABEL_LOC = "reportInfoLabelLoc";
-	protected static final String REFERRED_FROM_BUTTON_LOC = "referredFromButtonLoc";
-	private ComboBox lab;
-	protected static final String NATIONAL_SECRETARIAT_ONLY = "nationalSecretariatOnly";
-	protected static final String OTHER_INFORMATION_HEADLINE_LOC = "otherInformationHeadlineLoc";
-//	headingSpecimenHandling
-	protected static final String HEADING_SPECIMEN_HANDLING = "headingSpecimenHandling";
-	private Disease disease;
-	private ComboBox diseaseField;
-	public ComboBox sampleMaterialComboBox;
-	public ComboBox sampleSource;
-	private TextField labDetails;
-	private TextField labLocation;
-	private TextField labSampleId;
-	protected SampleDispatchMode sampleDispatchMode = SampleDispatchMode.REGIONAL_COLDROOM;
-	private DateTimeField sampleDateField;
-	private NullableOptionGroup hasSampleBeenCollected;
-	private DateTimeField laboratorySampleDateReceived;
-	OptionGroup sampleTestsField;
-	OptionGroup requestedSampleMaterialsField;
-	OptionGroup influenzaOroNasoSelection;
-	private ComboBox testResultField;
-	private ComboBox suspectedDisease;
-	private DateField dateLabReceivedSpecimen;
-	private OptionGroup laboratorySampleCondition;
-	private TextField laboratoryFinalResults;
-	private DateField dateFormSentToDistrict;
-	private DateField dateResultsSentToClinician;
-	private DateField dateSpecimenSentToLab;
-	private CheckBox pathogenTestingRequestedField;
-	private TextField laboratoryNumber;
-	private OptionGroup laboratorySampleContainerReceived;
-	private TextField laboratorySampleContainerOther;
-	private NullableOptionGroup laboratoryAppearanceOfCSF;
-	private DateField shipmentDate;
-	private TextField shipmentDetails;
-	private CheckBox check;
-	private DateField dateSampleSentToLab;
-	private DateField laboratoryDateResultsSentDSD;
-	private DateField dateFormReceivedAtDistrictField;
-	private DateField dateSurveillanceSentResultsToDistrict;
-	private DateField dateFormSentToHigherLevel;
-	private TextField personCompletingForm;
-	private ComboBox ipsampleResults;
-	private OptionGroup ipSampleSent;
-	OptionGroup requestedPathogenTestsField;
-	private CheckBox sampleReceived;
+    protected static final String PATHOGEN_TESTING_INFO_LOC = "pathogenTestingInfoLoc";
+    protected static final String SAMPLE_MATERIAL_INFO_LOC = "sampleMaterialInfoLoc";
+    protected static final String ADDITIONAL_TESTING_INFO_LOC = "additionalTestingInfoLoc";
+    protected static final String PATHOGEN_TESTING_READ_HEADLINE_LOC = "pathogenTestingReadHeadlineLoc";
+    protected static final String SAMPLE_MATERIAL_READ_HEADLINE_LOC = "sampleMaterialReadHeadlineLoc";
+    protected static final String ADDITIONAL_TESTING_READ_HEADLINE_LOC = "additionalTestingReadHeadlineLoc";
+    protected static final String REQUESTED_PATHOGEN_TESTS_READ_LOC = "requestedPathogenTestsReadLoc";
+    protected static final String DISTRICT_LABORATORY_HEADLINE_LOC = "districtLaboratoryLoc";
+    protected static final String REGIONAL_LABORATORY_HEADLINE_LOC = "regionalLaboratoryLoc";
+    protected static final String REFERENCE_LABORATORY_HEADLINE_LOC = "referenceLaboratoryLoc";
+    protected static final String STOOL_SPECIMEN_COLLECTION_HEADLINE_LOC = "stoolSpecimenCollectionLoc";
+    protected static final String STOOL_SPECIMEN_RESULTS_HEADLINE_LOC = "stoolSpecimenResultsLoc";
+    protected static final String FINAL_LAB_RESULTS_HEADLINE_LOC = "finalLabResultsLoc";
+    protected static final String FOLLOW_UP_EXAMINATION_HEADLINE_LOC = "followUpExaminationLoc";
+    protected static final String LABORATORY_ANTIBIOGRAM_HEADLINE_LOC = "laboratoryAntibiogramHeadlineloc";
+    protected static final String LABORATORY_PCR_HEADLINE_LOC = "laboratoryPcrHeadlineloc";
+    protected static final String REQUESTED_ADDITIONAL_TESTS_READ_LOC = "requestedAdditionalTestsReadLoc";
+    protected static final String REPORT_INFO_LABEL_LOC = "reportInfoLabelLoc";
+    protected static final String REFERRED_FROM_BUTTON_LOC = "referredFromButtonLoc";
+    private ComboBox lab;
+    private Disease disease;
+    public ComboBox sampleMaterialComboBox;
+    public ComboBox sampleSource;
+    private TextField labDetails;
+    private TextField labLocation;
+    private TextField labSampleId;
+    protected SampleDispatchMode sampleDispatchMode = SampleDispatchMode.REGIONAL_COLDROOM;
+    private DateTimeField sampleDateField;
+    private NullableOptionGroup hasSampleBeenCollected;
+    private DateTimeField laboratorySampleDateReceived;
+    OptionGroup sampleTestsField;
+    OptionGroup requestedPathogenTestsField;
+    OptionGroup requestedSampleMaterialsField;
+    OptionGroup influenzaOroNasoSelection;
+    private ComboBox testResultField;
+    private ComboBox suspectedDisease;
+    private DateField dateLabReceivedSpecimen;
+    private OptionGroup laboratorySampleCondition;
+    private TextField laboratoryFinalResults;
+    private DateField dateFormSentToDistrict;
+    private DateField dateFormReceivedAtDistrict;
+    private DateField dateResultsSentToClinician;
+    private DateField dateSpecimenSentToLab;
+    private CheckBox pathogenTestingRequestedField;
+    private TextField laboratoryNumber;
+    private OptionGroup laboratorySampleContainerReceived;
+    private TextField laboratorySampleContainerOther;
+    private NullableOptionGroup laboratoryAppearanceOfCSF;
+    private OptionGroup ipSampleSent;
+    private CheckBox sampleReceived;
     private DateTimeField sampleReceivedDate;
     private ComboBox sampleSpecimenCondition;
 
@@ -366,17 +351,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateLabReceivedSpecimen = addField(SampleDto.DATE_LAB_RECEIVED_SPECIMEN);
 		hasSampleBeenCollected.setVisible(false);
 
-        ComboBox diseaseBox = new ComboBox("Diseases");
-
-        for (Disease ahfDisease : Disease.AHF_DISEASES) {
-            diseaseBox.addItem(ahfDisease);
-        }
-
-		addField(SampleDto.LAB_LOCAL, NullableOptionGroup.class);
-		addField(SampleDto.LAB_LOCAL_DETAILS, TextField.class);
-
-		diseaseField = addField(SampleDto.DISEASE, diseaseBox);
-		diseaseField.setVisible(false);
 
         addField(SampleDto.SAMPLE_MATERIAL_TEXT, TextField.class);
         sampleSource = addField(SampleDto.SAMPLE_SOURCE, ComboBox.class);
@@ -488,23 +462,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				SampleDto.FREQUENCY_OF_CHANGING_FILTERS,
 				SampleDto.REMARKS);
 
-		/*diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
-			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
-
-			switch(disease){
-				case EVD:
-				case LASSA:
-				case DENGUE:
-				case CHIKUNGUNYA:
-				case YELLOW_FEVER:
-				case MARBURG:
-				case ZIKA:
-					selectAHFTests();
-					break;
-				case MEASLES:
-					handleMeasles();
-            }
-		});*/
     }
 
     protected void defaultValueChangeListener() {
@@ -978,11 +935,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         getContent().getComponent(PATHOGEN_TESTING_READ_HEADLINE_LOC).setVisible(canOnlyReadRequests);
         getContent().getComponent(ADDITIONAL_TESTING_READ_HEADLINE_LOC).setVisible(canOnlyReadRequests && canUseAdditionalTests);
 
-        handleDisease(Disease.YELLOW_FEVER, "National Public Health Reference Laboratory");
-        handleDisease(Disease.AHF, "NMIMR");
-        handleDisease(Disease.DENGUE, "NMIMR");
-        handleDisease(Disease.AFP, "NMIMR");
-        handleDisease(Disease.NEW_INFLUENZA, "NMIMR");
         handleDiseaseField(Disease.NEW_INFLUENZA, Disease.CSM, Disease.SARI, Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, Disease.AHF);
 
         if (getValue() != null && canOnlyReadRequests) {
@@ -1178,7 +1130,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         dateSpecimenSentToLab.setVisible(false);
         sampleDateField.setVisible(false);
 
-        diseaseField.setVisible(true);
         List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.PLASMA_SERUM, SampleMaterial.SALIVA, SampleMaterial.URINE, SampleMaterial.BIOPSY, SampleMaterial.CARDIAC, SampleMaterial.BLOOD_ANTI_COAGULANT, SampleMaterial.OTHER);
         FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
 
@@ -1427,7 +1378,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                 SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS,
                 SampleDto.SAMPLE_SOURCE,
                 SampleDto.FIELD_SAMPLE_ID,
-                SampleDto.DISEASE,
                 SampleDto.SAMPLE_TESTS,
                 SampleDto.COMMENT,
                 SampleDto.PATHOGEN_TEST_RESULT,
@@ -1452,7 +1402,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                 SampleDto.REQUESTED_ADDITIONAL_TESTS,
                 SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS,
                 SampleDto.SAMPLE_SOURCE,
-                SampleDto.DISEASE,
                 SampleDto.COMMENT,
                 SampleDto.PATHOGEN_TEST_RESULT,
                 SampleDto.NO_TEST_POSSIBLE_REASON,
