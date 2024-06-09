@@ -124,7 +124,6 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String DATE_LAB_RECEIVED_SPECIMEN = "dateLabReceivedSpecimen";
 	public static final String LAB_LOCATION = "labLocation";
 	public static final String IPSAMPLESENT = "ipSampleSent";
-	public static final String IPSAMPLERESULTS = "ipSampleResults";
 	public static final String DISEASE = "disease";
 
 
@@ -308,7 +307,6 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private String otherDeletionReason;
 
 	private YesNo ipSampleSent;
-	private IpResult ipSampleResults;
 	private SampleDispatchMode sampleDispatchMode;
 	private Date sampleDispatchDate;
 
@@ -604,14 +602,6 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public void setSampleDispatchMode(SampleDispatchMode sampleDispatchMode) {
 		this.sampleDispatchMode = sampleDispatchMode;
 	}
-	public IpResult getIpSampleResults(){
-		return ipSampleResults;
-	}
-
-	public void setIpSampleResults(IpResult ipSampleResults) {
-		this.ipSampleResults = ipSampleResults;
-	}
-
 	public Disease getDisease(){
 		return disease;
 	}

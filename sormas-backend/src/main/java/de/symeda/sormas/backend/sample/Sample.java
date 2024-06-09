@@ -112,7 +112,6 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public static final String DELETION_REASON = "deletionReason";
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
 	public static final String IPSAMPLESENT = "ipSampleSent";
-	public static final String IPSAMPLERESULTS = "ipSampleResults";
 //	public static final String SAMPLE_DISEASE_TESTS = "sampleDiseaseTests";
 	public static final String DISEASE = "disease";
 	public static final String CSF_SAMPLE_COLLECTED = "csfSampleCollected";
@@ -242,7 +241,6 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
 	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
 	private YesNo ipSampleSent;
-	private IpResult ipSampleResults;
 	private Disease disease;
 	private SampleDispatchMode sampleDispatchMode;
 	private Date sampleDispatchDate;
@@ -889,14 +887,6 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setSampleDispatchDate(Date sampleDispatchDate) {
 		this.sampleDispatchDate = sampleDispatchDate;
-	}
-
-	public void setIpSampleResults(IpResult ipSampleResults) {
-		this.ipSampleResults = ipSampleResults;
-	}
-	@Enumerated(EnumType.STRING)
-	public IpResult getIpSampleResults(){
-		return ipSampleResults;
 	}
 
 	public void setDisease(Disease disease) {

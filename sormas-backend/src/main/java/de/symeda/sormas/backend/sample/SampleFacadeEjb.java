@@ -1140,7 +1140,6 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setSamplingReasonDetails(source.getSamplingReasonDetails());
 
 		target.setIpSampleSent(source.getIpSampleSent());
-		target.setIpSampleResults(source.getIpSampleResults());
 		target.setDisease(source.getDisease());
 		target.setSampleDispatchMode(source.getSampleDispatchMode());
 		target.setSampleDispatchDate(source.getSampleDispatchDate());
@@ -1435,7 +1434,6 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setOtherDeletionReason(source.getOtherDeletionReason());
 
 		target.setIpSampleSent(source.getIpSampleSent());
-		target.setIpSampleResults(source.getIpSampleResults());
 		target.setDisease(source.getDisease());
 		target.setSampleDispatchMode(source.getSampleDispatchMode());
 		target.setSampleDispatchDate(source.getSampleDispatchDate());

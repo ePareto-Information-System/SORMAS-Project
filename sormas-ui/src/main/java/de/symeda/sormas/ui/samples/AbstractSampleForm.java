@@ -227,7 +227,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 //					loc(ADDITIONAL_TESTING_READ_HEADLINE_LOC) +
 //					loc(ADDITIONAL_TESTING_INFO_LOC) +
 //					loc(SampleDto.REQUESTED_ADDITIONAL_TESTS) +
-				//	loc(SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS) +
+//					loc(SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS) +
 //					loc(REQUESTED_ADDITIONAL_TESTS_READ_LOC) +
 
 					//AFP
@@ -262,7 +262,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(6, SampleDto.LAB_SAMPLE_ID) +
 					fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
 					fluidRowLocs(SampleDto.IPSAMPLESENT) +
-					fluidRowLocs(6, SampleDto.IPSAMPLERESULTS)+
 					fluidRowLocs(6,SampleDto.LABORATORY_APPEARANCE_OF_CSF) +
 					fluidRowLocs(SampleDto.COMMENT) +
 
@@ -1208,8 +1207,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         setVisible(true, SampleDto.REQUESTED_SAMPLE_MATERIALS);
         testResultField.setVisible(true);
 
-        ipsampleResults = addField(SampleDto.IPSAMPLERESULTS, ComboBox.class);
-        ipsampleResults.setVisible(false);
 
         sampleReceived.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
             FieldHelper.setVisibleWhen(sampleReceived, Arrays.asList(sampleReceivedDate, labSampleId, sampleSpecimenCondition, ipSampleSent), Arrays.asList(Boolean.TRUE), true);
@@ -1218,8 +1215,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         if (sampleReceived.getValue().equals(Boolean.TRUE)) {
             FieldHelper.setVisibleWhen(sampleReceived, Arrays.asList(sampleReceivedDate, labSampleId, sampleSpecimenCondition, ipSampleSent), Arrays.asList(Boolean.TRUE), true);
         }
-
-        FieldHelper.setVisibleWhen(ipSampleSent, Arrays.asList(ipsampleResults), Arrays.asList(YesNo.YES), true);
 
     }
 
