@@ -85,7 +85,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
     protected static final String REFERRED_FROM_BUTTON_LOC = "referredFromButtonLoc";
     private ComboBox lab;
     private Disease disease;
-    private ComboBox diseaseField;
     public ComboBox sampleMaterialComboBox;
     public ComboBox sampleSource;
     private TextField labDetails;
@@ -283,14 +282,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         dateLabReceivedSpecimen = addField(SampleDto.DATE_LAB_RECEIVED_SPECIMEN);
         hasSampleBeenCollected.setVisible(false);
 
-        ComboBox diseaseBox = new ComboBox("Diseases");
-
-        for (Disease ahfDisease : Disease.AHF_DISEASES) {
-            diseaseBox.addItem(ahfDisease);
-        }
-
-        diseaseField = addField(SampleDto.DISEASE, diseaseBox);
-        diseaseField.setVisible(false);
 
         addField(SampleDto.SAMPLE_MATERIAL_TEXT, TextField.class);
         sampleSource = addField(SampleDto.SAMPLE_SOURCE, ComboBox.class);
@@ -352,23 +343,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         addField(SampleDto.OTHER_DELETION_REASON, TextArea.class).setRows(3);
         setVisible(false, SampleDto.DELETION_REASON, SampleDto.OTHER_DELETION_REASON);
 
-		/*diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
-			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
-
-			switch(disease){
-				case EVD:
-                case LASSA:
-                case DENGUE:
-                case CHIKUNGUNYA:
-                case YELLOW_FEVER:
-                case MARBURG:
-                case ZIKA:
-                    selectAHFTests();
-					break;
-				case MEASLES:
-					handleMeasles();
-            }
-		});*/
     }
 
     protected void defaultValueChangeListener() {
@@ -963,7 +937,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         dateSpecimenSentToLab.setVisible(false);
         sampleDateField.setVisible(false);
 
-        diseaseField.setVisible(true);
         List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.PLASMA_SERUM, SampleMaterial.SALIVA, SampleMaterial.URINE, SampleMaterial.BIOPSY, SampleMaterial.CARDIAC, SampleMaterial.BLOOD_ANTI_COAGULANT, SampleMaterial.OTHER);
         FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
 
@@ -1164,7 +1137,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                 SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS,
                 SampleDto.SAMPLE_SOURCE,
                 SampleDto.FIELD_SAMPLE_ID,
-                SampleDto.DISEASE,
                 SampleDto.SAMPLE_TESTS,
                 SampleDto.COMMENT,
                 SampleDto.PATHOGEN_TEST_RESULT,
@@ -1189,7 +1161,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                 SampleDto.REQUESTED_ADDITIONAL_TESTS,
                 SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS,
                 SampleDto.SAMPLE_SOURCE,
-                SampleDto.DISEASE,
                 SampleDto.COMMENT,
                 SampleDto.PATHOGEN_TEST_RESULT,
                 SampleDto.NO_TEST_POSSIBLE_REASON,
