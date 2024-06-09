@@ -30,7 +30,6 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.utils.DateFormatHelper;
 import de.symeda.sormas.api.utils.EmbeddedPersonalData;
 import de.symeda.sormas.api.utils.EmbeddedSensitiveData;
-import de.symeda.sormas.api.utils.IpResult;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
@@ -110,7 +109,6 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	private SampleDispatchMode sampleDispatchMode;
 	private Date sampleDispatchDate;
 	private String ipSampleSent;
-	private IpResult ipSampleResults;
 
 	//@formatter:off
 
@@ -360,14 +358,6 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 
 	public void setSampleTests(PathogenTestType sampleTests) {
 		this.sampleTests = sampleTests;
-	}
-
-	public IpResult getIpSampleResults() {
-		return ipSampleResults;
-	}
-
-	public void setIpSampleResults(IpResult ipSampleResults) {
-		this.ipSampleResults = ipSampleResults;
 	}
 
 	public Date getSampleDateTime() {
