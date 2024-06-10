@@ -158,7 +158,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     fluidRowLocs(SampleDto.SAMPLE_PURPOSE) +
                     fluidRowLocs(6,SampleDto.SAMPLE_MATERIAL) +
 					fluidRowLocs(SampleDto.FIELD_SAMPLE_ID, REFERRED_FROM_BUTTON_LOC) +
-					fluidRowLocs(6, SampleDto.DISEASE) +
+//					fluidRowLocs(6, SampleDto.DISEASE) +
 					fluidRowLocs(SampleDto.SAMPLE_TESTS) +
 					fluidRowLocs("", SampleDto.SAMPLE_MATERIAL_TEXT) +
 					fluidRowLocs(SampleDto.SAMPLING_REASON, SampleDto.SAMPLING_REASON_DETAILS) +
@@ -1121,7 +1121,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
         setRequired(false, SampleDto.SAMPLE_PURPOSE);
 
-        setVisible(false, SampleDto.SAMPLE_PURPOSE, SampleDto.REQUESTED_SAMPLE_MATERIALS, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLE_MATERIAL_TEXT, SampleDto.SAMPLE_MATERIAL_REQUESTED, SampleDto.COMMENT, SampleDto.SAMPLE_TESTS, SampleDto.DISEASE, SampleDto.SAMPLING_REASON, SampleDto.SAMPLE_MATERIAL, SampleDto.PATHOGEN_TEST_RESULT, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLE_DATE_TIME);
+        setVisible(false, SampleDto.SAMPLE_PURPOSE, SampleDto.REQUESTED_SAMPLE_MATERIALS, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLE_MATERIAL_TEXT, SampleDto.SAMPLE_MATERIAL_REQUESTED, SampleDto.COMMENT, SampleDto.SAMPLE_TESTS, SampleDto.SAMPLING_REASON, SampleDto.SAMPLE_MATERIAL, SampleDto.PATHOGEN_TEST_RESULT, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLE_DATE_TIME);
 
         suspectedDisease.setVisible(false);
         labLocation.setVisible(false);
@@ -1299,7 +1299,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			Arrays.stream(PathogenTestType.values())
 					.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
 					.forEach(pathogenTestType -> requestedPathogenTestsField.removeItem(pathogenTestType));
-			setVisible(false, SampleDto.FIELD_SAMPLE_ID, SampleDto.DISEASE, SampleDto.SAMPLING_REASON, SampleDto.IPSAMPLESENT, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLE_TESTS, SampleDto.LAB_LOCATION, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.SUSPECTED_DISEASE, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN);
+			setVisible(false, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLING_REASON, SampleDto.IPSAMPLESENT, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLE_TESTS, SampleDto.LAB_LOCATION, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.SUSPECTED_DISEASE, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN);
 			laboratoryDateResultsSentDSD.setVisible(true);
 			setVisible(true, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT);
 			dateFormReceivedAtDistrictField.setVisible(true);
