@@ -14796,12 +14796,6 @@ ALTER TABLE samples ADD COLUMN labLocalDetails VARCHAR(255);
 INSERT INTO schema_version(version_number, comment) VALUES (672, 'Added labLocal, labLocalDetails to samples');
 
 ALTER TABLE triaging ADD COLUMN potentialrisk VARCHAR(3);
-INSERT INTO schema_version (version_number, comment) VALUES (673, 'added potentail risk to ebs');
-
-ALTER TABLE pathogentest ADD COLUMN virusDetectionGenotype varchar(255) NULL;
-INSERT INTO schema_version (version_number, comment) VALUES (674, 'Added column to pathogentest to samples');
-
-ALTER TABLE pathogentest ADD COLUMN finalClassification varchar(255) NULL;
-INSERT INTO schema_version (version_number, comment) VALUES (612, 'Added finalClassification to pathogentest');
+INSERT INTO schema_version (version_number, comment) VALUES (673, 'added potential risk to ebs');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

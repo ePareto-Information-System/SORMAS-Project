@@ -383,20 +383,19 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
 		List<Disease> diseases = Disease.diseaseMap.get(caseDisease);
 
-		if (caseDisease == Disease.AHF) {
+		if(caseDisease == Disease.AHF){
 			diseaseField.removeAllItems();
-			List<Disease> subDiseaseList = Collections.singletonList(subDisease);
-			FieldHelper.updateEnumData(diseaseField, subDiseaseList);
-		} else if (caseDisease == Disease.CSM) {
+			FieldHelper.updateEnumData(diseaseField, Disease.AHF_DISEASES);
+		}
+		else if (caseDisease == Disease.CSM) {
 			diseaseField.removeAllItems();
 			FieldHelper.updateEnumData(diseaseField, Disease.CSM_ONLY);
 			diseaseField.setEnabled(false);
-		} else if (caseDisease == Disease.NEW_INFLUENZA) {
+		}
+		else if (caseDisease == Disease.NEW_INFLUENZA) {
 			diseaseField.removeAllItems();
 			FieldHelper.updateEnumData(diseaseField, Disease.NEW_ONLY);
 			diseaseField.setEnabled(false);
-		} else if (caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
-			FieldHelper.updateEnumData(diseaseField, Disease.AHF_DISEASES);
 		}
 		else if (caseDisease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
 			for (Disease disease1 : Disease.values()) {
@@ -406,7 +405,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 					break;
 				}
 			}
-		} else if (Arrays.asList(Disease.MEASLES, Disease.CHOLERA, Disease.CORONAVIRUS, Disease.GUINEA_WORM).contains(caseDisease)) {
+		}
+		else if (Arrays.asList(Disease.MEASLES, Disease.CHOLERA, Disease.CORONAVIRUS, Disease.GUINEA_WORM).contains(caseDisease)) {
 
 		} else if (diseases != null) {
 			diseaseField.removeAllItems();
@@ -890,7 +890,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			dateDistrictReceivedLabResults.setVisible(true);
 			virusDetectionGenotypeField.setVisible(true);
 
-			List<FinalClassification> yellowFeverClass = FinalClassification.yellowFeverClass;
+			List<FinalClassification> yellowFeverClass = FinalClassification.YF_CLASSIFICATION;
 			FieldHelper.updateEnumData(finalClassificationField, yellowFeverClass);
 			finalClassificationField.setCaption("Final Classification");
 

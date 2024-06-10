@@ -13,30 +13,18 @@ public enum FinalClassification {
     DISCARDED_NON_MEASLES_NON_RUBELLA_BY_LAB,
     SUSPECTED_MEASLES_RUBELLA_WITH_LAB_RESULTS_AND_OR_CASE_CLASSIFICATION_PENDING,
     LAB_CONFIRMED,
-    CONFIRMED_BY_EPIDEMIOLOGIC_LINK,
+    EPIDEMIOLOGICAL,
     COMPATIBLE,
-    DISCRADED,
+    DISCARDED,
     PENDING,
     NOT_A_CASE,
     SUSPECT,
     PROBABLE;
 
-    public static final List<FinalClassification> YF_CLASSIFICATION = Arrays.asList( LAB_CONFIRMED, CONFIRMED_BY_EPIDEMIOLOGIC_LINK, COMPATIBLE, DISCRADED, PENDING  );
+    public static final List<FinalClassification> YF_CLASSIFICATION = Arrays.asList( LAB_CONFIRMED, EPIDEMIOLOGICAL, COMPATIBLE, DISCARDED, PENDING);
+    public static final List<FinalClassification> CHOLERA_CLASSIFICATION = Arrays.asList( NOT_A_CASE, SUSPECT, PROBABLE, LAB_CONFIRMED, EPIDEMIOLOGICAL, PENDING);
 
-    public static final List<FinalClassification> CHOLERA_CLASSIFICATION = Arrays.asList( NOT_A_CASE, SUSPECT, PROBABLE, LAB_CONFIRMED, CONFIRMED_BY_EPIDEMIOLOGIC_LINK, PENDING  );
-
-    public static final List<FinalClassification> DEFAULT = Arrays.asList( CONFIRMED_MEASLES_BY_LAB,
-    Lab_Confirmed,
-    Epidemiological,
-    Compatible,
-    Discarded,
-    Pending);
-
-    public static final List<FinalClassification> yellowFeverClass = Arrays.asList(Lab_Confirmed,
-            Epidemiological,
-            Compatible,
-            Discarded,
-            Pending);
+    public static final List<FinalClassification> DEFAULT = Arrays.asList( CONFIRMED_MEASLES_BY_LAB, LAB_CONFIRMED, EPIDEMIOLOGICAL, DISCARDED, PENDING);
 
     public static final List<FinalClassification> measlesClass = Arrays.asList(CONFIRMED_MEASLES_BY_LAB,
             CONFIRMED_MEASLES_BY_EPIDEMIOLOGIC_LINK,

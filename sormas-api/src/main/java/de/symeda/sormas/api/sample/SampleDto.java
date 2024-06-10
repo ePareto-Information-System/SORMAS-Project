@@ -1978,8 +1978,5 @@ public class SampleDto extends SormasToSormasShareableDto {
 		this.labLocalDetails = labLocalDetails;
 	}
 	
-	public FinalClassification getFinalClassification() {
-		return finalClassification;
-	}
 
 }

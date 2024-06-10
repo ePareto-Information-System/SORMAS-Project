@@ -995,7 +995,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	}
 	public void handleCSM(){
 		setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAT_LON_ACCURACY, LocationDto.LAND_MARK);
-		setVisible(false,LocationDto.AREA_TYPE);
+		setVisible(false,LocationDto.AREA_TYPE, LocationDto.CITY);
 	}
 	public void handleNewInfluenza(){
 		setVisible(false,
@@ -1047,7 +1047,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		localityField.setCaption("Address (Location)");
 	}
 	public void handleIDSR(){
-		setVisible(false, LocationDto.POSTAL_CODE);
+		setVisible(false, LocationDto.POSTAL_CODE, LocationDto.CITY);
 		 houseNumberField.setCaption("House Number/Location");
 	}
 

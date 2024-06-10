@@ -221,11 +221,13 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 					&& !caze.checkIsUnreferredPortHealthCase()
 					&& !UserProvider.getCurrent().isPortHealthUser()) {
 
-				if (caze.getDisease() == Disease.CHOLERA || caze.getDisease() == Disease.MONKEYPOX) {
+				if (caze.getDisease() == Disease.CHOLERA) {
 					menu.addView(
-							RiskFactorView.VIEW_NAME,
-							I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.RISK_FACTOR),
-							params);
+							RiskFactorView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.RISK_FACTOR), params);
+				}
+				else if (caze.getDisease() == Disease.MONKEYPOX){
+					menu.addView(
+							RiskFactorView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.RISK_FACTOR_NAME), params);
 				}
 			}
 
