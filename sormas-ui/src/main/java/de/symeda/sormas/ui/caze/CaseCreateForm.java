@@ -622,6 +622,12 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 
 		});
 
+		FieldHelper.setVisibleWhen(
+				diseaseField,
+				Arrays.asList(facilityOrHome),
+				Arrays.asList(Disease.CORONAVIRUS),
+				true);
+
 
 
 		idsrdiagnosis.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {

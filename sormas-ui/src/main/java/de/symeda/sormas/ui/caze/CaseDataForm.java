@@ -1453,6 +1453,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 Arrays.asList(Disease.GUINEA_WORM),
                 true);
 
+        FieldHelper.setVisibleWhen(
+                diseaseField,
+                Arrays.asList(facilityOrHome),
+                Arrays.asList(Disease.GUINEA_WORM),
+                true);
+
         // Other initializations
         //Not Required in Gh-dsd requirements
 		/*if (disease == Disease.MONKEYPOX) {
