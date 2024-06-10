@@ -14794,4 +14794,12 @@ INSERT INTO schema_version (version_number, comment) VALUES (671, 'Dropped food 
 ALTER TABLE samples ADD COLUMN labLocal VARCHAR(255);
 ALTER TABLE samples ADD COLUMN labLocalDetails VARCHAR(255);
 INSERT INTO schema_version(version_number, comment) VALUES (672, 'Added labLocal, labLocalDetails to samples');
+
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Case Officer';
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Contact Officer';
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'District Observer';
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Hospital informant';
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Hospital supervisor';
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Surveillance Officer';
+INSERT INTO schema_version (version_number, comment) VALUES (673, 'updated hasoptionalhealthfacility for userroles');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

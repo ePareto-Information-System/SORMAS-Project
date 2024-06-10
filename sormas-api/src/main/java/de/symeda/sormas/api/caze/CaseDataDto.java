@@ -31,12 +31,14 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus;
 import de.symeda.sormas.api.afpimmunization.AfpImmunizationDto;
 import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.riskfactor.RiskFactorDto;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
+import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.utils.*;
 import org.apache.commons.lang3.StringUtils;
 
@@ -770,6 +772,11 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		caze.setCaseOrigin(CaseOrigin.IN_COUNTRY);
 		// TODO This is a workaround for transferring the followup comment while converting a contact to a case. This can be removed if the followup for cases is implemented in the mobile app
 		caze.setFollowUpStatus(FollowUpStatus.NO_FOLLOW_UP);
+
+		UserDto currentUser = FacadeProvider.getUserFacade().getCurrentUser();
+		if (currentUser != null) {
+			caze.setHealthFacility(currentUser.getHealthFacility());
+		}
 		return caze;
 	}
 
