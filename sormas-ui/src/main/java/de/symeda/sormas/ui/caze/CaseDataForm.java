@@ -230,8 +230,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(FACILITY_OR_HOME_LOC) +
 					//fluidRowLocs(CaseDataDto.REGION, CaseDataDto.DISTRICT, CaseDataDto.COMMUNITY) +
 					fluidRowLocs(6,TYPE_GROUP_LOC) +
-					fluidRowLocs(CaseDataDto.FACILITY_TYPE, CaseDataDto.HEALTH_FACILITY) +
-					fluidRowLocs(6,CaseDataDto.HEALTH_FACILITY_DETAILS) +
+//					fluidRowLocs(CaseDataDto.FACILITY_TYPE, CaseDataDto.HEALTH_FACILITY) +
+					fluidRowLocs(6, CaseDataDto.HEALTH_FACILITY, 6,CaseDataDto.HEALTH_FACILITY_DETAILS) +
 					fluidRowLocs(6,CaseDataDto.MOBILE_TEAM_NO) +
 					fluidRowLocs(6,CaseDataDto.NAME_OF_VILLAGE_PERSON_GOT_ILL) +
 					inlineLocs(CaseDataDto.POINT_OF_ENTRY, CaseDataDto.POINT_OF_ENTRY_DETAILS, CASE_REFER_POINT_OF_ENTRY_BTN_LOC) +
