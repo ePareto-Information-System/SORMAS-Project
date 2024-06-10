@@ -500,9 +500,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         }
 
         samplePurposeField.setRequired(true);
-
         sampleMaterialComboBox = addField(SampleDto.SAMPLE_MATERIAL);
-
         UserReferenceDto reportingUser = getValue().getReportingUser();
 
         if (disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
@@ -525,7 +523,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                         SampleDto.SAMPLE_PURPOSE,
                         Arrays.asList(SampleDto.LAB),
                         Arrays.asList(SamplePurpose.EXTERNAL, null));
-
 
             } else {
                 getField(SampleDto.SAMPLE_DATE_TIME).setEnabled(false);
@@ -615,7 +612,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION, SampleDto.LABORATORY_NUMBER, SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_APPEARANCE_OF_CSF),
                     true);
             FieldHelper.setVisibleWhen(laboratorySampleContainerReceived, Arrays.asList(laboratorySampleContainerOther), Arrays.asList(SampleContainerUsed.OTHER), true);
-        } else if (disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
+        }
+		else if (disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
             FieldHelper.setVisibleWhen(
                     getFieldGroup(),
                     Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
@@ -629,7 +627,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
                     true);
         } else {
-
             FieldHelper.setVisibleWhen(
                     getFieldGroup(),
                     Arrays.asList(SampleDto.RECEIVED_DATE),
@@ -797,28 +794,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				}
 	}
 
-
-	private void updateSampleMaterialFields() {
-
-		boolean sampleMaterialsRequested = Boolean.TRUE.equals(sampleMaterialTestingField.getValue());
-		setVisible(sampleMaterialsRequested, SampleDto.REQUESTED_SAMPLE_MATERIALS);
-
-		getContent().getComponent(SAMPLE_MATERIAL_INFO_LOC).setVisible(sampleMaterialsRequested);
-
-		if (getValue() != null ) {
-			CssLayout requestedSampleMaterialsLayout = new CssLayout();
-			CssStyles.style(requestedSampleMaterialsLayout, VSPACE_3);
-			for (SampleMaterial sampleType : SampleMaterial.values()) {
-				Label testLabel = new Label(sampleType.toString());
-				testLabel.setWidthUndefined();
-				CssStyles.style(testLabel, CssStyles.LABEL_ROUNDED_CORNERS, CssStyles.LABEL_BACKGROUND_FOCUS_LIGHT, VSPACE_4, HSPACE_RIGHT_4);
-				requestedSampleMaterialsLayout.addComponent(testLabel);
-			}
-			getContent().addComponent(requestedSampleMaterialsLayout, SAMPLE_MATERIAL_INFO_LOC);
-		}
-	}
-
-
 	class FieldSampleIdValidator implements Validator {
 
 		private static final long serialVersionUID = 1L;
@@ -902,19 +877,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         sampleTestsField.setVisible(false);
 
     }
-
     CheckBox sampleMaterialRequestedField = addField(SampleDto.SAMPLE_MATERIAL_REQUESTED, CheckBox.class);
     Field<?> sampleMaterialTestingField = getField(SampleDto.SAMPLE_MATERIAL_REQUESTED);
-
-
-    private void selectAHFTests() {
-
-        sampleTestsField.setCaption("Sample Tests");
-        sampleTestsField.setVisible(true);
-        List<PathogenTestType> validValues = Arrays.asList(PathogenTestType.IGG_SERUM_ANTIBODY, PathogenTestType.IGM_SERUM_ANTIBODY, PathogenTestType.PCR_RT_PCR);
-        FieldHelper.updateEnumData(sampleTestsField, validValues);
-    }
-
 
     private void updateRequestedTestFields() {
 
@@ -1299,10 +1263,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			Arrays.stream(PathogenTestType.values())
 					.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
 					.forEach(pathogenTestType -> requestedPathogenTestsField.removeItem(pathogenTestType));
-			setVisible(false, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLING_REASON, SampleDto.IPSAMPLESENT, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLE_TESTS, SampleDto.LAB_LOCATION, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.SUSPECTED_DISEASE, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN);
+			setVisible(false, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLING_REASON, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLE_TESTS, SampleDto.LAB_LOCATION, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.SUSPECTED_DISEASE, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN);
+
 			laboratoryDateResultsSentDSD.setVisible(true);
 			setVisible(true, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT);
-			dateFormReceivedAtDistrictField.setVisible(true);
+			dateFormReceivedAtDistrict.setVisible(true);
 			dateFormSentToDistrict.setVisible(false);
 
 		dateSurveillanceSentResultsToDistrict.setVisible(true);
