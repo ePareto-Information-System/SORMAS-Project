@@ -1,5 +1,6 @@
 package de.symeda.sormas.ui.ebs;
 
+import com.vaadin.ui.Notification;
 import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.ebs.*;
@@ -85,6 +86,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
     private OptionGroup animalFacCategoryDetails;
     private OptionGroup environmentalCategoryDetails;
     private OptionGroup poeCategoryDetails;
+    private OptionGroup categoryLevel;
 
     private static UiFieldAccessCheckers createFieldAccessCheckers(
             boolean isPseudonymized,
@@ -121,7 +123,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         healthConcern = addField(TriagingDto.HEALTH_CONCERN, NullableOptionGroup.class);
         potentialRisk = addField(TriagingDto.POTENTIAL_RISK, NullableOptionGroup.class);
         signalCategory = addField(TriagingDto.SIGNAL_CATEGORY, NullableOptionGroup.class);
-        OptionGroup categoryLevel = addField(TriagingDto.CATEGORY_DETAILS_LEVEL, OptionGroup.class);
+        categoryLevel = addField(TriagingDto.CATEGORY_DETAILS_LEVEL, OptionGroup.class);
         humanCommCategoryDetails = addField(TriagingDto.HUMAN_COMMUNITY_CATEGORY_DETAILS, OptionGroup.class);
         humanCommCategoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
         humanCommCategoryDetails.setMultiSelect(true);
@@ -218,22 +220,31 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         specificSignal.addValueChangeListener(e->{
             if(Objects.equals(e.getProperty().getValue().toString(), "[YES]")){
                 healthConcern.setVisible(false);
+                healthConcern.setValue(null);
                 potentialRisk.setVisible(false);
+                potentialRisk.setValue(null);
                 signalCategory.setVisible(true);
                 outcomeSupervisor.setVisible(false);
             }else if ((Objects.equals(e.getProperty().getValue().toString(), "[NO]"))){
                 potentialRisk.setVisible(true);
                 signalCategory.setVisible(false);
+                signalCategory.setValue(null);
                 outcomeSupervisor.setVisible(true);
                 categoryLevel.setVisible(false);
+                categoryLevel.setValue(null);
                 selectedEbs.getTriaging().setCategoryDetailsLevel(null);
                 selectedEbs.getTriaging().setSignalCategory(null);
                 selectedEbs.getTriaging().setHumanCommunityCategoryDetails(null);
                 selectedEbs.getTriaging().setHumanFacilityCategoryDetails(null);
                 selectedEbs.getTriaging().setHumanLaboratoryCategoryDetails(null);
                 humanCommCategoryDetails.setVisible(false);
+                humanCommCategoryDetails.setValue(null);
                 humanFacCategoryDetails.setVisible(false);
+                humanFacCategoryDetails.setValue(null);
                 humanLabCategoryDetails.setVisible(false);
+                humanLabCategoryDetails.setValue(null);
+
+                Notification.show(I18nProperties.getString(Strings.seniorOfficials), Notification.Type.WARNING_MESSAGE);
 
                 selectedEbs.getTriaging().setAnimalCommunityCategoryDetails(null);
                 selectedEbs.getTriaging().setAnimalFacilityCategoryDetails(null);
@@ -250,6 +261,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         });
         signalCategory.addValueChangeListener(e->{
             List<CategoryDetailsLevel> categories = null;
+            var category = signalCategory.getNullableValue();
             if (Objects.equals(e.getProperty().getValue().toString(), "[Human]") || Objects.equals(e.getProperty().getValue().toString(), "[Environment]") || Objects.equals(e.getProperty().getValue().toString(), "[Animal]") || Objects.equals(e.getProperty().getValue().toString(), "[POE]")){
                 categoryLevel.setVisible(true);
             }else {
@@ -257,16 +269,21 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             }
             if (Objects.equals(e.getProperty().getValue().toString(), "[Environment]") ||Objects.equals(e.getProperty().getValue().toString(), "[POE]") ){
                 categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY);
+                setVisibility("Community Level", (SignalCategory) category);
             } else if (Objects.equals(e.getProperty().getValue().toString(), "[Animal]")) {
                 categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY,CategoryDetailsLevel.FACILITY);
+                setVisibility("Community Level", (SignalCategory) category);
             }else if (Objects.equals(e.getProperty().getValue().toString(), "[Human]")) {
                 categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY,CategoryDetailsLevel.FACILITY,CategoryDetailsLevel.LABORATORY);
+                setVisibility("Community Level", (SignalCategory) category);
             }
             try {
                 FieldHelper.updateEnumData(categoryLevel,categories);
             }catch (Exception exception){
                 System.out.println(exception.getMessage());
             }
+            categoryLevel.setVisible(true);
+
         });
 
         categoryLevel.addValueChangeListener(valueChangeEvent -> {
@@ -292,6 +309,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             }
             else if (e.getProperty().getValue().toString().equals("[YES]")) {
                 healthConcern.setVisible(false);
+                healthConcern.setValue(null);
                 referredTo.setVisible(false);
             }
         });
@@ -299,6 +317,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             if (e.getProperty().getValue().toString().equals("[NO]")) {
                 triagingDecision.setValue(EbsTriagingDecision.DISCARD);
                 referredTo.setVisible(false);
+                referredTo.setValue(null);
             }
             else if (e.getProperty().getValue().toString().equals("[YES]")) {
                 referredTo.setVisible(true);
@@ -319,25 +338,37 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 signalCategory.setVisible(true);
             }else if (Objects.equals(selectedEbs.getTriaging().getSpecificSignal().toString(), "NO")) {
                 healthConcern.setVisible(false);
+                healthConcern.setValue(null);
                 potentialRisk.setVisible(false);
+                potentialRisk.setValue(null);
                 signalCategory.setVisible(false);
+                signalCategory.setValue(null);
                 categoryLevel.setVisible(false);
+                categoryLevel.setValue(null);
                 outcomeSupervisor.setVisible(true);
                 humanCommCategoryDetails.setVisible(false);
+                humanCommCategoryDetails.setValue(null);
                 humanFacCategoryDetails.setVisible(false);
-                humanLabCategoryDetails.setVisible(false);
+                humanFacCategoryDetails.setValue(null);
+                humanLabCategoryDetails.setValue(null);
 
                 animalCommCategoryDetails.setVisible(false);
+                animalCommCategoryDetails.setValue(null);
                 animalFacCategoryDetails.setVisible(false);  // Repeated for lab
+                animalFacCategoryDetails.setValue(null);  // Repeated for lab
 
                 environmentalCategoryDetails.setVisible(false);  // Shown for all levels
+                environmentalCategoryDetails.setValue(null);  // Shown for all levels
 
                 poeCategoryDetails.setVisible(false);  // Shown for all levels
+                poeCategoryDetails.setValue(null);  // Shown for all levels
             }
         }else {
             outcomeSupervisor.setVisible(false);
             signalCategory.setVisible(false);
+            signalCategory.setValue(null);
             categoryLevel.setVisible(false);
+            categoryLevel.setValue(null);
         }
         setRequired(true,TriagingDto.DATE_OF_DECISION, TriagingDto.TRIAGING_DECISION);
         initializeVisibilitiesAndAllowedVisibilities();
@@ -372,6 +403,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         if (!animalFacCategoryDetails.isVisible()) animalFacCategoryDetails.setVisible(false);
         if (!environmentalCategoryDetails.isVisible()) environmentalCategoryDetails.setVisible(false);
         if (!poeCategoryDetails.isVisible()) poeCategoryDetails.setVisible(false);
+        categoryLevel.setValue(CategoryDetailsLevel.COMMUNITY);
     }
 
     private void showSignalDetails() {
