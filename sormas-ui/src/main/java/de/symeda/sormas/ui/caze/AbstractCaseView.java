@@ -265,19 +265,29 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 							params);
 				}
 			}
-			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_THERAPY)
-				&& UserProvider.getCurrent().hasUserRight(UserRight.THERAPY_VIEW)
-				&& !caze.checkIsUnreferredPortHealthCase()
-				&& !FacadeProvider.getFeatureConfigurationFacade().isFeatureDisabled(FeatureType.CLINICAL_MANAGEMENT)) {
 
-				//menu.addView(TherapyView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.THERAPY), params);
+			if (caze.getDisease() == Disease.CORONAVIRUS) {
+				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_THERAPY)
+						&& UserProvider.getCurrent().hasUserRight(UserRight.THERAPY_VIEW)
+						&& !caze.checkIsUnreferredPortHealthCase()
+						&& !FacadeProvider.getFeatureConfigurationFacade().isFeatureDisabled(FeatureType.CLINICAL_MANAGEMENT)) {
+
+					menu.addView(TherapyView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.THERAPY), params);
+				}
 			}
 		}
 		if(caze.getDisease() != Disease.FOODBORNE_ILLNESS && caze.getDisease() != Disease.MONKEYPOX) {
 		if (caseFollowupEnabled
 			&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_FOLLOW_UP)
 			&& caze.getFollowUpStatus() != FollowUpStatus.NO_FOLLOW_UP) {
-			menu.addView(CaseVisitsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.VISITS), params);
+				if (caze.getDisease() == Disease.CORONAVIRUS) {
+					menu.addView(
+						ClinicalCourseView.VIEW_NAME,
+						I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CLINICAL_COURSE),
+						params);
+				}
+				menu.addView(CaseVisitsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.VISITS), params);
+
 		}
 
 		if (showExtraMenuEntries) {

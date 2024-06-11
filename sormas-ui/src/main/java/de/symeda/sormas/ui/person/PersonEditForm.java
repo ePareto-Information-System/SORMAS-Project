@@ -1111,6 +1111,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			} else if (disease == Disease.CHOLERA) {
 				List<PresentCondition> validValues = Arrays.asList();
 				FieldHelper.updateEnumData(presentConditionField, validValues);
+				occupationHeader.setVisible(false);
 				setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.MOTHERS_NAME, PersonDto.FATHERS_NAME, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PASSPORT_NUMBER, PersonDto.GHANA_CARD, PersonDto.MARRIAGE_STATUS, PersonDto.OCCUPATION_DETAILS, PersonDto.EDUCATION_TYPE);
 			}
 			else if (disease == Disease.YELLOW_FEVER) {

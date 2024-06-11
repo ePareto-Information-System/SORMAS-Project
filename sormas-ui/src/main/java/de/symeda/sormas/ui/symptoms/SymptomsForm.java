@@ -85,6 +85,7 @@ import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.visit.VisitStatus;
 import de.symeda.sormas.ui.utils.*;
+import org.apache.tapestry.IForm;
 
 public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
@@ -1527,6 +1528,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	@Override
 	protected String createHtmlLayout() {
 		String SELECTED_HTML_LAYOUT = "";
+
+			if (caze == null) {
+				return HTML_LAYOUT;
+			}
 
 			switch (caze.getDisease()) {
 				case GUINEA_WORM:
