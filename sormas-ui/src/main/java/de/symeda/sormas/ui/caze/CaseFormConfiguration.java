@@ -58,8 +58,7 @@ public class CaseFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.RESPONSIBLE_DISTRICT, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.RESPONSIBLE_COMMUNITY, new HashSet<>(Arrays.asList(Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DONT_SHARE_WITH_REPORTING_TOOL, new HashSet<>(Arrays.asList()));
-        DISABLED_FIELDS_BY_DISEASE.put(DIFFERENT_PLACE_OF_STAY_JURISDICTION, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
-
+        DISABLED_FIELDS_BY_DISEASE.put(DIFFERENT_PLACE_OF_STAY_JURISDICTION, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.HOME_ADDRESS_RECREATIONAL, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(PLACE_OF_STAY_HEADING_LOC, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(FACILITY_OR_HOME_LOC, new HashSet<>(Arrays.asList()));

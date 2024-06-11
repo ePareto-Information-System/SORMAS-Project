@@ -26,10 +26,7 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRow;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.locs;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import de.symeda.sormas.api.caze.IdsrType;
 import de.symeda.sormas.api.infrastructure.facility.*;
@@ -132,7 +129,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			+ fluidRowLocs(CaseDataDto.RESPONSIBLE_REGION, CaseDataDto.RESPONSIBLE_DISTRICT, CaseDataDto.RESPONSIBLE_COMMUNITY)
 			+ fluidRowLocs(CaseDataDto.DONT_SHARE_WITH_REPORTING_TOOL)
 			+ fluidRowLocs(DONT_SHARE_WARNING_LOC)
-			//+ fluidRowLocs(DIFFERENT_PLACE_OF_STAY_JURISDICTION)
+			+ fluidRowLocs(DIFFERENT_PLACE_OF_STAY_JURISDICTION)
 			//+ fluidRowLocs(PLACE_OF_STAY_HEADING_LOC)
 			+ fluidRowLocs(CaseDataDto.REGION, CaseDataDto.DISTRICT, CaseDataDto.COMMUNITY)
 			+ fluidRowLocs(FACILITY_OR_HOME_LOC)
@@ -473,6 +470,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 					setVisible(true, CaseDataDto.POINT_OF_ENTRY);
 					differentPointOfEntryJurisdiction.setVisible(true);
 					setRequired(true, CaseDataDto.POINT_OF_ENTRY);
+					setVisible(diseaseField.getValue() == Disease.CORONAVIRUS, DIFFERENT_POINT_OF_ENTRY_JURISDICTION, CaseDataDto.POINT_OF_ENTRY);
 					if (userJurisdictionLevel != JurisdictionLevel.HEALTH_FACILITY) {
 						facilityOrHome.clear();
 						//setRequired(false, FACILITY_OR_HOME_LOC, FACILITY_TYPE_GROUP_LOC, CaseDataDto.FACILITY_TYPE, CaseDataDto.HEALTH_FACILITY);
@@ -578,7 +576,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			if (diseaseField.getValue() != null && diseaseField.getValue() == Disease.FOODBORNE_ILLNESS) {
 				personCreateForm.hideFields();
 				placeOfStayHeadingLabel.setVisible(false);
-				setVisible(false, FACILITY_OR_HOME_LOC, DIFFERENT_PLACE_OF_STAY_JURISDICTION);
+				setVisible(false, FACILITY_OR_HOME_LOC);
 			} else if (diseaseField.getValue() != null && diseaseField.getValue() == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
 				personCreateForm.hideFields();
 			} else if(diseaseField.getValue() != null && diseaseField.getValue() == Disease.NEW_INFLUENZA || diseaseField.getValue() == Disease.AFP || diseaseField.getValue() == Disease.AHF){
@@ -598,7 +596,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
 				addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
 			}
-
+            setVisible(diseaseField.getValue() == Disease.CORONAVIRUS, DIFFERENT_PLACE_OF_STAY_JURISDICTION);
 		});
 
 		idsrdiagnosis.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
