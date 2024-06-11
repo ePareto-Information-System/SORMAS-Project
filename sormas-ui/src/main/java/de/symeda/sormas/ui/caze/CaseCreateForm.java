@@ -108,6 +108,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 
 	private final boolean showHomeAddressForm;
 	private final boolean showPersonSearchButton;
+	private boolean canUpdateFacility = true;
 
 	// If a case is created form a TravelEntry, the variable convertedTravelEntry provides the
 	// necessary extra data. This variable is expected to be replaced in the implementation of
@@ -135,8 +136,8 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			+ fluidRowLocs(CaseDataDto.REGION, CaseDataDto.DISTRICT, CaseDataDto.COMMUNITY)
 			+ fluidRowLocs(FACILITY_OR_HOME_LOC)
 			+ fluidRowLocs(6,FACILITY_TYPE_GROUP_LOC)
-			+ fluidRowLocs(CaseDataDto.FACILITY_TYPE, CaseDataDto.HEALTH_FACILITY)
-			+ fluidRowLocs(6,CaseDataDto.HEALTH_FACILITY_DETAILS)
+//			+ fluidRowLocs(CaseDataDto.FACILITY_TYPE, CaseDataDto.HEALTH_FACILITY)
+			+ fluidRowLocs(6, CaseDataDto.HEALTH_FACILITY, 6,CaseDataDto.HEALTH_FACILITY_DETAILS)
 			+ fluidRowLocs(6, CaseDataDto.HOME_ADDRESS_RECREATIONAL)
 			+ fluidRowLocs(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY)
 			+ fluidRowLocs(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT)
@@ -486,7 +487,9 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		responsibleDistrictCombo.addValueChangeListener(e -> {
 			Boolean differentPlaceOfStay = differentPlaceOfStayJurisdiction.getValue();
 			if (!Boolean.TRUE.equals(differentPlaceOfStay)) {
-				updateFacility();
+				if (!canUpdateFacility) {
+					updateFacility();
+				}
 				if (!Boolean.TRUE.equals(differentPointOfEntryJurisdiction.getValue())) {
 					updatePOEs();
 				}
@@ -495,6 +498,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		responsibleCommunityCombo.addValueChangeListener((e) -> {
 			Boolean differentPlaceOfStay = differentPlaceOfStayJurisdiction.getValue();
 			if (differentPlaceOfStay == null || Boolean.FALSE.equals(differentPlaceOfStay)) {
+				canUpdateFacility = false;
 				updateFacility();
 			}
 		});
@@ -567,7 +571,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			caseTransmissionClassification.setVisible(false);
 
 			facilityTypeGroup.setVisible(false);
-			FieldHelper.removeItems(facilityCombo);
+//			FieldHelper.removeItems(facilityCombo);
 
 
 			investigated.setVisible(disease == Disease.NEW_INFLUENZA);
@@ -618,6 +622,14 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 
 		});
 
+		FieldHelper.setVisibleWhen(
+				diseaseField,
+				Arrays.asList(facilityOrHome),
+				Arrays.asList(Disease.CORONAVIRUS),
+				true);
+
+
+
 		idsrdiagnosis.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
             specifyEvent.setVisible(idsrdiagnosis.getValue() != null && idsrdiagnosis.getValue() == IdsrType.OTHER);
 		});
@@ -632,6 +644,10 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			updateDiseaseVariant(disease);
 			personCreateForm.updatePresentConditionEnum(disease);
 		}
+
+		facilityOrHome.setValue(Sets.newHashSet(TypeOfPlace.FACILITY));
+
+
 	}
 
 	private void updateDiseaseVariant(Disease disease) {
@@ -672,6 +688,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			district = (DistrictReferenceDto) responsibleDistrictCombo.getValue();
 			community = (CommunityReferenceDto) responsibleCommunityCombo.getValue();
 		}
+
 
 		if (facilityType.getValue() != null && district != null) {
 			if (community != null) {

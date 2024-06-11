@@ -14,8 +14,6 @@
  */
 package de.symeda.sormas.ui.caze;
 
-import static de.symeda.sormas.api.symptoms.SymptomsDto.RASHES;
-import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.OTHER_CONDITIONS;
 import static de.symeda.sormas.ui.utils.CssStyles.ERROR_COLOR_PRIMARY;
 import static de.symeda.sormas.ui.utils.CssStyles.FORCE_CAPTION;
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
@@ -38,7 +36,6 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.locs;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.vaadin.ui.*;
 import com.vaadin.v7.data.validator.RegexpValidator;
 import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.ComboBox;
@@ -47,7 +44,6 @@ import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
 import com.vaadin.v7.ui.VerticalLayout;
 import de.symeda.sormas.api.caze.*;
-import de.symeda.sormas.api.infrastructure.facility.*;
 import de.symeda.sormas.api.utils.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -72,7 +68,6 @@ import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.caze.classification.DiseaseClassificationCriteriaDto;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.FollowUpStatus;
@@ -91,14 +86,11 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
-import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
@@ -124,18 +116,6 @@ import de.symeda.sormas.ui.utils.StringToAngularLocationConverter;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 import de.symeda.sormas.ui.utils.ValidationUtils;
 import de.symeda.sormas.ui.utils.ViewMode;
-import org.checkerframework.checker.units.qual.C;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import de.symeda.sormas.ui.utils.*;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static de.symeda.sormas.ui.utils.CssStyles.*;
-import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 
 public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
@@ -250,8 +230,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(FACILITY_OR_HOME_LOC) +
 					//fluidRowLocs(CaseDataDto.REGION, CaseDataDto.DISTRICT, CaseDataDto.COMMUNITY) +
 					fluidRowLocs(6,TYPE_GROUP_LOC) +
-					fluidRowLocs(CaseDataDto.FACILITY_TYPE, CaseDataDto.HEALTH_FACILITY) +
-					fluidRowLocs(6,CaseDataDto.HEALTH_FACILITY_DETAILS) +
+//					fluidRowLocs(CaseDataDto.FACILITY_TYPE, CaseDataDto.HEALTH_FACILITY) +
+					fluidRowLocs(6, CaseDataDto.HEALTH_FACILITY, 6,CaseDataDto.HEALTH_FACILITY_DETAILS) +
 					fluidRowLocs(6,CaseDataDto.MOBILE_TEAM_NO) +
 					fluidRowLocs(6,CaseDataDto.NAME_OF_VILLAGE_PERSON_GOT_ILL) +
 					inlineLocs(CaseDataDto.POINT_OF_ENTRY, CaseDataDto.POINT_OF_ENTRY_DETAILS, CASE_REFER_POINT_OF_ENTRY_BTN_LOC) +
@@ -400,6 +380,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
     private TextArea supplementalImmunizationDetails;
     private TextField reportingVillage;
     private TextField reportingZone;
+    private boolean canUpdateFacility = true;
 
 
     private final Map<ReinfectionDetailGroup, CaseReinfectionCheckBoxTree> reinfectionTrees = new EnumMap<>(ReinfectionDetailGroup.class);
@@ -1249,12 +1230,15 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         responsibleDistrict.addValueChangeListener(e -> {
             Boolean differentPlaceOfStay = differentPlaceOfStayJurisdiction.getValue();
             if (differentPlaceOfStay == null || Boolean.FALSE.equals(differentPlaceOfStay)) {
-                updateFacility();
+                if (!canUpdateFacility) {
+                    updateFacility();
+                }
             }
         });
         responsibleCommunity.addValueChangeListener((e) -> {
             Boolean differentPlaceOfStay = differentPlaceOfStayJurisdiction.getValue();
             if (differentPlaceOfStay == null || Boolean.FALSE.equals(differentPlaceOfStay)) {
+                canUpdateFacility = false;
                 updateFacility();
             }
         });
@@ -1466,6 +1450,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 getFieldGroup(),
                 Arrays.asList(CaseDataDto.REPORTING_VILLAGE, CaseDataDto.REPORTING_ZONE),
                 diseaseField,
+                Arrays.asList(Disease.GUINEA_WORM),
+                true);
+
+        FieldHelper.setVisibleWhen(
+                diseaseField,
+                Arrays.asList(facilityOrHome),
                 Arrays.asList(Disease.GUINEA_WORM),
                 true);
 

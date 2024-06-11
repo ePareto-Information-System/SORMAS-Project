@@ -14799,3 +14799,11 @@ ALTER TABLE triaging ADD COLUMN potentialrisk VARCHAR(3);
 INSERT INTO schema_version (version_number, comment) VALUES (673, 'added potential risk to ebs');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Case Officer';
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Contact Officer';
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'District Observer';
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Hospital informant';
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Hospital supervisor';
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Surveillance Officer';
+INSERT INTO schema_version (version_number, comment) VALUES (674, 'updated hasoptionalhealthfacility for userroles');
+-- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
