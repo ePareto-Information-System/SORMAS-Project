@@ -1600,6 +1600,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             // Set health facility/point of entry visibility based on case origin
             if (getValue().getCaseOrigin() == CaseOrigin.POINT_OF_ENTRY) {
                 setVisible(true, CaseDataDto.POINT_OF_ENTRY);
+                setVisible(diseaseField.getValue() == Disease.CORONAVIRUS, CaseDataDto.POINT_OF_ENTRY);
+
                 if (getValue().getPointOfEntry() != null) {
                     setVisible(getValue().getPointOfEntry().isOtherPointOfEntry(), CaseDataDto.POINT_OF_ENTRY_DETAILS);
                     btnReferFromPointOfEntry

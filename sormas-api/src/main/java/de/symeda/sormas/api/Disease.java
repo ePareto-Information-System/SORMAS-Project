@@ -97,7 +97,7 @@ public enum Disease
 	UNSPECIFIED_VHF(true, true, true, true, false,0, false, false, false),
 	SARI(true, true, true, true, false,17, true, false, false),
 	FOODBORNE_ILLNESS(true, true, true, true, false,17, true, false, false),
-	IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS(true, true, true, false, false,14, true, false, false),;
+	IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS(true, true, true, false, false,14, true, false, false);
 
 
 	private final boolean defaultActive;
