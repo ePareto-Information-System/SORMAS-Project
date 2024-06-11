@@ -291,6 +291,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 
 		facilityOrHome =
 				addCustomField(FACILITY_OR_HOME_LOC, TypeOfPlace.class, NullableOptionGroup.class, I18nProperties.getCaption(Captions.casePlaceOfStay));
+		facilityOrHome.setVisible(false);
 		facilityOrHome.removeAllItems();
 		for (TypeOfPlace place : TypeOfPlace.FOR_CASES) {
 			facilityOrHome.addItem(place);
@@ -535,11 +536,11 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		FieldHelper.setVisibleWhen(getFieldGroup(), Arrays.asList(CaseDataDto.RABIES_TYPE), CaseDataDto.DISEASE, Arrays.asList(Disease.RABIES), true);
 		FieldHelper
 				.setVisibleWhen(getFieldGroup(), Arrays.asList(CaseDataDto.IDSR_DIAGNOSIS), CaseDataDto.DISEASE, Arrays.asList(Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS), true);
-		FieldHelper.setVisibleWhen(
-				facilityOrHome,
-				Arrays.asList(facilityType, facilityCombo),
-				Collections.singletonList(TypeOfPlace.FACILITY),
-				false);
+//		FieldHelper.setVisibleWhen(
+//				facilityOrHome,
+//				Arrays.asList(facilityType, facilityCombo),
+//				Collections.singletonList(TypeOfPlace.FACILITY),
+//				false);
 
 		facilityCombo.addValueChangeListener(e -> {
 			updateFacilityFields(facilityCombo, facilityDetails);
@@ -572,6 +573,12 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 
 			facilityTypeGroup.setVisible(false);
 //			FieldHelper.removeItems(facilityCombo);
+
+			if(disease == Disease.CORONAVIRUS) {
+				facilityOrHome.setVisible(true);
+			}else {
+				facilityOrHome.setVisible(false);
+			}
 
 
 			investigated.setVisible(disease == Disease.NEW_INFLUENZA);
@@ -622,13 +629,11 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 
 		});
 
-		FieldHelper.setVisibleWhen(
-				diseaseField,
-				Arrays.asList(facilityOrHome),
-				Arrays.asList(Disease.CORONAVIRUS),
-				true);
-
-
+//		FieldHelper.setVisibleWhen(
+//				diseaseField,
+//				Arrays.asList(facilityOrHome),
+//				Arrays.asList(Disease.CORONAVIRUS),
+//				true);
 
 		idsrdiagnosis.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
             specifyEvent.setVisible(idsrdiagnosis.getValue() != null && idsrdiagnosis.getValue() == IdsrType.OTHER);

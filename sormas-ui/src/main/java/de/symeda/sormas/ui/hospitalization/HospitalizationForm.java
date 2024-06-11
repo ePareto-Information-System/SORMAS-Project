@@ -152,9 +152,9 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			fluidRowLocs(HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE);
 
 	public static final String MEASLES_LAYOUT = loc(HOSPITALIZATION_HEADING_LOC) +
-			fluidRowLocs(4, HospitalizationDto.SELECT_INPATIENT_OUTPATIENT) +
-			fluidRowLocs(4, HospitalizationDto.ADMISSION_DATE, 4, HospitalizationDto.DISCHARGE_DATE);
-			
+			fluidRowLocs(5, HospitalizationDto.SELECT_INPATIENT_OUTPATIENT, 2, "",5, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY) +
+			fluidRowLocs(5, HospitalizationDto.ADMISSION_DATE,2, "", 5, HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE) +
+	fluidRowLocs(5, HospitalizationDto.DISCHARGE_DATE );
 			
 
 	//@formatter:on
@@ -329,6 +329,13 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		if (caze.getDisease() == Disease.MEASLES) {
 
 			selectInpatientOutpatientField.setVisible(true);
+			seenAtAHealthFacility.setVisible(true);
+			FieldHelper.setVisibleWhen(
+					seenAtAHealthFacility,
+					Arrays.asList(dateFirstSeen),
+					Arrays.asList(YesNoUnknown.YES),
+					true);
+
 			FieldHelper.setVisibleWhen(
 					selectInpatientOutpatientField,
 					Arrays.asList(admissionDateField, dischargeDateField),
