@@ -126,6 +126,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private CheckBox sampleReceived;
     private DateTimeField sampleReceivedDate;
     private ComboBox sampleSpecimenCondition;
+    private OptionGroup ipSampleTestResults;
 
     //@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
@@ -223,12 +224,28 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					loc(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS) +
 					loc(REQUESTED_PATHOGEN_TESTS_READ_LOC) +
 
-//					locCss(VSPACE_TOP_3, SampleDto.ADDITIONAL_TESTING_REQUESTED) +
-//					loc(ADDITIONAL_TESTING_READ_HEADLINE_LOC) +
-//					loc(ADDITIONAL_TESTING_INFO_LOC) +
-//					loc(SampleDto.REQUESTED_ADDITIONAL_TESTS) +
-//					loc(SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS) +
-//					loc(REQUESTED_ADDITIONAL_TESTS_READ_LOC) +
+					locCss(VSPACE_TOP_3, SampleDto.ADDITIONAL_TESTING_REQUESTED) +
+					loc(ADDITIONAL_TESTING_READ_HEADLINE_LOC) +
+					loc(ADDITIONAL_TESTING_INFO_LOC) +
+					//loc(SampleDto.REQUESTED_ADDITIONAL_TESTS) +
+				//	loc(SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS) +
+					loc(REQUESTED_ADDITIONAL_TESTS_READ_LOC) +
+
+					locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
+					fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
+					locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
+					fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.LABORATORY_NUMBER) +
+					fluidRowLocs(SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER) +
+					fluidRowLocs(6,SampleDto.LAB_SAMPLE_ID) +
+					fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
+					fluidRowLocs(SampleDto.IPSAMPLESENT) +
+					fluidRowLocs(SampleDto.IPSAMPLE_TEST_RESULTS) +
+					fluidRowLocs(6,SampleDto.LABORATORY_APPEARANCE_OF_CSF) +
+					fluidRowLocs(SampleDto.COMMENT) +
+
+					fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT) +
+					fluidRowLocs(CaseDataDto.DELETION_REASON) +
+					fluidRowLocs(CaseDataDto.OTHER_DELETION_REASON) +
 
 					//AFP
 					loc(STOOL_SPECIMEN_COLLECTION_HEADLINE_LOC) +
@@ -840,6 +857,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         CssStyles.style(requestedSampleMaterialsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
         requestedSampleMaterialsField.setMultiSelect(true);
 
+        ipSampleTestResults = addField(SampleDto.IPSAMPLE_TEST_RESULTS, OptionGroup.class);
+        CssStyles.style(ipSampleTestResults, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+        ipSampleTestResults.setMultiSelect(true);
+
         OptionGroup requestedAdditionalTestsField = addField(SampleDto.REQUESTED_ADDITIONAL_TESTS, OptionGroup.class);
         CssStyles.style(requestedAdditionalTestsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
         requestedAdditionalTestsField.setMultiSelect(true);
@@ -873,8 +894,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
         updateRequestedTestFields();
 
-        sampleTestsField = addField(SampleDto.SAMPLE_TESTS, OptionGroup.class);
-        sampleTestsField.setVisible(false);
 
     }
     CheckBox sampleMaterialRequestedField = addField(SampleDto.SAMPLE_MATERIAL_REQUESTED, CheckBox.class);
@@ -1085,7 +1104,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
         setRequired(false, SampleDto.SAMPLE_PURPOSE);
 
-        setVisible(false, SampleDto.SAMPLE_PURPOSE, SampleDto.REQUESTED_SAMPLE_MATERIALS, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLE_MATERIAL_TEXT, SampleDto.SAMPLE_MATERIAL_REQUESTED, SampleDto.COMMENT, SampleDto.SAMPLE_TESTS, SampleDto.SAMPLING_REASON, SampleDto.SAMPLE_MATERIAL, SampleDto.PATHOGEN_TEST_RESULT, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLE_DATE_TIME);
+        setVisible(false, SampleDto.SAMPLE_PURPOSE, SampleDto.REQUESTED_SAMPLE_MATERIALS, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLE_MATERIAL_TEXT, SampleDto.SAMPLE_MATERIAL_REQUESTED, SampleDto.COMMENT, SampleDto.SAMPLING_REASON, SampleDto.SAMPLE_MATERIAL, SampleDto.PATHOGEN_TEST_RESULT, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLE_DATE_TIME);
 
         suspectedDisease.setVisible(false);
         labLocation.setVisible(false);
@@ -1148,6 +1167,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         if (sampleReceived.getValue().equals(Boolean.TRUE)) {
             FieldHelper.setVisibleWhen(sampleReceived, Arrays.asList(sampleReceivedDate, labSampleId, sampleSpecimenCondition, ipSampleSent), Arrays.asList(Boolean.TRUE), true);
         }
+
+        List<IpSampleTestType> values =  Arrays.stream(IpSampleTestType.values())
+                .filter(c -> fieldVisibilityCheckers.isVisible(IpSampleTestType.class, c.name()))
+                .collect(Collectors.toList());
+
+        ipSampleTestResults.addItems(values);
 
     }
 
@@ -1310,7 +1335,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
             if (facilityLab != null) {
                 lab.addItems(allActiveLaboratories);
                 lab.setValue(facilityLab);
-//				lab.setReadOnly(true);
                 labDetails.setVisible(false);
                 labDetails.setRequired(false);
             } else {
@@ -1353,7 +1377,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                 SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS,
                 SampleDto.SAMPLE_SOURCE,
                 SampleDto.FIELD_SAMPLE_ID,
-                SampleDto.SAMPLE_TESTS,
                 SampleDto.COMMENT,
                 SampleDto.PATHOGEN_TEST_RESULT,
                 SampleDto.NO_TEST_POSSIBLE_REASON,
@@ -1395,10 +1418,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                                 .collect(Collectors.toList()));
                 break;
             case YELLOW_FEVER:
-                requestedSampleMaterialsField.addItems(
-                        Arrays.stream(SampleMaterial.getYellowFeverMateriealTypes())
-                                .filter(c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
-                                .collect(Collectors.toList()));
+                 List<SampleMaterial> values1 = Arrays.stream(SampleMaterial.getYellowFeverMateriealTypes())
+                        .filter(c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
+                        .collect(Collectors.toList());
+
+                requestedSampleMaterialsField.addItems(values1);
                 break;
             default:
                 requestedSampleMaterialsField.addItems(

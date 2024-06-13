@@ -14798,6 +14798,14 @@ INSERT INTO schema_version(version_number, comment) VALUES (672, 'Added labLocal
 ALTER TABLE triaging ADD COLUMN potentialrisk VARCHAR(3);
 INSERT INTO schema_version (version_number, comment) VALUES (673, 'added potential risk to ebs');
 
+ALTER TABLE samples ADD COLUMN ipsampletestresultsstring VARCHAR(512);
+INSERT INTO schema_version (version_number, comment) VALUES (614, 'Added ipSampleTestResultsString to samples');
+
+ALTER TABLE samples DROP COLUMN sampletests;
+ALTER TABLE samples DROP COLUMN sampletestsstring;
+ALTER TABLE samples_history DROP COLUMN sampletestsstring;
+ALTER TABLE samples DROP COLUMN diseasesampletests;
+ALTER TABLE samples DROP COLUMN yellowfeversampletype;
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Case Officer';
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Contact Officer';

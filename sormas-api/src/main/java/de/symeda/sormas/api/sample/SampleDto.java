@@ -108,8 +108,6 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String ADDITIONAL_TESTING_REQUESTED = "additionalTestingRequested";
 	public static final String REQUESTED_PATHOGEN_TESTS = "requestedPathogenTests";
 	public static final String REQUESTED_SAMPLE_MATERIALS = "requestedSampleMaterials";
-	public static final String SAMPLE_TESTS = "sampleTests";
-//	public static final String SAMPLE_DISEASE_TESTS = "sampleDiseaseTests";
 	public static final String SAMPLE_DISPATCH_MODE = "sampleDispatchMode";
 	public static final String SAMPLE_DISPATCH_DATE = "sampleDispatchDate";
 	public static final String REQUESTED_ADDITIONAL_TESTS = "requestedAdditionalTests";
@@ -124,6 +122,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String DATE_LAB_RECEIVED_SPECIMEN = "dateLabReceivedSpecimen";
 	public static final String LAB_LOCATION = "labLocation";
 	public static final String IPSAMPLESENT = "ipSampleSent";
+	public static final String IPSAMPLE_TEST_RESULTS = "ipSampleTestResults";
 	public static final String DISEASE = "disease";
 
 
@@ -279,8 +278,6 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private SampleSource sampleSource;
 	private SampleReferenceDto referredTo;
 	private boolean shipped;
-/*	private boolean sampleMaterialTypeForYF;
-	private Boolean sampleDiseaseTests;*/
 	private boolean received;
 	private PathogenTestResultType pathogenTestResult;
 
@@ -288,8 +285,8 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private Boolean sampleMaterialTestingRequested;
 	private Boolean additionalTestingRequested;
 	private Set<PathogenTestType> requestedPathogenTests;
+	private Set<IpSampleTestType> ipSampleTestResults;
 	private Set<SampleMaterial> requestedSampleMaterials;
-	private PathogenTestType sampleTests;
 	private Set<AdditionalTestType> requestedAdditionalTests;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String requestedOtherPathogenTests;
@@ -832,23 +829,6 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public void setSampleMaterialTestingRequested(Boolean sampleMaterialTestingRequested) {
 		this.sampleMaterialTestingRequested = sampleMaterialTestingRequested;
 	}
-	/*@ImportIgnore
-	public boolean isYellowFeverSampleType() {
-		return sampleMaterialTypeForYF;
-	}
-
-	public void setYellowFeverSampleType(boolean sampleMaterialTypeForYF) {
-		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
-	}
-
-	@ImportIgnore
-	public Boolean isDiseaseSampleTests() {
-		return sampleDiseaseTests;
-	}
-
-	public void setDiseaseSampleTests(Boolean sampleDiseaseTests) {
-		this.sampleDiseaseTests = sampleDiseaseTests;
-	}*/
 
 	@ImportIgnore
 	public Boolean getAdditionalTestingRequested() {
@@ -867,6 +847,16 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public void setRequestedPathogenTests(Set<PathogenTestType> requestedPathogenTests) {
 		this.requestedPathogenTests = requestedPathogenTests;
 	}
+
+	@ImportIgnore
+	public Set<IpSampleTestType> getIpSampleTestResults() {
+		return ipSampleTestResults;
+	}
+
+	public void setIpSampleTestResults(Set<IpSampleTestType> ipSampleTestResults) {
+		this.ipSampleTestResults = ipSampleTestResults;
+	}
+
 	@ImportIgnore
 	public Set<SampleMaterial> getRequestedSampleMaterials() {
 		return requestedSampleMaterials;
@@ -874,13 +864,6 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 	public void setRequestedSampleMaterials(Set<SampleMaterial> requestedSampleMaterials) {
 		this.requestedSampleMaterials = requestedSampleMaterials;
-	}
-	public PathogenTestType getSampleTests() {
-		return sampleTests;
-	}
-
-	public void setSampleTests(PathogenTestType sampleTests) {
-		this.sampleTests = sampleTests;
 	}
 
 	@ImportIgnore
@@ -1016,8 +999,8 @@ public class SampleDto extends SormasToSormasShareableDto {
 		target.setSampleMaterialTestingRequested(source.getSampleMaterialTestingRequested());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());
+		target.setIpSampleTestResults(source.getIpSampleTestResults());
 		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
-		target.setSampleTests(source.getSampleTests());
 		target.setRequestedAdditionalTests(source.getRequestedAdditionalTests());
 		target.setFieldSampleID(source.getFieldSampleID());
 		target.setSamplingReason(source.getSamplingReason());
