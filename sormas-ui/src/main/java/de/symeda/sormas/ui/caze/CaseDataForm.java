@@ -182,8 +182,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					loc(NOTIFY_INVESTIGATE) +
 					fluidRowLocs(CaseDataDto.NOTIFIED_BY_LIST, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION) +
 					fluidRowLocs(6,CaseDataDto.NOTIFIED_OTHER) +
-					fluidRowLocs(6,CaseDataDto.NOTIFIED_BY) +
 					loc(INDICATE_CATEGORY_LOC) +
+					fluidRowLocs(6,CaseDataDto.NOTIFIED_BY) +
+                    fluidRowLocs(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY) +
+                    fluidRowLocs(CaseDataDto.REPORT_LAT, CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT_LON_ACCURACY)
+                    + fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY)
+                    + fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE) +
 					fluidRowLocs(CaseDataDto.EXTERNAL_ID, CaseDataDto.EXTERNAL_TOKEN) +
 					fluidRowLocs("", EXTERNAL_TOKEN_WARNING_LOC) +
 					fluidRowLocs(6, CaseDataDto.CASE_ID_ISM, 6, CaseDataDto.INTERNAL_TOKEN) +
@@ -252,7 +256,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(CaseDataDto.WAS_IN_QUARANTINE_BEFORE_ISOLATION) +
 					fluidRowLocs(CaseDataDto.QUARANTINE_REASON_BEFORE_ISOLATION, CaseDataDto.QUARANTINE_REASON_BEFORE_ISOLATION_DETAILS) +
 					fluidRowLocs(CaseDataDto.END_OF_ISOLATION_REASON, CaseDataDto.END_OF_ISOLATION_REASON_DETAILS) +
-					fluidRowLocs(CaseDataDto.REPORT_LAT, CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT_LON_ACCURACY) +
 					fluidRowLocs(CaseDataDto.HEALTH_CONDITIONS) +
 					loc(MEDICAL_INFORMATION_LOC) +
 					fluidRowLocs(CaseDataDto.BLOOD_ORGAN_OR_TISSUE_DONATED) +
@@ -1785,12 +1788,18 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 setVisible(false, CaseDataDto.CLINICAL_CONFIRMATION, CaseDataDto.EPIDEMIOLOGICAL_CONFIRMATION, CaseDataDto.LABORATORY_DIAGNOSTIC_CONFIRMATION);
             }
 
-            if (disease == Disease.MONKEYPOX) {
-                placeOfStayHeadingLabel.setVisible(false);
-                createLabel(I18nProperties.getString(Strings.notifyInvestigate), H3, NOTIFY_INVESTIGATE);
-                setVisible(true, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
-                createLabel(I18nProperties.getString(Strings.headingIndicateCategory), H3, INDICATE_CATEGORY_LOC);
-            }
+            if (disease ==Disease.MONKEYPOX){
+				placeOfStayHeadingLabel.setVisible(false);
+				createLabel(I18nProperties.getString(Strings.notifyInvestigate), H3, NOTIFY_INVESTIGATE);
+				setVisible(true, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
+				createLabel(I18nProperties.getString(Strings.headingIndicateCategory), H4, INDICATE_CATEGORY_LOC);
+
+                addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
+                tfReportLon.setVisible(true);
+                tfReportLat.setVisible(true);
+                addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
+                addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
+			}
 
 			if (disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
 				numberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being Reported");
@@ -1892,6 +1901,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 outcome.setVisible(false);
                 dateFormReceivedAtNational.setVisible(false);
 			}
+
 
         });
     }
