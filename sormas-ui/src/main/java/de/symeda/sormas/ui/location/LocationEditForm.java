@@ -926,6 +926,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	public void handleYellowFever(){
 			setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK);
+		localityField.setVisible(false);
 	}
 	public void handleAHF(){
 		setVisible(false,
