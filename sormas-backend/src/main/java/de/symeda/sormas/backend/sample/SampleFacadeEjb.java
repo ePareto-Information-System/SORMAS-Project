@@ -957,6 +957,13 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setDateSpecimenSentToLab(source.getDateSpecimenSentToLab());
 		target.setContainerOther(source.getContainerOther());
 		target.setHasSampleBeenCollected(source.getHasSampleBeenCollected());
+		target.setSelectedResultIGM(source.getSelectedResultIGM());
+		target.setSelectedResultPrnt(source.getSelectedResultPrnt());
+		target.setSelectedResultPcr(source.getSelectedResultPcr());
+		target.setSelectedResultIGMDate(source.getSelectedResultIGMDate());
+		target.setSelectedResultPrntDate(source.getSelectedResultPrntDate());
+		target.setSelectedResultPcrDate(source.getSelectedResultPcrDate());
+		target.setInputValuePrnt(source.getInputValuePrnt());
 
 
 
@@ -1223,6 +1230,13 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setDateSpecimenSentToLab(source.getDateSpecimenSentToLab());
 		target.setContainerOther(source.getContainerOther());
 		target.setHasSampleBeenCollected(source.getHasSampleBeenCollected());
+		target.setSelectedResultIGM(source.getSelectedResultIGM());
+		target.setSelectedResultPrnt(source.getSelectedResultPrnt());
+		target.setSelectedResultPcr(source.getSelectedResultPcr());
+		target.setSelectedResultIGMDate(source.getSelectedResultIGMDate());
+		target.setSelectedResultPrntDate(source.getSelectedResultPrntDate());
+		target.setSelectedResultPcrDate(source.getSelectedResultPcrDate());
+		target.setInputValuePrnt(source.getInputValuePrnt());
 
 
 		return target;

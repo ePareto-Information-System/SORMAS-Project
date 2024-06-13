@@ -101,64 +101,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public static final String REQUESTED_ADDITIONAL_TESTS = "requestedAdditionalTests";
 	public static final String DELETION_REASON = "deletionReason";
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
-	public static final String IPSAMPLESENT = "ipSampleSent";
 	public static final String DISEASE = "disease";
-	public static final String CSF_SAMPLE_COLLECTED = "csfSampleCollected";
-	public static final String CSF_REASON = "csfReason";
-	public static final String APPEARANCE_OF_CSF = "appearanceOfCsf";
-	public static final String INOCULATION_TIME_TRANSPORT_MEDIA = "inoculationTimeTransportMedia";
-	public static final String SAMPLE_SENT_TO_LAB = "sampleSentToLab";
-	public static final String DATE_SAMPLE_SENT_TO_LAB = "dateSampleSentToLab";
-	public static final String SAMPLE_CONTAINER_USED = "sampleContainerUsed";
-	public static final String RDT_PERFORMED = "rdtPerformed";
-	public static final String RDT_RESULTS = "rdtResults";
-	public static final String DISTRICT_NOTIFICATION_DATE = "districtNotificationDate";
-	public static final String NAME_OF_PERSON = "nameOfPerson";
-	public static final String TEL_NUMBER = "telNumber";
-	public static final String DATE_FORM_SENT_TO_DISTRICT = "dateFormSentToDistrict";
-	public static final String DATE_FORM_RECEIVED_AT_DISTRICT = "dateFormReceivedAtDistrict";
-	public static final String DATE_FORM_SENT_TO_REGION = "dateFormSentToRegion";
-	public static final String DATE_FORM_RECEIVED_AT_REGION = "dateFormReceivedAtRegion";
-	public static final String DATE_FORM_SENT_TO_NATIONAL = "dateFormSentToNational";
-	public static final String DATE_FORM_RECEIVED_AT_NATIONAL = "dateFormReceivedAtNational";
-	public static final String REASON_NOT_SENT_TO_LAB = "reasonNotSentToLab";
-
-	public static final String LABORATORY_NAME = "laboratoryName";
-	public static final String LABORATORY_SAMPLE_DATE_RECEIVED = "laboratorySampleDateReceived";
-	public static final String LABORATORY_NUMBER = "laboratoryNumber";
-	public static final String LABORATORY_SAMPLE_CONTAINER_RECEIVED = "laboratorySampleContainerReceived";
-	public static final String LABORATORY_SAMPLE_CONTAINER_OTHER = "laboratorySampleContainerOther";
-	public static final String LABORATORY_SAMPLE_CONDITION = "laboratorySampleCondition";
-	public static final String LABORATORY_APPEARANCE_OF_CSF = "laboratoryAppearanceOfCSF";
-	public static final String LABORATORY_TEST_PERFORMED = "laboratoryTestPerformed";
-	public static final String LABORATORY_TEST_PERFORMED_OTHER = "laboratoryTestPerformedOther";
-	public static final String LABORATORY_CYTOLOGY = "laboratoryCytology";
-	public static final String LABORATORY_GRAM = "laboratoryGram";
-	public static final String LABORATORY_GRAM_OTHER = "laboratoryGramOther";
-	public static final String LABORATORY_RDT_PERFORMED = "laboratoryRdtPerformed";
-	public static final String LABORATORY_RDT_RESULTS = "laboratoryRdtResults";
-	public static final String LABORATORY_LATEX = "laboratoryLatex";
-	public static final String LABORATORY_CULTURE = "laboratoryCulture";
-	public static final String LABORATORY_CULTURE_OTHER = "laboratoryCultureOther";
-	public static final String LABORATORY_OTHER_TESTS = "laboratoryOtherTests";
-	public static final String LABORATORY_OTHER_TESTS_RESULTS = "laboratoryOtherTestsResults";
-	public static final String LABORATORY_CEFTRIAXONE = "laboratoryCeftriaxone";
-	public static final String LABORATORY_PENICILLIN_G = "laboratoryPenicillinG";
-	public static final String LABORATORY_AMOXYCILLIN = "laboratoryAmoxycillin";
-	public static final String LABORATORY_OXACILLIN = "laboratoryOxacillin";
-	public static final String LABORATORY_ANTIBIOGRAM_OTHER = "laboratoryAntibiogramOther";
-	public static final String LABORATORY_DATE_PCR_PERFORMED = "laboratoryDatePcrPerformed";
-	public static final String LABORATORY_PCR_TYPE = "laboratoryPcrType";
-	public static final String LABORATORY_PCR_OPTIONS = "laboratoryPcrOptions";
-	public static final String LABORATORY_SEROTYPE = "laboratorySerotype";
-	public static final String LABORATORY_SEROTYPE_TYPE = "laboratorySerotypeType";
-	public static final String LABORATORY_SEROTYPE_RESULTS = "laboratorySerotypeResults";
-	public static final String LABORATORY_FINAL_RESULTS = "laboratoryFinalResults";
-	public static final String LABORATORY_OBSERVATIONS = "laboratoryObservations";
-	public static final String LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY = "laboratoryDateResultsSentHealthFacility";
-	public static final String LABORATORY_DATE_RESULTS_SENT_DSD = "laboratoryDateResultsSentDSD";
-	public static final String LABORATORY_FINAL_CLASSIFICATION = "laboratoryFinalClassification";
-	public static final String LABORATORY_TYPE = "laboratoryType";
 
 	private Case associatedCase;
 	private Contact associatedContact;
@@ -317,6 +260,13 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private Long pathogenTestCount;
 	private String containerOther;
 	private YesNo hasSampleBeenCollected;
+	private PosNegEq selectedResultIGM;
+	private PosNegEq selectedResultPrnt;
+	private PosNegEq selectedResultPcr;
+	private Date selectedResultIGMDate;
+	private Date selectedResultPrntDate;
+	private Date selectedResultPcrDate;
+	private String inputValuePrnt;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -1645,6 +1595,62 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setHasSampleBeenCollected(YesNo hasSampleBeenCollected) {
 		this.hasSampleBeenCollected = hasSampleBeenCollected;
+	}
+
+	public PosNegEq getSelectedResultIGM() {
+		return selectedResultIGM;
+	}
+
+	public void setSelectedResultIGM(PosNegEq selectedResultIGM) {
+		this.selectedResultIGM = selectedResultIGM;
+	}
+
+	public PosNegEq getSelectedResultPrnt() {
+		return selectedResultPrnt;
+	}
+
+	public void setSelectedResultPrnt(PosNegEq selectedResultPrnt) {
+		this.selectedResultPrnt = selectedResultPrnt;
+	}
+
+	public PosNegEq getSelectedResultPcr() {
+		return selectedResultPcr;
+	}
+
+	public void setSelectedResultPcr(PosNegEq selectedResultPcr) {
+		this.selectedResultPcr = selectedResultPcr;
+	}
+
+	public Date getSelectedResultIGMDate() {
+		return selectedResultIGMDate;
+	}
+
+	public void setSelectedResultIGMDate(Date selectedResultIGMDate) {
+		this.selectedResultIGMDate = selectedResultIGMDate;
+	}
+
+	public Date getSelectedResultPrntDate() {
+		return selectedResultPrntDate;
+	}
+
+	public void setSelectedResultPrntDate(Date selectedResultPrntDate) {
+		this.selectedResultPrntDate = selectedResultPrntDate;
+	}
+
+	public Date getSelectedResultPcrDate() {
+		return selectedResultPcrDate;
+	}
+
+	public void setSelectedResultPcrDate(Date selectedResultPcrDate) {
+		this.selectedResultPcrDate = selectedResultPcrDate;
+	}
+
+	public String getInputValuePrnt() {
+		return inputValuePrnt;
+	}
+
+	public void setInputValuePrnt(String inputValuePrnt) {
+		this.inputValuePrnt = inputValuePrnt;
 	}
 
 }

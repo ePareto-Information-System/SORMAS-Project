@@ -104,11 +104,19 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
     private OptionGroup laboratorySampleContainerReceived;
     private TextField laboratorySampleContainerOther;
     private NullableOptionGroup laboratoryAppearanceOfCSF;
-    private OptionGroup ipSampleSent;
+    private ComboBox ipSampleSent;
     private CheckBox sampleReceived;
     private DateTimeField sampleReceivedDate;
     private ComboBox sampleSpecimenCondition;
     private OptionGroup ipSampleTestResults;
+
+    private NullableOptionGroup selectedResultIGM;
+    private DateField selectedResultIGMDate;
+    private NullableOptionGroup selectedResultPrnt;
+    private TextField inputValuePrnt;
+    private DateField selectedResultPrntDate;
+    private NullableOptionGroup selectedResultPcr;
+    private DateField selectedResultPcrDate;
 
     //@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
@@ -212,9 +220,13 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER) +
 					fluidRowLocs(6,SampleDto.LAB_SAMPLE_ID) +
 					fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
-					fluidRowLocs(SampleDto.IPSAMPLESENT) +
+					fluidRowLocs(6,SampleDto.IPSAMPLESENT) +
 					fluidRowLocs(SampleDto.IPSAMPLE_TEST_RESULTS) +
-					fluidRowLocs(6,SampleDto.LABORATORY_APPEARANCE_OF_CSF) +
+                    fluidRowLocs(SampleDto.SELECTED_RESULT_IGM, SampleDto.SELECTED_RESULT_IGM_DATE)+
+                    fluidRowLocs(SampleDto.SELECTED_RESULT_PCR, SampleDto.SELECTED_RESULT_PCR_DATE)+
+                    fluidRowLocs(SampleDto.SELECTED_RESULT_PRNT, SampleDto.INPUT_VALUE_PRNT, SampleDto.SELECTED_RESULT_PRNT_DATE)+
+
+                    fluidRowLocs(6,SampleDto.LABORATORY_APPEARANCE_OF_CSF) +
 					fluidRowLocs(SampleDto.COMMENT) +
 
 					fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT) +
@@ -308,9 +320,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         addField(SampleDto.SHIPPED, CheckBox.class);
         sampleReceived = addField(SampleDto.RECEIVED, CheckBox.class);
 
-        ipSampleSent = addField(SampleDto.IPSAMPLESENT, OptionGroup.class);
         sampleSpecimenCondition.setVisible(false);
-        ipSampleSent.setVisible(false);
 
         testResultField = addField(SampleDto.PATHOGEN_TEST_RESULT, ComboBox.class);
         testResultField.removeItem(PathogenTestResultType.NOT_DONE);
@@ -951,12 +961,14 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         setVisible(true, SampleDto.REQUESTED_SAMPLE_MATERIALS);
         testResultField.setVisible(true);
 
+        ipSampleSent = addField(SampleDto.IPSAMPLESENT, ComboBox.class);
+        ipSampleSent.setVisible(false);
 
         sampleReceived.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
             FieldHelper.setVisibleWhen(sampleReceived, Arrays.asList(sampleReceivedDate, labSampleId, sampleSpecimenCondition, ipSampleSent), Arrays.asList(Boolean.TRUE), true);
         });
 
-        if (sampleReceived.getValue().equals(Boolean.TRUE)) {
+        if(sampleReceived.getValue().equals(Boolean.TRUE)){
             FieldHelper.setVisibleWhen(sampleReceived, Arrays.asList(sampleReceivedDate, labSampleId, sampleSpecimenCondition, ipSampleSent), Arrays.asList(Boolean.TRUE), true);
         }
 
@@ -965,6 +977,60 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                 .collect(Collectors.toList());
 
         ipSampleTestResults.addItems(values);
+
+        selectedResultIGM = addField(SampleDto.SELECTED_RESULT_IGM, NullableOptionGroup.class);
+        selectedResultIGMDate = addField(SampleDto.SELECTED_RESULT_IGM_DATE, DateField.class);
+
+        selectedResultPrnt = addField(SampleDto.SELECTED_RESULT_PRNT, NullableOptionGroup.class);
+        inputValuePrnt = addField(SampleDto.INPUT_VALUE_PRNT, TextField.class);
+        selectedResultPrntDate = addField(SampleDto.SELECTED_RESULT_PRNT_DATE, DateField.class);
+
+        selectedResultPcr = addField(SampleDto.SELECTED_RESULT_PCR, NullableOptionGroup.class);
+        selectedResultPcrDate = addField(SampleDto.SELECTED_RESULT_PCR_DATE, DateField.class);
+
+        setVisible(false, SampleDto.SELECTED_RESULT_IGM, SampleDto.SELECTED_RESULT_IGM_DATE, SampleDto.SELECTED_RESULT_PRNT, SampleDto.SELECTED_RESULT_PRNT_DATE, SampleDto.SELECTED_RESULT_PCR, SampleDto.SELECTED_RESULT_PCR_DATE, SampleDto.INPUT_VALUE_PRNT);
+
+        FieldHelper.setVisibleWhen(ipSampleSent, Arrays.asList(ipSampleTestResults), Arrays.asList(YesNo.YES), true);
+
+        //Event Listener for when sample result type is selected
+        ipSampleTestResults.addValueChangeListener(event -> {
+            Set<IpSampleTestType> selectedResults = (Set<IpSampleTestType>) event.getProperty().getValue();
+
+            boolean elisa = selectedResults != null && selectedResults.contains(IpSampleTestType.IGM);
+            selectedResultIGM.setVisible(elisa);
+            selectedResultIGMDate.setVisible(elisa);
+
+            boolean pcr = selectedResults != null && selectedResults.contains(IpSampleTestType.PCR);
+            selectedResultPcr.setVisible(pcr);
+            selectedResultPcr.removeItem(PosNegEq.EQU);
+            selectedResultPcrDate.setVisible(pcr);
+
+            boolean prnt = selectedResults != null && selectedResults.contains(IpSampleTestType.PRNT);
+            selectedResultPrnt.setVisible(prnt);
+            selectedResultPrnt.removeItem(PosNegEq.EQU);
+            selectedResultPrntDate.setVisible(prnt);
+
+        });
+
+// Check the value on load and set visibility accordingly for ipSampleTestResults
+        Set<IpSampleTestType> selectedResults = (Set<IpSampleTestType>) ipSampleTestResults.getValue();
+
+        boolean elisa = selectedResults != null && selectedResults.contains(IpSampleTestType.IGM);
+        selectedResultIGM.setVisible(elisa);
+        selectedResultIGMDate.setVisible(elisa);
+
+        boolean pcr = selectedResults != null && selectedResults.contains(IpSampleTestType.PCR);
+        selectedResultPcr.setVisible(pcr);
+        selectedResultPcr.removeItem(PosNegEq.EQU);
+        selectedResultPcrDate.setVisible(pcr);
+
+        boolean prnt = selectedResults != null && selectedResults.contains(IpSampleTestType.PRNT);
+        selectedResultPrnt.setVisible(prnt);
+        selectedResultPrnt.removeItem(PosNegEq.EQU);
+        selectedResultPrntDate.setVisible(prnt);
+
+        FieldHelper.setVisibleWhen(selectedResultPrnt, Arrays.asList(inputValuePrnt), Arrays.asList(PosNegEq.POSITIVE), true);
+
 
     }
 
