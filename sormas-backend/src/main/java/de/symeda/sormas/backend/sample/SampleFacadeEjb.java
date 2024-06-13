@@ -844,15 +844,14 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setSampleMaterialTestingRequested(source.getSampleMaterialTestingRequested());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());
+		target.setIpSampleTestResults(source.getIpSampleTestResults());
 		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
-		target.setSampleTests(source.getSampleTests());
 		target.setRequestedAdditionalTests(source.getRequestedAdditionalTests());
 		target.setPathogenTestResult(source.getPathogenTestResult());
 		target.setRequestedOtherPathogenTests(source.getRequestedOtherPathogenTests());
 		target.setRequestedOtherAdditionalTests(source.getRequestedOtherAdditionalTests());
 		target.setSamplingReason(source.getSamplingReason());
 		target.setSamplingReasonDetails(source.getSamplingReasonDetails());
-
 		target.setIpSampleSent(source.getIpSampleSent());
 		target.setDisease(source.getDisease());
 		target.setSampleDispatchMode(source.getSampleDispatchMode());
@@ -881,7 +880,6 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setDateFormReceivedAtRegion(source.getDateFormReceivedAtRegion());
 		target.setDateFormSentToNational(source.getDateFormSentToNational());
 		target.setDateFormReceivedAtNational(source.getDateFormReceivedAtNational());
-
 
 		target.setLaboratoryName(source.getLaboratoryName());
 		target.setLaboratoryNumber(source.getLaboratoryNumber());
@@ -1104,8 +1102,8 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setSampleMaterialTestingRequested(source.getSampleMaterialTestingRequested());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());
+		target.setIpSampleTestResults(source.getIpSampleTestResults());
 		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
-		target.setSampleTests(source.getSampleTests());
 		target.setRequestedAdditionalTests(source.getRequestedAdditionalTests());
 		target.setPathogenTestResult(source.getPathogenTestResult());
 		target.setRequestedOtherPathogenTests(source.getRequestedOtherPathogenTests());

@@ -13699,4 +13699,12 @@ INSERT INTO schema_version (version_number, comment) VALUES (612, 'Added finalCl
 ALTER TABLE person ADD COLUMN ethnicity VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (613, 'Added ethnicity to person');
 
+ALTER TABLE samples ADD COLUMN ipsampletestresultsstring VARCHAR(512);
+INSERT INTO schema_version (version_number, comment) VALUES (614, 'Added ipSampleTestResultsString to samples');
+
+ALTER TABLE samples DROP COLUMN sampletests;
+ALTER TABLE samples DROP COLUMN sampletestsstring;
+ALTER TABLE samples_history DROP COLUMN sampletestsstring;
+ALTER TABLE samples DROP COLUMN diseasesampletests;
+ALTER TABLE samples DROP COLUMN yellowfeversampletype;
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
