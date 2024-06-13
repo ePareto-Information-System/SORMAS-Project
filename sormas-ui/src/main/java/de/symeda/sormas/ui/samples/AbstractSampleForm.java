@@ -695,6 +695,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					break;
 				case FOODBORNE_ILLNESS:
 					handleFBI();
+                    break;
 				case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
 					handleIDSR();
 					break;
@@ -872,6 +873,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         CssStyles.style(ipSampleTestResults, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
         ipSampleTestResults.setMultiSelect(true);
 
+        ipSampleTestResults.setVisible(false);
+
         OptionGroup requestedAdditionalTestsField = addField(SampleDto.REQUESTED_ADDITIONAL_TESTS, OptionGroup.class);
         CssStyles.style(requestedAdditionalTestsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
         requestedAdditionalTestsField.setMultiSelect(true);
@@ -950,7 +953,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         handleDisease(Disease.DENGUE, "NMIMR");
         handleDisease(Disease.AFP, "NMIMR");
         handleDisease(Disease.NEW_INFLUENZA, "NMIMR");
-        handleDiseaseField(Disease.NEW_INFLUENZA, Disease.CSM, Disease.SARI, Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, Disease.AHF);
+        handleDiseaseField(Disease.NEW_INFLUENZA, Disease.CSM, Disease.SARI, Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, Disease.AHF, Disease.MONKEYPOX);
 
         if (getValue() != null && canOnlyReadRequests) {
             CssLayout requestedPathogenTestsLayout = new CssLayout();
@@ -1117,14 +1120,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
         setVisible(false, SampleDto.SAMPLE_PURPOSE, SampleDto.REQUESTED_SAMPLE_MATERIALS, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLE_MATERIAL_TEXT, SampleDto.SAMPLE_MATERIAL_REQUESTED, SampleDto.COMMENT, SampleDto.SAMPLING_REASON, SampleDto.SAMPLE_MATERIAL, SampleDto.PATHOGEN_TEST_RESULT, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLE_DATE_TIME);
 
-        suspectedDisease.setVisible(false);
-        labLocation.setVisible(false);
-        dateLabReceivedSpecimen.setVisible(false);
-        laboratorySampleCondition.setVisible(false);
-        dateFormSentToDistrict.setVisible(false);
-        dateFormReceivedAtDistrict.setVisible(false);
-        dateResultsSentToClinician.setVisible(false);
-        dateSpecimenSentToLab.setVisible(false);
+        hideCommonProperties();
 
     }
 
@@ -1132,14 +1128,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         setVisible(false, SampleDto.SAMPLE_SOURCE,
                 SampleDto.SAMPLE_PURPOSE, SampleDto.SAMPLING_REASON, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLE_MATERIAL_REQUESTED, SampleDto.COMMENT, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.REQUESTED_SAMPLE_MATERIALS);
 
-        suspectedDisease.setVisible(false);
-        labLocation.setVisible(false);
-        dateLabReceivedSpecimen.setVisible(false);
-        laboratorySampleCondition.setVisible(false);
-        dateFormSentToDistrict.setVisible(false);
-        dateFormReceivedAtDistrict.setVisible(false);
-        dateResultsSentToClinician.setVisible(false);
-        dateSpecimenSentToLab.setVisible(false);
+        hideCommonProperties();
         sampleDateField.setVisible(false);
 
         List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.PLASMA_SERUM, SampleMaterial.SALIVA, SampleMaterial.URINE, SampleMaterial.BIOPSY, SampleMaterial.CARDIAC, SampleMaterial.BLOOD_ANTI_COAGULANT, SampleMaterial.OTHER);
@@ -1156,15 +1145,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
         setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
 
+        hideCommonProperties();
         sampleMaterialComboBox.setVisible(false);
-        suspectedDisease.setVisible(false);
-        labLocation.setVisible(false);
-        dateLabReceivedSpecimen.setVisible(false);
-        laboratorySampleCondition.setVisible(false);
-        dateFormSentToDistrict.setVisible(false);
-        dateFormReceivedAtDistrict.setVisible(false);
-        dateResultsSentToClinician.setVisible(false);
-        dateSpecimenSentToLab.setVisible(false);
+
         setVisible(false, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLING_REASON, SampleDto.SAMPLE_MATERIAL_TEXT);
 
         setVisible(true, SampleDto.REQUESTED_SAMPLE_MATERIALS);
@@ -1180,6 +1163,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         if(sampleReceived.getValue().equals(Boolean.TRUE)){
             FieldHelper.setVisibleWhen(sampleReceived, Arrays.asList(sampleReceivedDate, labSampleId, sampleSpecimenCondition, ipSampleSent), Arrays.asList(Boolean.TRUE), true);
         }
+        ipSampleTestResults.setVisible(true);
 
         List<IpSampleTestType> values =  Arrays.stream(IpSampleTestType.values())
                 .filter(c -> fieldVisibilityCheckers.isVisible(IpSampleTestType.class, c.name()))
@@ -1246,14 +1230,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
     private void handleNewInfluenza() {
 
         setPropertiesVisibility();
-        suspectedDisease.setVisible(false);
-        labLocation.setVisible(false);
-        dateLabReceivedSpecimen.setVisible(false);
-        laboratorySampleCondition.setVisible(false);
-        dateFormSentToDistrict.setVisible(false);
-        dateFormReceivedAtDistrict.setVisible(false);
-        dateResultsSentToClinician.setVisible(false);
-        dateSpecimenSentToLab.setVisible(false);
+        hideCommonProperties();
         pathogenTestingRequestedField.setVisible(false);
 
         List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.NASOPHARYNGEAL_SWAB, SampleMaterial.OROPHARYNGEAL_SWAB, SampleMaterial.ORO_NASO, SampleMaterial.SERA, SampleMaterial.PLASMA, SampleMaterial.OTHER);
@@ -1321,6 +1298,16 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         laboratoryAppearanceOfCSF.setVisible(false);
 
         setVisible(false, SampleDto.FIELD_SAMPLE_ID);
+    }
+
+    private void handleMpox(){
+        setPropertiesVisibility();
+        hideCommonProperties();
+        sampleMaterialComboBox.setVisible(false);
+
+        setVisible(true, SampleDto.REQUESTED_SAMPLE_MATERIALS);
+
+
     }
 
     private void addSampleDispatchFields() {
@@ -1452,6 +1439,17 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         );
     }
 
+    private void hideCommonProperties(){
+        suspectedDisease.setVisible(false);
+        labLocation.setVisible(false);
+        dateLabReceivedSpecimen.setVisible(false);
+        laboratorySampleCondition.setVisible(false);
+        dateFormSentToDistrict.setVisible(false);
+        dateFormReceivedAtDistrict.setVisible(false);
+        dateResultsSentToClinician.setVisible(false);
+        dateSpecimenSentToLab.setVisible(false);
+    }
+
     private void hidePropertiesVisibility() {
         setVisible(false,
                 SampleDto.SAMPLE_PURPOSE,
@@ -1490,6 +1488,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                         .collect(Collectors.toList());
 
                 requestedSampleMaterialsField.addItems(values1);
+            case MONKEYPOX:
+                requestedSampleMaterialsField.addItems(
+                        Arrays.stream(SampleMaterial.getNewInfluenzaType())
+                                .filter(c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
+                                .collect(Collectors.toList()));
                 break;
             default:
                 requestedSampleMaterialsField.addItems(

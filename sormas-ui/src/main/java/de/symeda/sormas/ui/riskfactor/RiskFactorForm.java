@@ -237,7 +237,7 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
             );
 
             createLabel(I18nProperties.getString(Strings.headingPatientStatus), H3, PATIENT_STATUS);
-            createLabel(I18nProperties.getString(Strings.headingLaboratory), H3, LABORATORY);
+//            createLabel(I18nProperties.getString(Strings.headingLaboratory), H3, LABORATORY);
             createLabel(I18nProperties.getString(Strings.headingInvestigatingOfficer), H3, INVESTIGATING_OFFICER_INFO);
 
             addField(RiskFactorDto.PATIENT_SPOX_VACCINATION_SCAR_PRESENT, NullableOptionGroup.class);
@@ -266,7 +266,7 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
 
             addField(RiskFactorDto.DATE_OF_DEATH, DateField.class);
             addField(RiskFactorDto.PLACE_OF_DEATH, TextField.class);
-            addField(RiskFactorDto.DATE_OF_SPECIMEN_COLLECTION, DateField.class);
+            /*addField(RiskFactorDto.DATE_OF_SPECIMEN_COLLECTION, DateField.class);
 
             ComboBox specimen = new ComboBox("Outcome");
 
@@ -275,7 +275,7 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
                     specimen.addItem(sample);
                 }
             }
-            addField(RiskFactorDto.TYPE_OF_SPECIMEN_COLLECTION, specimen);
+            addField(RiskFactorDto.TYPE_OF_SPECIMEN_COLLECTION, specimen);*/
 
             addField(RiskFactorDto.INVESTIGATOR_NAME, TextField.class);
             addField(RiskFactorDto.INVESTIGATOR_TITLE, TextField.class);
