@@ -13719,4 +13719,9 @@ ALTER TABLE samples ADD COLUMN selectedresultprntdate Date;
 ALTER TABLE samples ADD COLUMN selectedresultpcrdate Date;
 
 INSERT INTO schema_version (version_number, comment) VALUES (616, 'Added 7 columns in samples for sample test types/results');
+
+ALTER TABLE symptoms ADD COLUMN typeofrashstring VARCHAR(512);
+ALTER TABLE symptoms DROP COLUMN typeofrash;
+
+INSERT INTO schema_version (version_number, comment) VALUES (617, '');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

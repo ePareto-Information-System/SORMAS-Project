@@ -2490,7 +2490,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private YesNo areLesionsSameSize;
 	private YesNo areLesionsDeep;
 	private YesNo areUlcersAmong;
-	private SymptomsList typeOfRash;
+	private Set<SymptomsList> typeOfRash;
 	private String outcomeOther;
 	private YesNo patientHaveFever;
 	private Date outcomeDate;
@@ -4113,7 +4113,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		return areUlcersAmong;
 	}
 	@Order(380)
-	public SymptomsList getTypeOfRash(){
+	public Set<SymptomsList> getTypeOfRash(){
 		return typeOfRash;
 	}
 	@Order(381)
@@ -4371,7 +4371,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	public void setAreUlcersAmong(YesNo areUlcersAmong) {
 		this.areUlcersAmong = areUlcersAmong;
 	}
-	public void setTypeOfRash(SymptomsList typeOfRash) {
+	public void setTypeOfRash(Set<SymptomsList> typeOfRash) {
 		this.typeOfRash = typeOfRash;
 	}
 	public void setSymptomsSelectedOther(String symptomsSelectedOther) {
