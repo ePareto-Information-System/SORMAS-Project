@@ -209,6 +209,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private ComboBox diseaseField;
 	private TextField virusDetectionGenotypeField;
 	private ComboBox finalClassificationField;
+	private DateTimeField sampleTestDateField;
 
 
 	public PathogenTestForm(AbstractSampleForm sampleForm, boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction) {
@@ -266,7 +267,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		pcrTestSpecification = addField(PathogenTestDto.PCR_TEST_SPECIFICATION, ComboBox.class);
 		testTypeTextField = addField(PathogenTestDto.TEST_TYPE_TEXT, TextField.class);
 		FieldHelper.addSoftRequiredStyle(testTypeTextField);
-		DateTimeField sampleTestDateField = addField(PathogenTestDto.TEST_DATE_TIME, DateTimeField.class);
+		sampleTestDateField = addField(PathogenTestDto.TEST_DATE_TIME, DateTimeField.class);
 		sampleTestDateField.addValidator(
 			new DateComparisonValidator(
 				sampleTestDateField,
@@ -774,6 +775,15 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 			});
 
+		}
+
+		if(caseDisease == Disease.MONKEYPOX){
+			sampleTestDateField.addValueChangeListener(event -> {
+				if (event.getProperty().getValue() != null) {
+					sampleTestDateField.setReadOnly(true);
+					// sampleTestDateField.setEnabled(false);
+				}
+			});
 		}
 	}
 
