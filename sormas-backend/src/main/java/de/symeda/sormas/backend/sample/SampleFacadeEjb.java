@@ -1257,6 +1257,13 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setPersonCompletingForm(source.getPersonCompletingForm());
 		target.setContainerOther(source.getContainerOther());
 		target.setHasSampleBeenCollected(source.getHasSampleBeenCollected());
+		target.setSelectedResultIGM(source.getSelectedResultIGM());
+		target.setSelectedResultPrnt(source.getSelectedResultPrnt());
+		target.setSelectedResultPcr(source.getSelectedResultPcr());
+		target.setSelectedResultIGMDate(source.getSelectedResultIGMDate());
+		target.setSelectedResultPrntDate(source.getSelectedResultPrntDate());
+		target.setSelectedResultPcrDate(source.getSelectedResultPcrDate());
+		target.setInputValuePrnt(source.getInputValuePrnt());
 
 		target.setDateSpecimenSentToRegion(source.getDateSpecimenSentToRegion());
 		target.setNameOfPersonWhoReceivedSpecimenAtRegion(source.getNameOfPersonWhoReceivedSpecimenAtRegion());
@@ -1554,6 +1561,14 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setConfirmedAsGuineaWorm(source.getConfirmedAsGuineaWorm());
 		target.setLabLocal(source.getLabLocal());
 		target.setLabLocalDetails(source.getLabLocalDetails());
+		target.setSelectedResultIGM(source.getSelectedResultIGM());
+		target.setSelectedResultPrnt(source.getSelectedResultPrnt());
+		target.setSelectedResultPcr(source.getSelectedResultPcr());
+		target.setSelectedResultIGMDate(source.getSelectedResultIGMDate());
+		target.setSelectedResultPrntDate(source.getSelectedResultPrntDate());
+		target.setSelectedResultPcrDate(source.getSelectedResultPcrDate());
+		target.setInputValuePrnt(source.getInputValuePrnt());
+
 
 		return target;
 	}

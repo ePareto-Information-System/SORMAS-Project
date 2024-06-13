@@ -110,7 +110,6 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public static final String REQUESTED_ADDITIONAL_TESTS = "requestedAdditionalTests";
 	public static final String DELETION_REASON = "deletionReason";
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
-	public static final String IPSAMPLESENT = "ipSampleSent";
 	public static final String DISEASE = "disease";
 	public static final String CSF_SAMPLE_COLLECTED = "csfSampleCollected";
 	public static final String CSF_REASON = "csfReason";
@@ -367,6 +366,13 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private LabLocal labLocal;
 	private String labLocalDetails;
 
+	private PosNegEq selectedResultIGM;
+	private PosNegEq selectedResultPrnt;
+	private PosNegEq selectedResultPcr;
+	private Date selectedResultIGMDate;
+	private Date selectedResultPrntDate;
+	private Date selectedResultPcrDate;
+	private String inputValuePrnt;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -1896,4 +1902,60 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLabLocalDetails(final String labLocalDetails) {
 		this.labLocalDetails = labLocalDetails;
 	}
+	public PosNegEq getSelectedResultIGM() {
+		return selectedResultIGM;
+	}
+
+	public void setSelectedResultIGM(PosNegEq selectedResultIGM) {
+		this.selectedResultIGM = selectedResultIGM;
+	}
+
+	public PosNegEq getSelectedResultPrnt() {
+		return selectedResultPrnt;
+	}
+
+	public void setSelectedResultPrnt(PosNegEq selectedResultPrnt) {
+		this.selectedResultPrnt = selectedResultPrnt;
+	}
+
+	public PosNegEq getSelectedResultPcr() {
+		return selectedResultPcr;
+	}
+
+	public void setSelectedResultPcr(PosNegEq selectedResultPcr) {
+		this.selectedResultPcr = selectedResultPcr;
+	}
+
+	public Date getSelectedResultIGMDate() {
+		return selectedResultIGMDate;
+	}
+
+	public void setSelectedResultIGMDate(Date selectedResultIGMDate) {
+		this.selectedResultIGMDate = selectedResultIGMDate;
+	}
+
+	public Date getSelectedResultPrntDate() {
+		return selectedResultPrntDate;
+	}
+
+	public void setSelectedResultPrntDate(Date selectedResultPrntDate) {
+		this.selectedResultPrntDate = selectedResultPrntDate;
+	}
+
+	public Date getSelectedResultPcrDate() {
+		return selectedResultPcrDate;
+	}
+
+	public void setSelectedResultPcrDate(Date selectedResultPcrDate) {
+		this.selectedResultPcrDate = selectedResultPcrDate;
+	}
+
+	public String getInputValuePrnt() {
+		return inputValuePrnt;
+	}
+
+	public void setInputValuePrnt(String inputValuePrnt) {
+		this.inputValuePrnt = inputValuePrnt;
+	}
+
 }

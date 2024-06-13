@@ -14806,6 +14806,18 @@ ALTER TABLE samples DROP COLUMN sampletestsstring;
 ALTER TABLE samples_history DROP COLUMN sampletestsstring;
 ALTER TABLE samples DROP COLUMN diseasesampletests;
 ALTER TABLE samples DROP COLUMN yellowfeversampletype;
+
+INSERT INTO schema_version (version_number, comment) VALUES (615, 'Dropped redundant columns in samples');
+
+ALTER TABLE samples ADD COLUMN selectedresultigm VARCHAR(55);
+ALTER TABLE samples ADD COLUMN selectedresultprnt VARCHAR(55);
+ALTER TABLE samples ADD COLUMN selectedresultpcr VARCHAR(55);
+ALTER TABLE samples ADD COLUMN inputvalueprnt VARCHAR(255);
+ALTER TABLE samples ADD COLUMN selectedresultigmdate Date;
+ALTER TABLE samples ADD COLUMN selectedresultprntdate Date;
+ALTER TABLE samples ADD COLUMN selectedresultpcrdate Date;
+
+INSERT INTO schema_version (version_number, comment) VALUES (616, 'Added 7 columns in samples for sample test types/results');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Case Officer';
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Contact Officer';
