@@ -287,6 +287,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	OptionGroup tickRashCharacteristicsField;
 	NullableOptionGroup patientHaveFever;
 	DateField dateOfOnset;
+    private List<String> ;
+    OptionGroup typeOfRash;
+    NullableOptionGroup patientHaveFever;
 
     public SymptomsForm(
             CaseDataDto caze,
@@ -1124,13 +1127,13 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
             foodHistoryHeadingLabel.setVisible(true);
 		}
 
-		if(disease == Disease.MONKEYPOX){
-			setVisible(false, SYMPTOMS_COMMENTS);
+        }
+
+        if (disease == Disease.MONKEYPOX) {
+            setVisible(false, SYMPTOMS_COMMENTS, OUTCOME, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT, ONSET_DATE);
 
             symptomsHeadingLabel.setVisible(true);
             tickSymptomField.setVisible(true);
-            onsetSymptom.setVisible(true);
-            setVisible(true, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
 
             addField(SYMPTOMS_SELECTED_OTHER, TextField.class);
             addField(DATE_OF_ONSET_RASH, DateField.class);
@@ -1143,12 +1146,14 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
             addField(ARE_LESIONS_DEEP, NullableOptionGroup.class);
             addField(ARE_ULCERS_AMONG_LESIONS, NullableOptionGroup.class);
 
-            ComboBox typeOfRash = new ComboBox("Rash");
-            for (SymptomsList list : SymptomsList.MpoxRashList()) {
-                typeOfRash.addItem(list);
-            }
+			typeOfRash = addField(TYPE_OF_RASH, OptionGroup.class);
+			CssStyles.style(typeOfRash, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+			typeOfRash.setMultiSelect(true);
 
-            addField(TYPE_OF_RASH, typeOfRash);
+            typeOfRash.addItems(
+					Arrays.stream(SymptomsList.MpoxRashList())
+							.filter(c -> fieldVisibilityCheckers.isVisible(SymptomsList.class, c.name()))
+							.collect(Collectors.toList()));
 		}
 		
 		if (disease == Disease.CORONAVIRUS) {
