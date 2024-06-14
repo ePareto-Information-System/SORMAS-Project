@@ -33,7 +33,7 @@ public class TriagingDto extends EntityDto {
 
 	public static final String I18N_PREFIX = "Triaging";
 
-	public static final String EARLY_WARNING = "earlyWarning";
+	public static final String SUPERVISOR_REVIEW = "supervisorReview";
 	public static final String SPECIFIC_SIGNAL = "specificSignal";
 	public static final String HEALTH_CONCERN = "healthConcern";
 	public static final String SIGNAL_CATEGORY = "signalCategory";
@@ -56,6 +56,7 @@ public class TriagingDto extends EntityDto {
 	public static final String TRIAGING_DECISION = "triagingDecision";
 	public static final String DATE_OF_DECISION = "decisionDate";
 	public static final String REFERRED_TO = "referredTo";
+	public static final String REFERRED = "referred";
 	public static final String RESPONSIBLE_USER = "responsibleUser";
 	public static final String OUTCOME_SUPERVISOR = "outcomeSupervisor";
 	public static final String NOT_SIGNAL = "notSignal";
@@ -64,7 +65,8 @@ public class TriagingDto extends EntityDto {
 
 
 
-	private YesNo earlyWarning;
+	private YesNo supervisorReview;
+	private YesNo referred;
 	private YesNo specificSignal;
 	private SignalCategory signalCategory;
 	private YesNo healthConcern;
@@ -99,12 +101,12 @@ public class TriagingDto extends EntityDto {
 	}
 
 
-	public YesNo getEarlyWarning() {
-		return earlyWarning;
+	public YesNo getSupervisorReview() {
+		return supervisorReview;
 	}
 
-	public void setEarlyWarning(YesNo earlyWarning) {
-		this.earlyWarning = earlyWarning;
+	public void setSupervisorReview(YesNo supervisorReview) {
+		this.supervisorReview = supervisorReview;
 	}
 
 	public YesNo getSpecificSignal() {
@@ -313,5 +315,13 @@ public class TriagingDto extends EntityDto {
 
 	public void setPotentialRisk(YesNo potentialRisk) {
 		this.potentialRisk = potentialRisk;
+	}
+
+	public YesNo getReferred() {
+		return referred;
+	}
+
+	public void setReferred(YesNo referred) {
+		this.referred = referred;
 	}
 }
