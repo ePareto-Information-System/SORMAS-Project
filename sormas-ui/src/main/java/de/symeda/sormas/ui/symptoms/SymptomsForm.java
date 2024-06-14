@@ -147,11 +147,14 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(BUTTONS_LOC)+
 					createSymptomGroupLayout(SymptomGroup.GENERAL, GENERAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					fluidRowLocs(FEVER_ONSET_PARALYSIS, PROGRESSIVE_PARALYSIS) +
-					fluidRowLocs(DATE_ONSET_PARALYSIS, PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
-					fluidRowLocs(SITE_OF_PARALYSIS) +
+					fluidRowLocs(PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
+					fluidRowLocs(6,SITE_OF_PARALYSIS) +
 					fluidRowLocs(PARALYSED_LIMB_SENSITIVE_TO_PAIN, INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
 					fluidRowLocs(RIGHT_INJECTION_SITE, LEFT_INJECTION_SITE) +
-					fluidRowLocs(6, TRUEAFP) +
+					fluidRowLocs(6,DATE_ONSET_PARALYSIS) +
+					fluidRowLocs(PROVISONAL_DIAGNOSIS)+
+					fluidRowLocs(6, TRUEAFP)+
+
 					fluidRowLocs(6,ALTERED_CONSCIOUSNESS) +
 					fluidRowLocs(6,CONFUSED_DISORIENTED) +
 					fluidRowLocs(6,HEMORRHAGIC_SYNDROME) +
@@ -191,9 +194,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6, OUTCOME_PLACE_COMM_VILLAGE)+
 					fluidRowLocs(6, HOSPITAL_NAME_SERVICE)+
 					fluidRowLocs(6, PLACE_OF_FUNERAL_NAME_VILLAGE)+
-
-					fluidRowLocs(PROVISONAL_DIAGNOSIS)+
-					fluidRowLocs(6, TRUEAFP)+
 					fluidRowLocs(SYMPTOMS_ONGOING, DURATION_HOURS, YES_NAME_OF_HEALTH_FACILITY)+
 
 					loc(FOOD_HISTORY_HEADING_LOC);
@@ -1006,7 +1006,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
         }
         if (disease == Disease.AFP) {
 
-            setVisible(false, SYMPTOMS_COMMENTS);
+            setVisible(false, SYMPTOMS_COMMENTS, OUTCOME, ONSET_DATE, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
 
             NullableOptionGroup feverOnsetParalysis = addField(FEVER_ONSET_PARALYSIS, NullableOptionGroup.class);
             NullableOptionGroup progressiveParalysis = addField(PROGRESSIVE_PARALYSIS, NullableOptionGroup.class);
@@ -1026,36 +1026,35 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
             OptionGroup paralysedLimbSensitiveToPain = addField(PARALYSED_LIMB_SENSITIVE_TO_PAIN, OptionGroup.class);
             OptionGroup injectionSiteBeforeOnsetParalysis = addField(INJECTION_SITE_BEFORE_ONSET_PARALYSIS, OptionGroup.class);
 
-            NullableOptionGroup rightInjectionSiteBox = new NullableOptionGroup("Right Injection Site");
+			ComboBox rightInjectionSiteBox = new ComboBox("Right Injection Site");
             for (InjectionSite injectionSiteRight : InjectionSite.InjectionSiteRight) {
                 rightInjectionSiteBox.addItem(injectionSiteRight);
             }
-            NullableOptionGroup rightInjectionSite = addField(RIGHT_INJECTION_SITE, rightInjectionSiteBox);
+			ComboBox rightInjectionSite = addField(RIGHT_INJECTION_SITE, rightInjectionSiteBox);
 
-            NullableOptionGroup leftInjectionSiteBox = new NullableOptionGroup("Left Injection Site");
+			ComboBox leftInjectionSiteBox = new ComboBox("Left Injection Site");
             for (InjectionSite injectionSiteLeft : InjectionSite.InjectionSiteLeft) {
                 leftInjectionSiteBox.addItem(injectionSiteLeft);
             }
-            NullableOptionGroup leftInjectionSite = addField(LEFT_INJECTION_SITE, leftInjectionSiteBox);
+            ComboBox leftInjectionSite = addField(LEFT_INJECTION_SITE, leftInjectionSiteBox);
+
+			rightInjectionSite.setVisible(false);
+			leftInjectionSite.setVisible(false);
+
+			FieldHelper.setVisibleWhen(injectionSiteBeforeOnsetParalysis, Arrays.asList(rightInjectionSite, leftInjectionSite), Arrays.asList(YesNo.YES), true);
+
             OptionGroup trueAFP = addField(TRUEAFP, OptionGroup.class);
             TextArea provisionalDiagnosis = addField(PROVISONAL_DIAGNOSIS, TextArea.class);
             provisionalDiagnosis.setRows(4);
 
-			/*addFields(
-					MUSCLE_TONE,
-					DEEP_TENDON_REFLEX,
-					MUSCLE_VOLUME,
-					SENSORY_LOSS);*/
+            clinicalMeasurementsHeadingLabel.setVisible(false);
+            setVisible(false, FEVER,
+                    ALTERED_CONSCIOUSNESS,
+                    SEIZURES,
+                    HEADACHE,
+                    NECK_STIFFNESS);
 
-			clinicalMeasurementsHeadingLabel.setVisible(false);
-			setVisible(false, FEVER,
-					ALTERED_CONSCIOUSNESS,
-					SEIZURES,
-					HEADACHE,
-					NECK_STIFFNESS);
-
-			symptomsHide();
-			setVisible(true, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
+            symptomsHide();
 
 		}
 		if(disease == Disease.NEW_INFLUENZA){
@@ -1243,6 +1242,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				Arrays.asList(SymptomState.YES),
 				disease);
 		}
+        Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.DENGUE, Disease.CSM, Disease.NEW_INFLUENZA));
 
 		FieldHelper
 			.setRequiredWhen(getFieldGroup(), getFieldGroup().getField(LESIONS_ALL_OVER_BODY), lesionsFieldIds, Arrays.asList(Boolean.TRUE), disease);
