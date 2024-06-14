@@ -39,13 +39,17 @@ import de.symeda.sormas.ui.events.EventsView;
 import de.symeda.sormas.ui.utils.AbstractEditAllowedDetailView;
 import de.symeda.sormas.ui.utils.DirtyStateComponent;
 
+import java.util.Objects;
+
 @SuppressWarnings("serial")
 public abstract class AbstractEbsView extends AbstractEditAllowedDetailView<EbsReferenceDto> {
 
 	public static final String ROOT_VIEW_NAME = EBSView.VIEW_NAME;
 
-	protected AbstractEbsView(String viewName) {
+	private final String currentView;
+	protected AbstractEbsView(String viewName,String currentView) {
 		super(viewName);
+		this.currentView = currentView;
 	}
 
 	@Override
@@ -68,7 +72,13 @@ public abstract class AbstractEbsView extends AbstractEditAllowedDetailView<EbsR
 		}
 
 		menu.removeAllViews();
-		menu.addView(EBSView.VIEW_NAME, I18nProperties.getCaption(Captions.eventEventsList));
+		String viewCaption;
+		if (Objects.equals(currentView, "eventlist")){
+			viewCaption  = Captions.eventEventsList;
+		}else{
+			viewCaption  = Captions.eventSignalsList;
+		}
+		menu.addView(EBSView.VIEW_NAME, I18nProperties.getCaption(viewCaption));
 		menu.addView(EbsDataView.VIEW_NAME, I18nProperties.getCaption(Captions.SignalInformation), params);
 		menu.addView(TriagingView.VIEW_NAME, I18nProperties.getCaption(Captions.Triaging), params);
 		menu.addView(SignalVerificationView.VIEW_NAME, I18nProperties.getCaption(Captions.SignalVerification), params);

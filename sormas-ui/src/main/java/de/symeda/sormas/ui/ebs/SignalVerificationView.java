@@ -30,7 +30,7 @@ public class SignalVerificationView extends AbstractEbsView {
 	public static final String VIEW_NAME = ROOT_VIEW_NAME + "/signalVerification";
 
 	public SignalVerificationView() {
-		super(VIEW_NAME);
+		super(VIEW_NAME,EBSView.currentview);
 	}
 
 	@Override
