@@ -126,6 +126,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private OptionGroup ipSampleSent;
 	OptionGroup requestedPathogenTestsField;
 	private CheckBox sampleReceived;
+    private CheckBox sampleReceived;
+    private CheckBox sampleShipped;
     private DateTimeField sampleReceivedDate;
     private ComboBox sampleSpecimenCondition;
     private OptionGroup ipSampleTestResults;
@@ -168,8 +170,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     fluidRowLocs(SampleDto.SAMPLE_PURPOSE) +
                     fluidRowLocs(6,SampleDto.SAMPLE_MATERIAL) +
 					fluidRowLocs(SampleDto.FIELD_SAMPLE_ID, REFERRED_FROM_BUTTON_LOC) +
-//					fluidRowLocs(6, SampleDto.DISEASE) +
-					fluidRowLocs(SampleDto.SAMPLE_TESTS) +
 					fluidRowLocs("", SampleDto.SAMPLE_MATERIAL_TEXT) +
 					fluidRowLocs(SampleDto.SAMPLING_REASON, SampleDto.SAMPLING_REASON_DETAILS) +
 					fluidRowLocs(SampleDto.SAMPLE_SOURCE, "") +
@@ -437,7 +437,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         comment.setDescription(
                 I18nProperties.getPrefixDescription(SampleDto.I18N_PREFIX, SampleDto.COMMENT, "") + "\n"
                         + I18nProperties.getDescription(Descriptions.descGdpr));
-        addField(SampleDto.SHIPPED, CheckBox.class);
+        sampleShipped = addField(SampleDto.SHIPPED, CheckBox.class);
         sampleReceived = addField(SampleDto.RECEIVED, CheckBox.class);
 
         sampleSpecimenCondition.setVisible(false);
@@ -595,7 +595,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                 getField(SampleDto.SAMPLE_SOURCE).setEnabled(false);
             }
         }
-
 
         StringBuilder reportInfoText = new StringBuilder().append(I18nProperties.getString(Strings.reportedOn))
                 .append(" ")
@@ -1306,7 +1305,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         sampleMaterialComboBox.setVisible(false);
 
         setVisible(true, SampleDto.REQUESTED_SAMPLE_MATERIALS);
-
 
     }
 
