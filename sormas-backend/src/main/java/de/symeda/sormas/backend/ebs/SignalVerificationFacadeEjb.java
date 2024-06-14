@@ -25,6 +25,8 @@ public class SignalVerificationFacadeEjb implements SignalVerificationFacade {
         target.setNumberOfDeath(source.getNumberOfDeath());
         target.setDescription(source.getDescription());
         target.setWhyNotVerify(source.getWhyNotVerify());
+        target.setNumberOfDeathPerson(source.getNumberOfDeathPerson());
+        target.setNumberOfPersonCases(source.getNumberOfPersonCases());
         return target;
     }
 
@@ -44,6 +46,8 @@ public class SignalVerificationFacadeEjb implements SignalVerificationFacade {
         target.setNumberOfDeath(source.getNumberOfDeath());
         target.setDescription(source.getDescription());
         target.setWhyNotVerify(source.getWhyNotVerify());
+        target.setNumberOfDeathPerson(source.getNumberOfDeathPerson());
+        target.setNumberOfPersonCases(source.getNumberOfPersonCases());
         return target;
     }
 

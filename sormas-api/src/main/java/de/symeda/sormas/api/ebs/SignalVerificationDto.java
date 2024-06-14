@@ -25,6 +25,8 @@ public class SignalVerificationDto extends EntityDto {
     public static final String DESCRIPTION = "description";
     public static final String WHY_NOT_VERIFY = "whyNotVerify";
     public static final String SIGNALVERIFICATION = "signalVerification";
+    public static final String NUMBER_OF_PERSON_CASES = "numberOfPersonCases";
+    public static final String NUMBER_OF_DEATH_PERSON = "numberOfDeathPerson";
 
     private YesNo verificationSent;
     private YesNo verified;
@@ -35,6 +37,8 @@ public class SignalVerificationDto extends EntityDto {
     private String numberOfDeath;
     private String description;
     private String whyNotVerify;
+    private String numberOfPersonCases;
+    private String numberOfDeathPerson;
 
     public YesNo getVerificationSent() {
         return verificationSent;
@@ -106,5 +110,21 @@ public class SignalVerificationDto extends EntityDto {
 
     public void setWhyNotVerify(String whyNotVerify) {
         this.whyNotVerify = whyNotVerify;
+    }
+
+    public String getNumberOfPersonCases() {
+        return numberOfPersonCases;
+    }
+
+    public void setNumberOfPersonCases(String numberOfPersonCases) {
+        this.numberOfPersonCases = numberOfPersonCases;
+    }
+
+    public String getNumberOfDeathPerson() {
+        return numberOfDeathPerson;
+    }
+
+    public void setNumberOfDeathPerson(String numberOfDeathPerson) {
+        this.numberOfDeathPerson = numberOfDeathPerson;
     }
 }
