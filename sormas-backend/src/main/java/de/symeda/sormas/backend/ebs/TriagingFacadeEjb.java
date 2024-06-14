@@ -33,7 +33,7 @@ public class TriagingFacadeEjb implements TriagingFacade {
 		}
 
 		target = DtoHelper.fillOrBuildEntity(source, target, Triaging::new, checkChangeDate);
-		target.setEarlyWarning(source.getEarlyWarning());
+		target.setSupervisorReview(source.getSupervisorReview());
         target.setDecisionDate(source.getDecisionDate());
         target.setHealthConcern(source.getHealthConcern());
         target.setReferredTo(source.getReferredTo());
@@ -53,6 +53,7 @@ public class TriagingFacadeEjb implements TriagingFacade {
 		target.setNotSignal(source.getNotSignal());
 		target.setCategoryDetailsLevel(source.getCategoryDetailsLevel());
 		target.setPotentialRisk(source.getPotentialRisk());
+		target.setReferred(source.getReferred());
 		return target;
 	}
 
@@ -65,7 +66,7 @@ public class TriagingFacadeEjb implements TriagingFacade {
 		Triaging source = triaging;
 		DtoHelper.fillDto(target, source);
 
-		target.setEarlyWarning(source.getEarlyWarning());
+		target.setSupervisorReview(source.getSupervisorReview());
 		target.setDecisionDate(source.getDecisionDate());
 		target.setHealthConcern(source.getHealthConcern());
 		target.setReferredTo(source.getReferredTo());
@@ -91,6 +92,7 @@ public class TriagingFacadeEjb implements TriagingFacade {
 		target.setNotSignal(source.getNotSignal());
 		target.setCategoryDetailsLevel(source.getCategoryDetailsLevel());
 		target.setPotentialRisk(source.getPotentialRisk());
+		target.setReferred(source.getReferred());
 		return target;
 	}
 
