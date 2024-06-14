@@ -122,7 +122,7 @@ public class EBSView extends AbstractView {
             }
         }
 
-        if (UserProvider.getCurrent().hasUserRight(UserRight.EVENT_CREATE)) {
+
             createButton = ButtonHelper.createIconButton(
                     Captions.ebsCreatEbs,
                     VaadinIcons.PLUS_CIRCLE,
@@ -130,7 +130,6 @@ public class EBSView extends AbstractView {
                     ValoTheme.BUTTON_PRIMARY);
 
             addHeaderComponent(createButton);
-        }
 
         final PopupMenu moreButton = new PopupMenu(I18nProperties.getCaption(Captions.moreActions));
 
