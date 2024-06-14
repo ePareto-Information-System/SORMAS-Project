@@ -1301,6 +1301,7 @@ public interface Captions {
 	String eventEventParticipants = "eventEventParticipants";
 	String eventEventParticipantsSamples = "eventEventParticipantsSamples";
 	String eventEventsList = "eventEventsList";
+	String eventSignalsList = "eventSignalsList";
 	String eventEvolutionCommentWithStatus = "eventEvolutionCommentWithStatus";
 	String eventEvolutionDateWithStatus = "eventEvolutionDateWithStatus";
 	String eventFilterOnlyEventsChangedSinceLastSharedWithExternalSurvTool = "eventFilterOnlyEventsChangedSinceLastSharedWithExternalSurvTool";
