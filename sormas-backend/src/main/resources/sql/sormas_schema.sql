@@ -13724,4 +13724,9 @@ ALTER TABLE symptoms ADD COLUMN typeofrashstring VARCHAR(512);
 ALTER TABLE symptoms DROP COLUMN typeofrash;
 
 INSERT INTO schema_version (version_number, comment) VALUES (617, '');
+
+ALTER TABLE sixtyday ADD COLUMN paralysisweaknesspresentsitestring VARCHAR(512);
+ALTER TABLE sixtyday DROP COLUMN paralysisweaknesspresentsite;
+
+INSERT INTO schema_version (version_number, comment) VALUES (618, 'Added paralysisweaknesspresentsitestring and dropped paralysisweaknesspresentsite for AFP');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

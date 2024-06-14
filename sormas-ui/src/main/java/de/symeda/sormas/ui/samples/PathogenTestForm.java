@@ -17,55 +17,46 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.samples;
 
-import static de.symeda.sormas.ui.utils.CssStyles.*;
-import static de.symeda.sormas.ui.utils.LayoutUtil.*;
+import com.vaadin.ui.Label;
+import com.vaadin.v7.data.util.converter.Converter;
+import com.vaadin.v7.ui.AbstractSelect.ItemCaptionMode;
+import com.vaadin.v7.ui.*;
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
+import de.symeda.sormas.api.disease.DiseaseVariant;
+import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.event.EventParticipantReferenceDto;
+import de.symeda.sormas.api.event.EventReferenceDto;
+import de.symeda.sormas.api.i18n.Descriptions;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.sample.*;
+import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.Gram;
+import de.symeda.sormas.api.utils.LabType;
+import de.symeda.sormas.api.utils.LatexCulture;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
+import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.utils.*;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import com.vaadin.v7.ui.*;
-import de.symeda.sormas.api.caze.CaseClassification;
-import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.caze.CaseOutcome;
-import de.symeda.sormas.api.caze.CaseReferenceDto;
-import de.symeda.sormas.api.contact.ContactDto;
-import de.symeda.sormas.api.contact.ContactReferenceDto;
-import de.symeda.sormas.api.event.EventDto;
-import de.symeda.sormas.api.event.EventParticipantReferenceDto;
-import de.symeda.sormas.api.event.EventReferenceDto;
-import de.symeda.sormas.api.hospitalization.SymptomsList;
-import de.symeda.sormas.api.i18n.Descriptions;
-import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
-import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.person.Profession;
-import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.sample.*;
-import de.symeda.sormas.api.symptoms.SymptomsDto;
-import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.Gram;
-import de.symeda.sormas.api.utils.LabType;
-import de.symeda.sormas.api.utils.LatexCulture;
-import de.symeda.sormas.api.utils.YesNo;
-import de.symeda.sormas.ui.utils.*;
-import org.apache.commons.collections.CollectionUtils;
-
-import com.vaadin.ui.Label;
-import com.vaadin.v7.data.util.converter.Converter;
-import com.vaadin.v7.ui.AbstractSelect.ItemCaptionMode;
-
-import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
-import de.symeda.sormas.api.disease.DiseaseVariant;
-import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.i18n.Validations;
-import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
-import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
-import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
-import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
-import de.symeda.sormas.ui.UserProvider;
+import static de.symeda.sormas.ui.utils.CssStyles.*;
+import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
+import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 
 public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
