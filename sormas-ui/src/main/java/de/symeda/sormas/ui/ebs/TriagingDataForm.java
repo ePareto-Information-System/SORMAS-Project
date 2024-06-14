@@ -19,8 +19,6 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.NullableOptionGroup;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -91,7 +89,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
     private OptionGroup animalFacCategoryDetails;
     private OptionGroup environmentalCategoryDetails;
     private OptionGroup poeCategoryDetails;
-    private OptionGroup categoryLevel;
+    private NullableOptionGroup categoryLevel;
 
     private static UiFieldAccessCheckers createFieldAccessCheckers(
             boolean isPseudonymized,
@@ -130,7 +128,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         supervisorReview = addField(TriagingDto.SUPERVISOR_REVIEW, NullableOptionGroup.class);
         referred = addField(TriagingDto.REFERRED, NullableOptionGroup.class);
         signalCategory = addField(TriagingDto.SIGNAL_CATEGORY, NullableOptionGroup.class);
-        categoryLevel = addField(TriagingDto.CATEGORY_DETAILS_LEVEL, OptionGroup.class);
+        categoryLevel = addField(TriagingDto.CATEGORY_DETAILS_LEVEL, NullableOptionGroup.class);
         humanCommCategoryDetails = addField(TriagingDto.HUMAN_COMMUNITY_CATEGORY_DETAILS, OptionGroup.class);
         humanCommCategoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
         humanCommCategoryDetails.setMultiSelect(true);
@@ -286,28 +284,13 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             if (categoryLevel.getValue() != null) {
                 try {
                     categoryLevel.setValue(CategoryDetailsLevel.COMMUNITY);
+
                     SignalCategory category = getSignalCategory(propertyValue);
-                    setVisibility(categoryLevel.getValue().toString(), category);
+                    setVisibility(categoryLevel.getNullableValue().toString(), category);
                 }catch (Exception exception){
                     System.out.println(exception.getMessage());
                 }
 
-            } else if (signalCategory.getValue() == null) {
-                try {
-                    categoryLevel.setValue(null);
-                    SignalCategory category = getSignalCategory(propertyValue);
-                    setVisibility(categoryLevel.getValue().toString(), category);
-                }catch (Exception exception){
-                    System.out.println(exception.getMessage());
-                }
-            }else {
-                try {
-                    categoryLevel.setValue(CategoryDetailsLevel.COMMUNITY);
-                    SignalCategory category = getSignalCategory(propertyValue);
-                    setVisibility(categoryLevel.getValue().toString(), category);
-                }catch (Exception exception){
-                    System.out.println(exception.getMessage());
-                }
             }
             try {
                 displayCategories(e.getProperty().getValue().toString());
@@ -411,13 +394,19 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             }
         }
 
-        assert selectedEbs != null;
         if (selectedEbs.getTriaging().getSpecificSignal() != null) {
             if (Objects.equals(selectedEbs.getTriaging().getSpecificSignal().toString(), "YES")) {
                 healthConcern.setVisible(true);
                 signalCategory.setVisible(true);
             }else if (Objects.equals(selectedEbs.getTriaging().getSpecificSignal().toString(), "NO")) {
-                inititalRendering(healthConcern, potentialRisk, signalCategory, categoryLevel);
+                healthConcern.setVisible(false);
+                healthConcern.setValue(null);
+                potentialRisk.setVisible(false);
+                potentialRisk.setValue(null);
+                signalCategory.setVisible(false);
+                signalCategory.setValue(null);
+                categoryLevel.setVisible(false);
+                categoryLevel.setValue(null);
                 outcomeSupervisor.setVisible(true);
                 humanCommCategoryDetails.setVisible(false);
                 humanCommCategoryDetails.setValue(null);
@@ -425,7 +414,16 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 humanFacCategoryDetails.setValue(null);
                 humanLabCategoryDetails.setValue(null);
 
-                inititalRendering(animalCommCategoryDetails, animalFacCategoryDetails, environmentalCategoryDetails, poeCategoryDetails);
+                animalCommCategoryDetails.setVisible(false);
+                animalCommCategoryDetails.setValue(null);
+                animalFacCategoryDetails.setVisible(false);  // Repeated for lab
+                animalFacCategoryDetails.setValue(null);  // Repeated for lab
+
+                environmentalCategoryDetails.setVisible(false);  // Shown for all levels
+                environmentalCategoryDetails.setValue(null);  // Shown for all levels
+
+                poeCategoryDetails.setVisible(false);  // Shown for all levels
+                poeCategoryDetails.setValue(null);  // Shown for all levels
             }
         }else {
             outcomeSupervisor.setVisible(false);
@@ -438,32 +436,16 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         initializeAccessAndAllowedAccesses();
     }
 
-    private void inititalRendering(OptionGroup healthConcern, OptionGroup potentialRisk, OptionGroup signalCategory, OptionGroup categoryLevel) {
-        healthConcern.setVisible(false);
-        healthConcern.setValue(null);
-        potentialRisk.setVisible(false);
-        potentialRisk.setValue(null);
-        signalCategory.setVisible(false);
-        signalCategory.setValue(null);
-        categoryLevel.setVisible(false);
-        categoryLevel.setValue(null);
-    }
-
     private static @Nullable SignalCategory getSignalCategory(String propertyValue) {
         SignalCategory category = null;
-        switch (propertyValue) {
-            case "[Human]":
-                category = SignalCategory.HUMAN;
-                break;
-            case "[Environment]":
-                category = SignalCategory.ENVIRONMENT;
-                break;
-            case "[Animal]":
-                category = SignalCategory.ANIMAL;
-                break;
-            case "[POE]":
-                category = SignalCategory.POE;
-                break;
+        if (propertyValue.equals("[Human]")) {
+            category = SignalCategory.HUMAN;
+        } else if (propertyValue.equals("[Environment]")) {
+            category = SignalCategory.ENVIRONMENT;
+        } else if (propertyValue.equals("[Animal]")) {
+            category = SignalCategory.ANIMAL;
+        } else if (propertyValue.equals("[POE]")) {
+            category = SignalCategory.POE;
         }
         return category;
     }
@@ -479,9 +461,9 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             environmentalCategoryDetails.setVisible(false);
             poeCategoryDetails.setVisible(false);
         }
-        boolean isCommunityLevel = "Community".equals(level);
-        boolean isFacilityLevel = "Facility".equals(level);
-        boolean isLaboratoryLevel = "Laboratory".equals(level);
+        boolean isCommunityLevel = "[Community]".equals(level);
+        boolean isFacilityLevel = "[Facility]".equals(level);
+        boolean isLaboratoryLevel = "[Laboratory]".equals(level);
 
         humanCommCategoryDetails.setVisible(isCommunityLevel && category == SignalCategory.HUMAN);
         humanFacCategoryDetails.setVisible(isFacilityLevel && category == SignalCategory.HUMAN);
@@ -517,10 +499,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         window.setStyleName("low-risk-assessment");
     }
 
-    public void displayCategories(String property) {
-        // Initialize logger for logging messages
-        Logger logger = LoggerFactory.getLogger(getClass());
-
+    public void displayCategories(String property){
         List<CategoryDetailsLevel> categories;
         switch (property) {
             case "[Environment]":
@@ -538,27 +517,17 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 break;
         }
         try {
-                // Remove items not in the categories list
-//                Arrays.stream(CategoryDetailsLevel.values())
-//                        .filter(detailsLevel -> !categories.contains(detailsLevel))
-//                        .forEach(detailsLevel -> categoryLevel.removeItem(detailsLevel));
-//
-//            // Add new items that are in the new categories list but not currently in the categoryLevel
-//            categories.forEach(detailsLevel -> {
-//                if (categoryLevel.getItemIds().isEmpty() || !Collections.singletonList(categoryLevel.getValue()).contains(detailsLevel)) {
-//                    categoryLevel.addItem(detailsLevel);
-//                }
-//            });
+//            categoryLevel.setValue(null);
 
-
-            // Update categoryLevel with new categories
-                FieldHelper.updateEnumData(categoryLevel, categories);
-        } catch (Exception exception) {
-            logger.error("Exception during category handling: {}", exception.getMessage());
-            logger.error("StackTrace:", exception); // Log full stack trace for detailed debugging
-
-            // Optionally rethrow the exception or handle it according to your application's needs
-            // throw new RuntimeException("Failed to handle categories", exception);
+//            categoryLevel.removeAllItems();
+//            Arrays.stream(new List[]{categories})
+//                    .forEach(category -> categoryLevel.addItem(category));
+//            Arrays.stream(CategoryDetailsLevel.values())
+//                    .filter(category -> !categories.contains(category))
+//                    .forEach(category -> categoryLevel.removeItem(category));
+            FieldHelper.updateEnumData(categoryLevel, categories);
+        }catch (Exception exception){
+            System.out.println(exception.getMessage());
         }
     }
 
