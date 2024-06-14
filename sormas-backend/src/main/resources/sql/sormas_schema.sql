@@ -13532,7 +13532,7 @@ ALTER TABLE cases ADD COLUMN lastvaccinationdate date;
 INSERT INTO schema_version (version_number, comment) VALUES (590, 'Added last vaccination date for IDSR 53');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
--- Define the ebs table
+-- 2024-05-13 created ebs table
 CREATE TABLE ebs (
                      id bigint not null,
                      uuid VARCHAR(36) NOT NULL UNIQUE,
@@ -13593,7 +13593,7 @@ CREATE TABLE ebs_history (
 );
 
 
-
+-- 2024-05-14 created triaging table
 CREATE TABLE triaging (
                           id bigint not null,
                           uuid VARCHAR(36) NOT NULL UNIQUE,
@@ -13633,7 +13633,7 @@ CREATE TABLE triaging_history (
                              LIKE triaging INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
 );
 
-
+-- 2024-05-13 created ebs signal verification
 CREATE TABLE signalVerification (
                           id bigint not null,
                           verificationSent VARCHAR(3),
@@ -13663,6 +13663,7 @@ CREATE TABLE signalVerification_history (
                              LIKE signalVerification INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
 );
 
+-- 2024-05-13 created risk table
 CREATE TABLE riskAssessment(
     id bigint not null,
     uuid VARCHAR(36) NOT NULL UNIQUE,
@@ -13694,6 +13695,8 @@ CREATE TABLE riskAssessment_history (
                              LIKE riskAssessment INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
 );
 
+
+-- 2024-05-14 created ebs table
 CREATE TABLE ebsAlert(
     id bigint not null,
     actionInitiated VARCHAR(255),
@@ -13727,3 +13730,11 @@ ALTER TABLE triaging ADD COLUMN supervisorreview VARCHAR(3);
 INSERT INTO schema_version (version_number, comment) VALUES (593, 'added supervisor review to ebs');
 ALTER TABLE triaging ADD COLUMN referred VARCHAR(3);
 INSERT INTO schema_version (version_number, comment) VALUES (594, 'added referred to ebs');
+-- 2024-06-14 added alertdate to alert table
+ALTER TABLE ebsAlert ADD COLUMN alertdate DATE;
+INSERT INTO schema_version (version_number, comment) VALUES (595, 'added alertdate to ebsAlert');
+
+-- 2024-06-14 added alertdate to alert table
+ALTER TABLE signalVerification ADD numberOfPersonCases VARCHAR(255);
+ALTER TABLE signalVerification ADD numberOfDeathPerson VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (596, 'added alertdate to ebsAlert');
