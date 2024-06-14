@@ -79,4 +79,6 @@ public interface EbsFacade extends CoreFacade<EbsDto, EbsIndexDto, EbsReferenceD
 
 	void setEbsAlertAssociations(EbsReferenceDto ebsRef);
 
+	public List<EbsIndexDto> getEventIndexList(EbsCriteria ebsCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+
 }
