@@ -1095,6 +1095,7 @@ public interface Strings {
 	String messageEventSaved = "messageEventSaved";
 	String messageEventsDearchived = "messageEventsDearchived";
 	String seniorOfficials = "seniorOfficials";
+	String referredNotifs = "referredNotifs";
 	String messageEventsDeleted = "messageEventsDeleted";
 	String messageEventsEdited = "messageEventsEdited";
 	String messageEventsEditedExceptArchived = "messageEventsEditedExceptArchived";
