@@ -86,11 +86,11 @@ public class RiskAssessmentDataForm extends AbstractEditForm<RiskAssessmentDto> 
         if (ebs == null){
             return;
         }
-        Label riskAssessment = new Label(I18nProperties.getString(Strings.headingSignalVerification));
+        Label riskAssessment = new Label(I18nProperties.getString(Strings.headingRiskAssessment));
         riskAssessment.addStyleName(H3);
         getContent().addComponent(riskAssessment, RISK_ASSESSMENT_LOC);
 
-        Label riskClassification = new Label(I18nProperties.getString(Strings.headingEventDetails));
+        Label riskClassification = new Label(I18nProperties.getString(Strings.headingRiskDetails));
         riskClassification.addStyleName(H5);
         getContent().addComponent(riskClassification, RISK_CLASSIFICATION_LOC);
         NullableOptionGroup morbidityMortality = addField(RiskAssessmentDto.MORBIDITY_MORTALITY,NullableOptionGroup.class);
