@@ -591,6 +591,11 @@ public class CaseController {
 			cazeDto.setReinfectionStatus(null);
 		}
 
+		boolean isNewCase = false;
+		if (cazeDto.getCreationDate() == null) {
+			isNewCase = true;
+		}
+
 		// Compare old and new case
 		CaseDataDto existingDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(cazeDto.getUuid());
 		CaseDataDto resultDto = FacadeProvider.getCaseFacade().save(cazeDto);
@@ -637,7 +642,9 @@ public class CaseController {
 				notification.show(Page.getCurrent());
 			} else {
 				Notification.show(I18nProperties.getString(Strings.messageCaseSaved), Type.WARNING_MESSAGE);
-				SormasUI.navigateToCaseChild();
+				if (!isNewCase) {
+					SormasUI.navigateToCaseChild();
+				}
 			}
 			SormasUI.refreshView();
 		}
