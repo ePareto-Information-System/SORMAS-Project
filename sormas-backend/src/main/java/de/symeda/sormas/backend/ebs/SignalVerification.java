@@ -4,6 +4,8 @@ import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.util.Date;
 
 @Entity(name = "signalVerification")
@@ -24,6 +26,8 @@ public class SignalVerification extends AbstractDomainObject {
     public static final String DATE_OF_OCCURRENCE = "dateOfOccurrence";
     public static final String NUMBER_OF_PERSON_ANIMAL = "numberOfPersonAnimal";
     public static final String NUMBER_OF_DEATH = "numberOfDeath";
+    public static final String NUMBER_OF_PERSON_CASES = "numberOfPersonCases";
+    public static final String NUMBER_OF_DEATH_PERSON = "numberOfDeathPerson";
     public static final String DESCRIPTION = "description";
     public static final String WHY_NOT_VERIFY = "whyNotVerify";
 
@@ -34,6 +38,8 @@ public class SignalVerification extends AbstractDomainObject {
     private Date dateOfOccurrence;
     private String numberOfPersonAnimal;
     private String numberOfDeath;
+    private String numberOfPersonCases;
+    private String numberOfDeathPerson;
     private String description;
     private String whyNotVerify;
 
@@ -44,7 +50,7 @@ public class SignalVerification extends AbstractDomainObject {
     public void setVerificationSent(YesNo verificationSent) {
         this.verificationSent = verificationSent;
     }
-
+    @Enumerated(EnumType.STRING)
     public YesNo getVerified() {
         return verified;
     }
@@ -107,5 +113,21 @@ public class SignalVerification extends AbstractDomainObject {
 
     public void setWhyNotVerify(String whyNotVerify) {
         this.whyNotVerify = whyNotVerify;
+    }
+
+    public String getNumberOfPersonCases() {
+        return numberOfPersonCases;
+    }
+
+    public void setNumberOfPersonCases(String numberOfPersonCases) {
+        this.numberOfPersonCases = numberOfPersonCases;
+    }
+
+    public String getNumberOfDeathPerson() {
+        return numberOfDeathPerson;
+    }
+
+    public void setNumberOfDeathPerson(String numberOfDeathPerson) {
+        this.numberOfDeathPerson = numberOfDeathPerson;
     }
 }
