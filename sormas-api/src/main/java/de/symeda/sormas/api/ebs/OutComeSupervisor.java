@@ -5,8 +5,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 public enum OutComeSupervisor {
 
     ISSIGNAL,
-    ISNOTSIGNAL,
-    NOTREVIEWED;
+    ISNOTSIGNAL;
     @Override
     public String toString() {
         return I18nProperties.getEnumCaption(this);
