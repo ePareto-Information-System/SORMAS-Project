@@ -140,55 +140,19 @@ public class CCESamplesGrid extends FilteredGrid<SampleIndexDto, SampleCriteria>
             removeColumn(SampleIndexDto.RECEIVED_DATE);
         }
 
-        if (!UserProvider.getCurrent().hasUserRight(UserRight.CASE_VIEW)) {
-            removeColumn(SampleIndexDto.ASSOCIATED_CASE);
-        }
-
-        if (!UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_VIEW)) {
-            removeColumn(SampleIndexDto.ASSOCIATED_CONTACT);
-        }
-
-        if (!UserProvider.getCurrent().hasUserRight(UserRight.EVENT_VIEW)) {
-            removeColumn(SampleIndexDto.ASSOCIATED_EVENT_PARTICIPANT);
-        }
-
-//        if (!UserProvider.getCurrent().hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
-//                || !FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.ADDITIONAL_TESTS)) {
-//            removeColumn(SampleIndexDto.ADDITIONAL_TESTING_STATUS);
-//        }
-
-//        if (criteria.getSampleAssociationType() == SampleAssociationType.CASE) {
-//            if (getColumn(SampleIndexDto.ASSOCIATED_CONTACT) != null) {
-//                removeColumn(SampleIndexDto.ASSOCIATED_CONTACT);
-//            }
-//            if (getColumn(SampleIndexDto.ASSOCIATED_EVENT_PARTICIPANT) != null) {
-//                removeColumn(SampleIndexDto.ASSOCIATED_EVENT_PARTICIPANT);
-//            }
-//        }
-
-//        if (!shouldShowEpidNumber()) {
-//            removeColumn(SampleIndexDto.EPID_NUMBER);
+//        if (!UserProvider.getCurrent().hasUserRight(UserRight.CASE_VIEW)) {
+//            removeColumn(SampleIndexDto.ASSOCIATED_CASE);
 //        }
 //
-//        if (criteria.getSampleAssociationType() == SampleAssociationType.CONTACT) {
-//            removeColumnIfExists(SampleIndexDto.EPID_NUMBER);
+//        if (!UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_VIEW)) {
+//            removeColumn(SampleIndexDto.ASSOCIATED_CONTACT);
+//        }
 //
-//            if (getColumn(SampleIndexDto.ASSOCIATED_CASE) != null) {
-//                removeColumn(SampleIndexDto.ASSOCIATED_CASE);
-//            }
-//            if (getColumn(SampleIndexDto.ASSOCIATED_EVENT_PARTICIPANT) != null) {
-//                removeColumn(SampleIndexDto.ASSOCIATED_EVENT_PARTICIPANT);
-//            }
+//        if (!UserProvider.getCurrent().hasUserRight(UserRight.EVENT_VIEW)) {
+//            removeColumn(SampleIndexDto.ASSOCIATED_EVENT_PARTICIPANT);
 //        }
-//        if (criteria.getSampleAssociationType() == SampleAssociationType.EVENT_PARTICIPANT) {
-//            removeColumnIfExists(SampleIndexDto.EPID_NUMBER);
-//            if (getColumn(SampleIndexDto.ASSOCIATED_CASE) != null) {
-//                removeColumn(SampleIndexDto.ASSOCIATED_CASE);
-//            }
-//            if (getColumn(SampleIndexDto.ASSOCIATED_CONTACT) != null) {
-//                removeColumn(SampleIndexDto.ASSOCIATED_CONTACT);
-//            }
-//        }
+
+
 
         for (Column<SampleIndexDto, ?> column : getColumns()) {
             column.setCaption(I18nProperties.getPrefixCaption(SampleIndexDto.I18N_PREFIX, column.getId(), column.getCaption()));
