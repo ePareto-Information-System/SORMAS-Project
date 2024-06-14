@@ -28,6 +28,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.caze.CaseOrigin;
+import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.ui.hospitalization.HospitalizationView;
 import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.navigator.Navigator;
@@ -547,7 +549,9 @@ public class PersonController {
 			String personSavedMessage = I18nProperties.getString(Strings.messagePersonSaved);
 			String notificationMessage = String.format("%s.%s", personSavedMessage, synchronizationMessage);
 			if (responseDto == null || (responseDto.isSuccess() && responseDto.getErrors().isEmpty())) {
+				SormasUI.navigateToCaseChild();
 				Notification.show(notificationMessage, Type.WARNING_MESSAGE);
+
 			} else {
 				VaadinUiUtil.showWarningPopup(notificationMessage);
 			}

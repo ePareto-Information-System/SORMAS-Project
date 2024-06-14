@@ -637,6 +637,7 @@ public class CaseController {
 				notification.show(Page.getCurrent());
 			} else {
 				Notification.show(I18nProperties.getString(Strings.messageCaseSaved), Type.WARNING_MESSAGE);
+				SormasUI.navigateToCaseChild();
 			}
 			SormasUI.refreshView();
 		}

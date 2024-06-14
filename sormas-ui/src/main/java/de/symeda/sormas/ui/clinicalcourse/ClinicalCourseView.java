@@ -155,6 +155,7 @@ public class ClinicalCourseView extends AbstractCaseView {
 		editComponent = ControllerProvider.getCaseController().getClinicalCourseComponent(getCaseRef().getUuid());
 		editComponent.setMargin(false);
 		container.addComponent(editComponent);
+		container.addComponent(getNextTabButton());
 
 		setSubComponent(container);
 

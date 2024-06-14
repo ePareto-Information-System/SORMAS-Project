@@ -378,10 +378,14 @@ public class CaseContactsView extends AbstractCaseView {
 			gridLayout.setSpacing(false);
 			gridLayout.setSizeFull();
 			gridLayout.setExpandRatio(grid, 1);
+			gridLayout.setHeightUndefined();
 
 			if (viewConfiguration.isInEagerMode()) {
 				grid.setEagerDataProvider();
 			}
+
+
+			gridLayout.addComponent(getNextTabButton());
 
 			grid.addDataSizeChangeListener(e -> updateStatusButtons());
 

@@ -19,6 +19,9 @@
 package de.symeda.sormas.ui.caze;
 
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.Property;
@@ -36,10 +39,7 @@ import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.ui.ControllerProvider;
-import de.symeda.sormas.ui.SubMenu;
-import de.symeda.sormas.ui.UserProvider;
-import de.symeda.sormas.ui.ViewModelProviders;
+import de.symeda.sormas.ui.*;
 import de.symeda.sormas.ui.afpimmunization.AfpImmunizationView;
 import de.symeda.sormas.ui.caze.maternalhistory.MaternalHistoryView;
 import de.symeda.sormas.ui.caze.porthealthinfo.PortHealthInfoView;
@@ -51,12 +51,7 @@ import de.symeda.sormas.ui.hospitalization.HospitalizationView;
 import de.symeda.sormas.ui.riskfactor.RiskFactorView;
 import de.symeda.sormas.ui.sixtydayfollowup.SixtyDayFollowupView;
 import de.symeda.sormas.ui.therapy.TherapyView;
-import de.symeda.sormas.ui.utils.AbstractEditAllowedDetailView;
-import de.symeda.sormas.ui.utils.CssStyles;
-import de.symeda.sormas.ui.utils.DirtyStateComponent;
-import de.symeda.sormas.ui.utils.ExternalJournalUtil;
-import de.symeda.sormas.ui.utils.ViewConfiguration;
-import de.symeda.sormas.ui.utils.ViewMode;
+import de.symeda.sormas.ui.utils.*;
 
 import java.util.Arrays;
 
@@ -66,6 +61,7 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 	public static final String VIEW_MODE_URL_PREFIX = "v";
 
 	public static final String ROOT_VIEW_NAME = CasesView.VIEW_NAME;
+	public static final String NEXT_BUTTON_LOC = "nextButtonLoc";
 
 	private Boolean hasOutbreak;
 	private boolean caseFollowupEnabled;
@@ -386,4 +382,22 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 
 		return viewConfiguration.getViewMode();
 	}
+
+	public HorizontalLayout getNextTabButton() {
+		HorizontalLayout footerLayout = new HorizontalLayout();
+		footerLayout.setMargin(false);
+		footerLayout.setSpacing(true);
+		footerLayout.setWidth(100, Unit.PERCENTAGE);
+
+		//create a next button
+		Button caseTabNextButton = ButtonHelper.createButton(Captions.caseNextTabButton, e -> {
+			SormasUI.navigateToCaseChild();
+		});
+
+		footerLayout.addComponent(caseTabNextButton);
+		footerLayout.setComponentAlignment(caseTabNextButton, Alignment.MIDDLE_RIGHT);
+		return footerLayout;
+	}
+
+
 }

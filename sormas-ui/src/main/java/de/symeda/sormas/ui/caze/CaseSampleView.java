@@ -73,7 +73,7 @@ public class CaseSampleView extends AbstractCaseView {
             }
 
             grid.getDataProvider().addDataProviderListener(e -> updateStatusButtons());
-
+            gridLayout.addComponent(getNextTabButton());
             setSubComponent(gridLayout);
         }
 

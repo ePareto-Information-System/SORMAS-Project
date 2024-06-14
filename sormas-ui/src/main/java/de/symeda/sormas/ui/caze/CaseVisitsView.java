@@ -165,6 +165,8 @@ public class CaseVisitsView extends AbstractCaseView {
 			setSubComponent(gridLayout);
 		}
 
+		gridLayout.addComponent(getNextTabButton());
+
 		grid.reload();
 	}
 }

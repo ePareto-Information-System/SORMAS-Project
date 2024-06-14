@@ -42,6 +42,7 @@ import de.symeda.sormas.api.therapy.TreatmentDto;
 import de.symeda.sormas.api.therapy.TreatmentType;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
+import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.caze.AbstractCaseView;
@@ -298,6 +299,7 @@ public class TherapyView extends AbstractCaseView {
 		container.addComponent(treatmentGrid);
 		container.setExpandRatio(treatmentGrid, 1);
 
+		container.addComponent(getNextTabButton());
 		setSubComponent(container);
 
 		update(caze);
