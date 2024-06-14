@@ -1,9 +1,12 @@
 package de.symeda.sormas.ui.ebs;
 
-import com.vaadin.ui.Notification;
+import com.vaadin.server.Sizeable;
+import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.ui.Window;
 import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.ebs.*;
+import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.ui.utils.*;
 import com.vaadin.ui.Label;
@@ -15,11 +18,11 @@ import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.NullableOptionGroup;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
@@ -32,18 +35,16 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
     private static final String SIGNAL_INFORMATION_LOC = "signalInformationLoc";
     private static final String TRIAGING_DECISION_LOC = "triagingDecisionLoc";
 
-    private static final String TRIAGING_ENTITY = "Triaging";
-
     private final EbsDto ebs;
     private final Class<? extends EntityDto> parentClass;
 
     private static final String HTML_LAYOUT =
             loc(SIGNAL_INFORMATION_LOC) +
                     fluidRowLocs(TriagingDto.SPECIFIC_SIGNAL) +
+                    fluidRowLocs(TriagingDto.SUPERVISOR_REVIEW) +
+                    fluidRowLocs(TriagingDto.OUTCOME_SUPERVISOR,"") +
                     fluidRowLocs(TriagingDto.POTENTIAL_RISK) +
                     fluidRowLocs(TriagingDto.HEALTH_CONCERN) +
-                    fluidRowLocs(TriagingDto.REFERRED_TO, "") +
-                    fluidRowLocs(TriagingDto.OUTCOME_SUPERVISOR,"") +
                     fluidRowLocs(TriagingDto.SIGNAL_CATEGORY) +
                     fluidRowLocs(TriagingDto.CATEGORY_DETAILS_LEVEL) +
                     fluidRowLocs(TriagingDto.HUMAN_COMMUNITY_CATEGORY_DETAILS,"") +
@@ -54,6 +55,8 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                     fluidRowLocs(TriagingDto.ENVIRONMENTAL_CATEGORY_DETAILS,"") +
                     fluidRowLocs(TriagingDto.POE_CATEGORY_DETAILS,"") +
                     fluidRowLocs(TriagingDto.OCCURRENCE_PREVIOUSLY) +
+                    fluidRowLocs(TriagingDto.REFERRED) +
+                    fluidRowLocs(TriagingDto.REFERRED_TO, "") +
                     loc(TRIAGING_DECISION_LOC) +
                     fluidRowLocs(TriagingDto.TRIAGING_DECISION,TriagingDto.DATE_OF_DECISION);
 
@@ -79,6 +82,8 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
     private NullableOptionGroup previousOccurrence;
     private NullableOptionGroup healthConcern;
     private NullableOptionGroup potentialRisk;
+    private NullableOptionGroup supervisorReview;
+    private NullableOptionGroup referred;
     private Label headingSignalInformation;
     private OptionGroup humanFacCategoryDetails;
     private OptionGroup humanLabCategoryDetails;
@@ -122,6 +127,8 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         NullableOptionGroup specificSignal = addField(TriagingDto.SPECIFIC_SIGNAL, NullableOptionGroup.class);
         healthConcern = addField(TriagingDto.HEALTH_CONCERN, NullableOptionGroup.class);
         potentialRisk = addField(TriagingDto.POTENTIAL_RISK, NullableOptionGroup.class);
+        supervisorReview = addField(TriagingDto.SUPERVISOR_REVIEW, NullableOptionGroup.class);
+        referred = addField(TriagingDto.REFERRED, NullableOptionGroup.class);
         signalCategory = addField(TriagingDto.SIGNAL_CATEGORY, NullableOptionGroup.class);
         categoryLevel = addField(TriagingDto.CATEGORY_DETAILS_LEVEL, OptionGroup.class);
         humanCommCategoryDetails = addField(TriagingDto.HUMAN_COMMUNITY_CATEGORY_DETAILS, OptionGroup.class);
@@ -200,8 +207,12 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         referredTo = addField(TriagingDto.REFERRED_TO, TextField.class);
         ComboBox outcomeSupervisor = addField(TriagingDto.OUTCOME_SUPERVISOR, ComboBox.class);
         referredTo.setVisible(false);
+        supervisorReview.setVisible(false);
         potentialRisk.setVisible(false);
         healthConcern.setVisible(false);
+        referred.setVisible(false);
+        triagingDecision.setVisible(false);
+        dateOfDecision.setVisible(false);
         EbsDto selectedEbs = getEbsDto();
 
         FieldHelper.setVisibleWhen(
@@ -219,17 +230,20 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 
         specificSignal.addValueChangeListener(e->{
             if(Objects.equals(e.getProperty().getValue().toString(), "[YES]")){
+                signalCategory.setVisible(true);
                 healthConcern.setVisible(false);
                 healthConcern.setValue(null);
                 potentialRisk.setVisible(false);
+                supervisorReview.setVisible(false);
                 potentialRisk.setValue(null);
-                signalCategory.setVisible(true);
+                supervisorReview.setValue(null);
+                referred.setVisible(false);
+                referred.setValue(null);
                 outcomeSupervisor.setVisible(false);
             }else if ((Objects.equals(e.getProperty().getValue().toString(), "[NO]"))){
-                potentialRisk.setVisible(true);
+                supervisorReview.setVisible(true);
                 signalCategory.setVisible(false);
                 signalCategory.setValue(null);
-                outcomeSupervisor.setVisible(true);
                 categoryLevel.setVisible(false);
                 categoryLevel.setValue(null);
                 selectedEbs.getTriaging().setCategoryDetailsLevel(null);
@@ -243,9 +257,10 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 humanFacCategoryDetails.setValue(null);
                 humanLabCategoryDetails.setVisible(false);
                 humanLabCategoryDetails.setValue(null);
-
-                Notification.show(I18nProperties.getString(Strings.seniorOfficials), Notification.Type.WARNING_MESSAGE);
-
+                var bb = ebs.getTriaging().getSupervisorReview();
+                if (ebs.getTriaging().getSupervisorReview() == null) {
+                    reviewSignal(Strings.seniorOfficials,selectedEbs);
+                }
                 selectedEbs.getTriaging().setAnimalCommunityCategoryDetails(null);
                 selectedEbs.getTriaging().setAnimalFacilityCategoryDetails(null);
 
@@ -260,29 +275,45 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             }
         });
         signalCategory.addValueChangeListener(e->{
-            List<CategoryDetailsLevel> categories = null;
-            var category = signalCategory.getNullableValue();
-            if (Objects.equals(e.getProperty().getValue().toString(), "[Human]") || Objects.equals(e.getProperty().getValue().toString(), "[Environment]") || Objects.equals(e.getProperty().getValue().toString(), "[Animal]") || Objects.equals(e.getProperty().getValue().toString(), "[POE]")){
+            List<CategoryDetailsLevel> categories;
+            final Set<String> validCategories = new HashSet<>(Set.of("[Human]", "[Environment]", "[Animal]", "[POE]"));
+            String propertyValue = e.getProperty().getValue().toString();
+            if (validCategories.contains(propertyValue)) {
                 categoryLevel.setVisible(true);
-            }else {
+            } else {
                 categoryLevel.setVisible(false);
             }
-            if (Objects.equals(e.getProperty().getValue().toString(), "[Environment]") ||Objects.equals(e.getProperty().getValue().toString(), "[POE]") ){
-                categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY);
-                setVisibility("Community Level", (SignalCategory) category);
-            } else if (Objects.equals(e.getProperty().getValue().toString(), "[Animal]")) {
-                categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY,CategoryDetailsLevel.FACILITY);
-                setVisibility("Community Level", (SignalCategory) category);
-            }else if (Objects.equals(e.getProperty().getValue().toString(), "[Human]")) {
-                categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY,CategoryDetailsLevel.FACILITY,CategoryDetailsLevel.LABORATORY);
-                setVisibility("Community Level", (SignalCategory) category);
+            if (categoryLevel.getValue() != null) {
+                try {
+                    categoryLevel.setValue(CategoryDetailsLevel.COMMUNITY);
+                    SignalCategory category = getSignalCategory(propertyValue);
+                    setVisibility(categoryLevel.getValue().toString(), category);
+                }catch (Exception exception){
+                    System.out.println(exception.getMessage());
+                }
+
+            } else if (signalCategory.getValue() == null) {
+                try {
+                    categoryLevel.setValue(null);
+                    SignalCategory category = getSignalCategory(propertyValue);
+                    setVisibility(categoryLevel.getValue().toString(), category);
+                }catch (Exception exception){
+                    System.out.println(exception.getMessage());
+                }
+            }else {
+                try {
+                    categoryLevel.setValue(CategoryDetailsLevel.COMMUNITY);
+                    SignalCategory category = getSignalCategory(propertyValue);
+                    setVisibility(categoryLevel.getValue().toString(), category);
+                }catch (Exception exception){
+                    System.out.println(exception.getMessage());
+                }
             }
             try {
-                FieldHelper.updateEnumData(categoryLevel,categories);
+                displayCategories(e.getProperty().getValue().toString());
             }catch (Exception exception){
                 System.out.println(exception.getMessage());
             }
-            categoryLevel.setVisible(true);
 
         });
 
@@ -303,24 +334,72 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             }
         });
 
-        potentialRisk.addValueChangeListener(e->{
-            if (e.getProperty().getValue().toString().equals("[NO]")) {
-                healthConcern.setVisible(true);
+        supervisorReview.addValueChangeListener(e->{
+            if (e.getProperty().getValue().toString().equals("[YES]")) {
+                outcomeSupervisor.setVisible(true);
+                triagingDecision.setVisible(true);
+                dateOfDecision.setVisible(true);
+                triagingDecision.setRequired(true);
+                dateOfDecision.setRequired(true);
             }
-            else if (e.getProperty().getValue().toString().equals("[YES]")) {
+            else if (e.getProperty().getValue().toString().equals("[NO]")) {
+                if (ebs.getTriaging().getSupervisorReview() != YesNo.NO) {
+                    reviewSignal(Strings.seniorOfficials,selectedEbs);
+                }
+                potentialRisk.setVisible(false);
+                potentialRisk.setValue(null);
+                dateOfDecision.setRequired(false);
+                dateOfDecision.setValue(null);
+                dateOfDecision.setVisible(false);
+                triagingDecision.setVisible(false);
+                triagingDecision.setRequired(false);
+                triagingDecision.setValue(null);
+                outcomeSupervisor.setVisible(false);
+                outcomeSupervisor.setValue(OutComeSupervisor.ISNOTSIGNAL);
+                healthConcern.setVisible(false);
+                healthConcern.setValue(null);
+                referred.setVisible(false);
+                referred.setValue(null);
+                referredTo.setVisible(false);
+                referredTo.setValue(null);
+            }
+        });
+
+        outcomeSupervisor.addValueChangeListener(e->{
+            if (e.getProperty().getValue().equals(OutComeSupervisor.ISSIGNAL)) {
+                healthConcern.setVisible(true);
+                previousOccurrence.setVisible(true);
+            }
+            else if (e.getProperty().getValue().equals(OutComeSupervisor.ISNOTSIGNAL)) {
                 healthConcern.setVisible(false);
                 healthConcern.setValue(null);
                 referredTo.setVisible(false);
+                referred.setVisible(false);
             }
         });
         healthConcern.addValueChangeListener(e->{
             if (e.getProperty().getValue().toString().equals("[NO]")) {
                 triagingDecision.setValue(EbsTriagingDecision.DISCARD);
                 referredTo.setVisible(false);
+                referred.setVisible(false);
                 referredTo.setValue(null);
+                referred.setValue(null);
             }
             else if (e.getProperty().getValue().toString().equals("[YES]")) {
+                if (ebs.getTriaging().getHealthConcern() != YesNo.YES) {
+                    reviewSignal(Strings.referredNotifs,selectedEbs);
+                }
+                referred.setVisible(true);
+            }
+        });
+        referred.addValueChangeListener(e->{
+            if (e.getProperty().getValue().toString().equals("[YES]")) {
                 referredTo.setVisible(true);
+                triagingDecision.setValue(EbsTriagingDecision.MORE_INFORMATION);
+            }
+            else if (e.getProperty().getValue().toString().equals("[NO]")) {
+                referredTo.setVisible(false);
+                referredTo.setValue(null);
             }
         });
 
@@ -332,19 +411,13 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             }
         }
 
+        assert selectedEbs != null;
         if (selectedEbs.getTriaging().getSpecificSignal() != null) {
             if (Objects.equals(selectedEbs.getTriaging().getSpecificSignal().toString(), "YES")) {
                 healthConcern.setVisible(true);
                 signalCategory.setVisible(true);
             }else if (Objects.equals(selectedEbs.getTriaging().getSpecificSignal().toString(), "NO")) {
-                healthConcern.setVisible(false);
-                healthConcern.setValue(null);
-                potentialRisk.setVisible(false);
-                potentialRisk.setValue(null);
-                signalCategory.setVisible(false);
-                signalCategory.setValue(null);
-                categoryLevel.setVisible(false);
-                categoryLevel.setValue(null);
+                inititalRendering(healthConcern, potentialRisk, signalCategory, categoryLevel);
                 outcomeSupervisor.setVisible(true);
                 humanCommCategoryDetails.setVisible(false);
                 humanCommCategoryDetails.setValue(null);
@@ -352,16 +425,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 humanFacCategoryDetails.setValue(null);
                 humanLabCategoryDetails.setValue(null);
 
-                animalCommCategoryDetails.setVisible(false);
-                animalCommCategoryDetails.setValue(null);
-                animalFacCategoryDetails.setVisible(false);  // Repeated for lab
-                animalFacCategoryDetails.setValue(null);  // Repeated for lab
-
-                environmentalCategoryDetails.setVisible(false);  // Shown for all levels
-                environmentalCategoryDetails.setValue(null);  // Shown for all levels
-
-                poeCategoryDetails.setVisible(false);  // Shown for all levels
-                poeCategoryDetails.setValue(null);  // Shown for all levels
+                inititalRendering(animalCommCategoryDetails, animalFacCategoryDetails, environmentalCategoryDetails, poeCategoryDetails);
             }
         }else {
             outcomeSupervisor.setVisible(false);
@@ -370,19 +434,54 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             categoryLevel.setVisible(false);
             categoryLevel.setValue(null);
         }
-        setRequired(true,TriagingDto.DATE_OF_DECISION, TriagingDto.TRIAGING_DECISION);
         initializeVisibilitiesAndAllowedVisibilities();
         initializeAccessAndAllowedAccesses();
     }
 
+    private void inititalRendering(OptionGroup healthConcern, OptionGroup potentialRisk, OptionGroup signalCategory, OptionGroup categoryLevel) {
+        healthConcern.setVisible(false);
+        healthConcern.setValue(null);
+        potentialRisk.setVisible(false);
+        potentialRisk.setValue(null);
+        signalCategory.setVisible(false);
+        signalCategory.setValue(null);
+        categoryLevel.setVisible(false);
+        categoryLevel.setValue(null);
+    }
+
+    private static @Nullable SignalCategory getSignalCategory(String propertyValue) {
+        SignalCategory category = null;
+        switch (propertyValue) {
+            case "[Human]":
+                category = SignalCategory.HUMAN;
+                break;
+            case "[Environment]":
+                category = SignalCategory.ENVIRONMENT;
+                break;
+            case "[Animal]":
+                category = SignalCategory.ANIMAL;
+                break;
+            case "[POE]":
+                category = SignalCategory.POE;
+                break;
+        }
+        return category;
+    }
+
 
     private void setVisibility(String level, SignalCategory category) {
-        if (level == null || category == null){
-            return;
+        if (level == null && category == null){
+            humanCommCategoryDetails.setVisible(false);
+            humanFacCategoryDetails.setVisible(false);
+            humanLabCategoryDetails.setVisible(false);
+            animalCommCategoryDetails.setVisible(false);
+            animalFacCategoryDetails.setVisible(false);
+            environmentalCategoryDetails.setVisible(false);
+            poeCategoryDetails.setVisible(false);
         }
-        boolean isCommunityLevel = "Community Level".equals(level);
-        boolean isFacilityLevel = "Facility Level".equals(level);
-        boolean isLaboratoryLevel = "Laboratory Level".equals(level);
+        boolean isCommunityLevel = "Community".equals(level);
+        boolean isFacilityLevel = "Facility".equals(level);
+        boolean isLaboratoryLevel = "Laboratory".equals(level);
 
         humanCommCategoryDetails.setVisible(isCommunityLevel && category == SignalCategory.HUMAN);
         humanFacCategoryDetails.setVisible(isFacilityLevel && category == SignalCategory.HUMAN);
@@ -403,43 +502,65 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         if (!animalFacCategoryDetails.isVisible()) animalFacCategoryDetails.setVisible(false);
         if (!environmentalCategoryDetails.isVisible()) environmentalCategoryDetails.setVisible(false);
         if (!poeCategoryDetails.isVisible()) poeCategoryDetails.setVisible(false);
-        categoryLevel.setValue(CategoryDetailsLevel.COMMUNITY);
     }
 
-    private void showSignalDetails() {
-//        signalCategory.setVisible(true);
-//        categoryDetails.setVisible(true);
-//        triagingDecision.setVisible(true);
-//        dateOfDecision.setVisible(true);
-//        referredTo.setVisible(true);
-//        headingSignalInformation.setVisible(true);
-////        headingTriagingDecision.setVisible(true);
-//        previousOccurrence.setVisible(true);
-////        healthConcern.setVisible(true);
+    public void reviewSignal(String captionsText,EbsDto ebs){
+        Label notificationType =  new Label( String.format(I18nProperties.getString(captionsText),50,50), ContentMode.HTML);
+        VerticalLayout verticalLayout = new VerticalLayout();
+        notificationType.setStyleName("window-text");
+        verticalLayout.addComponents(notificationType);
+        verticalLayout.setWidth(100, Unit.PERCENTAGE);
+        Window window =  VaadinUiUtil.showPopupWindow(
+                verticalLayout,
+                I18nProperties.getCaption(Captions.signalReview));
+        window.setWidth(50, Unit.PERCENTAGE);
+        window.setStyleName("low-risk-assessment");
     }
 
-    private void showNonSignalDetails() {
-//        signalCategory.setVisible(false);
-//        categoryDetails.setVisible(false);
-//        triagingDecision.setVisible(true);
-//        headingSignalInformation.setVisible(true);
-////        headingTriagingDecision.setVisible(true);
-//        dateOfDecision.setVisible(true);
-//        previousOccurrence.setVisible(false);
-////        healthConcern.setVisible(false);
-    }
+    public void displayCategories(String property) {
+        // Initialize logger for logging messages
+        Logger logger = LoggerFactory.getLogger(getClass());
 
-    private void hideAllDetails() {
-//        signalCategory.setVisible(false);
-//        categoryDetails.setVisible(false);
-//        triagingDecision.setVisible(false);
-//        dateOfDecision.setVisible(false);
-//        referredTo.setVisible(false);
-////        headingTriagingDecision.setVisible(false);
-//        previousOccurrence.setVisible(false);
-////        healthConcern.setVisible(false);
-    }
+        List<CategoryDetailsLevel> categories;
+        switch (property) {
+            case "[Environment]":
+            case "[POE]":
+                categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY);
+                break;
+            case "[Animal]":
+                categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY, CategoryDetailsLevel.FACILITY);
+                break;
+            case "[Human]":
+                categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY, CategoryDetailsLevel.FACILITY, CategoryDetailsLevel.LABORATORY);
+                break;
+            default:
+                categories = Collections.emptyList(); // Handle unknown EbsSourceType if necessary
+                break;
+        }
+        try {
+                // Remove items not in the categories list
+//                Arrays.stream(CategoryDetailsLevel.values())
+//                        .filter(detailsLevel -> !categories.contains(detailsLevel))
+//                        .forEach(detailsLevel -> categoryLevel.removeItem(detailsLevel));
+//
+//            // Add new items that are in the new categories list but not currently in the categoryLevel
+//            categories.forEach(detailsLevel -> {
+//                if (categoryLevel.getItemIds().isEmpty() || !Collections.singletonList(categoryLevel.getValue()).contains(detailsLevel)) {
+//                    categoryLevel.addItem(detailsLevel);
+//                }
+//            });
 
+
+            // Update categoryLevel with new categories
+                FieldHelper.updateEnumData(categoryLevel, categories);
+        } catch (Exception exception) {
+            logger.error("Exception during category handling: {}", exception.getMessage());
+            logger.error("StackTrace:", exception); // Log full stack trace for detailed debugging
+
+            // Optionally rethrow the exception or handle it according to your application's needs
+            // throw new RuntimeException("Failed to handle categories", exception);
+        }
+    }
 
 }
 
