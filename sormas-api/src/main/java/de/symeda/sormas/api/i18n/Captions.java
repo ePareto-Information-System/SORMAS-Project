@@ -1461,6 +1461,8 @@ public interface Captions {
 	String SignalVerification_numberOfPersonAnimal = "SignalVerification.numberOfPersonAnimal";
 	String SignalVerification_whyNotVerify = "SignalVerification.whyNotVerify";
 	String SignalVerification_dateOfOccurrence = "SignalVerification.dateOfOccurrence";
+	String SignalVerification_numberOfPersonCases = "SignalVerification.numberOfPersonCases";
+	String SignalVerification_numberOfDeathPerson = "SignalVerification.numberOfDeathPerson";
 	String SignalInformation = "Ebs.ebs";
 	String Triaging = "Triaging.triaging";
 	String SignalVerification = "SignalVerification.signalVerification";
