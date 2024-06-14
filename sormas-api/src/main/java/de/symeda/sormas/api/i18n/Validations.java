@@ -267,4 +267,5 @@ public interface Validations {
 	String visitDate = "visitDate";
 	String visitStatus = "visitStatus";
 	String visitSymptoms = "visitSymptoms";
+    String numberOfDeathPersonGreaterThanNumberOfPersonCases = "numberOfDeathPersonGreaterThanNumberOfPersonCases";
 }
