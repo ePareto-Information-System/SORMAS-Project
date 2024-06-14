@@ -33,7 +33,7 @@ public class EpiFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(EpiDataDto.LARGE_OUTBREAKS_AREA, new HashSet<>(Arrays.asList(Disease.AFP, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS,Disease.AHF)));
         DISABLED_FIELDS_BY_DISEASE.put(EpiDataDto.AREA_INFECTED_ANIMALS, new HashSet<>(Arrays.asList(Disease.AFP, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS,Disease.AHF)));
         DISABLED_FIELDS_BY_DISEASE.put(EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN, new HashSet<>(Arrays.asList(Disease.AFP, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS,Disease.AHF)));
-
+        DISABLED_FIELDS_BY_DISEASE.put(EpiDataDto.CONTACT_SICK_ANIMALS, new HashSet<>(Arrays.asList(Disease.AFP)));
     }
 
     public static Set<String> getDisabledFieldsForDisease(Disease disease) {
