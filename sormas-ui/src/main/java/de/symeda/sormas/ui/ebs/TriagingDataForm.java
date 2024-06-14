@@ -284,7 +284,6 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             if (categoryLevel.getValue() != null) {
                 try {
                     categoryLevel.setValue(CategoryDetailsLevel.COMMUNITY);
-
                     SignalCategory category = getSignalCategory(propertyValue);
                     setVisibility(categoryLevel.getNullableValue().toString(), category);
                 }catch (Exception exception){
