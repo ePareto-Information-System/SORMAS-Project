@@ -15,24 +15,16 @@ public class EbsAlert extends AbstractDomainObject {
 
     public static final String DELETED = "deleted";
     public final static long serialVersionUID = 1L;
-
     public static final String I18N_PREFIX = "EbsAlert";
-
     public static final String TABLE_NAME = "ebsAlert";
-
     public static final String ACTION_INITIATED = "actionInitiated";
-
     public static final String RESPONSE_STATUS = "responseStatus";
-
     public static final String RESPONSE_DATE = "responseDate";
-
     public static final String DETAILS_RESPONSE_ACTIVITIES = "detailsResponseActivities";
-
     public static final String ALERT_USED = "alertUsed";
-
     public static final String DETAILS_GIVEN = "detailsGiven";
-
     public static final String DETAILS_ALERT_USED = "detailsAlertUsed";
+    public static final String ALERTDATE = "alertDate";
 
     public static final String EBS = "ebs";
 
@@ -44,6 +36,7 @@ public class EbsAlert extends AbstractDomainObject {
     private YesNo alertUsed;
     private String detailsAlertUsed;
     private Ebs ebs;
+    private Date alertDate;
 
     public YesNo getActionInitiated() {
         return actionInitiated;
@@ -99,6 +92,14 @@ public class EbsAlert extends AbstractDomainObject {
 
     public void setDetailsAlertUsed(String detailsAlertUsed) {
         this.detailsAlertUsed = detailsAlertUsed;
+    }
+
+    public Date getAlertDate() {
+        return alertDate;
+    }
+
+    public void setAlertDate(Date alertDate) {
+        this.alertDate = alertDate;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
