@@ -105,9 +105,7 @@ public class EbsDto extends PseudonymizableDto {
 	private Date timeOnset;
 	private UserReferenceDto reportingUser;
 	private LocationDto ebsLocation;
-	@NotNull(message = Validations.validLocation)
 	private Double ebsLongitude;
-	@NotNull(message = Validations.validLocation)
 	private Double ebsLatitude;
 	private Double ebsLatLon;
 
