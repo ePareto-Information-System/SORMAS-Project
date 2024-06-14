@@ -349,7 +349,12 @@
   .low-risk-assessment .v-window-outerheader{
     background: $s-low-risk-color !important;
   }
-
+  .window-text{
+    text-wrap: wrap !important;
+      font-size: 20px !important;
+      text-align: center !important;
+    font-family: none, serif !important;
+  }
   .root-component {
     min-width: 640px;
 	max-width: 1280px;
