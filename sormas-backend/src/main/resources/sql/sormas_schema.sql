@@ -13723,3 +13723,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (591, 'added ebs,tri
 
 ALTER TABLE triaging ADD COLUMN potentialrisk VARCHAR(3);
 INSERT INTO schema_version (version_number, comment) VALUES (592, 'added potentail risk to ebs');
+ALTER TABLE triaging ADD COLUMN supervisorreview VARCHAR(3);
+INSERT INTO schema_version (version_number, comment) VALUES (593, 'added supervisor review to ebs');
+ALTER TABLE triaging ADD COLUMN referred VARCHAR(3);
+INSERT INTO schema_version (version_number, comment) VALUES (594, 'added referred to ebs');
