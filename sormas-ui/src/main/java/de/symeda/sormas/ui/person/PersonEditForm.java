@@ -89,7 +89,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	public static final String CONTACT_INFORMATION_HEADER = "contactInformationHeader";
 	private static final String EXTERNAL_TOKEN_WARNING_LOC = "externalTokenWarningLoc";
 	public static final String GENERAL_COMMENT_LOC = "generalCommentLoc";
-	private static final String FILL_SECTION_HEADING_LOC = "fillSectionHeadingLoc";
 	private static final String SEEK_HELP_HEADING_LOC = "seekHelpHeadingLoc";
 	private static final String PLACE_STAYED_IN_LAST_10_14_MONTHS = "placeStayedInLast10-14Months";
 	private static final String HEALTH_STAFF_DETAILS_LOC = "healthStaffDetailsLoc";
@@ -170,7 +169,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					fluidRowLocs(PersonDto.ADDITIONAL_PLACES_STAYED)+
 
 					//AFP
-					loc(FILL_SECTION_HEADING_LOC) +
 					loc(SEEK_HELP_HEADING_LOC) +
 					fluidRowLocs(PersonDto.PLACE, PersonDto.DURATION_MONTHS, PersonDto.DURATION_DAYS) +
 					fluidRowLocs(PersonDto.PLACE2, PersonDto.DURATION_MONTHS2, PersonDto.DURATION_DAYS2) +
@@ -857,10 +855,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 		if (disease == Disease.AFP) {
 
-			Label fillThisSectionHeadingLabel = new Label(I18nProperties.getString(Strings.headingFillThis));
-			fillThisSectionHeadingLabel.addStyleName(H3);
-			getContent().addComponent(fillThisSectionHeadingLabel, FILL_SECTION_HEADING_LOC);
-
 			Label childSeekhelpHeadingLabel = new Label(I18nProperties.getString(Strings.headingChildSeek));
 			childSeekhelpHeadingLabel.addStyleName(H3);
 			childSeekhelpHeadingLabel.addStyleName("afp-childseek-label");
@@ -885,9 +879,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			investigatorAddress.setVisible(true);
 			investigatorTel.setVisible(true);
 
-			TextArea additionalPlacesStayed = addField(PersonDto.ADDITIONAL_PLACES_STAYED, TextArea.class, new ResizableTextAreaWrapper<>(false));
-			additionalDetails.setCaption("Village");
-			additionalDetails.setVisible(true);
+//			TextArea additionalPlacesStayed = addField(PersonDto.ADDITIONAL_PLACES_STAYED, TextArea.class, new ResizableTextAreaWrapper<>(false));
 			generalCommentLabel.setVisible(false);
 			occupationHeader.setVisible(false);
 			addressesHeader.setVisible(false);
