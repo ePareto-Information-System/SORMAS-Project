@@ -9,6 +9,7 @@ import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
 import java.util.Date;
+import java.util.Set;
 
 @DependingOnFeatureType(featureType = FeatureType.CASE_SURVEILANCE)
 public class SixtyDayDto extends PseudonymizableDto {
@@ -74,7 +75,7 @@ public class SixtyDayDto extends PseudonymizableDto {
     private String patientFoundReason;
     private String locateChildAttempt;
     private YesNo paralysisWeaknessPresent;
-    private ParalysisSite paralysisWeaknessPresentSite;
+    private Set<ParalysisSite> paralysisWeaknessPresentSite;
     private String paralyzedPartOther;
     private YesNo paralysisWeaknessFloppy;
     private SymptomLevel muscleToneParalyzedPart;
@@ -185,11 +186,11 @@ public class SixtyDayDto extends PseudonymizableDto {
     public void setParalysisWeaknessPresent(YesNo paralysisWeaknessPresent) {
         this.paralysisWeaknessPresent = paralysisWeaknessPresent;
     }
-    public ParalysisSite getParalysisWeaknessPresentSite() {
+    public Set<ParalysisSite> getParalysisWeaknessPresentSite() {
         return paralysisWeaknessPresentSite;
     }
 
-    public void setParalysisWeaknessPresentSite(ParalysisSite paralysisWeaknessPresentSite) {
+    public void setParalysisWeaknessPresentSite(Set<ParalysisSite> paralysisWeaknessPresentSite) {
         this.paralysisWeaknessPresentSite = paralysisWeaknessPresentSite;
     }
 

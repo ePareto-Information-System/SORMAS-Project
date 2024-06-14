@@ -22,20 +22,23 @@ import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
+import de.symeda.sormas.api.utils.ParalysisSite;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
-import de.symeda.sormas.ui.utils.*;
+import de.symeda.sormas.ui.utils.AbstractEditForm;
+import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.FieldHelper;
+import de.symeda.sormas.ui.utils.NullableOptionGroup;
 
 import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static de.symeda.sormas.ui.utils.CssStyles.H2;
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
@@ -50,17 +53,16 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
 
     private static final String HTML_LAYOUT =
             loc(SIXTYDAY_HEADING_LOC) +
-                    fluidRowLocs(SixtyDayDto.PERSON_EXAMINE_CASE) +
+                    fluidRowLocs(6,SixtyDayDto.PERSON_EXAMINE_CASE) +
                     fluidRowLocs(SixtyDayDto.DATE_OF_FOLLOWUP, SixtyDayDto.DATE_BIRTH) +
-                    fluidRowLocs(SixtyDayDto.RESIDENTIAL_LOCATION) +
+                    fluidRowLocs(6,SixtyDayDto.RESIDENTIAL_LOCATION) +
                     fluidRowLocs(SixtyDayDto.PATIENT_FOUND) +
                     fluidRowLocs(SixtyDayDto.PATIENT_FOUND_REASON) +
                     fluidRowLocs(SixtyDayDto.LOCATE_CHILD_ATTEMPT) +
                     fluidRowLocs(SixtyDayDto.PARALYSIS_WEAKNESS_PRESENT) +
                     fluidRowLocs(SixtyDayDto.PARALYSIS_WEAKNESS_PRESENT_SITE, SixtyDayDto.PARALYZED_PART_OTHER) +
                     fluidRowLocs(SixtyDayDto.PARALYSIS_WEAKNESS_FLOPPY) +
-                    fluidRowLocs(SixtyDayDto.PARALYZED_PART) +
-                    fluidRowLocs(SixtyDayDto.OTHER_PART_BODY) +
+                    fluidRowLocs(SixtyDayDto.PARALYZED_PART, SixtyDayDto.OTHER_PART_BODY) +
                     fluidRowLocs(SixtyDayDto.DEEP_TENDON_REFLEX_SELECTION) +
                     fluidRowLocs(SixtyDayDto.MUSCLE_VOLUME_SELECTION) +
                     fluidRowLocs(SixtyDayDto.SENSORY_LOSS_SELECTION) +
@@ -121,9 +123,28 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
         TextField patientFoundReasonField = addField(SixtyDayDto.PATIENT_FOUND_REASON, TextField.class);
         TextField locateChildAttemptField = addField(SixtyDayDto.LOCATE_CHILD_ATTEMPT, TextField.class);
 
-        OptionGroup paralysisWeaknessPresentField = addField(SixtyDayDto.PARALYSIS_WEAKNESS_PRESENT, OptionGroup.class);
-        ComboBox paralysisWeaknessPresentSiteField = addField(SixtyDayDto.PARALYSIS_WEAKNESS_PRESENT_SITE, ComboBox.class);
-        TextField paralysisWeaknessResponse = addField(SixtyDayDto.PARALYZED_PART_OTHER, TextField.class);
+        OptionGroup paralysisWeaknessPresent = addField(SixtyDayDto.PARALYSIS_WEAKNESS_PRESENT, OptionGroup.class);
+
+        OptionGroup paralysisWeaknessPresentSiteField = addField(SixtyDayDto.PARALYSIS_WEAKNESS_PRESENT_SITE, OptionGroup.class);
+        CssStyles.style(paralysisWeaknessPresentSiteField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+        paralysisWeaknessPresentSiteField.setMultiSelect(true);
+
+        paralysisWeaknessPresentSiteField.addItems(Arrays.stream(ParalysisSite.values())
+                .filter(c -> fieldVisibilityCheckers.isVisible(ParalysisSite.class, c.name()))
+                .collect(Collectors.toList()));
+
+        TextField paralysisPartOther = addField(SixtyDayDto.PARALYZED_PART_OTHER, TextField.class);
+
+        paralysisWeaknessPresentSiteField.setVisible(false);
+        paralysisPartOther.setVisible(false);
+
+        FieldHelper.setVisibleWhen(paralysisWeaknessPresent, Arrays.asList(paralysisWeaknessPresentSiteField), Arrays.asList(YesNo.YES), true);
+
+        paralysisWeaknessPresentSiteField.addValueChangeListener( event ->{
+            Set<ParalysisSite> selectedSites = (Set<ParalysisSite>) event.getProperty().getValue();
+            paralysisPartOther.setVisible(selectedSites.contains(ParalysisSite.OTHER));
+        });
+
         OptionGroup paralysisWeaknessFloppyField = addField(SixtyDayDto.PARALYSIS_WEAKNESS_FLOPPY, OptionGroup.class);
 
         NullableOptionGroup paralyzedPartField = addField(SixtyDayDto.PARALYZED_PART, NullableOptionGroup.class);
