@@ -1242,6 +1242,7 @@ public interface Strings {
 	String messageEventParticipationUnlinked = "messageEventParticipationUnlinked";
 	String messageEventSaved = "messageEventSaved";
 	String seniorOfficials = "seniorOfficials";
+	String referredNotifs = "referredNotifs";
 	String messageEventsDeleted = "messageEventsDeleted";
 	String messageEventsLinkedToGroup = "messageEventsLinkedToGroup";
 	String messageEventsNotDeleted = "messageEventsNotDeleted";

@@ -1440,6 +1440,7 @@ public interface Captions {
 	String Triaging_occurrencePreviously = "Triaging.occurrencePreviously";
 	String Triaging_decisionDate = "Triaging.decisionDate";
 	String Triaging_referredTo = "Triaging.referredTo";
+	String Triaging_referred = "Triaging.referred";
 	String Triaging_outcomeSupervisor = "Triaging.outcomeSupervisor";
 	String Triaging_humanCommunityCategoryDetails = "Triaging.humanCommunityCategoryDetails";
 	String Triaging_humanFacilityCategoryDetails = "Triaging.humanFacilityCategoryDetails";
@@ -1447,8 +1448,10 @@ public interface Captions {
 	String Triaging_animalCommunityCategoryDetails = "Triaging.animalCommunityCategoryDetails";
 	String Triaging_animalFacilityCategoryDetails = "Triaging.animalFacilityCategoryDetails";
 	String Triaging_environmentalCategoryDetails = "Triaging.environmentalCategoryDetails";
+	String signalReview = "signalReview";
 	String Triaging_categoryDetailsLevel = "Triaging.categoryDetailsLevel";
 	String Triaging_poeCategoryDetails = "Triaging.poeCategoryDetails";
+	String Triaging_supervisorReview = "Triaging.supervisorReview";
 	String SignalVerification_description = "SignalVerification.description";
 	String SignalVerification_verificationSent = "SignalVerification.verificationSent";
 	String SignalVerification_verified = "SignalVerification.verified";
