@@ -308,6 +308,7 @@ public interface Captions {
 	String caseSamples = "caseSamples";
 	String caseCreateCase = "caseCreateCase";
 	String caseCreateNew = "caseCreateNew";
+	String caseNextTabButton = "caseNextTabButton";
 	String CaseData = "CaseData";
 	String CaseData_additionalDetails = "CaseData.additionalDetails";
 	String CaseData_ageAndBirthDate = "CaseData.ageAndBirthDate";
