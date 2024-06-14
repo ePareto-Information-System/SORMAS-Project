@@ -61,8 +61,6 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 
     private static final String STATUS_CHANGE = "statusChange";
 
-    private static final String EBS_ENTITY = "Ebs";
-
     //@formatter:off
     private static final String HTML_LAYOUT =
             loc(INFORMATION_SOURCE_HEADING_LOC) +
@@ -308,6 +306,21 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 
             FieldHelper.updateEnumData(categoryInformant, itemsToAdd);
 
+        });
+
+        categoryInformant.addValueChangeListener(valueChangeEvent -> {
+            List<MediaScannningType> itemsToAdd;
+            Object value = categoryInformant.getValue();
+            if (value != PersonReporting.PERSON_NATIONAL){
+                itemsToAdd  = Arrays.asList(MediaScannningType.MANUAL);
+            }else{
+                itemsToAdd = Arrays.asList(MediaScannningType.MANUAL,MediaScannningType.AUTOMATIC);
+            }
+            Arrays.stream(MediaScannningType.values())
+                    .filter(scanType -> !itemsToAdd.contains(scanType))
+                    .forEach(scanType -> scanningType.removeItem(scanType));
+
+            FieldHelper.updateEnumData(scanningType, itemsToAdd);
         });
 
         manualScanningType.addValueChangeListener(valueChangeEvent -> {
