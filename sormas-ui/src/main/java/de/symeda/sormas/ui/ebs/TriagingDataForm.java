@@ -512,18 +512,10 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY, CategoryDetailsLevel.FACILITY, CategoryDetailsLevel.LABORATORY);
                 break;
             default:
-                categories = Collections.emptyList(); // Handle unknown EbsSourceType if necessary
+                categories = Collections.emptyList();
                 break;
         }
         try {
-//            categoryLevel.setValue(null);
-
-//            categoryLevel.removeAllItems();
-//            Arrays.stream(new List[]{categories})
-//                    .forEach(category -> categoryLevel.addItem(category));
-//            Arrays.stream(CategoryDetailsLevel.values())
-//                    .filter(category -> !categories.contains(category))
-//                    .forEach(category -> categoryLevel.removeItem(category));
             FieldHelper.updateEnumData(categoryLevel, categories);
         }catch (Exception exception){
             System.out.println(exception.getMessage());
