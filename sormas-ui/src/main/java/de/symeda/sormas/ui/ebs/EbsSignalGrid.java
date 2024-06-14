@@ -53,7 +53,6 @@ public class EbsSignalGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 	public static final String DISEASE_SHORT = Captions.columnDiseaseShort;
 
 	private DataProviderListener<EbsIndexDto> dataProviderListener;
-
 	@SuppressWarnings("unchecked")
 	public <V extends View> EbsSignalGrid(EbsCriteria criteria, Class<V> viewClass) {
 

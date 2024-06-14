@@ -41,7 +41,7 @@ public class EbsDataView extends AbstractEbsView {
 	private ExternalSurveillanceShareComponent externalSurvToolLayout;
 
 	public EbsDataView() {
-		super(VIEW_NAME);
+		super(VIEW_NAME,EBSView.currentview);
 	}
 
 	@Override

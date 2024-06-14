@@ -40,7 +40,7 @@ public class EbsAlertView extends AbstractEbsView {
 	private VerticalLayout gridLayout;
 
 	public EbsAlertView() {
-		super(VIEW_NAME);
+		super(VIEW_NAME, EBSView.currentview);
 	}
 
 

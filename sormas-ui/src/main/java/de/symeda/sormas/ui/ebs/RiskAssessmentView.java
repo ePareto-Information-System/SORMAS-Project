@@ -44,7 +44,7 @@ public class RiskAssessmentView extends AbstractEbsView {
 	private VerticalLayout gridLayout;
 
 	public RiskAssessmentView() {
-		super(VIEW_NAME);
+		super(VIEW_NAME,EBSView.currentview);
 	}
 
 
