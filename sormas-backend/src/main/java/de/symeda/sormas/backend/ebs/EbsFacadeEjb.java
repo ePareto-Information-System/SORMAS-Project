@@ -38,6 +38,7 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.AccessDeniedException;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.backend.FacadeHelper;
 import de.symeda.sormas.backend.common.AbstractCoreFacadeEjb;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
@@ -505,7 +506,110 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		return indexList;
 	}
 
+	@Override
+	public List<EbsIndexDto> getEventIndexList(EbsCriteria ebsCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
+		List<Long> indexListIds = getIndexListIds(ebsCriteria, first, max, sortProperties);
+		List<EbsIndexDto> indexList = new ArrayList<>();
+		Set<Long> addedIds = new HashSet<>();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
 
+		IterableHelper.executeBatched(indexListIds, ModelConstants.PARAMETER_LIMIT, batchedIds -> {
+			CriteriaQuery<EbsIndexDto> cq = cb.createQuery(EbsIndexDto.class);
+			Root<Ebs> ebs = cq.from(Ebs.class);
+			EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
+			EbsJoins ebsJoins = ebsQueryContext.getJoins();
+
+			Join<Ebs, Triaging> triaging = ebs.join("triaging", JoinType.LEFT);
+			Join<Ebs, SignalVerification> signalVerification = ebs.join("signalVerification", JoinType.LEFT);
+			Join<Ebs, Location> location = ebsJoins.getLocation();
+			Join<Location, Region> region = ebsJoins.getRegion();
+			Join<Location, District> district = ebsJoins.getDistrict();
+			Join<Location, Community> community = ebsJoins.getCommunity();
+
+			// Subquery for latest ebsAlert
+			Subquery<Long> subqueryAlert = cq.subquery(Long.class);
+			Root<EbsAlert> subRootAlert = subqueryAlert.from(EbsAlert.class);
+			subqueryAlert.select(cb.max(subRootAlert.get(EbsAlert.ID)))
+					.where(cb.equal(subRootAlert.get(EbsAlert.EBS), ebs));
+
+			Join<Ebs, EbsAlert> ebsAlert = ebs.join("ebsAlert", JoinType.LEFT);
+			Predicate alertPredicate = cb.or(cb.isNull(ebsAlert.get(EbsAlert.ID)), cb.equal(ebsAlert.get(EbsAlert.ID), subqueryAlert));
+
+			// Subquery for latest riskAssessment
+			Subquery<Long> subqueryRisk = cq.subquery(Long.class);
+			Root<RiskAssessment> subRootRisk = subqueryRisk.from(RiskAssessment.class);
+			subqueryRisk.select(cb.max(subRootRisk.get(RiskAssessment.ID)))
+					.where(cb.equal(subRootRisk.get(RiskAssessment.EBS), ebs));
+
+			Join<Ebs, RiskAssessment> riskAssessment = ebs.join("riskAssessment", JoinType.LEFT);
+			Predicate riskPredicate = cb.or(cb.isNull(riskAssessment.get(RiskAssessment.ID)), cb.equal(riskAssessment.get(RiskAssessment.ID), subqueryRisk));
+
+			// Predicate for verified status
+			Predicate verifiedPredicate = cb.equal(signalVerification.get(SignalVerification.VERIFIED), YesNo.YES);
+
+			// Create the selection
+			cq.multiselect(
+					ebs.get(Ebs.ID),
+					ebs.get(Ebs.UUID),
+					ebs.get(Ebs.TRIAGE_DATE),
+					ebs.get(Ebs.SOURCE_INFORMATION),
+					triaging.get(Triaging.TRIAGING_DECISION),
+					ebs.get(Ebs.REPORT_DATE_TIME),
+					ebs.get(Ebs.CATEGORY_OF_INFORMANT),
+					ebs.get(Ebs.INFORMANT_NAME),
+					ebs.get(Ebs.INFORMANT_TEL),
+					triaging.get(Triaging.SIGNAL_CATEGORY),
+					signalVerification.get(SignalVerification.VERIFIED),
+					signalVerification.get(SignalVerification.NUMBER_OF_DEATH),
+					triaging.get(Triaging.DATE_OF_DECISION),
+					ebs.get(Ebs.PERSON_REGISTERING),
+					ebs.get(Ebs.PERSON_DESIGNATION),
+					signalVerification.get(SignalVerification.VERIFICATION_SENT),
+					signalVerification.get(SignalVerification.VERIFICATION_SENT_DATE),
+					signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE),
+					riskAssessment.get(RiskAssessment.RISK_ASSESSMENT),
+					ebsAlert.get(EbsAlert.ACTION_INITIATED),
+					ebsAlert.get(EbsAlert.RESPONSE_STATUS),
+					region.get(Region.UUID),
+					region.get(Region.NAME),
+					community.get(Community.UUID),
+					community.get(Community.NAME),
+					location.get(Location.CITY),
+					district.get(District.UUID),
+					district.get(District.NAME)
+			);
+
+			Predicate filter = ebs.get(Ebs.ID).in(batchedIds);
+
+			if (ebsCriteria != null) {
+				if (ebsCriteria.getUserFilterIncluded()) {
+					EbsUserFilterCriteria ebsUserFilterCriteria = new EbsUserFilterCriteria();
+					filter = service.createUserFilter(ebsQueryContext, ebsUserFilterCriteria);
+				}
+
+				Predicate criteriaFilter = service.buildCriteriaFilter(ebsCriteria, ebsQueryContext);
+				filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
+			}
+
+			if (filter != null) {
+				cq.where(cb.and(filter, alertPredicate, riskPredicate, verifiedPredicate));
+			} else {
+				cq.where(cb.and(alertPredicate, riskPredicate, verifiedPredicate));
+			}
+
+			sortBy(sortProperties, ebsQueryContext);
+			cq.distinct(true);
+
+			List<EbsIndexDto> results = QueryHelper.getResultList(em, cq, null, null);
+
+			for (EbsIndexDto dto : results) {
+				if (addedIds.add(dto.getId())) {
+					indexList.add(dto);
+				}
+			}
+		});
+		return indexList;
+	}
 
 	private List<Long> getIndexListIds(EbsCriteria ebsCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();

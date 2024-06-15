@@ -31,6 +31,7 @@ public class EBSView extends AbstractView {
     private EbsCriteria ebsCriteria;
     private EbsGroupCriteria ebsGroupCriteria;
     private EbsViewConfiguration viewConfiguration;
+    public static String currentview = "signallist";
 
     private FilteredGrid<?, ?> grid;
     private Button createButton;
@@ -53,8 +54,10 @@ public class EBSView extends AbstractView {
         ebsCriteria = ViewModelProviders.of(EBSView.class).get(EbsCriteria.class);
         if (isDefaultViewType()) {
             grid = new EbsSignalGrid(ebsCriteria, getClass());
+            currentview = "signallist";
         } else {
             grid = new EbsGrid(ebsCriteria, getClass());
+            currentview = "eventlist";
         }
         gridLayout = new VerticalLayout();
         gridLayout.addComponent(createFilterBar());
@@ -122,7 +125,7 @@ public class EBSView extends AbstractView {
             }
         }
 
-        if (UserProvider.getCurrent().hasUserRight(UserRight.EVENT_CREATE)) {
+
             createButton = ButtonHelper.createIconButton(
                     Captions.ebsCreatEbs,
                     VaadinIcons.PLUS_CIRCLE,
@@ -130,7 +133,6 @@ public class EBSView extends AbstractView {
                     ValoTheme.BUTTON_PRIMARY);
 
             addHeaderComponent(createButton);
-        }
 
         final PopupMenu moreButton = new PopupMenu(I18nProperties.getCaption(Captions.moreActions));
 

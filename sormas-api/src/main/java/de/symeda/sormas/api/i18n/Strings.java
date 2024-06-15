@@ -624,7 +624,9 @@ public interface Strings {
 	String headingSignalInformation = "headingSignalInformation";
 	String headingSignalVerification = "headingSignalVerification";
 	String headingRiskVerification = "headingRiskVerification";
+	String headingRiskAssessment = "headingRiskAssessment";
 	String headingEventDetails = "headingEventDetails";
+	String headingRiskDetails = "headingRiskDetails";
 	String headingTriagingDecision = "headingTriagingDecision";
 	String headingSixtyDay = "headingSixtyDay";
 	String headingRiskFactor = "headingRiskFactor";
@@ -1296,6 +1298,7 @@ public interface Strings {
 	String messageEventParticipationUnlinked = "messageEventParticipationUnlinked";
 	String messageEventSaved = "messageEventSaved";
 	String seniorOfficials = "seniorOfficials";
+	String referredNotifs = "referredNotifs";
 	String messageEventsDeleted = "messageEventsDeleted";
 	String messageEventsLinkedToGroup = "messageEventsLinkedToGroup";
 	String messageEventsNotDeleted = "messageEventsNotDeleted";

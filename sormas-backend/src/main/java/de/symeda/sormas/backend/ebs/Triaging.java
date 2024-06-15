@@ -40,7 +40,7 @@ public class Triaging extends AbstractDomainObject {
 
 	public static final String I18N_PREFIX = "Triaging";
 
-	public static final String EARLY_WARNING = "earlyWarning";
+	public static final String SUPERVISOR_REVIEW = "supervisorReview";
 	public static final String SPECIFIC_SIGNAL = "specificSignal";
 	public static final String HEALTH_CONCERN = "healthConcern";
 	public static final String SIGNAL_CATEGORY = "signalCategory";
@@ -70,7 +70,8 @@ public class Triaging extends AbstractDomainObject {
 
 
 
-	private YesNo earlyWarning;
+	private YesNo supervisorReview;
+	private YesNo referred;
 	private YesNo specificSignal;
 	private SignalCategory signalCategory;
 	private YesNo healthConcern;
@@ -92,6 +93,7 @@ public class Triaging extends AbstractDomainObject {
 
 
 
+
 	private YesNo occurrencePreviously;
 	private EbsTriagingDecision triagingDecision;
 	private String triagingDecisionString;
@@ -107,12 +109,12 @@ public class Triaging extends AbstractDomainObject {
 	}
 
 
-	public YesNo getEarlyWarning() {
-		return earlyWarning;
+	public YesNo getSupervisorReview() {
+		return supervisorReview;
 	}
 
-	public void setEarlyWarning(YesNo earlyWarning) {
-		this.earlyWarning = earlyWarning;
+	public void setSupervisorReview(YesNo earlyWarning) {
+		this.supervisorReview = earlyWarning;
 	}
 
 	public YesNo getSpecificSignal() {
@@ -485,5 +487,13 @@ public class Triaging extends AbstractDomainObject {
 
 	public void setPotentialRisk(YesNo potentialRisk) {
 		this.potentialRisk = potentialRisk;
+	}
+
+	public YesNo getReferred() {
+		return referred;
+	}
+
+	public void setReferred(YesNo referred) {
+		this.referred = referred;
 	}
 }

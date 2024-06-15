@@ -1451,6 +1451,7 @@ public interface Captions {
 	String eventEventParticipants = "eventEventParticipants";
 	String eventEventParticipantsSamples = "eventEventParticipantsSamples";
 	String eventEventsList = "eventEventsList";
+	String eventSignalsList = "eventSignalsList";
 	String eventEvolutionCommentWithStatus = "eventEvolutionCommentWithStatus";
 	String eventEvolutionDateWithStatus = "eventEvolutionDateWithStatus";
 	String eventFilterOnlyEventsChangedSinceLastSharedWithExternalSurvTool = "eventFilterOnlyEventsChangedSinceLastSharedWithExternalSurvTool";
@@ -1590,6 +1591,7 @@ public interface Captions {
 	String Triaging_occurrencePreviously = "Triaging.occurrencePreviously";
 	String Triaging_decisionDate = "Triaging.decisionDate";
 	String Triaging_referredTo = "Triaging.referredTo";
+	String Triaging_referred = "Triaging.referred";
 	String Triaging_outcomeSupervisor = "Triaging.outcomeSupervisor";
 	String Triaging_humanCommunityCategoryDetails = "Triaging.humanCommunityCategoryDetails";
 	String Triaging_humanFacilityCategoryDetails = "Triaging.humanFacilityCategoryDetails";
@@ -1597,8 +1599,10 @@ public interface Captions {
 	String Triaging_animalCommunityCategoryDetails = "Triaging.animalCommunityCategoryDetails";
 	String Triaging_animalFacilityCategoryDetails = "Triaging.animalFacilityCategoryDetails";
 	String Triaging_environmentalCategoryDetails = "Triaging.environmentalCategoryDetails";
+	String signalReview = "signalReview";
 	String Triaging_categoryDetailsLevel = "Triaging.categoryDetailsLevel";
 	String Triaging_poeCategoryDetails = "Triaging.poeCategoryDetails";
+	String Triaging_supervisorReview = "Triaging.supervisorReview";
 	String SignalVerification_description = "SignalVerification.description";
 	String SignalVerification_verificationSent = "SignalVerification.verificationSent";
 	String SignalVerification_verified = "SignalVerification.verified";
@@ -1608,6 +1612,8 @@ public interface Captions {
 	String SignalVerification_numberOfPersonAnimal = "SignalVerification.numberOfPersonAnimal";
 	String SignalVerification_whyNotVerify = "SignalVerification.whyNotVerify";
 	String SignalVerification_dateOfOccurrence = "SignalVerification.dateOfOccurrence";
+	String SignalVerification_numberOfPersonCases = "SignalVerification.numberOfPersonCases";
+	String SignalVerification_numberOfDeathPerson = "SignalVerification.numberOfDeathPerson";
 	String SignalInformation = "Ebs.ebs";
 	String Triaging = "Triaging.triaging";
 	String SignalVerification = "SignalVerification.signalVerification";

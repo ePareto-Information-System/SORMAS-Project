@@ -33,7 +33,7 @@ public class TriagingView extends AbstractEbsView {
 	public static final String VIEW_NAME = ROOT_VIEW_NAME + "/triaging";
 
 	public TriagingView() {
-		super(VIEW_NAME);
+		super(VIEW_NAME,EBSView.currentview);
 	}
 
 	@Override

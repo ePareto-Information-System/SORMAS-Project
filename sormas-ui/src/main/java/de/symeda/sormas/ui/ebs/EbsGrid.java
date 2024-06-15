@@ -144,11 +144,11 @@ public class EbsGrid extends FilteredGrid<de.symeda.sormas.api.ebs.EbsIndexDto, 
 
 	public void setLazyDataProvider() {
 
-		setLazyDataProvider(FacadeProvider.getEbsFacade()::getIndexList, FacadeProvider.getEbsFacade()::count);
+		setLazyDataProvider(FacadeProvider.getEbsFacade()::getEventIndexList, FacadeProvider.getEbsFacade()::count);
 	}
 
 	public void setEagerDataProvider() {
 
-		setEagerDataProvider(FacadeProvider.getEbsFacade()::getIndexList);
+		setEagerDataProvider(FacadeProvider.getEbsFacade()::getEventIndexList);
 	}
 }

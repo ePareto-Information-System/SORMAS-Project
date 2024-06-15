@@ -17,29 +17,16 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.ebs;
 
-import com.google.common.base.Functions;
 import com.vaadin.navigator.Navigator;
-import com.vaadin.server.Page;
 import com.vaadin.server.Sizeable;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Notification.Type;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.ReferenceDto;
-import de.symeda.sormas.api.caze.CaseClassification;
-import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.common.DeletionReason;
-import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.deletionconfiguration.DeletionInfoDto;
 import de.symeda.sormas.api.ebs.*;
-import de.symeda.sormas.api.event.EventDto;
-import de.symeda.sormas.api.event.EventIndexDto;
-import de.symeda.sormas.api.event.EventReferenceDto;
-import de.symeda.sormas.api.event.EventStatus;
-import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolRuntimeException;
-import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
@@ -52,8 +39,6 @@ import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
-import de.symeda.sormas.ui.events.*;
-import de.symeda.sormas.ui.sixtydayfollowup.SixtyDayForm;
 import de.symeda.sormas.ui.utils.*;
 import de.symeda.sormas.ui.utils.components.automaticdeletion.DeletionLabel;
 import de.symeda.sormas.ui.utils.components.page.title.TitleLayout;
@@ -61,7 +46,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -253,9 +237,11 @@ public class EbsController {
 			FacadeProvider.getRiskAssessmentFacade().saveRisk(riskAssessmentDto);
 			FacadeProvider.getEbsFacade().save(ebs);
 			SormasUI.refreshView();
-			Notification.show(I18nProperties.getString(Strings.messageRiskAssessmentSavedShort), TRAY_NOTIFICATION);
+			Notification notification =  Notification.show(I18nProperties.getString(Strings.messageRiskAssessmentSavedShort), TRAY_NOTIFICATION);
 			showAssessmentCaseDialog(riskAssessmentDto);
-			navigateToAlert(ebs.getUuid(),false);
+			notification.addCloseListener(e -> {
+				navigateToAlert(ebs.getUuid(),false);
+			});
 		});
 
 
@@ -468,6 +454,7 @@ public class EbsController {
 							});
 				} else {
 					saveEbs(saveCallback, eventDto);
+					navigateToTriaging(eventUuid,false);
 				}
 			}
 		});

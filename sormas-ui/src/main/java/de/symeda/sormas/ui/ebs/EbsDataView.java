@@ -14,27 +14,12 @@
  */
 package de.symeda.sormas.ui.ebs;
 
-import com.vaadin.ui.Button;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
 import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.caze.CaseCriteria;
-import de.symeda.sormas.api.contact.ContactCriteria;
-import de.symeda.sormas.api.ebs.EbsCriteria;
 import de.symeda.sormas.api.ebs.EbsDto;
-import de.symeda.sormas.api.event.TypeOfPlace;
-import de.symeda.sormas.api.feature.FeatureType;
-import de.symeda.sormas.api.i18n.Captions;
-import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.location.LocationDto;
-import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
-import de.symeda.sormas.ui.UserProvider;
-import de.symeda.sormas.ui.docgeneration.EventDocumentsComponent;
-import de.symeda.sormas.ui.externalsurveillanceservice.ExternalSurveillanceServiceGateway;
 import de.symeda.sormas.ui.externalsurveillanceservice.ExternalSurveillanceShareComponent;
-import de.symeda.sormas.ui.sormastosormas.SormasToSormasListComponent;
 import de.symeda.sormas.ui.utils.*;
 
 
@@ -56,7 +41,7 @@ public class EbsDataView extends AbstractEbsView {
 	private ExternalSurveillanceShareComponent externalSurvToolLayout;
 
 	public EbsDataView() {
-		super(VIEW_NAME);
+		super(VIEW_NAME,EBSView.currentview);
 	}
 
 	@Override

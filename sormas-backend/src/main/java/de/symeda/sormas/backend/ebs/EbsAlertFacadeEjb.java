@@ -32,6 +32,7 @@ public class EbsAlertFacadeEjb implements EbsAlertFacade {
         target.setDetailsGiven(source.getDetailsGiven());
         target.setEbs(ebsService.getByReferenceDto(source.getEbs()));
         target.setActionInitiated(source.getActionInitiated());
+        target.setAlertDate(source.getAlertDate());
         return target;
     }
 
@@ -50,6 +51,7 @@ public class EbsAlertFacadeEjb implements EbsAlertFacade {
         target.setDetailsResponseActivities(source.getDetailsResponseActivities());
         target.setDetailsGiven(source.getDetailsGiven());
         target.setEbs(EbsFacadeEjb.toReferenceDto(source.getEbs()));
+        target.setAlertDate(source.getAlertDate());
         return target;
     }
 

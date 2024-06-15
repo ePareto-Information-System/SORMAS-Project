@@ -63,6 +63,7 @@ public class EventGrid extends FilteredGrid<EventIndexDto, EventCriteria> {
 	public static final String DISEASE_SHORT = Captions.columnDiseaseShort;
 
 	private DataProviderListener<EventIndexDto> dataProviderListener;
+	public static final String currentview = "eventlist";
 
 	@SuppressWarnings("unchecked")
 	public <V extends View> EventGrid(EventCriteria criteria, Class<V> viewClass) {

@@ -14806,4 +14806,13 @@ UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Hospital 
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Hospital supervisor';
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Surveillance Officer';
 INSERT INTO schema_version (version_number, comment) VALUES (674, 'updated hasoptionalhealthfacility for userroles');
--- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+
+-- 2024-06-14 added alertdate to alert table
+ALTER TABLE triaging ADD COLUMN supervisorreview VARCHAR(3);
+ALTER TABLE triaging ADD COLUMN referred VARCHAR(3);
+-- 2024-06-14 added alertdate to alert table
+ALTER TABLE ebsAlert ADD COLUMN alertdate DATE;
+-- 2024-06-14 added alertdate to alert table
+ALTER TABLE signalVerification ADD numberOfPersonCases VARCHAR(255);
+ALTER TABLE signalVerification ADD numberOfDeathPerson VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (675, 'added new ebs related fields');

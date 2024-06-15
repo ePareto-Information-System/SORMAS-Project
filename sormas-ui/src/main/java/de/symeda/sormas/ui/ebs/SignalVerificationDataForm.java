@@ -2,6 +2,7 @@ package de.symeda.sormas.ui.ebs;
 
 
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
@@ -9,6 +10,8 @@ import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.ebs.*;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.utils.ValidationException;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.ui.utils.*;
 import de.symeda.sormas.api.FacadeProvider;
@@ -23,6 +26,7 @@ import java.util.Arrays;
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
+import static java.lang.Integer.parseInt;
 
 public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificationDto> {
 
@@ -39,9 +43,10 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
     loc(SIGNAL_VERIFICATION_LOC) +
      fluidRowLocs(SignalVerificationDto.VERIFICATION_SENT, SignalVerificationDto.VERIFICATION_SENT_DATE) +
     fluidRowLocs(SignalVerificationDto.VERIFIED) +
-    fluidRowLocs(SignalVerificationDto.VERIFICATION_COMPLETE_DATE) +
+    fluidRowLocs(SignalVerificationDto.VERIFICATION_COMPLETE_DATE,"") +
             loc(EVENT_DETAILS_LOC) +
     fluidRowLocs(SignalVerificationDto.DATE_OF_OCCURRENCE, SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL, SignalVerificationDto.NUMBER_OF_DEATH) +
+    fluidRowLocs(SignalVerificationDto.NUMBER_OF_DEATH_PERSON, SignalVerificationDto.NUMBER_OF_PERSON_CASES,"") +
     fluidRowLocs(SignalVerificationDto.DESCRIPTION) +
     fluidRowLocs(SignalVerificationDto.WHY_NOT_VERIFY);
 
@@ -93,11 +98,17 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
         addField(SignalVerificationDto.VERIFICATION_SENT_DATE, DateField.class);
         addField(SignalVerificationDto.VERIFICATION_COMPLETE_DATE, DateField.class);
         addField(SignalVerificationDto.DATE_OF_OCCURRENCE, DateField.class);
-        addField(SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL, TextField.class);
-        addField(SignalVerificationDto.NUMBER_OF_DEATH, TextField.class);
+        TextField numberOfPersonAnimal = addField(SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL, TextField.class);
+        TextField numberOfDeath = addField(SignalVerificationDto.NUMBER_OF_DEATH, TextField.class);
         addField(SignalVerificationDto.DESCRIPTION, TextArea.class);
         addField(SignalVerificationDto.WHY_NOT_VERIFY, TextArea.class);
+        TextField numberOfPersonCases = addField(SignalVerificationDto.NUMBER_OF_PERSON_CASES, TextField.class);
+        TextField numberOfDeathPerson = addField(SignalVerificationDto.NUMBER_OF_DEATH_PERSON, TextField.class);
 
+        numberOfPersonCases.addValidator(new NumberNumericValueValidator(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, numberOfPersonCases.getCaption())));
+        numberOfDeathPerson.addValidator(new NumberNumericValueValidator(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, numberOfDeathPerson.getCaption())));
+        numberOfPersonAnimal.addValidator(new NumberNumericValueValidator(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, numberOfPersonAnimal.getCaption())));
+        numberOfDeath.addValidator(new NumberNumericValueValidator(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, numberOfDeath.getCaption())));
 
         EbsDto selectedEbs = getEbsDto();
 
@@ -107,7 +118,7 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 
         FieldHelper.setVisibleWhen(
                 getFieldGroup(),
-                Arrays.asList(SignalVerificationDto.DESCRIPTION,SignalVerificationDto.VERIFICATION_COMPLETE_DATE,SignalVerificationDto.DATE_OF_OCCURRENCE,SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL,SignalVerificationDto.NUMBER_OF_DEATH),
+                Arrays.asList(SignalVerificationDto.DESCRIPTION,SignalVerificationDto.VERIFICATION_COMPLETE_DATE,SignalVerificationDto.DATE_OF_OCCURRENCE,SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL,SignalVerificationDto.NUMBER_OF_DEATH,SignalVerificationDto.NUMBER_OF_DEATH_PERSON,SignalVerificationDto.NUMBER_OF_PERSON_CASES),
                 SignalVerificationDto.VERIFIED,
                 Arrays.asList(YesNo.YES),
                 true);
@@ -127,13 +138,15 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
         verified.addValueChangeListener(event -> {
             if (event.getProperty().getValue().toString().equals("[YES]")){
                 getContent().getComponent(EVENT_DETAILS_LOC).setVisible(true);
+                setRequired(true,SignalVerificationDto.VERIFICATION_COMPLETE_DATE,SignalVerificationDto.DATE_OF_OCCURRENCE,SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL,SignalVerificationDto.NUMBER_OF_DEATH,SignalVerificationDto.NUMBER_OF_DEATH_PERSON,SignalVerificationDto.NUMBER_OF_PERSON_CASES,SignalVerificationDto.DESCRIPTION);
+                setRequired(false,SignalVerificationDto.WHY_NOT_VERIFY);
             }else{
+                setRequired(false,SignalVerificationDto.VERIFICATION_COMPLETE_DATE,SignalVerificationDto.DATE_OF_OCCURRENCE,SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL,SignalVerificationDto.NUMBER_OF_DEATH,SignalVerificationDto.NUMBER_OF_DEATH_PERSON,SignalVerificationDto.NUMBER_OF_PERSON_CASES,SignalVerificationDto.DESCRIPTION);
+                setRequired(true,SignalVerificationDto.WHY_NOT_VERIFY);
                 getContent().getComponent(EVENT_DETAILS_LOC).setVisible(false);
 
             }
         });
-
-
         setRequired(true,SignalVerificationDto.VERIFICATION_SENT);
     }
 
