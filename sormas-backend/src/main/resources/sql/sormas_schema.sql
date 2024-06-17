@@ -14828,6 +14828,9 @@ ALTER TABLE sixtyday ADD COLUMN paralysisweaknesspresentsitestring VARCHAR(512);
 ALTER TABLE sixtyday DROP COLUMN paralysisweaknesspresentsite;
 
 INSERT INTO schema_version (version_number, comment) VALUES (618, 'Added paralysisweaknesspresentsitestring and dropped paralysisweaknesspresentsite for AFP');
+
+ALTER TABLE samples_history ALTER COLUMN samplepurpose DROP NOT NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (619, 'Dropped null constraint for samplepurpose in history table');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Case Officer';
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Contact Officer';
