@@ -272,50 +272,51 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 				}
 			}
 		}
-		if(caze.getDisease() != Disease.FOODBORNE_ILLNESS && caze.getDisease() != Disease.MONKEYPOX) {
-		if (caseFollowupEnabled
-			&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_FOLLOW_UP)
-			&& caze.getFollowUpStatus() != FollowUpStatus.NO_FOLLOW_UP) {
+
+		if (caze.getDisease() != Disease.FOODBORNE_ILLNESS && caze.getDisease() != Disease.MONKEYPOX) {
+			if (caseFollowupEnabled
+					&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_FOLLOW_UP)
+					&& caze.getFollowUpStatus() != FollowUpStatus.NO_FOLLOW_UP) {
 				if (caze.getDisease() == Disease.CORONAVIRUS) {
 					menu.addView(
-						ClinicalCourseView.VIEW_NAME,
-						I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CLINICAL_COURSE),
-						params);
+							ClinicalCourseView.VIEW_NAME,
+							I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CLINICAL_COURSE),
+							params);
 				}
 				menu.addView(CaseVisitsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.VISITS), params);
-
-		}
-
-		if (showExtraMenuEntries) {
-			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_FOLLOW_UP)
-				&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_CLINICAL_COURSE)
-				&& UserProvider.getCurrent().hasUserRight(UserRight.CLINICAL_COURSE_VIEW)
-				&& !caze.checkIsUnreferredPortHealthCase()
-				&& !FacadeProvider.getFeatureConfigurationFacade().isFeatureDisabled(FeatureType.CLINICAL_MANAGEMENT)) {
-				/*menu.addView(
-					ClinicalCourseView.VIEW_NAME,
-					I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CLINICAL_COURSE),
-					params);*/
 			}
-		}
-		if (FacadeProvider.getDiseaseConfigurationFacade().hasFollowUp(caze.getDisease())
-			&& UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_VIEW)
-			&& !caze.checkIsUnreferredPortHealthCase()) {
-			menu.addView(CaseContactsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, Captions.caseContacts), params);
-		}
 
-			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SAMPLES_LAB)
-					&& UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)
-					&& !caze.checkIsUnreferredPortHealthCase()) {
-				if (!Arrays.asList(Disease.NEONATAL_TETANUS).contains(caze.getDisease())) {
-					menu.addView(CaseSampleView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, Captions.caseSamples), params);
+			if (showExtraMenuEntries) {
+				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_FOLLOW_UP)
+						&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_CLINICAL_COURSE)
+						&& UserProvider.getCurrent().hasUserRight(UserRight.CLINICAL_COURSE_VIEW)
+						&& !caze.checkIsUnreferredPortHealthCase()
+						&& !FacadeProvider.getFeatureConfigurationFacade().isFeatureDisabled(FeatureType.CLINICAL_MANAGEMENT)) {
+            /*menu.addView(
+                ClinicalCourseView.VIEW_NAME,
+                I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CLINICAL_COURSE),
+                params);*/
 				}
+			}
+			if (FacadeProvider.getDiseaseConfigurationFacade().hasFollowUp(caze.getDisease())
+					&& UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_VIEW)
+					&& !caze.checkIsUnreferredPortHealthCase()) {
+				menu.addView(CaseContactsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, Captions.caseContacts), params);
 			}
 
 			if (caze.getExternalData() != null && !caze.getExternalData().isEmpty()) {
 				menu.addView(CaseExternalDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EXTERNAL_DATA), params);
 			}
 		}
+
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SAMPLES_LAB)
+				&& UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)
+				&& !caze.checkIsUnreferredPortHealthCase()) {
+			if (!Arrays.asList(Disease.NEONATAL_TETANUS, Disease.FOODBORNE_ILLNESS).contains(caze.getDisease())) {
+				menu.addView(CaseSampleView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, Captions.caseSamples), params);
+			}
+		}
+
 
 		setMainHeaderComponent(ControllerProvider.getCaseController().getCaseViewTitleLayout(caze));
 

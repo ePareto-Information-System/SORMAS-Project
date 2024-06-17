@@ -123,10 +123,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private DateField dateSurveillanceSentResultsToDistrict;
 	private DateField dateFormSentToHigherLevel;
 	private TextField personCompletingForm;
-	private OptionGroup ipSampleSent;
+	private ComboBox ipSampleSent;
 	OptionGroup requestedPathogenTestsField;
 	private CheckBox sampleReceived;
-    private CheckBox sampleReceived;
     private CheckBox sampleShipped;
     private DateTimeField sampleReceivedDate;
     private ComboBox sampleSpecimenCondition;
@@ -247,11 +246,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER) +
 					fluidRowLocs(6,SampleDto.LAB_SAMPLE_ID) +
 					fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
-					fluidRowLocs(6,SampleDto.IPSAMPLESENT) +
-					fluidRowLocs(SampleDto.IPSAMPLE_TEST_RESULTS) +
-                    fluidRowLocs(SampleDto.SELECTED_RESULT_IGM, SampleDto.SELECTED_RESULT_IGM_DATE)+
-                    fluidRowLocs(SampleDto.SELECTED_RESULT_PCR, SampleDto.SELECTED_RESULT_PCR_DATE)+
-                    fluidRowLocs(SampleDto.SELECTED_RESULT_PRNT, SampleDto.INPUT_VALUE_PRNT, SampleDto.SELECTED_RESULT_PRNT_DATE)+
 
                     fluidRowLocs(6,SampleDto.LABORATORY_APPEARANCE_OF_CSF) +
 					fluidRowLocs(SampleDto.COMMENT) +
@@ -287,11 +281,15 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
 					fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
 					locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
+					fluidRowLocs(6,SampleDto.IPSAMPLESENT) +
+					fluidRowLocs(SampleDto.IPSAMPLE_TEST_RESULTS) +
+					fluidRowLocs(SampleDto.SELECTED_RESULT_IGM, SampleDto.SELECTED_RESULT_IGM_DATE)+
+					fluidRowLocs(SampleDto.SELECTED_RESULT_PCR, SampleDto.SELECTED_RESULT_PCR_DATE)+
+					fluidRowLocs(SampleDto.SELECTED_RESULT_PRNT, SampleDto.INPUT_VALUE_PRNT, SampleDto.SELECTED_RESULT_PRNT_DATE)+
 					fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.LABORATORY_NUMBER) +
 					fluidRowLocs(SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER) +
 					fluidRowLocs(6, SampleDto.LAB_SAMPLE_ID) +
 					fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
-					fluidRowLocs(SampleDto.IPSAMPLESENT) +
 					fluidRowLocs(6,SampleDto.LABORATORY_APPEARANCE_OF_CSF) +
 					fluidRowLocs(SampleDto.COMMENT) +
 
@@ -702,6 +700,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					handleGuineaWorm();
 				case CHOLERA:
 					handleCholera();
+					break;
+				case MONKEYPOX:
+					handleMpox();
 					break;
 				default:
 			}
@@ -1340,7 +1341,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			Arrays.stream(PathogenTestType.values())
 					.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
 					.forEach(pathogenTestType -> requestedPathogenTestsField.removeItem(pathogenTestType));
-			setVisible(false, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLING_REASON, SampleDto.SAMPLE_SOURCE, SampleDto.SAMPLE_TESTS, SampleDto.LAB_LOCATION, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.SUSPECTED_DISEASE, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN);
+			setVisible(false, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLING_REASON, SampleDto.SAMPLE_SOURCE, SampleDto.LAB_LOCATION, SampleDto.DATE_FORM_SENT_TO_DISTRICT, SampleDto.SUSPECTED_DISEASE, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN);
 
 			laboratoryDateResultsSentDSD.setVisible(true);
 			setVisible(true, SampleDto.DATE_FORM_RECEIVED_AT_DISTRICT);

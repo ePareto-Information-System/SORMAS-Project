@@ -153,8 +153,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6,INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
 					fluidRowLocs(RIGHT_INJECTION_SITE, LEFT_INJECTION_SITE) +
 					fluidRowLocs(6,DATE_ONSET_PARALYSIS) +
-					fluidRowLocs(PROVISONAL_DIAGNOSIS)+
-					fluidRowLocs(6, TRUEAFP)+
 
 					fluidRowLocs(6,ALTERED_CONSCIOUSNESS) +
 					fluidRowLocs(6,CONFUSED_DISORIENTED) +
@@ -196,6 +194,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6, HOSPITAL_NAME_SERVICE)+
 					fluidRowLocs(6, PLACE_OF_FUNERAL_NAME_VILLAGE)+
 					fluidRowLocs(SYMPTOMS_ONGOING, DURATION_HOURS, YES_NAME_OF_HEALTH_FACILITY)+
+					fluidRowLocs(PROVISONAL_DIAGNOSIS)+
+					fluidRowLocs(6, TRUEAFP)+
 
 					loc(FOOD_HISTORY_HEADING_LOC);
 
@@ -288,9 +288,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	OptionGroup tickRashCharacteristicsField;
 	NullableOptionGroup patientHaveFever;
 	DateField dateOfOnset;
-    private List<String> ;
     OptionGroup typeOfRash;
-    NullableOptionGroup patientHaveFever;
 
     public SymptomsForm(
             CaseDataDto caze,
@@ -1127,7 +1125,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
             foodHistoryHeadingLabel.setVisible(true);
 		}
 
-        }
 
         if (disease == Disease.MONKEYPOX) {
             setVisible(false, SYMPTOMS_COMMENTS, OUTCOME, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT, ONSET_DATE);
@@ -1243,7 +1240,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				Arrays.asList(SymptomState.YES),
 				disease);
 		}
-        Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.DENGUE, Disease.CSM, Disease.NEW_INFLUENZA));
+		Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.CSM, Disease.NEW_INFLUENZA, Disease.AFP));
 
 		FieldHelper
 			.setRequiredWhen(getFieldGroup(), getFieldGroup().getField(LESIONS_ALL_OVER_BODY), lesionsFieldIds, Arrays.asList(Boolean.TRUE), disease);
@@ -1273,8 +1270,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		setEmptyToNoButton.setVisible(false);
 
 		//Button setEmptyToUnknownButton = createButtonSetClearedToSymptomState(Captions.symptomsSetClearedToUnknown, SymptomState.UNKNOWN);
-
-		Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.DENGUE, Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI));
 
 		if (includedDiseases.contains(disease)) {
 			clearAllButton.setVisible(true);

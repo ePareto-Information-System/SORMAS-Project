@@ -840,14 +840,6 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setRequestedOtherAdditionalTests(String requestedOtherAdditionalTests) {
 		this.requestedOtherAdditionalTests = requestedOtherAdditionalTests;
 	}
-	@Enumerated(EnumType.STRING)
-	public PathogenTestType getSampleTests() {
-		return sampleTests;
-	}
-
-	public void setSampleTests(PathogenTestType sampleTests) {
-		this.sampleTests = sampleTests;
-	}
 
 	@Enumerated(EnumType.STRING)
 	public SamplingReason getSamplingReason() {

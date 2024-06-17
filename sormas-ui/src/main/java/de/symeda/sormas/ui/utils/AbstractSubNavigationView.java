@@ -42,6 +42,7 @@ public abstract class AbstractSubNavigationView<SC extends Component> extends Ab
 		createButtonsLayout().ifPresent(l -> {
 			buttonsLayout = l;
 			addHeaderComponent(l);
+			addHeaderComponentSample(l);
 		});
 	}
 

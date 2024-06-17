@@ -152,7 +152,7 @@ public class CaseSampleView extends AbstractCaseView {
                     VaadinIcons.PLUS_CIRCLE,
                     e -> ControllerProvider.getSampleController().create(criteria.getCaze(), criteria.getDisease(), SormasUI::refreshView),
                     ValoTheme.BUTTON_PRIMARY);
-            addHeaderComponent(newButton);
+            addHeaderComponentSample(newButton);
 
             sampleTypeFilter = ComboBoxHelper.createComboBoxV7();
             sampleTypeFilter.setWidth(140, Unit.PERCENTAGE);

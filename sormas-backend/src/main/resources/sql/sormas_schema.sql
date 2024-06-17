@@ -14798,40 +14798,6 @@ INSERT INTO schema_version(version_number, comment) VALUES (672, 'Added labLocal
 ALTER TABLE triaging ADD COLUMN potentialrisk VARCHAR(3);
 INSERT INTO schema_version (version_number, comment) VALUES (673, 'added potential risk to ebs');
 
-ALTER TABLE samples ADD COLUMN ipsampletestresultsstring VARCHAR(512);
-INSERT INTO schema_version (version_number, comment) VALUES (614, 'Added ipSampleTestResultsString to samples');
-
-ALTER TABLE samples DROP COLUMN sampletests;
-ALTER TABLE samples DROP COLUMN sampletestsstring;
-ALTER TABLE samples_history DROP COLUMN sampletestsstring;
-ALTER TABLE samples DROP COLUMN diseasesampletests;
-ALTER TABLE samples DROP COLUMN yellowfeversampletype;
-
-INSERT INTO schema_version (version_number, comment) VALUES (615, 'Dropped redundant columns in samples');
-
-ALTER TABLE samples ADD COLUMN selectedresultigm VARCHAR(55);
-ALTER TABLE samples ADD COLUMN selectedresultprnt VARCHAR(55);
-ALTER TABLE samples ADD COLUMN selectedresultpcr VARCHAR(55);
-ALTER TABLE samples ADD COLUMN inputvalueprnt VARCHAR(255);
-ALTER TABLE samples ADD COLUMN selectedresultigmdate Date;
-ALTER TABLE samples ADD COLUMN selectedresultprntdate Date;
-ALTER TABLE samples ADD COLUMN selectedresultpcrdate Date;
-
-INSERT INTO schema_version (version_number, comment) VALUES (616, 'Added 7 columns in samples for sample test types/results');
-
-ALTER TABLE symptoms ADD COLUMN typeofrashstring VARCHAR(512);
-ALTER TABLE symptoms DROP COLUMN typeofrash;
-
-INSERT INTO schema_version (version_number, comment) VALUES (617, '');
-
-ALTER TABLE sixtyday ADD COLUMN paralysisweaknesspresentsitestring VARCHAR(512);
-ALTER TABLE sixtyday DROP COLUMN paralysisweaknesspresentsite;
-
-INSERT INTO schema_version (version_number, comment) VALUES (618, 'Added paralysisweaknesspresentsitestring and dropped paralysisweaknesspresentsite for AFP');
-
-ALTER TABLE samples_history ALTER COLUMN samplepurpose DROP NOT NULL;
-INSERT INTO schema_version (version_number, comment) VALUES (619, 'Dropped null constraint for samplepurpose in history table');
--- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Case Officer';
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Contact Officer';
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'District Observer';
@@ -14849,3 +14815,41 @@ ALTER TABLE ebsAlert ADD COLUMN alertdate DATE;
 ALTER TABLE signalVerification ADD numberOfPersonCases VARCHAR(255);
 ALTER TABLE signalVerification ADD numberOfDeathPerson VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (675, 'added new ebs related fields');
+
+ALTER TABLE samples ADD COLUMN ipsampletestresultsstring VARCHAR(512);
+ALTER TABLE samples ADD COLUMN selectedresultigm VARCHAR(55);
+ALTER TABLE samples ADD COLUMN selectedresultprnt VARCHAR(55);
+ALTER TABLE samples ADD COLUMN selectedresultpcr VARCHAR(55);
+ALTER TABLE samples ADD COLUMN inputvalueprnt VARCHAR(255);
+ALTER TABLE samples ADD COLUMN selectedresultigmdate Date;
+ALTER TABLE samples ADD COLUMN selectedresultprntdate Date;
+ALTER TABLE samples ADD COLUMN selectedresultpcrdate Date;
+INSERT INTO schema_version (version_number, comment) VALUES (676, 'Added columns to to samples');
+
+ALTER TABLE samples DROP COLUMN sampletests;
+ALTER TABLE samples DROP COLUMN sampletestsstring;
+ALTER TABLE samples_history DROP COLUMN sampletestsstring;
+ALTER TABLE samples DROP COLUMN diseasesampletests;
+ALTER TABLE samples DROP COLUMN yellowfeversampletype;
+ALTER TABLE samples_history ALTER COLUMN samplepurpose DROP NOT NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (677, 'Dropped redundant columns in samples, made samplepurpose not null');
+
+ALTER TABLE symptoms ADD COLUMN typeofrashstring VARCHAR(512);
+ALTER TABLE symptoms DROP COLUMN typeofrash;
+ALTER TABLE sixtyday ADD COLUMN paralysisweaknesspresentsitestring VARCHAR(512);
+ALTER TABLE sixtyday DROP COLUMN paralysisweaknesspresentsite;
+INSERT INTO schema_version (version_number, comment) VALUES (678, 'Added paralysisweaknesspresentsitestring and dropped paralysisweaknesspresentsite for AFP, added typeofrashstring to symptoms');
+
+
+
+
+
+
+
+
+
+
+
+-- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+
+
