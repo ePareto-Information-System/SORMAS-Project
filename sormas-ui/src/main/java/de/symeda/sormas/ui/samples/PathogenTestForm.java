@@ -50,6 +50,8 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.*;
 import org.apache.commons.collections.CollectionUtils;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -768,14 +770,22 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 		}
 
-		if(caseDisease == Disease.MONKEYPOX){
+		/*if(caseDisease == Disease.MONKEYPOX){
 			sampleTestDateField.addValueChangeListener(event -> {
 				if (event.getProperty().getValue() != null) {
 					sampleTestDateField.setReadOnly(true);
 					// sampleTestDateField.setEnabled(false);
 				}
 			});
+		}*/
+
+		if (caseDisease == Disease.MONKEYPOX) {
+			LocalDate localDate = LocalDate.now();
+			Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+			sampleTestDateField.setValue(date);
+			sampleTestDateField.setReadOnly(true);
 		}
+
 	}
 
 	// Method to hide all components initially

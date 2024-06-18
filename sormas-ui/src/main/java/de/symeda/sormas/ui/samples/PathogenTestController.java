@@ -19,6 +19,8 @@ package de.symeda.sormas.ui.samples;
 
 import static com.vaadin.ui.Notification.Type.TRAY_NOTIFICATION;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -220,9 +222,15 @@ public class PathogenTestController {
 		final EventParticipantReferenceDto associatedEventParticipant = sample.getAssociatedEventParticipant();
 
 		pathogenTests.forEach(p -> {
+			if (p.getTestDateTime() == null && p.getTestedDisease() == Disease.MONKEYPOX) {
+				LocalDate localDate = LocalDate.now();
+				Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+				p.setTestDateTime(date);
+			}
 			p.setSample(sampleRef);
 			facade.savePathogenTest(p);
 		});
+
 		if (associatedContact != null) {
 			handleAssociatedContact(pathogenTests, associatedContact);
 		} else if (associatedEventParticipant != null) {

@@ -15585,6 +15585,13 @@ div.v-layout.v-horizontal.v-widget {
 	color: #c80000 !important;
 }
 
+.sormas .window-text {
+	text-wrap: wrap !important;
+	font-size: 20px !important;
+	text-align: center !important;
+	font-family: none, serif !important;
+}
+
 .sormas .root-component {
 	min-width: 640px;
 	max-width: 1280px;
@@ -15647,6 +15654,22 @@ div.v-layout.v-horizontal.v-widget {
 	word-wrap: break-word;
 	position: relative;
 	top: -14px;
+}
+
+.sormas .v-button.v-widget.primary.v-button-primary.sample-button, .sormas .sormas .v-widget.primary.v-button-primary.sample-button.v-link.v-link-button, .sormas .sormas .v-button.v-widget.primary.sample-button.v-link.v-link-button-primary, .sormas .sormas .v-upload .v-button.v-widget.primary.sample-button, .sormas .sormas .sormas .v-widget.primary.sample-button.v-link.v-link-button-primary.v-link-button, .sormas .sormas .sormas .v-upload .v-widget.primary.sample-button.v-link.v-link-button.v-button, .sormas .sormas .sormas .v-upload .sormas .v-widget.primary.sample-button.v-link.v-link-button, .sormas .sormas .v-upload .sormas .v-widget.primary.sample-button.v-link.v-link-button {
+	font-size: 20px;
+	padding: 10px 20px;
+	margin: 0 auto;
+	display: block;
+	background-color: #007bff;
+	color: white;
+	border-radius: 8px;
+}
+
+.sormas .v-button-caption-overflow-label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .sormas .v-button, .sormas .v-link.v-link-button {

@@ -110,6 +110,16 @@ public class FacilityFacadeEjb
 	}
 
 	@Override
+	@PermitAll
+	public List<FacilityReferenceDto> getActiveFacilitiesByCommunityAndType(
+			boolean includeOtherFacility,
+			boolean includeNoneFacility) {
+
+		List<Facility> facilities = service.getActiveFacilitiesByCommunityAndType(includeOtherFacility, includeNoneFacility);
+		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
+	}
+
+	@Override
 	public List<FacilityReferenceDto> getActiveFacilitiesByCommunityAndType(
 			CommunityReferenceDto communityRef,
 			DhimsFacility dhimsFacilityType,
@@ -167,6 +177,14 @@ public class FacilityFacadeEjb
 
 		List<Facility> laboratories = service.getAllActiveLaboratories(includeOtherFacility);
 		return laboratories.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
+	}
+
+	@Override
+	@PermitAll
+	public List<FacilityReferenceDto> getAllActiveFacility(boolean includeOtherFacility) {
+
+		List<Facility> facilities = service.getAllActiveFacilities(includeOtherFacility);
+		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
 	@Override

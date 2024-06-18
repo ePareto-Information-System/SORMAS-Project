@@ -105,6 +105,32 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 	}
 
 	public List<Facility> getActiveFacilitiesByCommunityAndType(
+			boolean includeOtherFacility,
+			boolean includeNoneFacility) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Facility> cq = cb.createQuery(getElementClass());
+		Root<Facility> from = cq.from(getElementClass());
+
+		Predicate filter = createBasicFilter(cb, from);
+
+		cq.where(filter);
+		cq.distinct(true);
+		cq.orderBy(cb.asc(from.get(Facility.NAME)));
+
+		List<Facility> facilities = em.createQuery(cq).getResultList();
+
+		if (includeOtherFacility) {
+			facilities.add(getByUuid(FacilityDto.OTHER_FACILITY_UUID));
+		}
+		if (includeNoneFacility) {
+			facilities.add(getByUuid(FacilityDto.NONE_FACILITY_UUID));
+		}
+
+		return facilities;
+	}
+
+	public List<Facility> getActiveFacilitiesByCommunityAndType(
 			Community community,
 			DhimsFacility dhimsFacilityType,
 			boolean includeOtherFacility,
@@ -204,6 +230,10 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 		return getAllActiveLaboratories(includeOtherFacility, null);
 	}
 
+	public List<Facility> getAllActiveFacilities(boolean includeOtherFacility) {
+		return getAllActiveFacilities(includeOtherFacility, null);
+	}
+
 	private List<Facility> getAllActiveLaboratories(
 		boolean includeOtherFacility,
 		BiFunction<CriteriaBuilder, Root<Facility>, Predicate> createExtraFilters) {
@@ -216,6 +246,37 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 			createBasicFilter(cb, from),
 			cb.equal(from.get(Facility.TYPE), FacilityType.LABORATORY),
 			cb.notEqual(from.get(Facility.UUID), FacilityDto.OTHER_FACILITY_UUID)
+
+		);
+
+		if (createExtraFilters != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, createExtraFilters.apply(cb, from));
+		}
+
+		cq.where(filter);
+		cq.orderBy(cb.asc(from.get(Facility.NAME)));
+
+		List<Facility> facilities = em.createQuery(cq).getResultList();
+
+		if (includeOtherFacility) {
+			facilities.add(getByUuid(FacilityDto.OTHER_FACILITY_UUID));
+		}
+
+		return facilities;
+	}
+
+	private List<Facility> getAllActiveFacilities(
+			boolean includeOtherFacility,
+			BiFunction<CriteriaBuilder, Root<Facility>, Predicate> createExtraFilters) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Facility> cq = cb.createQuery(getElementClass());
+		Root<Facility> from = cq.from(getElementClass());
+
+		Predicate filter = cb.and(
+				createBasicFilter(cb, from),
+				cb.equal(from.get(Facility.TYPE), FacilityType.HOSPITAL),
+				cb.notEqual(from.get(Facility.UUID), FacilityDto.OTHER_FACILITY_UUID)
 
 		);
 

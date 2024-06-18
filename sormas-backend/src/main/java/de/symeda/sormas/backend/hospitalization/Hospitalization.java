@@ -28,6 +28,7 @@ import javax.validation.constraints.Size;
 import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
 import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
@@ -95,7 +96,7 @@ public class Hospitalization extends AbstractDomainObject {
 	private String hospitalRecordNumber;
 	private Date dateFormSentToDistrict;
 	private YesNo soughtMedicalAttention;
-	private String nameOfFacility;
+	private FacilityReferenceDto nameOfFacility;
 	private String locationAddress;
 	private Date dateOfVisitHospital;
 	private String physicianName;
@@ -405,11 +406,11 @@ public class Hospitalization extends AbstractDomainObject {
 		this.soughtMedicalAttention = soughtMedicalAttention;
 	}
 
-	public String getNameOfFacility() {
+	public FacilityReferenceDto getNameOfFacility() {
 		return nameOfFacility;
 	}
 
-	public void setNameOfFacility(String nameOfFacility) {
+	public void setNameOfFacility(FacilityReferenceDto nameOfFacility) {
 		this.nameOfFacility = nameOfFacility;
 	}
 
