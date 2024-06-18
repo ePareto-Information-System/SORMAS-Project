@@ -23,9 +23,7 @@ import com.vaadin.ui.renderers.DateRenderer;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
-import de.symeda.sormas.api.ebs.EbsCriteria;
-import de.symeda.sormas.api.ebs.EbsIndexDto;
-import de.symeda.sormas.api.ebs.EbsSourceType;
+import de.symeda.sormas.api.ebs.*;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.user.UserRight;
@@ -33,10 +31,7 @@ import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
-import de.symeda.sormas.ui.utils.FieldAccessHelper;
-import de.symeda.sormas.ui.utils.FilteredGrid;
-import de.symeda.sormas.ui.utils.ShowDetailsListener;
-import de.symeda.sormas.ui.utils.UuidRenderer;
+import de.symeda.sormas.ui.utils.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +39,7 @@ import java.util.Date;
 import java.util.List;
 
 @SuppressWarnings("serial")
-public class EbsSignalGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
+public class EbsSignalGrid extends FilteredGrid<de.symeda.sormas.api.ebs.EbsIndexDto, de.symeda.sormas.api.ebs.EbsCriteria> {
 
 	public static final String EBS_DATE = Captions.singleDayEventDate;
 	public static final String EBS_EVOLUTION_DATE = Captions.Event_evolutionDate;
@@ -53,6 +48,7 @@ public class EbsSignalGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 	public static final String DISEASE_SHORT = Captions.columnDiseaseShort;
 
 	private DataProviderListener<EbsIndexDto> dataProviderListener;
+
 	@SuppressWarnings("unchecked")
 	public <V extends View> EbsSignalGrid(EbsCriteria criteria, Class<V> viewClass) {
 
@@ -89,25 +85,23 @@ public class EbsSignalGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 
 		columnIds.addAll(
 			Arrays.asList(
-				EbsIndexDto.SIGNAL_CATEGORY,
-				EbsIndexDto.TRIAGING_DECISION,
-				EbsIndexDto.TRIAGING_DECISION_DATE,
-				EbsIndexDto.VERIFICATION_SENT,
-				EbsIndexDto.VERIFICATION_SENT_DATE,
-				EbsIndexDto.VERIFIED,
-				EbsIndexDto.VERIFIED_DATE,
-				EbsIndexDto.DEATH,
-				EbsIndexDto.RISK_STATUS,
-				EbsIndexDto.RESPONSE_STATUS));
+				EbsIndexDto.SOURCE_INFORMATION,
+				EbsIndexDto.CATEGORY_OF_INFORMANT,
+				EbsIndexDto.REPORT_DATE_TIME,
+				EbsIndexDto.INFORMANT_NAME,
+				EbsIndexDto.INFORMANT_TEL,
+				EbsIndexDto.REGION,
+				EbsIndexDto.COMMUNITY,
+				EbsIndexDto.TOWN,
+				EbsIndexDto.PERSON_REGISTERING,
+				EbsIndexDto.PERSON_DESIGNATION));
 
 
 		setColumns(columnIds.toArray(new String[columnIds.size()]));
 
 
 		((Column<EbsIndexDto, String>) getColumn(EbsIndexDto.UUID)).setRenderer(new UuidRenderer());
-		((Column<EbsIndexDto, Date>) getColumn(EbsIndexDto.VERIFICATION_SENT_DATE))
-			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(userLanguage)));
-		((Column<EbsIndexDto, Date>) getColumn(EbsIndexDto.VERIFIED_DATE))
+		((Column<EbsIndexDto, Date>) getColumn(EbsIndexDto.REPORT_DATE_TIME))
 			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(userLanguage)));
 		addItemClickListener(new ShowDetailsListener<>(EbsIndexDto.UUID, e -> ControllerProvider.getEbsController().navigateToData(e.getUuid())));
 	}
@@ -134,18 +128,6 @@ public class EbsSignalGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 		return (srcMediaWebsite != null ? srcMediaWebsite : "");
 	}
 
-//	public void setContactCountMethod(EbsContactCountMethod method) {
-//		getColumn(EbsIndexDto.CONTACT_COUNT_SOURCE_IN_EVENT).setHidden(method == EbsContactCountMethod.ALL);
-//		getColumn(EbsIndexDto.CONTACT_COUNT).setHidden(method == EbsContactCountMethod.SOURCE_CASE_IN_EVENT);
-//		if (method == EbsContactCountMethod.BOTH_METHODS) {
-//			getColumn(EbsIndexDto.CONTACT_COUNT_SOURCE_IN_EVENT)
-//				.setCaption(I18nProperties.getPrefixCaption(EbsIndexDto.I18N_PREFIX, EbsIndexDto.CONTACT_COUNT_SOURCE_IN_EVENT));
-//		} else {
-//			getColumn(EbsIndexDto.CONTACT_COUNT_SOURCE_IN_EVENT)
-//				.setCaption(I18nProperties.getPrefixCaption(EbsIndexDto.I18N_PREFIX, EbsIndexDto.CONTACT_COUNT));
-//		}
-//	}
-
 	public void reload() {
 
 		if (getSelectionModel().isUserSelectionAllowed()) {
@@ -162,11 +144,11 @@ public class EbsSignalGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 
 	public void setLazyDataProvider() {
 
-		setLazyDataProvider(FacadeProvider.getEbsFacade()::getIndexList, FacadeProvider.getEbsFacade()::count);
+		setLazyDataProvider(FacadeProvider.getEbsFacade()::getEventIndexList, FacadeProvider.getEbsFacade()::count);
 	}
 
 	public void setEagerDataProvider() {
 
-		setEagerDataProvider(FacadeProvider.getEbsFacade()::getIndexList);
+		setEagerDataProvider(FacadeProvider.getEbsFacade()::getEventIndexList);
 	}
 }
