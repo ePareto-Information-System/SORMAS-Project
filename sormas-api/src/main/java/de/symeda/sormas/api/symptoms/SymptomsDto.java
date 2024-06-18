@@ -2458,7 +2458,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState urinaryRetention;
 
 	@Diseases({
-			MONKEYPOX })
+			SARI })
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState generalBodilyPains;
 

@@ -35,12 +35,6 @@ import de.symeda.sormas.api.utils.SortProperty;
 public interface FacilityFacade extends InfrastructureFacade<FacilityDto, FacilityIndexDto, FacilityReferenceDto, FacilityCriteria> {
 
 	List<FacilityReferenceDto> getActiveFacilitiesByCommunityAndType(
-		CommunityReferenceDto community,
-		FacilityType type,
-		boolean includeOtherFacility,
-		boolean includeNoneFacility);
-
-	List<FacilityReferenceDto> getActiveFacilitiesByCommunityAndType(
 			CommunityReferenceDto community,
 			FacilityType type,
 			boolean includeOtherFacility,
