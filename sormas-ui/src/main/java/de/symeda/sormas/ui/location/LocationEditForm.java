@@ -1020,7 +1020,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	//handle CHOLERA
 	public void handleForCholera() {
 		setVisible(true, LocationDto.POSTAL_CODE, LocationDto.VILLAGE);
-		setVisible(false, LocationDto.STREET, LocationDto.ADDITIONAL_INFORMATION, LocationDto.CITY, LocationDto.HOUSE_NUMBER, LocationDto.AREA_TYPE);
+		setVisible(false, LocationDto.STREET, LocationDto.ADDITIONAL_INFORMATION, LocationDto.CITY, LocationDto.HOUSE_NUMBER, LocationDto.AREA_TYPE, LocationDto.VILLAGE);
 	}
 	
 	public void handleMeasles() {
