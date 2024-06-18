@@ -3520,6 +3520,14 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
 		target.setDateLatestUpdateRecord(source.getDateLatestUpdateRecord());
 		target.setNumberOfPeopleInSameHousehold(source.getNumberOfPeopleInSameHousehold());
+		target.setPatientName(source.getPatientName());
+		target.setPatientOtherNames(source.getPatientOtherNames());
+		target.setPatientDobDD(source.getPatientDobDD());
+		target.setPatientDobMM(source.getPatientDobMM());
+		target.setPatientDobYY(source.getPatientDobYY());
+		target.setPatientAgeYear(source.getPatientAgeYear());
+		target.setPatientAgeMonth(source.getPatientAgeMonth());
+		target.setPatientSex(source.getPatientSex());
 		return target;
 	}
 
@@ -3791,6 +3799,15 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setInformationGivenBy(source.getInformationGivenBy());
 		target.setFamilyLinkWithPatient(source.getFamilyLinkWithPatient());
 		target.setNameOfVillagePersonGotIll(source.getNameOfVillagePersonGotIll());
+		target.setPatientName(source.getPatientName());
+		target.setPatientOtherNames(source.getPatientOtherNames());
+		target.setPatientDobDD(source.getPatientDobDD());
+		target.setPatientDobMM(source.getPatientDobMM());
+		target.setPatientDobYY(source.getPatientDobYY());
+		target.setPatientAgeYear(source.getPatientAgeYear());
+		target.setPatientAgeMonth(source.getPatientAgeMonth());
+		target.setPatientSex(source.getPatientSex());
+
 
 		return target;
 	}
