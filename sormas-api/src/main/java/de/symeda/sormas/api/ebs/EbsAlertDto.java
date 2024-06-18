@@ -18,7 +18,7 @@ public class EbsAlertDto extends PseudonymizableDto {
     public static final String RESPONSE_DATE = "responseDate";
     public static final String DETAILS_RESPONSE_ACTIVITIES = "detailsResponseActivities";
     public static final String DETAILS_GIVEN = "detailsGiven";
-    public static final String ALERT_USED = "alertUsed";
+    public static final String ALERT_ISSUED = "alertIssued";
     public static final String DETAILS_ALERT_USED = "detailsAlertUsed";
     public static final String ALERT_DATE = "alertDate";
     public static final String EBS = "ebs";
@@ -28,7 +28,7 @@ public class EbsAlertDto extends PseudonymizableDto {
     private Date responseDate;
     private String detailsResponseActivities;
     private String detailsGiven;
-    private YesNo alertUsed;
+    private YesNo alertIssued;
     private String detailsAlertUsed;
     private EbsReferenceDto ebs;
     private Date alertDate;
@@ -73,12 +73,12 @@ public class EbsAlertDto extends PseudonymizableDto {
         this.detailsGiven = detailsGiven;
     }
 
-    public YesNo getAlertUsed() {
-        return alertUsed;
+    public YesNo getAlertIssued() {
+        return alertIssued;
     }
 
-    public void setAlertUsed(YesNo alertUsed) {
-        this.alertUsed = alertUsed;
+    public void setAlertIssued(YesNo alertIssued) {
+        this.alertIssued = alertIssued;
     }
 
     public String getDetailsAlertUsed() {
