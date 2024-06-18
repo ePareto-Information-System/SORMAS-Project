@@ -1484,7 +1484,7 @@ public interface Captions {
 	String EbsAlert_responseDate = "EbsAlert.responseDate";
 	String EbsAlert_detailsResponseActivities = "EbsAlert.detailsResponseActivities";
 	String EbsAlert_detailsGiven = "EbsAlert.detailsGiven";
-	String EbsAlert_alertUsed = "EbsAlert.alertUsed";
+	String EbsAlert_alertIssued = "EbsAlert.alertIssued";
 	String EbsAlert_detailsAlertUsed = "EbsAlert.detailsAlertUsed";
 	String export = "export";
 	String exportBasic = "exportBasic";
