@@ -66,6 +66,7 @@ public class RiskAssessmentView extends AbstractEbsView {
 	if (ControllerProvider.getEbsController().isSignalVerified(getEbsRef().getUuid())) {
 		addButton.setEnabled(false);
 		Notification.show(I18nProperties.getCaption(Captions.ebsRiskAssessmentDisabled), ERROR_MESSAGE);
+		ControllerProvider.getEbsController().navigateToIndex();
 	}
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
