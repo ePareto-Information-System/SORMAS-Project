@@ -17,6 +17,45 @@
  *******************************************************************************/
 package de.symeda.sormas.backend.caze;
 
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.validation.constraints.Size;
+
+import de.symeda.sormas.api.caze.*;
+import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.utils.AFPFacilityOptions;
+import de.symeda.sormas.api.utils.CardOrHistory;
+import de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus;
+import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
+import de.symeda.sormas.api.sixtyday.SixtyDayDto;
+import de.symeda.sormas.api.utils.*;
+import de.symeda.sormas.backend.riskfactor.RiskFactor;
+import de.symeda.sormas.backend.sixtyday.SixtyDay;
+import org.hibernate.annotations.Type;
+
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.contact.FollowUpStatus;
@@ -441,6 +480,14 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private String informationGivenBy;
 	private String familyLinkWithPatient;
 	private String nameOfVillagePersonGotIll;
+	private String patientName;
+	private String patientOtherNames;
+	private Integer patientDobDD;
+	private Integer patientDobMM;
+	private Integer patientDobYY;
+	private Integer patientAgeYear;
+	private Integer patientAgeMonth;
+	private Sex patientSex;
 
 	public static Case build() {
 		Case caze = new Case();
@@ -2133,6 +2180,70 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setNameOfVillagePersonGotIll(String nameOfVillagePersonGotIll) {
 		this.nameOfVillagePersonGotIll = nameOfVillagePersonGotIll;
+	}
+
+	public String getPatientName() {
+		return patientName;
+	}
+
+	public void setPatientName(String patientName) {
+		this.patientName = patientName;
+	}
+
+	public String getPatientOtherNames() {
+		return patientOtherNames;
+	}
+
+	public void setPatientOtherNames(String patientOtherNames) {
+		this.patientOtherNames = patientOtherNames;
+	}
+
+	public Integer getPatientDobDD() {
+		return patientDobDD;
+	}
+
+	public void setPatientDobDD(Integer patientDobDD) {
+		this.patientDobDD = patientDobDD;
+	}
+
+	public Integer getPatientDobMM() {
+		return patientDobMM;
+	}
+
+	public void setPatientDobMM(Integer patientDobMM) {
+		this.patientDobMM = patientDobMM;
+	}
+
+	public Integer getPatientDobYY() {
+		return patientDobYY;
+	}
+
+	public void setPatientDobYY(Integer patientDobYY) {
+		this.patientDobYY = patientDobYY;
+	}
+
+	public Integer getPatientAgeYear() {
+		return patientAgeYear;
+	}
+
+	public void setPatientAgeYear(Integer patientAgeYear) {
+		this.patientAgeYear = patientAgeYear;
+	}
+
+	public Integer getPatientAgeMonth() {
+		return patientAgeMonth;
+	}
+
+	public void setPatientAgeMonth(Integer patientAgeMonth) {
+		this.patientAgeMonth = patientAgeMonth;
+	}
+
+	public Sex getPatientSex() {
+		return patientSex;
+	}
+
+	public void setPatientSex(Sex patientSex) {
+		this.patientSex = patientSex;
 	}
 
 //	Riskfactor on

@@ -137,7 +137,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					loc(INDICATE_CATEGORY_LOC) +
 					fluidRowLocs(6,CaseDataDto.NOTIFIED_BY) +
                     fluidRowLocs(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY) +
-                    fluidRowLocs(CaseDataDto.REPORT_LAT, CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT_LON_ACCURACY)
+                    fluidRowLocs(CaseDataDto.REPORT_LAT, CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT_LON_ACCURACY) +
+                    fluidRowLocs(CaseDataDto.PATIENT_NAME, CaseDataDto.PATIENT_OTHER_NAMES)
+                    + fluidRowLocs(CaseDataDto.PATIENT_DOB_DD, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_YY)
+                    + fluidRowLocs(CaseDataDto.PATIENT_AGE_YEAR, CaseDataDto.PATIENT_AGE_MONTH)
+                    + fluidRowLocs(6, CaseDataDto.PATIENT_SEX)
                     + fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY)
                     + fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE) +
 					fluidRowLocs(CaseDataDto.EXTERNAL_ID, CaseDataDto.EXTERNAL_TOKEN) +
@@ -1553,6 +1557,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
                 tfReportLon.setVisible(true);
                 tfReportLat.setVisible(true);
+                addFields(CaseDataDto.PATIENT_NAME, CaseDataDto.PATIENT_OTHER_NAMES);
+                addFields(CaseDataDto.PATIENT_DOB_DD, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_YY);
+                addFields(CaseDataDto.PATIENT_AGE_YEAR, CaseDataDto.PATIENT_AGE_MONTH);
+                addFields(CaseDataDto.PATIENT_SEX);
                 addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
                 addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
 			}

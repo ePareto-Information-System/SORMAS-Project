@@ -13738,4 +13738,15 @@ ALTER TABLE epidata DROP COLUMN yearofvaccination;
 ALTER TABLE epidata ADD COLUMN yearofvaccinationcovid INTEGER;
 ALTER TABLE epidata ADD COLUMN yearofvaccination INTEGER;
 INSERT INTO schema_version (version_number, comment) VALUES (620, 'Dropped columns at epidate and re-added with type Int');
+
+ALTER TABLE cases ADD COLUMN patientname VARCHAR(255);
+ALTER TABLE cases ADD COLUMN patientothernames VARCHAR(255);
+ALTER TABLE cases ADD COLUMN patientdobdd integer;
+ALTER TABLE cases ADD COLUMN patientdobmm integer;
+ALTER TABLE cases ADD COLUMN patientdobyy integer;
+ALTER TABLE cases ADD COLUMN patientageyear integer;
+ALTER TABLE cases ADD COLUMN patientagemonth integer;
+ALTER TABLE cases ADD COLUMN patientsex varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (621, 'Added Mpox person data to cases');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

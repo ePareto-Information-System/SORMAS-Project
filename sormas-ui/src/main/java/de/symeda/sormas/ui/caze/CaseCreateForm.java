@@ -15,11 +15,7 @@
 
 package de.symeda.sormas.ui.caze;
 
-import static de.symeda.sormas.ui.utils.CssStyles.ERROR_COLOR_PRIMARY;
-import static de.symeda.sormas.ui.utils.CssStyles.H3;
-import static de.symeda.sormas.ui.utils.CssStyles.SOFT_REQUIRED;
-import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
-import static de.symeda.sormas.ui.utils.CssStyles.style;
+import static de.symeda.sormas.ui.utils.CssStyles.*;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumn;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumnLoc;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRow;
@@ -84,6 +80,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 	private static final String RESPONSIBLE_JURISDICTION_HEADING_LOC = "responsibleJurisdictionHeadingLoc";
 	private static final String DIFFERENT_PLACE_OF_STAY_JURISDICTION = "differentPlaceOfStayJurisdiction";
 	private static final String PLACE_OF_STAY_HEADING_LOC = "placeOfStayHeadingLoc";
+	private static final String MPOX_COORDINATE_LABEL = "mpoxCoordinate";
 	private static final String DIFFERENT_POINT_OF_ENTRY_JURISDICTION = "differentPointOfEntryJurisdiction";
 	private static final String POINT_OF_ENTRY_REGION = "pointOfEntryRegion";
 	private static final String POINT_OF_ENTRY_DISTRICT = "pointOfEntryDistrict";
@@ -139,7 +136,12 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			+ fluidRowLocs(6, CaseDataDto.HEALTH_FACILITY_DETAILS)
 			+ fluidRowLocs(6, CaseDataDto.HOME_ADDRESS_RECREATIONAL)
 			+ fluidRowLocs(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY)
+			+ fluidRowLocs(MPOX_COORDINATE_LABEL)
 			+ fluidRowLocs(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT)
+			+ fluidRowLocs(CaseDataDto.PATIENT_NAME, CaseDataDto.PATIENT_OTHER_NAMES)
+			+ fluidRowLocs(CaseDataDto.PATIENT_DOB_DD, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_YY)
+			+ fluidRowLocs(CaseDataDto.PATIENT_AGE_YEAR, CaseDataDto.PATIENT_AGE_MONTH)
+			+ fluidRowLocs(6, CaseDataDto.PATIENT_SEX)
 			+ fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY)
 			+ fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE)
 			+ fluidRowLocs(6,CaseDataDto.AFP_FACILITY_OPTIONS)
@@ -594,9 +596,19 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				personCreateForm.hideFields();
 				reportDate.setVisible(false);
 				reportDate.setRequired(false);
+				personCreateForm.hideFieldsForMpox();
 
 				addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
+
+				Label coorLabel = new Label(I18nProperties.getCaption(Captions.coorLabel));
+				coorLabel.addStyleName(H4);
+				getContent().addComponent(coorLabel, MPOX_COORDINATE_LABEL);
+
 				addFields(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT);
+				addFields(CaseDataDto.PATIENT_NAME, CaseDataDto.PATIENT_OTHER_NAMES);
+				addFields(CaseDataDto.PATIENT_DOB_DD, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_YY);
+				addFields(CaseDataDto.PATIENT_AGE_YEAR, CaseDataDto.PATIENT_AGE_MONTH);
+				addFields(CaseDataDto.PATIENT_SEX);
 				addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
 				addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
 			}
