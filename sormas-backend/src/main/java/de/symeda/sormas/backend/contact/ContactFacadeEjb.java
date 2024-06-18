@@ -2296,10 +2296,11 @@ public class ContactFacadeEjb
 
 		// 3 Attach otherContact visits to leadContact
 		// (set the person and the disease of the visit, saveVisit does the rest)
-		for (VisitDto otherVisit : otherContact.getVisits().stream().map(VisitFacadeEjb::toDto).collect(Collectors.toList())) {
+		List<VisitDto> otherContacts = visitFacade.getVisitsByContact(otherContactDto.toReference());
+		for (VisitDto otherVisit : otherContacts) {
 			otherVisit.setPerson(leadContactDto.getPerson());
 			otherVisit.setDisease(leadContactDto.getDisease());
-			visitFacade.saveVisit(otherVisit);
+			visitFacade.save(otherVisit);
 		}
 
 		// 4 Documents
