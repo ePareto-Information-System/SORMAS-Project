@@ -7,6 +7,7 @@ import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.ebs.*;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import de.symeda.sormas.ui.utils.*;
 import com.vaadin.ui.Label;
 import de.symeda.sormas.api.FacadeProvider;
@@ -49,6 +50,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                     fluidRowLocs(TriagingDto.HUMAN_FACILITY_CATEGORY_DETAILS,"") +
                     fluidRowLocs(TriagingDto.ANIMAL_COMMUNITY_CATEGORY_DETAILS,"") +
                     fluidRowLocs(TriagingDto.ANIMAL_FACILITY_CATEGORY_DETAILS,"") +
+                    fluidRowLocs(TriagingDto.ANIMAL_LABORATORY_CATEGORY_DETAILS,"") +
                     fluidRowLocs(TriagingDto.ENVIRONMENTAL_CATEGORY_DETAILS,"") +
                     fluidRowLocs(TriagingDto.POE_CATEGORY_DETAILS,"") +
                     fluidRowLocs(TriagingDto.OCCURRENCE_PREVIOUSLY) +
@@ -86,6 +88,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
     private OptionGroup humanLabCategoryDetails;
     private OptionGroup animalCommCategoryDetails;
     private OptionGroup animalFacCategoryDetails;
+    private OptionGroup animalLabCategoryDetails;
     private OptionGroup environmentalCategoryDetails;
     private OptionGroup poeCategoryDetails;
     private NullableOptionGroup categoryLevel;
@@ -128,72 +131,54 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         referred = addField(TriagingDto.REFERRED, NullableOptionGroup.class);
         signalCategory = addField(TriagingDto.SIGNAL_CATEGORY, NullableOptionGroup.class);
         categoryLevel = addField(TriagingDto.CATEGORY_DETAILS_LEVEL, NullableOptionGroup.class);
-        humanCommCategoryDetails = addField(TriagingDto.HUMAN_COMMUNITY_CATEGORY_DETAILS, OptionGroup.class);
-        humanCommCategoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
-        humanCommCategoryDetails.setMultiSelect(true);
-        humanCommCategoryDetails.addItems(
-                Arrays.stream(HumanCommunityCategoryDetails.values())
-                        .filter(category -> fieldVisibilityCheckers.isVisible(HumanCommunityCategoryDetails.class, category.name()))
-                        .collect(Collectors.toList())
-        );
-        humanCommCategoryDetails.setVisible(false);
-        humanFacCategoryDetails = addField(TriagingDto.HUMAN_FACILITY_CATEGORY_DETAILS, OptionGroup.class);
-        humanFacCategoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
-        humanFacCategoryDetails.setMultiSelect(true);
-        humanFacCategoryDetails.addItems(
-                Arrays.stream(HumanFaclityCategoryDetails.values())
-                        .filter(category -> fieldVisibilityCheckers.isVisible(HumanFaclityCategoryDetails.class, category.name()))
-                        .collect(Collectors.toList())
-        );
-        humanFacCategoryDetails.setVisible(false);
-        humanLabCategoryDetails = addField(TriagingDto.HUMAN_LABORATORY_CATEGORY_DETAILS, OptionGroup.class);
-        humanLabCategoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
-        humanLabCategoryDetails.setMultiSelect(true);
-        humanLabCategoryDetails.addItems(
-                Arrays.stream(HumanLaboratoryCategoryDetails.values())
-                        .filter(category -> fieldVisibilityCheckers.isVisible(HumanLaboratoryCategoryDetails.class, category.name()))
-                        .collect(Collectors.toList())
-        );
+        OptionGroup humanCommCategoryDetail = new OptionGroup("Human Community Category Details");
+        for (HumanCommunityCategoryDetails categoryDetails : HumanCommunityCategoryDetails.values()) {
+            humanCommCategoryDetail.addItem(categoryDetails);
+        }
+        humanCommCategoryDetails = addField(TriagingDto.HUMAN_COMMUNITY_CATEGORY_DETAILS, humanCommCategoryDetail);
+        OptionGroup humanFacCategoryDetail = new OptionGroup("Human Facility Category Details");
+        for (HumanFaclityCategoryDetails categoryDetails : HumanFaclityCategoryDetails.values()) {
+            humanFacCategoryDetail.addItem(categoryDetails);
+        }
+        humanFacCategoryDetails = addField(TriagingDto.HUMAN_FACILITY_CATEGORY_DETAILS, humanFacCategoryDetail);
+        OptionGroup humanLabCategoryDetail = new OptionGroup("Human Laboratory Category Details");
+        for (HumanLaboratoryCategoryDetails categoryDetails : HumanLaboratoryCategoryDetails.values()) {
+            humanLabCategoryDetail.addItem(categoryDetails);
+        }
+        humanLabCategoryDetails = addField(TriagingDto.HUMAN_LABORATORY_CATEGORY_DETAILS, humanLabCategoryDetail);
         humanLabCategoryDetails.setVisible(false);
-        animalCommCategoryDetails = addField(TriagingDto.ANIMAL_COMMUNITY_CATEGORY_DETAILS, OptionGroup.class);
-        animalCommCategoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
-        animalCommCategoryDetails.setMultiSelect(true);
-        animalCommCategoryDetails.addItems(
-                Arrays.stream(AnimalCommunityCategoryDetails.values())
-                        .filter(category -> fieldVisibilityCheckers.isVisible(AnimalCommunityCategoryDetails.class, category.name()))
-                        .collect(Collectors.toList())
-        );
+        OptionGroup animalCommCategoryDetail = new OptionGroup("Animal Community Category Details");
+        for (AnimalCommunityCategoryDetails categoryDetails : AnimalCommunityCategoryDetails.values()) {
+            animalCommCategoryDetail.addItem(categoryDetails);
+        }
+        animalCommCategoryDetails = addField(TriagingDto.ANIMAL_COMMUNITY_CATEGORY_DETAILS, animalCommCategoryDetail);
         animalCommCategoryDetails.setVisible(false);
-        animalFacCategoryDetails = addField(TriagingDto.ANIMAL_FACILITY_CATEGORY_DETAILS, OptionGroup.class);
-        animalFacCategoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
-        animalFacCategoryDetails.setMultiSelect(true);
-        animalFacCategoryDetails.addItems(
-                Arrays.stream(AnimalFacilityCategoryDetails.values())
-                        .filter(category -> fieldVisibilityCheckers.isVisible(AnimalFacilityCategoryDetails.class, category.name()))
-                        .collect(Collectors.toList())
-        );
+        OptionGroup animalFacCategoryDetail = new OptionGroup("Animal Facility Category Details");
+        for (AnimalFacilityCategoryDetails categoryDetails : AnimalFacilityCategoryDetails.values()) {
+            animalFacCategoryDetail.addItem(categoryDetails);
+        }
+        animalFacCategoryDetails = addField(TriagingDto.ANIMAL_FACILITY_CATEGORY_DETAILS, animalFacCategoryDetail);
         animalFacCategoryDetails.setVisible(false);
-        environmentalCategoryDetails = addField(TriagingDto.ENVIRONMENTAL_CATEGORY_DETAILS, OptionGroup.class);
-        environmentalCategoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
-        environmentalCategoryDetails.setMultiSelect(true);
-        environmentalCategoryDetails.addItems(
-                Arrays.stream(EnvironmentalCategoryDetails.values())
-                        .filter(category -> fieldVisibilityCheckers.isVisible(EnvironmentalCategoryDetails.class, category.name()))
-                        .collect(Collectors.toList())
-        );
+        OptionGroup animalLabCategoryDetail = new OptionGroup("Category Details");
+        for (AnimalLaboratoryCategoryDetails categoryDetails : AnimalLaboratoryCategoryDetails.values()) {
+            animalLabCategoryDetail.addItem(categoryDetails);
+        }
+        animalLabCategoryDetails = addField(TriagingDto.ANIMAL_LABORATORY_CATEGORY_DETAILS, animalLabCategoryDetail);
+        animalLabCategoryDetails.setVisible(false);
+        OptionGroup environmentalCategoryDetail = new OptionGroup("Category Details");
+        for (EnvironmentalCategoryDetails categoryDetails : EnvironmentalCategoryDetails.values()) {
+            environmentalCategoryDetail.addItem(categoryDetails);
+        }
+        environmentalCategoryDetails = addField(TriagingDto.ENVIRONMENTAL_CATEGORY_DETAILS, environmentalCategoryDetail);
         environmentalCategoryDetails.setVisible(false);
-        poeCategoryDetails = addField(TriagingDto.POE_CATEGORY_DETAILS, OptionGroup.class);
-        poeCategoryDetails.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
-        poeCategoryDetails.setMultiSelect(true);
-        poeCategoryDetails.addItems(
-                Arrays.stream(POE.values())
-                        .filter(category -> fieldVisibilityCheckers.isVisible(POE.class, category.name()))
-                        .collect(Collectors.toList())
-        );
-        poeCategoryDetails.setVisible(false);
+        OptionGroup poeCategoryDetail = new OptionGroup("Category Details");
+        for (POE categoryDetails : POE.values()) {
+            poeCategoryDetail.addItem(categoryDetails);
+        }
+        poeCategoryDetails = addField(TriagingDto.POE_CATEGORY_DETAILS, poeCategoryDetail);
         previousOccurrence = addField(TriagingDto.OCCURRENCE_PREVIOUSLY, NullableOptionGroup.class);
         triagingDecision = addField(TriagingDto.TRIAGING_DECISION, OptionGroup.class);
-        triagingDecision.setMultiSelect(false);
+//        triagingDecision.setMultiSelect(false);
         triagingDecision.addItems(
                 Arrays.stream(EbsTriagingDecision.values())
                         .filter(decision -> fieldVisibilityCheckers.isVisible(EbsTriagingDecision.class, decision.name()))
@@ -210,6 +195,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         referred.setVisible(false);
         triagingDecision.setVisible(false);
         dateOfDecision.setVisible(false);
+        categoryLevel.setVisible(false);
         EbsDto selectedEbs = getEbsDto();
 
         FieldHelper.setVisibleWhen(
@@ -265,6 +251,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 
                 animalCommCategoryDetails.setVisible(false);
                 animalFacCategoryDetails.setVisible(false);  // Repeated for lab
+                animalLabCategoryDetails.setVisible(false);  // Repeated for lab
 
                 selectedEbs.getTriaging().setEnvironmentalCategoryDetails(null);
                 selectedEbs.getTriaging().setPoeCategoryDetails(null);
@@ -315,6 +302,20 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 selectedEbs.getSignalVerification().setVerificationSent(YesNo.NO);
             }
         });
+        triagingDecision.addValueChangeListener(e->{
+            try {
+                var decision = e.getProperty().getValue().toString();
+                if (e.getProperty().getValue().toString().equals("Proceed to verification")) {
+                    selectedEbs.getSignalVerification().setVerificationSent(YesNo.YES);
+                    selectedEbs.getSignalVerification().setDateOfOccurrence(new Date());
+                } else {
+                    selectedEbs.getSignalVerification().setVerificationSent(YesNo.NO);
+                    selectedEbs.getSignalVerification().setVerified(YesNo.NO);
+                }
+            }catch (Exception exception){
+                System.out.println(exception.getMessage());
+            }
+        });
 
         supervisorReview.addValueChangeListener(e->{
             if (e.getProperty().getValue().toString().equals("[YES]")) {
@@ -349,11 +350,12 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 
         outcomeSupervisor.addValueChangeListener(e->{
             if (e.getProperty().getValue().equals(OutComeSupervisor.ISSIGNAL)) {
-                healthConcern.setVisible(true);
                 previousOccurrence.setVisible(true);
+                healthConcern.setVisible(false);
+                healthConcern.setValue(null);
             }
             else if (e.getProperty().getValue().equals(OutComeSupervisor.ISNOTSIGNAL)) {
-                healthConcern.setVisible(false);
+                healthConcern.setVisible(true);
                 healthConcern.setValue(null);
                 referredTo.setVisible(false);
                 referred.setVisible(false);
@@ -416,7 +418,9 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 animalCommCategoryDetails.setVisible(false);
                 animalCommCategoryDetails.setValue(null);
                 animalFacCategoryDetails.setVisible(false);  // Repeated for lab
+                animalLabCategoryDetails.setVisible(false);  // Repeated for lab
                 animalFacCategoryDetails.setValue(null);  // Repeated for lab
+                animalLabCategoryDetails.setValue(null);  // Repeated for lab
 
                 environmentalCategoryDetails.setVisible(false);  // Shown for all levels
                 environmentalCategoryDetails.setValue(null);  // Shown for all levels
@@ -463,6 +467,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         humanLabCategoryDetails.setVisible(false);
         animalCommCategoryDetails.setVisible(false);
         animalFacCategoryDetails.setVisible(false);
+        animalLabCategoryDetails.setVisible(false);
         environmentalCategoryDetails.setVisible(false);
         poeCategoryDetails.setVisible(false);
 
@@ -482,7 +487,8 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 break;
             case ANIMAL:
                 animalCommCategoryDetails.setVisible(isCommunityLevel);
-                animalFacCategoryDetails.setVisible(isFacilityLevel || isLaboratoryLevel);
+                animalFacCategoryDetails.setVisible(isFacilityLevel);
+                animalLabCategoryDetails.setVisible(isLaboratoryLevel);
                 break;
             case ENVIRONMENT:
                 environmentalCategoryDetails.setVisible(true);
@@ -507,16 +513,16 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 
     public void displayCategories(String property){
         List<CategoryDetailsLevel> categories;
+        categoryLevel.setVisible(true);
         switch (property) {
             case "[Environment]":
             case "[POE]":
-                categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY);
+                categories = Arrays.asList();
+                categoryLevel.setVisible(false);
                 break;
             case "[Animal]":
-                categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY, CategoryDetailsLevel.FACILITY);
-                break;
             case "[Human]":
-                categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY, CategoryDetailsLevel.FACILITY, CategoryDetailsLevel.LABORATORY);
+                categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY, CategoryDetailsLevel.FACILITY,CategoryDetailsLevel.LABORATORY);
                 break;
             default:
                 categories = Collections.emptyList();
