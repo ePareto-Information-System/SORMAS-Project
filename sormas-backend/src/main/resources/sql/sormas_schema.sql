@@ -13532,7 +13532,915 @@ ALTER TABLE cases ADD COLUMN lastvaccinationdate date;
 INSERT INTO schema_version (version_number, comment) VALUES (590, 'Added last vaccination date for IDSR 53');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
--- 2024-05-13 created ebs table
+-- VibrioRiskFactors create new table
+CREATE TABLE riskfactor (
+    id BIGINT PRIMARY KEY NOT NULL,
+    drinkingWaterSourceOne VARCHAR(255),
+    drinkingWaterSourceTwo VARCHAR(255),
+    drinkingWaterSourceThree VARCHAR(255),
+    drinkingWaterSourceFour VARCHAR(255),
+--     non drinking water source
+    nonDrinkingWaterSourceOne VARCHAR(255),
+    nonDrinkingWaterSourceTwo VARCHAR(255),
+    nonDrinkingWaterSourceThree VARCHAR(255),
+    nonDrinkingWaterSourceFour VARCHAR(255),
+--     food items
+    foodItemsOne VARCHAR(255),
+    foodItemsTwo VARCHAR(255),
+    foodItemsThree VARCHAR(255),
+    foodItemsFour VARCHAR(255),
+    foodItemsFive VARCHAR(255),
+    foodItemsSix VARCHAR(255),
+    foodItemsSeven VARCHAR(255),
+    foodItemsEight VARCHAR(255),
+    drinkingWaterInfectedByVibrio VARCHAR(255),
+    nonDrinkingWaterInfectedByVibrio VARCHAR(255),
+    foodItemsInfectedByVibrio VARCHAR(255),
+
+    waterUsedForDrinking VARCHAR(255),
+
+    threeDaysPriorToDiseaseWaterSourceOne VARCHAR(255),
+    threeDaysPriorToDiseaseWaterSourceTwo VARCHAR(255),
+    threeDaysPriorToDiseaseWaterSourceThree VARCHAR(255),
+    threeDaysPriorToDiseaseWaterSourceFour VARCHAR(255),
+    threeDaysPriorToDiseaseWaterSourceFive VARCHAR(255),
+
+--     Within 3 days prior to the onset of the disease did the patient eat …………………..
+    threeDaysPriorToDiseaseFoodItemsOne VARCHAR(255),
+    threeDaysPriorToDiseaseFoodItemsTwo VARCHAR(255),
+    threeDaysPriorToDiseaseFoodItemsThree VARCHAR(255),
+    threeDaysPriorToDiseaseFoodItemsFour VARCHAR(255),
+    threeDaysPriorToDiseaseFoodItemsFive VARCHAR(255),
+
+    threeDaysPriorToDiseaseAttendAnyFuneral VARCHAR(255),
+    threeDaysPriorToDiseaseAttendAnySocialEvent VARCHAR(255),
+    otherSocialEventDetails VARCHAR(255),
+    changedate TIMESTAMP(3),
+    change_user_id BIGINT,
+    creationdate DATE,
+    uuid VARCHAR(512)
+);
+
+ALTER TABLE cases ADD COLUMN riskfactor_id BIGINT;
+INSERT INTO schema_version (version_number, comment) VALUES (591, 'Added riskfactor_id to cases');
+
+ALTER TABLE epidata ADD COLUMN exposedToRiskFactor VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN waterUsedByPatientAfterExposure VARCHAR(255);
+ALTER TABLE riskfactor ADD COLUMN vibrioCholeraeIdentifiedInStools VARCHAR(255);
+ALTER TABLE riskfactor ADD COLUMN drugsSensitiveToVibrioStrain VARCHAR(255);
+ALTER TABLE riskfactor ADD COLUMN drugsResistantToVibrioStrain VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (592, 'Added columns to epiData, riskfactor to implement patientVisitedHealthCareFacility #26');
+
+-- 565
+ALTER TABLE cases ADD COLUMN motherVaccinatedWithTT varchar(255);
+ALTER TABLE cases ADD COLUMN motherHaveCard varchar(255);
+ALTER TABLE cases ADD COLUMN motherNumberOfDoses varchar(255);
+ALTER TABLE cases ADD COLUMN motherVaccinationStatus varchar(255);
+ALTER TABLE cases ADD COLUMN motherTTDateOne date;
+ALTER TABLE cases ADD COLUMN motherTTDateTwo date;
+ALTER TABLE cases ADD COLUMN motherTTDateThree date;
+ALTER TABLE cases ADD COLUMN motherTTDateFour date;
+ALTER TABLE cases ADD COLUMN motherTTDateFive date;
+ALTER TABLE cases ADD COLUMN motherLastDoseDate date;
+INSERT INTO schema_version (version_number, comment) VALUES (593, 'Added columns to cases to implement MOTHER VACCINATION HISTORY #26');
+
+
+ALTER TABLE person ADD COLUMN receivedAntenatalCare varchar(255);
+ALTER TABLE person ADD COLUMN prenatalTotalVisits varchar(255);
+ALTER TABLE person ADD COLUMN attendedByTrainedTBA varchar(255);
+ALTER TABLE person ADD COLUMN attendedByTrainedTBAMidwifeName varchar(255);
+ALTER TABLE person ADD COLUMN attendedByDoctorNurse varchar(255);
+ALTER TABLE person ADD COLUMN locationOfDelivery varchar(255);
+ALTER TABLE person ADD COLUMN birthByInstitution varchar(255);
+ALTER TABLE person ADD COLUMN birthByInstitutionName varchar(255);
+ALTER TABLE person ADD COLUMN cutCordWithSterileBlade varchar(255);
+ALTER TABLE person ADD COLUMN cordTreatedWithAnything varchar(255);
+ALTER TABLE person ADD COLUMN cordTreatedWithAnythingWhere varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (594, 'Added columns to person to implement BIRTH OF INFANT #26');
+
+ALTER TABLE symptoms ADD COLUMN babyNormalAtBirth varchar(255);
+ALTER TABLE symptoms ADD COLUMN normalCryAndSuck varchar(255);
+ALTER TABLE symptoms ADD COLUMN stoppedSuckingAfterTwoDays varchar(255);
+ALTER TABLE symptoms ADD COLUMN archedBack varchar(255);
+ALTER TABLE symptoms ADD COLUMN stiffness varchar(255);
+ALTER TABLE symptoms ADD COLUMN babyDied varchar(255);
+ALTER TABLE symptoms ADD COLUMN ageAtDeathDays varchar(255);
+ALTER TABLE symptoms ADD COLUMN ageAtOnsetDays varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (595, 'Added columns to symptoms to implement CLINICAL HISTORY FOR #26');
+
+ALTER TABLE cases ADD COLUMN seenInOPD varchar(255);
+ALTER TABLE cases ADD COLUMN admittedInOPD varchar(255);
+ALTER TABLE cases ADD COLUMN motherGivenProtectiveDoseTT varchar(255);
+ALTER TABLE cases ADD COLUMN motherGivenProtectiveDoseTTDate date;
+ALTER TABLE cases ADD COLUMN supplementalImmunization varchar(255);
+ALTER TABLE cases ADD COLUMN supplementalImmunizationDetails varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (596, 'Added columns to cases');
+
+-- 2024-03-27 Added marital status for Food Borne illness
+ALTER TABLE person ADD COLUMN maritalstatus varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (597, 'Added marital status for Food Borne illness');
+
+-- 2024-03-27 Added symptoms for Food Borne illness
+ALTER TABLE symptoms ADD COLUMN dizziness varchar(255);
+ALTER TABLE symptoms ADD COLUMN excessivesweating varchar(255);
+ALTER TABLE symptoms ADD COLUMN numbness varchar(255);
+ALTER TABLE symptoms ADD COLUMN symptomsongoing varchar(255);
+ALTER TABLE symptoms ADD COLUMN durationhours varchar(255);
+ALTER TABLE symptoms ADD COLUMN nameOfHealthFacility varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (598, ' Added symptoms and properties for Food Borne illness');
+
+ALTER TABLE hospitalization ADD COLUMN soughtmedicalattention VARCHAR(255);
+ALTER TABLE hospitalization ADD COLUMN nameoffacility VARCHAR(255);
+ALTER TABLE hospitalization ADD COLUMN locationaddress VARCHAR(255);
+ALTER TABLE hospitalization ADD COLUMN dateofvisithospital DATE;
+ALTER TABLE hospitalization ADD COLUMN physicianname VARCHAR(255);
+ALTER TABLE hospitalization ADD COLUMN physiciannumber VARCHAR(255);
+ALTER TABLE hospitalization ADD COLUMN labtestconducted VARCHAR(255);
+ALTER TABLE hospitalization ADD COLUMN typeofsample VARCHAR(255);
+ALTER TABLE hospitalization ADD COLUMN agentidentified VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (599, 'Added hospitalization properties for Food Borne illness');
+
+-- 2024-03-01 Added exposure history for Food Borne illness
+ALTER TABLE epidata ADD COLUMN intltravel varchar(255);
+ALTER TABLE epidata ADD COLUMN specifycountries varchar(512);
+ALTER TABLE epidata ADD COLUMN dateofdeparture date;
+ALTER TABLE epidata ADD COLUMN dateofarrival date;
+ALTER TABLE epidata ADD COLUMN domestictravel varchar(255);
+ALTER TABLE epidata ADD COLUMN specifylocation varchar(255);
+ALTER TABLE epidata ADD COLUMN dateofdeparture2 date;
+ALTER TABLE epidata ADD COLUMN dateofarrival2 date;
+ALTER TABLE epidata ADD COLUMN contactillperson varchar(255);
+ALTER TABLE epidata ADD COLUMN contactdate date;
+ALTER TABLE epidata ADD COLUMN specifyillness varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (600, 'Added exposure history for Food Borne illness ');
+
+-- 2024-04-02 Added food sample fields for Food Borne illness
+ALTER TABLE samples ADD COLUMN foodavailabletesting varchar(255);
+ALTER TABLE samples ADD COLUMN specifyfoodssources varchar(512);
+ALTER TABLE samples ADD COLUMN productname varchar(255);
+ALTER TABLE samples ADD COLUMN batchnumber varchar(255);
+ALTER TABLE samples ADD COLUMN dateofmanufacture DATE;
+ALTER TABLE samples ADD COLUMN expirationdate DATE;
+ALTER TABLE samples ADD COLUMN packagesize varchar(255);
+ALTER TABLE samples ADD COLUMN packagingtype varchar(255);
+ALTER TABLE samples ADD COLUMN packagingtypeother varchar(255);
+ALTER TABLE samples ADD COLUMN placeofpurchase varchar(255);
+ALTER TABLE samples ADD COLUMN nameofmanufacturer varchar(255);
+ALTER TABLE samples ADD COLUMN address varchar(255);
+ALTER TABLE samples ADD COLUMN labtestconducted varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (601, 'Added sample fields for Food Borne illness ');
+
+ALTER TABLE epidata ADD COLUMN nameofaffectedperson varchar(255);
+ALTER TABLE epidata ADD COLUMN nameofaffectedperson2 varchar(255);
+ALTER TABLE epidata ADD COLUMN nameofaffectedperson3 varchar(512);
+ALTER TABLE epidata ADD COLUMN nameofaffectedperson4 varchar(255);
+ALTER TABLE epidata ADD COLUMN telno varchar(255);
+ALTER TABLE epidata ADD COLUMN telno2 varchar(255);
+ALTER TABLE epidata ADD COLUMN telno3 varchar(255);
+ALTER TABLE epidata ADD COLUMN telno4 varchar(255);
+ALTER TABLE epidata ADD COLUMN datetime DATE;
+ALTER TABLE epidata ADD COLUMN datetime2 DATE;
+ALTER TABLE epidata ADD COLUMN datetime3 DATE;
+ALTER TABLE epidata ADD COLUMN datetime4 DATE;
+ALTER TABLE epidata ADD COLUMN age varchar(255);
+ALTER TABLE epidata ADD COLUMN age2 varchar(255);
+ALTER TABLE epidata ADD COLUMN age3 varchar(255);
+ALTER TABLE epidata ADD COLUMN age4 varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (602, 'Added four columns in epidata for Food Borne illness ');
+
+ALTER TABLE hospitalization ADD COLUMN requestedsymptomsselectedstring varchar(512);
+ALTER TABLE hospitalization ADD COLUMN othersymptomselected varchar(255);
+ALTER TABLE hospitalization ADD COLUMN onsetofsymptomdatetime DATE;
+ALTER TABLE hospitalization ADD COLUMN symptomsongoing varchar(255);
+ALTER TABLE hospitalization ADD COLUMN durationhours varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (603, 'Added hospitalization fields for Food Borne illness ');
+
+-- 2024-04-22 Added food history section for Food Borne illness
+ALTER TABLE epidata ADD COLUMN suspectedfood VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN dateconsumed DATE;
+ALTER TABLE epidata ADD COLUMN foodsource VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN eventtype VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN eventotherspecify VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN breakfast VARCHAR(55);
+ALTER TABLE epidata ADD COLUMN totalnopersons VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumed VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffood VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplace VARCHAR(3);
+ALTER TABLE epidata ADD COLUMN lunch VARCHAR(55);
+ALTER TABLE epidata ADD COLUMN totalnopersonsl1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumedl1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffoodl1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplacel1 VARCHAR(3);
+ALTER TABLE epidata ADD COLUMN supper VARCHAR(55);
+ALTER TABLE epidata ADD COLUMN totalnopersonss1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumeds1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffoodss1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplaces1 VARCHAR(3);
+ALTER TABLE epidata ADD COLUMN breakfast2 VARCHAR(3);
+ALTER TABLE epidata ADD COLUMN totalnopersons2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumed2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffood2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplace2 VARCHAR(3);
+ALTER TABLE epidata ADD COLUMN lunchl2 VARCHAR(55);
+ALTER TABLE epidata ADD COLUMN totalnopersonsl2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumedl2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffoodl2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplacel2 VARCHAR(3);
+ALTER TABLE epidata ADD COLUMN suppers2 VARCHAR(55);
+ALTER TABLE epidata ADD COLUMN totalnopersonss2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumeds2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffoods2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplaces2 VARCHAR(3);
+ALTER TABLE epidata ADD COLUMN breakfast3 VARCHAR(55);
+ALTER TABLE epidata ADD COLUMN totalnopersons3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumed3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffood3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplace3 VARCHAR(3);
+ALTER TABLE epidata ADD COLUMN lunchl3 VARCHAR(55);
+ALTER TABLE epidata ADD COLUMN totalnopersonsl3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumedl3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffoodl3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplacel3 VARCHAR(3);
+ALTER TABLE epidata ADD COLUMN suppers3 VARCHAR(55);
+ALTER TABLE epidata ADD COLUMN totalnopersonss3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodconsumeds3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN sourceoffoods3 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN consumedatplaces3 VARCHAR(55);
+
+INSERT INTO schema_version (version_number, comment) VALUES (604, 'Added food history section for Food Borne illness');
+
+-- 2024-04-22 Added food sample testing section for Food Borne illness
+ALTER TABLE sixtyday ADD COLUMN foodavailabletesting VARCHAR(3);
+ALTER TABLE sixtyday ADD COLUMN labtestconducted VARCHAR(3);
+ALTER TABLE sixtyday ADD COLUMN specifyfoodssources VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN productname VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN batchnumber VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN dateofmanufacture DATE;
+ALTER TABLE sixtyday ADD COLUMN expirationdate DATE;
+ALTER TABLE sixtyday ADD COLUMN packagesize VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN packagingtype VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN packagingtypeother VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN placeofpurchase VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN nameofmanufacturer VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN address VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN foodtel VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN investigationnotes VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN suspecteddiagnosis VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN confirmeddiagnosis VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN investigatedby VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN investigatorsignature VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN investigatordate DATE;
+ALTER TABLE sixtyday ADD COLUMN surname VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN firstname VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN middlename VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN telno VARCHAR(255);
+ALTER TABLE sixtyday ADD COLUMN dateofcompletionofform DATE;
+ALTER TABLE sixtyday ADD COLUMN nameofhealthfacility VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (605, 'Added food sample testing section for Food Borne illness');
+
+-- 2024-04-02 Removed food sample fields for Food Borne illness in Sample
+ALTER TABLE samples DROP COLUMN foodavailabletesting;
+ALTER TABLE samples DROP COLUMN specifyfoodssources;
+ALTER TABLE samples DROP COLUMN productname;
+ALTER TABLE samples DROP COLUMN batchnumber;
+ALTER TABLE samples DROP COLUMN dateofmanufacture ;
+ALTER TABLE samples DROP COLUMN expirationdate;
+ALTER TABLE samples DROP COLUMN packagesize;
+ALTER TABLE samples DROP COLUMN packagingtype;
+ALTER TABLE samples DROP COLUMN packagingtypeother;
+ALTER TABLE samples DROP COLUMN placeofpurchase;
+ALTER TABLE samples DROP COLUMN nameofmanufacturer;
+ALTER TABLE samples DROP COLUMN address;
+
+INSERT INTO schema_version (version_number, comment) VALUES (606, 'Removed food sample testing section for Food Borne illness in Sample');
+
+ALTER TABLE person DROP COLUMN maritalstatus;
+ALTER TABLE person ADD COLUMN marriagestatus VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (607, 'Removed maritalstatus and added marriagestatus to person for Food Borne illness in Sample');
+
+
+-- 2024-04-27 Added Tel Number for Food Borne illness at Person
+ALTER TABLE person ADD COLUMN telnumber VARCHAR(55);
+
+INSERT INTO schema_version (version_number, comment) VALUES (608, 'Added Tel Number for Food Borne illness at Person');
+
+-- 2024-04-29 Added 7 properties to case create for MPox
+ALTER TABLE cases ADD COLUMN addressmpox VARCHAR(255);
+ALTER TABLE cases ADD COLUMN village VARCHAR(255);
+ALTER TABLE cases ADD COLUMN city VARCHAR(255);
+ALTER TABLE cases ADD COLUMN nationality VARCHAR(255);
+ALTER TABLE cases ADD COLUMN ethnicity VARCHAR(255);
+ALTER TABLE cases ADD COLUMN occupation VARCHAR(255);
+ALTER TABLE cases ADD COLUMN districtofresidence VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (609, 'Added 7 properties to case create for MPox');
+
+-- 2024-04-29 Added requestedsymptomsselectedstring to symptoms for MPox
+
+ALTER TABLE symptoms ADD COLUMN requestedsymptomsselectedstring varchar(512);
+ALTER TABLE symptoms ADD COLUMN requestedrashsymptomsstring varchar(512);
+ALTER TABLE symptoms ADD COLUMN dateofonsetrash Date;
+ALTER TABLE symptoms ADD COLUMN rashsymptomsotherareas varchar(255);
+ALTER TABLE symptoms ADD COLUMN arelesionssamestate varchar(55);
+ALTER TABLE symptoms ADD COLUMN arelesionssamesize varchar(55);
+ALTER TABLE symptoms ADD COLUMN arelesionsdeep varchar(55);
+ALTER TABLE symptoms ADD COLUMN areulcersamong varchar(55);
+ALTER TABLE symptoms ADD COLUMN typeofrash varchar(512);
+ALTER TABLE symptoms ADD COLUMN symptomsselectedother varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (610, 'Added 9 properties to symptoms for MPox');
+
+-- VibrioRiskFactors create new table
+-- CREATE TABLE riskfactor (
+--     id BIGINT PRIMARY KEY NOT NULL,
+--     drinkingWaterSourceOne VARCHAR(255),
+--     drinkingWaterSourceTwo VARCHAR(255),
+--     drinkingWaterSourceThree VARCHAR(255),
+--     drinkingWaterSourceFour VARCHAR(255),
+-- --     non drinking water source
+--     nonDrinkingWaterSourceOne VARCHAR(255),
+--     nonDrinkingWaterSourceTwo VARCHAR(255),
+--     nonDrinkingWaterSourceThree VARCHAR(255),
+--     nonDrinkingWaterSourceFour VARCHAR(255),
+-- --     food items
+--     foodItemsOne VARCHAR(255),
+--     foodItemsTwo VARCHAR(255),
+--     foodItemsThree VARCHAR(255),
+--     foodItemsFour VARCHAR(255),
+--     foodItemsFive VARCHAR(255),
+--     foodItemsSix VARCHAR(255),
+--     foodItemsSeven VARCHAR(255),
+--     foodItemsEight VARCHAR(255),
+--     drinkingWaterInfectedByVibrio VARCHAR(255),
+--     nonDrinkingWaterInfectedByVibrio VARCHAR(255),
+--     foodItemsInfectedByVibrio VARCHAR(255),
+--
+--     waterUsedForDrinking VARCHAR(255),
+--
+--     threeDaysPriorToDiseaseWaterSourceOne VARCHAR(255),
+--     threeDaysPriorToDiseaseWaterSourceTwo VARCHAR(255),
+--     threeDaysPriorToDiseaseWaterSourceThree VARCHAR(255),
+--     threeDaysPriorToDiseaseWaterSourceFour VARCHAR(255),
+--     threeDaysPriorToDiseaseWaterSourceFive VARCHAR(255),
+--
+-- --     Within 3 days prior to the onset of the disease did the patient eat …………………..
+--     threeDaysPriorToDiseaseFoodItemsOne VARCHAR(255),
+--     threeDaysPriorToDiseaseFoodItemsTwo VARCHAR(255),
+--     threeDaysPriorToDiseaseFoodItemsThree VARCHAR(255),
+--     threeDaysPriorToDiseaseFoodItemsFour VARCHAR(255),
+--     threeDaysPriorToDiseaseFoodItemsFive VARCHAR(255),
+--
+--     threeDaysPriorToDiseaseAttendAnyFuneral VARCHAR(255),
+--     threeDaysPriorToDiseaseAttendAnySocialEvent VARCHAR(255),
+--     otherSocialEventDetails VARCHAR(255),
+--     changedate TIMESTAMP(3),
+--     change_user_id BIGINT,
+--     creationdate DATE,
+--     uuid VARCHAR(512)
+-- );
+--
+-- ALTER TABLE cases ADD COLUMN riskfactor_id BIGINT;
+
+INSERT INTO schema_version (version_number, comment) VALUES (611, 'Added riskfactor - riskfactors_id to cases');
+
+-- ALTER TABLE epidata ADD COLUMN exposedToRiskFactor VARCHAR(255);
+-- ALTER TABLE epidata ADD COLUMN waterUsedByPatientAfterExposure VARCHAR(255);
+-- ALTER TABLE riskfactor ADD COLUMN vibrioCholeraeIdentifiedInStools VARCHAR(255);
+-- ALTER TABLE riskfactor ADD COLUMN drugsSensitiveToVibrioStrain VARCHAR(255);
+-- ALTER TABLE riskfactor ADD COLUMN drugsResistantToVibrioStrain VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (612, 'Added columns to epiData, riskfactor to implement patientVisitedHealthCareFacility #26');
+
+-- For risk factor assessment
+ALTER TABLE riskfactor ADD COLUMN patientspoxvaccinationscarpresent VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN patienttravelledanywhere3weeksprior VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN patienttravelled3weeksifyesindicate VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN patienttravelledperiodofillness VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN patienttravelledillnessifyesindicate VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN otherplaces VARCHAR(512);
+ALTER TABLE riskfactor ADD COLUMN during3weekspatientcontactwithsimilarsymptoms VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN during3weekspatientcontactwithsimilarsymptomsifyes VARCHAR(512);
+ALTER TABLE riskfactor ADD COLUMN dateofcontactwithillperson Date;
+ALTER TABLE riskfactor ADD COLUMN patienttouchdomesticwildanimal VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN patienttouchdomesticwildanimalifyes VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN statusofpatient VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN dateofdeath Date;
+ALTER TABLE riskfactor ADD COLUMN placeofdeath VARCHAR(255);
+ALTER TABLE riskfactor ADD COLUMN dateofspecimencollection Date;
+ALTER TABLE riskfactor ADD COLUMN typeofspecimencollection VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN investigatorname VARCHAR(255);
+ALTER TABLE riskfactor ADD COLUMN investigatortitle VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN investigatoraddress VARCHAR(255);
+ALTER TABLE riskfactor ADD COLUMN investigatortel VARCHAR(55);
+ALTER TABLE riskfactor ADD COLUMN email VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (613, 'Added columns to risk factor assessment for MonkeyPox');
+
+ALTER TABLE location ADD COLUMN village varchar(255);
+ALTER TABLE location ADD COLUMN zone varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (614, 'Added village, zone to location');
+
+ALTER TABLE cases ADD COLUMN reportingVillage varchar(255);
+ALTER TABLE cases ADD COLUMN reportingZone varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (615, 'Added reportingVillage, reportingZone to cases');
+
+ALTER TABLE person ADD COLUMN ethnicity varchar(255);
+ALTER TABLE person ADD COLUMN placeStayedtenToFourteenMonthsVillage varchar(255);
+ALTER TABLE person ADD COLUMN placeStayedtenToFourteenMonthsZone varchar(255);
+ALTER TABLE person ADD COLUMN placeStayedtenToFourteenMonthsCommunity_id BIGINT;
+ALTER TABLE person ADD COLUMN placeStayedtenToFourteenMonthsDistrict_id BIGINT;
+ALTER TABLE person ADD COLUMN placeStayedtenToFourteenMonthsRegion_id BIGINT;
+ALTER TABLE person ADD COLUMN placeStayedtenToFourteenMonthsCountry_id BIGINT;
+INSERT INTO schema_version (version_number, comment) VALUES (616, 'Added fields to person to implement placeStayedtenToFourteenMonths #26');
+
+-- persontravelhistory
+CREATE TABLE persontravelhistory(
+   id bigint not null,
+   uuid varchar(36) not null unique,
+   changedate timestamp not null,
+   creationdate timestamp not null,
+   epidata_id bigint not null,
+   travelPeriodType varchar(255),
+   dateFrom varchar(255),
+   dateTo varchar(255),
+   village varchar(255),
+   subDistrict_id bigint,
+   district_id bigint,
+   region_id varchar(255),
+--    sys_period tstzrange not null,
+   primary key(id)
+);
+
+ALTER TABLE persontravelhistory OWNER TO sormas_user;
+ALTER TABLE persontravelhistory ADD CONSTRAINT fk_persontravelhistory_epidata_id FOREIGN KEY (epidata_id) REFERENCES epidata(id);
+INSERT INTO schema_version (version_number, comment) VALUES (617, 'Added fields to implement persontravel history for epid data');
+
+ALTER TABLE persontravelhistory ADD COLUMN change_user_id BIGINT,
+                           ADD CONSTRAINT fk_change_user_id
+                               FOREIGN KEY (change_user_id)
+                                   REFERENCES users (id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (618, 'Added change_user_id to persontravelhistory');
+
+ALTER TABLE symptoms ADD COLUMN firstSignOrSymptomsBeforeWorm varchar(255);
+ALTER TABLE symptoms ADD COLUMN firstSignOrSymptomsBeforeWormOthers varchar(255);
+ALTER TABLE symptoms ADD COLUMN emergenceOfGuineaWorm varchar(255);
+ALTER TABLE symptoms ADD COLUMN numberOfWorms varchar(255);
+ALTER TABLE symptoms ADD COLUMN firstWormThisYear varchar(255);
+ALTER TABLE symptoms ADD COLUMN dateFirstWormEmergence DATE;
+ALTER TABLE symptoms ADD COLUMN caseDetectedBeforeWormEmergence varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (619, 'Added columns to symptoms to implement guinea worm symptoms data');
+
+CREATE TABLE contaminationsources(
+                                    id bigint not null,
+                                    uuid varchar(36) not null unique,
+                                    changedate timestamp not null,
+                                    creationdate timestamp not null,
+                                    epidata_id bigint not null,
+                                    contaminationType varchar(255),
+                                    name varchar(255),
+                                    longitude varchar(255),
+                                    latitude varchar(255),
+                                    type varchar(255),
+                                    source varchar(255),
+                                    treatedWithAbate varchar(255),
+                                    abateTreatmentDate varchar(255),
+                                    primary key(id)
+);
+
+ALTER TABLE contaminationsources OWNER TO sormas_user;
+ALTER TABLE contaminationsources ADD CONSTRAINT fk_contaminationsources_epidata_id FOREIGN KEY (epidata_id) REFERENCES epidata(id);
+ALTER TABLE contaminationsources ADD COLUMN change_user_id BIGINT,
+                           ADD CONSTRAINT fk_change_user_id
+                               FOREIGN KEY (change_user_id)
+                                   REFERENCES users (id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (620, 'Added fields to implement contaminationsources for epid data');
+
+CREATE TABLE containmentMeasures(
+    id bigint not null,
+    uuid varchar(36) not null unique,
+    changedate timestamp not null,
+    creationdate timestamp not null,
+    epidata_id bigint not null,
+    locationOfWorm varchar(255),
+    dateWormDetectedEmergence varchar(255),
+    dateWormDetectBySupervisor varchar(255),
+    dateConfirmed varchar(255),
+    dateOfGuineaWormExpelled varchar(255),
+    regularBandaging varchar(255),
+    completelyExtracted varchar(255),
+    primary key(id)
+);
+ALTER TABLE containmentMeasures OWNER TO sormas_user;
+ALTER TABLE containmentMeasures ADD CONSTRAINT fk_containmentMeasures_epidata_id FOREIGN KEY (epidata_id) REFERENCES epidata(id);
+ALTER TABLE containmentMeasures ADD COLUMN change_user_id BIGINT,
+                           ADD CONSTRAINT fk_change_user_id
+                               FOREIGN KEY (change_user_id)
+                                   REFERENCES users (id);
+INSERT INTO schema_version(version_number, comment) VALUES (621, 'Added fields to implement containmentMeasures for epid data');
+
+ALTER TABLE samples ADD COLUMN receivedByRegion varchar(255);
+ALTER TABLE samples ADD COLUMN receivedByNational varchar(255);
+ALTER TABLE samples ADD COLUMN specimenSavedAndPreservedInAlcohol varchar(255);
+ALTER TABLE samples ADD COLUMN specimenSavedAndPreservedInAlcoholWhy varchar(255);
+ALTER TABLE samples ADD COLUMN sentForConfirmationNational varchar(255);
+ALTER TABLE samples ADD COLUMN sentForConfirmationNationalDate DATE;
+ALTER TABLE samples ADD COLUMN sentForConfirmationTo varchar(255);
+ALTER TABLE samples ADD COLUMN dateResultReceivedNational DATE;
+ALTER TABLE samples ADD COLUMN useOfClothFilter varchar(255);
+ALTER TABLE samples ADD COLUMN frequencyOfChangingFilters varchar(255);
+ALTER TABLE samples ADD COLUMN remarks varchar(255);
+ALTER TABLE epidata ADD COLUMN receivedHealthEducation varchar(255);
+ALTER TABLE epidata ADD COLUMN patientEnteredWaterSource varchar(255);
+ALTER TABLE epidata ADD COLUMN placeManaged varchar(255);
+ALTER TABLE epidata ADD COLUMN placeManagedOther varchar(255);
+INSERT INTO schema_version(version_number, comment) VALUES (622, 'Added new fields to samples, person and epidata');
+
+-- Lab Section for CSM
+ALTER TABLE pathogentest ADD COLUMN laboratorytestperformed varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorytestperformedother varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorycytology varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorygram varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorygramother varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryrdtperformed varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryrdtresults varchar(512);
+ALTER TABLE pathogentest ADD COLUMN laboratorylatex varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorylatexotherresults varchar(255);
+ALTER TABLE pathogentest ADD COLUMN datesentreportinghealthfac date;
+ALTER TABLE pathogentest ADD COLUMN datesamplesentregreflab date;
+ALTER TABLE pathogentest ADD COLUMN laboratoryculture varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorycultureother varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryothertests varchar(512);
+ALTER TABLE pathogentest ADD COLUMN laboratoryothertestsresults varchar(512);
+ALTER TABLE pathogentest ADD COLUMN laboratoryceftriaxone varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorypenicilling varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryamoxycillin varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryoxacillin varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryantibiogramother varchar(255);
+ALTER TABLE pathogentest ADD COLUMN datesamplesentregLab date;
+ALTER TABLE pathogentest ADD COLUMN laboratorydatepcrperformed date;
+ALTER TABLE pathogentest ADD COLUMN laboratorypcrtype varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorypcroptions varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryserotype varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryserotypetype varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryserotyperesults varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryfinalresults varchar(512);
+ALTER TABLE pathogentest ADD COLUMN laboratoryobservations varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorydateresultssenthealthfacility date;
+ALTER TABLE pathogentest ADD COLUMN laboratorydateresultssentdsd date;
+ALTER TABLE pathogentest ADD COLUMN laboratoryfinalclassification varchar(255);
+
+--History
+ALTER TABLE pathogentest_history ADD COLUMN laboratorytestperformed varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorytestperformedother varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorycytology varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorygram varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorygramother varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryrdtperformed varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryrdtresults varchar(512);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorylatex varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorylatexotherresults varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN datesentreportinghealthfac date;
+ALTER TABLE pathogentest_history ADD COLUMN datesamplesentregreflab date;
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryculture varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorycultureother varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryothertests varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryothertestsresults varchar(512);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryceftriaxone varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorypenicilling varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryamoxycillin varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryoxacillin varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryantibiogramother varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN datesamplesentregLab date;
+ALTER TABLE pathogentest_history ADD COLUMN laboratorydatepcrperformed date;
+ALTER TABLE pathogentest_history ADD COLUMN laboratorypcrtype varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorypcroptions varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryserotype varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryserotypetype varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryserotyperesults varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryfinalresults varchar(512);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryobservations varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratorydateresultssenthealthfacility date;
+ALTER TABLE pathogentest_history ADD COLUMN laboratorydateresultssentdsd date;
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryfinalclassification varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (623, 'Added columns to lab section for CSM');
+
+ALTER TABLE pathogentest ADD COLUMN laboratorytype varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratoryname varchar(255);
+
+ALTER TABLE pathogentest_history ADD COLUMN laboratorytype varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN laboratoryname varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (624, 'Added 2 extra columns to lab section for CSM');
+
+ALTER TABLE symptoms ADD COLUMN diarrhoea VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN abdominalCramps VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN headaches VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (625, 'Added columns to symptoms to implement patientVisitedHealthCareFacility #26');
+
+-- Other Notes and Observations
+ALTER TABLE cases ADD COLUMN otherNotesAndObservations VARCHAR(255);
+ALTER TABLE cases ADD COLUMN dateLatestUpdateRecord DATE;
+INSERT INTO schema_version (version_number, comment) VALUES (626, 'Added columns to cases to implement otherNotesAndObservations #26');
+
+-- Number of people in same household
+ALTER TABLE cases ADD COLUMN numberOfPeopleInSameHousehold VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (627, 'Added columns to cases to implement numberOfPeopleInSameHousehold #26');
+
+-- Adding columns to pathogentest for IDSR 09-05-2024
+ALTER TABLE pathogentest ADD COLUMN lablocation varchar(255);
+ALTER TABLE pathogentest ADD COLUMN dateLabReceivedSpecimen Date;
+ALTER TABLE pathogentest ADD COLUMN specimencondition varchar(255);
+ALTER TABLE pathogentest ADD COLUMN datelabresultssentdistrict Date;
+ALTER TABLE pathogentest ADD COLUMN datelabresultssentclinician Date;
+ALTER TABLE pathogentest ADD COLUMN datedistrictreceivedlabresults Date;
+
+INSERT INTO schema_version (version_number, comment) VALUES (628, 'Added columns to pathogentest for IDSR');
+
+-- Adding columns to cases for IDSR 09-05-2024
+ALTER TABLE cases ADD COLUMN idsrdiagnosis character varying(255);
+ALTER TABLE cases ADD COLUMN specifyeventdiagnosis character varying(255);
+
+ALTER TABLE cases_history ADD COLUMN idsrdiagnosis character varying(255);
+ALTER TABLE cases_history ADD COLUMN specifyeventdiagnosis character varying(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (629, 'Added columns to cases for IDSR');
+
+ALTER TABLE location ADD COLUMN nearestHealthFacilityToVillage varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (630, 'Added nearestHealthFacilityToVillage to location');
+
+ALTER TABLE hospitalization ADD COLUMN selectinpatientoutpatient varchar(255);
+ALTER TABLE person ADD COLUMN applicable varchar(55);
+ALTER TABLE symptoms ADD COLUMN outcomeother varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (631, 'Added 4 columns and dropped telnumber');
+
+ALTER TABLE symptoms ADD COLUMN redeyes varchar(255) NULL;
+ALTER TABLE symptoms ADD COLUMN generalizedrash varchar(255) NULL;
+ALTER TABLE symptoms ADD COLUMN swollenlymphnodesbehindears varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (632, 'Added column to redEyes, generalizedRash, swollenLymphNodesBehindEars to symptoms');
+
+
+ALTER TABLE samples ADD COLUMN datesurveillancesentresultstodistrict date;
+ALTER TABLE samples ADD COLUMN dateformsenttohigherlevel date;
+ALTER TABLE samples ADD COLUMN personcompletingform varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (633, 'Added column to dateSurveillanceSentResultsToDistrict, dateFormSentToHigherLevel, personCompletingForm to samples');
+
+ALTER TABLE symptoms ADD COLUMN historyoftraveloutsidethevillagetowndistrict varchar(255) NULL;
+ALTER TABLE symptoms ADD COLUMN placeOfExposureMeaslesRubella varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (634, 'Added column to historyOfTravelOutsideTheVillageTownDistrict, placeOfExposureMeaslesRubella to symptoms');
+
+ALTER TABLE pathogentest ADD COLUMN virusDetectionGenotype varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (635, 'Added column to pathogentest to samples');
+
+ALTER TABLE samples ADD COLUMN finalClassification varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (636, 'Added column to finalClassification to samples');
+
+ALTER TABLE cases ADD COLUMN dateFormSentToDistrict varchar(255) NULL;
+ALTER TABLE cases_history ADD COLUMN dateFormSentToDistrict varchar(255) NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (637, 'Added column to cases');
+
+ALTER TABLE riskfactor DROP COLUMN vibrioCholeraeIdentifiedInStools;
+ALTER TABLE riskfactor DROP COLUMN drugsSensitiveToVibrioStrain;
+ALTER TABLE riskfactor DROP COLUMN drugsResistantToVibrioStrain;
+
+
+ALTER TABLE pathogentest ADD COLUMN vibrioCholeraeIdentifiedInStools VARCHAR(255);
+ALTER TABLE pathogentest ADD COLUMN drugsSensitiveToVibrioStrain VARCHAR(255);
+ALTER TABLE pathogentest ADD COLUMN drugsResistantToVibrioStrain VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (638, 'Added columns to pathogentest to implement vibrioCholeraeIdentifiedInStools, drugsSensitiveToVibrioStrain, drugsResistantToVibrioStrain and DROP on riskfactor');
+
+ALTER TABLE samples DROP COLUMN finalClassification;
+ALTER TABLE pathogentest ADD COLUMN finalClassification varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (639, 'Drop finalClassification from samples and add to pathogentest');
+
+ALTER TABLE location ADD COLUMN residentialaddress varchar(255) NULL;
+ALTER TABLE pathogentest ADD COLUMN othernotesandobservations varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (640, 'Added column to residentialAddress to location and otherNotesAndObservations to pathogentest');
+
+ALTER TABLE pathogentest ADD COLUMN laboratorycytologypmn varchar(255);
+ALTER TABLE pathogentest ADD COLUMN laboratorycytologylymph varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (641, 'Added columns to pathogentest for CSM');
+
+ALTER TABLE epidata ADD COLUMN nameofvaccine varchar(255);
+ALTER TABLE epidata ADD COLUMN previouslyvaccinatedagainstcovid varchar(55);
+ALTER TABLE epidata ADD COLUMN yearofvaccinationcovid Date;
+ALTER TABLE epidata ADD COLUMN nameofvaccinecovid varchar(255);
+ALTER TABLE epidata ADD COLUMN ifyesspecifysick varchar(255);
+ALTER TABLE epidata ADD COLUMN contactdeadanimals varchar(255);
+ALTER TABLE epidata ADD COLUMN ifyesspecifydead varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (642, 'Added 7 columns to epidata for ILI');
+
+ALTER TABLE pathogentest ADD COLUMN testresultvariant varchar(255);
+ALTER TABLE pathogentest ADD COLUMN variantotherspecify varchar(255);
+ALTER TABLE pathogentest ADD COLUMN secondtesteddisease varchar(255);
+ALTER TABLE pathogentest ADD COLUMN testresultforseconddisease varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (643, 'Added 4 columns to pathogentest for ILI');
+
+ALTER TABLE cases ADD COLUMN investigationOfficerName varchar(255);
+ALTER TABLE cases ADD COLUMN investigationOfficerPosition varchar(255);
+INSERT INTO schema_version(version_number, comment) VALUES (644, 'Added investigationOfficerName, investigationOfficerPosition to cases');
+
+ALTER TABLE cases ADD COLUMN formCompletedByName varchar(255);
+ALTER TABLE cases ADD COLUMN formCompletedByPosition varchar(255);
+ALTER TABLE cases ADD COLUMN formCompletedByCellPhoneNo varchar(255);
+INSERT INTO schema_version(version_number, comment) VALUES (645, 'Added formCompletedByName, formCompletedByPosition, formCompletedByCellPhoneNo to cases');
+
+ALTER TABLE person RENAME COLUMN placeStayedtenToFourteenMonthsVillage TO pst14MonthsVillage;
+ALTER TABLE person RENAME COLUMN placeStayedtenToFourteenMonthsZone TO pst14MonthsZone;
+ALTER TABLE person RENAME COLUMN placeStayedtenToFourteenMonthsCommunity_id TO pst14MonthsCommunity_id;
+ALTER TABLE person RENAME COLUMN placeStayedtenToFourteenMonthsDistrict_id TO pst14MonthsDistrict_id;
+ALTER TABLE person RENAME COLUMN placeStayedtenToFourteenMonthsRegion_id TO pst14MonthsRegion_id;
+ALTER TABLE person RENAME COLUMN placeStayedtenToFourteenMonthsCountry_id TO pst14MonthsCountry_id;
+INSERT INTO schema_version(version_number, comment) VALUES (646, 'Renamed placeStayedtenToFourteenMonths fields in person');
+
+ALTER TABLE person ADD COLUMN placeOfResidenceSameAsReportingVillage varchar(255);
+ALTER TABLE person ADD COLUMN residenceSinceWhenInMonths varchar(255);
+INSERT INTO schema_version(version_number, comment) VALUES (647, 'Added new fields to person');
+
+ALTER TABLE person ADD COLUMN locationOfBirth varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (648, 'Added locationOfBirth to person');
+
+ALTER TABLE person ADD COLUMN birthInInstitution varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (649, 'Added birthInInstitution to person');
+-- *** Insert new sql commands BEFORE this line. Remember to alway
+ALTER TABLE cases ADD COLUMN notifiedbylist varchar(255);
+ALTER TABLE cases ADD COLUMN notifiedother varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (650, 'Added 2 columns to case for AFP');
+
+CREATE TABLE afpimmunization (
+             id BIGINT PRIMARY KEY NOT NULL,
+             totalnumberdoses INTEGER,
+             opvdoseatbirth VARCHAR(255),
+             seconddose VARCHAR(255),
+             fourthdose VARCHAR(255),
+             firstdose VARCHAR(255),
+             thirddose VARCHAR(255),
+             lastdose VARCHAR(255),
+             totalopvdosesreceivedthroughsia VARCHAR(255),
+             totalopvdosesreceivedthroughri VARCHAR(255),
+             datelastopvdosesreceivedthroughsia VARCHAR(255),
+             totalipvdosesreceivedthroughsia VARCHAR(255),
+             totalipvdosesreceivedthroughri VARCHAR(255),
+             datelastipvreceivedthroughsia DATE,
+             sourcerivaccinationinformation VARCHAR(255),
+             changedate TIMESTAMP(3),
+             change_user_id BIGINT,
+             creationdate DATE,
+             datelastipvdosesreceivedthroughsia varchar(255),
+             uuid VARCHAR(512)
+);
+
+ALTER TABLE cases ADD COLUMN afpimmunization_id BIGINT;
+
+INSERT INTO schema_version (version_number, comment) VALUES (651, 'Created afpimmunization table and altered cases table');
+
+ALTER TABLE symptoms ADD COLUMN requestedsiteOfparalysisstring varchar(512);
+ALTER TABLE symptoms DROP COLUMN siteofparalysis ;
+
+INSERT INTO schema_version (version_number, comment) VALUES (652, 'updated requestedsiteOfparalysisstring and dropped siteofparalysis for AFP');
+
+ALTER TABLE epidata ADD COLUMN historyoftraveloutsidethevillagetowndistrict varchar(255) NULL;
+ALTER TABLE epidata ADD COLUMN historyoftraveloutsidethevillagetowndistrictdetails varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (653, 'Added column to historyOfTravelOutsideTheVillageTownDistrictDetails to epidata');
+
+ALTER TABLE symptoms DROP COLUMN historyoftraveloutsidethevillagetowndistrict;
+ALTER TABLE symptoms DROP COLUMN placeOfExposureMeaslesRubella;
+INSERT INTO schema_version (version_number, comment) VALUES (654, 'Drop historyOfTravelOutsideTheVillageTownDistrict and placeOfExposureMeaslesRubella on symptoms');
+
+ALTER TABLE epidata ADD COLUMN historyoftravelregion_id varchar(255) NULL;
+ALTER TABLE epidata ADD COLUMN historyoftraveldistrict_id varchar(255) NULL;
+ALTER TABLE epidata ADD COLUMN historyOfTravelSubDistrict_id varchar(255) NULL;
+ALTER TABLE epidata ADD COLUMN historyOfTravelVillage varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (655, 'Added column to historyOfTravelRegion, historyOfTravelDistrict, historyOfTravelSubDistrict, historyOfTravelVillage to epidata');
+
+ALTER TABLE cases ADD COLUMN mobileteamno VARCHAR(255);
+ALTER TABLE cases ADD COLUMN informationgivenby VARCHAR(255);
+ALTER TABLE cases ADD COLUMN familylinkwithpatient VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (656, 'Added mobileteamno to cases table');
+
+ALTER TABLE person ADD COLUMN headhousehold VARCHAR(255);
+ALTER TABLE person ADD COLUMN professionofpatientstring VARCHAR(512);
+ALTER TABLE person ADD COLUMN professionofpatientother VARCHAR(255);
+ALTER TABLE person ADD COLUMN namehealthfacility VARCHAR(255);
+ALTER TABLE person ADD COLUMN service VARCHAR(255);
+ALTER TABLE person ADD COLUMN qualification VARCHAR(255);
+ALTER TABLE person ADD COLUMN nameofvillagepersongotIll VARCHAR(255);
+
+ALTER TABLE person_history ADD COLUMN headhousehold VARCHAR(255);
+ALTER TABLE person_history ADD COLUMN professionofpatientstring VARCHAR(512);
+ALTER TABLE person_history ADD COLUMN professionofpatientother VARCHAR(255);
+ALTER TABLE person_history ADD COLUMN namehealthfacility VARCHAR(255);
+ALTER TABLE person_history ADD COLUMN service VARCHAR(255);
+ALTER TABLE person_history ADD COLUMN qualification VARCHAR(255);
+ALTER TABLE person_history ADD COLUMN nameofvillagepersongotIll VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (657, 'added columns for AHF fields');
+
+ALTER TABLE symptoms ADD COLUMN patientHaveFever VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN outcomeDate Date;
+ALTER TABLE symptoms ADD COLUMN outcomePlaceCommVillage VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN nameService VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN placeOfFuneralNameVillage VARCHAR(255);
+
+ALTER TABLE symptoms_history ADD COLUMN patientHaveFever VARCHAR(255);
+ALTER TABLE symptoms_history ADD COLUMN outcomeDate Date;
+ALTER TABLE symptoms_history ADD COLUMN outcomePlaceCommVillage VARCHAR(255);
+ALTER TABLE symptoms_history ADD COLUMN nameService VARCHAR(255);
+ALTER TABLE symptoms_history ADD COLUMN placeOfFuneralNameVillage VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (658, 'added columns for AHF fields at symptoms');
+
+ALTER TABLE epidata ADD COLUMN patienttravelduringillness VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN comm1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN comm2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN healthcenter1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN healthcenter2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN country1 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN country2 VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN waspatienthospitalized VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN ifyeswhere VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN hospitalizeddate1 DATE;
+ALTER TABLE epidata ADD COLUMN hospitalizeddate2 DATE;
+ALTER TABLE epidata ADD COLUMN didpatientconsulthealer VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN ifyesnamehealer VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN community VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN country VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN whenwherecontacttakeplace VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN dateofcontact DATE;
+ALTER TABLE epidata ADD COLUMN patientreceivetraditionalmedicine VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN ifyesexplain VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN patientattendfuneralceremonies VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN patienttravelanytimeperiodbeforeill VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN iftravelyeswhere VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN ifyesstartdate DATE;
+ALTER TABLE epidata ADD COLUMN ifyesenddate DATE;
+ALTER TABLE epidata ADD COLUMN patientcontactknownsuspect VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN suspectname VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN idcase VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN duringcontactsuspectcase VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN dateofdeath DATE;
+ALTER TABLE epidata ADD COLUMN dateoflastcontactwithsuspectcase DATE;
+ALTER TABLE epidata ADD COLUMN ifyeswildanimallocation VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN ifyeswildanimaldate DATE;
+
+INSERT INTO schema_version (version_number, comment) VALUES (659, 'added columns for AHF fields at epidata');
+
+ALTER TABLE hospitalization ADD COLUMN receptiondate DATE;
+ALTER TABLE hospitalization ADD COLUMN memberfamilyhelpingpatient VARCHAR(255);
+ALTER TABLE hospitalization ADD COLUMN dateofdeath DATE;
+
+INSERT INTO schema_version (version_number, comment) VALUES (660, 'added columns for AHF fields at hospitalization');
+
+ALTER TABLE pathogentest ADD COLUMN sampletestresultpcr VARCHAR(255);
+ALTER TABLE pathogentest ADD COLUMN sampletestsstring VARCHAR(255);
+ALTER TABLE pathogentest ADD COLUMN sampletestresultpcrdate DATE;
+ALTER TABLE pathogentest ADD COLUMN sampletestresultantigen VARCHAR(255);
+ALTER TABLE pathogentest ADD COLUMN sampletestresultantigendate DATE;
+ALTER TABLE pathogentest ADD COLUMN sampletestresultigm VARCHAR(255);
+ALTER TABLE pathogentest ADD COLUMN sampletestresultigmdate DATE;
+ALTER TABLE pathogentest ADD COLUMN sampletestresultigg VARCHAR(255);
+ALTER TABLE pathogentest ADD COLUMN sampletestresultiggdate DATE;
+ALTER TABLE pathogentest ADD COLUMN sampletestresultimmuno VARCHAR(255);
+ALTER TABLE pathogentest ADD COLUMN sampletestresultimmunodate DATE;
+
+INSERT INTO schema_version (version_number, comment) VALUES (661, 'added columns for AHF fields at pathogentest');
+
+ALTER TABLE samples ADD COLUMN containerother VARCHAR(255);
+ALTER TABLE pathogentest ALTER COLUMN testtype DROP NOT NULL;
+ALTER TABLE pathogentest ALTER COLUMN testresult DROP NOT NULL;
+
+ALTER TABLE pathogentest_history ALTER COLUMN testtype DROP NOT NULL;
+ALTER TABLE pathogentest_history ALTER COLUMN testresult DROP NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (662, 'added containerother for CSM field at sample and made 3 columns nullable');
+
+ALTER TABLE person ADD COLUMN nationality VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN difficultyswallow VARCHAR(255);
+ALTER TABLE samples ADD COLUMN hassamplebeencollected VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN skinrashnew VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (663, 'added nationality to persons and difficultyswallow to symptoms');
+
+-- Define the ebs table
 CREATE TABLE ebs (
                      id bigint not null,
                      uuid VARCHAR(36) NOT NULL UNIQUE,
@@ -13589,11 +14497,11 @@ ALTER TABLE ebs ADD CONSTRAINT fk_ebs_change_user_id FOREIGN KEY (change_user_id
 ALTER TABLE ebs ADD CONSTRAINT fk_ebs_ebslocation_id FOREIGN KEY (ebslocation_id) REFERENCES location (id);
 
 CREATE TABLE ebs_history (
-                             LIKE ebs INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
+    LIKE ebs INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
 );
 
 
--- 2024-05-14 created triaging table
+
 CREATE TABLE triaging (
                           id bigint not null,
                           uuid VARCHAR(36) NOT NULL UNIQUE,
@@ -13630,60 +14538,59 @@ ALTER TABLE ebs ADD CONSTRAINT fk_ebs_triaging_id FOREIGN KEY (triaging_id) REFE
 
 
 CREATE TABLE triaging_history (
-                             LIKE triaging INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
+    LIKE triaging INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
 );
 
--- 2024-05-13 created ebs signal verification
+
 CREATE TABLE signalVerification (
-                          id bigint not null,
-                          verificationSent VARCHAR(3),
-                          verified VARCHAR(3),
-                          verificationSentDate DATE,
-                          verificationCompleteDate DATE,
-                          dateOfOccurrence DATE,
-                          numberOfPersonAnimal VARCHAR(255),
-                          numberOfDeath VARCHAR(255),
-                          description VARCHAR(255),
-                          whyNotVerify VARCHAR(255),
-                          archived boolean DEFAULT false,
-                          sormasToSormasOriginInfo_id bigint,
-                          externalid varchar(512),
-                          responsibleuser_id bigint,
-                          changedate timestamp not null,
-                          creationdate timestamp not null,
-                          change_user_id BIGINT,
-                          uuid VARCHAR(36) NOT NULL UNIQUE,
-                          primary key(id)
+                                    id bigint not null,
+                                    verificationSent VARCHAR(3),
+                                    verified VARCHAR(3),
+                                    verificationSentDate DATE,
+                                    verificationCompleteDate DATE,
+                                    dateOfOccurrence DATE,
+                                    numberOfPersonAnimal VARCHAR(255),
+                                    numberOfDeath VARCHAR(255),
+                                    description VARCHAR(255),
+                                    whyNotVerify VARCHAR(255),
+                                    archived boolean DEFAULT false,
+                                    sormasToSormasOriginInfo_id bigint,
+                                    externalid varchar(512),
+                                    responsibleuser_id bigint,
+                                    changedate timestamp not null,
+                                    creationdate timestamp not null,
+                                    change_user_id BIGINT,
+                                    uuid VARCHAR(36) NOT NULL UNIQUE,
+                                    primary key(id)
 );
 
 ALTER TABLE signalVerification ADD CONSTRAINT fk_ebs_change_user_id FOREIGN KEY (change_user_id) REFERENCES users (id);
 ALTER TABLE ebs ADD COLUMN signalVerification_id BIGINT;
 ALTER TABLE ebs ADD CONSTRAINT fk_ebs_signalVerification_id FOREIGN KEY (signalVerification_id) REFERENCES signalVerification (id);
 CREATE TABLE signalVerification_history (
-                             LIKE signalVerification INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
+    LIKE signalVerification INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
 );
 
--- 2024-05-13 created risk table
 CREATE TABLE riskAssessment(
-    id bigint not null,
-    uuid VARCHAR(36) NOT NULL UNIQUE,
-    morbidityMortality VARCHAR(3),
-    spreadProbability VARCHAR(3),
-    controlMeasures VARCHAR(3),
-    riskAssessment VARCHAR(255),
-    archived boolean DEFAULT false,
-    sormasToSormasOriginInfo_id bigint,
-    externalid varchar(512),
-    responsibleuser_id bigint,
-    morbiditymortalitycomment VARCHAR(255),
-    assessmentdate DATE,
-    assessmenttime varchar(255),
-    spreadprobabilitycomment VARCHAR(255),
-    controlmeasurescomment varchar(255),
-    changedate timestamp not null,
-    creationdate timestamp not null,
-    change_user_id BIGINT,
-    primary key(id)
+                               id bigint not null,
+                               uuid VARCHAR(36) NOT NULL UNIQUE,
+                               morbidityMortality VARCHAR(3),
+                               spreadProbability VARCHAR(3),
+                               controlMeasures VARCHAR(3),
+                               riskAssessment VARCHAR(255),
+                               archived boolean DEFAULT false,
+                               sormasToSormasOriginInfo_id bigint,
+                               externalid varchar(512),
+                               responsibleuser_id bigint,
+                               morbiditymortalitycomment VARCHAR(255),
+                               assessmentdate DATE,
+                               assessmenttime varchar(255),
+                               spreadprobabilitycomment VARCHAR(255),
+                               controlmeasurescomment varchar(255),
+                               changedate timestamp not null,
+                               creationdate timestamp not null,
+                               change_user_id BIGINT,
+                               primary key(id)
 );
 
 ALTER TABLE riskAssessment ADD CONSTRAINT fk_ebs_change_user_id FOREIGN KEY (change_user_id) REFERENCES users (id);
@@ -13692,26 +14599,24 @@ ALTER TABLE riskAssessment ADD COLUMN ebs_id bigint;
 ALTER TABLE riskAssessment ADD CONSTRAINT fk_riskAssessment_ebs_id FOREIGN KEY (ebs_id) REFERENCES ebs (id);
 ALTER TABLE ebs ADD CONSTRAINT fk_ebs_riskAssessment_id FOREIGN KEY (riskAssessment_id) REFERENCES riskAssessment (id);
 CREATE TABLE riskAssessment_history (
-                             LIKE riskAssessment INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
+    LIKE riskAssessment INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
 );
 
-
--- 2024-05-14 created ebs table
 CREATE TABLE ebsAlert(
-    id bigint not null,
-    actionInitiated VARCHAR(255),
-    responseStatus VARCHAR(255),
-    responseDate DATE,
-    detailsResponseActivities VARCHAR(255),
-    detailsGiven VARCHAR(255),
-    alertUsed VARCHAR(3),
-    detailsAlertUsed varchar(255),
-    ebs_id  bigint,
-    changedate timestamp not null,
-    creationdate timestamp not null,
-    change_user_id BIGINT,
-    uuid VARCHAR(36) NOT NULL UNIQUE,
-    primary key(id)
+                         id bigint not null,
+                         actionInitiated VARCHAR(255),
+                         responseStatus VARCHAR(255),
+                         responseDate DATE,
+                         detailsResponseActivities VARCHAR(255),
+                         detailsGiven VARCHAR(255),
+                         alertUsed VARCHAR(3),
+                         detailsAlertUsed varchar(255),
+                         ebs_id  bigint,
+                         changedate timestamp not null,
+                         creationdate timestamp not null,
+                         change_user_id BIGINT,
+                         uuid VARCHAR(36) NOT NULL UNIQUE,
+                         primary key(id)
 );
 
 ALTER TABLE ebs ADD COLUMN ebsAlert_id BIGINT;
@@ -13720,21 +14625,241 @@ ALTER TABLE ebsAlert ADD CONSTRAINT fk_ebsAlert_ebs_id FOREIGN KEY (ebs_id) REFE
 ALTER TABLE ebs ADD CONSTRAINT fk_ebs_ebsAlert_id FOREIGN KEY (ebsAlert_id) REFERENCES ebsAlert (id);
 
 CREATE TABLE ebsAlert_history (
-                             LIKE ebsAlert INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
+    LIKE ebsAlert INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
 );
-INSERT INTO schema_version (version_number, comment) VALUES (591, 'added ebs,triaging,signalverification,riskassessment and alert');
+INSERT INTO schema_version (version_number, comment) VALUES (664, 'added ebs,triaging,signalverification,riskassessment and alert');
+
+ALTER TABLE epidata ADD COLUMN waterUsedForDrinking VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN waterUsedNotForDrinking VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN foodItems VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (665, 'Added columns to riskfactor to implement waterUsedForDrinking, waterUsedNotForDrinking, foodItems');
+
+ALTER TABLE samples ADD COLUMN dateSpecimenSentToRegion DATE;
+ALTER TABLE samples ADD COLUMN nameOfPersonWhoReceivedSpecimenAtRegion VARCHAR(255);
+ALTER TABLE samples ADD COLUMN dateSpecimenReceivedAtRegion DATE;
+ALTER TABLE samples ADD COLUMN dateSpecimenSentToNational DATE;
+ALTER TABLE samples ADD COLUMN nameOfPersonWhoReceivedSpecimenAtNational VARCHAR(255);
+ALTER TABLE samples ADD COLUMN dateSpecimenReceivedAtNational DATE;
+
+INSERT INTO schema_version(version_number, comment) VALUES (666, 'Added new fields to samples for specimen handling');
+
+ALTER TABLE samples ADD COLUMN confirmedAsGuineaWorm VARCHAR(255);
+
+INSERT INTO schema_version(version_number, comment) VALUES (667, 'Added confirmedAsGuineaWorm to samples');
+
+ALTER TABLE pathogentest ADD COLUMN datesurveillancesentresultstodistrict date;
+
+INSERT INTO schema_version (version_number, comment) VALUES (668, 'Added column to dateSurveillanceSentResultsToDistrict to pathogentest');
+
+-- 2024-05-31 Dropped nameofvillagepersongotIll in person and added in cases
+ALTER TABLE cases ADD COLUMN nameofvillagepersongotIll VARCHAR(255);
+ALTER TABLE epidata ADD COLUMN suspectlastname VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (669, 'Dropped nameofvillagepersongotIll in person and added in cases and epidata');
+
+-- Created foodhistory table for Food Borne Illness
+CREATE TABLE foodhistory (
+              id BIGINT PRIMARY KEY NOT NULL,
+              suspectedfood VARCHAR(255),
+              dateconsumed DATE,
+              foodsource VARCHAR(255),
+              eventtype VARCHAR(255),
+              eventotherspecify VARCHAR(255),
+              nameofaffectedperson VARCHAR(255),
+              nameofaffectedperson2 VARCHAR(255),
+              nameofaffectedperson3 VARCHAR(512),
+              nameofaffectedperson4 VARCHAR(255),
+              telno VARCHAR(255),
+              telno2 VARCHAR(255),
+              telno3 VARCHAR(255),
+              telno4 VARCHAR(255),
+              datetime DATE,
+              datetime2 DATE,
+              datetime3 DATE,
+              datetime4 DATE,
+              age VARCHAR(255),
+              age2 VARCHAR(255),
+              age3 VARCHAR(255),
+              age4 VARCHAR(255),
+              breakfast VARCHAR(3),
+              totalnopersons VARCHAR(255),
+              foodconsumed VARCHAR(255),
+              sourceoffood VARCHAR(255),
+              consumedatplace VARCHAR(3),
+              lunch VARCHAR(55),
+              totalnopersonsl1 VARCHAR(255),
+              foodconsumedl1 VARCHAR(255),
+              sourceoffoodl1 VARCHAR(255),
+              consumedatplacel1 VARCHAR(3),
+              supper VARCHAR(55),
+              totalnopersonss1 VARCHAR(255),
+              foodconsumeds1 VARCHAR(255),
+              sourceoffoodss1 VARCHAR(255),
+              consumedatplaces1 VARCHAR(3),
+              breakfast2 VARCHAR(3),
+              totalnopersons2 VARCHAR(255),
+              foodconsumed2 VARCHAR(255),
+              sourceoffood2 VARCHAR(255),
+              consumedatplace2 VARCHAR(3),
+              lunchl2 VARCHAR(55),
+              totalnopersonsl2 VARCHAR(255),
+              foodconsumedl2 VARCHAR(255),
+              sourceoffoodl2 VARCHAR(255),
+              consumedatplacel2 VARCHAR(3),
+              suppers2 VARCHAR(55),
+              totalnopersonss2 VARCHAR(255),
+              foodconsumeds2 VARCHAR(255),
+              sourceoffoods2 VARCHAR(255),
+              consumedatplaces2 VARCHAR(3),
+              breakfast3 VARCHAR(55),
+              totalnopersons3 VARCHAR(255),
+              foodconsumed3 VARCHAR(255),
+              sourceoffood3 VARCHAR(255),
+              consumedatplace3 VARCHAR(3),
+              lunchl3 VARCHAR(55),
+              totalnopersonsl3 VARCHAR(255),
+              foodconsumedl3 VARCHAR(255),
+              sourceoffoodl3 VARCHAR(255),
+              consumedatplacel3 VARCHAR(3),
+              suppers3 VARCHAR(55),
+              totalnopersonss3 VARCHAR(255),
+              foodconsumeds3 VARCHAR(255),
+              sourceoffoods3 VARCHAR(255),
+              consumedatplaces3 VARCHAR(55),
+              changedate TIMESTAMP(3),
+              change_user_id BIGINT,
+              creationdate DATE,
+              uuid VARCHAR(512)
+);
+
+ALTER TABLE cases ADD COLUMN foodhistory_id BIGINT;
+
+INSERT INTO schema_version (version_number, comment) VALUES (670, 'Created foodhistory table and added foodhistory_id to cases');
+
+-- 2024-03-06 Dropped food history section columns in epidata
+ALTER TABLE epidata DROP COLUMN suspectedfood;
+ALTER TABLE epidata DROP COLUMN dateconsumed;
+ALTER TABLE epidata DROP COLUMN foodsource;
+ALTER TABLE epidata DROP COLUMN eventtype;
+ALTER TABLE epidata DROP COLUMN eventotherspecify;
+ALTER TABLE epidata DROP COLUMN breakfast;
+ALTER TABLE epidata DROP COLUMN totalnopersons;
+ALTER TABLE epidata DROP COLUMN foodconsumed;
+ALTER TABLE epidata DROP COLUMN sourceoffood;
+ALTER TABLE epidata DROP COLUMN consumedatplace;
+ALTER TABLE epidata DROP COLUMN lunch;
+ALTER TABLE epidata DROP COLUMN totalnopersonsl1;
+ALTER TABLE epidata DROP COLUMN foodconsumedl1;
+ALTER TABLE epidata DROP COLUMN sourceoffoodl1;
+ALTER TABLE epidata DROP COLUMN consumedatplacel1;
+ALTER TABLE epidata DROP COLUMN supper;
+ALTER TABLE epidata DROP COLUMN totalnopersonss1;
+ALTER TABLE epidata DROP COLUMN foodconsumeds1;
+ALTER TABLE epidata DROP COLUMN sourceoffoodss1;
+ALTER TABLE epidata DROP COLUMN consumedatplaces1;
+ALTER TABLE epidata DROP COLUMN breakfast2;
+ALTER TABLE epidata DROP COLUMN totalnopersons2;
+ALTER TABLE epidata DROP COLUMN foodconsumed2;
+ALTER TABLE epidata DROP COLUMN sourceoffood2;
+ALTER TABLE epidata DROP COLUMN consumedatplace2;
+ALTER TABLE epidata DROP COLUMN lunchl2;
+ALTER TABLE epidata DROP COLUMN totalnopersonsl2;
+ALTER TABLE epidata DROP COLUMN foodconsumedl2;
+ALTER TABLE epidata DROP COLUMN sourceoffoodl2;
+ALTER TABLE epidata DROP COLUMN consumedatplacel2;
+ALTER TABLE epidata DROP COLUMN suppers2;
+ALTER TABLE epidata DROP COLUMN totalnopersonss2;
+ALTER TABLE epidata DROP COLUMN foodconsumeds2;
+ALTER TABLE epidata DROP COLUMN sourceoffoods2;
+ALTER TABLE epidata DROP COLUMN consumedatplaces2;
+ALTER TABLE epidata DROP COLUMN breakfast3;
+ALTER TABLE epidata DROP COLUMN totalnopersons3;
+ALTER TABLE epidata DROP COLUMN foodconsumed3;
+ALTER TABLE epidata DROP COLUMN sourceoffood3;
+ALTER TABLE epidata DROP COLUMN consumedatplace3;
+ALTER TABLE epidata DROP COLUMN lunchl3;
+ALTER TABLE epidata DROP COLUMN totalnopersonsl3;
+ALTER TABLE epidata DROP COLUMN foodconsumedl3;
+ALTER TABLE epidata DROP COLUMN sourceoffoodl3;
+ALTER TABLE epidata DROP COLUMN consumedatplacel3;
+ALTER TABLE epidata DROP COLUMN suppers3;
+ALTER TABLE epidata DROP COLUMN totalnopersonss3;
+ALTER TABLE epidata DROP COLUMN foodconsumeds3;
+ALTER TABLE epidata DROP COLUMN sourceoffoods3;
+ALTER TABLE epidata DROP COLUMN consumedatplaces3;
+
+INSERT INTO schema_version (version_number, comment) VALUES (671, 'Dropped food history section columns in epidata');
+
+ALTER TABLE samples ADD COLUMN labLocal VARCHAR(255);
+ALTER TABLE samples ADD COLUMN labLocalDetails VARCHAR(255);
+INSERT INTO schema_version(version_number, comment) VALUES (672, 'Added labLocal, labLocalDetails to samples');
 
 ALTER TABLE triaging ADD COLUMN potentialrisk VARCHAR(3);
-INSERT INTO schema_version (version_number, comment) VALUES (592, 'added potentail risk to ebs');
+INSERT INTO schema_version (version_number, comment) VALUES (673, 'added potential risk to ebs');
+
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Case Officer';
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Contact Officer';
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'District Observer';
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Hospital informant';
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Hospital supervisor';
+UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Surveillance Officer';
+INSERT INTO schema_version (version_number, comment) VALUES (674, 'updated hasoptionalhealthfacility for userroles');
+
+-- 2024-06-14 added alertdate to alert table
 ALTER TABLE triaging ADD COLUMN supervisorreview VARCHAR(3);
-INSERT INTO schema_version (version_number, comment) VALUES (593, 'added supervisor review to ebs');
 ALTER TABLE triaging ADD COLUMN referred VARCHAR(3);
-INSERT INTO schema_version (version_number, comment) VALUES (594, 'added referred to ebs');
 -- 2024-06-14 added alertdate to alert table
 ALTER TABLE ebsAlert ADD COLUMN alertdate DATE;
-INSERT INTO schema_version (version_number, comment) VALUES (595, 'added alertdate to ebsAlert');
-
 -- 2024-06-14 added alertdate to alert table
 ALTER TABLE signalVerification ADD numberOfPersonCases VARCHAR(255);
 ALTER TABLE signalVerification ADD numberOfDeathPerson VARCHAR(255);
-INSERT INTO schema_version (version_number, comment) VALUES (596, 'added alertdate to ebsAlert');
+INSERT INTO schema_version (version_number, comment) VALUES (675, 'added new ebs related fields');
+
+ALTER TABLE samples ADD COLUMN ipsampletestresultsstring VARCHAR(512);
+ALTER TABLE samples ADD COLUMN selectedresultigm VARCHAR(55);
+ALTER TABLE samples ADD COLUMN selectedresultprnt VARCHAR(55);
+ALTER TABLE samples ADD COLUMN selectedresultpcr VARCHAR(55);
+ALTER TABLE samples ADD COLUMN inputvalueprnt VARCHAR(255);
+ALTER TABLE samples ADD COLUMN selectedresultigmdate Date;
+ALTER TABLE samples ADD COLUMN selectedresultprntdate Date;
+ALTER TABLE samples ADD COLUMN selectedresultpcrdate Date;
+INSERT INTO schema_version (version_number, comment) VALUES (676, 'Added columns to to samples');
+
+ALTER TABLE samples DROP COLUMN sampletests;
+ALTER TABLE samples DROP COLUMN sampletestsstring;
+ALTER TABLE samples_history DROP COLUMN sampletestsstring;
+ALTER TABLE samples DROP COLUMN diseasesampletests;
+ALTER TABLE samples DROP COLUMN yellowfeversampletype;
+ALTER TABLE samples_history ALTER COLUMN samplepurpose DROP NOT NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (677, 'Dropped redundant columns in samples, made samplepurpose not null');
+
+ALTER TABLE symptoms ADD COLUMN typeofrashstring VARCHAR(512);
+ALTER TABLE symptoms DROP COLUMN typeofrash;
+ALTER TABLE sixtyday ADD COLUMN paralysisweaknesspresentsitestring VARCHAR(512);
+ALTER TABLE sixtyday DROP COLUMN paralysisweaknesspresentsite;
+INSERT INTO schema_version (version_number, comment) VALUES (678, 'Added paralysisweaknesspresentsitestring and dropped paralysisweaknesspresentsite for AFP, added typeofrashstring to symptoms');
+
+-- 2024-06-18 added alertdate to alert table
+ALTER TABLE ebsAlert RENAME COLUMN alertUsed TO alertIssued;
+INSERT INTO schema_version (version_number, comment) VALUES (679, 'rename alert used to alert issued fields');
+ALTER TABLE triaging ADD animalLaboratoryCategoryDetailsString varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (680, 'rename alert used to alert issued fields');
+ALTER TABLE triaging ADD humanCommunityCategoryDetails varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (681, 'rename alert used to alert issued fields');
+ALTER TABLE triaging Drop humanCommunityCategoryDetailsString;
+ALTER TABLE triaging Drop  humanFacilityCategoryDetailsString ;
+ALTER TABLE triaging Drop  humanLaboratoryCategoryDetailsString;
+ALTER TABLE triaging Drop  animalCommunityCategoryDetailsString;
+ALTER TABLE triaging Drop  animalFacilityCategoryDetailsString ;
+ALTER TABLE triaging Drop  environmentalCategoryDetailsString ;
+ALTER TABLE triaging Drop  poeCategoryDetailsString;
+ALTER TABLE triaging ADD COLUMN  humanFacilityCategoryDetails VARCHAR(255);
+ALTER TABLE triaging ADD COLUMN  humanLaboratoryCategoryDetails VARCHAR(255);
+ALTER TABLE triaging ADD COLUMN  animalCommunityCategoryDetails VARCHAR(255);
+ALTER TABLE triaging ADD COLUMN  animalFacilityCategoryDetails VARCHAR(255);
+ALTER TABLE triaging ADD COLUMN  environmentalCategoryDetails VARCHAR(255);
+ALTER TABLE triaging ADD COLUMN  poeCategoryDetails VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (682, 'rename alert used to alert issued fields');
+ALTER TABLE triaging ADD COLUMN  animalLaboratoryCategoryDetails VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (683, 'rename alert used to alert issued fields');
