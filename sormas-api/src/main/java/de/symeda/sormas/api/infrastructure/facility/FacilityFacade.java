@@ -51,6 +51,7 @@ public interface FacilityFacade extends InfrastructureFacade<FacilityDto, Facili
 	List<FacilityReferenceDto> getActiveHospitalsByDistrict(DistrictReferenceDto district, boolean includeOtherFacility);
 
 	List<FacilityReferenceDto> getAllActiveLaboratories(boolean includeOtherFacility);
+	List<FacilityReferenceDto> getAllActiveFacility(boolean includeOtherFacility);
 	List<FacilityReferenceDto> getAllActiveFacilityByDisease(String diseaseName);
 
 //	List<FacilityReferenceDto> getAllActiveFacilityByDisease(String diseaseName);

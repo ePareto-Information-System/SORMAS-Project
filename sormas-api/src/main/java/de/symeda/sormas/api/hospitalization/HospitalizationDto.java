@@ -18,6 +18,7 @@
 package de.symeda.sormas.api.hospitalization;
 
 import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.utils.*;
 
 import java.util.ArrayList;
@@ -150,7 +151,7 @@ public class HospitalizationDto extends EntityDto {
 	private YesNoUnknown seenAtAHealthFacility;
 	private YesNoUnknown wasPatientAdmitted;
 	private YesNo soughtMedicalAttention;
-	private String nameOfFacility;
+	private FacilityReferenceDto nameOfFacility;
 	private String locationAddress;
 	private Date dateOfVisitHospital;
 	private String physicianName;
@@ -484,11 +485,11 @@ public class HospitalizationDto extends EntityDto {
 		this.soughtMedicalAttention = soughtMedicalAttention;
 	}
 
-	public String getNameOfFacility() {
+	public FacilityReferenceDto getNameOfFacility() {
 		return nameOfFacility;
 	}
 
-	public void setNameOfFacility(String nameOfFacility) {
+	public void setNameOfFacility(FacilityReferenceDto nameOfFacility) {
 		this.nameOfFacility = nameOfFacility;
 	}
 
