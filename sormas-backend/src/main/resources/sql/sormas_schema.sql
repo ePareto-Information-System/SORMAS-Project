@@ -14849,7 +14849,7 @@ ALTER TABLE cases ADD COLUMN patientageyear integer;
 ALTER TABLE cases ADD COLUMN patientagemonth integer;
 ALTER TABLE cases ADD COLUMN patientsex varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (678, 'Added Mpox person data to cases');
+INSERT INTO schema_version (version_number, comment) VALUES (679, 'Added Mpox person data to cases');
 
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
