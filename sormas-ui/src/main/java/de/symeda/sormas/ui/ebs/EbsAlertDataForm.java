@@ -18,7 +18,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 
@@ -30,7 +29,7 @@ public class EbsAlertDataForm extends AbstractEditForm<EbsAlertDto> {
     private final Class<? extends EntityDto> parentClass;
 
     private static final String HTML_LAYOUT =
-            fluidRowLocs(EbsAlertDto.ALERT_USED,EbsAlertDto.ALERT_DATE) +
+            fluidRowLocs(EbsAlertDto.ALERT_ISSUED,EbsAlertDto.ALERT_DATE) +
             fluidRowLocs(EbsAlertDto.DETAILS_ALERT_USED) +
             fluidRowLocs(EbsAlertDto.ACTION_INITIATED) +
             fluidRowLocs(EbsAlertDto.RESPONSE_STATUS,EbsAlertDto.RESPONSE_DATE) +
@@ -76,7 +75,7 @@ public class EbsAlertDataForm extends AbstractEditForm<EbsAlertDto> {
         addField(EbsAlertDto.ACTION_INITIATED, NullableOptionGroup.class);
         addField(EbsAlertDto.RESPONSE_STATUS, OptionGroup.class);
         addField(EbsAlertDto.DETAILS_RESPONSE_ACTIVITIES, TextArea.class);
-        addField(EbsAlertDto.ALERT_USED, NullableOptionGroup.class);
+        addField(EbsAlertDto.ALERT_ISSUED, NullableOptionGroup.class);
         addField(EbsAlertDto.ALERT_DATE, DateField.class);
         addField(EbsAlertDto.RESPONSE_DATE, DateField.class);
         addField(EbsAlertDto.DETAILS_ALERT_USED, TextArea.class);
@@ -84,7 +83,7 @@ public class EbsAlertDataForm extends AbstractEditForm<EbsAlertDto> {
         FieldHelper.setVisibleWhen(
                 getFieldGroup(),
                 Arrays.asList(EbsAlertDto.DETAILS_ALERT_USED,EbsAlertDto.ALERT_DATE),
-                EbsAlertDto.ALERT_USED,
+                EbsAlertDto.ALERT_ISSUED,
                 Arrays.asList(YesNo.YES),
                 true);
 
@@ -98,9 +97,9 @@ public class EbsAlertDataForm extends AbstractEditForm<EbsAlertDto> {
         FieldHelper.setRequiredWhen(
                 getFieldGroup(),
                 Arrays.asList(EbsAlertDto.DETAILS_ALERT_USED,EbsAlertDto.ALERT_DATE),
-                Collections.singletonList(EbsAlertDto.ALERT_USED),
+                Collections.singletonList(EbsAlertDto.ALERT_ISSUED),
                 Arrays.asList(YesNo.YES));
 
-        setRequired(true, EbsAlertDto.ACTION_INITIATED, EbsAlertDto.RESPONSE_STATUS, EbsAlertDto.ALERT_USED,EbsAlertDto.DETAILS_RESPONSE_ACTIVITIES);
+        setRequired(true, EbsAlertDto.ACTION_INITIATED, EbsAlertDto.RESPONSE_STATUS, EbsAlertDto.ALERT_ISSUED,EbsAlertDto.DETAILS_RESPONSE_ACTIVITIES);
     }
 }
