@@ -37,7 +37,7 @@ public class SignalVerificationView extends AbstractEbsView {
 	protected void initView(String params) {
 		if (ControllerProvider.getEbsController().isTriagingDiscard(getEbsRef().getUuid())) {
 			Notification.show(I18nProperties.getCaption(Captions.ebsSignalVerificationDisabled), WARNING_MESSAGE);
-			return;
+			ControllerProvider.getEbsController().navigateToIndex();
 		}
 		CommitDiscardWrapperComponent<SignalVerificationDataForm> signalVerficationForm = ControllerProvider.getEbsController()
 				.getEbsCreateSignalVerficationComponent(getEbsRef().getUuid(),

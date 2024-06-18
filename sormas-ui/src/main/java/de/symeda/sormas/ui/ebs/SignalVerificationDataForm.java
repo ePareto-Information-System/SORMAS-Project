@@ -46,7 +46,7 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
     fluidRowLocs(SignalVerificationDto.VERIFICATION_COMPLETE_DATE,"") +
             loc(EVENT_DETAILS_LOC) +
     fluidRowLocs(SignalVerificationDto.DATE_OF_OCCURRENCE, SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL, SignalVerificationDto.NUMBER_OF_DEATH) +
-    fluidRowLocs(SignalVerificationDto.NUMBER_OF_DEATH_PERSON, SignalVerificationDto.NUMBER_OF_PERSON_CASES,"") +
+    fluidRowLocs(SignalVerificationDto.NUMBER_OF_PERSON_CASES,SignalVerificationDto.NUMBER_OF_DEATH_PERSON, "") +
     fluidRowLocs(SignalVerificationDto.DESCRIPTION) +
     fluidRowLocs(SignalVerificationDto.WHY_NOT_VERIFY);
 
@@ -138,10 +138,10 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
         verified.addValueChangeListener(event -> {
             if (event.getProperty().getValue().toString().equals("[YES]")){
                 getContent().getComponent(EVENT_DETAILS_LOC).setVisible(true);
-                setRequired(true,SignalVerificationDto.VERIFICATION_COMPLETE_DATE,SignalVerificationDto.DATE_OF_OCCURRENCE,SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL,SignalVerificationDto.NUMBER_OF_DEATH,SignalVerificationDto.NUMBER_OF_DEATH_PERSON,SignalVerificationDto.NUMBER_OF_PERSON_CASES,SignalVerificationDto.DESCRIPTION);
+                setRequired(true,SignalVerificationDto.VERIFICATION_COMPLETE_DATE,SignalVerificationDto.DATE_OF_OCCURRENCE,SignalVerificationDto.DESCRIPTION);
                 setRequired(false,SignalVerificationDto.WHY_NOT_VERIFY);
             }else{
-                setRequired(false,SignalVerificationDto.VERIFICATION_COMPLETE_DATE,SignalVerificationDto.DATE_OF_OCCURRENCE,SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL,SignalVerificationDto.NUMBER_OF_DEATH,SignalVerificationDto.NUMBER_OF_DEATH_PERSON,SignalVerificationDto.NUMBER_OF_PERSON_CASES,SignalVerificationDto.DESCRIPTION);
+                setRequired(false,SignalVerificationDto.VERIFICATION_COMPLETE_DATE,SignalVerificationDto.DATE_OF_OCCURRENCE,SignalVerificationDto.DESCRIPTION);
                 setRequired(true,SignalVerificationDto.WHY_NOT_VERIFY);
                 getContent().getComponent(EVENT_DETAILS_LOC).setVisible(false);
 
