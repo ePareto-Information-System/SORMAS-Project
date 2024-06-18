@@ -49,7 +49,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static com.vaadin.ui.Notification.Type.ERROR_MESSAGE;
 import static com.vaadin.ui.Notification.Type.TRAY_NOTIFICATION;
 
 public class EbsController {
@@ -146,7 +145,7 @@ public class EbsController {
 		form.setValue(createNewEvent(null));
 
 		final CommitDiscardWrapperComponent<EbsDataForm> component =
-				new CommitDiscardWrapperComponent<>(form, UserProvider.getCurrent().hasAllUserRights(UserRight.EVENT_CREATE), form.getFieldGroup());
+				new CommitDiscardWrapperComponent<>(form, UserProvider.getCurrent().hasAllUserRights(), form.getFieldGroup());
 		component.getDiscardButton().setCaption("Cancel");
 		component.addCommitListener(() -> {
 			if (!form.getFieldGroup().isModified()) {
@@ -365,7 +364,7 @@ public class EbsController {
 		editView.getDiscardButton().setCaption("Cancel");
 		editView.addCommitListener(() -> {
 			ebs.setAlert(alertDataForm.getValue());
-			ebsAlertDto.setAlertUsed(alertDataForm.getValue().getAlertUsed());
+			ebsAlertDto.setAlertIssued(alertDataForm.getValue().getAlertIssued());
 			FacadeProvider.getAlertFacade().saveAlert(ebsAlertDto);
 			FacadeProvider.getEbsFacade().save(ebs);
 			SormasUI.refreshView();
@@ -386,7 +385,7 @@ public class EbsController {
 		return "";
 	}
 
-	private Consumer<List<EbsIndexDto>> bulkOperationCallback(EbsGrid eventGrid, Window popupWindow) {
+	private Consumer<List<EbsIndexDto>> bulkOperationCallback(EbsSignalGrid eventGrid, Window popupWindow) {
 		return remainingEvents -> {
 			if (popupWindow != null) {
 				popupWindow.close();
@@ -401,7 +400,7 @@ public class EbsController {
 		};
 	}
 
-	public void archiveAllSelectedItems(Collection<EbsIndexDto> selectedRows, EbsGrid eventGrid) {
+	public void archiveAllSelectedItems(Collection<EbsIndexDto> selectedRows, EbsSignalGrid eventGrid) {
 		ControllerProvider.getArchiveController()
 				.archiveSelectedItems(selectedRows, ArchiveHandlers.forEvent(), bulkOperationCallback(eventGrid, null));
 	}
