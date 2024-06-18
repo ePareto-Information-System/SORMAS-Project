@@ -44,6 +44,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.caze.*;
+import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus;
@@ -511,6 +512,14 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private String informationGivenBy;
 	private String familyLinkWithPatient;
 	private String nameOfVillagePersonGotIll;
+	private String patientName;
+	private String patientOtherNames;
+	private Integer patientDobDD;
+	private Integer patientDobMM;
+	private Integer patientDobYY;
+	private Integer patientAgeYear;
+	private Integer patientAgeMonth;
+	private Sex patientSex;
 
 	public static Case build() {
 		Case caze = new Case();
@@ -2422,6 +2431,70 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setNameOfVillagePersonGotIll(String nameOfVillagePersonGotIll) {
 		this.nameOfVillagePersonGotIll = nameOfVillagePersonGotIll;
+	}
+
+	public String getPatientName() {
+		return patientName;
+	}
+
+	public void setPatientName(String patientName) {
+		this.patientName = patientName;
+	}
+
+	public String getPatientOtherNames() {
+		return patientOtherNames;
+	}
+
+	public void setPatientOtherNames(String patientOtherNames) {
+		this.patientOtherNames = patientOtherNames;
+	}
+
+	public Integer getPatientDobDD() {
+		return patientDobDD;
+	}
+
+	public void setPatientDobDD(Integer patientDobDD) {
+		this.patientDobDD = patientDobDD;
+	}
+
+	public Integer getPatientDobMM() {
+		return patientDobMM;
+	}
+
+	public void setPatientDobMM(Integer patientDobMM) {
+		this.patientDobMM = patientDobMM;
+	}
+
+	public Integer getPatientDobYY() {
+		return patientDobYY;
+	}
+
+	public void setPatientDobYY(Integer patientDobYY) {
+		this.patientDobYY = patientDobYY;
+	}
+
+	public Integer getPatientAgeYear() {
+		return patientAgeYear;
+	}
+
+	public void setPatientAgeYear(Integer patientAgeYear) {
+		this.patientAgeYear = patientAgeYear;
+	}
+
+	public Integer getPatientAgeMonth() {
+		return patientAgeMonth;
+	}
+
+	public void setPatientAgeMonth(Integer patientAgeMonth) {
+		this.patientAgeMonth = patientAgeMonth;
+	}
+
+	public Sex getPatientSex() {
+		return patientSex;
+	}
+
+	public void setPatientSex(Sex patientSex) {
+		this.patientSex = patientSex;
 	}
 
 //	Riskfactor on

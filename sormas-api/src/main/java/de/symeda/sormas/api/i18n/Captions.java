@@ -326,6 +326,14 @@ public interface Captions {
 	String CaseData_mobileTeamNo = "CaseData.mobileTeamNo";
 	String CaseData_informationGivenBy = "CaseData.informationGivenBy";
 	String CaseData_familyLinkWithPatient = "CaseData.familyLinkWithPatient";
+	String CaseData_patientName = "CaseData.patientName";
+	String CaseData_patientOtherNames = "CaseData.patientOtherNames";
+	String CaseData_patientDobDD = "CaseData.patientDobDD";
+	String CaseData_patientDobMM = "CaseData.patientDobMM";
+	String CaseData_patientDobYY = "CaseData.patientDobYY";
+	String CaseData_patientAgeYear = "CaseData.patientAgeYear";
+	String CaseData_patientAgeMonth = "CaseData.patientAgeMonth";
+	String CaseData_patientSex = "CaseData.patientSex";
 	String CaseData_numberOfDoses = "CaseData.numberOfDoses";
 	String CaseData_classificationUser = "CaseData.classificationUser";
 	String CaseData_classifiedBy = "CaseData.classifiedBy";
@@ -697,6 +705,7 @@ public interface Captions {
 	String casePersonAddress = "casePersonAddress";
 	String casePickCase = "casePickCase";
 	String casePlaceOfStay = "casePlaceOfStay";
+	String coorLabel = "coorLabel";
 	String casePlusDays = "casePlusDays";
 	String CasePreviousHospitalization = "CasePreviousHospitalization";
 	String CasePreviousHospitalization_admissionAndDischargeDate = "CasePreviousHospitalization.admissionAndDischargeDate";
