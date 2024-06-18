@@ -105,32 +105,6 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 	}
 
 	public List<Facility> getActiveFacilitiesByCommunityAndType(
-			boolean includeOtherFacility,
-			boolean includeNoneFacility) {
-
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Facility> cq = cb.createQuery(getElementClass());
-		Root<Facility> from = cq.from(getElementClass());
-
-		Predicate filter = createBasicFilter(cb, from);
-
-		cq.where(filter);
-		cq.distinct(true);
-		cq.orderBy(cb.asc(from.get(Facility.NAME)));
-
-		List<Facility> facilities = em.createQuery(cq).getResultList();
-
-		if (includeOtherFacility) {
-			facilities.add(getByUuid(FacilityDto.OTHER_FACILITY_UUID));
-		}
-		if (includeNoneFacility) {
-			facilities.add(getByUuid(FacilityDto.NONE_FACILITY_UUID));
-		}
-
-		return facilities;
-	}
-
-	public List<Facility> getActiveFacilitiesByCommunityAndType(
 			Community community,
 			DhimsFacility dhimsFacilityType,
 			boolean includeOtherFacility,

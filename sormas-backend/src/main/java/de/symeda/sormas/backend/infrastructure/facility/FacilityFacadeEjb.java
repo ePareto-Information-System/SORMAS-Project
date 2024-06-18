@@ -110,16 +110,6 @@ public class FacilityFacadeEjb
 	}
 
 	@Override
-	@PermitAll
-	public List<FacilityReferenceDto> getActiveFacilitiesByCommunityAndType(
-			boolean includeOtherFacility,
-			boolean includeNoneFacility) {
-
-		List<Facility> facilities = service.getActiveFacilitiesByCommunityAndType(includeOtherFacility, includeNoneFacility);
-		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
-	}
-
-	@Override
 	public List<FacilityReferenceDto> getActiveFacilitiesByCommunityAndType(
 			CommunityReferenceDto communityRef,
 			DhimsFacility dhimsFacilityType,
