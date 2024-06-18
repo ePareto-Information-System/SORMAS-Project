@@ -3,7 +3,6 @@ package de.symeda.sormas.backend.ebs;
 import de.symeda.sormas.api.ebs.EbsAlertDto;
 import de.symeda.sormas.api.ebs.EbsAlertFacade;
 import de.symeda.sormas.api.ebs.RiskAssessmentCriteria;
-import de.symeda.sormas.api.ebs.RiskAssessmentDto;
 import de.symeda.sormas.backend.util.DtoHelper;
 
 import javax.ejb.EJB;
@@ -26,7 +25,7 @@ public class EbsAlertFacadeEjb implements EbsAlertFacade {
         target = DtoHelper.fillOrBuildEntity(source, target, EbsAlert::new, checkChangeDate);
         target.setResponseDate(source.getResponseDate());
         target.setResponseStatus(source.getResponseStatus());
-        target.setAlertUsed(source.getAlertUsed());
+        target.setAlertIssued(source.getAlertIssued());
         target.setDetailsAlertUsed(source.getDetailsAlertUsed());
         target.setDetailsResponseActivities(source.getDetailsResponseActivities());
         target.setDetailsGiven(source.getDetailsGiven());
@@ -46,7 +45,7 @@ public class EbsAlertFacadeEjb implements EbsAlertFacade {
         target.setActionInitiated(source.getActionInitiated());
         target.setResponseDate(source.getResponseDate());
         target.setResponseStatus(source.getResponseStatus());
-        target.setAlertUsed(source.getAlertUsed());
+        target.setAlertIssued(source.getAlertIssued());
         target.setDetailsAlertUsed(source.getDetailsAlertUsed());
         target.setDetailsResponseActivities(source.getDetailsResponseActivities());
         target.setDetailsGiven(source.getDetailsGiven());
