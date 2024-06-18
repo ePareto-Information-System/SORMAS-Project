@@ -20,6 +20,7 @@ import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.*;
 
 import javax.ejb.*;
+import java.util.Set;
 
 @Stateless(name = "TriagingFacade")
 public class TriagingFacadeEjb implements TriagingFacade {
@@ -45,6 +46,7 @@ public class TriagingFacadeEjb implements TriagingFacade {
 		target.setHumanLaboratoryCategoryDetails(source.getHumanLaboratoryCategoryDetails());
 		target.setAnimalCommunityCategoryDetails(source.getAnimalCommunityCategoryDetails());
 		target.setAnimalFacilityCategoryDetails(source.getAnimalFacilityCategoryDetails());
+		target.setAnimalLaboratoryCategoryDetails(source.getAnimalLaboratoryCategoryDetails());
 		target.setEnvironmentalCategoryDetails(source.getEnvironmentalCategoryDetails());
 		target.setPoeCategoryDetails(source.getPoeCategoryDetails());
 		target.setTriagingDecision(source.getTriagingDecision());
@@ -81,13 +83,7 @@ public class TriagingFacadeEjb implements TriagingFacade {
 		target.setEnvironmentalCategoryDetails(source.getEnvironmentalCategoryDetails());
 		target.setPoeCategoryDetails(source.getPoeCategoryDetails());
 		target.setTriagingDecision(source.getTriagingDecision());
-		target.setHumanCommunityCategoryDetailsString(source.getHumanCommunityCategoryDetailsString());
-		target.setHumanFacilityCategoryDetailsString(source.getHumanFacilityCategoryDetailsString());
-		target.setHumanLaboratoryCategoryDetailsString(source.getHumanLaboratoryCategoryDetailsString());
-		target.setAnimalCommunityCategoryDetailsString(source.getAnimalCommunityCategoryDetailsString());
-		target.setAnimalFacilityCategoryDetailsString(source.getAnimalFacilityCategoryDetailsString());
-		target.setEnvironmentalCategoryDetailsString(source.getEnvironmentalCategoryDetailsString());
-		target.setPoeCategoryDetailsString(source.getPoeCategoryDetailsString());
+		target.setAnimalLaboratoryCategoryDetails(source.getAnimalLaboratoryCategoryDetails());
 		target.setOutcomeSupervisor(source.getOutcomeSupervisor());
 		target.setNotSignal(source.getNotSignal());
 		target.setCategoryDetailsLevel(source.getCategoryDetailsLevel());
