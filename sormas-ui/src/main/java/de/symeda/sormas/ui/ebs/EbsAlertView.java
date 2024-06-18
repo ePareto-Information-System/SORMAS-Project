@@ -63,6 +63,7 @@ public class EbsAlertView extends AbstractEbsView {
 		if (ControllerProvider.getEbsController().isSignalVerified(getEbsRef().getUuid())) {
 			addButton.setEnabled(false);
 			Notification.show(I18nProperties.getCaption(Captions.ebsAlertDisabled), ERROR_MESSAGE);
+			ControllerProvider.getEbsController().navigateToIndex();
 		}
 
 		HorizontalLayout buttonLayout = new HorizontalLayout();
