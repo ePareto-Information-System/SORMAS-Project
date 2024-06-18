@@ -4304,7 +4304,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		for (VisitDto otherVisit : otherCase.getVisits().stream().map(v->visitFacade.toDto(v)).collect(Collectors.toList())) {
 			otherVisit.setPerson(leadCaseData.getPerson());
 			otherVisit.setDisease(leadCaseData.getDisease());
-			visitFacade.saveVisit(otherVisit);
+			visitFacade.save(otherVisit);
 		}
 
 		// 6 Documents
