@@ -84,6 +84,7 @@ public class EbsDto extends PseudonymizableDto {
 	public static final String SIGNAL_VERIFICATION = "signalVerification";
 	public static final String RISK_ASSESSMENT = "riskAssessment";
 	public static final String ALERT = "alert";
+	public static final String OTHER_INFORMANT = "otherInformant";
 
 
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
@@ -136,6 +137,7 @@ public class EbsDto extends PseudonymizableDto {
 	private SignalVerificationDto signalVerification;
 	private RiskAssessmentDto riskAssessment;
 	private EbsAlertDto alert;
+	private String otherInformant;
 
 
 	public static EbsDto build() {
@@ -437,5 +439,13 @@ public class EbsDto extends PseudonymizableDto {
 
 	public void setAlert(EbsAlertDto alert) {
 		this.alert = alert;
+	}
+
+	public String getOtherInformant() {
+		return otherInformant;
+	}
+
+	public void setOtherInformant(String otherInformant) {
+		this.otherInformant = otherInformant;
 	}
 }

@@ -73,6 +73,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public static final String SIGNAL_VERIFICATION = "signalVerification";
 	public static final String RISK_ASSESSMENT = "riskAssessment";
 	public static final String EBS_ALERT = "ebsAlert";
+	public static final String OTHER_INFORMANT = "otherInformant";
 
 	private String informantName;
 	private String informantTel;
@@ -105,6 +106,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	private SignalVerification signalVerification;
 	private Set<RiskAssessment> riskAssessment = new HashSet<>();
 	private Set<EbsAlert> ebsAlert = new HashSet<>();
+	private String otherInformant;
 
 	@Column(columnDefinition = "text")
 	public String getInformantName() {
@@ -397,5 +399,13 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 
 	public void setRiskAssessment(Set<RiskAssessment> riskAssessment) {
 		this.riskAssessment = riskAssessment;
+	}
+
+	public String getOtherInformant() {
+		return otherInformant;
+	}
+
+	public void setOtherInformant(String otherInformant) {
+		this.otherInformant = otherInformant;
 	}
 }
