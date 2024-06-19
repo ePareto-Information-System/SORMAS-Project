@@ -888,10 +888,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				List<PresentCondition> validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);
 				FieldHelper.updateEnumData(presentConditionField, validValues);
 			}
-			else if (disease == Disease.YELLOW_FEVER) {
-				List<PresentCondition> validValues = Arrays.asList(PresentCondition.ALIVE);
-				FieldHelper.updateEnumData(presentConditionField, validValues);
-			} else {
+			 else {
 				FieldVisibilityCheckers fieldVisibilityCheckers = FieldVisibilityCheckers.withDisease(disease);
 				List<PresentCondition> validValues = Arrays.stream(PresentCondition.values())
 						.filter(c -> fieldVisibilityCheckers.isVisible(PresentCondition.class, c.name()))
