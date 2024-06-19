@@ -14840,8 +14840,6 @@ ALTER TABLE sixtyday ADD COLUMN paralysisweaknesspresentsitestring VARCHAR(512);
 ALTER TABLE sixtyday DROP COLUMN paralysisweaknesspresentsite;
 INSERT INTO schema_version (version_number, comment) VALUES (678, 'Added paralysisweaknesspresentsitestring and dropped paralysisweaknesspresentsite for AFP, added typeofrashstring to symptoms');
 
-
--- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ALTER TABLE cases ADD COLUMN patientname VARCHAR(255);
 ALTER TABLE cases ADD COLUMN patientothernames VARCHAR(255);
 ALTER TABLE cases ADD COLUMN patientdobdd integer;
@@ -14878,3 +14876,11 @@ ALTER TABLE triaging ADD COLUMN  animalLaboratoryCategoryDetails VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (684, 'rename alert used to alert issued fields');
 ALTER TABLE ebs ADD COLUMN  otherInformant VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (685, 'rename alert used to alert issued fields');
+
+ALTER TABLE samples_history ALTER COLUMN samplepurpose DROP NOT NULL;
+ALTER TABLE epidata DROP COLUMN yearofvaccinationcovid;
+ALTER TABLE epidata DROP COLUMN yearofvaccination;
+ALTER TABLE epidata ADD COLUMN yearofvaccinationcovid INTEGER;
+ALTER TABLE epidata ADD COLUMN yearofvaccination INTEGER;
+INSERT INTO schema_version (version_number, comment) VALUES (686, 'Dropped columns at epidate and re-added with type Int and null constraint for samplepurpose in history table');
+-- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

@@ -1901,6 +1901,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			if (disease == Disease.NEW_INFLUENZA) {
                 outcome.setVisible(false);
                 dateFormReceivedAtNational.setVisible(false);
+                placeOfStayHeadingLabel.setVisible(false);
 			}
 
 

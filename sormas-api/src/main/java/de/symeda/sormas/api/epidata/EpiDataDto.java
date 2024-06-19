@@ -175,8 +175,8 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	private YesNo previouslyVaccinatedAgainstInfluenza;
 	private YesNo previouslyVaccinatedAgainstCovid;
-	private Date yearOfVaccination;
-	private Date yearOfVaccinationCovid;
+	private Integer yearOfVaccination;
+	private Integer yearOfVaccinationCovid;
 	private String nameOfVaccine;
 	private String nameOfVaccineCovid;
 	private String placesVisitedPastSevenDays;
@@ -435,11 +435,11 @@ public class EpiDataDto extends PseudonymizableDto {
 		this.previouslyVaccinatedAgainstInfluenza = previouslyVaccinatedAgainstInfluenza;
 	}
 
-	public Date getYearOfVaccination() {
+	public Integer getYearOfVaccination() {
 		return yearOfVaccination;
 	}
 
-	public void setYearOfVaccination(Date yearOfVaccination) {
+	public void setYearOfVaccination(Integer yearOfVaccination) {
 		this.yearOfVaccination = yearOfVaccination;
 	}
 
@@ -698,11 +698,11 @@ public class EpiDataDto extends PseudonymizableDto {
 		this.previouslyVaccinatedAgainstCovid = previouslyVaccinatedAgainstCovid;
 	}
 
-	public Date getYearOfVaccinationCovid() {
+	public Integer getYearOfVaccinationCovid() {
 		return yearOfVaccinationCovid;
 	}
 
-	public void setYearOfVaccinationCovid(Date yearOfVaccinationCovid) {
+	public void setYearOfVaccinationCovid(Integer yearOfVaccinationCovid) {
 		this.yearOfVaccinationCovid = yearOfVaccinationCovid;
 	}
 
