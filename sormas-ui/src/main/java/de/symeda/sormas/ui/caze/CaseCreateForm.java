@@ -361,6 +361,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		communityCombo.addValueChangeListener(e -> updateFacility());
 
 		facilityOrHome.addValueChangeListener(e -> {
+			canUpdateFacility = false;
 			FacilityReferenceDto healthFacility = UserProvider.getCurrent().getUser().getHealthFacility();
 			boolean hasOptionalHealthFacility = UserProvider.getCurrent().hasOptionalHealthFacility();
 			if (hasOptionalHealthFacility && healthFacility != null) {
