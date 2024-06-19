@@ -220,16 +220,18 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER) +
 					fluidRowLocs(6,SampleDto.LAB_SAMPLE_ID) +
 					fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
-					fluidRowLocs(6,SampleDto.IPSAMPLESENT) +
-					fluidRowLocs(SampleDto.IPSAMPLE_TEST_RESULTS) +
-                    fluidRowLocs(SampleDto.SELECTED_RESULT_IGM, SampleDto.SELECTED_RESULT_IGM_DATE)+
-                    fluidRowLocs(SampleDto.SELECTED_RESULT_PCR, SampleDto.SELECTED_RESULT_PCR_DATE)+
-                    fluidRowLocs(SampleDto.SELECTED_RESULT_PRNT, SampleDto.INPUT_VALUE_PRNT, SampleDto.SELECTED_RESULT_PRNT_DATE)+
+
 
                     fluidRowLocs(6,SampleDto.LABORATORY_APPEARANCE_OF_CSF) +
 					fluidRowLocs(SampleDto.COMMENT) +
 
-					fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT) +
+					fluidRowLocs(6,SampleDto.PATHOGEN_TEST_RESULT) +
+                    fluidRowLocs(6,SampleDto.IPSAMPLESENT) +
+                    fluidRowLocs(SampleDto.IPSAMPLE_TEST_RESULTS) +
+                    fluidRowLocs(SampleDto.SELECTED_RESULT_IGM, SampleDto.SELECTED_RESULT_IGM_DATE)+
+                    fluidRowLocs(SampleDto.SELECTED_RESULT_PCR, SampleDto.SELECTED_RESULT_PCR_DATE)+
+                    fluidRowLocs(SampleDto.SELECTED_RESULT_PRNT, SampleDto.INPUT_VALUE_PRNT, SampleDto.SELECTED_RESULT_PRNT_DATE)+
+
 					fluidRowLocs(CaseDataDto.DELETION_REASON) +
 					fluidRowLocs(CaseDataDto.OTHER_DELETION_REASON) +
 
@@ -946,16 +948,14 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         testResultField.setVisible(true);
 
         ipSampleSent = addField(SampleDto.IPSAMPLESENT, ComboBox.class);
-        ipSampleSent.setVisible(false);
 
         sampleReceived.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
-            FieldHelper.setVisibleWhen(sampleReceived, Arrays.asList(sampleReceivedDate, labSampleId, sampleSpecimenCondition, ipSampleSent), Arrays.asList(Boolean.TRUE), true);
+            FieldHelper.setVisibleWhen(sampleReceived, Arrays.asList(sampleReceivedDate, labSampleId, sampleSpecimenCondition), Arrays.asList(Boolean.TRUE), true);
         });
 
         if(sampleReceived.getValue().equals(Boolean.TRUE)){
-            FieldHelper.setVisibleWhen(sampleReceived, Arrays.asList(sampleReceivedDate, labSampleId, sampleSpecimenCondition, ipSampleSent), Arrays.asList(Boolean.TRUE), true);
+            FieldHelper.setVisibleWhen(sampleReceived, Arrays.asList(sampleReceivedDate, labSampleId, sampleSpecimenCondition), Arrays.asList(Boolean.TRUE), true);
         }
-        ipSampleTestResults.setVisible(true);
 
         List<IpSampleTestType> values =  Arrays.stream(IpSampleTestType.values())
                 .filter(c -> fieldVisibilityCheckers.isVisible(IpSampleTestType.class, c.name()))
@@ -1078,14 +1078,14 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         }
 
         OptionGroup sampleDispatchModeTypes = addField(SampleDto.SAMPLE_DISPATCH_MODE, outcome);
-        DateField cardDateField = addField(SampleDto.SAMPLE_DISPATCH_DATE, DateField.class);
+        /*DateField cardDateField = addField(SampleDto.SAMPLE_DISPATCH_DATE, DateField.class);
         cardDateField.setValue(new Date());
 
         FieldHelper.setEnabledWhen(
                 sampleDispatchModeTypes,
                 Arrays.asList(SampleDispatchMode.NATIONAL_LAB, SampleDispatchMode.REGIONAL_COLDROOM, SampleDispatchMode.NATIONAL_BY_DISTRICT),
                 Collections.singletonList(cardDateField),
-                false);
+                false);*/
 
         setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
         sampleMaterialComboBox.setVisible(false);
