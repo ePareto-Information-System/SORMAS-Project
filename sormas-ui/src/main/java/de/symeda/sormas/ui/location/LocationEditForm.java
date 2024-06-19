@@ -17,11 +17,6 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.location;
 
-import static de.symeda.sormas.ui.utils.LayoutUtil.divs;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumnLoc;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRow;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +29,7 @@ import de.symeda.sormas.api.InfrastructureDataReferenceDto;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.infrastructure.area.AreaType;
 import de.symeda.sormas.api.infrastructure.facility.*;
+import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.ui.caze.CaseDataForm;
 import de.symeda.sormas.ui.caze.CasePersonView;
 import de.symeda.sormas.ui.person.PersonEditForm;
@@ -93,6 +89,9 @@ import de.symeda.sormas.ui.utils.PhoneNumberValidator;
 import de.symeda.sormas.ui.utils.StringToAngularLocationConverter;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
+import static de.symeda.sormas.ui.utils.CssStyles.H3;
+import static de.symeda.sormas.ui.utils.LayoutUtil.*;
+
 public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	private static final long serialVersionUID = 1L;
@@ -100,6 +99,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private static final String FACILITY_TYPE_GROUP_LOC = "typeGroupLoc";
 	private static final String GEO_BUTTONS_LOC = "geoButtons";
 	private static final String COUNTRY_HINT_LOC = "countryHintLoc";
+	private static final String HOME_ADDRESS_HEADING = "homeAddress";
 
 	private Disease newDisease;
 	private static final String HTML_LAYOUT =
@@ -111,12 +111,16 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY),
 			//fluidRowLocs(FACILITY_TYPE_GROUP_LOC, LocationDto.FACILITY_TYPE),
 			//fluidRowLocs(LocationDto.FACILITY, LocationDto.FACILITY_DETAILS),
-			fluidRowLocs(LocationDto.STREET, LocationDto.LOCALITY),
+			fluidRowLocs(6,LocationDto.STREET),
+			loc(HOME_ADDRESS_HEADING),
 			fluidRowLocs(6,LocationDto.ADDITIONAL_INFORMATION),
-			fluidRowLocs(6,LocationDto.HOUSE_NUMBER),
+			fluidRowLocs(6, LocationDto.RESIDENTIAL_ADDRESS),
+			fluidRowLocs(LocationDto.HOUSE_NUMBER, LocationDto.LOCALITY),
 			fluidRowLocs(LocationDto.CITY, LocationDto.AREA_TYPE),
+			fluidRowLocs(LocationDto.VILLAGE, LocationDto.ZONE),
 			fluidRowLocs(6,LocationDto.POSTAL_CODE),
 			fluidRowLocs(6,LocationDto.LAND_MARK),
+			fluidRowLocs(6, LocationDto.NEAREST_HEALTH_FACILITY_TO_VILLAGE),
 			fluidRowLocs(LocationDto.CONTACT_PERSON_FIRST_NAME, LocationDto.CONTACT_PERSON_LAST_NAME),
 			fluidRowLocs(LocationDto.CONTACT_PERSON_PHONE, LocationDto.CONTACT_PERSON_EMAIL),
 			fluidRow(
@@ -125,12 +129,17 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 				fluidColumnLoc(2, 0, LocationDto.LATITUDE),
 				fluidColumnLoc(2, 0, LocationDto.LONGITUDE),
 				fluidColumnLoc(2, 0, LocationDto.LAT_LON_ACCURACY)));
+	private static final String HTML_LAYOUT_GUINEA_WORM = fluidRowLocs(LocationDto.VILLAGE, LocationDto.ZONE) +
+			fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY) +
+			fluidRowLocs(LocationDto.AREA_TYPE, LocationDto.LAND_MARK);
+
+	private static final String EBS_LAYOUT = fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY) +
+			fluidRowLocs(4,LocationDto.CITY);
 
 	private MapPopupView leafletMapPopup;
 	private ComboBox addressType;
 	private ComboBoxWithPlaceholder facilityTypeGroup;
 	private ComboBox facilityType;
-	private ComboBox dhimsFacilityType;
 	private ComboBox facility;
 	private TextField facilityDetails;
 	private ComboBox continent;
@@ -150,9 +159,25 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private boolean skipFacilityTypeUpdate;
 	private boolean disableFacilityAddressCheck;
 	private boolean hasEventParticipantsWithoutJurisdiction;
+	private TextField zoneTextField;
+	private TextField villageTextField;
+	private TextField nearestHealthFacilityToVillage;
+	private TextField  houseNumberField;
+	private TextField residentialAddress;
+	private Disease caseDisease;
 
 	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers) {
 		super(LocationDto.class, LocationDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers);
+
+		if (FacadeProvider.getGeocodingFacade().isEnabled() && isEditableAllowed(LocationDto.LATITUDE) && isEditableAllowed(LocationDto.LONGITUDE)) {
+			getContent().addComponent(createGeoButton(), GEO_BUTTONS_LOC);
+		}
+	}
+
+	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers, Disease disease) {
+		super(LocationDto.class, LocationDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers, disease);
+		this.caseDisease = disease;
+
 
 		if (FacadeProvider.getGeocodingFacade().isEnabled() && isEditableAllowed(LocationDto.LATITUDE) && isEditableAllowed(LocationDto.LONGITUDE)) {
 			getContent().addComponent(createGeoButton(), GEO_BUTTONS_LOC);
@@ -165,7 +190,6 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	public ComboBox getFacilityType() {
 		return facilityType;
 	}
-	public ComboBox getDhimsFacilityType() {return dhimsFacilityType;}
 
 	private void setConvertedValue(String propertyId, Object value) {
 		((AbstractField<?>) getField(propertyId)).setConvertedValue(value);
@@ -187,6 +211,9 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void addFields() {
+
+		caseDisease = getCaseDisease();
+
 
 		addressType = addField(LocationDto.ADDRESS_TYPE, ComboBox.class);
 		addressType.setVisible(false);
@@ -241,7 +268,8 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		TextField streetField = addField(LocationDto.STREET, TextField.class);
 		streetField.setVisible(false);
 		localityField = addField(LocationDto.LOCALITY, TextField.class);
-		TextField houseNumberField = addField(LocationDto.HOUSE_NUMBER, TextField.class);
+		localityField.setVisible(false);
+		houseNumberField = addField(LocationDto.HOUSE_NUMBER, TextField.class);
 		TextField landMark = addField(LocationDto.LAND_MARK, TextField.class);
 		landMark.setVisible(false);
 		additionalInformationField = addField(LocationDto.ADDITIONAL_INFORMATION, TextField.class);
@@ -250,10 +278,17 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		TextField cityField = addField(LocationDto.CITY, TextField.class);
 		postalCodeField = addField(LocationDto.POSTAL_CODE, TextField.class);
 
+		residentialAddress = addField(LocationDto.RESIDENTIAL_ADDRESS, TextField.class);
+		residentialAddress.setVisible(false);
+
 		areaType = addField(LocationDto.AREA_TYPE, ComboBox.class);
 		areaType.removeItem(AreaType.UNKNOWN);
 		areaType.setVisible(true);
 		areaType.setDescription(I18nProperties.getDescription(getPropertyI18nPrefix() + "." + LocationDto.AREA_TYPE));
+
+		zoneTextField = addField(LocationDto.ZONE, TextField.class);
+		villageTextField = addField(LocationDto.VILLAGE, TextField.class);
+		setVisible(false, LocationDto.ZONE, LocationDto.VILLAGE);
 
 		contactPersonFirstName = addField(LocationDto.CONTACT_PERSON_FIRST_NAME, TextField.class);
 		contactPersonLastName = addField(LocationDto.CONTACT_PERSON_LAST_NAME, TextField.class);
@@ -269,10 +304,11 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		final AccessibleTextField tfAccuracy = addField(LocationDto.LAT_LON_ACCURACY, AccessibleTextField.class);
 		final StringToAngularLocationConverter stringToAngularLocationConverter = new StringToAngularLocationConverter();
 		tfLatitude.setConverter(stringToAngularLocationConverter);
-		tfLatitude.setVisible(false);
 		tfLongitude.setConverter(stringToAngularLocationConverter);
-		tfLongitude.setVisible(false);
 		tfAccuracy.setConverter(stringToAngularLocationConverter);
+
+		tfLatitude.setVisible(false);
+		tfLongitude.setVisible(false);
 		tfAccuracy.setVisible(false);
 
 		continent = addInfrastructureField(LocationDto.CONTINENT);
@@ -289,6 +325,9 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
+
+		nearestHealthFacilityToVillage = addField(LocationDto.NEAREST_HEALTH_FACILITY_TO_VILLAGE, TextField.class);
+		nearestHealthFacilityToVillage.setVisible(false);
 
 		if (!isEditableAllowed(LocationDto.COMMUNITY)) {
 			setEnabled(false, LocationDto.COUNTRY, LocationDto.REGION, LocationDto.DISTRICT);
@@ -751,10 +790,13 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	//create a function to hide fields in ebs
 	public void hideForEbsForm() {
-		getField(LocationDto.LOCALITY).setVisible(false);
-		getField(LocationDto.HOUSE_NUMBER).setVisible(false);
-		getField(LocationDto.AREA_TYPE).setVisible(false);
-		getField(LocationDto.POSTAL_CODE).setVisible(false);
+		setVisible(false, LocationDto.STREET, LocationDto.ADDITIONAL_INFORMATION, LocationDto.LOCALITY,LocationDto.HOUSE_NUMBER,LocationDto.AREA_TYPE,LocationDto.POSTAL_CODE);
+//		getField(LocationDto.STREET).setVisible(false);
+//		getField(LocationDto.ADDITIONAL_INFORMATION).setVisible(false);
+//		getField(LocationDto.LOCALITY).setVisible(false);
+//		getField(LocationDto.HOUSE_NUMBER).setVisible(false);
+//		getField(LocationDto.AREA_TYPE).setVisible(false);
+//		getField(LocationDto.POSTAL_CODE).setVisible(false);
 	}
 
 	public void setCountryDisabledWithHint(String hint) {
@@ -768,7 +810,17 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	@Override
 	protected String createHtmlLayout() {
-		return HTML_LAYOUT;
+		if (caseDisease !=  null) {
+			switch (caseDisease) {
+				case GUINEA_WORM:
+					return HTML_LAYOUT_GUINEA_WORM;
+				default:
+					return HTML_LAYOUT;
+			}
+
+		} else {
+			return HTML_LAYOUT;
+		}
 	}
 
 	@Override
@@ -906,17 +958,20 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	public void getIncomingDisease(Disease incomingDisease){
 		newDisease = incomingDisease;
 
-		switch (newDisease) {
-    		case YELLOW_FEVER:
-        		handleYellowFever();
-        		break;
-    		case AHF:
-        		handleAHF();
-        		break;
+
+		switch (newDisease){
+			case YELLOW_FEVER:
+				handleYellowFever();
+				break;
+			case AHF:
+			case DENGUE:
+				handleAHF();
+				break;
 			case CSM:
 				handleCSM();
 				break;
 			case NEW_INFLUENZA:
+			case SARI:
 				handleNewInfluenza();
 				break;
 			case AFP:
@@ -928,6 +983,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			case CORONAVIRUS:
 				handleCoronavirus();
 				break;
+			case FOODBORNE_ILLNESS:
+				handleFBI();
+			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
+				handleIDSR();
 			default:
 				break;
 			}
@@ -935,39 +994,80 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	public void handleYellowFever(){
 			setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK);
-			localityField.setVisible(false);
 	}
 	public void handleAHF(){
 		setVisible(false,
-				LocationDto.POSTAL_CODE, LocationDto.ADDITIONAL_INFORMATION, LocationDto.LOCALITY);
+				LocationDto.POSTAL_CODE, LocationDto.ADDITIONAL_INFORMATION, LocationDto.HOUSE_NUMBER, LocationDto.AREA_TYPE, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
+		setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE);
 	}
 	public void handleCSM(){
 		setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAT_LON_ACCURACY, LocationDto.LAND_MARK);
-		setVisible(false,LocationDto.AREA_TYPE);
+		setVisible(false,LocationDto.AREA_TYPE, LocationDto.CITY);
 	}
 	public void handleNewInfluenza(){
 		setVisible(false,
-				LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY, LocationDto.LOCALITY);
-		additionalInformationField.setCaption("Address (Location)");
+				LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
+		localityField.setVisible(true);
+
 	}
 	public void handleAFP(){
 		additionalInformationField.setCaption("Village");
 		setVisible(false, LocationDto.ADDRESS_TYPE,
 				LocationDto.ADDRESS_TYPE_DETAILS,
 				LocationDto.STREET,
-				LocationDto.CONTACT_PERSON_FIRST_NAME, LocationDto.LOCALITY);
+				LocationDto.CONTACT_PERSON_FIRST_NAME);
 		setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE);
 	}
 
-	public void handleMeasles(){
-		setVisible(false, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY, LocationDto.AREA_TYPE);
-			getField(LocationDto.LAND_MARK).setVisible(true);
-			postalCodeField.setVisible(true);
-	}
-
 	public void handleCoronavirus() {
-		setVisible(true, LocationDto.POSTAL_CODE, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK);
+			setVisible(true, LocationDto.POSTAL_CODE, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK);
+			setVisible(false, LocationDto.ADDITIONAL_INFORMATION, LocationDto.STREET, LocationDto.HOUSE_NUMBER, LocationDto.CITY, LocationDto.AREA_TYPE, LocationDto.DETAILS, LocationDto.LAND_MARK);
 	}
 
+	//handle CHOLERA
+	public void handleForCholera() {
+		setVisible(true, LocationDto.POSTAL_CODE, LocationDto.VILLAGE);
+		setVisible(false, LocationDto.STREET, LocationDto.ADDITIONAL_INFORMATION, LocationDto.CITY, LocationDto.HOUSE_NUMBER, LocationDto.AREA_TYPE, LocationDto.VILLAGE);
+	}
+	
+	public void handleMeasles() {
+			setVisible(false, LocationDto.STREET, LocationDto.HOUSE_NUMBER, LocationDto.LOCALITY);
+			setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE, LocationDto.LAT_LON_ACCURACY, LocationDto.LAND_MARK, LocationDto.COMMUNITY, LocationDto.DISTRICT, LocationDto.REGION, LocationDto.CITY);
+			additionalInformationField.setCaption("Address (Location)");
+			residentialAddress.setVisible(true);
+			areaType.setVisible(true);
+	}
+
+	//handleNnt
+	public void handleVisibilityForNNT() {
+		nearestHealthFacilityToVillage.setVisible(true);
+		setVisible(true, LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
+		setVisible(false, LocationDto.STREET, LocationDto.HOUSE_NUMBER, LocationDto.ADDITIONAL_INFORMATION);
+	}
+
+
+	public void handleFBI(){
+		createLabel(I18nProperties.getString(Strings.homeAddressheading), H3, HOME_ADDRESS_HEADING);
+
+		setVisible(false,
+				LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
+		localityField.setVisible(true);
+	}
+	public void handleIDSR(){
+		setVisible(false, LocationDto.POSTAL_CODE, LocationDto.CITY);
+		 houseNumberField.setCaption("House Number/Location");
+	}
+
+	public void setOnlyUnknownForGuineaWorm() {
+		setVisible(false, LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.ADDITIONAL_INFORMATION, LocationDto.CITY, LocationDto.HOUSE_NUMBER);
+			setVisible(true, LocationDto.LAND_MARK, LocationDto.AREA_TYPE, LocationDto.ZONE, LocationDto.VILLAGE);
+	}
+	private Label createLabel(String text, String h4, String location) {
+		final Label label = new Label(text);
+		label.setId(text);
+		label.addStyleName(h4);
+		getContent().addComponent(label, location);
+		return label;
+	}
 
 }
