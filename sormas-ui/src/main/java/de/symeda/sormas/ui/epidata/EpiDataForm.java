@@ -30,21 +30,16 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import com.vaadin.ui.Label;
-import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.DateField;
-import com.vaadin.v7.ui.OptionGroup;
+import com.vaadin.v7.ui.*;
 import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.utils.CardOrHistory;
-import de.symeda.sormas.api.utils.RiskFactorInfluenza;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.ui.utils.*;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.v7.ui.Field;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityDto;
@@ -55,7 +50,6 @@ import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
@@ -326,11 +320,20 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 			NullableOptionGroup previously = addField(EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_INFLUENZA, NullableOptionGroup.class);
 			TextField vaccineName = addField(EpiDataDto.NAME_OF_VACCINE, TextField.class);
-			DateField year = addField(EpiDataDto.YEAR_OF_VACCINATION, DateField.class);
+			ComboBox year = addField(EpiDataDto.YEAR_OF_VACCINATION, ComboBox.class);
+			// @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
+			year.setNullSelectionAllowed(true);
+			year.addItems(DateHelper.getYearsToNow());
+			year.setItemCaptionMode(AbstractSelect.ItemCaptionMode.ID_TOSTRING);
+			year.setInputPrompt(I18nProperties.getString(Strings.year));
 
 			NullableOptionGroup previouslyCovid = addField(EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_COVID, NullableOptionGroup.class);
 			TextField vaccineNameCovid = addField(EpiDataDto.NAME_OF_VACCINE_FOR_COVID, TextField.class);
-			DateField yearCovid = addField(EpiDataDto.YEAR_OF_VACCINATION_FOR_COVID, DateField.class);
+			ComboBox yearCovid = addField(EpiDataDto.YEAR_OF_VACCINATION_FOR_COVID, ComboBox.class);
+			yearCovid.setNullSelectionAllowed(true);
+			yearCovid.addItems(DateHelper.getYearsToNow());
+			yearCovid.setItemCaptionMode(AbstractSelect.ItemCaptionMode.ID_TOSTRING);
+			yearCovid.setInputPrompt(I18nProperties.getString(Strings.year));
 
 			vaccineName.setVisible(false);
 			year.setVisible(false);

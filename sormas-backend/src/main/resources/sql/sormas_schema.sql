@@ -13732,4 +13732,10 @@ INSERT INTO schema_version (version_number, comment) VALUES (618, 'Added paralys
 
 ALTER TABLE samples_history ALTER COLUMN samplepurpose DROP NOT NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (619, 'Dropped null constraint for samplepurpose in history table');
+
+ALTER TABLE epidata DROP COLUMN yearofvaccinationcovid;
+ALTER TABLE epidata DROP COLUMN yearofvaccination;
+ALTER TABLE epidata ADD COLUMN yearofvaccinationcovid INTEGER;
+ALTER TABLE epidata ADD COLUMN yearofvaccination INTEGER;
+INSERT INTO schema_version (version_number, comment) VALUES (620, 'Dropped columns at epidate and re-added with type Int');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

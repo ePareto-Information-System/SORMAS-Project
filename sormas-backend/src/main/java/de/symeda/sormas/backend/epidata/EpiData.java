@@ -58,7 +58,7 @@ public class EpiData extends AbstractDomainObject {
 	private YesNo areaInfectedAnimals;
 	private Disease disease;
 	private YesNo previouslyVaccinatedAgainstInfluenza;
-	private Date yearOfVaccination;
+	private Integer yearOfVaccination;
 	private String placesVisitedPastSevenDays;
 	private YesNo vistedPlacesConfirmedPandemic;
 	private RiskFactorInfluenza riskFactorsSevereDisease;
@@ -76,7 +76,7 @@ public class EpiData extends AbstractDomainObject {
 	private String specifyIllness;
 	private String nameOfVaccine;
 	private YesNo previouslyVaccinatedAgainstCovid;
-	private Date yearOfVaccinationCovid;
+	private Integer yearOfVaccinationCovid;
 	private String nameOfVaccineCovid;
 	private String ifYesSpecifySick;
 	private YesNo contactDeadAnimals;
@@ -240,11 +240,11 @@ public class EpiData extends AbstractDomainObject {
 		this.previouslyVaccinatedAgainstInfluenza = previouslyVaccinatedAgainstInfluenza;
 	}
 
-	public Date getYearOfVaccination() {
+	public Integer getYearOfVaccination() {
 		return yearOfVaccination;
 	}
 
-	public void setYearOfVaccination(Date yearOfVaccination) {
+	public void setYearOfVaccination(Integer yearOfVaccination) {
 		this.yearOfVaccination = yearOfVaccination;
 	}
 
@@ -384,11 +384,11 @@ public class EpiData extends AbstractDomainObject {
 		this.previouslyVaccinatedAgainstCovid = previouslyVaccinatedAgainstCovid;
 	}
 
-	public Date getYearOfVaccinationCovid() {
+	public Integer getYearOfVaccinationCovid() {
 		return yearOfVaccinationCovid;
 	}
 
-	public void setYearOfVaccinationCovid(Date yearOfVaccinationCovid) {
+	public void setYearOfVaccinationCovid(Integer yearOfVaccinationCovid) {
 		this.yearOfVaccinationCovid = yearOfVaccinationCovid;
 	}
 

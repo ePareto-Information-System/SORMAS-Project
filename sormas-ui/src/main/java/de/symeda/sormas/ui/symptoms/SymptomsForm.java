@@ -940,7 +940,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
             setVisible(false, FEVER, HEADACHE, ALTERED_CONSCIOUSNESS, CONVULSION, SEIZURES);
             setVisible(true, COUGH, SORE_THROAT, DIFFICULTY_BREATHING, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT, TEMPERATURE, TEMPERATURE_SOURCE);
 
-            FieldHelper.setVisibleWhen(feverBodytemp, Arrays.asList(temperature, temperatureSource), Arrays.asList(YesNoUnknown.YES), true);
+            FieldHelper.setVisibleWhen(feverBodytemp, Arrays.asList(temperature, temperatureSource), Arrays.asList(YesNo.YES), true);
 
         }
         if (disease == Disease.YELLOW_FEVER) {

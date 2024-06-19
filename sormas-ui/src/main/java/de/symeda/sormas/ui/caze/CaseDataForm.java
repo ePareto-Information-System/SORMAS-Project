@@ -1538,6 +1538,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			//INFLUENZA
 			if (disease == Disease.NEW_INFLUENZA) {
 				outcome.setVisible(false);
+                placeOfStayHeadingLabel.setVisible(false);
 			}
 
 			if(disease ==Disease.FOODBORNE_ILLNESS){
