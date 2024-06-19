@@ -593,6 +593,10 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			} else if(diseaseField.getValue() != null && diseaseField.getValue() == Disease.NEW_INFLUENZA || diseaseField.getValue() == Disease.AFP || diseaseField.getValue() == Disease.AHF){
 				personCreateForm.hidePresentCondition();
 			}
+			else if(diseaseField.getValue() != null && diseaseField.getValue() == Disease.YELLOW_FEVER){
+				personCreateForm.hidePresentCondition();
+				personCreateForm.showPersonalEmail();
+			}
 			else{
 				personCreateForm.showPresentCondition();
 			}

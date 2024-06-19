@@ -525,9 +525,6 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		if (disease == Disease.AHF) {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);
 			hideSelectedFields();
-		}else if (disease == Disease.YELLOW_FEVER) {
-			validValues = Arrays.asList(PresentCondition.ALIVE);
-			showPersonalEmail();
 		} else if (disease == Disease.CSM) {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD);
 			hidePersonalEmail();
