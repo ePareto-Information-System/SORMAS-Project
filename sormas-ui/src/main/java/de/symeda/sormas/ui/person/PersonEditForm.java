@@ -1105,10 +1105,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				occupationHeader.setVisible(false);
 				setVisible(false, PersonDto.PRESENT_CONDITION, PersonDto.MOTHERS_NAME, PersonDto.FATHERS_NAME, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PASSPORT_NUMBER, PersonDto.GHANA_CARD, PersonDto.MARRIAGE_STATUS, PersonDto.OCCUPATION_DETAILS, PersonDto.EDUCATION_TYPE);
 			}
-			else if (disease == Disease.YELLOW_FEVER) {
-				List<PresentCondition> validValues = Arrays.asList(PresentCondition.ALIVE);
-				FieldHelper.updateEnumData(presentConditionField, validValues);
-			} else {
+			 else {
 				FieldVisibilityCheckers fieldVisibilityCheckers = FieldVisibilityCheckers.withDisease(disease);
 				List<PresentCondition> validValues = Arrays.stream(PresentCondition.values())
 						.filter(c -> fieldVisibilityCheckers.isVisible(PresentCondition.class, c.name()))
