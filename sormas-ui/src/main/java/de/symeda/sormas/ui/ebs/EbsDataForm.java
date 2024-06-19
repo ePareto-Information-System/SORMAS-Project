@@ -65,7 +65,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
     private static final String HTML_LAYOUT =
             loc(INFORMATION_SOURCE_HEADING_LOC) +
                     fluidRowLocs(EbsDto.SOURCE_INFORMATION, EbsDto.CATEGORY_OF_INFORMANT, EbsDto.REPORT_DATE_TIME) +
-                    fluidRowLocs(EbsDto.INFORMANT_TEL,EbsDto.INFORMANT_NAME, "") +
+                    fluidRowLocs(EbsDto.INFORMANT_TEL,EbsDto.INFORMANT_NAME, EbsDto.OTHER_INFORMANT) +
                     fluidRowLocs(EbsDto.SCANNING_TYPE, EbsDto.AUTOMATIC_SCANNING_TYPE) +
                     fluidRowLocs(EbsDto.SOURCE_NAME,EbsDto.MANUAL_SCANNING_TYPE,EbsDto.SOURCE_URL,EbsDto.OTHER) +
 
@@ -135,6 +135,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
         getContent().addComponent(locationHeadingLabel, PLACE_DETECTION_HEADING_LOC);
         TextField contactName = addField(EbsDto.INFORMANT_NAME,TextField.class);
         TextField contactPhone = addField(EbsDto.INFORMANT_TEL, TextField.class);
+        TextField otherInformant = addField(EbsDto.OTHER_INFORMANT, TextField.class);
         contactPhone.addValidator(new PhoneNumberValidator(I18nProperties.getValidationError(Validations.validPhoneNumber, contactPhone.getCaption())));
         Label contactPhoneLabel = new Label(I18nProperties.getString(Strings.messageEventExternalTokenWarning));
         contactPhoneLabel.addStyleNames(VSPACE_3, LABEL_WHITE_SPACE_NORMAL);
@@ -163,10 +164,11 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
         personPhone.addValidator(new PhoneNumberValidator(I18nProperties.getValidationError(Validations.validPhoneNumber, personPhone.getCaption())));
         addField(
                 EbsDto.EBS_LOCATION,
-                new LocationEditForm(fieldVisibilityCheckers, createFieldAccessCheckers(isPseudonymized, inJurisdiction, false))).setCaption(null);
+                new LocationEditForm(fieldVisibilityCheckers, createFieldAccessCheckers(isPseudonymized, inJurisdiction, false),null)).setCaption(null);
 
         locationForm = (LocationEditForm) getFieldGroup().getField(EbsDto.EBS_LOCATION);
         locationForm.setDistrictRequiredOnDefaultCountry(true);
+
 
         ComboBox regionField = (ComboBox) locationForm.getFieldGroup().getField(LocationDto.REGION);
         ComboBox districtField = (ComboBox) locationForm.getFieldGroup().getField(LocationDto.DISTRICT);
@@ -231,6 +233,12 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
                 Arrays.asList(EbsDto.SOURCE_URL),
                 EbsDto.MANUAL_SCANNING_TYPE,
                 Arrays.asList(ManualScanningType.ONLINE),
+                true);
+        FieldHelper.setVisibleWhen(
+                getFieldGroup(),
+                Arrays.asList(EbsDto.OTHER_INFORMANT),
+                EbsDto.CATEGORY_OF_INFORMANT,
+                Arrays.asList(PersonReporting.OTHER),
                 true);
 
         regionField.addValueChangeListener(e -> {
@@ -414,4 +422,5 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
         // this hopefully resets everything to its correct value
         locationForm.discard();
     }
+
 }

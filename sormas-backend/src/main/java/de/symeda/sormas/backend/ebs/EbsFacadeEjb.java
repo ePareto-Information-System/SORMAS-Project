@@ -189,6 +189,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		target.setDeletionReason(source.getDeletionReason());
 		target.setTriaging(TriagingFacadeEjb.toDto(source.getTriaging()));
 		target.setSignalVerification(SignalVerificationFacadeEjb.toDto(source.getSignalVerification()));
+		target.setOtherInformant(source.getOtherInformant());
 		return target;
 	}
 
@@ -922,6 +923,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		target.setEbsLatitude(source.getEbsLongitude());
 		target.setTriaging(triagingFacade.fillOrBuildEntity(source.getTriaging(), target.getTriaging(), checkChangeDate));
 		target.setSignalVerification(signalVerificationFacade.fillOrBuildEntity(source.getSignalVerification(), target.getSignalVerification(), checkChangeDate));
+		target.setOtherInformant(source.getOtherInformant());
 		return target;
 	}
 
