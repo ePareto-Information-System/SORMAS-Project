@@ -7,7 +7,6 @@ import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.ebs.*;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.utils.YesNo;
-import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import de.symeda.sormas.ui.utils.*;
 import com.vaadin.ui.Label;
 import de.symeda.sormas.api.FacadeProvider;
