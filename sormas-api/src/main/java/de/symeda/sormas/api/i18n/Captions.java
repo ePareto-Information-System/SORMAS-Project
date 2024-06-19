@@ -1564,6 +1564,7 @@ public interface Captions {
 	String Ebs_manualScanningType = "Ebs.manualScanningType";
 	String Ebs_other = "Ebs.other";
 	String Ebs_informantName = "Ebs.contactName";
+	String Ebs_otherInformant = "Ebs.otherInformant";
 	String Ebs_sourceName = "Ebs.sourceName";
 	String Ebs_sourceUrl = "Ebs.sourceUrl";
 	String Ebs_descriptionOccurrence = "Ebs.descriptionOccurrence";
