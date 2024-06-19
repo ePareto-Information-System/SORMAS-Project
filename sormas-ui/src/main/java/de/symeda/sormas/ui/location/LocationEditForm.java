@@ -114,7 +114,8 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 				fluidColumnLoc(2, 0, LocationDto.LATITUDE),
 				fluidColumnLoc(2, 0, LocationDto.LONGITUDE),
 				fluidColumnLoc(2, 0, LocationDto.LAT_LON_ACCURACY)));
-
+    private static final String EBS_LAYOUT = fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY) +
+            fluidRowLocs(4,LocationDto.CITY);
 	private MapPopupView leafletMapPopup;
 	private ComboBox addressType;
 	private ComboBox facilityTypeGroup;
@@ -709,6 +710,13 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	//create a function to hide fields in ebs
 	public void hideForEbsForm() {
+		setVisible(false, LocationDto.STREET, LocationDto.ADDITIONAL_INFORMATION, LocationDto.LOCALITY,LocationDto.HOUSE_NUMBER,LocationDto.AREA_TYPE,LocationDto.POSTAL_CODE);
+//		getField(LocationDto.STREET).setVisible(false);
+//		getField(LocationDto.ADDITIONAL_INFORMATION).setVisible(false);
+//		getField(LocationDto.LOCALITY).setVisible(false);
+//		getField(LocationDto.HOUSE_NUMBER).setVisible(false);
+//		getField(LocationDto.AREA_TYPE).setVisible(false);
+//		getField(LocationDto.POSTAL_CODE).setVisible(false);
 		getField(LocationDto.HOUSE_NUMBER).setVisible(false);
 		getField(LocationDto.AREA_TYPE).setVisible(false);
 		getField(LocationDto.POSTAL_CODE).setVisible(false);
