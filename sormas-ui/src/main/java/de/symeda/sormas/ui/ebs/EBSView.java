@@ -270,15 +270,15 @@ public class EBSView extends AbstractView {
             params = params.substring(1);
         }
             if (isDefaultViewType()) {
-                ((EbsGrid) grid).setEagerDataProvider();
-
-                updateFilterComponents();
-                ((EbsGrid) grid).reload();
-            }else {
-                ((EbsSignalGrid) grid).setEagerDataProvider();
+                ((EbsSignalGrid) grid).setLazyDataProvider();
 
                 updateFilterComponents();
                 ((EbsSignalGrid) grid).reload();
+            }else {
+                ((EbsGrid) grid).setLazyDataProvider();
+
+                updateFilterComponents();
+                ((EbsGrid) grid).reload();
             }
     }
 
