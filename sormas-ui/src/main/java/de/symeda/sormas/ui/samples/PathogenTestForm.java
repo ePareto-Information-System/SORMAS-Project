@@ -17,9 +17,41 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.samples;
 
-import static de.symeda.sormas.ui.utils.CssStyles.*;
-import static de.symeda.sormas.ui.utils.LayoutUtil.*;
+import com.vaadin.ui.Label;
+import com.vaadin.v7.data.util.converter.Converter;
+import com.vaadin.v7.ui.AbstractSelect.ItemCaptionMode;
+import com.vaadin.v7.ui.*;
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
+import de.symeda.sormas.api.disease.DiseaseVariant;
+import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.event.EventParticipantReferenceDto;
+import de.symeda.sormas.api.event.EventReferenceDto;
+import de.symeda.sormas.api.i18n.Descriptions;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.sample.*;
+import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.Gram;
+import de.symeda.sormas.api.utils.LabType;
+import de.symeda.sormas.api.utils.LatexCulture;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
+import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.utils.*;
+import org.apache.commons.collections.CollectionUtils;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -71,6 +103,9 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
+import static de.symeda.sormas.ui.utils.CssStyles.*;
+import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
+import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 
 public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
@@ -219,6 +254,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private TextField virusDetectionGenotypeField;
 	private ComboBox finalClassificationField;
 	private TextArea otherNotesAndObservations;
+	private DateTimeField sampleTestDateField;
+
 
 		public PathogenTestForm(SampleDto sample, boolean create, int caseSampleCount, boolean isPseudonymized) {
 		super(
@@ -341,7 +378,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		pcrTestSpecification = addField(PathogenTestDto.PCR_TEST_SPECIFICATION, ComboBox.class);
 		testTypeTextField = addField(PathogenTestDto.TEST_TYPE_TEXT, TextField.class);
 		FieldHelper.addSoftRequiredStyle(testTypeTextField);
-		DateTimeField sampleTestDateField = addField(PathogenTestDto.TEST_DATE_TIME, DateTimeField.class);
+		sampleTestDateField = addField(PathogenTestDto.TEST_DATE_TIME, DateTimeField.class);
 		sampleTestDateField.addValidator(
 				new DateComparisonValidator(
 						sampleTestDateField,
@@ -962,6 +999,23 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			});
 
 		}
+
+		/*if(caseDisease == Disease.MONKEYPOX){
+			sampleTestDateField.addValueChangeListener(event -> {
+				if (event.getProperty().getValue() != null) {
+					sampleTestDateField.setReadOnly(true);
+					// sampleTestDateField.setEnabled(false);
+				}
+			});
+		}*/
+
+		if (caseDisease == Disease.MONKEYPOX) {
+			LocalDate localDate = LocalDate.now();
+			Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+			sampleTestDateField.setValue(date);
+			sampleTestDateField.setReadOnly(true);
+		}
+
 	}
 
 

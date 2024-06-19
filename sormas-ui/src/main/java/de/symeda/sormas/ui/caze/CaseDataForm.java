@@ -14,14 +14,7 @@
  */
 package de.symeda.sormas.ui.caze;
 
-import static de.symeda.sormas.ui.utils.CssStyles.ERROR_COLOR_PRIMARY;
-import static de.symeda.sormas.ui.utils.CssStyles.FORCE_CAPTION;
-import static de.symeda.sormas.ui.utils.CssStyles.H3;
-import static de.symeda.sormas.ui.utils.CssStyles.LABEL_WHITE_SPACE_NORMAL;
-import static de.symeda.sormas.ui.utils.CssStyles.LAYOUT_COL_HIDE_INVSIBLE;
-import static de.symeda.sormas.ui.utils.CssStyles.SOFT_REQUIRED;
-import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
-import static de.symeda.sormas.ui.utils.CssStyles.style;
+import static de.symeda.sormas.ui.utils.CssStyles.*;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumn;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumnLoc;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumnLocCss;
@@ -182,8 +175,16 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					loc(NOTIFY_INVESTIGATE) +
 					fluidRowLocs(CaseDataDto.NOTIFIED_BY_LIST, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION) +
 					fluidRowLocs(6,CaseDataDto.NOTIFIED_OTHER) +
-					fluidRowLocs(6,CaseDataDto.NOTIFIED_BY) +
 					loc(INDICATE_CATEGORY_LOC) +
+					fluidRowLocs(6,CaseDataDto.NOTIFIED_BY) +
+                    fluidRowLocs(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY) +
+                    fluidRowLocs(CaseDataDto.REPORT_LAT, CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT_LON_ACCURACY) +
+                    fluidRowLocs(CaseDataDto.PATIENT_NAME, CaseDataDto.PATIENT_OTHER_NAMES)
+                    + fluidRowLocs(CaseDataDto.PATIENT_DOB_DD, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_YY)
+                    + fluidRowLocs(CaseDataDto.PATIENT_AGE_YEAR, CaseDataDto.PATIENT_AGE_MONTH)
+                    + fluidRowLocs(6, CaseDataDto.PATIENT_SEX)
+                    + fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY)
+                    + fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE) +
 					fluidRowLocs(CaseDataDto.EXTERNAL_ID, CaseDataDto.EXTERNAL_TOKEN) +
 					fluidRowLocs("", EXTERNAL_TOKEN_WARNING_LOC) +
 					fluidRowLocs(6, CaseDataDto.CASE_ID_ISM, 6, CaseDataDto.INTERNAL_TOKEN) +
@@ -252,7 +253,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(CaseDataDto.WAS_IN_QUARANTINE_BEFORE_ISOLATION) +
 					fluidRowLocs(CaseDataDto.QUARANTINE_REASON_BEFORE_ISOLATION, CaseDataDto.QUARANTINE_REASON_BEFORE_ISOLATION_DETAILS) +
 					fluidRowLocs(CaseDataDto.END_OF_ISOLATION_REASON, CaseDataDto.END_OF_ISOLATION_REASON_DETAILS) +
-					fluidRowLocs(CaseDataDto.REPORT_LAT, CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT_LON_ACCURACY) +
 					fluidRowLocs(CaseDataDto.HEALTH_CONDITIONS) +
 					loc(MEDICAL_INFORMATION_LOC) +
 					fluidRowLocs(CaseDataDto.BLOOD_ORGAN_OR_TISSUE_DONATED) +
@@ -784,7 +784,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
             if (StringUtils.isNotBlank(group.toString())) {
                 Label heading = new Label(group.toString());
-                CssStyles.style(heading, CssStyles.H4);
+                CssStyles.style(heading, H4);
                 if (group.ordinal() < 2) {
                     reinfectionDetailsLeftLayout.addComponent(heading);
                 } else {
@@ -1600,6 +1600,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             // Set health facility/point of entry visibility based on case origin
             if (getValue().getCaseOrigin() == CaseOrigin.POINT_OF_ENTRY) {
                 setVisible(true, CaseDataDto.POINT_OF_ENTRY);
+                setVisible(diseaseField.getValue() == Disease.CORONAVIRUS, CaseDataDto.POINT_OF_ENTRY);
+
                 if (getValue().getPointOfEntry() != null) {
                     setVisible(getValue().getPointOfEntry().isOtherPointOfEntry(), CaseDataDto.POINT_OF_ENTRY_DETAILS);
                     btnReferFromPointOfEntry
@@ -1783,12 +1785,22 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 setVisible(false, CaseDataDto.CLINICAL_CONFIRMATION, CaseDataDto.EPIDEMIOLOGICAL_CONFIRMATION, CaseDataDto.LABORATORY_DIAGNOSTIC_CONFIRMATION);
             }
 
-            if (disease == Disease.MONKEYPOX) {
-                placeOfStayHeadingLabel.setVisible(false);
-                createLabel(I18nProperties.getString(Strings.notifyInvestigate), H3, NOTIFY_INVESTIGATE);
-                setVisible(true, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
-                createLabel(I18nProperties.getString(Strings.headingIndicateCategory), H3, INDICATE_CATEGORY_LOC);
-            }
+            if (disease ==Disease.MONKEYPOX){
+				placeOfStayHeadingLabel.setVisible(false);
+				createLabel(I18nProperties.getString(Strings.notifyInvestigate), H3, NOTIFY_INVESTIGATE);
+				setVisible(true, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
+				createLabel(I18nProperties.getString(Strings.headingIndicateCategory), H4, INDICATE_CATEGORY_LOC);
+
+                addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
+                tfReportLon.setVisible(true);
+                tfReportLat.setVisible(true);
+                addFields(CaseDataDto.PATIENT_NAME, CaseDataDto.PATIENT_OTHER_NAMES);
+                addFields(CaseDataDto.PATIENT_DOB_DD, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_YY);
+                addFields(CaseDataDto.PATIENT_AGE_YEAR, CaseDataDto.PATIENT_AGE_MONTH);
+                addFields(CaseDataDto.PATIENT_SEX);
+                addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
+                addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
+			}
 
 			if (disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
 				numberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being Reported");
@@ -1890,6 +1902,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 outcome.setVisible(false);
                 dateFormReceivedAtNational.setVisible(false);
 			}
+
 
         });
     }

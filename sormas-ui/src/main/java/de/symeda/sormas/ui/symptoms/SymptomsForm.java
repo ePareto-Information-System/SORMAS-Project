@@ -147,11 +147,13 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(BUTTONS_LOC)+
 					createSymptomGroupLayout(SymptomGroup.GENERAL, GENERAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					fluidRowLocs(FEVER_ONSET_PARALYSIS, PROGRESSIVE_PARALYSIS) +
-					fluidRowLocs(DATE_ONSET_PARALYSIS, PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
-					fluidRowLocs(SITE_OF_PARALYSIS) +
-					fluidRowLocs(PARALYSED_LIMB_SENSITIVE_TO_PAIN, INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
+					fluidRowLocs(PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
+					fluidRowLocs(6,SITE_OF_PARALYSIS) +
+					fluidRowLocs(6,PARALYSED_LIMB_SENSITIVE_TO_PAIN) +
+					fluidRowLocs(6,INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
 					fluidRowLocs(RIGHT_INJECTION_SITE, LEFT_INJECTION_SITE) +
-					fluidRowLocs(6, TRUEAFP) +
+					fluidRowLocs(6,DATE_ONSET_PARALYSIS) +
+
 					fluidRowLocs(6,ALTERED_CONSCIOUSNESS) +
 					fluidRowLocs(6,CONFUSED_DISORIENTED) +
 					fluidRowLocs(6,HEMORRHAGIC_SYNDROME) +
@@ -191,10 +193,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6, OUTCOME_PLACE_COMM_VILLAGE)+
 					fluidRowLocs(6, HOSPITAL_NAME_SERVICE)+
 					fluidRowLocs(6, PLACE_OF_FUNERAL_NAME_VILLAGE)+
-
+					fluidRowLocs(SYMPTOMS_ONGOING, DURATION_HOURS, YES_NAME_OF_HEALTH_FACILITY)+
 					fluidRowLocs(PROVISONAL_DIAGNOSIS)+
 					fluidRowLocs(6, TRUEAFP)+
-					fluidRowLocs(SYMPTOMS_ONGOING, DURATION_HOURS, YES_NAME_OF_HEALTH_FACILITY)+
 
 					loc(FOOD_HISTORY_HEADING_LOC);
 
@@ -287,6 +288,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	OptionGroup tickRashCharacteristicsField;
 	NullableOptionGroup patientHaveFever;
 	DateField dateOfOnset;
+    OptionGroup typeOfRash;
 
     public SymptomsForm(
             CaseDataDto caze,
@@ -1003,7 +1005,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
         }
         if (disease == Disease.AFP) {
 
-            setVisible(false, SYMPTOMS_COMMENTS);
+            setVisible(false, SYMPTOMS_COMMENTS, OUTCOME, ONSET_DATE, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
 
             NullableOptionGroup feverOnsetParalysis = addField(FEVER_ONSET_PARALYSIS, NullableOptionGroup.class);
             NullableOptionGroup progressiveParalysis = addField(PROGRESSIVE_PARALYSIS, NullableOptionGroup.class);
@@ -1023,36 +1025,35 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
             OptionGroup paralysedLimbSensitiveToPain = addField(PARALYSED_LIMB_SENSITIVE_TO_PAIN, OptionGroup.class);
             OptionGroup injectionSiteBeforeOnsetParalysis = addField(INJECTION_SITE_BEFORE_ONSET_PARALYSIS, OptionGroup.class);
 
-            NullableOptionGroup rightInjectionSiteBox = new NullableOptionGroup("Right Injection Site");
+			ComboBox rightInjectionSiteBox = new ComboBox("Right Injection Site");
             for (InjectionSite injectionSiteRight : InjectionSite.InjectionSiteRight) {
                 rightInjectionSiteBox.addItem(injectionSiteRight);
             }
-            NullableOptionGroup rightInjectionSite = addField(RIGHT_INJECTION_SITE, rightInjectionSiteBox);
+			ComboBox rightInjectionSite = addField(RIGHT_INJECTION_SITE, rightInjectionSiteBox);
 
-            NullableOptionGroup leftInjectionSiteBox = new NullableOptionGroup("Left Injection Site");
+			ComboBox leftInjectionSiteBox = new ComboBox("Left Injection Site");
             for (InjectionSite injectionSiteLeft : InjectionSite.InjectionSiteLeft) {
                 leftInjectionSiteBox.addItem(injectionSiteLeft);
             }
-            NullableOptionGroup leftInjectionSite = addField(LEFT_INJECTION_SITE, leftInjectionSiteBox);
+            ComboBox leftInjectionSite = addField(LEFT_INJECTION_SITE, leftInjectionSiteBox);
+
+			rightInjectionSite.setVisible(false);
+			leftInjectionSite.setVisible(false);
+
+			FieldHelper.setVisibleWhen(injectionSiteBeforeOnsetParalysis, Arrays.asList(rightInjectionSite, leftInjectionSite), Arrays.asList(YesNo.YES), true);
+
             OptionGroup trueAFP = addField(TRUEAFP, OptionGroup.class);
             TextArea provisionalDiagnosis = addField(PROVISONAL_DIAGNOSIS, TextArea.class);
             provisionalDiagnosis.setRows(4);
 
-			/*addFields(
-					MUSCLE_TONE,
-					DEEP_TENDON_REFLEX,
-					MUSCLE_VOLUME,
-					SENSORY_LOSS);*/
+            clinicalMeasurementsHeadingLabel.setVisible(false);
+            setVisible(false, FEVER,
+                    ALTERED_CONSCIOUSNESS,
+                    SEIZURES,
+                    HEADACHE,
+                    NECK_STIFFNESS);
 
-			clinicalMeasurementsHeadingLabel.setVisible(false);
-			setVisible(false, FEVER,
-					ALTERED_CONSCIOUSNESS,
-					SEIZURES,
-					HEADACHE,
-					NECK_STIFFNESS);
-
-			symptomsHide();
-			setVisible(true, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
+            symptomsHide();
 
 		}
 		if(disease == Disease.NEW_INFLUENZA){
@@ -1124,13 +1125,12 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
             foodHistoryHeadingLabel.setVisible(true);
 		}
 
-		if(disease == Disease.MONKEYPOX){
-			setVisible(false, SYMPTOMS_COMMENTS);
+
+        if (disease == Disease.MONKEYPOX) {
+            setVisible(false, SYMPTOMS_COMMENTS, OUTCOME, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT, ONSET_DATE);
 
             symptomsHeadingLabel.setVisible(true);
             tickSymptomField.setVisible(true);
-            onsetSymptom.setVisible(true);
-            setVisible(true, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
 
             addField(SYMPTOMS_SELECTED_OTHER, TextField.class);
             addField(DATE_OF_ONSET_RASH, DateField.class);
@@ -1143,12 +1143,14 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
             addField(ARE_LESIONS_DEEP, NullableOptionGroup.class);
             addField(ARE_ULCERS_AMONG_LESIONS, NullableOptionGroup.class);
 
-            ComboBox typeOfRash = new ComboBox("Rash");
-            for (SymptomsList list : SymptomsList.MpoxRashList()) {
-                typeOfRash.addItem(list);
-            }
+			typeOfRash = addField(TYPE_OF_RASH, OptionGroup.class);
+			CssStyles.style(typeOfRash, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+			typeOfRash.setMultiSelect(true);
 
-            addField(TYPE_OF_RASH, typeOfRash);
+            typeOfRash.addItems(
+					Arrays.stream(SymptomsList.MpoxRashList())
+							.filter(c -> fieldVisibilityCheckers.isVisible(SymptomsList.class, c.name()))
+							.collect(Collectors.toList()));
 		}
 		
 		if (disease == Disease.CORONAVIRUS) {
@@ -1238,6 +1240,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				Arrays.asList(SymptomState.YES),
 				disease);
 		}
+		Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.CSM, Disease.NEW_INFLUENZA, Disease.AFP));
 
 		FieldHelper
 			.setRequiredWhen(getFieldGroup(), getFieldGroup().getField(LESIONS_ALL_OVER_BODY), lesionsFieldIds, Arrays.asList(Boolean.TRUE), disease);
@@ -1267,8 +1270,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		setEmptyToNoButton.setVisible(false);
 
 		//Button setEmptyToUnknownButton = createButtonSetClearedToSymptomState(Captions.symptomsSetClearedToUnknown, SymptomState.UNKNOWN);
-
-		Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.DENGUE, Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI));
 
 		if (includedDiseases.contains(disease)) {
 			clearAllButton.setVisible(true);

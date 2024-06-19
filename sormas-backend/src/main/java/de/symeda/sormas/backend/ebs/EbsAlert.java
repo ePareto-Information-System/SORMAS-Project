@@ -21,7 +21,7 @@ public class EbsAlert extends AbstractDomainObject {
     public static final String RESPONSE_STATUS = "responseStatus";
     public static final String RESPONSE_DATE = "responseDate";
     public static final String DETAILS_RESPONSE_ACTIVITIES = "detailsResponseActivities";
-    public static final String ALERT_USED = "alertUsed";
+    public static final String ALERT_ISSUED = "alertIssued";
     public static final String DETAILS_GIVEN = "detailsGiven";
     public static final String DETAILS_ALERT_USED = "detailsAlertUsed";
     public static final String ALERTDATE = "alertDate";
@@ -33,7 +33,7 @@ public class EbsAlert extends AbstractDomainObject {
     private Date responseDate;
     private String detailsResponseActivities;
     private String detailsGiven;
-    private YesNo alertUsed;
+    private YesNo alertIssued;
     private String detailsAlertUsed;
     private Ebs ebs;
     private Date alertDate;
@@ -78,12 +78,12 @@ public class EbsAlert extends AbstractDomainObject {
         this.detailsGiven = detailsGiven;
     }
 
-    public YesNo getAlertUsed() {
-        return alertUsed;
+    public YesNo getAlertIssued() {
+        return alertIssued;
     }
 
-    public void setAlertUsed(YesNo alertUsed) {
-        this.alertUsed = alertUsed;
+    public void setAlertIssued(YesNo alertUsed) {
+        this.alertIssued = alertUsed;
     }
 
     public String getDetailsAlertUsed() {

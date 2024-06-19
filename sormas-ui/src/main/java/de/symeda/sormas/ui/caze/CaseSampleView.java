@@ -108,10 +108,18 @@ public class CaseSampleView extends AbstractCaseView {
         HorizontalLayout buttonFilterLayout = new HorizontalLayout();
         buttonFilterLayout.setSpacing(true);
         {
+            final Button newButton = ButtonHelper.createIconButtonWithCaption(
+                    Captions.sampleNewSample,
+                    I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, Captions.sampleNewSample),
+                    VaadinIcons.PLUS_CIRCLE,
+                    e -> ControllerProvider.getSampleController().create(criteria.getCaze(), criteria.getDisease(), SormasUI::refreshView),
+                    ValoTheme.BUTTON_PRIMARY);
+
             Button statusAll =
                     ButtonHelper.createButton(Captions.all, e -> processStatusChange(null), ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER);
             statusAll.setCaptionAsHtml(true);
 
+            buttonFilterLayout.addComponent(newButton);
             buttonFilterLayout.addComponent(statusAll);
 
             statusButtons.put(statusAll, I18nProperties.getCaption(Captions.all));
@@ -145,14 +153,6 @@ public class CaseSampleView extends AbstractCaseView {
                 actionButtonsLayout.addComponent(relevanceStatusFilter);
             }
 
-
-            final Button newButton = ButtonHelper.createIconButtonWithCaption(
-                    Captions.sampleNewSample,
-                    I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, Captions.sampleNewSample),
-                    VaadinIcons.PLUS_CIRCLE,
-                    e -> ControllerProvider.getSampleController().create(criteria.getCaze(), criteria.getDisease(), SormasUI::refreshView),
-                    ValoTheme.BUTTON_PRIMARY);
-            addHeaderComponent(newButton);
 
             sampleTypeFilter = ComboBoxHelper.createComboBoxV7();
             sampleTypeFilter.setWidth(140, Unit.PERCENTAGE);

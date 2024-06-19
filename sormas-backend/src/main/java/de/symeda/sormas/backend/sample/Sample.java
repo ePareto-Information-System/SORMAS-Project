@@ -105,14 +105,11 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public static final String SORMAS_TO_SORMAS_ORIGIN_INFO = "sormasToSormasOriginInfo";
 	public static final String SORMAS_TO_SORMAS_SHARES = "sormasToSormasShares";
 	public static final String PATHOGEN_TEST_COUNT = "pathogenTestCount";
-	public static final String SAMPLE_TESTS = "sampleTests";
 	public static final String SAMPLE_DISPATCH_MODE = "sampleDispatchMode";
 	public static final String SAMPLE_DISPATCH_DATE = "sampleDispatchDate";
 	public static final String REQUESTED_ADDITIONAL_TESTS = "requestedAdditionalTests";
 	public static final String DELETION_REASON = "deletionReason";
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
-	public static final String IPSAMPLESENT = "ipSampleSent";
-//	public static final String SAMPLE_DISEASE_TESTS = "sampleDiseaseTests";
 	public static final String DISEASE = "disease";
 	public static final String CSF_SAMPLE_COLLECTED = "csfSampleCollected";
 	public static final String CSF_REASON = "csfReason";
@@ -212,25 +209,21 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private SampleSource sampleSource;
 	private Sample referredTo;
 	private boolean shipped;
-/*	private boolean sampleMaterialTypeForYF;
-	private boolean sampleDiseaseTests;*/
 	private boolean received;
 	private PathogenTestResultType pathogenTestResult;
 	private Date pathogenTestResultChangeDate;
-
 	private Boolean pathogenTestingRequested;
 	private Boolean sampleMaterialTestingRequested;
 	private Boolean additionalTestingRequested;
 	private Set<PathogenTestType> requestedPathogenTests;
 	private Set<SampleMaterial> requestedSampleMaterials;
-//	private Set<PathogenTestType> sampleTests;
-	private PathogenTestType sampleTests;
+	private Set<IpSampleTestType> ipSampleTestResults;
 	private Set<AdditionalTestType> requestedAdditionalTests;
 	private String requestedOtherPathogenTests;
 	private String requestedOtherAdditionalTests;
 	private String requestedPathogenTestsString;
 	private String requestedSampleMaterialsString;
-	private String sampleTestsString;
+	private String ipSampleTestResultsString;
 	private String requestedAdditionalTestsString;
 	private SamplingReason samplingReason;
 	private String samplingReasonDetails;
@@ -373,6 +366,13 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private LabLocal labLocal;
 	private String labLocalDetails;
 
+	private PosNegEq selectedResultIGM;
+	private PosNegEq selectedResultPrnt;
+	private PosNegEq selectedResultPcr;
+	private Date selectedResultIGMDate;
+	private Date selectedResultPrntDate;
+	private Date selectedResultPcrDate;
+	private String inputValuePrnt;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -608,22 +608,6 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 		this.shipped = shipped;
 	}
 
-/*	public boolean isYellowFeverSampleType() {
-		return sampleMaterialTypeForYF;
-	}
-
-	public void setYellowFeverSampleType(boolean sampleMaterialTypeForYF) {
-		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
-	}
-
-	public boolean isDiseaseSampleTests() {
-		return sampleDiseaseTests;
-	}
-
-	public void setDiseaseSampleTests(boolean sampleDiseaseTests) {
-		this.sampleDiseaseTests = sampleDiseaseTests;
-	}*/
-
 	@Column
 	public boolean isReceived() {
 		return received;
@@ -710,6 +694,46 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	}
 
 	@Transient
+	public Set<IpSampleTestType> getIpSampleTestResults() {
+		if (ipSampleTestResults == null) {
+			if (StringUtils.isEmpty(ipSampleTestResultsString)) {
+				ipSampleTestResults = new HashSet<>();
+			} else {
+				ipSampleTestResults =
+						Arrays.stream(ipSampleTestResultsString.split(",")).map(IpSampleTestType::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return ipSampleTestResults;
+	}
+
+	public void setIpSampleTestResults(Set<IpSampleTestType> ipSampleTestResults) {
+		this.ipSampleTestResults = ipSampleTestResults;
+
+		if (this.ipSampleTestResults == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		ipSampleTestResults.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		ipSampleTestResultsString = sb.toString();
+	}
+
+	public String getIpSampleTestResultsString() {
+		return ipSampleTestResultsString;
+	}
+
+	public void setIpSampleTestResultsString(String ipSampleTestResultsString) {
+		this.ipSampleTestResultsString = ipSampleTestResultsString;
+		ipSampleTestResults = null;
+	}
+
+	@Transient
 	public Set<SampleMaterial> getRequestedSampleMaterials() {
 		if (requestedSampleMaterials == null) {
 			if (StringUtils.isEmpty(requestedSampleMaterialsString)) {
@@ -740,36 +764,6 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 		requestedSampleMaterialsString = sb.toString();
 	}
 
-	/*@Transient
-	public Set<PathogenTestType> getSampleTests() {
-		if (sampleTests == null) {
-			if (StringUtils.isEmpty(sampleTestsString)) {
-				sampleTests = new HashSet<>();
-			} else {
-				sampleTests =
-						Arrays.stream(sampleTestsString.split(",")).map(PathogenTestType::valueOf).collect(Collectors.toSet());
-			}
-		}
-		return sampleTests;
-	}
-
-	public void setSampleTests(Set<PathogenTestType> sampleTests) {
-		this.sampleTests = sampleTests;
-
-		if (this.sampleTests == null) {
-			return;
-		}
-
-		StringBuilder sb = new StringBuilder();
-		sampleTests.stream().forEach(t -> {
-			sb.append(t.name());
-			sb.append(",");
-		});
-		if (sb.length() > 0) {
-			sb.substring(0, sb.lastIndexOf(","));
-		}
-		sampleTestsString = sb.toString();
-	}*/
 
 	@Transient
 	public Set<AdditionalTestType> getRequestedAdditionalTests() {
@@ -845,14 +839,6 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setRequestedOtherAdditionalTests(String requestedOtherAdditionalTests) {
 		this.requestedOtherAdditionalTests = requestedOtherAdditionalTests;
-	}
-	@Enumerated(EnumType.STRING)
-	public PathogenTestType getSampleTests() {
-		return sampleTests;
-	}
-
-	public void setSampleTests(PathogenTestType sampleTests) {
-		this.sampleTests = sampleTests;
 	}
 
 	@Enumerated(EnumType.STRING)
@@ -1908,4 +1894,60 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setLabLocalDetails(final String labLocalDetails) {
 		this.labLocalDetails = labLocalDetails;
 	}
+	public PosNegEq getSelectedResultIGM() {
+		return selectedResultIGM;
+	}
+
+	public void setSelectedResultIGM(PosNegEq selectedResultIGM) {
+		this.selectedResultIGM = selectedResultIGM;
+	}
+
+	public PosNegEq getSelectedResultPrnt() {
+		return selectedResultPrnt;
+	}
+
+	public void setSelectedResultPrnt(PosNegEq selectedResultPrnt) {
+		this.selectedResultPrnt = selectedResultPrnt;
+	}
+
+	public PosNegEq getSelectedResultPcr() {
+		return selectedResultPcr;
+	}
+
+	public void setSelectedResultPcr(PosNegEq selectedResultPcr) {
+		this.selectedResultPcr = selectedResultPcr;
+	}
+
+	public Date getSelectedResultIGMDate() {
+		return selectedResultIGMDate;
+	}
+
+	public void setSelectedResultIGMDate(Date selectedResultIGMDate) {
+		this.selectedResultIGMDate = selectedResultIGMDate;
+	}
+
+	public Date getSelectedResultPrntDate() {
+		return selectedResultPrntDate;
+	}
+
+	public void setSelectedResultPrntDate(Date selectedResultPrntDate) {
+		this.selectedResultPrntDate = selectedResultPrntDate;
+	}
+
+	public Date getSelectedResultPcrDate() {
+		return selectedResultPcrDate;
+	}
+
+	public void setSelectedResultPcrDate(Date selectedResultPcrDate) {
+		this.selectedResultPcrDate = selectedResultPcrDate;
+	}
+
+	public String getInputValuePrnt() {
+		return inputValuePrnt;
+	}
+
+	public void setInputValuePrnt(String inputValuePrnt) {
+		this.inputValuePrnt = inputValuePrnt;
+	}
+
 }

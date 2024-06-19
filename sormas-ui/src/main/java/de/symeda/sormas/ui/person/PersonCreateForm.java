@@ -511,6 +511,10 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		setVisible(false, PersonDto.PASSPORT_NUMBER, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PRESENT_CONDITION,PersonDto.EMAIL_ADDRESS, PersonDto.PHONE);
 	}
 
+	public void hideFieldsForMpox(){
+		setVisible(false, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.OTHER_NAME, PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD, PersonDto.SEX);
+	}
+
 
 	public void updatePresentConditionEnum(Disease disease) {
 

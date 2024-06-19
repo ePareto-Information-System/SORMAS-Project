@@ -78,7 +78,6 @@ import java.util.stream.Collectors;
 import static java.util.Objects.isNull;
 
 @Stateless(name = "EbsFacade")
-@RightsAllowed(UserRight._EVENT_VIEW)
 public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto, EbsReferenceDto, EbsService, EbsCriteria>
 		implements EbsFacade {
 
@@ -239,16 +238,11 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	}
 
 	@Override
-	@RightsAllowed({
-			UserRight._EVENT_CREATE,
-			UserRight._EVENT_EDIT })
 	public EbsDto save(@Valid @NotNull EbsDto dto) {
 		return save(dto, true, true);
 	}
 
-	@RightsAllowed({
-			UserRight._EVENT_CREATE,
-			UserRight._EVENT_EDIT })
+
 	public EbsDto save(@NotNull EbsDto dto, boolean checkChangeDate, boolean internal) {
 
 		Ebs existingEbs = dto.getUuid() != null ? service.getByUuid(dto.getUuid()) : null;
@@ -278,8 +272,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			syncSharesAsync(new ShareTreeCriteria(ebs.getUuid()));
 		}
 	}
-
-	@RightsAllowed(UserRight._EVENT_EDIT)
+	
 	public void syncSharesAsync(ShareTreeCriteria criteria) {
 //		executorService.schedule(() -> {
 //			sormasToSormasEventFacade.syncShares(criteria);
@@ -287,7 +280,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	}
 
 	@Override
-	@RightsAllowed(UserRight._EVENT_DELETE)
 	public void delete(String ebsUuid, DeletionDetails deletionDetails)
 			throws ExternalSurveillanceToolRuntimeException, SormasToSormasRuntimeException {
 		Ebs ebs = service.getByUuid(ebsUuid);
@@ -1001,7 +993,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		return service.getUuidByCaseUuidOrPersonUuid(searchTerm);
 	}
 	@Override
-	@RightsAllowed(UserRight._EVENT_EDIT)
 	public void updateExternalData(@Valid List<ExternalDataDto> externalData) throws ExternalDataUpdateException {
 		service.updateExternalData(externalData);
 	}
@@ -1012,7 +1003,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	}
 
 	@Override
-	@RightsAllowed(UserRight._EVENT_EDIT)
 	public Integer saveBulkEbs(
 			List<String> ebsUuidList,
 			EbsDto updatedTempEbs) {

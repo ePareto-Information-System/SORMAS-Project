@@ -110,12 +110,12 @@ public enum SampleMaterial {
 		return new SampleMaterial[] { GINGIVAL_FLUID, THROAT_SWAB, URINE, NASAL_SWAB, WHOLE_BLOOD_SERUM, OTHER };
 	}
 	//IDSR
-	public static SampleMaterial[] getIDSRMaterialTypes() {
+	public static SampleMaterial[] getMPoxTypes() {
 		return new SampleMaterial[] { WHOLE_BLOOD, PLASMA, SERUM, ASPIRATE, CEREBROSPINAL_FLUID, PUS, SALIVA, BIOPSY, STOOL, URETHRAL, URINE, SPUTUM, FOOD_WATER };
 	}
 
 	public static SampleMaterial[] getNewInfluenzaType() {
-		return new SampleMaterial[] { OROPHARYNGEAL_SWAB, NASOPHARYNGEAL_SWAB, ORO_NASO };
+		return new SampleMaterial[] { CRUST, SWAB, WHOLE_BLOOD };
 	}
 
 

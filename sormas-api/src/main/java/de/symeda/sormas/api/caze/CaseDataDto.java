@@ -36,6 +36,7 @@ import de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus;
 import de.symeda.sormas.api.afpimmunization.AfpImmunizationDto;
 import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
+import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.riskfactor.RiskFactorDto;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
 import de.symeda.sormas.api.user.UserDto;
@@ -290,6 +291,14 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String ETHNICITY = "ethnicity";
 	public static final String OCCUPATION = "occupation";
 	public static final String DISTRICT_OF_RESIDENCE = "districtOfResidence";
+	public static final String PATIENT_NAME = "patientName";
+	public static final String PATIENT_OTHER_NAMES = "patientOtherNames";
+	public static final String PATIENT_DOB_DD = "patientDobDD";
+	public static final String PATIENT_DOB_MM = "patientDobMM";
+	public static final String PATIENT_DOB_YY = "patientDobYY";
+	public static final String PATIENT_AGE_YEAR = "patientAgeYear";
+	public static final String PATIENT_AGE_MONTH = "patientAgeMonth";
+	public static final String PATIENT_SEX = "patientSex";
 	public static final String REPORTING_VILLAGE = "reportingVillage";
 	public static final String REPORTING_ZONE = "reportingZone";
 	public static final String OTHER_NOTES_AND_OBSERVATIONS = "otherNotesAndObservations";
@@ -304,6 +313,14 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	// Fields are declared in the order they should appear in the import template
 
+	private String patientName;
+	private String patientOtherNames;
+	private Integer patientDobDD;
+	private Integer patientDobMM;
+	private Integer patientDobYY;
+	private Integer patientAgeYear;
+	private Integer patientAgeMonth;
+	private Sex patientSex;
 	@Outbreaks
 	@NotNull(message = Validations.validDisease)
 	private Disease disease;
@@ -2447,5 +2464,69 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	public void setNameOfVillagePersonGotIll(String nameOfVillagePersonGotIll) {
 		this.nameOfVillagePersonGotIll = nameOfVillagePersonGotIll;
+	}
+
+	public String getPatientName() {
+		return patientName;
+	}
+
+	public void setPatientName(String patientName) {
+		this.patientName = patientName;
+	}
+
+	public String getPatientOtherNames() {
+		return patientOtherNames;
+	}
+
+	public void setPatientOtherNames(String patientOtherNames) {
+		this.patientOtherNames = patientOtherNames;
+	}
+
+	public Integer getPatientDobDD() {
+		return patientDobDD;
+	}
+
+	public void setPatientDobDD(Integer patientDobDD) {
+		this.patientDobDD = patientDobDD;
+	}
+
+	public Integer getPatientDobMM() {
+		return patientDobMM;
+	}
+
+	public void setPatientDobMM(Integer patientDobMM) {
+		this.patientDobMM = patientDobMM;
+	}
+
+	public Integer getPatientDobYY() {
+		return patientDobYY;
+	}
+
+	public void setPatientDobYY(Integer patientDobYY) {
+		this.patientDobYY = patientDobYY;
+	}
+
+	public Integer getPatientAgeYear() {
+		return patientAgeYear;
+	}
+
+	public void setPatientAgeYear(Integer patientAgeYear) {
+		this.patientAgeYear = patientAgeYear;
+	}
+
+	public Integer getPatientAgeMonth() {
+		return patientAgeMonth;
+	}
+
+	public void setPatientAgeMonth(Integer patientAgeMonth) {
+		this.patientAgeMonth = patientAgeMonth;
+	}
+
+	public Sex getPatientSex() {
+		return patientSex;
+	}
+
+	public void setPatientSex(Sex patientSex) {
+		this.patientSex = patientSex;
 	}
 }

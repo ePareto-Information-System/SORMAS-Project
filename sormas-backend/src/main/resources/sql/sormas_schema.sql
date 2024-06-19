@@ -14798,7 +14798,6 @@ INSERT INTO schema_version(version_number, comment) VALUES (672, 'Added labLocal
 ALTER TABLE triaging ADD COLUMN potentialrisk VARCHAR(3);
 INSERT INTO schema_version (version_number, comment) VALUES (673, 'added potential risk to ebs');
 
--- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Case Officer';
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Contact Officer';
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'District Observer';
@@ -14816,3 +14815,64 @@ ALTER TABLE ebsAlert ADD COLUMN alertdate DATE;
 ALTER TABLE signalVerification ADD numberOfPersonCases VARCHAR(255);
 ALTER TABLE signalVerification ADD numberOfDeathPerson VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (675, 'added new ebs related fields');
+
+ALTER TABLE samples ADD COLUMN ipsampletestresultsstring VARCHAR(512);
+ALTER TABLE samples ADD COLUMN selectedresultigm VARCHAR(55);
+ALTER TABLE samples ADD COLUMN selectedresultprnt VARCHAR(55);
+ALTER TABLE samples ADD COLUMN selectedresultpcr VARCHAR(55);
+ALTER TABLE samples ADD COLUMN inputvalueprnt VARCHAR(255);
+ALTER TABLE samples ADD COLUMN selectedresultigmdate Date;
+ALTER TABLE samples ADD COLUMN selectedresultprntdate Date;
+ALTER TABLE samples ADD COLUMN selectedresultpcrdate Date;
+INSERT INTO schema_version (version_number, comment) VALUES (676, 'Added columns to to samples');
+
+ALTER TABLE samples DROP COLUMN sampletests;
+ALTER TABLE samples DROP COLUMN sampletestsstring;
+ALTER TABLE samples_history DROP COLUMN sampletestsstring;
+ALTER TABLE samples DROP COLUMN diseasesampletests;
+ALTER TABLE samples DROP COLUMN yellowfeversampletype;
+ALTER TABLE samples_history ALTER COLUMN samplepurpose DROP NOT NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (677, 'Dropped redundant columns in samples, made samplepurpose not null');
+
+ALTER TABLE symptoms ADD COLUMN typeofrashstring VARCHAR(512);
+ALTER TABLE symptoms DROP COLUMN typeofrash;
+ALTER TABLE sixtyday ADD COLUMN paralysisweaknesspresentsitestring VARCHAR(512);
+ALTER TABLE sixtyday DROP COLUMN paralysisweaknesspresentsite;
+INSERT INTO schema_version (version_number, comment) VALUES (678, 'Added paralysisweaknesspresentsitestring and dropped paralysisweaknesspresentsite for AFP, added typeofrashstring to symptoms');
+
+
+-- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+ALTER TABLE cases ADD COLUMN patientname VARCHAR(255);
+ALTER TABLE cases ADD COLUMN patientothernames VARCHAR(255);
+ALTER TABLE cases ADD COLUMN patientdobdd integer;
+ALTER TABLE cases ADD COLUMN patientdobmm integer;
+ALTER TABLE cases ADD COLUMN patientdobyy integer;
+ALTER TABLE cases ADD COLUMN patientageyear integer;
+ALTER TABLE cases ADD COLUMN patientagemonth integer;
+ALTER TABLE cases ADD COLUMN patientsex varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (679, 'Added Mpox person data to cases');
+
+-- 2024-06-18 added alertdate to alert table
+ALTER TABLE ebsAlert RENAME COLUMN alertUsed TO alertIssued;
+INSERT INTO schema_version (version_number, comment) VALUES (680, 'rename alert used to alert issued fields');
+ALTER TABLE triaging ADD animalLaboratoryCategoryDetailsString varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (681, 'rename alert used to alert issued fields');
+ALTER TABLE triaging ADD humanCommunityCategoryDetails varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (682, 'rename alert used to alert issued fields');
+ALTER TABLE triaging Drop humanCommunityCategoryDetailsString;
+ALTER TABLE triaging Drop  humanFacilityCategoryDetailsString ;
+ALTER TABLE triaging Drop  humanLaboratoryCategoryDetailsString;
+ALTER TABLE triaging Drop  animalCommunityCategoryDetailsString;
+ALTER TABLE triaging Drop  animalFacilityCategoryDetailsString ;
+ALTER TABLE triaging Drop  environmentalCategoryDetailsString ;
+ALTER TABLE triaging Drop  poeCategoryDetailsString;
+ALTER TABLE triaging ADD COLUMN  humanFacilityCategoryDetails VARCHAR(255);
+ALTER TABLE triaging ADD COLUMN  humanLaboratoryCategoryDetails VARCHAR(255);
+ALTER TABLE triaging ADD COLUMN  animalCommunityCategoryDetails VARCHAR(255);
+ALTER TABLE triaging ADD COLUMN  animalFacilityCategoryDetails VARCHAR(255);
+ALTER TABLE triaging ADD COLUMN  environmentalCategoryDetails VARCHAR(255);
+ALTER TABLE triaging ADD COLUMN  poeCategoryDetails VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (683, 'rename alert used to alert issued fields');
+ALTER TABLE triaging ADD COLUMN  animalLaboratoryCategoryDetails VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (684, 'rename alert used to alert issued fields');

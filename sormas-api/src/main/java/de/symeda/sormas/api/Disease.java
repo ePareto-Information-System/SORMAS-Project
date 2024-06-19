@@ -97,7 +97,7 @@ public enum Disease
 	UNSPECIFIED_VHF(true, true, true, true, false,0, false, false, false),
 	SARI(true, true, true, true, false,17, true, false, false),
 	FOODBORNE_ILLNESS(true, true, true, true, false,17, true, false, false),
-	IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS(true, true, true, false, false,14, true, false, false),;
+	IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS(true, true, true, false, false,14, true, false, false);
 
 
 	private final boolean defaultActive;
@@ -226,6 +226,7 @@ public enum Disease
 	public static final List<Disease> CSM_ONLY = Arrays.asList(CSM);
 	public static final List<Disease> NEW_ONLY = List.of(NEW_INFLUENZA);
 	public static final List<Disease> YF = List.of(YELLOW_FEVER);
+	public static final List<Disease> MPOX = List.of(MONKEYPOX);
 
 	public static final Map<Disease, List<Disease>> diseaseMap = new HashMap<>();
 
@@ -234,6 +235,7 @@ public enum Disease
 		diseaseMap.put(NEW_INFLUENZA, NEW_ONLY);
 		diseaseMap.put(YELLOW_FEVER, YF);
 		diseaseMap.put(AHF, AHF_DISEASES);
+		diseaseMap.put(MONKEYPOX, MPOX);
 	}
 
 	public static List<Disease> hideFollowUp = Arrays.asList(

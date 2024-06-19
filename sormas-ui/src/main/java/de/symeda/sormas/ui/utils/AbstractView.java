@@ -98,6 +98,11 @@ public abstract class AbstractView extends VerticalLayout implements View {
 		viewHeader.setComponentAlignment(c, Alignment.MIDDLE_RIGHT);
 	}
 
+	protected void addHeaderComponentSample(Component c) {
+		viewHeader.addComponent(c);
+		viewHeader.setComponentAlignment(c, Alignment.MIDDLE_LEFT);
+	}
+
 	protected void setMainHeaderComponent(Component c) {
 		viewHeader.removeComponent(viewTitleLayout);
 		viewHeader.addComponent(c, 0);

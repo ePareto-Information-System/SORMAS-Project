@@ -1,13 +1,11 @@
 package de.symeda.sormas.ui.ebs;
 
 
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.v7.data.util.BeanItemContainer;
 import com.vaadin.v7.data.util.GeneratedPropertyContainer;
 import com.vaadin.v7.ui.Grid;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ebs.*;
-import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
 import java.util.List;
 
@@ -26,7 +24,7 @@ public class EbsAlertGrid extends Grid {
 		GeneratedPropertyContainer generatedContainer = new GeneratedPropertyContainer(container);
 		setContainerDataSource(generatedContainer);
 
-		setColumns(EbsAlertDto.ACTION_INITIATED, EbsAlertDto.RESPONSE_STATUS, EbsAlertDto.ALERT_USED);
+		setColumns(EbsAlertDto.ACTION_INITIATED, EbsAlertDto.RESPONSE_STATUS, EbsAlertDto.ALERT_ISSUED);
 //		addItemClickListener(new ShowDetailsListener<>(INFO, e -> ControllerProvider.getEbsController().navigateToData(e.getUuid())));
 
 		reload(ebsUuid);

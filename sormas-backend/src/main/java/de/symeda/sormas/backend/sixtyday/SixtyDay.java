@@ -1,11 +1,17 @@
 package de.symeda.sormas.backend.sixtyday;
 
 //import de.symeda.auditlog.api.Audited;
+import de.symeda.sormas.api.sample.IpSampleTestType;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 //@Audited
@@ -45,7 +51,8 @@ public class SixtyDay extends AbstractDomainObject {
     private String patientFoundReason;
     private String locateChildAttempt;
     private YesNo paralysisWeaknessPresent;
-    private ParalysisSite paralysisWeaknessPresentSite;
+    private Set<ParalysisSite> paralysisWeaknessPresentSite;
+    private String paralysisWeaknessPresentSiteString;
     private String paralyzedPartOther;
     private YesNo paralysisWeaknessFloppy;
     private SymptomLevel muscleToneParalyzedPart;
@@ -149,14 +156,47 @@ public class SixtyDay extends AbstractDomainObject {
     public void setParalysisWeaknessPresent(YesNo paralysisWeaknessPresent) {
         this.paralysisWeaknessPresent = paralysisWeaknessPresent;
     }
-    @Enumerated(EnumType.STRING)
-    public ParalysisSite getParalysisWeaknessPresentSite() {
+
+    @Transient
+    public Set<ParalysisSite> getParalysisWeaknessPresentSite() {
+        if (paralysisWeaknessPresentSite == null) {
+            if (StringUtils.isEmpty(paralysisWeaknessPresentSiteString)) {
+                paralysisWeaknessPresentSite = new HashSet<>();
+            } else {
+                paralysisWeaknessPresentSite =
+                        Arrays.stream(paralysisWeaknessPresentSiteString.split(",")).map(ParalysisSite::valueOf).collect(Collectors.toSet());
+            }
+        }
         return paralysisWeaknessPresentSite;
     }
 
-    public void setParalysisWeaknessPresentSite(ParalysisSite paralysisWeaknessPresentSite) {
+    public void setParalysisWeaknessPresentSite(Set<ParalysisSite> paralysisWeaknessPresentSite) {
         this.paralysisWeaknessPresentSite = paralysisWeaknessPresentSite;
+
+        if (this.paralysisWeaknessPresentSite == null) {
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        paralysisWeaknessPresentSite.stream().forEach(t -> {
+            sb.append(t.name());
+            sb.append(",");
+        });
+        if (sb.length() > 0) {
+            sb.substring(0, sb.lastIndexOf(","));
+        }
+        paralysisWeaknessPresentSiteString = sb.toString();
     }
+
+    public String getParalysisWeaknessPresentSiteString() {
+        return paralysisWeaknessPresentSiteString;
+    }
+
+    public void setParalysisWeaknessPresentSiteString(String paralysisWeaknessPresentSiteString) {
+        this.paralysisWeaknessPresentSiteString = paralysisWeaknessPresentSiteString;
+        paralysisWeaknessPresentSite = null;
+    }
+
 
     public String getParalyzedPartOther() {
         return paralyzedPartOther;

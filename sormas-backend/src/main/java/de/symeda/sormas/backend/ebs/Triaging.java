@@ -52,6 +52,7 @@ public class Triaging extends AbstractDomainObject {
 	public static final String HUMAN_LABORATORY_CATEGORY_DETAILS = "humanLaboratoryCategoryDetails";
 	public static final String ANIMAL_COMMUNITY_CATEGORY_DETAILS = "animalCommunityCategoryDetails";
 	public static final String ANIMAL_FACILITY_CATEGORY_DETAILS = "animalFacilityCategoryDetails";
+	public static final String ANIMAL_LABORATORY_CATEGORY_DETAILS = "animalLaboratoryCategoryDetails";
 	public static final String ENVIRONMENTAL_CATEGORY_DETAILS = "environmentalCategoryDetails";
 	public static final String POE_CATEGORY_DETAILS = "poeCategoryDetails";
 	public static final String UNABLE_TO_WALK = "unableToWalk";
@@ -75,20 +76,14 @@ public class Triaging extends AbstractDomainObject {
 	private YesNo specificSignal;
 	private SignalCategory signalCategory;
 	private YesNo healthConcern;
-	private Set<HumanCommunityCategoryDetails> humanCommunityCategoryDetails;
-	private Set<HumanFaclityCategoryDetails> humanFacilityCategoryDetails;
-	private Set<HumanLaboratoryCategoryDetails> humanLaboratoryCategoryDetails;
-	private Set<AnimalCommunityCategoryDetails> animalCommunityCategoryDetails;
-	private Set<AnimalFacilityCategoryDetails> animalFacilityCategoryDetails;
-	private Set<EnvironmentalCategoryDetails> environmentalCategoryDetails;
-	private Set<POE> poeCategoryDetails;
-	private String humanCommunityCategoryDetailsString;
-	private String humanFacilityCategoryDetailsString;
-	private String humanLaboratoryCategoryDetailsString;
-	private String animalCommunityCategoryDetailsString;
-	private String animalFacilityCategoryDetailsString;
-	private String environmentalCategoryDetailsString;
-	private String poeCategoryDetailsString;
+	private HumanCommunityCategoryDetails humanCommunityCategoryDetails;
+	private HumanFaclityCategoryDetails humanFacilityCategoryDetails;
+	private HumanLaboratoryCategoryDetails humanLaboratoryCategoryDetails;
+	private AnimalCommunityCategoryDetails animalCommunityCategoryDetails;
+	private AnimalFacilityCategoryDetails animalFacilityCategoryDetails;
+	private AnimalLaboratoryCategoryDetails animalLaboratoryCategoryDetails;
+	private EnvironmentalCategoryDetails environmentalCategoryDetails;
+	private POE poeCategoryDetails;
 	private CategoryDetailsLevel categoryDetailsLevel;
 
 
@@ -142,261 +137,71 @@ public class Triaging extends AbstractDomainObject {
 		this.healthConcern = healthConcern;
 	}
 
-	@Transient
-	public Set<HumanCommunityCategoryDetails> getHumanCommunityCategoryDetails() {
-		if (humanCommunityCategoryDetails == null) {
-			if (StringUtils.isEmpty(humanCommunityCategoryDetailsString)) {
-				humanCommunityCategoryDetails = new HashSet<>();
-			} else {
-				humanCommunityCategoryDetails =
-						Arrays.stream(humanCommunityCategoryDetailsString.split(",")).map(HumanCommunityCategoryDetails::valueOf).collect(Collectors.toSet());
-			}
-		}
+
+	public HumanCommunityCategoryDetails getHumanCommunityCategoryDetails() {
 		return humanCommunityCategoryDetails;
 	}
 
-	public void setHumanCommunityCategoryDetails(Set<HumanCommunityCategoryDetails> humanCommunityCategoryDetails) {
+	public void setHumanCommunityCategoryDetails(HumanCommunityCategoryDetails humanCommunityCategoryDetails) {
 		this.humanCommunityCategoryDetails = humanCommunityCategoryDetails;
-		if (this.humanCommunityCategoryDetails == null) {
-			return;
-		}
-
-		StringBuilder sb = new StringBuilder();
-		humanCommunityCategoryDetails.stream().forEach(t -> {
-			sb.append(t.name());
-			sb.append(",");
-		});
-		if (sb.length() > 0) {
-			sb.substring(0, sb.lastIndexOf(","));
-		}
-		humanCommunityCategoryDetailsString = sb.toString();
 	}
 
-	@Transient
-	public Set<HumanFaclityCategoryDetails> getHumanFacilityCategoryDetails() {
-		if (humanFacilityCategoryDetails == null) {
-			if (StringUtils.isEmpty(humanFacilityCategoryDetailsString)) {
-				humanFacilityCategoryDetails = new HashSet<>();
-			} else {
-				humanFacilityCategoryDetails =
-						Arrays.stream(humanFacilityCategoryDetailsString.split(",")).map(HumanFaclityCategoryDetails::valueOf).collect(Collectors.toSet());
-			}
-		}
+	public HumanFaclityCategoryDetails getHumanFacilityCategoryDetails() {
 		return humanFacilityCategoryDetails;
 	}
 
-	public void setHumanFacilityCategoryDetails(Set<HumanFaclityCategoryDetails> humanFacilityCategoryDetails) {
+	public void setHumanFacilityCategoryDetails(HumanFaclityCategoryDetails humanFacilityCategoryDetails) {
 		this.humanFacilityCategoryDetails = humanFacilityCategoryDetails;
-		if (this.humanFacilityCategoryDetails == null){
-			return;
-		}
-		StringBuilder sb = new StringBuilder();
-		humanFacilityCategoryDetails.stream().forEach(t -> {
-			sb.append(t.name());
-			sb.append(",");
-		});
-		if (sb.length() > 0) {
-			sb.substring(0, sb.lastIndexOf(","));
-		}
-		humanFacilityCategoryDetailsString = sb.toString();
 	}
 
-	@Transient
-	public Set<HumanLaboratoryCategoryDetails> getHumanLaboratoryCategoryDetails() {
-		if (humanLaboratoryCategoryDetails == null) {
-			if (StringUtils.isEmpty(humanLaboratoryCategoryDetailsString)) {
-				humanLaboratoryCategoryDetails = new HashSet<>();
-			} else {
-				humanLaboratoryCategoryDetails =
-						Arrays.stream(humanLaboratoryCategoryDetailsString.split(",")).map(HumanLaboratoryCategoryDetails::valueOf).collect(Collectors.toSet());
-			}
-		}
+	public HumanLaboratoryCategoryDetails getHumanLaboratoryCategoryDetails() {
 		return humanLaboratoryCategoryDetails;
 	}
 
-	public void setHumanLaboratoryCategoryDetails(Set<HumanLaboratoryCategoryDetails> humanLaboratoryCategoryDetails) {
+	public void setHumanLaboratoryCategoryDetails(HumanLaboratoryCategoryDetails humanLaboratoryCategoryDetails) {
 		this.humanLaboratoryCategoryDetails = humanLaboratoryCategoryDetails;
-		if (this.humanLaboratoryCategoryDetails == null){
-			return;
-		}
-		StringBuilder sb = new StringBuilder();
-		humanLaboratoryCategoryDetails.stream().forEach(t -> {
-			sb.append(t.name());
-			sb.append(",");
-		});
-		if (sb.length() > 0) {
-			sb.substring(0, sb.lastIndexOf(","));
-		}
-		humanLaboratoryCategoryDetailsString = sb.toString();
 	}
 
-	@Transient
-	public Set<AnimalCommunityCategoryDetails> getAnimalCommunityCategoryDetails() {
-		if (animalCommunityCategoryDetails == null) {
-			if (StringUtils.isEmpty(animalCommunityCategoryDetailsString)) {
-				animalCommunityCategoryDetails = new HashSet<>();
-			} else {
-				animalCommunityCategoryDetails =
-						Arrays.stream(animalCommunityCategoryDetailsString.split(",")).map(AnimalCommunityCategoryDetails::valueOf).collect(Collectors.toSet());
-			}
-		}
+	public AnimalCommunityCategoryDetails getAnimalCommunityCategoryDetails() {
 		return animalCommunityCategoryDetails;
 	}
 
-	public void setAnimalCommunityCategoryDetails(Set<AnimalCommunityCategoryDetails> animalCommunityCategoryDetails) {
+	public void setAnimalCommunityCategoryDetails(AnimalCommunityCategoryDetails animalCommunityCategoryDetails) {
 		this.animalCommunityCategoryDetails = animalCommunityCategoryDetails;
-		if (this.animalCommunityCategoryDetails == null){
-			return;
-		}
-		StringBuilder sb = new StringBuilder();
-		animalCommunityCategoryDetails.stream().forEach(t -> {
-			sb.append(t.name());
-			sb.append(",");
-		});
-		if (sb.length() > 0) {
-			sb.substring(0, sb.lastIndexOf(","));
-		}
-		animalCommunityCategoryDetailsString = sb.toString();
 	}
 
-	@Transient
-	public Set<AnimalFacilityCategoryDetails> getAnimalFacilityCategoryDetails() {
-		if (animalFacilityCategoryDetails == null) {
-			if (StringUtils.isEmpty(animalFacilityCategoryDetailsString)) {
-				animalFacilityCategoryDetails = new HashSet<>();
-			} else {
-				animalFacilityCategoryDetails =
-						Arrays.stream(animalFacilityCategoryDetailsString.split(",")).map(AnimalFacilityCategoryDetails::valueOf).collect(Collectors.toSet());
-			}
-		}
+	public AnimalFacilityCategoryDetails getAnimalFacilityCategoryDetails() {
 		return animalFacilityCategoryDetails;
 	}
 
-	public void setAnimalFacilityCategoryDetails(Set<AnimalFacilityCategoryDetails> animalFacilityCategoryDetails) {
+	public void setAnimalFacilityCategoryDetails(AnimalFacilityCategoryDetails animalFacilityCategoryDetails) {
 		this.animalFacilityCategoryDetails = animalFacilityCategoryDetails;
-		if (this.animalFacilityCategoryDetails == null){
-			return;
-		}
-		StringBuilder sb = new StringBuilder();
-		animalFacilityCategoryDetails.stream().forEach(t -> {
-			sb.append(t.name());
-			sb.append(",");
-		});
-		if (sb.length() > 0) {
-			sb.substring(0, sb.lastIndexOf(","));
-		}
-		animalFacilityCategoryDetailsString = sb.toString();
+
 	}
 
-	@Transient
-	public Set<EnvironmentalCategoryDetails> getEnvironmentalCategoryDetails() {
-		if (environmentalCategoryDetails == null) {
-			if (StringUtils.isEmpty(environmentalCategoryDetailsString)) {
-				environmentalCategoryDetails = new HashSet<>();
-			} else {
-				environmentalCategoryDetails =
-						Arrays.stream(environmentalCategoryDetailsString.split(",")).map(EnvironmentalCategoryDetails::valueOf).collect(Collectors.toSet());
-			}
-		}
+	public AnimalLaboratoryCategoryDetails getAnimalLaboratoryCategoryDetails() {
+		return animalLaboratoryCategoryDetails;
+	}
+
+	public void setAnimalLaboratoryCategoryDetails(AnimalLaboratoryCategoryDetails animalLaboratoryCategoryDetails) {
+		this.animalLaboratoryCategoryDetails = animalLaboratoryCategoryDetails;
+	}
+
+	public EnvironmentalCategoryDetails getEnvironmentalCategoryDetails() {
 		return environmentalCategoryDetails;
 	}
 
-	public void setEnvironmentalCategoryDetails(Set<EnvironmentalCategoryDetails> environmentalCategoryDetails) {
+	public void setEnvironmentalCategoryDetails(EnvironmentalCategoryDetails environmentalCategoryDetails) {
 		this.environmentalCategoryDetails = environmentalCategoryDetails;
-		if (this.environmentalCategoryDetails == null){
-			return;
-		}
-		StringBuilder sb = new StringBuilder();
-		environmentalCategoryDetails.stream().forEach(t -> {
-			sb.append(t.name());
-			sb.append(",");
-		});
-		if (sb.length() > 0) {
-			sb.substring(0, sb.lastIndexOf(","));
-		}
-		environmentalCategoryDetailsString = sb.toString();
 	}
 
-	@Transient
-	public Set<POE> getPoeCategoryDetails() {
-		if (poeCategoryDetails == null) {
-			if (StringUtils.isEmpty(poeCategoryDetailsString)) {
-				poeCategoryDetails = new HashSet<>();
-			} else {
-				poeCategoryDetails =
-						Arrays.stream(poeCategoryDetailsString.split(",")).map(POE::valueOf).collect(Collectors.toSet());
-			}
-		}
+	public POE getPoeCategoryDetails() {
 		return poeCategoryDetails;
 	}
 
-	public void setPoeCategoryDetails(Set<POE> poeCategoryDetails) {
+	public void setPoeCategoryDetails(POE poeCategoryDetails) {
 		this.poeCategoryDetails = poeCategoryDetails;
-		if (this.poeCategoryDetails == null){
-			return;
-		}
-		StringBuilder sb = new StringBuilder();
-		poeCategoryDetails.stream().forEach(t -> {
-			sb.append(t.name());
-			sb.append(",");
-		});
-		if (sb.length() > 0) {
-			sb.substring(0, sb.lastIndexOf(","));
-		}
-		poeCategoryDetailsString = sb.toString();
 
-	}
-
-	public void setHumanCommunityCategoryDetailsString(String humanCommunityCategoryDetailsString) {
-		this.humanCommunityCategoryDetailsString = humanCommunityCategoryDetailsString;
-	}
-
-	public String getHumanFacilityCategoryDetailsString() {
-		return humanFacilityCategoryDetailsString;
-	}
-
-	public void setHumanFacilityCategoryDetailsString(String humanFacilityCategoryDetailsString) {
-		this.humanFacilityCategoryDetailsString = humanFacilityCategoryDetailsString;
-	}
-
-	public String getHumanLaboratoryCategoryDetailsString() {
-		return humanLaboratoryCategoryDetailsString;
-	}
-
-	public void setHumanLaboratoryCategoryDetailsString(String humanLaboratoryCategoryDetailsString) {
-		this.humanLaboratoryCategoryDetailsString = humanLaboratoryCategoryDetailsString;
-	}
-
-	public String getAnimalCommunityCategoryDetailsString() {
-		return animalCommunityCategoryDetailsString;
-	}
-
-	public void setAnimalCommunityCategoryDetailsString(String animalCommunityCategoryDetailsString) {
-		this.animalCommunityCategoryDetailsString = animalCommunityCategoryDetailsString;
-	}
-
-	public String getAnimalFacilityCategoryDetailsString() {
-		return animalFacilityCategoryDetailsString;
-	}
-
-	public void setAnimalFacilityCategoryDetailsString(String animalFacilityCategoryDetailsString) {
-		this.animalFacilityCategoryDetailsString = animalFacilityCategoryDetailsString;
-	}
-
-	public String getEnvironmentalCategoryDetailsString() {
-		return environmentalCategoryDetailsString;
-	}
-
-	public void setEnvironmentalCategoryDetailsString(String environmentalCategoryDetailsString) {
-		this.environmentalCategoryDetailsString = environmentalCategoryDetailsString;
-	}
-
-	public String getPoeCategoryDetailsString() {
-		return poeCategoryDetailsString;
-	}
-
-	public void setPoeCategoryDetailsString(String poeCategoryDetailsString) {
-		this.poeCategoryDetailsString = poeCategoryDetailsString;
 	}
 
 	public YesNo getOccurrencePreviously() {
@@ -441,13 +246,6 @@ public class Triaging extends AbstractDomainObject {
 		this.responsibleUser = responsibleUser;
 	}
 
-	public String getHumanCommunityCategoryDetailsString() {
-		return humanCommunityCategoryDetailsString;
-	}
-
-	public void setHumanCommunityCategoryDetailsStringString(String humanCommunityCategoryDetailsString) {
-		this.humanCommunityCategoryDetailsString = humanCommunityCategoryDetailsString;
-	}
 	public String getTriagingDecisionString() {
 		return triagingDecisionString;
 	}

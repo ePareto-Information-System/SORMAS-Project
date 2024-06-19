@@ -75,7 +75,7 @@ public class SormasUI extends UI implements HasUserProvider, HasViewModelProvide
 			{Disease.NEW_INFLUENZA.getName(), "data", "person", "hospitalization", "symptoms", "epidata", "samples"},
 			{Disease.NEONATAL_TETANUS.getName(), "data", "person", "hospitalization", "symptoms"},
 			{Disease.FOODBORNE_ILLNESS.getName(), "data", "person", "symptoms", "epidata", "foodhistory", "60-Days"},
-			{Disease.MONKEYPOX.getName(), "data", "person", "hospitalization", "symptoms", "riskFactor"},
+			{Disease.MONKEYPOX.getName(), "data", "hospitalization", "symptoms", "riskFactor", "samples"},
 	};
 
 	@Override

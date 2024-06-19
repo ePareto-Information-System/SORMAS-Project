@@ -1130,15 +1130,14 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setSampleMaterialTestingRequested(source.getSampleMaterialTestingRequested());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());
+		target.setIpSampleTestResults(source.getIpSampleTestResults());
 		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
-		target.setSampleTests(source.getSampleTests());
 		target.setRequestedAdditionalTests(source.getRequestedAdditionalTests());
 		target.setPathogenTestResult(source.getPathogenTestResult());
 		target.setRequestedOtherPathogenTests(source.getRequestedOtherPathogenTests());
 		target.setRequestedOtherAdditionalTests(source.getRequestedOtherAdditionalTests());
 		target.setSamplingReason(source.getSamplingReason());
 		target.setSamplingReasonDetails(source.getSamplingReasonDetails());
-
 		target.setIpSampleSent(source.getIpSampleSent());
 		target.setDisease(source.getDisease());
 		target.setSampleDispatchMode(source.getSampleDispatchMode());
@@ -1167,7 +1166,6 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setDateFormReceivedAtRegion(source.getDateFormReceivedAtRegion());
 		target.setDateFormSentToNational(source.getDateFormSentToNational());
 		target.setDateFormReceivedAtNational(source.getDateFormReceivedAtNational());
-
 
 		target.setLaboratoryName(source.getLaboratoryName());
 		target.setLaboratoryNumber(source.getLaboratoryNumber());
@@ -1259,6 +1257,13 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setPersonCompletingForm(source.getPersonCompletingForm());
 		target.setContainerOther(source.getContainerOther());
 		target.setHasSampleBeenCollected(source.getHasSampleBeenCollected());
+		target.setSelectedResultIGM(source.getSelectedResultIGM());
+		target.setSelectedResultPrnt(source.getSelectedResultPrnt());
+		target.setSelectedResultPcr(source.getSelectedResultPcr());
+		target.setSelectedResultIGMDate(source.getSelectedResultIGMDate());
+		target.setSelectedResultPrntDate(source.getSelectedResultPrntDate());
+		target.setSelectedResultPcrDate(source.getSelectedResultPcrDate());
+		target.setInputValuePrnt(source.getInputValuePrnt());
 
 		target.setDateSpecimenSentToRegion(source.getDateSpecimenSentToRegion());
 		target.setNameOfPersonWhoReceivedSpecimenAtRegion(source.getNameOfPersonWhoReceivedSpecimenAtRegion());
@@ -1413,8 +1418,8 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setSampleMaterialTestingRequested(source.getSampleMaterialTestingRequested());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());
+		target.setIpSampleTestResults(source.getIpSampleTestResults());
 		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
-		target.setSampleTests(source.getSampleTests());
 		target.setRequestedAdditionalTests(source.getRequestedAdditionalTests());
 		target.setPathogenTestResult(source.getPathogenTestResult());
 		target.setRequestedOtherPathogenTests(source.getRequestedOtherPathogenTests());
@@ -1556,6 +1561,14 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setConfirmedAsGuineaWorm(source.getConfirmedAsGuineaWorm());
 		target.setLabLocal(source.getLabLocal());
 		target.setLabLocalDetails(source.getLabLocalDetails());
+		target.setSelectedResultIGM(source.getSelectedResultIGM());
+		target.setSelectedResultPrnt(source.getSelectedResultPrnt());
+		target.setSelectedResultPcr(source.getSelectedResultPcr());
+		target.setSelectedResultIGMDate(source.getSelectedResultIGMDate());
+		target.setSelectedResultPrntDate(source.getSelectedResultPrntDate());
+		target.setSelectedResultPcrDate(source.getSelectedResultPcrDate());
+		target.setInputValuePrnt(source.getInputValuePrnt());
+
 
 		return target;
 	}

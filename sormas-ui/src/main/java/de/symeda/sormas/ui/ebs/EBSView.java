@@ -7,7 +7,6 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.OptionGroup;
-import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ebs.EbsCriteria;
 import de.symeda.sormas.api.ebs.EbsGroupCriteria;
@@ -53,10 +52,10 @@ public class EBSView extends AbstractView {
 
         ebsCriteria = ViewModelProviders.of(EBSView.class).get(EbsCriteria.class);
         if (isDefaultViewType()) {
-            grid = new EbsSignalGrid(ebsCriteria, getClass());
+            grid = new EbsGrid(ebsCriteria, getClass());
             currentview = "signallist";
         } else {
-            grid = new EbsGrid(ebsCriteria, getClass());
+            grid = new EbsSignalGrid(ebsCriteria, getClass());
             currentview = "eventlist";
         }
         gridLayout = new VerticalLayout();
@@ -157,14 +156,14 @@ public class EBSView extends AbstractView {
                     ViewModelProviders.of(EBSView.class).get(EbsViewConfiguration.class).setInEagerMode(true);
                     btnEnterBulkEditMode.setVisible(false);
                     btnLeaveBulkEditMode.setVisible(true);
-                    ((EbsSignalGrid) grid).reload();
+                    ((EbsGrid) grid).reload();
                 });
             }else {
                 btnEnterBulkEditMode.addClickListener(e -> {
                             ViewModelProviders.of(EBSView.class).get(EbsViewConfiguration.class).setInEagerMode(true);
                             btnEnterBulkEditMode.setVisible(false);
                             btnLeaveBulkEditMode.setVisible(true);
-                            ((EbsGrid) grid).reload();
+                            ((EbsSignalGrid) grid).reload();
             });
             }
             btnLeaveBulkEditMode.addClickListener(e -> {
@@ -253,9 +252,9 @@ public class EBSView extends AbstractView {
             ebsFilterForm.addApplyHandler(e -> {
                 if (isDefaultViewType()) {
                     navigateTo(ebsCriteria);
-                ((EbsSignalGrid) grid).reload();
+                ((EbsGrid) grid).reload();
                 }else {
-                    ((EbsGrid) grid).reload();
+                    ((EbsSignalGrid) grid).reload();
                     navigateTo(ebsCriteria);
                 }
             });
@@ -271,15 +270,15 @@ public class EBSView extends AbstractView {
             params = params.substring(1);
         }
             if (isDefaultViewType()) {
-                ((EbsSignalGrid) grid).setEagerDataProvider();
-
-                updateFilterComponents();
-                ((EbsSignalGrid) grid).reload();
-            }else {
                 ((EbsGrid) grid).setEagerDataProvider();
 
                 updateFilterComponents();
                 ((EbsGrid) grid).reload();
+            }else {
+                ((EbsSignalGrid) grid).setEagerDataProvider();
+
+                updateFilterComponents();
+                ((EbsSignalGrid) grid).reload();
             }
     }
 

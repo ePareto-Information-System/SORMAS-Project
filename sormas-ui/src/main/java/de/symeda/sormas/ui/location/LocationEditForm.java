@@ -265,6 +265,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		TextField streetField = addField(LocationDto.STREET, TextField.class);
 		streetField.setVisible(false);
 		localityField = addField(LocationDto.LOCALITY, TextField.class);
+		localityField.setVisible(false);
 		houseNumberField = addField(LocationDto.HOUSE_NUMBER, TextField.class);
 		TextField landMark = addField(LocationDto.LAND_MARK, TextField.class);
 		landMark.setVisible(false);
@@ -990,7 +991,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	}
 	public void handleAHF(){
 		setVisible(false,
-				LocationDto.POSTAL_CODE, LocationDto.ADDITIONAL_INFORMATION, LocationDto.LOCALITY, LocationDto.HOUSE_NUMBER, LocationDto.AREA_TYPE, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
+				LocationDto.POSTAL_CODE, LocationDto.ADDITIONAL_INFORMATION, LocationDto.HOUSE_NUMBER, LocationDto.AREA_TYPE, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
 		setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE);
 	}
 	public void handleCSM(){
@@ -1000,7 +1001,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	public void handleNewInfluenza(){
 		setVisible(false,
 				LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
-		localityField.setCaption("Address (Location)");
+		localityField.setVisible(true);
 
 	}
 	public void handleAFP(){
@@ -1008,7 +1009,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		setVisible(false, LocationDto.ADDRESS_TYPE,
 				LocationDto.ADDRESS_TYPE_DETAILS,
 				LocationDto.STREET,
-				LocationDto.CONTACT_PERSON_FIRST_NAME, LocationDto.LOCALITY);
+				LocationDto.CONTACT_PERSON_FIRST_NAME);
 		setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE);
 	}
 
@@ -1044,7 +1045,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 		setVisible(false,
 				LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
-		localityField.setCaption("Address (Location)");
+		localityField.setVisible(true);
 	}
 	public void handleIDSR(){
 		setVisible(false, LocationDto.POSTAL_CODE, LocationDto.CITY);
