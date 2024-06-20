@@ -177,7 +177,6 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         poeCategoryDetails = addField(TriagingDto.POE_CATEGORY_DETAILS, poeCategoryDetail);
         previousOccurrence = addField(TriagingDto.OCCURRENCE_PREVIOUSLY, NullableOptionGroup.class);
         triagingDecision = addField(TriagingDto.TRIAGING_DECISION, OptionGroup.class);
-//        triagingDecision.setMultiSelect(false);
         triagingDecision.addItems(
                 Arrays.stream(EbsTriagingDecision.values())
                         .filter(decision -> fieldVisibilityCheckers.isVisible(EbsTriagingDecision.class, decision.name()))
@@ -512,7 +511,6 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 
     public void displayCategories(String property){
         List<CategoryDetailsLevel> categories;
-        categoryLevel.setVisible(true);
         switch (property) {
             case "[Environment]":
             case "[POE]":
