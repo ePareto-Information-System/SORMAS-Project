@@ -67,7 +67,8 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
                     fluidRowLocs(EbsDto.SOURCE_INFORMATION, EbsDto.CATEGORY_OF_INFORMANT, EbsDto.REPORT_DATE_TIME) +
                     fluidRowLocs(EbsDto.INFORMANT_TEL,EbsDto.INFORMANT_NAME, EbsDto.OTHER_INFORMANT) +
                     fluidRowLocs(EbsDto.SCANNING_TYPE, EbsDto.AUTOMATIC_SCANNING_TYPE) +
-                    fluidRowLocs(EbsDto.SOURCE_NAME,EbsDto.MANUAL_SCANNING_TYPE,EbsDto.SOURCE_URL,EbsDto.OTHER) +
+                    fluidRowLocs(EbsDto.SOURCE_NAME,EbsDto.MANUAL_SCANNING_TYPE)+
+                    fluidRowLocs(EbsDto.SOURCE_URL,EbsDto.OTHER) +
 
                     loc(PLACE_DETECTION_HEADING_LOC) +
                     fluidRowLocs(EbsDto.EBS_LOCATION) +
