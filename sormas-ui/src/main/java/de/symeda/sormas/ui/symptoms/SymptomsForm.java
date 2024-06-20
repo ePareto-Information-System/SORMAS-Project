@@ -243,6 +243,14 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			fluidRowLocsCss( ONSET_SYMPTOM, ONSET_DATE) +
 			fluidRowLocs(6, OUTCOME);
 
+	public static final String AFP_LAYOUT = fluidRowLocs(FEVER_ONSET_PARALYSIS, PROGRESSIVE_PARALYSIS) +
+			fluidRowLocs(DATE_ONSET_PARALYSIS, PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
+			fluidRowLocs(6,SITE_OF_PARALYSIS) +
+			fluidRowLocs(PARALYSED_LIMB_SENSITIVE_TO_PAIN, INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
+			fluidRowLocs(RIGHT_INJECTION_SITE, LEFT_INJECTION_SITE) +
+			fluidRowLocs(PROVISONAL_DIAGNOSIS)+
+			fluidRowLocs(6, TRUEAFP);
+
     private static String createSymptomGroupLayout(SymptomGroup symptomGroup, String loc) {
 
         final Predicate<java.lang.reflect.Field> groupSymptoms =
@@ -1240,7 +1248,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				Arrays.asList(SymptomState.YES),
 				disease);
 		}
-		Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.CSM, Disease.NEW_INFLUENZA, Disease.AFP));
+		Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.CSM, Disease.NEW_INFLUENZA));
 
 		FieldHelper
 			.setRequiredWhen(getFieldGroup(), getFieldGroup().getField(LESIONS_ALL_OVER_BODY), lesionsFieldIds, Arrays.asList(Boolean.TRUE), disease);
@@ -1546,6 +1554,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					break;
 				case CHOLERA:
 					SELECTED_HTML_LAYOUT = CHOLERA_LAYOUT;
+					break;
+				case AFP:
+					SELECTED_HTML_LAYOUT = AFP_LAYOUT;
 					break;
 				default:
 					SELECTED_HTML_LAYOUT = HTML_LAYOUT;
