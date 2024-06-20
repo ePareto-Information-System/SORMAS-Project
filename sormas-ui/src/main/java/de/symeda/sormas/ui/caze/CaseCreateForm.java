@@ -105,8 +105,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 
 	private final boolean showHomeAddressForm;
 	private final boolean showPersonSearchButton;
-	private boolean canUpdateFacility = true;
-
 	// If a case is created form a TravelEntry, the variable convertedTravelEntry provides the
 	// necessary extra data. This variable is expected to be replaced in the implementation of
 	// issue #5910.
@@ -366,7 +364,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		communityCombo.addValueChangeListener(e -> updateFacility());
 
 		facilityOrHome.addValueChangeListener(e -> {
-			canUpdateFacility = false;
 			FacilityReferenceDto healthFacility = UserProvider.getCurrent().getUser().getHealthFacility();
 			boolean hasOptionalHealthFacility = UserProvider.getCurrent().hasOptionalHealthFacility();
 			if (hasOptionalHealthFacility && healthFacility != null) {
@@ -493,9 +490,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		responsibleDistrictCombo.addValueChangeListener(e -> {
 			Boolean differentPlaceOfStay = differentPlaceOfStayJurisdiction.getValue();
 			if (!Boolean.TRUE.equals(differentPlaceOfStay)) {
-				if (!canUpdateFacility) {
 					updateFacility();
-				}
 				if (!Boolean.TRUE.equals(differentPointOfEntryJurisdiction.getValue())) {
 					updatePOEs();
 				}
@@ -504,7 +499,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		responsibleCommunityCombo.addValueChangeListener((e) -> {
 			Boolean differentPlaceOfStay = differentPlaceOfStayJurisdiction.getValue();
 			if (differentPlaceOfStay == null || Boolean.FALSE.equals(differentPlaceOfStay)) {
-				canUpdateFacility = false;
 				updateFacility();
 			}
 		});
