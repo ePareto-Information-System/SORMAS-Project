@@ -383,6 +383,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             else if (e.getProperty().getValue().toString().equals("[NO]")) {
                 referredTo.setVisible(false);
                 referredTo.setValue(null);
+                triagingDecision.setValue(EbsTriagingDecision.DISCARD);
             }
         });
 
