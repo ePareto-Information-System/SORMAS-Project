@@ -954,11 +954,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         getContent().getComponent(PATHOGEN_TESTING_READ_HEADLINE_LOC).setVisible(canOnlyReadRequests);
         getContent().getComponent(ADDITIONAL_TESTING_READ_HEADLINE_LOC).setVisible(canOnlyReadRequests && canUseAdditionalTests);
 
-        handleDisease(Disease.YELLOW_FEVER, "National Public Health Reference Laboratory");
+        /*handleDisease(Disease.YELLOW_FEVER, "National Public Health Reference Laboratory");
         handleDisease(Disease.AHF, "NMIMR");
         handleDisease(Disease.DENGUE, "NMIMR");
         handleDisease(Disease.AFP, "NMIMR");
-        handleDisease(Disease.NEW_INFLUENZA, "NMIMR");
+        handleDisease(Disease.NEW_INFLUENZA, "NMIMR");*/
         handleDiseaseField(Disease.NEW_INFLUENZA, Disease.CSM, Disease.SARI, Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, Disease.AHF, Disease.MONKEYPOX);
 
         if (getValue() != null && canOnlyReadRequests) {
@@ -1515,7 +1515,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
     private void handleDiseaseField(Disease... targetDiseases) {
         for (Disease targetDisease : targetDiseases) {
             if (disease == targetDisease) {
-                setVisible(false, SampleDto.PATHOGEN_TESTING_REQUESTED);
+                setVisible(false, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.ADDITIONAL_TESTING_REQUESTED);
             }
         }
     }

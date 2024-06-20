@@ -706,6 +706,8 @@ public interface Captions {
 	String casePickCase = "casePickCase";
 	String casePlaceOfStay = "casePlaceOfStay";
 	String coorLabel = "coorLabel";
+	String patientDob = "patientDob";
+	String dobNot = "dobNot";
 	String casePlusDays = "casePlusDays";
 	String CasePreviousHospitalization = "CasePreviousHospitalization";
 	String CasePreviousHospitalization_admissionAndDischargeDate = "CasePreviousHospitalization.admissionAndDischargeDate";
