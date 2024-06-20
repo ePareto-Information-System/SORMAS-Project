@@ -14,6 +14,36 @@
  */
 package de.symeda.sormas.ui.caze;
 
+import static de.symeda.sormas.ui.caze.CaseCreateForm.*;
+import static de.symeda.sormas.ui.utils.CssStyles.*;
+import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumn;
+import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumnLoc;
+import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumnLocCss;
+import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRow;
+import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
+import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocsCss;
+import static de.symeda.sormas.ui.utils.LayoutUtil.inlineLocs;
+import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
+import static de.symeda.sormas.ui.utils.LayoutUtil.locCss;
+import static de.symeda.sormas.ui.utils.LayoutUtil.locs;
+
+import java.time.Month;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import com.vaadin.v7.data.validator.RegexpValidator;
+import com.vaadin.v7.ui.CheckBox;
+import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.DateField;
+import com.vaadin.v7.ui.TextArea;
+import com.vaadin.v7.ui.TextField;
+import com.vaadin.v7.ui.VerticalLayout;
+import de.symeda.sormas.api.caze.*;
+import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.utils.*;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.server.UserError;
@@ -136,10 +166,13 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(6,CaseDataDto.NOTIFIED_OTHER) +
 					loc(INDICATE_CATEGORY_LOC) +
 					fluidRowLocs(6,CaseDataDto.NOTIFIED_BY) +
-                    fluidRowLocs(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY) +
-                    fluidRowLocs(CaseDataDto.REPORT_LAT, CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT_LON_ACCURACY) +
-                    fluidRowLocs(CaseDataDto.PATIENT_FIRST_NAME, CaseDataDto.PATIENT_LAST_NAME, CaseDataDto.PATIENT_OTHER_NAMES)
-                    + fluidRowLocs(CaseDataDto.PATIENT_DOB_DD, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_YY)
+                    fluidRowLocs(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY)
+                    + fluidRowLocs(MPOX_COORDINATE_LABEL)
+                    + fluidRowLocs(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT)
+                    + fluidRowLocs(CaseDataDto.PATIENT_FIRST_NAME, CaseDataDto.PATIENT_LAST_NAME, CaseDataDto.PATIENT_OTHER_NAMES)
+                    + fluidRowLocs(PATIENT_DOB_LABEL)
+                    + fluidRowLocs(CaseDataDto.PATIENT_DOB_YY, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_DD)
+                    + fluidRowLocs(DOB_NOT_KNOWN_LABEL)
                     + fluidRowLocs(CaseDataDto.PATIENT_AGE_YEAR, CaseDataDto.PATIENT_AGE_MONTH)
                     + fluidRowLocs(6, CaseDataDto.PATIENT_SEX)
                     + fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY)
@@ -280,6 +313,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
     private TextField numberOfDoses;
     private ComboBox cbCaseClassification;
     private Label medicalInformationCaptionLabel;
+
+    private ComboBox patientDobDay;
 
 
     private final Map<ReinfectionDetailGroup, CaseReinfectionCheckBoxTree> reinfectionTrees = new EnumMap<>(ReinfectionDetailGroup.class);
@@ -1554,13 +1589,64 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				setVisible(true, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
 				createLabel(I18nProperties.getString(Strings.headingIndicateCategory), H4, INDICATE_CATEGORY_LOC);
 
+                Label coorLabel = new Label(I18nProperties.getCaption(Captions.coorLabel));
+                coorLabel.addStyleName(H4);
+                getContent().addComponent(coorLabel, MPOX_COORDINATE_LABEL);
+
+                Label patientDob = new Label(I18nProperties.getCaption(Captions.patientDob));
+                patientDob.addStyleName(H4);
+                getContent().addComponent(patientDob, PATIENT_DOB_LABEL);
+
                 addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
                 tfReportLon.setVisible(true);
                 tfReportLat.setVisible(true);
-                addFields(CaseDataDto.PATIENT_FIRST_NAME, CaseDataDto.PATIENT_LAST_NAME, CaseDataDto.PATIENT_OTHER_NAMES);
-                addFields(CaseDataDto.PATIENT_DOB_DD, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_YY);
-                addFields(CaseDataDto.PATIENT_AGE_YEAR, CaseDataDto.PATIENT_AGE_MONTH);
-                addFields(CaseDataDto.PATIENT_SEX);
+                 addFields(CaseDataDto.PATIENT_FIRST_NAME, CaseDataDto.PATIENT_LAST_NAME, CaseDataDto.PATIENT_OTHER_NAMES);
+
+                Label dobNot = new Label(I18nProperties.getCaption(Captions.dobNot));
+                dobNot.addStyleName(H4);
+                getContent().addComponent(dobNot, DOB_NOT_KNOWN_LABEL);
+
+                patientDobDay = addField(CaseDataDto.PATIENT_DOB_DD, ComboBox.class);
+                // @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
+                patientDobDay.setNullSelectionAllowed(true);
+                patientDobDay.setInputPrompt(I18nProperties.getString(Strings.day));
+                patientDobDay.setCaption("");
+
+                ComboBox patientDobMonth = addField(CaseDataDto.PATIENT_DOB_MM,ComboBox.class);
+                // @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
+                patientDobMonth.setNullSelectionAllowed(true);
+                patientDobMonth.addItems(DateHelper.getMonthsInYear());
+                patientDobMonth.setPageLength(12);
+                patientDobMonth.setInputPrompt(I18nProperties.getString(Strings.month));
+                patientDobMonth.setCaption("");
+                DateHelper.getMonthsInYear()
+                        .forEach(month -> patientDobMonth.setItemCaption(month, de.symeda.sormas.api.Month.values()[month - 1].toString()));
+                setItemCaptionsForMonths(patientDobMonth);
+
+                ComboBox patientDobYear = addField(CaseDataDto.PATIENT_DOB_YY, ComboBox.class);
+                // @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
+                patientDobYear.setNullSelectionAllowed(true);
+                patientDobYear.addItems(DateHelper.getYearsToNow());
+                patientDobYear.setItemCaptionMode(AbstractSelect.ItemCaptionMode.ID_TOSTRING);
+                patientDobYear.setInputPrompt(I18nProperties.getString(Strings.year));
+
+                patientDobDay.addValidator(
+                        g -> ControllerProvider.getPersonController()
+                                .validateBirthDate((Integer) patientDobYear.getValue(), (Integer) patientDobMonth.getValue(), (Integer) g));
+                patientDobMonth.addValidator(
+                        g -> ControllerProvider.getPersonController()
+                                .validateBirthDate((Integer) patientDobYear.getValue(), (Integer) g, (Integer) patientDobDay.getValue()));
+                patientDobYear.addValidator(
+                        g -> ControllerProvider.getPersonController()
+                                .validateBirthDate((Integer) g, (Integer) patientDobMonth.getValue(), (Integer) patientDobDay.getValue()));
+
+                addField(CaseDataDto.PATIENT_AGE_YEAR);
+                addField(CaseDataDto.PATIENT_AGE_MONTH);
+
+                ComboBox patientSex = addField(CaseDataDto.PATIENT_SEX, ComboBox.class);
+                patientSex.removeItem(Sex.OTHER);
+                patientSex.removeItem(Sex.UNKNOWN);
+
                 addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
                 addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
 			}
@@ -2076,6 +2162,32 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			setVisible(false, CaseDataDto.PREVIOUS_QUARANTINE_TO, CaseDataDto.QUARANTINE_CHANGE_COMMENT);
 		}
 	}
+
+	    private void setItemCaptionsForMonths(AbstractSelect months) {
+        months.setItemCaption(1, I18nProperties.getEnumCaption(Month.JANUARY));
+        months.setItemCaption(2, I18nProperties.getEnumCaption(Month.FEBRUARY));
+        months.setItemCaption(3, I18nProperties.getEnumCaption(Month.MARCH));
+        months.setItemCaption(4, I18nProperties.getEnumCaption(Month.APRIL));
+        months.setItemCaption(5, I18nProperties.getEnumCaption(Month.MAY));
+        months.setItemCaption(6, I18nProperties.getEnumCaption(Month.JUNE));
+        months.setItemCaption(7, I18nProperties.getEnumCaption(Month.JULY));
+        months.setItemCaption(8, I18nProperties.getEnumCaption(Month.AUGUST));
+        months.setItemCaption(9, I18nProperties.getEnumCaption(Month.SEPTEMBER));
+        months.setItemCaption(10, I18nProperties.getEnumCaption(Month.OCTOBER));
+        months.setItemCaption(11, I18nProperties.getEnumCaption(Month.NOVEMBER));
+        months.setItemCaption(12, I18nProperties.getEnumCaption(Month.DECEMBER));
+    }
+
+    private void updateListOfDays(Integer selectedYear, Integer selectedMonth) {
+        if (!patientDobDay.isReadOnly()) {
+            Integer currentlySelected = (Integer) patientDobDay.getValue();
+            patientDobDay.removeAllItems();
+            patientDobDay.addItems(DateHelper.getDaysInMonth(selectedMonth, selectedYear));
+            if (patientDobDay.containsId(currentlySelected)) {
+                patientDobDay.setValue(currentlySelected);
+            }
+        }
+    }
 	private Label createLabel(String text, String h4, String location) {
 		final Label label = new Label(text);
 		label.setId(text);
