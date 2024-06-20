@@ -170,8 +170,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.SAMPLING_REASON, SampleDto.SAMPLING_REASON_DETAILS) +
 					fluidRowLocs(SampleDto.SAMPLE_SOURCE, "") +
 					fluidRowLocs(6,SampleDto.OTHER_TYPE) +
-					//fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
-
+//					fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
 
 					fluidRowLocs(SampleDto.SAMPLE_DISPATCH_MODE) +
 					fluidRowLocs(6,SampleDto.SAMPLE_DISPATCH_DATE) +
@@ -180,7 +179,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(REGIONAL_LABORATORY_HEADLINE_LOC) +
 					fluidRowLocs(REFERENCE_LABORATORY_HEADLINE_LOC) +
 					locCss(VSPACE_TOP_3, SampleDto.LABORATORY_NAME) +
-
 
 					fluidRowLocs(SampleDto.LABORATORY_TEST_PERFORMED, SampleDto.LABORATORY_TEST_PERFORMED_OTHER) +
 					fluidRowLocs(SampleDto.LABORATORY_CYTOLOGY, SampleDto.LABORATORY_GRAM, SampleDto.LABORATORY_GRAM_OTHER) +
@@ -215,54 +213,29 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(6, SampleDto.LABORATORY_FINAL_CLASSIFICATION) +
 					fluidRowLocs(SampleDto.DATE_SURVEILLANCE_SENT_RESULTS_TO_DISTRICT, SampleDto.DATE_FORM_SENT_TO_HIGHER_LEVEL, SampleDto.PERSON_COMPLETING_FORM) +
 
-
 					loc(SAMPLE_MATERIAL_READ_HEADLINE_LOC) +
 					loc(SampleDto.REQUESTED_SAMPLE_MATERIALS) +
-
-					//locCss(VSPACE_TOP_3, SampleDto.PATHOGEN_TESTING_REQUESTED) +
+//					locCss(VSPACE_TOP_3, SampleDto.PATHOGEN_TESTING_REQUESTED) +
 					loc(PATHOGEN_TESTING_READ_HEADLINE_LOC) +
 					loc(PATHOGEN_TESTING_INFO_LOC) +
 					loc(SampleDto.REQUESTED_PATHOGEN_TESTS) +
 					loc(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS) +
 					loc(REQUESTED_PATHOGEN_TESTS_READ_LOC) +
 
-					locCss(VSPACE_TOP_3, SampleDto.ADDITIONAL_TESTING_REQUESTED) +
+//					locCss(VSPACE_TOP_3, SampleDto.ADDITIONAL_TESTING_REQUESTED) +
 					loc(ADDITIONAL_TESTING_READ_HEADLINE_LOC) +
 					loc(ADDITIONAL_TESTING_INFO_LOC) +
 					//loc(SampleDto.REQUESTED_ADDITIONAL_TESTS) +
-				//	loc(SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS) +
+//					loc(SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS) +
 					loc(REQUESTED_ADDITIONAL_TESTS_READ_LOC) +
-
-					locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
-					fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
-					locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
-					fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.LABORATORY_NUMBER) +
-					fluidRowLocs(SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER) +
-					fluidRowLocs(6,SampleDto.LAB_SAMPLE_ID) +
-					fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
-
-                    fluidRowLocs(6,SampleDto.LABORATORY_APPEARANCE_OF_CSF) +
-					fluidRowLocs(SampleDto.COMMENT) +
-
-					fluidRowLocs(6,SampleDto.PATHOGEN_TEST_RESULT) +
-                    fluidRowLocs(6,SampleDto.IPSAMPLESENT) +
-                    fluidRowLocs(SampleDto.IPSAMPLE_TEST_RESULTS) +
-                    fluidRowLocs(SampleDto.SELECTED_RESULT_IGM, SampleDto.SELECTED_RESULT_IGM_DATE)+
-                    fluidRowLocs(SampleDto.SELECTED_RESULT_PCR, SampleDto.SELECTED_RESULT_PCR_DATE)+
-                    fluidRowLocs(SampleDto.SELECTED_RESULT_PRNT, SampleDto.INPUT_VALUE_PRNT, SampleDto.SELECTED_RESULT_PRNT_DATE)+
-
-					fluidRowLocs(CaseDataDto.DELETION_REASON) +
-					fluidRowLocs(CaseDataDto.OTHER_DELETION_REASON) +
 
 					//AFP
 					loc(STOOL_SPECIMEN_COLLECTION_HEADLINE_LOC) +
 					fluidRowLocs(SampleDto.DATE_FIRST_SPECIMEN, SampleDto.DATE_SECOND_SPECIMEN, SampleDto.DATE_SPECIMEN_SENT_NATIONAL_LEVEL) +
 					fluidRowLocs(SampleDto.DATE_SPECIMEN_RECEIVED_NATIONAL_LEVEL, SampleDto.DATE_SPECIMEN_SENT_INTERCOUNTY_NATLAB) +
-
 					loc(STOOL_SPECIMEN_RESULTS_HEADLINE_LOC) +
 					fluidRowLocs(SampleDto.DATE_SPECIMEN_RECEIVED_INTERCOUNTY_NATLAB, SampleDto.STATUS_SPECIMEN_RECEPTION_AT_LAB) +
 					fluidRowLocs(6,SampleDto.DATE_COMBINED_CELL_CULTURE_RESULTS) +
-
 
 					fluidRowLocs(SampleDto.DATE_SENT_NATIONAL_REG_LAB, SampleDto.DATE_DIFFERENTIATION_SENT_EPI) +
 					fluidRowLocs(6,SampleDto.DATE_DIFFERENTIATION_RECEIVED_EPI) +
@@ -276,7 +249,28 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					loc(FOLLOW_UP_EXAMINATION_HEADLINE_LOC) +
 					fluidRowLocs(SampleDto.DATE_FOLLOWUP_EXAM, SampleDto.RESIDUAL_ANALYSIS, SampleDto.RESULT_EXAM) +
 					fluidRowLocs(6,SampleDto.IMMUNOCOMPROMISED_STATUS_SUSPECTED) +
-					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION);
+					fluidRowLocs(6,SampleDto.AFP_FINAL_CLASSIFICATION) +
+
+					locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
+					fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
+					locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
+					fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.LABORATORY_NUMBER) +
+					fluidRowLocs(SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_SAMPLE_CONTAINER_OTHER) +
+					fluidRowLocs(6,SampleDto.LAB_SAMPLE_ID) +
+					fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
+
+					fluidRowLocs(6,SampleDto.LABORATORY_APPEARANCE_OF_CSF) +
+					fluidRowLocs(SampleDto.COMMENT) +
+
+					fluidRowLocs(6,SampleDto.PATHOGEN_TEST_RESULT) +
+					fluidRowLocs(6,SampleDto.IPSAMPLESENT) +
+					fluidRowLocs(SampleDto.IPSAMPLE_TEST_RESULTS) +
+					fluidRowLocs(SampleDto.SELECTED_RESULT_IGM, SampleDto.SELECTED_RESULT_IGM_DATE)+
+					fluidRowLocs(SampleDto.SELECTED_RESULT_PCR, SampleDto.SELECTED_RESULT_PCR_DATE)+
+					fluidRowLocs(SampleDto.SELECTED_RESULT_PRNT, SampleDto.INPUT_VALUE_PRNT, SampleDto.SELECTED_RESULT_PRNT_DATE)+
+
+					fluidRowLocs(CaseDataDto.DELETION_REASON) +
+					fluidRowLocs(CaseDataDto.OTHER_DELETION_REASON);
 
 
     protected static final String GUINEA_WORM_LAYOUT =
@@ -466,23 +460,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				SampleDto.FREQUENCY_OF_CHANGING_FILTERS,
 				SampleDto.REMARKS);
 
-		/*diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
-			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
-
-			switch(disease){
-				case EVD:
-				case LASSA:
-				case DENGUE:
-				case CHIKUNGUNYA:
-				case YELLOW_FEVER:
-				case MARBURG:
-				case ZIKA:
-					selectAHFTests();
-					break;
-				case MEASLES:
-					handleMeasles();
-            }
-		});*/
     }
 
     protected void defaultValueChangeListener() {
@@ -929,11 +906,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         getContent().getComponent(PATHOGEN_TESTING_READ_HEADLINE_LOC).setVisible(canOnlyReadRequests);
         getContent().getComponent(ADDITIONAL_TESTING_READ_HEADLINE_LOC).setVisible(canOnlyReadRequests && canUseAdditionalTests);
 
-        /*handleDisease(Disease.YELLOW_FEVER, "National Public Health Reference Laboratory");
-        handleDisease(Disease.AHF, "NMIMR");
-        handleDisease(Disease.DENGUE, "NMIMR");
-        handleDisease(Disease.AFP, "NMIMR");
-        handleDisease(Disease.NEW_INFLUENZA, "NMIMR");*/
         handleDiseaseField(Disease.NEW_INFLUENZA, Disease.CSM, Disease.SARI, Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, Disease.AHF, Disease.MONKEYPOX);
 
         if (getValue() != null && canOnlyReadRequests) {
@@ -1478,12 +1450,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                                 .filter(c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
                                 .collect(Collectors.toList()));
                 break;
-        }
-    }
-
-    private void handleDisease(Disease targetDisease, String labName) {
-        if (disease == targetDisease) {
-            setVisibleAndCheckLab(labName, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.ADDITIONAL_TESTING_REQUESTED);
         }
     }
 
