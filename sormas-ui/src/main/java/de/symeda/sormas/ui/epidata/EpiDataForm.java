@@ -46,8 +46,6 @@ import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
-import de.symeda.sormas.ui.containmentmeasure.ContainmentMeasureField;
-import de.symeda.sormas.ui.contaminationsource.ContaminationSourcesField;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.ui.utils.*;

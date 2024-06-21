@@ -47,7 +47,6 @@ import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import de.symeda.sormas.api.utils.CardOrHistory;
-import de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
