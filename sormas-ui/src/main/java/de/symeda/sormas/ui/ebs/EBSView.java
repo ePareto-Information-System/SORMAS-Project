@@ -95,7 +95,8 @@ public class EBSView extends AbstractView {
             Button importButton = ButtonHelper.createIconButton(Captions.actionImport, VaadinIcons.UPLOAD, e -> {
                 Window popupWindow = VaadinUiUtil.showPopupWindow(new EventImportLayout());
                 popupWindow.setCaption(I18nProperties.getString(Strings.headingImportEvent));
-                popupWindow.addCloseListener(c -> ((EventGrid) grid).reload());
+                popupWindow.addCloseListener(c -> ((EbsGrid) grid).reload());
+                popupWindow.addCloseListener(c -> ((EbsSignalGrid) grid).reload());
             }, ValoTheme.BUTTON_PRIMARY);
 
             addHeaderComponent(importButton);
@@ -116,7 +117,7 @@ public class EBSView extends AbstractView {
             {
                 StreamResource streamResource = GridExportStreamResource.createStreamResourceWithSelectedItems(
                         grid,
-                        () -> isDefaultViewType() && this.viewConfiguration.isInEagerMode()
+                        () -> this.viewConfiguration.isInEagerMode()
                                 ? this.grid.asMultiSelect().getSelectedItems()
                                 : Collections.emptySet(),
                         ExportEntityName.EBS);
