@@ -516,6 +516,12 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		setRequired(false, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.SEX);
 	}
 
+//	covid-19
+	public void hideFieldsForCovid19(){
+		setVisible(true, PersonDto.PASSPORT_NUMBER);
+		setVisible(false, PersonDto.PRESENT_CONDITION);
+	}
+
 
 	public void updatePresentConditionEnum(Disease disease) {
 

@@ -581,6 +581,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 
 			if(disease == Disease.CORONAVIRUS) {
 				facilityOrHome.setVisible(true);
+				caseTransmissionClassification.setVisible(true);
 			}else {
 				facilityOrHome.setVisible(false);
 			}
@@ -601,8 +602,9 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			else if(diseaseField.getValue() != null && diseaseField.getValue() == Disease.YELLOW_FEVER){
 				personCreateForm.hidePresentCondition();
 				personCreateForm.showPersonalEmail();
-			}
-			else{
+			} else if (diseaseField.getValue() != null && diseaseField.getValue() == Disease.CORONAVIRUS) {
+				personCreateForm.hideFieldsForCovid19();
+			} else{
 				personCreateForm.showPresentCondition();
 			}
 
