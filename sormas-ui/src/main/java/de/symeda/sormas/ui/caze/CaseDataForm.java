@@ -1495,6 +1495,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 healthConditionsField.setVisible(true);
                 healthConditionsField.hideAllFields();
                 healthConditionsField.showForCovid19();
+                caseTransmissionClassification.setVisible(true);
                 setVisible(true, CaseDataDto.REPORTING_OFFICER_NAME, CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE);
 
             } else if (disease == Disease.CHOLERA) {
