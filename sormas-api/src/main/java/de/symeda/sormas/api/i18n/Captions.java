@@ -2303,6 +2303,7 @@ public interface Captions {
 	String Person_qualification = "Person.qualification";
 	String Person_marriageStatus = "Person.marriageStatus";
 	String Person_uuid = "Person.uuid";
+	String Person_otherId = "Person.otherId";
 	String Person_placeOfResidenceSameAsReportingVillage = "Person.placeOfResidenceSameAsReportingVillage";
 	String Person_residenceSinceWhenInMonths = "Person.residenceSinceWhenInMonths";
 	String personAgeAndBirthdate = "personAgeAndBirthdate";

@@ -133,7 +133,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 							oneOfFourCol(PersonDto.BURIAL_CONDUCTOR),
 							oneOfTwoCol(PersonDto.BURIAL_PLACE_DESCRIPTION)
 					) +
-					fluidRowLocs(PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER) +
+					fluidRowLocs(PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD) +
+					fluidRowLocs(PersonDto.PASSPORT_NUMBER, PersonDto.OTHER_ID) +
 					fluidRowLocs(PersonDto.NUMBER_OF_PEOPLE, PersonDto.NUMBER_OF_OTHER_CONTACTS) +
 					//fluidRowLocs(PersonDto.EXTERNAL_ID, PersonDto.EXTERNAL_TOKEN) +
 					//fluidRowLocs(PersonDto.INTERNAL_TOKEN, EXTERNAL_TOKEN_WARNING_LOC) +
@@ -420,6 +421,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		burialDate = addField(PersonDto.BURIAL_DATE, DateField.class);
 		burialPlaceDesc = addField(PersonDto.BURIAL_PLACE_DESCRIPTION, TextField.class);
 		ComboBox burialConductor = addField(PersonDto.BURIAL_CONDUCTOR, ComboBox.class);
+
+		TextField otherId = addField(PersonDto.OTHER_ID, TextField.class);
+		otherId.setVisible(false);
 
 
 		addressForm = addField(PersonDto.ADDRESS, new LocationEditForm(
@@ -1099,6 +1103,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			} else if (disease == Disease.CORONAVIRUS) {
 				List<PresentCondition> validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD);
 				FieldHelper.updateEnumData(presentConditionField, validValues);
+				setVisible(true, PersonDto.OTHER_ID);
 			} else if (disease == Disease.CHOLERA) {
 				List<PresentCondition> validValues = Arrays.asList();
 				FieldHelper.updateEnumData(presentConditionField, validValues);
