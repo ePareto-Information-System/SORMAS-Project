@@ -248,8 +248,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String SITE_OF_PARALYSIS = "siteOfParalysis";
 	public static final String PARALYSED_LIMB_SENSITIVE_TO_PAIN = "paralysedLimbSensitiveToPain";
 	public static final String INJECTION_SITE_BEFORE_ONSET_PARALYSIS = "injectionSiteBeforeOnsetParalysis";
-	public static final String RIGHT_INJECTION_SITE = "rightInjectionSite";
-	public static final String LEFT_INJECTION_SITE = "leftInjectionSite";
+	public static final String INJECTION_SITE = "injectionSite";
 	public static final String TRUEAFP = "trueAfp";
 	public static final String OUTCOME_OTHER = "outcomeOther";
 
@@ -2474,8 +2473,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private YesNoUnknown assymetric;
 	private YesNo paralysedLimbSensitiveToPain;
 	private YesNo injectionSiteBeforeOnsetParalysis;
-	private InjectionSite rightInjectionSite;
-	private InjectionSite leftInjectionSite;
+	private Set<InjectionSite> injectionSite;
 	private YesNo trueAfp;
 	private YesNo symptomsOngoing;
 	private DurationHours durationHours;
@@ -4063,10 +4061,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	public YesNo getParalysedLimbSensitiveToPain(){return paralysedLimbSensitiveToPain;}
 	@Order(364)
 	public YesNo getInjectionSiteBeforeOnsetParalysis(){return injectionSiteBeforeOnsetParalysis;}
-	@Order(365)
-	public InjectionSite getRightInjectionSite(){return rightInjectionSite;}
-	@Order(366)
-	public InjectionSite getLeftInjectionSite(){return leftInjectionSite;}
 	@Order(367)
 	public YesNo getTrueAfp(){return trueAfp;}
 	@Order(368)
@@ -4326,14 +4320,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.injectionSiteBeforeOnsetParalysis = injectionSiteBeforeOnsetParalysis;
 	}
 
-	public void setRightInjectionSite(InjectionSite rightInjectionSite) {
-		this.rightInjectionSite = rightInjectionSite;
-	}
-
-	public void setLeftInjectionSite(InjectionSite leftInjectionSite) {
-		this.leftInjectionSite = leftInjectionSite;
-	}
-
 	public void setTrueAfp(YesNo trueAfp) {
 		this.trueAfp = trueAfp;
 	}
@@ -4398,5 +4384,13 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setPlaceOfFuneralNameVillage(String placeOfFuneralNameVillage) {
 		this.placeOfFuneralNameVillage = placeOfFuneralNameVillage;
+	}
+
+	public Set<InjectionSite> getInjectionSite() {
+		return injectionSite;
+	}
+
+	public void setInjectionSite(Set<InjectionSite> injectionSite) {
+		this.injectionSite = injectionSite;
 	}
 }

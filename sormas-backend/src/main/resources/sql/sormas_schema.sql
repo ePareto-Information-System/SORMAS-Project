@@ -13749,4 +13749,8 @@ ALTER TABLE cases ADD COLUMN patientagemonth integer;
 ALTER TABLE cases ADD COLUMN patientsex varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (621, 'Added Mpox person data to cases');
+
+ALTER TABLE symptoms DROP COLUMN rightinjectionsite;
+ALTER TABLE symptoms DROP COLUMN leftinjectionsite;
+ALTER TABLE symptoms ADD COLUMN injectionSiteString VARCHAR(512);
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

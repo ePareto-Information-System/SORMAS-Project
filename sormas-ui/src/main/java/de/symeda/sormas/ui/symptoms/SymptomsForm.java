@@ -141,7 +141,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6,SITE_OF_PARALYSIS) +
 					fluidRowLocs(6,PARALYSED_LIMB_SENSITIVE_TO_PAIN) +
 					fluidRowLocs(6,INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
-					fluidRowLocs(RIGHT_INJECTION_SITE, LEFT_INJECTION_SITE) +
+					fluidRowLocs(INJECTION_SITE) +
 					fluidRowLocs(6,DATE_ONSET_PARALYSIS) +
 					fluidRowLocs(PROVISONAL_DIAGNOSIS)+
 					fluidRowLocs(6, TRUEAFP)+
@@ -900,22 +900,19 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
             OptionGroup paralysedLimbSensitiveToPain = addField(PARALYSED_LIMB_SENSITIVE_TO_PAIN, OptionGroup.class);
             OptionGroup injectionSiteBeforeOnsetParalysis = addField(INJECTION_SITE_BEFORE_ONSET_PARALYSIS, OptionGroup.class);
 
-			ComboBox rightInjectionSiteBox = new ComboBox("Right Injection Site");
-            for (InjectionSite injectionSiteRight : InjectionSite.InjectionSiteRight) {
-                rightInjectionSiteBox.addItem(injectionSiteRight);
-            }
-			ComboBox rightInjectionSite = addField(RIGHT_INJECTION_SITE, rightInjectionSiteBox);
+			OptionGroup leftRightInjectionSite = addField(INJECTION_SITE, OptionGroup.class);
+			CssStyles.style(leftRightInjectionSite, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+			leftRightInjectionSite.setMultiSelect(true);
 
-			ComboBox leftInjectionSiteBox = new ComboBox("Left Injection Site");
-            for (InjectionSite injectionSiteLeft : InjectionSite.InjectionSiteLeft) {
-                leftInjectionSiteBox.addItem(injectionSiteLeft);
-            }
-            ComboBox leftInjectionSite = addField(LEFT_INJECTION_SITE, leftInjectionSiteBox);
+			leftRightInjectionSite.addItems(
+					Arrays.stream(InjectionSite.values())
+							.filter(x -> fieldVisibilityCheckers.isVisible(InjectionSite.class, x.name()))
+							.collect(Collectors.toSet()));
 
-			rightInjectionSite.setVisible(false);
-			leftInjectionSite.setVisible(false);
 
-			FieldHelper.setVisibleWhen(injectionSiteBeforeOnsetParalysis, Arrays.asList(rightInjectionSite, leftInjectionSite), Arrays.asList(YesNo.YES), true);
+
+			leftRightInjectionSite.setVisible(false);
+			FieldHelper.setVisibleWhen(injectionSiteBeforeOnsetParalysis, Arrays.asList(leftRightInjectionSite), Arrays.asList(YesNo.YES), true);
 
             OptionGroup trueAFP = addField(TRUEAFP, OptionGroup.class);
             TextArea provisionalDiagnosis = addField(PROVISONAL_DIAGNOSIS, TextArea.class);

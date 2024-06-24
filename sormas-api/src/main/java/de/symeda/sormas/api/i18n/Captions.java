@@ -2916,6 +2916,7 @@ public interface Captions {
 	String Symptoms_progressiveFlaccidAcute = "Symptoms.progressiveFlaccidAcute";
 	String Symptoms_assymetric = "Symptoms.assymetric";
 	String Symptoms_siteOfParalysis = "Symptoms.siteOfParalysis";
+	String Symptoms_injectionSite = "Symptoms.injectionSite";
 	String Symptoms_paralysedLimbSensitiveToPain = "Symptoms.paralysedLimbSensitiveToPain";
 	String Symptoms_injectionSiteBeforeOnsetParalysis = "Symptoms.injectionSiteBeforeOnsetParalysis";
 	String Symptoms_rightInjectionSite = "Symptoms.rightInjectionSite";
