@@ -787,8 +787,6 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setAssymetric(source.getAssymetric());
 		target.setParalysedLimbSensitiveToPain(source.getParalysedLimbSensitiveToPain());
 		target.setInjectionSiteBeforeOnsetParalysis(source.getInjectionSiteBeforeOnsetParalysis());
-		target.setRightInjectionSite(source.getRightInjectionSite());
-		target.setLeftInjectionSite(source.getLeftInjectionSite());
 		target.setTrueAfp(source.getTrueAfp());
 		target.setOutcomeOther(source.getOutcomeOther());
 		target.setDyspnea(source.getDyspnea());
