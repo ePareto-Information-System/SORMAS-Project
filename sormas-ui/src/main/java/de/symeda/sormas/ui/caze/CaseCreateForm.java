@@ -582,8 +582,11 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			if(disease == Disease.CORONAVIRUS) {
 				facilityOrHome.setVisible(true);
 				caseTransmissionClassification.setVisible(true);
+				personCreateForm.setSymptomsOnsetDateVisible(true);
 			}else {
 				facilityOrHome.setVisible(false);
+				caseTransmissionClassification.setVisible(false);
+				personCreateForm.setSymptomsOnsetDateVisible(false);
 			}
 
 

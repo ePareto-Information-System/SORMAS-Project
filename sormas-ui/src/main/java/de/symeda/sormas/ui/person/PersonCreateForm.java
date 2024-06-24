@@ -91,7 +91,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	private static final String HTML_LAYOUT =
 		"%s" + fluidRow(fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD), fluidRowLocs(PersonDto.SEX))
 			+ fluidRowLocs(PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PASSPORT_NUMBER)
-			+ fluidRowLocs(PersonDto.PHONE, PersonDto.PRESENT_CONDITION) + fluidRowLocs(6,PersonDto.EMAIL_ADDRESS)
+			+ fluidRowLocs(PersonDto.PHONE, PersonDto.PRESENT_CONDITION) + fluidRowLocs(6,PersonDto.EMAIL_ADDRESS, 6, SymptomsDto.ONSET_DATE)
 			+ fluidRowLocs(ENTER_HOME_ADDRESS_NOW) + loc(HOME_ADDRESS_HEADER) + divsCss(VSPACE_3, fluidRowLocs(HOME_ADDRESS_LOC));
 
 	private static final String NAME_ROW_WITH_PERSON_SEARCH = fluidRowLocs(PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.OTHER_NAME, PERSON_SEARCH_LOC);
@@ -123,6 +123,11 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	@Override
 	protected String createHtmlLayout() {
 		return String.format(HTML_LAYOUT, showPersonSearchButton ? NAME_ROW_WITH_PERSON_SEARCH : NAME_ROW_WITHOUT_PERSON_SEARCH);
+	}
+
+//	showSymptomsOnsetDate
+	public void setSymptomsOnsetDateVisible(boolean visible) {
+		getField(SymptomsDto.ONSET_DATE).setVisible(visible);
 	}
 
 	@Override
