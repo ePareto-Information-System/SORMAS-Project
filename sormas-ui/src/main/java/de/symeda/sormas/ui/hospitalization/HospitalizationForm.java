@@ -549,8 +549,9 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			hideFields();
 			hospitalRecordNumber.setVisible(true);
 			patientVentilated.setVisible(true);
-			intensiveCareUnit.setVisible(false);
-			setVisible(true, HospitalizationDto.ISOLATED, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY,HospitalizationDto.ADMISSION_DATE, HospitalizationDto.NAME_OF_FACILITY ,HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE);
+			intensiveCareUnit.setVisible(true);
+			hospitalizedPreviouslyField.setVisible(true);
+			setVisible(true, HospitalizationDto.ISOLATED, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY,HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE);
 		}
 
 		if (caze.getDisease() == Disease.NEONATAL_TETANUS) {
