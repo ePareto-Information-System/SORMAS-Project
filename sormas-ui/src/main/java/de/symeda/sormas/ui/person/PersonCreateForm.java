@@ -90,8 +90,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 	private static final String HTML_LAYOUT =
 		"%s" + fluidRow(fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD), fluidRowLocs(PersonDto.SEX))
-			+ fluidRowLocs(PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID)
-			+ fluidRowLocs(PersonDto.PASSPORT_NUMBER, PersonDto.OTHER_ID)
+			+ fluidRowLocs(PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PASSPORT_NUMBER)
 			+ fluidRowLocs(PersonDto.PHONE, PersonDto.PRESENT_CONDITION) + fluidRowLocs(6,PersonDto.EMAIL_ADDRESS, 6, SymptomsDto.ONSET_DATE)
 			+ fluidRowLocs(ENTER_HOME_ADDRESS_NOW) + loc(HOME_ADDRESS_HEADER) + divsCss(VSPACE_3, fluidRowLocs(HOME_ADDRESS_LOC));
 
@@ -124,6 +123,11 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	@Override
 	protected String createHtmlLayout() {
 		return String.format(HTML_LAYOUT, showPersonSearchButton ? NAME_ROW_WITH_PERSON_SEARCH : NAME_ROW_WITHOUT_PERSON_SEARCH);
+	}
+
+//	showSymptomsOnsetDate
+	public void setSymptomsOnsetDateVisible(boolean visible) {
+		getField(SymptomsDto.ONSET_DATE).setVisible(visible);
 	}
 
 	@Override
@@ -198,8 +202,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		addField(PersonDto.GHANA_CARD, TextField.class);
 		addField(PersonDto.PASSPORT_NUMBER, TextField.class);
 		addField(PersonDto.NATIONAL_HEALTH_ID, TextField.class);
-		TextField otherId = addField(PersonDto.OTHER_ID, TextField.class);
-		otherId.setVisible(false);
+
 		presentCondition = addField(PersonDto.PRESENT_CONDITION, ComboBox.class);
 		presentCondition.setVisible(showPresentCondition);
 		FieldHelper.addSoftRequiredStyle(presentCondition, sexComboBox);
@@ -520,9 +523,8 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 //	covid-19
 	public void hideFieldsForCovid19(){
-		setVisible(true, PersonDto.PASSPORT_NUMBER, PersonDto.OTHER_ID);
+		setVisible(true, PersonDto.PASSPORT_NUMBER);
 		setVisible(false, PersonDto.PRESENT_CONDITION);
-
 	}
 
 
