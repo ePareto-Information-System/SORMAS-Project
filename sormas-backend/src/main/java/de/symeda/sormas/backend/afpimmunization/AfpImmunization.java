@@ -13,12 +13,12 @@ public class AfpImmunization extends AbstractDomainObject {
     public static final String TABLE_NAME = "afpimmunization";
 
     private Integer totalNumberDoses;
-    private String opvDoseAtBirth;
-    private String secondDose;
-    private String fourthDose;
-    private String firstDose;
-    private String thirdDose;
-    private String lastDose;
+    private Date opvDoseAtBirth;
+    private Date secondDose;
+    private Date fourthDose;
+    private Date firstDose;
+    private Date thirdDose;
+    private Date lastDose;
     private String totalOpvDosesReceivedThroughSia;
     private String totalOpvDosesReceivedThroughRi;
     private Date dateLastOpvDosesReceivedThroughSia;
@@ -35,51 +35,51 @@ public class AfpImmunization extends AbstractDomainObject {
         this.totalNumberDoses = totalNumberDoses;
     }
 
-    public String getOpvDoseAtBirth() {
+    public Date getOpvDoseAtBirth() {
         return opvDoseAtBirth;
     }
 
-    public void setOpvDoseAtBirth(String opvDoseAtBirth) {
+    public void setOpvDoseAtBirth(Date opvDoseAtBirth) {
         this.opvDoseAtBirth = opvDoseAtBirth;
     }
 
-    public String getSecondDose() {
+    public Date getSecondDose() {
         return secondDose;
     }
 
-    public void setSecondDose(String secondDose) {
+    public void setSecondDose(Date secondDose) {
         this.secondDose = secondDose;
     }
 
-    public String getFourthDose() {
+    public Date getFourthDose() {
         return fourthDose;
     }
 
-    public void setFourthDose(String fourthDose) {
+    public void setFourthDose(Date fourthDose) {
         this.fourthDose = fourthDose;
     }
 
-    public String getFirstDose() {
+    public Date getFirstDose() {
         return firstDose;
     }
 
-    public void setFirstDose(String firstDose) {
+    public void setFirstDose(Date firstDose) {
         this.firstDose = firstDose;
     }
 
-    public String getThirdDose() {
+    public Date getThirdDose() {
         return thirdDose;
     }
 
-    public void setThirdDose(String thirdDose) {
+    public void setThirdDose(Date thirdDose) {
         this.thirdDose = thirdDose;
     }
 
-    public String getLastDose() {
+    public Date getLastDose() {
         return lastDose;
     }
 
-    public void setLastDose(String lastDose) {
+    public void setLastDose(Date lastDose) {
         this.lastDose = lastDose;
     }
 

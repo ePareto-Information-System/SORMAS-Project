@@ -14889,4 +14889,20 @@ INSERT INTO schema_version (version_number, comment) VALUES (686, 'Dropped colum
 ALTER TABLE symptoms DROP COLUMN rightinjectionsite;
 ALTER TABLE symptoms DROP COLUMN leftinjectionsite;
 ALTER TABLE symptoms ADD COLUMN injectionSiteString VARCHAR(512);
+
+ALTER TABLE immunization DROP COLUMN opvdoseatbirth;
+ALTER TABLE immunization DROP COLUMN seconddose;
+ALTER TABLE immunization DROP COLUMN fourthdose;
+ALTER TABLE immunization DROP COLUMN firstdose;
+ALTER TABLE immunization DROP COLUMN thirddose;
+ALTER TABLE immunization DROP COLUMN lastdose;
+
+ALTER TABLE immunization ADD COLUMN opvdoseatbirth Date;
+ALTER TABLE immunization ADD COLUMN seconddose Date;
+ALTER TABLE immunization ADD COLUMN fourthdose Date;
+ALTER TABLE immunization ADD COLUMN firstdose Date;
+ALTER TABLE immunization ADD COLUMN thirddose Date;
+ALTER TABLE immunization ADD COLUMN lastdose Date;
+
+INSERT INTO schema_version (version_number, comment) VALUES (687, 'Modified columns for symptoms and afpimmunization for AFP');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
