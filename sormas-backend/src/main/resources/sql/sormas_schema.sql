@@ -14872,8 +14872,10 @@ ALTER TABLE triaging ADD COLUMN  animalFacilityCategoryDetails VARCHAR(255);
 ALTER TABLE triaging ADD COLUMN  environmentalCategoryDetails VARCHAR(255);
 ALTER TABLE triaging ADD COLUMN  poeCategoryDetails VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (683, 'rename alert used to alert issued fields');
+
 ALTER TABLE triaging ADD COLUMN  animalLaboratoryCategoryDetails VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (684, 'rename alert used to alert issued fields');
+
 ALTER TABLE ebs ADD COLUMN  otherInformant VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (685, 'rename alert used to alert issued fields');
 
@@ -14883,4 +14885,8 @@ ALTER TABLE epidata DROP COLUMN yearofvaccination;
 ALTER TABLE epidata ADD COLUMN yearofvaccinationcovid INTEGER;
 ALTER TABLE epidata ADD COLUMN yearofvaccination INTEGER;
 INSERT INTO schema_version (version_number, comment) VALUES (686, 'Dropped columns at epidate and re-added with type Int and null constraint for samplepurpose in history table');
+
+ALTER TABLE symptoms DROP COLUMN rightinjectionsite;
+ALTER TABLE symptoms DROP COLUMN leftinjectionsite;
+ALTER TABLE symptoms ADD COLUMN injectionSiteString VARCHAR(512);
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

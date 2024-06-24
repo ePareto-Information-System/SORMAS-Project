@@ -279,8 +279,6 @@ public class Symptoms extends AbstractDomainObject {
 	private String requestedSiteOfParalysisString;
 	private YesNo paralysedLimbSensitiveToPain;
 	private YesNo injectionSiteBeforeOnsetParalysis;
-	private InjectionSite rightInjectionSite;
-	private InjectionSite leftInjectionSite;
 	private YesNo trueAfp;
 	private SymptomState dyspnea;
 	private SymptomState tachypnea;
@@ -332,6 +330,8 @@ public class Symptoms extends AbstractDomainObject {
 	private String outcomePlaceCommVillage;
 	private String nameService;
 	private String placeOfFuneralNameVillage;
+	private Set<InjectionSite> injectionSite;
+	private String injectionSiteString;
 
 	// when adding new fields make sure to extend toHumanString
 
@@ -2147,22 +2147,6 @@ public class Symptoms extends AbstractDomainObject {
 		this.injectionSiteBeforeOnsetParalysis = injectionSiteBeforeOnsetParalysis;
 	}
 
-	public InjectionSite getRightInjectionSite() {
-		return rightInjectionSite;
-	}
-
-	public void setRightInjectionSite(InjectionSite rightInjectionSite) {
-		this.rightInjectionSite = rightInjectionSite;
-	}
-
-	public InjectionSite getLeftInjectionSite() {
-		return leftInjectionSite;
-	}
-
-	public void setLeftInjectionSite(InjectionSite leftInjectionSite) {
-		this.leftInjectionSite = leftInjectionSite;
-	}
-
 	public YesNo getTrueAfp() {
 		return trueAfp;
 	}
@@ -2632,5 +2616,45 @@ public class Symptoms extends AbstractDomainObject {
 	}
 	public void setPlaceOfFuneralNameVillage(String placeOfFuneralNameVillage) {
 		this.placeOfFuneralNameVillage = placeOfFuneralNameVillage;
+	}
+
+	@Transient
+	public Set<InjectionSite> getInjectionSite() {
+		if (injectionSite == null) {
+			if (StringUtils.isEmpty(injectionSiteString)) {
+				injectionSite = new HashSet<>();
+			} else {
+				injectionSite =
+						Arrays.stream(injectionSiteString.split(",")).map(InjectionSite::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return injectionSite;
+	}
+
+	public void setInjectionSite(Set<InjectionSite> injectionSite) {
+		this.injectionSite = injectionSite;
+
+		if (this.injectionSite == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		injectionSite.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		injectionSiteString = sb.toString();
+	}
+
+	public String getInjectionSiteString() {
+		return injectionSiteString;
+	}
+
+	public void setInjectionSiteString(String injectionSiteString) {
+		this.injectionSiteString = injectionSiteString;
+		injectionSite = null;
 	}
 }
