@@ -387,10 +387,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
     private TextArea supplementalImmunizationDetails;
     private TextField reportingVillage;
     private TextField reportingZone;
-    private boolean canUpdateFacility = true;
-
     private ComboBox patientDobDay;
-
 
     private final Map<ReinfectionDetailGroup, CaseReinfectionCheckBoxTree> reinfectionTrees = new EnumMap<>(ReinfectionDetailGroup.class);
 
@@ -1239,15 +1236,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         responsibleDistrict.addValueChangeListener(e -> {
             Boolean differentPlaceOfStay = differentPlaceOfStayJurisdiction.getValue();
             if (differentPlaceOfStay == null || Boolean.FALSE.equals(differentPlaceOfStay)) {
-                if (!canUpdateFacility) {
                     updateFacility();
-                }
             }
         });
         responsibleCommunity.addValueChangeListener((e) -> {
             Boolean differentPlaceOfStay = differentPlaceOfStayJurisdiction.getValue();
             if (differentPlaceOfStay == null || Boolean.FALSE.equals(differentPlaceOfStay)) {
-                canUpdateFacility = false;
                 updateFacility();
             }
         });
