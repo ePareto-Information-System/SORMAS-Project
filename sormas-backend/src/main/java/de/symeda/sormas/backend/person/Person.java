@@ -153,6 +153,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	public static final String ADDITIONAL_DETAILS = "additionalDetails";
 	public static final String TRAVEL_ENTRIES = "travelEntries";
 	public static final String CADRE = "cadre";
+	public static final String OTHER_ID = "otherId";
 
 	private String firstName;
 	private String lastName;
@@ -280,6 +281,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private String nameHealthFacility;
 	private String service;
 	private String qualification;
+	private String otherId;
 
 	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getFirstName() {
@@ -1148,6 +1150,14 @@ public class Person extends AbstractDomainObject implements HasExternalData {
     public void setApplicable(YesNo applicable) {
          this.applicable = applicable;
     }
+
+	public String getOtherId() {
+		return otherId;
+	}
+
+	public void setOtherId(String otherId) {
+		this.otherId = otherId;
+	}
 
 	private void setPersonContactInformation(String contactInfo, PersonContactDetailType personContactDetailType) {
 		final PersonContactDetail pcd =

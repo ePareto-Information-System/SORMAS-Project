@@ -399,6 +399,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setEthnicity(source.getEthnicity());
 		target.setLocationOfBirth(source.getLocationOfBirth());
 		target.setBirthInInstitution(source.getBirthInInstitution());
+		target.setOtherId(source.getOtherId());
 		return target;
 	}
 
@@ -1209,6 +1210,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setNameHealthFacility(source.getNameHealthFacility());
 		target.setService(source.getService());
 		target.setQualification(source.getQualification());
+		target.setOtherId(source.getOtherId());
 
 		return target;
 	}
@@ -2078,6 +2080,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setNameHealthFacility(source.getNameHealthFacility());
 		target.setService(source.getService());
 		target.setQualification(source.getQualification());
+		target.setOtherId(source.getOtherId());
 
 		return target;
 	}

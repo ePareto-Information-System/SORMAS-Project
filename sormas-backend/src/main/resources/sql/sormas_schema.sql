@@ -14905,4 +14905,7 @@ ALTER TABLE immunization ADD COLUMN thirddose Date;
 ALTER TABLE immunization ADD COLUMN lastdose Date;
 
 INSERT INTO schema_version (version_number, comment) VALUES (687, 'Modified columns for symptoms and afpimmunization for AFP');
+
+ALTER TABLE person ADD COLUMN otherId VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (688, 'Added otherId to person');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

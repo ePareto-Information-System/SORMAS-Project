@@ -179,6 +179,7 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String APPLICABLE = "applicable";
 	public static final String LOCATION_OF_BIRTH = "locationOfBirth";
 	public static final String BIRTH_IN_INSTITUTION = "birthInInstitution";
+	public static final String OTHER_ID = "otherId";
 
 
 	// Fields are declared in the order they should appear in the import template
@@ -517,6 +518,7 @@ public class PersonDto extends PseudonymizableDto {
 	private CountryReferenceDto pst14MonthsCountry;
 	private YesNo placeOfResidenceSameAsReportingVillage;
 	private String residenceSinceWhenInMonths;
+	private String otherId;
 
 	@SuppressWarnings("serial")
 	public static class SeveralNonPrimaryContactDetailsException extends RuntimeException {
@@ -1618,5 +1620,13 @@ public class PersonDto extends PseudonymizableDto {
 
 	public void setBirthInInstitution(final YesNoUnknown birthInInstitution) {
 		this.birthInInstitution = birthInInstitution;
+	}
+
+	public String getOtherId() {
+		return otherId;
+	}
+
+	public void setOtherId(String otherId) {
+		this.otherId = otherId;
 	}
 }
