@@ -9,16 +9,16 @@ import java.util.List;
 
 public enum InjectionSite {
 
-    RIGHT_ARM,
-    RIGHT_FOREARM,
-    RIGHT_BUTTOCKS,
-    RIGHT_THIGH,
-    RIGHT_LEG,
     LEFT_ARM,
-    LEFT_FOREARM,
     LEFT_BUTTOCKS,
+    LEFT_FOREARM,
+    LEFT_LEG,
     LEFT_THIGH,
-    LEFT_LEG;
+    RIGHT_ARM,
+    RIGHT_BUTTOCKS,
+    RIGHT_FOREARM,
+    RIGHT_LEG,
+    RIGHT_THIGH;
 
     public static InjectionSite[] ParalysisSite() {
         return new InjectionSite[] {
