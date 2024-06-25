@@ -1036,10 +1036,12 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			CssStyles.style(leftRightInjectionSite, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
 			leftRightInjectionSite.setMultiSelect(true);
 
-			leftRightInjectionSite.addItems(
-					Arrays.stream(InjectionSite.values())
-							.filter(x -> fieldVisibilityCheckers.isVisible(InjectionSite.class, x.name()))
-							.collect(Collectors.toSet()));
+			List<InjectionSite> sortedInjectionSites = Arrays.stream(InjectionSite.values())
+					.filter(x -> fieldVisibilityCheckers.isVisible(InjectionSite.class, x.name()))
+					.sorted(Comparator.comparing(Enum::name))
+					.collect(Collectors.toList());
+
+			leftRightInjectionSite.addItems(new LinkedHashSet<>(sortedInjectionSites));
 
 
 
