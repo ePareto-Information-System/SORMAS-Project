@@ -277,7 +277,7 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 			if (caseFollowupEnabled
 					&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_FOLLOW_UP)
 					&& caze.getFollowUpStatus() != FollowUpStatus.NO_FOLLOW_UP) {
-				if (caze.getDisease() == Disease.CORONAVIRUS) {
+				if (Arrays.asList().contains(caze.getDisease())) {
 					menu.addView(
 							ClinicalCourseView.VIEW_NAME,
 							I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CLINICAL_COURSE),
