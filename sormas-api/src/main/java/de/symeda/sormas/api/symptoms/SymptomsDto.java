@@ -337,7 +337,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CHOLERA,
 		OTHER })
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState abdominalPain;
 
 	@Diseases({
@@ -539,7 +539,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Outbreaks
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState cough;
 
 	@Diseases({
@@ -560,7 +560,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Outbreaks
 	@HideForCountries(countries = {
 			CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState soreThroat;
 
 	@Diseases({
@@ -633,7 +633,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		FOODBORNE_ILLNESS,
 		OTHER })
 	@Outbreaks
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState diarrhea;
 
 	@Diseases({
@@ -689,7 +689,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState difficultyBreathing;
 
 	@Diseases({
@@ -1219,7 +1219,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		FOODBORNE_ILLNESS,
 		OTHER })
 	@Outbreaks
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState nausea;
 
 	@Diseases({
@@ -1448,7 +1448,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState rapidBreathing;
 
 	@Diseases({
@@ -1490,7 +1490,7 @@ public class SymptomsDto extends PseudonymizableDto {
 			CORONAVIRUS,
 			UNDEFINED,
 			OTHER })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState runnyNose;
 
 	@Diseases({
@@ -2027,7 +2027,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
 		CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState fluidInLungCavityAuscultation;
 
 	@Diseases({
@@ -2047,7 +2047,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
 		CountryHelper.COUNTRY_CODE_SWITZERLAND })
-	@SymptomGrouping(SymptomGroup.GENERAL)
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState abnormalLungXrayFindings;
 
 	@Diseases({
@@ -2284,6 +2284,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		OTHER })
 	@Complication
 	@HideForCountries
+	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState otherComplications;
 
 	@Diseases({
@@ -2310,6 +2311,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Complication
 	@HideForCountries
 	@SensitiveData
+	@SymptomGrouping(SymptomGroup.OTHER)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String otherComplicationsText;
 
@@ -2526,6 +2528,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private YesNo injectionSiteBeforeOnsetParalysis;
 	private Set<InjectionSite> injectionSite;
 	private YesNo trueAfp;
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState dyspnea;
 	private SymptomState tachypnea;
 	@Diseases({
