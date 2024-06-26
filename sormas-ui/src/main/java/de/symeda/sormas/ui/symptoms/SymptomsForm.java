@@ -1495,7 +1495,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				ABDOMINAL_CRAMPS,
 				HEADACHES,
 				DIFFICULTY_SWALLOWING,
-				SKIN_RASH_NEW);
+				SKIN_RASH_NEW,
+				DYSPNEA);
 	}
 
 	private void toggleFeverComponentError(NullableOptionGroup feverField, ComboBox temperatureField) {
