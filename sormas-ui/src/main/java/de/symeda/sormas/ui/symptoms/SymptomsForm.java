@@ -165,9 +165,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(AGE_AT_DEATH_DAYS, AGE_AT_ONSET_DAYS) +
 					fluidRowLocs(6,OTHER_COMPLICATIONS) +
 					fluidRowLocs(6,OTHER_COMPLICATIONS_TEXT) +
-//					createSymptomGroupLayout(SymptomGroup.RESPIRATORY, RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
+					createSymptomGroupLayout(SymptomGroup.RESPIRATORY, RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 //					createSymptomGroupLayout(SymptomGroup.CARDIOVASCULAR, CARDIOVASCULAR_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
-					//createSymptomGroupLayout(SymptomGroup.GASTROINTESTINAL, GASTROINTESTINAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
+					createSymptomGroupLayout(SymptomGroup.GASTROINTESTINAL, GASTROINTESTINAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 //					createSymptomGroupLayout(SymptomGroup.URINARY, URINARY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 //					createSymptomGroupLayout(SymptomGroup.NERVOUS_SYSTEM, NERVOUS_SYSTEM_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					//createSymptomGroupLayout(SymptomGroup.RASH, RASH_AND_SYMPTOMS_HEADING_LOC) +
@@ -1159,9 +1159,15 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		
 		if (disease == Disease.CORONAVIRUS) {
 			symptomsHide();
-			setVisible(true, FEVER, RAPID_BREATHING, MUSCLE_PAIN, CHEST_PAIN, ABDOMINAL_PAIN, JOINT_PAIN, FATIGUE_WEAKNESS, DIARRHEA, COUGH, NAUSEA,
-					SORE_THROAT, HEADACHE, RUNNY_NOSE, HEADACHE, CONFUSED_DISORIENTED, OTHER_COMPLICATIONS, PHARYNGEAL_EXUDATE, COMA, ABNORMAL_LUNG_XRAY_FINDINGS,
-					CONJUNCTIVAL_INJECTION, SEIZURES, FLUID_IN_LUNG_CAVITY_AUSCULTATION, DIFFICULTY_BREATHING, TACHYPNEA);
+			generalSymptomsHeadingLabel.setVisible(true);
+			respiratorySymptomsHeadingLabel.setVisible(true);
+			gastrointestinalSymptomsHeadingLabel.setVisible(true);
+			otherSymptomsHeadingLabel.setVisible(true);
+
+			setVisible(true, TEMPERATURE, TEMPERATURE_SOURCE );
+			setVisible(true, FEVER, RAPID_BREATHING, MUSCLE_PAIN, CHEST_PAIN, ABDOMINAL_PAIN, FATIGUE_WEAKNESS, DIARRHEA, COUGH, NAUSEA,
+					SORE_THROAT, HEADACHE, RUNNY_NOSE, HEADACHE, OTHER_COMPLICATIONS, PHARYNGEAL_EXUDATE, ABNORMAL_LUNG_XRAY_FINDINGS,
+					CONJUNCTIVAL_INJECTION, FLUID_IN_LUNG_CAVITY_AUSCULTATION, DIFFICULTY_BREATHING, TACHYPNEA);
 
 		} else if (disease == Disease.NEONATAL_TETANUS) {
 			symptomsHide();
@@ -1244,7 +1250,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				Arrays.asList(SymptomState.YES),
 				disease);
 		}
-		Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.CSM, Disease.NEW_INFLUENZA));
+		Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.CSM, Disease.NEW_INFLUENZA, Disease.CORONAVIRUS));
 
 		FieldHelper
 			.setRequiredWhen(getFieldGroup(), getFieldGroup().getField(LESIONS_ALL_OVER_BODY), lesionsFieldIds, Arrays.asList(Boolean.TRUE), disease);
