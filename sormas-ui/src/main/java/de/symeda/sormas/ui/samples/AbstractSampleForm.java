@@ -1307,7 +1307,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	private void handleCoronaVirus() {
 		if (disease == Disease.CORONAVIRUS) {
-			setVisible(false, SampleDto.SUSPECTED_DISEASE, SampleDto.DATE_LAB_RECEIVED_SPECIMEN, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.DATE_SPECIMEN_SENT_TO_LAB, SampleDto.FIELD_SAMPLE_ID);
+			setVisible(true, SampleDto.PATHOGEN_TEST_RESULT, SampleDto.COMMENT, SampleDto.FIELD_SAMPLE_ID);
+			setVisible(false, SampleDto.SUSPECTED_DISEASE, SampleDto.DATE_LAB_RECEIVED_SPECIMEN, SampleDto.DATE_RESULTS_RECEIVED_SENT_TO_CLINICIAN, SampleDto.DATE_SPECIMEN_SENT_TO_LAB);
 		}
 	}
 
