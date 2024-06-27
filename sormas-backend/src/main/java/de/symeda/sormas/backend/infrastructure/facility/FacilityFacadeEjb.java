@@ -102,11 +102,12 @@ public class FacilityFacadeEjb
 			CommunityReferenceDto communityRef,
 			FacilityType type,
 			boolean includeOtherFacility,
-			boolean includeNoneFacility) {
+			boolean includeNoneFacility,
+			boolean includeNotSetFacility) {
 
 		Community community = communityService.getByUuid(communityRef.getUuid());
 		List<Facility> facilities = service.getActiveFacilitiesByCommunityAndType(community, type, includeOtherFacility,
-				includeNoneFacility);
+				includeNoneFacility, includeNotSetFacility);
 		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
@@ -116,25 +117,20 @@ public class FacilityFacadeEjb
 			DistrictReferenceDto districtRef,
 			FacilityType type,
 			boolean includeOtherFacility,
-			boolean includeNoneFacility) {
+			boolean includeNoneFacility,
+			boolean includeNotSetFacility) {
 
 		District district = districtService.getByUuid(districtRef.getUuid());
-		/*List<Facility> facilities = service.getActiveFacilitiesByDistrictAndType(district, type, includeOtherFacility,
-				includeNoneFacility);*/
-		List<Facility> facilities = service.getActiveFacilitiesByDistrictAndType(district, type,  includeOtherFacility, includeNoneFacility);
+		List<Facility> facilities = service.getActiveFacilitiesByDistrictAndType(district, type,  includeOtherFacility, includeNoneFacility, includeNotSetFacility);
 		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
 
 	@Override
-	// public List<FacilityReferenceDto> getActiveHospitalsByCommunity(CommunityReferenceDto communityRef,
-	// 																boolean includeOtherFacility) {1.74.3
 	@PermitAll
-	public List<FacilityReferenceDto> getActiveHospitalsByCommunity(CommunityReferenceDto communityRef, boolean includeOtherFacility) {
+	public List<FacilityReferenceDto> getActiveHospitalsByCommunity(CommunityReferenceDto communityRef, boolean includeOtherFacility, boolean includeNotSetFacility) {
 		Community community = communityService.getByUuid(communityRef.getUuid());
-	/*	List<Facility> facilities = service.getActiveFacilitiesByCommunityAndType(community, FacilityType.HOSPITAL,
-				includeOtherFacility, false);*/
-		List<Facility> facilities = service.getActiveFacilitiesByCommunityAndType(community, FacilityType.HOSPITAL,  includeOtherFacility, false);
+		List<Facility> facilities = service.getActiveFacilitiesByCommunityAndType(community, FacilityType.HOSPITAL,  includeOtherFacility, false, includeNotSetFacility);
 		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
@@ -142,10 +138,10 @@ public class FacilityFacadeEjb
 	// public List<FacilityReferenceDto> getActiveHospitalsByDistrict(DistrictReferenceDto districtRef,
 	// 															   boolean includeOtherFacility) {
 	@PermitAll
-	public List<FacilityReferenceDto> getActiveHospitalsByDistrict(DistrictReferenceDto districtRef, boolean includeOtherFacility) {
+	public List<FacilityReferenceDto> getActiveHospitalsByDistrict(DistrictReferenceDto districtRef, boolean includeOtherFacility, boolean includeNotSetFacility) {
 		District district = districtService.getByUuid(districtRef.getUuid());
 		List<Facility> facilities = service.getActiveFacilitiesByDistrictAndType(district, FacilityType.HOSPITAL,
-				includeOtherFacility, false);
+				includeOtherFacility, false, includeNotSetFacility);
 		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
@@ -237,7 +233,6 @@ public class FacilityFacadeEjb
 		Join<Facility, Community> community = root.join(Facility.COMMUNITY, JoinType.LEFT);
 		Join<Facility, District> district = root.join(Facility.DISTRICT, JoinType.LEFT);
 		Join<Facility, Region> region = root.join(Facility.REGION, JoinType.LEFT);
-		//Join<Facility, AFPFacilityOptions> afpFacilityOptions = root.join(Facility.AFP_TYPE, JoinType.LEFT);
 		// Need to be in the same order as in the constructor
 		cq.multiselect(
 			root.get(Facility.CREATION_DATE),
@@ -267,8 +262,6 @@ public class FacilityFacadeEjb
 			root.get(Facility.LATITUDE),
 			root.get(Facility.LONGITUDE),
 			root.get(Facility.TYPE),
-			root.get(Facility.DHIMS_FACILITY_TYPE),
-			root.get(Facility.AFP_TYPE),
 			root.get(Facility.PUBLIC_OWNERSHIP),
 			root.get(Facility.EXTERNAL_ID));
 	}
@@ -337,11 +330,6 @@ public class FacilityFacadeEjb
 	}
 
 	@Override
-	public List<FacilityReferenceDto> getByExternalIdAndType(String id, FacilityType type, AFPFacilityOptions afpType, boolean includeArchivedEntities) {
-		return null;
-	}
-
-	@Override
 	public Page<FacilityIndexDto> getIndexPage(FacilityCriteria criteria, Integer offset, Integer size,
 											   List<SortProperty> sortProperties) {
 		List<FacilityIndexDto> facilityIndexList = getIndexList(criteria, offset, size, sortProperties);
@@ -350,41 +338,7 @@ public class FacilityFacadeEjb
 	}
 
 	@Override
-	@PermitAll
-	public List<FacilityReferenceDto> getByNameAndType(
-			String name,
-			DistrictReferenceDto districtRef,
-			CommunityReferenceDto communityRef,
-			FacilityType type,
-			DhimsFacility dhimsFacilityType,
-			AFPFacilityOptions afpType,
-			boolean includeArchivedEntities) {
-
-		return service
-			.getFacilitiesByNameAndType(
-				name,
-				districtService.getByReferenceDto(districtRef),
-				communityService.getByReferenceDto(communityRef),
-				type,
-				dhimsFacilityType,
-				afpType,
-				includeArchivedEntities)
-			.stream()
-			.map(FacilityFacadeEjb::toReferenceDto)
-			.collect(Collectors.toList());
-	}
-
-	@Override
 	public List<FacilityReferenceDto> getByNameAndType(String name, DistrictReferenceDto districtRef, CommunityReferenceDto communityRef, FacilityType type, boolean includeArchivedEntities) {
-		return null;
-	}
-
-	@Override
-	public List<FacilityReferenceDto> getByNameAndType(String name, DistrictReferenceDto districtRef, CommunityReferenceDto communityRef, FacilityType type, AFPFacilityOptions afpType, boolean includeArchivedEntities) {
-		return null;
-	}
-	@Override
-	public List<FacilityReferenceDto> getByNameAndType(String name, DistrictReferenceDto districtRef, CommunityReferenceDto communityRef, FacilityType type, DhimsFacility dhimsFacilityType, boolean includeArchivedEntities) {
 		return null;
 	}
 
@@ -631,8 +585,6 @@ public class FacilityFacadeEjb
 			facility.get(Facility.UUID),
 			facility.get(Facility.NAME),
 			facility.get(Facility.TYPE),
-			facility.get(Facility.DHIMS_FACILITY_TYPE),
-			facility.get(Facility.AFP_TYPE),
 			region.get(Region.NAME),
 			district.get(District.NAME),
 			community.get(Community.NAME),
@@ -682,6 +634,7 @@ public class FacilityFacadeEjb
 		Predicate filter = service.buildCriteriaFilter(criteria, cb, root);
 		Predicate excludeFilter = cb.and(
 				cb.notEqual(root.get(Facility.UUID), FacilityDto.OTHER_FACILITY_UUID),
+				cb.notEqual(root.get(Facility.UUID), FacilityDto.NOT_SET_FACILITY),
 				cb.notEqual(root.get(Facility.UUID), FacilityDto.NONE_FACILITY_UUID));
 		if (filter != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, excludeFilter);
@@ -734,7 +687,8 @@ public class FacilityFacadeEjb
 	public void validate(@Valid FacilityDto dto) {
 		if (dto.getType() == null
 				&& !FacilityDto.OTHER_FACILITY_UUID.equals(dto.getUuid())
-				&& !FacilityDto.NONE_FACILITY_UUID.equals(dto.getUuid())) {
+				&& !FacilityDto.NONE_FACILITY_UUID.equals(dto.getUuid())
+				&& !FacilityDto.NOT_SET_FACILITY_UUID.equals(dto.getUuid())) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validFacilityType));
 		}
 

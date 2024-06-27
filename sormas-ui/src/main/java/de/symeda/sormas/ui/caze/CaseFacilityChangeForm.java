@@ -129,7 +129,7 @@ public class CaseFacilityChangeForm extends AbstractEditForm<CaseDataDto> {
 				FieldHelper.updateItems(
 					facility,
 					FacadeProvider.getFacilityFacade()
-						.getActiveFacilitiesByDistrictAndType(districtDto, (FacilityType) type.getValue(), true, false));
+						.getActiveFacilitiesByDistrictAndType(districtDto, (FacilityType) type.getValue(), true, false, true));
 			}
 			Disease caseDisease = getValue().getDisease();
 			List<UserReferenceDto> assignableCaseResponsibles =
@@ -149,14 +149,15 @@ public class CaseFacilityChangeForm extends AbstractEditForm<CaseDataDto> {
 					facility,
 					communityDto != null
 						? FacadeProvider.getFacilityFacade()
-							.getActiveFacilitiesByCommunityAndType(communityDto, (FacilityType) type.getValue(), true, false)
+							.getActiveFacilitiesByCommunityAndType(communityDto, (FacilityType) type.getValue(), true, false, true)
 						: district.getValue() != null
 							? FacadeProvider.getFacilityFacade()
 								.getActiveFacilitiesByDistrictAndType(
 									(DistrictReferenceDto) district.getValue(),
 									(FacilityType) type.getValue(),
 									true,
-									false)
+									false,
+									true)
 							: null);
 			}
 		});
@@ -197,7 +198,8 @@ public class CaseFacilityChangeForm extends AbstractEditForm<CaseDataDto> {
 								(CommunityReferenceDto) community.getValue(),
 								(FacilityType) type.getValue(),
 								true,
-								false));
+								false,
+								true));
 				} else {
 					FieldHelper.updateItems(
 						facility,
@@ -206,7 +208,8 @@ public class CaseFacilityChangeForm extends AbstractEditForm<CaseDataDto> {
 								(DistrictReferenceDto) district.getValue(),
 								(FacilityType) type.getValue(),
 								true,
-								false));
+								false,
+								true));
 				}
 			}
 		});
@@ -252,11 +255,11 @@ public class CaseFacilityChangeForm extends AbstractEditForm<CaseDataDto> {
 			if (community != null) {
 				FieldHelper.updateItems(
 					facility,
-					FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, (FacilityType) type.getValue(), true, false));
+					FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, (FacilityType) type.getValue(), true, false, true));
 			} else {
 				FieldHelper.updateItems(
 					facility,
-					FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(district, (FacilityType) type.getValue(), true, false));
+					FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(district, (FacilityType) type.getValue(), true, false, true));
 			}
 		}
 	}

@@ -897,6 +897,10 @@ public class CaseController {
 		selectOrCreateCase(dto, FacadeProvider.getPersonFacade().getByUuid(selectedPerson.getUuid()), uuid -> {
 			if (uuid == null) {
 				dto.getSymptoms().setOnsetDate(createForm.getOnsetDate());
+				if(dto.getHealthFacility() == null && (dto.getDisease() != null  && dto.getDisease() == Disease.AFP)){
+					dto.setHealthFacility(new FacilityReferenceDto(FacilityDto.NOT_SET_FACILITY_UUID));
+					dto.setFacilityType(FacilityType.HOSPITAL);
+				}
 				saveCase(dto);
 				navigateToView(CaseDataView.VIEW_NAME, dto.getUuid(), null);
 			} else {

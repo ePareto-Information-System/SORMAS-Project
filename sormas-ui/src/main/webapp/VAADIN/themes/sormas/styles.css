@@ -15702,6 +15702,11 @@ div.v-layout.v-horizontal.v-widget {
 	top: -14px;
 }
 
+.sormas .v-filterselect.change-color .v-filterselect-input {
+	color: gray;
+	font-style: italic;
+}
+
 .sormas .v-button, .sormas .v-link.v-link-button {
 	text-transform: uppercase;
 	border-color: #005A9C;

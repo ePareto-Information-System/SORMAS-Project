@@ -1931,12 +1931,18 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                         true);
             }
 
-            	//AFP
 			if (disease == Disease.AFP) {
 				setVisible(true, CaseDataDto.NOTIFIED_BY_LIST, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
                 outcome.setVisible(false);
+                FacilityReferenceDto facility = getValue().getHealthFacility();
+                if (facility != null) {
+                    if (facility.toString().equals(FacilityDto.NOT_SET_FACILITY) ||
+                            facility.getCaption().equals("Not Set")) {
+                        facilityCombo.addStyleName("change-color");
+                    }
+                }
 
-			}
+            }
 
             if (disease == Disease.FOODBORNE_ILLNESS) {
                 placeOfStayHeadingLabel.setVisible(false);
@@ -2330,11 +2336,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             if (community != null) {
                 FieldHelper.updateItems(
                         facilityCombo,
-                        FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, facilityType, true, false));
+                        FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, facilityType, true, false, true));
             } else if (district != null) {
                 FieldHelper.updateItems(
                         facilityCombo,
-                        FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(district, facilityType, true, false));
+                        FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(district, facilityType, true, false, true));
             } else {
                 FieldHelper.removeItems(facilityCombo);
             }

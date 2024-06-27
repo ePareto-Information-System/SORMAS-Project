@@ -299,13 +299,13 @@ public class LineListingLayout extends VerticalLayout {
 	private void updateFacility(FacilityType type, DistrictReferenceDto districtDto, CaseLineLayout line) {
 		FieldHelper.updateItems(
 			line.getFacility(),
-			districtDto != null ? FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(districtDto, type, true, false) : null);
+			districtDto != null ? FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(districtDto, type, true, false, true) : null);
 	}
 
 	private void updateFacility(FacilityType type, DhimsFacility dhimsFacilityType, CommunityReferenceDto communityDto, CaseLineLayout line) {
 		FieldHelper.updateItems(
 			line.getFacility(),
-			communityDto != null ? FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(communityDto, type, true, false) : null);
+			communityDto != null ? FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(communityDto, type, true, false, true) : null);
 	}
 
 	private void removeCommunities() {
@@ -487,10 +487,10 @@ public class LineListingLayout extends VerticalLayout {
 					FieldHelper.updateItems(
 						facility,
 						communityDto != null
-							? FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(communityDto, type.getValue(), true, false)
+							? FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(communityDto, type.getValue(), true, false, true)
 							: district.getValue() != null
 								? FacadeProvider.getFacilityFacade()
-									.getActiveFacilitiesByDistrictAndType(district.getValue(), type.getValue(), true, false)
+									.getActiveFacilitiesByDistrictAndType(district.getValue(), type.getValue(), true, false, true)
 								: null);
 				}
 			});

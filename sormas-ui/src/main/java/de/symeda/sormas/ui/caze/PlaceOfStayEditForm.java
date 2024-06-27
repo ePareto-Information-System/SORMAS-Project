@@ -180,12 +180,12 @@ public class PlaceOfStayEditForm extends AbstractEditForm<CaseDataDto> {
 		if (community != null) {
 			FieldHelper.updateItems(
 				facilityCombo,
-				FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, FacilityType.HOSPITAL, true, false));
+				FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, FacilityType.HOSPITAL, true, false, true));
 			facilityCombo.setEnabled(true);
 		} else if (district != null) {
 			FieldHelper.updateItems(
 				facilityCombo,
-				FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(district, FacilityType.HOSPITAL, true, false));
+				FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(district, FacilityType.HOSPITAL, true, false, true));
 			facilityCombo.setEnabled(true);
 		} else {
 			FieldHelper.removeItems(facilityCombo);

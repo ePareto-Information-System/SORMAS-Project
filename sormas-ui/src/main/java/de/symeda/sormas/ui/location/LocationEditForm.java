@@ -454,7 +454,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 				FieldHelper.updateItems(
 					facility,
 					FacadeProvider.getFacilityFacade()
-						.getActiveFacilitiesByDistrictAndType(districtDto, (FacilityType) facilityType.getValue(), true, false));
+						.getActiveFacilitiesByDistrictAndType(districtDto, (FacilityType) facilityType.getValue(), true, false, true));
 			}
 		});
 		community.addValueChangeListener(e -> {
@@ -464,14 +464,14 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 					facility,
 					communityDto != null
 						? FacadeProvider.getFacilityFacade()
-							.getActiveFacilitiesByCommunityAndType(communityDto, (FacilityType) facilityType.getValue(), true, true)
+							.getActiveFacilitiesByCommunityAndType(communityDto, (FacilityType) facilityType.getValue(), true, true, true)
 						: district.getValue() != null
 							? FacadeProvider.getFacilityFacade()
 								.getActiveFacilitiesByDistrictAndType(
 									(DistrictReferenceDto) district.getValue(),
 									(FacilityType) facilityType.getValue(),
 									true,
-									false)
+									false, true)
 							: null);
 			}
 		});
@@ -499,7 +499,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 								(CommunityReferenceDto) community.getValue(),
 								(FacilityType) facilityType.getValue(),
 								true,
-								false));
+								false, true));
 				} else {
 					FieldHelper.updateItems(
 						facility,
@@ -508,7 +508,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 								(DistrictReferenceDto) district.getValue(),
 								(FacilityType) facilityType.getValue(),
 								true,
-								false));
+								false, true));
 				}
 			} else if (facilityType.getValue() != null && district.getValue() == null) {
 				// Add a visual indictator reminding the user to select a district

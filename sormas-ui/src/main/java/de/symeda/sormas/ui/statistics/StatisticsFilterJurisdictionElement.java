@@ -52,7 +52,6 @@ public class StatisticsFilterJurisdictionElement extends StatisticsFilterElement
 	StatisticsFilterValuesElement communityElement;
 	StatisticsFilterValuesElement facilityElement;
 	private ComboBox type;
-	private ComboBox dhimsFacilityType;
 
 	public StatisticsFilterJurisdictionElement(int rowIndex) {
 		setSpacing(true);
@@ -194,7 +193,7 @@ public class StatisticsFilterJurisdictionElement extends StatisticsFilterElement
 					CommunityReferenceDto selectedCommunity = (CommunityReferenceDto) selectedCommunityTokenizable.getValue();
 					facilities.addAll(
 						FacadeProvider.getFacilityFacade()
-							.getActiveFacilitiesByCommunityAndType(selectedCommunity, (FacilityType) type.getValue(), false, false));
+							.getActiveFacilitiesByCommunityAndType(selectedCommunity, (FacilityType) type.getValue(), false, false, false));
 				}
 				Map<String, String> facilityCommunitiesMap = FacadeProvider.getFacilityFacade()
 					.getCommunityUuidsForFacilities(
@@ -226,9 +225,6 @@ public class StatisticsFilterJurisdictionElement extends StatisticsFilterElement
 
 	FacilityType getFacilityType() {
 		return (FacilityType) type.getValue();
-	}
-	DhimsFacility getDhimsFacilityType() {
-		return (DhimsFacility) dhimsFacilityType.getValue();
 	}
 
 	@Override

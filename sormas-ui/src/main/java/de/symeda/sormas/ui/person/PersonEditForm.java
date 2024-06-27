@@ -1048,14 +1048,14 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 									(CommunityReferenceDto) communityField.getValue(),
 									(FacilityType) typeField.getValue(),
 									true,
-									false)
+									false, true)
 							: districtField.getValue() != null
 							? FacadeProvider.getFacilityFacade()
 							.getActiveFacilitiesByDistrictAndType(
 									(DistrictReferenceDto) districtField.getValue(),
 									(FacilityType) typeField.getValue(),
 									true,
-									false)
+									false, true)
 							: null);
 		} else {
 			if (allowNoneFacility) {

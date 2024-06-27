@@ -807,12 +807,12 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				FieldHelper.updateItems(
 						facilityCombo,
 						FacadeProvider.getFacilityFacade()
-								.getActiveFacilitiesByCommunityAndType(community, (FacilityType) facilityType.getValue(),true, false));
+								.getActiveFacilitiesByCommunityAndType(community, (FacilityType) facilityType.getValue(),true, false, true));
 			} else {
 				FieldHelper.updateItems(
 						facilityCombo,
 						FacadeProvider.getFacilityFacade()
-								.getActiveFacilitiesByDistrictAndType(district, (FacilityType) facilityType.getValue(),true, false));
+								.getActiveFacilitiesByDistrictAndType(district, (FacilityType) facilityType.getValue(),true, false, true));
 			}
 		}
 	}

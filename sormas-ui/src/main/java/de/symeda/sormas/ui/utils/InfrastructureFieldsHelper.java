@@ -70,7 +70,7 @@ public class InfrastructureFieldsHelper {
 					FieldHelper.updateItems(
 						facilityCombo,
 						FacadeProvider.getFacilityFacade()
-							.getActiveFacilitiesByDistrictAndType(districtDto, (FacilityType) facilityTypeCombo.getValue(), true, false));
+							.getActiveFacilitiesByDistrictAndType(districtDto, (FacilityType) facilityTypeCombo.getValue(), true, false, true));
 				}
 			}
 		});
@@ -84,10 +84,10 @@ public class InfrastructureFieldsHelper {
 					FieldHelper.updateItems(
 						facilityCombo,
 						communityDto != null
-							? FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(communityDto, facilityType, true, true)
+							? FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(communityDto, facilityType, true, true, true)
 							: districtCombo.getValue() != null
 								? FacadeProvider.getFacilityFacade()
-									.getActiveFacilitiesByDistrictAndType((DistrictReferenceDto) districtCombo.getValue(), facilityType, true, false)
+									.getActiveFacilitiesByDistrictAndType((DistrictReferenceDto) districtCombo.getValue(), facilityType, true, false, true)
 								: null);
 				}
 			});
@@ -114,7 +114,7 @@ public class InfrastructureFieldsHelper {
 									(CommunityReferenceDto) communityCombo.getValue(),
 									(FacilityType) facilityTypeCombo.getValue(),
 									true,
-									false));
+									false, true));
 					} else {
 						FieldHelper.updateItems(
 							facilityCombo,
@@ -123,7 +123,7 @@ public class InfrastructureFieldsHelper {
 									(DistrictReferenceDto) districtCombo.getValue(),
 									(FacilityType) facilityTypeCombo.getValue(),
 									true,
-									false));
+									false, true));
 					}
 				}
 			});

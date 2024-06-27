@@ -106,7 +106,7 @@ public class AggregateReportsFilterForm extends AbstractFilterForm<AggregateRepo
 			if (userDistrict != null) {
 				districtFilter.setEnabled(false);
 				Optional.ofNullable(facilityFilter)
-					.ifPresent(f -> f.addItems(FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(userDistrict, false)));
+					.ifPresent(f -> f.addItems(FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(userDistrict, false, false)));
 				Optional.ofNullable(pointOfEntryFilter)
 					.ifPresent(p -> p.addItems(FacadeProvider.getPointOfEntryFacade().getAllActiveByDistrict(userDistrict.getUuid(), false)));
 				if (userFacility != null || userPointOfEntry != null) {
@@ -156,7 +156,7 @@ public class AggregateReportsFilterForm extends AbstractFilterForm<AggregateRepo
 				clearAndDisableFields(facilityFilter, pointOfEntryFilter);
 				enableFields(facilityFilter, pointOfEntryFilter);
 				if (facilityFilter != null) {
-					FieldHelper.updateItems(facilityFilter, FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(newDistrict, false));
+					FieldHelper.updateItems(facilityFilter, FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(newDistrict, false, false));
 				}
 				if (pointOfEntryFilter != null) {
 					FieldHelper
@@ -280,7 +280,7 @@ public class AggregateReportsFilterForm extends AbstractFilterForm<AggregateRepo
 		if (criteria.getDistrict() != null) {
 			if (facilityFilter != null) {
 				FieldHelper
-					.updateItems(facilityFilter, FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(criteria.getDistrict(), false));
+					.updateItems(facilityFilter, FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(criteria.getDistrict(), false, false));
 			}
 			if (pointOfEntryFilter != null) {
 				FieldHelper.updateItems(
