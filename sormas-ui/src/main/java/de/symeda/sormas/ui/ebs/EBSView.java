@@ -52,10 +52,10 @@ public class EBSView extends AbstractView {
 
         ebsCriteria = ViewModelProviders.of(EBSView.class).get(EbsCriteria.class);
         if (isDefaultViewType()) {
-            grid = new EbsGrid(ebsCriteria, getClass());
+            grid = new EbsSignalGrid(ebsCriteria, getClass());
             currentview = "signallist";
         } else {
-            grid = new EbsSignalGrid(ebsCriteria, getClass());
+            grid = new EbsGrid(ebsCriteria, getClass());
             currentview = "eventlist";
         }
         gridLayout = new VerticalLayout();
@@ -156,14 +156,14 @@ public class EBSView extends AbstractView {
                     ViewModelProviders.of(EBSView.class).get(EbsViewConfiguration.class).setInEagerMode(true);
                     btnEnterBulkEditMode.setVisible(false);
                     btnLeaveBulkEditMode.setVisible(true);
-                    ((EbsGrid) grid).reload();
+                    ((EbsSignalGrid) grid).reload();
                 });
             }else {
                 btnEnterBulkEditMode.addClickListener(e -> {
                             ViewModelProviders.of(EBSView.class).get(EbsViewConfiguration.class).setInEagerMode(true);
                             btnEnterBulkEditMode.setVisible(false);
                             btnLeaveBulkEditMode.setVisible(true);
-                            ((EbsSignalGrid) grid).reload();
+                            ((EbsGrid) grid).reload();
             });
             }
             btnLeaveBulkEditMode.addClickListener(e -> {
@@ -252,9 +252,9 @@ public class EBSView extends AbstractView {
             ebsFilterForm.addApplyHandler(e -> {
                 if (isDefaultViewType()) {
                     navigateTo(ebsCriteria);
-                ((EbsGrid) grid).reload();
+                ((EbsSignalGrid) grid).reload();
                 }else {
-                    ((EbsSignalGrid) grid).reload();
+                    ((EbsGrid) grid).reload();
                     navigateTo(ebsCriteria);
                 }
             });
@@ -270,15 +270,15 @@ public class EBSView extends AbstractView {
             params = params.substring(1);
         }
             if (isDefaultViewType()) {
-                ((EbsGrid) grid).setEagerDataProvider();
-
-                updateFilterComponents();
-                ((EbsGrid) grid).reload();
-            }else {
-                ((EbsSignalGrid) grid).setEagerDataProvider();
+//                ((EbsSignalGrid) grid).setLazyDataProvider();
 
                 updateFilterComponents();
                 ((EbsSignalGrid) grid).reload();
+            }else {
+//                ((EbsGrid) grid).setLazyDataProvider();
+
+                updateFilterComponents();
+                ((EbsGrid) grid).reload();
             }
     }
 

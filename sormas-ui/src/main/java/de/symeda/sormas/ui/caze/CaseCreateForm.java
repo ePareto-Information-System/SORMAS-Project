@@ -22,10 +22,15 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRow;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.locs;
 
+import java.time.Month;
 import java.util.*;
 
+import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.caze.IdsrType;
 import de.symeda.sormas.api.infrastructure.facility.*;
+import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.ui.ControllerProvider;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.google.common.collect.Sets;
@@ -33,11 +38,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.ui.AbstractSelect.ItemCaptionMode;
-import com.vaadin.v7.ui.CheckBox;
-import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.DateField;
-import com.vaadin.v7.ui.OptionGroup;
-import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
@@ -78,7 +78,9 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 	private static final String RESPONSIBLE_JURISDICTION_HEADING_LOC = "responsibleJurisdictionHeadingLoc";
 	private static final String DIFFERENT_PLACE_OF_STAY_JURISDICTION = "differentPlaceOfStayJurisdiction";
 	private static final String PLACE_OF_STAY_HEADING_LOC = "placeOfStayHeadingLoc";
-	private static final String MPOX_COORDINATE_LABEL = "mpoxCoordinate";
+	public static final String MPOX_COORDINATE_LABEL = "mpoxCoordinate";
+	public static final String PATIENT_DOB_LABEL = "patientDob";
+	public static final String DOB_NOT_KNOWN_LABEL = "dobNotKnown";
 	private static final String DIFFERENT_POINT_OF_ENTRY_JURISDICTION = "differentPointOfEntryJurisdiction";
 	private static final String POINT_OF_ENTRY_REGION = "pointOfEntryRegion";
 	private static final String POINT_OF_ENTRY_DISTRICT = "pointOfEntryDistrict";
@@ -97,6 +99,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 	private ComboBox facilityCombo;
 	private ComboBox pointOfEntryDistrictCombo;
 	private DateField investigated;
+	private ComboBox patientDobDay;
 
 	private PersonCreateForm personCreateForm;
 
@@ -135,7 +138,9 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			+ fluidRowLocs(MPOX_COORDINATE_LABEL)
 			+ fluidRowLocs(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT)
 			+ fluidRowLocs(CaseDataDto.PATIENT_NAME, CaseDataDto.PATIENT_OTHER_NAMES)
-			+ fluidRowLocs(CaseDataDto.PATIENT_DOB_DD, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_YY)
+			+ fluidRowLocs(PATIENT_DOB_LABEL)
+			+ fluidRowLocs(CaseDataDto.PATIENT_DOB_YY, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_DD)
+			+ fluidRowLocs(DOB_NOT_KNOWN_LABEL)
 			+ fluidRowLocs(CaseDataDto.PATIENT_AGE_YEAR, CaseDataDto.PATIENT_AGE_MONTH)
 			+ fluidRowLocs(6, CaseDataDto.PATIENT_SEX)
 			+ fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY)
@@ -570,8 +575,12 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 
 			if(disease == Disease.CORONAVIRUS) {
 				facilityOrHome.setVisible(true);
+				caseTransmissionClassification.setVisible(true);
+				personCreateForm.setSymptomsOnsetDateVisible(true);
 			}else {
 				facilityOrHome.setVisible(false);
+				caseTransmissionClassification.setVisible(false);
+				personCreateForm.setSymptomsOnsetDateVisible(false);
 			}
 
 
@@ -587,7 +596,12 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			} else if(diseaseField.getValue() != null && diseaseField.getValue() == Disease.NEW_INFLUENZA || diseaseField.getValue() == Disease.AFP || diseaseField.getValue() == Disease.AHF){
 				personCreateForm.hidePresentCondition();
 			}
-			else{
+			else if(diseaseField.getValue() != null && diseaseField.getValue() == Disease.YELLOW_FEVER){
+				personCreateForm.hidePresentCondition();
+				personCreateForm.showPersonalEmail();
+			} else if (diseaseField.getValue() != null && diseaseField.getValue() == Disease.CORONAVIRUS) {
+				personCreateForm.hideFieldsForCovid19();
+			} else{
 				personCreateForm.showPresentCondition();
 			}
 
@@ -622,13 +636,76 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				coorLabel.addStyleName(H4);
 				getContent().addComponent(coorLabel, MPOX_COORDINATE_LABEL);
 
+				Label patientDob = new Label(I18nProperties.getCaption(Captions.patientDob));
+				patientDob.addStyleName(H4);
+				getContent().addComponent(patientDob, PATIENT_DOB_LABEL);
+
 				addFields(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT);
 				addFields(CaseDataDto.PATIENT_NAME, CaseDataDto.PATIENT_OTHER_NAMES);
-				addFields(CaseDataDto.PATIENT_DOB_DD, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_YY);
-				addFields(CaseDataDto.PATIENT_AGE_YEAR, CaseDataDto.PATIENT_AGE_MONTH);
-				addFields(CaseDataDto.PATIENT_SEX);
+
+				patientDobDay = addField(CaseDataDto.PATIENT_DOB_DD, ComboBox.class);
+				// @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
+				patientDobDay.setNullSelectionAllowed(true);
+				patientDobDay.setInputPrompt(I18nProperties.getString(Strings.day));
+				patientDobDay.setCaption("");
+
+				ComboBox patientDobMonth = addField(CaseDataDto.PATIENT_DOB_MM,ComboBox.class);
+				// @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
+				patientDobMonth.setNullSelectionAllowed(true);
+				patientDobMonth.addItems(DateHelper.getMonthsInYear());
+				patientDobMonth.setPageLength(12);
+				patientDobMonth.setInputPrompt(I18nProperties.getString(Strings.month));
+				patientDobMonth.setCaption("");
+				DateHelper.getMonthsInYear()
+						.forEach(month -> patientDobMonth.setItemCaption(month, de.symeda.sormas.api.Month.values()[month - 1].toString()));
+				setItemCaptionsForMonths(patientDobMonth);
+
+				ComboBox patientDobYear = addField(CaseDataDto.PATIENT_DOB_YY, ComboBox.class);
+				// @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
+				patientDobYear.setNullSelectionAllowed(true);
+				patientDobYear.addItems(DateHelper.getYearsToNow());
+				patientDobYear.setItemCaptionMode(ItemCaptionMode.ID_TOSTRING);
+				patientDobYear.setInputPrompt(I18nProperties.getString(Strings.year));
+
+				patientDobDay.addValidator(
+						e -> ControllerProvider.getPersonController()
+								.validateBirthDate((Integer) patientDobYear.getValue(), (Integer) patientDobMonth.getValue(), (Integer) e));
+				patientDobMonth.addValidator(
+						e -> ControllerProvider.getPersonController()
+								.validateBirthDate((Integer) patientDobYear.getValue(), (Integer) e, (Integer) patientDobDay.getValue()));
+				patientDobYear.addValidator(
+						e -> ControllerProvider.getPersonController()
+								.validateBirthDate((Integer) e, (Integer) patientDobMonth.getValue(), (Integer) patientDobDay.getValue()));
+
+				Label dobNot = new Label(I18nProperties.getCaption(Captions.dobNot));
+				dobNot.addStyleName(H4);
+				getContent().addComponent(dobNot, DOB_NOT_KNOWN_LABEL);
+
+				addField(CaseDataDto.PATIENT_AGE_YEAR);
+				addField(CaseDataDto.PATIENT_AGE_MONTH);
+
+				ComboBox patientSex = addField(CaseDataDto.PATIENT_SEX, ComboBox.class);
+				patientSex.removeItem(Sex.OTHER);
+				patientSex.removeItem(Sex.UNKNOWN);
 				addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
 				addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
+
+				patientDobYear.addValueChangeListener(e -> {
+					updateListOfDays((Integer) e.getProperty().getValue(), (Integer) patientDobMonth.getValue());
+					patientDobMonth.markAsDirty();
+					patientDobDay.markAsDirty();
+				});
+				patientDobMonth.addValueChangeListener(e -> {
+					updateListOfDays((Integer) patientDobYear.getValue(), (Integer) e.getProperty().getValue());
+					patientDobYear.markAsDirty();
+					patientDobDay.markAsDirty();
+				});
+				patientDobDay.addValueChangeListener(e -> {
+					patientDobYear.markAsDirty();
+					patientDobMonth.markAsDirty();
+				});
+
+
 			}
             setVisible(diseaseField.getValue() == Disease.CORONAVIRUS, DIFFERENT_PLACE_OF_STAY_JURISDICTION);
 		});
@@ -657,6 +734,32 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		facilityOrHome.setValue(Sets.newHashSet(TypeOfPlace.FACILITY));
 
 
+	}
+
+	private void setItemCaptionsForMonths(AbstractSelect months) {
+		months.setItemCaption(1, I18nProperties.getEnumCaption(Month.JANUARY));
+		months.setItemCaption(2, I18nProperties.getEnumCaption(Month.FEBRUARY));
+		months.setItemCaption(3, I18nProperties.getEnumCaption(Month.MARCH));
+		months.setItemCaption(4, I18nProperties.getEnumCaption(Month.APRIL));
+		months.setItemCaption(5, I18nProperties.getEnumCaption(Month.MAY));
+		months.setItemCaption(6, I18nProperties.getEnumCaption(Month.JUNE));
+		months.setItemCaption(7, I18nProperties.getEnumCaption(Month.JULY));
+		months.setItemCaption(8, I18nProperties.getEnumCaption(Month.AUGUST));
+		months.setItemCaption(9, I18nProperties.getEnumCaption(Month.SEPTEMBER));
+		months.setItemCaption(10, I18nProperties.getEnumCaption(Month.OCTOBER));
+		months.setItemCaption(11, I18nProperties.getEnumCaption(Month.NOVEMBER));
+		months.setItemCaption(12, I18nProperties.getEnumCaption(Month.DECEMBER));
+	}
+
+	private void updateListOfDays(Integer selectedYear, Integer selectedMonth) {
+		if (!patientDobDay.isReadOnly()) {
+			Integer currentlySelected = (Integer) patientDobDay.getValue();
+			patientDobDay.removeAllItems();
+			patientDobDay.addItems(DateHelper.getDaysInMonth(selectedMonth, selectedYear));
+			if (patientDobDay.containsId(currentlySelected)) {
+				patientDobDay.setValue(currentlySelected);
+			}
+		}
 	}
 
 	private void updateDiseaseVariant(Disease disease) {

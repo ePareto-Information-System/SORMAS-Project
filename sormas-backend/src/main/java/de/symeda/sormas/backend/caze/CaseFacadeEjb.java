@@ -2155,7 +2155,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				&& !communityFacade.getByUuid(caze.getResponsibleCommunity().getUuid()).getDistrict().equals(caze.getResponsibleDistrict())) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noResponsibleCommunityInResponsibleDistrict));
 		}
-		if ((caze.getCaseOrigin() == null || caze.getCaseOrigin() == CaseOrigin.IN_COUNTRY) && (caze.getHealthFacility() == null && caze.getFacilityType() == null)  && caze.getDisease() != Disease.FOODBORNE_ILLNESS) {
+		if ((caze.getCaseOrigin() == null || caze.getCaseOrigin() == CaseOrigin.IN_COUNTRY) && (caze.getHealthFacility() == null && caze.getFacilityType() == null)  && caze.getDisease() != Disease.FOODBORNE_ILLNESS && caze.getDisease() != Disease.AFP) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validFacility));
 		}
 		if (CaseOrigin.POINT_OF_ENTRY.equals(caze.getCaseOrigin()) && caze.getPointOfEntry() == null && caze.getDisease() == Disease.CORONAVIRUS) {

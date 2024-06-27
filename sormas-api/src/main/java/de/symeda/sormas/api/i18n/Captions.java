@@ -706,6 +706,8 @@ public interface Captions {
 	String casePickCase = "casePickCase";
 	String casePlaceOfStay = "casePlaceOfStay";
 	String coorLabel = "coorLabel";
+	String patientDob = "patientDob";
+	String dobNot = "dobNot";
 	String casePlusDays = "casePlusDays";
 	String CasePreviousHospitalization = "CasePreviousHospitalization";
 	String CasePreviousHospitalization_admissionAndDischargeDate = "CasePreviousHospitalization.admissionAndDischargeDate";
@@ -1564,6 +1566,7 @@ public interface Captions {
 	String Ebs_manualScanningType = "Ebs.manualScanningType";
 	String Ebs_other = "Ebs.other";
 	String Ebs_informantName = "Ebs.contactName";
+	String Ebs_otherInformant = "Ebs.otherInformant";
 	String Ebs_sourceName = "Ebs.sourceName";
 	String Ebs_sourceUrl = "Ebs.sourceUrl";
 	String Ebs_descriptionOccurrence = "Ebs.descriptionOccurrence";
@@ -2300,6 +2303,7 @@ public interface Captions {
 	String Person_qualification = "Person.qualification";
 	String Person_marriageStatus = "Person.marriageStatus";
 	String Person_uuid = "Person.uuid";
+	String Person_otherId = "Person.otherId";
 	String Person_placeOfResidenceSameAsReportingVillage = "Person.placeOfResidenceSameAsReportingVillage";
 	String Person_residenceSinceWhenInMonths = "Person.residenceSinceWhenInMonths";
 	String personAgeAndBirthdate = "personAgeAndBirthdate";
@@ -3239,6 +3243,7 @@ public interface Captions {
 	String Symptoms_progressiveFlaccidAcute = "Symptoms.progressiveFlaccidAcute";
 	String Symptoms_assymetric = "Symptoms.assymetric";
 	String Symptoms_siteOfParalysis = "Symptoms.siteOfParalysis";
+	String Symptoms_injectionSite = "Symptoms.injectionSite";
 	String Symptoms_paralysedLimbSensitiveToPain = "Symptoms.paralysedLimbSensitiveToPain";
 	String Symptoms_injectionSiteBeforeOnsetParalysis = "Symptoms.injectionSiteBeforeOnsetParalysis";
 	String Symptoms_rightInjectionSite = "Symptoms.rightInjectionSite";

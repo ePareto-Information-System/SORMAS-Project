@@ -245,8 +245,6 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setAssymetric(source.getAssymetric());
 		target.setParalysedLimbSensitiveToPain(source.getParalysedLimbSensitiveToPain());
 		target.setInjectionSiteBeforeOnsetParalysis(source.getInjectionSiteBeforeOnsetParalysis());
-		target.setRightInjectionSite(source.getRightInjectionSite());
-		target.setLeftInjectionSite(source.getLeftInjectionSite());
 		target.setTrueAfp(source.getTrueAfp());
 		target.setOutcomeOther(source.getOutcomeOther());
 		target.setDyspnea(source.getDyspnea());
@@ -298,6 +296,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setOutcomePlaceCommVillage(source.getOutcomePlaceCommVillage());
 		target.setNameService(source.getNameService());
 		target.setPlaceOfFuneralNameVillage(source.getPlaceOfFuneralNameVillage());
+		target.setInjectionSite(source.getInjectionSite());
 
 		return target;
 	}
@@ -521,8 +520,6 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setAssymetric(source.getAssymetric());
 		target.setParalysedLimbSensitiveToPain(source.getParalysedLimbSensitiveToPain());
 		target.setInjectionSiteBeforeOnsetParalysis(source.getInjectionSiteBeforeOnsetParalysis());
-		target.setRightInjectionSite(source.getRightInjectionSite());
-		target.setLeftInjectionSite(source.getLeftInjectionSite());
 		target.setTrueAfp(source.getTrueAfp());
 		target.setOutcomeOther(source.getOutcomeOther());
 		target.setDyspnea(source.getDyspnea());
@@ -571,6 +568,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setOutcomePlaceCommVillage(source.getOutcomePlaceCommVillage());
 		target.setNameService(source.getNameService());
 		target.setPlaceOfFuneralNameVillage(source.getPlaceOfFuneralNameVillage());
+		target.setInjectionSite(source.getInjectionSite());
 
 
 		return target;
@@ -789,8 +787,6 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setAssymetric(source.getAssymetric());
 		target.setParalysedLimbSensitiveToPain(source.getParalysedLimbSensitiveToPain());
 		target.setInjectionSiteBeforeOnsetParalysis(source.getInjectionSiteBeforeOnsetParalysis());
-		target.setRightInjectionSite(source.getRightInjectionSite());
-		target.setLeftInjectionSite(source.getLeftInjectionSite());
 		target.setTrueAfp(source.getTrueAfp());
 		target.setOutcomeOther(source.getOutcomeOther());
 		target.setDyspnea(source.getDyspnea());
@@ -1056,8 +1052,6 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setAssymetric(source.getAssymetric());
 		target.setParalysedLimbSensitiveToPain(source.getParalysedLimbSensitiveToPain());
 		target.setInjectionSiteBeforeOnsetParalysis(source.getInjectionSiteBeforeOnsetParalysis());
-		target.setRightInjectionSite(source.getRightInjectionSite());
-		target.setLeftInjectionSite(source.getLeftInjectionSite());
 		target.setTrueAfp(source.getTrueAfp());
 		target.setOutcome(source.getOutcome());
 		target.setBodyAche(source.getBodyAche());
@@ -1091,6 +1085,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setOutcomePlaceCommVillage(source.getOutcomePlaceCommVillage());
 		target.setNameService(source.getNameService());
 		target.setPlaceOfFuneralNameVillage(source.getPlaceOfFuneralNameVillage());
+		target.setInjectionSite(source.getInjectionSite());
 
 		target.setFirstSignOrSymptomsBeforeWorm(source.getFirstSignOrSymptomsBeforeWorm());
 		target.setFirstSignOrSymptomsBeforeWormOthers(source.getFirstSignOrSymptomsBeforeWormOthers());

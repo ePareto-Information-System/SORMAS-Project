@@ -151,7 +151,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(6,SITE_OF_PARALYSIS) +
 					fluidRowLocs(6,PARALYSED_LIMB_SENSITIVE_TO_PAIN) +
 					fluidRowLocs(6,INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
-					fluidRowLocs(RIGHT_INJECTION_SITE, LEFT_INJECTION_SITE) +
+					fluidRowLocs(INJECTION_SITE) +
 					fluidRowLocs(6,DATE_ONSET_PARALYSIS) +
 
 					fluidRowLocs(6,ALTERED_CONSCIOUSNESS) +
@@ -165,9 +165,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(AGE_AT_DEATH_DAYS, AGE_AT_ONSET_DAYS) +
 					fluidRowLocs(6,OTHER_COMPLICATIONS) +
 					fluidRowLocs(6,OTHER_COMPLICATIONS_TEXT) +
-//					createSymptomGroupLayout(SymptomGroup.RESPIRATORY, RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
+					createSymptomGroupLayout(SymptomGroup.RESPIRATORY, RESPIRATORY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 //					createSymptomGroupLayout(SymptomGroup.CARDIOVASCULAR, CARDIOVASCULAR_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
-					//createSymptomGroupLayout(SymptomGroup.GASTROINTESTINAL, GASTROINTESTINAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
+					createSymptomGroupLayout(SymptomGroup.GASTROINTESTINAL, GASTROINTESTINAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 //					createSymptomGroupLayout(SymptomGroup.URINARY, URINARY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 //					createSymptomGroupLayout(SymptomGroup.NERVOUS_SYSTEM, NERVOUS_SYSTEM_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					//createSymptomGroupLayout(SymptomGroup.RASH, RASH_AND_SYMPTOMS_HEADING_LOC) +
@@ -180,7 +180,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(DATE_ONSET_PARALYSIS, PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
 					fluidRowLocs(6,SITE_OF_PARALYSIS) +
 					fluidRowLocs(PARALYSED_LIMB_SENSITIVE_TO_PAIN, INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
-					fluidRowLocs(RIGHT_INJECTION_SITE, LEFT_INJECTION_SITE) +
 					fluidRowLocs(6, PATIENT_ILL_LOCATION) +
 					fluidRowLocs(6, SYMPTOMS_COMMENTS) +
 					fluidRowLocs(6, ONSET_SYMPTOM) +
@@ -242,6 +241,14 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			fluidRowLocs(SYMPTOMS_COMMENTS) +
 			fluidRowLocsCss( ONSET_SYMPTOM, ONSET_DATE) +
 			fluidRowLocs(6, OUTCOME);
+
+	public static final String AFP_LAYOUT = fluidRowLocs(FEVER_ONSET_PARALYSIS, PROGRESSIVE_PARALYSIS) +
+			fluidRowLocs(DATE_ONSET_PARALYSIS, PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
+			fluidRowLocs(6,SITE_OF_PARALYSIS) +
+			fluidRowLocs(PARALYSED_LIMB_SENSITIVE_TO_PAIN, INJECTION_SITE_BEFORE_ONSET_PARALYSIS) +
+			fluidRowLocs(INJECTION_SITE) +
+			fluidRowLocs(PROVISONAL_DIAGNOSIS)+
+			fluidRowLocs(6, TRUEAFP);
 
     private static String createSymptomGroupLayout(SymptomGroup symptomGroup, String loc) {
 
@@ -1025,22 +1032,19 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
             OptionGroup paralysedLimbSensitiveToPain = addField(PARALYSED_LIMB_SENSITIVE_TO_PAIN, OptionGroup.class);
             OptionGroup injectionSiteBeforeOnsetParalysis = addField(INJECTION_SITE_BEFORE_ONSET_PARALYSIS, OptionGroup.class);
 
-			ComboBox rightInjectionSiteBox = new ComboBox("Right Injection Site");
-            for (InjectionSite injectionSiteRight : InjectionSite.InjectionSiteRight) {
-                rightInjectionSiteBox.addItem(injectionSiteRight);
-            }
-			ComboBox rightInjectionSite = addField(RIGHT_INJECTION_SITE, rightInjectionSiteBox);
+			OptionGroup leftRightInjectionSite = addField(INJECTION_SITE, OptionGroup.class);
+			CssStyles.style(leftRightInjectionSite, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+			leftRightInjectionSite.setMultiSelect(true);
 
-			ComboBox leftInjectionSiteBox = new ComboBox("Left Injection Site");
-            for (InjectionSite injectionSiteLeft : InjectionSite.InjectionSiteLeft) {
-                leftInjectionSiteBox.addItem(injectionSiteLeft);
-            }
-            ComboBox leftInjectionSite = addField(LEFT_INJECTION_SITE, leftInjectionSiteBox);
+			leftRightInjectionSite.addItems(
+					Arrays.stream(InjectionSite.values())
+							.filter(x -> fieldVisibilityCheckers.isVisible(InjectionSite.class, x.name()))
+							.collect(Collectors.toSet()));
 
-			rightInjectionSite.setVisible(false);
-			leftInjectionSite.setVisible(false);
 
-			FieldHelper.setVisibleWhen(injectionSiteBeforeOnsetParalysis, Arrays.asList(rightInjectionSite, leftInjectionSite), Arrays.asList(YesNo.YES), true);
+
+			leftRightInjectionSite.setVisible(false);
+			FieldHelper.setVisibleWhen(injectionSiteBeforeOnsetParalysis, Arrays.asList(leftRightInjectionSite), Arrays.asList(YesNo.YES), true);
 
             OptionGroup trueAFP = addField(TRUEAFP, OptionGroup.class);
             TextArea provisionalDiagnosis = addField(PROVISONAL_DIAGNOSIS, TextArea.class);
@@ -1065,7 +1069,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
             setVisible(false, FEVER, HEADACHE, ALTERED_CONSCIOUSNESS, CONVULSION, SEIZURES);
             setVisible(true, COUGH, SORE_THROAT, DIFFICULTY_BREATHING, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT, TEMPERATURE, TEMPERATURE_SOURCE);
 
-            FieldHelper.setVisibleWhen(feverBodytemp, Arrays.asList(temperature, temperatureSource), Arrays.asList(YesNoUnknown.YES), true);
+            FieldHelper.setVisibleWhen(feverBodytemp, Arrays.asList(temperature, temperatureSource), Arrays.asList(YesNo.YES), true);
 
 		}
 
@@ -1155,9 +1159,15 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		
 		if (disease == Disease.CORONAVIRUS) {
 			symptomsHide();
-			setVisible(true, FEVER, RAPID_BREATHING, MUSCLE_PAIN, CHEST_PAIN, ABDOMINAL_PAIN, JOINT_PAIN, FATIGUE_WEAKNESS, DIARRHEA, COUGH, NAUSEA,
-					SORE_THROAT, HEADACHE, RUNNY_NOSE, HEADACHE, CONFUSED_DISORIENTED, OTHER_COMPLICATIONS, PHARYNGEAL_EXUDATE, COMA, ABNORMAL_LUNG_XRAY_FINDINGS,
-					CONJUNCTIVAL_INJECTION, SEIZURES, FLUID_IN_LUNG_CAVITY_AUSCULTATION, DIFFICULTY_BREATHING, TACHYPNEA);
+			generalSymptomsHeadingLabel.setVisible(true);
+			respiratorySymptomsHeadingLabel.setVisible(true);
+			gastrointestinalSymptomsHeadingLabel.setVisible(true);
+			otherSymptomsHeadingLabel.setVisible(true);
+
+			setVisible(true, TEMPERATURE, TEMPERATURE_SOURCE );
+			setVisible(true, FEVER, RAPID_BREATHING, MUSCLE_PAIN, CHEST_PAIN, ABDOMINAL_PAIN, FATIGUE_WEAKNESS, DIARRHEA, COUGH, NAUSEA,
+					SORE_THROAT, HEADACHE, RUNNY_NOSE, HEADACHE, OTHER_COMPLICATIONS, PHARYNGEAL_EXUDATE, ABNORMAL_LUNG_XRAY_FINDINGS,
+					CONJUNCTIVAL_INJECTION, FLUID_IN_LUNG_CAVITY_AUSCULTATION, DIFFICULTY_BREATHING, TACHYPNEA);
 
 		} else if (disease == Disease.NEONATAL_TETANUS) {
 			symptomsHide();
@@ -1240,7 +1250,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				Arrays.asList(SymptomState.YES),
 				disease);
 		}
-		Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.CSM, Disease.NEW_INFLUENZA, Disease.AFP));
+		Set<Disease> includedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.CSM, Disease.NEW_INFLUENZA, Disease.CORONAVIRUS));
 
 		FieldHelper
 			.setRequiredWhen(getFieldGroup(), getFieldGroup().getField(LESIONS_ALL_OVER_BODY), lesionsFieldIds, Arrays.asList(Boolean.TRUE), disease);
@@ -1485,7 +1495,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				ABDOMINAL_CRAMPS,
 				HEADACHES,
 				DIFFICULTY_SWALLOWING,
-				SKIN_RASH_NEW);
+				SKIN_RASH_NEW,
+				DYSPNEA);
 	}
 
 	private void toggleFeverComponentError(NullableOptionGroup feverField, ComboBox temperatureField) {
@@ -1546,6 +1557,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					break;
 				case CHOLERA:
 					SELECTED_HTML_LAYOUT = CHOLERA_LAYOUT;
+					break;
+				case AFP:
+					SELECTED_HTML_LAYOUT = AFP_LAYOUT;
 					break;
 				default:
 					SELECTED_HTML_LAYOUT = HTML_LAYOUT;

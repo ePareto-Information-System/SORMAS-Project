@@ -35,12 +35,12 @@ public class AfpImmunizationForm extends AbstractEditForm<AfpImmunizationDto> {
                     + fluidRowLocs(AfpImmunizationDto.DATE_LAST_IPV_DOSES_RECEIVED_THROUGH_SIA, AfpImmunizationDto.SOURCE_RI_VACCINATION_INFORMATION);
 
     private Field totalNumberDoses;
-    private TextField opvDoseAtBirth;
-    private TextField secondDose;
-    private TextField fourthDose;
-    private TextField firstDose;
-    private TextField thirdDose;
-    private TextField lastDose;
+    private DateField opvDoseAtBirth;
+    private DateField secondDose;
+    private DateField fourthDose;
+    private DateField firstDose;
+    private DateField thirdDose;
+    private DateField lastDose;
     private TextField totalOpvDosesReceivedThroughSia;
     private TextField totalOpvDosesReceivedThroughRi;
     private DateField dateLastOpvDosesReceivedThroughSia;
@@ -76,13 +76,13 @@ public class AfpImmunizationForm extends AbstractEditForm<AfpImmunizationDto> {
         getContent().addComponent(afpImmunizationHeadingLabel, IMMUNIZATION_HEADING_LOC);
 
         totalNumberDoses = addField(AfpImmunizationDto.TOTAL_NUMBER_DOSES, Field.class);
-        opvDoseAtBirth = addField(AfpImmunizationDto.OPV_DOSE_AT_BIRTH, TextField.class);
-        secondDose = addField(AfpImmunizationDto.SECOND, TextField.class);
-        fourthDose = addField(AfpImmunizationDto.FOURTH, TextField.class);
+        opvDoseAtBirth = addField(AfpImmunizationDto.OPV_DOSE_AT_BIRTH, DateField.class);
+        secondDose = addField(AfpImmunizationDto.SECOND, DateField.class);
+        fourthDose = addField(AfpImmunizationDto.FOURTH, DateField.class);
 
-        firstDose = addField(AfpImmunizationDto.FIRST, TextField.class);
-        thirdDose = addField(AfpImmunizationDto.THIRD, TextField.class);
-        lastDose = addField(AfpImmunizationDto.LAST_DOSE, TextField.class);
+        firstDose = addField(AfpImmunizationDto.FIRST, DateField.class);
+        thirdDose = addField(AfpImmunizationDto.THIRD, DateField.class);
+        lastDose = addField(AfpImmunizationDto.LAST_DOSE, DateField.class);
 
         totalOpvDosesReceivedThroughSia = addField(AfpImmunizationDto.TOTAL_OPV_DOSES_RECEIVED_THROUGH_SIA, TextField.class);
         totalOpvDosesReceivedThroughRi = addField(AfpImmunizationDto.TOTAL_OPV_DOSES_RECEIVED_THROUGH_RI, TextField.class);
