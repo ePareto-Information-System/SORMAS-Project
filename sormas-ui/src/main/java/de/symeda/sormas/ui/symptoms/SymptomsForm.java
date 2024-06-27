@@ -75,6 +75,8 @@ import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.SymptomsContext;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.symptoms.SymptomsHelper;
+import de.symeda.sormas.api.user.UserDto;
+import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.symptoms.*;
 import de.symeda.sormas.api.utils.DateComparator;

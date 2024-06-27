@@ -87,10 +87,12 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	private final boolean showSymptomsOnsetDate;
 	private final boolean showPersonSearchButton;
 	private ComboBox presentCondition;
+	private TextField otherId;
 
 	private static final String HTML_LAYOUT =
-		"%s" + fluidRow(fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD), fluidRowLocs(PersonDto.SEX))
-			+ fluidRowLocs(PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PASSPORT_NUMBER)
+		"%s" + fluidRow(fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD), fluidRowLocs(PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE, PersonDto.SEX))
+			+ fluidRowLocs(PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID)
+			+ fluidRowLocs(PersonDto.PASSPORT_NUMBER, PersonDto.OTHER_ID)
 			+ fluidRowLocs(PersonDto.PHONE, PersonDto.PRESENT_CONDITION) + fluidRowLocs(6,PersonDto.EMAIL_ADDRESS, 6, SymptomsDto.ONSET_DATE)
 			+ fluidRowLocs(ENTER_HOME_ADDRESS_NOW) + loc(HOME_ADDRESS_HEADER) + divsCss(VSPACE_3, fluidRowLocs(HOME_ADDRESS_LOC));
 
@@ -136,6 +138,9 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		addField(PersonDto.FIRST_NAME, TextField.class);
 		addField(PersonDto.LAST_NAME, TextField.class);
 		addField(PersonDto.OTHER_NAME, TextField.class);
+
+		addFields(PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE);
+		setVisible(false, PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE);
 
 		if (showPersonSearchButton) {
 			searchPersonButton = createPersonSearchButton(PERSON_SEARCH_LOC);
@@ -202,6 +207,8 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		addField(PersonDto.GHANA_CARD, TextField.class);
 		addField(PersonDto.PASSPORT_NUMBER, TextField.class);
 		addField(PersonDto.NATIONAL_HEALTH_ID, TextField.class);
+		otherId = addField(PersonDto.OTHER_ID, TextField.class);
+		otherId.setVisible(false);
 
 		presentCondition = addField(PersonDto.PRESENT_CONDITION, ComboBox.class);
 		presentCondition.setVisible(showPresentCondition);
@@ -379,6 +386,9 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		person.setGhanaCard(personCreated.getGhanaCard());
 		person.setNationalHealthId(personCreated.getNationalHealthId());
 		person.setPassportNumber(personCreated.getPassportNumber());
+		person.setOtherId(personCreated.getOtherId());
+		person.setApproximateAge(personCreated.getApproximateAge());
+		person.setApproximateAgeType(personCreated.getApproximateAgeType());
 
 		if (StringUtils.isNotEmpty(getPhone())) {
 			person.setPhone(getPhone());
@@ -523,7 +533,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 //	covid-19
 	public void hideFieldsForCovid19(){
-		setVisible(true, PersonDto.PASSPORT_NUMBER);
+		setVisible(true, PersonDto.PASSPORT_NUMBER, PersonDto.OTHER_ID);
 		setVisible(false, PersonDto.PRESENT_CONDITION);
 	}
 
