@@ -3752,6 +3752,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setDeleted(source.isDeleted());
 		target.setDeletionReason(source.getDeletionReason());
 		target.setOtherDeletionReason(source.getOtherDeletionReason());
+		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
 		target.setSecondVaccinationDate(source.getSecondVaccinationDate());
 		target.setLastVaccinationDate(source.getLastVaccinationDate());
 
