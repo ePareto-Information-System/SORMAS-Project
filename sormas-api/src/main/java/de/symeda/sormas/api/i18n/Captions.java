@@ -317,9 +317,6 @@ public interface Captions {
 	String CaseData_patientFirstName = "CaseData.patientFirstName";
 	String CaseData_patientLastName = "CaseData.patientLastName";
 	String CaseData_patientOtherNames = "CaseData.patientOtherNames";
-	String CaseData_patientDobDD = "CaseData.patientDobDD";
-	String CaseData_patientDobMM = "CaseData.patientDobMM";
-	String CaseData_patientDobYY = "CaseData.patientDobYY";
 	String CaseData_patientAgeYear = "CaseData.patientAgeYear";
 	String CaseData_patientAgeMonth = "CaseData.patientAgeMonth";
 	String CaseData_patientSex = "CaseData.patientSex";
@@ -498,6 +495,7 @@ public interface Captions {
 	String CaseData_ethnicity = "CaseData.ethnicity";
 	String CaseData_occupation = "CaseData.occupation";
 	String CaseData_districtOfResidence = "CaseData.districtOfResidence";
+	String CaseData_ageYearMonth = "CaseData.ageYearMonth";
 	String CaseData_wasInQuarantineBeforeIsolation = "CaseData.wasInQuarantineBeforeIsolation";
 	String caseDataEnterHomeAddressNow = "caseDataEnterHomeAddressNow";
 	String caseDefaultView = "caseDefaultView";

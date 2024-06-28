@@ -170,7 +170,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                     + fluidRowLocs(MPOX_COORDINATE_LABEL)
                     + fluidRowLocs(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT)
                     + fluidRowLocs(CaseDataDto.PATIENT_FIRST_NAME, CaseDataDto.PATIENT_LAST_NAME, CaseDataDto.PATIENT_OTHER_NAMES)
-                    + fluidRowLocs(PATIENT_DOB_LABEL)
                     + fluidRowLocs(CaseDataDto.PATIENT_DOB_YY, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_DD)
                     + fluidRowLocs(DOB_NOT_KNOWN_LABEL)
                     + fluidRowLocs(CaseDataDto.PATIENT_AGE_YEAR, CaseDataDto.PATIENT_AGE_MONTH)
@@ -1624,6 +1623,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 setItemCaptionsForMonths(patientDobMonth);
 
                 ComboBox patientDobYear = addField(CaseDataDto.PATIENT_DOB_YY, ComboBox.class);
+                patientDobYear.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.BIRTH_DATE));
                 // @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
                 patientDobYear.setNullSelectionAllowed(true);
                 patientDobYear.addItems(DateHelper.getYearsToNow());

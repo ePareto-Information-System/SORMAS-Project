@@ -281,6 +281,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String FORM_COMPLETED_BY_POSITION = "formCompletedByPosition";
 	public static final String FORM_COMPLETED_BY_CELL_PHONE_NO = "formCompletedByCellPhoneNo";
 	public static final String NAME_OF_VILLAGE_PERSON_GOT_ILL = "nameOfVillagePersonGotIll";
+	public static final String AGE_YEAR_MONTH = "ageYearMonth";
 
 	// Fields are declared in the order they should appear in the import template
 
