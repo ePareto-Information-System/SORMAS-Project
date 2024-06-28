@@ -31,6 +31,8 @@ import de.symeda.sormas.api.infrastructure.facility.*;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.ControllerProvider;
+import de.symeda.sormas.api.utils.AFPFacilityOptions;
+import de.symeda.sormas.api.utils.TypeOfAbode;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.google.common.collect.Sets;
@@ -137,10 +139,8 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			+ fluidRowLocs(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY)
 			+ fluidRowLocs(MPOX_COORDINATE_LABEL)
 			+ fluidRowLocs(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT)
-			+ fluidRowLocs(CaseDataDto.PATIENT_NAME, CaseDataDto.PATIENT_OTHER_NAMES)
-			+ fluidRowLocs(PATIENT_DOB_LABEL)
-			+ fluidRowLocs(CaseDataDto.PATIENT_DOB_YY, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_DD)
-			+ fluidRowLocs(DOB_NOT_KNOWN_LABEL)
+			+ fluidRowLocs(CaseDataDto.PATIENT_FIRST_NAME, CaseDataDto.PATIENT_LAST_NAME, CaseDataDto.PATIENT_OTHER_NAMES)
+			+ fluidRowLocs(CaseDataDto.PATIENT_DOB_DD, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_YY)
 			+ fluidRowLocs(CaseDataDto.PATIENT_AGE_YEAR, CaseDataDto.PATIENT_AGE_MONTH)
 			+ fluidRowLocs(6, CaseDataDto.PATIENT_SEX)
 			+ fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY)
@@ -211,10 +211,20 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		specifyEvent.setVisible(false);
 		addField(CaseDataDto.RE_INFECTION, NullableOptionGroup.class);
 
-//		personCreateForm = new PersonCreateForm(showHomeAddressForm, true, true, showPersonSearchButton);
 		personCreateForm = new PersonCreateForm(false, true,true, false);
 		personCreateForm.setWidth(100, Unit.PERCENTAGE);
-		getContent().addComponent(personCreateForm, CaseDataDto.PERSON);
+
+		diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
+				Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
+
+				if(disease == Disease.MONKEYPOX){
+					// implement any logic here
+				}
+				else{
+					getContent().addComponent(personCreateForm, CaseDataDto.PERSON);
+				}
+
+		});
 
 		differentPlaceOfStayJurisdiction = addCustomField(DIFFERENT_PLACE_OF_STAY_JURISDICTION, Boolean.class, CheckBox.class);
 		differentPlaceOfStayJurisdiction.addStyleName(VSPACE_3);
@@ -687,6 +697,8 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				ComboBox patientSex = addField(CaseDataDto.PATIENT_SEX, ComboBox.class);
 				patientSex.removeItem(Sex.OTHER);
 				patientSex.removeItem(Sex.UNKNOWN);
+				addFields(CaseDataDto.PATIENT_FIRST_NAME, CaseDataDto.PATIENT_LAST_NAME, CaseDataDto.PATIENT_OTHER_NAMES);
+				
 				addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
 				addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
 
@@ -935,6 +947,33 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 
 	public void setSearchedPerson(PersonDto searchedPerson) {
 		personCreateForm.setSearchedPerson(searchedPerson);
+	}
+
+	public void transferDataToPerson(PersonDto person) {
+		if (Objects.equals(disease, Disease.MONKEYPOX.toString())) {
+			person.setFirstName((String) getField(CaseDataDto.PATIENT_FIRST_NAME).getValue());
+			person.setLastName((String) getField(CaseDataDto.PATIENT_LAST_NAME).getValue());
+			person.setOtherName((String) getField(CaseDataDto.PATIENT_OTHER_NAMES).getValue());
+			person.setSex((Sex) getField(CaseDataDto.PATIENT_SEX).getValue());
+		} else {
+			personCreateForm.transferDataToPerson(person);
+		}
+	}
+
+	public String getPatientFirstName() {
+		return (String) getField(CaseDataDto.PATIENT_FIRST_NAME).getValue();
+	}
+
+	public String getPatientLastName() {
+		return (String) getField(CaseDataDto.PATIENT_LAST_NAME).getValue();
+	}
+
+	public String getPatientOtherNames() {
+		return (String) getField(CaseDataDto.PATIENT_OTHER_NAMES).getValue();
+	}
+
+	public Sex getPatientSex() {
+		return (Sex) getField(CaseDataDto.PATIENT_SEX).getValue();
 	}
 
 }

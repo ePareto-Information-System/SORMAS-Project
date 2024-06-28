@@ -185,13 +185,13 @@ public class PersonDto extends PseudonymizableDto {
 	// Fields are declared in the order they should appear in the import template
 
 	@Outbreaks
-//	@NotBlank(message = Validations.specifyFirstName)
+	@NotBlank(message = Validations.specifyFirstName)
 	@PersonalData(mandatoryField = false)
 	@SensitiveData(mandatoryField = false)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String firstName;
 	@Outbreaks
-//	@NotBlank(message = Validations.specifyLastName)
+	@NotBlank(message = Validations.specifyLastName)
 	@PersonalData(mandatoryField = false)
 	@SensitiveData(mandatoryField = false)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)

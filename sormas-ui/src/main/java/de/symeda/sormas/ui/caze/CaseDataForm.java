@@ -183,7 +183,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                     fluidRowLocs(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY)
                     + fluidRowLocs(MPOX_COORDINATE_LABEL)
                     + fluidRowLocs(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT)
-                    + fluidRowLocs(CaseDataDto.PATIENT_NAME, CaseDataDto.PATIENT_OTHER_NAMES)
+                    + fluidRowLocs(CaseDataDto.PATIENT_FIRST_NAME, CaseDataDto.PATIENT_LAST_NAME, CaseDataDto.PATIENT_OTHER_NAMES)
                     + fluidRowLocs(PATIENT_DOB_LABEL)
                     + fluidRowLocs(CaseDataDto.PATIENT_DOB_YY, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_DD)
                     + fluidRowLocs(DOB_NOT_KNOWN_LABEL)
@@ -1852,6 +1852,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 patientSex.removeItem(Sex.OTHER);
                 patientSex.removeItem(Sex.UNKNOWN);
 
+                addFields(CaseDataDto.PATIENT_FIRST_NAME, CaseDataDto.PATIENT_LAST_NAME, CaseDataDto.PATIENT_OTHER_NAMES);
+            
                 addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
                 addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
 			}

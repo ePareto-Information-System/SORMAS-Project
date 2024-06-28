@@ -291,7 +291,8 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String ETHNICITY = "ethnicity";
 	public static final String OCCUPATION = "occupation";
 	public static final String DISTRICT_OF_RESIDENCE = "districtOfResidence";
-	public static final String PATIENT_NAME = "patientName";
+	public static final String PATIENT_FIRST_NAME = "patientFirstName";
+	public static final String PATIENT_LAST_NAME = "patientLastName";
 	public static final String PATIENT_OTHER_NAMES = "patientOtherNames";
 	public static final String PATIENT_DOB_DD = "patientDobDD";
 	public static final String PATIENT_DOB_MM = "patientDobMM";
@@ -313,7 +314,8 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	// Fields are declared in the order they should appear in the import template
 
-	private String patientName;
+	private String patientFirstName;
+	private String patientLastName;
 	private String patientOtherNames;
 	private Integer patientDobDD;
 	private Integer patientDobMM;
@@ -2466,14 +2468,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		this.nameOfVillagePersonGotIll = nameOfVillagePersonGotIll;
 	}
 
-	public String getPatientName() {
-		return patientName;
-	}
-
-	public void setPatientName(String patientName) {
-		this.patientName = patientName;
-	}
-
 	public String getPatientOtherNames() {
 		return patientOtherNames;
 	}
@@ -2528,5 +2522,21 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	public void setPatientSex(Sex patientSex) {
 		this.patientSex = patientSex;
+	}
+
+	public String getPatientFirstName() {
+		return patientFirstName;
+	}
+
+	public void setPatientFirstName(String patientFirstName) {
+		this.patientFirstName = patientFirstName;
+	}
+
+	public String getPatientLastName() {
+		return patientLastName;
+	}
+
+	public void setPatientLastName(String patientLastName) {
+		this.patientLastName = patientLastName;
 	}
 }

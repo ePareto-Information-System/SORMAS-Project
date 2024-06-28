@@ -14915,4 +14915,9 @@ UPDATE facility SET type = 'HOSPITAL' WHERE NOT type = 'LABORATORY' AND uuid NOT
 
 INSERT INTO schema_version (version_number, comment) VALUES (689, 'Added Not Set Insert Query into facility');
 
+ALTER TABLE cases DROP COLUMN patientname;
+ALTER TABLE cases ADD COLUMN patientfirstname VARCHAR(255);
+ALTER TABLE cases ADD COLUMN patientlastname VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (690, 'Dropped patientname, Added patient first,last names to cases');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
