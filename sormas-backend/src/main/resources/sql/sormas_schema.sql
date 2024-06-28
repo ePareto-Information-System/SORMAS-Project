@@ -13769,4 +13769,10 @@ ALTER TABLE immunization ADD COLUMN thirddose Date;
 ALTER TABLE immunization ADD COLUMN lastdose Date;
 
 INSERT INTO schema_version (version_number, comment) VALUES (622, 'Modified columns for symptoms and afpimmunization for AFP');
+
+ALTER TABLE cases DROP COLUMN patientname;
+ALTER TABLE cases ADD COLUMN patientfirstname VARCHAR(255);
+ALTER TABLE cases ADD COLUMN patientlastname VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (623, 'Added patient first,last names to cases');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

@@ -314,7 +314,8 @@ public interface Captions {
 	String CaseData_mobileTeamNo = "CaseData.mobileTeamNo";
 	String CaseData_informationGivenBy = "CaseData.informationGivenBy";
 	String CaseData_familyLinkWithPatient = "CaseData.familyLinkWithPatient";
-	String CaseData_patientName = "CaseData.patientName";
+	String CaseData_patientFirstName = "CaseData.patientFirstName";
+	String CaseData_patientLastName = "CaseData.patientLastName";
 	String CaseData_patientOtherNames = "CaseData.patientOtherNames";
 	String CaseData_patientDobDD = "CaseData.patientDobDD";
 	String CaseData_patientDobMM = "CaseData.patientDobMM";

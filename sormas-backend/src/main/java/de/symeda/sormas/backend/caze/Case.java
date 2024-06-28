@@ -479,7 +479,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private String informationGivenBy;
 	private String familyLinkWithPatient;
 	private String nameOfVillagePersonGotIll;
-	private String patientName;
 	private String patientOtherNames;
 	private Integer patientDobDD;
 	private Integer patientDobMM;
@@ -487,6 +486,8 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private Integer patientAgeYear;
 	private Integer patientAgeMonth;
 	private Sex patientSex;
+	private String patientFirstName;
+	private String patientLastName;
 
 	public static Case build() {
 		Case caze = new Case();
@@ -2181,14 +2182,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.nameOfVillagePersonGotIll = nameOfVillagePersonGotIll;
 	}
 
-	public String getPatientName() {
-		return patientName;
-	}
-
-	public void setPatientName(String patientName) {
-		this.patientName = patientName;
-	}
-
 	public String getPatientOtherNames() {
 		return patientOtherNames;
 	}
@@ -2243,6 +2236,22 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setPatientSex(Sex patientSex) {
 		this.patientSex = patientSex;
+	}
+
+	public String getPatientFirstName() {
+		return patientFirstName;
+	}
+
+	public void setPatientFirstName(String patientFirstName) {
+		this.patientFirstName = patientFirstName;
+	}
+
+	public String getPatientLastName() {
+		return patientLastName;
+	}
+
+	public void setPatientLastName(String patientLastName) {
+		this.patientLastName = patientLastName;
 	}
 
 //	Riskfactor on
