@@ -211,18 +211,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 
 		personCreateForm = new PersonCreateForm(false, true,true, false);
 		personCreateForm.setWidth(100, Unit.PERCENTAGE);
-
-		diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
-				Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
-
-				if(disease == Disease.MONKEYPOX){
-					// implement any logic here
-				}
-				else{
-					getContent().addComponent(personCreateForm, CaseDataDto.PERSON);
-				}
-
-		});
+		getContent().addComponent(personCreateForm, CaseDataDto.PERSON);
 
 		differentPlaceOfStayJurisdiction = addCustomField(DIFFERENT_PLACE_OF_STAY_JURISDICTION, Boolean.class, CheckBox.class);
 		differentPlaceOfStayJurisdiction.addStyleName(VSPACE_3);
