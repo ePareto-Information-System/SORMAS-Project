@@ -633,7 +633,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private String followUpComment;
 	private Date followUpUntil;
 	private boolean overwriteFollowUpUntil;
-	private CSMVaccines vaccineType;
+	private VaccineTypes vaccineType;
 	private String numberOfDoses;
 
 	@HideForCountriesExcept(countries = COUNTRY_CODE_SWITZERLAND)
@@ -1723,11 +1723,11 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		this.trimester = trimester;
 	}
 
-	public CSMVaccines getVaccineType() {
+	public VaccineTypes getVaccineType() {
 		return vaccineType;
 	}
 
-	public void setVaccineType(CSMVaccines vaccineType) {
+	public void setVaccineType(VaccineTypes vaccineType) {
 		this.vaccineType = vaccineType;
 	}
 
