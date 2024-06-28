@@ -17,33 +17,21 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.dashboard;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import de.symeda.sormas.api.caze.CaseCriteria;
-import de.symeda.sormas.api.dashboard.*;
-import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
-import de.symeda.sormas.api.infrastructure.region.RegionDto;
-import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
-import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
-import org.apache.commons.lang3.time.DateUtils;
-
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseReferenceDefinition;
 import de.symeda.sormas.api.caze.NewCaseDateType;
+import de.symeda.sormas.api.dashboard.*;
 import de.symeda.sormas.api.disease.DiseaseBurdenDto;
 import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.outbreak.OutbreakCriteria;
-
-import de.symeda.sormas.api.sample.DashboardTestResultDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
+import de.symeda.sormas.api.utils.DateHelper;
+import org.apache.commons.lang3.time.DateUtils;
+
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 // FIXME: 06/08/2020 this should be refactored into two specific data providers for case and contact dashboards
 public class DashboardDataProvider extends AbstractDashboardDataProvider<DashboardCriteria> {
@@ -68,37 +56,16 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 	private List<DashboardEventDto> events = new ArrayList<>();
 	private Map<PathogenTestResultType, Long> newCasesFinalLabResultCountByResultType;
 	private Map<EventStatus, Long> eventCountByStatus;
-
 	private Long contactsInQuarantineCount = 0L;
 	private Long contactsPlacedInQuarantineCount = 0L;
 	private Long casesInQuarantineCount = 0L;
 	private Long casesPlacedInQuarantineCount = 0L;
 	private Long contactsConvertedToCaseCount = 0L;
 	private Long caseWithReferenceDefinitionFulfilledCount = 0L;
-	private RegionReferenceDto region;
-	private DistrictReferenceDto district;
 	private DiseaseBurdenDto diseaseBurdenDetail;
-	private Map<PathogenTestResultType, Long> testResultCountByResultType;
-
-	private List<DashboardTestResultDto> testResults = new ArrayList<>();
-	private List<DashboardTestResultDto> previousTestResults = new ArrayList<>();
-	private List<RegionDto> regionDtoList;
-
 	private CaseClassification caseClassification;
-
 	private NewDateFilterType dateFilterType;
-	private Date fromDate;
-	private Date toDate;
 
-	private final Class<? extends CriteriaDateType> dateTypeClass;
-
-	public DashboardDataProvider(Class<? extends CriteriaDateType> dateTypeClass) {
-		this.dateTypeClass = dateTypeClass;
-	}
-
-	public DashboardDataProvider() {
-		this.dateTypeClass = CriteriaDateType.class;
-	}
 	public void refreshData() {
 
 		// Update the entities lists according to the filters
@@ -124,10 +91,10 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 				,caseClassification);
 
 		setDiseaseBurdenDetail(dbd);
-		Long outbreakDistrictCount = 	FacadeProvider.getOutbreakFacade()
+		Long countOfOutbreakDistricts = 	FacadeProvider.getOutbreakFacade()
 				.getOutbreakDistrictCount(
 						new OutbreakCriteria().region(region).district(district).disease(disease).reportedBetween(fromDate, toDate).caseClassification(caseClassification));
-		setOutbreakDistrictCount(outbreakDistrictCount);
+		setOutbreakDistrictCount(countOfOutbreakDistricts);
 
 		this.refreshDataForSelectedDisease();
 	}
@@ -257,12 +224,12 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 		setEvents(FacadeProvider.getDashboardFacade().getNewEvents(eventDashboardCriteria));
 		setEventCountByStatus(FacadeProvider.getDashboardFacade().getEventCountByStatus(eventDashboardCriteria));
 
-		Long outbreakDistrictCount = FacadeProvider.getOutbreakFacade()
+		Long districtOutbreakCount = FacadeProvider.getOutbreakFacade()
 				.getOutbreakDistrictCount(
 						new OutbreakCriteria().region(region).district(district).disease(disease)
 								.reportedBetween(fromDate, toDate));
 
-		setOutbreakDistrictCount(outbreakDistrictCount);
+		setOutbreakDistrictCount(districtOutbreakCount);
 
 		refreshDataForQuarantinedCases();
 		refreshDataForConvertedContactsToCase();
@@ -272,9 +239,7 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 	private DashboardCriteria buildDashboardCriteria(Date fromDate, Date toDate) {
 		return buildDashboardCriteria().newCaseDateType(newCaseDateType).dateBetween(fromDate, toDate);
 	}
-	public void setTestResultCountByResultType(Map<PathogenTestResultType, Long> testResults) {
-		this.testResultCountByResultType = testResults;
-	}
+
 	public List<DashboardCaseDto> getCases() {
 		return cases;
 	}
@@ -370,22 +335,23 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 	public void setLastReportedDistrict(String district) {
 		this.lastReportedDistrict = district;
 	}
-
+	@Override
 	public NewCaseDateType getNewCaseDateType() {
 		if (newCaseDateType == null) {
 			return NewCaseDateType.MOST_RELEVANT;
 		}
 		return newCaseDateType;
 	}
-
+	@Override
 	public void setNewCaseDateType(NewCaseDateType newCaseDateType) {
 		this.newCaseDateType = newCaseDateType;
 	}
 
+	@Override
 	public DashboardType getDashboardType() {
 		return dashboardType;
 	}
-
+	@Override
 	public void setDashboardType(DashboardType dashboardType) {
 		this.dashboardType = dashboardType;
 	}
@@ -437,71 +403,19 @@ public class DashboardDataProvider extends AbstractDashboardDataProvider<Dashboa
 	public void setCaseWithReferenceDefinitionFulfilledCount(Long caseWithReferenceDefinitionFulfilledCount) {
 		this.caseWithReferenceDefinitionFulfilledCount = caseWithReferenceDefinitionFulfilledCount;
 	}
-	public List<RegionDto> getRegionDtoList() {
-		return regionDtoList;
-	}
-
-	public void setRegionDtoList(List<RegionDto> regionDtoList) {
-		this.regionDtoList = regionDtoList;
-	}
-
+	@Override
 	public CaseClassification getCaseClassification() {
 		return caseClassification;
 	}
-
+	@Override
 	public void setCaseClassification(CaseClassification caseClassification) {
 		this.caseClassification = caseClassification;
 	}
 
-	public NewDateFilterType getDateFilterType() {
-		if (dateFilterType == NewDateFilterType.TODAY) {
-			setFromDate(DateHelper.getStartOfDay(new Date()));
-			setToDate(new Date());
-		}
-		if (dateFilterType == NewDateFilterType.YESTERDAY) {
-			setFromDate(DateHelper.getStartOfDay(DateHelper.subtractDays(new Date(), 1)));
-			setToDate(DateHelper.getEndOfDay(DateHelper.subtractDays(new Date(), 1)));
-		}
-		if (dateFilterType == NewDateFilterType.THIS_WEEK) {
-			setFromDate(DateHelper.getStartOfWeek(new Date()));
-			setToDate(new Date());
-		}
-		if (dateFilterType == NewDateFilterType.LAST_WEEK) {
-			setFromDate(DateHelper.getStartOfWeek(DateHelper.subtractWeeks(new Date(), 1)));
-			setToDate(DateHelper.getEndOfWeek(DateHelper.subtractWeeks(new Date(), 1)));
-		}
-		if (dateFilterType == NewDateFilterType.THIS_YEAR) {
-			setFromDate(DateHelper.getStartOfWeek(DateHelper.getStartOfYear(new Date())));
-			setToDate(new Date());
-		}
-		return dateFilterType;
-	}
-
+	@Override
 	public void setDateFilterType(NewDateFilterType dateFilterType) {
 		this.dateFilterType = dateFilterType;
 	}
 
-	public Date getFromDate() {
-		return fromDate;
-	}
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-
-	public Date getToDate() {
-		return toDate;
-	}
-
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-
-	public Date getPreviousFromDate() {
-		return previousFromDate;
-	}
-
-	public void setPreviousFromDate(Date previousFromDate) {
-		this.previousFromDate = previousFromDate;
-	}
 }

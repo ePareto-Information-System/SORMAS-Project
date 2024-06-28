@@ -37,7 +37,6 @@ import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.common.progress.ProcessedEntity;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
-import de.symeda.sormas.api.dashboard.DashboardCaseDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
@@ -200,7 +199,7 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 
 	List<CasePersonDto> getDuplicates(@Valid CasePersonDto casePerson);
 
-	List<CaseDataDto> getDuplicatesWithPathogenTest(@Valid PersonReferenceDto personReferenceDto, PathogenTestDto pathogenTestDto);
+    List<CaseDataDto> getDuplicatesWithPathogenTest(@Valid PersonReferenceDto personReferenceDto, PathogenTestDto pathogenTestDto);
 
 	List<CaseDataDto> getByPersonUuids(List<String> personUuids);
 

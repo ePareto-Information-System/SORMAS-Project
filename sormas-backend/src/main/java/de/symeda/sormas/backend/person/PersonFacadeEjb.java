@@ -14,69 +14,12 @@
  */
 package de.symeda.sormas.backend.person;
 
-import static de.symeda.sormas.backend.common.CriteriaBuilderHelper.and;
-import static java.util.Comparator.comparing;
-import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.maxBy;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.annotation.security.PermitAll;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Tuple;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Selection;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.SerializationUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
-
-import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.RequestContextHolder;
-import de.symeda.sormas.api.caze.CaseClassification;
-import de.symeda.sormas.api.caze.CaseCriteria;
-import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.caze.CaseLogic;
-import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.FollowUpStatus;
@@ -89,60 +32,25 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.immunization.ImmunizationDto;
-import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.location.LocationDto;
-import de.symeda.sormas.api.person.ApproximateAgeType;
+import de.symeda.sormas.api.person.*;
 import de.symeda.sormas.api.person.ApproximateAgeType.ApproximateAgeHelper;
-import de.symeda.sormas.api.person.CauseOfDeath;
-import de.symeda.sormas.api.person.IsPerson;
-import de.symeda.sormas.api.person.JournalPersonDto;
-import de.symeda.sormas.api.person.PersonAddressType;
-import de.symeda.sormas.api.person.PersonAssociation;
-import de.symeda.sormas.api.person.PersonContactDetailDto;
-import de.symeda.sormas.api.person.PersonContactDetailType;
-import de.symeda.sormas.api.person.PersonContext;
-import de.symeda.sormas.api.person.PersonCriteria;
-import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.person.PersonExportDto;
-import de.symeda.sormas.api.person.PersonFacade;
-import de.symeda.sormas.api.person.PersonFollowUpEndDto;
-import de.symeda.sormas.api.person.PersonHelper;
-import de.symeda.sormas.api.person.PersonIndexDto;
-import de.symeda.sormas.api.person.PersonReferenceDto;
-import de.symeda.sormas.api.person.PersonSimilarityCriteria;
-import de.symeda.sormas.api.person.PresentCondition;
-import de.symeda.sormas.api.person.SimilarPersonDto;
-import de.symeda.sormas.api.person.SymptomJournalStatus;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.AccessDeniedException;
-import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.DataHelper.Pair;
-import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.api.utils.DtoCopyHelper;
-import de.symeda.sormas.api.utils.LocationHelper;
-import de.symeda.sormas.api.utils.SortProperty;
-import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.api.utils.fieldaccess.checkers.AnnotationBasedFieldAccessChecker.SpecialAccessCheck;
 import de.symeda.sormas.api.vaccination.VaccinationDto;
 import de.symeda.sormas.backend.FacadeHelper;
+import de.symeda.sormas.backend.caze.*;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
 import de.symeda.sormas.backend.common.AbstractBaseEjb;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
-import de.symeda.sormas.backend.contact.Contact;
-import de.symeda.sormas.backend.contact.ContactFacadeEjb;
+import de.symeda.sormas.backend.contact.*;
 import de.symeda.sormas.backend.contact.ContactFacadeEjb.ContactFacadeEjbLocal;
-import de.symeda.sormas.backend.contact.ContactJoins;
-import de.symeda.sormas.backend.contact.ContactQueryContext;
-import de.symeda.sormas.backend.contact.ContactService;
-import de.symeda.sormas.backend.event.Event;
-import de.symeda.sormas.backend.event.EventFacadeEjb;
-import de.symeda.sormas.backend.event.EventParticipant;
-import de.symeda.sormas.backend.event.EventParticipantFacadeEjb;
+import de.symeda.sormas.backend.event.*;
 import de.symeda.sormas.backend.event.EventParticipantFacadeEjb.EventParticipantFacadeEjbLocal;
-import de.symeda.sormas.backend.event.EventParticipantService;
-import de.symeda.sormas.backend.event.EventService;
 import de.symeda.sormas.backend.externaljournal.ExternalJournalService;
 import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal;
 import de.symeda.sormas.backend.immunization.ImmunizationFacadeEjb;
@@ -177,15 +85,34 @@ import de.symeda.sormas.backend.travelentry.TravelEntry;
 import de.symeda.sormas.backend.travelentry.services.TravelEntryService;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserFacadeEjb.UserFacadeEjbLocal;
-import de.symeda.sormas.backend.util.DtoHelper;
-import de.symeda.sormas.backend.util.IterableHelper;
-import de.symeda.sormas.backend.util.JurisdictionHelper;
-import de.symeda.sormas.backend.util.ModelConstants;
-import de.symeda.sormas.backend.util.Pseudonymizer;
-import de.symeda.sormas.backend.util.QueryHelper;
-import de.symeda.sormas.backend.util.RightsAllowed;
+import de.symeda.sormas.backend.util.*;
 import de.symeda.sormas.backend.visit.Visit;
 import de.symeda.sormas.backend.visit.VisitService;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.security.PermitAll;
+import javax.ejb.*;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Tuple;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static de.symeda.sormas.backend.common.CriteriaBuilderHelper.and;
+import static java.util.Comparator.comparing;
+import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.maxBy;
 
 @Stateless(name = "PersonFacade")
 @RightsAllowed(UserRight._PERSON_VIEW)
@@ -301,16 +228,6 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 	@RightsAllowed(UserRight._PERSON_EDIT)
 	public void updateExternalData(@Valid List<ExternalDataDto> externalData) throws ExternalDataUpdateException {
 		service.updateExternalData(externalData);
-	}
-
-	@Override
-	public List<PersonDto> getDeathsBetween(Date fromDate, Date toDate, DistrictReferenceDto districtRef, Disease disease) {
-		final User user = userService.getCurrentUser();
-		if (user == null) {
-			return Collections.emptyList();
-		}
-		final District district = districtService.getByReferenceDto(districtRef);
-		return toPseudonymizedDtos(service.getDeathsBetween(fromDate, toDate, district, disease, user));
 	}
 
 	public Long getPersonIdByUuid(String uuid) {
@@ -2066,35 +1983,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 			.collect(Collectors.toList());
 	}
 
-	@Override
-	public Map<Disease, Long> getDeathCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases, boolean excludeCasesFromContacts) {
 
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
-		Root<Case> root = cq.from(Case.class);
-		Join<Case, Person> person = root.join(Case.PERSON, JoinType.LEFT);
-
-		Predicate filter = caseService.createUserFilter(
-				cb,
-				cq,
-				root,
-				new CaseUserFilterCriteria().excludeSharedCases(excludeSharedCases).excludeCasesFromContacts(excludeCasesFromContacts));
-		filter = and(cb, filter, caseService.createCriteriaFilter(caseCriteria, cb, cq, root));
-		filter = and(cb, filter, cb.equal(person.get(Person.CAUSE_OF_DEATH_DISEASE), root.get(Case.DISEASE)));
-
-		if (filter != null) {
-			cq.where(filter);
-		}
-
-		cq.multiselect(person.get(Person.CAUSE_OF_DEATH_DISEASE), cb.count(person));
-		cq.groupBy(person.get(Person.CAUSE_OF_DEATH_DISEASE));
-
-		List<Object[]> results = em.createQuery(cq).getResultList();
-
-		Map<Disease, Long> outbreaks = results.stream().collect(Collectors.toMap(e -> (Disease) e[0], e -> (Long) e[1]));
-
-		return outbreaks;
-	}
 
     @LocalBean
 	@Stateless

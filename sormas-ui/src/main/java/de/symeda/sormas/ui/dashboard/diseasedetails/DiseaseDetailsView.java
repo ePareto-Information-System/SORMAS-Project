@@ -6,17 +6,13 @@ import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.NewCaseDateType;
 import de.symeda.sormas.api.dashboard.NewDateFilterType;
 import de.symeda.sormas.api.infrastructure.region.RegionDto;
-import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
 import de.symeda.sormas.ui.dashboard.DashboardType;
-
 import static com.vaadin.navigator.ViewChangeListener.*;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.EnumSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,11 +26,10 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 
 	protected DiseaseDetailsViewLayout diseaseDetailsViewLayout;
 
-	public static  String diseaseDetailsData;
+	private static String diseaseDetailsData;
 	public static void setDiseaseDetailsData(String newData) {
 		diseaseDetailsData =newData;
 	}
-
 
 	public DiseaseDetailsView() {
 		super(VIEW_NAME, DashboardType.DISEASE);
@@ -83,15 +78,15 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 	}
 
 	private void setDateFilters(String dateFrom, String dateTo) {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 		try {
 			if (dateFrom != null) {
 				Date startDate = dateFormat.parse(dateFrom);
-				dashboardDataProvider.setFromDate(DateHelper.getStartOfDay(startDate));
+				dashboardDataProvider.setFromDate(startDate);
 			}
 			if (dateTo != null) {
 				Date endDate = dateFormat.parse(dateTo);
-				dashboardDataProvider.setToDate(DateHelper.getEndOfDay(endDate));
+				dashboardDataProvider.setToDate(endDate);
 			}
 		} catch (ParseException e) {
 			LOGGER.log(Level.SEVERE, "Date parsing error", e);
@@ -109,8 +104,10 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 
 	private void setCaseClassification(String caseClassification) {
 		try {
-			CaseClassification classification = CaseClassification.valueOf(caseClassification.replace(" ", "_").toUpperCase().trim());
-			dashboardDataProvider.setCaseClassification(classification);
+			if(caseClassification!=null && !caseClassification.equals("null")) {
+				CaseClassification classification = CaseClassification.valueOf(caseClassification.replace(" ", "_").toUpperCase().trim());
+				dashboardDataProvider.setCaseClassification(classification);
+			}
 		} catch (IllegalArgumentException e) {
 			LOGGER.log(Level.WARNING, "Unsupported case classification: " + caseClassification, e);
 			dashboardDataProvider.setCaseClassification(CaseClassification.NOT_CLASSIFIED);

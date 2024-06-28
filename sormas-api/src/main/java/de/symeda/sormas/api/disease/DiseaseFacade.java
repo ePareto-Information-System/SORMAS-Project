@@ -19,8 +19,6 @@ package de.symeda.sormas.api.disease;
  *******************************************************************************/
 
 import java.util.Date;
-import java.util.List;
-
 import javax.ejb.Remote;
 
 import de.symeda.sormas.api.Disease;
@@ -32,14 +30,6 @@ import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
 
 @Remote
 public interface DiseaseFacade {
-
-    List<DiseaseBurdenDto> getDiseaseBurdenForDashboard(
-            RegionReferenceDto regionRef,
-            DistrictReferenceDto districtRef,
-            Date from,
-            Date to,
-            Date previousFromDate,
-            Date previousToDate);
 
 
     DiseaseBurdenDto getDiseaseForDashboard(
@@ -53,6 +43,7 @@ public interface DiseaseFacade {
             CriteriaDateType newCaseDateType,
             CaseClassification caseClassification
     );
+
     //
     DiseaseBurdenDto getDiseaseGridForDashboard(
             RegionReferenceDto regionRef,

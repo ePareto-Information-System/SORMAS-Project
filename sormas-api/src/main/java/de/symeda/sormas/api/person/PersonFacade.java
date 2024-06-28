@@ -16,7 +16,6 @@ package de.symeda.sormas.api.person;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Remote;
@@ -24,14 +23,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.BaseFacade;
-import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EditPermissionFacade;
 import de.symeda.sormas.api.caze.CaseClassification;
-import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
-import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.SortProperty;
@@ -40,8 +36,6 @@ import de.symeda.sormas.api.utils.SortProperty;
 public interface PersonFacade extends BaseFacade<PersonDto, PersonIndexDto, PersonReferenceDto, PersonCriteria>, EditPermissionFacade {
 
 	Set<PersonAssociation> getPermittedAssociations();
-
-	List<PersonDto> getDeathsBetween(Date fromDate, Date toDate, DistrictReferenceDto districtRef, Disease disease);
 
 	JournalPersonDto getPersonForJournal(String uuid);
 
@@ -100,5 +94,4 @@ public interface PersonFacade extends BaseFacade<PersonDto, PersonIndexDto, Pers
 
 	void copyHomeAddress(PersonReferenceDto source, PersonReferenceDto target);
 
-    Map<Disease, Long> getDeathCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases, boolean excludeCasesFromContacts);
 }

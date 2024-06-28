@@ -17,13 +17,6 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.dashboard.map;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.shared.ui.ContentMode;
@@ -32,7 +25,6 @@ import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.shared.ui.grid.HeightMode;
 import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.OptionGroup;
-
 import de.symeda.sormas.api.CaseMeasure;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
@@ -56,7 +48,6 @@ import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
-import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
@@ -64,6 +55,8 @@ import de.symeda.sormas.api.utils.DataHelper.Pair;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UiUtil;
+import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.dashboard.DashboardCssStyles;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
 import de.symeda.sormas.ui.dashboard.DashboardType;
 import de.symeda.sormas.ui.map.*;
@@ -71,6 +64,15 @@ import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 import org.vaadin.hene.popupbutton.PopupButton;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.nonNull;
 
 @SuppressWarnings("serial")
 public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCriteria, DashboardDataProvider> {
@@ -117,13 +119,10 @@ public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCr
 	private BigDecimal districtValuesUpperQuartile;
 	private Consumer<Boolean> externalExpandListener;
 	private boolean emptyPopulationDistrictPresent;
-	//private  LeafletMap map;
-
 	private MapCasePeriodOption mapCasePeriodOption;
 	private  Label overlayMessageLabel;
 
 	ComboBox cmbPeriodFilter;
-	//private PopupButton legendDropdown;
 	ComboBox cmbPeriodType;
 
 	private Date dateFrom = null;
@@ -134,66 +133,11 @@ public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCr
 		DONT_RELOAD
 	}
 
-
-
-//	public DashboardMapComponent(DashboardDataProvider dashboardDataProvider) {
-//		super(
-//			dashboardDataProvider.getDashboardType() == DashboardType.SURVEILLANCE ? Strings.headingCaseStatusMap : Strings.headingContactMap,
-//			dashboardDataProvider,
-//			null);
-//
-//		//this.dashboardDataProvider = dashboardDataProvider;
-//
-//		setMargin(false);
-//		setSpacing(false);
-//		setSizeFull();
-//
-//		map = new LeafletMap();
-//
-//		map.setSizeFull();
-//		map.addMarkerClickListener(event -> onMarkerClicked(event.getGroupId(), event.getMarkerIndex()));
-//
-//		{
-//
-//			GeoShapeProvider geoShapeProvider = FacadeProvider.getGeoShapeProvider();
-//
-//			final GeoLatLon mapCenter;
-//			//if (UserProvider.getCurrent().hasAnyUserRole(DefaultUserRole.NATIONAL_USER, DefaultUserRole.NATIONAL_CLINICIAN, DefaultUserRole.NATIONAL_OBSERVER)) {
-//				mapCenter = geoShapeProvider.getCenterOfAllRegions();
-//
-//			//} else {
-//				UserDto user = UserProvider.getCurrent().getUser();
-//
-////				if (user.getRegion() != null) {
-////					mapCenter = geoShapeProvider.getCenterOfRegion(user.getRegion());
-////				} else {
-////					mapCenter = geoShapeProvider.getCenterOfAllRegions();
-////				}
-//		//	}
-//
-//			GeoLatLon center = Optional.ofNullable(mapCenter).orElseGet(FacadeProvider.getConfigFacade()::getCountryCenter);
-//
-//			if (center == null || (center.getLat() == 0.0 && center.getLon() == 0)) {
-//				center = new GeoLatLon(8.134, 1.423);
-//			}
-//			map.setCenter(center);
-//		}
-//
-//		int zoomVal=FacadeProvider.getConfigFacade().getMapZoom();
-//        if(zoomVal!=0) {
-//			map.setZoom(zoomVal);
-//		}
-//
-//	}
-
 	public DashboardMapComponent(DashboardDataProvider dashboardDataProvider) {
-		//super(dashboardDataProvider);
 		super(
 			dashboardDataProvider.getDashboardType() == DashboardType.SURVEILLANCE ? Strings.headingCaseStatusMap : Strings.headingContactMap,
 			dashboardDataProvider,
 			null);
-//
-		//this.dashboardDataProvider = dashboardDataProvider;
 		if(dashboardDataProvider.getDashboardType().equals(DashboardType.DISEASE)) {
 
 			setMargin(false);
@@ -267,7 +211,7 @@ public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCr
 			this.setMargin(true);
 
 			// Add components
-			addComponent(createHeader());
+			addComponent(createMapHeader());
 
 			CssLayout mapLayout = new CssLayout();
 			mapLayout.setSizeFull();
@@ -284,9 +228,7 @@ public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCr
 			overlayMessageLabel = new Label();
 			overlayMessageLabel.addStyleNames(CssStyles.ALIGN_CENTER, CssStyles.LABEL_WHITE, CssStyles.LABEL_WHITE_SPACE_NORMAL);
 
-			Button button = ButtonHelper.createButton(Captions.showPlacesOnMap, (e) -> {
-				refreshMapDashboard(true);
-			});
+			Button button = ButtonHelper.createButton(Captions.showPlacesOnMap, (e) -> refreshMapDashboard(true));
 
 			overlayLayout = new VerticalLayout(overlayMessageLabel, button);
 			overlayLayout.setStyleName(DashboardCssStyles.MAP_OVERLAY);
@@ -301,7 +243,7 @@ public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCr
 			addComponent(mapLayout);
 			setExpandRatio(mapLayout, 1);
 
-			addComponent(createFooter());
+			addComponent(createMapFooter());
 		}
 	}
 
@@ -330,7 +272,7 @@ public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCr
 	}
 
 
-	private HorizontalLayout createFooter() {
+	private HorizontalLayout createMapFooter() {
 		HorizontalLayout mapFooterLayout = new HorizontalLayout();
 		mapFooterLayout.setWidth(100, Unit.PERCENTAGE);
 		mapFooterLayout.setSpacing(true);
@@ -338,7 +280,7 @@ public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCr
 
 		// Map key dropdown button
 		legendDropdown = ButtonHelper.createPopupButton(Captions.dashboardMapKey, null, CssStyles.BUTTON_SUBTLE);
-		legendDropdown.setContent(createLegend());
+		legendDropdown.setContent(createMapLegend());
 
 		mapFooterLayout.addComponent(legendDropdown);
 		mapFooterLayout.setComponentAlignment(legendDropdown, Alignment.MIDDLE_RIGHT);
@@ -528,7 +470,7 @@ public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCr
 		return mapFooterLayout;
 	}
 
-	private VerticalLayout createLegend() {
+	private VerticalLayout createMapLegend() {
 		VerticalLayout legendLayout = new VerticalLayout();
 		legendLayout.setSpacing(false);
 		legendLayout.setMargin(true);
@@ -676,39 +618,6 @@ public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCr
 
 		return legendLayout;
 	}
-//	@Override
-//	protected void addComponents() {
-//		if (dashboardDataProvider.getDashboardType() == DashboardType.SURVEILLANCE) {
-//			showCases = true;
-//			caseClassificationOption = MapCaseClassificationOption.ALL_CASES;
-//			showContacts = false;
-//			showEvents = false;
-//			showConfirmedContacts = true;
-//			showUnconfirmedContacts = true;
-//		}
-//		else if (dashboardDataProvider.getDashboardType() == DashboardType.CONTACTS) {
-//			showCases = false;
-//			caseClassificationOption = MapCaseClassificationOption.ALL_CASES;
-//			showContacts = true;
-//			showEvents = false;
-//			showConfirmedContacts = true;
-//			showUnconfirmedContacts = true;
-//		}
-//
-//		else if (dashboardDataProvider.getDashboardType() == DashboardType.DISEASE) {
-//			map.setZoom(6);
-//			showCases = true;
-//			caseClassificationOption = MapCaseClassificationOption.ALL_CASES;
-//			showContacts = false;
-//			showEvents = false;
-//			showConfirmedContacts = true;
-//			showUnconfirmedContacts = true;
-//		}
-//		hideOtherCountries = false;
-//		showCurrentEpiSituation = false;
-//
-//		super.addComponents();
-//	}
 
 	private void createPeriodFilters(VerticalLayout layersLayout) {
 		cmbPeriodType = new ComboBox();
@@ -791,8 +700,8 @@ public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCr
 
 			//disable arrow buttons if date is first or last item in the dropdown
 			int curDateIndex = ((List<?>) cmbPeriodFilter.getValue()).indexOf(date);
-			Boolean hasNextDate = ((List<?>) cmbPeriodFilter.getValue()).size() > 0 && curDateIndex < ((List<?>)cmbPeriodFilter.getValue()).size() - 1;
-			Boolean hasPrevDate = ((List<?>)cmbPeriodFilter.getValue()).size() > 0 && curDateIndex > 0;
+			Boolean hasNextDate = !((List<?>) cmbPeriodFilter.getValue()).isEmpty() && curDateIndex < ((List<?>)cmbPeriodFilter.getValue()).size() - 1;
+			Boolean hasPrevDate = !((List<?>)cmbPeriodFilter.getValue()).isEmpty() && curDateIndex > 0;
 			btnBack.setEnabled(hasPrevDate);
 			btnForward.setEnabled(hasNextDate);
 
@@ -801,8 +710,8 @@ public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCr
 			refreshMapDashboard();
 		});
 		cmbPeriodFilter.addValueChangeListener(e -> {
-			cmbPeriodFilter.setEnabled(((List<?>)cmbPeriodFilter.getValue()).size() > 0);
-			btnForward.setEnabled(((List<?>)cmbPeriodFilter.getValue()).size() > 0);
+			cmbPeriodFilter.setEnabled(!((List<?>)cmbPeriodFilter.getValue()).isEmpty());
+			btnForward.setEnabled(!((List<?>)cmbPeriodFilter.getValue()).isEmpty());
 		});
 
 		CssStyles.style(btnBack, ValoTheme.BUTTON_BORDERLESS);
@@ -862,8 +771,6 @@ public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCr
 		if (reloadFlag != PeriodFilterReloadFlag.DONT_RELOAD)
 			cmbPeriodFilter.setItems();
 
-		//cmbPeriodFilter.removeAllItems();
-
 		if (periodType == null) {
 			cmbPeriodFilter.setEnabled(false);
 			dateFrom = null;
@@ -876,13 +783,21 @@ public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCr
 		}
 
 		cmbPeriodFilter.setEnabled(true);
-//		checks if map has a case before rendering period dropdown
-		if (mapAndFacilityCases.size() == 0)
+
+		if (mapAndFacilityCases.isEmpty())
 			return;
 
+
 		List<Date> reportedDates = mapAndFacilityCases.stream().map(c -> c.getReportDate()).collect(Collectors.toList());
-		Date minDate = reportedDates.stream().min(Date::compareTo).get();
-		Date maxDate = reportedDates.stream().max(Date::compareTo).get();
+		Optional<Date> minDateOptional = reportedDates.stream().min(Date::compareTo);
+		Optional<Date> maxDateOptional = reportedDates.stream().max(Date::compareTo);
+
+		if (!minDateOptional.isPresent() || !maxDateOptional.isPresent()) {
+			return;
+		}
+
+		Date minDate = minDateOptional.get();
+		Date maxDate = maxDateOptional.get();
 
 		List<Date> dates;
 		String strDateFormat = "";
@@ -920,27 +835,6 @@ public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCr
 		if (reloadFlag == PeriodFilterReloadFlag.RELOAD_AND_CLEAR_VALUE)
 			cmbPeriodFilter.setValue(cmbPeriodFilter.getData());
 	}
-
-//	protected void refreshMapDashboard(boolean forced) {
-//		clearRegionShapes();
-//		clearCaseMarkers();
-//		clearContactMarkers();
-//		clearEventMarkers();
-//		LeafletMapUtil.clearOtherCountriesOverlay(map);
-//
-//		if (hideOtherCountries) {
-//			LeafletMapUtil.addOtherCountriesOverlay(map);
-//		}
-//
-//		Date fromDate = dashboardDataProvider.getFromDate();
-//		Date toDate = dashboardDataProvider.getToDate();
-//
-//		if (showRegions) {
-//			showRegionsShapes(caseMeasure, fromDate, toDate, dashboardDataProvider.getDisease());
-//		}
-//
-//		super.refreshMapDashboard(forced);
-//	}
 
 	@Override
 	protected Long getMarkerCount(Date fromDate, Date toDate, int maxCount) {
@@ -1176,7 +1070,7 @@ public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCr
 		layersLayout.addComponent(showCurrentEpiSituationCB);
 	}
 
-	private HorizontalLayout createHeader() {
+	private HorizontalLayout createMapHeader() {
 		HorizontalLayout mapHeaderLayout = new HorizontalLayout();
 		mapHeaderLayout.setWidth(100, Unit.PERCENTAGE);
 		mapHeaderLayout.setSpacing(true);
@@ -1880,9 +1774,9 @@ public class DashboardMapComponent extends BaseDashboardMapComponent<DashboardCr
 		}
 if(dashboardDataProvider.getDashboardType().equals(DashboardType.DISEASE)) {
 	if (!forced && maxDisplayCount >= 0 && count > maxDisplayCount) {
-		showMapOverlay(maxDisplayCount);
+		makeMapOverlayVisible(maxDisplayCount);
 	} else {
-		hideMapOverlay();
+		makeMapOverlayInvisible();
 
 		loadMapData(fromDate, toDate);
 	}
@@ -1893,14 +1787,15 @@ if(dashboardDataProvider.getDashboardType().equals(DashboardType.DISEASE)) {
 		refreshMapDashboard(false);
 	}
 
-	private void showMapOverlay(int maxCount) {
+	private void makeMapOverlayVisible(int maxCount) {
 		overlayBackground.setVisible(true);
 		overlayLayout.setVisible(true);
 		overlayMessageLabel.setValue(String.format(I18nProperties.getString(Strings.warningDashboardMapTooManyMarkers), maxCount));
 	}
 
-	private void hideMapOverlay() {
+	private void makeMapOverlayInvisible() {
 		overlayBackground.setVisible(false);
 		overlayLayout.setVisible(false);
 	}
+
 }

@@ -35,6 +35,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.backend.infrastructure.InfrastructureAdo;
 import org.apache.commons.collections4.CollectionUtils;
 
 import de.symeda.sormas.api.common.Page;
@@ -349,21 +350,6 @@ public class RegionFacadeEjb
 
 		return em.createQuery(cq).getResultList();
 	}
-
-	// Need to be in the same order as in the constructor
-//	private void selectDtoFields(CriteriaQuery<RegionDto> cq, Root<Region> root) {
-//
-//		cq.multiselect(
-//				root.get(Region.CREATION_DATE),
-//				root.get(Region.CHANGE_DATE),
-//				root.get(Region.UUID),
-//				root.get(Region.ARCHIVED),
-//				root.get(Region.NAME),
-//				root.get(Region.EPID_CODE),
-//				root.get(Region.GROWTH_RATE),
-//				root.get(Region.EXTERNAL_ID));
-//	}
-
 
 	protected void selectDtoFields(CriteriaQuery<RegionDto> cq, Root<Region> root) {
 

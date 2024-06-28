@@ -19,20 +19,14 @@ package de.symeda.sormas.backend.disease;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.caze.CaseClassification;
-import de.symeda.sormas.api.caze.CaseCriteria;
-import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.dashboard.DashboardCriteria;
 import de.symeda.sormas.api.disease.DiseaseBurdenDto;
@@ -43,7 +37,6 @@ import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.outbreak.OutbreakCriteria;
-import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
 import de.symeda.sormas.backend.dashboard.DashboardService;
@@ -63,8 +56,7 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 
 	@EJB
 	private CaseFacadeEjbLocal caseFacade;
-	//	@EJB
-//	private DashboardService dashboardService;
+
 	@EJB
 	private EventFacadeEjbLocal eventFacade;
 	@EJB
@@ -81,66 +73,7 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 
 	@EJB
 	private FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal featureConfigurationFacade;
-	@Override
-	public List<DiseaseBurdenDto> getDiseaseBurdenForDashboard(
-			RegionReferenceDto regionRef,
-			DistrictReferenceDto districtRef,
-			Date from,
-			Date to,
-			Date previousFrom,
-			Date previousTo) {
 
-		//diseases
-		List<Disease> diseases = diseaseConfigurationFacade.getAllDiseases(true, true, true);
-
-		//new cases
-		CaseCriteria caseCriteria = new CaseCriteria().newCaseDateBetween(from, to, null).region(regionRef).district(districtRef);
-
-		Map<Disease, Long> newCases = caseFacade.getCaseCountByDisease(caseCriteria, true, true);
-
-		//events
-		Map<Disease, Long> events =
-				eventFacade.getEventCountByDisease(new EventCriteria().region(regionRef).district(districtRef).reportedBetween(from, to));
-
-		//outbreaks
-		Map<Disease, Long> outbreakDistrictsCount = outbreakFacade
-				.getOutbreakDistrictCountByDisease(new OutbreakCriteria().region(regionRef).district(districtRef).reportedBetween(from, to));
-
-		//last report district
-		Map<Disease, District> lastReportedDistricts = caseFacade.getLastReportedDistrictByDisease(caseCriteria, true, true);
-
-		//case fatalities
-		Map<Disease, Long> caseFatalities = personFacade.getDeathCountByDisease(caseCriteria, true, true);
-
-		//previous cases
-		caseCriteria.newCaseDateBetween(previousFrom, previousTo, null);
-		Map<Disease, Long> previousCases = caseFacade.getCaseCountByDisease(caseCriteria, true, true);
-
-
-		//build diseasesBurden
-		List<DiseaseBurdenDto> diseasesBurden = diseases.stream().map(disease -> {
-			Long caseCount = newCases.getOrDefault(disease, 0L);
-			Long previousCaseCount = previousCases.getOrDefault(disease, 0L);
-			Long eventCount = events.getOrDefault(disease, 0L);
-			Long outbreakDistrictCount = outbreakDistrictsCount.getOrDefault(disease, 0L);
-			Long caseFatalityCount = caseFatalities.getOrDefault(disease, 0L);
-			District lastReportedDistrict = lastReportedDistricts.getOrDefault(disease, null);
-
-			String lastReportedDistrictName = lastReportedDistrict == null ? "" : lastReportedDistrict.getName();
-
-			return new DiseaseBurdenDto(
-					disease,
-					caseCount,
-					previousCaseCount,
-					eventCount,
-					outbreakDistrictCount,
-					caseFatalityCount,
-					lastReportedDistrictName);
-
-		}).collect(Collectors.toList());
-
-		return diseasesBurden;
-	}
 
 	@Override
 	public DiseaseBurdenDto getDiseaseForDashboard(
@@ -156,9 +89,8 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 
 
 		DashboardCriteria dashboardCriteria =
-				new DashboardCriteria().region(region).district(district).newCaseDateType(newCaseDateType);
-				dashboardCriteria.setDateTo(toDate);
-				dashboardCriteria.setDateFrom(fromDate);
+				new DashboardCriteria().region(region).district(district).newCaseDateType(newCaseDateType).dateBetween(fromDate, toDate);
+
 
 		Map<Disease, Long> newCases = dashboardService.getCaseCountByDisease(dashboardCriteria);
 
@@ -235,12 +167,9 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 			regionDto = regionFacade.getByUuid(region.getUuid());
 		}
 
-
 		//new cases
 		DashboardCriteria dashboardCriteria =
-				new DashboardCriteria().region(region).district(district).newCaseDateType(newCaseDateType);
-		dashboardCriteria.setDateTo(toDate);
-		dashboardCriteria.setDateFrom(fromDate);
+				new DashboardCriteria().region(region).district(district).newCaseDateType(newCaseDateType).dateBetween(fromDate, toDate);
 
 		//Load count all dead/ fatalities
 		Map<Disease, Long> allCasesFetched = dashboardService.getCaseCountByDisease(dashboardCriteria);
@@ -248,17 +177,11 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 
 		Map<Disease, Long> caseFatalities = dashboardService.getDeathCountByDisease(dashboardCriteria);
 
-
 		dashboardCriteria.setOutcome(CaseOutcome.NO_OUTCOME);
-		//caseCriteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
 		Map<Disease, Long> archievedCase = dashboardService.getCaseCountByDisease(dashboardCriteria);
-
-		//dashboardCriteria.relevanceStatus(null);
-
 
 		dashboardCriteria.setOutcome(CaseOutcome.RECOVERED);
 		Map<Disease, Long> recoveredCase = dashboardService.getCaseCountByDisease(dashboardCriteria);
-
 
 		dashboardCriteria.setOutcome(CaseOutcome.UNKNOWN);
 
@@ -274,7 +197,6 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 		Long recoveredCaseCount = recoveredCase.getOrDefault(disease, 0L);
 		Long caseFatalityCount = caseFatalities.getOrDefault(disease, 0L);
 		Long otherCaseCount = other.getOrDefault(disease, 0L)+unknown.getOrDefault(disease, 0L);
-
 
 		return new DiseaseBurdenDto(
 				regionDto,
