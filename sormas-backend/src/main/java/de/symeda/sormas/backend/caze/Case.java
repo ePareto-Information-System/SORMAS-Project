@@ -41,32 +41,26 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus;
-import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
-import de.symeda.sormas.api.sixtyday.SixtyDayDto;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.riskfactor.RiskFactor;
 import de.symeda.sormas.backend.sixtyday.SixtyDay;
 import org.hibernate.annotations.Type;
 
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.externaldata.HasExternalData;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
-import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.afpimmunization.AfpImmunization;
 import de.symeda.sormas.backend.caze.maternalhistory.MaternalHistory;
 import de.symeda.sormas.backend.caze.porthealthinfo.PortHealthInfo;
@@ -86,10 +80,8 @@ import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.person.Person;
-import de.symeda.sormas.backend.riskfactor.RiskFactor;
 import de.symeda.sormas.backend.sample.Sample;
 import de.symeda.sormas.backend.share.ExternalShareInfo;
-import de.symeda.sormas.backend.sixtyday.SixtyDay;
 import de.symeda.sormas.backend.sormastosormas.entities.SormasToSormasShareable;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
 import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo;
@@ -99,13 +91,6 @@ import de.symeda.sormas.backend.therapy.Therapy;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.ModelConstants;
 import de.symeda.sormas.backend.visit.Visit;
-import org.hibernate.annotations.Type;
-
-import javax.persistence.*;
-import java.util.*;
-
-import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
-import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
 @Entity(name = "cases")
 //@Audited
@@ -409,7 +394,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	private YesNo postpartum;
 	private Trimester trimester;
-	private CSMVaccines vaccineType;
+	private VaccineTypes vaccineType;
 	private String numberOfDoses;
 	private List<Task> tasks;
 	private Set<Sample> samples = new HashSet<>();
@@ -1673,11 +1658,11 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.trimester = trimester;
 	}
 	@Enumerated(EnumType.STRING)
-	public CSMVaccines getVaccineType() {
+	public VaccineTypes getVaccineType() {
 		return vaccineType;
 	}
 
-	public void setVaccineType(CSMVaccines vaccineType) {
+	public void setVaccineType(VaccineTypes vaccineType) {
 		this.vaccineType = vaccineType;
 	}
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
