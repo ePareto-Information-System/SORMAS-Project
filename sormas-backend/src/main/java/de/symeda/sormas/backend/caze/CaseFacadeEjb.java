@@ -3520,7 +3520,6 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
 		target.setDateLatestUpdateRecord(source.getDateLatestUpdateRecord());
 		target.setNumberOfPeopleInSameHousehold(source.getNumberOfPeopleInSameHousehold());
-		target.setPatientName(source.getPatientName());
 		target.setPatientOtherNames(source.getPatientOtherNames());
 		target.setPatientDobDD(source.getPatientDobDD());
 		target.setPatientDobMM(source.getPatientDobMM());

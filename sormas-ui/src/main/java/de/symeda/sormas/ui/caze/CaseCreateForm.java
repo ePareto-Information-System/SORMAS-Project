@@ -637,7 +637,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				getContent().addComponent(patientDob, PATIENT_DOB_LABEL);
 
 				addFields(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT);
-				addFields(CaseDataDto.PATIENT_NAME, CaseDataDto.PATIENT_OTHER_NAMES);
 
 				patientDobDay = addField(CaseDataDto.PATIENT_DOB_DD, ComboBox.class);
 				// @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3

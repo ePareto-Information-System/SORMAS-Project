@@ -1804,7 +1804,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
                 tfReportLon.setVisible(true);
                 tfReportLat.setVisible(true);
-                addFields(CaseDataDto.PATIENT_NAME, CaseDataDto.PATIENT_OTHER_NAMES);
 
                 Label dobNot = new Label(I18nProperties.getCaption(Captions.dobNot));
                 dobNot.addStyleName(H4);
