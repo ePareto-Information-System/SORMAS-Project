@@ -494,7 +494,7 @@ public class ImmunizationDataForm extends AbstractEditForm<ImmunizationDto> {
 				FieldHelper.updateItems(
 					facilityCombo,
 					FacadeProvider.getFacilityFacade()
-						.getActiveFacilitiesByDistrictAndType(districtDto, (FacilityType) facilityType.getValue(), true, false));
+						.getActiveFacilitiesByDistrictAndType(districtDto, (FacilityType) facilityType.getValue(), true, false, true));
 			}
 		});
 
@@ -506,14 +506,14 @@ public class ImmunizationDataForm extends AbstractEditForm<ImmunizationDto> {
 					facilityCombo,
 					communityDto != null
 						? FacadeProvider.getFacilityFacade()
-							.getActiveFacilitiesByCommunityAndType(communityDto, (FacilityType) facilityType.getValue(), true, false)
+							.getActiveFacilitiesByCommunityAndType(communityDto, (FacilityType) facilityType.getValue(), true, false, true)
 						: responsibleDistrictCombo.getValue() != null
 							? FacadeProvider.getFacilityFacade()
 								.getActiveFacilitiesByDistrictAndType(
 									(DistrictReferenceDto) responsibleDistrictCombo.getValue(),
 									(FacilityType) facilityType.getValue(),
 									true,
-									false)
+									false, true)
 							: null);
 			}
 		});
@@ -539,7 +539,7 @@ public class ImmunizationDataForm extends AbstractEditForm<ImmunizationDto> {
 								(CommunityReferenceDto) responsibleCommunityCombo.getValue(),
 								(FacilityType) facilityType.getValue(),
 								true,
-								false));
+								false, true));
 				} else {
 					FieldHelper.updateItems(
 						facilityCombo,
@@ -548,7 +548,7 @@ public class ImmunizationDataForm extends AbstractEditForm<ImmunizationDto> {
 								(DistrictReferenceDto) responsibleDistrictCombo.getValue(),
 								(FacilityType) facilityType.getValue(),
 								true,
-								false));
+								false, true));
 				}
 			}
 		});

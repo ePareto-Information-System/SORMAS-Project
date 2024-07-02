@@ -326,11 +326,9 @@ public interface Captions {
 	String CaseData_mobileTeamNo = "CaseData.mobileTeamNo";
 	String CaseData_informationGivenBy = "CaseData.informationGivenBy";
 	String CaseData_familyLinkWithPatient = "CaseData.familyLinkWithPatient";
-	String CaseData_patientName = "CaseData.patientName";
+	String CaseData_patientFirstName = "CaseData.patientFirstName";
+	String CaseData_patientLastName = "CaseData.patientLastName";
 	String CaseData_patientOtherNames = "CaseData.patientOtherNames";
-	String CaseData_patientDobDD = "CaseData.patientDobDD";
-	String CaseData_patientDobMM = "CaseData.patientDobMM";
-	String CaseData_patientDobYY = "CaseData.patientDobYY";
 	String CaseData_patientAgeYear = "CaseData.patientAgeYear";
 	String CaseData_patientAgeMonth = "CaseData.patientAgeMonth";
 	String CaseData_patientSex = "CaseData.patientSex";
@@ -516,6 +514,7 @@ public interface Captions {
 	String CaseData_ethnicity = "CaseData.ethnicity";
 	String CaseData_occupation = "CaseData.occupation";
 	String CaseData_districtOfResidence = "CaseData.districtOfResidence";
+	String CaseData_ageYearMonth = "CaseData.ageYearMonth";
 	String CaseData_wasInQuarantineBeforeIsolation = "CaseData.wasInQuarantineBeforeIsolation";
 	String CaseData_reportingVillage = "CaseData.reportingVillage";
 	String CaseData_reportingZone = "CaseData.reportingZone";
@@ -1797,6 +1796,7 @@ public interface Captions {
 	String Facility_name = "Facility.name";
 	String Facility_NO_FACILITY = "Facility.NO_FACILITY";
 	String Facility_OTHER_FACILITY = "Facility.OTHER_FACILITY";
+	String Facility_NOT_SET_FACILITY = "Facility.NOT_SET_FACILITY";
 	String Facility_postalCode = "Facility.postalCode";
 	String Facility_publicOwnership = "Facility.publicOwnership";
 	String Facility_region = "Facility.region";

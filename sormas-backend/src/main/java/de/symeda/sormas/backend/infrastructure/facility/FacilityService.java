@@ -71,7 +71,8 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 			Community community,
 			FacilityType type,
 			boolean includeOtherFacility,
-			boolean includeNoneFacility) {
+			boolean includeNoneFacility,
+			boolean includeNotSetFacility) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Facility> cq = cb.createQuery(getElementClass());
@@ -93,6 +94,9 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 		}
 		if (includeNoneFacility) {
 			facilities.add(getByUuid(FacilityDto.NONE_FACILITY_UUID));
+		}
+		if (includeNotSetFacility) {
+			facilities.add(getByUuid(FacilityDto.NOT_SET_FACILITY_UUID));
 		}
 
 		return facilities;
@@ -134,7 +138,8 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 			District district,
 			FacilityType type,
 			boolean includeOtherFacility,
-			boolean includeNoneFacility) {
+			boolean includeNoneFacility,
+			boolean includeNotSetFacility) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Facility> cq = cb.createQuery(getElementClass());
@@ -157,6 +162,9 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 		}
 		if (includeNoneFacility) {
 			facilities.add(getByUuid(FacilityDto.NONE_FACILITY_UUID));
+		}
+		if (includeNotSetFacility) {
+			facilities.add(getByUuid(FacilityDto.NOT_SET_FACILITY_UUID));
 		}
 
 		return facilities;

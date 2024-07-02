@@ -181,7 +181,7 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
                     districtDto != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(districtDto.getUuid()) : null);
             FieldHelper.updateItems(
                     healthFacility,
-                    districtDto != null ? FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(districtDto, false) : null);
+                    districtDto != null ? FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(districtDto, false, false) : null);
             FieldHelper.updateItems(
                     associatedOfficer,
                     districtDto != null ? FacadeProvider.getUserFacade().getUserRefsByDistrict(districtDto, null, UserRight.CASE_RESPONSIBLE, UserRight.WEEKLYREPORT_CREATE) : null);

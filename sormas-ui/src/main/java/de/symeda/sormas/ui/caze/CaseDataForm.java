@@ -183,8 +183,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                     fluidRowLocs(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY)
                     + fluidRowLocs(MPOX_COORDINATE_LABEL)
                     + fluidRowLocs(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT)
-                    + fluidRowLocs(CaseDataDto.PATIENT_NAME, CaseDataDto.PATIENT_OTHER_NAMES)
-                    + fluidRowLocs(PATIENT_DOB_LABEL)
+                    + fluidRowLocs(CaseDataDto.PATIENT_FIRST_NAME, CaseDataDto.PATIENT_LAST_NAME, CaseDataDto.PATIENT_OTHER_NAMES)
                     + fluidRowLocs(CaseDataDto.PATIENT_DOB_YY, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_DD)
                     + fluidRowLocs(DOB_NOT_KNOWN_LABEL)
                     + fluidRowLocs(CaseDataDto.PATIENT_AGE_YEAR, CaseDataDto.PATIENT_AGE_MONTH)
@@ -1747,7 +1746,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             //CORONAVIRUS
             if (disease == Disease.CORONAVIRUS) {
                 FieldHelper
-                        .setVisibleWhen(vaccinationStatus, Arrays.asList(vaccineType, numberOfDoses, cardDateField, secondVaccinationDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
+                        .setVisibleWhen(vaccinationStatus, Arrays.asList(numberOfDoses, cardDateField, secondVaccinationDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
             }
 
             if (disease == Disease.MEASLES) {
@@ -1805,7 +1804,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
                 tfReportLon.setVisible(true);
                 tfReportLat.setVisible(true);
-                addFields(CaseDataDto.PATIENT_NAME, CaseDataDto.PATIENT_OTHER_NAMES);
 
                 Label dobNot = new Label(I18nProperties.getCaption(Captions.dobNot));
                 dobNot.addStyleName(H4);
@@ -1829,6 +1827,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 setItemCaptionsForMonths(patientDobMonth);
 
                 ComboBox patientDobYear = addField(CaseDataDto.PATIENT_DOB_YY, ComboBox.class);
+                patientDobYear.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.BIRTH_DATE));
                 // @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
                 patientDobYear.setNullSelectionAllowed(true);
                 patientDobYear.addItems(DateHelper.getYearsToNow());
@@ -1852,6 +1851,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 patientSex.removeItem(Sex.OTHER);
                 patientSex.removeItem(Sex.UNKNOWN);
 
+                addFields(CaseDataDto.PATIENT_FIRST_NAME, CaseDataDto.PATIENT_LAST_NAME, CaseDataDto.PATIENT_OTHER_NAMES);
+            
                 addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
                 addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
 			}
@@ -1931,12 +1932,18 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                         true);
             }
 
-            	//AFP
 			if (disease == Disease.AFP) {
 				setVisible(true, CaseDataDto.NOTIFIED_BY_LIST, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
                 outcome.setVisible(false);
+                FacilityReferenceDto facility = getValue().getHealthFacility();
+                if (facility != null) {
+                    if (facility.toString().equals(FacilityDto.NOT_SET_FACILITY) ||
+                            facility.getCaption().equals("Not Set")) {
+                        facilityCombo.addStyleName("change-color");
+                    }
+                }
 
-			}
+            }
 
             if (disease == Disease.FOODBORNE_ILLNESS) {
                 placeOfStayHeadingLabel.setVisible(false);
@@ -2330,11 +2337,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             if (community != null) {
                 FieldHelper.updateItems(
                         facilityCombo,
-                        FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, facilityType, true, false));
+                        FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, facilityType, true, false, true));
             } else if (district != null) {
                 FieldHelper.updateItems(
                         facilityCombo,
-                        FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(district, facilityType, true, false));
+                        FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(district, facilityType, true, false, true));
             } else {
                 FieldHelper.removeItems(facilityCombo);
             }

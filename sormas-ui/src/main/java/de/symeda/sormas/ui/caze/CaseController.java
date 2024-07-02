@@ -897,6 +897,10 @@ public class CaseController {
 		selectOrCreateCase(dto, FacadeProvider.getPersonFacade().getByUuid(selectedPerson.getUuid()), uuid -> {
 			if (uuid == null) {
 				dto.getSymptoms().setOnsetDate(createForm.getOnsetDate());
+				if(dto.getHealthFacility() == null && (dto.getDisease() != null  && dto.getDisease() == Disease.AFP)){
+					dto.setHealthFacility(new FacilityReferenceDto(FacilityDto.NOT_SET_FACILITY_UUID));
+					dto.setFacilityType(FacilityType.HOSPITAL);
+				}
 				saveCase(dto);
 				navigateToView(CaseDataView.VIEW_NAME, dto.getUuid(), null);
 			} else {
@@ -912,7 +916,16 @@ public class CaseController {
 	}
 
 	private void transferDataToPerson(CaseCreateForm createForm, PersonDto person) {
-		createForm.getPersonCreateForm().transferDataToPerson(person);
+		if(createForm.getValue().getDisease().equals(Disease.MONKEYPOX)){
+			person.setFirstName(createForm.getPatientFirstName());
+			person.setLastName(createForm.getPatientLastName());
+			person.setOtherName(createForm.getPatientOtherNames());
+			person.setSex(createForm.getPatientSex());
+
+			createForm.transferDataToPerson(person);
+		} else{
+			createForm.getPersonCreateForm().transferDataToPerson(person);
+		}
 	}
 
 	/*private void updateHomeAddress(CaseCreateForm createForm, PersonDto person) {

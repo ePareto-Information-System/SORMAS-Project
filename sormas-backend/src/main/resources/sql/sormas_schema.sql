@@ -14908,4 +14908,16 @@ INSERT INTO schema_version (version_number, comment) VALUES (687, 'Modified colu
 
 ALTER TABLE person ADD COLUMN otherId VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (688, 'Added otherId to person');
+
+INSERT INTO facility (id, name, publicownership, uuid, archived, changedate, creationdate, sys_period) VALUES (nextval('entity_seq'), 'Not Set', false, 'SORMAS-CONSTID-NOTSET-FACILITY', false, now(), now(), tstzrange(now(), null));
+UPDATE facility SET type = 'HOSPITAL' WHERE type ISNULL AND uuid NOT IN ('SORMAS-CONSTID-NOTSET-FACILITY');
+UPDATE facility SET type = 'HOSPITAL' WHERE NOT type = 'LABORATORY' AND uuid NOT IN ('SORMAS-CONSTID-NOTSET-FACILITY');
+
+INSERT INTO schema_version (version_number, comment) VALUES (689, 'Added Not Set Insert Query into facility');
+
+ALTER TABLE cases DROP COLUMN patientname;
+ALTER TABLE cases ADD COLUMN patientfirstname VARCHAR(255);
+ALTER TABLE cases ADD COLUMN patientlastname VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (690, 'Dropped patientname, Added patient first,last names to cases');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

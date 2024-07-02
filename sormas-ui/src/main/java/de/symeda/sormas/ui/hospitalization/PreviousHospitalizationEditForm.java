@@ -173,7 +173,7 @@ public class PreviousHospitalizationEditForm extends AbstractEditForm<PreviousHo
 				.updateItems(facilityCommunity, isEmpty ? null : FacadeProvider.getCommunityFacade().getAllActiveByDistrict(districtDto.getUuid()));
 			FieldHelper.updateItems(
 				healthFacilityCombo,
-				addUnknown(isEmpty ? null : FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(districtDto, true), unknownFacility));
+				addUnknown(isEmpty ? null : FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(districtDto, true, true), unknownFacility));
 		});
 		facilityCommunity.addValueChangeListener(e -> {
 			CommunityReferenceDto communityDto = (CommunityReferenceDto) e.getProperty().getValue();
@@ -188,8 +188,8 @@ public class PreviousHospitalizationEditForm extends AbstractEditForm<PreviousHo
 				healthFacilityCombo,
 				addUnknown(
 					communityDto != null
-						? FacadeProvider.getFacilityFacade().getActiveHospitalsByCommunity(communityDto, true)
-						: isDistrictEmpty ? null : FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(district, true),
+						? FacadeProvider.getFacilityFacade().getActiveHospitalsByCommunity(communityDto, true, true)
+						: isDistrictEmpty ? null : FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(district, true, true),
 					unknownFacility));
 		});
 		regionCombo.addItems(addUnknown(FacadeProvider.getRegionFacade().getAllActiveByServerCountry(), unknownRegion));
