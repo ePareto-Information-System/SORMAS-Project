@@ -54,6 +54,7 @@ public class CCESamplesGrid extends FilteredGrid<SampleIndexDto, SampleCriteria>
     private static final String PATHOGEN_TEST_RESULT = Captions.Sample_pathogenTestResult;
     private static final String DISEASE_SHORT = Captions.columnDiseaseShort;
     private static final String LAST_PATHOGEN_TEST = Captions.columnLastPathogenTest;
+    private static final String REQUESTED_SAMPLE_MATERIALS_COLUMN = "requestedSampleMaterialsColumn";
 
     private DataProviderListener<SampleIndexDto> dataProviderListener;
 
@@ -104,13 +105,18 @@ public class CCESamplesGrid extends FilteredGrid<SampleIndexDto, SampleCriteria>
             }
             return text;
         });
+
+        Column<SampleIndexDto, String> requestedSampleMaterialsColumn = addColumn(sample -> sample.getFormattedRequestedSampleMaterials());
+        requestedSampleMaterialsColumn.setId(REQUESTED_SAMPLE_MATERIALS_COLUMN);
+        requestedSampleMaterialsColumn.setCaption("Type of Sample");
+
         lastPathogenTestColumn.setId(LAST_PATHOGEN_TEST);
         lastPathogenTestColumn.setSortable(false);
 
         if (isMonkeyPoxPresent(criteria)) {
             setColumns(
                     SampleIndexDto.UUID,
-                    SampleIndexDto.REQUESTED_SAMPLE_MATERIALS_STRING,
+                    REQUESTED_SAMPLE_MATERIALS_COLUMN,
                     PATHOGEN_TEST_RESULT,
                     SampleIndexDto.RECEIVED,
                     SampleIndexDto.RECEIVED_DATE,

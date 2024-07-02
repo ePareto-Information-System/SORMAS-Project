@@ -600,7 +600,7 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		StringBuilder sb = new StringBuilder();
 		sb.append(DateFormatHelper.formatLocalDateTime(sampleDateTime)).append(" - ");
 		sb.append(sampleMaterial);
-		sb.append(getFormattedRequestedSampleMaterials());
+		sb.append(requestedSampleMaterialsString);
 		sb.append(" (").append(disease).append(")");
 		if (pathogenTestResult != null) {
 			sb.append(": ").append(pathogenTestResult);
