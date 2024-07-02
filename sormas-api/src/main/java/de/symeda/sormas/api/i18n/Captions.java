@@ -2483,6 +2483,7 @@ public interface Captions {
 	String Sample_sampleCode = "Sample.sampleCode";
 	String Sample_sampleDateTime = "Sample.sampleDateTime";
 	String Sample_sampleMaterial = "Sample.sampleMaterial";
+	String Sample_requestedSampleMaterialsString = "Sample.requestedSampleMaterialsString";
 	String Sample_hasSampleBeenCollected = "Sample.hasSampleBeenCollected";
 	String Sample_sampleMaterialText = "Sample.sampleMaterialText";
 	String Sample_suspectedDisease = "Sample.suspectedDisease";
