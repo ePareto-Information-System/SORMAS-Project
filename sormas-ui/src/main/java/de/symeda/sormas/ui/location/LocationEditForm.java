@@ -956,10 +956,14 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	}
 
 	public void getIncomingDisease(Disease incomingDisease){
-		newDisease = incomingDisease;
+		if (incomingDisease == null) {
+			return;
+		}
 
 
-		switch (newDisease){
+
+
+		switch (incomingDisease){
 			case YELLOW_FEVER:
 				handleYellowFever();
 				break;

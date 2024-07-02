@@ -429,6 +429,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		addressForm = addField(PersonDto.ADDRESS, new LocationEditForm(
 				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
 				UiFieldAccessCheckers.getNoop(), disease));
+
 		addressForm.getIncomingDisease(disease);
 
 		birthInInstitutionField = addField(PersonDto.BIRTH_IN_INSTITUTION, NullableOptionGroup.class);
@@ -1138,6 +1139,10 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	@Override
 	protected String createHtmlLayout() {
 		String DISEASE_LAYOUT = "";
+
+		if (disease== null) {
+			return HTML_LAYOUT;
+		}
 
 		switch (disease) {
 			case GUINEA_WORM:
