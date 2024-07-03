@@ -42,7 +42,6 @@ import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import de.symeda.sormas.api.utils.FieldConstraints;
-import de.symeda.sormas.api.utils.Required;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.SensitiveData;
 import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
@@ -413,7 +412,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private YesNo positiveViralCulture;
 	private YesNo positiveRealTime;
 	private YesNo fourFoldRise;
-	private InfluenzaVirus influenzaVirus;
+	private VirusType influenzaVirus;
 	private String otherInfluenzaVirus;
 	private String treatment;
 	private String stateTreatmentAdministered;
@@ -1700,11 +1699,11 @@ public class SampleDto extends SormasToSormasShareableDto {
 		this.fourFoldRise = fourFoldRise;
 	}
 
-	public InfluenzaVirus getInfluenzaVirus() {
+	public VirusType getInfluenzaVirus() {
 		return influenzaVirus;
 	}
 
-	public void setInfluenzaVirus(InfluenzaVirus influenzaVirus) {
+	public void setInfluenzaVirus(VirusType influenzaVirus) {
 		this.influenzaVirus = influenzaVirus;
 	}
 

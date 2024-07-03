@@ -2,7 +2,7 @@ package de.symeda.sormas.api.utils;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
 
-public enum InfluenzaVirus {
+public enum VirusType {
 
     AH5N1,
     AH3N2,
