@@ -181,7 +181,7 @@ public class EpiDataDto extends PseudonymizableDto {
 	private String nameOfVaccineCovid;
 	private String placesVisitedPastSevenDays;
 	private YesNo vistedPlacesConfirmedPandemic;
-	private RiskFactorInfluenza riskFactorsSevereDisease;
+	private RiskFactorCondition riskFactorsSevereDisease;
 	private String otherSpecify;
 	private YesNo intlTravel;
 	private String specifyCountries;
@@ -459,11 +459,11 @@ public class EpiDataDto extends PseudonymizableDto {
 		this.vistedPlacesConfirmedPandemic = vistedPlacesConfirmedPandemic;
 	}
 
-	public RiskFactorInfluenza getRiskFactorsSevereDisease() {
+	public RiskFactorCondition getRiskFactorsSevereDisease() {
 		return riskFactorsSevereDisease;
 	}
 
-	public void setRiskFactorsSevereDisease(RiskFactorInfluenza riskFactorsSevereDisease) {
+	public void setRiskFactorsSevereDisease(RiskFactorCondition riskFactorsSevereDisease) {
 		this.riskFactorsSevereDisease = riskFactorsSevereDisease;
 	}
 

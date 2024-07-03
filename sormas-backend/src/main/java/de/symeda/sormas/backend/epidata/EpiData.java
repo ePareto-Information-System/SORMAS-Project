@@ -27,11 +27,10 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.epidata.ContactSetting;
 import de.symeda.sormas.api.epidata.PlaceManaged;
 import de.symeda.sormas.api.riskfactor.DrinkingWaterSource;
-import de.symeda.sormas.api.utils.RiskFactorInfluenza;
+import de.symeda.sormas.api.utils.RiskFactorCondition;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.caze.CaseOutcome;
-import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.NotExposedToApi;
@@ -69,7 +68,7 @@ public class EpiData extends AbstractDomainObject {
 	private Integer yearOfVaccination;
 	private String placesVisitedPastSevenDays;
 	private YesNo vistedPlacesConfirmedPandemic;
-	private RiskFactorInfluenza riskFactorsSevereDisease;
+	private RiskFactorCondition riskFactorsSevereDisease;
 	private String otherSpecify;
 	private YesNo intlTravel;
 	private String specifyCountries;
@@ -374,11 +373,11 @@ public class EpiData extends AbstractDomainObject {
 		this.vistedPlacesConfirmedPandemic = vistedPlacesConfirmedPandemic;
 	}
 
-	public RiskFactorInfluenza getRiskFactorsSevereDisease() {
+	public RiskFactorCondition getRiskFactorsSevereDisease() {
 		return riskFactorsSevereDisease;
 	}
 
-	public void setRiskFactorsSevereDisease(RiskFactorInfluenza riskFactorsSevereDisease) {
+	public void setRiskFactorsSevereDisease(RiskFactorCondition riskFactorsSevereDisease) {
 		this.riskFactorsSevereDisease = riskFactorsSevereDisease;
 	}
 
