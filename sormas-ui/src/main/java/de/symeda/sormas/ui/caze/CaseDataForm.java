@@ -387,6 +387,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
     private TextField reportingVillage;
     private TextField reportingZone;
     private ComboBox patientDobDay;
+    private Label placeOfStayHeadingLabel;
+    private AccessibleTextField tfReportLon;
+    private AccessibleTextField tfReportLat;
 
     private final Map<ReinfectionDetailGroup, CaseReinfectionCheckBoxTree> reinfectionTrees = new EnumMap<>(ReinfectionDetailGroup.class);
 
@@ -456,9 +459,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             return;
         }
 
-		Label caseDataHeadingLabel = new Label(I18nProperties.getString(Strings.headingCaseData));
+        Label caseDataHeadingLabel = new Label(I18nProperties.getString(Strings.headingCaseData));
 
-		getContent().addComponent(caseDataHeadingLabel, CASE_DATA_HEADING_LOC);
+        getContent().addComponent(caseDataHeadingLabel, CASE_DATA_HEADING_LOC);
 
         if (caseFollowUpEnabled) {
             Label followUpStatusHeadingLabel = new Label(I18nProperties.getString(Strings.headingFollowUpStatus));
@@ -466,9 +469,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             getContent().addComponent(followUpStatusHeadingLabel, FOLLOW_UP_STATUS_HEADING_LOC);
         }
 
-		Label personWhoCompletedThisFormHeadingLabel = new Label(I18nProperties.getString(Strings.headingPersonWhoCompletedThisForm));
-		personWhoCompletedThisFormHeadingLabel.addStyleName(H3);
-		getContent().addComponent(personWhoCompletedThisFormHeadingLabel, PERSON_WHO_COMPLETED_THIS_FORM_HEADING_LOC);
+        Label personWhoCompletedThisFormHeadingLabel = new Label(I18nProperties.getString(Strings.headingPersonWhoCompletedThisForm));
+        personWhoCompletedThisFormHeadingLabel.addStyleName(H3);
+        getContent().addComponent(personWhoCompletedThisFormHeadingLabel, PERSON_WHO_COMPLETED_THIS_FORM_HEADING_LOC);
 
 
         // Add fields
@@ -499,9 +502,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         DateField dateOfInvestigation = addField(CaseDataDto.DATE_OF_INVESTIGATION, DateField.class);
         notifiedOther.setVisible(false);
 
-		TextField investigationOfficerNameField = addField(CaseDataDto.INVESTIGATION_OFFICER_NAME, TextField.class);
-		TextField investigationOfficerPositionField = addField(CaseDataDto.INVESTIGATION_OFFICER_POSITION, TextField.class);
-		setVisible(false, CaseDataDto.INVESTIGATION_OFFICER_NAME, CaseDataDto.INVESTIGATION_OFFICER_POSITION);
+        TextField investigationOfficerNameField = addField(CaseDataDto.INVESTIGATION_OFFICER_NAME, TextField.class);
+        TextField investigationOfficerPositionField = addField(CaseDataDto.INVESTIGATION_OFFICER_POSITION, TextField.class);
+        setVisible(false, CaseDataDto.INVESTIGATION_OFFICER_NAME, CaseDataDto.INVESTIGATION_OFFICER_POSITION);
 
 
         TextField epidField = addField(CaseDataDto.EPID_NUMBER, TextField.class);
@@ -544,14 +547,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         otherCaseOutComeDetails.addAttachListener(e -> setOtherOutomeValue());
 
         NullableOptionGroup investigationstatus = addField(CaseDataDto.INVESTIGATION_STATUS, NullableOptionGroup.class);
-        NullableOptionGroup outcome = new NullableOptionGroup("Outcome");
+        NullableOptionGroup outcome = addField(CaseDataDto.OUTCOME, NullableOptionGroup.class);
+        FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED));
 
-        for (CaseOutcome caseOutcome : CaseOutcome.values()) {
-            if (caseOutcome == CaseOutcome.DECEASED || caseOutcome == CaseOutcome.ALIVE) {
-                outcome.addItem(caseOutcome);
-            }
-        }
-        addField(CaseDataDto.OUTCOME, outcome);
         addField(CaseDataDto.BLOOD_ORGAN_OR_TISSUE_DONATED, NullableOptionGroup.class);
 
         addField(CaseDataDto.SEQUELAE, NullableOptionGroup.class);
@@ -584,8 +582,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         TextField specifyEvent = addField(CaseDataDto.SPECIFY_EVENT_DIAGNOSIS, TextField.class);
         specifyEvent.setVisible(false);
 
-		addFields(CaseDataDto.FORM_COMPLETED_BY_NAME, CaseDataDto.FORM_COMPLETED_BY_POSITION, CaseDataDto.FORM_COMPLETED_BY_CELL_PHONE_NO);
-		setVisible(false, CaseDataDto.FORM_COMPLETED_BY_NAME, CaseDataDto.FORM_COMPLETED_BY_POSITION, CaseDataDto.FORM_COMPLETED_BY_CELL_PHONE_NO);
+        addFields(CaseDataDto.FORM_COMPLETED_BY_NAME, CaseDataDto.FORM_COMPLETED_BY_POSITION, CaseDataDto.FORM_COMPLETED_BY_CELL_PHONE_NO);
+        setVisible(false, CaseDataDto.FORM_COMPLETED_BY_NAME, CaseDataDto.FORM_COMPLETED_BY_POSITION, CaseDataDto.FORM_COMPLETED_BY_CELL_PHONE_NO);
 
         quarantine = addField(CaseDataDto.QUARANTINE);
         quarantine.addValueChangeListener(e -> onValueChange());
@@ -636,7 +634,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
                 }
             }
-
 
             //if(cbCaseClassification.getCaption())
             addField(CaseDataDto.NOT_A_CASE_REASON_NEGATIVE_TEST, CheckBox.class);
@@ -849,8 +846,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             specifyEvent.setVisible(idsrdiagnosis.getValue() != null && idsrdiagnosis.getValue() == IdsrType.OTHER);
         });
 
-//		}
-
         addField(CaseDataDto.QUARANTINE_HOME_POSSIBLE, NullableOptionGroup.class);
         addField(CaseDataDto.QUARANTINE_HOME_POSSIBLE_COMMENT, TextField.class);
         addField(CaseDataDto.QUARANTINE_HOME_SUPPLY_ENSURED, NullableOptionGroup.class);
@@ -941,7 +936,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 false,
                 null);
 
-        Label placeOfStayHeadingLabel = new Label(I18nProperties.getCaption(Captions.casePlaceOfStay));
+        placeOfStayHeadingLabel = new Label(I18nProperties.getCaption(Captions.casePlaceOfStay));
         placeOfStayHeadingLabel.addStyleName(H3);
         getContent().addComponent(placeOfStayHeadingLabel, PLACE_OF_STAY_HEADING_LOC);
 
@@ -1046,10 +1041,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                         false,
                         I18nProperties.getValidationError(Validations.afterDate, prohibitionToWorkUntil.getCaption(), prohibitionToWorkFrom.getCaption())));
 
-        AccessibleTextField tfReportLat = addField(CaseDataDto.REPORT_LAT, AccessibleTextField.class);
+        tfReportLat = addField(CaseDataDto.REPORT_LAT, AccessibleTextField.class);
         tfReportLat.setConverter(new StringToAngularLocationConverter());
         tfReportLat.setVisible(false);
-        AccessibleTextField tfReportLon = addField(CaseDataDto.REPORT_LON, AccessibleTextField.class);
+        tfReportLon = addField(CaseDataDto.REPORT_LON, AccessibleTextField.class);
         tfReportLon.setConverter(new StringToAngularLocationConverter());
         tfReportLon.setVisible(false);
         AccessibleTextField tfReportAccuracy = addField(CaseDataDto.REPORT_LAT_LON_ACCURACY, AccessibleTextField.class);
@@ -1142,7 +1137,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         secondVaccinationDateField = addField(CaseDataDto.SECOND_VACCINATION_DATE, DateField.class);
         secondVaccinationDateField.setVisible(false);
 
-
         reportingVillage = addField(CaseDataDto.REPORTING_VILLAGE, TextField.class);
         reportingZone = addField(CaseDataDto.REPORTING_ZONE, TextField.class);
         setVisible(false, CaseDataDto.REPORTING_VILLAGE, CaseDataDto.REPORTING_ZONE);
@@ -1208,18 +1202,18 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 true);
 
         // jurisdiction fields
-		Label jurisdictionHeadingLabel;
-		switch (disease) {
-			case GUINEA_WORM:
-				jurisdictionHeadingLabel = new Label(I18nProperties.getString(Strings.headingCaseDataReportingInvestigationInformationGuineaWorm));
-				jurisdictionHeadingLabel.addStyleName(H3);
-				break;
-			default:
-				jurisdictionHeadingLabel = new Label(I18nProperties.getString(Strings.headingCaseResponsibleJurisidction));
-				jurisdictionHeadingLabel.addStyleName(H3);
-				break;
-		}
-		getContent().addComponent(jurisdictionHeadingLabel, RESPONSIBLE_JURISDICTION_HEADING_LOC);
+        Label jurisdictionHeadingLabel;
+        switch (disease) {
+            case GUINEA_WORM:
+                jurisdictionHeadingLabel = new Label(I18nProperties.getString(Strings.headingCaseDataReportingInvestigationInformationGuineaWorm));
+                jurisdictionHeadingLabel.addStyleName(H3);
+                break;
+            default:
+                jurisdictionHeadingLabel = new Label(I18nProperties.getString(Strings.headingCaseResponsibleJurisidction));
+                jurisdictionHeadingLabel.addStyleName(H3);
+                break;
+        }
+        getContent().addComponent(jurisdictionHeadingLabel, RESPONSIBLE_JURISDICTION_HEADING_LOC);
 
         ComboBox responsibleRegion = addInfrastructureField(CaseDataDto.RESPONSIBLE_REGION);
         responsibleRegion.setRequired(true);
@@ -1235,7 +1229,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         responsibleDistrict.addValueChangeListener(e -> {
             Boolean differentPlaceOfStay = differentPlaceOfStayJurisdiction.getValue();
             if (differentPlaceOfStay == null || Boolean.FALSE.equals(differentPlaceOfStay)) {
-                    updateFacility();
+                updateFacility();
             }
         });
         responsibleCommunity.addValueChangeListener((e) -> {
@@ -1250,7 +1244,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 updateFacility();
             }
         });
-		
+
 
         // Set initial visibilities & accesses
         initializeVisibilitiesAndAllowedVisibilities();
@@ -1481,9 +1475,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 						.setVisible(FieldHelper.getNullableSourceFieldValue((Field) e.getProperty()) == YesNoUnknown.YES);
 			});
 		}*/
-		if(disease != Disease.MONKEYPOX && disease != Disease.AFP) {
-			List<String> medicalInformationFields =
-					Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.VACCINATION_STATUS, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
+        if (disease != Disease.MONKEYPOX && disease != Disease.AFP) {
+            List<String> medicalInformationFields =
+                    Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.VACCINATION_STATUS, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
 
             healthConditionsField = addField(CaseDataDto.HEALTH_CONDITIONS, HealthConditionsForm.class);
             healthConditionsField.setVisible(false);
@@ -1555,8 +1549,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
         }
 
-			outcome.setVisible(false);
-
+        outcome.setVisible(false);
 
         addField(CaseDataDto.DELETION_REASON);
         addField(CaseDataDto.OTHER_DELETION_REASON, TextArea.class).setRows(3);
@@ -1712,36 +1705,55 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 reinfectionTree.initCheckboxes();
             }
 
-			hideFieldsForSelectedDisease(disease);
+            hideFieldsForSelectedDisease(disease);
 
-            notifiedByList.addValueChangeListener((ValueChangeListener) valueChangeEvent-> {
+            notifiedByList.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
                 notifiedOther.setVisible(notifiedByList.getValue() != null && notifiedByList.getValue() == NotifiedList.OTHER);
             });
 
-			//YELLOW FEVER
-			if (disease == Disease.YELLOW_FEVER) {
-//				dateFormReceivedAtNational.setVisible(true);
-//                dateFormSentToDistrict.setVisible(true);
-//                dateFormReceivedAtDistrict.setVisible(true);
-				setVaccinatedByCardOrHistoryVisibility();
-				outcome.setVisible(false);
-			}
-
-            //CSM
-            if (disease == Disease.CSM) {
-                setVaccinationHelperVisibility();
+            switch (disease) {
+                case YELLOW_FEVER:
+                    setVaccinatedByCardOrHistoryVisibility();
+                    outcome.setVisible(false);
+                    break;
+                case CSM:
+                    setVaccinationHelperVisibility();
+                    break;
+                case AHF:
+                    setVisible(true, CaseDataDto.NOTIFIED_BY_LIST);
+                    addField(CaseDataDto.MOBILE_TEAM_NO);
+                    addField(CaseDataDto.INFORMATION_GIVEN_BY);
+                    addField(CaseDataDto.FAMILY_LINK_WITH_PATIENT);
+                    addField(CaseDataDto.NAME_OF_VILLAGE_PERSON_GOT_ILL, TextField.class);
+                    medicalInformationCaptionLabel.setVisible(false);
+                    break;
+                case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
+                    numberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being Reported");
+                    numberOfDoses.addStyleName("v-captiontext-idsr");
+                    break;
+                case AFP:
+                    setVisible(true, CaseDataDto.NOTIFIED_BY_LIST, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
+                    outcome.setVisible(false);
+                    FacilityReferenceDto facility = getValue().getHealthFacility();
+                    if (facility != null) {
+                        if (facility.toString().equals(FacilityDto.NOT_SET_FACILITY) || facility.getCaption().equals("Not Set")) {
+                            facilityCombo.addStyleName("change-color");
+                        }
+                    }
+                    break;
+                case FOODBORNE_ILLNESS:
+                    placeOfStayHeadingLabel.setVisible(false);
+                    break;
+                case NEW_INFLUENZA:
+                    outcome.setVisible(false);
+                    dateFormReceivedAtNational.setVisible(false);
+                    placeOfStayHeadingLabel.setVisible(false);
+                    break;
+                case MONKEYPOX:
+                    handleMpox();
+                default:
+                    break;
             }
-
-            //AHF
-            	if (disease == Disease.AHF) {
-				setVisible(true, CaseDataDto.NOTIFIED_BY_LIST);
-                addField(CaseDataDto.MOBILE_TEAM_NO);
-                addField(CaseDataDto.INFORMATION_GIVEN_BY);
-                addField(CaseDataDto.FAMILY_LINK_WITH_PATIENT);
-                addField(CaseDataDto.NAME_OF_VILLAGE_PERSON_GOT_ILL, TextField.class);
-
-                medicalInformationCaptionLabel.setVisible(false);
-			}
 
             //CORONAVIRUS
             if (disease == Disease.CORONAVIRUS) {
@@ -1786,81 +1798,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 setVisible(true, CaseDataDto.DATE_FORM_RECEIVED_AT_DISTRICT, CaseDataDto.INVESTIGATED_DATE, CaseDataDto.NOTIFIED_BY);
                 setVisible(false, CaseDataDto.CLINICAL_CONFIRMATION, CaseDataDto.EPIDEMIOLOGICAL_CONFIRMATION, CaseDataDto.LABORATORY_DIAGNOSTIC_CONFIRMATION);
             }
-
-            if (disease ==Disease.MONKEYPOX){
-				placeOfStayHeadingLabel.setVisible(false);
-				createLabel(I18nProperties.getString(Strings.notifyInvestigate), H3, NOTIFY_INVESTIGATE);
-				setVisible(true, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
-				createLabel(I18nProperties.getString(Strings.headingIndicateCategory), H4, INDICATE_CATEGORY_LOC);
-
-                Label coorLabel = new Label(I18nProperties.getCaption(Captions.coorLabel));
-                coorLabel.addStyleName(H4);
-                getContent().addComponent(coorLabel, MPOX_COORDINATE_LABEL);
-
-                Label patientDob = new Label(I18nProperties.getCaption(Captions.patientDob));
-                patientDob.addStyleName(H4);
-                getContent().addComponent(patientDob, PATIENT_DOB_LABEL);
-
-                addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
-                tfReportLon.setVisible(true);
-                tfReportLat.setVisible(true);
-
-                Label dobNot = new Label(I18nProperties.getCaption(Captions.dobNot));
-                dobNot.addStyleName(H4);
-                getContent().addComponent(dobNot, DOB_NOT_KNOWN_LABEL);
-
-                patientDobDay = addField(CaseDataDto.PATIENT_DOB_DD, ComboBox.class);
-                // @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
-                patientDobDay.setNullSelectionAllowed(true);
-                patientDobDay.setInputPrompt(I18nProperties.getString(Strings.day));
-                patientDobDay.setCaption("");
-
-                ComboBox patientDobMonth = addField(CaseDataDto.PATIENT_DOB_MM,ComboBox.class);
-                // @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
-                patientDobMonth.setNullSelectionAllowed(true);
-                patientDobMonth.addItems(DateHelper.getMonthsInYear());
-                patientDobMonth.setPageLength(12);
-                patientDobMonth.setInputPrompt(I18nProperties.getString(Strings.month));
-                patientDobMonth.setCaption("");
-                DateHelper.getMonthsInYear()
-                        .forEach(month -> patientDobMonth.setItemCaption(month, de.symeda.sormas.api.Month.values()[month - 1].toString()));
-                setItemCaptionsForMonths(patientDobMonth);
-
-                ComboBox patientDobYear = addField(CaseDataDto.PATIENT_DOB_YY, ComboBox.class);
-                patientDobYear.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.BIRTH_DATE));
-                // @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
-                patientDobYear.setNullSelectionAllowed(true);
-                patientDobYear.addItems(DateHelper.getYearsToNow());
-                patientDobYear.setItemCaptionMode(AbstractSelect.ItemCaptionMode.ID_TOSTRING);
-                patientDobYear.setInputPrompt(I18nProperties.getString(Strings.year));
-
-                patientDobDay.addValidator(
-                        g -> ControllerProvider.getPersonController()
-                                .validateBirthDate((Integer) patientDobYear.getValue(), (Integer) patientDobMonth.getValue(), (Integer) g));
-                patientDobMonth.addValidator(
-                        g -> ControllerProvider.getPersonController()
-                                .validateBirthDate((Integer) patientDobYear.getValue(), (Integer) g, (Integer) patientDobDay.getValue()));
-                patientDobYear.addValidator(
-                        g -> ControllerProvider.getPersonController()
-                                .validateBirthDate((Integer) g, (Integer) patientDobMonth.getValue(), (Integer) patientDobDay.getValue()));
-
-                addField(CaseDataDto.PATIENT_AGE_YEAR);
-                addField(CaseDataDto.PATIENT_AGE_MONTH);
-
-                ComboBox patientSex = addField(CaseDataDto.PATIENT_SEX, ComboBox.class);
-                patientSex.removeItem(Sex.OTHER);
-                patientSex.removeItem(Sex.UNKNOWN);
-
-                addFields(CaseDataDto.PATIENT_FIRST_NAME, CaseDataDto.PATIENT_LAST_NAME, CaseDataDto.PATIENT_OTHER_NAMES);
-            
-                addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
-                addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
-			}
-
-			if (disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
-				numberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being Reported");
-				numberOfDoses.addStyleName("v-captiontext-idsr");
-			}
 
             if (disease == Disease.NEONATAL_TETANUS) {
                 setVisible(false, CaseDataDto.VACCINATION_STATUS, CaseDataDto.OUTCOME, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.LAST_VACCINATION_DATE, CaseDataDto.NUMBER_OF_DOSES);
@@ -1932,42 +1869,103 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                         true);
             }
 
-			if (disease == Disease.AFP) {
-				setVisible(true, CaseDataDto.NOTIFIED_BY_LIST, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
-                outcome.setVisible(false);
-                FacilityReferenceDto facility = getValue().getHealthFacility();
-                if (facility != null) {
-                    if (facility.toString().equals(FacilityDto.NOT_SET_FACILITY) ||
-                            facility.getCaption().equals("Not Set")) {
-                        facilityCombo.addStyleName("change-color");
-                    }
-                }
-
-            }
-
-            if (disease == Disease.FOODBORNE_ILLNESS) {
-                placeOfStayHeadingLabel.setVisible(false);
-            }
-
             if (disease == Disease.GUINEA_WORM) {
                 dateOfInvestigation.setVisible(true);
                 surveillanceOfficerField.setVisible(true);
                 investigationOfficerNameField.setVisible(true);
-				investigationOfficerPositionField.setVisible(true);
+                investigationOfficerPositionField.setVisible(true);
                 setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.TRIMESTER, CaseDataDto.VACCINATION_STATUS);
-				setVisible(true, CaseDataDto.FORM_COMPLETED_BY_NAME, CaseDataDto.FORM_COMPLETED_BY_POSITION, CaseDataDto.FORM_COMPLETED_BY_CELL_PHONE_NO);
+                setVisible(true, CaseDataDto.FORM_COMPLETED_BY_NAME, CaseDataDto.FORM_COMPLETED_BY_POSITION, CaseDataDto.FORM_COMPLETED_BY_CELL_PHONE_NO);
             }
-
-            //INFLUENZA
-			if (disease == Disease.NEW_INFLUENZA) {
-                outcome.setVisible(false);
-                dateFormReceivedAtNational.setVisible(false);
-                placeOfStayHeadingLabel.setVisible(false);
-			}
-
 
         });
     }
+
+    private void handleMpox() {
+        placeOfStayHeadingLabel.setVisible(false);
+        createLabel(I18nProperties.getString(Strings.notifyInvestigate), H3, NOTIFY_INVESTIGATE);
+        setVisible(true, CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION);
+        createLabel(I18nProperties.getString(Strings.headingIndicateCategory), H4, INDICATE_CATEGORY_LOC);
+
+        Label coorLabel = new Label(I18nProperties.getCaption(Captions.coorLabel));
+        coorLabel.addStyleName(H4);
+        getContent().addComponent(coorLabel, MPOX_COORDINATE_LABEL);
+
+        Label patientDob = new Label(I18nProperties.getCaption(Captions.patientDob));
+        patientDob.addStyleName(H4);
+        getContent().addComponent(patientDob, PATIENT_DOB_LABEL);
+
+        addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
+        tfReportLon.setVisible(true);
+        tfReportLat.setVisible(true);
+
+        Label dobNot = new Label(I18nProperties.getCaption(Captions.dobNot));
+        dobNot.addStyleName(H4);
+        getContent().addComponent(dobNot, DOB_NOT_KNOWN_LABEL);
+
+        patientDobDay = addField(CaseDataDto.PATIENT_DOB_DD, ComboBox.class);
+        // @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
+        patientDobDay.setNullSelectionAllowed(true);
+        patientDobDay.setInputPrompt(I18nProperties.getString(Strings.day));
+        patientDobDay.setCaption("");
+
+        ComboBox patientDobMonth = addField(CaseDataDto.PATIENT_DOB_MM, ComboBox.class);
+        // @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
+        patientDobMonth.setNullSelectionAllowed(true);
+        patientDobMonth.addItems(DateHelper.getMonthsInYear());
+        patientDobMonth.setPageLength(12);
+        patientDobMonth.setInputPrompt(I18nProperties.getString(Strings.month));
+        patientDobMonth.setCaption("");
+        DateHelper.getMonthsInYear()
+                .forEach(month -> patientDobMonth.setItemCaption(month, de.symeda.sormas.api.Month.values()[month - 1].toString()));
+        setItemCaptionsForMonths(patientDobMonth);
+
+        ComboBox patientDobYear = addField(CaseDataDto.PATIENT_DOB_YY, ComboBox.class);
+        patientDobYear.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.BIRTH_DATE));
+        // @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
+        patientDobYear.setNullSelectionAllowed(true);
+        patientDobYear.addItems(DateHelper.getYearsToNow());
+        patientDobYear.setItemCaptionMode(AbstractSelect.ItemCaptionMode.ID_TOSTRING);
+        patientDobYear.setInputPrompt(I18nProperties.getString(Strings.year));
+
+        patientDobDay.addValidator(
+                g -> ControllerProvider.getPersonController()
+                        .validateBirthDate((Integer) patientDobYear.getValue(), (Integer) patientDobMonth.getValue(), (Integer) g));
+        patientDobMonth.addValidator(
+                g -> ControllerProvider.getPersonController()
+                        .validateBirthDate((Integer) patientDobYear.getValue(), (Integer) g, (Integer) patientDobDay.getValue()));
+        patientDobYear.addValidator(
+                g -> ControllerProvider.getPersonController()
+                        .validateBirthDate((Integer) g, (Integer) patientDobMonth.getValue(), (Integer) patientDobDay.getValue()));
+
+        addField(CaseDataDto.PATIENT_AGE_YEAR);
+        addField(CaseDataDto.PATIENT_AGE_MONTH);
+
+        ComboBox patientSex = addField(CaseDataDto.PATIENT_SEX, ComboBox.class);
+        patientSex.removeItem(Sex.OTHER);
+        patientSex.removeItem(Sex.UNKNOWN);
+
+        addFields(CaseDataDto.PATIENT_FIRST_NAME, CaseDataDto.PATIENT_LAST_NAME, CaseDataDto.PATIENT_OTHER_NAMES);
+
+        addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
+        addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
+
+        patientDobYear.addValueChangeListener(e -> {
+            updateListOfDays((Integer) e.getProperty().getValue(), (Integer) patientDobMonth.getValue());
+            patientDobMonth.markAsDirty();
+            patientDobDay.markAsDirty();
+        });
+        patientDobMonth.addValueChangeListener(e -> {
+            updateListOfDays((Integer) patientDobYear.getValue(), (Integer) e.getProperty().getValue());
+            patientDobYear.markAsDirty();
+            patientDobDay.markAsDirty();
+        });
+        patientDobDay.addValueChangeListener(e -> {
+            patientDobYear.markAsDirty();
+            patientDobMonth.markAsDirty();
+        });
+    }
+
     private void setItemCaptionsForMonths(AbstractSelect months) {
         months.setItemCaption(1, I18nProperties.getEnumCaption(Month.JANUARY));
         months.setItemCaption(2, I18nProperties.getEnumCaption(Month.FEBRUARY));
@@ -2361,20 +2359,20 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
     @Override
     protected String createHtmlLayout() {
-        String SORMAS_MAIN_HTML_LAYOUT = MAIN_HTML_LAYOUT + (caseFollowUpEnabled ? FOLLOWUP_LAYOUT : "") + PAPER_FORM_DATES_AND_HEALTH_CONDITIONS_HTML_LAYOUT + fluidRowLocsCss( VSPACE_3 ,INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC);
-		String DISEASE_LAYOUT = "";
+        String SORMAS_MAIN_HTML_LAYOUT = MAIN_HTML_LAYOUT + (caseFollowUpEnabled ? FOLLOWUP_LAYOUT : "") + PAPER_FORM_DATES_AND_HEALTH_CONDITIONS_HTML_LAYOUT + fluidRowLocsCss(VSPACE_3, INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC);
+        String DISEASE_LAYOUT = "";
 
-		switch (disease) {
-			case GUINEA_WORM:
-				DISEASE_LAYOUT = GUINEA_WORM_LAYOUT;
-				break;
-			default:
-				DISEASE_LAYOUT = SORMAS_MAIN_HTML_LAYOUT;
-				break;
+        switch (disease) {
+            case GUINEA_WORM:
+                DISEASE_LAYOUT = GUINEA_WORM_LAYOUT;
+                break;
+            default:
+                DISEASE_LAYOUT = SORMAS_MAIN_HTML_LAYOUT;
+                break;
 
-		}
+        }
 
-		return DISEASE_LAYOUT;
+        return DISEASE_LAYOUT;
     }
 
     public void addButtonListener(String componentId, Button.ClickListener listener) {
