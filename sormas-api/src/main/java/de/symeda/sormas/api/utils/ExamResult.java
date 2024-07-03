@@ -2,7 +2,7 @@ package de.symeda.sormas.api.utils;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
 
-public enum AfpResult {
+public enum ExamResult {
     RESIDUAL_FLACCID_PARALYSIS,
     NO_RESIDUAL_PARALYSIS,
     LOST_FOLLOW_UP,

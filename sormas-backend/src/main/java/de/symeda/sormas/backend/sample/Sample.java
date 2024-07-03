@@ -323,7 +323,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private YesNo sL3;
 	private Date dateFollowUpExam;
 	private InjectionSite residualAnalysis;
-	private AfpResult resultExam;
+	private ExamResult resultExam;
 	private YesNo positiveViralCulture;
 	private YesNo positiveRealTime;
 	private YesNo fourFoldRise;
@@ -1590,11 +1590,11 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 		this.residualAnalysis = residualAnalysis;
 	}
 
-	public AfpResult getResultExam() {
+	public ExamResult getResultExam() {
 		return resultExam;
 	}
 
-	public void setResultExam(AfpResult resultExam) {
+	public void setResultExam(ExamResult resultExam) {
 		this.resultExam = resultExam;
 	}
 
