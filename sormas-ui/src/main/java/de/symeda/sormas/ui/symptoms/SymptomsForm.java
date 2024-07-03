@@ -44,7 +44,6 @@ import com.vaadin.shared.ui.ErrorLevel;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
@@ -56,8 +55,6 @@ import com.vaadin.v7.data.util.converter.Converter.ConversionException;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.caze.VaccinationStatus;
-import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.i18n.Captions;
@@ -67,16 +64,11 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.sample.SampleDto;
-import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.SymptomsContext;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.symptoms.SymptomsHelper;
-import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.symptoms.*;
 import de.symeda.sormas.api.utils.DateComparator;
@@ -87,7 +79,6 @@ import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.visit.VisitStatus;
 import de.symeda.sormas.ui.utils.*;
-import org.apache.tapestry.IForm;
 
 public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
@@ -910,8 +901,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
         tickRashCharacteristicsField.setMultiSelect(true);
 
         tickRashCharacteristicsField.addItems(
-                Arrays.stream(MpoxRashArea.values())
-                        .filter(c -> fieldVisibilityCheckers.isVisible(MpoxRashArea.class, c.name()))
+                Arrays.stream(BodyPart.values())
+                        .filter(c -> fieldVisibilityCheckers.isVisible(BodyPart.class, c.name()))
                         .collect(Collectors.toList()));
 
         tickRashCharacteristicsField.setVisible(false);
