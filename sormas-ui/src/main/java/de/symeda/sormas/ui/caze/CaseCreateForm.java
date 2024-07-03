@@ -28,7 +28,6 @@ import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.api.utils.AFPFacilityOptions;
-import de.symeda.sormas.api.utils.TypeOfAbode;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.google.common.collect.Sets;
