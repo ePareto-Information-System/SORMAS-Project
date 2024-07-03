@@ -387,7 +387,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 	private PosNeg finalLabResults;
 	private YesNoUnknown immunocompromisedStatusSuspected;
-	private AFPClassification afpFinalClassification;
+	private FinalClassification afpFinalClassification;
 	private Date dateSurveillanceSentResultsToDistrict;
 	private Date dateFormSentToHigherLevel;
 	private String personCompletingForm;
@@ -1524,11 +1524,11 @@ public class SampleDto extends SormasToSormasShareableDto {
 		this.immunocompromisedStatusSuspected = immunocompromisedStatusSuspected;
 	}
 
-	public AFPClassification getAfpFinalClassification() {
+	public FinalClassification getAfpFinalClassification() {
 		return afpFinalClassification;
 	}
 
-	public void setAfpFinalClassification(AFPClassification afpFinalClassification) {
+	public void setAfpFinalClassification(FinalClassification afpFinalClassification) {
 		this.afpFinalClassification = afpFinalClassification;
 	}
 

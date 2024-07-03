@@ -305,7 +305,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	private PosNeg finalLabResults;
 	private YesNoUnknown immunocompromisedStatusSuspected;
-	private AFPClassification afpFinalClassification;
+	private FinalClassification afpFinalClassification;
 	private Date dateFirstSpecimen;
 	private Date dateSecondSpecimen;
 	private Date dateSpecimenSentNationalLevel;
@@ -1446,11 +1446,11 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 		this.immunocompromisedStatusSuspected = immunocompromisedStatusSuspected;
 	}
 
-	public AFPClassification getAfpFinalClassification() {
+	public FinalClassification getAfpFinalClassification() {
 		return afpFinalClassification;
 	}
 
-	public void setAfpFinalClassification(AFPClassification afpFinalClassification) {
+	public void setAfpFinalClassification(FinalClassification afpFinalClassification) {
 		this.afpFinalClassification = afpFinalClassification;
 	}
 
