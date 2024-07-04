@@ -427,6 +427,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private Long personId;
 
 	private Map<String, String> externalData;
+	private Date lastDateOfVaccination;
 
 	@Column(name = "person_id", updatable = false, insertable = false)
 	public Long getPersonId() {
@@ -1768,6 +1769,14 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setExternalData(Map<String, String> externalData) {
 		this.externalData = externalData;
+	}
+
+	public Date getLastDateOfVaccination() {
+		return lastDateOfVaccination;
+	}
+
+	public void setLastDateOfVaccination(Date lastDateOfVaccination) {
+		this.lastDateOfVaccination = lastDateOfVaccination;
 	}
 
 	public String buildCaseGpsCoordinationCaption() {
