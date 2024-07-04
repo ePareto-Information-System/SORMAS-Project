@@ -42,7 +42,6 @@ import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import de.symeda.sormas.api.utils.FieldConstraints;
-import de.symeda.sormas.api.utils.Required;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.SensitiveData;
 import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
@@ -387,7 +386,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 	private PosNeg finalLabResults;
 	private YesNoUnknown immunocompromisedStatusSuspected;
-	private AFPClassification afpFinalClassification;
+	private FinalClassification afpFinalClassification;
 	private Date dateSurveillanceSentResultsToDistrict;
 	private Date dateFormSentToHigherLevel;
 	private String personCompletingForm;
@@ -409,11 +408,11 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private YesNo sL3;
 	private Date dateFollowUpExam;
 	private InjectionSite residualAnalysis;
-	private AfpResult resultExam;
+	private ExamResult resultExam;
 	private YesNo positiveViralCulture;
 	private YesNo positiveRealTime;
 	private YesNo fourFoldRise;
-	private InfluenzaVirus influenzaVirus;
+	private VirusType influenzaVirus;
 	private String otherInfluenzaVirus;
 	private String treatment;
 	private String stateTreatmentAdministered;
@@ -1524,11 +1523,11 @@ public class SampleDto extends SormasToSormasShareableDto {
 		this.immunocompromisedStatusSuspected = immunocompromisedStatusSuspected;
 	}
 
-	public AFPClassification getAfpFinalClassification() {
+	public FinalClassification getAfpFinalClassification() {
 		return afpFinalClassification;
 	}
 
-	public void setAfpFinalClassification(AFPClassification afpFinalClassification) {
+	public void setAfpFinalClassification(FinalClassification afpFinalClassification) {
 		this.afpFinalClassification = afpFinalClassification;
 	}
 
@@ -1668,11 +1667,11 @@ public class SampleDto extends SormasToSormasShareableDto {
 		this.residualAnalysis = residualAnalysis;
 	}
 
-	public AfpResult getResultExam() {
+	public ExamResult getResultExam() {
 		return resultExam;
 	}
 
-	public void setResultExam(AfpResult resultExam) {
+	public void setResultExam(ExamResult resultExam) {
 		this.resultExam = resultExam;
 	}
 
@@ -1700,11 +1699,11 @@ public class SampleDto extends SormasToSormasShareableDto {
 		this.fourFoldRise = fourFoldRise;
 	}
 
-	public InfluenzaVirus getInfluenzaVirus() {
+	public VirusType getInfluenzaVirus() {
 		return influenzaVirus;
 	}
 
-	public void setInfluenzaVirus(InfluenzaVirus influenzaVirus) {
+	public void setInfluenzaVirus(VirusType influenzaVirus) {
 		this.influenzaVirus = influenzaVirus;
 	}
 

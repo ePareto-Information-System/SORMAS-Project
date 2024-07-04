@@ -48,7 +48,7 @@ public enum Disease
 	YELLOW_FEVER(true, true, true, false, false,6, true, false, false),
 	RABIES(false, false, false, false, false,6, false, false, false),
 	ANTHRAX(false, false, false, false, false,0, false, false, false),
-	CORONAVIRUS(true, true, false, true, true,14, true, true, true),
+	CORONAVIRUS(true, true, true, true, false,14, true, true, true),
 	PNEUMONIA(true, false, true, false, false,0, true, false, false),
 	MALARIA(true, false, false, false, false,0, true, false, false),
 	TYPHOID_FEVER(true, false, false, false, false,0, true, false, false),
@@ -239,7 +239,7 @@ public enum Disease
 	}
 
 	public static List<Disease> hideFollowUp = Arrays.asList(
-			YELLOW_FEVER, AHF, CSM, AFP, NEW_INFLUENZA, CHOLERA, MEASLES, FOODBORNE_ILLNESS, GUINEA_WORM, MONKEYPOX, NEONATAL_TETANUS
+			YELLOW_FEVER, AHF, CSM, AFP, NEW_INFLUENZA, CHOLERA, MEASLES, FOODBORNE_ILLNESS, GUINEA_WORM, MONKEYPOX, NEONATAL_TETANUS, CORONAVIRUS
 	);
 
 	public static String toString(Disease value, String details) {

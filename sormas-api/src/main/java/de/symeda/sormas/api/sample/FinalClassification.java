@@ -19,7 +19,13 @@ public enum FinalClassification {
     PENDING,
     NOT_A_CASE,
     SUSPECT,
-    PROBABLE;
+    PROBABLE,
+    CONFIRMED_POLIO,
+    NOT_AN_AFP_CASE,
+    cVDPV,
+    aVDPV,
+    iVDPV,
+    SERO_TYPE;
 
     public static final List<FinalClassification> YF_CLASSIFICATION = Arrays.asList( LAB_CONFIRMED, EPIDEMIOLOGICAL, COMPATIBLE, DISCARDED, PENDING);
     public static final List<FinalClassification> CHOLERA_CLASSIFICATION = Arrays.asList( NOT_A_CASE, SUSPECT, PROBABLE, LAB_CONFIRMED, EPIDEMIOLOGICAL, PENDING);
@@ -32,6 +38,7 @@ public enum FinalClassification {
             CONFIRMED_RUBELLA_BY_LAB,
             DISCARDED_NON_MEASLES_NON_RUBELLA_BY_LAB,
             SUSPECTED_MEASLES_RUBELLA_WITH_LAB_RESULTS_AND_OR_CASE_CLASSIFICATION_PENDING  );
+    public static final List<FinalClassification> AFP_CLASSIFICATION = Arrays.asList(CONFIRMED_POLIO, COMPATIBLE, DISCARDED, NOT_AN_AFP_CASE, cVDPV, aVDPV, iVDPV, SERO_TYPE);
 
 
     @Override

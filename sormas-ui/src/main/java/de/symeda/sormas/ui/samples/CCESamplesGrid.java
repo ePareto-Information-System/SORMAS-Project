@@ -20,6 +20,7 @@ package de.symeda.sormas.ui.samples;
 import static java.util.Objects.nonNull;
 
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.vaadin.data.provider.DataProvider;
@@ -28,18 +29,12 @@ import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.renderers.DateRenderer;
 
-import de.symeda.sormas.api.ConfigFacade;
-import de.symeda.sormas.api.CountryHelper;
-import de.symeda.sormas.api.DiseaseHelper;
-import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.*;
+import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.sample.PathogenTestType;
-import de.symeda.sormas.api.sample.SampleAssociationType;
-import de.symeda.sormas.api.sample.SampleCriteria;
-import de.symeda.sormas.api.sample.SampleIndexDto;
-import de.symeda.sormas.api.sample.SpecimenCondition;
+import de.symeda.sormas.api.sample.*;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.ui.ControllerProvider;
@@ -59,6 +54,7 @@ public class CCESamplesGrid extends FilteredGrid<SampleIndexDto, SampleCriteria>
     private static final String PATHOGEN_TEST_RESULT = Captions.Sample_pathogenTestResult;
     private static final String DISEASE_SHORT = Captions.columnDiseaseShort;
     private static final String LAST_PATHOGEN_TEST = Captions.columnLastPathogenTest;
+    private static final String REQUESTED_SAMPLE_MATERIALS_COLUMN = "requestedSampleMaterialsColumn";
 
     private DataProviderListener<SampleIndexDto> dataProviderListener;
 
@@ -109,18 +105,35 @@ public class CCESamplesGrid extends FilteredGrid<SampleIndexDto, SampleCriteria>
             }
             return text;
         });
+
+        Column<SampleIndexDto, String> requestedSampleMaterialsColumn = addColumn(sample -> sample.getFormattedRequestedSampleMaterials());
+        requestedSampleMaterialsColumn.setId(REQUESTED_SAMPLE_MATERIALS_COLUMN);
+        requestedSampleMaterialsColumn.setCaption("Type of Sample");
+
         lastPathogenTestColumn.setId(LAST_PATHOGEN_TEST);
         lastPathogenTestColumn.setSortable(false);
 
-        setColumns(
-                SampleIndexDto.UUID,
-                SampleIndexDto.SAMPLE_MATERIAL,
-                PATHOGEN_TEST_RESULT,
-                SampleIndexDto.RECEIVED,
-                SampleIndexDto.RECEIVED_DATE,
-                SampleIndexDto.LAB,
-                SampleIndexDto.SAMPLE_PURPOSE,
-                SampleIndexDto.PATHOGEN_TEST_COUNT);
+        if (isMonkeyPoxPresent(criteria)) {
+            setColumns(
+                    SampleIndexDto.UUID,
+                    REQUESTED_SAMPLE_MATERIALS_COLUMN,
+                    PATHOGEN_TEST_RESULT,
+                    SampleIndexDto.RECEIVED,
+                    SampleIndexDto.RECEIVED_DATE,
+                    SampleIndexDto.LAB,
+                    SampleIndexDto.SAMPLE_PURPOSE,
+                    SampleIndexDto.PATHOGEN_TEST_COUNT);
+        } else {
+            setColumns(
+                    SampleIndexDto.UUID,
+                    SampleIndexDto.SAMPLE_MATERIAL,
+                    PATHOGEN_TEST_RESULT,
+                    SampleIndexDto.RECEIVED,
+                    SampleIndexDto.RECEIVED_DATE,
+                    SampleIndexDto.LAB,
+                    SampleIndexDto.SAMPLE_PURPOSE,
+                    SampleIndexDto.PATHOGEN_TEST_COUNT);
+        }
 
         //((Column<SampleIndexDto, Date>) getColumn(SampleIndexDto.SHIPMENT_DATE)).setRenderer(new DateRenderer(DateFormatHelper.getDateFormat()));
         ((Column<SampleIndexDto, Date>) getColumn(SampleIndexDto.RECEIVED_DATE)).setRenderer(new DateRenderer(DateFormatHelper.getDateFormat()));
@@ -160,6 +173,19 @@ public class CCESamplesGrid extends FilteredGrid<SampleIndexDto, SampleCriteria>
             column.setStyleGenerator(FieldAccessColumnStyleGenerator.getDefault(getBeanType(), column.getId()));
 
         }
+    }
+
+    private boolean isMonkeyPoxPresent(SampleCriteria criteria) {
+        List<SampleDto> samples = FacadeProvider.getSampleFacade().getSamplesByCriteria(criteria);
+
+        for (SampleDto sample : samples) {
+            CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(sample.getAssociatedCase().getUuid());
+
+            if (Disease.MONKEYPOX.equals(caseDataDto.getDisease())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean shouldShowEpidNumber() {

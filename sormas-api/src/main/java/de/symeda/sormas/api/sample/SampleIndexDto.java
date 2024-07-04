@@ -18,7 +18,11 @@
 package de.symeda.sormas.api.sample;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
@@ -34,6 +38,9 @@ import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.EmptyValuePseudonymizer;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.persistence.Transient;
 
 public class SampleIndexDto extends PseudonymizableIndexDto implements Serializable {
 
@@ -57,6 +64,8 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	public static final String RECEIVED_DATE = "receivedDate";
 	public static final String LAB = "lab";
 	public static final String SAMPLE_MATERIAL = "sampleMaterial";
+	public static final String REQUESTED_SAMPLE_MATERIALS_STRING = "requestedSampleMaterialsString";
+	public static final String REQUESTED_SAMPLE_MATERIALS = "requestedSampleMaterials";
 	public static final String SAMPLE_PURPOSE = "samplePurpose";
 	public static final String SHIPPED = "shipped";
 	public static final String RECEIVED = "received";
@@ -94,6 +103,8 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	private Date receivedDate;
 	private FacilityReferenceDto lab;
 	private SampleMaterial sampleMaterial;
+	private Set<SampleMaterial> requestedSampleMaterials;
+	private String requestedSampleMaterialsString;
 	private SamplePurpose samplePurpose;
 	private SpecimenCondition specimenCondition;
 	private PathogenTestResultType pathogenTestResult;
@@ -118,7 +129,7 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	//@formatter:off
 	public SampleIndexDto(String uuid, String epidNumber, String labSampleId, String fieldSampleId,
 						  Date sampleDateTime, boolean shipped, Date shipmentDate, boolean received, Date receivedDate,
-						  SampleMaterial sampleMaterial, SamplePurpose samplePurpose, SpecimenCondition specimenCondition,
+						  SampleMaterial sampleMaterial, String requestedSampleMaterialsString,SamplePurpose samplePurpose, SpecimenCondition specimenCondition,
 						  String labName, String referredSampleUuid,
 						  SamplingReason samplingReason, String samplingReasonDetails,
 						  String associatedCaseUuid, String associatedCaseFirstName, String associatedCaseLastName, String associatedCaseOtherName,
@@ -171,6 +182,7 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 //		this.lab = new FacilityReferenceDto(labUuid, FacilityHelper.buildFacilityString(labUuid, labName), null);
 		this.lab = new FacilityReferenceDto(labUuid, FacilityHelper.buildFacilityString(labUuid, labName), null);
 		this.sampleMaterial = sampleMaterial;
+		this.requestedSampleMaterialsString = requestedSampleMaterialsString;
 		this.samplePurpose = samplePurpose;
 		this.specimenCondition = specimenCondition;
 		this.pathogenTestResult = pathogenTestResult;
@@ -362,6 +374,46 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.sampleMaterial = sampleMaterial;
 	}
 
+	@Transient
+	public Set<SampleMaterial> getRequestedSampleMaterials() {
+		if (requestedSampleMaterials == null) {
+			if (StringUtils.isEmpty(requestedSampleMaterialsString)) {
+				requestedSampleMaterials = new HashSet<>();
+			} else {
+				requestedSampleMaterials =
+						Arrays.stream(requestedSampleMaterialsString.split(",")).map(SampleMaterial::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return requestedSampleMaterials;
+	}
+
+	public void setRequestedSampleMaterials(Set<SampleMaterial> requestedSampleMaterials) {
+		this.requestedSampleMaterials = requestedSampleMaterials;
+
+		if (this.requestedSampleMaterials == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		requestedSampleMaterials.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		requestedSampleMaterialsString = sb.toString();
+	}
+
+	public String getRequestedSampleMaterialsString() {
+		return requestedSampleMaterialsString;
+	}
+
+	public void setRequestedSampleMaterialsString(String requestedSampleMaterialsString) {
+		this.requestedSampleMaterialsString = requestedSampleMaterialsString;
+		requestedSampleMaterials = null;
+	}
+
 	public SamplePurpose getSamplePurpose() {
 		return samplePurpose;
 	}
@@ -548,6 +600,7 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		StringBuilder sb = new StringBuilder();
 		sb.append(DateFormatHelper.formatLocalDateTime(sampleDateTime)).append(" - ");
 		sb.append(sampleMaterial);
+		sb.append(requestedSampleMaterialsString);
 		sb.append(" (").append(disease).append(")");
 		if (pathogenTestResult != null) {
 			sb.append(": ").append(pathogenTestResult);
@@ -561,5 +614,23 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 
 	public void setAdditionalTest(String additionalTest) {
 		this.additionalTest = additionalTest;
+	}
+
+	public String getFormattedRequestedSampleMaterials() {
+		if (requestedSampleMaterialsString == null || requestedSampleMaterialsString.isEmpty()) {
+			return "";
+		}
+		return Arrays.stream(requestedSampleMaterialsString.split(","))
+				.map(this::formatSampleMaterial) //
+				.collect(Collectors.joining(", "));
+	}
+
+	private String formatSampleMaterial(String material) {
+		String name = material.toLowerCase().replace('_', ' ');
+		String[] words = name.split(" ");
+		for (int i = 0; i < words.length; i++) {
+			words[i] = words[i].substring(0, 1).toUpperCase() + words[i].substring(1);
+		}
+		return String.join(" ", words);
 	}
 }

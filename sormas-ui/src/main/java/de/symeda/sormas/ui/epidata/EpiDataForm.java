@@ -22,7 +22,6 @@ import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_TOP_3;
 import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 
-import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -36,15 +35,9 @@ import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.*;
 import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
-import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.epidata.ContactSetting;
 import de.symeda.sormas.api.caze.CaseOutcome;
-import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.utils.CardOrHistory;
-import de.symeda.sormas.api.utils.RiskFactorInfluenza;
-import com.vaadin.ui.Label;
-import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.TextField;
+import de.symeda.sormas.api.utils.RiskFactorCondition;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.YesNo;
@@ -521,7 +514,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			TextField other = addField(EpiDataDto.OTHER_SPECIFY, com.vaadin.v7.ui.TextField.class);
 			other.setVisible(false);
 
-			FieldHelper.setVisibleWhen(riskFactor, Arrays.asList(other), Arrays.asList(RiskFactorInfluenza.OTHER), true);
+			FieldHelper.setVisibleWhen(riskFactor, Arrays.asList(other), Arrays.asList(RiskFactorCondition.OTHER), true);
 			FieldHelper.setVisibleWhen(previously, Arrays.asList(year, vaccineName), Arrays.asList(YesNo.YES), true);
 			FieldHelper.setVisibleWhen(previouslyCovid, Arrays.asList(yearCovid, vaccineNameCovid), Arrays.asList(YesNo.YES), true);
 

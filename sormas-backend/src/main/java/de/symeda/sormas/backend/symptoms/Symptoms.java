@@ -17,7 +17,6 @@
  *******************************************************************************/
 package de.symeda.sormas.backend.symptoms;
 
-import static de.symeda.sormas.api.Disease.*;
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
 import java.util.Arrays;
@@ -314,7 +313,7 @@ public class Symptoms extends AbstractDomainObject {
 	private Set<SymptomsList> symptomsSelected;
 	private String requestedSymptomsSelectedString;
 	private Date dateOfOnsetRash;
-	private Set<MpoxRashArea> rashSymptoms;
+	private Set<BodyPart> rashSymptoms;
 	private String requestedRashSymptomsString;
 	private String rashSymptomsOtherAreas;
 	private YesNo areLesionsSameState;
@@ -2325,18 +2324,18 @@ public class Symptoms extends AbstractDomainObject {
 	}
 
 	@Transient
-	public Set<MpoxRashArea> getRashSymptoms() {
+	public Set<BodyPart> getRashSymptoms() {
 		if (rashSymptoms == null) {
 			if (StringUtils.isEmpty(requestedRashSymptomsString)) {
 				rashSymptoms = new HashSet<>();
 			} else {
 				rashSymptoms =
-						Arrays.stream(requestedRashSymptomsString.split(",")).map(MpoxRashArea::valueOf).collect(Collectors.toSet());
+						Arrays.stream(requestedRashSymptomsString.split(",")).map(BodyPart::valueOf).collect(Collectors.toSet());
 			}
 		}
 		return rashSymptoms;
 	}
-	public void setRashSymptoms(Set<MpoxRashArea> rashSymptoms) {
+	public void setRashSymptoms(Set<BodyPart> rashSymptoms) {
 		this.rashSymptoms = rashSymptoms;
 
 		if (this.rashSymptoms == null) {

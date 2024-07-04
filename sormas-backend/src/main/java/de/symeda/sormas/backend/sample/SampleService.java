@@ -253,6 +253,7 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 						sample.get(Sample.RECEIVED),
 						sample.get(Sample.RECEIVED_DATE),
 						sample.get(Sample.SAMPLE_MATERIAL),
+						sample.get(Sample.REQUESTED_SAMPLE_MATERIALS_STRING),
 						sample.get(Sample.SAMPLE_PURPOSE),
 						sample.get(Sample.SPECIMEN_CONDITION),
 						joins.getLab().get(Facility.NAME),

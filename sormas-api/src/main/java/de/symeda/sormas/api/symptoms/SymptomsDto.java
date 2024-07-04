@@ -2569,7 +2569,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Set<SymptomsList> symptomsSelected;
 	private String symptomsSelectedOther;
 	private Date dateOfOnsetRash;
-	private Set<MpoxRashArea> rashSymptoms;
+	private Set<BodyPart> rashSymptoms;
 	private Set<InjectionSite> siteOfParalysis;
 	private String rashSymptomsOtherAreas;
 	private YesNo areLesionsSameState;
@@ -4211,7 +4211,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		return dateOfOnsetRash;
 	}
 	@Order(374)
-	public Set<MpoxRashArea> getRashSymptoms(){
+	public Set<BodyPart> getRashSymptoms(){
 		return rashSymptoms;
 	}
 	@Order(362)
@@ -4618,7 +4618,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	public void setDateOfOnsetRash(Date dateOfOnsetRash) {
 		this.dateOfOnsetRash = dateOfOnsetRash;
 	}
-	public void setRashSymptoms(Set<MpoxRashArea> rashSymptoms) {
+	public void setRashSymptoms(Set<BodyPart> rashSymptoms) {
 		this.rashSymptoms = rashSymptoms;
 	}
 	public void setRashSymptomsOtherAreas(String rashSymptomsOtherAreas) {
