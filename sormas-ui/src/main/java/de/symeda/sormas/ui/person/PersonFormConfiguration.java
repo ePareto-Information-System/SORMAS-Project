@@ -48,7 +48,7 @@ public class PersonFormConfiguration {
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.BURIAL_PLACE_DESCRIPTION, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.NATIONAL_HEALTH_ID, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.GHANA_CARD, new HashSet<>(Arrays.asList()));
-            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.PASSPORT_NUMBER, new HashSet<>(Arrays.asList()));
+            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.PASSPORT_NUMBER, new HashSet<>(Arrays.asList(Disease.AFP)));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.NUMBER_OF_PEOPLE, new HashSet<>(Arrays.asList(Disease.CSM, Disease.NEW_INFLUENZA, Disease.SARI, Disease.AFP, Disease.YELLOW_FEVER, Disease.AHF)));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.NUMBER_OF_OTHER_CONTACTS, new HashSet<>(Arrays.asList(Disease.CSM, Disease.NEW_INFLUENZA, Disease.SARI, Disease.AFP, Disease.YELLOW_FEVER, Disease.AHF)));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.HAS_COVID_APP, new HashSet<>(Arrays.asList()));
@@ -69,12 +69,13 @@ public class PersonFormConfiguration {
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.MOTHERS_NAME, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS)));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.FATHERS_NAME, new HashSet<>(Arrays.asList(Disease.FOODBORNE_ILLNESS)));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.NAMES_OF_GUARDIANS, new HashSet<>(Arrays.asList(Disease.AFP)));
-            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.BIRTH_COUNTRY, new HashSet<>(Arrays.asList(Disease.AHF, Disease.DENGUE, Disease.AFP)));
+            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.BIRTH_COUNTRY, new HashSet<>(Arrays.asList(Disease.AHF, Disease.AFP)));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.CITIZENSHIP, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.PERSON_CONTACT_DETAILS, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(GENERAL_COMMENT_LOC, new HashSet<>(Arrays.asList()));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.ADDITIONAL_DETAILS, new HashSet<>(Arrays.asList(Disease.AFP)));
             DISABLED_FIELDS_BY_DISEASE.put(PersonDto.ADDITIONAL_PLACES_STAYED, new HashSet<>(Arrays.asList()));
+            DISABLED_FIELDS_BY_DISEASE.put(PersonDto.MARRIAGE_STATUS, new HashSet<>(Arrays.asList(Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS)));
 
     }
     public static Set<String> getDisabledFieldsForDisease(Disease disease) {

@@ -136,6 +136,21 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private static final String EBS_LAYOUT = fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY) +
 			fluidRowLocs(4,LocationDto.CITY);
 
+	private static final String IDSR_LAYOUT =
+			fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY) +
+			fluidRowLocs(LocationDto.HOUSE_NUMBER, LocationDto.AREA_TYPE);
+
+	private static final String CSM_LAYOUT =
+			fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY) +
+					fluidRowLocs(LocationDto.HOUSE_NUMBER, LocationDto.POSTAL_CODE, LocationDto.LAND_MARK) +
+					fluidRowLocs(LocationDto.LATITUDE, LocationDto.LONGITUDE, LocationDto.LAT_LON_ACCURACY);
+
+	private static final String YELLOW_FEVER_LAYOUT =
+			fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY) +
+					fluidRowLocs(LocationDto.HOUSE_NUMBER, LocationDto.CITY, LocationDto.AREA_TYPE) +
+					fluidRowLocs(LocationDto.POSTAL_CODE, LocationDto.LAND_MARK) +
+					fluidRowLocs(LocationDto.LATITUDE, LocationDto.LONGITUDE);
+
 	private MapPopupView leafletMapPopup;
 	private ComboBox addressType;
 	private ComboBoxWithPlaceholder facilityTypeGroup;
@@ -814,6 +829,12 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			switch (caseDisease) {
 				case GUINEA_WORM:
 					return HTML_LAYOUT_GUINEA_WORM;
+				case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
+					return IDSR_LAYOUT;
+				case CSM:
+					return CSM_LAYOUT;
+				case YELLOW_FEVER:
+					return YELLOW_FEVER_LAYOUT;
 				default:
 					return HTML_LAYOUT;
 			}
@@ -960,9 +981,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			return;
 		}
 
-
-
-
+		
 		switch (incomingDisease){
 			case YELLOW_FEVER:
 				handleYellowFever();
@@ -997,7 +1016,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	}
 
 	public void handleYellowFever(){
-			setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK);
+			setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK, LocationDto.CITY);
 	}
 	public void handleAHF(){
 		setVisible(false,

@@ -51,7 +51,7 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 
 	private static final long serialVersionUID = 1L;
 
-	protected final FieldVisibilityCheckers fieldVisibilityCheckers;
+	public final FieldVisibilityCheckers fieldVisibilityCheckers;
 	protected final UiFieldAccessCheckers fieldAccessCheckers;
 
 	private boolean hideValidationUntilNextCommit = false;
@@ -434,7 +434,7 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 		}
 	}
 
-	protected void setVisible(boolean visible, String... fieldOrPropertyIds) {
+	public void setVisible(boolean visible, String... fieldOrPropertyIds) {
 
 		for (String propertyId : fieldOrPropertyIds) {
 			if (!visible || isVisibleAllowed(propertyId)) {
