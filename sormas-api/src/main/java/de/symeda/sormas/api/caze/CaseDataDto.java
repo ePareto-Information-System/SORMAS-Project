@@ -217,6 +217,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
 
 	public static final String NEW_EXISTING = "existingCase";
+	public static final String LAST_DATE_OF_VACCINATION = "lastDateOfVaccination";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -582,6 +583,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private String otherDeletionReason;
 
 	private NewExisting existingCase;
+	private Date lastDateOfVaccination;
 
 	//private PickMerge importUpdateCaseStatus;
 
@@ -1742,6 +1744,15 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public void setExistingCase(NewExisting existingCase) {
 		this.existingCase = existingCase;
 	}
+
+	public Date getLastDateOfVaccination() {
+		return lastDateOfVaccination;
+	}
+
+	public void setLastDateOfVaccination(Date lastDateOfVaccination) {
+		this.lastDateOfVaccination = lastDateOfVaccination;
+	}
+
 	@JsonIgnore
 	public String i18nPrefix() {
 		return I18N_PREFIX;

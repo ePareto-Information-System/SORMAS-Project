@@ -3010,6 +3010,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
         target.setPregnant(source.getPregnant());
         target.setVaccinationStatus(source.getVaccinationStatus());
+        target.setLastDateOfVaccination(source.getLastDateOfVaccination());
         target.setSmallpoxVaccinationScar(source.getSmallpoxVaccinationScar());
         target.setSmallpoxVaccinationReceived(source.getSmallpoxVaccinationReceived());
         target.setSmallpoxLastVaccinationDate(source.getSmallpoxLastVaccinationDate());
@@ -3200,6 +3201,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
         target.setPregnant(source.getPregnant());
         target.setVaccinationStatus(source.getVaccinationStatus());
+        target.setLastDateOfVaccination(source.getLastDateOfVaccination());
         target.setSmallpoxVaccinationScar(source.getSmallpoxVaccinationScar());
         target.setSmallpoxVaccinationReceived(source.getSmallpoxVaccinationReceived());
         target.setSmallpoxLastVaccinationDate(source.getSmallpoxLastVaccinationDate());

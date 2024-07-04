@@ -12063,4 +12063,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (489, 'Updated surve
 -- INSERT INTO userroles_userrights(userrole_id, userright) VALUES (1177306, 'DASHBOARD_SAMPLE_ACCESS');
 
 INSERT INTO schema_version (version_number, comment) VALUES (490, 'Updated surveillance officer role to see dashboards and Statistics menu #148');
+
+ALTER TABLE cases ADD COLUMN lastDateOfVaccination date;
+INSERT INTO schema_version (version_number, comment) VALUES (491, 'Add lastDateOfVaccination to cases #148');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
