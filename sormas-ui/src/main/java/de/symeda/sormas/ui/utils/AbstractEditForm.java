@@ -63,7 +63,7 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 	private ComboBox diseaseField;
 	private boolean setServerDiseaseAsDefault;
 
-	protected String disease;
+	protected Disease disease;
 	private Disease caseDisease;
 	protected EbsDto ebsDto;
 
@@ -309,7 +309,7 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 				newItem.getItemProperty(SormasFieldGroupFieldFactory.CAPTION_PROPERTY_ID).setValue(value.toString());
 			}
             assert value != null;
-            this.disease=value.toString();
+            this.disease= (Disease) value;
 		});
 		return diseaseField;
 	}

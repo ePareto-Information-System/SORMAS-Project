@@ -479,23 +479,10 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		birthInInstitutionField = addField(PersonDto.BIRTH_IN_INSTITUTION, NullableOptionGroup.class);
 		birthInInstitutionField.setVisible(false);
 
+		addressForm.getIncomingDisease(disease);
+
 		if (disease != null) {
 			switch (disease) {
-				case CSM:
-					addressForm.handleCSM();
-					break;
-				case AFP:
-					addressForm.handleAFP();
-					break;
-				case NEW_INFLUENZA:
-					addressForm.handleNewInfluenza();
-					break;
-				case YELLOW_FEVER:
-					addressForm.handleYellowFever();
-					break;
-				case AHF:
-					addressForm.handleAHF();
-					break;
 				case CORONAVIRUS:
 					addressForm.handleCoronavirus();
 					break;
