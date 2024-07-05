@@ -989,13 +989,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		addField(CaseDataDto.VACCINATION_STATUS);
 		addField(CaseDataDto.LAST_DATE_OF_VACCINATION, DateField.class);
 
-		FieldHelper.setVisibleWhen(
-			getFieldGroup(),
-			CaseDataDto.LAST_DATE_OF_VACCINATION,
-			CaseDataDto.VACCINATION_STATUS,
-			Arrays.asList(VaccinationStatus.VACCINATED),
-			true);
-
 
 		addFields(CaseDataDto.SMALLPOX_VACCINATION_SCAR, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
 		addDateField(CaseDataDto.SMALLPOX_LAST_VACCINATION_DATE, DateField.class, 0);
@@ -1137,7 +1130,19 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			FieldHelper.updateItems(diseaseVariantField, diseaseVariants);
 			diseaseVariantField
 				.setVisible(disease != null && isVisibleAllowed(CaseDataDto.DISEASE_VARIANT) && CollectionUtils.isNotEmpty(diseaseVariants));
+
+			if (disease != null && disease == Disease.MEASLES) {
+				FieldHelper.setVisibleWhen(
+						getFieldGroup(),
+						CaseDataDto.LAST_DATE_OF_VACCINATION,
+						CaseDataDto.VACCINATION_STATUS,
+						Arrays.asList(VaccinationStatus.VACCINATED),
+						true);
+			} else {
+				setVisible(false, CaseDataDto.LAST_DATE_OF_VACCINATION);
+			}
 		});
+
 		diseaseVariantField.addValueChangeListener(e -> {
 			DiseaseVariant diseaseVariant = (DiseaseVariant) e.getProperty().getValue();
 			diseaseVariantDetailsField.setVisible(diseaseVariant != null && diseaseVariant.matchPropertyValue(DiseaseVariant.HAS_DETAILS, true));
