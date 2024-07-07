@@ -430,6 +430,7 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 				externalMessage.get(ExternalMessage.DISEASE_VARIANT),
 				externalMessage.get(ExternalMessage.PERSON_FIRST_NAME),
 				externalMessage.get(ExternalMessage.PERSON_LAST_NAME),
+				externalMessage.get(ExternalMessage.PERSON_OTHER_NAME),
 				externalMessage.get(ExternalMessage.PERSON_BIRTH_DATE_YYYY),
 				externalMessage.get(ExternalMessage.PERSON_BIRTH_DATE_MM),
 				externalMessage.get(ExternalMessage.PERSON_BIRTH_DATE_DD),

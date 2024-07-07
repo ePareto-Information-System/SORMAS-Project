@@ -49,6 +49,7 @@ public class ExternalMessageIndexDto extends AbstractUuidDto {
 	private DiseaseVariant diseaseVariant;
 	private String personFirstName;
 	private String personLastName;
+	private String personOtherName;
 	private Date personBirthDate;
 	private String personPostalCode;
 	private ExternalMessageStatus status;
@@ -64,6 +65,7 @@ public class ExternalMessageIndexDto extends AbstractUuidDto {
 		DiseaseVariant diseaseVariant,
 		String personFirstName,
 		String personLastName,
+		String personOtherName,
 		Integer personBirthDateYYYY,
 		Integer personBirthDateMM,
 		Integer personBirthDateDD,
@@ -82,6 +84,7 @@ public class ExternalMessageIndexDto extends AbstractUuidDto {
 		this.diseaseVariant = diseaseVariant;
 		this.personFirstName = personFirstName;
 		this.personLastName = personLastName;
+		this.personOtherName = personOtherName;
 		this.personPostalCode = personPostalCode;
 		this.status = status;
 		if (assigneeUuid != null) {
@@ -162,6 +165,14 @@ public class ExternalMessageIndexDto extends AbstractUuidDto {
 
 	public void setPersonLastName(String personLastName) {
 		this.personLastName = personLastName;
+	}
+
+	public String getPersonOtherName() {
+		return personOtherName;
+	}
+
+	public void setPersonOtherName(String personOtherName) {
+		this.personOtherName = personOtherName;
 	}
 
 	public Date getPersonBirthDate() {
