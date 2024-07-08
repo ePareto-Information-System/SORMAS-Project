@@ -1131,7 +1131,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			diseaseVariantField
 				.setVisible(disease != null && isVisibleAllowed(CaseDataDto.DISEASE_VARIANT) && CollectionUtils.isNotEmpty(diseaseVariants));
 
-			if (disease != null && disease == Disease.MEASLES) {
+			if (disease != null && Arrays.asList(Disease.MEASLES, Disease.ANTHRAX, Disease.DENGUE, Disease.PLAGUE, Disease.RABIES).contains(disease)) {
 				FieldHelper.setVisibleWhen(
 						getFieldGroup(),
 						CaseDataDto.LAST_DATE_OF_VACCINATION,
