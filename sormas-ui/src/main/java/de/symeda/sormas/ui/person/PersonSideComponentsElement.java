@@ -106,10 +106,13 @@ public interface PersonSideComponentsElement {
 		EventParticipantListComponent eventParticipantListComponent = null;
 		Disease personDataView = null;
 		if (entityUuid != null) {
-			personDataView = FacadeProvider.getCaseFacade().getCaseDataByUuid(entityUuid).getDisease();
+			CaseDataDto caseData = FacadeProvider.getCaseFacade().getCaseDataByUuid(entityUuid);
+			if (caseData != null) {
+				personDataView = caseData.getDisease();
+			}
 		}
 
-		if (personDataView != null && !personDataView.name().equals("FOODBORNE_ILLNESS")) {
+		if (personDataView == null || !personDataView.name().equals("FOODBORNE_ILLNESS")) {
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
 					&& currentUser != null
 					&& currentUser.hasUserRight(UserRight.CASE_VIEW)) {
@@ -181,7 +184,7 @@ public interface PersonSideComponentsElement {
 										isEditAllowed)),
 						TRAVEL_ENTRIES_LOC);
 			}
-			if (personDataView != null && !personDataView.name().equals("AHF")) {
+			if (personDataView == null || !personDataView.name().equals("AHF")) {
 				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.IMMUNIZATION_MANAGEMENT)
 						&& currentUser != null
 						&& currentUser.hasUserRight(UserRight.IMMUNIZATION_VIEW)) {
