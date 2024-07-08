@@ -22,10 +22,7 @@ import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_TOP_3;
 import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -74,17 +71,11 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	private static final String LOC_EXPOSURE_INVESTIGATION_HEADING = "locExposureInvestigationHeading";
 	private static final String LOC_EXPOSURE_TRAVEL_HISTORY_HEADING = "locExposureTravelHistoryHeading";
 	private static final String LOC_ACTIVITY_AS_CASE_INVESTIGATION_HEADING = "locActivityAsCaseInvestigationHeading";
-	private static final String OBTAIN_HISTORY_HEADING = "obtainHistoryHeading";
-	private static final String DAY_1_HEADING = "day1Heading";
-	private static final String DAY_2_HEADING = "day2Heading";
-	private static final String DAY_3_HEADING = "day3Heading";
 	private static final String LOC_SOURCE_CASE_CONTACTS_HEADING = "locSourceCaseContactsHeading";
 	private static final String LOC_EPI_DATA_FIELDS_HINT = "locEpiDataFieldsHint";
 	private static final String EXPOSURE_HISTORY_HEADING = "exposureHistoryHeading";
 	private static final String EXPOSITION_RISKS_HEADING = "expositionRisksHeading";
 	private static final String INDICATE_PLACES_COUNTRY_HEADING = "indicate";
-	private static final String OTHER_PERSONS_HEADING = "otherPersonsHeading";
-	private static final String NUMBER_OF_PERSONS_NO_AFFECTED = "numberOfPersonsNoAffected";
 	private static final String NAME_OF_PLACE_OF_TRAVEL_HEADING = "headingNameOfPlaceOfTravel";
 
 	private static final String TRAVEL_HISTORY_HEADING = "travelHistoryHeadingLoc";
@@ -176,7 +167,6 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			locCss(VSPACE_TOP_3, NAME_OF_PLACE_OF_TRAVEL_HEADING) +
 			fluidRowLocs(EpiDataDto.HISTORY_OF_TRAVEL_REGION, EpiDataDto.HISTORY_OF_TRAVEL_DISTRICT) +
 			fluidRowLocs(EpiDataDto.HISTORY_OF_TRAVEL_SUB_DISTRICT, EpiDataDto.HISTORY_OF_TRAVEL_VILLAGE);
-//			fluidRowLocs(8, EpiDataDto.HISTORY_OF_TRAVEL_OUTSIDE_THE_VILLAGE_TOWN_DISTRICT_DETAILS);
 
 	//@formatter:on
 
@@ -227,12 +217,12 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	protected void addFields() {
 
 
-		if (disease != null && !diseaseCheck() && !diseaseInfluenzaCheck() && disease != Disease.FOODBORNE_ILLNESS && disease != Disease.AFP && disease != Disease.AHF) {
+		if (disease != null && !excludedDiseases.contains(disease)) {
 			addHeadingsAndInfoTexts();
 		}
 
-		NullableOptionGroup recentTravelOutbreak = addField(EpiDataDto.RECENT_TRAVEL_OUTBREAK, NullableOptionGroup.class);
-		NullableOptionGroup contactSimilarOutbreak = addField(EpiDataDto.CONTACT_SIMILAR_SYMPTOMS, NullableOptionGroup.class);
+		addField(EpiDataDto.RECENT_TRAVEL_OUTBREAK, NullableOptionGroup.class);
+		addField(EpiDataDto.CONTACT_SIMILAR_SYMPTOMS, NullableOptionGroup.class);
 
 		NullableOptionGroup contactSickDomesticAnimals = addField(EpiDataDto.CONTACT_SICK_ANIMALS, NullableOptionGroup.class);
 		TextField ifYesSpecifySickDomestic = addField(EpiDataDto.IF_YES_SPECIFY_SICK_ANIMAL, TextField.class);
@@ -298,11 +288,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		nullableOptionGroupHTVTD.addValueChangeListener(e -> {
 			YesNo yesNo = (YesNo) FieldHelper.getNullableSourceFieldValue((Field) e.getProperty());
-			if (yesNo == YesNo.YES) {
-				nameOfPlaceOfTravelLabel.setVisible(true);
-			} else {
-				nameOfPlaceOfTravelLabel.setVisible(false);
-			}
+            nameOfPlaceOfTravelLabel.setVisible(yesNo == YesNo.YES);
 		});
 
 
@@ -411,7 +397,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		DateField dateOfContact = addField(EpiDataDto.DATE_OF_CONTACT, DateField.class);
 		NullableOptionGroup patientReceiveTraditionalMedicine = addField(EpiDataDto.PATIENT_RECEIVE_TRADITIONAL_MEDICINE, NullableOptionGroup.class);
 		TextField ifYesExplain = addField(EpiDataDto.IF_YES_EXPLAIN, TextField.class);
-		NullableOptionGroup patientAttendFuneralCeremonies = addField(EpiDataDto.PATIENT_ATTEND_FUNERAL_CEREMONIES, NullableOptionGroup.class);
+		addField(EpiDataDto.PATIENT_ATTEND_FUNERAL_CEREMONIES, NullableOptionGroup.class);
 		NullableOptionGroup patientTravelAnytimePeriodBeforeIll = addField(EpiDataDto.PATIENT_TRAVEL_ANYTIME_PERIOD_BEFORE_ILL, NullableOptionGroup.class);
 		TextField ifTravelYesWhere = addField(EpiDataDto.IF_TRAVEL_YES_WHERE, TextField.class);
 		DateField ifTravelStartDate = addField(EpiDataDto.IF_TRAVEL_START_DATE, DateField.class);
@@ -461,29 +447,11 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		NullableOptionGroup foodItemsField = addField(EpiDataDto.FOOD_ITEMS, NullableOptionGroup.class);
 		setVisible(false, EpiDataDto.WATER_USED_FOR_DRINKING, EpiDataDto.WATER_USED_NOT_FOR_DRINKING, EpiDataDto.FOOD_ITEMS);
 
-		exposuresField.addValueChangeListener(e -> {
-			ogExposureDetailsKnown.setEnabled(CollectionUtils.isEmpty(exposuresField.getValue()));
-		});
+		exposuresField.addValueChangeListener(e -> ogExposureDetailsKnown.setEnabled(CollectionUtils.isEmpty(exposuresField.getValue())));
 
 		hideFieldsForSelectedDisease(disease);
 
-		if (diseaseCheck()) {
-			setVisible(false, EpiDataDto.EXPOSURES, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN);
-			setVisible(false, EpiDataDto.RECENT_TRAVEL_OUTBREAK, EpiDataDto.CONTACT_SIMILAR_SYMPTOMS, EpiDataDto.CONTACT_SICK_ANIMALS);
-			setVisible(false, EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, EpiDataDto.LARGE_OUTBREAKS_AREA, EpiDataDto.AREA_INFECTED_ANIMALS);
-		}
-
-		if (diseaseCSMCheck()) {
-			recentTravelOutbreak.setVisible(false);
-			contactSickDomesticAnimals.setVisible(false);
-
-			setVisible(false, EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, EpiDataDto.LARGE_OUTBREAKS_AREA, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN);
-
-		}
-
 		if (disease == Disease.NEW_INFLUENZA) {
-			setVisible(false, EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, EpiDataDto.LARGE_OUTBREAKS_AREA, EpiDataDto.AREA_INFECTED_ANIMALS);
-			setVisible(false, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN, EpiDataDto.EXPOSURES, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN);
 
 			NullableOptionGroup previously = addField(EpiDataDto.PREVIOUSLY_VACCINATED_AGAINST_INFLUENZA, NullableOptionGroup.class);
 			TextField vaccineName = addField(EpiDataDto.NAME_OF_VACCINE, TextField.class);
@@ -581,8 +549,6 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 			createLabel(I18nProperties.getString(Strings.headingExposureHistory), H3, EXPOSURE_HISTORY_HEADING);
 
-			setVisible(false, EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, EpiDataDto.LARGE_OUTBREAKS_AREA, EpiDataDto.AREA_INFECTED_ANIMALS, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN, EpiDataDto.EXPOSURES, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN, EpiDataDto.RECENT_TRAVEL_OUTBREAK, EpiDataDto.CONTACT_SIMILAR_SYMPTOMS, EpiDataDto.CONTACT_SICK_ANIMALS, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN, EpiDataDto.ACTIVITIES_AS_CASE, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN);
-
 			setVisible(true, EpiDataDto.INTL_TRAVEL, EpiDataDto.SPECIFY_COUNTRIES, EpiDataDto.DATE_OF_DEPARTURE, EpiDataDto.DATE_OF_ARRIVAL, EpiDataDto.DOMESTIC_TRAVEL, EpiDataDto.SPECIFY_LOCATION, EpiDataDto.DATE_OF_DEPARTURE2, EpiDataDto.DATE_OF_ARRIVAL2, EpiDataDto.CONTACT_ILL_PERSON, EpiDataDto.CONTACT_DATE, EpiDataDto.SPECIFY_ILLNESS);
 
 			FieldHelper.setVisibleWhen(intlTravel, Arrays.asList(specifyCountries,dateDeparture,dateArrival ), Arrays.asList(YesNo.YES), true);
@@ -635,24 +601,6 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 					EpiDataDto.DURING_CONTACT_SUSPECT_CASE, EpiDataDto.DATE_OF_DEATH,
 					EpiDataDto.DATE_OF_LAST_CONTACT_WITH_SUSPECT_CASE);
 
-			dateOfDeath.setVisible(false);
-			ifYesWhere.setVisible(false);
-			hospitalizedDate1.setVisible(false);
-			hospitalizedDate2.setVisible(false);
-			ifYesNameHealer.setVisible(false);
-			community.setVisible(false);
-			country.setVisible(false);
-			ifTravelYesWhere.setVisible(false);
-			ifTravelStartDate.setVisible(false);
-			ifYesEndDate.setVisible(false);
-			suspectName.setVisible(false);
-			suspectLastName.setVisible(false);
-			idCase.setVisible(false);
-			whenWhereContactTakePlace.setVisible(false);
-			dateOfContact.setVisible(false);
-			ifYesExplain.setVisible(false);
-			duringContactSuspectCase.setVisible(false);
-
 			contactDeadWildAnimals.setVisible(true);
 
 			FieldHelper.setVisibleWhen(patientContactKnownSuspect, Arrays.asList(suspectName, suspectLastName, idCase, duringContactSuspectCase, dateOfLastContactWithSuspectCase), Arrays.asList(YesNo.YES), true);
@@ -666,8 +614,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			FieldHelper.setVisibleWhen(patientTravelDuringIllness, Arrays.asList(comm1, comm2, healthCenter1, healthCenter2, country1, country2), Arrays.asList(YesNo.YES), true);
 
 			patientTravelDuringIllness.addValueChangeListener(event -> {
-				YesNo var = (YesNo) FieldHelper.getNullableSourceFieldValue((Field) event.getProperty());
-                indicatePlacesheading.setVisible(var == YesNo.YES);
+				YesNo varField = (YesNo) FieldHelper.getNullableSourceFieldValue((Field) event.getProperty());
+                indicatePlacesheading.setVisible(varField == YesNo.YES);
 			});
 
 		}
@@ -693,7 +641,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 	private void addActivityAsCaseFields() {
 
-		if(!diseaseCSMCheck() && disease != Disease.FOODBORNE_ILLNESS && disease != Disease.AFP && disease != Disease.AHF && disease != Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
+		if(disease != Disease.CSM && disease != Disease.FOODBORNE_ILLNESS && disease != Disease.AFP && disease != Disease.AHF && disease != Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
 			getContent().addComponent(
 					new MultilineLabel(
 							h3(I18nProperties.getString(Strings.headingActivityAsCase))
@@ -714,9 +662,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 				Collections.singletonList(YesNo.YES),
 				true);
 
-		activityAsCaseField.addValueChangeListener(e -> {
-			ogActivityAsCaseDetailsKnown.setEnabled(CollectionUtils.isEmpty(activityAsCaseField.getValue()));
-		});
+		activityAsCaseField.addValueChangeListener(e -> ogActivityAsCaseDetailsKnown.setEnabled(CollectionUtils.isEmpty(activityAsCaseField.getValue())));
 	}
 
 	private void addHeadingsAndInfoTexts() {
@@ -753,20 +699,11 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	@Override
 	protected String createHtmlLayout() {
 		Disease caseDisease = getCaseDisease();
-		switch (caseDisease) {
-			case MEASLES:
-				return MEASLES_LAYOUT;
-			default:
-				return parentClass == CaseDataDto.class ? MAIN_HTML_LAYOUT + SOURCE_CONTACTS_HTML_LAYOUT : MAIN_HTML_LAYOUT;
-		}
-	}
-
-	private boolean diseaseCheck(){
-		return disease == Disease.YELLOW_FEVER;
-	}
-	private boolean diseaseCSMCheck(){return disease == Disease.CSM; }
-	private boolean diseaseInfluenzaCheck(){return disease == Disease.NEW_INFLUENZA || disease == Disease.SARI; }
-
+        if (Objects.requireNonNull(caseDisease) == Disease.MEASLES) {
+            return MEASLES_LAYOUT;
+        }
+        return parentClass == CaseDataDto.class ? MAIN_HTML_LAYOUT + SOURCE_CONTACTS_HTML_LAYOUT : MAIN_HTML_LAYOUT;
+    }
 
 	public void hideFieldsForSelectedDisease(Disease disease) {
 		Set<String> disabledFields = EpiFormConfiguration.getDisabledFieldsForDisease(disease);
@@ -780,8 +717,15 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 				.filter(heading -> getContent().getComponent(heading) != null)
 				.forEach(heading -> getContent().getComponent(heading).setVisible(false));
 
-
 	}
+
+	Set<Disease> excludedDiseases = EnumSet.of(
+			Disease.CSM,
+			Disease.FOODBORNE_ILLNESS,
+			Disease.AFP,
+			Disease.AHF,
+			Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS
+	);
 
 	private Label createLabel(String text, String h4, String location) {
 		final Label label = new Label(text);
