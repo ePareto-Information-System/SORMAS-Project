@@ -14920,4 +14920,8 @@ ALTER TABLE cases ADD COLUMN patientfirstname VARCHAR(255);
 ALTER TABLE cases ADD COLUMN patientlastname VARCHAR(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (690, 'Dropped patientname, Added patient first,last names to cases');
+
+-- Abnormal lung auscultation
+ALTER TABLE symptoms ADD COLUMN abnormalLungAuscultation VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (691, 'Added abnormalLungAuscultation to symptoms');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

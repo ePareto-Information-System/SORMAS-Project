@@ -331,6 +331,7 @@ public class Symptoms extends AbstractDomainObject {
 	private String placeOfFuneralNameVillage;
 	private Set<InjectionSite> injectionSite;
 	private String injectionSiteString;
+	private SymptomState abnormalLungAuscultation;
 
 	// when adding new fields make sure to extend toHumanString
 
@@ -2655,5 +2656,13 @@ public class Symptoms extends AbstractDomainObject {
 	public void setInjectionSiteString(String injectionSiteString) {
 		this.injectionSiteString = injectionSiteString;
 		injectionSite = null;
+	}
+
+	public SymptomState getAbnormalLungAuscultation() {
+		return abnormalLungAuscultation;
+	}
+
+	public void setAbnormalLungAuscultation(SymptomState abnormalLungAuscultation) {
+		this.abnormalLungAuscultation = abnormalLungAuscultation;
 	}
 }

@@ -297,7 +297,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setNameService(source.getNameService());
 		target.setPlaceOfFuneralNameVillage(source.getPlaceOfFuneralNameVillage());
 		target.setInjectionSite(source.getInjectionSite());
-
+		target.setAbnormalLungAuscultation(source.getAbnormalLungAuscultation());
 		return target;
 	}
 
@@ -569,7 +569,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setNameService(source.getNameService());
 		target.setPlaceOfFuneralNameVillage(source.getPlaceOfFuneralNameVillage());
 		target.setInjectionSite(source.getInjectionSite());
-
+		target.setAbnormalLungAuscultation(source.getAbnormalLungAuscultation());
 
 		return target;
 	}
@@ -835,7 +835,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setOutcomePlaceCommVillage(source.getOutcomePlaceCommVillage());
 		target.setNameService(source.getNameService());
 		target.setPlaceOfFuneralNameVillage(source.getPlaceOfFuneralNameVillage());
-
+		target.setAbnormalLungAuscultation(source.getAbnormalLungAuscultation());
 		return target;
 	}
 
@@ -1100,7 +1100,8 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setRedEyes(source.getRedEyes());
 		target.setGeneralizedRash(source.getGeneralizedRash());
 		target.setSwollenLymphNodesBehindEars(source.getSwollenLymphNodesBehindEars());
-
+		target.setPatientHaveFever(source.getPatientHaveFever());
+		target.setAbnormalLungAuscultation(source.getAbnormalLungAuscultation());
 		return target;
 	}
 

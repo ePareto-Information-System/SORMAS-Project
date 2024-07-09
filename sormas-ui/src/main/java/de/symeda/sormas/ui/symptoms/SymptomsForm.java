@@ -645,7 +645,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			ABDOMINAL_CRAMPS,
 			HEADACHES,
 			GENERALIZED_RASH,
-			SWOLLEN_LYMPH_NODES_BEHIND_EARS);
+			SWOLLEN_LYMPH_NODES_BEHIND_EARS,
+			ABNORMAL_LUNG_AUSCULTATION);
 
 		TextField babyAgeAtDeath = addField(AGE_AT_DEATH_DAYS, TextField.class);
 		TextField ageOfOnsetDays =  addField(AGE_AT_ONSET_DAYS, TextField.class);
