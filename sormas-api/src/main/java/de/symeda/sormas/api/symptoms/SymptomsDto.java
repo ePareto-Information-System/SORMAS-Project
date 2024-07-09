@@ -486,6 +486,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		OTHER })
 	@Outbreaks
 	@HideForCountries
+	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState chestPain;
 
 	@Diseases({
@@ -627,7 +628,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		PLAGUE,
 		POLIO,
 		ANTHRAX,
-		CORONAVIRUS,
 		AHF,
 		UNDEFINED,
 		FOODBORNE_ILLNESS,
@@ -1434,6 +1434,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		POLIO,
 		AHF, DENGUE,
+		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries
@@ -2057,6 +2058,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
 		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState conjunctivalInjection;
 
 	@Diseases({
@@ -2332,6 +2334,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Outbreaks
 	@Complication
 	@HideForCountries
+	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState seizures;
 
 	@Diseases({
@@ -2530,6 +2533,10 @@ public class SymptomsDto extends PseudonymizableDto {
 	private YesNo trueAfp;
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState dyspnea;
+	@Diseases({
+			CORONAVIRUS
+	})
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState tachypnea;
 	@Diseases({
 			NEONATAL_TETANUS
@@ -2608,7 +2615,8 @@ public class SymptomsDto extends PseudonymizableDto {
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState caseDetectedBeforeWormEmergence;
 	@Diseases({
-			CHOLERA
+			CHOLERA,
+			CORONAVIRUS
 			 })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
