@@ -51,7 +51,7 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 
 	private static final long serialVersionUID = 1L;
 
-	protected final FieldVisibilityCheckers fieldVisibilityCheckers;
+	public final FieldVisibilityCheckers fieldVisibilityCheckers;
 	protected final UiFieldAccessCheckers fieldAccessCheckers;
 
 	private boolean hideValidationUntilNextCommit = false;
@@ -63,7 +63,7 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 	private ComboBox diseaseField;
 	private boolean setServerDiseaseAsDefault;
 
-	protected String disease;
+	protected Disease disease;
 	private Disease caseDisease;
 	protected EbsDto ebsDto;
 
@@ -309,7 +309,7 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 				newItem.getItemProperty(SormasFieldGroupFieldFactory.CAPTION_PROPERTY_ID).setValue(value.toString());
 			}
             assert value != null;
-            this.disease=value.toString();
+            this.disease= (Disease) value;
 		});
 		return diseaseField;
 	}
@@ -434,7 +434,7 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 		}
 	}
 
-	protected void setVisible(boolean visible, String... fieldOrPropertyIds) {
+	public void setVisible(boolean visible, String... fieldOrPropertyIds) {
 
 		for (String propertyId : fieldOrPropertyIds) {
 			if (!visible || isVisibleAllowed(propertyId)) {

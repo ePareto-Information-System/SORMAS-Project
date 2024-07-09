@@ -20,6 +20,7 @@ package de.symeda.sormas.ui.location;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,6 +34,7 @@ import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.ui.caze.CaseDataForm;
 import de.symeda.sormas.ui.caze.CasePersonView;
 import de.symeda.sormas.ui.person.PersonEditForm;
+import de.symeda.sormas.ui.person.PersonFormConfiguration;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -135,6 +137,21 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	private static final String EBS_LAYOUT = fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY) +
 			fluidRowLocs(4,LocationDto.CITY);
+
+	private static final String IDSR_LAYOUT =
+			fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY) +
+			fluidRowLocs(LocationDto.HOUSE_NUMBER, LocationDto.AREA_TYPE);
+
+	private static final String CSM_LAYOUT =
+			fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY) +
+					fluidRowLocs(LocationDto.HOUSE_NUMBER, LocationDto.POSTAL_CODE, LocationDto.LAND_MARK) +
+					fluidRowLocs(LocationDto.LATITUDE, LocationDto.LONGITUDE, LocationDto.LAT_LON_ACCURACY);
+
+	private static final String YELLOW_FEVER_LAYOUT =
+			fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY) +
+					fluidRowLocs(LocationDto.HOUSE_NUMBER, LocationDto.CITY, LocationDto.AREA_TYPE) +
+					fluidRowLocs(LocationDto.POSTAL_CODE, LocationDto.LAND_MARK) +
+					fluidRowLocs(LocationDto.LATITUDE, LocationDto.LONGITUDE);
 
 	private MapPopupView leafletMapPopup;
 	private ComboBox addressType;
@@ -814,6 +831,12 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			switch (caseDisease) {
 				case GUINEA_WORM:
 					return HTML_LAYOUT_GUINEA_WORM;
+				case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
+					return IDSR_LAYOUT;
+				case CSM:
+					return CSM_LAYOUT;
+				case YELLOW_FEVER:
+					return YELLOW_FEVER_LAYOUT;
 				default:
 					return HTML_LAYOUT;
 			}
@@ -960,26 +983,23 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			return;
 		}
 
-
-
-
 		switch (incomingDisease){
+
 			case YELLOW_FEVER:
-				handleYellowFever();
+				setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK, LocationDto.CITY);
 				break;
 			case AHF:
-			case DENGUE:
-				handleAHF();
+				setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE);
 				break;
 			case CSM:
-				handleCSM();
+				setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAT_LON_ACCURACY, LocationDto.LAND_MARK);
 				break;
 			case NEW_INFLUENZA:
-			case SARI:
-				handleNewInfluenza();
+				localityField.setVisible(true);
 				break;
 			case AFP:
-				handleAFP();
+				additionalInformationField.setCaption("Village");
+				setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE);
 				break;
 			case MEASLES:
 				handleMeasles();
@@ -988,39 +1008,15 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 				handleCoronavirus();
 				break;
 			case FOODBORNE_ILLNESS:
-				handleFBI();
+				createLabel(I18nProperties.getString(Strings.homeAddressheading), H3, HOME_ADDRESS_HEADING);
+				localityField.setVisible(true);
 			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
-				handleIDSR();
+				houseNumberField.setCaption("House Number/Location");
 			default:
 				break;
 			}
-	}
 
-	public void handleYellowFever(){
-			setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK);
-	}
-	public void handleAHF(){
-		setVisible(false,
-				LocationDto.POSTAL_CODE, LocationDto.ADDITIONAL_INFORMATION, LocationDto.HOUSE_NUMBER, LocationDto.AREA_TYPE, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
-		setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE);
-	}
-	public void handleCSM(){
-		setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAT_LON_ACCURACY, LocationDto.LAND_MARK);
-		setVisible(false,LocationDto.AREA_TYPE, LocationDto.CITY);
-	}
-	public void handleNewInfluenza(){
-		setVisible(false,
-				LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
-		localityField.setVisible(true);
-
-	}
-	public void handleAFP(){
-		additionalInformationField.setCaption("Village");
-		setVisible(false, LocationDto.ADDRESS_TYPE,
-				LocationDto.ADDRESS_TYPE_DETAILS,
-				LocationDto.STREET,
-				LocationDto.CONTACT_PERSON_FIRST_NAME);
-		setVisible(true, LocationDto.LATITUDE, LocationDto.LONGITUDE);
+		hideFieldsForSelectedDisease(incomingDisease);
 	}
 
 	public void handleCoronavirus() {
@@ -1049,19 +1045,6 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		setVisible(false, LocationDto.STREET, LocationDto.HOUSE_NUMBER, LocationDto.ADDITIONAL_INFORMATION);
 	}
 
-
-	public void handleFBI(){
-		createLabel(I18nProperties.getString(Strings.homeAddressheading), H3, HOME_ADDRESS_HEADING);
-
-		setVisible(false,
-				LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
-		localityField.setVisible(true);
-	}
-	public void handleIDSR(){
-		setVisible(false, LocationDto.POSTAL_CODE, LocationDto.CITY);
-		 houseNumberField.setCaption("House Number/Location");
-	}
-
 	public void setOnlyUnknownForGuineaWorm() {
 		setVisible(false, LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.ADDITIONAL_INFORMATION, LocationDto.CITY, LocationDto.HOUSE_NUMBER);
 			setVisible(true, LocationDto.LAND_MARK, LocationDto.AREA_TYPE, LocationDto.ZONE, LocationDto.VILLAGE);
@@ -1072,6 +1055,17 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		label.addStyleName(h4);
 		getContent().addComponent(label, location);
 		return label;
+	}
+
+	public void hideFieldsForSelectedDisease(Disease disease) {
+		Set<String> disabledFields = LocationFormConfiguration.getDisabledFieldsForDisease(disease);
+		for (String field : disabledFields) {
+			disableField(field);
+		}
+	}
+
+	private void disableField(String field) {
+		setVisible(false, field);
 	}
 
 
