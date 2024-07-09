@@ -1332,7 +1332,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.INTERNAL_TOKEN, CaseDataDto.EXTERNAL_TOKEN, CaseDataDto.CLINICIAN_NAME, CaseDataDto.CLINICIAN_PHONE,
                 CaseDataDto.CLINICIAN_EMAIL);
 
-        FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.TRIMESTER, CaseDataDto.PREGNANT, Collections.singletonList(YesNoUnknown.YES), true);
+        FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.TRIMESTER, CaseDataDto.PREGNANT, Collections.singletonList(YesNo.YES), true);
 
         diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
             Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
@@ -1485,6 +1485,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             if (disease == Disease.CORONAVIRUS) {
                 medicalInformationFields =
                         Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.TRIMESTER);
+                setVisible(true, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM);
+
                 healthConditionsField.setVisible(true);
                 healthConditionsField.hideAllFields();
                 healthConditionsField.showForCovid19();
