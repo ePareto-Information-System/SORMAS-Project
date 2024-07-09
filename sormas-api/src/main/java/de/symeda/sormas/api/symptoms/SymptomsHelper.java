@@ -531,6 +531,7 @@ public final class SymptomsHelper {
 		appendYesSymptom(string, SymptomsDto.build().getGeneralizedRash(), SymptomsDto.GENERALIZED_RASH);
 		appendYesSymptom(string, SymptomsDto.build().getRedEyes(), SymptomsDto.RED_EYES);
 		appendYesSymptom(string, SymptomsDto.build().getSwollenLymphNodesBehindEars(), SymptomsDto.SWOLLEN_LYMPH_NODES_BEHIND_EARS);
+		appendYesSymptom(string, SymptomsDto.build().getAbnormalLungAuscultation(), SymptomsDto.ABNORMAL_LUNG_AUSCULTATION);
 
 		// symptomsComments;
 

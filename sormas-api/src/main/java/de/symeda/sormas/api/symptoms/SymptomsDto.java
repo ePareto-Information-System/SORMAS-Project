@@ -309,6 +309,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String DIARRHOEA = "diarrhoea";
 	public static final String ABDOMINAL_CRAMPS = "abdominalCramps";
 	public static final String HEADACHES = "headaches";
+	public static final String ABNORMAL_LUNG_AUSCULTATION = "abnormalLungAuscultation";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -2590,6 +2591,9 @@ public class SymptomsDto extends PseudonymizableDto {
 	private String outcomePlaceCommVillage;
 	private String nameService;
 	private String placeOfFuneralNameVillage;
+	@Diseases({CORONAVIRUS})
+	@SymptomGrouping(SymptomGroup.RESPIRATORY)
+	private SymptomState abnormalLungAuscultation;
 
 	@Diseases({
 			GUINEA_WORM })
@@ -4783,5 +4787,13 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setInjectionSite(Set<InjectionSite> injectionSite) {
 		this.injectionSite = injectionSite;
+	}
+
+	public SymptomState getAbnormalLungAuscultation() {
+		return abnormalLungAuscultation;
+	}
+
+	public void setAbnormalLungAuscultation(SymptomState abnormalLungAuscultation) {
+		this.abnormalLungAuscultation = abnormalLungAuscultation;
 	}
 }
