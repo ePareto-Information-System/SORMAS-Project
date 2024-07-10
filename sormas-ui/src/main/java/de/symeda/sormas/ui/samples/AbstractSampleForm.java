@@ -754,7 +754,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	class FieldSampleIdValidator implements Validator {
 
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 10L;
 
 		@Override
 		public void validate(Object value) throws InvalidValueException {
