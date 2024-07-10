@@ -1,65 +1,48 @@
 package de.symeda.sormas.ui.samples;
 
-import static de.symeda.sormas.ui.utils.CssStyles.*;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
-import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
-import static de.symeda.sormas.ui.utils.LayoutUtil.locCss;
-
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.Property;
 import com.vaadin.v7.data.Validator;
-import com.vaadin.v7.ui.AbstractField;
-import com.vaadin.v7.ui.CheckBox;
-import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.DateField;
-import com.vaadin.v7.ui.Field;
-import com.vaadin.v7.ui.OptionGroup;
-import com.vaadin.v7.ui.TextArea;
-import com.vaadin.v7.ui.TextField;
-
+import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.caze.*;
+import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
-import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.feature.FeatureType;
-import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.i18n.*;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.sample.*;
-import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.*;
+import de.symeda.sormas.api.utils.InjectionSite;
+import de.symeda.sormas.api.utils.SampleContainerUsed;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.*;
-import de.symeda.sormas.ui.utils.DateFormatHelper;
-import de.symeda.sormas.ui.utils.DateTimeField;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.vaadin.hene.popupbutton.PopupButton;
-import java.util.Date;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static de.symeda.sormas.ui.utils.CssStyles.*;
+import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 
 public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
     private static final long serialVersionUID = -2323128076462668517L;
 
-	//	protected static final String REPORT_INFORMATION_LOC = "reportInformationLoc";
 	protected static final String PATHOGEN_TESTING_INFO_LOC = "pathogenTestingInfoLoc";
 	protected static final String SAMPLE_MATERIAL_INFO_LOC = "sampleMaterialInfoLoc";
 	protected static final String ADDITIONAL_TESTING_INFO_LOC = "additionalTestingInfoLoc";
@@ -85,9 +68,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	protected static final String HEADING_SPECIMEN_HANDLING = "headingSpecimenHandling";
 
 
-	private ComboBox lab;
 	private Disease disease;
-	private ComboBox diseaseField;
 	public ComboBox sampleMaterialComboBox;
 	public ComboBox sampleSource;
 	private TextField labDetails;
@@ -96,7 +77,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	protected SampleDispatchMode sampleDispatchMode = SampleDispatchMode.REGIONAL_COLDROOM;
 	private DateTimeField sampleDateField;
 	private NullableOptionGroup hasSampleBeenCollected;
-	private DateTimeField laboratorySampleDateReceived;
+
 	OptionGroup sampleTestsField;
 	OptionGroup requestedSampleMaterialsField;
 	OptionGroup influenzaOroNasoSelection;
@@ -104,7 +85,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private ComboBox suspectedDisease;
 	private DateField dateLabReceivedSpecimen;
 	private OptionGroup laboratorySampleCondition;
-	private TextField laboratoryFinalResults;
+
 	private DateField dateFormSentToDistrict;
 	private DateField dateFormReceivedAtDistrict;
 	private DateField dateResultsSentToClinician;
@@ -114,31 +95,20 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private OptionGroup laboratorySampleContainerReceived;
 	private TextField laboratorySampleContainerOther;
 	private NullableOptionGroup laboratoryAppearanceOfCSF;
-	private DateField shipmentDate;
-	private TextField shipmentDetails;
-	private CheckBox check;
 	private DateField dateSampleSentToLab;
 	private DateField laboratoryDateResultsSentDSD;
-	private DateField dateFormReceivedAtDistrictField;
 	private DateField dateSurveillanceSentResultsToDistrict;
 	private DateField dateFormSentToHigherLevel;
 	private TextField personCompletingForm;
-	private ComboBox ipSampleSent;
+
 	OptionGroup requestedPathogenTestsField;
 	private CheckBox sampleReceived;
-    private CheckBox sampleShipped;
-    private DateTimeField sampleReceivedDate;
+	private DateTimeField sampleReceivedDate;
     private ComboBox sampleSpecimenCondition;
     private OptionGroup ipSampleTestResults;
-    private NullableOptionGroup selectedResultIGM;
-    private DateField selectedResultIGMDate;
-    private NullableOptionGroup selectedResultPrnt;
-    private TextField inputValuePrnt;
-    private DateField selectedResultPrntDate;
-    private NullableOptionGroup selectedResultPcr;
-    private DateField selectedResultPcrDate;
 
-    //@formatter:off
+
+	//@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
 			fluidRowLocs(SampleDto.SAMPLE_PURPOSE) +
             fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
@@ -170,7 +140,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(SampleDto.SAMPLING_REASON, SampleDto.SAMPLING_REASON_DETAILS) +
 					fluidRowLocs(SampleDto.SAMPLE_SOURCE, "") +
 					fluidRowLocs(6,SampleDto.OTHER_TYPE) +
-//					fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
 
 					fluidRowLocs(SampleDto.SAMPLE_DISPATCH_MODE) +
 					fluidRowLocs(6,SampleDto.SAMPLE_DISPATCH_DATE) +
@@ -343,6 +312,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
     protected void addCommonFields() {
 
+    TextField laboratoryFinalResults;
+  	ComboBox lab;
+
 		disease = getCaseDisease();
 
 //	-- dateSurveillanceSentResultsToDistrict, dateFormSentToHigherLevel, personCompletingForm
@@ -410,7 +382,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         comment.setDescription(
                 I18nProperties.getPrefixDescription(SampleDto.I18N_PREFIX, SampleDto.COMMENT, "") + "\n"
                         + I18nProperties.getDescription(Descriptions.descGdpr));
-        sampleShipped = addField(SampleDto.SHIPPED, CheckBox.class);
+		addField(SampleDto.SHIPPED, CheckBox.class);
         sampleReceived = addField(SampleDto.RECEIVED, CheckBox.class);
 
         sampleSpecimenCondition.setVisible(false);
@@ -514,7 +486,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                 getField(SampleDto.SAMPLE_MATERIAL_TEXT).setEnabled(false);
                 getField(SampleDto.LAB).setEnabled(false);
                 shippedField.setEnabled(false);
-//				getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
                 getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
                 getField(SampleDto.SAMPLE_SOURCE).setEnabled(false);
             }
@@ -944,16 +915,17 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
     }
 
     private void handleCSM() {
+        DateTimeField laboratorySampleDateReceived;
 
         OptionGroup csfSampleCollected = addField(SampleDto.CSF_SAMPLE_COLLECTED, OptionGroup.class);
         ComboBox csfReason = addField(SampleDto.CSF_REASON, ComboBox.class);
-        NullableOptionGroup appearanceOfCsf = addField(SampleDto.APPEARANCE_OF_CSF, NullableOptionGroup.class);
+        addField(SampleDto.APPEARANCE_OF_CSF, NullableOptionGroup.class);
         addField(SampleDto.INOCULATION_TIME_TRANSPORT_MEDIA, DateField.class);
         OptionGroup sampleSentToLab = addField(SampleDto.SAMPLE_SENT_TO_LAB, OptionGroup.class);
         TextField reasonNotSent = addField(SampleDto.REASON_NOT_SENT_TO_LAB, TextField.class);
         NullableOptionGroup sampleContainerUsed = addField(SampleDto.SAMPLE_CONTAINER_USED, NullableOptionGroup.class);
         TextField otherContainer = addField(SampleDto.CONTAINER_OTHER, TextField.class);
-        OptionGroup rdtPerformed = addField(SampleDto.RDT_PERFORMED, OptionGroup.class);
+        addField(SampleDto.RDT_PERFORMED, OptionGroup.class);
         addField(SampleDto.RDT_RESULTS, TextField.class);
         addField(SampleDto.DISTRICT_NOTIFICATION_DATE, DateField.class);
         addField(SampleDto.NAME_OF_PERSON, TextField.class);
@@ -1031,26 +1003,26 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         followUpExamination.setVisible(false);
 
         stoolSpecimenCollection.setVisible(true);
-        DateField dateFirstSpecimen = addField(SampleDto.DATE_FIRST_SPECIMEN, DateField.class);
-        DateField dateSecondSpecimen = addField(SampleDto.DATE_SECOND_SPECIMEN, DateField.class);
-        DateField dateSpecimenSentNationalLevel = addField(SampleDto.DATE_SPECIMEN_SENT_NATIONAL_LEVEL, DateField.class);
-        DateField dateSpecimenReceivedNationalLevel = addField(SampleDto.DATE_SPECIMEN_RECEIVED_NATIONAL_LEVEL, DateField.class);
-        DateField dateSpecimenSentInter = addField(SampleDto.DATE_SPECIMEN_SENT_INTERCOUNTY_NATLAB, DateField.class);
-        DateField dateSpecimenReceivedInter = addField(SampleDto.DATE_SPECIMEN_RECEIVED_INTERCOUNTY_NATLAB, DateField.class);
+        addField(SampleDto.DATE_FIRST_SPECIMEN, DateField.class);
+		addField(SampleDto.DATE_SECOND_SPECIMEN, DateField.class);
+        addField(SampleDto.DATE_SPECIMEN_SENT_NATIONAL_LEVEL, DateField.class);
+		addField(SampleDto.DATE_SPECIMEN_RECEIVED_NATIONAL_LEVEL, DateField.class);
+        addField(SampleDto.DATE_SPECIMEN_SENT_INTERCOUNTY_NATLAB, DateField.class);
+        addField(SampleDto.DATE_SPECIMEN_RECEIVED_INTERCOUNTY_NATLAB, DateField.class);
 
         stoolSpecimenResults.setVisible(true);
-        OptionGroup statusSpecimenReceptionAtLab = addField(SampleDto.STATUS_SPECIMEN_RECEPTION_AT_LAB, OptionGroup.class);
-        DateField dateCombinedCellCultureResults = addField(SampleDto.DATE_COMBINED_CELL_CULTURE_RESULTS, DateField.class);
-        OptionGroup w1 = addField(SampleDto.W1, OptionGroup.class);
-        OptionGroup w2 = addField(SampleDto.W2, OptionGroup.class);
-        OptionGroup w3 = addField(SampleDto.W3, OptionGroup.class);
-        OptionGroup s1 = addField(SampleDto.SL1, OptionGroup.class);
-        OptionGroup s2 = addField(SampleDto.SL2, OptionGroup.class);
-        OptionGroup s3 = addField(SampleDto.SL3, OptionGroup.class);
-        NullableOptionGroup discordant = addField(SampleDto.DISCORDANT, NullableOptionGroup.class);
+        addField(SampleDto.STATUS_SPECIMEN_RECEPTION_AT_LAB, OptionGroup.class);
+        addField(SampleDto.DATE_COMBINED_CELL_CULTURE_RESULTS, DateField.class);
+        addField(SampleDto.W1, OptionGroup.class);
+        addField(SampleDto.W2, OptionGroup.class);
+        addField(SampleDto.W3, OptionGroup.class);
+        addField(SampleDto.SL1, OptionGroup.class);
+        addField(SampleDto.SL2, OptionGroup.class);
+        addField(SampleDto.SL3, OptionGroup.class);
+        addField(SampleDto.DISCORDANT, NullableOptionGroup.class);
 
         followUpExamination.setVisible(true);
-        DateField dateFollowUpExam = addField(SampleDto.DATE_FOLLOWUP_EXAM, DateField.class);
+        addField(SampleDto.DATE_FOLLOWUP_EXAM, DateField.class);
         NullableOptionGroup residualAnalysis = addField(SampleDto.RESIDUAL_ANALYSIS, NullableOptionGroup.class);
         residualAnalysis.removeItem(InjectionSite.RIGHT_FOREARM);
         residualAnalysis.removeItem(InjectionSite.RIGHT_BUTTOCKS);
@@ -1058,15 +1030,15 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         residualAnalysis.removeItem(InjectionSite.LEFT_FOREARM);
         residualAnalysis.removeItem(InjectionSite.LEFT_BUTTOCKS);
         residualAnalysis.removeItem(InjectionSite.LEFT_THIGH);
-        ComboBox resultExam = addField(SampleDto.RESULT_EXAM, ComboBox.class);
+        addField(SampleDto.RESULT_EXAM, ComboBox.class);
 
-        DateField dateSentNationalRegLab = addField(SampleDto.DATE_SENT_NATIONAL_REG_LAB, DateField.class);
-        DateField dateDifferentiationSentEpi = addField(SampleDto.DATE_DIFFERENTIATION_SENT_EPI, DateField.class);
-        DateField dateDifferentiationReceivedEpi = addField(SampleDto.DATE_DIFFERENTIATION_RECEIVED_EPI, DateField.class);
-        DateField dateIsolateSentSequencing = addField(SampleDto.DATE_ISOLATE_SENT_SEQUENCING, DateField.class);
-        DateField dateSeqResultsSentProgram = addField(SampleDto.DATE_SEQ_RESULTS_SENT_PROGRAM, DateField.class);
-        NullableOptionGroup finalLabResults = addField(SampleDto.FINAL_LAB_RESULTS, NullableOptionGroup.class);
-        NullableOptionGroup immunocompromisedStatusSuspected = addField(SampleDto.IMMUNOCOMPROMISED_STATUS_SUSPECTED, NullableOptionGroup.class);
+        addField(SampleDto.DATE_SENT_NATIONAL_REG_LAB, DateField.class);
+		addField(SampleDto.DATE_DIFFERENTIATION_SENT_EPI, DateField.class);
+        addField(SampleDto.DATE_DIFFERENTIATION_RECEIVED_EPI, DateField.class);
+        addField(SampleDto.DATE_ISOLATE_SENT_SEQUENCING, DateField.class);
+        addField(SampleDto.DATE_SEQ_RESULTS_SENT_PROGRAM, DateField.class);
+        addField(SampleDto.FINAL_LAB_RESULTS, NullableOptionGroup.class);
+        addField(SampleDto.IMMUNOCOMPROMISED_STATUS_SUSPECTED, NullableOptionGroup.class);
         ComboBox afpFinalClassification = addField(SampleDto.AFP_FINAL_CLASSIFICATION, ComboBox.class);
 		FieldHelper.updateEnumData(afpFinalClassification, FinalClassification.AFP_CLASSIFICATION);
 
@@ -1094,6 +1066,14 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
     }
 
     private void handleYellowFever() {
+        TextField inputValuePrnt;
+        ComboBox ipSampleSent;
+        NullableOptionGroup selectedResultIGM;
+        DateField selectedResultIGMDate;
+        NullableOptionGroup selectedResultPcr;
+        DateField selectedResultPcrDate;
+        NullableOptionGroup selectedResultPrnt;
+        DateField selectedResultPrntDate;
 
         addSampleDispatchFields();
 
@@ -1109,9 +1089,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
         ipSampleSent = addField(SampleDto.IPSAMPLESENT, ComboBox.class);
 
-        sampleReceived.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
-            FieldHelper.setVisibleWhen(sampleReceived, Arrays.asList(sampleReceivedDate, labSampleId, sampleSpecimenCondition), Arrays.asList(Boolean.TRUE), true);
-        });
+        sampleReceived.addValueChangeListener((ValueChangeListener) valueChangeEvent -> FieldHelper.setVisibleWhen(sampleReceived, Arrays.asList(sampleReceivedDate, labSampleId, sampleSpecimenCondition), Arrays.asList(Boolean.TRUE), true));
 
         if(sampleReceived.getValue().equals(Boolean.TRUE)){
             FieldHelper.setVisibleWhen(sampleReceived, Arrays.asList(sampleReceivedDate, labSampleId, sampleSpecimenCondition), Arrays.asList(Boolean.TRUE), true);
@@ -1192,9 +1170,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         otherType.setVisible(false);
         otherType.setCaption("Specify for other type");
 
-        sampleMaterialComboBox.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
-            otherType.setVisible(sampleMaterialComboBox.getValue() != null && sampleMaterialComboBox.getValue() == SampleMaterial.OTHER);
-        });
+        sampleMaterialComboBox.addValueChangeListener((ValueChangeListener) valueChangeEvent -> otherType.setVisible(sampleMaterialComboBox.getValue() != null && sampleMaterialComboBox.getValue() == SampleMaterial.OTHER));
     }
 
 
@@ -1270,15 +1246,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
             }
         }
 
-        OptionGroup sampleDispatchModeTypes = addField(SampleDto.SAMPLE_DISPATCH_MODE, outcome);
-        /*DateField cardDateField = addField(SampleDto.SAMPLE_DISPATCH_DATE, DateField.class);
-        cardDateField.setValue(new Date());
-
-        FieldHelper.setEnabledWhen(
-                sampleDispatchModeTypes,
-                Arrays.asList(SampleDispatchMode.NATIONAL_LAB, SampleDispatchMode.REGIONAL_COLDROOM, SampleDispatchMode.NATIONAL_BY_DISTRICT),
-                Collections.singletonList(cardDateField),
-                false);*/
+    addField(SampleDto.SAMPLE_DISPATCH_MODE, outcome);
 
 		setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
 		   sampleMaterialComboBox.setVisible(false);
@@ -1286,9 +1254,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	}
 
 	private void handleMeasles() {
-//			setVisible(false, SampleDto.SAMPLING_REASON);
-//			setVisible(false, SampleDto.SAMPLE_PURPOSE, SampleDto.SAMPLE_MATERIAL);
-//			setVisible(true, SampleDto.RECEIVED, SampleDto.REQUESTED_SAMPLE_MATERIALS);
 			List<PathogenTestType> measelesPathogenTests = PathogenTestType.getMeaslesTestTypes();
 			Arrays.stream(PathogenTestType.values())
 					.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
@@ -1313,17 +1278,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		}
 	}
 
-	private FacilityReferenceDto findLabByName(List<FacilityReferenceDto> labs, String labName) {
-		for (FacilityReferenceDto labItem : labs) {
-			if (labName.equals(labItem.getCaption())) {
-				return labItem;
-			}
-		}
-
-		return null;
-	}
-
-
     private Disease getDiseaseFromCase(String caseUuid) {
         CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(caseUuid);
         if (caseDataDto != null) {
@@ -1331,26 +1285,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         }
         return null;
     }
-
-    private void setVisibleAndCheckLab(String labName, String... fieldsToHide) {
-        setVisible(false, fieldsToHide);
-        List<FacilityReferenceDto> allActiveLaboratories = FacadeProvider.getFacilityFacade().getAllActiveLaboratories(false);
-        FacilityReferenceDto facilityLab = findLabByName(allActiveLaboratories, labName);
-
-        if (lab != null) {
-            if (facilityLab != null) {
-                lab.addItems(allActiveLaboratories);
-                lab.setValue(facilityLab);
-                labDetails.setVisible(false);
-                labDetails.setRequired(false);
-            } else {
-                System.out.println("Please add " + labName + " to Facility Configuration");
-            }
-        } else {
-            System.out.println("Lab dropdown is null. Please contact system admin.");
-        }
-    }
-
 
     private Disease getDiseaseFromContact(String contactUuid) {
         ContactDto contactDto = FacadeProvider.getContactFacade().getByUuid(contactUuid);
@@ -1440,6 +1374,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                         .collect(Collectors.toList());
 
                 requestedSampleMaterialsField.addItems(values1);
+				break;
             case MONKEYPOX:
                 requestedSampleMaterialsField.addItems(
                         Arrays.stream(SampleMaterial.getNewInfluenzaType())
