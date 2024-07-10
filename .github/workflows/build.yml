@@ -34,7 +34,9 @@ jobs:
         with:
           M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
       - name: Change directory to where POM is located
-        run: cd /home/runner/work/SORMAS-Project/SORMAS-Project/sormas-base
+        run: cd SORMAS-Project/SORMAS-Project/sormas-base
+      - name: Verify directory
+        run: ls -la
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
