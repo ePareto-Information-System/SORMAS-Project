@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     branches:
-      - development
+      - gh-release-1.87.0
 
 
 jobs:
