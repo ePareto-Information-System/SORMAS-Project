@@ -18,19 +18,25 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
-      - name: Install Ant
-        run: sudo apt-get install ant
       - name: Cache SonarQube packages
         uses: actions/cache@v1
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-      - name: Build and analyze with Ant
+      - name: Set up Maven Env
+        uses: stCarolas/setup-maven@v4
+        with:
+          maven-version: 3.8.1
+      - name: Set environment variables
+        id: check
+        uses: allenevans/set-env@v2.0.1
+        with:
+          M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
+      - name: Change directory to where POM is located
+        run: cd /home/runner/work/SORMAS-Project/SORMAS-Project/sormas-base
+      - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: |
-          ant clean
-          ant build
-          ant sonar -Dsonar.projectKey=ePareto-Information-System_SORMAS-Project_0b4721af-c235-4cc3-9a0a-4c59d5d3ec28 -Dsonar.projectName='SORMAS-Project'
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ePareto-Information-System_SORMAS-Project_0b4721af-c235-4cc3-9a0a-4c59d5d3ec28 -Dsonar.projectName='SORMAS-Project'
