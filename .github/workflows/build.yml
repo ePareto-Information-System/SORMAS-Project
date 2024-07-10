@@ -36,7 +36,7 @@ jobs:
       - name: check current directory
         run: ls
       - name: Change directory to where POM is located
-        run: cd home/runner/work/SORMAS-Project/SORMAS-Project/sormas-base/
+        run: cd /sormas-base/
       - name: check current directory
         run: ls
       - name: Verify directory
