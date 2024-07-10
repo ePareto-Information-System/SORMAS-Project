@@ -41,8 +41,10 @@ jobs:
         run: ls
       - name: Verify directory
         run: ls -la
-      - name: Build and analyze
+      - name: Build and analyze   
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ePareto-Information-System_SORMAS-Project_0b4721af-c235-4cc3-9a0a-4c59d5d3ec28 -Dsonar.projectName='SORMAS-Project'
+        run: |
+            cd ./sormas-base/
+            mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ePareto-Information-System_SORMAS-Project_0b4721af-c235-4cc3-9a0a-4c59d5d3ec28 -Dsonar.projectName='SORMAS-Project'
