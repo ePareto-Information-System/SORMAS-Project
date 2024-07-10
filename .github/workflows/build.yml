@@ -5,11 +5,12 @@ on:
     branches:
       - Sonarqube-1.87
 
+
 jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
-
+    
     steps:
       - uses: actions/checkout@v4
         with:
@@ -24,27 +25,16 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-      - name: Set up Maven Env
-        uses: stCarolas/setup-maven@v4
+      - name: Cache Maven packages
+        uses: actions/cache@v1
         with:
-          maven-version: 3.8.1
-      - name: Set environment variables
-        id: check
-        uses: allenevans/set-env@v2.0.1
-        with:
-          M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
-      - name: check current directory
-        run: ls
-      - name: Change directory to where POM is located
-        run: cd sormas-base/
-      - name: check current directory
-        run: ls
-      - name: Verify directory
-        run: ls -la
-      - name: Build and analyze   
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: |
-            cd ./sormas-base/
-            mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ePareto-Information-System_SORMAS-Project_0b4721af-c235-4cc3-9a0a-4c59d5d3ec28 -Dsonar.projectName='SORMAS-Project' -D skipTests
+        run: | 
+             cd ./sormas-base/
+              mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ePareto-Information-System_SORMAS-Project_0b4721af-c235-4cc3-9a0a-4c59d5d3ec28 -Dsonar.projectName='SORMAS-Project' -D skipTests
