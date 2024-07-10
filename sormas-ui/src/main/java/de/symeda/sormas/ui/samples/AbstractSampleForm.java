@@ -78,6 +78,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private DateTimeField sampleDateField;
 	private NullableOptionGroup hasSampleBeenCollected;
 
+	//test sonar
 	OptionGroup sampleTestsField;
 	OptionGroup requestedSampleMaterialsField;
 	OptionGroup influenzaOroNasoSelection;
