@@ -936,7 +936,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         addField(SampleDto.DATE_FORM_SENT_TO_NATIONAL, DateField.class);
         addField(SampleDto.DATE_FORM_RECEIVED_AT_NATIONAL, DateField.class);
 
-        csfReason.setVisible(false);
+        /*csfReason.setVisible(false);
         reasonNotSent.setVisible(false);
         dateSampleSentToLab.setVisible(false);
         sampleDateField.setVisible(false);
@@ -946,7 +946,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         dateLabReceivedSpecimen.setVisible(false);
         dateResultsSentToClinician.setVisible(false);
         sampleMaterialComboBox.setVisible(false);
-        otherContainer.setVisible(false);
+        otherContainer.setVisible(false);*/
 
 		setVisible(true, SampleDto.DATE_SAMPLE_SENT_TO_LAB);
 		otherContainer.setVisible(false);
