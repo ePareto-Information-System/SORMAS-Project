@@ -3250,6 +3250,9 @@ public interface Captions {
 	String Symptoms_rightInjectionSite = "Symptoms.rightInjectionSite";
 	String Symptoms_leftInjectionSite = "Symptoms.leftInjectionSite";
 	String Symptoms_trueAfp = "Symptoms.trueAfp";
+	String Symptoms_trimester = "Symptoms.trimester";
+	String Symptoms_postpartum = "Symptoms.postpartum";
+	String Symptoms_pregnant = "Symptoms.pregnant";
 	String Symptoms_wheezing = "Symptoms.wheezing";
 	String Symptoms_firstSignOrSymptomsBeforeWorm = "Symptoms.firstSignOrSymptomsBeforeWorm";
 	String Symptoms_firstSignOrSymptomsBeforeWormOthers = "Symptoms.firstSignOrSymptomsBeforeWormOthers";

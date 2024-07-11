@@ -14929,4 +14929,9 @@ INSERT INTO schema_version (version_number, comment) VALUES (691, 'Added abnorma
 ALTER TABLE symptoms ADD COLUMN healthconditions_id BIGINT;
 ALTER TABLE symptoms ADD CONSTRAINT fk_symptoms_healthconditions_id FOREIGN KEY (healthconditions_id) REFERENCES healthconditions (id);
 INSERT INTO schema_version (version_number, comment) VALUES (692, 'Added healthconditions_id to symptoms');
+
+ALTER TABLE symptoms ADD COLUMN trimester VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN postpartum VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN pregnant VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (693, 'Added pregnant related fields to symptoms');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

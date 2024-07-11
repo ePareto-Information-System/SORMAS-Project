@@ -29,6 +29,7 @@ import javax.persistence.*;
 
 //import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.caze.Trimester;
 import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
 import de.symeda.sormas.api.symptoms.GuineaWormFirstSymptom;
@@ -55,6 +56,9 @@ public class Symptoms extends AbstractDomainObject {
 	public static final String BLOOD_PRESSURE_DIASTOLIC = "bloodPressureDiastolic";
 	public static final String HEART_RATE = "heartRate";
 	public static final String HEALTH_CONDITIONS = "healthConditions";
+	public static final String POSTPARTUM = "postpartum";
+	public static final String TRIMESTER = "trimester";
+	public static final String PREGNANT = "pregnant";
 
 	private Date onsetDate;
 	private Date dateOfOnset;
@@ -335,6 +339,9 @@ public class Symptoms extends AbstractDomainObject {
 	private String injectionSiteString;
 	private SymptomState abnormalLungAuscultation;
 	private HealthConditions healthConditions;
+	private Trimester trimester;
+	private YesNo postpartum;
+	private YesNo pregnant;
 
 	// when adding new fields make sure to extend toHumanString
 
@@ -2676,5 +2683,29 @@ public class Symptoms extends AbstractDomainObject {
 
 	public void setHealthConditions(HealthConditions healthConditions) {
 		this.healthConditions = healthConditions;
+	}
+
+	public Trimester getTrimester() {
+		return trimester;
+	}
+
+	public void setTrimester(Trimester trimester) {
+		this.trimester = trimester;
+	}
+
+	public YesNo getPostpartum() {
+		return postpartum;
+	}
+
+	public void setPostpartum(YesNo postpartum) {
+		this.postpartum = postpartum;
+	}
+
+	public YesNo getPregnant() {
+		return pregnant;
+	}
+
+	public void setPregnant(YesNo pregnant) {
+		this.pregnant = pregnant;
 	}
 }
