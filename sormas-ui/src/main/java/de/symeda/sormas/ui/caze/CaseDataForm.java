@@ -1483,13 +1483,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             healthConditionsField.setVisible(false);
 
             if (disease == Disease.CORONAVIRUS) {
-                medicalInformationFields =
-                        Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.TRIMESTER);
-                setVisible(true, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM);
-
-                healthConditionsField.setVisible(true);
-                healthConditionsField.hideAllFields();
-                healthConditionsField.showForCovid19();
+                healthConditionsField.setVisible(false);
                 caseTransmissionClassification.setVisible(true);
                 setVisible(true, CaseDataDto.REPORTING_OFFICER_NAME, CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE);
 

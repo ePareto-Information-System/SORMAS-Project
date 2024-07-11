@@ -332,7 +332,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
             return;
         }
 
-		addField(HEALTH_CONDITIONS, HealthConditionsForm.class);
+		HealthConditionsForm healthConditionsForm = addField(HEALTH_CONDITIONS, HealthConditionsForm.class);
+		healthConditionsForm.setCaption("");
+		healthConditionsForm.setVisible(false);
+
 
         // Add fields
         Label clinicalMeasurementsHeadingLabel =
@@ -1162,7 +1165,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			respiratorySymptomsHeadingLabel.setVisible(true);
 			gastrointestinalSymptomsHeadingLabel.setVisible(true);
 			otherSymptomsHeadingLabel.setVisible(true);
-
+			healthConditionsForm.setVisible(true);
+			healthConditionsForm.hideAllFields();
+			healthConditionsForm.showForCovid19();
 			setVisible(true, TEMPERATURE, TEMPERATURE_SOURCE );
 			setVisible(true, FEVER, RAPID_BREATHING, MUSCLE_PAIN, CHEST_PAIN, JOINT_PAIN, ABDOMINAL_PAIN, PHARYNGEAL_EXUDATE, FATIGUE_WEAKNESS, COMA, DIARRHOEA, CONJUNCTIVAL_INJECTION, COUGH, NAUSEA,TACHYPNEA, SEIZURES, CONFUSED_DISORIENTED,
 					SORE_THROAT, HEADACHE, RUNNY_NOSE, HEADACHE, OTHER_COMPLICATIONS, PHARYNGEAL_EXUDATE, ABNORMAL_LUNG_XRAY_FINDINGS,
