@@ -14924,4 +14924,9 @@ INSERT INTO schema_version (version_number, comment) VALUES (690, 'Dropped patie
 -- Abnormal lung auscultation
 ALTER TABLE symptoms ADD COLUMN abnormalLungAuscultation VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (691, 'Added abnormalLungAuscultation to symptoms');
+
+-- healthconditions_id on symptoms
+ALTER TABLE symptoms ADD COLUMN healthconditions_id BIGINT;
+ALTER TABLE symptoms ADD CONSTRAINT fk_symptoms_healthconditions_id FOREIGN KEY (healthconditions_id) REFERENCES healthconditions (id);
+INSERT INTO schema_version (version_number, comment) VALUES (692, 'Added healthconditions_id to symptoms');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

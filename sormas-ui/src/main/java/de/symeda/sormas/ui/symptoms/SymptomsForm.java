@@ -78,6 +78,7 @@ import de.symeda.sormas.api.utils.SymptomGrouping;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.visit.VisitStatus;
+import de.symeda.sormas.ui.clinicalcourse.HealthConditionsForm;
 import de.symeda.sormas.ui.utils.*;
 
 public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
@@ -168,7 +169,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					//createSymptomGroupLayout(SymptomGroup.RASH_TYPE, RASH_TYPE_AND_SYMPTOMS_HEADING_LOC) +
 //					createSymptomGroupLayout(SymptomGroup.SKIN, SKIN_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.OTHER, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
-
+					fluidRowLocs(HEALTH_CONDITIONS) +
 					fluidRowLocs(FEVER_ONSET_PARALYSIS, PROGRESSIVE_PARALYSIS) +
 					fluidRowLocs(DATE_ONSET_PARALYSIS, PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
 					fluidRowLocs(6,SITE_OF_PARALYSIS) +
@@ -330,6 +331,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
             // workaround to stop initialization until disease is set
             return;
         }
+
+		addField(HEALTH_CONDITIONS, HealthConditionsForm.class);
 
         // Add fields
         Label clinicalMeasurementsHeadingLabel =

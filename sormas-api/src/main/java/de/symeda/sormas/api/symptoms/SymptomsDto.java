@@ -24,12 +24,15 @@ import static de.symeda.sormas.api.Disease.*;
 import java.util.Date;
 import java.util.Set;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
 import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.feature.FeatureTypeProperty;
 import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.utils.*;
@@ -310,12 +313,14 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String ABDOMINAL_CRAMPS = "abdominalCramps";
 	public static final String HEADACHES = "headaches";
 	public static final String ABNORMAL_LUNG_AUSCULTATION = "abnormalLungAuscultation";
+	public static final String HEALTH_CONDITIONS = "healthConditions";
 
 	// Fields are declared in the order they should appear in the import template
 
 	public static SymptomsDto build() {
 		SymptomsDto symptoms = new SymptomsDto();
 		symptoms.setUuid(DataHelper.createUuid());
+		symptoms.setHealthConditions(HealthConditionsDto.build());
 		return symptoms;
 	}
 
@@ -2637,6 +2642,8 @@ public class SymptomsDto extends PseudonymizableDto {
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState headaches;
+	@Valid
+	private HealthConditionsDto healthConditions;
 
 	@Order(0)
 	public Float getTemperature() {
@@ -4795,5 +4802,13 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setAbnormalLungAuscultation(SymptomState abnormalLungAuscultation) {
 		this.abnormalLungAuscultation = abnormalLungAuscultation;
+	}
+
+	public HealthConditionsDto getHealthConditions() {
+		return healthConditions;
+	}
+
+	public void setHealthConditions(HealthConditionsDto healthConditions) {
+		this.healthConditions = healthConditions;
 	}
 }
