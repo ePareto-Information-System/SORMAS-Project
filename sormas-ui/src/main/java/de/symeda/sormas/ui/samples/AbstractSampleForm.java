@@ -557,33 +557,33 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     Arrays.asList(true),
                     Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION, SampleDto.LABORATORY_NUMBER, SampleDto.LABORATORY_SAMPLE_CONTAINER_RECEIVED, SampleDto.LABORATORY_APPEARANCE_OF_CSF),
                     true);
-            FieldHelper.setVisibleWhen(laboratorySampleContainerReceived, Collections.singletonList(laboratorySampleContainerOther), List.of(SampleContainerUsed.OTHER), true);
+            FieldHelper.setVisibleWhen(laboratorySampleContainerReceived, Arrays.asList(laboratorySampleContainerOther), Arrays.asList(SampleContainerUsed.OTHER), true);
         }
 		else if (disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
             FieldHelper.setVisibleWhen(
                     getFieldGroup(),
                     Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
                     SampleDto.RECEIVED,
-                    List.of(true),
+					Arrays.asList(true),
                     true);
             FieldHelper.setEnabledWhen(
                     getFieldGroup(),
                     receivedField,
-                    List.of(true),
+					Arrays.asList(true),
                     Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
                     true);
         } else {
             FieldHelper.setVisibleWhen(
                     getFieldGroup(),
-                    List.of(SampleDto.RECEIVED_DATE),
+					Arrays.asList(SampleDto.RECEIVED_DATE),
                     SampleDto.RECEIVED,
-                    List.of(true),
+					Arrays.asList(true),
                     true);
             FieldHelper.setEnabledWhen(
                     getFieldGroup(),
                     receivedField,
-                    List.of(true),
-                    List.of(SampleDto.RECEIVED_DATE),
+                    Arrays.asList(true),
+                    Arrays.asList(SampleDto.RECEIVED_DATE),
                     true);
         }
 
@@ -718,7 +718,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				if (disease != Disease.GUINEA_WORM) {
 						FieldHelper.setVisibleWhen(
 								getFieldGroup(),
-								List.of(SampleDto.LAB),
+								Arrays.asList(SampleDto.LAB),
 								SampleDto.SAMPLE_PURPOSE,
 								Arrays.asList(SamplePurpose.EXTERNAL, null),
 								true);
@@ -938,8 +938,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         FieldHelper
                 .setVisibleWhen(sampleContainerUsed, Arrays.asList(otherContainer), Arrays.asList(SampleContainerUsed.OTHER), true);
 
-        setPropertiesVisibility();
-
     }
 
     private void handleAFP() {
@@ -1099,7 +1097,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
     private void handleNewInfluenza() {
 
-        setPropertiesVisibility();
         hideCommonProperties();
         pathogenTestingRequestedField.setVisible(false);
 
@@ -1161,7 +1158,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
     }
 
     private void handleMpox(){
-        setPropertiesVisibility();
         hideCommonProperties();
         sampleMaterialComboBox.setVisible(false);
 
@@ -1232,29 +1228,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
             return eventDto.getDisease();
         }
         return null;
-    }
-
-    private void setPropertiesVisibility() {
-        setVisible(false,
-//                SampleDto.SAMPLE_PURPOSE,
-//                SampleDto.SAMPLING_REASON,
-//                SampleDto.SAMPLING_REASON_DETAILS,
-//                SampleDto.SAMPLE_MATERIAL_REQUESTED,
-//                SampleDto.REQUESTED_SAMPLE_MATERIALS,
-//                SampleDto.PATHOGEN_TESTING_REQUESTED,
-//                SampleDto.REQUESTED_PATHOGEN_TESTS,
-                SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS,
-//                SampleDto.ADDITIONAL_TESTING_REQUESTED,
-//                SampleDto.REQUESTED_ADDITIONAL_TESTS,
-//                SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS,
-//                SampleDto.SAMPLE_SOURCE,
-                SampleDto.FIELD_SAMPLE_ID,
-                SampleDto.COMMENT
-//                SampleDto.PATHOGEN_TEST_RESULT,
-//                SampleDto.NO_TEST_POSSIBLE_REASON,
-//                CaseDataDto.DELETION_REASON,
-//                CaseDataDto.OTHER_DELETION_REASON
-        );
     }
 
     private void hideCommonProperties(){

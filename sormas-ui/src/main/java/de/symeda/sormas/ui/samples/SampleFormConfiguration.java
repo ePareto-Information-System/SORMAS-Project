@@ -12,7 +12,7 @@ public class SampleFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(SampleDto.PATHOGEN_TESTING_REQUESTED, new HashSet<>(Arrays.asList(Disease.NEW_INFLUENZA, Disease.CSM, Disease.AHF)));
         DISABLED_FIELDS_BY_DISEASE.put(SampleDto.SAMPLE_PURPOSE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.AHF)));
         DISABLED_FIELDS_BY_DISEASE.put(SampleDto.REQUESTED_SAMPLE_MATERIALS, new HashSet<>(Arrays.asList(Disease.AFP, Disease.AHF)));
-        DISABLED_FIELDS_BY_DISEASE.put(SampleDto.FIELD_SAMPLE_ID, new HashSet<>(Arrays.asList(Disease.AFP, Disease.AHF, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS)));
+        DISABLED_FIELDS_BY_DISEASE.put(SampleDto.FIELD_SAMPLE_ID, new HashSet<>(Arrays.asList(Disease.AFP, Disease.AHF, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, Disease.CSM, Disease.NEW_INFLUENZA, Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(SampleDto.SAMPLE_MATERIAL_TEXT, new HashSet<>(Arrays.asList(Disease.AFP, Disease.YELLOW_FEVER)));
         DISABLED_FIELDS_BY_DISEASE.put(SampleDto.SAMPLE_MATERIAL_REQUESTED, new HashSet<>(Arrays.asList(Disease.AFP, Disease.AHF)));
         DISABLED_FIELDS_BY_DISEASE.put(SampleDto.COMMENT, new HashSet<>(Arrays.asList(Disease.AFP, Disease.AHF)));
