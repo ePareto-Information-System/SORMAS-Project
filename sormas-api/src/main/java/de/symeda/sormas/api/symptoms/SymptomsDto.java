@@ -30,6 +30,7 @@ import javax.validation.constraints.Size;
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.caze.Trimester;
 import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.feature.FeatureTypeProperty;
@@ -314,6 +315,9 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String HEADACHES = "headaches";
 	public static final String ABNORMAL_LUNG_AUSCULTATION = "abnormalLungAuscultation";
 	public static final String HEALTH_CONDITIONS = "healthConditions";
+	public static final String POSTPARTUM = "postpartum";
+	public static final String TRIMESTER = "trimester";
+	public static final String PREGNANT = "pregnant";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -2644,7 +2648,9 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState headaches;
 	@Valid
 	private HealthConditionsDto healthConditions;
-
+	private Trimester trimester;
+	private YesNo postpartum;
+	private YesNo pregnant;
 	@Order(0)
 	public Float getTemperature() {
 		return temperature;
@@ -4810,5 +4816,29 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setHealthConditions(HealthConditionsDto healthConditions) {
 		this.healthConditions = healthConditions;
+	}
+
+	public Trimester getTrimester() {
+		return trimester;
+	}
+
+	public void setTrimester(Trimester trimester) {
+		this.trimester = trimester;
+	}
+
+	public YesNo getPostpartum() {
+		return postpartum;
+	}
+
+	public void setPostpartum(YesNo postpartum) {
+		this.postpartum = postpartum;
+	}
+
+	public YesNo getPregnant() {
+		return pregnant;
+	}
+
+	public void setPregnant(YesNo pregnant) {
+		this.pregnant = pregnant;
 	}
 }
