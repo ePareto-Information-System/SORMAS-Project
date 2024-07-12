@@ -51,9 +51,8 @@
 
 		<!--SONAR GitHub Actions scanner -->
 		<sonar.projectKey>ePareto-Information-System_SORMAS-Project_0b4721af-c235-4cc3-9a0a-4c59d5d3ec28</sonar.projectKey>
-		<sonar.organization>sormas</sonar.organization>
+		<sonar.organization>ePareto-Information-System</sonar.organization>
 		<sonar.host.url>http://217.182.24.173:9000</sonar.host.url>
-		<sonar.login>sqp_3331cc2d1a6372080ba7d0e731f211e81800adbd</sonar.login>
 
 		<!-- Attention: Compile dependencies with versions are maintained redundantly in sormas-app/app/build.gradle -->
 	</properties>
