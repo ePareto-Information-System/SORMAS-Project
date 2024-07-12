@@ -49,6 +49,11 @@
 		<apache-tika.version>2.8.0</apache-tika.version>
 		<temportal-tables.version>0.4.2</temportal-tables.version>
 
+		<!--SONAR GitHub Actions scanner -->
+		<sonar.projectKey>ePareto-Information-System_SORMAS-Project_0b4721af-c235-4cc3-9a0a-4c59d5d3ec28</sonar.projectKey>
+		<sonar.organization>ePareto-Information-System</sonar.organization>
+		<sonar.host.url>http://217.182.24.173:9000</sonar.host.url>
+
 		<!-- Attention: Compile dependencies with versions are maintained redundantly in sormas-app/app/build.gradle -->
 	</properties>
 
@@ -1454,6 +1459,11 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>4.0.0.4121</version>
 			</plugin>
 		</plugins>
 		<pluginManagement>
