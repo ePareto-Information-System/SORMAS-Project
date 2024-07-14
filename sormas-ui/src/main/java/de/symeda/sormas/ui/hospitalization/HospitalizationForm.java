@@ -320,18 +320,10 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		setVisible(false, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.NAME_OF_FACILITY, HospitalizationDto.DATE_OF_VISIT_HOSPITAL,
 				HospitalizationDto.PHYSICIAN_NAME, HospitalizationDto.PHYSICIAN_NUMBER, HospitalizationDto.LAB_TEST_CONDUCTED, HospitalizationDto.TYPE_OF_SAMPLE, HospitalizationDto.AGENT_IDENTIFIED, HospitalizationDto.OTHER_SYMPTOM_SELECTED, HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING, HospitalizationDto.DURATION_HOURS);
 
-		admissionDateField.setVisible(false);
-		dischargeDateField.setVisible(false);
-		hospitalRecordNumber.setVisible(false);
-		dateFirstSeen.setVisible(false);
-		intensiveCareUnit.setVisible(false);
-		isolatedField.setVisible(false);
-		descriptionField.setVisible(false);
-		terminationDateHospitalStay.setVisible(false);
-		leftAgainstAdviceField.setVisible(false);
-		hospitalizationReason.setVisible(false);
-		hospitalizedPreviouslyField.setVisible(false);
 		previousHospitalizationsHeadingLabel.setVisible(false);
+
+		setFieldsVisible(false, admissionDateField, dischargeDateField, hospitalRecordNumber, dateFirstSeen, intensiveCareUnit, isolatedField, descriptionField, terminationDateHospitalStay, leftAgainstAdviceField, hospitalizationReason, hospitalizedPreviouslyField);
+
 		if (caze.getDisease() == Disease.MEASLES) {
 
 			selectInpatientOutpatientField.setVisible(true);
