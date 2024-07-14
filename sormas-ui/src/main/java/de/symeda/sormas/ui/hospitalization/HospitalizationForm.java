@@ -250,8 +250,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		wasPatientAdmitted.setVisible(false);
 
 		final NullableOptionGroup admittedToHealthFacilityFieldNew = addField(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, NullableOptionGroup.class);
-		DateField receptionDate = addField(HospitalizationDto.RECEPTION_DATE, DateField.class);
-		TextField memberFamily = addField(HospitalizationDto.MEMBER_FAMILY_HELPING_PATIENT, TextField.class);
+		addField(HospitalizationDto.RECEPTION_DATE, DateField.class);
+		addField(HospitalizationDto.MEMBER_FAMILY_HELPING_PATIENT, TextField.class);
 		admittedToHealthFacilityFieldNew.setVisible(false);
 		admittedToHealthFacilityFieldNew.setCaption("Was the Patient Admitted at the Facility (in-patient)?");
 		final DateField admissionDateField = addField(HospitalizationDto.ADMISSION_DATE, DateField.class);
@@ -259,8 +259,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		DateField dateOfDeath = addDateField(HospitalizationDto.DATE_OF_DEATH, DateField.class, 7);
 		intensiveCareUnit = addField(HospitalizationDto.INTENSIVE_CARE_UNIT, NullableOptionGroup.class);
 		intensiveCareUnitStart = addField(HospitalizationDto.INTENSIVE_CARE_UNIT_START, DateField.class);
-		DateField notifyDistrictDate = addField(HospitalizationDto.NOTIFY_DISTRICT_DATE, DateField.class);
-		DateField dateFormSentToDistrict = addField(HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT, DateField.class);
+		addField(HospitalizationDto.NOTIFY_DISTRICT_DATE, DateField.class);
+		addField(HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT, DateField.class);
 		DateField dateFirstSeen = addField(HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE, DateField.class);
 		DateField terminationDateHospitalStay = addField(HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY, DateField.class);
 		TextField hospitalRecordNumber = addField(HospitalizationDto.HOSPITAL_RECORD_NUMBER, TextField.class);
@@ -295,7 +295,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 				FacadeProvider.getFacilityFacade()
 						.getAllActiveFacility(false));
 
-//		TextField locationAddressField = addField(HospitalizationDto.LOCATION_ADDRESS, TextField.class);
 		DateField dateOfVisitHospitalField = addField(HospitalizationDto.DATE_OF_VISIT_HOSPITAL, DateField.class);
 		TextField physicianNameField = addField(HospitalizationDto.PHYSICIAN_NAME, TextField.class);
 		TextField physicianNumberField = addField(HospitalizationDto.PHYSICIAN_NUMBER, TextField.class);
