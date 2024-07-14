@@ -295,12 +295,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 				FacadeProvider.getFacilityFacade()
 						.getAllActiveFacility(false));
 
-		DateField dateOfVisitHospitalField = addField(HospitalizationDto.DATE_OF_VISIT_HOSPITAL, DateField.class);
-		TextField physicianNameField = addField(HospitalizationDto.PHYSICIAN_NAME, TextField.class);
-		TextField physicianNumberField = addField(HospitalizationDto.PHYSICIAN_NUMBER, TextField.class);
-		NullableOptionGroup labTestConductedField = addField(HospitalizationDto.LAB_TEST_CONDUCTED, NullableOptionGroup.class);
-		TextField typeOfSampleField = addField(HospitalizationDto.TYPE_OF_SAMPLE, TextField.class);
-		TextField agentIdentifiedField = addField(HospitalizationDto.AGENT_IDENTIFIED, TextField.class);
+		addField(HospitalizationDto.DATE_OF_VISIT_HOSPITAL, DateField.class);
+		addField(HospitalizationDto.PHYSICIAN_NAME, TextField.class);
+		addField(HospitalizationDto.PHYSICIAN_NUMBER, TextField.class);
+		addField(HospitalizationDto.LAB_TEST_CONDUCTED, NullableOptionGroup.class);
+		addField(HospitalizationDto.TYPE_OF_SAMPLE, TextField.class);
+		addField(HospitalizationDto.AGENT_IDENTIFIED, TextField.class);
 
 		tickSymptomField = addField(HospitalizationDto.SYMPTOMS_SELECTED, OptionGroup.class);
 		CssStyles.style(tickSymptomField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
