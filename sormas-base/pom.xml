@@ -1266,16 +1266,16 @@
 				<version>1.18.3</version>
 				<scope>test</scope>
 			</dependency>
-<!--			<dependency>-->
+			<!--			<dependency>-->
 
-<!--				<groupId>info.novatec</groupId>-->
-<!--				<artifactId>bean-test</artifactId>-->
-<!--				<version>0.2.Final</version>-->
-<!--				<scope>system</scope>-->
-<!--				<systemPath>${project.basedir}/../sormas-base/dependencies/bean-test-0.2.Final.jar</systemPath>-->
-<!--			 -->
-<!-- 			</dependency> -->
- 			
+			<!--				<groupId>info.novatec</groupId>-->
+			<!--				<artifactId>bean-test</artifactId>-->
+			<!--				<version>0.2.Final</version>-->
+			<!--				<scope>system</scope>-->
+			<!--				<systemPath>${project.basedir}/../sormas-base/dependencies/bean-test-0.2.Final.jar</systemPath>-->
+			<!--			 -->
+			<!-- 			</dependency> -->
+
 
 			<dependency>
 				<groupId>org.jboss.weld.se</groupId>
@@ -1460,10 +1460,6 @@
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 			</plugin>
-<<<<<<< HEAD
-
-=======
->>>>>>> 914cbd2961f04f9aabfaf6eacb87d33fb4f68ca4
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
@@ -1852,7 +1848,7 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
-		
+
 	</repositories>
 
 	<pluginRepositories>
