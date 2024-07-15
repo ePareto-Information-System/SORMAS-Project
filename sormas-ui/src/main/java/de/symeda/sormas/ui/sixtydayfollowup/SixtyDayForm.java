@@ -145,7 +145,7 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
             paralysisPartOther.setVisible(selectedSites.contains(ParalysisSite.OTHER));
         });
 
-        OptionGroup paralysisWeaknessFloppyField = addField(SixtyDayDto.PARALYSIS_WEAKNESS_FLOPPY, OptionGroup.class);
+        addField(SixtyDayDto.PARALYSIS_WEAKNESS_FLOPPY, OptionGroup.class);
 
         NullableOptionGroup paralyzedPartField = addField(SixtyDayDto.PARALYZED_PART, NullableOptionGroup.class);
         NullableOptionGroup otherPartBodyField = addField(SixtyDayDto.OTHER_PART_BODY, NullableOptionGroup.class);
