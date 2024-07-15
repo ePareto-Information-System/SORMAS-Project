@@ -50,7 +50,7 @@
 		<temportal-tables.version>0.4.2</temportal-tables.version>
 
 		<!--SONAR GitHub Actions scanner -->
-		<sonar.projectKey>ePareto-Information-System_SORMAS-Project_0b4721af-c235-4cc3-9a0a-4c59d5d3ec28</sonar.projectKey>
+		<sonar.projectKey>ePareto-Information-System_SORMAS-Project_a08c8b2f-b6d7-43bc-816a-f8fde08d2164</sonar.projectKey>
 		<sonar.organization>ePareto-Information-System</sonar.organization>
 		<sonar.host.url>http://217.182.24.173:9000</sonar.host.url>
 
