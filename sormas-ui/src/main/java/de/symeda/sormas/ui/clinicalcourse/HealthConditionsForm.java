@@ -149,6 +149,7 @@ public class HealthConditionsForm extends AbstractEditForm<HealthConditionsDto> 
 				LUNG_DISEASE,
 				STROKE,
 				CANCER,
+				HIV,
 				OTHER_CONDITIONS
 		);
 	}
