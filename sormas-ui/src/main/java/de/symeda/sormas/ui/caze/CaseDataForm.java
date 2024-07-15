@@ -1332,7 +1332,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         setVisible(false, CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.INTERNAL_TOKEN, CaseDataDto.EXTERNAL_TOKEN, CaseDataDto.CLINICIAN_NAME, CaseDataDto.CLINICIAN_PHONE,
                 CaseDataDto.CLINICIAN_EMAIL);
 
-        FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.TRIMESTER, CaseDataDto.PREGNANT, Collections.singletonList(YesNoUnknown.YES), true);
+        FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.TRIMESTER, CaseDataDto.PREGNANT, Collections.singletonList(YesNo.YES), true);
 
         diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
             Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
@@ -1483,11 +1483,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             healthConditionsField.setVisible(false);
 
             if (disease == Disease.CORONAVIRUS) {
-                medicalInformationFields =
-                        Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM, CaseDataDto.TRIMESTER);
-                healthConditionsField.setVisible(true);
-                healthConditionsField.hideAllFields();
-                healthConditionsField.showForCovid19();
+                healthConditionsField.setVisible(false);
                 caseTransmissionClassification.setVisible(true);
                 setVisible(true, CaseDataDto.REPORTING_OFFICER_NAME, CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE);
 
@@ -1755,6 +1751,26 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                     break;
             }
 
+            if (disease == Disease.CORONAVIRUS) {
+                FieldHelper
+                        .setVisibleWhen(vaccinationStatus, Arrays.asList(numberOfDoses, cardDateField, secondVaccinationDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
+            }
+            if (disease == Disease.CORONAVIRUS) {
+                FieldHelper
+                        .setVisibleWhen(vaccinationStatus, Arrays.asList(numberOfDoses, cardDateField, secondVaccinationDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
+            }if (disease == Disease.CORONAVIRUS) {
+                FieldHelper
+                        .setVisibleWhen(vaccinationStatus, Arrays.asList(numberOfDoses, cardDateField, secondVaccinationDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
+            }if (disease == Disease.CORONAVIRUS) {
+                FieldHelper
+                        .setVisibleWhen(vaccinationStatus, Arrays.asList(numberOfDoses, cardDateField, secondVaccinationDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
+            }if (disease == Disease.CORONAVIRUS) {
+                FieldHelper
+                        .setVisibleWhen(vaccinationStatus, Arrays.asList(numberOfDoses, cardDateField, secondVaccinationDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
+            }if (disease == Disease.CORONAVIRUS) {
+                FieldHelper
+                        .setVisibleWhen(vaccinationStatus, Arrays.asList(numberOfDoses, cardDateField, secondVaccinationDateField), Arrays.asList(VaccinationStatus.VACCINATED), true);
+            }
             //CORONAVIRUS
             if (disease == Disease.CORONAVIRUS) {
                 FieldHelper

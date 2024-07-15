@@ -1460,7 +1460,10 @@
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 			</plugin>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 914cbd2961f04f9aabfaf6eacb87d33fb4f68ca4
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>

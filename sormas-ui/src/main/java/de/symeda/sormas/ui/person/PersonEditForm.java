@@ -989,14 +989,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		}
 	}
 
-	public void setFieldsVisible(boolean visible,Field<?>... fields) {
-		for (Field field : fields) {
-			if (field != null) {
-				field.setVisible(visible);
-			}
-		}
-	}
-
 	private void initializePresentConditionField() {
 		PresentCondition presentCondition = getValue().getPresentCondition();
 		ComboBox presentConditionField = getField(PersonDto.PRESENT_CONDITION);

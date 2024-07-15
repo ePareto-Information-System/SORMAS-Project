@@ -4,13 +4,16 @@ on:
   push:
     branches:
       - Sonarqube-1.87
+<<<<<<< HEAD
 
+=======
+>>>>>>> 914cbd2961f04f9aabfaf6eacb87d33fb4f68ca4
 
 jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,8 +35,20 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Build and analyze
+<<<<<<< HEAD
         working-directory: sormas-base
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ePareto-Information-System_SORMAS-Project_0b4721af-c235-4cc3-9a0a-4c59d5d3ec28 -Dsonar.projectName='SORMAS-Project' -DskipTests
+=======
+      working-directory: sormas-base
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar \
+          -Dsonar.projectKey=ePareto-Information-System_SORMAS-Project_0b4721af-c235-4cc3-9a0a-4c59d5d3ec28 \
+          -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+          -DskipTests
+>>>>>>> 914cbd2961f04f9aabfaf6eacb87d33fb4f68ca4

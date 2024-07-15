@@ -78,6 +78,7 @@ import de.symeda.sormas.api.utils.SymptomGrouping;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.visit.VisitStatus;
+import de.symeda.sormas.ui.clinicalcourse.HealthConditionsForm;
 import de.symeda.sormas.ui.utils.*;
 
 public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
@@ -168,7 +169,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					//createSymptomGroupLayout(SymptomGroup.RASH_TYPE, RASH_TYPE_AND_SYMPTOMS_HEADING_LOC) +
 //					createSymptomGroupLayout(SymptomGroup.SKIN, SKIN_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.OTHER, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
-
+					fluidRowLocs(HEALTH_CONDITIONS) +
+					fluidRowLocs(PREGNANT, TRIMESTER, POSTPARTUM) +
 					fluidRowLocs(FEVER_ONSET_PARALYSIS, PROGRESSIVE_PARALYSIS) +
 					fluidRowLocs(DATE_ONSET_PARALYSIS, PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
 					fluidRowLocs(6,SITE_OF_PARALYSIS) +
@@ -331,7 +333,19 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
             return;
         }
 
-        // Add fields
+		HealthConditionsForm healthConditionsForm = addField(HEALTH_CONDITIONS, HealthConditionsForm.class);
+		healthConditionsForm.setCaption("");
+		healthConditionsForm.setVisible(false);
+
+		addField(TRIMESTER, NullableOptionGroup.class);
+		addField(PREGNANT, NullableOptionGroup.class);
+		addField(POSTPARTUM, NullableOptionGroup.class);
+		setVisible(false, PREGNANT, POSTPARTUM);
+		FieldHelper.setVisibleWhen(getFieldGroup(), TRIMESTER, PREGNANT, Collections.singletonList(YesNo.YES), true);
+
+
+
+		// Add fields
         Label clinicalMeasurementsHeadingLabel =
                 createLabel(I18nProperties.getString(Strings.headingClinicalMeasurements), H3, CLINICAL_MEASUREMENTS_HEADING_LOC);
 
@@ -645,7 +659,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			ABDOMINAL_CRAMPS,
 			HEADACHES,
 			GENERALIZED_RASH,
-			SWOLLEN_LYMPH_NODES_BEHIND_EARS);
+			SWOLLEN_LYMPH_NODES_BEHIND_EARS,
+			ABNORMAL_LUNG_AUSCULTATION);
 
 		TextField babyAgeAtDeath = addField(AGE_AT_DEATH_DAYS, TextField.class);
 		TextField ageOfOnsetDays =  addField(AGE_AT_ONSET_DAYS, TextField.class);
@@ -1158,9 +1173,12 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			respiratorySymptomsHeadingLabel.setVisible(true);
 			gastrointestinalSymptomsHeadingLabel.setVisible(true);
 			otherSymptomsHeadingLabel.setVisible(true);
-
+			healthConditionsForm.setVisible(true);
+			healthConditionsForm.hideAllFields();
+			healthConditionsForm.showForCovid19();
+			setVisible(true, PREGNANT, POSTPARTUM);
 			setVisible(true, TEMPERATURE, TEMPERATURE_SOURCE );
-			setVisible(true, FEVER, RAPID_BREATHING, MUSCLE_PAIN, CHEST_PAIN, ABDOMINAL_PAIN, FATIGUE_WEAKNESS, DIARRHEA, COUGH, NAUSEA,
+			setVisible(true, FEVER, RAPID_BREATHING, MUSCLE_PAIN, CHEST_PAIN, JOINT_PAIN, ABDOMINAL_PAIN, PHARYNGEAL_EXUDATE, FATIGUE_WEAKNESS, COMA, DIARRHOEA, CONJUNCTIVAL_INJECTION, COUGH, NAUSEA,TACHYPNEA, SEIZURES, CONFUSED_DISORIENTED,
 					SORE_THROAT, HEADACHE, RUNNY_NOSE, HEADACHE, OTHER_COMPLICATIONS, PHARYNGEAL_EXUDATE, ABNORMAL_LUNG_XRAY_FINDINGS,
 					CONJUNCTIVAL_INJECTION, FLUID_IN_LUNG_CAVITY_AUSCULTATION, DIFFICULTY_BREATHING, TACHYPNEA);
 

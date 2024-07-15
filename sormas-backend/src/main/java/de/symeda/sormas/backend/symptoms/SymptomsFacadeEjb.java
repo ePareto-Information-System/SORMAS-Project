@@ -19,8 +19,11 @@ import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
+import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.symptoms.SymptomsFacade;
+import de.symeda.sormas.backend.clinicalcourse.HealthConditions;
+import de.symeda.sormas.backend.clinicalcourse.HealthConditionsMapper;
 import de.symeda.sormas.backend.util.DtoHelper;
 
 @Stateless(name = "SymptomsFacade")
@@ -28,6 +31,8 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 
 	@EJB
 	private SymptomsService service;
+	@EJB
+	private HealthConditionsMapper healthConditionsMapper;
 	public static SymptomsDto toDto(Symptoms symptoms) {
 
 		if (symptoms == null) {
@@ -38,7 +43,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		Symptoms source = symptoms;
 
 		DtoHelper.fillDto(target, source);
-
+		target.setHealthConditions(HealthConditionsMapper.toDto(source.getHealthConditions()));
 		target.setAbdominalPain(source.getAbdominalPain());
 		target.setAlteredConsciousness(source.getAlteredConsciousness());
 		target.setAnorexiaAppetiteLoss(source.getAnorexiaAppetiteLoss());
@@ -297,7 +302,10 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setNameService(source.getNameService());
 		target.setPlaceOfFuneralNameVillage(source.getPlaceOfFuneralNameVillage());
 		target.setInjectionSite(source.getInjectionSite());
-
+		target.setAbnormalLungAuscultation(source.getAbnormalLungAuscultation());
+		target.setTrimester(source.getTrimester());
+		target.setPostpartum(source.getPostpartum());
+		target.setPregnant(source.getPregnant());
 		return target;
 	}
 
@@ -313,7 +321,11 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		Symptoms source = symptoms;
 
 		DtoHelper.fillDto(target, source);
-
+		if (source.getHealthConditions() != null) {
+			target.setHealthConditions(HealthConditionsMapper.toDto(source.getHealthConditions()));
+		} else {
+			target.setHealthConditions(HealthConditionsDto.build());
+		}
 		target.setAbdominalPain(source.getAbdominalPain());
 		target.setOutcome(source.getOutcome());
 		target.setAlteredConsciousness(source.getAlteredConsciousness());
@@ -569,8 +581,10 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setNameService(source.getNameService());
 		target.setPlaceOfFuneralNameVillage(source.getPlaceOfFuneralNameVillage());
 		target.setInjectionSite(source.getInjectionSite());
-
-
+		target.setAbnormalLungAuscultation(source.getAbnormalLungAuscultation());
+		target.setTrimester(source.getTrimester());
+		target.setPostpartum(source.getPostpartum());
+		target.setPregnant(source.getPregnant());
 		return target;
 	}
 
@@ -580,7 +594,8 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		}
 
 		target = DtoHelper.fillOrBuildEntity(source, target, Symptoms::new, checkChangeDate);
-
+		target.setHealthConditions(
+				healthConditionsMapper.fillOrBuildEntity(source.getHealthConditions(), target.getHealthConditions(), checkChangeDate));
 		target.setAbdominalPain(source.getAbdominalPain());
 		target.setOutcome(source.getOutcome());
 		target.setAlteredConsciousness(source.getAlteredConsciousness());
@@ -835,7 +850,10 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setOutcomePlaceCommVillage(source.getOutcomePlaceCommVillage());
 		target.setNameService(source.getNameService());
 		target.setPlaceOfFuneralNameVillage(source.getPlaceOfFuneralNameVillage());
-
+		target.setAbnormalLungAuscultation(source.getAbnormalLungAuscultation());
+		target.setTrimester(source.getTrimester());
+		target.setPostpartum(source.getPostpartum());
+		target.setPregnant(source.getPregnant());
 		return target;
 	}
 
@@ -847,7 +865,8 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 
 		String uuid = source.getUuid();
 		Symptoms target = DtoHelper.fillOrBuildEntity(source, uuid != null ? service.getByUuid(uuid) : null, Symptoms::new, checkChangeDate);
-
+		HealthConditions healthConditions = healthConditionsMapper.fillOrBuildEntity(source.getHealthConditions(), target.getHealthConditions(), checkChangeDate);
+		target.setHealthConditions(healthConditions);
 		target.setAbdominalPain(source.getAbdominalPain());
 		target.setAlteredConsciousness(source.getAlteredConsciousness());
 		target.setAnorexiaAppetiteLoss(source.getAnorexiaAppetiteLoss());
@@ -1100,7 +1119,11 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setRedEyes(source.getRedEyes());
 		target.setGeneralizedRash(source.getGeneralizedRash());
 		target.setSwollenLymphNodesBehindEars(source.getSwollenLymphNodesBehindEars());
-
+		target.setPatientHaveFever(source.getPatientHaveFever());
+		target.setAbnormalLungAuscultation(source.getAbnormalLungAuscultation());
+		target.setTrimester(source.getTrimester());
+		target.setPostpartum(source.getPostpartum());
+		target.setPregnant(source.getPregnant());
 		return target;
 	}
 

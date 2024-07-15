@@ -3250,6 +3250,9 @@ public interface Captions {
 	String Symptoms_rightInjectionSite = "Symptoms.rightInjectionSite";
 	String Symptoms_leftInjectionSite = "Symptoms.leftInjectionSite";
 	String Symptoms_trueAfp = "Symptoms.trueAfp";
+	String Symptoms_trimester = "Symptoms.trimester";
+	String Symptoms_postpartum = "Symptoms.postpartum";
+	String Symptoms_pregnant = "Symptoms.pregnant";
 	String Symptoms_wheezing = "Symptoms.wheezing";
 	String Symptoms_firstSignOrSymptomsBeforeWorm = "Symptoms.firstSignOrSymptomsBeforeWorm";
 	String Symptoms_firstSignOrSymptomsBeforeWormOthers = "Symptoms.firstSignOrSymptomsBeforeWormOthers";
@@ -3291,6 +3294,7 @@ public interface Captions {
 	String Symptoms_outcomePlaceCommVillage = "Symptoms.outcomePlaceCommVillage";
 	String Symptoms_nameService = "Symptoms.nameService";
 	String Symptoms_placeOfFuneralNameVillage = "Symptoms.placeOfFuneralNameVillage";
+	String Symptoms_abnormalLungAuscultation = "Symptoms.abnormalLungAuscultation";
 	String sync = "sync";
 	String syncErrors = "syncErrors";
 	String syncProcessed = "syncProcessed";

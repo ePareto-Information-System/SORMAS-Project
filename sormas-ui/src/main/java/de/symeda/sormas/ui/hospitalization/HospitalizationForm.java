@@ -250,8 +250,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		wasPatientAdmitted.setVisible(false);
 
 		final NullableOptionGroup admittedToHealthFacilityFieldNew = addField(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, NullableOptionGroup.class);
-		DateField receptionDate = addField(HospitalizationDto.RECEPTION_DATE, DateField.class);
-		TextField memberFamily = addField(HospitalizationDto.MEMBER_FAMILY_HELPING_PATIENT, TextField.class);
+		addField(HospitalizationDto.RECEPTION_DATE, DateField.class);
+		addField(HospitalizationDto.MEMBER_FAMILY_HELPING_PATIENT, TextField.class);
 		admittedToHealthFacilityFieldNew.setVisible(false);
 		admittedToHealthFacilityFieldNew.setCaption("Was the Patient Admitted at the Facility (in-patient)?");
 		final DateField admissionDateField = addField(HospitalizationDto.ADMISSION_DATE, DateField.class);
@@ -259,8 +259,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		DateField dateOfDeath = addDateField(HospitalizationDto.DATE_OF_DEATH, DateField.class, 7);
 		intensiveCareUnit = addField(HospitalizationDto.INTENSIVE_CARE_UNIT, NullableOptionGroup.class);
 		intensiveCareUnitStart = addField(HospitalizationDto.INTENSIVE_CARE_UNIT_START, DateField.class);
-		DateField notifyDistrictDate = addField(HospitalizationDto.NOTIFY_DISTRICT_DATE, DateField.class);
-		DateField dateFormSentToDistrict = addField(HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT, DateField.class);
+		addField(HospitalizationDto.NOTIFY_DISTRICT_DATE, DateField.class);
+		addField(HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT, DateField.class);
 		DateField dateFirstSeen = addField(HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE, DateField.class);
 		DateField terminationDateHospitalStay = addField(HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY, DateField.class);
 		TextField hospitalRecordNumber = addField(HospitalizationDto.HOSPITAL_RECORD_NUMBER, TextField.class);
@@ -295,13 +295,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 				FacadeProvider.getFacilityFacade()
 						.getAllActiveFacility(false));
 
-//		TextField locationAddressField = addField(HospitalizationDto.LOCATION_ADDRESS, TextField.class);
-		DateField dateOfVisitHospitalField = addField(HospitalizationDto.DATE_OF_VISIT_HOSPITAL, DateField.class);
-		TextField physicianNameField = addField(HospitalizationDto.PHYSICIAN_NAME, TextField.class);
-		TextField physicianNumberField = addField(HospitalizationDto.PHYSICIAN_NUMBER, TextField.class);
-		NullableOptionGroup labTestConductedField = addField(HospitalizationDto.LAB_TEST_CONDUCTED, NullableOptionGroup.class);
-		TextField typeOfSampleField = addField(HospitalizationDto.TYPE_OF_SAMPLE, TextField.class);
-		TextField agentIdentifiedField = addField(HospitalizationDto.AGENT_IDENTIFIED, TextField.class);
+		addField(HospitalizationDto.DATE_OF_VISIT_HOSPITAL, DateField.class);
+		addField(HospitalizationDto.PHYSICIAN_NAME, TextField.class);
+		addField(HospitalizationDto.PHYSICIAN_NUMBER, TextField.class);
+		addField(HospitalizationDto.LAB_TEST_CONDUCTED, NullableOptionGroup.class);
+		addField(HospitalizationDto.TYPE_OF_SAMPLE, TextField.class);
+		addField(HospitalizationDto.AGENT_IDENTIFIED, TextField.class);
 
 		tickSymptomField = addField(HospitalizationDto.SYMPTOMS_SELECTED, OptionGroup.class);
 		CssStyles.style(tickSymptomField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
@@ -321,18 +320,10 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		setVisible(false, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.NAME_OF_FACILITY, HospitalizationDto.DATE_OF_VISIT_HOSPITAL,
 				HospitalizationDto.PHYSICIAN_NAME, HospitalizationDto.PHYSICIAN_NUMBER, HospitalizationDto.LAB_TEST_CONDUCTED, HospitalizationDto.TYPE_OF_SAMPLE, HospitalizationDto.AGENT_IDENTIFIED, HospitalizationDto.OTHER_SYMPTOM_SELECTED, HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING, HospitalizationDto.DURATION_HOURS);
 
-		admissionDateField.setVisible(false);
-		dischargeDateField.setVisible(false);
-		hospitalRecordNumber.setVisible(false);
-		dateFirstSeen.setVisible(false);
-		intensiveCareUnit.setVisible(false);
-		isolatedField.setVisible(false);
-		descriptionField.setVisible(false);
-		terminationDateHospitalStay.setVisible(false);
-		leftAgainstAdviceField.setVisible(false);
-		hospitalizationReason.setVisible(false);
-		hospitalizedPreviouslyField.setVisible(false);
 		previousHospitalizationsHeadingLabel.setVisible(false);
+
+		setFieldsVisible(false, admissionDateField, dischargeDateField, hospitalRecordNumber, dateFirstSeen, intensiveCareUnit, isolatedField, descriptionField, terminationDateHospitalStay, leftAgainstAdviceField, hospitalizationReason, hospitalizedPreviouslyField);
+
 		if (caze.getDisease() == Disease.MEASLES) {
 
 			selectInpatientOutpatientField.setVisible(true);
