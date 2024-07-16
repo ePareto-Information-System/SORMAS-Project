@@ -36,4 +36,4 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ePareto-Information-System_SORMAS-Project_a08c8b2f-b6d7-43bc-816a-f8fde08d2164 -Dsonar.projectName='SORMAS-Project' -DskipTests
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ePareto-Information-System_SORMAS-Project_c9790c98-2093-477d-877a-de38dee472f5 -Dsonar.projectName='SORMAS-Project' -DskipTests
