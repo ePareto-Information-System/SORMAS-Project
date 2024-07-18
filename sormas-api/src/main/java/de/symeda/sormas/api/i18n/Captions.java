@@ -3173,6 +3173,7 @@ public interface Captions {
 	String Symptoms_otherComplicationsText = "Symptoms.otherComplicationsText";
 	String Person_applicable = "Person.applicable";
 	String Symptoms_outcomeOther = "Symptoms.outcomeOther";
+	String Symptoms_outcome = "Symptoms.outcome";
 	String Symptoms_nonVascular = "Symptoms.nonVascular";
 	String Symptoms_otherHemorrhagicSymptoms = "Symptoms.otherHemorrhagicSymptoms";
 	String Symptoms_otherHemorrhagicSymptomsText = "Symptoms.otherHemorrhagicSymptomsText";

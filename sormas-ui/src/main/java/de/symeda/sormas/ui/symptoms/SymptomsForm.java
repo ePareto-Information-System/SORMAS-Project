@@ -64,6 +64,7 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.SymptomsContext;
@@ -291,6 +292,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	NullableOptionGroup patientHaveFever;
 	DateField dateOfOnset;
     OptionGroup typeOfRash;
+	public ComboBox outcome;
 
     public SymptomsForm(
             CaseDataDto caze,
@@ -428,20 +430,17 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
         }
         ComboBox temperatureSource = addField(TEMPERATURE_SOURCE, ComboBox.class);
 
-        ComboBox outcome = new ComboBox("Outcome");
+		outcome = addField(CaseDataDto.OUTCOME);
+		outcome.removeItem(CaseOutcome.UNKNOWN);
 
         if (disease == Disease.YELLOW_FEVER) {
-            for (CaseOutcome caseOutcome : CaseOutcome.values()) {
-                if (caseOutcome == CaseOutcome.DECEASED || caseOutcome == CaseOutcome.ALIVE) {
-                    outcome.addItem(caseOutcome);
-                }
-            }
-            addField(CaseDataDto.OUTCOME, outcome);
-        } else {
-            outcome = addField(CaseDataDto.OUTCOME, ComboBox.class);
-            outcome.removeItem(CaseOutcome.UNKNOWN);
+			List<CaseOutcome> outcomes = Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED);
+			FieldHelper.updateEnumData(outcome, outcomes);
         }
-
+		if (disease == Disease.NEW_INFLUENZA) {
+			List<CaseOutcome> outcomes = Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED, CaseOutcome.OTHER);
+			FieldHelper.updateEnumData(outcome, outcomes);
+		}
         TextField outcomeOther = addField(OUTCOME_OTHER, TextField.class);
         outcomeOther.setVisible(false);
 
