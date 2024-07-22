@@ -69,8 +69,6 @@ public class LineListingLayout extends VerticalLayout {
 	private final ComboBox<DistrictReferenceDto> district;
 	private final ComboBox<FacilityTypeGroup> typeGroup;
 	private final ComboBox<FacilityType> type;
-	private final ComboBox<DhimsFacility> dhimsFacilityType;
-
 	private List<CaseLineLayout> caseLines;
 
 	private final Window window;
@@ -119,11 +117,6 @@ public class LineListingLayout extends VerticalLayout {
 		type.setWidth(200, Unit.PIXELS);
 		sharedInformationBar.addComponent(type);
 
-		dhimsFacilityType = new ComboBox<>(I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.DHIMS_FACILITY_TYPE));
-		dhimsFacilityType.setId("dhimsFacilityType");
-		dhimsFacilityType.setWidth(200, Unit.PIXELS);
-		sharedInformationBar.addComponent(dhimsFacilityType);
-
 		region.addValueChangeListener(e -> {
 			RegionReferenceDto regionDto = e.getValue();
 			updateDistricts(regionDto);
@@ -138,12 +131,6 @@ public class LineListingLayout extends VerticalLayout {
 			removeFacilities();
 			type.setItems(typeGroup.getValue() != null ? FacilityType.getAccommodationTypes(typeGroup.getValue()) : new ArrayList<>());
 			type.setValue(null);
-		});
-		type.addValueChangeListener(e -> {
-			removeFacilities();
-			if (type.getValue() != null && district.getValue() != null) {
-				updateFacilities(type.getValue(), dhimsFacilityType.getValue(),district.getValue());
-			}
 		});
 
 		sharedInformationComponent.addComponent(sharedInformationBar);
@@ -286,27 +273,13 @@ public class LineListingLayout extends VerticalLayout {
 		}
 	}
 
-	private void updateFacilities(FacilityType type, DhimsFacility dhimsFacilityType,  DistrictReferenceDto districtDto) {
-		for (CaseLineLayout line : caseLines) {
-			if (line.getCommunity().getValue() != null) {
-				updateFacility(type, dhimsFacilityType, line.getCommunity().getValue(), line);
-			} else {
-				updateFacility(type, districtDto, line);
-			}
-		}
-	}
 
 	private void updateFacility(FacilityType type, DistrictReferenceDto districtDto, CaseLineLayout line) {
 		FieldHelper.updateItems(
 			line.getFacility(),
-			districtDto != null ? FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(districtDto, type, true, false, true) : null);
+			districtDto != null ? FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(districtDto, type, true, false, true, true) : null);
 	}
 
-	private void updateFacility(FacilityType type, DhimsFacility dhimsFacilityType, CommunityReferenceDto communityDto, CaseLineLayout line) {
-		FieldHelper.updateItems(
-			line.getFacility(),
-			communityDto != null ? FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(communityDto, type, true, false, true) : null);
-	}
 
 	private void removeCommunities() {
 
@@ -357,7 +330,6 @@ public class LineListingLayout extends VerticalLayout {
 			caze.setEpidNumber(caseLineDto.getEpidNumber());
 			caze.setResponsibleCommunity(caseLineDto.getCommunity());
 			caze.setFacilityType(caseLineDto.getFacilityType());
-			caze.setDhimsFacilityType(caseLineDto.getDhimsFacilityType());
 			caze.setHealthFacility(caseLineDto.getFacility());
 			caze.setHealthFacilityDetails(caseLineDto.getFacilityDetails());
 			if (caseLineDto.getDateOfOnset() != null) {
@@ -404,7 +376,6 @@ public class LineListingLayout extends VerticalLayout {
 			newLineDto.setCommunity(lastLineDto.getCommunity());
 			newLineDto.setFacilityTypeGroup(lastLineDto.getFacilityTypeGroup());
 			newLineDto.setFacilityType(lastLineDto.getFacilityType());
-			newLineDto.setDhimsFacilityType(lastLineDto.getDhimsFacilityType());
 			newLineDto.setFacility(lastLineDto.getFacility());
 			newLineDto.setFacilityDetails(lastLineDto.getFacilityDetails());
 
@@ -463,7 +434,6 @@ public class LineListingLayout extends VerticalLayout {
 			binder.forField(district).asRequired().bind(CaseLineDto.DISTRICT);
 			binder.forField(typeGroup).asRequired().bind(CaseLineDto.FACILITY_TYPE_GROUP);
 			binder.forField(type).asRequired().bind(CaseLineDto.FACILITY_TYPE);
-			binder.forField(type).asRequired().bind(CaseLineDto.DHIMS_FACILITY_TYPE);
 
 			dateOfReport = new DateField();
 			dateOfReport.setId("lineListingDateOfReport_" + lineIndex);
@@ -487,10 +457,10 @@ public class LineListingLayout extends VerticalLayout {
 					FieldHelper.updateItems(
 						facility,
 						communityDto != null
-							? FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(communityDto, type.getValue(), true, false, true)
+							? FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(communityDto, type.getValue(), true, false, true, true)
 							: district.getValue() != null
 								? FacadeProvider.getFacilityFacade()
-									.getActiveFacilitiesByDistrictAndType(district.getValue(), type.getValue(), true, false, true)
+									.getActiveFacilitiesByDistrictAndType(district.getValue(), type.getValue(), true, false, true, true)
 								: null);
 				}
 			});
@@ -781,7 +751,6 @@ public class LineListingLayout extends VerticalLayout {
 		public static final String DATE_OF_ONSET = "dateOfOnset";
 		public static final String FACILITY_TYPE_GROUP = "facilityTypeGroup";
 		public static final String FACILITY_TYPE = "facilityType";
-		public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
 
 		private Disease disease;
 		private String diseaseDetails;
@@ -792,7 +761,6 @@ public class LineListingLayout extends VerticalLayout {
 		private CommunityReferenceDto community;
 		private FacilityTypeGroup facilityTypeGroup;
 		private FacilityType facilityType;
-		private DhimsFacility dhimsFacilityType;
 		private FacilityReferenceDto facility;
 		private String facilityDetails;
 		private String firstName;
@@ -960,12 +928,6 @@ public class LineListingLayout extends VerticalLayout {
 
 		public void setFacilityType(FacilityType facilityType) {
 			this.facilityType = facilityType;
-		}
-		public DhimsFacility getDhimsFacilityType() {
-			return dhimsFacilityType;
-		}
-		public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
-			this.dhimsFacilityType = dhimsFacilityType;
 		}
 
 	}

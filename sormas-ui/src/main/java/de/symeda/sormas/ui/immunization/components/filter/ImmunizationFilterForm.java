@@ -188,7 +188,7 @@ public class ImmunizationFilterForm extends AbstractFilterForm<ImmunizationCrite
 							FieldHelper.updateItems(
 								facilityField,
 								FacadeProvider.getFacilityFacade()
-									.getActiveFacilitiesByDistrictAndType(newDistrict, (FacilityType) facilityTypeField.getValue(), true, false, true));
+									.getActiveFacilitiesByDistrictAndType(newDistrict, (FacilityType) facilityTypeField.getValue(), true, false, true, true));
 							enableFields(facilityField);
 						} else {
 							FieldHelper.updateEnumData(facilityTypeGroupField, FacilityTypeGroup.getAccomodationGroups());
@@ -219,11 +219,11 @@ public class ImmunizationFilterForm extends AbstractFilterForm<ImmunizationCrite
 					if (community == null) {
 						FieldHelper.updateItems(
 							facilityField,
-							FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(currentDistrict, facilityType, true, false, true));
+							FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(currentDistrict, facilityType, true, false, true, true));
 					} else {
 						FieldHelper.updateItems(
 							facilityField,
-							FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, facilityType,true, false, true));
+							FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, facilityType,true, false, true, true));
 					}
 				}
 			}
@@ -258,11 +258,11 @@ public class ImmunizationFilterForm extends AbstractFilterForm<ImmunizationCrite
 					if (community != null) {
 						FieldHelper.updateItems(
 							facilityField,
-							FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, facilityType, true, false, true));
+							FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, facilityType, true, false, true, true));
 					} else if (currentDistrict != null) {
 						FieldHelper.updateItems(
 							facilityField,
-							FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(currentDistrict, facilityType, true, false, true));
+							FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(currentDistrict, facilityType, true, false, true, true));
 					}
 				}
 			}
@@ -343,10 +343,10 @@ public class ImmunizationFilterForm extends AbstractFilterForm<ImmunizationCrite
 					enableFields(facilityField);
 					if (community != null) {
 						facilityField
-							.addItems(FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, facilityType, true, false, true));
+							.addItems(FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, facilityType, true, false, true, true));
 					} else {
 						facilityField
-							.addItems(FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(district, facilityType, true, false, true));
+							.addItems(FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(district, facilityType, true, false, true, true));
 					}
 				} else {
 					disableFields(facilityField);

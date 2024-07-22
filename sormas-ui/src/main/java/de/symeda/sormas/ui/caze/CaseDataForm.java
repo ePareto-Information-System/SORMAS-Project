@@ -2351,11 +2351,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             if (community != null) {
                 FieldHelper.updateItems(
                         facilityCombo,
-                        FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, facilityType, true, false, true));
+                        FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, facilityType, true, false, true, true));
             } else if (district != null) {
                 FieldHelper.updateItems(
                         facilityCombo,
-                        FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(district, facilityType, true, false, true));
+                        FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(district, facilityType, true, false, true, true));
             } else {
                 FieldHelper.removeItems(facilityCombo);
             }
