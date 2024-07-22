@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 import javax.persistence.*;
 
-//import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.caze.Trimester;
 import de.symeda.sormas.api.hospitalization.SymptomsList;
@@ -306,7 +305,9 @@ public class Symptoms extends AbstractDomainObject {
 	private SymptomState firstWormThisYear;
 	private Date dateFirstWormEmergence;
 	private SymptomState caseDetectedBeforeWormEmergence;
-
+	/*
+	* The constructor is empty to create a new instance of the class.
+	 */
 	public Symptoms() {
 	}
 	private SymptomState bodyAche;
