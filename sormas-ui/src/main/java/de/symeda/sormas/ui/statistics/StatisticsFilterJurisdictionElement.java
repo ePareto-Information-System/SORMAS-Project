@@ -193,7 +193,7 @@ public class StatisticsFilterJurisdictionElement extends StatisticsFilterElement
 					CommunityReferenceDto selectedCommunity = (CommunityReferenceDto) selectedCommunityTokenizable.getValue();
 					facilities.addAll(
 						FacadeProvider.getFacilityFacade()
-							.getActiveFacilitiesByCommunityAndType(selectedCommunity, (FacilityType) type.getValue(), false, false, false));
+							.getActiveFacilitiesByCommunityAndType(selectedCommunity, (FacilityType) type.getValue(), false, false, false, false));
 				}
 				Map<String, String> facilityCommunitiesMap = FacadeProvider.getFacilityFacade()
 					.getCommunityUuidsForFacilities(

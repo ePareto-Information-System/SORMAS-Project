@@ -52,6 +52,9 @@ public final class FacilityHelper {
 			if (facilityUuid.equals(FacilityDto.NOT_SET_FACILITY_UUID)) {
 				return I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.NOT_SET_FACILITY);
 			}
+			if (facilityUuid.equals(FacilityDto.NOT_FACILITY_BASED_UUID)) {
+				return I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.NOT_FACILITY_BASED);
+			}
 		}
 
 		StringBuilder caption = new StringBuilder();
@@ -63,6 +66,6 @@ public final class FacilityHelper {
 	}
 
 	public static boolean isOtherOrNoneHealthFacility(String facilityUuid) {
-		return FacilityDto.OTHER_FACILITY_UUID.equals(facilityUuid) || FacilityDto.NONE_FACILITY_UUID.equals(facilityUuid) || FacilityDto.NOT_SET_FACILITY_UUID.equals(facilityUuid);
+		return FacilityDto.OTHER_FACILITY_UUID.equals(facilityUuid) || FacilityDto.NONE_FACILITY_UUID.equals(facilityUuid) || FacilityDto.NOT_SET_FACILITY_UUID.equals(facilityUuid) || FacilityDto.NOT_FACILITY_BASED_UUID.equals(facilityUuid);
 	}
 }

@@ -14934,4 +14934,9 @@ ALTER TABLE symptoms ADD COLUMN trimester VARCHAR(255);
 ALTER TABLE symptoms ADD COLUMN postpartum VARCHAR(255);
 ALTER TABLE symptoms ADD COLUMN pregnant VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (693, 'Added pregnant related fields to symptoms');
+
+INSERT INTO facility (id, name, publicownership, uuid, archived, changedate, creationdate, sys_period) VALUES (nextval('entity_seq'), 'Not facility based', false, 'SORMAS-CONSTID-NOTBASED-FACILITY', false, now(), now(), tstzrange(now(), null));
+UPDATE facility SET type = 'HOSPITAL' WHERE type ISNULL AND uuid NOT IN ('SORMAS-CONSTID-NOTBASED-FACILITY');
+UPDATE facility SET type = 'HOSPITAL' WHERE NOT type = 'LABORATORY' AND uuid NOT IN ('SORMAS-CONSTID-NOTBASED-FACILITY');
+INSERT INTO schema_version (version_number, comment) VALUES (694, 'Added Not facility based Query into facility');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

@@ -1797,6 +1797,7 @@ public interface Captions {
 	String Facility_NO_FACILITY = "Facility.NO_FACILITY";
 	String Facility_OTHER_FACILITY = "Facility.OTHER_FACILITY";
 	String Facility_NOT_SET_FACILITY = "Facility.NOT_SET_FACILITY";
+	String Facility_NOT_FACILITY_BASED = "Facility.NOT_FACILITY_BASED";
 	String Facility_postalCode = "Facility.postalCode";
 	String Facility_publicOwnership = "Facility.publicOwnership";
 	String Facility_region = "Facility.region";

@@ -52,11 +52,13 @@ public class FacilityDto extends InfrastructureDto {
 	public static final String OTHER_FACILITY_UUID = "SORMAS-CONSTID-OTHERS-FACILITY";
 	public static final String NONE_FACILITY_UUID = "SORMAS-CONSTID-ISNONE-FACILITY";
 	public static final String NOT_SET_FACILITY_UUID = "SORMAS-CONSTID-NOTSET-FACILITY";
-	public static final List<String> CONSTANT_FACILITY_UUIDS = Arrays.asList(OTHER_FACILITY_UUID, NONE_FACILITY_UUID, NOT_SET_FACILITY_UUID);
+	public static final String NOT_FACILITY_BASED_UUID = "SORMAS-CONSTID-NOTBASED-FACILITY";
+	public static final List<String> CONSTANT_FACILITY_UUIDS = Arrays.asList(OTHER_FACILITY_UUID, NONE_FACILITY_UUID, NOT_SET_FACILITY_UUID, NOT_FACILITY_BASED_UUID);
 	public static final String OTHER_FACILITY = "OTHER_FACILITY";
 	public static final String OTHER_LABORATORY_UUID = "SORMAS-CONSTID-OTHERS-LABORATO";
 	public static final String NO_FACILITY = "NO_FACILITY";
 	public static final String NOT_SET_FACILITY = "NOT_SET_FACILITY";
+	public static final String NOT_FACILITY_BASED = "NOT_FACILITY_BASED";
 	public static final String CONFIGURED_FACILITY = "CONFIGURED_FACILITY";
 	public static final String NAME = "name";
 	public static final String REGION = "region";

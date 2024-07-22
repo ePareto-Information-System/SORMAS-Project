@@ -72,7 +72,8 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 			FacilityType type,
 			boolean includeOtherFacility,
 			boolean includeNoneFacility,
-			boolean includeNotSetFacility) {
+			boolean includeNotSetFacility,
+			boolean includeNotFacilityBasedFacility) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Facility> cq = cb.createQuery(getElementClass());
@@ -97,6 +98,9 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 		}
 		if (includeNotSetFacility) {
 			facilities.add(getByUuid(FacilityDto.NOT_SET_FACILITY_UUID));
+		}
+		if (includeNotFacilityBasedFacility) {
+			facilities.add(getByUuid(FacilityDto.NOT_FACILITY_BASED_UUID));
 		}
 
 		return facilities;
@@ -139,7 +143,8 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 			FacilityType type,
 			boolean includeOtherFacility,
 			boolean includeNoneFacility,
-			boolean includeNotSetFacility) {
+			boolean includeNotSetFacility,
+			boolean includeNotFacilityBasedFacility) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Facility> cq = cb.createQuery(getElementClass());
@@ -166,37 +171,8 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 		if (includeNotSetFacility) {
 			facilities.add(getByUuid(FacilityDto.NOT_SET_FACILITY_UUID));
 		}
-
-		return facilities;
-	}
-
-	public List<Facility> getActiveFacilitiesByDistrictAndType(
-			District district,
-			DhimsFacility dhimsFacilityType,
-			boolean includeDhimsFacility,
-			boolean includeNoneFacility) {
-
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Facility> cq = cb.createQuery(getElementClass());
-		Root<Facility> from = cq.from(getElementClass());
-
-		Predicate filter = createBasicFilter(cb, from);
-
-		if (dhimsFacilityType != null) {
-			filter = cb.and(filter, cb.equal(from.get(Facility.DHIMS_FACILITY_TYPE), dhimsFacilityType));
-		}
-		filter = cb.and(filter, cb.equal(from.get(Facility.DISTRICT), district));
-		cq.where(filter);
-		cq.distinct(true);
-		cq.orderBy(cb.asc(from.get(Facility.NAME)));
-
-		List<Facility> facilities = em.createQuery(cq).getResultList();
-
-		if (includeDhimsFacility) {
-			facilities.add(getByUuid(FacilityDto.OTHER_FACILITY_UUID));
-		}
-		if (includeNoneFacility) {
-			facilities.add(getByUuid(FacilityDto.NONE_FACILITY_UUID));
+		if (includeNotFacilityBasedFacility) {
+			facilities.add(getByUuid(FacilityDto.NOT_FACILITY_BASED_UUID));
 		}
 
 		return facilities;

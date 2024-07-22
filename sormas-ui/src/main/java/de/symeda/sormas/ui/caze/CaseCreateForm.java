@@ -808,12 +808,12 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
                 FieldHelper.updateItems(
                         facilityCombo,
                         FacadeProvider.getFacilityFacade()
-                                .getActiveFacilitiesByCommunityAndType(community, (FacilityType) facilityType.getValue(), true, false, true));
+                                .getActiveFacilitiesByCommunityAndType(community, (FacilityType) facilityType.getValue(), true, false, true, true));
             } else {
                 FieldHelper.updateItems(
                         facilityCombo,
                         FacadeProvider.getFacilityFacade()
-                                .getActiveFacilitiesByDistrictAndType(district, (FacilityType) facilityType.getValue(), true, false, true));
+                                .getActiveFacilitiesByDistrictAndType(district, (FacilityType) facilityType.getValue(), true, false, true, true));
             }
         }
     }
