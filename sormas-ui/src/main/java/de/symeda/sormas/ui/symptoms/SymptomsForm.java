@@ -26,9 +26,9 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowCss;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocsCss;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
-import static de.symeda.sormas.ui.utils.LayoutUtil.locCss;
 import static de.symeda.sormas.ui.utils.LayoutUtil.locsCss;
 
+import java.lang.reflect.Member;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -64,7 +64,6 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.SymptomsContext;
@@ -113,7 +112,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	private static final String MPOX_RASH_HEADING_LOC = " mpozRash";
 	private static final String PLACE_DEATH_HEADING_LOC = " placeDeathsHeading";
 
-    private static Map<String, List<String>> symptomGroupMap = new HashMap();
+    private static Map<String, List<String>> symptomGroupMap = new HashMap<>();
 
     //@formatter:off
 	private static final String HTML_LAYOUT =
@@ -252,7 +251,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
                 field -> field.isAnnotationPresent(SymptomGrouping.class) && field.getAnnotation(SymptomGrouping.class).value() == symptomGroup;
         final List<String> symptomLocations = Arrays.stream(SymptomsDto.class.getDeclaredFields())
                 .filter(groupSymptoms)
-                .map(field -> field.getName())
+                .map(Member::getName)
                 .sorted(Comparator.comparing(fieldName -> I18nProperties.getPrefixCaption(I18N_PREFIX, fieldName)))
                 .collect(Collectors.toList());
 
@@ -351,8 +350,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
         Label clinicalMeasurementsHeadingLabel =
                 createLabel(I18nProperties.getString(Strings.headingClinicalMeasurements), H3, CLINICAL_MEASUREMENTS_HEADING_LOC);
 
-		Label headingClinicalHistoryHeadingLabel =
-				createLabel(I18nProperties.getString(Strings.headingClinicalHistory), H3, CLINICAL_HISTORY_HEADING_LOC);
+		createLabel(I18nProperties.getString(Strings.headingClinicalHistory), H3, CLINICAL_HISTORY_HEADING_LOC);
 		Label signsAndSymptomsHeadingLabel =
 			createLabel(I18nProperties.getString(Strings.headingSignsAndSymptoms), H3, SIGNS_AND_SYMPTOMS_HEADING_LOC);
 		signsAndSymptomsHeadingLabel.setVisible(false);
@@ -374,8 +372,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		nervousSystemSymptomsHeadingLabel.setVisible(false);
 		final Label rashSymptomsHeadingLabel = createLabel(SymptomGroup.RASH.toString(), H4, RASH_AND_SYMPTOMS_HEADING_LOC);
 		rashSymptomsHeadingLabel.setVisible(false);
-		final Label rashCharacteristicsSymptomsHeadingLabel =
-			createLabel(SymptomGroup.RASH_CHARACTERISTICS.toString(), H4, RASH_CHARACTERISTICS_AND_SYMPTOMS_HEADING_LOC);
+		createLabel(SymptomGroup.RASH_CHARACTERISTICS.toString(), H4, RASH_CHARACTERISTICS_AND_SYMPTOMS_HEADING_LOC);
 		final Label rashTypeSymptomsHeadingLabel = createLabel(SymptomGroup.RASH_TYPE.toString(), H4, RASH_TYPE_AND_SYMPTOMS_HEADING_LOC);
 		rashTypeSymptomsHeadingLabel.setVisible(false);
 		final Label skinSymptomsHeadingLabel = createLabel(SymptomGroup.SKIN.toString(), H4, SKIN_SIGNS_AND_SYMPTOMS_HEADING_LOC);
@@ -661,8 +658,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			SWOLLEN_LYMPH_NODES_BEHIND_EARS,
 			ABNORMAL_LUNG_AUSCULTATION);
 
-		TextField babyAgeAtDeath = addField(AGE_AT_DEATH_DAYS, TextField.class);
-		TextField ageOfOnsetDays =  addField(AGE_AT_ONSET_DAYS, TextField.class);
+		addField(AGE_AT_DEATH_DAYS, TextField.class);
+		addField(AGE_AT_ONSET_DAYS, TextField.class);
 		setVisible(false, AGE_AT_DEATH_DAYS, AGE_AT_ONSET_DAYS,
 				VOMITING, DIARRHEA, BLOOD_IN_STOOL, NAUSEA, ABDOMINAL_PAIN, HEADACHE, MUSCLE_PAIN, CHILLS_SWEATS, FATIGUE_WEAKNESS, SKIN_RASH, NECK_STIFFNESS, SORE_THROAT, COUGH, COUGH_WITH_SPUTUM, COUGH_WITH_HEAMOPTYSIS, RUNNY_NOSE, DIFFICULTY_BREATHING, CHEST_PAIN, CONJUNCTIVITIS, EYE_PAIN_LIGHT_SENSITIVE, KOPLIKS_SPOTS, THROBOCYTOPENIA, OTITIS_MEDIA, HEARINGLOSS, DEHYDRATION, ANOREXIA_APPETITE_LOSS, REFUSAL_FEEDOR_DRINK, JOINT_PAIN, HICCUPS, BACKACHE, EYES_BLEEDING, JAUNDICE, DARK_URINE, STOMACH_BLEEDING, RAPID_BREATHING, SWOLLEN_GLANDS, UNEXPLAINED_BLEEDING, GUMS_BLEEDING, INJECTION_SITE_BLEEDING, NOSE_BLEEDING, BLOODY_BLACK_STOOL, RED_BLOOD_VOMIT, DIGESTED_BLOOD_VOMIT, COUGHING_BLOOD, BLEEDING_VAGINA, SKIN_BRUISING, BLOOD_URINE, OTHER_HEMORRHAGIC_SYMPTOMS, OTHER_HEMORRHAGIC_SYMPTOMS_TEXT, OTHER_NON_HEMORRHAGIC_SYMPTOMS, OTHER_NON_HEMORRHAGIC_SYMPTOMS_TEXT, LESIONS, LESIONS_THAT_ITCH, LESIONS_SAME_STATE, LESIONS_SAME_SIZE, LESIONS_DEEP_PROFOUND, LESIONS_FACE, LESIONS_LEGS, LESIONS_SOLES_FEET, LESIONS_PALMS_HANDS, LESIONS_THORAX, LESIONS_ARMS, LESIONS_GENITALS, LESIONS_ALL_OVER_BODY, LYMPHADENOPATHY, LYMPHADENOPATHY_AXILLARY, LYMPHADENOPATHY_CERVICAL, LYMPHADENOPATHY_INGUINAL, BEDRIDDEN, ORAL_ULCERS, PAINFUL_LYMPHADENITIS, BLACKENING_DEATH_OF_TISSUE, BUBOES_GROIN_ARMPIT_NECK, BULGING_FONTANELLE, PHARYNGEAL_ERYTHEMA, PHARYNGEAL_EXUDATE, OEDEMA_FACE_NECK, OEDEMA_LOWER_EXTREMITY, LOSS_SKIN_TURGOR, PALPABLE_LIVER, PALPABLE_SPLEEN, MALAISE, SUNKEN_EYES_FONTANELLE, SIDE_PAIN, FLUID_IN_LUNG_CAVITY, TREMOR, BILATERAL_CATARACTS, UNILATERAL_CATARACTS, CONGENITAL_GLAUCOMA, CONGENITAL_HEART_DISEASE, PIGMENTARY_RETINOPATHY, RADIOLUCENT_BONE_DISEASE, SPLENOMEGALY, MICROCEPHALY, MENINGOENCEPHALITIS, PURPURIC_RASH, DEVELOPMENTAL_DELAY, CONGENITAL_HEART_DISEASE_TYPE, CONGENITAL_HEART_DISEASE_DETAILS, JAUNDICE_WITHIN_24_HOURS_OF_BIRTH, PATIENT_ILL_LOCATION, HYDROPHOBIA, OPISTHOTONUS, ANXIETY_STATES, DELIRIUM, UPROARIOUSNESS, PARASTHESIA_AROUND_WOUND, EXCESS_SALIVATION, INSOMNIA, PARALYSIS, EXCITATION, DYSPHAGIA, AEROPHOBIA, HYPERACTIVITY, PARESIS, AGITATION, ASCENDING_FLACCID_PARALYSIS, ERRATIC_BEHAVIOUR, COMA, CONVULSION, FLUID_IN_LUNG_CAVITY_AUSCULTATION, FLUID_IN_LUNG_CAVITY_XRAY, ABNORMAL_LUNG_XRAY_FINDINGS, CONJUNCTIVAL_INJECTION, ACUTE_RESPIRATORY_DISTRESS_SYNDROME, PNEUMONIA_CLINICAL_OR_RADIOLOGIC, LOSS_OF_TASTE, LOSS_OF_SMELL, WHEEZING, SKIN_ULCERS, INABILITY_TO_WALK, IN_DRAWING_OF_CHEST_WALL, FEELING_ILL, SHIVERING, RESPIRATORY_DISEASE_VENTILATION, FAST_HEART_RATE, OXYGEN_SATURATION_LOWER_94, FEVERISHFEELING, WEAKNESS, FATIGUE, COUGH_WITHOUT_SPUTUM, BREATHLESSNESS, CHEST_PRESSURE, BLUE_LIPS, BLOOD_CIRCULATION_PROBLEMS, PALPITATIONS, DIZZINESS_STANDING_UP, HIGH_OR_LOW_BLOOD_PRESSURE, URINARY_RETENTION, FEVER, BODY_ACHE, DIZZINESS, EXCESSIVE_SWEATING, NUMBNESS);
 
@@ -711,9 +708,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
                     MID_UPPER_ARM_CIRCUMFERENCE,
                     GLASGOW_COMA_SCALE);
         }
-		/*else {
-			setVisible(false, ONSET_SYMPTOM, ONSET_DATE);
-		}*/
 
         // Initialize lists
 
@@ -1021,11 +1015,11 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
             setVisible(false, SYMPTOMS_COMMENTS, OUTCOME, ONSET_DATE, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
 
-            NullableOptionGroup feverOnsetParalysis = addField(FEVER_ONSET_PARALYSIS, NullableOptionGroup.class);
-            NullableOptionGroup progressiveParalysis = addField(PROGRESSIVE_PARALYSIS, NullableOptionGroup.class);
-            DateField dateOnsetParalysis = addField(DATE_ONSET_PARALYSIS, DateField.class);
-            NullableOptionGroup progressiveFlaccidAcute = addField(PROGRESSIVE_FLACID_ACUTE, NullableOptionGroup.class);
-            NullableOptionGroup assymetric = addField(ASSYMETRIC, NullableOptionGroup.class);
+            addField(FEVER_ONSET_PARALYSIS, NullableOptionGroup.class);
+            addField(PROGRESSIVE_PARALYSIS, NullableOptionGroup.class);
+            addField(DATE_ONSET_PARALYSIS, DateField.class);
+            addField(PROGRESSIVE_FLACID_ACUTE, NullableOptionGroup.class);
+            addField(ASSYMETRIC, NullableOptionGroup.class);
 
             OptionGroup siteOfParalysis = addField(SITE_OF_PARALYSIS, OptionGroup.class);
             CssStyles.style(siteOfParalysis, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
@@ -1036,7 +1030,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
                             .filter(c -> fieldVisibilityCheckers.isVisible(InjectionSite.class, c.name()))
                             .collect(Collectors.toList()));
 
-            OptionGroup paralysedLimbSensitiveToPain = addField(PARALYSED_LIMB_SENSITIVE_TO_PAIN, OptionGroup.class);
+            addField(PARALYSED_LIMB_SENSITIVE_TO_PAIN, OptionGroup.class);
             OptionGroup injectionSiteBeforeOnsetParalysis = addField(INJECTION_SITE_BEFORE_ONSET_PARALYSIS, OptionGroup.class);
 
 			OptionGroup leftRightInjectionSite = addField(INJECTION_SITE, OptionGroup.class);
@@ -1055,7 +1049,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			leftRightInjectionSite.setVisible(false);
 			FieldHelper.setVisibleWhen(injectionSiteBeforeOnsetParalysis, Arrays.asList(leftRightInjectionSite), Arrays.asList(YesNo.YES), true);
 
-            OptionGroup trueAFP = addField(TRUEAFP, OptionGroup.class);
+            addField(TRUEAFP, OptionGroup.class);
             TextArea provisionalDiagnosis = addField(PROVISONAL_DIAGNOSIS, TextArea.class);
             provisionalDiagnosis.setRows(4);
 
@@ -1220,23 +1214,11 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			FieldHelper.setVisibleWhen(getFieldGroup(), NUMBER_OF_WORMS, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
 			FieldHelper.setVisibleWhen(getFieldGroup(), DATE_FIRST_WORM_EMERGENCE, EMERGENCE_OF_GUINEA_WORM, Arrays.asList(SymptomState.YES), true);
 
-		} else if (disease == Disease.CHOLERA) {
-			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED));
-
 		}
 
 		if (symptomsContext != SymptomsContext.CASE) {
 			getFieldGroup().getField(PATIENT_ILL_LOCATION).setVisible(false);
 		}
-
-		/*symptomGroupMap.forEach((location, strings) -> {
-			final Component groupLabel = getContent().getComponent(location);
-			final Optional<String> groupHasVisibleSymptom =
-				strings.stream().filter(s -> getFieldGroup().getField(s) != null && getFieldGroup().getField(s).isVisible()).findAny();
-			if (!groupHasVisibleSymptom.isPresent()) {
-				groupLabel.setVisible(false);
-			}
-		});*/
 
 		if (isEditableAllowed(OTHER_HEMORRHAGIC_SYMPTOMS_TEXT)) {
 			FieldHelper.setRequiredWhen(
@@ -1291,8 +1273,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		clearAllButton.setVisible(false);
 		setEmptyToNoButton.setVisible(false);
 
-		//Button setEmptyToUnknownButton = createButtonSetClearedToSymptomState(Captions.symptomsSetClearedToUnknown, SymptomState.UNKNOWN);
-
 		if (includedDiseases.contains(disease)) {
 			clearAllButton.setVisible(true);
 			setEmptyToNoButton.setVisible(true);
@@ -1312,7 +1292,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		buttonsLayout.addStyleName("move-to-left");
 		buttonsLayout.addComponent(clearAllButton);
 		buttonsLayout.addComponent(setEmptyToNoButton);
-		//buttonsLayout.addComponent(setEmptyToUnknownButton);
 		buttonsLayout.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
 		buttonsLayout.setMargin(new MarginInfo(true, true, true, false));
 
@@ -1691,17 +1670,13 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		}
 
 		if (visitStatusField != null) {
-			visitStatusField.addValueChangeListener(new ValueChangeListener() {
-
-				@Override
-				public void valueChange(com.vaadin.v7.data.Property.ValueChangeEvent event) {
-					if (isAnySymptomSetToYes(fieldGroup, sourcePropertyIds, sourceValues) && visitStatusField.getValue() == VisitStatus.COOPERATIVE) {
-						FieldHelper.addSoftRequiredStyle(targetField);
-					} else {
-						FieldHelper.removeSoftRequiredStyle(targetField);
-					}
-				}
-			});
+			visitStatusField.addValueChangeListener((ValueChangeListener) event -> {
+                if (isAnySymptomSetToYes(fieldGroup, sourcePropertyIds, sourceValues) && visitStatusField.getValue() == VisitStatus.COOPERATIVE) {
+                    FieldHelper.addSoftRequiredStyle(targetField);
+                } else {
+                    FieldHelper.removeSoftRequiredStyle(targetField);
+                }
+            });
 		}
 	}
 
@@ -1742,7 +1717,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				} else {
 					onsetSymptom.removeItem(sourceField.getCaption());
 					boolean isOnsetDateFieldEnabled = isAnySymptomSetToYes(getFieldGroup(), allPropertyIds, Arrays.asList(SymptomState.YES));
-					//onsetDateField.setEnabled(isOnsetDateFieldEnabled);
 					onsetDateField.setEnabled(true);
 					Date onsetDate = getValue().getOnsetDate();
 					if (onsetDate != null) {
@@ -1792,7 +1766,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		hl4.addComponents(getContent().getComponent(LESIONS_RESEMBLE_IMG4), lesionsImg4);
 		getContent().addComponent(hl4, LESIONS_RESEMBLE_IMG4);
 
-		//List<String> monkeypoxImages = Arrays.asList(MONKEYPOX_LESIONS_IMG11, MONKEYPOX_LESIONS_IMG2, MONKEYPOX_LESIONS_IMG3, MONKEYPOX_LESIONS_IMG4);
 		List<String> monkeypoxImages = Arrays.asList(LESIONS_RESEMBLE_IMG1, LESIONS_RESEMBLE_IMG2, LESIONS_RESEMBLE_IMG3, LESIONS_RESEMBLE_IMG4);
 
 		// Set up initial visibility
@@ -1818,10 +1791,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 	public Button createButtonSetClearedToSymptomState(String caption, SymptomState symptomState) {
 
-		Button button = ButtonHelper.createButton(caption, event -> {
+		return ButtonHelper.createButton(caption, event -> {
 			for (Object symptomId : unconditionalSymptomFieldIds) {
 				Field<Object> symptom = (Field<Object>) getFieldGroup().getField(symptomId);
-				if (symptom.isVisible() && (Set.class.isAssignableFrom(symptom.getValue().getClass()) && ((Set) symptom.getValue()).size() == 0)) {
+				if (symptom.isVisible() && (Set.class.isAssignableFrom(symptom.getValue().getClass()) && ((Set) symptom.getValue()).isEmpty())) {
 					Set<SymptomState> value = (Set<SymptomState>) symptom.getValue();
 					value.add(symptomState);
 					symptom.setValue(value);
@@ -1829,7 +1802,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			}
 			for (Object symptomId : conditionalBleedingSymptomFieldIds) {
 				Field<Object> symptom = (Field<Object>) getFieldGroup().getField(symptomId);
-				if (symptom.isVisible() && (Set.class.isAssignableFrom(symptom.getValue().getClass()) && ((Set) symptom.getValue()).size() == 0)) {
+				if (symptom.isVisible() && (Set.class.isAssignableFrom(symptom.getValue().getClass()) && ((Set) symptom.getValue()).isEmpty())) {
 					Set<SymptomState> value = (Set<SymptomState>) symptom.getValue();
 					value.add(symptomState);
 					symptom.setValue(value);
@@ -1840,7 +1813,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				if (symptom.isVisible()) {
 					if (symptom.isRequired() && symptom.getValue() == null) {
 						symptom.setValue(symptomState);
-					} else if (Set.class.isAssignableFrom(symptom.getValue().getClass()) && ((Set) symptom.getValue()).size() == 0) {
+					} else if (Set.class.isAssignableFrom(symptom.getValue().getClass()) && ((Set) symptom.getValue()).isEmpty()) {
 						Set<SymptomState> value = (Set<SymptomState>) symptom.getValue();
 						value.add(symptomState);
 						symptom.setValue(value);
@@ -1852,7 +1825,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				if (symptom.isVisible()) {
 					if (symptom.isRequired() && symptom.getValue() == null) {
 						symptom.setValue(symptomState);
-					} else if (Set.class.isAssignableFrom(symptom.getValue().getClass()) && ((Set) symptom.getValue()).size() == 0) {
+					} else if (Set.class.isAssignableFrom(symptom.getValue().getClass()) && ((Set) symptom.getValue()).isEmpty()) {
 						Set<SymptomState> value = (Set<SymptomState>) symptom.getValue();
 						value.add(symptomState);
 						symptom.setValue(value);
@@ -1860,8 +1833,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				}
 			}
 		}, ValoTheme.BUTTON_LINK);
-
-		return button;
 	}
 
 }
