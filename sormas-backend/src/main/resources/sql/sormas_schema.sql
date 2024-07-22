@@ -12920,7 +12920,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment) VALUES (537, 'Add the ''See personal data inside jurisdiction'' user right to the default Environmental Surveillance User #12284');
--- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
 ALTER TABLE externalmessage ADD COLUMN sample_id bigint;
 ALTER TABLE externalmessage ADD CONSTRAINT fk_externalmessage_sample_id FOREIGN KEY (sample_id) REFERENCES samples (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
@@ -13121,7 +13120,7 @@ CREATE TABLE sixtyday (
                           changedate timestamp(3),
                           change_user_id bigint,
                           creationdate DATE,
-                          uuid VARCHAR(512),
+                          uuid VARCHAR(512)
                           );
 INSERT INTO schema_version (version_number, comment) VALUES (554, 'Created sixtyday table');
 
