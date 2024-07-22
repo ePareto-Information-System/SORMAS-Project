@@ -286,7 +286,7 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 				if (community != null) {
 					FieldHelper.updateItems(
 						facilityField,
-						FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, facilityType, true, false, true));
+						FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, facilityType, true, false, true, true));
 				} else {
 					FieldHelper.updateItems(
 						facilityField,
@@ -295,7 +295,7 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 								user.getDistrict() != null ? user.getDistrict() : (DistrictReferenceDto) districtField.getValue(),
 								facilityType,
 								true,
-								false, true));
+								false, true, true));
 				}
 			} else {
 				facilityField.removeAllItems();

@@ -14,45 +14,20 @@
  */
 package de.symeda.sormas.backend.infrastructure.facility;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.annotation.security.PermitAll;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.criteria.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import de.symeda.sormas.api.disease.DiseaseConfigurationDto;
-import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.infrastructure.facility.*;
-import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.AFPFacilityOptions;
-import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
-import de.symeda.sormas.backend.disease.DiseaseConfiguration;
-import de.symeda.sormas.backend.user.UserService;
-import org.apache.commons.collections.CollectionUtils;
 import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.disease.DiseaseConfigurationDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.*;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
+import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
+import de.symeda.sormas.backend.disease.DiseaseConfiguration;
 import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal;
 import de.symeda.sormas.backend.infrastructure.AbstractInfrastructureFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.community.Community;
@@ -64,9 +39,22 @@ import de.symeda.sormas.backend.infrastructure.district.DistrictService;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.infrastructure.region.RegionFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.region.RegionService;
+import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.QueryHelper;
 import de.symeda.sormas.backend.util.RightsAllowed;
+import org.apache.commons.collections.CollectionUtils;
+
+import javax.annotation.security.PermitAll;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.criteria.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Stateless(name = "FacilityFacade")
 @RightsAllowed(UserRight._INFRASTRUCTURE_VIEW)
@@ -105,11 +93,12 @@ public class FacilityFacadeEjb
 			FacilityType type,
 			boolean includeOtherFacility,
 			boolean includeNoneFacility,
-			boolean includeNotSetFacility) {
+			boolean includeNotSetFacility,
+			boolean includeNotFacilityBasedFacility) {
 
 		Community community = communityService.getByUuid(communityRef.getUuid());
 		List<Facility> facilities = service.getActiveFacilitiesByCommunityAndType(community, type, includeOtherFacility,
-				includeNoneFacility, includeNotSetFacility);
+				includeNoneFacility, includeNotSetFacility, includeNotFacilityBasedFacility);
 		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
@@ -120,19 +109,20 @@ public class FacilityFacadeEjb
 			FacilityType type,
 			boolean includeOtherFacility,
 			boolean includeNoneFacility,
-			boolean includeNotSetFacility) {
+			boolean includeNotSetFacility,
+			boolean includeNotFacilityBasedFacility) {
 
 		District district = districtService.getByUuid(districtRef.getUuid());
-		List<Facility> facilities = service.getActiveFacilitiesByDistrictAndType(district, type,  includeOtherFacility, includeNoneFacility, includeNotSetFacility);
+		List<Facility> facilities = service.getActiveFacilitiesByDistrictAndType(district, type,  includeOtherFacility, includeNoneFacility, includeNotSetFacility, includeNotFacilityBasedFacility);
 		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
 
 	@Override
 	@PermitAll
-	public List<FacilityReferenceDto> getActiveHospitalsByCommunity(CommunityReferenceDto communityRef, boolean includeOtherFacility, boolean includeNotSetFacility) {
+	public List<FacilityReferenceDto> getActiveHospitalsByCommunity(CommunityReferenceDto communityRef, boolean includeOtherFacility, boolean includeNotSetFacility, boolean includeNotFacilityBasedFacility) {
 		Community community = communityService.getByUuid(communityRef.getUuid());
-		List<Facility> facilities = service.getActiveFacilitiesByCommunityAndType(community, FacilityType.HOSPITAL,  includeOtherFacility, false, includeNotSetFacility);
+		List<Facility> facilities = service.getActiveFacilitiesByCommunityAndType(community, FacilityType.HOSPITAL,  includeOtherFacility, false, includeNotSetFacility, includeNotFacilityBasedFacility);
 		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
@@ -140,10 +130,10 @@ public class FacilityFacadeEjb
 	// public List<FacilityReferenceDto> getActiveHospitalsByDistrict(DistrictReferenceDto districtRef,
 	// 															   boolean includeOtherFacility) {
 	@PermitAll
-	public List<FacilityReferenceDto> getActiveHospitalsByDistrict(DistrictReferenceDto districtRef, boolean includeOtherFacility, boolean includeNotSetFacility) {
+	public List<FacilityReferenceDto> getActiveHospitalsByDistrict(DistrictReferenceDto districtRef, boolean includeOtherFacility, boolean includeNotSetFacility, boolean includeNotFacilityBasedFacility) {
 		District district = districtService.getByUuid(districtRef.getUuid());
 		List<Facility> facilities = service.getActiveFacilitiesByDistrictAndType(district, FacilityType.HOSPITAL,
-				includeOtherFacility, false, includeNotSetFacility);
+				includeOtherFacility, false, includeNotSetFacility, includeNotFacilityBasedFacility);
 		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
@@ -635,6 +625,7 @@ public class FacilityFacadeEjb
 		Predicate excludeFilter = cb.and(
 				cb.notEqual(root.get(Facility.UUID), FacilityDto.OTHER_FACILITY_UUID),
 				cb.notEqual(root.get(Facility.UUID), FacilityDto.NOT_SET_FACILITY),
+				cb.notEqual(root.get(Facility.UUID), FacilityDto.NOT_FACILITY_BASED),
 				cb.notEqual(root.get(Facility.UUID), FacilityDto.NONE_FACILITY_UUID));
 		if (filter != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, excludeFilter);
@@ -686,6 +677,7 @@ public class FacilityFacadeEjb
 		if (dto.getType() == null
 				&& !FacilityDto.OTHER_FACILITY_UUID.equals(dto.getUuid())
 				&& !FacilityDto.NONE_FACILITY_UUID.equals(dto.getUuid())
+				&& !FacilityDto.NOT_FACILITY_BASED_UUID.equals(dto.getUuid())
 				&& !FacilityDto.NOT_SET_FACILITY_UUID.equals(dto.getUuid())) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validFacilityType));
 		}

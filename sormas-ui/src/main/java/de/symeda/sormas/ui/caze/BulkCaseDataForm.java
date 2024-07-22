@@ -328,7 +328,7 @@ public class BulkCaseDataForm extends AbstractEditForm<CaseBulkEditData> {
 				FieldHelper.updateItems(
 					facility,
 					FacadeProvider.getFacilityFacade()
-						.getActiveFacilitiesByDistrictAndType(districtDto, (FacilityType) facilityType.getValue(), true, false, true));
+						.getActiveFacilitiesByDistrictAndType(districtDto, (FacilityType) facilityType.getValue(), true, false, true, true));
 			}
 		});
 		community.addValueChangeListener(e -> {
@@ -339,14 +339,14 @@ public class BulkCaseDataForm extends AbstractEditForm<CaseBulkEditData> {
 					facility,
 					communityDto != null
 						? FacadeProvider.getFacilityFacade()
-							.getActiveFacilitiesByCommunityAndType(communityDto, (FacilityType) facilityType.getValue(),true, false, true)
+							.getActiveFacilitiesByCommunityAndType(communityDto, (FacilityType) facilityType.getValue(),true, false, true, true)
 						: district.getValue() != null
 							? FacadeProvider.getFacilityFacade()
 								.getActiveFacilitiesByDistrictAndType(
 									(DistrictReferenceDto) district.getValue(),
 									(FacilityType) facilityType.getValue(),
 									true,
-									false, true)
+									false, true, true)
 							: null);
 			}
 		});
@@ -367,7 +367,7 @@ public class BulkCaseDataForm extends AbstractEditForm<CaseBulkEditData> {
 								(CommunityReferenceDto) community.getValue(),
 								(FacilityType) facilityType.getValue(),
 								true,
-								false, true));
+								false, true, true));
 				} else {
 					FieldHelper.updateItems(
 						facility,
@@ -376,7 +376,7 @@ public class BulkCaseDataForm extends AbstractEditForm<CaseBulkEditData> {
 								(DistrictReferenceDto) district.getValue(),
 								(FacilityType) facilityType.getValue(),
 								true,
-								false, true));
+								false, true, true));
 				}
 			}
 		});
@@ -555,12 +555,12 @@ public class BulkCaseDataForm extends AbstractEditForm<CaseBulkEditData> {
 				FieldHelper.updateItems(
 					facility,
 					FacadeProvider.getFacilityFacade()
-						.getActiveFacilitiesByCommunityAndType(community, (FacilityType) facilityType.getValue(),true, false, true));
+						.getActiveFacilitiesByCommunityAndType(community, (FacilityType) facilityType.getValue(),true, false, true, true));
 			} else {
 				FieldHelper.updateItems(
 					facility,
 					FacadeProvider.getFacilityFacade()
-						.getActiveFacilitiesByDistrictAndType(district, (FacilityType) facilityType.getValue(), true, false, true));
+						.getActiveFacilitiesByDistrictAndType(district, (FacilityType) facilityType.getValue(), true, false, true, true));
 			}
 		}
 	}

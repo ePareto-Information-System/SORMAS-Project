@@ -153,7 +153,7 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 				checkForExistingData(edit);
 				comboBoxDistrict.setComponentError(null);
 				if (comboBoxFacility != null && !UserProvider.getCurrent().isPortHealthUser()) {
-					comboBoxFacility.setItems(FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(district, false, true));
+					comboBoxFacility.setItems(FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(district, false, true, true));
 					comboBoxFacility.setEnabled(true);
 				}
 				if (comboBoxPoe != null) {
