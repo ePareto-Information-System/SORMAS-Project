@@ -216,7 +216,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			fluidRowLocs(6,OUTCOME);
 
 
-	public static final String GUINEA_WORD_LAYOUT =
+	public static final String GUINEA_WORM_LAYOUT =
 			loc(SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 			fluidRowLocs(FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM, FIRST_SIGN_OR_SYMPTOMS_BEFORE_WORM_OTHERS) +
 			fluidRowLocs(6, EMERGENCE_OF_GUINEA_WORM) +
@@ -1538,7 +1538,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 			switch (caze.getDisease()) {
 				case GUINEA_WORM:
-					SELECTED_HTML_LAYOUT = GUINEA_WORD_LAYOUT;
+					SELECTED_HTML_LAYOUT = GUINEA_WORM_LAYOUT;
 					break;
 				case MEASLES:
 					SELECTED_HTML_LAYOUT = MEASLES_LAYOUT;
