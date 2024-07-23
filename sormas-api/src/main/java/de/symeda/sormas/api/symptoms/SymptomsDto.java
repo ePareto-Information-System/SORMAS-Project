@@ -33,7 +33,6 @@ import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.caze.Trimester;
 import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
 import de.symeda.sormas.api.feature.FeatureType;
-import de.symeda.sormas.api.feature.FeatureTypeProperty;
 import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.utils.*;
@@ -505,7 +504,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		PLAGUE,
 		ANTHRAX,
 		POLIO,
-		CORONAVIRUS,
 		UNDEFINED,
 		YELLOW_FEVER,
 		FOODBORNE_ILLNESS,
@@ -575,13 +573,13 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState soreThroat;
 
 	@Diseases({
-		CORONAVIRUS })
+		 })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState coughWithSputum;
 
 	@Diseases({
-		CORONAVIRUS })
+		 })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState coughWithHeamoptysis;
@@ -656,7 +654,6 @@ public class SymptomsDto extends PseudonymizableDto {
 			PLAGUE,
 			POLIO,
 			ANTHRAX,
-			CORONAVIRUS,
 			AHF,
 			UNDEFINED,
 			FOODBORNE_ILLNESS,
@@ -1137,7 +1134,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState lossSkinTurgor;
 
 	@Diseases({
-		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries(countries = {
@@ -1343,7 +1339,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		CONGENITAL_RUBELLA,
 		POLIO,
 		RABIES,
-		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -1541,8 +1536,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		AHF,
 		UNDEFINED,
-		OTHER,
-		CORONAVIRUS })
+		OTHER })
 	@Outbreaks
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -1882,8 +1876,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		AHF,
 		UNDEFINED,
 		POLIO,
-		OTHER,
-		CORONAVIRUS })
+		OTHER })
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
 		CountryHelper.COUNTRY_CODE_SWITZERLAND })
@@ -1905,7 +1898,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		AHF,
 		UNDEFINED,
 		POLIO,
-		CORONAVIRUS,
 		FOODBORNE_ILLNESS,
 		CHOLERA,
 		OTHER })
@@ -2032,7 +2024,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState convulsion;
 
 	@Diseases({
-		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries(countries = {
@@ -2042,7 +2033,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState fluidInLungCavityAuscultation;
 
 	@Diseases({
-		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries(countries = {
@@ -2072,7 +2062,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState conjunctivalInjection;
 
 	@Diseases({
-		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
@@ -2080,7 +2069,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState acuteRespiratoryDistressSyndrome;
 
 	@Diseases({
-		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
@@ -2088,14 +2076,12 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState pneumoniaClinicalOrRadiologic;
 
 	@Diseases({
-		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState lossOfTaste;
 
 	@Diseases({
-		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@SymptomGrouping(SymptomGroup.GENERAL)
@@ -2111,7 +2097,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState wheezing;
 
 	@Diseases({
-		CORONAVIRUS,
 		UNDEFINED,
 		MONKEYPOX,
 		OTHER })
@@ -2122,7 +2107,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState skinUlcers;
 
 	@Diseases({
-		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries(countries = {
@@ -2132,7 +2116,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState inabilityToWalk;
 
 	@Diseases({
-		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@HideForCountries(countries = {
@@ -2397,7 +2380,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState weakness;
 	@Diseases({
-		CORONAVIRUS,
 		UNDEFINED,
 		CHOLERA,
 		AHF,
@@ -2405,7 +2387,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState fatigue;
 	@Diseases({
-		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
@@ -2541,6 +2522,8 @@ public class SymptomsDto extends PseudonymizableDto {
 	private YesNo injectionSiteBeforeOnsetParalysis;
 	private Set<InjectionSite> injectionSite;
 	private YesNo trueAfp;
+	@Diseases({
+	})
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState dyspnea;
 	@Diseases({
@@ -2553,8 +2536,15 @@ public class SymptomsDto extends PseudonymizableDto {
 	})
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)
+	@HideForCountries
 	private SymptomState babyDied;
+	@DependantOn(BABY_DIED)
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	@HideForCountries
 	private Integer ageAtDeathDays;
+	@DependantOn(BABY_DIED)
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	@HideForCountries
 	private Integer ageAtOnsetDays;
 	@Diseases({
 			NEONATAL_TETANUS
@@ -2641,7 +2631,8 @@ public class SymptomsDto extends PseudonymizableDto {
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState abdominalCramps;
 	@Diseases({
-			CHOLERA
+			CHOLERA,
+			CORONAVIRUS
 	})
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)

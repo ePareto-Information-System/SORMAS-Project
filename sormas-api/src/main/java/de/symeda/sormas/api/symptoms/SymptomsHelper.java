@@ -349,6 +349,8 @@ public final class SymptomsHelper {
 		appendNotNullValue(string, symptomsDto.getWeight(), SymptomsDto.WEIGHT);
 		appendNotNullValue(string, symptomsDto.getHeight(), SymptomsDto.HEIGHT);
 		appendNotNullValue(string, symptomsDto.getGlasgowComaScale(), SymptomsDto.GLASGOW_COMA_SCALE);
+		appendNotNullValue(string, symptomsDto.getAgeAtDeathDays(), SymptomsDto.AGE_AT_DEATH_DAYS);
+
 
 		appendYesSymptom(string, symptomsDto.getAlteredConsciousness(), SymptomsDto.ALTERED_CONSCIOUSNESS);
 		appendYesSymptom(string, symptomsDto.getConfusedDisoriented(), SymptomsDto.CONFUSED_DISORIENTED);
