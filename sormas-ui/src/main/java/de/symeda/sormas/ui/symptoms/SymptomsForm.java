@@ -967,7 +967,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
                 && person.getApproximateAge() != null
                 && ((person.getApproximateAge() <= 12 && person.getApproximateAgeType() == ApproximateAgeType.MONTHS) || person.getApproximateAge() <= 1);
         if (!isInfant) {
-            getFieldGroup().getField(BULGING_FONTANELLE).setVisible(false);
+//            getFieldGroup().getField(BULGING_FONTANELLE).setVisible(false);
         }
 
         // Handle visibility of lesions locations caption
@@ -1084,8 +1084,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		}
 
 		if(disease == Disease.CSM){
-//			symptomsHide();
-			setVisible(true, BULGING_FONTANELLE, FEVER, NECK_STIFFNESS, HEADACHE, CONVULSION, ALTERED_CONSCIOUSNESS, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
 			clinicalMeasurementsHeadingLabel.setVisible(false);
 
 		}
