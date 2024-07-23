@@ -105,6 +105,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 
 	OptionGroup tickSymptomField;
+	TextField physicianName;
+	TextField physicianNumber;
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(HOSPITALIZATION_HEADING_LOC) +
@@ -116,7 +118,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.DATE_OF_DEATH) +
 					fluidRowLocs(6,HospitalizationDto.TERMINATION_DATE_HOSPITAL_STAY) +
 					fluidRowLocs(6,HospitalizationDto.SELECT_INPATIENT_OUTPATIENT) +
-			fluidRowLocs(6,HospitalizationDto.PHYSICIAN_NAME) +
 					fluidRowLocs(6,HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE) +
 			fluidRowLocs(HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
 			fluidRowLocs(HospitalizationDto.NOTIFY_DISTRICT_DATE, HospitalizationDto.DATE_FORM_SENT_TO_DISTRICT) +
@@ -150,7 +151,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					fluidRowLocs(6, HospitalizationDto.DURATION_HOURS)+
 					fluidRowLocs(HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.NAME_OF_FACILITY)+
 					fluidRowLocs(6,HospitalizationDto.DATE_OF_VISIT_HOSPITAL)+
-					fluidRowLocs(6, HospitalizationDto.PHYSICIAN_NUMBER)+
+					fluidRowLocs(6,HospitalizationDto.HOSPITALIZATION_YES_NO) +
+					fluidRowLocs(HospitalizationDto.PHYSICIAN_NAME, HospitalizationDto.PHYSICIAN_NUMBER)+
 					fluidRowLocs(HospitalizationDto.LAB_TEST_CONDUCTED, HospitalizationDto.TYPE_OF_SAMPLE, HospitalizationDto.AGENT_IDENTIFIED);
 
 	public static final String GUINEA_WORK_LAYOUT = loc(HOSPITALIZATION_HEADING_LOC) +
@@ -276,6 +278,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		NullableOptionGroup hospitalizedYesNo = addField(HospitalizationDto.HOSPITALIZATION_YES_NO, NullableOptionGroup.class);
 		addField(HospitalizationDto.RECEPTION_DATE, DateField.class);
 		addField(HospitalizationDto.MEMBER_FAMILY_HELPING_PATIENT, TextField.class);
+		hospitalizedYesNo.setVisible(false);
 		admittedToHealthFacilityFieldNew.setVisible(false);
 		admittedToHealthFacilityFieldNew.setCaption("Was the Patient Admitted at the Facility (in-patient)?");
 		final DateField admissionDateField = addField(HospitalizationDto.ADMISSION_DATE, DateField.class);
@@ -333,12 +336,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		nameOfFacilityField.setVisible(false);
 		setVisible(false, HospitalizationDto.LOCATION_TYPE);
 
-		addField(HospitalizationDto.DATE_OF_VISIT_HOSPITAL, DateField.class);
-		addField(HospitalizationDto.PHYSICIAN_NAME, TextField.class);
-		addField(HospitalizationDto.PHYSICIAN_NUMBER, TextField.class);
-		addField(HospitalizationDto.LAB_TEST_CONDUCTED, NullableOptionGroup.class);
-		addField(HospitalizationDto.TYPE_OF_SAMPLE, TextField.class);
-		addField(HospitalizationDto.AGENT_IDENTIFIED, TextField.class);
+		DateField dateOfVisitHospital = addField(HospitalizationDto.DATE_OF_VISIT_HOSPITAL, DateField.class);
+		physicianName = addField(HospitalizationDto.PHYSICIAN_NAME, TextField.class);
+		physicianNumber = addField(HospitalizationDto.PHYSICIAN_NUMBER, TextField.class);
+		NullableOptionGroup labTestConducted = addField(HospitalizationDto.LAB_TEST_CONDUCTED, NullableOptionGroup.class);
+		TextField typeOfSample = addField(HospitalizationDto.TYPE_OF_SAMPLE, TextField.class);
+		TextField agentIdentified = addField(HospitalizationDto.AGENT_IDENTIFIED, TextField.class);
 
 		tickSymptomField = addField(HospitalizationDto.SYMPTOMS_SELECTED, OptionGroup.class);
 		CssStyles.style(tickSymptomField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
@@ -596,11 +599,11 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			symptomsHeadingLabel.setVisible(true);
 			tickSymptomField.setVisible(true);
 
-			setVisible(true, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.NAME_OF_FACILITY, HospitalizationDto.DATE_OF_VISIT_HOSPITAL,
-					 HospitalizationDto.PHYSICIAN_NUMBER, HospitalizationDto.LAB_TEST_CONDUCTED, HospitalizationDto.TYPE_OF_SAMPLE, HospitalizationDto.AGENT_IDENTIFIED, HospitalizationDto.OTHER_SYMPTOM_SELECTED, HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING, HospitalizationDto.DURATION_HOURS);
+			setVisible(true, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.NAME_OF_FACILITY, HospitalizationDto.AGENT_IDENTIFIED, HospitalizationDto.OTHER_SYMPTOM_SELECTED, HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING, HospitalizationDto.DURATION_HOURS);
 
 			FieldHelper.setVisibleWhen(ongoing, Arrays.asList(durationHours), Arrays.asList(YesNo.NO), true);
-			FieldHelper.setVisibleWhen(soughtMedicalAttentionField, Arrays.asList(nameOfFacilityField), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(soughtMedicalAttentionField, Arrays.asList(dateOfVisitHospital, hospitalizedYesNo, labTestConducted, typeOfSample, agentIdentified), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(hospitalizedYesNo, Arrays.asList(physicianName, physicianNumber), Arrays.asList(YesNo.YES), true);
 
 		}
 		

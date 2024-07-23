@@ -14939,6 +14939,10 @@ INSERT INTO facility (id, name, publicownership, uuid, archived, changedate, cre
 UPDATE facility SET type = 'HOSPITAL' WHERE type ISNULL AND uuid NOT IN ('SORMAS-CONSTID-NOTBASED-FACILITY');
 UPDATE facility SET type = 'HOSPITAL' WHERE NOT type = 'LABORATORY' AND uuid NOT IN ('SORMAS-CONSTID-NOTBASED-FACILITY');
 INSERT INTO schema_version (version_number, comment) VALUES (694, 'Added Not facility based Query into facility');
+
+ALTER TABLE hospitalization ADD COLUMN hospitalizationYesNo VARCHAR(55);
+INSERT INTO schema_version (version_number, comment) VALUES (695, 'Added hospitalizationyesno to hospitalization');
+
 -- CREATE TABLE FormEntities (
 --     id BIGINT PRIMARY KEY NOT NULL,
 --     name VARCHAR(255),
@@ -15107,4 +15111,7 @@ INSERT INTO schema_version(version_number, comment) VALUES (705, 'Dropped fields
 UPDATE samples SET samplematerial = 'BLOOD' WHERE samplematerial = 'WHOLE_BLOOD';
 INSERT INTO schema_version (version_number, comment) VALUES (706, 'Updated samplematerial column to blood');
 
+
+ALTER TABLE hospitalization ADD COLUMN hospitalizationYesNo VARCHAR(55);
+INSERT INTO schema_version (version_number, comment) VALUES (695, 'Added hospitalizationyesno to hospitalization');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

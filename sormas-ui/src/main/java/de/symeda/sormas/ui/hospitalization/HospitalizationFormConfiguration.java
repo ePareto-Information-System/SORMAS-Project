@@ -44,6 +44,7 @@ public class HospitalizationFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.LAB_TEST_CONDUCTED, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.TYPE_OF_SAMPLE, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.AGENT_IDENTIFIED, new HashSet<>(Arrays.asList()));
+        DISABLED_FIELDS_BY_DISEASE.put(HospitalizationDto.HOSPITALIZATION_YES_NO, new HashSet<>(Arrays.asList(Disease.AFP, Disease.CSM, Disease.AHF, Disease.YELLOW_FEVER, Disease.NEW_INFLUENZA, Disease.NEONATAL_TETANUS, Disease.MONKEYPOX, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS, Disease.CHOLERA, Disease.MEASLES, Disease.CORONAVIRUS, Disease.GUINEA_WORM)));
 
     }
 

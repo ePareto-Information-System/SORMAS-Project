@@ -43,6 +43,7 @@ public class HospitalizationDto extends EntityDto {
 
 	public static final String ADMITTED_TO_HEALTH_FACILITY = "admittedToHealthFacility";
 	public static final String ADMITTED_TO_HEALTH_FACILITY_NEW = "admittedToHealthFacilityNew";
+	public static final String HOSPITALIZATION_YES_NO = "hospitalizationYesNo";
 	public static final String ADMISSION_DATE = "admissionDate";
 	public static final String NOTIFY_DISTRICT_DATE = "notifyDistrictDate";
 	public static final String DATE_FORM_SENT_TO_DISTRICT = "dateFormSentToDistrict";
@@ -105,6 +106,7 @@ public class HospitalizationDto extends EntityDto {
 	@Outbreaks
 	private YesNo admittedToHealthFacility;
 	private YesNo admittedToHealthFacilityNew;
+	private YesNo hospitalizationYesNo;
 	private Date admissionDate;
 	private Date notifyDistrictDate;
 	private Date dateFormSentToDistrict;
@@ -615,5 +617,13 @@ public class HospitalizationDto extends EntityDto {
 
 	public void setDateOfDeath(Date dateOfDeath) {
 		this.dateOfDeath = dateOfDeath;
+	}
+
+	public YesNo getHospitalizationYesNo() {
+		return hospitalizationYesNo;
+	}
+
+	public void setHospitalizationYesNo(YesNo hospitalizationYesNo) {
+		this.hospitalizationYesNo = hospitalizationYesNo;
 	}
 }
