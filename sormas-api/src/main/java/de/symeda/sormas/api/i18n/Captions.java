@@ -670,6 +670,7 @@ public interface Captions {
 	String CaseHospitalization_patientVentilated = "CaseHospitalization.patientVentilated";
 	String CaseHospitalization_selectInpatientOutpatient= "CaseHospitalization.selectInpatientOutpatient";
 	String CaseHospitalization_soughtMedicalAttention = "CaseHospitalization.soughtMedicalAttention";
+	String CaseHospitalization_hospitalizationYesNo = "CaseHospitalization.hospitalizationYesNo";
 	String CaseHospitalization_nameOfFacility = "CaseHospitalization.nameOfFacility";
 	String CaseHospitalization_locationAddress = "CaseHospitalization.locationAddress";
 	String CaseHospitalization_dateOfVisitHospital = "CaseHospitalization.dateOfVisitHospital";

@@ -124,6 +124,7 @@ public class Hospitalization extends AbstractDomainObject {
 	private Date receptionDate;
 	private String memberFamilyHelpingPatient;
 	private Date dateOfDeath;
+	private YesNo hospitalizationYesNo;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getAdmissionDate() {
@@ -624,5 +625,13 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setDateOfDeath(Date dateOfDeath) {
 		this.dateOfDeath = dateOfDeath;
+	}
+
+	public YesNo getHospitalizationYesNo() {
+		return hospitalizationYesNo;
+	}
+
+	public void setHospitalizationYesNo(YesNo hospitalizationYesNo) {
+		this.hospitalizationYesNo = hospitalizationYesNo;
 	}
 }

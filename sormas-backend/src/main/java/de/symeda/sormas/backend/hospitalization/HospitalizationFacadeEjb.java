@@ -140,6 +140,7 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setReceptionDate(source.getReceptionDate());
 		target.setMemberFamilyHelpingPatient(source.getMemberFamilyHelpingPatient());
 		target.setDateOfDeath(source.getDateOfDeath());
+		target.setHospitalizationYesNo(source.getHospitalizationYesNo());
 
 
 		return target;
@@ -253,6 +254,7 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setReceptionDate(source.getReceptionDate());
 		target.setMemberFamilyHelpingPatient(source.getMemberFamilyHelpingPatient());
 		target.setDateOfDeath(source.getDateOfDeath());
+		target.setHospitalizationYesNo(source.getHospitalizationYesNo());
 
 
 		return target;
