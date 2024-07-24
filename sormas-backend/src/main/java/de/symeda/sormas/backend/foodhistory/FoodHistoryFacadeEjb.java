@@ -115,6 +115,8 @@ public class FoodHistoryFacadeEjb implements FoodHistoryFacade {
         target.setFoodConsumedS3(source.getFoodConsumedS3());
         target.setSourceOfFoodS3(source.getSourceOfFoodS3());
         target.setConsumedAtPlaceS3(source.getConsumedAtPlaceS3());
+        target.setNumberOfPeopleAteImplicatedFood(source.getNumberOfPeopleAteImplicatedFood());
+        target.setNumberAffected(source.getNumberAffected());
 
         return target;
     }
@@ -209,6 +211,8 @@ public class FoodHistoryFacadeEjb implements FoodHistoryFacade {
         target.setFoodConsumedS3(source.getFoodConsumedS3());
         target.setSourceOfFoodS3(source.getSourceOfFoodS3());
         target.setConsumedAtPlaceS3(source.getConsumedAtPlaceS3());
+        target.setNumberOfPeopleAteImplicatedFood(source.getNumberOfPeopleAteImplicatedFood());
+        target.setNumberAffected(source.getNumberAffected());
 
 
 
