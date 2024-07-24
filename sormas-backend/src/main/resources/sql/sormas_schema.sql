@@ -14942,4 +14942,8 @@ INSERT INTO schema_version (version_number, comment) VALUES (694, 'Added Not fac
 
 ALTER TABLE hospitalization ADD COLUMN hospitalizationYesNo VARCHAR(55);
 INSERT INTO schema_version (version_number, comment) VALUES (695, 'Added hospitalizationyesno to hospitalization');
+
+ALTER TABLE foodhistory ADD COLUMN numberofpeopleateimplicatedfood Integer;
+ALTER TABLE foodhistory ADD COLUMN numberaffected Integer;
+INSERT INTO schema_version (version_number, comment) VALUES (696, 'Added numberOfPeopleAteImplicatedFood,numberAffected to foodhistory');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
