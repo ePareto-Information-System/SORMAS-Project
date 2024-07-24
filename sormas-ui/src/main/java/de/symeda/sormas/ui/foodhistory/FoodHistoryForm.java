@@ -87,6 +87,7 @@ public class FoodHistoryForm extends AbstractEditForm<FoodHistoryDto> {
         Label otherPersonHeading = createLabel(I18nProperties.getString(Strings.headingOtherPersons), H3, OTHER_PERSONS_HEADING);
         otherPersonHeading.addStyleName("otherPersonHeading-middle");
 
+        addFields(FoodHistoryDto.NUMBER_OF_PEOPLE_ATE_IMPLICATED_FOOD, FoodHistoryDto.NUMBER_AFFECTED);
         addFields(FoodHistoryDto.NAME_OF_AFFECTED_PERSON, FoodHistoryDto.NAME_OF_AFFECTED_PERSON2, FoodHistoryDto.NAME_OF_AFFECTED_PERSON3, FoodHistoryDto.NAME_OF_AFFECTED_PERSON4);
         addFields(FoodHistoryDto.TEL_NO, FoodHistoryDto.TEL_NO2, FoodHistoryDto.TEL_NO3, FoodHistoryDto.TEL_NO4);
         addField(FoodHistoryDto.DATE_TIME, DateTimeField.class);
