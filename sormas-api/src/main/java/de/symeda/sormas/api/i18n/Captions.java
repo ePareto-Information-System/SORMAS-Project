@@ -2892,6 +2892,8 @@ public interface Captions {
 	String FoodHistory_age2 = "age2";
 	String FoodHistory_age3 = "age3";
 	String FoodHistory_age4 = "age4";
+	String FoodHistory_numberOfPeopleAteImplicatedFood = "numberOfPeopleAteImplicatedFood";
+	String FoodHistory_numberAffected = "numberAffected";
 
 	String RiskFactor_patientSpoxVaccinationScarPresent = "patientSpoxVaccinationScarPresent";
 	String RiskFactor_patientTravelledAnywhere3WeeksPrior = "patientTravelledAnywhere3WeeksPrior";
