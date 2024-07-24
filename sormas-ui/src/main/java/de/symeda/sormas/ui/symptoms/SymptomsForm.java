@@ -1058,11 +1058,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			OptionGroup feverBodytemp = addField(FEVER_BODY_TEMP_GREATER, OptionGroup.class);
             dateOfOnset.setVisible(true);
             clinicalMeasurementsHeadingLabel.setVisible(false);
-            setVisible(false, ONSET_DATE);
-//            symptomsHide();
-            setVisible(false, FEVER, HEADACHE, ALTERED_CONSCIOUSNESS, CONVULSION, SEIZURES);
-            setVisible(true, COUGH, SORE_THROAT, DIFFICULTY_BREATHING, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT, TEMPERATURE, TEMPERATURE_SOURCE);
-
+			setVisible(false, ONSET_DATE);
             FieldHelper.setVisibleWhen(feverBodytemp, Arrays.asList(temperature, temperatureSource), Arrays.asList(YesNo.YES), true);
 
 		}
