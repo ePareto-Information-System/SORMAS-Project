@@ -1174,20 +1174,20 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		} else if (disease == Disease.NEONATAL_TETANUS) {
 //			symptomsHide();
-			setVisible(true,
-					SYMPTOMS_COMMENTS,
-					ONSET_DATE,
-					AGE_AT_DEATH_DAYS,
-					AGE_AT_ONSET_DAYS,
-					SEIZURES,
-					OTHER_COMPLICATIONS,
-					BABY_DIED,
-					BABY_NORMAL_AT_BIRTH,
-					NORMAL_CRY_AND_SUCK,
-					STOPPED_SUCKING_AFTER_TWO_DAYS,
-					STIFFNESS,
-					BACKACHE,
-					OTHER_COMPLICATIONS);
+//			setVisible(true,
+//					SYMPTOMS_COMMENTS,
+//					ONSET_DATE,
+//					AGE_AT_DEATH_DAYS,
+//					AGE_AT_ONSET_DAYS,
+//					SEIZURES,
+//					OTHER_COMPLICATIONS,
+//					BABY_DIED,
+//					BABY_NORMAL_AT_BIRTH,
+//					NORMAL_CRY_AND_SUCK,
+//					STOPPED_SUCKING_AFTER_TWO_DAYS,
+//					STIFFNESS,
+//					BACKACHE,
+//					OTHER_COMPLICATIONS);
 
 		}
 
