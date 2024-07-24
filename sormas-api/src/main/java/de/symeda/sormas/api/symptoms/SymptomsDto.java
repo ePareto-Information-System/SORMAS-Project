@@ -333,7 +333,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA,
 		SARI,
-		YELLOW_FEVER,
 		DENGUE,
 		PLAGUE,
 		POLIO,
@@ -354,7 +353,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		EVD,
 		LASSA,
 		POLIO,
-		YELLOW_FEVER,
 		AHF,
 		DENGUE,
 		UNDEFINED,
@@ -415,7 +413,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		AFP,
 		GUINEA_WORM,
 		POLIO,
-		YELLOW_FEVER,
 		ANTHRAX,
 		AHF,
 		DENGUE,
@@ -602,7 +599,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		POLIO,
-		YELLOW_FEVER,
 		AHF,
 		UNDEFINED,
 		OTHER })
@@ -729,7 +725,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		AFP,
 		POLIO,
-		YELLOW_FEVER,
 		AHF,
 		DENGUE,
 		UNDEFINED,
@@ -753,7 +748,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		AHF,
 		RABIES,
 		ANTHRAX,
-		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -808,7 +802,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		EVD,
 		LASSA,
 		POLIO,
-		YELLOW_FEVER,
 		DENGUE,
 		AHF,
 		UNDEFINED,
@@ -853,7 +846,8 @@ public class SymptomsDto extends PseudonymizableDto {
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState hearingloss;
 	@Diseases({
-		YELLOW_FEVER})
+			YELLOW_FEVER,
+	})
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState bodyAche;
 
@@ -1184,7 +1178,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		MEASLES,
-		YELLOW_FEVER,
 		DENGUE,
 		MONKEYPOX,
 		PLAGUE,
@@ -1235,7 +1228,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		EVD,
 		LASSA,
 		POLIO,
-		YELLOW_FEVER,
 		AHF, DENGUE,
 		UNDEFINED,
 		OTHER })
@@ -1724,6 +1716,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		RABIES,
 		CORONAVIRUS,
+		YELLOW_FEVER,
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
@@ -1853,7 +1846,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		AFP,
 		EVD,
 		LASSA,
-		YELLOW_FEVER,
 		DENGUE,
 		PLAGUE,
 		AHF,
@@ -2186,7 +2178,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		EVD,
 		LASSA,
 		POLIO,
-		YELLOW_FEVER,
 		DENGUE,
 		PLAGUE,
 		AHF,

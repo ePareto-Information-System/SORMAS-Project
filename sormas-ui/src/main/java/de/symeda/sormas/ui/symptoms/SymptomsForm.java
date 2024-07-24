@@ -1078,9 +1078,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		}
 
 		if(disease == Disease.YELLOW_FEVER){
-			setVisible(true, HEADACHE, BACKACHE, NAUSEA, VOMITING, FEVER, JAUNDICE, CHILLS_SWEATS, FATIGUE_WEAKNESS, FATIGUE, WEAKNESS, BODY_ACHE);
-            setVisible(true, TEMPERATURE, TEMPERATURE_SOURCE, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
-
+            setVisible(true, TEMPERATURE, TEMPERATURE_SOURCE);
 		}
 
 		if(disease == Disease.CSM){
