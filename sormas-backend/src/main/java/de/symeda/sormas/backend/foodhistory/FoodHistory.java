@@ -81,6 +81,8 @@ public class FoodHistory extends AbstractDomainObject {
     private String foodConsumedS3;
     private String sourceOfFoodS3;
     private YesNo consumedAtPlaceS3;
+    private Integer numberOfPeopleAteImplicatedFood;
+    private Integer numberAffected;
 
     public String getNameOfAffectedPerson() {
         return nameOfAffectedPerson;
@@ -608,5 +610,21 @@ public class FoodHistory extends AbstractDomainObject {
 
     public void setConsumedAtPlaceS3(YesNo consumedAtPlaceS3) {
         this.consumedAtPlaceS3 = consumedAtPlaceS3;
+    }
+
+    public Integer getNumberOfPeopleAteImplicatedFood() {
+        return numberOfPeopleAteImplicatedFood;
+    }
+
+    public void setNumberOfPeopleAteImplicatedFood(Integer numberOfPeopleAteImplicatedFood) {
+        this.numberOfPeopleAteImplicatedFood = numberOfPeopleAteImplicatedFood;
+    }
+
+    public Integer getNumberAffected() {
+        return numberAffected;
+    }
+
+    public void setNumberAffected(Integer numberAffected) {
+        this.numberAffected = numberAffected;
     }
 }

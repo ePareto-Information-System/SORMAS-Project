@@ -68,6 +68,8 @@ public class FoodHistoryDto extends PseudonymizableDto {
     public static final String FOOD_CONSUMED_S3 = "foodConsumedS3";
     public static final String SOURCE_OF_FOOD_S3 = "sourceOfFoodS3";
     public static final String CONSUMED_AT_PLACE_S3 = "consumedAtPlaceS3";
+    public static final String NUMBER_OF_PEOPLE_ATE_IMPLICATED_FOOD = "numberOfPeopleAteImplicatedFood";
+    public static final String NUMBER_AFFECTED = "numberAffected";
     public static final String NAME_OF_AFFECTED_PERSON = "nameOfAffectedPerson";
     public static final String NAME_OF_AFFECTED_PERSON2 = "nameOfAffectedPerson2";
     public static final String NAME_OF_AFFECTED_PERSON3 = "nameOfAffectedPerson3";
@@ -152,6 +154,8 @@ public class FoodHistoryDto extends PseudonymizableDto {
     private String foodConsumedS3;
     private String sourceOfFoodS3;
     private YesNo consumedAtPlaceS3;
+    private Integer numberOfPeopleAteImplicatedFood;
+    private Integer numberAffected;
 
 
     public String getNameOfAffectedPerson() {
@@ -682,10 +686,28 @@ public class FoodHistoryDto extends PseudonymizableDto {
         this.consumedAtPlaceS3 = consumedAtPlaceS3;
     }
 
+    public Integer getNumberOfPeopleAteImplicatedFood() {
+        return numberOfPeopleAteImplicatedFood;
+    }
+
+    public void setNumberOfPeopleAteImplicatedFood(Integer numberOfPeopleAteImplicatedFood) {
+        this.numberOfPeopleAteImplicatedFood = numberOfPeopleAteImplicatedFood;
+    }
+
+    public Integer getNumberAffected() {
+        return numberAffected;
+    }
+
+    public void setNumberAffected(Integer numberAffected) {
+        this.numberAffected = numberAffected;
+    }
+
 
     public static FoodHistoryDto build() {
         FoodHistoryDto foodHistoryDto  = new FoodHistoryDto();
         foodHistoryDto .setUuid(DataHelper.createUuid());
         return foodHistoryDto ;
     }
+
+
 }
