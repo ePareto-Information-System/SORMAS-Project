@@ -196,22 +196,10 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 					I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.PORT_HEALTH_INFO),
 					params);
 			}
-			if(caze.getDisease() != Disease.FOODBORNE_ILLNESS) {
-				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_SYMPTOMS)) {
+			if(caze.getDisease() != Disease.FOODBORNE_ILLNESS && FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_SYMPTOMS)) {
 					menu.addView(CaseSymptomsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.SYMPTOMS), params);
 				}
-			}
 
-
-			if(caze.getDisease() != Disease.MONKEYPOX){
-				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_EPIDEMIOLOGICAL_DATA)
-						&& caze.getDisease() != Disease.CONGENITAL_RUBELLA) {
-						if (caze.getDisease() != Disease.NEONATAL_TETANUS) {
-						menu.addView(CaseEpiDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EPI_DATA), params);
-						}
-
-				}
-			}
 
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
 					&& !caze.checkIsUnreferredPortHealthCase()
@@ -229,18 +217,21 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
 					&& !caze.checkIsUnreferredPortHealthCase()
-					&& !UserProvider.getCurrent().isPortHealthUser()) {
-				if(caze.getDisease() == Disease.FOODBORNE_ILLNESS){
+					&& !UserProvider.getCurrent().isPortHealthUser() && caze.getDisease() == Disease.FOODBORNE_ILLNESS){
 					menu.addView(
 							FoodHistoryView.VIEW_NAME,
 							I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.FOOD_HISTORY_TAB),
 							params);
 				}
+
+			if(caze.getDisease() != Disease.MONKEYPOX && FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_EPIDEMIOLOGICAL_DATA)
+					&& caze.getDisease() != Disease.CONGENITAL_RUBELLA && caze.getDisease() != Disease.NEONATAL_TETANUS) {
+				menu.addView(CaseEpiDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EPI_DATA), params);
 			}
+
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
 					&& !caze.checkIsUnreferredPortHealthCase()
-					&& !UserProvider.getCurrent().isPortHealthUser()) {
-				if(caze.getDisease() == Disease.AFP){
+					&& !UserProvider.getCurrent().isPortHealthUser() && caze.getDisease() == Disease.AFP){
 					menu.addView(
 							SixtyDayFollowupView.VIEW_NAME,
 							I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.SIXTY_DAY),
@@ -250,17 +241,16 @@ public abstract class AbstractCaseView extends AbstractEditAllowedDetailView<Cas
 							I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.AFP_IMMUNIZATION),
 							params);
 				}
-			}
+
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
 					&& !caze.checkIsUnreferredPortHealthCase()
-					&& !UserProvider.getCurrent().isPortHealthUser()) {
-				if(caze.getDisease() == Disease.FOODBORNE_ILLNESS){
+					&& !UserProvider.getCurrent().isPortHealthUser() && caze.getDisease() == Disease.FOODBORNE_ILLNESS){
 					menu.addView(
 							SixtyDayFollowupView.VIEW_NAME,
 							I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.FOOD_SAMPLE_TESTING),
 							params);
 				}
-			}
+
 
 			if (caze.getDisease() == Disease.CORONAVIRUS) {
 				if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_THERAPY)
