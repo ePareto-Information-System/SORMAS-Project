@@ -1014,8 +1014,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
         }
         if (disease == Disease.AFP) {
 
-            setVisible(false, SYMPTOMS_COMMENTS, OUTCOME, ONSET_DATE, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT);
-
             addField(FEVER_ONSET_PARALYSIS, NullableOptionGroup.class);
             addField(PROGRESSIVE_PARALYSIS, NullableOptionGroup.class);
             addField(DATE_ONSET_PARALYSIS, DateField.class);
@@ -1055,14 +1053,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
             provisionalDiagnosis.setRows(4);
 
             clinicalMeasurementsHeadingLabel.setVisible(false);
-            setVisible(false, FEVER,
-                    ALTERED_CONSCIOUSNESS,
-                    SEIZURES,
-                    HEADACHE,
-                    NECK_STIFFNESS);
-
-//            symptomsHide();
-
 		}
 		if(disease == Disease.NEW_INFLUENZA){
 			OptionGroup feverBodytemp = addField(FEVER_BODY_TEMP_GREATER, OptionGroup.class);
