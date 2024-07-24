@@ -2231,7 +2231,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		CSM,
-		MEASLES,
 		GUINEA_WORM,
 		POLIO,
 		AHF,

@@ -1192,9 +1192,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		}
 
 		if(disease == Disease.MEASLES) {
-			setVisible(true, FEVER, GENERALIZED_RASH, COUGH, RUNNY_NOSE, RED_EYES, SWOLLEN_LYMPH_NODES_BEHIND_EARS, JOINT_PAIN, DATE_OF_ONSET);
-			setVisible(false, SYMPTOMS_COMMENTS);
-
 			FieldHelper.updateEnumData(outcome, Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED, CaseOutcome.UNKNOWN));
 		} else if(disease == Disease.CHOLERA) {
 			setVisible(true, DIARRHOEA, VOMITING, DEHYDRATION, ABDOMINAL_PAIN, ABDOMINAL_CRAMPS, FEVER, HEADACHES, FATIGUE);
