@@ -43,6 +43,7 @@ public class SixtyDayDto extends PseudonymizableDto {
     public static final String FOOD_AVAILABLE_TESTING = "foodAvailableTesting";
     public static final String LAB_TEST_CONDUCTED = "labTestConducted";
     public static final String SPECIFY_FOODS_SOURCES = "specifyFoodsSources";
+    public static final String SPECIFY_SOURCES = "specifySources";
     public static final String PRODUCT_NAME = "productName";
     public static final String BATCH_NUMBER = "batchNumber";
     public static final String DATE_OF_MANUFACTURE = "dateOfManufacture";
@@ -93,6 +94,7 @@ public class SixtyDayDto extends PseudonymizableDto {
     private YesNo foodAvailableTesting;
     private YesNo labTestConducted;
     private String specifyFoodsSources;
+    private String specifySources;
     private String productName;
     private String batchNumber;
     private Date dateOfManufacture;
@@ -504,4 +506,11 @@ public class SixtyDayDto extends PseudonymizableDto {
         this.nameOfHealthFacility = nameOfHealthFacility;
     }
 
+    public String getSpecifySources() {
+        return specifySources;
+    }
+
+    public void setSpecifySources(String specifySources) {
+        this.specifySources = specifySources;
+    }
 }
