@@ -14947,6 +14947,9 @@ ALTER TABLE foodhistory ADD COLUMN numberofpeopleateimplicatedfood Integer;
 ALTER TABLE foodhistory ADD COLUMN numberaffected Integer;
 INSERT INTO schema_version (version_number, comment) VALUES (696, 'Added numberOfPeopleAteImplicatedFood,numberAffected to foodhistory');
 
+ALTER TABLE sixtyday ADD COLUMN specifySources VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (697, 'Added specifySources to sixtyday');
+
 -- CREATE TABLE FormEntities (
 --     id BIGINT PRIMARY KEY NOT NULL,
 --     name VARCHAR(255),

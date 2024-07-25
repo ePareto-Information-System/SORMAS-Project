@@ -25,6 +25,7 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
+import de.symeda.sormas.api.utils.PackagingType;
 import de.symeda.sormas.api.utils.ParalysisSite;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
@@ -72,8 +73,9 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
                     fluidRowLocs(SixtyDayDto.SIGNATURE, SixtyDayDto.DATE_SUBMISSION_FORMS)+
 
                     //FBI
+                    fluidRowLocs(SixtyDayDto.FOOD_AVAILABLE_TESTING,SixtyDayDto.LAB_TEST_CONDUCTED) +
                     loc(PROVIDE_HEADING_LOC)+
-                    fluidRowLocs(SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.SPECIFY_FOODS_SOURCES, SixtyDayDto.LAB_TEST_CONDUCTED) +
+                    fluidRowLocs(SixtyDayDto.SPECIFY_FOODS_SOURCES, SixtyDayDto.SPECIFY_SOURCES) +
                     fluidRowLocs(SixtyDayDto.PRODUCT_NAME, SixtyDayDto.BATCH_NUMBER) +
                     fluidRowLocs(SixtyDayDto.DATE_OF_MANUFACTURE, SixtyDayDto.EXPIRATION_DATE) +
                     fluidRowLocs(SixtyDayDto.PACKAGE_SIZE, SixtyDayDto.PACKAGING_TYPE, SixtyDayDto.PACKAGING_TYPE_OTHER) +
@@ -114,14 +116,14 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
         sixtyDayHeadingLabel.addStyleName(H3);
         getContent().addComponent(sixtyDayHeadingLabel, SIXTYDAY_HEADING_LOC);
 
-        TextField personExamineCase = addField(SixtyDayDto.PERSON_EXAMINE_CASE, TextField.class);
-        DateField admissionDateField = addField(SixtyDayDto.DATE_OF_FOLLOWUP, DateField.class);
-        DateField dateOfBirthField = addField(SixtyDayDto.DATE_BIRTH, DateField.class);
+        addField(SixtyDayDto.PERSON_EXAMINE_CASE, TextField.class);
+        addField(SixtyDayDto.DATE_OF_FOLLOWUP, DateField.class);
+        addField(SixtyDayDto.DATE_BIRTH, DateField.class);
 
-        TextField residentialLocationField = addField(SixtyDayDto.RESIDENTIAL_LOCATION, TextField.class);
-        NullableOptionGroup patientFoundField = addField(SixtyDayDto.PATIENT_FOUND, NullableOptionGroup.class);
-        TextField patientFoundReasonField = addField(SixtyDayDto.PATIENT_FOUND_REASON, TextField.class);
-        TextField locateChildAttemptField = addField(SixtyDayDto.LOCATE_CHILD_ATTEMPT, TextField.class);
+        addField(SixtyDayDto.RESIDENTIAL_LOCATION, TextField.class);
+        addField(SixtyDayDto.PATIENT_FOUND, NullableOptionGroup.class);
+        addField(SixtyDayDto.PATIENT_FOUND_REASON, TextField.class);
+        addField(SixtyDayDto.LOCATE_CHILD_ATTEMPT, TextField.class);
 
         OptionGroup paralysisWeaknessPresent = addField(SixtyDayDto.PARALYSIS_WEAKNESS_PRESENT, OptionGroup.class);
 
@@ -163,18 +165,19 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
 
         NullableOptionGroup foodAvailable = addField(SixtyDayDto.FOOD_AVAILABLE_TESTING, NullableOptionGroup.class);
         addField(SixtyDayDto.LAB_TEST_CONDUCTED, NullableOptionGroup.class);
-        TextField foodSources =  addField(SixtyDayDto.SPECIFY_FOODS_SOURCES, TextField.class);
-        addField(SixtyDayDto.PRODUCT_NAME, TextField.class);
-        addField(SixtyDayDto.BATCH_NUMBER, TextField.class);
-        addField(SixtyDayDto.DATE_OF_MANUFACTURE, DateField.class);
-        addField(SixtyDayDto.EXPIRATION_DATE, DateField.class);
-        addField(SixtyDayDto.PACKAGE_SIZE, TextField.class);
-        addField(SixtyDayDto.PACKAGING_TYPE, ComboBox.class);
-        addField(SixtyDayDto.PACKAGING_TYPE_OTHER, TextField.class);
-        addField(SixtyDayDto.PLACE_OF_PURCHASE, TextField.class);
-        addField(SixtyDayDto.NAME_OF_MANUFACTURER, TextField.class);
-        addField(SixtyDayDto.ADDRESS, TextField.class);
-        addField(SixtyDayDto.FOOD_TEL, TextField.class);
+        TextField food =  addField(SixtyDayDto.SPECIFY_FOODS_SOURCES, TextField.class);
+        TextField sources =  addField(SixtyDayDto.SPECIFY_SOURCES, TextField.class);
+        TextField productName = addField(SixtyDayDto.PRODUCT_NAME, TextField.class);
+        TextField batchNumber = addField(SixtyDayDto.BATCH_NUMBER, TextField.class);
+        DateField dateOfManufacture = addField(SixtyDayDto.DATE_OF_MANUFACTURE, DateField.class);
+        DateField expirationDate = addField(SixtyDayDto.EXPIRATION_DATE, DateField.class);
+        TextField packageSize = addField(SixtyDayDto.PACKAGE_SIZE, TextField.class);
+        ComboBox packagingType = addField(SixtyDayDto.PACKAGING_TYPE, ComboBox.class);
+        TextField packagingTypeOther = addField(SixtyDayDto.PACKAGING_TYPE_OTHER, TextField.class);
+        TextField placeOfPurchase = addField(SixtyDayDto.PLACE_OF_PURCHASE, TextField.class);
+        TextField nameOfManufacturer = addField(SixtyDayDto.NAME_OF_MANUFACTURER, TextField.class);
+        TextField address = addField(SixtyDayDto.ADDRESS, TextField.class);
+        TextField foodTel = addField(SixtyDayDto.FOOD_TEL, TextField.class);
         addField(SixtyDayDto.INVESTIGATION_NOTES, TextArea.class);
         addField(SixtyDayDto.SUSPECTED_DIAGNOSIS, TextField.class);
         addField(SixtyDayDto.CONFIRMED_DIAGNOSIS, TextField.class);
@@ -189,8 +192,7 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
         addField(SixtyDayDto.NAME_OF_HEALTH_FACILITY, TextField.class);
 
         setVisible(false,
-                SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED, SixtyDayDto.SPECIFY_FOODS_SOURCES, SixtyDayDto.PRODUCT_NAME, SixtyDayDto.BATCH_NUMBER, SixtyDayDto.DATE_OF_MANUFACTURE, SixtyDayDto.EXPIRATION_DATE, SixtyDayDto.PACKAGE_SIZE, SixtyDayDto.PACKAGING_TYPE, SixtyDayDto.PACKAGING_TYPE_OTHER, SixtyDayDto.PLACE_OF_PURCHASE, SixtyDayDto.NAME_OF_MANUFACTURER,
-                SixtyDayDto.ADDRESS, SixtyDayDto.FOOD_TEL, SixtyDayDto.INVESTIGATION_NOTES, SixtyDayDto.SUSPECTED_DIAGNOSIS, SixtyDayDto.CONFIRMED_DIAGNOSIS, SixtyDayDto.INVESTIGATED_BY,
+                SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED, SixtyDayDto.SPECIFY_FOODS_SOURCES, SixtyDayDto.SPECIFY_SOURCES, SixtyDayDto.PRODUCT_NAME, SixtyDayDto.BATCH_NUMBER, SixtyDayDto.DATE_OF_MANUFACTURE, SixtyDayDto.EXPIRATION_DATE, SixtyDayDto.PACKAGE_SIZE, SixtyDayDto.PACKAGING_TYPE, SixtyDayDto.PACKAGING_TYPE_OTHER, SixtyDayDto.PLACE_OF_PURCHASE, SixtyDayDto.NAME_OF_MANUFACTURER, SixtyDayDto.ADDRESS, SixtyDayDto.FOOD_TEL, SixtyDayDto.INVESTIGATION_NOTES, SixtyDayDto.SUSPECTED_DIAGNOSIS, SixtyDayDto.CONFIRMED_DIAGNOSIS, SixtyDayDto.INVESTIGATED_BY,
                 SixtyDayDto.INVESTIGATOR_SIGNATURE, SixtyDayDto.INVESTIGATOR_DATE, SixtyDayDto.SURNAME, SixtyDayDto.FIRSTNAME, SixtyDayDto.MIDDLENAME, SixtyDayDto.TEL_NO, SixtyDayDto.DATE_OF_COMPLETION_OF_FORM, SixtyDayDto.NAME_OF_HEALTH_FACILITY);
 
 
@@ -213,12 +215,17 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
             createLabel(I18nProperties.getString(Strings.headingPersonCompleting), H3, PERSON_COMPLETING_HEADING_LOC);
 
             setVisible(true,
-                    SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED, SixtyDayDto.SPECIFY_FOODS_SOURCES, SixtyDayDto.PRODUCT_NAME, SixtyDayDto.BATCH_NUMBER, SixtyDayDto.DATE_OF_MANUFACTURE, SixtyDayDto.EXPIRATION_DATE, SixtyDayDto.PACKAGE_SIZE, SixtyDayDto.PACKAGING_TYPE, SixtyDayDto.PACKAGING_TYPE_OTHER, SixtyDayDto.PLACE_OF_PURCHASE, SixtyDayDto.NAME_OF_MANUFACTURER,
-                    SixtyDayDto.ADDRESS, SixtyDayDto.FOOD_TEL, SixtyDayDto.INVESTIGATION_NOTES, SixtyDayDto.SUSPECTED_DIAGNOSIS, SixtyDayDto.CONFIRMED_DIAGNOSIS, SixtyDayDto.INVESTIGATED_BY,
-                    SixtyDayDto.INVESTIGATOR_SIGNATURE, SixtyDayDto.INVESTIGATOR_DATE, SixtyDayDto.SURNAME, SixtyDayDto.FIRSTNAME, SixtyDayDto.MIDDLENAME, SixtyDayDto.TEL_NO, SixtyDayDto.DATE_OF_COMPLETION_OF_FORM, SixtyDayDto.NAME_OF_HEALTH_FACILITY);
+                    SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED, SixtyDayDto.INVESTIGATION_NOTES, SixtyDayDto.SUSPECTED_DIAGNOSIS, SixtyDayDto.CONFIRMED_DIAGNOSIS, SixtyDayDto.INVESTIGATED_BY, SixtyDayDto.INVESTIGATOR_SIGNATURE, SixtyDayDto.INVESTIGATOR_DATE, SixtyDayDto.SURNAME, SixtyDayDto.FIRSTNAME, SixtyDayDto.MIDDLENAME, SixtyDayDto.TEL_NO, SixtyDayDto.DATE_OF_COMPLETION_OF_FORM, SixtyDayDto.NAME_OF_HEALTH_FACILITY);
         }
 
-        FieldHelper.setVisibleWhen(foodAvailable, Arrays.asList(foodSources), Arrays.asList(YesNo.YES), true);
+        FieldHelper.setVisibleWhen(
+                foodAvailable,
+                Arrays.asList(food, sources, productName, batchNumber, dateOfManufacture, expirationDate, packageSize, packagingType, placeOfPurchase, nameOfManufacturer,
+                        address, foodTel),Arrays.asList(YesNo.YES),true);
+        packagingType.addValueChangeListener(event -> {
+            boolean isOther = event.getProperty().getValue() == PackagingType.OTHER;
+            packagingTypeOther.setVisible(isOther);
+        });
     }
 
     private Label createLabel(String text, String h4, String location) {

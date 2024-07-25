@@ -107,6 +107,7 @@ public class SixtyDayFacadeEjb implements SixtyDayFacade {
         target.setTelNo(source.getTelNo());
         target.setDateOfCompletionOfForm(source.getDateOfCompletionOfForm());
         target.setNameOfHealthFacility(source.getNameOfHealthFacility());
+        target.setSpecifySources(source.getSpecifySources());
 
         return target;
     }
@@ -172,6 +173,7 @@ public class SixtyDayFacadeEjb implements SixtyDayFacade {
         target.setTelNo(source.getTelNo());
         target.setDateOfCompletionOfForm(source.getDateOfCompletionOfForm());
         target.setNameOfHealthFacility(source.getNameOfHealthFacility());
+        target.setSpecifySources(source.getSpecifySources());
 
 
         return target;

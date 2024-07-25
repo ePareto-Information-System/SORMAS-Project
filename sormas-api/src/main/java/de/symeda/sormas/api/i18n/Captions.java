@@ -2787,6 +2787,7 @@ public interface Captions {
 	String SixtyDay_foodAvailableTesting = "foodAvailableTesting";
 	String SixtyDay_labTestConducted = "labTestConducted";
 	String SixtyDay_specifyFoodsSources = "specifyFoodsSources";
+	String SixtyDay_specifySources = "specifySources";
 	String SixtyDay_productName = "productName";
 	String SixtyDay_batchNumber = "batchNumber";
 	String SixtyDay_dateOfManufacture = "dateOfManufacture";

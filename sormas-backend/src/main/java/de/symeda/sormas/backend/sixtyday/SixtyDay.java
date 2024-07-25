@@ -92,6 +92,7 @@ public class SixtyDay extends AbstractDomainObject {
     private String telNo;
     private Date dateOfCompletionOfForm;
     private String nameOfHealthFacility;
+    private String specifySources;
 
 
     public String getPersonExamineCase() {
@@ -505,5 +506,13 @@ public class SixtyDay extends AbstractDomainObject {
 
     public void setNameOfHealthFacility(String nameOfHealthFacility) {
         this.nameOfHealthFacility = nameOfHealthFacility;
+    }
+
+    public String getSpecifySources() {
+        return specifySources;
+    }
+
+    public void setSpecifySources(String specifySources) {
+        this.specifySources = specifySources;
     }
 }
