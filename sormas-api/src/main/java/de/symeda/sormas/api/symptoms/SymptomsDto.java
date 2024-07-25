@@ -375,7 +375,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -491,7 +490,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		PLAGUE,
 		ANTHRAX,
 		POLIO,
@@ -508,7 +506,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		EVD,
 		LASSA, SARI,
 		MEASLES,
-		MONKEYPOX,
 		POLIO,
 		DENGUE,
 		UNDEFINED,
@@ -525,7 +522,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		NEW_INFLUENZA, SARI,
 		MEASLES,
-		MONKEYPOX,
 		PLAGUE,
 		POLIO,
 		ANTHRAX,
@@ -545,7 +541,6 @@ public class SymptomsDto extends PseudonymizableDto {
 			LASSA,
 			NEW_INFLUENZA, SARI,
 			MEASLES,
-			MONKEYPOX,
 			PLAGUE,
 			POLIO,
 			ANTHRAX,
@@ -699,7 +694,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA, SARI,
 		MEASLES,
 		DENGUE,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -727,7 +721,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		MEASLES,
 		YELLOW_FEVER,
 		DENGUE,
-		MONKEYPOX,
 		PLAGUE,
 		POLIO,
 		RABIES,
@@ -749,7 +742,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		MEASLES,
 		YELLOW_FEVER,
 		DENGUE,
-		MONKEYPOX,
 		PLAGUE,
 		POLIO,
 		RABIES,
@@ -799,7 +791,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		CSM,
 		YELLOW_FEVER,
 		DENGUE,
-		MONKEYPOX,
 		PLAGUE,
 		POLIO,
 		AHF,
@@ -907,7 +898,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		ANTHRAX,
 		POLIO,
 		UNDEFINED,
@@ -919,7 +909,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -930,7 +919,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		ANTHRAX,
 		POLIO,
 		UNDEFINED,
@@ -942,7 +930,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		ANTHRAX,
 		POLIO,
 		UNDEFINED,
@@ -954,7 +941,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -965,7 +951,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -976,7 +961,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -986,7 +970,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Boolean lesionsLegs;
 
 	@Diseases({
-		MONKEYPOX,
 		ANTHRAX })
 	@DependantOn(LESIONS)
 	@HideForCountries
@@ -995,7 +978,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1033,7 +1015,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1044,7 +1025,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1055,7 +1035,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1066,7 +1045,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1077,7 +1055,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1108,7 +1085,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1118,7 +1094,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1128,7 +1103,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1155,7 +1129,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA, SARI,
 		MEASLES,
 		DENGUE,
-		MONKEYPOX,
 		PLAGUE,
 		POLIO,
 		CORONAVIRUS,
@@ -1173,7 +1146,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA, SARI,
 		YELLOW_FEVER,
 		DENGUE,
-		MONKEYPOX,
 		PLAGUE,
 		POLIO,
 		RABIES,
@@ -1243,7 +1215,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1288,7 +1259,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA, SARI,
 		MEASLES,
 		DENGUE,
-		MONKEYPOX,
 		PLAGUE,
 		CONGENITAL_RUBELLA,
 		POLIO,
@@ -1305,7 +1275,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA, SARI,
 		MEASLES,
 		DENGUE,
-		MONKEYPOX,
 		PLAGUE,
 		POLIO,
 		AHF,
@@ -1366,7 +1335,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		AFP,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1479,7 +1447,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA, SARI,
 		MEASLES,
 		DENGUE,
-		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
@@ -1518,7 +1485,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		MEASLES,
 		DENGUE,
-		MONKEYPOX,
 		POLIO,
 		UNSPECIFIED_VHF,
 		UNDEFINED,
@@ -1531,7 +1497,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 			AFP,
-			MONKEYPOX,
 			ANTHRAX,
 			POLIO,
 			UNDEFINED,
@@ -1542,7 +1507,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 			AFP,
-			MONKEYPOX,
 			ANTHRAX,
 			POLIO,
 			UNDEFINED,
@@ -1552,7 +1516,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 			AFP,
-			MONKEYPOX,
 			POLIO,
 			UNDEFINED,
 			OTHER })
@@ -1567,7 +1530,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		LASSA,
 		MEASLES,
 		DENGUE,
-		MONKEYPOX,
 		POLIO,
 		UNSPECIFIED_VHF,
 		UNDEFINED,
@@ -1649,7 +1611,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		CSM,
 		MEASLES,
 		DENGUE,
-		MONKEYPOX,
 		PLAGUE,
 		POLIO,
 		AHF,
@@ -1669,7 +1630,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		MEASLES,
 		YELLOW_FEVER,
 		DENGUE,
-		MONKEYPOX,
 		PLAGUE,
 		AHF,
 		CONGENITAL_RUBELLA,
@@ -1689,7 +1649,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		MEASLES,
 		YELLOW_FEVER,
 		DENGUE,
-		MONKEYPOX,
 		PLAGUE,
 		AHF,
 		CONGENITAL_RUBELLA,
@@ -1823,7 +1782,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		MEASLES,
 		YELLOW_FEVER,
 		DENGUE,
-		MONKEYPOX,
 		PLAGUE,
 		ANTHRAX,
 		AHF,
@@ -2029,7 +1987,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 		UNDEFINED,
-		MONKEYPOX,
 		OTHER })
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
@@ -2195,7 +2152,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		NEONATAL_TETANUS,
 		FOODBORNE_ILLNESS,
-		MONKEYPOX,
 		OTHER })
 	@Complication
 	@HideForCountries
@@ -2219,7 +2175,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		NEONATAL_TETANUS,
 		FOODBORNE_ILLNESS,
-		MONKEYPOX,
 		OTHER })
 	@DependantOn(OTHER_COMPLICATIONS)
 	@Complication
@@ -2372,7 +2327,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 			AFP,
-			MONKEYPOX,
 			POLIO,
 			UNDEFINED,
 			OTHER })
@@ -2382,7 +2336,6 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Diseases({
 			AFP,
-			MONKEYPOX,
 			POLIO,
 			UNDEFINED,
 			OTHER })

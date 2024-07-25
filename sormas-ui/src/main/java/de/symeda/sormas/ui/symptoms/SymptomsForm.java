@@ -1100,8 +1100,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		}
 
 		if(disease == Disease.FOODBORNE_ILLNESS){
-			setVisible(true,
-                    ABDOMINAL_PAIN, BLOOD_IN_STOOL, CHILLS_SWEATS, CONVULSION, DEHYDRATION, DIARRHEA, DIZZINESS, FEVER, EXCESSIVE_SWEATING, HEADACHE, JAUNDICE, MUSCLE_PAIN, NAUSEA, NUMBNESS, VOMITING, WEAKNESS, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC);
 
             symptomsOngoing.setVisible(true);
             durationHours.setVisible(true);
@@ -1117,7 +1115,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 
         if (disease == Disease.MONKEYPOX) {
-            setVisible(false, SYMPTOMS_COMMENTS, OUTCOME, OTHER_COMPLICATIONS, OTHER_COMPLICATIONS_TEXT, ONSET_DATE);
+            setVisible(false, ONSET_DATE, OUTCOME);
 
             symptomsHeadingLabel.setVisible(true);
             tickSymptomField.setVisible(true);
