@@ -713,6 +713,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		EVD,
 		LASSA, SARI,
 		YELLOW_FEVER,
+		CORONAVIRUS,
 		DENGUE,
 		PLAGUE,
 		POLIO,
@@ -2216,7 +2217,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState feverishFeeling;
 	@Diseases({
-		CORONAVIRUS,
 		UNDEFINED,
 		FOODBORNE_ILLNESS,
 		OTHER })
@@ -2472,7 +2472,6 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState abdominalCramps;
 	@Diseases({
 			CHOLERA,
-			CORONAVIRUS
 	})
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
