@@ -643,7 +643,6 @@ public class SymptomsDto extends PseudonymizableDto {
 			PLAGUE,
 			POLIO,
 			ANTHRAX,
-			CORONAVIRUS,
 			AHF,
 			UNDEFINED,
 			FOODBORNE_ILLNESS,
