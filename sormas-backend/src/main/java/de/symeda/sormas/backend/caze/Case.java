@@ -49,6 +49,7 @@ import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus;
 import de.symeda.sormas.api.utils.*;
+import de.symeda.sormas.backend.investigationnotes.InvestigationNotes;
 import de.symeda.sormas.backend.riskfactor.RiskFactor;
 import de.symeda.sormas.backend.sixtyday.SixtyDay;
 import org.hibernate.annotations.Type;
@@ -144,6 +145,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public static final String COMMUNITY = "community";
 	public static final String HOSPITALIZATION = "hospitalization";
 	public static final String SIXTY_DAY = "sixtyDay";
+	public static final String INVESTIGATION_NOTES = "investigationNotes";
 	public static final String AFP_IMMUNIZATION = "afpImmunization";
 	public static final String FOOD_HISTORY = "foodHistory";
 	public static final String EPI_DATA = "epiData";
@@ -277,6 +279,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private Hospitalization hospitalization;
 	private RiskFactor riskFactor;
 	private SixtyDay sixtyDay;
+	private InvestigationNotes investigationNotes;
 	private AfpImmunization afpImmunization;
 	private FoodHistory foodHistory;
 	private EpiData epiData;
@@ -1004,6 +1007,17 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 	public void setSixtyDay(SixtyDay sixtyDay) {this.sixtyDay = sixtyDay; }
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	//@AuditedIgnore
+	public InvestigationNotes getInvestigationNotes(){
+		if (investigationNotes == null){
+			investigationNotes = new InvestigationNotes();
+		}
+		return investigationNotes;
+	}
+
+	public void setInvestigationNotes(InvestigationNotes investigationNotes) {this.investigationNotes = investigationNotes; }
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public RiskFactor getRiskFactor() {

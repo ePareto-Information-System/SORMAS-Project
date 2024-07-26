@@ -55,12 +55,6 @@ public class SixtyDayDto extends PseudonymizableDto {
     public static final String NAME_OF_MANUFACTURER = "nameOfManufacturer";
     public static final String ADDRESS = "address";
     public static final String FOOD_TEL = "foodTel";
-    public static final String INVESTIGATION_NOTES = "investigationNotes";
-    public static final String SUSPECTED_DIAGNOSIS = "suspectedDiagnosis";
-    public static final String CONFIRMED_DIAGNOSIS = "confirmedDiagnosis";
-    public static final String INVESTIGATED_BY = "investigatedBy";
-    public static final String INVESTIGATOR_SIGNATURE = "investigatorSignature";
-    public static final String INVESTIGATOR_DATE = "investigatorDate";
     public static final String SURNAME = "surname";
     public static final String FIRSTNAME = "firstName";
     public static final String MIDDLENAME = "middleName";
@@ -106,12 +100,6 @@ public class SixtyDayDto extends PseudonymizableDto {
     private String nameOfManufacturer;
     private String address;
     private String foodTel;
-    private String investigationNotes;
-    private String suspectedDiagnosis;
-    private String confirmedDiagnosis;
-    private String investigatedBy;
-    private String investigatorSignature;
-    private Date investigatorDate;
     private String surname;
     private String firstName;
     private String middleName;
@@ -408,54 +396,6 @@ public class SixtyDayDto extends PseudonymizableDto {
 
     public void setFoodTel(String foodTel) {
         this.foodTel = foodTel;
-    }
-
-    public String getInvestigationNotes() {
-        return investigationNotes;
-    }
-
-    public void setInvestigationNotes(String investigationNotes) {
-        this.investigationNotes = investigationNotes;
-    }
-
-    public String getSuspectedDiagnosis() {
-        return suspectedDiagnosis;
-    }
-
-    public void setSuspectedDiagnosis(String suspectedDiagnosis) {
-        this.suspectedDiagnosis = suspectedDiagnosis;
-    }
-
-    public String getConfirmedDiagnosis() {
-        return confirmedDiagnosis;
-    }
-
-    public void setConfirmedDiagnosis(String confirmedDiagnosis) {
-        this.confirmedDiagnosis = confirmedDiagnosis;
-    }
-
-    public String getInvestigatedBy() {
-        return investigatedBy;
-    }
-
-    public void setInvestigatedBy(String investigatedBy) {
-        this.investigatedBy = investigatedBy;
-    }
-
-    public String getInvestigatorSignature() {
-        return investigatorSignature;
-    }
-
-    public void setInvestigatorSignature(String investigatorSignature) {
-        this.investigatorSignature = investigatorSignature;
-    }
-
-    public Date getInvestigatorDate() {
-        return investigatorDate;
-    }
-
-    public void setInvestigatorDate(Date investigatorDate) {
-        this.investigatorDate = investigatorDate;
     }
 
     public String getSurname() {

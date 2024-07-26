@@ -21,6 +21,7 @@
 		<class>de.symeda.sormas.backend.infrastructure.facility.Facility</class>
 		<class>de.symeda.sormas.backend.hospitalization.Hospitalization</class>
 		<class>de.symeda.sormas.backend.sixtyday.SixtyDay</class>
+		<class>de.symeda.sormas.backend.investigationnotes.InvestigationNotes</class>
 		<class>de.symeda.sormas.backend.afpimmunization.AfpImmunization</class>
 		<class>de.symeda.sormas.backend.ebs.Ebs</class>
 		<class>de.symeda.sormas.backend.ebs.Triaging</class>

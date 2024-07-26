@@ -80,12 +80,6 @@ public class SixtyDay extends AbstractDomainObject {
     private String nameOfManufacturer;
     private String address;
     private String foodTel;
-    private String investigationNotes;
-    private String suspectedDiagnosis;
-    private String confirmedDiagnosis;
-    private String investigatedBy;
-    private String investigatorSignature;
-    private Date investigatorDate;
     private String surname;
     private String firstName;
     private String middleName;
@@ -410,54 +404,6 @@ public class SixtyDay extends AbstractDomainObject {
 
     public void setFoodTel(String foodTel) {
         this.foodTel = foodTel;
-    }
-
-    public String getInvestigationNotes() {
-        return investigationNotes;
-    }
-
-    public void setInvestigationNotes(String investigationNotes) {
-        this.investigationNotes = investigationNotes;
-    }
-
-    public String getSuspectedDiagnosis() {
-        return suspectedDiagnosis;
-    }
-
-    public void setSuspectedDiagnosis(String suspectedDiagnosis) {
-        this.suspectedDiagnosis = suspectedDiagnosis;
-    }
-
-    public String getConfirmedDiagnosis() {
-        return confirmedDiagnosis;
-    }
-
-    public void setConfirmedDiagnosis(String confirmedDiagnosis) {
-        this.confirmedDiagnosis = confirmedDiagnosis;
-    }
-
-    public String getInvestigatedBy() {
-        return investigatedBy;
-    }
-
-    public void setInvestigatedBy(String investigatedBy) {
-        this.investigatedBy = investigatedBy;
-    }
-
-    public String getInvestigatorSignature() {
-        return investigatorSignature;
-    }
-
-    public void setInvestigatorSignature(String investigatorSignature) {
-        this.investigatorSignature = investigatorSignature;
-    }
-
-    public Date getInvestigatorDate() {
-        return investigatorDate;
-    }
-
-    public void setInvestigatorDate(Date investigatorDate) {
-        this.investigatorDate = investigatorDate;
     }
 
     public String getSurname() {

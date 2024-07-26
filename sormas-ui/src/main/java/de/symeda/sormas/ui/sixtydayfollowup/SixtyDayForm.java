@@ -81,10 +81,6 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
                     fluidRowLocs(SixtyDayDto.PACKAGE_SIZE, SixtyDayDto.PACKAGING_TYPE, SixtyDayDto.PACKAGING_TYPE_OTHER) +
                     fluidRowLocs(SixtyDayDto.PLACE_OF_PURCHASE, SixtyDayDto.NAME_OF_MANUFACTURER) +
                     fluidRowLocs(SixtyDayDto.ADDRESS, SixtyDayDto.FOOD_TEL)+
-                    loc(OFFICIAL_HEADING_LOC) +
-            fluidRowLocs(SixtyDayDto.INVESTIGATION_NOTES) +
-            fluidRowLocs(SixtyDayDto.SUSPECTED_DIAGNOSIS, SixtyDayDto.CONFIRMED_DIAGNOSIS) +
-            fluidRowLocs(SixtyDayDto.INVESTIGATED_BY, SixtyDayDto.INVESTIGATOR_SIGNATURE, SixtyDayDto.INVESTIGATOR_DATE) +
                     loc(PERSON_COMPLETING_HEADING_LOC) +
             fluidRowLocs(SixtyDayDto.SURNAME, SixtyDayDto.FIRSTNAME, SixtyDayDto.MIDDLENAME) +
             fluidRowLocs(SixtyDayDto.TEL_NO, SixtyDayDto.DATE_OF_COMPLETION_OF_FORM, SixtyDayDto.NAME_OF_HEALTH_FACILITY);
@@ -178,12 +174,6 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
         TextField nameOfManufacturer = addField(SixtyDayDto.NAME_OF_MANUFACTURER, TextField.class);
         TextField address = addField(SixtyDayDto.ADDRESS, TextField.class);
         TextField foodTel = addField(SixtyDayDto.FOOD_TEL, TextField.class);
-        addField(SixtyDayDto.INVESTIGATION_NOTES, TextArea.class);
-        addField(SixtyDayDto.SUSPECTED_DIAGNOSIS, TextField.class);
-        addField(SixtyDayDto.CONFIRMED_DIAGNOSIS, TextField.class);
-        addField(SixtyDayDto.INVESTIGATED_BY, TextField.class);
-        addField(SixtyDayDto.INVESTIGATOR_SIGNATURE, TextField.class);
-        addField(SixtyDayDto.INVESTIGATOR_DATE, DateField.class);
         addField(SixtyDayDto.SURNAME, TextField.class);
         addField(SixtyDayDto.FIRSTNAME, TextField.class);
         addField(SixtyDayDto.MIDDLENAME, TextField.class);
@@ -192,8 +182,7 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
         addField(SixtyDayDto.NAME_OF_HEALTH_FACILITY, TextField.class);
 
         setVisible(false,
-                SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED, SixtyDayDto.SPECIFY_FOODS_SOURCES, SixtyDayDto.SPECIFY_SOURCES, SixtyDayDto.PRODUCT_NAME, SixtyDayDto.BATCH_NUMBER, SixtyDayDto.DATE_OF_MANUFACTURE, SixtyDayDto.EXPIRATION_DATE, SixtyDayDto.PACKAGE_SIZE, SixtyDayDto.PACKAGING_TYPE, SixtyDayDto.PACKAGING_TYPE_OTHER, SixtyDayDto.PLACE_OF_PURCHASE, SixtyDayDto.NAME_OF_MANUFACTURER, SixtyDayDto.ADDRESS, SixtyDayDto.FOOD_TEL, SixtyDayDto.INVESTIGATION_NOTES, SixtyDayDto.SUSPECTED_DIAGNOSIS, SixtyDayDto.CONFIRMED_DIAGNOSIS, SixtyDayDto.INVESTIGATED_BY,
-                SixtyDayDto.INVESTIGATOR_SIGNATURE, SixtyDayDto.INVESTIGATOR_DATE, SixtyDayDto.SURNAME, SixtyDayDto.FIRSTNAME, SixtyDayDto.MIDDLENAME, SixtyDayDto.TEL_NO, SixtyDayDto.DATE_OF_COMPLETION_OF_FORM, SixtyDayDto.NAME_OF_HEALTH_FACILITY);
+                SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED, SixtyDayDto.SPECIFY_FOODS_SOURCES, SixtyDayDto.SPECIFY_SOURCES, SixtyDayDto.PRODUCT_NAME, SixtyDayDto.BATCH_NUMBER, SixtyDayDto.DATE_OF_MANUFACTURE, SixtyDayDto.EXPIRATION_DATE, SixtyDayDto.PACKAGE_SIZE, SixtyDayDto.PACKAGING_TYPE, SixtyDayDto.PACKAGING_TYPE_OTHER, SixtyDayDto.PLACE_OF_PURCHASE, SixtyDayDto.NAME_OF_MANUFACTURER, SixtyDayDto.ADDRESS, SixtyDayDto.FOOD_TEL, SixtyDayDto.SURNAME, SixtyDayDto.FIRSTNAME, SixtyDayDto.MIDDLENAME, SixtyDayDto.TEL_NO, SixtyDayDto.DATE_OF_COMPLETION_OF_FORM, SixtyDayDto.NAME_OF_HEALTH_FACILITY);
 
 
         initializeVisibilitiesAndAllowedVisibilities();
@@ -215,7 +204,7 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
             createLabel(I18nProperties.getString(Strings.headingPersonCompleting), H3, PERSON_COMPLETING_HEADING_LOC);
 
             setVisible(true,
-                    SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED, SixtyDayDto.INVESTIGATION_NOTES, SixtyDayDto.SUSPECTED_DIAGNOSIS, SixtyDayDto.CONFIRMED_DIAGNOSIS, SixtyDayDto.INVESTIGATED_BY, SixtyDayDto.INVESTIGATOR_SIGNATURE, SixtyDayDto.INVESTIGATOR_DATE, SixtyDayDto.SURNAME, SixtyDayDto.FIRSTNAME, SixtyDayDto.MIDDLENAME, SixtyDayDto.TEL_NO, SixtyDayDto.DATE_OF_COMPLETION_OF_FORM, SixtyDayDto.NAME_OF_HEALTH_FACILITY);
+                    SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED, SixtyDayDto.SURNAME, SixtyDayDto.FIRSTNAME, SixtyDayDto.MIDDLENAME, SixtyDayDto.TEL_NO, SixtyDayDto.DATE_OF_COMPLETION_OF_FORM, SixtyDayDto.NAME_OF_HEALTH_FACILITY);
         }
 
         FieldHelper.setVisibleWhen(

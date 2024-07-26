@@ -38,6 +38,7 @@ import de.symeda.sormas.backend.infrastructure.district.District;
 import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
 import de.symeda.sormas.backend.infrastructure.region.Region;
+import de.symeda.sormas.backend.investigationnotes.InvestigationNotes;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.person.PersonJoins;
@@ -68,6 +69,7 @@ public class CaseJoins extends QueryJoins<Case> {
 	private Join<Case, User> reportingUser;
 	private Join<Case, Hospitalization> hospitalization;
 	private Join<Case, SixtyDay> sixtyDay;
+	private Join<Case, InvestigationNotes> investigationNotes;
 	private Join<Case, AfpImmunization> afpImmunization;
 	private Join<Case, FoodHistory> foodHistory;
 	private Join<Case, EpiData> epiData;
@@ -222,6 +224,14 @@ public class CaseJoins extends QueryJoins<Case> {
 
 	private void setSixtyDay(Join<Case, SixtyDay> sixtyDay) {
 		this.sixtyDay = sixtyDay;
+	}
+
+	public Join<Case, InvestigationNotes> getInvestigationNotes() {
+		return getOrCreate(investigationNotes, Case.INVESTIGATION_NOTES, JoinType.LEFT, this::setInvestigationNotes);
+	}
+
+	private void setInvestigationNotes(Join<Case, InvestigationNotes> investigationNotes) {
+		this.investigationNotes = investigationNotes;
 	}
 
 	public Join<Case, AfpImmunization> getAfpImmunization(){
