@@ -36,6 +36,7 @@ import de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus;
 import de.symeda.sormas.api.afpimmunization.AfpImmunizationDto;
 import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
+import de.symeda.sormas.api.investigationnotes.InvestigationNotesDto;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.riskfactor.RiskFactorDto;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
@@ -147,6 +148,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String AFP_IMMUNIZATION = "afpImmunization";
 	public static final String FOOD_HISTORY_TAB = "foodHistory";
 	public static final String FOOD_SAMPLE_TESTING = "foodSampleTesting";
+	public static final String INVESTIGATION_NOTES = "investigationNotes";
 	public static final String EPI_DATA = "epiData";
 	public static final String THERAPY = "therapy";
 	public static final String CLINICAL_COURSE = "clinicalCourse";
@@ -532,6 +534,8 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	@Valid
 	private SixtyDayDto sixtyDay;
 	@Valid
+	private InvestigationNotesDto investigationNotes;
+	@Valid
 	private AfpImmunizationDto afpImmunization;
 	@Valid
 	private FoodHistoryDto foodHistory;
@@ -776,6 +780,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		caze.setPerson(person);
 		caze.setHospitalization(HospitalizationDto.build());
 		caze.setSixtyDay(SixtyDayDto.build());
+		caze.setInvestigationNotes(InvestigationNotesDto.build());
 		caze.setAfpImmunization(AfpImmunizationDto.build());
 		caze.setFoodHistory(FoodHistoryDto.build());
 		caze.setRiskFactor(RiskFactorDto.build());
@@ -1283,6 +1288,14 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	}
 	public void setFoodHistory(FoodHistoryDto foodHistory) {
 		this.foodHistory = foodHistory;
+	}
+
+	public InvestigationNotesDto getInvestigationNotes() {
+		return investigationNotes;
+	}
+
+	public void setInvestigationNotes(InvestigationNotesDto investigationNotes) {
+		this.investigationNotes = investigationNotes;
 	}
 
 	public RiskFactorDto getRiskFactor() {

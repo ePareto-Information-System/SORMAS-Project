@@ -14949,4 +14949,29 @@ INSERT INTO schema_version (version_number, comment) VALUES (696, 'Added numberO
 
 ALTER TABLE sixtyday ADD COLUMN specifySources VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (697, 'Added specifySources to sixtyday');
+
+CREATE TABLE investigationnotes (
+              id BIGINT PRIMARY KEY NOT NULL,
+              investigationnotesdata VARCHAR(255),
+              suspecteddiagnosis VARCHAR(255),
+              confirmeddiagnosis VARCHAR(255),
+              investigatedby VARCHAR(255),
+              investigatorsignature VARCHAR(255),
+              investigatordate DATE,
+              changedate timestamp(3),
+              change_user_id bigint,
+              creationdate DATE,
+              uuid VARCHAR(512));
+
+ALTER TABLE cases ADD COLUMN investigationnotes_id bigint;
+INSERT INTO schema_version (version_number, comment) VALUES (698, 'Created sixtyday table and Added investigationnotes_id to cases');
+
+ALTER TABLE sixtyday DROP COLUMN investigationnotes;
+ALTER TABLE sixtyday DROP COLUMN suspecteddiagnosis;
+ALTER TABLE sixtyday DROP COLUMN confirmeddiagnosis;
+ALTER TABLE sixtyday DROP COLUMN investigatedby;
+ALTER TABLE sixtyday DROP COLUMN investigatorsignature;
+ALTER TABLE sixtyday DROP COLUMN investigatordate;
+
+INSERT INTO schema_version (version_number, comment) VALUES (699, 'Dropped investigationnotes, suspecteddiagnosis, confirmeddiagnosis etc from sixtyday');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

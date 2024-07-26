@@ -47,6 +47,7 @@ import de.symeda.sormas.api.infrastructure.district.DistrictFacade;
 import de.symeda.sormas.api.infrastructure.facility.FacilityFacade;
 import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryFacade;
 import de.symeda.sormas.api.infrastructure.region.RegionFacade;
+import de.symeda.sormas.api.investigationnotes.InvestigationNotesFacade;
 import de.symeda.sormas.api.outbreak.OutbreakFacade;
 import de.symeda.sormas.api.person.PersonFacade;
 import de.symeda.sormas.api.report.WeeklyReportFacade;
@@ -92,6 +93,7 @@ import de.symeda.sormas.backend.infrastructure.district.DistrictFacadeEjb.Distri
 import de.symeda.sormas.backend.infrastructure.facility.FacilityFacadeEjb.FacilityFacadeEjbLocal;
 import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntryFacadeEjb.PointOfEntryFacadeEjbLocal;
 import de.symeda.sormas.backend.infrastructure.region.RegionFacadeEjb.RegionFacadeEjbLocal;
+import de.symeda.sormas.backend.investigationnotes.InvestigationNotesFacadeEjb;
 import de.symeda.sormas.backend.outbreak.OutbreakFacadeEjb.OutbreakFacadeEjbLocal;
 import de.symeda.sormas.backend.person.PersonFacadeEjb.PersonFacadeEjbLocal;
 import de.symeda.sormas.backend.report.WeeklyReportFacadeEjb.WeeklyReportFacadeEjbLocal;
@@ -164,6 +166,8 @@ public final class FacadeProviderMock extends FacadeProvider {
 			return (P) beanTest.getBean(HospitalizationFacadeEjbLocal.class);
 		} else if (SixtyDayFacade.class == clazz) {
 			return (P) beanTest.getBean(SixtyDayFacadeEjb.SixtyDayFacadeEjbLocal.class);
+		} else if (InvestigationNotesFacade.class == clazz) {
+			return (P) beanTest.getBean(InvestigationNotesFacadeEjb.InvestigationNotesFacadeEjbLocal.class);
 		} else if (AfpImmunizationFacade.class == clazz) {
 			return (P) beanTest.getBean(AfpImmunizationFacadeEjb.AfpImmunizationEjbLocal.class);
 		} else if (FoodHistoryFacade.class == clazz) {

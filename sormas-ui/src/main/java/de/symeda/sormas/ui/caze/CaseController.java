@@ -32,6 +32,8 @@ import de.symeda.sormas.ui.afpimmunization.AfpImmunizationForm;
 import de.symeda.sormas.ui.afpimmunization.AfpImmunizationView;
 import de.symeda.sormas.ui.foodhistory.FoodHistoryForm;
 import de.symeda.sormas.ui.foodhistory.FoodHistoryView;
+import de.symeda.sormas.ui.investigationnotes.InvestigationNotesForm;
+import de.symeda.sormas.ui.investigationnotes.InvestigationNotesView;
 import de.symeda.sormas.ui.riskfactor.RiskFactorForm;
 import de.symeda.sormas.ui.riskfactor.RiskFactorView;
 import de.symeda.sormas.ui.sixtydayfollowup.SixtyDayFollowupView;
@@ -184,6 +186,7 @@ public class CaseController {
 		navigator.addView(CaseEpiDataView.VIEW_NAME, CaseEpiDataView.class);
 
 		navigator.addView(SixtyDayFollowupView.VIEW_NAME, SixtyDayFollowupView.class);
+		navigator.addView(InvestigationNotesView.VIEW_NAME, InvestigationNotesView.class);
 		navigator.addView(AfpImmunizationView.VIEW_NAME, AfpImmunizationView.class);
 		navigator.addView(FoodHistoryView.VIEW_NAME, FoodHistoryView.class);
 
@@ -1321,6 +1324,30 @@ public class CaseController {
 		editView.addCommitListener(() -> {
 			CaseDataDto cazeDto = findCase(caseUuid);
 			cazeDto.setSixtyDay(sixtyDayForm.getValue());
+			saveCase(cazeDto);
+
+		});
+
+		return editView;
+	}
+
+	public CommitDiscardWrapperComponent<InvestigationNotesForm> getInvestigationNotesComponent(final String caseUuid, ViewMode viewMode, boolean isEditAllowed) {
+
+		CaseDataDto caze = findCase(caseUuid);
+		InvestigationNotesForm investigationNotesForm = new InvestigationNotesForm(
+				caze.getDisease(),
+				caze.isPseudonymized(),
+				caze.isInJurisdiction(),
+				isEditAllowed);
+		investigationNotesForm.setValue(caze.getInvestigationNotes());
+
+		final CommitDiscardWrapperComponent<InvestigationNotesForm> editView = new CommitDiscardWrapperComponent<>(
+                investigationNotesForm,
+                investigationNotesForm.getFieldGroup());
+
+		editView.addCommitListener(() -> {
+			CaseDataDto cazeDto = findCase(caseUuid);
+			cazeDto.setInvestigationNotes(investigationNotesForm.getValue());
 			saveCase(cazeDto);
 
 		});
