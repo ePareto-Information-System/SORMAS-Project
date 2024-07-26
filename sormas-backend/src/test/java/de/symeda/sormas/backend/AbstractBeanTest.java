@@ -37,12 +37,14 @@ import de.symeda.sormas.api.afpimmunization.AfpImmunizationFacade;
 import de.symeda.sormas.api.epidata.EpiDataFacade;
 import de.symeda.sormas.api.foodhistory.FoodHistoryFacade;
 import de.symeda.sormas.api.hospitalization.HospitalizationFacade;
+import de.symeda.sormas.api.investigationnotes.InvestigationNotesFacade;
 import de.symeda.sormas.api.report.AggregateReportFacade;
 import de.symeda.sormas.api.sixtyday.SixtyDayFacade;
 import de.symeda.sormas.backend.afpimmunization.AfpImmunizationFacadeEjb;
 import de.symeda.sormas.backend.epidata.EpiDataFacadeEjb;
 import de.symeda.sormas.backend.foodhistory.FoodHistoryFacadeEjb;
 import de.symeda.sormas.backend.hospitalization.HospitalizationFacadeEjb;
+import de.symeda.sormas.backend.investigationnotes.InvestigationNotesFacadeEjb;
 import de.symeda.sormas.backend.report.AggregateReport;
 import de.symeda.sormas.backend.report.AggregateReportFacadeEjb;
 import de.symeda.sormas.backend.sixtyday.SixtyDayFacadeEjb;
@@ -623,6 +625,10 @@ public abstract class AbstractBeanTest {
 	}
 	public SixtyDayFacade getSixtyDayFacade() {
 		return getBean(SixtyDayFacadeEjb.SixtyDayFacadeEjbLocal.class);
+	}
+
+	public InvestigationNotesFacade getInvestigationNotesFacade() {
+		return getBean(InvestigationNotesFacadeEjb.InvestigationNotesFacadeEjbLocal.class);
 	}
 
 	public AfpImmunizationFacade getAfpImmunizationFacade() {

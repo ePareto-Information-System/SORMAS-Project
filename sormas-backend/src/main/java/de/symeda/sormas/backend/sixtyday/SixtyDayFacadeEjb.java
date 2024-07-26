@@ -95,12 +95,6 @@ public class SixtyDayFacadeEjb implements SixtyDayFacade {
         target.setNameOfManufacturer(source.getNameOfManufacturer());
         target.setAddress(source.getAddress());
         target.setFoodTel(source.getFoodTel());
-        target.setInvestigationNotes(source.getInvestigationNotes());
-        target.setSuspectedDiagnosis(source.getSuspectedDiagnosis());
-        target.setConfirmedDiagnosis(source.getConfirmedDiagnosis());
-        target.setInvestigatedBy(source.getInvestigatedBy());
-        target.setInvestigatorSignature(source.getInvestigatorSignature());
-        target.setInvestigatorDate(source.getInvestigatorDate());
         target.setSurname(source.getSurname());
         target.setFirstName(source.getFirstName());
         target.setMiddleName(source.getMiddleName());
@@ -161,12 +155,6 @@ public class SixtyDayFacadeEjb implements SixtyDayFacade {
         target.setNameOfManufacturer(source.getNameOfManufacturer());
         target.setAddress(source.getAddress());
         target.setFoodTel(source.getFoodTel());
-        target.setInvestigationNotes(source.getInvestigationNotes());
-        target.setSuspectedDiagnosis(source.getSuspectedDiagnosis());
-        target.setConfirmedDiagnosis(source.getConfirmedDiagnosis());
-        target.setInvestigatedBy(source.getInvestigatedBy());
-        target.setInvestigatorSignature(source.getInvestigatorSignature());
-        target.setInvestigatorDate(source.getInvestigatorDate());
         target.setSurname(source.getSurname());
         target.setFirstName(source.getFirstName());
         target.setMiddleName(source.getMiddleName());
