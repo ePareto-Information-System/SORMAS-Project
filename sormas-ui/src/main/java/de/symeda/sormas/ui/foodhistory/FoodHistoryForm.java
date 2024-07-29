@@ -52,11 +52,11 @@ public class FoodHistoryForm extends AbstractEditForm<FoodHistoryDto> {
                fluidRowLocs(FoodHistoryDto.LUNCH_L3, FoodHistoryDto.TOTAL_NO_PERSONS_L3, FoodHistoryDto.FOOD_CONSUMED_L3, FoodHistoryDto.SOURCE_OF_FOOD_L3, FoodHistoryDto.CONSUMED_AT_PLACE_L3) +
                fluidRowLocs(FoodHistoryDto.SUPPER_S3, FoodHistoryDto.TOTAL_NO_PERSONS_S3, FoodHistoryDto.FOOD_CONSUMED_S3, FoodHistoryDto.SOURCE_OF_FOOD_S3, FoodHistoryDto.CONSUMED_AT_PLACE_S3) +
                fluidRowLocs(OTHER_PERSONS_HEADING) +
-               fluidRowLocs(FoodHistoryDto.NUMBER_OF_PEOPLE_ATE_IMPLICATED_FOOD, FoodHistoryDto.NUMBER_AFFECTED) +
-               fluidRowLocs(FoodHistoryDto.NAME_OF_AFFECTED_PERSON, FoodHistoryDto.TEL_NO, FoodHistoryDto.DATE_TIME, FoodHistoryDto.AGE) +
+               fluidRowLocs(FoodHistoryDto.NUMBER_OF_PEOPLE_ATE_IMPLICATED_FOOD, FoodHistoryDto.NUMBER_AFFECTED);
+               /*fluidRowLocs(FoodHistoryDto.NAME_OF_AFFECTED_PERSON, FoodHistoryDto.TEL_NO, FoodHistoryDto.DATE_TIME, FoodHistoryDto.AGE) +
                fluidRowLocs(FoodHistoryDto.NAME_OF_AFFECTED_PERSON2, FoodHistoryDto.TEL_NO2, FoodHistoryDto.DATE_TIME2, FoodHistoryDto.AGE2) +
                fluidRowLocs(FoodHistoryDto.NAME_OF_AFFECTED_PERSON3, FoodHistoryDto.TEL_NO3, FoodHistoryDto.DATE_TIME3, FoodHistoryDto.AGE3) +
-               fluidRowLocs(FoodHistoryDto.NAME_OF_AFFECTED_PERSON4, FoodHistoryDto.TEL_NO4, FoodHistoryDto.DATE_TIME4, FoodHistoryDto.AGE4);
+               fluidRowLocs(FoodHistoryDto.NAME_OF_AFFECTED_PERSON4, FoodHistoryDto.TEL_NO4, FoodHistoryDto.DATE_TIME4, FoodHistoryDto.AGE4);*/
 
 
     public FoodHistoryForm(Disease disease,
@@ -88,13 +88,13 @@ public class FoodHistoryForm extends AbstractEditForm<FoodHistoryDto> {
         otherPersonHeading.addStyleName("otherPersonHeading-middle");
 
         addFields(FoodHistoryDto.NUMBER_OF_PEOPLE_ATE_IMPLICATED_FOOD, FoodHistoryDto.NUMBER_AFFECTED);
-        addFields(FoodHistoryDto.NAME_OF_AFFECTED_PERSON, FoodHistoryDto.NAME_OF_AFFECTED_PERSON2, FoodHistoryDto.NAME_OF_AFFECTED_PERSON3, FoodHistoryDto.NAME_OF_AFFECTED_PERSON4);
-        addFields(FoodHistoryDto.TEL_NO, FoodHistoryDto.TEL_NO2, FoodHistoryDto.TEL_NO3, FoodHistoryDto.TEL_NO4);
-        addField(FoodHistoryDto.DATE_TIME, DateTimeField.class);
-        addField(FoodHistoryDto.DATE_TIME2, DateTimeField.class);
-        addField(FoodHistoryDto.DATE_TIME3, DateTimeField.class);
-        addField(FoodHistoryDto.DATE_TIME4, DateTimeField.class);
-        addFields(FoodHistoryDto.AGE, FoodHistoryDto.AGE2, FoodHistoryDto.AGE3, FoodHistoryDto.AGE4);
+//        addFields(FoodHistoryDto.NAME_OF_AFFECTED_PERSON, FoodHistoryDto.NAME_OF_AFFECTED_PERSON2, FoodHistoryDto.NAME_OF_AFFECTED_PERSON3, FoodHistoryDto.NAME_OF_AFFECTED_PERSON4);
+//        addFields(FoodHistoryDto.TEL_NO, FoodHistoryDto.TEL_NO2, FoodHistoryDto.TEL_NO3, FoodHistoryDto.TEL_NO4);
+//        addField(FoodHistoryDto.DATE_TIME, DateTimeField.class);
+//        addField(FoodHistoryDto.DATE_TIME2, DateTimeField.class);
+//        addField(FoodHistoryDto.DATE_TIME3, DateTimeField.class);
+//        addField(FoodHistoryDto.DATE_TIME4, DateTimeField.class);
+//        addFields(FoodHistoryDto.AGE, FoodHistoryDto.AGE2, FoodHistoryDto.AGE3, FoodHistoryDto.AGE4);
 
         addField(FoodHistoryDto.SUSPECTED_FOOD, TextField.class);
         addField(FoodHistoryDto.DATE_CONSUMED, DateTimeField.class);
