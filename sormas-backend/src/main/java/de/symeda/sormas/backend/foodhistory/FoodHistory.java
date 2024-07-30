@@ -3,10 +3,17 @@ package de.symeda.sormas.backend.foodhistory;
 import de.symeda.sormas.api.utils.EventType;
 import de.symeda.sormas.api.utils.FoodSource;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.backend.affectedperson.AffectedPerson;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.common.NotExposedToApi;
+import de.symeda.sormas.backend.containmentmeasure.ContainmentMeasure;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class FoodHistory extends AbstractDomainObject {
@@ -83,6 +90,9 @@ public class FoodHistory extends AbstractDomainObject {
     private YesNo consumedAtPlaceS3;
     private Integer numberOfPeopleAteImplicatedFood;
     private Integer numberAffected;
+    private List<AffectedPerson> affectedPersons = new ArrayList<>();
+    @NotExposedToApi
+    private Date changeDateOfEmbeddedLists;
 
     public String getNameOfAffectedPerson() {
         return nameOfAffectedPerson;
@@ -626,5 +636,25 @@ public class FoodHistory extends AbstractDomainObject {
 
     public void setNumberAffected(Integer numberAffected) {
         this.numberAffected = numberAffected;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = AffectedPerson.FOOD_HISTORY)
+    public List<AffectedPerson> getAffectedPersons() {
+        return affectedPersons;
+    }
+
+    public void setAffectedPersons(List<AffectedPerson> affectedPersons) {
+        this.affectedPersons = affectedPersons;
+    }
+
+    /**
+     * This change date has to be set whenever exposures are modified
+     */
+    public Date getChangeDateOfEmbeddedLists() {
+        return changeDateOfEmbeddedLists;
+    }
+
+    public void setChangeDateOfEmbeddedLists(Date changeDateOfEmbeddedLists) {
+        this.changeDateOfEmbeddedLists = changeDateOfEmbeddedLists;
     }
 }

@@ -1,8 +1,14 @@
 package de.symeda.sormas.backend.foodhistory;
 
+import de.symeda.sormas.api.epidata.ContainmentMeasureDto;
+import de.symeda.sormas.api.foodhistory.AffectedPersonDto;
 import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
 import de.symeda.sormas.api.foodhistory.FoodHistoryFacade;
+import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.backend.affectedperson.AffectedPerson;
+import de.symeda.sormas.backend.affectedperson.AffectedPersonService;
 import de.symeda.sormas.backend.caze.CaseService;
+import de.symeda.sormas.backend.containmentmeasure.ContainmentMeasure;
 import de.symeda.sormas.backend.infrastructure.community.CommunityService;
 import de.symeda.sormas.backend.infrastructure.district.DistrictService;
 import de.symeda.sormas.backend.infrastructure.facility.FacilityService;
@@ -12,6 +18,9 @@ import de.symeda.sormas.backend.util.DtoHelper;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Stateless(name = "FoodHistoryFacade")
 public class FoodHistoryFacadeEjb implements FoodHistoryFacade {
@@ -27,6 +36,8 @@ public class FoodHistoryFacadeEjb implements FoodHistoryFacade {
     private CommunityService communityService;
     @EJB
     private FacilityService facilityService;
+    @EJB
+    private AffectedPersonService affectedPersonService;
 
     public FoodHistory fillOrBuildEntity(FoodHistoryDto source, FoodHistory target, boolean checkChangeDate) {
 
@@ -117,6 +128,20 @@ public class FoodHistoryFacadeEjb implements FoodHistoryFacade {
         target.setConsumedAtPlaceS3(source.getConsumedAtPlaceS3());
         target.setNumberOfPeopleAteImplicatedFood(source.getNumberOfPeopleAteImplicatedFood());
         target.setNumberAffected(source.getNumberAffected());
+
+        List<AffectedPerson> affectedPersons = new ArrayList<>();
+        for (AffectedPersonDto affectedPersonDto : source.getAffectedPersons()) {
+            AffectedPerson affectedPerson = affectedPersonService.getByUuid(affectedPersonDto.getUuid());
+            affectedPerson = fillOrBuildAffectedPersonEntity(affectedPersonDto, affectedPerson, checkChangeDate);
+            affectedPerson.setFoodHistory(target);
+            affectedPersons.add(affectedPerson);
+        }
+        if (!DataHelper.equalContains(target.getAffectedPersons(), affectedPersons)) {
+            // note: DataHelper.equal does not work here, because target.getAddresses may be a PersistentBag when using lazy loading
+            target.setChangeDateOfEmbeddedLists(new Date());
+        }
+        target.getAffectedPersons().clear();
+        target.getAffectedPersons().addAll(affectedPersons);
 
         return target;
     }
@@ -214,7 +239,43 @@ public class FoodHistoryFacadeEjb implements FoodHistoryFacade {
         target.setNumberOfPeopleAteImplicatedFood(source.getNumberOfPeopleAteImplicatedFood());
         target.setNumberAffected(source.getNumberAffected());
 
+        List<AffectedPersonDto> affectedPersonDtos = new ArrayList<>();
+        for (AffectedPerson affectedPerson : source.getAffectedPersons()) {
+            AffectedPersonDto affectedPersonDto = toAffectedPersonDto(affectedPerson);
+            affectedPersonDtos.add(affectedPersonDto);
+        }
+        target.setAffectedPersons(affectedPersonDtos);
 
+        return target;
+    }
+
+    public AffectedPerson fillOrBuildAffectedPersonEntity(AffectedPersonDto source, AffectedPerson target, boolean checkChangeDate) {
+        if (source == null) {
+            return null;
+        }
+        target = DtoHelper.fillOrBuildEntity(source, target, AffectedPerson::new, checkChangeDate);
+
+        target.setNameOfAffectedPerson(source.getNameOfAffectedPerson());
+        target.setTelNo(source.getTelNo());
+        target.setDateTime(source.getDateTime());
+        target.setAge(source.getAge());
+
+        return target;
+    }
+
+    public static AffectedPersonDto toAffectedPersonDto(AffectedPerson source) {
+
+        if (source == null) {
+            return null;
+        }
+
+        AffectedPersonDto target = new AffectedPersonDto();
+
+        DtoHelper.fillDto(target, source);
+        target.setNameOfAffectedPerson(source.getNameOfAffectedPerson());
+        target.setTelNo(source.getTelNo());
+        target.setDateTime(source.getDateTime());
+        target.setAge(source.getAge());
 
         return target;
     }

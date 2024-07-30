@@ -1409,6 +1409,7 @@ public class CaseController {
 		CaseDataDto caze = findCase(caseUuid);
 		FoodHistoryForm foodHistoryForm = new FoodHistoryForm(
 				caze.getDisease(),
+				CaseDataDto.class,
 				caze.isPseudonymized(),
 				caze.isInJurisdiction(),
 				isEditAllowed);

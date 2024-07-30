@@ -1,10 +1,14 @@
 package de.symeda.sormas.api.foodhistory;
 
+import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
+import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @DependingOnFeatureType(featureType = FeatureType.CASE_SURVEILANCE)
 public class FoodHistoryDto extends PseudonymizableDto {
@@ -70,6 +74,7 @@ public class FoodHistoryDto extends PseudonymizableDto {
     public static final String CONSUMED_AT_PLACE_S3 = "consumedAtPlaceS3";
     public static final String NUMBER_OF_PEOPLE_ATE_IMPLICATED_FOOD = "numberOfPeopleAteImplicatedFood";
     public static final String NUMBER_AFFECTED = "numberAffected";
+    public static final String AFFECTED_PERSONS = "affectedPersons";
     public static final String NAME_OF_AFFECTED_PERSON = "nameOfAffectedPerson";
     public static final String NAME_OF_AFFECTED_PERSON2 = "nameOfAffectedPerson2";
     public static final String NAME_OF_AFFECTED_PERSON3 = "nameOfAffectedPerson3";
@@ -156,6 +161,8 @@ public class FoodHistoryDto extends PseudonymizableDto {
     private YesNo consumedAtPlaceS3;
     private Integer numberOfPeopleAteImplicatedFood;
     private Integer numberAffected;
+    @Valid
+    private List<AffectedPersonDto> affectedPersons = new ArrayList<>();
 
 
     public String getNameOfAffectedPerson() {
@@ -702,11 +709,34 @@ public class FoodHistoryDto extends PseudonymizableDto {
         this.numberAffected = numberAffected;
     }
 
+    @ImportIgnore
+    public List<AffectedPersonDto> getAffectedPersons() {
+        return affectedPersons;
+    }
+
+    public void setAffectedPersons(List<AffectedPersonDto> affectedPersons) {
+        this.affectedPersons = affectedPersons;
+    }
+
 
     public static FoodHistoryDto build() {
         FoodHistoryDto foodHistoryDto  = new FoodHistoryDto();
         foodHistoryDto .setUuid(DataHelper.createUuid());
         return foodHistoryDto ;
+    }
+
+    @Override
+    public FoodHistoryDto clone() throws CloneNotSupportedException {
+        FoodHistoryDto clone = (FoodHistoryDto) super.clone();
+
+        List<AffectedPersonDto> affectedPersonDtos = new ArrayList<>();
+        for (AffectedPersonDto affectedPerson : getAffectedPersons()) {
+            affectedPersonDtos.add(affectedPerson.clone());
+        }
+        clone.getAffectedPersons().clear();
+        clone.getAffectedPersons().addAll(affectedPersonDtos);
+
+        return clone;
     }
 
 
