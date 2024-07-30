@@ -1,7 +1,6 @@
 package de.symeda.sormas.ui.foodhistory;
 
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.Disease;
