@@ -1,5 +1,6 @@
 package de.symeda.sormas.ui.affectedperson;
 
+import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.foodhistory.AffectedPersonDto;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -37,8 +38,10 @@ public class AffectedPersonEditForm extends AbstractEditForm<AffectedPersonDto> 
 
     @Override
     protected void addFields() {
+        TextField nameOfAffectedPerson = addField(AffectedPersonDto.NAME_OF_AFFECTED_PERSON, TextField.class);
+        nameOfAffectedPerson.setRequired(true);
+
         addFields(
-                AffectedPersonDto.NAME_OF_AFFECTED_PERSON,
                 AffectedPersonDto.TEL_NO,
                 AffectedPersonDto.DATE_TIME,
                 AffectedPersonDto.AGE);
