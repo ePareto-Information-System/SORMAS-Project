@@ -15707,12 +15707,6 @@ div.v-layout.v-horizontal.v-widget {
 	font-style: italic;
 }
 
-.sormas .v-label.v-widget.h3.v-label-h3.otherPersonHeading-middle.v-label-otherPersonHeading-middle.v-label-undef-w {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
 .sormas .v-button, .sormas .v-link.v-link-button {
 	text-transform: uppercase;
 	border-color: #005A9C;
