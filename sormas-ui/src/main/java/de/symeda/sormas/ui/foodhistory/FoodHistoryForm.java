@@ -4,7 +4,9 @@ import com.vaadin.ui.Label;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -13,6 +15,7 @@ import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.affectedperson.AffectedPersonField;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.DateTimeField;
 import de.symeda.sormas.ui.utils.FieldHelper;
@@ -34,6 +37,7 @@ public class FoodHistoryForm extends AbstractEditForm<FoodHistoryDto> {
     private static final String DAY_3_HEADING = "day3Heading";
     private static final String OTHER_PERSONS_HEADING = "otherPersonsHeading";
     private static final String NUMBER_OF_PERSONS_NO_AFFECTED = "numberOfPersonsNoAffected";
+    //@formatter:off
 
     private static final String HTML_LAYOUT =
                fluidRowLocs(FoodHistoryDto.SUSPECTED_FOOD, FoodHistoryDto.DATE_CONSUMED) +
@@ -52,14 +56,13 @@ public class FoodHistoryForm extends AbstractEditForm<FoodHistoryDto> {
                fluidRowLocs(FoodHistoryDto.LUNCH_L3, FoodHistoryDto.TOTAL_NO_PERSONS_L3, FoodHistoryDto.FOOD_CONSUMED_L3, FoodHistoryDto.SOURCE_OF_FOOD_L3, FoodHistoryDto.CONSUMED_AT_PLACE_L3) +
                fluidRowLocs(FoodHistoryDto.SUPPER_S3, FoodHistoryDto.TOTAL_NO_PERSONS_S3, FoodHistoryDto.FOOD_CONSUMED_S3, FoodHistoryDto.SOURCE_OF_FOOD_S3, FoodHistoryDto.CONSUMED_AT_PLACE_S3) +
                fluidRowLocs(OTHER_PERSONS_HEADING) +
-               fluidRowLocs(FoodHistoryDto.NUMBER_OF_PEOPLE_ATE_IMPLICATED_FOOD, FoodHistoryDto.NUMBER_AFFECTED);
-               /*fluidRowLocs(FoodHistoryDto.NAME_OF_AFFECTED_PERSON, FoodHistoryDto.TEL_NO, FoodHistoryDto.DATE_TIME, FoodHistoryDto.AGE) +
-               fluidRowLocs(FoodHistoryDto.NAME_OF_AFFECTED_PERSON2, FoodHistoryDto.TEL_NO2, FoodHistoryDto.DATE_TIME2, FoodHistoryDto.AGE2) +
-               fluidRowLocs(FoodHistoryDto.NAME_OF_AFFECTED_PERSON3, FoodHistoryDto.TEL_NO3, FoodHistoryDto.DATE_TIME3, FoodHistoryDto.AGE3) +
-               fluidRowLocs(FoodHistoryDto.NAME_OF_AFFECTED_PERSON4, FoodHistoryDto.TEL_NO4, FoodHistoryDto.DATE_TIME4, FoodHistoryDto.AGE4);*/
+               fluidRowLocs(FoodHistoryDto.NUMBER_OF_PEOPLE_ATE_IMPLICATED_FOOD, FoodHistoryDto.NUMBER_AFFECTED) +
+               loc(FoodHistoryDto.AFFECTED_PERSONS);
 
-
+    private final Class<? extends EntityDto> parentClass;
+    private final boolean isPseudonymized;
     public FoodHistoryForm(Disease disease,
+                           Class<? extends EntityDto> parentClass,
                            boolean isPseudonymized,
                                boolean inJurisdiction,boolean isEditAllowed) {
         super(
@@ -68,12 +71,19 @@ public class FoodHistoryForm extends AbstractEditForm<FoodHistoryDto> {
                 false,
                 FieldVisibilityCheckers.withDisease(disease).andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
                 UiFieldAccessCheckers.forDataAccessLevel(UserProvider.getCurrent().getPseudonymizableDataAccessLevel(inJurisdiction), isPseudonymized),
-                isEditAllowed);
+                isEditAllowed, disease);
+        this.isPseudonymized = isPseudonymized;
+        this.disease = disease;
+        this.parentClass = parentClass;
         addFields();
     }
 
     @Override
     protected void addFields() {
+
+        if (parentClass == CaseDataDto.class) {
+            addAffectedPersonFields();
+        }
 
         Label foodHistoryHeadingLabel = new Label(I18nProperties.getString(Strings.foodHistoryHeading));
         foodHistoryHeadingLabel.addStyleName(H3);
@@ -88,13 +98,6 @@ public class FoodHistoryForm extends AbstractEditForm<FoodHistoryDto> {
         otherPersonHeading.addStyleName("otherPersonHeading-middle");
 
         addFields(FoodHistoryDto.NUMBER_OF_PEOPLE_ATE_IMPLICATED_FOOD, FoodHistoryDto.NUMBER_AFFECTED);
-//        addFields(FoodHistoryDto.NAME_OF_AFFECTED_PERSON, FoodHistoryDto.NAME_OF_AFFECTED_PERSON2, FoodHistoryDto.NAME_OF_AFFECTED_PERSON3, FoodHistoryDto.NAME_OF_AFFECTED_PERSON4);
-//        addFields(FoodHistoryDto.TEL_NO, FoodHistoryDto.TEL_NO2, FoodHistoryDto.TEL_NO3, FoodHistoryDto.TEL_NO4);
-//        addField(FoodHistoryDto.DATE_TIME, DateTimeField.class);
-//        addField(FoodHistoryDto.DATE_TIME2, DateTimeField.class);
-//        addField(FoodHistoryDto.DATE_TIME3, DateTimeField.class);
-//        addField(FoodHistoryDto.DATE_TIME4, DateTimeField.class);
-//        addFields(FoodHistoryDto.AGE, FoodHistoryDto.AGE2, FoodHistoryDto.AGE3, FoodHistoryDto.AGE4);
 
         addField(FoodHistoryDto.SUSPECTED_FOOD, TextField.class);
         addField(FoodHistoryDto.DATE_CONSUMED, DateTimeField.class);
@@ -193,6 +196,12 @@ public class FoodHistoryForm extends AbstractEditForm<FoodHistoryDto> {
         label.addStyleName(h4);
         getContent().addComponent(label, location);
         return label;
+    }
+
+    private void addAffectedPersonFields() {
+        AffectedPersonField affectedPersonField = addField(FoodHistoryDto.AFFECTED_PERSONS, AffectedPersonField.class);
+        affectedPersonField.setWidthFull();
+        affectedPersonField.setPseudonymized(isPseudonymized);
     }
 
     @Override

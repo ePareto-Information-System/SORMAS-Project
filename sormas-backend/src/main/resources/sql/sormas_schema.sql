@@ -14975,6 +14975,28 @@ ALTER TABLE sixtyday DROP COLUMN investigatordate;
 
 INSERT INTO schema_version (version_number, comment) VALUES (699, 'Dropped investigationnotes, suspecteddiagnosis, confirmeddiagnosis etc from sixtyday');
 
+CREATE TABLE affectedperson (
+     id BIGINT PRIMARY KEY NOT NULL,
+     uuid varchar(36) not null unique,
+     changedate timestamp not null,
+     creationdate timestamp not null,
+     foodhistory_id bigint not null,
+     nameofaffectedperson varchar(255),
+     telno VARCHAR(255),
+     datetime DATE,
+     age VARCHAR(255)
+);
+ALTER TABLE affectedperson OWNER TO sormas_user;
+ALTER TABLE affectedperson ADD CONSTRAINT fk_affectedperson_foodhistory_id FOREIGN KEY (foodhistory_id) REFERENCES foodhistory(id);
+ALTER TABLE affectedperson ADD COLUMN change_user_id BIGINT,
+                           ADD CONSTRAINT fk_change_user_id
+                               FOREIGN KEY (change_user_id)
+                                   REFERENCES users (id);
+INSERT INTO schema_version(version_number, comment) VALUES (700, 'Added fields to implement affectedperson for food history');
+
+ALTER TABLE foodhistory ADD COLUMN changedateofembeddedlists timestamp without time zone;
+INSERT INTO schema_version(version_number, comment) VALUES (701, 'Added changedateofembeddedlists for food history');
+
 -- CREATE TABLE FormEntities (
 --     id BIGINT PRIMARY KEY NOT NULL,
 --     name VARCHAR(255),

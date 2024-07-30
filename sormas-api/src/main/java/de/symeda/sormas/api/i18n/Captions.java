@@ -2828,6 +2828,7 @@ public interface Captions {
 	String AfpImmunization_sourceRiVaccinationInformation = "sourceRiVaccinationInformation";
 
 	String FoodHistory_suspectedFood = "suspectedFood";
+	String FoodHistory_affectedPersons = "affectedPersons";
 	String FoodHistory_dateConsumed = "dateConsumed";
 	String FoodHistory_foodSource = "foodSource";
 	String FoodHistory_eventType = "eventType";
