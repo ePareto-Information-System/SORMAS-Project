@@ -160,7 +160,7 @@ public class FoodHistoryDto extends PseudonymizableDto {
     private String sourceOfFoodS3;
     private YesNo consumedAtPlaceS3;
     private Integer numberOfPeopleAteImplicatedFood;
-    private Integer numberAffected;
+    private String numberAffected;
     @Valid
     private List<AffectedPersonDto> affectedPersons = new ArrayList<>();
 
@@ -701,11 +701,11 @@ public class FoodHistoryDto extends PseudonymizableDto {
         this.numberOfPeopleAteImplicatedFood = numberOfPeopleAteImplicatedFood;
     }
 
-    public Integer getNumberAffected() {
+    public String getNumberAffected() {
         return numberAffected;
     }
 
-    public void setNumberAffected(Integer numberAffected) {
+    public void setNumberAffected(String numberAffected) {
         this.numberAffected = numberAffected;
     }
 

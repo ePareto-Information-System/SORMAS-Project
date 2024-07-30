@@ -21,6 +21,7 @@
 package de.symeda.sormas.ui.affectedperson;
 
 import com.vaadin.server.Sizeable;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Window;
 import com.vaadin.v7.data.Property;
 import com.vaadin.v7.ui.Table;
@@ -29,7 +30,6 @@ import de.symeda.sormas.api.foodhistory.AffectedPersonDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
@@ -39,7 +39,9 @@ import de.symeda.sormas.ui.utils.DateFormatHelper;
 import de.symeda.sormas.ui.utils.FieldAccessCellStyleGenerator;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class AffectedPersonField extends AbstractTableField<AffectedPersonDto> {
@@ -48,10 +50,12 @@ public class AffectedPersonField extends AbstractTableField<AffectedPersonDto> {
     public static final String TEL_NO = "telNo";
     public static final String DATE_TIME = "dateTime";
     public static final String AGE = "age";
+    private int maxAffectedPersons = 0;
 
     private final FieldVisibilityCheckers fieldVisibilityCheckers;
     private boolean isPseudonymized;
     private boolean isEditAllowed;
+    private transient List<Runnable> dataLoadedListeners = new ArrayList<>();
 
     public AffectedPersonField(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers, boolean isEditAllowed) {
         super(fieldAccessCheckers, isEditAllowed);
@@ -81,18 +85,19 @@ public class AffectedPersonField extends AbstractTableField<AffectedPersonDto> {
                 table.setColumnHeader(columnId, I18nProperties.getPrefixCaption(AffectedPersonDto.I18N_PREFIX, (String) columnId));
             }
         }
+        notifyDataLoadedListeners();
     }
 
     private void addGeneratedColumns(Table table) {
 
         table.addGeneratedColumn(NAME_OF_AFFECTED_PERSON, (Table.ColumnGenerator) (source, itemId, columnId) -> {
             AffectedPersonDto affectedPerson = (AffectedPersonDto) itemId;
-            return String.valueOf(affectedPerson.getAge());
+            return String.valueOf(affectedPerson.getNameOfAffectedPerson());
         });
 
         table.addGeneratedColumn(TEL_NO, (Table.ColumnGenerator) (source, itemId, columnId) -> {
             AffectedPersonDto affectedPerson = (AffectedPersonDto) itemId;
-            return String.valueOf(affectedPerson.getAge());
+            return String.valueOf(affectedPerson.getTelNo());
         });
 
         table.addGeneratedColumn(DATE_TIME, (Table.ColumnGenerator) (source, itemId, columnId) -> {
@@ -125,11 +130,15 @@ public class AffectedPersonField extends AbstractTableField<AffectedPersonDto> {
         return AffectedPersonDto.class;
     }
 
+    public void setMaxAffectedPersons(int maxAffectedPersons) {
+        this.maxAffectedPersons = maxAffectedPersons;
+    }
 
     @Override
     protected void editEntry(AffectedPersonDto entry, boolean create, Consumer<AffectedPersonDto> commitCallback) {
-        if (create) {
-            entry.setUuid(DataHelper.createUuid());
+        if (create && getTableRowCount() >= maxAffectedPersons) {
+            Notification.show("Cannot add more than " + maxAffectedPersons + " affected persons.", Notification.Type.ERROR_MESSAGE);
+            return;
         }
 
         AffectedPersonEditForm affectedPersonEditForm = new AffectedPersonEditForm(create, fieldVisibilityCheckers, fieldAccessCheckers);
@@ -185,4 +194,18 @@ public class AffectedPersonField extends AbstractTableField<AffectedPersonDto> {
         return super.getPropertyDataSource();
     }
 
-}
+    public int getTableRowCount() {
+        return getTable().getItemIds().size();
+    }
+
+    public void addDataLoadedListener(Runnable listener) {
+        dataLoadedListeners.add(listener);
+    }
+
+    private void notifyDataLoadedListeners() {
+        for (Runnable listener : dataLoadedListeners) {
+            listener.run();
+        }
+    }
+
+  }
