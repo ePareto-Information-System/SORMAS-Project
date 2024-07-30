@@ -14997,6 +14997,10 @@ INSERT INTO schema_version(version_number, comment) VALUES (700, 'Added fields t
 ALTER TABLE foodhistory ADD COLUMN changedateofembeddedlists timestamp without time zone;
 INSERT INTO schema_version(version_number, comment) VALUES (701, 'Added changedateofembeddedlists for food history');
 
+ALTER TABLE foodhistory DROP COLUMN numberaffected;
+ALTER TABLE foodhistory ADD COLUMN numberaffected VARCHAR(255);
+INSERT INTO schema_version(version_number, comment) VALUES (702, 'Dropped and readded  numberaffected food history');
+
 -- CREATE TABLE FormEntities (
 --     id BIGINT PRIMARY KEY NOT NULL,
 --     name VARCHAR(255),

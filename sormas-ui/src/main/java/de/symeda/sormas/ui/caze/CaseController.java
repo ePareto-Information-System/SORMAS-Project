@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.ui.afpimmunization.AfpImmunizationForm;
 import de.symeda.sormas.ui.afpimmunization.AfpImmunizationView;
@@ -1418,6 +1419,21 @@ public class CaseController {
 
 		editView.addCommitListener(() -> {
 			CaseDataDto cazeDto = findCase(caseUuid);
+			foodHistoryForm.validateNumberOfAffectedPersons();
+
+			int numberAffected = Integer.parseInt((String) foodHistoryForm.getField(FoodHistoryDto.NUMBER_AFFECTED).getValue());
+			int tableRowCount = foodHistoryForm.affectedPersonField.getTableRowCount();
+
+			if (numberAffected < tableRowCount) {
+				Notification.show("Number of affected persons cannot be less than the number of entries in the table.", Notification.Type.ERROR_MESSAGE);
+				return;
+			}
+
+			if (numberAffected > tableRowCount) {
+				Notification.show("Number of affected persons cannot be greater than the number of entries in the table.", Notification.Type.ERROR_MESSAGE);
+				return;
+			}
+
 			cazeDto.setFoodHistory(foodHistoryForm.getValue());
 			saveCase(cazeDto);
 

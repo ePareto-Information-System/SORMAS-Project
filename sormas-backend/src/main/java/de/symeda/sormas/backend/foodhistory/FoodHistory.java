@@ -89,7 +89,7 @@ public class FoodHistory extends AbstractDomainObject {
     private String sourceOfFoodS3;
     private YesNo consumedAtPlaceS3;
     private Integer numberOfPeopleAteImplicatedFood;
-    private Integer numberAffected;
+    private String numberAffected;
     private List<AffectedPerson> affectedPersons = new ArrayList<>();
     @NotExposedToApi
     private Date changeDateOfEmbeddedLists;
@@ -630,11 +630,11 @@ public class FoodHistory extends AbstractDomainObject {
         this.numberOfPeopleAteImplicatedFood = numberOfPeopleAteImplicatedFood;
     }
 
-    public Integer getNumberAffected() {
+    public String getNumberAffected() {
         return numberAffected;
     }
 
-    public void setNumberAffected(Integer numberAffected) {
+    public void setNumberAffected(String numberAffected) {
         this.numberAffected = numberAffected;
     }
 
