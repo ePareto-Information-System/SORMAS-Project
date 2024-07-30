@@ -1,6 +1,7 @@
 package de.symeda.sormas.ui.foodhistory;
 
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.Disease;
@@ -61,6 +62,8 @@ public class FoodHistoryForm extends AbstractEditForm<FoodHistoryDto> {
 
     private final Class<? extends EntityDto> parentClass;
     private final boolean isPseudonymized;
+    public AffectedPersonField affectedPersonField;
+    private int maxAffectedPersons = 0;
     public FoodHistoryForm(Disease disease,
                            Class<? extends EntityDto> parentClass,
                            boolean isPseudonymized,
@@ -97,7 +100,17 @@ public class FoodHistoryForm extends AbstractEditForm<FoodHistoryDto> {
         Label otherPersonHeading = createLabel(I18nProperties.getString(Strings.headingOtherPersons), H3, OTHER_PERSONS_HEADING);
         otherPersonHeading.addStyleName("otherPersonHeading-middle");
 
-        addFields(FoodHistoryDto.NUMBER_OF_PEOPLE_ATE_IMPLICATED_FOOD, FoodHistoryDto.NUMBER_AFFECTED);
+        addField(FoodHistoryDto.NUMBER_OF_PEOPLE_ATE_IMPLICATED_FOOD);
+
+        TextField numberAffectedField = addField(FoodHistoryDto.NUMBER_AFFECTED, TextField.class);
+        numberAffectedField.addValueChangeListener(event -> {
+            String value = (String) event.getProperty().getValue();
+            if (value != null && !value.isEmpty()) {
+                int numberAffected = Integer.parseInt(value);
+                maxAffectedPersons = numberAffected;
+                affectedPersonField.setMaxAffectedPersons(maxAffectedPersons);
+            }
+        });
 
         addField(FoodHistoryDto.SUSPECTED_FOOD, TextField.class);
         addField(FoodHistoryDto.DATE_CONSUMED, DateTimeField.class);
@@ -199,9 +212,20 @@ public class FoodHistoryForm extends AbstractEditForm<FoodHistoryDto> {
     }
 
     private void addAffectedPersonFields() {
-        AffectedPersonField affectedPersonField = addField(FoodHistoryDto.AFFECTED_PERSONS, AffectedPersonField.class);
+        affectedPersonField = addField(FoodHistoryDto.AFFECTED_PERSONS, AffectedPersonField.class);
         affectedPersonField.setWidthFull();
         affectedPersonField.setPseudonymized(isPseudonymized);
+        affectedPersonField.setMaxAffectedPersons(maxAffectedPersons);
+
+        affectedPersonField.addDataLoadedListener(() -> {
+            int rowCount = affectedPersonField.getTableRowCount();
+        });
+    }
+
+    public void validateNumberOfAffectedPersons() {
+        if (affectedPersonField != null) {
+            affectedPersonField.setMaxAffectedPersons(maxAffectedPersons);
+        }
     }
 
     @Override
