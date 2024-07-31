@@ -15000,4 +15000,11 @@ INSERT INTO schema_version(version_number, comment) VALUES (701, 'Added changeda
 ALTER TABLE foodhistory DROP COLUMN numberaffected;
 ALTER TABLE foodhistory ADD COLUMN numberaffected VARCHAR(255);
 INSERT INTO schema_version(version_number, comment) VALUES (702, 'Dropped and readded  numberaffected food history');
+
+ALTER TABLE hospitalization ADD column location_id BIGINT;
+ALTER TABLE hospitalization ADD column locationtype_id BIGINT;
+ALTER TABLE hospitalization ADD CONSTRAINT fk_hospitalization_location_id FOREIGN KEY (location_id) REFERENCES location (id);
+ALTER TABLE hospitalization ADD CONSTRAINT fk_hospitalization_locationtype_id FOREIGN KEY (locationtype_id) REFERENCES location (id);
+
+INSERT INTO schema_version(version_number, comment) VALUES (703, 'Added region, disctrict, sub-district to hospitalization');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

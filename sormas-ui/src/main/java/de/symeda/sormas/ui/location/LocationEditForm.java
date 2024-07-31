@@ -103,7 +103,6 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private static final String COUNTRY_HINT_LOC = "countryHintLoc";
 	private static final String HOME_ADDRESS_HEADING = "homeAddress";
 
-	private Disease newDisease;
 	private static final String HTML_LAYOUT =
 		//XXX #1620 are the divs needed?
 		divs(
@@ -816,6 +815,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 //		getField(LocationDto.POSTAL_CODE).setVisible(false);
 	}
 
+	public void hideForHospitalizationForm(){
+		setVisible(false, LocationDto.COMMUNITY);
+	}
+
 	public void setCountryDisabledWithHint(String hint) {
 		country.setEnabled(false);
 		Label infoLabel = new Label(VaadinIcons.INFO_CIRCLE.getHtml(), ContentMode.HTML);
@@ -1010,8 +1013,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			case FOODBORNE_ILLNESS:
 				createLabel(I18nProperties.getString(Strings.homeAddressheading), H3, HOME_ADDRESS_HEADING);
 				localityField.setVisible(true);
+				break;
 			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
 				houseNumberField.setCaption("House Number/Location");
+				break;
 			default:
 				break;
 			}
