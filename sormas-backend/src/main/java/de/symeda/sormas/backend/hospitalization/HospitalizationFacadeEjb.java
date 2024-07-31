@@ -28,7 +28,15 @@ import javax.ejb.Stateless;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.hospitalization.HospitalizationFacade;
 import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.location.LocationDto;
+import de.symeda.sormas.api.person.PersonContactDetailType;
+import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.api.person.PersonHelper;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.backend.caze.CaseService;
 import de.symeda.sormas.backend.infrastructure.community.CommunityFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.community.CommunityService;
@@ -38,7 +46,9 @@ import de.symeda.sormas.backend.infrastructure.facility.FacilityFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.facility.FacilityService;
 import de.symeda.sormas.backend.infrastructure.region.RegionFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.region.RegionService;
+import de.symeda.sormas.backend.location.LocationFacadeEjb;
 import de.symeda.sormas.backend.util.DtoHelper;
+import org.apache.commons.lang3.StringUtils;
 
 @Stateless(name = "HospitalizationFacade")
 public class HospitalizationFacadeEjb implements HospitalizationFacade {
@@ -60,12 +70,22 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 	private PreviousHospitalizationService prevHospService;
 	@EJB
 	private CaseService caseService;
+	@EJB
+	private DistrictFacadeEjb.DistrictFacadeEjbLocal districtFacade;
+	@EJB
+	private CommunityFacadeEjb.CommunityFacadeEjbLocal communityFacade;
+	@EJB
+	private FacilityFacadeEjb.FacilityFacadeEjbLocal facilityFacade;
+	@EJB
+	private LocationFacadeEjb.LocationFacadeEjbLocal locationFacade;
 
 
 	public Hospitalization fillOrBuildEntity(HospitalizationDto source, Hospitalization target, boolean checkChangeDate) {
 		if (source == null) {
 			return null;
 		}
+
+		validate(source);
 
 		target = DtoHelper.fillOrBuildEntity(source, target, Hospitalization::new, checkChangeDate);
 
@@ -141,6 +161,7 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setMemberFamilyHelpingPatient(source.getMemberFamilyHelpingPatient());
 		target.setDateOfDeath(source.getDateOfDeath());
 		target.setHospitalizationYesNo(source.getHospitalizationYesNo());
+		target.setLocationType(locationFacade.fillOrBuildEntity(source.getLocationType(), target.getLocationType(), checkChangeDate));
 
 
 		return target;
@@ -256,6 +277,8 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setDateOfDeath(source.getDateOfDeath());
 		target.setHospitalizationYesNo(source.getHospitalizationYesNo());
 
+		target.setLocationType(LocationFacadeEjb.toDto(source.getLocationType()));
+
 
 		return target;
 	}
@@ -360,6 +383,43 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setIntensiveCareUnitEnd(source.getIntensiveCareUnitEnd());
 
 		return target;
+	}
+
+	public void validate(HospitalizationDto source) throws ValidationRuntimeException {
+
+		if (source.getLocationType() != null) {
+			if (source.getLocationType().getRegion() != null
+					&& source.getLocationType().getDistrict() != null
+					&& !districtFacade.getByUuid(source.getLocationType().getDistrict().getUuid()).getRegion().equals(source.getLocationType().getRegion())) {
+				throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noAddressDistrictInAddressRegion));
+			}
+			if (source.getLocationType().getDistrict() != null
+					&& source.getLocationType().getCommunity() != null
+					&& !communityFacade.getByUuid(source.getLocationType().getCommunity().getUuid()).getDistrict().equals(source.getLocationType().getDistrict())) {
+				throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noAddressCommunityInAddressDistrict));
+			}
+			if ((source.getLocationType().getDistrict() != null || source.getLocationType().getFacility() != null) && source.getLocationType().getRegion() == null) {
+				throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validRegion));
+			}
+			if (source.getLocationType().getFacility() != null) {
+				FacilityDto healthFacility = facilityFacade.getByUuid(source.getLocationType().getFacility().getUuid());
+
+				if (source.getLocationType().getCommunity() == null
+						&& healthFacility.getDistrict() != null
+						&& !healthFacility.getDistrict().equals(source.getLocationType().getDistrict())) {
+					throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noAddressFacilityInAddressDistrict));
+				}
+				if (source.getLocationType().getCommunity() != null
+						&& healthFacility.getCommunity() != null
+						&& !source.getLocationType().getCommunity().equals(healthFacility.getCommunity())) {
+					throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noAddressFacilityInAddressCommunity));
+				}
+				if (healthFacility.getRegion() != null && !source.getLocationType().getRegion().equals(healthFacility.getRegion())) {
+					throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noAddressFacilityInAddressRegion));
+				}
+			}
+
+		}
 	}
     @LocalBean
 	@Stateless

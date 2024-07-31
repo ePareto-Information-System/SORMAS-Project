@@ -25,8 +25,10 @@ import java.util.stream.Collectors;
 
 import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.ebs.EbsDto;
 import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.utils.InpatOutpat;
@@ -63,6 +65,7 @@ import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.caze.CaseFormConfiguration;
+import de.symeda.sormas.ui.location.LocationEditForm;
 import de.symeda.sormas.ui.utils.*;
 
 public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
@@ -99,6 +102,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	OptionGroup tickSymptomField;
 	TextField physicianName;
 	TextField physicianNumber;
+	private LocationEditForm addressForm;
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(HOSPITALIZATION_HEADING_LOC) +
@@ -140,7 +144,9 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					fluidRowLocs(6,HospitalizationDto.OTHER_SYMPTOM_SELECTED)+
 					fluidRowLocs(HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING)+
 					fluidRowLocs(6, HospitalizationDto.DURATION_HOURS)+
-					fluidRowLocs(HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.NAME_OF_FACILITY)+
+					fluidRowLocs(6, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION)+
+					fluidRowLocs(HospitalizationDto.LOCATION_TYPE)+
+					fluidRowLocs(6, HospitalizationDto.NAME_OF_FACILITY)+
 					fluidRowLocs(6,HospitalizationDto.DATE_OF_VISIT_HOSPITAL)+
 					fluidRowLocs(6,HospitalizationDto.HOSPITALIZATION_YES_NO) +
 					fluidRowLocs(HospitalizationDto.PHYSICIAN_NAME, HospitalizationDto.PHYSICIAN_NUMBER)+
@@ -193,6 +199,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		sequelaeDetails = addCustomField(SEQUELAE_DETAILS, CaseDataDto.class, TextField.class);
 		sequelae.setVisible(false);*/
+
+		addressForm = addField(HospitalizationDto.LOCATION_TYPE, new LocationEditForm(
+				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
+				UiFieldAccessCheckers.getNoop(), disease));
+		addressForm.setCaption(null);
+		addressForm = (LocationEditForm) getFieldGroup().getField(HospitalizationDto.LOCATION_TYPE);
 
 		Label previousHospitalizationsHeadingLabel = new Label(I18nProperties.getString(Strings.headingPreviousHospitalizations));
 		previousHospitalizationsHeadingLabel.addStyleName(H3);
@@ -358,6 +370,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
+		addressForm.hideForHospitalizationForm();
 
 		if (isVisibleAllowed(HospitalizationDto.ISOLATION_DATE)) {
 			FieldHelper.setVisibleWhen(
@@ -759,5 +772,14 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 				field.setVisible(false);
 
 		}
+	}
+
+	@Override
+	public void setValue(HospitalizationDto newFieldValue) {
+		super.setValue(newFieldValue);
+
+		// HACK: Binding to the fields will call field listeners that may clear/modify the values of other fields.
+		// this hopefully resets everything to its correct value
+		addressForm.discard();
 	}
 }
