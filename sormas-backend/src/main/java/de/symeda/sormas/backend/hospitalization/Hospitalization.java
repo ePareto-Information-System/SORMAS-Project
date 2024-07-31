@@ -26,6 +26,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
+import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.i18n.Validations;
@@ -33,6 +34,7 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.location.Location;
 import org.apache.commons.lang3.StringUtils;
 
 @Entity
@@ -125,6 +127,7 @@ public class Hospitalization extends AbstractDomainObject {
 	private String memberFamilyHelpingPatient;
 	private Date dateOfDeath;
 	private YesNo hospitalizationYesNo;
+	private Location locationType;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getAdmissionDate() {
@@ -633,5 +636,17 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setHospitalizationYesNo(YesNo hospitalizationYesNo) {
 		this.hospitalizationYesNo = hospitalizationYesNo;
+	}
+
+	@OneToOne(cascade = CascadeType.ALL)
+	public Location getLocationType() {
+		if (locationType == null) {
+			locationType = new Location();
+		}
+		return locationType;
+	}
+
+	public void setLocationType(Location locationType) {
+		this.locationType = locationType;
 	}
 }

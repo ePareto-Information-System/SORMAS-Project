@@ -19,6 +19,9 @@ package de.symeda.sormas.api.hospitalization;
 
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.location.LocationDto;
+import de.symeda.sormas.api.person.PersonContactDetailDto;
+import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.utils.*;
 
 import java.util.ArrayList;
@@ -84,6 +87,7 @@ public class HospitalizationDto extends EntityDto {
 	public static final String SOUGHT_MEDICAL_ATTENTION = "soughtMedicalAttention";
 	public static final String NAME_OF_FACILITY = "nameOfFacility";
 	public static final String LOCATION_ADDRESS = "locationAddress";
+	public static final String LOCATION_TYPE = "locationType";
 	public static final String DATE_OF_VISIT_HOSPITAL = "dateOfVisitHospital";
 	public static final String PHYSICIAN_NAME = "physicianName";
 	public static final String PHYSICIAN_NUMBER = "physicianNumber";
@@ -170,12 +174,33 @@ public class HospitalizationDto extends EntityDto {
 	private Date receptionDate;
 	private String memberFamilyHelpingPatient;
 	private Date dateOfDeath;
+	@EmbeddedPersonalData
+	@EmbeddedSensitiveData
+	@Valid
+	private LocationDto locationType;
 
 
 	public static HospitalizationDto build() {
 		HospitalizationDto hospitalization = new HospitalizationDto();
 		hospitalization.setUuid(DataHelper.createUuid());
+		hospitalization.setLocationType(LocationDto.build());
 		return hospitalization;
+	}
+
+	@Override
+	public HospitalizationDto clone() throws CloneNotSupportedException {
+		HospitalizationDto clone = (HospitalizationDto) super.clone();
+		clone.setLocationType((LocationDto) getLocationType().clone());
+
+		return clone;
+	}
+
+	public LocationDto getLocationType() {
+		return locationType;
+	}
+
+	public void setLocationType(LocationDto locationType) {
+		this.locationType = locationType;
 	}
 
 	public Date getAdmissionDate() {

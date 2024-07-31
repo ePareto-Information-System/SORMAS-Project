@@ -489,8 +489,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
 				UiFieldAccessCheckers.getNoop(), disease));
 
-		addressForm.getIncomingDisease(disease);
-
 		birthInInstitutionField = addField(PersonDto.BIRTH_IN_INSTITUTION, NullableOptionGroup.class);
 		birthInInstitutionField.setVisible(false);
 
