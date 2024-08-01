@@ -537,7 +537,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			Predicate riskPredicate = cb.or(cb.isNull(riskAssessment.get(RiskAssessment.ID)), cb.equal(riskAssessment.get(RiskAssessment.ID), subqueryRisk));
 
 			// Predicate for verified status
-			Predicate verifiedPredicate = cb.equal(signalVerification.get(SignalVerification.VERIFIED), YesNo.YES);
+			Predicate verifiedPredicate = cb.equal(signalVerification.get(SignalVerification.VERIFIED), SignalOutcome.EVENT);
 
 			// Create the selection
 			cq.multiselect(
