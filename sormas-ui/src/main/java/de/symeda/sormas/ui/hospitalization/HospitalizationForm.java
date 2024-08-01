@@ -370,7 +370,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
-		addressForm.hideForHospitalizationForm();
+//		addressForm.hideForHospitalizationForm();
 
 		if (isVisibleAllowed(HospitalizationDto.ISOLATION_DATE)) {
 			FieldHelper.setVisibleWhen(
