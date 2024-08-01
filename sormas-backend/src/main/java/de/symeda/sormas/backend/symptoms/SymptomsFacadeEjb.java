@@ -865,8 +865,10 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 
 		String uuid = source.getUuid();
 		Symptoms target = DtoHelper.fillOrBuildEntity(source, uuid != null ? service.getByUuid(uuid) : null, Symptoms::new, checkChangeDate);
-		HealthConditions healthConditions = healthConditionsMapper.fillOrBuildEntity(source.getHealthConditions(), target.getHealthConditions(), checkChangeDate);
-		target.setHealthConditions(healthConditions);
+		if (source.getHealthConditions() != null) {
+			HealthConditions healthConditions = healthConditionsMapper.fillOrBuildEntity(source.getHealthConditions(), target.getHealthConditions(), checkChangeDate);
+			target.setHealthConditions(healthConditions);
+		}
 		target.setAbdominalPain(source.getAbdominalPain());
 		target.setAlteredConsciousness(source.getAlteredConsciousness());
 		target.setAnorexiaAppetiteLoss(source.getAnorexiaAppetiteLoss());
