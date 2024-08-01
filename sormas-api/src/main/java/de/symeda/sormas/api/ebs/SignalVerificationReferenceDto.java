@@ -32,6 +32,12 @@ public class SignalVerificationReferenceDto extends ReferenceDto {
 		};
 		return verificationSent.toString();
 	}
+	public static String buildCaption(SignalOutcome verified) {
+		if(verified == null){
+			return "";
+		};
+		return verified.toString();
+	}
 
 	public static String buildCaption(String death) {
 		if(death == null){

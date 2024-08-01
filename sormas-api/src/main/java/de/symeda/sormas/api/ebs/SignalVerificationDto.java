@@ -29,8 +29,7 @@ public class SignalVerificationDto extends EntityDto {
     public static final String NUMBER_OF_DEATH_PERSON = "numberOfDeathPerson";
 
     private YesNo verificationSent;
-    private YesNo verified;
-    private Date verificationSentDate;
+    private SignalOutcome verified;
     private Date verificationCompleteDate;
     private Date dateOfOccurrence;
     private String numberOfPersonAnimal;
@@ -48,20 +47,12 @@ public class SignalVerificationDto extends EntityDto {
         this.verificationSent = verificationSent;
     }
 
-    public YesNo getVerified() {
+    public SignalOutcome getVerified() {
         return verified;
     }
 
-    public void setVerified(YesNo verified) {
+    public void setVerified(SignalOutcome verified) {
         this.verified = verified;
-    }
-
-    public Date getVerificationSentDate() {
-        return verificationSentDate;
-    }
-
-    public void setVerificationSentDate(Date verificationSentDate) {
-        this.verificationSentDate = verificationSentDate;
     }
 
     public Date getVerificationCompleteDate() {
