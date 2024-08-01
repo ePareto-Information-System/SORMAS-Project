@@ -94,7 +94,6 @@
     <string name="action_open_syncLog">Synchronization conflicts</string>
     <string name="action_options">Options</string>
     <string name="action_pick_gps">Pick current GPS for address</string>
-    <string name="heading_additional_info_landmark">Closest landmark</string>
     <string name="action_redownload_app">Redownload</string>
     <string name="action_redownload_app_later">Redownload later</string>
     <string name="action_refer_case_from_poe">Refer case from Point of Entry</string>
@@ -378,7 +377,6 @@
     <string name="heading_most_recent_additional_tests">Most Recent Additional Tests</string>
     <string name="heading_most_recent_hospitalization">Most Recent Hospitalization</string>
     <string name="heading_most_recent_test">Most Recent Pathogen Test</string>
-    <string name="heading_laboratory_results">Laboratory results</string>
     <string name="heading_new_sormas_version">New SORMAS version</string>
     <string name="heading_outbreak_response">Outbreak Response</string>
     <string name="heading_person_involved">Person Involved</string>

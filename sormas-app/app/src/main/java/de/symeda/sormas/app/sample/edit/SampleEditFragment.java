@@ -20,12 +20,10 @@ import static android.view.View.VISIBLE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.jcajce.provider.asymmetric.util.IESUtil;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 
@@ -36,10 +34,7 @@ import androidx.annotation.Nullable;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.feature.FeatureType;
-import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
-import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.sample.AdditionalTestType;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
@@ -65,7 +60,6 @@ import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.databinding.FragmentSampleEditLayoutBinding;
 import de.symeda.sormas.app.sample.read.SampleReadActivity;
 import de.symeda.sormas.app.util.DataUtils;
-import de.symeda.sormas.app.util.DiseaseConfigurationCache;
 
 public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayoutBinding, Sample, Sample> {
 
@@ -84,9 +78,6 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	private List<String> requestedPathogenTests = new ArrayList<>();
 	private List<String> requestedAdditionalTests = new ArrayList<>();
 	private List<Item> finalTestResults;
-	private List<Item> diseaseList;
-	//private List<Item> labResultList;
-	private Disease disease;
 
 	public static SampleEditFragment newInstance(Sample activityRootData) {
 		return newInstanceWithFieldCheckers(
@@ -164,13 +155,6 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	@Override
 	protected void prepareFragmentData() {
 		record = getActivityRootData();
-
-		List<Disease> diseases = DiseaseConfigurationCache.getInstance().getAllDiseases(true, true, true);
-		diseaseList = DataUtils.toItems(diseases);
-		if (record.getDisease() != null && !diseases.contains(record.getDisease())) {
-			diseaseList.add(DataUtils.toItem(record.getDisease()));
-		}
-
 		if (record.getId() != null) {
 			mostRecentTest = DatabaseHelper.getSampleTestDao().queryMostRecentBySample(record);
 			if (ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
@@ -186,10 +170,9 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 
 		sampleMaterialList = DataUtils.getEnumItems(SampleMaterial.class, true, getFieldVisibilityCheckers());
 		sampleSourceList = DataUtils.getEnumItems(SampleSource.class, true);
-		labList = DatabaseHelper.getFacilityDao().getActiveLaboratoriesByDisease(getDiseaseOfAssociatedEntity(record), true, record.getLab());
+		labList = DatabaseHelper.getFacilityDao().getActiveLaboratories(true);
 		samplePurposeList = DataUtils.getEnumItems(SamplePurpose.class, true);
 		samplingReasonList = DataUtils.getEnumItems(SamplingReason.class, true, getFieldVisibilityCheckers());
-		//labResultList = DataUtils.getEnumItems(PathogenTestResultType.class, true);
 
 		for (PathogenTestType pathogenTest : record.getRequestedPathogenTests()) {
 			requestedPathogenTests.clear();
@@ -241,8 +224,6 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		setFieldVisibilitiesAndAccesses(SampleDto.class, contentBinding.mainContent);
 		setUpFieldVisibilities(contentBinding);
 
-		Disease selectedDisease = getDiseaseOfAssociatedEntity(record);
-
 		// Initialize ControlSpinnerFields
 		contentBinding.sampleSampleMaterial.initializeSpinner(sampleMaterialList);
 		contentBinding.sampleSampleSource.initializeSpinner(sampleSourceList);
@@ -255,6 +236,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 				contentBinding.sampleLabDetails.hideField(true);
 			}
 		});
+
 		if (finalTestResults != null) {
 			contentBinding.samplePathogenTestResult.initializeSpinner(finalTestResults);
 			if (contentBinding.samplePathogenTestResult.getValue() == null) {
@@ -270,28 +252,6 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 					.setVisibility(ConfigProvider.getUser().equals(record.getReportingUser()) ? VISIBLE : GONE);
 				contentBinding.sampleAdditionalTestingRequested
 					.setVisibility(ConfigProvider.getUser().equals(record.getReportingUser()) ? VISIBLE : GONE);
-
-				handleDisease(Disease.YELLOW_FEVER, "National Public Health and Reference Lab");
-				handleDisease(Disease.AHF, "Noguchi Memorial Institute for Medical Research");
-				handleDisease(Disease.AFP, "Noguchi Memorial Institute for Medical Research");
-
-				switch (selectedDisease) {
-					case CSM:
-						handleCSM();
-						break;
-					case AHF:
-						handleAHF();
-						break;
-					case AFP:
-						handleAFP();
-						break;
-					case YELLOW_FEVER:
-						handleYellowFever();
-
-					default:
-						break;
-				}
-
 			} else {
 				contentBinding.sampleShipped.setValue(null);
 				contentBinding.sampleShipmentDate.setValue(null);
@@ -370,91 +330,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		if (!ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
 			&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
 			contentBinding.additionalTestingLayout.setVisibility(GONE);
-			}
-
-	}
-
-	private void handleDisease(Disease targetDisease, String labName) {
-		Disease selectedDisease = getDiseaseOfAssociatedEntity(record);
-
-		if (selectedDisease == targetDisease) {
-			checkLabName(labName);
 		}
 	}
-
-	private void checkLabName(String labName){
-		if(labList != null){
-			List<Facility>allActiveLaboratories = DatabaseHelper.getFacilityDao().getActiveLaboratories(false);
-			Facility facilitylab = findLabByName(allActiveLaboratories, labName);
-
-			if(facilitylab != null){
-				labList.addAll(allActiveLaboratories);
-				getContentBinding().sampleLab.setValue(facilitylab);
-			} else {
-				System.out.println("Please add " + labName + " to Facility Configuration");
-			}
-		} else {
-			System.out.println("Lab dropdown is null. Please contact the administrator.");
-		}
-	}
-
-	private Facility findLabByName(List<Facility> labs, String labName) {
-		for (Facility labItem : labs) {
-			if (labName.equals(labItem.getName())) {
-				return labItem;
-			}
-		}
-		return null;
-	}
-
-	private void handleCSM() {
-		getContentBinding().samplePurpose.setVisibility(GONE);
-		getContentBinding().samplePurpose.setVisibility(GONE);
-	}
-
-	private void handleAFP() {
-		getContentBinding().samplePurpose.setVisibility(GONE);
-		getContentBinding().samplePurpose.setRequired(false);
-	}
-
-	private void handleAHF(){
-		getContentBinding().sampleSampleSource.setVisibility(GONE);
-		getContentBinding().sampleSamplingReason.setVisibility(GONE);
-		getContentBinding().sampleSamplingReason.setVisibility(GONE);
-		getContentBinding().sampleSamplingReasonDetails.setVisibility(GONE);
-		getContentBinding().sampleSamplingReasonDetails.setVisibility(GONE);
-	}
-
-	private void handleYellowFever(){
-		getContentBinding().sampleSampleDateTime.setVisibility(GONE);
-		getContentBinding().sampleSampleMaterial.setVisibility(GONE);
-		getContentBinding().sampleSamplingReason.setVisibility(GONE);
-		getContentBinding().samplePathogenTestingRequested.setVisibility(GONE);
-
-		getContentBinding().sampleSampleDateTime.setRequired(false);
-		getContentBinding().sampleSampleMaterial.setRequired(false);
-
-		//Sample IP Sent
-		getContentBinding().sampleIpSent.setEnabled(true);
-		getContentBinding().sampleIpResults.setEnabled(true);
-
-		getContentBinding().sampleMaterialTypeForYellowFever.setEnabled(true);
-		getContentBinding().sampleYellowFeverSampleTypes.setEnumClass(SampleMaterial.class);
-
-		List<Item> labResultList = new ArrayList<>();
-		labResultList.add(new Item("", null));
-
-		for (PathogenTestResultType resultType : PathogenTestResultType.values()) {
-			if (resultType == PathogenTestResultType.PENDING || resultType == PathogenTestResultType.POSITIVE || resultType == PathogenTestResultType.NEGATIVE) {
-				Item item = new Item(resultType.toString(), resultType);
-				labResultList.add(item);
-			}
-		}
-
-		getContentBinding().sampleLabResults.initializeSpinner(labResultList);
-
-	}
-
 
 	@Override
 	public int getEditLayout() {

@@ -74,11 +74,6 @@
                         app:value="@{data.lastName}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
-                    <de.symeda.sormas.app.component.controls.ControlTextReadField
-                        android:id="@+id/person_other_Name"
-                        app:value="@{data.otherName}"
-                        style="@style/ControlSecondOfTwoColumnsStyle" />
-
                 </LinearLayout>
 
                 <LinearLayout

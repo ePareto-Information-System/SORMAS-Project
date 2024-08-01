@@ -26,15 +26,11 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
 import android.util.Log;
-
-import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.AbstractInfrastructureAdoDao;
-import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.common.InfrastructureAdo;
-import de.symeda.sormas.app.backend.disease.DiseaseConfiguration;
 import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.District;
 import de.symeda.sormas.app.backend.region.Region;
@@ -178,24 +174,6 @@ public class FacilityDao extends AbstractInfrastructureAdoDao<Facility> {
 			Log.e(getTableName(), "Could not perform queryForEq");
 			throw new RuntimeException(e);
 		}
-	}
-
-	public List<Facility> getActiveLaboratoriesByDisease(Disease disease, boolean includeOtherFacility, Facility facility) {
-		DiseaseConfiguration diseaseConfiguration = DatabaseHelper.getDiseaseConfigurationDao().getDiseaseConfiguration(disease);
-		List<Facility> facilities = DatabaseHelper.getDiseaseConfigurationDao().getDiseaseFacilities(diseaseConfiguration);
-
-		if (facilities.size() < 1) {
-			facilities = getActiveLaboratories(includeOtherFacility);
-		}
-
-		if (facility != null) {
-			//check if facility is not in list and add
-			if (!facilities.contains(facility)) {
-				facilities.add(facility);
-			}
-		}
-
-		return facilities;
 	}
 
 	@Override

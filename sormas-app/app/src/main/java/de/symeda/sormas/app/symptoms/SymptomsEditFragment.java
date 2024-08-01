@@ -206,25 +206,6 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 				contentBinding.symptomsCongenitalHeartDiseaseDetails.setVisibility(GONE);
 			}
 		});
-
-		if(disease == Disease.CSM){
-			contentBinding.symptomsMusclePain.setVisibility(GONE);
-			contentBinding.symptomsAnorexiaAppetiteLoss.setVisibility(GONE);
-			contentBinding.symptomsDiarrhea.setVisibility(GONE);
-			contentBinding.symptomsEyePainLightSensitive.setVisibility(GONE);
-			contentBinding.symptomsJointPain.setVisibility(GONE);
-			contentBinding.symptomsPurpuricRash.setVisibility(GONE);
-			contentBinding.symptomsSkinRash.setVisibility(GONE);
-			contentBinding.symptomsNausea.setVisibility(GONE);
-			contentBinding.symptomsRefusalFeedorDrink.setVisibility(GONE);
-			contentBinding.symptomsVomiting.setVisibility(GONE);
-			contentBinding.symptomsConfusedDisoriented.setVisibility(GONE);
-			contentBinding.symptomsHyperglycemia.setVisibility(GONE);
-			contentBinding.symptomsHypoglycemia.setVisibility(GONE);
-			contentBinding.symptomsMeningealSigns.setVisibility(GONE);
-			contentBinding.symptomsSepsis.setVisibility(GONE);
-			contentBinding.symptomsShock.setVisibility(GONE);
-		}
 	}
 
 	private void initSymptomFields(FragmentSymptomsEditLayoutBinding contentBinding) {

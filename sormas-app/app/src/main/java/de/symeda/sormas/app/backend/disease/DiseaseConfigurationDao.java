@@ -18,27 +18,19 @@ package de.symeda.sormas.app.backend.disease;
 import android.util.Log;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.app.backend.common.AbstractAdoDao;
-import de.symeda.sormas.app.backend.common.DatabaseHelper;
-import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.util.DiseaseConfigurationCache;
 
 public class DiseaseConfigurationDao extends AbstractAdoDao<DiseaseConfiguration> {
 
-	private Dao<DiseaseFacility, Long> diseaseFacilityDao;
-
-	public DiseaseConfigurationDao(Dao<DiseaseConfiguration, Long> innerDao, Dao<DiseaseFacility, Long> diseaseFacilityDao) {
+	public DiseaseConfigurationDao(Dao<DiseaseConfiguration, Long> innerDao) {
 		super(innerDao);
-		this.diseaseFacilityDao = diseaseFacilityDao;
 	}
 
 	@Override
@@ -63,68 +55,15 @@ public class DiseaseConfigurationDao extends AbstractAdoDao<DiseaseConfiguration
 		}
 	}
 
-	public List<Facility> getDiseaseFacilities(DiseaseConfiguration diseaseConfiguration) {
-		diseaseConfiguration.setFacilities(
-				loadDiseaseFacility(diseaseConfiguration.getId()).stream()
-						.map(diseaseFacility -> DatabaseHelper.getFacilityDao().queryForId(diseaseFacility.getFacility().getId()))
-						.collect(Collectors.toList()));
-
-		List<Facility> facilities = diseaseConfiguration.getFacilities();
-		return facilities;
-	}
-
-	private List<DiseaseFacility> loadDiseaseFacility(Long diseaseId) {
-		try {
-			QueryBuilder builder = diseaseFacilityDao.queryBuilder();
-			Where where = builder.where();
-			where.eq(DiseaseConfiguration.TABLE_NAME + "_id", diseaseId);
-			return (List<DiseaseFacility>) builder.query();
-		} catch (SQLException e) {
-			Log.e(getTableName(), "Could not perform loadUserRoles");
-			throw new RuntimeException(e);
-		}
-	}
-
 	@Override
 	public void create(DiseaseConfiguration data) throws SQLException {
-		if (data == null)
-			return;
 		super.create(data);
 		DiseaseConfigurationCache.reset();
-		if (data.getFacilities() != null) {
-			for (Facility facility : data.getFacilities()) {
-				int resultRowCount = diseaseFacilityDao.create(new DiseaseFacility(data, facility));
-				if (resultRowCount < 1)
-					throw new SQLException(
-							"Database entry was not created - go back and try again.\n" + "Type: " + DiseaseFacility.class.getSimpleName() + ", Facility-UUID: "
-									+ data.getUuid());
-			}
-		}
-
 	}
 
 	@Override
 	protected void update(DiseaseConfiguration data) throws SQLException {
-		if (data == null)
-			return;
-
 		super.update(data);
 		DiseaseConfigurationCache.reset();
-
-		// 1. Delete existing DiseaseFacility
-		DeleteBuilder<DiseaseFacility, Long> diseaseFacilityLongDeleteBuilder = diseaseFacilityDao.deleteBuilder();
-		diseaseFacilityLongDeleteBuilder.where().eq(DiseaseFacility.DISEASE_CONFIGURATION + "_id", data);
-		diseaseFacilityLongDeleteBuilder.delete();
-
-		// 2. Create new DiseaseFacility
-		if (data.getFacilities() != null) {
-			for (Facility facility : data.getFacilities()) {
-				int resultRowCount = diseaseFacilityDao.create(new DiseaseFacility(data, facility));
-				if (resultRowCount < 1)
-					throw new SQLException(
-							"Database entry was not created - go back and try again.\n" + "Type: " + DiseaseFacility.class.getSimpleName() + ", Facility-UUID: "
-									+ data.getUuid());
-			}
-		}
 	}
 }

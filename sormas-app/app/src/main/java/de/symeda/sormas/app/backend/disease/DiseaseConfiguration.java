@@ -29,8 +29,6 @@ import com.j256.ormlite.table.DatabaseTable;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.utils.AgeGroupUtils;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
-import de.symeda.sormas.app.backend.facility.Facility;
-import de.symeda.sormas.app.util.MetaProperty;
 
 @Entity(name = DiseaseConfiguration.TABLE_NAME)
 @DatabaseTable(tableName = DiseaseConfiguration.TABLE_NAME)
@@ -80,8 +78,6 @@ public class DiseaseConfiguration extends AbstractDomainObject {
 	private String ageGroupsString;
 
 	private List<String> ageGroups;
-
-	private List<Facility> facilities = null;
 
 	public Disease getDisease() {
 		return disease;
@@ -195,14 +191,5 @@ public class DiseaseConfiguration extends AbstractDomainObject {
 	@Override
 	public String getI18nPrefix() {
 		return I18N_PREFIX;
-	}
-
-	@MetaProperty
-	public List<Facility> getFacilities() {
-		return facilities;
-	}
-
-	public void setFacilities(List<Facility> facilities) {
-		this.facilities = facilities;
 	}
 }

@@ -15,15 +15,11 @@
 
 package de.symeda.sormas.app.backend.disease;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import de.symeda.sormas.api.PostResponse;
 import de.symeda.sormas.api.disease.DiseaseConfigurationDto;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
-import de.symeda.sormas.app.backend.common.DatabaseHelper;
-import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.rest.NoConnectionException;
 import de.symeda.sormas.app.rest.RetroProvider;
 import retrofit2.Call;
@@ -69,15 +65,6 @@ public class DiseaseConfigurationDtoHelper extends AdoDtoHelper<DiseaseConfigura
 		target.setExtendedClassification(source.getExtendedClassification());
 		target.setExtendedClassificationMulti(source.getExtendedClassificationMulti());
 		target.setAgeGroups(source.getAgeGroups());
-		if (source.getFacilities().size() > 0) {
-			List<Facility> facilities = Optional.of(target).map(DiseaseConfiguration::getFacilities).orElseGet(LinkedList::new);
-			target.setFacilities(facilities);
-			facilities.clear();
-			source.getFacilities()
-					.stream()
-					.map(userRoleReferenceDto -> DatabaseHelper.getFacilityDao().getByReferenceDto(userRoleReferenceDto))
-					.forEach(facilities::add);
-		}
 	}
 
 	@Override

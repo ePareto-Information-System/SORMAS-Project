@@ -172,7 +172,6 @@ public class ContactDtoHelper extends PersonDependentDtoHelper<Contact, ContactD
 		target.setFollowUpStatusChangeDate(source.getFollowUpStatusChangeDate());
 		target.setFollowUpStatusChangeUser(DatabaseHelper.getUserDao().getByReferenceDto(source.getFollowUpStatusChangeUser()));
 		target.setVaccinationStatus(source.getVaccinationStatus());
-		target.setContactTransmissionClassification(source.getContactTransmissionClassification());
 	}
 
 	@Override
@@ -328,7 +327,6 @@ public class ContactDtoHelper extends PersonDependentDtoHelper<Contact, ContactD
 	@Override
 	protected long getApproximateJsonSizeInBytes() {
 		return ContactDto.APPROXIMATE_JSON_SIZE_IN_BYTES;
-		//target.setContactTransmissionClassification(source.getContactTransmissionClassification());
 	}
 
 	public static ContactReferenceDto toReferenceDto(Contact ado) {

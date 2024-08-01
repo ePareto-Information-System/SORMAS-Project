@@ -31,7 +31,6 @@
         <import type="de.symeda.sormas.api.person.CauseOfDeath" />
         <import type="de.symeda.sormas.api.person.Salutation" />
         <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
-        <import type="de.symeda.sormas.api.utils.Diseases" />
         <import type="de.symeda.sormas.api.i18n.I18nProperties" />
         <import type="de.symeda.sormas.api.i18n.Strings" />
         <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
@@ -75,13 +74,6 @@
                     android:id="@+id/person_lastName"
                     app:required="true"
                     app:value="@={data.lastName}"
-                    app:imeOptions="actionNext"
-                    style="@style/ControlSecondOfTwoColumnsStyle" />
-
-                <de.symeda.sormas.app.component.controls.ControlTextEditField
-                    android:id="@+id/person_otherName"
-                    app:required="false"
-                    app:value="@={data.otherName}"
                     app:imeOptions="actionNext"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
@@ -257,12 +249,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-               <!-- <de.symeda.sormas.app.component.controls.ControlSpinnerField
-                    android:id="@+id/person_disease"
-                    app:value="@={data.disease}"
-                    app:required="true"
-                    style="@style/ControlSingleColumnStyle" />-->
-
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/person_causeOfDeath"
                     app:value="@={data.causeOfDeath}"
@@ -354,11 +340,6 @@
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/person_passportNumber"
                     app:value="@={data.passportNumber}"
-                    style="@style/ControlFirstOfTwoColumnsStyle" />
-
-                <de.symeda.sormas.app.component.controls.ControlTextEditField
-                    android:id="@+id/person_ghanacardr"
-                    app:value="@={data.ghanaCard}"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
@@ -644,7 +625,6 @@
             <ImageView style="@style/FullHorizontalDividerStyle" />
 
             <TextView
-                android:id="@+id/heading_additional_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/heading_additional_details"

@@ -100,7 +100,6 @@ import de.symeda.sormas.app.backend.disease.DiseaseConfiguration;
 import de.symeda.sormas.app.backend.disease.DiseaseConfigurationDao;
 import de.symeda.sormas.app.backend.environment.Environment;
 import de.symeda.sormas.app.backend.environment.EnvironmentDao;
-import de.symeda.sormas.app.backend.disease.DiseaseFacility;
 import de.symeda.sormas.app.backend.epidata.EpiData;
 import de.symeda.sormas.app.backend.epidata.EpiDataDao;
 import de.symeda.sormas.app.backend.event.Event;
@@ -293,7 +292,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				TableUtils.clearTable(connectionSource, Area.class);
 				TableUtils.clearTable(connectionSource, Campaign.class);
 				TableUtils.clearTable(connectionSource, CampaignFormMeta.class);
-				TableUtils.clearTable(connectionSource, DiseaseFacility.class);
+
 				ConfigProvider.init(instance.context);
 			}
 
@@ -378,7 +377,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, Campaign.class);
 			TableUtils.createTable(connectionSource, CampaignFormData.class);
 			TableUtils.createTable(connectionSource, CampaignFormMeta.class);
-			TableUtils.createTable(connectionSource, DiseaseFacility.class);
 			TableUtils.createTable(connectionSource, LbdsSync.class);
 			TableUtils.createTable(connectionSource, Environment.class);
 		} catch (SQLException e) {
@@ -3062,6 +3060,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(DiseaseConfiguration.class).executeRaw("ALTER TABLE diseaseConfiguration ADD COLUMN ageGroupsString text;");
 				getDao(DiseaseConfiguration.class).executeRaw("UPDATE diseaseConfiguration SET changeDate = 0;");
 
+
+
 			case 343:
 				currentVersion = 343;
 				getDao(Task.class).executeRaw("ALTER TABLE tasks ADD COLUMN assignedByUser_id BIGINT REFERENCES users(id);");
@@ -3100,54 +3100,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(FeatureConfiguration.class).executeRaw("DELETE FROM featureConfiguration WHERE featureType = 'DASHBOARD';");
 
 				// ATTENTION: break should only be done after last version
-			case 216:
-				currentVersion = 216;
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN caseTransmissionClassification varchar(512);");
-
-			case 338:
-				currentVersion = 338;
-				getDao(Contact.class).executeRaw("ALTER TABLE contacts ADD COLUMN contactTransmissionClassification varchar(512);");
-
-			case 339:
-					currentVersion = 339;
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN vaccinationType varchar(256);");
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN vaccinationDate timestamp;");
-			case 340:
-					currentVersion = 340;
-				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN ghanaCard varchar(256) NULL;");
-				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN otherName varchar(256) NULL;");
-
-				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN sampleMaterialRequested boolean;");
-				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN ipSampleSent varchar(255);");
-				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN ipSampleResults varchar(512);");
-				getDao(Sample.class).executeRaw("ALTER TABLE samples ALTER COLUMN sampleMaterial DROP NOT NULL;");
-				getDao(Sample.class).executeRaw("ALTER TABLE samples ALTER COLUMN samplePurpose DROP NOT NULL;");
-
-				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN afpFacilityOptions varchar(255) NULL;");
-
-				getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN landmark varchar(255) NULL;");
-				getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN afpFacilityOptions varchar(255) NULL;");
-
-				getDao(Facility.class).executeRaw("ALTER TABLE facility ADD COLUMN landmark varchar(255) NULL;");
-				getDao(Facility.class).executeRaw("ALTER TABLE facility ADD COLUMN facilityAfpType varchar(255) NULL;");
-				getDao(Facility.class).executeRaw("ALTER TABLE facility ADD COLUMN facility_AfpType varchar(255) NULL;");
-
-			case 341:
-					currentVersion = 341;
-				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN sampleMaterialTypeForYF boolean;");
-			case 342:
-					currentVersion = 342;
-				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN disease varchar(255) NULL;");
-			case 343:
-				currentVersion = 343;
-					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN disease varchar(255) NULL;");
-			case 344:
-					currentVersion = 344;
-					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN pathogentestresult varchar(255) NULL;");
-			case 345:
-					currentVersion = 345;
-					getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN landMark varchar(255) NULL;");
-					// ATTENTION: break should only be done after last version
 				break;
 
 			// update
@@ -4070,7 +4022,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				} else if (type.equals(UserRole.class)) {
 					dao = (AbstractAdoDao<ADO>) new UserRoleDao((Dao<UserRole, Long>) innerDao);
 				} else if (type.equals(DiseaseConfiguration.class)) {
-					dao = (AbstractAdoDao<ADO>) new DiseaseConfigurationDao((Dao<DiseaseConfiguration, Long>) innerDao, super.getDao(DiseaseFacility.class));
+					dao = (AbstractAdoDao<ADO>) new DiseaseConfigurationDao((Dao<DiseaseConfiguration, Long>) innerDao);
 				} else if (type.equals(CustomizableEnumValue.class)) {
 					dao = (AbstractAdoDao<ADO>) new CustomizableEnumValueDao((Dao<CustomizableEnumValue, Long>) innerDao);
 				} else if (type.equals(FeatureConfiguration.class)) {

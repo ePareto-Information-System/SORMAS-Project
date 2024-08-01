@@ -24,7 +24,6 @@ import javax.persistence.Enumerated;
 
 import com.j256.ormlite.table.DatabaseTable;
 
-import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
@@ -40,10 +39,7 @@ public class EpiData extends PseudonymizableAdo {
 
 	public static final String TABLE_NAME = "epidata";
 	public static final String I18N_PREFIX = "EpiData";
-	public static final String DISEASE = "disease";
 
-	@Enumerated(EnumType.STRING)
-	private Disease disease;
 	@Enumerated(EnumType.STRING)
 	private YesNoUnknown exposureDetailsKnown;
 	@Enumerated(EnumType.STRING)
@@ -68,12 +64,6 @@ public class EpiData extends PseudonymizableAdo {
 	public void setExposureDetailsKnown(YesNoUnknown exposureDetailsKnown) {
 		this.exposureDetailsKnown = exposureDetailsKnown;
 	}
-	/*public Disease getDisease() {
-		return disease;
-	}
-	public void setDisease(Disease disease) {
-		this.disease = disease;
-	}*/
 
 	public YesNoUnknown getActivityAsCaseDetailsKnown() {
 		return activityAsCaseDetailsKnown;
