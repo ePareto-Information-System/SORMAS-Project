@@ -14935,3 +14935,7 @@ ALTER TABLE symptoms ADD COLUMN postpartum VARCHAR(255);
 ALTER TABLE symptoms ADD COLUMN pregnant VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (693, 'Added pregnant related fields to symptoms');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+ALTER TABLE signalVerification ALTER COLUMN verified TYPE VARCHAR(20);
+INSERT INTO schema_version (version_number, comment) VALUES (694, 'updated the verified field');
+ALTER TABLE signalVerification ALTER COLUMN description TYPE TEXT;
+INSERT INTO schema_version (version_number, comment) VALUES (695, 'updated the description field');
