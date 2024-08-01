@@ -453,7 +453,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 					ebs.get(Ebs.PERSON_REGISTERING),
 					ebs.get(Ebs.PERSON_DESIGNATION),
 					signalVerification.get(SignalVerification.VERIFICATION_SENT),
-					signalVerification.get(SignalVerification.VERIFICATION_SENT_DATE),
 					signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE),
 					riskAssessment.get(RiskAssessment.RISK_ASSESSMENT),
 					ebsAlert.get(EbsAlert.ACTION_INITIATED),
@@ -558,7 +557,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 					ebs.get(Ebs.PERSON_REGISTERING),
 					ebs.get(Ebs.PERSON_DESIGNATION),
 					signalVerification.get(SignalVerification.VERIFICATION_SENT),
-					signalVerification.get(SignalVerification.VERIFICATION_SENT_DATE),
 					signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE),
 					riskAssessment.get(RiskAssessment.RISK_ASSESSMENT),
 					ebsAlert.get(EbsAlert.ACTION_INITIATED),
@@ -676,9 +674,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 						break;
 					case EbsIndexDto.VERIFICATION_SENT:
 						expression = signalVerification.get(SignalVerification.VERIFICATION_SENT);
-						break;
-					case EbsIndexDto.VERIFICATION_SENT_DATE:
-						expression = signalVerification.get(SignalVerification.VERIFICATION_SENT_DATE);
 						break;
 					case EbsIndexDto.VERIFIED_DATE:
 						expression = signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE);

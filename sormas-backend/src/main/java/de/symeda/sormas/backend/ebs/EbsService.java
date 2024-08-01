@@ -445,9 +445,6 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		if (ebsCriteria.getVerificationSent() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getSignalVerification().get(SignalVerification.VERIFICATION_SENT), ebsCriteria.getVerificationSent()));
 		}
-		if (ebsCriteria.getVerificationSentDate() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getSignalVerification().get(SignalVerification.VERIFICATION_SENT_DATE), ebsCriteria.getVerificationSentDate()));
-		}
 		if (ebsCriteria.getVerifiedDate() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getSignalVerification().get(SignalVerification.VERIFICATION_COMPLETE_DATE), ebsCriteria.getVerifiedDate()));
 		}

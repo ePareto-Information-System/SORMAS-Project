@@ -93,7 +93,6 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 				EbsIndexDto.TRIAGING_DECISION,
 				EbsIndexDto.TRIAGING_DECISION_DATE,
 				EbsIndexDto.VERIFICATION_SENT,
-				EbsIndexDto.VERIFICATION_SENT_DATE,
 				EbsIndexDto.VERIFIED,
 				EbsIndexDto.VERIFIED_DATE,
 				EbsIndexDto.DEATH,
@@ -105,8 +104,6 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 
 
 		((Column<EbsIndexDto, String>) getColumn(EbsIndexDto.UUID)).setRenderer(new UuidRenderer());
-		((Column<EbsIndexDto, Date>) getColumn(EbsIndexDto.VERIFICATION_SENT_DATE))
-			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(userLanguage)));
 		((Column<EbsIndexDto, Date>) getColumn(EbsIndexDto.VERIFIED_DATE))
 			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(userLanguage)));
 		addItemClickListener(new ShowDetailsListener<>(EbsIndexDto.UUID, e -> ControllerProvider.getEbsController().navigateToData(e.getUuid())));
