@@ -38,7 +38,6 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.AccessDeniedException;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
-import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.backend.FacadeHelper;
 import de.symeda.sormas.backend.common.AbstractCoreFacadeEjb;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
