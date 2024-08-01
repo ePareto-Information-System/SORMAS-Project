@@ -1098,6 +1098,7 @@ public interface Strings {
 	String messageEventsDearchived = "messageEventsDearchived";
 	String seniorOfficials = "seniorOfficials";
 	String referredNotifs = "referredNotifs";
+	String verifyNotifs = "verifyNotifs";
 	String messageEventsDeleted = "messageEventsDeleted";
 	String messageEventsEdited = "messageEventsEdited";
 	String messageEventsEditedExceptArchived = "messageEventsEditedExceptArchived";
