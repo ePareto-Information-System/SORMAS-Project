@@ -190,7 +190,6 @@ public class HospitalizationDto extends EntityDto {
 	@Override
 	public HospitalizationDto clone() throws CloneNotSupportedException {
 		HospitalizationDto clone = (HospitalizationDto) super.clone();
-		clone.setLocationType((LocationDto) getLocationType().clone());
 
 		return clone;
 	}

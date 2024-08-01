@@ -640,9 +640,6 @@ public class Hospitalization extends AbstractDomainObject {
 
 	@OneToOne(cascade = CascadeType.ALL)
 	public Location getLocationType() {
-		if (locationType == null) {
-			locationType = new Location();
-		}
 		return locationType;
 	}
 
