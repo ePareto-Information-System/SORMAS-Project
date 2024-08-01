@@ -507,11 +507,11 @@ public class EbsController {
 
 	public boolean isSignalVerified(String ebsUuid) {
 		EbsDto ebs = findEbs(ebsUuid);
-        return ebs.getSignalVerification().getVerified() == YesNo.NO || ebs.getSignalVerification().getVerified() == null ;
+        return ebs.getSignalVerification().getVerified() == SignalOutcome.NON_EVENT || ebs.getSignalVerification().getVerified() == null ;
     }
 	public boolean isTriagingDiscard(String ebsUuid) {
 		EbsDto ebs = findEbs(ebsUuid);
-        return ebs.getTriaging().getTriagingDecision() == EbsTriagingDecision.DISCARD;
+        return ebs.getTriaging().getTriagingDecision() == EbsTriagingDecision.DISCARD || ebs.getTriaging().getTriagingDecision() == EbsTriagingDecision.MORE_INFORMATION;
     }
 
 	public RiskAssessmentDto createRiskAssessmentComponent(final String ebsUuid,
