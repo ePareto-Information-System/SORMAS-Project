@@ -200,12 +200,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		sequelaeDetails = addCustomField(SEQUELAE_DETAILS, CaseDataDto.class, TextField.class);
 		sequelae.setVisible(false);*/
 
-		addressForm = addField(HospitalizationDto.LOCATION_TYPE, new LocationEditForm(
-				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-				UiFieldAccessCheckers.getNoop(), disease));
-		addressForm.setCaption(null);
-		addressForm = (LocationEditForm) getFieldGroup().getField(HospitalizationDto.LOCATION_TYPE);
-
 		Label previousHospitalizationsHeadingLabel = new Label(I18nProperties.getString(Strings.headingPreviousHospitalizations));
 		previousHospitalizationsHeadingLabel.addStyleName(H3);
 		getContent().addComponent(previousHospitalizationsHeadingLabel, PREVIOUS_HOSPITALIZATIONS_HEADING_LOC);
@@ -300,6 +294,13 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 				addField(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS, PreviousHospitalizationsField.class);
 
 		NullableOptionGroup soughtMedicalAttentionField = addField(HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, NullableOptionGroup.class);
+
+		addressForm = addField(HospitalizationDto.LOCATION_TYPE, new LocationEditForm(
+				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
+				UiFieldAccessCheckers.getNoop(), disease));
+		addressForm.setCaption(null);
+		addressForm = (LocationEditForm) getFieldGroup().getField(HospitalizationDto.LOCATION_TYPE);
+
 		ComboBox nameOfFacilityField = addInfrastructureField(HospitalizationDto.NAME_OF_FACILITY);
 		nameOfFacilityField.setImmediate(true);
 
