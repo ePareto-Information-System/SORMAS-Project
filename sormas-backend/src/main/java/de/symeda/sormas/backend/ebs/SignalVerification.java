@@ -1,5 +1,6 @@
 package de.symeda.sormas.backend.ebs;
 
+import de.symeda.sormas.api.ebs.SignalOutcome;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 
@@ -21,7 +22,6 @@ public class SignalVerification extends AbstractDomainObject {
 
     public static final String VERIFICATION_SENT = "verificationSent";
     public static final String VERIFIED = "verified";
-    public static final String VERIFICATION_SENT_DATE = "verificationSentDate";
     public static final String VERIFICATION_COMPLETE_DATE = "verificationCompleteDate";
     public static final String DATE_OF_OCCURRENCE = "dateOfOccurrence";
     public static final String NUMBER_OF_PERSON_ANIMAL = "numberOfPersonAnimal";
@@ -32,8 +32,7 @@ public class SignalVerification extends AbstractDomainObject {
     public static final String WHY_NOT_VERIFY = "whyNotVerify";
 
     private YesNo verificationSent;
-    private YesNo verified;
-    private Date verificationSentDate;
+    private SignalOutcome verified;
     private Date verificationCompleteDate;
     private Date dateOfOccurrence;
     private String numberOfPersonAnimal;
@@ -51,20 +50,12 @@ public class SignalVerification extends AbstractDomainObject {
         this.verificationSent = verificationSent;
     }
     @Enumerated(EnumType.STRING)
-    public YesNo getVerified() {
+    public SignalOutcome getVerified() {
         return verified;
     }
 
-    public void setVerified(YesNo verified) {
+    public void setVerified(SignalOutcome verified) {
         this.verified = verified;
-    }
-
-    public Date getVerificationSentDate() {
-        return verificationSentDate;
-    }
-
-    public void setVerificationSentDate(Date verificationSentDate) {
-        this.verificationSentDate = verificationSentDate;
     }
 
     public Date getVerificationCompleteDate() {

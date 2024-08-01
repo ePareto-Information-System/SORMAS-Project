@@ -18,7 +18,6 @@ public class SignalVerificationFacadeEjb implements SignalVerificationFacade {
         target = DtoHelper.fillOrBuildEntity(source, target, SignalVerification::new, checkChangeDate);
         target.setVerificationSent(source.getVerificationSent());
         target.setVerified(source.getVerified());
-        target.setVerificationSentDate(source.getVerificationSentDate());
         target.setVerificationCompleteDate(source.getVerificationCompleteDate());
         target.setDateOfOccurrence(source.getDateOfOccurrence());
         target.setNumberOfPersonAnimal(source.getNumberOfPersonAnimal());
@@ -39,7 +38,6 @@ public class SignalVerificationFacadeEjb implements SignalVerificationFacade {
         DtoHelper.fillDto(target, source);
         target.setVerificationSent(source.getVerificationSent());
         target.setVerified(source.getVerified());
-        target.setVerificationSentDate(source.getVerificationSentDate());
         target.setVerificationCompleteDate(source.getVerificationCompleteDate());
         target.setDateOfOccurrence(source.getDateOfOccurrence());
         target.setNumberOfPersonAnimal(source.getNumberOfPersonAnimal());
