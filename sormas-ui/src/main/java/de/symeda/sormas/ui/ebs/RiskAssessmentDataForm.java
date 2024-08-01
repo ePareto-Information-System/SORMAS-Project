@@ -137,5 +137,8 @@ public class RiskAssessmentDataForm extends AbstractEditForm<RiskAssessmentDto> 
         morbidityMortality.addValueChangeListener(commonListener);
         spreadProbability.addValueChangeListener(commonListener);
         controlMeasures.addValueChangeListener(commonListener);
+        controlMeasuresComment.setRequired(true);
+        morbidityMortalityComment.setRequired(true);
+        spreadProbabilityComment.setRequired(true);
     }
 }
