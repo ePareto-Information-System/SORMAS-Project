@@ -243,7 +243,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 humanLabCategoryDetails.setVisible(false);
                 humanLabCategoryDetails.setValue(null);
                 if (ebs.getTriaging().getSupervisorReview() == null) {
-                    reviewSignal(Strings.seniorOfficials,selectedEbs);
+                    reviewSignal(Strings.seniorOfficials);
                 }
                 selectedEbs.getTriaging().setAnimalCommunityCategoryDetails(null);
                 selectedEbs.getTriaging().setAnimalFacilityCategoryDetails(null);
@@ -303,13 +303,12 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         });
         triagingDecision.addValueChangeListener(e->{
             try {
-                var decision = e.getProperty().getValue().toString();
                 if (e.getProperty().getValue().toString().equals("Proceed to verification")) {
                     selectedEbs.getSignalVerification().setVerificationSent(YesNo.YES);
                     selectedEbs.getSignalVerification().setDateOfOccurrence(new Date());
                 } else {
                     selectedEbs.getSignalVerification().setVerificationSent(YesNo.NO);
-                    selectedEbs.getSignalVerification().setVerified(YesNo.NO);
+                    selectedEbs.getSignalVerification().setVerified(SignalOutcome.NON_EVENT);
                 }
             }catch (Exception exception){
                 System.out.println(exception.getMessage());
@@ -326,7 +325,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             }
             else if (e.getProperty().getValue().toString().equals("[NO]")) {
                 if (ebs.getTriaging().getSupervisorReview() != YesNo.NO) {
-                    reviewSignal(Strings.seniorOfficials,selectedEbs);
+                    reviewSignal(Strings.seniorOfficials);
                 }
                 potentialRisk.setVisible(false);
                 potentialRisk.setValue(null);
@@ -370,7 +369,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             }
             else if (e.getProperty().getValue().toString().equals("[YES]")) {
                 if (ebs.getTriaging().getHealthConcern() != YesNo.YES) {
-                    reviewSignal(Strings.referredNotifs,selectedEbs);
+                    reviewSignal(Strings.referredNotifs);
                 }
                 referred.setVisible(true);
             }
@@ -498,7 +497,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 break;
         }
     }
-    public void reviewSignal(String captionsText,EbsDto ebs){
+    public static void reviewSignal(String captionsText){
         Label notificationType =  new Label( String.format(I18nProperties.getString(captionsText),50,50), ContentMode.HTML);
         VerticalLayout verticalLayout = new VerticalLayout();
         notificationType.setStyleName("window-text");
