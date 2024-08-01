@@ -50,7 +50,6 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 
 	public static final String TRIAGING_DECISION_DATE = "triagingDecisionDate";
 	public static final String VERIFICATION_SENT = "verificationSent";
-	public static final String VERIFICATION_SENT_DATE = "verificationSentDate";
 	public static final String VERIFIED_DATE = "verifiedDate";
 	public static final String RISK_STATUS = "riskStatus";
 	public static final String ACTION_INITIATED = "actionInitiated";
@@ -78,7 +77,6 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	private String personRegistering;
 	private String personDesignation;
 	private EbsVerificationSent verificationSent;
-	private EbsVerificationSentDate verificationSentDate;
 	private EbsVerifiedDate verifiedDate;
 	private EbsRiskStatus riskStatus;
 	private EbsActionInitiated actionInitiated;
@@ -98,13 +96,12 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 			String informantName,
 			String informantTel,
 			SignalCategory signalCategory,
-			YesNo verified,
+			SignalOutcome verified,
 			String death,
 			Date decisionDate,
 			String personRegistering,
 			String personDesignation,
 			YesNo verificationSent,
-			Date verificationSentDate,
 			Date verifiedDate,
 			RiskAssesment riskStatus,
 			YesNo actionInitiated,
@@ -134,7 +131,6 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		this.personDesignation = personDesignation;
 		this.personRegistering = personRegistering;
 		this.verificationSent = new EbsVerificationSent(verificationSent);
-		this.verificationSentDate = new EbsVerificationSentDate(verificationSentDate);
 		this.verifiedDate = new EbsVerifiedDate(verifiedDate);
 		this.riskStatus = new EbsRiskStatus(riskStatus);
 		this.actionInitiated = new EbsActionInitiated(actionInitiated);
@@ -195,10 +191,6 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		return getExtensionVerificationSent().getVerificationSent();
 	}
 
-	public Date getVerificationSentDate() {
-		return getEbsVerificationSentDate().getVerificationSentDate();
-	}
-
 	public Date getVerifiedDate() {
 		return getEbsVerifiedDate().getVerifiedDate();
 	}
@@ -246,7 +238,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		return new EbsReferenceDto(getUuid(), getTriageDate());
 	}
 
-	public YesNo getVerified() {
+	public SignalOutcome getVerified() {
 		return getEbsVerified().getVerified();
 	}
 
@@ -273,10 +265,6 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 
 	public EbsVerificationSent getExtensionVerificationSent() {
 		return verificationSent;
-	}
-
-	public EbsVerificationSentDate getEbsVerificationSentDate() {
-		return verificationSentDate;
 	}
 
 	public EbsVerifiedDate getEbsVerifiedDate() {
@@ -394,34 +382,18 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 
 	public static class EbsVerified implements Serializable, HasCaption {
 
-		private final YesNo verified;
+		private final SignalOutcome verified;
 
-		public EbsVerified(YesNo verified) {
+		public EbsVerified(SignalOutcome verified) {
 			this.verified = verified;
 		}
 
-		public YesNo getVerified() {
+		public SignalOutcome getVerified() {
 			return verified;
 		}
 
 		public String buildCaption() {
 			return SignalVerificationReferenceDto.buildCaption(verified);
-		}
-	}
-
-	public static class EbsVerificationSentDate implements Serializable, HasCaption {
-		private final Date verificationSentDate;
-
-		public EbsVerificationSentDate(Date verificationSentDate) {
-			this.verificationSentDate = verificationSentDate;
-		}
-
-		public Date getVerificationSentDate() {
-			return verificationSentDate;
-		}
-
-		public String buildCaption() {
-			return SignalVerificationReferenceDto.buildCaption(verificationSentDate);
 		}
 	}
 
