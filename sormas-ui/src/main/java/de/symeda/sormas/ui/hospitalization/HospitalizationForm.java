@@ -321,6 +321,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		nameOfFacilityField.setImmediate(true);
 
 		addressForm.setNameOfFacilityField(nameOfFacilityField);
+		addressForm.hideForHospitalizationForm();
 
 		DateField dateOfVisitHospital = addField(HospitalizationDto.DATE_OF_VISIT_HOSPITAL, DateField.class);
 		physicianName = addField(HospitalizationDto.PHYSICIAN_NAME, TextField.class);
