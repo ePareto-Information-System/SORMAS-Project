@@ -491,6 +491,64 @@ public class EbsController {
 		return editView;
 	}
 
+	public CommitDiscardWrapperComponent<RiskAssessmentDataForm> getRiskAssessmenteditComponent(final String ebsUuid,
+																									 boolean isEditAllowed,RiskAssessmentDto riskAssessmentDto) {
+		EbsDto ebs = findEbs(ebsUuid);
+		RiskAssessmentDataForm riskAssessmentDataForm = new RiskAssessmentDataForm(
+				ebs,
+				EbsDto.class,
+				ebs.isPseudonymized(),
+				ebs.isInJurisdiction(),
+				isEditAllowed);
+
+		riskAssessmentDataForm.setValue(riskAssessmentDto);
+		final CommitDiscardWrapperComponent<RiskAssessmentDataForm> editView = new CommitDiscardWrapperComponent<RiskAssessmentDataForm>(
+				riskAssessmentDataForm,
+				riskAssessmentDataForm.getFieldGroup());
+		editView.getDiscardButton().setCaption("Cancel");
+		editView.addCommitListener(() -> {
+			ebs.setRiskAssessment(riskAssessmentDataForm.getValue());
+			riskAssessmentDto.setRiskAssessment(riskAssessmentDataForm.getValue().getRiskAssessment());
+			FacadeProvider.getRiskAssessmentFacade().saveRisk(riskAssessmentDto);
+			FacadeProvider.getEbsFacade().save(ebs);
+			SormasUI.refreshView();
+			Notification notification =  Notification.show(I18nProperties.getString(Strings.messageRiskAssessmentSavedShort), TRAY_NOTIFICATION);
+			showAssessmentCaseDialog(riskAssessmentDto);
+			notification.addCloseListener(e -> {
+				navigateToAlert(ebs.getUuid(),false);
+			});
+		});
+
+
+		return editView;
+	}
+
+	public CommitDiscardWrapperComponent<EbsAlertDataForm> getEbsCreateAlertEditComponent(final String ebsUuid,
+																					  boolean isEditAllowed,EbsAlertDto ebsAlertDto) {
+		EbsDto ebs = findEbs(ebsUuid);
+		EbsAlertDataForm alertDataForm = new EbsAlertDataForm(
+				ebs,
+				EbsDto.class,
+				ebs.isPseudonymized(),
+				ebs.isInJurisdiction(),
+				isEditAllowed);
+		alertDataForm.setValue(ebsAlertDto);
+		final CommitDiscardWrapperComponent<EbsAlertDataForm> editView = new CommitDiscardWrapperComponent<EbsAlertDataForm>(
+				alertDataForm,
+				alertDataForm.getFieldGroup());
+		editView.getDiscardButton().setCaption("Cancel");
+		editView.addCommitListener(() -> {
+			ebs.setAlert(alertDataForm.getValue());
+			ebsAlertDto.setAlertIssued(alertDataForm.getValue().getAlertIssued());
+			FacadeProvider.getAlertFacade().saveAlert(ebsAlertDto);
+			FacadeProvider.getEbsFacade().save(ebs);
+			SormasUI.refreshView();
+		});
+
+		return editView;
+	}
+
+
 	private void saveEbs(Consumer<EbsSourceType> saveCallback, EbsDto ebsDto) {
 		ebsDto = FacadeProvider.getEbsFacade().save(ebsDto);
 		Notification.show(I18nProperties.getString(Strings.messageEventSaved), Type.WARNING_MESSAGE);
@@ -523,6 +581,24 @@ public class EbsController {
 		}
 		VaadinUiUtil.showModalPopupWindow(createRiskAssessmentComponent, I18nProperties.getString(Strings.headingCreateNewAssessment));
 		return riskAssessmentDto;
+	}
+	public RiskAssessmentDto editRiskAssessmentComponent(final String ebsUuid,
+														   boolean isEditAllowed,RiskAssessmentDto riskAssessmentDto){
+		CommitDiscardWrapperComponent<RiskAssessmentDataForm> createRiskAssessmentComponent = getRiskAssessmenteditComponent(ebsUuid, isEditAllowed,riskAssessmentDto);
+		if (isSignalVerified(ebsUuid)){
+			return null;
+		}
+		VaadinUiUtil.showModalPopupWindow(createRiskAssessmentComponent, I18nProperties.getString(Strings.headingCreateNewAssessment));
+		return riskAssessmentDto;
+	}
+	public EbsAlertDto editAlertComponent(final String ebsUuid,
+														   boolean isEditAllowed,EbsAlertDto ebsAlertDto){
+		CommitDiscardWrapperComponent<EbsAlertDataForm> createAlertComponent = getEbsCreateAlertEditComponent(ebsUuid, isEditAllowed,ebsAlertDto);
+		if (isSignalVerified(ebsUuid)){
+			return null;
+		}
+		VaadinUiUtil.showModalPopupWindow(createAlertComponent, I18nProperties.getString(Strings.headingCreateNewAlert));
+		return ebsAlertDto;
 	}
 	public EbsAlertDto createAlertComponent(final String ebsUuid,
 														   boolean isEditAllowed){
