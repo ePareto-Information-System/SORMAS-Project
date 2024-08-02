@@ -333,22 +333,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		addField(HospitalizationDto.LOCATION_TYPE, addressForm);
 		addressForm.setCaption(null);
 
-		addressForm.getCurrentDisease(disease);
-
-		ComboBox nameOfFacilityField = addInfrastructureField(HospitalizationDto.NAME_OF_FACILITY);
-		nameOfFacilityField.setImmediate(true);*/
-
-	/*	FieldHelper.updateItems(
-				nameOfFacilityField,
-				FacadeProvider.getFacilityFacade()
-						.getAllActiveFacility(false));*/
-
-		addressForm = new LocationEditForm(
-				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-				UiFieldAccessCheckers.getNoop(), disease);
-		addField(HospitalizationDto.LOCATION_TYPE, addressForm);
-		addressForm.setCaption(null);
-
 		ComboBox nameOfFacilityField = addInfrastructureField(HospitalizationDto.NAME_OF_FACILITY);
 		nameOfFacilityField.setImmediate(true);
 

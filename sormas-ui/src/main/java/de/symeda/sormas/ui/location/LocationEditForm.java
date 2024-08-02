@@ -861,7 +861,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	}
 
 	public void hideForHospitalizationForm(){
-		setVisible(false, LocationDto.COMMUNITY);
+		setVisible(false, LocationDto.LOCALITY, LocationDto.CITY, LocationDto.VILLAGE, LocationDto.HOUSE_NUMBER);
 	}
 
 	public void setCountryDisabledWithHint(String hint) {
@@ -1023,11 +1023,6 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 		public void setCoordinates(GeoLatLon coordinates) {
 			this.coordinates = coordinates;
-		}
-	}
-	public void getCurrentDisease(Disease currentDisease){
-		if (currentDisease == Disease.FOODBORNE_ILLNESS){
-
 		}
 	}
 

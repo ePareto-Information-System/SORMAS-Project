@@ -14941,14 +14941,10 @@ UPDATE facility SET type = 'HOSPITAL' WHERE NOT type = 'LABORATORY' AND uuid NOT
 INSERT INTO schema_version (version_number, comment) VALUES (694, 'Added Not facility based Query into facility');
 
 ALTER TABLE hospitalization ADD COLUMN hospitalizationYesNo VARCHAR(55);
-INSERT INTO schema_version (version_number, comment) VALUES (695, 'Added hospitalizationyesno to hospitalization');
-
 ALTER TABLE foodhistory ADD COLUMN numberofpeopleateimplicatedfood Integer;
 ALTER TABLE foodhistory ADD COLUMN numberaffected Integer;
-INSERT INTO schema_version (version_number, comment) VALUES (696, 'Added numberOfPeopleAteImplicatedFood,numberAffected to foodhistory');
-
 ALTER TABLE sixtyday ADD COLUMN specifySources VARCHAR(255);
-INSERT INTO schema_version (version_number, comment) VALUES (697, 'Added specifySources to sixtyday');
+INSERT INTO schema_version (version_number, comment) VALUES (695, 'Added numberOfPeopleAteImplicatedFood,numberAffected to foodhistory, hospitalizationyesno to hospitalization, specifySources to sixtyday');
 
 CREATE TABLE investigationnotes (
               id BIGINT PRIMARY KEY NOT NULL,
@@ -14964,16 +14960,13 @@ CREATE TABLE investigationnotes (
               uuid VARCHAR(512));
 
 ALTER TABLE cases ADD COLUMN investigationnotes_id bigint;
-INSERT INTO schema_version (version_number, comment) VALUES (698, 'Created sixtyday table and Added investigationnotes_id to cases');
-
 ALTER TABLE sixtyday DROP COLUMN investigationnotes;
 ALTER TABLE sixtyday DROP COLUMN suspecteddiagnosis;
 ALTER TABLE sixtyday DROP COLUMN confirmeddiagnosis;
 ALTER TABLE sixtyday DROP COLUMN investigatedby;
 ALTER TABLE sixtyday DROP COLUMN investigatorsignature;
 ALTER TABLE sixtyday DROP COLUMN investigatordate;
-
-INSERT INTO schema_version (version_number, comment) VALUES (699, 'Dropped investigationnotes, suspecteddiagnosis, confirmeddiagnosis etc from sixtyday');
+INSERT INTO schema_version (version_number, comment) VALUES (696, 'Created sixtyday table and Added investigationnotes_id to cases, Dropped investigationnotes, suspecteddiagnosis, confirmeddiagnosis etc from sixtyday');
 
 CREATE TABLE affectedperson (
      id BIGINT PRIMARY KEY NOT NULL,
@@ -14992,19 +14985,16 @@ ALTER TABLE affectedperson ADD COLUMN change_user_id BIGINT,
                            ADD CONSTRAINT fk_change_user_id
                                FOREIGN KEY (change_user_id)
                                    REFERENCES users (id);
-INSERT INTO schema_version(version_number, comment) VALUES (700, 'Added fields to implement affectedperson for food history');
+INSERT INTO schema_version(version_number, comment) VALUES (697, 'Created affectedperson, Added fields to implement affectedperson for food history');
 
 ALTER TABLE foodhistory ADD COLUMN changedateofembeddedlists timestamp without time zone;
-INSERT INTO schema_version(version_number, comment) VALUES (701, 'Added changedateofembeddedlists for food history');
-
 ALTER TABLE foodhistory DROP COLUMN numberaffected;
 ALTER TABLE foodhistory ADD COLUMN numberaffected VARCHAR(255);
-INSERT INTO schema_version(version_number, comment) VALUES (702, 'Dropped and readded  numberaffected food history');
-
 ALTER TABLE hospitalization ADD column location_id BIGINT;
 ALTER TABLE hospitalization ADD column locationtype_id BIGINT;
 ALTER TABLE hospitalization ADD CONSTRAINT fk_hospitalization_location_id FOREIGN KEY (location_id) REFERENCES location (id);
 ALTER TABLE hospitalization ADD CONSTRAINT fk_hospitalization_locationtype_id FOREIGN KEY (locationtype_id) REFERENCES location (id);
+INSERT INTO schema_version(version_number, comment) VALUES (698, 'Added changedateofembeddedlists, Dropped and re-added  numberaffected food history, added location ref to hospitalization');
 
 INSERT INTO schema_version(version_number, comment) VALUES (703, 'Added region, disctrict, sub-district to hospitalization');
 -- CREATE TABLE FormEntities (
