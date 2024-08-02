@@ -162,6 +162,9 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private ComboBox subcontinent;
 	private ComboBox country;
 	private ComboBox region;
+	private ComboBox district;
+	private ComboBox community;
+	private ComboBox nameOfFacilityField;
 	private ComboBox areaType;
 	private TextField contactPersonFirstName;
 	private TextField contactPersonLastName;
@@ -181,6 +184,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private TextField  houseNumberField;
 	private TextField residentialAddress;
 	private Disease caseDisease;
+	private ComboBox facilityName;
 
 	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers) {
 		super(LocationDto.class, LocationDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers);
@@ -332,9 +336,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		country = addInfrastructureField(LocationDto.COUNTRY);
 		country.setVisible(false);
 		region = addInfrastructureField(LocationDto.REGION);
-		ComboBox district = addInfrastructureField(LocationDto.DISTRICT);
-		ComboBox community = addInfrastructureField(LocationDto.COMMUNITY);
+		district = addInfrastructureField(LocationDto.DISTRICT);
+		community = addInfrastructureField(LocationDto.COMMUNITY);
 		community.setCaption("Sub-District");
+		facilityName = new ComboBox("Facility");
 
 		continent.setVisible(false);
 		subcontinent.setVisible(false);
@@ -443,6 +448,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 			RegionReferenceDto regionDto = (RegionReferenceDto) e.getProperty().getValue();
 			FieldHelper
 				.updateItems(district, regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
+			updateFacilities();
 		});
 		district.addValueChangeListener(e -> {
 			DistrictReferenceDto districtDto = (DistrictReferenceDto) e.getProperty().getValue();
@@ -472,6 +478,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 					FacadeProvider.getFacilityFacade()
 						.getActiveFacilitiesByDistrictAndType(districtDto, (FacilityType) facilityType.getValue(), true, false, true, true));
 			}
+			updateFacilities();
 		});
 		community.addValueChangeListener(e -> {
 			CommunityReferenceDto communityDto = (CommunityReferenceDto) e.getProperty().getValue();
@@ -490,6 +497,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 									false, true, true)
 							: null);
 			}
+			updateFacilities();
 		});
 		skipFacilityTypeUpdate = false;
 		facilityTypeGroup.addValueChangeListener(e -> {
@@ -651,6 +659,27 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 		// Set initial visiblity of facility-contactperson-details (should only be visible if at least a facilityType has been selected)
 		setFacilityContactPersonFieldsVisible(facilityType.getValue() != null, true);
+	}
+
+	private void updateFacilities() {
+		DistrictReferenceDto selectedDistrict = (DistrictReferenceDto) district.getValue();
+		CommunityReferenceDto selectedCommunity = (CommunityReferenceDto) community.getValue();
+
+		List<FacilityReferenceDto> facilities = null;
+		if (selectedCommunity != null) {
+			facilities = FacadeProvider.getFacilityFacade().getActiveHospitalsByCommunity(selectedCommunity, false, false, false);
+		} else if (selectedDistrict != null) {
+			facilities = FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(selectedDistrict, false, false, false);
+		}
+
+		if (nameOfFacilityField != null) {
+			FieldHelper.updateItems(nameOfFacilityField, facilities);
+		}
+
+
+	}
+	public void setNameOfFacilityField(ComboBox nameOfFacilityField) {
+		this.nameOfFacilityField = nameOfFacilityField;
 	}
 
 	@Override
@@ -978,6 +1007,11 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 		public void setCoordinates(GeoLatLon coordinates) {
 			this.coordinates = coordinates;
+		}
+	}
+	public void getCurrentDisease(Disease currentDisease){
+		if (currentDisease == Disease.FOODBORNE_ILLNESS){
+
 		}
 	}
 

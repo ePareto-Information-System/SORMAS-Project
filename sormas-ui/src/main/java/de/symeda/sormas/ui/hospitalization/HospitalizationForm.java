@@ -295,19 +295,32 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		NullableOptionGroup soughtMedicalAttentionField = addField(HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, NullableOptionGroup.class);
 
-		addressForm = addField(HospitalizationDto.LOCATION_TYPE, new LocationEditForm(
+		/*addressForm = addField(HospitalizationDto.LOCATION_TYPE, new LocationEditForm(
 				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
 				UiFieldAccessCheckers.getNoop(), disease));
 		addressForm.setCaption(null);
 		addressForm = (LocationEditForm) getFieldGroup().getField(HospitalizationDto.LOCATION_TYPE);
 
+		addressForm.getCurrentDisease(disease);
+
+		ComboBox nameOfFacilityField = addInfrastructureField(HospitalizationDto.NAME_OF_FACILITY);
+		nameOfFacilityField.setImmediate(true);*/
+
+	/*	FieldHelper.updateItems(
+				nameOfFacilityField,
+				FacadeProvider.getFacilityFacade()
+						.getAllActiveFacility(false));*/
+
+		addressForm = new LocationEditForm(
+				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
+				UiFieldAccessCheckers.getNoop(), disease);
+		addField(HospitalizationDto.LOCATION_TYPE, addressForm);
+		addressForm.setCaption(null);
+
 		ComboBox nameOfFacilityField = addInfrastructureField(HospitalizationDto.NAME_OF_FACILITY);
 		nameOfFacilityField.setImmediate(true);
 
-		FieldHelper.updateItems(
-				nameOfFacilityField,
-				FacadeProvider.getFacilityFacade()
-						.getAllActiveFacility(false));
+		addressForm.setNameOfFacilityField(nameOfFacilityField);
 
 		DateField dateOfVisitHospital = addField(HospitalizationDto.DATE_OF_VISIT_HOSPITAL, DateField.class);
 		physicianName = addField(HospitalizationDto.PHYSICIAN_NAME, TextField.class);
@@ -331,7 +344,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		tickSymptomField.setVisible(false);
 
-		setVisible(false, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.NAME_OF_FACILITY, HospitalizationDto.DATE_OF_VISIT_HOSPITAL,
+		setVisible(false, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.DATE_OF_VISIT_HOSPITAL,
 				HospitalizationDto.PHYSICIAN_NAME, HospitalizationDto.PHYSICIAN_NUMBER, HospitalizationDto.LAB_TEST_CONDUCTED, HospitalizationDto.TYPE_OF_SAMPLE, HospitalizationDto.AGENT_IDENTIFIED, HospitalizationDto.OTHER_SYMPTOM_SELECTED, HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING, HospitalizationDto.DURATION_HOURS);
 
 		previousHospitalizationsHeadingLabel.setVisible(false);
@@ -573,7 +586,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			symptomsHeadingLabel.setVisible(true);
 			tickSymptomField.setVisible(true);
 
-			setVisible(true, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.NAME_OF_FACILITY, HospitalizationDto.AGENT_IDENTIFIED, HospitalizationDto.OTHER_SYMPTOM_SELECTED, HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING, HospitalizationDto.DURATION_HOURS);
+			setVisible(true, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.AGENT_IDENTIFIED, HospitalizationDto.OTHER_SYMPTOM_SELECTED, HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING, HospitalizationDto.DURATION_HOURS);
 
 			FieldHelper.setVisibleWhen(ongoing, Arrays.asList(durationHours), Arrays.asList(YesNo.NO), true);
 			FieldHelper.setVisibleWhen(soughtMedicalAttentionField, Arrays.asList(dateOfVisitHospital, hospitalizedYesNo, labTestConducted, typeOfSample, agentIdentified), Arrays.asList(YesNo.YES), true);
