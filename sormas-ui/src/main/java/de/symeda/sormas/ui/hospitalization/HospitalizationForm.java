@@ -23,6 +23,7 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.vaadin.ui.Component;
 import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.ebs.EbsDto;
@@ -608,8 +609,16 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			setVisible(true, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.AGENT_IDENTIFIED, HospitalizationDto.OTHER_SYMPTOM_SELECTED, HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING, HospitalizationDto.DURATION_HOURS);
 
 			FieldHelper.setVisibleWhen(ongoing, Arrays.asList(durationHours), Arrays.asList(YesNo.NO), true);
-			FieldHelper.setVisibleWhen(soughtMedicalAttentionField, Arrays.asList(dateOfVisitHospital, hospitalizedYesNo, labTestConducted, typeOfSample, agentIdentified), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(soughtMedicalAttentionField, Arrays.asList(dateOfVisitHospital, hospitalizedYesNo, labTestConducted, typeOfSample, agentIdentified, nameOfFacilityField), Arrays.asList(YesNo.YES), true);
 			FieldHelper.setVisibleWhen(hospitalizedYesNo, Arrays.asList(physicianName, physicianNumber), Arrays.asList(YesNo.YES), true);
+
+			FieldHelper.setVisibleWhen(
+					fieldGroup,
+					Arrays.asList(HospitalizationDto.LOCATION_TYPE),
+					(Field) soughtMedicalAttentionField,
+					Arrays.asList(YesNo.YES),
+					true
+			);
 
 		}
 		

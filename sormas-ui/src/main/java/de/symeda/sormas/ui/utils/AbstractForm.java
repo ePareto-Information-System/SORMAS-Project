@@ -44,7 +44,7 @@ public abstract class AbstractForm<T> extends CustomField<T> {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractForm.class);
 
 	protected final String propertyI18nPrefix;
-	private final SormasBeanFieldGroup<T> fieldGroup;
+	public final SormasBeanFieldGroup<T> fieldGroup;
 	private Class<T> type;
 	private List<Field<?>> customFields = new ArrayList<>();
 
