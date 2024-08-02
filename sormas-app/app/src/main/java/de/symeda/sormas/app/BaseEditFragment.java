@@ -18,6 +18,8 @@ package de.symeda.sormas.app;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -32,6 +35,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.OnRebindCallback;
 import androidx.databinding.ViewDataBinding;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -325,4 +329,52 @@ public abstract class BaseEditFragment<TBinding extends ViewDataBinding, TData, 
 //        if (jobTask != null && !jobTask.isCancelled())
 //            jobTask.cancel(true);
 //    }
+
+	public void hideFieldsForDisease(String diseaseName, LinearLayout mainContent) {
+		// Get the relevant fields for the given disease
+		List<String> relevantFields = getFieldsForDisease(diseaseName);
+		if (relevantFields.isEmpty()) {
+			for (int i = 0; i < mainContent.getChildCount(); i++) {
+				View child = mainContent.getChildAt(i);
+				if (child instanceof ControlPropertyEditField) {
+					child.setVisibility(View.VISIBLE);
+				}
+			}
+			return;
+		}
+
+		// Loop through the children of the mainContent and hide fields not in the relevantFields list
+		for (int i = 0; i < mainContent.getChildCount(); i++) {
+			View child = mainContent.getChildAt(i);
+			if (child instanceof ControlPropertyEditField) {
+				String childIdName = getResources().getResourceEntryName(child.getId());
+				if (!relevantFields.contains(childIdName)) {
+					child.setVisibility(View.GONE);
+				} else {
+					child.setVisibility(View.VISIBLE); // Ensure relevant fields are visible
+				}
+			}
+
+		}
+	}
+
+
+	public List<String> getFieldsForDisease(String diseaseName) {
+		// 2D array with diseases and their relevant fields
+		final String[][] caseBasedDiseases = {
+//				{Disease.GUINEA_WORM.getName(), "caseData_disease", "caseData_caseOrigin", "caseData_epidNumber", "caseData_caseClassification"},
+//				{Disease.CORONAVIRUS.getName(), "caseData_disease", "caseData_caseOrigin"}
+		};
+
+		// Loop through the diseases and find the matching disease
+		for (String[] disease : caseBasedDiseases) {
+			if (disease[0].equals(diseaseName)) {
+				// Return the fields as a list
+				return Arrays.asList(Arrays.copyOfRange(disease, 1, disease.length));
+			}
+		}
+
+		// Return an empty list if the disease is not found
+		return new ArrayList<>();
+	}
 }

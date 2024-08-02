@@ -18,6 +18,8 @@ package de.symeda.sormas.app.caze.edit;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.widget.LinearLayout;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -263,6 +265,10 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 				e.getValue() != null && ((CaseNewActivity) getActivity()).getLineListingDiseases().contains(e.getValue()) ? VISIBLE : GONE);
 			updateDiseaseVariantsField(contentBinding);
 			updatePresentConditionField(contentBinding);
+			Disease selectedDisease = (Disease) e.getValue();
+			if (selectedDisease != null) {
+				hideFieldsForDisease(contentBinding.mainContent, selectedDisease.getName());
+			}
 		});
 	}
 
@@ -436,5 +442,10 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 		record.setCaseTransmissionClassification(lastCase.getCaseTransmissionClassification());
 
 		getContentBinding().setData(record);
+	}
+
+	public void hideFieldsForDisease(LinearLayout contentBinding, String selectedDisease) {
+		// TODO Auto-generated method stub
+		super.hideFieldsForDisease(selectedDisease, contentBinding);
 	}
 }
