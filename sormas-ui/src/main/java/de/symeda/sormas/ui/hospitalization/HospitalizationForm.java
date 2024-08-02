@@ -23,6 +23,7 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.vaadin.ui.Component;
 import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.ebs.EbsDto;
@@ -314,7 +315,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		addressForm = new LocationEditForm(
 				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
 				UiFieldAccessCheckers.getNoop(), disease);
-		addField(HospitalizationDto.LOCATION_TYPE, addressForm);
+		Component locationTypeField = addField(HospitalizationDto.LOCATION_TYPE, addressForm);
 		addressForm.setCaption(null);
 
 		ComboBox nameOfFacilityField = addInfrastructureField(HospitalizationDto.NAME_OF_FACILITY);
@@ -322,6 +323,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		addressForm.setNameOfFacilityField(nameOfFacilityField);
 		addressForm.hideForHospitalizationForm();
+		nameOfFacilityField.setVisible(false);
+		locationTypeField.setVisible(false);
 
 		DateField dateOfVisitHospital = addField(HospitalizationDto.DATE_OF_VISIT_HOSPITAL, DateField.class);
 		physicianName = addField(HospitalizationDto.PHYSICIAN_NAME, TextField.class);
@@ -590,8 +593,16 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			setVisible(true, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.AGENT_IDENTIFIED, HospitalizationDto.OTHER_SYMPTOM_SELECTED, HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING, HospitalizationDto.DURATION_HOURS);
 
 			FieldHelper.setVisibleWhen(ongoing, Arrays.asList(durationHours), Arrays.asList(YesNo.NO), true);
-			FieldHelper.setVisibleWhen(soughtMedicalAttentionField, Arrays.asList(dateOfVisitHospital, hospitalizedYesNo, labTestConducted, typeOfSample, agentIdentified), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(soughtMedicalAttentionField, Arrays.asList(dateOfVisitHospital, hospitalizedYesNo, labTestConducted, typeOfSample, agentIdentified, nameOfFacilityField), Arrays.asList(YesNo.YES), true);
 			FieldHelper.setVisibleWhen(hospitalizedYesNo, Arrays.asList(physicianName, physicianNumber), Arrays.asList(YesNo.YES), true);
+
+			FieldHelper.setVisibleWhen(
+					fieldGroup,
+					Arrays.asList(HospitalizationDto.LOCATION_TYPE),
+					(Field) soughtMedicalAttentionField,
+					Arrays.asList(YesNo.YES),
+					true
+			);
 
 		}
 		
