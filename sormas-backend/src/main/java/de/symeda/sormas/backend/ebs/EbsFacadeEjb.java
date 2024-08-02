@@ -484,15 +484,17 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			}
 
 			sortBy(sortProperties, ebsQueryContext);
+
+			cq.orderBy(cb.desc(ebs.get(Ebs.REPORT_DATE_TIME)));
 			cq.distinct(true);
+//			List<EbsIndexDto> results = QueryHelper.getResultList(em, cq, null, null);
 
-			List<EbsIndexDto> results = QueryHelper.getResultList(em, cq, null, null);
-
-			for (EbsIndexDto dto : results) {
-				if (addedIds.add(dto.getId())) {
-					indexList.add(dto);
-				}
-			}
+//			for (EbsIndexDto dto : results) {
+//				if (addedIds.add(dto.getId())) {
+//					indexList.add(dto);
+//				}
+//			}
+			indexList.addAll(QueryHelper.getResultList(em, cq, null, null));
 		});
 		return indexList;
 	}
@@ -589,6 +591,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 			sortBy(sortProperties, ebsQueryContext);
 			cq.distinct(true);
+			cq.orderBy(cb.desc(ebs.get(Ebs.REPORT_DATE_TIME)));
 
 			List<EbsIndexDto> results = QueryHelper.getResultList(em, cq, null, null);
 
