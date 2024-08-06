@@ -667,9 +667,9 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 		List<FacilityReferenceDto> facilities = null;
 		if (selectedCommunity != null) {
-			facilities = FacadeProvider.getFacilityFacade().getActiveHospitalsByCommunity(selectedCommunity, false, false, false);
+			facilities = FacadeProvider.getFacilityFacade().getActiveHospitalsByCommunity(selectedCommunity, true, true, true);
 		} else if (selectedDistrict != null) {
-			facilities = FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(selectedDistrict, false, false, false);
+			facilities = FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(selectedDistrict, true, true, true);
 		}
 
 		if (nameOfFacilityField != null) {
@@ -844,6 +844,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 //		getField(LocationDto.POSTAL_CODE).setVisible(false);
 	}
 
+	public void hideForFoodBorne(){
+		setVisible(false, LocationDto.CITY, LocationDto.VILLAGE, LocationDto.LOCALITY);
+	}
+
 	public void hideForHospitalizationForm(){
 		setVisible(false, LocationDto.COMMUNITY);
 	}
@@ -1007,11 +1011,6 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 		public void setCoordinates(GeoLatLon coordinates) {
 			this.coordinates = coordinates;
-		}
-	}
-	public void getCurrentDisease(Disease currentDisease){
-		if (currentDisease == Disease.FOODBORNE_ILLNESS){
-
 		}
 	}
 

@@ -295,22 +295,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		NullableOptionGroup soughtMedicalAttentionField = addField(HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, NullableOptionGroup.class);
 
-		/*addressForm = addField(HospitalizationDto.LOCATION_TYPE, new LocationEditForm(
-				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-				UiFieldAccessCheckers.getNoop(), disease));
-		addressForm.setCaption(null);
-		addressForm = (LocationEditForm) getFieldGroup().getField(HospitalizationDto.LOCATION_TYPE);
-
-		addressForm.getCurrentDisease(disease);
-
-		ComboBox nameOfFacilityField = addInfrastructureField(HospitalizationDto.NAME_OF_FACILITY);
-		nameOfFacilityField.setImmediate(true);*/
-
-	/*	FieldHelper.updateItems(
-				nameOfFacilityField,
-				FacadeProvider.getFacilityFacade()
-						.getAllActiveFacility(false));*/
-
 		addressForm = new LocationEditForm(
 				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
 				UiFieldAccessCheckers.getNoop(), disease);
@@ -422,7 +406,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 						return ErrorLevel.INFO;
 					}
 
-					@Override
+					@Override 
 					public String getFormattedHtmlMessage() {
 						return I18nProperties.getValidationError(
 								Validations.afterDateSoft,
@@ -581,6 +565,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		}
 
 		if(caze.getDisease() == Disease.FOODBORNE_ILLNESS){
+			addressForm.hideForFoodBorne();
 			hospitalizationHeadingLabel.setVisible(false);
 			facilityField.setVisible(false);
 			symptomsHeadingLabel.setVisible(true);
@@ -589,8 +574,9 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			setVisible(true, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.AGENT_IDENTIFIED, HospitalizationDto.OTHER_SYMPTOM_SELECTED, HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING, HospitalizationDto.DURATION_HOURS);
 
 			FieldHelper.setVisibleWhen(ongoing, Arrays.asList(durationHours), Arrays.asList(YesNo.NO), true);
-			FieldHelper.setVisibleWhen(soughtMedicalAttentionField, Arrays.asList(dateOfVisitHospital, hospitalizedYesNo, labTestConducted, typeOfSample, agentIdentified), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(soughtMedicalAttentionField, Arrays.asList(dateOfVisitHospital, hospitalizedYesNo, labTestConducted), Arrays.asList(YesNo.YES), true);
 			FieldHelper.setVisibleWhen(hospitalizedYesNo, Arrays.asList(physicianName, physicianNumber), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(labTestConducted, Arrays.asList(typeOfSample, agentIdentified), Arrays.asList(YesNo.YES), true);
 
 		}
 		

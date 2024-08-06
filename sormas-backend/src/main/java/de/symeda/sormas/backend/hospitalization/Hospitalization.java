@@ -34,6 +34,7 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.location.Location;
 import org.apache.commons.lang3.StringUtils;
 
@@ -108,7 +109,7 @@ public class Hospitalization extends AbstractDomainObject {
 	private YesNoUnknown patientVentilated;
 	private Date dateFormSentToDistrict;
 	private YesNo soughtMedicalAttention;
-	private FacilityReferenceDto nameOfFacility;
+	private Facility nameOfFacility;
 	private String locationAddress;
 	private Date dateOfVisitHospital;
 	private String physicianName;
@@ -465,11 +466,12 @@ public class Hospitalization extends AbstractDomainObject {
 		this.soughtMedicalAttention = soughtMedicalAttention;
 	}
 
-	public FacilityReferenceDto getNameOfFacility() {
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	public Facility getNameOfFacility() {
 		return nameOfFacility;
 	}
 
-	public void setNameOfFacility(FacilityReferenceDto nameOfFacility) {
+	public void setNameOfFacility(Facility nameOfFacility) {
 		this.nameOfFacility = nameOfFacility;
 	}
 
