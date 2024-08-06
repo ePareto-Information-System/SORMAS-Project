@@ -442,7 +442,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 						return ErrorLevel.INFO;
 					}
 
-					@Override 
+					@Override
 					public String getFormattedHtmlMessage() {
 						return I18nProperties.getValidationError(
 								Validations.afterDateSoft,
@@ -610,14 +610,14 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			setVisible(true, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.AGENT_IDENTIFIED, HospitalizationDto.OTHER_SYMPTOM_SELECTED, HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING, HospitalizationDto.DURATION_HOURS);
 
 			FieldHelper.setVisibleWhen(ongoing, Arrays.asList(durationHours), Arrays.asList(YesNo.NO), true);
-			FieldHelper.setVisibleWhen(soughtMedicalAttentionField, Arrays.asList(dateOfVisitHospital, hospitalizedYesNo, labTestConducted), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(soughtMedicalAttentionField, Arrays.asList(dateOfVisitHospital, hospitalizedYesNo, labTestConducted, nameOfFacilityField), Arrays.asList(YesNo.YES), true);
 			FieldHelper.setVisibleWhen(hospitalizedYesNo, Arrays.asList(physicianName, physicianNumber), Arrays.asList(YesNo.YES), true);
 			FieldHelper.setVisibleWhen(labTestConducted, Arrays.asList(typeOfSample, agentIdentified), Arrays.asList(YesNo.YES), true);
 
 			FieldHelper.setVisibleWhen(
-					fieldGroup,
+					getFieldGroup(),
 					Arrays.asList(HospitalizationDto.LOCATION_TYPE),
-					(Field) soughtMedicalAttentionField,
+					HospitalizationDto.SOUGHT_MEDICAL_ATTENTION,
 					Arrays.asList(YesNo.YES),
 					true
 			);
