@@ -14996,4 +14996,10 @@ ALTER TABLE hospitalization ADD CONSTRAINT fk_hospitalization_location_id FOREIG
 ALTER TABLE hospitalization ADD CONSTRAINT fk_hospitalization_locationtype_id FOREIGN KEY (locationtype_id) REFERENCES location (id);
 INSERT INTO schema_version(version_number, comment) VALUES (698, 'Added changedateofembeddedlists, Dropped and re-added  numberaffected food history, added location ref to hospitalization');
 
+ALTER TABLE hospitalization DROP COLUMN nameoffacility;
+ALTER TABLE hospitalization ADD COLUMN nameoffacility_id bigint;
+ALTER TABLE hospitalization ADD CONSTRAINT fk_hospitalization_nameoffacility_id FOREIGN KEY (nameoffacility_id) REFERENCES facility(id);
+ALTER TABLE hospitalization ADD COLUMN nameoffacilitydetails varchar(512);
+
+INSERT INTO schema_version(version_number, comment) VALUES (699, 'Added nameoffacility reference and established relationship btn hospitalization anf facility');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
