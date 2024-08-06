@@ -14996,7 +14996,6 @@ ALTER TABLE hospitalization ADD CONSTRAINT fk_hospitalization_location_id FOREIG
 ALTER TABLE hospitalization ADD CONSTRAINT fk_hospitalization_locationtype_id FOREIGN KEY (locationtype_id) REFERENCES location (id);
 INSERT INTO schema_version(version_number, comment) VALUES (698, 'Added changedateofembeddedlists, Dropped and re-added  numberaffected food history, added location ref to hospitalization');
 
-INSERT INTO schema_version(version_number, comment) VALUES (703, 'Added region, disctrict, sub-district to hospitalization');
 -- CREATE TABLE FormEntities (
 --     id BIGINT PRIMARY KEY NOT NULL,
 --     name VARCHAR(255),
@@ -15165,4 +15164,6 @@ INSERT INTO schema_version(version_number, comment) VALUES (705, 'Dropped fields
 UPDATE samples SET samplematerial = 'BLOOD' WHERE samplematerial = 'WHOLE_BLOOD';
 INSERT INTO schema_version (version_number, comment) VALUES (706, 'Updated samplematerial column to blood');
 
+
+INSERT INTO schema_version(version_number, comment) VALUES (699, 'Added nameoffacility reference and established relationship btn hospitalization anf facility');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

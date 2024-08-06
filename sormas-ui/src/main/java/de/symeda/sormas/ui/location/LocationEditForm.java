@@ -683,9 +683,9 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 		List<FacilityReferenceDto> facilities = null;
 		if (selectedCommunity != null) {
-			facilities = FacadeProvider.getFacilityFacade().getActiveHospitalsByCommunity(selectedCommunity, false, false, false);
+			facilities = FacadeProvider.getFacilityFacade().getActiveHospitalsByCommunity(selectedCommunity, true, true, true);
 		} else if (selectedDistrict != null) {
-			facilities = FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(selectedDistrict, false, false, false);
+			facilities = FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(selectedDistrict, true, true, true);
 		}
 
 		if (nameOfFacilityField != null) {
@@ -858,6 +858,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 //		getField(LocationDto.HOUSE_NUMBER).setVisible(false);
 //		getField(LocationDto.AREA_TYPE).setVisible(false);
 //		getField(LocationDto.POSTAL_CODE).setVisible(false);
+	}
+
+	public void hideForFoodBorne(){
+		setVisible(false, LocationDto.CITY, LocationDto.VILLAGE, LocationDto.LOCALITY);
 	}
 
 	public void hideForHospitalizationForm(){
