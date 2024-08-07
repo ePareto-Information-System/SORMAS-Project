@@ -916,7 +916,7 @@ public class CaseController {
 	}
 
 	private void transferDataToPerson(CaseCreateForm createForm, PersonDto person) {
-		if(createForm.getValue().getDisease().equals(Disease.MONKEYPOX)){
+		/*if(createForm.getValue().getDisease().equals(Disease.MONKEYPOX)){
 			person.setFirstName(createForm.getPatientFirstName());
 			person.setLastName(createForm.getPatientLastName());
 			person.setOtherName(createForm.getPatientOtherNames());
@@ -925,7 +925,8 @@ public class CaseController {
 			createForm.transferDataToPerson(person);
 		} else{
 			createForm.getPersonCreateForm().transferDataToPerson(person);
-		}
+		}*/
+		createForm.getPersonCreateForm().transferDataToPerson(person);
 	}
 
 	/*private void updateHomeAddress(CaseCreateForm createForm, PersonDto person) {

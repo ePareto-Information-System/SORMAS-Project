@@ -140,12 +140,12 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 			+loc(DOB_NOT_KNOWN_LABEL)
 			+ fluidRowLocs(CaseDataDto.PATIENT_AGE_YEAR, CaseDataDto.PATIENT_AGE_MONTH)
 			+ fluidRowLocs(6, CaseDataDto.PATIENT_SEX)
-			+ fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY)
-			+ fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE)
 			+ fluidRowLocs(DIFFERENT_POINT_OF_ENTRY_JURISDICTION)
 			+ fluidRowLocs(POINT_OF_ENTRY_REGION, POINT_OF_ENTRY_DISTRICT)
 			+ fluidRowLocs(CaseDataDto.POINT_OF_ENTRY, CaseDataDto.POINT_OF_ENTRY_DETAILS)
-			+ fluidRowLocs(CaseDataDto.PERSON);
+			+ fluidRowLocs(CaseDataDto.PERSON)
+            + fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY)
+            + fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
 	//@formatter:on
 
     public CaseCreateForm() {
@@ -613,7 +613,8 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
                         personCreateForm.showPersonalEmail();
                         break;
                     case MONKEYPOX:
-                        handleMPox();
+//                        handleMPox();
+                        handleMonkeyPox();
                         break;
                     default:
                         personCreateForm.showPresentCondition();
@@ -650,6 +651,23 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
         facilityOrHome.setValue(Sets.newHashSet(TypeOfPlace.FACILITY));
 
 
+    }
+
+    private void handleMonkeyPox(){
+        personCreateForm.hideFields();
+        personCreateForm.showFields();
+        reportDate.setVisible(false);
+        reportDate.setRequired(false);
+
+        addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
+
+        Label coorLabel = new Label(I18nProperties.getCaption(Captions.coorLabel));
+        coorLabel.addStyleName(H4);
+        getContent().addComponent(coorLabel, MPOX_COORDINATE_LABEL);
+
+        addFields(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT);
+        addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
+        addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
     }
 
     private void handleMPox() {
