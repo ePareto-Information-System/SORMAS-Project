@@ -477,6 +477,7 @@ public interface Captions {
 	String CaseData_surveillanceOfficer = "CaseData.surveillanceOfficer";
 	String CaseData_reportingOfficerName = "CaseData.reportingOfficerName";
 	String CaseData_reportingOfficerTitle = "CaseData.reportingOfficerTitle";
+	String CaseData_regionOfResidence = "CaseData.regionOfResidence";
 	String CaseData_functionOfReportingOfficer = "CaseData.functionOfReportingOfficer";
 	String CaseData_reportingOfficerContactPhone = "CaseData.reportingOfficerContactPhone";
 	String CaseData_reportingOfficerEmail = "CaseData.reportingOfficerEmail";
