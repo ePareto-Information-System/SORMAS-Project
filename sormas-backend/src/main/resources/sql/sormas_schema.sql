@@ -15008,7 +15008,7 @@ CREATE TABLE forms (
 CREATE TABLE forms_history (LIKE forms);
 CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE ON forms
                                                        FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'forms_history', true);
-INSERT INTO schema_version (version_number, comment) VALUES (695, 'Added forms and form_fields tables');
+INSERT INTO schema_version (version_number, comment) VALUES (694, 'Added forms and form_fields tables');
 
 CREATE TABLE forms_form_fields (
        form_id bigint,
@@ -15026,13 +15026,17 @@ CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE OR DELETE ON forms_form_fields
     FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'forms_form_fields_history', true);
 ALTER TABLE forms_form_fields_history OWNER TO sormas_user;
-INSERT INTO schema_version (version_number, comment) VALUES (696, 'Added forms_form_fields table');
+INSERT INTO schema_version (version_number, comment) VALUES (695, 'Added forms_form_fields table');
 
-ALTER TABLE form_fields DROP COLUMN fieldName;
-ALTER TABLE form_fields ADD COLUMN fieldName text;
-INSERT INTO schema_version (version_number, comment) VALUES (697, 'Changed varchar size for fieldname');
+ALTER TABLE hospitalization DROP COLUMN nameoffacility;
+ALTER TABLE hospitalization ADD COLUMN nameoffacility_id bigint;
+ALTER TABLE hospitalization ADD CONSTRAINT fk_hospitalization_nameoffacility_id FOREIGN KEY (nameoffacility_id) REFERENCES facility(id);
+ALTER TABLE hospitalization ADD COLUMN nameoffacilitydetails varchar(512);
+INSERT INTO schema_version(version_number, comment) VALUES (696, 'Added nameoffacility reference and established relationship btn hospitalization anf facility');
 
-ALTER TABLE form_fields_history DROP COLUMN fieldName;
-ALTER TABLE form_fields_history ADD COLUMN fieldName text;
-INSERT INTO schema_version (version_number, comment) VALUES (698, 'Changed varchar size for fieldname');
+ALTER TABLE cases ADD column regionofresidence_id BIGINT;
+ALTER TABLE cases ADD column districtofresidence_id BIGINT;
+ALTER TABLE cases ADD CONSTRAINT fk_cases_regionofresidence_id FOREIGN KEY (regionofresidence_id) REFERENCES region (id);
+ALTER TABLE cases ADD CONSTRAINT fk_cases_districtofresidence_id FOREIGN KEY (districtofresidence_id) REFERENCES district (id);
+INSERT INTO schema_version(version_number, comment) VALUES (697, 'Added regionofresidence_id, districtofresidence_id to cases and created ref to region, district');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

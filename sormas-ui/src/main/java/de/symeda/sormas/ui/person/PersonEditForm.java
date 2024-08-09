@@ -42,9 +42,7 @@ import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.person.*;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.YesNo;
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.ui.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import com.vaadin.ui.CustomLayout;
@@ -69,7 +67,6 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.person.ApproximateAgeType.ApproximateAgeHelper;
 import de.symeda.sormas.api.utils.DataHelper.Pair;
-import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
@@ -231,6 +228,14 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			+ fluidRowLocs(PersonDto.MOTHERS_NAME, PersonDto.FATHERS_NAME)
 			+ fluidRowLocs(PersonDto.PERSON_CONTACT_DETAILS);
 
+	private final String MPOX_LAYOUT = loc(PERSON_INFORMATION_HEADING_LOC) +
+			fluidRowLocs(PersonDto.UUID, "") +
+			fluidRowLocs(PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.OTHER_NAME) +
+			fluidRow(
+					fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD),
+					fluidRowLocs(PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE_REFERENCE_DATE))
+			+ fluidRowLocs(6, PersonDto.SEX);
+
 	public final Label occupationHeader = new Label(I18nProperties.getString(Strings.headingPersonOccupation));
 	final Label addressHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESS));
 	public final Label addressesHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESSES));
@@ -274,6 +279,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	public TextField homeaddrecreational;
 	public TextField passport;
 	public TextField nationalHealthId;
+
+	private PersonDto person;
 	//@formatter:on
 	public PersonEditForm(PersonContext personContext, Disease disease, String diseaseDetails, ViewMode viewMode, boolean isPseudonymized, CaseOrigin caseOrigin) {
 		super(
@@ -1038,8 +1045,29 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		}
 	}
 
-
 	@Override
+	protected String createHtmlLayout() {
+		if (disease != null) {
+			switch (disease) {
+				case GUINEA_WORM:
+					return GUINEA_WORM_LAYOUT;
+				case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
+					return IDSR_LAYOUT;
+				case CSM:
+					return CSM_LAYOUT;
+				case YELLOW_FEVER:
+					return YELLOW_FEVER_LAYOUT;
+				case MONKEYPOX:
+					return MPOX_LAYOUT;
+				default:
+					return HTML_LAYOUT;
+			}
+		}
+		return HTML_LAYOUT;
+	}
+
+
+	/*@Override
 	protected String createHtmlLayout() {
 		String DISEASE_LAYOUT = "";
 
@@ -1060,6 +1088,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			case YELLOW_FEVER:
 				DISEASE_LAYOUT = YELLOW_FEVER_LAYOUT;
 				break;
+			case MONKEYPOX:
+				DISEASE_LAYOUT = MPOX_LAYOUT;
 			default:
 				DISEASE_LAYOUT = HTML_LAYOUT;
 				break;
@@ -1067,7 +1097,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		}
 
 		return DISEASE_LAYOUT;
-	}
+	}*/
+
 	private void updateReadyOnlyApproximateAge() {
 		boolean readonly = false;
 		if (getFieldGroup().getField(PersonDto.BIRTH_DATE_YYYY).getValue() != null) {
@@ -1226,6 +1257,50 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		if (burialPlaceDesc.isVisible() && StringUtils.isBlank(burialPlaceDesc.getValue())) {
 			burialPlaceDesc.setValue(getValue().getAddress().buildCaption());
 		}
+	}
+
+	public void setPerson(PersonDto person) {
+
+		this.person = person;
+
+		if (person != null) {
+			setValue(person);
+		} else {
+			setValue(new PersonDto());
+		}
+	}
+
+	public void transferDataToPersonFromCaseData(PersonDto person) {
+
+		commit();
+		PersonDto personCreated = getValue();
+
+		person.setFirstName(personCreated.getFirstName());
+		person.setLastName(personCreated.getLastName());
+		person.setOtherName(personCreated.getOtherName());
+		person.setBirthdateDD(personCreated.getBirthdateDD());
+		person.setBirthdateMM(personCreated.getBirthdateMM());
+		person.setBirthdateYYYY(personCreated.getBirthdateYYYY());
+		person.setSex(personCreated.getSex());
+		person.setPresentCondition(personCreated.getPresentCondition());
+		person.setGhanaCard(personCreated.getGhanaCard());
+		person.setNationalHealthId(personCreated.getNationalHealthId());
+		person.setPassportNumber(personCreated.getPassportNumber());
+		person.setOtherId(personCreated.getOtherId());
+		person.setApproximateAge(personCreated.getApproximateAge());
+		person.setApproximateAgeType(personCreated.getApproximateAgeType());
+
+	}
+
+	public void showFields(){
+		setVisible(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.OTHER_NAME, PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD, PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.SEX);
+		occupationHeader.setVisible(false);
+		addressHeader.setVisible(false);
+		setRequired(true, PersonDto.SEX);
+	}
+
+	public void setFieldsEnabled(){
+		setEnabled(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.LAST_NAME, PersonDto.SEX, PersonDto.BIRTH_DATE_DD);
 	}
 	@Override
 	protected <F extends Field> F addFieldToLayout(CustomLayout layout, String propertyId, F field) {

@@ -43,6 +43,8 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import de.symeda.sormas.api.caze.*;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import de.symeda.sormas.api.utils.CardOrHistory;
@@ -479,7 +481,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private String nationality;
 	private String ethnicity;
 	private String occupation;
-	private String districtOfResidence;
 	private String reportingVillage;
 	private String reportingZone;
 	private String otherNotesAndObservations;
@@ -506,6 +507,8 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private Sex patientSex;
 	private String patientFirstName;
 	private String patientLastName;
+	private Region regionOfResidence;
+	private District districtOfResidence;
 
 	public static Case build() {
 		Case caze = new Case();
@@ -2356,14 +2359,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.occupation = occupation;
 	}
 
-	public String getDistrictOfResidence() {
-		return districtOfResidence;
-	}
-
-	public void setDistrictOfResidence(String districtOfResidence) {
-		this.districtOfResidence = districtOfResidence;
-	}
-
 	public String getSpecifyEventDiagnosis() {
 		return specifyEventDiagnosis;
 	}
@@ -2516,5 +2511,23 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setVaccinationRoutineDate(Date vaccinationRoutineDate) {
 		this.vaccinationRoutineDate = vaccinationRoutineDate;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	public Region getRegionOfResidence() {
+		return regionOfResidence;
+	}
+
+	public void setRegionOfResidence(Region regionOfResidence) {
+		this.regionOfResidence = regionOfResidence;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	public District getDistrictOfResidence() {
+		return districtOfResidence;
+	}
+
+	public void setDistrictOfResidence(District districtOfResidence) {
+		this.districtOfResidence = districtOfResidence;
 	}
 }

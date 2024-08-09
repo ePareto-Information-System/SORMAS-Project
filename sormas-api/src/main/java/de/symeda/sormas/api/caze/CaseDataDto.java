@@ -36,6 +36,8 @@ import de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus;
 import de.symeda.sormas.api.afpimmunization.AfpImmunizationDto;
 import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
 import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
+import de.symeda.sormas.api.investigationnotes.InvestigationNotesDto;
+import de.symeda.sormas.api.location.LocationReferenceDto;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.riskfactor.RiskFactorDto;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
@@ -290,6 +292,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String NATIONALITY = "nationality";
 	public static final String ETHNICITY = "ethnicity";
 	public static final String OCCUPATION = "occupation";
+	public static final String REGION_OF_RESIDENCE = "regionOfResidence";
 	public static final String DISTRICT_OF_RESIDENCE = "districtOfResidence";
 	public static final String PATIENT_FIRST_NAME = "patientFirstName";
 	public static final String PATIENT_LAST_NAME = "patientLastName";
@@ -758,7 +761,8 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private String nationality;
 	private String ethnicity;
 	private String occupation;
-	private String districtOfResidence;
+	private RegionReferenceDto regionOfResidence;
+	private DistrictReferenceDto districtOfResidence;
 	private String specifyEventDiagnosis;
 	private String nameOfVillagePersonGotIll;
 
@@ -2327,11 +2331,19 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		this.occupation = occupation;
 	}
 
-	public String getDistrictOfResidence() {
+	public RegionReferenceDto getRegionOfResidence() {
+		return regionOfResidence;
+	}
+
+	public void setRegionOfResidence(RegionReferenceDto regionOfResidence) {
+		this.regionOfResidence = regionOfResidence;
+	}
+
+	public DistrictReferenceDto getDistrictOfResidence() {
 		return districtOfResidence;
 	}
 
-	public void setDistrictOfResidence(String districtOfResidence) {
+	public void setDistrictOfResidence(DistrictReferenceDto districtOfResidence) {
 		this.districtOfResidence = districtOfResidence;
 	}
 

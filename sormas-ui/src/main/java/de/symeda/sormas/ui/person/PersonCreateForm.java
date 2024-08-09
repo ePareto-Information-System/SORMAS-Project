@@ -518,6 +518,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	}
 	public void showFields(){
 		setVisible(true, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE);
+		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.SEX);
 	}
 	public void showPresentCondition(){
 		setVisible(true, PersonDto.PRESENT_CONDITION);
