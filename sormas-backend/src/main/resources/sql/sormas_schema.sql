@@ -15000,6 +15000,11 @@ ALTER TABLE hospitalization DROP COLUMN nameoffacility;
 ALTER TABLE hospitalization ADD COLUMN nameoffacility_id bigint;
 ALTER TABLE hospitalization ADD CONSTRAINT fk_hospitalization_nameoffacility_id FOREIGN KEY (nameoffacility_id) REFERENCES facility(id);
 ALTER TABLE hospitalization ADD COLUMN nameoffacilitydetails varchar(512);
-
 INSERT INTO schema_version(version_number, comment) VALUES (699, 'Added nameoffacility reference and established relationship btn hospitalization anf facility');
+
+ALTER TABLE cases ADD column regionofresidence_id BIGINT;
+ALTER TABLE cases ADD column districtofresidence_id BIGINT;
+ALTER TABLE cases ADD CONSTRAINT fk_cases_regionofresidence_id FOREIGN KEY (regionofresidence_id) REFERENCES region (id);
+ALTER TABLE cases ADD CONSTRAINT fk_cases_districtofresidence_id FOREIGN KEY (districtofresidence_id) REFERENCES district (id);
+INSERT INTO schema_version(version_number, comment) VALUES (700, 'Added regionofresidence_id, districtofresidence_id to cases and created ref to region, district');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

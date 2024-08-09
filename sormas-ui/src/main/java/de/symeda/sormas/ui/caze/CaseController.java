@@ -920,17 +920,11 @@ public class CaseController {
 	}
 
 	private void transferDataToPerson(CaseCreateForm createForm, PersonDto person) {
-		/*if(createForm.getValue().getDisease().equals(Disease.MONKEYPOX)){
-			person.setFirstName(createForm.getPatientFirstName());
-			person.setLastName(createForm.getPatientLastName());
-			person.setOtherName(createForm.getPatientOtherNames());
-			person.setSex(createForm.getPatientSex());
-
-			createForm.transferDataToPerson(person);
-		} else{
-			createForm.getPersonCreateForm().transferDataToPerson(person);
-		}*/
 		createForm.getPersonCreateForm().transferDataToPerson(person);
+	}
+
+	private void transferDataToPersonFromCaseData(CaseDataForm caseDataForm, PersonDto person) {
+		caseDataForm.getPersonEditForm().transferDataToPersonFromCaseData(person);
 	}
 
 	/*private void updateHomeAddress(CaseCreateForm createForm, PersonDto person) {
@@ -973,6 +967,8 @@ public class CaseController {
 
 	public CommitDiscardWrapperComponent<CaseDataForm> getCaseDataEditComponent(final String caseUuid, final ViewMode viewMode) {
 		CaseDataDto caze = findCase(caseUuid);
+		PersonDto person = FacadeProvider.getPersonFacade().getByUuid(caze.getPerson().getUuid());
+
 		DeletionInfoDto automaticDeletionInfoDto = FacadeProvider.getCaseFacade().getAutomaticDeletionInfo(caseUuid);
 		DeletionInfoDto manuallyDeletionInfoDto = FacadeProvider.getCaseFacade().getManuallyDeletionInfo(caseUuid);
 
@@ -1002,6 +998,10 @@ public class CaseController {
 		editView.addCommitListener(() -> {
 			CaseDataDto oldCase = findCase(caseUuid);
 			CaseDataDto cazeDto = caseEditForm.getValue();
+
+			transferDataToPersonFromCaseData(caseEditForm, person);
+			FacadeProvider.getPersonFacade().save(person);
+
 			saveCaseWithFacilityChangedPrompt(cazeDto, oldCase);
 		});
 

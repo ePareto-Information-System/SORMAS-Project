@@ -3374,7 +3374,6 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setNationality(source.getNationality());
 		target.setEthnicity(source.getEthnicity());
 		target.setOccupation(source.getOccupation());
-		target.setDistrictOfResidence(source.getDistrictOfResidence());
 		target.setSpecifyEventDiagnosis(source.getSpecifyEventDiagnosis());
 		target.setNotifiedByList(source.getNotifiedByList());
 		target.setNotifiedOther(source.getNotifiedOther());
@@ -3421,6 +3420,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setPatientSex(source.getPatientSex());
 		target.setPatientFirstName(source.getPatientFirstName());
 		target.setPatientLastName(source.getPatientLastName());
+		target.setRegionOfResidence(RegionFacadeEjb.toReferenceDto(source.getRegionOfResidence()));
+		target.setDistrictOfResidence(DistrictFacadeEjb.toReferenceDto(source.getDistrictOfResidence()));
 
 		return target;
 	}
@@ -3678,7 +3679,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setNationality(source.getNationality());
 		target.setEthnicity(source.getEthnicity());
 		target.setOccupation(source.getOccupation());
-		target.setDistrictOfResidence(source.getDistrictOfResidence());
+		target.setRegionOfResidence(regionService.getByReferenceDto(source.getRegionOfResidence()));
+		target.setDistrictOfResidence(districtService.getByReferenceDto(source.getDistrictOfResidence()));
 		target.setReportingZone(source.getReportingZone());
 		target.setReportingVillage(source.getReportingVillage());
 		target.setSpecifyEventDiagnosis(source.getSpecifyEventDiagnosis());
