@@ -137,7 +137,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 			+ fluidRowLocs(CaseDataDto.POINT_OF_ENTRY, CaseDataDto.POINT_OF_ENTRY_DETAILS)
 			+ fluidRowLocs(CaseDataDto.PERSON)
             + fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY)
-            + fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
+            + fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.REGION_OF_RESIDENCE, CaseDataDto.DISTRICT_OF_RESIDENCE);
 	//@formatter:on
 
     public CaseCreateForm() {
@@ -653,7 +653,18 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 
         addFields(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT);
         addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
-        addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
+        addField(CaseDataDto.OCCUPATION);
+        ComboBox regionOfResidence  = addInfrastructureField(CaseDataDto.REGION_OF_RESIDENCE);
+        ComboBox districtOfResidence  = addInfrastructureField(CaseDataDto.DISTRICT_OF_RESIDENCE);
+
+        FieldHelper.updateItems(regionOfResidence, FacadeProvider.getRegionFacade().getAllActiveAsReference());
+
+        regionOfResidence.addValueChangeListener(e -> {
+            RegionReferenceDto regionDto = (RegionReferenceDto) e.getProperty().getValue();
+            FieldHelper.updateItems(districtOfResidence,
+                    regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
+
+        });
     }
 
     private void updateDiseaseVariant(Disease disease) {

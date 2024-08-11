@@ -334,13 +334,13 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                     CLASSIFICATION_RULES_LOC,
                     CASE_CONFIRMATION_BASIS,
                     CASE_CLASSIFICATION_CALCULATE_BTN_LOC) +
+            fluidRowLocs(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY) +
+            fluidRowLocs(MPOX_COORDINATE_LABEL) +
+            fluidRowLocs(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT) +
             fluidRowLocs(CaseDataDto.RESPONSIBLE_REGION, CaseDataDto.RESPONSIBLE_DISTRICT, CaseDataDto.RESPONSIBLE_COMMUNITY) +
             loc(NOTIFY_INVESTIGATE) +
             fluidRowLocs(CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION) +
             loc(INDICATE_CATEGORY_LOC) +
-            fluidRowLocs(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY) +
-            fluidRowLocs(MPOX_COORDINATE_LABEL) +
-            fluidRowLocs(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT) +
             fluidRowLocs(CaseDataDto.PERSON) +
             fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY) +
             fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.REGION_OF_RESIDENCE, CaseDataDto.DISTRICT_OF_RESIDENCE);
