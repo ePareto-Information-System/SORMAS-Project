@@ -77,8 +77,6 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
     private static final String DIFFERENT_PLACE_OF_STAY_JURISDICTION = "differentPlaceOfStayJurisdiction";
     private static final String PLACE_OF_STAY_HEADING_LOC = "placeOfStayHeadingLoc";
     public static final String MPOX_COORDINATE_LABEL = "mpoxCoordinate";
-    public static final String PATIENT_DOB_LABEL = "patientDob";
-    public static final String DOB_NOT_KNOWN_LABEL = "dobNotKnown";
     private static final String DIFFERENT_POINT_OF_ENTRY_JURISDICTION = "differentPointOfEntryJurisdiction";
     private static final String POINT_OF_ENTRY_REGION = "pointOfEntryRegion";
     private static final String POINT_OF_ENTRY_DISTRICT = "pointOfEntryDistrict";
@@ -97,7 +95,6 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
     private ComboBox facilityCombo;
     private ComboBox pointOfEntryDistrictCombo;
     private DateField investigated;
-    private ComboBox patientDobDay;
     private PersonCreateForm personCreateForm;
     private DateField reportDate;
 
@@ -135,11 +132,6 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 			+ fluidRowLocs(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY)
 			+ fluidRowLocs(MPOX_COORDINATE_LABEL)
 			+ fluidRowLocs(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT)
-			+ fluidRowLocs(CaseDataDto.PATIENT_FIRST_NAME, CaseDataDto.PATIENT_LAST_NAME, CaseDataDto.PATIENT_OTHER_NAMES)
-			+ fluidRowLocs(CaseDataDto.PATIENT_DOB_YY, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_DD)
-			+loc(DOB_NOT_KNOWN_LABEL)
-			+ fluidRowLocs(CaseDataDto.PATIENT_AGE_YEAR, CaseDataDto.PATIENT_AGE_MONTH)
-			+ fluidRowLocs(6, CaseDataDto.PATIENT_SEX)
 			+ fluidRowLocs(DIFFERENT_POINT_OF_ENTRY_JURISDICTION)
 			+ fluidRowLocs(POINT_OF_ENTRY_REGION, POINT_OF_ENTRY_DISTRICT)
 			+ fluidRowLocs(CaseDataDto.POINT_OF_ENTRY, CaseDataDto.POINT_OF_ENTRY_DETAILS)

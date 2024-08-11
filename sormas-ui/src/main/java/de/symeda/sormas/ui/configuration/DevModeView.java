@@ -1030,8 +1030,6 @@ public class DevModeView extends AbstractConfigurationView {
 				caze.setResponsibleCommunity(healthFacility.getCommunity());
 				caze.setHealthFacility(healthFacility.toReference());
 				caze.setFacilityType(healthFacility.getType());
-				caze.setDhimsFacilityType(healthFacility.getDhimsFacilityType());
-				caze.setAfpFacilityOptions(healthFacility.getAfpFacilityOptions());
 				caze.setReportLat(healthFacility.getLatitude());
 				caze.setReportLon(healthFacility.getLongitude());
 			}
@@ -1566,8 +1564,6 @@ public class DevModeView extends AbstractConfigurationView {
 						FacilityIndexDto facility = random(healthFacilities);
 						caze.setHealthFacility(facility.toReference());
 						caze.setFacilityType(facility.getType());
-						caze.setDhimsFacilityType(facility.getDhimsFacilityType());
-						caze.setAfpFacilityOptions(facility.getAfpFacilityOptions());
 						caze.setAdditionalDetails("Case generated using DevMode on " + LocalDate.now());
 						FacadeProvider.getCaseFacade().save(caze);
 						eventParticipant.setResultingCase(caze.toReference());

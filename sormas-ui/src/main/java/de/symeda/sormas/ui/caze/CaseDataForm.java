@@ -1771,7 +1771,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                     placeOfStayHeadingLabel.setVisible(false);
                     break;
                 case MONKEYPOX:
-//                    handleMpox();
                     handleMonkeyPox();
                 default:
                     break;

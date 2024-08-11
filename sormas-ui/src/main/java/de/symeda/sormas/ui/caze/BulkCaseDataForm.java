@@ -134,7 +134,6 @@ public class BulkCaseDataForm extends AbstractEditForm<CaseBulkEditData> {
 	private CheckBox shareWithReportingToolCheckbox;
 	private ComboBox facilityTypeGroup;
 	private ComboBox facilityType;
-	private ComboBox dhimsFacilityType;
 	private TextField healthFacilityDetails;
 	private Collection<? extends CaseIndexDto> selectedCases;
 	private OptionGroup facilityOrHome;
@@ -307,8 +306,6 @@ public class BulkCaseDataForm extends AbstractEditForm<CaseBulkEditData> {
 		facilityTypeGroup.setEnabled(false);
 		facilityType = addField(CaseBulkEditData.FACILITY_TYPE, ComboBox.class);
 		facilityType.setEnabled(false);
-		dhimsFacilityType = addField(CaseDataDto.DHIMS_FACILITY_TYPE, ComboBox.class);
-		dhimsFacilityType.setEnabled(false);
 		ComboBox facility = addInfrastructureField(CaseBulkEditData.HEALTH_FACILITY);
 		facility.setImmediate(true);
 		facility.setEnabled(false);

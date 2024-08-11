@@ -22,7 +22,6 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import org.junit.Test;
 
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
@@ -59,11 +58,11 @@ public class FacilityServiceTest extends AbstractBeanTest {
 		Community otherCommunity = creator.createCommunity("Other Community", otherDistrict);
 		creator.createFacility("Facility", region, district, community);
 
-		assertThat(getFacilityService().getFacilitiesByNameAndType("Facility", district, community, null, null,AFPFacilityOptions.valueOf(""),true), hasSize(1));
-		assertThat(getFacilityService().getFacilitiesByNameAndType(" Facility ", district, community, null, null,AFPFacilityOptions.valueOf(""),true), hasSize(1));
-		assertThat(getFacilityService().getFacilitiesByNameAndType("facility", district, null, null,null,AFPFacilityOptions.valueOf("") ,true), hasSize(1));
-		assertThat(getFacilityService().getFacilitiesByNameAndType("FACILITY", district, null, null,null,AFPFacilityOptions.valueOf("") ,true), hasSize(1));
-		assertThat(getFacilityService().getFacilitiesByNameAndType("Facility", otherDistrict, otherCommunity, null,null,AFPFacilityOptions.valueOf(""),true), empty());
-		assertThat(getFacilityService().getFacilitiesByNameAndType("Redcliffe Church", district, community, null,null,AFPFacilityOptions.valueOf("") ,true), empty());
+		assertThat(getFacilityService().getFacilitiesByNameAndType("Facility", district, community, null,true), hasSize(1));
+		assertThat(getFacilityService().getFacilitiesByNameAndType(" Facility ", district, community, null,true), hasSize(1));
+		assertThat(getFacilityService().getFacilitiesByNameAndType("facility", district, null, null,true), hasSize(1));
+		assertThat(getFacilityService().getFacilitiesByNameAndType("FACILITY", district, null, null ,true), hasSize(1));
+		assertThat(getFacilityService().getFacilitiesByNameAndType("Facility", otherDistrict, otherCommunity, null,true), empty());
+		assertThat(getFacilityService().getFacilitiesByNameAndType("Redcliffe Church", district, community, null,true), empty());
 	}
 }
