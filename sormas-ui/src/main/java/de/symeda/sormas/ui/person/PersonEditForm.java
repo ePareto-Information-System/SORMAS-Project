@@ -1298,7 +1298,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	}
 
 	public void setFieldsEnabled(){
-		setEnabled(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.LAST_NAME, PersonDto.SEX, PersonDto.BIRTH_DATE_DD);
+		setEnabled(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.OTHER_NAME, PersonDto.SEX, PersonDto.BIRTH_DATE_DD);
 	}
 	@Override
 	protected <F extends Field> F addFieldToLayout(CustomLayout layout, String propertyId, F field) {
