@@ -49,6 +49,8 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.*;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal;
@@ -344,7 +346,7 @@ public class FacilityFacadeEjb
 
 	@Override
 	public List<FacilityReferenceDto> getLaboratoriesByName(String name, boolean includeArchivedEntities) {
-		return service.getFacilitiesByNameAndType(name, null, null, FacilityType.LABORATORY, DhimsFacility.HOSPITAL, AFPFacilityOptions.Hospital, includeArchivedEntities)
+		return service.getFacilitiesByNameAndType(name, null, null, FacilityType.LABORATORY, includeArchivedEntities)
 			.stream()
 			.map(FacilityFacadeEjb::toReferenceDto)
 			.collect(Collectors.toList());
@@ -401,8 +403,6 @@ public class FacilityFacadeEjb
 		DtoHelper.fillDto(dto, entity);
 		dto.setName(entity.getName());
 		dto.setType(entity.getType());
-		dto.setDhimsFacilityType(entity.getDhimsFacilityType());
-		dto.setAfpType(entity.getAfpType());
 		dto.setPublicOwnership(entity.isPublicOwnership());
 		dto.setRegion(RegionFacadeEjb.toReferenceDto(entity.getRegion()));
 		dto.setDistrict(DistrictFacadeEjb.toReferenceDto(entity.getDistrict()));
@@ -673,8 +673,6 @@ public class FacilityFacadeEjb
 			districtService.getByReferenceDto(dto.getDistrict()),
 			communityService.getByReferenceDto(dto.getCommunity()),
 			dto.getType(),
-			dto.getDhimsFacilityType(),
-			dto.getAfpType(),
 			includeArchived);
 	}
 
@@ -726,8 +724,6 @@ public class FacilityFacadeEjb
 		target.setLatitude(source.getLatitude());
 		target.setLongitude(source.getLongitude());
 		target.setType(source.getType());
-		target.setDhimsFacilityType(source.getDhimsFacilityType());
-		target.setAfpType(source.getAfpType());
 		target.setArchived(source.isArchived());
 		target.setExternalID(source.getExternalID());
 		target.setCentrallyManaged(source.isCentrallyManaged());

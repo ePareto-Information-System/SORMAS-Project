@@ -15039,4 +15039,26 @@ ALTER TABLE cases ADD column districtofresidence_id BIGINT;
 ALTER TABLE cases ADD CONSTRAINT fk_cases_regionofresidence_id FOREIGN KEY (regionofresidence_id) REFERENCES region (id);
 ALTER TABLE cases ADD CONSTRAINT fk_cases_districtofresidence_id FOREIGN KEY (districtofresidence_id) REFERENCES district (id);
 INSERT INTO schema_version(version_number, comment) VALUES (697, 'Added regionofresidence_id, districtofresidence_id to cases and created ref to region, district');
+
+ALTER TABLE cases DROP COLUMN patientfirstname;
+ALTER TABLE cases DROP COLUMN patientlastname;
+ALTER TABLE cases DROP COLUMN patientothernames;
+ALTER TABLE cases DROP COLUMN patientdobdd;
+ALTER TABLE cases DROP COLUMN patientdobmm;
+ALTER TABLE cases DROP COLUMN patientdobyy;
+ALTER TABLE cases DROP COLUMN patientageyear;
+ALTER TABLE cases DROP COLUMN patientagemonth;
+ALTER TABLE cases DROP COLUMN patientsex;
+ALTER TABLE cases DROP COLUMN dhimsfacilitytype;
+ALTER TABLE cases DROP COLUMN afpfacilityoptions;
+ALTER TABLE cases_history DROP COLUMN dhimsfacilitytype;
+ALTER TABLE location DROP COLUMN afpfacilityoptions;
+ALTER TABLE facility DROP COLUMN facilityafptype;
+ALTER TABLE facility DROP COLUMN facility_afptype;
+ALTER TABLE facility DROP COLUMN dhimsfacilitytype;
+ALTER TABLE facility DROP COLUMN afptype;
+ALTER TABLE location DROP COLUMN dhimsfacilitytype;
+ALTER TABLE person DROP COLUMN dhimsfacilitytype;
+INSERT INTO schema_version(version_number, comment) VALUES (698, 'Dropped redundant fields and type: dhimsfacilitytype at cases,facility,location,person');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

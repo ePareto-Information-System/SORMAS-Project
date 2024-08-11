@@ -83,7 +83,6 @@ public class FacilitiesView extends AbstractConfigurationView {
 	private SearchField searchField;
 	private ComboBox typeGroupFilter;
 	private ComboBox typeFilter;
-	private ComboBox dhimsFacilityTypeFilter;
 	private ComboBox countryFilter;
 	private ComboBox regionFilter;
 	private ComboBox districtFilter;
@@ -285,16 +284,6 @@ public class FacilitiesView extends AbstractConfigurationView {
 			navigateTo(criteria);
 		});
 		filterLayout.addComponent(typeFilter);
-
-		dhimsFacilityTypeFilter = ComboBoxHelper.createComboBoxV7();
-		dhimsFacilityTypeFilter.setId(FacilityDto.DHIMS_FACILITY_TYPE);
-		dhimsFacilityTypeFilter.setWidth(220, Unit.PIXELS);
-		dhimsFacilityTypeFilter.setCaption(I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.DHIMS_FACILITY_TYPE));
-		dhimsFacilityTypeFilter.addValueChangeListener(e -> {
-			criteria.dhimsFacilityType((DhimsFacility) e.getProperty().getValue());
-			navigateTo(criteria);
-		});
-		filterLayout.addComponent(dhimsFacilityTypeFilter);
 
 		countryFilter = addCountryFilter(filterLayout, country -> {
 			criteria.country(country);

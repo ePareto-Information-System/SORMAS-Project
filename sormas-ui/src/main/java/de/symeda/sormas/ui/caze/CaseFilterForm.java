@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.vaadin.server.Sizeable;
@@ -83,7 +82,6 @@ public class CaseFilterForm extends AbstractFilterForm<CaseCriteria> {
 		CaseDataDto.COMMUNITY,
 		CaseCriteria.FACILITY_TYPE_GROUP,
 		CaseCriteria.FACILITY_TYPE,
-		CaseCriteria.DHIMS_FACILITY_TYPE,
 		CaseDataDto.HEALTH_FACILITY,
 		CaseDataDto.POINT_OF_ENTRY,
 		CaseDataDto.SURVEILLANCE_OFFICER,
@@ -218,9 +216,6 @@ public class CaseFilterForm extends AbstractFilterForm<CaseCriteria> {
 			ComboBox facilityField = addField(moreFiltersContainer, FieldConfiguration.pixelSized(CaseDataDto.HEALTH_FACILITY, 140));
 			facilityField.setDescription(I18nProperties.getDescription(Descriptions.descFacilityFilter));
 
-			ComboBox dhimsFacilityType = addField(moreFiltersContainer, FieldConfiguration.pixelSized(CaseCriteria.DHIMS_FACILITY_TYPE, 140));
-			dhimsFacilityType.setInputPrompt(I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.DHIMS_FACILITY_TYPE));
-			dhimsFacilityType.removeAllItems();
 		}
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.PORT_HEALTH_INFO_VIEW)) {
@@ -447,7 +442,6 @@ public class CaseFilterForm extends AbstractFilterForm<CaseCriteria> {
 		final ComboBox communityField = getField(CaseDataDto.COMMUNITY);
 		final ComboBox facilityTypeGroupField = getField(CaseCriteria.FACILITY_TYPE_GROUP);
 		final ComboBox facilityTypeField = getField(CaseCriteria.FACILITY_TYPE);
-		final ComboBox dhimsFacilityTypeField = getField(CaseCriteria.DHIMS_FACILITY_TYPE);
 		final ComboBox facilityField = getField(CaseDataDto.HEALTH_FACILITY);
 		final ComboBox pointOfEntryField = getField(CaseDataDto.POINT_OF_ENTRY);
 		final ComboBox caseOriginField = getField(CaseDataDto.CASE_ORIGIN);
@@ -533,7 +527,6 @@ public class CaseFilterForm extends AbstractFilterForm<CaseCriteria> {
 				}
 
 				final FacilityType facilityType = facilityTypeField != null ? (FacilityType) facilityTypeField.getValue() : null;
-				final DhimsFacility dhimsFacilityType = dhimsFacilityTypeField != null ? (DhimsFacility) dhimsFacilityTypeField.getValue() : null;
 
 				if (facilityType == null && facilityField != null) {
 					facilityField.removeAllItems();
@@ -549,19 +542,6 @@ public class CaseFilterForm extends AbstractFilterForm<CaseCriteria> {
 					}
 				}
 
-//				if (dhimsFacilityType == null && dhimsFacilityTypeField != null) {
-//					dhimsFacilityTypeField.removeAllItems();
-//				} else if (dhimsFacilityTypeField != null) {
-//					if (community == null) {
-//						FieldHelper.updateItems(
-//								dhimsFacilityTypeField,
-//								FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(currentDistrict, dhimsFacilityType, true,false));
-//					} else {
-//						FieldHelper.updateItems(
-//								dhimsFacilityTypeField,
-//								FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, dhimsFacilityType,false, false));
-//					}
-//				}
 			}
 			break;
 		}
@@ -602,28 +582,7 @@ public class CaseFilterForm extends AbstractFilterForm<CaseCriteria> {
 			}
 			break;
 		}
-//			case CaseCriteria.DHIMS_FACILITY_TYPE: {
-//				DhimsFacility dhimsFacilityType = (DhimsFacility) event.getProperty().getValue();
-//				if (!DataHelper.equal(dhimsFacilityType, criteria.getDhimsFacilityType())) {
-//					if (dhimsFacilityType == null) {
-//						clearAndDisableFields(dhimsFacilityTypeField);
-//					} else {
-//						enableFields(dhimsFacilityTypeField);
-//						dhimsFacilityTypeField.setValue(null);
-//						CommunityReferenceDto community = (CommunityReferenceDto) communityField.getValue();
-//						if (community != null) {
-//							FieldHelper.updateItems(
-//									dhimsFacilityTypeField,
-//									FacadeProvider.getFacilityFacade().getActiveFacilitiesByCommunityAndType(community, dhimsFacilityType, true, false));
-//						} else if (currentDistrict != null) {
-//							FieldHelper.updateItems(
-//									facilityField,
-//									FacadeProvider.getFacilityFacade().getActiveFacilitiesByDistrictAndType(currentDistrict,dhimsFacilityType, true,false));
-//						}
-//					}
-//				}
-//				break;
-//			}
+
 		case CaseCriteria.BIRTHDATE_MM: {
 			Integer birthMM = (Integer) event.getProperty().getValue();
 
@@ -718,7 +677,6 @@ public class CaseFilterForm extends AbstractFilterForm<CaseCriteria> {
 		final CommunityReferenceDto community = user.getCommunity() == null ? criteria.getCommunity() : user.getCommunity();
 		final FacilityTypeGroup facilityTypeGroup = criteria.getFacilityTypeGroup();
 		final FacilityType facilityType = criteria.getFacilityType();
-		final DhimsFacility dhimsFacilityType = criteria.getDhimsFacilityType();
 
 		// district
 		if (region != null) {

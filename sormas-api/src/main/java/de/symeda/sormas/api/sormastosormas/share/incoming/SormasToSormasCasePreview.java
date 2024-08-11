@@ -33,7 +33,6 @@ import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
-import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryReferenceDto;
@@ -64,7 +63,6 @@ public class SormasToSormasCasePreview extends PseudonymizableDto implements Has
 	public static final String DISTRICT = "district";
 	public static final String COMMUNITY = "community";
 	public static final String FACILITY_TYPE = "facilityType";
-	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
 	public static final String HEALTH_FACILITY = "healthFacility";
 	public static final String HEALTH_FACILITY_DETAILS = "healthFacilityDetails";
 	public static final String POINT_OF_ENTRY = "pointOfEntry";
@@ -87,7 +85,6 @@ public class SormasToSormasCasePreview extends PseudonymizableDto implements Has
 	@SensitiveData
 	private CommunityReferenceDto community;
 	private FacilityType facilityType;
-	private DhimsFacility dhimsFacilityType;
 	@PersonalData
 	@SensitiveData
 	private FacilityReferenceDto healthFacility;
@@ -202,11 +199,6 @@ public class SormasToSormasCasePreview extends PseudonymizableDto implements Has
 
 	public void setFacilityType(FacilityType facilityType) {
 		this.facilityType = facilityType;
-	}
-	public DhimsFacility getDhimsFacilityType() {return dhimsFacilityType;}
-
-	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
-		this.dhimsFacilityType = dhimsFacilityType;
 	}
 
 	public FacilityReferenceDto getHealthFacility() {

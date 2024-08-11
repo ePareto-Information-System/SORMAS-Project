@@ -759,10 +759,6 @@ public class CaseController {
 					dto.setFacilityType(null);
 				}
 
-				if (dto.getDhimsFacilityType() == null || FacilityDto.NONE_FACILITY_UUID.equals(dto.getDhimsFacilityType().getUuid())) {
-					dto.setDhimsFacilityType(null);
-				}
-
 				if (convertedContact != null) {
 					int incubationPeriod = FacadeProvider.getDiseaseConfigurationFacade().getCaseFollowUpDuration(dto.getDisease());
 					List<VisitDto> visits = FacadeProvider.getVisitFacade()
