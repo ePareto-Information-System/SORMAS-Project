@@ -326,12 +326,6 @@ public interface Captions {
 	String CaseData_mobileTeamNo = "CaseData.mobileTeamNo";
 	String CaseData_informationGivenBy = "CaseData.informationGivenBy";
 	String CaseData_familyLinkWithPatient = "CaseData.familyLinkWithPatient";
-	String CaseData_patientFirstName = "CaseData.patientFirstName";
-	String CaseData_patientLastName = "CaseData.patientLastName";
-	String CaseData_patientOtherNames = "CaseData.patientOtherNames";
-	String CaseData_patientAgeYear = "CaseData.patientAgeYear";
-	String CaseData_patientAgeMonth = "CaseData.patientAgeMonth";
-	String CaseData_patientSex = "CaseData.patientSex";
 	String CaseData_numberOfDoses = "CaseData.numberOfDoses";
 	String CaseData_classificationUser = "CaseData.classificationUser";
 	String CaseData_classifiedBy = "CaseData.classifiedBy";
@@ -456,7 +450,6 @@ public interface Captions {
 	String CaseData_reportDate = "CaseData.reportDate";
 	String CaseData_specifyEventDiagnosis = "CaseData.specifyEventDiagnosis";
 	String CaseData_idsrDiagnosis = "CaseData.idsrDiagnosis";
-	String CaseData_dhimsFacilityType = "CaseData.dhimsFacilityType";
 	String CaseData_reportingDistrict = "CaseData.reportingDistrict";
 	String CaseData_reportingUser = "CaseData.reportingUser";
 	String CaseData_reportLat = "CaseData.reportLat";
@@ -1891,8 +1884,6 @@ public interface Captions {
 	String facilityAllFacilities = "facilityAllFacilities";
 	String facilityArchivedFacilities = "facilityArchivedFacilities";
 	String facilityType = "facilityType";
-	String dhimsFacilityType = "dhimsFacilityType";
-	String afpFacilityOptions = "afpFacilityOptions";
 	String facilityTypeGroup = "facilityTypeGroup";
 	String facilitiesSelected = "facilitiesSelected";
 	String facilitiesAvailable = "facilitiesAvailable";

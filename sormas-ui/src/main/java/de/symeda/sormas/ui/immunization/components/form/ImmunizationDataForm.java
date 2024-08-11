@@ -226,7 +226,6 @@ public class ImmunizationDataForm extends AbstractEditForm<ImmunizationDto> {
 		facilityTypeGroup.addItems(FacilityTypeGroup.values());
 		getContent().addComponent(facilityTypeGroup, FACILITY_TYPE_GROUP_LOC);
 		ComboBox facilityType = addField(ImmunizationDto.FACILITY_TYPE);
-		//ComboBox dhimsFacilityType = addField(ImmunizationDto.DHIMS_FACILITY_TYPE);
 		ComboBox facilityCombo = addInfrastructureField(ImmunizationDto.HEALTH_FACILITY);
 		facilityCombo.setImmediate(true);
 		TextField facilityDetails = addField(ImmunizationDto.HEALTH_FACILITY_DETAILS, TextField.class);

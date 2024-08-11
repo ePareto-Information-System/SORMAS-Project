@@ -23,7 +23,6 @@ import de.symeda.sormas.api.immunization.ImmunizationCriteria;
 import de.symeda.sormas.api.immunization.ImmunizationDateType;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
-import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
@@ -51,7 +50,6 @@ public class ImmunizationFilterForm extends AbstractFilterForm<ImmunizationCrite
 		ImmunizationCriteria.COMMUNITY,
 		ImmunizationCriteria.FACILITY_TYPE_GROUP,
 		ImmunizationCriteria.FACILITY_TYPE,
-		ImmunizationCriteria.DHIMS_FACILITY_TYPE,
 		ImmunizationCriteria.HEALTH_FACILITY,
 		ImmunizationCriteria.ONLY_PERSONS_WITH_OVERDUE_IMMUNIZATION)
 
@@ -123,10 +121,6 @@ public class ImmunizationFilterForm extends AbstractFilterForm<ImmunizationCrite
 		type.setInputPrompt(I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.TYPE));
 		type.removeAllItems();
 
-		ComboBox dhimsFacilityType = addField(moreFiltersContainer, FieldConfiguration.pixelSized(ImmunizationCriteria.DHIMS_FACILITY_TYPE, 140));
-		dhimsFacilityType.setInputPrompt(I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.DHIMS_FACILITY_TYPE));
-		dhimsFacilityType.removeAllItems();
-
 		ComboBox facilityField = addField(moreFiltersContainer, FieldConfiguration.pixelSized(ImmunizationCriteria.HEALTH_FACILITY, 140));
 		facilityField.setDescription(I18nProperties.getDescription(Descriptions.descFacilityFilter));
 
@@ -152,7 +146,6 @@ public class ImmunizationFilterForm extends AbstractFilterForm<ImmunizationCrite
 		final ComboBox communityField = getField(ImmunizationCriteria.COMMUNITY);
 		final ComboBox facilityTypeGroupField = getField(ImmunizationCriteria.FACILITY_TYPE_GROUP);
 		final ComboBox facilityTypeField = getField(ImmunizationCriteria.FACILITY_TYPE);
-		final ComboBox dhimsFacilityTypeField = getField(ImmunizationCriteria.DHIMS_FACILITY_TYPE);
 		final ComboBox facilityField = getField(ImmunizationCriteria.HEALTH_FACILITY);
 
 		final UserDto user = currentUserDto();
@@ -211,7 +204,6 @@ public class ImmunizationFilterForm extends AbstractFilterForm<ImmunizationCrite
 				}
 
 				final FacilityType facilityType = facilityTypeField != null ? (FacilityType) facilityTypeField.getValue() : null;
-				final DhimsFacility dhimsFacilityType = dhimsFacilityTypeField != null ? (DhimsFacility) dhimsFacilityTypeField.getValue() : null;
 
 				if (facilityType == null && facilityField != null) {
 					facilityField.removeAllItems();
@@ -245,7 +237,6 @@ public class ImmunizationFilterForm extends AbstractFilterForm<ImmunizationCrite
 		}
 		case ImmunizationCriteria.FACILITY_TYPE: {
 			FacilityType facilityType = (FacilityType) event.getProperty().getValue();
-			DhimsFacility dhimsFacilityType = (DhimsFacility) event.getProperty().getValue();
 
 			if (!DataHelper.equal(facilityType, criteria.getFacilityType())) {
 				if (facilityType == null) {
@@ -306,7 +297,6 @@ public class ImmunizationFilterForm extends AbstractFilterForm<ImmunizationCrite
 		final CommunityReferenceDto community = user.getCommunity() == null ? criteria.getCommunity() : user.getCommunity();
 		final FacilityTypeGroup facilityTypeGroup = criteria.getFacilityTypeGroup();
 		final FacilityType facilityType = criteria.getFacilityType();
-		final DhimsFacility dhimsFacilityType = criteria.getDhimsFacilityType();
 
 		// district
 		if (region != null) {
