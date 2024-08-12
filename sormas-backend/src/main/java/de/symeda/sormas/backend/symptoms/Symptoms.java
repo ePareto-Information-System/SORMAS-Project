@@ -327,8 +327,7 @@ public class Symptoms extends AbstractDomainObject {
 	private YesNo areLesionsSameSize;
 	private YesNo areLesionsDeep;
 	private YesNo areUlcersAmong;
-	private Set<SymptomsList> typeOfRash;
-	private String typeOfRashString;
+	private SymptomsList typeOfRash;
 	private String symptomsSelectedOther;
 	private String outcomeOther;
 	private YesNo patientHaveFever;
@@ -2428,35 +2427,11 @@ public class Symptoms extends AbstractDomainObject {
 		this.areUlcersAmong = areUlcersAmong;
 	}
 
-	@Transient
-	public Set<SymptomsList> getTypeOfRash() {
-		if (typeOfRash == null) {
-			if (StringUtils.isEmpty(typeOfRashString)) {
-				typeOfRash = new HashSet<>();
-			} else {
-				typeOfRash =
-						Arrays.stream(typeOfRashString.split(",")).map(SymptomsList::valueOf).collect(Collectors.toSet());
-			}
-		}
+	public SymptomsList getTypeOfRash() {
 		return typeOfRash;
 	}
-
-	public void setTypeOfRash(Set<SymptomsList> typeOfRash) {
+	public void setTypeOfRash(SymptomsList typeOfRash) {
 		this.typeOfRash = typeOfRash;
-
-		if (this.typeOfRash == null) {
-			return;
-		}
-
-		StringBuilder sb = new StringBuilder();
-		typeOfRash.stream().forEach(t -> {
-			sb.append(t.name());
-			sb.append(",");
-		});
-		if (sb.length() > 0) {
-			sb.substring(0, sb.lastIndexOf(","));
-		}
-		typeOfRashString = sb.toString();
 	}
 
 	public String getSymptomsSelectedOther(){
@@ -2586,15 +2561,6 @@ public class Symptoms extends AbstractDomainObject {
 	public void setRequestedSiteOfParalysisString(String requestedSiteOfParalysisString) {
 		this.requestedSiteOfParalysisString = requestedSiteOfParalysisString;
 		siteOfParalysis = null;
-	}
-
-	public String getTypeOfRashString() {
-		return typeOfRashString;
-	}
-
-	public void setTypeOfRashString(String typeOfRashString) {
-		this.typeOfRashString = typeOfRashString;
-		typeOfRash = null;
 	}
 
 	public YesNo getPatientHaveFever() {
