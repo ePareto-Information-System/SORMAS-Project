@@ -338,6 +338,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             fluidRowLocs(MPOX_COORDINATE_LABEL) +
             fluidRowLocs(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT) +
             fluidRowLocs(CaseDataDto.RESPONSIBLE_REGION, CaseDataDto.RESPONSIBLE_DISTRICT, CaseDataDto.RESPONSIBLE_COMMUNITY) +
+            fluidRowLocs(CaseDataDto.HEALTH_FACILITY, CaseDataDto.HEALTH_FACILITY_DETAILS) +
             loc(NOTIFY_INVESTIGATE) +
             fluidRowLocs(CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION) +
             loc(INDICATE_CATEGORY_LOC) +
