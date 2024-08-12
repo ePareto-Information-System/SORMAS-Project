@@ -626,7 +626,9 @@ public interface Captions {
 	String CaseHospitalization_dischargeDate = "CaseHospitalization.dischargeDate";
 	String CaseHospitalization_healthFacility = "CaseHospitalization.healthFacility";
 	String CaseHospitalization_healthFacilityRecordNumber = "CaseHospitalization.healthFacilityRecordNumber";
-	String CaseHospitalization_healthFacilityDistrict = "CaseHospitalization.CaseHospitalization_healthFacilityDistrict";
+	String CaseHospitalization_healthFacilityRegion= "CaseHospitalization.healthFacilityRegion";
+	String CaseHospitalization_healthFacilityDistrict = "CaseHospitalization.healthFacilityDistrict";
+	String CaseHospitalization_healthFacilityCommunity = "CaseHospitalization.healthFacilityCommunity";
 	String CaseHospitalization_fillSectionBeforeSigningLoc = "CaseHospitalization.fillSectionBeforeSigning";
 	String CaseHospitalization_seekHelpChildLoc = "CaseHospitalization.seekHelpChild";
 	String CaseHospitalization_hospitalizationReason = "CaseHospitalization.hospitalizationReason";
