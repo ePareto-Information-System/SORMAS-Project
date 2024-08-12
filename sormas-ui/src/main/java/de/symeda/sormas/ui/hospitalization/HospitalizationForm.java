@@ -28,7 +28,9 @@ import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.ebs.EbsDto;
 import de.symeda.sormas.api.hospitalization.SymptomsList;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleMaterial;
@@ -83,6 +85,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private static final String OTHERCASEOUTCOMEDETAIL = Captions.CaseData_specify_other_outcome;
 	public static final String HEALTH_FACILITY = Captions.CaseHospitalization_healthFacility;
 	public static final String HEALTH_FACILITY_DISTRICT = Captions.CaseHospitalization_healthFacilityDistrict;
+	public static final String HEALTH_FACILITY_COMMUNITY = Captions.CaseHospitalization_healthFacilityCommunity;
+	public static final String HEALTH_FACILITY_REGION = Captions.CaseHospitalization_healthFacilityRegion;
 	private static final String HOSPITAL_NAME_DETAIL = " ( %s )";
 	private static final String SYMPTOMS_HEADING_LOC = " symptomsHeading";
 
@@ -108,7 +112,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private static final String HTML_LAYOUT =
 			loc(HOSPITALIZATION_HEADING_LOC) +
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY, HospitalizationDto.WAS_PATIENT_ADMITTED) +
-					fluidRowLocs(HEALTH_FACILITY, HEALTH_FACILITY_DISTRICT, HospitalizationDto.HOSPITAL_RECORD_NUMBER) +
+					fluidRowLocs(HEALTH_FACILITY, HEALTH_FACILITY_REGION, HEALTH_FACILITY_DISTRICT, HEALTH_FACILITY_COMMUNITY) +
+					fluidRowLocs(6,HospitalizationDto.HOSPITAL_RECORD_NUMBER) +
 					fluidRowLocs(6,HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW) +
 					fluidRowLocs(6,HospitalizationDto.MEMBER_FAMILY_HELPING_PATIENT) +
 					fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.DATE_OF_DEATH) +
@@ -161,7 +166,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			fluidRowLocs(5, HospitalizationDto.SELECT_INPATIENT_OUTPATIENT, 2, "",5, HospitalizationDto.SEEN_AT_A_HEALTH_FACILITY) +
 			fluidRowLocs(5, HospitalizationDto.ADMISSION_DATE,2, "", 5, HospitalizationDto.DATE_FIRST_SEEN_HOSPITAL_FOR_DISEASE) +
 	fluidRowLocs(5, HospitalizationDto.DISCHARGE_DATE );
-			
+
+	public static final String MPOX_LAYOUT = loc(HOSPITALIZATION_HEADING_LOC) +
+			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW) +
+			fluidRowLocs(HEALTH_FACILITY_REGION, HEALTH_FACILITY_DISTRICT, HEALTH_FACILITY_COMMUNITY) +
+			fluidRowLocs(HEALTH_FACILITY)+
+			fluidRowLocs(HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.ADMISSION_DATE);
 
 	//@formatter:on
 	public HospitalizationForm(CaseDataDto caze, ViewMode viewMode, boolean isPseudonymized, boolean inJurisdiction, boolean isEditAllowed) {
@@ -210,15 +220,27 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		getContent().addComponent(symptomsHeadingLabel, SYMPTOMS_HEADING_LOC);
 		symptomsHeadingLabel.setVisible(false);
 
+		TextField regionField = addCustomField(HEALTH_FACILITY_REGION, RegionReferenceDto.class, TextField.class);
+		RegionReferenceDto regionReferenceDto = caze.getResponsibleRegion();
+
 		TextField districtField = addCustomField(HEALTH_FACILITY_DISTRICT, DistrictReferenceDto.class, TextField.class);
 		DistrictReferenceDto districtReferenceDto = caze.getResponsibleDistrict();
 
+		TextField subDistrictField = addCustomField(HEALTH_FACILITY_COMMUNITY, CommunityReferenceDto.class, TextField.class);
+		CommunityReferenceDto communityReferenceDto = caze.getResponsibleCommunity();
+
+		if(regionReferenceDto!= null){
+			regionField.setValue(regionReferenceDto.getCaption());
+		}
 		if(districtReferenceDto!= null){
 			districtField.setValue(districtReferenceDto.getCaption());
 		}
+		if(communityReferenceDto!= null){
+			subDistrictField.setValue(communityReferenceDto.getCaption());
+		}
+
 		districtField.setReadOnly(true);
-		districtField.setCaption("District where Health Facility located");
-		districtField.setVisible(false);
+		setFieldsVisible(false, regionField, districtField, subDistrictField);
 
 		TextField facilityField = addCustomField(HEALTH_FACILITY, FacilityReferenceDto.class, TextField.class);
 		FacilityReferenceDto healthFacility1 = caze.getHealthFacility();
@@ -255,7 +277,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		final NullableOptionGroup wasPatientAdmitted = addField(HospitalizationDto.WAS_PATIENT_ADMITTED, NullableOptionGroup.class);
 		wasPatientAdmitted.setVisible(false);
 
-		final NullableOptionGroup admittedToHealthFacilityFieldNew = addField(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, NullableOptionGroup.class);
+		NullableOptionGroup admittedToHealthFacilityFieldNew = addField(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, NullableOptionGroup.class);
 		NullableOptionGroup hospitalizedYesNo = addField(HospitalizationDto.HOSPITALIZATION_YES_NO, NullableOptionGroup.class);
 		addField(HospitalizationDto.RECEPTION_DATE, DateField.class);
 		addField(HospitalizationDto.MEMBER_FAMILY_HELPING_PATIENT, TextField.class);
@@ -593,7 +615,19 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		}
 		
 		if(caze.getDisease() == Disease.MONKEYPOX){
-			setVisible(true, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, HospitalizationDto.ADMISSION_DATE, HospitalizationDto.HOSPITAL_RECORD_NUMBER);
+			setFieldsVisible(true, admittedToHealthFacilityFieldNew, regionField, districtField, subDistrictField);
+
+			regionField.setReadOnly(true);
+			districtField.setReadOnly(true);
+			subDistrictField.setReadOnly(true);
+
+			FieldHelper.setVisibleWhen(
+					getFieldGroup(),
+					Arrays.asList(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.HOSPITAL_RECORD_NUMBER),
+					HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW,
+					Arrays.asList(YesNo.YES),
+					true
+			);
 		}
 
 		if (caze.getDisease() == Disease.GUINEA_WORM) {
@@ -713,6 +747,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					return GUINEA_WORK_LAYOUT;
 				case MEASLES:
 					return MEASLES_LAYOUT;
+				case MONKEYPOX:
+					return MPOX_LAYOUT;
 				default:
 					return HTML_LAYOUT;
 			}
