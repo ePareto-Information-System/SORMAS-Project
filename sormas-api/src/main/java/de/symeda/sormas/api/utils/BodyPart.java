@@ -11,7 +11,8 @@ public enum BodyPart {
     PALMS,
     GENITAL_AREA,
     SOLES_OF_THE_FEET,
-    ALL_OVER_THE_BODY;
+    ALL_OVER_THE_BODY,
+    OTHER;
 
     @Override
     public String toString() {

@@ -64,6 +64,8 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.api.sample.IpSampleTestType;
+import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.SymptomsContext;
@@ -245,6 +247,19 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			fluidRowLocs(PROVISONAL_DIAGNOSIS)+
 			fluidRowLocs(6, TRUEAFP);
 
+	public static final String MPOX_LAYOUT = loc(MPOX_SYMPTOMS_HEADING_LOC) +
+			fluidRowLocs(SymptomsDto.SYMPTOMS_SELECTED)+
+			fluidRowLocs(6,SymptomsDto.SYMPTOMS_SELECTED_OTHER)+
+			loc(MPOX_RASH_HEADING_LOC) +
+			fluidRowLocs(ONSET_DATE, DATE_OF_ONSET_RASH)+
+			fluidRowLocs(RASH_SYMPTOMS)+
+			fluidRowLocs(6, RASH_SYMPTOMS_OTHER_AREAS)+
+			fluidRowLocs(ARE_LESIONS_IN_SAME_STATE)+
+			fluidRowLocs(ARE_LESIONS_SAME_SIZE)+
+			fluidRowLocs(ARE_LESIONS_DEEP)+
+			fluidRowLocs(ARE_ULCERS_AMONG_LESIONS)+
+			fluidRowLocs(6, TYPE_OF_RASH);
+
     private static String createSymptomGroupLayout(SymptomGroup symptomGroup, String loc) {
 
         final Predicate<java.lang.reflect.Field> groupSymptoms =
@@ -290,7 +305,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	OptionGroup tickRashCharacteristicsField;
 	NullableOptionGroup patientHaveFever;
 	DateField dateOfOnset;
-    OptionGroup typeOfRash;
 	public ComboBox outcome;
 
     public SymptomsForm(
@@ -1104,30 +1118,44 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 
         if (disease == Disease.MONKEYPOX) {
-            setVisible(false, ONSET_DATE, OUTCOME);
+            setVisible(false, OUTCOME);
 
             symptomsHeadingLabel.setVisible(true);
             tickSymptomField.setVisible(true);
 
-            addField(SYMPTOMS_SELECTED_OTHER, TextField.class);
+			TextField symptomsSelectedOther = addField(SYMPTOMS_SELECTED_OTHER, TextField.class);
+			symptomsSelectedOther.setVisible(false);
+
+			tickSymptomField.addValueChangeListener(event -> {
+				Set<SymptomsList> values = (Set<SymptomsList>) event.getProperty().getValue();
+
+				boolean otherSelected = values != null && values.contains(SymptomsList.OTHER);
+				symptomsSelectedOther.setVisible(otherSelected);
+			});
+
             addField(DATE_OF_ONSET_RASH, DateField.class);
 
             tickRashCharacteristicsField.setVisible(true);
 
-            addField(RASH_SYMPTOMS_OTHER_AREAS, TextField.class);
+			TextField rashSymptomsOtherAreas = addField(RASH_SYMPTOMS_OTHER_AREAS, TextField.class);
+			rashSymptomsOtherAreas.setVisible(false);
+
+			tickRashCharacteristicsField.addValueChangeListener(event ->{
+				Set<BodyPart> items = (Set<BodyPart>) event.getProperty().getValue();
+
+				boolean otherSelected = items != null && items.contains(BodyPart.OTHER);
+				rashSymptomsOtherAreas.setVisible(otherSelected);
+			});
+
             addField(ARE_LESIONS_IN_SAME_STATE, NullableOptionGroup.class);
             addField(ARE_LESIONS_SAME_SIZE, NullableOptionGroup.class);
             addField(ARE_LESIONS_DEEP, NullableOptionGroup.class);
             addField(ARE_ULCERS_AMONG_LESIONS, NullableOptionGroup.class);
 
-			typeOfRash = addField(TYPE_OF_RASH, OptionGroup.class);
-			CssStyles.style(typeOfRash, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
-			typeOfRash.setMultiSelect(true);
+			ComboBox typeOfRash = addField(TYPE_OF_RASH, ComboBox.class);
+			List<SymptomsList> validValues = Arrays.asList(SymptomsList.MACULAR, SymptomsList.MACULOPAPULAR, SymptomsList.VESICULAR, SymptomsList.PAPULAR, SymptomsList.PETECHIAL);
+			FieldHelper.updateEnumData(typeOfRash, validValues);
 
-            typeOfRash.addItems(
-					Arrays.stream(SymptomsList.MpoxRashList())
-							.filter(c -> fieldVisibilityCheckers.isVisible(SymptomsList.class, c.name()))
-							.collect(Collectors.toList()));
 		}
 		
 		if (disease == Disease.CORONAVIRUS) {
@@ -1321,6 +1349,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					break;
 				case AFP:
 					SELECTED_HTML_LAYOUT = AFP_LAYOUT;
+					break;
+				case MONKEYPOX:
+					SELECTED_HTML_LAYOUT = MPOX_LAYOUT;
 					break;
 				default:
 					SELECTED_HTML_LAYOUT = HTML_LAYOUT;
