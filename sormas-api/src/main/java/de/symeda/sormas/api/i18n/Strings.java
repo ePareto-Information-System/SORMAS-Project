@@ -290,6 +290,8 @@ public interface Strings {
 	String entityVisits = "entityVisits";
 	String entityWeeklyReports = "entityWeeklyReports";
 	String entityContainmentMeasure = "entityContainmentMeasure";
+	String entityAffectedPerson = "entityAffectedPerson";
+	String entityPatientSymptomsPrecedence = "entityPatientSymptomsPrecedence";
 	String entityPersonTravelHistory = "entityPersonTravelHistory";
 	String entityContaminationSource = "entityContaminationSource";
 

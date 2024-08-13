@@ -2911,6 +2911,10 @@ public interface Captions {
 	String RiskFactor_investigatorAddress = "investigatorAddress";
 	String RiskFactor_investigatorTel = "investigatorTel";
 	String RiskFactor_email = "email";
+	String RiskFactor_patientSymptomsPrecedence = "patientSymptomsPrecedence";
+	String PatientSymptomsPrecedence_name = "name";
+	String PatientSymptomsPrecedence_phone = "phone";
+	String PatientSymptomsPrecedence_contactAddress = "contactAddress";
 
 
 	String sormasToSormasCaseNotShared = "sormasToSormasCaseNotShared";

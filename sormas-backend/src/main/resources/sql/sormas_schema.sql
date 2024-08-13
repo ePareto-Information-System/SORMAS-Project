@@ -15067,4 +15067,24 @@ INSERT INTO schema_version(version_number, comment) VALUES (702, 'Dropped redund
 
 ALTER TABLE cases ADD COLUMN investigationofficeraddress VARCHAR(255);
 INSERT INTO schema_version(version_number, comment) VALUES (703, 'Added investigationofficeraddress to cases');
+
+CREATE TABLE patientsymptomsprecedence (
+                                id BIGINT PRIMARY KEY NOT NULL,
+                                uuid varchar(36) not null unique,
+                                changedate timestamp not null,
+                                creationdate timestamp not null,
+                                riskfactor_id bigint not null,
+                                name varchar(255),
+                                contactaddress VARCHAR(255),
+                                phone VARCHAR(255)
+);
+ALTER TABLE patientsymptomsprecedence OWNER TO sormas_user;
+ALTER TABLE patientsymptomsprecedence ADD CONSTRAINT fk_patientsymptomsprecedence_riskfactor_id FOREIGN KEY (riskfactor_id) REFERENCES riskfactor(id);
+ALTER TABLE patientsymptomsprecedence ADD COLUMN change_user_id BIGINT,
+                           ADD CONSTRAINT fk_change_user_id
+                               FOREIGN KEY (change_user_id)
+                                   REFERENCES users (id);
+ALTER TABLE riskfactor ADD COLUMN changedateofembeddedlists timestamp without time zone;
+INSERT INTO schema_version(version_number, comment) VALUES (704, 'Created table patientsymptomsprecedence and added fields to implement patientsymptomsprecedence for riskfactor');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
