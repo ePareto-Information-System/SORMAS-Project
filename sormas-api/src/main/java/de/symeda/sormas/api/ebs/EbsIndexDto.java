@@ -36,6 +36,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	public static final String SOURCE_INFORMATION = "sourceInformation";
 	public static final String TRIAGING_DECISION = "triagingDecision";
 	public static final String REPORT_DATE_TIME = "reportDateTime";
+	public static final String CHANGE_DATE = "changeDate";
 	public static final String REPORTING_USER = "reportingUser";
 	public static final String INFORMANT_NAME = "informantName";
 	public static final String INFORMANT_TEL = "informantTel";
@@ -67,6 +68,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	private EbsSourceType sourceInformation;
 	private EbsTriagingDecision triagingDecision;
 	private Date reportDateTime;
+	private Date changeDate;
 	private PersonReporting categoryOfInformant;
 	private String informantName;
 	private String informantTel;
@@ -93,6 +95,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 			EbsSourceType sourceInformation,
 			EbsTriagingDecision triagingDecision,
 			Date reportDateTime,
+			Date changeDate,
 			PersonReporting categoryOfInformant,
 			String informantName,
 			String informantTel,
@@ -122,6 +125,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		this.sourceInformation = sourceInformation;
 		this.triagingDecision = triagingDecision;
 		this.reportDateTime = reportDateTime;
+		this.changeDate = changeDate;
 		this.categoryOfInformant = categoryOfInformant;
 		this.informantName = informantName;
 		this.informantTel = informantTel;
@@ -183,6 +187,13 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	public void setReportDateTime(Date reportDateTime) {
 		this.reportDateTime = reportDateTime;
 	}
+	public Date getChangeDate() {
+			return changeDate;
+		}
+
+	public void setChangeDate(Date changeDate) {
+			this.changeDate = changeDate;
+		}
 
 	public Date getDecisionDate() {
 		return getTriagingDecisionDate().getDecisionDate();
