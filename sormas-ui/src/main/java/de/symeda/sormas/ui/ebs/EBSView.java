@@ -116,7 +116,7 @@ public class EBSView extends AbstractView {
             {
                 StreamResource streamResource = GridExportStreamResource.createStreamResourceWithSelectedItems(
                         grid,
-                        () -> isDefaultViewType() && this.viewConfiguration.isInEagerMode()
+                        () -> this.viewConfiguration.isInEagerMode()
                                 ? this.grid.asMultiSelect().getSelectedItems()
                                 : Collections.emptySet(),
                         ExportEntityName.EBS);
@@ -270,12 +270,10 @@ public class EBSView extends AbstractView {
             params = params.substring(1);
         }
             if (isDefaultViewType()) {
-//                ((EbsSignalGrid) grid).setLazyDataProvider();
 
                 updateFilterComponents();
                 ((EbsSignalGrid) grid).reload();
             }else {
-//                ((EbsGrid) grid).setLazyDataProvider();
 
                 updateFilterComponents();
                 ((EbsGrid) grid).reload();
