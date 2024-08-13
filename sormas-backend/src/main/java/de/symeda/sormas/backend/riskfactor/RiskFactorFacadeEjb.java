@@ -88,9 +88,6 @@ public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boo
         target.setDateOfContactWithIllPerson(source.getDateOfContactWithIllPerson());
         target.setPatientTouchDomesticWildAnimal(source.getPatientTouchDomesticWildAnimal());
         target.setPatientTouchDomesticWildAnimalIfYes(source.getPatientTouchDomesticWildAnimalIfYes());
-        target.setStatusOfPatient(source.getStatusOfPatient());
-        target.setDateOfDeath(source.getDateOfDeath());
-        target.setPlaceOfDeath(source.getPlaceOfDeath());
         target.setDateOfSpecimenCollection(source.getDateOfSpecimenCollection());
         target.setTypeOfSpecimenCollection(source.getTypeOfSpecimenCollection());
         target.setInvestigatorName(source.getInvestigatorName());
@@ -168,9 +165,6 @@ public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boo
         target.setDateOfContactWithIllPerson(source.getDateOfContactWithIllPerson());
         target.setPatientTouchDomesticWildAnimal(source.getPatientTouchDomesticWildAnimal());
         target.setPatientTouchDomesticWildAnimalIfYes(source.getPatientTouchDomesticWildAnimalIfYes());
-        target.setStatusOfPatient(source.getStatusOfPatient());
-        target.setDateOfDeath(source.getDateOfDeath());
-        target.setPlaceOfDeath(source.getPlaceOfDeath());
         target.setDateOfSpecimenCollection(source.getDateOfSpecimenCollection());
         target.setTypeOfSpecimenCollection(source.getTypeOfSpecimenCollection());
         target.setInvestigatorName(source.getInvestigatorName());

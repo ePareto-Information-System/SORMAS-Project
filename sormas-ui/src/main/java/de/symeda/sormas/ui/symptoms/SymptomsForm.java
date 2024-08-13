@@ -64,6 +64,7 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.api.riskfactor.RiskFactorDto;
 import de.symeda.sormas.api.sample.IpSampleTestType;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
@@ -113,8 +114,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	private static final String MPOX_SYMPTOMS_HEADING_LOC = " symptomsHeading";
 	private static final String MPOX_RASH_HEADING_LOC = " mpozRash";
 	private static final String PLACE_DEATH_HEADING_LOC = " placeDeathsHeading";
-
     private static Map<String, List<String>> symptomGroupMap = new HashMap<>();
+	private static final String PATIENT_STATUS = "patientStatusLoc";
 
     //@formatter:off
 	private static final String HTML_LAYOUT =
@@ -258,7 +259,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			fluidRowLocs(ARE_LESIONS_SAME_SIZE)+
 			fluidRowLocs(ARE_LESIONS_DEEP)+
 			fluidRowLocs(ARE_ULCERS_AMONG_LESIONS)+
-			fluidRowLocs(6, TYPE_OF_RASH);
+			fluidRowLocs(6, TYPE_OF_RASH) +
+			loc(PATIENT_STATUS) +
+			fluidRowLocs(6, STATUS_OF_PATIENT) +
+			fluidRowLocs(DATE_OF_DEATH, PLACE_OF_DEATH);
 
     private static String createSymptomGroupLayout(SymptomGroup symptomGroup, String loc) {
 
@@ -1118,8 +1122,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 
         if (disease == Disease.MONKEYPOX) {
+			createLabel(I18nProperties.getString(Strings.headingPatientStatus), H3, PATIENT_STATUS);
             setVisible(false, OUTCOME);
-
             symptomsHeadingLabel.setVisible(true);
             tickSymptomField.setVisible(true);
 
@@ -1134,7 +1138,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			});
 
             addField(DATE_OF_ONSET_RASH, DateField.class);
-
             tickRashCharacteristicsField.setVisible(true);
 
 			TextField rashSymptomsOtherAreas = addField(RASH_SYMPTOMS_OTHER_AREAS, TextField.class);
@@ -1155,6 +1158,17 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			ComboBox typeOfRash = addField(TYPE_OF_RASH, ComboBox.class);
 			List<SymptomsList> validValues = Arrays.asList(SymptomsList.MACULAR, SymptomsList.MACULOPAPULAR, SymptomsList.VESICULAR, SymptomsList.PAPULAR, SymptomsList.PETECHIAL);
 			FieldHelper.updateEnumData(typeOfRash, validValues);
+
+			ComboBox outcome = new ComboBox("Outcome");
+
+			for (CaseOutcome caseOutcome : CaseOutcome.values()) {
+				if (caseOutcome == CaseOutcome.DECEASED || caseOutcome == CaseOutcome.ALIVE) {
+					outcome.addItem(caseOutcome);
+				}
+			}
+			addField(STATUS_OF_PATIENT, outcome);
+			addField(DATE_OF_DEATH, DateField.class);
+			addField(PLACE_OF_DEATH, TextField.class);
 
 		}
 		
