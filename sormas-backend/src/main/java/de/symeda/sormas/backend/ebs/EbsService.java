@@ -401,7 +401,6 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getRiskAssessment().get(RiskAssessment.RISK_ASSESSMENT), ebsCriteria.getRiskAssessment()));
 		}
 		if (ebsCriteria.getReportDateTime() != null) {
-			var somedate = ebsCriteria.getReportDateTime();
 			filter = CriteriaBuilderHelper.and(
 					cb, filter,
 					cb.between(
