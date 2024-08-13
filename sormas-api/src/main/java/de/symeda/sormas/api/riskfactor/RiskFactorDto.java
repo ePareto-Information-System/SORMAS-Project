@@ -11,9 +11,10 @@ import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 import de.symeda.sormas.api.EntityDto;
 
 
-
-
+import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @DependingOnFeatureType(featureType = FeatureType.CASE_SURVEILANCE)
 public class RiskFactorDto extends PseudonymizableDto {
@@ -61,7 +62,7 @@ public class RiskFactorDto extends PseudonymizableDto {
     public static final String PATIENT_TRAVELLED_ILLNESS_IF_YES_INDICATE = "patientTravelledIllnessIfYesIndicate";
     public static final String OTHER_PLACES = "otherPlaces";
     public static final String DURING_3WEEKS_PATIENT_CONTACT_WITH_SIMILAR_SYMPTOMS = "during3WeeksPatientContactWithSimilarSymptoms";
-    public static final String DURING_3WEEKS_PATIENT_CONTACT_WITH_SIMILAR_SYMPTOMS_IF_YES = "during3WeeksPatientContactWithSimilarSymptomsIfYes";
+    public static final String PATIENT_SYMPTOMS_PRECEDENCE = "patientSymptomsPrecedence";
     public static final String DATE_OF_CONTACT_WITH_ILL_PERSON = "dateOfContactWithIllPerson";
     public static final String PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL = "patientTouchDomesticWildAnimal";
     public static final String PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL_IF_YES = "patientTouchDomesticWildAnimalIfYes";
@@ -70,10 +71,6 @@ public class RiskFactorDto extends PseudonymizableDto {
     public static final String PLACE_OF_DEATH = "placeOfDeath";
     public static final String DATE_OF_SPECIMEN_COLLECTION = "dateOfSpecimenCollection";
     public static final String TYPE_OF_SPECIMEN_COLLECTION = "typeOfSpecimenCollection";
-    public static final String INVESTIGATOR_NAME = "investigatorName";
-    public static final String INVESTIGATOR_TITLE = "investigatorTitle";
-    public static final String INVESTIGATOR_ADDRESS = "investigatorAddress";
-    public static final String INVESTIGATOR_TEL = "investigatorTel";
     public static final String EMAIL = "email";
 
     private String drinkingWaterSourceOne;
@@ -130,6 +127,8 @@ public class RiskFactorDto extends PseudonymizableDto {
     private String investigatorAddress;
     private String investigatorTel;
     private String email;
+    @Valid
+    private List<PatientSymptomsPrecedenceDto> patientSymptomsPrecedence = new ArrayList<>();
 
     public static RiskFactorDto build() {
         RiskFactorDto riskFactorDto  = new RiskFactorDto();
@@ -570,4 +569,25 @@ public class RiskFactorDto extends PseudonymizableDto {
         this.email = email;
     }
 
+    public List<PatientSymptomsPrecedenceDto> getPatientSymptomsPrecedence() {
+        return patientSymptomsPrecedence;
+    }
+
+    public void setPatientSymptomsPrecedence(List<PatientSymptomsPrecedenceDto> patientSymptomsPrecedence) {
+        this.patientSymptomsPrecedence = patientSymptomsPrecedence;
+    }
+
+    @Override
+    public RiskFactorDto clone() throws CloneNotSupportedException {
+        RiskFactorDto clone = (RiskFactorDto) super.clone();
+
+        List<PatientSymptomsPrecedenceDto> patientSymptomsPrecedenceDtos = new ArrayList<>();
+        for (PatientSymptomsPrecedenceDto patientSymptomsPrecedenceDto : getPatientSymptomsPrecedence()) {
+            patientSymptomsPrecedenceDtos.add(patientSymptomsPrecedenceDto.clone());
+        }
+        clone.getPatientSymptomsPrecedence().clear();
+        clone.getPatientSymptomsPrecedence().addAll(patientSymptomsPrecedenceDtos);
+
+        return clone;
+    }
 }
