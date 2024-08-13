@@ -153,6 +153,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
     public static final String CASE_REFER_POINT_OF_ENTRY_BTN_LOC = "caseReferFromPointOfEntryBtnLoc";
     public static final String PERSON_WHO_COMPLETED_THIS_FORM_HEADING_LOC = "personWhoCompletedThisFormHeadingLoc";
     private static final String INVESTIGATE_INTO_RISK_FACTORS_NAVIGATION_LINK_LOC = "investigateIntoRiskFactorsNavigationLink";
+    private static final String INVESTIGATING_OFFICER_INFO = "investigatingOfficerInfoLoc";
     NullableOptionGroup vaccinatedByCardOrHistory;
     private HealthConditionsForm healthConditionsField;
     private Label medicalInformationCaptionLabel;
@@ -344,7 +345,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             loc(INDICATE_CATEGORY_LOC) +
             fluidRowLocs(CaseDataDto.PERSON) +
             fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY) +
-            fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.REGION_OF_RESIDENCE, CaseDataDto.DISTRICT_OF_RESIDENCE);
+            fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.REGION_OF_RESIDENCE, CaseDataDto.DISTRICT_OF_RESIDENCE)+
+            loc(INVESTIGATING_OFFICER_INFO) +
+            fluidRowLocs(6, CaseDataDto.REPORTING_OFFICER_NAME) +
+            fluidRowLocs(CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.INVESTIGATION_OFFICER_ADDRESS) +
+            fluidRowLocs(CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE, CaseDataDto.REPORTING_OFFICER_EMAIL);
 
 	//@formatter:on
 
@@ -412,6 +417,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
     private AccessibleTextField tfReportLon;
     private AccessibleTextField tfReportLat;
     private PersonEditForm personEditForm;
+    TextField reportingOfficerName;
+    TextField reportingOfficerTitle;
+    TextField reportingOfficerFunction;
+    TextField reportingOfficerPhone;
+    TextField reportingOfficerEmail;
+    TextField investigationOfficerAddress;
 
     private final Map<ReinfectionDetailGroup, CaseReinfectionCheckBoxTree> reinfectionTrees = new EnumMap<>(ReinfectionDetailGroup.class);
 
@@ -930,11 +941,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         surveillanceOfficerField.setNullSelectionAllowed(true);
         surveillanceOfficerField.setVisible(false);
 
-        TextField reportingOfficerName = addField(CaseDataDto.REPORTING_OFFICER_NAME, TextField.class);
-        TextField reportingOfficerTitle = addField(CaseDataDto.REPORTING_OFFICER_TITLE, TextField.class);
-        TextField reportingOfficerFunction = addField(CaseDataDto.FUNCTION_OF_REPORTING_OFFICER, TextField.class);
-        TextField reportingOfficerPhone = addField(CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE, TextField.class);
-        TextField reportingOfficerEmail = addField(CaseDataDto.REPORTING_OFFICER_EMAIL, TextField.class);
+       reportingOfficerName      = addField(CaseDataDto.REPORTING_OFFICER_NAME, TextField.class);
+       reportingOfficerTitle     = addField(CaseDataDto.REPORTING_OFFICER_TITLE, TextField.class);
+       reportingOfficerFunction  = addField(CaseDataDto.FUNCTION_OF_REPORTING_OFFICER, TextField.class);
+       reportingOfficerPhone     = addField(CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE, TextField.class);
+       reportingOfficerEmail     = addField(CaseDataDto.REPORTING_OFFICER_EMAIL, TextField.class);
+       investigationOfficerAddress     = addField(CaseDataDto.INVESTIGATION_OFFICER_ADDRESS, TextField.class);
 
         differentPlaceOfStayJurisdiction = addCustomField(DIFFERENT_PLACE_OF_STAY_JURISDICTION, Boolean.class, CheckBox.class);
         differentPlaceOfStayJurisdiction.addStyleName(VSPACE_3);
@@ -1954,6 +1966,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                     regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
 
         });
+        createLabel(I18nProperties.getString(Strings.headingInvestigatingOfficer), H3, INVESTIGATING_OFFICER_INFO);
+        reportingOfficerName.setCaption("Name");
+        reportingOfficerTitle.setCaption("Job Title");
+        reportingOfficerPhone.setCaption("Contact Number");
+        reportingOfficerEmail.setCaption("Email Address");
 
     }
 
