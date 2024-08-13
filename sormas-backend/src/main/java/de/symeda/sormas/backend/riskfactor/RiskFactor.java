@@ -447,30 +447,6 @@ public class RiskFactor extends AbstractDomainObject {
         this.patientTouchDomesticWildAnimalIfYes = patientTouchDomesticWildAnimalIfYes;
     }
 
-    public CaseOutcome getStatusOfPatient() {
-        return statusOfPatient;
-    }
-
-    public void setStatusOfPatient(CaseOutcome statusOfPatient) {
-        this.statusOfPatient = statusOfPatient;
-    }
-
-    public Date getDateOfDeath() {
-        return dateOfDeath;
-    }
-
-    public void setDateOfDeath(Date dateOfDeath) {
-        this.dateOfDeath = dateOfDeath;
-    }
-
-    public String getPlaceOfDeath() {
-        return placeOfDeath;
-    }
-
-    public void setPlaceOfDeath(String placeOfDeath) {
-        this.placeOfDeath = placeOfDeath;
-    }
-
     public Date getDateOfSpecimenCollection() {
         return dateOfSpecimenCollection;
     }
