@@ -497,6 +497,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private String nameOfVillagePersonGotIll;
 	private Region regionOfResidence;
 	private District districtOfResidence;
+	private String investigationOfficerAddress;
 
 	public static Case build() {
 		Case caze = new Case();
@@ -2441,5 +2442,11 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setDistrictOfResidence(District districtOfResidence) {
 		this.districtOfResidence = districtOfResidence;
+	}
+
+	public String getInvestigationOfficerAddress() {return investigationOfficerAddress;}
+
+	public void setInvestigationOfficerAddress(String investigationOfficerAddress) {
+		this.investigationOfficerAddress = investigationOfficerAddress;
 	}
 }

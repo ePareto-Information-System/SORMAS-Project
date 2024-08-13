@@ -96,11 +96,7 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
                     fluidRowLocs(RiskFactorDto.DATE_OF_DEATH, RiskFactorDto.PLACE_OF_DEATH) +
                     loc(LABORATORY) +
                     fluidRowLocs(6,RiskFactorDto.DATE_OF_SPECIMEN_COLLECTION) +
-                    fluidRowLocs(6,RiskFactorDto.TYPE_OF_SPECIMEN_COLLECTION) +
-                    loc(INVESTIGATING_OFFICER_INFO) +
-                    fluidRowLocs(6,RiskFactorDto.INVESTIGATOR_NAME) +
-                    fluidRowLocs(RiskFactorDto.INVESTIGATOR_TITLE, RiskFactorDto.INVESTIGATOR_ADDRESS) +
-                    fluidRowLocs(RiskFactorDto.INVESTIGATOR_TEL, RiskFactorDto.EMAIL);
+                    fluidRowLocs(6,RiskFactorDto.TYPE_OF_SPECIMEN_COLLECTION);
 
     private final Disease disease;
     private final Class<? extends EntityDto> parentClass;
@@ -238,7 +234,7 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
 
             createLabel(I18nProperties.getString(Strings.headingPatientStatus), H3, PATIENT_STATUS);
 //            createLabel(I18nProperties.getString(Strings.headingLaboratory), H3, LABORATORY);
-            createLabel(I18nProperties.getString(Strings.headingInvestigatingOfficer), H3, INVESTIGATING_OFFICER_INFO);
+//            createLabel(I18nProperties.getString(Strings.headingInvestigatingOfficer), H3, INVESTIGATING_OFFICER_INFO);
 
             addField(RiskFactorDto.PATIENT_SPOX_VACCINATION_SCAR_PRESENT, NullableOptionGroup.class);
             NullableOptionGroup travelled3weeks = addField(RiskFactorDto.PATIENT_TRAVELLED_ANYWHERE_3WEEKS_PRIOR, NullableOptionGroup.class);
@@ -276,12 +272,6 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
                 }
             }
             addField(RiskFactorDto.TYPE_OF_SPECIMEN_COLLECTION, specimen);*/
-
-            addField(RiskFactorDto.INVESTIGATOR_NAME, TextField.class);
-            addField(RiskFactorDto.INVESTIGATOR_TITLE, TextField.class);
-            addField(RiskFactorDto.INVESTIGATOR_ADDRESS, TextField.class);
-            addField(RiskFactorDto.INVESTIGATOR_TEL, TextField.class);
-            addField(RiskFactorDto.EMAIL, TextField.class);
 
             FieldHelper.setVisibleWhen(travelled3weeks, Arrays.asList(indicatePlaces), Arrays.asList(YesNo.YES), true);
             FieldHelper.setVisibleWhen(travelledIllness, Arrays.asList(indicateTravel), Arrays.asList(YesNo.YES), true);

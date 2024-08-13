@@ -15032,6 +15032,9 @@ INSERT INTO schema_version(version_number, comment) VALUES (701, 'Dropped redund
 ALTER TABLE symptoms DROP COLUMN typeofrashstring;
 ALTER TABLE symptoms ADD COLUMN typeofrash VARCHAR(255);
 INSERT INTO schema_version(version_number, comment) VALUES (702, 'Dropped redundant field: typeofrashstring and added typeofrash at symptoms');
+
+ALTER TABLE cases ADD COLUMN investigationofficeraddress VARCHAR(255);
+INSERT INTO schema_version(version_number, comment) VALUES (703, 'Added investigationofficeraddress to cases');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ALTER TABLE signalVerification ALTER COLUMN verified TYPE VARCHAR(20);
 INSERT INTO schema_version (version_number, comment) VALUES (700, 'updated the verified field');
