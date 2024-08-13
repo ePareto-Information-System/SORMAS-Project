@@ -52,7 +52,6 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 	public static final String NUMBER_OF_PENDING_TASKS = Captions.columnNumberOfPendingTasks;
 	public static final String DISEASE_SHORT = Captions.columnDiseaseShort;
 
-	private DataProviderListener<EbsIndexDto> dataProviderListener;
 	@SuppressWarnings("unchecked")
 	public <V extends View> EbsGrid(EbsCriteria criteria, Class<V> viewClass) {
 
@@ -81,8 +80,6 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 
 		Language userLanguage = I18nProperties.getUserLanguage();
 
-		boolean specificRiskEnabled = FacadeProvider.getCustomizableEnumFacade().hasEnumValues(CustomizableEnumType.SPECIFIC_EVENT_RISK, null);
-
 		List<String> columnIds = new ArrayList<>(
 			Arrays.asList(
 				EbsIndexDto.UUID));
@@ -109,21 +106,6 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 		addItemClickListener(new ShowDetailsListener<>(EbsIndexDto.UUID, e -> ControllerProvider.getEbsController().navigateToData(e.getUuid())));
 	}
 
-//		((Column<EbsIndexDto, TriagingDto>)) ebsTriagingColumn =
-//				(Column<EbsIndexDto, TriagingDto>) getColumn(EbsIndexDto.TRIAGING);
-//		ebsTriagingColumn.setSortable(false);
-//		ebsTriagingColumn.setRenderer(new EventGroupsValueProvider(), new HtmlRenderer());
-
-//	public static String createEbsDateColumn(FilteredGrid<EbsIndexDto, EbsCriteria> grid) {
-//		Column<EbsIndexDto, String> ebsDateColumn =
-//			grid.addColumn(ebs -> EbsHelper.buildEbsDateString(ebs.getTriageDate(), ebs.getEndDate()));
-//		ebsDateColumn.setId(EBS_DATE);
-//		ebsDateColumn.setSortProperty(EbsDto.TRIAGE_DATE);
-//		ebsDateColumn.setSortable(true);
-//
-//		return EBS_DATE;
-//	}
-
 	private String buildSourcePersonText(EbsIndexDto ebs) {
 		String srcFirstName = ebs.getInformantName();
 		String srcTelNo = ebs.getInformantTel();
@@ -146,20 +128,7 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 		return (srcMediaWebsite != null ? srcMediaWebsite : "");
 	}
 
-//	public void setContactCountMethod(EbsContactCountMethod method) {
-//		getColumn(EbsIndexDto.CONTACT_COUNT_SOURCE_IN_EVENT).setHidden(method == EbsContactCountMethod.ALL);
-//		getColumn(EbsIndexDto.CONTACT_COUNT).setHidden(method == EbsContactCountMethod.SOURCE_CASE_IN_EVENT);
-//		if (method == EbsContactCountMethod.BOTH_METHODS) {
-//			getColumn(EbsIndexDto.CONTACT_COUNT_SOURCE_IN_EVENT)
-//				.setCaption(I18nProperties.getPrefixCaption(EbsIndexDto.I18N_PREFIX, EbsIndexDto.CONTACT_COUNT_SOURCE_IN_EVENT));
-//		} else {
-//			getColumn(EbsIndexDto.CONTACT_COUNT_SOURCE_IN_EVENT)
-//				.setCaption(I18nProperties.getPrefixCaption(EbsIndexDto.I18N_PREFIX, EbsIndexDto.CONTACT_COUNT));
-//		}
-//	}
-
 	public void reload() {
-
 		if (getSelectionModel().isUserSelectionAllowed()) {
 			deselectAll();
 		}
@@ -173,12 +142,10 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 	}
 
 	public void setLazyDataProvider() {
-
-		setLazyDataProvider(FacadeProvider.getEbsFacade()::getIndexList, FacadeProvider.getEbsFacade()::count);
+		setLazyDataProvider(FacadeProvider.getEbsFacade()::getEventIndexList, FacadeProvider.getEbsFacade()::eventCount);
 	}
 
 	public void setEagerDataProvider() {
-
-		setEagerDataProvider(FacadeProvider.getEbsFacade()::getIndexList);
+		setEagerDataProvider(FacadeProvider.getEbsFacade()::getEventIndexList);
 	}
 }
