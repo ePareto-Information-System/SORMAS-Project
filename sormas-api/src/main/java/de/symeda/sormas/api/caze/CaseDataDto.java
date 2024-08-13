@@ -176,6 +176,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String REPORT_LAT_LON_ACCURACY = "reportLatLonAccuracy";
 	public static final String REPORTING_OFFICER_NAME = "reportingOfficerName";
 	public static final String REPORTING_OFFICER_TITLE = "reportingOfficerTitle";
+	public static final String INVESTIGATION_OFFICER_ADDRESS = "investigationOfficerAddress";
 	public static final String FUNCTION_OF_REPORTING_OFFICER = "functionOfReportingOfficer";
 	public static final String REPORTING_OFFICER_CONTACT_PHONE = "reportingOfficerContactPhone";
 	public static final String REPORTING_OFFICER_EMAIL = "reportingOfficerEmail";
@@ -477,6 +478,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	private String reportingOfficerName;
 	private String reportingOfficerTitle;
+	private String investigationOfficerAddress;
 	private String functionOfReportingOfficer;
 	private String reportingOfficerContactPhone;
 	private String reportingOfficerEmail;
@@ -2455,6 +2457,12 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	public void setNameOfVillagePersonGotIll(String nameOfVillagePersonGotIll) {
 		this.nameOfVillagePersonGotIll = nameOfVillagePersonGotIll;
+	}
+
+	public String getInvestigationOfficerAddress() {return investigationOfficerAddress;}
+
+	public void setInvestigationOfficerAddress(String investigationOfficerAddress) {
+		this.investigationOfficerAddress = investigationOfficerAddress;
 	}
 
 }

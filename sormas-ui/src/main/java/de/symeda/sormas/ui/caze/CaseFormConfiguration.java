@@ -133,11 +133,11 @@ public class CaseFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.OVERWRITE_FOLLOW_UP_UNTIL, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.FOLLOW_UP_COMMENT, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.SURVEILLANCE_OFFICER, new HashSet<>(Arrays.asList(Disease.MEASLES)));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_NAME, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER,Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI,Disease.DENGUE, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_TITLE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI,Disease.AHF, Disease.DENGUE, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_NAME, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER,Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI,Disease.DENGUE, Disease.FOODBORNE_ILLNESS)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_TITLE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI,Disease.AHF, Disease.DENGUE, Disease.FOODBORNE_ILLNESS)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.FUNCTION_OF_REPORTING_OFFICER, new HashSet<>(Arrays.asList(Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI,Disease.AHF, Disease.DENGUE, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS)));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.NEW_INFLUENZA,Disease.SARI, Disease.AHF, Disease.DENGUE, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS)));
-        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_EMAIL, new HashSet<>(Arrays.asList(Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI,Disease.AHF, Disease.DENGUE, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_CONTACT_PHONE, new HashSet<>(Arrays.asList(Disease.AFP, Disease.NEW_INFLUENZA,Disease.SARI, Disease.AHF, Disease.DENGUE, Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.REPORTING_OFFICER_EMAIL, new HashSet<>(Arrays.asList(Disease.CSM, Disease.AFP, Disease.NEW_INFLUENZA, Disease.SARI,Disease.AHF, Disease.DENGUE, Disease.FOODBORNE_ILLNESS, Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS)));
         DISABLED_FIELDS_BY_DISEASE.put(PAPER_FORM_DATES_LOC, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DATE_FORM_RECEIVED_AT_DISTRICT, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.DATE_FORM_RECEIVED_AT_REGION, new HashSet<>(Arrays.asList()));
@@ -151,6 +151,7 @@ public class CaseFormConfiguration {
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.FAMILY_LINK_WITH_PATIENT, new HashSet<>(Arrays.asList()));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.LAST_VACCINATION_DATE, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AFP, Disease.AHF, Disease.DENGUE, Disease.NEW_INFLUENZA, Disease.SARI, Disease.CSM, Disease.CORONAVIRUS, Disease.AFP, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX)));
         DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.NOTIFIED_BY_LIST, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AFP, Disease.AHF, Disease.CORONAVIRUS, Disease.NEW_INFLUENZA, Disease.CHOLERA, Disease.CSM, Disease.NON_NEONATAL_TETANUS, Disease.AFP, Disease.FOODBORNE_ILLNESS, Disease.MONKEYPOX, Disease.MEASLES, Disease.GUINEA_WORM)));
+        DISABLED_FIELDS_BY_DISEASE.put(CaseDataDto.INVESTIGATION_OFFICER_ADDRESS, new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AFP, Disease.AHF, Disease.CORONAVIRUS, Disease.NEW_INFLUENZA, Disease.CHOLERA, Disease.CSM, Disease.NON_NEONATAL_TETANUS, Disease.AFP, Disease.FOODBORNE_ILLNESS, Disease.MEASLES, Disease.GUINEA_WORM)));
     }
 
 
