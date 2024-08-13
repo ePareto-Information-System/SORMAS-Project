@@ -342,6 +342,9 @@ public class Symptoms extends AbstractDomainObject {
 	private Trimester trimester;
 	private YesNo postpartum;
 	private YesNo pregnant;
+	private CaseOutcome statusOfPatient;
+	private Date dateOfDeath;
+	private String placeOfDeath;
 
 	// when adding new fields make sure to extend toHumanString
 
@@ -2674,5 +2677,28 @@ public class Symptoms extends AbstractDomainObject {
 
 	public void setPregnant(YesNo pregnant) {
 		this.pregnant = pregnant;
+	}
+	public CaseOutcome getStatusOfPatient() {
+		return statusOfPatient;
+	}
+
+	public void setStatusOfPatient(CaseOutcome statusOfPatient) {
+		this.statusOfPatient = statusOfPatient;
+	}
+
+	public Date getDateOfDeath() {
+		return dateOfDeath;
+	}
+
+	public void setDateOfDeath(Date dateOfDeath) {
+		this.dateOfDeath = dateOfDeath;
+	}
+
+	public String getPlaceOfDeath() {
+		return placeOfDeath;
+	}
+
+	public void setPlaceOfDeath(String placeOfDeath) {
+		this.placeOfDeath = placeOfDeath;
 	}
 }

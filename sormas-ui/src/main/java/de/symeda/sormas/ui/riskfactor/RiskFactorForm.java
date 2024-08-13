@@ -92,9 +92,6 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
                     fluidRowLocs(6,RiskFactorDto.DATE_OF_CONTACT_WITH_ILL_PERSON) +
                     fluidRowLocs(RiskFactorDto.PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL) +
                     fluidRowLocs(RiskFactorDto.PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL_IF_YES) +
-                    loc(PATIENT_STATUS) +
-                    fluidRowLocs(6,RiskFactorDto.STATUS_OF_PATIENT) +
-                    fluidRowLocs(RiskFactorDto.DATE_OF_DEATH, RiskFactorDto.PLACE_OF_DEATH) +
                     loc(LABORATORY) +
                     fluidRowLocs(6,RiskFactorDto.DATE_OF_SPECIMEN_COLLECTION) +
                     fluidRowLocs(6,RiskFactorDto.TYPE_OF_SPECIMEN_COLLECTION);
@@ -237,7 +234,6 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
                  threeDaysPriorToOnsetOfDiseaseAttendAny
             );
 
-            createLabel(I18nProperties.getString(Strings.headingPatientStatus), H3, PATIENT_STATUS);
             addField(RiskFactorDto.PATIENT_SPOX_VACCINATION_SCAR_PRESENT, NullableOptionGroup.class);
             NullableOptionGroup travelled3weeks = addField(RiskFactorDto.PATIENT_TRAVELLED_ANYWHERE_3WEEKS_PRIOR, NullableOptionGroup.class);
             TextArea indicatePlaces = addField(RiskFactorDto.PATIENT_TRAVELLED_3WEEKS_IF_YES_INDICATE, TextArea.class);
@@ -252,16 +248,6 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
             NullableOptionGroup patientTouch = addField(RiskFactorDto.PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL, NullableOptionGroup.class);
             TextArea patientTouchYes = addField(RiskFactorDto.PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL_IF_YES, TextArea.class);
 
-            ComboBox outcome = new ComboBox("Outcome");
-
-            for (CaseOutcome caseOutcome : CaseOutcome.values()) {
-                if (caseOutcome == CaseOutcome.DECEASED || caseOutcome == CaseOutcome.ALIVE) {
-                    outcome.addItem(caseOutcome);
-                }
-            }
-            addField(RiskFactorDto.STATUS_OF_PATIENT, outcome);
-            addField(RiskFactorDto.DATE_OF_DEATH, DateField.class);
-            addField(RiskFactorDto.PLACE_OF_DEATH, TextField.class);
             FieldHelper.setVisibleWhen(travelled3weeks, Arrays.asList(indicatePlaces), Arrays.asList(YesNo.YES), true);
             FieldHelper.setVisibleWhen(travelledIllness, Arrays.asList(indicateTravel), Arrays.asList(YesNo.YES), true);
             FieldHelper.setVisibleWhen(patientTouch, Arrays.asList(patientTouchYes), Arrays.asList(YesNo.YES), true);

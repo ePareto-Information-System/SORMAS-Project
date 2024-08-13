@@ -15055,4 +15055,12 @@ ALTER TABLE patientsymptomsprecedence ADD COLUMN change_user_id BIGINT,
 ALTER TABLE riskfactor ADD COLUMN changedateofembeddedlists timestamp without time zone;
 INSERT INTO schema_version(version_number, comment) VALUES (704, 'Created table patientsymptomsprecedence and added fields to implement patientsymptomsprecedence for riskfactor');
 
+ALTER TABLE riskfactor DROP COLUMN statusofpatient;
+ALTER TABLE riskfactor DROP COLUMN dateofdeath;
+ALTER TABLE riskfactor DROP COLUMN placeofdeath;
+ALTER TABLE symptoms ADD COLUMN statusofpatient VARCHAR(55);
+ALTER TABLE symptoms ADD COLUMN dateofdeath Date;
+ALTER TABLE symptoms ADD COLUMN placeofdeath VARCHAR(255);
+INSERT INTO schema_version(version_number, comment) VALUES (705, 'Dropped fields in riskfactor and added to symptoms');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

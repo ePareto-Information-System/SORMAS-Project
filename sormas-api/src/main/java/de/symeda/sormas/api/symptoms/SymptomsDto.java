@@ -317,6 +317,9 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String POSTPARTUM = "postpartum";
 	public static final String TRIMESTER = "trimester";
 	public static final String PREGNANT = "pregnant";
+	public static final String STATUS_OF_PATIENT = "statusOfPatient";
+	public static final String DATE_OF_DEATH = "dateOfDeath";
+	public static final String PLACE_OF_DEATH = "placeOfDeath";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -2480,6 +2483,9 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Trimester trimester;
 	private YesNo postpartum;
 	private YesNo pregnant;
+	private CaseOutcome statusOfPatient;
+	private Date dateOfDeath;
+	private String placeOfDeath;
 	@Order(0)
 	public Float getTemperature() {
 		return temperature;
@@ -4669,5 +4675,28 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setPregnant(YesNo pregnant) {
 		this.pregnant = pregnant;
+	}
+	public CaseOutcome getStatusOfPatient() {
+		return statusOfPatient;
+	}
+
+	public void setStatusOfPatient(CaseOutcome statusOfPatient) {
+		this.statusOfPatient = statusOfPatient;
+	}
+
+	public Date getDateOfDeath() {
+		return dateOfDeath;
+	}
+
+	public void setDateOfDeath(Date dateOfDeath) {
+		this.dateOfDeath = dateOfDeath;
+	}
+
+	public String getPlaceOfDeath() {
+		return placeOfDeath;
+	}
+
+	public void setPlaceOfDeath(String placeOfDeath) {
+		this.placeOfDeath = placeOfDeath;
 	}
 }

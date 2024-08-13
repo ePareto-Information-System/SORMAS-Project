@@ -66,9 +66,6 @@ public class RiskFactorDto extends PseudonymizableDto {
     public static final String DATE_OF_CONTACT_WITH_ILL_PERSON = "dateOfContactWithIllPerson";
     public static final String PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL = "patientTouchDomesticWildAnimal";
     public static final String PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL_IF_YES = "patientTouchDomesticWildAnimalIfYes";
-    public static final String STATUS_OF_PATIENT = "statusOfPatient";
-    public static final String DATE_OF_DEATH = "dateOfDeath";
-    public static final String PLACE_OF_DEATH = "placeOfDeath";
     public static final String DATE_OF_SPECIMEN_COLLECTION = "dateOfSpecimenCollection";
     public static final String TYPE_OF_SPECIMEN_COLLECTION = "typeOfSpecimenCollection";
     public static final String EMAIL = "email";
@@ -117,9 +114,6 @@ public class RiskFactorDto extends PseudonymizableDto {
     private Date dateOfContactWithIllPerson;
     private YesNo patientTouchDomesticWildAnimal;
     private String patientTouchDomesticWildAnimalIfYes;
-    private CaseOutcome statusOfPatient;
-    private Date dateOfDeath;
-    private String placeOfDeath;
     private Date dateOfSpecimenCollection;
     private SampleMaterial typeOfSpecimenCollection;
     private String investigatorName;
@@ -487,30 +481,6 @@ public class RiskFactorDto extends PseudonymizableDto {
 
     public void setPatientTouchDomesticWildAnimalIfYes(String patientTouchDomesticWildAnimalIfYes) {
         this.patientTouchDomesticWildAnimalIfYes = patientTouchDomesticWildAnimalIfYes;
-    }
-
-    public CaseOutcome getStatusOfPatient() {
-        return statusOfPatient;
-    }
-
-    public void setStatusOfPatient(CaseOutcome statusOfPatient) {
-        this.statusOfPatient = statusOfPatient;
-    }
-
-    public Date getDateOfDeath() {
-        return dateOfDeath;
-    }
-
-    public void setDateOfDeath(Date dateOfDeath) {
-        this.dateOfDeath = dateOfDeath;
-    }
-
-    public String getPlaceOfDeath() {
-        return placeOfDeath;
-    }
-
-    public void setPlaceOfDeath(String placeOfDeath) {
-        this.placeOfDeath = placeOfDeath;
     }
 
     public Date getDateOfSpecimenCollection() {
