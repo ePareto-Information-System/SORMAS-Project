@@ -254,10 +254,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				loc(OTHER_INFORMATION_HEADLINE_LOC) +
 				fluidRowLocs(SampleDto.USE_OF_CLOTH_FILTER, SampleDto.FREQUENCY_OF_CHANGING_FILTERS) +
 				fluidRowLocs(SampleDto.REMARKS) +
-//				locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
-//				fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
-//				locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
-//				fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.SPECIMEN_CONDITION) +
 				fluidRowLocs(SampleDto.CONFIRMED_AS_GUINEA_WORM) +
 				fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT);
 				
@@ -1162,6 +1158,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         sampleMaterialComboBox.setVisible(false);
 
         setVisible(true, SampleDto.REQUESTED_SAMPLE_MATERIALS);
+		setRequired(true, SampleDto.SHIPPED);
 
     }
 
