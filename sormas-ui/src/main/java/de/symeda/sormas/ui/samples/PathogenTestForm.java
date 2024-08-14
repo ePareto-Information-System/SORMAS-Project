@@ -170,15 +170,8 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 	private ComboBox diseaseField;
 	private Disease caseDisease;
-	private Disease subDisease;
-	private TextField laboratoryTestPerformedOther;
-	private TextField laboratoryCytology_LEUCOCYTES;
-	private TextField laboratoryCytology_PMN;
-	private TextField laboratoryCytology_LYMPH;
 	private NullableOptionGroup laboratoryGram;
 	private TextField laboratoryGramOther;
-	private OptionGroup laboratoryRdtPerformed;
-	private TextField laboratoryRdtResults;
 	private TextField laboratoryCultureOther;
 	private TextField laboratoryOtherTests;
 	private ComboBox laboratoryCeftriaxone;
@@ -201,8 +194,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private DateField labDateResultsSentDSD;
 	private DateField refLabDate;
 	private DateField regrefLabDate;
-	private DateField dateSentReportHealthFacility;
-	private ComboBox diseaseBox;
 	private ComboBox testResultField;
 	private ComboBox testResultVariant;
 	private ComboBox secondTestedDisease;
@@ -304,10 +295,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(sample.getAssociatedCase().getUuid());
 		caseDisease = caseDataDto.getDisease();
-
-		if(caseDisease == Disease.AHF){
-			subDisease = sample.getDisease();
-		}
 
 		pathogenTestHeadingLabel = new Label();
 		pathogenTestHeadingLabel.addStyleName(H3);
@@ -773,14 +760,14 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			//addField(PathogenTestDto.LABORATORY_NAME, TextField.class);
 
 			// General fields
-			Label cytologyHeadingLabel = createLabel(I18nProperties.getString(Strings.headingCytology), H3, CYTOLOGY_HEADING);
-			laboratoryCytology_LEUCOCYTES = addField(PathogenTestDto.LABORATORY_CYTOLOGY_LEUCOCYTES, TextField.class);
-			laboratoryCytology_PMN = addField(PathogenTestDto.LABORATORY_CYTOLOGY_PMN, TextField.class);
-			laboratoryCytology_LYMPH = addField(PathogenTestDto.LABORATORY_CYTOLOGY_LYMPH, TextField.class);
+			createLabel(I18nProperties.getString(Strings.headingCytology), H3, CYTOLOGY_HEADING);
+			addField(PathogenTestDto.LABORATORY_CYTOLOGY_LEUCOCYTES, TextField.class);
+			addField(PathogenTestDto.LABORATORY_CYTOLOGY_PMN, TextField.class);
+			addField(PathogenTestDto.LABORATORY_CYTOLOGY_LYMPH, TextField.class);
 			laboratoryGram = addField(PathogenTestDto.LABORATORY_GRAM, NullableOptionGroup.class);
 			laboratoryGramOther = addField(PathogenTestDto.LABORATORY_GRAM_OTHER, TextField.class);
-			laboratoryRdtPerformed = addField(PathogenTestDto.LABORATORY_RDT_PERFORMED, OptionGroup.class);
-			laboratoryRdtResults = addField(PathogenTestDto.LABORATORY_RDT_RESULTS, TextField.class);
+			addField(PathogenTestDto.LABORATORY_RDT_PERFORMED, OptionGroup.class);
+			addField(PathogenTestDto.LABORATORY_RDT_RESULTS, TextField.class);
 			laboratoryGramOther.setVisible(false);
 
 			laboratoryLatex = new ComboBox();
@@ -794,7 +781,7 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			FieldHelper.setVisibleWhen(laboratoryGram, Arrays.asList(laboratoryGramOther), Arrays.asList(Gram.OTHER_PATHOGENS), true);
 
 			// District Section
-			dateSentReportHealthFacility = addField(PathogenTestDto.DATE_SENT_REPORTING_HEALTH_FACILITY);
+			addField(PathogenTestDto.DATE_SENT_REPORTING_HEALTH_FACILITY);
 			regrefLabDate = addField(PathogenTestDto.DATE_SAMPLE_SENT_REGREF_LAB);
 
 			// Regional Section
@@ -956,15 +943,6 @@ public class  PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			});
 
 		}
-
-		/*if(caseDisease == Disease.MONKEYPOX){
-			sampleTestDateField.addValueChangeListener(event -> {
-				if (event.getProperty().getValue() != null) {
-					sampleTestDateField.setReadOnly(true);
-					// sampleTestDateField.setEnabled(false);
-				}
-			});
-		}*/
 
 		if (caseDisease == Disease.MONKEYPOX) {
 			LocalDate localDate = LocalDate.now();
