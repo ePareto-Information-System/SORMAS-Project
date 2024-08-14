@@ -116,7 +116,7 @@ public class CCESamplesGrid extends FilteredGrid<SampleIndexDto, SampleCriteria>
         if (isMonkeyPoxPresent(criteria)) {
             setColumns(
                     SampleIndexDto.UUID,
-                    REQUESTED_SAMPLE_MATERIALS_COLUMN,
+                    SampleIndexDto.SAMPLE_MATERIAL,
                     PATHOGEN_TEST_RESULT,
                     SampleIndexDto.RECEIVED,
                     SampleIndexDto.RECEIVED_DATE,

@@ -1155,9 +1155,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
     private void handleMpox(){
         hideCommonProperties();
-        sampleMaterialComboBox.setVisible(false);
+		List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.CRUST, SampleMaterial.SWAB);
+		FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
 
-        setVisible(true, SampleDto.REQUESTED_SAMPLE_MATERIALS);
 		setRequired(true, SampleDto.SHIPPED);
 
     }
@@ -1228,14 +1228,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
     }
 
     private void hideCommonProperties(){
-        suspectedDisease.setVisible(false);
-        labLocation.setVisible(false);
-        dateLabReceivedSpecimen.setVisible(false);
-        laboratorySampleCondition.setVisible(false);
-        dateFormSentToDistrict.setVisible(false);
-        dateFormReceivedAtDistrict.setVisible(false);
-        dateResultsSentToClinician.setVisible(false);
-        dateSpecimenSentToLab.setVisible(false);
+		setFieldsVisible(false, suspectedDisease, labLocation, dateLabReceivedSpecimen, laboratorySampleCondition, dateFormSentToDistrict, dateFormReceivedAtDistrict, dateResultsSentToClinician,
+		dateSpecimenSentToLab);
     }
 
     private void hidePropertiesVisibility() {
@@ -1277,12 +1271,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
                 requestedSampleMaterialsField.addItems(values1);
 				break;
-            case MONKEYPOX:
+           /* case MONKEYPOX:
                 requestedSampleMaterialsField.addItems(
                         Arrays.stream(SampleMaterial.getNewInfluenzaType())
                                 .filter(c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
                                 .collect(Collectors.toList()));
-                break;
+                break;*/
             default:
                 requestedSampleMaterialsField.addItems(
                         Arrays.stream(SampleMaterial.values())
