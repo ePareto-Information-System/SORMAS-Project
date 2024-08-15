@@ -785,6 +785,8 @@ public interface Captions {
 	String Configuration_LineListing = "Configuration.LineListing";
 	String Configuration_Diseases = "Configuration.Diseases";
 	String Configuration_Disease = "Configuration.Disease";
+//	FormType
+	String Configuration_FormType = "Configuration.FormType";
 	String Configuration_Outbreaks = "Configuration.Outbreaks";
 	String Configuration_PointsOfEntry = "Configuration.PointsOfEntry";
 	String Contact = "Contact";
@@ -1813,6 +1815,9 @@ public interface Captions {
 	String facilityTypeGroup = "facilityTypeGroup";
 	String facilitiesSelected = "facilitiesSelected";
 	String facilitiesAvailable = "facilitiesAvailable";
+	String formFieldsSelected = "formFieldsSelected";
+	String formFieldsAvailable = "formFieldsAvailable";
+
 	String FeatureConfiguration_districtName = "FeatureConfiguration.districtName";
 	String FeatureConfiguration_enabled = "FeatureConfiguration.enabled";
 	String FeatureConfiguration_endDate = "FeatureConfiguration.endDate";
@@ -3570,6 +3575,10 @@ public interface Captions {
 	String View_configuration_linelisting_short = "View.configuration.linelisting.short";
 	String View_configuration_diseases = "View.configuration.diseases";
 	String View_configuration_diseases_short = "View.configuration.diseases.short";
+	String View_configuration_forms = "View.configuration.forms";
+	String View_configuration_formFields = "View.configuration.formFields";
+	String View_configuration_forms_short = "View.configuration.forms.short";
+	String View_configuration_formFields_short = "View.configuration.formFields.short";
 	String View_configuration_outbreaks = "View.configuration.outbreaks";
 	String View_configuration_outbreaks_short = "View.configuration.outbreaks.short";
 	String View_configuration_pointsofentry = "View.configuration.pointsofentry";

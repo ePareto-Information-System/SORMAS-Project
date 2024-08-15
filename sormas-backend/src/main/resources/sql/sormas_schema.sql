@@ -14934,4 +14934,98 @@ ALTER TABLE symptoms ADD COLUMN trimester VARCHAR(255);
 ALTER TABLE symptoms ADD COLUMN postpartum VARCHAR(255);
 ALTER TABLE symptoms ADD COLUMN pregnant VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (693, 'Added pregnant related fields to symptoms');
+
+-- CREATE TABLE FormEntities (
+--     id BIGINT PRIMARY KEY NOT NULL,
+--     name VARCHAR(255),
+--     description VARCHAR(255)
+-- );
+--
+-- CREATE TABLE FormEntities_history (
+--     LIKE FormEntities INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
+-- );
+--
+-- CREATE TABLE FormEntityFields (
+--     id BIGINT PRIMARY KEY NOT NULL,
+--     formEntity_id BIGINT,
+--     name VARCHAR(255),
+--     fieldId VARCHAR(255),
+--     CONSTRAINT fk_formentityfields_formentity_id FOREIGN KEY (formEntity_id) REFERENCES FormEntities (id)
+-- );
+--
+-- CREATE TABLE FormEntityFields_history (
+--     LIKE FormEntityFields INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
+-- );
+--
+-- -- disease formEntities formField
+-- CREATE TABLE DiseaseFormEntityFormFields (
+--     id BIGINT PRIMARY KEY NOT NULL,
+--     diseaseconfiguration_id BIGINT,
+--     formEntity_id BIGINT,
+--     formField_id BIGINT,
+--     CONSTRAINT fk_diseaseformentityformfields_disease_id FOREIGN KEY (diseaseconfiguration_id) REFERENCES diseaseconfiguration (id),
+--     CONSTRAINT fk_diseaseformentityformfields_formentity_id FOREIGN KEY (formEntity_id) REFERENCES FormEntities (id),
+--     CONSTRAINT fk_diseaseformentityformfields_formfield_id FOREIGN KEY (formField_id) REFERENCES FormEntityFields (id)
+-- );
+--
+-- CREATE TABLE DiseaseFormEntityFormFields_history (
+--     LIKE DiseaseFormEntityFormFields INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
+-- );
+--
+-- INSERT INTO schema_version (version_number, comment) VALUES (694, 'Added FormEntities, FormEntityFields, DiseaseFormEntityFormFields tables');
+
+CREATE TABLE form_fields (
+    id BIGINT PRIMARY KEY NOT NULL,
+    uuid varchar(36) NOT NULL UNIQUE,
+    formType varchar(255),
+    fieldName VARCHAR(255),
+    description VARCHAR(255),
+    sys_period tstzrange not null,
+    active boolean,
+    centrally_managed boolean DEFAULT false,
+    change_user_id BIGINT,
+    changedate timestamp not null,
+    creationdate timestamp not null,
+    archived boolean DEFAULT false);
+
+CREATE TABLE form_fields_history (LIKE form_fields);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE ON form_fields
+                                                       FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'form_fields_history', true);
+
+CREATE TABLE forms (
+         id BIGINT PRIMARY KEY NOT NULL,
+         uuid varchar(36) NOT NULL UNIQUE,
+         formType varchar(255),
+         disease VARCHAR(255),
+         sys_period tstzrange not null,
+         active boolean,
+         centrally_managed boolean DEFAULT false,
+         change_user_id BIGINT,
+         changedate timestamp not null,
+         creationdate timestamp not null,
+         archived boolean DEFAULT false);
+
+CREATE TABLE forms_history (LIKE forms);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE ON forms
+                                                       FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'forms_history', true);
+INSERT INTO schema_version (version_number, comment) VALUES (695, 'Added forms and form_fields tables');
+
+CREATE TABLE forms_form_fields (
+       form_id bigint,
+       formField_id bigint,
+       PRIMARY KEY (form_id, formField_id),
+       FOREIGN KEY (form_id) REFERENCES forms(id),
+       FOREIGN KEY (formField_id) REFERENCES form_fields(id)
+);
+
+ALTER TABLE forms_form_fields ADD COLUMN sys_period tstzrange;
+UPDATE forms_form_fields SET sys_period=tstzrange((SELECT forms.creationdate FROM forms WHERE forms.id = forms_form_fields.form_id), null);
+ALTER TABLE forms_form_fields ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE forms_form_fields_history (LIKE forms_form_fields);
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE OR DELETE ON forms_form_fields
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'forms_form_fields_history', true);
+ALTER TABLE forms_form_fields_history OWNER TO sormas_user;
+INSERT INTO schema_version (version_number, comment) VALUES (696, 'Added forms_form_fields table');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

@@ -243,6 +243,8 @@ public interface Strings {
 	String entityDataProtectionDictionary = "entityDataProtectionDictionary";
 	String entityDiseaseClassifications = "entityDiseaseClassifications";
 	String entityDiseaseConfigurations = "entityDiseaseConfigurations";
+	String entityFormBuilder = "entityFormBuilder";
+	String entityFormFields = "entityFormFields";
 	String entityDistrict = "entityDistrict";
 	String entityDistricts = "entityDistricts";
 	String entityDocuments = "entityDocuments";
@@ -519,6 +521,8 @@ public interface Strings {
 	String headingCreateNewEventGroup = "headingCreateNewEventGroup";
 	String headingCreateNewEventParticipant = "headingCreateNewEventParticipant";
 	String headingCreateNewFacility = "headingCreateNewFacility";
+	String headingCreateNewField = "headingCreateNewField";
+	String headingCreateNewForm = "headingCreateNewForm";
 	String headingCreateNewImmunization = "headingCreateNewImmunization";
 	String headingCreateNewPerson = "headingCreateNewPerson";
 	String headingCreateNewPrescription = "headingCreateNewPrescription";
