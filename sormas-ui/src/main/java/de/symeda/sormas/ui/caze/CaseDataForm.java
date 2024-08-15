@@ -1282,6 +1282,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         personEditForm = new PersonEditForm(true, true, true);
         personEditForm.setWidth(100, Unit.PERCENTAGE);
         getContent().addComponent(personEditForm, CaseDataDto.PERSON);
+        personEditForm.hideAllFields();
 
 
         // Set initial visibilities & accesses
@@ -1936,7 +1937,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
     }
 
     private void handleMonkeyPox(){
-        personEditForm.hideAllFields();
         personEditForm.showFields();
         personEditForm.setFieldsEnabled();
 

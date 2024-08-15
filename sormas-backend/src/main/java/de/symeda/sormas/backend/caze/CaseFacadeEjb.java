@@ -3471,6 +3471,14 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setFoodHistory(foodHistoryFacade.fillOrBuildEntity(source.getFoodHistory(), target.getFoodHistory(),checkChangeDate));
 
 		target.setRiskFactor(riskFactorFacade.fillOrBuildEntity(source.getRiskFactor(), target.getRiskFactor(), checkChangeDate));
+		if (source.getDisease() == Disease.MONKEYPOX) {
+			if (source.getHospitalization().getLocationType().getRegion() == null) {
+				source.getHospitalization().getLocationType().setRegion(source.getResponsibleRegion());
+				source.getHospitalization().getLocationType().setDistrict(source.getResponsibleDistrict());
+				source.getHospitalization().getLocationType().setCommunity(source.getResponsibleCommunity());
+				source.getHospitalization().setNameOfFacility(source.getHealthFacility());
+			}
+		}
 		target.setHospitalization(hospitalizationFacade.fillOrBuildEntity(source.getHospitalization(), target.getHospitalization(), checkChangeDate));
 		target.setEpiData(epiDataFacade.fillOrBuildEntity(source.getEpiData(), target.getEpiData(), checkChangeDate));
 		if (source.getTherapy() == null) {

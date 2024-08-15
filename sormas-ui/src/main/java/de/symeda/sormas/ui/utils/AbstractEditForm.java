@@ -39,6 +39,7 @@ import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.InfrastructureDataReferenceDto;
+import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.ebs.EbsDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -65,6 +66,7 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 
 	protected Disease disease;
 	private Disease caseDisease;
+	private CaseDataDto caseDataDto;
 	protected EbsDto ebsDto;
 
 	protected AbstractEditForm(Class<DTO> type, String propertyI18nPrefix) {
@@ -85,6 +87,10 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 
 	public Disease getCaseDisease () {
 		return caseDisease;
+	}
+
+	public CaseDataDto getCaseData () {
+		return caseDataDto;
 	}
 
 	protected AbstractEditForm(
@@ -143,6 +149,29 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 		this.fieldVisibilityCheckers = fieldVisibilityCheckers;
 		this.fieldAccessCheckers = fieldAccessCheckers;
 		this.caseDisease = disease;
+
+		getFieldGroup().addCommitHandler(this);
+		setWidth(900, Unit.PIXELS);
+
+		if (addFields) {
+			addFields();
+		}
+	}
+
+	protected AbstractEditForm(
+			Class<DTO> type,
+			String propertyI18nPrefix,
+			boolean addFields,
+			FieldVisibilityCheckers fieldVisibilityCheckers,
+			UiFieldAccessCheckers fieldAccessCheckers,
+			Disease disease,
+			CaseDataDto caseDataDto) {
+
+		super(type, propertyI18nPrefix, new SormasFieldGroupFieldFactory(fieldVisibilityCheckers, fieldAccessCheckers), false);
+		this.fieldVisibilityCheckers = fieldVisibilityCheckers;
+		this.fieldAccessCheckers = fieldAccessCheckers;
+		this.caseDisease = disease;
+		this.caseDataDto = caseDataDto;
 
 		getFieldGroup().addCommitHandler(this);
 		setWidth(900, Unit.PIXELS);
