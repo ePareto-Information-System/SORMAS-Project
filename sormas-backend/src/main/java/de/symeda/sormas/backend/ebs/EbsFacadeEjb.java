@@ -38,6 +38,7 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.AccessDeniedException;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.backend.FacadeHelper;
 import de.symeda.sormas.backend.common.AbstractCoreFacadeEjb;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
@@ -643,7 +644,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 		if (sortProperties != null && !sortProperties.isEmpty()) {
 			EbsJoins ebsJoins = ebsQueryContext.getJoins();
-			Join<Ebs, User> reportingUser = ebsJoins.getReportingUser();
 			Join<Ebs, Triaging> triaging = ebsJoins.getTriaging();
 			Join<Ebs, SignalVerification> signalVerification = ebsJoins.getSignalVerification();
 			Join<Ebs, RiskAssessment> riskAssessment =  ebs.join("riskAssessment", JoinType.LEFT);
@@ -747,80 +747,109 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<EbsExportDto> cq = cb.createQuery(EbsExportDto.class);
 		Root<Ebs> ebs = cq.from(Ebs.class);
+
+		// Initialize the context and joins
 		EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
 		EbsJoins ebsJoins = ebsQueryContext.getJoins();
-		Join<Ebs, Location> location = ebsJoins.getLocation();
 		Join<Location, Region> region = ebsJoins.getRegion();
 		Join<Location, District> district = ebsJoins.getDistrict();
 		Join<Location, Community> community = ebsJoins.getCommunity();
-		Join<Ebs, User> reportingUser = ebsJoins.getReportingUser();
-		Join<Ebs, Triaging> decisionDate = ebsJoins.getTriaging();
-
+		Join<Ebs, Triaging> triaging = ebsJoins.getTriaging();
+		Join<Ebs, SignalVerification> signalVerification = ebsJoins.getSignalVerification();
+		Join<Ebs, RiskAssessment> riskAssessment =  ebs.join("riskAssessment", JoinType.LEFT);
+		Join<Ebs, EbsAlert> ebsAlert = ebs.join("ebsAlert", JoinType.LEFT);
 		cq.multiselect(
 				ebs.get(Ebs.UUID),
-				ebs.get(Ebs.EXTERNAL_ID),
 				ebs.get(Ebs.INFORMANT_NAME),
 				ebs.get(Ebs.INFORMANT_TEL),
-				ebs.get(Ebs.RISK_LEVEL),
-				ebs.get(Ebs.SPECIFIC_RISK),
-				ebs.get(Ebs.TRIAGE_DATE),
-				ebs.get(Ebs.SIGNAL_CATEGORY),
-				ebs.get(Ebs.VERIFIED),
-				ebs.get(Ebs.CASES),
-				ebs.get(Ebs.DEATH),
-				ebs.get(Ebs.CATEGORY_OF_INFORMANT),
-				region.get(Region.UUID),
-				region.get(Region.NAME),
-				district.get(District.UUID),
-				district.get(District.NAME),
-				community.get(Community.UUID),
-				community.get(Community.NAME),
-				location.get(Location.ADDITIONAL_INFORMATION),
-				ebs.get(Ebs.SOURCE_INFORMATION),
 				ebs.get(Ebs.REPORT_DATE_TIME),
-				reportingUser.get(User.UUID),
-				reportingUser.get(User.FIRST_NAME),
-				reportingUser.get(User.LAST_NAME));
-		decisionDate.get(Triaging.DATE_OF_DECISION);
-
+				ebs.get(Ebs.SOURCE_INFORMATION),
+				ebs.get(Ebs.SOURCE_NAME),
+				ebs.get(Ebs.SOURCE_URL),
+				region.get(Region.NAME),
+				district.get(District.NAME),
+				community.get(Community.NAME),
+				ebs.get(Ebs.EBS_LATITUDE),
+				ebs.get(Ebs.EBS_LONGITUDE),
+				ebs.get(Ebs.EBS_LATLONG),
+				ebs.get(Ebs.DESCRIPTION_OCCURANCE),
+				ebs.get(Ebs.PERSON_REGISTERING),
+				ebs.get(Ebs.PERSON_DESIGNATION),
+				ebs.get(Ebs.PERSON_PHONE),
+				ebs.get(Ebs.AUTOMATIC_SCANNING_TYPE),
+				ebs.get(Ebs.MANUAL_SCANNING_TYPE),
+				ebs.get(Ebs.SCANNING_TYPE),
+				ebs.get(Ebs.OTHER),
+				ebs.get(Ebs.CATEGORY_OF_INFORMANT),
+				ebs.get(Ebs.OTHER_INFORMANT),
+				triaging.get(Triaging.SUPERVISOR_REVIEW),
+				triaging.get(Triaging.REFERRED),
+				triaging.get(Triaging.SPECIFIC_SIGNAL),
+				triaging.get(Triaging.SIGNAL_CATEGORY),
+				triaging.get(Triaging.HEALTH_CONCERN),
+				triaging.get(Triaging.HUMAN_COMMUNITY_CATEGORY_DETAILS),
+				triaging.get(Triaging.HUMAN_FACILITY_CATEGORY_DETAILS),
+				triaging.get(Triaging.HUMAN_LABORATORY_CATEGORY_DETAILS),
+				triaging.get(Triaging.ANIMAL_COMMUNITY_CATEGORY_DETAILS),
+				triaging.get(Triaging.ANIMAL_FACILITY_CATEGORY_DETAILS),
+				triaging.get(Triaging.ANIMAL_LABORATORY_CATEGORY_DETAILS),
+				triaging.get(Triaging.ENVIRONMENTAL_CATEGORY_DETAILS),
+				triaging.get(Triaging.POE_CATEGORY_DETAILS),
+				triaging.get(Triaging.OCCURRENCE_PREVIOUSLY),
+				triaging.get(Triaging.TRIAGING_DECISION),
+				triaging.get(Triaging.DATE_OF_DECISION),
+				triaging.get(Triaging.REFERRED_TO),
+				triaging.get(Triaging.OUTCOME_SUPERVISOR),
+				triaging.get(Triaging.NOT_SIGNAL),
+				triaging.get(Triaging.CATEGORY_DETAILS_LEVEL),
+				triaging.get(Triaging.POTENTIAL_RISK),
+				signalVerification.get(SignalVerification.VERIFICATION_SENT),
+				signalVerification.get(SignalVerification.VERIFIED),
+				signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE),
+				signalVerification.get(SignalVerification.DATE_OF_OCCURRENCE),
+				signalVerification.get(SignalVerification.NUMBER_OF_PERSON_ANIMAL),
+				signalVerification.get(SignalVerification.NUMBER_OF_DEATH),
+				signalVerification.get(SignalVerification.DESCRIPTION),
+				signalVerification.get(SignalVerification.WHY_NOT_VERIFY),
+				signalVerification.get(SignalVerification.NUMBER_OF_PERSON_CASES),
+				signalVerification.get(SignalVerification.NUMBER_OF_DEATH_PERSON),
+				riskAssessment.get(RiskAssessment.MORBIDITY_MORTALITY),
+				riskAssessment.get(RiskAssessment.MORBIDITY_MORTALITY_COMMENT),
+				riskAssessment.get(RiskAssessment.SPREAD_PROBABILITY),
+				riskAssessment.get(RiskAssessment.SPREAD_PROBABILITY_COMMENT),
+				riskAssessment.get(RiskAssessment.CONTROL_MEASURES),
+				riskAssessment.get(RiskAssessment.CONTROL_MEASURES_COMMENT),
+				riskAssessment.get(RiskAssessment.RISK_ASSESSMENT),
+				riskAssessment.get(RiskAssessment.ASSESSMENT_DATE),
+				ebsAlert.get(EbsAlert.ACTION_INITIATED),
+				ebsAlert.get(EbsAlert.RESPONSE_STATUS),
+				ebsAlert.get(EbsAlert.RESPONSE_DATE),
+				ebsAlert.get(EbsAlert.DETAILS_RESPONSE_ACTIVITIES),
+				ebsAlert.get(EbsAlert.DETAILS_GIVEN),
+				ebsAlert.get(EbsAlert.ALERT_ISSUED),
+				ebsAlert.get(EbsAlert.DETAILS_ALERT_USED),
+				ebsAlert.get(EbsAlert.ALERTDATE));
 		cq.distinct(true);
-
 		Predicate filter = service.createUserFilter(ebsQueryContext);
-
 		if (ebsCriteria != null) {
 			Predicate criteriaFilter = service.buildCriteriaFilter(ebsCriteria, ebsQueryContext);
-			filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
-		}
-
-		if (CollectionUtils.isNotEmpty(selectedRows)) {
-			filter = CriteriaBuilderHelper.andInValues(selectedRows, filter, cb, ebs.get(Ebs.UUID));
-		}
-
-		cq.where(filter);
-		cq.orderBy(cb.desc(ebs.get(Ebs.REPORT_DATE_TIME)));
-
-		List<EbsExportDto> exportList = QueryHelper.getResultList(em, cq, first, max);
-
-		Map<String, Long> caseCounts = new HashMap<>();
-		Map<String, Long> deathCounts = new HashMap<>();
-		Map<String, Long> contactCounts = new HashMap<>();
-		Map<String, Long> contactCountsSourceInEbs = new HashMap<>();
-		if (exportList != null && !exportList.isEmpty()) {
-			List<Object[]> objectQueryList = null;
-			List<String> ebsUuids = exportList.stream().map(EbsExportDto::getUuid).collect(Collectors.toList());
-
-
-		}
-
-		if (exportList != null) {
-			for (EbsExportDto exportDto : exportList) {
-				Optional.ofNullable(caseCounts.get(exportDto.getUuid())).ifPresent(exportDto::setCaseCount);
-				Optional.ofNullable(deathCounts.get(exportDto.getUuid())).ifPresent(exportDto::setDeathCount);
-				Optional.ofNullable(contactCounts.get(exportDto.getUuid())).ifPresent(exportDto::setContactCount);
+			if (criteriaFilter != null) {
+				filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
 			}
 		}
-
-		return exportList;
+		if (CollectionUtils.isNotEmpty(selectedRows)) {
+			Predicate selectedRowsFilter = CriteriaBuilderHelper.andInValues(selectedRows, filter, cb, ebs.get(Ebs.UUID));
+			if (selectedRowsFilter != null) {
+				filter = selectedRowsFilter;
+			}
+		}
+		if (filter != null) {
+			cq.where(filter);
+		} else {
+			System.out.print("Filter predicate is null, no where clause will be applied.");
+		}
+		cq.orderBy(cb.desc(ebs.get(Ebs.UUID)));
+		return QueryHelper.getResultList(em, cq, first, max);
 	}
 
 	@Override
