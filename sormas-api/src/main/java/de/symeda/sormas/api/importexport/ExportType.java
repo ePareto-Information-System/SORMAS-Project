@@ -8,5 +8,6 @@ public enum ExportType {
 	VISIT,
 	SAMPLE,
 	TASK,
-	PERSON
+	PERSON,
+	EBS
 }
