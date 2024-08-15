@@ -17,7 +17,6 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
     private static final long serialVersionUID = 2194071120732246594L;
 
     public static final String REPORTING_USER_ROLE = "reportingUserRole";
-    public static final String RISK_LEVEL = "riskLevel";
     public static final String DISTRICT = "district";
     public static final String REGION = "region";
     public static final String COMMUNITY = "community";
