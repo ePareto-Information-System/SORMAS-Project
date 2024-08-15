@@ -43,13 +43,10 @@ public class EbsDto extends PseudonymizableDto {
 
 	public static final String I18N_PREFIX = "Ebs";
 
-	public static final String RISK_LEVEL = "riskLevel";
 	public static final String INFORMANT_NAME = "informantName";
 	public static final String SOURCE_NAME = "sourceName";
 	public static final String SOURCE_URL = "sourceUrl";
 	public static final String INFORMANT_TEL = "informantTel";
-	public static final String EBS_TITLE = "ebsTitle";
-	public static final String EBS_DESC = "ebsDesc";
 	public static final String TRIAGE_DATE = "triageDate";
 	public static final String END_DATE = "endDate";
 	public static final String REPORT_DATE_TIME = "reportDateTime";

@@ -38,9 +38,6 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public static final String EXTERNAL_ID = "externalId";
 	public static final String INFORMANT_NAME = "informantName";
 	public static final String INFORMANT_TEL = "informantTel";
-	public static final String RISK_LEVEL = "riskLevel";
-	public static final String SPECIFIC_RISK = "specificRisk";
-	public static final String EVENT_MANAGEMENT_STATUS = "eventManagementStatus";
 	public static final String EVENT_DESC = "eventDesc";
 	public static final String TRIAGE_DATE = "triageDate";
 	public static final String SOURCE_NAME = "sourceName";
@@ -56,11 +53,13 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public static final String SOURCE_INFORMATION = "sourceInformation";
 	public static final String TRIAGING_DECISION = "triagingDecision";
 	public static final String RESPONSIBLE_USER = "responsibleUser";
-	public static final String REPORT_LAT = "reportLat";
-	public static final String REPORT_LON = "reportLon";
+	public static final String EBS_LONGITUDE = "ebsLongitude";
+	public static final String EBS_LATITUDE = "ebsLatitude";
+	public static final String EBS_LATLONG = "ebsLatLon";
 	public static final String SORMAS_TO_SORMAS_ORIGIN_INFO = "sormasToSormasOriginInfo";
 	public static final String SORMAS_TO_SORMAS_SHARES = "sormasToSormasShares";
 	public static final String MANUAL_SCANNING_TYPE = "manualScanningType";
+	public static final String AUTOMATIC_SCANNING_TYPE = "automaticScanningType";
 	public static final String SCANNING_TYPE = "scanningType";
 	public static final String OTHER = "other";
 	public static final String EBS_LOCATION = "ebsLocation";

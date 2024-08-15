@@ -15,26 +15,26 @@ public class RiskAssessmentDto extends PseudonymizableDto {
 
     public static final String I18N_PREFIX = "RiskAssessment";
 
-    public static String MORBIDITY_MORTALITY = "morbidityMortality";
+    public static final String  MORBIDITY_MORTALITY = "morbidityMortality";
 
-    public static String MORBIDITY_MORTALITY_COMMENT = "morbidityMortalityComment";
+    public static final String  MORBIDITY_MORTALITY_COMMENT = "morbidityMortalityComment";
 
-    public static String SPREAD_PROBABILITY = "spreadProbability";
+    public static final String  SPREAD_PROBABILITY = "spreadProbability";
 
-    public static String SPREAD_PROBABILITY_COMMENT = "spreadProbabilityComment";
+    public static final String  SPREAD_PROBABILITY_COMMENT = "spreadProbabilityComment";
 
-    public static String CONTROL_MEASURES = "controlMeasures";
+    public static final String  CONTROL_MEASURES = "controlMeasures";
 
-    public static String CONTROL_MEASURES_COMMENT = "controlMeasuresComment";
+    public static final String  CONTROL_MEASURES_COMMENT = "controlMeasuresComment";
 
-    public static String ASSESSMENT_LEVEL = "riskAssessment";
+    public static final String  ASSESSMENT_LEVEL = "riskAssessment";
 
-    public static String ASSESSMENT_DATE = "assessmentDate";
+    public static final String  ASSESSMENT_DATE = "assessmentDate";
 
-    public static String ASSESSMENT_TIME = "assessmentTime";
+    public static final String  ASSESSMENT_TIME = "assessmentTime";
 
-    public static String INFO = "info";
-    public static String EBS = "ebs";
+    public static final String  INFO = "info";
+    public static final String  EBS = "ebs";
 
 
     private YesNo morbidityMortality;
