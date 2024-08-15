@@ -18,7 +18,12 @@ public enum ExportGroupType {
 	EVENT,
 	EVENT_GROUP,
 	EVENT_SOURCE,
-	CASE_MANAGEMENT;
+	CASE_MANAGEMENT,
+	EBS,
+	TRIAGING,
+	SIGNAL_VERIFICATION,
+	RISK_ASSESSMENT,
+	EBS_ALERT;
 
 	@Override
 	public String toString() {

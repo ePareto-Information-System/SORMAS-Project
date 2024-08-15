@@ -21,7 +21,9 @@ package de.symeda.sormas.ui.utils;
 import com.vaadin.server.StreamResource;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ebs.EbsCriteria;
+import de.symeda.sormas.api.ebs.EbsDto;
 import de.symeda.sormas.api.ebs.EbsExportDto;
+import de.symeda.sormas.api.ebs.EbsIndexDto;
 import de.symeda.sormas.api.event.EventCriteria;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventExportDto;
@@ -58,9 +60,9 @@ public class EbsDownloadUtil {
 
         return I18nProperties.findPrefixCaption(
               propertyId,
-              EventExportDto.I18N_PREFIX,
-              EventIndexDto.I18N_PREFIX,
-              EventDto.I18N_PREFIX,
+              EbsExportDto.I18N_PREFIX,
+              EbsIndexDto.I18N_PREFIX,
+              EbsDto.I18N_PREFIX,
               LocationDto.I18N_PREFIX);
     }
 
