@@ -311,6 +311,20 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 				addField(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS, PreviousHospitalizationsField.class);
 
 		NullableOptionGroup soughtMedicalAttentionField = addField(HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, NullableOptionGroup.class);
+
+		if(caze.getDisease() == Disease.MONKEYPOX){
+			addressForm = new LocationEditForm(
+					FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
+					UiFieldAccessCheckers.getNoop(), disease, caze);
+		} else{
+			addressForm = new LocationEditForm(
+					FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
+					UiFieldAccessCheckers.getNoop(), disease);
+		}
+
+		addField(HospitalizationDto.LOCATION_TYPE, addressForm);
+		addressForm.setCaption(null);
+
 		ComboBox nameOfFacilityField = addInfrastructureField(HospitalizationDto.NAME_OF_FACILITY);
 		nameOfFacilityField.setImmediate(true);
 
@@ -592,13 +606,14 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		
 		if(caze.getDisease() == Disease.MONKEYPOX){
 			setFieldsVisible(true, admittedToHealthFacilityFieldNew);
+//			setVisible(true, HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.LOCATION_TYPE, HospitalizationDto.NAME_OF_FACILITY);
 
 			FieldHelper.setVisibleWhen(
 					getFieldGroup(),
 					Arrays.asList(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.LOCATION_TYPE, HospitalizationDto.NAME_OF_FACILITY),
 					HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW,
 					Arrays.asList(YesNo.YES),
-					true
+					false
 			);
 		}
 
