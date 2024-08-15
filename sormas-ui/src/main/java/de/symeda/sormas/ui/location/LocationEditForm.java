@@ -196,6 +196,15 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		}
 	}
 
+	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers, Disease disease, CaseDataDto caseDataObject) {
+		super(LocationDto.class, LocationDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers, disease, caseDataObject);
+		this.caseDisease = disease;
+
+		if (FacadeProvider.getGeocodingFacade().isEnabled() && isEditableAllowed(LocationDto.LATITUDE) && isEditableAllowed(LocationDto.LONGITUDE)) {
+			getContent().addComponent(createGeoButton(), GEO_BUTTONS_LOC);
+		}
+	}
+
 	public ComboBox getFacilityTypeGroup() {
 		return facilityTypeGroup;
 	}
@@ -223,8 +232,15 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void addFields() {
-
 		caseDisease = getCaseDisease();
+
+		CaseDataDto newCazeData = getCaseData();
+		if(newCazeData != null){
+			RegionReferenceDto regionReferenceDto = newCazeData.getResponsibleRegion();
+			DistrictReferenceDto districtReferenceDto = newCazeData.getResponsibleDistrict();
+			CommunityReferenceDto communityReferenceDto = newCazeData.getResponsibleCommunity();
+		}
+
 
 
 		addressType = addField(LocationDto.ADDRESS_TYPE, ComboBox.class);
@@ -437,11 +453,11 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		});
 
 		region.addValueChangeListener(e -> {
-			RegionReferenceDto regionDto = (RegionReferenceDto) e.getProperty().getValue();
-			FieldHelper
-				.updateItems(district, regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
-			updateFacilities();
-		});
+				RegionReferenceDto regionDto = (RegionReferenceDto) e.getProperty().getValue();
+				FieldHelper
+						.updateItems(district, regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
+				updateFacilities();
+			});
 		district.addValueChangeListener(e -> {
 			DistrictReferenceDto districtDto = (DistrictReferenceDto) e.getProperty().getValue();
 			FieldHelper.updateItems(
