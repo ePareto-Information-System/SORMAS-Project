@@ -164,8 +164,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 	public static final String MPOX_LAYOUT = loc(HOSPITALIZATION_HEADING_LOC) +
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW) +
-			fluidRowLocs(HEALTH_FACILITY_REGION, HEALTH_FACILITY_DISTRICT, HEALTH_FACILITY_COMMUNITY) +
-			fluidRowLocs(HEALTH_FACILITY)+
+			fluidRowLocs(HospitalizationDto.LOCATION_TYPE) +
+			fluidRowLocs(6,HospitalizationDto.NAME_OF_FACILITY)+
 			fluidRowLocs(HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.ADMISSION_DATE);
 
 	//@formatter:on
@@ -314,10 +314,10 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		ComboBox nameOfFacilityField = addInfrastructureField(HospitalizationDto.NAME_OF_FACILITY);
 		nameOfFacilityField.setImmediate(true);
 
-		FieldHelper.updateItems(
-				nameOfFacilityField,
-				FacadeProvider.getFacilityFacade()
-						.getAllActiveFacility(false));
+		addressForm.setNameOfFacilityField(nameOfFacilityField);
+		addressForm.hideForHospitalizationForm();
+		nameOfFacilityField.setVisible(false);
+		setVisible(false, HospitalizationDto.LOCATION_TYPE);
 
 		addField(HospitalizationDto.DATE_OF_VISIT_HOSPITAL, DateField.class);
 		addField(HospitalizationDto.PHYSICIAN_NAME, TextField.class);
@@ -591,15 +591,11 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		}
 		
 		if(caze.getDisease() == Disease.MONKEYPOX){
-			setFieldsVisible(true, admittedToHealthFacilityFieldNew, regionField, districtField, subDistrictField);
-
-			regionField.setReadOnly(true);
-			districtField.setReadOnly(true);
-			subDistrictField.setReadOnly(true);
+			setFieldsVisible(true, admittedToHealthFacilityFieldNew);
 
 			FieldHelper.setVisibleWhen(
 					getFieldGroup(),
-					Arrays.asList(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.HOSPITAL_RECORD_NUMBER),
+					Arrays.asList(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.LOCATION_TYPE, HospitalizationDto.NAME_OF_FACILITY),
 					HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW,
 					Arrays.asList(YesNo.YES),
 					true
