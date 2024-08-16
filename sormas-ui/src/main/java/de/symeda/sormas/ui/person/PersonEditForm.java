@@ -80,6 +80,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	public static final String PERSON_INFORMATION_HEADING_LOC = "personInformationHeadingLoc";
 	private static final String CADRE_HEADER = "headingPersonCadre";
 	public static final String OCCUPATION_HEADER = "occupationHeader";
+	public static final String OCCUPATION_TITLE = "occupationTitle";
 	private static final String BIRTH_OF_INFANT_HEADING_LOC = "headingBirthOfInfant";
 	public static final String ADDRESS_HEADER = "addressHeader";
 	private static final String ADDRESSES_HEADER = "addressesHeader";
@@ -138,6 +139,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 					fluidRowLocs(PersonDto.HAS_COVID_APP, PersonDto.COVID_CODE_DELIVERED) +
 					loc(OCCUPATION_HEADER) +
 					divsCss(VSPACE_3,
+							loc(OCCUPATION_TITLE) +
 							fluidRowLocs(PersonDto.OCCUPATION_DETAILS, PersonDto.OCCUPATION_TYPE) +
 									fluidRow(oneOfTwoCol(PersonDto.ARMED_FORCES_RELATION_TYPE)),
 							fluidRowLocs(PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS)
@@ -241,7 +243,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	public final Label addressesHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESSES));
 	final Label contactInformationHeader = new Label(I18nProperties.getString(Strings.headingContactInformation));
 	private Label headingBirthOfInfant = new Label(I18nProperties.getString(Strings.headingBirthOfInfant));
-	private Label personInformationHeadingLabel;
+	public Label personInformationHeadingLabel;
+	private Label occupationTitleHeadingLabel;
 	private TextField firstNameField;
 	private TextField lastNameField;
 	private TextField otherNameField;
@@ -383,6 +386,11 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		personInformationHeadingLabel = new Label(I18nProperties.getString(Strings.headingPersonInformation));
 		personInformationHeadingLabel.addStyleName(H3);
 		getContent().addComponent(personInformationHeadingLabel, PERSON_INFORMATION_HEADING_LOC);
+		personInformationHeadingLabel.setVisible(false);
+
+		occupationTitleHeadingLabel = new Label(I18nProperties.getString(Strings.headingOccupationTitle));
+		occupationTitleHeadingLabel.addStyleName(H3);
+		getContent().addComponent(occupationTitleHeadingLabel, OCCUPATION_TITLE);
 
 		placeStayedInLast10_14MonthsLabel = new Label(I18nProperties.getString(Strings.headingPlaceStayedInLast10_14Months));
 		placeStayedInLast10_14MonthsLabel.addStyleName(H3);
@@ -1300,6 +1308,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		occupationHeader.setVisible(false);
 		addressHeader.setVisible(false);
 		personInformationHeadingLabel.setVisible(false);
+		occupationTitleHeadingLabel.setVisible(false);
 	}
 
 	public void setFieldsEnabled(){

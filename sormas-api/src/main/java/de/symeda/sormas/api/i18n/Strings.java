@@ -738,6 +738,7 @@ public interface Strings {
 	String confirmPassword = "confirmPassword";
 	String passwordStrength = "passwordStrength";
 	String headingPersonInformation = "headingPersonInformation";
+	String headingOccupationTitle = "headingOccupationTitle";
 	String headingPlaceStayedInLast10_14Months = "headingPlaceStayedInLast10_14Months";
 	String headingPersonOccupation = "headingPersonOccupation";
 	String headingPersonCadre = "headingCadre";

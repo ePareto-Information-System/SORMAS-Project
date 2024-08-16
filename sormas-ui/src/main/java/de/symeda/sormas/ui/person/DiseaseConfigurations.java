@@ -99,6 +99,8 @@ public abstract class DiseaseConfigurations extends AbstractEditForm<PersonDto> 
             form.addressHeader.setVisible(false);
             form.personContactDetailsField.setVisible(false);
             form.addField(PersonDto.TEL_NUMBER, TextField.class);
+            form.occupationHeader.setVisible(false);
+            form.personInformationHeadingLabel.setVisible(true);
         });
 
         CONFIGURATIONS.put(Disease.MONKEYPOX, form -> {
