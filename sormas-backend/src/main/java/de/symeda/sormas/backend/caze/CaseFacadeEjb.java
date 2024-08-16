@@ -569,6 +569,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				person.get(Person.UUID),
 				person.get(Person.FIRST_NAME),
 				person.get(Person.LAST_NAME),
+				person.get(Person.OTHER_NAME),
 
 				facility.get(Facility.UUID),
 				facility.get(Facility.LATITUDE),
@@ -1008,7 +1009,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				joins.getRoot().get(Case.HEALTH_CONDITIONS).get(HealthConditions.ID),
 				caseRoot.get(Case.UUID),
 				caseRoot.get(Case.EPID_NUMBER), caseRoot.get(Case.DISEASE), caseRoot.get(Case.DISEASE_VARIANT), caseRoot.get(Case.DISEASE_DETAILS),
-				caseRoot.get(Case.DISEASE_VARIANT_DETAILS), joins.getPerson().get(Person.UUID), joins.getPerson().get(Person.FIRST_NAME), joins.getPerson().get(Person.LAST_NAME),
+				caseRoot.get(Case.DISEASE_VARIANT_DETAILS), joins.getPerson().get(Person.UUID), joins.getPerson().get(Person.FIRST_NAME), joins.getPerson().get(Person.LAST_NAME), joins.getPerson().get(Person.OTHER_NAME),
 				joins.getPerson().get(Person.SALUTATION), joins.getPerson().get(Person.OTHER_SALUTATION), joins.getPerson().get(Person.SEX),
 				caseRoot.get(Case.PREGNANT), joins.getPerson().get(Person.APPROXIMATE_AGE),
 				joins.getPerson().get(Person.APPROXIMATE_AGE_TYPE), joins.getPerson().get(Person.BIRTHDATE_DD),
@@ -4368,6 +4369,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				caze.get(Case.CHANGE_DATE),
 				joins.getPerson().get(Person.FIRST_NAME),
 				joins.getPerson().get(Person.LAST_NAME),
+				joins.getPerson().get(Person.OTHER_NAME),
 				caze.get(Case.REPORT_DATE),
 				joins.getSymptoms().get(Symptoms.ONSET_DATE),
 				caze.get(Case.FOLLOW_UP_UNTIL),
@@ -4612,7 +4614,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			Predicate personPredicate = and(
 					cb,
 					cb.equal(cb.trim(cb.lower(person.get(Person.FIRST_NAME))), searchPerson.getFirstName().toLowerCase().trim()),
-					cb.equal(cb.trim(cb.lower(person.get(Person.LAST_NAME))), searchPerson.getLastName().toLowerCase().trim()));
+					cb.equal(cb.trim(cb.lower(person.get(Person.LAST_NAME))), searchPerson.getLastName().toLowerCase().trim()),
+					cb.equal(cb.trim(cb.lower(person.get(Person.OTHER_NAME))), searchPerson.getLastName().toLowerCase().trim()));
 
 			if (searchPerson.getBirthdateDD() != null) {
 				personPredicate = and(

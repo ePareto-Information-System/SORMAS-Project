@@ -1292,9 +1292,14 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 	public void showFields(){
 		setVisible(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.OTHER_NAME, PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD, PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.SEX);
+		setRequired(true, PersonDto.SEX);
+		personInformationHeadingLabel.setVisible(true);
+	}
+
+	public void hideLabels(){
 		occupationHeader.setVisible(false);
 		addressHeader.setVisible(false);
-		setRequired(true, PersonDto.SEX);
+		personInformationHeadingLabel.setVisible(false);
 	}
 
 	public void setFieldsEnabled(){
