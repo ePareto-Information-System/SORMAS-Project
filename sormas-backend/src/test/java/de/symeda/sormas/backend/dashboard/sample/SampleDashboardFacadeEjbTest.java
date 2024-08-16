@@ -69,7 +69,7 @@ public class SampleDashboardFacadeEjbTest extends AbstractBeanTest {
 
 	@Test
 	public void getSampleCountsByResultType() {
-		SampleDto indeterminateSample = createSampleByResultType(caze, reportDate, PathogenTestResultType.INDETERMINATE, SampleMaterial.WHOLE_BLOOD);
+		SampleDto indeterminateSample = createSampleByResultType(caze, reportDate, PathogenTestResultType.INDETERMINATE, SampleMaterial.BLOOD);
 		createPathogenTestByResultType(indeterminateSample, Disease.CORONAVIRUS, reportDate, PathogenTestResultType.INDETERMINATE);
 		createPathogenTestByResultType(
 			indeterminateSample,
@@ -165,7 +165,7 @@ public class SampleDashboardFacadeEjbTest extends AbstractBeanTest {
 		assertNull(sampleCountsForCovid.get(PathogenTestResultType.NOT_DONE));
 
 		Map<PathogenTestResultType, Long> sampleCountsForSampleMaterial =
-			getSampleDashboardFacade().getSampleCountsByResultType(new SampleDashboardCriteria().sampleMaterial(SampleMaterial.WHOLE_BLOOD));
+			getSampleDashboardFacade().getSampleCountsByResultType(new SampleDashboardCriteria().sampleMaterial(SampleMaterial.BLOOD));
 
 		assertEquals(1, sampleCountsForSampleMaterial.get(PathogenTestResultType.INDETERMINATE));
 		assertNull(sampleCountsForSampleMaterial.get(PathogenTestResultType.PENDING));
@@ -176,7 +176,7 @@ public class SampleDashboardFacadeEjbTest extends AbstractBeanTest {
 		Map<PathogenTestResultType, Long> sampleCountsForMultipleFilters = getSampleDashboardFacade().getSampleCountsByResultType(
 			new SampleDashboardCriteria().dateBetween(DateHelper.subtractDays(reportDate, 2), DateHelper.addDays(reportDate, 2))
 				.sampleDateType(SampleDashboardFilterDateType.ASSOCIATED_ENTITY_REPORT_DATE)
-				.sampleMaterial(SampleMaterial.WHOLE_BLOOD)
+				.sampleMaterial(SampleMaterial.BLOOD)
 				.disease(Disease.CORONAVIRUS)
 				.district(rdcf.district));
 
@@ -280,14 +280,14 @@ public class SampleDashboardFacadeEjbTest extends AbstractBeanTest {
 
 	@Test
 	public void getResultCountByResultType() {
-		SampleDto sample1 = createSampleByResultType(caze, reportDate, null, SampleMaterial.WHOLE_BLOOD);
+		SampleDto sample1 = createSampleByResultType(caze, reportDate, null, SampleMaterial.BLOOD);
 		createPathogenTestByResultType(sample1, Disease.CORONAVIRUS, reportDate, PathogenTestResultType.INDETERMINATE);
 
-		SampleDto sample2 = createSampleByResultType(caze, reportDate, null, SampleMaterial.WHOLE_BLOOD);
+		SampleDto sample2 = createSampleByResultType(caze, reportDate, null, SampleMaterial.BLOOD);
 		createPathogenTestByResultType(sample2, Disease.CORONAVIRUS, reportDate, PathogenTestResultType.PENDING);
 		createPathogenTestByResultType(sample2, Disease.CORONAVIRUS, reportDate, PathogenTestResultType.NEGATIVE);
 
-		SampleDto sample3 = createSampleByResultType(caze, reportDate, null, SampleMaterial.WHOLE_BLOOD);
+		SampleDto sample3 = createSampleByResultType(caze, reportDate, null, SampleMaterial.BLOOD);
 		createPathogenTestByResultType(sample3, Disease.CORONAVIRUS, reportDate, PathogenTestResultType.POSITIVE);
 
 		Map<PathogenTestResultType, Long> pathogenTestCountsForRelevantDate = getSampleDashboardFacade().getTestResultCountsByResultType(

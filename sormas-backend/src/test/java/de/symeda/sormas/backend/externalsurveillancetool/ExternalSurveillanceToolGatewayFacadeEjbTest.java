@@ -543,9 +543,9 @@ public class ExternalSurveillanceToolGatewayFacadeEjbTest extends SormasToSormas
 			null,
 			new Date(),
 			user.toReference());
-		SampleDto sample = creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+		SampleDto sample = creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
 		SampleDto sampleAssociatedToContactAndCase =
-			creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+			creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
 		ContactDto contact2 =
 			creator.createContact(user.toReference(), user.toReference(), contactPerson.toReference(), caze, new Date(), new Date(), null);
 		sampleAssociatedToContactAndCase.setAssociatedContact(new ContactReferenceDto(contact2.getUuid()));

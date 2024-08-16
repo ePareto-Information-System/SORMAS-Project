@@ -993,7 +993,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         hideCommonProperties();
 		sampleDateTimeField.setVisible(false);
 
-        List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.PLASMA_SERUM, SampleMaterial.SALIVA, SampleMaterial.URINE, SampleMaterial.BIOPSY, SampleMaterial.CARDIAC, SampleMaterial.BLOOD_ANTI_COAGULANT, SampleMaterial.OTHER);
+        List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.BLOOD, SampleMaterial.PLASMA_SERUM, SampleMaterial.SALIVA, SampleMaterial.URINE, SampleMaterial.BIOPSY, SampleMaterial.CARDIAC, SampleMaterial.BLOOD_ANTI_COAGULANT, SampleMaterial.OTHER);
         FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
 
         hasSampleBeenCollected.setVisible(true);
@@ -1145,7 +1145,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
     private void handleIDSR() {
 
-        List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.PLASMA, SampleMaterial.SERUM, SampleMaterial.ASPIRATE, SampleMaterial.CEREBROSPINAL_FLUID, SampleMaterial.PUS, SampleMaterial.SALIVA, SampleMaterial.BIOPSY, SampleMaterial.STOOL, SampleMaterial.URETHRAL, SampleMaterial.URINE, SampleMaterial.SPUTUM, SampleMaterial.FOOD_WATER);
+        List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.BLOOD, SampleMaterial.PLASMA, SampleMaterial.SERUM, SampleMaterial.ASPIRATE, SampleMaterial.CEREBROSPINAL_FLUID, SampleMaterial.PUS, SampleMaterial.SALIVA, SampleMaterial.BIOPSY, SampleMaterial.STOOL, SampleMaterial.URETHRAL, SampleMaterial.URINE, SampleMaterial.SPUTUM, SampleMaterial.FOOD_WATER);
         FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
 
         suspectedDisease.setRequired(true);
@@ -1155,7 +1155,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
     private void handleMpox(){
         hideCommonProperties();
-		List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.CRUST, SampleMaterial.SWAB);
+		List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.BLOOD, SampleMaterial.CRUST, SampleMaterial.SWAB);
 		FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
 
 		setRequired(true, SampleDto.SHIPPED);

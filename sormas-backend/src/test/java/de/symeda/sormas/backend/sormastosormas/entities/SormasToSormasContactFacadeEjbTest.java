@@ -702,7 +702,7 @@ public class SormasToSormasContactFacadeEjbTest extends SormasToSormasTest {
 		SampleDto sample = SampleDto.build(reportingUser, associatedContact);
 		sample.setSampleDateTime(new Date());
 		sample.setReportDateTime(new Date());
-		sample.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		sample.setSampleMaterial(SampleMaterial.BLOOD);
 		sample.setSamplePurpose(SamplePurpose.EXTERNAL);
 		sample.setLab(getFacilityFacade().getReferenceByUuid(lab.getUuid()));
 
