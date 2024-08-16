@@ -15063,6 +15063,9 @@ ALTER TABLE symptoms ADD COLUMN dateofdeath Date;
 ALTER TABLE symptoms ADD COLUMN placeofdeath VARCHAR(255);
 INSERT INTO schema_version(version_number, comment) VALUES (705, 'Dropped fields in riskfactor and added to symptoms');
 
+UPDATE samples SET samplematerial = 'BLOOD' WHERE samplematerial = 'WHOLE_BLOOD';
+INSERT INTO schema_version (version_number, comment) VALUES (706, 'Updated samplematerial column to blood');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ALTER TABLE signalVerification ALTER COLUMN verified TYPE VARCHAR(20);
 INSERT INTO schema_version (version_number, comment) VALUES (700, 'updated the verified field');

@@ -33,7 +33,7 @@ public class SampleGenerationConfig extends BaseGenerationConfig {
     sampleGenerationConfig.region = null;
     sampleGenerationConfig.district = null;
     sampleGenerationConfig.samplePurpose = SamplePurpose.INTERNAL;
-    sampleGenerationConfig.sampleMaterial = SampleMaterial.WHOLE_BLOOD;
+    sampleGenerationConfig.sampleMaterial = SampleMaterial.BLOOD;
     return sampleGenerationConfig;
   }
 
@@ -46,7 +46,7 @@ public class SampleGenerationConfig extends BaseGenerationConfig {
     sampleGenerationConfig.region = null;
     sampleGenerationConfig.district = null;
     sampleGenerationConfig.samplePurpose = SamplePurpose.EXTERNAL;
-    sampleGenerationConfig.sampleMaterial = SampleMaterial.WHOLE_BLOOD;
+    sampleGenerationConfig.sampleMaterial = SampleMaterial.BLOOD;
     sampleGenerationConfig.laboratory = FacadeProvider.getFacilityFacade().getAllActiveLaboratories(false).get(0);
     return sampleGenerationConfig;
   }

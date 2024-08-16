@@ -267,7 +267,7 @@ public class SormasToSormasEventFacadeEjbTest extends SormasToSormasTest {
 			null);
 
 		SampleDto sample =
-			creator.createSample(eventParticipant.toReference(), new Date(), new Date(), nationalUser.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+			creator.createSample(eventParticipant.toReference(), new Date(), new Date(), nationalUser.toReference(), SampleMaterial.BLOOD, rdcf.facility);
 		creator.createPathogenTest(
 			sample.toReference(),
 			PathogenTestType.CULTURE,
@@ -438,7 +438,7 @@ public class SormasToSormasEventFacadeEjbTest extends SormasToSormasTest {
 		SampleDto savedSample = getSampleFacade().getSampleByUuid(sample.getUuid());
 		assertThat(savedSample, is(notNullValue()));
 		assertThat(savedSample.getAssociatedEventParticipant(), is(eventParticipant.toReference()));
-		assertThat(savedSample.getSampleMaterial(), is(SampleMaterial.WHOLE_BLOOD));
+		assertThat(savedSample.getSampleMaterial(), is(SampleMaterial.BLOOD));
 		assertThat(savedSample.getLab(), is(localLab.toReference()));
 		assertThat(savedSample.getLabSampleID(), is("Test lab sample id"));
 
@@ -969,7 +969,7 @@ public class SormasToSormasEventFacadeEjbTest extends SormasToSormasTest {
 
 	private SampleDto createSample(EventParticipantReferenceDto eventParticipant, UserReferenceDto reportingUser, FacilityReferenceDto lab) {
 		SampleDto sample = SampleDto.build(reportingUser, eventParticipant);
-		sample.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		sample.setSampleMaterial(SampleMaterial.BLOOD);
 		sample.setSamplePurpose(SamplePurpose.INTERNAL);
 		sample.setLab(lab);
 		sample.setSampleDateTime(new Date());
