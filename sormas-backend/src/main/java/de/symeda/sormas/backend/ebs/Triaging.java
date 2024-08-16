@@ -68,6 +68,7 @@ public class Triaging extends AbstractDomainObject {
 	public static final String NOT_SIGNAL = "notSignal";
 	public static final String CATEGORY_DETAILS_LEVEL = "categoryDetailsLevel";
 	public static final String POTENTIAL_RISK = "potentialRisk";
+	public static final String REFERRED = "referred";
 
 
 

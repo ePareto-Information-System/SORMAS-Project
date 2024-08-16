@@ -15003,3 +15003,7 @@ ALTER TABLE hospitalization ADD COLUMN nameoffacilitydetails varchar(512);
 
 INSERT INTO schema_version(version_number, comment) VALUES (699, 'Added nameoffacility reference and established relationship btn hospitalization anf facility');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+ALTER TABLE signalVerification ALTER COLUMN verified TYPE VARCHAR(20);
+INSERT INTO schema_version (version_number, comment) VALUES (694, 'updated the verified field');
+ALTER TABLE signalVerification ALTER COLUMN description TYPE TEXT;
+INSERT INTO schema_version (version_number, comment) VALUES (695, 'updated the description field');

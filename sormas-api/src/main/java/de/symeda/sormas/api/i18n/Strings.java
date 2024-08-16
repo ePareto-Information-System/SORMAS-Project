@@ -1300,6 +1300,7 @@ public interface Strings {
 	String messageEventSaved = "messageEventSaved";
 	String seniorOfficials = "seniorOfficials";
 	String referredNotifs = "referredNotifs";
+	String verifyNotifs = "verifyNotifs";
 	String messageEventsDeleted = "messageEventsDeleted";
 	String messageEventsLinkedToGroup = "messageEventsLinkedToGroup";
 	String messageEventsNotDeleted = "messageEventsNotDeleted";

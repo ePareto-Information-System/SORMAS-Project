@@ -81,4 +81,6 @@ public interface EbsFacade extends CoreFacade<EbsDto, EbsIndexDto, EbsReferenceD
 
 	public List<EbsIndexDto> getEventIndexList(EbsCriteria ebsCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
 
+	public long eventCount(EbsCriteria ebsCriteria);
+
 }

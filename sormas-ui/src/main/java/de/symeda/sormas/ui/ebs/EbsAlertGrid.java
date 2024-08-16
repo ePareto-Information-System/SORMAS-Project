@@ -6,6 +6,7 @@ import com.vaadin.v7.data.util.GeneratedPropertyContainer;
 import com.vaadin.v7.ui.Grid;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ebs.*;
+import de.symeda.sormas.ui.ControllerProvider;
 
 import java.util.List;
 
@@ -25,7 +26,11 @@ public class EbsAlertGrid extends Grid {
 		setContainerDataSource(generatedContainer);
 
 		setColumns(EbsAlertDto.ACTION_INITIATED, EbsAlertDto.RESPONSE_STATUS, EbsAlertDto.ALERT_ISSUED);
-//		addItemClickListener(new ShowDetailsListener<>(INFO, e -> ControllerProvider.getEbsController().navigateToData(e.getUuid())));
+		addItemClickListener(e->{
+			if (EbsAlertDto.ACTION_INITIATED.equals(e.getPropertyId()) || e.isDoubleClick()) {
+				ControllerProvider.getEbsController().editAlertComponent(ebsUuid,true,(EbsAlertDto) e.getItemId());
+			}
+		});
 
 		reload(ebsUuid);
 	}

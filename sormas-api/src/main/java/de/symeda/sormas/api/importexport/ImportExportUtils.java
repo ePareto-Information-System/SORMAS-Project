@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.ebs.EbsExportDto;
 import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -139,6 +140,16 @@ public final class ImportExportUtils {
 
 	public static List<ExportPropertyMetaInfo> getPersonExportProperties(PropertyCaptionProvider propertyCaptionProvider, String countryLocale) {
 		return getExportProperties(PersonExportDto.class, new PropertyTypeFilter() {
+
+			@Override
+			public boolean accept(ExportGroupType type) {
+				return true;
+			}
+		}, propertyCaptionProvider, countryLocale);
+	}
+
+	public static List<ExportPropertyMetaInfo> getEbsExportProperties(PropertyCaptionProvider propertyCaptionProvider, String countryLocale) {
+		return getExportProperties(EbsExportDto.class, new PropertyTypeFilter() {
 
 			@Override
 			public boolean accept(ExportGroupType type) {

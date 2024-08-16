@@ -1,17 +1,19 @@
 package de.symeda.sormas.ui.ebs;
 
 
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
+import com.vaadin.ui.Window;
 import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
+import com.vaadin.v7.ui.VerticalLayout;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.ebs.*;
+import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
-import de.symeda.sormas.api.utils.ValidationException;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.ui.utils.*;
 import de.symeda.sormas.api.FacadeProvider;
@@ -41,7 +43,7 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 
     private static final String HTML_LAYOUT =
     loc(SIGNAL_VERIFICATION_LOC) +
-     fluidRowLocs(SignalVerificationDto.VERIFICATION_SENT, SignalVerificationDto.VERIFICATION_SENT_DATE) +
+     fluidRowLocs(SignalVerificationDto.VERIFICATION_SENT) +
     fluidRowLocs(SignalVerificationDto.VERIFIED) +
     fluidRowLocs(SignalVerificationDto.VERIFICATION_COMPLETE_DATE,"") +
             loc(EVENT_DETAILS_LOC) +
@@ -95,7 +97,6 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
         getContent().addComponent(headingEventDetails, EVENT_DETAILS_LOC);
         NullableOptionGroup sentVerification = addField(SignalVerificationDto.VERIFICATION_SENT, NullableOptionGroup.class);
         NullableOptionGroup verified = addField(SignalVerificationDto.VERIFIED, NullableOptionGroup.class);
-        addField(SignalVerificationDto.VERIFICATION_SENT_DATE, DateField.class);
         addField(SignalVerificationDto.VERIFICATION_COMPLETE_DATE, DateField.class);
         addField(SignalVerificationDto.DATE_OF_OCCURRENCE, DateField.class);
         TextField numberOfPersonAnimal = addField(SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL, TextField.class);
@@ -118,25 +119,25 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 
         FieldHelper.setVisibleWhen(
                 getFieldGroup(),
-                Arrays.asList(SignalVerificationDto.DESCRIPTION,SignalVerificationDto.VERIFICATION_COMPLETE_DATE,SignalVerificationDto.DATE_OF_OCCURRENCE,SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL,SignalVerificationDto.NUMBER_OF_DEATH,SignalVerificationDto.NUMBER_OF_DEATH_PERSON,SignalVerificationDto.NUMBER_OF_PERSON_CASES),
+                Arrays.asList(SignalVerificationDto.DESCRIPTION,SignalVerificationDto.DATE_OF_OCCURRENCE,SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL,SignalVerificationDto.NUMBER_OF_DEATH,SignalVerificationDto.NUMBER_OF_DEATH_PERSON,SignalVerificationDto.NUMBER_OF_PERSON_CASES),
                 SignalVerificationDto.VERIFIED,
-                Arrays.asList(YesNo.YES),
+                Arrays.asList(SignalOutcome.EVENT),
                 true);
         FieldHelper.setVisibleWhen(
                 getFieldGroup(),
                 Arrays.asList(SignalVerificationDto.WHY_NOT_VERIFY),
                 SignalVerificationDto.VERIFIED,
-                Arrays.asList(YesNo.NO),
+                Arrays.asList(SignalOutcome.NON_EVENT),
                 true);
 
         FieldHelper.setVisibleWhen(
                 getFieldGroup(),
-                Arrays.asList(SignalVerificationDto.VERIFICATION_SENT_DATE,SignalVerificationDto.VERIFIED),
+                Arrays.asList(SignalVerificationDto.VERIFIED,SignalVerificationDto.VERIFICATION_COMPLETE_DATE),
                 SignalVerificationDto.VERIFICATION_SENT,
                 Arrays.asList(YesNo.YES),
                 true);
         verified.addValueChangeListener(event -> {
-            if (event.getProperty().getValue().toString().equals("[YES]")){
+            if (event.getProperty().getValue().toString().equals("[Event]")){
                 getContent().getComponent(EVENT_DETAILS_LOC).setVisible(true);
                 setRequired(true,SignalVerificationDto.VERIFICATION_COMPLETE_DATE,SignalVerificationDto.DATE_OF_OCCURRENCE,SignalVerificationDto.DESCRIPTION);
                 setRequired(false,SignalVerificationDto.WHY_NOT_VERIFY);
@@ -148,7 +149,11 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
             }
         });
         setRequired(true,SignalVerificationDto.VERIFICATION_SENT);
+        sentVerification.addValueChangeListener(event->{
+            if (event.getProperty().getValue().equals(YesNo.NO) && selectedEbs.getTriaging().getTriagingDecision() == EbsTriagingDecision.VERIFY){
+                TriagingDataForm.reviewSignal(Strings.verifyNotifs);
+            }
+        });
     }
-
 
 }

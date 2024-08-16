@@ -401,7 +401,14 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getRiskAssessment().get(RiskAssessment.RISK_ASSESSMENT), ebsCriteria.getRiskAssessment()));
 		}
 		if (ebsCriteria.getReportDateTime() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Ebs.REPORT_DATE_TIME), DateHelper.getStartOfDay(ebsCriteria.getReportDateTime())));
+			filter = CriteriaBuilderHelper.and(
+					cb, filter,
+					cb.between(
+							from.get(Ebs.REPORT_DATE_TIME),
+							DateHelper.getStartOfDay(ebsCriteria.getReportDateTime()),
+							DateHelper.getEndOfDay(ebsCriteria.getReportDateTime())
+					)
+			);
 		}
 		if (ebsCriteria.getTriagingDto() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getTriaging().get(Ebs.TRIAGING), ebsCriteria.getTriagingDto()));
@@ -444,9 +451,6 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		}
 		if (ebsCriteria.getVerificationSent() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getSignalVerification().get(SignalVerification.VERIFICATION_SENT), ebsCriteria.getVerificationSent()));
-		}
-		if (ebsCriteria.getVerificationSentDate() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getSignalVerification().get(SignalVerification.VERIFICATION_SENT_DATE), ebsCriteria.getVerificationSentDate()));
 		}
 		if (ebsCriteria.getVerifiedDate() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getSignalVerification().get(SignalVerification.VERIFICATION_COMPLETE_DATE), ebsCriteria.getVerifiedDate()));
