@@ -80,7 +80,7 @@ public class GermanCaseClassificationValidatorTest extends AbstractUiBeanTest {
 
 		// assert classifications when no symptoms & non-positive lab result
 		final SampleDto sample =
-			creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+			creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
 
 		valid(CaseClassification.NOT_CLASSIFIED, validator);
 		invalid(CaseClassification.SUSPECT, validator);

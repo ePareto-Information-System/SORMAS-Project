@@ -549,9 +549,9 @@ public class ContactFacadeEjbTest extends AbstractBeanTest {
 			new Date(),
 			user.toReference());
 		SampleDto sample =
-			creator.createSample(contact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+			creator.createSample(contact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
 		SampleDto sample2 =
-			creator.createSample(contact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+			creator.createSample(contact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
 		sample2.setAssociatedCase(new CaseReferenceDto(caze.getUuid()));
 		getSampleFacade().saveSample(sample2);
 
