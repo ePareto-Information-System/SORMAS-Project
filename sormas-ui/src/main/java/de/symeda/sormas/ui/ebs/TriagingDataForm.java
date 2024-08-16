@@ -130,6 +130,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         referred = addField(TriagingDto.REFERRED, NullableOptionGroup.class);
         signalCategory = addField(TriagingDto.SIGNAL_CATEGORY, NullableOptionGroup.class);
         categoryLevel = addField(TriagingDto.CATEGORY_DETAILS_LEVEL, NullableOptionGroup.class);
+        loc(TriagingDto.SIGNAL_CATEGORY);
         OptionGroup humanCommCategoryDetail = new OptionGroup("Human Community Category Details");
         for (HumanCommunityCategoryDetails categoryDetails : HumanCommunityCategoryDetails.values()) {
             humanCommCategoryDetail.addItem(categoryDetails);
@@ -158,23 +159,24 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         }
         animalFacCategoryDetails = addField(TriagingDto.ANIMAL_FACILITY_CATEGORY_DETAILS, animalFacCategoryDetail);
         animalFacCategoryDetails.setVisible(false);
-        OptionGroup animalLabCategoryDetail = new OptionGroup("Category Details");
+        OptionGroup animalLabCategoryDetail = new OptionGroup("Animal Laboratory Category Details");
         for (AnimalLaboratoryCategoryDetails categoryDetails : AnimalLaboratoryCategoryDetails.values()) {
             animalLabCategoryDetail.addItem(categoryDetails);
         }
         animalLabCategoryDetails = addField(TriagingDto.ANIMAL_LABORATORY_CATEGORY_DETAILS, animalLabCategoryDetail);
         animalLabCategoryDetails.setVisible(false);
-        OptionGroup environmentalCategoryDetail = new OptionGroup("Category Details");
+        OptionGroup environmentalCategoryDetail = new OptionGroup("Environmental Category Details");
         for (EnvironmentalCategoryDetails categoryDetails : EnvironmentalCategoryDetails.values()) {
             environmentalCategoryDetail.addItem(categoryDetails);
         }
         environmentalCategoryDetails = addField(TriagingDto.ENVIRONMENTAL_CATEGORY_DETAILS, environmentalCategoryDetail);
         environmentalCategoryDetails.setVisible(false);
-        OptionGroup poeCategoryDetail = new OptionGroup("Category Details");
+        OptionGroup poeCategoryDetail = new OptionGroup("POE Category Details");
         for (POE categoryDetails : POE.values()) {
             poeCategoryDetail.addItem(categoryDetails);
         }
         poeCategoryDetails = addField(TriagingDto.POE_CATEGORY_DETAILS, poeCategoryDetail);
+        poeCategoryDetail.setVisible(false);
         previousOccurrence = addField(TriagingDto.OCCURRENCE_PREVIOUSLY, NullableOptionGroup.class);
         triagingDecision = addField(TriagingDto.TRIAGING_DECISION, OptionGroup.class);
 //        triagingDecision.setMultiSelect(false);
@@ -187,6 +189,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         dateOfDecision = addField(TriagingDto.DATE_OF_DECISION, DateField.class);
         referredTo = addField(TriagingDto.REFERRED_TO, TextField.class);
         ComboBox outcomeSupervisor = addField(TriagingDto.OUTCOME_SUPERVISOR, ComboBox.class);
+        categoryLevel.setCaption("");
         referredTo.setVisible(false);
         supervisorReview.setVisible(false);
         potentialRisk.setVisible(false);
@@ -483,17 +486,21 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 humanCommCategoryDetails.setVisible(isCommunityLevel);
                 humanFacCategoryDetails.setVisible(isFacilityLevel);
                 humanLabCategoryDetails.setVisible(isLaboratoryLevel);
+                categoryLevel.setCaption(String.format(I18nProperties.getCaption(Captions.Triaging_categoryDetails)));
                 break;
             case ANIMAL:
                 animalCommCategoryDetails.setVisible(isCommunityLevel);
                 animalFacCategoryDetails.setVisible(isFacilityLevel);
                 animalLabCategoryDetails.setVisible(isLaboratoryLevel);
+                categoryLevel.setCaption(String.format(I18nProperties.getCaption(Captions.Triaging_categoryDetails)));
                 break;
             case ENVIRONMENT:
                 environmentalCategoryDetails.setVisible(true);
+                categoryLevel.setCaption(String.format(I18nProperties.getCaption(Captions.Triaging_categoryDetails)));
                 break;
             case POE:
                 poeCategoryDetails.setVisible(true);
+                categoryLevel.setCaption(String.format(I18nProperties.getCaption(Captions.Triaging_categoryDetails)));
                 break;
         }
     }
@@ -525,6 +532,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 break;
             default:
                 categories = Collections.emptyList();
+                categoryLevel.setCaption("");
                 break;
         }
         try {
