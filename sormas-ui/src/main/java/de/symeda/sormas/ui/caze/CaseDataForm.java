@@ -1283,6 +1283,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         personEditForm.setWidth(100, Unit.PERCENTAGE);
         getContent().addComponent(personEditForm, CaseDataDto.PERSON);
         personEditForm.hideAllFields();
+        personEditForm.hideLabels();
 
 
         // Set initial visibilities & accesses
