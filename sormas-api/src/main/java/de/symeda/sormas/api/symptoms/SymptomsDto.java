@@ -3296,6 +3296,21 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Order(337)
 	public SymptomState getSkinRashNew() {return skinRashNew;}
+
+	@Order(338)
+	public String getPlaceOfDeath() {
+		return placeOfDeath;
+	}
+
+	@Order(339)
+	public Date getDateOfDeath() {
+		return dateOfDeath;
+	}
+
+	@Order(340)
+	public CaseOutcome getStatusOfPatient() {
+		return statusOfPatient;
+	}
 	public void setAbdominalPain(SymptomState abdominalPain) {
 		this.abdominalPain = abdominalPain;
 	}
@@ -4676,24 +4691,13 @@ public class SymptomsDto extends PseudonymizableDto {
 	public void setPregnant(YesNo pregnant) {
 		this.pregnant = pregnant;
 	}
-	public CaseOutcome getStatusOfPatient() {
-		return statusOfPatient;
-	}
 
 	public void setStatusOfPatient(CaseOutcome statusOfPatient) {
 		this.statusOfPatient = statusOfPatient;
 	}
 
-	public Date getDateOfDeath() {
-		return dateOfDeath;
-	}
-
 	public void setDateOfDeath(Date dateOfDeath) {
 		this.dateOfDeath = dateOfDeath;
-	}
-
-	public String getPlaceOfDeath() {
-		return placeOfDeath;
 	}
 
 	public void setPlaceOfDeath(String placeOfDeath) {
