@@ -81,6 +81,8 @@ import de.symeda.sormas.app.backend.event.EventDtoHelper;
 import de.symeda.sormas.app.backend.event.EventParticipantDtoHelper;
 import de.symeda.sormas.app.backend.facility.FacilityDtoHelper;
 import de.symeda.sormas.app.backend.feature.FeatureConfigurationDtoHelper;
+import de.symeda.sormas.app.backend.formbuilder.FormBuilderDtoHelper;
+import de.symeda.sormas.app.backend.formfield.FormFieldDtoHelper;
 import de.symeda.sormas.app.backend.immunization.Immunization;
 import de.symeda.sormas.app.backend.immunization.ImmunizationDtoHelper;
 import de.symeda.sormas.app.backend.infrastructure.InfrastructureHelper;
@@ -558,6 +560,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		new DiseaseConfigurationDtoHelper().repullEntities(context, syncCallbacks);
 		new CustomizableEnumValueDtoHelper().repullEntities(context, syncCallbacks);
 		new FeatureConfigurationDtoHelper().repullEntities(context, syncCallbacks);
+		new FormBuilderDtoHelper().repullEntities(context, syncCallbacks);
+		new FormFieldDtoHelper().repullEntities(context, syncCallbacks);
 		personDtoHelper.repullEntities(context, syncCallbacks);
 		caseDtoHelper.repullEntities(context, syncCallbacks);
 		immunizationDtoHelper.repullEntities(context, syncCallbacks);
@@ -636,6 +640,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		new DiseaseClassificationDtoHelper().pullEntities(false, context, syncCallbacks);
 		new DiseaseConfigurationDtoHelper().pullEntities(false, context, syncCallbacks);
 		new CustomizableEnumValueDtoHelper().pullEntities(false, context, syncCallbacks);
+		new FormFieldDtoHelper().pullEntities(false, context, syncCallbacks);
+		new FormBuilderDtoHelper().pullEntities(false, context, syncCallbacks);
 
 		// feature configurations may be removed, so have to pull the deleted uuids
 		// this may be applied to other entities later as well
@@ -875,6 +881,7 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		List<String> outbreakUuids = viewAllowed ? executeUuidCall(RetroProvider.getOutbreakFacade().pullActiveUuids()) : new ArrayList<>();
 		DatabaseHelper.getOutbreakDao().deleteInvalid(outbreakUuids, syncCallbacks);
 
+
 		final CampaignFormDataDtoHelper campaignFormDataDtoHelper = new CampaignFormDataDtoHelper();
 		List<String> campaignFormMetaUuids = null;
 		List<String> campaignUuids = null;
@@ -978,6 +985,12 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		// continents
 		List<String> continentUuids = executeUuidCall(RetroProvider.getContinentFacade().pullUuids());
 		DatabaseHelper.getContinentDao().deleteInvalid(continentUuids, syncCallbacks);
+		//formFields
+		List<String> formFieldUuids = executeUuidCall(RetroProvider.getFormFieldFacade().pullUuids());
+		DatabaseHelper.getFormFieldDao().deleteInvalid(formFieldUuids, syncCallbacks);
+
+		List<String> formsUuids = executeUuidCall(RetroProvider.getFormBuilderFacade().pullUuids());
+		DatabaseHelper.getFormBuilderDao().deleteInvalid(formsUuids, syncCallbacks);
 
 		syncCallbacks.ifPresent(c -> c.getShowNextCleanupItemsCallback().run());
 
@@ -996,6 +1009,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		new DiseaseConfigurationDtoHelper().pullMissing(diseaseConfigurationUuids, syncCallbacks);
 		new CustomizableEnumValueDtoHelper().pullMissing(customizableEnumValueUuids, syncCallbacks);
 		new FeatureConfigurationDtoHelper().pullMissing(featureConfigurationUuids, syncCallbacks);
+		new FormFieldDtoHelper().pullMissing(formFieldUuids, syncCallbacks);
+		new FormBuilderDtoHelper().pullMissing(formsUuids, syncCallbacks);
 	}
 
 	private List<String> executeUuidCall(Call<List<String>> call) throws ServerConnectionException, ServerCommunicationException {

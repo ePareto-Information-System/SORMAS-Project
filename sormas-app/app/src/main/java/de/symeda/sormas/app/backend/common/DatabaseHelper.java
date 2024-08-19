@@ -112,6 +112,11 @@ import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.facility.FacilityDao;
 import de.symeda.sormas.app.backend.feature.FeatureConfiguration;
 import de.symeda.sormas.app.backend.feature.FeatureConfigurationDao;
+import de.symeda.sormas.app.backend.formbuilder.FormBuilder;
+import de.symeda.sormas.app.backend.formbuilder.FormBuilderDao;
+import de.symeda.sormas.app.backend.formbuilder.FormBuilderFormField;
+import de.symeda.sormas.app.backend.formfield.FormField;
+import de.symeda.sormas.app.backend.formfield.FormFieldDao;
 import de.symeda.sormas.app.backend.hospitalization.Hospitalization;
 import de.symeda.sormas.app.backend.hospitalization.HospitalizationDao;
 import de.symeda.sormas.app.backend.hospitalization.PreviousHospitalization;
@@ -292,6 +297,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				TableUtils.clearTable(connectionSource, Area.class);
 				TableUtils.clearTable(connectionSource, Campaign.class);
 				TableUtils.clearTable(connectionSource, CampaignFormMeta.class);
+				TableUtils.clearTable(connectionSource, FormField.class);
+				TableUtils.clearTable(connectionSource, FormBuilder.class);
+				TableUtils.clearTable(connectionSource, FormBuilderFormField.class);
 
 				ConfigProvider.init(instance.context);
 			}
@@ -379,6 +387,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, CampaignFormMeta.class);
 			TableUtils.createTable(connectionSource, LbdsSync.class);
 			TableUtils.createTable(connectionSource, Environment.class);
+			TableUtils.createTable(connectionSource, FormBuilder.class);
+			TableUtils.createTable(connectionSource, FormField.class);
+			TableUtils.createTable(connectionSource, FormBuilderFormField.class);
 		} catch (SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Can't build database", e);
 			throw new RuntimeException(e);
@@ -3098,10 +3109,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			case 346:
 				currentVersion = 346;
 				getDao(FeatureConfiguration.class).executeRaw("DELETE FROM featureConfiguration WHERE featureType = 'DASHBOARD';");
-
-				// ATTENTION: break should only be done after last version
-				break;
-
 			// update
 			case 347:
 				currentVersion = 347;
@@ -3153,7 +3160,19 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				if (columnDoesNotExist("vaccination", "modified")) {
 					getDao(Vaccination.class).executeRaw("ALTER TABLE vaccination ADD COLUMN modified SMALLINT DEFAULT 0;");
 				}
-
+			case 353:
+				currentVersion = 353;
+				getDao(FormBuilder.class).executeRaw(
+						"CREATE TABLE forms_form_fields(" +
+								"form_id bigint not null," +
+								"formField_id bigint not null," +
+								"PRIMARY KEY (form_id, formField_id)," +
+								"FOREIGN KEY (form_id) REFERENCES forms(id)," +
+								"FOREIGN KEY (formField_id) REFERENCES form_fields(id)" +
+								");"
+				);
+				// ATTENTION: break should only be done after last version
+				break;
 			default:
 				throw new IllegalStateException("onUpgrade() with unknown oldVersion " + oldVersion);
 			}
@@ -3958,6 +3977,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.dropTable(connectionSource, CampaignFormData.class, true);
 			TableUtils.dropTable(connectionSource, LbdsSync.class, true);
 			TableUtils.dropTable(connectionSource, Environment.class, true);
+			TableUtils.dropTable(connectionSource, FormField.class, true);
+			TableUtils.dropTable(connectionSource, FormBuilder.class, true);
+			TableUtils.dropTable(connectionSource, FormBuilderFormField.class, true);
 
 			if (oldVersion < 30) {
 				TableUtils.dropTable(connectionSource, Config.class, true);
@@ -4092,6 +4114,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				}
 				else if (type.equals(Environment.class)) {
 					dao = (AbstractAdoDao<ADO>) new EnvironmentDao((Dao<Environment, Long>) innerDao);
+				}
+				else if (type.equals(FormField.class)) {
+					dao = (AbstractAdoDao<ADO>) new FormFieldDao((Dao<FormField, Long>) innerDao);
+				} else if (type.equals(FormBuilder.class)) {
+					dao = (AbstractAdoDao<ADO>) new FormBuilderDao((Dao<FormBuilder, Long>) innerDao, super.getDao(FormBuilderFormField.class));
 				} else {
 					throw new UnsupportedOperationException(type.toString());
 				}
@@ -4277,6 +4304,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		return (FeatureConfigurationDao) getAdoDao(FeatureConfiguration.class);
 	}
 
+	public static FormFieldDao getFormFieldDao() {
+		return (FormFieldDao) getAdoDao(FormField.class);
+	}
+
+	public static FormBuilderDao getFormBuilderDao() {
+		return (FormBuilderDao) getAdoDao(FormBuilder.class);
+	}
+
 	public static SymptomsDao getSymptomsDao() {
 		return (SymptomsDao) getAdoDao(Symptoms.class);
 	}
@@ -4368,6 +4403,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	 public static AuditLogEntryDao getAuditLogEntryDao() {
 	 	return (AuditLogEntryDao) getAdoDao(AuditLogEntry.class);
 	 }
+
+
 
 // TODO [vaccination info] integrate vaccination info
 //	public static VaccinationInfoDao getVaccinationInfoDao() {
