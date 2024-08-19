@@ -196,10 +196,7 @@ public class PersonDto extends PseudonymizableDto {
 	@SensitiveData(mandatoryField = false)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String lastName;
-	@Outbreaks
-	@PersonalData(mandatoryField = false)
-	@SensitiveData(mandatoryField = false)
-	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
+
 	private String otherName;
 
 	@HideForCountriesExcept
@@ -250,8 +247,8 @@ public class PersonDto extends PseudonymizableDto {
 //	@NotNull(message = Validations.specifySex)
 	private Sex sex;
 	@Outbreaks
-	@PersonalData
-	@SensitiveData
+	/*@PersonalData
+	@SensitiveData*/
 	private Integer birthdateDD;
 	@Outbreaks
 	private Integer birthdateMM;

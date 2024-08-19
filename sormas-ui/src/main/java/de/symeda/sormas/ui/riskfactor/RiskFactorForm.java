@@ -10,6 +10,7 @@ import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.riskfactor.RiskFactorDto;
@@ -24,6 +25,7 @@ import de.symeda.sormas.ui.utils.*;
 import com.vaadin.ui.Label;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 
 import static de.symeda.sormas.ui.utils.CssStyles.*;
@@ -252,6 +254,13 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
             FieldHelper.setVisibleWhen(travelledIllness, Arrays.asList(indicateTravel), Arrays.asList(YesNo.YES), true);
             FieldHelper.setVisibleWhen(patientTouch, Arrays.asList(patientTouchYes), Arrays.asList(YesNo.YES), true);
 
+            FieldHelper.setVisibleWhen(
+                    getFieldGroup(),
+                    RiskFactorDto.PATIENT_SYMPTOMS_PRECEDENCE,
+                    RiskFactorDto.DURING_3WEEKS_PATIENT_CONTACT_WITH_SIMILAR_SYMPTOMS,
+                    Collections.singletonList(YesNo.YES),
+                    true);
+
         }
 
     }
@@ -277,14 +286,6 @@ public class RiskFactorForm extends AbstractEditForm<RiskFactorDto> {
 
     private void disableField(String field) {
         setVisible(false, field);
-    }
-
-    private Label createLabel(String text, String h4, String location) {
-        final Label label = new Label(text);
-        label.setId(text);
-        label.addStyleName(h4);
-        getContent().addComponent(label, location);
-        return label;
     }
 
 }

@@ -77,6 +77,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
     private static final String DIFFERENT_PLACE_OF_STAY_JURISDICTION = "differentPlaceOfStayJurisdiction";
     private static final String PLACE_OF_STAY_HEADING_LOC = "placeOfStayHeadingLoc";
     public static final String MPOX_COORDINATE_LABEL = "mpoxCoordinate";
+    public static final String PERSON_INFO_LABEL = "personInfoLabel";
     private static final String DIFFERENT_POINT_OF_ENTRY_JURISDICTION = "differentPointOfEntryJurisdiction";
     private static final String POINT_OF_ENTRY_REGION = "pointOfEntryRegion";
     private static final String POINT_OF_ENTRY_DISTRICT = "pointOfEntryDistrict";
@@ -135,6 +136,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 			+ fluidRowLocs(DIFFERENT_POINT_OF_ENTRY_JURISDICTION)
 			+ fluidRowLocs(POINT_OF_ENTRY_REGION, POINT_OF_ENTRY_DISTRICT)
 			+ fluidRowLocs(CaseDataDto.POINT_OF_ENTRY, CaseDataDto.POINT_OF_ENTRY_DETAILS)
+			+ fluidRowLocs(PERSON_INFO_LABEL)
 			+ fluidRowLocs(CaseDataDto.PERSON)
             + fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY)
             + fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.REGION_OF_RESIDENCE, CaseDataDto.DISTRICT_OF_RESIDENCE);
@@ -650,6 +652,10 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
         Label coorLabel = new Label(I18nProperties.getCaption(Captions.coorLabel));
         coorLabel.addStyleName(H4);
         getContent().addComponent(coorLabel, MPOX_COORDINATE_LABEL);
+
+        Label personInfoLabel = new Label(I18nProperties.getCaption(Captions.personInfoLabel));
+        personInfoLabel.addStyleName(H4);
+        getContent().addComponent(personInfoLabel, PERSON_INFO_LABEL);
 
         addFields(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT);
         addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
