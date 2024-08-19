@@ -14,6 +14,8 @@ import de.symeda.sormas.api.infrastructure.continent.ContinentDto;
 import de.symeda.sormas.api.infrastructure.country.CountryDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.fields.FormFieldsDto;
+import de.symeda.sormas.api.infrastructure.forms.FormBuilderDto;
 import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryDto;
 import de.symeda.sormas.api.infrastructure.region.RegionDto;
 import de.symeda.sormas.api.infrastructure.subcontinent.SubcontinentDto;
@@ -44,6 +46,8 @@ public class InfrastructureSyncDto implements Serializable {
 	private List<String> deletedFeatureConfigurationUuids;
 	private List<CampaignDto> campaigns;
 	private List<CampaignFormMetaDto> campaignFormMetas;
+	private List<FormBuilderDto> formBuilders;
+	private List<FormFieldsDto> formFields;
 
 	public boolean isInitialSyncRequired() {
 		return initialSyncRequired;
@@ -167,6 +171,22 @@ public class InfrastructureSyncDto implements Serializable {
 
 	public List<FeatureConfigurationDto> getFeatureConfigurations() {
 		return featureConfigurations;
+	}
+
+	public List<FormBuilderDto> getFormBuilders() {
+		return formBuilders;
+	}
+
+	public void setFormBuilders(List<FormBuilderDto> formBuilders) {
+		this.formBuilders = formBuilders;
+	}
+
+	public List<FormFieldsDto> getFormFields() {
+		return formFields;
+	}
+
+	public void setFormFields(List<FormFieldsDto> formFields) {
+		this.formFields = formFields;
 	}
 
 	public void setFeatureConfigurations(List<FeatureConfigurationDto> featureConfigurations) {
