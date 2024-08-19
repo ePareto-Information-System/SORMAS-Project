@@ -28,7 +28,7 @@ public class ContaminationSourceDto extends PseudonymizableDto  {
     public static final String TREATED_WITH_ABATE = "treatedWithAbate";
     public static final String ABATE_TREATMENT_DATE = "abateTreatmentDate";
 
-    private String uuid;
+//    private String uuid;
     private String name;
     private String contaminationType;
     private Double longitude;
@@ -70,15 +70,15 @@ public class ContaminationSourceDto extends PseudonymizableDto  {
     }
 
 
-    @Override
-    public String getUuid() {
-        return uuid;
-    }
-
-    @Override
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
+//    @Override
+//    public String getUuid() {
+//        return uuid;
+//    }
+//
+//    @Override
+//    public void setUuid(String uuid) {
+//        this.uuid = uuid;
+//    }
 
     public String getName() {
         return name;
