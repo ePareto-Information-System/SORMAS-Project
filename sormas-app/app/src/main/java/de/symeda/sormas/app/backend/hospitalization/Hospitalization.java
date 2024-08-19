@@ -31,7 +31,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import de.symeda.sormas.api.hospitalization.AccommodationType;
 import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
 
@@ -48,7 +48,7 @@ public class Hospitalization extends AbstractDomainObject {
 	public static final String I18N_PREFIX = "CaseHospitalization";
 
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown admittedToHealthFacility;
+	private YesNo admittedToHealthFacility;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date admissionDate;
 	@DatabaseField(dataType = DataType.DATE_LONG)
@@ -57,7 +57,7 @@ public class Hospitalization extends AbstractDomainObject {
 	@Deprecated
 	private AccommodationType accommodation;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown isolated;
+	private YesNo isolated;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date isolationDate;
 	@Column(length = CHARACTER_LIMIT_BIG)
@@ -67,12 +67,12 @@ public class Hospitalization extends AbstractDomainObject {
 	private String healthFacilityRecordNumber;
 
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown leftAgainstAdvice;
+	private YesNo leftAgainstAdvice;
 
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown hospitalizedPreviously;
+	private YesNo hospitalizedPreviously;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown intensiveCareUnit;
+	private YesNo intensiveCareUnit;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date intensiveCareUnitStart;
 	@DatabaseField(dataType = DataType.DATE_LONG)
@@ -104,11 +104,11 @@ public class Hospitalization extends AbstractDomainObject {
 		this.dischargeDate = dischargeDate;
 	}
 
-	public YesNoUnknown getIsolated() {
+	public YesNo getIsolated() {
 		return isolated;
 	}
 
-	public void setIsolated(YesNoUnknown isolated) {
+	public void setIsolated(YesNo isolated) {
 		this.isolated = isolated;
 	}
 
@@ -128,27 +128,27 @@ public class Hospitalization extends AbstractDomainObject {
 		this.description = description;
 	}
 
-	public YesNoUnknown getHospitalizedPreviously() {
+	public YesNo getHospitalizedPreviously() {
 		return hospitalizedPreviously;
 	}
 
-	public void setHospitalizedPreviously(YesNoUnknown hospitalizedPreviously) {
+	public void setHospitalizedPreviously(YesNo hospitalizedPreviously) {
 		this.hospitalizedPreviously = hospitalizedPreviously;
 	}
 
-	public YesNoUnknown getAdmittedToHealthFacility() {
+	public YesNo getAdmittedToHealthFacility() {
 		return admittedToHealthFacility;
 	}
 
-	public void setAdmittedToHealthFacility(YesNoUnknown admittedToHealthFacility) {
+	public void setAdmittedToHealthFacility(YesNo admittedToHealthFacility) {
 		this.admittedToHealthFacility = admittedToHealthFacility;
 	}
 
-	public YesNoUnknown getIntensiveCareUnit() {
+	public YesNo getIntensiveCareUnit() {
 		return intensiveCareUnit;
 	}
 
-	public void setIntensiveCareUnit(YesNoUnknown intensiveCareUnit) {
+	public void setIntensiveCareUnit(YesNo intensiveCareUnit) {
 		this.intensiveCareUnit = intensiveCareUnit;
 	}
 
@@ -196,11 +196,11 @@ public class Hospitalization extends AbstractDomainObject {
 		this.accommodation = accommodation;
 	}
 
-	public YesNoUnknown getLeftAgainstAdvice() {
+	public YesNo getLeftAgainstAdvice() {
 		return leftAgainstAdvice;
 	}
 
-	public void setLeftAgainstAdvice(YesNoUnknown leftAgainstAdvice) {
+	public void setLeftAgainstAdvice(YesNo leftAgainstAdvice) {
 		this.leftAgainstAdvice = leftAgainstAdvice;
 	}
 

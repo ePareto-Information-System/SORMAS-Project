@@ -57,6 +57,7 @@ import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.EpiWeek;
 import de.symeda.sormas.api.utils.InfoProvider;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
@@ -305,7 +306,7 @@ public class CaseDao extends AbstractAdoDao<Case> {
 		Case newCase = build(contact.getPerson());
 		newCase.setDisease(contact.getDisease());
 		newCase.setDiseaseDetails(contact.getDiseaseDetails());
-		newCase.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		newCase.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		return newCase;
 	}
 
@@ -322,7 +323,7 @@ public class CaseDao extends AbstractAdoDao<Case> {
 			caze.getHospitalization()
 				.getPreviousHospitalizations()
 				.add(DatabaseHelper.getPreviousHospitalizationDao().buildPreviousHospitalizationFromHospitalization(caze, oldCase));
-			caze.getHospitalization().setHospitalizedPreviously(YesNoUnknown.YES);
+			caze.getHospitalization().setHospitalizedPreviously(YesNo.YES);
 		}
 		if (FacilityType.HOSPITAL.equals(caze.getFacilityType())) {
 			caze.getHospitalization().setAdmissionDate(new Date());

@@ -56,6 +56,7 @@ import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.caze.maternalhistory.MaternalHistory;
 import de.symeda.sormas.app.backend.caze.porthealthinfo.PortHealthInfo;
@@ -221,7 +222,7 @@ public class Case extends PseudonymizableAdo {
 	private User caseOfficer;
 
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown pregnant;
+	private YesNo pregnant;
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private HealthConditions healthConditions;
@@ -341,7 +342,7 @@ public class Case extends PseudonymizableAdo {
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date quarantineOfficialOrderSentDate;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown postpartum;
+	private YesNo postpartum;
 	@Enumerated(EnumType.STRING)
 	private Trimester trimester;
 	@DatabaseField
@@ -676,11 +677,11 @@ public class Case extends PseudonymizableAdo {
 		this.healthConditions = healthConditions;
 	}
 
-	public YesNoUnknown getPregnant() {
+	public YesNo getPregnant() {
 		return pregnant;
 	}
 
-	public void setPregnant(YesNoUnknown pregnant) {
+	public void setPregnant(YesNo pregnant) {
 		this.pregnant = pregnant;
 	}
 
@@ -1132,11 +1133,11 @@ public class Case extends PseudonymizableAdo {
 		this.quarantineOfficialOrderSentDate = quarantineOfficialOrderSentDate;
 	}
 
-	public YesNoUnknown getPostpartum() {
+	public YesNo getPostpartum() {
 		return postpartum;
 	}
 
-	public void setPostpartum(YesNoUnknown postpartum) {
+	public void setPostpartum(YesNo postpartum) {
 		this.postpartum = postpartum;
 	}
 

@@ -328,7 +328,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 			public void onClick(View v, Object item) {
 				for (ControlSwitchField symptomField : symptomFields) {
 					if (symptomField.getVisibility() == VISIBLE && symptomField.getValue() == null) {
-						symptomField.setValue(SymptomState.UNKNOWN);
+//						symptomField.setValue(SymptomState.UNKNOWN);
 					}
 				}
 			}

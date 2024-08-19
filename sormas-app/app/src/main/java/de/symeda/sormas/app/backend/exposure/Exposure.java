@@ -24,7 +24,7 @@ import de.symeda.sormas.api.exposure.GatheringType;
 import de.symeda.sormas.api.exposure.HabitationType;
 import de.symeda.sormas.api.exposure.TypeOfAnimal;
 import de.symeda.sormas.api.exposure.WorkEnvironment;
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.contact.Contact;
@@ -96,43 +96,43 @@ public class Exposure extends PseudonymizableAdo {
 
 	// Details
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown indoors;
+	private YesNo indoors;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown outdoors;
+	private YesNo outdoors;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown wearingMask;
+	private YesNo wearingMask;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown wearingPpe;
+	private YesNo wearingPpe;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown otherProtectiveMeasures;
+	private YesNo otherProtectiveMeasures;
 	@Column(columnDefinition = "text")
 	private String protectiveMeasuresDetails;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown shortDistance;
+	private YesNo shortDistance;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown longFaceToFaceContact;
+	private YesNo longFaceToFaceContact;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown animalMarket;
+	private YesNo animalMarket;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown percutaneous;
+	private YesNo percutaneous;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown contactToBodyFluids;
+	private YesNo contactToBodyFluids;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown handlingSamples;
+	private YesNo handlingSamples;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown eatingRawAnimalProducts;
+	private YesNo eatingRawAnimalProducts;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown handlingAnimals;
+	private YesNo handlingAnimals;
 	@Enumerated(EnumType.STRING)
 	private AnimalCondition animalCondition;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown animalVaccinated;
+	private YesNo animalVaccinated;
 	@Enumerated(EnumType.STRING)
 	private AnimalContactType animalContactType;
 	@Column(columnDefinition = "text")
 	private String animalContactTypeDetails;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown bodyOfWater;
+	private YesNo bodyOfWater;
 	@Enumerated(EnumType.STRING)
 	private WaterSource waterSource;
 	@Column(columnDefinition = "text")
@@ -140,11 +140,11 @@ public class Exposure extends PseudonymizableAdo {
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private Contact contactToCase;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown prophylaxis;
+	private YesNo prophylaxis;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date prophylaxisDate;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown riskArea;
+	private YesNo riskArea;
 
 	// Exposure sub-types
 	@Enumerated(EnumType.STRING)
@@ -162,17 +162,17 @@ public class Exposure extends PseudonymizableAdo {
 
 	// Fields specific to ExposureType.BURIAL
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown physicalContactDuringPreparation;
+	private YesNo physicalContactDuringPreparation;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown physicalContactWithBody;
+	private YesNo physicalContactWithBody;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown deceasedPersonIll;
+	private YesNo deceasedPersonIll;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String deceasedPersonName;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String deceasedPersonRelation;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown largeAttendanceNumber;
+	private YesNo largeAttendanceNumber;
 
 	@Override
 	public String getI18nPrefix() {
@@ -259,43 +259,43 @@ public class Exposure extends PseudonymizableAdo {
 		this.exposureRole = exposureRole;
 	}
 
-	public YesNoUnknown getIndoors() {
+	public YesNo getIndoors() {
 		return indoors;
 	}
 
-	public void setIndoors(YesNoUnknown indoors) {
+	public void setIndoors(YesNo indoors) {
 		this.indoors = indoors;
 	}
 
-	public YesNoUnknown getOutdoors() {
+	public YesNo getOutdoors() {
 		return outdoors;
 	}
 
-	public void setOutdoors(YesNoUnknown outdoors) {
+	public void setOutdoors(YesNo outdoors) {
 		this.outdoors = outdoors;
 	}
 
-	public YesNoUnknown getWearingMask() {
+	public YesNo getWearingMask() {
 		return wearingMask;
 	}
 
-	public void setWearingMask(YesNoUnknown wearingMask) {
+	public void setWearingMask(YesNo wearingMask) {
 		this.wearingMask = wearingMask;
 	}
 
-	public YesNoUnknown getWearingPpe() {
+	public YesNo getWearingPpe() {
 		return wearingPpe;
 	}
 
-	public void setWearingPpe(YesNoUnknown wearingPpe) {
+	public void setWearingPpe(YesNo wearingPpe) {
 		this.wearingPpe = wearingPpe;
 	}
 
-	public YesNoUnknown getOtherProtectiveMeasures() {
+	public YesNo getOtherProtectiveMeasures() {
 		return otherProtectiveMeasures;
 	}
 
-	public void setOtherProtectiveMeasures(YesNoUnknown otherProtectiveMeasures) {
+	public void setOtherProtectiveMeasures(YesNo otherProtectiveMeasures) {
 		this.otherProtectiveMeasures = otherProtectiveMeasures;
 	}
 
@@ -307,67 +307,67 @@ public class Exposure extends PseudonymizableAdo {
 		this.protectiveMeasuresDetails = protectiveMeasuresDetails;
 	}
 
-	public YesNoUnknown getShortDistance() {
+	public YesNo getShortDistance() {
 		return shortDistance;
 	}
 
-	public void setShortDistance(YesNoUnknown shortDistance) {
+	public void setShortDistance(YesNo shortDistance) {
 		this.shortDistance = shortDistance;
 	}
 
-	public YesNoUnknown getLongFaceToFaceContact() {
+	public YesNo getLongFaceToFaceContact() {
 		return longFaceToFaceContact;
 	}
 
-	public void setLongFaceToFaceContact(YesNoUnknown longFaceToFaceContact) {
+	public void setLongFaceToFaceContact(YesNo longFaceToFaceContact) {
 		this.longFaceToFaceContact = longFaceToFaceContact;
 	}
 
-	public YesNoUnknown getAnimalMarket() {
+	public YesNo getAnimalMarket() {
 		return animalMarket;
 	}
 
-	public void setAnimalMarket(YesNoUnknown animalMarket) {
+	public void setAnimalMarket(YesNo animalMarket) {
 		this.animalMarket = animalMarket;
 	}
 
-	public YesNoUnknown getPercutaneous() {
+	public YesNo getPercutaneous() {
 		return percutaneous;
 	}
 
-	public void setPercutaneous(YesNoUnknown percutaneous) {
+	public void setPercutaneous(YesNo percutaneous) {
 		this.percutaneous = percutaneous;
 	}
 
-	public YesNoUnknown getContactToBodyFluids() {
+	public YesNo getContactToBodyFluids() {
 		return contactToBodyFluids;
 	}
 
-	public void setContactToBodyFluids(YesNoUnknown contactToBodyFluids) {
+	public void setContactToBodyFluids(YesNo contactToBodyFluids) {
 		this.contactToBodyFluids = contactToBodyFluids;
 	}
 
-	public YesNoUnknown getHandlingSamples() {
+	public YesNo getHandlingSamples() {
 		return handlingSamples;
 	}
 
-	public void setHandlingSamples(YesNoUnknown handlingSamples) {
+	public void setHandlingSamples(YesNo handlingSamples) {
 		this.handlingSamples = handlingSamples;
 	}
 
-	public YesNoUnknown getEatingRawAnimalProducts() {
+	public YesNo getEatingRawAnimalProducts() {
 		return eatingRawAnimalProducts;
 	}
 
-	public void setEatingRawAnimalProducts(YesNoUnknown eatingRawAnimalProducts) {
+	public void setEatingRawAnimalProducts(YesNo eatingRawAnimalProducts) {
 		this.eatingRawAnimalProducts = eatingRawAnimalProducts;
 	}
 
-	public YesNoUnknown getHandlingAnimals() {
+	public YesNo getHandlingAnimals() {
 		return handlingAnimals;
 	}
 
-	public void setHandlingAnimals(YesNoUnknown handlingAnimals) {
+	public void setHandlingAnimals(YesNo handlingAnimals) {
 		this.handlingAnimals = handlingAnimals;
 	}
 
@@ -379,11 +379,11 @@ public class Exposure extends PseudonymizableAdo {
 		this.animalCondition = animalCondition;
 	}
 
-	public YesNoUnknown getAnimalVaccinated() {
+	public YesNo getAnimalVaccinated() {
 		return animalVaccinated;
 	}
 
-	public void setAnimalVaccinated(YesNoUnknown animalVaccinated) {
+	public void setAnimalVaccinated(YesNo animalVaccinated) {
 		this.animalVaccinated = animalVaccinated;
 	}
 
@@ -403,11 +403,11 @@ public class Exposure extends PseudonymizableAdo {
 		this.animalContactTypeDetails = animalContactTypeDetails;
 	}
 
-	public YesNoUnknown getBodyOfWater() {
+	public YesNo getBodyOfWater() {
 		return bodyOfWater;
 	}
 
-	public void setBodyOfWater(YesNoUnknown bodyOfWater) {
+	public void setBodyOfWater(YesNo bodyOfWater) {
 		this.bodyOfWater = bodyOfWater;
 	}
 
@@ -483,27 +483,27 @@ public class Exposure extends PseudonymizableAdo {
 		this.typeOfAnimalDetails = typeOfAnimalDetails;
 	}
 
-	public YesNoUnknown getPhysicalContactDuringPreparation() {
+	public YesNo getPhysicalContactDuringPreparation() {
 		return physicalContactDuringPreparation;
 	}
 
-	public void setPhysicalContactDuringPreparation(YesNoUnknown physicalContactDuringPreparation) {
+	public void setPhysicalContactDuringPreparation(YesNo physicalContactDuringPreparation) {
 		this.physicalContactDuringPreparation = physicalContactDuringPreparation;
 	}
 
-	public YesNoUnknown getPhysicalContactWithBody() {
+	public YesNo getPhysicalContactWithBody() {
 		return physicalContactWithBody;
 	}
 
-	public void setPhysicalContactWithBody(YesNoUnknown physicalContactWithBody) {
+	public void setPhysicalContactWithBody(YesNo physicalContactWithBody) {
 		this.physicalContactWithBody = physicalContactWithBody;
 	}
 
-	public YesNoUnknown getDeceasedPersonIll() {
+	public YesNo getDeceasedPersonIll() {
 		return deceasedPersonIll;
 	}
 
-	public void setDeceasedPersonIll(YesNoUnknown deceasedPersonIll) {
+	public void setDeceasedPersonIll(YesNo deceasedPersonIll) {
 		this.deceasedPersonIll = deceasedPersonIll;
 	}
 
@@ -579,11 +579,11 @@ public class Exposure extends PseudonymizableAdo {
 		this.workEnvironment = workEnvironment;
 	}
 
-	public YesNoUnknown getProphylaxis() {
+	public YesNo getProphylaxis() {
 		return prophylaxis;
 	}
 
-	public void setProphylaxis(YesNoUnknown prophylaxis) {
+	public void setProphylaxis(YesNo prophylaxis) {
 		this.prophylaxis = prophylaxis;
 	}
 
@@ -595,19 +595,19 @@ public class Exposure extends PseudonymizableAdo {
 		this.prophylaxisDate = prophylaxisDate;
 	}
 
-	public YesNoUnknown getRiskArea() {
+	public YesNo getRiskArea() {
 		return riskArea;
 	}
 
-	public void setRiskArea(YesNoUnknown riskArea) {
+	public void setRiskArea(YesNo riskArea) {
 		this.riskArea = riskArea;
 	}
 
-	public YesNoUnknown getLargeAttendanceNumber() {
+	public YesNo getLargeAttendanceNumber() {
 		return largeAttendanceNumber;
 	}
 
-	public void setLargeAttendanceNumber(YesNoUnknown largeAttendanceNumber) {
+	public void setLargeAttendanceNumber(YesNo largeAttendanceNumber) {
 		this.largeAttendanceNumber = largeAttendanceNumber;
 	}
 }

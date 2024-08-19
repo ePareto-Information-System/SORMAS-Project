@@ -35,6 +35,7 @@ import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.contact.ContactStatus;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.ValidationException;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.BaseEditActivity;
 import de.symeda.sormas.app.BaseEditFragment;
@@ -240,7 +241,7 @@ public class CaseNewActivity extends BaseEditActivity<Case> {
 					if (!DataHelper.isNullOrEmpty(contactUuid)) {
 						Contact contact = DatabaseHelper.getContactDao().queryUuid(contactUuid);
 						try {
-							pickedCase.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+							pickedCase.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 							DatabaseHelper.getCaseDao().saveAndSnapshot(pickedCase);
 
 							contact.setResultingCaseUuid(pickedCase.getUuid());

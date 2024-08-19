@@ -30,7 +30,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.facility.Facility;
@@ -55,7 +55,7 @@ public class PreviousHospitalization extends PseudonymizableAdo {
 	public static final String HOSPITALIZATION = "hospitalization";
 
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown admittedToHealthFacility;
+	private YesNo admittedToHealthFacility;
 
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date admissionDate;
@@ -79,7 +79,7 @@ public class PreviousHospitalization extends PseudonymizableAdo {
 	private String healthFacilityDetails;
 
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown isolated;
+	private YesNo isolated;
 
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date isolationDate;
@@ -100,7 +100,7 @@ public class PreviousHospitalization extends PseudonymizableAdo {
 	private String otherHospitalizationReason;
 
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown intensiveCareUnit;
+	private YesNo intensiveCareUnit;
 
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date intensiveCareUnitStart;
@@ -108,11 +108,11 @@ public class PreviousHospitalization extends PseudonymizableAdo {
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date intensiveCareUnitEnd;
 
-	public YesNoUnknown getAdmittedToHealthFacility() {
+	public YesNo getAdmittedToHealthFacility() {
 		return admittedToHealthFacility;
 	}
 
-	public void setAdmittedToHealthFacility(YesNoUnknown admittedToHealthFacility) {
+	public void setAdmittedToHealthFacility(YesNo admittedToHealthFacility) {
 		this.admittedToHealthFacility = admittedToHealthFacility;
 	}
 
@@ -172,11 +172,11 @@ public class PreviousHospitalization extends PseudonymizableAdo {
 		this.healthFacilityDetails = healthFacilityDetails;
 	}
 
-	public YesNoUnknown getIsolated() {
+	public YesNo getIsolated() {
 		return isolated;
 	}
 
-	public void setIsolated(YesNoUnknown isolated) {
+	public void setIsolated(YesNo isolated) {
 		this.isolated = isolated;
 	}
 
@@ -220,11 +220,11 @@ public class PreviousHospitalization extends PseudonymizableAdo {
 		this.otherHospitalizationReason = otherHospitalizationReason;
 	}
 
-	public YesNoUnknown getIntensiveCareUnit() {
+	public YesNo getIntensiveCareUnit() {
 		return intensiveCareUnit;
 	}
 
-	public void setIntensiveCareUnit(YesNoUnknown intensiveCareUnit) {
+	public void setIntensiveCareUnit(YesNo intensiveCareUnit) {
 		this.intensiveCareUnit = intensiveCareUnit;
 	}
 

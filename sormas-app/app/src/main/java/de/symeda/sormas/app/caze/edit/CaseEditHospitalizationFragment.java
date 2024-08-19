@@ -31,6 +31,7 @@ import java.util.List;
 import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import java.util.List;
 import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -131,8 +132,8 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 	}
 
 	private void verifyPrevHospitalizationStatus() {
-		YesNoUnknown hospitalizedPreviously = record.getHospitalizedPreviously();
-		if (hospitalizedPreviously == YesNoUnknown.YES && getPreviousHospitalizations().size() <= 0) {
+		YesNo hospitalizedPreviously = record.getHospitalizedPreviously();
+		if (hospitalizedPreviously == YesNo.YES && getPreviousHospitalizations().size() <= 0) {
 			getContentBinding().caseHospitalizationHospitalizedPreviously.enableWarningState(R.string.validation_soft_add_list_entry);
 		} else {
 			getContentBinding().caseHospitalizationHospitalizedPreviously.disableWarningState();
