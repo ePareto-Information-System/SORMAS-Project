@@ -702,6 +702,7 @@ public interface Captions {
 	String casePickCase = "casePickCase";
 	String casePlaceOfStay = "casePlaceOfStay";
 	String coorLabel = "coorLabel";
+	String personInfoLabel = "personInfoLabel";
 	String patientDob = "patientDob";
 	String dobNot = "dobNot";
 	String casePlusDays = "casePlusDays";

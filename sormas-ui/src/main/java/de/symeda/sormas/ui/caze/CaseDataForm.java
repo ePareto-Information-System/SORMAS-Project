@@ -343,9 +343,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
             loc(NOTIFY_INVESTIGATE) +
             fluidRowLocs(CaseDataDto.NOTIFIED_BY, CaseDataDto.DATE_OF_NOTIFICATION, CaseDataDto.DATE_OF_INVESTIGATION) +
             loc(INDICATE_CATEGORY_LOC) +
+//            fluidRowLocs(PERSON_INFO_LABEL) +
             fluidRowLocs(CaseDataDto.PERSON) +
             fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY) +
-            fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.REGION_OF_RESIDENCE, CaseDataDto.DISTRICT_OF_RESIDENCE)+
+            fluidRowLocs(6, CaseDataDto.OCCUPATION)+
+            fluidRowLocs(CaseDataDto.REGION_OF_RESIDENCE, CaseDataDto.DISTRICT_OF_RESIDENCE)+
             loc(INVESTIGATING_OFFICER_INFO) +
             fluidRowLocs(6, CaseDataDto.REPORTING_OFFICER_NAME) +
             fluidRowLocs(CaseDataDto.REPORTING_OFFICER_TITLE, CaseDataDto.INVESTIGATION_OFFICER_ADDRESS) +
@@ -1949,6 +1951,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         Label coorLabel = new Label(I18nProperties.getCaption(Captions.coorLabel));
         coorLabel.addStyleName(H4);
         getContent().addComponent(coorLabel, MPOX_COORDINATE_LABEL);
+
+        Label personInfoLabel = new Label(I18nProperties.getCaption(Captions.personInfoLabel));
+        personInfoLabel.addStyleName(H4);
+        getContent().addComponent(personInfoLabel, PERSON_INFO_LABEL);
 
         addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
         tfReportLon.setVisible(true);
