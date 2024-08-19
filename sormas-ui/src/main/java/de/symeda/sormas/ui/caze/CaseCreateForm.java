@@ -646,6 +646,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
         personCreateForm.showFields();
         reportDate.setVisible(false);
         reportDate.setRequired(false);
+        setRequired(true, CaseDataDto.HEALTH_FACILITY);
 
         addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
 

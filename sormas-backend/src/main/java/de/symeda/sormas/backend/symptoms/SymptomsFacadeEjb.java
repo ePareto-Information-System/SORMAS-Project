@@ -306,6 +306,9 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setTrimester(source.getTrimester());
 		target.setPostpartum(source.getPostpartum());
 		target.setPregnant(source.getPregnant());
+		target.setStatusOfPatient(source.getStatusOfPatient());
+		target.setDateOfDeath(source.getDateOfDeath());
+		target.setPlaceOfDeath(source.getPlaceOfDeath());
 		return target;
 	}
 
@@ -1134,6 +1137,9 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setTrimester(source.getTrimester());
 		target.setPostpartum(source.getPostpartum());
 		target.setPregnant(source.getPregnant());
+		target.setStatusOfPatient(source.getStatusOfPatient());
+		target.setDateOfDeath(source.getDateOfDeath());
+		target.setPlaceOfDeath(source.getPlaceOfDeath());
 		return target;
 	}
 

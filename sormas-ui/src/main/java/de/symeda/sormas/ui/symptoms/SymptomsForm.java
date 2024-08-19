@@ -1177,7 +1177,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					Arrays.asList(DATE_OF_DEATH, PLACE_OF_DEATH),
 					STATUS_OF_PATIENT,
 					Arrays.asList(CaseOutcome.DECEASED),
-					false
+					true
 			);
 
 		}
