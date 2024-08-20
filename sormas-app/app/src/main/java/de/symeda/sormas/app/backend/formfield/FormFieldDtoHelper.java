@@ -55,7 +55,7 @@ public class FormFieldDtoHelper extends AdoDtoHelper<FormField, FormFieldsDto> {
 	@Override
 	public void fillInnerFromDto(FormField target, FormFieldsDto source) {
 		target.setFormType(source.getFormType());
-		target.setFieldName(target.getFieldName());
+		target.setFieldName(source.getFieldName());
 		target.setDescription(source.getDescription());
 		target.setActive(source.getActive());
 
@@ -64,7 +64,7 @@ public class FormFieldDtoHelper extends AdoDtoHelper<FormField, FormFieldsDto> {
 	@Override
 	public void fillInnerFromAdo(FormFieldsDto target, FormField source) {
 		target.setFormType(source.getFormType());
-		target.setFieldName(target.getFieldName());
+		target.setFieldName(source.getFieldName());
 		target.setDescription(source.getDescription());
 		target.setActive(source.getActive());
 	}

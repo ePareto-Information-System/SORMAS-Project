@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.app.backend.common.AbstractAdoDao;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
@@ -54,11 +55,13 @@ public class FormBuilderDao extends AbstractAdoDao<FormBuilder> {
 		return FormBuilder.TABLE_NAME;
 	}
 
-	public FormBuilder getFormBuilder(FormType formType) {
+	public FormBuilder getFormBuilder(FormType formType, Disease disease) {
 		try {
 			QueryBuilder builder = queryBuilder();
 			Where where = builder.where();
 			where.eq(FormBuilder.FORM_TYPE, formType);
+			where.and();
+			where.eq(FormBuilder.DISEASE, disease);
 			return (FormBuilder) builder.queryForFirst();
 		} catch (SQLException e) {
 			Log.e(getTableName(), "Could not perform getFormBuilder");
