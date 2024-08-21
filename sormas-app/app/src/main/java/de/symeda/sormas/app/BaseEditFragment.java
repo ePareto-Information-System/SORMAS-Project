@@ -338,6 +338,7 @@ public abstract class BaseEditFragment<TBinding extends ViewDataBinding, TData, 
 	public void hideFieldsForDisease(Disease diseaseName, LinearLayout mainContent, FormType formType) {
 		// Get the relevant fields for the given disease
 		List<String> relevantFields = getFieldsForDisease(diseaseName, formType);
+		boolean hasVisibleChild = false;
 		if (relevantFields.isEmpty()) {
 			for (int i = 0; i < mainContent.getChildCount(); i++) {
 				View child = mainContent.getChildAt(i);
@@ -358,9 +359,45 @@ public abstract class BaseEditFragment<TBinding extends ViewDataBinding, TData, 
 				} else {
 					child.setVisibility(View.VISIBLE); // Ensure relevant fields are visible
 				}
-			}
+			} else if (child instanceof LinearLayout) {
+				LinearLayout childLayout = (LinearLayout) child;
+				boolean layoutHasVisibleField = false;
 
+				// Loop through the children of the LinearLayout
+				for (int j = 0; j < childLayout.getChildCount(); j++) {
+					View grandChild = childLayout.getChildAt(j);
+
+					if (grandChild instanceof ControlPropertyEditField) {
+						String childIdName = getResources().getResourceEntryName(grandChild.getId());
+
+						if (relevantFields.isEmpty() || relevantFields.contains(childIdName)) {
+							grandChild.setVisibility(View.VISIBLE);
+							layoutHasVisibleField = true;
+						} else {
+							grandChild.setVisibility(View.GONE);
+						}
+					}
+				}
+
+				if (!layoutHasVisibleField) {
+					childLayout.setVisibility(View.GONE);
+				} else {
+					childLayout.setVisibility(View.VISIBLE);
+					hasVisibleChild = true;
+				}
+			} else if (child instanceof  TextView) {
+				String childIdName = getResources().getResourceEntryName(child.getId());
+
+				// Hide the TextView if it's not in the relevantFields list
+				if (relevantFields.isEmpty() || relevantFields.contains(childIdName)) {
+					child.setVisibility(View.VISIBLE);
+					hasVisibleChild = true;
+				} else {
+					child.setVisibility(View.GONE);
+				}
+			}
 		}
+
 	}
 
 
@@ -371,25 +408,6 @@ public abstract class BaseEditFragment<TBinding extends ViewDataBinding, TData, 
 			List<FormField> formFields = DatabaseHelper.getFormBuilderDao().getFormBuilderFormFields(formBuilder);
 			return formFields.stream().map(FormField::getFieldName).collect(Collectors.toList());
 		}
-
-
-		// 2D array with diseases and their relevant fields
-//		final String[][] caseBasedDiseases = {
-//				{Disease.GUINEA_WORM.getName(), "caseData_disease", "caseData_caseOrigin", "caseData_epidNumber", "caseData_caseClassification"},
-//				{Disease.CORONAVIRUS.getName(), "caseData_disease", "caseData_caseOrigin"}
-//		};
-//
-//		// Loop through the diseases and find the matching disease
-//		for (String[] disease : caseBasedDiseases) {
-//			if (disease[0].equals(diseaseName)) {
-//				// Return the fields as a list
-//				return Arrays.asList(Arrays.copyOfRange(disease, 1, disease.length));
-//			}
-//		}
-
-
-
-		// Return an empty list if the disease is not found
 		return new ArrayList<>();
 	}
 }

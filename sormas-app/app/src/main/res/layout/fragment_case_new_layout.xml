@@ -122,6 +122,7 @@
                 style="@style/ControlSingleColumnStyle" />
 
             <TextView
+                android:id="@+id/caseData_headingCaseResponsibleJurisidction"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@{I18nProperties.getString(Strings.headingCaseResponsibleJurisidction)}"
