@@ -212,6 +212,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String SIDE_PAIN = "sidePain";
 	public static final String SKIN_BRUISING = "skinBruising";
 	public static final String SKIN_RASH = "skinRash";
+	public static final String GENERALIZED_RASH = "generalizedRash";
 	public static final String RASHES = "rashes";
 	public static final String SKIN_ULCERS = "skinUlcers";
 	public static final String SORE_THROAT = "soreThroat";
@@ -1499,6 +1500,13 @@ public class SymptomsDto extends PseudonymizableDto {
 	@SymptomGrouping(SymptomGroup.RASH_TYPE)
 	/** Maculopapular rash */
 	private SymptomState skinRash;
+
+	@Diseases({
+			MEASLES})
+	@Outbreaks
+	@HideForCountries
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState generalizedRash;
 
 	@Diseases({
 		AFP,
@@ -3192,6 +3200,8 @@ public class SymptomsDto extends PseudonymizableDto {
 		return weight;
 	}
 
+	@Order(331)
+
 	public void setAbdominalPain(SymptomState abdominalPain) {
 		this.abdominalPain = abdominalPain;
 	}
@@ -3590,6 +3600,13 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setSkinRash(SymptomState skinRash) {
 		this.skinRash = skinRash;
+	}
+	public SymptomState getGeneralizedRash() {
+		return generalizedRash;
+	}
+
+	public void setGeneralizedRash(SymptomState generalizedRash) {
+		this.generalizedRash = generalizedRash;
 	}
 
 	public void setSoreThroat(SymptomState soreThroat) {

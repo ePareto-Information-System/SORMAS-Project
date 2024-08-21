@@ -12066,4 +12066,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (490, 'Updated surve
 
 ALTER TABLE cases ADD COLUMN lastDateOfVaccination date;
 INSERT INTO schema_version (version_number, comment) VALUES (491, 'Add lastDateOfVaccination to cases #148');
+
+ALTER TABLE symptoms ADD COLUMN generalizedrash varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (492, 'Add generalizedrash to symptoms');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

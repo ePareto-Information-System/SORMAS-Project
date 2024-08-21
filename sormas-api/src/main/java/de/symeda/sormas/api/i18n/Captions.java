@@ -2323,6 +2323,7 @@ public interface Captions {
 	String Symptoms_weakness = "Symptoms.weakness";
 	String Symptoms_weight = "Symptoms.weight";
 	String Symptoms_wheezing = "Symptoms.wheezing";
+	String Symptoms_generalizedRash = "Symptoms.generalizedRash";
 	String symptomsLesionsLocations = "symptomsLesionsLocations";
 	String symptomsMaxTemperature = "symptomsMaxTemperature";
 	String symptomsSetClearedToNo = "symptomsSetClearedToNo";

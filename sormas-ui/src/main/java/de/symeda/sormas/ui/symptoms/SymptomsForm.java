@@ -483,12 +483,13 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			PAPULAR_RASH,
 			MACULAR_RASH,
 			VESICULAR_RASH,
-			OTHER_LESION_AREAS
-		
-			
-			
+			OTHER_LESION_AREAS,
+				GENERALIZED_RASH
 
-			
+
+
+
+
 				);
 		//
 
@@ -734,7 +735,11 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		FieldHelper.setVisibleWhen(getFieldGroup(), lesionsTypeIds, RASHES, Arrays.asList(SymptomState.YES), true);
 
-		FieldHelper.setVisibleWhen(getFieldGroup(), lesionsLocationFieldIds, RASHES, Arrays.asList(SymptomState.YES), true);
+		if (disease != Disease.MEASLES) {
+			FieldHelper.setVisibleWhen(getFieldGroup(), lesionsLocationFieldIds, RASHES, Arrays.asList(SymptomState.YES), true);
+		} else {
+			FieldHelper.setVisibleWhen(getFieldGroup(), LESIONS_ONSET_DATE, GENERALIZED_RASH, Arrays.asList(SymptomState.YES), true);
+		}
 
 		FieldHelper.setVisibleWhen(getFieldGroup(), LESIONS_ONSET_DATE, RASHES, Arrays.asList(SymptomState.YES), true);
 
