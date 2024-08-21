@@ -338,14 +338,27 @@ public abstract class BaseEditFragment<TBinding extends ViewDataBinding, TData, 
 	public void hideFieldsForDisease(Disease diseaseName, LinearLayout mainContent, FormType formType) {
 		// Get the relevant fields for the given disease
 		List<String> relevantFields = getFieldsForDisease(diseaseName, formType);
-		boolean hasVisibleChild = false;
 		if (relevantFields.isEmpty()) {
 			for (int i = 0; i < mainContent.getChildCount(); i++) {
 				View child = mainContent.getChildAt(i);
 				if (child instanceof ControlPropertyEditField) {
 					child.setVisibility(View.VISIBLE);
+				} else if (child instanceof LinearLayout) {
+					LinearLayout childLayout = (LinearLayout) child;
+					for (int j = 0; j < childLayout.getChildCount(); j++) {
+						View grandChild = childLayout.getChildAt(j);
+						if (grandChild instanceof ControlPropertyEditField) {
+							grandChild.setVisibility(View.VISIBLE);
+						}
+					}
+
+					childLayout.setVisibility(View.VISIBLE);
+				} else if (child instanceof TextView) {
+					child.setVisibility(View.VISIBLE);
 				}
 			}
+
+
 			return;
 		}
 
@@ -383,7 +396,6 @@ public abstract class BaseEditFragment<TBinding extends ViewDataBinding, TData, 
 					childLayout.setVisibility(View.GONE);
 				} else {
 					childLayout.setVisibility(View.VISIBLE);
-					hasVisibleChild = true;
 				}
 			} else if (child instanceof  TextView) {
 				String childIdName = getResources().getResourceEntryName(child.getId());
@@ -391,12 +403,12 @@ public abstract class BaseEditFragment<TBinding extends ViewDataBinding, TData, 
 				// Hide the TextView if it's not in the relevantFields list
 				if (relevantFields.isEmpty() || relevantFields.contains(childIdName)) {
 					child.setVisibility(View.VISIBLE);
-					hasVisibleChild = true;
 				} else {
 					child.setVisibility(View.GONE);
 				}
 			}
 		}
+
 
 	}
 
