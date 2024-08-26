@@ -163,9 +163,25 @@ public class FormFieldFacadeEjb extends AbstractInfrastructureFacadeEjb<FormFiel
         return totalCount;
     }
 
-    @Override
+   /* @Override
     public FormFieldsDto save(FormFieldsDto dto, boolean allowMerge) {
         return super.save(dto, allowMerge);
+    }*/
+    @Override
+    public FormFieldsDto save(FormFieldsDto dto, boolean allowMerge) {
+        if (dto.getFieldName() != null && dto.getFieldName().contains(",")) {
+            String[] fieldNames = dto.getFieldName().split(",");
+            for (String fieldName : fieldNames) {
+                FormFieldsDto newDto = new FormFieldsDto();
+                newDto.setFieldName(fieldName.trim());
+                newDto.setFormType(dto.getFormType());
+                newDto.setDescription(dto.getDescription());
+                super.save(newDto, allowMerge);
+            }
+            return null; // Return null or the last saved dto
+        } else {
+            return super.save(dto, allowMerge);
+        }
     }
 
     @Override
@@ -178,9 +194,17 @@ public class FormFieldFacadeEjb extends AbstractInfrastructureFacadeEjb<FormFiel
         return target;
     }
 
-    @Override
+    /*@Override
     protected List<FormField> findDuplicates(FormFieldsDto dto, boolean includeArchived) {
         return service.getByUuids(List.of(dto.getUuid()));
+    }*/
+    @Override
+    protected List<FormField> findDuplicates(FormFieldsDto dto, boolean includeArchived) {
+        if (dto.getUuid() != null) {
+            return service.getByUuids(List.of(dto.getUuid()));
+        } else {
+            return new ArrayList<>();
+        }
     }
 
 

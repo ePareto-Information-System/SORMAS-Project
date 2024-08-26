@@ -15028,4 +15028,11 @@ CREATE TRIGGER versioning_trigger
 ALTER TABLE forms_form_fields_history OWNER TO sormas_user;
 INSERT INTO schema_version (version_number, comment) VALUES (696, 'Added forms_form_fields table');
 
+ALTER TABLE form_fields DROP COLUMN fieldName;
+ALTER TABLE form_fields ADD COLUMN fieldName text;
+INSERT INTO schema_version (version_number, comment) VALUES (697, 'Changed varchar size for fieldname');
+
+ALTER TABLE form_fields_history DROP COLUMN fieldName;
+ALTER TABLE form_fields_history ADD COLUMN fieldName text;
+INSERT INTO schema_version (version_number, comment) VALUES (698, 'Changed varchar size for fieldname');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
