@@ -10,10 +10,12 @@ import com.vaadin.v7.ui.OptionGroup;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ebs.EbsCriteria;
 import de.symeda.sormas.api.ebs.EbsGroupCriteria;
+import de.symeda.sormas.api.ebs.EbsIndexDto;
 import de.symeda.sormas.api.ebs.EbsSourceType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.task.TaskIndexDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.*;
 import de.symeda.sormas.ui.events.*;
@@ -23,13 +25,14 @@ import de.symeda.sormas.ui.utils.components.popupmenu.PopupMenu;
 import org.vaadin.hene.popupbutton.PopupButton;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class EBSView extends AbstractView {
     private static final long serialVersionUID = -3048977745713631500L;
     public static final String VIEW_NAME = "ebs";
     private EbsCriteria ebsCriteria;
     private EbsGroupCriteria ebsGroupCriteria;
-    private EbsViewConfiguration viewConfiguration;
+    private final EbsViewConfiguration viewConfiguration;
     public static String currentview = "signallist";
 
     private FilteredGrid<?, ?> grid;
@@ -116,12 +119,19 @@ public class EBSView extends AbstractView {
             {
                 StreamResource streamResource = GridExportStreamResource.createStreamResourceWithSelectedItems(
                         grid,
-                        () -> isDefaultViewType() && this.viewConfiguration.isInEagerMode()
+                        () -> this.viewConfiguration.isInEagerMode()
                                 ? this.grid.asMultiSelect().getSelectedItems()
                                 : Collections.emptySet(),
                         ExportEntityName.EBS);
                 addExportButton(streamResource, exportPopupButton, exportLayout, VaadinIcons.TABLE, Captions.exportBasic, Strings.infoBasicExport);
             }
+            Button btnCustomExport = ButtonHelper.createIconButton(Captions.exportCustom, VaadinIcons.FILE_TEXT, e -> {
+                ControllerProvider.getCustomExportController().openEbsExportWindow(ebsCriteria,  this::getSelectedRowUuids);
+                exportPopupButton.setPopupVisible(false);
+            }, ValoTheme.BUTTON_PRIMARY);
+            btnCustomExport.setDescription(I18nProperties.getString(Strings.infoCustomExport));
+            btnCustomExport.setWidth(100, Unit.PERCENTAGE);
+            exportLayout.addComponent(btnCustomExport);
         }
 
 
@@ -263,6 +273,8 @@ public class EBSView extends AbstractView {
         return filterLayout;
     }
 
+
+
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         String params = event.getParameters().trim();
@@ -270,18 +282,21 @@ public class EBSView extends AbstractView {
             params = params.substring(1);
         }
             if (isDefaultViewType()) {
-//                ((EbsSignalGrid) grid).setLazyDataProvider();
 
                 updateFilterComponents();
                 ((EbsSignalGrid) grid).reload();
             }else {
-//                ((EbsGrid) grid).setLazyDataProvider();
 
                 updateFilterComponents();
                 ((EbsGrid) grid).reload();
             }
     }
 
+    private Set<String> getSelectedRowUuids() {
+        return viewConfiguration.isInEagerMode()
+                ? (Set<String>) grid.asMultiSelect().getSelectedItems()
+                : Collections.emptySet();
+    }
     public HorizontalLayout createStatusFilterBar() {
 
         HorizontalLayout srcFilterLayout = new HorizontalLayout();

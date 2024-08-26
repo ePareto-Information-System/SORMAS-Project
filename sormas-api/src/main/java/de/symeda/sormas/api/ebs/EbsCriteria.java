@@ -17,7 +17,6 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
     private static final long serialVersionUID = 2194071120732246594L;
 
     public static final String REPORTING_USER_ROLE = "reportingUserRole";
-    public static final String RISK_LEVEL = "riskLevel";
     public static final String DISTRICT = "district";
     public static final String REGION = "region";
     public static final String COMMUNITY = "community";
@@ -31,7 +30,7 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
     private String informantName;
     private String informantTel;
     private SignalCategory signalCategory;
-    private YesNo verified;
+    private SignalOutcome verified;
     private String death;
     private Date triagingDecisionDate;
     private String personRegistering;
@@ -295,15 +294,15 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
         return this;
     }
 
-    public YesNo getVerified() {
+    public SignalOutcome getVerified() {
         return verified;
     }
 
-    public void setVerified(YesNo verified) {
+    public void setVerified(SignalOutcome verified) {
         this.verified = verified;
     }
 
-    public EbsCriteria verified(YesNo verified) {
+    public EbsCriteria verified(SignalOutcome verified) {
         this.verified = verified;
         return this;
     }

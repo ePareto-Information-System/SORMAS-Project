@@ -35,8 +35,13 @@ public class RiskAssessmentGrid extends Grid {
 		setColumns(RiskAssessmentDto.ASSESSMENT_LEVEL, RiskAssessmentDto.ASSESSMENT_DATE, RiskAssessmentDto.ASSESSMENT_TIME,INFO);
 		VaadinUiUtil.setupActionColumn(getColumn(INFO));
 		addItemClickListener(e->{
-			if (INFO.equals(e.getPropertyId()) || e.isDoubleClick()) {
+			if (INFO.equals(e.getPropertyId())) {
 				ControllerProvider.getEbsController().showAssessmentCaseDialog((RiskAssessmentDto) e.getItemId());
+			}
+		});
+		addItemClickListener(e->{
+			if (RiskAssessmentDto.ASSESSMENT_LEVEL.equals(e.getPropertyId()) || e.isDoubleClick()) {
+				ControllerProvider.getEbsController().editRiskAssessmentComponent(ebsUuid,true,(RiskAssessmentDto) e.getItemId());
 			}
 		});
 		reload(ebsUuid);

@@ -18,6 +18,7 @@ package de.symeda.sormas.ui.customexport;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 import com.vaadin.server.Page;
 import com.vaadin.server.Sizeable;
@@ -27,6 +28,7 @@ import com.vaadin.ui.Window;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.contact.ContactCriteria;
+import de.symeda.sormas.api.ebs.EbsCriteria;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -36,12 +38,12 @@ import de.symeda.sormas.api.importexport.ExportType;
 import de.symeda.sormas.api.importexport.ImportExportUtils;
 import de.symeda.sormas.api.person.PersonCriteria;
 import de.symeda.sormas.api.task.TaskCriteria;
-import de.symeda.sormas.ui.utils.ContactDownloadUtil;
-import de.symeda.sormas.ui.utils.PersonDownloadUtil;
-import de.symeda.sormas.ui.utils.TaskDownloadUtil;
-import de.symeda.sormas.ui.utils.VaadinUiUtil;
+import de.symeda.sormas.ui.utils.*;
+import org.slf4j.LoggerFactory;
 
 public class CustomExportController {
+
+	private static final org.slf4j.Logger log = LoggerFactory.getLogger(CustomExportController.class);
 
 	public void openContactExportWindow(ContactCriteria contactCriteria, Supplier<Collection<String>> selectedRows) {
 		Window customExportWindow = VaadinUiUtil.createPopupWindow();
@@ -85,6 +87,20 @@ public class CustomExportController {
 		customExportWindow.setCaption(I18nProperties.getCaption(Captions.exportCustom));
 		customExportWindow.setContent(customExportsLayout);
 		UI.getCurrent().addWindow(customExportWindow);
+	}
+
+	public void openEbsExportWindow(EbsCriteria ebsCriteria, Supplier<Collection<String>> selectedRows) {
+		Window customExportWindow = VaadinUiUtil.createPopupWindow();
+			ExportConfigurationsLayout customExportsLayout = new ExportConfigurationsLayout(
+					ExportType.EBS,
+					ImportExportUtils.getEbsExportProperties(EbsDownloadUtil::getPropertyCaption, FacadeProvider.getConfigFacade().getCountryLocale()),
+					customExportWindow::close);
+			customExportsLayout.setExportCallback(
+					exportConfig -> Page.getCurrent().open(EbsDownloadUtil.createEbsExportResource(ebsCriteria, selectedRows, exportConfig), null, true));
+			customExportWindow.setWidth(1024, Sizeable.Unit.PIXELS);
+			customExportWindow.setCaption(I18nProperties.getCaption(Captions.exportCustom));
+			customExportWindow.setContent(customExportsLayout);
+			UI.getCurrent().addWindow(customExportWindow);
 	}
 
 	public void openEditExportConfigurationWindow(

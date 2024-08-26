@@ -15029,3 +15029,7 @@ ALTER TABLE forms_form_fields_history OWNER TO sormas_user;
 INSERT INTO schema_version (version_number, comment) VALUES (696, 'Added forms_form_fields table');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+ALTER TABLE signalVerification ALTER COLUMN verified TYPE VARCHAR(20);
+INSERT INTO schema_version (version_number, comment) VALUES (694, 'updated the verified field');
+ALTER TABLE signalVerification ALTER COLUMN description TYPE TEXT;
+INSERT INTO schema_version (version_number, comment) VALUES (695, 'updated the description field');

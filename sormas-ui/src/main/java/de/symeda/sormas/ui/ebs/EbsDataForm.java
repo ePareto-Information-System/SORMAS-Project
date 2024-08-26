@@ -55,7 +55,6 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
     private static final long serialVersionUID = 1L;
 
     private static final String INFORMATION_SOURCE_HEADING_LOC = "informationSourceHeadingLoc";
-    private static final String LOCATION_HEADING_LOC = "locationHeadingLoc";
     private static final String PLACE_DETECTION_HEADING_LOC = "placeOfDetectionHeadingLoc";
     private static final String CONTACT_PHONE_NUMBER_WARNING_LOC = "contactPhoneNumberWarningLoc";
 
@@ -276,6 +275,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
             List<PersonReporting> itemsToAdd;
 
             Object value = srcType.getValue();
+            if (value == null) return;
             if (value.equals(EbsSourceType.CEBS)) {
                 itemsToAdd = Arrays.asList(
                         PersonReporting.COMMUNITY_SURVEILLANCE_VOLUNTEER,
@@ -305,7 +305,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
                         PersonReporting.OTHER
                 );
             } else {
-                itemsToAdd = Collections.emptyList(); // Handle unknown EbsSourceType if necessary
+                itemsToAdd = Collections.emptyList();
             }
 
             Arrays.stream(PersonReporting.values())
