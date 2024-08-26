@@ -18,8 +18,12 @@ package de.symeda.sormas.app.backend.common;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
@@ -30,9 +34,15 @@ import com.j256.ormlite.table.TableUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,6 +50,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -3112,6 +3123,91 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			Array.set(result, index, null);
 		}
 	}
+
+	public static boolean backupDatabase(Context context, String databaseName) {
+		try {
+			// Path to the app's internal database
+			File dbFile = context.getDatabasePath(databaseName);
+
+			// Path to the backup location
+			File backupDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+			if (!backupDir.exists()) {
+				backupDir.mkdirs(); // Create backup directory if it doesn't exist
+			}
+
+			//get the current date and time
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault());
+			String currentDateAndTime = sdf.format(new Date());
+
+			File backupFile = new File(backupDir, "sormas_db_" + currentDateAndTime + ".db");
+
+			// Copy the database to the backup location
+			try (FileInputStream fis = new FileInputStream(dbFile);
+				 FileOutputStream fos = new FileOutputStream(backupFile)) {
+
+				byte[] buffer = new byte[1024];
+				int length;
+				while ((length = fis.read(buffer)) > 0) {
+					fos.write(buffer, 0, length);
+				}
+			}
+
+			return true; // Backup successful
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false; // Backup failed
+		}
+	}
+
+	public static boolean restoreDatabaseFromUri(Context context, Uri fileUri) {
+		try {
+			// Get the file name from the Uri
+			String fileName = getFileName(context, fileUri);
+
+			// Path to the app's internal database
+			File dbFile = context.getDatabasePath(DATABASE_NAME);
+
+			// Copy the selected backup file to the app's internal database location
+			try (InputStream is = context.getContentResolver().openInputStream(fileUri);
+				 FileOutputStream fos = new FileOutputStream(dbFile)) {
+
+				byte[] buffer = new byte[1024];
+				int length;
+				while ((length = is.read(buffer)) > 0) {
+					fos.write(buffer, 0, length);
+				}
+			}
+
+			// Log or display the restore location
+			Log.d("DatabaseRestore", "Restore successful from: " + fileName);
+			Toast.makeText(context, "Database restored from: " + fileName, Toast.LENGTH_LONG).show();
+
+			return true; // Restore successful
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false; // Restore failed
+		}
+	}
+
+	private static String getFileName(Context context, Uri uri) {
+		String result = null;
+		if (uri.getScheme().equals("content")) {
+			try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
+				if (cursor != null && cursor.moveToFirst()) {
+					result = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME));
+				}
+			}
+		}
+		if (result == null) {
+			result = uri.getPath();
+			int cut = result.lastIndexOf('/');
+			if (cut != -1) {
+				result = result.substring(cut + 1);
+			}
+		}
+		return result;
+	}
+
 
 	private void formatRawResultDate(Object[] result, int index) {
 		if (result[index] != null && result[index] instanceof Date) {

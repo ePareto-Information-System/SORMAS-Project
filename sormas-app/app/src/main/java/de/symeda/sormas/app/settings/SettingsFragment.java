@@ -23,10 +23,12 @@ import org.hzi.sormas.lbds.messaging.LbdsRelated;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -72,6 +74,8 @@ public class SettingsFragment extends BaseLandingFragment {
 
 	private final int SHOW_DEV_OPTIONS_CLICK_LIMIT = 5;
 
+	private static final int PICK_FILE_REQUEST_CODE = 9;
+
 	private FragmentSettingsLayoutBinding binding;
 	private int versionClickedCount;
 
@@ -90,6 +94,8 @@ public class SettingsFragment extends BaseLandingFragment {
 
 		binding.settingsServerUrl.setValue(ConfigProvider.getServerRestUrl());
 		binding.changePin.setOnClickListener(v -> changePIN());
+		binding.backupDb.setOnClickListener(v -> backupDatabase());
+		binding.restoreDb.setOnClickListener(v -> pickBackupFile());
 		binding.changePassword.setOnClickListener(v -> changePassword());
 		binding.resynchronizeData.setOnClickListener(v -> repullData());
 		binding.showSyncLog.setOnClickListener(v -> openSyncLog());
@@ -168,6 +174,7 @@ public class SettingsFragment extends BaseLandingFragment {
 		binding.syncPersonLbds.setVisibility(showLbdsFeatures ? View.VISIBLE : View.GONE);
 		binding.syncCaseLbds.setVisibility(showLbdsFeatures ? View.VISIBLE : View.GONE);
 		binding.settingsLbdsDebugUrl.setVisibility(showLbdsFeatures ? View.VISIBLE : View.GONE);
+		binding.backupDb.setVisibility(hasUser ? View.VISIBLE : View.GONE);
 	}
 
 	@Override
@@ -191,6 +198,30 @@ public class SettingsFragment extends BaseLandingFragment {
 		startActivity(intent);
 	}
 
+//	backupDatabase
+	public void backupDatabase() {
+		try {
+			DatabaseHelper.backupDatabase(getContext(), "sormas.db");
+			Toast.makeText(getContext(), "Backup successful", Toast.LENGTH_LONG).show();
+		} catch (Exception e) {
+			Toast.makeText(getContext(), "Backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+		}
+	}
+
+	private void pickBackupFile() {
+		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+		intent.setType("*/*"); // Filter to show only files
+		intent.addCategory(Intent.CATEGORY_OPENABLE);
+		intent.setAction(Intent.ACTION_GET_CONTENT);
+		startActivityForResult(Intent.createChooser(intent, "Select Backup File"), PICK_FILE_REQUEST_CODE);
+//		try {
+//			startActivity(Intent.createChooser(intent, "Select a File to Restore"));
+//			onActivityResult(PICK_FILE_REQUEST_CODE, AppCompatActivity.RESULT_OK, intent);
+//		} catch (android.content.ActivityNotFoundException ex) {
+//			NotificationHelper
+//					.showNotification((SettingsActivity) getActivity(), ERROR, getString(R.string.message_language_change_unsuccessful));
+//		}
+	}
 
 
 	private void repullData() {

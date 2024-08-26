@@ -15,10 +15,15 @@
 
 package de.symeda.sormas.app.settings;
 
+import static de.symeda.sormas.app.core.notification.NotificationType.ERROR;
+import static de.symeda.sormas.app.core.notification.NotificationType.SUCCESS;
+
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -28,6 +33,7 @@ import de.symeda.sormas.app.BaseLandingActivity;
 import de.symeda.sormas.app.BaseLandingFragment;
 import de.symeda.sormas.app.LocaleManager;
 import de.symeda.sormas.app.R;
+import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.core.notification.NotificationHelper;
 import de.symeda.sormas.app.core.notification.NotificationPosition;
@@ -36,6 +42,7 @@ import de.symeda.sormas.app.login.LoginActivity;
 import de.symeda.sormas.app.util.AppUpdateController;
 
 public class SettingsActivity extends BaseLandingActivity {
+	private static final int PICK_FILE_REQUEST_CODE = 9;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -141,6 +148,24 @@ public class SettingsActivity extends BaseLandingActivity {
 				break;
 			}
 		}
+
+		if (resultCode == Activity.RESULT_CANCELED) {
+			// User cancelled the file picker
+			Toast.makeText(this, "File selection canceled", Toast.LENGTH_SHORT).show();
+			return;
+		}
+
+		if (intent.getData() != null && resultCode == Activity.RESULT_OK) {
+			Uri fileUri = intent.getData();
+
+			if (fileUri != null) {
+				// Restore the database from the selected file URI
+				DatabaseHelper.restoreDatabaseFromUri(this, fileUri);
+			} else {
+				Toast.makeText(this, "Failed to get file", Toast.LENGTH_SHORT).show();
+			}
+		}
+
 	}
 
 	public void setNewLocale(AppCompatActivity mContext, Language language) {
