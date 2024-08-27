@@ -365,7 +365,9 @@ public class CaseNewActivity extends BaseEditActivity<Case> {
 			.append(": ")
 			.append(person.getFirstName())
 			.append(" ")
-			.append(person.getLastName());
+			.append(person.getLastName())
+			.append(" ")
+			.append(person.getOtherName());
 		String dobText = DateFormatHelper.getAgeAndBirthdateString(
 			person.getApproximateAge(),
 			person.getApproximateAgeType(),

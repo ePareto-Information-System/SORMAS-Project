@@ -71,6 +71,7 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setFirstName(source.getFirstName());
 		target.setLastName(source.getLastName());
+		target.setOtherName(source.getOtherName());
 		target.setSalutation(source.getSalutation());
 		target.setOtherSalutation(source.getOtherSalutation());
 		target.setBirthName(source.getBirthName());
@@ -117,6 +118,8 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setPassportNumber(source.getPassportNumber());
 		target.setNationalHealthId(source.getNationalHealthId());
+		target.setGhanaCard(source.getGhanaCard());
+		target.setPhone(source.getPhone());
 
 		target.setPseudonymized(source.isPseudonymized());
 		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());
@@ -155,6 +158,7 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setFirstName(source.getFirstName());
 		target.setLastName(source.getLastName());
+		target.setOtherName(source.getOtherName());
 		target.setSalutation(source.getSalutation());
 		target.setOtherSalutation(source.getOtherSalutation());
 		target.setBirthName(source.getBirthName());
@@ -225,6 +229,8 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setPassportNumber(source.getPassportNumber());
 		target.setNationalHealthId(source.getNationalHealthId());
+		target.setGhanaCard(source.getGhanaCard());
+		target.setPhone(source.getPhone());
 
 		target.setPseudonymized(source.isPseudonymized());
 		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());

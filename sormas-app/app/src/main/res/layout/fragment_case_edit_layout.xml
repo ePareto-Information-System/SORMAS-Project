@@ -404,6 +404,7 @@
                     style="@style/ControlSingleColumnStyle" />
 
                 <TextView
+                    android:id="@+id/caseData_headingCaseResponsibleJurisidction"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@{I18nProperties.getString(Strings.headingCaseResponsibleJurisidction)}"
@@ -442,6 +443,7 @@
                     app:value="@={differentPlaceOfStayJurisdiction}" />
 
                 <TextView
+                    android:id="@+id/caseData_differentPlaceOfStayJurisdictionHeading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/heading_case_place_of_stay"

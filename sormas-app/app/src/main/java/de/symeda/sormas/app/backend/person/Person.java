@@ -68,6 +68,7 @@ public class Person extends PseudonymizableAdo {
 
 	public static final String FIRST_NAME = "firstName";
 	public static final String LAST_NAME = "lastName";
+	public static final String OTHER_NAME = "otherName";
 	public static final String APPROXIMATE_AGE = "approximateAge";
 	public static final String ADDRESS = "address";
 	public static final String SEX = "sex";
@@ -81,6 +82,7 @@ public class Person extends PseudonymizableAdo {
 	private String firstName;
 	@Column(nullable = false)
 	private String lastName;
+	private String otherName;
 	@Enumerated(EnumType.STRING)
 	private Salutation salutation;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
@@ -175,6 +177,12 @@ public class Person extends PseudonymizableAdo {
 	@Column
 	private String nationalHealthId;
 
+	@Column
+	private String ghanaCard;
+
+	@Column
+	private String phone;
+
 	private List<Location> addresses = new ArrayList<>();
 	private List<PersonContactDetail> personContactDetails = new ArrayList<>();
 
@@ -214,6 +222,8 @@ public class Person extends PseudonymizableAdo {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+	public String getOtherName() { return otherName;}
+	public void setOtherName(String otherName) {this.otherName = otherName;}
 
 	public Salutation getSalutation() {
 		return salutation;
@@ -438,9 +448,15 @@ public class Person extends PseudonymizableAdo {
 	@Override
 	public String buildCaption() {
 		StringBuilder builder = new StringBuilder();
-		builder.append(getFirstName() != null ? getFirstName() : "").append(" ").append((getLastName() != null ? getLastName() : "").toUpperCase());
+		builder.append(getFirstName() != null ? getFirstName() : "")
+				.append(" ")
+				.append(getLastName() != null ? getLastName().toUpperCase() : "")
+				.append(" ")
+				.append(getOtherName() != null ? getOtherName() : "");
 		return builder.toString();
 	}
+
+
 
 	@Override
 	public String getI18nPrefix() {
@@ -565,6 +581,22 @@ public class Person extends PseudonymizableAdo {
 
 	public void setNationalHealthId(String nationalHealthId) {
 		this.nationalHealthId = nationalHealthId;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getGhanaCard() {
+		return ghanaCard;
+	}
+
+	public void setGhanaCard(String ghanaCard) {
+		this.ghanaCard = ghanaCard;
 	}
 
 	public FacilityType getPlaceOfBirthFacilityType() {

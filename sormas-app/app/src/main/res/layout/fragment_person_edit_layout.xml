@@ -77,6 +77,13 @@
                     app:imeOptions="actionNext"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/person_otherName"
+                    app:required="true"
+                    app:value="@={data.otherName}"
+                    app:imeOptions="actionNext"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
             </LinearLayout>
 
             <de.symeda.sormas.app.component.controls.ControlSpinnerField
@@ -345,6 +352,23 @@
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/person_nationalHealthId"
                     app:value="@={data.nationalHealthId}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/person_ghanaCard"
+                    app:value="@={data.ghanaCard}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/person_phone"
+                    app:value="@={data.phone}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>

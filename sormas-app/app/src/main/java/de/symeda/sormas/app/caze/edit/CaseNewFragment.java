@@ -329,6 +329,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 		if (bundler.getContactUuid() != null || bundler.getEventParticipantUuid() != null) {
 			contentBinding.caseDataFirstName.setEnabled(false);
 			contentBinding.caseDataLastName.setEnabled(false);
+			contentBinding.caseDataOtherName.setEnabled(false);
 			contentBinding.personSex.setEnabled(false);
 			contentBinding.personBirthdateYYYY.setEnabled(false);
 			contentBinding.personBirthdateMM.setEnabled(false);
