@@ -475,6 +475,10 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			}
 		});
 
+		if (record.getDisease() != null) {
+			super.hideFieldsForDisease(record.getDisease(), contentBinding.mainContent, FormType.CASE_EDIT);
+		}
+
 		contentBinding.setData(record);
 		contentBinding.setHosp(hospitalization);
 		contentBinding.setYesNoUnknownClass(YesNoUnknown.class);
