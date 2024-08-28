@@ -47,6 +47,7 @@ import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.formbuilder.FormBuilder;
 import de.symeda.sormas.app.backend.formfield.FormField;
 import de.symeda.sormas.app.component.controls.ControlPropertyEditField;
+import de.symeda.sormas.app.component.controls.ControlPropertyField;
 import de.symeda.sormas.app.core.IUpdateSubHeadingTitle;
 import de.symeda.sormas.app.core.NotImplementedException;
 import de.symeda.sormas.app.core.NotificationContext;
@@ -445,7 +446,7 @@ public abstract class BaseEditFragment<TBinding extends ViewDataBinding, TData, 
 		for (int i = 0; i < parent.getChildCount(); i++) {
 			View child = parent.getChildAt(i);
 
-			if (child instanceof ControlPropertyEditField || child instanceof TextView) {
+			if (isFieldView(child)) {
 				child.setVisibility(visibility);
 			} else if (child instanceof LinearLayout) {
 				setAllFieldsVisibility((LinearLayout) child, visibility);
@@ -454,13 +455,15 @@ public abstract class BaseEditFragment<TBinding extends ViewDataBinding, TData, 
 		}
 	}
 
+	private boolean isFieldView(View view) {
+		return view instanceof ControlPropertyEditField || view instanceof TextView || view instanceof ControlPropertyField;
+	}
+
 	private void handleChildView(View child, List<String> relevantFields) {
-		if (child instanceof ControlPropertyEditField) {
+		if (isFieldView(child)) {
 			setViewVisibility(child, relevantFields);
 		} else if (child instanceof LinearLayout) {
 			handleLinearLayout((LinearLayout) child, relevantFields);
-		} else if (child instanceof TextView) {
-			setViewVisibility(child, relevantFields);
 		}
 	}
 
@@ -470,7 +473,7 @@ public abstract class BaseEditFragment<TBinding extends ViewDataBinding, TData, 
 		for (int j = 0; j < childLayout.getChildCount(); j++) {
 			View grandChild = childLayout.getChildAt(j);
 
-			if (grandChild instanceof ControlPropertyEditField) {
+			if (isFieldView(grandChild)) {
 				if (setViewVisibility(grandChild, relevantFields)) {
 					layoutHasVisibleField = true;
 				}
