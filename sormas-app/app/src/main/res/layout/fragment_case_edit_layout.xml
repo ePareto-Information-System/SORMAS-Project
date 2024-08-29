@@ -765,6 +765,7 @@
                 <ImageView style="@style/FullHorizontalDividerStyle" />
 
                 <TextView
+                    android:id="@+id/caseData_medicalInformationHeading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/heading_additional_medical_information"
@@ -892,6 +893,7 @@
                 <ImageView style="@style/FullHorizontalDividerStyle" />
 
                 <TextView
+                    android:id="@+id/caseData_generalCommentHeading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/heading_additional_details"
