@@ -4,6 +4,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TwinColSelect;
 import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityRelevanceStatus;
@@ -36,7 +37,7 @@ public class FormFieldsEditForm extends AbstractEditForm<FormFieldsDto> {
 
     private boolean create;
     private ViewConfiguration viewConfiguration;
-    private TextField fieldName;
+    private TextArea fieldName;
 
     private static final String HTML_LAYOUT = fluidRowLocs(FormFieldsDto.FORM_TYPE, FormFieldsDto.FIELD_NAME)
             + fluidRowLocs(FormFieldsDto.DESCRIPTION);
@@ -62,7 +63,7 @@ public class FormFieldsEditForm extends AbstractEditForm<FormFieldsDto> {
     @Override
     protected void addFields() {
         addFields(FormFieldsDto.FORM_TYPE, FormFieldsDto.DESCRIPTION);
-        fieldName = addField(FormFieldsDto.FIELD_NAME, TextField.class);
+        fieldName = addField(FormFieldsDto.FIELD_NAME, TextArea.class);
     }
 
     @Override
