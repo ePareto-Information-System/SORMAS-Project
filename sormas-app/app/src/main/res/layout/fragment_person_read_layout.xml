@@ -530,6 +530,11 @@
                 app:textArea="true"
                 style="@style/ControlSingleColumnStyle" />
 
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_otherId"
+                app:value="@{data.otherId}"
+                style="@style/ControlSingleColumnStyle" />
+
         </LinearLayout>
 
     </ScrollView>

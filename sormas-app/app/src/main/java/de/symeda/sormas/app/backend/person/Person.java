@@ -202,6 +202,9 @@ public class Person extends PseudonymizableAdo {
 	@Column(columnDefinition = "text")
 	private String additionalDetails;
 
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String otherId;
+
 	public Person() {
 	}
 
@@ -669,5 +672,13 @@ public class Person extends PseudonymizableAdo {
 
 	public void setAdditionalDetails(String additionalDetails) {
 		this.additionalDetails = additionalDetails;
+	}
+
+	public String getOtherId() {
+		return otherId;
+	}
+
+	public void setOtherId(String otherId) {
+		this.otherId = otherId;
 	}
 }

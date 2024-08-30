@@ -666,6 +666,19 @@
                 app:textArea="true"
                 style="@style/ControlSingleColumnStyle" />
 
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_otherId"
+                app:showCaption="false"
+                app:value="@={data.otherId}"
+                app:inputType="textMultiLine"
+                app:textAlignment="gravity"
+                app:gravity="top|start"
+                app:singleLine="false"
+                app:maxLines="6"
+                app:textArea="true"
+                style="@style/ControlSingleColumnStyle" />
+
+
         </LinearLayout>
 
     </ScrollView>
