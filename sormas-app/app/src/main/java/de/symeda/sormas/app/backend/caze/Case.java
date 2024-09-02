@@ -407,6 +407,24 @@ public class Case extends PseudonymizableAdo {
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private User followUpStatusChangeUser;
 
+	@DatabaseField
+	private String reportingVillage;
+	@DatabaseField
+	private String reportingZone;
+	@DatabaseField
+	private String investigationOfficerName;
+	@DatabaseField
+	private String investigationOfficerPosition;
+	@DatabaseField
+	private String formCompletedByName;
+	@DatabaseField
+	private String formCompletedByPosition;
+	@DatabaseField
+	private String formCompletedByCellPhoneNo;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateOfInvestigation;
+
+
 	public boolean isUnreferredPortHealthCase() {
 		return caseOrigin == CaseOrigin.POINT_OF_ENTRY && healthFacility == null;
 	}
@@ -1370,5 +1388,69 @@ public class Case extends PseudonymizableAdo {
 
 	public void setFollowUpStatusChangeUser(User followUpStatusChangeUser) {
 		this.followUpStatusChangeUser = followUpStatusChangeUser;
+	}
+
+	public String getReportingVillage() {
+		return reportingVillage;
+	}
+
+	public void setReportingVillage(String reportingVillage) {
+		this.reportingVillage = reportingVillage;
+	}
+
+	public String getReportingZone() {
+		return reportingZone;
+	}
+
+	public void setReportingZone(String reportingZone) {
+		this.reportingZone = reportingZone;
+	}
+
+	public String getInvestigationOfficerName() {
+		return investigationOfficerName;
+	}
+
+	public void setInvestigationOfficerName(String investigationOfficerName) {
+		this.investigationOfficerName = investigationOfficerName;
+	}
+
+	public String getInvestigationOfficerPosition() {
+		return investigationOfficerPosition;
+	}
+
+	public void setInvestigationOfficerPosition(String investigationOfficerPosition) {
+		this.investigationOfficerPosition = investigationOfficerPosition;
+	}
+
+	public String getFormCompletedByName() {
+		return formCompletedByName;
+	}
+
+	public void setFormCompletedByName(String formCompletedByName) {
+		this.formCompletedByName = formCompletedByName;
+	}
+
+	public String getFormCompletedByPosition() {
+		return formCompletedByPosition;
+	}
+
+	public void setFormCompletedByPosition(String formCompletedByPosition) {
+		this.formCompletedByPosition = formCompletedByPosition;
+	}
+
+	public String getFormCompletedByCellPhoneNo() {
+		return formCompletedByCellPhoneNo;
+	}
+
+	public void setFormCompletedByCellPhoneNo(String formCompletedByCellPhoneNo) {
+		this.formCompletedByCellPhoneNo = formCompletedByCellPhoneNo;
+	}
+
+	public Date getDateOfInvestigation() {
+		return dateOfInvestigation;
+	}
+
+	public void setDateOfInvestigation(Date dateOfInvestigation) {
+		this.dateOfInvestigation = dateOfInvestigation;
 	}
 }

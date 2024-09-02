@@ -236,6 +236,15 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setNotACaseReasonDetails(source.getNotACaseReasonDetails());
 		target.setFollowUpStatusChangeDate(source.getFollowUpStatusChangeDate());
 		target.setFollowUpStatusChangeUser(DatabaseHelper.getUserDao().getByReferenceDto(source.getFollowUpStatusChangeUser()));
+		target.setReportingVillage(source.getReportingVillage());
+		target.setReportingZone(source.getReportingZone());
+		target.setInvestigationOfficerName(source.getInvestigationOfficerName());
+		target.setInvestigationOfficerPosition(source.getInvestigationOfficerPosition());
+		target.setFormCompletedByName(source.getFormCompletedByName());
+		target.setFormCompletedByPosition(source.getFormCompletedByPosition());
+		target.setFormCompletedByCellPhoneNo(source.getFormCompletedByCellPhoneNo());
+		target.setDateOfInvestigation(source.getDateOfInvestigation());
+
 	}
 
 	@Override
@@ -493,6 +502,15 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		} else {
 			target.setHealthConditions(null);
 		}
+
+		target.setReportingVillage(source.getReportingVillage());
+		target.setReportingZone(source.getReportingZone());
+		target.setInvestigationOfficerName(source.getInvestigationOfficerName());
+		target.setInvestigationOfficerPosition(source.getInvestigationOfficerPosition());
+		target.setFormCompletedByName(source.getFormCompletedByName());
+		target.setFormCompletedByPosition(source.getFormCompletedByPosition());
+		target.setFormCompletedByCellPhoneNo(source.getFormCompletedByCellPhoneNo());
+		target.setDateOfInvestigation(source.getDateOfInvestigation());
 
 	}
 
