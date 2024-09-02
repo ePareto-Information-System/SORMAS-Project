@@ -668,7 +668,7 @@
             <ImageView style="@style/FullHorizontalDividerStyle" />
 
             <TextView
-                android:id="@+id/person_generalComment"
+                android:id="@+id/person_additionalDetailsLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/heading_additional_details"
