@@ -48,6 +48,7 @@ import de.symeda.sormas.app.backend.formbuilder.FormBuilder;
 import de.symeda.sormas.app.backend.formfield.FormField;
 import de.symeda.sormas.app.component.controls.ControlPropertyEditField;
 import de.symeda.sormas.app.component.controls.ControlPropertyField;
+import de.symeda.sormas.app.component.controls.ControlSpinnerField;
 import de.symeda.sormas.app.core.IUpdateSubHeadingTitle;
 import de.symeda.sormas.app.core.NotImplementedException;
 import de.symeda.sormas.app.core.NotificationContext;
@@ -426,7 +427,7 @@ public abstract class BaseEditFragment<TBinding extends ViewDataBinding, TData, 
 
 
 	public void hideFieldsForDisease(Disease diseaseName, LinearLayout mainContent, FormType formType) {
-		// Get the relevant fields for the given disease
+		// Get the relevant fields for the given diseasez
 		List<String> relevantFields = getFieldsForDisease(diseaseName, formType);
 
 		// If no relevant fields, make all fields visible and return
@@ -456,7 +457,7 @@ public abstract class BaseEditFragment<TBinding extends ViewDataBinding, TData, 
 	}
 
 	private boolean isFieldView(View view) {
-		return view instanceof ControlPropertyEditField || view instanceof TextView || view instanceof ControlPropertyField;
+		return view instanceof ControlPropertyEditField || view instanceof TextView || view instanceof ControlPropertyField || view instanceof ControlSpinnerField;
 	}
 
 	private void handleChildView(View child, List<String> relevantFields) {
