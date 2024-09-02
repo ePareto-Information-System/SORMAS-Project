@@ -14935,45 +14935,6 @@ ALTER TABLE symptoms ADD COLUMN postpartum VARCHAR(255);
 ALTER TABLE symptoms ADD COLUMN pregnant VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (693, 'Added pregnant related fields to symptoms');
 
--- CREATE TABLE FormEntities (
---     id BIGINT PRIMARY KEY NOT NULL,
---     name VARCHAR(255),
---     description VARCHAR(255)
--- );
---
--- CREATE TABLE FormEntities_history (
---     LIKE FormEntities INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
--- );
---
--- CREATE TABLE FormEntityFields (
---     id BIGINT PRIMARY KEY NOT NULL,
---     formEntity_id BIGINT,
---     name VARCHAR(255),
---     fieldId VARCHAR(255),
---     CONSTRAINT fk_formentityfields_formentity_id FOREIGN KEY (formEntity_id) REFERENCES FormEntities (id)
--- );
---
--- CREATE TABLE FormEntityFields_history (
---     LIKE FormEntityFields INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
--- );
---
--- -- disease formEntities formField
--- CREATE TABLE DiseaseFormEntityFormFields (
---     id BIGINT PRIMARY KEY NOT NULL,
---     diseaseconfiguration_id BIGINT,
---     formEntity_id BIGINT,
---     formField_id BIGINT,
---     CONSTRAINT fk_diseaseformentityformfields_disease_id FOREIGN KEY (diseaseconfiguration_id) REFERENCES diseaseconfiguration (id),
---     CONSTRAINT fk_diseaseformentityformfields_formentity_id FOREIGN KEY (formEntity_id) REFERENCES FormEntities (id),
---     CONSTRAINT fk_diseaseformentityformfields_formfield_id FOREIGN KEY (formField_id) REFERENCES FormEntityFields (id)
--- );
---
--- CREATE TABLE DiseaseFormEntityFormFields_history (
---     LIKE DiseaseFormEntityFormFields INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
--- );
---
--- INSERT INTO schema_version (version_number, comment) VALUES (694, 'Added FormEntities, FormEntityFields, DiseaseFormEntityFormFields tables');
-
 CREATE TABLE form_fields (
     id BIGINT PRIMARY KEY NOT NULL,
     uuid varchar(36) NOT NULL UNIQUE,
@@ -15008,8 +14969,6 @@ CREATE TABLE forms (
 CREATE TABLE forms_history (LIKE forms);
 CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE ON forms
                                                        FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'forms_history', true);
-INSERT INTO schema_version (version_number, comment) VALUES (695, 'Added forms and form_fields tables');
-
 CREATE TABLE forms_form_fields (
        form_id bigint,
        formField_id bigint,
@@ -15026,13 +14985,4 @@ CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE OR DELETE ON forms_form_fields
     FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'forms_form_fields_history', true);
 ALTER TABLE forms_form_fields_history OWNER TO sormas_user;
-INSERT INTO schema_version (version_number, comment) VALUES (696, 'Added forms_form_fields table');
-
-ALTER TABLE form_fields DROP COLUMN fieldName;
-ALTER TABLE form_fields ADD COLUMN fieldName text;
-INSERT INTO schema_version (version_number, comment) VALUES (697, 'Changed varchar size for fieldname');
-
-ALTER TABLE form_fields_history DROP COLUMN fieldName;
-ALTER TABLE form_fields_history ADD COLUMN fieldName text;
-INSERT INTO schema_version (version_number, comment) VALUES (698, 'Changed varchar size for fieldname');
--- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+INSERT INTO schema_version (version_number, comment) VALUES (694, 'Added form_fields and forms tables and a join table forms_form_fields');
