@@ -4,7 +4,8 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum FormType {
     CASE_CREATE,
-    CASE_EDIT;
+    CASE_EDIT,
+    PERSON_EDIT;
 
     @Override
     public String toString() {
