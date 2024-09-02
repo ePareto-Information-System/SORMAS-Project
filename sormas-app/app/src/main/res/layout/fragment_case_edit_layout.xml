@@ -473,7 +473,7 @@
                         android:id="@+id/caseData_formCompletedByPosition"
                         app:value="@={data.formCompletedByPosition}"
                         app:userEditRight="@{UserRight.CASE_TRANSFER}"
-                        style="@style/ControlSingleColumnStyle" />
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
 
