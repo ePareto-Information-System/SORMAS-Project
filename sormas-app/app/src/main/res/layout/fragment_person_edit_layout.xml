@@ -367,11 +367,16 @@
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
-                    android:id="@+id/person_phone"
-                    app:value="@={data.phone}"
-                    style="@style/ControlSecondOfTwoColumnsStyle" />
+                    android:id="@+id/person_otherId"
+                    app:value="@={data.otherId}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
 
             </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_phone"
+                app:value="@={data.phone}"
+                style="@style/ControlSecondOfTwoColumnsStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlTextPopupField
                 android:id="@+id/person_address"
@@ -665,19 +670,6 @@
                 app:maxLines="6"
                 app:textArea="true"
                 style="@style/ControlSingleColumnStyle" />
-
-            <de.symeda.sormas.app.component.controls.ControlTextEditField
-                android:id="@+id/person_otherId"
-                app:showCaption="false"
-                app:value="@={data.otherId}"
-                app:inputType="textMultiLine"
-                app:textAlignment="gravity"
-                app:gravity="top|start"
-                app:singleLine="false"
-                app:maxLines="6"
-                app:textArea="true"
-                style="@style/ControlSingleColumnStyle" />
-
 
         </LinearLayout>
 

@@ -289,11 +289,16 @@
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/person_phone"
-                    app:value="@{data.phone}"
-                    style="@style/ControlSecondOfTwoColumnsStyle" />
+                    android:id="@+id/person_otherId"
+                    app:value="@{data.otherId}"
+                    style="@style/ControlSingleColumnStyle" />
 
             </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_phone"
+                app:value="@{data.phone}"
+                style="@style/ControlSecondOfTwoColumnsStyle" />
 
             <ImageView style="@style/FullHorizontalDividerStyle"/>
 
@@ -528,11 +533,6 @@
                 app:singleLine="false"
                 app:maxLines="4000"
                 app:textArea="true"
-                style="@style/ControlSingleColumnStyle" />
-
-            <de.symeda.sormas.app.component.controls.ControlTextReadField
-                android:id="@+id/person_otherId"
-                app:value="@{data.otherId}"
                 style="@style/ControlSingleColumnStyle" />
 
         </LinearLayout>
