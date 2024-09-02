@@ -423,6 +423,10 @@ public class Case extends PseudonymizableAdo {
 	private String formCompletedByCellPhoneNo;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateOfInvestigation;
+	@DatabaseField
+	private String reportingOfficerName;
+	@DatabaseField
+	private String reportingOfficerTitle;
 
 
 	public boolean isUnreferredPortHealthCase() {
@@ -1452,5 +1456,21 @@ public class Case extends PseudonymizableAdo {
 
 	public void setDateOfInvestigation(Date dateOfInvestigation) {
 		this.dateOfInvestigation = dateOfInvestigation;
+	}
+
+	public String getReportingOfficerName() {
+		return reportingOfficerName;
+	}
+
+	public void setReportingOfficerName(String reportingOfficerName) {
+		this.reportingOfficerName = reportingOfficerName;
+	}
+
+	public String getReportingOfficerTitle() {
+		return reportingOfficerTitle;
+	}
+
+	public void setReportingOfficerTitle(String reportingOfficerTitle) {
+		this.reportingOfficerTitle = reportingOfficerTitle;
 	}
 }

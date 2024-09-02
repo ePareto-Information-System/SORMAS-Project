@@ -244,6 +244,8 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setFormCompletedByPosition(source.getFormCompletedByPosition());
 		target.setFormCompletedByCellPhoneNo(source.getFormCompletedByCellPhoneNo());
 		target.setDateOfInvestigation(source.getDateOfInvestigation());
+		target.setReportingOfficerName(source.getReportingOfficerName());
+		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
 
 	}
 
@@ -511,6 +513,8 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setFormCompletedByPosition(source.getFormCompletedByPosition());
 		target.setFormCompletedByCellPhoneNo(source.getFormCompletedByCellPhoneNo());
 		target.setDateOfInvestigation(source.getDateOfInvestigation());
+		target.setReportingOfficerName(source.getReportingOfficerName());
+		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
 
 	}
 

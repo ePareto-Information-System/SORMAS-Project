@@ -404,6 +404,24 @@
                     android:orientation="horizontal">
 
                     <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/caseData_reportingOfficerName"
+                        app:value="@{data.reportingOfficerName}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/caseData_reportingOfficerTitle"
+                        app:value="@{data.reportingOfficerTitle}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
                         android:id="@+id/caseData_investigationOfficerName"
                         app:value="@{data.investigationOfficerName}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
