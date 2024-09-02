@@ -221,11 +221,23 @@
 
             </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
             <de.symeda.sormas.app.component.controls.ControlSpinnerField
                 android:id="@+id/person_sex"
                 app:required="true"
                 app:value="@={data.sex}"
-                style="@style/ControlSingleColumnStyle" />
+                style="@style/ControlFirstOfTwoColumnsStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                android:id="@+id/person_marriageStatus"
+                app:value="@={data.marriageStatus}"
+                style="@style/ControlSecondOfTwoColumnsStyle" />
+
+        </LinearLayout>
 
             <ImageView style="@style/FullHorizontalDividerStyle"/>
 
@@ -345,13 +357,17 @@
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
-                    android:id="@+id/person_passportNumber"
-                    app:value="@={data.passportNumber}"
+                    android:id="@+id/person_ghanaCard"
+                    android:nextFocusForward="@+id/person_nationalHealthId"
+                    app:value="@={data.ghanaCard}"
+                    app:imeOptions="actionNext"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/person_nationalHealthId"
-                    app:value="@={data.nationalHealthId}"
+                    android:nextFocusForward="@+id/person_phone"
+                    app:value="@={data.phone}"
+                    app:imeOptions="actionNext"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
@@ -362,16 +378,19 @@
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
-                    android:id="@+id/person_ghanaCard"
-                    app:value="@={data.ghanaCard}"
+                    android:id="@+id/person_phone"
+                    android:nextFocusForward="@+id/person_passportNumber"
+                    app:value="@={data.phone}"
+                    app:imeOptions="actionNext"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
-                    android:id="@+id/person_phone"
-                    app:value="@={data.phone}"
+                    android:id="@+id/person_passportNumber"
+                    app:value="@={data.passportNumber}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
+
 
             <de.symeda.sormas.app.component.controls.ControlTextPopupField
                 android:id="@+id/person_address"
@@ -649,6 +668,7 @@
             <ImageView style="@style/FullHorizontalDividerStyle" />
 
             <TextView
+                android:id="@+id/person_generalComment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/heading_additional_details"

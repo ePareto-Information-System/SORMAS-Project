@@ -32,6 +32,7 @@ import androidx.databinding.ObservableList;
 
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -43,6 +44,7 @@ import de.symeda.sormas.api.person.BurialConductor;
 import de.symeda.sormas.api.person.CauseOfDeath;
 import de.symeda.sormas.api.person.DeathPlaceType;
 import de.symeda.sormas.api.person.EducationType;
+import de.symeda.sormas.api.person.MaritalStatus;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Salutation;
@@ -84,6 +86,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 	public static final String TAG = PersonEditFragment.class.getSimpleName();
 
 	private Person record;
+	private Disease disease;
 	private AbstractDomainObject rootData;
 	private IEntryItemOnClickListener onAddressItemClickListener;
 	private IEntryItemOnClickListener onPersonContactDetailItemClickListener;
@@ -133,7 +136,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 
 	private void setUpLayoutBinding(final BaseEditFragment fragment, final Person record, final FragmentPersonEditLayoutBinding contentBinding) {
 
-		setUpControlListeners(record, fragment, contentBinding);
+		setUpControlListeners(record, fragment, contentBinding, disease);
 
 		fragment.setFieldVisibilitiesAndAccesses(PersonDto.class, contentBinding.mainContent);
 
@@ -142,6 +145,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		List<Item> yearList = DataUtils.toItems(DateHelper.getYearsToNow(), true);
 		List<Item> approximateAgeTypeList = DataUtils.getEnumItems(ApproximateAgeType.class, true);
 		List<Item> sexList = DataUtils.getEnumItems(Sex.class, true);
+		List<Item> marriageList = DataUtils.getEnumItems(MaritalStatus.class, true);
 		List<Item> causeOfDeathList = DataUtils.getEnumItems(CauseOfDeath.class, true);
 		List<Item> diseaseList = DataUtils.toItems(DiseaseConfigurationCache.getInstance().getAllDiseases(true, true, true));
 		if (record.getCauseOfDeathDisease() != null && !diseaseList.contains(record.getCauseOfDeathDisease())) {
@@ -214,6 +218,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		contentBinding.personBirthdateYYYY.setSelectionOnOpen(year - 35);
 		contentBinding.personApproximateAgeType.initializeSpinner(approximateAgeTypeList);
 		contentBinding.personSex.initializeSpinner(sexList);
+		contentBinding.personMarriageStatus.initializeSpinner(marriageList);
 		contentBinding.personCauseOfDeath.initializeSpinner(causeOfDeathList);
 		contentBinding.personCauseOfDeathDisease.initializeSpinner(diseaseList);
 		contentBinding.personDeathPlaceType.initializeSpinner(deathPlaceTypeList);
@@ -262,8 +267,9 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 	public static void setUpControlListeners(
 		final Person record,
 		final BaseEditFragment fragment,
-		final FragmentPersonEditLayoutBinding contentBinding) {
-		contentBinding.personAddress.setOnClickListener(v -> openAddressPopup(record, fragment, contentBinding));
+		final FragmentPersonEditLayoutBinding contentBinding,
+		final Disease disease) {
+		contentBinding.personAddress.setOnClickListener(v -> openAddressPopup(record, fragment, contentBinding, disease));
 	}
 
 	public static Date calculateBirthDateValue(FragmentPersonEditLayoutBinding contentBinding) {
@@ -309,7 +315,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		}
 	}
 
-	private static void openAddressPopup(final Person record, final BaseEditFragment fragment, final FragmentPersonEditLayoutBinding contentBinding) {
+	private static void openAddressPopup(final Person record, final BaseEditFragment fragment, final FragmentPersonEditLayoutBinding contentBinding, final Disease disease) {
 		final Location location = record.getAddress();
 		final Location locationClone = (Location) location.clone();
 		final LocationDialog locationDialog = new LocationDialog(BaseActivity.getActiveActivity(), locationClone, fragment.getFieldAccessCheckers());
@@ -537,6 +543,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		if (ado instanceof Case) {
 			record = ((Case) ado).getPerson();
 			rootData = ado;
+			disease = ((Case) ado).getDisease();
 		} else if (ado instanceof Contact) {
 			record = ((Contact) ado).getPerson();
 			rootData = ado;
@@ -566,6 +573,10 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 
 		PersonValidator.initializePersonValidation(contentBinding);
 
+		if (disease != null) {
+			super.hideFieldsForDisease(disease, contentBinding.mainContent, FormType.PERSON_EDIT);
+		}
+
 		contentBinding.setAddressList(getAddresses());
 		contentBinding.setAddressItemClickCallback(onAddressItemClickListener);
 		getContentBinding().setAddressBindCallback(this::setLocationFieldVisibilitiesAndAccesses);
@@ -581,6 +592,11 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 	public void onAfterLayoutBinding(final FragmentPersonEditLayoutBinding contentBinding) {
 		if (!ConfigProvider.isConfiguredServer(CountryHelper.COUNTRY_CODE_GERMANY)) {
 			contentBinding.personArmedForcesRelationType.setVisibility(GONE);
+		}
+
+		if(disease != null && disease == Disease.YELLOW_FEVER){
+			contentBinding.personOccupationType.setVisibility(GONE);
+			contentBinding.personOccupationDetails.setVisibility(View.VISIBLE);
 		}
 		contentBinding.personCitizenship.setVisibility(GONE);
 		contentBinding.personBirthCountry.setVisibility(GONE);

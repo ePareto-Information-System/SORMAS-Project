@@ -200,7 +200,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 358;
+	public static final int DATABASE_VERSION = 359;
 
 	private static DatabaseHelper instance = null;
 
@@ -3190,6 +3190,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN functionOfReportingOfficer varchar(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN reportingOfficerContactPhone varchar(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN reportingOfficerEmail varchar(255);");
+
+				case 358:
+					currentVersion = 358;
+					getDao(Person.class).executeRaw("ALTER TABLE cases ADD COLUMN marriageStatus varchar(255);");
 				// ATTENTION: break should only be done after last version
 				break;
 			default:
