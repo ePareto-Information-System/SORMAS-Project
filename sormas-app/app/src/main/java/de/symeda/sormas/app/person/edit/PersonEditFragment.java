@@ -32,6 +32,7 @@ import androidx.databinding.ObservableList;
 
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -87,10 +88,13 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 	private AbstractDomainObject rootData;
 	private IEntryItemOnClickListener onAddressItemClickListener;
 	private IEntryItemOnClickListener onPersonContactDetailItemClickListener;
+	private static Disease caseDisease;
 
 	// Instance methods
 
 	public static PersonEditFragment newInstance(Case activityRootData) {
+
+		caseDisease = activityRootData.getDisease();
 
 		return newInstanceWithFieldCheckers(
 			PersonEditFragment.class,
@@ -584,6 +588,10 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		}
 		contentBinding.personCitizenship.setVisibility(GONE);
 		contentBinding.personBirthCountry.setVisibility(GONE);
+
+		if (caseDisease != null) {
+			super.hideFieldsForDisease(caseDisease, contentBinding.mainContent, FormType.PERSON_EDIT);
+		}
 	}
 
 	@Override
