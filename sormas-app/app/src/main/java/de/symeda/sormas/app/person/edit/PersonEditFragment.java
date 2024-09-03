@@ -267,7 +267,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		final Person record,
 		final BaseEditFragment fragment,
 		final FragmentPersonEditLayoutBinding contentBinding) {
-		contentBinding.personAddress.setOnClickListener(v -> openAddressPopup(record, fragment, contentBinding));
+		contentBinding.personAddress.setOnClickListener(v -> openAddressPopup(record, fragment, contentBinding, caseDisease));
 	}
 
 	public static Date calculateBirthDateValue(FragmentPersonEditLayoutBinding contentBinding) {
@@ -313,11 +313,12 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		}
 	}
 
-	private static void openAddressPopup(final Person record, final BaseEditFragment fragment, final FragmentPersonEditLayoutBinding contentBinding) {
+	private static void openAddressPopup(final Person record, final BaseEditFragment fragment, final FragmentPersonEditLayoutBinding contentBinding, Disease caseDisease) {
 		final Location location = record.getAddress();
 		final Location locationClone = (Location) location.clone();
 		final LocationDialog locationDialog = new LocationDialog(BaseActivity.getActiveActivity(), locationClone, fragment.getFieldAccessCheckers());
 		locationDialog.show();
+		locationDialog.showHideFieldsForDisease(caseDisease, FormType.PERSON_LOCATION_EDIT);
 
 		locationDialog.setPositiveCallback(() -> {
 			contentBinding.personAddress.setValue(locationClone);
