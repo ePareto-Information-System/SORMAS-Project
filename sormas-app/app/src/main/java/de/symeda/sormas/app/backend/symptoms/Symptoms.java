@@ -441,6 +441,8 @@ public class Symptoms extends PseudonymizableAdo {
 	private Boolean lesionsTrunk;
 	@DatabaseField
 	private Boolean lesionsNeck;
+	@Enumerated(EnumType.STRING)
+	private SymptomState abdominalCramps;
 
 	@Override
 	public String getI18nPrefix() {
@@ -1943,5 +1945,13 @@ public class Symptoms extends PseudonymizableAdo {
 
 	public void setOtherLesionAreas(String otherLesionAreas) {
 		this.otherLesionAreas = otherLesionAreas;
+	}
+
+	public SymptomState getAbdominalCramps() {
+		return abdominalCramps;
+	}
+
+	public void setAbdominalCramps(SymptomState abdominalCramps) {
+		this.abdominalCramps = abdominalCramps;
 	}
 }

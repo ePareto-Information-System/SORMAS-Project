@@ -224,6 +224,7 @@ public class Person extends PseudonymizableAdo {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+	@Bindable
 	public String getOtherName() { return otherName;}
 	public void setOtherName(String otherName) {this.otherName = otherName;}
 
