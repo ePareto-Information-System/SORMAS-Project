@@ -52,6 +52,7 @@ import de.symeda.sormas.app.component.controls.ControlSpinnerField;
 import de.symeda.sormas.app.core.IUpdateSubHeadingTitle;
 import de.symeda.sormas.app.core.NotImplementedException;
 import de.symeda.sormas.app.core.NotificationContext;
+import de.symeda.sormas.app.util.DiseaseFieldHandler;
 import de.symeda.sormas.app.util.SoftKeyboardHelper;
 
 public abstract class BaseEditFragment<TBinding extends ViewDataBinding, TData, TActivityRootData extends AbstractDomainObject> extends BaseFragment {
@@ -336,171 +337,11 @@ public abstract class BaseEditFragment<TBinding extends ViewDataBinding, TData, 
 //        if (jobTask != null && !jobTask.isCancelled())
 //            jobTask.cancel(true);
 //    }
-
-//	public void hideFieldsForDisease(Disease diseaseName, LinearLayout mainContent, FormType formType) {
-//		// Get the relevant fields for the given disease
-//		List<String> relevantFields = getFieldsForDisease(diseaseName, formType);
-//		if (relevantFields.isEmpty()) {
-//			for (int i = 0; i < mainContent.getChildCount(); i++) {
-//				View child = mainContent.getChildAt(i);
-//				if (child instanceof ControlPropertyEditField) {
-//					child.setVisibility(View.VISIBLE);
-//				} else if (child instanceof LinearLayout) {
-//					LinearLayout childLayout = (LinearLayout) child;
-//					for (int j = 0; j < childLayout.getChildCount(); j++) {
-//						View grandChild = childLayout.getChildAt(j);
-//						if (grandChild instanceof ControlPropertyEditField) {
-//							grandChild.setVisibility(View.VISIBLE);
-//						}
-//					}
-//
-//					childLayout.setVisibility(View.VISIBLE);
-//				} else if (child instanceof TextView) {
-//					child.setVisibility(View.VISIBLE);
-//				}
-//			}
-//
-//
-//			return;
-//		}
-//
-//		// Loop through the children of the mainContent and hide fields not in the relevantFields list
-//		for (int i = 0; i < mainContent.getChildCount(); i++) {
-//			View child = mainContent.getChildAt(i);
-//			if (child instanceof ControlPropertyEditField) {
-//				String childIdName = getResources().getResourceEntryName(child.getId());
-//				if (!relevantFields.contains(childIdName)) {
-//					child.setVisibility(View.GONE);
-//				} else {
-//					child.setVisibility(View.VISIBLE); // Ensure relevant fields are visible
-//				}
-//			} else if (child instanceof LinearLayout) {
-//				LinearLayout childLayout = (LinearLayout) child;
-//				boolean layoutHasVisibleField = false;
-//
-//				// Loop through the children of the LinearLayout
-//				for (int j = 0; j < childLayout.getChildCount(); j++) {
-//					View grandChild = childLayout.getChildAt(j);
-//
-//					if (grandChild instanceof ControlPropertyEditField) {
-//						String childIdName = getResources().getResourceEntryName(grandChild.getId());
-//
-//						if (relevantFields.isEmpty() || relevantFields.contains(childIdName)) {
-//							grandChild.setVisibility(View.VISIBLE);
-//							layoutHasVisibleField = true;
-//						} else {
-//							grandChild.setVisibility(View.GONE);
-//						}
-//					}
-//				}
-//
-//				if (!layoutHasVisibleField) {
-//					childLayout.setVisibility(View.GONE);
-//				} else {
-//					childLayout.setVisibility(View.VISIBLE);
-//				}
-//			} else if (child instanceof  TextView) {
-//				String childIdName = getResources().getResourceEntryName(child.getId());
-//
-//				// Hide the TextView if it's not in the relevantFields list
-//				if (relevantFields.isEmpty() || relevantFields.contains(childIdName)) {
-//					child.setVisibility(View.VISIBLE);
-//				} else {
-//					child.setVisibility(View.GONE);
-//				}
-//			}
-//		}
-//
-//
-//	}
-//
-//
-//	public List<String> getFieldsForDisease(Disease diseaseName, FormType formType) {
-//
-//		FormBuilder formBuilder = DatabaseHelper.getFormBuilderDao().getFormBuilder(formType, diseaseName);
-//		if (formBuilder != null) {
-//			List<FormField> formFields = DatabaseHelper.getFormBuilderDao().getFormBuilderFormFields(formBuilder);
-//			return formFields.stream().map(FormField::getFieldName).collect(Collectors.toList());
-//		}
-//		return new ArrayList<>();
-//	}
-
-
 	public void hideFieldsForDisease(Disease diseaseName, LinearLayout mainContent, FormType formType) {
-		// Get the relevant fields for the given diseasez
-		List<String> relevantFields = getFieldsForDisease(diseaseName, formType);
 
-		// If no relevant fields, make all fields visible and return
-		if (relevantFields.isEmpty()) {
-			setAllFieldsVisibility(mainContent, View.VISIBLE);
-			return;
-		}
 
-		// Loop through the children of the mainContent and set visibility based on relevantFields list
-		for (int i = 0; i < mainContent.getChildCount(); i++) {
-			View child = mainContent.getChildAt(i);
-			handleChildView(child, relevantFields);
-		}
-	}
-
-	private void setAllFieldsVisibility(ViewGroup parent, int visibility) {
-		for (int i = 0; i < parent.getChildCount(); i++) {
-			View child = parent.getChildAt(i);
-
-			if (isFieldView(child)) {
-				child.setVisibility(visibility);
-			} else if (child instanceof LinearLayout) {
-				setAllFieldsVisibility((LinearLayout) child, visibility);
-				child.setVisibility(visibility);
-			}
-		}
-	}
-
-	private boolean isFieldView(View view) {
-		return view instanceof ControlPropertyEditField || view instanceof TextView || view instanceof ControlPropertyField || view instanceof ControlSpinnerField;
-	}
-
-	private void handleChildView(View child, List<String> relevantFields) {
-		if (isFieldView(child)) {
-			setViewVisibility(child, relevantFields);
-		} else if (child instanceof LinearLayout) {
-			handleLinearLayout((LinearLayout) child, relevantFields);
-		}
-	}
-
-	private void handleLinearLayout(LinearLayout childLayout, List<String> relevantFields) {
-		boolean layoutHasVisibleField = false;
-
-		for (int j = 0; j < childLayout.getChildCount(); j++) {
-			View grandChild = childLayout.getChildAt(j);
-
-			if (isFieldView(grandChild)) {
-				if (setViewVisibility(grandChild, relevantFields)) {
-					layoutHasVisibleField = true;
-				}
-			}
-		}
-
-		childLayout.setVisibility(layoutHasVisibleField ? View.VISIBLE : View.GONE);
-	}
-
-	private boolean setViewVisibility(View view, List<String> relevantFields) {
-		String viewIdName = getResources().getResourceEntryName(view.getId());
-		boolean isVisible = relevantFields.isEmpty() || relevantFields.contains(viewIdName);
-
-		view.setVisibility(isVisible ? View.VISIBLE : View.GONE);
-		return isVisible;
-	}
-
-	public List<String> getFieldsForDisease(Disease diseaseName, FormType formType) {
-		FormBuilder formBuilder = DatabaseHelper.getFormBuilderDao().getFormBuilder(formType, diseaseName);
-
-		if (formBuilder != null) {
-			List<FormField> formFields = DatabaseHelper.getFormBuilderDao().getFormBuilderFormFields(formBuilder);
-			return formFields.stream().map(FormField::getFieldName).collect(Collectors.toList());
-		}
-
-		return new ArrayList<>();
+		DiseaseFieldHandler diseaseFieldHandler = new DiseaseFieldHandler(getContext());
+		diseaseFieldHandler.hideFieldsForDisease(diseaseName, mainContent, formType);
 	}
 
 }
