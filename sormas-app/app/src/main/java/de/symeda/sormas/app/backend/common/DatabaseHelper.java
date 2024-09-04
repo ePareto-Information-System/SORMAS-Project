@@ -200,7 +200,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 360;
+	public static final int DATABASE_VERSION = 361;
 
 	private static DatabaseHelper instance = null;
 
@@ -3197,6 +3197,78 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				case 359:
 					currentVersion = 359;
 					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN abdominalCramps varchar(255);");
+
+				case 360:
+					currentVersion = 360;
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN dateofonset DATE;");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN provisionalDiagnosis VARCHAR(512);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN dateonsetparalysis DATE;");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN requestedsiteofparalysisstring VARCHAR(512);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN firstSignOrSymptomsBeforeWormOthers VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN numberOfWorms VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN requestedSymptomsSelectedString VARCHAR(512);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN dateofonsetrash DATE;");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN requestedRashSymptomsString VARCHAR(512);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN rashSymptomsOtherAreas VARCHAR(512);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN typeOfRashString VARCHAR(512);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN symptomsSelectedOther VARCHAR(512);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN outcomeOther VARCHAR(512);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN outcomeDate DATE;");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN outcomePlaceCommVillage VARCHAR(512);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN nameService VARCHAR(512);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN placeOfFuneralNameVillage VARCHAR(512);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN injectionSiteString VARCHAR(512);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN durationHours INTEGER;");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN ageAtDeathDays INTEGER;");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN ageAtOnsetDays INTEGER;");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN nameOfHealthFacility VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN dateFirstWormEmergence DATE;");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN outcome VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN feverBodyTempGreater VARCHAR(10);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN difficultySwallow VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN skinRashNew VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN generalizedRash VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN redEyes VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN swollenLymphNodesBehindEars VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN muscleTone VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN deepTendonReflex VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN muscleVolume VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN sensoryLoss VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN nonVascular VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN feverOnsetParalysis VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN progressiveParalysis VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN progressiveFlaccidAcute VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN assymetric VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN paralysedLimbSensitiveToPain VARCHAR(10);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN injectionSiteBeforeOnsetParalysis VARCHAR(10);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN trueAfp VARCHAR(10);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN dyspnea VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN tachypnea VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN diarrhoea VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN headaches VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN babyDied VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN babyNormalAtBirth VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN normalCryAndSuck VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN stoppedSuckingAfterTwoDays VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN stiffness VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN firstSignOrSymptomsBeforeWorm VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN emergenceOfGuineaWorm VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN firstWormThisYear VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN caseDetectedBeforeWormEmergence VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN bodyAche VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN dizziness VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN excessiveSweating VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN numbness VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN symptomsOngoing VARCHAR(10);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN areLesionsSameState VARCHAR(10);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN areLesionsSameSize VARCHAR(10);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN areLesionsDeep VARCHAR(10);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN areUlcersAmong VARCHAR(10);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN patientHaveFever VARCHAR(10);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN abnormalLungAuscultation VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN trimester VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN postpartum VARCHAR(10);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN pregnant VARCHAR(10);");
 				// ATTENTION: break should only be done after last version
 				break;
 			default:
