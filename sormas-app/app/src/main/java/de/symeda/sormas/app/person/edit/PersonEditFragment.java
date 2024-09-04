@@ -320,7 +320,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		final Location locationClone = (Location) location.clone();
 		final LocationDialog locationDialog = new LocationDialog(BaseActivity.getActiveActivity(), locationClone, fragment.getFieldAccessCheckers());
 		locationDialog.show();
-		locationDialog.showHideFieldsForDisease(caseDisease, FormType.PERSON_LOCATION_EDIT);
+		locationDialog.showHideFieldsForDisease(disease, FormType.PERSON_LOCATION_EDIT);
 
 		locationDialog.setPositiveCallback(() -> {
 			contentBinding.personAddress.setValue(locationClone);
