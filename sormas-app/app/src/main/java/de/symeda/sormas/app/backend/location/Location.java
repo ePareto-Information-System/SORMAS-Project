@@ -112,6 +112,12 @@ public class Location extends PseudonymizableAdo {
 	private String contactPersonPhone;
 	@Column(columnDefinition = "text")
 	private String contactPersonEmail;
+	@Column(length = CHARACTER_LIMIT_BIG)
+	private String village;
+	@Column(length = CHARACTER_LIMIT_BIG)
+	private String zone;
+	@Column(length = CHARACTER_LIMIT_BIG)
+	private String landMark;
 
 	/**
 	 * Dirty fix for person-location association; doing this with a JoinTable is not
@@ -485,4 +491,27 @@ public class Location extends PseudonymizableAdo {
 		this.latLonAccuracy = latLonAccuracy;
 	}
 
+	public String getVillage() {
+		return village;
+	}
+
+	public void setVillage(String village) {
+		this.village = village;
+	}
+
+	public String getZone() {
+		return zone;
+	}
+
+	public void setZone(String zone) {
+		this.zone = zone;
+	}
+
+	public String getLandMark() {
+		return landMark;
+	}
+
+	public void setLandMark(String landMark) {
+		this.landMark = landMark;
+	}
 }
