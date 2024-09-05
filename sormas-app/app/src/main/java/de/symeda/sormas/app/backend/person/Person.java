@@ -83,6 +83,7 @@ public class Person extends PseudonymizableAdo {
 	private String firstName;
 	@Column(nullable = false)
 	private String lastName;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String otherName;
 	@Enumerated(EnumType.STRING)
 	private Salutation salutation;
