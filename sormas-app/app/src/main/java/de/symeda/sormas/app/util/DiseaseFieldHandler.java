@@ -82,8 +82,17 @@ public class DiseaseFieldHandler {
             View grandChild = viewGroup.getChildAt(j);
 
             if (isFieldView(grandChild)) {
-                if (setViewVisibility(grandChild, relevantFields)) {
-                    groupHasVisibleField = true;
+                if (grandChild instanceof ControlPropertyField) {
+                    ControlPropertyField controlPropertyField = (ControlPropertyField) grandChild;
+                    if (!controlPropertyField.hasVisibilityDependencies()) {
+                        if (setViewVisibility(grandChild, relevantFields)) {
+                            groupHasVisibleField = true;
+                        }
+                    }
+                } else {
+                    if (setViewVisibility(grandChild, relevantFields)) {
+                        groupHasVisibleField = true;
+                    }
                 }
             } else if (grandChild instanceof ViewGroup) {
                 handleViewGroup((ViewGroup) grandChild, relevantFields);
@@ -93,7 +102,8 @@ public class DiseaseFieldHandler {
             }
         }
 
-        viewGroup.setVisibility(groupHasVisibleField ? View.VISIBLE : View.GONE);
+
+//        viewGroup.setVisibility(groupHasVisibleField ? View.VISIBLE : View.GONE);
     }
 
     private boolean setViewVisibility(View view, List<String> relevantFields) {
