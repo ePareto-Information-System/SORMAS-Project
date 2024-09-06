@@ -50,6 +50,7 @@ import de.symeda.sormas.app.backend.epidata.EpiData;
 import de.symeda.sormas.app.backend.exposure.Exposure;
 import de.symeda.sormas.app.caze.edit.CaseEditActivity;
 import de.symeda.sormas.app.core.IEntryItemOnClickListener;
+import de.symeda.sormas.app.core.YesNo;
 import de.symeda.sormas.app.databinding.FragmentEditEpidLayoutBinding;
 import de.symeda.sormas.app.util.FieldVisibilityAndAccessHelper;
 
@@ -226,6 +227,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		setDefaultValues(record);
 
 		contentBinding.setData(record);
+		contentBinding.setYesNoClass(YesNo.class);
 		contentBinding.setExposureList(getExposureList());
 		contentBinding.setExposureItemClickCallback(onExposureItemClickListener);
 		contentBinding.setExposureListBindCallback(
