@@ -23,6 +23,7 @@ import androidx.databinding.ObservableArrayList;
 
 import java.util.List;
 
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
 import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
@@ -173,6 +174,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 
 		contentBinding.setData(record);
 		contentBinding.setCaze(caze);
+		contentBinding.setYesNoClass(YesNo.class);
 //		contentBinding.setPatientCondition(patientCondition);
 		contentBinding.setPreviousHospitalizationList(getPreviousHospitalizations());
 		contentBinding.setPrevHosItemClickCallback(onPrevHosItemClickListener);
@@ -208,6 +210,10 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		contentBinding.caseDataOutcome.initializeSpinner(outcomeList);
 
 		verifyPrevHospitalizationStatus();
+
+		if (caze.getDisease() != null) {
+			super.hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.HOSPITALIZATION_EDIT);
+		}
 	}
 
 	@Override
