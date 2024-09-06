@@ -34,6 +34,7 @@
         <import type="de.symeda.sormas.api.i18n.I18nProperties" />
         <import type="de.symeda.sormas.api.i18n.Strings" />
         <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
+        <import type="de.symeda.sormas.api.utils.YesNo" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.person.Person"/>
         <variable name="addressList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.location.Location&gt;" />
@@ -42,6 +43,7 @@
         <variable name="personContactDetailList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.person.PersonContactDetail&gt;" />
         <variable name="personContactDetailItemClickCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
         <variable name="personContactDetailBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
+        <variable name="YesNoClass" type="Class" />
     </data>
 
     <ScrollView
@@ -383,6 +385,47 @@
                 app:iconStart="@drawable/ic_edit_location_black_24dp"
                 app:hint="@string/hint_enter_location"
                 app:locationValue="@={data.address}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/person_placeOfResidenceSameAsReportingVillage"
+                app:enumClass="@{YesNoClass}"
+                app:value="@={data.placeOfResidenceSameAsReportingVillage}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_residenceSinceWhenInMonths"
+                app:value="@={data.residenceSinceWhenInMonths}"
+                app:dependencyParentField="@{personPlaceOfResidenceSameAsReportingVillage}"
+                app:dependencyParentValue="@{YesNo.NO}"
+                app:inputType="number"
+                style="@style/ControlSingleColumnStyle" />
+
+
+                <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
+                    android:id="@+id/person_pst14MonthsRegion"
+                    app:value="@={data.pst14MonthsRegion}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
+                    android:id="@+id/person_pst14MonthsDistrict"
+                    app:value="@={data.pst14MonthsDistrict}"
+                    style="@style/ControlSingleColumnStyle" />
+
+
+            <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
+                android:id="@+id/person_pst14MonthsCommunity"
+                app:value="@={data.pst14MonthsCommunity}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_pst14MonthsZone"
+                app:value="@={data.pst14MonthsZone}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_pst14MonthsVillage"
+                app:value="@={data.pst14MonthsVillage}"
                 style="@style/ControlSingleColumnStyle" />
 
             <LinearLayout

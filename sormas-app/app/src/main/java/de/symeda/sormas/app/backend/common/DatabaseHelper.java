@@ -200,7 +200,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 359;
+	public static final int DATABASE_VERSION = 360;
 
 	private static DatabaseHelper instance = null;
 
@@ -3198,6 +3198,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN landMark varchar(255);");
 				getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN village varchar(255);");
 				getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN zone varchar(255);");
+			case 359:
+				currentVersion = 359;
+				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN placeOfResidenceSameAsReportingVillage boolean;");
+				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN residenceSinceWhenInMonths int;");
+				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN pst14MonthsRegion_id varchar(255);");
+				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN pst14MonthsDistrict_id varchar(255);");
+				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN pst14MonthsCommunity_id varchar(255);");
+				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN pst14MonthsZone varchar(255);");
+				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN pst14MonthsVillage varchar(255);");
 				// ATTENTION: break should only be done after last version
 				break;
 			default:
