@@ -85,8 +85,6 @@
 
                     <de.symeda.sormas.app.component.controls.ControlTextReadField
                         android:id="@+id/caseData_healthFacilityRecordNumber"
-                        app:dependencyParentField="@{caseHospitalizationAdmittedToHealthFacility}"
-                        app:dependencyParentValue="@{YesNo.YES}"
                         app:value="@{data.healthFacilityRecordNumber}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
@@ -103,12 +101,19 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseHospitalization_hospitalRecordNumber"
+                        app:value="@={data.hospitalRecordNumber}"
+                        app:dependencyParentField="@{caseHospitalizationAdmittedToHealthFacility}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/caseHospitalization_admissionDate"
                         app:value="@={data.admissionDate}"
                         app:dependencyParentField="@{caseHospitalizationAdmittedToHealthFacility}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlFirstOfTwoColumnsStyle" />
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/caseHospitalization_dischargeDate"
@@ -117,6 +122,7 @@
                         app:dependencyParentField="@{caseHospitalizationAdmittedToHealthFacility}"
                         app:dependencyParentValue="@{YesNo.YES}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
+
 
                 </LinearLayout>
 

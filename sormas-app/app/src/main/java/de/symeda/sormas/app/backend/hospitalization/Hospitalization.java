@@ -85,6 +85,8 @@ public class Hospitalization extends AbstractDomainObject {
 	@Column(columnDefinition = "text")
 	private String otherHospitalizationReason;
 
+	@Column(length = CHARACTER_LIMIT_BIG)
+	private String hospitalRecordNumber;
 	// just for reference, not persisted in DB
 	private List<PreviousHospitalization> previousHospitalizations = new ArrayList<>();
 
@@ -233,5 +235,13 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setHealthFacilityRecordNumber(String healthFacilityRecordNumber) {
 		this.healthFacilityRecordNumber = healthFacilityRecordNumber;
+	}
+
+	public String getHospitalRecordNumber() {
+		return hospitalRecordNumber;
+	}
+
+	public void setHospitalRecordNumber(String hospitalRecordNumber) {
+		this.hospitalRecordNumber = hospitalRecordNumber;
 	}
 }
