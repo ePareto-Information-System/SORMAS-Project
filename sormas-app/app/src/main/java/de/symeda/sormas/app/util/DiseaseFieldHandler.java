@@ -15,9 +15,7 @@ import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.formbuilder.FormBuilder;
 import de.symeda.sormas.app.backend.formfield.FormField;
-import de.symeda.sormas.app.component.controls.ControlPropertyEditField;
 import de.symeda.sormas.app.component.controls.ControlPropertyField;
-import de.symeda.sormas.app.component.controls.ControlSpinnerField;
 
 public class DiseaseFieldHandler {
 
@@ -57,13 +55,21 @@ public class DiseaseFieldHandler {
     }
 
     private boolean isFieldView(View view) {
-        return view instanceof ControlPropertyEditField || view instanceof TextView ||
-                view instanceof ControlPropertyField || view instanceof ControlSpinnerField;
+        return view instanceof TextView || view instanceof ControlPropertyField;
     }
 
     private void handleChildView(View child, List<String> relevantFields) {
+
+
         if (isFieldView(child)) {
-            setViewVisibility(child, relevantFields);
+            if (child instanceof ControlPropertyField) {
+                ControlPropertyField controlPropertyField = (ControlPropertyField) child;
+                if (!controlPropertyField.hasVisibilityDependencies()) {
+                    setViewVisibility(child, relevantFields);
+                }
+            } else {
+                setViewVisibility(child, relevantFields);
+            }
         } else if (child instanceof ViewGroup) {
             handleViewGroup((ViewGroup) child, relevantFields);
         }
@@ -92,6 +98,11 @@ public class DiseaseFieldHandler {
 
     private boolean setViewVisibility(View view, List<String> relevantFields) {
         String viewIdName = context.getResources().getResourceEntryName(view.getId());
+        if (viewIdName == null) {
+            return false;
+        }
+
+
         boolean isVisible = relevantFields.isEmpty() || relevantFields.contains(viewIdName);
 
         view.setVisibility(isVisible ? View.VISIBLE : View.GONE);

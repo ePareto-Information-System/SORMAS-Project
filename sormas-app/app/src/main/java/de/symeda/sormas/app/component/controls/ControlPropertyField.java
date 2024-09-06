@@ -639,4 +639,10 @@ public abstract class ControlPropertyField<T> extends LinearLayout {
 			field.setValue(null);
 		}
 	}
+
+	public boolean hasVisibilityDependencies() {
+		return visibilityDependencies != null;
+	}
+
+
 }
