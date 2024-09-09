@@ -883,16 +883,13 @@
 
                 </LinearLayout>
 
-                    <de.symeda.sormas.app.component.controls.ControlTextReadField
-                        android:id="@+id/caseData_reportingOfficerTitle"
-                        app:value="@{data.reportingOfficerTitle}"
-                        style="@style/ControlSingleColumnStyle" />
+
 
                     <de.symeda.sormas.app.component.controls.ControlTextReadField
                         android:id="@+id/caseData_functionOfReportingOfficer"
                         app:value="@{data.functionOfReportingOfficer}"
                         style="@style/ControlSingleColumnStyle" />
-
+fragment_person_edit_layout
                     <de.symeda.sormas.app.component.controls.ControlTextReadField
                         android:id="@+id/caseData_reportingOfficerContactPhone"
                         app:value="@{data.reportingOfficerContactPhone}"
