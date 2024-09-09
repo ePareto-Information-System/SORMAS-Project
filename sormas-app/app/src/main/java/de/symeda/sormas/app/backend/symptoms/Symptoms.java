@@ -469,7 +469,9 @@ public class Symptoms extends PseudonymizableAdo {
 	private String provisionalDiagnosis;
 	private Date dateOnsetParalysis;
 	private String requestedSiteOfParalysisString;
+	@DatabaseField
 	private String firstSignOrSymptomsBeforeWormOthers;
+	@DatabaseField
 	private String numberOfWorms;
 	private String requestedSymptomsSelectedString;
 	private Date dateOfOnsetRash;
@@ -492,6 +494,7 @@ public class Symptoms extends PseudonymizableAdo {
 	private Set<SymptomsList> typeOfRash;
 	private Set<InjectionSite> injectionSite;
 	private String nameOfHealthFacility;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateFirstWormEmergence;
 
 	@Enumerated(EnumType.STRING)
