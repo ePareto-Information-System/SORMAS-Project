@@ -17,6 +17,7 @@ package de.symeda.sormas.app.epidata;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static de.symeda.sormas.app.epidata.EpiDataFragmentHelper.getDisease;
 import static de.symeda.sormas.app.epidata.EpiDataFragmentHelper.getDiseaseOfCaseOrContact;
 import static de.symeda.sormas.app.epidata.EpiDataFragmentHelper.getEpiDataOfCaseOrContact;
 
@@ -30,11 +31,14 @@ import androidx.databinding.ObservableArrayList;
 import com.googlecode.openbeans.Introspector;
 import com.googlecode.openbeans.PropertyDescriptor;
 
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -58,6 +62,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	public static final String TAG = EpidemiologicalDataEditFragment.class.getSimpleName();
 
 	private EpiData record;
+	private Disease disease;
 	private IEntryItemOnClickListener onExposureItemClickListener;
 	private IEntryItemOnClickListener onActivityAsCaseItemClickListener;
 
@@ -100,9 +105,9 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		});
 
 		contentBinding.epiDataExposureDetailsKnown.addValueChangedListener(field -> {
-			YesNoUnknown value = (YesNoUnknown) field.getValue();
-			contentBinding.exposuresLayout.setVisibility(value == YesNoUnknown.YES ? VISIBLE : GONE);
-			if (value != YesNoUnknown.YES) {
+			YesNo value = (YesNo) field.getValue();
+			contentBinding.exposuresLayout.setVisibility(value == YesNo.YES ? VISIBLE : GONE);
+			if (value != YesNo.YES) {
 				clearExposures();
 			}
 
@@ -138,9 +143,9 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		});
 
 		contentBinding.epiDataActivityAsCaseDetailsKnown.addValueChangedListener(field -> {
-			YesNoUnknown value = (YesNoUnknown) field.getValue();
-			contentBinding.activityascaseLayout.setVisibility(value == YesNoUnknown.YES ? VISIBLE : GONE);
-			if (value != YesNoUnknown.YES) {
+			YesNo value = (YesNo) field.getValue();
+			contentBinding.activityascaseLayout.setVisibility(value == YesNo.YES ? VISIBLE : GONE);
+			if (value != YesNo.YES) {
 				clearActivitiesAsCase();
 			}
 
@@ -217,6 +222,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	@Override
 	protected void prepareFragmentData() {
 		record = getEpiDataOfCaseOrContact(getActivityRootData());
+		disease = getDisease(getActivityRootData());
 	}
 
 	@Override
@@ -224,6 +230,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		setUpControlListeners(contentBinding);
 
 		setDefaultValues(record);
+		contentBinding.setYesNoClass(YesNo.class);
 
 		contentBinding.setData(record);
 		contentBinding.setExposureList(getExposureList());
@@ -237,6 +244,10 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		contentBinding.setActivityAsCaseListBindCallback(
 			v -> FieldVisibilityAndAccessHelper
 				.setFieldVisibilitiesAndAccesses(ActivityAsCaseDto.class, (ViewGroup) v, new FieldVisibilityCheckers(), getFieldAccessCheckers()));
+
+		if (disease != null) {
+			super.hideFieldsForDisease(disease, contentBinding.mainContent, FormType.EPIDEMIOLOGICAL_EDIT);
+		}
 	}
 
 		public void setDefaultValues(EpiData epiDataDto) {
