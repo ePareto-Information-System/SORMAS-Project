@@ -212,6 +212,21 @@
 
             </LinearLayout>
 
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/caseHospitalization_selectInpatientOutpatient"
+                app:value="@{data.selectInpatientOutpatient}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/caseHospitalization_dateFirstSeen"
+                app:value="@{data.dateFirstSeen}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/caseHospitalization_notifyDistrictDate"
+                app:value="@{data.notifyDistrictDate}"
+                style="@style/ControlSingleColumnStyle" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

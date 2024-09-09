@@ -62,7 +62,6 @@
                 >
 
                 <TextView
-                    android:id="@+id/heading_most_recent_hospitalization"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/heading_most_recent_hospitalization"
@@ -163,14 +162,14 @@
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/caseHospitalization_intensiveCareUnitStart"
                         dependencyParentField="@{caseHospitalizationIntensiveCareUnit}"
-                        dependencyParentValue="@{YesNoUnknown.YES}"
+                        dependencyParentValue="@{YesNo.YES}"
                         app:value="@={data.intensiveCareUnitStart}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/caseHospitalization_intensiveCareUnitEnd"
                         dependencyParentField="@{caseHospitalizationIntensiveCareUnit}"
-                        dependencyParentValue="@{YesNoUnknown.YES}"
+                        dependencyParentValue="@{YesNo.YES}"
                         app:value="@={data.intensiveCareUnitEnd}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
@@ -209,7 +208,7 @@
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/caseHospitalization_isolationDate"
                         dependencyParentField="@{caseHospitalizationIsolated}"
-                        dependencyParentValue="@{YesNoUnknown.YES}"
+                        dependencyParentValue="@{YesNo.YES}"
                         app:value="@={data.isolationDate}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
@@ -245,6 +244,28 @@
                         style="@style/ControlSingleColumnStyle" />
 
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/fragment_padding">
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/caseHospitalization_selectInpatientOutpatient"
+                    app:value="@={data.selectInpatientOutpatient}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/caseHospitalization_dateFirstSeen"
+                    app:value="@={data.dateFirstSeen}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/caseHospitalization_notifyDistrictDate"
+                    app:value="@={data.notifyDistrictDate}"
+                    style="@style/ControlSingleColumnStyle" />
+        </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/prev_hospitalizations_layout"

@@ -48,6 +48,7 @@ import de.symeda.sormas.api.person.BurialConductor;
 import de.symeda.sormas.api.person.CauseOfDeath;
 import de.symeda.sormas.api.person.DeathPlaceType;
 import de.symeda.sormas.api.person.EducationType;
+import de.symeda.sormas.api.person.MaritalStatus;
 import de.symeda.sormas.api.person.OccupationType;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Salutation;
@@ -207,6 +208,7 @@ public class Person extends PseudonymizableAdo {
 	private Country citizenship;
 	@Column(columnDefinition = "text")
 	private String additionalDetails;
+	private MaritalStatus marriageStatus;
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String otherId;
@@ -339,6 +341,14 @@ public class Person extends PseudonymizableAdo {
 
 	public Sex getSex() {
 		return sex;
+	}
+
+	public MaritalStatus getMarriageStatus() {
+		return marriageStatus;
+	}
+
+	public void setMarriageStatus(MaritalStatus marriageStatus) {
+		this.marriageStatus = marriageStatus;
 	}
 
 	public void setSex(Sex sex) {

@@ -61,6 +61,7 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -102,6 +103,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 	// Enum lists
 
 	private List<Item> caseClassificationList;
+	private List<Item> vaccinationStatusList;
 	private List<Item> caseOutcomeList;
 	private List<Item> diseaseList;
 	private List<Item> diseaseVariantList;
@@ -387,6 +389,8 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		hospitalWardTypeList = DataUtils.getEnumItems(HospitalWardType.class, true);
 		quarantineList = DataUtils.getEnumItems(QuarantineType.class, true);
 		reportingTypeList = DataUtils.getEnumItems(ReportingType.class, true);
+		vaccinationStatusList = DataUtils.getEnumItems(VaccinationStatus.class, true);
+		vaccinationStatusList.remove(VaccinationStatus.UNKNOWN);
 
 		// initialRegions = InfrastructureHelper.loadRegions();
 		// initialDistricts = InfrastructureHelper.loadDistricts(record.getRegion());
@@ -483,6 +487,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.setHosp(hospitalization);
 		contentBinding.setYesNoUnknownClass(YesNoUnknown.class);
 		contentBinding.setVaccinationStatusClass(VaccinationStatus.class);
+		contentBinding.setVaccinationTypeClass(CardOrHistory.class);
 		contentBinding.setTrimesterClass(Trimester.class);
 		contentBinding.setDifferentPlaceOfStayJurisdiction(differentPlaceOfStayJurisdiction);
 
@@ -741,6 +746,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataQuarantineOrderedVerballyDate.initializeDateField(getChildFragmentManager());
 		contentBinding.caseDataQuarantineOrderedOfficialDocumentDate.initializeDateField(getChildFragmentManager());
 		contentBinding.caseDataQuarantineOfficialOrderSentDate.initializeDateField(getChildFragmentManager());
+		contentBinding.caseDataVaccinationDate.initializeDateField(getFragmentManager());
 //		contentBinding.caseDataReportingType.initializeSpinner(reportingTypeList);
 
 		// Replace classification user field with classified by field when case has been classified automatically

@@ -831,6 +831,21 @@
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/caseData_vaccinationType"
+                    app:value="@{data.vaccinationType}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/caseData_numberOfDoses"
+                    app:value="@={data.numberOfDoses}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/caseData_vaccinationDate"
+                    app:value="@={data.vaccinationDate}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/caseData_smallpoxVaccinationReceived"
                     app:value="@{data.smallpoxVaccinationReceived}"
                     style="@style/ControlSingleColumnStyle" />
@@ -867,6 +882,27 @@
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/caseData_reportingOfficerTitle"
+                        app:value="@{data.reportingOfficerTitle}"
+                        style="@style/ControlSingleColumnStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/caseData_functionOfReportingOfficer"
+                        app:value="@{data.functionOfReportingOfficer}"
+                        style="@style/ControlSingleColumnStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/caseData_reportingOfficerContactPhone"
+                        app:value="@{data.reportingOfficerContactPhone}"
+                        style="@style/ControlSingleColumnStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/caseData_reportingOfficerEmail"
+                        app:value="@{data.reportingOfficerEmail}"
+                        style="@style/ControlSingleColumnStyle" />
+
 
                 <LinearLayout
                     android:layout_width="match_parent"

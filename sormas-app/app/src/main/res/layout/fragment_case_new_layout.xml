@@ -364,22 +364,22 @@
                 app:value="@={data.person.presentCondition}"
                 style="@style/ControlSingleColumnStyle" />
 
-            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/person_passportNumber"
                 app:value="@={data.person.passportNumber}"
                 style="@style/ControlSingleColumnStyle" />
 
-            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/person_nationalHealthId"
                 app:value="@={data.person.nationalHealthId}"
                 style="@style/ControlSingleColumnStyle" />
 
-            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/person_ghanaCard"
                 app:value="@={data.person.ghanaCard}"
                 style="@style/ControlSingleColumnStyle" />
 
-            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/person_phone"
                 app:value="@={data.person.phone}"
                 style="@style/ControlSingleColumnStyle" />

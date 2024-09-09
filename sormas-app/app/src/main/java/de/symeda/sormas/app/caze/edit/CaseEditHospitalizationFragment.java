@@ -29,6 +29,7 @@ import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
 import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
 import java.util.List;
 
+import de.symeda.sormas.api.utils.InpatOutpat;
 import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import java.util.List;
 import de.symeda.sormas.api.caze.CaseOutcome;
@@ -59,6 +60,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 
 	private IEntryItemOnClickListener onPrevHosItemClickListener;
 	private List<Item> outcomeList;
+	private List<Item> inpatientOutpatientList;
 
 
 	// Static methods
@@ -162,6 +164,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		record = caze.getHospitalization();
 		patientCondition = DataUtils.getEnumItems(MildModerateSevereCritical.class, true);
 		outcomeList = DataUtils.getEnumItems(CaseOutcome.class, true);
+		inpatientOutpatientList = DataUtils.getEnumItems(InpatOutpat.class, true);
 	}
 
 	@Override
@@ -171,6 +174,10 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		CaseValidator.initializeHospitalizationValidation(contentBinding, caze);
 
 		List<Item> hospitalizationReasons = DataUtils.getEnumItems(HospitalizationReasonType.class, true);
+
+		if(caze.getDisease() != null){
+			hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.HOSPITALIZATION_EDIT);
+		}
 
 		contentBinding.setData(record);
 		contentBinding.setCaze(caze);
@@ -205,9 +212,12 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		contentBinding.caseHospitalizationIntensiveCareUnitStart.initializeDateField(getFragmentManager());
 		contentBinding.caseHospitalizationIntensiveCareUnitEnd.initializeDateField(getFragmentManager());
 		contentBinding.caseHospitalizationIsolationDate.initializeDateField(getFragmentManager());
+		contentBinding.caseHospitalizationDateFirstSeen.initializeDateField(getFragmentManager());
+		contentBinding.caseHospitalizationNotifyDistrictDate.initializeDateField(getFragmentManager());
 		contentBinding.caseHospitalizationPatientConditionOnAdmission.initializeSpinner(patientCondition);
 
 		contentBinding.caseDataOutcome.initializeSpinner(outcomeList);
+		contentBinding.caseHospitalizationSelectInpatientOutpatient.initializeSpinner(inpatientOutpatientList);
 
 		verifyPrevHospitalizationStatus();
 

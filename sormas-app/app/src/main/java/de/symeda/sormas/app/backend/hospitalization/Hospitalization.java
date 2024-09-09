@@ -29,6 +29,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import de.symeda.sormas.api.hospitalization.AccommodationType;
+import de.symeda.sormas.api.utils.InpatOutpat;
 import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
 import de.symeda.sormas.api.utils.YesNo;
@@ -84,6 +85,12 @@ public class Hospitalization extends AbstractDomainObject {
 
 	@Column(columnDefinition = "text")
 	private String otherHospitalizationReason;
+	@Enumerated(EnumType.STRING)
+	private InpatOutpat selectInpatientOutpatient;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateFirstSeen;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date notifyDistrictDate;
 
 	@Column(length = CHARACTER_LIMIT_BIG)
 	private String hospitalRecordNumber;
@@ -168,6 +175,25 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setIntensiveCareUnitEnd(Date intensiveCareUnitEnd) {
 		this.intensiveCareUnitEnd = intensiveCareUnitEnd;
+	}
+
+	public InpatOutpat getSelectInpatientOutpatient() {
+		return selectInpatientOutpatient;}
+	public void setSelectInpatientOutpatient(InpatOutpat selectInpatientOutpatient) {
+		this.selectInpatientOutpatient = selectInpatientOutpatient;}
+
+	public Date getDateFirstSeen() {
+		return dateFirstSeen;
+	}
+	public Date getNotifyDistrictDate() {
+		return notifyDistrictDate;
+	}
+
+	public void setNotifyDistrictDate(Date notifyDistrictDate) {
+		this.notifyDistrictDate = notifyDistrictDate;
+	}
+	public void setDateFirstSeen(Date dateFirstSeen) {
+		this.dateFirstSeen = dateFirstSeen;
 	}
 
 	/**
