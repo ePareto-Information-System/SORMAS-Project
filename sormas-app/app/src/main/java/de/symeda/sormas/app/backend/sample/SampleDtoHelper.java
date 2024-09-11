@@ -108,6 +108,16 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 
 		target.setSamplingReason(source.getSamplingReason());
 		target.setSamplingReasonDetails(source.getSamplingReasonDetails());
+		target.setSampleDispatchMode(source.getSampleDispatchMode());
+		target.setIpSampleSent(source.getIpSampleSent());
+		target.setIpSampleTestResults(source.getIpSampleTestResults());
+		target.setSelectedResultIGM(source.getSelectedResultIGM());
+		target.setSelectedResultIGMDate(source.getSelectedResultIGMDate());
+		target.setSelectedResultPcr(source.getSelectedResultPcr());
+		target.setSelectedResultPcrDate(source.getSelectedResultPcrDate());
+		target.setSelectedResultPrnt(source.getSelectedResultPrnt());
+		target.setSelectedResultPrntDate(source.getSelectedResultPrntDate());
+		target.setInputValuePrnt(source.getInputValuePrnt());
 
 		target.setSormasToSormasOriginInfo(
 			sormasToSormasOriginInfoDtoHelper.fillOrCreateFromDto(target.getSormasToSormasOriginInfo(), source.getSormasToSormasOriginInfo()));
@@ -181,7 +191,16 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		if (source.getSormasToSormasOriginInfo() != null) {
 			target.setSormasToSormasOriginInfo(sormasToSormasOriginInfoDtoHelper.adoToDto(source.getSormasToSormasOriginInfo()));
 		}
-
+		target.setSampleDispatchMode(source.getSampleDispatchMode());
+		target.setIpSampleSent(source.getIpSampleSent());
+		target.setIpSampleTestResults(source.getIpSampleTestResults());
+		target.setSelectedResultIGM(source.getSelectedResultIGM());
+		target.setSelectedResultIGMDate(source.getSelectedResultIGMDate());
+		target.setSelectedResultPcr(source.getSelectedResultPcr());
+		target.setSelectedResultPcrDate(source.getSelectedResultPcrDate());
+		target.setSelectedResultPrnt(source.getSelectedResultPrnt());
+		target.setSelectedResultPrntDate(source.getSelectedResultPrntDate());
+		target.setInputValuePrnt(source.getInputValuePrnt());
 		target.setPseudonymized(source.isPseudonymized());
 	}
 

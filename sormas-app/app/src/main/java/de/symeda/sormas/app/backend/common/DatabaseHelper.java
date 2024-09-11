@@ -200,7 +200,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 363;
+	public static final int DATABASE_VERSION = 365;
 
 	private static DatabaseHelper instance = null;
 
@@ -3193,7 +3193,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 				case 358:
 					currentVersion = 358;
-					getDao(Person.class).executeRaw("ALTER TABLE cases ADD COLUMN marriageStatus varchar(255);");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN marriageStatus varchar(255);");
 				case 359:
 					currentVersion = 359;
 					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN abdominalCramps varchar(255);");
@@ -3279,6 +3279,23 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN selectInpatientOutpatient VARCHAR(255);");
 					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN dateFirstSeen DATE;");
 					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN notifyDistrictDate DATE;");
+
+				case 363:
+					currentVersion = 363;
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN sampleDispatchMode VARCHAR(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN ipSampleSent VARCHAR(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN ipSampleTestResultsString VARCHAR(512);");
+
+				case 364:
+					currentVersion = 364;
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN selectedResultIGM VARCHAR(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN selectedResultIGMDate DATE;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN selectedResultPcr VARCHAR(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN selectedResultPcrDate DATE;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN selectedResultPrnt VARCHAR(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN selectedResultPrntDate DATE;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN inputValuePrnt VARCHAR(255);");
+
 				// ATTENTION: break should only be done after last version
 				break;
 			default:
