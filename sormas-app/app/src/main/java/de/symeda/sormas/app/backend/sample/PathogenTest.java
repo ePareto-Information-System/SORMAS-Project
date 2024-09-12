@@ -35,6 +35,7 @@ import javax.persistence.Transient;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
+import de.symeda.sormas.api.sample.FinalClassification;
 import de.symeda.sormas.api.sample.PCRTestSpecification;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
@@ -83,6 +84,8 @@ public class PathogenTest extends PseudonymizableAdo {
 
 	@Column
 	private String typingId;
+	@Column
+	private String virusDetectionGenotype;
 
 	@Enumerated(EnumType.STRING)
 	@Column
@@ -120,6 +123,11 @@ public class PathogenTest extends PseudonymizableAdo {
 
 	@Column
 	private boolean viaLims;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateLabResultsSentDistrict;
+
+	@Enumerated(EnumType.STRING)
+	private FinalClassification finalClassification;
 
 	public Sample getSample() {
 		return sample;
@@ -197,6 +205,14 @@ public class PathogenTest extends PseudonymizableAdo {
 
 	public String getTypingId() {
 		return typingId;
+	}
+
+	public String getVirusDetectionGenotype() {
+		return virusDetectionGenotype;
+	}
+
+	public void setVirusDetectionGenotype(String virusDetectionGenotype) {
+		this.virusDetectionGenotype = virusDetectionGenotype;
 	}
 
 	public void setTypingId(String typingId) {
@@ -305,6 +321,22 @@ public class PathogenTest extends PseudonymizableAdo {
 
 	public void setViaLims(boolean viaLims) {
 		this.viaLims = viaLims;
+	}
+
+	public Date getDateLabResultsSentDistrict() {
+		return dateLabResultsSentDistrict;
+	}
+
+	public void setDateLabResultsSentDistrict(Date dateLabResultsSentDistrict) {
+		this.dateLabResultsSentDistrict = dateLabResultsSentDistrict;
+	}
+
+	public FinalClassification getFinalClassification() {
+		return finalClassification;
+	}
+
+	public void setFinalClassification(FinalClassification finalClassification) {
+		this.finalClassification = finalClassification;
 	}
 
 	@Override
