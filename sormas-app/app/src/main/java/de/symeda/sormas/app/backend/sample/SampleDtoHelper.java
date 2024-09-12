@@ -118,6 +118,7 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setSelectedResultPrnt(source.getSelectedResultPrnt());
 		target.setSelectedResultPrntDate(source.getSelectedResultPrntDate());
 		target.setInputValuePrnt(source.getInputValuePrnt());
+		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
 
 		target.setSormasToSormasOriginInfo(
 			sormasToSormasOriginInfoDtoHelper.fillOrCreateFromDto(target.getSormasToSormasOriginInfo(), source.getSormasToSormasOriginInfo()));
@@ -202,6 +203,7 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setSelectedResultPrntDate(source.getSelectedResultPrntDate());
 		target.setInputValuePrnt(source.getInputValuePrnt());
 		target.setPseudonymized(source.isPseudonymized());
+		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
 	}
 
     @Override

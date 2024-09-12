@@ -175,7 +175,10 @@ public class Sample extends PseudonymizableAdo {
 	private Set<PathogenTestType> requestedPathogenTests;
 	@Transient
 	private Set<IpSampleTestType> ipSampleTestResults;
-
+	@Transient
+	private Set<SampleMaterial> requestedSampleMaterials;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String requestedSampleMaterialsString;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String ipSampleTestResultsString;
 	@Enumerated(EnumType.STRING)
@@ -458,6 +461,46 @@ public class Sample extends PseudonymizableAdo {
 	public void setRequestedAdditionalTestsString(String requestedAdditionalTestsString) {
 		this.requestedAdditionalTestsString = requestedAdditionalTestsString;
 		requestedAdditionalTests = null;
+	}
+
+	@Transient
+	public Set<SampleMaterial> getRequestedSampleMaterials() {
+		if (requestedSampleMaterials == null) {
+			if (StringUtils.isEmpty(requestedSampleMaterialsString)) {
+				requestedSampleMaterials = new HashSet<>();
+			} else {
+				requestedSampleMaterials =
+						Arrays.stream(requestedSampleMaterialsString.split(",")).map(SampleMaterial::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return requestedSampleMaterials;
+	}
+
+	public void setRequestedSampleMaterials(Set<SampleMaterial> requestedSampleMaterials) {
+		this.requestedSampleMaterials = requestedSampleMaterials;
+
+		if (this.requestedSampleMaterials == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		requestedSampleMaterials.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		requestedSampleMaterialsString = sb.toString();
+	}
+
+	public String getRequestedSampleMaterialsString() {
+		return requestedSampleMaterialsString;
+	}
+
+	public void setRequestedSampleMaterialsString(String requestedSampleMaterialsString) {
+		this.requestedSampleMaterialsString = requestedSampleMaterialsString;
+		requestedSampleMaterials = null;
 	}
 
 	@Transient

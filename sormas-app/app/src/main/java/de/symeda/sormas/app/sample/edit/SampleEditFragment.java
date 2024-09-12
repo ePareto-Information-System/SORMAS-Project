@@ -20,6 +20,7 @@ import static android.view.View.VISIBLE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -63,8 +64,6 @@ import de.symeda.sormas.app.backend.sample.PathogenTest;
 import de.symeda.sormas.app.backend.sample.Sample;
 import de.symeda.sormas.app.barcode.BarcodeActivity;
 import de.symeda.sormas.app.component.Item;
-import de.symeda.sormas.app.component.controls.ControlPropertyField;
-import de.symeda.sormas.app.component.controls.ValueChangeListener;
 import de.symeda.sormas.app.databinding.FragmentSampleEditLayoutBinding;
 import de.symeda.sormas.app.sample.read.SampleReadActivity;
 import de.symeda.sormas.app.util.DataUtils;
@@ -84,6 +83,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	private List<Item> samplePurposeList;
 	private List<Item> samplingReasonList;
 	private List<String> requestedPathogenTests = new ArrayList<>();
+	private List<String> requestedSampleMaterials = new ArrayList<>();
 	private List<String> requestedAdditionalTests = new ArrayList<>();
 	private List<Item> finalTestResults;
 	private List<String> ipSampleTestResults = new ArrayList<>();
@@ -194,6 +194,13 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			}
 		}
 
+/*		List<SampleMaterial> values = Arrays.stream(SampleMaterial.getYellowFeverMateriealTypes())
+				.filter(c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
+				.collect(Collectors.toList());
+
+		requestedSampleMaterials.clear();
+		requestedSampleMaterials.add(values.toString());*/
+
 		for (IpSampleTestType ipSampleTestType : record.getIpSampleTestResults()) {
 			ipSampleTestResults.clear();
 			ipSampleTestResults.add(ipSampleTestType.toString());
@@ -239,6 +246,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		contentBinding.setSampleDispatchModeClass(SampleDispatchMode.class);
 		contentBinding.setYesNoClass(YesNo.class);
 		contentBinding.setIpSampleTestTypeClass(IpSampleTestType.class);
+		contentBinding.setSampleMaterialClass(SampleMaterial.class);
 
 		if(record.getAssociatedCase().getDisease() != null){
 			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_EDIT);
@@ -363,6 +371,27 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		if (!ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
 				&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
 			contentBinding.additionalTestingLayout.setVisibility(GONE);
+		}
+		contentBinding.sampleRequestedSampleMaterialsTags.setTags(requestedSampleMaterials);
+
+		List<SampleMaterial> allowedMaterials = Arrays.asList(
+				SampleMaterial.WHOLE_BLOOD,
+				SampleMaterial.SERUM,
+				SampleMaterial.PLASMA
+		);
+
+		List<Item> filteredSampleMaterialList = sampleMaterialList.stream()
+				.filter(item -> allowedMaterials.contains(item.getValue()))
+				.collect(Collectors.toList());
+
+		contentBinding.sampleRequestedSampleMaterials.initializeCheckBoxGroup(filteredSampleMaterialList);
+
+		if (record.getRequestedSampleMaterials() != null) {
+			contentBinding.sampleRequestedSampleMaterials.setValue(
+					record.getRequestedSampleMaterials().stream()
+							.filter(allowedMaterials::contains)
+							.collect(Collectors.toList())
+			);
 		}
 
 		switch (record.getAssociatedCase().getDisease()){
