@@ -32,9 +32,11 @@ import com.googlecode.openbeans.PropertyDescriptor;
 
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.epidata.EpiDataDto;
+import de.symeda.sormas.api.epidata.PlaceManaged;
 import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -53,7 +55,6 @@ import de.symeda.sormas.app.backend.exposure.Exposure;
 import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
 import de.symeda.sormas.app.caze.edit.CaseEditActivity;
 import de.symeda.sormas.app.core.IEntryItemOnClickListener;
-import de.symeda.sormas.app.core.YesNo;
 import de.symeda.sormas.app.databinding.FragmentEditEpidLayoutBinding;
 import de.symeda.sormas.app.util.FieldVisibilityAndAccessHelper;
 
@@ -382,6 +383,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 
 		contentBinding.setData(record);
 		contentBinding.setYesNoClass(YesNo.class);
+		contentBinding.setPlaceManagedClass(PlaceManaged.class);
 		contentBinding.setExposureList(getExposureList());
 		contentBinding.setExposureItemClickCallback(onExposureItemClickListener);
 		contentBinding.setExposureListBindCallback(

@@ -24,6 +24,7 @@ import javax.persistence.Enumerated;
 
 import com.j256.ormlite.table.DatabaseTable;
 
+import de.symeda.sormas.api.epidata.PlaceManaged;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
@@ -62,6 +63,15 @@ public class EpiData extends PseudonymizableAdo {
 	private List<PersonTravelHistory> personTravelHistories = new ArrayList<>();
 	private List<ContainmentMeasure> containmentMeasures = new ArrayList<>();
 	private List<ContaminationSource> contaminationSources = new ArrayList<>();
+
+	@Enumerated(EnumType.STRING)
+	private YesNo receivedHealthEducation;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo patientEnteredWaterSource;
+
+	@Enumerated(EnumType.STRING)
+	private PlaceManaged placeManaged;
 
 	public YesNo getExposureDetailsKnown() {
 		return exposureDetailsKnown;
@@ -151,7 +161,29 @@ public class EpiData extends PseudonymizableAdo {
 		this.contaminationSources = contaminationSources;
 	}
 
+	public YesNo getReceivedHealthEducation() {
+		return receivedHealthEducation;
+	}
 
+	public void setReceivedHealthEducation(YesNo receivedHealthEducation) {
+		this.receivedHealthEducation = receivedHealthEducation;
+	}
+
+	public YesNo getPatientEnteredWaterSource() {
+		return patientEnteredWaterSource;
+	}
+
+	public void setPatientEnteredWaterSource(YesNo patientEnteredWaterSource) {
+		this.patientEnteredWaterSource = patientEnteredWaterSource;
+	}
+
+	public PlaceManaged getPlaceManaged() {
+		return placeManaged;
+	}
+
+	public void setPlaceManaged(PlaceManaged placeManaged) {
+		this.placeManaged = placeManaged;
+	}
 
 	@Override
 	public String getI18nPrefix() {

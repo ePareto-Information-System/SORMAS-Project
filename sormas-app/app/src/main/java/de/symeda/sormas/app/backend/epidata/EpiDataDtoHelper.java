@@ -141,6 +141,10 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		target.setPersonTravelHistories(personTravelHistories);
 
 		target.setPseudonymized(source.isPseudonymized());
+
+		target.setReceivedHealthEducation(source.getReceivedHealthEducation());
+		target.setPatientEnteredWaterSource(source.getPatientEnteredWaterSource());
+		target.setPlaceManaged(source.getPlaceManaged());
 	}
 
 	@Override
@@ -197,6 +201,9 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 			}
 		}
 		target.setPersonTravelHistories(personTravelHistoryDtos);
+		target.setReceivedHealthEducation(source.getReceivedHealthEducation());
+		target.setPatientEnteredWaterSource(source.getPatientEnteredWaterSource());
+		target.setPlaceManaged(source.getPlaceManaged());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}
