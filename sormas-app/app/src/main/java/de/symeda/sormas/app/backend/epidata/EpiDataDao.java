@@ -70,6 +70,9 @@ public class EpiDataDao extends AbstractAdoDao<EpiData> {
 	private EpiData initLazyData(EpiData epiData) {
 		epiData.setExposures(DatabaseHelper.getExposureDao().getByEpiData(epiData));
 		epiData.setActivitiesAsCase(DatabaseHelper.getActivityAsCaseDao().getByEpiData(epiData));
+		epiData.setPersonTravelHistories(DatabaseHelper.getPersonTravelHistoryDao().getByEpiData(epiData));
+		epiData.setContaminationSources(DatabaseHelper.getContaminationSourceDao().getByEpiData(epiData));
+		epiData.setContainmentMeasures(DatabaseHelper.getContainmentMeasureDao().getByEpiData(epiData));
 
 		return epiData;
 	}
@@ -82,6 +85,12 @@ public class EpiDataDao extends AbstractAdoDao<EpiData> {
 		DatabaseHelper.getExposureDao().saveCollectionWithSnapshot(DatabaseHelper.getExposureDao().getByEpiData(ado), ado.getExposures(), ado);
 		DatabaseHelper.getActivityAsCaseDao()
 			.saveCollectionWithSnapshot(DatabaseHelper.getActivityAsCaseDao().getByEpiData(ado), ado.getActivitiesAsCase(), ado);
+		DatabaseHelper.getPersonTravelHistoryDao().saveCollectionWithSnapshot(DatabaseHelper.getPersonTravelHistoryDao().getByEpiData(ado),
+			ado.getPersonTravelHistories(), ado);
+		DatabaseHelper.getContaminationSourceDao().saveCollectionWithSnapshot(DatabaseHelper.getContaminationSourceDao().getByEpiData(ado),
+			ado.getContaminationSources(), ado);
+		DatabaseHelper.getContainmentMeasureDao().saveCollectionWithSnapshot(DatabaseHelper.getContainmentMeasureDao().getByEpiData(ado),
+			ado.getContainmentMeasures(), ado);
 
 		return snapshot;
 	}
@@ -95,6 +104,9 @@ public class EpiDataDao extends AbstractAdoDao<EpiData> {
 
 		date = DateHelper.getLatestDate(date, DatabaseHelper.getExposureDao().getLatestChangeDate());
 		date = DateHelper.getLatestDate(date, DatabaseHelper.getActivityAsCaseDao().getLatestChangeDate());
+		date = DateHelper.getLatestDate(date, DatabaseHelper.getPersonTravelHistoryDao().getLatestChangeDate());
+		date = DateHelper.getLatestDate(date, DatabaseHelper.getContaminationSourceDao().getLatestChangeDate());
+		date = DateHelper.getLatestDate(date, DatabaseHelper.getContainmentMeasureDao().getLatestChangeDate());
 
 		return date;
 	}

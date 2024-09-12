@@ -94,6 +94,10 @@ import de.symeda.sormas.app.backend.config.ConfigDao;
 import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.contact.Contact;
 import de.symeda.sormas.app.backend.contact.ContactDao;
+import de.symeda.sormas.app.backend.containmentmeasure.ContainmentMeasure;
+import de.symeda.sormas.app.backend.containmentmeasure.ContainmentMeasureDao;
+import de.symeda.sormas.app.backend.contaminationsource.ContaminationSource;
+import de.symeda.sormas.app.backend.contaminationsource.ContaminationSourceDao;
 import de.symeda.sormas.app.backend.customizableenum.CustomizableEnumValue;
 import de.symeda.sormas.app.backend.customizableenum.CustomizableEnumValueDao;
 import de.symeda.sormas.app.backend.disease.DiseaseConfiguration;
@@ -135,6 +139,8 @@ import de.symeda.sormas.app.backend.person.Person;
 import de.symeda.sormas.app.backend.person.PersonContactDetail;
 import de.symeda.sormas.app.backend.person.PersonContactDetailDao;
 import de.symeda.sormas.app.backend.person.PersonDao;
+import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
+import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistoryDao;
 import de.symeda.sormas.app.backend.region.Area;
 import de.symeda.sormas.app.backend.region.AreaDao;
 import de.symeda.sormas.app.backend.region.Community;
@@ -200,7 +206,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 359;
+	public static final int DATABASE_VERSION = 360;
 
 	private static DatabaseHelper instance = null;
 
@@ -278,6 +284,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.clearTable(connectionSource, CampaignFormData.class);
 			TableUtils.clearTable(connectionSource, LbdsSync.class);
 			TableUtils.clearTable(connectionSource, Environment.class);
+			TableUtils.clearTable(connectionSource, PersonTravelHistory.class);
+			TableUtils.clearTable(connectionSource, ContaminationSource.class);
+			TableUtils.clearTable(connectionSource, ContainmentMeasure.class);
 
 			if (clearInfrastructure) {
 				TableUtils.clearTable(connectionSource, UserUserRole.class);
@@ -390,6 +399,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, FormBuilder.class);
 			TableUtils.createTable(connectionSource, FormField.class);
 			TableUtils.createTable(connectionSource, FormBuilderFormField.class);
+			TableUtils.createTable(connectionSource, PersonTravelHistory.class);
+			TableUtils.createTable(connectionSource, ContaminationSource.class);
+			TableUtils.createTable(connectionSource, ContainmentMeasure.class);
 		} catch (SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Can't build database", e);
 			throw new RuntimeException(e);
@@ -3285,6 +3297,77 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN trimester VARCHAR(255);");
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN postpartum VARCHAR(10);");
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN pregnant VARCHAR(10);");
+			case 359:
+				getDao(PersonTravelHistory.class).executeRaw(
+						"CREATE TABLE persontravelhistory ("
+								+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
+								+ "    uuid VARCHAR(36) NOT NULL UNIQUE,"
+								+ "    changedate BIGINT NOT NULL,"
+								+ "		pseudonymized SMALLINT,"
+								+ "    creationdate BIGINT NOT NULL,"
+								+ "    epidata_id BIGINT NOT NULL,"
+								+ "    travelPeriodType VARCHAR(255),"
+								+ "    dateFrom VARCHAR(255),"
+								+ "    dateTo VARCHAR(255),"
+								+ "    village VARCHAR(255),"
+								+ "    subDistrict_id BIGINT,"
+								+ "    district_id BIGINT,"
+								+ "    region_id VARCHAR(255),"
+								+ "		lastOpenedDate BIGINT,"
+								+ "		localChangeDate BIGINT NOT NULL,"
+								+ "		modified SMALLINT,"
+								+ "		snapshot SMALLINT,"
+								+ "		UNIQUE (snapshot ASC, uuid ASC)"
+								+ ");"
+				);
+
+				getDao(ContaminationSource.class).executeRaw(
+						"CREATE TABLE contaminationsources ("
+								+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
+								+ "    uuid VARCHAR(36) NOT NULL UNIQUE,"
+								+ "    changedate BIGINT NOT NULL,"
+								+ "		pseudonymized SMALLINT,"
+								+ "    creationdate BIGINT NOT NULL,"
+								+ "    epidata_id BIGINT NOT NULL,"
+								+ "    contaminationType VARCHAR(255),"
+								+ "    name VARCHAR(255),"
+								+ "    longitude VARCHAR(255),"
+								+ "    latitude VARCHAR(255),"
+								+ "    type VARCHAR(255),"
+								+ "    source VARCHAR(255),"
+								+ "    treatedWithAbate VARCHAR(255),"
+								+ "    abateTreatmentDate VARCHAR(255),"
+								+ "		lastOpenedDate BIGINT,"
+								+ "		localChangeDate BIGINT NOT NULL,"
+								+ "		modified SMALLINT,"
+								+ "		snapshot SMALLINT,"
+								+ "		UNIQUE (snapshot ASC, uuid ASC)"
+								+ ");"
+				);
+
+				getDao(ContainmentMeasure.class).executeRaw(
+						"CREATE TABLE containmentMeasures ("
+								+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
+								+ "    uuid VARCHAR(36) NOT NULL UNIQUE,"
+								+ "		pseudonymized SMALLINT,"
+								+ "    changedate BIGINT NOT NULL,"
+								+ "    creationdate BIGINT NOT NULL,"
+								+ "    epidata_id BIGINT NOT NULL,"
+								+ "    locationOfWorm VARCHAR(255),"
+								+ "    dateWormDetectedEmergence VARCHAR(255),"
+								+ "    dateWormDetectBySupervisor VARCHAR(255),"
+								+ "    dateConfirmed VARCHAR(255),"
+								+ "    dateOfGuineaWormExpelled VARCHAR(255),"
+								+ "    regularBandaging VARCHAR(255),"
+								+ "    completelyExtracted VARCHAR(255),"
+								+ "		lastOpenedDate BIGINT,"
+								+ "		localChangeDate BIGINT NOT NULL,"
+								+ "		modified SMALLINT,"
+								+ "		snapshot SMALLINT,"
+								+ "		UNIQUE (snapshot ASC, uuid ASC)"
+								+ ");"
+				);
+
 				// ATTENTION: break should only be done after last version
 				break;
 			default:
@@ -4094,6 +4177,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.dropTable(connectionSource, FormField.class, true);
 			TableUtils.dropTable(connectionSource, FormBuilder.class, true);
 			TableUtils.dropTable(connectionSource, FormBuilderFormField.class, true);
+			TableUtils.dropTable(connectionSource, PersonTravelHistory.class, true);
+			TableUtils.dropTable(connectionSource, ContaminationSource.class, true);
+			TableUtils.dropTable(connectionSource, ContainmentMeasure.class, true);
 
 			if (oldVersion < 30) {
 				TableUtils.dropTable(connectionSource, Config.class, true);
@@ -4233,6 +4319,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					dao = (AbstractAdoDao<ADO>) new FormFieldDao((Dao<FormField, Long>) innerDao);
 				} else if (type.equals(FormBuilder.class)) {
 					dao = (AbstractAdoDao<ADO>) new FormBuilderDao((Dao<FormBuilder, Long>) innerDao, super.getDao(FormBuilderFormField.class));
+				} else if (type.equals(PersonTravelHistory.class)) {
+					dao = (AbstractAdoDao<ADO>) new PersonTravelHistoryDao((Dao<PersonTravelHistory, Long>) innerDao);
+				} else if (type.equals(ContaminationSource.class)) {
+					dao = (AbstractAdoDao<ADO>) new ContaminationSourceDao((Dao<ContaminationSource, Long>) innerDao);
+				} else if (type.equals(ContainmentMeasure.class)) {
+					dao = (AbstractAdoDao<ADO>) new ContainmentMeasureDao((Dao<ContainmentMeasure, Long>) innerDao);
 				} else {
 					throw new UnsupportedOperationException(type.toString());
 				}
@@ -4526,6 +4618,18 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 //	}
 	public static EnvironmentDao getEnvironmentDao() {
 		return (EnvironmentDao) getAdoDao(Environment.class);
+	}
+
+	public static PersonTravelHistoryDao getPersonTravelHistoryDao() {
+		return (PersonTravelHistoryDao) getAdoDao(PersonTravelHistory.class);
+	}
+
+	public static ContaminationSourceDao getContaminationSourceDao() {
+		return (ContaminationSourceDao) getAdoDao(ContaminationSource.class);
+	}
+
+	public static ContainmentMeasureDao getContainmentMeasureDao() {
+		return (ContainmentMeasureDao) getAdoDao(ContainmentMeasure.class);
 	}
 
 	/**

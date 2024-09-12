@@ -71,6 +71,8 @@ import de.symeda.sormas.app.backend.common.DaoException;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.contact.Contact;
+import de.symeda.sormas.app.backend.containmentmeasure.ContainmentMeasure;
+import de.symeda.sormas.app.backend.contaminationsource.ContaminationSource;
 import de.symeda.sormas.app.backend.epidata.EpiData;
 import de.symeda.sormas.app.backend.event.Event;
 import de.symeda.sormas.app.backend.event.EventCriteria;
@@ -78,6 +80,7 @@ import de.symeda.sormas.app.backend.event.EventEditAuthorization;
 import de.symeda.sormas.app.backend.event.EventParticipant;
 import de.symeda.sormas.app.backend.exposure.Exposure;
 import de.symeda.sormas.app.backend.person.Person;
+import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
 import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.District;
 import de.symeda.sormas.app.backend.region.Region;
@@ -155,6 +158,21 @@ public class CaseDao extends AbstractAdoDao<Case> {
 		Date activityAsCaseDate = getLatestChangeDateSubJoin(EpiData.TABLE_NAME, Case.EPI_DATA, ActivityAsCase.TABLE_NAME);
 		if (activityAsCaseDate != null && activityAsCaseDate.after(date)) {
 			date = activityAsCaseDate;
+		}
+
+		Date personTravelHistoryDate = getLatestChangeDateSubJoin(EpiData.TABLE_NAME, Case.EPI_DATA, PersonTravelHistory.TABLE_NAME);
+		if (personTravelHistoryDate != null && personTravelHistoryDate.after(date)) {
+			date = personTravelHistoryDate;
+		}
+
+		Date containmentMeasureDate = getLatestChangeDateSubJoin(EpiData.TABLE_NAME, Case.EPI_DATA, ContainmentMeasure.TABLE_NAME);
+		if (containmentMeasureDate != null && containmentMeasureDate.after(date)) {
+			date = containmentMeasureDate;
+		}
+
+		Date contaminationSourceDate = getLatestChangeDateSubJoin(EpiData.TABLE_NAME, Case.EPI_DATA, ContaminationSource.TABLE_NAME);
+		if (contaminationSourceDate != null && contaminationSourceDate.after(date)) {
+			date = contaminationSourceDate;
 		}
 
 		Date therapyDate = DatabaseHelper.getTherapyDao().getLatestChangeDate();

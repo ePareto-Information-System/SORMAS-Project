@@ -20,13 +20,22 @@ import java.util.List;
 
 import de.symeda.sormas.api.PostResponse;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
+import de.symeda.sormas.api.epidata.ContainmentMeasureDto;
+import de.symeda.sormas.api.epidata.ContaminationSourceDto;
 import de.symeda.sormas.api.epidata.EpiDataDto;
+import de.symeda.sormas.api.epidata.PersonTravelHistoryDto;
 import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCaseDtoHelper;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
+import de.symeda.sormas.app.backend.containmentmeasure.ContainmentMeasure;
+import de.symeda.sormas.app.backend.containmentmeasure.ContainmentMeasureDtoHelper;
+import de.symeda.sormas.app.backend.contaminationsource.ContaminationSource;
+import de.symeda.sormas.app.backend.contaminationsource.ContaminationSourceDtoHelper;
 import de.symeda.sormas.app.backend.exposure.Exposure;
 import de.symeda.sormas.app.backend.exposure.ExposureDtoHelper;
+import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
+import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistoryDtoHelper;
 import de.symeda.sormas.app.rest.NoConnectionException;
 import retrofit2.Call;
 
@@ -34,10 +43,16 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 
 	private final ExposureDtoHelper exposureDtoHelper;
 	private final ActivityAsCaseDtoHelper activityAsCaseDtoHelper;
+	private final PersonTravelHistoryDtoHelper personTravelHistoryDtoHelper;
+	private final ContaminationSourceDtoHelper contaminationSourceDtoHelper;
+	private final ContainmentMeasureDtoHelper containmentMeasureDtoHelper;
 
 	public EpiDataDtoHelper() {
 		exposureDtoHelper = new ExposureDtoHelper();
 		activityAsCaseDtoHelper = new ActivityAsCaseDtoHelper();
+		personTravelHistoryDtoHelper = new PersonTravelHistoryDtoHelper();
+		contaminationSourceDtoHelper = new ContaminationSourceDtoHelper();
+		containmentMeasureDtoHelper = new ContainmentMeasureDtoHelper();
 	}
 
 	@Override
@@ -95,6 +110,36 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		}
 		target.setActivitiesAsCase(activitiesAsCase);
 
+		List<ContainmentMeasure> containmentMeasures = new ArrayList<>();
+		if (!source.getContainmentMeasures().isEmpty()) {
+			for (ContainmentMeasureDto containmentMeasureDto : source.getContainmentMeasures()) {
+				ContainmentMeasure containmentMeasure = containmentMeasureDtoHelper.fillOrCreateFromDto(null, containmentMeasureDto);
+				containmentMeasure.setEpiData(target);
+				containmentMeasures.add(containmentMeasure);
+			}
+		}
+		target.setContainmentMeasures(containmentMeasures);
+
+		List<ContaminationSource> contaminationSources = new ArrayList<>();
+		if (!source.getContaminationSources().isEmpty()) {
+			for (ContaminationSourceDto contaminationSourceDto : source.getContaminationSources()) {
+				ContaminationSource contaminationSource = contaminationSourceDtoHelper.fillOrCreateFromDto(null, contaminationSourceDto);
+				contaminationSource.setEpiData(target);
+				contaminationSources.add(contaminationSource);
+			}
+		}
+		target.setContaminationSources(contaminationSources);
+
+		List<PersonTravelHistory> personTravelHistories = new ArrayList<>();
+		if (!source.getPersonTravelHistories().isEmpty()) {
+			for (PersonTravelHistoryDto personTravelHistoryDto : source.getPersonTravelHistories()) {
+				PersonTravelHistory personTravelHistory = personTravelHistoryDtoHelper.fillOrCreateFromDto(null, personTravelHistoryDto);
+				personTravelHistory.setEpiData(target);
+				personTravelHistories.add(personTravelHistory);
+			}
+		}
+		target.setPersonTravelHistories(personTravelHistories);
+
 		target.setPseudonymized(source.isPseudonymized());
 	}
 
@@ -125,6 +170,33 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 			}
 		}
 		target.setActivitiesAsCase(activityAsCaseDtos);
+
+		List<ContainmentMeasureDto> containmentMeasureDtos = new ArrayList<>();
+		if (!source.getContainmentMeasures().isEmpty()) {
+			for (ContainmentMeasure containmentMeasure : source.getContainmentMeasures()) {
+				ContainmentMeasureDto containmentMeasureDto = containmentMeasureDtoHelper.adoToDto(containmentMeasure);
+				containmentMeasureDtos.add(containmentMeasureDto);
+			}
+		}
+		target.setContainmentMeasures(containmentMeasureDtos);
+
+		List<ContaminationSourceDto> contaminationSourceDtos = new ArrayList<>();
+		if (!source.getContaminationSources().isEmpty()) {
+			for (ContaminationSource contaminationSource : source.getContaminationSources()) {
+				ContaminationSourceDto contaminationSourceDto = contaminationSourceDtoHelper.adoToDto(contaminationSource);
+				contaminationSourceDtos.add(contaminationSourceDto);
+			}
+		}
+		target.setContaminationSources(contaminationSourceDtos);
+
+		List<PersonTravelHistoryDto> personTravelHistoryDtos = new ArrayList<>();
+		if (!source.getPersonTravelHistories().isEmpty()) {
+			for (PersonTravelHistory personTravelHistory : source.getPersonTravelHistories()) {
+				PersonTravelHistoryDto personTravelHistoryDto = personTravelHistoryDtoHelper.adoToDto(personTravelHistory);
+				personTravelHistoryDtos.add(personTravelHistoryDto);
+			}
+		}
+		target.setPersonTravelHistories(personTravelHistoryDtos);
 
 		target.setPseudonymized(source.isPseudonymized());
 	}

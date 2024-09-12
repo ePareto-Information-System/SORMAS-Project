@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="de.symeda.sormas.api.i18n.I18nProperties" />
+        <import type="de.symeda.sormas.api.i18n.Captions" />
+
+        <variable name="data" type="de.symeda.sormas.app.backend.containmentmeasure.ContainmentMeasure" />
+        <variable name="index" type="java.lang.Integer" />
+
+        <variable name="callback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/row_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/controlReadTextMarginBottom"
+        android:background="@drawable/selector_list_section_row_background"
+        android:elevation="2dp"
+        android:onClickListener="@{(view) -> callback.onClick(view, data)}"
+        android:orientation="vertical"
+        android:padding="@dimen/rowListItemPadding">
+
+        <de.symeda.sormas.app.component.controls.ControlTextReadField
+            android:id="@+id/containmentMeasure_locationOfWorm"
+            android:textAlignment="viewEnd"
+            app:value="@{data.locationOfWorm}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/containmentMeasure_dateWormDetectedEmergence"
+                android:textAlignment="viewEnd"
+                app:value="@{data.dateWormDetectedEmergence}"
+                style="@style/ControlFirstOfTwoColumnsStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/containmentMeasure_dateWormDetectBySupervisor"
+                android:textAlignment="viewEnd"
+                app:value="@{data.dateWormDetectBySupervisor}"
+                style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/containmentMeasure_dateConfirmed"
+                app:value="@{data.dateConfirmed}"
+                style="@style/ControlSecondOfTwoColumnsStyle" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/containmentMeasure_dateOfGuineaWormExpelled"
+                android:textAlignment="viewEnd"
+                app:value="@{data.dateOfGuineaWormExpelled}"
+                style="@style/ControlFirstOfTwoColumnsStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/containmentMeasure_regularBandaging"
+                android:textAlignment="viewEnd"
+                app:value="@{data.regularBandaging}"
+                style="@style/ControlFirstOfTwoColumnsStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/containmentMeasure_completelyExtracted"
+                android:textAlignment="viewEnd"
+                app:value="@{data.completelyExtracted}"
+                style="@style/ControlFirstOfTwoColumnsStyle" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>
