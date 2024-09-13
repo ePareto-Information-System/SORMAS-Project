@@ -25,7 +25,7 @@
     android:id="@+id/base_layout">
 
     <data>
-        <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
+        <import type="de.symeda.sormas.api.utils.YesNo" />
         <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
         <import type="de.symeda.sormas.api.i18n.I18nProperties" />
         <import type="de.symeda.sormas.api.i18n.Strings" />
@@ -41,6 +41,8 @@
         <variable name="activityAsCaseList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.activityascase.ActivityAsCase&gt;" />
         <variable name="activityAsCaseItemClickCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
         <variable name="activityAsCaseListBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
+        <variable name="YesNoClass" type="Class" />
+
     </data>
 
     <ScrollView
@@ -61,12 +63,14 @@
                 android:padding="@dimen/fragment_padding">
 
                 <TextView
+                    android:id="@+id/exposureInvestigationHeading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{I18nProperties.getString(Strings.headingExposureInvestigation)}"
                     style="@style/SubHeadingCompactStyle" />
 
                 <TextView
+                    android:id="@+id/infoEpiDataFieldsHintHeading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:htmlValue="@{I18nProperties.getString(Strings.infoEpiDataFieldsHint)}"
@@ -166,6 +170,7 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/epiData_activityAsCaseDetailsKnown"
                     app:value="@={data.activityAsCaseDetailsKnown}"
+                    app:enumClass="@{YesNoClass}"
                     style="@style/ControlSingleColumnStyle"/>
 
                 <LinearLayout

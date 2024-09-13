@@ -191,9 +191,9 @@ public class ControlSwitchField extends ControlPropertyEditField<Object> {
 			if (btnValue instanceof YesNoUnknown && btnKey.equals(YesNoUnknown.UNKNOWN.toString())) {
 				btnKey = btnKey.substring(0, 3);
 			}
-			if (btnValue instanceof SymptomState && btnKey.equals(SymptomState.UNKNOWN.toString())) {
-				btnKey = btnKey.substring(0, 3);
-			}
+//			if (btnValue instanceof SymptomState && btnKey.equals(SymptomState.UNKNOWN.toString())) {
+//				btnKey = btnKey.substring(0, 3);
+//			}
 		}
 
 		if (btnKey != null) {

@@ -34,6 +34,7 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -186,12 +187,12 @@ public class EpidemiologicalDataReadFragment extends BaseReadFragment<FragmentRe
 	@Override
 	public void onAfterLayoutBinding(FragmentReadEpidLayoutBinding contentBinding) {
 		setFieldVisibilitiesAndAccesses(EpiDataDto.class, contentBinding.mainContent);
-		if (record.getExposureDetailsKnown() != YesNoUnknown.YES) {
+		if (record.getExposureDetailsKnown() != YesNo.YES) {
 			contentBinding.exposuresLayout.setVisibility(View.GONE);
 		}
 
 		if (getActivityRootData() instanceof Case) {
-			if (record.getActivityAsCaseDetailsKnown() != YesNoUnknown.YES) {
+			if (record.getActivityAsCaseDetailsKnown() != YesNo.YES) {
 				contentBinding.activitiesascaseLayout.setVisibility(View.GONE);
 			}
 		}

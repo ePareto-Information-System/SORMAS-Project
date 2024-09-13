@@ -24,7 +24,7 @@ import javax.persistence.Enumerated;
 
 import com.j256.ormlite.table.DatabaseTable;
 
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
@@ -41,67 +41,67 @@ public class EpiData extends PseudonymizableAdo {
 	public static final String I18N_PREFIX = "EpiData";
 
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown exposureDetailsKnown;
+	private YesNo exposureDetailsKnown;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown activityAsCaseDetailsKnown;
+	private YesNo activityAsCaseDetailsKnown;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown contactWithSourceCaseKnown;
+	private YesNo contactWithSourceCaseKnown;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown highTransmissionRiskArea;
+	private YesNo highTransmissionRiskArea;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown largeOutbreaksArea;
+	private YesNo largeOutbreaksArea;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown areaInfectedAnimals;
+	private YesNo areaInfectedAnimals;
 
 	private List<Exposure> exposures = new ArrayList<>();
 
 	private List<ActivityAsCase> activitiesAsCase = new ArrayList<>();
 
-	public YesNoUnknown getExposureDetailsKnown() {
+	public YesNo getExposureDetailsKnown() {
 		return exposureDetailsKnown;
 	}
 
-	public void setExposureDetailsKnown(YesNoUnknown exposureDetailsKnown) {
+	public void setExposureDetailsKnown(YesNo exposureDetailsKnown) {
 		this.exposureDetailsKnown = exposureDetailsKnown;
 	}
 
-	public YesNoUnknown getActivityAsCaseDetailsKnown() {
+	public YesNo getActivityAsCaseDetailsKnown() {
 		return activityAsCaseDetailsKnown;
 	}
 
-	public void setActivityAsCaseDetailsKnown(YesNoUnknown activityAsCaseDetailsKnown) {
+	public void setActivityAsCaseDetailsKnown(YesNo activityAsCaseDetailsKnown) {
 		this.activityAsCaseDetailsKnown = activityAsCaseDetailsKnown;
 	}
 
-	public YesNoUnknown getContactWithSourceCaseKnown() {
+	public YesNo getContactWithSourceCaseKnown() {
 		return contactWithSourceCaseKnown;
 	}
 
-	public void setContactWithSourceCaseKnown(YesNoUnknown contactWithSourceCaseKnown) {
+	public void setContactWithSourceCaseKnown(YesNo contactWithSourceCaseKnown) {
 		this.contactWithSourceCaseKnown = contactWithSourceCaseKnown;
 	}
 
-	public YesNoUnknown getHighTransmissionRiskArea() {
+	public YesNo getHighTransmissionRiskArea() {
 		return highTransmissionRiskArea;
 	}
 
-	public void setHighTransmissionRiskArea(YesNoUnknown highTransmissionRiskArea) {
+	public void setHighTransmissionRiskArea(YesNo highTransmissionRiskArea) {
 		this.highTransmissionRiskArea = highTransmissionRiskArea;
 	}
 
-	public YesNoUnknown getLargeOutbreaksArea() {
+	public YesNo getLargeOutbreaksArea() {
 		return largeOutbreaksArea;
 	}
 
-	public void setLargeOutbreaksArea(YesNoUnknown largeOutbreaksArea) {
+	public void setLargeOutbreaksArea(YesNo largeOutbreaksArea) {
 		this.largeOutbreaksArea = largeOutbreaksArea;
 	}
 
-	public YesNoUnknown getAreaInfectedAnimals() {
+	public YesNo getAreaInfectedAnimals() {
 		return areaInfectedAnimals;
 	}
 
-	public void setAreaInfectedAnimals(YesNoUnknown areaInfectedAnimals) {
+	public void setAreaInfectedAnimals(YesNo areaInfectedAnimals) {
 		this.areaInfectedAnimals = areaInfectedAnimals;
 	}
 

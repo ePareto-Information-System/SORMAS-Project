@@ -153,6 +153,9 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setHealthConditions(healthConditionsDtoHelper.fillOrCreateFromDto(target.getHealthConditions(), source.getHealthConditions()));
 
 		target.setVaccinationStatus(source.getVaccinationStatus());
+		target.setVaccinationType(source.getVaccinationType());
+		target.setNumberOfDoses(source.getNumberOfDoses());
+		target.setVaccinationDate(source.getVaccinationDate());
 		target.setSmallpoxVaccinationScar(source.getSmallpoxVaccinationScar());
 		target.setSmallpoxVaccinationReceived(source.getSmallpoxVaccinationReceived());
 		target.setSmallpoxLastVaccinationDate(source.getSmallpoxLastVaccinationDate());
@@ -236,6 +239,10 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setNotACaseReasonDetails(source.getNotACaseReasonDetails());
 		target.setFollowUpStatusChangeDate(source.getFollowUpStatusChangeDate());
 		target.setFollowUpStatusChangeUser(DatabaseHelper.getUserDao().getByReferenceDto(source.getFollowUpStatusChangeUser()));
+		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
+		target.setFunctionOfReportingOfficer(source.getFunctionOfReportingOfficer());
+		target.setReportingOfficerContactPhone(source.getReportingOfficerContactPhone());
+		target.setReportingOfficerEmail(source.getReportingOfficerEmail());
 	}
 
 	@Override
@@ -402,6 +409,9 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setClinicianEmail(source.getClinicianEmail());
 		target.setPregnant(source.getPregnant());
 		target.setVaccinationStatus(source.getVaccinationStatus());
+		target.setVaccinationType(source.getVaccinationType());
+		target.setNumberOfDoses(source.getNumberOfDoses());
+		target.setVaccinationDate(source.getVaccinationDate());
 		target.setSmallpoxVaccinationScar(source.getSmallpoxVaccinationScar());
 		target.setSmallpoxVaccinationReceived(source.getSmallpoxVaccinationReceived());
 		target.setSmallpoxLastVaccinationDate(source.getSmallpoxLastVaccinationDate());
@@ -493,6 +503,11 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		} else {
 			target.setHealthConditions(null);
 		}
+
+		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
+		target.setFunctionOfReportingOfficer(source.getFunctionOfReportingOfficer());
+		target.setReportingOfficerContactPhone(source.getReportingOfficerContactPhone());
+		target.setReportingOfficerEmail(source.getReportingOfficerEmail());
 
 	}
 

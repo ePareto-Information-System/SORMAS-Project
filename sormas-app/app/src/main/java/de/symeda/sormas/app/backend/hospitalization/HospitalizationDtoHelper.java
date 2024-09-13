@@ -76,6 +76,9 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		a.setHospitalizationReason(b.getHospitalizationReason());
 		a.setOtherHospitalizationReason(b.getOtherHospitalizationReason());
 		a.setHealthFacilityRecordNumber(b.getHealthFacilityRecordNumber());
+		a.setSelectInpatientOutpatient(b.getSelectInpatientOutpatient());
+		a.setDateFirstSeen(b.getDateFirstSeen());
+		a.setNotifyDistrictDate(b.getNotifyDistrictDate());
 
 
 		// It would be better to merge with the existing hospitalizations
@@ -108,6 +111,9 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		a.setHospitalizationReason(b.getHospitalizationReason());
 		a.setOtherHospitalizationReason(b.getOtherHospitalizationReason());
 		a.setHealthFacilityRecordNumber(b.getHealthFacilityRecordNumber());
+		a.setSelectInpatientOutpatient(b.getSelectInpatientOutpatient());
+		a.setDateFirstSeen(b.getDateFirstSeen());
+		a.setNotifyDistrictDate(b.getNotifyDistrictDate());
 
 		List<PreviousHospitalizationDto> previousHospitalizationDtos = new ArrayList<>();
 		for (PreviousHospitalization prevHosp : b.getPreviousHospitalizations()) {

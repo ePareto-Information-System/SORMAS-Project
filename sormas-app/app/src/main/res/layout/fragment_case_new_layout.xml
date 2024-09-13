@@ -122,6 +122,7 @@
                 style="@style/ControlSingleColumnStyle" />
 
             <TextView
+                android:id="@+id/caseData_headingCaseResponsibleJurisidction"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@{I18nProperties.getString(Strings.headingCaseResponsibleJurisidction)}"
@@ -308,6 +309,12 @@
                     app:required="true"
                     app:value="@={data.person.lastName}" />
 
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/caseData_otherName"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:required="false"
+                    app:value="@={data.person.otherName}" />
+
             </LinearLayout>
 
             <TextView
@@ -355,6 +362,26 @@
             <de.symeda.sormas.app.component.controls.ControlSpinnerField
                 android:id="@+id/person_presentCondition"
                 app:value="@={data.person.presentCondition}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_passportNumber"
+                app:value="@={data.person.passportNumber}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_nationalHealthId"
+                app:value="@={data.person.nationalHealthId}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_ghanaCard"
+                app:value="@={data.person.ghanaCard}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_phone"
+                app:value="@={data.person.phone}"
                 style="@style/ControlSingleColumnStyle" />
 
         </LinearLayout>

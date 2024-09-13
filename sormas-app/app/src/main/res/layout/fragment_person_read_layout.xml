@@ -68,6 +68,11 @@
                     app:value="@{data.lastName}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_otherName"
+                    app:value="@{data.otherName}"
+                    style="@style/ControlSingleColumnStyle" />
+
             </LinearLayout>
 
             <de.symeda.sormas.app.component.controls.ControlTextReadField
@@ -269,6 +274,23 @@
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_nationalHealthId"
                     app:value="@{data.nationalHealthId}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_ghanaCard"
+                    app:value="@{data.ghanaCard}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_phone"
+                    app:value="@{data.phone}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>

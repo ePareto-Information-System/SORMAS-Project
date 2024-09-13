@@ -69,6 +69,7 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setTestedDiseaseVariant(source.getTestedDiseaseVariant());
 		target.setTestedDiseaseDetails(source.getTestedDiseaseDetails());
 		target.setTestedDiseaseVariantDetails(source.getTestedDiseaseVariantDetails());
+		target.setVirusDetectionGenotype(source.getVirusDetectionGenotype());
 		target.setTypingId(source.getTypingId());
 		target.setTestResultVerified(source.getTestResultVerified());
 		target.setTestResultText(source.getTestResultText());
@@ -76,6 +77,8 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setSerotype(source.getSerotype());
 		target.setCqValue(source.getCqValue());
 		target.setReportDate(source.getReportDate());
+		target.setDateLabResultsSentDistrict(source.getDateLabResultsSentDistrict());
+		target.setFinalClassification(source.getFinalClassification());
 		target.setViaLims(source.isViaLims());
 		target.setLab(DatabaseHelper.getFacilityDao().getByReferenceDto(source.getLab()));
 		target.setLabDetails(source.getLabDetails());
@@ -101,6 +104,7 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setTestedDiseaseVariant(source.getTestedDiseaseVariant());
 		target.setTestedDiseaseDetails(source.getTestedDiseaseDetails());
 		target.setTestedDiseaseVariantDetails(source.getTestedDiseaseVariantDetails());
+		target.setVirusDetectionGenotype(source.getVirusDetectionGenotype());
 		target.setTypingId(source.getTypingId());
 
 		if (source.getLab() != null) {
@@ -117,6 +121,8 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setSerotype(source.getSerotype());
 		target.setCqValue(source.getCqValue());
 		target.setReportDate(source.getReportDate());
+		target.setDateLabResultsSentDistrict(source.getDateLabResultsSentDistrict());
+		target.setFinalClassification(source.getFinalClassification());
 		target.setViaLims(source.isViaLims());
 
 		if (source.getLabUser() != null) {

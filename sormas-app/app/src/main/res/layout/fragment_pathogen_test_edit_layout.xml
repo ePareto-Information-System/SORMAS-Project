@@ -116,6 +116,11 @@
                         app:dependencyParentValue3="@{PathogenTestType.SEQUENCING}"
                         app:value="@={data.typingId}"/>
 
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/pathogenTest_virusDetectionGenotype"
+                    app:value="@={data.virusDetectionGenotype}"
+                    style="@style/ControlSingleColumnStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlDateTimeField
                     android:id="@+id/pathogenTest_testDateTime"
                     app:dateHint="@string/caption_date_of_sampling"
@@ -188,6 +193,16 @@
                     app:singleLine="false"
                     app:maxLines="3"
                     app:value="@={data.testResultText}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/pathogenTest_dateLabResultsSentDistrict"
+                    app:value="@={data.dateLabResultsSentDistrict}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/pathogenTest_finalClassification"
+                    app:value="@={data.finalClassification}"
                     style="@style/ControlSingleColumnStyle" />
 
             </LinearLayout>

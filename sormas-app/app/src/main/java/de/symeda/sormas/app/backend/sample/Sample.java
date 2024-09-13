@@ -24,9 +24,11 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,14 +37,18 @@ import javax.persistence.Enumerated;
 import javax.persistence.Transient;
 
 import de.symeda.sormas.api.sample.AdditionalTestType;
+import de.symeda.sormas.api.sample.IpSampleTestType;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
+import de.symeda.sormas.api.sample.PosNegEq;
 import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.sample.SampleSource;
 import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.sample.SpecimenCondition;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.contact.Contact;
@@ -50,7 +56,6 @@ import de.symeda.sormas.app.backend.event.EventParticipant;
 import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfo;
 import de.symeda.sormas.app.backend.user.User;
-import de.symeda.sormas.app.core.YesNo;
 import de.symeda.sormas.app.util.DateFormatHelper;
 
 @Entity(name = Sample.TABLE_NAME)
@@ -168,7 +173,28 @@ public class Sample extends PseudonymizableAdo {
 
 	@Transient
 	private Set<PathogenTestType> requestedPathogenTests;
-
+	@Transient
+	private Set<IpSampleTestType> ipSampleTestResults;
+	@Transient
+	private Set<SampleMaterial> requestedSampleMaterials;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String requestedSampleMaterialsString;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String ipSampleTestResultsString;
+	@Enumerated(EnumType.STRING)
+	private PosNegEq selectedResultIGM;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date selectedResultIGMDate;
+	@Enumerated(EnumType.STRING)
+	private PosNegEq selectedResultPcr;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date selectedResultPcrDate;
+	@Enumerated(EnumType.STRING)
+	private PosNegEq selectedResultPrnt;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date selectedResultPrntDate;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String inputValuePrnt;
 	@Transient
 	private Set<AdditionalTestType> requestedAdditionalTests;
 
@@ -187,6 +213,12 @@ public class Sample extends PseudonymizableAdo {
 	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
 	@DatabaseField
 	private boolean ownershipHandedOver;
+	@Enumerated(EnumType.STRING)
+	private SampleDispatchMode sampleDispatchMode;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date sampleDispatchDate;
+	@Enumerated(EnumType.STRING)
+	private YesNo ipSampleSent;
 
 	public Case getAssociatedCase() {
 		return associatedCase;
@@ -413,6 +445,15 @@ public class Sample extends PseudonymizableAdo {
 		requestedPathogenTests = null;
 	}
 
+	public String getIpSampleTestResultsString() {
+		return ipSampleTestResultsString;
+	}
+
+	public void setIpSampleTestResultsString(String ipSampleTestResultsString) {
+		this.ipSampleTestResultsString = ipSampleTestResultsString;
+		ipSampleTestResults = null;
+	}
+
 	public String getRequestedAdditionalTestsString() {
 		return requestedAdditionalTestsString;
 	}
@@ -420,6 +461,46 @@ public class Sample extends PseudonymizableAdo {
 	public void setRequestedAdditionalTestsString(String requestedAdditionalTestsString) {
 		this.requestedAdditionalTestsString = requestedAdditionalTestsString;
 		requestedAdditionalTests = null;
+	}
+
+	@Transient
+	public Set<SampleMaterial> getRequestedSampleMaterials() {
+		if (requestedSampleMaterials == null) {
+			if (StringUtils.isEmpty(requestedSampleMaterialsString)) {
+				requestedSampleMaterials = new HashSet<>();
+			} else {
+				requestedSampleMaterials =
+						Arrays.stream(requestedSampleMaterialsString.split(",")).map(SampleMaterial::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return requestedSampleMaterials;
+	}
+
+	public void setRequestedSampleMaterials(Set<SampleMaterial> requestedSampleMaterials) {
+		this.requestedSampleMaterials = requestedSampleMaterials;
+
+		if (this.requestedSampleMaterials == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		requestedSampleMaterials.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		requestedSampleMaterialsString = sb.toString();
+	}
+
+	public String getRequestedSampleMaterialsString() {
+		return requestedSampleMaterialsString;
+	}
+
+	public void setRequestedSampleMaterialsString(String requestedSampleMaterialsString) {
+		this.requestedSampleMaterialsString = requestedSampleMaterialsString;
+		requestedSampleMaterials = null;
 	}
 
 	@Transient
@@ -452,6 +533,95 @@ public class Sample extends PseudonymizableAdo {
 			sb.substring(0, sb.lastIndexOf(","));
 		}
 		requestedPathogenTestsString = sb.toString();
+	}
+
+	@Transient
+
+	public Set<IpSampleTestType> getIpSampleTestResults() {
+		if (ipSampleTestResults == null) {
+			ipSampleTestResults = new HashSet<>();
+			if (!StringUtils.isEmpty(ipSampleTestResultsString)) {
+				String[] testTypes = ipSampleTestResultsString.split(",");
+				for (String testType : testTypes) {
+					ipSampleTestResults.add(IpSampleTestType.valueOf(testType));
+				}
+			}
+		}
+		return ipSampleTestResults;
+	}
+
+	public void setIpSampleTestResults(Set<IpSampleTestType> ipSampleTestResults) {
+		this.ipSampleTestResults = ipSampleTestResults;
+
+		if (this.ipSampleTestResults == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		ipSampleTestResults.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		ipSampleTestResultsString = sb.toString();
+	}
+
+	public PosNegEq getSelectedResultIGM() {
+		return selectedResultIGM;
+	}
+
+	public void setSelectedResultIGM(PosNegEq selectedResultIGM) {
+		this.selectedResultIGM = selectedResultIGM;
+	}
+
+	public Date getSelectedResultIGMDate() {
+		return selectedResultIGMDate;
+	}
+
+	public void setSelectedResultIGMDate(Date selectedResultIGMDate) {
+		this.selectedResultIGMDate = selectedResultIGMDate;
+	}
+
+	public PosNegEq getSelectedResultPcr() {
+		return selectedResultPcr;
+	}
+
+	public void setSelectedResultPcr(PosNegEq selectedResultPcr) {
+		this.selectedResultPcr = selectedResultPcr;
+	}
+
+	public Date getSelectedResultPcrDate() {
+		return selectedResultPcrDate;
+	}
+
+	public void setSelectedResultPcrDate(Date selectedResultPcrDate) {
+		this.selectedResultPcrDate = selectedResultPcrDate;
+	}
+
+	public PosNegEq getSelectedResultPrnt() {
+		return selectedResultPrnt;
+	}
+
+	public void setSelectedResultPrnt(PosNegEq selectedResultPrnt) {
+		this.selectedResultPrnt = selectedResultPrnt;
+	}
+
+	public Date getSelectedResultPrntDate() {
+		return selectedResultPrntDate;
+	}
+
+	public void setSelectedResultPrntDate(Date selectedResultPrntDate) {
+		this.selectedResultPrntDate = selectedResultPrntDate;
+	}
+
+	public String getInputValuePrnt() {
+		return inputValuePrnt;
+	}
+
+	public void setInputValuePrnt(String inputValuePrnt) {
+		this.inputValuePrnt = inputValuePrnt;
 	}
 
 	@Transient
@@ -566,5 +736,28 @@ public class Sample extends PseudonymizableAdo {
 
 	public void setOwnershipHandedOver(boolean ownershipHandedOver) {
 		this.ownershipHandedOver = ownershipHandedOver;
+	}
+
+	public SampleDispatchMode getSampleDispatchMode() {
+		return sampleDispatchMode;
+	}
+	public void setSampleDispatchMode(SampleDispatchMode sampleDispatchMode) {
+		this.sampleDispatchMode = sampleDispatchMode;
+	}
+
+	public Date getSampleDispatchDate() {
+		return sampleDispatchDate;
+	}
+
+	public void setSampleDispatchDate(Date sampleDispatchDate) {
+		this.sampleDispatchDate = sampleDispatchDate;
+	}
+
+	public de.symeda.sormas.api.utils.YesNo getIpSampleSent() {
+		return ipSampleSent;
+	}
+
+	public void setIpSampleSent(YesNo ipSampleSent) {
+		this.ipSampleSent = ipSampleSent;
 	}
 }

@@ -15,6 +15,8 @@
 
 package de.symeda.sormas.app.component.controls;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +36,7 @@ import androidx.databinding.BindingAdapter;
 import androidx.databinding.InverseBindingAdapter;
 import androidx.databinding.InverseBindingListener;
 
+import de.symeda.sormas.api.sample.IpSampleTestType;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.component.Item;
@@ -46,6 +49,22 @@ public class ControlCheckBoxGroupField extends ControlPropertyEditField<Object> 
 	private InverseBindingListener inverseBindingListener;
 	private Class<? extends Enum> enumClass = null;
 	private LinearLayout checkBoxesFrame;
+	public interface OnValueChangeListener {
+		void onValueChanged(List<String> selectedValues);
+	}
+
+	private OnValueChangeListener onValueChangeListener;
+
+	public void setOnValueChangeListener(OnValueChangeListener listener) {
+		this.onValueChangeListener = listener;
+	}
+
+	private void notifyValueChanged() {
+		if (onValueChangeListener != null) {
+			onValueChangeListener.onValueChanged(getSelectedValues());
+		}
+	}
+
 
 	// Constructors
 
@@ -93,6 +112,7 @@ public class ControlCheckBoxGroupField extends ControlPropertyEditField<Object> 
 			if (inverseBindingListener != null) {
 				inverseBindingListener.onChange();
 			}
+			notifyValueChanged();
 		});
 		return checkBox;
 	}
@@ -149,7 +169,7 @@ public class ControlCheckBoxGroupField extends ControlPropertyEditField<Object> 
 		return selectedElements;
 	}
 
-	@Override
+	/*@Override
 	protected void setFieldValue(Object value) {
 		if (value == null) {
 			uncheckAll();
@@ -160,6 +180,31 @@ public class ControlCheckBoxGroupField extends ControlPropertyEditField<Object> 
 				if (checkBox == null) {
 					throw new IllegalArgumentException(
 						"Passed list arguments contains an element that is not part of this ControlCheckBoxGroupField");
+				}
+
+				checkBox.setChecked(true);
+			}
+		}
+	}*/
+
+	@Override
+	protected void setFieldValue(Object value) {
+		if (value == null) {
+			uncheckAll();
+		} else {
+			Collection<?> elements;
+			if (value instanceof Collection) {
+				elements = (Collection<?>) value;
+			} else {
+				throw new IllegalArgumentException("Value must be a Collection (List or Set)");
+			}
+
+			for (Object element : elements) {
+				CheckBox checkBox = checkBoxes.get(element);
+
+				if (checkBox == null) {
+					throw new IllegalArgumentException(
+							"Passed collection contains an element that is not part of this ControlCheckBoxGroupField");
 				}
 
 				checkBox.setChecked(true);
@@ -214,4 +259,34 @@ public class ControlCheckBoxGroupField extends ControlPropertyEditField<Object> 
 	protected void changeVisualState(VisualState state) {
 		// TODO: Implement
 	}
+
+
+	public void initializeCheckBoxGroup(List<Item> items) {
+		suppressListeners = true;
+		removeAllItems();
+
+		int itemTotal = items.size();
+		for (int i = 0; i < items.size(); i++) {
+			addItem(i, itemTotal - 1, items.get(i));
+		}
+
+		suppressListeners = false;
+	}
+
+	public List<String> getSelectedValues() {
+		List<String> selectedValues = new ArrayList<>();
+
+		for (Map.Entry<Object, CheckBox> entry : checkBoxes.entrySet()) {
+			if (entry.getValue().isChecked()) {
+				if (entry.getKey() != null) {
+					selectedValues.add(entry.getKey().toString());
+				} else {
+					throw new IllegalArgumentException("Key is null and cannot be processed.");
+				}
+			}
+		}
+
+		return selectedValues;
+	}
+
 }

@@ -103,7 +103,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private NullableOptionGroup intensiveCareUnit;
 	private DateField intensiveCareUnitStart;
 	private DateField intensiveCareUnitEnd;
-	private ComboBox selectInpatientOutpatientField;
+	private ComboBox selectInpatientOutpatient;
 	OptionGroup tickSymptomField;
 	TextField physicianName;
 	TextField physicianNumber;
@@ -297,8 +297,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		patientVentilated = addField(HospitalizationDto.PATIENT_VENTILATED, NullableOptionGroup.class);
 		patientVentilated.setVisible(false);
 
-		selectInpatientOutpatientField = addField(HospitalizationDto.SELECT_INPATIENT_OUTPATIENT ,ComboBox.class);
-		selectInpatientOutpatientField.setVisible(false);
+		selectInpatientOutpatient = addField(HospitalizationDto.SELECT_INPATIENT_OUTPATIENT ,ComboBox.class);
+		selectInpatientOutpatient.setVisible(false);
 
 		intensiveCareUnitEnd = addField(HospitalizationDto.INTENSIVE_CARE_UNIT_END, DateField.class);
 		FieldHelper
@@ -370,7 +370,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		if (caze.getDisease() == Disease.MEASLES) {
 
-			selectInpatientOutpatientField.setVisible(true);
+			selectInpatientOutpatient.setVisible(true);
 			seenAtAHealthFacility.setVisible(true);
 			FieldHelper.setVisibleWhen(
 					seenAtAHealthFacility,
@@ -379,7 +379,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					true);
 
 			FieldHelper.setVisibleWhen(
-					selectInpatientOutpatientField,
+					selectInpatientOutpatient,
 					Arrays.asList(admissionDateField, dischargeDateField),
 					Arrays.asList(InpatOutpat.INPATIENT),
 					true);
@@ -558,7 +558,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 			dateFirstSeen.setVisible(true);
 			dateFirstSeen.setCaption("Date seen at health facility");
-			selectInpatientOutpatientField.setVisible(true);
+			selectInpatientOutpatient.setVisible(true);
 		}
 
 		if(caze.getDisease() == Disease.NEW_INFLUENZA){
@@ -655,7 +655,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		if(caze.getDisease() == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
 			dateFirstSeen.setVisible(true);
 			dateFirstSeen.setCaption("Date seen at health facility");
-			selectInpatientOutpatientField.setVisible(true);
+			selectInpatientOutpatient.setVisible(true);
 		}
 	}
 

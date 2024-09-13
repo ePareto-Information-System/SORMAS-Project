@@ -100,7 +100,8 @@
 		<class>de.symeda.sormas.backend.persontravelhistory.PersonTravelHistory</class>
 		<class>de.symeda.sormas.backend.contaminationsource.ContaminationSource</class>
 		<class>de.symeda.sormas.backend.containmentmeasure.ContainmentMeasure</class>
-
+		<class>de.symeda.sormas.backend.infrastructure.formbuilder.FormBuilder</class>
+		<class>de.symeda.sormas.backend.infrastructure.formfiield.FormField</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 
 		<shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>

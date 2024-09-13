@@ -87,6 +87,8 @@ public class Location extends PseudonymizableAdo {
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String postalCode;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String landMark;
 	@Column(length = CHARACTER_LIMIT_BIG)
 	private String street;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
@@ -218,6 +220,10 @@ public class Location extends PseudonymizableAdo {
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
 	}
+
+	public  String getLandMark(){return  landMark;}
+
+	public void setLandMark(String landMark){this.landMark = landMark;}
 
 	@Bindable
 	public String getStreet() {

@@ -33,6 +33,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.symeda.sormas.api.CountryHelper;
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.area.AreaType;
@@ -56,6 +58,7 @@ import de.symeda.sormas.app.core.notification.NotificationHelper;
 import de.symeda.sormas.app.core.notification.NotificationType;
 import de.symeda.sormas.app.databinding.DialogLocationLayoutBinding;
 import de.symeda.sormas.app.util.DataUtils;
+import de.symeda.sormas.app.util.DiseaseFieldHandler;
 import de.symeda.sormas.app.util.FieldVisibilityAndAccessHelper;
 import de.symeda.sormas.app.util.InfrastructureDaoHelper;
 import de.symeda.sormas.app.util.InfrastructureFieldsDependencyHandler;
@@ -436,5 +439,22 @@ public class LocationDialog extends FormDialog {
 			contentBinding.locationFacility.setValue(oldFacility);
 			contentBinding.locationFacilityDetails.setValue(oldDetails);
 		});
+	}
+
+	/**
+	 * Show or hide fields based on the selected disease
+	 *
+	 * @param caseDisease
+	 *            the selected disease
+	 * @param formType
+	 *            the form type
+	 * Call this method after the dialog has been shown which is after the show() method
+	 */
+
+	public void showHideFieldsForDisease(Disease caseDisease, FormType formType) {
+		if (caseDisease == null || contentBinding.mainContent == null) {
+			return;
+		}
+		super.hideFieldsForDisease(caseDisease, contentBinding.mainContent, formType);
 	}
 }

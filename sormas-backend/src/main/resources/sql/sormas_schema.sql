@@ -15071,4 +15071,58 @@ INSERT INTO schema_version(version_number, comment) VALUES (707, 'Dropped fields
 UPDATE samples SET samplematerial = 'BLOOD' WHERE samplematerial = 'WHOLE_BLOOD';
 INSERT INTO schema_version (version_number, comment) VALUES (708, 'Updated samplematerial column to blood');
 
+CREATE TABLE form_fields (
+    id BIGINT PRIMARY KEY NOT NULL,
+    uuid varchar(36) NOT NULL UNIQUE,
+    formType varchar(255),
+    fieldName VARCHAR(255),
+    description VARCHAR(255),
+    sys_period tstzrange not null,
+    active boolean,
+    centrally_managed boolean DEFAULT false,
+    change_user_id BIGINT,
+    changedate timestamp not null,
+    creationdate timestamp not null,
+    archived boolean DEFAULT false);
+
+CREATE TABLE form_fields_history (LIKE form_fields);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE ON form_fields
+                                                       FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'form_fields_history', true);
+
+CREATE TABLE forms (
+         id BIGINT PRIMARY KEY NOT NULL,
+         uuid varchar(36) NOT NULL UNIQUE,
+         formType varchar(255),
+         disease VARCHAR(255),
+         sys_period tstzrange not null,
+         active boolean,
+         centrally_managed boolean DEFAULT false,
+         change_user_id BIGINT,
+         changedate timestamp not null,
+         creationdate timestamp not null,
+         archived boolean DEFAULT false);
+
+CREATE TABLE forms_history (LIKE forms);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE ON forms
+                                                       FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'forms_history', true);
+INSERT INTO schema_version (version_number, comment) VALUES (709, 'Added forms and form_fields tables');
+
+CREATE TABLE forms_form_fields (
+       form_id bigint,
+       formField_id bigint,
+       PRIMARY KEY (form_id, formField_id),
+       FOREIGN KEY (form_id) REFERENCES forms(id),
+       FOREIGN KEY (formField_id) REFERENCES form_fields(id)
+);
+
+ALTER TABLE forms_form_fields ADD COLUMN sys_period tstzrange;
+UPDATE forms_form_fields SET sys_period=tstzrange((SELECT forms.creationdate FROM forms WHERE forms.id = forms_form_fields.form_id), null);
+ALTER TABLE forms_form_fields ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE forms_form_fields_history (LIKE forms_form_fields);
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE OR DELETE ON forms_form_fields
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'forms_form_fields_history', true);
+ALTER TABLE forms_form_fields_history OWNER TO sormas_user;
+INSERT INTO schema_version (version_number, comment) VALUES (710, 'Added forms_form_fields table');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

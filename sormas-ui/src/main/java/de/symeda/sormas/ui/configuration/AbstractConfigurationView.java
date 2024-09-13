@@ -15,9 +15,6 @@
 
 package de.symeda.sormas.ui.configuration;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.function.Consumer;
 
 import com.explicatis.ext_token_field.Tokenizable;
@@ -30,7 +27,6 @@ import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
-import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.ui.SubMenu;
@@ -40,7 +36,6 @@ import de.symeda.sormas.ui.configuration.infrastructure.*;
 import de.symeda.sormas.ui.configuration.infrastructure.components.CountryCombo;
 import de.symeda.sormas.ui.configuration.linelisting.LineListingConfigurationView;
 import de.symeda.sormas.ui.configuration.outbreak.OutbreaksView;
-import de.symeda.sormas.ui.statistics.StatisticsFilterElement;
 import de.symeda.sormas.ui.utils.AbstractSubNavigationView;
 import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.DirtyStateComponent;
@@ -105,6 +100,9 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 		if (isAnySurveillanceEnabled && UserProvider.getCurrent().hasUserRight(UserRight.DOCUMENT_TEMPLATE_MANAGEMENT)) {
 			navigator.addView(DocumentTemplatesView.VIEW_NAME, DocumentTemplatesView.class);
 		}
+		
+		navigator.addView(FormBuildersView.VIEW_NAME, FormBuildersView.class);
+		navigator.addView(FormFieldsView.VIEW_NAME, FormFieldsView.class);
 
 		if (FacadeProvider.getConfigFacade().isDevMode() && UserProvider.getCurrent().hasUserRight(UserRight.DEV_MODE)) {
 			navigator.addView(DevModeView.VIEW_NAME, DevModeView.class);
@@ -229,6 +227,18 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 					null,
 					false);
 		}
+		
+		menu.addView(
+				FormBuildersView.VIEW_NAME,
+				I18nProperties.getPrefixCaption("View", FormBuildersView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+				null,
+				false);
+
+		menu.addView(
+				FormFieldsView.VIEW_NAME,
+				I18nProperties.getPrefixCaption("View", FormFieldsView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+				null,
+				false);
 	}
 
 	protected ComboBox addCountryFilter(Layout layout, Consumer<CountryReferenceDto> changeHandler, ComboBox regionFilter) {

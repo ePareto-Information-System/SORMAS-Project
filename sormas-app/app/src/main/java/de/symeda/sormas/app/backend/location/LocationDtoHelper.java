@@ -137,6 +137,7 @@ public class LocationDtoHelper extends AdoDtoHelper<Location, LocationDto> {
 		}
 
 		target.setPostalCode(source.getPostalCode());
+		target.setLandMark(source.getLandMark());
 
 		target.setPseudonymized(source.isPseudonymized());
 		target.setStreet(source.getStreet());

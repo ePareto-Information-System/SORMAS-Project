@@ -55,7 +55,9 @@ import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.caze.maternalhistory.MaternalHistory;
 import de.symeda.sormas.app.backend.caze.porthealthinfo.PortHealthInfo;
@@ -221,7 +223,7 @@ public class Case extends PseudonymizableAdo {
 	private User caseOfficer;
 
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown pregnant;
+	private YesNo pregnant;
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private HealthConditions healthConditions;
@@ -229,6 +231,10 @@ public class Case extends PseudonymizableAdo {
 	@Enumerated(EnumType.STRING)
 	@DatabaseField(columnName = "vaccination")
 	private VaccinationStatus vaccinationStatus;
+
+	private CardOrHistory vaccinationType;
+	private String numberOfDoses;
+	private Date vaccinationDate;
 
 	@Enumerated(EnumType.STRING)
 	private YesNoUnknown smallpoxVaccinationScar;
@@ -341,7 +347,7 @@ public class Case extends PseudonymizableAdo {
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date quarantineOfficialOrderSentDate;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown postpartum;
+	private YesNo postpartum;
 	@Enumerated(EnumType.STRING)
 	private Trimester trimester;
 	@DatabaseField
@@ -405,6 +411,10 @@ public class Case extends PseudonymizableAdo {
 	private Date followUpStatusChangeDate;
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private User followUpStatusChangeUser;
+	private String reportingOfficerTitle;
+	private String functionOfReportingOfficer;
+	private String reportingOfficerContactPhone;
+	private String reportingOfficerEmail;
 
 	public boolean isUnreferredPortHealthCase() {
 		return caseOrigin == CaseOrigin.POINT_OF_ENTRY && healthFacility == null;
@@ -676,11 +686,11 @@ public class Case extends PseudonymizableAdo {
 		this.healthConditions = healthConditions;
 	}
 
-	public YesNoUnknown getPregnant() {
+	public YesNo getPregnant() {
 		return pregnant;
 	}
 
-	public void setPregnant(YesNoUnknown pregnant) {
+	public void setPregnant(YesNo pregnant) {
 		this.pregnant = pregnant;
 	}
 
@@ -690,6 +700,30 @@ public class Case extends PseudonymizableAdo {
 
 	public void setVaccinationStatus(VaccinationStatus vaccinationStatus) {
 		this.vaccinationStatus = vaccinationStatus;
+	}
+
+	public CardOrHistory getVaccinationType() {
+		return vaccinationType;
+	}
+
+	public void setVaccinationType(CardOrHistory vaccinationType) {
+		this.vaccinationType = vaccinationType;
+	}
+
+	public String getNumberOfDoses() {
+		return numberOfDoses;
+	}
+
+	public void setNumberOfDoses(String numberOfDoses) {
+		this.numberOfDoses = numberOfDoses;
+	}
+
+	public Date getVaccinationDate() {
+		return vaccinationDate;
+	}
+
+	public void setVaccinationDate(Date vaccinationDate) {
+		this.vaccinationDate = vaccinationDate;
 	}
 
 	public YesNoUnknown getSmallpoxVaccinationScar() {
@@ -1132,11 +1166,11 @@ public class Case extends PseudonymizableAdo {
 		this.quarantineOfficialOrderSentDate = quarantineOfficialOrderSentDate;
 	}
 
-	public YesNoUnknown getPostpartum() {
+	public YesNo getPostpartum() {
 		return postpartum;
 	}
 
-	public void setPostpartum(YesNoUnknown postpartum) {
+	public void setPostpartum(YesNo postpartum) {
 		this.postpartum = postpartum;
 	}
 
@@ -1369,5 +1403,28 @@ public class Case extends PseudonymizableAdo {
 
 	public void setFollowUpStatusChangeUser(User followUpStatusChangeUser) {
 		this.followUpStatusChangeUser = followUpStatusChangeUser;
+	}
+
+	public String getReportingOfficerTitle() {return reportingOfficerTitle;}
+
+	public void setReportingOfficerTitle(String reportingOfficerTitle) {
+		this.reportingOfficerTitle = reportingOfficerTitle;
+	}
+
+	public String getFunctionOfReportingOfficer() {return functionOfReportingOfficer;}
+
+	public void setFunctionOfReportingOfficer(String functionOfReportingOfficer) {
+		this.functionOfReportingOfficer = functionOfReportingOfficer;
+	}
+
+	public String getReportingOfficerContactPhone() {return reportingOfficerContactPhone;}
+
+	public void setReportingOfficerContactPhone(String reportingOfficerContactPhone) {
+		this.reportingOfficerContactPhone = reportingOfficerContactPhone;
+	}
+	public String getReportingOfficerEmail() {return reportingOfficerEmail;}
+
+	public void setReportingOfficerEmail(String reportingOfficerEmail) {
+		this.reportingOfficerEmail = reportingOfficerEmail;
 	}
 }
