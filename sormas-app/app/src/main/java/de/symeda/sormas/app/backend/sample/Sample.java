@@ -35,6 +35,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Transient;
 
 import de.symeda.sormas.api.sample.AdditionalTestType;
+import de.symeda.sormas.api.sample.FilterChangingFrequency;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.sample.SampleMaterial;
@@ -50,7 +51,8 @@ import de.symeda.sormas.app.backend.event.EventParticipant;
 import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfo;
 import de.symeda.sormas.app.backend.user.User;
-import de.symeda.sormas.app.core.YesNo;
+//import de.symeda.sormas.app.core.YesNo;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.app.util.DateFormatHelper;
 
 @Entity(name = Sample.TABLE_NAME)
@@ -187,6 +189,56 @@ public class Sample extends PseudonymizableAdo {
 	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
 	@DatabaseField
 	private boolean ownershipHandedOver;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo specimenSavedAndPreservedInAlcohol;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String specimenSavedAndPreservedInAlcoholWhy;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSpecimenSentToRegion;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSpecimenReceivedAtRegion;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String nameOfPersonWhoReceivedSpecimenAtRegion;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSpecimenSentToNational;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSpecimenReceivedAtNational;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String nameOfPersonWhoReceivedSpecimenAtNational;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo sentForConfirmationNational;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date sentForConfirmationNationalDate;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String sentForConfirmationTo;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateResultReceivedNational;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo useOfClothFilter;
+
+	@Enumerated(EnumType.STRING)
+	private FilterChangingFrequency frequencyOfChangingFilters;
+
+	@Column(columnDefinition = "text")
+	private String remarks;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo confirmedAsGuineaWorm;
+
+
 
 	public Case getAssociatedCase() {
 		return associatedCase;
@@ -566,5 +618,133 @@ public class Sample extends PseudonymizableAdo {
 
 	public void setOwnershipHandedOver(boolean ownershipHandedOver) {
 		this.ownershipHandedOver = ownershipHandedOver;
+	}
+
+	public YesNo getSpecimenSavedAndPreservedInAlcohol() {
+		return specimenSavedAndPreservedInAlcohol;
+	}
+
+	public void setSpecimenSavedAndPreservedInAlcohol(YesNo specimenSavedAndPreservedInAlcohol) {
+		this.specimenSavedAndPreservedInAlcohol = specimenSavedAndPreservedInAlcohol;
+	}
+
+	public String getSpecimenSavedAndPreservedInAlcoholWhy() {
+		return specimenSavedAndPreservedInAlcoholWhy;
+	}
+
+	public void setSpecimenSavedAndPreservedInAlcoholWhy(String specimenSavedAndPreservedInAlcoholWhy) {
+		this.specimenSavedAndPreservedInAlcoholWhy = specimenSavedAndPreservedInAlcoholWhy;
+	}
+
+	public Date getDateSpecimenSentToRegion() {
+		return dateSpecimenSentToRegion;
+	}
+
+	public void setDateSpecimenSentToRegion(Date dateSpecimenSentToRegion) {
+		this.dateSpecimenSentToRegion = dateSpecimenSentToRegion;
+	}
+
+	public Date getDateSpecimenReceivedAtRegion() {
+		return dateSpecimenReceivedAtRegion;
+	}
+
+	public void setDateSpecimenReceivedAtRegion(Date dateSpecimenReceivedAtRegion) {
+		this.dateSpecimenReceivedAtRegion = dateSpecimenReceivedAtRegion;
+	}
+
+	public String getNameOfPersonWhoReceivedSpecimenAtRegion() {
+		return nameOfPersonWhoReceivedSpecimenAtRegion;
+	}
+
+	public void setNameOfPersonWhoReceivedSpecimenAtRegion(String nameOfPersonWhoReceivedSpecimenAtRegion) {
+		this.nameOfPersonWhoReceivedSpecimenAtRegion = nameOfPersonWhoReceivedSpecimenAtRegion;
+	}
+
+	public Date getDateSpecimenSentToNational() {
+		return dateSpecimenSentToNational;
+	}
+
+	public void setDateSpecimenSentToNational(Date dateSpecimenSentToNational) {
+		this.dateSpecimenSentToNational = dateSpecimenSentToNational;
+	}
+
+	public Date getDateSpecimenReceivedAtNational() {
+		return dateSpecimenReceivedAtNational;
+	}
+
+	public void setDateSpecimenReceivedAtNational(Date dateSpecimenReceivedAtNational) {
+		this.dateSpecimenReceivedAtNational = dateSpecimenReceivedAtNational;
+	}
+
+	public String getNameOfPersonWhoReceivedSpecimenAtNational() {
+		return nameOfPersonWhoReceivedSpecimenAtNational;
+	}
+
+	public void setNameOfPersonWhoReceivedSpecimenAtNational(String nameOfPersonWhoReceivedSpecimenAtNational) {
+		this.nameOfPersonWhoReceivedSpecimenAtNational = nameOfPersonWhoReceivedSpecimenAtNational;
+	}
+
+	public YesNo getSentForConfirmationNational() {
+		return sentForConfirmationNational;
+	}
+
+	public void setSentForConfirmationNational(YesNo sentForConfirmationNational) {
+		this.sentForConfirmationNational = sentForConfirmationNational;
+	}
+
+	public Date getSentForConfirmationNationalDate() {
+		return sentForConfirmationNationalDate;
+	}
+
+	public void setSentForConfirmationNationalDate(Date sentForConfirmationNationalDate) {
+		this.sentForConfirmationNationalDate = sentForConfirmationNationalDate;
+	}
+
+	public String getSentForConfirmationTo() {
+		return sentForConfirmationTo;
+	}
+
+	public void setSentForConfirmationTo(String sentForConfirmationTo) {
+		this.sentForConfirmationTo = sentForConfirmationTo;
+	}
+
+	public Date getDateResultReceivedNational() {
+		return dateResultReceivedNational;
+	}
+
+	public void setDateResultReceivedNational(Date dateResultReceivedNational) {
+		this.dateResultReceivedNational = dateResultReceivedNational;
+	}
+
+	public YesNo getUseOfClothFilter() {
+		return useOfClothFilter;
+	}
+
+	public void setUseOfClothFilter(YesNo useOfClothFilter) {
+		this.useOfClothFilter = useOfClothFilter;
+	}
+
+	public FilterChangingFrequency getFrequencyOfChangingFilters() {
+		return frequencyOfChangingFilters;
+	}
+
+	public void setFrequencyOfChangingFilters(FilterChangingFrequency frequencyOfChangingFilters) {
+		this.frequencyOfChangingFilters = frequencyOfChangingFilters;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public YesNo getConfirmedAsGuineaWorm() {
+		return confirmedAsGuineaWorm;
+	}
+
+	public void setConfirmedAsGuineaWorm(YesNo confirmedAsGuineaWorm) {
+		this.confirmedAsGuineaWorm = confirmedAsGuineaWorm;
 	}
 }

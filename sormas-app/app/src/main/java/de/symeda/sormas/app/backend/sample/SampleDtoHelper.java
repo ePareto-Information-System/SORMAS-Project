@@ -113,6 +113,24 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 			sormasToSormasOriginInfoDtoHelper.fillOrCreateFromDto(target.getSormasToSormasOriginInfo(), source.getSormasToSormasOriginInfo()));
 		target.setOwnershipHandedOver(source.isOwnershipHandedOver());
 
+		target.setSpecimenSavedAndPreservedInAlcohol(source.getSpecimenSavedAndPreservedInAlcohol());
+		target.setSpecimenSavedAndPreservedInAlcoholWhy(source.getSpecimenSavedAndPreservedInAlcoholWhy());
+		target.setDateSpecimenSentToRegion(source.getDateSpecimenSentToRegion());
+		target.setDateSpecimenReceivedAtRegion(source.getDateSpecimenReceivedAtRegion());
+		target.setNameOfPersonWhoReceivedSpecimenAtRegion(source.getNameOfPersonWhoReceivedSpecimenAtRegion());
+		target.setDateSpecimenSentToNational(source.getDateSpecimenSentToNational());
+		target.setDateSpecimenReceivedAtNational(source.getDateSpecimenReceivedAtNational());
+		target.setNameOfPersonWhoReceivedSpecimenAtNational(source.getNameOfPersonWhoReceivedSpecimenAtNational());
+		target.setSentForConfirmationNational(source.getSentForConfirmationNational());
+		target.setSentForConfirmationNationalDate(source.getSentForConfirmationNationalDate());
+		target.setSentForConfirmationTo(source.getSentForConfirmationTo());
+		target.setDateResultReceivedNational(source.getDateResultReceivedNational());
+		target.setUseOfClothFilter(source.getUseOfClothFilter());
+		target.setFrequencyOfChangingFilters(source.getFrequencyOfChangingFilters());
+		target.setRemarks(source.getRemarks());
+		target.setConfirmedAsGuineaWorm(source.getConfirmedAsGuineaWorm());
+
+
 		target.setPseudonymized(source.isPseudonymized());
 	}
 
@@ -181,6 +199,23 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		if (source.getSormasToSormasOriginInfo() != null) {
 			target.setSormasToSormasOriginInfo(sormasToSormasOriginInfoDtoHelper.adoToDto(source.getSormasToSormasOriginInfo()));
 		}
+
+		target.setSpecimenSavedAndPreservedInAlcohol(source.getSpecimenSavedAndPreservedInAlcohol());
+		target.setSpecimenSavedAndPreservedInAlcoholWhy(source.getSpecimenSavedAndPreservedInAlcoholWhy());
+		target.setDateSpecimenSentToRegion(source.getDateSpecimenSentToRegion());
+		target.setDateSpecimenReceivedAtRegion(source.getDateSpecimenReceivedAtRegion());
+		target.setNameOfPersonWhoReceivedSpecimenAtRegion(source.getNameOfPersonWhoReceivedSpecimenAtRegion());
+		target.setDateSpecimenSentToNational(source.getDateSpecimenSentToNational());
+		target.setDateSpecimenReceivedAtNational(source.getDateSpecimenReceivedAtNational());
+		target.setNameOfPersonWhoReceivedSpecimenAtNational(source.getNameOfPersonWhoReceivedSpecimenAtNational());
+		target.setSentForConfirmationNational(source.getSentForConfirmationNational());
+		target.setSentForConfirmationNationalDate(source.getSentForConfirmationNationalDate());
+		target.setSentForConfirmationTo(source.getSentForConfirmationTo());
+		target.setDateResultReceivedNational(source.getDateResultReceivedNational());
+		target.setUseOfClothFilter(source.getUseOfClothFilter());
+		target.setFrequencyOfChangingFilters(source.getFrequencyOfChangingFilters());
+		target.setRemarks(source.getRemarks());
+		target.setConfirmedAsGuineaWorm(source.getConfirmedAsGuineaWorm());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}

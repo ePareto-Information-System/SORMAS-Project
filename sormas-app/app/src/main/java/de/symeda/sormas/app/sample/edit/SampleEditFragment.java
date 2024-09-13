@@ -36,6 +36,7 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.sample.AdditionalTestType;
+import de.symeda.sormas.api.sample.FilterChangingFrequency;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.sample.SampleDto;
@@ -45,6 +46,7 @@ import de.symeda.sormas.api.sample.SampleSource;
 import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
@@ -78,6 +80,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	private List<String> requestedPathogenTests = new ArrayList<>();
 	private List<String> requestedAdditionalTests = new ArrayList<>();
 	private List<Item> finalTestResults;
+	private List<Item> frequencyOfChangingFiltersList;
 
 	public static SampleEditFragment newInstance(Sample activityRootData) {
 		return newInstanceWithFieldCheckers(
@@ -216,6 +219,15 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 
 		contentBinding.setPathogenTestTypeClass(PathogenTestType.class);
 		contentBinding.setAdditionalTestTypeClass(AdditionalTestType.class);
+		contentBinding.setYesNoClass(YesNo.class);
+		contentBinding.setFilterChangingFrequencyClass(FilterChangingFrequency.class);
+
+		contentBinding.sampleDateSpecimenReceivedAtRegion.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSpecimenReceivedAtRegion.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSpecimenReceivedAtNational.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSpecimenReceivedAtNational.initializeDateField(getFragmentManager());
+		contentBinding.sampleSentForConfirmationNationalDate.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateResultReceivedNational.initializeDateField(getFragmentManager());
 	}
 
 	@Override
@@ -331,6 +343,9 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
 			contentBinding.additionalTestingLayout.setVisibility(GONE);
 		}
+
+		frequencyOfChangingFiltersList = DataUtils.getEnumItems(FilterChangingFrequency.class, true);
+		contentBinding.sampleFrequencyOfChangingFilters.initializeSpinner(frequencyOfChangingFiltersList);
 	}
 
 	@Override
