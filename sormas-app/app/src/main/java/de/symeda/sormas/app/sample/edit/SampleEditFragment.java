@@ -30,7 +30,9 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.android.gms.common.api.CommonStatusCodes;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 
 import androidx.annotation.Nullable;
 
@@ -194,12 +196,6 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			}
 		}
 
-/*		List<SampleMaterial> values = Arrays.stream(SampleMaterial.getYellowFeverMateriealTypes())
-				.filter(c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
-				.collect(Collectors.toList());
-
-		requestedSampleMaterials.clear();
-		requestedSampleMaterials.add(values.toString());*/
 
 		for (IpSampleTestType ipSampleTestType : record.getIpSampleTestResults()) {
 			ipSampleTestResults.clear();
@@ -247,6 +243,17 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		contentBinding.setYesNoClass(YesNo.class);
 		contentBinding.setIpSampleTestTypeClass(IpSampleTestType.class);
 		contentBinding.setSampleMaterialClass(SampleMaterial.class);
+
+		contentBinding.sampleSelectedResultIGM.initializeSpinner(posNegEqList);
+		contentBinding.sampleSelectedResultPcr.initializeSpinner(posNegList);
+		contentBinding.sampleSelectedResultPrnt.initializeSpinner(posNegList);
+
+		// Initialize ControlDateFields and ControlDateTimeFields
+		contentBinding.sampleSampleDateTime.initializeDateTimeField(getFragmentManager());
+		contentBinding.sampleShipmentDate.initializeDateField(getFragmentManager());
+		contentBinding.sampleSelectedResultIGMDate.initializeDateField(getFragmentManager());
+		contentBinding.sampleSelectedResultPcrDate.initializeDateField(getFragmentManager());
+		contentBinding.sampleSelectedResultPrntDate.initializeDateField(getFragmentManager());
 
 		if(record.getAssociatedCase().getDisease() != null){
 			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_EDIT);
@@ -298,16 +305,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		});
 
 		contentBinding.sampleSamplingReason.initializeSpinner(samplingReasonList);
-		contentBinding.sampleSelectedResultIGM.initializeSpinner(posNegEqList);
-		contentBinding.sampleSelectedResultPcr.initializeSpinner(posNegList);
-		contentBinding.sampleSelectedResultPrnt.initializeSpinner(posNegList);
 
-		// Initialize ControlDateFields and ControlDateTimeFields
-		contentBinding.sampleSampleDateTime.initializeDateTimeField(getFragmentManager());
-		contentBinding.sampleShipmentDate.initializeDateField(getFragmentManager());
-		contentBinding.sampleSelectedResultIGMDate.initializeDateField(getFragmentManager());
-		contentBinding.sampleSelectedResultPcrDate.initializeDateField(getFragmentManager());
-		contentBinding.sampleSelectedResultPrntDate.initializeDateField(getFragmentManager());
 
 		// Initialize on clicks
 		contentBinding.buttonScanFieldSampleId.setOnClickListener((View v) -> {
@@ -393,6 +391,32 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 							.collect(Collectors.toList())
 			);
 		}
+
+		contentBinding.sampleSelectedResultIGM.setVisibility(View.GONE);
+		contentBinding.sampleSelectedResultIGMDate.setVisibility(View.GONE);
+		contentBinding.sampleSelectedResultPcr.setVisibility(View.GONE);
+		contentBinding.sampleSelectedResultPcrDate.setVisibility(View.GONE);
+		contentBinding.sampleSelectedResultPrnt.setVisibility(View.GONE);
+		contentBinding.sampleSelectedResultPrntDate.setVisibility(View.GONE);
+
+		contentBinding.sampleIpSampleTestResults.setOnValueChangeListener(selectedValues -> {
+			List<String> selectedItems = contentBinding.sampleIpSampleTestResults.getSelectedValues();
+
+			boolean elisa = selectedItems != null && selectedItems.contains("Elisa IgM");
+			contentBinding.sampleSelectedResultIGM.setVisibility(elisa ? View.VISIBLE : View.GONE);
+			contentBinding.sampleSelectedResultIGMDate.setVisibility(elisa ? View.VISIBLE : View.GONE);
+
+			boolean pcr = selectedItems != null && selectedItems.contains(IpSampleTestType.PCR.name());
+			contentBinding.sampleSelectedResultPcr.setVisibility(pcr ? View.VISIBLE : GONE);
+			contentBinding.sampleSelectedResultPcrDate.setVisibility(pcr ? View.VISIBLE : GONE);
+
+			boolean prnt = selectedItems != null && selectedItems.contains(IpSampleTestType.PRNT.name());
+			contentBinding.sampleSelectedResultPrnt.setVisibility(prnt ? View.VISIBLE : GONE);
+			contentBinding.sampleSelectedResultPrntDate.setVisibility(prnt ? View.VISIBLE : GONE);
+
+
+		});
+
 
 		switch (record.getAssociatedCase().getDisease()){
 			case YELLOW_FEVER:

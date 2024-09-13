@@ -15,6 +15,7 @@
 
 package de.symeda.sormas.app.component.controls;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +36,7 @@ import androidx.databinding.BindingAdapter;
 import androidx.databinding.InverseBindingAdapter;
 import androidx.databinding.InverseBindingListener;
 
+import de.symeda.sormas.api.sample.IpSampleTestType;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.component.Item;
@@ -47,6 +49,22 @@ public class ControlCheckBoxGroupField extends ControlPropertyEditField<Object> 
 	private InverseBindingListener inverseBindingListener;
 	private Class<? extends Enum> enumClass = null;
 	private LinearLayout checkBoxesFrame;
+	public interface OnValueChangeListener {
+		void onValueChanged(List<String> selectedValues);
+	}
+
+	private OnValueChangeListener onValueChangeListener;
+
+	public void setOnValueChangeListener(OnValueChangeListener listener) {
+		this.onValueChangeListener = listener;
+	}
+
+	private void notifyValueChanged() {
+		if (onValueChangeListener != null) {
+			onValueChangeListener.onValueChanged(getSelectedValues());
+		}
+	}
+
 
 	// Constructors
 
@@ -94,6 +112,7 @@ public class ControlCheckBoxGroupField extends ControlPropertyEditField<Object> 
 			if (inverseBindingListener != null) {
 				inverseBindingListener.onChange();
 			}
+			notifyValueChanged();
 		});
 		return checkBox;
 	}
@@ -253,4 +272,21 @@ public class ControlCheckBoxGroupField extends ControlPropertyEditField<Object> 
 
 		suppressListeners = false;
 	}
+
+	public List<String> getSelectedValues() {
+		List<String> selectedValues = new ArrayList<>();
+
+		for (Map.Entry<Object, CheckBox> entry : checkBoxes.entrySet()) {
+			if (entry.getValue().isChecked()) {
+				if (entry.getKey() != null) {
+					selectedValues.add(entry.getKey().toString());
+				} else {
+					throw new IllegalArgumentException("Key is null and cannot be processed.");
+				}
+			}
+		}
+
+		return selectedValues;
+	}
+
 }
