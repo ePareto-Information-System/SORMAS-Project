@@ -44,9 +44,6 @@ public class Triaging extends AbstractDomainObject {
 	public static final String SPECIFIC_SIGNAL = "specificSignal";
 	public static final String HEALTH_CONCERN = "healthConcern";
 	public static final String SIGNAL_CATEGORY = "signalCategory";
-	public static final String RESPIRATORY_SYMPTOMS = "respiratorySymptoms";
-	public static final String SEVERE_ILLNESS = "severeIllness";
-	public static final String SEVERE_DIARRHOEA = "severeDiarrhoea";
 	public static final String HUMAN_COMMUNITY_CATEGORY_DETAILS = "humanCommunityCategoryDetails";
 	public static final String HUMAN_FACILITY_CATEGORY_DETAILS = "humanFacilityCategoryDetails";
 	public static final String HUMAN_LABORATORY_CATEGORY_DETAILS = "humanLaboratoryCategoryDetails";
@@ -55,10 +52,6 @@ public class Triaging extends AbstractDomainObject {
 	public static final String ANIMAL_LABORATORY_CATEGORY_DETAILS = "animalLaboratoryCategoryDetails";
 	public static final String ENVIRONMENTAL_CATEGORY_DETAILS = "environmentalCategoryDetails";
 	public static final String POE_CATEGORY_DETAILS = "poeCategoryDetails";
-	public static final String UNABLE_TO_WALK = "unableToWalk";
-	public static final String OTC = "otc";
-	public static final String PREGNANT_WOMAN = "pregnantWoman";
-	public static final String HANGING_WORM = "hangingWorm";
 	public static final String OCCURRENCE_PREVIOUSLY = "occurrencePreviously";
 	public static final String TRIAGING_DECISION = "triagingDecision";
 	public static final String DATE_OF_DECISION = "decisionDate";
