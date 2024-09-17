@@ -107,6 +107,7 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 	private TextView contactNotificationCounter;
 	private TextView eventNotificationCounter;
 	private TextView sampleNotificationCounter;
+	private TextView ebsNotificationCounter;
 
 	private ProgressDialog progressDialog = null;
 
@@ -305,6 +306,8 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 					NavigationHelper.goToContacts(getContext());
 				} else if (id == R.id.menu_item_events) {
 					NavigationHelper.goToEvents(getContext());
+				}else if (id == R.id.menu_item_ebs) {
+					NavigationHelper.goToEbs(getContext());
 				} else if (id == R.id.menu_item_samples) {
 					NavigationHelper.goToSamples(getContext());
 				} else if (id == R.id.menu_item_immunizations) {
@@ -332,6 +335,8 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 			(TextView) navigationView.getMenu().findItem(R.id.menu_item_events).getActionView().findViewById(R.id.main_menu_notification_counter);
 		sampleNotificationCounter =
 			(TextView) navigationView.getMenu().findItem(R.id.menu_item_samples).getActionView().findViewById(R.id.main_menu_notification_counter);
+		ebsNotificationCounter =
+			(TextView) navigationView.getMenu().findItem(R.id.menu_item_ebs).getActionView().findViewById(R.id.main_menu_notification_counter);
 	}
 
 	protected abstract boolean isSubActivity();
@@ -410,6 +415,7 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 			MenuItem aggregateReportsMenu = menuNav.findItem(R.id.menu_item_aggregate_reports);
 			MenuItem contactMenu = menuNav.findItem(R.id.menu_item_contacts);
 			MenuItem eventMenu = menuNav.findItem(R.id.menu_item_events);
+			MenuItem ebsMenu = menuNav.findItem(R.id.menu_item_ebs);
 			MenuItem sampleMenu = menuNav.findItem(R.id.menu_item_samples);
 			MenuItem immunizationMenu = menuNav.findItem(R.id.menu_item_immunizations);
 			MenuItem reportMenu = menuNav.findItem(R.id.menu_item_reports);
@@ -448,6 +454,10 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 
 			if (eventMenu != null)
 				eventMenu.setVisible(
+					ConfigProvider.hasUserRight(UserRight.EVENT_VIEW)
+						&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.EVENT_SURVEILLANCE));
+			if (ebsMenu != null)
+				ebsMenu.setVisible(
 					ConfigProvider.hasUserRight(UserRight.EVENT_VIEW)
 						&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.EVENT_SURVEILLANCE));
 
@@ -494,6 +504,7 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 		contactNotificationCounter.setVisibility(View.GONE);
 		eventNotificationCounter.setVisibility(View.GONE);
 		sampleNotificationCounter.setVisibility(View.GONE);
+		ebsNotificationCounter.setVisibility(View.GONE);
 //        taskNotificationCounter.setText("3");
 //        caseNotificationCounter.setText("10");
 //        contactNotificationCounter.setText("7");
