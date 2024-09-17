@@ -19,6 +19,9 @@ import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.FollowUpStatus;
+import de.symeda.sormas.api.ebs.CategoryDetailsLevel;
+import de.symeda.sormas.api.ebs.EbsSourceType;
+import de.symeda.sormas.api.ebs.SignalOutcome;
 import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.task.TaskStatus;
@@ -35,8 +38,11 @@ public class StatusElaboratorFactory {
 
 		if (e instanceof StatusElaborator) {
 			result = (StatusElaborator) e;
-		} else if (e instanceof EventStatus) {
+		}
+		else if (e instanceof EventStatus) {
 			result = new EventStatusElaborator((EventStatus) e);
+		} else if (e instanceof EbsSourceType) {
+			result = new EbsStatusElaborator((EbsSourceType) e);
 		} else if (e instanceof FollowUpStatus) {
 			result = new FollowUpStatusElaborator((FollowUpStatus) e);
 		} else if (e instanceof InvestigationStatus) {
@@ -53,6 +59,8 @@ public class StatusElaboratorFactory {
 			result = new ContactClassificationElaborator((ContactClassification) e);
 		} else if (e instanceof PathogenTestResultType) {
 			result = new PathogenTestResultTypeElaborator((PathogenTestResultType) e);
+		} else if (e instanceof CategoryDetailsLevel) {
+			result = new EbsStatusElaborator((CategoryDetailsLevel) e);
 		} else {
 			throw new IllegalArgumentException(e.getDeclaringClass().getName());
 		}
