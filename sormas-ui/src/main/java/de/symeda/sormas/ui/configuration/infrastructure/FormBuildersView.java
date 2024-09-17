@@ -9,15 +9,13 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.infrastructure.InfrastructureType;
 import de.symeda.sormas.api.infrastructure.diseasecon.DiseaseConCriteria;
 import de.symeda.sormas.api.infrastructure.forms.FormBuilderCriteria;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.configuration.AbstractConfigurationView;
-import de.symeda.sormas.ui.utils.ButtonHelper;
-import de.symeda.sormas.ui.utils.CssStyles;
-import de.symeda.sormas.ui.utils.RowCount;
-import de.symeda.sormas.ui.utils.ViewConfiguration;
+import de.symeda.sormas.ui.utils.*;
 
 
 public class FormBuildersView extends AbstractConfigurationView {
@@ -25,6 +23,7 @@ public class FormBuildersView extends AbstractConfigurationView {
     public static final String VIEW_NAME = ROOT_VIEW_NAME + "/forms";
     private FormBuilderGrid grid;
     protected Button createButton;
+    protected Button importButton;
     private FormBuilderCriteria criteria;
     private ViewConfiguration viewConfiguration;
 
@@ -57,6 +56,16 @@ public class FormBuildersView extends AbstractConfigurationView {
 		gridLayout.setStyleName("crud-main-layout");
 
         addComponent(gridLayout);
+
+        importButton = ButtonHelper.createIconButton(Captions.actionImport, VaadinIcons.UPLOAD, e -> {
+            Window window = VaadinUiUtil.showPopupWindow(new InfrastructureImportLayout(InfrastructureType.FORM));
+            window.setCaption(I18nProperties.getString(Strings.entityFormBuilder));
+            window.addCloseListener(c -> grid.reload());
+        }, ValoTheme.BUTTON_PRIMARY);
+
+        // TODO:
+
+//        addHeaderComponent(importButton);
 
         createButton = ButtonHelper.createIconButtonWithCaption(
                 "create",

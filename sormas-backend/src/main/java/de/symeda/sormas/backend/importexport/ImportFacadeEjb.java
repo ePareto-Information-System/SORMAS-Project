@@ -231,6 +231,8 @@ public class ImportFacadeEjb implements ImportFacade {
 	private static final String ALL_COUNTRIES_IMPORT_FILE_NAME = "sormas_import_all_countries.csv";
 	private static final String ALL_SUBCONTINENTS_IMPORT_FILE_NAME = "sormas_import_all_subcontinents.csv";
 	private static final String ALL_CONTINENTS_IMPORT_FILE_NAME = "sormas_import_all_continents.csv";
+	private static final String FORM_FIELD_IMPORT_TEMPLATE_FILE_NAME = "import_form_field_template.csv";
+	private static final String FORM_IMPORT_TEMPLATE_FILE_NAME = "import_form_template.csv";
 
 	@Override
 	public void generateCaseImportTemplateFile(List<FeatureConfigurationDto> featureConfigurations) throws IOException {
@@ -450,6 +452,7 @@ public class ImportFacadeEjb implements ImportFacade {
 		importColumns.add(ImportColumn.from(CaseDataDto.class, POINT_OF_ENTRY, PointOfEntryReferenceDto.class, separator));
 		importColumns.add(ImportColumn.from(CaseDataDto.class, POINT_OF_ENTRY_DETAILS, String.class, separator));
 		importColumns.add(ImportColumn.from(CaseDataDto.class, SYMPTOMS + "." + SymptomsDto.ONSET_DATE, Date.class, separator));
+
 
 		writeTemplate(Paths.get(getCaseLineListingImportTemplateFilePath()), importColumns, false);
 	}
@@ -960,6 +963,27 @@ public class ImportFacadeEjb implements ImportFacade {
 		}
 
 		return false;
+	}
+
+//	getFormFieldImportTemplateFilePath, getFormFieldImportTemplateFileName
+	@Override
+	public String getFormFieldImportTemplateFileName() {
+		return getImportTemplateFileName(FORM_FIELD_IMPORT_TEMPLATE_FILE_NAME);
+	}
+
+	@Override
+	public String getFormFieldImportTemplateFilePath() {
+		return getImportTemplateFilePath(FORM_FIELD_IMPORT_TEMPLATE_FILE_NAME);
+	}
+
+	@Override
+	public String getFormImportTemplateFileName() {
+		return getImportTemplateFileName(FORM_IMPORT_TEMPLATE_FILE_NAME);
+	}
+
+	@Override
+	public String getFormImportTemplateFilePath() {
+		return getImportTemplateFilePath(FORM_IMPORT_TEMPLATE_FILE_NAME);
 	}
 
 	public String buildEntityProperty(String[] entityPropertyPath) {

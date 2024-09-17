@@ -10,21 +10,20 @@ import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.infrastructure.InfrastructureType;
 import de.symeda.sormas.api.infrastructure.diseasecon.DiseaseConCriteria;
 import de.symeda.sormas.api.infrastructure.fields.FormFieldsCriteria;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.configuration.AbstractConfigurationView;
-import de.symeda.sormas.ui.utils.ButtonHelper;
-import de.symeda.sormas.ui.utils.CssStyles;
-import de.symeda.sormas.ui.utils.RowCount;
-import de.symeda.sormas.ui.utils.ViewConfiguration;
+import de.symeda.sormas.ui.utils.*;
 
 
 public class FormFieldsView extends AbstractConfigurationView {
 
     public static final String VIEW_NAME = ROOT_VIEW_NAME + "/formFields";
     private FormFieldsGrid grid;
+    protected Button importButton;
     protected Button createButton;
     private FormFieldsCriteria criteria;
     private ViewConfiguration viewConfiguration;
@@ -61,6 +60,14 @@ public class FormFieldsView extends AbstractConfigurationView {
 
         addComponent(gridLayout);
 
+        importButton = ButtonHelper.createIconButton(Captions.actionImport, VaadinIcons.UPLOAD, e -> {
+            Window window = VaadinUiUtil.showPopupWindow(new InfrastructureImportLayout(InfrastructureType.FORM_FIELD));
+            window.setCaption(I18nProperties.getString(Strings.entityFormFields));
+            window.addCloseListener(c -> grid.reload());
+        }, ValoTheme.BUTTON_PRIMARY);
+
+        addHeaderComponent(importButton);
+
         createButton = ButtonHelper.createIconButtonWithCaption(
                 "create",
                 I18nProperties.getCaption(Captions.actionNewEntry),
@@ -68,6 +75,8 @@ public class FormFieldsView extends AbstractConfigurationView {
                 e -> ControllerProvider.getInfrastructureController().createField(),
                 ValoTheme.BUTTON_PRIMARY);
         addHeaderComponent(createButton);
+
+
 
     }
 
