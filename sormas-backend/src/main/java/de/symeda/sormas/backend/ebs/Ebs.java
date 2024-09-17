@@ -42,8 +42,6 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public static final String TRIAGE_DATE = "triageDate";
 	public static final String SOURCE_NAME = "sourceName";
 	public static final String SOURCE_URL = "sourceUrl";
-	public static final String DATE_ONSET = "dateOnset";
-	public static final String TIME_ONSET = "timeOnset";
 	public static final String DESCRIPTION_OCCURANCE = "descriptionOccurrence";
 	public static final String PERSON_REGISTERING = "personRegistering";
 	public static final String PERSON_DESIGNATION = "personDesignation";
@@ -51,7 +49,6 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public static final String REPORT_DATE_TIME = "reportDateTime";
 	public static final String REPORTING_USER = "reportingUser";
 	public static final String SOURCE_INFORMATION = "sourceInformation";
-	public static final String TRIAGING_DECISION = "triagingDecision";
 	public static final String RESPONSIBLE_USER = "responsibleUser";
 	public static final String EBS_LONGITUDE = "ebsLongitude";
 	public static final String EBS_LATITUDE = "ebsLatitude";
@@ -63,15 +60,10 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public static final String SCANNING_TYPE = "scanningType";
 	public static final String OTHER = "other";
 	public static final String EBS_LOCATION = "ebsLocation";
-	public static final String SIGNAL_CATEGORY = "signalCategory";
-	public static final String VERIFIED = "verified";
 	public static final String CASES = "cases";
-	public static final String DEATH = "death";
 	public static final String CATEGORY_OF_INFORMANT = "categoryOfInformant";
 	public static final String TRIAGING = "triaging";
 	public static final String SIGNAL_VERIFICATION = "signalVerification";
-	public static final String RISK_ASSESSMENT = "riskAssessment";
-	public static final String EBS_ALERT = "ebsAlert";
 	public static final String OTHER_INFORMANT = "otherInformant";
 
 	private String informantName;
