@@ -81,6 +81,8 @@
     <string name="action_new_campaign_form_data">New Campaign Form Data</string>
     <string name="action_new_contact">New Contact</string>
     <string name="action_new_event">New Event</string>
+    <string name="action_new_ebs">New Ebs</string>
+    <string name="action_new_triaging">New Triaging</string>
     <string name="action_new_sample">New Sample</string>
     <string name="action_new_task">New Task</string>
     <string name="action_not_executable">Not Executable</string>
@@ -105,6 +107,9 @@
     <string name="action_save_clinical_visit">Save Clinical Visit</string>
     <string name="action_save_contact">Save Contact</string>
     <string name="action_save_event">Save Event</string>
+    <string name="action_save_ebs">Save Signal</string>
+    <string name="action_save_triaging">Save Triaging</string>
+    <string name="action_save_signal_verification">Save Signal Verification</string>
     <string name="action_save_event_participant">Save Event Participant</string>
     <string name="action_save_prescription">Save Prescription</string>
     <string name="action_save_sample">Save Sample</string>
@@ -179,6 +184,10 @@
     <string name="caption_event_location">Location</string>
     <string name="caption_event_period">Date of event</string>
     <string name="caption_event_information">Event Information</string>
+    <string name="caption_ebs_information">Signal Information</string>
+    <string name="caption_triaging_information">Triaging</string>
+    <string name="caption_signal_verification">Signal Verification</string>
+    <string name="caption_risk_assessment">RiskAssessment</string>
     <string name="caption_event_participants">Persons Involved</string>
     <string name="caption_event_participant_immunizations">Event participant Immunizations</string>
     <string name="caption_event_participant_vaccinations">Event participant Vaccinations</string>
@@ -357,9 +366,13 @@
     <string name="heading_error_notification_dialog">Oops, something went wrong.</string>
     <string name="heading_event_edit">Edit Event</string>
     <string name="heading_event_new">New Event</string>
+    <string name="heading_triaging_new">New Triaging</string>
+    <string name="heading_triaging_edit">Edit Triaging</string>
+    <string name="heading_signal_verification_edit">Edit Signal Verification</string>
     <string name="heading_event_read">Read Event</string>
     <string name="heading_event_summary">Event Summary</string>
     <string name="heading_events_list">Event Listing</string>
+    <string name="heading_ebs_list">Event Listing</string>
     <string name="heading_existing_persons">Existing Persons</string>
     <string name="heading_existing_cases">Existing Cases</string>
     <string name="heading_existing_immunizations">Existing Immunizations</string>
@@ -526,6 +539,7 @@
     <string name="main_menu_contacts">Contacts</string>
     <string name="main_menu_dashboard">Dashboard</string>
     <string name="main_menu_events">Events</string>
+    <string name="main_menu_ebs">Ebs</string>
     <string name="main_menu_reports">Reports</string>
     <string name="main_menu_samples">Samples</string>
     <string name="main_menu_environments">Environments</string>
