@@ -377,13 +377,11 @@
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/sample_dateSpecimenSentToRegion"
                         app:value="@={data.dateSpecimenSentToRegion}"
-                        app:dependencyParentField="@{sampleShipped}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/sample_dateSpecimenReceivedAtRegion"
                         app:value="@={data.dateSpecimenReceivedAtRegion}"
-                        app:dependencyParentField="@{sampleReceived}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
@@ -501,6 +499,7 @@
                 android:padding="@dimen/fragment_padding">
 
                 <TextView
+                    android:id="@+id/most_recent_test_heading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/heading_most_recent_test"
@@ -531,6 +530,7 @@
                 android:padding="@dimen/fragment_padding">
 
                 <TextView
+                    android:id="@+id/most_recent_additional_tests_heading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/heading_most_recent_additional_tests"

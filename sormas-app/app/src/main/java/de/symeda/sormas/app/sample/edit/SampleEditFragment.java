@@ -33,6 +33,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.sample.AdditionalTestType;
@@ -346,6 +347,10 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 
 		frequencyOfChangingFiltersList = DataUtils.getEnumItems(FilterChangingFrequency.class, true);
 		contentBinding.sampleFrequencyOfChangingFilters.initializeSpinner(frequencyOfChangingFiltersList);
+
+		if(record.getAssociatedCase().getDisease() != null){
+			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_CREATE);
+		}
 	}
 
 	@Override
