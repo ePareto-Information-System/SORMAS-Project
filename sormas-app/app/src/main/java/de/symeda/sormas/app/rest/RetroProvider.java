@@ -108,6 +108,7 @@ public final class RetroProvider {
 	private ContactFacadeRetro contactFacadeRetro;
 	private VisitFacadeRetro visitFacadeRetro;
 	private EventFacadeRetro eventFacadeRetro;
+	private EbsFacadeRetro ebsFacadeRetro;
 	private SampleFacadeRetro sampleFacadeRetro;
 	private PathogenTestFacadeRetro pathogenTestFacadeRetro;
 	private EventParticipantFacadeRetro eventParticipantFacadeRetro;
@@ -732,6 +733,19 @@ public final class RetroProvider {
 			}
 		}
 		return instance.eventFacadeRetro;
+	}
+
+	public static EbsFacadeRetro getEbsFacade() throws NoConnectionException {
+		if (instance == null)
+			throw new NoConnectionException();
+		if (instance.ebsFacadeRetro == null) {
+			synchronized ((RetroProvider.class)) {
+				if (instance.ebsFacadeRetro == null) {
+					instance.ebsFacadeRetro = instance.retrofit.create(EbsFacadeRetro.class);
+				}
+			}
+		}
+		return instance.ebsFacadeRetro;
 	}
 
 	public static SampleFacadeRetro getSampleFacade() throws NoConnectionException {
