@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ SORMAS® - Surveillance Outbreak Response Management & Analysis System
+  ~ Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="contentDescription"
+    android:descendantFocusability="beforeDescendants"
+    android:id="@+id/base_layout">
+
+
+    <data>
+        <import type="android.view.View" />
+        <import type="de.symeda.sormas.api.ebs.RiskAssesment"/>
+        <variable name="data" type="de.symeda.sormas.app.backend.ebs.riskAssessment.RiskAssessment"/>
+        <variable name="yesNoClass" type="Class" />
+
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/main_content"
+            style="@style/LayoutSingleContentSpaceBelowStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskAssessment_uuid"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:shortUuidValue="@{data.uuid}" />
+            </LinearLayout>
+
+            <ImageView style="@style/FullHorizontalDividerStyle"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/riskAssessment_morbidityMortality"
+                style="@style/ControlFirstOfTwoColumnsStyle"
+                app:enumClass="@{yesNoClass}"
+                app:value="@={data.morbidityMortality}"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/riskAssessment_morbidityMortalityComment"
+                app:inputType="textMultiLine"
+                app:textAlignment="gravity"
+                app:gravity="top|start"
+                app:textArea="true"
+                app:singleLine="false"
+                app:maxLines="5"
+                app:value="@={data.morbidityMortalityComment}"
+                style="@style/ControlFirstOfTwoColumnsStyle" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/riskAssessment_spreadProbability"
+                style="@style/ControlFirstOfTwoColumnsStyle"
+                app:enumClass="@{yesNoClass}"
+                app:value="@={data.spreadProbability}"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/riskAssessment_spreadProbabilityComment"
+                    app:inputType="textMultiLine"
+                    app:textAlignment="gravity"
+                    app:gravity="top|start"
+                    app:textArea="true"
+                    app:singleLine="false"
+                    app:maxLines="5"
+                    app:value="@={data.spreadProbabilityComment}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+            </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/riskAssessment_controlMeasures"
+                style="@style/ControlFirstOfTwoColumnsStyle"
+                app:enumClass="@{yesNoClass}"
+                app:value="@={data.controlMeasures}"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/riskAssessment_controlMeasuresComment"
+                    app:inputType="textMultiLine"
+                    app:textAlignment="gravity"
+                    app:gravity="top|start"
+                    app:textArea="true"
+                    app:singleLine="false"
+                    app:maxLines="5"
+                    app:value="@={data.controlMeasuresComment}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                        android:id="@+id/riskAssessment_riskAssessment"
+                        style="@style/ControlFirstOfTwoColumnsStyle"
+                        app:value="@={data.riskAssessment}"/>
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/riskAssessment_assessmentDate"
+                        style="@style/ControlSecondOfTwoColumnsStyle"
+                        app:required="true"
+                        app:allowedDaysInFuture="0"
+                        app:value="@={data.assessmentDate}" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+</layout>
+
