@@ -30,6 +30,8 @@ import androidx.databinding.ObservableArrayList;
 import com.googlecode.openbeans.Introspector;
 import com.googlecode.openbeans.PropertyDescriptor;
 
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.epidata.PlaceManaged;
@@ -63,6 +65,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	public static final String TAG = EpidemiologicalDataEditFragment.class.getSimpleName();
 
 	private EpiData record;
+	private Disease caseDisease;
 	private IEntryItemOnClickListener onExposureItemClickListener;
 	private IEntryItemOnClickListener onActivityAsCaseItemClickListener;
 	private IEntryItemOnClickListener onPersonTravelHistoryItemClickListener;
@@ -373,6 +376,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	@Override
 	protected void prepareFragmentData() {
 		record = getEpiDataOfCaseOrContact(getActivityRootData());
+		caseDisease = getDiseaseOfCaseOrContact(getActivityRootData());
 	}
 
 	@Override
@@ -456,6 +460,12 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 			contentBinding.personTravelHistoryLayout.setVisibility(GONE);
 			contentBinding.containmentMeasureLayout.setVisibility(GONE);
 			contentBinding.contaminationSourceLayout.setVisibility(GONE);
+		}
+
+		if (getActivityRootData() instanceof Case) {
+			if(caseDisease != null){
+				super.hideFieldsForDisease(caseDisease, contentBinding.mainContent, FormType.EPIDEMIOLOGICAL_EDIT);
+			}
 		}
 	}
 

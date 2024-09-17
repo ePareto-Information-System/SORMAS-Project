@@ -78,12 +78,14 @@
                 android:padding="@dimen/fragment_padding">
 
                 <TextView
+                    android:id="@+id/heading_exposure_investigation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{I18nProperties.getString(Strings.headingExposureInvestigation)}"
                     style="@style/SubHeadingCompactStyle" />
 
                 <TextView
+                    android:id="@+id/epiDataFieldsHint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:htmlValue="@{I18nProperties.getString(Strings.infoEpiDataFieldsHint)}"
