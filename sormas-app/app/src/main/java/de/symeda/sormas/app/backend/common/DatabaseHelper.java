@@ -109,6 +109,13 @@ import de.symeda.sormas.app.backend.customizableenum.CustomizableEnumValueDao;
 import de.symeda.sormas.app.backend.disease.DiseaseConfiguration;
 import de.symeda.sormas.app.backend.disease.DiseaseConfigurationDao;
 import de.symeda.sormas.app.backend.disease.DiseaseFacility;
+import de.symeda.sormas.app.backend.ebs.Ebs;
+import de.symeda.sormas.app.backend.ebs.EbsDao;
+import de.symeda.sormas.app.backend.ebs.ebsAlert.EbsAlert;
+import de.symeda.sormas.app.backend.ebs.ebsAlert.EbsAlertDao;
+import de.symeda.sormas.app.backend.ebs.riskAssessment.RiskAssessment;
+import de.symeda.sormas.app.backend.ebs.riskAssessment.RiskAssessmentDao;
+import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
 import de.symeda.sormas.app.backend.epidata.EpiData;
 import de.symeda.sormas.app.backend.epidata.EpiDataDao;
 import de.symeda.sormas.app.backend.event.Event;
@@ -165,6 +172,7 @@ import de.symeda.sormas.app.backend.sample.PathogenTest;
 import de.symeda.sormas.app.backend.sample.PathogenTestDao;
 import de.symeda.sormas.app.backend.sample.Sample;
 import de.symeda.sormas.app.backend.sample.SampleDao;
+import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerificationDao;
 import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfo;
 import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfoDao;
 import de.symeda.sormas.app.backend.symptoms.Symptoms;
@@ -179,6 +187,8 @@ import de.symeda.sormas.app.backend.therapy.Therapy;
 import de.symeda.sormas.app.backend.therapy.TherapyDao;
 import de.symeda.sormas.app.backend.therapy.Treatment;
 import de.symeda.sormas.app.backend.therapy.TreatmentDao;
+import de.symeda.sormas.app.backend.ebs.triaging.Triaging;
+import de.symeda.sormas.app.backend.ebs.triaging.TriagingDao;
 import de.symeda.sormas.app.backend.user.User;
 import de.symeda.sormas.app.backend.user.UserDao;
 import de.symeda.sormas.app.backend.user.UserRole;
@@ -262,6 +272,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.clearTable(connectionSource, Contact.class);
 			TableUtils.clearTable(connectionSource, Visit.class);
 			TableUtils.clearTable(connectionSource, Event.class);
+			TableUtils.clearTable(connectionSource, Ebs.class);
+			TableUtils.clearTable(connectionSource, Triaging.class);
+			TableUtils.clearTable(connectionSource, SignalVerification.class);
+			TableUtils.clearTable(connectionSource, RiskAssessment.class);
+			TableUtils.clearTable(connectionSource, EbsAlert.class);
 			TableUtils.clearTable(connectionSource, Sample.class);
 			TableUtils.clearTable(connectionSource, PathogenTest.class);
 			TableUtils.clearTable(connectionSource, AdditionalTest.class);
@@ -365,6 +380,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, Visit.class);
 			TableUtils.createTable(connectionSource, Task.class);
 			TableUtils.createTable(connectionSource, Event.class);
+			TableUtils.createTable(connectionSource, Ebs.class);
+			TableUtils.createTable(connectionSource, Triaging.class);
+			TableUtils.createTable(connectionSource, SignalVerification.class);
+			TableUtils.createTable(connectionSource, RiskAssessment.class);
+			TableUtils.createTable(connectionSource, EbsAlert.class);
 			TableUtils.createTable(connectionSource, Sample.class);
 			TableUtils.createTable(connectionSource, PathogenTest.class);
 			TableUtils.createTable(connectionSource, AdditionalTest.class);
@@ -3937,6 +3957,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.dropTable(connectionSource, Contact.class, true);
 			TableUtils.dropTable(connectionSource, Visit.class, true);
 			TableUtils.dropTable(connectionSource, Event.class, true);
+			TableUtils.dropTable(connectionSource, Ebs.class, true);
+			TableUtils.dropTable(connectionSource, Triaging.class, true);
+			TableUtils.dropTable(connectionSource, SignalVerification.class, true);
+			TableUtils.dropTable(connectionSource, RiskAssessment.class, true);
+			TableUtils.dropTable(connectionSource, EbsAlert.class, true);
 			TableUtils.dropTable(connectionSource, Sample.class, true);
 			TableUtils.dropTable(connectionSource, PathogenTest.class, true);
 			TableUtils.dropTable(connectionSource, AdditionalTest.class, true);
@@ -4048,6 +4073,16 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					dao = (AbstractAdoDao<ADO>) new VisitDao((Dao<Visit, Long>) innerDao);
 				} else if (type.equals(Event.class)) {
 					dao = (AbstractAdoDao<ADO>) new EventDao((Dao<Event, Long>) innerDao);
+				} else if (type.equals(Ebs.class)) {
+					dao = (AbstractAdoDao<ADO>) new EbsDao((Dao<Ebs, Long>) innerDao);
+				} else if (type.equals(Triaging.class)) {
+					dao = (AbstractAdoDao<ADO>) new TriagingDao((Dao<Triaging, Long>) innerDao);
+				} else if (type.equals(SignalVerification.class)) {
+					dao = (AbstractAdoDao<ADO>) new SignalVerificationDao((Dao<SignalVerification, Long>) innerDao);
+				} else if (type.equals(RiskAssessment.class)) {
+					dao = (AbstractAdoDao<ADO>) new RiskAssessmentDao((Dao<RiskAssessment, Long>) innerDao);
+				} else if (type.equals(EbsAlert.class)) {
+					dao = (AbstractAdoDao<ADO>) new EbsAlertDao((Dao<EbsAlert, Long>) innerDao);
 				} else if (type.equals(EventParticipant.class)) {
 					dao = (AbstractAdoDao<ADO>) new EventParticipantDao((Dao<EventParticipant, Long>) innerDao);
 				} else if (type.equals(Sample.class)) {
@@ -4294,6 +4329,26 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	public static EventDao getEventDao() {
 		return (EventDao) getAdoDao(Event.class);
+	}
+
+	public static EbsDao getEbsDao() {
+		return (EbsDao) getAdoDao(Ebs.class);
+	}
+
+	public static TriagingDao getTriagingDao() {
+		return (TriagingDao) getAdoDao(Triaging.class);
+	}
+
+	public static SignalVerificationDao getSignalVerificationDao() {
+		return (SignalVerificationDao) getAdoDao(SignalVerification.class);
+	}
+
+	public static RiskAssessmentDao getRiskAssessmentDao() {
+		return (RiskAssessmentDao) getAdoDao(RiskAssessment.class);
+	}
+
+	public static EbsAlertDao getEbsAlertDao() {
+		return (EbsAlertDao) getAdoDao(EbsAlert.class);
 	}
 
 	public static EventParticipantDao getEventParticipantDao() {
