@@ -78,6 +78,11 @@ public class DiseaseFieldHandler {
     private void handleViewGroup(ViewGroup viewGroup, List<String> relevantFields) {
         boolean groupHasVisibleField = false;
 
+        String layoutIdName = getResourceID(viewGroup.getId());
+        if (layoutIdName != null && relevantFields.contains(layoutIdName)) {
+            return;
+        }
+
         for (int j = 0; j < viewGroup.getChildCount(); j++) {
             View grandChild = viewGroup.getChildAt(j);
 
@@ -107,7 +112,7 @@ public class DiseaseFieldHandler {
     }
 
     private boolean setViewVisibility(View view, List<String> relevantFields) {
-        String viewIdName = context.getResources().getResourceEntryName(view.getId());
+        String viewIdName = getResourceID(view.getId());
         if (viewIdName == null) {
             return false;
         }
@@ -128,6 +133,15 @@ public class DiseaseFieldHandler {
         }
 
         return new ArrayList<>();
+    }
+
+
+    private String getResourceID(int id) {
+        try {
+            return context.getResources().getResourceEntryName(id);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
 
