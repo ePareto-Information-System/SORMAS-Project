@@ -267,6 +267,40 @@
             android:theme="@style/ActivityWithOverflowMenuTheme" >
         </activity>
         <activity
+            android:name=".ebs.list.EbsListActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityWithOverflowMenuTheme" >
+        </activity>
+        <activity
+            android:name=".ebs.edit.EbsEditActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ebs.list.EbsListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityWithOverflowMenuTheme" >
+        </activity>
+        <activity
+            android:name=".ebs.edit.EbsNewActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ebs.list.EbsListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityWithOverflowMenuTheme" >
+        </activity>
+        <activity
+            android:name=".triaging.edit.TriagingEditActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ebs.edit.EbsEditActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityWithOverflowMenuTheme" >
+        </activity>
+        <activity
+            android:name=".triaging.edit.TriagingNewActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ebs.edit.EbsNewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityWithOverflowMenuTheme" >
+        </activity>
+        <activity
             android:name=".campaign.list.CampaignFormDataListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
