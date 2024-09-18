@@ -373,7 +373,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		contentBinding.sampleRequestedSampleMaterialsTags.setTags(requestedSampleMaterials);
 
 		List<SampleMaterial> allowedMaterials = Arrays.asList(
-				SampleMaterial.WHOLE_BLOOD,
+				SampleMaterial.BLOOD,
 				SampleMaterial.SERUM,
 				SampleMaterial.PLASMA
 		);

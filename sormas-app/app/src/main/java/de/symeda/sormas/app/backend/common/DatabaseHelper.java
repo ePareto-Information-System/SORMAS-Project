@@ -200,7 +200,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 367;
+	public static final int DATABASE_VERSION = 361;
 
 	private static DatabaseHelper instance = null;
 
@@ -3174,32 +3174,21 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			case 354:
 					currentVersion = 354;
 					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN otherName varchar(255);");
-			case 355:
-					currentVersion = 355;
 					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN ghanaCard varchar(255);");
 					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN phone varchar(255);");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN marriageStatus varchar(255);");
 
-			case 356:
-					currentVersion = 356;
+			case 355:
+					currentVersion = 355;
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN vaccinationType varchar(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN numberOfDoses varchar(255);");
-
-				case 357:
-					currentVersion = 357;
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN reportingOfficerTitle varchar(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN functionOfReportingOfficer varchar(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN reportingOfficerContactPhone varchar(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN reportingOfficerEmail varchar(255);");
 
-				case 358:
-					currentVersion = 358;
-					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN marriageStatus varchar(255);");
-				case 359:
-					currentVersion = 359;
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN abdominalCramps varchar(255);");
-
-				case 360:
-					currentVersion = 360;
+				case 356:
+					currentVersion = 356;
 					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN dateofonset DATE;");
 					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN provisionalDiagnosis VARCHAR(512);");
 					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN dateonsetparalysis DATE;");
@@ -3210,7 +3199,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN dateofonsetrash DATE;");
 					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN requestedRashSymptomsString VARCHAR(512);");
 					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN rashSymptomsOtherAreas VARCHAR(512);");
-					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN typeOfRashString VARCHAR(512);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN typeOfRash VARCHAR(512);");
 					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN symptomsSelectedOther VARCHAR(512);");
 					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN outcomeOther VARCHAR(512);");
 					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN outcomeDate DATE;");
@@ -3269,25 +3258,23 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN trimester VARCHAR(255);");
 					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN postpartum VARCHAR(10);");
 					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN pregnant VARCHAR(10);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN abdominalCramps varchar(255);");
 
-				case 361:
-					currentVersion = 361;
+				case 357:
+					currentVersion = 357;
 					getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN landMark VARCHAR(255);");
 
-				case 362:
-					currentVersion = 362;
+				case 358:
+					currentVersion = 358;
 					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN selectInpatientOutpatient VARCHAR(255);");
 					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN dateFirstSeen DATE;");
 					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN notifyDistrictDate DATE;");
 
-				case 363:
-					currentVersion = 363;
+				case 359:
+					currentVersion = 359;
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN sampleDispatchMode VARCHAR(255);");
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN ipSampleSent VARCHAR(255);");
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN ipSampleTestResultsString VARCHAR(512);");
-
-				case 364:
-					currentVersion = 364;
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN selectedResultIGM VARCHAR(255);");
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN selectedResultIGMDate DATE;");
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN selectedResultPcr VARCHAR(255);");
@@ -3295,13 +3282,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN selectedResultPrnt VARCHAR(255);");
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN selectedResultPrntDate DATE;");
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN inputValuePrnt VARCHAR(255);");
-
-				case 365:
-					currentVersion = 365;
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN requestedSampleMaterialsString varchar(512);");
 
-				case 366:
-					currentVersion = 366;
+				case 360:
+					currentVersion = 360;
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN virusDetectionGenotype varchar(255);");
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateLabResultsSentDistrict Date;");
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN finalClassification varchar(255);");

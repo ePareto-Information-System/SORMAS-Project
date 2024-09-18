@@ -14996,44 +14996,80 @@ ALTER TABLE hospitalization ADD CONSTRAINT fk_hospitalization_location_id FOREIG
 ALTER TABLE hospitalization ADD CONSTRAINT fk_hospitalization_locationtype_id FOREIGN KEY (locationtype_id) REFERENCES location (id);
 INSERT INTO schema_version(version_number, comment) VALUES (698, 'Added changedateofembeddedlists, Dropped and re-added  numberaffected food history, added location ref to hospitalization');
 
--- CREATE TABLE FormEntities (
---     id BIGINT PRIMARY KEY NOT NULL,
---     name VARCHAR(255),
---     description VARCHAR(255)
--- );
---
--- CREATE TABLE FormEntities_history (
---     LIKE FormEntities INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
--- );
---
--- CREATE TABLE FormEntityFields (
---     id BIGINT PRIMARY KEY NOT NULL,
---     formEntity_id BIGINT,
---     name VARCHAR(255),
---     fieldId VARCHAR(255),
---     CONSTRAINT fk_formentityfields_formentity_id FOREIGN KEY (formEntity_id) REFERENCES FormEntities (id)
--- );
---
--- CREATE TABLE FormEntityFields_history (
---     LIKE FormEntityFields INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
--- );
---
--- -- disease formEntities formField
--- CREATE TABLE DiseaseFormEntityFormFields (
---     id BIGINT PRIMARY KEY NOT NULL,
---     diseaseconfiguration_id BIGINT,
---     formEntity_id BIGINT,
---     formField_id BIGINT,
---     CONSTRAINT fk_diseaseformentityformfields_disease_id FOREIGN KEY (diseaseconfiguration_id) REFERENCES diseaseconfiguration (id),
---     CONSTRAINT fk_diseaseformentityformfields_formentity_id FOREIGN KEY (formEntity_id) REFERENCES FormEntities (id),
---     CONSTRAINT fk_diseaseformentityformfields_formfield_id FOREIGN KEY (formField_id) REFERENCES FormEntityFields (id)
--- );
---
--- CREATE TABLE DiseaseFormEntityFormFields_history (
---     LIKE DiseaseFormEntityFormFields INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
--- );
---
--- INSERT INTO schema_version (version_number, comment) VALUES (694, 'Added FormEntities, FormEntityFields, DiseaseFormEntityFormFields tables');
+ALTER TABLE hospitalization DROP COLUMN nameoffacility;
+ALTER TABLE hospitalization ADD COLUMN nameoffacility_id bigint;
+ALTER TABLE hospitalization ADD CONSTRAINT fk_hospitalization_nameoffacility_id FOREIGN KEY (nameoffacility_id) REFERENCES facility(id);
+ALTER TABLE hospitalization ADD COLUMN nameoffacilitydetails varchar(512);
+INSERT INTO schema_version(version_number, comment) VALUES (699, 'Added nameoffacility reference and established relationship btn hospitalization anf facility');
+
+ALTER TABLE signalVerification ALTER COLUMN verified TYPE VARCHAR(20);
+INSERT INTO schema_version (version_number, comment) VALUES (700, 'updated the verified field');
+ALTER TABLE signalVerification ALTER COLUMN description TYPE TEXT;
+INSERT INTO schema_version (version_number, comment) VALUES (701, 'updated the description field');
+
+ALTER TABLE cases ADD column regionofresidence_id BIGINT;
+ALTER TABLE cases ADD column districtofresidence_id BIGINT;
+ALTER TABLE cases ADD CONSTRAINT fk_cases_regionofresidence_id FOREIGN KEY (regionofresidence_id) REFERENCES region (id);
+ALTER TABLE cases ADD CONSTRAINT fk_cases_districtofresidence_id FOREIGN KEY (districtofresidence_id) REFERENCES district (id);
+INSERT INTO schema_version(version_number, comment) VALUES (702, 'Added regionofresidence_id, districtofresidence_id to cases and created ref to region, district');
+
+ALTER TABLE cases DROP COLUMN patientfirstname;
+ALTER TABLE cases DROP COLUMN patientlastname;
+ALTER TABLE cases DROP COLUMN patientothernames;
+ALTER TABLE cases DROP COLUMN patientdobdd;
+ALTER TABLE cases DROP COLUMN patientdobmm;
+ALTER TABLE cases DROP COLUMN patientdobyy;
+ALTER TABLE cases DROP COLUMN patientageyear;
+ALTER TABLE cases DROP COLUMN patientagemonth;
+ALTER TABLE cases DROP COLUMN patientsex;
+ALTER TABLE cases DROP COLUMN dhimsfacilitytype;
+ALTER TABLE cases DROP COLUMN afpfacilityoptions;
+ALTER TABLE cases_history DROP COLUMN dhimsfacilitytype;
+ALTER TABLE location DROP COLUMN afpfacilityoptions;
+ALTER TABLE facility DROP COLUMN facilityafptype;
+ALTER TABLE facility DROP COLUMN facility_afptype;
+ALTER TABLE facility DROP COLUMN dhimsfacilitytype;
+ALTER TABLE facility DROP COLUMN afptype;
+ALTER TABLE location DROP COLUMN dhimsfacilitytype;
+ALTER TABLE person DROP COLUMN dhimsfacilitytype;
+INSERT INTO schema_version(version_number, comment) VALUES (703, 'Dropped redundant fields and type: dhimsfacilitytype at cases,facility,location,person');
+
+ALTER TABLE symptoms DROP COLUMN typeofrashstring;
+ALTER TABLE symptoms ADD COLUMN typeofrash VARCHAR(255);
+INSERT INTO schema_version(version_number, comment) VALUES (704, 'Dropped redundant field: typeofrashstring and added typeofrash at symptoms');
+
+ALTER TABLE cases ADD COLUMN investigationofficeraddress VARCHAR(255);
+INSERT INTO schema_version(version_number, comment) VALUES (705, 'Added investigationofficeraddress to cases');
+
+CREATE TABLE patientsymptomsprecedence (
+                                           id BIGINT PRIMARY KEY NOT NULL,
+                                           uuid varchar(36) not null unique,
+                                           changedate timestamp not null,
+                                           creationdate timestamp not null,
+                                           riskfactor_id bigint not null,
+                                           name varchar(255),
+                                           contactaddress VARCHAR(255),
+                                           phone VARCHAR(255)
+);
+ALTER TABLE patientsymptomsprecedence OWNER TO sormas_user;
+ALTER TABLE patientsymptomsprecedence ADD CONSTRAINT fk_patientsymptomsprecedence_riskfactor_id FOREIGN KEY (riskfactor_id) REFERENCES riskfactor(id);
+ALTER TABLE patientsymptomsprecedence ADD COLUMN change_user_id BIGINT,
+                           ADD CONSTRAINT fk_change_user_id
+                               FOREIGN KEY (change_user_id)
+                                   REFERENCES users (id);
+ALTER TABLE riskfactor ADD COLUMN changedateofembeddedlists timestamp without time zone;
+INSERT INTO schema_version(version_number, comment) VALUES (706, 'Created table patientsymptomsprecedence and added fields to implement patientsymptomsprecedence for riskfactor');
+
+ALTER TABLE riskfactor DROP COLUMN statusofpatient;
+ALTER TABLE riskfactor DROP COLUMN dateofdeath;
+ALTER TABLE riskfactor DROP COLUMN placeofdeath;
+ALTER TABLE symptoms ADD COLUMN statusofpatient VARCHAR(55);
+ALTER TABLE symptoms ADD COLUMN dateofdeath Date;
+ALTER TABLE symptoms ADD COLUMN placeofdeath VARCHAR(255);
+INSERT INTO schema_version(version_number, comment) VALUES (707, 'Dropped fields in riskfactor and added to symptoms');
+
+UPDATE samples SET samplematerial = 'BLOOD' WHERE samplematerial = 'WHOLE_BLOOD';
+INSERT INTO schema_version (version_number, comment) VALUES (708, 'Updated samplematerial column to blood');
 
 CREATE TABLE form_fields (
     id BIGINT PRIMARY KEY NOT NULL,
@@ -15069,7 +15105,7 @@ CREATE TABLE forms (
 CREATE TABLE forms_history (LIKE forms);
 CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE ON forms
                                                        FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'forms_history', true);
-INSERT INTO schema_version (version_number, comment) VALUES (695, 'Added forms and form_fields tables');
+INSERT INTO schema_version (version_number, comment) VALUES (709, 'Added forms and form_fields tables');
 
 CREATE TABLE forms_form_fields (
        form_id bigint,
@@ -15087,83 +15123,6 @@ CREATE TRIGGER versioning_trigger
     BEFORE INSERT OR UPDATE OR DELETE ON forms_form_fields
     FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'forms_form_fields_history', true);
 ALTER TABLE forms_form_fields_history OWNER TO sormas_user;
-INSERT INTO schema_version (version_number, comment) VALUES (696, 'Added forms_form_fields table');
+INSERT INTO schema_version (version_number, comment) VALUES (710, 'Added forms_form_fields table');
 
-ALTER TABLE hospitalization DROP COLUMN nameoffacility;
-ALTER TABLE hospitalization ADD COLUMN nameoffacility_id bigint;
-ALTER TABLE hospitalization ADD CONSTRAINT fk_hospitalization_nameoffacility_id FOREIGN KEY (nameoffacility_id) REFERENCES facility(id);
-ALTER TABLE hospitalization ADD COLUMN nameoffacilitydetails varchar(512);
-INSERT INTO schema_version(version_number, comment) VALUES (697, 'Added nameoffacility reference and established relationship btn hospitalization anf facility');
-
-ALTER TABLE signalVerification ALTER COLUMN verified TYPE VARCHAR(20);
-INSERT INTO schema_version (version_number, comment) VALUES (698, 'updated the verified field');
-ALTER TABLE signalVerification ALTER COLUMN description TYPE TEXT;
-INSERT INTO schema_version (version_number, comment) VALUES (699, 'updated the description field');
-
-ALTER TABLE cases ADD column regionofresidence_id BIGINT;
-ALTER TABLE cases ADD column districtofresidence_id BIGINT;
-ALTER TABLE cases ADD CONSTRAINT fk_cases_regionofresidence_id FOREIGN KEY (regionofresidence_id) REFERENCES region (id);
-ALTER TABLE cases ADD CONSTRAINT fk_cases_districtofresidence_id FOREIGN KEY (districtofresidence_id) REFERENCES district (id);
-INSERT INTO schema_version(version_number, comment) VALUES (700, 'Added regionofresidence_id, districtofresidence_id to cases and created ref to region, district');
-
-ALTER TABLE cases DROP COLUMN patientfirstname;
-ALTER TABLE cases DROP COLUMN patientlastname;
-ALTER TABLE cases DROP COLUMN patientothernames;
-ALTER TABLE cases DROP COLUMN patientdobdd;
-ALTER TABLE cases DROP COLUMN patientdobmm;
-ALTER TABLE cases DROP COLUMN patientdobyy;
-ALTER TABLE cases DROP COLUMN patientageyear;
-ALTER TABLE cases DROP COLUMN patientagemonth;
-ALTER TABLE cases DROP COLUMN patientsex;
-ALTER TABLE cases DROP COLUMN dhimsfacilitytype;
-ALTER TABLE cases DROP COLUMN afpfacilityoptions;
-ALTER TABLE cases_history DROP COLUMN dhimsfacilitytype;
-ALTER TABLE location DROP COLUMN afpfacilityoptions;
-ALTER TABLE facility DROP COLUMN facilityafptype;
-ALTER TABLE facility DROP COLUMN facility_afptype;
-ALTER TABLE facility DROP COLUMN dhimsfacilitytype;
-ALTER TABLE facility DROP COLUMN afptype;
-ALTER TABLE location DROP COLUMN dhimsfacilitytype;
-ALTER TABLE person DROP COLUMN dhimsfacilitytype;
-INSERT INTO schema_version(version_number, comment) VALUES (701, 'Dropped redundant fields and type: dhimsfacilitytype at cases,facility,location,person');
-
-ALTER TABLE symptoms DROP COLUMN typeofrashstring;
-ALTER TABLE symptoms ADD COLUMN typeofrash VARCHAR(255);
-INSERT INTO schema_version(version_number, comment) VALUES (702, 'Dropped redundant field: typeofrashstring and added typeofrash at symptoms');
-
-ALTER TABLE cases ADD COLUMN investigationofficeraddress VARCHAR(255);
-INSERT INTO schema_version(version_number, comment) VALUES (703, 'Added investigationofficeraddress to cases');
-
-CREATE TABLE patientsymptomsprecedence (
-                                id BIGINT PRIMARY KEY NOT NULL,
-                                uuid varchar(36) not null unique,
-                                changedate timestamp not null,
-                                creationdate timestamp not null,
-                                riskfactor_id bigint not null,
-                                name varchar(255),
-                                contactaddress VARCHAR(255),
-                                phone VARCHAR(255)
-);
-ALTER TABLE patientsymptomsprecedence OWNER TO sormas_user;
-ALTER TABLE patientsymptomsprecedence ADD CONSTRAINT fk_patientsymptomsprecedence_riskfactor_id FOREIGN KEY (riskfactor_id) REFERENCES riskfactor(id);
-ALTER TABLE patientsymptomsprecedence ADD COLUMN change_user_id BIGINT,
-                           ADD CONSTRAINT fk_change_user_id
-                               FOREIGN KEY (change_user_id)
-                                   REFERENCES users (id);
-ALTER TABLE riskfactor ADD COLUMN changedateofembeddedlists timestamp without time zone;
-INSERT INTO schema_version(version_number, comment) VALUES (704, 'Created table patientsymptomsprecedence and added fields to implement patientsymptomsprecedence for riskfactor');
-
-ALTER TABLE riskfactor DROP COLUMN statusofpatient;
-ALTER TABLE riskfactor DROP COLUMN dateofdeath;
-ALTER TABLE riskfactor DROP COLUMN placeofdeath;
-ALTER TABLE symptoms ADD COLUMN statusofpatient VARCHAR(55);
-ALTER TABLE symptoms ADD COLUMN dateofdeath Date;
-ALTER TABLE symptoms ADD COLUMN placeofdeath VARCHAR(255);
-INSERT INTO schema_version(version_number, comment) VALUES (705, 'Dropped fields in riskfactor and added to symptoms');
-
-UPDATE samples SET samplematerial = 'BLOOD' WHERE samplematerial = 'WHOLE_BLOOD';
-INSERT INTO schema_version (version_number, comment) VALUES (706, 'Updated samplematerial column to blood');
-
-
-INSERT INTO schema_version(version_number, comment) VALUES (699, 'Added nameoffacility reference and established relationship btn hospitalization anf facility');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
