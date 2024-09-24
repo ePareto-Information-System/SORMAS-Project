@@ -25,13 +25,14 @@
     android:descendantFocusability="beforeDescendants">
 
     <data>
-        <import type="de.symeda.sormas.api.utils.YesNo" />
+        <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
         <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
         <import type="de.symeda.sormas.api.hospitalization.AccommodationType" />
         <import type="de.symeda.sormas.api.utils.MildModerateSevereCritical" />
         <import type="de.symeda.sormas.api.caze.CaseOutcome" />
         <import type="de.symeda.sormas.api.hospitalization.HospitalizationReasonType" />
         <import type="de.symeda.sormas.api.infrastructure.facility.FacilityType" />
+        <import type="de.symeda.sormas.api.utils.YesNo" />
 
         <variable name="patientCondition" type="MildModerateSevereCritical" />
         <variable name="data" type="de.symeda.sormas.app.backend.hospitalization.Hospitalization" />
@@ -39,6 +40,7 @@
         <variable name="previousHospitalizationList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.hospitalization.PreviousHospitalization&gt;" />
         <variable name="prevHosItemClickCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
         <variable name="previousHospitalizationBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
+        <variable name="YesNoClass" type="Class" />
     </data>
 
     <ScrollView
@@ -57,11 +59,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="@dimen/fragment_padding"
-                app:goneIfVariable="@{caze.facilityType}"
-                app:goneIfNotValue="@{FacilityType.HOSPITAL}">
+                >
 
                 <TextView
-                    android:id="@+id/most_recent_hospitalization_headline"
+                    android:id="@+id/heading_most_recent_hospitalization"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/heading_most_recent_hospitalization"
@@ -91,6 +92,7 @@
 
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/caseHospitalization_admittedToHealthFacility"
+                    app:enumClass="@{YesNoClass}"
                     app:value="@={data.admittedToHealthFacility}"
                     style="@style/ControlSingleColumnStyle" />
 
@@ -99,16 +101,28 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseHospitalization_hospitalRecordNumber"
+                        app:value="@={data.hospitalRecordNumber}"
+                        app:dependencyParentField="@{caseHospitalizationAdmittedToHealthFacility}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/caseHospitalization_admissionDate"
                         app:value="@={data.admissionDate}"
-                        style="@style/ControlFirstOfTwoColumnsStyle" />
+                        app:dependencyParentField="@{caseHospitalizationAdmittedToHealthFacility}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/caseHospitalization_dischargeDate"
                         app:value="@={data.dischargeDate}"
                         app:allowedDaysInFuture="7"
+                        app:dependencyParentField="@{caseHospitalizationAdmittedToHealthFacility}"
+                        app:dependencyParentValue="@{YesNo.YES}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
+
 
                 </LinearLayout>
 
@@ -122,7 +136,6 @@
                         android:id="@+id/caseData_Outcome"
                         dependencyParentField="@{caseHospitalizationDischargeDate}"
                         app:dependencyParentVisibility="@{false}"
-                        app:required="true"
                         app:value="@={caze.outcome}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
@@ -295,6 +308,7 @@
                 </RelativeLayout>
 
                 <ImageView
+                    android:id="@+id/prev_hospitalizations_divider"
                     style="@style/FullHorizontalDividerStyle"
                     app:goneIfEmpty="@{previousHospitalizationList}"/>
 

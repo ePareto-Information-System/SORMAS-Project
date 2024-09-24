@@ -29,6 +29,7 @@
         <import type="de.symeda.sormas.api.symptoms.SymptomsContext" />
         <import type="de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType" />
         <import type="de.symeda.sormas.api.symptoms.SymptomState" />
+        <import type="de.symeda.sormas.api.symptoms.GuineaWormFirstSymptom" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.symptoms.Symptoms"/>
         <variable name="symptomStateClass" type="Class"/>
@@ -36,6 +37,7 @@
         <variable name="setClearedToNoCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener"/>
         <variable name="setClearedToUnknownCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener"/>
         <variable name="symptomsContext" type="de.symeda.sormas.api.symptoms.SymptomsContext" />
+        <variable name="GuineaWormFirstSymptomClass" type="Class"/>
     </data>
 
 
@@ -1402,10 +1404,70 @@
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_firstSignOrSymptomsBeforeWorm"
+                app:enumClass="@{GuineaWormFirstSymptomClass}"
+                app:value="@={data.firstSignOrSymptomsBeforeWorm}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/symptoms_firstSignOrSymptomsBeforeWormOthers"
+                app:value="@={data.firstSignOrSymptomsBeforeWormOthers}"
+                app:dependencyParentField="@{symptomsFirstSignOrSymptomsBeforeWorm}"
+                app:dependencyParentValue="@{GuineaWormFirstSymptom.OTHER}"
+                style="@style/ControlSingleColumnStyle" />
+
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_emergenceOfGuineaWorm"
+                style="@style/ControlSingleColumnStyle"
+                app:enumClass="@{symptomStateClass}"
+                app:slim="true"
+                app:value="@={data.emergenceOfGuineaWorm}" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/symptoms_numberOfWorms"
+                app:value="@={data.numberOfWorms}"
+                app:softRequired="true"
+                app:inputType="number"
+                app:dependencyParentField="@{symptomsEmergenceOfGuineaWorm}"
+                app:dependencyParentValue="@{SymptomState.YES}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_firstWormThisYear"
+                app:enumClass="@{symptomStateClass}"
+                app:slim="true"
+                app:value="@={data.firstWormThisYear}"
+                app:dependencyParentField="@{symptomsEmergenceOfGuineaWorm}"
+                app:dependencyParentValue="@{SymptomState.YES}"
+                style="@style/ControlSingleColumnStyle" />
+
+
+            <de.symeda.sormas.app.component.controls.ControlDateField
+                android:id="@+id/symptoms_dateFirstWormEmergence"
+                app:value="@={data.dateFirstWormEmergence}"
+                app:softRequired="true"
+                app:dependencyParentField="@{symptomsEmergenceOfGuineaWorm}"
+                app:dependencyParentValue="@{SymptomState.YES}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_caseDetectedBeforeWormEmergence"
+                app:enumClass="@{symptomStateClass}"
+                app:slim="true"
+                app:value="@={data.caseDetectedBeforeWormEmergence}"
+                app:dependencyParentField="@{symptomsEmergenceOfGuineaWorm}"
+                app:dependencyParentValue="@{SymptomState.YES}"
+                style="@style/ControlSingleColumnStyle" />
+
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
                 android:id="@+id/symptoms_otherComplications"
                 app:enumClass="@{symptomStateClass}"
                 app:slim="true"
                 app:value="@={data.otherComplications}"
+                app:dependencyParentField="@{symptomsEmergenceOfGuineaWorm}"
+                app:dependencyParentValue="@{SymptomState.YES}"
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField

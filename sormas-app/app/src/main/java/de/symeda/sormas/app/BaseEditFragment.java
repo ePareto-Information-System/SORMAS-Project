@@ -48,6 +48,7 @@ import de.symeda.sormas.app.backend.formbuilder.FormBuilder;
 import de.symeda.sormas.app.backend.formfield.FormField;
 import de.symeda.sormas.app.component.controls.ControlPropertyEditField;
 import de.symeda.sormas.app.component.controls.ControlPropertyField;
+import de.symeda.sormas.app.component.controls.ControlSpinnerField;
 import de.symeda.sormas.app.core.IUpdateSubHeadingTitle;
 import de.symeda.sormas.app.core.NotImplementedException;
 import de.symeda.sormas.app.core.NotificationContext;

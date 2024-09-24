@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import de.symeda.sormas.api.infrastructure.fields.FormFieldsDto;
+import de.symeda.sormas.api.infrastructure.forms.FormBuilderDto;
 import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.sormas.api.EntityDto;
@@ -92,6 +94,12 @@ public class InfrastructureImporter extends DataImporter {
 		case CONTINENT:
 			newEntityDto = ContinentDto.build();
 			break;
+		case FORM_FIELD:
+			newEntityDto = FormFieldsDto.build();
+			break;
+		case FORM:
+			newEntityDto = FormBuilderDto.build();
+			break;
 		default:
 			throw new IllegalArgumentException(type.toString());
 		}
@@ -145,6 +153,12 @@ public class InfrastructureImporter extends DataImporter {
 					break;
 				case CONTINENT:
 					FacadeProvider.getContinentFacade().save((ContinentDto) newEntityDto, allowOverwrite);
+					break;
+				case FORM_FIELD:
+					FacadeProvider.getFormFieldFacade().save((FormFieldsDto) newEntityDto, allowOverwrite);
+					break;
+				case FORM:
+					FacadeProvider.getFormBuilderFacade().save((FormBuilderDto) newEntityDto, allowOverwrite);
 					break;
 				default:
 					throw new IllegalArgumentException(type.toString());

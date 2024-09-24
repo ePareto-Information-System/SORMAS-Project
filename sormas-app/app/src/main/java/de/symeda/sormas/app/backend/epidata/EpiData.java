@@ -24,11 +24,15 @@ import javax.persistence.Enumerated;
 
 import com.j256.ormlite.table.DatabaseTable;
 
+import de.symeda.sormas.api.epidata.PlaceManaged;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
+import de.symeda.sormas.app.backend.containmentmeasure.ContainmentMeasure;
+import de.symeda.sormas.app.backend.contaminationsource.ContaminationSource;
 import de.symeda.sormas.app.backend.exposure.Exposure;
+import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
 
 @Entity(name = EpiData.TABLE_NAME)
 @DatabaseTable(tableName = EpiData.TABLE_NAME)
@@ -56,6 +60,18 @@ public class EpiData extends PseudonymizableAdo {
 	private List<Exposure> exposures = new ArrayList<>();
 
 	private List<ActivityAsCase> activitiesAsCase = new ArrayList<>();
+	private List<PersonTravelHistory> personTravelHistories = new ArrayList<>();
+	private List<ContainmentMeasure> containmentMeasures = new ArrayList<>();
+	private List<ContaminationSource> contaminationSources = new ArrayList<>();
+
+	@Enumerated(EnumType.STRING)
+	private YesNo receivedHealthEducation;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo patientEnteredWaterSource;
+
+	@Enumerated(EnumType.STRING)
+	private PlaceManaged placeManaged;
 
 	public YesNo getExposureDetailsKnown() {
 		return exposureDetailsKnown;
@@ -119,6 +135,54 @@ public class EpiData extends PseudonymizableAdo {
 
 	public void setActivitiesAsCase(List<ActivityAsCase> activitiesAsCase) {
 		this.activitiesAsCase = activitiesAsCase;
+	}
+
+	public List<PersonTravelHistory> getPersonTravelHistories() {
+		return personTravelHistories;
+	}
+
+	public void setPersonTravelHistories(List<PersonTravelHistory> personTravelHistories) {
+		this.personTravelHistories = personTravelHistories;
+	}
+
+	public List<ContainmentMeasure> getContainmentMeasures() {
+		return containmentMeasures;
+	}
+
+	public void setContainmentMeasures(List<ContainmentMeasure> containmentMeasures) {
+		this.containmentMeasures = containmentMeasures;
+	}
+
+	public List<ContaminationSource> getContaminationSources() {
+		return contaminationSources;
+	}
+
+	public void setContaminationSources(List<ContaminationSource> contaminationSources) {
+		this.contaminationSources = contaminationSources;
+	}
+
+	public YesNo getReceivedHealthEducation() {
+		return receivedHealthEducation;
+	}
+
+	public void setReceivedHealthEducation(YesNo receivedHealthEducation) {
+		this.receivedHealthEducation = receivedHealthEducation;
+	}
+
+	public YesNo getPatientEnteredWaterSource() {
+		return patientEnteredWaterSource;
+	}
+
+	public void setPatientEnteredWaterSource(YesNo patientEnteredWaterSource) {
+		this.patientEnteredWaterSource = patientEnteredWaterSource;
+	}
+
+	public PlaceManaged getPlaceManaged() {
+		return placeManaged;
+	}
+
+	public void setPlaceManaged(PlaceManaged placeManaged) {
+		this.placeManaged = placeManaged;
 	}
 
 	@Override

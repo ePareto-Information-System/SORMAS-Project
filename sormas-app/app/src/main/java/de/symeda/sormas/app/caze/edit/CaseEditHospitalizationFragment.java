@@ -181,6 +181,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 
 		contentBinding.setData(record);
 		contentBinding.setCaze(caze);
+		contentBinding.setYesNoClass(YesNo.class);
 //		contentBinding.setPatientCondition(patientCondition);
 		contentBinding.setPreviousHospitalizationList(getPreviousHospitalizations());
 		contentBinding.setPrevHosItemClickCallback(onPrevHosItemClickListener);
@@ -219,6 +220,10 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		contentBinding.caseHospitalizationSelectInpatientOutpatient.initializeSpinner(inpatientOutpatientList);
 
 		verifyPrevHospitalizationStatus();
+
+		if (caze.getDisease() != null) {
+			super.hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.HOSPITALIZATION_EDIT);
+		}
 	}
 
 	@Override

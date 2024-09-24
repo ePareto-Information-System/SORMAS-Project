@@ -1,5 +1,7 @@
 package de.symeda.sormas.backend.infrastructure.formbuilder;
 
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.infrastructure.diseasecon.DiseaseConCriteria;
 import de.symeda.sormas.api.infrastructure.forms.FormBuilderCriteria;
 import de.symeda.sormas.backend.common.AbstractInfrastructureAdoService;
@@ -71,6 +73,26 @@ public class FromBuilderService extends AbstractInfrastructureAdoService<FormBui
 
         TypedQuery<FormField> query = em.createQuery(cq);
         return query.getResultList();
+    }
+
+//    getByDiseaseAndFormType
+    public FormBuilder getByDiseaseAndFormType(Disease disease, FormType formType) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<FormBuilder> cq = cb.createQuery(FormBuilder.class);
+        Root<FormBuilder> from = cq.from(FormBuilder.class);
+
+        Predicate filter = cb.and(
+                cb.equal(from.get("disease"), disease),
+                cb.equal(from.get("formType"), formType)
+        );
+        cq.where(filter);
+
+        TypedQuery<FormBuilder> query = em.createQuery(cq);
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
 

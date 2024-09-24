@@ -1,7 +1,5 @@
 package de.symeda.sormas.ui.configuration.infrastructure;
 
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TwinColSelect;
 import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.TextArea;

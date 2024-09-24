@@ -514,7 +514,7 @@ public class PersonDto extends PseudonymizableDto {
 	
 	private CountryReferenceDto pst14MonthsCountry;
 	private YesNo placeOfResidenceSameAsReportingVillage;
-	private String residenceSinceWhenInMonths;
+	private Integer residenceSinceWhenInMonths;
 	private String otherId;
 
 	@SuppressWarnings("serial")
@@ -1450,11 +1450,11 @@ public class PersonDto extends PseudonymizableDto {
 		this.placeOfResidenceSameAsReportingVillage = placeOfResidenceSameAsReportingVillage;
 	}
 
-	public String getResidenceSinceWhenInMonths() {
+	public Integer getResidenceSinceWhenInMonths() {
 		return residenceSinceWhenInMonths;
 	}
 
-	public void setResidenceSinceWhenInMonths(String residenceSinceWhenInMonths) {
+	public void setResidenceSinceWhenInMonths(Integer residenceSinceWhenInMonths) {
 		this.residenceSinceWhenInMonths = residenceSinceWhenInMonths;
 	}
 

@@ -261,6 +261,26 @@
                     app:dateWithoutTime="@{true}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_reportingOfficerName"
+                        app:value="@={data.reportingOfficerName}"
+                        app:userEditRight="@{UserRight.CASE_EDIT}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_reportingOfficerTitle"
+                        app:value="@={data.reportingOfficerTitle}"
+                        app:userEditRight="@{UserRight.CASE_EDIT}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/caseData_caseIdentificationSource"
                     app:value="@={data.caseIdentificationSource}"
@@ -417,6 +437,79 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_reportingVillage"
+                        app:value="@={data.reportingVillage}"
+                        app:required="true"
+                        app:userEditRight="@{UserRight.CASE_TRANSFER}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_reportingZone"
+                        app:value="@={data.reportingZone}"
+                        app:required="true"
+                        app:userEditRight="@{UserRight.CASE_TRANSFER}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_investigationOfficerName"
+                        app:value="@={data.investigationOfficerName}"
+                        app:userEditRight="@{UserRight.CASE_TRANSFER}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_investigationOfficerPosition"
+                        app:value="@={data.investigationOfficerPosition}"
+                        app:userEditRight="@{UserRight.CASE_TRANSFER}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+                </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/caseData_dateOfInvestigation"
+                    app:value="@={data.dateOfInvestigation}"
+                    app:userEditRight="@{UserRight.CASE_TRANSFER}"
+                    app:dateWithoutTime="@{true}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_formCompletedByName"
+                        app:value="@={data.formCompletedByName}"
+                        app:userEditRight="@{UserRight.CASE_TRANSFER}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_formCompletedByPosition"
+                        app:value="@={data.formCompletedByPosition}"
+                        app:userEditRight="@{UserRight.CASE_TRANSFER}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/caseData_formCompletedByCellPhoneNo"
+                    app:value="@={data.formCompletedByCellPhoneNo}"
+                    app:userEditRight="@{UserRight.CASE_TRANSFER}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
                     <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                         android:id="@+id/caseData_responsibleRegion"
                         app:value="@={data.responsibleRegion}"
@@ -438,6 +531,8 @@
                     app:value="@={data.responsibleCommunity}"
                     app:userEditRight="@{UserRight.CASE_TRANSFER}"
                     style="@style/ControlSingleColumnStyle" />
+
+
 
                 <de.symeda.sormas.app.component.controls.ControlCheckBoxField
                     android:id="@+id/caseData_differentPlaceOfStayJurisdiction"
@@ -767,7 +862,7 @@
                 <ImageView style="@style/FullHorizontalDividerStyle" />
 
                 <TextView
-                    android:id="@+id/caseData_medicalInformationHeading"
+                    android:id="@+id/caseData_headingAdditionalMedicalInformation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/heading_additional_medical_information"
@@ -899,10 +994,6 @@
 
                 </LinearLayout>
 
-                    <de.symeda.sormas.app.component.controls.ControlTextEditField
-                        android:id="@+id/caseData_reportingOfficerTitle"
-                        app:value="@={data.reportingOfficerTitle}"
-                        style="@style/ControlSingleColumnStyle"/>
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/caseData_functionOfReportingOfficer"
@@ -941,7 +1032,7 @@
                 <ImageView style="@style/FullHorizontalDividerStyle" />
 
                 <TextView
-                    android:id="@+id/caseData_generalCommentHeading"
+                    android:id="@+id/caseData_headingAdditionalDetails"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/heading_additional_details"

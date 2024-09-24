@@ -92,6 +92,8 @@ public class Hospitalization extends AbstractDomainObject {
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date notifyDistrictDate;
 
+	@Column(length = CHARACTER_LIMIT_BIG)
+	private String hospitalRecordNumber;
 	// just for reference, not persisted in DB
 	private List<PreviousHospitalization> previousHospitalizations = new ArrayList<>();
 
@@ -259,5 +261,13 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setHealthFacilityRecordNumber(String healthFacilityRecordNumber) {
 		this.healthFacilityRecordNumber = healthFacilityRecordNumber;
+	}
+
+	public String getHospitalRecordNumber() {
+		return hospitalRecordNumber;
+	}
+
+	public void setHospitalRecordNumber(String hospitalRecordNumber) {
+		this.hospitalRecordNumber = hospitalRecordNumber;
 	}
 }

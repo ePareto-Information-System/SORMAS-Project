@@ -24,6 +24,7 @@ import java.util.List;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
+import de.symeda.sormas.api.symptoms.GuineaWormFirstSymptom;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.SymptomsContext;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
@@ -52,6 +53,7 @@ import de.symeda.sormas.app.component.controls.ControlSpinnerField;
 import de.symeda.sormas.app.component.controls.ControlSwitchField;
 import de.symeda.sormas.app.component.controls.ValueChangeListener;
 import de.symeda.sormas.app.core.IEntryItemOnClickListener;
+import de.symeda.sormas.app.core.YesNo;
 import de.symeda.sormas.app.databinding.FragmentSymptomsEditLayoutBinding;
 import de.symeda.sormas.app.util.Bundler;
 import de.symeda.sormas.app.util.DataUtils;
@@ -153,6 +155,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		setupCallback();
 
 		contentBinding.setData(record);
+		contentBinding.setGuineaWormFirstSymptomClass(GuineaWormFirstSymptom.class);
 		contentBinding.setSymptomsContext(symptomsContext);
 		contentBinding.setSymptomStateClass(SymptomState.class);
 		contentBinding.setClearAllCallback(clearAllCallback);
@@ -190,6 +193,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		contentBinding.symptomsTemperatureSource.initializeSpinner(DataUtils.addEmptyItem(tempSourceList));
 		contentBinding.symptomsCongenitalHeartDiseaseType.initializeSpinner(congenitalHeartDiseaseList);
 		contentBinding.symptomsOnsetSymptom.initializeSpinner(DataUtils.toItems(null, true));
+		contentBinding.symptomsDateFirstWormEmergence.initializeDateField(getFragmentManager());
 
 		contentBinding.symptomsTemperature.setSelectionOnOpen(37.0f);
 

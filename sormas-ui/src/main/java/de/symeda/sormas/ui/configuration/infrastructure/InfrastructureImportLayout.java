@@ -94,6 +94,16 @@ public class InfrastructureImportLayout extends AbstractImportLayout {
 			templateFileName = importFacade.getContinentImportTemplateFileName();
 			fileNameAddition = "_continent_import_";
 			break;
+		case FORM_FIELD:
+			templateFilePath = importFacade.getFormFieldImportTemplateFilePath();
+			templateFileName = importFacade.getFormFieldImportTemplateFileName();
+			fileNameAddition = "_form_field_import_";
+			break;
+		case FORM:
+			templateFilePath = importFacade.getFormImportTemplateFilePath();
+			templateFileName = importFacade.getFormImportTemplateFileName();
+			fileNameAddition = "_form_import_";
+			break;
 		default:
 			throw new UnsupportedOperationException("Import is currently not implemented for infrastructure type " + infrastructureType.name());
 		}
@@ -189,6 +199,22 @@ public class InfrastructureImportLayout extends AbstractImportLayout {
 							file,
 							currentUser,
 							InfrastructureType.CONTINENT,
+							allowOverwrite,
+							(ValueSeparator) separator.getValue());
+						break;
+					case FORM_FIELD:
+						importer = new InfrastructureImporter(
+							file,
+							currentUser,
+							InfrastructureType.FORM_FIELD,
+							allowOverwrite,
+							(ValueSeparator) separator.getValue());
+						break;
+					case FORM:
+						importer = new InfrastructureImporter(
+							file,
+							currentUser,
+							InfrastructureType.FORM,
 							allowOverwrite,
 							(ValueSeparator) separator.getValue());
 						break;

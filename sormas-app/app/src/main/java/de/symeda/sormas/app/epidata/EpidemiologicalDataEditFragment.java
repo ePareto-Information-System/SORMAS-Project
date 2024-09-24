@@ -35,6 +35,7 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.epidata.EpiDataDto;
+import de.symeda.sormas.api.epidata.PlaceManaged;
 import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -50,8 +51,11 @@ import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.contact.Contact;
+import de.symeda.sormas.app.backend.containmentmeasure.ContainmentMeasure;
+import de.symeda.sormas.app.backend.contaminationsource.ContaminationSource;
 import de.symeda.sormas.app.backend.epidata.EpiData;
 import de.symeda.sormas.app.backend.exposure.Exposure;
+import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
 import de.symeda.sormas.app.caze.edit.CaseEditActivity;
 import de.symeda.sormas.app.core.IEntryItemOnClickListener;
 import de.symeda.sormas.app.databinding.FragmentEditEpidLayoutBinding;
@@ -62,9 +66,13 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	public static final String TAG = EpidemiologicalDataEditFragment.class.getSimpleName();
 
 	private EpiData record;
-	private Disease disease;
+	private Disease caseDisease;
 	private IEntryItemOnClickListener onExposureItemClickListener;
 	private IEntryItemOnClickListener onActivityAsCaseItemClickListener;
+	private IEntryItemOnClickListener onPersonTravelHistoryItemClickListener;
+	private IEntryItemOnClickListener onContainmentMeasureItemClickListener;
+	private IEntryItemOnClickListener onContaminationSourceItemClickListener;
+
 
 	// Static methods
 
@@ -152,6 +160,91 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 			getContentBinding().epiDataActivityAsCaseDetailsKnown.setEnabled(getActivityAsCaseList().isEmpty());
 		});
 
+		contentBinding.btnAddPersonTravelHistory.setOnClickListener(v -> {
+			final PersonTravelHistory personTravelHistory = DatabaseHelper.getPersonTravelHistoryDao().build();
+			final PersonTravelHistoryDialog dialog =
+				new PersonTravelHistoryDialog(CaseEditActivity.getActiveActivity(), personTravelHistory, getActivityRootData(), true);
+			dialog.setPositiveCallback(() -> addPersonTravelHistory(personTravelHistory));
+			dialog.show();
+		});
+
+		onPersonTravelHistoryItemClickListener = (v, item) -> {
+			final PersonTravelHistory personTravelHistory = (PersonTravelHistory) item;
+			final PersonTravelHistory personTravelHistoryClone = (PersonTravelHistory) personTravelHistory.clone();
+			final PersonTravelHistoryDialog dialog =
+				new PersonTravelHistoryDialog(CaseEditActivity.getActiveActivity(), personTravelHistoryClone, getActivityRootData(), false);
+			dialog.setPositiveCallback(() -> {
+				record.getPersonTravelHistories().set(record.getPersonTravelHistories().indexOf(personTravelHistory), personTravelHistoryClone);
+				updatePersonTravelHistories();
+			});
+			dialog.setDeleteCallback(() -> {
+				removePersonTravelHistory(personTravelHistory);
+				dialog.dismiss();
+			});
+			dialog.show();
+		};
+
+		contentBinding.setPersonTravelHistoryItemClickCallback(onPersonTravelHistoryItemClickListener);
+
+
+//		ContainmentMeasure
+		contentBinding.btnAddContainmentMeasure.setOnClickListener(v -> {
+			final ContainmentMeasure containmentMeasure = DatabaseHelper.getContainmentMeasureDao().build();
+			final ContainmentMeasureDialog dialog =
+				new ContainmentMeasureDialog(CaseEditActivity.getActiveActivity(), containmentMeasure, getActivityRootData(), true);
+			dialog.setPositiveCallback(() -> addContainmentMeasure(containmentMeasure));
+			dialog.show();
+		});
+
+		onContainmentMeasureItemClickListener = (v, item) -> {
+			final ContainmentMeasure containmentMeasure = (ContainmentMeasure) item;
+			final ContainmentMeasure containmentMeasureClone = (ContainmentMeasure) containmentMeasure.clone();
+			final ContainmentMeasureDialog dialog =
+				new ContainmentMeasureDialog(CaseEditActivity.getActiveActivity(), containmentMeasureClone, getActivityRootData(), false);
+			dialog.setPositiveCallback(() -> {
+				record.getContainmentMeasures().set(record.getContainmentMeasures().indexOf(containmentMeasure), containmentMeasureClone);
+				updateContainmentMeasures();
+			});
+			dialog.setDeleteCallback(() -> {
+				removeContainmentMeasure(containmentMeasure);
+				dialog.dismiss();
+			});
+			dialog.show();
+		};
+		contentBinding.setContainmentMeasureItemClickCallback(onContainmentMeasureItemClickListener);
+
+//		ContaminationSource
+		contentBinding.btnAddContaminationSource.setOnClickListener(v -> {
+			final ContaminationSource contaminationSource = DatabaseHelper.getContaminationSourceDao().build();
+			final ContaminationSourceDialog dialog =
+				new ContaminationSourceDialog(CaseEditActivity.getActiveActivity(), contaminationSource, getActivityRootData(), true);
+			dialog.setPositiveCallback(() -> addContaminationSource(contaminationSource));
+			dialog.show();
+		});
+
+		onContaminationSourceItemClickListener = (v, item) -> {
+			final ContaminationSource contaminationSource = (ContaminationSource) item;
+			final ContaminationSource contaminationSourceClone = (ContaminationSource) contaminationSource.clone();
+			final ContaminationSourceDialog dialog =
+				new ContaminationSourceDialog(CaseEditActivity.getActiveActivity(), contaminationSourceClone, getActivityRootData(), false);
+			dialog.setPositiveCallback(() -> {
+				record.getContaminationSources().set(record.getContaminationSources().indexOf(contaminationSource), contaminationSourceClone);
+				updateContaminationSources();
+			});
+			dialog.setDeleteCallback(() -> {
+				removeContaminationSource(contaminationSource);
+				dialog.dismiss();
+			});
+			dialog.show();
+		};
+
+		contentBinding.setContaminationSourceItemClickCallback(onContaminationSourceItemClickListener);
+
+
+
+
+
+
 	}
 
 	private ObservableArrayList<Exposure> getExposureList() {
@@ -202,11 +295,73 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		getContentBinding().epiDataActivityAsCaseDetailsKnown.setEnabled(getActivityAsCaseList().isEmpty());
 		updateAddActivitiesAsCaseButtonVisibility();
 	}
-
 	private void addActivityAsCase(ActivityAsCase activityAsCase) {
 		record.getActivitiesAsCase().add(0, activityAsCase);
 		updateActivitiesAsCase();
 	}
+
+	private ObservableArrayList<PersonTravelHistory> getPersonTravelHistories() {
+		ObservableArrayList<PersonTravelHistory> personTravelHistories = new ObservableArrayList<>();
+		personTravelHistories.addAll(record.getPersonTravelHistories());
+		return personTravelHistories;
+	}
+
+	private void updatePersonTravelHistories() {
+		getContentBinding().setPersonTravelHistoryList(getPersonTravelHistories());
+	}
+
+	private void addPersonTravelHistory(PersonTravelHistory personTravelHistory) {
+		record.getPersonTravelHistories().add(0, personTravelHistory);
+		updatePersonTravelHistories();
+	}
+
+	private void removePersonTravelHistory(PersonTravelHistory personTravelHistory) {
+		record.getPersonTravelHistories().remove(personTravelHistory);
+		updatePersonTravelHistories();
+	}
+
+	private ObservableArrayList<ContainmentMeasure> getContainmentMeasures() {
+		ObservableArrayList<ContainmentMeasure> containmentMeasures = new ObservableArrayList<>();
+		containmentMeasures.addAll(record.getContainmentMeasures());
+		return containmentMeasures;
+	}
+
+	private void updateContainmentMeasures() {
+		getContentBinding().setContainmentMeasureList(getContainmentMeasures());
+	}
+
+	private void addContainmentMeasure(ContainmentMeasure containmentMeasure) {
+		record.getContainmentMeasures().add(0, containmentMeasure);
+		updateContainmentMeasures();
+	}
+
+	private void removeContainmentMeasure(ContainmentMeasure containmentMeasure) {
+		record.getContainmentMeasures().remove(containmentMeasure);
+		updateContainmentMeasures();
+	}
+
+	private ObservableArrayList<ContaminationSource> getContaminationSources() {
+		ObservableArrayList<ContaminationSource> contaminationSources = new ObservableArrayList<>();
+		contaminationSources.addAll(record.getContaminationSources());
+		return contaminationSources;
+	}
+
+	private void updateContaminationSources() {
+		getContentBinding().setContaminationSourceList(getContaminationSources());
+	}
+
+	private void addContaminationSource(ContaminationSource contaminationSource) {
+		record.getContaminationSources().add(0, contaminationSource);
+		updateContaminationSources();
+	}
+
+	private void removeContaminationSource(ContaminationSource contaminationSource) {
+		record.getContaminationSources().remove(contaminationSource);
+		updateContaminationSources();
+	}
+
+
+
 
 	@Override
 	protected String getSubHeadingTitle() {
@@ -222,7 +377,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	@Override
 	protected void prepareFragmentData() {
 		record = getEpiDataOfCaseOrContact(getActivityRootData());
-		disease = getDisease(getActivityRootData());
+		caseDisease = getDiseaseOfCaseOrContact(getActivityRootData());
 	}
 
 	@Override
@@ -233,6 +388,8 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		contentBinding.setYesNoClass(YesNo.class);
 
 		contentBinding.setData(record);
+		contentBinding.setYesNoClass(YesNo.class);
+		contentBinding.setPlaceManagedClass(PlaceManaged.class);
 		contentBinding.setExposureList(getExposureList());
 		contentBinding.setExposureItemClickCallback(onExposureItemClickListener);
 		contentBinding.setExposureListBindCallback(
@@ -245,9 +402,31 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 			v -> FieldVisibilityAndAccessHelper
 				.setFieldVisibilitiesAndAccesses(ActivityAsCaseDto.class, (ViewGroup) v, new FieldVisibilityCheckers(), getFieldAccessCheckers()));
 
-		if (disease != null) {
-			super.hideFieldsForDisease(disease, contentBinding.mainContent, FormType.EPIDEMIOLOGICAL_EDIT);
+		if (caseDisease != null) {
+			super.hideFieldsForDisease(caseDisease, contentBinding.mainContent, FormType.EPIDEMIOLOGICAL_EDIT);
 		}
+		
+		contentBinding.setPersonTravelHistoryList(getPersonTravelHistories());
+		contentBinding.setPersonTravelHistoryItemClickCallback(onPersonTravelHistoryItemClickListener);
+		contentBinding.setPersonTravelHistoryListBindCallback(
+			v -> FieldVisibilityAndAccessHelper
+				.setFieldVisibilitiesAndAccesses(PersonTravelHistory.class, (ViewGroup) v, new FieldVisibilityCheckers(), getFieldAccessCheckers()));
+
+		contentBinding.setContainmentMeasureList(getContainmentMeasures());
+		contentBinding.setContainmentMeasureItemClickCallback(onContainmentMeasureItemClickListener);
+		contentBinding.setContainmentMeasureListBindCallback(
+			v -> FieldVisibilityAndAccessHelper
+				.setFieldVisibilitiesAndAccesses(ContainmentMeasure.class, (ViewGroup) v, new FieldVisibilityCheckers(), getFieldAccessCheckers()));
+
+		contentBinding.setContaminationSourceList(getContaminationSources());
+		contentBinding.setContaminationSourceItemClickCallback(onContaminationSourceItemClickListener);
+		contentBinding.setContaminationSourceListBindCallback(
+			v -> FieldVisibilityAndAccessHelper
+				.setFieldVisibilitiesAndAccesses(ContaminationSource.class, (ViewGroup) v, new FieldVisibilityCheckers(), getFieldAccessCheckers()));
+
+
+
+
 	}
 
 		public void setDefaultValues(EpiData epiDataDto) {
@@ -284,6 +463,15 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 			contentBinding.activityascaseInvestigationInfo.setText(Html.fromHtml(I18nProperties.getString(Strings.infoActivityAsCaseInvestigation)));
 			contentBinding.activityascaseLayout.setVisibility(GONE);
 			contentBinding.epiDataActivityAsCaseDetailsKnown.setVisibility(GONE);
+			contentBinding.personTravelHistoryLayout.setVisibility(GONE);
+			contentBinding.containmentMeasureLayout.setVisibility(GONE);
+			contentBinding.contaminationSourceLayout.setVisibility(GONE);
+		}
+
+		if (getActivityRootData() instanceof Case) {
+			if(caseDisease != null){
+				super.hideFieldsForDisease(caseDisease, contentBinding.mainContent, FormType.EPIDEMIOLOGICAL_EDIT);
+			}
 		}
 	}
 

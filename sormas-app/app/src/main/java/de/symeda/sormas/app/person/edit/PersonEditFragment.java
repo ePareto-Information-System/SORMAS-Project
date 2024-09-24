@@ -51,6 +51,7 @@ import de.symeda.sormas.api.person.Salutation;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
@@ -90,10 +91,13 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 	private AbstractDomainObject rootData;
 	private IEntryItemOnClickListener onAddressItemClickListener;
 	private IEntryItemOnClickListener onPersonContactDetailItemClickListener;
+	private static Disease caseDisease;
 
 	// Instance methods
 
 	public static PersonEditFragment newInstance(Case activityRootData) {
+
+		caseDisease = activityRootData.getDisease();
 
 		return newInstanceWithFieldCheckers(
 			PersonEditFragment.class,
@@ -136,7 +140,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 
 	private void setUpLayoutBinding(final BaseEditFragment fragment, final Person record, final FragmentPersonEditLayoutBinding contentBinding) {
 
-		setUpControlListeners(record, fragment, contentBinding, disease);
+		setUpControlListeners(record, fragment, contentBinding);
 
 		fragment.setFieldVisibilitiesAndAccesses(PersonDto.class, contentBinding.mainContent);
 
@@ -164,6 +168,21 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 			DataUtils.toItems(DatabaseHelper.getCustomizableEnumValueDao().getEnumValues(CustomizableEnumType.OCCUPATION_TYPE, null));
 		List<Item> placeOfBirthFacilityTypeList = DataUtils.toItems(FacilityType.getPlaceOfBirthTypes(), true);
 		List<Item> countryList = InfrastructureDaoHelper.loadCountries();
+
+		List<Item>
+				initialRegions = InfrastructureDaoHelper.loadRegionsByServerCountry();
+		List<Item> initialPs14Districts = InfrastructureDaoHelper.loadDistricts(record.getPst14MonthsRegion());
+		List<Item> initialPs14Communities = InfrastructureDaoHelper.loadCommunities(record.getPst14MonthsDistrict());
+		InfrastructureFieldsDependencyHandler.instance.initializeRegionFields(
+				contentBinding.personPst14MonthsRegion,
+				initialRegions,
+				record.getPst14MonthsRegion(),
+				contentBinding.personPst14MonthsDistrict,
+				initialPs14Districts,
+				record.getPst14MonthsDistrict(),
+				contentBinding.personPst14MonthsCommunity,
+				initialPs14Communities,
+				record.getPst14MonthsCommunity());
 
 		InfrastructureDaoHelper.initializeHealthFacilityDetailsFieldVisibility(
 			contentBinding.personPlaceOfBirthFacility,
@@ -262,14 +281,14 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		// Initialize ControlDateFields
 		contentBinding.personDeathDate.initializeDateField(fragment.getFragmentManager());
 		contentBinding.personBurialDate.initializeDateField(fragment.getFragmentManager());
+		contentBinding.personResidenceSinceWhenInMonths.addValueChangedListener(field -> handlePersonResidenceSinceWhenInMonths(contentBinding));
 	}
 
 	public static void setUpControlListeners(
 		final Person record,
 		final BaseEditFragment fragment,
-		final FragmentPersonEditLayoutBinding contentBinding,
-		final Disease disease) {
-		contentBinding.personAddress.setOnClickListener(v -> openAddressPopup(record, fragment, contentBinding, disease));
+		final FragmentPersonEditLayoutBinding contentBinding) {
+		contentBinding.personAddress.setOnClickListener(v -> openAddressPopup(record, fragment, contentBinding, caseDisease));
 	}
 
 	public static Date calculateBirthDateValue(FragmentPersonEditLayoutBinding contentBinding) {
@@ -315,12 +334,12 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		}
 	}
 
-	private static void openAddressPopup(final Person record, final BaseEditFragment fragment, final FragmentPersonEditLayoutBinding contentBinding, final Disease disease) {
+	private static void openAddressPopup(final Person record, final BaseEditFragment fragment, final FragmentPersonEditLayoutBinding contentBinding, Disease caseDisease) {
 		final Location location = record.getAddress();
 		final Location locationClone = (Location) location.clone();
 		final LocationDialog locationDialog = new LocationDialog(BaseActivity.getActiveActivity(), locationClone, fragment.getFieldAccessCheckers());
 		locationDialog.show();
-		locationDialog.showHideFieldsForDisease(disease, FormType.PERSON_LOCATION_EDIT);
+		locationDialog.showHideFieldsForDisease(caseDisease, FormType.PERSON_LOCATION_EDIT);
 
 		locationDialog.setPositiveCallback(() -> {
 			contentBinding.personAddress.setValue(locationClone);
@@ -571,7 +590,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		setUpControlListeners();
 
 		contentBinding.setData(record);
-
+		contentBinding.setYesNoClass(YesNo.class);
 		PersonValidator.initializePersonValidation(contentBinding);
 
 		if (disease != null) {
@@ -585,7 +604,6 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		contentBinding.setPersonContactDetailList(getPersonContactDetails());
 		contentBinding.setPersonContactDetailItemClickCallback(onPersonContactDetailItemClickListener);
 		getContentBinding().setPersonContactDetailBindCallback(this::setLocationFieldVisibilitiesAndAccesses);
-
 		setUpLayoutBinding(this, record, contentBinding);
 	}
 
@@ -601,10 +619,43 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		}
 		contentBinding.personCitizenship.setVisibility(GONE);
 		contentBinding.personBirthCountry.setVisibility(GONE);
+
+		if (caseDisease != null) {
+			super.hideFieldsForDisease(caseDisease, contentBinding.mainContent, FormType.PERSON_EDIT);
+		}
+
+		handlePersonResidenceSinceWhenInMonths(contentBinding);
 	}
 
 	@Override
 	public int getEditLayout() {
 		return R.layout.fragment_person_edit_layout;
+	}
+
+	public void handlePersonResidenceSinceWhenInMonths(final FragmentPersonEditLayoutBinding contentBinding) {
+		ControlPropertyField field = contentBinding.personResidenceSinceWhenInMonths;
+
+			if (field.getValue() != null && field.getValue().toString().length() > 0) {
+				boolean isNumber = DataHelper.isPositiveNumber((String) field.getValue());
+				if (!isNumber) {
+					contentBinding.personPlaceOfResidenceSameAsReportingVillage.setValue(null);
+				} else {
+					int months = Integer.parseInt((String) field.getValue());
+
+					if (months >= 10 && months <= 14) {
+						contentBinding.personPst14MonthsRegion.setVisibility(VISIBLE);
+						contentBinding.personPst14MonthsDistrict.setVisibility(VISIBLE);
+						contentBinding.personPst14MonthsCommunity.setVisibility(VISIBLE);
+						contentBinding.personPst14MonthsZone.setVisibility(VISIBLE);
+						contentBinding.personPst14MonthsVillage.setVisibility(VISIBLE);
+					} else {
+						contentBinding.personPst14MonthsRegion.setVisibility(GONE);
+						contentBinding.personPst14MonthsDistrict.setVisibility(GONE);
+						contentBinding.personPst14MonthsCommunity.setVisibility(GONE);
+						contentBinding.personPst14MonthsZone.setVisibility(GONE);
+						contentBinding.personPst14MonthsVillage.setVisibility(GONE);
+					}
+				}
+			}
 	}
 }

@@ -272,7 +272,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private Region pst14MonthsRegion;
 	private Country pst14MonthsCountry;
 	private YesNo placeOfResidenceSameAsReportingVillage;
-	private String residenceSinceWhenInMonths;
+	private Integer residenceSinceWhenInMonths;
 	private String ethnicity;
 	private String headHouseHold;
 	private Set<Profession> professionOfPatient;
@@ -1306,11 +1306,11 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 		this.placeOfResidenceSameAsReportingVillage = placeOfResidenceSameAsReportingVillage;
 	}
 
-	public String getResidenceSinceWhenInMonths() {
+	public Integer getResidenceSinceWhenInMonths() {
 		return residenceSinceWhenInMonths;
 	}
 
-	public void setResidenceSinceWhenInMonths(String residenceSinceWhenInMonths) {
+	public void setResidenceSinceWhenInMonths(Integer residenceSinceWhenInMonths) {
 		this.residenceSinceWhenInMonths = residenceSinceWhenInMonths;
 	}
 

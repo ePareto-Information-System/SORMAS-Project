@@ -31,6 +31,7 @@
         <import type="de.symeda.sormas.api.i18n.Strings" />
         <import type="de.symeda.sormas.api.i18n.Captions" />
         <import type="de.symeda.sormas.api.epidata.EpiDataDto" />
+        <import type="de.symeda.sormas.api.epidata.PlaceManaged" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.epidata.EpiData" />
 
@@ -43,6 +44,20 @@
         <variable name="activityAsCaseListBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
         <variable name="YesNoClass" type="Class" />
 
+
+        <variable name="personTravelHistoryList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory&gt;" />
+        <variable name="personTravelHistoryItemClickCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
+        <variable name="personTravelHistoryListBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
+
+        <variable name="containmentMeasureList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.containmentmeasure.ContainmentMeasure&gt;" />
+        <variable name="containmentMeasureItemClickCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
+        <variable name="containmentMeasureListBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
+
+        <variable name="contaminationSourceList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.contaminationsource.ContaminationSource&gt;" />
+        <variable name="contaminationSourceItemClickCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
+        <variable name="contaminationSourceListBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
+
+        <variable name="PlaceManagedClass" type="Class" />
     </data>
 
     <ScrollView
@@ -63,7 +78,7 @@
                 android:padding="@dimen/fragment_padding">
 
                 <TextView
-                    android:id="@+id/exposureInvestigationHeading"
+                    android:id="@+id/heading_exposure_investigation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{I18nProperties.getString(Strings.headingExposureInvestigation)}"
@@ -227,6 +242,227 @@
                         app:entries="@{activityAsCaseList}"
                         app:layout="@{@layout/row_epid_activity_as_case_layout}"
                         app:bindCallback="@{activityAsCaseListBindCallback}" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/personTravelHistory_heading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{I18nProperties.getString(Strings.headingTravelHistoryOfPatientTenToFourteenMonth)}"
+                    android:layout_marginBottom="24dp"
+                    style="@style/SubHeadingCompactStyle" />
+
+                <LinearLayout
+                    android:id="@+id/personTravelHistory_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/textControlMarginBottom"
+                    android:background="@color/formListSectionBackground"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/parentLayoutHorizontalPadding"
+                    android:paddingEnd="@dimen/parentLayoutHorizontalPadding"
+                    android:paddingTop="@dimen/parentLayoutVerticalPadding">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:alternateBottomMarginIfEmpty="@{personTravelHistoryList}"
+                        app:emptyBottomMargin="@{@dimen/parentLayoutVerticalMargin}"
+                        app:nonEmptyBottomMargin="@{@dimen/closelyRelatedControlMarginBottom}">
+
+                        <TextView
+                            android:id="@+id/personTravelHistory_headline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:text="@{I18nProperties.getPrefixCaption(EpiDataDto.I18N_PREFIX, EpiDataDto.PERSON_TRAVEL_HISTORY)}"
+                            style="@style/ReadActivitySubListHeadingNoBMarginStyle" />
+
+                        <de.symeda.sormas.app.component.controls.ControlButton
+                            android:id="@+id/btn_add_personTravelHistory"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:text="@string/action_new"
+                            app:buttonType="@{ControlButtonType.LINE_PRIMARY}"
+                            app:iconStart="@drawable/ic_add_24dp"
+                            app:rounded="true"
+                            app:slim="true" />
+
+                    </RelativeLayout>
+
+                    <ImageView
+                        style="@style/FullHorizontalDividerStyle"
+                        app:goneIfEmpty="@{personTravelHistoryList}"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:orientation="vertical"
+                        android:padding="@dimen/rowListItemParentPadding"
+                        app:callback="@{personTravelHistoryItemClickCallback}"
+                        app:entries="@{personTravelHistoryList}"
+                        app:layout="@{@layout/row_epid_person_travel_history_layout}"
+                        app:bindCallback="@{personTravelHistoryListBindCallback}" />
+
+                </LinearLayout>
+
+                    <TextView
+                    android:id="@+id/containmentMeasure_heading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{I18nProperties.getString(Strings.headingContainmentMeasures)}"
+                    android:layout_marginBottom="24dp"
+                    style="@style/SubHeadingCompactStyle" />
+
+                <LinearLayout
+                    android:id="@+id/containmentMeasure_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/textControlMarginBottom"
+                    android:background="@color/formListSectionBackground"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/parentLayoutHorizontalPadding"
+                    android:paddingEnd="@dimen/parentLayoutHorizontalPadding"
+                    android:paddingTop="@dimen/parentLayoutVerticalPadding">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:alternateBottomMarginIfEmpty="@{containmentMeasureList}"
+                        app:emptyBottomMargin="@{@dimen/parentLayoutVerticalMargin}"
+                        app:nonEmptyBottomMargin="@{@dimen/closelyRelatedControlMarginBottom}">
+
+                        <TextView
+                            android:id="@+id/containmentMeasure_headline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:text="@{I18nProperties.getPrefixCaption(EpiDataDto.I18N_PREFIX, EpiDataDto.CONTAINMENT_MEASURES)}"
+                            style="@style/ReadActivitySubListHeadingNoBMarginStyle" />
+
+                        <de.symeda.sormas.app.component.controls.ControlButton
+                            android:id="@+id/btn_add_containmentMeasure"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:text="@string/action_new"
+                            app:buttonType="@{ControlButtonType.LINE_PRIMARY}"
+                            app:iconStart="@drawable/ic_add_24dp"
+                            app:rounded="true"
+                            app:slim="true" />
+
+                    </RelativeLayout>
+
+                    <ImageView
+                        style="@style/FullHorizontalDividerStyle"
+                        app:goneIfEmpty="@{containmentMeasureList}"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:orientation="vertical"
+                        android:padding="@dimen/rowListItemParentPadding"
+                        app:callback="@{containmentMeasureItemClickCallback}"
+                        app:entries="@{containmentMeasureList}"
+                        app:layout="@{@layout/row_epid_containment_measure_layout}"
+                        app:bindCallback="@{containmentMeasureListBindCallback}" />
+
+                </LinearLayout>
+
+
+                <TextView
+                    android:id="@+id/contaminationSource_heading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{I18nProperties.getString(Strings.headingContaminationSources)}"
+                    android:layout_marginBottom="24dp"
+                    style="@style/SubHeadingCompactStyle" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/epiData_receivedHealthEducation"
+                        app:value="@={data.receivedHealthEducation}"
+                        app:enumClass="@{YesNoClass}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/epiData_patientEnteredWaterSource"
+                        app:value="@={data.patientEnteredWaterSource}"
+                        app:enumClass="@{YesNoClass}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/epiData_placeManaged"
+                    app:enumClass="@{PlaceManagedClass}"
+                    app:value="@={data.placeManaged}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <LinearLayout
+                    android:id="@+id/contaminationSource_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/textControlMarginBottom"
+                    android:background="@color/formListSectionBackground"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/parentLayoutHorizontalPadding"
+                    android:paddingEnd="@dimen/parentLayoutHorizontalPadding"
+                    android:paddingTop="@dimen/parentLayoutVerticalPadding">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:alternateBottomMarginIfEmpty="@{contaminationSourceList}"
+                        app:emptyBottomMargin="@{@dimen/parentLayoutVerticalMargin}"
+                        app:nonEmptyBottomMargin="@{@dimen/closelyRelatedControlMarginBottom}">
+
+                        <TextView
+                            android:id="@+id/contaminationSource_headline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:text="@{I18nProperties.getPrefixCaption(EpiDataDto.I18N_PREFIX, EpiDataDto.CONTAMINATION_SOURCES)}"
+                            style="@style/ReadActivitySubListHeadingNoBMarginStyle" />
+
+                        <de.symeda.sormas.app.component.controls.ControlButton
+                            android:id="@+id/btn_add_contaminationSource"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:text="@string/action_new"
+                            app:buttonType="@{ControlButtonType.LINE_PRIMARY}"
+                            app:iconStart="@drawable/ic_add_24dp"
+                            app:rounded="true"
+                            app:slim="true" />
+
+                    </RelativeLayout>
+
+                    <ImageView
+                        style="@style/FullHorizontalDividerStyle"
+                        app:goneIfEmpty="@{contaminationSourceList}"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:orientation="vertical"
+                        android:padding="@dimen/rowListItemParentPadding"
+                        app:callback="@{contaminationSourceItemClickCallback}"
+                        app:entries="@{contaminationSourceList}"
+                        app:layout="@{@layout/row_epid_contamination_source_layout}"
+                        app:bindCallback="@{contaminationSourceListBindCallback}" />
 
                 </LinearLayout>
 

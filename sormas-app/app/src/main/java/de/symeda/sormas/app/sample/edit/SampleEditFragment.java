@@ -42,6 +42,7 @@ import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.sample.AdditionalTestType;
 import de.symeda.sormas.api.sample.IpSampleTestType;
+import de.symeda.sormas.api.sample.FilterChangingFrequency;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.sample.PosNegEq;
@@ -91,6 +92,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	private List<String> ipSampleTestResults = new ArrayList<>();
 	private List<Item> posNegList;
 	private List<Item> posNegEqList;
+	private List<Item> frequencyOfChangingFiltersList;
+
 	public static SampleEditFragment newInstance(Sample activityRootData) {
 		return newInstanceWithFieldCheckers(
 				SampleEditFragment.class,
@@ -258,6 +261,14 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		if(record.getAssociatedCase().getDisease() != null){
 			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_EDIT);
 		}
+		contentBinding.setFilterChangingFrequencyClass(FilterChangingFrequency.class);
+
+		contentBinding.sampleDateSpecimenReceivedAtRegion.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSpecimenReceivedAtRegion.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSpecimenReceivedAtNational.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSpecimenReceivedAtNational.initializeDateField(getFragmentManager());
+		contentBinding.sampleSentForConfirmationNationalDate.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateResultReceivedNational.initializeDateField(getFragmentManager());
 	}
 
 	@Override
@@ -423,6 +434,13 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 				handleYellowFever();
 		}
 
+
+		frequencyOfChangingFiltersList = DataUtils.getEnumItems(FilterChangingFrequency.class, true);
+		contentBinding.sampleFrequencyOfChangingFilters.initializeSpinner(frequencyOfChangingFiltersList);
+
+		if(record.getAssociatedCase().getDisease() != null){
+			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_CREATE);
+		}
 	}
 
 	@Override

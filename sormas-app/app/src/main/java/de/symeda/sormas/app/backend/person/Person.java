@@ -37,7 +37,11 @@ import androidx.databinding.Bindable;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.ArmedForcesRelationType;
 import de.symeda.sormas.api.person.BurialConductor;
@@ -49,6 +53,7 @@ import de.symeda.sormas.api.person.OccupationType;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Salutation;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.facility.Facility;
@@ -205,6 +210,23 @@ public class Person extends PseudonymizableAdo {
 	private String additionalDetails;
 	private MaritalStatus marriageStatus;
 
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String otherId;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String pst14MonthsVillage;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String pst14MonthsZone;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
+	private Community pst14MonthsCommunity;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
+	private District pst14MonthsDistrict;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
+	private Region pst14MonthsRegion;
+	@Enumerated(EnumType.STRING)
+	private YesNo placeOfResidenceSameAsReportingVillage;
+	@Column
+	private Integer residenceSinceWhenInMonths;
+
 	public Person() {
 	}
 
@@ -225,7 +247,6 @@ public class Person extends PseudonymizableAdo {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	@Bindable
 	public String getOtherName() { return otherName;}
 	public void setOtherName(String otherName) {this.otherName = otherName;}
 
@@ -681,5 +702,69 @@ public class Person extends PseudonymizableAdo {
 
 	public void setAdditionalDetails(String additionalDetails) {
 		this.additionalDetails = additionalDetails;
+	}
+
+	public String getOtherId() {
+		return otherId;
+	}
+
+	public void setOtherId(String otherId) {
+		this.otherId = otherId;
+	}
+
+	public String getPst14MonthsVillage() {
+		return pst14MonthsVillage;
+	}
+
+	public void setPst14MonthsVillage(String pst14MonthsVillage) {
+		this.pst14MonthsVillage = pst14MonthsVillage;
+	}
+
+	public String getPst14MonthsZone() {
+		return pst14MonthsZone;
+	}
+
+	public void setPst14MonthsZone(String pst14MonthsZone) {
+		this.pst14MonthsZone = pst14MonthsZone;
+	}
+
+	public Community getPst14MonthsCommunity() {
+		return pst14MonthsCommunity;
+	}
+
+	public void setPst14MonthsCommunity(Community pst14MonthsCommunity) {
+		this.pst14MonthsCommunity = pst14MonthsCommunity;
+	}
+
+	public District getPst14MonthsDistrict() {
+		return pst14MonthsDistrict;
+	}
+
+	public void setPst14MonthsDistrict(District pst14MonthsDistrict) {
+		this.pst14MonthsDistrict = pst14MonthsDistrict;
+	}
+
+	public Region getPst14MonthsRegion() {
+		return pst14MonthsRegion;
+	}
+
+	public void setPst14MonthsRegion(Region pst14MonthsRegion) {
+		this.pst14MonthsRegion = pst14MonthsRegion;
+	}
+
+	public YesNo getPlaceOfResidenceSameAsReportingVillage() {
+		return placeOfResidenceSameAsReportingVillage;
+	}
+
+	public void setPlaceOfResidenceSameAsReportingVillage(YesNo placeOfResidenceSameAsReportingVillage) {
+		this.placeOfResidenceSameAsReportingVillage = placeOfResidenceSameAsReportingVillage;
+	}
+
+	public Integer getResidenceSinceWhenInMonths() {
+		return residenceSinceWhenInMonths;
+	}
+
+	public void setResidenceSinceWhenInMonths(Integer residenceSinceWhenInMonths) {
+		this.residenceSinceWhenInMonths = residenceSinceWhenInMonths;
 	}
 }
