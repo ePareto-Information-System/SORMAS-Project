@@ -206,7 +206,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 362;
+	public static final int DATABASE_VERSION = 361;
 
 	private static DatabaseHelper instance = null;
 
@@ -3238,7 +3238,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN dateOfOnsetRash DATE;");
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN requestedRashSymptomsString VARCHAR(512);");
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN rashSymptomsOtherAreas VARCHAR(512);");
-				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN typeOfRashString VARCHAR(512);");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN typeOfRash VARCHAR(512);");
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN symptomsSelectedOther VARCHAR(512);");
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN outcomeOther VARCHAR(512);");
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN outcomeDate DATE;");

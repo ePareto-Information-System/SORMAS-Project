@@ -56,6 +56,7 @@ import de.symeda.sormas.app.person.edit.PersonValidator;
 import de.symeda.sormas.app.util.Bundler;
 import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.app.util.DiseaseConfigurationCache;
+import de.symeda.sormas.app.util.DiseaseFieldHandler;
 import de.symeda.sormas.app.util.InfrastructureDaoHelper;
 import de.symeda.sormas.app.util.InfrastructureFieldsDependencyHandler;
 
@@ -64,6 +65,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 	public static final String TAG = CaseNewFragment.class.getSimpleName();
 
 	private Case record;
+	private DiseaseFieldHandler diseaseFieldHandler;
 
 	private List<Item> yearList;
 	private List<Item> monthList;

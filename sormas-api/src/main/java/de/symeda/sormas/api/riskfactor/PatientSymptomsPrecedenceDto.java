@@ -16,7 +16,6 @@ public class PatientSymptomsPrecedenceDto extends PseudonymizableDto {
     public static final String NAME = "name";
     public static final String CONTACT_ADDRESS = "contactAddress";
     public static final String PHONE = "phone";
-    private String uuid;
     private String name;
     private String contactAddress;
     private String phone;
@@ -42,11 +41,11 @@ public class PatientSymptomsPrecedenceDto extends PseudonymizableDto {
 
     @Override
     public String getUuid() {
-        return uuid;
+        return super.getUuid();
     }
     @Override
     public void setUuid(String uuid) {
-        this.uuid = uuid;
+        super.setUuid(uuid);
     }
 
     public String getName() {

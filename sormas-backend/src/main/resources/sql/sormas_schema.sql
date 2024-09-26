@@ -15042,14 +15042,14 @@ ALTER TABLE cases ADD COLUMN investigationofficeraddress VARCHAR(255);
 INSERT INTO schema_version(version_number, comment) VALUES (705, 'Added investigationofficeraddress to cases');
 
 CREATE TABLE patientsymptomsprecedence (
-                                id BIGINT PRIMARY KEY NOT NULL,
-                                uuid varchar(36) not null unique,
-                                changedate timestamp not null,
-                                creationdate timestamp not null,
-                                riskfactor_id bigint not null,
-                                name varchar(255),
-                                contactaddress VARCHAR(255),
-                                phone VARCHAR(255)
+                                           id BIGINT PRIMARY KEY NOT NULL,
+                                           uuid varchar(36) not null unique,
+                                           changedate timestamp not null,
+                                           creationdate timestamp not null,
+                                           riskfactor_id bigint not null,
+                                           name varchar(255),
+                                           contactaddress VARCHAR(255),
+                                           phone VARCHAR(255)
 );
 ALTER TABLE patientsymptomsprecedence OWNER TO sormas_user;
 ALTER TABLE patientsymptomsprecedence ADD CONSTRAINT fk_patientsymptomsprecedence_riskfactor_id FOREIGN KEY (riskfactor_id) REFERENCES riskfactor(id);

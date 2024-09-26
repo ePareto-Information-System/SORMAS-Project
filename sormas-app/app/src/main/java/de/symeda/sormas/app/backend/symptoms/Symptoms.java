@@ -491,7 +491,7 @@ public class Symptoms extends PseudonymizableAdo {
 	private Set<SymptomsList> symptomsSelected;
 	private Set<BodyPart> rashSymptoms;
 	private Set<InjectionSite> siteOfParalysis;
-	private Set<SymptomsList> typeOfRash;
+	private SymptomsList typeOfRash;
 	private Set<InjectionSite> injectionSite;
 	private String nameOfHealthFacility;
 	@DatabaseField(dataType = DataType.DATE_LONG)
@@ -2561,35 +2561,11 @@ public class Symptoms extends PseudonymizableAdo {
 		this.areUlcersAmong = areUlcersAmong;
 	}
 
-	@Transient
-	public Set<SymptomsList> getTypeOfRash() {
-		if (typeOfRash == null) {
-			if (StringUtils.isEmpty(typeOfRashString)) {
-				typeOfRash = new HashSet<>();
-			} else {
-				typeOfRash =
-						Arrays.stream(typeOfRashString.split(",")).map(SymptomsList::valueOf).collect(Collectors.toSet());
-			}
-		}
+	public SymptomsList getTypeOfRash() {
 		return typeOfRash;
 	}
-
-	public void setTypeOfRash(Set<SymptomsList> typeOfRash) {
+	public void setTypeOfRash(SymptomsList typeOfRash) {
 		this.typeOfRash = typeOfRash;
-
-		if (this.typeOfRash == null) {
-			return;
-		}
-
-		StringBuilder sb = new StringBuilder();
-		typeOfRash.stream().forEach(t -> {
-			sb.append(t.name());
-			sb.append(",");
-		});
-		if (sb.length() > 0) {
-			sb.substring(0, sb.lastIndexOf(","));
-		}
-		typeOfRashString = sb.toString();
 	}
 
 	public String getSymptomsSelectedOther(){
@@ -2712,15 +2688,6 @@ public class Symptoms extends PseudonymizableAdo {
 	public void setRequestedSiteOfParalysisString(String requestedSiteOfParalysisString) {
 		this.requestedSiteOfParalysisString = requestedSiteOfParalysisString;
 		siteOfParalysis = null;
-	}
-
-	public String getTypeOfRashString() {
-		return typeOfRashString;
-	}
-
-	public void setTypeOfRashString(String typeOfRashString) {
-		this.typeOfRashString = typeOfRashString;
-		typeOfRash = null;
 	}
 
 	public YesNo getPatientHaveFever() {

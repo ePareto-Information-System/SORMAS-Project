@@ -345,8 +345,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		country = addInfrastructureField(LocationDto.COUNTRY);
 		country.setVisible(false);
 		region = addInfrastructureField(LocationDto.REGION);
-		ComboBox district = addInfrastructureField(LocationDto.DISTRICT);
-		ComboBox community = addInfrastructureField(LocationDto.COMMUNITY);
+		district = addInfrastructureField(LocationDto.DISTRICT);
+		community = addInfrastructureField(LocationDto.COMMUNITY);
+		community.setCaption("Sub-District");
+		facilityName = new ComboBox("Facility");
 
 		continent.setVisible(false);
 		subcontinent.setVisible(false);
@@ -452,11 +454,11 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		});
 
 		region.addValueChangeListener(e -> {
-				RegionReferenceDto regionDto = (RegionReferenceDto) e.getProperty().getValue();
-				FieldHelper
-						.updateItems(district, regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
-				updateFacilities();
-			});
+			RegionReferenceDto regionDto = (RegionReferenceDto) e.getProperty().getValue();
+			FieldHelper
+				.updateItems(district, regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
+			updateFacilities();
+		});
 		district.addValueChangeListener(e -> {
 			DistrictReferenceDto districtDto = (DistrictReferenceDto) e.getProperty().getValue();
 			FieldHelper.updateItems(
