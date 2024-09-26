@@ -1,20 +1,27 @@
 package de.symeda.sormas.app.util;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
+import de.symeda.sormas.app.FieldOrderConfigurations;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.formbuilder.FormBuilder;
 import de.symeda.sormas.app.backend.formfield.FormField;
+import de.symeda.sormas.app.component.controls.ControlCheckBoxField;
+import de.symeda.sormas.app.component.controls.ControlDateField;
 import de.symeda.sormas.app.component.controls.ControlPropertyEditField;
 import de.symeda.sormas.app.component.controls.ControlPropertyField;
 import de.symeda.sormas.app.component.controls.ControlSpinnerField;
@@ -42,6 +49,8 @@ public class DiseaseFieldHandler {
             View child = mainContent.getChildAt(i);
             handleChildView(child, relevantFields);
         }
+        List<Integer> fieldOrder = getFieldOrderForDisease(diseaseName, formType);
+        reorderFieldsForDisease(fieldOrder, mainContent);
     }
 
     private void setAllFieldsVisibility(ViewGroup parent, int visibility) {
@@ -58,7 +67,8 @@ public class DiseaseFieldHandler {
 
     private boolean isFieldView(View view) {
         return view instanceof ControlPropertyEditField || view instanceof TextView ||
-                view instanceof ControlPropertyField || view instanceof ControlSpinnerField;
+                view instanceof ControlPropertyField || view instanceof ControlSpinnerField ||
+                view instanceof ControlCheckBoxField || view instanceof ControlDateField;
     }
 
     private void handleChildView(View child, List<String> relevantFields) {
@@ -108,5 +118,58 @@ public class DiseaseFieldHandler {
 
         return new ArrayList<>();
     }
+
+    public List<Integer> getFieldOrderForDisease(Disease diseaseName, FormType formType) {
+        return FieldOrderConfigurations.getConfigurationForDisease(diseaseName, formType);
+
+    }
+
+    public void reorderFieldsForDisease(List<Integer> fieldOrder, ViewGroup parent) {
+        Map<Integer, View> viewMap = new HashMap<>();
+        gatherChildViews(parent, viewMap);
+
+        reorderViewsInPlace(parent, fieldOrder, viewMap);
+    }
+
+
+    // Recursively gather child views, including those inside nested ViewGroups
+    private void gatherChildViews(ViewGroup parent, Map<Integer, View> viewMap) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child.getId() != View.NO_ID) {
+                viewMap.put(child.getId(), child);
+            } else {
+            }
+            if (child instanceof ViewGroup) {
+                gatherChildViews((ViewGroup) child, viewMap);
+            }
+        }
+    }
+
+    // Reorder the views within their respective parents
+    private void reorderViewsInPlace(ViewGroup parent, List<Integer> fieldOrder, Map<Integer, View> viewMap) {
+        List<View> reorderedViews = new ArrayList<>();
+
+        // Loop through fieldOrder to get the views in the correct order
+        for (int fieldId : fieldOrder) {
+            View view = viewMap.get(fieldId);
+
+            if (view != null && view.getParent() == parent) {
+                reorderedViews.add(view);
+            } else {
+            }
+        }
+
+        parent.removeAllViews();
+
+        // Add views back to parent in the new order
+        for (View view : reorderedViews) {
+            if (view.getParent() == null) {
+                parent.addView(view);
+            } else {
+            }
+        }
+    }
+
 }
 
