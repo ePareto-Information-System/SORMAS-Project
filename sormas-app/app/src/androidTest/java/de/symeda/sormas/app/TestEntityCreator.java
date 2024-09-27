@@ -187,7 +187,7 @@ public class TestEntityCreator {
 		}
 		Date sampleDateTime = DateHelper.subtractDays(new Date(), 1);
 		Facility lab = DatabaseHelper.getFacilityDao().queryForAll().get(0);
-		SampleMaterial material = SampleMaterial.WHOLE_BLOOD;
+		SampleMaterial material = SampleMaterial.BLOOD;
 
 		Sample sample = DatabaseHelper.getSampleDao().build(caze);
 		sample.setSampleDateTime(sampleDateTime);
