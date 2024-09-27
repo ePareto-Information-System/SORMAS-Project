@@ -57,6 +57,8 @@
         <variable name="caseTransmissionClassificationClass" type="de.symeda.sormas.api.caze.TransmissionClassification" />
         <variable name="differentJurisdiction" type="Boolean" />
         <variable name="differentPlaceOfStayJurisdiction" type="Boolean" />
+        <variable name="filteredVaccinationStatusValues" type="VaccinationStatus[]" />
+
     </data>
 
     <ScrollView
@@ -355,6 +357,7 @@
                 <ImageView style="@style/FullHorizontalDividerStyle" />
 
                 <LinearLayout
+                    android:id="@+id/case_uuid_investigationStatus_fields_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -372,6 +375,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/classifying_fields_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -413,6 +417,7 @@
                     style="@style/SubHeadingStyle" />
 
                 <LinearLayout
+                    android:id="@+id/region_district_fields_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -525,13 +530,11 @@
                     app:dependencyParentValue="@{TypeOfPlace.FACILITY}"
                     app:dependencyParentClearOnHide="@{false}"
                     app:required="true"
-                    app:userEditRight="@{UserRight.CASE_TRANSFER}"
                     app:value="@={data.healthFacility}" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/caseData_healthFacilityDetails"
                     app:value="@={data.healthFacilityDetails}"
-                    app:userEditRight="@{UserRight.CASE_TRANSFER}"
                     app:softRequired="true"
                     style="@style/ControlSingleColumnStyle" />
 
@@ -801,9 +804,10 @@
 
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/caseData_vaccinationStatus"
-                    app:enumClass="@{vaccinationStatusClass}"
                     app:value="@={data.vaccinationStatus}"
+                    app:enumValues="@{filteredVaccinationStatusValues}"
                     style="@style/ControlSingleColumnStyle" />
+
 
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/caseData_vaccinationType"

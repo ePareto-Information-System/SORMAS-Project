@@ -36,6 +36,7 @@ import androidx.databinding.BindingAdapter;
 import androidx.databinding.InverseBindingAdapter;
 import androidx.databinding.InverseBindingListener;
 
+import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -432,5 +433,30 @@ public class ControlSwitchField extends ControlPropertyEditField<Object> {
 
 	public void setUseAbbreviations(boolean useAbbreviations) {
 		this.useAbbreviations = useAbbreviations;
+	}
+
+	@BindingAdapter("enumValues")
+	public static void setEnumValues(ControlSwitchField view, VaccinationStatus[] enumValues) {
+		if (enumValues == null) {
+			enumValues = new VaccinationStatus[] {};
+		}
+
+		List<Item> items = new ArrayList<>();
+		for (VaccinationStatus status : enumValues) {
+			items.add(new Item(status.name(), status));
+		}
+
+		view.setEnumItems(items);
+	}
+
+	public void setEnumItems(List<Item> items) {
+		suppressListeners = true;
+		removeAllItems();
+
+		int itemTotal = items.size();
+		for (int i = 0; i < items.size(); i++) {
+			addItem(i, itemTotal - 1, items.get(i));
+		}
+		suppressListeners = false;
 	}
 }

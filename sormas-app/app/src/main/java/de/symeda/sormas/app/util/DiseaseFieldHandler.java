@@ -50,6 +50,11 @@ public class DiseaseFieldHandler {
             handleChildView(child, relevantFields);
         }
         List<Integer> fieldOrder = getFieldOrderForDisease(diseaseName, formType);
+        if (fieldOrder.isEmpty()) {
+            Log.d("HideFields", "No field order defined for disease: " + diseaseName);
+            return;
+        }
+
         reorderFieldsForDisease(fieldOrder, mainContent);
     }
 
