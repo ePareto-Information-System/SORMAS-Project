@@ -191,6 +191,7 @@
                 android:text="@string/action_pick_gps" />
 
             <LinearLayout
+                android:id="@+id/lat_lon_coordinates"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">

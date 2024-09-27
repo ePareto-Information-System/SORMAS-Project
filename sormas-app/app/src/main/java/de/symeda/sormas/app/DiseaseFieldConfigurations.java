@@ -27,6 +27,12 @@ public class DiseaseFieldConfigurations {
                         R.id.case_uuid_investigationStatus_fields_layout, R.id.caseData_reportDate, R.id.caseData_reportingUser, R.id.classifying_fields_layout, R.id.caseData_caseClassification,R.id.caseData_epidNumber, R.id.caseData_disease, R.id.caseData_caseOrigin, R.id.caseData_headingCaseResponsibleJurisidction, R.id.region_district_fields_layout, R.id.caseData_responsibleCommunity, R.id.caseData_healthFacility, R.id.caseData_healthFacilityDetails, R.id.caseData_medicalInformationHeading, R.id.caseData_vaccinationStatus, R.id.caseData_vaccinationType, R.id.caseData_numberOfDoses, R.id.caseData_reportingOfficerTitle, R.id.caseData_functionOfReportingOfficer, R.id.caseData_reportingOfficerContactPhone, R.id.caseData_reportingOfficerEmail
                 )
         );
+
+        diseaseFieldConfigurations.put(new DiseaseFormTypeKey(Disease.YELLOW_FEVER, FormType.PERSON_LOCATION_EDIT),
+                Arrays.asList(
+                        R.id.location_region, R.id.location_district,R.id.location_community, R.id.location_houseNumber, R.id.location_city, R.id.location_areaType, R.id.location_postalCode, R.id.location_landMark, R.id.pick_gps_coordinates, R.id.lat_lon_coordinates, R.id.location_latLonAccuracy
+                )
+        );
     }
 
     public static List<Integer> getFields(Disease disease, FormType formType) {
