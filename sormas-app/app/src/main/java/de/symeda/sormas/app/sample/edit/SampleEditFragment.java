@@ -466,5 +466,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		);
 		getContentBinding().samplePathogenTestResult.initializeSpinner(DataUtils.toItems(yellowFeverTestResults));
 		getContentBinding().samplePurpose.setValue(SamplePurpose.EXTERNAL);
+		getContentBinding().samplePurpose.setVisibility(GONE);
+		getContentBinding().samplePathogenTestingRequested.setVisibility(GONE);
 	}
 }
