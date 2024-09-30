@@ -30,6 +30,7 @@ import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -221,7 +222,13 @@ public class CaseReadFragment extends BaseReadFragment<FragmentCaseReadLayoutBin
 			contentBinding.facilityTypeFieldsLayout.setVisibility(GONE);
 		} else {
 			contentBinding.facilityOrHome.setValue(TypeOfPlace.FACILITY);
-			contentBinding.facilityTypeGroup.setValue(record.getFacilityType().getFacilityTypeGroup());
+//			contentBinding.facilityTypeGroup.setValue(record.getFacilityType().getFacilityTypeGroup());
+			FacilityType facilityType = record.getFacilityType();
+			if (facilityType != null) {
+				contentBinding.facilityTypeGroup.setValue(facilityType.getFacilityTypeGroup());
+			} else {
+				contentBinding.facilityTypeGroup.setVisibility(GONE);
+			}
 		}
 	}
 

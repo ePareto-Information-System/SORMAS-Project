@@ -907,6 +907,15 @@
                     app:dependencyParentVisibility="@{true}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/caseData_secondVaccinationDate"
+                    app:value="@={data.secondVaccinationDate}"
+                    app:dateWithoutTime="@{true}"
+                    app:dependencyParentField="@{caseDataVaccinationType}"
+                    app:dependencyParentValue="@{CardOrHistory.CARD}"
+                    app:dependencyParentVisibility="@{true}"
+                    style="@style/ControlSingleColumnStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/caseData_smallpoxVaccinationReceived"
                     app:enumClass="@{yesNoUnknownClass}"

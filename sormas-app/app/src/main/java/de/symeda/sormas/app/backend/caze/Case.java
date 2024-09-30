@@ -435,6 +435,8 @@ public class Case extends PseudonymizableAdo {
 	private String reportingOfficerName;
 	@DatabaseField
 	private String reportingOfficerTitle;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date secondVaccinationDate;
 
 
 	public boolean isUnreferredPortHealthCase() {
@@ -1519,5 +1521,13 @@ public class Case extends PseudonymizableAdo {
 
 	public void setReportingOfficerEmail(String reportingOfficerEmail) {
 		this.reportingOfficerEmail = reportingOfficerEmail;
+	}
+
+	public Date getSecondVaccinationDate() {
+		return secondVaccinationDate;
+	}
+
+	public void setSecondVaccinationDate(Date secondVaccinationDate) {
+		this.secondVaccinationDate = secondVaccinationDate;
 	}
 }
