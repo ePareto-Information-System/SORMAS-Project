@@ -31,6 +31,8 @@ public class Bundler {
 	private static final String EVENT_UUID = "eventUuid";
 	private static final String EBS_UUID = "ebsUuid";
 	private static final String TRIAGING_UUID = "triagingUuid";
+	private static final String RISK_UUID = "riskUuid";
+	private static final String ALERT_UUID = "alertUuid";
 	private static final String CAMPAIGN_UUID = "campaignUuid";
 	private static final String CAMPAIGN_FROM_META_UUID = "campaignFormMetaUuid";
 	private static final String EVENT_PARTICIPANT_UUID = "eventParticipantUuid";
@@ -198,6 +200,29 @@ public class Bundler {
 	public String getEbsUuid() {
 		if (bundle.containsKey(EBS_UUID)) {
 			return bundle.getString(EBS_UUID);
+		}
+		return null;
+	}
+
+	public Bundler setRiskUuid(String riskUuid) {
+		bundle.putString(RISK_UUID, riskUuid);
+		return this;
+	}
+
+	public String getRiskUuid() {
+		if (bundle.containsKey(RISK_UUID)) {
+			return bundle.getString(RISK_UUID);
+		}
+		return null;
+	}
+	public Bundler setAlertUuid(String alertUuid) {
+		bundle.putString(ALERT_UUID, alertUuid);
+		return this;
+	}
+
+	public String getAlertUuid() {
+		if (bundle.containsKey(ALERT_UUID)) {
+			return bundle.getString(ALERT_UUID);
 		}
 		return null;
 	}
