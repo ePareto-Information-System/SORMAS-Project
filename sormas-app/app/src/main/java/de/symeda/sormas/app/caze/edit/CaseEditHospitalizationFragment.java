@@ -23,6 +23,7 @@ import androidx.databinding.ObservableArrayList;
 
 import java.util.List;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
@@ -41,6 +42,7 @@ import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
+import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.hospitalization.Hospitalization;
 import de.symeda.sormas.app.backend.hospitalization.PreviousHospitalization;
 import de.symeda.sormas.app.component.Item;
@@ -175,10 +177,6 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 
 		List<Item> hospitalizationReasons = DataUtils.getEnumItems(HospitalizationReasonType.class, true);
 
-		if(caze.getDisease() != null){
-			hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.HOSPITALIZATION_EDIT);
-		}
-
 		contentBinding.setData(record);
 		contentBinding.setCaze(caze);
 //		contentBinding.setPatientCondition(patientCondition);
@@ -196,6 +194,10 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 
 			verifyPrevHospitalizationStatus();
 		});
+
+		if(caze.getDisease() != null){
+			hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.HOSPITALIZATION_EDIT);
+		}
 	}
 
 	@Override

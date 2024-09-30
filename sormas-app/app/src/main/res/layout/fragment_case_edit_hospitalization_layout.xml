@@ -56,9 +56,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="@dimen/fragment_padding"
-                app:goneIfVariable="@{caze.facilityType}"
-                app:goneIfNotValue="@{FacilityType.HOSPITAL}">
+                android:padding="@dimen/fragment_padding">
+                <!--app:goneIfVariable="@{caze.facilityType}"
+                app:goneIfNotValue="@{FacilityType.HOSPITAL}">-->
 
                 <TextView
                     android:id="@+id/most_recent_hospitalization_headline"
