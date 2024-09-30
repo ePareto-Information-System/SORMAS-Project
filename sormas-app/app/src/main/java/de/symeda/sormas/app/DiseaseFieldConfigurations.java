@@ -33,6 +33,12 @@ public class DiseaseFieldConfigurations {
                         R.id.location_region, R.id.location_district,R.id.location_community, R.id.location_houseNumber, R.id.location_city, R.id.location_areaType, R.id.location_postalCode, R.id.location_landMark, R.id.pick_gps_coordinates, R.id.lat_lon_coordinates, R.id.location_latLonAccuracy
                 )
         );
+
+        diseaseFieldConfigurations.put(new DiseaseFormTypeKey(Disease.YELLOW_FEVER, FormType.SYMPTOMS_EDIT),
+                Arrays.asList(
+                        R.id.symptoms_temperatureAndSource, R.id.symptoms_description, R.id.btns, R.id.symptoms_backache, R.id.symptoms_bodyAche, R.id.symptoms_chillsSweats, R.id.symptoms_fatigueWeakness, R.id.symptoms_fever, R.id.symptoms_headache, R.id.symptoms_jaundice, R.id.symptoms_vomiting, R.id.symptoms_nausea, R.id.symptoms_otherComplications, R.id.symptoms_otherComplicationsText, R.id.symptoms_onsetDate, R.id.symptoms_outcome
+                )
+        );
     }
 
     public static List<Integer> getFields(Disease disease, FormType formType) {
