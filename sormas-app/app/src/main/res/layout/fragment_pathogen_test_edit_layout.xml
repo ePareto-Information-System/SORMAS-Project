@@ -55,31 +55,6 @@
 
                 <requestFocus/>
 
-                <de.symeda.sormas.app.component.controls.ControlDateField
-                    android:id="@+id/pathogenTest_reportDate"
-                    app:value="@={data.reportDate}"
-                    style="@style/ControlSingleColumnStyle" />
-
-                <de.symeda.sormas.app.component.controls.ControlSpinnerField
-                    android:id="@+id/pathogenTest_testType"
-                    app:required="true"
-                    app:value="@={data.testType}"
-                    style="@style/ControlSingleColumnStyle" />
-
-                <de.symeda.sormas.app.component.controls.ControlSpinnerField
-                    android:id="@+id/pathogenTest_pcrTestSpecification"
-                    app:value="@={data.pcrTestSpecification}"
-                    style="@style/ControlSingleColumnStyle" />
-
-                <de.symeda.sormas.app.component.controls.ControlTextEditField
-                    android:id="@+id/pathogenTest_testTypeText"
-                    style="@style/ControlSingleColumnStyle"
-                    app:dependencyParentField="@{pathogenTestTestType}"
-                    app:dependencyParentValue="@{PathogenTestType.OTHER}"
-                    app:dependencyParentValue2="@{PathogenTestType.PCR_RT_PCR}"
-                    app:softRequired="true"
-                    app:value="@={data.testTypeText}"/>
-
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/pathogenTest_testedDisease"
                     app:required="true"
@@ -106,6 +81,31 @@
                     app:customizableEnumProperty="@{DiseaseVariant.HAS_DETAILS}"
                     app:customizableEnumValue="@{Boolean.TRUE}"
                     style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/pathogenTest_reportDate"
+                    app:value="@={data.reportDate}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/pathogenTest_testType"
+                    app:required="true"
+                    app:value="@={data.testType}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/pathogenTest_pcrTestSpecification"
+                    app:value="@={data.pcrTestSpecification}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/pathogenTest_testTypeText"
+                    style="@style/ControlSingleColumnStyle"
+                    app:dependencyParentField="@{pathogenTestTestType}"
+                    app:dependencyParentValue="@{PathogenTestType.OTHER}"
+                    app:dependencyParentValue2="@{PathogenTestType.PCR_RT_PCR}"
+                    app:softRequired="true"
+                    app:value="@={data.testTypeText}"/>
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/pathogenTest_typingId"
