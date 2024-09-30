@@ -183,6 +183,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 			() -> Boolean.TRUE.equals(contentBinding.caseDataDifferentPlaceOfStayJurisdiction.getValue()));
 
 			contentBinding.caseDataCaseTransmissionClassification.initializeSpinner(caseTransmissionClassificationsList);
+			contentBinding.caseDataCaseTransmissionClassification.setVisibility(GONE);
 			// InfrastructureDaoHelper.initializeFacilityFields(
 			InfrastructureFieldsDependencyHandler.instance.initializeFacilityFields(
 			record,

@@ -51,21 +51,6 @@
 
             <requestFocus />
 
-            <de.symeda.sormas.app.component.controls.ControlSwitchField
-                android:id="@+id/caseData_caseOrigin"
-                android:tag="case_origin_tag"
-                style="@style/ControlSingleColumnStyle"
-                app:enumClass="@{caseOriginClass}"
-                app:nullable="false"
-                app:required="true"
-                app:value="@={data.caseOrigin}" />
-
-            <de.symeda.sormas.app.component.controls.ControlSpinnerField
-                android:id="@+id/caseData_caseTransmissionClassification"
-                style="@style/ControlSingleColumnStyle"
-                app:required="true"
-                app:value="@={data.caseTransmissionClassification}" />
-
             <de.symeda.sormas.app.component.controls.ControlSpinnerField
                 android:id="@+id/caseData_disease"
                 android:tag="disease_tag"
@@ -121,6 +106,28 @@
                 app:customizableEnumField="@{caseDataDiseaseVariant}"
                 app:customizableEnumProperty="@{DiseaseVariant.HAS_DETAILS}"
                 app:customizableEnumValue="@{Boolean.TRUE}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/caseData_caseOrigin"
+                android:tag="case_origin_tag"
+                style="@style/ControlSingleColumnStyle"
+                app:enumClass="@{caseOriginClass}"
+                app:nullable="false"
+                app:required="true"
+                app:value="@={data.caseOrigin}" />
+
+            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                android:id="@+id/caseData_caseTransmissionClassification"
+                style="@style/ControlSingleColumnStyle"
+                app:required="true"
+                app:value="@={data.caseTransmissionClassification}" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/caseData_epidNumber"
+                android:tag="epid_number_tag"
+                app:value="@={data.epidNumber}"
+                app:userViewRight="@{UserRight.CASE_CHANGE_EPID_NUMBER}"
                 style="@style/ControlSingleColumnStyle" />
 
             <TextView
@@ -254,13 +261,6 @@
                 style="@style/ControlSingleColumnStyle"
                 app:required="true"
                 app:value="@={data.pointOfEntryDetails}" />
-
-            <de.symeda.sormas.app.component.controls.ControlTextEditField
-                android:id="@+id/caseData_epidNumber"
-                android:tag="epid_number_tag"
-                app:value="@={data.epidNumber}"
-                app:userViewRight="@{UserRight.CASE_CHANGE_EPID_NUMBER}"
-                style="@style/ControlSingleColumnStyle" />
 
             <LinearLayout
                 android:id="@+id/token_fields_layout"
