@@ -20,8 +20,11 @@ import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
+import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
 import de.symeda.sormas.api.symptoms.SymptomState;
@@ -35,6 +38,7 @@ import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
 import de.symeda.sormas.api.visit.VisitStatus;
 import de.symeda.sormas.app.BaseEditFragment;
+import de.symeda.sormas.app.FieldOrderConfigurations;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalVisit;
@@ -55,6 +59,7 @@ import de.symeda.sormas.app.core.IEntryItemOnClickListener;
 import de.symeda.sormas.app.databinding.FragmentSymptomsEditLayoutBinding;
 import de.symeda.sormas.app.util.Bundler;
 import de.symeda.sormas.app.util.DataUtils;
+import de.symeda.sormas.app.util.DiseaseFieldHandler;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -76,6 +81,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 	private IEntryItemOnClickListener setClearedToUnknownCallback;
 
 	private List<ControlSwitchField> symptomFields;
+	List<Item> outcomeList;
 
 	public static SymptomsEditFragment newInstance(Case activityRootData) {
 		return newInstanceWithFieldCheckers(
@@ -146,6 +152,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		bodyTempList = getTemperatures(true);
 		tempSourceList = DataUtils.getEnumItems(TemperatureSource.class, true);
 		congenitalHeartDiseaseList = DataUtils.getEnumItems(CongenitalHeartDiseaseType.class, true);
+		outcomeList = DataUtils.getEnumItems(CaseOutcome.class, true);
 	}
 
 	@Override
@@ -190,6 +197,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		contentBinding.symptomsTemperatureSource.initializeSpinner(DataUtils.addEmptyItem(tempSourceList));
 		contentBinding.symptomsCongenitalHeartDiseaseType.initializeSpinner(congenitalHeartDiseaseList);
 		contentBinding.symptomsOnsetSymptom.initializeSpinner(DataUtils.toItems(null, true));
+		contentBinding.symptomsOutcome.initializeSpinner(outcomeList);
 
 		contentBinding.symptomsTemperature.setSelectionOnOpen(37.0f);
 
@@ -199,6 +207,27 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		// Remove the Complications heading for CRS; should be done automatically later
 		if (disease == Disease.CONGENITAL_RUBELLA||disease == Disease.MONKEYPOX) {
 			contentBinding.complicationsHeading.setVisibility(GONE);
+		}
+
+		if (disease == Disease.YELLOW_FEVER){
+
+			Set<CaseOutcome> outcomesToRemove = Set.of(
+					CaseOutcome.NO_OUTCOME,
+					CaseOutcome.ON_TREATMENT,
+					CaseOutcome.REFERRED,
+					CaseOutcome.UNKNOWN,
+					CaseOutcome.OTHER,
+					CaseOutcome.RECOVERED
+			);
+
+			contentBinding.symptomsOutcome.initializeSpinner(outcomeList);
+			outcomeList.removeIf(item -> outcomesToRemove.contains(item.getValue()));
+
+
+			new DiseaseFieldHandler(getContext()).reorderFieldsForDisease(
+					FieldOrderConfigurations.getConfigurationForDisease(disease, FormType.SYMPTOMS_EDIT),
+					contentBinding.mainContent
+			);
 		}
 
 		contentBinding.symptomsCongenitalHeartDisease.addValueChangedListener(e -> {

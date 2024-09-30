@@ -51,6 +51,7 @@
             style="@style/LayoutSingleContentSpaceBelowStyle">
 
             <LinearLayout
+                android:id="@+id/symptoms_temperatureAndSource"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -85,6 +86,7 @@
                 android:text="@string/info_symptoms"/>
 
             <LinearLayout
+                android:id="@+id/btns"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
@@ -208,6 +210,13 @@
                 app:enumClass="@{symptomStateClass}"
                 app:slim="true"
                 app:value="@={data.backache}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_bodyAche"
+                app:enumClass="@{symptomStateClass}"
+                app:slim="true"
+                app:value="@={data.bodyAche}"
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlSwitchField
@@ -1435,6 +1444,11 @@
                 app:softRequired="true"
                 app:goneIfVariable="@{symptomsContext}"
                 app:goneIfValue="@{SymptomsContext.CLINICAL_VISIT}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                android:id="@+id/symptoms_outcome"
+                app:value="@={data.outcome}"
                 style="@style/ControlSingleColumnStyle" />
 
         </LinearLayout>
