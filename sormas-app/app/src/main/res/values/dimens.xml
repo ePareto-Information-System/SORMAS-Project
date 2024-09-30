@@ -68,6 +68,7 @@
     <dimen name="defaultControlTextSize">16sp</dimen>
     <dimen name="defaultPageHintTextSize">14sp</dimen>
     <dimen name="defaultSubHeadingDescriptionTextSize">14sp</dimen>
+    <dimen name="defaultHeadingRiskDescriptionTextSize">25sp</dimen>
     <dimen name="defaultButtonStroke">@dimen/defaultControlStrokeWidth</dimen>
     <dimen name="defaultButtonRadius">@dimen/defaultControlRadius</dimen>
     <dimen name="defaultButtonHeight">48dp</dimen>
