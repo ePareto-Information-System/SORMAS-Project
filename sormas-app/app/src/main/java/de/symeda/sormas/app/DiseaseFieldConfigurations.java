@@ -24,7 +24,7 @@ public class DiseaseFieldConfigurations {
 
         diseaseFieldConfigurations.put(new DiseaseFormTypeKey(Disease.YELLOW_FEVER, FormType.CASE_EDIT),
                 Arrays.asList(
-                        R.id.case_uuid_investigationStatus_fields_layout, R.id.caseData_reportDate, R.id.caseData_reportingUser, R.id.classifying_fields_layout, R.id.caseData_caseClassification,R.id.caseData_epidNumber, R.id.caseData_disease, R.id.caseData_caseOrigin, R.id.caseData_headingCaseResponsibleJurisidction, R.id.region_district_fields_layout, R.id.caseData_responsibleCommunity, R.id.caseData_healthFacility, R.id.caseData_healthFacilityDetails, R.id.caseData_medicalInformationHeading, R.id.caseData_vaccinationStatus, R.id.caseData_vaccinationType, R.id.caseData_numberOfDoses, R.id.caseData_reportingOfficerTitle, R.id.caseData_functionOfReportingOfficer, R.id.caseData_reportingOfficerContactPhone, R.id.caseData_reportingOfficerEmail
+                        R.id.case_uuid_investigationStatus_fields_layout, R.id.caseData_reportDate, R.id.caseData_reportingUser, R.id.classifying_fields_layout, R.id.caseData_caseClassification,R.id.caseData_epidNumber, R.id.caseData_disease, R.id.caseData_caseOrigin, R.id.caseData_headingCaseResponsibleJurisidction, R.id.region_district_fields_layout, R.id.caseData_responsibleCommunity, R.id.caseData_healthFacility, R.id.caseData_healthFacilityDetails, R.id.caseData_headingAdditionalMedicalInformation, R.id.caseData_vaccinationStatus, R.id.caseData_vaccinationType, R.id.caseData_numberOfDoses, R.id.caseData_reportingOfficerTitle, R.id.caseData_functionOfReportingOfficer, R.id.caseData_reportingOfficerContactPhone, R.id.caseData_reportingOfficerEmail
                 )
         );
 

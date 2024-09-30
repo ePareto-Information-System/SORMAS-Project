@@ -438,9 +438,9 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		frequencyOfChangingFiltersList = DataUtils.getEnumItems(FilterChangingFrequency.class, true);
 		contentBinding.sampleFrequencyOfChangingFilters.initializeSpinner(frequencyOfChangingFiltersList);
 
-		if(record.getAssociatedCase().getDisease() != null){
+		/*if(record.getAssociatedCase().getDisease() != null){
 			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_CREATE);
-		}
+		}*/
 	}
 
 	@Override

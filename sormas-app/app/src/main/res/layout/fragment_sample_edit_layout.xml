@@ -49,8 +49,7 @@
         <variable name="sampleDispatchModeClass" type="Class" />
         <variable name="ipSampleTestTypeClass" type="Class" />
         <variable name="sampleMaterialClass" type="Class" />
-
-        <variable name="YesNoClass" type="Class" />
+        <variable name="yesNoClass" type="Class" />
         <variable name="FilterChangingFrequencyClass" type="Class" />
     </data>
 
@@ -456,7 +455,7 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/sample_specimenSavedAndPreservedInAlcohol"
                     app:value="@={data.specimenSavedAndPreservedInAlcohol}"
-                    app:enumClass="@{YesNoClass}"
+                    app:enumClass="@{yesNoClass}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
@@ -519,7 +518,7 @@
                     <de.symeda.sormas.app.component.controls.ControlSwitchField
                         android:id="@+id/sample_sentForConfirmationNational"
                         app:value="@={data.sentForConfirmationNational}"
-                        app:enumClass="@{YesNoClass}"
+                        app:enumClass="@{yesNoClass}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
@@ -560,7 +559,7 @@
                     <de.symeda.sormas.app.component.controls.ControlSwitchField
                         android:id="@+id/sample_useOfClothFilter"
                         app:value="@={data.useOfClothFilter}"
-                        app:enumClass="@{YesNoClass}"
+                        app:enumClass="@{yesNoClass}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlSpinnerField
@@ -573,7 +572,7 @@
                     <de.symeda.sormas.app.component.controls.ControlSwitchField
                         android:id="@+id/sample_confirmedAsGuineaWorm"
                         app:value="@={data.confirmedAsGuineaWorm}"
-                        app:enumClass="@{YesNoClass}"
+                        app:enumClass="@{yesNoClass}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>

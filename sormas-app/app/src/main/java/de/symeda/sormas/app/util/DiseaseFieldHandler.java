@@ -71,8 +71,7 @@ public class DiseaseFieldHandler {
 
     private boolean isFieldView(View view) {
         return view instanceof ControlPropertyEditField || view instanceof TextView ||
-                view instanceof ControlPropertyField || view instanceof ControlSpinnerField ||
-                view instanceof ControlCheckBoxField || view instanceof ControlDateField;
+                view instanceof ControlPropertyField || view instanceof ControlCheckBoxField || view instanceof ControlDateField;
     }
 
     private void handleChildView(View child, List<String> relevantFields) {
