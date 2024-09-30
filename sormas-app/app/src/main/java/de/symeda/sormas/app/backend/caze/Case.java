@@ -231,9 +231,11 @@ public class Case extends PseudonymizableAdo {
 	@Enumerated(EnumType.STRING)
 	@DatabaseField(columnName = "vaccination")
 	private VaccinationStatus vaccinationStatus;
-
+	@Enumerated(EnumType.STRING)
+	@DatabaseField(columnName = "vaccinationType")
 	private CardOrHistory vaccinationType;
 	private String numberOfDoses;
+	@DatabaseField(columnName = "vaccinationDate", dataType = DataType.DATE_LONG)
 	private Date vaccinationDate;
 
 	@Enumerated(EnumType.STRING)
@@ -242,7 +244,7 @@ public class Case extends PseudonymizableAdo {
 	@Enumerated(EnumType.STRING)
 	private YesNoUnknown smallpoxVaccinationReceived;
 
-	@DatabaseField(columnName = "vaccinationDate", dataType = DataType.DATE_LONG)
+	@DatabaseField(columnName = "smallpoxLastVaccinationDate", dataType = DataType.DATE_LONG)
 	private Date smallpoxLastVaccinationDate;
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
