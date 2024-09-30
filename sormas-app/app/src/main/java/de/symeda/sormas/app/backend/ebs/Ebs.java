@@ -21,15 +21,20 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import de.symeda.sormas.api.ebs.AutomaticScanningType;
 import de.symeda.sormas.api.ebs.EbsSourceType;
 import de.symeda.sormas.api.ebs.ManualScanningType;
 import de.symeda.sormas.api.ebs.MediaScannningType;
 import de.symeda.sormas.api.ebs.PersonReporting;
+import de.symeda.sormas.app.backend.common.EmbeddedAdo;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.location.Location;
 import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfo;
@@ -45,6 +50,36 @@ public class Ebs extends PseudonymizableAdo {
 
     public static final String TABLE_NAME = "ebs";
     public static final String I18N_PREFIX = "Ebs";
+
+    public static final String INFORMANT_NAME = "informantName";
+    public static final String INFORMANT_TEL = "informantTel";
+    public static final String EVENT_DESC = "eventDesc";
+    public static final String TRIAGE_DATE = "triageDate";
+    public static final String SOURCE_NAME = "sourceName";
+    public static final String SOURCE_URL = "sourceUrl";
+    public static final String DESCRIPTION_OCCURANCE = "descriptionOccurrence";
+    public static final String PERSON_REGISTERING = "personRegistering";
+    public static final String PERSON_DESIGNATION = "personDesignation";
+    public static final String PERSON_PHONE = "personPhone";
+    public static final String REPORT_DATE_TIME = "reportDateTime";
+    public static final String REPORTING_USER = "reportingUser";
+    public static final String SOURCE_INFORMATION = "sourceInformation";
+    public static final String RESPONSIBLE_USER = "responsibleUser";
+    public static final String EBS_LONGITUDE = "ebsLongitude";
+    public static final String EBS_LATITUDE = "ebsLatitude";
+    public static final String EBS_LATLONG = "ebsLatLon";
+    public static final String SORMAS_TO_SORMAS_ORIGIN_INFO = "sormasToSormasOriginInfo";
+    public static final String SORMAS_TO_SORMAS_SHARES = "sormasToSormasShares";
+    public static final String MANUAL_SCANNING_TYPE = "manualScanningType";
+    public static final String AUTOMATIC_SCANNING_TYPE = "automaticScanningType";
+    public static final String SCANNING_TYPE = "scanningType";
+    public static final String OTHER = "other";
+    public static final String EBS_LOCATION = "ebsLocation";
+    public static final String CASES = "cases";
+    public static final String CATEGORY_OF_INFORMANT = "categoryOfInformant";
+    public static final String TRIAGING = "triaging";
+    public static final String OTHER_INFORMANT = "otherInformant";
+
 
     @DatabaseField
     private String informantName;
@@ -80,7 +115,7 @@ public class Ebs extends PseudonymizableAdo {
     @DatabaseField
     private String sourceUrl;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "ebslocation_id")
     private Location ebsLocation;
 
     @DatabaseField
@@ -353,6 +388,8 @@ public class Ebs extends PseudonymizableAdo {
         this.otherInformant = otherInformant;
     }
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     public SignalVerification getSignalVerification() {
         return signalVerification;
     }
