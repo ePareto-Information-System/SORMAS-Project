@@ -189,9 +189,9 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		contentBinding.caseHospitalizationHospitalizationReason.initializeSpinner(hospitalizationReasons);
 
 		contentBinding.caseHospitalizationHospitalizedPreviously.addValueChangedListener(field -> {
-			YesNoUnknown value = (YesNoUnknown) field.getValue();
-			contentBinding.prevHospitalizationsLayout.setVisibility(value == YesNoUnknown.YES ? View.VISIBLE : View.GONE);
-			if (value != YesNoUnknown.YES) {
+			YesNo value = (YesNo) field.getValue();
+			contentBinding.prevHospitalizationsLayout.setVisibility(value == YesNo.YES ? View.VISIBLE : View.GONE);
+			if (value != YesNo.YES) {
 				clearPreviousHospitalizations();
 			}
 

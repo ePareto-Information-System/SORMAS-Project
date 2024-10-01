@@ -152,6 +152,7 @@
 
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/caseHospitalization_intensiveCareUnit"
+                    app:enumClass="@{YesNoClass}"
                     app:value="@={data.intensiveCareUnit}"
                     style="@style/ControlSingleColumnStyle" />
 
@@ -179,6 +180,7 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/caseHospitalization_leftAgainstAdvice"
                     app:value="@={data.leftAgainstAdvice}"
+                    app:enumClass="@{YesNoClass}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
@@ -204,6 +206,7 @@
                         android:id="@+id/caseHospitalization_isolated"
                         app:useAbbreviations="true"
                         app:value="@={data.isolated}"
+                        app:enumClass="@{YesNoClass}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
@@ -242,6 +245,7 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                         android:id="@+id/caseHospitalization_hospitalizedPreviously"
                         app:value="@={data.hospitalizedPreviously}"
+                        app:enumClass="@{YesNoClass}"
                         style="@style/ControlSingleColumnStyle" />
 
             </LinearLayout>
