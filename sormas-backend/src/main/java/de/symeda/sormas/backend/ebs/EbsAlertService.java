@@ -66,4 +66,15 @@ public class EbsAlertService extends BaseAdoService<EbsAlert> {
 
         return result;
     }
+
+    public List<String> getAllActiveUuids() {
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<String> cq = cb.createQuery(String.class);
+        Root<EbsAlert> from = cq.from(EbsAlert.class);
+        cq.select(from.get(EbsAlert.UUID));
+        cq.distinct(true);
+
+        return em.createQuery(cq).getResultList();
+    }
 }

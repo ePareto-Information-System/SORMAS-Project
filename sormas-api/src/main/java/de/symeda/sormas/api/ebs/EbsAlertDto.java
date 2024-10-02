@@ -12,7 +12,7 @@ public class EbsAlertDto extends PseudonymizableDto {
     private final static long serialVersionUID = 1L;
 
     public static final String I18N_PREFIX = "EbsAlert";
-
+    public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 13356L;
     public static final String ACTION_INITIATED = "actionInitiated";
     public static final String RESPONSE_STATUS = "responseStatus";
     public static final String RESPONSE_DATE = "responseDate";
