@@ -5,16 +5,11 @@ import android.util.Log;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import de.symeda.sormas.app.backend.common.AbstractAdoDao;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
-import de.symeda.sormas.app.backend.ebs.Ebs;
-import de.symeda.sormas.app.backend.ebs.EbsCriteria;
-import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
 
 
 public class EbsAlertDao extends AbstractAdoDao<EbsAlert> {
@@ -32,16 +27,13 @@ public class EbsAlertDao extends AbstractAdoDao<EbsAlert> {
         return EbsAlert.TABLE_NAME;
     }
 
-    private QueryBuilder<EbsAlert, Long> buildQueryBuilder(EbsCriteria criteria) throws SQLException {
+    private QueryBuilder<EbsAlert, Long> buildQueryBuilder(EbsAlertCriteria criteria) throws SQLException {
         QueryBuilder<EbsAlert, Long> queryBuilder = queryBuilder();
         List<Where<EbsAlert, Long>> whereStatements = new ArrayList<>();
         Where<EbsAlert, Long> where = queryBuilder.where();
         whereStatements.add(where.eq(AbstractDomainObject.SNAPSHOT, false));
-
-        SignalVerification signalVerification = criteria.getSignalVerification();
-        if (signalVerification != null && signalVerification.getVerified() != null) {
-            queryBuilder.distinct();
-            whereStatements.add(where.eq(Ebs.SIGNAL_VERIFICATION, signalVerification.getVerified()));
+        if (criteria.getEbsId() != 0) {
+            whereStatements.add(where.eq("ebs_id", criteria.getEbsId()));
         }
         if (!whereStatements.isEmpty()) {
             Where<EbsAlert, Long> whereStatement = where.and(whereStatements.size());
@@ -50,7 +42,7 @@ public class EbsAlertDao extends AbstractAdoDao<EbsAlert> {
         return queryBuilder;
     }
 
-    public List<EbsAlert> queryByCriteria(EbsCriteria criteria, long offset, long limit) {
+    public List<EbsAlert> queryByCriteria(EbsAlertCriteria criteria, long offset, long limit) {
         try {
             return buildQueryBuilder(criteria).orderBy(EbsAlert.LOCAL_CHANGE_DATE, false).offset(offset).limit(limit).query();
         } catch (SQLException e) {
@@ -59,7 +51,7 @@ public class EbsAlertDao extends AbstractAdoDao<EbsAlert> {
         }
     }
 
-    public long countByCriteria(EbsCriteria criteria) {
+    public long countByCriteria(EbsAlertCriteria criteria) {
         try {
             return buildQueryBuilder(criteria).countOf();
         } catch (SQLException e) {
