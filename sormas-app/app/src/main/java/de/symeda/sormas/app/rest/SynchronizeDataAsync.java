@@ -38,7 +38,9 @@ import de.symeda.sormas.api.campaign.form.CampaignFormMetaDto;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.clinicalcourse.ClinicalVisitDto;
 import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.ebs.EbsAlertDto;
 import de.symeda.sormas.api.ebs.EbsDto;
+import de.symeda.sormas.api.ebs.RiskAssessmentDto;
 import de.symeda.sormas.api.environment.EnvironmentDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
@@ -76,6 +78,8 @@ import de.symeda.sormas.app.backend.contact.ContactDtoHelper;
 import de.symeda.sormas.app.backend.customizableenum.CustomizableEnumValueDtoHelper;
 import de.symeda.sormas.app.backend.disease.DiseaseConfigurationDtoHelper;
 import de.symeda.sormas.app.backend.ebs.EbsDtoHelper;
+import de.symeda.sormas.app.backend.ebs.ebsAlert.EbsAlertDtoHelper;
+import de.symeda.sormas.app.backend.ebs.riskAssessment.RiskAssessmentDtoHelper;
 import de.symeda.sormas.app.backend.environment.Environment;
 import de.symeda.sormas.app.backend.environment.EnvironmentDtoHelper;
 import de.symeda.sormas.app.backend.event.Event;
@@ -317,6 +321,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		new ImmunizationDtoHelper().pushEntities(true, syncCallbacks);
 		new EventDtoHelper().pushEntities(true, syncCallbacks);
 		new EbsDtoHelper().pushEntities(true, syncCallbacks);
+		new RiskAssessmentDtoHelper().pushEntities(true, syncCallbacks);
+		new EbsAlertDtoHelper().pushEntities(true, syncCallbacks);
 		new EventParticipantDtoHelper().pushEntities(true, syncCallbacks);
 		new SampleDtoHelper().pushEntities(true, syncCallbacks);
 		new PathogenTestDtoHelper().pushEntities(true, syncCallbacks);
@@ -344,6 +350,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		ImmunizationDtoHelper immunizationDtoHelper = new ImmunizationDtoHelper();
 		EventDtoHelper eventDtoHelper = new EventDtoHelper();
 		EbsDtoHelper ebsDtoHelper = new EbsDtoHelper();
+		RiskAssessmentDtoHelper riskAssessmentDtoHelper = new RiskAssessmentDtoHelper();
+		EbsAlertDtoHelper ebsAlertDtoHelper = new EbsAlertDtoHelper();
 		EventParticipantDtoHelper eventParticipantDtoHelper = new EventParticipantDtoHelper();
 		SampleDtoHelper sampleDtoHelper = new SampleDtoHelper();
 		EnvironmentDtoHelper environmentDtoHelper = new EnvironmentDtoHelper();
@@ -369,6 +377,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		boolean immunizationsNeedPull = immunizationDtoHelper.pullAndPushEntities(context, syncCallbacks);
 		boolean eventsNeedPull = eventDtoHelper.pullAndPushEntities(context, syncCallbacks);
 		boolean ebsNeedPull = ebsDtoHelper.pullAndPushEntities(context, syncCallbacks);
+		boolean riskNeedPull = riskAssessmentDtoHelper.pullAndPushEntities(context, syncCallbacks);
+		boolean ebsAlertNeedPull = ebsAlertDtoHelper.pullAndPushEntities(context, syncCallbacks);
 		boolean eventParticipantsNeedPull = eventParticipantDtoHelper.pullAndPushEntities(context, syncCallbacks);
 		boolean samplesNeedPull = sampleDtoHelper.pullAndPushEntities(context, syncCallbacks);
 		boolean sampleTestsNeedPull = pathogenTestDtoHelper.pullAndPushEntities(context, syncCallbacks);
@@ -388,6 +398,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 			DtoUserRightsHelper.isViewAllowed(ImmunizationDto.class) && DtoFeatureConfigHelper.isFeatureConfigForImmunizationEnabled();
 		boolean eventsVisible = DtoUserRightsHelper.isViewAllowed(EventDto.class) && DtoFeatureConfigHelper.isFeatureConfigForEventsEnabled();
 		boolean ebsVisible = DtoUserRightsHelper.isViewAllowed(EbsDto.class) && DtoFeatureConfigHelper.isFeatureConfigForEventsEnabled();
+		boolean riskVisible = DtoUserRightsHelper.isViewAllowed(RiskAssessmentDto.class) && DtoFeatureConfigHelper.isFeatureConfigForEventsEnabled();
+		boolean ebsAlertVisible = DtoUserRightsHelper.isViewAllowed(EbsAlertDto.class) && DtoFeatureConfigHelper.isFeatureConfigForEventsEnabled();
 		boolean eventParticipantsVisible =
 			DtoUserRightsHelper.isViewAllowed(EventParticipantDto.class) && DtoFeatureConfigHelper.isFeatureConfigForEventParticipantsEnabled();
 		boolean samplesVisible = DtoUserRightsHelper.isViewAllowed(SampleDto.class) && DtoFeatureConfigHelper.isFeatureConfigForSampleEnabled();
@@ -440,6 +452,18 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 			syncCallbacks.ifPresent(c -> c.getLoadNextCallback().run());
 			if (ebsNeedPull) {
 				ebsDtoHelper.pullEntities(true, context, syncCallbacks, false);
+			}
+		}
+		if (riskVisible) {
+			syncCallbacks.ifPresent(c -> c.getLoadNextCallback().run());
+			if (riskNeedPull) {
+				riskAssessmentDtoHelper.pullEntities(true, context, syncCallbacks, false);
+			}
+		}
+		if (ebsAlertVisible) {
+			syncCallbacks.ifPresent(c -> c.getLoadNextCallback().run());
+			if (ebsAlertNeedPull) {
+				ebsAlertDtoHelper.pullEntities(true, context, syncCallbacks, false);
 			}
 		}
 		if (eventParticipantsVisible) {
@@ -550,6 +574,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		ImmunizationDtoHelper immunizationDtoHelper = new ImmunizationDtoHelper();
 		EventDtoHelper eventDtoHelper = new EventDtoHelper();
 		EbsDtoHelper ebsDtoHelper = new EbsDtoHelper();
+		RiskAssessmentDtoHelper riskAssessmentDtoHelper = new RiskAssessmentDtoHelper();
+		EbsAlertDtoHelper ebsAlertDtoHelper = new EbsAlertDtoHelper();
 		EventParticipantDtoHelper eventParticipantDtoHelper = new EventParticipantDtoHelper();
 		SampleDtoHelper sampleDtoHelper = new SampleDtoHelper();
 		EnvironmentDtoHelper environmentDtoHelper = new EnvironmentDtoHelper();
@@ -580,6 +606,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		immunizationDtoHelper.repullEntities(context, syncCallbacks);
 		eventDtoHelper.repullEntities(context, syncCallbacks);
 		ebsDtoHelper.repullEntities(context, syncCallbacks);
+		riskAssessmentDtoHelper.repullEntities(context, syncCallbacks);
+		ebsAlertDtoHelper.repullEntities(context, syncCallbacks);
 		eventParticipantDtoHelper.repullEntities(context, syncCallbacks);
 		sampleDtoHelper.repullEntities(context, syncCallbacks);
 		environmentDtoHelper.repullEntities(context, syncCallbacks);
@@ -882,6 +910,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		viewAllowed = DtoUserRightsHelper.isViewAllowed(EbsDto.class);
 		List<String> ebsUuids = viewAllowed ? executeUuidCall(RetroProvider.getEbsFacade().pullUuids()) : new ArrayList<>();
 		DatabaseHelper.getEventDao().deleteInvalid(ebsUuids, syncCallbacks);
+		List<String> riskUuids = viewAllowed ? executeUuidCall(RetroProvider.getRiskAssessmentFacade().pullUuids()) : new ArrayList<>();
+		List<String> ebsAlertUuids = viewAllowed ? executeUuidCall(RetroProvider.getEbsAlertFacade().pullUuids()) : new ArrayList<>();
 		// immunizations
 		viewAllowed = DtoUserRightsHelper.isViewAllowed(ImmunizationDto.class);
 		List<String> immunizationUuids = viewAllowed ? executeUuidCall(RetroProvider.getImmunizationFacade().pullUuids()) : new ArrayList<>();
@@ -926,6 +956,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		new ImmunizationDtoHelper().pullMissing(caseUuids, syncCallbacks);
 		new EventDtoHelper().pullMissing(eventUuids, syncCallbacks);
 		new EbsDtoHelper().pullMissing(ebsUuids, syncCallbacks);
+		new RiskAssessmentDtoHelper().pullMissing(riskUuids, syncCallbacks);
+		new EbsAlertDtoHelper().pullMissing(ebsAlertUuids, syncCallbacks);
 		new EventParticipantDtoHelper().pullMissing(eventParticipantUuids, syncCallbacks);
 		new SampleDtoHelper().pullMissing(sampleUuids, syncCallbacks);
 		new EnvironmentDtoHelper().pullMissing(environmentUuids, syncCallbacks);
