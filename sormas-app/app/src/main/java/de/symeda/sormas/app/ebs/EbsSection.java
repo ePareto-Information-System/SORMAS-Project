@@ -26,7 +26,12 @@ public enum EbsSection
 
 	SIGNAL_INFORMATION(R.string.caption_ebs_information, R.drawable.ic_group_black_24dp),
 	TRIAGING(R.string.caption_triaging_information, R.drawable.ic_alert_24dp),
-	SIGNAL_VERIFICATION(R.string.caption_signal_verification, R.drawable.ic_alert_24dp);
+	SIGNAL_VERIFICATION(R.string.caption_signal_verification, R.drawable.ic_alert_24dp),
+	RISK_ASSESSMENT(R.string.caption_risk_assessment, R.drawable.ic_alert_24dp),
+	RISK_ASSESSMENT_EDIT(R.string.caption_risk_assessment, R.drawable.ic_alert_24dp),
+	EBS_ALERT(R.string.caption_ebs_alert, R.drawable.ic_alert_24dp),
+	EBS_ALERT_EDIT(R.string.caption_ebs_alert, R.drawable.ic_alert_24dp);
+
 
 	private int friendlyNameResourceId;
 	private int iconResourceId;
