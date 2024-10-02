@@ -38,6 +38,7 @@ public class EbsAlert extends PseudonymizableAdo {
     private YesNo alertIssued;
     @DatabaseField
     private String detailsAlertUsed;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Ebs ebs;
     @DatabaseField(dataType = DataType.DATE_LONG)
     private Date alertDate;
@@ -46,7 +47,6 @@ public class EbsAlert extends PseudonymizableAdo {
     public String getI18nPrefix() {
         return I18N_PREFIX;
     }
-
 
     public YesNo getActionInitiated() {
         return actionInitiated;
