@@ -13,8 +13,6 @@ import java.util.List;
 import de.symeda.sormas.app.backend.common.AbstractAdoDao;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.ebs.Ebs;
-import de.symeda.sormas.app.backend.ebs.EbsCriteria;
-import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
 
 
 public class RiskAssessmentDao extends AbstractAdoDao<RiskAssessment> {
@@ -32,25 +30,27 @@ public class RiskAssessmentDao extends AbstractAdoDao<RiskAssessment> {
         return RiskAssessment.TABLE_NAME;
     }
 
-    private QueryBuilder<RiskAssessment, Long> buildQueryBuilder(EbsCriteria criteria) throws SQLException {
+    private QueryBuilder<RiskAssessment, Long> buildQueryBuilder(RiskAssessmentCriteria criteria) throws SQLException {
         QueryBuilder<RiskAssessment, Long> queryBuilder = queryBuilder();
         List<Where<RiskAssessment, Long>> whereStatements = new ArrayList<>();
         Where<RiskAssessment, Long> where = queryBuilder.where();
+
+        // Existing condition: filter where SNAPSHOT is false
         whereStatements.add(where.eq(AbstractDomainObject.SNAPSHOT, false));
 
-        SignalVerification signalVerification = criteria.getSignalVerification();
-        if (signalVerification != null && signalVerification.getVerified() != null) {
-            queryBuilder.distinct();
-            whereStatements.add(where.eq(Ebs.SIGNAL_VERIFICATION, signalVerification.getVerified()));
+        // New condition: filter by Ebs UUID if it's set in the criteria
+        if (criteria.getEbsId() != 0) {
+            whereStatements.add(where.eq("ebs_id", criteria.getEbsId()));
         }
         if (!whereStatements.isEmpty()) {
             Where<RiskAssessment, Long> whereStatement = where.and(whereStatements.size());
             queryBuilder.setWhere(whereStatement);
         }
+
         return queryBuilder;
     }
 
-    public List<RiskAssessment> queryByCriteria(EbsCriteria criteria, long offset, long limit) {
+    public List<RiskAssessment> queryByCriteria(RiskAssessmentCriteria criteria, long offset, long limit) {
         try {
             return buildQueryBuilder(criteria).orderBy(RiskAssessment.LOCAL_CHANGE_DATE, false).offset(offset).limit(limit).query();
         } catch (SQLException e) {
@@ -59,7 +59,7 @@ public class RiskAssessmentDao extends AbstractAdoDao<RiskAssessment> {
         }
     }
 
-    public long countByCriteria(EbsCriteria criteria) {
+    public long countByCriteria(RiskAssessmentCriteria criteria) {
         try {
             return buildQueryBuilder(criteria).countOf();
         } catch (SQLException e) {
