@@ -11,18 +11,17 @@ public class EbsAlertDto extends PseudonymizableDto {
 
 	private final static long serialVersionUID = 1L;
 
-	public static final String I18N_PREFIX = "EbsAlert";
-	public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 13356L;
-
-	public static final String ACTION_INITIATED = "actionInitiated";
-	public static final String RESPONSE_STATUS = "responseStatus";
-	public static final String RESPONSE_DATE = "responseDate";
-	public static final String DETAILS_RESPONSE_ACTIVITIES = "detailsResponseActivities";
-	public static final String DETAILS_GIVEN = "detailsGiven";
-	public static final String ALERT_ISSUED = "alertIssued";
-	public static final String DETAILS_ALERT_USED = "detailsAlertUsed";
-	public static final String ALERT_DATE = "alertDate";
-	public static final String EBS = "ebs";
+    public static final String I18N_PREFIX = "EbsAlert";
+    public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 13356L;
+    public static final String ACTION_INITIATED = "actionInitiated";
+    public static final String RESPONSE_STATUS = "responseStatus";
+    public static final String RESPONSE_DATE = "responseDate";
+    public static final String DETAILS_RESPONSE_ACTIVITIES = "detailsResponseActivities";
+    public static final String DETAILS_GIVEN = "detailsGiven";
+    public static final String ALERT_ISSUED = "alertIssued";
+    public static final String DETAILS_ALERT_USED = "detailsAlertUsed";
+    public static final String ALERT_DATE = "alertDate";
+    public static final String EBS = "ebs";
 
 	private YesNoUnknown actionInitiated;
 	private ResponseStatus responseStatus;
