@@ -12,10 +12,12 @@ import javax.persistence.Enumerated;
 
 import de.symeda.sormas.api.ebs.SignalOutcome;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.app.backend.common.EmbeddedAdo;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 
 @Entity(name = SignalVerification.TABLE_NAME)
 @DatabaseTable(tableName = SignalVerification.TABLE_NAME)
+@EmbeddedAdo
 public class SignalVerification extends PseudonymizableAdo {
     public static final String TABLE_NAME = "signalVerification";
     public static final String I18N_PREFIX = "signalVerification";
