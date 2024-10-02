@@ -83,6 +83,8 @@
     <string name="action_new_event">New Event</string>
     <string name="action_new_ebs">New Ebs</string>
     <string name="action_new_triaging">New Triaging</string>
+    <string name="action_new_risk_assessment">New Risk Assessment</string>
+    <string name="action_new_alert">New Alert</string>
     <string name="action_new_sample">New Sample</string>
     <string name="action_new_task">New Task</string>
     <string name="action_not_executable">Not Executable</string>
@@ -110,6 +112,8 @@
     <string name="action_save_ebs">Save Signal</string>
     <string name="action_save_triaging">Save Triaging</string>
     <string name="action_save_signal_verification">Save Signal Verification</string>
+    <string name="action_save_risk_assessment">Save Risk Assessment</string>
+    <string name="action_save_alert">Save Alert</string>
     <string name="action_save_event_participant">Save Event Participant</string>
     <string name="action_save_prescription">Save Prescription</string>
     <string name="action_save_sample">Save Sample</string>
@@ -188,6 +192,7 @@
     <string name="caption_triaging_information">Triaging</string>
     <string name="caption_signal_verification">Signal Verification</string>
     <string name="caption_risk_assessment">RiskAssessment</string>
+    <string name="caption_ebs_alert">Ebs Alert</string>
     <string name="caption_event_participants">Persons Involved</string>
     <string name="caption_event_participant_immunizations">Event participant Immunizations</string>
     <string name="caption_event_participant_vaccinations">Event participant Vaccinations</string>
@@ -369,10 +374,16 @@
     <string name="heading_triaging_new">New Triaging</string>
     <string name="heading_triaging_edit">Edit Triaging</string>
     <string name="heading_signal_verification_edit">Edit Signal Verification</string>
+    <string name="heading_risk_assessment_edit">Edit Risk Assessment</string>
+    <string name="heading_risk_assessment_new">New Risk Assessment</string>
+    <string name="heading_alert_assessment_edit">Edit Alert</string>
+    <string name="heading_alert_assessment_new">New Alert</string>
     <string name="heading_event_read">Read Event</string>
     <string name="heading_event_summary">Event Summary</string>
     <string name="heading_events_list">Event Listing</string>
     <string name="heading_ebs_list">Event Listing</string>
+    <string name="heading_risk_assessment_list">Risk Assessment Listing</string>
+    <string name="heading_alert_list">Alert Listing</string>
     <string name="heading_existing_persons">Existing Persons</string>
     <string name="heading_existing_cases">Existing Cases</string>
     <string name="heading_existing_immunizations">Existing Immunizations</string>
@@ -464,6 +475,7 @@
     <string name="heading_vaccination_edit">Edit Vaccination</string>
     <string name="heading_vaccination_new">New Vaccination</string>
     <string name="heading_search_for_case">Search specific case</string>
+    <string name="heading_general_notice">Notice!!!</string>
 
     <string name="hint_add_to_empty_list">Add a new entry by pressing the "+" symbol in the top right.</string>
     <string name="hint_clear">Clear</string>
@@ -500,6 +512,7 @@
     <string name="hint_case_numbers_not_submitted">Case numbers not submitted yet</string>
     <string name="hint_contact_text_filter">Contact ID or contact person name</string>
     <string name="hint_settings_debug_url_lbds">e.g. https://localhost:6070/sormas-rest/</string>
+    <string name="hint_source_information">Source Information</string>
 
     <string name="indicator_error">ERROR</string>
     <string name="indicator_required">*</string>
@@ -535,6 +548,28 @@
     <string name="info_pick_campaign_form_meta">Please select a campaign form for which you want to enter data!</string>
     <string name="info_immunization_override_mark_check_box">Override existing immunization></string>
 
+    <string name="info_very_high_risk_header">VERY HIGH</string>
+    <string name="info_high_risk_header">HIGH</string>
+    <string name="info_moderate_risk_header">MODERATE</string>
+    <string name="info_low_risk_header">LOW</string>
+    <string name="heading_recomended_actions">RECOMMENDED ACTIONS</string>
+    <string name="heading_notification_type">NOTIFICATION TYPE</string>
+    <string name="heading_notification_action">NOTIFICATION ACTION</string>
+
+    <string name="info_very_high_rec_actions">Immediate response required even if the event is reported out of normal working hours. Activate regional and district PHEMC and immediately involve national level in the response, as a range of specific control measures will be required, some of which will have significant resource implications and/or social/economic consequences.</string>
+    <string name="info_high_rec_actions">Activate PHEMC at district and regional levels, and ensure rapid deployment of response and countermeasures, as may be required. Ensure involvement of higher level in the response as a range of additional control measures will be required some of which may have significant resource implications and/or social/economic consequences.</string>
+    <string name="info_moderate_rec_actions">Specific monitoring or control measures required (e.g. enhanced surveillance, additional vaccination campaigns). Activate PHEMC, review response plans and establish specific roles and responsibility for the response activity.</string>
+    <string name="info_low_rec_actions">Manage according to standard response protocols, routine control programs and regulations (e.g. monitoring through routine surveillance systems)</string>
+
+    <string name="info_very_high_notification_type">Immediately report event on SORMAS and notify next level, as appropriate. Region to notify National level of event and actions taken. National to notify WHO</string>
+    <string name="info_high_notification_type">Immediately report event on SORMAS and notify next level, as appropriate. Region to notify National level of event and actions taken. National should consider notifying WHO etc, as may be appropriate.</string>
+    <string name="info_moderate_notification_type">Immediately report event on SORMAS and notify next level, as appropriate. Region to notify National level of event and actions taken.</string>
+    <string name="info_low_notification_type">Immediately report event on SORMAS and notify next level, as appropriate.</string>
+
+    <string name="info_very_high_notification_action">Immediate deployment of national level logistics and human resources to support response activities.</string>
+    <string name="info_high_notification_action">Activate PHEMC (district and regional ) and deploy RRT and other support to affected level; consider national- level deployment (as requested) in consultation with affected region</string>
+    <string name="info_moderate_notification_action">Region/District to discuss support/assistance required with affected level. Consider activating PHEMC.</string>
+    <string name="info_low_notification_action">Continue to monitor; repeat risk assessment if situation changes.</string>
     <string name="main_menu_cases">Cases</string>
     <string name="main_menu_contacts">Contacts</string>
     <string name="main_menu_dashboard">Dashboard</string>
@@ -739,5 +774,6 @@
     <string name="caption_enter_current_password" >"Enter Current Password"</string>
     <string name="caption_enter_new_password" >"Enter new Password"</string>
     <string name="caption_confirm_new_password" >"Confirm Password"</string>
-
+    <string name="signal_not_event">Signal Is not An Event</string>
+    <string name="triaging_decision_not_verify">Triaging Decision Is Discard Or Referred </string>
 </resources>

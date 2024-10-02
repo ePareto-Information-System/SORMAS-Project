@@ -36,5 +36,7 @@
     <string name="two_strings_format">%1$s %2$s</string>
     <string name="two_strings_with_brackets_format">%1$s (%2$s)</string>
     <string name="two_strings_with_hyphen_format">%1$s - %2$s</string>
+    <string name="message_review_signal">Please review the information received with a supervisor, Senior official (e.g.,DDHS, Head of IPHU) or Subject-Matter Expert, for potential public health threat.</string>
+    <string name="message_relevant_focal">Consider referring to the relevant Program Focal Point/ Department / Agency!</string>
 
 </resources>
