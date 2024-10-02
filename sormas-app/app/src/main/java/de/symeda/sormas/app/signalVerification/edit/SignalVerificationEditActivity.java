@@ -17,6 +17,7 @@ package de.symeda.sormas.app.signalVerification.edit;
 
 import static de.symeda.sormas.app.core.notification.NotificationType.WARNING;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.view.Menu;
@@ -24,6 +25,8 @@ import android.view.Menu;
 import java.util.List;
 
 import de.symeda.sormas.api.ebs.EbsSourceType;
+import de.symeda.sormas.api.ebs.EbsTriagingDecision;
+import de.symeda.sormas.api.ebs.SignalOutcome;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.ValidationException;
@@ -45,6 +48,10 @@ import de.symeda.sormas.app.ebs.edit.EbsEditActivity;
 import de.symeda.sormas.app.ebs.edit.EbsEditFragment;
 import de.symeda.sormas.app.ebs.edit.SignalVerificationEditFragment;
 import de.symeda.sormas.app.ebs.edit.TriagingEditFragment;
+import de.symeda.sormas.app.ebs.list.EbsListActivity;
+import de.symeda.sormas.app.ebsAlert.list.EbsAlertListActivity;
+import de.symeda.sormas.app.riskAssessment.list.RiskAssessmentListActivity;
+import de.symeda.sormas.app.triaging.edit.TriagingEditActivity;
 import de.symeda.sormas.app.util.Bundler;
 
 public class SignalVerificationEditActivity extends BaseEditActivity<SignalVerification> {
@@ -62,8 +69,13 @@ public class SignalVerificationEditActivity extends BaseEditActivity<SignalVerif
 	}
 
 	@Override
-	public EbsSourceType getPageStatus() {
-		return EbsSourceType.CEBS;
+	public SignalOutcome getPageStatus() {
+		if (getStoredRootEntity() == null){
+			return null;
+		}else if (getStoredRootEntity().getVerified() == null) {
+			return SignalOutcome.NON_EVENT;
+		}
+		return getStoredRootEntity() == null ? SignalOutcome.NON_EVENT : EbsEditActivity.getParentEbs().getSignalVerification().getVerified();
 	}
 
 	@Override
@@ -86,9 +98,9 @@ public class SignalVerificationEditActivity extends BaseEditActivity<SignalVerif
 	@Override
 	public List<PageMenuItem> getPageMenuData() {
 		List<PageMenuItem> menuItems = PageMenuItem.fromEnum(EbsSection.values(), getContext());
-		if (DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.EBS_SURVEILLANCE)) {
-			menuItems.set(EbsSection.SIGNAL_INFORMATION.ordinal(), null);
-		}
+		menuItems.set(EbsSection.SIGNAL_VERIFICATION.ordinal(), null);
+		menuItems.set(EbsSection.EBS_ALERT_EDIT.ordinal(), null);
+		menuItems.set(EbsSection.RISK_ASSESSMENT_EDIT.ordinal(), null);
 		return menuItems;
 
 	}
@@ -96,17 +108,31 @@ public class SignalVerificationEditActivity extends BaseEditActivity<SignalVerif
 	@Override
 	protected BaseEditFragment buildEditFragment(PageMenuItem menuItem, SignalVerification activityRootData) {
 		EbsSection section = EbsSection.fromOrdinal(menuItem.getPosition());
-		BaseEditFragment fragment;
+		BaseEditFragment fragment = EbsEditFragment.newInstance(EbsEditActivity.getParentEbs());
+		if (EbsEditActivity.getParentEbs().getTriaging().getTriagingDecision() != EbsTriagingDecision.VERIFY){
+			EbsListActivity.startActivity(getContext(),null);
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(R.string.indicator_warning)
+					.setMessage(R.string.triaging_decision_not_verify)
+					.show();
+			return fragment;
+		}
 		switch (section) {
 
 			case SIGNAL_INFORMATION:
-				fragment = EbsEditFragment.newInstance(activityRootData);
+				fragment = EbsEditFragment.newInstance(EbsEditActivity.getParentEbs());
 				break;
 			case TRIAGING:
-				fragment = TriagingEditFragment.newInstance(activityRootData);
+				fragment = TriagingEditFragment.newInstance(EbsEditActivity.getParentEbs().getTriaging());
 				break;
 			case SIGNAL_VERIFICATION:
 				fragment = SignalVerificationEditFragment.newInstance(activityRootData);
+				break;
+			case RISK_ASSESSMENT:
+				RiskAssessmentListActivity.startActivity(getContext(), null);
+				break;
+			case EBS_ALERT:
+				EbsAlertListActivity.startActivity(getContext(), null);
 				break;
 			default:
 				throw new IndexOutOfBoundsException(DataHelper.toStringNullable(section));
@@ -142,7 +168,7 @@ public class SignalVerificationEditActivity extends BaseEditActivity<SignalVerif
 
 				if (taskResult.getResultStatus().isSuccess()) {
 					finish();
-					EbsEditActivity.startActivity(getContext(), signalToSave.getUuid(), EbsSection.SIGNAL_VERIFICATION);
+					RiskAssessmentListActivity.startActivity(getContext(), null);
 				} else {
 					onResume(); // reload data
 				}
