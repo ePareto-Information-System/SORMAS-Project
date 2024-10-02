@@ -18,6 +18,9 @@ package de.symeda.sormas.app.ebs.edit;
 import static android.view.View.GONE;
 
 import android.view.View;
+import android.widget.PopupWindow;
+
+import androidx.core.app.NotificationCompat;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +52,12 @@ import de.symeda.sormas.app.backend.ebs.Ebs;
 import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
 import de.symeda.sormas.app.backend.ebs.triaging.Triaging;
 import de.symeda.sormas.app.component.Item;
+import de.symeda.sormas.app.component.dialog.ConfirmationDialog;
+import de.symeda.sormas.app.component.dialog.ConfirmationInputDialog;
 import de.symeda.sormas.app.databinding.FragmentTriagingEditLayoutBinding;
+import de.symeda.sormas.app.rest.SynchronizeDataAsync;
+import de.symeda.sormas.app.triaging.edit.TriagingEditActivity;
+import de.symeda.sormas.app.util.Callback;
 import de.symeda.sormas.app.util.DataUtils;
 
 public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditLayoutBinding, Triaging, Triaging> {
@@ -167,9 +175,35 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 		super.onAfterLayoutBinding(contentBinding);
 		contentBinding.triagingDecisionDate.initializeDateField(getFragmentManager());
 		contentBinding.triagingOutcomeSupervisor.initializeSpinner(triagingOutComeSupervisor);
+		if (contentBinding.triagingSpecificSignal.getValue() != null && contentBinding.triagingSpecificSignal.getValue() == YesNo.YES){
+			contentBinding.triagingOccurrencePreviously.setVisibility(View.VISIBLE);
+		} else if (contentBinding.triagingSpecificSignal.getValue() != null && contentBinding.triagingSpecificSignal.getValue() == YesNo.NO) {
+			contentBinding.triagingOccurrencePreviously.setVisibility(GONE);
+		}
+		if (contentBinding.triagingSignalCategory.getValue() == null){
+			contentBinding.triagingCategoryDetailsLevel.setVisibility(GONE);
+		}
+		contentBinding.triagingSpecificSignal.addValueChangedListener(e->{
+			var value = e.getValue();
+			if(value == YesNo.YES){
+				contentBinding.triagingOccurrencePreviously.setVisibility(View.VISIBLE);
+			}else {
+				contentBinding.triagingOccurrencePreviously.setVisibility(GONE);
+				reviewSignal(R.string.message_review_signal);
+			}
+		});
+		contentBinding.triagingSupervisorReview.addValueChangedListener(e->{
+			var value = e.getValue();
+			if(value == YesNo.NO){
+				reviewSignal(R.string.message_review_signal);
+			}
+		});
+
+
+
 		contentBinding.triagingSignalCategory.addValueChangedListener(e->{
 			final Set<String> validCategories = new HashSet<>(Set.of("Human", "Environment", "Animal", "POE"));
-			String propertyValue  = e.getValue().toString();
+			String propertyValue = (e.getValue() != null) ? e.getValue().toString() : null;
 			if (validCategories.contains(propertyValue)) {
 				contentBinding.triagingCategoryDetailsLevel.setVisibility(View.VISIBLE);
 			} else {
@@ -192,12 +226,36 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 			}
 		});
 
+		contentBinding.triagingOutcomeSupervisor.addValueChangedListener(e->{
+			if (e.getValue() == OutComeSupervisor.ISSIGNAL){
+				contentBinding.triagingOccurrencePreviously.setVisibility(View.VISIBLE);
+			}
+		});
+
+		contentBinding.triagingHealthConcern.addValueChangedListener(e->{
+			if (e.getValue() == YesNo.YES){
+				reviewSignal(R.string.message_relevant_focal);
+			}
+		});
 		contentBinding.triagingCategoryDetailsLevel.addValueChangedListener(e -> {
-			var level = e.getValue().toString();
-			var category = contentBinding.triagingSignalCategory.getValue();
+			var level = (e.getValue() != null) ? e.getValue().toString() : "Community";
+			var category =  contentBinding.triagingSignalCategory.getValue();
 			setVisibility(level, (SignalCategory) category,contentBinding);
 		});
 
+		Ebs selectedEbs = EbsEditActivity.getParentEbs();
+		Triaging selectedTriaging = selectedEbs.getTriaging();
+		if(selectedTriaging.getCategoryDetailsLevel() != null  ) {
+			setVisibility(selectedTriaging.getCategoryDetailsLevel().toString(), selectedTriaging.getSignalCategory(),contentBinding);
+		}
+		contentBinding.triagingOccurrencePreviously.addValueChangedListener(e->{
+			var value = e.getValue();
+			if(value == YesNo.YES){
+				contentBinding.triagingTriagingDecision.setValue(EbsTriagingDecision.DISCARD);
+			}else {
+				contentBinding.triagingTriagingDecision.setValue(EbsTriagingDecision.VERIFY);
+			}
+		});
 
 	}
 
@@ -288,6 +346,14 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 		}catch (Exception exception){
 			System.out.println(exception.getMessage());
 		}
+	}
+
+	private void reviewSignal(int message) {
+			final ConfirmationDialog signalReviewDialog = new ConfirmationDialog(
+					getActivity(),
+					R.string.heading_general_notice,
+                    message);
+					signalReviewDialog.show();
 	}
 
 }

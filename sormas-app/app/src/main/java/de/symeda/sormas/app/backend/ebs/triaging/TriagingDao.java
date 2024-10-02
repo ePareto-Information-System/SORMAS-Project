@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.symeda.sormas.api.ebs.SignalVerificationDto;
 import de.symeda.sormas.app.backend.common.AbstractAdoDao;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.ebs.Ebs;
@@ -37,10 +38,9 @@ public class TriagingDao extends AbstractAdoDao<Triaging> {
         Where<Triaging, Long> where = queryBuilder.where();
         whereStatements.add(where.eq(AbstractDomainObject.SNAPSHOT, false));
 
-        SignalVerification signalVerification = criteria.getSignalVerification();
-        if (signalVerification != null && signalVerification.getVerified() != null) {
+        if (criteria.getSignalOutcome() != null) {
             queryBuilder.distinct();
-            whereStatements.add(where.eq(Ebs.SIGNAL_VERIFICATION, signalVerification.getVerified()));
+            whereStatements.add(where.eq(Ebs.SIGNAL_VERIFICATION, criteria.getSignalVerification().getVerified()));
         }
     if (!whereStatements.isEmpty()) {
             Where<Triaging, Long> whereStatement = where.and(whereStatements.size());

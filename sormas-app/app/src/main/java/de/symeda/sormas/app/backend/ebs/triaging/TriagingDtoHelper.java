@@ -3,8 +3,8 @@ package de.symeda.sormas.app.backend.ebs.triaging;
 import java.util.List;
 
 import de.symeda.sormas.api.PostResponse;
-import de.symeda.sormas.api.ebs.EbsDto;
-import de.symeda.sormas.api.ebs.EbsReferenceDto;
+import de.symeda.sormas.api.ebs.TriagingDto;
+import de.symeda.sormas.api.ebs.TriagingReferenceDto;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.backend.ebs.Ebs;
 import de.symeda.sormas.app.backend.event.Event;
@@ -14,7 +14,7 @@ import de.symeda.sormas.app.rest.NoConnectionException;
 import de.symeda.sormas.app.rest.RetroProvider;
 import retrofit2.Call;
 
-public class TriagingDtoHelper extends AdoDtoHelper<Ebs, EbsDto> {
+public class TriagingDtoHelper extends AdoDtoHelper<Triaging, TriagingDto> {
     private LocationDtoHelper locationHelper;
 
     private SormasToSormasOriginInfoDtoHelper sormasToSormasOriginInfoDtoHelper = new SormasToSormasOriginInfoDtoHelper();
@@ -24,88 +24,90 @@ public class TriagingDtoHelper extends AdoDtoHelper<Ebs, EbsDto> {
     }
 
     @Override
-    protected Class<Ebs> getAdoClass() {
-        return Ebs.class;
+    protected Class<Triaging> getAdoClass() {
+        return Triaging.class;
     }
 
     @Override
-    protected Class<EbsDto> getDtoClass() {
-        return EbsDto.class;
+    protected Class<TriagingDto> getDtoClass() {
+        return TriagingDto.class;
     }
 
     @Override
-    protected Call<List<EbsDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid) throws NoConnectionException {
-        return RetroProvider.getEbsFacade().pullAllSince(since, size, lastSynchronizedUuid);
+    protected Call<List<TriagingDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid) throws NoConnectionException {
+        return RetroProvider.getTriagingFacade().pullAllSince(since, size, lastSynchronizedUuid);
     }
 
     @Override
-    protected Call<List<EbsDto>> pullByUuids(List<String> uuids) throws NoConnectionException {
-        return RetroProvider.getEbsFacade().pullByUuids(uuids);
+    protected Call<List<TriagingDto>> pullByUuids(List<String> uuids) throws NoConnectionException {
+        return RetroProvider.getTriagingFacade().pullByUuids(uuids);
     }
 
     @Override
-    protected Call<List<PostResponse>> pushAll(List<EbsDto> ebsDtos) throws NoConnectionException {
-        return RetroProvider.getEbsFacade().pushAll(ebsDtos);
+    protected Call<List<PostResponse>> pushAll(List<TriagingDto> triagingDtos) throws NoConnectionException {
+        return RetroProvider.getTriagingFacade().pushAll(triagingDtos);
     }
 
     @Override
-    public void fillInnerFromDto(Ebs target, EbsDto source) {
-        target.setInformantName(source.getInformantName());
-        target.setInformantTel(source.getInformantTel());
-        target.setEndDate(source.getEndDate());
-        target.setReportDateTime(source.getReportDateTime());
-        target.setCategoryOfInformant(source.getCategoryOfInformant());
-        target.setEbsLatLon(source.getEbsLatLon());
-        target.setAutomaticScanningType(source.getAutomaticScanningType());
-        target.setManualScanningType(source.getManualScanningType());
-        target.setScanningType(source.getScanningType());
-        target.setDescriptionOccurrence(source.getDescriptionOccurrence());
-        target.setOther(source.getOther());
-        target.setPersonDesignation(source.getPersonDesignation());
-        target.setPersonPhone(source.getPersonPhone());
-        target.setPersonRegistering(source.getPersonRegistering());
-        target.setSourceName(source.getSourceName());
-        target.setSourceInformation(source.getSourceInformation());
-        target.setDateOnset(source.getDateOnset());
-        target.setEbsLongitude(source.getEbsLongitude());
-        target.setEbsLatitude(source.getEbsLongitude());
-        target.setOtherInformant(source.getOtherInformant());
+    public void fillInnerFromDto(Triaging target, TriagingDto source) {
+        target.setSupervisorReview(source.getSupervisorReview());
+        target.setDecisionDate(source.getDecisionDate());
+        target.setHealthConcern(source.getHealthConcern());
+        target.setReferredTo(source.getReferredTo());
+        target.setOccurrencePreviously(source.getOccurrencePreviously());
+        target.setSpecificSignal(source.getSpecificSignal());
+        target.setSignalCategory(source.getSignalCategory());
+        target.setHumanCommunityCategoryDetails(source.getHumanCommunityCategoryDetails());
+        target.setHumanFacilityCategoryDetails(source.getHumanFacilityCategoryDetails());
+        target.setHumanLaboratoryCategoryDetails(source.getHumanLaboratoryCategoryDetails());
+        target.setAnimalCommunityCategoryDetails(source.getAnimalCommunityCategoryDetails());
+        target.setAnimalFacilityCategoryDetails(source.getAnimalFacilityCategoryDetails());
+        target.setAnimalLaboratoryCategoryDetails(source.getAnimalLaboratoryCategoryDetails());
+        target.setEnvironmentalCategoryDetails(source.getEnvironmentalCategoryDetails());
+        target.setPoeCategoryDetails(source.getPoeCategoryDetails());
+        target.setTriagingDecision(source.getTriagingDecision());
+        target.setOutcomeSupervisor(source.getOutcomeSupervisor());
+        target.setNotSignal(source.getNotSignal());
+        target.setCategoryDetailsLevel(source.getCategoryDetailsLevel());
+        target.setPotentialRisk(source.getPotentialRisk());
+        target.setReferred(source.getReferred());
     }
 
     @Override
-    public void fillInnerFromAdo(EbsDto target, Ebs source) {
-        target.setInformantName(source.getInformantName());
-        target.setInformantTel(source.getInformantTel());
-        target.setEndDate(source.getEndDate());
-        target.setReportDateTime(source.getReportDateTime());
-        target.setCategoryOfInformant(source.getCategoryOfInformant());
-        target.setEbsLatLon(source.getEbsLatLon());
-        target.setAutomaticScanningType(source.getAutomaticScanningType());
-        target.setManualScanningType(source.getManualScanningType());
-        target.setScanningType(source.getScanningType());
-        target.setDescriptionOccurrence(source.getDescriptionOccurrence());
-        target.setOther(source.getOther());
-        target.setPersonDesignation(source.getPersonDesignation());
-        target.setPersonPhone(source.getPersonPhone());
-        target.setPersonRegistering(source.getPersonRegistering());
-        target.setSourceName(source.getSourceName());
-        target.setSourceInformation(source.getSourceInformation());
-        target.setDateOnset(source.getDateOnset());
-        target.setEbsLongitude(source.getEbsLongitude());
-        target.setEbsLatitude(source.getEbsLongitude());
-        target.setOtherInformant(source.getOtherInformant());
+    public void fillInnerFromAdo(TriagingDto target, Triaging source) {
+        target.setSupervisorReview(source.getSupervisorReview());
+        target.setDecisionDate(source.getDecisionDate());
+        target.setHealthConcern(source.getHealthConcern());
+        target.setReferredTo(source.getReferredTo());
+        target.setOccurrencePreviously(source.getOccurrencePreviously());
+        target.setSpecificSignal(source.getSpecificSignal());
+        target.setSignalCategory(source.getSignalCategory());
+        target.setHumanCommunityCategoryDetails(source.getHumanCommunityCategoryDetails());
+        target.setHumanFacilityCategoryDetails(source.getHumanFacilityCategoryDetails());
+        target.setHumanLaboratoryCategoryDetails(source.getHumanLaboratoryCategoryDetails());
+        target.setAnimalCommunityCategoryDetails(source.getAnimalCommunityCategoryDetails());
+        target.setAnimalFacilityCategoryDetails(source.getAnimalFacilityCategoryDetails());
+        target.setAnimalLaboratoryCategoryDetails(source.getAnimalLaboratoryCategoryDetails());
+        target.setEnvironmentalCategoryDetails(source.getEnvironmentalCategoryDetails());
+        target.setPoeCategoryDetails(source.getPoeCategoryDetails());
+        target.setTriagingDecision(source.getTriagingDecision());
+        target.setOutcomeSupervisor(source.getOutcomeSupervisor());
+        target.setNotSignal(source.getNotSignal());
+        target.setCategoryDetailsLevel(source.getCategoryDetailsLevel());
+        target.setPotentialRisk(source.getPotentialRisk());
+        target.setReferred(source.getReferred());
     }
 
     @Override
     protected long getApproximateJsonSizeInBytes() {
-        return EbsDto.APPROXIMATE_JSON_SIZE_IN_BYTES;
+        return TriagingDto.APPROXIMATE_JSON_SIZE_IN_BYTES;
     }
 
-    public static EbsReferenceDto toReferenceDto(Event ado) {
+    public static TriagingReferenceDto toReferenceDto(Ebs ado) {
         if (ado == null) {
             return null;
         }
-        EbsReferenceDto dto = new EbsReferenceDto(ado.getUuid());
+        TriagingReferenceDto dto = new TriagingReferenceDto(ado.getUuid());
 
         return dto;
     }
