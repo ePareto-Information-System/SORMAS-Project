@@ -5,8 +5,16 @@ import java.util.List;
 import de.symeda.sormas.api.PostResponse;
 import de.symeda.sormas.api.ebs.EbsDto;
 import de.symeda.sormas.api.ebs.EbsReferenceDto;
+import de.symeda.sormas.api.ebs.SignalVerificationDto;
+import de.symeda.sormas.api.ebs.TriagingDto;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
+import de.symeda.sormas.app.backend.common.DatabaseHelper;
+import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
+import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerificationDtoHelper;
+import de.symeda.sormas.app.backend.ebs.triaging.Triaging;
+import de.symeda.sormas.app.backend.ebs.triaging.TriagingDtoHelper;
 import de.symeda.sormas.app.backend.event.Event;
+import de.symeda.sormas.app.backend.location.Location;
 import de.symeda.sormas.app.backend.location.LocationDtoHelper;
 import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfoDtoHelper;
 import de.symeda.sormas.app.rest.NoConnectionException;
@@ -17,10 +25,16 @@ public class EbsDtoHelper extends AdoDtoHelper<Ebs, EbsDto> {
     private LocationDtoHelper locationHelper;
 
     private SormasToSormasOriginInfoDtoHelper sormasToSormasOriginInfoDtoHelper = new SormasToSormasOriginInfoDtoHelper();
+    private TriagingDtoHelper triagingDtoHelper;
 
+    private SignalVerificationDtoHelper signalVerificationDtoHelper = new SignalVerificationDtoHelper();
     public EbsDtoHelper() {
         locationHelper = new LocationDtoHelper();
+        triagingDtoHelper = new TriagingDtoHelper();
+        signalVerificationDtoHelper = new SignalVerificationDtoHelper();
     }
+
+
 
     @Override
     protected Class<Ebs> getAdoClass() {
@@ -69,6 +83,9 @@ public class EbsDtoHelper extends AdoDtoHelper<Ebs, EbsDto> {
         target.setEbsLongitude(source.getEbsLongitude());
         target.setEbsLatitude(source.getEbsLongitude());
         target.setOtherInformant(source.getOtherInformant());
+        target.setEbsLocation(locationHelper.fillOrCreateFromDto(target.getEbsLocation(), source.getEbsLocation()));
+        target.setTriaging(triagingDtoHelper.fillOrCreateFromDto(target.getTriaging(),source.getTriaging()));
+        target.setSignalVerification(signalVerificationDtoHelper.fillOrCreateFromDto(target.getSignalVerification(),source.getSignalVerification()));
     }
 
     @Override
@@ -92,7 +109,28 @@ public class EbsDtoHelper extends AdoDtoHelper<Ebs, EbsDto> {
         target.setDateOnset(source.getDateOnset());
         target.setEbsLongitude(source.getEbsLongitude());
         target.setEbsLatitude(source.getEbsLongitude());
+        if (source.getEbsLocation() != null) {
+            Location location = DatabaseHelper.getLocationDao().queryForId(source.getEbsLocation().getId());
+            target.setEbsLocation(locationHelper.adoToDto(location));
+        } else {
+            target.setEbsLocation(null);
+        }
         target.setOtherInformant(source.getOtherInformant());
+        if (source.getTriaging() != null) {
+            Triaging triaging = DatabaseHelper.getTriagingDao().queryForId(source.getTriaging().getId());
+            TriagingDto triagingDto = triagingDtoHelper.adoToDto(triaging);
+            target.setTriaging(triagingDto);
+        } else {
+            target.setTriaging(null);
+        }
+        if (source.getSignalVerification() != null) {
+            SignalVerification signalVerification = DatabaseHelper.getSignalVerificationDao().queryForId(source.getSignalVerification().getId());
+            SignalVerificationDto signalVerificationDto = signalVerificationDtoHelper.adoToDto(signalVerification);
+            target.setSignalVerification(signalVerificationDto);
+        } else {
+            target.setSignalVerification(null);
+        }
+
     }
 
     @Override
