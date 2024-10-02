@@ -28,15 +28,16 @@ import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.ebs.Ebs;
 import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
+import de.symeda.sormas.app.backend.ebs.triaging.Triaging;
 import de.symeda.sormas.app.databinding.FragmentSignalVerificationEditLayoutBinding;
 
 
-public class SignalVerificationEditFragment extends BaseEditFragment<FragmentSignalVerificationEditLayoutBinding, SignalVerification, Ebs> {
+public class SignalVerificationEditFragment extends BaseEditFragment<FragmentSignalVerificationEditLayoutBinding, SignalVerification, SignalVerification> {
 
 	public static final String TAG = SignalVerificationEditFragment.class.getSimpleName();
 
 	private SignalVerification record;
-	// Static methods
+
 
 	public static SignalVerificationEditFragment newInstance(Ebs activityRootData) {
 		return newInstanceWithFieldCheckers(
@@ -70,8 +71,9 @@ public class SignalVerificationEditFragment extends BaseEditFragment<FragmentSig
 
 	@Override
 	protected void prepareFragmentData() {
-		Ebs ebs = getActivityRootData();
-		record = ebs.getSignalVerification();
+		SignalVerification signalVerification = getActivityRootData();
+		record = signalVerification;
+
 	}
 
 	@Override
