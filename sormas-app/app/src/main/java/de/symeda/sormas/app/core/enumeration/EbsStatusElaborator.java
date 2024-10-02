@@ -24,11 +24,11 @@ import de.symeda.sormas.app.R;
 
 public class EbsStatusElaborator implements StatusElaborator {
 
-	private EbsSourceType sourceType = null;
+	private SignalOutcome signalOutcome = null;
 	private CategoryDetailsLevel detailsLevel = null;
 
-	public EbsStatusElaborator(EbsSourceType sourceType) {
-		this.sourceType = sourceType;
+	public EbsStatusElaborator(SignalOutcome signalOutcome) {
+		this.signalOutcome = signalOutcome;
 	}
 	public EbsStatusElaborator(CategoryDetailsLevel detailsLevel) {
 		this.detailsLevel = detailsLevel;
@@ -36,8 +36,8 @@ public class EbsStatusElaborator implements StatusElaborator {
 
 	@Override
 	public String getFriendlyName(Context context) {
-		if (sourceType != null) {
-			return sourceType.toString();
+		if (signalOutcome != null) {
+			return signalOutcome.toString();
 		}
 		if (detailsLevel != null) {
 			return detailsLevel.toString();
@@ -48,10 +48,10 @@ public class EbsStatusElaborator implements StatusElaborator {
 
 	@Override
 	public int getColorIndicatorResource() {
-		switch (sourceType) {
-			case CEBS:
+		switch (signalOutcome) {
+			case EVENT:
 				return R.color.indicatorSignal;
-			case HEBS:
+			case NON_EVENT:
 				return R.color.indicatorEvent;
 		}
 
@@ -60,18 +60,18 @@ public class EbsStatusElaborator implements StatusElaborator {
 
 	@Override
 	public Enum getValue() {
-		return this.sourceType;
+		return this.signalOutcome;
 	}
 
 	@Override
 	public int getIconResourceId() {
-		switch (sourceType) {
-			case CEBS:
+		switch (signalOutcome) {
+			case EVENT:
 			return R.drawable.ic_lp_possible_alerts_192dp;
-			case HEBS:
+			case NON_EVENT:
 			return R.drawable.ic_lp_confirmed_alerts_192dp;
 		default:
-			throw new IllegalArgumentException(sourceType.toString());
+			throw new IllegalArgumentException(signalOutcome.toString());
 		}
 	}
 }
