@@ -206,7 +206,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 363;
+	public static final int DATABASE_VERSION = 364;
 
 	private static DatabaseHelper instance = null;
 
@@ -3393,6 +3393,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			case 362:
 				currentVersion = 362;
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN secondVaccinationDate DATE;");
+            case 363:
+                currentVersion = 363;
+                getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN patientVentilated VARCHAR(255);");
+                getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN dateFormSentToDistrict DATE;");
 				// ATTENTION: break should only be done after last version
 				break;
 			default:

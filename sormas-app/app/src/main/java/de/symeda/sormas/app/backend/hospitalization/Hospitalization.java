@@ -33,6 +33,7 @@ import de.symeda.sormas.api.utils.InpatOutpat;
 import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
 
@@ -96,6 +97,11 @@ public class Hospitalization extends AbstractDomainObject {
 	private String hospitalRecordNumber;
 	// just for reference, not persisted in DB
 	private List<PreviousHospitalization> previousHospitalizations = new ArrayList<>();
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateFormSentToDistrict;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown patientVentilated;
+
 
 	public Date getAdmissionDate() {
 		return admissionDate;
@@ -269,5 +275,21 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setHospitalRecordNumber(String hospitalRecordNumber) {
 		this.hospitalRecordNumber = hospitalRecordNumber;
+	}
+
+	public Date getDateFormSentToDistrict() {
+		return dateFormSentToDistrict;
+	}
+
+	public void setDateFormSentToDistrict(Date dateFormSentToDistrict) {
+		this.dateFormSentToDistrict = dateFormSentToDistrict;
+	}
+
+	public YesNoUnknown getPatientVentilated() {
+		return patientVentilated;
+	}
+
+	public void setPatientVentilated(YesNoUnknown patientVentilated) {
+		this.patientVentilated = patientVentilated;
 	}
 }

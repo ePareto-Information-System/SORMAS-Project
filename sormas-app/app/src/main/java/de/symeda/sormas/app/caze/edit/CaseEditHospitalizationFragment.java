@@ -215,6 +215,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		contentBinding.caseHospitalizationDateFirstSeen.initializeDateField(getFragmentManager());
 		contentBinding.caseHospitalizationNotifyDistrictDate.initializeDateField(getFragmentManager());
 		contentBinding.caseHospitalizationPatientConditionOnAdmission.initializeSpinner(patientCondition);
+		contentBinding.caseHospitalizationDateFormSentToDistrict.initializeDateField(getFragmentManager());
 
 		contentBinding.caseDataOutcome.initializeSpinner(outcomeList);
 		contentBinding.caseHospitalizationSelectInpatientOutpatient.initializeSpinner(inpatientOutpatientList);
