@@ -163,10 +163,10 @@ public class Ebs extends PseudonymizableAdo {
     @Enumerated(EnumType.STRING)
     private PersonReporting categoryOfInformant;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true,columnName = "signalverification_id")
     private SignalVerification signalVerification;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true,columnName = "triaging_id")
     private Triaging triaging;
 
     @DatabaseField

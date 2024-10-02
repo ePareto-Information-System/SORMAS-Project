@@ -24,10 +24,12 @@ import de.symeda.sormas.api.ebs.OutComeSupervisor;
 import de.symeda.sormas.api.ebs.POE;
 import de.symeda.sormas.api.ebs.SignalCategory;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.app.backend.common.EmbeddedAdo;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.ebs.Ebs;
 
 @Entity(name = Triaging.TABLE_NAME)
+@EmbeddedAdo
 @DatabaseTable(tableName = Triaging.TABLE_NAME)
 public class Triaging extends PseudonymizableAdo {
 
