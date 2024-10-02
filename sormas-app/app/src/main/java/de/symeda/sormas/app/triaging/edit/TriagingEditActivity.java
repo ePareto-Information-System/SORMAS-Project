@@ -24,6 +24,7 @@ import android.view.Menu;
 import java.util.List;
 
 import de.symeda.sormas.api.ebs.EbsSourceType;
+import de.symeda.sormas.api.ebs.SignalOutcome;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.ValidationException;
@@ -33,6 +34,7 @@ import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.common.DaoException;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.ebs.Ebs;
+import de.symeda.sormas.app.backend.ebs.ebsAlert.EbsAlert;
 import de.symeda.sormas.app.backend.ebs.triaging.Triaging;
 import de.symeda.sormas.app.component.menu.PageMenuItem;
 import de.symeda.sormas.app.core.async.AsyncTaskResult;
@@ -40,9 +42,14 @@ import de.symeda.sormas.app.core.async.SavingAsyncTask;
 import de.symeda.sormas.app.core.async.TaskResultHolder;
 import de.symeda.sormas.app.core.notification.NotificationHelper;
 import de.symeda.sormas.app.ebs.EbsSection;
+import de.symeda.sormas.app.ebs.edit.EbsAlertEditFragment;
 import de.symeda.sormas.app.ebs.edit.EbsEditActivity;
 import de.symeda.sormas.app.ebs.edit.EbsEditFragment;
+import de.symeda.sormas.app.ebs.edit.SignalVerificationEditFragment;
 import de.symeda.sormas.app.ebs.edit.TriagingEditFragment;
+import de.symeda.sormas.app.ebsAlert.list.EbsAlertListActivity;
+import de.symeda.sormas.app.riskAssessment.list.RiskAssessmentListActivity;
+import de.symeda.sormas.app.signalVerification.edit.SignalVerificationEditActivity;
 import de.symeda.sormas.app.triaging.TriagingSection;
 import de.symeda.sormas.app.util.Bundler;
 
@@ -51,8 +58,6 @@ public class TriagingEditActivity extends BaseEditActivity<Triaging> {
 	public static final String TAG = TriagingEditActivity.class.getSimpleName();
 
 	private AsyncTask saveTask;
-
-	private static Ebs parent;
 
 	public static void startActivity(Context context, String rootUuid) {
 		BaseEditActivity.startActivity(context, TriagingEditActivity.class, buildBundle(rootUuid));
@@ -63,18 +68,20 @@ public class TriagingEditActivity extends BaseEditActivity<Triaging> {
 	}
 
 	@Override
-	public EbsSourceType getPageStatus() {
-		return EbsSourceType.CEBS;
+	public SignalOutcome getPageStatus() {
+		if (getStoredRootEntity() == null){
+			return null;
+		}else if (EbsEditActivity.getParentEbs().getSignalVerification() == null) {
+			return SignalOutcome.NON_EVENT;
+		} else if (EbsEditActivity.getParentEbs().getSignalVerification().getVerified() == null) {
+			return SignalOutcome.NON_EVENT;
+		}
+		return getStoredRootEntity() == null ? null : EbsEditActivity.getParentEbs().getSignalVerification().getVerified();
 	}
 
 	@Override
 	protected Triaging queryRootEntity(String recordUuid) {
 		return DatabaseHelper.getTriagingDao().queryUuid(recordUuid);
-	}
-
-	public static Ebs getEbs(Ebs parent){
-		TriagingEditActivity.parent = parent;
-		return parent;
 	}
 
 	@Override
@@ -93,24 +100,33 @@ public class TriagingEditActivity extends BaseEditActivity<Triaging> {
 	@Override
 	public List<PageMenuItem> getPageMenuData() {
 		List<PageMenuItem> menuItems = PageMenuItem.fromEnum(EbsSection.values(), getContext());
-		if (DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.EBS_SURVEILLANCE)) {
-			menuItems.set(EbsSection.SIGNAL_INFORMATION.ordinal(), null);
-		}
+			menuItems.set(EbsSection.TRIAGING.ordinal(), null);
+			menuItems.set(EbsSection.EBS_ALERT_EDIT.ordinal(), null);
+			menuItems.set(EbsSection.RISK_ASSESSMENT_EDIT.ordinal(), null);
 		return menuItems;
 
 	}
 
 	@Override
 	protected BaseEditFragment buildEditFragment(PageMenuItem menuItem, Triaging activityRootData) {
-		TriagingSection section = TriagingSection.fromOrdinal(menuItem.getPosition());
-		BaseEditFragment fragment;
+		EbsSection section = EbsSection.fromOrdinal(menuItem.getPosition());
+		BaseEditFragment fragment = EbsEditFragment.newInstance(EbsEditActivity.getParentEbs());
 		switch (section) {
 
+			case SIGNAL_INFORMATION:
+				fragment = EbsEditFragment.newInstance(EbsEditActivity.getParentEbs());
+				break;
 			case TRIAGING:
 				fragment = TriagingEditFragment.newInstance(activityRootData);
 				break;
-			case SIGNAL_INFORMATION:
-				fragment = EbsEditFragment.newInstance(activityRootData);
+			case SIGNAL_VERIFICATION:
+				fragment = SignalVerificationEditFragment.newInstance(EbsEditActivity.getParentEbs().getSignalVerification());
+				break;
+			case RISK_ASSESSMENT:
+				RiskAssessmentListActivity.startActivity(getContext(), null);
+				break;
+			case EBS_ALERT:
+				EbsAlertListActivity.startActivity(getContext(), null);
 				break;
 			default:
 				throw new IndexOutOfBoundsException(DataHelper.toStringNullable(section));
@@ -145,7 +161,7 @@ public class TriagingEditActivity extends BaseEditActivity<Triaging> {
 				super.onPostExecute(taskResult);
 
 				if (taskResult.getResultStatus().isSuccess()) {
-					EbsEditActivity.startActivity(getContext(), parent.getUuid(), EbsSection.SIGNAL_VERIFICATION);
+					SignalVerificationEditActivity.startActivity(getContext(), EbsEditActivity.getParentEbs().getSignalVerification().getUuid());
 				} else {
 					onResume(); // reload data
 				}
