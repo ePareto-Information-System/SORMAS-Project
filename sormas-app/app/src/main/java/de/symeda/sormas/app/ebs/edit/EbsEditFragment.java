@@ -60,9 +60,7 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 
 	private List<Item> sourceInformation;
 	private List<Item> categoryOfInformant;
-	private List<Item> personReporting;
 	private List<Item> manualScanningType;
-	private List<Item> mediaScanningType;
 	private List<Item> automaticScanningType;
 	private List<Item> initialRegions;
 	private List<Item> initialDistricts;
@@ -159,7 +157,6 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 		sourceInformation = DataUtils.getEnumItems(EbsSourceType.class,true);
 		categoryOfInformant = DataUtils.getEnumItems(PersonReporting.class,true);
 		manualScanningType = DataUtils.getEnumItems(ManualScanningType.class,true);
-		mediaScanningType = DataUtils.getEnumItems(MediaScannningType.class, true);
 		automaticScanningType = DataUtils.getEnumItems(AutomaticScanningType.class, true);
 		initialRegions = InfrastructureDaoHelper.loadRegionsByServerCountry();
 		initialDistricts = InfrastructureDaoHelper.loadDistricts(record.getEbsLocation().getRegion());
