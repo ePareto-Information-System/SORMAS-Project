@@ -14,6 +14,7 @@ import java.util.Date;
 public class RiskAssessment extends AbstractDomainObject {
 
     public static final String DELETED = "deleted";
+    public static final String ARCHIVED = "archived";
     private static final long serialVersionUID = 1L;
     public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 13356;
 

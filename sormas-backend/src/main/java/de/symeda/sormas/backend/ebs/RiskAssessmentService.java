@@ -1,12 +1,16 @@
 package de.symeda.sormas.backend.ebs;
 
+import de.symeda.sormas.api.RequestContextHolder;
 import de.symeda.sormas.api.ebs.RiskAssessmentCriteria;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.BaseAdoService;
+import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.sample.Sample;
+import de.symeda.sormas.backend.user.User;
 
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.criteria.*;
@@ -18,7 +22,8 @@ import java.util.UUID;
 @Stateless
 @LocalBean
 public class RiskAssessmentService extends BaseAdoService<RiskAssessment> {
-
+        @EJB
+        EbsService service;
         public RiskAssessmentService() {super(RiskAssessment.class);}
 
         public RiskAssessment createRiskAssessment() {
@@ -44,55 +49,6 @@ public class RiskAssessmentService extends BaseAdoService<RiskAssessment> {
         cq.where(filter);
         return em.createQuery(cq).getResultList();
     }
-
-//    public Collection<RiskAssessment> findBy(RiskAssessmentCriteria criteria) {
-//        CriteriaBuilder cb = em.getCriteriaBuilder();
-//        CriteriaQuery<RiskAssessment> cq = cb.createQuery(RiskAssessment.class);
-//        Root<RiskAssessment> root = cq.from(RiskAssessment.class);
-//        cq.select(root);
-//
-//        Predicate filter = createDefaultFilter(cb, root);
-//
-//        if (criteria.getEbs() != null) {
-//            filter = cb.and(filter, cb.equal(root.get(RiskAssessment.EBS).get(Ebs.ID), criteria.getEbs().getUuid()));
-//        }
-//
-//        cq.where(filter);
-//        return em.createQuery(cq).getResultList();
-//    }
-
-
-//    public List<RiskAssessment> findBy(RiskAssessmentCriteria criteria) {
-//        if (criteria == null) {
-//            throw new IllegalArgumentException("Criteria cannot be null");
-//        }
-//
-//        CriteriaBuilder cb = em.getCriteriaBuilder();
-//        CriteriaQuery<RiskAssessment> cq = cb.createQuery(RiskAssessment.class);
-//        Root<RiskAssessment> root = cq.from(RiskAssessment.class);
-//        cq.select(root);
-//
-//        Predicate filter = createDefaultFilter(cb, root);
-//
-//        if (criteria.getEbs() != null) {
-//            UUID ebsUuid = UUID.fromString(criteria.getEbs().getUuid());
-//            if (ebsUuid != null) {
-//                filter = cb.and(filter, cb.equal(root.get(RiskAssessment.EBS).get(Ebs.ID), ebsUuid));
-//            }
-//        }
-//
-//        cq.where(filter);
-//
-//        List<RiskAssessment> result = Collections.emptyList();
-//        try {
-//            result = em.createQuery(cq).getResultList();
-//        } catch (Exception e) {
-//            // Log the exception and handle it as needed
-//            e.printStackTrace();
-//        }
-//
-//        return result;
-//    }
 
     public List<RiskAssessment> findBy(RiskAssessmentCriteria criteria) {
         if (criteria == null) {
@@ -124,5 +80,19 @@ public class RiskAssessmentService extends BaseAdoService<RiskAssessment> {
         return result;
     }
 
+    public List<String> getAllActiveUuids() {
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<String> cq = cb.createQuery(String.class);
+        Root<RiskAssessment> from = cq.from(RiskAssessment.class);
+        cq.select(from.get(RiskAssessment.UUID));
+        cq.distinct(true);
+
+        return em.createQuery(cq).getResultList();
+    }
+
+    public Predicate createActiveRiskFilter(CriteriaBuilder cb, Root<RiskAssessment> root) {
+        return cb.and(cb.isFalse(root.get(RiskAssessment.DELETED)));
+    }
 
 }

@@ -3,14 +3,16 @@ package de.symeda.sormas.backend.ebs;
 import de.symeda.sormas.api.ebs.RiskAssessmentCriteria;
 import de.symeda.sormas.api.ebs.RiskAssessmentDto;
 import de.symeda.sormas.api.ebs.RiskAssessmentFacade;
+import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 
+import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.validation.Valid;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Stateless(name = "RiskAssessmentFacade")
@@ -61,7 +63,7 @@ public class RiskAssessmentFacadeEjb implements RiskAssessmentFacade {
         return target;
     }
 
-    public RiskAssessmentDto saveRisk(@Valid RiskAssessmentDto dto) {
+    public RiskAssessmentDto save(@Valid RiskAssessmentDto dto) {
         RiskAssessment riskAssessment = riskService.getByUuid(dto.getUuid());
 
         RiskAssessment ado = fillOrBuildEntity(dto, riskAssessment, true);
@@ -77,6 +79,28 @@ public class RiskAssessmentFacadeEjb implements RiskAssessmentFacade {
 
     public List<RiskAssessmentDto> getByEbsUuids(List<String> ebsUuids) {
         return riskService.getByEbsUuids(ebsUuids).stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    @PermitAll
+    public List<RiskAssessmentDto> getAllAfter(Date date) {
+        return riskService.getAll().stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public RiskAssessmentDto getRiskByUuid(String uuid, boolean detailedReferences) {
+        RiskAssessment risk = riskService.getByUuid(uuid);
+        return toDto(risk);
+    }
+
+    @Override
+    public List<String> getAllActiveUuids() {
+        User user = userService.getCurrentUser();
+        if (user == null) {
+            return Collections.emptyList();
+        }
+
+        return riskService.getAllActiveUuids();
     }
 
     @LocalBean
