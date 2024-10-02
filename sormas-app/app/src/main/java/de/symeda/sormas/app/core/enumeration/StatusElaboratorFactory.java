@@ -21,6 +21,8 @@ import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.ebs.CategoryDetailsLevel;
 import de.symeda.sormas.api.ebs.EbsSourceType;
+import de.symeda.sormas.api.ebs.ResponseStatus;
+import de.symeda.sormas.api.ebs.RiskAssesment;
 import de.symeda.sormas.api.ebs.SignalOutcome;
 import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
@@ -41,8 +43,12 @@ public class StatusElaboratorFactory {
 		}
 		else if (e instanceof EventStatus) {
 			result = new EventStatusElaborator((EventStatus) e);
-		} else if (e instanceof EbsSourceType) {
-			result = new EbsStatusElaborator((EbsSourceType) e);
+		} else if (e instanceof SignalOutcome) {
+			result = new EbsStatusElaborator((SignalOutcome) e);
+		} else if (e instanceof RiskAssesment) {
+			result = new RiskAssessmentStatusElaborator((RiskAssesment) e);
+		} else if (e instanceof ResponseStatus) {
+			result = new EbsAlertStatusElaborator((ResponseStatus) e);
 		} else if (e instanceof FollowUpStatus) {
 			result = new FollowUpStatusElaborator((FollowUpStatus) e);
 		} else if (e instanceof InvestigationStatus) {
