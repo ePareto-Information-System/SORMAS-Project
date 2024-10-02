@@ -109,6 +109,10 @@ public final class RetroProvider {
 	private VisitFacadeRetro visitFacadeRetro;
 	private EventFacadeRetro eventFacadeRetro;
 	private EbsFacadeRetro ebsFacadeRetro;
+	private TriagingFacadeRetro triagingFacadeRetro;
+	private SignalVerificationFacadeRetro signalVerificationFacadeRetro;
+	private RiskAssessmentFacadeRetro riskAssessmentFacadeRetro;
+	private EbsAlertFacadeRetro ebsAlertFacadeRetro;
 	private SampleFacadeRetro sampleFacadeRetro;
 	private PathogenTestFacadeRetro pathogenTestFacadeRetro;
 	private EventParticipantFacadeRetro eventParticipantFacadeRetro;
@@ -746,6 +750,58 @@ public final class RetroProvider {
 			}
 		}
 		return instance.ebsFacadeRetro;
+	}
+
+	public static TriagingFacadeRetro getTriagingFacade() throws NoConnectionException {
+		if (instance == null)
+			throw new NoConnectionException();
+		if (instance.triagingFacadeRetro == null) {
+			synchronized ((RetroProvider.class)) {
+				if (instance.triagingFacadeRetro == null) {
+					instance.triagingFacadeRetro = instance.retrofit.create(TriagingFacadeRetro.class);
+				}
+			}
+		}
+		return instance.triagingFacadeRetro;
+	}
+	
+	public static SignalVerificationFacadeRetro getSignalVerificationFacade() throws NoConnectionException {
+		if (instance == null)
+			throw new NoConnectionException();
+		if (instance.signalVerificationFacadeRetro == null) {
+			synchronized ((RetroProvider.class)) {
+				if (instance.signalVerificationFacadeRetro == null) {
+					instance.signalVerificationFacadeRetro = instance.retrofit.create(SignalVerificationFacadeRetro.class);
+				}
+			}
+		}
+		return instance.signalVerificationFacadeRetro;
+	}
+
+	public static RiskAssessmentFacadeRetro getRiskAssessmentFacade() throws NoConnectionException {
+		if (instance == null)
+			throw new NoConnectionException();
+		if (instance.riskAssessmentFacadeRetro == null) {
+			synchronized ((RetroProvider.class)) {
+				if (instance.riskAssessmentFacadeRetro == null) {
+					instance.riskAssessmentFacadeRetro = instance.retrofit.create(RiskAssessmentFacadeRetro.class);
+				}
+			}
+		}
+		return instance.riskAssessmentFacadeRetro;
+	}
+
+	public static EbsAlertFacadeRetro getEbsAlertFacade() throws NoConnectionException {
+		if (instance == null)
+			throw new NoConnectionException();
+		if (instance.ebsAlertFacadeRetro == null) {
+			synchronized ((RetroProvider.class)) {
+				if (instance.ebsAlertFacadeRetro == null) {
+					instance.ebsAlertFacadeRetro = instance.retrofit.create(EbsAlertFacadeRetro.class);
+				}
+			}
+		}
+		return instance.ebsAlertFacadeRetro;
 	}
 
 	public static SampleFacadeRetro getSampleFacade() throws NoConnectionException {
