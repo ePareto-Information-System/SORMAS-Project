@@ -35,7 +35,9 @@ import de.symeda.sormas.api.campaign.form.CampaignFormMetaDto;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.clinicalcourse.ClinicalVisitDto;
 import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.ebs.EbsAlertDto;
 import de.symeda.sormas.api.ebs.EbsDto;
+import de.symeda.sormas.api.ebs.RiskAssessmentDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.feature.FeatureType;
@@ -69,6 +71,8 @@ import de.symeda.sormas.app.backend.contact.ContactDtoHelper;
 import de.symeda.sormas.app.backend.customizableenum.CustomizableEnumValueDtoHelper;
 import de.symeda.sormas.app.backend.disease.DiseaseConfigurationDtoHelper;
 import de.symeda.sormas.app.backend.ebs.EbsDtoHelper;
+import de.symeda.sormas.app.backend.ebs.ebsAlert.EbsAlertDtoHelper;
+import de.symeda.sormas.app.backend.ebs.riskAssessment.RiskAssessmentDtoHelper;
 import de.symeda.sormas.app.backend.event.Event;
 import de.symeda.sormas.app.backend.event.EventDtoHelper;
 import de.symeda.sormas.app.backend.event.EventParticipantDtoHelper;
@@ -277,6 +281,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		new EventDtoHelper().pushEntities(true);
 		new EventParticipantDtoHelper().pushEntities(true);
         new EbsDtoHelper().pushEntities(true, syncCallbacks);
+        new RiskAssessmentDtoHelper().pushEntities(true, syncCallbacks);
+        new EbsAlertDtoHelper().pushEntities(true, syncCallbacks);
 		new SampleDtoHelper().pushEntities(true);
 		new PathogenTestDtoHelper().pushEntities(true);
 		new AdditionalTestDtoHelper().pushEntities(true);
@@ -297,6 +303,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		ImmunizationDtoHelper immunizationDtoHelper = new ImmunizationDtoHelper();
 		EventDtoHelper eventDtoHelper = new EventDtoHelper();
 		EbsDtoHelper ebsDtoHelper = new EbsDtoHelper();
+		RiskAssessmentDtoHelper riskAssessmentDtoHelper = new RiskAssessmentDtoHelper();
+		EbsAlertDtoHelper ebsAlertDtoHelper = new EbsAlertDtoHelper();
 		EventParticipantDtoHelper eventParticipantDtoHelper = new EventParticipantDtoHelper();
 		SampleDtoHelper sampleDtoHelper = new SampleDtoHelper();
 		PathogenTestDtoHelper pathogenTestDtoHelper = new PathogenTestDtoHelper();
@@ -322,6 +330,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		boolean eventsNeedPull = eventDtoHelper.pullAndPushEntities(context);
 		boolean eventParticipantsNeedPull = eventParticipantDtoHelper.pullAndPushEntities(context);
         boolean ebsNeedPull = ebsDtoHelper.pullAndPushEntities(context, syncCallbacks);
+        boolean riskNeedPull = riskAssessmentDtoHelper.pullAndPushEntities(context, syncCallbacks);
+        boolean ebsAlertNeedPull = ebsAlertDtoHelper.pullAndPushEntities(context, syncCallbacks);
 		boolean samplesNeedPull = sampleDtoHelper.pullAndPushEntities(context);
 		boolean sampleTestsNeedPull = pathogenTestDtoHelper.pullAndPushEntities(context);
 		boolean additionalTestsNeedPull = additionalTestDtoHelper.pullAndPushEntities(context);
@@ -334,6 +344,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		boolean treatmentsNeedPull = treatmentDtoHelper.pullAndPushEntities(context);
 		boolean clinicalVisitsNeedPull = clinicalVisitDtoHelper.pullAndPushEntities(context);
         boolean ebsVisible = DtoUserRightsHelper.isViewAllowed(EbsDto.class) && DtoFeatureConfigHelper.isFeatureConfigForEventsEnabled();
+        boolean riskVisible = DtoUserRightsHelper.isViewAllowed(RiskAssessmentDto.class) && DtoFeatureConfigHelper.isFeatureConfigForEventsEnabled();
+        boolean ebsAlertVisible = DtoUserRightsHelper.isViewAllowed(EbsAlertDto.class) && DtoFeatureConfigHelper.isFeatureConfigForEventsEnabled();
 		casesNeedPull |= clinicalVisitsNeedPull;
 
 		if (personsNeedPull)
@@ -374,6 +386,18 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
                 ebsDtoHelper.pullEntities(true, context, syncCallbacks, false);
             }
         }
+        if (riskVisible) {
+            syncCallbacks.ifPresent(c -> c.getLoadNextCallback().run());
+            if (riskNeedPull) {
+                riskAssessmentDtoHelper.pullEntities(true, context, syncCallbacks, false);
+            }
+        }
+        if (ebsAlertVisible) {
+            syncCallbacks.ifPresent(c -> c.getLoadNextCallback().run());
+            if (ebsAlertNeedPull) {
+                ebsAlertDtoHelper.pullEntities(true, context, syncCallbacks, false);
+            }
+        }
 		// Campaigns
 		if (!DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CAMPAIGNS)) {
 
@@ -399,6 +423,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		ImmunizationDtoHelper immunizationDtoHelper = new ImmunizationDtoHelper();
 		EventDtoHelper eventDtoHelper = new EventDtoHelper();
 		EbsDtoHelper ebsDtoHelper = new EbsDtoHelper();
+		RiskAssessmentDtoHelper riskAssessmentDtoHelper = new RiskAssessmentDtoHelper();
+		EbsAlertDtoHelper ebsAlertDtoHelper = new EbsAlertDtoHelper();
 		EventParticipantDtoHelper eventParticipantDtoHelper = new EventParticipantDtoHelper();
 		SampleDtoHelper sampleDtoHelper = new SampleDtoHelper();
 		PathogenTestDtoHelper pathogenTestDtoHelper = new PathogenTestDtoHelper();
@@ -438,6 +464,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		treatmentDtoHelper.repullEntities(context);
 		clinicalVisitDtoHelper.repullEntities(context);
         ebsDtoHelper.repullEntities(context, syncCallbacks);
+        riskAssessmentDtoHelper.repullEntities(context, syncCallbacks);
+        ebsAlertDtoHelper.repullEntities(context, syncCallbacks);
 		// Campaigns
 		if (!DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CAMPAIGNS)) {
 			// meta first
@@ -671,6 +699,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		viewAllowed = DtoUserRightsHelper.isViewAllowed(EbsDto.class);
 		List<String> ebsUuids = viewAllowed ? executeUuidCall(RetroProvider.getEbsFacade().pullUuids()) : new ArrayList<>();
 		DatabaseHelper.getEventDao().deleteInvalid(ebsUuids, syncCallbacks);
+		List<String> riskUuids = viewAllowed ? executeUuidCall(RetroProvider.getRiskAssessmentFacade().pullUuids()) : new ArrayList<>();
+		List<String> ebsAlertUuids = viewAllowed ? executeUuidCall(RetroProvider.getEbsAlertFacade().pullUuids()) : new ArrayList<>();
 		// immunizations
 		viewAllowed = DtoUserRightsHelper.isViewAllowed(ImmunizationDto.class);
 		List<String> immunizationUuids = viewAllowed ? executeUuidCall(RetroProvider.getImmunizationFacade().pullUuids()) : new ArrayList<>();
@@ -709,6 +739,9 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		new TreatmentDtoHelper().pullMissing(treatmentUuids);
 		new ClinicalVisitDtoHelper().pullMissing(clinicalVisitUuids);
         new EbsDtoHelper().pullMissing(ebsUuids, syncCallbacks);
+        new EbsDtoHelper().pullMissing(ebsUuids, syncCallbacks);
+        new RiskAssessmentDtoHelper().pullMissing(riskUuids, syncCallbacks);
+        new EbsAlertDtoHelper().pullMissing(ebsAlertUuids, syncCallbacks);
 		// CampaignData
 		if (!DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CAMPAIGNS)) {
 			// meta first
