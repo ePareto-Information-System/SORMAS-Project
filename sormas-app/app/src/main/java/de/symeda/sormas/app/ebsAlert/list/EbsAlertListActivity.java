@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
+import android.widget.AdapterView;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -136,6 +137,11 @@ public class EbsAlertListActivity extends PagedBaseListActivity {
     @Override
     protected boolean isEntryCreateAllowed() {
         return ConfigProvider.hasUserRight(UserRight.EVENT_CREATE);
+    }
+
+    @Override
+    public int onNotificationCountChangingAsync(AdapterView parent, PageMenuItem menuItem, int position) {
+        return 0;
     }
 
     @Override

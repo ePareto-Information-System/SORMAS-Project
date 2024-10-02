@@ -39,7 +39,7 @@
         <import type="de.symeda.sormas.api.ebs.EnvironmentalCategoryDetails"/>
         <import type="de.symeda.sormas.api.ebs.POE"/>
 
-        <import type="de.symeda.sormas.api.utils.YesNo"/>
+        <import type="de.symeda.sormas.api.utils.YesNoUnknown"/>
         <import type="de.symeda.sormas.api.ebs.EbsTriagingDecision"/>
 
         <import type="de.symeda.sormas.api.ebs.OutComeSupervisor"/>
@@ -107,7 +107,7 @@
                     android:id="@+id/triaging_supervisorReview"
                     app:enumClass="@{yesNoClass}"
                     app:dependencyParentField="@{triagingSpecificSignal}"
-                    app:dependencyParentValue="@{YesNo.NO}"
+                    app:dependencyParentValue="@{YesNoUnknown.NO}"
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:value="@={data.supervisorReview}"/>
             </LinearLayout>
@@ -118,7 +118,7 @@
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/triaging_outcomeSupervisor"
                     app:dependencyParentField="@{triagingSupervisorReview}"
-                    app:dependencyParentValue="@{YesNo.YES}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:value="@={data.outcomeSupervisor}"/>
             </LinearLayout>
@@ -142,7 +142,7 @@
                     android:id="@+id/triaging_referred"
                     app:enumClass="@{yesNoClass}"
                     app:dependencyParentField="@{triagingHealthConcern}"
-                    app:dependencyParentValue="@{YesNo.YES}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:value="@={data.referred}"/>
             </LinearLayout>
@@ -153,7 +153,7 @@
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/triaging_referredTo"
                     app:dependencyParentField="@{triagingReferred}"
-                    app:dependencyParentValue="@{YesNo.YES}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:value="@={data.referredTo}"/>
             </LinearLayout>
@@ -165,7 +165,7 @@
                     android:id="@+id/triaging_signalCategory"
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:dependencyParentField="@{triagingSpecificSignal}"
-                    app:dependencyParentValue="@{YesNo.YES}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
                     app:enumClass="@{triagingSignalCategoryClass}"
                     app:value="@={data.signalCategory}"/>
             </LinearLayout>

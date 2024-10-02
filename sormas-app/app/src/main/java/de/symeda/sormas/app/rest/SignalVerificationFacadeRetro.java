@@ -17,7 +17,7 @@ package de.symeda.sormas.app.rest;
 
 import java.util.List;
 
-import de.symeda.sormas.api.PostResponse;
+import de.symeda.sormas.api.PushResult;
 import de.symeda.sormas.api.ebs.SignalVerificationDto;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -34,7 +34,7 @@ public interface SignalVerificationFacadeRetro {
 	Call<List<SignalVerificationDto>> pullByUuids(@Body List<String> uuids);
 
 	@POST("signalVerification/push")
-	Call<List<PostResponse>> pushAll(@Body List<SignalVerificationDto> dtos);
+	Call<List<PushResult>> pushAll(@Body List<SignalVerificationDto> dtos);
 
 	@GET("signalVerification/uuids")
 	Call<List<String>> pullUuids();

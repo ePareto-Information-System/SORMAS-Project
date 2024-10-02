@@ -12,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import de.symeda.sormas.api.ebs.RiskAssesment;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.ebs.Ebs;
 
@@ -28,11 +28,11 @@ public class RiskAssessment extends PseudonymizableAdo {
 
 
     @DatabaseField
-    private YesNo morbidityMortality;
+    private YesNoUnknown morbidityMortality;
     @DatabaseField
-    private YesNo spreadProbability;
+    private YesNoUnknown spreadProbability;
     @DatabaseField
-    private YesNo controlMeasures;
+    private YesNoUnknown controlMeasures;
     @DatabaseField
     private RiskAssesment riskAssessment;
     @DatabaseField(dataType = DataType.DATE_LONG)
@@ -54,27 +54,27 @@ public class RiskAssessment extends PseudonymizableAdo {
         return I18N_PREFIX;
     }
 
-    public YesNo getMorbidityMortality() {
+    public YesNoUnknown getMorbidityMortality() {
         return morbidityMortality;
     }
 
-    public void setMorbidityMortality(YesNo morbidityMortality) {
+    public void setMorbidityMortality(YesNoUnknown morbidityMortality) {
         this.morbidityMortality = morbidityMortality;
     }
 
-    public YesNo getSpreadProbability() {
+    public YesNoUnknown getSpreadProbability() {
         return spreadProbability;
     }
 
-    public void setSpreadProbability(YesNo spreadProbability) {
+    public void setSpreadProbability(YesNoUnknown spreadProbability) {
         this.spreadProbability = spreadProbability;
     }
 
-    public YesNo getControlMeasures() {
+    public YesNoUnknown getControlMeasures() {
         return controlMeasures;
     }
 
-    public void setControlMeasures(YesNo controlMeasures) {
+    public void setControlMeasures(YesNoUnknown controlMeasures) {
         this.controlMeasures = controlMeasures;
     }
 

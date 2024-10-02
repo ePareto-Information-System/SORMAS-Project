@@ -28,7 +28,7 @@
     <data>
         <import type="android.view.View" />
         <import type="de.symeda.sormas.api.ebs.ResponseStatus"/>
-        <import type="de.symeda.sormas.api.utils.YesNo"/>
+        <import type="de.symeda.sormas.api.utils.YesNoUnknown"/>
         <variable name="data" type="de.symeda.sormas.app.backend.ebs.ebsAlert.EbsAlert"/>
         <variable name="yesNoClass" type="Class" />
         <variable name="responseStatusClass" type="Class" />
@@ -73,7 +73,7 @@
                 android:id="@+id/ebsAlert_alertDate"
                 style="@style/ControlSecondOfTwoColumnsStyle"
                 app:dependencyParentField="@{ebsAlertAlertIssued}"
-                app:dependencyParentValue="@{YesNo.YES}"
+                app:dependencyParentValue="@{YesNoUnknown.YES}"
                 app:allowedDaysInFuture="0"
                 app:value="@={data.alertDate}" />
         </LinearLayout>
@@ -88,7 +88,7 @@
                 app:textAlignment="gravity"
                 app:gravity="top|start"
                 app:dependencyParentField="@{ebsAlertAlertIssued}"
-                app:dependencyParentValue="@{YesNo.YES}"
+                app:dependencyParentValue="@{YesNoUnknown.YES}"
                 app:textArea="true"
                 app:singleLine="false"
                 app:maxLines="5"

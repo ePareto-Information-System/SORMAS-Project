@@ -213,7 +213,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	// any time you make changes to your database objects, you may have to increase the database version
 
 	// public static final int DATABASE_VERSION = 307;
-	public static final int DATABASE_VERSION = 344;
+	public static final int DATABASE_VERSION = 349;
 
 	private static DatabaseHelper instance = null;
 
@@ -3088,7 +3088,171 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			case 343:
 				currentVersion = 343;
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN generalizedRash boolean;");
-				// ATTENTION: break should only be done after last version
+			case 344:
+				currentVersion = 344;
+				getDao(Ebs.class).executeRaw(
+						"CREATE TABLE ebs (" +
+								"id BIGINT PRIMARY KEY NOT NULL," +
+								"uuid VARCHAR(36) NOT NULL UNIQUE," +
+								"changedate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+								"creationdate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+								"ebstdate TIMESTAMP," +
+								"reportdatetime TIMESTAMP NOT NULL," +
+								"reportinguser_id BIGINT," +
+								"location_id BIGINT," +
+								"externaltoken VARCHAR(512)," +
+								"internaltoken TEXT," +
+								"deleted BOOLEAN DEFAULT FALSE," +
+								"archiveundonereason VARCHAR(512)," +
+								"change_user_id BIGINT," +
+								"deletionreason VARCHAR(255)," +
+								"automaticScanningType VARCHAR(512)," +
+								"manualScanningType VARCHAR(512)," +
+								"scanningType VARCHAR(512)," +
+								"descriptionOccurrence VARCHAR(512)," +
+								"sourceName VARCHAR(512)," +
+								"sourceUrl VARCHAR(512)," +
+								"dateOnset TIMESTAMP," +
+								"personRegistering VARCHAR(512)," +
+								"personDesignation VARCHAR(512)," +
+								"personPhone VARCHAR(512)," +
+								"other VARCHAR(512)," +
+								"ebsLongitude DOUBLE PRECISION," +
+								"ebsLatitude DOUBLE PRECISION," +
+								"ebsLatLon DOUBLE PRECISION," +
+								"ebslocation_id BIGINT," +
+								"sourceInformation VARCHAR(255)," +
+								"archived BOOLEAN DEFAULT FALSE," +
+								"sormasToSormasOriginInfo_id BIGINT," +
+								"categoryOfInformant VARCHAR(255)," +
+								" modified SMALLINT DEFAULT 0," +
+								" snapshot SMALLINT DEFAULT 0,"  +
+								"informantName VARCHAR(512)," +
+								"informantTel VARCHAR(20)," +
+								"responsibleuser_id BIGINT," +
+								"otherdeletionreason VARCHAR(255)," +
+								"externalid VARCHAR(512)," +
+								"otherInformant VARCHAR(255)," +
+								"triaging_id BIGINT," +
+								"signalVerification_id BIGINT," +
+								"riskAssessment_id BIGINT," +
+								"ebsalert_id BIGINT," +
+								// Define Foreign Key Constraints
+								"FOREIGN KEY (reportinguser_id) REFERENCES users(id)," +
+								"FOREIGN KEY (location_id) REFERENCES location(id)," +
+								"FOREIGN KEY (change_user_id) REFERENCES users(id)," +
+								"FOREIGN KEY (ebslocation_id) REFERENCES location(id)," +
+								"FOREIGN KEY (triaging_id) REFERENCES triaging(id)," +
+								"FOREIGN KEY (signalVerification_id) REFERENCES signalVerification(id)," +
+								"FOREIGN KEY (riskAssessment_id) REFERENCES riskAssessment(id)," +
+								"FOREIGN KEY (ebsalert_id) REFERENCES ebsAlert(id)" +
+								");"
+				);
+			case 345:
+				currentVersion = 345;
+				getDao(Triaging.class).executeRaw(
+							"CREATE TABLE triaging(" +
+									"id bigint primary key not null," +
+									"uuid varchar(36) not null unique," +
+									"earlyWarning varchar(3)," +
+									"specificSignal varchar(3)," +
+									"signalCategory varchar(255)," +
+									"healthConcern varchar(3)," +
+									"categoryDetails varchar(255)," +
+									"occurrencePreviously varchar(3)," +
+									"triagingDecision varchar(255)," +
+									"decisionDate date," +
+									"referredTo varchar(255)," +
+									"changedate timestamp not null," +
+									"creationdate timestamp not null," +
+									"change_user_id bigint," +
+									"responsibleuser_id bigint," +
+									" modified SMALLINT DEFAULT 0," +
+									" snapshot SMALLINT DEFAULT 0,"  +
+									"triagingDecisionString varchar(255)," +
+									"categoryDetailsString varchar(255)," +
+									"outcomeSupervisor varchar(255)," +
+									"notSignal boolean default false," +
+									"humanLaboratoryCategoryDetails varchar(255)," +
+									"animalCommunityCategoryDetails varchar(255)," +
+									"animalFacilityCategoryDetails varchar(255)," +
+									"environmentalCategoryDetails varchar(255)," +
+									"poeCategoryDetails varchar(255)," +
+									"animalLaboratoryCategoryDetails varchar(255)," +
+									"humanCommunityCategoryDetails varchar(255)," +
+									"categoryDetailsLevel varchar(255)," +
+									"supervisorreview varchar(3)," +
+									"referred varchar(3)" +
+									");"
+					);
+			case 346:
+				currentVersion = 346;
+				getDao(RiskAssessment.class).executeRaw(
+						"CREATE TABLE riskAssessment(" +
+								"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+								"changedate timestamp not null," +
+								"creationdate timestamp not null," +
+								"morbidityMortality VARCHAR(3)," +
+								"spreadProbability VARCHAR(3)," +
+								"controlMeasures VARCHAR(3)," +
+								"riskAssessment VARCHAR(255)," +
+								"assessmentDate TIMESTAMP," +
+								"assessmentTime VARCHAR(255)," +
+								" modified SMALLINT DEFAULT 0," +
+								" snapshot SMALLINT DEFAULT 0,"  +
+								"ebs_id INTEGER," +
+								"morbidityMortalityComment VARCHAR(255)," +
+								"spreadProbabilityComment VARCHAR(255)," +
+								"controlMeasuresComment VARCHAR(255)," +
+								"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" +
+								");"
+				);
+
+				case 347:
+				currentVersion = 347;
+				getDao(EbsAlert.class).executeRaw(
+							"CREATE TABLE ebsAlert(" +
+									"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+									"changedate timestamp not null," +
+									"creationdate timestamp not null," +
+									"actionInitiated varchar(3)," +
+									"responseStatus varchar(255)," +
+									"responseDate timestamp," +
+									"detailsResponseActivities varchar(255)," +
+									"detailsGiven varchar(255)," +
+									"alertIssued varchar(3)," +
+									"detailsAlertUsed varchar(255)," +
+									"ebs_id INTEGER," +
+									" modified SMALLINT DEFAULT 0," +
+									" snapshot SMALLINT DEFAULT 0,"  +
+									"alertDate timestamp," +
+									"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" +
+									");"
+					);
+				case 348:
+					currentVersion = 348;
+					getDao(SignalVerification.class).executeRaw(
+							"CREATE TABLE signalverification (" +
+									"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+									"verificationSent TEXT," +
+									"verified TEXT," + // Replace with actual enum values
+									"verificationCompleteDate TEXT NOT NULL," +
+									"dateOfOccurrence TEXT NOT NULL," +
+									"numberOfPersonAnimal TEXT," +
+									"numberOfDeath TEXT," +
+									" modified SMALLINT DEFAULT 0," +
+									" snapshot SMALLINT DEFAULT 0,"  +
+									"numberOfPersonCases TEXT," +
+									"numberOfDeathPerson TEXT," +
+									"description TEXT," +
+									"whyNotVerify TEXT," +
+									"creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+									"changed_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+									"ebs_id INTEGER NOT NULL," +
+									"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" +
+									");"
+					);
+					// ATTENTION: break should only be done after last version
 				break;
 
 			default:

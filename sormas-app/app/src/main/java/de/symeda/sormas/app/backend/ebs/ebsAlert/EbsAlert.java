@@ -12,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import de.symeda.sormas.api.ebs.ResponseStatus;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.ebs.Ebs;
 
@@ -26,7 +26,7 @@ public class EbsAlert extends PseudonymizableAdo {
     public static final String I18N_PREFIX = "EbsAlert";
     public static final String TABLE_NAME = "EbsAlert";
     @DatabaseField
-    private YesNo actionInitiated;
+    private YesNoUnknown actionInitiated;
     @DatabaseField
     private ResponseStatus responseStatus;
     @DatabaseField(dataType = DataType.DATE_LONG)
@@ -36,7 +36,7 @@ public class EbsAlert extends PseudonymizableAdo {
     @DatabaseField
     private String detailsGiven;
     @DatabaseField
-    private YesNo alertIssued;
+    private YesNoUnknown alertIssued;
     @DatabaseField
     private String detailsAlertUsed;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
@@ -49,11 +49,11 @@ public class EbsAlert extends PseudonymizableAdo {
         return I18N_PREFIX;
     }
 
-    public YesNo getActionInitiated() {
+    public YesNoUnknown getActionInitiated() {
         return actionInitiated;
     }
 
-    public void setActionInitiated(YesNo actionInitiated) {
+    public void setActionInitiated(YesNoUnknown actionInitiated) {
         this.actionInitiated = actionInitiated;
     }
 
@@ -89,11 +89,11 @@ public class EbsAlert extends PseudonymizableAdo {
         this.detailsGiven = detailsGiven;
     }
 
-    public YesNo getAlertIssued() {
+    public YesNoUnknown getAlertIssued() {
         return alertIssued;
     }
 
-    public void setAlertIssued(YesNo alertUsed) {
+    public void setAlertIssued(YesNoUnknown alertUsed) {
         this.alertIssued = alertUsed;
     }
 

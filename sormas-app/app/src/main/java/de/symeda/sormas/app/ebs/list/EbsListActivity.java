@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
@@ -144,6 +145,11 @@ public class EbsListActivity extends PagedBaseListActivity {
     @Override
     protected boolean isEntryCreateAllowed() {
         return ConfigProvider.hasUserRight(UserRight.EVENT_CREATE);
+    }
+
+    @Override
+    public int onNotificationCountChangingAsync(AdapterView parent, PageMenuItem menuItem, int position) {
+        return 0;
     }
 
     @Override

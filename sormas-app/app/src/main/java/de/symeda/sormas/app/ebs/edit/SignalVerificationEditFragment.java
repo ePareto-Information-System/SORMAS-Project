@@ -22,7 +22,7 @@ import java.util.List;
 
 import de.symeda.sormas.api.ebs.SignalOutcome;
 import de.symeda.sormas.api.ebs.SignalVerificationDto;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
@@ -80,7 +80,7 @@ public class SignalVerificationEditFragment extends BaseEditFragment<FragmentSig
 	public void onLayoutBinding(final FragmentSignalVerificationEditLayoutBinding contentBinding) {
 		contentBinding.setData(record);
 		contentBinding.setSignalOutcomeClass(SignalOutcome.class);
-		contentBinding.setYesNoClass(YesNo.class);
+		contentBinding.setYesNoClass(YesNoUnknown.class);
 	}
 
 	@Override

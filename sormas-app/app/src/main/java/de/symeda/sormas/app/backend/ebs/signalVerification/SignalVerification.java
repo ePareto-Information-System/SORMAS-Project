@@ -11,7 +11,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 import de.symeda.sormas.api.ebs.SignalOutcome;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 
@@ -28,7 +28,7 @@ public class SignalVerification extends PseudonymizableAdo {
     public static final String VERIFIED = "verified";
 
     @DatabaseField
-    private YesNo verificationSent;
+    private YesNoUnknown verificationSent;
     @DatabaseField
     private SignalOutcome verified;
     @DatabaseField(dataType = DataType.DATE_LONG)
@@ -48,11 +48,11 @@ public class SignalVerification extends PseudonymizableAdo {
     @DatabaseField
     private String whyNotVerify;
 
-    public YesNo getVerificationSent() {
+    public YesNoUnknown getVerificationSent() {
         return verificationSent;
     }
 
-    public void setVerificationSent(YesNo verificationSent) {
+    public void setVerificationSent(YesNoUnknown verificationSent) {
         this.verificationSent = verificationSent;
     }
     @Override

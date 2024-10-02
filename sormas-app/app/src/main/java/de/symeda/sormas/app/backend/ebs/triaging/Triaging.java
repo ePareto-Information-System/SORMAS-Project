@@ -23,7 +23,7 @@ import de.symeda.sormas.api.ebs.HumanLaboratoryCategoryDetails;
 import de.symeda.sormas.api.ebs.OutComeSupervisor;
 import de.symeda.sormas.api.ebs.POE;
 import de.symeda.sormas.api.ebs.SignalCategory;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.ebs.Ebs;
@@ -63,15 +63,15 @@ public class Triaging extends PseudonymizableAdo {
 
 
     @Enumerated(EnumType.STRING)
-    private YesNo supervisorReview;
+    private YesNoUnknown supervisorReview;
     @Enumerated(EnumType.STRING)
-    private YesNo referred;
+    private YesNoUnknown referred;
     @Enumerated(EnumType.STRING)
-    private YesNo specificSignal;
+    private YesNoUnknown specificSignal;
     @Enumerated(EnumType.STRING)
     private SignalCategory signalCategory;
     @Enumerated(EnumType.STRING)
-    private YesNo healthConcern;
+    private YesNoUnknown healthConcern;
     @Enumerated(EnumType.STRING)
     private HumanCommunityCategoryDetails humanCommunityCategoryDetails;
     @Enumerated(EnumType.STRING)
@@ -95,7 +95,7 @@ public class Triaging extends PseudonymizableAdo {
     private Ebs ebs;
 
     @Enumerated(EnumType.STRING)
-    private YesNo occurrencePreviously;
+    private YesNoUnknown occurrencePreviously;
     @Enumerated(EnumType.STRING)
     private EbsTriagingDecision triagingDecision;
 
@@ -111,26 +111,26 @@ public class Triaging extends PseudonymizableAdo {
     @DatabaseField
     private boolean notSignal;
     @Enumerated(EnumType.STRING)
-    private YesNo potentialRisk;
+    private YesNoUnknown potentialRisk;
 
     public EbsReferenceDto toReference() {
         return new EbsReferenceDto(getUuid());
     }
 
 
-    public YesNo getSupervisorReview() {
+    public YesNoUnknown getSupervisorReview() {
         return supervisorReview;
     }
 
-    public void setSupervisorReview(YesNo earlyWarning) {
+    public void setSupervisorReview(YesNoUnknown earlyWarning) {
         this.supervisorReview = earlyWarning;
     }
 
-    public YesNo getSpecificSignal() {
+    public YesNoUnknown getSpecificSignal() {
         return specificSignal;
     }
 
-    public void setSpecificSignal(YesNo specificSignal) {
+    public void setSpecificSignal(YesNoUnknown specificSignal) {
         this.specificSignal = specificSignal;
     }
 
@@ -143,11 +143,11 @@ public class Triaging extends PseudonymizableAdo {
         this.signalCategory = signalCategory;
     }
 
-    public YesNo getHealthConcern() {
+    public YesNoUnknown getHealthConcern() {
         return healthConcern;
     }
 
-    public void setHealthConcern(YesNo healthConcern) {
+    public void setHealthConcern(YesNoUnknown healthConcern) {
         this.healthConcern = healthConcern;
     }
 
@@ -218,11 +218,11 @@ public class Triaging extends PseudonymizableAdo {
 
     }
 
-    public YesNo getOccurrencePreviously() {
+    public YesNoUnknown getOccurrencePreviously() {
         return occurrencePreviously;
     }
 
-    public void setOccurrencePreviously(YesNo occurrencePreviously) {
+    public void setOccurrencePreviously(YesNoUnknown occurrencePreviously) {
         this.occurrencePreviously = occurrencePreviously;
     }
 
@@ -284,19 +284,19 @@ public class Triaging extends PseudonymizableAdo {
         this.categoryDetailsLevel = categoryDetailsLevel;
     }
 
-    public YesNo getPotentialRisk() {
+    public YesNoUnknown getPotentialRisk() {
         return potentialRisk;
     }
 
-    public void setPotentialRisk(YesNo potentialRisk) {
+    public void setPotentialRisk(YesNoUnknown potentialRisk) {
         this.potentialRisk = potentialRisk;
     }
 
-    public YesNo getReferred() {
+    public YesNoUnknown getReferred() {
         return referred;
     }
 
-    public void setReferred(YesNo referred) {
+    public void setReferred(YesNoUnknown referred) {
         this.referred = referred;
     }
 
