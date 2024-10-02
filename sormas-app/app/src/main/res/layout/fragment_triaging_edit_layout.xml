@@ -107,7 +107,7 @@
                     android:id="@+id/triaging_supervisorReview"
                     app:enumClass="@{yesNoClass}"
                     app:dependencyParentField="@{triagingSpecificSignal}"
-                    app:dependencyParentValue="@{YesNo.YES}"
+                    app:dependencyParentValue="@{YesNo.NO}"
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:value="@={data.supervisorReview}"/>
             </LinearLayout>
@@ -117,8 +117,8 @@
                 android:orientation="horizontal">
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/triaging_outcomeSupervisor"
-                    app:dependencyParentField="@{triagingSpecificSignal}"
-                    app:dependencyParentValue="@{YesNo.NO}"
+                    app:dependencyParentField="@{triagingSupervisorReview}"
+                    app:dependencyParentValue="@{YesNo.YES}"
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:value="@={data.outcomeSupervisor}"/>
             </LinearLayout>
@@ -127,8 +127,46 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/triaging_healthConcern"
+                    app:enumClass="@{yesNoClass}"
+                    app:dependencyParentField="@{triagingOutcomeSupervisor}"
+                    app:dependencyParentValue="@{OutComeSupervisor.ISNOTSIGNAL}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:value="@={data.healthConcern}"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/triaging_referred"
+                    app:enumClass="@{yesNoClass}"
+                    app:dependencyParentField="@{triagingHealthConcern}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:value="@={data.referred}"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/triaging_referredTo"
+                    app:dependencyParentField="@{triagingReferred}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:value="@={data.referredTo}"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/triaging_signalCategory"
                     style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:required="true"
+                    app:dependencyParentField="@{triagingSpecificSignal}"
+                    app:dependencyParentValue="@{YesNo.YES}"
                     app:enumClass="@{triagingSignalCategoryClass}"
                     app:value="@={data.signalCategory}"/>
             </LinearLayout>
@@ -139,6 +177,7 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/triaging_categoryDetailsLevel"
                     style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:required="true"
                     app:enumClass="@{triagingCategoryDetailsLevelClass}"
                     app:value="@={data.categoryDetailsLevel}"/>
             </LinearLayout>
@@ -152,8 +191,8 @@
             <de.symeda.sormas.app.component.controls.ControlRadioGroupField
                     android:id="@+id/triaging_humanFacilityCategoryDetails"
                     style="@style/ControlSingleColumnStyle"
-                app:dependencyParentField="@{triagingSignalCategory}"
-                app:dependencyParentValue="@{SignalCategory.HUMAN}"
+                    app:dependencyParentField="@{triagingSignalCategory}"
+                    app:dependencyParentValue="@{SignalCategory.HUMAN}"
                     app:enumClass="@{triagingHumanFaclityCategoryDetailsClass}"
                     app:value="@={data.humanFacilityCategoryDetails}"/>
             <de.symeda.sormas.app.component.controls.ControlRadioGroupField
@@ -212,6 +251,8 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/triaging_occurrencePreviously"
                     style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:dependencyParentField="@{triagingOutcomeSupervisor}"
+                    app:dependencyParentValue="@{OutComeSupervisor.ISNOTSIGNAL}"
                     app:enumClass="@{yesNoClass}"
                     app:value="@={data.occurrencePreviously}"/>
             </LinearLayout>
@@ -222,6 +263,7 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/triaging_triagingDecision"
                     style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:required="true"
                     app:enumClass="@{triagingDecisionClass}"
                     app:value="@={data.triagingDecision}"/>
             </LinearLayout>
