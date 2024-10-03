@@ -206,7 +206,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 364;
+	public static final int DATABASE_VERSION = 366;
 
 	private static DatabaseHelper instance = null;
 
@@ -3397,6 +3397,24 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 currentVersion = 363;
                 getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN patientVentilated VARCHAR(255);");
                 getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN dateFormSentToDistrict DATE;");
+			case 364:
+				currentVersion = 364;
+				//remove later
+			case 365:
+				currentVersion = 365;
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientTravelledTwoWeeksPrior VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientTravelledInCountryOne VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientTravelledInCountryTwo VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientTravelledInCountryThree VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientTravelledInCountryFour VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientTravelledInternationalOne VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientTravelledInternationalTwo VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientTravelledInternationalThree VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientTravelledInternationalFour VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientVisitedHealthCareFacility VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientCloseContactWithARI VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientContactWithConfirmedCase VARCHAR(255);");
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientContactWithConfirmedCaseExposureLocationCityCountry VARCHAR(255);");
 				// ATTENTION: break should only be done after last version
 				break;
 			default:

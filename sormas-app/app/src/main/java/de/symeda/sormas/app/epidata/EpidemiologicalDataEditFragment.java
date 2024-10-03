@@ -388,6 +388,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		contentBinding.setData(record);
 		contentBinding.setYesNoClass(YesNo.class);
 		contentBinding.setPlaceManagedClass(PlaceManaged.class);
+		contentBinding.setYesNoUnknownClass(YesNoUnknown.class);
 		contentBinding.setExposureList(getExposureList());
 		contentBinding.setExposureItemClickCallback(onExposureItemClickListener);
 		contentBinding.setExposureListBindCallback(
