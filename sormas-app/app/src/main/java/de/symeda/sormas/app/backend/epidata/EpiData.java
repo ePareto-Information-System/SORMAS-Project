@@ -18,16 +18,23 @@ package de.symeda.sormas.app.backend.epidata;
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Transient;
 
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.apache.commons.lang3.StringUtils;
+
+import de.symeda.sormas.api.epidata.ContactSetting;
 import de.symeda.sormas.api.epidata.PlaceManaged;
+import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
@@ -114,10 +121,24 @@ public class EpiData extends PseudonymizableAdo {
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String patientContactWithConfirmedCaseExposureLocationCityCountry;
-
 	public YesNo getExposureDetailsKnown() {
 		return exposureDetailsKnown;
 	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String patientCloseContactWithARIContactSettingsString;
+
+	@Transient
+	private Set<ContactSetting> patientCloseContactWithARIContactSettings;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String patientContactWithConfirmedCaseExposureLocationsString;
+
+	@Transient
+	private Set<ContactSetting> patientContactWithConfirmedCaseExposureLocations;
+
+
+
 
 	public void setExposureDetailsKnown(YesNo exposureDetailsKnown) {
 		this.exposureDetailsKnown = exposureDetailsKnown;
@@ -330,6 +351,90 @@ public class EpiData extends PseudonymizableAdo {
 	public void setPatientContactWithConfirmedCaseExposureLocationCityCountry(String patientContactWithConfirmedCaseExposureLocationCityCountry) {
 		this.patientContactWithConfirmedCaseExposureLocationCityCountry = patientContactWithConfirmedCaseExposureLocationCityCountry;
 	}
+
+	public String getPatientCloseContactWithARIContactSettingsString() {
+		return patientCloseContactWithARIContactSettingsString;
+	}
+
+	public void setPatientCloseContactWithARIContactSettingsString(String patientCloseContactWithARIContactSettingsString) {
+		this.patientCloseContactWithARIContactSettingsString = patientCloseContactWithARIContactSettingsString;
+		patientCloseContactWithARIContactSettings = null;
+	}
+
+	public String getPatientContactWithConfirmedCaseExposureLocationsString() {
+		return patientContactWithConfirmedCaseExposureLocationsString;
+	}
+
+	public void setPatientContactWithConfirmedCaseExposureLocationsString(String patientContactWithConfirmedCaseExposureLocationsString) {
+		this.patientContactWithConfirmedCaseExposureLocationsString = patientContactWithConfirmedCaseExposureLocationsString;
+		patientContactWithConfirmedCaseExposureLocations = null;
+	}
+
+	public void setPatientCloseContactWithARIContactSettings(Set<ContactSetting> patientCloseContactWithARIContactSettings) {
+		this.patientCloseContactWithARIContactSettings = patientCloseContactWithARIContactSettings;
+
+		if (this.patientCloseContactWithARIContactSettings == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		for (ContactSetting contactSetting : patientCloseContactWithARIContactSettings) {
+			sb.append(contactSetting.name());
+			sb.append(",");
+		}
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		patientCloseContactWithARIContactSettingsString = sb.toString();
+	}
+
+	@Transient
+	public Set<ContactSetting> getPatientCloseContactWithARIContactSettings() {
+		if (patientCloseContactWithARIContactSettings == null) {
+			patientCloseContactWithARIContactSettings = new HashSet<>();
+			if (!StringUtils.isEmpty(patientCloseContactWithARIContactSettingsString)) {
+				String[] contactSettingsTypes = patientCloseContactWithARIContactSettingsString.split(",");
+				for (String contactSettingsType : contactSettingsTypes) {
+					patientCloseContactWithARIContactSettings.add(ContactSetting.valueOf(contactSettingsType));
+				}
+			}
+		}
+		return patientCloseContactWithARIContactSettings;
+	}
+
+	public void setPatientContactWithConfirmedCaseExposureLocations(Set<ContactSetting> patientContactWithConfirmedCaseExposureLocations) {
+		this.patientContactWithConfirmedCaseExposureLocations = patientContactWithConfirmedCaseExposureLocations;
+
+		if (this.patientContactWithConfirmedCaseExposureLocations == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		for (ContactSetting contactSetting : patientContactWithConfirmedCaseExposureLocations) {
+			sb.append(contactSetting.name());
+			sb.append(",");
+		}
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		patientContactWithConfirmedCaseExposureLocationsString = sb.toString();
+	}
+
+	@Transient
+	public Set<ContactSetting> getPatientContactWithConfirmedCaseExposureLocations() {
+		if (patientContactWithConfirmedCaseExposureLocations == null) {
+			patientContactWithConfirmedCaseExposureLocations = new HashSet<>();
+			if (!StringUtils.isEmpty(patientContactWithConfirmedCaseExposureLocationsString)) {
+				String[] contactSettingsTypes = patientContactWithConfirmedCaseExposureLocationsString.split(",");
+				for (String contactSettingsType : contactSettingsTypes) {
+					patientContactWithConfirmedCaseExposureLocations.add(ContactSetting.valueOf(contactSettingsType));
+				}
+			}
+		}
+		return patientContactWithConfirmedCaseExposureLocations;
+	}
+
+
 
 	@Override
 	public String getI18nPrefix() {

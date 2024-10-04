@@ -33,6 +33,7 @@ import com.googlecode.openbeans.PropertyDescriptor;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
+import de.symeda.sormas.api.epidata.ContactSetting;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.epidata.PlaceManaged;
 import de.symeda.sormas.api.exposure.ExposureDto;
@@ -389,6 +390,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		contentBinding.setYesNoClass(YesNo.class);
 		contentBinding.setPlaceManagedClass(PlaceManaged.class);
 		contentBinding.setYesNoUnknownClass(YesNoUnknown.class);
+		contentBinding.setContactSettingClass(ContactSetting.class);
 		contentBinding.setExposureList(getExposureList());
 		contentBinding.setExposureItemClickCallback(onExposureItemClickListener);
 		contentBinding.setExposureListBindCallback(

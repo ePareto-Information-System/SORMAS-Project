@@ -158,6 +158,8 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		target.setPatientCloseContactWithARI(source.getPatientCloseContactWithARI());
 		target.setPatientContactWithConfirmedCase(source.getPatientContactWithConfirmedCase());
 		target.setPatientContactWithConfirmedCaseExposureLocationCityCountry(source.getPatientContactWithConfirmedCaseExposureLocationCityCountry());
+		target.setPatientCloseContactWithARIContactSettings(source.getPatientCloseContactWithARIContactSettings());
+		target.setPatientContactWithConfirmedCaseExposureLocations(source.getPatientContactWithConfirmedCaseExposureLocations());
 	}
 
 	@Override
@@ -230,8 +232,8 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		target.setPatientCloseContactWithARI(source.getPatientCloseContactWithARI());
 		target.setPatientContactWithConfirmedCase(source.getPatientContactWithConfirmedCase());
 		target.setPatientContactWithConfirmedCaseExposureLocationCityCountry(source.getPatientContactWithConfirmedCaseExposureLocationCityCountry());
-
-
+		target.setPatientCloseContactWithARIContactSettings(source.getPatientCloseContactWithARIContactSettings());
+		target.setPatientContactWithConfirmedCaseExposureLocations(source.getPatientContactWithConfirmedCaseExposureLocations());
 		target.setPseudonymized(source.isPseudonymized());
 	}
 
