@@ -129,7 +129,9 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setFrequencyOfChangingFilters(source.getFrequencyOfChangingFilters());
 		target.setRemarks(source.getRemarks());
 		target.setConfirmedAsGuineaWorm(source.getConfirmedAsGuineaWorm());
-
+		target.setLabLocation(source.getLabLocation());
+		target.setDateFormSentToDistrict(source.getDateFormSentToDistrict());
+		target.setDateFormReceivedAtDistrict(source.getDateFormReceivedAtDistrict());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}
@@ -216,6 +218,9 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setFrequencyOfChangingFilters(source.getFrequencyOfChangingFilters());
 		target.setRemarks(source.getRemarks());
 		target.setConfirmedAsGuineaWorm(source.getConfirmedAsGuineaWorm());
+		target.setLabLocation(source.getLabLocation());
+		target.setDateFormSentToDistrict(source.getDateFormSentToDistrict());
+		target.setDateFormReceivedAtDistrict(source.getDateFormReceivedAtDistrict());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}

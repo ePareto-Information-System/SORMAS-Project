@@ -238,6 +238,15 @@ public class Sample extends PseudonymizableAdo {
 	@Enumerated(EnumType.STRING)
 	private YesNo confirmedAsGuineaWorm;
 
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String labLocation;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateFormSentToDistrict;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateFormReceivedAtDistrict;
+
 
 
 	public Case getAssociatedCase() {
@@ -746,5 +755,29 @@ public class Sample extends PseudonymizableAdo {
 
 	public void setConfirmedAsGuineaWorm(YesNo confirmedAsGuineaWorm) {
 		this.confirmedAsGuineaWorm = confirmedAsGuineaWorm;
+	}
+
+	public String getLabLocation() {
+		return labLocation;
+	}
+
+	public void setLabLocation(String labLocation) {
+		this.labLocation = labLocation;
+	}
+
+	public Date getDateFormSentToDistrict() {
+		return dateFormSentToDistrict;
+	}
+
+	public void setDateFormSentToDistrict(Date dateFormSentToDistrict) {
+		this.dateFormSentToDistrict = dateFormSentToDistrict;
+	}
+
+	public Date getDateFormReceivedAtDistrict() {
+		return dateFormReceivedAtDistrict;
+	}
+
+	public void setDateFormReceivedAtDistrict(Date dateFormReceivedAtDistrict) {
+		this.dateFormReceivedAtDistrict = dateFormReceivedAtDistrict;
 	}
 }

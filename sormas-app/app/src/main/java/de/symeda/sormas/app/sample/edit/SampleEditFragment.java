@@ -229,6 +229,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		contentBinding.sampleDateSpecimenReceivedAtNational.initializeDateField(getFragmentManager());
 		contentBinding.sampleSentForConfirmationNationalDate.initializeDateField(getFragmentManager());
 		contentBinding.sampleDateResultReceivedNational.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateFormReceivedAtDistrict.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateFormSentToDistrict.initializeDateField(getFragmentManager());
 	}
 
 	@Override
