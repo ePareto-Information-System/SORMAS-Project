@@ -41,6 +41,7 @@ import de.symeda.sormas.api.caze.ContactTracingContactType;
 import de.symeda.sormas.api.caze.DengueFeverType;
 import de.symeda.sormas.api.caze.EndOfIsolationReason;
 import de.symeda.sormas.api.caze.HospitalWardType;
+import de.symeda.sormas.api.caze.IdsrType;
 import de.symeda.sormas.api.caze.InfectionSetting;
 import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.caze.PlagueType;
@@ -122,6 +123,12 @@ public class Case extends PseudonymizableAdo {
 	@Column(name = "diseaseVariant")
 	private String diseaseVariantString;
 	private DiseaseVariant diseaseVariant;
+
+	@Enumerated(EnumType.STRING)
+	private IdsrType idsrDiagnosis;
+
+	@Column(name = "specifyEventDiagnosis")
+	private String specifyEventDiagnosis;
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String diseaseDetails;
@@ -475,6 +482,22 @@ public class Case extends PseudonymizableAdo {
 
 	public void setDiseaseVariantString(String diseaseVariantString) {
 		this.diseaseVariantString = diseaseVariantString;
+	}
+
+	public IdsrType getIdsrDiagnosis() {
+		return idsrDiagnosis;
+	}
+
+	public void setIdsrDiagnosis(IdsrType idsrDiagnosis) {
+		this.idsrDiagnosis = idsrDiagnosis;
+	}
+
+	public String getSpecifyEventDiagnosis() {
+		return specifyEventDiagnosis;
+	}
+
+	public void setSpecifyEventDiagnosis(String specifyEventDiagnosis) {
+		this.specifyEventDiagnosis = specifyEventDiagnosis;
 	}
 
 	@Transient

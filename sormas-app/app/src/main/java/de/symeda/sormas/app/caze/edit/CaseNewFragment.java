@@ -29,6 +29,7 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.caze.DengueFeverType;
+import de.symeda.sormas.api.caze.IdsrType;
 import de.symeda.sormas.api.caze.PlagueType;
 import de.symeda.sormas.api.caze.RabiesType;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
@@ -86,6 +87,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 	private List<Item> facilityOrHomeList;
 	private List<Item> facilityTypeGroupList;
 	private List<Item> caseTransmissionClassificationsList;
+	private List<Item> idsrTypeList;
 
 	public static CaseNewFragment newInstance(Case activityRootData) {
 		return newInstance(CaseNewFragment.class, CaseNewActivity.buildBundle().get(), activityRootData);
@@ -143,6 +145,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 
 		facilityOrHomeList = DataUtils.toItems(TypeOfPlace.FOR_CASES, true);
 		facilityTypeGroupList = DataUtils.toItems(FacilityTypeGroup.getAccomodationGroups(), true);
+		idsrTypeList = DataUtils.getEnumItems(IdsrType.class, true);
 	}
 
 	@Override
@@ -226,6 +229,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 
 		contentBinding.caseDataDisease.initializeSpinner(diseaseList, DiseaseConfigurationCache.getInstance().getDefaultDisease());
 		contentBinding.caseDataDiseaseVariant.initializeSpinner(diseaseVariantList);
+		contentBinding.caseDataIdsrDiagnosis.initializeSpinner(idsrTypeList);
 
 		contentBinding.caseDataPlagueType.initializeSpinner(plagueTypeList);
 		contentBinding.caseDataDengueFeverType.initializeSpinner(dengueFeverTypeList);

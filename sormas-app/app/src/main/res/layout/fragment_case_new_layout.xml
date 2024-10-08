@@ -23,6 +23,7 @@
 
     <data>
         <import type="de.symeda.sormas.api.Disease" />
+        <import type="de.symeda.sormas.api.caze.IdsrType" />
         <import type="de.symeda.sormas.api.user.UserRight" />
         <import type="de.symeda.sormas.api.event.TypeOfPlace" />
         <import type="de.symeda.sormas.api.i18n.I18nProperties" />
@@ -57,6 +58,20 @@
                 style="@style/ControlSingleColumnStyle"
                 app:required="true"
                 app:value="@={data.disease}" />
+
+            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                android:id="@+id/caseData_idsrDiagnosis"
+                style="@style/ControlSingleColumnStyle"
+                app:dependencyParentField="@{caseDataDisease}"
+                app:dependencyParentValue="@{Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS}"
+                app:value="@={data.idsrDiagnosis}" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/caseData_specifyEventDiagnosis"
+                style="@style/ControlSingleColumnStyle"
+                app:dependencyParentField="@{caseDataIdsrDiagnosis}"
+                app:dependencyParentValue="@{IdsrType.OTHER}"
+                app:value="@={data.specifyEventDiagnosis}" />
 
             <de.symeda.sormas.app.component.controls.ControlCheckBoxField
                 android:id="@+id/rapid_case_entry_checkBox"

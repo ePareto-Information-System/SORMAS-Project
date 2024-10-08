@@ -315,6 +315,8 @@ public class CaseDao extends AbstractAdoDao<Case> {
 			newCase.setDiseaseDetails(caze.getDiseaseDetails());
 			newCase.setPlagueType(caze.getPlagueType());
 			newCase.setDengueFeverType(caze.getDengueFeverType());
+			newCase.setIdsrDiagnosis(caze.getIdsrDiagnosis());
+			newCase.setSpecifyEventDiagnosis(caze.getSpecifyEventDiagnosis());
 		}
 
 		return newCase;
