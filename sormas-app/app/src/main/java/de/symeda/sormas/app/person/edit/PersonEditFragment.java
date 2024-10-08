@@ -51,6 +51,7 @@ import de.symeda.sormas.api.person.Salutation;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
@@ -146,6 +147,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		List<Item> approximateAgeTypeList = DataUtils.getEnumItems(ApproximateAgeType.class, true);
 		List<Item> sexList = DataUtils.getEnumItems(Sex.class, true);
 		List<Item> marriageList = DataUtils.getEnumItems(MaritalStatus.class, true);
+		List<Item> yesNoList = DataUtils.getEnumItems(YesNo.class, true);
 		List<Item> causeOfDeathList = DataUtils.getEnumItems(CauseOfDeath.class, true);
 		List<Item> diseaseList = DataUtils.toItems(DiseaseConfigurationCache.getInstance().getAllDiseases(true, true, true));
 		if (record.getCauseOfDeathDisease() != null && !diseaseList.contains(record.getCauseOfDeathDisease())) {
@@ -225,6 +227,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		contentBinding.personBurialConductor.initializeSpinner(burialConductorList);
 		contentBinding.personOccupationType.initializeSpinner(occupationTypeList);
 		contentBinding.personArmedForcesRelationType.initializeSpinner(DataUtils.getEnumItems(ArmedForcesRelationType.class, true));
+		contentBinding.personApplicable.initializeSpinner(yesNoList);
 		contentBinding.personEducationType.initializeSpinner(DataUtils.getEnumItems(EducationType.class, true));
 		// Determine which values should show as personPresentCondition (the person may have a value that by default is not shown for the current disease)
 		List<Item> items = DataUtils.getEnumItems(PresentCondition.class, true, getFieldVisibilityCheckers());
@@ -601,6 +604,15 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		}
 		contentBinding.personCitizenship.setVisibility(GONE);
 		contentBinding.personBirthCountry.setVisibility(GONE);
+
+		contentBinding.personApplicable.addValueChangedListener(event -> {
+			YesNo applicableValue = (YesNo) contentBinding.personApplicable.getValue();
+			int visibility = YesNo.YES.equals(applicableValue) ? View.VISIBLE : View.GONE;
+
+			contentBinding.personMothersName.setVisibility(visibility);
+			contentBinding.personFathersName.setVisibility(visibility);
+		});
+
 	}
 
 	@Override
