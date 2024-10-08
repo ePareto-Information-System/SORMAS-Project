@@ -145,6 +145,21 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		target.setReceivedHealthEducation(source.getReceivedHealthEducation());
 		target.setPatientEnteredWaterSource(source.getPatientEnteredWaterSource());
 		target.setPlaceManaged(source.getPlaceManaged());
+		target.setPatientTravelledTwoWeeksPrior(source.getPatientTravelledTwoWeeksPrior());
+		target.setPatientTravelledInCountryOne(source.getPatientTravelledInCountryOne());
+		target.setPatientTravelledInCountryTwo(source.getPatientTravelledInCountryTwo());
+		target.setPatientTravelledInCountryThree(source.getPatientTravelledInCountryThree());
+		target.setPatientTravelledInCountryFour(source.getPatientTravelledInCountryFour());
+		target.setPatientTravelledInternationalOne(source.getPatientTravelledInternationalOne());
+		target.setPatientTravelledInternationalTwo(source.getPatientTravelledInternationalTwo());
+		target.setPatientTravelledInternationalThree(source.getPatientTravelledInternationalThree());
+		target.setPatientTravelledInternationalFour(source.getPatientTravelledInternationalFour());
+		target.setPatientVisitedHealthCareFacility(source.getPatientVisitedHealthCareFacility());
+		target.setPatientCloseContactWithARI(source.getPatientCloseContactWithARI());
+		target.setPatientContactWithConfirmedCase(source.getPatientContactWithConfirmedCase());
+		target.setPatientContactWithConfirmedCaseExposureLocationCityCountry(source.getPatientContactWithConfirmedCaseExposureLocationCityCountry());
+		target.setPatientCloseContactWithARIContactSettings(source.getPatientCloseContactWithARIContactSettings());
+		target.setPatientContactWithConfirmedCaseExposureLocations(source.getPatientContactWithConfirmedCaseExposureLocations());
 	}
 
 	@Override
@@ -204,7 +219,21 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		target.setReceivedHealthEducation(source.getReceivedHealthEducation());
 		target.setPatientEnteredWaterSource(source.getPatientEnteredWaterSource());
 		target.setPlaceManaged(source.getPlaceManaged());
-
+		target.setPatientTravelledTwoWeeksPrior(source.getPatientTravelledTwoWeeksPrior());
+		target.setPatientTravelledInCountryOne(source.getPatientTravelledInCountryOne());
+		target.setPatientTravelledInCountryTwo(source.getPatientTravelledInCountryTwo());
+		target.setPatientTravelledInCountryThree(source.getPatientTravelledInCountryThree());
+		target.setPatientTravelledInCountryFour(source.getPatientTravelledInCountryFour());
+		target.setPatientTravelledInternationalOne(source.getPatientTravelledInternationalOne());
+		target.setPatientTravelledInternationalTwo(source.getPatientTravelledInternationalTwo());
+		target.setPatientTravelledInternationalThree(source.getPatientTravelledInternationalThree());
+		target.setPatientTravelledInternationalFour(source.getPatientTravelledInternationalFour());
+		target.setPatientVisitedHealthCareFacility(source.getPatientVisitedHealthCareFacility());
+		target.setPatientCloseContactWithARI(source.getPatientCloseContactWithARI());
+		target.setPatientContactWithConfirmedCase(source.getPatientContactWithConfirmedCase());
+		target.setPatientContactWithConfirmedCaseExposureLocationCityCountry(source.getPatientContactWithConfirmedCaseExposureLocationCityCountry());
+		target.setPatientCloseContactWithARIContactSettings(source.getPatientCloseContactWithARIContactSettings());
+		target.setPatientContactWithConfirmedCaseExposureLocations(source.getPatientContactWithConfirmedCaseExposureLocations());
 		target.setPseudonymized(source.isPseudonymized());
 	}
 

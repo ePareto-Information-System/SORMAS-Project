@@ -24,9 +24,11 @@
 
     <data>
         <variable name="data" type="de.symeda.sormas.app.backend.hospitalization.PreviousHospitalization"/>
+        <variable name="yesNoClass" type="Class" />
 
         <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
         <import type="de.symeda.sormas.api.hospitalization.HospitalizationReasonType" />
+        <import type="de.symeda.sormas.api.utils.YesNo" />
     </data>
 
     <ScrollView
@@ -48,6 +50,7 @@
             <de.symeda.sormas.app.component.controls.ControlSwitchField
                 android:id="@+id/casePreviousHospitalization_admittedToHealthFacility"
                 style="@style/ControlSingleColumnStyle"
+                app:enumClass="@{yesNoClass}"
                 app:value="@={data.admittedToHealthFacility}" />
 
             <LinearLayout
@@ -70,6 +73,7 @@
             <de.symeda.sormas.app.component.controls.ControlSwitchField
                 android:id="@+id/casePreviousHospitalization_intensiveCareUnit"
                 app:value="@={data.intensiveCareUnit}"
+                app:enumClass="@{yesNoClass}"
                 style="@style/ControlSingleColumnStyle" />
 
             <LinearLayout
@@ -144,6 +148,7 @@
             <de.symeda.sormas.app.component.controls.ControlSwitchField
                 android:id="@+id/casePreviousHospitalization_isolated"
                 app:value="@={data.isolated}"
+                app:enumClass="@{yesNoClass}"
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlDateField

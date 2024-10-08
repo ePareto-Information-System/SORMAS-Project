@@ -263,25 +263,6 @@
                     app:dateWithoutTime="@{true}"
                     style="@style/ControlSingleColumnStyle" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <de.symeda.sormas.app.component.controls.ControlTextEditField
-                        android:id="@+id/caseData_reportingOfficerName"
-                        app:value="@={data.reportingOfficerName}"
-                        app:userEditRight="@{UserRight.CASE_EDIT}"
-                        style="@style/ControlFirstOfTwoColumnsStyle" />
-
-                    <de.symeda.sormas.app.component.controls.ControlTextEditField
-                        android:id="@+id/caseData_reportingOfficerTitle"
-                        app:value="@={data.reportingOfficerTitle}"
-                        app:userEditRight="@{UserRight.CASE_EDIT}"
-                        style="@style/ControlSecondOfTwoColumnsStyle" />
-
-                </LinearLayout>
-
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/caseData_caseIdentificationSource"
@@ -930,6 +911,15 @@
                     app:dependencyParentVisibility="@{true}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/caseData_secondVaccinationDate"
+                    app:value="@={data.secondVaccinationDate}"
+                    app:dateWithoutTime="@{true}"
+                    app:dependencyParentField="@{caseDataVaccinationType}"
+                    app:dependencyParentValue="@{CardOrHistory.CARD}"
+                    app:dependencyParentVisibility="@{true}"
+                    style="@style/ControlSingleColumnStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/caseData_smallpoxVaccinationReceived"
                     app:enumClass="@{yesNoUnknownClass}"
@@ -998,26 +988,59 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_reportingOfficerName"
+                        app:value="@={data.reportingOfficerName}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_reportingOfficerTitle"
+                        app:value="@={data.reportingOfficerTitle}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/caseData_functionOfReportingOfficer"
                         app:value="@={data.functionOfReportingOfficer}"
-                        style="@style/ControlSingleColumnStyle"/>
+                        style="@style/ControlSecondOfTwoColumnsStyle"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/caseData_reportingOfficerContactPhone"
                         app:value="@={data.reportingOfficerContactPhone}"
-                        style="@style/ControlSingleColumnStyle"/>
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/caseData_reportingOfficerEmail"
                         app:value="@={data.reportingOfficerEmail}"
-                        style="@style/ControlSingleColumnStyle"/>
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/caseData_notifyingClinic"
                     app:value="@={data.notifyingClinic}"
                     style="@style/ControlSingleColumnStyle" />
+
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/caseData_notifyingClinicDetails"

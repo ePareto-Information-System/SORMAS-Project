@@ -224,12 +224,10 @@ public class CaseReadFragment extends BaseReadFragment<FragmentCaseReadLayoutBin
 		} else {
 			contentBinding.facilityOrHome.setValue(TypeOfPlace.FACILITY);
 //			contentBinding.facilityTypeGroup.setValue(record.getFacilityType().getFacilityTypeGroup());
-
 			FacilityType facilityType = record.getFacilityType();
 			if (facilityType != null) {
 				contentBinding.facilityTypeGroup.setValue(facilityType.getFacilityTypeGroup());
 			} else {
-				Log.w("CaseReadFragment", "FacilityType is null for this case.");
 				contentBinding.facilityTypeGroup.setVisibility(GONE);
 			}
 		}

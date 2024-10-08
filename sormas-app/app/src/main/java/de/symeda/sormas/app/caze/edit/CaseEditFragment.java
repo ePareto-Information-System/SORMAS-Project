@@ -751,6 +751,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataQuarantineOrderedOfficialDocumentDate.initializeDateField(getChildFragmentManager());
 		contentBinding.caseDataQuarantineOfficialOrderSentDate.initializeDateField(getChildFragmentManager());
 		contentBinding.caseDataVaccinationDate.initializeDateField(getFragmentManager());
+		contentBinding.caseDataSecondVaccinationDate.initializeDateField(getFragmentManager());
 //		contentBinding.caseDataReportingType.initializeSpinner(reportingTypeList);
 
 		// Replace classification user field with classified by field when case has been classified automatically
