@@ -50,6 +50,7 @@ import de.symeda.sormas.app.databinding.FragmentCaseReadLayoutBinding;
 import de.symeda.sormas.app.util.DiseaseConfigurationCache;
 import de.symeda.sormas.app.util.FieldVisibilityAndAccessHelper;
 import de.symeda.sormas.app.util.InfrastructureDaoHelper;
+import de.symeda.sormas.api.caze.IdsrType;
 
 public class CaseReadFragment extends BaseReadFragment<FragmentCaseReadLayoutBinding, Case, Case> {
 

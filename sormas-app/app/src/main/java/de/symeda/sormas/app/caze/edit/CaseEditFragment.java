@@ -41,6 +41,7 @@ import de.symeda.sormas.api.caze.ContactTracingContactType;
 import de.symeda.sormas.api.caze.DengueFeverType;
 import de.symeda.sormas.api.caze.EndOfIsolationReason;
 import de.symeda.sormas.api.caze.HospitalWardType;
+import de.symeda.sormas.api.caze.IdsrType;
 import de.symeda.sormas.api.caze.InfectionSetting;
 import de.symeda.sormas.api.caze.PlagueType;
 import de.symeda.sormas.api.caze.QuarantineReason;
@@ -132,6 +133,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
     private List<Item> caseConfirmationBasisList;
 
 	private boolean differentPlaceOfStayJurisdiction;
+	private List<Item> idsrTypeList;
 
 	// Static methods
 
@@ -413,6 +415,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		caseTransmissionClassificationsList = DataUtils.getEnumItems(TransmissionClassification.class, true);
 		infectionSettingList = DataUtils.getEnumItems(InfectionSetting.class, true);
 		caseConfirmationBasisList = DataUtils.getEnumItems(CaseConfirmationBasis.class, true);
+		idsrTypeList = DataUtils.getEnumItems(IdsrType.class, true);
 	}
 
 	@Override
@@ -595,6 +598,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			filteredValues = new VaccinationStatus[] {};
 		}
 		contentBinding.setFilteredVaccinationStatusValues(filteredValues);
+		contentBinding.caseDataIdsrDiagnosis.initializeSpinner(idsrTypeList);
 
 		contentBinding.caseDataQuarantineTo.addValueChangedListener(new ValueChangeListener() {
 
