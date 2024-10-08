@@ -104,6 +104,9 @@ public class Person extends PseudonymizableAdo {
 	private String mothersName;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String fathersName;
+	@Enumerated(EnumType.STRING)
+	private YesNo applicable;
+
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String namesOfGuardians;
 	@Column
@@ -534,6 +537,14 @@ public class Person extends PseudonymizableAdo {
 
 	public void setFathersName(String fathersName) {
 		this.fathersName = fathersName;
+	}
+
+	public YesNo getApplicable() {
+		return applicable;
+	}
+
+	public void setApplicable(YesNo applicable) {
+		this.applicable = applicable;
 	}
 
 	public String getNamesOfGuardians() {
