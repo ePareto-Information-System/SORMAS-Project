@@ -264,7 +264,6 @@ public class SymptomsDtoHelper extends AdoDtoHelper<Symptoms, SymptomsDto> {
 		target.setSymptomsSelected(source.getSymptomsSelected());
 		target.setRashSymptoms(source.getRashSymptoms());
 		target.setSiteOfParalysis(source.getSiteOfParalysis());
-		target.setTypeOfRash(source.getTypeOfRash());
 		target.setInjectionSite(source.getInjectionSite());
 		target.setNameOfHealthFacility(source.getNameOfHealthFacility());
 		target.setDateFirstWormEmergence(source.getDateFirstWormEmergence());
@@ -529,7 +528,6 @@ public class SymptomsDtoHelper extends AdoDtoHelper<Symptoms, SymptomsDto> {
 		target.setSymptomsSelected(source.getSymptomsSelected());
 		target.setRashSymptoms(source.getRashSymptoms());
 		target.setSiteOfParalysis(source.getSiteOfParalysis());
-		target.setTypeOfRash(source.getTypeOfRash());
 		target.setInjectionSite(source.getInjectionSite());
 		target.setNameOfHealthFacility(source.getNameOfHealthFacility());
 		target.setDateFirstWormEmergence(source.getDateFirstWormEmergence());

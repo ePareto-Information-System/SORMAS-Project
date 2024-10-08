@@ -33,6 +33,7 @@
         <import type="de.symeda.sormas.api.epidata.EpiDataDto" />
         <import type="de.symeda.sormas.api.epidata.PlaceManaged" />
         <import type="de.symeda.sormas.api.epidata.ContactSetting" />
+        <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.epidata.EpiData" />
 
