@@ -50,6 +50,7 @@ import de.symeda.sormas.api.caze.RabiesType;
 import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.caze.ScreeningType;
 import de.symeda.sormas.api.caze.Trimester;
+import de.symeda.sormas.api.caze.VaccinationRoutine;
 import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
@@ -439,6 +440,10 @@ public class Case extends PseudonymizableAdo {
 	private String reportingOfficerTitle;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date secondVaccinationDate;
+	@Enumerated(EnumType.STRING)
+	private VaccinationRoutine vaccinationRoutine;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date lastVaccinationDate;
 
 
 	public boolean isUnreferredPortHealthCase() {
@@ -1531,5 +1536,21 @@ public class Case extends PseudonymizableAdo {
 
 	public void setSecondVaccinationDate(Date secondVaccinationDate) {
 		this.secondVaccinationDate = secondVaccinationDate;
+	}
+
+	public VaccinationRoutine getVaccinationRoutine() {
+		return vaccinationRoutine;
+	}
+
+	public void setVaccinationRoutine(VaccinationRoutine vaccinationRoutine) {
+		this.vaccinationRoutine = vaccinationRoutine;
+	}
+
+	public Date getLastVaccinationDate() {
+		return lastVaccinationDate;
+	}
+
+	public void setLastVaccinationDate(Date lastVaccinationDate) {
+		this.lastVaccinationDate = lastVaccinationDate;
 	}
 }
