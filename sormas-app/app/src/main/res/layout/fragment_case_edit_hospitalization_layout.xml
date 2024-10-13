@@ -253,6 +253,11 @@
                     android:id="@+id/caseHospitalization_notifyDistrictDate"
                     app:value="@={data.notifyDistrictDate}"
                     style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/caseHospitalization_dateFormSentToDistrict"
+                    app:value="@={data.dateFormSentToDistrict}"
+                    style="@style/ControlSingleColumnStyle" />
         </LinearLayout>
 
             <LinearLayout
