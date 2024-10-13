@@ -101,6 +101,8 @@ public class Hospitalization extends AbstractDomainObject {
 	private Date dateFormSentToDistrict;
 	@Enumerated(EnumType.STRING)
 	private YesNoUnknown patientVentilated;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown seenAtAHealthFacility;
 
 
 	public Date getAdmissionDate() {
@@ -291,5 +293,13 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setPatientVentilated(YesNoUnknown patientVentilated) {
 		this.patientVentilated = patientVentilated;
+	}
+
+	public YesNoUnknown getSeenAtAHealthFacility() {
+		return seenAtAHealthFacility;
+	}
+
+	public void setSeenAtAHealthFacility(YesNoUnknown seenAtAHealthFacility) {
+		this.seenAtAHealthFacility = seenAtAHealthFacility;
 	}
 }
