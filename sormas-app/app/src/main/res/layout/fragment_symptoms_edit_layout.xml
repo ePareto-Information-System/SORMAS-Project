@@ -30,6 +30,7 @@
         <import type="de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType" />
         <import type="de.symeda.sormas.api.symptoms.SymptomState" />
         <import type="de.symeda.sormas.api.symptoms.GuineaWormFirstSymptom" />
+        <import type="de.symeda.sormas.api.caze.CaseOutcome" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.symptoms.Symptoms"/>
         <variable name="symptomStateClass" type="Class"/>
@@ -38,6 +39,7 @@
         <variable name="setClearedToUnknownCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener"/>
         <variable name="symptomsContext" type="de.symeda.sormas.api.symptoms.SymptomsContext" />
         <variable name="GuineaWormFirstSymptomClass" type="Class"/>
+        <variable name="caseOutcomeClass" type="Class"/>
     </data>
 
 
@@ -1474,6 +1476,27 @@
                 app:dependencyParentValue="@{SymptomState.YES}"
                 style="@style/ControlSingleColumnStyle" />
 
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_generalizedRash"
+                app:enumClass="@{symptomStateClass}"
+                app:slim="true"
+                app:value="@={data.generalizedRash}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_redEyes"
+                app:enumClass="@{symptomStateClass}"
+                app:slim="true"
+                app:value="@={data.redEyes}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_swollenLymphNodesBehindEars"
+                app:enumClass="@{symptomStateClass}"
+                app:slim="true"
+                app:value="@={data.swollenLymphNodesBehindEars}"
+                style="@style/ControlSingleColumnStyle" />
+
 
             <de.symeda.sormas.app.component.controls.ControlSwitchField
                 android:id="@+id/symptoms_otherComplications"
@@ -1511,6 +1534,11 @@
                 app:softRequired="true"
                 app:goneIfVariable="@{symptomsContext}"
                 app:goneIfValue="@{SymptomsContext.CLINICAL_VISIT}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                android:id="@+id/symptoms_outcome"
+                app:value="@={data.outcome}"
                 style="@style/ControlSingleColumnStyle" />
 
         </LinearLayout>

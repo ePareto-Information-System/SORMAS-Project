@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
 import de.symeda.sormas.api.symptoms.GuineaWormFirstSymptom;
@@ -72,6 +73,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 	private List<Item> bodyTempList;
 	private List<Item> tempSourceList;
 	private List<Item> congenitalHeartDiseaseList;
+	private List<Item> caseOutcomeList;
 
 	private IEntryItemOnClickListener clearAllCallback;
 	private IEntryItemOnClickListener setClearedToNoCallback;
@@ -161,6 +163,8 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		contentBinding.setClearAllCallback(clearAllCallback);
 		contentBinding.setSetClearedToNoCallback(setClearedToNoCallback);
 		contentBinding.setSetClearedToUnknownCallback(setClearedToUnknownCallback);
+		caseOutcomeList = DataUtils.getEnumItems(CaseOutcome.class, true);
+		contentBinding.symptomsOutcome.setSpinnerData(caseOutcomeList);
 
 		SymptomsValidator.initializeSymptomsValidation(contentBinding, ado);
 	}
