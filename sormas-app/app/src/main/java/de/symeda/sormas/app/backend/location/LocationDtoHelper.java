@@ -96,6 +96,7 @@ public class LocationDtoHelper extends AdoDtoHelper<Location, LocationDto> {
 		target.setLandMark(source.getLandMark());
 		target.setVillage(source.getVillage());
 		target.setZone(source.getZone());
+		target.setResidentialAddress(source.getResidentialAddress());
 	}
 
 	@Override
@@ -158,6 +159,7 @@ public class LocationDtoHelper extends AdoDtoHelper<Location, LocationDto> {
 		target.setLandMark(source.getLandMark());
 		target.setVillage(source.getVillage());
 		target.setZone(source.getZone());
+		target.setResidentialAddress(source.getResidentialAddress());
 	}
 
     @Override
