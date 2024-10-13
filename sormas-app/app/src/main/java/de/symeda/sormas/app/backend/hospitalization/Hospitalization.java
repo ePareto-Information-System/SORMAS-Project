@@ -92,6 +92,8 @@ public class Hospitalization extends AbstractDomainObject {
 	private Date dateFirstSeen;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date notifyDistrictDate;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateFormSentToDistrict;
 
 	@Column(length = CHARACTER_LIMIT_BIG)
 	private String hospitalRecordNumber;
@@ -197,6 +199,14 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setNotifyDistrictDate(Date notifyDistrictDate) {
 		this.notifyDistrictDate = notifyDistrictDate;
+	}
+
+	public Date getDateFormSentToDistrict() {
+		return dateFormSentToDistrict;
+	}
+
+	public void setDateFormSentToDistrict(Date dateFormSentToDistrict) {
+		this.dateFormSentToDistrict = dateFormSentToDistrict;
 	}
 	public void setDateFirstSeen(Date dateFirstSeen) {
 		this.dateFirstSeen = dateFirstSeen;
