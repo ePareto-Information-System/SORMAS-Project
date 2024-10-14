@@ -509,6 +509,21 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 				Disease.FOODBORNE_ILLNESS
 		);
 		getContentBinding().sampleSuspectedDisease.initializeSpinner(DataUtils.toItems(idsrSuspectedList));
+
+		List<SampleMaterial> idsrSampleMaterialList = Arrays.asList(
+				SampleMaterial.BLOOD,
+				SampleMaterial.PLASMA,
+				SampleMaterial.SERUM,
+				SampleMaterial.ASPIRATE,
+				SampleMaterial.CEREBROSPINAL_FLUID,
+				SampleMaterial.PUS,
+				SampleMaterial.SALIVA,
+				SampleMaterial.BIOPSY,
+				SampleMaterial.STOOL
+		);
+
+		getContentBinding().sampleSampleMaterial.initializeSpinner(DataUtils.toItems(idsrSampleMaterialList));
+
 		getContentBinding().samplePurpose.setValue(SamplePurpose.EXTERNAL);
 		getContentBinding().samplePurpose.setVisibility(GONE);
 		getContentBinding().samplePathogenTestingRequested.setVisibility(GONE);
