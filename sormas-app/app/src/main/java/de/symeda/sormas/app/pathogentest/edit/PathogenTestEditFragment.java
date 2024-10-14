@@ -222,6 +222,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		contentBinding.pathogenTestReportDate.initializeDateField(getFragmentManager());
 		contentBinding.pathogenTestTestDateTime.initializeDateTimeField(getFragmentManager());
 		contentBinding.pathogenTestDateLabResultsSentDistrict.initializeDateField(getFragmentManager());
+		contentBinding.pathogenTestDateLabResultsSentClinician.initializeDateField(getFragmentManager());
 
 		if (sample.getSamplePurpose() == SamplePurpose.INTERNAL) {
 			contentBinding.pathogenTestLab.setRequired(false);
@@ -231,6 +232,8 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		switch (record.getSample().getAssociatedCase().getDisease()){
 			case YELLOW_FEVER:
 				handleYellowFever();
+			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
+				handleIDSR();
 		}
 	}
 
@@ -262,10 +265,11 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 				.collect(Collectors.toList());
 
 		List<Item> itemList = DataUtils.toItems(values1);
-
 		getContentBinding().pathogenTestFinalClassification.initializeSpinner(itemList);
 
+	}
 
-
+	private void handleIDSR(){
+		getContentBinding().pathogenTestTestedDisease.setEnabled(false);
 	}
 }

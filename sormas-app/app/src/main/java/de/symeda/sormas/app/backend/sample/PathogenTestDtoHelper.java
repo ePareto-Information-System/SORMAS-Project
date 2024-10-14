@@ -78,10 +78,12 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setCqValue(source.getCqValue());
 		target.setReportDate(source.getReportDate());
 		target.setDateLabResultsSentDistrict(source.getDateLabResultsSentDistrict());
+		target.setDateLabResultsSentClinician(source.getDateLabResultsSentClinician());
 		target.setFinalClassification(source.getFinalClassification());
 		target.setViaLims(source.isViaLims());
 		target.setLab(DatabaseHelper.getFacilityDao().getByReferenceDto(source.getLab()));
 		target.setLabDetails(source.getLabDetails());
+		target.setLabLocation(source.getLabLocation());
 		target.setLabUser(DatabaseHelper.getUserDao().getByReferenceDto(source.getLabUser()));
 
 		target.setPseudonymized(source.isPseudonymized());
@@ -114,6 +116,7 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 			target.setLab(null);
 		}
 		target.setLabDetails(source.getLabDetails());
+		target.setLabLocation(source.getLabLocation());
 
 		target.setTestResultVerified(source.getTestResultVerified());
 		target.setTestResultText(source.getTestResultText());
@@ -122,6 +125,7 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setCqValue(source.getCqValue());
 		target.setReportDate(source.getReportDate());
 		target.setDateLabResultsSentDistrict(source.getDateLabResultsSentDistrict());
+		target.setDateLabResultsSentClinician(source.getDateLabResultsSentClinician());
 		target.setFinalClassification(source.getFinalClassification());
 		target.setViaLims(source.isViaLims());
 

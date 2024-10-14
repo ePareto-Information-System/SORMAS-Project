@@ -140,6 +140,11 @@
                     app:value="@={data.labDetails}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/pathogenTest_labLocation"
+                    app:value="@={data.labLocation}"
+                    style="@style/ControlSingleColumnStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/pathogenTest_testResult"
                     app:required="true"
@@ -198,6 +203,11 @@
                 <de.symeda.sormas.app.component.controls.ControlDateField
                     android:id="@+id/pathogenTest_dateLabResultsSentDistrict"
                     app:value="@={data.dateLabResultsSentDistrict}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/pathogenTest_dateLabResultsSentClinician"
+                    app:value="@={data.dateLabResultsSentClinician}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
