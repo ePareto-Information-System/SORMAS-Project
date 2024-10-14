@@ -36,6 +36,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Transient;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.sample.AdditionalTestType;
 import de.symeda.sormas.api.sample.IpSampleTestType;
 import de.symeda.sormas.api.sample.FilterChangingFrequency;
@@ -161,7 +162,8 @@ public class Sample extends PseudonymizableAdo {
 
 	@Enumerated(EnumType.STRING)
 	private PathogenTestResultType pathogenTestResult;
-
+	@Enumerated(EnumType.STRING)
+	private Disease suspectedDisease;
 	@DatabaseField
 	private Boolean pathogenTestingRequested;
 
@@ -476,6 +478,14 @@ public class Sample extends PseudonymizableAdo {
 
 	public PathogenTestResultType getPathogenTestResult() {
 		return pathogenTestResult;
+	}
+
+	public Disease getSuspectedDisease() {
+		return suspectedDisease;
+	}
+
+	public void setSuspectedDisease(Disease suspectedDisease) {
+		this.suspectedDisease = suspectedDisease;
 	}
 
 	public void setPathogenTestResult(PathogenTestResultType pathogenTestResult) {

@@ -82,6 +82,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 
 	private List<Item> sampleMaterialList;
 	private List<Item> sampleSourceList;
+	private List<Item> suspectedDiseaseList;
 	private List<Facility> labList;
 	private List<Item> samplePurposeList;
 	private List<Item> samplingReasonList;
@@ -89,6 +90,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	private List<String> requestedSampleMaterials = new ArrayList<>();
 	private List<String> requestedAdditionalTests = new ArrayList<>();
 	private List<Item> finalTestResults;
+	private List<Item> suspectedList;
 	private List<String> ipSampleTestResults = new ArrayList<>();
 	private List<Item> posNegList;
 	private List<Item> posNegEqList;
@@ -188,6 +190,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		labList = DatabaseHelper.getFacilityDao().getActiveLaboratories(true);
 		samplePurposeList = DataUtils.getEnumItems(SamplePurpose.class, true);
 		samplingReasonList = DataUtils.getEnumItems(SamplingReason.class, true, getFieldVisibilityCheckers());
+		suspectedList = DataUtils.getEnumItems(Disease.class, true);
 		posNegList = DataUtils.getEnumItems(PosNegEq.class, true);
 		posNegEqList = DataUtils.getEnumItems(PosNegEq.class, true);
 		posNegList.remove(new Item<>(PosNegEq.EQU.toString(), PosNegEq.EQU));
@@ -299,6 +302,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			}
 		}*/
 		contentBinding.samplePathogenTestResult.initializeSpinner(finalTestResults);
+
 		contentBinding.samplePurpose.initializeSpinner(samplePurposeList, field -> {
 			SamplePurpose samplePurpose = (SamplePurpose) field.getValue();
 			if (SamplePurpose.EXTERNAL == samplePurpose) {
@@ -317,6 +321,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			}
 		});
 
+		contentBinding.sampleSuspectedDisease.initializeSpinner(suspectedList);
 		contentBinding.sampleSamplingReason.initializeSpinner(samplingReasonList);
 
 
@@ -433,6 +438,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		switch (record.getAssociatedCase().getDisease()){
 			case YELLOW_FEVER:
 				handleYellowFever();
+			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
+				handleIDSR();
 		}
 
 
@@ -484,6 +491,24 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 				PathogenTestResultType.NEGATIVE
 		);
 		getContentBinding().samplePathogenTestResult.initializeSpinner(DataUtils.toItems(yellowFeverTestResults));
+		getContentBinding().samplePurpose.setValue(SamplePurpose.EXTERNAL);
+		getContentBinding().samplePurpose.setVisibility(GONE);
+		getContentBinding().samplePathogenTestingRequested.setVisibility(GONE);
+	}
+
+	private void handleIDSR() {
+		List<Disease> idsrSuspectedList = Arrays.asList(
+				Disease.AHF,
+				Disease.AFP,
+				Disease.CORONAVIRUS,
+				Disease.CHIKUNGUNYA,
+				Disease.CHOLERA,
+				Disease.CONGENITAL_RUBELLA,
+				Disease.DENGUE,
+				Disease.EVD,
+				Disease.FOODBORNE_ILLNESS
+		);
+		getContentBinding().sampleSuspectedDisease.initializeSpinner(DataUtils.toItems(idsrSuspectedList));
 		getContentBinding().samplePurpose.setValue(SamplePurpose.EXTERNAL);
 		getContentBinding().samplePurpose.setVisibility(GONE);
 		getContentBinding().samplePathogenTestingRequested.setVisibility(GONE);
