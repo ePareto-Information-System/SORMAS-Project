@@ -85,6 +85,9 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 
 		target.setExposureDetailsKnown(source.getExposureDetailsKnown());
 		target.setActivityAsCaseDetailsKnown(source.getActivityAsCaseDetailsKnown());
+		target.setRecentTravelOutbreak(source.getRecentTravelOutbreak());
+		target.setContactSimilarOutbreak(source.getContactSimilarOutbreak());
+		target.setContactSickAnimals(source.getContactSickAnimals());
 		target.setContactWithSourceCaseKnown(source.getContactWithSourceCaseKnown());
 		target.setHighTransmissionRiskArea(source.getHighTransmissionRiskArea());
 		target.setLargeOutbreaksArea(source.getLargeOutbreaksArea());
@@ -167,6 +170,9 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 
 		target.setExposureDetailsKnown(source.getExposureDetailsKnown());
 		target.setActivityAsCaseDetailsKnown(source.getActivityAsCaseDetailsKnown());
+		target.setRecentTravelOutbreak(source.getRecentTravelOutbreak());
+		target.setContactSimilarOutbreak(source.getContactSimilarOutbreak());
+		target.setContactSickAnimals(source.getContactSickAnimals());
 		target.setContactWithSourceCaseKnown(source.getContactWithSourceCaseKnown());
 		target.setHighTransmissionRiskArea(source.getHighTransmissionRiskArea());
 		target.setLargeOutbreaksArea(source.getLargeOutbreaksArea());

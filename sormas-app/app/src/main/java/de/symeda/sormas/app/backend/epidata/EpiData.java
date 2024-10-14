@@ -60,6 +60,12 @@ public class EpiData extends PseudonymizableAdo {
 	@Enumerated(EnumType.STRING)
 	private YesNo activityAsCaseDetailsKnown;
 	@Enumerated(EnumType.STRING)
+	private YesNo recentTravelOutbreak;
+	@Enumerated(EnumType.STRING)
+	private YesNo contactSimilarOutbreak;
+	@Enumerated(EnumType.STRING)
+	private YesNo contactSickAnimals;
+	@Enumerated(EnumType.STRING)
 	private YesNo contactWithSourceCaseKnown;
 	@Enumerated(EnumType.STRING)
 	private YesNo highTransmissionRiskArea;
@@ -150,6 +156,30 @@ public class EpiData extends PseudonymizableAdo {
 
 	public void setActivityAsCaseDetailsKnown(YesNo activityAsCaseDetailsKnown) {
 		this.activityAsCaseDetailsKnown = activityAsCaseDetailsKnown;
+	}
+
+	public YesNo getRecentTravelOutbreak() {
+		return recentTravelOutbreak;
+	}
+
+	public void setRecentTravelOutbreak(YesNo recentTravelOutbreak) {
+		this.recentTravelOutbreak = recentTravelOutbreak;
+	}
+
+	public YesNo getContactSimilarOutbreak() {
+		return contactSimilarOutbreak;
+	}
+
+	public void setContactSimilarOutbreak(YesNo contactSimilarOutbreak) {
+		this.contactSimilarOutbreak = contactSimilarOutbreak;
+	}
+
+	public YesNo getContactSickAnimals() {
+		return contactSickAnimals;
+	}
+
+	public void setContactSickAnimals(YesNo contactSickAnimals) {
+		this.contactSickAnimals = contactSickAnimals;
 	}
 
 	public YesNo getContactWithSourceCaseKnown() {
