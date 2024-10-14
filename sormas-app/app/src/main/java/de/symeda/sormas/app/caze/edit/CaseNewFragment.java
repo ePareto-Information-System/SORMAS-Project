@@ -40,6 +40,7 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.sample.PosNegEq;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -131,6 +132,8 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 		monthList = DataUtils.getMonthItems(true);
 
 		sexList = DataUtils.getEnumItems(Sex.class, true);
+		sexList.remove(new Item<>(Sex.OTHER.toString(), Sex.OTHER));
+		sexList.remove(new Item<>(Sex.UNKNOWN.toString(), Sex.UNKNOWN));
 		presentConditionList = DataUtils.getEnumItems(PresentCondition.class, true);
 		caseTransmissionClassificationsList = DataUtils.getEnumItems(TransmissionClassification.class, true);
 

@@ -34,6 +34,7 @@ import androidx.fragment.app.FragmentManager;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
+//import de.symeda.sormas.app.BR;
 import de.symeda.sormas.app.BR;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.component.controls.ControlButton;

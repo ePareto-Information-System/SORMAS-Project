@@ -371,7 +371,7 @@
 
             </LinearLayout>
 
-            <ImageView style="@style/FullHorizontalDividerStyle"/>
+<!--            <ImageView style="@style/FullHorizontalDividerStyle"/>-->
 
             <TextView
                 android:id="@+id/person_headingEducationOccupation"

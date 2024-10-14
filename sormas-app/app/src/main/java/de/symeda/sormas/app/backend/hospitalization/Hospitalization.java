@@ -193,13 +193,6 @@ public class Hospitalization extends AbstractDomainObject {
 		this.notifyDistrictDate = notifyDistrictDate;
 	}
 
-	public Date getDateFormSentToDistrict() {
-		return dateFormSentToDistrict;
-	}
-
-	public void setDateFormSentToDistrict(Date dateFormSentToDistrict) {
-		this.dateFormSentToDistrict = dateFormSentToDistrict;
-	}
 	public void setDateFirstSeen(Date dateFirstSeen) {
 		this.dateFirstSeen = dateFirstSeen;
 	}

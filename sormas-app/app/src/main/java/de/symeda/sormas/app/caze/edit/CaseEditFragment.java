@@ -479,6 +479,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 				}
 			}
 		});
+		contentBinding.caseDataDisease.setEnabled(false);
 
 		if (record.getDisease() != null) {
 			super.hideFieldsForDisease(record.getDisease(), contentBinding.mainContent, FormType.CASE_EDIT);
@@ -808,6 +809,8 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		switch (record.getDisease()){
 			case YELLOW_FEVER:
 				handleYellowFever();
+			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
+				handleIDSR();
 		}
 	}
 
@@ -864,5 +867,10 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		getContentBinding().setFilteredVaccinationStatusValues(getFilteredVaccinationStatuses());
 
 
+	}
+
+	private void handleIDSR() {
+		getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
+		getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
 	}
 }
