@@ -117,6 +117,8 @@ public class PathogenTest extends PseudonymizableAdo {
 
 	@Column
 	private String labDetails;
+	@Column
+	private String labLocation;
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private User labUser;
@@ -125,7 +127,8 @@ public class PathogenTest extends PseudonymizableAdo {
 	private boolean viaLims;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateLabResultsSentDistrict;
-
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateLabResultsSentClinician;
 	@Enumerated(EnumType.STRING)
 	private FinalClassification finalClassification;
 
@@ -275,6 +278,14 @@ public class PathogenTest extends PseudonymizableAdo {
 		this.labDetails = labDetails;
 	}
 
+	public String getLabLocation() {
+		return labLocation;
+	}
+
+	public void setLabLocation(String labLocation) {
+		this.labLocation = labLocation;
+	}
+
 	public boolean isFourFoldIncreaseAntibodyTiter() {
 		return fourFoldIncreaseAntibodyTiter;
 	}
@@ -331,6 +342,13 @@ public class PathogenTest extends PseudonymizableAdo {
 		this.dateLabResultsSentDistrict = dateLabResultsSentDistrict;
 	}
 
+	public Date getDateLabResultsSentClinician() {
+		return dateLabResultsSentClinician;
+	}
+
+	public void setDateLabResultsSentClinician(Date dateLabResultsSentClinician) {
+		this.dateLabResultsSentClinician = dateLabResultsSentClinician;
+	}
 	public FinalClassification getFinalClassification() {
 		return finalClassification;
 	}
