@@ -99,8 +99,7 @@ public class Hospitalization extends AbstractDomainObject {
 	private String hospitalRecordNumber;
 	// just for reference, not persisted in DB
 	private List<PreviousHospitalization> previousHospitalizations = new ArrayList<>();
-	@DatabaseField(dataType = DataType.DATE_LONG)
-	private Date dateFormSentToDistrict;
+
 	@Enumerated(EnumType.STRING)
 	private YesNoUnknown patientVentilated;
 
@@ -201,13 +200,6 @@ public class Hospitalization extends AbstractDomainObject {
 		this.notifyDistrictDate = notifyDistrictDate;
 	}
 
-	public Date getDateFormSentToDistrict() {
-		return dateFormSentToDistrict;
-	}
-
-	public void setDateFormSentToDistrict(Date dateFormSentToDistrict) {
-		this.dateFormSentToDistrict = dateFormSentToDistrict;
-	}
 	public void setDateFirstSeen(Date dateFirstSeen) {
 		this.dateFirstSeen = dateFirstSeen;
 	}

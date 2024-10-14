@@ -35,7 +35,6 @@
         <import type="de.symeda.sormas.api.i18n.I18nProperties" />
         <import type="de.symeda.sormas.api.i18n.Strings" />
         <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
-        <import type="de.symeda.sormas.api.utils.YesNo" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.person.Person"/>
         <variable name="addressList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.location.Location&gt;" />
@@ -373,7 +372,7 @@
 
             </LinearLayout>
 
-            <ImageView style="@style/FullHorizontalDividerStyle"/>
+<!--            <ImageView style="@style/FullHorizontalDividerStyle"/>-->
 
             <TextView
                 android:id="@+id/person_headingEducationOccupation"
