@@ -230,6 +230,15 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 			);
 		}
 
+		if( disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
+			contentBinding.btnClearAll.setVisibility(GONE);
+			contentBinding.btnClearedToNo.setVisibility(GONE);
+			contentBinding.btnClearedToUnknown.setVisibility(GONE);
+			contentBinding.symptomsOnsetSymptom.setVisibility(GONE);
+			contentBinding.symptomsDescription.setVisibility(GONE);
+			contentBinding.symptomsSignsAndSymptons.setVisibility(GONE);
+		}
+
 		contentBinding.symptomsCongenitalHeartDisease.addValueChangedListener(e -> {
 			if (e.getValue() != SymptomState.YES) {
 				contentBinding.symptomsCongenitalHeartDiseaseDetails.setVisibility(GONE);
@@ -296,8 +305,12 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		}
 
 		onsetSymptomField.initializeSpinner(DataUtils.addEmptyItem(initialSpinnerItems));
-		onsetSymptomField.setEnabled(onsetSymptomField.getAdapter().getCount() > 1); // first is "empty item"
-		onsetDateField.setEnabled(isAnySymptomSetToYes());
+
+		if ( disease != Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
+			onsetSymptomField.setEnabled(onsetSymptomField.getAdapter().getCount() > 1); // first is "empty item"
+			onsetDateField.setEnabled(isAnySymptomSetToYes());
+		}
+
 	}
 
 	private boolean isAnySymptomSetToYes() {

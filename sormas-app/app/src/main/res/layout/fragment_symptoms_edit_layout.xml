@@ -74,6 +74,7 @@
 
             <TextView
                 style="@style/SubHeadingCompactStyle"
+                android:id="@+id/symptoms_signsAndSymptons"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/heading_symptoms"/>
