@@ -28,6 +28,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Transient;
 
+import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +45,9 @@ import de.symeda.sormas.app.backend.containmentmeasure.ContainmentMeasure;
 import de.symeda.sormas.app.backend.contaminationsource.ContaminationSource;
 import de.symeda.sormas.app.backend.exposure.Exposure;
 import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
+import de.symeda.sormas.app.backend.region.Community;
+import de.symeda.sormas.app.backend.region.District;
+import de.symeda.sormas.app.backend.region.Region;
 
 @Entity(name = EpiData.TABLE_NAME)
 @DatabaseTable(tableName = EpiData.TABLE_NAME)
@@ -136,6 +140,21 @@ public class EpiData extends PseudonymizableAdo {
 
 	@Transient
 	private Set<ContactSetting> patientContactWithConfirmedCaseExposureLocations;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo historyOfTravelOutsideTheVillageTownDistrict;
+
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private Region historyOfTravelRegion;
+
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private District historyOfTravelDistrict;
+
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private Community historyOfTravelSubDistrict;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String historyOfTravelVillage;
 
 
 
@@ -368,6 +387,46 @@ public class EpiData extends PseudonymizableAdo {
 	public void setPatientContactWithConfirmedCaseExposureLocationsString(String patientContactWithConfirmedCaseExposureLocationsString) {
 		this.patientContactWithConfirmedCaseExposureLocationsString = patientContactWithConfirmedCaseExposureLocationsString;
 		patientContactWithConfirmedCaseExposureLocations = null;
+	}
+
+	public YesNo getHistoryOfTravelOutsideTheVillageTownDistrict() {
+		return historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public void setHistoryOfTravelOutsideTheVillageTownDistrict(YesNo historyOfTravelOutsideTheVillageTownDistrict) {
+		this.historyOfTravelOutsideTheVillageTownDistrict = historyOfTravelOutsideTheVillageTownDistrict;
+	}
+
+	public Region getHistoryOfTravelRegion() {
+		return historyOfTravelRegion;
+	}
+
+	public void setHistoryOfTravelRegion(Region historyOfTravelRegion) {
+		this.historyOfTravelRegion = historyOfTravelRegion;
+	}
+
+	public District getHistoryOfTravelDistrict() {
+		return historyOfTravelDistrict;
+	}
+
+	public void setHistoryOfTravelDistrict(District historyOfTravelDistrict) {
+		this.historyOfTravelDistrict = historyOfTravelDistrict;
+	}
+
+	public Community getHistoryOfTravelSubDistrict() {
+		return historyOfTravelSubDistrict;
+	}
+
+	public void setHistoryOfTravelSubDistrict(Community historyOfTravelSubDistrict) {
+		this.historyOfTravelSubDistrict = historyOfTravelSubDistrict;
+	}
+
+	public String getHistoryOfTravelVillage() {
+		return historyOfTravelVillage;
+	}
+
+	public void setHistoryOfTravelVillage(String historyOfTravelVillage) {
+		this.historyOfTravelVillage = historyOfTravelVillage;
 	}
 
 	public void setPatientCloseContactWithARIContactSettings(Set<ContactSetting> patientCloseContactWithARIContactSettings) {

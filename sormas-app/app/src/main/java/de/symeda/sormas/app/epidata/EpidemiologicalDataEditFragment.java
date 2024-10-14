@@ -30,6 +30,8 @@ import androidx.databinding.ObservableArrayList;
 import com.googlecode.openbeans.Introspector;
 import com.googlecode.openbeans.PropertyDescriptor;
 
+import java.util.List;
+
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
@@ -57,9 +59,12 @@ import de.symeda.sormas.app.backend.epidata.EpiData;
 import de.symeda.sormas.app.backend.exposure.Exposure;
 import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
 import de.symeda.sormas.app.caze.edit.CaseEditActivity;
+import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.core.IEntryItemOnClickListener;
 import de.symeda.sormas.app.databinding.FragmentEditEpidLayoutBinding;
 import de.symeda.sormas.app.util.FieldVisibilityAndAccessHelper;
+import de.symeda.sormas.app.util.InfrastructureDaoHelper;
+import de.symeda.sormas.app.util.InfrastructureFieldsDependencyHandler;
 
 public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEditEpidLayoutBinding, EpiData, PseudonymizableAdo> {
 
@@ -72,6 +77,11 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	private IEntryItemOnClickListener onPersonTravelHistoryItemClickListener;
 	private IEntryItemOnClickListener onContainmentMeasureItemClickListener;
 	private IEntryItemOnClickListener onContaminationSourceItemClickListener;
+
+	private List<Item> initialRegionsList;
+	private List<Item> initialDistrictsList;
+	private List<Item> initialCommunitiesList;
+
 
 
 	// Static methods
@@ -378,6 +388,10 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	protected void prepareFragmentData() {
 		record = getEpiDataOfCaseOrContact(getActivityRootData());
 		caseDisease = getDiseaseOfCaseOrContact(getActivityRootData());
+
+		initialRegionsList = InfrastructureDaoHelper.loadRegionsByServerCountry();
+		initialDistrictsList = InfrastructureDaoHelper.loadDistricts(record.getHistoryOfTravelRegion());
+		initialCommunitiesList = InfrastructureDaoHelper.loadCommunities(record.getHistoryOfTravelDistrict());
 	}
 
 	@Override
@@ -420,6 +434,18 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		contentBinding.setContaminationSourceListBindCallback(
 			v -> FieldVisibilityAndAccessHelper
 				.setFieldVisibilitiesAndAccesses(ContaminationSource.class, (ViewGroup) v, new FieldVisibilityCheckers(), getFieldAccessCheckers()));
+
+		InfrastructureFieldsDependencyHandler.instance.initializeRegionFields(
+			contentBinding.epiDataHistoryOfTravelRegion,
+			initialRegionsList,
+			record.getHistoryOfTravelRegion(),
+			contentBinding.epiDataHistoryOfTravelDistrict,
+			initialDistrictsList,
+			record.getHistoryOfTravelDistrict(),
+			contentBinding.epiDataHistoryOfTravelSubDistrict,
+			initialCommunitiesList,
+			record.getHistoryOfTravelSubDistrict()
+		);
 
 
 
