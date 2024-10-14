@@ -225,6 +225,12 @@
                     app:value="@={data.pathogenTestResult}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/sample_suspectedDisease"
+                    app:required="true"
+                    app:value="@={data.suspectedDisease}"
+                    style="@style/ControlSingleColumnStyle" />
+
                 <LinearLayout
                     android:id="@+id/external_sample_fields_layout"
                     android:orientation="vertical"
