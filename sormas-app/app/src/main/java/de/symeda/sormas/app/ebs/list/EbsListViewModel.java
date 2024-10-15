@@ -24,17 +24,15 @@ public class EbsListViewModel extends ViewModel {
     public void initializeViewModel() {
         ebsDataFactory = new EbsListViewModel.EbsDataFactory();
         EbsCriteria ebsCriteria = new EbsCriteria();
-        ebsCriteria.signalOutcome(SignalOutcome.EVENT);
         ebsDataFactory.setEbsCriteria(ebsCriteria);
         initializeList();
     }
 
     public EbsListViewModel() {
-        ebsDataFactory = new EbsListViewModel.EbsDataFactory();
+        ebsDataFactory = new EbsDataFactory();
         EbsCriteria ebsCriteria = new EbsCriteria();
-        ebsCriteria.signalOutcome(SignalOutcome.EVENT);
+        ebsCriteria.signalOutcome(SignalOutcome.NON_EVENT);
         ebsDataFactory.setEbsCriteria(ebsCriteria);
-
         PagedList.Config config = new PagedList.Config.Builder().setEnablePlaceholders(true).setInitialLoadSizeHint(16).setPageSize(8).build();
 
         LivePagedListBuilder eventListBuilder = new LivePagedListBuilder(ebsDataFactory, config);
@@ -55,7 +53,7 @@ public class EbsListViewModel extends ViewModel {
     }
 
     public EbsCriteria getEbsCriteria(){
-        return ebsDataFactory.ebsCriteria;
+        return ebsDataFactory.getEbsCriteria();
     }
 
     public static class EbsDataSource extends PositionalDataSource<Ebs> {
