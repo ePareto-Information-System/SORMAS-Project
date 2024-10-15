@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import de.symeda.sormas.api.ebs.EbsSourceType;
+import de.symeda.sormas.api.ebs.EbsTriagingDecision;
+import de.symeda.sormas.api.ebs.SignalCategory;
 import de.symeda.sormas.api.ebs.SignalOutcome;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.app.BaseListActivity;
@@ -20,22 +22,27 @@ import de.symeda.sormas.app.PagedBaseListFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.ebs.Ebs;
+import de.symeda.sormas.app.backend.region.District;
+import de.symeda.sormas.app.backend.region.Region;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.component.menu.PageMenuItem;
+import de.symeda.sormas.app.databinding.FilterEbsListLayoutBinding;
 import de.symeda.sormas.app.ebs.edit.EbsNewActivity;
 import de.symeda.sormas.app.util.Callback;
 import de.symeda.sormas.app.util.DataUtils;
+import de.symeda.sormas.app.util.InfrastructureDaoHelper;
 
 public class EbsListActivity extends PagedBaseListActivity {
 
-    public static EbsSourceType[] sourceTypes = new EbsSourceType[]{
-        null,
-            EbsSourceType.CEBS,
-            EbsSourceType.HEBS};
+    public static SignalOutcome[] signalOutcomes = new SignalOutcome[]{
+            SignalOutcome.NON_EVENT,
+            SignalOutcome.EVENT
+    };
     private EbsListViewModel model;
+    private FilterEbsListLayoutBinding filterBinding;
 
     public static void startActivity(Context context, SignalOutcome listFilter) {
-        BaseListActivity.startActivity(context, EbsListActivity.class, buildBundle(getStatusFilterPosition(sourceTypes, listFilter)));
+        BaseListActivity.startActivity(context, EbsListActivity.class, buildBundle(getStatusFilterPosition(signalOutcomes, listFilter)));
     }
 
     @Override
@@ -59,13 +66,14 @@ public class EbsListActivity extends PagedBaseListActivity {
         });
         model = new ViewModelProvider(this).get(EbsListViewModel.class);
         model.initializeViewModel();
-        model.getEbs().observe(this, tasks -> {
-            adapter.submitList(tasks);
+        model.getEbs().observe(this, ebss -> {
+            adapter.submitList(ebss);
             hidePreloader();
         });
+        filterBinding.setCriteria(model.getEbsCriteria());
         setOpenPageCallback(p -> {
             showPreloader();
-            model.getEbsCriteria().setSourceType(sourceTypes[((PageMenuItem) p).getPosition()]);
+            model.getEbsCriteria().setSignalOutcome(signalOutcomes[((PageMenuItem) p).getPosition()]);
             model.notifyCriteriaUpdated();
         });
     }
@@ -76,18 +84,18 @@ public class EbsListActivity extends PagedBaseListActivity {
         getIntent().putExtra("refreshOnResume", true);
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        if (getIntent().getBooleanExtra("refreshOnResume", false)) {
-//            showPreloader();
-//            model.getEbs().getValue().getDataSource().invalidate();
-//        }
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getIntent().getBooleanExtra("refreshOnResume", false)) {
+            showPreloader();
+            model.getEbs().getValue().getDataSource().invalidate();
+        }
+    }
 
     @Override
     public List<PageMenuItem> getPageMenuData() {
-        return PageMenuItem.fromEnum(sourceTypes, getContext());
+        return PageMenuItem.fromEnum(signalOutcomes, getContext());
     }
 
     @Override
@@ -102,7 +110,7 @@ public class EbsListActivity extends PagedBaseListActivity {
     @Override
     protected PagedBaseListFragment buildListFragment(PageMenuItem menuItem) {
         if (menuItem != null) {
-            EbsSourceType listFilter = sourceTypes[menuItem.getPosition()];
+            SignalOutcome listFilter = signalOutcomes[menuItem.getPosition()];
             return EbsListFragment.newInstance(listFilter);
         }
         return null;
@@ -133,20 +141,50 @@ public class EbsListActivity extends PagedBaseListActivity {
 
     @Override
     public void addFiltersToPageMenu() {
-//        View ebsListFilterView = getLayoutInflater().inflate(R.layout.filter_ebs_list_layout, null);
-//        FilterEbsListLayoutBinding ebsListFilterBinding = DataBindingUtil.bind(ebsListFilterView);
+        View ebsListFilterView = getLayoutInflater().inflate(R.layout.filter_ebs_list_layout, null);
+        filterBinding = DataBindingUtil.bind(ebsListFilterView);
+        List<Item> sourceInformation = DataUtils.getEnumItems(EbsSourceType.class);
+        List<Item> triagingDecision = DataUtils.getEnumItems(EbsTriagingDecision.class);
+        List<Item> signalCategory = DataUtils.getEnumItems(SignalCategory.class);
 
-//        List<Item> ebsSignalOutcomeList = DataUtils.getEnumItems(SignalOutcome.class, false);
-//        ebsListFilterBinding.ebsSignalOutcome.initializeSpinner(ebsSignalOutcomeList);
 
-//        pageMenu.addFilter(ebsListFilterView);
+        filterBinding.ebsSourceInformationFilter.initializeSpinner(sourceInformation);
+        filterBinding.triagingSignalCategoryFilter.initializeSpinner(signalCategory);
+        filterBinding.triagingTriagingDecisionFilter.initializeSpinner(triagingDecision);
+        filterBinding.ebsRegionFilter.initializeSpinner(InfrastructureDaoHelper.loadRegionsByServerCountry());
+        filterBinding.ebsRegionFilter.addValueChangedListener(e->{
+            filterBinding.ebsDistrictFilter.initializeSpinner(InfrastructureDaoHelper.loadDistricts((Region) e.getValue()));
+        });
+        filterBinding.ebsDistrictFilter.addValueChangedListener(e->{
+            filterBinding.ebsCommunityFilter.initializeSpinner(InfrastructureDaoHelper.loadCommunities((District) e.getValue()));
+        });
 
-//        ebsListFilterBinding.ebsSignalOutcome.addValueChangedListener(e -> {
-//            if (model.getEbsCriteria().getSignalOutcome() != e.getValue()) {
-//                showPreloader();
-//                model.getEbsCriteria().signalOutcome((SignalOutcome) e.getValue());
-//                model.notifyCriteriaUpdated();
-//            }
-//        });
+
+        filterBinding.ebsReportDateTimeFilter.initializeDateField(getSupportFragmentManager());
+        filterBinding.triagingDecisionDateFilter.initializeDateField(getSupportFragmentManager());
+
+        pageMenu.addFilter(ebsListFilterView);
+
+        filterBinding.applyFilters.setOnClickListener(e -> {
+            showPreloader();
+            pageMenu.hideAll();
+            model.notifyCriteriaUpdated();
+        });
+
+        filterBinding.resetFilters.setOnClickListener(e -> {
+            showPreloader();
+            pageMenu.hideAll();
+            model.getEbsCriteria().setSourceInformation(null);
+            model.getEbsCriteria().setRegion(null);
+            model.getEbsCriteria().setDistrict(null);
+            model.getEbsCriteria().setCommunity(null);
+            model.getEbsCriteria().setReportDateTime(null);
+            model.getEbsCriteria().triageDate(null);
+            model.getEbsCriteria().setSignalCategory(null);
+            model.getEbsCriteria().setTriagingDecision(null);
+            filterBinding.invalidateAll();
+            filterBinding.executePendingBindings();
+            model.notifyCriteriaUpdated();
+        });
     }
 }
