@@ -189,6 +189,9 @@ public class EbsAlertEditActivity extends BaseEditActivity<EbsAlert> {
 				if (taskResult.getResultStatus().isSuccess()) {
 					finish();
 					EbsAlertListActivity.startActivity(getContext(), null);
+				} else {
+					onResume(); // reload data
+					EbsAlertListActivity.startActivity(getContext(), null);
 				}
 				saveTask = null;
 			}
