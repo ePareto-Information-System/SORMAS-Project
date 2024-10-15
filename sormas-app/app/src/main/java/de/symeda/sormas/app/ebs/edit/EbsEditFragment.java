@@ -197,6 +197,8 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 		contentBinding.ebsManualScanningType.initializeSpinner(manualScanningType);
 		contentBinding.ebsReportDateTime.initializeDateField(getFragmentManager());
 		contentBinding.ebsDateOnset.initializeDateField(getFragmentManager());
+		contentBinding.ebsInformantName.setVisibility(GONE);
+		contentBinding.ebsCommunity.setCaption("Sub District");
 		contentBinding.ebsSourceInformation.addValueChangedListener(e -> {
 			List<PersonReporting> itemsToAdd;
 
@@ -214,6 +216,7 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 							PersonReporting.COMMUNITY_MEMBER,
 							PersonReporting.OTHER
 					);
+					contentBinding.ebsInformantName.setVisibility(View.VISIBLE);
 					break;
 				case HEBS:
 					itemsToAdd = Arrays.asList(
@@ -222,6 +225,7 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 							PersonReporting.REFERENCE_LABORATORY,
 							PersonReporting.OTHER
 					);
+					contentBinding.ebsInformantName.setVisibility(View.VISIBLE);
 					break;
 				case MEDIA_NEWS:
 					itemsToAdd = Arrays.asList(
@@ -230,6 +234,7 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 							PersonReporting.PERSON_NATIONAL,
 							PersonReporting.OTHER
 					);
+					contentBinding.ebsInformantName.setVisibility(GONE);
 					contentBinding.ebsScanningType.setValue(scannningTypes);
 					break;
 				case HOTLINE_PERSON:
@@ -238,6 +243,7 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 							PersonReporting.INSTITUTIONAL_INFORMANT,
 							PersonReporting.OTHER
 					);
+					contentBinding.ebsInformantName.setVisibility(View.VISIBLE);
 					break;
 				default:
 					itemsToAdd = Collections.emptyList();
