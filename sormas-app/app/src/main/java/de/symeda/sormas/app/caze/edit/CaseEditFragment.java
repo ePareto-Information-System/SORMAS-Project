@@ -50,6 +50,7 @@ import de.symeda.sormas.api.caze.RabiesType;
 import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.caze.Trimester;
 import de.symeda.sormas.api.caze.VaccinationInfoSource;
+import de.symeda.sormas.api.caze.VaccinationRoutine;
 import de.symeda.sormas.api.caze.Vaccine;
 import de.symeda.sormas.api.caze.VaccineManufacturer;
 import de.symeda.sormas.api.caze.surveillancereport.ReportingType;
@@ -758,6 +759,8 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataVaccinationDate.initializeDateField(getFragmentManager());
 		contentBinding.caseDataSecondVaccinationDate.initializeDateField(getFragmentManager());
 //		contentBinding.caseDataReportingType.initializeSpinner(reportingTypeList);
+		contentBinding.caseDataLastVaccinationDate.initializeDateField(getFragmentManager());
+		contentBinding.setVaccinationRoutineClass(VaccinationRoutine.class);
 
 		// Replace classification user field with classified by field when case has been classified automatically
 		if (contentBinding.getData().getClassificationDate() != null && contentBinding.getData().getClassificationUser() == null) {

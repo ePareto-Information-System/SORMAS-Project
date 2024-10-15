@@ -500,6 +500,23 @@
                     android:orientation="horizontal">
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/sample_dateFormSentToHigherLevel"
+                        app:value="@={data.dateFormSentToHigherLevel}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/sample_personCompletingForm"
+                        app:value="@={data.personCompletingForm}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/sample_dateSpecimenSentToRegion"
                         app:value="@={data.dateSpecimenSentToRegion}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />

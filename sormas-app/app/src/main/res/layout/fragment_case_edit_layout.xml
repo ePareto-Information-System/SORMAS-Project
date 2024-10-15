@@ -47,6 +47,7 @@
         <import type="de.symeda.sormas.api.i18n.Strings" />
         <import type="de.symeda.sormas.api.disease.DiseaseVariant" />
         <import type="de.symeda.sormas.api.caze.IdsrType" />
+        <import type="de.symeda.sormas.api.caze.VaccinationRoutine" />
 
         <variable name="hosp" type="de.symeda.sormas.app.backend.hospitalization.Hospitalization" />
         <variable name="data" type="de.symeda.sormas.app.backend.caze.Case"/>
@@ -60,6 +61,7 @@
         <variable name="differentPlaceOfStayJurisdiction" type="Boolean" />
         <variable name="filteredVaccinationStatusValues" type="VaccinationStatus[]" />
 
+        <variable name="vaccinationRoutineClass" type="Class" />
     </data>
 
     <ScrollView
@@ -954,6 +956,23 @@
                     app:value="@={data.smallpoxVaccinationScar}"
                     app:dependencyParentField="@{caseDataSmallpoxVaccinationReceived}"
                     app:dependencyParentValue="@{YesNoUnknown.YES}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/caseData_vaccinationRoutine"
+                    app:enumClass="@{vaccinationRoutineClass}"
+                    app:value="@={data.vaccinationRoutine}"
+                    app:dependencyParentField="@{caseDataVaccinationType}"
+                    app:dependencyParentValue="@{CardOrHistory.CARD}"
+                    app:dependencyParentVisibility="@{true}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/caseData_lastVaccinationDate"
+                    app:value="@={data.lastVaccinationDate}"
+                    app:dependencyParentField="@{caseDataVaccinationType}"
+                    app:dependencyParentValue="@{CardOrHistory.CARD}"
+                    app:dependencyParentVisibility="@{true}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <TextView

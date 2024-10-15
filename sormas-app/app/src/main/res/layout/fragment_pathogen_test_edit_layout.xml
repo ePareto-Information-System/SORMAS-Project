@@ -210,6 +210,22 @@
                     app:value="@={data.dateLabResultsSentClinician}"
                     style="@style/ControlSingleColumnStyle" />
 
+
+                <de.symeda.sormas.app.component.controls.ControlDateTimeField
+                    android:id="@+id/pathogenTest_dateSurveillanceSentResultsToDistrict"
+                    app:value="@={data.dateSurveillanceSentResultsToDistrict}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateTimeField
+                    android:id="@+id/pathogenTest_dateDistrictReceivedLabResults"
+                    app:value="@={data.dateDistrictReceivedLabResults}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateTimeField
+                    android:id="@+id/pathogenTest_laboratoryDateResultsSentDSD"
+                    app:value="@={data.laboratoryDateResultsSentDSD}"
+                    style="@style/ControlSingleColumnStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/pathogenTest_finalClassification"
                     app:value="@={data.finalClassification}"

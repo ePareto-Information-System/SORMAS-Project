@@ -95,6 +95,7 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		a.setHospitalRecordNumber(b.getHospitalRecordNumber());
 		a.setPatientVentilated(b.getPatientVentilated());
 		a.setDateFormSentToDistrict(b.getDateFormSentToDistrict());
+		a.setSeenAtAHealthFacility(b.getSeenAtAHealthFacility());
 	}
 
 	@Override
@@ -129,6 +130,7 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		a.setHospitalRecordNumber(b.getHospitalRecordNumber());
 		a.setPatientVentilated(b.getPatientVentilated());
 		a.setDateFormSentToDistrict(b.getDateFormSentToDistrict());
+		a.setSeenAtAHealthFacility(b.getSeenAtAHealthFacility());
 	}
 
     @Override

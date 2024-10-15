@@ -28,6 +28,7 @@ import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCaseDtoHelper;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
+import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.containmentmeasure.ContainmentMeasure;
 import de.symeda.sormas.app.backend.containmentmeasure.ContainmentMeasureDtoHelper;
 import de.symeda.sormas.app.backend.contaminationsource.ContaminationSource;
@@ -36,6 +37,12 @@ import de.symeda.sormas.app.backend.exposure.Exposure;
 import de.symeda.sormas.app.backend.exposure.ExposureDtoHelper;
 import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
 import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistoryDtoHelper;
+import de.symeda.sormas.app.backend.region.Community;
+import de.symeda.sormas.app.backend.region.CommunityDtoHelper;
+import de.symeda.sormas.app.backend.region.District;
+import de.symeda.sormas.app.backend.region.DistrictDtoHelper;
+import de.symeda.sormas.app.backend.region.Region;
+import de.symeda.sormas.app.backend.region.RegionDtoHelper;
 import de.symeda.sormas.app.rest.NoConnectionException;
 import retrofit2.Call;
 
@@ -163,6 +170,11 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		target.setPatientContactWithConfirmedCaseExposureLocationCityCountry(source.getPatientContactWithConfirmedCaseExposureLocationCityCountry());
 		target.setPatientCloseContactWithARIContactSettings(source.getPatientCloseContactWithARIContactSettings());
 		target.setPatientContactWithConfirmedCaseExposureLocations(source.getPatientContactWithConfirmedCaseExposureLocations());
+		target.setHistoryOfTravelOutsideTheVillageTownDistrict(source.getHistoryOfTravelOutsideTheVillageTownDistrict());
+		target.setHistoryOfTravelRegion(DatabaseHelper.getRegionDao().getByReferenceDto(source.getHistoryOfTravelRegion()));
+		target.setHistoryOfTravelDistrict(DatabaseHelper.getDistrictDao().getByReferenceDto(source.getHistoryOfTravelDistrict()));
+		target.setHistoryOfTravelSubDistrict(DatabaseHelper.getCommunityDao().getByReferenceDto(source.getHistoryOfTravelSubDistrict()));
+		target.setHistoryOfTravelVillage(source.getHistoryOfTravelVillage());
 	}
 
 	@Override
@@ -241,6 +253,30 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		target.setPatientCloseContactWithARIContactSettings(source.getPatientCloseContactWithARIContactSettings());
 		target.setPatientContactWithConfirmedCaseExposureLocations(source.getPatientContactWithConfirmedCaseExposureLocations());
 		target.setPseudonymized(source.isPseudonymized());
+
+		target.setHistoryOfTravelOutsideTheVillageTownDistrict(source.getHistoryOfTravelOutsideTheVillageTownDistrict());
+		if (source.getHistoryOfTravelRegion() != null) {
+			Region region = DatabaseHelper.getRegionDao().queryForId(source.getHistoryOfTravelRegion().getId());
+			target.setHistoryOfTravelRegion(RegionDtoHelper.toReferenceDto(region));
+		} else {
+			target.setHistoryOfTravelRegion(null);
+		}
+
+		if (source.getHistoryOfTravelDistrict() != null) {
+			District district = DatabaseHelper.getDistrictDao().queryForId(source.getHistoryOfTravelDistrict().getId());
+			target.setHistoryOfTravelDistrict(DistrictDtoHelper.toReferenceDto(district));
+		} else {
+			target.setHistoryOfTravelDistrict(null);
+		}
+
+		if (source.getHistoryOfTravelSubDistrict() != null) {
+			Community community = DatabaseHelper.getCommunityDao().queryForId(source.getHistoryOfTravelSubDistrict().getId());
+			target.setHistoryOfTravelSubDistrict(CommunityDtoHelper.toReferenceDto(community));
+		} else {
+			target.setHistoryOfTravelSubDistrict(null);
+		}
+
+		target.setHistoryOfTravelVillage(source.getHistoryOfTravelVillage());
 	}
 
     @Override

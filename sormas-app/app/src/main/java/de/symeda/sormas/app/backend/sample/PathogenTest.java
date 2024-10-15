@@ -129,7 +129,16 @@ public class PathogenTest extends PseudonymizableAdo {
 	private Date dateLabResultsSentDistrict;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateLabResultsSentClinician;
-	@Enumerated(EnumType.STRING)
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSurveillanceSentResultsToDistrict;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateDistrictReceivedLabResults;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date laboratoryDateResultsSentDSD;
+
+	@Enumerated
 	private FinalClassification finalClassification;
 
 	public Sample getSample() {
@@ -349,6 +358,32 @@ public class PathogenTest extends PseudonymizableAdo {
 	public void setDateLabResultsSentClinician(Date dateLabResultsSentClinician) {
 		this.dateLabResultsSentClinician = dateLabResultsSentClinician;
 	}
+	
+
+	public Date getDateSurveillanceSentResultsToDistrict() {
+		return dateSurveillanceSentResultsToDistrict;
+	}
+
+	public void setDateSurveillanceSentResultsToDistrict(Date dateSurveillanceSentResultsToDistrict) {
+		this.dateSurveillanceSentResultsToDistrict = dateSurveillanceSentResultsToDistrict;
+	}
+
+	public Date getDateDistrictReceivedLabResults() {
+		return dateDistrictReceivedLabResults;
+	}
+
+	public void setDateDistrictReceivedLabResults(Date dateDistrictReceivedLabResults) {
+		this.dateDistrictReceivedLabResults = dateDistrictReceivedLabResults;
+	}
+
+	public Date getLaboratoryDateResultsSentDSD() {
+		return laboratoryDateResultsSentDSD;
+	}
+
+	public void setLaboratoryDateResultsSentDSD(Date laboratoryDateResultsSentDSD) {
+		this.laboratoryDateResultsSentDSD = laboratoryDateResultsSentDSD;
+	}
+
 	public FinalClassification getFinalClassification() {
 		return finalClassification;
 	}
@@ -366,4 +401,6 @@ public class PathogenTest extends PseudonymizableAdo {
 	public String buildCaption() {
 		return super.buildCaption() + DateFormatHelper.formatLocalDate(getTestDateTime());
 	}
+
+
 }

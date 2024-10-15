@@ -118,6 +118,8 @@ public class Location extends PseudonymizableAdo {
 	private String zone;
 	@Column(length = CHARACTER_LIMIT_BIG)
 	private String landMark;
+	@Column(length = CHARACTER_LIMIT_BIG)
+	private String residentialAddress;
 
 	/**
 	 * Dirty fix for person-location association; doing this with a JoinTable is not
@@ -513,5 +515,13 @@ public class Location extends PseudonymizableAdo {
 
 	public void setLandMark(String landMark) {
 		this.landMark = landMark;
+	}
+
+	public String getResidentialAddress() {
+		return residentialAddress;
+	}
+
+	public void setResidentialAddress(String residentialAddress) {
+		this.residentialAddress = residentialAddress;
 	}
 }

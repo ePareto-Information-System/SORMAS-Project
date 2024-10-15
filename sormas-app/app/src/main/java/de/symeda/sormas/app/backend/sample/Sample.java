@@ -282,6 +282,12 @@ public class Sample extends PseudonymizableAdo {
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateFormReceivedAtDistrict;
 
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateFormSentToHigherLevel;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String personCompletingForm;
+
 
 
 	public Case getAssociatedCase() {
@@ -982,5 +988,21 @@ public class Sample extends PseudonymizableAdo {
 
 	public void setDateFormReceivedAtDistrict(Date dateFormReceivedAtDistrict) {
 		this.dateFormReceivedAtDistrict = dateFormReceivedAtDistrict;
+	}
+
+	public Date getDateFormSentToHigherLevel() {
+		return dateFormSentToHigherLevel;
+	}
+
+	public void setDateFormSentToHigherLevel(Date dateFormSentToHigherLevel) {
+		this.dateFormSentToHigherLevel = dateFormSentToHigherLevel;
+	}
+
+	public String getPersonCompletingForm() {
+		return personCompletingForm;
+	}
+
+	public void setPersonCompletingForm(String personCompletingForm) {
+		this.personCompletingForm = personCompletingForm;
 	}
 }

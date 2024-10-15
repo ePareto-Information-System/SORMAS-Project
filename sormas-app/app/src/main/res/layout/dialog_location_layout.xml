@@ -128,6 +128,12 @@
                 style="@style/ControlSingleColumnStyle"
                 app:value="@={data.postalCode}" />
 
+<!--            residentialaddress-->
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/location_residentialAddress"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@={data.residentialAddress}" />
+
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/location_city"
                 style="@style/ControlSingleColumnStyle"
