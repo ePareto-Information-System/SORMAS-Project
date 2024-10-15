@@ -1296,10 +1296,21 @@
 
                 </LinearLayout>
 
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/symptoms_generalizedRash"
+                    app:enumClass="@{symptomStateClass}"
+                    app:slim="true"
+                    app:value="@={data.generalizedRash}"
+                    style="@style/ControlSingleColumnStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlDateField
                     android:id="@+id/symptoms_lesionsOnsetDate"
                     app:value="@={data.lesionsOnsetDate}"
+                    app:softRequired="true"
+                    app:dependencyParentField="@{symptomsGeneralizedRash}"
+                    app:dependencyParentValue="@{SymptomState.YES}"
                     style="@style/ControlSingleColumnStyle" />
+
 
             </LinearLayout>
 
@@ -1474,13 +1485,6 @@
                 app:value="@={data.caseDetectedBeforeWormEmergence}"
                 app:dependencyParentField="@{symptomsEmergenceOfGuineaWorm}"
                 app:dependencyParentValue="@{SymptomState.YES}"
-                style="@style/ControlSingleColumnStyle" />
-
-            <de.symeda.sormas.app.component.controls.ControlSwitchField
-                android:id="@+id/symptoms_generalizedRash"
-                app:enumClass="@{symptomStateClass}"
-                app:slim="true"
-                app:value="@={data.generalizedRash}"
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlSwitchField
