@@ -250,7 +250,7 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 		}
 		contentBinding.triagingOccurrencePreviously.addValueChangedListener(e->{
 			var value = e.getValue();
-			if(value == YesNo.YES){
+			if(value == YesNo.YES || value == null){
 				contentBinding.triagingTriagingDecision.setValue(EbsTriagingDecision.DISCARD);
 			}else {
 				contentBinding.triagingTriagingDecision.setValue(EbsTriagingDecision.VERIFY);

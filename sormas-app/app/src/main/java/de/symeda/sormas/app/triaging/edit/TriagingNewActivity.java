@@ -39,6 +39,7 @@ import de.symeda.sormas.app.core.async.AsyncTaskResult;
 import de.symeda.sormas.app.core.async.SavingAsyncTask;
 import de.symeda.sormas.app.core.async.TaskResultHolder;
 import de.symeda.sormas.app.core.notification.NotificationHelper;
+import de.symeda.sormas.app.ebs.EbsSection;
 import de.symeda.sormas.app.ebs.edit.TriagingEditFragment;
 import de.symeda.sormas.app.util.Bundler;
 
@@ -169,7 +170,7 @@ public class TriagingNewActivity extends BaseEditActivity<Triaging> {
 				super.onPostExecute(taskResult);
 				if (taskResult.getResultStatus().isSuccess()) {
 					finish();
-					TriagingEditActivity.startActivity(getContext(), taskToSave.getUuid());
+					TriagingEditActivity.startActivity(getContext(), taskToSave.getUuid(), EbsSection.TRIAGING);
 				}
 				saveTask = null;
 			}
