@@ -23,7 +23,6 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import de.symeda.sormas.api.ebs.EbsSourceType;
 import de.symeda.sormas.api.ebs.SignalOutcome;
 import de.symeda.sormas.app.PagedBaseListFragment;
 import de.symeda.sormas.app.R;
@@ -38,7 +37,7 @@ public class EbsListFragment extends PagedBaseListFragment<EbsListAdapter> imple
 	private LinearLayoutManager linearLayoutManager;
 	private RecyclerView recyclerViewForList;
 
-	public static EbsListFragment newInstance(EbsSourceType listFilter) {
+	public static EbsListFragment newInstance(SignalOutcome listFilter) {
 		return newInstance(EbsListFragment.class, null, listFilter);
 	}
 
