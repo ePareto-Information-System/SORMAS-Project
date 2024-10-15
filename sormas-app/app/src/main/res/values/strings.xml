@@ -381,7 +381,7 @@
     <string name="heading_event_read">Read Event</string>
     <string name="heading_event_summary">Event Summary</string>
     <string name="heading_events_list">Event Listing</string>
-    <string name="heading_ebs_list">Event Listing</string>
+    <string name="heading_ebs_list">Signal / Event Listing</string>
     <string name="heading_risk_assessment_list">Risk Assessment Listing</string>
     <string name="heading_alert_list">Alert Listing</string>
     <string name="heading_existing_persons">Existing Persons</string>
