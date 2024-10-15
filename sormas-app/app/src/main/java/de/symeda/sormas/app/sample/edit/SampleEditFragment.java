@@ -231,6 +231,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		contentBinding.sampleDateResultReceivedNational.initializeDateField(getFragmentManager());
 		contentBinding.sampleDateFormReceivedAtDistrict.initializeDateField(getFragmentManager());
 		contentBinding.sampleDateFormSentToDistrict.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateFormSentToHigherLevel.initializeDateField(getFragmentManager());
 
 		if(record.getAssociatedCase().getDisease() != null){
 			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_CREATE);

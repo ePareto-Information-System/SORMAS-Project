@@ -132,6 +132,8 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setLabLocation(source.getLabLocation());
 		target.setDateFormSentToDistrict(source.getDateFormSentToDistrict());
 		target.setDateFormReceivedAtDistrict(source.getDateFormReceivedAtDistrict());
+		target.setDateFormSentToHigherLevel(source.getDateFormSentToHigherLevel());
+		target.setPersonCompletingForm(source.getPersonCompletingForm());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}
@@ -221,6 +223,8 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setLabLocation(source.getLabLocation());
 		target.setDateFormSentToDistrict(source.getDateFormSentToDistrict());
 		target.setDateFormReceivedAtDistrict(source.getDateFormReceivedAtDistrict());
+		target.setDateFormSentToHigherLevel(source.getDateFormSentToHigherLevel());
+		target.setPersonCompletingForm(source.getPersonCompletingForm());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}
