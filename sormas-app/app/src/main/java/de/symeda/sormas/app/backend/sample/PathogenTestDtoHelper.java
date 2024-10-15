@@ -80,6 +80,12 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setLab(DatabaseHelper.getFacilityDao().getByReferenceDto(source.getLab()));
 		target.setLabDetails(source.getLabDetails());
 		target.setLabUser(DatabaseHelper.getUserDao().getByReferenceDto(source.getLabUser()));
+		target.setVirusDetectionGenotype(source.getVirusDetectionGenotype());
+		target.setDateSurveillanceSentResultsToDistrict(source.getDateSurveillanceSentResultsToDistrict());
+		target.setTestResultText(source.getTestResultText());
+		target.setDateDistrictReceivedLabResults(source.getDateDistrictReceivedLabResults());
+		target.setLaboratoryDateResultsSentDSD(source.getLaboratoryDateResultsSentDSD());
+		target.setFinalClassification(source.getFinalClassification());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}
@@ -125,6 +131,13 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		} else {
 			target.setLabUser(null);
 		}
+
+		target.setVirusDetectionGenotype(source.getVirusDetectionGenotype());
+		target.setDateSurveillanceSentResultsToDistrict(source.getDateSurveillanceSentResultsToDistrict());
+		target.setTestResultText(source.getTestResultText());
+		target.setDateDistrictReceivedLabResults(source.getDateDistrictReceivedLabResults());
+		target.setLaboratoryDateResultsSentDSD(source.getLaboratoryDateResultsSentDSD());
+		target.setFinalClassification(source.getFinalClassification());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}

@@ -190,6 +190,31 @@
                     app:value="@={data.testResultText}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/pathogenTest_virusDetectionGenotype"
+                    app:value="@={data.virusDetectionGenotype}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateTimeField
+                    android:id="@+id/pathogenTest_dateSurveillanceSentResultsToDistrict"
+                    app:value="@={data.dateSurveillanceSentResultsToDistrict}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateTimeField
+                    android:id="@+id/pathogenTest_dateDistrictReceivedLabResults"
+                    app:value="@={data.dateDistrictReceivedLabResults}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateTimeField
+                    android:id="@+id/pathogenTest_laboratoryDateResultsSentDSD"
+                    app:value="@={data.laboratoryDateResultsSentDSD}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/pathogenTest_finalClassification"
+                    app:value="@={data.finalClassification}"
+                    style="@style/ControlSingleColumnStyle" />
+
             </LinearLayout>
 
         </LinearLayout>

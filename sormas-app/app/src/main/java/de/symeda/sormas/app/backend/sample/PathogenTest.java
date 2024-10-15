@@ -35,6 +35,7 @@ import javax.persistence.Transient;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
+import de.symeda.sormas.api.sample.FinalClassification;
 import de.symeda.sormas.api.sample.PCRTestSpecification;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
@@ -120,6 +121,21 @@ public class PathogenTest extends PseudonymizableAdo {
 
 	@Column
 	private boolean viaLims;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String virusDetectionGenotype;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSurveillanceSentResultsToDistrict;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateDistrictReceivedLabResults;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date laboratoryDateResultsSentDSD;
+
+	@Enumerated
+	private FinalClassification finalClassification;
 
 	public Sample getSample() {
 		return sample;
@@ -307,6 +323,46 @@ public class PathogenTest extends PseudonymizableAdo {
 		this.viaLims = viaLims;
 	}
 
+	public String getVirusDetectionGenotype() {
+		return virusDetectionGenotype;
+	}
+
+	public void setVirusDetectionGenotype(String virusDetectionGenotype) {
+		this.virusDetectionGenotype = virusDetectionGenotype;
+	}
+
+	public Date getDateSurveillanceSentResultsToDistrict() {
+		return dateSurveillanceSentResultsToDistrict;
+	}
+
+	public void setDateSurveillanceSentResultsToDistrict(Date dateSurveillanceSentResultsToDistrict) {
+		this.dateSurveillanceSentResultsToDistrict = dateSurveillanceSentResultsToDistrict;
+	}
+
+	public Date getDateDistrictReceivedLabResults() {
+		return dateDistrictReceivedLabResults;
+	}
+
+	public void setDateDistrictReceivedLabResults(Date dateDistrictReceivedLabResults) {
+		this.dateDistrictReceivedLabResults = dateDistrictReceivedLabResults;
+	}
+
+	public Date getLaboratoryDateResultsSentDSD() {
+		return laboratoryDateResultsSentDSD;
+	}
+
+	public void setLaboratoryDateResultsSentDSD(Date laboratoryDateResultsSentDSD) {
+		this.laboratoryDateResultsSentDSD = laboratoryDateResultsSentDSD;
+	}
+
+	public FinalClassification getFinalClassification() {
+		return finalClassification;
+	}
+
+	public void setFinalClassification(FinalClassification finalClassification) {
+		this.finalClassification = finalClassification;
+	}
+
 	@Override
 	public String getI18nPrefix() {
 		return I18N_PREFIX;
@@ -316,4 +372,6 @@ public class PathogenTest extends PseudonymizableAdo {
 	public String buildCaption() {
 		return super.buildCaption() + DateFormatHelper.formatLocalDate(getTestDateTime());
 	}
+
+
 }

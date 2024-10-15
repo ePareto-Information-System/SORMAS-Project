@@ -26,9 +26,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.sample.FinalClassification;
 import de.symeda.sormas.api.sample.PCRTestSpecification;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
@@ -63,6 +65,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 	private List<Item> diseaseList;
 	private List<Item> diseaseVariantList;
 	private List<Item> testResultList;
+	private List<Item> finalClassificationList;
 
 	// Instance methods
 
@@ -116,6 +119,16 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 	@Override
 	public void onLayoutBinding(FragmentPathogenTestEditLayoutBinding contentBinding) {
 		contentBinding.setData(record);
+		contentBinding.pathogenTestDateSurveillanceSentResultsToDistrict.initializeDateTimeField(getFragmentManager());
+		contentBinding.pathogenTestDateDistrictReceivedLabResults.initializeDateTimeField(getFragmentManager());
+		contentBinding.pathogenTestLaboratoryDateResultsSentDSD.initializeDateTimeField(getFragmentManager());
+		finalClassificationList = DataUtils.toItems(getDiseaseFinalClassifications(record.getTestedDisease()));
+		contentBinding.pathogenTestFinalClassification.initializeSpinner(finalClassificationList);
+
+		if(record.getSample().getAssociatedCase().getDisease() != null){
+			super.hideFieldsForDisease(record.getSample().getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.PATHOGEN_TEST_EDIT);
+		}
+
 	}
 
 	@Override
@@ -205,6 +218,19 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		if (sample.getSamplePurpose() == SamplePurpose.INTERNAL) {
 			contentBinding.pathogenTestLab.setRequired(false);
 		}
+
+		contentBinding.pathogenTestTestedDisease.addValueChangedListener(new ValueChangeListener() {
+			@Override
+			public void onChange(ControlPropertyField field) {
+				Disease disease = (Disease) field.getValue();
+				if (disease == null) {
+					return;
+				}
+
+				finalClassificationList = DataUtils.toItems(getDiseaseFinalClassifications(disease));
+				contentBinding.pathogenTestFinalClassification.setSpinnerData(finalClassificationList);
+			}
+		});
 	}
 
 	private void updateDiseaseVariantsField(FragmentPathogenTestEditLayoutBinding contentBinding) {
@@ -225,5 +251,17 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 	@Override
 	public int getEditLayout() {
 		return R.layout.fragment_pathogen_test_edit_layout;
+	}
+
+	public List<FinalClassification> getDiseaseFinalClassifications(Disease disease) {
+		if (disease == null) {
+			return FinalClassification.DEFAULT;
+		}
+		switch (disease) {
+			case MEASLES:
+				return FinalClassification.measlesClass;
+			default:
+				return FinalClassification.DEFAULT;
+		}
 	}
 }
