@@ -19,6 +19,7 @@ import static de.symeda.sormas.app.core.notification.NotificationType.ERROR;
 import static de.symeda.sormas.app.core.notification.NotificationType.WARNING;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -37,6 +38,7 @@ import de.symeda.sormas.app.backend.common.DaoException;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.ebs.Ebs;
 import de.symeda.sormas.app.backend.ebs.riskAssessment.RiskAssessment;
+import de.symeda.sormas.app.component.dialog.InfoDialog;
 import de.symeda.sormas.app.component.menu.PageMenuItem;
 import de.symeda.sormas.app.component.validation.FragmentValidator;
 import de.symeda.sormas.app.core.async.AsyncTaskResult;
@@ -47,6 +49,7 @@ import de.symeda.sormas.app.ebs.EbsSection;
 import de.symeda.sormas.app.ebs.edit.EbsEditActivity;
 import de.symeda.sormas.app.ebs.edit.EbsEditFragment;
 import de.symeda.sormas.app.ebs.edit.RiskAssessmentEditFragment;
+import de.symeda.sormas.app.ebsAlert.list.EbsAlertListActivity;
 import de.symeda.sormas.app.riskAssessment.list.RiskAssessmentListActivity;
 import de.symeda.sormas.app.triaging.edit.TriagingEditActivity;
 import de.symeda.sormas.app.util.Bundler;
@@ -165,12 +168,48 @@ public class RiskAssessmentNewActivity extends BaseEditActivity<RiskAssessment> 
 				hidePreloader();
 				super.onPostExecute(taskResult);
 				if (taskResult.getResultStatus().isSuccess()) {
-					finish();
-					RiskAssessmentListActivity.startActivity(getContext(), null);
+					InfoDialog riskInfo =  showRiskDialog(riskToSave.getRiskAssessment().toString());
+					riskInfo.setPositiveButton(R.string.action_ok, listener);
+					riskInfo.show();
+				} else {
+					finish(); // reload data
 				}
 				saveTask = null;
 			}
 		}.executeOnThreadPool();
+	}
+
+	DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+
+		public void onClick(DialogInterface dialog, int id) {
+			finish();
+			EbsAlertListActivity.startActivity(getContext(), null);
+		}
+	};
+	private InfoDialog showRiskDialog(String riskassessment){
+		InfoDialog riskAssessmentInfoDialog = null;
+		switch (riskassessment){
+			case "Very High":
+				riskAssessmentInfoDialog =
+						new InfoDialog(getContext(), R.layout.dialog_risk_very_high_assessment_layout, null);
+				break;
+			case "High":
+				riskAssessmentInfoDialog =
+						new InfoDialog(getContext(), R.layout.dialog_risk_high_assessment_layout, null);
+				break;
+			case "Moderate":
+				riskAssessmentInfoDialog =
+						new InfoDialog(getContext(), R.layout.dialog_risk_moderate_assessment_layout, null);
+				break;
+			case "Low":
+				riskAssessmentInfoDialog =
+						new InfoDialog(getContext(), R.layout.dialog_risk_low_assessment_layout, null);
+				break;
+			default:
+				riskAssessmentInfoDialog =
+						new InfoDialog(getContext(), R.layout.dialog_risk_low_assessment_layout, null);
+		}
+		return riskAssessmentInfoDialog;
 	}
 
 	@Override

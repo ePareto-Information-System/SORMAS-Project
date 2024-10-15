@@ -17,6 +17,7 @@ package de.symeda.sormas.app.ebs.edit;
 
 import static de.symeda.sormas.app.core.notification.NotificationType.ERROR;
 import static de.symeda.sormas.app.core.notification.NotificationType.WARNING;
+import static de.symeda.sormas.app.ebs.edit.EbsEditActivity.setParent;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -41,6 +42,7 @@ import de.symeda.sormas.app.core.async.SavingAsyncTask;
 import de.symeda.sormas.app.core.async.TaskResultHolder;
 import de.symeda.sormas.app.core.notification.NotificationHelper;
 import de.symeda.sormas.app.ebs.EbsSection;
+import de.symeda.sormas.app.triaging.edit.TriagingEditActivity;
 import de.symeda.sormas.app.util.Bundler;
 
 public class EbsNewActivity extends BaseEditActivity<Ebs> {
@@ -167,8 +169,9 @@ public class EbsNewActivity extends BaseEditActivity<Ebs> {
 				hidePreloader();
 				super.onPostExecute(taskResult);
 				if (taskResult.getResultStatus().isSuccess()) {
+					setParent(eventToSave);
 					finish();
-					EbsEditActivity.startActivity(getContext(), eventToSave.getUuid(), EbsSection.SIGNAL_INFORMATION);
+					TriagingEditActivity.startActivity(getContext(), EbsEditActivity.getParentEbs().getTriaging().getUuid(), EbsSection.TRIAGING);
 				}
 				saveTask = null;
 			}

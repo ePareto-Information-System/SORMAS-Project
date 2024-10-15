@@ -60,8 +60,8 @@ public class SignalVerificationEditActivity extends BaseEditActivity<SignalVerif
 
 	private AsyncTask saveTask;
 
-	public static void startActivity(Context context, String rootUuid) {
-		BaseEditActivity.startActivity(context, SignalVerificationEditActivity.class, buildBundle(rootUuid));
+	public static void startActivity(Context context, String rootUuid,EbsSection section) {
+		BaseEditActivity.startActivity(context, SignalVerificationEditActivity.class, buildBundle(rootUuid,section));
 	}
 
 	public static Bundler buildBundle(String rootUuid) {
@@ -107,8 +107,14 @@ public class SignalVerificationEditActivity extends BaseEditActivity<SignalVerif
 
 	@Override
 	protected BaseEditFragment buildEditFragment(PageMenuItem menuItem, SignalVerification activityRootData) {
-		EbsSection section = EbsSection.fromOrdinal(menuItem.getPosition());
+		EbsSection section = EbsSection.SIGNAL_VERIFICATION;
+		if (menuItem != null){
+			section = EbsSection.fromOrdinal(menuItem.getPosition());
+		}else {
+			section = EbsSection.SIGNAL_VERIFICATION;
+		}
 		BaseEditFragment fragment = EbsEditFragment.newInstance(EbsEditActivity.getParentEbs());
+		var some = EbsEditActivity.getParentEbs().getTriaging().getTriagingDecision();
 		if (EbsEditActivity.getParentEbs().getTriaging().getTriagingDecision() != EbsTriagingDecision.VERIFY){
 			EbsListActivity.startActivity(getContext(),null);
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -160,6 +166,8 @@ public class SignalVerificationEditActivity extends BaseEditActivity<SignalVerif
 			@Override
 			public void doInBackground(TaskResultHolder resultHolder) throws DaoException, ValidationException {
 				DatabaseHelper.getSignalVerificationDao().saveAndSnapshot(signalToSave);
+				EbsEditActivity.getParentEbs().setSignalVerification(signalToSave);
+				DatabaseHelper.getEbsDao().saveAndSnapshot(EbsEditActivity.getParentEbs());
 			}
 
 			@Override

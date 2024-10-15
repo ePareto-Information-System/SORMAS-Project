@@ -201,7 +201,7 @@ public class EbsEditActivity extends BaseEditActivity<Ebs> {
 				super.onPostExecute(taskResult);
 				if (taskResult.getResultStatus().isSuccess()) {
 					setParent(changedCase);
-					TriagingEditActivity.startActivity(getContext(),changedCase.getTriaging().getUuid());
+					TriagingEditActivity.startActivity(getContext(),changedCase.getTriaging().getUuid(),EbsSection.TRIAGING);
 				} else {
 					onResume();
 					// reload data

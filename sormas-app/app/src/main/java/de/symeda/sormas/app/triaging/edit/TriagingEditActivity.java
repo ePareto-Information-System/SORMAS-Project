@@ -59,8 +59,8 @@ public class TriagingEditActivity extends BaseEditActivity<Triaging> {
 
 	private AsyncTask saveTask;
 
-	public static void startActivity(Context context, String rootUuid) {
-		BaseEditActivity.startActivity(context, TriagingEditActivity.class, buildBundle(rootUuid));
+	public static void startActivity(Context context, String rootUuid,EbsSection section) {
+		BaseEditActivity.startActivity(context, TriagingEditActivity.class, buildBundle(rootUuid,section));
 	}
 
 	public static Bundler buildBundle(String rootUuid) {
@@ -109,7 +109,12 @@ public class TriagingEditActivity extends BaseEditActivity<Triaging> {
 
 	@Override
 	protected BaseEditFragment buildEditFragment(PageMenuItem menuItem, Triaging activityRootData) {
-		EbsSection section = EbsSection.fromOrdinal(menuItem.getPosition());
+		EbsSection section = EbsSection.TRIAGING;
+		if (menuItem != null){
+			section = EbsSection.fromOrdinal(menuItem.getPosition());
+		}else {
+			section = EbsSection.TRIAGING;
+		}
 		BaseEditFragment fragment = EbsEditFragment.newInstance(EbsEditActivity.getParentEbs());
 		switch (section) {
 
@@ -154,6 +159,8 @@ public class TriagingEditActivity extends BaseEditActivity<Triaging> {
 			@Override
 			public void doInBackground(TaskResultHolder resultHolder) throws DaoException, ValidationException {
 				DatabaseHelper.getTriagingDao().saveAndSnapshot(triageToSave);
+				EbsEditActivity.getParentEbs().setTriaging(triageToSave);
+				DatabaseHelper.getEbsDao().saveAndSnapshot(EbsEditActivity.getParentEbs());
 			}
 
 			@Override
@@ -161,7 +168,7 @@ public class TriagingEditActivity extends BaseEditActivity<Triaging> {
 				super.onPostExecute(taskResult);
 
 				if (taskResult.getResultStatus().isSuccess()) {
-					SignalVerificationEditActivity.startActivity(getContext(), EbsEditActivity.getParentEbs().getSignalVerification().getUuid());
+					SignalVerificationEditActivity.startActivity(getContext(), EbsEditActivity.getParentEbs().getSignalVerification().getUuid(), EbsSection.SIGNAL_VERIFICATION);
 				} else {
 					onResume(); // reload data
 				}
