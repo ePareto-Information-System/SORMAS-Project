@@ -233,7 +233,7 @@ public class EbsController {
 		editView.addCommitListener(() -> {
 			ebs.setRiskAssessment(riskAssessmentDataForm.getValue());
 			riskAssessmentDto.setRiskAssessment(riskAssessmentDataForm.getValue().getRiskAssessment());
-			FacadeProvider.getRiskAssessmentFacade().saveRisk(riskAssessmentDto);
+			FacadeProvider.getRiskAssessmentFacade().save(riskAssessmentDto);
 			FacadeProvider.getEbsFacade().save(ebs);
 			SormasUI.refreshView();
 			Notification notification =  Notification.show(I18nProperties.getString(Strings.messageRiskAssessmentSavedShort), TRAY_NOTIFICATION);
@@ -497,7 +497,7 @@ public class EbsController {
 		editView.addCommitListener(() -> {
 			ebs.setRiskAssessment(riskAssessmentDataForm.getValue());
 			riskAssessmentDto.setRiskAssessment(riskAssessmentDataForm.getValue().getRiskAssessment());
-			FacadeProvider.getRiskAssessmentFacade().saveRisk(riskAssessmentDto);
+			FacadeProvider.getRiskAssessmentFacade().save(riskAssessmentDto);
 			FacadeProvider.getEbsFacade().save(ebs);
 			SormasUI.refreshView();
 			Notification notification =  Notification.show(I18nProperties.getString(Strings.messageRiskAssessmentSavedShort), TRAY_NOTIFICATION);

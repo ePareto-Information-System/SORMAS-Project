@@ -8,6 +8,7 @@ import de.symeda.sormas.api.ebs.EbsTriagingDecision;
 import de.symeda.sormas.api.ebs.SignalCategory;
 import de.symeda.sormas.api.ebs.SignalOutcome;
 import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
+import de.symeda.sormas.app.backend.location.Location;
 import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.District;
 import de.symeda.sormas.app.backend.region.Region;
@@ -21,6 +22,7 @@ public class EbsCriteria implements Serializable {
     private Region region;
     private District district;
     private Community community;
+    private Location location;
     private Date reportDateTime;
     private Date triageDate;
 
@@ -117,6 +119,13 @@ public class EbsCriteria implements Serializable {
     }
     public Community getCommunity() {
         return community;
+    }
+
+    public Location getLocation(){
+        return location;
+    }
+    public void setLocation(Location location){
+        this.location = location;
     }
 
     public void setCommunity(Community community) {

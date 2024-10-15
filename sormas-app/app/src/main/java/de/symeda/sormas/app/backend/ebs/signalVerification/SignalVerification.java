@@ -25,6 +25,8 @@ public class SignalVerification extends PseudonymizableAdo {
     private static final long serialVersionUID = 1L;
     public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 13356;
 
+    public static final String VERIFIED = "verified";
+
     @DatabaseField
     private YesNo verificationSent;
     @DatabaseField
