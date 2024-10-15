@@ -785,7 +785,7 @@
                 <ImageView style="@style/FullHorizontalDividerStyle" />
 
                 <TextView
-                    android:id="@+id/caseData_medicalInformationHeading"
+                    android:id="@+id/caseData_headingAdditionalMedicalInformation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/heading_additional_medical_information"

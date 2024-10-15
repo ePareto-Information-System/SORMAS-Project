@@ -263,4 +263,12 @@ public class Hospitalization extends AbstractDomainObject {
 	public void setHealthFacilityRecordNumber(String healthFacilityRecordNumber) {
 		this.healthFacilityRecordNumber = healthFacilityRecordNumber;
 	}
+
+	public Date getDateFormSentToDistrict() {
+		return dateFormSentToDistrict;
+	}
+
+	public void setDateFormSentToDistrict(Date dateFormSentToDistrict) {
+		this.dateFormSentToDistrict = dateFormSentToDistrict;
+	}
 }
