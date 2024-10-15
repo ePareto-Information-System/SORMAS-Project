@@ -231,6 +231,10 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		contentBinding.sampleDateResultReceivedNational.initializeDateField(getFragmentManager());
 		contentBinding.sampleDateFormReceivedAtDistrict.initializeDateField(getFragmentManager());
 		contentBinding.sampleDateFormSentToDistrict.initializeDateField(getFragmentManager());
+
+		if(record.getAssociatedCase().getDisease() != null){
+			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_CREATE);
+		}
 	}
 
 	@Override
@@ -350,8 +354,9 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		frequencyOfChangingFiltersList = DataUtils.getEnumItems(FilterChangingFrequency.class, true);
 		contentBinding.sampleFrequencyOfChangingFilters.initializeSpinner(frequencyOfChangingFiltersList);
 
-		if(record.getAssociatedCase().getDisease() != null){
-			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_CREATE);
+		switch (record.getAssociatedCase().getDisease()){
+			case MEASLES:
+				handleMeasles();
 		}
 	}
 
@@ -386,5 +391,11 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		} else {
 			return null;
 		}
+	}
+
+	private void handleMeasles() {
+		getContentBinding().samplePurpose.setValue(SamplePurpose.EXTERNAL);
+		getContentBinding().samplePurpose.setVisibility(GONE);
+		getContentBinding().samplePathogenTestingRequested.setVisibility(GONE);
 	}
 }
