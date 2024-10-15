@@ -196,6 +196,11 @@
                         android:id="@+id/ebs_city"
                         app:value="@={data.ebsLocation.city}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/ebs_city"
+                        app:value="@={data.ebsLocation.city}"
+                        app:required="true"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
             </LinearLayout>
