@@ -93,12 +93,23 @@ public class RiskAssessmentEditFragment extends BaseEditFragment<FragmentRiskAss
 		contentBinding.riskAssessmentMorbidityMortality.setOnCheckedChangeListener((buttonView, isChecked) -> updateRiskAssessment(contentBinding));
 		contentBinding.riskAssessmentSpreadProbability.setOnCheckedChangeListener((buttonView, isChecked) -> updateRiskAssessment(contentBinding));
 		contentBinding.riskAssessmentControlMeasures.setOnCheckedChangeListener((buttonView, isChecked) -> updateRiskAssessment(contentBinding));
+		contentBinding.riskAssessmentRiskAssessment.addValueChangedListener(e->{
+			if (e.getValue() == RiskAssesment.VERY_HIGH){
+				contentBinding.riskAssessmentRiskAssessment.setBackgroundResource(R.drawable.background_risk_very_high_assessment);
+			}if (e.getValue() == RiskAssesment.HIGH){
+				contentBinding.riskAssessmentRiskAssessment.setBackgroundResource(R.drawable.background_risk_high_assessment);
+			}if (e.getValue() == RiskAssesment.MEDIUM){
+				contentBinding.riskAssessmentRiskAssessment.setBackgroundResource(R.drawable.background_risk_moderate_assessment);
+			}if (e.getValue() == RiskAssesment.LOW){
+				contentBinding.riskAssessmentRiskAssessment.setBackgroundResource(R.drawable.background_risk_low_assessment);
+			}
+		});
 	}
 
 	private void updateRiskAssessment(FragmentRiskAssessmentEditLayoutBinding binding) {
-		String morbidityMortalityYes = binding.riskAssessmentMorbidityMortality.getValue().toString();
-		String spreadProbabilityYes = binding.riskAssessmentSpreadProbability.getValue().toString();
-		String controlMeasuresYes = binding.riskAssessmentControlMeasures.getValue().toString();
+		String morbidityMortalityYes = binding.riskAssessmentMorbidityMortality.getValue()  == null ? "NO" : binding.riskAssessmentMorbidityMortality.getValue().toString() ;
+		String spreadProbabilityYes = binding.riskAssessmentSpreadProbability.getValue()  == null ? "NO" : binding.riskAssessmentSpreadProbability.getValue().toString() ;
+		String controlMeasuresYes = binding.riskAssessmentControlMeasures.getValue() == null ? "NO" : binding.riskAssessmentControlMeasures.getValue().toString() ;
 
 		// Check conditions based on the checked values
 		if (morbidityMortalityYes.equals("YES") && spreadProbabilityYes.equals("YES") && controlMeasuresYes.equals("NO")) {
@@ -116,6 +127,10 @@ public class RiskAssessmentEditFragment extends BaseEditFragment<FragmentRiskAss
 			binding.riskAssessmentRiskAssessment.setValue(RiskAssesment.MEDIUM);
 			binding.riskAssessmentRiskAssessment.setBackgroundResource(R.drawable.background_risk_moderate_assessment);
 		} else if (morbidityMortalityYes.equals("NO") && spreadProbabilityYes.equals("NO") && controlMeasuresYes.equals("YES")) {
+			binding.riskAssessmentRiskAssessment.setValue(RiskAssesment.LOW);
+			binding.riskAssessmentRiskAssessment.setBackgroundResource(R.drawable.background_risk_low_assessment);
+		}
+		else {
 			binding.riskAssessmentRiskAssessment.setValue(RiskAssesment.LOW);
 			binding.riskAssessmentRiskAssessment.setBackgroundResource(R.drawable.background_risk_low_assessment);
 		}

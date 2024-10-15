@@ -112,7 +112,6 @@
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/signalVerification_numberOfPersonAnimal"
                     style="@style/ControlFirstOfTwoColumnsStyle"
-                    app:required="true"
                     app:inputType="number"
                     app:dependencyParentField="@{signalVerificationVerified}"
                     app:dependencyParentValue="@{SignalOutcome.EVENT}"
@@ -122,7 +121,6 @@
                     style="@style/ControlSecondOfTwoColumnsStyle"
                     app:dependencyParentField="@{signalVerificationVerified}"
                     app:dependencyParentValue="@{SignalOutcome.EVENT}"
-                    app:required="true"
                     app:inputType="number"
                     app:value="@={data.numberOfDeath}" />
             </LinearLayout>
@@ -135,7 +133,6 @@
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:dependencyParentField="@{signalVerificationVerified}"
                     app:dependencyParentValue="@{SignalOutcome.EVENT}"
-                    app:required="true"
                     app:inputType="number"
                     app:value="@={data.numberOfPersonCases}" />
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
@@ -143,7 +140,6 @@
                     style="@style/ControlSecondOfTwoColumnsStyle"
                     app:dependencyParentField="@{signalVerificationVerified}"
                     app:dependencyParentValue="@{SignalOutcome.EVENT}"
-                    app:required="true"
                     app:inputType="number"
                     app:value="@={data.numberOfDeathPerson}" />
             </LinearLayout>
