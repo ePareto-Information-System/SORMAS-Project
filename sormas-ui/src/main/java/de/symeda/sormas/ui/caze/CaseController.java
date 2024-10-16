@@ -763,10 +763,6 @@ public class CaseController {
 					dto.setFacilityType(null);
 				}
 
-				if (dto.getDhimsFacilityType() == null || FacilityDto.NONE_FACILITY_UUID.equals(dto.getDhimsFacilityType().getUuid())) {
-					dto.setDhimsFacilityType(null);
-				}
-
 				if (convertedContact != null) {
 					int incubationPeriod = FacadeProvider.getDiseaseConfigurationFacade().getCaseFollowUpDuration(dto.getDisease());
 					List<VisitDto> visits = FacadeProvider.getVisitFacade()
@@ -920,16 +916,11 @@ public class CaseController {
 	}
 
 	private void transferDataToPerson(CaseCreateForm createForm, PersonDto person) {
-		if(createForm.getValue().getDisease().equals(Disease.MONKEYPOX)){
-			person.setFirstName(createForm.getPatientFirstName());
-			person.setLastName(createForm.getPatientLastName());
-			person.setOtherName(createForm.getPatientOtherNames());
-			person.setSex(createForm.getPatientSex());
+		createForm.getPersonCreateForm().transferDataToPerson(person);
+	}
 
-			createForm.transferDataToPerson(person);
-		} else{
-			createForm.getPersonCreateForm().transferDataToPerson(person);
-		}
+	private void transferDataToPersonFromCaseData(CaseDataForm caseDataForm, PersonDto person) {
+		caseDataForm.getPersonEditForm().transferDataToPersonFromCaseData(person);
 	}
 
 	/*private void updateHomeAddress(CaseCreateForm createForm, PersonDto person) {
@@ -972,6 +963,8 @@ public class CaseController {
 
 	public CommitDiscardWrapperComponent<CaseDataForm> getCaseDataEditComponent(final String caseUuid, final ViewMode viewMode) {
 		CaseDataDto caze = findCase(caseUuid);
+		PersonDto person = FacadeProvider.getPersonFacade().getByUuid(caze.getPerson().getUuid());
+
 		DeletionInfoDto automaticDeletionInfoDto = FacadeProvider.getCaseFacade().getAutomaticDeletionInfo(caseUuid);
 		DeletionInfoDto manuallyDeletionInfoDto = FacadeProvider.getCaseFacade().getManuallyDeletionInfo(caseUuid);
 
@@ -1001,6 +994,10 @@ public class CaseController {
 		editView.addCommitListener(() -> {
 			CaseDataDto oldCase = findCase(caseUuid);
 			CaseDataDto cazeDto = caseEditForm.getValue();
+
+			transferDataToPersonFromCaseData(caseEditForm, person);
+			FacadeProvider.getPersonFacade().save(person);
+
 			saveCaseWithFacilityChangedPrompt(cazeDto, oldCase);
 		});
 

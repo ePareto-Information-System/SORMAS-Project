@@ -12,5 +12,7 @@ public enum InfrastructureType {
 	COUNTRY,
 	SUBCONTINENT,
 	CONTINENT,
-	CADRE;
+	CADRE,
+	FORM,
+	FORM_FIELD;
 }

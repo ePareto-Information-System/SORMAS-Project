@@ -113,7 +113,6 @@ public class CaseShareDataBuilder
 		casePreview.setDistrict(DistrictFacadeEjb.toReferenceDto(caze.getResponsibleDistrict()));
 		casePreview.setCommunity(CommunityFacadeEjb.toReferenceDto(caze.getResponsibleCommunity()));
 		casePreview.setFacilityType(caze.getFacilityType());
-		casePreview.setDhimsFacilityType(caze.getDhimsFacilityType());
 		casePreview.setHealthFacility(FacilityFacadeEjb.toReferenceDto(caze.getHealthFacility()));
 		casePreview.setHealthFacilityDetails(caze.getHealthFacilityDetails());
 		casePreview.setPointOfEntry(PointOfEntryFacadeEjb.toReferenceDto(caze.getPointOfEntry()));

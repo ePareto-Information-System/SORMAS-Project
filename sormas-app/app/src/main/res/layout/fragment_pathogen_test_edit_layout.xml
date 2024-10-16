@@ -55,31 +55,6 @@
 
                 <requestFocus/>
 
-                <de.symeda.sormas.app.component.controls.ControlDateField
-                    android:id="@+id/pathogenTest_reportDate"
-                    app:value="@={data.reportDate}"
-                    style="@style/ControlSingleColumnStyle" />
-
-                <de.symeda.sormas.app.component.controls.ControlSpinnerField
-                    android:id="@+id/pathogenTest_testType"
-                    app:required="true"
-                    app:value="@={data.testType}"
-                    style="@style/ControlSingleColumnStyle" />
-
-                <de.symeda.sormas.app.component.controls.ControlSpinnerField
-                    android:id="@+id/pathogenTest_pcrTestSpecification"
-                    app:value="@={data.pcrTestSpecification}"
-                    style="@style/ControlSingleColumnStyle" />
-
-                <de.symeda.sormas.app.component.controls.ControlTextEditField
-                    android:id="@+id/pathogenTest_testTypeText"
-                    style="@style/ControlSingleColumnStyle"
-                    app:dependencyParentField="@{pathogenTestTestType}"
-                    app:dependencyParentValue="@{PathogenTestType.OTHER}"
-                    app:dependencyParentValue2="@{PathogenTestType.PCR_RT_PCR}"
-                    app:softRequired="true"
-                    app:value="@={data.testTypeText}"/>
-
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/pathogenTest_testedDisease"
                     app:required="true"
@@ -107,6 +82,31 @@
                     app:customizableEnumValue="@{Boolean.TRUE}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/pathogenTest_reportDate"
+                    app:value="@={data.reportDate}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/pathogenTest_testType"
+                    app:required="true"
+                    app:value="@={data.testType}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/pathogenTest_pcrTestSpecification"
+                    app:value="@={data.pcrTestSpecification}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/pathogenTest_testTypeText"
+                    style="@style/ControlSingleColumnStyle"
+                    app:dependencyParentField="@{pathogenTestTestType}"
+                    app:dependencyParentValue="@{PathogenTestType.OTHER}"
+                    app:dependencyParentValue2="@{PathogenTestType.PCR_RT_PCR}"
+                    app:softRequired="true"
+                    app:value="@={data.testTypeText}"/>
+
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/pathogenTest_typingId"
                         style="@style/ControlSingleColumnStyle"
@@ -115,6 +115,11 @@
                         app:dependencyParentValue2="@{PathogenTestType.PCR_RT_PCR}"
                         app:dependencyParentValue3="@{PathogenTestType.SEQUENCING}"
                         app:value="@={data.typingId}"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/pathogenTest_virusDetectionGenotype"
+                    app:value="@={data.virusDetectionGenotype}"
+                    style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlDateTimeField
                     android:id="@+id/pathogenTest_testDateTime"
@@ -133,6 +138,11 @@
                     android:id="@+id/pathogenTest_labDetails"
                     app:required="true"
                     app:value="@={data.labDetails}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/pathogenTest_labLocation"
+                    app:value="@={data.labLocation}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
@@ -188,6 +198,37 @@
                     app:singleLine="false"
                     app:maxLines="3"
                     app:value="@={data.testResultText}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/pathogenTest_dateLabResultsSentDistrict"
+                    app:value="@={data.dateLabResultsSentDistrict}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/pathogenTest_dateLabResultsSentClinician"
+                    app:value="@={data.dateLabResultsSentClinician}"
+                    style="@style/ControlSingleColumnStyle" />
+
+
+                <de.symeda.sormas.app.component.controls.ControlDateTimeField
+                    android:id="@+id/pathogenTest_dateSurveillanceSentResultsToDistrict"
+                    app:value="@={data.dateSurveillanceSentResultsToDistrict}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateTimeField
+                    android:id="@+id/pathogenTest_dateDistrictReceivedLabResults"
+                    app:value="@={data.dateDistrictReceivedLabResults}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateTimeField
+                    android:id="@+id/pathogenTest_laboratoryDateResultsSentDSD"
+                    app:value="@={data.laboratoryDateResultsSentDSD}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/pathogenTest_finalClassification"
+                    app:value="@={data.finalClassification}"
                     style="@style/ControlSingleColumnStyle" />
 
             </LinearLayout>

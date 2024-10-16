@@ -20,7 +20,9 @@ import static android.view.View.VISIBLE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,16 +30,22 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.android.gms.common.api.CommonStatusCodes;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 
 import androidx.annotation.Nullable;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.sample.AdditionalTestType;
+import de.symeda.sormas.api.sample.IpSampleTestType;
+import de.symeda.sormas.api.sample.FilterChangingFrequency;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
+import de.symeda.sormas.api.sample.PosNegEq;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.sample.SamplePurpose;
@@ -45,8 +53,10 @@ import de.symeda.sormas.api.sample.SampleSource;
 import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
+import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
@@ -72,21 +82,28 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 
 	private List<Item> sampleMaterialList;
 	private List<Item> sampleSourceList;
+	private List<Item> suspectedDiseaseList;
 	private List<Facility> labList;
 	private List<Item> samplePurposeList;
 	private List<Item> samplingReasonList;
 	private List<String> requestedPathogenTests = new ArrayList<>();
+	private List<String> requestedSampleMaterials = new ArrayList<>();
 	private List<String> requestedAdditionalTests = new ArrayList<>();
 	private List<Item> finalTestResults;
+	private List<Item> suspectedList;
+	private List<String> ipSampleTestResults = new ArrayList<>();
+	private List<Item> posNegList;
+	private List<Item> posNegEqList;
+	private List<Item> frequencyOfChangingFiltersList;
 
 	public static SampleEditFragment newInstance(Sample activityRootData) {
 		return newInstanceWithFieldCheckers(
-			SampleEditFragment.class,
-			null,
-			activityRootData,
-			FieldVisibilityCheckers.withDisease(getDiseaseOfAssociatedEntity(activityRootData)).andWithCountry(ConfigProvider.getServerCountryCode()),
-			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()),
-			UserRight.SAMPLE_EDIT);
+				SampleEditFragment.class,
+				null,
+				activityRootData,
+				FieldVisibilityCheckers.withDisease(getDiseaseOfAssociatedEntity(activityRootData)).andWithCountry(ConfigProvider.getServerCountryCode()),
+				UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()),
+				UserRight.SAMPLE_EDIT);
 	}
 
 	private void setUpControlListeners(FragmentSampleEditLayoutBinding contentBinding) {
@@ -120,11 +137,11 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 
 		// Most recent additional tests layout
 		if (ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
-			&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
+				&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
 			if (!record.isReceived()
-				|| record.getSpecimenCondition() != SpecimenCondition.ADEQUATE
-				|| !record.getAdditionalTestingRequested()
-				|| mostRecentAdditionalTests == null) {
+					|| record.getSpecimenCondition() != SpecimenCondition.ADEQUATE
+					|| !record.getAdditionalTestingRequested()
+					|| mostRecentAdditionalTests == null) {
 				contentBinding.mostRecentAdditionalTestsLayout.setVisibility(GONE);
 			} else {
 				if (!mostRecentAdditionalTests.hasArterialVenousGasValue()) {
@@ -135,9 +152,9 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			contentBinding.mostRecentAdditionalTestsLayout.setVisibility(GONE);
 		}
 
-		if (record.getId() == null) {
+		/*if (record.getId() == null) {
 			contentBinding.samplePathogenTestResult.setVisibility(GONE);
-		}
+		}*/
 	}
 
 	// Overrides
@@ -158,7 +175,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		if (record.getId() != null) {
 			mostRecentTest = DatabaseHelper.getSampleTestDao().queryMostRecentBySample(record);
 			if (ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
-				&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
+					&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
 				mostRecentAdditionalTests = DatabaseHelper.getAdditionalTestDao().queryMostRecentBySample(record);
 			}
 		}
@@ -173,6 +190,10 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		labList = DatabaseHelper.getFacilityDao().getActiveLaboratories(true);
 		samplePurposeList = DataUtils.getEnumItems(SamplePurpose.class, true);
 		samplingReasonList = DataUtils.getEnumItems(SamplingReason.class, true, getFieldVisibilityCheckers());
+		suspectedList = DataUtils.getEnumItems(Disease.class, true);
+		posNegList = DataUtils.getEnumItems(PosNegEq.class, true);
+		posNegEqList = DataUtils.getEnumItems(PosNegEq.class, true);
+		posNegList.remove(new Item<>(PosNegEq.EQU.toString(), PosNegEq.EQU));
 
 		for (PathogenTestType pathogenTest : record.getRequestedPathogenTests()) {
 			requestedPathogenTests.clear();
@@ -180,15 +201,23 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 				requestedPathogenTests.add(pathogenTest.toString());
 			}
 		}
+
+
+		for (IpSampleTestType ipSampleTestType : record.getIpSampleTestResults()) {
+			ipSampleTestResults.clear();
+			ipSampleTestResults.add(ipSampleTestType.toString());
+		}
+
 		if (ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
-			&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
+				&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
 			requestedAdditionalTests.clear();
 			for (AdditionalTestType additionalTest : record.getRequestedAdditionalTests()) {
 				requestedAdditionalTests.add(additionalTest.toString());
 			}
 		}
+		finalTestResults = DataUtils.toItems(Arrays.asList(PathogenTestResultType.values()));
 
-		if (record.getId() != null) {
+		/*if (record.getId() != null) {
 			if (DatabaseHelper.getSampleTestDao()
 				.queryBySample(record)
 				.stream()
@@ -200,7 +229,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 						.filter(type -> type != PathogenTestResultType.NOT_DONE)
 						.collect(Collectors.toList()));
 			}
-		}
+		}*/
 	}
 
 	@Override
@@ -216,6 +245,40 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 
 		contentBinding.setPathogenTestTypeClass(PathogenTestType.class);
 		contentBinding.setAdditionalTestTypeClass(AdditionalTestType.class);
+		contentBinding.setSampleDispatchModeClass(SampleDispatchMode.class);
+		contentBinding.setYesNoClass(YesNo.class);
+		contentBinding.setIpSampleTestTypeClass(IpSampleTestType.class);
+		contentBinding.setSampleMaterialClass(SampleMaterial.class);
+
+		contentBinding.sampleSelectedResultIGM.initializeSpinner(posNegEqList);
+		contentBinding.sampleSelectedResultPcr.initializeSpinner(posNegList);
+		contentBinding.sampleSelectedResultPrnt.initializeSpinner(posNegList);
+
+		// Initialize ControlDateFields and ControlDateTimeFields
+		contentBinding.sampleSampleDateTime.initializeDateTimeField(getFragmentManager());
+		contentBinding.sampleShipmentDate.initializeDateField(getFragmentManager());
+		contentBinding.sampleSelectedResultIGMDate.initializeDateField(getFragmentManager());
+		contentBinding.sampleSelectedResultPcrDate.initializeDateField(getFragmentManager());
+		contentBinding.sampleSelectedResultPrntDate.initializeDateField(getFragmentManager());
+
+		if(record.getAssociatedCase().getDisease() != null){
+			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_EDIT);
+		}
+		contentBinding.setFilterChangingFrequencyClass(FilterChangingFrequency.class);
+
+		contentBinding.sampleDateSpecimenReceivedAtRegion.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSpecimenReceivedAtRegion.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSpecimenReceivedAtNational.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSpecimenReceivedAtNational.initializeDateField(getFragmentManager());
+		contentBinding.sampleSentForConfirmationNationalDate.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateResultReceivedNational.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateFormReceivedAtDistrict.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateFormSentToDistrict.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateFormSentToHigherLevel.initializeDateField(getFragmentManager());
+
+		if(record.getAssociatedCase().getDisease() != null){
+			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_CREATE);
+		}
 	}
 
 	@Override
@@ -237,21 +300,22 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			}
 		});
 
-		if (finalTestResults != null) {
+		/*if (finalTestResults != null) {
 			contentBinding.samplePathogenTestResult.initializeSpinner(finalTestResults);
 			if (contentBinding.samplePathogenTestResult.getValue() == null) {
 				contentBinding.samplePathogenTestResult.setValue(PathogenTestResultType.PENDING);
 			}
-		}
+		}*/
+		contentBinding.samplePathogenTestResult.initializeSpinner(finalTestResults);
 
 		contentBinding.samplePurpose.initializeSpinner(samplePurposeList, field -> {
 			SamplePurpose samplePurpose = (SamplePurpose) field.getValue();
 			if (SamplePurpose.EXTERNAL == samplePurpose) {
 				contentBinding.externalSampleFieldsLayout.setVisibility(VISIBLE);
-				contentBinding.samplePathogenTestingRequested
-					.setVisibility(ConfigProvider.getUser().equals(record.getReportingUser()) ? VISIBLE : GONE);
+				/*contentBinding.samplePathogenTestingRequested
+					.setVisibility(ConfigProvider.getUser().equals(record.getReportingUser()) ? VISIBLE : GONE);*/
 				contentBinding.sampleAdditionalTestingRequested
-					.setVisibility(ConfigProvider.getUser().equals(record.getReportingUser()) ? VISIBLE : GONE);
+						.setVisibility(ConfigProvider.getUser().equals(record.getReportingUser()) ? VISIBLE : GONE);
 			} else {
 				contentBinding.sampleShipped.setValue(null);
 				contentBinding.sampleShipmentDate.setValue(null);
@@ -262,11 +326,9 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			}
 		});
 
+		contentBinding.sampleSuspectedDisease.initializeSpinner(suspectedList);
 		contentBinding.sampleSamplingReason.initializeSpinner(samplingReasonList);
 
-		// Initialize ControlDateFields and ControlDateTimeFields
-		contentBinding.sampleSampleDateTime.initializeDateTimeField(getFragmentManager());
-		contentBinding.sampleShipmentDate.initializeDateField(getFragmentManager());
 
 		// Initialize on clicks
 		contentBinding.buttonScanFieldSampleId.setOnClickListener((View v) -> {
@@ -306,7 +368,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			}
 
 			if (ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
-				&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
+					&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
 				if (!requestedAdditionalTests.isEmpty()) {
 					contentBinding.sampleRequestedAdditionalTestsTags.setTags(requestedAdditionalTests);
 					if (StringUtils.isEmpty(record.getRequestedOtherAdditionalTests())) {
@@ -328,8 +390,70 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		}
 
 		if (!ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
-			&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
+				&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
 			contentBinding.additionalTestingLayout.setVisibility(GONE);
+		}
+		contentBinding.sampleRequestedSampleMaterialsTags.setTags(requestedSampleMaterials);
+
+		List<SampleMaterial> allowedMaterials = Arrays.asList(
+				SampleMaterial.SERUM,
+				SampleMaterial.PLASMA
+		);
+
+		List<Item> filteredSampleMaterialList = sampleMaterialList.stream()
+				.filter(item -> allowedMaterials.contains(item.getValue()))
+				.collect(Collectors.toList());
+
+		contentBinding.sampleRequestedSampleMaterials.initializeCheckBoxGroup(filteredSampleMaterialList);
+
+		if (record.getRequestedSampleMaterials() != null) {
+			contentBinding.sampleRequestedSampleMaterials.setValue(
+					record.getRequestedSampleMaterials().stream()
+							.filter(allowedMaterials::contains)
+							.collect(Collectors.toList())
+			);
+		}
+
+		contentBinding.sampleSelectedResultIGM.setVisibility(View.GONE);
+		contentBinding.sampleSelectedResultIGMDate.setVisibility(View.GONE);
+		contentBinding.sampleSelectedResultPcr.setVisibility(View.GONE);
+		contentBinding.sampleSelectedResultPcrDate.setVisibility(View.GONE);
+		contentBinding.sampleSelectedResultPrnt.setVisibility(View.GONE);
+		contentBinding.sampleSelectedResultPrntDate.setVisibility(View.GONE);
+
+		contentBinding.sampleIpSampleTestResults.setOnValueChangeListener(selectedValues -> {
+			List<String> selectedItems = contentBinding.sampleIpSampleTestResults.getSelectedValues();
+
+			boolean elisa = selectedItems != null && selectedItems.contains("Elisa IgM");
+			contentBinding.sampleSelectedResultIGM.setVisibility(elisa ? View.VISIBLE : View.GONE);
+			contentBinding.sampleSelectedResultIGMDate.setVisibility(elisa ? View.VISIBLE : View.GONE);
+
+			boolean pcr = selectedItems != null && selectedItems.contains(IpSampleTestType.PCR.name());
+			contentBinding.sampleSelectedResultPcr.setVisibility(pcr ? View.VISIBLE : GONE);
+			contentBinding.sampleSelectedResultPcrDate.setVisibility(pcr ? View.VISIBLE : GONE);
+
+			boolean prnt = selectedItems != null && selectedItems.contains(IpSampleTestType.PRNT.name());
+			contentBinding.sampleSelectedResultPrnt.setVisibility(prnt ? View.VISIBLE : GONE);
+			contentBinding.sampleSelectedResultPrntDate.setVisibility(prnt ? View.VISIBLE : GONE);
+
+
+		});
+
+
+		switch (record.getAssociatedCase().getDisease()){
+			case YELLOW_FEVER:
+				handleYellowFever();
+			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
+				handleIDSR();
+		}
+
+
+		frequencyOfChangingFiltersList = DataUtils.getEnumItems(FilterChangingFrequency.class, true);
+		contentBinding.sampleFrequencyOfChangingFilters.initializeSpinner(frequencyOfChangingFiltersList);
+
+		switch (record.getAssociatedCase().getDisease()){
+			case MEASLES:
+				handleMeasles();
 		}
 	}
 
@@ -364,5 +488,52 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		} else {
 			return null;
 		}
+	}
+
+	private void handleYellowFever() {
+		List<PathogenTestResultType> yellowFeverTestResults = Arrays.asList(
+				PathogenTestResultType.PENDING,
+				PathogenTestResultType.POSITIVE,
+				PathogenTestResultType.NEGATIVE
+		);
+		getContentBinding().samplePathogenTestResult.initializeSpinner(DataUtils.toItems(yellowFeverTestResults));
+		getContentBinding().samplePurpose.setValue(SamplePurpose.EXTERNAL);
+		getContentBinding().samplePurpose.setVisibility(GONE);
+		getContentBinding().samplePathogenTestingRequested.setVisibility(GONE);
+	}
+
+	private void handleIDSR() {
+		List<Disease> idsrSuspectedList = Arrays.asList(
+				Disease.AHF,
+				Disease.AFP,
+				Disease.CORONAVIRUS,
+				Disease.CHIKUNGUNYA,
+				Disease.CHOLERA,
+				Disease.CONGENITAL_RUBELLA,
+				Disease.DENGUE,
+				Disease.EVD,
+				Disease.FOODBORNE_ILLNESS
+		);
+		getContentBinding().sampleSuspectedDisease.initializeSpinner(DataUtils.toItems(idsrSuspectedList));
+
+		List<SampleMaterial> idsrSampleMaterialList = Arrays.asList(
+				SampleMaterial.BLOOD,
+				SampleMaterial.PLASMA,
+				SampleMaterial.SERUM,
+				SampleMaterial.ASPIRATE,
+				SampleMaterial.CEREBROSPINAL_FLUID,
+				SampleMaterial.PUS,
+				SampleMaterial.SALIVA,
+				SampleMaterial.BIOPSY,
+				SampleMaterial.STOOL
+		);
+
+		getContentBinding().sampleSampleMaterial.initializeSpinner(DataUtils.toItems(idsrSampleMaterialList));
+	}
+
+	private void handleMeasles() {
+		getContentBinding().samplePurpose.setValue(SamplePurpose.EXTERNAL);
+		getContentBinding().samplePurpose.setVisibility(GONE);
+		getContentBinding().samplePathogenTestingRequested.setVisibility(GONE);
 	}
 }

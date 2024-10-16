@@ -13,6 +13,8 @@ import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.disease.DiseaseConfigurationDtoHelper;
 import de.symeda.sormas.app.backend.facility.FacilityDtoHelper;
 import de.symeda.sormas.app.backend.feature.FeatureConfigurationDtoHelper;
+import de.symeda.sormas.app.backend.formbuilder.FormBuilderDtoHelper;
+import de.symeda.sormas.app.backend.formfield.FormFieldDtoHelper;
 import de.symeda.sormas.app.backend.region.AreaDtoHelper;
 import de.symeda.sormas.app.backend.region.CommunityDtoHelper;
 import de.symeda.sormas.app.backend.region.ContinentDtoHelper;
@@ -49,6 +51,8 @@ public class InfrastructureHelper {
 		changeDates.setUserRoleChangeDate(DatabaseHelper.getUserRoleDao().getLatestChangeDate());
 		changeDates.setFeatureConfigurationChangeDate(DatabaseHelper.getFeatureConfigurationDao().getLatestChangeDate());
 		changeDates.setAreaChangeDate(DatabaseHelper.getAreaDao().getLatestChangeDate());
+//		changeDates.setFormFieldChangeDate(DatabaseHelper.getFormFieldDao().getLatestChangeDate());
+//		changeDates.setFormBuilderChangeDate(DatabaseHelper.getFormBuilderDao().getLatestChangeDate());
 
 		return changeDates;
 	}
@@ -90,5 +94,8 @@ public class InfrastructureHelper {
 		DatabaseHelper.getFeatureConfigurationDao().delete(infrastructureData.getDeletedFeatureConfigurationUuids());
 		new FeatureConfigurationDtoHelper()
 			.handlePulledList(DatabaseHelper.getFeatureConfigurationDao(), infrastructureData.getFeatureConfigurations(), callbacks);
+		new FormFieldDtoHelper().handlePulledList(DatabaseHelper.getFormFieldDao(), infrastructureData.getFormFields(), callbacks);
+		new FormBuilderDtoHelper().handlePulledList(DatabaseHelper.getFormBuilderDao(), infrastructureData.getFormBuilders(), callbacks);
+
 	}
 }

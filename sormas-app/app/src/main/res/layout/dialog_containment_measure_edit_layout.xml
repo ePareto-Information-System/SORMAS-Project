@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/base_layout"
+    android:descendantFocusability="beforeDescendants">
+
+    <data>
+        <import type="de.symeda.sormas.api.i18n.I18nProperties" />
+        <import type="de.symeda.sormas.api.i18n.Strings" />
+        <import type="de.symeda.sormas.api.utils.YesNo" />
+
+        <variable name="data" type="de.symeda.sormas.app.backend.containmentmeasure.ContainmentMeasure" />
+        <variable name="YesNoClass" type="Class" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/main_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/rowListItemHorizontalMargin"
+            android:paddingRight="@dimen/rowListItemHorizontalMargin">
+
+            <requestFocus/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/containmentMeasure_uuid"
+                    app:shortUuidValue="@{data.uuid}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/containmentMeasure_locationOfWorm"
+                app:value="@={data.locationOfWorm}"
+                style="@style/ControlSingleColumnStyle" />
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/containmentMeasure_dateWormDetectedEmergence"
+                    app:value="@={data.dateWormDetectedEmergence}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/containmentMeasure_dateWormDetectBySupervisor"
+                    app:value="@={data.dateWormDetectBySupervisor}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/containmentMeasure_dateConfirmed"
+                    app:value="@={data.dateConfirmed}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/containmentMeasure_dateOfGuineaWormExpelled"
+                    app:value="@={data.dateOfGuineaWormExpelled}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/containmentMeasure_regularBandaging"
+                app:enumClass="@{YesNoClass}"
+                app:value="@={data.regularBandaging}"
+                style="@style/ControlFirstOfTwoColumnsStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/containmentMeasure_completelyExtracted"
+                app:enumClass="@{YesNoClass}"
+                app:value="@={data.completelyExtracted}"
+                style="@style/ControlSecondOfTwoColumnsStyle" />
+
+        </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</layout>

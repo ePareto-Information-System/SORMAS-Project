@@ -21,6 +21,8 @@ android {
                          'META-INF/maven/de.symeda.sormas/sormas-api/pom.xml',
                          'META-INF/license.txt',
                          'META-INF/notice.txt',
+                         'META-INF/INDEX.LIST',
+                         'META-INF/hivemodule.xml',
                          'META-INF/spring.*']
         }
     }
@@ -54,7 +56,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
-            signingConfig signingConfigs.release
+            //signingConfig signingConfigs.release
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             firebaseCrashlytics {
@@ -90,8 +92,8 @@ android {
 repositories {
     mavenLocal()
     google()
+    mavenCentral()
     maven { url "https://maven.repository.redhat.com/ga/" }
-    jcenter()
 }
 
 dependencies {
@@ -129,7 +131,7 @@ dependencies {
     implementation 'org.apache.commons:commons-text:1.10.0'
     implementation 'org.jsoup:jsoup:1.16.1'
     implementation('org.springframework:spring-context:5.3.27') {
-    	// spring-jcl duplicates commons-logging classes
+        // spring-jcl duplicates commons-logging classes
         exclude group: 'org.springframework', module: 'spring-jcl'
     }
     implementation 'com.googlecode:openbeans:1.0'
@@ -143,7 +145,7 @@ dependencies {
     implementation 'androidx.paging:paging-runtime:3.1.1'
     implementation 'androidx.work:work-runtime-ktx:2.8.1'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'me.dm7.barcodescanner:zxing:1.9.13'
+    implementation 'me.dm7.barcodescanner:zxing:1.9.8'
     implementation 'io.crowdcode.sormas.lbds:lbds-android-messaging:1.4.8'
     implementation 'org.slf4j:slf4j-api:2.0.7'
     // Align versions of all Kotlin components
@@ -169,19 +171,19 @@ jacoco {
 }
 task jacocoUnitTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     def coverageSourceDirs = [
-        "src/main/java"
+            "src/main/java"
     ]
     def fileFilter = [
-        '**/R.class',
-        '**/R$*.class',
-        '**/*$ViewInjector*.*',
-        '**/*$ViewBinder*.*',
-        '**/BuildConfig.*',
-        '**/Manifest*.*'
+            '**/R.class',
+            '**/R$*.class',
+            '**/*$ViewInjector*.*',
+            '**/*$ViewBinder*.*',
+            '**/BuildConfig.*',
+            '**/Manifest*.*'
     ]
     def javaClasses = fileTree(
-        dir: "$buildDir/intermediates/javac/debug/classes/de/symeda/sormas/app",
-        excludes: fileFilter
+            dir: "$buildDir/intermediates/javac/debug/classes/de/symeda/sormas/app",
+            excludes: fileFilter
     )
     classDirectories.from = files([ javaClasses ])
     additionalSourceDirs.from = files(coverageSourceDirs)
@@ -204,6 +206,6 @@ sonarqube {
         property "sonar.projectName", "sormas-app"
 
         property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacocoUnitTestReport/jacocoUnitTestReport.xml"
-        property "sonar.junit.reportPaths", "build/test-results/testDebugUnitTest/" 
+        property "sonar.junit.reportPaths", "build/test-results/testDebugUnitTest/"
     }
 }

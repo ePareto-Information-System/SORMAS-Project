@@ -43,11 +43,11 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import de.symeda.sormas.api.caze.*;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus;
-import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.investigationnotes.InvestigationNotes;
 import de.symeda.sormas.backend.riskfactor.RiskFactor;
@@ -215,8 +215,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public static final String VISITS = "visits";
 	public static final String SURVEILLANCE_REPORTS = "surveillanceReports";
 	public static final String FACILITY_TYPE = "facilityType";
-	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
-	public static final String AFP_FACILITY_OPTIONS = "afpFacilityOptions";
 	public static final String CONTACTS = "contacts";
 	public static final String CONVERTED_FROM_CONTACT = "convertedContact";
 	public static final String EVENT_PARTICIPANTS = "eventParticipants";
@@ -298,8 +296,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private District district;
 	private Community community;
 	private FacilityType facilityType;
-	private DhimsFacility dhimsFacilityType;
-	private AFPFacilityOptions afpFacilityOptions;
 	private Facility healthFacility;
 	private String healthFacilityDetails;
 
@@ -482,7 +478,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private String nationality;
 	private String ethnicity;
 	private String occupation;
-	private String districtOfResidence;
 	private String reportingVillage;
 	private String reportingZone;
 	private String otherNotesAndObservations;
@@ -500,15 +495,9 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private String informationGivenBy;
 	private String familyLinkWithPatient;
 	private String nameOfVillagePersonGotIll;
-	private String patientOtherNames;
-	private Integer patientDobDD;
-	private Integer patientDobMM;
-	private Integer patientDobYY;
-	private Integer patientAgeYear;
-	private Integer patientAgeMonth;
-	private Sex patientSex;
-	private String patientFirstName;
-	private String patientLastName;
+	private Region regionOfResidence;
+	private District districtOfResidence;
+	private String investigationOfficerAddress;
 
 	public static Case build() {
 		Case caze = new Case();
@@ -1733,21 +1722,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public void setFacilityType(FacilityType facilityType) {
 		this.facilityType = facilityType;
 	}
-	@Enumerated(EnumType.STRING)
-	public DhimsFacility getDhimsFacilityType() {
-		return dhimsFacilityType;
-	}
-	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
-		this.dhimsFacilityType = dhimsFacilityType;
-	}
-	@Enumerated(EnumType.STRING)
-	public AFPFacilityOptions getAfpFacilityOptions() {
-		return afpFacilityOptions;
-	}
-
-	public void setAfpFacilityOptions(AFPFacilityOptions afpFacilityOptions) {
-		this.afpFacilityOptions = afpFacilityOptions;
-	}
 
 	@Column
 	public Integer getCaseIdIsm() {
@@ -2370,14 +2344,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.occupation = occupation;
 	}
 
-	public String getDistrictOfResidence() {
-		return districtOfResidence;
-	}
-
-	public void setDistrictOfResidence(String districtOfResidence) {
-		this.districtOfResidence = districtOfResidence;
-	}
-
 	public String getSpecifyEventDiagnosis() {
 		return specifyEventDiagnosis;
 	}
@@ -2433,78 +2399,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.nameOfVillagePersonGotIll = nameOfVillagePersonGotIll;
 	}
 
-	public String getPatientOtherNames() {
-		return patientOtherNames;
-	}
-
-	public void setPatientOtherNames(String patientOtherNames) {
-		this.patientOtherNames = patientOtherNames;
-	}
-
-	public Integer getPatientDobDD() {
-		return patientDobDD;
-	}
-
-	public void setPatientDobDD(Integer patientDobDD) {
-		this.patientDobDD = patientDobDD;
-	}
-
-	public Integer getPatientDobMM() {
-		return patientDobMM;
-	}
-
-	public void setPatientDobMM(Integer patientDobMM) {
-		this.patientDobMM = patientDobMM;
-	}
-
-	public Integer getPatientDobYY() {
-		return patientDobYY;
-	}
-
-	public void setPatientDobYY(Integer patientDobYY) {
-		this.patientDobYY = patientDobYY;
-	}
-
-	public Integer getPatientAgeYear() {
-		return patientAgeYear;
-	}
-
-	public void setPatientAgeYear(Integer patientAgeYear) {
-		this.patientAgeYear = patientAgeYear;
-	}
-
-	public Integer getPatientAgeMonth() {
-		return patientAgeMonth;
-	}
-
-	public void setPatientAgeMonth(Integer patientAgeMonth) {
-		this.patientAgeMonth = patientAgeMonth;
-	}
-
-	public Sex getPatientSex() {
-		return patientSex;
-	}
-
-	public void setPatientSex(Sex patientSex) {
-		this.patientSex = patientSex;
-	}
-
-	public String getPatientFirstName() {
-		return patientFirstName;
-	}
-
-	public void setPatientFirstName(String patientFirstName) {
-		this.patientFirstName = patientFirstName;
-	}
-
-	public String getPatientLastName() {
-		return patientLastName;
-	}
-
-	public void setPatientLastName(String patientLastName) {
-		this.patientLastName = patientLastName;
-	}
-
 //	Riskfactor on
 
 
@@ -2530,5 +2424,29 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setVaccinationRoutineDate(Date vaccinationRoutineDate) {
 		this.vaccinationRoutineDate = vaccinationRoutineDate;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	public Region getRegionOfResidence() {
+		return regionOfResidence;
+	}
+
+	public void setRegionOfResidence(Region regionOfResidence) {
+		this.regionOfResidence = regionOfResidence;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	public District getDistrictOfResidence() {
+		return districtOfResidence;
+	}
+
+	public void setDistrictOfResidence(District districtOfResidence) {
+		this.districtOfResidence = districtOfResidence;
+	}
+
+	public String getInvestigationOfficerAddress() {return investigationOfficerAddress;}
+
+	public void setInvestigationOfficerAddress(String investigationOfficerAddress) {
+		this.investigationOfficerAddress = investigationOfficerAddress;
 	}
 }

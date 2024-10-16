@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.infrastructure.area.AreaType;
 import de.symeda.sormas.api.infrastructure.facility.*;
 import org.apache.commons.lang3.ObjectUtils;
@@ -196,6 +197,15 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		}
 	}
 
+	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers, Disease disease, CaseDataDto caseDataObject) {
+		super(LocationDto.class, LocationDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers, disease, caseDataObject);
+		this.caseDisease = disease;
+
+		if (FacadeProvider.getGeocodingFacade().isEnabled() && isEditableAllowed(LocationDto.LATITUDE) && isEditableAllowed(LocationDto.LONGITUDE)) {
+			getContent().addComponent(createGeoButton(), GEO_BUTTONS_LOC);
+		}
+	}
+
 	public ComboBox getFacilityTypeGroup() {
 		return facilityTypeGroup;
 	}
@@ -223,8 +233,15 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void addFields() {
-
 		caseDisease = getCaseDisease();
+
+		CaseDataDto newCazeData = getCaseData();
+		if(newCazeData != null){
+			RegionReferenceDto regionReferenceDto = newCazeData.getResponsibleRegion();
+			DistrictReferenceDto districtReferenceDto = newCazeData.getResponsibleDistrict();
+			CommunityReferenceDto communityReferenceDto = newCazeData.getResponsibleCommunity();
+		}
+
 
 
 		addressType = addField(LocationDto.ADDRESS_TYPE, ComboBox.class);

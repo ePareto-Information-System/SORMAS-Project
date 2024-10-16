@@ -77,8 +77,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
     private static final String DIFFERENT_PLACE_OF_STAY_JURISDICTION = "differentPlaceOfStayJurisdiction";
     private static final String PLACE_OF_STAY_HEADING_LOC = "placeOfStayHeadingLoc";
     public static final String MPOX_COORDINATE_LABEL = "mpoxCoordinate";
-    public static final String PATIENT_DOB_LABEL = "patientDob";
-    public static final String DOB_NOT_KNOWN_LABEL = "dobNotKnown";
+    public static final String PERSON_INFO_LABEL = "personInfoLabel";
     private static final String DIFFERENT_POINT_OF_ENTRY_JURISDICTION = "differentPointOfEntryJurisdiction";
     private static final String POINT_OF_ENTRY_REGION = "pointOfEntryRegion";
     private static final String POINT_OF_ENTRY_DISTRICT = "pointOfEntryDistrict";
@@ -97,7 +96,6 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
     private ComboBox facilityCombo;
     private ComboBox pointOfEntryDistrictCombo;
     private DateField investigated;
-    private ComboBox patientDobDay;
     private PersonCreateForm personCreateForm;
     private DateField reportDate;
 
@@ -135,17 +133,13 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 			+ fluidRowLocs(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY)
 			+ fluidRowLocs(MPOX_COORDINATE_LABEL)
 			+ fluidRowLocs(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT)
-			+ fluidRowLocs(CaseDataDto.PATIENT_FIRST_NAME, CaseDataDto.PATIENT_LAST_NAME, CaseDataDto.PATIENT_OTHER_NAMES)
-			+ fluidRowLocs(CaseDataDto.PATIENT_DOB_YY, CaseDataDto.PATIENT_DOB_MM, CaseDataDto.PATIENT_DOB_DD)
-			+loc(DOB_NOT_KNOWN_LABEL)
-			+ fluidRowLocs(CaseDataDto.PATIENT_AGE_YEAR, CaseDataDto.PATIENT_AGE_MONTH)
-			+ fluidRowLocs(6, CaseDataDto.PATIENT_SEX)
-			+ fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY)
-			+ fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE)
 			+ fluidRowLocs(DIFFERENT_POINT_OF_ENTRY_JURISDICTION)
 			+ fluidRowLocs(POINT_OF_ENTRY_REGION, POINT_OF_ENTRY_DISTRICT)
 			+ fluidRowLocs(CaseDataDto.POINT_OF_ENTRY, CaseDataDto.POINT_OF_ENTRY_DETAILS)
-			+ fluidRowLocs(CaseDataDto.PERSON);
+			+ fluidRowLocs(PERSON_INFO_LABEL)
+			+ fluidRowLocs(CaseDataDto.PERSON)
+            + fluidRowLocs(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY)
+            + fluidRowLocs(CaseDataDto.OCCUPATION, CaseDataDto.REGION_OF_RESIDENCE, CaseDataDto.DISTRICT_OF_RESIDENCE);
 	//@formatter:on
 
     public CaseCreateForm() {
@@ -613,7 +607,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
                         personCreateForm.showPersonalEmail();
                         break;
                     case MONKEYPOX:
-                        handleMPox();
+                        handleMonkeyPox();
                         break;
                     default:
                         personCreateForm.showPresentCondition();
@@ -626,11 +620,6 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
             setVisible(diseaseField.getValue() == Disease.CORONAVIRUS, DIFFERENT_PLACE_OF_STAY_JURISDICTION);
         });
 
-//		FieldHelper.setVisibleWhen(
-//				diseaseField,
-//				Arrays.asList(facilityOrHome),
-//				Arrays.asList(Disease.CORONAVIRUS),
-//				true);
 
         idsrdiagnosis.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
             specifyEvent.setVisible(idsrdiagnosis.getValue() != null && idsrdiagnosis.getValue() == IdsrType.OTHER);
@@ -652,11 +641,12 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 
     }
 
-    private void handleMPox() {
+    private void handleMonkeyPox(){
         personCreateForm.hideFields();
+        personCreateForm.showFields();
         reportDate.setVisible(false);
         reportDate.setRequired(false);
-        personCreateForm.hideFieldsForMpox();
+        setRequired(true, CaseDataDto.HEALTH_FACILITY);
 
         addFields(CaseDataDto.ADDRESS_MPOX, CaseDataDto.VILLAGE, CaseDataDto.CITY);
 
@@ -664,103 +654,24 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
         coorLabel.addStyleName(H4);
         getContent().addComponent(coorLabel, MPOX_COORDINATE_LABEL);
 
-        Label patientDob = new Label(I18nProperties.getCaption(Captions.patientDob));
-        patientDob.addStyleName(H4);
-        getContent().addComponent(patientDob, PATIENT_DOB_LABEL);
+        Label personInfoLabel = new Label(I18nProperties.getCaption(Captions.personInfoLabel));
+        personInfoLabel.addStyleName(H4);
+        getContent().addComponent(personInfoLabel, PERSON_INFO_LABEL);
 
         addFields(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT);
-
-        patientDobDay = addField(CaseDataDto.PATIENT_DOB_DD, ComboBox.class);
-        // @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
-        patientDobDay.setNullSelectionAllowed(true);
-        patientDobDay.setInputPrompt(I18nProperties.getString(Strings.day));
-        patientDobDay.setCaption("");
-
-        ComboBox patientDobMonth = addField(CaseDataDto.PATIENT_DOB_MM, ComboBox.class);
-        // @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
-        patientDobMonth.setNullSelectionAllowed(true);
-        patientDobMonth.addItems(DateHelper.getMonthsInYear());
-        patientDobMonth.setPageLength(12);
-        patientDobMonth.setInputPrompt(I18nProperties.getString(Strings.month));
-        patientDobMonth.setCaption("");
-        DateHelper.getMonthsInYear()
-                .forEach(month -> patientDobMonth.setItemCaption(month, de.symeda.sormas.api.Month.values()[month - 1].toString()));
-        setItemCaptionsForMonths(patientDobMonth);
-
-        ComboBox patientDobYear = addField(CaseDataDto.PATIENT_DOB_YY, ComboBox.class);
-        patientDobYear.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.BIRTH_DATE));
-        // @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
-        patientDobYear.setNullSelectionAllowed(true);
-        patientDobYear.addItems(DateHelper.getYearsToNow());
-        patientDobYear.setItemCaptionMode(ItemCaptionMode.ID_TOSTRING);
-        patientDobYear.setInputPrompt(I18nProperties.getString(Strings.year));
-
-        patientDobDay.addValidator(
-                e -> ControllerProvider.getPersonController()
-                        .validateBirthDate((Integer) patientDobYear.getValue(), (Integer) patientDobMonth.getValue(), (Integer) e));
-        patientDobMonth.addValidator(
-                e -> ControllerProvider.getPersonController()
-                        .validateBirthDate((Integer) patientDobYear.getValue(), (Integer) e, (Integer) patientDobDay.getValue()));
-        patientDobYear.addValidator(
-                e -> ControllerProvider.getPersonController()
-                        .validateBirthDate((Integer) e, (Integer) patientDobMonth.getValue(), (Integer) patientDobDay.getValue()));
-
-        Label dobNot = new Label(I18nProperties.getCaption(Captions.dobNot));
-        dobNot.addStyleName(H4);
-        getContent().addComponent(dobNot, DOB_NOT_KNOWN_LABEL);
-
-        TextField patientAgeYear = addField(CaseDataDto.PATIENT_AGE_YEAR);
-        addField(CaseDataDto.PATIENT_AGE_MONTH);
-
-        ComboBox patientSex = addField(CaseDataDto.PATIENT_SEX, ComboBox.class);
-        patientSex.removeItem(Sex.OTHER);
-        patientSex.removeItem(Sex.UNKNOWN);
-        addFields(CaseDataDto.PATIENT_FIRST_NAME, CaseDataDto.PATIENT_LAST_NAME, CaseDataDto.PATIENT_OTHER_NAMES);
-
         addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
-        addFields(CaseDataDto.OCCUPATION, CaseDataDto.DISTRICT_OF_RESIDENCE);
+        addField(CaseDataDto.OCCUPATION);
+        ComboBox regionOfResidence  = addInfrastructureField(CaseDataDto.REGION_OF_RESIDENCE);
+        ComboBox districtOfResidence  = addInfrastructureField(CaseDataDto.DISTRICT_OF_RESIDENCE);
 
-        patientDobYear.addValueChangeListener(e -> {
-            updateListOfDays((Integer) e.getProperty().getValue(), (Integer) patientDobMonth.getValue());
-            patientDobMonth.markAsDirty();
-            patientDobDay.markAsDirty();
+        FieldHelper.updateItems(regionOfResidence, FacadeProvider.getRegionFacade().getAllActiveAsReference());
+
+        regionOfResidence.addValueChangeListener(e -> {
+            RegionReferenceDto regionDto = (RegionReferenceDto) e.getProperty().getValue();
+            FieldHelper.updateItems(districtOfResidence,
+                    regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
+
         });
-        patientDobMonth.addValueChangeListener(e -> {
-            updateListOfDays((Integer) patientDobYear.getValue(), (Integer) e.getProperty().getValue());
-            patientDobYear.markAsDirty();
-            patientDobDay.markAsDirty();
-        });
-        patientDobDay.addValueChangeListener(e -> {
-            patientDobYear.markAsDirty();
-            patientDobMonth.markAsDirty();
-        });
-
-    }
-
-    private void setItemCaptionsForMonths(AbstractSelect months) {
-        months.setItemCaption(1, I18nProperties.getEnumCaption(Month.JANUARY));
-        months.setItemCaption(2, I18nProperties.getEnumCaption(Month.FEBRUARY));
-        months.setItemCaption(3, I18nProperties.getEnumCaption(Month.MARCH));
-        months.setItemCaption(4, I18nProperties.getEnumCaption(Month.APRIL));
-        months.setItemCaption(5, I18nProperties.getEnumCaption(Month.MAY));
-        months.setItemCaption(6, I18nProperties.getEnumCaption(Month.JUNE));
-        months.setItemCaption(7, I18nProperties.getEnumCaption(Month.JULY));
-        months.setItemCaption(8, I18nProperties.getEnumCaption(Month.AUGUST));
-        months.setItemCaption(9, I18nProperties.getEnumCaption(Month.SEPTEMBER));
-        months.setItemCaption(10, I18nProperties.getEnumCaption(Month.OCTOBER));
-        months.setItemCaption(11, I18nProperties.getEnumCaption(Month.NOVEMBER));
-        months.setItemCaption(12, I18nProperties.getEnumCaption(Month.DECEMBER));
-    }
-
-    private void updateListOfDays(Integer selectedYear, Integer selectedMonth) {
-        if (!patientDobDay.isReadOnly()) {
-            Integer currentlySelected = (Integer) patientDobDay.getValue();
-            patientDobDay.removeAllItems();
-            patientDobDay.addItems(DateHelper.getDaysInMonth(selectedMonth, selectedYear));
-            if (patientDobDay.containsId(currentlySelected)) {
-                patientDobDay.setValue(currentlySelected);
-            }
-        }
     }
 
     private void updateDiseaseVariant(Disease disease) {
@@ -936,33 +847,6 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 
     public void setSearchedPerson(PersonDto searchedPerson) {
         personCreateForm.setSearchedPerson(searchedPerson);
-    }
-
-    public void transferDataToPerson(PersonDto person) {
-        if (Objects.equals(disease, Disease.MONKEYPOX.toString())) {
-            person.setFirstName((String) getField(CaseDataDto.PATIENT_FIRST_NAME).getValue());
-            person.setLastName((String) getField(CaseDataDto.PATIENT_LAST_NAME).getValue());
-            person.setOtherName((String) getField(CaseDataDto.PATIENT_OTHER_NAMES).getValue());
-            person.setSex((Sex) getField(CaseDataDto.PATIENT_SEX).getValue());
-        } else {
-            personCreateForm.transferDataToPerson(person);
-        }
-    }
-
-    public String getPatientFirstName() {
-        return (String) getField(CaseDataDto.PATIENT_FIRST_NAME).getValue();
-    }
-
-    public String getPatientLastName() {
-        return (String) getField(CaseDataDto.PATIENT_LAST_NAME).getValue();
-    }
-
-    public String getPatientOtherNames() {
-        return (String) getField(CaseDataDto.PATIENT_OTHER_NAMES).getValue();
-    }
-
-    public Sex getPatientSex() {
-        return (Sex) getField(CaseDataDto.PATIENT_SEX).getValue();
     }
 
 }

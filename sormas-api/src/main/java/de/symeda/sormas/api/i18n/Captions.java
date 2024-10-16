@@ -326,12 +326,6 @@ public interface Captions {
 	String CaseData_mobileTeamNo = "CaseData.mobileTeamNo";
 	String CaseData_informationGivenBy = "CaseData.informationGivenBy";
 	String CaseData_familyLinkWithPatient = "CaseData.familyLinkWithPatient";
-	String CaseData_patientFirstName = "CaseData.patientFirstName";
-	String CaseData_patientLastName = "CaseData.patientLastName";
-	String CaseData_patientOtherNames = "CaseData.patientOtherNames";
-	String CaseData_patientAgeYear = "CaseData.patientAgeYear";
-	String CaseData_patientAgeMonth = "CaseData.patientAgeMonth";
-	String CaseData_patientSex = "CaseData.patientSex";
 	String CaseData_numberOfDoses = "CaseData.numberOfDoses";
 	String CaseData_classificationUser = "CaseData.classificationUser";
 	String CaseData_classifiedBy = "CaseData.classifiedBy";
@@ -456,7 +450,6 @@ public interface Captions {
 	String CaseData_reportDate = "CaseData.reportDate";
 	String CaseData_specifyEventDiagnosis = "CaseData.specifyEventDiagnosis";
 	String CaseData_idsrDiagnosis = "CaseData.idsrDiagnosis";
-	String CaseData_dhimsFacilityType = "CaseData.dhimsFacilityType";
 	String CaseData_reportingDistrict = "CaseData.reportingDistrict";
 	String CaseData_reportingUser = "CaseData.reportingUser";
 	String CaseData_reportLat = "CaseData.reportLat";
@@ -477,6 +470,7 @@ public interface Captions {
 	String CaseData_surveillanceOfficer = "CaseData.surveillanceOfficer";
 	String CaseData_reportingOfficerName = "CaseData.reportingOfficerName";
 	String CaseData_reportingOfficerTitle = "CaseData.reportingOfficerTitle";
+	String CaseData_regionOfResidence = "CaseData.regionOfResidence";
 	String CaseData_functionOfReportingOfficer = "CaseData.functionOfReportingOfficer";
 	String CaseData_reportingOfficerContactPhone = "CaseData.reportingOfficerContactPhone";
 	String CaseData_reportingOfficerEmail = "CaseData.reportingOfficerEmail";
@@ -632,7 +626,9 @@ public interface Captions {
 	String CaseHospitalization_dischargeDate = "CaseHospitalization.dischargeDate";
 	String CaseHospitalization_healthFacility = "CaseHospitalization.healthFacility";
 	String CaseHospitalization_healthFacilityRecordNumber = "CaseHospitalization.healthFacilityRecordNumber";
-	String CaseHospitalization_healthFacilityDistrict = "CaseHospitalization.CaseHospitalization_healthFacilityDistrict";
+	String CaseHospitalization_healthFacilityRegion= "CaseHospitalization.healthFacilityRegion";
+	String CaseHospitalization_healthFacilityDistrict = "CaseHospitalization.healthFacilityDistrict";
+	String CaseHospitalization_healthFacilityCommunity = "CaseHospitalization.healthFacilityCommunity";
 	String CaseHospitalization_fillSectionBeforeSigningLoc = "CaseHospitalization.fillSectionBeforeSigning";
 	String CaseHospitalization_seekHelpChildLoc = "CaseHospitalization.seekHelpChild";
 	String CaseHospitalization_hospitalizationReason = "CaseHospitalization.hospitalizationReason";
@@ -706,6 +702,7 @@ public interface Captions {
 	String casePickCase = "casePickCase";
 	String casePlaceOfStay = "casePlaceOfStay";
 	String coorLabel = "coorLabel";
+	String personInfoLabel = "personInfoLabel";
 	String patientDob = "patientDob";
 	String dobNot = "dobNot";
 	String casePlusDays = "casePlusDays";
@@ -786,6 +783,8 @@ public interface Captions {
 	String Configuration_LineListing = "Configuration.LineListing";
 	String Configuration_Diseases = "Configuration.Diseases";
 	String Configuration_Disease = "Configuration.Disease";
+//	FormType
+	String Configuration_FormType = "Configuration.FormType";
 	String Configuration_Outbreaks = "Configuration.Outbreaks";
 	String Configuration_PointsOfEntry = "Configuration.PointsOfEntry";
 	String Contact = "Contact";
@@ -1890,11 +1889,12 @@ public interface Captions {
 	String facilityAllFacilities = "facilityAllFacilities";
 	String facilityArchivedFacilities = "facilityArchivedFacilities";
 	String facilityType = "facilityType";
-	String dhimsFacilityType = "dhimsFacilityType";
-	String afpFacilityOptions = "afpFacilityOptions";
 	String facilityTypeGroup = "facilityTypeGroup";
 	String facilitiesSelected = "facilitiesSelected";
 	String facilitiesAvailable = "facilitiesAvailable";
+	String formFieldsSelected = "formFieldsSelected";
+	String formFieldsAvailable = "formFieldsAvailable";
+
 	String FeatureConfiguration_districtName = "FeatureConfiguration.districtName";
 	String FeatureConfiguration_enabled = "FeatureConfiguration.enabled";
 	String FeatureConfiguration_endDate = "FeatureConfiguration.endDate";
@@ -2998,6 +2998,10 @@ public interface Captions {
 	String RiskFactor_investigatorAddress = "investigatorAddress";
 	String RiskFactor_investigatorTel = "investigatorTel";
 	String RiskFactor_email = "email";
+	String RiskFactor_patientSymptomsPrecedence = "patientSymptomsPrecedence";
+	String PatientSymptomsPrecedence_name = "name";
+	String PatientSymptomsPrecedence_phone = "phone";
+	String PatientSymptomsPrecedence_contactAddress = "contactAddress";
 
 
 	String sormasToSormasCaseNotShared = "sormasToSormasCaseNotShared";
@@ -3656,6 +3660,10 @@ public interface Captions {
 	String View_configuration_linelisting_short = "View.configuration.linelisting.short";
 	String View_configuration_diseases = "View.configuration.diseases";
 	String View_configuration_diseases_short = "View.configuration.diseases.short";
+	String View_configuration_forms = "View.configuration.forms";
+	String View_configuration_formFields = "View.configuration.formFields";
+	String View_configuration_forms_short = "View.configuration.forms.short";
+	String View_configuration_formFields_short = "View.configuration.formFields.short";
 	String View_configuration_outbreaks = "View.configuration.outbreaks";
 	String View_configuration_outbreaks_short = "View.configuration.outbreaks.short";
 	String View_configuration_pointsofentry = "View.configuration.pointsofentry";

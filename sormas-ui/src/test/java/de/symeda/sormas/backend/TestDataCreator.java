@@ -1217,7 +1217,7 @@ public class TestDataCreator {
 	}
 
 	public SampleDto createSample(CaseReferenceDto associatedCase, UserReferenceDto reportingUser, Facility lab, Consumer<SampleDto> customConfig) {
-		return createSample(associatedCase, new Date(), new Date(), reportingUser, SampleMaterial.WHOLE_BLOOD, lab, customConfig);
+		return createSample(associatedCase, new Date(), new Date(), reportingUser, SampleMaterial.BLOOD, lab, customConfig);
 	}
 
 	public SampleDto createSample(CaseReferenceDto associatedCase, UserReferenceDto reportingUser, FacilityReferenceDto lab) {
@@ -1233,7 +1233,7 @@ public class TestDataCreator {
 		SampleDto sample = SampleDto.build(reportingUser, associatedCase);
 		sample.setSampleDateTime(new Date());
 		sample.setReportDateTime(new Date());
-		sample.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		sample.setSampleMaterial(SampleMaterial.BLOOD);
 		sample.setSamplePurpose(SamplePurpose.EXTERNAL);
 		sample.setLab(beanTest.getFacilityFacade().getReferenceByUuid(lab.getUuid()));
 
@@ -1347,7 +1347,7 @@ public class TestDataCreator {
 		SampleDto sample = SampleDto.build(reportingUser, associatedContact);
 		sample.setSampleDateTime(new Date());
 		sample.setReportDateTime(new Date());
-		sample.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		sample.setSampleMaterial(SampleMaterial.BLOOD);
 		sample.setSamplePurpose(SamplePurpose.EXTERNAL);
 		sample.setLab(beanTest.getFacilityFacade().getReferenceByUuid(lab.getUuid()));
 
@@ -1361,7 +1361,7 @@ public class TestDataCreator {
 	}
 
 	public SampleDto createSample(EventParticipantReferenceDto associatedEventParticipant, UserReferenceDto reportingUser, FacilityReferenceDto lab) {
-		return createSample(associatedEventParticipant, new Date(), new Date(), reportingUser, SampleMaterial.WHOLE_BLOOD, lab);
+		return createSample(associatedEventParticipant, new Date(), new Date(), reportingUser, SampleMaterial.BLOOD, lab);
 	}
 
 	public SampleDto createSample(
@@ -1369,7 +1369,7 @@ public class TestDataCreator {
 		UserReferenceDto reportingUser,
 		FacilityReferenceDto lab,
 		Consumer<SampleDto> customConfig) {
-		return createSample(associatedEventParticipant, new Date(), new Date(), reportingUser, SampleMaterial.WHOLE_BLOOD, lab, customConfig);
+		return createSample(associatedEventParticipant, new Date(), new Date(), reportingUser, SampleMaterial.BLOOD, lab, customConfig);
 	}
 
 	public SampleDto createSample(
@@ -1531,7 +1531,7 @@ public class TestDataCreator {
 			new Date(),
 			new Date(),
 			associatedCase.getReportingUser(),
-			SampleMaterial.WHOLE_BLOOD,
+			SampleMaterial.BLOOD,
 			rdcf.facility);
 		return createPathogenTest(
 			new SampleReferenceDto(sample.getUuid()),

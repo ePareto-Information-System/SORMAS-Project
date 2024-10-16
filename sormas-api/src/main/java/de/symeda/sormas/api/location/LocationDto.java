@@ -22,7 +22,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

@@ -23,11 +23,13 @@ import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import de.symeda.sormas.backend.common.NotExposedToApi;
+import de.symeda.sormas.backend.patientsymptomsprecedence.PatientSymptomsPrecedence;
+
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class RiskFactor extends AbstractDomainObject {
@@ -88,6 +90,9 @@ public class RiskFactor extends AbstractDomainObject {
     private String investigatorAddress;
     private String investigatorTel;
     private String email;
+    private List<PatientSymptomsPrecedence> patientSymptomsPrecedence = new ArrayList<>();
+    @NotExposedToApi
+    private Date changeDateOfEmbeddedLists;
 
 
     public String getDrinkingWaterSourceOne() {
@@ -442,30 +447,6 @@ public class RiskFactor extends AbstractDomainObject {
         this.patientTouchDomesticWildAnimalIfYes = patientTouchDomesticWildAnimalIfYes;
     }
 
-    public CaseOutcome getStatusOfPatient() {
-        return statusOfPatient;
-    }
-
-    public void setStatusOfPatient(CaseOutcome statusOfPatient) {
-        this.statusOfPatient = statusOfPatient;
-    }
-
-    public Date getDateOfDeath() {
-        return dateOfDeath;
-    }
-
-    public void setDateOfDeath(Date dateOfDeath) {
-        this.dateOfDeath = dateOfDeath;
-    }
-
-    public String getPlaceOfDeath() {
-        return placeOfDeath;
-    }
-
-    public void setPlaceOfDeath(String placeOfDeath) {
-        this.placeOfDeath = placeOfDeath;
-    }
-
     public Date getDateOfSpecimenCollection() {
         return dateOfSpecimenCollection;
     }
@@ -520,5 +501,25 @@ public class RiskFactor extends AbstractDomainObject {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = PatientSymptomsPrecedence.RISK_FACTOR)
+    public List<PatientSymptomsPrecedence> getPatientSymptomsPrecedence() {
+        return patientSymptomsPrecedence;
+    }
+
+    public void setPatientSymptomsPrecedence(List<PatientSymptomsPrecedence> patientSymptomsPrecedence) {
+        this.patientSymptomsPrecedence = patientSymptomsPrecedence;
+    }
+
+    /**
+     * This change date has to be set whenever exposures are modified
+     */
+    public Date getChangeDateOfEmbeddedLists() {
+        return changeDateOfEmbeddedLists;
+    }
+
+    public void setChangeDateOfEmbeddedLists(Date changeDateOfEmbeddedLists) {
+        this.changeDateOfEmbeddedLists = changeDateOfEmbeddedLists;
     }
 }

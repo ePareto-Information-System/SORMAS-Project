@@ -569,6 +569,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				person.get(Person.UUID),
 				person.get(Person.FIRST_NAME),
 				person.get(Person.LAST_NAME),
+				person.get(Person.OTHER_NAME),
 
 				facility.get(Facility.UUID),
 				facility.get(Facility.LATITUDE),
@@ -1008,7 +1009,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				joins.getRoot().get(Case.HEALTH_CONDITIONS).get(HealthConditions.ID),
 				caseRoot.get(Case.UUID),
 				caseRoot.get(Case.EPID_NUMBER), caseRoot.get(Case.DISEASE), caseRoot.get(Case.DISEASE_VARIANT), caseRoot.get(Case.DISEASE_DETAILS),
-				caseRoot.get(Case.DISEASE_VARIANT_DETAILS), joins.getPerson().get(Person.UUID), joins.getPerson().get(Person.FIRST_NAME), joins.getPerson().get(Person.LAST_NAME),
+				caseRoot.get(Case.DISEASE_VARIANT_DETAILS), joins.getPerson().get(Person.UUID), joins.getPerson().get(Person.FIRST_NAME), joins.getPerson().get(Person.LAST_NAME), joins.getPerson().get(Person.OTHER_NAME),
 				joins.getPerson().get(Person.SALUTATION), joins.getPerson().get(Person.OTHER_SALUTATION), joins.getPerson().get(Person.SEX),
 				caseRoot.get(Case.PREGNANT), joins.getPerson().get(Person.APPROXIMATE_AGE),
 				joins.getPerson().get(Person.APPROXIMATE_AGE_TYPE), joins.getPerson().get(Person.BIRTHDATE_DD),
@@ -1778,7 +1779,6 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				caze.setDistrict(newDistrict);
 				caze.setCommunity(newCommunity);
 				caze.setFacilityType(updatedCaseBulkEditData.getFacilityType());
-				caze.setDhimsFacilityType(updatedCaseBulkEditData.getDhimsFacilityType());
 				caze.setHealthFacility(facilityService.getByUuid(updatedCaseBulkEditData.getHealthFacility().getUuid()));
 				caze.setHealthFacilityDetails(updatedCaseBulkEditData.getHealthFacilityDetails());
 				CaseLogic.handleHospitalization(toDto(caze), existingCaseDto, doTransfer);
@@ -2048,6 +2048,10 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		if ((caze.getCaseOrigin() == null || caze.getCaseOrigin() == CaseOrigin.IN_COUNTRY) && (caze.getHealthFacility() == null && caze.getFacilityType() == null)  && caze.getDisease() != Disease.FOODBORNE_ILLNESS && caze.getDisease() != Disease.AFP) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validFacility));
 		}
+
+		if(caze.getDisease() == Disease.MONKEYPOX && caze.getHealthFacility() == null){
+			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validFacility));
+		}
 		if (CaseOrigin.POINT_OF_ENTRY.equals(caze.getCaseOrigin()) && caze.getPointOfEntry() == null && caze.getDisease() == Disease.CORONAVIRUS) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validPointOfEntry));
 		}
@@ -2075,12 +2079,12 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		if (caze.getHealthFacility() != null) {
 			FacilityDto healthFacility = facilityFacade.getByUuid(caze.getHealthFacility().getUuid());
 
-			if (caze.getFacilityType() == null && caze.getDhimsFacilityType() == null) {
+			/*if (caze.getFacilityType() == null) {
 				if (!FacilityDto.NONE_FACILITY_UUID.equals(caze.getHealthFacility().getUuid())) {
 					throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noFacilityType));
 				}
-			}
-			/*else if (!caze.getFacilityType().isAccommodation() && caze.getDhimsFacilityType() == null) {
+			}*/
+			/*else if (!caze.getFacilityType().isAccommodation()) {
 				throw new ValidationRuntimeException(
 						I18nProperties.getValidationError(Validations.notAccomodationFacilityType, caze.getFacilityType()));
 			}*/
@@ -3312,8 +3316,6 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setFollowUpUntil(source.getFollowUpUntil());
 		target.setOverwriteFollowUpUntil(source.isOverwriteFollowUpUntil());
 		target.setFacilityType(source.getFacilityType());
-		target.setDhimsFacilityType(source.getDhimsFacilityType());
-		target.setAfpFacilityOptions(source.getAfpFacilityOptions());
 
 		target.setCaseIdIsm(source.getCaseIdIsm());
 		target.setContactTracingFirstContactType(source.getContactTracingFirstContactType());
@@ -3374,7 +3376,6 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setNationality(source.getNationality());
 		target.setEthnicity(source.getEthnicity());
 		target.setOccupation(source.getOccupation());
-		target.setDistrictOfResidence(source.getDistrictOfResidence());
 		target.setSpecifyEventDiagnosis(source.getSpecifyEventDiagnosis());
 		target.setNotifiedByList(source.getNotifiedByList());
 		target.setNotifiedOther(source.getNotifiedOther());
@@ -3393,7 +3394,6 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setMotherTTDateFour(source.getMotherTTDateFour());
 		target.setMotherTTDateFive(source.getMotherTTDateFive());
 		target.setMotherLastDoseDate(source.getMotherLastDoseDate());
-
 		target.setSeenInOPD(source.getSeenInOPD());
 		target.setAdmittedInOPD(source.getAdmittedInOPD());
 		target.setMotherGivenProtectiveDoseTT(source.getMotherGivenProtectiveDoseTT());
@@ -3408,19 +3408,12 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setFormCompletedByName(source.getFormCompletedByName());
 		target.setFormCompletedByPosition(source.getFormCompletedByPosition());
 		target.setFormCompletedByCellPhoneNo(source.getFormCompletedByCellPhoneNo());
-
 		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
 		target.setDateLatestUpdateRecord(source.getDateLatestUpdateRecord());
 		target.setNumberOfPeopleInSameHousehold(source.getNumberOfPeopleInSameHousehold());
-		target.setPatientOtherNames(source.getPatientOtherNames());
-		target.setPatientDobDD(source.getPatientDobDD());
-		target.setPatientDobMM(source.getPatientDobMM());
-		target.setPatientDobYY(source.getPatientDobYY());
-		target.setPatientAgeYear(source.getPatientAgeYear());
-		target.setPatientAgeMonth(source.getPatientAgeMonth());
-		target.setPatientSex(source.getPatientSex());
-		target.setPatientFirstName(source.getPatientFirstName());
-		target.setPatientLastName(source.getPatientLastName());
+		target.setRegionOfResidence(RegionFacadeEjb.toReferenceDto(source.getRegionOfResidence()));
+		target.setDistrictOfResidence(DistrictFacadeEjb.toReferenceDto(source.getDistrictOfResidence()));
+		target.setInvestigationOfficerAddress(source.getInvestigationOfficerAddress());
 
 		return target;
 	}
@@ -3483,6 +3476,14 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setFoodHistory(foodHistoryFacade.fillOrBuildEntity(source.getFoodHistory(), target.getFoodHistory(),checkChangeDate));
 
 		target.setRiskFactor(riskFactorFacade.fillOrBuildEntity(source.getRiskFactor(), target.getRiskFactor(), checkChangeDate));
+		if (source.getDisease() == Disease.MONKEYPOX) {
+			if (source.getHospitalization().getLocationType().getRegion() == null) {
+				source.getHospitalization().getLocationType().setRegion(source.getResponsibleRegion());
+				source.getHospitalization().getLocationType().setDistrict(source.getResponsibleDistrict());
+				source.getHospitalization().getLocationType().setCommunity(source.getResponsibleCommunity());
+				source.getHospitalization().setNameOfFacility(source.getHealthFacility());
+			}
+		}
 		target.setHospitalization(hospitalizationFacade.fillOrBuildEntity(source.getHospitalization(), target.getHospitalization(), checkChangeDate));
 		target.setEpiData(epiDataFacade.fillOrBuildEntity(source.getEpiData(), target.getEpiData(), checkChangeDate));
 		if (source.getTherapy() == null) {
@@ -3592,8 +3593,6 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setVaccineType(source.getVaccineType());
 		target.setNumberOfDoses(source.getNumberOfDoses());
 		target.setFacilityType(source.getFacilityType());
-		target.setDhimsFacilityType(source.getDhimsFacilityType());
-		target.setAfpFacilityOptions(source.getAfpFacilityOptions());
 		if (source.getSormasToSormasOriginInfo() != null) {
 			target.setSormasToSormasOriginInfo(originInfoService.getByUuid(source.getSormasToSormasOriginInfo().getUuid()));
 		}
@@ -3678,7 +3677,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setNationality(source.getNationality());
 		target.setEthnicity(source.getEthnicity());
 		target.setOccupation(source.getOccupation());
-		target.setDistrictOfResidence(source.getDistrictOfResidence());
+		target.setRegionOfResidence(regionService.getByReferenceDto(source.getRegionOfResidence()));
+		target.setDistrictOfResidence(districtService.getByReferenceDto(source.getDistrictOfResidence()));
 		target.setReportingZone(source.getReportingZone());
 		target.setReportingVillage(source.getReportingVillage());
 		target.setSpecifyEventDiagnosis(source.getSpecifyEventDiagnosis());
@@ -3696,15 +3696,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setInformationGivenBy(source.getInformationGivenBy());
 		target.setFamilyLinkWithPatient(source.getFamilyLinkWithPatient());
 		target.setNameOfVillagePersonGotIll(source.getNameOfVillagePersonGotIll());
-		target.setPatientOtherNames(source.getPatientOtherNames());
-		target.setPatientDobDD(source.getPatientDobDD());
-		target.setPatientDobMM(source.getPatientDobMM());
-		target.setPatientDobYY(source.getPatientDobYY());
-		target.setPatientAgeYear(source.getPatientAgeYear());
-		target.setPatientAgeMonth(source.getPatientAgeMonth());
-		target.setPatientSex(source.getPatientSex());
-		target.setPatientFirstName(source.getPatientFirstName());
-		target.setPatientLastName(source.getPatientLastName());
+		target.setInvestigationOfficerAddress(source.getInvestigationOfficerAddress());
 
 
 		return target;
@@ -4381,6 +4373,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				caze.get(Case.CHANGE_DATE),
 				joins.getPerson().get(Person.FIRST_NAME),
 				joins.getPerson().get(Person.LAST_NAME),
+				joins.getPerson().get(Person.OTHER_NAME),
 				caze.get(Case.REPORT_DATE),
 				joins.getSymptoms().get(Symptoms.ONSET_DATE),
 				caze.get(Case.FOLLOW_UP_UNTIL),
@@ -4625,7 +4618,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			Predicate personPredicate = and(
 					cb,
 					cb.equal(cb.trim(cb.lower(person.get(Person.FIRST_NAME))), searchPerson.getFirstName().toLowerCase().trim()),
-					cb.equal(cb.trim(cb.lower(person.get(Person.LAST_NAME))), searchPerson.getLastName().toLowerCase().trim()));
+					cb.equal(cb.trim(cb.lower(person.get(Person.LAST_NAME))), searchPerson.getLastName().toLowerCase().trim()),
+					cb.equal(cb.trim(cb.lower(person.get(Person.OTHER_NAME))), searchPerson.getLastName().toLowerCase().trim()));
 
 			if (searchPerson.getBirthdateDD() != null) {
 				personPredicate = and(

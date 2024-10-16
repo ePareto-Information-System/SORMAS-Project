@@ -51,6 +51,7 @@ import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.task.TaskStatus;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.caze.CaseDao;
@@ -130,10 +131,10 @@ public class CaseBackendTest {
 		Case caze = TestEntityCreator.createCase();
 
 		caze.setEpidNumber("AppEpidNumber");
-		caze.getHospitalization().setIsolated(YesNoUnknown.NO);
+		caze.getHospitalization().setIsolated(YesNo.NO);
 		caze.getPerson().setNickname("Hansi");
 		caze.getSymptoms().setTemperature(37.0f);
-		caze.getEpiData().setAreaInfectedAnimals(YesNoUnknown.NO);
+		caze.getEpiData().setAreaInfectedAnimals(YesNo.NO);
 		caze.getPerson().getAddress().setCity("AppCity");
 
 		DatabaseHelper.getCaseDao().saveAndSnapshot(caze);
@@ -158,10 +159,10 @@ public class CaseBackendTest {
 		mergeCase.getMaternalHistory().setId(null);
 
 		mergeCase.setEpidNumber("ServerEpidNumber");
-		mergeCase.getHospitalization().setIsolated(YesNoUnknown.YES);
+		mergeCase.getHospitalization().setIsolated(YesNo.YES);
 		mergeCase.getPerson().setNickname("Franzi");
 		mergeCase.getSymptoms().setTemperature(36.5f);
-		mergeCase.getEpiData().setAreaInfectedAnimals(YesNoUnknown.YES);
+		mergeCase.getEpiData().setAreaInfectedAnimals(YesNo.YES);
 		mergeCase.getPerson().getAddress().setCity("ServerCity");
 
 		// Assert that the cloning has worked properly

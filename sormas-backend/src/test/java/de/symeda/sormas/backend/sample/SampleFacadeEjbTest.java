@@ -199,14 +199,14 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 			DateHelper.subtractDays(new Date(), 4),
 			new Date(),
 			user.toReference(),
-			SampleMaterial.WHOLE_BLOOD,
+			SampleMaterial.BLOOD,
 			rdcf.facility);
 		SampleDto referredSample = creator.createSample(
 			contact.toReference(),
 			DateHelper.subtractDays(new Date(), 3),
 			new Date(),
 			user.toReference(),
-			SampleMaterial.WHOLE_BLOOD,
+			SampleMaterial.BLOOD,
 			rdcf.facility);
 		sample.setReferredTo(referredSample.toReference());
 		creator.createAdditionalTest(sample.toReference());
@@ -233,7 +233,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 			DateHelper.subtractDays(new Date(), 2),
 			new Date(),
 			user.toReference(),
-			SampleMaterial.WHOLE_BLOOD,
+			SampleMaterial.BLOOD,
 			rdcf.facility);
 
 		long count = getSampleFacade().count(new SampleCriteria());
@@ -301,14 +301,14 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 			DateHelper.subtractDays(new Date(), 4),
 			new Date(),
 			user.toReference(),
-			SampleMaterial.WHOLE_BLOOD,
+			SampleMaterial.BLOOD,
 			rdcf.facility);
 		SampleDto referredSample = creator.createSample(
 			contact.toReference(),
 			DateHelper.subtractDays(new Date(), 3),
 			new Date(),
 			user.toReference(),
-			SampleMaterial.WHOLE_BLOOD,
+			SampleMaterial.BLOOD,
 			rdcf.facility);
 		sample.setReferredTo(referredSample.toReference());
 		creator.createAdditionalTest(sample.toReference());
@@ -362,7 +362,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 			InvestigationStatus.PENDING,
 			new Date(),
 			rdcf);
-		SampleDto sample = creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+		SampleDto sample = creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
 		PathogenTestDto sampleTest = creator.createPathogenTest(
 			sample.toReference(),
 			PathogenTestType.MICROSCOPY,
@@ -406,9 +406,9 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 			new Date(),
 			rdcf);
 		SampleDto firstSample =
-			creator.createSample(firstCaze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+			creator.createSample(firstCaze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
 		SampleDto secondSample =
-			creator.createSample(firstCaze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+			creator.createSample(firstCaze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
 		PathogenTestDto firstSamplePathogenTest = creator.createPathogenTest(
 			firstSample.toReference(),
 			PathogenTestType.MICROSCOPY,
@@ -454,9 +454,9 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 			new Date(),
 			rdcf);
 		SampleDto thirdSample =
-			creator.createSample(secondCaze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+			creator.createSample(secondCaze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
 		SampleDto forthSample =
-			creator.createSample(secondCaze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+			creator.createSample(secondCaze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
 		PathogenTestDto secondSamplePathogenTest = creator.createPathogenTest(
 			thirdSample.toReference(),
 			PathogenTestType.RAPID_TEST,
@@ -514,7 +514,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 			InvestigationStatus.PENDING,
 			new Date(),
 			rdcf);
-		SampleDto sample = creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+		SampleDto sample = creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
 		creator.createPathogenTest(
 			sample.toReference(),
 			PathogenTestType.MICROSCOPY,
@@ -580,24 +580,24 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 		creator.createSample(caze.toReference(), officer.toReference(), rdcf.facility, (s) -> {
 			s.setLabSampleID("case_sample_id");
 			s.setSampleDateTime(sampleDateTime1);
-			s.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+			s.setSampleMaterial(SampleMaterial.BLOOD);
 		});
 
 		Date sampleDateTime2 = DateHelper.parseDate("08.02.2021", new SimpleDateFormat("dd.MM.yyyy"));
 		creator.createSample(caze.toReference(), officer.toReference(), rdcf.facility, (s) -> {
 			s.setLabSampleID("case_sample_id_2");
 			s.setSampleDateTime(sampleDateTime2);
-			s.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+			s.setSampleMaterial(SampleMaterial.BLOOD);
 		});
 
 		ContactReferenceDto contact = creator.createContact(officer.toReference(), creator.createPerson().toReference()).toReference();
 		SampleDto contactSample =
-			creator.createSample(contact, sampleDateTime1, new Date(), officer.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+			creator.createSample(contact, sampleDateTime1, new Date(), officer.toReference(), SampleMaterial.BLOOD, rdcf.facility);
 
 		EventParticipantDto eventParticipant =
 			creator.createEventParticipant(creator.createEvent(officer.toReference()).toReference(), creator.createPerson(), officer.toReference());
 		SampleDto eventParticipantSample = creator
-			.createSample(eventParticipant.toReference(), sampleDateTime1, new Date(), officer.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+			.createSample(eventParticipant.toReference(), sampleDateTime1, new Date(), officer.toReference(), SampleMaterial.BLOOD, rdcf.facility);
 
 		SampleSimilarityCriteria criteria = new SampleSimilarityCriteria();
 		criteria.sampleCriteria(new SampleCriteria().caze(caze.toReference()));
@@ -611,7 +611,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 		similarSamples = getSampleFacade().getSimilarSamples(criteria);
 		MatcherAssert.assertThat(similarSamples, hasSize(0));
 
-		criteria.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		criteria.setSampleMaterial(SampleMaterial.BLOOD);
 
 		criteria.setSampleDateTime(DateHelper.addDays(sampleDateTime2, 1));
 		similarSamples = getSampleFacade().getSimilarSamples(criteria);
@@ -632,7 +632,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 		// contact samples
 		SampleSimilarityCriteria contactSampleCriteria = new SampleSimilarityCriteria().sampleCriteria(new SampleCriteria().contact(contact));
 		contactSampleCriteria.setSampleDateTime(sampleDateTime1);
-		contactSampleCriteria.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		contactSampleCriteria.setSampleMaterial(SampleMaterial.BLOOD);
 
 		List<SampleDto> contactSimilarSamples = getSampleFacade().getSimilarSamples(contactSampleCriteria);
 		MatcherAssert.assertThat(contactSimilarSamples, hasSize(1));
@@ -642,7 +642,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 		SampleSimilarityCriteria eventParticipantSampleCriteria =
 			new SampleSimilarityCriteria().sampleCriteria(new SampleCriteria().eventParticipant(eventParticipant.toReference()));
 		eventParticipantSampleCriteria.setSampleDateTime(sampleDateTime1);
-		eventParticipantSampleCriteria.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		eventParticipantSampleCriteria.setSampleMaterial(SampleMaterial.BLOOD);
 
 		List<SampleDto> eventParticipantSimilarSamples = getSampleFacade().getSimilarSamples(eventParticipantSampleCriteria);
 		MatcherAssert.assertThat(eventParticipantSimilarSamples, hasSize(1));
@@ -699,7 +699,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 
 		SampleDto cazeSample = SampleDto.build(user.toReference(), unexistingCase.toReference());
 		cazeSample.setSampleDateTime(new Date());
-		cazeSample.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		cazeSample.setSampleMaterial(SampleMaterial.BLOOD);
 		cazeSample.setSamplePurpose(SamplePurpose.INTERNAL);
 
 		try {
@@ -721,7 +721,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 
 		SampleDto contactSample = SampleDto.build(user.toReference(), unexistingContact.toReference());
 		contactSample.setSampleDateTime(new Date());
-		contactSample.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		contactSample.setSampleMaterial(SampleMaterial.BLOOD);
 		contactSample.setSamplePurpose(SamplePurpose.INTERNAL);
 
 		try {
@@ -746,7 +746,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 
 		SampleDto eventParticipantSample = SampleDto.build(user.toReference(), unexstingEventParticipant.toReference());
 		eventParticipantSample.setSampleDateTime(new Date());
-		eventParticipantSample.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		eventParticipantSample.setSampleMaterial(SampleMaterial.BLOOD);
 		eventParticipantSample.setSamplePurpose(SamplePurpose.INTERNAL);
 
 		try {
@@ -767,7 +767,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 
 		SampleDto cazeSample = SampleDto.build(user.toReference(), caze.toReference());
 		cazeSample.setSampleDateTime(new Date());
-		cazeSample.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		cazeSample.setSampleMaterial(SampleMaterial.BLOOD);
 		cazeSample.setSamplePurpose(SamplePurpose.INTERNAL);
 
 		FacilityDto unexistingLaboratory = FacilityDto.build();
@@ -791,7 +791,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 
 		SampleDto sample = SampleDto.build(user.toReference(), caze.toReference());
 		sample.setSampleDateTime(new Date());
-		sample.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		sample.setSampleMaterial(SampleMaterial.BLOOD);
 		sample.setSamplePurpose(SamplePurpose.INTERNAL);
 
 		UserDto unexistingUser = UserDto.build();
@@ -1083,7 +1083,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 			new Date(),
 			new Date(),
 			user.toReference(),
-			SampleMaterial.WHOLE_BLOOD,
+			SampleMaterial.BLOOD,
 			creator.createRDCF().facility);
 
 		ContactDto contactWithCoord = creator.createContact(user.toReference(), creator.createPerson().toReference(), Disease.CORONAVIRUS, c -> {
@@ -1095,7 +1095,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 			new Date(),
 			new Date(),
 			user.toReference(),
-			SampleMaterial.WHOLE_BLOOD,
+			SampleMaterial.BLOOD,
 			creator.createRDCF().facility);
 
 		EventDto event = creator.createEvent(user.toReference());
@@ -1106,7 +1106,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 			new Date(),
 			new Date(),
 			user.toReference(),
-			SampleMaterial.WHOLE_BLOOD,
+			SampleMaterial.BLOOD,
 			creator.createRDCF().facility);
 
 		EventDto eventWithCoord = creator.createEvent(user.toReference(), Disease.CORONAVIRUS, e -> {
@@ -1120,7 +1120,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 			new Date(),
 			new Date(),
 			user.toReference(),
-			SampleMaterial.WHOLE_BLOOD,
+			SampleMaterial.BLOOD,
 			creator.createRDCF().facility);
 
 		// sample coordinates not taken

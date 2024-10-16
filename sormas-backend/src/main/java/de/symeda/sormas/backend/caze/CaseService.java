@@ -778,12 +778,6 @@ public class CaseService extends AbstractCoreAdoService<Case, CaseJoins> {
 		if (caseCriteria.getFacilityType() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.FACILITY_TYPE), caseCriteria.getFacilityType()));
 		}
-		if (caseCriteria.getDhimsFacilityType() != null) {
-		    filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.DHIMS_FACILITY_TYPE), caseCriteria.getDhimsFacilityType()));
-		}
-		if (caseCriteria.getAfpFacilityOptions() != null) {
-		    filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.AFP_FACILITY_OPTIONS), caseCriteria.getAfpFacilityOptions()));
-		}
 		if (caseCriteria.getPointOfEntry() != null) {
 			filter = CriteriaBuilderHelper
 					.and(cb, filter, cb.equal(joins.getPointOfEntry().get(PointOfEntry.UUID), caseCriteria.getPointOfEntry().getUuid()));

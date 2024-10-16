@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.utils.*;
 
 import de.symeda.sormas.api.CountryHelper;
@@ -148,8 +147,6 @@ public class CaseExportDto extends AbstractUuidDto {
 	@PersonalData
 	@SensitiveData
 	private FacilityType facilityType;
-	private DhimsFacility dhimsFacilityType;
-	private AFPFacilityOptions afpFacilityOptions;
 	@PersonalData
 	@SensitiveData
 	private String healthFacility;
@@ -360,7 +357,7 @@ public class CaseExportDto extends AbstractUuidDto {
 						 String personUuid, String firstName, String lastName, String otherName, Salutation salutation, String otherSalutation, Sex sex, YesNoUnknown pregnant,
 						 Integer approximateAge, ApproximateAgeType approximateAgeType, Integer birthdateDD, Integer birthdateMM,
 						 Integer birthdateYYYY, Date reportDate, String region, String district, String community,
-						 FacilityType facilityType, DhimsFacility dhimsFacilityType, AFPFacilityOptions afpFacilityOptions, String healthFacility, String healthFacilityUuid, String healthFacilityDetails, String pointOfEntry,
+						 FacilityType facilityType, String healthFacility, String healthFacilityUuid, String healthFacilityDetails, String pointOfEntry,
 						 String pointOfEntryUuid, String pointOfEntryDetails, CaseClassification caseClassification,
 						 YesNoUnknown clinicalConfirmation, YesNoUnknown epidemiologicalConfirmation, YesNoUnknown laboratoryDiagnosticConfirmation,
 						 Boolean notACaseReasonNegativeTest, Boolean notACaseReasonPhysicianInformation, Boolean notACaseReasonDifferentPathogen, Boolean notACaseReasonOther,
@@ -473,8 +470,6 @@ public class CaseExportDto extends AbstractUuidDto {
 		this.quarantineOfficialOrderSent = quarantineOfficialOrderSent;
 		this.quarantineOfficialOrderSentDate = quarantineOfficialOrderSentDate;
 		this.facilityType = facilityType;
-		this.dhimsFacilityType = dhimsFacilityType;
-		this.afpFacilityOptions = afpFacilityOptions;
 		this.healthFacility = FacilityHelper.buildFacilityString(healthFacilityUuid, healthFacility);
 		this.healthFacilityDetails = healthFacilityDetails;
 		this.pointOfEntry = InfrastructureHelper.buildPointOfEntryString(pointOfEntryUuid, pointOfEntry);
@@ -2399,33 +2394,13 @@ public class CaseExportDto extends AbstractUuidDto {
 	@ExportTarget(caseExportTypes = {
 			CaseExportType.CASE_SURVEILLANCE,
 			CaseExportType.CASE_MANAGEMENT })
-	@ExportProperty(CaseDataDto.AFP_FACILITY_OPTIONS)
-	@ExportGroup(ExportGroupType.CORE)
-	public AFPFacilityOptions getAfpFacilityOptions() {
-		return afpFacilityOptions;
-	}
-
-	@Order(181)
-	@ExportTarget(caseExportTypes = {
-			CaseExportType.CASE_SURVEILLANCE,
-			CaseExportType.CASE_MANAGEMENT })
-	@ExportProperty(CaseDataDto.DHIMS_FACILITY_TYPE)
-	@ExportGroup(ExportGroupType.CORE)
-	public DhimsFacility getDhimsFacilityType() {
-		return dhimsFacilityType;
-	}
-
-	@Order(182)
-	@ExportTarget(caseExportTypes = {
-			CaseExportType.CASE_SURVEILLANCE,
-			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.REPORTING_OFFICER_TITLE)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getReportingOfficerTitle() {
 		return reportingOfficerTitle;
 	}
 
-	@Order(183)
+	@Order(181)
 	@ExportTarget(caseExportTypes = {
 			CaseExportType.CASE_SURVEILLANCE,
 			CaseExportType.CASE_MANAGEMENT })
@@ -2435,7 +2410,7 @@ public class CaseExportDto extends AbstractUuidDto {
 		return functionOfReportingOfficer;
 	}
 
-	@Order(184)
+	@Order(182)
 	@ExportTarget(caseExportTypes = {
 			CaseExportType.CASE_SURVEILLANCE,
 			CaseExportType.CASE_MANAGEMENT })
@@ -2445,7 +2420,7 @@ public class CaseExportDto extends AbstractUuidDto {
 		return reportingOfficerContactPhone;
 	}
 
-	@Order(185)
+	@Order(183)
 	@ExportTarget(caseExportTypes = {
 			CaseExportType.CASE_SURVEILLANCE,
 			CaseExportType.CASE_MANAGEMENT })
@@ -2540,9 +2515,6 @@ public class CaseExportDto extends AbstractUuidDto {
 	}
 
 	public void setFacilityType(FacilityType facilityType) {this.facilityType = facilityType;}
-	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {this.dhimsFacilityType = dhimsFacilityType;}
-
-	public void setAfpFacilityOptions(AFPFacilityOptions afpFacilityOptions) {this.afpFacilityOptions = afpFacilityOptions;}
 
 	public void setHealthFacilityDetails(String healthFacilityDetails) {this.healthFacilityDetails = healthFacilityDetails;}
 

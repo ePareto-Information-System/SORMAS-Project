@@ -240,7 +240,6 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
 		hideValidationUntilNextCommit();
-//		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.SEX);
 	}
 
 	private void setItemCaptionsForMonths(AbstractSelect months) {
@@ -378,6 +377,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 		person.setFirstName(personCreated.getFirstName());
 		person.setLastName(personCreated.getLastName());
+		person.setOtherName(personCreated.getOtherName());
 		person.setBirthdateDD(personCreated.getBirthdateDD());
 		person.setBirthdateMM(personCreated.getBirthdateMM());
 		person.setBirthdateYYYY(personCreated.getBirthdateYYYY());
@@ -398,9 +398,6 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		}
 		if (getHomeAddressForm() != null && getHomeAddressForm().getValue() != null) {
 			person.setAddress(getHomeAddressForm().getValue());
-		}
-		if(StringUtils.isNotEmpty(getOtherName())) {
-			person.setOtherName(getOtherName());
 		}
 	}
 
@@ -429,6 +426,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 		getField(PersonDto.FIRST_NAME).setEnabled(enabled);
 		getField(PersonDto.LAST_NAME).setEnabled(enabled);
+		getField(PersonDto.OTHER_NAME).setEnabled(enabled);
 		getField(PersonDto.BIRTH_DATE_DD).setEnabled(enabled);
 		getField(PersonDto.BIRTH_DATE_MM).setEnabled(enabled);
 		getField(PersonDto.BIRTH_DATE_YYYY).setEnabled(enabled);
@@ -484,7 +482,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 		searchPersonButton.setEnabled(false);
 
-		setRequired(false, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.SEX);
+		setRequired(false, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.OTHER_NAME, PersonDto.SEX);
 	}
 
 	public LocationEditForm getHomeAddressForm() {
@@ -516,6 +514,10 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	public void hideFields(){
 		setVisible(false, PersonDto.GHANA_CARD, PersonDto.PASSPORT_NUMBER, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PRESENT_CONDITION, PersonDto.EMAIL_ADDRESS, PersonDto.PHONE);
 	}
+	public void showFields(){
+		setVisible(true, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE);
+		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.SEX);
+	}
 	public void showPresentCondition(){
 		setVisible(true, PersonDto.PRESENT_CONDITION);
 	}
@@ -524,11 +526,6 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	}
 	public void hideSelectedFields(){
 		setVisible(false, PersonDto.PASSPORT_NUMBER, PersonDto.NATIONAL_HEALTH_ID, PersonDto.PRESENT_CONDITION,PersonDto.EMAIL_ADDRESS, PersonDto.PHONE);
-	}
-
-	public void hideFieldsForMpox(){
-		setVisible(false, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.OTHER_NAME, PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD, PersonDto.SEX);
-		setRequired(false, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.SEX);
 	}
 
 //	covid-19

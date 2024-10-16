@@ -76,6 +76,10 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		a.setHospitalizationReason(b.getHospitalizationReason());
 		a.setOtherHospitalizationReason(b.getOtherHospitalizationReason());
 		a.setHealthFacilityRecordNumber(b.getHealthFacilityRecordNumber());
+		a.setSelectInpatientOutpatient(b.getSelectInpatientOutpatient());
+		a.setDateFirstSeen(b.getDateFirstSeen());
+		a.setNotifyDistrictDate(b.getNotifyDistrictDate());
+		a.setDateFormSentToDistrict(b.getDateFormSentToDistrict());
 
 
 		// It would be better to merge with the existing hospitalizations
@@ -88,6 +92,10 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 			}
 		}
 		a.setPreviousHospitalizations(previousHospitalizations);
+		a.setHospitalRecordNumber(b.getHospitalRecordNumber());
+		a.setPatientVentilated(b.getPatientVentilated());
+		a.setDateFormSentToDistrict(b.getDateFormSentToDistrict());
+		a.setSeenAtAHealthFacility(b.getSeenAtAHealthFacility());
 	}
 
 	@Override
@@ -108,6 +116,10 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		a.setHospitalizationReason(b.getHospitalizationReason());
 		a.setOtherHospitalizationReason(b.getOtherHospitalizationReason());
 		a.setHealthFacilityRecordNumber(b.getHealthFacilityRecordNumber());
+		a.setSelectInpatientOutpatient(b.getSelectInpatientOutpatient());
+		a.setDateFirstSeen(b.getDateFirstSeen());
+		a.setNotifyDistrictDate(b.getNotifyDistrictDate());
+		a.setDateFormSentToDistrict(b.getDateFormSentToDistrict());
 
 		List<PreviousHospitalizationDto> previousHospitalizationDtos = new ArrayList<>();
 		for (PreviousHospitalization prevHosp : b.getPreviousHospitalizations()) {
@@ -115,6 +127,10 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 			previousHospitalizationDtos.add(prevHospDto);
 		}
 		a.setPreviousHospitalizations(previousHospitalizationDtos);
+		a.setHospitalRecordNumber(b.getHospitalRecordNumber());
+		a.setPatientVentilated(b.getPatientVentilated());
+		a.setDateFormSentToDistrict(b.getDateFormSentToDistrict());
+		a.setSeenAtAHealthFacility(b.getSeenAtAHealthFacility());
 	}
 
     @Override

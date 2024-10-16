@@ -1,19 +1,24 @@
 package de.symeda.sormas.backend.riskfactor;
 
+import de.symeda.sormas.api.riskfactor.PatientSymptomsPrecedenceDto;
 import de.symeda.sormas.api.riskfactor.RiskFactorDto;
 import de.symeda.sormas.api.riskfactor.RiskFactorFacade;
+import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.caze.CaseService;
 import de.symeda.sormas.backend.infrastructure.community.CommunityService;
 import de.symeda.sormas.backend.infrastructure.district.DistrictService;
 import de.symeda.sormas.backend.infrastructure.facility.FacilityService;
 import de.symeda.sormas.backend.infrastructure.region.RegionService;
-import de.symeda.sormas.backend.util.DtoHelper;
-import de.symeda.sormas.backend.sixtyday.SixtyDayService;
+import de.symeda.sormas.backend.patientsymptomsprecedence.PatientSymptomsPrecedence;
+import de.symeda.sormas.backend.patientsymptomsprecedence.PatientSymptomsPrecedenceService;
 import de.symeda.sormas.backend.util.DtoHelper;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Stateless(name = "RiskFactorFacade")
 public class RiskFactorFacadeEjb implements RiskFactorFacade {
@@ -30,6 +35,8 @@ public class RiskFactorFacadeEjb implements RiskFactorFacade {
     private CommunityService communityService;
     @EJB
     private FacilityService facilityService;
+    @EJB
+    private PatientSymptomsPrecedenceService patientSymptomsPrecedenceService;
 
 public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boolean checkChangeDate) {
         if (source == null) {
@@ -81,9 +88,6 @@ public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boo
         target.setDateOfContactWithIllPerson(source.getDateOfContactWithIllPerson());
         target.setPatientTouchDomesticWildAnimal(source.getPatientTouchDomesticWildAnimal());
         target.setPatientTouchDomesticWildAnimalIfYes(source.getPatientTouchDomesticWildAnimalIfYes());
-        target.setStatusOfPatient(source.getStatusOfPatient());
-        target.setDateOfDeath(source.getDateOfDeath());
-        target.setPlaceOfDeath(source.getPlaceOfDeath());
         target.setDateOfSpecimenCollection(source.getDateOfSpecimenCollection());
         target.setTypeOfSpecimenCollection(source.getTypeOfSpecimenCollection());
         target.setInvestigatorName(source.getInvestigatorName());
@@ -91,6 +95,20 @@ public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boo
         target.setInvestigatorAddress(source.getInvestigatorAddress());
         target.setInvestigatorTel(source.getInvestigatorTel());
         target.setEmail(source.getEmail());
+
+    List<PatientSymptomsPrecedence> patientSymptomsPrecedences = new ArrayList<>();
+    for (PatientSymptomsPrecedenceDto patientSymptomsPrecedenceDto : source.getPatientSymptomsPrecedence()) {
+        PatientSymptomsPrecedence patientSymptomsPrecedence = patientSymptomsPrecedenceService.getByUuid(patientSymptomsPrecedenceDto.getUuid());
+        patientSymptomsPrecedence = fillOrBuildPatientSymptomsPrecedenceEntity(patientSymptomsPrecedenceDto, patientSymptomsPrecedence, checkChangeDate);
+        patientSymptomsPrecedence.setRiskFactor(target);
+        patientSymptomsPrecedences.add(patientSymptomsPrecedence);
+    }
+    if (!DataHelper.equalContains(target.getPatientSymptomsPrecedence(), patientSymptomsPrecedences)) {
+        // note: DataHelper.equal does not work here, because target.getAddresses may be a PersistentBag when using lazy loading
+        target.setChangeDateOfEmbeddedLists(new Date());
+    }
+    target.getPatientSymptomsPrecedence().clear();
+    target.getPatientSymptomsPrecedence().addAll(patientSymptomsPrecedences);
 
     return target;
     }
@@ -147,9 +165,6 @@ public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boo
         target.setDateOfContactWithIllPerson(source.getDateOfContactWithIllPerson());
         target.setPatientTouchDomesticWildAnimal(source.getPatientTouchDomesticWildAnimal());
         target.setPatientTouchDomesticWildAnimalIfYes(source.getPatientTouchDomesticWildAnimalIfYes());
-        target.setStatusOfPatient(source.getStatusOfPatient());
-        target.setDateOfDeath(source.getDateOfDeath());
-        target.setPlaceOfDeath(source.getPlaceOfDeath());
         target.setDateOfSpecimenCollection(source.getDateOfSpecimenCollection());
         target.setTypeOfSpecimenCollection(source.getTypeOfSpecimenCollection());
         target.setInvestigatorName(source.getInvestigatorName());
@@ -158,6 +173,41 @@ public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boo
         target.setInvestigatorTel(source.getInvestigatorTel());
         target.setEmail(source.getEmail());
 
+        List<PatientSymptomsPrecedenceDto> patientSymptomsPrecedenceDtos = new ArrayList<>();
+        for (PatientSymptomsPrecedence patientSymptomsPrecedence : source.getPatientSymptomsPrecedence()) {
+            PatientSymptomsPrecedenceDto patientSymptomsPrecedenceDto = toPatientSymptomsPrecedenceDto(patientSymptomsPrecedence);
+            patientSymptomsPrecedenceDtos.add(patientSymptomsPrecedenceDto);
+        }
+        target.setPatientSymptomsPrecedence(patientSymptomsPrecedenceDtos);
+
+        return target;
+    }
+
+    public PatientSymptomsPrecedence fillOrBuildPatientSymptomsPrecedenceEntity(PatientSymptomsPrecedenceDto source, PatientSymptomsPrecedence target, boolean checkChangeDate) {
+        if (source == null) {
+            return null;
+        }
+        target = DtoHelper.fillOrBuildEntity(source, target, PatientSymptomsPrecedence::new, checkChangeDate);
+
+        target.setName(source.getName());
+        target.setContactAddress(source.getContactAddress());
+        target.setPhone(source.getPhone());
+
+        return target;
+    }
+
+    public static PatientSymptomsPrecedenceDto toPatientSymptomsPrecedenceDto(PatientSymptomsPrecedence source) {
+
+        if (source == null) {
+            return null;
+        }
+
+        PatientSymptomsPrecedenceDto target = new PatientSymptomsPrecedenceDto();
+
+        DtoHelper.fillDto(target, source);
+        target.setName(source.getName());
+        target.setContactAddress(source.getContactAddress());
+        target.setPhone(source.getPhone());
 
         return target;
     }

@@ -20,7 +20,7 @@ public class AffectedPersonDto extends PseudonymizableDto {
     public static final String TEL_NO = "telNo";
     public static final String DATE_TIME = "dateTime";
     public static final String AGE = "age";
-    private String uuid;
+//    private String uuid;
     private String nameOfAffectedPerson;
     private String telNo;
     private Date dateTime;
@@ -51,11 +51,11 @@ public class AffectedPersonDto extends PseudonymizableDto {
 
     @Override
     public String getUuid() {
-        return uuid;
+        return super.getUuid();
     }
     @Override
     public void setUuid(String uuid) {
-        this.uuid = uuid;
+        super.setUuid(uuid);
     }
 
     public String getNameOfAffectedPerson() {

@@ -71,12 +71,14 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setFirstName(source.getFirstName());
 		target.setLastName(source.getLastName());
+		target.setOtherName(source.getOtherName());
 		target.setSalutation(source.getSalutation());
 		target.setOtherSalutation(source.getOtherSalutation());
 		target.setBirthName(source.getBirthName());
 		target.setNickname(source.getNickname());
 		target.setMothersMaidenName(source.getMothersMaidenName());
 		target.setSex(source.getSex());
+		target.setMarriageStatus(source.getMarriageStatus());
 
 		target.setBirthdateDD(source.getBirthdateDD());
 		target.setBirthdateMM(source.getBirthdateMM());
@@ -106,6 +108,7 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		target.setCauseOfDeathDetails(source.getCauseOfDeathDetails());
 		target.setMothersName(source.getMothersName());
 		target.setFathersName(source.getFathersName());
+		target.setApplicable(source.getApplicable());
 		target.setNamesOfGuardians(source.getNamesOfGuardians());
 		target.setPlaceOfBirthRegion(DatabaseHelper.getRegionDao().getByReferenceDto(source.getPlaceOfBirthRegion()));
 		target.setPlaceOfBirthDistrict(DatabaseHelper.getDistrictDao().getByReferenceDto(source.getPlaceOfBirthDistrict()));
@@ -117,6 +120,8 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setPassportNumber(source.getPassportNumber());
 		target.setNationalHealthId(source.getNationalHealthId());
+		target.setGhanaCard(source.getGhanaCard());
+		target.setPhone(source.getPhone());
 
 		target.setPseudonymized(source.isPseudonymized());
 		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());
@@ -148,6 +153,14 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		target.setBirthCountry(DatabaseHelper.getCountryDao().getByReferenceDto(source.getBirthCountry()));
 		target.setCitizenship(DatabaseHelper.getCountryDao().getByReferenceDto(source.getCitizenship()));
 		target.setAdditionalDetails(source.getAdditionalDetails());
+		target.setOtherId(source.getOtherId());
+		target.setPlaceOfResidenceSameAsReportingVillage(source.getPlaceOfResidenceSameAsReportingVillage());
+		target.setResidenceSinceWhenInMonths(source.getResidenceSinceWhenInMonths());
+		target.setPst14MonthsRegion(DatabaseHelper.getRegionDao().getByReferenceDto(source.getPst14MonthsRegion()));
+		target.setPst14MonthsDistrict(DatabaseHelper.getDistrictDao().getByReferenceDto(source.getPst14MonthsDistrict()));
+		target.setPst14MonthsCommunity(DatabaseHelper.getCommunityDao().getByReferenceDto(source.getPst14MonthsCommunity()));
+		target.setPst14MonthsZone(source.getPst14MonthsZone());
+		target.setPst14MonthsVillage(source.getPst14MonthsVillage());
 	}
 
 	@Override
@@ -155,12 +168,14 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setFirstName(source.getFirstName());
 		target.setLastName(source.getLastName());
+		target.setOtherName(source.getOtherName());
 		target.setSalutation(source.getSalutation());
 		target.setOtherSalutation(source.getOtherSalutation());
 		target.setBirthName(source.getBirthName());
 		target.setNickname(source.getNickname());
 		target.setMothersMaidenName(source.getMothersMaidenName());
 		target.setSex(source.getSex());
+		target.setMarriageStatus(source.getMarriageStatus());
 		target.setPresentCondition(source.getPresentCondition());
 		target.setDeathDate(source.getDeathDate());
 		target.setDeathPlaceType(source.getDeathPlaceType());
@@ -192,6 +207,7 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setMothersName(source.getMothersName());
 		target.setFathersName(source.getFathersName());
+		target.setApplicable(source.getApplicable());
 		target.setNamesOfGuardians(source.getNamesOfGuardians());
 
 		if (source.getPlaceOfBirthRegion() != null) {
@@ -225,6 +241,8 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setPassportNumber(source.getPassportNumber());
 		target.setNationalHealthId(source.getNationalHealthId());
+		target.setGhanaCard(source.getGhanaCard());
+		target.setPhone(source.getPhone());
 
 		target.setPseudonymized(source.isPseudonymized());
 		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());
@@ -253,6 +271,30 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		target.setBirthCountry(CountryDtoHelper.toReferenceDto(source.getBirthCountry()));
 		target.setCitizenship(CountryDtoHelper.toReferenceDto(source.getCitizenship()));
 		target.setAdditionalDetails(source.getAdditionalDetails());
+		target.setOtherId(source.getOtherId());
+//		placeOfResidenceSameAsReportingVillage, residenceSinceWhenInMonths, pst14MonthsRegion, pst14MonthsDistrict, pst14MonthsCommunity, pst14MonthsZone, pst14MonthsVillage
+		target.setPlaceOfResidenceSameAsReportingVillage(source.getPlaceOfResidenceSameAsReportingVillage());
+		target.setResidenceSinceWhenInMonths(source.getResidenceSinceWhenInMonths());
+		if (source.getPst14MonthsRegion() != null) {
+			target.setPst14MonthsRegion(
+				RegionDtoHelper.toReferenceDto(DatabaseHelper.getRegionDao().queryForId(source.getPst14MonthsRegion().getId())));
+		} else {
+			target.setPst14MonthsRegion(null);
+		}
+		if (source.getPst14MonthsDistrict() != null) {
+			target.setPst14MonthsDistrict(
+				DistrictDtoHelper.toReferenceDto(DatabaseHelper.getDistrictDao().queryForId(source.getPst14MonthsDistrict().getId())));
+		} else {
+			target.setPst14MonthsDistrict(null);
+		}
+		if (source.getPst14MonthsCommunity() != null) {
+			target.setPst14MonthsCommunity(
+				CommunityDtoHelper.toReferenceDto(DatabaseHelper.getCommunityDao().queryForId(source.getPst14MonthsCommunity().getId())));
+		} else {
+			target.setPst14MonthsCommunity(null);
+		}
+		target.setPst14MonthsZone(source.getPst14MonthsZone());
+		target.setPst14MonthsVillage(source.getPst14MonthsVillage());
 	}
 
     @Override

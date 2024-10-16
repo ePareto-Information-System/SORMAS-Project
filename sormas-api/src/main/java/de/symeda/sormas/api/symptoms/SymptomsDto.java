@@ -317,6 +317,9 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String POSTPARTUM = "postpartum";
 	public static final String TRIMESTER = "trimester";
 	public static final String PREGNANT = "pregnant";
+	public static final String STATUS_OF_PATIENT = "statusOfPatient";
+	public static final String DATE_OF_DEATH = "dateOfDeath";
+	public static final String PLACE_OF_DEATH = "placeOfDeath";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -2422,7 +2425,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	private YesNo areLesionsSameSize;
 	private YesNo areLesionsDeep;
 	private YesNo areUlcersAmong;
-	private Set<SymptomsList> typeOfRash;
+	private SymptomsList typeOfRash;
 	private String outcomeOther;
 	private YesNo patientHaveFever;
 	private Date outcomeDate;
@@ -2480,6 +2483,9 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Trimester trimester;
 	private YesNo postpartum;
 	private YesNo pregnant;
+	private CaseOutcome statusOfPatient;
+	private Date dateOfDeath;
+	private String placeOfDeath;
 	@Order(0)
 	public Float getTemperature() {
 		return temperature;
@@ -3290,6 +3296,21 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	@Order(337)
 	public SymptomState getSkinRashNew() {return skinRashNew;}
+
+	@Order(338)
+	public String getPlaceOfDeath() {
+		return placeOfDeath;
+	}
+
+	@Order(339)
+	public Date getDateOfDeath() {
+		return dateOfDeath;
+	}
+
+	@Order(340)
+	public CaseOutcome getStatusOfPatient() {
+		return statusOfPatient;
+	}
 	public void setAbdominalPain(SymptomState abdominalPain) {
 		this.abdominalPain = abdominalPain;
 	}
@@ -4091,7 +4112,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		return areUlcersAmong;
 	}
 	@Order(380)
-	public Set<SymptomsList> getTypeOfRash(){
+	public SymptomsList getTypeOfRash(){
 		return typeOfRash;
 	}
 	@Order(381)
@@ -4490,7 +4511,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	public void setAreUlcersAmong(YesNo areUlcersAmong) {
 		this.areUlcersAmong = areUlcersAmong;
 	}
-	public void setTypeOfRash(Set<SymptomsList> typeOfRash) {
+	public void setTypeOfRash(SymptomsList typeOfRash) {
 		this.typeOfRash = typeOfRash;
 	}
 	public void setSymptomsSelectedOther(String symptomsSelectedOther) {
@@ -4669,5 +4690,17 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setPregnant(YesNo pregnant) {
 		this.pregnant = pregnant;
+	}
+
+	public void setStatusOfPatient(CaseOutcome statusOfPatient) {
+		this.statusOfPatient = statusOfPatient;
+	}
+
+	public void setDateOfDeath(Date dateOfDeath) {
+		this.dateOfDeath = dateOfDeath;
+	}
+
+	public void setPlaceOfDeath(String placeOfDeath) {
+		this.placeOfDeath = placeOfDeath;
 	}
 }

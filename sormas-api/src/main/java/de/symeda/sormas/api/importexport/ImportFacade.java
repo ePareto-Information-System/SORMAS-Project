@@ -145,4 +145,10 @@ public interface ImportFacade {
 	String getCaseImportTemplateXlsmFilePath();
 
 	String getCaseImportTemplateXlsmFileName();
+
+	String getFormFieldImportTemplateFilePath();
+	String getFormFieldImportTemplateFileName();
+
+	String getFormImportTemplateFilePath();
+	String getFormImportTemplateFileName();
 }

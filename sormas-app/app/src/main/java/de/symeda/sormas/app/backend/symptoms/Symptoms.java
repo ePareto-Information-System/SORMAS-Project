@@ -17,21 +17,42 @@ package de.symeda.sormas.app.backend.symptoms;
 
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.apache.commons.lang3.StringUtils;
+
+import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.caze.Trimester;
+import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
+import de.symeda.sormas.api.symptoms.GuineaWormFirstSymptom;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.TemperatureSource;
+import de.symeda.sormas.api.utils.BodyPart;
+import de.symeda.sormas.api.utils.DurationHours;
+import de.symeda.sormas.api.utils.InjectionSite;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.app.backend.clinicalcourse.HealthConditions;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 
@@ -190,7 +211,7 @@ public class Symptoms extends PseudonymizableAdo {
 	private SymptomState cutaneousEruption;
 	@Enumerated(EnumType.STRING)
 	private SymptomState lesions;
-    @Enumerated(EnumType.STRING)
+	@Enumerated(EnumType.STRING)
 	private SymptomState rashes;
 	@Enumerated(EnumType.STRING)
 	private SymptomState vesicularRash;
@@ -441,6 +462,181 @@ public class Symptoms extends PseudonymizableAdo {
 	private Boolean lesionsTrunk;
 	@DatabaseField
 	private Boolean lesionsNeck;
+	@Enumerated(EnumType.STRING)
+	private SymptomState abdominalCramps;
+
+	private Date dateOfOnset;
+	private String provisionalDiagnosis;
+	private Date dateOnsetParalysis;
+	private String requestedSiteOfParalysisString;
+	@DatabaseField
+	private String firstSignOrSymptomsBeforeWormOthers;
+	@DatabaseField
+	private String numberOfWorms;
+	private String requestedSymptomsSelectedString;
+	private Date dateOfOnsetRash;
+	private String requestedRashSymptomsString;
+	private String rashSymptomsOtherAreas;
+	private String typeOfRashString;
+	private String symptomsSelectedOther;
+	private String outcomeOther;
+	private Date outcomeDate;
+	private String outcomePlaceCommVillage;
+	private String nameService;
+	private String placeOfFuneralNameVillage;
+	private String injectionSiteString;
+	private DurationHours durationHours;
+	private Integer ageAtDeathDays;
+	private Integer ageAtOnsetDays;
+	private Set<SymptomsList> symptomsSelected;
+	private Set<BodyPart> rashSymptoms;
+	private Set<InjectionSite> siteOfParalysis;
+	private SymptomsList typeOfRash;
+	private Set<InjectionSite> injectionSite;
+	private String nameOfHealthFacility;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateFirstWormEmergence;
+
+	@Enumerated(EnumType.STRING)
+	private CaseOutcome outcome;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo feverBodyTempGreater;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState difficultySwallow;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState skinRashNew;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState generalizedRash;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState redEyes;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState swollenLymphNodesBehindEars;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState muscleTone;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState deepTendonReflex;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState muscleVolume;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState sensoryLoss;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState nonVascular;
+
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown feverOnsetParalysis;
+
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown progressiveParalysis;
+
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown progressiveFlaccidAcute;
+
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown assymetric;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo paralysedLimbSensitiveToPain;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo injectionSiteBeforeOnsetParalysis;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo trueAfp;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState dyspnea;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState tachypnea;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState diarrhoea;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState headaches;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState babyDied;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState babyNormalAtBirth;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState normalCryAndSuck;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState stoppedSuckingAfterTwoDays;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState stiffness;
+
+	@Enumerated(EnumType.STRING)
+	private GuineaWormFirstSymptom firstSignOrSymptomsBeforeWorm;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState emergenceOfGuineaWorm;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState firstWormThisYear;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState caseDetectedBeforeWormEmergence;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState bodyAche;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState dizziness;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState excessiveSweating;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState numbness;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo symptomsOngoing;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo areLesionsSameState;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo areLesionsSameSize;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo areLesionsDeep;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo areUlcersAmong;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo patientHaveFever;
+
+	@Enumerated(EnumType.STRING)
+	private SymptomState abnormalLungAuscultation;
+
+	private HealthConditions healthConditions;
+
+	@Enumerated(EnumType.STRING)
+	private Trimester trimester;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo postpartum;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo pregnant;
+
 
 	@Override
 	public String getI18nPrefix() {
@@ -971,7 +1167,7 @@ public class Symptoms extends PseudonymizableAdo {
 	public void setLesions(SymptomState lesions) {
 		this.lesions = lesions;
 	}
-    public SymptomState getRashes() {
+	public SymptomState getRashes() {
 		return rashes;
 	}
 
@@ -1943,5 +2139,674 @@ public class Symptoms extends PseudonymizableAdo {
 
 	public void setOtherLesionAreas(String otherLesionAreas) {
 		this.otherLesionAreas = otherLesionAreas;
+	}
+
+	public SymptomState getAbdominalCramps() {
+		return abdominalCramps;
+	}
+
+	public void setAbdominalCramps(SymptomState abdominalCramps) {
+		this.abdominalCramps = abdominalCramps;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getDateOfOnset() {
+		return dateOfOnset;
+	}
+
+	public void setDateOfOnset(Date dateOfOnset) {
+		this.dateOfOnset = dateOfOnset;
+	}
+	@Enumerated(EnumType.STRING)
+	public YesNo getFeverBodyTempGreater() {
+		return feverBodyTempGreater;
+	}
+
+	public void setFeverBodyTempGreater(YesNo feverBodyTempGreater) {
+		this.feverBodyTempGreater = feverBodyTempGreater;
+	}
+	@Enumerated(EnumType.STRING)
+	public SymptomState getDifficultySwallow() {
+		return difficultySwallow;
+	}
+
+	public void setDifficultySwallow(SymptomState difficultySwallow) {
+		this.difficultySwallow = difficultySwallow;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SymptomState getSkinRashNew() {
+		return skinRashNew;
+	}
+
+	public void setSkinRashNew(SymptomState skinRashNew) {
+		this.skinRashNew = skinRashNew;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SymptomState getMuscleTone() {
+		return muscleTone;
+	}
+
+	public void setMuscleTone(SymptomState muscleTone) {
+		this.muscleTone = muscleTone;
+	}
+	@Enumerated(EnumType.STRING)
+	public SymptomState getDeepTendonReflex() {
+		return deepTendonReflex;
+	}
+
+	public void setDeepTendonReflex(SymptomState deepTendonReflex) {
+		this.deepTendonReflex = deepTendonReflex;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SymptomState getMuscleVolume() {
+		return muscleVolume;
+	}
+
+	public void setMuscleVolume(SymptomState muscleVolume) {
+		this.muscleVolume = muscleVolume;
+	}
+	@Enumerated(EnumType.STRING)
+	public SymptomState getSensoryLoss() {
+		return sensoryLoss;
+	}
+
+	public void setSensoryLoss(SymptomState sensoryLoss) {
+		this.sensoryLoss = sensoryLoss;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getProvisionalDiagnosis() {
+		return provisionalDiagnosis;
+	}
+
+	public void setProvisionalDiagnosis(String provisionalDiagnosis) {
+		this.provisionalDiagnosis = provisionalDiagnosis;
+	}
+
+	@Enumerated
+	public SymptomState getNonVascular() {
+		return nonVascular;
+	}
+
+	public void setNonVascular(SymptomState nonVascular) {
+		this.nonVascular = nonVascular;
+	}
+
+	public YesNoUnknown getFeverOnsetParalysis() {
+		return feverOnsetParalysis;
+	}
+
+	public void setFeverOnsetParalysis(YesNoUnknown feverOnsetParalysis) {
+		this.feverOnsetParalysis = feverOnsetParalysis;
+	}
+
+	public YesNoUnknown getProgressiveParalysis() {
+		return progressiveParalysis;
+	}
+
+	public void setProgressiveParalysis(YesNoUnknown progressiveParalysis) {
+		this.progressiveParalysis = progressiveParalysis;
+	}
+
+	public Date getDateOnsetParalysis() {
+		return dateOnsetParalysis;
+	}
+
+	public void setDateOnsetParalysis(Date dateOnsetParalysis) {
+		this.dateOnsetParalysis = dateOnsetParalysis;
+	}
+
+	public YesNoUnknown getProgressiveFlaccidAcute() {
+		return progressiveFlaccidAcute;
+	}
+
+	public void setProgressiveFlaccidAcute(YesNoUnknown progressiveFlaccidAcute) {
+		this.progressiveFlaccidAcute = progressiveFlaccidAcute;
+	}
+
+	public YesNoUnknown getAssymetric() {
+		return assymetric;
+	}
+
+	public void setAssymetric(YesNoUnknown assymetric) {
+		this.assymetric = assymetric;
+	}
+
+	public YesNo getParalysedLimbSensitiveToPain() {
+		return paralysedLimbSensitiveToPain;
+	}
+
+	public void setParalysedLimbSensitiveToPain(YesNo paralysedLimbSensitiveToPain) {
+		this.paralysedLimbSensitiveToPain = paralysedLimbSensitiveToPain;
+	}
+
+	public YesNo getInjectionSiteBeforeOnsetParalysis() {
+		return injectionSiteBeforeOnsetParalysis;
+	}
+
+	public void setInjectionSiteBeforeOnsetParalysis(YesNo injectionSiteBeforeOnsetParalysis) {
+		this.injectionSiteBeforeOnsetParalysis = injectionSiteBeforeOnsetParalysis;
+	}
+
+	public YesNo getTrueAfp() {
+		return trueAfp;
+	}
+
+	public void setTrueAfp(YesNo trueAfp) {
+		this.trueAfp = trueAfp;
+	}
+
+	public SymptomState getDyspnea() {
+		return dyspnea;
+	}
+	public void setDyspnea(SymptomState dyspnea) {
+		this.dyspnea = dyspnea;
+	}
+	public SymptomState getTachypnea() {
+		return tachypnea;
+	}
+	public void setTachypnea(SymptomState tachypnea) {
+		this.tachypnea = tachypnea;
+	}
+	public SymptomState getBodyAche() {
+		return bodyAche;
+	}
+
+	public void setBodyAche(SymptomState bodyAche) {
+		this.bodyAche = bodyAche;
+	}
+
+	public SymptomState getBabyDied() {
+		return babyDied;
+	}
+
+	public void setBabyDied(SymptomState babyDied) {
+		this.babyDied = babyDied;
+	}
+
+	public Integer getAgeAtDeathDays() {
+		return ageAtDeathDays;
+	}
+
+	public void setAgeAtDeathDays(Integer ageAtDeathDays) {
+		this.ageAtDeathDays = ageAtDeathDays;
+	}
+
+	public Integer getAgeAtOnsetDays() {
+		return ageAtOnsetDays;
+	}
+
+	public void setAgeAtOnsetDays(Integer ageAtOnsetDays) {
+		this.ageAtOnsetDays = ageAtOnsetDays;
+	}
+
+	public SymptomState getBabyNormalAtBirth() {
+		return babyNormalAtBirth;
+	}
+
+	public void setBabyNormalAtBirth(SymptomState babyNormalAtBirth) {
+		this.babyNormalAtBirth = babyNormalAtBirth;
+	}
+
+	public SymptomState getNormalCryAndSuck() {
+		return normalCryAndSuck;
+	}
+
+	public void setNormalCryAndSuck(SymptomState normalCryAndSuck) {
+		this.normalCryAndSuck = normalCryAndSuck;
+	}
+
+	public SymptomState getStoppedSuckingAfterTwoDays() {
+		return stoppedSuckingAfterTwoDays;
+	}
+
+	public void setStoppedSuckingAfterTwoDays(SymptomState stoppedSuckingAfterTwoDays) {
+		this.stoppedSuckingAfterTwoDays = stoppedSuckingAfterTwoDays;
+	}
+
+	public SymptomState getStiffness() {
+		return stiffness;
+	}
+
+	public void setStiffness(SymptomState stiffness) {
+		this.stiffness = stiffness;
+	}
+	public SymptomState getDizziness() {
+		return dizziness;
+	}
+
+	public void setDizziness(SymptomState dizziness) {
+		this.dizziness = dizziness;
+	}
+	public SymptomState getExcessiveSweating() {
+		return excessiveSweating;
+	}
+
+	public void setExcessiveSweating(SymptomState excessiveSweating) {
+		this.excessiveSweating = excessiveSweating;
+	}
+	public SymptomState getNumbness() {
+		return numbness;
+	}
+	public void setNumbness(SymptomState numbness) {
+		this.numbness = numbness;
+	}
+	public String getOutcomeOther() { return outcomeOther;}
+	public void setOutcomeOther(String outcomeOther) {
+		this.outcomeOther = outcomeOther;
+	}
+	public YesNo getSymptomsOngoing(){
+		return symptomsOngoing;
+	}
+
+	public void setSymptomsOngoing(YesNo symptomsOngoing){
+		this.symptomsOngoing = symptomsOngoing;
+	}
+
+	public DurationHours getDurationHours(){
+		return durationHours;
+	}
+
+	public void setDurationHours(DurationHours durationHours){
+		this.durationHours = durationHours;
+	}
+
+	public String getNameOfHealthFacility(){
+		return nameOfHealthFacility;
+	}
+
+	public void setNameOfHealthFacility(String nameOfHealthFacility){
+		this.nameOfHealthFacility = nameOfHealthFacility;
+	}
+
+	@Transient
+	public Set<SymptomsList> getSymptomsSelected() {
+		if (symptomsSelected == null) {
+			if (StringUtils.isEmpty(requestedSymptomsSelectedString)) {
+				symptomsSelected = new HashSet<>();
+			} else {
+				symptomsSelected =
+						Arrays.stream(requestedSymptomsSelectedString.split(",")).map(SymptomsList::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return symptomsSelected;
+	}
+
+	public void setSymptomsSelected(Set<SymptomsList> symptomsSelected) {
+		this.symptomsSelected = symptomsSelected;
+
+		if (this.symptomsSelected == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		symptomsSelected.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		requestedSymptomsSelectedString = sb.toString();
+	}
+
+	public String getRequestedSymptomsSelectedString() {
+		return requestedSymptomsSelectedString;
+	}
+
+	public void setRequestedSymptomsSelectedString(String requestedSymptomsSelectedString) {
+		this.requestedSymptomsSelectedString = requestedSymptomsSelectedString;
+		symptomsSelected = null;
+	}
+	public Date getDateOfOnsetRash(){
+		return dateOfOnsetRash;
+	}
+	public void setDateOfOnsetRash(Date dateOfOnsetRash) {
+		this.dateOfOnsetRash = dateOfOnsetRash;
+	}
+
+	@Transient
+	public Set<BodyPart> getRashSymptoms() {
+		if (rashSymptoms == null) {
+			if (StringUtils.isEmpty(requestedRashSymptomsString)) {
+				rashSymptoms = new HashSet<>();
+			} else {
+				rashSymptoms =
+						Arrays.stream(requestedRashSymptomsString.split(",")).map(BodyPart::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return rashSymptoms;
+	}
+	public void setRashSymptoms(Set<BodyPart> rashSymptoms) {
+		this.rashSymptoms = rashSymptoms;
+
+		if (this.rashSymptoms == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		rashSymptoms.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		requestedRashSymptomsString = sb.toString();
+	}
+
+	@Transient
+	public Set<InjectionSite> getSiteOfParalysis() {
+		if (siteOfParalysis == null) {
+			if (StringUtils.isEmpty(requestedSiteOfParalysisString)) {
+				siteOfParalysis = new HashSet<>();
+			} else {
+				siteOfParalysis =
+						Arrays.stream(requestedSiteOfParalysisString.split(",")).map(InjectionSite::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return siteOfParalysis;
+	}
+
+	public void setSiteOfParalysis(Set<InjectionSite> siteOfParalysis) {
+		this.siteOfParalysis = siteOfParalysis;
+
+		if (this.siteOfParalysis == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		siteOfParalysis.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		requestedSiteOfParalysisString = sb.toString();
+	}
+
+	public String getRashSymptomsOtherAreas(){
+		return rashSymptomsOtherAreas;
+	}
+	public void setRashSymptomsOtherAreas(String rashSymptomsOtherAreas) {
+		this.rashSymptomsOtherAreas = rashSymptomsOtherAreas;
+	}
+
+	public YesNo getAreLesionsSameState(){
+		return areLesionsSameState;
+	}
+	public void setAreLesionsSameState(YesNo areLesionsSameState) {
+		this.areLesionsSameState = areLesionsSameState;
+	}
+	public YesNo getAreLesionsSameSize(){
+		return areLesionsSameSize;
+	}
+	public void setAreLesionsSameSize(YesNo areLesionsSameSize) {
+		this.areLesionsSameSize = areLesionsSameSize;
+	}
+	public YesNo getAreLesionsDeep(){
+		return areLesionsDeep;
+	}
+	public void setAreLesionsDeep(YesNo areLesionsDeep) {
+		this.areLesionsDeep = areLesionsDeep;
+	}
+	public YesNo getAreUlcersAmong(){
+		return areUlcersAmong;
+	}
+	public void setAreUlcersAmong(YesNo areUlcersAmong) {
+		this.areUlcersAmong = areUlcersAmong;
+	}
+
+	public SymptomsList getTypeOfRash() {
+		return typeOfRash;
+	}
+	public void setTypeOfRash(SymptomsList typeOfRash) {
+		this.typeOfRash = typeOfRash;
+	}
+
+	public String getSymptomsSelectedOther(){
+		return symptomsSelectedOther;
+	}
+	public void setSymptomsSelectedOther(String symptomsSelectedOther) {
+		this.symptomsSelectedOther = symptomsSelectedOther;
+	}
+
+	public String getRequestedRashSymptomsString() {
+		return requestedRashSymptomsString;
+	}
+
+	public void setRequestedRashSymptomsString(String requestedRashSymptomsString) {
+		this.requestedRashSymptomsString = requestedRashSymptomsString;
+		rashSymptoms = null;
+	}
+
+
+	public GuineaWormFirstSymptom getFirstSignOrSymptomsBeforeWorm() {
+		return firstSignOrSymptomsBeforeWorm;
+	}
+
+	public void setFirstSignOrSymptomsBeforeWorm(GuineaWormFirstSymptom firstSignOrSymptomsBeforeWorm) {
+		this.firstSignOrSymptomsBeforeWorm = firstSignOrSymptomsBeforeWorm;
+	}
+
+	public String getFirstSignOrSymptomsBeforeWormOthers() {
+		return firstSignOrSymptomsBeforeWormOthers;
+	}
+
+	public void setFirstSignOrSymptomsBeforeWormOthers(String firstSignOrSymptomsBeforeWormOthers) {
+		this.firstSignOrSymptomsBeforeWormOthers = firstSignOrSymptomsBeforeWormOthers;
+	}
+
+	public SymptomState getEmergenceOfGuineaWorm() {
+		return emergenceOfGuineaWorm;
+	}
+
+	public void setEmergenceOfGuineaWorm(SymptomState emergenceOfGuineaWorm) {
+		this.emergenceOfGuineaWorm = emergenceOfGuineaWorm;
+	}
+
+	public String getNumberOfWorms() {
+		return numberOfWorms;
+	}
+
+	public void setNumberOfWorms(String numberOfWorms) {
+		this.numberOfWorms = numberOfWorms;
+	}
+
+	public SymptomState getFirstWormThisYear() {
+		return firstWormThisYear;
+	}
+
+	public void setFirstWormThisYear(SymptomState firstWormThisYear) {
+		this.firstWormThisYear = firstWormThisYear;
+	}
+
+	public Date getDateFirstWormEmergence() {
+		return dateFirstWormEmergence;
+	}
+
+	public void setDateFirstWormEmergence(Date dateFirstWormEmergence) {
+		this.dateFirstWormEmergence = dateFirstWormEmergence;
+	}
+
+	public SymptomState getCaseDetectedBeforeWormEmergence() {
+		return caseDetectedBeforeWormEmergence;
+	}
+
+	public void setCaseDetectedBeforeWormEmergence(SymptomState caseDetectedBeforeWormEmergence) {
+		this.caseDetectedBeforeWormEmergence = caseDetectedBeforeWormEmergence;
+	}
+	@Enumerated(EnumType.STRING)
+	public SymptomState getDiarrhoea() {
+		return diarrhoea;
+	}
+
+	public void setDiarrhoea(SymptomState diarrhoea) {
+		this.diarrhoea = diarrhoea;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SymptomState getHeadaches() {
+		return headaches;
+	}
+
+	public void setHeadaches(SymptomState headaches) {
+		this.headaches = headaches;
+	}
+
+	public SymptomState getGeneralizedRash() {
+		return generalizedRash;
+	}
+
+	public void setGeneralizedRash(SymptomState generalizedRash) {
+		this.generalizedRash = generalizedRash;
+	}
+
+	public SymptomState getRedEyes() {
+		return redEyes;
+	}
+
+	public void setRedEyes(SymptomState redEyes) {
+		this.redEyes = redEyes;
+	}
+
+	public SymptomState getSwollenLymphNodesBehindEars() {
+		return swollenLymphNodesBehindEars;
+	}
+
+	public void setSwollenLymphNodesBehindEars(SymptomState swollenLymphNodesBehindEars) {
+		this.swollenLymphNodesBehindEars = swollenLymphNodesBehindEars;
+	}
+	public String getRequestedSiteOfParalysisString() {
+		return requestedSiteOfParalysisString;
+	}
+
+	public void setRequestedSiteOfParalysisString(String requestedSiteOfParalysisString) {
+		this.requestedSiteOfParalysisString = requestedSiteOfParalysisString;
+		siteOfParalysis = null;
+	}
+
+	public YesNo getPatientHaveFever() {
+		return patientHaveFever;
+	}
+	public void setPatientHaveFever(YesNo patientHaveFever) {
+		this.patientHaveFever = patientHaveFever;
+	}
+	public Date getOutcomeDate() {
+		return outcomeDate;
+	}
+	public void setOutcomeDate(Date outcomeDate) {
+		this.outcomeDate = outcomeDate;
+	}
+	public String getNameService() {
+		return nameService;
+	}
+	public void setNameService(String nameService) {
+		this.nameService = nameService;
+	}
+
+	public String getOutcomePlaceCommVillage() {
+		return outcomePlaceCommVillage;
+	}
+	public void setOutcomePlaceCommVillage(String outcomePlaceCommVillage) {
+		this.outcomePlaceCommVillage = outcomePlaceCommVillage;
+	}
+	public String getPlaceOfFuneralNameVillage() {
+		return placeOfFuneralNameVillage;
+	}
+	public void setPlaceOfFuneralNameVillage(String placeOfFuneralNameVillage) {
+		this.placeOfFuneralNameVillage = placeOfFuneralNameVillage;
+	}
+
+	@Transient
+	public Set<InjectionSite> getInjectionSite() {
+		if (injectionSite == null) {
+			if (StringUtils.isEmpty(injectionSiteString)) {
+				injectionSite = new HashSet<>();
+			} else {
+				injectionSite =
+						Arrays.stream(injectionSiteString.split(",")).map(InjectionSite::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return injectionSite;
+	}
+
+	public void setInjectionSite(Set<InjectionSite> injectionSite) {
+		this.injectionSite = injectionSite;
+
+		if (this.injectionSite == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		injectionSite.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		injectionSiteString = sb.toString();
+	}
+
+	public String getInjectionSiteString() {
+		return injectionSiteString;
+	}
+
+	public void setInjectionSiteString(String injectionSiteString) {
+		this.injectionSiteString = injectionSiteString;
+		injectionSite = null;
+	}
+
+	public SymptomState getAbnormalLungAuscultation() {
+		return abnormalLungAuscultation;
+	}
+
+	public void setAbnormalLungAuscultation(SymptomState abnormalLungAuscultation) {
+		this.abnormalLungAuscultation = abnormalLungAuscultation;
+	}
+
+	/*@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	public HealthConditions getHealthConditions() {
+		return healthConditions;
+	}
+
+	public void setHealthConditions(HealthConditions healthConditions) {
+		this.healthConditions = healthConditions;
+	}*/
+
+	public Trimester getTrimester() {
+		return trimester;
+	}
+
+	public void setTrimester(Trimester trimester) {
+		this.trimester = trimester;
+	}
+
+	public YesNo getPostpartum() {
+		return postpartum;
+	}
+
+	public void setPostpartum(YesNo postpartum) {
+		this.postpartum = postpartum;
+	}
+
+	public YesNo getPregnant() {
+		return pregnant;
+	}
+
+	public void setPregnant(YesNo pregnant) {
+		this.pregnant = pregnant;
+	}
+
+	public CaseOutcome getOutcome() {
+		return outcome;
+	}
+	public void setOutcome(CaseOutcome outcome) {
+		this.outcome = outcome;
 	}
 }

@@ -4,7 +4,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum YellowFeverSample {
 
-    WHOLE_BLOOD,
+    BLOOD,
     SERUM,
     POST_MORTEM_LIVER_SPECIMEN;
 

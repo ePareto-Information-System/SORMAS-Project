@@ -24,9 +24,11 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,15 +36,21 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Transient;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.sample.AdditionalTestType;
+import de.symeda.sormas.api.sample.IpSampleTestType;
+import de.symeda.sormas.api.sample.FilterChangingFrequency;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
+import de.symeda.sormas.api.sample.PosNegEq;
 import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.sample.SampleSource;
 import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.sample.SpecimenCondition;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.contact.Contact;
@@ -50,7 +58,8 @@ import de.symeda.sormas.app.backend.event.EventParticipant;
 import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfo;
 import de.symeda.sormas.app.backend.user.User;
-import de.symeda.sormas.app.core.YesNo;
+//import de.symeda.sormas.app.core.YesNo;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.app.util.DateFormatHelper;
 
 @Entity(name = Sample.TABLE_NAME)
@@ -153,7 +162,8 @@ public class Sample extends PseudonymizableAdo {
 
 	@Enumerated(EnumType.STRING)
 	private PathogenTestResultType pathogenTestResult;
-
+	@Enumerated(EnumType.STRING)
+	private Disease suspectedDisease;
 	@DatabaseField
 	private Boolean pathogenTestingRequested;
 
@@ -168,7 +178,28 @@ public class Sample extends PseudonymizableAdo {
 
 	@Transient
 	private Set<PathogenTestType> requestedPathogenTests;
-
+	@Transient
+	private Set<IpSampleTestType> ipSampleTestResults;
+	@Transient
+	private Set<SampleMaterial> requestedSampleMaterials;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String requestedSampleMaterialsString;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String ipSampleTestResultsString;
+	@Enumerated(EnumType.STRING)
+	private PosNegEq selectedResultIGM;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date selectedResultIGMDate;
+	@Enumerated(EnumType.STRING)
+	private PosNegEq selectedResultPcr;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date selectedResultPcrDate;
+	@Enumerated(EnumType.STRING)
+	private PosNegEq selectedResultPrnt;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date selectedResultPrntDate;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String inputValuePrnt;
 	@Transient
 	private Set<AdditionalTestType> requestedAdditionalTests;
 
@@ -187,6 +218,77 @@ public class Sample extends PseudonymizableAdo {
 	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
 	@DatabaseField
 	private boolean ownershipHandedOver;
+	@Enumerated(EnumType.STRING)
+	private SampleDispatchMode sampleDispatchMode;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date sampleDispatchDate;
+	@Enumerated(EnumType.STRING)
+	private YesNo ipSampleSent;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo specimenSavedAndPreservedInAlcohol;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String specimenSavedAndPreservedInAlcoholWhy;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSpecimenSentToRegion;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSpecimenReceivedAtRegion;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String nameOfPersonWhoReceivedSpecimenAtRegion;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSpecimenSentToNational;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSpecimenReceivedAtNational;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String nameOfPersonWhoReceivedSpecimenAtNational;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo sentForConfirmationNational;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date sentForConfirmationNationalDate;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String sentForConfirmationTo;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateResultReceivedNational;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo useOfClothFilter;
+
+	@Enumerated(EnumType.STRING)
+	private FilterChangingFrequency frequencyOfChangingFilters;
+
+	@Column(columnDefinition = "text")
+	private String remarks;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo confirmedAsGuineaWorm;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String labLocation;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateFormSentToDistrict;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateFormReceivedAtDistrict;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateFormSentToHigherLevel;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String personCompletingForm;
+
+
 
 	public Case getAssociatedCase() {
 		return associatedCase;
@@ -384,6 +486,14 @@ public class Sample extends PseudonymizableAdo {
 		return pathogenTestResult;
 	}
 
+	public Disease getSuspectedDisease() {
+		return suspectedDisease;
+	}
+
+	public void setSuspectedDisease(Disease suspectedDisease) {
+		this.suspectedDisease = suspectedDisease;
+	}
+
 	public void setPathogenTestResult(PathogenTestResultType pathogenTestResult) {
 		this.pathogenTestResult = pathogenTestResult;
 	}
@@ -413,6 +523,15 @@ public class Sample extends PseudonymizableAdo {
 		requestedPathogenTests = null;
 	}
 
+	public String getIpSampleTestResultsString() {
+		return ipSampleTestResultsString;
+	}
+
+	public void setIpSampleTestResultsString(String ipSampleTestResultsString) {
+		this.ipSampleTestResultsString = ipSampleTestResultsString;
+		ipSampleTestResults = null;
+	}
+
 	public String getRequestedAdditionalTestsString() {
 		return requestedAdditionalTestsString;
 	}
@@ -420,6 +539,46 @@ public class Sample extends PseudonymizableAdo {
 	public void setRequestedAdditionalTestsString(String requestedAdditionalTestsString) {
 		this.requestedAdditionalTestsString = requestedAdditionalTestsString;
 		requestedAdditionalTests = null;
+	}
+
+	@Transient
+	public Set<SampleMaterial> getRequestedSampleMaterials() {
+		if (requestedSampleMaterials == null) {
+			if (StringUtils.isEmpty(requestedSampleMaterialsString)) {
+				requestedSampleMaterials = new HashSet<>();
+			} else {
+				requestedSampleMaterials =
+						Arrays.stream(requestedSampleMaterialsString.split(",")).map(SampleMaterial::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return requestedSampleMaterials;
+	}
+
+	public void setRequestedSampleMaterials(Set<SampleMaterial> requestedSampleMaterials) {
+		this.requestedSampleMaterials = requestedSampleMaterials;
+
+		if (this.requestedSampleMaterials == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		requestedSampleMaterials.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		requestedSampleMaterialsString = sb.toString();
+	}
+
+	public String getRequestedSampleMaterialsString() {
+		return requestedSampleMaterialsString;
+	}
+
+	public void setRequestedSampleMaterialsString(String requestedSampleMaterialsString) {
+		this.requestedSampleMaterialsString = requestedSampleMaterialsString;
+		requestedSampleMaterials = null;
 	}
 
 	@Transient
@@ -452,6 +611,95 @@ public class Sample extends PseudonymizableAdo {
 			sb.substring(0, sb.lastIndexOf(","));
 		}
 		requestedPathogenTestsString = sb.toString();
+	}
+
+	@Transient
+
+	public Set<IpSampleTestType> getIpSampleTestResults() {
+		if (ipSampleTestResults == null) {
+			ipSampleTestResults = new HashSet<>();
+			if (!StringUtils.isEmpty(ipSampleTestResultsString)) {
+				String[] testTypes = ipSampleTestResultsString.split(",");
+				for (String testType : testTypes) {
+					ipSampleTestResults.add(IpSampleTestType.valueOf(testType));
+				}
+			}
+		}
+		return ipSampleTestResults;
+	}
+
+	public void setIpSampleTestResults(Set<IpSampleTestType> ipSampleTestResults) {
+		this.ipSampleTestResults = ipSampleTestResults;
+
+		if (this.ipSampleTestResults == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		ipSampleTestResults.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		ipSampleTestResultsString = sb.toString();
+	}
+
+	public PosNegEq getSelectedResultIGM() {
+		return selectedResultIGM;
+	}
+
+	public void setSelectedResultIGM(PosNegEq selectedResultIGM) {
+		this.selectedResultIGM = selectedResultIGM;
+	}
+
+	public Date getSelectedResultIGMDate() {
+		return selectedResultIGMDate;
+	}
+
+	public void setSelectedResultIGMDate(Date selectedResultIGMDate) {
+		this.selectedResultIGMDate = selectedResultIGMDate;
+	}
+
+	public PosNegEq getSelectedResultPcr() {
+		return selectedResultPcr;
+	}
+
+	public void setSelectedResultPcr(PosNegEq selectedResultPcr) {
+		this.selectedResultPcr = selectedResultPcr;
+	}
+
+	public Date getSelectedResultPcrDate() {
+		return selectedResultPcrDate;
+	}
+
+	public void setSelectedResultPcrDate(Date selectedResultPcrDate) {
+		this.selectedResultPcrDate = selectedResultPcrDate;
+	}
+
+	public PosNegEq getSelectedResultPrnt() {
+		return selectedResultPrnt;
+	}
+
+	public void setSelectedResultPrnt(PosNegEq selectedResultPrnt) {
+		this.selectedResultPrnt = selectedResultPrnt;
+	}
+
+	public Date getSelectedResultPrntDate() {
+		return selectedResultPrntDate;
+	}
+
+	public void setSelectedResultPrntDate(Date selectedResultPrntDate) {
+		this.selectedResultPrntDate = selectedResultPrntDate;
+	}
+
+	public String getInputValuePrnt() {
+		return inputValuePrnt;
+	}
+
+	public void setInputValuePrnt(String inputValuePrnt) {
+		this.inputValuePrnt = inputValuePrnt;
 	}
 
 	@Transient
@@ -566,5 +814,195 @@ public class Sample extends PseudonymizableAdo {
 
 	public void setOwnershipHandedOver(boolean ownershipHandedOver) {
 		this.ownershipHandedOver = ownershipHandedOver;
+	}
+
+	public SampleDispatchMode getSampleDispatchMode() {
+		return sampleDispatchMode;
+	}
+	public void setSampleDispatchMode(SampleDispatchMode sampleDispatchMode) {
+		this.sampleDispatchMode = sampleDispatchMode;
+	}
+
+	public Date getSampleDispatchDate() {
+		return sampleDispatchDate;
+	}
+
+	public void setSampleDispatchDate(Date sampleDispatchDate) {
+		this.sampleDispatchDate = sampleDispatchDate;
+	}
+
+	public de.symeda.sormas.api.utils.YesNo getIpSampleSent() {
+		return ipSampleSent;
+	}
+
+	public void setIpSampleSent(YesNo ipSampleSent) {
+		this.ipSampleSent = ipSampleSent;
+	}
+	public YesNo getSpecimenSavedAndPreservedInAlcohol() {
+		return specimenSavedAndPreservedInAlcohol;
+	}
+
+	public void setSpecimenSavedAndPreservedInAlcohol(YesNo specimenSavedAndPreservedInAlcohol) {
+		this.specimenSavedAndPreservedInAlcohol = specimenSavedAndPreservedInAlcohol;
+	}
+
+	public String getSpecimenSavedAndPreservedInAlcoholWhy() {
+		return specimenSavedAndPreservedInAlcoholWhy;
+	}
+
+	public void setSpecimenSavedAndPreservedInAlcoholWhy(String specimenSavedAndPreservedInAlcoholWhy) {
+		this.specimenSavedAndPreservedInAlcoholWhy = specimenSavedAndPreservedInAlcoholWhy;
+	}
+
+	public Date getDateSpecimenSentToRegion() {
+		return dateSpecimenSentToRegion;
+	}
+
+	public void setDateSpecimenSentToRegion(Date dateSpecimenSentToRegion) {
+		this.dateSpecimenSentToRegion = dateSpecimenSentToRegion;
+	}
+
+	public Date getDateSpecimenReceivedAtRegion() {
+		return dateSpecimenReceivedAtRegion;
+	}
+
+	public void setDateSpecimenReceivedAtRegion(Date dateSpecimenReceivedAtRegion) {
+		this.dateSpecimenReceivedAtRegion = dateSpecimenReceivedAtRegion;
+	}
+
+	public String getNameOfPersonWhoReceivedSpecimenAtRegion() {
+		return nameOfPersonWhoReceivedSpecimenAtRegion;
+	}
+
+	public void setNameOfPersonWhoReceivedSpecimenAtRegion(String nameOfPersonWhoReceivedSpecimenAtRegion) {
+		this.nameOfPersonWhoReceivedSpecimenAtRegion = nameOfPersonWhoReceivedSpecimenAtRegion;
+	}
+
+	public Date getDateSpecimenSentToNational() {
+		return dateSpecimenSentToNational;
+	}
+
+	public void setDateSpecimenSentToNational(Date dateSpecimenSentToNational) {
+		this.dateSpecimenSentToNational = dateSpecimenSentToNational;
+	}
+
+	public Date getDateSpecimenReceivedAtNational() {
+		return dateSpecimenReceivedAtNational;
+	}
+
+	public void setDateSpecimenReceivedAtNational(Date dateSpecimenReceivedAtNational) {
+		this.dateSpecimenReceivedAtNational = dateSpecimenReceivedAtNational;
+	}
+
+	public String getNameOfPersonWhoReceivedSpecimenAtNational() {
+		return nameOfPersonWhoReceivedSpecimenAtNational;
+	}
+
+	public void setNameOfPersonWhoReceivedSpecimenAtNational(String nameOfPersonWhoReceivedSpecimenAtNational) {
+		this.nameOfPersonWhoReceivedSpecimenAtNational = nameOfPersonWhoReceivedSpecimenAtNational;
+	}
+
+	public YesNo getSentForConfirmationNational() {
+		return sentForConfirmationNational;
+	}
+
+	public void setSentForConfirmationNational(YesNo sentForConfirmationNational) {
+		this.sentForConfirmationNational = sentForConfirmationNational;
+	}
+
+	public Date getSentForConfirmationNationalDate() {
+		return sentForConfirmationNationalDate;
+	}
+
+	public void setSentForConfirmationNationalDate(Date sentForConfirmationNationalDate) {
+		this.sentForConfirmationNationalDate = sentForConfirmationNationalDate;
+	}
+
+	public String getSentForConfirmationTo() {
+		return sentForConfirmationTo;
+	}
+
+	public void setSentForConfirmationTo(String sentForConfirmationTo) {
+		this.sentForConfirmationTo = sentForConfirmationTo;
+	}
+
+	public Date getDateResultReceivedNational() {
+		return dateResultReceivedNational;
+	}
+
+	public void setDateResultReceivedNational(Date dateResultReceivedNational) {
+		this.dateResultReceivedNational = dateResultReceivedNational;
+	}
+
+	public YesNo getUseOfClothFilter() {
+		return useOfClothFilter;
+	}
+
+	public void setUseOfClothFilter(YesNo useOfClothFilter) {
+		this.useOfClothFilter = useOfClothFilter;
+	}
+
+	public FilterChangingFrequency getFrequencyOfChangingFilters() {
+		return frequencyOfChangingFilters;
+	}
+
+	public void setFrequencyOfChangingFilters(FilterChangingFrequency frequencyOfChangingFilters) {
+		this.frequencyOfChangingFilters = frequencyOfChangingFilters;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public YesNo getConfirmedAsGuineaWorm() {
+		return confirmedAsGuineaWorm;
+	}
+
+	public void setConfirmedAsGuineaWorm(YesNo confirmedAsGuineaWorm) {
+		this.confirmedAsGuineaWorm = confirmedAsGuineaWorm;
+	}
+
+	public String getLabLocation() {
+		return labLocation;
+	}
+
+	public void setLabLocation(String labLocation) {
+		this.labLocation = labLocation;
+	}
+
+	public Date getDateFormSentToDistrict() {
+		return dateFormSentToDistrict;
+	}
+
+	public void setDateFormSentToDistrict(Date dateFormSentToDistrict) {
+		this.dateFormSentToDistrict = dateFormSentToDistrict;
+	}
+
+	public Date getDateFormReceivedAtDistrict() {
+		return dateFormReceivedAtDistrict;
+	}
+
+	public void setDateFormReceivedAtDistrict(Date dateFormReceivedAtDistrict) {
+		this.dateFormReceivedAtDistrict = dateFormReceivedAtDistrict;
+	}
+
+	public Date getDateFormSentToHigherLevel() {
+		return dateFormSentToHigherLevel;
+	}
+
+	public void setDateFormSentToHigherLevel(Date dateFormSentToHigherLevel) {
+		this.dateFormSentToHigherLevel = dateFormSentToHigherLevel;
+	}
+
+	public String getPersonCompletingForm() {
+		return personCompletingForm;
+	}
+
+	public void setPersonCompletingForm(String personCompletingForm) {
+		this.personCompletingForm = personCompletingForm;
 	}
 }

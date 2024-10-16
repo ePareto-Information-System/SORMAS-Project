@@ -87,6 +87,21 @@
                 style="@style/ControlSingleColumnStyle"
                 app:value="@={data.community}" />
 
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/location_landMark"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@={data.landMark}" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/location_village"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@={data.village}" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/location_zone"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@={data.zone}" />
+
             <de.symeda.sormas.app.component.controls.ControlSpinnerField
                 android:id="@+id/facilityTypeGroup"
                 style="@style/ControlSingleColumnStyle"
@@ -112,6 +127,12 @@
                 android:id="@+id/location_postalCode"
                 style="@style/ControlSingleColumnStyle"
                 app:value="@={data.postalCode}" />
+
+<!--            residentialaddress-->
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/location_residentialAddress"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@={data.residentialAddress}" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/location_city"
@@ -176,6 +197,7 @@
                 android:text="@string/action_pick_gps" />
 
             <LinearLayout
+                android:id="@+id/lat_lon_coordinates"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">

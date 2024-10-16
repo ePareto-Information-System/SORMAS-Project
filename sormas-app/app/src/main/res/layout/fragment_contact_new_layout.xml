@@ -68,8 +68,15 @@
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/person_lastName"
+                android:nextFocusForward="@+id/person_otherName"
                 app:required="true"
                 app:value="@={data.person.lastName}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_otherName"
+                app:required="true"
+                app:value="@={data.person.otherName}"
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlSpinnerField

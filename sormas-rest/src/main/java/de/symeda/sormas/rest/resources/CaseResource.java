@@ -70,7 +70,8 @@ public class CaseResource extends EntityDtoResource<CaseDataDto> {
 		@PathParam("since") long since,
 		@PathParam("size") int size,
 		@PathParam("lastSynchronizedUuid") String lastSynchronizedUuid) {
-		return FacadeProvider.getCaseFacade().getAllAfter(new Date(since), size, lastSynchronizedUuid);
+		List<CaseDataDto> caseDataDtos =  FacadeProvider.getCaseFacade().getAllAfter(new Date(since), size, lastSynchronizedUuid);
+		return caseDataDtos;
 	}
 
 	@POST

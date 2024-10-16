@@ -196,10 +196,7 @@ public class PersonDto extends PseudonymizableDto {
 	@SensitiveData(mandatoryField = false)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String lastName;
-	@Outbreaks
-	@PersonalData(mandatoryField = false)
-	@SensitiveData(mandatoryField = false)
-	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
+
 	private String otherName;
 
 	@HideForCountriesExcept
@@ -250,8 +247,8 @@ public class PersonDto extends PseudonymizableDto {
 //	@NotNull(message = Validations.specifySex)
 	private Sex sex;
 	@Outbreaks
-	@PersonalData
-	@SensitiveData
+	/*@PersonalData
+	@SensitiveData*/
 	private Integer birthdateDD;
 	@Outbreaks
 	private Integer birthdateMM;
@@ -517,7 +514,7 @@ public class PersonDto extends PseudonymizableDto {
 	
 	private CountryReferenceDto pst14MonthsCountry;
 	private YesNo placeOfResidenceSameAsReportingVillage;
-	private String residenceSinceWhenInMonths;
+	private Integer residenceSinceWhenInMonths;
 	private String otherId;
 
 	@SuppressWarnings("serial")
@@ -1453,11 +1450,11 @@ public class PersonDto extends PseudonymizableDto {
 		this.placeOfResidenceSameAsReportingVillage = placeOfResidenceSameAsReportingVillage;
 	}
 
-	public String getResidenceSinceWhenInMonths() {
+	public Integer getResidenceSinceWhenInMonths() {
 		return residenceSinceWhenInMonths;
 	}
 
-	public void setResidenceSinceWhenInMonths(String residenceSinceWhenInMonths) {
+	public void setResidenceSinceWhenInMonths(Integer residenceSinceWhenInMonths) {
 		this.residenceSinceWhenInMonths = residenceSinceWhenInMonths;
 	}
 

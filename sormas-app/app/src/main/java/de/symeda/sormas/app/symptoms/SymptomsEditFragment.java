@@ -20,10 +20,14 @@ import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
+import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
+import de.symeda.sormas.api.symptoms.GuineaWormFirstSymptom;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.SymptomsContext;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
@@ -35,6 +39,7 @@ import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
 import de.symeda.sormas.api.visit.VisitStatus;
 import de.symeda.sormas.app.BaseEditFragment;
+import de.symeda.sormas.app.FieldOrderConfigurations;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalVisit;
@@ -52,9 +57,11 @@ import de.symeda.sormas.app.component.controls.ControlSpinnerField;
 import de.symeda.sormas.app.component.controls.ControlSwitchField;
 import de.symeda.sormas.app.component.controls.ValueChangeListener;
 import de.symeda.sormas.app.core.IEntryItemOnClickListener;
+import de.symeda.sormas.app.core.YesNo;
 import de.symeda.sormas.app.databinding.FragmentSymptomsEditLayoutBinding;
 import de.symeda.sormas.app.util.Bundler;
 import de.symeda.sormas.app.util.DataUtils;
+import de.symeda.sormas.app.util.DiseaseFieldHandler;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -70,12 +77,14 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 	private List<Item> bodyTempList;
 	private List<Item> tempSourceList;
 	private List<Item> congenitalHeartDiseaseList;
+	private List<Item> caseOutcomeList;
 
 	private IEntryItemOnClickListener clearAllCallback;
 	private IEntryItemOnClickListener setClearedToNoCallback;
 	private IEntryItemOnClickListener setClearedToUnknownCallback;
 
 	private List<ControlSwitchField> symptomFields;
+	List<Item> outcomeList;
 
 	public static SymptomsEditFragment newInstance(Case activityRootData) {
 		return newInstanceWithFieldCheckers(
@@ -146,6 +155,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		bodyTempList = getTemperatures(true);
 		tempSourceList = DataUtils.getEnumItems(TemperatureSource.class, true);
 		congenitalHeartDiseaseList = DataUtils.getEnumItems(CongenitalHeartDiseaseType.class, true);
+		outcomeList = DataUtils.getEnumItems(CaseOutcome.class, true);
 	}
 
 	@Override
@@ -153,11 +163,14 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		setupCallback();
 
 		contentBinding.setData(record);
+		contentBinding.setGuineaWormFirstSymptomClass(GuineaWormFirstSymptom.class);
 		contentBinding.setSymptomsContext(symptomsContext);
 		contentBinding.setSymptomStateClass(SymptomState.class);
 		contentBinding.setClearAllCallback(clearAllCallback);
 		contentBinding.setSetClearedToNoCallback(setClearedToNoCallback);
 		contentBinding.setSetClearedToUnknownCallback(setClearedToUnknownCallback);
+		caseOutcomeList = DataUtils.getEnumItems(CaseOutcome.class, true);
+		contentBinding.symptomsOutcome.setSpinnerData(caseOutcomeList);
 
 		SymptomsValidator.initializeSymptomsValidation(contentBinding, ado);
 	}
@@ -190,6 +203,8 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		contentBinding.symptomsTemperatureSource.initializeSpinner(DataUtils.addEmptyItem(tempSourceList));
 		contentBinding.symptomsCongenitalHeartDiseaseType.initializeSpinner(congenitalHeartDiseaseList);
 		contentBinding.symptomsOnsetSymptom.initializeSpinner(DataUtils.toItems(null, true));
+		contentBinding.symptomsDateFirstWormEmergence.initializeDateField(getFragmentManager());
+		contentBinding.symptomsOutcome.initializeSpinner(outcomeList);
 
 		contentBinding.symptomsTemperature.setSelectionOnOpen(37.0f);
 
@@ -199,6 +214,36 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		// Remove the Complications heading for CRS; should be done automatically later
 		if (disease == Disease.CONGENITAL_RUBELLA||disease == Disease.MONKEYPOX) {
 			contentBinding.complicationsHeading.setVisibility(GONE);
+		}
+
+		if (disease == Disease.YELLOW_FEVER){
+
+			Set<CaseOutcome> outcomesToRemove = Set.of(
+					CaseOutcome.NO_OUTCOME,
+					CaseOutcome.ON_TREATMENT,
+					CaseOutcome.REFERRED,
+					CaseOutcome.UNKNOWN,
+					CaseOutcome.OTHER,
+					CaseOutcome.RECOVERED
+			);
+
+			contentBinding.symptomsOutcome.initializeSpinner(outcomeList);
+			outcomeList.removeIf(item -> outcomesToRemove.contains(item.getValue()));
+
+
+			new DiseaseFieldHandler(getContext()).reorderFieldsForDisease(
+					FieldOrderConfigurations.getConfigurationForDisease(disease, FormType.SYMPTOMS_EDIT),
+					contentBinding.mainContent
+			);
+		}
+
+		if( disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
+			contentBinding.btnClearAll.setVisibility(GONE);
+			contentBinding.btnClearedToNo.setVisibility(GONE);
+			contentBinding.btnClearedToUnknown.setVisibility(GONE);
+			contentBinding.symptomsOnsetSymptom.setVisibility(GONE);
+			contentBinding.symptomsDescription.setVisibility(GONE);
+			contentBinding.symptomsSignsAndSymptons.setVisibility(GONE);
 		}
 
 		contentBinding.symptomsCongenitalHeartDisease.addValueChangedListener(e -> {
@@ -267,8 +312,12 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		}
 
 		onsetSymptomField.initializeSpinner(DataUtils.addEmptyItem(initialSpinnerItems));
-		onsetSymptomField.setEnabled(onsetSymptomField.getAdapter().getCount() > 1); // first is "empty item"
-		onsetDateField.setEnabled(isAnySymptomSetToYes());
+
+		if ( disease != Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS) {
+			onsetSymptomField.setEnabled(onsetSymptomField.getAdapter().getCount() > 1); // first is "empty item"
+			onsetDateField.setEnabled(isAnySymptomSetToYes());
+		}
+
 	}
 
 	private boolean isAnySymptomSetToYes() {
@@ -328,7 +377,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 			public void onClick(View v, Object item) {
 				for (ControlSwitchField symptomField : symptomFields) {
 					if (symptomField.getVisibility() == VISIBLE && symptomField.getValue() == null) {
-						symptomField.setValue(SymptomState.UNKNOWN);
+//						symptomField.setValue(SymptomState.UNKNOWN);
 					}
 				}
 			}

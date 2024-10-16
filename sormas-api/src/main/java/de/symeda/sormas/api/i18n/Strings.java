@@ -243,6 +243,8 @@ public interface Strings {
 	String entityDataProtectionDictionary = "entityDataProtectionDictionary";
 	String entityDiseaseClassifications = "entityDiseaseClassifications";
 	String entityDiseaseConfigurations = "entityDiseaseConfigurations";
+	String entityFormBuilder = "entityFormBuilder";
+	String entityFormFields = "entityFormFields";
 	String entityDistrict = "entityDistrict";
 	String entityDistricts = "entityDistricts";
 	String entityDocuments = "entityDocuments";
@@ -289,6 +291,7 @@ public interface Strings {
 	String entityWeeklyReports = "entityWeeklyReports";
 	String entityContainmentMeasure = "entityContainmentMeasure";
 	String entityAffectedPerson = "entityAffectedPerson";
+	String entityPatientSymptomsPrecedence = "entityPatientSymptomsPrecedence";
 	String entityPersonTravelHistory = "entityPersonTravelHistory";
 	String entityContaminationSource = "entityContaminationSource";
 
@@ -520,6 +523,8 @@ public interface Strings {
 	String headingCreateNewEventGroup = "headingCreateNewEventGroup";
 	String headingCreateNewEventParticipant = "headingCreateNewEventParticipant";
 	String headingCreateNewFacility = "headingCreateNewFacility";
+	String headingCreateNewField = "headingCreateNewField";
+	String headingCreateNewForm = "headingCreateNewForm";
 	String headingCreateNewImmunization = "headingCreateNewImmunization";
 	String headingCreateNewPerson = "headingCreateNewPerson";
 	String headingCreateNewPrescription = "headingCreateNewPrescription";
@@ -737,6 +742,7 @@ public interface Strings {
 	String confirmPassword = "confirmPassword";
 	String passwordStrength = "passwordStrength";
 	String headingPersonInformation = "headingPersonInformation";
+	String headingOccupationTitle = "headingOccupationTitle";
 	String headingPlaceStayedInLast10_14Months = "headingPlaceStayedInLast10_14Months";
 	String headingPersonOccupation = "headingPersonOccupation";
 	String headingPersonCadre = "headingCadre";

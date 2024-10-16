@@ -82,6 +82,7 @@ import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent.CommitListener;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
 public class PathogenTestController {
+	private Disease caseDisease;
 
 	private final PathogenTestFacade facade = FacadeProvider.getPathogenTestFacade();
 
@@ -94,10 +95,20 @@ public class PathogenTestController {
 
 	public void create(SampleReferenceDto sampleRef, int caseSampleCount) {
 		SampleDto sampleDto = FacadeProvider.getSampleFacade().getSampleByUuid(sampleRef.getUuid());
-		final CommitDiscardWrapperComponent<PathogenTestForm> editView = getPathogenTestCreateComponent(sampleDto, caseSampleCount, null, false);
+		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(sampleDto.getAssociatedCase().getUuid());
+		caseDisease = caseDataDto.getDisease();
 
+		if (caseDisease == Disease.MONKEYPOX) {
+			if (!Boolean.TRUE.equals(sampleDto.isReceived()) || sampleDto.getReceivedDate() == null) {
+				Notification.show("Please Confirm sample is \"Received\" and indicate \"Date Sample Received at Lab\".", Notification.Type.ERROR_MESSAGE);
+				return;
+			}
+		}
+
+		final CommitDiscardWrapperComponent<PathogenTestForm> editView = getPathogenTestCreateComponent(sampleDto, caseSampleCount, null, false);
 		VaadinUiUtil.showModalPopupWindow(editView, I18nProperties.getString(Strings.headingCreatePathogenTestResult));
 	}
+
 
 	public CommitDiscardWrapperComponent<PathogenTestForm> getPathogenTestCreateComponent(
 			SampleDto sampleDto,

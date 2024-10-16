@@ -35,6 +35,7 @@ import javax.persistence.Transient;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
+import de.symeda.sormas.api.sample.FinalClassification;
 import de.symeda.sormas.api.sample.PCRTestSpecification;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
@@ -83,6 +84,8 @@ public class PathogenTest extends PseudonymizableAdo {
 
 	@Column
 	private String typingId;
+	@Column
+	private String virusDetectionGenotype;
 
 	@Enumerated(EnumType.STRING)
 	@Column
@@ -114,12 +117,29 @@ public class PathogenTest extends PseudonymizableAdo {
 
 	@Column
 	private String labDetails;
+	@Column
+	private String labLocation;
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private User labUser;
 
 	@Column
 	private boolean viaLims;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateLabResultsSentDistrict;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateLabResultsSentClinician;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSurveillanceSentResultsToDistrict;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateDistrictReceivedLabResults;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date laboratoryDateResultsSentDSD;
+
+	@Enumerated
+	private FinalClassification finalClassification;
 
 	public Sample getSample() {
 		return sample;
@@ -199,6 +219,14 @@ public class PathogenTest extends PseudonymizableAdo {
 		return typingId;
 	}
 
+	public String getVirusDetectionGenotype() {
+		return virusDetectionGenotype;
+	}
+
+	public void setVirusDetectionGenotype(String virusDetectionGenotype) {
+		this.virusDetectionGenotype = virusDetectionGenotype;
+	}
+
 	public void setTypingId(String typingId) {
 		this.typingId = typingId;
 	}
@@ -259,6 +287,14 @@ public class PathogenTest extends PseudonymizableAdo {
 		this.labDetails = labDetails;
 	}
 
+	public String getLabLocation() {
+		return labLocation;
+	}
+
+	public void setLabLocation(String labLocation) {
+		this.labLocation = labLocation;
+	}
+
 	public boolean isFourFoldIncreaseAntibodyTiter() {
 		return fourFoldIncreaseAntibodyTiter;
 	}
@@ -307,6 +343,55 @@ public class PathogenTest extends PseudonymizableAdo {
 		this.viaLims = viaLims;
 	}
 
+	public Date getDateLabResultsSentDistrict() {
+		return dateLabResultsSentDistrict;
+	}
+
+	public void setDateLabResultsSentDistrict(Date dateLabResultsSentDistrict) {
+		this.dateLabResultsSentDistrict = dateLabResultsSentDistrict;
+	}
+
+	public Date getDateLabResultsSentClinician() {
+		return dateLabResultsSentClinician;
+	}
+
+	public void setDateLabResultsSentClinician(Date dateLabResultsSentClinician) {
+		this.dateLabResultsSentClinician = dateLabResultsSentClinician;
+	}
+	
+
+	public Date getDateSurveillanceSentResultsToDistrict() {
+		return dateSurveillanceSentResultsToDistrict;
+	}
+
+	public void setDateSurveillanceSentResultsToDistrict(Date dateSurveillanceSentResultsToDistrict) {
+		this.dateSurveillanceSentResultsToDistrict = dateSurveillanceSentResultsToDistrict;
+	}
+
+	public Date getDateDistrictReceivedLabResults() {
+		return dateDistrictReceivedLabResults;
+	}
+
+	public void setDateDistrictReceivedLabResults(Date dateDistrictReceivedLabResults) {
+		this.dateDistrictReceivedLabResults = dateDistrictReceivedLabResults;
+	}
+
+	public Date getLaboratoryDateResultsSentDSD() {
+		return laboratoryDateResultsSentDSD;
+	}
+
+	public void setLaboratoryDateResultsSentDSD(Date laboratoryDateResultsSentDSD) {
+		this.laboratoryDateResultsSentDSD = laboratoryDateResultsSentDSD;
+	}
+
+	public FinalClassification getFinalClassification() {
+		return finalClassification;
+	}
+
+	public void setFinalClassification(FinalClassification finalClassification) {
+		this.finalClassification = finalClassification;
+	}
+
 	@Override
 	public String getI18nPrefix() {
 		return I18N_PREFIX;
@@ -316,4 +401,6 @@ public class PathogenTest extends PseudonymizableAdo {
 	public String buildCaption() {
 		return super.buildCaption() + DateFormatHelper.formatLocalDate(getTestDateTime());
 	}
+
+
 }

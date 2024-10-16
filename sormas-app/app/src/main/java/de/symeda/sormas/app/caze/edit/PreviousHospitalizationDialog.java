@@ -28,6 +28,7 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
 import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
 import de.symeda.sormas.api.utils.ValidationException;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.hospitalization.PreviousHospitalization;
@@ -97,6 +98,7 @@ public class PreviousHospitalizationDialog extends FormDialog {
 		contentBinding.casePreviousHospitalizationIntensiveCareUnitStart.initializeDateField(getFragmentManager());
 		contentBinding.casePreviousHospitalizationIntensiveCareUnitEnd.initializeDateField(getFragmentManager());
 		contentBinding.casePreviousHospitalizationIsolationDate.initializeDateField(getFragmentManager());
+		contentBinding.setYesNoClass(YesNo.class);
 
 		if (data.getId() == null) {
 			setLiveValidationDisabled(true);

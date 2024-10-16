@@ -112,6 +112,8 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setDisease(source.getDisease());
 		target.setDiseaseVariant(source.getDiseaseVariant());
 		target.setDiseaseDetails(source.getDiseaseDetails());
+		target.setIdsrDiagnosis(source.getIdsrDiagnosis());
+		target.setSpecifyEventDiagnosis(source.getSpecifyEventDiagnosis());
 		target.setDiseaseVariantDetails(source.getDiseaseVariantDetails());
 		target.setPlagueType(source.getPlagueType());
 		target.setDengueFeverType(source.getDengueFeverType());
@@ -153,6 +155,9 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setHealthConditions(healthConditionsDtoHelper.fillOrCreateFromDto(target.getHealthConditions(), source.getHealthConditions()));
 
 		target.setVaccinationStatus(source.getVaccinationStatus());
+		target.setVaccinationType(source.getVaccinationType());
+		target.setNumberOfDoses(source.getNumberOfDoses());
+		target.setVaccinationDate(source.getVaccinationDate());
 		target.setSmallpoxVaccinationScar(source.getSmallpoxVaccinationScar());
 		target.setSmallpoxVaccinationReceived(source.getSmallpoxVaccinationReceived());
 		target.setSmallpoxLastVaccinationDate(source.getSmallpoxLastVaccinationDate());
@@ -236,6 +241,24 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setNotACaseReasonDetails(source.getNotACaseReasonDetails());
 		target.setFollowUpStatusChangeDate(source.getFollowUpStatusChangeDate());
 		target.setFollowUpStatusChangeUser(DatabaseHelper.getUserDao().getByReferenceDto(source.getFollowUpStatusChangeUser()));
+		target.setReportingVillage(source.getReportingVillage());
+		target.setReportingZone(source.getReportingZone());
+		target.setInvestigationOfficerName(source.getInvestigationOfficerName());
+		target.setInvestigationOfficerPosition(source.getInvestigationOfficerPosition());
+		target.setFormCompletedByName(source.getFormCompletedByName());
+		target.setFormCompletedByPosition(source.getFormCompletedByPosition());
+		target.setFormCompletedByCellPhoneNo(source.getFormCompletedByCellPhoneNo());
+		target.setDateOfInvestigation(source.getDateOfInvestigation());
+		target.setReportingOfficerName(source.getReportingOfficerName());
+		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
+
+		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
+		target.setFunctionOfReportingOfficer(source.getFunctionOfReportingOfficer());
+		target.setReportingOfficerContactPhone(source.getReportingOfficerContactPhone());
+		target.setReportingOfficerEmail(source.getReportingOfficerEmail());
+		target.setSecondVaccinationDate(source.getSecondVaccinationDate());
+		target.setVaccinationRoutine(source.getVaccinationRoutine());
+		target.setLastVaccinationDate(source.getLastVaccinationDate());
 	}
 
 	@Override
@@ -262,6 +285,8 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setDisease(source.getDisease());
 		target.setDiseaseVariant(source.getDiseaseVariant());
 		target.setDiseaseDetails(source.getDiseaseDetails());
+		target.setIdsrDiagnosis(source.getIdsrDiagnosis());
+		target.setSpecifyEventDiagnosis(source.getSpecifyEventDiagnosis());
 		target.setDiseaseVariantDetails(source.getDiseaseVariantDetails());
 		target.setPlagueType(source.getPlagueType());
 		target.setDengueFeverType(source.getDengueFeverType());
@@ -402,6 +427,9 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setClinicianEmail(source.getClinicianEmail());
 		target.setPregnant(source.getPregnant());
 		target.setVaccinationStatus(source.getVaccinationStatus());
+		target.setVaccinationType(source.getVaccinationType());
+		target.setNumberOfDoses(source.getNumberOfDoses());
+		target.setVaccinationDate(source.getVaccinationDate());
 		target.setSmallpoxVaccinationScar(source.getSmallpoxVaccinationScar());
 		target.setSmallpoxVaccinationReceived(source.getSmallpoxVaccinationReceived());
 		target.setSmallpoxLastVaccinationDate(source.getSmallpoxLastVaccinationDate());
@@ -493,6 +521,24 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		} else {
 			target.setHealthConditions(null);
 		}
+
+		target.setReportingVillage(source.getReportingVillage());
+		target.setReportingZone(source.getReportingZone());
+		target.setInvestigationOfficerName(source.getInvestigationOfficerName());
+		target.setInvestigationOfficerPosition(source.getInvestigationOfficerPosition());
+		target.setFormCompletedByName(source.getFormCompletedByName());
+		target.setFormCompletedByPosition(source.getFormCompletedByPosition());
+		target.setFormCompletedByCellPhoneNo(source.getFormCompletedByCellPhoneNo());
+		target.setDateOfInvestigation(source.getDateOfInvestigation());
+		target.setReportingOfficerName(source.getReportingOfficerName());
+		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
+		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
+		target.setFunctionOfReportingOfficer(source.getFunctionOfReportingOfficer());
+		target.setReportingOfficerContactPhone(source.getReportingOfficerContactPhone());
+		target.setReportingOfficerEmail(source.getReportingOfficerEmail());
+		target.setSecondVaccinationDate(source.getSecondVaccinationDate());
+		target.setVaccinationRoutine(source.getVaccinationRoutine());
+		target.setLastVaccinationDate(source.getLastVaccinationDate());
 
 	}
 

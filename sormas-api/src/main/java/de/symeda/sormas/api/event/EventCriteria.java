@@ -28,7 +28,6 @@ import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
-import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
@@ -95,7 +94,6 @@ public class EventCriteria extends CriteriaWithDateType implements ExternalShare
 	private TypeOfPlace typeOfPlace;
 	private PersonReferenceDto person;
 	private FacilityType facilityType;
-	private DhimsFacility dhimsFacilityType;
 	private FacilityReferenceDto facility;
 	private EventReferenceDto superordinateEvent;
 	private EventGroupReferenceDto eventGroup;
@@ -605,19 +603,6 @@ public class EventCriteria extends CriteriaWithDateType implements ExternalShare
 		this.facilityType = facilityType;
 		return this;
 	}
-	public DhimsFacility getDhimsFacilityType() {
-		return dhimsFacilityType;
-	}
-
-	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
-		this.dhimsFacilityType = dhimsFacilityType;
-	}
-
-	public EventCriteria dhimsFacilityType(DhimsFacility dhimsFacilityType) {
-		this.dhimsFacilityType = dhimsFacilityType;
-		return this;
-	}
-
 	public FacilityReferenceDto getFacility() {
 		return facility;
 	}

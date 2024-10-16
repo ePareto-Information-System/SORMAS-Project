@@ -37,7 +37,7 @@ public class BaseFragment extends Fragment {
 
 	private FirebaseAnalytics firebaseAnalytics;
 
-	private FieldVisibilityCheckers fieldVisibilityCheckers;
+	public FieldVisibilityCheckers fieldVisibilityCheckers;
 	private UiFieldAccessCheckers fieldAccessCheckers;
 
 	public BaseActivity getBaseActivity() {

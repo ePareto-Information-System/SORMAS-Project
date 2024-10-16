@@ -254,10 +254,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				loc(OTHER_INFORMATION_HEADLINE_LOC) +
 				fluidRowLocs(SampleDto.USE_OF_CLOTH_FILTER, SampleDto.FREQUENCY_OF_CHANGING_FILTERS) +
 				fluidRowLocs(SampleDto.REMARKS) +
-//				locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
-//				fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
-//				locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
-//				fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.SPECIMEN_CONDITION) +
 				fluidRowLocs(SampleDto.CONFIRMED_AS_GUINEA_WORM) +
 				fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT);
 				
@@ -997,7 +993,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         hideCommonProperties();
 		sampleDateTimeField.setVisible(false);
 
-        List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.PLASMA_SERUM, SampleMaterial.SALIVA, SampleMaterial.URINE, SampleMaterial.BIOPSY, SampleMaterial.CARDIAC, SampleMaterial.BLOOD_ANTI_COAGULANT, SampleMaterial.OTHER);
+        List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.BLOOD, SampleMaterial.PLASMA_SERUM, SampleMaterial.SALIVA, SampleMaterial.URINE, SampleMaterial.BIOPSY, SampleMaterial.CARDIAC, SampleMaterial.BLOOD_ANTI_COAGULANT, SampleMaterial.OTHER);
         FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
 
         hasSampleBeenCollected.setVisible(true);
@@ -1149,7 +1145,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
     private void handleIDSR() {
 
-        List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.WHOLE_BLOOD, SampleMaterial.PLASMA, SampleMaterial.SERUM, SampleMaterial.ASPIRATE, SampleMaterial.CEREBROSPINAL_FLUID, SampleMaterial.PUS, SampleMaterial.SALIVA, SampleMaterial.BIOPSY, SampleMaterial.STOOL, SampleMaterial.URETHRAL, SampleMaterial.URINE, SampleMaterial.SPUTUM, SampleMaterial.FOOD_WATER);
+        List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.BLOOD, SampleMaterial.PLASMA, SampleMaterial.SERUM, SampleMaterial.ASPIRATE, SampleMaterial.CEREBROSPINAL_FLUID, SampleMaterial.PUS, SampleMaterial.SALIVA, SampleMaterial.BIOPSY, SampleMaterial.STOOL, SampleMaterial.URETHRAL, SampleMaterial.URINE, SampleMaterial.SPUTUM, SampleMaterial.FOOD_WATER);
         FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
 
         suspectedDisease.setRequired(true);
@@ -1159,9 +1155,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
     private void handleMpox(){
         hideCommonProperties();
-        sampleMaterialComboBox.setVisible(false);
+		List<SampleMaterial> validValues = Arrays.asList(SampleMaterial.BLOOD, SampleMaterial.CRUST, SampleMaterial.SWAB);
+		FieldHelper.updateEnumData(sampleMaterialComboBox, validValues);
 
-        setVisible(true, SampleDto.REQUESTED_SAMPLE_MATERIALS);
+		setRequired(true, SampleDto.SHIPPED);
 
     }
 
@@ -1231,14 +1228,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
     }
 
     private void hideCommonProperties(){
-        suspectedDisease.setVisible(false);
-        labLocation.setVisible(false);
-        dateLabReceivedSpecimen.setVisible(false);
-        laboratorySampleCondition.setVisible(false);
-        dateFormSentToDistrict.setVisible(false);
-        dateFormReceivedAtDistrict.setVisible(false);
-        dateResultsSentToClinician.setVisible(false);
-        dateSpecimenSentToLab.setVisible(false);
+		setFieldsVisible(false, suspectedDisease, labLocation, dateLabReceivedSpecimen, laboratorySampleCondition, dateFormSentToDistrict, dateFormReceivedAtDistrict, dateResultsSentToClinician,
+		dateSpecimenSentToLab);
     }
 
     private void hidePropertiesVisibility() {
@@ -1280,12 +1271,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
                 requestedSampleMaterialsField.addItems(values1);
 				break;
-            case MONKEYPOX:
+           /* case MONKEYPOX:
                 requestedSampleMaterialsField.addItems(
                         Arrays.stream(SampleMaterial.getNewInfluenzaType())
                                 .filter(c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
                                 .collect(Collectors.toList()));
-                break;
+                break;*/
             default:
                 requestedSampleMaterialsField.addItems(
                         Arrays.stream(SampleMaterial.values())

@@ -55,4 +55,13 @@ public class EpiDataFragmentHelper {
 			return contact.getEpiData();
 		}
 	}
+
+	public static Disease getDisease(AbstractDomainObject abstractDomainObject) {
+		if (abstractDomainObject instanceof Case) {
+			Case caze = (Case) abstractDomainObject;
+			return caze.getDisease();
+		} else {
+			return null;
+		}
+	}
 }

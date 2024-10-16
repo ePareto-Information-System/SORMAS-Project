@@ -179,9 +179,9 @@ public class SymptomsReadFragment extends BaseReadFragment<FragmentSymptomsReadL
 					case NO:
 						// ignore this
 						break;
-					case UNKNOWN:
-						unknownResult.add(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, symptomPropertyId));
-						break;
+//					case UNKNOWN:
+//						unknownResult.add(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, symptomPropertyId));
+//						break;
 					default:
 						throw new IllegalArgumentException(symptomState.toString());
 					}

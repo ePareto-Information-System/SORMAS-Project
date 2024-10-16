@@ -129,6 +129,8 @@ public final class RetroProvider {
 	private AggregateReportFacadeRetro aggregateReportFacadeRetro;
 	private AuditLogEntryFacadeRetro auditLogEntryFacadeRetro;
 	private EnvironmentFacadeRetro environmentFacadeRetro;
+	private FormFieldRetro formFieldRetro;
+	private FormBuilderRetro formBuilderRetro;
 
 	private RetroProvider(Context context) throws ServerConnectionException, ServerCommunicationException, ApiVersionException {
 
@@ -886,6 +888,32 @@ public final class RetroProvider {
 			}
 		}
 		return instance.diseaseConfigurationFacadeRetro;
+	}
+
+	public static FormFieldRetro getFormFieldFacade() throws NoConnectionException {
+		if (instance == null)
+			throw new NoConnectionException();
+		if (instance.formFieldRetro == null) {
+			synchronized ((RetroProvider.class)) {
+				if (instance.formFieldRetro == null) {
+					instance.formFieldRetro = instance.retrofit.create(FormFieldRetro.class);
+				}
+			}
+		}
+		return instance.formFieldRetro;
+	}
+
+	public static FormBuilderRetro getFormBuilderFacade() throws NoConnectionException {
+		if (instance == null)
+			throw new NoConnectionException();
+		if (instance.formBuilderRetro == null) {
+			synchronized ((RetroProvider.class)) {
+				if (instance.formBuilderRetro == null) {
+					instance.formBuilderRetro = instance.retrofit.create(FormBuilderRetro.class);
+				}
+			}
+		}
+		return instance.formBuilderRetro;
 	}
 
 	public static CustomizableEnumValueFacadeRetro getCustomizableEnumValueFacade() throws NoConnectionException {

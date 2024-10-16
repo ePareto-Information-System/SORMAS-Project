@@ -207,10 +207,10 @@ public class CaseFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		// create contact in current jurisdiction to have access on pseudonymized case
 		creator.createContact(user2.toReference(), createPerson().toReference(), caze1);
 		Date sampleDate = new Date(1591747200000L);//2020-06-10
-		creator.createSample(caze1.toReference(), sampleDate, sampleDate, user1.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf1.facility);
+		creator.createSample(caze1.toReference(), sampleDate, sampleDate, user1.toReference(), SampleMaterial.BLOOD, rdcf1.facility);
 
 		CaseDataDto caze2 = createCase(rdcf2, user2);
-		creator.createSample(caze2.toReference(), sampleDate, sampleDate, user2.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf2.facility);
+		creator.createSample(caze2.toReference(), sampleDate, sampleDate, user2.toReference(), SampleMaterial.BLOOD, rdcf2.facility);
 
 		List<CaseExportDto> exportList =
 			getCaseFacade().getExportList(new CaseCriteria(), Collections.emptySet(), CaseExportType.CASE_SURVEILLANCE, 0, 100, null, Language.EN);

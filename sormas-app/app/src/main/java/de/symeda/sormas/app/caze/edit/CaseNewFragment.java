@@ -18,14 +18,18 @@ package de.symeda.sormas.app.caze.edit;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.widget.LinearLayout;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.caze.DengueFeverType;
+import de.symeda.sormas.api.caze.IdsrType;
 import de.symeda.sormas.api.caze.PlagueType;
 import de.symeda.sormas.api.caze.RabiesType;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
@@ -36,6 +40,7 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.sample.PosNegEq;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -53,6 +58,7 @@ import de.symeda.sormas.app.person.edit.PersonValidator;
 import de.symeda.sormas.app.util.Bundler;
 import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.app.util.DiseaseConfigurationCache;
+import de.symeda.sormas.app.util.DiseaseFieldHandler;
 import de.symeda.sormas.app.util.InfrastructureDaoHelper;
 import de.symeda.sormas.app.util.InfrastructureFieldsDependencyHandler;
 
@@ -61,6 +67,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 	public static final String TAG = CaseNewFragment.class.getSimpleName();
 
 	private Case record;
+	private DiseaseFieldHandler diseaseFieldHandler;
 
 	private List<Item> yearList;
 	private List<Item> monthList;
@@ -81,6 +88,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 	private List<Item> facilityOrHomeList;
 	private List<Item> facilityTypeGroupList;
 	private List<Item> caseTransmissionClassificationsList;
+	private List<Item> idsrTypeList;
 
 	public static CaseNewFragment newInstance(Case activityRootData) {
 		return newInstance(CaseNewFragment.class, CaseNewActivity.buildBundle().get(), activityRootData);
@@ -124,6 +132,8 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 		monthList = DataUtils.getMonthItems(true);
 
 		sexList = DataUtils.getEnumItems(Sex.class, true);
+		sexList.remove(new Item<>(Sex.OTHER.toString(), Sex.OTHER));
+		sexList.remove(new Item<>(Sex.UNKNOWN.toString(), Sex.UNKNOWN));
 		presentConditionList = DataUtils.getEnumItems(PresentCondition.class, true);
 		caseTransmissionClassificationsList = DataUtils.getEnumItems(TransmissionClassification.class, true);
 
@@ -138,6 +148,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 
 		facilityOrHomeList = DataUtils.toItems(TypeOfPlace.FOR_CASES, true);
 		facilityTypeGroupList = DataUtils.toItems(FacilityTypeGroup.getAccomodationGroups(), true);
+		idsrTypeList = DataUtils.getEnumItems(IdsrType.class, true);
 	}
 
 	@Override
@@ -178,6 +189,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 			() -> Boolean.TRUE.equals(contentBinding.caseDataDifferentPlaceOfStayJurisdiction.getValue()));
 
 			contentBinding.caseDataCaseTransmissionClassification.initializeSpinner(caseTransmissionClassificationsList);
+			contentBinding.caseDataCaseTransmissionClassification.setVisibility(GONE);
 			// InfrastructureDaoHelper.initializeFacilityFields(
 			InfrastructureFieldsDependencyHandler.instance.initializeFacilityFields(
 			record,
@@ -220,6 +232,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 
 		contentBinding.caseDataDisease.initializeSpinner(diseaseList, DiseaseConfigurationCache.getInstance().getDefaultDisease());
 		contentBinding.caseDataDiseaseVariant.initializeSpinner(diseaseVariantList);
+		contentBinding.caseDataIdsrDiagnosis.initializeSpinner(idsrTypeList);
 
 		contentBinding.caseDataPlagueType.initializeSpinner(plagueTypeList);
 		contentBinding.caseDataDengueFeverType.initializeSpinner(dengueFeverTypeList);
@@ -263,6 +276,10 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 				e.getValue() != null && ((CaseNewActivity) getActivity()).getLineListingDiseases().contains(e.getValue()) ? VISIBLE : GONE);
 			updateDiseaseVariantsField(contentBinding);
 			updatePresentConditionField(contentBinding);
+			Disease selectedDisease = (Disease) e.getValue();
+			if (selectedDisease != null) {
+				super.hideFieldsForDisease(selectedDisease, contentBinding.mainContent, FormType.CASE_CREATE);
+			}
 		});
 	}
 
@@ -322,6 +339,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 		if (bundler.getContactUuid() != null || bundler.getEventParticipantUuid() != null) {
 			contentBinding.caseDataFirstName.setEnabled(false);
 			contentBinding.caseDataLastName.setEnabled(false);
+			contentBinding.caseDataOtherName.setEnabled(false);
 			contentBinding.personSex.setEnabled(false);
 			contentBinding.personBirthdateYYYY.setEnabled(false);
 			contentBinding.personBirthdateMM.setEnabled(false);
@@ -437,4 +455,9 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 
 		getContentBinding().setData(record);
 	}
+
+//	public void hideFieldsForDisease(LinearLayout contentBinding, String selectedDisease) {
+//		// TODO Auto-generated method stub
+//		super.hideFieldsForDisease(selectedDisease, contentBinding);
+//	}
 }

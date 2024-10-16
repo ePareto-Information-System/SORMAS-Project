@@ -35,9 +35,7 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus;
 import de.symeda.sormas.api.afpimmunization.AfpImmunizationDto;
 import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
-import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.investigationnotes.InvestigationNotesDto;
-import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.riskfactor.RiskFactorDto;
 import de.symeda.sormas.api.sixtyday.SixtyDayDto;
 import de.symeda.sormas.api.user.UserDto;
@@ -178,6 +176,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String REPORT_LAT_LON_ACCURACY = "reportLatLonAccuracy";
 	public static final String REPORTING_OFFICER_NAME = "reportingOfficerName";
 	public static final String REPORTING_OFFICER_TITLE = "reportingOfficerTitle";
+	public static final String INVESTIGATION_OFFICER_ADDRESS = "investigationOfficerAddress";
 	public static final String FUNCTION_OF_REPORTING_OFFICER = "functionOfReportingOfficer";
 	public static final String REPORTING_OFFICER_CONTACT_PHONE = "reportingOfficerContactPhone";
 	public static final String REPORTING_OFFICER_EMAIL = "reportingOfficerEmail";
@@ -226,8 +225,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String FOLLOW_UP_UNTIL = "followUpUntil";
 	public static final String VISITS = "visits";
 	public static final String FACILITY_TYPE = "facilityType";
-	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
-	public static final String AFP_FACILITY_OPTIONS = "afpFacilityOptions";
 	public static final String CASE_ID_ISM = "caseIdIsm";
 	public static final String CONTACT_TRACING_FIRST_CONTACT_TYPE = "contactTracingFirstContactType";
 	public static final String CONTACT_TRACING_FIRST_CONTACT_DATE = "contactTracingFirstContactDate";
@@ -292,16 +289,8 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static final String NATIONALITY = "nationality";
 	public static final String ETHNICITY = "ethnicity";
 	public static final String OCCUPATION = "occupation";
+	public static final String REGION_OF_RESIDENCE = "regionOfResidence";
 	public static final String DISTRICT_OF_RESIDENCE = "districtOfResidence";
-	public static final String PATIENT_FIRST_NAME = "patientFirstName";
-	public static final String PATIENT_LAST_NAME = "patientLastName";
-	public static final String PATIENT_OTHER_NAMES = "patientOtherNames";
-	public static final String PATIENT_DOB_DD = "patientDobDD";
-	public static final String PATIENT_DOB_MM = "patientDobMM";
-	public static final String PATIENT_DOB_YY = "patientDobYY";
-	public static final String PATIENT_AGE_YEAR = "patientAgeYear";
-	public static final String PATIENT_AGE_MONTH = "patientAgeMonth";
-	public static final String PATIENT_SEX = "patientSex";
 	public static final String REPORTING_VILLAGE = "reportingVillage";
 	public static final String REPORTING_ZONE = "reportingZone";
 	public static final String OTHER_NOTES_AND_OBSERVATIONS = "otherNotesAndObservations";
@@ -317,15 +306,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	// Fields are declared in the order they should appear in the import template
 
-	private String patientFirstName;
-	private String patientLastName;
-	private String patientOtherNames;
-	private Integer patientDobDD;
-	private Integer patientDobMM;
-	private Integer patientDobYY;
-	private Integer patientAgeYear;
-	private Integer patientAgeMonth;
-	private Sex patientSex;
 	@Outbreaks
 	@NotNull(message = Validations.validDisease)
 	private Disease disease;
@@ -434,9 +414,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	@PersonalData(mandatoryField = true)
 	@SensitiveData(mandatoryField = true)
 	private FacilityType facilityType;
-	private DhimsFacility dhimsFacilityType;
-	private AFPFacilityOptions afpFacilityOptions;
-
 	@Outbreaks
 	@PersonalData(mandatoryField = true)
 	@SensitiveData(mandatoryField = true)
@@ -501,6 +478,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 	private String reportingOfficerName;
 	private String reportingOfficerTitle;
+	private String investigationOfficerAddress;
 	private String functionOfReportingOfficer;
 	private String reportingOfficerContactPhone;
 	private String reportingOfficerEmail;
@@ -762,7 +740,8 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private String nationality;
 	private String ethnicity;
 	private String occupation;
-	private String districtOfResidence;
+	private RegionReferenceDto regionOfResidence;
+	private DistrictReferenceDto districtOfResidence;
 	private String specifyEventDiagnosis;
 	private String nameOfVillagePersonGotIll;
 
@@ -1795,16 +1774,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		this.facilityType = facilityType;
 	}
 
-	public DhimsFacility getDhimsFacilityType() {
-		return dhimsFacilityType;
-	}
-	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
-		this.dhimsFacilityType = dhimsFacilityType;
-	}
-
-	public AFPFacilityOptions getAfpFacilityOptions(){return afpFacilityOptions;}
-	public void setAfpFacilityOptions(AFPFacilityOptions afpFacilityOptions){this.afpFacilityOptions = afpFacilityOptions;}
-
 	public Integer getCaseIdIsm() {
 		return caseIdIsm;
 	}
@@ -2340,11 +2309,19 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		this.occupation = occupation;
 	}
 
-	public String getDistrictOfResidence() {
+	public RegionReferenceDto getRegionOfResidence() {
+		return regionOfResidence;
+	}
+
+	public void setRegionOfResidence(RegionReferenceDto regionOfResidence) {
+		this.regionOfResidence = regionOfResidence;
+	}
+
+	public DistrictReferenceDto getDistrictOfResidence() {
 		return districtOfResidence;
 	}
 
-	public void setDistrictOfResidence(String districtOfResidence) {
+	public void setDistrictOfResidence(DistrictReferenceDto districtOfResidence) {
 		this.districtOfResidence = districtOfResidence;
 	}
 
@@ -2482,75 +2459,10 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		this.nameOfVillagePersonGotIll = nameOfVillagePersonGotIll;
 	}
 
-	public String getPatientOtherNames() {
-		return patientOtherNames;
+	public String getInvestigationOfficerAddress() {return investigationOfficerAddress;}
+
+	public void setInvestigationOfficerAddress(String investigationOfficerAddress) {
+		this.investigationOfficerAddress = investigationOfficerAddress;
 	}
 
-	public void setPatientOtherNames(String patientOtherNames) {
-		this.patientOtherNames = patientOtherNames;
-	}
-
-	public Integer getPatientDobDD() {
-		return patientDobDD;
-	}
-
-	public void setPatientDobDD(Integer patientDobDD) {
-		this.patientDobDD = patientDobDD;
-	}
-
-	public Integer getPatientDobMM() {
-		return patientDobMM;
-	}
-
-	public void setPatientDobMM(Integer patientDobMM) {
-		this.patientDobMM = patientDobMM;
-	}
-
-	public Integer getPatientDobYY() {
-		return patientDobYY;
-	}
-
-	public void setPatientDobYY(Integer patientDobYY) {
-		this.patientDobYY = patientDobYY;
-	}
-
-	public Integer getPatientAgeYear() {
-		return patientAgeYear;
-	}
-
-	public void setPatientAgeYear(Integer patientAgeYear) {
-		this.patientAgeYear = patientAgeYear;
-	}
-
-	public Integer getPatientAgeMonth() {
-		return patientAgeMonth;
-	}
-
-	public void setPatientAgeMonth(Integer patientAgeMonth) {
-		this.patientAgeMonth = patientAgeMonth;
-	}
-
-	public Sex getPatientSex() {
-		return patientSex;
-	}
-
-	public void setPatientSex(Sex patientSex) {
-		this.patientSex = patientSex;
-	}
-
-	public String getPatientFirstName() {
-		return patientFirstName;
-	}
-
-	public void setPatientFirstName(String patientFirstName) {
-		this.patientFirstName = patientFirstName;
-	}
-
-	public String getPatientLastName() {
-		return patientLastName;
-	}
-
-	public void setPatientLastName(String patientLastName) {
-		this.patientLastName = patientLastName;
-	}
 }

@@ -41,6 +41,7 @@ import de.symeda.sormas.api.caze.ContactTracingContactType;
 import de.symeda.sormas.api.caze.DengueFeverType;
 import de.symeda.sormas.api.caze.EndOfIsolationReason;
 import de.symeda.sormas.api.caze.HospitalWardType;
+import de.symeda.sormas.api.caze.IdsrType;
 import de.symeda.sormas.api.caze.InfectionSetting;
 import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.caze.PlagueType;
@@ -50,12 +51,15 @@ import de.symeda.sormas.api.caze.RabiesType;
 import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.caze.ScreeningType;
 import de.symeda.sormas.api.caze.Trimester;
+import de.symeda.sormas.api.caze.VaccinationRoutine;
 import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.caze.maternalhistory.MaternalHistory;
 import de.symeda.sormas.app.backend.caze.porthealthinfo.PortHealthInfo;
@@ -120,6 +124,12 @@ public class Case extends PseudonymizableAdo {
 	@Column(name = "diseaseVariant")
 	private String diseaseVariantString;
 	private DiseaseVariant diseaseVariant;
+
+	@Enumerated(EnumType.STRING)
+	private IdsrType idsrDiagnosis;
+
+	@Column(name = "specifyEventDiagnosis")
+	private String specifyEventDiagnosis;
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String diseaseDetails;
@@ -221,7 +231,7 @@ public class Case extends PseudonymizableAdo {
 	private User caseOfficer;
 
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown pregnant;
+	private YesNo pregnant;
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private HealthConditions healthConditions;
@@ -229,6 +239,12 @@ public class Case extends PseudonymizableAdo {
 	@Enumerated(EnumType.STRING)
 	@DatabaseField(columnName = "vaccination")
 	private VaccinationStatus vaccinationStatus;
+	@Enumerated(EnumType.STRING)
+	@DatabaseField(columnName = "vaccinationType")
+	private CardOrHistory vaccinationType;
+	private String numberOfDoses;
+	@DatabaseField(columnName = "vaccinationDate", dataType = DataType.DATE_LONG)
+	private Date vaccinationDate;
 
 	@Enumerated(EnumType.STRING)
 	private YesNoUnknown smallpoxVaccinationScar;
@@ -236,7 +252,7 @@ public class Case extends PseudonymizableAdo {
 	@Enumerated(EnumType.STRING)
 	private YesNoUnknown smallpoxVaccinationReceived;
 
-	@DatabaseField(columnName = "vaccinationDate", dataType = DataType.DATE_LONG)
+	@DatabaseField(columnName = "smallpoxLastVaccinationDate", dataType = DataType.DATE_LONG)
 	private Date smallpoxLastVaccinationDate;
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
@@ -341,7 +357,7 @@ public class Case extends PseudonymizableAdo {
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date quarantineOfficialOrderSentDate;
 	@Enumerated(EnumType.STRING)
-	private YesNoUnknown postpartum;
+	private YesNo postpartum;
 	@Enumerated(EnumType.STRING)
 	private Trimester trimester;
 	@DatabaseField
@@ -405,6 +421,37 @@ public class Case extends PseudonymizableAdo {
 	private Date followUpStatusChangeDate;
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private User followUpStatusChangeUser;
+	private String functionOfReportingOfficer;
+	private String reportingOfficerContactPhone;
+	private String reportingOfficerEmail;
+
+	@DatabaseField
+	private String reportingVillage;
+	@DatabaseField
+	private String reportingZone;
+	@DatabaseField
+	private String investigationOfficerName;
+	@DatabaseField
+	private String investigationOfficerPosition;
+	@DatabaseField
+	private String formCompletedByName;
+	@DatabaseField
+	private String formCompletedByPosition;
+	@DatabaseField
+	private String formCompletedByCellPhoneNo;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateOfInvestigation;
+	@DatabaseField
+	private String reportingOfficerName;
+	@DatabaseField
+	private String reportingOfficerTitle;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date secondVaccinationDate;
+	@Enumerated(EnumType.STRING)
+	private VaccinationRoutine vaccinationRoutine;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date lastVaccinationDate;
+
 
 	public boolean isUnreferredPortHealthCase() {
 		return caseOrigin == CaseOrigin.POINT_OF_ENTRY && healthFacility == null;
@@ -440,6 +487,22 @@ public class Case extends PseudonymizableAdo {
 
 	public void setDiseaseVariantString(String diseaseVariantString) {
 		this.diseaseVariantString = diseaseVariantString;
+	}
+
+	public IdsrType getIdsrDiagnosis() {
+		return idsrDiagnosis;
+	}
+
+	public void setIdsrDiagnosis(IdsrType idsrDiagnosis) {
+		this.idsrDiagnosis = idsrDiagnosis;
+	}
+
+	public String getSpecifyEventDiagnosis() {
+		return specifyEventDiagnosis;
+	}
+
+	public void setSpecifyEventDiagnosis(String specifyEventDiagnosis) {
+		this.specifyEventDiagnosis = specifyEventDiagnosis;
 	}
 
 	@Transient
@@ -676,11 +739,11 @@ public class Case extends PseudonymizableAdo {
 		this.healthConditions = healthConditions;
 	}
 
-	public YesNoUnknown getPregnant() {
+	public YesNo getPregnant() {
 		return pregnant;
 	}
 
-	public void setPregnant(YesNoUnknown pregnant) {
+	public void setPregnant(YesNo pregnant) {
 		this.pregnant = pregnant;
 	}
 
@@ -690,6 +753,30 @@ public class Case extends PseudonymizableAdo {
 
 	public void setVaccinationStatus(VaccinationStatus vaccinationStatus) {
 		this.vaccinationStatus = vaccinationStatus;
+	}
+
+	public CardOrHistory getVaccinationType() {
+		return vaccinationType;
+	}
+
+	public void setVaccinationType(CardOrHistory vaccinationType) {
+		this.vaccinationType = vaccinationType;
+	}
+
+	public String getNumberOfDoses() {
+		return numberOfDoses;
+	}
+
+	public void setNumberOfDoses(String numberOfDoses) {
+		this.numberOfDoses = numberOfDoses;
+	}
+
+	public Date getVaccinationDate() {
+		return vaccinationDate;
+	}
+
+	public void setVaccinationDate(Date vaccinationDate) {
+		this.vaccinationDate = vaccinationDate;
 	}
 
 	public YesNoUnknown getSmallpoxVaccinationScar() {
@@ -1132,11 +1219,11 @@ public class Case extends PseudonymizableAdo {
 		this.quarantineOfficialOrderSentDate = quarantineOfficialOrderSentDate;
 	}
 
-	public YesNoUnknown getPostpartum() {
+	public YesNo getPostpartum() {
 		return postpartum;
 	}
 
-	public void setPostpartum(YesNoUnknown postpartum) {
+	public void setPostpartum(YesNo postpartum) {
 		this.postpartum = postpartum;
 	}
 
@@ -1369,5 +1456,124 @@ public class Case extends PseudonymizableAdo {
 
 	public void setFollowUpStatusChangeUser(User followUpStatusChangeUser) {
 		this.followUpStatusChangeUser = followUpStatusChangeUser;
+	}
+
+	public String getReportingVillage() {
+		return reportingVillage;
+	}
+
+	public void setReportingVillage(String reportingVillage) {
+		this.reportingVillage = reportingVillage;
+	}
+
+	public String getReportingZone() {
+		return reportingZone;
+	}
+
+	public void setReportingZone(String reportingZone) {
+		this.reportingZone = reportingZone;
+	}
+
+	public String getInvestigationOfficerName() {
+		return investigationOfficerName;
+	}
+
+	public void setInvestigationOfficerName(String investigationOfficerName) {
+		this.investigationOfficerName = investigationOfficerName;
+	}
+
+	public String getInvestigationOfficerPosition() {
+		return investigationOfficerPosition;
+	}
+
+	public void setInvestigationOfficerPosition(String investigationOfficerPosition) {
+		this.investigationOfficerPosition = investigationOfficerPosition;
+	}
+
+	public String getFormCompletedByName() {
+		return formCompletedByName;
+	}
+
+	public void setFormCompletedByName(String formCompletedByName) {
+		this.formCompletedByName = formCompletedByName;
+	}
+
+	public String getFormCompletedByPosition() {
+		return formCompletedByPosition;
+	}
+
+	public void setFormCompletedByPosition(String formCompletedByPosition) {
+		this.formCompletedByPosition = formCompletedByPosition;
+	}
+
+	public String getFormCompletedByCellPhoneNo() {
+		return formCompletedByCellPhoneNo;
+	}
+
+	public void setFormCompletedByCellPhoneNo(String formCompletedByCellPhoneNo) {
+		this.formCompletedByCellPhoneNo = formCompletedByCellPhoneNo;
+	}
+
+	public Date getDateOfInvestigation() {
+		return dateOfInvestigation;
+	}
+
+	public void setDateOfInvestigation(Date dateOfInvestigation) {
+		this.dateOfInvestigation = dateOfInvestigation;
+	}
+
+	public String getReportingOfficerName() {
+		return reportingOfficerName;
+	}
+
+	public void setReportingOfficerName(String reportingOfficerName) {
+		this.reportingOfficerName = reportingOfficerName;
+	}
+
+	public String getReportingOfficerTitle() {return reportingOfficerTitle;}
+
+	public void setReportingOfficerTitle(String reportingOfficerTitle) {
+		this.reportingOfficerTitle = reportingOfficerTitle;
+	}
+
+	public String getFunctionOfReportingOfficer() {return functionOfReportingOfficer;}
+
+	public void setFunctionOfReportingOfficer(String functionOfReportingOfficer) {
+		this.functionOfReportingOfficer = functionOfReportingOfficer;
+	}
+
+	public String getReportingOfficerContactPhone() {return reportingOfficerContactPhone;}
+
+	public void setReportingOfficerContactPhone(String reportingOfficerContactPhone) {
+		this.reportingOfficerContactPhone = reportingOfficerContactPhone;
+	}
+	public String getReportingOfficerEmail() {return reportingOfficerEmail;}
+
+	public void setReportingOfficerEmail(String reportingOfficerEmail) {
+		this.reportingOfficerEmail = reportingOfficerEmail;
+	}
+
+	public Date getSecondVaccinationDate() {
+		return secondVaccinationDate;
+	}
+
+	public void setSecondVaccinationDate(Date secondVaccinationDate) {
+		this.secondVaccinationDate = secondVaccinationDate;
+	}
+
+	public VaccinationRoutine getVaccinationRoutine() {
+		return vaccinationRoutine;
+	}
+
+	public void setVaccinationRoutine(VaccinationRoutine vaccinationRoutine) {
+		this.vaccinationRoutine = vaccinationRoutine;
+	}
+
+	public Date getLastVaccinationDate() {
+		return lastVaccinationDate;
+	}
+
+	public void setLastVaccinationDate(Date lastVaccinationDate) {
+		this.lastVaccinationDate = lastVaccinationDate;
 	}
 }

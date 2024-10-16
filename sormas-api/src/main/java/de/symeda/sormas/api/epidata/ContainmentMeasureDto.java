@@ -25,7 +25,7 @@ public class ContainmentMeasureDto extends PseudonymizableDto  {
     public static final String DATE_OF_GUINEA_WORM_EXPULLED = "dateOfGuineaWormExpelled";
     public static final String REGULAR_BANDAGING = "regularBandaging";
     public static final String COMPLETELY_EXTRACTED = "completelyExtracted";
-    private String uuid;
+//    private String uuid;
     private String locationOfWorm;
     private Date dateWormDetectedEmergence;
     private Date dateWormDetectBySupervisor;
@@ -62,15 +62,15 @@ public class ContainmentMeasureDto extends PseudonymizableDto  {
     }
 
 
-    @Override
-    public String getUuid() {
-        return uuid;
-    }
-
-    @Override
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
+//    @Override
+//    public String getUuid() {
+//        return uuid;
+//    }
+//
+//    @Override
+//    public void setUuid(String uuid) {
+//        this.uuid = uuid;
+//    }
 
     public String getLocationOfWorm() {
         return locationOfWorm;

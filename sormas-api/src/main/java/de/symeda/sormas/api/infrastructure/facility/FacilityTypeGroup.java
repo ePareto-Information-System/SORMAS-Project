@@ -48,7 +48,6 @@ public enum FacilityTypeGroup {
 		return accomodationGroups;
 	}
 
-	//public static final List<FacilityTypeGroup> FOR_DHIMS = Arrays.asList(CHPS_COMPOUND, MATERNITY_HOME, CLINIC, HEALTH_CENTRE, POLYCLINIC, HOSPITAL);
 
 	@Override
 	public String toString() {

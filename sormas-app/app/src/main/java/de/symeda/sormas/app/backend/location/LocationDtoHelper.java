@@ -93,6 +93,10 @@ public class LocationDtoHelper extends AdoDtoHelper<Location, LocationDto> {
 		target.setContactPersonLastName(source.getContactPersonLastName());
 		target.setContactPersonPhone(source.getContactPersonPhone());
 		target.setContactPersonEmail(source.getContactPersonEmail());
+		target.setLandMark(source.getLandMark());
+		target.setVillage(source.getVillage());
+		target.setZone(source.getZone());
+		target.setResidentialAddress(source.getResidentialAddress());
 	}
 
 	@Override
@@ -137,6 +141,7 @@ public class LocationDtoHelper extends AdoDtoHelper<Location, LocationDto> {
 		}
 
 		target.setPostalCode(source.getPostalCode());
+		target.setLandMark(source.getLandMark());
 
 		target.setPseudonymized(source.isPseudonymized());
 		target.setStreet(source.getStreet());
@@ -151,6 +156,10 @@ public class LocationDtoHelper extends AdoDtoHelper<Location, LocationDto> {
 		target.setContactPersonLastName(source.getContactPersonLastName());
 		target.setContactPersonPhone(source.getContactPersonPhone());
 		target.setContactPersonEmail(source.getContactPersonEmail());
+		target.setLandMark(source.getLandMark());
+		target.setVillage(source.getVillage());
+		target.setZone(source.getZone());
+		target.setResidentialAddress(source.getResidentialAddress());
 	}
 
     @Override
