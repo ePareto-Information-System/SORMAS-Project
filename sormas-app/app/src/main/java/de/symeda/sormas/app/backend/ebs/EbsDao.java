@@ -72,7 +72,11 @@ public class EbsDao extends AbstractAdoDao<Ebs> {
         }
 
         if (criteria.getSignalOutcome() == null) {
-            signalVerificationLongQueryBuilder.where().eq(SignalVerification.VERIFIED, SignalOutcome.NON_EVENT).or().isNull("verified");
+            signalVerificationLongQueryBuilder
+                    .where()
+                    .in(SignalVerification.VERIFIED, SignalOutcome.NON_EVENT, SignalOutcome.EVENT)
+                    .or()
+                    .isNull(SignalVerification.VERIFIED);
             queryBuilder.leftJoin(signalVerificationLongQueryBuilder);
         }
 
