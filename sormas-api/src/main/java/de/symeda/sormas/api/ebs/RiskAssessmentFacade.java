@@ -17,16 +17,20 @@
  *******************************************************************************/
 package de.symeda.sormas.api.ebs;
 
-import de.symeda.sormas.api.sample.SampleCriteria;
-import de.symeda.sormas.api.sample.SampleDto;
+import de.symeda.sormas.api.CoreFacade;
+import de.symeda.sormas.api.caze.classification.DiseaseClassificationCriteriaDto;
 
+import javax.annotation.security.PermitAll;
 import javax.ejb.Remote;
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 
 @Remote
-public interface RiskAssessmentFacade {
-    RiskAssessmentDto saveRisk(@Valid RiskAssessmentDto dto);
+public interface RiskAssessmentFacade{
+    RiskAssessmentDto save(@Valid RiskAssessmentDto dto);
     List<RiskAssessmentDto> findBy(RiskAssessmentCriteria criteria);
-
+    List<RiskAssessmentDto> getAllAfter(Date date);
+    RiskAssessmentDto getRiskByUuid(String uuid, boolean detailedReferences);
+    List<String> getAllActiveUuids();
 }

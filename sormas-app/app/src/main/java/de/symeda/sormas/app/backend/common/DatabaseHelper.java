@@ -102,6 +102,13 @@ import de.symeda.sormas.app.backend.customizableenum.CustomizableEnumValue;
 import de.symeda.sormas.app.backend.customizableenum.CustomizableEnumValueDao;
 import de.symeda.sormas.app.backend.disease.DiseaseConfiguration;
 import de.symeda.sormas.app.backend.disease.DiseaseConfigurationDao;
+import de.symeda.sormas.app.backend.ebs.Ebs;
+import de.symeda.sormas.app.backend.ebs.EbsDao;
+import de.symeda.sormas.app.backend.ebs.ebsAlert.EbsAlert;
+import de.symeda.sormas.app.backend.ebs.ebsAlert.EbsAlertDao;
+import de.symeda.sormas.app.backend.ebs.riskAssessment.RiskAssessment;
+import de.symeda.sormas.app.backend.ebs.riskAssessment.RiskAssessmentDao;
+import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
 import de.symeda.sormas.app.backend.environment.Environment;
 import de.symeda.sormas.app.backend.environment.EnvironmentDao;
 import de.symeda.sormas.app.backend.epidata.EpiData;
@@ -167,6 +174,7 @@ import de.symeda.sormas.app.backend.sample.PathogenTest;
 import de.symeda.sormas.app.backend.sample.PathogenTestDao;
 import de.symeda.sormas.app.backend.sample.Sample;
 import de.symeda.sormas.app.backend.sample.SampleDao;
+import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerificationDao;
 import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfo;
 import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfoDao;
 import de.symeda.sormas.app.backend.symptoms.Symptoms;
@@ -181,6 +189,8 @@ import de.symeda.sormas.app.backend.therapy.Therapy;
 import de.symeda.sormas.app.backend.therapy.TherapyDao;
 import de.symeda.sormas.app.backend.therapy.Treatment;
 import de.symeda.sormas.app.backend.therapy.TreatmentDao;
+import de.symeda.sormas.app.backend.ebs.triaging.Triaging;
+import de.symeda.sormas.app.backend.ebs.triaging.TriagingDao;
 import de.symeda.sormas.app.backend.user.User;
 import de.symeda.sormas.app.backend.user.UserDao;
 import de.symeda.sormas.app.backend.user.UserRole;
@@ -265,6 +275,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.clearTable(connectionSource, Contact.class);
 			TableUtils.clearTable(connectionSource, Visit.class);
 			TableUtils.clearTable(connectionSource, Event.class);
+			TableUtils.clearTable(connectionSource, Ebs.class);
+			TableUtils.clearTable(connectionSource, Triaging.class);
+			TableUtils.clearTable(connectionSource, SignalVerification.class);
+			TableUtils.clearTable(connectionSource, RiskAssessment.class);
+			TableUtils.clearTable(connectionSource, EbsAlert.class);
 			TableUtils.clearTable(connectionSource, Sample.class);
 			TableUtils.clearTable(connectionSource, PathogenTest.class);
 			TableUtils.clearTable(connectionSource, AdditionalTest.class);
@@ -375,6 +390,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, Visit.class);
 			TableUtils.createTable(connectionSource, Task.class);
 			TableUtils.createTable(connectionSource, Event.class);
+			TableUtils.createTable(connectionSource, Ebs.class);
+			TableUtils.createTable(connectionSource, Triaging.class);
+			TableUtils.createTable(connectionSource, SignalVerification.class);
+			TableUtils.createTable(connectionSource, RiskAssessment.class);
+			TableUtils.createTable(connectionSource, EbsAlert.class);
 			TableUtils.createTable(connectionSource, Sample.class);
 			TableUtils.createTable(connectionSource, PathogenTest.class);
 			TableUtils.createTable(connectionSource, AdditionalTest.class);
@@ -3348,7 +3368,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN sampleDispatchMode VARCHAR(255);");
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN ipSampleSent VARCHAR(255);");
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN ipSampleTestResultsString VARCHAR(512);");
-					
+
 				case 360:
 					currentVersion = 360;
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN idsrDiagnosis varchar(255);");
@@ -3504,6 +3524,157 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				// ATTENTION: break should only be done after last version
 				break;
 			default:
+				case 354:
+					currentVersion = 354;
+					getDao(Ebs.class).executeRaw(
+							"CREATE TABLE ebs(" +
+									"id bigint primary key not null," +
+									"uuid varchar(36) not null unique," +
+									"changedate timestamp not null default CURRENT_TIMESTAMP," +
+									"creationdate timestamp not null default CURRENT_TIMESTAMP," +
+									"ebstdate timestamp," +
+									"reportdatetime timestamp not null," +
+									"reportinguser_id bigint," +
+									"location_id bigint," +
+									"externaltoken varchar(512)," +
+									"internaltoken text," +
+									"deleted boolean default false," +
+									"archiveundonereason varchar(512)," +
+									"change_user_id bigint," +
+									"deletionreason varchar(255)," +
+									"automaticScanningType varchar(512)," +
+									"manualScanningType varchar(512)," +
+									"scanningType varchar(512)," +
+									"descriptionOccurrence varchar(512)," +
+									"sourceName varchar(512)," +
+									"sourceUrl varchar(512)," +
+									"dateOnset timestamp," +
+									"personRegistering varchar(512)," +
+									"personDesignation varchar(512)," +
+									"personPhone varchar(512)," +
+									"other varchar(512)," +
+									"ebsLongitude double precision," +
+									"ebsLatitude double precision," +
+									"ebsLatLon double precision," +
+									"ebslocation_id bigint," +
+									"sourceInformation varchar(255)," +
+									"archived boolean default false," +
+									"sormasToSormasOriginInfo_id bigint," +
+									"categoryOfInformant varchar(255)," +
+									"informantName varchar(512)," +
+									"informantTel varchar(20)," +
+									"responsibleuser_id bigint," +
+									"otherdeletionreason varchar(255)," +
+									"externalid varchar(512)," +
+									"otherInformant varchar(255)," +
+									"triaging_id bigint," +
+									"signalVerification_id bigint," +
+									"riskAssessment_id bigint," +
+									"ebsalert_id bigint" +
+									");"
+					);
+
+					getDao(Ebs.class).executeRaw(
+							"ALTER TABLE ebs ADD CONSTRAINT fk_ebs_reportinguser_id FOREIGN KEY (reportinguser_id) REFERENCES users(id);"
+					);
+
+					getDao(Ebs.class).executeRaw(
+							"ALTER TABLE ebs ADD CONSTRAINT fk_ebs_location_id FOREIGN KEY (location_id) REFERENCES location(id);"
+					);
+
+					getDao(Ebs.class).executeRaw(
+							"ALTER TABLE ebs ADD CONSTRAINT fk_ebs_change_user_id FOREIGN KEY (change_user_id) REFERENCES users(id);"
+					);
+
+					getDao(Ebs.class).executeRaw(
+							"ALTER TABLE ebs ADD CONSTRAINT fk_ebs_ebslocation_id FOREIGN KEY (ebslocation_id) REFERENCES location(id);"
+					);
+					getDao(Ebs.class).executeRaw(
+							"ALTER TABLE ebs ADD CONSTRAINT fk_ebs_triaging_id FOREIGN KEY (triaging_id) REFERENCES triaging (id);"
+					);
+					getDao(Ebs.class).executeRaw(
+							"ALTER TABLE ebs ADD CONSTRAINT fk_ebs_signalVerification_id FOREIGN KEY (signalVerification_id) REFERENCES signalVerification (id);"
+					);
+					getDao(Ebs.class).executeRaw(
+							"ALTER TABLE ebs ADD CONSTRAINT fk_ebs_riskAssessment_id FOREIGN KEY (riskAssessment_id) REFERENCES riskAssessment (id);"
+					);
+					getDao(Ebs.class).executeRaw(
+							"ALTER TABLE ebs ADD CONSTRAINT fk_ebs_ebsAlert_id FOREIGN KEY (ebsAlert_id) REFERENCES ebsAlert (id);"
+					);
+				case 355:
+					currentVersion = 355;
+					getDao(Triaging.class).executeRaw(
+							"CREATE TABLE triaging(" +
+									"id bigint primary key not null," +
+									"uuid varchar(36) not null unique," +
+									"earlyWarning varchar(3)," +
+									"specificSignal varchar(3)," +
+									"signalCategory varchar(255)," +
+									"healthConcern varchar(3)," +
+									"categoryDetails varchar(255)," +
+									"occurrencePreviously varchar(3)," +
+									"triagingDecision varchar(255)," +
+									"decisionDate date," +
+									"referredTo varchar(255)," +
+									"changedate timestamp not null," +
+									"creationdate timestamp not null," +
+									"change_user_id bigint," +
+									"responsibleuser_id bigint," +
+									"triagingDecisionString varchar(255)," +
+									"categoryDetailsString varchar(255)," +
+									"outcomeSupervisor varchar(255)," +
+									"notSignal boolean default false," +
+									"humanLaboratoryCategoryDetails varchar(255)," +
+									"animalCommunityCategoryDetails varchar(255)," +
+									"animalFacilityCategoryDetails varchar(255)," +
+									"environmentalCategoryDetails varchar(255)," +
+									"poeCategoryDetails varchar(255)," +
+									"animalLaboratoryCategoryDetails varchar(255)," +
+									"humanCommunityCategoryDetails varchar(255)," +
+									"categoryDetailsLevel varchar(255)," +
+									"supervisorreview varchar(3)," +
+									"referred varchar(3)" +
+									");"
+					);
+				case 356:
+					currentVersion = 356;
+					getDao(RiskAssessment.class).executeRaw(
+							"CREATE TABLE riskAssessment(" +
+									"id bigint primary key autoincrement," +
+									"morbidityMortality varchar(3)," +
+									"spreadProbability varchar(3)," +
+									"controlMeasures varchar(3)," +
+									"riskAssessment varchar(255)," +
+									"assessmentDate timestamp," +
+									"assessmentTime varchar(255)," +
+									"ebs_id bigint," +
+									"morbidityMortalityComment varchar(255)," +
+									"spreadProbabilityComment varchar(255)," +
+									"controlMeasuresComment varchar(255)," +
+									"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" + // Foreign key constraint
+									");"
+					);
+				case 357:
+					currentVersion = 357;
+					getDao(EbsAlert.class).executeRaw(
+							"CREATE TABLE ebsAlert(" +
+									"id bigint primary key autoincrement," +
+									"actionInitiated varchar(3)," +
+									"responseStatus varchar(255)," +
+									"responseDate timestamp," +
+									"detailsResponseActivities varchar(255)," +
+									"detailsGiven varchar(255)," +
+									"alertIssued varchar(3)," +
+									"detailsAlertUsed varchar(255)," +
+									"ebs_id bigint," +
+									"alertDate timestamp," +
+									"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" +
+									");"
+					);
+
+					// ATTENTION: break should only be done after last version
+					break;
+				default:
 				throw new IllegalStateException("onUpgrade() with unknown oldVersion " + oldVersion);
 			}
 		} catch (
@@ -4284,6 +4455,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.dropTable(connectionSource, Contact.class, true);
 			TableUtils.dropTable(connectionSource, Visit.class, true);
 			TableUtils.dropTable(connectionSource, Event.class, true);
+			TableUtils.dropTable(connectionSource, Ebs.class, true);
+			TableUtils.dropTable(connectionSource, Triaging.class, true);
+			TableUtils.dropTable(connectionSource, SignalVerification.class, true);
+			TableUtils.dropTable(connectionSource, RiskAssessment.class, true);
+			TableUtils.dropTable(connectionSource, EbsAlert.class, true);
 			TableUtils.dropTable(connectionSource, Sample.class, true);
 			TableUtils.dropTable(connectionSource, PathogenTest.class, true);
 			TableUtils.dropTable(connectionSource, AdditionalTest.class, true);
@@ -4402,6 +4578,16 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					dao = (AbstractAdoDao<ADO>) new VisitDao((Dao<Visit, Long>) innerDao);
 				} else if (type.equals(Event.class)) {
 					dao = (AbstractAdoDao<ADO>) new EventDao((Dao<Event, Long>) innerDao);
+				} else if (type.equals(Ebs.class)) {
+					dao = (AbstractAdoDao<ADO>) new EbsDao((Dao<Ebs, Long>) innerDao);
+				} else if (type.equals(Triaging.class)) {
+					dao = (AbstractAdoDao<ADO>) new TriagingDao((Dao<Triaging, Long>) innerDao);
+				} else if (type.equals(SignalVerification.class)) {
+					dao = (AbstractAdoDao<ADO>) new SignalVerificationDao((Dao<SignalVerification, Long>) innerDao);
+				} else if (type.equals(RiskAssessment.class)) {
+					dao = (AbstractAdoDao<ADO>) new RiskAssessmentDao((Dao<RiskAssessment, Long>) innerDao);
+				} else if (type.equals(EbsAlert.class)) {
+					dao = (AbstractAdoDao<ADO>) new EbsAlertDao((Dao<EbsAlert, Long>) innerDao);
 				} else if (type.equals(EventParticipant.class)) {
 					dao = (AbstractAdoDao<ADO>) new EventParticipantDao((Dao<EventParticipant, Long>) innerDao);
 				} else if (type.equals(Sample.class)) {
@@ -4669,6 +4855,26 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	public static EventDao getEventDao() {
 		return (EventDao) getAdoDao(Event.class);
+	}
+
+	public static EbsDao getEbsDao() {
+		return (EbsDao) getAdoDao(Ebs.class);
+	}
+
+	public static TriagingDao getTriagingDao() {
+		return (TriagingDao) getAdoDao(Triaging.class);
+	}
+
+	public static SignalVerificationDao getSignalVerificationDao() {
+		return (SignalVerificationDao) getAdoDao(SignalVerification.class);
+	}
+
+	public static RiskAssessmentDao getRiskAssessmentDao() {
+		return (RiskAssessmentDao) getAdoDao(RiskAssessment.class);
+	}
+
+	public static EbsAlertDao getEbsAlertDao() {
+		return (EbsAlertDao) getAdoDao(EbsAlert.class);
 	}
 
 	public static EventParticipantDao getEventParticipantDao() {

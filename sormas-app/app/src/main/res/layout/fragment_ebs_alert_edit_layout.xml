@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ SORMAS® - Surveillance Outbreak Response Management & Analysis System
+  ~ Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="contentDescription"
+    android:descendantFocusability="beforeDescendants"
+    android:id="@+id/base_layout">
+
+
+    <data>
+        <import type="android.view.View" />
+        <import type="de.symeda.sormas.api.ebs.ResponseStatus"/>
+        <import type="de.symeda.sormas.api.utils.YesNo"/>
+        <variable name="data" type="de.symeda.sormas.app.backend.ebs.ebsAlert.EbsAlert"/>
+        <variable name="yesNoClass" type="Class" />
+        <variable name="responseStatusClass" type="Class" />
+
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/main_content"
+            style="@style/LayoutSingleContentSpaceBelowStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/ebsAlert_uuid"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:shortUuidValue="@{data.uuid}" />
+            </LinearLayout>
+
+            <ImageView style="@style/FullHorizontalDividerStyle"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/ebsAlert_alertIssued"
+                style="@style/ControlFirstOfTwoColumnsStyle"
+                app:enumClass="@{yesNoClass}"
+                app:value="@={data.alertIssued}"/>
+
+            <de.symeda.sormas.app.component.controls.ControlDateField
+                android:id="@+id/ebsAlert_alertDate"
+                style="@style/ControlSecondOfTwoColumnsStyle"
+                app:dependencyParentField="@{ebsAlertAlertIssued}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                app:required="true"
+                app:allowedDaysInFuture="0"
+                app:value="@={data.alertDate}" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/ebsAlert_detailsAlertUsed"
+                app:inputType="textMultiLine"
+                app:textAlignment="gravity"
+                app:gravity="top|start"
+                app:dependencyParentField="@{ebsAlertAlertIssued}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                app:textArea="true"
+                app:singleLine="false"
+                app:maxLines="5"
+                app:value="@={data.detailsAlertUsed}"
+                style="@style/ControlFirstOfTwoColumnsStyle" />
+        </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/ebsAlert_actionInitiated"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:enumClass="@{yesNoClass}"
+                    app:value="@={data.actionInitiated}"/>
+            </LinearLayout>
+                <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/ebsAlert_responseStatus"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:enumClass="@{responseStatusClass}"
+                    app:value="@={data.responseStatus}"/>
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/ebsAlert_responseDate"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:dependencyParentField="@{ebsAlertResponseStatus}"
+                    app:dependencyParentValue="@{ResponseStatus.COMPLETED}"
+                    app:required="true"
+                    app:allowedDaysInFuture="0"
+                    app:value="@={data.responseDate}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/ebsAlert_detailsResponseActivities"
+                    app:inputType="textMultiLine"
+                    app:textAlignment="gravity"
+                    app:gravity="top|start"
+                    app:textArea="true"
+                    app:singleLine="false"
+                    app:maxLines="5"
+                    app:value="@={data.detailsResponseActivities}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+</layout>
+

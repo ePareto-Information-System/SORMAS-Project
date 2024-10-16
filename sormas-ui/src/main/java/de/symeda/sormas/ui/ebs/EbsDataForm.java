@@ -345,55 +345,12 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 
     }
 
-
-
     private void addRegionAndDistrict(ComboBox responsibleUserField) {
         List<UserReferenceDto> responsibleUsers = new ArrayList<>();
         responsibleUsers.addAll(regionEventResponsibles);
         responsibleUsers.addAll(districtEventResponsibles);
 
         FieldHelper.updateItems(responsibleUserField, responsibleUsers);
-    }
-
-    private CheckBoxTree.CheckBoxElement<EpidemiologicalEvidenceDetail> epidemiologicalEvidenceDetailToCheckBoxElement(
-            EpidemiologicalEvidenceDetail epidemiologicalEvidenceDetail) {
-        return new CheckBoxTree.CheckBoxElement<>(
-                epidemiologicalEvidenceDetail.getParent() != null
-                        ? epidemiologicalEvidenceDetailToCheckBoxElement(epidemiologicalEvidenceDetail.getParent())
-                        : null,
-                epidemiologicalEvidenceDetail);
-    }
-
-    private void initEventDateValidation(DateTimeField startDate, DateTimeField endDate, CheckBox multiDayCheckbox) {
-        DateComparisonValidator startDateValidator = new DateComparisonValidator(
-                startDate,
-                endDate,
-                true,
-                true,
-                I18nProperties.getValidationError(Validations.beforeDate, startDate.getCaption(), endDate.getCaption()));
-
-        DateComparisonValidator endDateValidator = new DateComparisonValidator(
-                endDate,
-                startDate,
-                false,
-                true,
-                I18nProperties.getValidationError(Validations.afterDate, endDate.getCaption(), startDate.getCaption()));
-
-        endDate.removeAllValidators(); // make sure the end date does not come with a future date validator
-
-        multiDayCheckbox.addValueChangeListener(e -> {
-            if ((Boolean) e.getProperty().getValue()) {
-                startDate.addValidator(startDateValidator);
-                endDate.addValidator(endDateValidator);
-                DateComparisonValidator.dateFieldDependencyValidationVisibility(startDate, endDate);
-            } else {
-                startDate.removeValidator(startDateValidator);
-                startDate.setValidationVisible(true);
-                endDate.removeValidator(endDateValidator);
-                endDate.setValidationVisible(true);
-            }
-        });
-
     }
 
     @Override

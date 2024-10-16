@@ -34,7 +34,6 @@ import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
@@ -233,7 +232,7 @@ public class EbsController {
 		editView.addCommitListener(() -> {
 			ebs.setRiskAssessment(riskAssessmentDataForm.getValue());
 			riskAssessmentDto.setRiskAssessment(riskAssessmentDataForm.getValue().getRiskAssessment());
-			FacadeProvider.getRiskAssessmentFacade().saveRisk(riskAssessmentDto);
+			FacadeProvider.getRiskAssessmentFacade().save(riskAssessmentDto);
 			FacadeProvider.getEbsFacade().save(ebs);
 			SormasUI.refreshView();
 			Notification notification =  Notification.show(I18nProperties.getString(Strings.messageRiskAssessmentSavedShort), TRAY_NOTIFICATION);
@@ -509,7 +508,7 @@ public class EbsController {
 		editView.addCommitListener(() -> {
 			ebs.setRiskAssessment(riskAssessmentDataForm.getValue());
 			riskAssessmentDto.setRiskAssessment(riskAssessmentDataForm.getValue().getRiskAssessment());
-			FacadeProvider.getRiskAssessmentFacade().saveRisk(riskAssessmentDto);
+			FacadeProvider.getRiskAssessmentFacade().save(riskAssessmentDto);
 			FacadeProvider.getEbsFacade().save(ebs);
 			SormasUI.refreshView();
 			Notification notification =  Notification.show(I18nProperties.getString(Strings.messageRiskAssessmentSavedShort), TRAY_NOTIFICATION);

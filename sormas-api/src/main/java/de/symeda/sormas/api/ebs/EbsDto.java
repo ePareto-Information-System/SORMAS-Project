@@ -72,15 +72,7 @@ public class EbsDto extends PseudonymizableDto {
 	public static final String INTERNAL_TOKEN = "internalToken";
 	public static final String DELETION_REASON = "deletionReason";
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
-	public static final String SIGNAL_CATEGORY = "signalCategory";
-	public static final String VERIFIED = "verified";
-	public static final String CASES = "cases";
-	public static final String DEATH = "death";
-	public static final String CATEGORY_OF_INFORMANT = "categoryOfInformant";
-	public static final String TRIAGING = "triaging";
-	public static final String SIGNAL_VERIFICATION = "signalVerification";
-	public static final String RISK_ASSESSMENT = "riskAssessment";
-	public static final String ALERT = "alert";
+	public static final String CATEGORY_OF_INFORMANT = "categoryOfInformant";;
 	public static final String OTHER_INFORMANT = "otherInformant";
 
 

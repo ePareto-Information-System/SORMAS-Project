@@ -70,6 +70,14 @@
             />
 
         <item
+            android:id="@+id/menu_item_ebs"
+            android:title="@string/main_menu_ebs"
+            android:icon="@drawable/ic_alert_36dp"
+            android:orderInCategory="6"
+            app:actionLayout="@layout/drawer_main_menu_notification_counter"
+            />
+
+        <item
             android:id="@+id/menu_item_samples"
             android:title="@string/main_menu_samples"
             android:textSize="16sp"

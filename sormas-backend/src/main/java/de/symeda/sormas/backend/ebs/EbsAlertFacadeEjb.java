@@ -3,11 +3,17 @@ package de.symeda.sormas.backend.ebs;
 import de.symeda.sormas.api.ebs.EbsAlertDto;
 import de.symeda.sormas.api.ebs.EbsAlertFacade;
 import de.symeda.sormas.api.ebs.RiskAssessmentCriteria;
+import de.symeda.sormas.api.ebs.RiskAssessmentDto;
+import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 
+import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 @Stateless(name = "EbsAlertFacade")
@@ -16,6 +22,8 @@ public class EbsAlertFacadeEjb implements EbsAlertFacade {
     private EbsService ebsService;
     @EJB
     private EbsAlertService ebsAlertService;
+    @EJB
+    private UserService userService;
 
     public EbsAlert fillOrBuildEntity(EbsAlertDto source, EbsAlert target, boolean checkChangeDate) {
         if (source == null) {
@@ -65,6 +73,28 @@ public class EbsAlertFacadeEjb implements EbsAlertFacade {
     @Override
     public List<EbsAlertDto> findBy(RiskAssessmentCriteria criteria) {
         return ebsAlertService.findBy(criteria).stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    @PermitAll
+    public List<EbsAlertDto> getAllAfter(Date date) {
+        return ebsAlertService.getAll().stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public EbsAlertDto getAlertByUuid(String uuid, boolean detailedReferences) {
+        EbsAlert alert = ebsAlertService.getByUuid(uuid);
+        return toDto(alert);
+    }
+
+    @Override
+    public List<String> getAllActiveUuids() {
+        User user = userService.getCurrentUser();
+        if (user == null) {
+            return Collections.emptyList();
+        }
+
+        return ebsAlertService.getAllActiveUuids();
     }
 
     @LocalBean
