@@ -64,8 +64,8 @@ public class EbsAlertListActivity extends PagedBaseListActivity {
 
         setOpenPageCallback(p -> {
             showPreloader();
-            ResponseStatus selectedResponse = responseStatuses[((PageMenuItem) p).getPosition()];
             model.getEbsAlertCriteria().setEbsId(EbsEditActivity.getParentEbs().getId());
+            model.getEbsAlertCriteria().setResponseStatus(responseStatuses[((PageMenuItem) p).getPosition()]);
             model.notifyCriteriaUpdated();
         });
 
@@ -78,14 +78,14 @@ public class EbsAlertListActivity extends PagedBaseListActivity {
         getIntent().putExtra("refreshOnResume", true);
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        if (getIntent().getBooleanExtra("refreshOnResume", false)) {
-//            showPreloader();
-//            model.getEbs().getValue().getDataSource().invalidate();
-//        }
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getIntent().getBooleanExtra("refreshOnResume", false)) {
+            showPreloader();
+            model.getEbsAlert().getValue().getDataSource().invalidate();
+        }
+    }
 
     @Override
     public List<PageMenuItem> getPageMenuData() {

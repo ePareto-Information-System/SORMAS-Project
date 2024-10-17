@@ -85,6 +85,9 @@
     <string name="action_new_triaging">New Triaging</string>
     <string name="action_new_risk_assessment">New Risk Assessment</string>
     <string name="action_new_alert">New Alert</string>
+    <string name="caption_action_initiated">ACTION INITIATED: </string>
+    <string name="caption_response_status">RESPONSE STATUS: </string>
+    <string name="caption_alert_issued">ALERT ISSUED: </string>
     <string name="action_new_sample">New Sample</string>
     <string name="action_new_task">New Task</string>
     <string name="action_not_executable">Not Executable</string>

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import de.symeda.sormas.app.backend.common.AbstractAdoDao;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
+import de.symeda.sormas.app.backend.ebs.Ebs;
 
 
 public class EbsAlertDao extends AbstractAdoDao<EbsAlert> {
@@ -34,6 +35,9 @@ public class EbsAlertDao extends AbstractAdoDao<EbsAlert> {
         whereStatements.add(where.eq(AbstractDomainObject.SNAPSHOT, false));
         if (criteria.getEbsId() != 0) {
             whereStatements.add(where.eq("ebs_id", criteria.getEbsId()));
+        }
+        if (criteria.getResponseStatus() != null){
+            whereStatements.add(where.eq(EbsAlert.RESPONSE_STATUS, criteria.getResponseStatus()));
         }
         if (!whereStatements.isEmpty()) {
             Where<EbsAlert, Long> whereStatement = where.and(whereStatements.size());
