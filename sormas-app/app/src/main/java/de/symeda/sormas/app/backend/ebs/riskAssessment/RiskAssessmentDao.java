@@ -12,7 +12,6 @@ import java.util.List;
 
 import de.symeda.sormas.app.backend.common.AbstractAdoDao;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
-import de.symeda.sormas.app.backend.ebs.Ebs;
 
 
 public class RiskAssessmentDao extends AbstractAdoDao<RiskAssessment> {
@@ -41,6 +40,10 @@ public class RiskAssessmentDao extends AbstractAdoDao<RiskAssessment> {
         // New condition: filter by Ebs UUID if it's set in the criteria
         if (criteria.getEbsId() != 0) {
             whereStatements.add(where.eq("ebs_id", criteria.getEbsId()));
+        }
+
+        if (criteria.getRiskAssesment() != null){
+            whereStatements.add(where.eq(RiskAssessment.RISKASSESMENT, criteria.getRiskAssesment()));
         }
         if (!whereStatements.isEmpty()) {
             Where<RiskAssessment, Long> whereStatement = where.and(whereStatements.size());

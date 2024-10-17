@@ -97,17 +97,29 @@
                         >
 
                         <TextView
+                            android:id="@+id/InitiatedCaption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/listActivityRowTertiaryTextSize"
+                            android:textColor="@color/listActivityRowPrimaryText"
+                            android:fontFamily="sans-serif-medium"
+                            android:scrollHorizontally="true"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:layout_marginRight="8dp"
+                            app:value="@{@string/caption_action_initiated}"
+                            />
+                        <TextView
                             android:id="@+id/txtActionInitiated"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="@dimen/listActivityRowPrimaryTextSize"
+                            android:textSize="@dimen/listActivityRowTertiaryTextSize"
                             android:textColor="@color/listActivityRowPrimaryText"
                             android:fontFamily="sans-serif-medium"
                             android:scrollHorizontally="true"
                             android:maxLines="1"
                             android:ellipsize="end"
                             app:value="@{data.actionInitiated}"
-                            app:defaultValue='@{@string/value_type_unknown}'
                             />
 
                         <ImageView
@@ -119,21 +131,71 @@
                             android:layout_marginLeft="8dp"
                             />
                     </LinearLayout>
-
-                    <!-- Event Description -->
-                    <TextView
-                        android:id="@+id/txtResponseStatus"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:gravity="top"
-                        android:layout_marginBottom="@dimen/listActivityRowSecondaryTextVerticalMargin"
-                        android:textSize="@dimen/row_entry_secondary_text_size"
-                        android:textColor="@color/row_entry_secondary_text"
-                        app:value="@{data.responseStatus}"
-                        app:defaultValue='@{@string/value_not_available}'
-                        />
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+                        <TextView
+                            android:id="@+id/ResponseCaption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/listActivityRowTertiaryTextSize"
+                            android:textColor="@color/listActivityRowPrimaryText"
+                            android:fontFamily="sans-serif-medium"
+                            android:scrollHorizontally="true"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:layout_marginRight="8dp"
+                            app:value="@{@string/caption_response_status}"
+                            />
 
+                        <!-- Event Description -->
+                        <TextView
+                            android:id="@+id/txtResponseStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/listActivityRowTertiaryTextSize"
+                            android:textColor="@color/listActivityRowPrimaryText"
+                            android:fontFamily="sans-serif-medium"
+                            android:scrollHorizontally="true"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            app:value="@{data.responseStatus}"
+                            />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+                        <TextView
+                            android:id="@+id/issuedCaption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/listActivityRowTertiaryTextSize"
+                            android:textColor="@color/listActivityRowPrimaryText"
+                            android:fontFamily="sans-serif-medium"
+                            android:scrollHorizontally="true"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:layout_marginRight="8dp"
+                            app:value="@{@string/caption_alert_issued}"
+                            />
+
+                        <TextView
+                            android:id="@+id/txtAlertIssued"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/listActivityRowTertiaryTextSize"
+                            android:textColor="@color/listActivityRowPrimaryText"
+                            android:fontFamily="sans-serif-medium"
+                            android:scrollHorizontally="true"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            app:value="@{data.alertIssued}"
+                            />
+                    </LinearLayout>
                 </LinearLayout>
 
 
@@ -166,31 +228,6 @@
                     android:layout_gravity="center_vertical"
                     android:scaleType="fitEnd"
                     android:src="@drawable/ic_go_to_read_view_24dp"
-                    />
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp"
-                android:layout_marginRight="@dimen/listItemConentIndentRight"
-                >
-
-                <!-- Event Date -->
-                <TextView
-                    android:id="@+id/txtAlertIssued"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:gravity="top"
-                    android:layout_marginBottom="@dimen/listActivityRowSecondaryTextVerticalMargin"
-                    android:textSize="@dimen/row_entry_secondary_text_size"
-                    android:textColor="@color/row_entry_secondary_text"
-                    app:value="@{data.alertIssued}"
-                    app:defaultValue='@{@string/value_not_available}'
                     />
 
             </LinearLayout>

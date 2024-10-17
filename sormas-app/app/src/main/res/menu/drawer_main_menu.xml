@@ -63,6 +63,7 @@
 
         <item
             android:id="@+id/menu_item_events"
+            android:visible="false"
             android:title="@string/main_menu_events"
             android:icon="@drawable/ic_alert_36dp"
             android:orderInCategory="6"

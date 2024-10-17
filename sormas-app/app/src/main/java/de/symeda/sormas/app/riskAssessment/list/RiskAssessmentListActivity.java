@@ -68,8 +68,8 @@ public class RiskAssessmentListActivity extends PagedBaseListActivity {
 
         setOpenPageCallback(p -> {
             showPreloader();
-            RiskAssesment selectedRisk = riskAssessments[((PageMenuItem) p).getPosition()];
             model.getRiskAssessmentCriteria().setEbsId(EbsEditActivity.getParentEbs().getId());
+            model.getRiskAssessmentCriteria().setRiskAssesment(riskAssessments[((PageMenuItem) p).getPosition()]);
             model.notifyCriteriaUpdated();
         });
 

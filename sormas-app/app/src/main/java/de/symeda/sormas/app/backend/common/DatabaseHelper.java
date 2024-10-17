@@ -216,7 +216,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 377;
+	public static final int DATABASE_VERSION = 382;
 
 	private static DatabaseHelper instance = null;
 
@@ -3152,6 +3152,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 								+ "caseSurveillanceEnabled boolean, caseFollowUpDuration INTEGER, eventParticipantFollowUpDuration INTEGER, "
 								+ "extendedClassification boolean, extendedClassificationMulti boolean, ageGroupsString text, UNIQUE(snapshot, uuid));");
 				getDao(DiseaseConfiguration.class).executeRaw("ALTER TABLE diseaseconfiguration ADD COLUMN aggregateReportingEnabled boolean;");
+				getDao(DiseaseConfiguration.class).executeRaw("ALTER TABLE tmp_diseaseConfiguration ADD COLUMN caseBased boolean;");
 				getDao(DiseaseConfiguration.class).executeRaw(
 						"INSERT INTO diseaseConfiguration (id, uuid, changeDate, creationDate, lastOpenedDate, "
 								+ "localChangeDate, modified, snapshot, disease, active, primaryDisease, followUpEnabled, followUpDuration, "
@@ -3520,12 +3521,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateDistrictReceivedLabResults DATE;");
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryDateResultsSentDSD DATE;");
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN finalClassification VARCHAR(255);");
-
-				// ATTENTION: break should only be done after last version
-				break;
-			default:
-				case 354:
-					currentVersion = 354;
+				case 378:
+					currentVersion = 378;
 					getDao(Ebs.class).executeRaw(
 							"CREATE TABLE ebs(" +
 									"id bigint primary key not null," +
@@ -3601,8 +3598,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Ebs.class).executeRaw(
 							"ALTER TABLE ebs ADD CONSTRAINT fk_ebs_ebsAlert_id FOREIGN KEY (ebsAlert_id) REFERENCES ebsAlert (id);"
 					);
-				case 355:
-					currentVersion = 355;
+				case 379:
+					currentVersion = 379;
 					getDao(Triaging.class).executeRaw(
 							"CREATE TABLE triaging(" +
 									"id bigint primary key not null," +
@@ -3636,8 +3633,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									"referred varchar(3)" +
 									");"
 					);
-				case 356:
-					currentVersion = 356;
+				case 380:
+					currentVersion = 380;
 					getDao(RiskAssessment.class).executeRaw(
 							"CREATE TABLE riskAssessment(" +
 									"id bigint primary key autoincrement," +
@@ -3654,8 +3651,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" + // Foreign key constraint
 									");"
 					);
-				case 357:
-					currentVersion = 357;
+				case 381:
+					currentVersion = 381;
 					getDao(EbsAlert.class).executeRaw(
 							"CREATE TABLE ebsAlert(" +
 									"id bigint primary key autoincrement," +
@@ -3671,10 +3668,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" +
 									");"
 					);
-
-					// ATTENTION: break should only be done after last version
-					break;
-				default:
+				// ATTENTION: break should only be done after last version
+				break;
+			default:
 				throw new IllegalStateException("onUpgrade() with unknown oldVersion " + oldVersion);
 			}
 		} catch (

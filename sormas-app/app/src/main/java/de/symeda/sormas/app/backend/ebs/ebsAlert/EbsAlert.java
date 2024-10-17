@@ -19,6 +19,7 @@ import de.symeda.sormas.app.backend.ebs.Ebs;
 @Entity(name = EbsAlert.TABLE_NAME)
 @DatabaseTable(tableName = EbsAlert.TABLE_NAME)
 public class EbsAlert extends PseudonymizableAdo {
+    public static final String RESPONSE_STATUS = "responseStatus";
     private static final long serialVersionUID = 1L;
     public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 13356;
 

@@ -304,9 +304,11 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 					NavigationHelper.goToAggregateReports(getContext());
 				} else if (id == R.id.menu_item_contacts) {
 					NavigationHelper.goToContacts(getContext());
-				} else if (id == R.id.menu_item_events) {
+				}
+				else if (id == R.id.menu_item_events) {
 					NavigationHelper.goToEvents(getContext());
-				}else if (id == R.id.menu_item_ebs) {
+				}
+				else if (id == R.id.menu_item_ebs) {
 					NavigationHelper.goToEbs(getContext());
 				} else if (id == R.id.menu_item_samples) {
 					NavigationHelper.goToSamples(getContext());

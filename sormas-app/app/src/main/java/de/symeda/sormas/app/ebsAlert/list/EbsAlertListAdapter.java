@@ -47,11 +47,11 @@ public class EbsAlertListAdapter extends BindingPagedListAdapter<EbsAlert, RowEb
         Drawable drw = (Drawable) ContextCompat.getDrawable(imgStatusPriorityIcon.getContext(), R.drawable.indicator_status_circle);
         //TODO: MAKE IT CONFORM TO RESPONSE STATUS
         if (ebsAlert.getResponseStatus() == ResponseStatus.COMPLETED) {
-            drw.setColorFilter(resources.getColor(R.color.indicatorTaskPriorityHigh), PorterDuff.Mode.SRC_OVER);
-        } else if (ebsAlert.getResponseStatus() == ResponseStatus.ON_GOING) {
             drw.setColorFilter(resources.getColor(R.color.indicatorTaskPriorityLow), PorterDuff.Mode.SRC_OVER);
-        } else if (ebsAlert.getResponseStatus() == ResponseStatus.NOT_STARTED) {
+        } else if (ebsAlert.getResponseStatus() == ResponseStatus.ON_GOING) {
             drw.setColorFilter(resources.getColor(R.color.indicatorTaskPriorityNormal), PorterDuff.Mode.SRC_OVER);
+        } else if (ebsAlert.getResponseStatus() == ResponseStatus.NOT_STARTED) {
+            drw.setColorFilter(resources.getColor(R.color.indicatorTaskPriorityHigh), PorterDuff.Mode.SRC_OVER);
         }
         imgStatusPriorityIcon.setBackground(drw);
     }
