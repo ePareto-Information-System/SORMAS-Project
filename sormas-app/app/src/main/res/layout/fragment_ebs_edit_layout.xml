@@ -103,7 +103,6 @@
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/ebs_informantName"
                     style="@style/ControlSecondOfTwoColumnsStyle"
-                    app:required="true"
                     app:value="@={data.informantName}" />
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/ebs_otherInformant"
@@ -235,6 +234,7 @@
                 app:gravity="top|start"
                 app:textArea="true"
                 app:singleLine="false"
+                app:required="true"
                 app:maxLines="5"
                 app:value="@={data.descriptionOccurrence}"
                 style="@style/ControlSingleColumnStyle" />

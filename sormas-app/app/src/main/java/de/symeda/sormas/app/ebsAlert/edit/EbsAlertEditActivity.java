@@ -15,6 +15,7 @@
 
 package de.symeda.sormas.app.ebsAlert.edit;
 
+import static de.symeda.sormas.app.core.notification.NotificationType.ERROR;
 import static de.symeda.sormas.app.core.notification.NotificationType.WARNING;
 
 import android.content.Context;
@@ -35,6 +36,7 @@ import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.ebs.Ebs;
 import de.symeda.sormas.app.backend.ebs.ebsAlert.EbsAlert;
 import de.symeda.sormas.app.component.menu.PageMenuItem;
+import de.symeda.sormas.app.component.validation.FragmentValidator;
 import de.symeda.sormas.app.core.async.AsyncTaskResult;
 import de.symeda.sormas.app.core.async.SavingAsyncTask;
 import de.symeda.sormas.app.core.async.TaskResultHolder;
@@ -146,25 +148,47 @@ public class EbsAlertEditActivity extends BaseEditActivity<EbsAlert> {
 			return; // don't save multiple times
 		}
 
-		final EbsAlert ebsAlertToSave = getStoredRootEntity();
+		final EbsAlert ebsAlertToSave = (EbsAlert) getActiveFragment().getPrimaryData();
+		EbsAlertEditFragment fragment = (EbsAlertEditFragment) getActiveFragment();
+
+		fragment.setLiveValidationDisabled(false);
+
+		try {
+			FragmentValidator.validate(getContext(), fragment.getContentBinding());
+		} catch (ValidationException e) {
+			NotificationHelper.showNotification(this, ERROR, e.getMessage());
+			return;
+		}
+		saveDataInner(ebsAlertToSave);
+	}
+
+	private void saveDataInner(final EbsAlert ebsAlertToSave) {
+
+		if (saveTask != null) {
+			NotificationHelper.showNotification(this, WARNING, getString(R.string.message_already_saving));
+			return; // don't save multiple times
+		}
 
 		saveTask = new SavingAsyncTask(getRootView(), ebsAlertToSave) {
 
 			@Override
-			public void doInBackground(TaskResultHolder resultHolder) throws DaoException, ValidationException {
+			protected void onPreExecute() {
+				showPreloader();
+			}
+
+			@Override
+			public void doInBackground(TaskResultHolder resultHolder) throws DaoException {
 				ebsAlertToSave.setEbs(EbsEditActivity.getParentEbs());
 				DatabaseHelper.getEbsAlertDao().saveAndSnapshot(ebsAlertToSave);
 			}
 
 			@Override
 			protected void onPostExecute(AsyncTaskResult<TaskResultHolder> taskResult) {
+				hidePreloader();
 				super.onPostExecute(taskResult);
-
 				if (taskResult.getResultStatus().isSuccess()) {
 					finish();
 					EbsAlertListActivity.startActivity(getContext(), null);
-				} else {
-					onResume(); // reload data
 				}
 				saveTask = null;
 			}

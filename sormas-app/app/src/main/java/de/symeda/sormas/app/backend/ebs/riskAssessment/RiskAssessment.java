@@ -19,6 +19,7 @@ import de.symeda.sormas.app.backend.ebs.Ebs;
 @Entity(name = RiskAssessment.TABLE_NAME)
 @DatabaseTable(tableName = RiskAssessment.TABLE_NAME)
 public class RiskAssessment extends PseudonymizableAdo {
+    public static final String RISKASSESMENT = "riskassessment";
     private static final long serialVersionUID = 1L;
     public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 13356;
 
