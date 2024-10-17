@@ -464,9 +464,10 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 							.isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED));
 
 			if (eventMenu != null)
-				eventMenu.setVisible(
-					ConfigProvider.hasUserRight(UserRight.EVENT_VIEW)
-						&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.EVENT_SURVEILLANCE));
+				eventMenu.setVisible(false);
+//			eventMenu.setVisible(
+//					ConfigProvider.hasUserRight(UserRight.EVENT_VIEW)
+//						&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.EVENT_SURVEILLANCE));
 			if (ebsMenu != null)
 				ebsMenu.setVisible(
 					ConfigProvider.hasUserRight(UserRight.EVENT_VIEW)
