@@ -351,10 +351,6 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "triaging_id")
 	public Triaging getTriaging() {
-
-		if (triaging == null) {
-			triaging = new Triaging();
-		}
 		return triaging;
 	}
 
@@ -365,9 +361,6 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "signalverification_id")
 	public SignalVerification getSignalVerification() {
-		if (signalVerification == null) {
-			signalVerification = new SignalVerification();
-		}
 		return signalVerification;
 	}
 
