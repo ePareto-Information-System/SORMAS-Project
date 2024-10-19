@@ -73,7 +73,6 @@
                 style="@style/ControlSecondOfTwoColumnsStyle"
                 app:dependencyParentField="@{ebsAlertAlertIssued}"
                 app:dependencyParentValue="@{YesNo.YES}"
-                app:required="true"
                 app:allowedDaysInFuture="0"
                 app:value="@={data.alertDate}" />
         </LinearLayout>
@@ -121,7 +120,6 @@
                     style="@style/ControlSecondOfTwoColumnsStyle"
                     app:dependencyParentField="@{ebsAlertResponseStatus}"
                     app:dependencyParentValue="@{ResponseStatus.COMPLETED}"
-                    app:required="true"
                     app:allowedDaysInFuture="0"
                     app:value="@={data.responseDate}" />
             </LinearLayout>
@@ -135,6 +133,7 @@
                     app:inputType="textMultiLine"
                     app:textAlignment="gravity"
                     app:gravity="top|start"
+                    app:required="true"
                     app:textArea="true"
                     app:singleLine="false"
                     app:maxLines="5"
