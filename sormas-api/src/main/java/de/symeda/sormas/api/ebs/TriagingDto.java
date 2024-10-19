@@ -16,6 +16,7 @@
 package de.symeda.sormas.api.ebs;
 
 import de.symeda.sormas.api.EntityDto;
+import de.symeda.sormas.api.caze.maternalhistory.MaternalHistoryDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.*;
@@ -89,9 +90,14 @@ public class TriagingDto extends EntityDto {
 	private CategoryDetailsLevel categoryDetailsLevel;
 	private YesNo potentialRisk;
 
+    public static TriagingDto build() {
+		TriagingDto triagingDto = new TriagingDto();
+		triagingDto.setUuid(DataHelper.createUuid());
+		return triagingDto;
+    }
 
 
-	public EbsReferenceDto toReference() {
+    public EbsReferenceDto toReference() {
 		return new EbsReferenceDto(getUuid());
 	}
 

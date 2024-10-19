@@ -2,6 +2,7 @@ package de.symeda.sormas.api.ebs;
 
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import de.symeda.sormas.api.utils.YesNo;
 
@@ -38,6 +39,12 @@ public class SignalVerificationDto extends EntityDto {
     private String whyNotVerify;
     private String numberOfPersonCases;
     private String numberOfDeathPerson;
+
+    public static SignalVerificationDto build() {
+            SignalVerificationDto signalVerificationDto = new SignalVerificationDto();
+            signalVerificationDto.setUuid(DataHelper.createUuid());
+            return signalVerificationDto;
+    }
 
     public YesNo getVerificationSent() {
         return verificationSent;
