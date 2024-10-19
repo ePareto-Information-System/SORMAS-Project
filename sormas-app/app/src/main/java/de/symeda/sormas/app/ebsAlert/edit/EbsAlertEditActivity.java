@@ -122,6 +122,7 @@ public class EbsAlertEditActivity extends BaseEditActivity<EbsAlert> {
 				break;
 			case SIGNAL_VERIFICATION:
 				fragment = SignalVerificationEditFragment.newInstance(EbsEditActivity.getParentEbs().getSignalVerification());
+				break;
 			case RISK_ASSESSMENT:
 				RiskAssessmentListActivity.startActivity(getContext(), null);
 				break;
