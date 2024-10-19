@@ -140,8 +140,8 @@
                     android:id="@+id/ebs_sourceName"
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:required="true"
-                    app:dependencyParentField="@{ebsScanningType}"
-                    app:dependencyParentValue="@{MediaScannningType.AUTOMATIC}"
+                    app:dependencyParentField="@{ebsSourceInformation}"
+                    app:dependencyParentValue="@{EbsSourceType.MEDIA_NEWS}"
                     app:value="@={data.sourceName}" />
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
