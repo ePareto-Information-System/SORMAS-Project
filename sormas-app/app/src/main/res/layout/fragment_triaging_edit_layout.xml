@@ -226,6 +226,8 @@
                 app:dependencyParentField="@{triagingSignalCategory}"
                 app:dependencyParentValue="@{SignalCategory.ANIMAL}"
                 app:enumClass="@{triagingAnimalLaboratoryCategoryDetailsClass}"
+                android:maxLines="1"
+                android:ellipsize="end"
                 app:value="@={data.animalLaboratoryCategoryDetails}"/>
 
             <de.symeda.sormas.app.component.controls.ControlRadioGroupField
