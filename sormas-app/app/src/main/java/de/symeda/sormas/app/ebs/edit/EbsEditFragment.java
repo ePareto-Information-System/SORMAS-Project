@@ -203,8 +203,7 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 			List<PersonReporting> itemsToAdd;
 
 			Object value = contentBinding.ebsSourceInformation.getValue();
-			if (value == null || !(value instanceof EbsSourceType)) return;
-
+			if (value == null || !(value instanceof EbsSourceType)){ contentBinding.ebsInformantName.setVisibility(GONE); return;}
 			EbsSourceType sourceType = (EbsSourceType) value;
 
 			switch (sourceType) {

@@ -144,7 +144,7 @@ public class EbsController {
 		form.setValue(createNewEvent(null));
 
 		final CommitDiscardWrapperComponent<EbsDataForm> component =
-				new CommitDiscardWrapperComponent<>(form, UserProvider.getCurrent().hasAllUserRights(), form.getFieldGroup());
+				new CommitDiscardWrapperComponent<>(form, true, form.getFieldGroup());
 		component.getDiscardButton().setCaption("Cancel");
 		component.addCommitListener(() -> {
 			if (!form.getFieldGroup().isModified()) {

@@ -90,6 +90,40 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	public EbsIndexDto(
 			Long id,
 			String uuid,
+			EbsSourceType sourceInformation,
+			Date reportDateTime,
+			Date changeDate,
+			PersonReporting categoryOfInformant,
+			String informantName,
+			String informantTel,
+			String personRegistering,
+			String personDesignation,
+			String regionUuid,
+			String regionName,
+			String communityUuid,
+			String communityName,
+			String city,
+			String districtUuid,
+			String districtName
+	) {
+
+		super(uuid);
+		this.id = id;
+		this.sourceInformation = sourceInformation;
+		this.reportDateTime = reportDateTime;
+		this.changeDate = changeDate;
+		this.categoryOfInformant = categoryOfInformant;
+		this.informantName = informantName;
+		this.informantTel = informantTel;
+		this.personDesignation = personDesignation;
+		this.personRegistering = personRegistering;
+		this.ebsLocation = new EbsLocation(regionName, communityName, city,districtName);
+		this.regionUuid = regionUuid;
+	}
+
+	public EbsIndexDto(
+			Long id,
+			String uuid,
 			Date triageDate,
 			EbsSourceType sourceInformation,
 			EbsTriagingDecision triagingDecision,

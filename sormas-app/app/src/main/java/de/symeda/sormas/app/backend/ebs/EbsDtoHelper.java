@@ -22,17 +22,12 @@ import de.symeda.sormas.app.rest.RetroProvider;
 import retrofit2.Call;
 
 public class EbsDtoHelper extends AdoDtoHelper<Ebs, EbsDto> {
-    private LocationDtoHelper locationHelper;
+    private LocationDtoHelper locationHelper = new LocationDtoHelper();
 
     private SormasToSormasOriginInfoDtoHelper sormasToSormasOriginInfoDtoHelper = new SormasToSormasOriginInfoDtoHelper();
-    private TriagingDtoHelper triagingDtoHelper;
+    private TriagingDtoHelper triagingDtoHelper = new TriagingDtoHelper();
 
     private SignalVerificationDtoHelper signalVerificationDtoHelper = new SignalVerificationDtoHelper();
-    public EbsDtoHelper() {
-        locationHelper = new LocationDtoHelper();
-        triagingDtoHelper = new TriagingDtoHelper();
-        signalVerificationDtoHelper = new SignalVerificationDtoHelper();
-    }
 
 
 
@@ -118,15 +113,13 @@ public class EbsDtoHelper extends AdoDtoHelper<Ebs, EbsDto> {
         target.setOtherInformant(source.getOtherInformant());
         if (source.getTriaging() != null) {
             Triaging triaging = DatabaseHelper.getTriagingDao().queryForId(source.getTriaging().getId());
-            TriagingDto triagingDto = triagingDtoHelper.adoToDto(triaging);
-            target.setTriaging(triagingDto);
+            target.setTriaging(triagingDtoHelper.adoToDto(triaging));
         } else {
             target.setTriaging(null);
         }
         if (source.getSignalVerification() != null) {
             SignalVerification signalVerification = DatabaseHelper.getSignalVerificationDao().queryForId(source.getSignalVerification().getId());
-            SignalVerificationDto signalVerificationDto = signalVerificationDtoHelper.adoToDto(signalVerification);
-            target.setSignalVerification(signalVerificationDto);
+            target.setSignalVerification(signalVerificationDtoHelper.adoToDto(signalVerification));
         } else {
             target.setSignalVerification(null);
         }
@@ -138,7 +131,7 @@ public class EbsDtoHelper extends AdoDtoHelper<Ebs, EbsDto> {
         return EbsDto.APPROXIMATE_JSON_SIZE_IN_BYTES;
     }
 
-    public static EbsReferenceDto toReferenceDto(Event ado) {
+    public static EbsReferenceDto toReferenceDto(Ebs ado) {
         if (ado == null) {
             return null;
         }

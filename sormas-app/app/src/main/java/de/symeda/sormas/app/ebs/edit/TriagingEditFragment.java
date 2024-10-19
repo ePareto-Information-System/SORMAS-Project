@@ -22,6 +22,7 @@ import android.widget.PopupWindow;
 
 import androidx.core.app.NotificationCompat;
 
+import org.apache.tapestry.wml.Go;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -184,11 +185,15 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 			contentBinding.triagingCategoryDetailsLevel.setVisibility(GONE);
 		}
 		contentBinding.triagingSpecificSignal.addValueChangedListener(e->{
+			contentBinding.triagingDecisionDate.setVisibility(View.VISIBLE);
+			contentBinding.triagingTriagingDecision.setVisibility(View.VISIBLE);
 			var value = e.getValue();
 			if(value == YesNo.YES){
 				contentBinding.triagingOccurrencePreviously.setVisibility(View.VISIBLE);
 			}else {
 				contentBinding.triagingOccurrencePreviously.setVisibility(GONE);
+				contentBinding.triagingDecisionDate.setVisibility(View.VISIBLE);
+				contentBinding.triagingTriagingDecision.setVisibility(View.VISIBLE);
 				reviewSignal(R.string.message_review_signal);
 			}
 		});
@@ -198,7 +203,15 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 				reviewSignal(R.string.message_review_signal);
 			}
 		});
-
+		if (contentBinding.triagingSpecificSignal.getValue() != null) {
+			contentBinding.triagingOccurrencePreviously.setVisibility(View.VISIBLE);
+			contentBinding.triagingDecisionDate.setVisibility(View.VISIBLE);
+			contentBinding.triagingTriagingDecision.setVisibility(View.VISIBLE);
+		}else if (contentBinding.triagingSpecificSignal.getValue() == null){
+			contentBinding.triagingOccurrencePreviously.setVisibility(View.VISIBLE);
+			contentBinding.triagingDecisionDate.setVisibility(GONE);
+			contentBinding.triagingTriagingDecision.setVisibility(GONE);
+		}
 
 
 		contentBinding.triagingSignalCategory.addValueChangedListener(e->{
