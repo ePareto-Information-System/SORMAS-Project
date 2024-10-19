@@ -188,8 +188,12 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		target.setEbsLatLon(source.getEbsLatLon());
 		target.setDeleted(source.isDeleted());
 		target.setDeletionReason(source.getDeletionReason());
-		target.setTriaging(TriagingFacadeEjb.toDto(source.getTriaging()));
-		target.setSignalVerification(SignalVerificationFacadeEjb.toDto(source.getSignalVerification()));
+		if (source.getTriaging() != null) {
+			target.setTriaging(TriagingFacadeEjb.toDto(source.getTriaging()));
+		}
+		if (source.getSignalVerification() != null) {
+			target.setSignalVerification(SignalVerificationFacadeEjb.toDto(source.getSignalVerification()));
+		}
 		target.setOtherInformant(source.getOtherInformant());
 		return target;
 	}
@@ -246,25 +250,15 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 
 	public EbsDto save(@NotNull EbsDto dto, boolean checkChangeDate, boolean internal) {
-
 		Ebs existingEbs = dto.getUuid() != null ? service.getByUuid(dto.getUuid()) : null;
-		FacadeHelper.checkCreateAndEditRights(existingEbs, userService, UserRight.EVENT_CREATE, UserRight.EVENT_EDIT);
-
-		if (internal && existingEbs != null && !service.isEditAllowed(existingEbs)) {
-			throw new AccessDeniedException(I18nProperties.getString(Strings.errorEventNotEditable));
-		}
-
 		EbsDto existingDto = toDto(existingEbs);
 
 		Pseudonymizer pseudonymizer = createPseudonymizer();
 		restorePseudonymizedDto(dto, existingDto, existingEbs, pseudonymizer);
-
 		validate(dto);
 		Ebs ebs = fillOrBuildEntity(dto, existingEbs, checkChangeDate);
 		service.ensurePersisted(ebs);
-
 		onEventChange(toDto(ebs), internal);
-
 		return toPseudonymizedDto(ebs, pseudonymizer);
 	}
 
@@ -274,11 +268,9 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			syncSharesAsync(new ShareTreeCriteria(ebs.getUuid()));
 		}
 	}
-	
+
 	public void syncSharesAsync(ShareTreeCriteria criteria) {
-//		executorService.schedule(() -> {
-//			sormasToSormasEventFacade.syncShares(criteria);
-//		}, 5, TimeUnit.SECONDS);
+		return;
 	}
 
 	@Override
@@ -424,7 +416,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	public List<EbsIndexDto> getIndexList(EbsCriteria ebsCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
 		List<Long> indexListIds = getIndexListIds(ebsCriteria, first, max, sortProperties);
 		List<EbsIndexDto> indexList = new ArrayList<>();
-		Set<Long> addedIds = new HashSet<>();
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
 		IterableHelper.executeBatched(indexListIds, ModelConstants.PARAMETER_LIMIT, batchedIds -> {
@@ -433,51 +424,22 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
 			EbsJoins ebsJoins = ebsQueryContext.getJoins();
 
-			Join<Ebs, Triaging> triaging = ebs.join("triaging", JoinType.LEFT);
-			Join<Ebs, SignalVerification> signalVerification = ebs.join("signalVerification", JoinType.LEFT);
 			Join<Ebs, Location> location = ebsJoins.getLocation();
 			Join<Location, Region> region = ebsJoins.getRegion();
 			Join<Location, District> district = ebsJoins.getDistrict();
 			Join<Location, Community> community = ebsJoins.getCommunity();
 
-			Subquery<Long> subqueryAlert = cq.subquery(Long.class);
-			Root<EbsAlert> subRootAlert = subqueryAlert.from(EbsAlert.class);
-			subqueryAlert.select(cb.max(subRootAlert.get(EbsAlert.ID)))
-					.where(cb.equal(subRootAlert.get(EbsAlert.EBS), ebs));
-
-			Join<Ebs, EbsAlert> ebsAlert = ebs.join("ebsAlert", JoinType.LEFT);
-			Predicate alertPredicate = cb.or(cb.isNull(ebsAlert.get(EbsAlert.ID)), cb.equal(ebsAlert.get(EbsAlert.ID), subqueryAlert));
-
-			Subquery<Long> subqueryRisk = cq.subquery(Long.class);
-			Root<RiskAssessment> subRootRisk = subqueryRisk.from(RiskAssessment.class);
-			subqueryRisk.select(cb.max(subRootRisk.get(RiskAssessment.ID)))
-					.where(cb.equal(subRootRisk.get(RiskAssessment.EBS), ebs));
-
-			Join<Ebs, RiskAssessment> riskAssessment = ebs.join("riskAssessment", JoinType.LEFT);
-			Predicate riskPredicate = cb.or(cb.isNull(riskAssessment.get(RiskAssessment.ID)), cb.equal(riskAssessment.get(RiskAssessment.ID), subqueryRisk));
-
 			cq.multiselect(
 					ebs.get(Ebs.ID),
 					ebs.get(Ebs.UUID),
-					ebs.get(Ebs.TRIAGE_DATE),
 					ebs.get(Ebs.SOURCE_INFORMATION),
-					triaging.get(Triaging.TRIAGING_DECISION),
 					ebs.get(Ebs.REPORT_DATE_TIME),
 					ebs.get(Ebs.CHANGE_DATE),
 					ebs.get(Ebs.CATEGORY_OF_INFORMANT),
 					ebs.get(Ebs.INFORMANT_NAME),
 					ebs.get(Ebs.INFORMANT_TEL),
-					triaging.get(Triaging.SIGNAL_CATEGORY),
-					signalVerification.get(SignalVerification.VERIFIED),
-					signalVerification.get(SignalVerification.NUMBER_OF_DEATH),
-					triaging.get(Triaging.DATE_OF_DECISION),
 					ebs.get(Ebs.PERSON_REGISTERING),
 					ebs.get(Ebs.PERSON_DESIGNATION),
-					signalVerification.get(SignalVerification.VERIFICATION_SENT),
-					signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE),
-					riskAssessment.get(RiskAssessment.RISK_ASSESSMENT),
-					ebsAlert.get(EbsAlert.ACTION_INITIATED),
-					ebsAlert.get(EbsAlert.RESPONSE_STATUS),
 					region.get(Region.UUID),
 					region.get(Region.NAME),
 					community.get(Community.UUID),
@@ -497,12 +459,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 				Predicate criteriaFilter = service.buildCriteriaFilter(ebsCriteria, ebsQueryContext);
 				filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
-			}
-
-			if (filter != null) {
-				cq.where(cb.and(filter, alertPredicate, riskPredicate));
-			} else {
-				cq.where(cb.and(alertPredicate, riskPredicate));
 			}
 
 			sortBy(sortProperties, ebsQueryContext);
@@ -950,8 +906,14 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		target.setDateOnset(source.getDateOnset());
 		target.setEbsLongitude(source.getEbsLongitude());
 		target.setEbsLatitude(source.getEbsLongitude());
-		target.setTriaging(triagingFacade.fillOrBuildEntity(source.getTriaging(), target.getTriaging(), checkChangeDate));
-		target.setSignalVerification(signalVerificationFacade.fillOrBuildEntity(source.getSignalVerification(), target.getSignalVerification(), checkChangeDate));
+		if (source.getTriaging() == null) {
+			source.setTriaging(TriagingDto.build());
+		}
+		target.setTriaging(triagingFacade.fillOrBuildEntity(source.getTriaging(), target.getTriaging(), false));
+		if (source.getSignalVerification() == null) {
+			source.setSignalVerification(SignalVerificationDto.build());
+		}
+		target.setSignalVerification(signalVerificationFacade.fillOrBuildEntity(source.getSignalVerification(), target.getSignalVerification(), false));
 		target.setOtherInformant(source.getOtherInformant());
 		return target;
 	}
