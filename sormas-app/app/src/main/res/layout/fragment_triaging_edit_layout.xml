@@ -253,8 +253,6 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/triaging_occurrencePreviously"
                     style="@style/ControlFirstOfTwoColumnsStyle"
-                    app:dependencyParentField="@{triagingOutcomeSupervisor}"
-                    app:dependencyParentValue="@{OutComeSupervisor.ISNOTSIGNAL}"
                     app:enumClass="@{yesNoClass}"
                     app:value="@={data.occurrencePreviously}"/>
             </LinearLayout>
@@ -266,8 +264,6 @@
                     android:id="@+id/triaging_triagingDecision"
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:required="true"
-                    app:dependencyParentField="@{triagingSpecificSignal}"
-                    app:dependencyParentValue="@{YesNo.YES}"
                     app:enumClass="@{triagingDecisionClass}"
                     app:value="@={data.triagingDecision}"/>
             </LinearLayout>
@@ -279,8 +275,6 @@
                 <de.symeda.sormas.app.component.controls.ControlDateField
                     android:id="@+id/triaging_decisionDate"
                     style="@style/ControlSingleColumnStyle"
-                    app:dependencyParentField="@{triagingSpecificSignal}"
-                    app:dependencyParentValue="@{YesNo.YES}"
                     app:required="true"
                     app:allowedDaysInFuture="0"
                     app:value="@={data.decisionDate}" />
