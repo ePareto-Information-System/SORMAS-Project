@@ -102,7 +102,10 @@ public class RiskAssessmentEditFragment extends BaseEditFragment<FragmentRiskAss
 				contentBinding.riskAssessmentRiskAssessment.setBackgroundResource(R.drawable.background_risk_moderate_assessment);
 			}if (e.getValue() == RiskAssesment.LOW){
 				contentBinding.riskAssessmentRiskAssessment.setBackgroundResource(R.drawable.background_risk_low_assessment);
-			}
+			}if (e.getValue() == null) {
+                contentBinding.riskAssessmentRiskAssessment.initializeSpinner(assessment);
+            }
+
 		});
 	}
 

@@ -168,7 +168,6 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 		contentBinding.setYesNoClass(YesNo.class);
 		contentBinding.setTriagingDecisionClass(EbsTriagingDecision.class);
 		contentBinding.setTriagingOutComeSupervisorClass(OutComeSupervisor.class);
-//		var level = contentBinding.triagingSignalCategory.getValue().toString();
 	}
 
 	@Override

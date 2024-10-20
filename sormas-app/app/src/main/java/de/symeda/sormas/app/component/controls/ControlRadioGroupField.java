@@ -133,8 +133,8 @@ public class ControlRadioGroupField extends ControlPropertyEditField<Object> {
 		params.setMarginEnd(RADIO_BUTTON_MARGIN_END);
 
 		button.setIncludeFontPadding(false);
-		button.setPaddingRelative(0, 0, 0, 0);
-		button.setCompoundDrawablePadding(0);
+		button.setPaddingRelative(0, 0, 100, 100);
+		button.setCompoundDrawablePadding(100);
 		button.setLayoutParams(params);
 		button.setButtonDrawable(null);
 		button.setBackground(getBackgroundIndicator(button));

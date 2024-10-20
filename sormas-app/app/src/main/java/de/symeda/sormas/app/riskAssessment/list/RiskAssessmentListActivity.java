@@ -94,11 +94,9 @@ public class RiskAssessmentListActivity extends PagedBaseListActivity {
     @Override
     public List<PageMenuItem> getPageMenuData() {
         if (EbsEditActivity.getParentEbs().getSignalVerification().getVerified() != SignalOutcome.EVENT){
+            EbsListActivity.showWarningAlert = true;
+            EbsListActivity.message = R.string.risk_disabled_signal_not_verified;
             EbsListActivity.startActivity(getContext(),null);
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.indicator_warning)
-                    .setMessage(R.string.signal_not_event)
-                    .show();
         }
         return PageMenuItem.fromEnum(riskAssessments, getContext());
     }

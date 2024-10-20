@@ -31,6 +31,7 @@
         <import type="de.symeda.sormas.api.ebs.PersonReporting"/>
         <import type="de.symeda.sormas.api.ebs.ManualScanningType"/>
         <import type="de.symeda.sormas.api.ebs.MediaScannningType"/>
+        <import type="de.symeda.sormas.api.ebs.MobileScannningType"/>
         <import type="de.symeda.sormas.api.ebs.AutomaticScanningType"/>
 
 
@@ -38,6 +39,7 @@
         <variable name="ebsSourceTypeClass" type="Class" />
         <variable name="manualScanningTypeClass" type="Class" />
         <variable name="mediaScannningTypeClass" type="Class" />
+        <variable name="mobileScannningTypeClass" type="Class" />
         <variable name="automaticScanningTypeClass" type="Class" />
     </data>
 
@@ -84,8 +86,8 @@
 
             <de.symeda.sormas.app.component.controls.ControlDateField
                 android:id="@+id/ebs_reportDateTime"
-                style="@style/ControlSingleColumnStyle"
                 app:required="true"
+                style="@style/ControlSingleColumnStyle"
                 app:allowedDaysInFuture="0"
                 app:value="@={data.reportDateTime}" />
             <LinearLayout
@@ -109,7 +111,6 @@
                     app:dependencyParentField="@{ebsCategoryOfInformant}"
                     app:dependencyParentValue="@{PersonReporting.OTHER}"
                     style="@style/ControlSecondOfTwoColumnsStyle"
-                    app:required="true"
                     app:value="@={data.otherInformant}" />
             </LinearLayout>
             <LinearLayout
@@ -117,9 +118,8 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
                 >
-                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/ebs_scanningType"
-                    app:enumClass="@{mediaScannningTypeClass}"
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:dependencyParentField="@{ebsSourceInformation}"
                     app:dependencyParentValue="@{EbsSourceType.MEDIA_NEWS}"
@@ -139,7 +139,6 @@
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/ebs_sourceName"
                     style="@style/ControlFirstOfTwoColumnsStyle"
-                    app:required="true"
                     app:dependencyParentField="@{ebsSourceInformation}"
                     app:dependencyParentValue="@{EbsSourceType.MEDIA_NEWS}"
                     app:value="@={data.sourceName}" />
@@ -156,7 +155,6 @@
                     style="@style/ControlSecondOfTwoColumnsStyle"
                     app:dependencyParentField="@{ebsManualScanningType}"
                     app:dependencyParentValue="@{ManualScanningType.ONLINE}"
-                    app:required="true"
                     app:inputType="textUri"
                     app:value="@={data.sourceUrl}" />
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
@@ -164,7 +162,6 @@
                     style="@style/ControlSecondOfTwoColumnsStyle"
                     app:dependencyParentField="@{ebsManualScanningType}"
                     app:dependencyParentValue="@{ManualScanningType.OTHER}"
-                    app:required="true"
                     app:value="@={data.other}" />
             </LinearLayout>
             <LinearLayout
@@ -224,7 +221,6 @@
             <de.symeda.sormas.app.component.controls.ControlDateField
                 android:id="@+id/ebs_dateOnset"
                 style="@style/ControlSingleColumnStyle"
-                app:required="true"
                 app:allowedDaysInFuture="0"
                 app:value="@={data.dateOnset}" />
             <de.symeda.sormas.app.component.controls.ControlTextEditField
