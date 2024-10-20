@@ -65,6 +65,7 @@
             <de.symeda.sormas.app.component.controls.ControlSwitchField
                 android:id="@+id/ebsAlert_alertIssued"
                 style="@style/ControlFirstOfTwoColumnsStyle"
+                app:required="true"
                 app:enumClass="@{yesNoClass}"
                 app:value="@={data.alertIssued}"/>
 
@@ -102,6 +103,7 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/ebsAlert_actionInitiated"
                     style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:required="true"
                     app:enumClass="@{yesNoClass}"
                     app:value="@={data.actionInitiated}"/>
             </LinearLayout>
@@ -112,6 +114,7 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/ebsAlert_responseStatus"
                     style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:required="true"
                     app:enumClass="@{responseStatusClass}"
                     app:value="@={data.responseStatus}"/>
 

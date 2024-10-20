@@ -114,13 +114,10 @@ public class SignalVerificationEditActivity extends BaseEditActivity<SignalVerif
 			section = EbsSection.SIGNAL_VERIFICATION;
 		}
 		BaseEditFragment fragment = EbsEditFragment.newInstance(EbsEditActivity.getParentEbs());
-		var some = EbsEditActivity.getParentEbs().getTriaging().getTriagingDecision();
 		if (EbsEditActivity.getParentEbs().getTriaging().getTriagingDecision() != EbsTriagingDecision.VERIFY){
+			EbsListActivity.showWarningAlert = true;
+			EbsListActivity.message = R.string.triaging_decision_not_verify;
 			EbsListActivity.startActivity(getContext(),null);
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle(R.string.indicator_warning)
-					.setMessage(R.string.triaging_decision_not_verify)
-					.show();
 			return fragment;
 		}
 		switch (section) {

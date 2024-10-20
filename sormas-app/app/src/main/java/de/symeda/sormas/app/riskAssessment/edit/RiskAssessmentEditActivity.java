@@ -97,7 +97,9 @@ public class RiskAssessmentEditActivity extends BaseEditActivity<RiskAssessment>
 		RiskAssessment riskAssessment = getStoredRootEntity();
 		List<PageMenuItem> menuItems = PageMenuItem.fromEnum(EbsSection.values(), getContext());
 		if (riskAssessment != null) {
-			showRiskDialog(riskAssessment.getRiskAssessment().toString()).show();
+			if (riskAssessment.getRiskAssessment() != null) {
+				showRiskDialog(riskAssessment.getRiskAssessment().toString()).show();
+			}
 			menuItems.set(EbsSection.RISK_ASSESSMENT_EDIT.ordinal(), null);
 			menuItems.set(EbsSection.RISK_ASSESSMENT.ordinal(), null);
 			menuItems.set(EbsSection.EBS_ALERT_EDIT.ordinal(), null);
@@ -110,6 +112,8 @@ public class RiskAssessmentEditActivity extends BaseEditActivity<RiskAssessment>
 	protected BaseEditFragment buildEditFragment(PageMenuItem menuItem, RiskAssessment activityRootData) {
 		BaseEditFragment fragment = EbsEditFragment.newInstance(EbsEditActivity.getParentEbs());
 		if (EbsEditActivity.getParentEbs().getSignalVerification().getVerified() != SignalOutcome.EVENT){
+			EbsListActivity.showWarningAlert = true;
+			EbsListActivity.message = R.string.risk_disabled_signal_not_verified;
 			EbsListActivity.startActivity(getContext(),null);
 			return fragment;
 		}
@@ -165,9 +169,11 @@ public class RiskAssessmentEditActivity extends BaseEditActivity<RiskAssessment>
 				super.onPostExecute(taskResult);
 
 				if (taskResult.getResultStatus().isSuccess()) {
-					InfoDialog riskInfo =  showRiskDialog(riskToSave.getRiskAssessment().toString());
-					riskInfo.setPositiveButton(R.string.action_ok, listener);
-					riskInfo.show();
+					if (riskToSave.getRiskAssessment() != null) {
+						InfoDialog riskInfo = showRiskDialog(riskToSave.getRiskAssessment().toString());
+						riskInfo.setPositiveButton(R.string.action_ok, listener);
+						riskInfo.show();
+					}
 				} else {
 					onResume(); // reload data
 				}

@@ -1,5 +1,6 @@
 package de.symeda.sormas.app.ebs.list;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
@@ -40,6 +41,8 @@ public class EbsListActivity extends PagedBaseListActivity {
     };
     private EbsListViewModel model;
     private FilterEbsListLayoutBinding filterBinding;
+    public static boolean showWarningAlert = false;
+    public static int message = 0;
 
     public static void startActivity(Context context, SignalOutcome listFilter) {
         BaseListActivity.startActivity(context, EbsListActivity.class, buildBundle(getStatusFilterPosition(signalOutcomes, listFilter)));
@@ -125,6 +128,10 @@ public class EbsListActivity extends PagedBaseListActivity {
 
     @Override
     protected int getActivityTitle() {
+        if (showWarningAlert){
+            showAlert(message);
+            showWarningAlert = false;
+        }
         return R.string.heading_ebs_list;
     }
 
@@ -187,4 +194,12 @@ public class EbsListActivity extends PagedBaseListActivity {
             model.notifyCriteriaUpdated();
         });
     }
+    public void showAlert(int message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.indicator_warning)
+                .setMessage(message)
+                .show();
+    }
 }
+
+
