@@ -164,7 +164,6 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/triaging_signalCategory"
                     style="@style/ControlFirstOfTwoColumnsStyle"
-                    app:required="true"
                     app:dependencyParentField="@{triagingSpecificSignal}"
                     app:dependencyParentValue="@{YesNo.YES}"
                     app:enumClass="@{triagingSignalCategoryClass}"
