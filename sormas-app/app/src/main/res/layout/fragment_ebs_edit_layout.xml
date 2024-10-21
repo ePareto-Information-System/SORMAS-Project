@@ -31,7 +31,6 @@
         <import type="de.symeda.sormas.api.ebs.PersonReporting"/>
         <import type="de.symeda.sormas.api.ebs.ManualScanningType"/>
         <import type="de.symeda.sormas.api.ebs.MediaScannningType"/>
-        <import type="de.symeda.sormas.api.ebs.MobileScannningType"/>
         <import type="de.symeda.sormas.api.ebs.AutomaticScanningType"/>
 
 

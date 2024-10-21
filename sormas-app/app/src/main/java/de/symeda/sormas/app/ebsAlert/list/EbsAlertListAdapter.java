@@ -15,9 +15,9 @@ import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.ebs.ebsAlert.EbsAlert;
 import de.symeda.sormas.app.core.adapter.databinding.BindingPagedListAdapter;
 import de.symeda.sormas.app.core.adapter.databinding.BindingViewHolder;
-import de.symeda.sormas.app.databinding.RowEbsAlertListItemLayoutBindingImpl;
+import de.symeda.sormas.app.databinding.RowEbsAlertListItemLayoutBinding;
 
-public class EbsAlertListAdapter extends BindingPagedListAdapter<EbsAlert, RowEbsAlertListItemLayoutBindingImpl> {
+public class EbsAlertListAdapter extends BindingPagedListAdapter<EbsAlert, RowEbsAlertListItemLayoutBinding> {
 
     public EbsAlertListAdapter() {super(R.layout.row_ebs_alert_list_item_layout);}
 
@@ -26,7 +26,7 @@ public class EbsAlertListAdapter extends BindingPagedListAdapter<EbsAlert, RowEb
         super.onBindViewHolder(holder,position);
 
         if(getItemViewType(position) == TYPE_ITEM){
-            BindingViewHolder<EbsAlert, RowEbsAlertListItemLayoutBindingImpl> pagedHolder = (BindingViewHolder) holder;
+            BindingViewHolder<EbsAlert, RowEbsAlertListItemLayoutBinding> pagedHolder = (BindingViewHolder) holder;
             EbsAlert item = getItem(position);
 
             pagedHolder.setOnListItemClickListener(this.mOnListItemClickListener);
