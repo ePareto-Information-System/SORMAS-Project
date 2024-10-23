@@ -52,6 +52,7 @@ import de.symeda.sormas.api.caze.ScreeningType;
 import de.symeda.sormas.api.caze.Trimester;
 import de.symeda.sormas.api.caze.VaccinationRoutine;
 import de.symeda.sormas.api.caze.VaccinationStatus;
+import de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus;
 import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
@@ -444,6 +445,60 @@ public class Case extends PseudonymizableAdo {
 	private VaccinationRoutine vaccinationRoutine;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date lastVaccinationDate;
+
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown motherVaccinatedWithTT;
+
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown motherHaveCard;
+
+	@DatabaseField
+	private String motherNumberOfDoses;
+
+	@Enumerated(EnumType.STRING)
+	private MotherVaccinationStatus motherVaccinationStatus;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date motherTTDateOne;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date motherTTDateTwo;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date motherTTDateThree;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date motherTTDateFour;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date motherTTDateFive;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date motherLastDoseDate;
+
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown seenInOPD;
+
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown admittedInOPD;
+
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown motherGivenProtectiveDoseTT;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date motherGivenProtectiveDoseTTDate;
+
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown supplementalImmunization;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String supplementalImmunizationDetails;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateOfNotification;
+
+	@DatabaseField
+	private String notifiedBy;
 
 
 	public boolean isUnreferredPortHealthCase() {
@@ -1552,5 +1607,149 @@ public class Case extends PseudonymizableAdo {
 
 	public void setLastVaccinationDate(Date lastVaccinationDate) {
 		this.lastVaccinationDate = lastVaccinationDate;
+	}
+
+	public String getSupplementalImmunizationDetails() {
+		return supplementalImmunizationDetails;
+	}
+
+	public void setSupplementalImmunizationDetails(String supplementalImmunizationDetails) {
+		this.supplementalImmunizationDetails = supplementalImmunizationDetails;
+	}
+
+	public YesNoUnknown getSupplementalImmunization() {
+		return supplementalImmunization;
+	}
+
+	public void setSupplementalImmunization(YesNoUnknown supplementalImmunization) {
+		this.supplementalImmunization = supplementalImmunization;
+	}
+
+	public Date getMotherGivenProtectiveDoseTTDate() {
+		return motherGivenProtectiveDoseTTDate;
+	}
+
+	public void setMotherGivenProtectiveDoseTTDate(Date motherGivenProtectiveDoseTTDate) {
+		this.motherGivenProtectiveDoseTTDate = motherGivenProtectiveDoseTTDate;
+	}
+
+	public YesNoUnknown getMotherGivenProtectiveDoseTT() {
+		return motherGivenProtectiveDoseTT;
+	}
+
+	public void setMotherGivenProtectiveDoseTT(YesNoUnknown motherGivenProtectiveDoseTT) {
+		this.motherGivenProtectiveDoseTT = motherGivenProtectiveDoseTT;
+	}
+
+	public YesNoUnknown getAdmittedInOPD() {
+		return admittedInOPD;
+	}
+
+	public void setAdmittedInOPD(YesNoUnknown admittedInOPD) {
+		this.admittedInOPD = admittedInOPD;
+	}
+
+	public YesNoUnknown getSeenInOPD() {
+		return seenInOPD;
+	}
+
+	public void setSeenInOPD(YesNoUnknown seenInOPD) {
+		this.seenInOPD = seenInOPD;
+	}
+
+	public Date getMotherLastDoseDate() {
+		return motherLastDoseDate;
+	}
+
+	public void setMotherLastDoseDate(Date motherLastDoseDate) {
+		this.motherLastDoseDate = motherLastDoseDate;
+	}
+
+	public Date getMotherTTDateFive() {
+		return motherTTDateFive;
+	}
+
+	public void setMotherTTDateFive(Date motherTTDateFive) {
+		this.motherTTDateFive = motherTTDateFive;
+	}
+
+	public Date getMotherTTDateFour() {
+		return motherTTDateFour;
+	}
+
+	public void setMotherTTDateFour(Date motherTTDateFour) {
+		this.motherTTDateFour = motherTTDateFour;
+	}
+
+	public Date getMotherTTDateThree() {
+		return motherTTDateThree;
+	}
+
+	public void setMotherTTDateThree(Date motherTTDateThree) {
+		this.motherTTDateThree = motherTTDateThree;
+	}
+
+	public Date getMotherTTDateTwo() {
+		return motherTTDateTwo;
+	}
+
+	public void setMotherTTDateTwo(Date motherTTDateTwo) {
+		this.motherTTDateTwo = motherTTDateTwo;
+	}
+
+	public Date getMotherTTDateOne() {
+		return motherTTDateOne;
+	}
+
+	public void setMotherTTDateOne(Date motherTTDateOne) {
+		this.motherTTDateOne = motherTTDateOne;
+	}
+
+	public MotherVaccinationStatus getMotherVaccinationStatus() {
+		return motherVaccinationStatus;
+	}
+
+	public void setMotherVaccinationStatus(MotherVaccinationStatus motherVaccinationStatus) {
+		this.motherVaccinationStatus = motherVaccinationStatus;
+	}
+
+	public String getMotherNumberOfDoses() {
+		return motherNumberOfDoses;
+	}
+
+	public void setMotherNumberOfDoses(String motherNumberOfDoses) {
+		this.motherNumberOfDoses = motherNumberOfDoses;
+	}
+
+	public YesNoUnknown getMotherHaveCard() {
+		return motherHaveCard;
+	}
+
+	public void setMotherHaveCard(YesNoUnknown motherHaveCard) {
+		this.motherHaveCard = motherHaveCard;
+	}
+
+	public YesNoUnknown getMotherVaccinatedWithTT() {
+		return motherVaccinatedWithTT;
+	}
+
+	public void setMotherVaccinatedWithTT(YesNoUnknown motherVaccinatedWithTT) {
+		this.motherVaccinatedWithTT = motherVaccinatedWithTT;
+	}
+
+	public Date getDateOfNotification() {
+		return dateOfNotification;
+	}
+
+	public void setDateOfNotification(Date dateOfNotification) {
+		this.dateOfNotification = dateOfNotification;
+	}
+
+	public String getNotifiedBy() {
+		return notifiedBy;
+	}
+
+	public void setNotifiedBy(String notifiedBy) {
+		this.notifiedBy = notifiedBy;
 	}
 }

@@ -25,6 +25,8 @@ import android.webkit.WebView;
 
 import androidx.fragment.app.FragmentActivity;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Date;
 import java.util.List;
 
@@ -51,6 +53,7 @@ import de.symeda.sormas.api.caze.VaccinationInfoSource;
 import de.symeda.sormas.api.caze.VaccinationRoutine;
 import de.symeda.sormas.api.caze.Vaccine;
 import de.symeda.sormas.api.caze.VaccineManufacturer;
+import de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus;
 import de.symeda.sormas.api.caze.surveillancereport.ReportingType;
 import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.contact.QuarantineType;
@@ -701,6 +704,15 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 				.initIntegerValidator(contentBinding.caseDataVaccinationDoses, I18nProperties.getValidationError(Validations.vaccineDosesFormat), 1, 10);
 		ValidationHelper.initDateIntervalValidator(contentBinding.caseDataFirstVaccinationDate, contentBinding.caseDataLastVaccinationDate);*/
 		CaseValidator.initializeProhibitionToWorkIntervalValidator(contentBinding);
+
+		contentBinding.caseDataMotherTTDateOne.initializeDateField(getFragmentManager());
+		contentBinding.caseDataMotherTTDateTwo.initializeDateField(getFragmentManager());
+		contentBinding.caseDataMotherTTDateThree.initializeDateField(getFragmentManager());
+		contentBinding.caseDataMotherTTDateFour.initializeDateField(getFragmentManager());
+		contentBinding.caseDataMotherTTDateFive.initializeDateField(getFragmentManager());
+		contentBinding.caseDataMotherLastDoseDate.initializeDateField(getFragmentManager());
+		contentBinding.caseDataMotherGivenProtectiveDoseTTDate.initializeDateField(getFragmentManager());
+		contentBinding.setMotherVaccinationStatusClass(MotherVaccinationStatus.class);
 	}
 
 	private void fillConfirmedCaseClassificationCombo() {
@@ -800,6 +812,27 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 
 		// reinfection
 		contentBinding.caseDataPreviousInfectionDate.initializeDateField(getChildFragmentManager());
+		contentBinding.caseDataMotherNumberOfDoses.addValueChangedListener(field -> {
+			String value = field.getValue() != null ? field.getValue().toString() : "0";
+			if (value.isEmpty()) {
+				value = "0";
+			}
+
+			int numberOfDoses;
+			try {
+				numberOfDoses = Integer.parseInt(value);
+			} catch (NumberFormatException e) {
+				// Handle invalid input if necessary
+				return;
+			}
+
+			contentBinding.caseDataMotherTTDateOne.setVisibility(numberOfDoses >= 1 ? VISIBLE : GONE);
+			contentBinding.caseDataMotherTTDateTwo.setVisibility(numberOfDoses >= 2 ? VISIBLE : GONE);
+			contentBinding.caseDataMotherTTDateThree.setVisibility(numberOfDoses >= 3 ? VISIBLE : GONE);
+			contentBinding.caseDataMotherTTDateFour.setVisibility(numberOfDoses >= 4 ? VISIBLE : GONE);
+			contentBinding.caseDataMotherTTDateFive.setVisibility(numberOfDoses >= 5 ? VISIBLE : GONE);
+			contentBinding.caseDataMotherLastDoseDate.setVisibility(numberOfDoses >= 6 ? VISIBLE : GONE);
+		});
 	}
 
 	private void updateDiseaseVariantsField(FragmentCaseEditLayoutBinding contentBinding) {

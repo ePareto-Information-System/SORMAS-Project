@@ -206,7 +206,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 375;
+	public static final int DATABASE_VERSION = 376;
 
 	private static DatabaseHelper instance = null;
 
@@ -3454,7 +3454,26 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateDistrictReceivedLabResults DATE;");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryDateResultsSentDSD DATE;");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN finalClassification VARCHAR(255);");
-
+			case 375:
+				currentVersion = 375;
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherVaccinatedWithTT VARCHAR(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherHaveCard VARCHAR(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherNumberOfDoses VARCHAR(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherVaccinationStatus VARCHAR(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherTTDateOne DATE;");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherTTDateTwo DATE;");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherTTDateThree DATE;");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherTTDateFour DATE;");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherTTDateFive DATE;");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherLastDoseDate DATE;");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN seenInOPD VARCHAR(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN admittedInOPD VARCHAR(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherGivenProtectiveDoseTT VARCHAR(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherGivenProtectiveDoseTTDate DATE;");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN supplementalImmunization VARCHAR(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN supplementalImmunizationDetails VARCHAR(255);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN dateOfNotification DATE;");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN notifiedBy VARCHAR(255);");
 				// ATTENTION: break should only be done after last version
 				break;
 			default:

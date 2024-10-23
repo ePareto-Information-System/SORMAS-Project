@@ -257,6 +257,24 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setSecondVaccinationDate(source.getSecondVaccinationDate());
 		target.setVaccinationRoutine(source.getVaccinationRoutine());
 		target.setLastVaccinationDate(source.getLastVaccinationDate());
+		target.setMotherVaccinatedWithTT(source.getMotherVaccinatedWithTT());
+		target.setMotherHaveCard(source.getMotherHaveCard());
+		target.setMotherNumberOfDoses(source.getMotherNumberOfDoses());
+		target.setMotherVaccinationStatus(source.getMotherVaccinationStatus());
+		target.setMotherTTDateOne(source.getMotherTTDateOne());
+		target.setMotherTTDateTwo(source.getMotherTTDateTwo());
+		target.setMotherTTDateThree(source.getMotherTTDateThree());
+		target.setMotherTTDateFour(source.getMotherTTDateFour());
+		target.setMotherTTDateFive(source.getMotherTTDateFive());
+		target.setMotherLastDoseDate(source.getMotherLastDoseDate());
+		target.setSeenInOPD(source.getSeenInOPD());
+		target.setAdmittedInOPD(source.getAdmittedInOPD());
+		target.setMotherGivenProtectiveDoseTT(source.getMotherGivenProtectiveDoseTT());
+		target.setMotherGivenProtectiveDoseTTDate(source.getMotherGivenProtectiveDoseTTDate());
+		target.setSupplementalImmunization(source.getSupplementalImmunization());
+		target.setSupplementalImmunizationDetails(source.getSupplementalImmunizationDetails());
+		target.setDateOfNotification(source.getDateOfNotification());
+		target.setNotifiedBy(source.getNotifiedBy());
 	}
 
 	@Override
@@ -535,6 +553,25 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setSecondVaccinationDate(source.getSecondVaccinationDate());
 		target.setVaccinationRoutine(source.getVaccinationRoutine());
 		target.setLastVaccinationDate(source.getLastVaccinationDate());
+		target.setMotherVaccinatedWithTT(source.getMotherVaccinatedWithTT());
+		target.setMotherHaveCard(source.getMotherHaveCard());
+		target.setMotherNumberOfDoses(source.getMotherNumberOfDoses());
+		target.setMotherVaccinationStatus(source.getMotherVaccinationStatus());
+		target.setMotherTTDateOne(source.getMotherTTDateOne());
+		target.setMotherTTDateTwo(source.getMotherTTDateTwo());
+		target.setMotherTTDateThree(source.getMotherTTDateThree());
+		target.setMotherTTDateFour(source.getMotherTTDateFour());
+		target.setMotherTTDateFive(source.getMotherTTDateFive());
+		target.setMotherLastDoseDate(source.getMotherLastDoseDate());
+		target.setSeenInOPD(source.getSeenInOPD());
+		target.setAdmittedInOPD(source.getAdmittedInOPD());
+		target.setMotherGivenProtectiveDoseTT(source.getMotherGivenProtectiveDoseTT());
+		target.setMotherGivenProtectiveDoseTTDate(source.getMotherGivenProtectiveDoseTTDate());
+		target.setSupplementalImmunization(source.getSupplementalImmunization());
+		target.setSupplementalImmunizationDetails(source.getSupplementalImmunizationDetails());
+		target.setDateOfNotification(source.getDateOfNotification());
+		target.setNotifiedBy(source.getNotifiedBy());
+
 
 	}
 
