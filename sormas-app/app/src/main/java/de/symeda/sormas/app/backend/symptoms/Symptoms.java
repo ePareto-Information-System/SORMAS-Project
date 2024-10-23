@@ -486,7 +486,9 @@ public class Symptoms extends PseudonymizableAdo {
 	private String placeOfFuneralNameVillage;
 	private String injectionSiteString;
 	private DurationHours durationHours;
+	@Column
 	private Integer ageAtDeathDays;
+	@Column
 	private Integer ageAtOnsetDays;
 	private Set<SymptomsList> symptomsSelected;
 	private Set<BodyPart> rashSymptoms;

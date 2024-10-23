@@ -166,6 +166,8 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		caseOutcomeList = DataUtils.getEnumItems(CaseOutcome.class, true);
 		contentBinding.symptomsOutcome.setSpinnerData(caseOutcomeList);
 
+
+
 		SymptomsValidator.initializeSymptomsValidation(contentBinding, ado);
 	}
 
