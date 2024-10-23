@@ -40,10 +40,12 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.ArmedForcesRelationType;
+import de.symeda.sormas.api.person.AttendedBy;
 import de.symeda.sormas.api.person.BurialConductor;
 import de.symeda.sormas.api.person.CauseOfDeath;
 import de.symeda.sormas.api.person.DeathPlaceType;
 import de.symeda.sormas.api.person.EducationType;
+import de.symeda.sormas.api.person.LocationOfBirth;
 import de.symeda.sormas.api.person.MaritalStatus;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PresentCondition;
@@ -92,6 +94,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 	private IEntryItemOnClickListener onAddressItemClickListener;
 	private IEntryItemOnClickListener onPersonContactDetailItemClickListener;
 	private static Disease caseDisease;
+	private List<Item> locationOfBirthList;
 
 	// Instance methods
 
@@ -583,6 +586,9 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		// parent data is loaded)
 		DatabaseHelper.getPersonDao().initLocations(record);
 		DatabaseHelper.getPersonDao().initPersonContactDetails(record);
+
+		locationOfBirthList = DataUtils.getEnumItems(LocationOfBirth.class, true);
+
 	}
 
 	@Override
@@ -605,6 +611,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		contentBinding.setPersonContactDetailItemClickCallback(onPersonContactDetailItemClickListener);
 		getContentBinding().setPersonContactDetailBindCallback(this::setLocationFieldVisibilitiesAndAccesses);
 		setUpLayoutBinding(this, record, contentBinding);
+		contentBinding.setAttendedByClass(AttendedBy.class);
 	}
 
 	@Override
@@ -625,6 +632,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		}
 
 		handlePersonResidenceSinceWhenInMonths(contentBinding);
+		contentBinding.personLocationOfBirth.initializeSpinner(locationOfBirthList);
 	}
 
 	@Override
