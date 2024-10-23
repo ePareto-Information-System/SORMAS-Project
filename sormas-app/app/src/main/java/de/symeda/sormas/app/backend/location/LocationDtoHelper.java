@@ -97,6 +97,7 @@ public class LocationDtoHelper extends AdoDtoHelper<Location, LocationDto> {
 		target.setVillage(source.getVillage());
 		target.setZone(source.getZone());
 		target.setResidentialAddress(source.getResidentialAddress());
+		target.setNearestHealthFacilityToVillage(source.getNearestHealthFacilityToVillage());
 	}
 
 	@Override
@@ -160,6 +161,7 @@ public class LocationDtoHelper extends AdoDtoHelper<Location, LocationDto> {
 		target.setVillage(source.getVillage());
 		target.setZone(source.getZone());
 		target.setResidentialAddress(source.getResidentialAddress());
+		target.setNearestHealthFacilityToVillage(source.getNearestHealthFacilityToVillage());
 	}
 
     @Override

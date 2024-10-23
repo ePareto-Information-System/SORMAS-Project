@@ -206,7 +206,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 377;
+	public static final int DATABASE_VERSION = 378;
 
 	private static DatabaseHelper instance = null;
 
@@ -3474,7 +3474,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN supplementalImmunizationDetails VARCHAR(255);");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN dateOfNotification DATE;");
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN notifiedBy VARCHAR(255);");
-				// ATTENTION: break should only be done after last version
 			case 376:
 				currentVersion = 376;
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN locationOfBirth VARCHAR(255);");
@@ -3487,6 +3486,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN cutCordWithSterileBlade VARCHAR(255);");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN cordTreatedWithAnything VARCHAR(255);");
 				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN cordTreatedWithAnythingWhere VARCHAR(255);");
+			case 377:
+				currentVersion = 377;
+				getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN nearestHealthFacilityToVillage VARCHAR(255);");
+				// ATTENTION: break should only be done after last version
 				break;
 			default:
 				throw new IllegalStateException("onUpgrade() with unknown oldVersion " + oldVersion);
