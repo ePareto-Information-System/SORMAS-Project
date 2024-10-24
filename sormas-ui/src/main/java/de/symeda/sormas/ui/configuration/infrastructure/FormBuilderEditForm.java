@@ -97,12 +97,12 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
         availableFields.setRows(20);
         availableFields.setNullSelectionAllowed(false);
         availableFields.setMultiSelect(true);
-        availableFields.setCaption(I18nProperties.getCaption(Captions.facilitiesAvailable));
+        availableFields.setCaption(I18nProperties.getCaption(Captions.formFieldsAvailable));
 
         selectedFieldsTable = new Table();
         selectedFieldsTable.setWidth("100%");
         selectedFieldsTable.setHeight("400px");
-        selectedFieldsTable.setCaption(I18nProperties.getCaption(Captions.facilitiesSelected));
+        selectedFieldsTable.setCaption(I18nProperties.getCaption(Captions.formFieldsSelected));
         selectedFieldsTable.setSelectable(true);
         selectedFieldsTable.setMultiSelect(true);
 
