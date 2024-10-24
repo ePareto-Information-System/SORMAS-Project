@@ -42,11 +42,11 @@ public class FormFieldReferenceDto extends InfrastructureDataReferenceDto implem
 	}
 
 	public Integer getDisplayOrder() {
-		return displayOrder; // Getter for displayOrder
+		return displayOrder;
 	}
 
 	public void setDisplayOrder(Integer displayOrder) {
-		this.displayOrder = displayOrder; // Setter for displayOrder
+		this.displayOrder = displayOrder;
 	}
 
 	@Override

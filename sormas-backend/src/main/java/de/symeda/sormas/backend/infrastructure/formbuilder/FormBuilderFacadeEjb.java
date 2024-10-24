@@ -169,93 +169,56 @@ public class FormBuilderFacadeEjb extends AbstractInfrastructureFacadeEjb<FormBu
         return super.save(dto, allowMerge);
     }*/
 
-    /*@Override
-    public FormBuilderDto save(FormBuilderDto dto, boolean allowMerge) {
-        // Create or retrieve the FormBuilder entity
-        FormBuilder formBuilder = fillOrBuildEntity(dto, new FormBuilder(), true, allowMerge);
-
-        // Clear existing form-field relationships
-        formBuilder.getFormFields().clear();
-
-        // Add new form fields from the DTO
-        if (dto.getFormFields() != null) {
-            for (FormFieldReferenceDto fieldDto : dto.getFormFields()) {
-                FormField formField = mapDtoToEntity(fieldDto.getUuid());
-                if (formField != null) {
-                    formBuilder.getFormFields().add(formField);
-                    // formField.setFormBuilder(formBuilder); // Uncomment if you need this relationship
-                }
-            }
-        }
-
-        // Persist the FormBuilder entity
-        em.persist(formBuilder); // This will handle the associated formFields as well if they are managed
-
-        return toDto(formBuilder);
-    }*/
     @Override
     public FormBuilderDto save(FormBuilderDto dto, boolean allowMerge) {
         FormBuilder formBuilder;
 
-        // Check if it's an existing form (using the UUID)
         if (dto.getUuid() != null) {
-            // Retrieve the existing form using the UUID
             formBuilder = service.getByUuid(dto.getUuid());
             if (formBuilder == null) {
                 throw new EntityNotFoundException("FormBuilder with UUID " + dto.getUuid() + " not found.");
             }
         } else {
-            // Create a new FormBuilder entity
             formBuilder = new FormBuilder();
         }
 
-        // Fill or update the entity with data from the DTO
         formBuilder = fillOrBuildEntity(dto, formBuilder, true, allowMerge);
 
-        // Persist the entity
         if (formBuilder.getId() == null) {
-            em.persist(formBuilder); // New entity
+            em.persist(formBuilder);
         } else {
-            em.merge(formBuilder);   // Existing entity
+            em.merge(formBuilder);
         }
 
-        em.flush(); // Ensure the changes are written to the database
+        em.flush();
 
         return toDto(formBuilder);
     }
 
     @Override
     protected FormBuilder fillOrBuildEntity(FormBuilderDto source, FormBuilder target, boolean checkChangeDate, boolean allowUuidOverwrite) {
-        // Check if the target is new or an existing entity
         if (target == null) {
             target = new FormBuilder();
         }
 
-        // Handle UUID: if the UUID in the DTO is different from the target entity, raise an exception
         if (source.getUuid() != null && target.getUuid() != null && !source.getUuid().equals(target.getUuid())) {
             throw new MismatchUuidException(
                     String.format("FormBuilder DTO UUID (%s) does not match entity UUID (%s)", source.getUuid(), target.getUuid()),
-                    FormBuilder.class, // The class where the mismatch occurred
-                    target.getUuid()   // The entity's UUID
+                    FormBuilder.class,
+                    target.getUuid()
             );
         }
 
-
-        // Set UUID for new entities, or keep the existing one for updates
         if (source.getUuid() == null) {
-            // If the source DTO does not have a UUID, generate a new one
             target.setUuid(DataHelper.createUuid());
         } else {
-            // Use the UUID from the DTO if available
             target.setUuid(source.getUuid());
         }
 
-        // Copy other properties from DTO to entity
         target.setDisease(source.getDisease());
         target.setFormType(source.getFormType());
         target.setActive(source.getActive());
 
-        // Handle form fields while maintaining order
         List<FormField> formFields = new ArrayList<>();
         if (source.getFormFields() != null) {
             for (FormFieldReferenceDto fieldDto : source.getFormFields()) {
@@ -270,28 +233,6 @@ public class FormBuilderFacadeEjb extends AbstractInfrastructureFacadeEjb<FormBu
         return target;
     }
 
-    /*@Override
-    protected FormBuilder fillOrBuildEntity(FormBuilderDto source, FormBuilder target, boolean checkChangeDate, boolean allowUuidOverwrite) {
-        target = DtoHelper.fillOrBuildEntity(source, target, FormBuilder::new, checkChangeDate);
-
-        target.setDisease(source.getDisease());
-        target.setFormType(source.getFormType());
-        target.setActive(source.getActive());
-
-        // Handle form fields while maintaining order
-        List<FormField> formFields = new ArrayList<>();
-        if (source.getFormFields() != null) {
-            for (FormFieldReferenceDto fieldDto : source.getFormFields()) {
-                FormField formField = mapDtoToEntity(fieldDto.getUuid());
-                if (formField != null) {
-                    formFields.add(formField);
-                }
-            }
-        }
-        target.setFormFields(formFields);
-
-        return target;
-    }*/
     /*@Override
     protected FormBuilder fillOrBuildEntity(FormBuilderDto source, FormBuilder target, boolean checkChangeDate, boolean allowUuidOverwrite) {
         target = DtoHelper.fillOrBuildEntity(source, target, FormBuilder::new, checkChangeDate);
