@@ -33,10 +33,7 @@ import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.ViewConfiguration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
@@ -51,7 +48,7 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
     private static final String FIELDS_SELECTION_LOCATION = "searchFieldsLocation";
     FormFieldsCriteria formFieldsCriteria;
     ComboBox formType;
-
+    private Set<String> lastSelectedIds = new HashSet<>();
     private static final String HTML_LAYOUT = fluidRowLocs(FormBuilderDto.DISEASE, FormBuilderDto.FORM_TYPE) +
             fluidRowLocs(FIELDS_SELECTION_LOCATION);
 
@@ -66,7 +63,6 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
     Boolean firstPageLoad = true;
     private FormFieldsCriteria criteria;
     private String highlightedItemId = null; // To track the currently highlighted item
-
 
 
     public FormBuilderEditForm(boolean create) {
@@ -110,6 +106,14 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
         selectedFieldsTable.setSelectable(true);
         selectedFieldsTable.setMultiSelect(true);
 
+        selectedFieldsTable.addValueChangeListener(event -> {
+            @SuppressWarnings("unchecked")
+            Set<String> selectedIds = (Set<String>) event.getProperty().getValue();
+            if (selectedIds != null && !selectedIds.isEmpty()) {
+                lastSelectedIds = new HashSet<>(selectedIds);
+            }
+        });
+
         selectedFieldsContainer = new IndexedContainer();
         selectedFieldsContainer.addContainerProperty(PROPERTY_FIELD, FormFieldIndexDto.class, null);
         selectedFieldsContainer.addContainerProperty(PROPERTY_ORDER, Integer.class, null);
@@ -125,15 +129,19 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
         Button moveDownButton = new Button("↓");
         Button addButton = new Button("→");
         Button removeButton = new Button("←");
+        Button moveToTopButton = new Button("↑↑");
 
         moveUpButton.addStyleName(ValoTheme.BUTTON_SMALL);
         moveDownButton.addStyleName(ValoTheme.BUTTON_SMALL);
         addButton.addStyleName(ValoTheme.BUTTON_SMALL);
         removeButton.addStyleName(ValoTheme.BUTTON_SMALL);
+        moveToTopButton.addStyleName(ValoTheme.BUTTON_SMALL);
+
+        moveToTopButton.setDescription("Move selected items to top");
 
         VerticalLayout buttonLayout = new VerticalLayout();
         buttonLayout.setSpacing(true);
-        buttonLayout.addComponents(addButton, removeButton, moveUpButton, moveDownButton);
+        buttonLayout.addComponents(addButton, removeButton, moveUpButton, moveDownButton, moveToTopButton);
         buttonLayout.setWidth("10%");
 
         addButton.addClickListener(event -> {
@@ -158,7 +166,6 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
         });
 
 
-
         removeButton.addClickListener(event -> {
             Set<String> selectedIds = (Set<String>) selectedFieldsTable.getValue();
             for (String id : selectedIds) {
@@ -179,19 +186,47 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
 
         moveUpButton.addClickListener(event -> {
             Set<String> selectedIds = (Set<String>) selectedFieldsTable.getValue();
-            for (String id : selectedIds) {
-                moveItem(id, true);
+            if (selectedIds != null && !selectedIds.isEmpty()) {
+                lastSelectedIds = new HashSet<>(selectedIds);
+                for (String id : selectedIds) {
+                    moveItem(id, true);
+                }
+                updateFormFieldsList();
+                // Restore selection after move
+                selectedFieldsTable.setValue(lastSelectedIds);
             }
-            updateFormFieldsList();
         });
 
         moveDownButton.addClickListener(event -> {
-            Object[] selectedIds = ((Set<String>) selectedFieldsTable.getValue()).toArray();
-            for (int i = selectedIds.length - 1; i >= 0; i--) {
-                moveItem((String) selectedIds[i], false);
+            Set<String> selectedIds = (Set<String>) selectedFieldsTable.getValue();
+            if (selectedIds != null && !selectedIds.isEmpty()) {
+                lastSelectedIds = new HashSet<>(selectedIds);
+                Object[] selectedIdsArray = selectedIds.toArray();
+                for (int i = selectedIdsArray.length - 1; i >= 0; i--) {
+                    moveItem((String) selectedIdsArray[i], false);
+                }
+                updateFormFieldsList();
+                // Restore selection after move
+                selectedFieldsTable.setValue(lastSelectedIds);
             }
-            updateFormFieldsList();
         });
+
+        moveToTopButton.addClickListener(event -> {
+            Set<String> selectedIds = (Set<String>) selectedFieldsTable.getValue();
+            if (selectedIds != null && !selectedIds.isEmpty()) {
+                lastSelectedIds = new HashSet<>(selectedIds);
+                // Move items to top in reverse order to maintain relative positions
+                List<String> selectedIdsList = new ArrayList<>(selectedIds);
+                Collections.reverse(selectedIdsList);
+                for (String id : selectedIdsList) {
+                    moveItemToTop(id);
+                }
+                updateFormFieldsList();
+                // Restore selection after move
+                selectedFieldsTable.setValue(lastSelectedIds);
+            }
+        });
+
         fieldSelectionLayout.addComponents(availableFields, buttonLayout, selectedFieldsTable);
         getContent().addComponent(fieldSelectionLayout, FIELDS_SELECTION_LOCATION);
     }
@@ -243,6 +278,40 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
             selectedFieldsTable.setVisibleColumns(PROPERTY_ORDER, PROPERTY_NAME);
             selectedFieldsTable.setColumnHeader(PROPERTY_ORDER, "Order");
             selectedFieldsTable.setColumnHeader(PROPERTY_NAME, "Field Name");
+
+            if (!lastSelectedIds.isEmpty()) {
+                selectedFieldsTable.setValue(lastSelectedIds);
+            }
+        }
+    }
+
+    private void moveItemToTop(String itemId) {
+        int currentIndex = getCurrentItemIndex(itemId);
+        if (currentIndex > 0) {
+            IndexedContainer newContainer = new IndexedContainer();
+            newContainer.addContainerProperty(PROPERTY_FIELD, FormFieldIndexDto.class, null);
+            newContainer.addContainerProperty(PROPERTY_ORDER, Integer.class, null);
+            newContainer.addContainerProperty(PROPERTY_NAME, String.class, null);
+
+            List<Object> newOrder = new ArrayList<>(selectedFieldsContainer.getItemIds());
+            Object movedItem = newOrder.remove(currentIndex);
+            newOrder.add(0, movedItem);
+
+            for (Object id : newOrder) {
+                Item oldItem = selectedFieldsContainer.getItem(id);
+                Item newItem = newContainer.addItem(id);
+                for (Object propertyId : selectedFieldsContainer.getContainerPropertyIds()) {
+                    newItem.getItemProperty(propertyId).setValue(
+                            oldItem.getItemProperty(propertyId).getValue()
+                    );
+                }
+            }
+            selectedFieldsTable.setContainerDataSource(newContainer);
+            selectedFieldsContainer = newContainer;
+            selectedFieldsTable.setVisibleColumns(PROPERTY_ORDER, PROPERTY_NAME);
+            selectedFieldsTable.setColumnHeader(PROPERTY_ORDER, "Order");
+            selectedFieldsTable.setColumnHeader(PROPERTY_NAME, "Field Name");
+            reorderItems();
         }
     }
 
