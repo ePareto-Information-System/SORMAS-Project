@@ -48,6 +48,7 @@
         <import type="de.symeda.sormas.api.disease.DiseaseVariant" />
         <import type="de.symeda.sormas.api.caze.IdsrType" />
         <import type="de.symeda.sormas.api.caze.VaccinationRoutine" />
+        <import type="de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus" />
 
         <variable name="hosp" type="de.symeda.sormas.app.backend.hospitalization.Hospitalization" />
         <variable name="data" type="de.symeda.sormas.app.backend.caze.Case"/>
@@ -62,6 +63,7 @@
         <variable name="filteredVaccinationStatusValues" type="VaccinationStatus[]" />
 
         <variable name="vaccinationRoutineClass" type="Class" />
+        <variable name="motherVaccinationStatusClass" type="Class" />
     </data>
 
     <ScrollView
@@ -476,12 +478,32 @@
                         style="@style/ControlSecondOfTwoColumnsStyle" />
                 </LinearLayout>
 
-                <de.symeda.sormas.app.component.controls.ControlDateField
-                    android:id="@+id/caseData_dateOfInvestigation"
-                    app:value="@={data.dateOfInvestigation}"
-                    app:userEditRight="@{UserRight.CASE_TRANSFER}"
-                    app:dateWithoutTime="@{true}"
-                    style="@style/ControlSingleColumnStyle" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_notifiedBy"
+                        app:value="@={data.notifiedBy}"
+                        app:userEditRight="@{UserRight.CASE_TRANSFER}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/caseData_dateOfNotification"
+                        app:value="@={data.dateOfNotification}"
+                        app:userEditRight="@{UserRight.CASE_TRANSFER}"
+                        app:dateWithoutTime="@{true}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/caseData_dateOfInvestigation"
+                        app:value="@={data.dateOfInvestigation}"
+                        app:userEditRight="@{UserRight.CASE_TRANSFER}"
+                        app:dateWithoutTime="@{true}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -917,6 +939,7 @@
                     app:dependencyParentField="@{caseDataVaccinationStatus}"
                     app:dependencyParentValue="@{VaccinationStatus.VACCINATED}"
                     app:dependencyParentVisibility="@{true}"
+                    app:inputType="number"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlDateField
@@ -1111,7 +1134,162 @@
                     app:textArea="true"
                     style="@style/ControlSingleColumnStyle" />
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/caseData_motherVaccinatedWithTT"
+                        app:enumClass="@{yesNoUnknownClass}"
+                        app:value="@={data.motherVaccinatedWithTT}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/caseData_motherHaveCard"
+                        app:enumClass="@{yesNoUnknownClass}"
+                        app:value="@={data.motherHaveCard}"
+                        app:dependencyParentField="@{caseDataMotherVaccinatedWithTT}"
+                        app:dependencyParentValue="@{YesNoUnknown.YES}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_motherNumberOfDoses"
+                        app:value="@={data.motherNumberOfDoses}"
+                        app:dependencyParentField="@{caseDataMotherHaveCard}"
+                        app:dependencyParentValue="@{YesNoUnknown.YES}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/caseData_motherVaccinationStatus"
+                        app:enumClass="@{motherVaccinationStatusClass}"
+                        app:value="@={data.motherVaccinationStatus}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/caseData_motherTTDateOne"
+                        app:value="@={data.motherTTDateOne}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/caseData_motherTTDateTwo"
+                        app:value="@={data.motherTTDateTwo}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/caseData_motherTTDateThree"
+                        app:value="@={data.motherTTDateThree}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/caseData_motherTTDateFour"
+                        app:value="@={data.motherTTDateFour}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/caseData_motherTTDateFive"
+                        app:value="@={data.motherTTDateFive}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/caseData_motherLastDoseDate"
+                        app:value="@={data.motherLastDoseDate}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/caseData_seenInOPD"
+                        app:enumClass="@{yesNoUnknownClass}"
+                        app:value="@={data.seenInOPD}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/caseData_admittedInOPD"
+                        app:enumClass="@{yesNoUnknownClass}"
+                        app:value="@={data.admittedInOPD}"
+                        app:dependencyParentField="@{caseDataSeenInOPD}"
+                        app:dependencyParentValue="@{YesNoUnknown.YES}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/caseData_motherGivenProtectiveDoseTT"
+                        app:enumClass="@{yesNoUnknownClass}"
+                        app:value="@={data.motherGivenProtectiveDoseTT}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/caseData_motherGivenProtectiveDoseTTDate"
+                        app:value="@={data.motherGivenProtectiveDoseTTDate}"
+                        app:dependencyParentField="@{caseDataMotherGivenProtectiveDoseTT}"
+                        app:dependencyParentValue="@{YesNoUnknown.YES}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/caseData_supplementalImmunization"
+                    app:enumClass="@{yesNoUnknownClass}"
+                    app:value="@={data.supplementalImmunization}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/caseData_supplementalImmunizationDetails"
+                    app:value="@={data.supplementalImmunizationDetails}"
+                    app:dependencyParentField="@{caseDataSupplementalImmunization}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
+                    app:showCaption="false"
+                    app:inputType="textMultiLine"
+                    app:textAlignment="gravity"
+                    app:gravity="top|start"
+                    app:singleLine="false"
+                    app:maxLines="3"
+                    app:textArea="true"
+                    style="@style/ControlSingleColumnStyle"/>
+
             </LinearLayout>
+
+            //add here
 
             <LinearLayout
                 android:id="@+id/case_buttons_panel"

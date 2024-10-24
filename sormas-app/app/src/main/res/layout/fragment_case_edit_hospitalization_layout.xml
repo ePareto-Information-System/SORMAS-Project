@@ -92,6 +92,12 @@
                 </LinearLayout>
 
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/caseHospitalization_wasPatientAdmitted"
+                    app:value="@={data.wasPatientAdmitted}"
+                    style="@style/ControlSingleColumnStyle" />
+
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/caseHospitalization_admittedToHealthFacility"
                     app:enumClass="@{YesNoClass}"
                     app:value="@={data.admittedToHealthFacility}"

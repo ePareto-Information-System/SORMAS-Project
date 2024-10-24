@@ -35,6 +35,8 @@
         <import type="de.symeda.sormas.api.i18n.I18nProperties" />
         <import type="de.symeda.sormas.api.i18n.Strings" />
         <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
+        <import type="de.symeda.sormas.api.person.LocationOfBirth" />
+        <import type="de.symeda.sormas.api.person.AttendedBy" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.person.Person"/>
         <variable name="addressList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.location.Location&gt;" />
@@ -44,6 +46,8 @@
         <variable name="personContactDetailItemClickCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
         <variable name="personContactDetailBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
         <variable name="YesNoClass" type="Class" />
+        <variable name="locationOfBirthClass" type="Class" />
+        <variable name="attendedByClass" type="Class" />
     </data>
 
     <ScrollView
@@ -81,7 +85,6 @@
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/person_otherName"
-                    app:required="true"
                     app:value="@={data.otherName}"
                     app:imeOptions="actionNext"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
@@ -159,6 +162,24 @@
 
             </LinearLayout>
 
+<!--            locationOfBirth,birthInInstitution, -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/person_locationOfBirth"
+                    app:value="@={data.locationOfBirth}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/person_birthInInstitution"
+                    app:value="@={data.birthInInstitution}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -167,11 +188,15 @@
                 <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                     android:id="@+id/person_placeOfBirthRegion"
                     app:value="@={data.placeOfBirthRegion}"
+                    app:dependencyParentField="@{personBirthInInstitution}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                     android:id="@+id/person_placeOfBirthDistrict"
                     app:value="@={data.placeOfBirthDistrict}"
+                    app:dependencyParentField="@{personBirthInInstitution}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
@@ -185,6 +210,8 @@
                 <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                     android:id="@+id/person_placeOfBirthCommunity"
                     app:value="@={data.placeOfBirthCommunity}"
+                    app:dependencyParentField="@{personBirthInInstitution}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
@@ -197,12 +224,90 @@
             <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                 android:id="@+id/person_placeOfBirthFacility"
                 style="@style/ControlSingleColumnStyle"
+                app:dependencyParentField="@{personBirthInInstitution}"
+                app:dependencyParentValue="@{YesNoUnknown.YES}"
                 app:value="@={data.placeOfBirthFacility}" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/person_placeOfBirthFacilityDetails"
                 app:value="@={data.placeOfBirthFacilityDetails}"
                 style="@style/ControlSingleColumnStyle" />
+
+<!--            receivedAntenatalCare,prenatalTotalVisits,attendedByTrainedTBA,attendedByTrainedTBAMidwifeName,attendedByDoctorNurse,cutCordWithSterileBlade,cordTreatedWithAnything,cordTreatedWithAnythingWhere-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/person_receivedAntenatalCare"
+                    app:value="@={data.receivedAntenatalCare}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/person_prenatalTotalVisits"
+                    app:value="@={data.prenatalTotalVisits}"
+                    app:inputType="number"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/person_attendedByTrainedTBA"
+                    app:value="@={data.attendedByTrainedTBA}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/person_attendedByTrainedTBAMidwifeName"
+                    app:value="@={data.attendedByTrainedTBAMidwifeName}"
+                    app:dependencyParentField="@{personAttendedByTrainedTBA}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/person_attendedByDoctorNurse"
+                    app:value="@={data.attendedByDoctorNurse}"
+                    app:enumClass="@{attendedByClass}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/person_cutCordWithSterileBlade"
+                    app:value="@={data.cutCordWithSterileBlade}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/person_cordTreatedWithAnything"
+                    app:value="@={data.cordTreatedWithAnything}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/person_cordTreatedWithAnythingWhere"
+                    app:value="@={data.cordTreatedWithAnythingWhere}"
+                    app:dependencyParentField="@{personCordTreatedWithAnything}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

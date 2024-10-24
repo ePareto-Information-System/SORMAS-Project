@@ -122,12 +122,15 @@ public class Location extends PseudonymizableAdo {
 	private String landMark;
 	@Column(length = CHARACTER_LIMIT_BIG)
 	private String residentialAddress;
+	@Column(length = CHARACTER_LIMIT_BIG)
+	private String nearestHealthFacilityToVillage;
 
-	/**
-	 * Dirty fix for person-location association; doing this with a JoinTable is not
-	 * easy in SQLite; only locations that are part of the addresses field of a person
-	 * have this association.
-	 */
+
+/**
+ * Dirty fix for person-location association; doing this with a JoinTable is not
+ * easy in SQLite; only locations that are part of the addresses field of a person
+ * have this association.
+ */
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private Person person;
 
@@ -525,5 +528,13 @@ public class Location extends PseudonymizableAdo {
 
 	public void setResidentialAddress(String residentialAddress) {
 		this.residentialAddress = residentialAddress;
+	}
+
+	public String getNearestHealthFacilityToVillage() {
+		return nearestHealthFacilityToVillage;
+	}
+
+	public void setNearestHealthFacilityToVillage(String nearestHealthFacilityToVillage) {
+		this.nearestHealthFacilityToVillage = nearestHealthFacilityToVillage;
 	}
 }

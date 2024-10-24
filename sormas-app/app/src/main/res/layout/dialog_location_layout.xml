@@ -222,6 +222,11 @@
                 app:inputType="numberDecimal"
                 app:value="@={data.latLonAccuracy}" />
 
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/location_nearestHealthFacilityToVillage"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@={data.nearestHealthFacilityToVillage}" />
+
         </LinearLayout>
 
     </ScrollView>

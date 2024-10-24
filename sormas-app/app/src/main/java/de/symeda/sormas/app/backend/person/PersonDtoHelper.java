@@ -161,6 +161,16 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		target.setPst14MonthsCommunity(DatabaseHelper.getCommunityDao().getByReferenceDto(source.getPst14MonthsCommunity()));
 		target.setPst14MonthsZone(source.getPst14MonthsZone());
 		target.setPst14MonthsVillage(source.getPst14MonthsVillage());
+		target.setLocationOfBirth(source.getLocationOfBirth());
+		target.setBirthInInstitution(source.getBirthInInstitution());
+		target.setReceivedAntenatalCare(source.getReceivedAntenatalCare());
+		target.setPrenatalTotalVisits(source.getPrenatalTotalVisits());
+		target.setAttendedByTrainedTBA(source.getAttendedByTrainedTBA());
+		target.setAttendedByTrainedTBAMidwifeName(source.getAttendedByTrainedTBAMidwifeName());
+		target.setAttendedByDoctorNurse(source.getAttendedByDoctorNurse());
+		target.setCutCordWithSterileBlade(source.getCutCordWithSterileBlade());
+		target.setCordTreatedWithAnything(source.getCordTreatedWithAnything());
+		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
 	}
 
 	@Override
@@ -295,6 +305,17 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		}
 		target.setPst14MonthsZone(source.getPst14MonthsZone());
 		target.setPst14MonthsVillage(source.getPst14MonthsVillage());
+		target.setLocationOfBirth(source.getLocationOfBirth());
+		target.setBirthInInstitution(source.getBirthInInstitution());
+		target.setReceivedAntenatalCare(source.getReceivedAntenatalCare());
+		target.setPrenatalTotalVisits(source.getPrenatalTotalVisits());
+		target.setAttendedByTrainedTBA(source.getAttendedByTrainedTBA());
+		target.setAttendedByTrainedTBAMidwifeName(source.getAttendedByTrainedTBAMidwifeName());
+		target.setAttendedByDoctorNurse(source.getAttendedByDoctorNurse());
+		target.setCutCordWithSterileBlade(source.getCutCordWithSterileBlade());
+		target.setCordTreatedWithAnything(source.getCordTreatedWithAnything());
+		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
+
 	}
 
     @Override

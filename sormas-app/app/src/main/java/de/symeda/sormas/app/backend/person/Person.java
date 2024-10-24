@@ -44,16 +44,19 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.ArmedForcesRelationType;
+import de.symeda.sormas.api.person.AttendedBy;
 import de.symeda.sormas.api.person.BurialConductor;
 import de.symeda.sormas.api.person.CauseOfDeath;
 import de.symeda.sormas.api.person.DeathPlaceType;
 import de.symeda.sormas.api.person.EducationType;
+import de.symeda.sormas.api.person.LocationOfBirth;
 import de.symeda.sormas.api.person.MaritalStatus;
 import de.symeda.sormas.api.person.OccupationType;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Salutation;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.facility.Facility;
@@ -229,6 +232,26 @@ public class Person extends PseudonymizableAdo {
 	private YesNo placeOfResidenceSameAsReportingVillage;
 	@Column
 	private Integer residenceSinceWhenInMonths;
+	@Enumerated(EnumType.STRING)
+	private LocationOfBirth locationOfBirth;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown birthInInstitution;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown receivedAntenatalCare;
+	@Column
+	private Integer prenatalTotalVisits;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown attendedByTrainedTBA;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String attendedByTrainedTBAMidwifeName;
+	@Enumerated(EnumType.STRING)
+	private AttendedBy attendedByDoctorNurse;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown cutCordWithSterileBlade;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown cordTreatedWithAnything;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String cordTreatedWithAnythingWhere;
 
 	public Person() {
 	}
@@ -777,5 +800,85 @@ public class Person extends PseudonymizableAdo {
 
 	public void setResidenceSinceWhenInMonths(Integer residenceSinceWhenInMonths) {
 		this.residenceSinceWhenInMonths = residenceSinceWhenInMonths;
+	}
+
+	public LocationOfBirth getLocationOfBirth() {
+		return locationOfBirth;
+	}
+
+	public void setLocationOfBirth(LocationOfBirth locationOfBirth) {
+		this.locationOfBirth = locationOfBirth;
+	}
+
+	public YesNoUnknown getBirthInInstitution() {
+		return birthInInstitution;
+	}
+
+	public void setBirthInInstitution(YesNoUnknown birthInInstitution) {
+		this.birthInInstitution = birthInInstitution;
+	}
+
+	public YesNoUnknown getReceivedAntenatalCare() {
+		return receivedAntenatalCare;
+	}
+
+	public void setReceivedAntenatalCare(YesNoUnknown receivedAntenatalCare) {
+		this.receivedAntenatalCare = receivedAntenatalCare;
+	}
+
+	public Integer getPrenatalTotalVisits() {
+		return prenatalTotalVisits;
+	}
+
+	public void setPrenatalTotalVisits(Integer prenatalTotalVisits) {
+		this.prenatalTotalVisits = prenatalTotalVisits;
+	}
+
+	public YesNoUnknown getAttendedByTrainedTBA() {
+		return attendedByTrainedTBA;
+	}
+
+	public void setAttendedByTrainedTBA(YesNoUnknown attendedByTrainedTBA) {
+		this.attendedByTrainedTBA = attendedByTrainedTBA;
+	}
+
+	public String getAttendedByTrainedTBAMidwifeName() {
+		return attendedByTrainedTBAMidwifeName;
+	}
+
+	public void setAttendedByTrainedTBAMidwifeName(String attendedByTrainedTBAMidwifeName) {
+		this.attendedByTrainedTBAMidwifeName = attendedByTrainedTBAMidwifeName;
+	}
+
+	public AttendedBy getAttendedByDoctorNurse() {
+		return attendedByDoctorNurse;
+	}
+
+	public void setAttendedByDoctorNurse(AttendedBy attendedByDoctorNurse) {
+		this.attendedByDoctorNurse = attendedByDoctorNurse;
+	}
+
+	public YesNoUnknown getCutCordWithSterileBlade() {
+		return cutCordWithSterileBlade;
+	}
+
+	public void setCutCordWithSterileBlade(YesNoUnknown cutCordWithSterileBlade) {
+		this.cutCordWithSterileBlade = cutCordWithSterileBlade;
+	}
+
+	public YesNoUnknown getCordTreatedWithAnything() {
+		return cordTreatedWithAnything;
+	}
+
+	public void setCordTreatedWithAnything(YesNoUnknown cordTreatedWithAnything) {
+		this.cordTreatedWithAnything = cordTreatedWithAnything;
+	}
+
+	public String getCordTreatedWithAnythingWhere() {
+		return cordTreatedWithAnythingWhere;
+	}
+
+	public void setCordTreatedWithAnythingWhere(String cordTreatedWithAnythingWhere) {
+		this.cordTreatedWithAnythingWhere = cordTreatedWithAnythingWhere;
 	}
 }
