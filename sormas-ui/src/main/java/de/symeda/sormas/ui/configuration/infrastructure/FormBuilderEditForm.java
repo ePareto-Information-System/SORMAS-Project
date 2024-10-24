@@ -62,7 +62,7 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
     private int currentOrder = 0;
     Boolean firstPageLoad = true;
     private FormFieldsCriteria criteria;
-    private String highlightedItemId = null; // To track the currently highlighted item
+    private String highlightedItemId = null;
 
 
     public FormBuilderEditForm(boolean create) {
@@ -148,20 +148,18 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
             @SuppressWarnings("unchecked")
             Set<FormFieldIndexDto> selected = (Set<FormFieldIndexDto>) availableFields.getValue();
             for (FormFieldIndexDto field : selected) {
-                // Check if the field is already in selectedFieldsContainer
                 if (selectedFieldsContainer.getItem(field.getUuid()) == null) {
                     Item item = selectedFieldsContainer.addItem(field.getUuid());
                     if (item != null) {
-                        // Calculate the correct order based on current items
                         int order = selectedFieldsContainer.size() + 1;
                         item.getItemProperty(PROPERTY_FIELD).setValue(field);
-                        item.getItemProperty(PROPERTY_ORDER).setValue(order); // Use calculated order
+                        item.getItemProperty(PROPERTY_ORDER).setValue(order);
                         item.getItemProperty(PROPERTY_NAME).setValue(field.getFieldName());
                     }
                 }
             }
             availableFields.setValue(null);
-            reorderItems(); // Reorder the items after addition
+            reorderItems();
             updateFormFieldsList();
         });
 
@@ -169,13 +167,9 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
         removeButton.addClickListener(event -> {
             Set<String> selectedIds = (Set<String>) selectedFieldsTable.getValue();
             for (String id : selectedIds) {
-                // Find the field being removed
                 FormFieldIndexDto field = (FormFieldIndexDto) selectedFieldsContainer.getItem(id).getItemProperty(PROPERTY_FIELD).getValue();
 
-                // Remove the item from selectedFieldsContainer
                 selectedFieldsContainer.removeItem(id);
-
-                // Add it back to availableFields
                 availableFields.addItem(field);
                 availableFields.setItemCaption(field, field.getFieldName());
             }
@@ -192,7 +186,6 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
                     moveItem(id, true);
                 }
                 updateFormFieldsList();
-                // Restore selection after move
                 selectedFieldsTable.setValue(lastSelectedIds);
             }
         });
@@ -206,7 +199,6 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
                     moveItem((String) selectedIdsArray[i], false);
                 }
                 updateFormFieldsList();
-                // Restore selection after move
                 selectedFieldsTable.setValue(lastSelectedIds);
             }
         });
@@ -215,14 +207,12 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
             Set<String> selectedIds = (Set<String>) selectedFieldsTable.getValue();
             if (selectedIds != null && !selectedIds.isEmpty()) {
                 lastSelectedIds = new HashSet<>(selectedIds);
-                // Move items to top in reverse order to maintain relative positions
                 List<String> selectedIdsList = new ArrayList<>(selectedIds);
                 Collections.reverse(selectedIdsList);
                 for (String id : selectedIdsList) {
                     moveItemToTop(id);
                 }
                 updateFormFieldsList();
-                // Restore selection after move
                 selectedFieldsTable.setValue(lastSelectedIds);
             }
         });
@@ -316,11 +306,10 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
     }
 
     private void reorderItems() {
-        currentOrder = 0; // Reset order count
+        currentOrder = 0;
         for (Object itemId : selectedFieldsContainer.getItemIds()) {
             Item item = selectedFieldsContainer.getItem(itemId);
-            item.getItemProperty(PROPERTY_ORDER).setValue(++currentOrder); // Increment correctly
-            // Optionally update the DTOs with the new order
+            item.getItemProperty(PROPERTY_ORDER).setValue(++currentOrder);
             FormFieldIndexDto field = (FormFieldIndexDto) item.getItemProperty(PROPERTY_FIELD).getValue();
             FormFieldReferenceDto dto = new FormFieldReferenceDto();
             dto.setUuid(field.getUuid());
@@ -329,8 +318,6 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
             getValue().getFormFields().add(dto);
         }
     }
-
-
 
     private void updateFormFieldsList() {
         List<FormFieldReferenceDto> selectedDtos = new ArrayList<>();
@@ -375,13 +362,11 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
 
         availableFields.removeAllItems();
 
-        // First, collect all selected field UUIDs
         Set<String> selectedFieldUuids = getValue().getFormFields().stream()
                 .map(FormFieldReferenceDto::getUuid)
                 .collect(Collectors.toSet());
 
         for (FormFieldIndexDto dto : formFieldIndexDtos) {
-            // Only add to availableFields if not already selected
             if (!selectedFieldUuids.contains(dto.getUuid())) {
                 availableFields.addItem(dto);
                 availableFields.setItemCaption(dto, dto.getFieldName());

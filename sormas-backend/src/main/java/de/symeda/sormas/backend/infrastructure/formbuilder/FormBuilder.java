@@ -113,19 +113,4 @@ public class FormBuilder extends InfrastructureAdo {
         }
     }
 
-  /*  @ManyToMany(cascade = {}, fetch = FetchType.LAZY)
-    @JoinTable(name = "forms_form_fields",
-            joinColumns = @JoinColumn(name = "form_id"),
-            inverseJoinColumns = @JoinColumn(name = "formField_id"))
-    @OrderColumn(name = "displayOrder") // Ensure this column exists in your join table
-
-    public List<FormField> getFormFields() {
-        return formFields;
-    }
-
-    public void setFormFields(List<FormField> formFields) {
-        this.formFields = formFields;
-    }*/
-
-
 }
