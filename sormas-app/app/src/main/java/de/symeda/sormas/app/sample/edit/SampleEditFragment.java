@@ -260,12 +260,6 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		contentBinding.sampleSelectedResultIGMDate.initializeDateField(getFragmentManager());
 		contentBinding.sampleSelectedResultPcrDate.initializeDateField(getFragmentManager());
 		contentBinding.sampleSelectedResultPrntDate.initializeDateField(getFragmentManager());
-
-		if(record.getAssociatedCase().getDisease() != null){
-			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_EDIT);
-		}
-		contentBinding.setFilterChangingFrequencyClass(FilterChangingFrequency.class);
-
 		contentBinding.sampleDateSpecimenReceivedAtRegion.initializeDateField(getFragmentManager());
 		contentBinding.sampleDateSpecimenReceivedAtRegion.initializeDateField(getFragmentManager());
 		contentBinding.sampleDateSpecimenReceivedAtNational.initializeDateField(getFragmentManager());
@@ -277,8 +271,11 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		contentBinding.sampleDateFormSentToHigherLevel.initializeDateField(getFragmentManager());
 
 		if(record.getAssociatedCase().getDisease() != null){
-			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_CREATE);
+			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_EDIT);
 		}
+		contentBinding.setFilterChangingFrequencyClass(FilterChangingFrequency.class);
+
+
 	}
 
 	@Override
