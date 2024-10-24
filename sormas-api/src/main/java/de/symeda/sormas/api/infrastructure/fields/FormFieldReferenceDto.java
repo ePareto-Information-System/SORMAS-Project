@@ -29,7 +29,7 @@ import de.symeda.sormas.api.utils.DependingOnFeatureType;
 public class FormFieldReferenceDto extends InfrastructureDataReferenceDto implements StatisticsGroupingKey {
 
 	private static final long serialVersionUID = -7987228795475507196L;
-
+	private Integer displayOrder;
 	public FormFieldReferenceDto() {
 	}
 
@@ -39,6 +39,14 @@ public class FormFieldReferenceDto extends InfrastructureDataReferenceDto implem
 
 	public FormFieldReferenceDto(String uuid, String caption, String externalId) {
 		super(uuid, caption, externalId);
+	}
+
+	public Integer getDisplayOrder() {
+		return displayOrder; // Getter for displayOrder
+	}
+
+	public void setDisplayOrder(Integer displayOrder) {
+		this.displayOrder = displayOrder; // Setter for displayOrder
 	}
 
 	@Override

@@ -20,6 +20,7 @@ public class FormFieldIndexDto implements Serializable {
     private String fieldName;
     private String description;
     private Boolean active;
+    private Integer displayOrder;
 
     public FormFieldIndexDto(
             String uuid,
@@ -83,6 +84,14 @@ public class FormFieldIndexDto implements Serializable {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public Integer getDisplayOrder() {
+        return displayOrder;
+    }
+
+    public void setDisplayOrder(Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }
 
     //TODO: Write clone method
