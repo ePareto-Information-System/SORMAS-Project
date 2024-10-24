@@ -15125,4 +15125,26 @@ CREATE TRIGGER versioning_trigger
 ALTER TABLE forms_form_fields_history OWNER TO sormas_user;
 INSERT INTO schema_version (version_number, comment) VALUES (710, 'Added forms_form_fields table');
 
+ALTER TABLE forms_form_fields ADD COLUMN displayOrder INTEGER;
+INSERT INTO schema_version (version_number, comment) VALUES (711, 'Added displayorder to forms_form_fields table');
+
+CREATE INDEX idx_forms_form_fields_order
+    ON forms_form_fields (form_id, displayOrder);
+INSERT INTO schema_version (version_number, comment) VALUES (712, 'Craeted index for displayorder on forms_form_fields table');
+
+-- Update any null displayOrder values with valid ordering
+UPDATE forms_form_fields
+SET displayOrder = subquery.row_num - 1
+    FROM (
+    SELECT form_id, formField_id, ROW_NUMBER() OVER (PARTITION BY form_id ORDER BY formField_id) as row_num
+    FROM forms_form_fields
+    WHERE displayOrder IS NULL
+) as subquery
+WHERE forms_form_fields.form_id = subquery.form_id
+  AND forms_form_fields.formField_id = subquery.formField_id
+  AND forms_form_fields.displayOrder IS NULL;
+
+-- Make displayOrder not nullable if it isn't already
+ALTER TABLE forms_form_fields ALTER COLUMN displayOrder SET NOT NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (713, 'Made updates on forms_form_fields table');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

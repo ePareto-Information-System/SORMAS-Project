@@ -9,6 +9,8 @@ import de.symeda.sormas.backend.infrastructure.formfiield.FormField;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity(name = FormBuilder.TABLE_NAME)
@@ -28,6 +30,7 @@ public class FormBuilder extends InfrastructureAdo {
     private Boolean active;
     private Disease disease;
     private FormType formType;
+    private List<FormField> formFields = new ArrayList<>();
     @Override
     public String getUuid() {
         return super.getUuid();
@@ -69,7 +72,7 @@ public class FormBuilder extends InfrastructureAdo {
         return form;
     }
 
-    public static FormBuilder build(Disease disease) {
+    /*public static FormBuilder build(Disease disease) {
         return build(disease, null);
     }
 
@@ -80,7 +83,49 @@ public class FormBuilder extends InfrastructureAdo {
     public Set<FormField> getFormFields() {return formFields;}
     public void setFormFields(Set<FormField> formFields) {
         this.formFields = formFields;
+    }*/
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "forms_form_fields",
+            joinColumns = @JoinColumn(name = "form_id"),
+            inverseJoinColumns = @JoinColumn(name = "formField_id")
+    )
+    @OrderColumn(name = "displayOrder", nullable = false)  // Matches existing column name
+    public List<FormField> getFormFields() {
+        return formFields;
     }
+
+    public void setFormFields(List<FormField> formFields) {
+        this.formFields = formFields != null ? formFields : new ArrayList<>();
+    }
+
+    public void addFormField(FormField formField) {
+        if (formFields == null) {
+            formFields = new ArrayList<>();
+        }
+        formFields.add(formField);
+    }
+
+    public void removeFormField(FormField formField) {
+        if (formFields != null) {
+            formFields.remove(formField);
+        }
+    }
+
+  /*  @ManyToMany(cascade = {}, fetch = FetchType.LAZY)
+    @JoinTable(name = "forms_form_fields",
+            joinColumns = @JoinColumn(name = "form_id"),
+            inverseJoinColumns = @JoinColumn(name = "formField_id"))
+    @OrderColumn(name = "displayOrder") // Ensure this column exists in your join table
+
+    public List<FormField> getFormFields() {
+        return formFields;
+    }
+
+    public void setFormFields(List<FormField> formFields) {
+        this.formFields = formFields;
+    }*/
 
 
 }
