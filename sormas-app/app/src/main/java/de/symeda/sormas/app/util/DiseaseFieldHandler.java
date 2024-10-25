@@ -48,7 +48,7 @@ public class DiseaseFieldHandler {
             View child = mainContent.getChildAt(i);
             handleChildView(child, relevantFields);
         }
-        List<Integer> fieldOrder = getFieldOrderFromDatabase(diseaseName, formType);
+        List<Integer> fieldOrder = getFieldOrderForDisease(diseaseName, formType);
         if (!fieldOrder.isEmpty()) {
             reorderFieldsForDisease(fieldOrder, mainContent);
         }
@@ -208,16 +208,6 @@ public class DiseaseFieldHandler {
         }
     }
 
-    private List<Integer> getFieldOrderFromDatabase(Disease diseaseName, FormType formType) {
-        FormBuilder formBuilder = DatabaseHelper.getFormBuilderDao().getFormBuilder(formType, diseaseName);
-        if (formBuilder != null) {
-            return DatabaseHelper.getFormBuilderDao().getFormBuilderFormFields(formBuilder)
-                    .stream()
-                    .map(field -> field.getId().intValue())
-                    .collect(Collectors.toList());
-        }
-        return new ArrayList<>();
-    }
 
 }
 
