@@ -3804,6 +3804,25 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN notifiedByList varchar(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN notifiedOther varchar(255);");
 
+				case 366:
+					currentVersion = 366;
+					getDao(FormBuilder.class).executeRaw(
+							"BEGIN TRANSACTION;"
+									+ "CREATE TABLE forms_form_fields_new ("
+									+ "form_id BIGINT NOT NULL,"
+									+ "formField_id BIGINT NOT NULL,"
+									+ "displayOrder INTEGER,"
+									+ "PRIMARY KEY (form_id, formField_id),"
+									+ "FOREIGN KEY (form_id) REFERENCES forms(id),"
+									+ "FOREIGN KEY (formField_id) REFERENCES form_fields(id)"
+									+ ");"
+									+ "INSERT INTO forms_form_fields_new (form_id, formField_id) "
+									+ "SELECT form_id, formField_id FROM forms_form_fields;"
+									+ "DROP TABLE forms_form_fields;"
+									+ "ALTER TABLE forms_form_fields_new RENAME TO forms_form_fields;"
+									+ "COMMIT;"
+					);
+
 				// ATTENTION: break should only be done after last version
 				break;
 			default:
