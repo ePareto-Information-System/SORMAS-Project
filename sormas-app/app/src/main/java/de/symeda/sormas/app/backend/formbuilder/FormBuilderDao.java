@@ -91,6 +91,27 @@ public class FormBuilderDao extends AbstractAdoDao<FormBuilder> {
 		}
 	}
 
+	public List<FormField> getOrderedFormBuilderFormFields(FormBuilder formBuilder) {
+		try {
+			// Build a query on the junction table (forms_form_fields) using formBuilderId
+			QueryBuilder<FormBuilderFormField, Long> queryBuilder = formBuilderFormFieldDao.queryBuilder();
+			queryBuilder.where().eq("form_id", formBuilder.getId());
+			queryBuilder.orderBy("displayOrder", true);
+
+			// Execute query and fetch the ordered FormBuilderFormField entries
+			List<FormBuilderFormField> formBuilderFields = queryBuilder.query();
+
+			// Map these entries to a list of FormField objects
+			return formBuilderFields.stream()
+					.map(formBuilderFormField -> DatabaseHelper.getFormFieldDao().queryForId(formBuilderFormField.getFormField().getId()))
+					.collect(Collectors.toList());
+		} catch (SQLException e) {
+			Log.e(getTableName(), "Could not retrieve ordered form fields for FormBuilder");
+			throw new RuntimeException(e);
+		}
+	}
+
+
 	@Override
 	public void create(FormBuilder data) throws SQLException {
 		if (data == null)

@@ -54,7 +54,6 @@
 
             <de.symeda.sormas.app.component.controls.ControlSpinnerField
                 android:id="@+id/caseData_disease"
-                android:tag="disease_tag"
                 style="@style/ControlSingleColumnStyle"
                 app:required="true"
                 app:value="@={data.disease}" />
@@ -125,7 +124,6 @@
 
             <de.symeda.sormas.app.component.controls.ControlSwitchField
                 android:id="@+id/caseData_caseOrigin"
-                android:tag="case_origin_tag"
                 style="@style/ControlSingleColumnStyle"
                 app:enumClass="@{caseOriginClass}"
                 app:nullable="false"
@@ -140,7 +138,6 @@
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/caseData_epidNumber"
-                android:tag="epid_number_tag"
                 app:value="@={data.epidNumber}"
                 app:userViewRight="@{UserRight.CASE_CHANGE_EPID_NUMBER}"
                 style="@style/ControlSingleColumnStyle" />
@@ -153,14 +150,13 @@
                 style="@style/SubHeadingStyle" />
 
             <LinearLayout
-                android:id="@+id/region_district_fields_layout"
+                android:id="@+id/caseData_responsibleRegion_heading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                     android:id="@+id/caseData_responsibleRegion"
-                    android:tag="responsibleRegion_tag"
                     app:value="@={data.responsibleRegion}"
                     app:required="true"
                     app:userEditRight="@{UserRight.CASE_TRANSFER}"
@@ -168,7 +164,6 @@
 
                 <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                     android:id="@+id/caseData_responsibleDistrict"
-                    android:tag="responsibleDistrict_tag"
                     app:value="@={data.responsibleDistrict}"
                     app:required="true"
                     app:userEditRight="@{UserRight.CASE_TRANSFER}"
@@ -178,7 +173,6 @@
 
             <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                 android:id="@+id/caseData_responsibleCommunity"
-                android:tag="responsibleCommunity_tag"
                 app:value="@={data.responsibleCommunity}"
                 app:userEditRight="@{UserRight.CASE_TRANSFER}"
                 style="@style/ControlSingleColumnStyle" />
@@ -295,14 +289,13 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/date_fields_layout"
+                android:id="@+id/caseData_dateFields_heading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlDateField
                     android:id="@+id/caseData_reportDate"
-                    android:tag="report_date_tag"
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:required="true"
                     app:dateWithoutTime="@{true}"
@@ -350,7 +343,7 @@
                 android:text="@string/caption_date_of_birth" />
 
             <LinearLayout
-                android:id="@+id/birthday_fields_layout"
+                android:id="@+id/person_birthdateYYYY_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">

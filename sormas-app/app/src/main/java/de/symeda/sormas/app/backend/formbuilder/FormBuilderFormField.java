@@ -21,6 +21,9 @@ public class FormBuilderFormField {
     @DatabaseField(foreign = true, columnName = "formField_id")
     private FormField formField;
 
+    @DatabaseField(columnName = "displayOrder")
+    private Integer displayOrder;
+
     //Needed for dto serialization
     public FormBuilderFormField() {
     }
@@ -44,5 +47,13 @@ public class FormBuilderFormField {
 
     public void setFormBuilder(FormBuilder formBuilder) {
         this.formBuilder = formBuilder;
+    }
+
+    public Integer getDisplayOrder() {
+        return displayOrder;
+    }
+
+    public void setDisplayOrder(Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }
 }

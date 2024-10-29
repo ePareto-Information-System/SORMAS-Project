@@ -432,7 +432,7 @@
                     style="@style/SubHeadingStyle" />
 
                 <LinearLayout
-                    android:id="@+id/region_district_fields_layout"
+                    android:id="@+id/caseData_responsibleRegion_heading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">

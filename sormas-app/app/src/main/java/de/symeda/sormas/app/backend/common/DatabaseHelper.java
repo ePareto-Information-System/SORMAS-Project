@@ -200,7 +200,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 366;
+	public static final int DATABASE_VERSION = 367;
 
 	private static DatabaseHelper instance = null;
 
@@ -3314,6 +3314,25 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				case 365:
 					currentVersion = 365;
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN labLocation VARCHAR(255);");
+
+				case 366:
+					currentVersion = 366;
+					getDao(FormBuilder.class).executeRaw(
+							"BEGIN TRANSACTION;"
+									+ "CREATE TABLE forms_form_fields_new ("
+									+ "form_id BIGINT NOT NULL,"
+									+ "formField_id BIGINT NOT NULL,"
+									+ "displayOrder INTEGER,"
+									+ "PRIMARY KEY (form_id, formField_id),"
+									+ "FOREIGN KEY (form_id) REFERENCES forms(id),"
+									+ "FOREIGN KEY (formField_id) REFERENCES form_fields(id)"
+									+ ");"
+									+ "INSERT INTO forms_form_fields_new (form_id, formField_id) "
+									+ "SELECT form_id, formField_id FROM forms_form_fields;"
+									+ "DROP TABLE forms_form_fields;"
+									+ "ALTER TABLE forms_form_fields_new RENAME TO forms_form_fields;"
+									+ "COMMIT;"
+					);
 
 				// ATTENTION: break should only be done after last version
 				break;
