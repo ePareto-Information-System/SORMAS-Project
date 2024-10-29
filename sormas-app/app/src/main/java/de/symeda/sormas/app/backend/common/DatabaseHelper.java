@@ -3525,8 +3525,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateDistrictReceivedLabResults DATE;");
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryDateResultsSentDSD DATE;");
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN finalClassification VARCHAR(255);");
-				case 378:
-					currentVersion = 378;
+				case 377:
+					currentVersion = 377;
 					getDao(Ebs.class).executeRaw(
 							"CREATE TABLE ebs(" +
 									"id bigint primary key not null," +
@@ -3602,8 +3602,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Ebs.class).executeRaw(
 							"ALTER TABLE ebs ADD CONSTRAINT fk_ebs_ebsAlert_id FOREIGN KEY (ebsAlert_id) REFERENCES ebsAlert (id);"
 					);
-				case 379:
-					currentVersion = 379;
+				case 378:
+					currentVersion = 378;
 					getDao(Triaging.class).executeRaw(
 							"CREATE TABLE triaging(" +
 									"id bigint primary key not null," +
@@ -3637,8 +3637,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									"referred varchar(3)" +
 									");"
 					);
-				case 380:
-					currentVersion = 380;
+				case 379:
+					currentVersion = 379;
 					getDao(RiskAssessment.class).executeRaw(
 							"CREATE TABLE riskAssessment(" +
 									"id bigint primary key autoincrement," +
@@ -3655,8 +3655,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" + // Foreign key constraint
 									");"
 					);
-				case 381:
-					currentVersion = 381;
+				case 380:
+					currentVersion = 380;
 					getDao(EbsAlert.class).executeRaw(
 							"CREATE TABLE ebsAlert(" +
 									"id bigint primary key autoincrement," +
@@ -3672,8 +3672,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" +
 									");"
 					);
-				case 382:
-					currentVersion = 382;
+				case 381:
+					currentVersion = 381;
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherVaccinatedWithTT VARCHAR(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherHaveCard VARCHAR(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN motherNumberOfDoses VARCHAR(255);");
@@ -3692,8 +3692,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN supplementalImmunizationDetails VARCHAR(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN dateOfNotification DATE;");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN notifiedBy VARCHAR(255);");
-				case 383:
-					currentVersion = 383;
+				case 382:
+					currentVersion = 382;
 					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN locationOfBirth VARCHAR(255);");
 					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN birthInInstitution VARCHAR(255);");
 					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN receivedAntenatalCare VARCHAR(255);");
@@ -3704,17 +3704,17 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN cutCordWithSterileBlade VARCHAR(255);");
 					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN cordTreatedWithAnything VARCHAR(255);");
 					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN cordTreatedWithAnythingWhere VARCHAR(255);");
+				case 383:
+					currentVersion = 383;
+					getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN nearestHealthFacilityToVillage VARCHAR(255);");
 				case 384:
 					currentVersion = 384;
-					getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN nearestHealthFacilityToVillage VARCHAR(255);");
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN wasPatientAdmitted VARCHAR(255);");
 				case 385:
 					currentVersion = 385;
-					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN wasPatientAdmitted VARCHAR(255);");
+					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN riskfactor_id BIGINT;");
 				case 386:
 					currentVersion = 386;
-					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN riskfactor_id BIGINT;");
-				case 387:
-					currentVersion = 387;
 					getDao(RiskFactor.class).executeRaw(
 							"CREATE TABLE riskfactor ("
 									+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -3764,18 +3764,37 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									+ ");"
 					);
 	
-				case 388:
-					currentVersion = 388;
+				case 387:
+					currentVersion = 387;
 					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN exposedToRiskFactor VARCHAR(255);");
 					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN waterUsedByPatientAfterExposure VARCHAR(255);");
 					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN waterUsedForDrinking VARCHAR(255);");
 					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN waterUsedNotForDrinking VARCHAR(255);");
 					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN foodItems VARCHAR(255);");
-				case 389:
-					currentVersion = 389;
+				case 388:
+					currentVersion = 388;
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN numberOfPeopleInSameHousehold VARCHAR(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN dateLatestUpdateRecord DATE;");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN otherNotesAndObservations VARCHAR(255);");
+				case 389:
+					currentVersion = 389;
+					getDao(FormBuilder.class).executeRaw(
+							"BEGIN TRANSACTION;"
+									+ "CREATE TABLE forms_form_fields_new ("
+									+ "form_id BIGINT NOT NULL,"
+									+ "formField_id BIGINT NOT NULL,"
+									+ "displayOrder INTEGER,"
+									+ "PRIMARY KEY (form_id, formField_id),"
+									+ "FOREIGN KEY (form_id) REFERENCES forms(id),"
+									+ "FOREIGN KEY (formField_id) REFERENCES form_fields(id)"
+									+ ");"
+									+ "INSERT INTO forms_form_fields_new (form_id, formField_id) "
+									+ "SELECT form_id, formField_id FROM forms_form_fields;"
+									+ "DROP TABLE forms_form_fields;"
+									+ "ALTER TABLE forms_form_fields_new RENAME TO forms_form_fields;"
+									+ "COMMIT;"
+					);
+
 				// ATTENTION: break should only be done after last version
 				break;
 			default:
