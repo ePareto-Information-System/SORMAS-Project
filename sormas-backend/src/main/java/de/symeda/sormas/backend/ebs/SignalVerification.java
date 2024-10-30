@@ -1,7 +1,7 @@
 package de.symeda.sormas.backend.ebs;
 
 import de.symeda.sormas.api.ebs.SignalOutcome;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 
 import javax.persistence.Entity;
@@ -31,7 +31,7 @@ public class SignalVerification extends AbstractDomainObject {
     public static final String DESCRIPTION = "description";
     public static final String WHY_NOT_VERIFY = "whyNotVerify";
 
-    private YesNo verificationSent;
+    private YesNoUnknown verificationSent;
     private SignalOutcome verified;
     private Date verificationCompleteDate;
     private Date dateOfOccurrence;
@@ -42,11 +42,11 @@ public class SignalVerification extends AbstractDomainObject {
     private String description;
     private String whyNotVerify;
 
-    public YesNo getVerificationSent() {
+    public YesNoUnknown getVerificationSent() {
         return verificationSent;
     }
 
-    public void setVerificationSent(YesNo verificationSent) {
+    public void setVerificationSent(YesNoUnknown verificationSent) {
         this.verificationSent = verificationSent;
     }
     @Enumerated(EnumType.STRING)

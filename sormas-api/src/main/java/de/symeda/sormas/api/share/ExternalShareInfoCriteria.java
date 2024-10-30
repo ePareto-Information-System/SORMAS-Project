@@ -28,7 +28,7 @@ public class ExternalShareInfoCriteria implements Serializable {
 	private CaseReferenceDto caze;
 
 	private EventReferenceDto event;
-	@AuditIncludeProperty
+
 	private EbsReferenceDto ebs;
 
 	public CaseReferenceDto getCaze() {

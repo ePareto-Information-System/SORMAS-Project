@@ -18,7 +18,7 @@
 package de.symeda.sormas.api.ebs;
 
 import de.symeda.sormas.api.ReferenceDto;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 
 public class AlertReferenceDto extends ReferenceDto {
 
@@ -39,7 +39,7 @@ public class AlertReferenceDto extends ReferenceDto {
 
 	public AlertReferenceDto(
 		String uuid,
-		YesNo actionInitiated) {
+		YesNoUnknown actionInitiated) {
 		this.setUuid(uuid);
 		this.setCaption(buildCaption(actionInitiated));
 	}
@@ -57,7 +57,7 @@ public class AlertReferenceDto extends ReferenceDto {
 	}
 
 	public AlertReferenceDto(
-			YesNo actionInitiated) {
+			YesNoUnknown actionInitiated) {
 		this.setCaption(buildCaption(actionInitiated));
 	}
 
@@ -70,7 +70,7 @@ public class AlertReferenceDto extends ReferenceDto {
 	}
 
 	public static String buildCaption(
-			YesNo actionInitiated) {
+			YesNoUnknown actionInitiated) {
 		if(actionInitiated == null){
 			return "";
 		}

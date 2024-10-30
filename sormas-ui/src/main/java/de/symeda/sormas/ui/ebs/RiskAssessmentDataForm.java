@@ -13,7 +13,7 @@ import de.symeda.sormas.api.ebs.RiskAssesment;
 import de.symeda.sormas.api.ebs.RiskAssessmentDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
@@ -56,7 +56,7 @@ public class RiskAssessmentDataForm extends AbstractEditForm<RiskAssessmentDto> 
                 RiskAssessmentDto.I18N_PREFIX,
             false,
             FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-            createFieldAccessCheckers(isPseudonymized, inJurisdiction, true));
+            createFieldAccessCheckers(isPseudonymized, true));
         this.ebs = ebsDto;
         this.parentClass = parentClass;
         addFields();
@@ -64,12 +64,10 @@ public class RiskAssessmentDataForm extends AbstractEditForm<RiskAssessmentDto> 
 
     private static UiFieldAccessCheckers createFieldAccessCheckers(
             boolean isPseudonymized,
-            boolean inJurisdiction,
             boolean withPersonalAndSensitive) {
 
         if (withPersonalAndSensitive) {
-            return UiFieldAccessCheckers
-                    .forDataAccessLevel(UserProvider.getCurrent().getPseudonymizableDataAccessLevel(inJurisdiction), isPseudonymized);
+            return UiFieldAccessCheckers.getDefault(isPseudonymized);
         }
 
         return UiFieldAccessCheckers.getNoop();
@@ -107,20 +105,20 @@ public class RiskAssessmentDataForm extends AbstractEditForm<RiskAssessmentDto> 
 
         ValueChangeListener commonListener = event -> {
 
-            // Check if all three fields have YesNo.YES
-            if (morbidityMortality.getNullableValue() == YesNo.YES && spreadProbability.getNullableValue() == YesNo.YES && controlMeasures.getNullableValue() == YesNo.NO) {
+            // Check if all three fields have YesNoUnknown.YES
+            if (morbidityMortality.getNullableValue() == YesNoUnknown.YES && spreadProbability.getNullableValue() == YesNoUnknown.YES && controlMeasures.getNullableValue() == YesNoUnknown.NO) {
                 riskAssesment.setValue(RiskAssesment.VERY_HIGH);
                 riskAssesment.setStyleName("very-high-risk-assessment");
             }
-            else if(morbidityMortality.getNullableValue() == YesNo.YES && spreadProbability.getNullableValue() == YesNo.YES && controlMeasures.getNullableValue() == YesNo.YES || morbidityMortality.getNullableValue() == YesNo.NO && spreadProbability.getNullableValue() == YesNo.YES && controlMeasures.getNullableValue() == YesNo.NO || morbidityMortality.getNullableValue() == YesNo.YES && spreadProbability.getNullableValue() == YesNo.NO && controlMeasures.getNullableValue() == YesNo.NO) {
+            else if(morbidityMortality.getNullableValue() == YesNoUnknown.YES && spreadProbability.getNullableValue() == YesNoUnknown.YES && controlMeasures.getNullableValue() == YesNoUnknown.YES || morbidityMortality.getNullableValue() == YesNoUnknown.NO && spreadProbability.getNullableValue() == YesNoUnknown.YES && controlMeasures.getNullableValue() == YesNoUnknown.NO || morbidityMortality.getNullableValue() == YesNoUnknown.YES && spreadProbability.getNullableValue() == YesNoUnknown.NO && controlMeasures.getNullableValue() == YesNoUnknown.NO) {
                 riskAssesment.setValue(RiskAssesment.HIGH);
                 riskAssesment.setStyleName("high-risk-assessment");
             }
-            else if(morbidityMortality.getNullableValue() == YesNo.NO && spreadProbability.getNullableValue() == YesNo.NO && controlMeasures.getNullableValue() == YesNo.NO || morbidityMortality.getNullableValue() == YesNo.YES && spreadProbability.getNullableValue() == YesNo.NO && controlMeasures.getNullableValue() == YesNo.YES || morbidityMortality.getNullableValue() == YesNo.NO && spreadProbability.getNullableValue() == YesNo.YES && controlMeasures.getNullableValue() == YesNo.YES) {
+            else if(morbidityMortality.getNullableValue() == YesNoUnknown.NO && spreadProbability.getNullableValue() == YesNoUnknown.NO && controlMeasures.getNullableValue() == YesNoUnknown.NO || morbidityMortality.getNullableValue() == YesNoUnknown.YES && spreadProbability.getNullableValue() == YesNoUnknown.NO && controlMeasures.getNullableValue() == YesNoUnknown.YES || morbidityMortality.getNullableValue() == YesNoUnknown.NO && spreadProbability.getNullableValue() == YesNoUnknown.YES && controlMeasures.getNullableValue() == YesNoUnknown.YES) {
                 riskAssesment.setValue(RiskAssesment.MEDIUM);
                 riskAssesment.setStyleName("moderate-risk-assessment");
             }
-            else if(morbidityMortality.getNullableValue() == YesNo.NO && spreadProbability.getNullableValue() == YesNo.NO && controlMeasures.getNullableValue() == YesNo.YES) {
+            else if(morbidityMortality.getNullableValue() == YesNoUnknown.NO && spreadProbability.getNullableValue() == YesNoUnknown.NO && controlMeasures.getNullableValue() == YesNoUnknown.YES) {
                 riskAssesment.setValue(RiskAssesment.LOW);
                 riskAssesment.setStyleName("low-risk-assessment");
             }

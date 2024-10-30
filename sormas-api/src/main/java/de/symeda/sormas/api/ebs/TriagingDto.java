@@ -66,11 +66,11 @@ public class TriagingDto extends EntityDto {
 
 
 
-	private YesNo supervisorReview;
-	private YesNo referred;
-	private YesNo specificSignal;
+	private YesNoUnknown supervisorReview;
+	private YesNoUnknown referred;
+	private YesNoUnknown specificSignal;
 	private SignalCategory signalCategory;
-	private YesNo healthConcern;
+	private YesNoUnknown healthConcern;
 	private HumanCommunityCategoryDetails humanCommunityCategoryDetails;
 	private HumanFaclityCategoryDetails humanFacilityCategoryDetails;
 	private HumanLaboratoryCategoryDetails humanLaboratoryCategoryDetails;
@@ -79,7 +79,7 @@ public class TriagingDto extends EntityDto {
 	private AnimalLaboratoryCategoryDetails animalLaboratoryCategoryDetails;
 	private EnvironmentalCategoryDetails environmentalCategoryDetails;
 	private POE poeCategoryDetails;
-	private YesNo occurrencePreviously;
+	private YesNoUnknown occurrencePreviously;
 	private EbsTriagingDecision triagingDecision;
 	private Date decisionDate;
 	private String referredTo;
@@ -87,7 +87,7 @@ public class TriagingDto extends EntityDto {
 	private OutComeSupervisor outcomeSupervisor;
 	private boolean notSignal;
 	private CategoryDetailsLevel categoryDetailsLevel;
-	private YesNo potentialRisk;
+	private YesNoUnknown potentialRisk;
 
 
 
@@ -96,19 +96,19 @@ public class TriagingDto extends EntityDto {
 	}
 
 
-	public YesNo getSupervisorReview() {
+	public YesNoUnknown getSupervisorReview() {
 		return supervisorReview;
 	}
 
-	public void setSupervisorReview(YesNo supervisorReview) {
+	public void setSupervisorReview(YesNoUnknown supervisorReview) {
 		this.supervisorReview = supervisorReview;
 	}
 
-	public YesNo getSpecificSignal() {
+	public YesNoUnknown getSpecificSignal() {
 		return specificSignal;
 	}
 
-	public void setSpecificSignal(YesNo specificSignal) {
+	public void setSpecificSignal(YesNoUnknown specificSignal) {
 		this.specificSignal = specificSignal;
 	}
 
@@ -120,11 +120,11 @@ public class TriagingDto extends EntityDto {
 		this.signalCategory = signalCategory;
 	}
 
-	public YesNo getHealthConcern() {
+	public YesNoUnknown getHealthConcern() {
 		return healthConcern;
 	}
 
-	public void setHealthConcern(YesNo healthConcern) {
+	public void setHealthConcern(YesNoUnknown healthConcern) {
 		this.healthConcern = healthConcern;
 	}
 
@@ -192,11 +192,11 @@ public class TriagingDto extends EntityDto {
 		this.poeCategoryDetails = poeCategoryDetails;
 	}
 
-	public YesNo getOccurrencePreviously() {
+	public YesNoUnknown getOccurrencePreviously() {
 		return occurrencePreviously;
 	}
 
-	public void setOccurrencePreviously(YesNo occurrencePreviously) {
+	public void setOccurrencePreviously(YesNoUnknown occurrencePreviously) {
 		this.occurrencePreviously = occurrencePreviously;
 	}
 
@@ -256,19 +256,19 @@ public class TriagingDto extends EntityDto {
 		this.categoryDetailsLevel = categoryDetailsLevel;
 	}
 
-	public YesNo getPotentialRisk() {
+	public YesNoUnknown getPotentialRisk() {
 		return potentialRisk;
 	}
 
-	public void setPotentialRisk(YesNo potentialRisk) {
+	public void setPotentialRisk(YesNoUnknown potentialRisk) {
 		this.potentialRisk = potentialRisk;
 	}
 
-	public YesNo getReferred() {
+	public YesNoUnknown getReferred() {
 		return referred;
 	}
 
-	public void setReferred(YesNo referred) {
+	public void setReferred(YesNoUnknown referred) {
 		this.referred = referred;
 	}
 }

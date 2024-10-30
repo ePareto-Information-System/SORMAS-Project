@@ -186,13 +186,13 @@ public class MainScreen extends HorizontalLayout {
 			ControllerProvider.getContactController().registerViews(navigator);
 			menu.addView(ContactsView.class, ContactsView.VIEW_NAME, I18nProperties.getCaption(Captions.mainMenuContacts), VaadinIcons.HAND);
 		}
-		if (permitted(FeatureType.EVENT_SURVEILLANCE, UserRight.EVENT_VIEW)) {
-			ControllerProvider.getEventController().registerViews(navigator);
-			navigator.addView(EventParticipantDataView.VIEW_NAME, EventParticipantDataView.class);
-			navigator.addView(EventSamplesView.VIEW_NAME, EventSamplesView.class);
-			navigator.addView(EventGroupDataView.VIEW_NAME, EventGroupDataView.class);
-			menu.addView(EventsView.class, EventsView.VIEW_NAME, I18nProperties.getCaption(Captions.mainMenuEvents), VaadinIcons.PHONE);
-		}
+//		if (permitted(FeatureType.EVENT_SURVEILLANCE, UserRight.EVENT_VIEW)) {
+//			ControllerProvider.getEventController().registerViews(navigator);
+//			navigator.addView(EventParticipantDataView.VIEW_NAME, EventParticipantDataView.class);
+//			navigator.addView(EventSamplesView.VIEW_NAME, EventSamplesView.class);
+//			navigator.addView(EventGroupDataView.VIEW_NAME, EventGroupDataView.class);
+//			menu.addView(EventsView.class, EventsView.VIEW_NAME, I18nProperties.getCaption(Captions.mainMenuEvents), VaadinIcons.PHONE);
+//		}
 			ControllerProvider.getEbsController().registerViews(navigator);
 			menu.addView(EBSView.class, EBSView.VIEW_NAME, I18nProperties.getCaption(Captions.mainMenuEvents), VaadinIcons.PHONE);
 

@@ -1,7 +1,7 @@
 package de.symeda.sormas.backend.ebs;
 
 import de.symeda.sormas.api.ebs.ResponseStatus;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 
 import javax.persistence.Entity;
@@ -28,21 +28,21 @@ public class EbsAlert extends AbstractDomainObject {
 
     public static final String EBS = "ebs";
 
-    private YesNo actionInitiated;
+    private YesNoUnknown actionInitiated;
     private ResponseStatus responseStatus;
     private Date responseDate;
     private String detailsResponseActivities;
     private String detailsGiven;
-    private YesNo alertIssued;
+    private YesNoUnknown alertIssued;
     private String detailsAlertUsed;
     private Ebs ebs;
     private Date alertDate;
 
-    public YesNo getActionInitiated() {
+    public YesNoUnknown getActionInitiated() {
         return actionInitiated;
     }
 
-    public void setActionInitiated(YesNo actionInitiated) {
+    public void setActionInitiated(YesNoUnknown actionInitiated) {
         this.actionInitiated = actionInitiated;
     }
 
@@ -78,11 +78,11 @@ public class EbsAlert extends AbstractDomainObject {
         this.detailsGiven = detailsGiven;
     }
 
-    public YesNo getAlertIssued() {
+    public YesNoUnknown getAlertIssued() {
         return alertIssued;
     }
 
-    public void setAlertIssued(YesNo alertUsed) {
+    public void setAlertIssued(YesNoUnknown alertUsed) {
         this.alertIssued = alertUsed;
     }
 

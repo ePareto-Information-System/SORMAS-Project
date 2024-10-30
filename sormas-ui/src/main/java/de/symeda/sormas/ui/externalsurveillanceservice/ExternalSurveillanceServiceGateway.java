@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.symeda.sormas.api.ebs.EbsDto;
+import de.symeda.sormas.ui.utils.LayoutWithSidePanel;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +88,7 @@ public class ExternalSurveillanceServiceGateway {
 			I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_confirmSendEvent),
 			I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_confirmDeleteEvent),
 			isEditAllowed ? () -> {
-				FacadeProvider.getExternalSurveillanceToolFacade().sendEvents(Collections.singletonList(event.getUuid()));
+				FacadeProvider.getExternalSurveillanceToolFacade().sendEvents(Collections.singletonList(event.getUuid()), true);
 			} : null,
 			isEditAllowed ? () -> {
 				FacadeProvider.getExternalSurveillanceToolFacade().deleteEbs(Collections.singletonList(event));

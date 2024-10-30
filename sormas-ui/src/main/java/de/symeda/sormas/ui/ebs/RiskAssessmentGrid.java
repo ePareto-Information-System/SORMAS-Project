@@ -33,7 +33,7 @@ public class RiskAssessmentGrid extends Grid {
 
 		VaadinUiUtil.addIconColumn(generatedContainer, INFO, VaadinIcons.EYE);
 		setColumns(RiskAssessmentDto.ASSESSMENT_LEVEL, RiskAssessmentDto.ASSESSMENT_DATE, RiskAssessmentDto.ASSESSMENT_TIME,INFO);
-		VaadinUiUtil.setupActionColumn(getColumn(INFO));
+//		VaadinUiUtil.setupActionColumn(getColumn(INFO));
 		addItemClickListener(e->{
 			if (INFO.equals(e.getPropertyId())) {
 				ControllerProvider.getEbsController().showAssessmentCaseDialog((RiskAssessmentDto) e.getItemId());

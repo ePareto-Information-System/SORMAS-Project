@@ -2,7 +2,7 @@ package de.symeda.sormas.api.ebs;
 
 import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
 import java.util.Date;
@@ -37,38 +37,38 @@ public class RiskAssessmentDto extends PseudonymizableDto {
     public static final String  EBS = "ebs";
 
 
-    private YesNo morbidityMortality;
+    private YesNoUnknown morbidityMortality;
     private String morbidityMortalityComment;
-    private YesNo spreadProbability;
+    private YesNoUnknown spreadProbability;
     private String spreadProbabilityComment;
-    private YesNo controlMeasures;
+    private YesNoUnknown controlMeasures;
     private String controlMeasuresComment;
     private RiskAssesment riskAssessment;
     private Date assessmentDate;
     private String assessmentTime;
     private EbsReferenceDto ebs;
 
-    public YesNo getMorbidityMortality() {
+    public YesNoUnknown getMorbidityMortality() {
         return morbidityMortality;
     }
 
-    public void setMorbidityMortality(YesNo morbidityMortality) {
+    public void setMorbidityMortality(YesNoUnknown morbidityMortality) {
         this.morbidityMortality = morbidityMortality;
     }
 
-    public YesNo getSpreadProbability() {
+    public YesNoUnknown getSpreadProbability() {
         return spreadProbability;
     }
 
-    public void setSpreadProbability(YesNo spreadProbability) {
+    public void setSpreadProbability(YesNoUnknown spreadProbability) {
         this.spreadProbability = spreadProbability;
     }
 
-    public YesNo getControlMeasures() {
+    public YesNoUnknown getControlMeasures() {
         return controlMeasures;
     }
 
-    public void setControlMeasures(YesNo controlMeasures) {
+    public void setControlMeasures(YesNoUnknown controlMeasures) {
         this.controlMeasures = controlMeasures;
     }
 

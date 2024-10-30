@@ -17,7 +17,7 @@ package de.symeda.sormas.backend.ebs;
 
 
 import de.symeda.sormas.api.ebs.*;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.user.User;
 import org.apache.commons.lang3.StringUtils;
@@ -72,11 +72,11 @@ public class Triaging extends AbstractDomainObject {
 
 
 
-	private YesNo supervisorReview;
-	private YesNo referred;
-	private YesNo specificSignal;
+	private YesNoUnknown supervisorReview;
+	private YesNoUnknown referred;
+	private YesNoUnknown specificSignal;
 	private SignalCategory signalCategory;
-	private YesNo healthConcern;
+	private YesNoUnknown healthConcern;
 	private HumanCommunityCategoryDetails humanCommunityCategoryDetails;
 	private HumanFaclityCategoryDetails humanFacilityCategoryDetails;
 	private HumanLaboratoryCategoryDetails humanLaboratoryCategoryDetails;
@@ -90,7 +90,7 @@ public class Triaging extends AbstractDomainObject {
 
 
 
-	private YesNo occurrencePreviously;
+	private YesNoUnknown occurrencePreviously;
 	private EbsTriagingDecision triagingDecision;
 	private String triagingDecisionString;
 	private Date decisionDate;
@@ -98,26 +98,26 @@ public class Triaging extends AbstractDomainObject {
 	private User responsibleUser;
 	private OutComeSupervisor outcomeSupervisor;
 	private boolean notSignal;
-	private YesNo potentialRisk;
+	private YesNoUnknown potentialRisk;
 
 	public EbsReferenceDto toReference() {
 		return new EbsReferenceDto(getUuid());
 	}
 
 
-	public YesNo getSupervisorReview() {
+	public YesNoUnknown getSupervisorReview() {
 		return supervisorReview;
 	}
 
-	public void setSupervisorReview(YesNo earlyWarning) {
+	public void setSupervisorReview(YesNoUnknown earlyWarning) {
 		this.supervisorReview = earlyWarning;
 	}
 
-	public YesNo getSpecificSignal() {
+	public YesNoUnknown getSpecificSignal() {
 		return specificSignal;
 	}
 
-	public void setSpecificSignal(YesNo specificSignal) {
+	public void setSpecificSignal(YesNoUnknown specificSignal) {
 		this.specificSignal = specificSignal;
 	}
 
@@ -130,11 +130,11 @@ public class Triaging extends AbstractDomainObject {
 		this.signalCategory = signalCategory;
 	}
 
-	public YesNo getHealthConcern() {
+	public YesNoUnknown getHealthConcern() {
 		return healthConcern;
 	}
 
-	public void setHealthConcern(YesNo healthConcern) {
+	public void setHealthConcern(YesNoUnknown healthConcern) {
 		this.healthConcern = healthConcern;
 	}
 
@@ -205,11 +205,11 @@ public class Triaging extends AbstractDomainObject {
 
 	}
 
-	public YesNo getOccurrencePreviously() {
+	public YesNoUnknown getOccurrencePreviously() {
 		return occurrencePreviously;
 	}
 
-	public void setOccurrencePreviously(YesNo occurrencePreviously) {
+	public void setOccurrencePreviously(YesNoUnknown occurrencePreviously) {
 		this.occurrencePreviously = occurrencePreviously;
 	}
 
@@ -280,19 +280,19 @@ public class Triaging extends AbstractDomainObject {
 		this.categoryDetailsLevel = categoryDetailsLevel;
 	}
 
-	public YesNo getPotentialRisk() {
+	public YesNoUnknown getPotentialRisk() {
 		return potentialRisk;
 	}
 
-	public void setPotentialRisk(YesNo potentialRisk) {
+	public void setPotentialRisk(YesNoUnknown potentialRisk) {
 		this.potentialRisk = potentialRisk;
 	}
 
-	public YesNo getReferred() {
+	public YesNoUnknown getReferred() {
 		return referred;
 	}
 
-	public void setReferred(YesNo referred) {
+	public void setReferred(YesNoUnknown referred) {
 		this.referred = referred;
 	}
 }

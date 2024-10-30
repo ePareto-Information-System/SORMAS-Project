@@ -6,7 +6,7 @@ import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.share.ExternalShareCriteria;
 import de.symeda.sormas.api.user.UserRoleReferenceDto;
 import de.symeda.sormas.api.utils.IgnoreForUrl;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.criteria.CriteriaWithDateType;
 
 import java.io.Serializable;
@@ -35,11 +35,11 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
     private Date triagingDecisionDate;
     private String personRegistering;
     private String personDesignation;
-    private YesNo verificationSent;
+    private YesNoUnknown verificationSent;
     private Date verificationSentDate;
     private Date verifiedDate;
     private RiskAssesment riskAssessment;
-    private YesNo actionInitiated;
+    private YesNoUnknown actionInitiated;
     private ResponseStatus responseStatus;
     private Boolean deleted = Boolean.FALSE;
     private RegionReferenceDto region;
@@ -333,15 +333,15 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
         return this;
     }
 
-    public YesNo getVerificationSent() {
+    public YesNoUnknown getVerificationSent() {
         return verificationSent;
     }
 
-    public void setVerificationSent(YesNo verificationSent) {
+    public void setVerificationSent(YesNoUnknown verificationSent) {
         this.verificationSent = verificationSent;
     }
 
-    public EbsCriteria verificationSent(YesNo verificationSent) {
+    public EbsCriteria verificationSent(YesNoUnknown verificationSent) {
         this.verificationSent = verificationSent;
         return this;
     }
@@ -372,15 +372,15 @@ public class EbsCriteria extends CriteriaWithDateType implements ExternalShareCr
         return this;
     }
 
-    public YesNo getActionInitiated() {
+    public YesNoUnknown getActionInitiated() {
         return actionInitiated;
     }
 
-    public void setActionInitiated(YesNo actionInitiated) {
+    public void setActionInitiated(YesNoUnknown actionInitiated) {
         this.actionInitiated = actionInitiated;
     }
 
-    public EbsCriteria actionInitiated(YesNo actionInitiated) {
+    public EbsCriteria actionInitiated(YesNoUnknown actionInitiated) {
         this.actionInitiated = actionInitiated;
         return this;
     }

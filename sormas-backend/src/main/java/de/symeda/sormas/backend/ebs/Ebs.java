@@ -20,7 +20,7 @@ import de.symeda.sormas.backend.common.CoreAdo;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.sormastosormas.entities.SormasToSormasShareable;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
-import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo;
+import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfo;
 import de.symeda.sormas.backend.user.User;
 
 import javax.persistence.*;
@@ -81,7 +81,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	private Date reportDateTime;
 	private Date dateOnset;
 	private User reportingUser;
-	private EbsSourceType sourceInformation;;
+	private EbsSourceType sourceInformation;
 	private User responsibleUser;
 	private String sourceName;
 	private String sourceUrl;

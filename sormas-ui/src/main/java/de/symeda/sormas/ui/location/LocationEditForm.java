@@ -710,13 +710,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	//create a function to hide fields in ebs
 	public void hideForEbsForm() {
-		setVisible(false, LocationDto.STREET, LocationDto.ADDITIONAL_INFORMATION, LocationDto.LOCALITY,LocationDto.HOUSE_NUMBER,LocationDto.AREA_TYPE,LocationDto.POSTAL_CODE);
-//		getField(LocationDto.STREET).setVisible(false);
-//		getField(LocationDto.ADDITIONAL_INFORMATION).setVisible(false);
-//		getField(LocationDto.LOCALITY).setVisible(false);
-//		getField(LocationDto.HOUSE_NUMBER).setVisible(false);
-//		getField(LocationDto.AREA_TYPE).setVisible(false);
-//		getField(LocationDto.POSTAL_CODE).setVisible(false);
+		setVisible(false, LocationDto.STREET, LocationDto.ADDITIONAL_INFORMATION,LocationDto.HOUSE_NUMBER,LocationDto.AREA_TYPE,LocationDto.POSTAL_CODE);
 		getField(LocationDto.HOUSE_NUMBER).setVisible(false);
 		getField(LocationDto.AREA_TYPE).setVisible(false);
 		getField(LocationDto.POSTAL_CODE).setVisible(false);

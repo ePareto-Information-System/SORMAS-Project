@@ -3,7 +3,7 @@ package de.symeda.sormas.api.ebs;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.utils.DependingOnFeatureType;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 
 import java.util.Date;
 
@@ -28,7 +28,7 @@ public class SignalVerificationDto extends EntityDto {
     public static final String NUMBER_OF_PERSON_CASES = "numberOfPersonCases";
     public static final String NUMBER_OF_DEATH_PERSON = "numberOfDeathPerson";
 
-    private YesNo verificationSent;
+    private YesNoUnknown verificationSent;
     private SignalOutcome verified;
     private Date verificationCompleteDate;
     private Date dateOfOccurrence;
@@ -39,11 +39,11 @@ public class SignalVerificationDto extends EntityDto {
     private String numberOfPersonCases;
     private String numberOfDeathPerson;
 
-    public YesNo getVerificationSent() {
+    public YesNoUnknown getVerificationSent() {
         return verificationSent;
     }
 
-    public void setVerificationSent(YesNo verificationSent) {
+    public void setVerificationSent(YesNoUnknown verificationSent) {
         this.verificationSent = verificationSent;
     }
 

@@ -29,6 +29,7 @@ import de.symeda.sormas.ui.contact.ContactController;
 import de.symeda.sormas.ui.customexport.CustomExportController;
 import de.symeda.sormas.ui.dashboard.DashboardController;
 import de.symeda.sormas.ui.docgeneration.DocGenerationController;
+import de.symeda.sormas.ui.ebs.EbsController;
 import de.symeda.sormas.ui.events.EventController;
 import de.symeda.sormas.ui.events.EventGroupController;
 import de.symeda.sormas.ui.events.EventParticipantsController;
@@ -55,6 +56,7 @@ public class ControllerProvider extends BaseControllerProvider {
 	private final CaseController caseController;
 	private final ContactController contactController;
 	private final EventController eventController;
+	private final EbsController ebsController;
 	private final EventParticipantsController eventParticipantController;
 	private final EventGroupController eventGroupController;
 	private final InfrastructureController infrastructureController;
@@ -90,6 +92,7 @@ public class ControllerProvider extends BaseControllerProvider {
 		caseController = new CaseController();
 		contactController = new ContactController();
 		eventController = new EventController();
+		ebsController = new EbsController();
 		eventParticipantController = new EventParticipantsController();
 		eventGroupController = new EventGroupController();
 		infrastructureController = new InfrastructureController();
@@ -134,6 +137,10 @@ public class ControllerProvider extends BaseControllerProvider {
 
 	public static EventController getEventController() {
 		return get().eventController;
+	}
+
+	public static EbsController getEbsController() {
+		return get().ebsController;
 	}
 
 	public static EventParticipantsController getEventParticipantController() {

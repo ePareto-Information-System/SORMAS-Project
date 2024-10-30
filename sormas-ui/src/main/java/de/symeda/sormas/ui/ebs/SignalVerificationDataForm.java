@@ -14,7 +14,7 @@ import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.ui.utils.*;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
@@ -58,7 +58,7 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
             SignalVerificationDto.I18N_PREFIX,
             false,
             FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-            createFieldAccessCheckers(isPseudonymized, inJurisdiction, true),ebsDto);
+            createFieldAccessCheckers(isPseudonymized,  true),ebsDto);
         this.ebs = ebsDto;
         this.parentClass = parentClass;
         addFields();
@@ -66,12 +66,10 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 
     private static UiFieldAccessCheckers createFieldAccessCheckers(
             boolean isPseudonymized,
-            boolean inJurisdiction,
             boolean withPersonalAndSensitive) {
 
         if (withPersonalAndSensitive) {
-            return UiFieldAccessCheckers
-                    .forDataAccessLevel(UserProvider.getCurrent().getPseudonymizableDataAccessLevel(inJurisdiction), isPseudonymized);
+            return UiFieldAccessCheckers.getDefault(isPseudonymized);
         }
 
         return UiFieldAccessCheckers.getNoop();
@@ -113,7 +111,7 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 
         EbsDto selectedEbs = getEbsDto();
 
-        if (selectedEbs.getSignalVerification().getVerificationSent() == YesNo.YES){
+        if (selectedEbs.getSignalVerification().getVerificationSent() == YesNoUnknown.YES){
             sentVerification.setReadOnly(true);
         }
 
@@ -134,7 +132,7 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
                 getFieldGroup(),
                 Arrays.asList(SignalVerificationDto.VERIFIED,SignalVerificationDto.VERIFICATION_COMPLETE_DATE),
                 SignalVerificationDto.VERIFICATION_SENT,
-                Arrays.asList(YesNo.YES),
+                Arrays.asList(YesNoUnknown.YES),
                 true);
         verified.addValueChangeListener(event -> {
             if (event.getProperty().getValue().toString().equals("[Event]")){
@@ -150,7 +148,7 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
         });
         setRequired(true,SignalVerificationDto.VERIFICATION_SENT);
         sentVerification.addValueChangeListener(event->{
-            if (event.getProperty().getValue().equals(YesNo.NO) && selectedEbs.getTriaging().getTriagingDecision() == EbsTriagingDecision.VERIFY){
+            if (event.getProperty().getValue().equals(YesNoUnknown.NO) && selectedEbs.getTriaging().getTriagingDecision() == EbsTriagingDecision.VERIFY){
                 TriagingDataForm.reviewSignal(Strings.verifyNotifs);
             }
         });

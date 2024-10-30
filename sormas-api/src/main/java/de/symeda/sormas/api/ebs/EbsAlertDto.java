@@ -2,7 +2,7 @@ package de.symeda.sormas.api.ebs;
 
 import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
 import java.util.Date;
@@ -23,21 +23,21 @@ public class EbsAlertDto extends PseudonymizableDto {
     public static final String ALERT_DATE = "alertDate";
     public static final String EBS = "ebs";
 
-    private YesNo actionInitiated;
+    private YesNoUnknown actionInitiated;
     private ResponseStatus responseStatus;
     private Date responseDate;
     private String detailsResponseActivities;
     private String detailsGiven;
-    private YesNo alertIssued;
+    private YesNoUnknown alertIssued;
     private String detailsAlertUsed;
     private EbsReferenceDto ebs;
     private Date alertDate;
 
-    public YesNo getActionInitiated() {
+    public YesNoUnknown getActionInitiated() {
         return actionInitiated;
     }
 
-    public void setActionInitiated(YesNo actionInitiated) {
+    public void setActionInitiated(YesNoUnknown actionInitiated) {
         this.actionInitiated = actionInitiated;
     }
 
@@ -73,11 +73,11 @@ public class EbsAlertDto extends PseudonymizableDto {
         this.detailsGiven = detailsGiven;
     }
 
-    public YesNo getAlertIssued() {
+    public YesNoUnknown getAlertIssued() {
         return alertIssued;
     }
 
-    public void setAlertIssued(YesNo alertIssued) {
+    public void setAlertIssued(YesNoUnknown alertIssued) {
         this.alertIssued = alertIssued;
     }
 

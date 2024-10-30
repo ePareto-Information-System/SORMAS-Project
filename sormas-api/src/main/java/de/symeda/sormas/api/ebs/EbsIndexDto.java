@@ -17,8 +17,7 @@ package de.symeda.sormas.api.ebs;
 
 
 import de.symeda.sormas.api.location.LocationReferenceDto;
-import de.symeda.sormas.api.utils.HasCaption;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
 
 import java.io.Serializable;
@@ -105,10 +104,10 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 			Date decisionDate,
 			String personRegistering,
 			String personDesignation,
-			YesNo verificationSent,
+			YesNoUnknown verificationSent,
 			Date verifiedDate,
 			RiskAssesment riskStatus,
-			YesNo actionInitiated,
+			YesNoUnknown actionInitiated,
 			ResponseStatus responseStatus,
 			String regionUuid,
 			String regionName,
@@ -199,7 +198,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		return getTriagingDecisionDate().getDecisionDate();
 	}
 
-	public YesNo getVerificationSent() {
+	public YesNoUnknown getVerificationSent() {
 		return getExtensionVerificationSent().getVerificationSent();
 	}
 
@@ -211,7 +210,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		return getEbsRiskStatus().getRiskStatus();
 	}
 
-	public YesNo getResponseAction() {
+	public YesNoUnknown getResponseAction() {
 		return getEbsActionInitiated().getActionInitiated();
 	}
 
@@ -365,7 +364,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		return result;
 	}
 
-	public static class EbsIndexTriagingDecisionDate implements Serializable, HasCaption {
+	public static class EbsIndexTriagingDecisionDate implements Serializable {
 
 		private final Date decisionDate;
 
@@ -383,15 +382,15 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		}
 	}
 
-	public static class EbsVerificationSent implements Serializable, HasCaption {
+	public static class EbsVerificationSent implements Serializable{
 
-		private final YesNo verificationSent;
+		private final YesNoUnknown verificationSent;
 
-		public EbsVerificationSent(YesNo verificationSent) {
+		public EbsVerificationSent(YesNoUnknown verificationSent) {
 			this.verificationSent = verificationSent;
 		}
 
-		public YesNo getVerificationSent() {
+		public YesNoUnknown getVerificationSent() {
 			return verificationSent;
 		}
 
@@ -400,7 +399,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		}
 	}
 
-	public static class EbsVerified implements Serializable, HasCaption {
+	public static class EbsVerified implements Serializable {
 
 		private final SignalOutcome verified;
 
@@ -417,7 +416,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		}
 	}
 
-	public static class EbsVerifiedDate implements Serializable, HasCaption {
+	public static class EbsVerifiedDate implements Serializable {
 		private final Date verfiedDate;
 
 		public EbsVerifiedDate(Date verifiedDate) {
@@ -433,7 +432,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		}
 	}
 
-	public static class EbsRiskStatus implements Serializable, HasCaption {
+	public static class EbsRiskStatus implements Serializable {
 		private final RiskAssesment riskStatus;
 
 		public EbsRiskStatus(RiskAssesment riskStatus) {
@@ -449,15 +448,15 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		}
 	}
 
-	public static class EbsActionInitiated implements Serializable, HasCaption {
+	public static class EbsActionInitiated implements Serializable {
 
-		private final YesNo actionInitiated;
+		private final YesNoUnknown actionInitiated;
 
-		public EbsActionInitiated(YesNo actionInitiated) {
+		public EbsActionInitiated(YesNoUnknown actionInitiated) {
 			this.actionInitiated = actionInitiated;
 		}
 
-		public YesNo getActionInitiated() {
+		public YesNoUnknown getActionInitiated() {
 			return actionInitiated;
 		}
 
@@ -466,7 +465,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		}
 	}
 
-	public static class EbsResponseStatus implements Serializable, HasCaption {
+	public static class EbsResponseStatus implements Serializable {
 		private final ResponseStatus responseStatus;
 
 		public EbsResponseStatus(ResponseStatus responseStatus) {
@@ -482,7 +481,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		}
 	}
 
-	public static class EbsDeath implements Serializable, HasCaption {
+	public static class EbsDeath implements Serializable {
 		private final String death;
 
 		public EbsDeath(String death) {
@@ -497,7 +496,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 			return SignalVerificationReferenceDto.buildCaption(death);
 		}
 	}
-	public static class EbsLocation implements Serializable, HasCaption {
+	public static class EbsLocation implements Serializable {
 
 		private String regionName;
 		private String communityName;

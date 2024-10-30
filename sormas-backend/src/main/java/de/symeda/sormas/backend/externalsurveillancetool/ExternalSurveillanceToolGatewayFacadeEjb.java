@@ -28,10 +28,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 
 import de.symeda.sormas.api.ebs.EbsDto;
-import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.backend.ebs.Ebs;
-import de.symeda.sormas.backend.ebs.EbsService;
-import de.symeda.sormas.backend.util.RightsAllowed;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,8 +58,6 @@ public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveil
 	@EJB
 	private EventService eventService;
 	@EJB
-	private EbsService ebsService;
-	@EJB
 	private ExternalShareInfoService shareInfoService;
 
 	@Override
@@ -81,21 +75,7 @@ public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveil
 	}
 
 	@Override
-	@RightsAllowed(UserRight._EXTERNAL_SURVEILLANCE_SHARE)
-	public void sendEvents(List<String> eventUuids) throws ExternalSurveillanceToolException {
-		doSendEvents(eventUuids, false);
-	}
-
-	@RightsAllowed(UserRight._EVENT_ARCHIVE)
-	public void sendEventsInternal(List<String> eventUuids, boolean archived) throws ExternalSurveillanceToolException {
-		doSendEvents(eventUuids, archived);
-	}
-
-	private void doSendEvents(List<String> eventUuids, boolean archived) throws ExternalSurveillanceToolException {
-		if (!userService.hasRight(UserRight.EVENT_EDIT)) {
-			throw new AccessDeniedException(I18nProperties.getString(Strings.errorForbidden));
-		}
-
+	public void sendEvents(List<String> eventUuids, boolean archived) throws ExternalSurveillanceToolException {
 		ExportParameters params = new ExportParameters();
 		params.setEventUuids(eventUuids);
 		params.setArchived(archived);
@@ -103,18 +83,10 @@ public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveil
 		sendRequest(params);
 	}
 
-	public void sendEbsInternal(List<String> eventUuids, boolean archived) throws ExternalSurveillanceToolException {
-		doSendEbs(eventUuids, archived);
-	}
-
-	private void doSendEbs(List<String> eventUuids, boolean archived) throws ExternalSurveillanceToolException {
-		if (!userService.hasRight(UserRight.EVENT_EDIT)) {
-			throw new AccessDeniedException(I18nProperties.getString(Strings.errorForbidden));
-		}
-
-	public void sendEvents(List<String> eventUuids, boolean archived) throws ExternalSurveillanceToolException {
+	@Override
+	public void sendEbs(List<String> ebsUuids, boolean archived) throws ExternalSurveillanceToolException {
 		ExportParameters params = new ExportParameters();
-		params.setEventUuids(eventUuids);
+		params.setEventUuids(ebsUuids);
 		params.setArchived(archived);
 
 		sendRequest(params);
@@ -124,41 +96,41 @@ public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveil
 		String serviceUrl = configFacade.getExternalSurveillanceToolGatewayUrl().trim();
 
 		Response response = ClientBuilder.newBuilder()
-			.connectTimeout(30, TimeUnit.SECONDS)
-			.build()
-			.target(serviceUrl)
-			.path("export")
-			.request()
-			.post(Entity.json(params));
+				.connectTimeout(30, TimeUnit.SECONDS)
+				.build()
+				.target(serviceUrl)
+				.path("export")
+				.request()
+				.post(Entity.json(params));
 		int status = response.getStatus();
 
 		switch (status) {
-		case HttpServletResponse.SC_OK:
-		case HttpServletResponse.SC_NO_CONTENT:
-			if (params.getCaseUuids() != null) {
-				caseService.getByUuids(params.getCaseUuids())
-					.forEach(caze -> shareInfoService.createAndPersistShareInfo(caze, ExternalShareStatus.SHARED));
-			}
+			case HttpServletResponse.SC_OK:
+			case HttpServletResponse.SC_NO_CONTENT:
+				if (params.getCaseUuids() != null) {
+					caseService.getByUuids(params.getCaseUuids())
+							.forEach(caze -> shareInfoService.createAndPersistShareInfo(caze, ExternalShareStatus.SHARED));
+				}
 
-			if (params.getEventUuids() != null) {
-				eventService.getByUuids(params.getEventUuids())
-					.forEach(event -> shareInfoService.createAndPersistShareInfo(event, ExternalShareStatus.SHARED));
-			}
-			return;
-		case HttpServletResponse.SC_NOT_FOUND:
-			throw new ExternalSurveillanceToolException(I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_notificationErrorSending));
-		case HttpServletResponse.SC_BAD_REQUEST:
-			throw new ExternalSurveillanceToolException(I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_notificationEntryNotSent));
-		default:
-			ExternalSurveillanceToolResponse entity = response.readEntity(ExternalSurveillanceToolResponse.class);
-			if (entity == null || StringUtils.isBlank(entity.getMessage())) {
-				throw new ExternalSurveillanceToolException(
-					I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_notificationErrorSending));
-			} else if (StringUtils.isNotBlank(entity.getErrorCode())) {
-				throw new ExternalSurveillanceToolException(entity.getMessage(), entity.getErrorCode());
-			} else {
-				throw new ExternalSurveillanceToolException(entity.getMessage());
-			}
+				if (params.getEventUuids() != null) {
+					eventService.getByUuids(params.getEventUuids())
+							.forEach(event -> shareInfoService.createAndPersistShareInfo(event, ExternalShareStatus.SHARED));
+				}
+				return;
+			case HttpServletResponse.SC_NOT_FOUND:
+				throw new ExternalSurveillanceToolException(I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_notificationErrorSending));
+			case HttpServletResponse.SC_BAD_REQUEST:
+				throw new ExternalSurveillanceToolException(I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_notificationEntryNotSent));
+			default:
+				ExternalSurveillanceToolResponse entity = response.readEntity(ExternalSurveillanceToolResponse.class);
+				if (entity == null || StringUtils.isBlank(entity.getMessage())) {
+					throw new ExternalSurveillanceToolException(
+							I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_notificationErrorSending));
+				} else if (StringUtils.isNotBlank(entity.getErrorCode())) {
+					throw new ExternalSurveillanceToolException(entity.getMessage(), entity.getErrorCode());
+				} else {
+					throw new ExternalSurveillanceToolException(entity.getMessage());
+				}
 		}
 	}
 
@@ -186,35 +158,6 @@ public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveil
 
 	@Override
 	public void deleteEvents(List<EventDto> events) throws ExternalSurveillanceToolException {
-		if (!userService.hasRight(UserRight.EVENT_EDIT)) {
-			throw new AccessDeniedException(I18nProperties.getString(Strings.errorForbidden));
-		}
-
-		doDeleteEvents(events);
-	}
-	@Override
-	@RightsAllowed(UserRight._EXTERNAL_SURVEILLANCE_DELETE)
-	public void deleteEbs(List<EbsDto> events) throws ExternalSurveillanceToolException {
-		if (!userService.hasRight(UserRight.EVENT_EDIT)) {
-			throw new AccessDeniedException(I18nProperties.getString(Strings.errorForbidden));
-		}
-
-		doDeleteEbs(events);
-	}
-
-	@RightsAllowed({
-		UserRight._SORMAS_TO_SORMAS_SHARE,
-		UserRight._SORMAS_TO_SORMAS_CLIENT,
-		UserRight._EVENT_DELETE,
-		UserRight._SYSTEM })
-	public void deleteEventsInternal(List<EventDto> events) throws ExternalSurveillanceToolException {
-		doDeleteEvents(events);
-	}
-	public void deleteEbsInternal(List<EbsDto> ebs) throws ExternalSurveillanceToolException {
-		doDeleteEbs(ebs);
-	}
-
-	private void doDeleteEvents(List<EventDto> events) throws ExternalSurveillanceToolException {
 		DeleteParameters params = new DeleteParameters();
 		params.setEvents(events);
 
@@ -224,39 +167,33 @@ public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveil
 			shareInfoService.createAndPersistShareInfo(event, ExternalShareStatus.DELETED);
 		});
 	}
-	private void doDeleteEbs(List<EbsDto> events) throws ExternalSurveillanceToolException {
-		DeleteParameters params = new DeleteParameters();
-		params.setEbs(events);
 
-		sendDeleteRequest(params);
-
-		eventService.getByUuids(events.stream().map(EbsDto::getUuid).collect(Collectors.toList())).forEach(event -> {
-			shareInfoService.createAndPersistShareInfo(event, ExternalShareStatus.DELETED);
-		});
+	@Override
+	public void deleteEbs(List<EbsDto> events) throws ExternalSurveillanceToolException {
+		return;
 	}
-
 
 	private void sendDeleteRequest(DeleteParameters params) throws ExternalSurveillanceToolException {
 		String serviceUrl = configFacade.getExternalSurveillanceToolGatewayUrl().trim();
 		Response response = ClientBuilder.newBuilder()
-			.connectTimeout(30, TimeUnit.SECONDS)
-			.build()
-			.target(serviceUrl)
-			.path("delete")
-			.request()
-			.post(Entity.json(params));
+				.connectTimeout(30, TimeUnit.SECONDS)
+				.build()
+				.target(serviceUrl)
+				.path("delete")
+				.request()
+				.post(Entity.json(params));
 
 		int statusCode = response.getStatus();
 
 		switch (statusCode) {
-		case HttpServletResponse.SC_OK:
-		case HttpServletResponse.SC_NO_CONTENT:
-			return;
-		case HttpServletResponse.SC_BAD_REQUEST:
-			throw new ExternalSurveillanceToolException(
-				I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_notificationEntryNotDeleted));
-		default:
-			throw new ExternalSurveillanceToolException(I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_notificationErrorDeleting));
+			case HttpServletResponse.SC_OK:
+			case HttpServletResponse.SC_NO_CONTENT:
+				return;
+			case HttpServletResponse.SC_BAD_REQUEST:
+				throw new ExternalSurveillanceToolException(
+						I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_notificationEntryNotDeleted));
+			default:
+				throw new ExternalSurveillanceToolException(I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_notificationErrorDeleting));
 		}
 	}
 
@@ -267,7 +204,7 @@ public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveil
 
 		try {
 			Response response =
-				ClientBuilder.newBuilder().connectTimeout(30, TimeUnit.SECONDS).build().target(serviceUrl).path(versionEndpoint).request().get();
+					ClientBuilder.newBuilder().connectTimeout(30, TimeUnit.SECONDS).build().target(serviceUrl).path(versionEndpoint).request().get();
 			int status = response.getStatus();
 
 			if (status != HttpServletResponse.SC_OK) {
@@ -319,8 +256,6 @@ public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveil
 
 		private List<EventDto> events;
 
-		private List<EbsDto> ebs;
-
 		public List<CaseDataDto> getCases() {
 			return cases;
 		}
@@ -335,14 +270,6 @@ public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveil
 
 		public void setEvents(List<EventDto> events) {
 			this.events = events;
-		}
-
-		public List<EbsDto> getEbs() {
-			return ebs;
-		}
-
-		public void setEbs(List<EbsDto> ebs) {
-			this.ebs = ebs;
 		}
 	}
 

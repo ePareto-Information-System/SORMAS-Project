@@ -34,7 +34,7 @@ import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
@@ -171,7 +171,7 @@ public class EbsController {
 				ebs,
 				EbsDto.class,
 				ebs.isPseudonymized(),
-				ebs.isInJurisdiction(),
+				true,
 				isEditAllowed);
 		triagingDataForm.setValue(ebs.getTriaging());
 
@@ -196,7 +196,7 @@ public class EbsController {
 				ebs,
 				EbsDto.class,
 				ebs.isPseudonymized(),
-				ebs.isInJurisdiction(),
+				true,
 				isEditAllowed);
 		signalVerificationDataForm.setValue(ebs.getSignalVerification());
 		final CommitDiscardWrapperComponent<SignalVerificationDataForm> editView = new CommitDiscardWrapperComponent<SignalVerificationDataForm>(
@@ -222,7 +222,7 @@ public class EbsController {
 				ebs,
 				EbsDto.class,
 				ebs.isPseudonymized(),
-				ebs.isInJurisdiction(),
+				true,
 				isEditAllowed);
 
 		riskAssessmentDataForm.setValue(riskAssessmentDto);
@@ -355,7 +355,7 @@ public class EbsController {
 				ebs,
 				EbsDto.class,
 				ebs.isPseudonymized(),
-				ebs.isInJurisdiction(),
+				true,
 				isEditAllowed);
 		alertDataForm.setValue(ebsAlertDto);
 		final CommitDiscardWrapperComponent<EbsAlertDataForm> editView = new CommitDiscardWrapperComponent<EbsAlertDataForm>(
@@ -400,11 +400,6 @@ public class EbsController {
 		};
 	}
 
-	public void archiveAllSelectedItems(Collection<EbsIndexDto> selectedRows, EbsSignalGrid eventGrid) {
-		ControllerProvider.getArchiveController()
-				.archiveSelectedItems(selectedRows, ArchiveHandlers.forEvent(), bulkOperationCallback(eventGrid, null));
-	}
-
 
 	public CommitDiscardWrapperComponent<EbsDataForm> getEbsDataEditComponent(final String eventUuid, Consumer<EbsSourceType> saveCallback) {
 
@@ -412,7 +407,7 @@ public class EbsController {
 		DeletionInfoDto automaticDeletionInfoDto = FacadeProvider.getEbsFacade().getAutomaticDeletionInfo(eventUuid);
 		DeletionInfoDto manuallyDeletionInfoDto = FacadeProvider.getEbsFacade().getManuallyDeletionInfo(eventUuid);
 
-		EbsDataForm eventEditForm = new EbsDataForm(event,false, event.isPseudonymized(), event.isInJurisdiction());
+		EbsDataForm eventEditForm = new EbsDataForm(event,false, event.isPseudonymized(), true);
 		eventEditForm.setValue(event);
 		final CommitDiscardWrapperComponent<EbsDataForm> editView =
 				new CommitDiscardWrapperComponent<EbsDataForm>(eventEditForm, true, eventEditForm.getFieldGroup());
@@ -480,13 +475,6 @@ public class EbsController {
 //			});
 //		}
 		editView.getDiscardButton().setCaption("Cancel");
-		editView.restrictEditableComponentsOnEditView(
-				UserRight.EVENT_EDIT,
-				null,
-				UserRight.EVENT_DELETE,
-				UserRight.EVENT_ARCHIVE,
-				FacadeProvider.getEbsFacade().getEditPermissionType(eventUuid),
-				event.isInJurisdiction());
 
 		return editView;
 	}
@@ -498,7 +486,7 @@ public class EbsController {
 				ebs,
 				EbsDto.class,
 				ebs.isPseudonymized(),
-				ebs.isInJurisdiction(),
+				true,
 				isEditAllowed);
 
 		riskAssessmentDataForm.setValue(riskAssessmentDto);
@@ -530,7 +518,7 @@ public class EbsController {
 				ebs,
 				EbsDto.class,
 				ebs.isPseudonymized(),
-				ebs.isInJurisdiction(),
+				true,
 				isEditAllowed);
 		alertDataForm.setValue(ebsAlertDto);
 		final CommitDiscardWrapperComponent<EbsAlertDataForm> editView = new CommitDiscardWrapperComponent<EbsAlertDataForm>(

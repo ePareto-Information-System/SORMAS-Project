@@ -6,7 +6,7 @@ import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.ebs.*;
 import de.symeda.sormas.api.i18n.Captions;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.ui.utils.*;
 import com.vaadin.ui.Label;
 import de.symeda.sormas.api.FacadeProvider;
@@ -17,7 +17,6 @@ import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.NullableOptionGroup;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -65,7 +64,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 TriagingDto.I18N_PREFIX,
                 false,
                 FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-                createFieldAccessCheckers(isPseudonymized, inJurisdiction, true),
+                createFieldAccessCheckers(isPseudonymized,  false),
                 ebsDto);
         this.ebs = ebsDto;
         this.parentClass = parentClass;
@@ -94,12 +93,10 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 
     private static UiFieldAccessCheckers createFieldAccessCheckers(
             boolean isPseudonymized,
-            boolean inJurisdiction,
             boolean withPersonalAndSensitive) {
 
         if (withPersonalAndSensitive) {
-            return UiFieldAccessCheckers
-                    .forDataAccessLevel(UserProvider.getCurrent().getPseudonymizableDataAccessLevel(inJurisdiction), isPseudonymized);
+            return UiFieldAccessCheckers.getDefault(isPseudonymized);
         }
 
         return UiFieldAccessCheckers.getNoop();
@@ -203,7 +200,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 getFieldGroup(),
                 Arrays.asList(TriagingDto.OCCURRENCE_PREVIOUSLY),
                 TriagingDto.SPECIFIC_SIGNAL,
-                Arrays.asList(YesNo.YES),
+                Arrays.asList(YesNoUnknown.YES),
                 true);
 
         specificSignal.addValueChangeListener(e->{
@@ -262,7 +259,9 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
             }
         });
         signalCategory.addValueChangeListener(e->{
-            final Set<String> validCategories = new HashSet<>(Set.of("[Human]", "[Environment]", "[Animal]", "[POE]"));
+            final Set<String> validCategories = new HashSet<>(Arrays.asList(
+                    "[Human]", "[Environment]", "[Animal]", "[POE]"
+            ));
             String propertyValue = e.getProperty().getValue().toString();
             if (validCategories.contains(propertyValue)) {
                 categoryLevel.setVisible(true);
@@ -288,28 +287,28 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         });
 
         categoryLevel.addValueChangeListener(valueChangeEvent -> {
-            var level = valueChangeEvent.getProperty().getValue().toString();
-            var category = signalCategory.getNullableValue();
+            String level = valueChangeEvent.getProperty().getValue().toString();
+            Object category = signalCategory.getNullableValue();
             setVisibility(level, (SignalCategory) category);
         });
 
         previousOccurrence.addValueChangeListener(e -> {
             if (e.getProperty().getValue().toString().equals("[NO]")) {
                 triagingDecision.setValue(EbsTriagingDecision.VERIFY);
-                selectedEbs.getSignalVerification().setVerificationSent(YesNo.YES);
+                selectedEbs.getSignalVerification().setVerificationSent(YesNoUnknown.YES);
                 selectedEbs.getSignalVerification().setDateOfOccurrence(new Date());
             } else {
                 triagingDecision.setValue(EbsTriagingDecision.DISCARD);
-                selectedEbs.getSignalVerification().setVerificationSent(YesNo.NO);
+                selectedEbs.getSignalVerification().setVerificationSent(YesNoUnknown.NO);
             }
         });
         triagingDecision.addValueChangeListener(e->{
             try {
                 if (e.getProperty().getValue().toString().equals("Proceed to verification")) {
-                    selectedEbs.getSignalVerification().setVerificationSent(YesNo.YES);
+                    selectedEbs.getSignalVerification().setVerificationSent(YesNoUnknown.YES);
                     selectedEbs.getSignalVerification().setDateOfOccurrence(new Date());
                 } else {
-                    selectedEbs.getSignalVerification().setVerificationSent(YesNo.NO);
+                    selectedEbs.getSignalVerification().setVerificationSent(YesNoUnknown.NO);
                     selectedEbs.getSignalVerification().setVerified(SignalOutcome.NON_EVENT);
                 }
             }catch (Exception exception){
@@ -326,7 +325,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 dateOfDecision.setRequired(true);
             }
             else if (e.getProperty().getValue().toString().equals("[NO]")) {
-                if (ebs.getTriaging().getSupervisorReview() != YesNo.NO) {
+                if (ebs.getTriaging().getSupervisorReview() != YesNoUnknown.NO) {
                     reviewSignal(Strings.seniorOfficials);
                 }
                 potentialRisk.setVisible(false);
@@ -370,7 +369,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
                 referred.setValue(null);
             }
             else if (e.getProperty().getValue().toString().equals("[YES]")) {
-                if (ebs.getTriaging().getHealthConcern() != YesNo.YES) {
+                if (ebs.getTriaging().getHealthConcern() != YesNoUnknown.YES) {
                     reviewSignal(Strings.referredNotifs);
                 }
                 referred.setVisible(true);
@@ -440,7 +439,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
         initializeAccessAndAllowedAccesses();
     }
 
-    private static @Nullable SignalCategory getSignalCategory(String propertyValue) {
+    private static SignalCategory getSignalCategory(String propertyValue) {
         SignalCategory category = null;
         switch (propertyValue) {
             case "[Human]":

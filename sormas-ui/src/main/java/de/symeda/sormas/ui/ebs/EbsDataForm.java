@@ -90,7 +90,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
                 EbsDto.I18N_PREFIX,
                 false,
                 FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-                createFieldAccessCheckers(isPseudonymized, inJurisdiction, true),ebsDto);
+                createFieldAccessCheckers(isPseudonymized,  true),ebsDto);
 
         isCreateForm = create;
         this.ebs = ebsDto;
@@ -110,12 +110,10 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 
     private static UiFieldAccessCheckers createFieldAccessCheckers(
             boolean isPseudonymized,
-            boolean inJurisdiction,
             boolean withPersonalAndSensitive) {
 
         if (withPersonalAndSensitive) {
-            return UiFieldAccessCheckers
-                    .forDataAccessLevel(UserProvider.getCurrent().getPseudonymizableDataAccessLevel(inJurisdiction), isPseudonymized);
+            return UiFieldAccessCheckers.getDefault(isPseudonymized);
         }
 
         return UiFieldAccessCheckers.getNoop();
@@ -164,7 +162,8 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
         personPhone.addValidator(new PhoneNumberValidator(I18nProperties.getValidationError(Validations.validPhoneNumber, personPhone.getCaption())));
         addField(
                 EbsDto.EBS_LOCATION,
-                new LocationEditForm(fieldVisibilityCheckers, createFieldAccessCheckers(isPseudonymized, inJurisdiction, false),null)).setCaption(null);
+                new LocationEditForm(fieldVisibilityCheckers, createFieldAccessCheckers(isPseudonymized, false)))
+                .setCaption(null);
 
         locationForm = (LocationEditForm) getFieldGroup().getField(EbsDto.EBS_LOCATION);
         locationForm.setDistrictRequiredOnDefaultCountry(true);
@@ -365,38 +364,6 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
                 epidemiologicalEvidenceDetail);
     }
 
-    private void initEventDateValidation(DateTimeField startDate, DateTimeField endDate, CheckBox multiDayCheckbox) {
-        DateComparisonValidator startDateValidator = new DateComparisonValidator(
-                startDate,
-                endDate,
-                true,
-                true,
-                I18nProperties.getValidationError(Validations.beforeDate, startDate.getCaption(), endDate.getCaption()));
-
-        DateComparisonValidator endDateValidator = new DateComparisonValidator(
-                endDate,
-                startDate,
-                false,
-                true,
-                I18nProperties.getValidationError(Validations.afterDate, endDate.getCaption(), startDate.getCaption()));
-
-        endDate.removeAllValidators(); // make sure the end date does not come with a future date validator
-
-        multiDayCheckbox.addValueChangeListener(e -> {
-            if ((Boolean) e.getProperty().getValue()) {
-                startDate.addValidator(startDateValidator);
-                endDate.addValidator(endDateValidator);
-                DateComparisonValidator.dateFieldDependencyValidationVisibility(startDate, endDate);
-            } else {
-                startDate.removeValidator(startDateValidator);
-                startDate.setValidationVisible(true);
-                endDate.removeValidator(endDateValidator);
-                endDate.setValidationVisible(true);
-            }
-        });
-
-    }
-
     @Override
     protected String createHtmlLayout() {
         return HTML_LAYOUT;
@@ -412,7 +379,6 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
     @Override
     public void setValue(EbsDto newFieldValue) throws ReadOnlyException, Converter.ConversionException {
         if (!isCreateForm && FacadeProvider.getEventFacade().hasAnyEventParticipantWithoutJurisdiction(newFieldValue.getUuid())) {
-            locationForm.setHasEventParticipantsWithoutJurisdiction(true);
             locationForm.setFieldsRequirement(true, LocationDto.REGION, LocationDto.DISTRICT);
             locationForm.setCountryDisabledWithHint(I18nProperties.getString(Strings.infoCountryNotEditableEventParticipantsWithoutJurisdiction));
         }

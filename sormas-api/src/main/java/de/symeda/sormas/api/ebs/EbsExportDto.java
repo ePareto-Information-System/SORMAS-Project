@@ -21,19 +21,20 @@ import de.symeda.sormas.api.importexport.ExportGroupType;
 import de.symeda.sormas.api.importexport.ExportProperty;
 import de.symeda.sormas.api.infrastructure.region.RegionDto;
 import de.symeda.sormas.api.utils.Order;
-import de.symeda.sormas.api.utils.YesNo;
-import de.symeda.sormas.api.uuid.AbstractUuidDto;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 
+import java.io.Serializable;
 import java.util.*;
 
 @ExportEntity(EbsDto.class)
-public class EbsExportDto extends AbstractUuidDto {
+public class EbsExportDto implements Serializable {
 
 	public static final String I18N_PREFIX = "EbsExport";
 	private static final String REGION = "region";
 	private static final String DISTRICT = "district";
 	private static final String COMMUNITY = "community";
 
+	private String uuid;
 	private String informantName;
 	private String informantTel;
 	private Date reportDateTime;
@@ -56,11 +57,11 @@ public class EbsExportDto extends AbstractUuidDto {
 	private String other;
 	private PersonReporting categoryOfInformant;
 	private String otherInformant;
-	private YesNo supervisorReview;
-	private YesNo referred;
-	private YesNo specificSignal;
+	private YesNoUnknown supervisorReview;
+	private YesNoUnknown referred;
+	private YesNoUnknown specificSignal;
 	private SignalCategory signalCategory;
-	private YesNo healthConcern;
+	private YesNoUnknown healthConcern;
 	private HumanCommunityCategoryDetails humanCommunityCategoryDetails;
 	private HumanFaclityCategoryDetails humanFacilityCategoryDetails;
 	private HumanLaboratoryCategoryDetails humanLaboratoryCategoryDetails;
@@ -69,15 +70,15 @@ public class EbsExportDto extends AbstractUuidDto {
 	private AnimalLaboratoryCategoryDetails animalLaboratoryCategoryDetails;
 	private EnvironmentalCategoryDetails environmentalCategoryDetails;
 	private POE poeCategoryDetails;
-	private YesNo occurrencePreviously;
+	private YesNoUnknown occurrencePreviously;
 	private EbsTriagingDecision triagingDecision;
 	private Date decisionDate;
 	private String referredTo;
 	private OutComeSupervisor outcomeSupervisor;
 	private boolean notSignal;
 	private CategoryDetailsLevel categoryDetailsLevel;
-	private YesNo potentialRisk;
-	private YesNo verificationSent;
+	private YesNoUnknown potentialRisk;
+	private YesNoUnknown verificationSent;
 	private SignalOutcome verified;
 	private Date verificationCompleteDate;
 	private Date dateOfOccurrence;
@@ -87,21 +88,21 @@ public class EbsExportDto extends AbstractUuidDto {
 	private String whyNotVerify;
 	private String numberOfPersonCases;
 	private String numberOfDeathPerson;
-	private YesNo morbidityMortality;
+	private YesNoUnknown morbidityMortality;
 	private String morbidityMortalityComment;
-	private YesNo spreadProbability;
+	private YesNoUnknown spreadProbability;
 	private String spreadProbabilityComment;
-	private YesNo controlMeasures;
+	private YesNoUnknown controlMeasures;
 	private String controlMeasuresComment;
 	private RiskAssesment riskAssessment;
 	private Date assessmentDate;
 	private String assessmentTime;
-	private YesNo actionInitiated;
+	private YesNoUnknown actionInitiated;
 	private ResponseStatus responseStatus;
 	private Date responseDate;
 	private String detailsResponseActivities;
 	private String detailsGiven;
-	private YesNo alertIssued;
+	private YesNoUnknown alertIssued;
 	private String detailsAlertUsed;
 	private Date alertDate;
 
@@ -129,11 +130,11 @@ public class EbsExportDto extends AbstractUuidDto {
 			String other,
 			PersonReporting categoryOfInformant,
 			String otherInformant,
-			YesNo supervisorReview,
-			YesNo referred,
-			YesNo specificSignal,
+			YesNoUnknown supervisorReview,
+			YesNoUnknown referred,
+			YesNoUnknown specificSignal,
 			SignalCategory signalCategory,
-			YesNo healthConcern,
+			YesNoUnknown healthConcern,
 			HumanCommunityCategoryDetails humanCommunityCategoryDetails,
 			HumanFaclityCategoryDetails humanFacilityCategoryDetails,
 			HumanLaboratoryCategoryDetails humanLaboratoryCategoryDetails,
@@ -142,15 +143,15 @@ public class EbsExportDto extends AbstractUuidDto {
 			AnimalLaboratoryCategoryDetails animalLaboratoryCategoryDetails,
 			EnvironmentalCategoryDetails environmentalCategoryDetails,
 			POE poeCategoryDetails,
-			YesNo occurrencePreviously,
+			YesNoUnknown occurrencePreviously,
 			EbsTriagingDecision triagingDecision,
 			Date decisionDate,
 			String referredTo,
 			OutComeSupervisor outcomeSupervisor,
 			boolean notSignal,
 			CategoryDetailsLevel categoryDetailsLevel,
-			YesNo potentialRisk,
-			YesNo verificationSent,
+			YesNoUnknown potentialRisk,
+			YesNoUnknown verificationSent,
 			SignalOutcome verified,
 			Date verificationCompleteDate,
 			Date dateOfOccurrence,
@@ -160,24 +161,24 @@ public class EbsExportDto extends AbstractUuidDto {
 			String whyNotVerify,
 			String numberOfPersonCases,
 			String numberOfDeathPerson,
-			YesNo morbidityMortality,
+			YesNoUnknown morbidityMortality,
 			String morbidityMortalityComment,
-			YesNo spreadProbability,
+			YesNoUnknown spreadProbability,
 			String spreadProbabilityComment,
-			YesNo controlMeasures,
+			YesNoUnknown controlMeasures,
 			String controlMeasuresComment,
 			RiskAssesment riskAssessment,
 			Date assessmentDate,
-			YesNo actionInitiated,
+			YesNoUnknown actionInitiated,
 			ResponseStatus responseStatus,
 			Date responseDate,
 			String detailsResponseActivities,
 			String detailsGiven,
-			YesNo alertIssued,
+			YesNoUnknown alertIssued,
 			String detailsAlertUsed,
 			Date alertDate
 	) {
-		super(uuid);
+		this.uuid = uuid;
 		this.informantName = informantName;
 		this.informantTel = informantTel;
 		this.reportDateTime = reportDateTime;
@@ -252,9 +253,12 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(0)
 	@ExportProperty(EbsDto.UUID)
 	@ExportGroup(ExportGroupType.EBS)
-	@Override
 	public String getUuid() {
-		return super.getUuid();
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 	@Order(1)
 	@ExportProperty(EbsDto.SOURCE_INFORMATION)
@@ -459,30 +463,30 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(24)
 	@ExportProperty(TriagingDto.SUPERVISOR_REVIEW)
 	@ExportGroup(ExportGroupType.TRIAGING)
-	public YesNo getSupervisorReview() {
+	public YesNoUnknown getSupervisorReview() {
 		return supervisorReview;
 	}
-	public void setSupervisorReview(YesNo supervisorReview) {
+	public void setSupervisorReview(YesNoUnknown supervisorReview) {
 		this.supervisorReview = supervisorReview;
 	}
 
 	@Order(25)
 	@ExportProperty(TriagingDto.REFERRED)
 	@ExportGroup(ExportGroupType.TRIAGING)
-	public YesNo getReferred() {
+	public YesNoUnknown getReferred() {
 		return referred;
 	}
-	public void setReferred(YesNo referred) {
+	public void setReferred(YesNoUnknown referred) {
 		this.referred = referred;
 	}
 
 	@Order(26)
 	@ExportProperty(TriagingDto.SPECIFIC_SIGNAL)
 	@ExportGroup(ExportGroupType.TRIAGING)
-	public YesNo getSpecificSignal() {
+	public YesNoUnknown getSpecificSignal() {
 		return specificSignal;
 	}
-	public void setSpecificSignal(YesNo specificSignal) {
+	public void setSpecificSignal(YesNoUnknown specificSignal) {
 		this.specificSignal = specificSignal;
 	}
 
@@ -499,10 +503,10 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(28)
 	@ExportProperty(TriagingDto.HEALTH_CONCERN)
 	@ExportGroup(ExportGroupType.TRIAGING)
-	public YesNo getHealthConcern() {
+	public YesNoUnknown getHealthConcern() {
 		return healthConcern;
 	}
-	public void setHealthConcern(YesNo healthConcern) {
+	public void setHealthConcern(YesNoUnknown healthConcern) {
 		this.healthConcern = healthConcern;
 	}
 
@@ -589,10 +593,10 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(37)
 	@ExportProperty(TriagingDto.OCCURRENCE_PREVIOUSLY)
 	@ExportGroup(ExportGroupType.TRIAGING)
-	public YesNo getOccurrencePreviously() {
+	public YesNoUnknown getOccurrencePreviously() {
 		return occurrencePreviously;
 	}
-	public void setOccurrencePreviously(YesNo occurrencePreviously) {
+	public void setOccurrencePreviously(YesNoUnknown occurrencePreviously) {
 		this.occurrencePreviously = occurrencePreviously;
 	}
 
@@ -659,20 +663,20 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(44)
 	@ExportProperty(TriagingDto.POTENTIAL_RISK)
 	@ExportGroup(ExportGroupType.TRIAGING)
-	public YesNo getPotentialRisk() {
+	public YesNoUnknown getPotentialRisk() {
 		return potentialRisk;
 	}
-	public void setPotentialRisk(YesNo potentialRisk) {
+	public void setPotentialRisk(YesNoUnknown potentialRisk) {
 		this.potentialRisk = potentialRisk;
 	}
 
 	@Order(45)
 	@ExportProperty(SignalVerificationDto.VERIFICATION_SENT)
 	@ExportGroup(ExportGroupType.SIGNAL_VERIFICATION)
-	public YesNo getVerificationSent() {
+	public YesNoUnknown getVerificationSent() {
 		return verificationSent;
 	}
-	public void setVerificationSent(YesNo verificationSent) {
+	public void setVerificationSent(YesNoUnknown verificationSent) {
 		this.verificationSent = verificationSent;
 	}
 
@@ -768,10 +772,10 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(55)
 	@ExportProperty(RiskAssessmentDto.MORBIDITY_MORTALITY)
 	@ExportGroup(ExportGroupType.RISK_ASSESSMENT)
-	public YesNo getMorbidityMortality() {
+	public YesNoUnknown getMorbidityMortality() {
 		return morbidityMortality;
 	}
-	public void setMorbidityMortality(YesNo morbidityMortality) {
+	public void setMorbidityMortality(YesNoUnknown morbidityMortality) {
 		this.morbidityMortality = morbidityMortality;
 	}
 
@@ -788,10 +792,10 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(57)
 	@ExportProperty(RiskAssessmentDto.SPREAD_PROBABILITY)
 	@ExportGroup(ExportGroupType.RISK_ASSESSMENT)
-	public YesNo getSpreadProbability() {
+	public YesNoUnknown getSpreadProbability() {
 		return spreadProbability;
 	}
-	public void setSpreadProbability(YesNo spreadProbability) {
+	public void setSpreadProbability(YesNoUnknown spreadProbability) {
 		this.spreadProbability = spreadProbability;
 	}
 
@@ -808,10 +812,10 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(59)
 	@ExportProperty(RiskAssessmentDto.CONTROL_MEASURES)
 	@ExportGroup(ExportGroupType.RISK_ASSESSMENT)
-	public YesNo getControlMeasures() {
+	public YesNoUnknown getControlMeasures() {
 		return controlMeasures;
 	}
-	public void setControlMeasures(YesNo controlMeasures) {
+	public void setControlMeasures(YesNoUnknown controlMeasures) {
 		this.controlMeasures = controlMeasures;
 	}
 
@@ -858,10 +862,10 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(64)
 	@ExportProperty(EbsAlertDto.ACTION_INITIATED)
 	@ExportGroup(ExportGroupType.EBS_ALERT)
-	public YesNo getActionInitiated() {
+	public YesNoUnknown getActionInitiated() {
 		return actionInitiated;
 	}
-	public void setActionInitiated(YesNo actionInitiated) {
+	public void setActionInitiated(YesNoUnknown actionInitiated) {
 		this.actionInitiated = actionInitiated;
 	}
 
@@ -908,10 +912,10 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(69)
 	@ExportProperty(EbsAlertDto.ALERT_ISSUED)
 	@ExportGroup(ExportGroupType.EBS_ALERT)
-	public YesNo getAlertIssued() {
+	public YesNoUnknown getAlertIssued() {
 		return alertIssued;
 	}
-	public void setAlertIssued(YesNo alertIssued) {
+	public void setAlertIssued(YesNoUnknown alertIssued) {
 		this.alertIssued = alertIssued;
 	}
 

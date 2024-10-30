@@ -26,23 +26,17 @@ import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolRuntimeException;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.sormastosormas.ShareTreeCriteria;
-import de.symeda.sormas.api.sormastosormas.SormasToSormasException;
-import de.symeda.sormas.api.sormastosormas.SormasToSormasRuntimeException;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.AccessDeniedException;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
-import de.symeda.sormas.api.utils.YesNo;
-import de.symeda.sormas.backend.FacadeHelper;
 import de.symeda.sormas.backend.common.AbstractCoreFacadeEjb;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
-import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.externalsurveillancetool.ExternalSurveillanceToolGatewayFacadeEjb.ExternalSurveillanceToolGatewayFacadeEjbLocal;
 import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal;
 import de.symeda.sormas.backend.infrastructure.community.Community;
@@ -123,8 +117,8 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	}
 
 	@Inject
-	public EbsFacadeEjb(EbsService service) {
-		super(Ebs.class, EbsDto.class, service);
+	public EbsFacadeEjb(EbsService service,UserService userService) {
+		super(Ebs.class, EbsDto.class, service,userService);
 	}
 
 	public static EbsReferenceDto toReferenceDto(Ebs entity) {
@@ -207,7 +201,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 	@Override
 	public List<EbsDto> getAllByCase(CaseDataDto caseDataDto) {
-		return toDtos(service.getAllByCase(caseDataDto.getUuid()).stream());
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -230,13 +224,18 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	@Override
 	public EbsDto getEbsByUuid(String uuid, boolean detailedReferences) {
 		return (detailedReferences)
-				? convertToDetailedReferenceDto(service.getByUuid(uuid), createPseudonymizer())
-				: toPseudonymizedDto(service.getByUuid(uuid));
+				? convertToDetailedReferenceDto(service.getByUuid(uuid), Pseudonymizer.getDefault(userService::hasRight))
+				: convertToDto(service.getByUuid(uuid),Pseudonymizer.getDefault(userService::hasRight));
 	}
 
 	@Override
 	public EbsReferenceDto getReferenceByUuid(String uuid) {
 		return toReferenceDto(service.getByUuid(uuid));
+	}
+
+	@Override
+	protected void selectDtoFields(CriteriaQuery<EbsDto> cq, Root<Ebs> root) {
+
 	}
 
 	@Override
@@ -248,15 +247,10 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	public EbsDto save(@NotNull EbsDto dto, boolean checkChangeDate, boolean internal) {
 
 		Ebs existingEbs = dto.getUuid() != null ? service.getByUuid(dto.getUuid()) : null;
-		FacadeHelper.checkCreateAndEditRights(existingEbs, userService, UserRight.EVENT_CREATE, UserRight.EVENT_EDIT);
-
-		if (internal && existingEbs != null && !service.isEditAllowed(existingEbs)) {
-			throw new AccessDeniedException(I18nProperties.getString(Strings.errorEventNotEditable));
-		}
 
 		EbsDto existingDto = toDto(existingEbs);
 
-		Pseudonymizer pseudonymizer = createPseudonymizer();
+		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
 		restorePseudonymizedDto(dto, existingDto, existingEbs, pseudonymizer);
 
 		validate(dto);
@@ -265,7 +259,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 		onEventChange(toDto(ebs), internal);
 
-		return toPseudonymizedDto(ebs, pseudonymizer);
+		return convertToDto(ebs, pseudonymizer);
 	}
 
 	@PermitAll
@@ -274,7 +268,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			syncSharesAsync(new ShareTreeCriteria(ebs.getUuid()));
 		}
 	}
-	
+
 	public void syncSharesAsync(ShareTreeCriteria criteria) {
 //		executorService.schedule(() -> {
 //			sormasToSormasEventFacade.syncShares(criteria);
@@ -283,23 +277,13 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 	@Override
 	public void delete(String ebsUuid, DeletionDetails deletionDetails)
-			throws ExternalSurveillanceToolRuntimeException, SormasToSormasRuntimeException {
+			throws ExternalSurveillanceToolRuntimeException {
 		Ebs ebs = service.getByUuid(ebsUuid);
 		deleteEbs(ebs, deletionDetails);
 	}
 
 	private void deleteEbs(Ebs ebs, DeletionDetails deletionDetails)
-			throws ExternalSurveillanceToolRuntimeException, SormasToSormasRuntimeException, AccessDeniedException {
-
-		if (!ebsService.inJurisdictionOrOwned(ebs)) {
-			throw new AccessDeniedException(I18nProperties.getString(Strings.messageEventOutsideJurisdictionDeletionDenied));
-		}
-
-		try {
-			sormasToSormasFacade.revokePendingShareRequests(ebs.getSormasToSormasShares(), true);
-		} catch (SormasToSormasException e) {
-			throw new SormasToSormasRuntimeException(e);
-		}
+			throws ExternalSurveillanceToolRuntimeException, AccessDeniedException {
 
 		service.delete(ebs, deletionDetails);
 	}
@@ -315,7 +299,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 					try {
 						deleteEbs(ebstoBeDeleted, deletionDetails);
 						deletedEbsUuids.add(ebstoBeDeleted.getUuid());
-					} catch (ExternalSurveillanceToolRuntimeException | SormasToSormasRuntimeException | AccessDeniedException e) {
+					} catch (ExternalSurveillanceToolRuntimeException  | AccessDeniedException e) {
 						logger.error("The event with uuid:" + ebstoBeDeleted.getUuid() + "could not be deleted");
 					}
 				}
@@ -325,33 +309,8 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	}
 
 	@Override
-	@RightsAllowed(UserRight._EVENT_DELETE)
-	public void restore(String uuid) {
-		super.restore(uuid);
-	}
-
-	@Override
 	protected void pseudonymizeDto(Ebs source, EbsDto dto, Pseudonymizer pseudonymizer) {
 
-	}
-
-	@Override
-	@RightsAllowed(UserRight._EVENT_DELETE)
-	public List<String> restore(List<String> uuids) {
-		List<String> restoredEbssUuids = new ArrayList<>();
-		List<Ebs> ebsToBeRestored = ebsService.getByUuids(uuids);
-
-		if (ebsToBeRestored != null) {
-			ebsToBeRestored.forEach(ebstoBeDeleted -> {
-				try {
-					restore(ebstoBeDeleted.getUuid());
-					restoredEbssUuids.add(ebstoBeDeleted.getUuid());
-				} catch (Exception e) {
-					logger.error("The event with uuid: " + ebstoBeDeleted.getUuid() + " could not be restored");
-				}
-			});
-		}
-		return restoredEbssUuids;
 	}
 
 	@RightsAllowed({
@@ -365,7 +324,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 					&& ebsWithSameExternalId.size() == 1
 					&& externalSurveillanceToolFacade.isFeatureEnabled()
 					&& externalShareInfoService.isEbsShared(ebs.getId())) {
-				externalSurveillanceToolGatewayFacade.deleteEbsInternal(Collections.singletonList(toDto(ebs)));
+				externalSurveillanceToolGatewayFacade.deleteEbs(Collections.singletonList(toDto(ebs)));
 			}
 		}
 	}
@@ -893,7 +852,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 
 	@Override
-	protected EbsReferenceDto toRefDto(Ebs ebs) {
+	public EbsReferenceDto toRefDto(Ebs ebs) {
 		return toReferenceDto(ebs);
 	}
 
@@ -905,8 +864,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		return ebsDto;
 	}
 
-	@Override
-	protected void pseudonymizeDto(Ebs ebs, EbsDto dto, Pseudonymizer pseudonymizer, boolean inJurisdiction) {
+	public void pseudonymizeDto(Ebs ebs, EbsDto dto, Pseudonymizer pseudonymizer, boolean inJurisdiction) {
 
 		if (dto != null) {
 			pseudonymizer.pseudonymizeDto(EbsDto.class, dto, inJurisdiction, e -> {
@@ -932,7 +890,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		target.setEndDate(source.getEndDate());
 		target.setReportDateTime(source.getReportDateTime());
 		target.setCategoryOfInformant(source.getCategoryOfInformant());
-		target.setEbsLocation(locationFacade.fillOrBuildEntity(source.getEbsLocation(), target.getEbsLocation(), checkChangeDate));
+		target.setEbsLocation(locationFacade.fromDto(source.getEbsLocation(), checkChangeDate));
 		target.setResponsibleUser(userService.getByReferenceDto(source.getResponsibleUser()));
 		target.setDeleted(source.isDeleted());
 		target.setDeletionReason(source.getDeletionReason());
@@ -1034,26 +992,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	}
 
 	@Override
-	public Integer saveBulkEbs(
-			List<String> ebsUuidList,
-			EbsDto updatedTempEbs) {
-
-		int changedEbs = 0;
-		for (String ebsUuid : ebsUuidList) {
-			Ebs ebs = service.getByUuid(ebsUuid);
-
-			if (service.isEditAllowed(ebs)) {
-				EbsDto ebsDto = toDto(ebs);
-
-				save(ebsDto);
-				changedEbs++;
-			}
-		}
-		return changedEbs;
-
-	}
-
-	@Override
 	public void setRiskAssessmentAssociations(EbsReferenceDto ebsRef) {
 
 		final Ebs ebs = ebsService.getByUuid(ebsRef.getUuid());
@@ -1084,7 +1022,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 	@Override
 	protected String getDeleteReferenceField(DeletionReference deletionReference) {
-		if (deletionReference == DeletionReference.REPORT) {
+		if (deletionReference == DeletionReference.END) {
 			return Ebs.REPORT_DATE_TIME;
 		}
 
@@ -1109,8 +1047,8 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		}
 
 		@Inject
-		public EbsFacadeEjbLocal(EbsService service) {
-			super(service);
+		public EbsFacadeEjbLocal(EbsService service,UserService userService) {
+			super(service,userService);
 		}
 	}
 

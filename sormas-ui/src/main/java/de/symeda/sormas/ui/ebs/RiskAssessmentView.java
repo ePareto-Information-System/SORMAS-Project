@@ -26,7 +26,7 @@ import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.ButtonHelper;
@@ -54,13 +54,13 @@ public class RiskAssessmentView extends AbstractEbsView {
 		EbsDto ebsDto = ControllerProvider.getEbsController().findEbs(getEbsRef().getUuid());
 	if (riskAssessment.isEmpty()) {
 		ControllerProvider.getEbsController().createRiskAssessmentComponent(getEbsRef().getUuid(),
-				isEditAllowed() && UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT));
+                UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT));
 	}
 		addButton = ButtonHelper.createIconButton(
 				Captions.ebsNewEbs,
 				VaadinIcons.PLUS_CIRCLE,
 				e -> ControllerProvider.getEbsController().createRiskAssessmentComponent(getEbsRef().getUuid(),
-						isEditAllowed() && UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT)),
+                        UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT)),
 				ValoTheme.BUTTON_PRIMARY);
 
 	if (ControllerProvider.getEbsController().isSignalVerified(getEbsRef().getUuid())) {

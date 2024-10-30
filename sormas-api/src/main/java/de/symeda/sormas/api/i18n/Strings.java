@@ -1481,4 +1481,22 @@ public interface Strings {
 	String messageTriagingSavedShort = "messageTriagingSavedShort";
 	String messageAlertSavedShort = "messageAlertSavedShort";
 	String messageSignalVerificationSavedShort = "messageSignalVerificationSavedShort";
+	String VeryHighRisk = "VeryHighRisk";
+	String HighRisk = "HighRisk";
+	String ModerateRisk = "ModerateRisk";
+	String LowRisk = "LowRisk";
+	String RecommendedActions = "RecommendedActions";
+	String NotificationType = "NotificationType";
+	String NotificationAction = "NotificationAction";
+	String VeryHighRiskRecommendation = "VeryHighRiskRecommendation";
+	String VeryHighRiskNotificationType = "VeryHighRiskNotificationType";
+	String VeryHighRiskNotificationAction = "VeryHighRiskNotificationAction";
+	String HighRiskRecommendation = "HighRiskRecommendation";
+	String HighRiskNotificationType = "HighRiskNotificationType";
+	String HighRiskNotificationAction = "HighRiskNotificationAction";
+	String ModerateRiskRecommendation = "ModerateRiskRecommendation";
+	String ModerateRiskNotifcationType = "ModerateRiskNotifcationType";
+	String ModerateRiskNotificationAction = "ModerateRiskNotificationAction";
+	String headingCreateNewAssessment = "headingCreateNewAssessment";
+	String headingCreateNewAlert = "headingCreateNewAlert";
 }

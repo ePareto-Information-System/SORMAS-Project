@@ -1,7 +1,7 @@
 package de.symeda.sormas.backend.ebs;
 
 import de.symeda.sormas.api.ebs.RiskAssesment;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 
 import javax.persistence.Entity;
@@ -43,9 +43,9 @@ public class RiskAssessment extends AbstractDomainObject {
     public static final String EBS = "ebs";
 
 
-    private YesNo morbidityMortality;
-    private YesNo spreadProbability;
-    private YesNo controlMeasures;
+    private YesNoUnknown morbidityMortality;
+    private YesNoUnknown spreadProbability;
+    private YesNoUnknown controlMeasures;
     private RiskAssesment riskAssessment;
     private Date assessmentDate;
     private String assessmentTime;
@@ -54,27 +54,27 @@ public class RiskAssessment extends AbstractDomainObject {
     private String spreadProbabilityComment;
     private String controlMeasuresComment;
 
-    public YesNo getMorbidityMortality() {
+    public YesNoUnknown getMorbidityMortality() {
         return morbidityMortality;
     }
 
-    public void setMorbidityMortality(YesNo morbidityMortality) {
+    public void setMorbidityMortality(YesNoUnknown morbidityMortality) {
         this.morbidityMortality = morbidityMortality;
     }
 
-    public YesNo getSpreadProbability() {
+    public YesNoUnknown getSpreadProbability() {
         return spreadProbability;
     }
 
-    public void setSpreadProbability(YesNo spreadProbability) {
+    public void setSpreadProbability(YesNoUnknown spreadProbability) {
         this.spreadProbability = spreadProbability;
     }
 
-    public YesNo getControlMeasures() {
+    public YesNoUnknown getControlMeasures() {
         return controlMeasures;
     }
 
-    public void setControlMeasures(YesNo controlMeasures) {
+    public void setControlMeasures(YesNoUnknown controlMeasures) {
         this.controlMeasures = controlMeasures;
     }
 

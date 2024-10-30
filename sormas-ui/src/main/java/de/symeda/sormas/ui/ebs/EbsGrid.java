@@ -17,8 +17,11 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.ebs;
 
+import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.DataProviderListener;
+import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.navigator.View;
+import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.renderers.DateRenderer;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.Language;
@@ -30,6 +33,7 @@ import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
@@ -42,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("serial")
 public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
@@ -52,6 +57,7 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 	public static final String NUMBER_OF_PENDING_TASKS = Captions.columnNumberOfPendingTasks;
 	public static final String DISEASE_SHORT = Captions.columnDiseaseShort;
 
+	private DataProviderListener<EbsIndexDto> dataProviderListener;
 	@SuppressWarnings("unchecked")
 	public <V extends View> EbsGrid(EbsCriteria criteria, Class<V> viewClass) {
 
@@ -142,10 +148,35 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 	}
 
 	public void setLazyDataProvider() {
-		setLazyDataProvider(FacadeProvider.getEbsFacade()::getEventIndexList, FacadeProvider.getEbsFacade()::eventCount);
+
+		DataProvider<EbsIndexDto, EbsCriteria> dataProvider = DataProvider.fromFilteringCallbacks(
+				query -> FacadeProvider.getEbsFacade()
+						.getEventIndexList(
+								query.getFilter().orElse(null),
+								query.getOffset(),
+								query.getLimit(),
+								query.getSortOrders()
+										.stream()
+										.map(sortOrder -> new SortProperty(sortOrder.getSorted(), sortOrder.getDirection() == SortDirection.ASCENDING))
+										.collect(Collectors.toList()))
+						.stream(),
+				query -> (int) FacadeProvider.getEbsFacade().count(query.getFilter().orElse(null)));
+		setDataProvider(dataProvider);
+		setSelectionMode(SelectionMode.NONE);
 	}
 
 	public void setEagerDataProvider() {
-		setEagerDataProvider(FacadeProvider.getEbsFacade()::getEventIndexList);
+		ListDataProvider<EbsIndexDto> dataProvider =
+				DataProvider.fromStream(FacadeProvider.getEbsFacade().getEventIndexList(getCriteria(), null, null, null).stream());
+		setDataProvider(dataProvider);
+		setSelectionMode(SelectionMode.MULTI);
+
+		if (dataProviderListener != null) {
+			dataProvider.addDataProviderListener(dataProviderListener);
+		}
+	}
+
+	public void setDataProviderListener(DataProviderListener<EbsIndexDto> dataProviderListener) {
+		this.dataProviderListener = dataProviderListener;
 	}
 }

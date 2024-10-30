@@ -41,6 +41,7 @@ import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.AdoServiceWithUserFilter;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.contact.Contact;
+import de.symeda.sormas.backend.ebs.Ebs;
 import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.event.EventFacadeEjb;
 import de.symeda.sormas.backend.event.EventParticipant;
@@ -121,6 +122,9 @@ public class SormasToSormasShareInfoService extends AdoServiceWithUserFilter<Sor
 
 	public boolean isEventOwnershipHandedOver(Event event) {
 		return isOwnerShipHandedOver(SormasToSormasShareInfo.EVENT, event);
+	}
+	public boolean isEbsOwnershipHandedOver(Ebs event) {
+		return isOwnerShipHandedOver(SormasToSormasShareInfo.EBS, event);
 	}
 
 	public boolean isEventParticipantOwnershipHandedOver(EventParticipant eventParticipant) {

@@ -18,7 +18,7 @@
 package de.symeda.sormas.api.ebs;
 
 import de.symeda.sormas.api.ReferenceDto;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -26,7 +26,7 @@ public class SignalVerificationReferenceDto extends ReferenceDto {
 
 	private static final long serialVersionUID = -1399197327930368752L;
 
-	public static String buildCaption(YesNo verificationSent) {
+	public static String buildCaption(YesNoUnknown verificationSent) {
 		if(verificationSent == null){
 			return "";
 		};

@@ -39,7 +39,6 @@ import de.symeda.sormas.api.contact.ContactFacade;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumFacade;
 import de.symeda.sormas.api.dashboard.DashboardFacade;
 import de.symeda.sormas.api.contact.ContactStatisticsFacade;
-import de.symeda.sormas.api.disease.DiseaseBurdenDto;
 import de.symeda.sormas.api.disease.DiseaseConfigurationFacade;
 import de.symeda.sormas.api.disease.DiseaseFacade;
 import de.symeda.sormas.api.docgeneneration.DocumentTemplateFacade;
@@ -48,7 +47,6 @@ import de.symeda.sormas.api.docgeneneration.QuarantineOrderFacade;
 import de.symeda.sormas.api.document.DocumentFacade;
 import de.symeda.sormas.api.ebs.EbsAlertFacade;
 import de.symeda.sormas.api.ebs.EbsFacade;
-import de.symeda.sormas.api.ebs.EbsGroupFacade;
 import de.symeda.sormas.api.ebs.RiskAssessmentFacade;
 import de.symeda.sormas.api.epidata.EpiDataFacade;
 import de.symeda.sormas.api.event.EventFacade;
@@ -72,7 +70,6 @@ import de.symeda.sormas.api.immunization.ImmunizationFacade;
 import de.symeda.sormas.api.importexport.ExportFacade;
 import de.symeda.sormas.api.importexport.ImportFacade;
 import de.symeda.sormas.api.info.InfoFacade;
-import de.symeda.sormas.api.infrastructure.ClientInfraSyncFacade;
 import de.symeda.sormas.api.infrastructure.PopulationDataFacade;
 import de.symeda.sormas.api.infrastructure.area.AreaFacade;
 import de.symeda.sormas.api.infrastructure.community.CommunityFacade;
@@ -80,7 +77,6 @@ import de.symeda.sormas.api.infrastructure.continent.ContinentFacade;
 import de.symeda.sormas.api.infrastructure.country.CountryFacade;
 import de.symeda.sormas.api.infrastructure.diseasecon.DiseaseConFacade;
 import de.symeda.sormas.api.infrastructure.district.DistrictFacade;
-import de.symeda.sormas.api.infrastructure.facility.FacilityFacade;
 import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryFacade;
 import de.symeda.sormas.api.infrastructure.region.RegionFacade;
 import de.symeda.sormas.api.infrastructure.subcontinent.SubcontinentFacade;
@@ -100,14 +96,7 @@ import de.symeda.sormas.api.sormastosormas.event.SormasToSormasEventFacade;
 import de.symeda.sormas.api.sormastosormas.externalmessage.SormasToSormasExternalMessageFacade;
 import de.symeda.sormas.api.sormastosormas.shareinfo.SormasToSormasShareInfoFacade;
 import de.symeda.sormas.api.sormastosormas.sharerequest.SormasToSormasShareRequestFacade;
-import de.symeda.sormas.api.sormastosormas.entities.caze.SormasToSormasCaseFacade;
-import de.symeda.sormas.api.sormastosormas.entities.contact.SormasToSormasContactFacade;
 import de.symeda.sormas.api.sormastosormas.entities.ebs.SormasToSormasEbsFacade;
-import de.symeda.sormas.api.sormastosormas.entities.event.SormasToSormasEventFacade;
-import de.symeda.sormas.api.sormastosormas.entities.externalmessage.SormasToSormasExternalMessageFacade;
-import de.symeda.sormas.api.sormastosormas.share.incoming.SormasToSormasShareRequestFacade;
-import de.symeda.sormas.api.sormastosormas.share.outgoing.ShareRequestInfoFacade;
-import de.symeda.sormas.api.sormastosormas.share.outgoing.SormasToSormasShareInfoFacade;
 import de.symeda.sormas.api.symptoms.SymptomsFacade;
 import de.symeda.sormas.api.systemevents.SystemEventFacade;
 import de.symeda.sormas.api.systemevents.sync.SyncFacade;
@@ -209,10 +198,6 @@ public class FacadeProvider {
 	}
 	public static EbsAlertFacade getAlertFacade() {
 		return get().lookupEjbRemote(EbsAlertFacade.class);
-	}
-
-	public static EbsGroupFacade getEbsGroupFacade() {
-		return get().lookupEjbRemote(EbsGroupFacade.class);
 	}
 
 	public static VisitFacade getVisitFacade() {

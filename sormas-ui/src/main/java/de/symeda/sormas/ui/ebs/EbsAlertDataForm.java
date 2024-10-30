@@ -8,7 +8,7 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ebs.EbsAlertDto;
 import de.symeda.sormas.api.ebs.EbsDto;
 import de.symeda.sormas.api.ebs.ResponseStatus;
-import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
@@ -54,8 +54,7 @@ public class EbsAlertDataForm extends AbstractEditForm<EbsAlertDto> {
             boolean withPersonalAndSensitive) {
 
         if (withPersonalAndSensitive) {
-            return UiFieldAccessCheckers
-                    .forDataAccessLevel(UserProvider.getCurrent().getPseudonymizableDataAccessLevel(inJurisdiction), isPseudonymized);
+            return UiFieldAccessCheckers.getDefault(isPseudonymized);
         }
 
         return UiFieldAccessCheckers.getNoop();
@@ -84,7 +83,7 @@ public class EbsAlertDataForm extends AbstractEditForm<EbsAlertDto> {
                 getFieldGroup(),
                 Arrays.asList(EbsAlertDto.DETAILS_ALERT_USED,EbsAlertDto.ALERT_DATE),
                 EbsAlertDto.ALERT_ISSUED,
-                Arrays.asList(YesNo.YES),
+                Arrays.asList(YesNoUnknown.YES),
                 true);
 
         FieldHelper.setVisibleWhen(
@@ -98,7 +97,7 @@ public class EbsAlertDataForm extends AbstractEditForm<EbsAlertDto> {
                 getFieldGroup(),
                 Arrays.asList(EbsAlertDto.DETAILS_ALERT_USED,EbsAlertDto.ALERT_DATE),
                 Collections.singletonList(EbsAlertDto.ALERT_ISSUED),
-                Arrays.asList(YesNo.YES));
+                Arrays.asList(YesNoUnknown.YES));
 
         setRequired(true, EbsAlertDto.ACTION_INITIATED, EbsAlertDto.RESPONSE_STATUS, EbsAlertDto.ALERT_ISSUED,EbsAlertDto.DETAILS_RESPONSE_ACTIVITIES);
     }

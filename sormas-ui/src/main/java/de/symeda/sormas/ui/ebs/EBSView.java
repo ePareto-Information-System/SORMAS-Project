@@ -9,29 +9,23 @@ import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.OptionGroup;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ebs.EbsCriteria;
-import de.symeda.sormas.api.ebs.EbsGroupCriteria;
-import de.symeda.sormas.api.ebs.EbsIndexDto;
 import de.symeda.sormas.api.ebs.EbsSourceType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.task.TaskIndexDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.*;
-import de.symeda.sormas.ui.events.*;
 import de.symeda.sormas.ui.events.importer.EventImportLayout;
 import de.symeda.sormas.ui.utils.*;
 import de.symeda.sormas.ui.utils.components.popupmenu.PopupMenu;
 import org.vaadin.hene.popupbutton.PopupButton;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class EBSView extends AbstractView {
     private static final long serialVersionUID = -3048977745713631500L;
     public static final String VIEW_NAME = "ebs";
     private EbsCriteria ebsCriteria;
-    private EbsGroupCriteria ebsGroupCriteria;
     private final EbsViewConfiguration viewConfiguration;
     public static String currentview = "signallist";
 

@@ -15,10 +15,8 @@
 
 package de.symeda.sormas.api.sormastosormas.entities.ebs;
 
-import de.symeda.sormas.api.sormastosormas.entities.SormasToSormasEntityInterface;
-
 import javax.ejb.Remote;
 
 @Remote
-public interface SormasToSormasEbsFacade extends SormasToSormasEntityInterface {
+public interface SormasToSormasEbsFacade {
 }

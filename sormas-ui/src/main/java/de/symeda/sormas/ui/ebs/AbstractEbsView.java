@@ -18,31 +18,19 @@
 package de.symeda.sormas.ui.ebs;
 
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import de.symeda.sormas.api.CoreFacade;
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.ebs.EbsDto;
 import de.symeda.sormas.api.ebs.EbsReferenceDto;
-import de.symeda.sormas.api.ebs.SignalVerificationDto;
-import de.symeda.sormas.api.ebs.TriagingDto;
-import de.symeda.sormas.api.event.EventDto;
-import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SubMenu;
-import de.symeda.sormas.ui.UserProvider;
-import de.symeda.sormas.ui.events.EventActionsView;
-import de.symeda.sormas.ui.events.EventDataView;
-import de.symeda.sormas.ui.events.EventParticipantsView;
-import de.symeda.sormas.ui.events.EventsView;
-import de.symeda.sormas.ui.utils.AbstractEditAllowedDetailView;
+import de.symeda.sormas.ui.utils.AbstractDetailView;
 import de.symeda.sormas.ui.utils.DirtyStateComponent;
 
 import java.util.Objects;
 
 @SuppressWarnings("serial")
-public abstract class AbstractEbsView extends AbstractEditAllowedDetailView<EbsReferenceDto> {
+public abstract class AbstractEbsView extends AbstractDetailView<EbsReferenceDto> {
 
 	public static final String ROOT_VIEW_NAME = EBSView.VIEW_NAME;
 
@@ -51,12 +39,6 @@ public abstract class AbstractEbsView extends AbstractEditAllowedDetailView<EbsR
 		super(viewName);
 		this.currentView = currentView;
 	}
-
-	@Override
-	protected CoreFacade getEditPermissionFacade() {
-		return FacadeProvider.getEbsFacade();
-	}
-
 	@Override
 	public void enter(ViewChangeEvent event) {
 
@@ -109,13 +91,9 @@ public abstract class AbstractEbsView extends AbstractEditAllowedDetailView<EbsR
 	protected void setSubComponent(DirtyStateComponent newComponent) {
 		super.setSubComponent(newComponent);
 
-		if (getReference() != null && isEbsDeleted()) {
+		if (getReference() != null && FacadeProvider.getEventFacade().isDeleted(getReference().getUuid())) {
 			newComponent.setEnabled(false);
 		}
-	}
-
-	protected boolean isEbsDeleted() {
-		return FacadeProvider.getEbsFacade().isDeleted(getEbsRef().getUuid());
 	}
 
 	public EbsReferenceDto getEbsRef() {
