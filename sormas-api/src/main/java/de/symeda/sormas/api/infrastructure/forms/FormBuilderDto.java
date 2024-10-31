@@ -13,6 +13,7 @@ import de.symeda.sormas.api.utils.DependingOnFeatureType;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -74,7 +75,8 @@ public class FormBuilderDto extends InfrastructureDto {
 	}
 
 	public void setFormFields(List<FormFieldReferenceDto> formFields) {
-		this.formFields = formFields;
+
+		this.formFields = formFields != null ? formFields : new ArrayList<>();
 	}
 
 	public static FormBuilderDto build() {

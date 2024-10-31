@@ -275,6 +275,9 @@ public class InfrastructureController {
 		if (isNew) {
 			form = FormBuilderDto.build();
 		}
+		if (form.getFormFields() == null) {
+			form.setFormFields(new ArrayList<>());
+		}
 
 		editForm.setValue(form);
 

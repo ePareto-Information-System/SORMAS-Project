@@ -345,9 +345,11 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
 
         availableFields.removeAllItems();
 
-        Set<String> selectedFieldUuids = getValue().getFormFields().stream()
+        Set<String> selectedFieldUuids = getValue().getFormFields() != null
+                ? getValue().getFormFields().stream()
                 .map(FormFieldReferenceDto::getUuid)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toSet())
+                : Collections.emptySet();
 
         for (FormFieldIndexDto dto : formFieldIndexDtos) {
             if (!selectedFieldUuids.contains(dto.getUuid())) {
@@ -381,5 +383,6 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
             firstPageLoad = false;
         }
     }
+
 
 }
