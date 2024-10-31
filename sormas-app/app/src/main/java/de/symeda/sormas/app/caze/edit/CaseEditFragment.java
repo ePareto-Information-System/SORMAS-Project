@@ -43,6 +43,7 @@ import de.symeda.sormas.api.caze.EndOfIsolationReason;
 import de.symeda.sormas.api.caze.HospitalWardType;
 import de.symeda.sormas.api.caze.IdsrType;
 import de.symeda.sormas.api.caze.InfectionSetting;
+import de.symeda.sormas.api.caze.NotifiedList;
 import de.symeda.sormas.api.caze.PlagueType;
 import de.symeda.sormas.api.caze.QuarantineReason;
 import de.symeda.sormas.api.caze.RabiesType;
@@ -134,6 +135,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 
 	private boolean differentPlaceOfStayJurisdiction;
 	private List<Item> idsrTypeList;
+	private List<Item> notifyByList;
 
 	// Static methods
 
@@ -385,6 +387,9 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			caseClassificationList.remove(new Item<>(CaseClassification.CONFIRMED_NO_SYMPTOMS.toString(), CaseClassification.CONFIRMED_NO_SYMPTOMS));
 			caseClassificationList
 				.remove(new Item<>(CaseClassification.CONFIRMED_UNKNOWN_SYMPTOMS.toString(), CaseClassification.CONFIRMED_UNKNOWN_SYMPTOMS));
+			caseClassificationList.remove(new Item<>(CaseClassification.NO_CASE.toString(), CaseClassification.NO_CASE));
+			caseClassificationList.remove(new Item<>(CaseClassification.NOT_CLASSIFIED.toString(), CaseClassification.NOT_CLASSIFIED));
+
 		}
 		caseOutcomeList = DataUtils.getEnumItems(CaseOutcome.class, true);
 		plagueTypeList = DataUtils.getEnumItems(PlagueType.class, true);
@@ -416,6 +421,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		infectionSettingList = DataUtils.getEnumItems(InfectionSetting.class, true);
 		caseConfirmationBasisList = DataUtils.getEnumItems(CaseConfirmationBasis.class, true);
 		idsrTypeList = DataUtils.getEnumItems(IdsrType.class, true);
+		notifyByList = DataUtils.getEnumItems(NotifiedList.class, true);
 	}
 
 	@Override
@@ -600,6 +606,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		}
 		contentBinding.setFilteredVaccinationStatusValues(filteredValues);
 		contentBinding.caseDataIdsrDiagnosis.initializeSpinner(idsrTypeList);
+		contentBinding.caseDataNotifyByList.initializeSpinner(notifyByList);
 
 		contentBinding.caseDataQuarantineTo.addValueChangedListener(new ValueChangeListener() {
 
@@ -731,6 +738,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		// Initialize ControlSpinnerFields
 		contentBinding.caseDataDisease.initializeSpinner(diseaseList);
 		contentBinding.caseDataCaseClassification.initializeSpinner(caseClassificationList);
+		contentBinding.caseDataCaseClassification.setValue(CaseClassification.SUSPECT);
 
 		contentBinding.caseDataOutcome.initializeSpinner(caseOutcomeList);
 		contentBinding.caseDataOutcome.setVisibility(GONE);
