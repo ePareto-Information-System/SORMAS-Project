@@ -3827,6 +3827,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					currentVersion = 367;
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN reportingOfficerName varchar(255);");
 
+				case 368:
+					currentVersion = 368;
+					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN notifiedByList varchar(255);");
+					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN notifiedOther varchar(255);");
+
 				// ATTENTION: break should only be done after last version
 				break;
 			default:
