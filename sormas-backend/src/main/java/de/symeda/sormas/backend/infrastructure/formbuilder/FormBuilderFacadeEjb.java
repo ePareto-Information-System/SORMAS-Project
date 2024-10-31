@@ -173,14 +173,26 @@ public class FormBuilderFacadeEjb extends AbstractInfrastructureFacadeEjb<FormBu
     public FormBuilderDto save(FormBuilderDto dto, boolean allowMerge) {
         FormBuilder formBuilder;
 
-        if (dto.getUuid() != null) {
+        if (dto.getUuid() == null) {
+            // If no UUID, generate a new one
+            dto.setUuid(DataHelper.createUuid());
+            formBuilder = new FormBuilder();
+        } else {
+            // Try to find existing entity
+            formBuilder = service.getByUuid(dto.getUuid());
+            if (formBuilder == null) {
+                formBuilder = new FormBuilder();
+            }
+        }
+
+        /*if (dto.getUuid() != null) {
             formBuilder = service.getByUuid(dto.getUuid());
             if (formBuilder == null) {
                 throw new EntityNotFoundException("FormBuilder with UUID " + dto.getUuid() + " not found.");
             }
         } else {
             formBuilder = new FormBuilder();
-        }
+        }*/
 
         formBuilder = fillOrBuildEntity(dto, formBuilder, true, allowMerge);
 
@@ -201,13 +213,6 @@ public class FormBuilderFacadeEjb extends AbstractInfrastructureFacadeEjb<FormBu
             target = new FormBuilder();
         }
 
-        if (source.getUuid() != null && target.getUuid() != null && !source.getUuid().equals(target.getUuid())) {
-            throw new MismatchUuidException(
-                    String.format("FormBuilder DTO UUID (%s) does not match entity UUID (%s)", source.getUuid(), target.getUuid()),
-                    FormBuilder.class,
-                    target.getUuid()
-            );
-        }
 
         if (source.getUuid() == null) {
             target.setUuid(DataHelper.createUuid());
