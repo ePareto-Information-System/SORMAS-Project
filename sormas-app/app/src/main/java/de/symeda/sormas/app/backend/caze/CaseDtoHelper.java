@@ -241,6 +241,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setNotACaseReasonDetails(source.getNotACaseReasonDetails());
 		target.setFollowUpStatusChangeDate(source.getFollowUpStatusChangeDate());
 		target.setFollowUpStatusChangeUser(DatabaseHelper.getUserDao().getByReferenceDto(source.getFollowUpStatusChangeUser()));
+		target.setReportingOfficerName(source.getReportingOfficerName());
 		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
 		target.setFunctionOfReportingOfficer(source.getFunctionOfReportingOfficer());
 		target.setReportingOfficerContactPhone(source.getReportingOfficerContactPhone());
@@ -509,6 +510,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		}
 
 		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
+		target.setReportingOfficerName(source.getReportingOfficerName());
 		target.setFunctionOfReportingOfficer(source.getFunctionOfReportingOfficer());
 		target.setReportingOfficerContactPhone(source.getReportingOfficerContactPhone());
 		target.setReportingOfficerEmail(source.getReportingOfficerEmail());

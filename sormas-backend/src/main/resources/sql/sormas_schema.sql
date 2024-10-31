@@ -15144,7 +15144,6 @@ WHERE forms_form_fields.form_id = subquery.form_id
   AND forms_form_fields.formField_id = subquery.formField_id
   AND forms_form_fields.displayOrder IS NULL;
 
--- Make displayOrder not nullable if it isn't already
 ALTER TABLE forms_form_fields ALTER COLUMN displayOrder SET NOT NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (713, 'Made updates on forms_form_fields table');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

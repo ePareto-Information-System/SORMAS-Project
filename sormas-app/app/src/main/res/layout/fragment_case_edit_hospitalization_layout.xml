@@ -68,6 +68,7 @@
                     style="@style/SubHeadingStyle" />
 
                 <LinearLayout
+                    android:id="@+id/facility_type_fields_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -234,6 +235,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/caseHospitalization_patientDetailsHeading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"

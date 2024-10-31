@@ -23,6 +23,7 @@ import de.symeda.sormas.app.component.controls.ControlCheckBoxField;
 import de.symeda.sormas.app.component.controls.ControlDateField;
 import de.symeda.sormas.app.component.controls.ControlPropertyEditField;
 import de.symeda.sormas.app.component.controls.ControlPropertyField;
+import de.symeda.sormas.app.component.controls.ControlTextReadField;
 
 public class DiseaseFieldHandler {
     private static String TAG = DiseaseFieldHandler.class.getSimpleName();
@@ -37,11 +38,13 @@ public class DiseaseFieldHandler {
         // Get the relevant fields for the given disease
         List<FormField> relevantFields = getFieldsForDisease(diseaseName, formType);
         Log.d(TAG, "Relevant fields retrieved: " + relevantFields);
+
         if (relevantFields.isEmpty()) {
             Log.d(TAG, "No relevant fields found, making all fields visible.");
             setAllFieldsVisibility(mainContent, View.VISIBLE);
             return;
         }
+
         // Get field names for visibility checking
         List<String> fieldNames = relevantFields.stream()
                 .map(FormField::getFieldName)
@@ -54,9 +57,7 @@ public class DiseaseFieldHandler {
         }
 
         Log.d(TAG, "Starting hideFieldsForDisease with disease: " + diseaseName + " and formType: " + formType);
-        Log.d(TAG, "Main content child count: " + mainContent.getChildCount());
 
-        // Reorder fields according to display order
         reorderFieldsForDisease(relevantFields, mainContent);
     }
 
@@ -73,8 +74,7 @@ public class DiseaseFieldHandler {
     }
 
     private boolean isFieldView(View view) {
-        return view instanceof ControlPropertyEditField || view instanceof TextView ||
-                view instanceof ControlPropertyField || view instanceof ControlCheckBoxField || view instanceof ControlDateField;
+        return view instanceof TextView || view instanceof ControlPropertyField || view instanceof ControlCheckBoxField || view instanceof ControlDateField || view instanceof ControlTextReadField;
     }
 
     private void handleChildView(View child, List<String> relevantFields) {
@@ -105,45 +105,25 @@ public class DiseaseFieldHandler {
     }
 
     private boolean setViewVisibility(View view, List<String> relevantFields) {
-        String viewIdName = context.getResources().getResourceEntryName(view.getId());
+        // Check for a valid ID before retrieving the resource name
+        if (view.getId() == View.NO_ID || view.getId() == 0) {
+            Log.d(TAG, "Skipping view with no valid ID.");
+            return false;
+        }
+
+        String viewIdName;
+        try {
+            viewIdName = context.getResources().getResourceEntryName(view.getId());
+        } catch (Resources.NotFoundException e) {
+            Log.e(TAG, "Resource ID not found for view ID: " + view.getId(), e);
+            return false;
+        }
+
         boolean isVisible = relevantFields.isEmpty() || relevantFields.contains(viewIdName);
         view.setVisibility(isVisible ? View.VISIBLE : View.GONE);
         return isVisible;
     }
 
-
-    /*private void reorderFieldsForDisease(List<FormField> orderedFields, ViewGroup parent) {
-        Map<Integer, View> viewMap = new HashMap<>();
-        gatherChildViews(parent, viewMap);
-
-        List<View> reorderedViews = new ArrayList<>();
-        for (FormField field : orderedFields) {
-            // Convert field name to resource ID
-            int viewId = context.getResources().getIdentifier(field.getFieldName(), "id", context.getPackageName());
-            View view = viewMap.get(viewId);
-
-            if (view != null) {
-                reorderedViews.add(view);
-                Log.d(TAG, "Reordering view with ID: " + view.getId() + " - " + context.getResources().getResourceEntryName(view.getId()));
-            } else {
-                Log.d(TAG, "No matching View found for FormField with name: " + field.getFieldName());
-            }
-        }
-        parent.removeAllViews();
-
-        for (View view : reorderedViews) {
-            if (view.getParent() != null) {
-                ((ViewGroup) view.getParent()).removeView(view);
-            }
-            if (view.getLayoutParams() == null) {
-                view.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                ));
-            }
-            parent.addView(view);
-        }
-    }*/
 
     private void reorderFieldsForDisease(List<FormField> orderedFields, ViewGroup parent) {
         // Map to store views and their container hierarchies
@@ -166,7 +146,6 @@ public class DiseaseFieldHandler {
         List<View> reorderedViews = new ArrayList<>();
         Map<ViewGroup, List<View>> containerChildren = new HashMap<>();
 
-        Log.d(TAG, "Found views in layout: ");
         for (Map.Entry<Integer, ViewInfo> entry : viewInfoMap.entrySet()) {
             String resourceName = "";
             try {
@@ -188,7 +167,6 @@ public class DiseaseFieldHandler {
                             .computeIfAbsent(viewInfo.container, k -> new ArrayList<>())
                             .add(viewInfo.view);
 
-                    // If this is the last field in its container, add the entire container
                     boolean isLastInContainer = true;
                     for (FormField remainingField : orderedFields.subList(orderedFields.indexOf(field) + 1, orderedFields.size())) {
                         int remainingId = context.getResources().getIdentifier(remainingField.getFieldName(), "id", context.getPackageName());
@@ -211,12 +189,10 @@ public class DiseaseFieldHandler {
             }
         }
 
-        // Clear the parent
         parent.removeAllViews();
 
         // Add the reordered views back
         for (View view : reorderedViews) {
-            // Remove from current parent if needed
             if (view.getParent() != null) {
                 ((ViewGroup) view.getParent()).removeView(view);
             }
@@ -244,14 +220,7 @@ public class DiseaseFieldHandler {
             parent.addView(view);
         }
     }
-    private String sanitizeFieldName(String fieldName) {
-        // Remove any potential package name prefix
-        if (fieldName.contains(".")) {
-            fieldName = fieldName.substring(fieldName.lastIndexOf(".") + 1);
-        }
-        // Convert to lowercase for case-insensitive comparison
-        return fieldName.toLowerCase();
-    }
+
 
     // Helper class to store view information
     private static class ViewInfo {
@@ -264,7 +233,6 @@ public class DiseaseFieldHandler {
         }
     }
 
-    // Modified method to gather views with their container information
     private void gatherChildViewsWithContainers(ViewGroup parent, Map<Integer, ViewInfo> viewInfoMap, ViewGroup container) {
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
@@ -309,7 +277,6 @@ public class DiseaseFieldHandler {
     }
 
     public List<FormField> getFieldsForDisease(Disease diseaseName, FormType formType) {
-        Log.d(TAG, "Retrieving fields for Disease=" + diseaseName + ", FormType=" + formType);
         FormBuilder formBuilder = DatabaseHelper.getFormBuilderDao().getFormBuilder(formType, diseaseName);
 
         if (formBuilder != null) {
@@ -321,19 +288,6 @@ public class DiseaseFieldHandler {
         return new ArrayList<>();
     }
 
-    // Recursively gather child views, including those inside nested ViewGroups
-    private void gatherChildViews(ViewGroup parent, Map<Integer, View> viewMap) {
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            View child = parent.getChildAt(i);
-            if (child.getId() != View.NO_ID) {
-                viewMap.put(child.getId(), child);
-            } else {
-            }
-            if (child instanceof ViewGroup) {
-                gatherChildViews((ViewGroup) child, viewMap);
-            }
-        }
-    }
 
 }
 

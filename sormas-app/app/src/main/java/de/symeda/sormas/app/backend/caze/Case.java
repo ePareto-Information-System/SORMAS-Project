@@ -419,6 +419,7 @@ public class Case extends PseudonymizableAdo {
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private User followUpStatusChangeUser;
 	private String reportingOfficerTitle;
+	private String reportingOfficerName;
 	private String functionOfReportingOfficer;
 	private String reportingOfficerContactPhone;
 	private String reportingOfficerEmail;
@@ -1432,6 +1433,12 @@ public class Case extends PseudonymizableAdo {
 
 	public void setReportingOfficerTitle(String reportingOfficerTitle) {
 		this.reportingOfficerTitle = reportingOfficerTitle;
+	}
+
+	public String getReportingOfficerName() {return reportingOfficerName;}
+
+	public void setReportingOfficerName(String reportingOfficerName) {
+		this.reportingOfficerName = reportingOfficerName;
 	}
 
 	public String getFunctionOfReportingOfficer() {return functionOfReportingOfficer;}

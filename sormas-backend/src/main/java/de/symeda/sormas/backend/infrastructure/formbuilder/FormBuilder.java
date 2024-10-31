@@ -4,14 +4,13 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.audit.AuditIgnore;
 import de.symeda.sormas.backend.common.InfrastructureAdo;
-import de.symeda.sormas.backend.disease.DiseaseConfiguration;
 import de.symeda.sormas.backend.infrastructure.formfiield.FormField;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+
 
 @Entity(name = FormBuilder.TABLE_NAME)
 @AuditIgnore(retainWrites = true)
@@ -91,26 +90,13 @@ public class FormBuilder extends InfrastructureAdo {
             joinColumns = @JoinColumn(name = "form_id"),
             inverseJoinColumns = @JoinColumn(name = "formField_id")
     )
-    @OrderColumn(name = "displayOrder", nullable = false)  // Matches existing column name
+    @OrderColumn(name = "displayOrder", nullable = false)
     public List<FormField> getFormFields() {
         return formFields;
     }
 
     public void setFormFields(List<FormField> formFields) {
         this.formFields = formFields != null ? formFields : new ArrayList<>();
-    }
-
-    public void addFormField(FormField formField) {
-        if (formFields == null) {
-            formFields = new ArrayList<>();
-        }
-        formFields.add(formField);
-    }
-
-    public void removeFormField(FormField formField) {
-        if (formFields != null) {
-            formFields.remove(formField);
-        }
     }
 
 }
