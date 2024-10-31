@@ -186,6 +186,8 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setExternalID(source.getExternalID());
 		target.setExternalToken(source.getExternalToken());
 		target.setInternalToken(source.getInternalToken());
+		target.setNotifiedByList(source.getNotifiedByList());
+		target.setNotifiedOther(source.getNotifiedOther());
 
 		target.setQuarantine(source.getQuarantine());
 		target.setQuarantineTypeDetails(source.getQuarantineTypeDetails());
@@ -485,6 +487,8 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setExternalID(source.getExternalID());
 		target.setExternalToken(source.getExternalToken());
 		target.setInternalToken(source.getInternalToken());
+		target.setNotifiedByList(source.getNotifiedByList());
+		target.setNotifiedOther(source.getNotifiedOther());
 
 		target.setQuarantine(source.getQuarantine());
 		target.setQuarantineTypeDetails(source.getQuarantineTypeDetails());

@@ -49,6 +49,7 @@
         <import type="de.symeda.sormas.api.caze.IdsrType" />
         <import type="de.symeda.sormas.api.caze.VaccinationRoutine" />
         <import type="de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus" />
+        <import type="de.symeda.sormas.api.caze.NotifiedList" />
 
         <variable name="hosp" type="de.symeda.sormas.app.backend.hospitalization.Hospitalization" />
         <variable name="data" type="de.symeda.sormas.app.backend.caze.Case"/>
@@ -93,6 +94,18 @@
                     app:softRequired="true"
                     app:maxLength="24"
                     style="@style/ControlSingleColumnStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                        android:id="@+id/caseData_notifyByList"
+                    app:value="@={data.notifiedByList}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/caseData_notifiedOther"
+                    app:dependencyParentField="@{caseDataNotifyByList}"
+                    app:dependencyParentValue="@{NotifiedList.OTHER}"
+                    app:value="@={data.notifiedOther}"
+                    style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

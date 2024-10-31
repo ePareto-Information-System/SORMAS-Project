@@ -44,6 +44,7 @@ import de.symeda.sormas.api.caze.HospitalWardType;
 import de.symeda.sormas.api.caze.IdsrType;
 import de.symeda.sormas.api.caze.InfectionSetting;
 import de.symeda.sormas.api.caze.InvestigationStatus;
+import de.symeda.sormas.api.caze.NotifiedList;
 import de.symeda.sormas.api.caze.PlagueType;
 import de.symeda.sormas.api.caze.QuarantineReason;
 import de.symeda.sormas.api.caze.RabiesType;
@@ -324,6 +325,10 @@ public class Case extends PseudonymizableAdo {
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String externalToken;
+	@Enumerated(EnumType.STRING)
+	private NotifiedList notifiedByList;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String notifiedOther;
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String internalToken;
@@ -1138,6 +1143,22 @@ public class Case extends PseudonymizableAdo {
 
 	public String getExternalID() {
 		return externalID;
+	}
+
+	public NotifiedList getNotifiedByList() {
+		return notifiedByList;
+	}
+
+	public void setNotifiedByList(NotifiedList notifiedByList) {
+		this.notifiedByList = notifiedByList;
+	}
+
+	public String getNotifiedOther() {
+		return notifiedOther;
+	}
+
+	public void setNotifiedOther(String notifiedOther) {
+		this.notifiedOther = notifiedOther;
 	}
 
 	public void setExternalID(String externalID) {
