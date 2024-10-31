@@ -1099,6 +1099,11 @@
                         style="@style/ControlSingleColumnStyle"/>
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_reportingOfficerName"
+                        app:value="@={data.reportingOfficerName}"
+                        style="@style/ControlSingleColumnStyle"/>
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/caseData_reportingOfficerTitle"
                         app:value="@={data.reportingOfficerTitle}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />

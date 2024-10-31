@@ -3823,6 +3823,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									+ "COMMIT;"
 					);
 
+				case 367:
+					currentVersion = 367;
+					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN reportingOfficerName varchar(255);");
+
 				// ATTENTION: break should only be done after last version
 				break;
 			default:
