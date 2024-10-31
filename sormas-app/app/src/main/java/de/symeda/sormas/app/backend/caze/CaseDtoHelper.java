@@ -255,7 +255,6 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setReportingOfficerName(source.getReportingOfficerName());
 		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
 
-		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
 		target.setFunctionOfReportingOfficer(source.getFunctionOfReportingOfficer());
 		target.setReportingOfficerContactPhone(source.getReportingOfficerContactPhone());
 		target.setReportingOfficerEmail(source.getReportingOfficerEmail());
@@ -562,7 +561,6 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setFormCompletedByCellPhoneNo(source.getFormCompletedByCellPhoneNo());
 		target.setDateOfInvestigation(source.getDateOfInvestigation());
 		target.setReportingOfficerName(source.getReportingOfficerName());
-		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
 		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
 		target.setFunctionOfReportingOfficer(source.getFunctionOfReportingOfficer());
 		target.setReportingOfficerContactPhone(source.getReportingOfficerContactPhone());

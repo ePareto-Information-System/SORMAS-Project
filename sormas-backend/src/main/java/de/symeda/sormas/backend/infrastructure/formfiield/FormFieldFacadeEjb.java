@@ -178,7 +178,7 @@ public class FormFieldFacadeEjb extends AbstractInfrastructureFacadeEjb<FormFiel
                 newDto.setDescription(dto.getDescription() == null ? "" : dto.getDescription());
                 super.save(newDto, allowMerge);
             }
-            return null; // Return null or the last saved dto
+            return null;
         } else {
             return super.save(dto, allowMerge);
         }

@@ -622,16 +622,12 @@
                         android:id="@+id/facilityTypeGroup"
                         style="@style/ControlFirstOfTwoColumnsStyle"
                         app:caption="@string/caption_facility_type_group"
-                        app:dependencyParentField="@{facilityOrHome}"
-                        app:dependencyParentValue="@{TypeOfPlace.FACILITY}"
                         app:required="true"
                         app:userEditRight="@{UserRight.CASE_TRANSFER}"/>
 
                     <de.symeda.sormas.app.component.controls.ControlSpinnerField
                         android:id="@+id/caseData_facilityType"
                         style="@style/ControlSecondOfTwoColumnsStyle"
-                        app:dependencyParentField="@{facilityOrHome}"
-                        app:dependencyParentValue="@{TypeOfPlace.FACILITY}"
                         app:required="true"
                         app:userEditRight="@{UserRight.CASE_TRANSFER}"
                         app:value="@={data.facilityType}"/>
@@ -641,9 +637,6 @@
                 <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                     android:id="@+id/caseData_healthFacility"
                     style="@style/ControlSingleColumnStyle"
-                    app:dependencyParentField="@{facilityOrHome}"
-                    app:dependencyParentValue="@{TypeOfPlace.FACILITY}"
-                    app:dependencyParentClearOnHide="@{false}"
                     app:required="true"
                     app:value="@={data.healthFacility}" />
 
@@ -1086,6 +1079,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_reportingOfficerName"
+                        app:value="@={data.reportingOfficerName}"
+                        style="@style/ControlSingleColumnStyle"/>
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/caseData_reportingOfficerTitle"

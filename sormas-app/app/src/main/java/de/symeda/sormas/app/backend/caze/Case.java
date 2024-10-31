@@ -1599,18 +1599,16 @@ public class Case extends PseudonymizableAdo {
 		this.dateOfInvestigation = dateOfInvestigation;
 	}
 
-	public String getReportingOfficerName() {
-		return reportingOfficerName;
-	}
-
-	public void setReportingOfficerName(String reportingOfficerName) {
-		this.reportingOfficerName = reportingOfficerName;
-	}
-
 	public String getReportingOfficerTitle() {return reportingOfficerTitle;}
 
 	public void setReportingOfficerTitle(String reportingOfficerTitle) {
 		this.reportingOfficerTitle = reportingOfficerTitle;
+	}
+
+	public String getReportingOfficerName() {return reportingOfficerName;}
+
+	public void setReportingOfficerName(String reportingOfficerName) {
+		this.reportingOfficerName = reportingOfficerName;
 	}
 
 	public String getFunctionOfReportingOfficer() {return functionOfReportingOfficer;}
