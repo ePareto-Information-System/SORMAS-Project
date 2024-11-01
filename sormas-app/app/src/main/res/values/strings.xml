@@ -141,6 +141,7 @@
     <string name="caption_case_fatality_rate">Case Fatality Rate</string>
     <string name="caption_case_health_conditions">Pre-Existing Conditions</string>
     <string name="caption_case_hospitalization">Hospitalization Info</string>
+    <string name="caption_case_riskfactor">Risk Mapping Info</string>
     <string name="caption_case_information">Case Information</string>
     <string name="caption_case_maternal_history">Maternal History</string>
     <string name="caption_case_port_health_info">Port Health Info</string>
@@ -150,6 +151,7 @@
     <string name="caption_case_events">Case Events</string>
     <string name="caption_case_immunizations">Case Immunizations</string>
     <string name="caption_case_vaccinations">Case Vaccinations</string>
+    <string name="caption_case_risk_factors">Risk Factors</string>
     <string name="caption_case_treatments">Treatments</string>
     <string name="caption_case_similarity_create">Create a new case</string>
     <string name="caption_changed_data_lost">Changed data lost during re-sync.</string>
@@ -451,6 +453,15 @@
     <string name="heading_vaccination_edit">Edit Vaccination</string>
     <string name="heading_vaccination_new">New Vaccination</string>
     <string name="heading_search_for_case">Search specific case</string>
+    <string name="heading_case_risk_factor_potential_vibrio_vehicles_drinking_water">Potential vibrio vehicles: drinking water</string>
+    <string name="heading_case_risk_factor_potential_vibrio_vehicles_non_drinking_water">Potential vibrio vehicles: non-drinking water</string>
+    <string name="heading_case_risk_factor_potential_vibrio_vehicles_food_items">Potential vibrio vehicles: food items</string>
+    <string name="heading_case_risk_factor_bacteriology_lab_findings">Bacteriology lab findings</string>
+    <string name="heading_case_risk_factor_looking_out_for_exposure_to_identified_hazards">Looking out for exposure to the identified hazards</string>
+    <string name="heading_case_risk_factor_three_days_prior_to_onset_of_disease">Within 3 days prior to the onset of the disease did the patient drink from ???</string>
+<string name="heading_case_risk_factor_three_days_prior_to_onset_of_disease_drinking_water">Within 3 days prior to the onset of the disease did the patient drink from ???</string>
+    <string name="heading_case_risk_factor_three_days_prior_to_onset_of_disease_eat">Within 3 days prior to the onset of the disease did the patient eat</string>
+    <string name="heading_case_risk_factor_three_days_prior_to_onset_of_disease_attend_any">Within 3 days prior to the onset of the disease did the patient attend any</string>
 
     <string name="hint_add_to_empty_list">Add a new entry by pressing the "+" symbol in the top right.</string>
     <string name="hint_clear">Clear</string>

@@ -161,6 +161,8 @@ import de.symeda.sormas.app.backend.report.WeeklyReport;
 import de.symeda.sormas.app.backend.report.WeeklyReportDao;
 import de.symeda.sormas.app.backend.report.WeeklyReportEntry;
 import de.symeda.sormas.app.backend.report.WeeklyReportEntryDao;
+import de.symeda.sormas.app.backend.riskfactor.RiskFactor;
+import de.symeda.sormas.app.backend.riskfactor.RiskFactorDao;
 import de.symeda.sormas.app.backend.sample.AdditionalTest;
 import de.symeda.sormas.app.backend.sample.AdditionalTestDao;
 import de.symeda.sormas.app.backend.sample.PathogenTest;
@@ -206,7 +208,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 379;
+	public static final int DATABASE_VERSION = 381;
 
 	private static DatabaseHelper instance = null;
 
@@ -287,6 +289,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.clearTable(connectionSource, PersonTravelHistory.class);
 			TableUtils.clearTable(connectionSource, ContaminationSource.class);
 			TableUtils.clearTable(connectionSource, ContainmentMeasure.class);
+			TableUtils.clearTable(connectionSource, RiskFactor.class);
 
 			if (clearInfrastructure) {
 				TableUtils.clearTable(connectionSource, UserUserRole.class);
@@ -402,6 +405,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, PersonTravelHistory.class);
 			TableUtils.createTable(connectionSource, ContaminationSource.class);
 			TableUtils.createTable(connectionSource, ContainmentMeasure.class);
+			TableUtils.createTable(connectionSource, RiskFactor.class);
 		} catch (SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Can't build database", e);
 			throw new RuntimeException(e);
@@ -3492,6 +3496,59 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			case 378:
 				currentVersion = 378;
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN wasPatientAdmitted VARCHAR(255);");
+			case 379:
+				currentVersion = 379;
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN riskfactor_id BIGINT;");
+			case 380:
+				currentVersion = 380;
+				getDao(RiskFactor.class).executeRaw(
+						"CREATE TABLE riskfactor ("
+								+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
+								+ "    uuid VARCHAR(36) NOT NULL UNIQUE,"
+								+ "    changedate BIGINT NOT NULL,"
+								+ "		pseudonymized SMALLINT,"
+								+ "    creationdate BIGINT NOT NULL,"
+								+ "    epidata_id BIGINT NOT NULL,"
+								+ "    drinkingWaterSourceOne VARCHAR(255),"
+								+ "    drinkingWaterSourceTwo VARCHAR(255),"
+								+ "    drinkingWaterSourceThree VARCHAR(255),"
+								+ "    drinkingWaterSourceFour VARCHAR(255),"
+								+ "    nonDrinkingWaterSourceOne VARCHAR(255),"
+								+ "    nonDrinkingWaterSourceTwo VARCHAR(255),"
+								+ "    nonDrinkingWaterSourceThree VARCHAR(255),"
+								+ "    nonDrinkingWaterSourceFour VARCHAR(255),"
+								+ "    foodItemsOne VARCHAR(255),"
+								+ "    foodItemsTwo VARCHAR(255),"
+								+ "    foodItemsThree VARCHAR(255),"
+								+ "    foodItemsFour VARCHAR(255),"
+								+ "    foodItemsFive VARCHAR(255),"
+								+ "    foodItemsSix VARCHAR(255),"
+								+ "    foodItemsSeven VARCHAR(255),"
+								+ "    foodItemsEight VARCHAR(255),"
+								+ "    drinkingWaterInfectedByVibrio VARCHAR(255),"
+								+ "    nonDrinkingWaterInfectedByVibrio VARCHAR(255),"
+								+ "    otherSocialEventDetails VARCHAR(255),"
+								+ "    foodItemsInfectedByVibrio VARCHAR(255),"
+								+ "    waterUsedForDrinking VARCHAR(255),"
+								+ "    threeDaysPriorToDiseaseWaterSourceOne VARCHAR(255),"
+								+ "    threeDaysPriorToDiseaseWaterSourceTwo VARCHAR(255),"
+								+ "    threeDaysPriorToDiseaseWaterSourceThree VARCHAR(255),"
+								+ "    threeDaysPriorToDiseaseWaterSourceFour VARCHAR(255),"
+								+ "    threeDaysPriorToDiseaseWaterSourceFive VARCHAR(255),"
+								+ "    threeDaysPriorToDiseaseFoodItemsOne VARCHAR(255),"
+								+ "    threeDaysPriorToDiseaseFoodItemsTwo VARCHAR(255),"
+								+ "    threeDaysPriorToDiseaseFoodItemsThree VARCHAR(255),"
+								+ "    threeDaysPriorToDiseaseFoodItemsFour VARCHAR(255),"
+								+ "    threeDaysPriorToDiseaseFoodItemsFive VARCHAR(255),"
+								+ "    threeDaysPriorToDiseaseAttendAnyFuneral VARCHAR(255),"
+								+ "    threeDaysPriorToDiseaseAttendAnySocialEvent VARCHAR(255),"
+								+ "		lastOpenedDate BIGINT,"
+								+ "		localChangeDate BIGINT NOT NULL,"
+								+ "		modified SMALLINT,"
+								+ "		snapshot SMALLINT,"
+								+ "		UNIQUE (snapshot ASC, uuid ASC)"
+								+ ");"
+				);
 				// ATTENTION: break should only be done after last version
 				break;
 			default:
@@ -4449,7 +4506,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					dao = (AbstractAdoDao<ADO>) new ContaminationSourceDao((Dao<ContaminationSource, Long>) innerDao);
 				} else if (type.equals(ContainmentMeasure.class)) {
 					dao = (AbstractAdoDao<ADO>) new ContainmentMeasureDao((Dao<ContainmentMeasure, Long>) innerDao);
-				} else {
+				} else if(type.equals(RiskFactor.class)) {
+					dao = (AbstractAdoDao<ADO>) new RiskFactorDao((Dao<RiskFactor, Long>) innerDao);
+				}else {
 					throw new UnsupportedOperationException(type.toString());
 				}
 
@@ -4564,6 +4623,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	public static PortHealthInfoDao getPortHealthInfoDao() {
 		return (PortHealthInfoDao) getAdoDao(PortHealthInfo.class);
+	}
+
+	public static RiskFactorDao getRiskFactorDao() {
+		return (RiskFactorDao) getAdoDao(RiskFactor.class);
 	}
 
 	public static PersonDao getPersonDao() {

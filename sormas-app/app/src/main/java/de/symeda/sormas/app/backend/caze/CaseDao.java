@@ -84,6 +84,7 @@ import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
 import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.District;
 import de.symeda.sormas.app.backend.region.Region;
+import de.symeda.sormas.app.backend.riskfactor.RiskFactor;
 import de.symeda.sormas.app.backend.sample.Sample;
 import de.symeda.sormas.app.backend.symptoms.Symptoms;
 import de.symeda.sormas.app.backend.task.Task;
@@ -200,6 +201,12 @@ public class CaseDao extends AbstractAdoDao<Case> {
 			date = portHealthInfoDate;
 		}
 
+//		riskFactor
+		Date riskFactorDate = getLatestChangeDateJoin(RiskFactor.TABLE_NAME, Case.RISK_FACTOR);
+		if (riskFactorDate != null && riskFactorDate.after(date)) {
+			date = riskFactorDate;
+		}
+
 		return date;
 	}
 
@@ -275,6 +282,9 @@ public class CaseDao extends AbstractAdoDao<Case> {
 
 		// health conditions
 		caze.setHealthConditions(DatabaseHelper.getHealthConditionsDao().build());
+
+		// risk factor
+		caze.setRiskFactor(DatabaseHelper.getRiskFactorDao().build());
 
 		// Location
 		User currentUser = ConfigProvider.getUser();
