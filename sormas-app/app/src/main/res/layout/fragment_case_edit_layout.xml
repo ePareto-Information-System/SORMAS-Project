@@ -1088,6 +1088,26 @@
                     android:orientation="horizontal">
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_mobileTeamNo"
+                        app:value="@={data.mobileTeamNo}"
+                        style="@style/ControlSingleColumnStyle"/>
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_nameOfVillagePersonGotIll"
+                        app:value="@={data.nameOfVillagePersonGotIll}"
+                        style="@style/ControlSingleColumnStyle"/>
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_informationGivenBy"
+                        app:value="@={data.informationGivenBy}"
+                        style="@style/ControlSingleColumnStyle"/>
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_familyLinkWithPatient"
+                        app:value="@={data.familyLinkWithPatient}"
+                        style="@style/ControlSingleColumnStyle"/>
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/caseData_reportingOfficerName"
                         app:value="@={data.reportingOfficerName}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
