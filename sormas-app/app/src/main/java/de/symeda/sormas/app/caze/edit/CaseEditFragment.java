@@ -712,6 +712,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataMotherTTDateFive.initializeDateField(getFragmentManager());
 		contentBinding.caseDataMotherLastDoseDate.initializeDateField(getFragmentManager());
 		contentBinding.caseDataMotherGivenProtectiveDoseTTDate.initializeDateField(getFragmentManager());
+		contentBinding.caseDataDateLatestUpdateRecord.initializeDateField(getFragmentManager());
 		contentBinding.setMotherVaccinationStatusClass(MotherVaccinationStatus.class);
 	}
 

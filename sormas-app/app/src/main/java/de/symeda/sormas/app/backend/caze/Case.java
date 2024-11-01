@@ -505,6 +505,15 @@ public class Case extends PseudonymizableAdo {
 	@DatabaseField
 	private String notifiedBy;
 
+	@DatabaseField
+	private Integer numberOfPeopleInSameHousehold;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateLatestUpdateRecord;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String otherNotesAndObservations;
+
 
 	public boolean isUnreferredPortHealthCase() {
 		return caseOrigin == CaseOrigin.POINT_OF_ENTRY && healthFacility == null;
@@ -1764,5 +1773,29 @@ public class Case extends PseudonymizableAdo {
 
 	public void setNotifiedBy(String notifiedBy) {
 		this.notifiedBy = notifiedBy;
+	}
+
+	public Integer getNumberOfPeopleInSameHousehold() {
+		return numberOfPeopleInSameHousehold;
+	}
+
+	public void setNumberOfPeopleInSameHousehold(Integer numberOfPeopleInSameHousehold) {
+		this.numberOfPeopleInSameHousehold = numberOfPeopleInSameHousehold;
+	}
+
+	public Date getDateLatestUpdateRecord() {
+		return dateLatestUpdateRecord;
+	}
+
+	public void setDateLatestUpdateRecord(Date dateLatestUpdateRecord) {
+		this.dateLatestUpdateRecord = dateLatestUpdateRecord;
+	}
+
+	public String getOtherNotesAndObservations() {
+		return otherNotesAndObservations;
+	}
+
+	public void setOtherNotesAndObservations(String otherNotesAndObservations) {
+		this.otherNotesAndObservations = otherNotesAndObservations;
 	}
 }

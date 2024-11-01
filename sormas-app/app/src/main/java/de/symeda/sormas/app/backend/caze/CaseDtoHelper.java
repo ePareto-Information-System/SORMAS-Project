@@ -278,6 +278,9 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setSupplementalImmunizationDetails(source.getSupplementalImmunizationDetails());
 		target.setDateOfNotification(source.getDateOfNotification());
 		target.setNotifiedBy(source.getNotifiedBy());
+		target.setNumberOfPeopleInSameHousehold(source.getNumberOfPeopleInSameHousehold());
+		target.setDateLatestUpdateRecord(source.getDateLatestUpdateRecord());
+		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
 	}
 
 	@Override
@@ -581,6 +584,9 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setSupplementalImmunizationDetails(source.getSupplementalImmunizationDetails());
 		target.setDateOfNotification(source.getDateOfNotification());
 		target.setNotifiedBy(source.getNotifiedBy());
+		target.setNumberOfPeopleInSameHousehold(source.getNumberOfPeopleInSameHousehold());
+		target.setDateLatestUpdateRecord(source.getDateLatestUpdateRecord());
+		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
 
 
 	}
