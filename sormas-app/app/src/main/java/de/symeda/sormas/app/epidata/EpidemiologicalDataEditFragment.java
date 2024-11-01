@@ -41,6 +41,7 @@ import de.symeda.sormas.api.epidata.PlaceManaged;
 import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.riskfactor.DrinkingWaterSource;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
@@ -62,6 +63,7 @@ import de.symeda.sormas.app.caze.edit.CaseEditActivity;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.core.IEntryItemOnClickListener;
 import de.symeda.sormas.app.databinding.FragmentEditEpidLayoutBinding;
+import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.app.util.FieldVisibilityAndAccessHelper;
 import de.symeda.sormas.app.util.InfrastructureDaoHelper;
 import de.symeda.sormas.app.util.InfrastructureFieldsDependencyHandler;
@@ -81,6 +83,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	private List<Item> initialRegionsList;
 	private List<Item> initialDistrictsList;
 	private List<Item> initialCommunitiesList;
+	private List<Item> listDrinkingWaterSources;
 
 
 
@@ -392,6 +395,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		initialRegionsList = InfrastructureDaoHelper.loadRegionsByServerCountry();
 		initialDistrictsList = InfrastructureDaoHelper.loadDistricts(record.getHistoryOfTravelRegion());
 		initialCommunitiesList = InfrastructureDaoHelper.loadCommunities(record.getHistoryOfTravelDistrict());
+		listDrinkingWaterSources = DataUtils.getEnumItems(DrinkingWaterSource.class, true);
 	}
 
 	@Override
@@ -446,6 +450,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 			initialCommunitiesList,
 			record.getHistoryOfTravelSubDistrict()
 		);
+		contentBinding.epiDataWaterUsedByPatientAfterExposure.initializeSpinner(listDrinkingWaterSources);
 
 
 
