@@ -610,7 +610,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		}
 		contentBinding.setFilteredVaccinationStatusValues(filteredValues);
 		contentBinding.caseDataIdsrDiagnosis.initializeSpinner(idsrTypeList);
-		contentBinding.caseDataNotifyByList.initializeSpinner(notifyByList);
+		contentBinding.caseDataNotifiedByList.initializeSpinner(notifyByList);
 
 		contentBinding.caseDataQuarantineTo.addValueChangedListener(new ValueChangeListener() {
 
