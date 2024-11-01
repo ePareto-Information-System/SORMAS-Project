@@ -429,6 +429,11 @@ public class Case extends PseudonymizableAdo {
 	private String reportingOfficerContactPhone;
 	private String reportingOfficerEmail;
 
+	private String mobileTeamNo;
+	private String informationGivenBy;
+	private String familyLinkWithPatient;
+	private String nameOfVillagePersonGotIll;
+
 	public boolean isUnreferredPortHealthCase() {
 		return caseOrigin == CaseOrigin.POINT_OF_ENTRY && healthFacility == null;
 	}
@@ -1477,5 +1482,37 @@ public class Case extends PseudonymizableAdo {
 
 	public void setReportingOfficerEmail(String reportingOfficerEmail) {
 		this.reportingOfficerEmail = reportingOfficerEmail;
+	}
+
+	public String getMobileTeamNo() {
+		return mobileTeamNo;
+	}
+
+	public void setMobileTeamNo(String mobileTeamNo) {
+		this.mobileTeamNo = mobileTeamNo;
+	}
+
+	public String getInformationGivenBy() {
+		return informationGivenBy;
+	}
+
+	public void setInformationGivenBy(String informationGivenBy) {
+		this.informationGivenBy = informationGivenBy;
+	}
+
+	public String getFamilyLinkWithPatient() {
+		return familyLinkWithPatient;
+	}
+
+	public void setFamilyLinkWithPatient(String familyLinkWithPatient) {
+		this.familyLinkWithPatient = familyLinkWithPatient;
+	}
+
+	public String getNameOfVillagePersonGotIll() {
+		return nameOfVillagePersonGotIll;
+	}
+
+	public void setNameOfVillagePersonGotIll(String nameOfVillagePersonGotIll) {
+		this.nameOfVillagePersonGotIll = nameOfVillagePersonGotIll;
 	}
 }

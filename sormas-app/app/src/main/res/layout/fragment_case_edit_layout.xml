@@ -45,6 +45,7 @@
         <import type="de.symeda.sormas.api.caze.EndOfIsolationReason" />
         <import type="de.symeda.sormas.api.i18n.I18nProperties" />
         <import type="de.symeda.sormas.api.i18n.Strings" />
+        <import type="de.symeda.sormas.api.i18n.Captions" />
         <import type="de.symeda.sormas.api.disease.DiseaseVariant" />
         <import type="de.symeda.sormas.api.caze.IdsrType" />
         <import type="de.symeda.sormas.api.caze.NotifiedList" />
@@ -92,13 +93,13 @@
                     style="@style/ControlSingleColumnStyle"/>
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
-                        android:id="@+id/caseData_notifyByList"
+                        android:id="@+id/caseData_notifiedByList"
                     app:value="@={data.notifiedByList}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/caseData_notifiedOther"
-                    app:dependencyParentField="@{caseDataNotifyByList}"
+                    app:dependencyParentField="@{caseDataNotifiedByList}"
                     app:dependencyParentValue="@{NotifiedList.OTHER}"
                     app:value="@={data.notifiedOther}"
                     style="@style/ControlSingleColumnStyle" />
@@ -547,6 +548,13 @@
 
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/caseData_casePlaceOfStay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{I18nProperties.getCaption(Captions.casePlaceOfStay)}"
+                    style="@style/SubHeadingStyle" />
+
                 <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                     android:id="@+id/caseData_healthFacility"
                     style="@style/ControlSingleColumnStyle"
@@ -923,6 +931,26 @@
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_mobileTeamNo"
+                        app:value="@={data.mobileTeamNo}"
+                        style="@style/ControlSingleColumnStyle"/>
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_nameOfVillagePersonGotIll"
+                        app:value="@={data.nameOfVillagePersonGotIll}"
+                        style="@style/ControlSingleColumnStyle"/>
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_informationGivenBy"
+                        app:value="@={data.informationGivenBy}"
+                        style="@style/ControlSingleColumnStyle"/>
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_familyLinkWithPatient"
+                        app:value="@={data.familyLinkWithPatient}"
+                        style="@style/ControlSingleColumnStyle"/>
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/caseData_reportingOfficerName"

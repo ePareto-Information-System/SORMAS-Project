@@ -248,6 +248,10 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setFunctionOfReportingOfficer(source.getFunctionOfReportingOfficer());
 		target.setReportingOfficerContactPhone(source.getReportingOfficerContactPhone());
 		target.setReportingOfficerEmail(source.getReportingOfficerEmail());
+		target.setMobileTeamNo(source.getMobileTeamNo());
+		target.setInformationGivenBy(source.getInformationGivenBy());
+		target.setFamilyLinkWithPatient(source.getFamilyLinkWithPatient());
+		target.setNameOfVillagePersonGotIll(source.getNameOfVillagePersonGotIll());
 	}
 
 	@Override
@@ -518,6 +522,10 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setFunctionOfReportingOfficer(source.getFunctionOfReportingOfficer());
 		target.setReportingOfficerContactPhone(source.getReportingOfficerContactPhone());
 		target.setReportingOfficerEmail(source.getReportingOfficerEmail());
+		target.setMobileTeamNo(source.getMobileTeamNo());
+		target.setInformationGivenBy(source.getInformationGivenBy());
+		target.setFamilyLinkWithPatient(source.getFamilyLinkWithPatient());
+		target.setNameOfVillagePersonGotIll(source.getNameOfVillagePersonGotIll());
 
 	}
 
