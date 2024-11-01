@@ -17,15 +17,21 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.ebs;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.DataProviderListener;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.navigator.View;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.renderers.DateRenderer;
+
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.Language;
-import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.ebs.EbsCriteria;
 import de.symeda.sormas.api.ebs.EbsIndexDto;
 import de.symeda.sormas.api.ebs.EbsSourceType;
@@ -42,12 +48,6 @@ import de.symeda.sormas.ui.utils.FilteredGrid;
 import de.symeda.sormas.ui.utils.ShowDetailsListener;
 import de.symeda.sormas.ui.utils.UuidRenderer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @SuppressWarnings("serial")
 public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 
@@ -58,6 +58,7 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 	public static final String DISEASE_SHORT = Captions.columnDiseaseShort;
 
 	private DataProviderListener<EbsIndexDto> dataProviderListener;
+
 	@SuppressWarnings("unchecked")
 	public <V extends View> EbsGrid(EbsCriteria criteria, Class<V> viewClass) {
 
@@ -86,9 +87,7 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 
 		Language userLanguage = I18nProperties.getUserLanguage();
 
-		List<String> columnIds = new ArrayList<>(
-			Arrays.asList(
-				EbsIndexDto.UUID));
+		List<String> columnIds = new ArrayList<>(Arrays.asList(EbsIndexDto.UUID));
 
 		columnIds.addAll(
 			Arrays.asList(
@@ -102,9 +101,7 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 				EbsIndexDto.RISK_STATUS,
 				EbsIndexDto.RESPONSE_STATUS));
 
-
 		setColumns(columnIds.toArray(new String[columnIds.size()]));
-
 
 		((Column<EbsIndexDto, String>) getColumn(EbsIndexDto.UUID)).setRenderer(new UuidRenderer());
 		((Column<EbsIndexDto, Date>) getColumn(EbsIndexDto.VERIFIED_DATE))
@@ -120,8 +117,7 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 			return I18nProperties.getCaption(Captions.inaccessibleValue);
 		}
 
-		return (srcFirstName != null ? srcFirstName : "") + " "
-			+ (srcTelNo != null && !srcTelNo.isEmpty() ? " (" + srcTelNo + ")" : "");
+		return (srcFirstName != null ? srcFirstName : "") + " " + (srcTelNo != null && !srcTelNo.isEmpty() ? " (" + srcTelNo + ")" : "");
 	}
 
 	private String buildSourceMediaText(EbsIndexDto ebs) {
@@ -150,24 +146,24 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 	public void setLazyDataProvider() {
 
 		DataProvider<EbsIndexDto, EbsCriteria> dataProvider = DataProvider.fromFilteringCallbacks(
-				query -> FacadeProvider.getEbsFacade()
-						.getEventIndexList(
-								query.getFilter().orElse(null),
-								query.getOffset(),
-								query.getLimit(),
-								query.getSortOrders()
-										.stream()
-										.map(sortOrder -> new SortProperty(sortOrder.getSorted(), sortOrder.getDirection() == SortDirection.ASCENDING))
-										.collect(Collectors.toList()))
-						.stream(),
-				query -> (int) FacadeProvider.getEbsFacade().count(query.getFilter().orElse(null)));
+			query -> FacadeProvider.getEbsFacade()
+				.getEventIndexList(
+					query.getFilter().orElse(null),
+					query.getOffset(),
+					query.getLimit(),
+					query.getSortOrders()
+						.stream()
+						.map(sortOrder -> new SortProperty(sortOrder.getSorted(), sortOrder.getDirection() == SortDirection.ASCENDING))
+						.collect(Collectors.toList()))
+				.stream(),
+			query -> (int) FacadeProvider.getEbsFacade().count(query.getFilter().orElse(null)));
 		setDataProvider(dataProvider);
 		setSelectionMode(SelectionMode.NONE);
 	}
 
 	public void setEagerDataProvider() {
 		ListDataProvider<EbsIndexDto> dataProvider =
-				DataProvider.fromStream(FacadeProvider.getEbsFacade().getEventIndexList(getCriteria(), null, null, null).stream());
+			DataProvider.fromStream(FacadeProvider.getEbsFacade().getEventIndexList(getCriteria(), null, null, null).stream());
 		setDataProvider(dataProvider);
 		setSelectionMode(SelectionMode.MULTI);
 
