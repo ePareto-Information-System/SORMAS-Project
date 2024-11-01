@@ -152,47 +152,47 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 		signalCategory = addField(TriagingDto.SIGNAL_CATEGORY, NullableOptionGroup.class);
 		categoryLevel = addField(TriagingDto.CATEGORY_DETAILS_LEVEL, NullableOptionGroup.class);
 		loc(TriagingDto.SIGNAL_CATEGORY);
-		OptionGroup humanCommCategoryDetail = new OptionGroup("Human Community Category Details");
+		OptionGroup humanCommCategoryDetail = new OptionGroup(Captions.Triaging_humanCommunityCategoryDetails);
 		for (HumanCommunityCategoryDetails categoryDetails : HumanCommunityCategoryDetails.values()) {
 			humanCommCategoryDetail.addItem(categoryDetails);
 		}
 		humanCommCategoryDetails = addField(TriagingDto.HUMAN_COMMUNITY_CATEGORY_DETAILS, humanCommCategoryDetail);
-		OptionGroup humanFacCategoryDetail = new OptionGroup("Human Facility Category Details");
+		OptionGroup humanFacCategoryDetail = new OptionGroup(Captions.EbsExport_humanCommunityCategoryDetails);
 		for (HumanFaclityCategoryDetails categoryDetails : HumanFaclityCategoryDetails.values()) {
 			humanFacCategoryDetail.addItem(categoryDetails);
 		}
 		humanFacCategoryDetails = addField(TriagingDto.HUMAN_FACILITY_CATEGORY_DETAILS, humanFacCategoryDetail);
-		OptionGroup humanLabCategoryDetail = new OptionGroup("Human Laboratory Category Details");
+		OptionGroup humanLabCategoryDetail = new OptionGroup(Captions.Triaging_humanFacilityCategoryDetails);
 		for (HumanLaboratoryCategoryDetails categoryDetails : HumanLaboratoryCategoryDetails.values()) {
 			humanLabCategoryDetail.addItem(categoryDetails);
 		}
 		humanLabCategoryDetails = addField(TriagingDto.HUMAN_LABORATORY_CATEGORY_DETAILS, humanLabCategoryDetail);
 		humanLabCategoryDetails.setVisible(false);
-		OptionGroup animalCommCategoryDetail = new OptionGroup("Animal Community Category Details");
+		OptionGroup animalCommCategoryDetail = new OptionGroup(Captions.Triaging_animalCommunityCategoryDetails);
 		for (AnimalCommunityCategoryDetails categoryDetails : AnimalCommunityCategoryDetails.values()) {
 			animalCommCategoryDetail.addItem(categoryDetails);
 		}
 		animalCommCategoryDetails = addField(TriagingDto.ANIMAL_COMMUNITY_CATEGORY_DETAILS, animalCommCategoryDetail);
 		animalCommCategoryDetails.setVisible(false);
-		OptionGroup animalFacCategoryDetail = new OptionGroup("Animal Facility Category Details");
+		OptionGroup animalFacCategoryDetail = new OptionGroup(Captions.Triaging_animalFacilityCategoryDetails);
 		for (AnimalFacilityCategoryDetails categoryDetails : AnimalFacilityCategoryDetails.values()) {
 			animalFacCategoryDetail.addItem(categoryDetails);
 		}
 		animalFacCategoryDetails = addField(TriagingDto.ANIMAL_FACILITY_CATEGORY_DETAILS, animalFacCategoryDetail);
 		animalFacCategoryDetails.setVisible(false);
-		OptionGroup animalLabCategoryDetail = new OptionGroup("Animal Laboratory Category Details");
+		OptionGroup animalLabCategoryDetail = new OptionGroup(Captions.Triaging_animalLaboratoryCategoryDetails);
 		for (AnimalLaboratoryCategoryDetails categoryDetails : AnimalLaboratoryCategoryDetails.values()) {
 			animalLabCategoryDetail.addItem(categoryDetails);
 		}
 		animalLabCategoryDetails = addField(TriagingDto.ANIMAL_LABORATORY_CATEGORY_DETAILS, animalLabCategoryDetail);
 		animalLabCategoryDetails.setVisible(false);
-		OptionGroup environmentalCategoryDetail = new OptionGroup("Environmental Category Details");
+		OptionGroup environmentalCategoryDetail = new OptionGroup(Captions.Triaging_environmentalCategoryDetails);
 		for (EnvironmentalCategoryDetails categoryDetails : EnvironmentalCategoryDetails.values()) {
 			environmentalCategoryDetail.addItem(categoryDetails);
 		}
 		environmentalCategoryDetails = addField(TriagingDto.ENVIRONMENTAL_CATEGORY_DETAILS, environmentalCategoryDetail);
 		environmentalCategoryDetails.setVisible(false);
-		OptionGroup poeCategoryDetail = new OptionGroup("POE Category Details");
+		OptionGroup poeCategoryDetail = new OptionGroup(Captions.Triaging_poeCategoryDetails);
 		for (POE categoryDetails : POE.values()) {
 			poeCategoryDetail.addItem(categoryDetails);
 		}
