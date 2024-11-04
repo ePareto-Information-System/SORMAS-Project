@@ -79,6 +79,12 @@ public class Hospitalization extends AbstractDomainObject {
 	private Date intensiveCareUnitStart;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date intensiveCareUnitEnd;
+	@Enumerated(EnumType.STRING)
+	private YesNo admittedToHealthFacilityNew;
+	@Column(columnDefinition = "text")
+	private String memberFamilyHelpingPatient;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateOfDeath;
 
 	private MildModerateSevereCritical patientConditionOnAdmission;
 	@Enumerated(EnumType.STRING)
@@ -162,6 +168,30 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setAdmittedToHealthFacility(YesNo admittedToHealthFacility) {
 		this.admittedToHealthFacility = admittedToHealthFacility;
+	}
+
+	public YesNo getAdmittedToHealthFacilityNew() {
+		return admittedToHealthFacilityNew;
+	}
+
+	public void setAdmittedToHealthFacilityNew(YesNo admittedToHealthFacilityNew) {
+		this.admittedToHealthFacilityNew = admittedToHealthFacilityNew;
+	}
+
+	public String getMemberFamilyHelpingPatient() {
+		return memberFamilyHelpingPatient;
+	}
+
+	public void setMemberFamilyHelpingPatient(String memberFamilyHelpingPatient) {
+		this.memberFamilyHelpingPatient = memberFamilyHelpingPatient;
+	}
+
+	public Date getDateOfDeath() {
+		return dateOfDeath;
+	}
+
+	public void setDateOfDeath(Date dateOfDeath) {
+		this.dateOfDeath = dateOfDeath;
 	}
 
 	public YesNo getIntensiveCareUnit() {

@@ -174,6 +174,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		setUpControlListeners();
 
 		CaseValidator.initializeHospitalizationValidation(contentBinding, caze);
+		contentBinding.setYesNoClass(YesNo.class);
 
 		List<Item> hospitalizationReasons = DataUtils.getEnumItems(HospitalizationReasonType.class, true);
 
@@ -210,6 +211,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 
 		// Initialize ControlDateFields
 		contentBinding.caseHospitalizationAdmissionDate.initializeDateField(getFragmentManager());
+		contentBinding.caseHospitalizationDateOfDeath.initializeDateField(getFragmentManager());
 		contentBinding.caseHospitalizationDischargeDate.initializeDateField(getFragmentManager());
 		contentBinding.caseHospitalizationIntensiveCareUnitStart.initializeDateField(getFragmentManager());
 		contentBinding.caseHospitalizationIntensiveCareUnitEnd.initializeDateField(getFragmentManager());

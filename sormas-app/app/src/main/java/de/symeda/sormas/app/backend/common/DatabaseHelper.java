@@ -218,7 +218,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 390;
+	public static final int DATABASE_VERSION = 392;
 
 	private static DatabaseHelper instance = null;
 
@@ -3776,6 +3776,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN numberOfPeopleInSameHousehold VARCHAR(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN dateLatestUpdateRecord DATE;");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN otherNotesAndObservations VARCHAR(255);");
+
 				case 389:
 					currentVersion = 389;
 					getDao(FormBuilder.class).executeRaw(
@@ -3795,50 +3796,21 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									+ "COMMIT;"
 					);
 
-				case 367:
-					currentVersion = 367;
-					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN reportingOfficerName varchar(255);");
-
-				case 368:
-					currentVersion = 368;
+				case 390:
+					currentVersion = 390;
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN notifiedByList varchar(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN notifiedOther varchar(255);");
-
-				case 366:
-					currentVersion = 366;
-					getDao(FormBuilder.class).executeRaw(
-							"BEGIN TRANSACTION;"
-									+ "CREATE TABLE forms_form_fields_new ("
-									+ "form_id BIGINT NOT NULL,"
-									+ "formField_id BIGINT NOT NULL,"
-									+ "displayOrder INTEGER,"
-									+ "PRIMARY KEY (form_id, formField_id),"
-									+ "FOREIGN KEY (form_id) REFERENCES forms(id),"
-									+ "FOREIGN KEY (formField_id) REFERENCES form_fields(id)"
-									+ ");"
-									+ "INSERT INTO forms_form_fields_new (form_id, formField_id) "
-									+ "SELECT form_id, formField_id FROM forms_form_fields;"
-									+ "DROP TABLE forms_form_fields;"
-									+ "ALTER TABLE forms_form_fields_new RENAME TO forms_form_fields;"
-									+ "COMMIT;"
-					);
-
-				case 367:
-					currentVersion = 367;
-					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN reportingOfficerName varchar(255);");
-
-				case 368:
-					currentVersion = 368;
-					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN notifiedByList varchar(255);");
-					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN notifiedOther varchar(255);");
-
-				case 369:
-					currentVersion = 369;
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN mobileTeamNo varchar(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN informationGivenBy varchar(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN familyLinkWithPatient varchar(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN nameOfVillagePersonGotIll varchar(255);");
 
+				case 391:
+					currentVersion = 391;
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN admittedToHealthFacilityNew varchar(255);");
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN memberFamilyHelpingPatient varchar(255);");
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN dateOfDeath Date;");
+		
 				// ATTENTION: break should only be done after last version
 				break;
 			default:

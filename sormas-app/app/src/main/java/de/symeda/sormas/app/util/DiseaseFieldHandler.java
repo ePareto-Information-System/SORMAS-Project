@@ -23,6 +23,7 @@ import de.symeda.sormas.app.component.controls.ControlCheckBoxField;
 import de.symeda.sormas.app.component.controls.ControlDateField;
 import de.symeda.sormas.app.component.controls.ControlPropertyEditField;
 import de.symeda.sormas.app.component.controls.ControlPropertyField;
+import de.symeda.sormas.app.component.controls.ControlSwitchField;
 import de.symeda.sormas.app.component.controls.ControlTextReadField;
 
 public class DiseaseFieldHandler {
@@ -74,7 +75,8 @@ public class DiseaseFieldHandler {
     }
 
     private boolean isFieldView(View view) {
-        return view instanceof TextView || view instanceof ControlPropertyField || view instanceof ControlCheckBoxField || view instanceof ControlDateField || view instanceof ControlTextReadField;
+        return view instanceof TextView || view instanceof ControlPropertyField || view instanceof ControlCheckBoxField || view instanceof ControlDateField || view instanceof ControlTextReadField
+                || view instanceof ControlSwitchField;
     }
 
     private void handleChildView(View child, List<String> relevantFields) {
