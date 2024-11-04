@@ -110,6 +110,51 @@
                     app:value="@={data.areaInfectedAnimals}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/epiData_exposedToRiskFactor"
+                        app:value="@={data.exposedToRiskFactor}"
+                        app:enumClass="@{YesNoClass}"
+                        style="@style/ControlFirstOfTwoColumnsStyle"/>
+
+                    <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                        android:id="@+id/epiData_waterUsedByPatientAfterExposure"
+                        app:value="@={data.waterUsedByPatientAfterExposure}"
+                        app:dependencyParentField="@{epiDataExposedToRiskFactor}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSecondOfTwoColumnsStyle"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/epiData_waterUsedForDrinking"
+                        app:value="@={data.waterUsedForDrinking}"
+                        app:enumClass="@{YesNoClass}"
+                        style="@style/ControlFirstOfTwoColumnsStyle"/>
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/epiData_waterUsedNotForDrinking"
+                        app:value="@={data.waterUsedNotForDrinking}"
+                        app:enumClass="@{YesNoClass}"
+                        style="@style/ControlSecondOfTwoColumnsStyle"/>
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/epiData_foodItems"
+                        app:value="@={data.foodItems}"
+                        app:enumClass="@{YesNoClass}"
+                        style="@style/ControlSecondOfTwoColumnsStyle"/>
+
+                </LinearLayout>
+
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/epiData_historyOfTravelOutsideTheVillageTownDistrict"
                     app:value="@={data.historyOfTravelOutsideTheVillageTownDistrict}"
@@ -672,6 +717,7 @@
                     app:dependencyParentField="@{epiDataPatientContactWithConfirmedCase}"
                     app:dependencyParentValue="@{YesNoUnknown.YES}"
                     style="@style/ControlSingleColumnStyle"/>
+
 
             </LinearLayout>
 

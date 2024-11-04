@@ -76,6 +76,7 @@ import de.symeda.sormas.app.backend.person.Person;
 import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.District;
 import de.symeda.sormas.app.backend.region.Region;
+import de.symeda.sormas.app.backend.riskfactor.RiskFactor;
 import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfo;
 import de.symeda.sormas.app.backend.symptoms.Symptoms;
 import de.symeda.sormas.app.backend.therapy.Therapy;
@@ -112,6 +113,7 @@ public class Case extends PseudonymizableAdo {
 	public static final String CASE_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
 	public static final String VACCINATION_STATUS = "vaccinationStatus";
 	public static final String HEALTH_CONDITIONS = "healthConditions";
+	public static final String RISK_FACTOR = "riskFactor";
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, canBeNull = false, maxForeignAutoRefreshLevel = 3)
 	private Person person;
@@ -276,6 +278,9 @@ public class Case extends PseudonymizableAdo {
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private PortHealthInfo portHealthInfo;
+
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private RiskFactor riskFactor;
 
 	@Deprecated
 	@Column
@@ -506,6 +511,15 @@ public class Case extends PseudonymizableAdo {
 
 	@DatabaseField
 	private String notifiedBy;
+
+	@DatabaseField
+	private Integer numberOfPeopleInSameHousehold;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateLatestUpdateRecord;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String otherNotesAndObservations;
 
 
 	public boolean isUnreferredPortHealthCase() {
@@ -912,6 +926,14 @@ public class Case extends PseudonymizableAdo {
 
 	public void setPortHealthInfo(PortHealthInfo portHealthInfo) {
 		this.portHealthInfo = portHealthInfo;
+	}
+
+	public RiskFactor getRiskFactor() {
+		return riskFactor;
+	}
+
+	public void setRiskFactor(RiskFactor riskFactor) {
+		this.riskFactor = riskFactor;
 	}
 
 	public Double getReportLat() {
@@ -1774,5 +1796,29 @@ public class Case extends PseudonymizableAdo {
 
 	public void setNotifiedBy(String notifiedBy) {
 		this.notifiedBy = notifiedBy;
+	}
+
+	public Integer getNumberOfPeopleInSameHousehold() {
+		return numberOfPeopleInSameHousehold;
+	}
+
+	public void setNumberOfPeopleInSameHousehold(Integer numberOfPeopleInSameHousehold) {
+		this.numberOfPeopleInSameHousehold = numberOfPeopleInSameHousehold;
+	}
+
+	public Date getDateLatestUpdateRecord() {
+		return dateLatestUpdateRecord;
+	}
+
+	public void setDateLatestUpdateRecord(Date dateLatestUpdateRecord) {
+		this.dateLatestUpdateRecord = dateLatestUpdateRecord;
+	}
+
+	public String getOtherNotesAndObservations() {
+		return otherNotesAndObservations;
+	}
+
+	public void setOtherNotesAndObservations(String otherNotesAndObservations) {
+		this.otherNotesAndObservations = otherNotesAndObservations;
 	}
 }

@@ -1045,6 +1045,29 @@
 
                 </LinearLayout>
 
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/caseData_numberOfPeopleInSameHousehold"
+                    app:value="@={data.numberOfPeopleInSameHousehold}"
+                    app:inputType="number"
+                    style="@style/ControlSingleColumnStyle" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <de.symeda.sormas.app.component.controls.ControlDateField
+                android:id="@+id/caseData_dateLatestUpdateRecord"
+                app:value="@={data.dateLatestUpdateRecord}"
+                style="@style/ControlFirstOfTwoColumnsStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/caseData_otherNotesAndObservations"
+                app:value="@={data.otherNotesAndObservations}"
+                style="@style/ControlSecondOfTwoColumnsStyle" />
+
+        </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

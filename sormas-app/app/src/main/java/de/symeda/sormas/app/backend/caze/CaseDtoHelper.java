@@ -46,6 +46,7 @@ import de.symeda.sormas.app.backend.region.District;
 import de.symeda.sormas.app.backend.region.DistrictDtoHelper;
 import de.symeda.sormas.app.backend.region.Region;
 import de.symeda.sormas.app.backend.region.RegionDtoHelper;
+import de.symeda.sormas.app.backend.riskfactor.RiskFactorDtoHelper;
 import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfoDtoHelper;
 import de.symeda.sormas.app.backend.symptoms.Symptoms;
 import de.symeda.sormas.app.backend.symptoms.SymptomsDtoHelper;
@@ -68,6 +69,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 	private PortHealthInfoDtoHelper portHealthInfoDtoHelper = new PortHealthInfoDtoHelper();
 	private SormasToSormasOriginInfoDtoHelper sormasToSormasOriginInfoDtoHelper = new SormasToSormasOriginInfoDtoHelper();
 	private HealthConditionsDtoHelper healthConditionsDtoHelper = new HealthConditionsDtoHelper();
+	private RiskFactorDtoHelper riskFactorDtoHelper = new RiskFactorDtoHelper();
 
 	@Override
 	protected Class<Case> getAdoClass() {
@@ -145,6 +147,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setClinicalCourse(clinicalCourseDtoHelper.fillOrCreateFromDto(target.getClinicalCourse(), source.getClinicalCourse()));
 		target.setMaternalHistory(maternalHistoryDtoHelper.fillOrCreateFromDto(target.getMaternalHistory(), source.getMaternalHistory()));
 		target.setPortHealthInfo(portHealthInfoDtoHelper.fillOrCreateFromDto(target.getPortHealthInfo(), source.getPortHealthInfo()));
+		target.setRiskFactor(riskFactorDtoHelper.fillOrCreateFromDto(target.getRiskFactor(), source.getRiskFactor()));
 
 		target.setSurveillanceOfficer(DatabaseHelper.getUserDao().getByReferenceDto(source.getSurveillanceOfficer()));
 		target.setClinicianName(source.getClinicianName());
@@ -277,6 +280,9 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setSupplementalImmunizationDetails(source.getSupplementalImmunizationDetails());
 		target.setDateOfNotification(source.getDateOfNotification());
 		target.setNotifiedBy(source.getNotifiedBy());
+		target.setNumberOfPeopleInSameHousehold(source.getNumberOfPeopleInSameHousehold());
+		target.setDateLatestUpdateRecord(source.getDateLatestUpdateRecord());
+		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
 	}
 
 	@Override
@@ -440,6 +446,13 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 			target.setPortHealthInfo(null);
 		}
 
+		if (source.getRiskFactor() != null) {
+			target.setRiskFactor(
+				riskFactorDtoHelper.adoToDto(DatabaseHelper.getRiskFactorDao().queryForId(source.getRiskFactor().getId())));
+		} else {
+			target.setRiskFactor(null);
+		}
+
 		target.setClinicianName(source.getClinicianName());
 		target.setClinicianPhone(source.getClinicianPhone());
 		target.setClinicianEmail(source.getClinicianEmail());
@@ -575,6 +588,9 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setSupplementalImmunizationDetails(source.getSupplementalImmunizationDetails());
 		target.setDateOfNotification(source.getDateOfNotification());
 		target.setNotifiedBy(source.getNotifiedBy());
+		target.setNumberOfPeopleInSameHousehold(source.getNumberOfPeopleInSameHousehold());
+		target.setDateLatestUpdateRecord(source.getDateLatestUpdateRecord());
+		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
 
 
 	}

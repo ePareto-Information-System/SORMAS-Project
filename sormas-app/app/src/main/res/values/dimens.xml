@@ -150,6 +150,7 @@
     <dimen name="controlLabelSize">14sp</dimen>
     <dimen name="controlLabelMarginBottom">8dp</dimen>
     <dimen name="controlLabelMarginTop">0dp</dimen>
+    <dimen name="riskFactorControlLabelMarginTop">25dp</dimen>
 
     <!-- Read Text Control -->
     <dimen name="controlReadTextSize">16sp</dimen>

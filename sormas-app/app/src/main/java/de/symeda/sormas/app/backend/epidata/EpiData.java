@@ -35,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.sormas.api.epidata.ContactSetting;
 import de.symeda.sormas.api.epidata.PlaceManaged;
+import de.symeda.sormas.api.riskfactor.DrinkingWaterSource;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -162,8 +163,20 @@ public class EpiData extends PseudonymizableAdo {
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String historyOfTravelVillage;
 
+	@Enumerated(EnumType.STRING)
+	private YesNo exposedToRiskFactor;
 
+	@Enumerated(EnumType.STRING)
+	private DrinkingWaterSource waterUsedByPatientAfterExposure;
 
+	@Enumerated(EnumType.STRING)
+	private YesNo waterUsedForDrinking;
+
+	@Enumerated(EnumType.STRING)
+	private YesNo waterUsedNotForDrinking;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private YesNo foodItems;
 
 	public void setExposureDetailsKnown(YesNo exposureDetailsKnown) {
 		this.exposureDetailsKnown = exposureDetailsKnown;
@@ -457,6 +470,46 @@ public class EpiData extends PseudonymizableAdo {
 
 	public void setHistoryOfTravelVillage(String historyOfTravelVillage) {
 		this.historyOfTravelVillage = historyOfTravelVillage;
+	}
+
+	public YesNo getExposedToRiskFactor() {
+		return exposedToRiskFactor;
+	}
+
+	public void setExposedToRiskFactor(YesNo exposedToRiskFactor) {
+		this.exposedToRiskFactor = exposedToRiskFactor;
+	}
+
+	public DrinkingWaterSource getWaterUsedByPatientAfterExposure() {
+		return waterUsedByPatientAfterExposure;
+	}
+
+	public void setWaterUsedByPatientAfterExposure(DrinkingWaterSource waterUsedByPatientAfterExposure) {
+		this.waterUsedByPatientAfterExposure = waterUsedByPatientAfterExposure;
+	}
+
+	public YesNo getWaterUsedForDrinking() {
+		return waterUsedForDrinking;
+	}
+
+	public void setWaterUsedForDrinking(YesNo waterUsedForDrinking) {
+		this.waterUsedForDrinking = waterUsedForDrinking;
+	}
+
+	public YesNo getWaterUsedNotForDrinking() {
+		return waterUsedNotForDrinking;
+	}
+
+	public void setWaterUsedNotForDrinking(YesNo waterUsedNotForDrinking) {
+		this.waterUsedNotForDrinking = waterUsedNotForDrinking;
+	}
+
+	public YesNo getFoodItems() {
+		return foodItems;
+	}
+
+	public void setFoodItems(YesNo foodItems) {
+		this.foodItems = foodItems;
 	}
 
 	public void setPatientCloseContactWithARIContactSettings(Set<ContactSetting> patientCloseContactWithARIContactSettings) {

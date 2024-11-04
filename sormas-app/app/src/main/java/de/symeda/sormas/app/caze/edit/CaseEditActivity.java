@@ -221,6 +221,9 @@ public class CaseEditActivity extends BaseEditActivity<Case> {
 		case VACCINATIONS:
 			fragment = CaseEditVaccinationListFragment.newInstance(activityRootData);
 			break;
+		case RISK_FACTORS:
+			fragment = CaseEditRiskFactorFragment.newInstance(activityRootData);
+			break;
 		default:
 			throw new IndexOutOfBoundsException(DataHelper.toStringNullable(section));
 		}

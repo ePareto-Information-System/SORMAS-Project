@@ -175,6 +175,11 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		target.setHistoryOfTravelDistrict(DatabaseHelper.getDistrictDao().getByReferenceDto(source.getHistoryOfTravelDistrict()));
 		target.setHistoryOfTravelSubDistrict(DatabaseHelper.getCommunityDao().getByReferenceDto(source.getHistoryOfTravelSubDistrict()));
 		target.setHistoryOfTravelVillage(source.getHistoryOfTravelVillage());
+		target.setExposedToRiskFactor(source.getExposedToRiskFactor());
+		target.setWaterUsedByPatientAfterExposure(source.getWaterUsedByPatientAfterExposure());
+		target.setWaterUsedForDrinking(source.getWaterUsedForDrinking());
+		target.setWaterUsedNotForDrinking(source.getWaterUsedNotForDrinking());
+		target.setFoodItems(source.getFoodItems());
 	}
 
 	@Override
@@ -277,6 +282,11 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		}
 
 		target.setHistoryOfTravelVillage(source.getHistoryOfTravelVillage());
+		target.setExposedToRiskFactor(source.getExposedToRiskFactor());
+		target.setWaterUsedByPatientAfterExposure(source.getWaterUsedByPatientAfterExposure());
+		target.setWaterUsedForDrinking(source.getWaterUsedForDrinking());
+		target.setWaterUsedNotForDrinking(source.getWaterUsedNotForDrinking());
+		target.setFoodItems(source.getFoodItems());
 	}
 
     @Override
