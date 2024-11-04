@@ -15,13 +15,10 @@ import de.symeda.sormas.app.rest.RetroProvider;
 import retrofit2.Call;
 
 public class TriagingDtoHelper extends AdoDtoHelper<Triaging, TriagingDto> {
-    private LocationDtoHelper locationHelper;
+    private LocationDtoHelper locationHelper = new LocationDtoHelper();
 
     private SormasToSormasOriginInfoDtoHelper sormasToSormasOriginInfoDtoHelper = new SormasToSormasOriginInfoDtoHelper();
 
-    public TriagingDtoHelper() {
-        locationHelper = new LocationDtoHelper();
-    }
 
     @Override
     protected Class<Triaging> getAdoClass() {
@@ -101,15 +98,6 @@ public class TriagingDtoHelper extends AdoDtoHelper<Triaging, TriagingDto> {
     @Override
     protected long getApproximateJsonSizeInBytes() {
         return TriagingDto.APPROXIMATE_JSON_SIZE_IN_BYTES;
-    }
-
-    public static TriagingReferenceDto toReferenceDto(Ebs ado) {
-        if (ado == null) {
-            return null;
-        }
-        TriagingReferenceDto dto = new TriagingReferenceDto(ado.getUuid());
-
-        return dto;
     }
 
 }
