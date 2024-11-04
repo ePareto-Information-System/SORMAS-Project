@@ -280,13 +280,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		final NullableOptionGroup wasPatientAdmitted = addField(HospitalizationDto.WAS_PATIENT_ADMITTED, NullableOptionGroup.class);
 		wasPatientAdmitted.setVisible(false);
 
-		NullableOptionGroup admittedToHealthFacilityFieldNew = addField(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, NullableOptionGroup.class);
+		NullableOptionGroup admittedToHealthFacilityNew = addField(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, NullableOptionGroup.class);
 		NullableOptionGroup hospitalizedYesNo = addField(HospitalizationDto.HOSPITALIZATION_YES_NO, NullableOptionGroup.class);
 		addField(HospitalizationDto.RECEPTION_DATE, DateField.class);
 		addField(HospitalizationDto.MEMBER_FAMILY_HELPING_PATIENT, TextField.class);
 		hospitalizedYesNo.setVisible(false);
-		admittedToHealthFacilityFieldNew.setVisible(false);
-		admittedToHealthFacilityFieldNew.setCaption("Was the Patient Admitted at the Facility (in-patient)?");
+		admittedToHealthFacilityNew.setVisible(false);
 		final DateField admissionDateField = addField(HospitalizationDto.ADMISSION_DATE, DateField.class);
 		dischargeDateField = addDateField(HospitalizationDto.DISCHARGE_DATE, DateField.class, 7);
 		DateField dateOfDeath = addDateField(HospitalizationDto.DATE_OF_DEATH, DateField.class, 7);
@@ -396,7 +395,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
 
-			admittedToHealthFacilityFieldNew.setVisible(true);
+			admittedToHealthFacilityNew.setVisible(true);
 			hospitalRecordNumber.setVisible(true);
 			dateFirstSeen.setVisible(true);
 			dateFirstSeen.setCaption("Date of admission to hospital, if applicable:");
@@ -536,7 +535,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
 
-			admittedToHealthFacilityFieldNew.setVisible(true);
+			admittedToHealthFacilityNew.setVisible(true);
 			hospitalRecordNumber.setVisible(true);
 			dateFirstSeen.setVisible(true);
 			dateFirstSeen.setCaption("Date of admission to hospital, if applicable:");
@@ -551,7 +550,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			isolatedField.setVisible(true);
 
 			setVisible(true, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW, HospitalizationDto.DATE_OF_DEATH, HospitalizationDto.MEMBER_FAMILY_HELPING_PATIENT);
-			FieldHelper.setVisibleWhen(admittedToHealthFacilityFieldNew, Arrays.asList(admissionDateField, dischargeDateField, dateOfDeath), Arrays.asList(YesNo.YES), true);
+			FieldHelper.setVisibleWhen(admittedToHealthFacilityNew, Arrays.asList(admissionDateField, dischargeDateField, dateOfDeath), Arrays.asList(YesNo.YES), true);
 		}
 
 		if(caze.getDisease() == Disease.YELLOW_FEVER){
@@ -570,7 +569,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
 
-			admittedToHealthFacilityFieldNew.setVisible(true);
+			admittedToHealthFacilityNew.setVisible(true);
 			admissionDateField.setVisible(true);
 			dischargeDateField.setVisible(true);
 			terminationDateHospitalStay.setVisible(true);
@@ -580,7 +579,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			intensiveCareUnit.setVisible(true);
 
 			FieldHelper
-					.setVisibleWhen(admittedToHealthFacilityFieldNew, Arrays.asList(admissionDateField, dischargeDateField, terminationDateHospitalStay, intensiveCareUnit), Arrays.asList(YesNo.YES), true);
+					.setVisibleWhen(admittedToHealthFacilityNew, Arrays.asList(admissionDateField, dischargeDateField, terminationDateHospitalStay, intensiveCareUnit), Arrays.asList(YesNo.YES), true);
 
 		}
 
@@ -625,7 +624,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		}
 		
 		if(caze.getDisease() == Disease.MONKEYPOX){
-			setFieldsVisible(true, admittedToHealthFacilityFieldNew);
+			setFieldsVisible(true, admittedToHealthFacilityNew);
 //			setVisible(true, HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.LOCATION_TYPE, HospitalizationDto.NAME_OF_FACILITY);
 
 			FieldHelper.setVisibleWhen(

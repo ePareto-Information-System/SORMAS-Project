@@ -620,6 +620,7 @@ public interface Captions {
 	String CaseHospitalization = "CaseHospitalization";
 	String CaseHospitalization_admissionDate = "CaseHospitalization.admissionDate";
 	String CaseHospitalization_admittedToHealthFacility = "CaseHospitalization.admittedToHealthFacility";
+	String CaseHospitalization_admittedToHealthFacilityNew = "CaseHospitalization.admittedToHealthFacilityNew";
 	String CaseHospitalization_terminationDateHospitalStay = "CaseHospitalization.terminationDateHospitalStay";
 	String CaseHospitalization_notifyDistrictDate = "CaseHospitalization.notifyDistrictDate";
 	String CaseHospitalization_dateFormSentToDistrict = "CaseHospitalization.dateFormSentToDistrict";
