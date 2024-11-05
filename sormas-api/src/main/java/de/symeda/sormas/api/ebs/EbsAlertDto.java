@@ -4,40 +4,40 @@ import java.util.Date;
 
 import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
 public class EbsAlertDto extends PseudonymizableDto {
 
 	private final static long serialVersionUID = 1L;
 
-    public static final String I18N_PREFIX = "EbsAlert";
-    public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 13356L;
-    public static final String ACTION_INITIATED = "actionInitiated";
-    public static final String RESPONSE_STATUS = "responseStatus";
-    public static final String RESPONSE_DATE = "responseDate";
-    public static final String DETAILS_RESPONSE_ACTIVITIES = "detailsResponseActivities";
-    public static final String DETAILS_GIVEN = "detailsGiven";
-    public static final String ALERT_ISSUED = "alertIssued";
-    public static final String DETAILS_ALERT_USED = "detailsAlertUsed";
-    public static final String ALERT_DATE = "alertDate";
-    public static final String EBS = "ebs";
+	public static final String I18N_PREFIX = "EbsAlert";
+	public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 13356L;
+	public static final String ACTION_INITIATED = "actionInitiated";
+	public static final String RESPONSE_STATUS = "responseStatus";
+	public static final String RESPONSE_DATE = "responseDate";
+	public static final String DETAILS_RESPONSE_ACTIVITIES = "detailsResponseActivities";
+	public static final String DETAILS_GIVEN = "detailsGiven";
+	public static final String ALERT_ISSUED = "alertIssued";
+	public static final String DETAILS_ALERT_USED = "detailsAlertUsed";
+	public static final String ALERT_DATE = "alertDate";
+	public static final String EBS = "ebs";
 
-	private YesNoUnknown actionInitiated;
+	private YesNo actionInitiated;
 	private ResponseStatus responseStatus;
 	private Date responseDate;
 	private String detailsResponseActivities;
 	private String detailsGiven;
-	private YesNoUnknown alertIssued;
+	private YesNo alertIssued;
 	private String detailsAlertUsed;
 	private EbsReferenceDto ebs;
 	private Date alertDate;
 
-	public YesNoUnknown getActionInitiated() {
+	public YesNo getActionInitiated() {
 		return actionInitiated;
 	}
 
-	public void setActionInitiated(YesNoUnknown actionInitiated) {
+	public void setActionInitiated(YesNo actionInitiated) {
 		this.actionInitiated = actionInitiated;
 	}
 
@@ -73,11 +73,11 @@ public class EbsAlertDto extends PseudonymizableDto {
 		this.detailsGiven = detailsGiven;
 	}
 
-	public YesNoUnknown getAlertIssued() {
+	public YesNo getAlertIssued() {
 		return alertIssued;
 	}
 
-	public void setAlertIssued(YesNoUnknown alertIssued) {
+	public void setAlertIssued(YesNo alertIssued) {
 		this.alertIssued = alertIssued;
 	}
 
