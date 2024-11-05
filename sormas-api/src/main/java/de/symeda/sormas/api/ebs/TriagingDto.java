@@ -15,14 +15,13 @@
 
 package de.symeda.sormas.api.ebs;
 
+import java.util.Date;
+
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.user.UserReferenceDto;
-import de.symeda.sormas.api.utils.*;
-
-
-import java.util.Date;
-import java.util.Set;
+import de.symeda.sormas.api.utils.DependingOnFeatureType;
+import de.symeda.sormas.api.utils.YesNo;
 
 @DependingOnFeatureType(featureType = FeatureType.EVENT_SURVEILLANCE)
 public class TriagingDto extends EntityDto {
@@ -64,13 +63,11 @@ public class TriagingDto extends EntityDto {
 	public static final String CATEGORY_DETAILS_LEVEL = "categoryDetailsLevel";
 	public static final String POTENTIAL_RISK = "potentialRisk";
 
-
-
-	private YesNoUnknown supervisorReview;
-	private YesNoUnknown referred;
-	private YesNoUnknown specificSignal;
+	private YesNo supervisorReview;
+	private YesNo referred;
+	private YesNo specificSignal;
 	private SignalCategory signalCategory;
-	private YesNoUnknown healthConcern;
+	private YesNo healthConcern;
 	private HumanCommunityCategoryDetails humanCommunityCategoryDetails;
 	private HumanFaclityCategoryDetails humanFacilityCategoryDetails;
 	private HumanLaboratoryCategoryDetails humanLaboratoryCategoryDetails;
@@ -79,7 +76,7 @@ public class TriagingDto extends EntityDto {
 	private AnimalLaboratoryCategoryDetails animalLaboratoryCategoryDetails;
 	private EnvironmentalCategoryDetails environmentalCategoryDetails;
 	private POE poeCategoryDetails;
-	private YesNoUnknown occurrencePreviously;
+	private YesNo occurrencePreviously;
 	private EbsTriagingDecision triagingDecision;
 	private Date decisionDate;
 	private String referredTo;
@@ -87,28 +84,25 @@ public class TriagingDto extends EntityDto {
 	private OutComeSupervisor outcomeSupervisor;
 	private boolean notSignal;
 	private CategoryDetailsLevel categoryDetailsLevel;
-	private YesNoUnknown potentialRisk;
-
-
+	private YesNo potentialRisk;
 
 	public EbsReferenceDto toReference() {
 		return new EbsReferenceDto(getUuid());
 	}
 
-
-	public YesNoUnknown getSupervisorReview() {
+	public YesNo getSupervisorReview() {
 		return supervisorReview;
 	}
 
-	public void setSupervisorReview(YesNoUnknown supervisorReview) {
+	public void setSupervisorReview(YesNo supervisorReview) {
 		this.supervisorReview = supervisorReview;
 	}
 
-	public YesNoUnknown getSpecificSignal() {
+	public YesNo getSpecificSignal() {
 		return specificSignal;
 	}
 
-	public void setSpecificSignal(YesNoUnknown specificSignal) {
+	public void setSpecificSignal(YesNo specificSignal) {
 		this.specificSignal = specificSignal;
 	}
 
@@ -120,11 +114,11 @@ public class TriagingDto extends EntityDto {
 		this.signalCategory = signalCategory;
 	}
 
-	public YesNoUnknown getHealthConcern() {
+	public YesNo getHealthConcern() {
 		return healthConcern;
 	}
 
-	public void setHealthConcern(YesNoUnknown healthConcern) {
+	public void setHealthConcern(YesNo healthConcern) {
 		this.healthConcern = healthConcern;
 	}
 
@@ -192,11 +186,11 @@ public class TriagingDto extends EntityDto {
 		this.poeCategoryDetails = poeCategoryDetails;
 	}
 
-	public YesNoUnknown getOccurrencePreviously() {
+	public YesNo getOccurrencePreviously() {
 		return occurrencePreviously;
 	}
 
-	public void setOccurrencePreviously(YesNoUnknown occurrencePreviously) {
+	public void setOccurrencePreviously(YesNo occurrencePreviously) {
 		this.occurrencePreviously = occurrencePreviously;
 	}
 
@@ -256,19 +250,19 @@ public class TriagingDto extends EntityDto {
 		this.categoryDetailsLevel = categoryDetailsLevel;
 	}
 
-	public YesNoUnknown getPotentialRisk() {
+	public YesNo getPotentialRisk() {
 		return potentialRisk;
 	}
 
-	public void setPotentialRisk(YesNoUnknown potentialRisk) {
+	public void setPotentialRisk(YesNo potentialRisk) {
 		this.potentialRisk = potentialRisk;
 	}
 
-	public YesNoUnknown getReferred() {
+	public YesNo getReferred() {
 		return referred;
 	}
 
-	public void setReferred(YesNoUnknown referred) {
+	public void setReferred(YesNo referred) {
 		this.referred = referred;
 	}
 }

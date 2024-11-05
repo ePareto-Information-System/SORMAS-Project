@@ -1,146 +1,145 @@
 package de.symeda.sormas.api.ebs;
 
+import java.util.Date;
+
 import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
-
-import java.util.Date;
 
 public class RiskAssessmentDto extends PseudonymizableDto {
 
-    private static final long serialVersionUID = 2430932452606853497L;
+	private static final long serialVersionUID = 2430932452606853497L;
 
-    public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 13356;
+	public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 13356;
 
-    public static final String I18N_PREFIX = "RiskAssessment";
+	public static final String I18N_PREFIX = "RiskAssessment";
 
-    public static final String  MORBIDITY_MORTALITY = "morbidityMortality";
+	public static final String MORBIDITY_MORTALITY = "morbidityMortality";
 
-    public static final String  MORBIDITY_MORTALITY_COMMENT = "morbidityMortalityComment";
+	public static final String MORBIDITY_MORTALITY_COMMENT = "morbidityMortalityComment";
 
-    public static final String  SPREAD_PROBABILITY = "spreadProbability";
+	public static final String SPREAD_PROBABILITY = "spreadProbability";
 
-    public static final String  SPREAD_PROBABILITY_COMMENT = "spreadProbabilityComment";
+	public static final String SPREAD_PROBABILITY_COMMENT = "spreadProbabilityComment";
 
-    public static final String  CONTROL_MEASURES = "controlMeasures";
+	public static final String CONTROL_MEASURES = "controlMeasures";
 
-    public static final String  CONTROL_MEASURES_COMMENT = "controlMeasuresComment";
+	public static final String CONTROL_MEASURES_COMMENT = "controlMeasuresComment";
 
-    public static final String  ASSESSMENT_LEVEL = "riskAssessment";
+	public static final String ASSESSMENT_LEVEL = "riskAssessment";
 
-    public static final String  ASSESSMENT_DATE = "assessmentDate";
+	public static final String ASSESSMENT_DATE = "assessmentDate";
 
-    public static final String  ASSESSMENT_TIME = "assessmentTime";
+	public static final String ASSESSMENT_TIME = "assessmentTime";
 
-    public static final String  INFO = "info";
-    public static final String  EBS = "ebs";
+	public static final String INFO = "info";
+	public static final String EBS = "ebs";
 
+	private YesNo morbidityMortality;
+	private String morbidityMortalityComment;
+	private YesNo spreadProbability;
+	private String spreadProbabilityComment;
+	private YesNo controlMeasures;
+	private String controlMeasuresComment;
+	private RiskAssesment riskAssessment;
+	private Date assessmentDate;
+	private String assessmentTime;
+	private EbsReferenceDto ebs;
 
-    private YesNoUnknown morbidityMortality;
-    private String morbidityMortalityComment;
-    private YesNoUnknown spreadProbability;
-    private String spreadProbabilityComment;
-    private YesNoUnknown controlMeasures;
-    private String controlMeasuresComment;
-    private RiskAssesment riskAssessment;
-    private Date assessmentDate;
-    private String assessmentTime;
-    private EbsReferenceDto ebs;
+	public YesNo getMorbidityMortality() {
+		return morbidityMortality;
+	}
 
-    public YesNoUnknown getMorbidityMortality() {
-        return morbidityMortality;
-    }
+	public void setMorbidityMortality(YesNo morbidityMortality) {
+		this.morbidityMortality = morbidityMortality;
+	}
 
-    public void setMorbidityMortality(YesNoUnknown morbidityMortality) {
-        this.morbidityMortality = morbidityMortality;
-    }
+	public YesNo getSpreadProbability() {
+		return spreadProbability;
+	}
 
-    public YesNoUnknown getSpreadProbability() {
-        return spreadProbability;
-    }
+	public void setSpreadProbability(YesNo spreadProbability) {
+		this.spreadProbability = spreadProbability;
+	}
 
-    public void setSpreadProbability(YesNoUnknown spreadProbability) {
-        this.spreadProbability = spreadProbability;
-    }
+	public YesNo getControlMeasures() {
+		return controlMeasures;
+	}
 
-    public YesNoUnknown getControlMeasures() {
-        return controlMeasures;
-    }
+	public void setControlMeasures(YesNo controlMeasures) {
+		this.controlMeasures = controlMeasures;
+	}
 
-    public void setControlMeasures(YesNoUnknown controlMeasures) {
-        this.controlMeasures = controlMeasures;
-    }
+	public RiskAssesment getRiskAssessment() {
+		return riskAssessment;
+	}
 
-    public RiskAssesment getRiskAssessment() {
-        return riskAssessment;
-    }
+	public void setRiskAssessment(RiskAssesment riskAssessment) {
+		this.riskAssessment = riskAssessment;
+	}
 
-    public void setRiskAssessment(RiskAssesment riskAssessment) {
-        this.riskAssessment = riskAssessment;
-    }
+	public Date getAssessmentDate() {
+		return assessmentDate;
+	}
 
-    public Date getAssessmentDate() {
-        return assessmentDate;
-    }
+	public void setAssessmentDate(Date assessmentDate) {
+		this.assessmentDate = assessmentDate;
+	}
 
-    public void setAssessmentDate(Date assessmentDate) {
-        this.assessmentDate = assessmentDate;
-    }
+	public String getAssessmentTime() {
+		return assessmentTime;
+	}
 
-    public String getAssessmentTime() {
-        return assessmentTime;
-    }
+	public void setAssessmentTime(String assessmentTime) {
+		this.assessmentTime = assessmentTime;
+	}
 
-    public void setAssessmentTime(String assessmentTime) {
-        this.assessmentTime = assessmentTime;
-    }
+	public String getControlMeasuresComment() {
+		return controlMeasuresComment;
+	}
 
-    public String getControlMeasuresComment() {
-        return controlMeasuresComment;
-    }
+	public void setControlMeasuresComment(String controlMeasuresComment) {
+		this.controlMeasuresComment = controlMeasuresComment;
+	}
 
-    public void setControlMeasuresComment(String controlMeasuresComment) {
-        this.controlMeasuresComment = controlMeasuresComment;
-    }
+	public String getSpreadProbabilityComment() {
+		return spreadProbabilityComment;
+	}
 
-    public String getSpreadProbabilityComment() {
-        return spreadProbabilityComment;
-    }
+	public void setSpreadProbabilityComment(String spreadProbabilityComment) {
+		this.spreadProbabilityComment = spreadProbabilityComment;
+	}
 
-    public void setSpreadProbabilityComment(String spreadProbabilityComment) {
-        this.spreadProbabilityComment = spreadProbabilityComment;
-    }
+	public String getMorbidityMortalityComment() {
+		return morbidityMortalityComment;
+	}
 
-    public String getMorbidityMortalityComment() {
-        return morbidityMortalityComment;
-    }
+	public void setMorbidityMortalityComment(String morbidityMortalityComment) {
+		this.morbidityMortalityComment = morbidityMortalityComment;
+	}
 
-    public void setMorbidityMortalityComment(String morbidityMortalityComment) {
-        this.morbidityMortalityComment = morbidityMortalityComment;
-    }
+	@ImportIgnore
+	public EbsReferenceDto getEbs() {
+		return ebs;
+	}
 
-    @ImportIgnore
-    public  EbsReferenceDto getEbs() {
-        return ebs;
-    }
+	public void setEbs(EbsReferenceDto ebs) {
+		this.ebs = ebs;
+	}
 
-    public void setEbs(EbsReferenceDto ebs) {
-        this.ebs = ebs;
-    }
+	private static RiskAssessmentDto getRiskassessmentDto() {
 
-    private static RiskAssessmentDto getRiskassessmentDto() {
+		RiskAssessmentDto riskAssessmentDto = new RiskAssessmentDto();
+		riskAssessmentDto.setUuid(DataHelper.createUuid());
 
-        RiskAssessmentDto riskAssessmentDto = new RiskAssessmentDto();
-        riskAssessmentDto.setUuid(DataHelper.createUuid());
+		return riskAssessmentDto;
+	}
 
-        return riskAssessmentDto;
-    }
+	public static RiskAssessmentDto build(EbsReferenceDto ebsRef) {
 
-    public static RiskAssessmentDto build( EbsReferenceDto ebsRef) {
-
-        final RiskAssessmentDto riskAssessmentDto = getRiskassessmentDto();
-        riskAssessmentDto.setEbs(ebsRef);
-        return riskAssessmentDto;
-    }
+		final RiskAssessmentDto riskAssessmentDto = getRiskassessmentDto();
+		riskAssessmentDto.setEbs(ebsRef);
+		return riskAssessmentDto;
+	}
 }

@@ -42,7 +42,7 @@ import de.symeda.sormas.api.ebs.TriagingDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
@@ -215,7 +215,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 			getFieldGroup(),
 			Arrays.asList(TriagingDto.OCCURRENCE_PREVIOUSLY),
 			TriagingDto.SPECIFIC_SIGNAL,
-			Arrays.asList(YesNoUnknown.YES),
+			Arrays.asList(YesNo.YES),
 			true);
 
 		specificSignal.addValueChangeListener(e -> {
@@ -260,20 +260,20 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 		previousOccurrence.addValueChangeListener(e -> {
 			if (e.getProperty().getValue().toString().equals("[No]")) {
 				triagingDecision.setValue(EbsTriagingDecision.VERIFY);
-				selectedEbs.getSignalVerification().setVerificationSent(YesNoUnknown.YES);
+				selectedEbs.getSignalVerification().setVerificationSent(YesNo.YES);
 				selectedEbs.getSignalVerification().setDateOfOccurrence(new Date());
 			} else {
 				triagingDecision.setValue(EbsTriagingDecision.DISCARD);
-				selectedEbs.getSignalVerification().setVerificationSent(YesNoUnknown.NO);
+				selectedEbs.getSignalVerification().setVerificationSent(YesNo.NO);
 			}
 		});
 		triagingDecision.addValueChangeListener(e -> {
 			try {
 				if (e.getProperty().getValue().toString().equals("Proceed to verification")) {
-					selectedEbs.getSignalVerification().setVerificationSent(YesNoUnknown.YES);
+					selectedEbs.getSignalVerification().setVerificationSent(YesNo.YES);
 					selectedEbs.getSignalVerification().setDateOfOccurrence(new Date());
 				} else {
-					selectedEbs.getSignalVerification().setVerificationSent(YesNoUnknown.NO);
+					selectedEbs.getSignalVerification().setVerificationSent(YesNo.NO);
 					selectedEbs.getSignalVerification().setVerified(SignalOutcome.NON_EVENT);
 				}
 			} catch (Exception exception) {
@@ -289,7 +289,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 				triagingDecision.setRequired(true);
 				dateOfDecision.setRequired(true);
 			} else if (e.getProperty().getValue().toString().equals("[No]")) {
-				if (ebs.getTriaging().getSupervisorReview() != YesNoUnknown.NO) {
+				if (ebs.getTriaging().getSupervisorReview() != YesNo.NO) {
 					reviewSignal(Strings.seniorOfficials);
 				}
 				potentialRisk.setVisible(false);
@@ -331,7 +331,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 				referredTo.setValue(null);
 				referred.setValue(null);
 			} else if (e.getProperty().getValue().toString().equals("[Yes]")) {
-				if (ebs.getTriaging().getHealthConcern() != YesNoUnknown.YES) {
+				if (ebs.getTriaging().getHealthConcern() != YesNo.YES) {
 					reviewSignal(Strings.referredNotifs);
 				}
 				referred.setVisible(true);

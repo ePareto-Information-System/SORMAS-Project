@@ -17,39 +17,40 @@
  *******************************************************************************/
 package de.symeda.sormas.api.ebs;
 
-import de.symeda.sormas.api.ReferenceDto;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import de.symeda.sormas.api.ReferenceDto;
+import de.symeda.sormas.api.utils.YesNo;
 
 public class SignalVerificationReferenceDto extends ReferenceDto {
 
 	private static final long serialVersionUID = -1399197327930368752L;
 
-	public static String buildCaption(YesNoUnknown verificationSent) {
-		if(verificationSent == null){
+	public static String buildCaption(YesNo verificationSent) {
+		if (verificationSent == null) {
 			return "";
-		};
+		} ;
 		return verificationSent.toString();
 	}
+
 	public static String buildCaption(SignalOutcome verified) {
-		if(verified == null){
+		if (verified == null) {
 			return "";
-		};
+		} ;
 		return verified.toString();
 	}
 
 	public static String buildCaption(String death) {
-		if(death == null){
+		if (death == null) {
 			return "";
-		};
+		} ;
 		return death;
 	}
 
-	public static String buildCaption(
-			Date verificationSentDate) {
+	public static String buildCaption(Date verificationSentDate) {
 		SimpleDateFormat sdf = new SimpleDateFormat("M/d/yyyy h:mm a");
-		if(verificationSentDate == null){
+		if (verificationSentDate == null) {
 			return "";
 		}
 		String formattedDate = sdf.format(verificationSentDate);
