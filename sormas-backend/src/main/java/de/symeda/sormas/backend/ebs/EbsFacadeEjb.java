@@ -410,6 +410,61 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	public List<EbsIndexDto> getIndexList(EbsCriteria ebsCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
 		List<Long> indexListIds = getIndexListIds(ebsCriteria, first, max, sortProperties);
 		List<EbsIndexDto> indexList = new ArrayList<>();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+
+		IterableHelper.executeBatched(indexListIds, ModelConstants.PARAMETER_LIMIT, batchedIds -> {
+			CriteriaQuery<EbsIndexDto> cq = cb.createQuery(EbsIndexDto.class);
+			Root<Ebs> ebs = cq.from(Ebs.class);
+			EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
+			EbsJoins ebsJoins = ebsQueryContext.getJoins();
+
+			Join<Ebs, Location> location = ebsJoins.getLocation();
+			Join<Location, Region> region = ebsJoins.getRegion();
+			Join<Location, District> district = ebsJoins.getDistrict();
+			Join<Location, Community> community = ebsJoins.getCommunity();
+
+			cq.multiselect(
+				ebs.get(Ebs.ID),
+				ebs.get(Ebs.UUID),
+				ebs.get(Ebs.SOURCE_INFORMATION),
+				ebs.get(Ebs.REPORT_DATE_TIME),
+				ebs.get(Ebs.CHANGE_DATE),
+				ebs.get(Ebs.CATEGORY_OF_INFORMANT),
+				ebs.get(Ebs.INFORMANT_NAME),
+				ebs.get(Ebs.INFORMANT_TEL),
+				ebs.get(Ebs.PERSON_REGISTERING),
+				ebs.get(Ebs.PERSON_DESIGNATION),
+				region.get(Region.UUID),
+				region.get(Region.NAME),
+				community.get(Community.UUID),
+				community.get(Community.NAME),
+				location.get(Location.CITY),
+				district.get(District.UUID),
+				district.get(District.NAME));
+
+			Predicate filter = ebs.get(Ebs.ID).in(batchedIds);
+
+			if (ebsCriteria != null) {
+				if (ebsCriteria.getUserFilterIncluded()) {
+					EbsUserFilterCriteria ebsUserFilterCriteria = new EbsUserFilterCriteria();
+					filter = service.createUserFilter(ebsQueryContext, ebsUserFilterCriteria);
+				}
+
+				Predicate criteriaFilter = service.buildCriteriaFilter(ebsCriteria, ebsQueryContext);
+				filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
+			}
+
+			sortBy(sortProperties, ebsQueryContext);
+			cq.distinct(true);
+			indexList.addAll(QueryHelper.getResultList(em, cq, null, null));
+		});
+		return indexList;
+	}
+
+	@Override
+	public List<EbsIndexDto> getEventIndexList(EbsCriteria ebsCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
+		List<Long> indexListIds = getIndexListIds(ebsCriteria, first, max, sortProperties);
+		List<EbsIndexDto> indexList = new ArrayList<>();
 		Set<Long> addedIds = new HashSet<>();
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -440,6 +495,8 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			Join<Ebs, RiskAssessment> riskAssessment = ebs.join("riskAssessment", JoinType.LEFT);
 			Predicate riskPredicate =
 				cb.or(cb.isNull(riskAssessment.get(RiskAssessment.ID)), cb.equal(riskAssessment.get(RiskAssessment.ID), subqueryRisk));
+
+			Predicate verifiedPredicate = cb.equal(signalVerification.get(SignalVerification.VERIFIED), SignalOutcome.EVENT);
 
 			cq.multiselect(
 				ebs.get(Ebs.ID),
@@ -472,7 +529,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 				district.get(District.NAME));
 
 			Predicate filter = ebs.get(Ebs.ID).in(batchedIds);
-
 			if (ebsCriteria != null) {
 				if (ebsCriteria.getUserFilterIncluded()) {
 					EbsUserFilterCriteria ebsUserFilterCriteria = new EbsUserFilterCriteria();
@@ -484,94 +540,19 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			}
 
 			if (filter != null) {
-				cq.where(cb.and(filter, alertPredicate, riskPredicate));
+				cq.where(cb.and(filter, alertPredicate, riskPredicate, verifiedPredicate));
 			} else {
-				cq.where(cb.and(alertPredicate, riskPredicate));
+				cq.where(cb.and(alertPredicate, riskPredicate, verifiedPredicate));
 			}
 
 			sortBy(sortProperties, ebsQueryContext);
-			cq.distinct(true);
-			indexList.addAll(QueryHelper.getResultList(em, cq, null, null));
+			List<EbsIndexDto> results = QueryHelper.getResultList(em, cq, null, null);
+			for (EbsIndexDto dto : results) {
+				if (addedIds.add(dto.getId())) {
+					indexList.add(dto);
+				}
+			}
 		});
-		return indexList;
-	}
-
-	@Override
-	public List<EbsIndexDto> getEventIndexList(EbsCriteria ebsCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
-		List<Long> indexListIds = getIndexListIds(ebsCriteria, first, max, sortProperties);
-		List<EbsIndexDto> indexList = new ArrayList<>();
-		Set<Long> addedIds = new HashSet<>();
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<EbsIndexDto> cq = cb.createQuery(EbsIndexDto.class);
-		Root<Ebs> ebs = cq.from(Ebs.class);
-		EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
-		EbsJoins ebsJoins = ebsQueryContext.getJoins();
-
-		Join<Ebs, Triaging> triaging = ebsJoins.getTriaging();
-		Join<Ebs, SignalVerification> signalVerification = ebsJoins.getSignalVerification();
-		Join<Ebs, RiskAssessment> riskAssessment = ebsJoins.getRiskAssessment();
-		Join<Ebs, EbsAlert> ebsAlert = ebsJoins.getEbsAlert();
-		Join<Ebs, Location> location = ebsJoins.getLocation();
-		Join<Location, Region> region = ebsJoins.getRegion();
-		Join<Location, District> district = ebsJoins.getDistrict();
-		Join<Location, Community> community = ebsJoins.getCommunity();
-
-		Predicate verifiedPredicate = cb.equal(signalVerification.get(SignalVerification.VERIFIED), SignalOutcome.EVENT);
-
-		cq.multiselect(
-			ebs.get(Ebs.ID),
-			ebs.get(Ebs.UUID),
-			ebs.get(Ebs.TRIAGE_DATE),
-			ebs.get(Ebs.SOURCE_INFORMATION),
-			triaging.get(Triaging.TRIAGING_DECISION),
-			ebs.get(Ebs.REPORT_DATE_TIME),
-			ebs.get(Ebs.CHANGE_DATE),
-			ebs.get(Ebs.CATEGORY_OF_INFORMANT),
-			ebs.get(Ebs.INFORMANT_NAME),
-			ebs.get(Ebs.INFORMANT_TEL),
-			triaging.get(Triaging.SIGNAL_CATEGORY),
-			signalVerification.get(SignalVerification.VERIFIED),
-			signalVerification.get(SignalVerification.NUMBER_OF_DEATH),
-			triaging.get(Triaging.DATE_OF_DECISION),
-			ebs.get(Ebs.PERSON_REGISTERING),
-			ebs.get(Ebs.PERSON_DESIGNATION),
-			signalVerification.get(SignalVerification.VERIFICATION_SENT),
-			signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE),
-			riskAssessment.get(RiskAssessment.RISK_ASSESSMENT),
-			ebsAlert.get(EbsAlert.ACTION_INITIATED),
-			ebsAlert.get(EbsAlert.RESPONSE_STATUS),
-			region.get(Region.UUID),
-			region.get(Region.NAME),
-			community.get(Community.UUID),
-			community.get(Community.NAME),
-			location.get(Location.CITY),
-			district.get(District.UUID),
-			district.get(District.NAME));
-
-		Predicate filter = null;
-		if (ebsCriteria != null) {
-			if (ebsCriteria.getUserFilterIncluded()) {
-				EbsUserFilterCriteria ebsUserFilterCriteria = new EbsUserFilterCriteria();
-				filter = service.createUserFilter(ebsQueryContext, ebsUserFilterCriteria);
-			}
-
-			Predicate criteriaFilter = service.buildCriteriaFilter(ebsCriteria, ebsQueryContext);
-			filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
-		}
-
-//		if (filter != null) {
-//			cq.where(cb.and(filter, alertPredicate, riskPredicate, verifiedPredicate));
-//		} else {
-//			cq.where(cb.and(alertPredicate, riskPredicate, verifiedPredicate));
-//		}
-
-		sortBy(sortProperties, ebsQueryContext);
-		List<EbsIndexDto> results = QueryHelper.getResultList(em, cq, null, null);
-		for (EbsIndexDto dto : results) {
-			if (addedIds.add(dto.getId())) {
-				indexList.add(dto);
-			}
-		}
 		return indexList;
 	}
 
