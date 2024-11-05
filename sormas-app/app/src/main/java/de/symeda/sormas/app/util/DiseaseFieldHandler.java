@@ -16,9 +16,11 @@ import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
+import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.formbuilder.FormBuilder;
 import de.symeda.sormas.app.backend.formfield.FormField;
+import de.symeda.sormas.app.component.controls.ControlButton;
 import de.symeda.sormas.app.component.controls.ControlCheckBoxField;
 import de.symeda.sormas.app.component.controls.ControlDateField;
 import de.symeda.sormas.app.component.controls.ControlPropertyEditField;
@@ -76,7 +78,7 @@ public class DiseaseFieldHandler {
 
     private boolean isFieldView(View view) {
         return view instanceof TextView || view instanceof ControlPropertyField || view instanceof ControlCheckBoxField || view instanceof ControlDateField || view instanceof ControlTextReadField
-                || view instanceof ControlSwitchField;
+                || view instanceof ControlSwitchField || view instanceof ControlButton;
     }
 
     private void handleChildView(View child, List<String> relevantFields) {
@@ -287,19 +289,14 @@ public class DiseaseFieldHandler {
 
     private boolean isContainer(View view) {
         if (!(view instanceof ViewGroup)) return false;
-
         try {
             String resourceName = context.getResources().getResourceEntryName(view.getId());
-            return resourceName != null && (
-                    resourceName.contains("_heading") ||
-                            resourceName.contains("_layout") ||
-                            resourceName.contains("_label") ||
-                            resourceName.endsWith("_container")
-            );
+            return resourceName != null && (resourceName.contains("_layout") || resourceName.contains("_container") || view.getId() == R.id.btns);
         } catch (Resources.NotFoundException e) {
             return false;
         }
     }
+
 
     public List<FormField> getFieldsForDisease(Disease diseaseName, FormType formType) {
         FormBuilder formBuilder = DatabaseHelper.getFormBuilderDao().getFormBuilder(formType, diseaseName);
