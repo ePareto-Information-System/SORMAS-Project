@@ -19,14 +19,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.PushResult;
 import de.symeda.sormas.api.ebs.EbsAlertDto;
 
 @Path("/ebsAlert")
@@ -54,6 +57,13 @@ public class EbsAlertResource extends EntityDtoResource {
 
 	public UnaryOperator<EbsAlertDto> getSave() {
 		return FacadeProvider.getAlertFacade()::saveAlert;
+	}
+
+	@POST
+	@Path("/push")
+	public List<PushResult> postTasks(@Valid List<EbsAlertDto> dtos) {
+		List<PushResult> result = savePushedDto(dtos, FacadeProvider.getAlertFacade()::saveAlert);
+		return result;
 	}
 
 //	public Response postEntityDtos(List<EbsAlertDto> ebaDtos) {

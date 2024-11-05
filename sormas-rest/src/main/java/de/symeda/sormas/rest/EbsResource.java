@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -30,6 +31,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.PushResult;
 import de.symeda.sormas.api.caze.CriteriaWithSorting;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.DeletionReason;
@@ -141,6 +143,13 @@ public class EbsResource extends EntityDtoResource {
 
 	public UnaryOperator<EbsDto> getSave() {
 		return FacadeProvider.getEbsFacade()::save;
+	}
+
+	@POST
+	@Path("/push")
+	public List<PushResult> postTasks(@Valid List<EbsDto> dtos) {
+		List<PushResult> result = savePushedDto(dtos, FacadeProvider.getEbsFacade()::save);
+		return result;
 	}
 
 //	public Response postEntityDtos(List<EbsDto> ebaDtos) {
