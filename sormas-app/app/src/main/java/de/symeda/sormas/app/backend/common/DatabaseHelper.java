@@ -3097,7 +3097,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 								"changedate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 								"creationdate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 								"ebstdate TIMESTAMP," +
-								"reportdatetime TIMESTAMP NOT NULL," +
+								"reportdatetime TIMESTAMP," +
 								"reportinguser_id BIGINT," +
 								"location_id BIGINT," +
 								"externaltoken VARCHAR(512)," +

@@ -21,7 +21,7 @@ import java.util.List;
 
 
 import de.symeda.sormas.api.ebs.ResponseStatus;
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
@@ -79,7 +79,7 @@ public class EbsAlertEditFragment extends BaseEditFragment<FragmentEbsAlertEditL
 	@Override
 	public void onLayoutBinding(final FragmentEbsAlertEditLayoutBinding contentBinding) {
 		contentBinding.setData(record);
-		contentBinding.setYesNoClass(YesNoUnknown.class);
+		contentBinding.setYesNoClass(YesNo.class);
 		contentBinding.setResponseStatusClass(ResponseStatus.class);
 	}
 

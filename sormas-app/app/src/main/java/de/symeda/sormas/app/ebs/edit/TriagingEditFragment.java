@@ -38,7 +38,7 @@ import de.symeda.sormas.api.ebs.HumanLaboratoryCategoryDetails;
 import de.symeda.sormas.api.ebs.OutComeSupervisor;
 import de.symeda.sormas.api.ebs.POE;
 import de.symeda.sormas.api.ebs.SignalCategory;
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
@@ -160,7 +160,7 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 		contentBinding.setTriagingEnvironmentalCategoryDetailsClass(EnvironmentalCategoryDetails.class);
 		contentBinding.setTriagingPOEClass(POE.class);
 
-		contentBinding.setYesNoClass(YesNoUnknown.class);
+		contentBinding.setYesNoClass(YesNo.class);
 		contentBinding.setTriagingDecisionClass(EbsTriagingDecision.class);
 		contentBinding.setTriagingOutComeSupervisorClass(OutComeSupervisor.class);
 	}
@@ -170,9 +170,9 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 		super.onAfterLayoutBinding(contentBinding);
 		contentBinding.triagingDecisionDate.initializeDateField(getFragmentManager());
 		contentBinding.triagingOutcomeSupervisor.initializeSpinner(triagingOutComeSupervisor);
-		if (contentBinding.triagingSpecificSignal.getValue() != null && contentBinding.triagingSpecificSignal.getValue() == YesNoUnknown.YES){
+		if (contentBinding.triagingSpecificSignal.getValue() != null && contentBinding.triagingSpecificSignal.getValue() == YesNo.YES){
 			contentBinding.triagingOccurrencePreviously.setVisibility(View.VISIBLE);
-		} else if (contentBinding.triagingSpecificSignal.getValue() != null && contentBinding.triagingSpecificSignal.getValue() == YesNoUnknown.NO) {
+		} else if (contentBinding.triagingSpecificSignal.getValue() != null && contentBinding.triagingSpecificSignal.getValue() == YesNo.NO) {
 			contentBinding.triagingOccurrencePreviously.setVisibility(GONE);
 		}
 		if (contentBinding.triagingSignalCategory.getValue() == null){
@@ -182,7 +182,7 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 			contentBinding.triagingDecisionDate.setVisibility(View.VISIBLE);
 			contentBinding.triagingTriagingDecision.setVisibility(View.VISIBLE);
 			var value = e.getValue();
-			if(value == YesNoUnknown.YES){
+			if(value == YesNo.YES){
 				contentBinding.triagingOccurrencePreviously.setVisibility(View.VISIBLE);
 			}else {
 				contentBinding.triagingOccurrencePreviously.setVisibility(GONE);
@@ -193,7 +193,7 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 		});
 		contentBinding.triagingSupervisorReview.addValueChangedListener(e->{
 			var value = e.getValue();
-			if(value == YesNoUnknown.NO){
+			if(value == YesNo.NO){
 				reviewSignal(R.string.message_review_signal);
 			}
 		});
@@ -240,7 +240,7 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 		});
 
 		contentBinding.triagingHealthConcern.addValueChangedListener(e->{
-			if (e.getValue() == YesNoUnknown.YES){
+			if (e.getValue() == YesNo.YES){
 				reviewSignal(R.string.message_relevant_focal);
 			}
 		});
@@ -257,7 +257,7 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 		}
 		contentBinding.triagingOccurrencePreviously.addValueChangedListener(e->{
 			var value = e.getValue();
-			if(value == YesNoUnknown.YES || value == null){
+			if(value == YesNo.YES || value == null){
 				contentBinding.triagingTriagingDecision.setValue(EbsTriagingDecision.DISCARD);
 			}else {
 				contentBinding.triagingTriagingDecision.setValue(EbsTriagingDecision.VERIFY);

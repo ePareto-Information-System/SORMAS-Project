@@ -22,7 +22,7 @@ import java.util.List;
 import de.symeda.sormas.api.ebs.RiskAssesment;
 import de.symeda.sormas.api.ebs.RiskAssessmentDto;
 import de.symeda.sormas.api.ebs.SignalOutcome;
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
@@ -81,7 +81,7 @@ public class RiskAssessmentEditFragment extends BaseEditFragment<FragmentRiskAss
 	@Override
 	public void onLayoutBinding(final FragmentRiskAssessmentEditLayoutBinding contentBinding) {
 		contentBinding.setData(record);
-		contentBinding.setYesNoClass(YesNoUnknown.class);
+		contentBinding.setYesNoClass(YesNo.class);
 	}
 
 	@Override
