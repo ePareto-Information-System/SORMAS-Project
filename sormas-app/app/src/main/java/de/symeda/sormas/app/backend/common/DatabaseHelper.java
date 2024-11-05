@@ -3186,7 +3186,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									"humanCommunityCategoryDetails varchar(255)," +
 									"categoryDetailsLevel varchar(255)," +
 									"supervisorreview varchar(3)," +
-									"referred varchar(3)" +
+									"referred varchar(3)," +
 									"ebs_id INTEGER NOT NULL," +
 									"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" +
 									");"
