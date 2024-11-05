@@ -15,6 +15,9 @@
 
 package de.symeda.sormas.app.caze.edit;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.content.res.Resources;
 import android.view.View;
 import android.view.ViewGroup;
@@ -200,6 +203,10 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		if(caze.getDisease() != null){
 			hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.HOSPITALIZATION_EDIT);
 		}
+
+		if(caze.getDisease() == Disease.AHF){
+			handleAHF();
+		}
 	}
 
 	@Override
@@ -243,6 +250,16 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 			(ViewGroup) view,
 			new FieldVisibilityCheckers(),
 			getFieldAccessCheckers());
+
+	}
+
+	private void handleAHF() {
+		getContentBinding().caseHospitalizationAdmittedToHealthFacilityNew.addValueChangedListener(field -> {
+			int visibility = (field.getValue() == YesNo.YES ? VISIBLE : GONE);
+			getContentBinding().caseHospitalizationAdmissionDate.setVisibility(visibility);
+			getContentBinding().caseHospitalizationDischargeDate.setVisibility(visibility);
+			getContentBinding().caseHospitalizationDateOfDeath.setVisibility(visibility);
+		});
 
 	}
 }
