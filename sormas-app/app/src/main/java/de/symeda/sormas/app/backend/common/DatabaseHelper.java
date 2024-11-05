@@ -3239,8 +3239,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									"uuid VARCHAR(36) NOT NULL UNIQUE," +
 									"verificationSent TEXT," +
 									"verified TEXT," +
-									"pseudonymized boolean" +
-									"verificationCompleteDate TEXT NOT NULL," +
+									"pseudonymized boolean," +
+									"verificationCompleteDate TIMESTAMP," +
 									"dateOfOccurrence TEXT NOT NULL," +
 									"numberOfPersonAnimal TEXT," +
 									"numberOfDeath TEXT," +
