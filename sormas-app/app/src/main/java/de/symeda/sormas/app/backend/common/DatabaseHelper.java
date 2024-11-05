@@ -3190,6 +3190,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(RiskAssessment.class).executeRaw(
 						"CREATE TABLE riskAssessment(" +
 								"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+								"uuid VARCHAR(36) NOT NULL UNIQUE," +
 								"changedate timestamp not null," +
 								"creationdate timestamp not null," +
 								"morbidityMortality VARCHAR(3)," +
@@ -3213,6 +3214,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(EbsAlert.class).executeRaw(
 							"CREATE TABLE ebsAlert(" +
 									"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+									"uuid VARCHAR(36) NOT NULL UNIQUE," +
 									"changedate timestamp not null," +
 									"creationdate timestamp not null," +
 									"actionInitiated varchar(3)," +
@@ -3234,6 +3236,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(SignalVerification.class).executeRaw(
 							"CREATE TABLE signalverification (" +
 									"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+									"uuid VARCHAR(36) NOT NULL UNIQUE," +
 									"verificationSent TEXT," +
 									"verified TEXT," + // Replace with actual enum values
 									"verificationCompleteDate TEXT NOT NULL," +
