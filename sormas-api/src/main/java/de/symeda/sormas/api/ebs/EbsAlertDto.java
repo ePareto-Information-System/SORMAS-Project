@@ -1,120 +1,121 @@
 package de.symeda.sormas.api.ebs;
 
+import java.util.Date;
+
 import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
-import java.util.Date;
-
 public class EbsAlertDto extends PseudonymizableDto {
 
-    private final static long serialVersionUID = 1L;
+	private final static long serialVersionUID = 1L;
 
-    public static final String I18N_PREFIX = "EbsAlert";
+	public static final String I18N_PREFIX = "EbsAlert";
+	public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 13356L;
 
-    public static final String ACTION_INITIATED = "actionInitiated";
-    public static final String RESPONSE_STATUS = "responseStatus";
-    public static final String RESPONSE_DATE = "responseDate";
-    public static final String DETAILS_RESPONSE_ACTIVITIES = "detailsResponseActivities";
-    public static final String DETAILS_GIVEN = "detailsGiven";
-    public static final String ALERT_ISSUED = "alertIssued";
-    public static final String DETAILS_ALERT_USED = "detailsAlertUsed";
-    public static final String ALERT_DATE = "alertDate";
-    public static final String EBS = "ebs";
+	public static final String ACTION_INITIATED = "actionInitiated";
+	public static final String RESPONSE_STATUS = "responseStatus";
+	public static final String RESPONSE_DATE = "responseDate";
+	public static final String DETAILS_RESPONSE_ACTIVITIES = "detailsResponseActivities";
+	public static final String DETAILS_GIVEN = "detailsGiven";
+	public static final String ALERT_ISSUED = "alertIssued";
+	public static final String DETAILS_ALERT_USED = "detailsAlertUsed";
+	public static final String ALERT_DATE = "alertDate";
+	public static final String EBS = "ebs";
 
-    private YesNoUnknown actionInitiated;
-    private ResponseStatus responseStatus;
-    private Date responseDate;
-    private String detailsResponseActivities;
-    private String detailsGiven;
-    private YesNoUnknown alertIssued;
-    private String detailsAlertUsed;
-    private EbsReferenceDto ebs;
-    private Date alertDate;
+	private YesNoUnknown actionInitiated;
+	private ResponseStatus responseStatus;
+	private Date responseDate;
+	private String detailsResponseActivities;
+	private String detailsGiven;
+	private YesNoUnknown alertIssued;
+	private String detailsAlertUsed;
+	private EbsReferenceDto ebs;
+	private Date alertDate;
 
-    public YesNoUnknown getActionInitiated() {
-        return actionInitiated;
-    }
+	public YesNoUnknown getActionInitiated() {
+		return actionInitiated;
+	}
 
-    public void setActionInitiated(YesNoUnknown actionInitiated) {
-        this.actionInitiated = actionInitiated;
-    }
+	public void setActionInitiated(YesNoUnknown actionInitiated) {
+		this.actionInitiated = actionInitiated;
+	}
 
-    public ResponseStatus getResponseStatus() {
-        return responseStatus;
-    }
+	public ResponseStatus getResponseStatus() {
+		return responseStatus;
+	}
 
-    public void setResponseStatus(ResponseStatus responseStatus) {
-        this.responseStatus = responseStatus;
-    }
+	public void setResponseStatus(ResponseStatus responseStatus) {
+		this.responseStatus = responseStatus;
+	}
 
-    public Date getResponseDate() {
-        return responseDate;
-    }
+	public Date getResponseDate() {
+		return responseDate;
+	}
 
-    public void setResponseDate(Date responseDate) {
-        this.responseDate = responseDate;
-    }
+	public void setResponseDate(Date responseDate) {
+		this.responseDate = responseDate;
+	}
 
-    public String getDetailsResponseActivities() {
-        return detailsResponseActivities;
-    }
+	public String getDetailsResponseActivities() {
+		return detailsResponseActivities;
+	}
 
-    public void setDetailsResponseActivities(String detailsResponseActivities) {
-        this.detailsResponseActivities = detailsResponseActivities;
-    }
+	public void setDetailsResponseActivities(String detailsResponseActivities) {
+		this.detailsResponseActivities = detailsResponseActivities;
+	}
 
-    public String getDetailsGiven() {
-        return detailsGiven;
-    }
+	public String getDetailsGiven() {
+		return detailsGiven;
+	}
 
-    public void setDetailsGiven(String detailsGiven) {
-        this.detailsGiven = detailsGiven;
-    }
+	public void setDetailsGiven(String detailsGiven) {
+		this.detailsGiven = detailsGiven;
+	}
 
-    public YesNoUnknown getAlertIssued() {
-        return alertIssued;
-    }
+	public YesNoUnknown getAlertIssued() {
+		return alertIssued;
+	}
 
-    public void setAlertIssued(YesNoUnknown alertIssued) {
-        this.alertIssued = alertIssued;
-    }
+	public void setAlertIssued(YesNoUnknown alertIssued) {
+		this.alertIssued = alertIssued;
+	}
 
-    public String getDetailsAlertUsed() {
-        return detailsAlertUsed;
-    }
+	public String getDetailsAlertUsed() {
+		return detailsAlertUsed;
+	}
 
-    public void setDetailsAlertUsed(String detailsAlertUsed) {
-        this.detailsAlertUsed = detailsAlertUsed;
-    }
+	public void setDetailsAlertUsed(String detailsAlertUsed) {
+		this.detailsAlertUsed = detailsAlertUsed;
+	}
 
-    public Date getAlertDate() {
-        return alertDate;
-    }
+	public Date getAlertDate() {
+		return alertDate;
+	}
 
-    public void setAlertDate(Date alertDate) {
-        this.alertDate = alertDate;
-    }
+	public void setAlertDate(Date alertDate) {
+		this.alertDate = alertDate;
+	}
 
-    @ImportIgnore
-    public EbsReferenceDto getEbs() {
-        return ebs;
-    }
+	@ImportIgnore
+	public EbsReferenceDto getEbs() {
+		return ebs;
+	}
 
-    public void setEbs(EbsReferenceDto ebs) {
-        this.ebs = ebs;
-    }
+	public void setEbs(EbsReferenceDto ebs) {
+		this.ebs = ebs;
+	}
 
-    private static EbsAlertDto createEbsAlertDto() {
-        EbsAlertDto ebsAlertDto = new EbsAlertDto();
-        ebsAlertDto.setUuid(DataHelper.createUuid());
-        return ebsAlertDto;
-    }
+	private static EbsAlertDto createEbsAlertDto() {
+		EbsAlertDto ebsAlertDto = new EbsAlertDto();
+		ebsAlertDto.setUuid(DataHelper.createUuid());
+		return ebsAlertDto;
+	}
 
-    public static EbsAlertDto build(EbsReferenceDto ebsRef) {
-        final EbsAlertDto ebsAlertDto = createEbsAlertDto();
-        ebsAlertDto.setEbs(ebsRef);
-        return ebsAlertDto;
-    }
+	public static EbsAlertDto build(EbsReferenceDto ebsRef) {
+		final EbsAlertDto ebsAlertDto = createEbsAlertDto();
+		ebsAlertDto.setEbs(ebsRef);
+		return ebsAlertDto;
+	}
 }
