@@ -3251,7 +3251,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									"numberOfDeathPerson TEXT," +
 									"description TEXT," +
 									"whyNotVerify TEXT," +
-									"creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+									"creationdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
 									"changeDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
 									"ebs_id INTEGER NOT NULL," +
 									"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" +
