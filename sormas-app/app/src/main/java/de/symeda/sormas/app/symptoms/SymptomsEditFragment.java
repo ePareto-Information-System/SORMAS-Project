@@ -38,7 +38,7 @@ import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
 import de.symeda.sormas.api.visit.VisitStatus;
 import de.symeda.sormas.app.BaseEditFragment;
-import de.symeda.sormas.app.FieldOrderConfigurations;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalVisit;
@@ -59,8 +59,6 @@ import de.symeda.sormas.app.core.IEntryItemOnClickListener;
 import de.symeda.sormas.app.databinding.FragmentSymptomsEditLayoutBinding;
 import de.symeda.sormas.app.util.Bundler;
 import de.symeda.sormas.app.util.DataUtils;
-import de.symeda.sormas.app.util.DiseaseFieldHandler;
-
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -165,8 +163,13 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		contentBinding.setClearAllCallback(clearAllCallback);
 		contentBinding.setSetClearedToNoCallback(setClearedToNoCallback);
 		contentBinding.setSetClearedToUnknownCallback(setClearedToUnknownCallback);
+		contentBinding.setYesNoClass(YesNo.class);
 
 		SymptomsValidator.initializeSymptomsValidation(contentBinding, ado);
+
+		if( disease != null){
+			super.hideFieldsForDisease(disease, contentBinding.mainContent, FormType.SYMPTOMS_EDIT);
+		}
 	}
 
 	@Override
@@ -198,7 +201,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		contentBinding.symptomsCongenitalHeartDiseaseType.initializeSpinner(congenitalHeartDiseaseList);
 		contentBinding.symptomsOnsetSymptom.initializeSpinner(DataUtils.toItems(null, true));
 		contentBinding.symptomsOutcome.initializeSpinner(outcomeList);
-
+		contentBinding.symptomsDateOfOnset.initializeDateField(getFragmentManager());
 		contentBinding.symptomsTemperature.setSelectionOnOpen(37.0f);
 
 		initSymptomFields(contentBinding);
@@ -209,7 +212,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 			contentBinding.complicationsHeading.setVisibility(GONE);
 		}
 
-		if (disease == Disease.YELLOW_FEVER){
+		if (disease == Disease.YELLOW_FEVER || disease == Disease.AHF){
 
 			Set<CaseOutcome> outcomesToRemove = Set.of(
 					CaseOutcome.NO_OUTCOME,
@@ -223,14 +226,9 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 			contentBinding.symptomsOutcome.initializeSpinner(outcomeList);
 			outcomeList.removeIf(item -> outcomesToRemove.contains(item.getValue()));
 
-
-			/*new DiseaseFieldHandler(getContext()).reorderFieldsForDisease(
-					FieldOrderConfigurations.getConfigurationForDisease(disease, FormType.SYMPTOMS_EDIT),
-					contentBinding.mainContent
-			);*/
 		}
 
-		if( disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
+		if (disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
 			contentBinding.btnClearAll.setVisibility(GONE);
 			contentBinding.btnClearedToNo.setVisibility(GONE);
 			contentBinding.btnClearedToUnknown.setVisibility(GONE);

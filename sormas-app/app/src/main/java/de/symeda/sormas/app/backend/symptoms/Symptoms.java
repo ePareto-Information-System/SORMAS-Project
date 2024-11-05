@@ -464,7 +464,6 @@ public class Symptoms extends PseudonymizableAdo {
 	private Boolean lesionsNeck;
 	@Enumerated(EnumType.STRING)
 	private SymptomState abdominalCramps;
-
 	private Date dateOfOnset;
 	private String provisionalDiagnosis;
 	private Date dateOnsetParalysis;
@@ -2146,7 +2145,6 @@ public class Symptoms extends PseudonymizableAdo {
 		this.abdominalCramps = abdominalCramps;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
 	public Date getDateOfOnset() {
 		return dateOfOnset;
 	}
