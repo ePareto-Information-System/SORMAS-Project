@@ -124,7 +124,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/caseHospitalization_admission_discharge_Date"
+                    android:id="@+id/caseHospitalization_admission_discharge_Date_heading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -213,7 +213,7 @@
 <!--                    style="@style/ControlSecondOfTwoColumnsStyle" />-->
 
                 <LinearLayout
-                    android:id="@+id/caseHospitalization_isolated_and_date"
+                    android:id="@+id/caseHospitalization_isolated_and_date_heading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -221,6 +221,7 @@
                     <de.symeda.sormas.app.component.controls.ControlSwitchField
                         android:id="@+id/caseHospitalization_isolated"
                         app:useAbbreviations="true"
+                        app:enumClass="@{YesNoClass}"
                         app:value="@={data.isolated}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
