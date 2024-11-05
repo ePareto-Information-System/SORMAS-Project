@@ -3238,7 +3238,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									"id INTEGER PRIMARY KEY AUTOINCREMENT," +
 									"uuid VARCHAR(36) NOT NULL UNIQUE," +
 									"verificationSent TEXT," +
-									"verified TEXT," + // Replace with actual enum values
+									"verified TEXT," +
+									"pseudonymized boolean" +
 									"verificationCompleteDate TEXT NOT NULL," +
 									"dateOfOccurrence TEXT NOT NULL," +
 									"numberOfPersonAnimal TEXT," +
@@ -3250,7 +3251,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									"description TEXT," +
 									"whyNotVerify TEXT," +
 									"creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
-									"changed_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+									"changeDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
 									"ebs_id INTEGER NOT NULL," +
 									"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" +
 									");"
