@@ -3094,6 +3094,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						"CREATE TABLE ebs (" +
 								"id BIGINT PRIMARY KEY NOT NULL," +
 								"uuid VARCHAR(36) NOT NULL UNIQUE," +
+								"localChangeDate timestamp not null," +
 								"changedate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 								"creationdate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 								"ebstdate TIMESTAMP," +
