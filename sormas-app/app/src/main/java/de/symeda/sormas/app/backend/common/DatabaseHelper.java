@@ -3097,6 +3097,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 								"localChangeDate timestamp not null," +
 								"changedate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
 								"creationdate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+								"lastOpenedDate timestamp," +
 								"ebstdate TIMESTAMP," +
 								"reportdatetime TIMESTAMP," +
 								"reportinguser_id BIGINT," +
@@ -3166,6 +3167,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									"referredTo varchar(255)," +
 									"changedate timestamp not null," +
 									"creationdate timestamp not null," +
+									"lastOpenedDate timestamp," +
+									"localChangeDate timestamp not null," +
 									"change_user_id bigint," +
 									"responsibleuser_id bigint," +
 									" modified SMALLINT DEFAULT 0," +
@@ -3194,6 +3197,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 								"uuid VARCHAR(36) NOT NULL UNIQUE," +
 								"changedate timestamp not null," +
 								"creationdate timestamp not null," +
+								"lastOpenedDate timestamp," +
+								"localChangeDate timestamp not null," +
 								"morbidityMortality VARCHAR(3)," +
 								"spreadProbability VARCHAR(3)," +
 								"controlMeasures VARCHAR(3)," +
@@ -3218,6 +3223,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									"uuid VARCHAR(36) NOT NULL UNIQUE," +
 									"changedate timestamp not null," +
 									"creationdate timestamp not null," +
+									"lastOpenedDate timestamp," +
+									"localChangeDate timestamp not null," +
 									"actionInitiated varchar(3)," +
 									"responseStatus varchar(255)," +
 									"responseDate timestamp," +
@@ -3242,6 +3249,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									"verified TEXT," +
 									"pseudonymized boolean," +
 									"verificationCompleteDate TIMESTAMP," +
+									"lastOpenedDate timestamp," +
+									"localChangeDate timestamp not null," +
 									"dateOfOccurrence TEXT NOT NULL," +
 									"numberOfPersonAnimal TEXT," +
 									"numberOfDeath TEXT," +
