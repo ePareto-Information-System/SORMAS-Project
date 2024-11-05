@@ -14,13 +14,61 @@
  */
 package de.symeda.sormas.backend.ebs;
 
+import static java.util.Objects.isNull;
+
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.security.PermitAll;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.Tuple;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Selection;
+import javax.persistence.criteria.Subquery;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.common.CoreEntityType;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.deletionconfiguration.DeletionReference;
-import de.symeda.sormas.api.ebs.*;
+import de.symeda.sormas.api.ebs.EbsCriteria;
+import de.symeda.sormas.api.ebs.EbsDetailedReferenceDto;
+import de.symeda.sormas.api.ebs.EbsDto;
+import de.symeda.sormas.api.ebs.EbsExportDto;
+import de.symeda.sormas.api.ebs.EbsFacade;
+import de.symeda.sormas.api.ebs.EbsIndexDto;
+import de.symeda.sormas.api.ebs.EbsReferenceDto;
+import de.symeda.sormas.api.ebs.SignalOutcome;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
@@ -53,28 +101,15 @@ import de.symeda.sormas.backend.sormastosormas.SormasToSormasFacadeEjb.SormasToS
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfoService;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserService;
-import de.symeda.sormas.backend.util.*;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.security.PermitAll;
-import javax.ejb.*;
-import javax.inject.Inject;
-import javax.persistence.Tuple;
-import javax.persistence.criteria.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
-import static java.util.Objects.isNull;
+import de.symeda.sormas.backend.util.DtoHelper;
+import de.symeda.sormas.backend.util.IterableHelper;
+import de.symeda.sormas.backend.util.ModelConstants;
+import de.symeda.sormas.backend.util.Pseudonymizer;
+import de.symeda.sormas.backend.util.QueryHelper;
+import de.symeda.sormas.backend.util.RightsAllowed;
 
 @Stateless(name = "EbsFacade")
-public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto, EbsReferenceDto, EbsService, EbsCriteria>
-		implements EbsFacade {
+public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto, EbsReferenceDto, EbsService, EbsCriteria> implements EbsFacade {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -117,8 +152,8 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	}
 
 	@Inject
-	public EbsFacadeEjb(EbsService service,UserService userService) {
-		super(Ebs.class, EbsDto.class, service,userService);
+	public EbsFacadeEjb(EbsService service, UserService userService) {
+		super(Ebs.class, EbsDto.class, service, userService);
 	}
 
 	public static EbsReferenceDto toReferenceDto(Ebs entity) {
@@ -131,8 +166,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	}
 
 	private static String getCaption(Ebs entity) {
-		return EbsReferenceDto.buildCaption(
-				entity.getTriageDate());
+		return EbsReferenceDto.buildCaption(entity.getTriageDate());
 	}
 
 	public static EbsReferenceDto toDetailedReferenceDto(Ebs entity) {
@@ -141,16 +175,13 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			return null;
 		}
 
-		return new EbsDetailedReferenceDto(
-				entity.getUuid(),
-				getCaption(entity),
-				entity.getReportDateTime());
+		return new EbsDetailedReferenceDto(entity.getUuid(), getCaption(entity), entity.getReportDateTime());
 	}
+
 	@Override
 	public EbsDto toDto(Ebs source) {
 		return toEbsDto(source);
 	}
-
 
 	public static EbsDto toEbsDto(Ebs source) {
 
@@ -182,12 +213,8 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		target.setEbsLatLon(source.getEbsLatLon());
 		target.setDeleted(source.isDeleted());
 		target.setDeletionReason(source.getDeletionReason());
-		if (source.getTriaging() != null) {
-			target.setTriaging(TriagingFacadeEjb.toDto(source.getTriaging()));
-		}
-		if (source.getSignalVerification() != null) {
-			target.setSignalVerification(SignalVerificationFacadeEjb.toDto(source.getSignalVerification()));
-		}
+		target.setTriaging(TriagingFacadeEjb.toDto(source.getTriaging()));
+		target.setSignalVerification(SignalVerificationFacadeEjb.toDto(source.getSignalVerification()));
 		target.setOtherInformant(source.getOtherInformant());
 		return target;
 	}
@@ -228,8 +255,8 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	@Override
 	public EbsDto getEbsByUuid(String uuid, boolean detailedReferences) {
 		return (detailedReferences)
-				? convertToDetailedReferenceDto(service.getByUuid(uuid), Pseudonymizer.getDefault(userService::hasRight))
-				: convertToDto(service.getByUuid(uuid),Pseudonymizer.getDefault(userService::hasRight));
+			? convertToDetailedReferenceDto(service.getByUuid(uuid), Pseudonymizer.getDefault(userService::hasRight))
+			: convertToDto(service.getByUuid(uuid), Pseudonymizer.getDefault(userService::hasRight));
 	}
 
 	@Override
@@ -246,7 +273,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	public EbsDto save(@Valid @NotNull EbsDto dto) {
 		return save(dto, true, true);
 	}
-
 
 	public EbsDto save(@NotNull EbsDto dto, boolean checkChangeDate, boolean internal) {
 
@@ -274,18 +300,18 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	}
 
 	public void syncSharesAsync(ShareTreeCriteria criteria) {
-		return;
+//		executorService.schedule(() -> {
+//			sormasToSormasEventFacade.syncShares(criteria);
+//		}, 5, TimeUnit.SECONDS);
 	}
 
 	@Override
-	public void delete(String ebsUuid, DeletionDetails deletionDetails)
-			throws ExternalSurveillanceToolRuntimeException {
+	public void delete(String ebsUuid, DeletionDetails deletionDetails) throws ExternalSurveillanceToolRuntimeException {
 		Ebs ebs = service.getByUuid(ebsUuid);
 		deleteEbs(ebs, deletionDetails);
 	}
 
-	private void deleteEbs(Ebs ebs, DeletionDetails deletionDetails)
-			throws ExternalSurveillanceToolRuntimeException, AccessDeniedException {
+	private void deleteEbs(Ebs ebs, DeletionDetails deletionDetails) throws ExternalSurveillanceToolRuntimeException, AccessDeniedException {
 
 		service.delete(ebs, deletionDetails);
 	}
@@ -301,7 +327,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 					try {
 						deleteEbs(ebstoBeDeleted, deletionDetails);
 						deletedEbsUuids.add(ebstoBeDeleted.getUuid());
-					} catch (ExternalSurveillanceToolRuntimeException  | AccessDeniedException e) {
+					} catch (ExternalSurveillanceToolRuntimeException | AccessDeniedException e) {
 						logger.error("The event with uuid:" + ebstoBeDeleted.getUuid() + "could not be deleted");
 					}
 				}
@@ -316,21 +342,20 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	}
 
 	@RightsAllowed({
-			UserRight._EVENT_DELETE,
-			UserRight._SYSTEM })
+		UserRight._EVENT_DELETE,
+		UserRight._SYSTEM })
 	public void deleteEbsInExternalSurveillanceTool(Ebs ebs) throws ExternalSurveillanceToolException {
 
 		if (externalSurveillanceToolGatewayFacade.isFeatureEnabled() && StringUtils.isNotBlank(ebs.getExternalId())) {
 			List<Ebs> ebsWithSameExternalId = service.getByExternalId(ebs.getExternalId());
 			if (ebsWithSameExternalId != null
-					&& ebsWithSameExternalId.size() == 1
-					&& externalSurveillanceToolFacade.isFeatureEnabled()
-					&& externalShareInfoService.isEbsShared(ebs.getId())) {
+				&& ebsWithSameExternalId.size() == 1
+				&& externalSurveillanceToolFacade.isFeatureEnabled()
+				&& externalShareInfoService.isEbsShared(ebs.getId())) {
 				externalSurveillanceToolGatewayFacade.deleteEbs(Collections.singletonList(toDto(ebs)));
 			}
 		}
 	}
-
 
 	private long executeCountQuery(EbsCriteria ebsCriteria, boolean includeSignalVerification) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -385,7 +410,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	public List<EbsIndexDto> getIndexList(EbsCriteria ebsCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
 		List<Long> indexListIds = getIndexListIds(ebsCriteria, first, max, sortProperties);
 		List<EbsIndexDto> indexList = new ArrayList<>();
-		Set<Long> addedIds = new HashSet<>();
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
 		IterableHelper.executeBatched(indexListIds, ModelConstants.PARAMETER_LIMIT, batchedIds -> {
@@ -394,59 +418,29 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			EbsQueryContext ebsQueryContext = new EbsQueryContext(cb, cq, ebs);
 			EbsJoins ebsJoins = ebsQueryContext.getJoins();
 
-			Join<Ebs, Triaging> triaging = ebs.join("triaging", JoinType.LEFT);
-			Join<Ebs, SignalVerification> signalVerification = ebs.join("signalVerification", JoinType.LEFT);
 			Join<Ebs, Location> location = ebsJoins.getLocation();
 			Join<Location, Region> region = ebsJoins.getRegion();
 			Join<Location, District> district = ebsJoins.getDistrict();
 			Join<Location, Community> community = ebsJoins.getCommunity();
 
-			Subquery<Long> subqueryAlert = cq.subquery(Long.class);
-			Root<EbsAlert> subRootAlert = subqueryAlert.from(EbsAlert.class);
-			subqueryAlert.select(cb.max(subRootAlert.get(EbsAlert.ID)))
-					.where(cb.equal(subRootAlert.get(EbsAlert.EBS), ebs));
-
-			Join<Ebs, EbsAlert> ebsAlert = ebs.join("ebsAlert", JoinType.LEFT);
-			Predicate alertPredicate = cb.or(cb.isNull(ebsAlert.get(EbsAlert.ID)), cb.equal(ebsAlert.get(EbsAlert.ID), subqueryAlert));
-
-			Subquery<Long> subqueryRisk = cq.subquery(Long.class);
-			Root<RiskAssessment> subRootRisk = subqueryRisk.from(RiskAssessment.class);
-			subqueryRisk.select(cb.max(subRootRisk.get(RiskAssessment.ID)))
-					.where(cb.equal(subRootRisk.get(RiskAssessment.EBS), ebs));
-
-			Join<Ebs, RiskAssessment> riskAssessment = ebs.join("riskAssessment", JoinType.LEFT);
-			Predicate riskPredicate = cb.or(cb.isNull(riskAssessment.get(RiskAssessment.ID)), cb.equal(riskAssessment.get(RiskAssessment.ID), subqueryRisk));
-
 			cq.multiselect(
-					ebs.get(Ebs.ID),
-					ebs.get(Ebs.UUID),
-					ebs.get(Ebs.TRIAGE_DATE),
-					ebs.get(Ebs.SOURCE_INFORMATION),
-					triaging.get(Triaging.TRIAGING_DECISION),
-					ebs.get(Ebs.REPORT_DATE_TIME),
-					ebs.get(Ebs.CHANGE_DATE),
-					ebs.get(Ebs.CATEGORY_OF_INFORMANT),
-					ebs.get(Ebs.INFORMANT_NAME),
-					ebs.get(Ebs.INFORMANT_TEL),
-					triaging.get(Triaging.SIGNAL_CATEGORY),
-					signalVerification.get(SignalVerification.VERIFIED),
-					signalVerification.get(SignalVerification.NUMBER_OF_DEATH),
-					triaging.get(Triaging.DATE_OF_DECISION),
-					ebs.get(Ebs.PERSON_REGISTERING),
-					ebs.get(Ebs.PERSON_DESIGNATION),
-					signalVerification.get(SignalVerification.VERIFICATION_SENT),
-					signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE),
-					riskAssessment.get(RiskAssessment.RISK_ASSESSMENT),
-					ebsAlert.get(EbsAlert.ACTION_INITIATED),
-					ebsAlert.get(EbsAlert.RESPONSE_STATUS),
-					region.get(Region.UUID),
-					region.get(Region.NAME),
-					community.get(Community.UUID),
-					community.get(Community.NAME),
-					location.get(Location.CITY),
-					district.get(District.UUID),
-					district.get(District.NAME)
-			);
+				ebs.get(Ebs.ID),
+				ebs.get(Ebs.UUID),
+				ebs.get(Ebs.SOURCE_INFORMATION),
+				ebs.get(Ebs.REPORT_DATE_TIME),
+				ebs.get(Ebs.CHANGE_DATE),
+				ebs.get(Ebs.CATEGORY_OF_INFORMANT),
+				ebs.get(Ebs.INFORMANT_NAME),
+				ebs.get(Ebs.INFORMANT_TEL),
+				ebs.get(Ebs.PERSON_REGISTERING),
+				ebs.get(Ebs.PERSON_DESIGNATION),
+				region.get(Region.UUID),
+				region.get(Region.NAME),
+				community.get(Community.UUID),
+				community.get(Community.NAME),
+				location.get(Location.CITY),
+				district.get(District.UUID),
+				district.get(District.NAME));
 
 			Predicate filter = ebs.get(Ebs.ID).in(batchedIds);
 
@@ -458,12 +452,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 				Predicate criteriaFilter = service.buildCriteriaFilter(ebsCriteria, ebsQueryContext);
 				filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
-			}
-
-			if (filter != null) {
-				cq.where(cb.and(filter, alertPredicate, riskPredicate));
-			} else {
-				cq.where(cb.and(alertPredicate, riskPredicate));
 			}
 
 			sortBy(sortProperties, ebsQueryContext);
@@ -495,52 +483,50 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 			Subquery<Long> subqueryAlert = cq.subquery(Long.class);
 			Root<EbsAlert> subRootAlert = subqueryAlert.from(EbsAlert.class);
-			subqueryAlert.select(cb.max(subRootAlert.get(EbsAlert.ID)))
-					.where(cb.equal(subRootAlert.get(EbsAlert.EBS), ebs));
+			subqueryAlert.select(cb.max(subRootAlert.get(EbsAlert.ID))).where(cb.equal(subRootAlert.get(EbsAlert.EBS), ebs));
 
 			Join<Ebs, EbsAlert> ebsAlert = ebs.join("ebsAlert", JoinType.LEFT);
 			Predicate alertPredicate = cb.or(cb.isNull(ebsAlert.get(EbsAlert.ID)), cb.equal(ebsAlert.get(EbsAlert.ID), subqueryAlert));
 
 			Subquery<Long> subqueryRisk = cq.subquery(Long.class);
 			Root<RiskAssessment> subRootRisk = subqueryRisk.from(RiskAssessment.class);
-			subqueryRisk.select(cb.max(subRootRisk.get(RiskAssessment.ID)))
-					.where(cb.equal(subRootRisk.get(RiskAssessment.EBS), ebs));
+			subqueryRisk.select(cb.max(subRootRisk.get(RiskAssessment.ID))).where(cb.equal(subRootRisk.get(RiskAssessment.EBS), ebs));
 
 			Join<Ebs, RiskAssessment> riskAssessment = ebs.join("riskAssessment", JoinType.LEFT);
-			Predicate riskPredicate = cb.or(cb.isNull(riskAssessment.get(RiskAssessment.ID)), cb.equal(riskAssessment.get(RiskAssessment.ID), subqueryRisk));
+			Predicate riskPredicate =
+				cb.or(cb.isNull(riskAssessment.get(RiskAssessment.ID)), cb.equal(riskAssessment.get(RiskAssessment.ID), subqueryRisk));
 
 			Predicate verifiedPredicate = cb.equal(signalVerification.get(SignalVerification.VERIFIED), SignalOutcome.EVENT);
 
 			cq.multiselect(
-					ebs.get(Ebs.ID),
-					ebs.get(Ebs.UUID),
-					ebs.get(Ebs.TRIAGE_DATE),
-					ebs.get(Ebs.SOURCE_INFORMATION),
-					triaging.get(Triaging.TRIAGING_DECISION),
-					ebs.get(Ebs.REPORT_DATE_TIME),
-					ebs.get(Ebs.CHANGE_DATE),
-					ebs.get(Ebs.CATEGORY_OF_INFORMANT),
-					ebs.get(Ebs.INFORMANT_NAME),
-					ebs.get(Ebs.INFORMANT_TEL),
-					triaging.get(Triaging.SIGNAL_CATEGORY),
-					signalVerification.get(SignalVerification.VERIFIED),
-					signalVerification.get(SignalVerification.NUMBER_OF_DEATH),
-					triaging.get(Triaging.DATE_OF_DECISION),
-					ebs.get(Ebs.PERSON_REGISTERING),
-					ebs.get(Ebs.PERSON_DESIGNATION),
-					signalVerification.get(SignalVerification.VERIFICATION_SENT),
-					signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE),
-					riskAssessment.get(RiskAssessment.RISK_ASSESSMENT),
-					ebsAlert.get(EbsAlert.ACTION_INITIATED),
-					ebsAlert.get(EbsAlert.RESPONSE_STATUS),
-					region.get(Region.UUID),
-					region.get(Region.NAME),
-					community.get(Community.UUID),
-					community.get(Community.NAME),
-					location.get(Location.CITY),
-					district.get(District.UUID),
-					district.get(District.NAME)
-			);
+				ebs.get(Ebs.ID),
+				ebs.get(Ebs.UUID),
+				ebs.get(Ebs.TRIAGE_DATE),
+				ebs.get(Ebs.SOURCE_INFORMATION),
+				triaging.get(Triaging.TRIAGING_DECISION),
+				ebs.get(Ebs.REPORT_DATE_TIME),
+				ebs.get(Ebs.CHANGE_DATE),
+				ebs.get(Ebs.CATEGORY_OF_INFORMANT),
+				ebs.get(Ebs.INFORMANT_NAME),
+				ebs.get(Ebs.INFORMANT_TEL),
+				triaging.get(Triaging.SIGNAL_CATEGORY),
+				signalVerification.get(SignalVerification.VERIFIED),
+				signalVerification.get(SignalVerification.NUMBER_OF_DEATH),
+				triaging.get(Triaging.DATE_OF_DECISION),
+				ebs.get(Ebs.PERSON_REGISTERING),
+				ebs.get(Ebs.PERSON_DESIGNATION),
+				signalVerification.get(SignalVerification.VERIFICATION_SENT),
+				signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE),
+				riskAssessment.get(RiskAssessment.RISK_ASSESSMENT),
+				ebsAlert.get(EbsAlert.ACTION_INITIATED),
+				ebsAlert.get(EbsAlert.RESPONSE_STATUS),
+				region.get(Region.UUID),
+				region.get(Region.NAME),
+				community.get(Community.UUID),
+				community.get(Community.NAME),
+				location.get(Location.CITY),
+				district.get(District.UUID),
+				district.get(District.NAME));
 
 			Predicate filter = ebs.get(Ebs.ID).in(batchedIds);
 			if (ebsCriteria != null) {
@@ -607,7 +593,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			EbsJoins ebsJoins = ebsQueryContext.getJoins();
 			Join<Ebs, Triaging> triaging = ebsJoins.getTriaging();
 			Join<Ebs, SignalVerification> signalVerification = ebsJoins.getSignalVerification();
-			Join<Ebs, RiskAssessment> riskAssessment =  ebs.join("riskAssessment", JoinType.LEFT);
+			Join<Ebs, RiskAssessment> riskAssessment = ebs.join("riskAssessment", JoinType.LEFT);
 			Join<Ebs, EbsAlert> ebsAlert = ebs.join("ebsAlert", JoinType.LEFT);
 			Join<Ebs, Location> location = ebsJoins.getLocation();
 			Join<Location, Region> region = ebsJoins.getRegion();
@@ -619,69 +605,69 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			for (SortProperty sortProperty : sortProperties) {
 				Expression<?> expression;
 				switch (sortProperty.propertyName) {
-					case EbsIndexDto.UUID:
-					case EbsIndexDto.TRIAGE_DATE:
-					case EbsIndexDto.INFORMANT_NAME:
-					case EbsIndexDto.INFORMANT_TEL:
-					case EbsIndexDto.SOURCE_INFORMATION:
-					case EbsIndexDto.REPORT_DATE_TIME:
-					case EbsIndexDto.CATEGORY_OF_INFORMANT:
-					case EbsIndexDto.PERSON_REGISTERING:
-					case EbsIndexDto.PERSON_DESIGNATION:
-						expression = ebsQueryContext.getRoot().get(sortProperty.propertyName);
-						break;
-					case EbsIndexDto.TRIAGING_DECISION_DATE:
-						expression = triaging.get(Triaging.DATE_OF_DECISION);
-						break;
-					case EbsIndexDto.VERIFICATION_SENT:
-						expression = signalVerification.get(SignalVerification.VERIFICATION_SENT);
-						break;
-					case EbsIndexDto.VERIFIED_DATE:
-						expression = signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE);
-						break;
-					case EbsIndexDto.RISK_STATUS:
-						expression = riskAssessment.get(RiskAssessment.RISK_ASSESSMENT);
-						break;
-					case EbsIndexDto.ACTION_INITIATED:
-						expression = ebsAlert.get(EbsAlert.ACTION_INITIATED);
-						break;
-					case EbsIndexDto.RESPONSE_STATUS:
-						expression = ebsAlert.get(EbsAlert.RESPONSE_STATUS);
-						break;
-					case EbsIndexDto.VERIFIED:
-						expression = signalVerification.get(SignalVerification.VERIFIED);
-						break;
-					case EbsIndexDto.SIGNAL_CATEGORY:
-						expression = triaging.get(Triaging.SIGNAL_CATEGORY);
-						break;
-					case EbsIndexDto.TRIAGING_DECISION:
-						expression = triaging.get(Triaging.TRIAGING_DECISION);
-						break;
-					case EbsIndexDto.DEATH:
-						expression = signalVerification.get(SignalVerification.NUMBER_OF_DEATH);
-						break;
-					case EbsIndexDto.EBS_LOCATION:
-						expression = region.get(Region.NAME);
-						selections.add(expression);
-						order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
-						expression = community.get(Community.NAME);
-						break;
-					case EbsIndexDto.REGION:
-						expression = region.get(Region.NAME);
-						break;
-					case EbsIndexDto.DISTRICT:
-						expression = district.get(District.NAME);
-						break;
-					case EbsIndexDto.COMMUNITY:
-						expression = community.get(Community.NAME);
-						break;
-					case EbsIndexDto.TOWN:
-						expression = location.get(Location.CITY);
-						selections.add(expression);
-						order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
-						break;
-					default:
-						throw new IllegalArgumentException(sortProperty.propertyName);
+				case EbsIndexDto.UUID:
+				case EbsIndexDto.TRIAGE_DATE:
+				case EbsIndexDto.INFORMANT_NAME:
+				case EbsIndexDto.INFORMANT_TEL:
+				case EbsIndexDto.SOURCE_INFORMATION:
+				case EbsIndexDto.REPORT_DATE_TIME:
+				case EbsIndexDto.CATEGORY_OF_INFORMANT:
+				case EbsIndexDto.PERSON_REGISTERING:
+				case EbsIndexDto.PERSON_DESIGNATION:
+					expression = ebsQueryContext.getRoot().get(sortProperty.propertyName);
+					break;
+				case EbsIndexDto.TRIAGING_DECISION_DATE:
+					expression = triaging.get(Triaging.DATE_OF_DECISION);
+					break;
+				case EbsIndexDto.VERIFICATION_SENT:
+					expression = signalVerification.get(SignalVerification.VERIFICATION_SENT);
+					break;
+				case EbsIndexDto.VERIFIED_DATE:
+					expression = signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE);
+					break;
+				case EbsIndexDto.RISK_STATUS:
+					expression = riskAssessment.get(RiskAssessment.RISK_ASSESSMENT);
+					break;
+				case EbsIndexDto.ACTION_INITIATED:
+					expression = ebsAlert.get(EbsAlert.ACTION_INITIATED);
+					break;
+				case EbsIndexDto.RESPONSE_STATUS:
+					expression = ebsAlert.get(EbsAlert.RESPONSE_STATUS);
+					break;
+				case EbsIndexDto.VERIFIED:
+					expression = signalVerification.get(SignalVerification.VERIFIED);
+					break;
+				case EbsIndexDto.SIGNAL_CATEGORY:
+					expression = triaging.get(Triaging.SIGNAL_CATEGORY);
+					break;
+				case EbsIndexDto.TRIAGING_DECISION:
+					expression = triaging.get(Triaging.TRIAGING_DECISION);
+					break;
+				case EbsIndexDto.DEATH:
+					expression = signalVerification.get(SignalVerification.NUMBER_OF_DEATH);
+					break;
+				case EbsIndexDto.EBS_LOCATION:
+					expression = region.get(Region.NAME);
+					selections.add(expression);
+					order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+					expression = community.get(Community.NAME);
+					break;
+				case EbsIndexDto.REGION:
+					expression = region.get(Region.NAME);
+					break;
+				case EbsIndexDto.DISTRICT:
+					expression = district.get(District.NAME);
+					break;
+				case EbsIndexDto.COMMUNITY:
+					expression = community.get(Community.NAME);
+					break;
+				case EbsIndexDto.TOWN:
+					expression = location.get(Location.CITY);
+					selections.add(expression);
+					order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+					break;
+				default:
+					throw new IllegalArgumentException(sortProperty.propertyName);
 				}
 				order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
 				selections.add(expression);
@@ -695,6 +681,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 		return selections;
 	}
+
 	@Override
 	public Page<EbsIndexDto> getIndexPage(EbsCriteria ebsCriteria, Integer offset, Integer size, List<SortProperty> sortProperties) {
 		List<EbsIndexDto> ebsIndexList = getIndexList(ebsCriteria, offset, size, sortProperties);
@@ -717,79 +704,79 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		Join<Location, Community> community = ebsJoins.getCommunity();
 		Join<Ebs, Triaging> triaging = ebsJoins.getTriaging();
 		Join<Ebs, SignalVerification> signalVerification = ebsJoins.getSignalVerification();
-		Join<Ebs, RiskAssessment> riskAssessment =  ebs.join("riskAssessment", JoinType.LEFT);
+		Join<Ebs, RiskAssessment> riskAssessment = ebs.join("riskAssessment", JoinType.LEFT);
 		Join<Ebs, EbsAlert> ebsAlert = ebs.join("ebsAlert", JoinType.LEFT);
 		cq.multiselect(
-				ebs.get(Ebs.UUID),
-				ebs.get(Ebs.INFORMANT_NAME),
-				ebs.get(Ebs.INFORMANT_TEL),
-				ebs.get(Ebs.REPORT_DATE_TIME),
-				ebs.get(Ebs.SOURCE_INFORMATION),
-				ebs.get(Ebs.SOURCE_NAME),
-				ebs.get(Ebs.SOURCE_URL),
-				region.get(Region.NAME),
-				district.get(District.NAME),
-				community.get(Community.NAME),
-				ebs.get(Ebs.EBS_LATITUDE),
-				ebs.get(Ebs.EBS_LONGITUDE),
-				ebs.get(Ebs.EBS_LATLONG),
-				ebs.get(Ebs.DESCRIPTION_OCCURANCE),
-				ebs.get(Ebs.PERSON_REGISTERING),
-				ebs.get(Ebs.PERSON_DESIGNATION),
-				ebs.get(Ebs.PERSON_PHONE),
-				ebs.get(Ebs.AUTOMATIC_SCANNING_TYPE),
-				ebs.get(Ebs.MANUAL_SCANNING_TYPE),
-				ebs.get(Ebs.SCANNING_TYPE),
-				ebs.get(Ebs.OTHER),
-				ebs.get(Ebs.CATEGORY_OF_INFORMANT),
-				ebs.get(Ebs.OTHER_INFORMANT),
-				triaging.get(Triaging.SUPERVISOR_REVIEW),
-				triaging.get(Triaging.REFERRED),
-				triaging.get(Triaging.SPECIFIC_SIGNAL),
-				triaging.get(Triaging.SIGNAL_CATEGORY),
-				triaging.get(Triaging.HEALTH_CONCERN),
-				triaging.get(Triaging.HUMAN_COMMUNITY_CATEGORY_DETAILS),
-				triaging.get(Triaging.HUMAN_FACILITY_CATEGORY_DETAILS),
-				triaging.get(Triaging.HUMAN_LABORATORY_CATEGORY_DETAILS),
-				triaging.get(Triaging.ANIMAL_COMMUNITY_CATEGORY_DETAILS),
-				triaging.get(Triaging.ANIMAL_FACILITY_CATEGORY_DETAILS),
-				triaging.get(Triaging.ANIMAL_LABORATORY_CATEGORY_DETAILS),
-				triaging.get(Triaging.ENVIRONMENTAL_CATEGORY_DETAILS),
-				triaging.get(Triaging.POE_CATEGORY_DETAILS),
-				triaging.get(Triaging.OCCURRENCE_PREVIOUSLY),
-				triaging.get(Triaging.TRIAGING_DECISION),
-				triaging.get(Triaging.DATE_OF_DECISION),
-				triaging.get(Triaging.REFERRED_TO),
-				triaging.get(Triaging.OUTCOME_SUPERVISOR),
-				triaging.get(Triaging.NOT_SIGNAL),
-				triaging.get(Triaging.CATEGORY_DETAILS_LEVEL),
-				triaging.get(Triaging.POTENTIAL_RISK),
-				signalVerification.get(SignalVerification.VERIFICATION_SENT),
-				signalVerification.get(SignalVerification.VERIFIED),
-				signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE),
-				signalVerification.get(SignalVerification.DATE_OF_OCCURRENCE),
-				signalVerification.get(SignalVerification.NUMBER_OF_PERSON_ANIMAL),
-				signalVerification.get(SignalVerification.NUMBER_OF_DEATH),
-				signalVerification.get(SignalVerification.DESCRIPTION),
-				signalVerification.get(SignalVerification.WHY_NOT_VERIFY),
-				signalVerification.get(SignalVerification.NUMBER_OF_PERSON_CASES),
-				signalVerification.get(SignalVerification.NUMBER_OF_DEATH_PERSON),
-				riskAssessment.get(RiskAssessment.MORBIDITY_MORTALITY),
-				riskAssessment.get(RiskAssessment.MORBIDITY_MORTALITY_COMMENT),
-				riskAssessment.get(RiskAssessment.SPREAD_PROBABILITY),
-				riskAssessment.get(RiskAssessment.SPREAD_PROBABILITY_COMMENT),
-				riskAssessment.get(RiskAssessment.CONTROL_MEASURES),
-				riskAssessment.get(RiskAssessment.CONTROL_MEASURES_COMMENT),
-				riskAssessment.get(RiskAssessment.RISK_ASSESSMENT),
-				riskAssessment.get(RiskAssessment.ASSESSMENT_DATE),
-				ebsAlert.get(EbsAlert.ACTION_INITIATED),
-				ebsAlert.get(EbsAlert.RESPONSE_STATUS),
-				ebsAlert.get(EbsAlert.RESPONSE_DATE),
-				ebsAlert.get(EbsAlert.DETAILS_RESPONSE_ACTIVITIES),
-				ebsAlert.get(EbsAlert.DETAILS_GIVEN),
-				ebsAlert.get(EbsAlert.ALERT_ISSUED),
-				ebsAlert.get(EbsAlert.DETAILS_ALERT_USED),
-				ebsAlert.get(EbsAlert.ALERTDATE));
+			ebs.get(Ebs.UUID),
+			ebs.get(Ebs.INFORMANT_NAME),
+			ebs.get(Ebs.INFORMANT_TEL),
+			ebs.get(Ebs.REPORT_DATE_TIME),
+			ebs.get(Ebs.SOURCE_INFORMATION),
+			ebs.get(Ebs.SOURCE_NAME),
+			ebs.get(Ebs.SOURCE_URL),
+			region.get(Region.NAME),
+			district.get(District.NAME),
+			community.get(Community.NAME),
+			ebs.get(Ebs.EBS_LATITUDE),
+			ebs.get(Ebs.EBS_LONGITUDE),
+			ebs.get(Ebs.EBS_LATLONG),
+			ebs.get(Ebs.DESCRIPTION_OCCURANCE),
+			ebs.get(Ebs.PERSON_REGISTERING),
+			ebs.get(Ebs.PERSON_DESIGNATION),
+			ebs.get(Ebs.PERSON_PHONE),
+			ebs.get(Ebs.AUTOMATIC_SCANNING_TYPE),
+			ebs.get(Ebs.MANUAL_SCANNING_TYPE),
+			ebs.get(Ebs.SCANNING_TYPE),
+			ebs.get(Ebs.OTHER),
+			ebs.get(Ebs.CATEGORY_OF_INFORMANT),
+			ebs.get(Ebs.OTHER_INFORMANT),
+			triaging.get(Triaging.SUPERVISOR_REVIEW),
+			triaging.get(Triaging.REFERRED),
+			triaging.get(Triaging.SPECIFIC_SIGNAL),
+			triaging.get(Triaging.SIGNAL_CATEGORY),
+			triaging.get(Triaging.HEALTH_CONCERN),
+			triaging.get(Triaging.HUMAN_COMMUNITY_CATEGORY_DETAILS),
+			triaging.get(Triaging.HUMAN_FACILITY_CATEGORY_DETAILS),
+			triaging.get(Triaging.HUMAN_LABORATORY_CATEGORY_DETAILS),
+			triaging.get(Triaging.ANIMAL_COMMUNITY_CATEGORY_DETAILS),
+			triaging.get(Triaging.ANIMAL_FACILITY_CATEGORY_DETAILS),
+			triaging.get(Triaging.ANIMAL_LABORATORY_CATEGORY_DETAILS),
+			triaging.get(Triaging.ENVIRONMENTAL_CATEGORY_DETAILS),
+			triaging.get(Triaging.POE_CATEGORY_DETAILS),
+			triaging.get(Triaging.OCCURRENCE_PREVIOUSLY),
+			triaging.get(Triaging.TRIAGING_DECISION),
+			triaging.get(Triaging.DATE_OF_DECISION),
+			triaging.get(Triaging.REFERRED_TO),
+			triaging.get(Triaging.OUTCOME_SUPERVISOR),
+			triaging.get(Triaging.NOT_SIGNAL),
+			triaging.get(Triaging.CATEGORY_DETAILS_LEVEL),
+			triaging.get(Triaging.POTENTIAL_RISK),
+			signalVerification.get(SignalVerification.VERIFICATION_SENT),
+			signalVerification.get(SignalVerification.VERIFIED),
+			signalVerification.get(SignalVerification.VERIFICATION_COMPLETE_DATE),
+			signalVerification.get(SignalVerification.DATE_OF_OCCURRENCE),
+			signalVerification.get(SignalVerification.NUMBER_OF_PERSON_ANIMAL),
+			signalVerification.get(SignalVerification.NUMBER_OF_DEATH),
+			signalVerification.get(SignalVerification.DESCRIPTION),
+			signalVerification.get(SignalVerification.WHY_NOT_VERIFY),
+			signalVerification.get(SignalVerification.NUMBER_OF_PERSON_CASES),
+			signalVerification.get(SignalVerification.NUMBER_OF_DEATH_PERSON),
+			riskAssessment.get(RiskAssessment.MORBIDITY_MORTALITY),
+			riskAssessment.get(RiskAssessment.MORBIDITY_MORTALITY_COMMENT),
+			riskAssessment.get(RiskAssessment.SPREAD_PROBABILITY),
+			riskAssessment.get(RiskAssessment.SPREAD_PROBABILITY_COMMENT),
+			riskAssessment.get(RiskAssessment.CONTROL_MEASURES),
+			riskAssessment.get(RiskAssessment.CONTROL_MEASURES_COMMENT),
+			riskAssessment.get(RiskAssessment.RISK_ASSESSMENT),
+			riskAssessment.get(RiskAssessment.ASSESSMENT_DATE),
+			ebsAlert.get(EbsAlert.ACTION_INITIATED),
+			ebsAlert.get(EbsAlert.RESPONSE_STATUS),
+			ebsAlert.get(EbsAlert.RESPONSE_DATE),
+			ebsAlert.get(EbsAlert.DETAILS_RESPONSE_ACTIVITIES),
+			ebsAlert.get(EbsAlert.DETAILS_GIVEN),
+			ebsAlert.get(EbsAlert.ALERT_ISSUED),
+			ebsAlert.get(EbsAlert.DETAILS_ALERT_USED),
+			ebsAlert.get(EbsAlert.ALERTDATE));
 		cq.distinct(true);
 		Predicate filter = service.createUserFilter(ebsQueryContext);
 		if (ebsCriteria != null) {
@@ -826,14 +813,14 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	}
 
 	@Override
-	public void validate(@Valid EbsDto ebs) throws ValidationRuntimeException {
+	public void validate(EbsDto ebs) throws ValidationRuntimeException {
 
 		LocationDto location = ebs.getEbsLocation();
 		CountryReferenceDto locationCountry = location.getCountry();
 		CountryReferenceDto serverCountry = countryFacade.getServerCountry();
 		boolean regionAndDistrictRequired = serverCountry == null
-				? locationCountry == null
-				: locationCountry == null || serverCountry.getIsoCode().equalsIgnoreCase(locationCountry.getIsoCode());
+			? locationCountry == null
+			: locationCountry == null || serverCountry.getIsoCode().equalsIgnoreCase(locationCountry.getIsoCode());
 
 		if (location.getRegion() == null && regionAndDistrictRequired) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validRegion));
@@ -847,11 +834,10 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noDistrictInRegion));
 		}
 		if (location.getCommunity() != null
-				&& !communityFacade.getByUuid(location.getCommunity().getUuid()).getDistrict().equals(location.getDistrict())) {
+			&& !communityFacade.getByUuid(location.getCommunity().getUuid()).getDistrict().equals(location.getDistrict())) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noCommunityInDistrict));
 		}
 	}
-
 
 	@Override
 	public EbsReferenceDto toRefDto(Ebs ebs) {
@@ -910,14 +896,9 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		target.setDateOnset(source.getDateOnset());
 		target.setEbsLongitude(source.getEbsLongitude());
 		target.setEbsLatitude(source.getEbsLongitude());
-		if (source.getTriaging() == null) {
-			source.setTriaging(TriagingDto.build());
-		}
-		target.setTriaging(triagingFacade.fillOrBuildEntity(source.getTriaging(), target.getTriaging(), false));
-		if (source.getSignalVerification() == null) {
-			source.setSignalVerification(SignalVerificationDto.build());
-		}
-		target.setSignalVerification(signalVerificationFacade.fillOrBuildEntity(source.getSignalVerification(), target.getSignalVerification(), false));
+		target.setTriaging(triagingFacade.fillOrBuildEntity(source.getTriaging(), target.getTriaging(), checkChangeDate));
+		target.setSignalVerification(
+			signalVerificationFacade.fillOrBuildEntity(source.getSignalVerification(), target.getSignalVerification(), checkChangeDate));
 		target.setOtherInformant(source.getOtherInformant());
 		return target;
 	}
@@ -948,9 +929,9 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 		Timestamp notChangedTimestamp = Timestamp.valueOf(notChangedSince.atStartOfDay());
 		cq.where(
-				cb.equal(from.get(Ebs.ARCHIVED), false),
-				cb.equal(from.get(Ebs.DELETED), false),
-				cb.not(service.createChangeDateFilter(cb, from, notChangedTimestamp)));
+			cb.equal(from.get(Ebs.ARCHIVED), false),
+			cb.equal(from.get(Ebs.DELETED), false),
+			cb.not(service.createChangeDateFilter(cb, from, notChangedTimestamp)));
 		cq.select(from.get(Ebs.UUID)).distinct(true);
 		List<String> ebsUuids = em.createQuery(cq).getResultList();
 
@@ -962,10 +943,8 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	@Override
 	public boolean doesExternalTokenExist(String externalToken, String ebsUuid) {
 		return service.exists(
-				(cb, ebsRoot, cq) -> CriteriaBuilderHelper.and(
-						cb,
-						cb.notEqual(ebsRoot.get(Ebs.UUID), ebsUuid),
-						cb.notEqual(ebsRoot.get(Ebs.DELETED), Boolean.TRUE)));
+			(cb, ebsRoot, cq) -> CriteriaBuilderHelper
+				.and(cb, cb.notEqual(ebsRoot.get(Ebs.UUID), ebsUuid), cb.notEqual(ebsRoot.get(Ebs.DELETED), Boolean.TRUE)));
 	}
 
 	@Override
@@ -985,10 +964,12 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		});
 		return regionReferenceDtos;
 	}
+
 	@Override
 	public String getUuidByCaseUuidOrPersonUuid(String searchTerm) {
 		return service.getUuidByCaseUuidOrPersonUuid(searchTerm);
 	}
+
 	@Override
 	public void updateExternalData(@Valid List<ExternalDataDto> externalData) throws ExternalDataUpdateException {
 		service.updateExternalData(externalData);
@@ -1027,7 +1008,6 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		}
 	}
 
-
 	@Override
 	protected String getDeleteReferenceField(DeletionReference deletionReference) {
 		if (deletionReference == DeletionReference.END) {
@@ -1055,10 +1035,9 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		}
 
 		@Inject
-		public EbsFacadeEjbLocal(EbsService service,UserService userService) {
-			super(service,userService);
+		public EbsFacadeEjbLocal(EbsService service, UserService userService) {
+			super(service, userService);
 		}
 	}
-
 
 }

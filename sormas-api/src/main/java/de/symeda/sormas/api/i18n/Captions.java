@@ -839,7 +839,7 @@ public interface Captions {
 	String dashboardDiscarded = "dashboardDiscarded";
 	String dashboardDiseaseBurdenInfo = "dashboardDiseaseBurdenInfo";
 	String dashboardRegionalDiseaseBurden = "dashboardRegionalDiseaseBurden";
-	String dashboardDistrictDiseaseBurden="dashboardDistrictDiseaseBurden";
+	String dashboardDistrictDiseaseBurden = "dashboardDistrictDiseaseBurden";
 	String diseaseDetailMap = "diseaseDetailMap";
 	String dashboardDiseaseBurdenOutbreakDistricts = "dashboardDiseaseBurdenOutbreakDistricts";
 	String dashboardDiseaseCarouselSlideShow = "dashboardDiseaseCarouselSlideShow";
@@ -1285,24 +1285,16 @@ public interface Captions {
 	String Ebs_triagingDecision = "Ebs.triagingDecision";
 	String Ebs_startDate = "Ebs.startDate";
 	String Ebs_triageDate = "Ebs.triageDate";
-	String Ebs_signalCategory= "Ebs.signalCategory";
-	String Ebs_verified= "Ebs.verified";
-	String Ebs_cases= "Ebs.cases";
-	String Ebs_death= "Ebs.death";
+	String Ebs_signalCategory = "Ebs.signalCategory";
+	String Ebs_verified = "Ebs.verified";
+	String Ebs_cases = "Ebs.cases";
+	String Ebs_death = "Ebs.death";
 	String Triaging_potentialRisk = "Triaging.potentialRisk";
 	String Triaging_categoryDetails = "Triaging.categoryDetails";
 	String Triaging_specificSignal = "Triaging.specificSignal";
 	String Triaging_triagingDecision = "Triaging.triagingDecision";
 	String Triaging_healthConcern = "Triaging.healthConcern";
 	String Triaging_signalCategory = "Triaging.signalCategory";
-	String Triaging_respiratorySymptoms = "Triaging.respiratorySymptoms";
-	String Triaging_severeIllness = "Triaging.severeIllness";
-	String Triaging_severeDiarrhoea = "Triaging.severeDiarrhoea";
-	String Triaging_orifices = "Triaging.orifices";
-	String Triaging_unableToWalk = "Triaging.unableToWalk";
-	String Triaging_otc = "Triaging.otc";
-	String Triaging_pregnantWoman = "Triaging.pregnantWoman";
-	String Triaging_hangingWorm = "Triaging.hangingWorm";
 	String Triaging_occurrencePreviously = "Triaging.occurrencePreviously";
 	String Triaging_decisionDate = "Triaging.decisionDate";
 	String Triaging_referredTo = "Triaging.referredTo";
@@ -1313,6 +1305,7 @@ public interface Captions {
 	String Triaging_humanLaboratoryCategoryDetails = "Triaging.humanLaboratoryCategoryDetails";
 	String Triaging_animalCommunityCategoryDetails = "Triaging.animalCommunityCategoryDetails";
 	String Triaging_animalFacilityCategoryDetails = "Triaging.animalFacilityCategoryDetails";
+	String Triaging_animalLaboratoryCategoryDetails = "Triaging.animalFacilityCategoryDetails";
 	String Triaging_environmentalCategoryDetails = "Triaging.environmentalCategoryDetails";
 	String signalReview = "signalReview";
 	String Triaging_categoryDetailsLevel = "Triaging.categoryDetailsLevel";
@@ -1374,10 +1367,10 @@ public interface Captions {
 	String EbsExport_triagingDecision = "EbsExport.triagingDecision";
 	String EbsExport_startDate = "EbsExport.startDate";
 	String EbsExport_triageDate = "EbsExport.triageDate";
-	String EbsExport_signalCategory= "EbsExport.signalCategory";
-	String EbsExport_verified= "EbsExport.verified";
-	String EbsExport_cases= "EbsExport.cases";
-	String EbsExport_death= "EbsExport.death";
+	String EbsExport_signalCategory = "EbsExport.signalCategory";
+	String EbsExport_verified = "EbsExport.verified";
+	String EbsExport_cases = "EbsExport.cases";
+	String EbsExport_death = "EbsExport.death";
 	String EbsExport_potentialRisk = "EbsExport.potentialRisk";
 	String EbsExport_categoryDetails = "EbsExport.categoryDetails";
 	String EbsExport_specificSignal = "EbsExport.specificSignal";
@@ -1448,7 +1441,7 @@ public interface Captions {
 	String exportInfrastructureData = "exportInfrastructureData";
 	String exportNewExportConfiguration = "exportNewExportConfiguration";
 	String exportSamples = "exportSamples";
-	String exportCaseSamplesDetailed="Detailed Case And Sample Export";
+	String exportCaseSamplesDetailed = "Detailed Case And Sample Export";
 	String exportSelectSormasData = "exportSelectSormasData";
 	String exportSormasData = "exportSormasData";
 	String exportUserRoles = "exportUserRoles";
@@ -1690,8 +1683,7 @@ public interface Captions {
 
 	String importPicked = "importPicked";
 
-	String importMerged ="importMerged" +
-			"" ;
+	String importMerged = "importMerged" + "";
 	String importErrorDescription = "importErrorDescription";
 	String importErrors = "importErrors";
 	String importImportData = "importImportData";
@@ -2876,5 +2868,5 @@ public interface Captions {
 	String EntityAuditLogComponent_selectActivities = "EntityAuditLogComponent.selectActivities";
 	String years = "years";
 	String dashboardLastReportedDistrict = "Last Reported District";
-	String exportDownloadMergeFile ="exportDownloadMergeFile" ;
+	String exportDownloadMergeFile = "exportDownloadMergeFile";
 }

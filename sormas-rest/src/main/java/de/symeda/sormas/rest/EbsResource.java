@@ -13,9 +13,25 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.symeda.sormas.rest.resources;
+package de.symeda.sormas.rest;
+
+import java.util.Date;
+import java.util.List;
+import java.util.function.UnaryOperator;
+
+import javax.validation.Valid;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.PushResult;
 import de.symeda.sormas.api.caze.CriteriaWithSorting;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.DeletionReason;
@@ -23,23 +39,14 @@ import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.ebs.EbsCriteria;
 import de.symeda.sormas.api.ebs.EbsDto;
 import de.symeda.sormas.api.ebs.EbsIndexDto;
-import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
-import de.symeda.sormas.rest.resources.base.EntityDtoResource;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.Date;
-import java.util.List;
-import java.util.function.UnaryOperator;
 
 @Path("/ebs")
 @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 @Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-public class EbsResource extends EntityDtoResource<EbsDto> {
+public class EbsResource extends EntityDtoResource {
 
 	@GET
 	@Path("/all/{since}")
@@ -134,13 +141,18 @@ public class EbsResource extends EntityDtoResource<EbsDto> {
 		return FacadeProvider.getEbsFacade().delete(uuids, new DeletionDetails(DeletionReason.OTHER_REASON, "Deleted via ReST call"));
 	}
 
-	@Override
 	public UnaryOperator<EbsDto> getSave() {
 		return FacadeProvider.getEbsFacade()::save;
 	}
 
-	@Override
-	public Response postEntityDtos(List<EbsDto> ebaDtos) {
-		return super.postEntityDtos(ebaDtos);
+	@POST
+	@Path("/push")
+	public List<PushResult> postTasks(@Valid List<EbsDto> dtos) {
+		List<PushResult> result = savePushedDto(dtos, FacadeProvider.getEbsFacade()::save);
+		return result;
 	}
+
+//	public Response postEntityDtos(List<EbsDto> ebaDtos) {
+//		return super.postEntityDtos(ebaDtos);
+//	}
 }

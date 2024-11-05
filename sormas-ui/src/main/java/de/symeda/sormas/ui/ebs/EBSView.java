@@ -1,12 +1,24 @@
 package de.symeda.sormas.ui.ebs;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Set;
+
+import org.vaadin.hene.popupbutton.PopupButton;
+
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.StreamResource;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.OptionGroup;
+
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ebs.EbsCriteria;
 import de.symeda.sormas.api.ebs.EbsSourceType;
@@ -14,321 +26,320 @@ import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.ui.*;
+import de.symeda.sormas.ui.ControllerProvider;
+import de.symeda.sormas.ui.SearchSpecificLayout;
+import de.symeda.sormas.ui.SormasUI;
+import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.ViewModelProviders;
+import de.symeda.sormas.ui.events.EventGrid;
 import de.symeda.sormas.ui.events.importer.EventImportLayout;
-import de.symeda.sormas.ui.utils.*;
+import de.symeda.sormas.ui.utils.AbstractView;
+import de.symeda.sormas.ui.utils.ButtonHelper;
+import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.ExportEntityName;
+import de.symeda.sormas.ui.utils.FilteredGrid;
+import de.symeda.sormas.ui.utils.GridExportStreamResource;
+import de.symeda.sormas.ui.utils.VaadinUiUtil;
 import de.symeda.sormas.ui.utils.components.popupmenu.PopupMenu;
-import org.vaadin.hene.popupbutton.PopupButton;
-
-import java.util.*;
 
 public class EBSView extends AbstractView {
-    private static final long serialVersionUID = -3048977745713631500L;
-    public static final String VIEW_NAME = "ebs";
-    private EbsCriteria ebsCriteria;
-    private final EbsViewConfiguration viewConfiguration;
-    public static String currentview = "signallist";
 
-    private FilteredGrid<?, ?> grid;
-    private Button createButton;
-    private HashMap<Button, String> srcButtons;
-    private Button activeStatusButton;
-    // Filter
-    private EbsFilterForm ebsFilterForm;
-    private ComboBox contactCountMethod;
+	private static final long serialVersionUID = -3048977745713631500L;
+	public static final String VIEW_NAME = "ebs";
+	private EbsCriteria ebsCriteria;
+	private final EbsViewConfiguration viewConfiguration;
+	public static String currentview = "signallist";
 
-    private VerticalLayout gridLayout;
+	private FilteredGrid<?, ?> grid;
+	private Button createButton;
+	private HashMap<Button, String> srcButtons;
+	private Button activeStatusButton;
+	// Filter
+	private EbsFilterForm ebsFilterForm;
+	private ComboBox contactCountMethod;
 
-    public EBSView() {
-        super(VIEW_NAME);
+	private VerticalLayout gridLayout;
 
-        viewConfiguration = ViewModelProviders.of(getClass()).get(EbsViewConfiguration.class);
-        if (viewConfiguration.getViewType() == null) {
-            viewConfiguration.setViewType(EbsViewType.DEFAULT);
-        }
+	public EBSView() {
+		super(VIEW_NAME);
 
-        ebsCriteria = ViewModelProviders.of(EBSView.class).get(EbsCriteria.class);
-        if (isDefaultViewType()) {
-            grid = new EbsGrid(ebsCriteria, getClass());
-            currentview = "signallist";
-        } else {
-            grid = new EbsSignalGrid(ebsCriteria, getClass());
-            currentview = "eventlist";
-        }
-        gridLayout = new VerticalLayout();
-        gridLayout.addComponent(createFilterBar());
-        gridLayout.addComponent(grid);
-        gridLayout.setMargin(true);
-        gridLayout.setSpacing(false);
-        gridLayout.setSizeFull();
-        gridLayout.setExpandRatio(grid, 1);
+		viewConfiguration = ViewModelProviders.of(getClass()).get(EbsViewConfiguration.class);
+		if (viewConfiguration.getViewType() == null) {
+			viewConfiguration.setViewType(EbsViewType.DEFAULT);
+		}
+
+		ebsCriteria = ViewModelProviders.of(EBSView.class).get(EbsCriteria.class);
+		if (isDefaultViewType()) {
+			grid = new EbsSignalGrid(ebsCriteria, getClass());
+			currentview = "signallist";
+		} else {
+			grid = new EbsGrid(ebsCriteria, getClass());
+			currentview = "eventlist";
+		}
+		gridLayout = new VerticalLayout();
+		gridLayout.addComponent(createFilterBar());
+		gridLayout.addComponent(grid);
+		gridLayout.setMargin(true);
+		gridLayout.setSpacing(false);
+		gridLayout.setSizeFull();
+		gridLayout.setExpandRatio(grid, 1);
 //        gridLayout.setStyleName("crud-main-layout");
-        addComponent(gridLayout);
+		addComponent(gridLayout);
 
-        OptionGroup ebsViewSwitcher = new OptionGroup();
-        ebsViewSwitcher.setId("ebsViewSwitcher");
-        CssStyles.style(
-                ebsViewSwitcher,
-                CssStyles.FORCE_CAPTION,
-                ValoTheme.OPTIONGROUP_HORIZONTAL,
-                CssStyles.OPTIONGROUP_HORIZONTAL_PRIMARY,
-                CssStyles.VSPACE_TOP_3);
-        ebsViewSwitcher.addItem(EbsViewType.DEFAULT);
-        ebsViewSwitcher.setItemCaption(EbsViewType.DEFAULT, I18nProperties.getCaption(Captions.ebsSignalView));
+		OptionGroup ebsViewSwitcher = new OptionGroup();
+		ebsViewSwitcher.setId("ebsViewSwitcher");
+		CssStyles.style(
+			ebsViewSwitcher,
+			CssStyles.FORCE_CAPTION,
+			ValoTheme.OPTIONGROUP_HORIZONTAL,
+			CssStyles.OPTIONGROUP_HORIZONTAL_PRIMARY,
+			CssStyles.VSPACE_TOP_3);
+		ebsViewSwitcher.addItem(EbsViewType.DEFAULT);
+		ebsViewSwitcher.setItemCaption(EbsViewType.DEFAULT, I18nProperties.getCaption(Captions.ebsSignalView));
 
-        ebsViewSwitcher.addItem(EbsViewType.EVENT);
-        ebsViewSwitcher.setItemCaption(EbsViewType.EVENT, I18nProperties.getCaption(Captions.ebsEventView));
+		ebsViewSwitcher.addItem(EbsViewType.EVENT);
+		ebsViewSwitcher.setItemCaption(EbsViewType.EVENT, I18nProperties.getCaption(Captions.ebsEventView));
 
-        ebsViewSwitcher.setValue(viewConfiguration.getViewType());
-        ebsViewSwitcher.addValueChangeListener(e -> {
-            EbsViewType viewType = (EbsViewType) e.getProperty().getValue();
+		ebsViewSwitcher.setValue(viewConfiguration.getViewType());
+		ebsViewSwitcher.addValueChangeListener(e -> {
+			EbsViewType viewType = (EbsViewType) e.getProperty().getValue();
 
-            viewConfiguration.setViewType(viewType);
-            SormasUI.get().getNavigator().navigateTo(EBSView.VIEW_NAME);
-        });
-        addHeaderComponent(ebsViewSwitcher);
+			viewConfiguration.setViewType(viewType);
+			SormasUI.get().getNavigator().navigateTo(EBSView.VIEW_NAME);
+		});
+		addHeaderComponent(ebsViewSwitcher);
 
+		Button importButton = ButtonHelper.createIconButton(Captions.actionImport, VaadinIcons.UPLOAD, e -> {
+			Window popupWindow = VaadinUiUtil.showPopupWindow(new EventImportLayout());
+			popupWindow.setCaption(I18nProperties.getString(Strings.headingImportEvent));
+			popupWindow.addCloseListener(c -> ((EventGrid) grid).reload());
+		}, ValoTheme.BUTTON_PRIMARY);
 
-            Button importButton = ButtonHelper.createIconButton(Captions.actionImport, VaadinIcons.UPLOAD, e -> {
-                Window popupWindow = VaadinUiUtil.showPopupWindow(new EventImportLayout());
-                popupWindow.setCaption(I18nProperties.getString(Strings.headingImportEvent));
-                popupWindow.addCloseListener(c -> ((EbsGrid) grid).reload());
-                popupWindow.addCloseListener(c -> ((EbsSignalGrid) grid).reload());
-            }, ValoTheme.BUTTON_PRIMARY);
+		addHeaderComponent(importButton);
 
-            addHeaderComponent(importButton);
+		if (UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EXPORT)) {
+			VerticalLayout exportLayout = new VerticalLayout();
+			{
+				exportLayout.setSpacing(true);
+				exportLayout.setMargin(true);
+				exportLayout.addStyleName(CssStyles.LAYOUT_MINIMAL);
+				exportLayout.setWidth(250, Unit.PIXELS);
+			}
 
+			PopupButton exportPopupButton = ButtonHelper.createIconPopupButton(Captions.export, VaadinIcons.DOWNLOAD, exportLayout);
+			addHeaderComponent(exportPopupButton);
 
-        if (UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EXPORT)) {
-            VerticalLayout exportLayout = new VerticalLayout();
-            {
-                exportLayout.setSpacing(true);
-                exportLayout.setMargin(true);
-                exportLayout.addStyleName(CssStyles.LAYOUT_MINIMAL);
-                exportLayout.setWidth(250, Unit.PIXELS);
-            }
+			{
+				StreamResource streamResource = GridExportStreamResource.createStreamResourceWithSelectedItems(
+					grid,
+					() -> this.viewConfiguration.isInEagerMode() ? this.grid.asMultiSelect().getSelectedItems() : Collections.emptySet(),
+					ExportEntityName.EBS);
+				addExportButton(streamResource, exportPopupButton, exportLayout, VaadinIcons.TABLE, Captions.exportBasic, Strings.infoBasicExport);
+			}
+			Button btnCustomExport = ButtonHelper.createIconButton(Captions.exportCustom, VaadinIcons.FILE_TEXT, e -> {
+				ControllerProvider.getCustomExportController().openEbsExportWindow(ebsCriteria, this::getSelectedRowUuids);
+				exportPopupButton.setPopupVisible(false);
+			}, ValoTheme.BUTTON_PRIMARY);
+			btnCustomExport.setDescription(I18nProperties.getString(Strings.infoCustomExport));
+			btnCustomExport.setWidth(100, Unit.PERCENTAGE);
+			exportLayout.addComponent(btnCustomExport);
+		}
 
-            PopupButton exportPopupButton = ButtonHelper.createIconPopupButton(Captions.export, VaadinIcons.DOWNLOAD, exportLayout);
-            addHeaderComponent(exportPopupButton);
+		createButton = ButtonHelper.createIconButton(
+			Captions.ebsCreatEbs,
+			VaadinIcons.PLUS_CIRCLE,
+			e -> ControllerProvider.getEbsController().create(),
+			ValoTheme.BUTTON_PRIMARY);
 
-            {
-                StreamResource streamResource = GridExportStreamResource.createStreamResourceWithSelectedItems(
-                        grid,
-                        () -> this.viewConfiguration.isInEagerMode()
-                                ? this.grid.asMultiSelect().getSelectedItems()
-                                : Collections.emptySet(),
-                        ExportEntityName.EBS);
-                addExportButton(streamResource, exportPopupButton, exportLayout, VaadinIcons.TABLE, Captions.exportBasic, Strings.infoBasicExport);
-            }
-            Button btnCustomExport = ButtonHelper.createIconButton(Captions.exportCustom, VaadinIcons.FILE_TEXT, e -> {
-                ControllerProvider.getCustomExportController().openEbsExportWindow(ebsCriteria,  this::getSelectedRowUuids);
-                exportPopupButton.setPopupVisible(false);
-            }, ValoTheme.BUTTON_PRIMARY);
-            btnCustomExport.setDescription(I18nProperties.getString(Strings.infoCustomExport));
-            btnCustomExport.setWidth(100, Unit.PERCENTAGE);
-            exportLayout.addComponent(btnCustomExport);
-        }
+		addHeaderComponent(createButton);
 
+		final PopupMenu moreButton = new PopupMenu(I18nProperties.getCaption(Captions.moreActions));
 
-            createButton = ButtonHelper.createIconButton(
-                    Captions.ebsCreatEbs,
-                    VaadinIcons.PLUS_CIRCLE,
-                    e -> ControllerProvider.getEbsController().create(),
-                    ValoTheme.BUTTON_PRIMARY);
+		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS_EVENT)) {
+			Button btnEnterBulkEditMode = ButtonHelper.createIconButton(Captions.actionEnterBulkEditMode, VaadinIcons.CHECK_SQUARE_O, null);
+			{
+				btnEnterBulkEditMode.setVisible(!viewConfiguration.isInEagerMode());
+				btnEnterBulkEditMode.addStyleName(ValoTheme.BUTTON_PRIMARY);
+				btnEnterBulkEditMode.setWidth(100, Unit.PERCENTAGE);
+				moreButton.addMenuEntry(btnEnterBulkEditMode);
+			}
 
-            addHeaderComponent(createButton);
+			Button btnLeaveBulkEditMode =
+				ButtonHelper.createIconButton(Captions.actionLeaveBulkEditMode, VaadinIcons.CLOSE, null, ValoTheme.BUTTON_PRIMARY);
+			{
+				btnLeaveBulkEditMode.setVisible(viewConfiguration.isInEagerMode());
+				btnLeaveBulkEditMode.setWidth(100, Unit.PERCENTAGE);
+				moreButton.addMenuEntry(btnLeaveBulkEditMode);
+			}
+			if (isDefaultViewType()) {
+				btnEnterBulkEditMode.addClickListener(e -> {
+					ViewModelProviders.of(EBSView.class).get(EbsViewConfiguration.class).setInEagerMode(true);
+					btnEnterBulkEditMode.setVisible(false);
+					btnLeaveBulkEditMode.setVisible(true);
+					((EbsSignalGrid) grid).reload();
+				});
+			} else {
+				btnEnterBulkEditMode.addClickListener(e -> {
+					ViewModelProviders.of(EBSView.class).get(EbsViewConfiguration.class).setInEagerMode(true);
+					btnEnterBulkEditMode.setVisible(false);
+					btnLeaveBulkEditMode.setVisible(true);
+					((EbsGrid) grid).reload();
+				});
+			}
+			btnLeaveBulkEditMode.addClickListener(e -> {
+				ViewModelProviders.of(EBSView.class).get(EbsViewConfiguration.class).setInEagerMode(false);
+				btnLeaveBulkEditMode.setVisible(false);
+				btnEnterBulkEditMode.setVisible(true);
+				navigateTo(ebsCriteria);
+			});
+		}
+		Button searchSpecificEbsButton = ButtonHelper.createIconButton(Captions.eventSearchSpecificEvent, VaadinIcons.SEARCH, e -> {
+			buildAndOpenSearchSpecificEbsWindow();
+			moreButton.setPopupVisible(false);
+		}, ValoTheme.BUTTON_PRIMARY);
+		searchSpecificEbsButton.setWidth(100, Unit.PERCENTAGE);
+		moreButton.addMenuEntry(searchSpecificEbsButton);
 
-        final PopupMenu moreButton = new PopupMenu(I18nProperties.getCaption(Captions.moreActions));
+		if (moreButton.hasMenuEntries()) {
+			addHeaderComponent(moreButton);
+		}
+	}
 
-        if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS_EVENT)) {
-            Button btnEnterBulkEditMode = ButtonHelper.createIconButton(Captions.actionEnterBulkEditMode, VaadinIcons.CHECK_SQUARE_O, null);
-            {
-                btnEnterBulkEditMode.setVisible(!viewConfiguration.isInEagerMode());
-                btnEnterBulkEditMode.addStyleName(ValoTheme.BUTTON_PRIMARY);
-                btnEnterBulkEditMode.setWidth(100, Unit.PERCENTAGE);
-                moreButton.addMenuEntry(btnEnterBulkEditMode);
-            }
+	private boolean isDefaultViewType() {
+		return viewConfiguration.getViewType() == EbsViewType.DEFAULT;
+	}
 
-            Button btnLeaveBulkEditMode =
-                    ButtonHelper.createIconButton(Captions.actionLeaveBulkEditMode, VaadinIcons.CLOSE, null, ValoTheme.BUTTON_PRIMARY);
-            {
-                btnLeaveBulkEditMode.setVisible(viewConfiguration.isInEagerMode());
-                btnLeaveBulkEditMode.setWidth(100, Unit.PERCENTAGE);
-                moreButton.addMenuEntry(btnLeaveBulkEditMode);
-            }
-            if (isDefaultViewType()) {
-                btnEnterBulkEditMode.addClickListener(e -> {
-                    ViewModelProviders.of(EBSView.class).get(EbsViewConfiguration.class).setInEagerMode(true);
-                    btnEnterBulkEditMode.setVisible(false);
-                    btnLeaveBulkEditMode.setVisible(true);
-                    ((EbsGrid) grid).reload();
-                });
-            }else {
-                btnEnterBulkEditMode.addClickListener(e -> {
-                            ViewModelProviders.of(EBSView.class).get(EbsViewConfiguration.class).setInEagerMode(true);
-                            btnEnterBulkEditMode.setVisible(false);
-                            btnLeaveBulkEditMode.setVisible(true);
-                            ((EbsSignalGrid) grid).reload();
-            });
-            }
-            btnLeaveBulkEditMode.addClickListener(e -> {
-                ViewModelProviders.of(EBSView.class).get(EbsViewConfiguration.class).setInEagerMode(false);
-                btnLeaveBulkEditMode.setVisible(false);
-                btnEnterBulkEditMode.setVisible(true);
-                navigateTo(ebsCriteria);
-            });
-        }
-            Button searchSpecificEbsButton = ButtonHelper.createIconButton(Captions.eventSearchSpecificEvent, VaadinIcons.SEARCH, e -> {
-                buildAndOpenSearchSpecificEbsWindow();
-                moreButton.setPopupVisible(false);
-            }, ValoTheme.BUTTON_PRIMARY);
-            searchSpecificEbsButton.setWidth(100, Unit.PERCENTAGE);
-            moreButton.addMenuEntry(searchSpecificEbsButton);
+	private void buildAndOpenSearchSpecificEbsWindow() {
+		Window window = VaadinUiUtil.createPopupWindow();
+		window.setCaption(I18nProperties.getCaption(Captions.eventSearchSpecificEvent));
+		window.setWidth(768, Unit.PIXELS);
 
+		SearchSpecificLayout layout = buildSearchSpecificLayout(window);
+		window.setContent(layout);
+		UI.getCurrent().addWindow(window);
+	}
 
-        if (moreButton.hasMenuEntries()) {
-            addHeaderComponent(moreButton);
-        }
-    }
+	private SearchSpecificLayout buildSearchSpecificLayout(Window window) {
 
-    private boolean isDefaultViewType() {
-        return viewConfiguration.getViewType() == EbsViewType.DEFAULT;
-    }
+		String description = I18nProperties.getString(Strings.infoSpecificEventSearch);
+		String confirmCaption = I18nProperties.getCaption(Captions.eventSearchEvent);
 
-    private void buildAndOpenSearchSpecificEbsWindow() {
-        Window window = VaadinUiUtil.createPopupWindow();
-        window.setCaption(I18nProperties.getCaption(Captions.eventSearchSpecificEvent));
-        window.setWidth(768, Unit.PIXELS);
+		TextField searchField = new TextField();
+		Runnable confirmCallback = () -> {
+			String foundEbsUuid = FacadeProvider.getEbsFacade().getUuidByCaseUuidOrPersonUuid(searchField.getValue());
 
-        SearchSpecificLayout layout = buildSearchSpecificLayout(window);
-        window.setContent(layout);
-        UI.getCurrent().addWindow(window);
-    }
+			if (foundEbsUuid != null) {
+				ControllerProvider.getEbsController().navigateToData(foundEbsUuid);
+				window.close();
+			} else {
+				VaadinUiUtil.showSimplePopupWindow(
+					I18nProperties.getString(Strings.headingNoEventFound),
+					I18nProperties.getString(Strings.messageNoEventFound));
+			}
+		};
 
-    private SearchSpecificLayout buildSearchSpecificLayout(Window window) {
+		return new SearchSpecificLayout(confirmCallback, () -> window.close(), searchField, description, confirmCaption);
+	}
 
-        String description = I18nProperties.getString(Strings.infoSpecificEventSearch);
-        String confirmCaption = I18nProperties.getCaption(Captions.eventSearchEvent);
+	public void updateFilterComponents() {
 
-        TextField searchField = new TextField();
-        Runnable confirmCallback = () -> {
-            String foundEbsUuid = FacadeProvider.getEbsFacade().getUuidByCaseUuidOrPersonUuid(searchField.getValue());
+		// TODO replace with Vaadin 8 databinding
+		applyingCriteria = true;
 
-            if (foundEbsUuid != null) {
-                ControllerProvider.getEbsController().navigateToData(foundEbsUuid);
-                window.close();
-            } else {
-                VaadinUiUtil.showSimplePopupWindow(
-                        I18nProperties.getString(Strings.headingNoEventFound),
-                        I18nProperties.getString(Strings.messageNoEventFound));
-            }
-        };
+		ebsFilterForm.setValue(ebsCriteria);
 
-        return new SearchSpecificLayout(confirmCallback, () -> window.close(), searchField, description, confirmCaption);
-    }
+		applyingCriteria = false;
+	}
 
-    public void updateFilterComponents() {
+	public HorizontalLayout createFilterBar() {
+		HorizontalLayout filterLayout = new HorizontalLayout();
+		filterLayout.setSpacing(true);
+		filterLayout.setMargin(false);
+		filterLayout.setSizeUndefined();
 
-        // TODO replace with Vaadin 8 databinding
-        applyingCriteria = true;
+		ebsFilterForm = new EbsFilterForm();
+		ebsFilterForm.addValueChangeListener(e -> {
+			if (!ebsFilterForm.hasFilter()) {
+				navigateTo(null);
+			}
+		});
+		ebsFilterForm.addResetHandler(e -> {
+			ViewModelProviders.of(EBSView.class).remove(EbsCriteria.class);
+			navigateTo(null);
+		});
 
-        ebsFilterForm.setValue(ebsCriteria);
+		ebsFilterForm.addApplyHandler(e -> {
+			if (isDefaultViewType()) {
+				navigateTo(ebsCriteria);
+				((EbsSignalGrid) grid).reload();
+			} else {
+				((EbsGrid) grid).reload();
+				navigateTo(ebsCriteria);
+			}
+		});
+		filterLayout.addComponent(ebsFilterForm);
 
-        applyingCriteria = false;
-    }
+		return filterLayout;
+	}
 
-    public HorizontalLayout createFilterBar() {
-        HorizontalLayout filterLayout = new HorizontalLayout();
-        filterLayout.setSpacing(true);
-        filterLayout.setMargin(false);
-        filterLayout.setSizeUndefined();
+	@Override
+	public void enter(ViewChangeListener.ViewChangeEvent event) {
+		String params = event.getParameters().trim();
+		if (params.startsWith("?")) {
+			params = params.substring(1);
+		}
+		if (isDefaultViewType()) {
 
-        ebsFilterForm = new EbsFilterForm();
-        ebsFilterForm.addValueChangeListener(e -> {
-            if (!ebsFilterForm.hasFilter()) {
-                navigateTo(null);
-            }
-        });
-        ebsFilterForm.addResetHandler(e -> {
-            ViewModelProviders.of(EBSView.class).remove(EbsCriteria.class);
-            navigateTo(null);
-        });
+			updateFilterComponents();
+			((EbsSignalGrid) grid).reload();
+		} else {
 
-            ebsFilterForm.addApplyHandler(e -> {
-                if (isDefaultViewType()) {
-                    navigateTo(ebsCriteria);
-                ((EbsGrid) grid).reload();
-                }else {
-                    ((EbsSignalGrid) grid).reload();
-                    navigateTo(ebsCriteria);
-                }
-            });
-        filterLayout.addComponent(ebsFilterForm);
+			updateFilterComponents();
+			((EbsGrid) grid).reload();
+		}
+	}
 
-        return filterLayout;
-    }
+	private Set<String> getSelectedRowUuids() {
+		return viewConfiguration.isInEagerMode() ? (Set<String>) grid.asMultiSelect().getSelectedItems() : Collections.emptySet();
+	}
 
+	public HorizontalLayout createStatusFilterBar() {
 
+		HorizontalLayout srcFilterLayout = new HorizontalLayout();
+		srcFilterLayout.setSpacing(true);
+		srcFilterLayout.setMargin(false);
+		srcFilterLayout.setWidth(100, Unit.PERCENTAGE);
+		srcFilterLayout.addStyleName(CssStyles.VSPACE_3);
+		srcButtons = new HashMap<>();
 
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
-        String params = event.getParameters().trim();
-        if (params.startsWith("?")) {
-            params = params.substring(1);
-        }
-            if (isDefaultViewType()) {
+		if (isDefaultViewType()) {
+			Button srcAll = ButtonHelper.createButton(Captions.all, e -> {
+				ebsCriteria.setSourceInformation(null);
+				ebsCriteria.setTriagingDecision(null);
+				navigateTo(ebsCriteria);
+			}, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER);
+			srcAll.setCaptionAsHtml(true);
 
-                updateFilterComponents();
-                ((EbsSignalGrid) grid).reload();
-            }else {
+			srcFilterLayout.addComponent(srcAll);
 
-                updateFilterComponents();
-                ((EbsGrid) grid).reload();
-            }
-    }
+			srcButtons.put(srcAll, I18nProperties.getCaption(Captions.all));
+			activeStatusButton = srcAll;
 
-    private Set<String> getSelectedRowUuids() {
-        return viewConfiguration.isInEagerMode()
-                ? (Set<String>) grid.asMultiSelect().getSelectedItems()
-                : Collections.emptySet();
-    }
-    public HorizontalLayout createStatusFilterBar() {
+			for (EbsSourceType src : EbsSourceType.values()) {
+				Button srcButton = ButtonHelper.createButton("status-" + src, src.toString(), e -> {
+					ebsCriteria.setSourceInformation(src);
+					navigateTo(ebsCriteria);
+				}, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.BUTTON_FILTER_LIGHT);
+				srcButton.setCaptionAsHtml(true);
+				srcButton.setData(src);
 
-        HorizontalLayout srcFilterLayout = new HorizontalLayout();
-        srcFilterLayout.setSpacing(true);
-        srcFilterLayout.setMargin(false);
-        srcFilterLayout.setWidth(100, Unit.PERCENTAGE);
-        srcFilterLayout.addStyleName(CssStyles.VSPACE_3);
-        srcButtons = new HashMap<>();
+				srcFilterLayout.addComponent(srcButton);
 
-        if (isDefaultViewType()) {
-            Button srcAll = ButtonHelper.createButton(Captions.all, e -> {
-                ebsCriteria.setSourceInformation(null);
-                ebsCriteria.setTriagingDecision(null);
-                navigateTo(ebsCriteria);
-            }, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER);
-            srcAll.setCaptionAsHtml(true);
+				srcButtons.put(srcButton, src.toString());
+			}
+		}
 
-            srcFilterLayout.addComponent(srcAll);
+		return srcFilterLayout;
 
-            srcButtons.put(srcAll, I18nProperties.getCaption(Captions.all));
-            activeStatusButton = srcAll;
-
-            for (EbsSourceType src : EbsSourceType.values()) {
-                Button srcButton = ButtonHelper.createButton("status-" + src, src.toString(), e -> {
-                    ebsCriteria.setSourceInformation(src);
-                    navigateTo(ebsCriteria);
-                }, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.BUTTON_FILTER_LIGHT);
-                srcButton.setCaptionAsHtml(true);
-                srcButton.setData(src);
-
-                srcFilterLayout.addComponent(srcButton);
-
-                srcButtons.put(srcButton, src.toString());
-            }
-        }
-
-        return srcFilterLayout;
-
-    }
+	}
 }

@@ -15,19 +15,30 @@
 
 package de.symeda.sormas.backend.ebs;
 
+import java.util.Date;
 
-import de.symeda.sormas.api.ebs.*;
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+
+import de.symeda.sormas.api.ebs.AnimalCommunityCategoryDetails;
+import de.symeda.sormas.api.ebs.AnimalFacilityCategoryDetails;
+import de.symeda.sormas.api.ebs.AnimalLaboratoryCategoryDetails;
+import de.symeda.sormas.api.ebs.CategoryDetailsLevel;
+import de.symeda.sormas.api.ebs.EbsReferenceDto;
+import de.symeda.sormas.api.ebs.EbsTriagingDecision;
+import de.symeda.sormas.api.ebs.EnvironmentalCategoryDetails;
+import de.symeda.sormas.api.ebs.HumanCommunityCategoryDetails;
+import de.symeda.sormas.api.ebs.HumanFaclityCategoryDetails;
+import de.symeda.sormas.api.ebs.HumanLaboratoryCategoryDetails;
+import de.symeda.sormas.api.ebs.OutComeSupervisor;
+import de.symeda.sormas.api.ebs.POE;
+import de.symeda.sormas.api.ebs.SignalCategory;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.user.User;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.persistence.*;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity(name = "triaging")
 public class Triaging extends AbstractDomainObject {
@@ -63,13 +74,11 @@ public class Triaging extends AbstractDomainObject {
 	public static final String POTENTIAL_RISK = "potentialRisk";
 	public static final String REFERRED = "referred";
 
-
-
-	private YesNoUnknown supervisorReview;
-	private YesNoUnknown referred;
-	private YesNoUnknown specificSignal;
+	private YesNo supervisorReview;
+	private YesNo referred;
+	private YesNo specificSignal;
 	private SignalCategory signalCategory;
-	private YesNoUnknown healthConcern;
+	private YesNo healthConcern;
 	private HumanCommunityCategoryDetails humanCommunityCategoryDetails;
 	private HumanFaclityCategoryDetails humanFacilityCategoryDetails;
 	private HumanLaboratoryCategoryDetails humanLaboratoryCategoryDetails;
@@ -80,10 +89,7 @@ public class Triaging extends AbstractDomainObject {
 	private POE poeCategoryDetails;
 	private CategoryDetailsLevel categoryDetailsLevel;
 
-
-
-
-	private YesNoUnknown occurrencePreviously;
+	private YesNo occurrencePreviously;
 	private EbsTriagingDecision triagingDecision;
 	private String triagingDecisionString;
 	private Date decisionDate;
@@ -91,26 +97,25 @@ public class Triaging extends AbstractDomainObject {
 	private User responsibleUser;
 	private OutComeSupervisor outcomeSupervisor;
 	private boolean notSignal;
-	private YesNoUnknown potentialRisk;
+	private YesNo potentialRisk;
 
 	public EbsReferenceDto toReference() {
 		return new EbsReferenceDto(getUuid());
 	}
 
-
-	public YesNoUnknown getSupervisorReview() {
+	public YesNo getSupervisorReview() {
 		return supervisorReview;
 	}
 
-	public void setSupervisorReview(YesNoUnknown earlyWarning) {
+	public void setSupervisorReview(YesNo earlyWarning) {
 		this.supervisorReview = earlyWarning;
 	}
 
-	public YesNoUnknown getSpecificSignal() {
+	public YesNo getSpecificSignal() {
 		return specificSignal;
 	}
 
-	public void setSpecificSignal(YesNoUnknown specificSignal) {
+	public void setSpecificSignal(YesNo specificSignal) {
 		this.specificSignal = specificSignal;
 	}
 
@@ -123,14 +128,13 @@ public class Triaging extends AbstractDomainObject {
 		this.signalCategory = signalCategory;
 	}
 
-	public YesNoUnknown getHealthConcern() {
+	public YesNo getHealthConcern() {
 		return healthConcern;
 	}
 
-	public void setHealthConcern(YesNoUnknown healthConcern) {
+	public void setHealthConcern(YesNo healthConcern) {
 		this.healthConcern = healthConcern;
 	}
-
 
 	public HumanCommunityCategoryDetails getHumanCommunityCategoryDetails() {
 		return humanCommunityCategoryDetails;
@@ -198,11 +202,11 @@ public class Triaging extends AbstractDomainObject {
 
 	}
 
-	public YesNoUnknown getOccurrencePreviously() {
+	public YesNo getOccurrencePreviously() {
 		return occurrencePreviously;
 	}
 
-	public void setOccurrencePreviously(YesNoUnknown occurrencePreviously) {
+	public void setOccurrencePreviously(YesNo occurrencePreviously) {
 		this.occurrencePreviously = occurrencePreviously;
 	}
 
@@ -247,6 +251,7 @@ public class Triaging extends AbstractDomainObject {
 	public void setTriagingDecisionString(String triagingDecisionString) {
 		this.triagingDecisionString = triagingDecisionString;
 	}
+
 	@Enumerated(EnumType.STRING)
 	public OutComeSupervisor getOutcomeSupervisor() {
 		return outcomeSupervisor;
@@ -256,7 +261,6 @@ public class Triaging extends AbstractDomainObject {
 		this.outcomeSupervisor = outcomeSupervisor;
 	}
 
-
 	public boolean getNotSignal() {
 		return notSignal;
 	}
@@ -264,6 +268,7 @@ public class Triaging extends AbstractDomainObject {
 	public void setNotSignal(boolean notSignal) {
 		this.notSignal = notSignal;
 	}
+
 	@Enumerated(EnumType.STRING)
 	public CategoryDetailsLevel getCategoryDetailsLevel() {
 		return categoryDetailsLevel;
@@ -273,19 +278,19 @@ public class Triaging extends AbstractDomainObject {
 		this.categoryDetailsLevel = categoryDetailsLevel;
 	}
 
-	public YesNoUnknown getPotentialRisk() {
+	public YesNo getPotentialRisk() {
 		return potentialRisk;
 	}
 
-	public void setPotentialRisk(YesNoUnknown potentialRisk) {
+	public void setPotentialRisk(YesNo potentialRisk) {
 		this.potentialRisk = potentialRisk;
 	}
 
-	public YesNoUnknown getReferred() {
+	public YesNo getReferred() {
 		return referred;
 	}
 
-	public void setReferred(YesNoUnknown referred) {
+	public void setReferred(YesNo referred) {
 		this.referred = referred;
 	}
 }

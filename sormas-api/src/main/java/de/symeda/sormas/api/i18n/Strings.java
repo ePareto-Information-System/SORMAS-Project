@@ -805,8 +805,6 @@ public interface Strings {
 	String infoDownloadImportGuide = "infoDownloadImportGuide";
 	String infoDownloadImportTemplate = "infoDownloadImportTemplate";
 	String infoDownloadImportTemplateXlsm = "infoDownloadImportTemplateXlsm";
-
-	
 	String infoEditExportConfiguration = "infoEditExportConfiguration";
 	String infoEpiDataFieldsHint = "infoEpiDataFieldsHint";
 	String infoEpiDataSourceCaseContacts = "infoEpiDataSourceCaseContacts";
