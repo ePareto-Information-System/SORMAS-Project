@@ -3092,22 +3092,25 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				currentVersion = 344;
 				getDao(Ebs.class).executeRaw(
 						"CREATE TABLE ebs (" +
-								"id BIGINT PRIMARY KEY NOT NULL," +
-								"uuid VARCHAR(36) NOT NULL UNIQUE," +
+								"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+								"uuid VARCHAR(256)," +
 								"localChangeDate timestamp not null," +
-								"changedate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-								"creationdate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+								"changeDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+								"creationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
 								"lastOpenedDate timestamp," +
 								"ebstdate TIMESTAMP," +
-								"reportdatetime TIMESTAMP," +
-								"reportinguser_id BIGINT," +
+								"endDate TIMESTAMP," +
+								"pseudonymized boolean," +
+								"triageDate TIMESTAMP," +
+								"reportDateTime TIMESTAMP," +
+								"reportingUser_id BIGINT," +
 								"location_id BIGINT," +
-								"externaltoken VARCHAR(512)," +
-								"internaltoken TEXT," +
+								"externalToken VARCHAR(512)," +
+								"internalToken TEXT," +
 								"deleted BOOLEAN DEFAULT FALSE," +
-								"archiveundonereason VARCHAR(512)," +
+								"archiveUndoneReason VARCHAR(512)," +
 								"change_user_id BIGINT," +
-								"deletionreason VARCHAR(255)," +
+								"deletionReason VARCHAR(255)," +
 								"automaticScanningType VARCHAR(512)," +
 								"manualScanningType VARCHAR(512)," +
 								"scanningType VARCHAR(512)," +
@@ -3131,16 +3134,16 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 								" snapshot SMALLINT DEFAULT 0,"  +
 								"informantName VARCHAR(512)," +
 								"informantTel VARCHAR(20)," +
-								"responsibleuser_id BIGINT," +
-								"otherdeletionreason VARCHAR(255)," +
-								"externalid VARCHAR(512)," +
+								"responsibleUser_id BIGINT," +
+								"otherDeletionReason VARCHAR(255)," +
+								"externalId VARCHAR(512)," +
 								"otherInformant VARCHAR(255)," +
 								"triaging_id BIGINT," +
-								"signalVerification_id BIGINT," +
-								"riskAssessment_id BIGINT," +
+								"signalverification_id BIGINT," +
+								"riskassessment_id BIGINT," +
 								"ebsalert_id BIGINT," +
 								// Define Foreign Key Constraints
-								"FOREIGN KEY (reportinguser_id) REFERENCES users(id)," +
+								"FOREIGN KEY (reportingUser_id) REFERENCES users(id)," +
 								"FOREIGN KEY (location_id) REFERENCES location(id)," +
 								"FOREIGN KEY (change_user_id) REFERENCES users(id)," +
 								"FOREIGN KEY (ebslocation_id) REFERENCES location(id)," +
@@ -3154,9 +3157,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				currentVersion = 345;
 				getDao(Triaging.class).executeRaw(
 							"CREATE TABLE triaging(" +
-									"id bigint primary key not null," +
-									"uuid varchar(36) not null unique," +
+									"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+									"uuid varchar(256)," +
 									"earlyWarning varchar(3)," +
+									"pseudonymized boolean," +
 									"specificSignal varchar(3)," +
 									"signalCategory varchar(255)," +
 									"healthConcern varchar(3)," +
@@ -3164,13 +3168,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									"occurrencePreviously varchar(3)," +
 									"triagingDecision varchar(255)," +
 									"decisionDate date," +
+									"triageDate date," +
 									"referredTo varchar(255)," +
-									"changedate timestamp not null," +
-									"creationdate timestamp not null," +
+									"changeDate timestamp not null," +
+									"creationDate timestamp," +
 									"lastOpenedDate timestamp," +
 									"localChangeDate timestamp not null," +
 									"change_user_id bigint," +
-									"responsibleuser_id bigint," +
+									"responsibleUser_id bigint," +
 									" modified SMALLINT DEFAULT 0," +
 									" snapshot SMALLINT DEFAULT 0,"  +
 									"triagingDecisionString varchar(255)," +
@@ -3178,16 +3183,18 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									"outcomeSupervisor varchar(255)," +
 									"notSignal boolean default false," +
 									"humanLaboratoryCategoryDetails varchar(255)," +
+									"humanCommunityCategoryDetails varchar(255)," +
+									"humanFacilityCategoryDetails varchar(255)," +
 									"animalCommunityCategoryDetails varchar(255)," +
 									"animalFacilityCategoryDetails varchar(255)," +
 									"environmentalCategoryDetails varchar(255)," +
 									"poeCategoryDetails varchar(255)," +
 									"animalLaboratoryCategoryDetails varchar(255)," +
-									"humanCommunityCategoryDetails varchar(255)," +
 									"categoryDetailsLevel varchar(255)," +
-									"supervisorreview varchar(3)," +
+									"supervisorReview varchar(3)," +
+									"potentialRisk varchar(3)," +
 									"referred varchar(3)," +
-									"ebs_id INTEGER NOT NULL," +
+									"ebs_id INTEGER," +
 									"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" +
 									");"
 					);
@@ -3196,9 +3203,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(RiskAssessment.class).executeRaw(
 						"CREATE TABLE riskAssessment(" +
 								"id INTEGER PRIMARY KEY AUTOINCREMENT," +
-								"uuid VARCHAR(36) NOT NULL UNIQUE," +
-								"changedate timestamp not null," +
-								"creationdate timestamp not null," +
+								"uuid VARCHAR(256)," +
+								"changeDate timestamp not null," +
+								"creationDate timestamp not null," +
+								"pseudonymized boolean," +
 								"lastOpenedDate timestamp," +
 								"localChangeDate timestamp not null," +
 								"morbidityMortality VARCHAR(3)," +
@@ -3222,9 +3230,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(EbsAlert.class).executeRaw(
 							"CREATE TABLE ebsAlert(" +
 									"id INTEGER PRIMARY KEY AUTOINCREMENT," +
-									"uuid VARCHAR(36) NOT NULL UNIQUE," +
-									"changedate timestamp not null," +
-									"creationdate timestamp not null," +
+									"uuid VARCHAR(256)," +
+									"changeDate timestamp not null," +
+									"creationDate timestamp not null," +
+									"pseudonymized boolean," +
 									"lastOpenedDate timestamp," +
 									"localChangeDate timestamp not null," +
 									"actionInitiated varchar(3)," +
@@ -3246,14 +3255,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(SignalVerification.class).executeRaw(
 							"CREATE TABLE signalverification (" +
 									"id INTEGER PRIMARY KEY AUTOINCREMENT," +
-									"uuid VARCHAR(36) NOT NULL UNIQUE," +
+									"uuid VARCHAR(256)," +
 									"verificationSent TEXT," +
 									"verified TEXT," +
 									"pseudonymized boolean," +
 									"verificationCompleteDate TIMESTAMP," +
 									"lastOpenedDate timestamp," +
 									"localChangeDate timestamp not null," +
-									"dateOfOccurrence TEXT NOT NULL," +
+									"dateOfOccurrence timestamp," +
 									"numberOfPersonAnimal TEXT," +
 									"numberOfDeath TEXT," +
 									" modified SMALLINT DEFAULT 0," +
@@ -3262,9 +3271,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									"numberOfDeathPerson TEXT," +
 									"description TEXT," +
 									"whyNotVerify TEXT," +
-									"creationdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+									"creationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
 									"changeDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
-									"ebs_id INTEGER NOT NULL," +
+									"ebs_id INTEGER," +
 									"FOREIGN KEY (ebs_id) REFERENCES ebs(id)" +
 									");"
 					);
