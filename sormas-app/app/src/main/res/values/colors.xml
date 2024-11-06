@@ -324,6 +324,14 @@
     <color name="highPriority">#ffe10002</color>
 
 
+    !-- Risk Assessment -->
+    <color name="veryHighRisk">#FE0101</color>
+    <color name="highRisk">#FEC100</color>
+    <color name="moderateRisk">#FFFF00</color>
+    <color name="lowRisk">#93D150</color>
+
+
+
 
     <!-- Task Priority -->
     <color name="legendEntrySpacer">#ffa7c3e4</color>

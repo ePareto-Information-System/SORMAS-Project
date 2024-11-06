@@ -267,6 +267,89 @@
             android:theme="@style/ActivityWithOverflowMenuTheme" >
         </activity>
         <activity
+            android:name=".ebs.list.EbsListActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityWithOverflowMenuTheme" >
+        </activity>
+        <activity
+            android:name=".ebs.edit.EbsEditActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ebs.list.EbsListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityWithOverflowMenuTheme" >
+        </activity>
+        <activity
+            android:name=".ebs.edit.EbsNewActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ebs.list.EbsListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityWithOverflowMenuTheme" >
+        </activity>
+        <activity
+            android:name=".triaging.edit.TriagingEditActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ebs.edit.EbsEditActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityWithOverflowMenuTheme" >
+        </activity>
+        <activity
+            android:name=".triaging.edit.TriagingNewActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ebs.edit.EbsNewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityWithOverflowMenuTheme" >
+        </activity>
+        <activity
+            android:name=".signalVerification.edit.SignalVerificationEditActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".triaging.edit.TriagingEditActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityWithOverflowMenuTheme" >
+        </activity>
+        <activity
+            android:name=".riskAssessment.list.RiskAssessmentListActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".signalVerification.edit.SignalVerificationEditActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityWithOverflowMenuTheme" >
+        </activity>
+        <activity
+            android:name=".riskAssessment.edit.RiskAssessmentNewActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".riskAssessment.list.RiskAssessmentListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityWithOverflowMenuTheme" >
+        </activity>
+        <activity
+            android:name=".riskAssessment.edit.RiskAssessmentEditActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".riskAssessment.list.RiskAssessmentListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityWithOverflowMenuTheme" >
+        </activity>
+        <activity
+            android:name=".ebsAlert.list.EbsAlertListActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".riskAssessment.edit.RiskAssessmentEditActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityWithOverflowMenuTheme" >
+        </activity>
+        <activity
+            android:name=".ebsAlert.edit.EbsAlertNewActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ebsAlert.list.EbsAlertListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityWithOverflowMenuTheme" >
+        </activity>
+        <activity
+            android:name=".ebsAlert.edit.EbsAlertEditActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ebsAlert.list.EbsAlertListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ActivityWithOverflowMenuTheme" >
+        </activity>
+        <activity
             android:name=".campaign.list.CampaignFormDataListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"

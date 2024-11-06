@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ SORMAS® - Surveillance Outbreak Response Management & Analysis System
+  ~ Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ebs_list_filters">
+
+    <data>
+        <import type="de.symeda.sormas.api.i18n.I18nProperties" />
+        <import type="de.symeda.sormas.api.i18n.Strings" />
+        <import type="de.symeda.sormas.api.ebs.EbsDto" />
+        <import type="de.symeda.sormas.api.ebs.TriagingDto" />
+        <import type="de.symeda.sormas.api.location.LocationDto" />
+        <import type="de.symeda.sormas.app.component.controls.ControlButtonType"/>
+        <import type="de.symeda.sormas.api.i18n.Captions" />
+
+        <variable name="criteria" type="de.symeda.sormas.app.backend.ebs.EbsCriteria"/>
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
+
+            <de.symeda.sormas.app.component.controls.FilterSpinnerField
+                android:id="@+id/ebs_sourceInformation_filter"
+                app:hint="@string/hint_source_information"
+                app:showCaption="false"
+                app:value="@={criteria.sourceInformation}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.FilterSpinnerField
+                android:id="@+id/ebs_region_filter"
+                app:hint="@{I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.REGION)}"
+                app:showCaption="false"
+                app:value="@={criteria.region}"
+                style="@style/ControlSingleColumnStyle" />
+            <de.symeda.sormas.app.component.controls.FilterSpinnerField
+                android:id="@+id/ebs_district_filter"
+                app:hint="@{I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.DISTRICT)}"
+                app:showCaption="false"
+                app:value="@={criteria.district}"
+                style="@style/ControlSingleColumnStyle" />
+            <de.symeda.sormas.app.component.controls.FilterSpinnerField
+                android:id="@+id/ebs_community_filter"
+                app:hint="@{I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.COMMUNITY)}"
+                app:showCaption="false"
+                app:value="@={criteria.community}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.FilterDateField
+                android:id="@+id/ebs_reportDateTime_filter"
+                app:hint="@{I18nProperties.getCaption(Captions.Ebs_reportDateTime)}"
+                app:showCaption="false"
+                app:value="@={criteria.reportDateTime}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.FilterSpinnerField
+                android:id="@+id/triaging_triagingDecision_filter"
+                app:hint="@{I18nProperties.getPrefixCaption(TriagingDto.I18N_PREFIX, TriagingDto.TRIAGING_DECISION)}"
+                app:showCaption="false"
+                app:value="@={criteria.triagingDecision}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.FilterSpinnerField
+                android:id="@+id/triaging_signalCategory_filter"
+                app:hint="@{I18nProperties.getPrefixCaption(TriagingDto.I18N_PREFIX, TriagingDto.SIGNAL_CATEGORY)}"
+                app:showCaption="false"
+                app:value="@={criteria.signalCategory}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.FilterDateField
+                android:id="@+id/triaging_decisionDate_filter"
+                app:hint="@{I18nProperties.getCaption(Captions.Triaging_decisionDate)}"
+                app:showCaption="false"
+                app:value="@={criteria.triageDate}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlButton
+                    android:id="@+id/apply_filters"
+                    android:text="@string/action_apply_filters"
+                    app:buttonType="@{ControlButtonType.FILTER_PRIMARY}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlButton
+                    android:id="@+id/reset_filters"
+                    android:text="@string/action_reset_filters"
+                    app:buttonType="@{ControlButtonType.FILTER_SECONDARY}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</layout>

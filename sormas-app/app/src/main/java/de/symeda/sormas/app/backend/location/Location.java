@@ -56,6 +56,8 @@ public class Location extends PseudonymizableAdo {
 	public static final String TABLE_NAME = "location";
 	public static final String I18N_PREFIX = "Location";
 	public static final String COMMUNITY = "community";
+	public static final String REGION = "region";
+	public static final String DISTRICT = "district";
 	public static final String PERSON = "person";
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)

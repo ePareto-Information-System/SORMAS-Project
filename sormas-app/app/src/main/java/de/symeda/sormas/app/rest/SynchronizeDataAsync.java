@@ -35,6 +35,9 @@ import de.symeda.sormas.api.campaign.form.CampaignFormMetaDto;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.clinicalcourse.ClinicalVisitDto;
 import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.ebs.EbsAlertDto;
+import de.symeda.sormas.api.ebs.EbsDto;
+import de.symeda.sormas.api.ebs.RiskAssessmentDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.feature.FeatureType;
@@ -67,6 +70,10 @@ import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.contact.ContactDtoHelper;
 import de.symeda.sormas.app.backend.customizableenum.CustomizableEnumValueDtoHelper;
 import de.symeda.sormas.app.backend.disease.DiseaseConfigurationDtoHelper;
+import de.symeda.sormas.app.backend.ebs.EbsDtoHelper;
+import de.symeda.sormas.app.backend.ebs.ebsAlert.EbsAlertDtoHelper;
+import de.symeda.sormas.app.backend.ebs.riskAssessment.RiskAssessmentDtoHelper;
+import de.symeda.sormas.app.backend.event.Event;
 import de.symeda.sormas.app.backend.event.EventDtoHelper;
 import de.symeda.sormas.app.backend.event.EventParticipantDtoHelper;
 import de.symeda.sormas.app.backend.facility.FacilityDtoHelper;
@@ -132,50 +139,50 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 			Trace syncModeTrace;
 
 			switch (syncMode) {
-			case Changes:
-				syncModeTrace = FirebasePerformance.getInstance().newTrace("syncModeChangesTrace");
-				syncModeTrace.start();
+				case Changes:
+					syncModeTrace = FirebasePerformance.getInstance().newTrace("syncModeChangesTrace");
+					syncModeTrace.start();
 
-				// Prioritize pushing new data
-				pushNewData();
-				// Infrastructure always has to be pulled - otherwise referenced data may be lost (e.g. #586)
-				pullInfrastructure();
-				// Pull and remove obsolete entities when the last time this has been done is more than 24 hours ago
-				if (ConfigProvider.getLastObsoleteUuidsSyncDate() == null
-					|| DateHelper.getFullDaysBetween(ConfigProvider.getLastObsoleteUuidsSyncDate(), new Date()) >= 1) {
-					pullAndRemoveObsoleteUuidsSince(ConfigProvider.getLastObsoleteUuidsSyncDate());
-				}
-				// Pull changed data and push existing data that has been changed on the mobile device
-				synchronizeChangedData();
+					// Prioritize pushing new data
+					pushNewData();
+					// Infrastructure always has to be pulled - otherwise referenced data may be lost (e.g. #586)
+					pullInfrastructure();
+					// Pull and remove obsolete entities when the last time this has been done is more than 24 hours ago
+					if (ConfigProvider.getLastObsoleteUuidsSyncDate() == null
+							|| DateHelper.getFullDaysBetween(ConfigProvider.getLastObsoleteUuidsSyncDate(), new Date()) >= 1) {
+						pullAndRemoveObsoleteUuidsSince(ConfigProvider.getLastObsoleteUuidsSyncDate());
+					}
+					// Pull changed data and push existing data that has been changed on the mobile device
+					synchronizeChangedData();
 
-				syncModeTrace.stop();
-				break;
-			case Complete:
-				syncModeTrace = FirebasePerformance.getInstance().newTrace("syncModeCompleteTrace");
-				syncModeTrace.start();
+					syncModeTrace.stop();
+					break;
+				case Complete:
+					syncModeTrace = FirebasePerformance.getInstance().newTrace("syncModeCompleteTrace");
+					syncModeTrace.start();
 
-				pullInfrastructure(); // do before missing, because we may have a completely empty database
-				pullMissingAndDeleteInvalidInfrastructure();
-				pushNewPullMissingAndDeleteInvalidData();
-				synchronizeChangedData();
+					pullInfrastructure(); // do before missing, because we may have a completely empty database
+					pullMissingAndDeleteInvalidInfrastructure();
+					pushNewPullMissingAndDeleteInvalidData();
+					synchronizeChangedData();
 
-				syncModeTrace.stop();
-				break;
-			case CompleteAndRepull:
-				syncModeTrace = FirebasePerformance.getInstance().newTrace("syncModeCompleteAndRepullTrace");
-				syncModeTrace.start();
+					syncModeTrace.stop();
+					break;
+				case CompleteAndRepull:
+					syncModeTrace = FirebasePerformance.getInstance().newTrace("syncModeCompleteAndRepullTrace");
+					syncModeTrace.start();
 
-				pullInfrastructure(); // do before missing, because we may have a completely empty database
-				pullMissingAndDeleteInvalidInfrastructure();
-				repullData();
-				pushNewPullMissingAndDeleteInvalidData();
-				synchronizeChangedData();
-				ConfigProvider.setRepullNeeded(false);
+					pullInfrastructure(); // do before missing, because we may have a completely empty database
+					pullMissingAndDeleteInvalidInfrastructure();
+					repullData();
+					pushNewPullMissingAndDeleteInvalidData();
+					synchronizeChangedData();
+					ConfigProvider.setRepullNeeded(false);
 
-				syncModeTrace.stop();
-				break;
-			default:
-				throw new IllegalArgumentException(syncMode.toString());
+					syncModeTrace.stop();
+					break;
+				default:
+					throw new IllegalArgumentException(syncMode.toString());
 			}
 
 			if (syncMode == SyncMode.Changes && hasAnyUnsynchronizedData()) {
@@ -204,16 +211,16 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 
 			SyncMode newSyncMode = null;
 			switch (syncMode) {
-			case Changes:
-				newSyncMode = SyncMode.Complete;
-				break;
-			case Complete:
-				newSyncMode = SyncMode.CompleteAndRepull;
-				break;
-			case CompleteAndRepull:
-				break;
-			default:
-				throw new IllegalArgumentException(syncMode.toString());
+				case Changes:
+					newSyncMode = SyncMode.Complete;
+					break;
+				case Complete:
+					newSyncMode = SyncMode.CompleteAndRepull;
+					break;
+				case CompleteAndRepull:
+					break;
+				default:
+					throw new IllegalArgumentException(syncMode.toString());
 			}
 
 			if (newSyncMode != null) {
@@ -242,27 +249,27 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 
 	public static boolean hasAnyUnsynchronizedData() {
 		final boolean hasUnsynchronizedCampaignData = !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CAMPAIGNS)
-			&& (DatabaseHelper.getCampaignDao().isAnyModified()
+				&& (DatabaseHelper.getCampaignDao().isAnyModified()
 				|| DatabaseHelper.getCampaignFormMetaDao().isAnyModified()
 				|| DatabaseHelper.getCampaignFormDataDao().isAnyModified());
 
 		return DatabaseHelper.getCaseDao().isAnyModified()
-			|| DatabaseHelper.getImmunizationDao().isAnyModified()
-			|| DatabaseHelper.getContactDao().isAnyModified()
-			|| DatabaseHelper.getPersonDao().isAnyModified()
-			|| DatabaseHelper.getEventDao().isAnyModified()
-			|| DatabaseHelper.getEventParticipantDao().isAnyModified()
-			|| DatabaseHelper.getSampleDao().isAnyModified()
-			|| DatabaseHelper.getSampleTestDao().isAnyModified()
-			|| DatabaseHelper.getAdditionalTestDao().isAnyModified()
-			|| DatabaseHelper.getTaskDao().isAnyModified()
-			|| DatabaseHelper.getVisitDao().isAnyModified()
-			|| DatabaseHelper.getWeeklyReportDao().isAnyModified()
-			|| DatabaseHelper.getAggregateReportDao().isAnyModified()
-			|| DatabaseHelper.getPrescriptionDao().isAnyModified()
-			|| DatabaseHelper.getTreatmentDao().isAnyModified()
-			|| DatabaseHelper.getClinicalVisitDao().isAnyModified()
-			|| hasUnsynchronizedCampaignData;
+				|| DatabaseHelper.getImmunizationDao().isAnyModified()
+				|| DatabaseHelper.getContactDao().isAnyModified()
+				|| DatabaseHelper.getPersonDao().isAnyModified()
+				|| DatabaseHelper.getEventDao().isAnyModified()
+				|| DatabaseHelper.getEventParticipantDao().isAnyModified()
+				|| DatabaseHelper.getSampleDao().isAnyModified()
+				|| DatabaseHelper.getSampleTestDao().isAnyModified()
+				|| DatabaseHelper.getAdditionalTestDao().isAnyModified()
+				|| DatabaseHelper.getTaskDao().isAnyModified()
+				|| DatabaseHelper.getVisitDao().isAnyModified()
+				|| DatabaseHelper.getWeeklyReportDao().isAnyModified()
+				|| DatabaseHelper.getAggregateReportDao().isAnyModified()
+				|| DatabaseHelper.getPrescriptionDao().isAnyModified()
+				|| DatabaseHelper.getTreatmentDao().isAnyModified()
+				|| DatabaseHelper.getClinicalVisitDao().isAnyModified()
+				|| hasUnsynchronizedCampaignData;
 	}
 
 	@AddTrace(name = "pushNewDataTrace")
@@ -273,6 +280,9 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		new ImmunizationDtoHelper().pushEntities(true);
 		new EventDtoHelper().pushEntities(true);
 		new EventParticipantDtoHelper().pushEntities(true);
+		new EbsDtoHelper().pushEntities(true);
+		new RiskAssessmentDtoHelper().pushEntities(true);
+		new EbsAlertDtoHelper().pushEntities(true);
 		new SampleDtoHelper().pushEntities(true);
 		new PathogenTestDtoHelper().pushEntities(true);
 		new AdditionalTestDtoHelper().pushEntities(true);
@@ -292,6 +302,9 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		CaseDtoHelper caseDtoHelper = new CaseDtoHelper();
 		ImmunizationDtoHelper immunizationDtoHelper = new ImmunizationDtoHelper();
 		EventDtoHelper eventDtoHelper = new EventDtoHelper();
+		EbsDtoHelper ebsDtoHelper = new EbsDtoHelper();
+		RiskAssessmentDtoHelper riskAssessmentDtoHelper = new RiskAssessmentDtoHelper();
+		EbsAlertDtoHelper ebsAlertDtoHelper = new EbsAlertDtoHelper();
 		EventParticipantDtoHelper eventParticipantDtoHelper = new EventParticipantDtoHelper();
 		SampleDtoHelper sampleDtoHelper = new SampleDtoHelper();
 		PathogenTestDtoHelper pathogenTestDtoHelper = new PathogenTestDtoHelper();
@@ -316,6 +329,9 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		boolean immunizationsNeedPull = immunizationDtoHelper.pullAndPushEntities(context);
 		boolean eventsNeedPull = eventDtoHelper.pullAndPushEntities(context);
 		boolean eventParticipantsNeedPull = eventParticipantDtoHelper.pullAndPushEntities(context);
+		boolean ebsNeedPull = ebsDtoHelper.pullAndPushEntities(context);
+		boolean riskNeedPull = riskAssessmentDtoHelper.pullAndPushEntities(context);
+		boolean ebsAlertNeedPull = ebsAlertDtoHelper.pullAndPushEntities(context);
 		boolean samplesNeedPull = sampleDtoHelper.pullAndPushEntities(context);
 		boolean sampleTestsNeedPull = pathogenTestDtoHelper.pullAndPushEntities(context);
 		boolean additionalTestsNeedPull = additionalTestDtoHelper.pullAndPushEntities(context);
@@ -362,6 +378,12 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 			treatmentDtoHelper.pullEntities(true, context);
 		if (clinicalVisitsNeedPull)
 			clinicalVisitDtoHelper.pullEntities(true, context);
+		if (ebsNeedPull)
+			ebsDtoHelper.pullEntities(true, context);
+		if (riskNeedPull)
+			riskAssessmentDtoHelper.pullEntities(true, context);
+		if (ebsAlertNeedPull)
+			ebsAlertDtoHelper.pullEntities(true, context);
 
 		// Campaigns
 		if (!DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CAMPAIGNS)) {
@@ -387,6 +409,9 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		CaseDtoHelper caseDtoHelper = new CaseDtoHelper();
 		ImmunizationDtoHelper immunizationDtoHelper = new ImmunizationDtoHelper();
 		EventDtoHelper eventDtoHelper = new EventDtoHelper();
+		EbsDtoHelper ebsDtoHelper = new EbsDtoHelper();
+		RiskAssessmentDtoHelper riskAssessmentDtoHelper = new RiskAssessmentDtoHelper();
+		EbsAlertDtoHelper ebsAlertDtoHelper = new EbsAlertDtoHelper();
 		EventParticipantDtoHelper eventParticipantDtoHelper = new EventParticipantDtoHelper();
 		SampleDtoHelper sampleDtoHelper = new SampleDtoHelper();
 		PathogenTestDtoHelper pathogenTestDtoHelper = new PathogenTestDtoHelper();
@@ -425,7 +450,9 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		prescriptionDtoHelper.repullEntities(context);
 		treatmentDtoHelper.repullEntities(context);
 		clinicalVisitDtoHelper.repullEntities(context);
-
+        ebsDtoHelper.repullEntities(context);
+        riskAssessmentDtoHelper.repullEntities(context);
+        ebsAlertDtoHelper.repullEntities(context);
 		// Campaigns
 		if (!DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CAMPAIGNS)) {
 			// meta first
@@ -654,6 +681,13 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		viewAllowed = DtoUserRightsHelper.isViewAllowed(ClinicalVisitDto.class);
 		List<String> clinicalVisitUuids = viewAllowed ? executeUuidCall(RetroProvider.getClinicalVisitFacade().pullUuids()) : new ArrayList<>();
 		DatabaseHelper.getClinicalVisitDao().deleteInvalid(clinicalVisitUuids);
+		DatabaseHelper.getEventDao().deleteInvalid(eventUuids);
+		// ebs
+		viewAllowed = DtoUserRightsHelper.isViewAllowed(EbsDto.class);
+		List<String> ebsUuids = viewAllowed ? executeUuidCall(RetroProvider.getEbsFacade().pullUuids()) : new ArrayList<>();
+		DatabaseHelper.getEventDao().deleteInvalid(ebsUuids);
+		List<String> riskUuids = viewAllowed ? executeUuidCall(RetroProvider.getRiskAssessmentFacade().pullUuids()) : new ArrayList<>();
+		List<String> ebsAlertUuids = viewAllowed ? executeUuidCall(RetroProvider.getEbsAlertFacade().pullUuids()) : new ArrayList<>();
 		// immunizations
 		viewAllowed = DtoUserRightsHelper.isViewAllowed(ImmunizationDto.class);
 		List<String> immunizationUuids = viewAllowed ? executeUuidCall(RetroProvider.getImmunizationFacade().pullUuids()) : new ArrayList<>();
@@ -691,7 +725,10 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		new PrescriptionDtoHelper().pullMissing(prescriptionUuids);
 		new TreatmentDtoHelper().pullMissing(treatmentUuids);
 		new ClinicalVisitDtoHelper().pullMissing(clinicalVisitUuids);
-
+        new EbsDtoHelper().pullMissing(ebsUuids);
+        new EbsDtoHelper().pullMissing(ebsUuids);
+        new RiskAssessmentDtoHelper().pullMissing(riskUuids);
+        new EbsAlertDtoHelper().pullMissing(ebsAlertUuids);
 		// CampaignData
 		if (!DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CAMPAIGNS)) {
 			// meta first
