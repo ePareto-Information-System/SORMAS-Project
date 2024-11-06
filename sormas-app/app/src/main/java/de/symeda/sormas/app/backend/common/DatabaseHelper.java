@@ -3117,7 +3117,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 								"descriptionOccurrence VARCHAR(512)," +
 								"sourceName VARCHAR(512)," +
 								"sourceUrl VARCHAR(512)," +
-								"dateOnset TIMESTAMP," +
+								"dateOnset TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
 								"personRegistering VARCHAR(512)," +
 								"personDesignation VARCHAR(512)," +
 								"personPhone VARCHAR(512)," +
