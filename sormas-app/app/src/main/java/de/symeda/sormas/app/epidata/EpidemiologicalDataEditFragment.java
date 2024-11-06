@@ -37,12 +37,15 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.epidata.ContactSetting;
+import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.epidata.PlaceManaged;
 import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.riskfactor.DrinkingWaterSource;
+import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
@@ -87,6 +90,8 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	private List<Item> listDrinkingWaterSources;
 
 
+
+	private List<Item> outcomeList;
 
 	// Static methods
 
@@ -392,11 +397,12 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	protected void prepareFragmentData() {
 		record = getEpiDataOfCaseOrContact(getActivityRootData());
 		caseDisease = getDiseaseOfCaseOrContact(getActivityRootData());
-
 		initialRegionsList = InfrastructureDaoHelper.loadRegionsByServerCountry();
 		initialDistrictsList = InfrastructureDaoHelper.loadDistricts(record.getHistoryOfTravelRegion());
 		initialCommunitiesList = InfrastructureDaoHelper.loadCommunities(record.getHistoryOfTravelDistrict());
 		listDrinkingWaterSources = DataUtils.getEnumItems(DrinkingWaterSource.class, true);
+		disease = getDisease(getActivityRootData());
+		outcomeList = DataUtils.getEnumItems(CaseOutcome.class, true);
 	}
 
 	@Override
@@ -489,6 +495,14 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		setFieldVisibilitiesAndAccesses(EpiDataDto.class, contentBinding.mainContent);
 		contentBinding.epiDataExposureDetailsKnown.setEnabled(getExposureList().isEmpty());
 		contentBinding.epiDataActivityAsCaseDetailsKnown.setEnabled(getActivityAsCaseList().isEmpty());
+		contentBinding.epiDataIfYesWildAnimalDate.initializeDateField(getFragmentManager());
+		contentBinding.epiDataHospitalizedDate1.initializeDateField(getFragmentManager());
+		contentBinding.epiDataHospitalizedDate2.initializeDateField(getFragmentManager());
+		contentBinding.epiDataDateOfContact.initializeDateField(getFragmentManager());
+		contentBinding.epiDataIfYesStartDate.initializeDateField(getFragmentManager());
+		contentBinding.epiDataIfYesEndDate.initializeDateField(getFragmentManager());
+		contentBinding.epiDataDateOfLastContactWithSuspectCase.initializeDateField(getFragmentManager());
+		contentBinding.epiDataDateOfDeath.initializeDateField(getFragmentManager());
 
 		if (!(getActivityRootData() instanceof Case)) {
 			contentBinding.epiDataContactWithSourceCaseKnown.setVisibility(GONE);
@@ -506,6 +520,10 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 			if(caseDisease != null){
 				super.hideFieldsForDisease(caseDisease, contentBinding.mainContent, FormType.EPIDEMIOLOGICAL_EDIT);
 			}
+		}
+
+		if (disease == Disease.AHF){
+			handleAHF();
 		}
 	}
 
@@ -538,5 +556,19 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		} else if (getActivityRootData() instanceof Case && !getActivityAsCaseList().isEmpty()) {
 			getContentBinding().btnAddActivityascase.setVisibility(View.VISIBLE);
 		}
+	}
+
+	private void handleAHF(){
+		List<Item<CaseOutcome>> itemsToRemove = List.of(
+				new Item<>(CaseOutcome.OTHER.toString(), CaseOutcome.OTHER),
+				new Item<>(CaseOutcome.UNKNOWN.toString(), CaseOutcome.UNKNOWN),
+				new Item<>(CaseOutcome.REFERRED.toString(), CaseOutcome.REFERRED),
+				new Item<>(CaseOutcome.REFERRED.toString(), CaseOutcome.REFERRED),
+				new Item<>(CaseOutcome.NO_OUTCOME.toString(), CaseOutcome.NO_OUTCOME),
+				new Item<>(CaseOutcome.ON_TREATMENT.toString(), CaseOutcome.ON_TREATMENT)
+		);
+
+		getContentBinding().epiDataDuringContactSuspectCase.initializeSpinner(outcomeList);
+		outcomeList.removeAll(itemsToRemove);
 	}
 }

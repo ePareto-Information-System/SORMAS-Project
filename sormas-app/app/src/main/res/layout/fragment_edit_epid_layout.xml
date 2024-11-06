@@ -26,6 +26,7 @@
 
     <data>
         <import type="de.symeda.sormas.api.utils.YesNo" />
+        <import type="de.symeda.sormas.api.caze.CaseOutcome" />
         <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
         <import type="de.symeda.sormas.api.i18n.I18nProperties" />
         <import type="de.symeda.sormas.api.i18n.Strings" />
@@ -35,6 +36,7 @@
         <import type="de.symeda.sormas.api.epidata.ContactSetting" />
         <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
 
+        <import type="android.view.View" />
         <variable name="data" type="de.symeda.sormas.app.backend.epidata.EpiData" />
 
         <variable name="exposureList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.exposure.Exposure&gt;" />
@@ -66,14 +68,24 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!--<LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/main_content"
+            style="@style/LayoutMultipleContentSpaceBelowStyle">-->
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:id="@+id/main_content"
-            style="@style/LayoutMultipleContentSpaceBelowStyle">
+            android:padding="@dimen/fragment_padding"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:id="@+id/main_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -288,6 +300,306 @@
                     app:value="@={data.contactSickAnimals}"
                     app:enumClass="@{YesNoClass}"
                     style="@style/ControlSingleColumnStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/epiData_contactDeadAnimals"
+                    app:value="@={data.contactDeadAnimals}"
+                    app:enumClass="@{YesNoClass}"
+                    style="@style/ControlSingleColumnStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/epiData_ifYesSpecifyDead"
+                    app:value="@={data.ifYesSpecifyDead}"
+                    app:dependencyParentField="@{epiDataContactDeadAnimals}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSingleColumnStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/epiData_ifYesWildAnimalLocation"
+                    app:value="@={data.ifYesWildAnimalLocation}"
+                    app:dependencyParentField="@{epiDataContactDeadAnimals}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSingleColumnStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/epiData_ifYesWildAnimalDate"
+                    style="@style/ControlSingleColumnStyle"
+                    app:dependencyParentField="@{epiDataContactDeadAnimals}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    app:value="@={data.ifYesWildAnimalDate}" />
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/epiData_patientTravelDuringIllness"
+                    app:value="@={data.patientTravelDuringIllness}"
+                    app:enumClass="@{YesNoClass}"
+                    style="@style/ControlSingleColumnStyle"/>
+
+                <TextView
+                    android:id="@+id/epiData_indicatePlacesheading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:htmlValue="@{I18nProperties.getString(Strings.indicatePlace)}"
+                    style="@style/SubHeadingDescriptionStyle" />
+<!--                    android:visibility="@{data.patientTravelDuringIllness == YesNo.YES ? View.VISIBLE : View.GONE}" />-->
+
+                <LinearLayout
+                    android:id="@+id/epiData_comm_health_country_heading1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/epiData_comm1"
+                        app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.comm1}" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/epiData_healthCenter1"
+                        app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.healthCenter1}" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/epiData_country1"
+                        app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.country1}" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/comm_health_country_fields2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/epiData_comm2"
+                        app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.comm2}" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/epiData_healthCenter2"
+                        app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.healthCenter2}" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/epiData_country2"
+                        app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.country2}" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/epiData_expositionRisksheading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:htmlValue="@{I18nProperties.getString(Strings.headingExpositionRisks)}"
+                    style="@style/SubHeadingDescriptionStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/epiData_wasPatientHospitalized"
+                    app:value="@={data.wasPatientHospitalized}"
+                    app:enumClass="@{YesNoClass}"
+                    style="@style/ControlSingleColumnStyle"/>
+
+                <LinearLayout
+                    android:id="@+id/wasPatientHospitalized_heading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/epiData_ifYesWhere"
+                        app:dependencyParentField="@{epiDataWasPatientHospitalized}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.ifYesWhere}" />
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/epiData_hospitalizedDate1"
+                        app:dependencyParentField="@{epiDataWasPatientHospitalized}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.hospitalizedDate1}" />
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/epiData_hospitalizedDate2"
+                        app:dependencyParentField="@{epiDataWasPatientHospitalized}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.hospitalizedDate2}" />
+
+                </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/epiData_didPatientConsultHealer"
+                    app:value="@={data.didPatientConsultHealer}"
+                    app:enumClass="@{YesNoClass}"
+                    style="@style/ControlSingleColumnStyle"/>
+
+                <LinearLayout
+                    android:id="@+id/didPatientConsultHealer_heading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/epiData_ifYesNameHealer"
+                        app:dependencyParentField="@{epiDataDidPatientConsultHealer}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.ifYesNameHealer}" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/epiData_community"
+                        app:dependencyParentField="@{epiDataDidPatientConsultHealer}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.community}" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/epiData_country"
+                        app:dependencyParentField="@{epiDataDidPatientConsultHealer}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.country}" />
+
+                </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/epiData_whenWhereContactTakePlace"
+                    app:dependencyParentField="@{epiDataDidPatientConsultHealer}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSingleColumnStyle"
+                    app:value="@={data.whenWhereContactTakePlace}" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/epiData_dateOfContact"
+                    app:dependencyParentField="@{epiDataDidPatientConsultHealer}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSingleColumnStyle"
+                    app:value="@={data.dateOfContact}" />
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/epiData_patientReceiveTraditionalMedicine"
+                    app:value="@={data.patientReceiveTraditionalMedicine}"
+                    app:enumClass="@{YesNoClass}"
+                    style="@style/ControlSingleColumnStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/epiData_ifYesExplain"
+                    app:dependencyParentField="@{epiDataPatientReceiveTraditionalMedicine}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSingleColumnStyle"
+                    app:value="@={data.ifYesExplain}" />
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/epiData_patientAttendFuneralCeremonies"
+                    app:value="@={data.patientAttendFuneralCeremonies}"
+                    app:enumClass="@{YesNoClass}"
+                    style="@style/ControlSingleColumnStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/epiData_patientTravelAnytimePeriodBeforeIll"
+                    app:value="@={data.patientTravelAnytimePeriodBeforeIll}"
+                    app:enumClass="@{YesNoClass}"
+                    style="@style/ControlSingleColumnStyle"/>
+
+                <LinearLayout
+                    android:id="@+id/patientTravelAnytimePeriodBeforeIll_heading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/epiData_ifTravelYesWhere"
+                        app:dependencyParentField="@{epiDataPatientTravelAnytimePeriodBeforeIll}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.ifTravelYesWhere}" />
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/epiData_ifYesStartDate"
+                        app:dependencyParentField="@{epiDataPatientTravelAnytimePeriodBeforeIll}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.ifYesStartDate}" />
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/epiData_ifYesEndDate"
+                        app:dependencyParentField="@{epiDataPatientTravelAnytimePeriodBeforeIll}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.ifYesEndDate}" />
+
+                </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/epiData_patientContactKnownSuspect"
+                    app:value="@={data.patientContactKnownSuspect}"
+                    app:enumClass="@{YesNoClass}"
+                    style="@style/ControlSingleColumnStyle"/>
+
+                <LinearLayout
+                    android:id="@+id/patientContactKnownSuspect_heading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/epiData_suspectLastName"
+                        app:dependencyParentField="@{epiDataPatientContactKnownSuspect}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.suspectLastName}" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/epiData_suspectName"
+                        app:dependencyParentField="@{epiDataPatientContactKnownSuspect}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.suspectName}" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/epiData_idCase"
+                        app:dependencyParentField="@{epiDataPatientContactKnownSuspect}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSingleColumnStyle"
+                        app:value="@={data.idCase}" />
+
+                </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/epiData_duringContactSuspectCase"
+                    app:dependencyParentField="@{epiDataPatientContactKnownSuspect}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSingleColumnStyle"
+                    app:value="@={data.duringContactSuspectCase}" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/epiData_dateOfLastContactWithSuspectCase"
+                    app:dependencyParentField="@{epiDataPatientContactKnownSuspect}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSingleColumnStyle"
+                    app:value="@={data.dateOfLastContactWithSuspectCase}" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/epiData_dateOfDeath"
+                    app:dependencyParentField="@{epiDataDuringContactSuspectCase}"
+                    app:dependencyParentValue="@{CaseOutcome.DECEASED}"
+                    style="@style/ControlSingleColumnStyle"
+                    app:value="@={data.dateOfDeath}" />
 
                 <LinearLayout
                     android:id="@+id/activityascase_layout"
