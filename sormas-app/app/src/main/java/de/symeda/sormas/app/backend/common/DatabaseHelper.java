@@ -200,7 +200,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 371;
+	public static final int DATABASE_VERSION = 372;
 
 	private static DatabaseHelper instance = null;
 
@@ -3356,7 +3356,42 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN memberFamilyHelpingPatient varchar(255);");
 					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN dateOfDeath Date;");
 
-				// ATTENTION: break should only be done after last version
+				case 371:
+					currentVersion = 371;
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN contactDeadAnimals varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientTravelDuringIllness varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN comm1 varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN healthCenter1 varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN country1 varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN comm2 varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN healthCenter2 varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN country2 varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN wasPatientHospitalized varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN ifYesWhere varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN hospitalizedDate1 date ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN hospitalizedDate2 date ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN didPatientConsultHealer varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN ifYesNameHealer varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN community varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN country varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN whenWhereContactTakePlace varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN dateOfContact date ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientReceiveTraditionalMedicine varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN ifYesExplain varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientAttendFuneralCeremonies varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientTravelAnytimePeriodBeforeIll varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN ifTravelYesWhere varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN ifYesStartDate date ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN ifYesEndDate date ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN patientContactKnownSuspect varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN suspectName varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN suspectLastName varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN idCase varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN duringContactSuspectCase varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN dateOfDeath date ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN dateOfLastContactWithSuspectCase date ;");
+
+					// ATTENTION: break should only be done after last version
 				break;
 			default:
 				throw new IllegalStateException("onUpgrade() with unknown oldVersion " + oldVersion);
