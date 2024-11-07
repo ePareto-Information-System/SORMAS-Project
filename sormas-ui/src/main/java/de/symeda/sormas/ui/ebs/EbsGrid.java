@@ -68,8 +68,6 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 		EbsViewConfiguration viewConfiguration = ViewModelProviders.of(viewClass).get(EbsViewConfiguration.class);
 		setInEagerMode(viewConfiguration.isInEagerMode());
 
-		boolean externalSurveillanceToolShareEnabled = FacadeProvider.getExternalSurveillanceToolFacade().isFeatureEnabled();
-
 		if (isInEagerMode() && UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS_EVENT)) {
 			setCriteria(criteria);
 			setEagerDataProvider();
