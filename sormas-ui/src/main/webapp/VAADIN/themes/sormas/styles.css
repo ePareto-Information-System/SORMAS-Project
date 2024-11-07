@@ -15623,6 +15623,10 @@ div.v-layout.v-horizontal.v-widget {
 	background: #93D150 !important;
 }
 
+.sormas #manualScanningType {
+	width: 20em !important;
+}
+
 .sormas .window-text {
 	text-wrap: wrap !important;
 	font-size: 20px !important;

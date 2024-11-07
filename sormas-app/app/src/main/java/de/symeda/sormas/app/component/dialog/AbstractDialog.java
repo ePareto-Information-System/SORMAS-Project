@@ -74,31 +74,31 @@ public abstract class AbstractDialog implements NotificationContext {
 	// Constructor
 
 	public AbstractDialog(
-		final FragmentActivity activity,
-		int rootLayoutId,
-		int contentLayoutResourceId,
-		int buttonPanelLayoutResourceId,
-		int headingResourceId,
-		int subHeadingResourceId,
-		boolean closeOnPositiveButtonClick) {
+			final FragmentActivity activity,
+			int rootLayoutId,
+			int contentLayoutResourceId,
+			int buttonPanelLayoutResourceId,
+			int headingResourceId,
+			int subHeadingResourceId,
+			boolean closeOnPositiveButtonClick) {
 		this(
-			activity,
-			rootLayoutId,
-			contentLayoutResourceId,
-			buttonPanelLayoutResourceId,
-			headingResourceId >= 0 ? activity.getResources().getString(headingResourceId) : null,
-			subHeadingResourceId >= 0 ? activity.getResources().getString(subHeadingResourceId) : null,
-			closeOnPositiveButtonClick);
+				activity,
+				rootLayoutId,
+				contentLayoutResourceId,
+				buttonPanelLayoutResourceId,
+				headingResourceId >= 0 ? activity.getResources().getString(headingResourceId) : null,
+				subHeadingResourceId >= 0 ? activity.getResources().getString(subHeadingResourceId) : null,
+				closeOnPositiveButtonClick);
 	}
 
 	public AbstractDialog(
-		final FragmentActivity activity,
-		int rootLayoutId,
-		int contentLayoutResourceId,
-		int buttonPanelLayoutResourceId,
-		String heading,
-		String subHeading,
-		boolean closeOnPositiveButtonClick) {
+			final FragmentActivity activity,
+			int rootLayoutId,
+			int contentLayoutResourceId,
+			int buttonPanelLayoutResourceId,
+			String heading,
+			String subHeading,
+			boolean closeOnPositiveButtonClick) {
 		this.builder = new AlertDialog.Builder(activity);
 		this.activity = activity;
 		this.rootLayoutId = rootLayoutId;
@@ -117,22 +117,22 @@ public abstract class AbstractDialog implements NotificationContext {
 	}
 
 	public AbstractDialog(
-		final FragmentActivity activity,
-		int rootLayoutId,
-		int contentLayoutResourceId,
-		int buttonPanelLayoutResourceId,
-		int headingResourceId,
-		int subHeadingResourceId) {
+			final FragmentActivity activity,
+			int rootLayoutId,
+			int contentLayoutResourceId,
+			int buttonPanelLayoutResourceId,
+			int headingResourceId,
+			int subHeadingResourceId) {
 		this(activity, rootLayoutId, contentLayoutResourceId, buttonPanelLayoutResourceId, headingResourceId, subHeadingResourceId, true);
 	}
 
 	public AbstractDialog(
-		final FragmentActivity activity,
-		int rootLayoutId,
-		int contentLayoutResourceId,
-		int buttonPanelLayoutResourceId,
-		String headingResourceId,
-		String subHeadingResourceId) {
+			final FragmentActivity activity,
+			int rootLayoutId,
+			int contentLayoutResourceId,
+			int buttonPanelLayoutResourceId,
+			String headingResourceId,
+			String subHeadingResourceId) {
 		this(activity, rootLayoutId, contentLayoutResourceId, buttonPanelLayoutResourceId, headingResourceId, subHeadingResourceId, true);
 	}
 
@@ -286,7 +286,7 @@ public abstract class AbstractDialog implements NotificationContext {
 	private void onDeleteClick() {
 		if (deleteCallback != null) {
 			final ConfirmationDialog confirmationDialog =
-				new ConfirmationDialog(getActivity(), R.string.heading_confirmation_dialog, R.string.confirmation_delete, R.string.yes, R.string.no);
+					new ConfirmationDialog(getActivity(), R.string.heading_confirmation_dialog, R.string.confirmation_delete, R.string.yes, R.string.no);
 			confirmationDialog.setPositiveCallback(deleteCallback);
 
 			confirmationDialog.show();

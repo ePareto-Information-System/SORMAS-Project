@@ -1006,6 +1006,7 @@ public class Sample extends PseudonymizableAdo {
 
 	public void setPersonCompletingForm(String personCompletingForm) {
 		this.personCompletingForm = personCompletingForm;
+	}
 
 	public YesNo getHasSampleBeenCollected() {
 		return hasSampleBeenCollected;

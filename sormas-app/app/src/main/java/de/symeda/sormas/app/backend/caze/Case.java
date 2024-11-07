@@ -1843,6 +1843,7 @@ public class Case extends PseudonymizableAdo {
 
 	public void setOtherNotesAndObservations(String otherNotesAndObservations) {
 		this.otherNotesAndObservations = otherNotesAndObservations;
+	}
 	public String getMobileTeamNo() {
 		return mobileTeamNo;
 	}

@@ -81,17 +81,8 @@ public class DiseaseFieldHandler {
     }
 
     private void handleChildView(View child, List<String> relevantFields) {
-
-
         if (isFieldView(child)) {
-            if (child instanceof ControlPropertyField) {
-                ControlPropertyField controlPropertyField = (ControlPropertyField) child;
-                if (!controlPropertyField.hasVisibilityDependencies()) {
-                    setViewVisibility(child, relevantFields);
-                }
-            } else {
-                setViewVisibility(child, relevantFields);
-            }
+            setViewVisibility(child, relevantFields);
         } else if (child instanceof ViewGroup) {
             handleViewGroup((ViewGroup) child, relevantFields);
         }
@@ -100,25 +91,11 @@ public class DiseaseFieldHandler {
     private void handleViewGroup(ViewGroup viewGroup, List<String> relevantFields) {
         boolean groupHasVisibleField = false;
 
-        String layoutIdName = getResourceID(viewGroup.getId());
-        if (layoutIdName != null && relevantFields.contains(layoutIdName)) {
-            return;
-        }
-
         for (int j = 0; j < viewGroup.getChildCount(); j++) {
             View grandChild = viewGroup.getChildAt(j);
             if (isFieldView(grandChild)) {
-                if (grandChild instanceof ControlPropertyField) {
-                    ControlPropertyField controlPropertyField = (ControlPropertyField) grandChild;
-                    if (!controlPropertyField.hasVisibilityDependencies()) {
-                        if (setViewVisibility(grandChild, relevantFields)) {
-                            groupHasVisibleField = true;
-                        }
-                    }
-                } else {
-                    if (setViewVisibility(grandChild, relevantFields)) {
-                        groupHasVisibleField = true;
-                    }
+                if (setViewVisibility(grandChild, relevantFields)) {
+                    groupHasVisibleField = true;
                 }
             } else if (grandChild instanceof ViewGroup) {
                 handleViewGroup((ViewGroup) grandChild, relevantFields);
@@ -246,165 +223,6 @@ public class DiseaseFieldHandler {
         }
     }
 
-
-    public List<FormField> getFieldsForDisease(Disease diseaseName, FormType formType) {
-        FormBuilder formBuilder = DatabaseHelper.getFormBuilderDao().getFormBuilder(formType, diseaseName);
-
-        if (formBuilder != null) {
-            List<FormField> orderedFields = DatabaseHelper.getFormBuilderDao().getOrderedFormBuilderFormFields(formBuilder);
-            Log.d(TAG, "Ordered fields retrieved from database: " + orderedFields);
-            return orderedFields;
-        }
-        Log.d(TAG, "No FormBuilder found for Disease=" + diseaseName + ", FormType=" + formType);
-        return new ArrayList<>();
-    }
-
-    // Recursively gather child views, including those inside nested ViewGroups
-    private void gatherChildViews(ViewGroup parent, Map<Integer, View> viewMap) {
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            View child = parent.getChildAt(i);
-            if (child.getId() != View.NO_ID) {
-                viewMap.put(child.getId(), child);
-            } else {
-            }
-            if (child instanceof ViewGroup) {
-                gatherChildViews((ViewGroup) child, viewMap);
-            }
-        }
-
-        // Create a list to hold the reordered views
-        List<View> reorderedViews = new ArrayList<>();
-        Map<ViewGroup, List<View>> containerChildren = new HashMap<>();
-
-        for (Map.Entry<Integer, ViewInfo> entry : viewInfoMap.entrySet()) {
-            String resourceName = "";
-            try {
-                resourceName = context.getResources().getResourceEntryName(entry.getKey());
-                Log.d(TAG, "View ID: " + resourceName);
-            } catch (Resources.NotFoundException e) {
-                Log.e(TAG, "Could not find resource name for ID: " + entry.getKey());
-            }
-        }
-
-        for (FormField field : orderedFields) {
-            int viewId = context.getResources().getIdentifier(field.getFieldName(), "id", context.getPackageName());
-            ViewInfo viewInfo = viewInfoMap.get(viewId);
-
-            if (viewInfo != null) {
-                if (viewInfo.container != null) {
-                    // Handle views that are part of a container
-                    containerChildren
-                            .computeIfAbsent(viewInfo.container, k -> new ArrayList<>())
-                            .add(viewInfo.view);
-
-                    boolean isLastInContainer = true;
-                    for (FormField remainingField : orderedFields.subList(orderedFields.indexOf(field) + 1, orderedFields.size())) {
-                        int remainingId = context.getResources().getIdentifier(remainingField.getFieldName(), "id", context.getPackageName());
-                        ViewInfo remainingInfo = viewInfoMap.get(remainingId);
-                        if (remainingInfo != null && remainingInfo.container == viewInfo.container) {
-                            isLastInContainer = false;
-                            break;
-                        }
-                    }
-
-                    if (isLastInContainer && !reorderedViews.contains(viewInfo.container)) {
-                        reorderedViews.add(viewInfo.container);
-                    }
-                } else {
-                    // Handle views that are not in containers
-                    reorderedViews.add(viewInfo.view);
-                }
-            } else {
-                Log.d(TAG, "No matching View found for FormField with name: " + field.getFieldName());
-            }
-        }
-
-        parent.removeAllViews();
-
-        // Add the reordered views back
-        for (View view : reorderedViews) {
-            if (view.getParent() != null) {
-                ((ViewGroup) view.getParent()).removeView(view);
-            }
-
-            // Ensure proper layout params
-            if (view.getLayoutParams() == null) {
-                view.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                ));
-            }
-
-            // If it's a container, ensure its children are in the correct order
-            if (view instanceof ViewGroup && containerChildren.containsKey(view)) {
-                ViewGroup container = (ViewGroup) view;
-                container.removeAllViews();
-                for (View child : containerChildren.get(container)) {
-                    if (child.getParent() != null) {
-                        ((ViewGroup) child.getParent()).removeView(child);
-                    }
-                    container.addView(child);
-                }
-            }
-
-            parent.addView(view);
-        }
-    }
-
-
-    // Helper class to store view information
-    private static class ViewInfo {
-        View view;
-        ViewGroup container;
-
-        ViewInfo(View view, ViewGroup container) {
-            this.view = view;
-            this.container = container;
-        }
-    }
-
-    private void gatherChildViewsWithContainers(ViewGroup parent, Map<Integer, ViewInfo> viewInfoMap, ViewGroup container) {
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            View child = parent.getChildAt(i);
-
-            String resourceName = "";
-            try {
-                if (child.getId() != View.NO_ID) {
-                    resourceName = context.getResources().getResourceEntryName(child.getId());
-                    Log.d(TAG, "Processing view: " + resourceName);
-                }
-            } catch (Resources.NotFoundException e) {
-                Log.e(TAG, "Resource not found for view ID: " + child.getId());
-            }
-
-            if (child.getId() != View.NO_ID) {
-                // Add the view itself if it has an ID
-                viewInfoMap.put(child.getId(), new ViewInfo(child, container));
-            }
-
-            if (child instanceof ViewGroup) {
-                // Always recurse into ViewGroups, whether they're containers or not
-                gatherChildViewsWithContainers((ViewGroup) child, viewInfoMap,
-                        (isContainer(child) ? (ViewGroup)child : container));
-            }
-        }
-    }
-
-    private boolean isContainer(View view) {
-        if (!(view instanceof ViewGroup)) return false;
-
-        try {
-            String resourceName = context.getResources().getResourceEntryName(view.getId());
-            return resourceName != null && (
-                    resourceName.contains("_heading") ||
-                            resourceName.contains("_layout") ||
-                            resourceName.contains("_label") ||
-                            resourceName.endsWith("_container")
-            );
-        } catch (Resources.NotFoundException e) {
-            return false;
-        }
-    }
 
     public List<FormField> getFieldsForDisease(Disease diseaseName, FormType formType) {
         FormBuilder formBuilder = DatabaseHelper.getFormBuilderDao().getFormBuilder(formType, diseaseName);
