@@ -14,7 +14,32 @@
  */
 package de.symeda.sormas.backend.ebs;
 
-import de.symeda.sormas.api.ebs.*;
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import de.symeda.sormas.api.ebs.AutomaticScanningType;
+import de.symeda.sormas.api.ebs.EbsSourceType;
+import de.symeda.sormas.api.ebs.ManualScanningType;
+import de.symeda.sormas.api.ebs.MediaScannningType;
+import de.symeda.sormas.api.ebs.PersonReporting;
 import de.symeda.sormas.api.externaldata.HasExternalData;
 import de.symeda.sormas.backend.common.CoreAdo;
 import de.symeda.sormas.backend.location.Location;
@@ -22,11 +47,6 @@ import de.symeda.sormas.backend.sormastosormas.entities.SormasToSormasShareable;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
 import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfo;
 import de.symeda.sormas.backend.user.User;
-
-import javax.persistence.*;
-import java.util.*;
-
-import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
 @Entity(name = "ebs")
 public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternalData {
@@ -64,6 +84,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public static final String CATEGORY_OF_INFORMANT = "categoryOfInformant";
 	public static final String TRIAGING = "triaging";
 	public static final String SIGNAL_VERIFICATION = "signalVerification";
+	public static final String RISK_ASSESSMENT = "riskassessment";
 	public static final String OTHER_INFORMANT = "otherInformant";
 
 	private String informantName;
@@ -180,6 +201,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public void setResponsibleUser(User responsibleUser) {
 		this.responsibleUser = responsibleUser;
 	}
+
 	@OneToOne(cascade = CascadeType.ALL)
 	public Location getEbsLocation() {
 		return ebsLocation;
@@ -206,7 +228,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	}
 
 	public Double getEbsLatLon() {
-		return 	ebsLatLon;
+		return ebsLatLon;
 	}
 
 	public void setEbsLatLon(Double ebsLatlon) {
@@ -220,6 +242,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public void setDescriptionOccurrence(String descriptionOccurrence) {
 		this.descriptionOccurrence = descriptionOccurrence;
 	}
+
 	public String getPersonRegistering() {
 		return personRegistering;
 	}
@@ -227,6 +250,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public void setPersonRegistering(String personRegistering) {
 		this.personRegistering = personRegistering;
 	}
+
 	public String getPersonDesignation() {
 		return personDesignation;
 	}
@@ -234,6 +258,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public void setPersonDesignation(String personDesignation) {
 		this.personDesignation = personDesignation;
 	}
+
 	public String getPersonPhone() {
 		return personPhone;
 	}
@@ -249,6 +274,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public void setSourceName(String sourceName) {
 		this.sourceName = sourceName;
 	}
+
 	public String getSourceUrl() {
 		return sourceUrl;
 	}
@@ -266,10 +292,10 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	}
 
 	@ManyToOne(cascade = {
-			CascadeType.PERSIST,
-			CascadeType.MERGE,
-			CascadeType.DETACH,
-			CascadeType.REFRESH })
+		CascadeType.PERSIST,
+		CascadeType.MERGE,
+		CascadeType.DETACH,
+		CascadeType.REFRESH })
 	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
 		return sormasToSormasOriginInfo;
 	}
@@ -295,7 +321,6 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public void setInternalToken(String internalToken) {
 		this.internalToken = internalToken;
 	}
-
 
 	@Override
 	public String getExternalId() {
@@ -348,6 +373,7 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public void setOther(String other) {
 		this.other = other;
 	}
+
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "triaging_id")
 	public Triaging getTriaging() {
@@ -367,12 +393,13 @@ public class Ebs extends CoreAdo implements SormasToSormasShareable, HasExternal
 	public void setSignalVerification(SignalVerification signalVerification) {
 		this.signalVerification = signalVerification;
 	}
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,mappedBy = RiskAssessment.EBS, fetch = FetchType.LAZY)
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = RiskAssessment.EBS, fetch = FetchType.LAZY)
 	public Set<RiskAssessment> getRiskAssessment() {
 		return riskAssessment;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,mappedBy = EbsAlert.EBS, fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = EbsAlert.EBS, fetch = FetchType.LAZY)
 	public Set<EbsAlert> getEbsAlert() {
 		return ebsAlert;
 	}
