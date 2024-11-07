@@ -106,6 +106,8 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 		((Column<EbsIndexDto, String>) getColumn(EbsIndexDto.UUID)).setRenderer(new UuidRenderer());
 		((Column<EbsIndexDto, Date>) getColumn(EbsIndexDto.VERIFIED_DATE))
 			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(userLanguage)));
+		((Column<EbsIndexDto, Date>) getColumn(EbsIndexDto.TRIAGING_DECISION_DATE))
+			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(userLanguage)));
 		addItemClickListener(new ShowDetailsListener<>(EbsIndexDto.UUID, e -> ControllerProvider.getEbsController().navigateToData(e.getUuid())));
 	}
 
@@ -156,7 +158,7 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 						.map(sortOrder -> new SortProperty(sortOrder.getSorted(), sortOrder.getDirection() == SortDirection.ASCENDING))
 						.collect(Collectors.toList()))
 				.stream(),
-			query -> (int) FacadeProvider.getEbsFacade().count(query.getFilter().orElse(null)));
+			query -> (int) FacadeProvider.getEbsFacade().eventCount(query.getFilter().orElse(null)));
 		setDataProvider(dataProvider);
 		setSelectionMode(SelectionMode.NONE);
 	}
