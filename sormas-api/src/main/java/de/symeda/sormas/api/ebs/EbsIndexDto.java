@@ -72,11 +72,11 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	private SignalCategory signalCategory;
 	private EbsVerified verified;
 	private EbsDeath death;
-	private EbsIndexTriagingDecisionDate triagingDecisionDate;
+	private DateFormatting triagingDecisionDate;
 	private String personRegistering;
 	private String personDesignation;
 	private EbsVerificationSent verificationSent;
-	private EbsVerifiedDate verifiedDate;
+	private DateFormatting verifiedDate;
 	private EbsRiskStatus riskStatus;
 	private EbsActionInitiated actionInitiated;
 	private EbsResponseStatus responseStatus;
@@ -119,56 +119,31 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	public EbsIndexDto(
 		Long id,
 		String uuid,
-		Date triageDate,
-		EbsSourceType sourceInformation,
 		EbsTriagingDecision triagingDecision,
-		Date reportDateTime,
-		Date changeDate,
-		PersonReporting categoryOfInformant,
-		String informantName,
-		String informantTel,
 		SignalCategory signalCategory,
 		SignalOutcome verified,
 		String death,
 		Date decisionDate,
-		String personRegistering,
-		String personDesignation,
 		YesNo verificationSent,
 		Date verifiedDate,
 		RiskAssesment riskStatus,
 		YesNo actionInitiated,
 		ResponseStatus responseStatus,
-		String regionUuid,
-		String regionName,
-		String communityUuid,
-		String communityName,
-		String city,
-		String districtUuid,
-		String districtName) {
+		Date changeDate) {
 
 		super(uuid);
 		this.id = id;
-		this.triageDate = triageDate;
-		this.sourceInformation = sourceInformation;
 		this.triagingDecision = triagingDecision;
-		this.reportDateTime = reportDateTime;
-		this.changeDate = changeDate;
-		this.categoryOfInformant = categoryOfInformant;
-		this.informantName = informantName;
-		this.informantTel = informantTel;
 		this.signalCategory = signalCategory;
 		this.verified = new EbsVerified(verified);
 		this.death = new EbsDeath(death);
-		this.triagingDecisionDate = new EbsIndexTriagingDecisionDate(decisionDate);
-		this.personDesignation = personDesignation;
-		this.personRegistering = personRegistering;
+		this.triagingDecisionDate = new DateFormatting(decisionDate);
 		this.verificationSent = new EbsVerificationSent(verificationSent);
-		this.verifiedDate = new EbsVerifiedDate(verifiedDate);
+		this.verifiedDate = new DateFormatting(verifiedDate);
 		this.riskStatus = new EbsRiskStatus(riskStatus);
 		this.actionInitiated = new EbsActionInitiated(actionInitiated);
 		this.responseStatus = new EbsResponseStatus(responseStatus);
-		this.ebsLocation = new EbsLocation(regionName, communityName, city, districtName);
-		this.regionUuid = regionUuid;
+		this.changeDate = changeDate;
 	}
 
 	public EbsIndexDto(String uuid) {
@@ -224,7 +199,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	}
 
 	public Date getDecisionDate() {
-		return getTriagingDecisionDate().getDecisionDate();
+		return getTriagingDecisionDate().getVerifiedDate();
 	}
 
 	public YesNo getVerificationSent() {
@@ -299,7 +274,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		this.categoryOfInformant = categoryOfInformant;
 	}
 
-	public EbsIndexTriagingDecisionDate getTriagingDecisionDate() {
+	public DateFormatting getTriagingDecisionDate() {
 		return triagingDecisionDate;
 	}
 
@@ -307,7 +282,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		return verificationSent;
 	}
 
-	public EbsVerifiedDate getEbsVerifiedDate() {
+	public DateFormatting getEbsVerifiedDate() {
 		return verifiedDate;
 	}
 
@@ -340,7 +315,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	}
 
 	public Date getDecisionDateCaption() {
-		return getTriagingDecisionDate().getDecisionDate();
+		return getTriagingDecisionDate().getVerifiedDate();
 	}
 
 	public void setDeath(EbsDeath death) {
@@ -438,11 +413,11 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		}
 	}
 
-	public static class EbsVerifiedDate implements Serializable {
+	public static class DateFormatting implements Serializable {
 
 		private final Date verfiedDate;
 
-		public EbsVerifiedDate(Date verifiedDate) {
+		public DateFormatting(Date verifiedDate) {
 			this.verfiedDate = verifiedDate;
 		}
 
