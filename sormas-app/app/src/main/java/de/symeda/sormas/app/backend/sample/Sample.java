@@ -221,6 +221,8 @@ public class Sample extends PseudonymizableAdo {
 	private Date sampleDispatchDate;
 	@Enumerated(EnumType.STRING)
 	private YesNo ipSampleSent;
+	@Enumerated(EnumType.STRING)
+	private YesNo hasSampleBeenCollected;
 
 	public Case getAssociatedCase() {
 		return associatedCase;
@@ -769,5 +771,13 @@ public class Sample extends PseudonymizableAdo {
 
 	public void setIpSampleSent(YesNo ipSampleSent) {
 		this.ipSampleSent = ipSampleSent;
+	}
+
+	public YesNo getHasSampleBeenCollected() {
+		return hasSampleBeenCollected;
+	}
+
+	public void setHasSampleBeenCollected(YesNo hasSampleBeenCollected) {
+		this.hasSampleBeenCollected = hasSampleBeenCollected;
 	}
 }
