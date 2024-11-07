@@ -20,9 +20,12 @@ import static android.view.View.GONE;
 import static de.symeda.sormas.app.core.notification.NotificationType.ERROR;
 
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +35,7 @@ import de.symeda.sormas.api.ebs.EbsSourceType;
 import de.symeda.sormas.api.ebs.ManualScanningType;
 import de.symeda.sormas.api.ebs.MediaScannningType;
 import de.symeda.sormas.api.ebs.PersonReporting;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.utils.ValidationException;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -45,6 +49,7 @@ import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
 import de.symeda.sormas.app.backend.location.Location;
 import de.symeda.sormas.app.backend.ebs.triaging.Triaging;
 import de.symeda.sormas.app.component.Item;
+import de.symeda.sormas.app.component.controls.ControlDateField;
 import de.symeda.sormas.app.component.dialog.LocationDialog;
 import de.symeda.sormas.app.component.validation.FragmentValidator;
 import de.symeda.sormas.app.component.validation.ValidationHelper;
@@ -56,6 +61,7 @@ import de.symeda.sormas.app.util.InfrastructureFieldsDependencyHandler;
 
 public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBinding, Ebs, Ebs> {
 
+	public final String THE_DATE_OF_REPORT_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE = "The Date of Report cannot be earlier than the Date of Occurrence.";
 	private Ebs record;
 
 	private List<Item> sourceInformation;
@@ -276,6 +282,50 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 
 			contentBinding.ebsScanningType.initializeSpinner(filteredInformant);
 		});
+
+		contentBinding.ebsReportDateTime.addValueChangedListener(
+				e->{
+					validateDateFields(contentBinding);
+				}
+		);
+		contentBinding.ebsDateOnset.addValueChangedListener(
+				e->{
+					validateDateFields(contentBinding);
+				}
+		);
+	}
+
+	public void validateDateFields(FragmentEbsEditLayoutBinding contentBinding) {
+		ControlDateField dateOfReport = contentBinding.ebsReportDateTime;
+		ControlDateField dateOfOccurrence = contentBinding.ebsDateOnset;
+
+		if (dateOfReport.getValue() != null && dateOfOccurrence.getValue() != null && dateOfReport.getValue().before(dateOfOccurrence.getValue())) {
+			Date  dateOfReportDate = clearTime(dateOfReport.getValue());
+			Date  dateOfOccurrenceDate = clearTime(dateOfOccurrence.getValue());
+			if (!dateOfReportDate.toString().equals(dateOfOccurrenceDate.toString())) {
+				showError(THE_DATE_OF_REPORT_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE);
+				dateOfReport.setValidationCallback(() -> {
+					dateOfReport.enableErrorState(I18nProperties.getValidationError(THE_DATE_OF_REPORT_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE, THE_DATE_OF_REPORT_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE));
+					return true;
+				});
+			}else {
+				dateOfReport.setValidationCallback(() -> false);
+			}
+		}
+	}
+
+	private Date clearTime(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		return calendar.getTime();
+	}
+
+	private void showError(String message) {
+		Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
 	}
 
 	@Override
