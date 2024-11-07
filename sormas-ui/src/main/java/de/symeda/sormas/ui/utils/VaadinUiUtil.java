@@ -66,6 +66,13 @@ public final class VaadinUiUtil {
 		return window;
 	}
 
+	public static void setupActionColumn(Grid.Column column) {
+		column.setRenderer(new HtmlRenderer());
+		column.setWidth(20);
+		column.setSortable(false);
+		column.setHeaderCaption("");
+	}
+
 	public static Window showSimplePopupWindow(String caption, String contentText) {
 		return showSimplePopupWindow(caption, contentText, ContentMode.TEXT, null);
 	}
@@ -357,12 +364,12 @@ public final class VaadinUiUtil {
 	 *            TRUE: Option A, FALSE: Option B
 	 */
 	public static Window showChooseOptionPopup(
-			String caption,
-			Component content,
-			String optionACaption,
-			String optionBCaption,
-			Integer width,
-			Consumer<Boolean> resultConsumer) {
+		String caption,
+		Component content,
+		String optionACaption,
+		String optionBCaption,
+		Integer width,
+		Consumer<Boolean> resultConsumer) {
 		return showChooseOptionPopup(caption, content, optionACaption, optionBCaption, width, resultConsumer, false);
 	}
 
