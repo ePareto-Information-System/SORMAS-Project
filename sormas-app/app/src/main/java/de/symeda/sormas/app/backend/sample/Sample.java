@@ -224,6 +224,8 @@ public class Sample extends PseudonymizableAdo {
 	private Date sampleDispatchDate;
 	@Enumerated(EnumType.STRING)
 	private YesNo ipSampleSent;
+	@Enumerated(EnumType.STRING)
+	private YesNo hasSampleBeenCollected;
 
 	@Enumerated(EnumType.STRING)
 	private YesNo specimenSavedAndPreservedInAlcohol;
@@ -1004,5 +1006,12 @@ public class Sample extends PseudonymizableAdo {
 
 	public void setPersonCompletingForm(String personCompletingForm) {
 		this.personCompletingForm = personCompletingForm;
+
+	public YesNo getHasSampleBeenCollected() {
+		return hasSampleBeenCollected;
+	}
+
+	public void setHasSampleBeenCollected(YesNo hasSampleBeenCollected) {
+		this.hasSampleBeenCollected = hasSampleBeenCollected;
 	}
 }

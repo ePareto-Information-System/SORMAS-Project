@@ -73,17 +73,17 @@
 
                 <requestFocus/>
 
-                <LinearLayout
+<!--                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal">-->
 
                     <de.symeda.sormas.app.component.controls.ControlTextReadField
                         android:id="@+id/sample_uuid"
                         app:shortUuidValue="@{data.uuid}"
                         style="@style/ControlSingleColumnStyle" />
 
-                </LinearLayout>
+<!--                </LinearLayout>-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -103,6 +103,11 @@
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/sample_hasSampleBeenCollected"
+                    app:enumClass="@{yesNoClass}"
+                    app:value="@={data.hasSampleBeenCollected}"
+                    style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlDateTimeField
                     android:id="@+id/sample_sampleDateTime"
@@ -117,6 +122,9 @@
                     app:required="true"
                     app:value="@={data.samplePurpose}"
                     style="@style/ControlSingleColumnStyle" />
+
+<!--                ControlFirstOfTwoColumnsStyle-->
+<!--                ControlSecondOfTwoColumnsStyle-->
 
                 <LinearLayout
                     android:id="@+id/sample_sampleMaterialHeading"
@@ -330,6 +338,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/sample_ship_heading"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
@@ -337,7 +346,7 @@
                         <de.symeda.sormas.app.component.controls.ControlCheckBoxField
                             android:id="@+id/sample_shipped"
                             app:value="@={data.shipped}"
-                            style="@style/ControlFirstOfTwoColumnsStyle" />
+                            style="@style/ControlSingleColumnStyle" />
 
                         <de.symeda.sormas.app.component.controls.ControlDateField
                             android:id="@+id/sample_shipmentDate"
@@ -433,6 +442,7 @@
                         style="@style/ControlSingleColumnStyle" />
 
                     <LinearLayout
+                        android:id="@+id/sample_received_heading"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">

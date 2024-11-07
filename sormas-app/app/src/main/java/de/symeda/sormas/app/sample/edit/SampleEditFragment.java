@@ -442,6 +442,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 				handleYellowFever();
 			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
 				handleIDSR();
+			case AHF:
+				handleAHF();
 		}
 
 
@@ -532,5 +534,28 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		getContentBinding().samplePurpose.setValue(SamplePurpose.EXTERNAL);
 		getContentBinding().samplePurpose.setVisibility(GONE);
 		getContentBinding().samplePathogenTestingRequested.setVisibility(GONE);
+	}
+
+	private void handleAHF() {
+		getContentBinding().samplePurpose.setValue(SamplePurpose.EXTERNAL);
+		getContentBinding().samplePurpose.setVisibility(GONE);
+
+		if (getContentBinding().sampleHasSampleBeenCollected.getValue() == null) {
+			getContentBinding().sampleSampleDateTime.setVisibility(View.GONE);
+		} else {
+			int visibility = (getContentBinding().sampleHasSampleBeenCollected.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
+			getContentBinding().sampleSampleDateTime.setVisibility(visibility);
+		}
+
+		getContentBinding().sampleHasSampleBeenCollected.addValueChangedListener(field -> {
+			int visibility = (field.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
+			getContentBinding().sampleSampleDateTime.setVisibility(visibility);
+		});
+
+		List<SampleMaterial> ahfSampleMaterialList = Arrays.asList(
+				SampleMaterial.BLOOD, SampleMaterial.PLASMA_SERUM, SampleMaterial.SALIVA, SampleMaterial.URINE,	SampleMaterial.BIOPSY, SampleMaterial.CARDIAC,SampleMaterial.BLOOD_ANTI_COAGULANT,	SampleMaterial.OTHER
+		);
+
+		getContentBinding().sampleSampleMaterial.initializeSpinner(DataUtils.toItems(ahfSampleMaterialList));
 	}
 }

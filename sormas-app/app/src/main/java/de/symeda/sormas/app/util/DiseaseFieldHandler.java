@@ -23,7 +23,6 @@ import de.symeda.sormas.app.backend.formfield.FormField;
 import de.symeda.sormas.app.component.controls.ControlButton;
 import de.symeda.sormas.app.component.controls.ControlCheckBoxField;
 import de.symeda.sormas.app.component.controls.ControlDateField;
-import de.symeda.sormas.app.component.controls.ControlPropertyEditField;
 import de.symeda.sormas.app.component.controls.ControlPropertyField;
 import de.symeda.sormas.app.component.controls.ControlSwitchField;
 import de.symeda.sormas.app.component.controls.ControlTextReadField;
@@ -153,100 +152,50 @@ public class DiseaseFieldHandler {
 
 
     private void reorderFieldsForDisease(List<FormField> orderedFields, ViewGroup parent) {
-        // Map to store views and their container hierarchies
-        Map<Integer, ViewInfo> viewInfoMap = new HashMap<>();
-        gatherChildViewsWithContainers(parent, viewInfoMap, null);
+        Map<Integer, View> viewMap = new HashMap<>();
+        Map<String, Integer> resourceNameToId = new HashMap<>(); // Map for resource name to ID
 
-        // Create a map of resource names to IDs for easier lookup
-        Map<String, Integer> resourceNameToId = new HashMap<>();
-        for (int id : viewInfoMap.keySet()) {
+        // Populate the viewMap with all views within parent
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            viewMap.put(child.getId(), child);
+
+            // Log the resource name for each view ID
             try {
-                String resourceName = context.getResources().getResourceEntryName(id);
-                resourceNameToId.put(resourceName, id);
-                Log.d(TAG, "Mapped resource: " + resourceName + " to ID: " + id);
+                String resourceName = context.getResources().getResourceEntryName(child.getId());
+                resourceNameToId.put(resourceName, child.getId());
+                Log.d(TAG, "Mapped resource: " + resourceName + " to ID: " + child.getId());
             } catch (Resources.NotFoundException e) {
-                Log.e(TAG, "Could not find resource name for ID: " + id);
+                Log.e(TAG, "Could not find resource name for ID: " + child.getId());
             }
         }
 
-        // Create a list to hold the reordered views
         List<View> reorderedViews = new ArrayList<>();
-        Map<ViewGroup, List<View>> containerChildren = new HashMap<>();
 
-        for (Map.Entry<Integer, ViewInfo> entry : viewInfoMap.entrySet()) {
-            String resourceName = "";
-            try {
-                resourceName = context.getResources().getResourceEntryName(entry.getKey());
-                Log.d(TAG, "View ID: " + resourceName);
-            } catch (Resources.NotFoundException e) {
-                Log.e(TAG, "Could not find resource name for ID: " + entry.getKey());
-            }
-        }
-
+        // Loop through ordered fields and check if the corresponding view exists
         for (FormField field : orderedFields) {
             int viewId = context.getResources().getIdentifier(field.getFieldName(), "id", context.getPackageName());
-            ViewInfo viewInfo = viewInfoMap.get(viewId);
+            View view = viewMap.get(viewId);
 
-            if (viewInfo != null) {
-                if (viewInfo.container != null) {
-                    // Handle views that are part of a container
-                    containerChildren
-                            .computeIfAbsent(viewInfo.container, k -> new ArrayList<>())
-                            .add(viewInfo.view);
-
-                    boolean isLastInContainer = true;
-                    for (FormField remainingField : orderedFields.subList(orderedFields.indexOf(field) + 1, orderedFields.size())) {
-                        int remainingId = context.getResources().getIdentifier(remainingField.getFieldName(), "id", context.getPackageName());
-                        ViewInfo remainingInfo = viewInfoMap.get(remainingId);
-                        if (remainingInfo != null && remainingInfo.container == viewInfo.container) {
-                            isLastInContainer = false;
-                            break;
-                        }
-                    }
-
-                    if (isLastInContainer && !reorderedViews.contains(viewInfo.container)) {
-                        reorderedViews.add(viewInfo.container);
-                    }
-                } else {
-                    // Handle views that are not in containers
-                    reorderedViews.add(viewInfo.view);
-                }
+            if (view != null) {
+                Log.d(TAG, "View found for field: " + field.getFieldName() + " (ID: " + viewId + ")");
+                reorderedViews.add(view);
             } else {
                 Log.d(TAG, "No matching View found for FormField with name: " + field.getFieldName());
             }
         }
 
+        // Clear parent and re-add views with their original layout parameters
         parent.removeAllViews();
-
-        // Add the reordered views back
         for (View view : reorderedViews) {
             if (view.getParent() != null) {
                 ((ViewGroup) view.getParent()).removeView(view);
             }
-
-            // Ensure proper layout params
-            if (view.getLayoutParams() == null) {
-                view.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                ));
-            }
-
-            // If it's a container, ensure its children are in the correct order
-            if (view instanceof ViewGroup && containerChildren.containsKey(view)) {
-                ViewGroup container = (ViewGroup) view;
-                container.removeAllViews();
-                for (View child : containerChildren.get(container)) {
-                    if (child.getParent() != null) {
-                        ((ViewGroup) child.getParent()).removeView(child);
-                    }
-                    container.addView(child);
-                }
-            }
-
-            parent.addView(view);
+            parent.addView(view, view.getLayoutParams());
         }
     }
+
+
 
 
     // Helper class to store view information
