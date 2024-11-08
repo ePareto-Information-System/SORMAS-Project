@@ -35,6 +35,7 @@
         <import type="de.symeda.sormas.api.i18n.I18nProperties" />
         <import type="de.symeda.sormas.api.i18n.Strings" />
         <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
+        <import type="de.symeda.sormas.api.person.Profession" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.person.Person"/>
         <variable name="addressList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.location.Location&gt;" />
@@ -43,6 +44,7 @@
         <variable name="personContactDetailList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.person.PersonContactDetail&gt;" />
         <variable name="personContactDetailItemClickCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
         <variable name="personContactDetailBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
+        <variable name="professionClass" type="Class" />
     </data>
 
     <ScrollView
@@ -108,6 +110,7 @@
                 style="@style/ControlLabelStyle"/>
 
             <LinearLayout
+                android:id="@+id/person_birthdateHeading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -136,6 +139,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/person_approximateAgeHeading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -224,6 +228,7 @@
             </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/person_sex_marriageStatusHeading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -240,6 +245,70 @@
                 style="@style/ControlSecondOfTwoColumnsStyle" />
 
         </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_nationality"
+                app:value="@={data.nationality}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <LinearLayout
+                android:id="@+id/person_headHouseHold_ethnicHeading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/person_headHouseHold"
+                    app:value="@={data.headHouseHold}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/person_ethnicity"
+                    app:value="@={data.ethnicity}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
+                android:id="@+id/person_professionOfPatient"
+                app:value="@={data.professionOfPatient}"
+                app:enumClass="@{professionClass}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_professionOfPatientOther"
+                app:value="@={data.professionOfPatientOther}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <TextView
+                android:id="@+id/person_healthstaffLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/caption_health_staff_details"
+                style="@style/ControlLabelStyle"/>
+
+            <LinearLayout
+                android:id="@+id/person_healthStaff_Heading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/person_nameHealthFacility"
+                    app:value="@={data.nameHealthFacility}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/person_service"
+                    app:value="@={data.service}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/person_qualification"
+                    app:value="@={data.qualification}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
 
 <!--            <ImageView style="@style/FullHorizontalDividerStyle"/>-->
 
@@ -553,6 +622,7 @@
                 style="@style/ControlSingleColumnStyle" />
 
             <LinearLayout
+                android:id="@+id/person_parents_name_Heading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">

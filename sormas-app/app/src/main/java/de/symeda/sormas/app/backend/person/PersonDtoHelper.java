@@ -79,7 +79,12 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		target.setMothersMaidenName(source.getMothersMaidenName());
 		target.setSex(source.getSex());
 		target.setMarriageStatus(source.getMarriageStatus());
-
+		target.setNationality(source.getNationality());
+		target.setEthnicity(source.getEthnicity());
+		target.setHeadHouseHold(source.getHeadHouseHold());
+		target.setNameHealthFacility(source.getNameHealthFacility());
+		target.setService(source.getService());
+		target.setQualification(source.getQualification());
 		target.setBirthdateDD(source.getBirthdateDD());
 		target.setBirthdateMM(source.getBirthdateMM());
 		target.setBirthdateYYYY(source.getBirthdateYYYY());
@@ -168,6 +173,12 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		target.setMothersMaidenName(source.getMothersMaidenName());
 		target.setSex(source.getSex());
 		target.setMarriageStatus(source.getMarriageStatus());
+		target.setNationality(source.getNationality());
+		target.setEthnicity(source.getEthnicity());
+		target.setHeadHouseHold(source.getHeadHouseHold());
+		target.setNameHealthFacility(source.getNameHealthFacility());
+		target.setService(source.getService());
+		target.setQualification(source.getQualification());
 		target.setPresentCondition(source.getPresentCondition());
 		target.setDeathDate(source.getDeathDate());
 		target.setDeathPlaceType(source.getDeathPlaceType());
