@@ -218,7 +218,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 375;
+	public static final int DATABASE_VERSION = 396;
 
 	private static DatabaseHelper instance = null;
 
@@ -3855,12 +3855,28 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN nameHealthFacility varchar(255) ;");
 					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN service varchar(255) ;");
 					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN qualification varchar(255) ;");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN professionOfPatientOther varchar(255) ;");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN professionOfPatientString varchar(255) ;");
 
 				case 394:
 					currentVersion = 394;
 					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN professionOfPatient varchar(512) ;");
 					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN professionOfPatientOther varchar(255) ;");
 					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN professionOfPatientString varchar(255) ;");
+
+				case 395:
+					currentVersion = 395;
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampletestsstring VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultPCR VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultPCRDate DATE;");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultAntigen VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultAntigenDate DATE;");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultIGM VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultIGMDate DATE;");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultIGG VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultIGGDate DATE;");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultImmuno VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN sampleTestResultImmunoDate DATE;");
 
 					// ATTENTION: break should only be done after last version
 				break;

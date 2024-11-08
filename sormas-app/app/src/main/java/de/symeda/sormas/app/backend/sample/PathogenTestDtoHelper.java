@@ -91,6 +91,17 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setDateDistrictReceivedLabResults(source.getDateDistrictReceivedLabResults());
 		target.setLaboratoryDateResultsSentDSD(source.getLaboratoryDateResultsSentDSD());
 		target.setFinalClassification(source.getFinalClassification());
+		target.setSampleTests(source.getSampleTests());
+		target.setSampleTestResultPCR(source.getSampleTestResultPCR());
+		target.setSampleTestResultPCRDate(source.getSampleTestResultPCRDate());
+		target.setSampleTestResultAntigen(source.getSampleTestResultAntigen());
+		target.setSampleTestResultAntigenDate(source.getSampleTestResultAntigenDate());
+		target.setSampleTestResultIGM(source.getSampleTestResultIGM());
+		target.setSampleTestResultIGMDate(source.getSampleTestResultIGMDate());
+		target.setSampleTestResultIGG(source.getSampleTestResultIGG());
+		target.setSampleTestResultIGGDate(source.getSampleTestResultIGGDate());
+		target.setSampleTestResultImmuno(source.getSampleTestResultImmuno());
+		target.setSampleTestResultImmunoDate(source.getSampleTestResultImmunoDate());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}
@@ -134,6 +145,17 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setDateLabResultsSentClinician(source.getDateLabResultsSentClinician());
 		target.setFinalClassification(source.getFinalClassification());
 		target.setViaLims(source.isViaLims());
+		target.setSampleTests(source.getSampleTests());
+		target.setSampleTestResultPCR(source.getSampleTestResultPCR());
+		target.setSampleTestResultPCRDate(source.getSampleTestResultPCRDate());
+		target.setSampleTestResultAntigen(source.getSampleTestResultAntigen());
+		target.setSampleTestResultAntigenDate(source.getSampleTestResultAntigenDate());
+		target.setSampleTestResultIGM(source.getSampleTestResultIGM());
+		target.setSampleTestResultIGMDate(source.getSampleTestResultIGMDate());
+		target.setSampleTestResultIGG(source.getSampleTestResultIGG());
+		target.setSampleTestResultIGGDate(source.getSampleTestResultIGGDate());
+		target.setSampleTestResultImmuno(source.getSampleTestResultImmuno());
+		target.setSampleTestResultImmunoDate(source.getSampleTestResultImmunoDate());
 
 		if (source.getLabUser() != null) {
 			User user = DatabaseHelper.getUserDao().queryForId(source.getLabUser().getId());

@@ -33,6 +33,8 @@
         <import type="de.symeda.sormas.api.disease.DiseaseVariant" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.sample.PathogenTest"/>
+        <variable name="sampleTestsClass" type="Class"/>
+        <variable name="PosNegClass" type="Class"/>
     </data>
 
     <ScrollView
@@ -133,6 +135,107 @@
                     app:required="true"
                     app:value="@={data.lab}"
                     style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
+                    android:id="@+id/pathogenTest_sampleTests"
+                    app:value="@={data.sampleTests}"
+                    app:enumClass="@{sampleTestsClass}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <LinearLayout
+                    android:id="@+id/pathogenTest_pcrHeading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/pathogenTest_sampleTestResultPCR"
+                        app:value="@={data.sampleTestResultPCR}"
+                        app:enumClass="@{PosNegClass}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/pathogenTest_sampleTestResultPCRDate"
+                        app:value="@={data.sampleTestResultPCRDate}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/pathogenTest_antigenHeading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/pathogenTest_sampleTestResultAntigen"
+                        app:value="@={data.sampleTestResultAntigen}"
+                        app:enumClass="@{PosNegClass}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/pathogenTest_sampleTestResultAntigenDate"
+                        app:value="@={data.sampleTestResultAntigenDate}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/pathogenTest_igmHeading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/pathogenTest_sampleTestResultIGM"
+                        app:value="@={data.sampleTestResultIGM}"
+                        app:enumClass="@{PosNegClass}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/pathogenTest_sampleTestResultIGMDate"
+                        app:value="@={data.sampleTestResultIGMDate}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/pathogenTest_iggHeading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/pathogenTest_sampleTestResultIGG"
+                        app:value="@={data.sampleTestResultIGG}"
+                        app:enumClass="@{PosNegClass}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/pathogenTest_sampleTestResultIGGDate"
+                        app:value="@={data.sampleTestResultIGGDate}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/pathogenTest_immnunoHeading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/pathogenTest_sampleTestResultImmuno"
+                        app:value="@={data.sampleTestResultImmuno}"
+                        app:enumClass="@{PosNegClass}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlDateField
+                        android:id="@+id/pathogenTest_sampleTestResultImmunoDate"
+                        app:value="@={data.sampleTestResultImmunoDate}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/pathogenTest_labDetails"

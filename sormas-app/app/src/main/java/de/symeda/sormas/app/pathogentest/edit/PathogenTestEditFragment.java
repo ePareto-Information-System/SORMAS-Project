@@ -34,12 +34,14 @@ import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.sample.FinalClassification;
+import de.symeda.sormas.api.sample.IpSampleTestType;
 import de.symeda.sormas.api.sample.PCRTestSpecification;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.sample.SamplePurpose;
+import de.symeda.sormas.api.utils.PosNeg;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
@@ -141,6 +143,8 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 			super.hideFieldsForDisease(record.getSample().getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.PATHOGEN_TEST_EDIT);
 		}
 
+		contentBinding.setSampleTestsClass(PathogenTestType.class);
+		contentBinding.setPosNegClass(PosNeg.class);
 	}
 
 	@Override
@@ -230,6 +234,52 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		contentBinding.pathogenTestTestDateTime.initializeDateTimeField(getFragmentManager());
 		contentBinding.pathogenTestDateLabResultsSentDistrict.initializeDateField(getFragmentManager());
 		contentBinding.pathogenTestDateLabResultsSentClinician.initializeDateField(getFragmentManager());
+		contentBinding.pathogenTestSampleTestResultPCRDate.initializeDateField(getFragmentManager());
+		contentBinding.pathogenTestSampleTestResultAntigenDate.initializeDateField(getFragmentManager());
+		contentBinding.pathogenTestSampleTestResultIGMDate.initializeDateField(getFragmentManager());
+		contentBinding.pathogenTestSampleTestResultIGGDate.initializeDateField(getFragmentManager());
+		contentBinding.pathogenTestSampleTestResultImmunoDate.initializeDateField(getFragmentManager());
+
+		contentBinding.pathogenTestSampleTestResultPCR.setVisibility(GONE);
+		contentBinding.pathogenTestSampleTestResultPCRDate.setVisibility(GONE);
+
+		contentBinding.pathogenTestSampleTestResultAntigen.setVisibility(GONE);
+		contentBinding.pathogenTestSampleTestResultAntigenDate.setVisibility(GONE);
+
+		contentBinding.pathogenTestSampleTestResultIGM.setVisibility(GONE);
+		contentBinding.pathogenTestSampleTestResultIGMDate.setVisibility(GONE);
+
+		contentBinding.pathogenTestSampleTestResultIGG.setVisibility(GONE);
+		contentBinding.pathogenTestSampleTestResultIGGDate.setVisibility(GONE);
+
+		contentBinding.pathogenTestSampleTestResultImmuno.setVisibility(GONE);
+		contentBinding.pathogenTestSampleTestResultImmunoDate.setVisibility(GONE);
+
+		contentBinding.pathogenTestSampleTests.setOnValueChangeListener(selectedValues -> {
+			List<String> selectedItems = contentBinding.pathogenTestSampleTests.getSelectedValues();
+
+			boolean pcr = selectedItems != null && selectedItems.contains(PathogenTestType.PCR.name());
+			contentBinding.pathogenTestSampleTestResultPCR.setVisibility(pcr ? View.VISIBLE : View.GONE);
+			contentBinding.pathogenTestSampleTestResultPCRDate.setVisibility(pcr ? View.VISIBLE : View.GONE);
+
+			boolean antigen = selectedItems != null && selectedItems.contains(PathogenTestType.ANTIGEN_DETECTION.name());
+			contentBinding.pathogenTestSampleTestResultAntigen.setVisibility(antigen ? View.VISIBLE : GONE);
+			contentBinding.pathogenTestSampleTestResultAntigenDate.setVisibility(antigen ? View.VISIBLE : GONE);
+
+			boolean isIGMSelected = selectedItems != null && selectedItems.contains(PathogenTestType.IGM_SERUM_ANTIBODY.name());
+			contentBinding.pathogenTestSampleTestResultIGM.setVisibility(isIGMSelected ? View.VISIBLE : GONE);
+			contentBinding.pathogenTestSampleTestResultIGMDate.setVisibility(isIGMSelected ? View.VISIBLE : GONE);
+
+			boolean isIGGSelected = selectedItems != null && selectedItems.contains(PathogenTestType.IGG_SERUM_ANTIBODY.name());
+			contentBinding.pathogenTestSampleTestResultIGG.setVisibility(isIGGSelected ? View.VISIBLE : GONE);
+			contentBinding.pathogenTestSampleTestResultIGGDate.setVisibility(isIGGSelected ? View.VISIBLE : GONE);
+
+			boolean isImmunoSelected = selectedItems != null && selectedItems.contains(PathogenTestType.IMMUNO.name());
+			contentBinding.pathogenTestSampleTestResultImmuno.setVisibility(isImmunoSelected ? View.VISIBLE : GONE);
+			contentBinding.pathogenTestSampleTestResultImmunoDate.setVisibility(isImmunoSelected ? View.VISIBLE : GONE);
+
+
+		});
 
 		if (sample.getSamplePurpose() == SamplePurpose.INTERNAL) {
 			contentBinding.pathogenTestLab.setRequired(false);
