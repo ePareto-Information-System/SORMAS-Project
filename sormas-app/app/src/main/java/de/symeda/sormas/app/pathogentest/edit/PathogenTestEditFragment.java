@@ -142,7 +142,6 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		if(record.getSample().getAssociatedCase().getDisease() != null){
 			super.hideFieldsForDisease(record.getSample().getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.PATHOGEN_TEST_EDIT);
 		}
-
 		contentBinding.setSampleTestsClass(PathogenTestType.class);
 		contentBinding.setPosNegClass(PosNeg.class);
 	}
