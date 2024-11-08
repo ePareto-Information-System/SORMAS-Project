@@ -218,7 +218,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 393;
+	public static final int DATABASE_VERSION = 375;
 
 	private static DatabaseHelper instance = null;
 
@@ -3846,6 +3846,21 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN dateOfDeath date ;");
 					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN dateOfLastContactWithSuspectCase date ;");
 					getDao(EpiData.class).executeRaw("ALTER TABLE samples ADD COLUMN hasSampleBeenCollected varchar(255) ;");
+
+				case 393:
+					currentVersion = 393;
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN nationality varchar(255) ;");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN ethnicity varchar(255) ;");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN headHouseHold varchar(255) ;");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN nameHealthFacility varchar(255) ;");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN service varchar(255) ;");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN qualification varchar(255) ;");
+
+				case 394:
+					currentVersion = 394;
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN professionOfPatient varchar(512) ;");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN professionOfPatientOther varchar(255) ;");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN professionOfPatientString varchar(255) ;");
 
 					// ATTENTION: break should only be done after last version
 				break;

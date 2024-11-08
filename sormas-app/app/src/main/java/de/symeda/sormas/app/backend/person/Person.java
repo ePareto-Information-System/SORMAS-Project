@@ -18,8 +18,12 @@ package de.symeda.sormas.app.backend.person;
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -53,6 +57,7 @@ import de.symeda.sormas.api.person.LocationOfBirth;
 import de.symeda.sormas.api.person.MaritalStatus;
 import de.symeda.sormas.api.person.OccupationType;
 import de.symeda.sormas.api.person.PresentCondition;
+import de.symeda.sormas.api.person.Profession;
 import de.symeda.sormas.api.person.Salutation;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.YesNo;
@@ -215,6 +220,24 @@ public class Person extends PseudonymizableAdo {
 	@Column(columnDefinition = "text")
 	private String additionalDetails;
 	private MaritalStatus marriageStatus;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String nationality;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String ethnicity;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String headHouseHold;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String nameHealthFacility;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String service;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String qualification;
+	@Transient
+	private Set<Profession> professionOfPatient;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String professionOfPatientString;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String professionOfPatientOther;
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String otherId;
@@ -375,6 +398,98 @@ public class Person extends PseudonymizableAdo {
 
 	public void setMarriageStatus(MaritalStatus marriageStatus) {
 		this.marriageStatus = marriageStatus;
+	}
+
+	public String getNationality() {
+		return nationality;
+	}
+
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
+	public String getEthnicity() {
+		return ethnicity;
+	}
+
+	public void setEthnicity(String ethnicity) {
+		this.ethnicity = ethnicity;
+	}
+	public String getHeadHouseHold() {
+		return headHouseHold;
+	}
+
+	public void setHeadHouseHold(String headHouseHold) {
+		this.headHouseHold = headHouseHold;
+	}
+	public String getNameHealthFacility() {
+		return nameHealthFacility;
+	}
+
+	public void setNameHealthFacility(String nameHealthFacility) {
+		this.nameHealthFacility = nameHealthFacility;
+	}
+
+	public String getService() {
+		return service;
+	}
+
+	public void setService(String service) {
+		this.service = service;
+	}
+
+	public String getQualification() {
+		return qualification;
+	}
+
+	public void setQualification(String qualification) {
+		this.qualification = qualification;
+	}
+
+	@Transient
+	public Set<Profession> getProfessionOfPatient() {
+		if (professionOfPatient == null){
+			if(StringUtils.isEmpty(professionOfPatientString)){
+				professionOfPatient = new HashSet<>();
+			} else{
+				professionOfPatient =
+						Arrays.stream(professionOfPatientString.split(",")).map(Profession::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return professionOfPatient;
+	}
+
+	public void setProfessionOfPatient(Set<Profession> professionOfPatient) {
+		this.professionOfPatient = professionOfPatient;
+
+		if (this.professionOfPatient == null){
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		professionOfPatient.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if(sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		professionOfPatientString = sb.toString();
+
+	}
+
+	public String getProfessionOfPatientString() {return professionOfPatientString;}
+
+	public void setProfessionOfPatientString(String professionOfPatientString){
+		this.professionOfPatientString = professionOfPatientString;
+		professionOfPatient = null;
+	}
+
+	public String getProfessionOfPatientOther() {
+		return professionOfPatientOther;
+	}
+
+	public void setProfessionOfPatientOther(String professionOfPatientOther) {
+		this.professionOfPatientOther = professionOfPatientOther;
 	}
 
 	public void setSex(Sex sex) {

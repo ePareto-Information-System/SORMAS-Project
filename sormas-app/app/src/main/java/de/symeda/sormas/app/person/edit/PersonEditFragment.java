@@ -49,6 +49,7 @@ import de.symeda.sormas.api.person.LocationOfBirth;
 import de.symeda.sormas.api.person.MaritalStatus;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PresentCondition;
+import de.symeda.sormas.api.person.Profession;
 import de.symeda.sormas.api.person.Salutation;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.DataHelper;
@@ -287,6 +288,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		contentBinding.personDeathDate.initializeDateField(fragment.getFragmentManager());
 		contentBinding.personBurialDate.initializeDateField(fragment.getFragmentManager());
 		contentBinding.personResidenceSinceWhenInMonths.addValueChangedListener(field -> handlePersonResidenceSinceWhenInMonths(contentBinding));
+		contentBinding.setProfessionClass(Profession.class);
 	}
 
 	public static void setUpControlListeners(
@@ -628,6 +630,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		}
 		contentBinding.personCitizenship.setVisibility(GONE);
 		contentBinding.personBirthCountry.setVisibility(GONE);
+		contentBinding.personProfessionOfPatientOther.setVisibility(GONE);
 
 		handlePersonResidenceSinceWhenInMonths(contentBinding);
 		contentBinding.personApplicable.addValueChangedListener(event -> {
@@ -639,6 +642,14 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		});
 
 		contentBinding.personLocationOfBirth.initializeSpinner(locationOfBirthList);
+		contentBinding.personProfessionOfPatient.setOnValueChangeListener(selectedValues -> {
+			List<String> selectedItems = contentBinding.personProfessionOfPatient.getSelectedValues();
+
+			boolean proOther = selectedItems != null && selectedItems.contains("Others");
+			contentBinding.personProfessionOfPatientOther.setVisibility(proOther ? View.VISIBLE : View.GONE);
+
+		});
+
 	}
 
 	@Override
