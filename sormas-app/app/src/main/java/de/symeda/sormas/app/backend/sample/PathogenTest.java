@@ -24,7 +24,11 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,6 +43,7 @@ import de.symeda.sormas.api.sample.FinalClassification;
 import de.symeda.sormas.api.sample.PCRTestSpecification;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
+import de.symeda.sormas.api.utils.PosNeg;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.facility.Facility;
@@ -131,6 +136,29 @@ public class PathogenTest extends PseudonymizableAdo {
 	private Date dateLabResultsSentClinician;
 	@Enumerated(EnumType.STRING)
 	private FinalClassification finalClassification;
+
+	private Set<PathogenTestType> sampleTests;
+	@Enumerated(EnumType.STRING)
+	private PosNeg sampleTestResultPCR;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date sampleTestResultPCRDate;
+	@Enumerated(EnumType.STRING)
+	private PosNeg sampleTestResultAntigen;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date sampleTestResultAntigenDate;
+	@Enumerated(EnumType.STRING)
+	private PosNeg sampleTestResultIGM;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date sampleTestResultIGMDate;
+	@Enumerated(EnumType.STRING)
+	private PosNeg sampleTestResultIGG;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date sampleTestResultIGGDate;
+	@Enumerated(EnumType.STRING)
+	private PosNeg sampleTestResultImmuno;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date sampleTestResultImmunoDate;
+	private String sampleTestsString;
 
 	public Sample getSample() {
 		return sample;
@@ -355,6 +383,124 @@ public class PathogenTest extends PseudonymizableAdo {
 
 	public void setFinalClassification(FinalClassification finalClassification) {
 		this.finalClassification = finalClassification;
+	}
+
+	@Transient
+	public Set<PathogenTestType> getSampleTests() {
+		if(sampleTests == null){
+			if (StringUtils.isEmpty(sampleTestsString)) {
+				sampleTests = new HashSet<>();
+			}else{
+				sampleTests = Arrays.stream(sampleTestsString.split(",")).map(PathogenTestType::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return sampleTests;
+	}
+
+	public void setSampleTests(Set<PathogenTestType> sampleTests) {
+		this.sampleTests = sampleTests;
+
+		if(this.sampleTests == null){
+			return;
+		}
+		StringBuilder sb = new StringBuilder();
+		sampleTests.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		sampleTestsString = sb.toString();
+
+	}
+
+	public String getSampleTestsString() {
+		return sampleTestsString;
+	}
+
+	public void setSampleTestsString(String sampleTestsString) {
+		this.sampleTestsString = sampleTestsString;
+		sampleTests = null;
+	}
+	public PosNeg getSampleTestResultPCR() {
+		return sampleTestResultPCR;
+	}
+
+	public void setSampleTestResultPCR(PosNeg sampleTestResultPCR) {
+		this.sampleTestResultPCR = sampleTestResultPCR;
+	}
+
+	public Date getSampleTestResultPCRDate() {
+		return sampleTestResultPCRDate;
+	}
+
+	public void setSampleTestResultPCRDate(Date sampleTestResultPCRDate) {
+		this.sampleTestResultPCRDate = sampleTestResultPCRDate;
+	}
+
+	public PosNeg getSampleTestResultAntigen() {
+		return sampleTestResultAntigen;
+	}
+
+	public void setSampleTestResultAntigen(PosNeg sampleTestResultAntigen) {
+		this.sampleTestResultAntigen = sampleTestResultAntigen;
+	}
+
+	public Date getSampleTestResultAntigenDate() {
+		return sampleTestResultAntigenDate;
+	}
+
+	public void setSampleTestResultAntigenDate(Date sampleTestResultAntigenDate) {
+		this.sampleTestResultAntigenDate = sampleTestResultAntigenDate;
+	}
+
+	public PosNeg getSampleTestResultIGM() {
+		return sampleTestResultIGM;
+	}
+
+	public void setSampleTestResultIGM(PosNeg sampleTestResultIGM) {
+		this.sampleTestResultIGM = sampleTestResultIGM;
+	}
+
+	public Date getSampleTestResultIGMDate() {
+		return sampleTestResultIGMDate;
+	}
+
+	public void setSampleTestResultIGMDate(Date sampleTestResultIGMDate) {
+		this.sampleTestResultIGMDate = sampleTestResultIGMDate;
+	}
+
+	public PosNeg getSampleTestResultIGG() {
+		return sampleTestResultIGG;
+	}
+
+	public void setSampleTestResultIGG(PosNeg sampleTestResultIGG) {
+		this.sampleTestResultIGG = sampleTestResultIGG;
+	}
+
+	public Date getSampleTestResultIGGDate() {
+		return sampleTestResultIGGDate;
+	}
+
+	public void setSampleTestResultIGGDate(Date sampleTestResultIGGDate) {
+		this.sampleTestResultIGGDate = sampleTestResultIGGDate;
+	}
+
+	public PosNeg getSampleTestResultImmuno() {
+		return sampleTestResultImmuno;
+	}
+
+	public void setSampleTestResultImmuno(PosNeg sampleTestResultImmuno) {
+		this.sampleTestResultImmuno = sampleTestResultImmuno;
+	}
+
+	public Date getSampleTestResultImmunoDate() {
+		return sampleTestResultImmunoDate;
+	}
+
+	public void setSampleTestResultImmunoDate(Date sampleTestResultImmunoDate) {
+		this.sampleTestResultImmunoDate = sampleTestResultImmunoDate;
 	}
 
 	@Override
