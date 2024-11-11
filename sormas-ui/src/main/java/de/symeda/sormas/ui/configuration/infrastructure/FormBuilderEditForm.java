@@ -139,6 +139,7 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
                         item.getItemProperty(PROPERTY_ORDER).setValue(order);
                         item.getItemProperty(PROPERTY_NAME).setValue(field.getFieldName());
                     }
+                    availableFields.removeItem(field);
                 }
             }
             availableFields.setValue(null);
