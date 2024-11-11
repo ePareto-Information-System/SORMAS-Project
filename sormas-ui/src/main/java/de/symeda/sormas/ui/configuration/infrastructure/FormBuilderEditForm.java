@@ -131,7 +131,18 @@ public class FormBuilderEditForm extends AbstractEditForm<FormBuilderDto> {
             @SuppressWarnings("unchecked")
             Set<FormFieldIndexDto> selected = (Set<FormFieldIndexDto>) availableFields.getValue();
             for (FormFieldIndexDto field : selected) {
-                if (selectedFieldsContainer.getItem(field.getUuid()) == null) {
+                boolean isDuplicate = false;
+                // Check for duplicate field names in selectedFieldsContainer
+                for (Object itemId : selectedFieldsContainer.getItemIds()) {
+                    Item existingItem = selectedFieldsContainer.getItem(itemId);
+                    String existingName = (String) existingItem.getItemProperty(PROPERTY_NAME).getValue();
+                    if (existingName != null && existingName.equals(field.getFieldName())) {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
+
+                if (!isDuplicate && selectedFieldsContainer.getItem(field.getUuid()) == null) {
                     Item item = selectedFieldsContainer.addItem(field.getUuid());
                     if (item != null) {
                         int order = selectedFieldsContainer.size() + 1;

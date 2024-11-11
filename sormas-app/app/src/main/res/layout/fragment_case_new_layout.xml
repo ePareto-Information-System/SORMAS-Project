@@ -302,6 +302,12 @@
                     app:value="@={data.reportDate}" />
 
                 <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/caseData_investigatedDate"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:dateWithoutTime="@{true}"
+                    app:value="@={data.investigatedDate}" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
                     android:id="@+id/symptoms_onsetDate"
                     style="@style/ControlSecondOfTwoColumnsStyle"
                     app:caption="@string/caption_symptoms_onset_short"
