@@ -43,6 +43,7 @@ import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.sample.PosNegEq;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
@@ -67,8 +68,6 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 	public static final String TAG = CaseNewFragment.class.getSimpleName();
 
 	private Case record;
-	private DiseaseFieldHandler diseaseFieldHandler;
-
 	private List<Item> yearList;
 	private List<Item> monthList;
 	private List<Item> sexList;
@@ -279,12 +278,26 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 			Disease selectedDisease = (Disease) e.getValue();
 			if (selectedDisease != null) {
 				super.hideFieldsForDisease(selectedDisease, contentBinding.mainContent, FormType.CASE_CREATE);
+
+				CaseOrigin currentCaseOrigin = (CaseOrigin) contentBinding.caseDataCaseOrigin.getValue();
+				contentBinding.personPassportNumber.setVisibility(currentCaseOrigin == CaseOrigin.POINT_OF_ENTRY ? VISIBLE : GONE
+				);
 			}
 		});
 	}
 
 	@Override
 	public void onAfterLayoutBinding(final FragmentCaseNewLayoutBinding contentBinding) {
+
+		contentBinding.caseDataCaseOrigin.addValueChangedListener(e -> {
+			if (e.getValue() == CaseOrigin.IN_COUNTRY) {
+				contentBinding.personPassportNumber.setVisibility(GONE);
+			} else if (e.getValue() == CaseOrigin.POINT_OF_ENTRY) {
+				contentBinding.personPassportNumber.setVisibility(VISIBLE);
+			}
+		});
+
+
 		InfrastructureDaoHelper
 			.initializeHealthFacilityDetailsFieldVisibility(contentBinding.caseDataHealthFacility, contentBinding.caseDataHealthFacilityDetails);
 		InfrastructureDaoHelper
