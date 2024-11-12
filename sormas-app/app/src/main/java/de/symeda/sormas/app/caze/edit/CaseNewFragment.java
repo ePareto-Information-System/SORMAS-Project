@@ -238,6 +238,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 		contentBinding.caseDataHumanRabiesType.initializeSpinner(rabiesTypeList);
 		contentBinding.caseDataReportDate.initializeDateField(getFragmentManager());
 		contentBinding.symptomsOnsetDate.initializeDateField(getFragmentManager());
+		contentBinding.caseDataInvestigatedDate.initializeDateField(getFragmentManager());
 
 		contentBinding.personBirthdateDD.initializeSpinner(new ArrayList<>());
 		contentBinding.personBirthdateMM.initializeSpinner(
