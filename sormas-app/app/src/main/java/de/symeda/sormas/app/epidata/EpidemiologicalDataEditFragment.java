@@ -401,7 +401,6 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		initialDistrictsList = InfrastructureDaoHelper.loadDistricts(record.getHistoryOfTravelRegion());
 		initialCommunitiesList = InfrastructureDaoHelper.loadCommunities(record.getHistoryOfTravelDistrict());
 		listDrinkingWaterSources = DataUtils.getEnumItems(DrinkingWaterSource.class, true);
-		disease = getDisease(getActivityRootData());
 		outcomeList = DataUtils.getEnumItems(CaseOutcome.class, true);
 	}
 
@@ -522,7 +521,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 			}
 		}
 
-		if (disease == Disease.AHF){
+		if (caseDisease == Disease.AHF){
 			handleAHF();
 		}
 	}
