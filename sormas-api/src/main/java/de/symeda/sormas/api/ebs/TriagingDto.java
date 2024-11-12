@@ -20,6 +20,7 @@ import java.util.Date;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.user.UserReferenceDto;
+import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import de.symeda.sormas.api.utils.YesNo;
 
@@ -85,6 +86,12 @@ public class TriagingDto extends EntityDto {
 	private boolean notSignal;
 	private CategoryDetailsLevel categoryDetailsLevel;
 	private YesNo potentialRisk;
+
+	public static TriagingDto build() {
+		TriagingDto triagingDto = new TriagingDto();
+		triagingDto.setUuid(DataHelper.createUuid());
+		return triagingDto;
+	}
 
 	public EbsReferenceDto toReference() {
 		return new EbsReferenceDto(getUuid());
