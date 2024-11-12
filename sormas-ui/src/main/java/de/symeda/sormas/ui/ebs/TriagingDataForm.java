@@ -219,9 +219,9 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 			true);
 
 		specificSignal.addValueChangeListener(e -> {
-			if (Objects.equals(e.getProperty().getValue().toString(), "[Yes]")) {
+			if (Objects.equals(e.getProperty().getValue().toString(), "[YES]")) {
 				handleYesCase();
-			} else if ((Objects.equals(e.getProperty().getValue().toString(), "[No]"))) {
+			} else if ((Objects.equals(e.getProperty().getValue().toString(), "[NO]"))) {
 				handleNoCase(selectedEbs);
 			}
 		});
@@ -258,7 +258,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 		});
 
 		previousOccurrence.addValueChangeListener(e -> {
-			if (e.getProperty().getValue().toString().equals("[No]")) {
+			if (e.getProperty().getValue().toString().equals("[NO]")) {
 				triagingDecision.setValue(EbsTriagingDecision.VERIFY);
 				selectedEbs.getSignalVerification().setVerificationSent(YesNo.YES);
 				selectedEbs.getSignalVerification().setDateOfOccurrence(new Date());
@@ -282,13 +282,13 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 		});
 
 		supervisorReview.addValueChangeListener(e -> {
-			if (e.getProperty().getValue().toString().equals("[Yes]")) {
+			if (e.getProperty().getValue().toString().equals("[YES]")) {
 				outcomeSupervisor.setVisible(true);
 				triagingDecision.setVisible(true);
 				dateOfDecision.setVisible(true);
 				triagingDecision.setRequired(true);
 				dateOfDecision.setRequired(true);
-			} else if (e.getProperty().getValue().toString().equals("[No]")) {
+			} else if (e.getProperty().getValue().toString().equals("[NO]")) {
 				if (ebs.getTriaging().getSupervisorReview() != YesNo.NO) {
 					reviewSignal(Strings.seniorOfficials);
 				}
@@ -324,13 +324,13 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 			}
 		});
 		healthConcern.addValueChangeListener(e -> {
-			if (e.getProperty().getValue().toString().equals("[No]")) {
+			if (e.getProperty().getValue().toString().equals("[NO]")) {
 				triagingDecision.setValue(EbsTriagingDecision.DISCARD);
 				referredTo.setVisible(false);
 				referred.setVisible(false);
 				referredTo.setValue(null);
 				referred.setValue(null);
-			} else if (e.getProperty().getValue().toString().equals("[Yes]")) {
+			} else if (e.getProperty().getValue().toString().equals("[YES]")) {
 				if (ebs.getTriaging().getHealthConcern() != YesNo.YES) {
 					reviewSignal(Strings.referredNotifs);
 				}
@@ -338,10 +338,10 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 			}
 		});
 		referred.addValueChangeListener(e -> {
-			if (e.getProperty().getValue().toString().equals("[Yes]")) {
+			if (e.getProperty().getValue().toString().equals("[YES]")) {
 				referredTo.setVisible(true);
 				triagingDecision.setValue(EbsTriagingDecision.MORE_INFORMATION);
-			} else if (e.getProperty().getValue().toString().equals("[No]")) {
+			} else if (e.getProperty().getValue().toString().equals("[NO]")) {
 				referredTo.setVisible(false);
 				referredTo.setValue(null);
 				triagingDecision.setValue(EbsTriagingDecision.DISCARD);
@@ -350,8 +350,10 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 
 		if (selectedEbs != null) {
 			TriagingDto selectedTriaging = selectedEbs.getTriaging();
-			if (selectedTriaging.getCategoryDetailsLevel() != null) {
-				setVisibility(selectedTriaging.getCategoryDetailsLevel().toString(), selectedTriaging.getSignalCategory());
+			if (selectedTriaging != null) {
+				if (selectedTriaging.getCategoryDetailsLevel() != null) {
+					setVisibility(selectedTriaging.getCategoryDetailsLevel().toString(), selectedTriaging.getSignalCategory());
+				}
 			}
 		}
 

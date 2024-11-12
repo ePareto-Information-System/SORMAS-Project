@@ -105,8 +105,8 @@ public class EbsGrid extends FilteredGrid<EbsIndexDto, EbsCriteria> {
 
 		((Column<EbsIndexDto, String>) getColumn(EbsIndexDto.UUID)).setRenderer(new UuidRenderer());
 		((Column<EbsIndexDto, Date>) getColumn(EbsIndexDto.VERIFIED_DATE))
-			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(userLanguage)));
-		((Column<EbsIndexDto, Date>) getColumn(EbsIndexDto.TRIAGING_DECISION_DATE))
+//			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(userLanguage)));
+//		((Column<EbsIndexDto, Date>) getColumn(EbsIndexDto.TRIAGING_DECISION_DATE))
 			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(userLanguage)));
 		addItemClickListener(new ShowDetailsListener<>(EbsIndexDto.UUID, e -> ControllerProvider.getEbsController().navigateToData(e.getUuid())));
 	}
