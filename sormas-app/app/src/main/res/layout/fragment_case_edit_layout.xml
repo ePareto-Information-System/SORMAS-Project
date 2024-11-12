@@ -545,6 +545,7 @@
                     style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout
+                    android:id="@+id/caseData_responsibleRegion_heading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -570,8 +571,6 @@
                     app:value="@={data.responsibleCommunity}"
                     app:userEditRight="@{UserRight.CASE_TRANSFER}"
                     style="@style/ControlSingleColumnStyle" />
-
-
 
                 <de.symeda.sormas.app.component.controls.ControlCheckBoxField
                     android:id="@+id/caseData_differentPlaceOfStayJurisdiction"
@@ -1082,11 +1081,6 @@
 
         </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/caseData_mobileTeamNo"
                         app:value="@={data.mobileTeamNo}"
@@ -1106,45 +1100,22 @@
                         android:id="@+id/caseData_familyLinkWithPatient"
                         app:value="@={data.familyLinkWithPatient}"
                         style="@style/ControlSingleColumnStyle"/>
+
+                <LinearLayout
+                    android:id="@+id/caseData_reportingOfficerNameTitleFunctionLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/caseData_reportingOfficerName"
                         app:value="@={data.reportingOfficerName}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
-
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <de.symeda.sormas.app.component.controls.ControlTextEditField
-                        android:id="@+id/caseData_mobileTeamNo"
-                        app:value="@={data.mobileTeamNo}"
-                        style="@style/ControlSingleColumnStyle"/>
-
-                    <de.symeda.sormas.app.component.controls.ControlTextEditField
-                        android:id="@+id/caseData_nameOfVillagePersonGotIll"
-                        app:value="@={data.nameOfVillagePersonGotIll}"
-                        style="@style/ControlSingleColumnStyle"/>
-
-                    <de.symeda.sormas.app.component.controls.ControlTextEditField
-                        android:id="@+id/caseData_informationGivenBy"
-                        app:value="@={data.informationGivenBy}"
-                        style="@style/ControlSingleColumnStyle"/>
-
-                    <de.symeda.sormas.app.component.controls.ControlTextEditField
-                        android:id="@+id/caseData_familyLinkWithPatient"
-                        app:value="@={data.familyLinkWithPatient}"
-                        style="@style/ControlSingleColumnStyle"/>
-
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/caseData_reportingOfficerTitle"
                         app:value="@={data.reportingOfficerTitle}"
-                        style="@style/ControlFirstOfTwoColumnsStyle" />
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/caseData_functionOfReportingOfficer"
@@ -1154,6 +1125,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/caseData_reportingOfficerPhoneEMailLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -1365,8 +1337,6 @@
                     style="@style/ControlSingleColumnStyle"/>
 
             </LinearLayout>
-
-            //add here
 
             <LinearLayout
                 android:id="@+id/case_buttons_panel"

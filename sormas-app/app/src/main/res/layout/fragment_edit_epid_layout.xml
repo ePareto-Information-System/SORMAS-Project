@@ -340,7 +340,6 @@
                     android:layout_height="wrap_content"
                     app:htmlValue="@{I18nProperties.getString(Strings.indicatePlace)}"
                     style="@style/SubHeadingDescriptionStyle" />
-<!--                    android:visibility="@{data.patientTravelDuringIllness == YesNo.YES ? View.VISIBLE : View.GONE}" />-->
 
                 <LinearLayout
                     android:id="@+id/epiData_comm_health_country_heading1"

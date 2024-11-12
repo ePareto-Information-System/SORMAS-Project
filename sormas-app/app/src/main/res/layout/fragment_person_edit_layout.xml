@@ -527,22 +527,19 @@
                 style="@style/ControlSingleColumnStyle" />
 
             <LinearLayout
+                android:id="@+id/person_nationalHealthIdGhanaCardFieldsLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/person_nationalHealthId"
-                    android:nextFocusForward="@+id/person_phone"
-                    app:value="@={data.phone}"
-                    app:imeOptions="actionNext"
+                    app:value="@={data.nationalHealthId}"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/person_ghanaCard"
-                    android:nextFocusForward="@+id/person_nationalHealthId"
                     app:value="@={data.ghanaCard}"
-                    app:imeOptions="actionNext"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
@@ -557,6 +554,7 @@
                 style="@style/SubHeadingStyle" />
 
             <LinearLayout
+                android:id="@+id/person_educationFieldsLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -603,7 +601,7 @@
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/person_phone"
                 app:value="@={data.phone}"
-                style="@style/ControlSecondOfTwoColumnsStyle" />
+                style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlTextPopupField
                 android:id="@+id/person_address"
