@@ -426,8 +426,6 @@
                     style="@style/ControlSingleColumnStyle" />
 
         </LinearLayout>
-        </LinearLayout>
-
 
 
     </ScrollView>
