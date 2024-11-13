@@ -134,9 +134,18 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private boolean skipCountryValueChange;
 	private boolean skipFacilityTypeUpdate;
 	private boolean disableFacilityAddressCheck;
+	private boolean isEbsForm;
 
 	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers) {
 		super(LocationDto.class, LocationDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers);
+
+		if (FacadeProvider.getGeocodingFacade().isEnabled() && isEditableAllowed(LocationDto.LATITUDE) && isEditableAllowed(LocationDto.LONGITUDE)) {
+			getContent().addComponent(createGeoButton(), GEO_BUTTONS_LOC);
+		}
+	}
+
+	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers, boolean isEbsForm) {
+		super(LocationDto.class, LocationDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers, isEbsForm);
 
 		if (FacadeProvider.getGeocodingFacade().isEnabled() && isEditableAllowed(LocationDto.LATITUDE) && isEditableAllowed(LocationDto.LONGITUDE)) {
 			getContent().addComponent(createGeoButton(), GEO_BUTTONS_LOC);
@@ -727,6 +736,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	@Override
 	protected String createHtmlLayout() {
+		isEbsForm = isEbsForm();
+		if(isEbsForm){
+			return EBS_LAYOUT;
+		}
 		return HTML_LAYOUT;
 	}
 
