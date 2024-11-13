@@ -156,6 +156,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		List<Item> marriageList = DataUtils.getEnumItems(MaritalStatus.class, true);
 		List<Item> yesNoList = DataUtils.getEnumItems(YesNo.class, true);
 		List<Item> causeOfDeathList = DataUtils.getEnumItems(CauseOfDeath.class, true);
+		List<Item> educationList = DataUtils.getEnumItems(EducationType.class, true);
 		List<Item> diseaseList = DataUtils.toItems(DiseaseConfigurationCache.getInstance().getAllDiseases(true, true, true));
 		if (record.getCauseOfDeathDisease() != null && !diseaseList.contains(record.getCauseOfDeathDisease())) {
 			diseaseList.add(DataUtils.toItem(record.getCauseOfDeathDisease()));
@@ -250,7 +251,8 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		contentBinding.personOccupationType.initializeSpinner(occupationTypeList);
 		contentBinding.personArmedForcesRelationType.initializeSpinner(DataUtils.getEnumItems(ArmedForcesRelationType.class, true));
 		contentBinding.personApplicable.initializeSpinner(yesNoList);
-		contentBinding.personEducationType.initializeSpinner(DataUtils.getEnumItems(EducationType.class, true));
+		contentBinding.personEducationType.initializeSpinner(educationList);
+		educationList.remove(new Item<>(EducationType.NURSERY.toString(), EducationType.NURSERY));
 		// Determine which values should show as personPresentCondition (the person may have a value that by default is not shown for the current disease)
 		List<Item> items = DataUtils.getEnumItems(PresentCondition.class, true, getFieldVisibilityCheckers());
 		PresentCondition currentValue = record.getPresentCondition();
