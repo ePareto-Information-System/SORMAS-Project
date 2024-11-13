@@ -49,19 +49,20 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/main_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:orientation="vertical"
-            android:padding="@dimen/fragment_padding">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="@dimen/fragment_padding">
+                android:padding="@dimen/fragment_padding"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:id="@+id/main_content">
+
+                <requestFocus/>
                 <!--app:goneIfVariable="@{caze.facilityType}"
                 app:goneIfNotValue="@{FacilityType.HOSPITAL}">-->
 
