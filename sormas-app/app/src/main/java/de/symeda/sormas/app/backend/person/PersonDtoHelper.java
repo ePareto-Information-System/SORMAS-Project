@@ -176,6 +176,11 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		target.setCutCordWithSterileBlade(source.getCutCordWithSterileBlade());
 		target.setCordTreatedWithAnything(source.getCordTreatedWithAnything());
 		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
+		target.setInvestigatorName(source.getInvestigatorName());
+		target.setInvestigatorTitle(source.getInvestigatorTitle());
+		target.setInvestigatorUnit(source.getInvestigatorUnit());
+		target.setInvestigatorAddress(source.getInvestigatorAddress());
+		target.setInvestigatorTel(source.getInvestigatorTel());
 	}
 
 	@Override
@@ -326,6 +331,11 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		target.setCutCordWithSterileBlade(source.getCutCordWithSterileBlade());
 		target.setCordTreatedWithAnything(source.getCordTreatedWithAnything());
 		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
+		target.setInvestigatorName(source.getInvestigatorName());
+		target.setInvestigatorTitle(source.getInvestigatorTitle());
+		target.setInvestigatorUnit(source.getInvestigatorUnit());
+		target.setInvestigatorAddress(source.getInvestigatorAddress());
+		target.setInvestigatorTel(source.getInvestigatorTel());
 
 	}
 
