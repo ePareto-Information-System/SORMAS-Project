@@ -581,10 +581,10 @@
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/person_occupationDetails"
                 app:value="@={data.occupationDetails}"
-                app:customizableEnumField="@{personOccupationType}"
-                app:customizableEnumProperty="@{OccupationType.HAS_DETAILS}"
-                app:customizableEnumValue="@{Boolean.TRUE}"
                 style="@style/ControlSingleColumnStyle" />
+                <!--app:customizableEnumField="@{personOccupationType}"
+                app:customizableEnumProperty="@{OccupationType.HAS_DETAILS}"
+                app:customizableEnumValue="@{Boolean.TRUE}"-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -825,6 +825,7 @@
                 android:layout_marginBottom="@dimen/parentLayoutVerticalPadding">
 
                 <RelativeLayout
+                    android:id="@+id/personContactDetailList_headline"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:alternateBottomMarginIfEmpty="@{personContactDetailList}"
@@ -889,6 +890,45 @@
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/person_internalToken"
                 app:value="@={data.internalToken}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/person_investigatorNameTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_investigatorName"
+                app:value="@={data.investigatorName}"
+                style="@style/ControlFirstOfTwoColumnsStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_investigatorTitle"
+                app:value="@={data.investigatorTitle}"
+                style="@style/ControlSecondOfTwoColumnsStyle"/>
+            </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/person_investigatorUnitAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_investigatorUnit"
+                app:value="@={data.investigatorUnit}"
+                style="@style/ControlFirstOfTwoColumnsStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_investigatorAddress"
+                app:value="@={data.investigatorAddress}"
+                style="@style/ControlSecondOfTwoColumnsStyle"/>
+        </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_investigatorTel"
+                app:value="@={data.investigatorTel}"
                 style="@style/ControlSingleColumnStyle"/>
 
             <ImageView style="@style/FullHorizontalDividerStyle" />

@@ -275,6 +275,16 @@ public class Person extends PseudonymizableAdo {
 	private YesNoUnknown cordTreatedWithAnything;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String cordTreatedWithAnythingWhere;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String investigatorName;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String investigatorTitle;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String investigatorUnit;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String investigatorAddress;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String investigatorTel;
 
 	public Person() {
 	}
@@ -995,5 +1005,44 @@ public class Person extends PseudonymizableAdo {
 
 	public void setCordTreatedWithAnythingWhere(String cordTreatedWithAnythingWhere) {
 		this.cordTreatedWithAnythingWhere = cordTreatedWithAnythingWhere;
+	}
+	public String getInvestigatorName() {
+		return investigatorName;
+	}
+
+	public void setInvestigatorName(String investigatorName) {
+		this.investigatorName = investigatorName;
+	}
+
+	public String getInvestigatorTitle() {
+		return investigatorTitle;
+	}
+
+	public void setInvestigatorTitle(String investigatorTitle) {
+		this.investigatorTitle = investigatorTitle;
+	}
+
+	public String getInvestigatorUnit() {
+		return investigatorUnit;
+	}
+
+	public void setInvestigatorUnit(String investigatorUnit) {
+		this.investigatorUnit = investigatorUnit;
+	}
+
+	public String getInvestigatorAddress() {
+		return investigatorAddress;
+	}
+
+	public void setInvestigatorAddress(String investigatorAddress) {
+		this.investigatorAddress = investigatorAddress;
+	}
+
+	public String getInvestigatorTel() {
+		return investigatorTel;
+	}
+
+	public void setInvestigatorTel(String investigatorTel) {
+		this.investigatorTel = investigatorTel;
 	}
 }
