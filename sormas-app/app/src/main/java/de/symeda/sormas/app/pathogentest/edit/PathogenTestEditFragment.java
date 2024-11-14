@@ -315,6 +315,13 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 
 	private void handleAHF(){
 
+		List<Disease> testedDiseases = Arrays.stream(Disease.AHF_DISEASES.toArray(new Disease[0]))
+				.filter(c -> fieldVisibilityCheckers.isVisible(Disease.class, c.name()))
+				.collect(Collectors.toList());
+
+		List<Item> itemList = DataUtils.toItems(testedDiseases);
+		getContentBinding().pathogenTestTestedDisease.initializeSpinner(itemList);
+
 
 		getContentBinding().pathogenTestSampleTests.setOnValueChangeListener(selectedValues -> {
 			List<String> selectedItems = getContentBinding().pathogenTestSampleTests.getSelectedValues();
