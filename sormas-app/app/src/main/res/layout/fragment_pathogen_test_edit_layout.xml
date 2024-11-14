@@ -139,7 +139,6 @@
                 <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
                     android:id="@+id/pathogenTest_sampleTests"
                     app:value="@={data.sampleTests}"
-                    app:enumClass="@{sampleTestsClass}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout
