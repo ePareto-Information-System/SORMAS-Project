@@ -22,7 +22,9 @@ import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.Disease;
@@ -138,6 +140,17 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		}
 		contentBinding.setSampleTestsClass(PathogenTestType.class);
 		contentBinding.setPosNegClass(PosNeg.class);
+
+		Set<PathogenTestType> ahfTestTypes = Arrays.stream(PathogenTestType.getAHFTestTypes())
+				.filter(c -> c != null)
+				.filter(c -> fieldVisibilityCheckers.isVisible(PathogenTestType.class, c.name()))
+				.collect(Collectors.toSet());
+
+		List<Item> compatibleItems = DataUtils.toItems(new ArrayList<>(ahfTestTypes));
+		compatibleItems.removeIf(item -> item == null || item.toString().isEmpty()); // Remove empty names
+
+		contentBinding.pathogenTestSampleTests.initializeCheckBoxGroup(compatibleItems);
+
 	}
 
 	@Override
@@ -248,31 +261,6 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		contentBinding.pathogenTestSampleTestResultImmuno.setVisibility(GONE);
 		contentBinding.pathogenTestSampleTestResultImmunoDate.setVisibility(GONE);
 
-		contentBinding.pathogenTestSampleTests.setOnValueChangeListener(selectedValues -> {
-			List<String> selectedItems = contentBinding.pathogenTestSampleTests.getSelectedValues();
-
-			boolean pcr = selectedItems != null && selectedItems.contains(PathogenTestType.PCR.name());
-			contentBinding.pathogenTestSampleTestResultPCR.setVisibility(pcr ? View.VISIBLE : View.GONE);
-			contentBinding.pathogenTestSampleTestResultPCRDate.setVisibility(pcr ? View.VISIBLE : View.GONE);
-
-			boolean antigen = selectedItems != null && selectedItems.contains(PathogenTestType.ANTIGEN_DETECTION.name());
-			contentBinding.pathogenTestSampleTestResultAntigen.setVisibility(antigen ? View.VISIBLE : GONE);
-			contentBinding.pathogenTestSampleTestResultAntigenDate.setVisibility(antigen ? View.VISIBLE : GONE);
-
-			boolean isIGMSelected = selectedItems != null && selectedItems.contains(PathogenTestType.IGM_SERUM_ANTIBODY.name());
-			contentBinding.pathogenTestSampleTestResultIGM.setVisibility(isIGMSelected ? View.VISIBLE : GONE);
-			contentBinding.pathogenTestSampleTestResultIGMDate.setVisibility(isIGMSelected ? View.VISIBLE : GONE);
-
-			boolean isIGGSelected = selectedItems != null && selectedItems.contains(PathogenTestType.IGG_SERUM_ANTIBODY.name());
-			contentBinding.pathogenTestSampleTestResultIGG.setVisibility(isIGGSelected ? View.VISIBLE : GONE);
-			contentBinding.pathogenTestSampleTestResultIGGDate.setVisibility(isIGGSelected ? View.VISIBLE : GONE);
-
-			boolean isImmunoSelected = selectedItems != null && selectedItems.contains(PathogenTestType.IMMUNO.name());
-			contentBinding.pathogenTestSampleTestResultImmuno.setVisibility(isImmunoSelected ? View.VISIBLE : GONE);
-			contentBinding.pathogenTestSampleTestResultImmunoDate.setVisibility(isImmunoSelected ? View.VISIBLE : GONE);
-
-
-		});
 
 		if (sample.getSamplePurpose() == SamplePurpose.INTERNAL) {
 			contentBinding.pathogenTestLab.setRequired(false);
@@ -284,6 +272,8 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 				handleYellowFever();
 			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
 				handleIDSR();
+			case AHF:
+				handleAHF();
 		}
 	}
 
@@ -321,5 +311,35 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 
 	private void handleIDSR(){
 		getContentBinding().pathogenTestTestedDisease.setEnabled(false);
+	}
+
+	private void handleAHF(){
+
+
+		getContentBinding().pathogenTestSampleTests.setOnValueChangeListener(selectedValues -> {
+			List<String> selectedItems = getContentBinding().pathogenTestSampleTests.getSelectedValues();
+
+			// Visibility toggles based on selected items
+			boolean pcr = selectedItems != null && selectedItems.contains(PathogenTestType.PCR.toString());
+			getContentBinding().pathogenTestSampleTestResultPCR.setVisibility(pcr ? View.VISIBLE : View.GONE);
+			getContentBinding().pathogenTestSampleTestResultPCRDate.setVisibility(pcr ? View.VISIBLE : View.GONE);
+
+			boolean antigen = selectedItems != null && selectedItems.contains(PathogenTestType.ANTIGEN_DETECTION.toString());
+			getContentBinding().pathogenTestSampleTestResultAntigen.setVisibility(antigen ? View.VISIBLE : View.GONE);
+			getContentBinding().pathogenTestSampleTestResultAntigenDate.setVisibility(antigen ? View.VISIBLE : View.GONE);
+
+			boolean isIGMSelected = selectedItems != null && selectedItems.contains(PathogenTestType.IGM_SERUM_ANTIBODY.toString());
+			getContentBinding().pathogenTestSampleTestResultIGM.setVisibility(isIGMSelected ? View.VISIBLE : View.GONE);
+			getContentBinding().pathogenTestSampleTestResultIGMDate.setVisibility(isIGMSelected ? View.VISIBLE : View.GONE);
+
+			boolean isIGGSelected = selectedItems != null && selectedItems.contains(PathogenTestType.IGG_SERUM_ANTIBODY.toString());
+			getContentBinding().pathogenTestSampleTestResultIGG.setVisibility(isIGGSelected ? View.VISIBLE : View.GONE);
+			getContentBinding().pathogenTestSampleTestResultIGGDate.setVisibility(isIGGSelected ? View.VISIBLE : View.GONE);
+
+			boolean isImmunoSelected = selectedItems != null && selectedItems.contains(PathogenTestType.IMMUNO.toString());
+			getContentBinding().pathogenTestSampleTestResultImmuno.setVisibility(isImmunoSelected ? View.VISIBLE : View.GONE);
+			getContentBinding().pathogenTestSampleTestResultImmunoDate.setVisibility(isImmunoSelected ? View.VISIBLE : View.GONE);
+		});
+
 	}
 }
