@@ -68,32 +68,19 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <!--<LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:id="@+id/main_content"
-            style="@style/LayoutMultipleContentSpaceBelowStyle">-->
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/fragment_padding"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:id="@+id/main_content">
+            android:id="@+id/main_content"
+            style="@style/LayoutSingleContentSpaceBelowStyle">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/fragment_padding">
+            <requestFocus/>
 
-                <TextView
+
+            <TextView
                     android:id="@+id/heading_exposure_investigation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -1030,11 +1017,8 @@
                     style="@style/ControlSingleColumnStyle"/>
 
 
-            </LinearLayout>
-
         </LinearLayout>
 
     </ScrollView>
 
 </layout>
-
