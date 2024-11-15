@@ -292,8 +292,6 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 				handleIDSR();
 			case AHF:
 				handleAHF();
-			case NEW_INFLUENZA:
-				handleILI();
 		}
 
 		
