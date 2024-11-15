@@ -444,6 +444,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 				handleIDSR();
 			case AHF:
 				handleAHF();
+			case NEW_INFLUENZA:
+				handleILI();
 		}
 
 
@@ -558,4 +560,15 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 
 		getContentBinding().sampleSampleMaterial.initializeSpinner(DataUtils.toItems(ahfSampleMaterialList));
 	}
+	private void handleILI() {
+		getContentBinding().samplePurpose.setValue(SamplePurpose.EXTERNAL);
+		getContentBinding().samplePurpose.setVisibility(GONE);
+
+		List<SampleMaterial> iliSampleMaterialList = Arrays.asList(
+				SampleMaterial.NASOPHARYNGEAL_SWAB, SampleMaterial.OROPHARYNGEAL_SWAB, SampleMaterial.ORO_NASO, SampleMaterial.SERA, SampleMaterial.PLASMA, SampleMaterial.OTHER
+		);
+
+		getContentBinding().sampleSampleMaterial.initializeSpinner(DataUtils.toItems(iliSampleMaterialList));
+	}
+
 }

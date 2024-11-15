@@ -36,6 +36,7 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.utils.RiskFactorCondition;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
@@ -73,6 +74,9 @@ public class EpiData extends PseudonymizableAdo {
 	private YesNo contactDeadAnimals;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String ifYesSpecifyDead;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String ifYesSpecifySick;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String ifYesWildAnimalLocation;
 	@DatabaseField(dataType = DataType.DATE_LONG)
@@ -216,6 +220,16 @@ public class EpiData extends PseudonymizableAdo {
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private YesNo foodItems;
+	private YesNo previouslyVaccinatedAgainstInfluenza;
+	private YesNo previouslyVaccinatedAgainstCovid;
+	private Integer yearOfVaccination;
+	private Integer yearOfVaccinationCovid;
+	private String nameOfVaccine;
+	private String nameOfVaccineCovid;
+	private String placesVisitedPastSevenDays;
+	private YesNo vistedPlacesConfirmedPandemic;
+	private RiskFactorCondition riskFactorsSevereDisease;
+	private String otherSpecify;
 
 	public void setExposureDetailsKnown(YesNo exposureDetailsKnown) {
 		this.exposureDetailsKnown = exposureDetailsKnown;
@@ -267,6 +281,14 @@ public class EpiData extends PseudonymizableAdo {
 
 	public void setIfYesSpecifyDead(String ifYesSpecifyDead) {
 		this.ifYesSpecifyDead = ifYesSpecifyDead;
+	}
+
+	public String getIfYesSpecifySick() {
+		return ifYesSpecifySick;
+	}
+
+	public void setIfYesSpecifySick(String ifYesSpecifySick) {
+		this.ifYesSpecifySick = ifYesSpecifySick;
 	}
 
 	public String getIfYesWildAnimalLocation() {
@@ -891,6 +913,76 @@ public class EpiData extends PseudonymizableAdo {
 
 	public void setDateOfLastContactWithSuspectCase(Date dateOfLastContactWithSuspectCase) {
 		this.dateOfLastContactWithSuspectCase = dateOfLastContactWithSuspectCase;
+	}
+	public YesNo getPreviouslyVaccinatedAgainstInfluenza() {
+		return previouslyVaccinatedAgainstInfluenza;
+	}
+
+	public void setPreviouslyVaccinatedAgainstInfluenza(YesNo previouslyVaccinatedAgainstInfluenza) {
+		this.previouslyVaccinatedAgainstInfluenza = previouslyVaccinatedAgainstInfluenza;
+	}
+	public String getNameOfVaccine() {
+		return nameOfVaccine;
+	}
+	public void setNameOfVaccine(String nameOfVaccine) {
+		this.nameOfVaccine = nameOfVaccine;
+	}
+	public Integer getYearOfVaccination() {
+		return yearOfVaccination;
+	}
+
+	public void setYearOfVaccination(Integer yearOfVaccination) {
+		this.yearOfVaccination = yearOfVaccination;
+	}
+	public YesNo getPreviouslyVaccinatedAgainstCovid() {
+		return previouslyVaccinatedAgainstCovid;
+	}
+
+	public void setPreviouslyVaccinatedAgainstCovid(YesNo previouslyVaccinatedAgainstCovid) {
+		this.previouslyVaccinatedAgainstCovid = previouslyVaccinatedAgainstCovid;
+	}
+	public String getNameOfVaccineCovid() {
+		return nameOfVaccineCovid;
+	}
+
+	public void setNameOfVaccineCovid(String nameOfVaccineCovid) {
+		this.nameOfVaccineCovid = nameOfVaccineCovid;
+	}
+	public Integer getYearOfVaccinationCovid() {
+		return yearOfVaccinationCovid;
+	}
+
+	public void setYearOfVaccinationCovid(Integer yearOfVaccinationCovid) {
+		this.yearOfVaccinationCovid = yearOfVaccinationCovid;
+	}
+	public YesNo getVistedPlacesConfirmedPandemic() {
+		return vistedPlacesConfirmedPandemic;
+	}
+
+	public void setVistedPlacesConfirmedPandemic(YesNo vistedPlacesConfirmedPandemic) {
+		this.vistedPlacesConfirmedPandemic = vistedPlacesConfirmedPandemic;
+	}
+	public String getPlacesVisitedPastSevenDays() {
+		return placesVisitedPastSevenDays;
+	}
+
+	public void setPlacesVisitedPastSevenDays(String placesVisitedPastSevenDays) {
+		this.placesVisitedPastSevenDays = placesVisitedPastSevenDays;
+	}
+	public RiskFactorCondition getRiskFactorsSevereDisease() {
+		return riskFactorsSevereDisease;
+	}
+
+	public void setRiskFactorsSevereDisease(RiskFactorCondition riskFactorsSevereDisease) {
+		this.riskFactorsSevereDisease = riskFactorsSevereDisease;
+	}
+
+	public String getOtherSpecify() {
+		return otherSpecify;
+	}
+
+	public void setOtherSpecify(String otherSpecify) {
+		this.otherSpecify = otherSpecify;
 	}
 
 

@@ -102,6 +102,8 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setSampleTestResultIGGDate(source.getSampleTestResultIGGDate());
 		target.setSampleTestResultImmuno(source.getSampleTestResultImmuno());
 		target.setSampleTestResultImmunoDate(source.getSampleTestResultImmunoDate());
+		target.setSecondTestedDisease(source.getSecondTestedDisease());
+		target.setTestResultForSecondDisease(source.getTestResultForSecondDisease());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}
@@ -125,6 +127,8 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setTestedDiseaseVariantDetails(source.getTestedDiseaseVariantDetails());
 		target.setVirusDetectionGenotype(source.getVirusDetectionGenotype());
 		target.setTypingId(source.getTypingId());
+		target.setSecondTestedDisease(source.getSecondTestedDisease());
+		target.setTestResultForSecondDisease(source.getTestResultForSecondDisease());
 
 		if (source.getLab() != null) {
 			Facility lab = DatabaseHelper.getFacilityDao().queryForId(source.getLab().getId());

@@ -41,6 +41,7 @@ import de.symeda.sormas.api.sample.PCRTestSpecification;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
+import de.symeda.sormas.api.sample.PosNegEq;
 import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.utils.PosNeg;
@@ -65,12 +66,14 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 	private PathogenTest record;
 	private Sample sample;
 	private Disease caseDisease;
+	private Disease coronaDisease;
 
 	// Enum lists
 
 	private List<Facility> labList;
 	private List<Item> testTypeList;
 	private List<Item> pcrTestSpecificationList;
+	private List<Item> testResultListSecondDisease;
 	private List<Item> diseaseList;
 	private List<Item> diseaseVariantList;
 	private List<Item> testResultList;
@@ -105,11 +108,17 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		sample = record.getSample();
 		testTypeList = DataUtils.getEnumItems(PathogenTestType.class, true, getFieldVisibilityCheckers());
 		pcrTestSpecificationList = DataUtils.getEnumItems(PCRTestSpecification.class, true);
+		testResultListSecondDisease = DataUtils.getEnumItems(FinalClassification.class, true);
+		testResultListSecondDisease.remove(new Item<>(PathogenTestResultType.PENDING.toString(), PathogenTestResultType.PENDING));
+		testResultListSecondDisease.remove(new Item<>(PathogenTestResultType.NOT_DONE.toString(), PathogenTestResultType.NOT_DONE));
 		Disease incomingDisease = record.getSample().getAssociatedCase().getDisease();
+		Disease corona = Disease.CORONAVIRUS;
 
 		if(incomingDisease != null){
 			caseDisease = incomingDisease;
 		}
+
+		coronaDisease = corona;
 
 		List<Disease> diseases = DiseaseConfigurationCache.getInstance().getAllDiseases(true, true, true);
 		diseaseList = DataUtils.toItems(diseases);
@@ -187,6 +196,8 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 
 		contentBinding.pathogenTestPcrTestSpecification.initializeSpinner(pcrTestSpecificationList);
 		contentBinding.pathogenTestTestedDisease.setValue(caseDisease);
+		contentBinding.pathogenTestSecondTestedDisease.setValue(coronaDisease);
+		contentBinding.pathogenTestSecondTestedDisease.setEnabled(false);
 		contentBinding.pathogenTestTestedDisease.initializeSpinner(diseaseList, new ValueChangeListener() {
 
 			final Disease currentDisease = record.getTestedDisease();
@@ -211,6 +222,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 			}
 		});
 		contentBinding.pathogenTestTestedDiseaseVariant.initializeSpinner(diseaseVariantList);
+		contentBinding.pathogenTestTestResultForSecondDisease.initializeSpinner(testResultListSecondDisease);
 
 		contentBinding.pathogenTestTestResult.initializeSpinner(testResultList, new ValueChangeListener() {
 
@@ -280,6 +292,8 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 				handleIDSR();
 			case AHF:
 				handleAHF();
+			case NEW_INFLUENZA:
+				handleILI();
 		}
 
 		

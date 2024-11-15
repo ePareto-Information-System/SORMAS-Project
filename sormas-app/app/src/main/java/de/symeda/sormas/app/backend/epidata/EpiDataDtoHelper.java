@@ -101,6 +101,7 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		target.setAreaInfectedAnimals(source.getAreaInfectedAnimals());
 		target.setContactDeadAnimals(source.getContactDeadAnimals());
 		target.setIfYesSpecifyDead(source.getIfYesSpecifyDead());
+		target.setIfYesSpecifySick(source.getIfYesSpecifySick());
 		target.setIfYesWildAnimalLocation(source.getIfYesWildAnimalLocation());
 		target.setIfYesWildAnimalDate(source.getIfYesWildAnimalDate());
 		target.setPatientTravelDuringIllness(source.getPatientTravelDuringIllness());
@@ -134,6 +135,16 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		target.setDateOfDeath(source.getDateOfDeath());
 		target.setDateOfLastContactWithSuspectCase(source.getDateOfLastContactWithSuspectCase());
 		target.setSuspectLastName(source.getSuspectLastName());
+		target.setPreviouslyVaccinatedAgainstInfluenza(source.getPreviouslyVaccinatedAgainstInfluenza());
+		target.setNameOfVaccine(source.getNameOfVaccine());
+		target.setYearOfVaccination(source.getYearOfVaccination());
+		target.setPreviouslyVaccinatedAgainstCovid(source.getPreviouslyVaccinatedAgainstCovid());
+		target.setNameOfVaccineCovid(source.getNameOfVaccineCovid());
+		target.setYearOfVaccinationCovid(source.getYearOfVaccinationCovid());
+		target.setVistedPlacesConfirmedPandemic(source.getVistedPlacesConfirmedPandemic());
+		target.setPlacesVisitedPastSevenDays(source.getPlacesVisitedPastSevenDays());
+		target.setRiskFactorsSevereDisease(source.getRiskFactorsSevereDisease());
+		target.setOtherSpecify(source.getOtherSpecify());
 
 		List<Exposure> exposures = new ArrayList<>();
 		if (!source.getExposures().isEmpty()) {
@@ -231,6 +242,7 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		target.setAreaInfectedAnimals(source.getAreaInfectedAnimals());
 		target.setContactDeadAnimals(source.getContactDeadAnimals());
 		target.setIfYesSpecifyDead(source.getIfYesSpecifyDead());
+		target.setIfYesSpecifySick(source.getIfYesSpecifySick());
 		target.setIfYesWildAnimalLocation(source.getIfYesWildAnimalLocation());
 		target.setIfYesWildAnimalDate(source.getIfYesWildAnimalDate());
 		target.setPatientTravelDuringIllness(source.getPatientTravelDuringIllness());
@@ -264,6 +276,16 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		target.setDateOfDeath(source.getDateOfDeath());
 		target.setDateOfLastContactWithSuspectCase(source.getDateOfLastContactWithSuspectCase());
 		target.setSuspectLastName(source.getSuspectLastName());
+		target.setPreviouslyVaccinatedAgainstInfluenza(source.getPreviouslyVaccinatedAgainstInfluenza());
+		target.setNameOfVaccine(source.getNameOfVaccine());
+		target.setYearOfVaccination(source.getYearOfVaccination());
+		target.setPreviouslyVaccinatedAgainstCovid(source.getPreviouslyVaccinatedAgainstCovid());
+		target.setNameOfVaccineCovid(source.getNameOfVaccineCovid());
+		target.setYearOfVaccinationCovid(source.getYearOfVaccinationCovid());
+		target.setVistedPlacesConfirmedPandemic(source.getVistedPlacesConfirmedPandemic());
+		target.setPlacesVisitedPastSevenDays(source.getPlacesVisitedPastSevenDays());
+		target.setRiskFactorsSevereDisease(source.getRiskFactorsSevereDisease());
+		target.setOtherSpecify(source.getOtherSpecify());
 
 		List<ExposureDto> exposureDtos = new ArrayList<>();
 		if (!source.getExposures().isEmpty()) {
