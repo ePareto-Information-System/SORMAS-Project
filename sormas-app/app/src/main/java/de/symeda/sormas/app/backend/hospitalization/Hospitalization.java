@@ -112,6 +112,8 @@ public class Hospitalization extends AbstractDomainObject {
 	private YesNoUnknown seenAtAHealthFacility;
 	@Enumerated(EnumType.STRING)
 	private YesNoUnknown wasPatientAdmitted;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date terminationDateHospitalStay;
 
 
 	public Date getAdmissionDate() {
@@ -345,4 +347,10 @@ public class Hospitalization extends AbstractDomainObject {
 		this.wasPatientAdmitted = wasPatientAdmitted;
 	}
 
+	public Date getTerminationDateHospitalStay() {
+		return terminationDateHospitalStay;
+	}
+	public void setTerminationDateHospitalStay(Date terminationDateHospitalStay) {
+		this.terminationDateHospitalStay = terminationDateHospitalStay;
+	}
 }

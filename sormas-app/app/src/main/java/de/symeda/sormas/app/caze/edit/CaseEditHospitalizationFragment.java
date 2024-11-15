@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 
 import androidx.databinding.ObservableArrayList;
 
+import java.util.Arrays;
 import java.util.List;
 
 import de.symeda.sormas.api.Disease;
@@ -45,7 +46,6 @@ import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
-import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.hospitalization.Hospitalization;
 import de.symeda.sormas.app.backend.hospitalization.PreviousHospitalization;
 import de.symeda.sormas.app.component.Item;
@@ -66,6 +66,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 	private IEntryItemOnClickListener onPrevHosItemClickListener;
 	private List<Item> outcomeList;
 	private List<Item> inpatientOutpatientList;
+	private Disease disease;
 
 
 	// Static methods
@@ -170,6 +171,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		patientCondition = DataUtils.getEnumItems(MildModerateSevereCritical.class, true);
 		outcomeList = DataUtils.getEnumItems(CaseOutcome.class, true);
 		inpatientOutpatientList = DataUtils.getEnumItems(InpatOutpat.class, true);
+		disease = caze.getDisease();
 	}
 
 	@Override
@@ -200,12 +202,8 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 			verifyPrevHospitalizationStatus();
 		});
 
-		if(caze.getDisease() != null){
-			hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.HOSPITALIZATION_EDIT);
-		}
-
-		if(caze.getDisease() == Disease.AHF){
-			handleAHF();
+		if (disease != null) {
+			hideFieldsForDisease(disease, contentBinding.mainContent, FormType.HOSPITALIZATION_EDIT);
 		}
 	}
 
@@ -225,17 +223,19 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		contentBinding.caseHospitalizationIsolationDate.initializeDateField(getFragmentManager());
 		contentBinding.caseHospitalizationDateFirstSeen.initializeDateField(getFragmentManager());
 		contentBinding.caseHospitalizationNotifyDistrictDate.initializeDateField(getFragmentManager());
-		contentBinding.caseHospitalizationDateFormSentToDistrict.initializeDateField(getFragmentManager());
 		contentBinding.caseHospitalizationPatientConditionOnAdmission.initializeSpinner(patientCondition);
 		contentBinding.caseHospitalizationDateFormSentToDistrict.initializeDateField(getFragmentManager());
-
+		contentBinding.caseHospitalizationTerminationDateHospitalStay.initializeDateField(getFragmentManager());
 		contentBinding.caseDataOutcome.initializeSpinner(outcomeList);
 		contentBinding.caseHospitalizationSelectInpatientOutpatient.initializeSpinner(inpatientOutpatientList);
 
 		verifyPrevHospitalizationStatus();
 
-		if (caze.getDisease() != null) {
-			super.hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.HOSPITALIZATION_EDIT);
+		switch (disease){
+			case AHF:
+				handleAHF();
+			case NEW_INFLUENZA:
+				handleILI();
 		}
 	}
 
@@ -253,13 +253,37 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 
 	}
 
-	private void handleAHF() {
-		getContentBinding().caseHospitalizationAdmittedToHealthFacilityNew.addValueChangedListener(field -> {
-			int visibility = (field.getValue() == YesNo.YES ? VISIBLE : GONE);
-			getContentBinding().caseHospitalizationAdmissionDate.setVisibility(visibility);
-			getContentBinding().caseHospitalizationDischargeDate.setVisibility(visibility);
-			getContentBinding().caseHospitalizationDateOfDeath.setVisibility(visibility);
-		});
+	private void handleHospitalizationVisibility(List<View> viewsToToggle) {
+		for (View view : viewsToToggle) {
+			view.setVisibility(GONE);
+		}
 
+		getContentBinding().caseHospitalizationAdmittedToHealthFacility.addValueChangedListener(field -> {
+			int visibility = (field.getValue() == YesNo.YES ? VISIBLE : GONE);
+			for (View view : viewsToToggle) {
+				view.setVisibility(visibility);
+			}
+		});
 	}
+
+	private void handleAHF() {
+		handleHospitalizationVisibility(Arrays.asList(
+				getContentBinding().caseHospitalizationAdmissionDate,
+				getContentBinding().caseHospitalizationDischargeDate,
+				getContentBinding().caseHospitalizationDateOfDeath
+		));
+	}
+
+	private void handleILI() {
+		getContentBinding().caseHospitalizationAdmittedToHealthFacility.setCaption("WAS THE PATIENT ADMITTED AT THE FACILITY (IN-PATIENT)?");
+		getContentBinding().caseHospitalizationAdmissionDate.setCaption("DATE OF ADMISSION (IN-PATIENT)");
+		getContentBinding().caseHospitalizationDischargeDate.setCaption("DATE PERSON DISCHARGED FROM HOSPITAL");
+		handleHospitalizationVisibility(Arrays.asList(
+				getContentBinding().caseHospitalizationAdmissionDate,
+				getContentBinding().caseHospitalizationDischargeDate,
+				getContentBinding().caseHospitalizationTerminationDateHospitalStay,
+				getContentBinding().caseHospitalizationIntensiveCareUnit
+		));
+	}
+
 }
