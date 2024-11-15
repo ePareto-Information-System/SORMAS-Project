@@ -203,8 +203,8 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 
 		contentBinding.symptomsOnsetDate.initializeDateField(getFragmentManager());
 		contentBinding.symptomsLesionsOnsetDate.initializeDateField(getFragmentManager());
-		contentBinding.symptomsTemperature.initializeSpinner(DataUtils.addEmptyItem(bodyTempList));
-		contentBinding.symptomsTemperatureSource.initializeSpinner(DataUtils.addEmptyItem(tempSourceList));
+		contentBinding.symptomsTemperature.initializeSpinner(bodyTempList);
+		contentBinding.symptomsTemperatureSource.initializeSpinner(tempSourceList);
 		contentBinding.symptomsCongenitalHeartDiseaseType.initializeSpinner(congenitalHeartDiseaseList);
 		contentBinding.symptomsOnsetSymptom.initializeSpinner(DataUtils.toItems(null, true));
 		contentBinding.symptomsDateFirstWormEmergence.initializeDateField(getFragmentManager());
@@ -219,6 +219,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		if (disease == Disease.CONGENITAL_RUBELLA||disease == Disease.MONKEYPOX) {
 			contentBinding.complicationsHeading.setVisibility(GONE);
 		}
+		//TODO: CHANGE FROM IF TO SWITCH AND REMOVE REDUNDANCY CODE
 
 		if (disease == Disease.YELLOW_FEVER || disease == Disease.AHF){
 
@@ -243,6 +244,30 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 			contentBinding.symptomsOnsetSymptom.setVisibility(GONE);
 			contentBinding.symptomsDescription.setVisibility(GONE);
 			contentBinding.symptomsSignsAndSymptons.setVisibility(GONE);
+		}
+
+		if (disease == Disease.NEW_INFLUENZA){
+			contentBinding.symptomsTemperature.setCaption("BODY TEMPERATURE AT THE TIME OF INVESTIGATION");
+
+			contentBinding.symptomsPatientHaveFever.addValueChangedListener(field -> {
+				int visibility = field.getValue() == YesNo.YES ? VISIBLE : GONE;
+				contentBinding.symptomsTemperature.setVisibility(visibility);
+				contentBinding.symptomsTemperatureSource.setVisibility(visibility);
+
+			});
+
+
+			Set<CaseOutcome> outcomesToRemove = Set.of(
+					CaseOutcome.NO_OUTCOME,
+					CaseOutcome.ON_TREATMENT,
+					CaseOutcome.REFERRED,
+					CaseOutcome.UNKNOWN,
+					CaseOutcome.RECOVERED
+			);
+
+			contentBinding.symptomsOutcome.initializeSpinner(outcomeList);
+			outcomeList.removeIf(item -> outcomesToRemove.contains(item.getValue()));
+
 		}
 
 		contentBinding.symptomsCongenitalHeartDisease.addValueChangedListener(e -> {

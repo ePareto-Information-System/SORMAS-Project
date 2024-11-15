@@ -56,27 +56,17 @@
             android:id="@+id/main_content"
             style="@style/LayoutSingleContentSpaceBelowStyle">
 
-            <LinearLayout
-                android:id="@+id/symptoms_temperatureAndSource"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/symptoms_temperature"
                     app:value="@={data.temperature}"
-                    app:goneIfVariable="@{symptomsContext}"
-                    app:goneIfValue="@{SymptomsContext.CLINICAL_VISIT}"
-                    style="@style/ControlFirstOfTwoColumnsStyle" />
+                    style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/symptoms_temperatureSource"
                     app:value="@={data.temperatureSource}"
-                    app:goneIfVariable="@{symptomsContext}"
-                    app:goneIfValue="@{SymptomsContext.CLINICAL_VISIT}"
-                    style="@style/ControlSecondOfTwoColumnsStyle" />
+                    style="@style/ControlSingleColumnStyle" />
 
-            </LinearLayout>
 
             <TextView
                 style="@style/SubHeadingCompactStyle"
@@ -100,8 +90,6 @@
 
             <de.symeda.sormas.app.component.controls.ControlDateField
                 android:id="@+id/symptoms_dateOfOnset"
-                app:dependencyParentField="@{symptomsPatientHaveFever}"
-                app:dependencyParentValue="@{YesNo.YES}"
                 app:value="@={data.dateOfOnset}"
                 style="@style/ControlSingleColumnStyle" />
 

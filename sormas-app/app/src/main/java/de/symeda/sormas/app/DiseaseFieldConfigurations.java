@@ -33,11 +33,6 @@ public class DiseaseFieldConfigurations {
                 )
         );
 
-        diseaseFieldConfigurations.put(new DiseaseFormTypeKey(Disease.YELLOW_FEVER, FormType.SYMPTOMS_EDIT),
-                Arrays.asList(
-                        R.id.symptoms_temperatureAndSource, R.id.symptoms_description, R.id.btns, R.id.symptoms_backache, R.id.symptoms_bodyAche, R.id.symptoms_chillsSweats, R.id.symptoms_fatigueWeakness, R.id.symptoms_fever, R.id.symptoms_headache, R.id.symptoms_jaundice, R.id.symptoms_vomiting, R.id.symptoms_nausea, R.id.symptoms_otherComplications, R.id.symptoms_otherComplicationsText, R.id.symptoms_onsetDate, R.id.symptoms_outcome
-                )
-        );
     }
 
     public static List<Integer> getFields(Disease disease, FormType formType) {
