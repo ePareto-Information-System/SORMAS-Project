@@ -110,6 +110,8 @@ public class SettingsFragment extends BaseLandingFragment {
 			versionClickedCount++;
 			if (isShowDevOptions()) {
 				binding.settingsServerUrl.setVisibility(View.VISIBLE);
+				binding.backupDb.setVisibility(View.VISIBLE);
+				binding.restoreDb.setVisibility(View.VISIBLE);
 				if (isLbdsAppInstalled()) {
 					binding.kexLbds.setVisibility(View.VISIBLE);
 					binding.syncPersonLbds.setVisibility(View.VISIBLE);
@@ -174,7 +176,6 @@ public class SettingsFragment extends BaseLandingFragment {
 		binding.syncPersonLbds.setVisibility(showLbdsFeatures ? View.VISIBLE : View.GONE);
 		binding.syncCaseLbds.setVisibility(showLbdsFeatures ? View.VISIBLE : View.GONE);
 		binding.settingsLbdsDebugUrl.setVisibility(showLbdsFeatures ? View.VISIBLE : View.GONE);
-		binding.backupDb.setVisibility(hasUser ? View.VISIBLE : View.GONE);
 	}
 
 	@Override
