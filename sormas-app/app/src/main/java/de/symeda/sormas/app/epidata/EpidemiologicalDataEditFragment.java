@@ -31,6 +31,7 @@ import androidx.databinding.ObservableArrayList;
 import com.googlecode.openbeans.Introspector;
 import com.googlecode.openbeans.PropertyDescriptor;
 
+import java.util.Calendar;
 import java.util.List;
 
 import de.symeda.sormas.api.Disease;
@@ -46,6 +47,8 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.riskfactor.DrinkingWaterSource;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.RiskFactorCondition;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
@@ -88,8 +91,8 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	private List<Item> initialDistrictsList;
 	private List<Item> initialCommunitiesList;
 	private List<Item> listDrinkingWaterSources;
-
-
+	private List<Item> yearList;
+	private List<Item> riskFactorConditionList;
 
 	private List<Item> outcomeList;
 
@@ -402,6 +405,8 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		initialCommunitiesList = InfrastructureDaoHelper.loadCommunities(record.getHistoryOfTravelDistrict());
 		listDrinkingWaterSources = DataUtils.getEnumItems(DrinkingWaterSource.class, true);
 		outcomeList = DataUtils.getEnumItems(CaseOutcome.class, true);
+		yearList = DataUtils.toItems(DateHelper.getYearsToNow(), true);
+		riskFactorConditionList = DataUtils.getEnumItems(RiskFactorCondition.class, true);
 	}
 
 	@Override
@@ -462,8 +467,13 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 			record.getHistoryOfTravelSubDistrict()
 		);
 		contentBinding.epiDataWaterUsedByPatientAfterExposure.initializeSpinner(listDrinkingWaterSources);
+		contentBinding.epiDataYearOfVaccination.initializeSpinner(yearList);
+		contentBinding.epiDataYearOfVaccinationCovid.initializeSpinner(yearList);
+		contentBinding.epiDataRiskFactorsSevereDisease.initializeSpinner(riskFactorConditionList);
 
-
+		int year = Calendar.getInstance().get(Calendar.YEAR);
+		contentBinding.epiDataYearOfVaccination.setSelectionOnOpen(year - 35);
+		contentBinding.epiDataYearOfVaccinationCovid.setSelectionOnOpen(year - 35);
 
 
 	}
@@ -514,13 +524,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 			contentBinding.containmentMeasureLayout.setVisibility(GONE);
 			contentBinding.contaminationSourceLayout.setVisibility(GONE);
 		}
-
-		if (getActivityRootData() instanceof Case) {
-			if(caseDisease != null){
-				super.hideFieldsForDisease(caseDisease, contentBinding.mainContent, FormType.EPIDEMIOLOGICAL_EDIT);
-			}
-		}
-
+		
 		if (caseDisease == Disease.AHF){
 			handleAHF();
 		}

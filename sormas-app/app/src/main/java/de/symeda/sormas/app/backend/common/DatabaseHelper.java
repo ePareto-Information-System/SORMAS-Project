@@ -218,7 +218,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 398;
+	public static final int DATABASE_VERSION = 399;
 
 	private static DatabaseHelper instance = null;
 
@@ -3889,6 +3889,20 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				case 397:
 					currentVersion = 397;
 					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN terminationDateHospitalStay DATE ;");
+
+				case 398:
+					currentVersion = 398;
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN previouslyVaccinatedAgainstInfluenza varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN nameOfVaccine varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN yearOfVaccination Integer ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN previouslyVaccinatedAgainstCovid varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN nameOfVaccineCovid varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN yearOfVaccinationCovid Integer ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN vistedPlacesConfirmedPandemic varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN placesVisitedPastSevenDays varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN riskFactorsSevereDisease varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN otherSpecify varchar(255) ;");
+					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN ifYesSpecifySick varchar(255) ;");
 
 
 					// ATTENTION: break should only be done after last version
