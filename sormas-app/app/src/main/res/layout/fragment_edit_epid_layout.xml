@@ -329,7 +329,7 @@
                     style="@style/SubHeadingDescriptionStyle" />
 
                 <LinearLayout
-                    android:id="@+id/epiData_comm_health_country_heading1"
+                    android:id="@+id/epiData_comm_health_country_fields1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -338,21 +338,21 @@
                         android:id="@+id/epiData_comm1"
                         app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlFirstOfTwoColumnsStyle"
                         app:value="@={data.comm1}" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/epiData_healthCenter1"
                         app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlSecondOfTwoColumnsStyle"
                         app:value="@={data.healthCenter1}" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/epiData_country1"
                         app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlSecondOfTwoColumnsStyle"
                         app:value="@={data.country1}" />
 
                 </LinearLayout>
@@ -367,21 +367,21 @@
                         android:id="@+id/epiData_comm2"
                         app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlFirstOfTwoColumnsStyle"
                         app:value="@={data.comm2}" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/epiData_healthCenter2"
                         app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlSecondOfTwoColumnsStyle"
                         app:value="@={data.healthCenter2}" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/epiData_country2"
                         app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlSecondOfTwoColumnsStyle"
                         app:value="@={data.country2}" />
 
                 </LinearLayout>
@@ -400,7 +400,7 @@
                     style="@style/ControlSingleColumnStyle"/>
 
                 <LinearLayout
-                    android:id="@+id/wasPatientHospitalized_heading"
+                    android:id="@+id/wasPatientHospitalized_whereDates_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -409,21 +409,21 @@
                         android:id="@+id/epiData_ifYesWhere"
                         app:dependencyParentField="@{epiDataWasPatientHospitalized}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlFirstOfTwoColumnsStyle"
                         app:value="@={data.ifYesWhere}" />
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/epiData_hospitalizedDate1"
                         app:dependencyParentField="@{epiDataWasPatientHospitalized}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlSecondOfTwoColumnsStyle"
                         app:value="@={data.hospitalizedDate1}" />
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/epiData_hospitalizedDate2"
                         app:dependencyParentField="@{epiDataWasPatientHospitalized}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlSecondOfTwoColumnsStyle"
                         app:value="@={data.hospitalizedDate2}" />
 
                 </LinearLayout>
@@ -435,7 +435,7 @@
                     style="@style/ControlSingleColumnStyle"/>
 
                 <LinearLayout
-                    android:id="@+id/didPatientConsultHealer_heading"
+                    android:id="@+id/didPatientConsultHealer_nameCommCountry_Layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -444,21 +444,21 @@
                         android:id="@+id/epiData_ifYesNameHealer"
                         app:dependencyParentField="@{epiDataDidPatientConsultHealer}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlFirstOfTwoColumnsStyle"
                         app:value="@={data.ifYesNameHealer}" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/epiData_community"
                         app:dependencyParentField="@{epiDataDidPatientConsultHealer}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlSecondOfTwoColumnsStyle"
                         app:value="@={data.community}" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/epiData_country"
                         app:dependencyParentField="@{epiDataDidPatientConsultHealer}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlSecondOfTwoColumnsStyle"
                         app:value="@={data.country}" />
 
                 </LinearLayout>
@@ -483,14 +483,16 @@
                     app:enumClass="@{YesNoClass}"
                     style="@style/ControlSingleColumnStyle"/>
 
-                <de.symeda.sormas.app.component.controls.ControlTextEditField
-                    android:id="@+id/epiData_ifYesExplain"
-                    app:dependencyParentField="@{epiDataPatientReceiveTraditionalMedicine}"
-                    app:dependencyParentValue="@{YesNo.YES}"
-                    style="@style/ControlSingleColumnStyle"
-                    app:value="@={data.ifYesExplain}" />
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/epiData_ifYesExplain"
+                android:visibility="gone"
+                app:dependencyParentField="@{epiDataPatientReceiveTraditionalMedicine}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@={data.ifYesExplain}" />
 
-                <de.symeda.sormas.app.component.controls.ControlSwitchField
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/epiData_patientAttendFuneralCeremonies"
                     app:value="@={data.patientAttendFuneralCeremonies}"
                     app:enumClass="@{YesNoClass}"
@@ -503,7 +505,7 @@
                     style="@style/ControlSingleColumnStyle"/>
 
                 <LinearLayout
-                    android:id="@+id/patientTravelAnytimePeriodBeforeIll_heading"
+                    android:id="@+id/patientTravelAnytimePeriodBeforeIll_whereDates_Layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -512,21 +514,21 @@
                         android:id="@+id/epiData_ifTravelYesWhere"
                         app:dependencyParentField="@{epiDataPatientTravelAnytimePeriodBeforeIll}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlFirstOfTwoColumnsStyle"
                         app:value="@={data.ifTravelYesWhere}" />
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/epiData_ifYesStartDate"
                         app:dependencyParentField="@{epiDataPatientTravelAnytimePeriodBeforeIll}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlSecondOfTwoColumnsStyle"
                         app:value="@={data.ifYesStartDate}" />
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/epiData_ifYesEndDate"
                         app:dependencyParentField="@{epiDataPatientTravelAnytimePeriodBeforeIll}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlSecondOfTwoColumnsStyle"
                         app:value="@={data.ifYesEndDate}" />
 
                 </LinearLayout>
@@ -538,7 +540,7 @@
                     style="@style/ControlSingleColumnStyle"/>
 
                 <LinearLayout
-                    android:id="@+id/patientContactKnownSuspect_heading"
+                    android:id="@+id/patientContactKnownSuspect_nameIDCase_Layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -547,21 +549,21 @@
                         android:id="@+id/epiData_suspectLastName"
                         app:dependencyParentField="@{epiDataPatientContactKnownSuspect}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlFirstOfTwoColumnsStyle"
                         app:value="@={data.suspectLastName}" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/epiData_suspectName"
                         app:dependencyParentField="@{epiDataPatientContactKnownSuspect}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlSecondOfTwoColumnsStyle"
                         app:value="@={data.suspectName}" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/epiData_idCase"
                         app:dependencyParentField="@{epiDataPatientContactKnownSuspect}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle"
+                        style="@style/ControlSecondOfTwoColumnsStyle"
                         app:value="@={data.idCase}" />
 
                 </LinearLayout>
@@ -1017,7 +1019,7 @@
                     style="@style/ControlSingleColumnStyle"/>
 
 
-        </LinearLayout>
+            </LinearLayout>
 
     </ScrollView>
 

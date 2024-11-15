@@ -346,7 +346,7 @@
                         <de.symeda.sormas.app.component.controls.ControlCheckBoxField
                             android:id="@+id/sample_shipped"
                             app:value="@={data.shipped}"
-                            style="@style/ControlSingleColumnStyle" />
+                            style="@style/ControlFirstOfTwoColumnsStyle" />
 
                         <de.symeda.sormas.app.component.controls.ControlDateField
                             android:id="@+id/sample_shipmentDate"
