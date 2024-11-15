@@ -76,6 +76,10 @@ public class PathogenTest extends PseudonymizableAdo {
 
 	@Enumerated(EnumType.STRING)
 	private Disease testedDisease;
+	@Enumerated(EnumType.STRING)
+	private Disease secondTestedDisease;
+	@Enumerated(EnumType.STRING)
+	private PathogenTestResultType testResultForSecondDisease;
 
 	@Column(name = "testedDiseaseVariant")
 	private String testedDiseaseVariantString;
@@ -200,6 +204,22 @@ public class PathogenTest extends PseudonymizableAdo {
 	public void setTestedDisease(Disease testedDisease) {
 		this.testedDisease = testedDisease;
 	}
+
+	public Disease getSecondTestedDisease() {
+		return secondTestedDisease;
+	}
+
+	public void setSecondTestedDisease(Disease secondTestedDisease) {
+		this.secondTestedDisease = secondTestedDisease;
+	}
+	public PathogenTestResultType getTestResultForSecondDisease() {
+		return testResultForSecondDisease;
+	}
+
+	public void setTestResultForSecondDisease(PathogenTestResultType testResultForSecondDisease) {
+		this.testResultForSecondDisease = testResultForSecondDisease;
+	}
+
 
 	public String getTestedDiseaseVariantString() {
 		return testedDiseaseVariantString;

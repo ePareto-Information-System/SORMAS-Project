@@ -333,6 +333,16 @@
                     app:value="@={data.finalClassification}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/pathogenTest_secondTestedDisease"
+                    app:value="@={data.secondTestedDisease}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/pathogenTest_testResultForSecondDisease"
+                    app:value="@={data.testResultForSecondDisease}"
+                    style="@style/ControlSingleColumnStyle" />
+
             </LinearLayout>
 
         </LinearLayout>
