@@ -1343,6 +1343,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/symptoms_ageAtDeathDays_ageAtOnsetDays"
                     android:orientation="horizontal">
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField

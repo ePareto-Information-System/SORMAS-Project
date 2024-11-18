@@ -171,6 +171,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/person_locationOfBirth_institution_layout"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
@@ -188,6 +189,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/place_of_birth_region_district_layout"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
@@ -242,6 +244,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/person_prenatalCare_layout"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
@@ -260,6 +263,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/person_attendedByTrainedTBA_layout"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
@@ -279,6 +283,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/person_attendedByDoctorNurse_cutCordWithSterileBlade_layout"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
@@ -298,6 +303,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/person_cordTreatedWithAnything_layout"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
@@ -317,6 +323,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/person_birthWeight_gestationAgeAtBirth_layout"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
@@ -740,6 +747,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/person_mothers_name_mothersMaidenName_layout"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
