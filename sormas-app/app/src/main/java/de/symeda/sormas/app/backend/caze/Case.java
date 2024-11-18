@@ -61,6 +61,7 @@ import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.VaccineTypes;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.caze.maternalhistory.MaternalHistory;
@@ -246,6 +247,8 @@ public class Case extends PseudonymizableAdo {
 	@Enumerated(EnumType.STRING)
 	@DatabaseField(columnName = "vaccinationType")
 	private CardOrHistory vaccinationType;
+	@Enumerated(EnumType.STRING)
+	private VaccineTypes vaccineType;
 	private String numberOfDoses;
 	@DatabaseField(columnName = "vaccinationDate", dataType = DataType.DATE_LONG)
 	private Date vaccinationDate;
@@ -839,6 +842,14 @@ public class Case extends PseudonymizableAdo {
 
 	public void setVaccinationType(CardOrHistory vaccinationType) {
 		this.vaccinationType = vaccinationType;
+	}
+
+	public VaccineTypes getVaccineType() {
+		return vaccineType;
+	}
+
+	public void setVaccineType(VaccineTypes vaccineType) {
+		this.vaccineType = vaccineType;
 	}
 
 	public String getNumberOfDoses() {

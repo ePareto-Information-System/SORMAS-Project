@@ -159,6 +159,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 
 		target.setVaccinationStatus(source.getVaccinationStatus());
 		target.setVaccinationType(source.getVaccinationType());
+		target.setVaccineType(source.getVaccineType());
 		target.setNumberOfDoses(source.getNumberOfDoses());
 		target.setVaccinationDate(source.getVaccinationDate());
 		target.setSmallpoxVaccinationScar(source.getSmallpoxVaccinationScar());
@@ -464,6 +465,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setPregnant(source.getPregnant());
 		target.setVaccinationStatus(source.getVaccinationStatus());
 		target.setVaccinationType(source.getVaccinationType());
+		target.setVaccineType(source.getVaccineType());
 		target.setNumberOfDoses(source.getNumberOfDoses());
 		target.setVaccinationDate(source.getVaccinationDate());
 		target.setSmallpoxVaccinationScar(source.getSmallpoxVaccinationScar());
