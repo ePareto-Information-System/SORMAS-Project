@@ -18,10 +18,14 @@ package de.symeda.sormas.app.ebs.edit;
 import static android.view.View.GONE;
 
 import android.view.View;
+import android.widget.Toast;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +42,7 @@ import de.symeda.sormas.api.ebs.HumanLaboratoryCategoryDetails;
 import de.symeda.sormas.api.ebs.OutComeSupervisor;
 import de.symeda.sormas.api.ebs.POE;
 import de.symeda.sormas.api.ebs.SignalCategory;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -48,8 +53,11 @@ import de.symeda.sormas.app.backend.ebs.Ebs;
 import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
 import de.symeda.sormas.app.backend.ebs.triaging.Triaging;
 import de.symeda.sormas.app.component.Item;
+import de.symeda.sormas.app.component.controls.ControlDateField;
+import de.symeda.sormas.app.component.controls.ControlDateTimeField;
 import de.symeda.sormas.app.component.dialog.ConfirmationDialog;
 import de.symeda.sormas.app.component.dialog.ConfirmationInputDialog;
+import de.symeda.sormas.app.databinding.FragmentEbsEditLayoutBinding;
 import de.symeda.sormas.app.databinding.FragmentTriagingEditLayoutBinding;
 import de.symeda.sormas.app.rest.SynchronizeDataAsync;
 import de.symeda.sormas.app.triaging.edit.TriagingEditActivity;
@@ -57,7 +65,7 @@ import de.symeda.sormas.app.util.Callback;
 import de.symeda.sormas.app.util.DataUtils;
 
 public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditLayoutBinding, Triaging, Triaging> {
-
+	public final String THE_DATE_OF_DECISION_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE = "The Date of Decision cannot be earlier than the Date of Report or Date of Occurrence.";
 	private Triaging record;
 
 	private List<Item> signalCategory;
@@ -245,7 +253,7 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 			}
 		});
 		contentBinding.triagingCategoryDetailsLevel.addValueChangedListener(e -> {
-			var level = (e.getValue() != null) ? e.getValue().toString() : "Community";
+			var level = (e.getValue() != null) ? e.getValue().toString() : "";
 			var category =  contentBinding.triagingSignalCategory.getValue();
 			setVisibility(level, (SignalCategory) category,contentBinding);
 		});
@@ -263,7 +271,10 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 				contentBinding.triagingTriagingDecision.setValue(EbsTriagingDecision.VERIFY);
 			}
 		});
-
+		contentBinding.triagingDecisionDate.addValueChangedListener(e->{
+			validateDateFields(contentBinding);
+		});
+		validateDateFields(contentBinding);
 	}
 
 	@Override
@@ -361,6 +372,48 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 					R.string.heading_general_notice,
                     message);
 					signalReviewDialog.show();
+	}
+
+	public void validateDateFields(FragmentTriagingEditLayoutBinding contentBinding) {
+		Date dateOfReport = EbsEditActivity.getParentEbs().getReportDateTime();
+		Date dateOfOccurrence = EbsEditActivity.getParentEbs().getDateOnset();
+		ControlDateField dateOfDecision = contentBinding.triagingDecisionDate;
+		Date dateOfDecisionDate = dateOfDecision.getValue();
+		if (dateOfOccurrence == null) {
+			dateOfOccurrence = new Date(0);
+		}
+		if (dateOfReport == null) {
+			dateOfReport = new Date(0);
+		}
+
+		Date dateOfReportDate = clearTime(dateOfReport);
+		Date dateOfOccurrenceDate = clearTime(dateOfOccurrence);
+		if (dateOfDecisionDate != null){
+			dateOfDecisionDate = clearTime(dateOfDecisionDate);
+		if (dateOfDecisionDate.before(dateOfReportDate)) {
+			if (!dateOfReportDate.toString().equals(dateOfDecisionDate.toString())) {
+				showError(THE_DATE_OF_DECISION_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE);
+				dateOfDecision.setValidationCallback(() -> {
+					dateOfDecision.enableErrorState(I18nProperties.getValidationError(THE_DATE_OF_DECISION_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE, THE_DATE_OF_DECISION_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE));
+					return true;
+				});
+			}else {
+				dateOfDecision.setValidationCallback(() -> false);
+			}
+		}else{dateOfDecision.setValidationCallback(() -> false);}
+		}
+	}
+	private Date clearTime(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		return calendar.getTime();
+	}
+	private void showError(String message) {
+		Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
 	}
 
 }
