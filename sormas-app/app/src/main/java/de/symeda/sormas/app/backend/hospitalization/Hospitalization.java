@@ -95,6 +95,8 @@ public class Hospitalization extends AbstractDomainObject {
 	@Enumerated(EnumType.STRING)
 	private InpatOutpat selectInpatientOutpatient;
 	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date diseaseOnsetDate;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateFirstSeen;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date notifyDistrictDate;
@@ -224,6 +226,14 @@ public class Hospitalization extends AbstractDomainObject {
 		return selectInpatientOutpatient;}
 	public void setSelectInpatientOutpatient(InpatOutpat selectInpatientOutpatient) {
 		this.selectInpatientOutpatient = selectInpatientOutpatient;}
+
+	public Date getDiseaseOnsetDate() {
+		return diseaseOnsetDate;
+	}
+
+	public void setDiseaseOnsetDate(Date diseaseOnsetDate) {
+		this.diseaseOnsetDate = diseaseOnsetDate;
+	}
 
 	public Date getDateFirstSeen() {
 		return dateFirstSeen;
