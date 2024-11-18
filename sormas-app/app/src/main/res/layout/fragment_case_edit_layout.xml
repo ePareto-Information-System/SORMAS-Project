@@ -492,6 +492,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/caseData_notifiedBy_notification_investigation_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -1185,6 +1186,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/caseData_mother_vaccinatedWithTT_haveCard_layout"
                     android:orientation="horizontal">
 
                     <de.symeda.sormas.app.component.controls.ControlSwitchField
@@ -1206,13 +1208,13 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/caseData_numberOfDoses_motherVaccinationStatus_layout"
                     android:orientation="horizontal">
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/caseData_motherNumberOfDoses"
                         app:value="@={data.motherNumberOfDoses}"
-                        app:dependencyParentField="@{caseDataMotherHaveCard}"
-                        app:dependencyParentValue="@{YesNoUnknown.YES}"
+                        app:inputType="number"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlSwitchField
@@ -1226,6 +1228,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/caseData_vaccinationDate_one_two_layout"
                     android:orientation="horizontal">
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
@@ -1243,6 +1246,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/caseData_vaccinationDate_three_four_layout"
                     android:orientation="horizontal">
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
@@ -1260,6 +1264,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/caseData_vaccinationDate_five_lastDose_layout"
                     android:orientation="horizontal">
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
@@ -1277,6 +1282,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/caseData_seenInOPD_admittedInOPD_layout"
                     android:orientation="horizontal">
 
                     <de.symeda.sormas.app.component.controls.ControlSwitchField
@@ -1298,6 +1304,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/caseData_protectiveDoseTT_protectiveDoseTTDate_layout"
                     android:orientation="horizontal">
 
                     <de.symeda.sormas.app.component.controls.ControlSwitchField

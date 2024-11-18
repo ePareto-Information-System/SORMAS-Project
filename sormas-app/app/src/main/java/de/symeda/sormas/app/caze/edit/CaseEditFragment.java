@@ -837,26 +837,13 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
 				handleIDSR();
 		}
+
+		contentBinding.caseDataMotherHaveCard.addValueChangedListener(field -> {
+			handleNNT();
+		});
+		handleNNT();
 		contentBinding.caseDataMotherNumberOfDoses.addValueChangedListener(field -> {
-			String value = field.getValue() != null ? field.getValue().toString() : "0";
-			if (value.isEmpty()) {
-				value = "0";
-			}
-
-			int numberOfDoses;
-			try {
-				numberOfDoses = Integer.parseInt(value);
-			} catch (NumberFormatException e) {
-				// Handle invalid input if necessary
-				return;
-			}
-
-			contentBinding.caseDataMotherTTDateOne.setVisibility(numberOfDoses >= 1 ? VISIBLE : GONE);
-			contentBinding.caseDataMotherTTDateTwo.setVisibility(numberOfDoses >= 2 ? VISIBLE : GONE);
-			contentBinding.caseDataMotherTTDateThree.setVisibility(numberOfDoses >= 3 ? VISIBLE : GONE);
-			contentBinding.caseDataMotherTTDateFour.setVisibility(numberOfDoses >= 4 ? VISIBLE : GONE);
-			contentBinding.caseDataMotherTTDateFive.setVisibility(numberOfDoses >= 5 ? VISIBLE : GONE);
-			contentBinding.caseDataMotherLastDoseDate.setVisibility(numberOfDoses >= 6 ? VISIBLE : GONE);
+			handleNNT();
 		});
 	}
 
@@ -918,5 +905,38 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 	private void handleIDSR() {
 		getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
 		getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
+	}
+
+	private void handleNNT() {
+		FragmentCaseEditLayoutBinding contentBinding = getContentBinding();
+		YesNoUnknown caseDataMotherHaveCard = contentBinding.caseDataMotherHaveCard != null ? (YesNoUnknown) contentBinding.caseDataMotherHaveCard.getValue() : null;
+		if (caseDataMotherHaveCard != null && caseDataMotherHaveCard == YesNoUnknown.YES) {
+			contentBinding.caseDataMotherNumberOfDoses.setVisibility(VISIBLE);
+		} else {
+			contentBinding.caseDataMotherNumberOfDoses.setVisibility(GONE);
+		}
+
+
+		String caseDataMotherNumberOfDoses = contentBinding.caseDataMotherNumberOfDoses != null ? contentBinding.caseDataMotherNumberOfDoses.getValue().toString() : "0";
+		if (caseDataMotherNumberOfDoses.isEmpty()) {
+			caseDataMotherNumberOfDoses = "0";
+		}
+
+		int numberOfDoses;
+		try {
+			numberOfDoses = Integer.parseInt(caseDataMotherNumberOfDoses);
+		} catch (NumberFormatException e) {
+			// Handle invalid input if necessary
+			return;
+		}
+
+		contentBinding.caseDataMotherTTDateOne.setVisibility(numberOfDoses >= 1 ? VISIBLE : GONE);
+		contentBinding.caseDataMotherTTDateTwo.setVisibility(numberOfDoses >= 2 ? VISIBLE : GONE);
+		contentBinding.caseDataMotherTTDateThree.setVisibility(numberOfDoses >= 3 ? VISIBLE : GONE);
+		contentBinding.caseDataMotherTTDateFour.setVisibility(numberOfDoses >= 4 ? VISIBLE : GONE);
+		contentBinding.caseDataMotherTTDateFive.setVisibility(numberOfDoses >= 5 ? VISIBLE : GONE);
+		contentBinding.caseDataMotherLastDoseDate.setVisibility(numberOfDoses >= 6 ? VISIBLE : GONE);
+
+
 	}
 }
