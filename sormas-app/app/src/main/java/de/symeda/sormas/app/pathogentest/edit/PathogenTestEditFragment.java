@@ -22,6 +22,7 @@ import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -66,14 +67,12 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 	private PathogenTest record;
 	private Sample sample;
 	private Disease caseDisease;
-	private Disease coronaDisease;
 
 	// Enum lists
 
 	private List<Facility> labList;
 	private List<Item> testTypeList;
 	private List<Item> pcrTestSpecificationList;
-	private List<Item> testResultListSecondDisease;
 	private List<Item> diseaseList;
 	private List<Item> diseaseVariantList;
 	private List<Item> testResultList;
@@ -108,17 +107,11 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		sample = record.getSample();
 		testTypeList = DataUtils.getEnumItems(PathogenTestType.class, true, getFieldVisibilityCheckers());
 		pcrTestSpecificationList = DataUtils.getEnumItems(PCRTestSpecification.class, true);
-		testResultListSecondDisease = DataUtils.getEnumItems(FinalClassification.class, true);
-		testResultListSecondDisease.remove(new Item<>(PathogenTestResultType.PENDING.toString(), PathogenTestResultType.PENDING));
-		testResultListSecondDisease.remove(new Item<>(PathogenTestResultType.NOT_DONE.toString(), PathogenTestResultType.NOT_DONE));
 		Disease incomingDisease = record.getSample().getAssociatedCase().getDisease();
-		Disease corona = Disease.CORONAVIRUS;
 
 		if(incomingDisease != null){
 			caseDisease = incomingDisease;
 		}
-
-		coronaDisease = corona;
 
 		List<Disease> diseases = DiseaseConfigurationCache.getInstance().getAllDiseases(true, true, true);
 		diseaseList = DataUtils.toItems(diseases);
@@ -196,8 +189,6 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 
 		contentBinding.pathogenTestPcrTestSpecification.initializeSpinner(pcrTestSpecificationList);
 		contentBinding.pathogenTestTestedDisease.setValue(caseDisease);
-		contentBinding.pathogenTestSecondTestedDisease.setValue(coronaDisease);
-		contentBinding.pathogenTestSecondTestedDisease.setEnabled(false);
 		contentBinding.pathogenTestTestedDisease.initializeSpinner(diseaseList, new ValueChangeListener() {
 
 			final Disease currentDisease = record.getTestedDisease();
@@ -212,17 +203,16 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 				}
 
 				updateDiseaseVariantsField(contentBinding);
-
+			if(caseDisease != Disease.NEW_INFLUENZA){
 				testTypeList = DataUtils.toItems(
-					Arrays.asList(PathogenTestType.values()),
-					true,
-					FieldVisibilityCheckers.withDisease((Disease) field.getValue()),
-					PathogenTestType.class);
+						Arrays.asList(PathogenTestType.values()),
+						true,
+						FieldVisibilityCheckers.withDisease((Disease) field.getValue()),
+						PathogenTestType.class);
 				contentBinding.pathogenTestTestType.setSpinnerData(testTypeList);
-			}
+			}}
 		});
 		contentBinding.pathogenTestTestedDiseaseVariant.initializeSpinner(diseaseVariantList);
-		contentBinding.pathogenTestTestResultForSecondDisease.initializeSpinner(testResultListSecondDisease);
 
 		contentBinding.pathogenTestTestResult.initializeSpinner(testResultList, new ValueChangeListener() {
 
@@ -292,6 +282,8 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 				handleIDSR();
 			case AHF:
 				handleAHF();
+			case NEW_INFLUENZA:
+				handleILI();
 		}
 
 		
@@ -332,12 +324,12 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 	private void handleYellowFever() {
 		getContentBinding().pathogenTestTestedDisease.setEnabled(false);
 
-		List<FinalClassification> values1 = Arrays.stream(FinalClassification.YF_CLASSIFICATION.toArray(new FinalClassification[0]))
+		/*List<FinalClassification> values1 = Arrays.stream(FinalClassification.YF_CLASSIFICATION.toArray(new FinalClassification[0]))
 				.filter(c -> fieldVisibilityCheckers.isVisible(FinalClassification.class, c.name()))
 				.collect(Collectors.toList());
 
 		List<Item> itemList = DataUtils.toItems(values1);
-		getContentBinding().pathogenTestFinalClassification.initializeSpinner(itemList);
+		getContentBinding().pathogenTestFinalClassification.initializeSpinner(itemList);*/
 
 	}
 
@@ -352,6 +344,8 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		switch (disease) {
 			case MEASLES:
 				return FinalClassification.measlesClass;
+			case YELLOW_FEVER:
+				return FinalClassification.YF_CLASSIFICATION;
 			default:
 				return FinalClassification.DEFAULT;
 		}
@@ -392,6 +386,36 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 			getContentBinding().pathogenTestSampleTestResultImmuno.setVisibility(isImmunoSelected ? View.VISIBLE : View.GONE);
 			getContentBinding().pathogenTestSampleTestResultImmunoDate.setVisibility(isImmunoSelected ? View.VISIBLE : View.GONE);
 		});
+
+	}
+
+	private void handleILI(){
+		List<PathogenTestType> iliTestTypeList = Arrays.asList(PathogenTestType.PCR_RT_PCR, PathogenTestType.OTHER);
+		getContentBinding().pathogenTestTestType.initializeSpinner(DataUtils.toItems(iliTestTypeList));
+
+		List<PathogenTestResultType> iliTestResultType = Arrays.asList(PathogenTestResultType.INDETERMINATE,PathogenTestResultType.POSITIVE, PathogenTestResultType.NEGATIVE);
+		getContentBinding().pathogenTestTestResult.initializeSpinner(DataUtils.toItems(iliTestResultType));
+		getContentBinding().pathogenTestTestResultForSecondDisease.initializeSpinner(DataUtils.toItems(iliTestResultType));
+
+		// Get the coronavirus disease
+		Disease coronaDisease = null;
+		for (Disease disease : DiseaseConfigurationCache.getInstance().getAllDiseases(true, true, true)) {
+			if (Disease.CORONAVIRUS.equals(disease)) {
+				coronaDisease = disease;
+				break;
+			}
+		}
+
+		if (coronaDisease != null) {
+			List<Item> coronaDiseaseItemList = Collections.singletonList(DataUtils.toItem(coronaDisease));
+			getContentBinding().pathogenTestSecondTestedDisease.initializeSpinner(coronaDiseaseItemList);
+
+			// Set the value of the spinner
+			getContentBinding().pathogenTestSecondTestedDisease.setValue(DataUtils.toItem(coronaDisease));
+			getContentBinding().pathogenTestSecondTestedDisease.setEnabled(false);
+		}
+
+
 
 	}
 }
