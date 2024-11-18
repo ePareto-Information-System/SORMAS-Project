@@ -15,6 +15,8 @@
 
 package de.symeda.sormas.app.signalVerification.edit;
 
+import static de.symeda.sormas.api.utils.DataHelper.isNullOrEmpty;
+import static de.symeda.sormas.app.core.notification.NotificationType.ERROR;
 import static de.symeda.sormas.app.core.notification.NotificationType.WARNING;
 
 import android.app.AlertDialog;
@@ -39,6 +41,7 @@ import de.symeda.sormas.app.backend.ebs.Ebs;
 import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
 import de.symeda.sormas.app.backend.ebs.triaging.Triaging;
 import de.symeda.sormas.app.component.menu.PageMenuItem;
+import de.symeda.sormas.app.component.validation.FragmentValidator;
 import de.symeda.sormas.app.core.async.AsyncTaskResult;
 import de.symeda.sormas.app.core.async.SavingAsyncTask;
 import de.symeda.sormas.app.core.async.TaskResultHolder;
@@ -158,6 +161,14 @@ public class SignalVerificationEditActivity extends BaseEditActivity<SignalVerif
 
 		final SignalVerification signalToSave = getStoredRootEntity();
 
+		try {
+			FragmentValidator.validate(getContext(), getActiveFragment().getContentBinding());
+			callDeathCount(signalToSave);
+		} catch (ValidationException e) {
+			NotificationHelper.showNotification(this, ERROR, e.getMessage());
+			return;
+		}
+
 		saveTask = new SavingAsyncTask(getRootView(), signalToSave) {
 
 			@Override
@@ -181,6 +192,16 @@ public class SignalVerificationEditActivity extends BaseEditActivity<SignalVerif
 			}
 		}.executeOnThreadPool();
 	}
+
+	public static void callDeathCount(SignalVerification signalVerification) {
+		if (!isNullOrEmpty(signalVerification.getNumberOfDeathPerson()) && isNullOrEmpty(signalVerification.getNumberOfPersonCases())){
+			signalVerification.setNumberOfPersonCases(signalVerification.getNumberOfDeathPerson());
+		}
+		if (!isNullOrEmpty(signalVerification.getNumberOfDeath()) && isNullOrEmpty(signalVerification.getNumberOfPersonAnimal())){
+			signalVerification.setNumberOfPersonAnimal(signalVerification.getNumberOfDeath());
+		}
+	}
+
 
 	@Override
 	public void onDestroy() {

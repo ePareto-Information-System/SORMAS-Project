@@ -1,6 +1,5 @@
 package de.symeda.sormas.ui.ebs;
 
-
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
@@ -33,126 +32,142 @@ import de.symeda.sormas.ui.utils.NumberNumericValueValidator;
 
 public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificationDto> {
 
-    private static final long serialVersionUID = 1L;
-    private static final String EVENT_DETAILS_LOC = "eventDetailsLoc";
-    private static final String SIGNAL_VERIFICATION_LOC = "signalVerificationLoc";
+	private static final long serialVersionUID = 1L;
+	private static final String EVENT_DETAILS_LOC = "eventDetailsLoc";
+	private static final String SIGNAL_VERIFICATION_LOC = "signalVerificationLoc";
 
-    private static final String SIGNAL_VERIFICATION_ENTITY = "SignalVerification";
+	private static final String SIGNAL_VERIFICATION_ENTITY = "SignalVerification";
 
-    private final EbsDto ebs;
-    private final Class<? extends EntityDto> parentClass;
+	private final EbsDto ebs;
+	private final Class<? extends EntityDto> parentClass;
 
-    private static final String HTML_LAYOUT =
-    loc(SIGNAL_VERIFICATION_LOC) +
-     fluidRowLocs(SignalVerificationDto.VERIFICATION_SENT) +
-    fluidRowLocs(SignalVerificationDto.VERIFIED) +
-    fluidRowLocs(SignalVerificationDto.VERIFICATION_COMPLETE_DATE,"") +
-            loc(EVENT_DETAILS_LOC) +
-    fluidRowLocs(SignalVerificationDto.DATE_OF_OCCURRENCE, SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL, SignalVerificationDto.NUMBER_OF_DEATH) +
-    fluidRowLocs(SignalVerificationDto.NUMBER_OF_PERSON_CASES,SignalVerificationDto.NUMBER_OF_DEATH_PERSON, "") +
-    fluidRowLocs(SignalVerificationDto.DESCRIPTION) +
-    fluidRowLocs(SignalVerificationDto.WHY_NOT_VERIFY);
+	private static final String HTML_LAYOUT = loc(SIGNAL_VERIFICATION_LOC)
+		+ fluidRowLocs(SignalVerificationDto.VERIFICATION_SENT)
+		+ fluidRowLocs(SignalVerificationDto.VERIFIED)
+		+ fluidRowLocs(SignalVerificationDto.VERIFICATION_COMPLETE_DATE, "")
+		+ loc(EVENT_DETAILS_LOC)
+		+ fluidRowLocs(SignalVerificationDto.DATE_OF_OCCURRENCE, SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL, SignalVerificationDto.NUMBER_OF_DEATH)
+		+ fluidRowLocs(SignalVerificationDto.NUMBER_OF_PERSON_CASES, SignalVerificationDto.NUMBER_OF_DEATH_PERSON, "")
+		+ fluidRowLocs(SignalVerificationDto.DESCRIPTION)
+		+ fluidRowLocs(SignalVerificationDto.WHY_NOT_VERIFY);
 
-    SignalVerificationDataForm(EbsDto ebsDto, Class<? extends EntityDto> parentClass, boolean isPseudonymized, boolean inJurisdiction, boolean isEditAllowed){
-        super(
-            SignalVerificationDto.class,
-            SignalVerificationDto.I18N_PREFIX,
-            false,
-            FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-            createFieldAccessCheckers(isPseudonymized,  true),ebsDto);
-        this.ebs = ebsDto;
-        this.parentClass = parentClass;
-        addFields();
-    }
+	SignalVerificationDataForm(
+		EbsDto ebsDto,
+		Class<? extends EntityDto> parentClass,
+		boolean isPseudonymized,
+		boolean inJurisdiction,
+		boolean isEditAllowed) {
+		super(
+			SignalVerificationDto.class,
+			SignalVerificationDto.I18N_PREFIX,
+			false,
+			FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
+			createFieldAccessCheckers(isPseudonymized, true),
+			ebsDto);
+		this.ebs = ebsDto;
+		this.parentClass = parentClass;
+		addFields();
+	}
 
-    private static UiFieldAccessCheckers createFieldAccessCheckers(
-            boolean isPseudonymized,
-            boolean withPersonalAndSensitive) {
+	private static UiFieldAccessCheckers createFieldAccessCheckers(boolean isPseudonymized, boolean withPersonalAndSensitive) {
 
-        if (withPersonalAndSensitive) {
-            return UiFieldAccessCheckers.getDefault(isPseudonymized);
-        }
+		if (withPersonalAndSensitive) {
+			return UiFieldAccessCheckers.getDefault(isPseudonymized);
+		}
 
-        return UiFieldAccessCheckers.getNoop();
-    }
+		return UiFieldAccessCheckers.getNoop();
+	}
 
+	@Override
+	protected String createHtmlLayout() {
+		return HTML_LAYOUT;
+	}
 
-    @Override
-    protected String createHtmlLayout() {
-        return HTML_LAYOUT;
-    }
+	@Override
+	protected void addFields() {
+		if (ebs == null) {
+			return;
+		}
+		Label signalVerification = new Label(I18nProperties.getString(Strings.headingSignalVerification));
+		signalVerification.addStyleName(H3);
+		getContent().addComponent(signalVerification, SIGNAL_VERIFICATION_LOC);
 
-    @Override
-    protected void addFields() {
-        if (ebs == null){
-            return;
-        }
-        Label signalVerification = new Label(I18nProperties.getString(Strings.headingSignalVerification));
-        signalVerification.addStyleName(H3);
-        getContent().addComponent(signalVerification, SIGNAL_VERIFICATION_LOC);
+		Label headingEventDetails = new Label(I18nProperties.getString(Strings.headingEventDetails));
+		headingEventDetails.addStyleName(H3);
+		getContent().addComponent(headingEventDetails, EVENT_DETAILS_LOC);
+		NullableOptionGroup sentVerification = addField(SignalVerificationDto.VERIFICATION_SENT, NullableOptionGroup.class);
+		NullableOptionGroup verified = addField(SignalVerificationDto.VERIFIED, NullableOptionGroup.class);
+		addField(SignalVerificationDto.VERIFICATION_COMPLETE_DATE, DateField.class);
+		addField(SignalVerificationDto.DATE_OF_OCCURRENCE, DateField.class);
+		TextField numberOfPersonAnimal = addField(SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL, TextField.class);
+		TextField numberOfDeath = addField(SignalVerificationDto.NUMBER_OF_DEATH, TextField.class);
+		addField(SignalVerificationDto.DESCRIPTION, TextArea.class);
+		addField(SignalVerificationDto.WHY_NOT_VERIFY, TextArea.class);
+		TextField numberOfPersonCases = addField(SignalVerificationDto.NUMBER_OF_PERSON_CASES, TextField.class);
+		TextField numberOfDeathPerson = addField(SignalVerificationDto.NUMBER_OF_DEATH_PERSON, TextField.class);
 
-        Label headingEventDetails = new Label(I18nProperties.getString(Strings.headingEventDetails));
-        headingEventDetails.addStyleName(H3);
-        getContent().addComponent(headingEventDetails, EVENT_DETAILS_LOC);
-        NullableOptionGroup sentVerification = addField(SignalVerificationDto.VERIFICATION_SENT, NullableOptionGroup.class);
-        NullableOptionGroup verified = addField(SignalVerificationDto.VERIFIED, NullableOptionGroup.class);
-        addField(SignalVerificationDto.VERIFICATION_COMPLETE_DATE, DateField.class);
-        addField(SignalVerificationDto.DATE_OF_OCCURRENCE, DateField.class);
-        TextField numberOfPersonAnimal = addField(SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL, TextField.class);
-        TextField numberOfDeath = addField(SignalVerificationDto.NUMBER_OF_DEATH, TextField.class);
-        addField(SignalVerificationDto.DESCRIPTION, TextArea.class);
-        addField(SignalVerificationDto.WHY_NOT_VERIFY, TextArea.class);
-        TextField numberOfPersonCases = addField(SignalVerificationDto.NUMBER_OF_PERSON_CASES, TextField.class);
-        TextField numberOfDeathPerson = addField(SignalVerificationDto.NUMBER_OF_DEATH_PERSON, TextField.class);
+		numberOfPersonCases.addValidator(
+			new NumberNumericValueValidator(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, numberOfPersonCases.getCaption())));
+		numberOfDeathPerson.addValidator(
+			new NumberNumericValueValidator(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, numberOfDeathPerson.getCaption())));
+		numberOfPersonAnimal.addValidator(
+			new NumberNumericValueValidator(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, numberOfPersonAnimal.getCaption())));
+		numberOfDeath.addValidator(
+			new NumberNumericValueValidator(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, numberOfDeath.getCaption())));
 
-        numberOfPersonCases.addValidator(new NumberNumericValueValidator(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, numberOfPersonCases.getCaption())));
-        numberOfDeathPerson.addValidator(new NumberNumericValueValidator(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, numberOfDeathPerson.getCaption())));
-        numberOfPersonAnimal.addValidator(new NumberNumericValueValidator(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, numberOfPersonAnimal.getCaption())));
-        numberOfDeath.addValidator(new NumberNumericValueValidator(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, numberOfDeath.getCaption())));
+		EbsDto selectedEbs = getEbsDto();
 
-        EbsDto selectedEbs = getEbsDto();
+		FieldHelper.setVisibleWhen(
+			getFieldGroup(),
+			Arrays.asList(
+				SignalVerificationDto.DESCRIPTION,
+				SignalVerificationDto.DATE_OF_OCCURRENCE,
+				SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL,
+				SignalVerificationDto.NUMBER_OF_DEATH,
+				SignalVerificationDto.NUMBER_OF_DEATH_PERSON,
+				SignalVerificationDto.NUMBER_OF_PERSON_CASES),
+			SignalVerificationDto.VERIFIED,
+			Arrays.asList(SignalOutcome.EVENT),
+			true);
+		FieldHelper.setVisibleWhen(
+			getFieldGroup(),
+			Arrays.asList(SignalVerificationDto.WHY_NOT_VERIFY),
+			SignalVerificationDto.VERIFIED,
+			Arrays.asList(SignalOutcome.NON_EVENT),
+			true);
 
-        if (selectedEbs.getSignalVerification().getVerificationSent() == YesNo.YES){
-            sentVerification.setReadOnly(true);
-        }
+		FieldHelper.setVisibleWhen(
+			getFieldGroup(),
+			Arrays.asList(SignalVerificationDto.VERIFIED, SignalVerificationDto.VERIFICATION_COMPLETE_DATE),
+			SignalVerificationDto.VERIFICATION_SENT,
+			Arrays.asList(YesNo.YES),
+			true);
+		verified.addValueChangeListener(event -> {
+			if (event.getProperty().getValue().toString().equals("[Event]")) {
+				getContent().getComponent(EVENT_DETAILS_LOC).setVisible(true);
+				setRequired(
+					true,
+					SignalVerificationDto.VERIFICATION_COMPLETE_DATE,
+					SignalVerificationDto.DATE_OF_OCCURRENCE,
+					SignalVerificationDto.DESCRIPTION);
+				setRequired(false, SignalVerificationDto.WHY_NOT_VERIFY);
+			} else {
+				setRequired(
+					false,
+					SignalVerificationDto.VERIFICATION_COMPLETE_DATE,
+					SignalVerificationDto.DATE_OF_OCCURRENCE,
+					SignalVerificationDto.DESCRIPTION);
+				setRequired(true, SignalVerificationDto.WHY_NOT_VERIFY);
+				getContent().getComponent(EVENT_DETAILS_LOC).setVisible(false);
 
-        FieldHelper.setVisibleWhen(
-                getFieldGroup(),
-                Arrays.asList(SignalVerificationDto.DESCRIPTION,SignalVerificationDto.DATE_OF_OCCURRENCE,SignalVerificationDto.NUMBER_OF_PERSON_ANIMAL,SignalVerificationDto.NUMBER_OF_DEATH,SignalVerificationDto.NUMBER_OF_DEATH_PERSON,SignalVerificationDto.NUMBER_OF_PERSON_CASES),
-                SignalVerificationDto.VERIFIED,
-                Arrays.asList(SignalOutcome.EVENT),
-                true);
-        FieldHelper.setVisibleWhen(
-                getFieldGroup(),
-                Arrays.asList(SignalVerificationDto.WHY_NOT_VERIFY),
-                SignalVerificationDto.VERIFIED,
-                Arrays.asList(SignalOutcome.NON_EVENT),
-                true);
-
-        FieldHelper.setVisibleWhen(
-                getFieldGroup(),
-                Arrays.asList(SignalVerificationDto.VERIFIED,SignalVerificationDto.VERIFICATION_COMPLETE_DATE),
-                SignalVerificationDto.VERIFICATION_SENT,
-                Arrays.asList(YesNo.YES),
-                true);
-        verified.addValueChangeListener(event -> {
-            if (event.getProperty().getValue().toString().equals("[Event]")){
-                getContent().getComponent(EVENT_DETAILS_LOC).setVisible(true);
-                setRequired(true,SignalVerificationDto.VERIFICATION_COMPLETE_DATE,SignalVerificationDto.DATE_OF_OCCURRENCE,SignalVerificationDto.DESCRIPTION);
-                setRequired(false,SignalVerificationDto.WHY_NOT_VERIFY);
-            }else{
-                setRequired(false,SignalVerificationDto.VERIFICATION_COMPLETE_DATE,SignalVerificationDto.DATE_OF_OCCURRENCE,SignalVerificationDto.DESCRIPTION);
-                setRequired(true,SignalVerificationDto.WHY_NOT_VERIFY);
-                getContent().getComponent(EVENT_DETAILS_LOC).setVisible(false);
-
-            }
-        });
-        setRequired(true,SignalVerificationDto.VERIFICATION_SENT);
-        sentVerification.addValueChangeListener(event->{
-            if (event.getProperty().getValue().equals(YesNo.NO) && selectedEbs.getTriaging().getTriagingDecision() == EbsTriagingDecision.VERIFY){
-                TriagingDataForm.reviewSignal(Strings.verifyNotifs);
-            }
-        });
-    }
+			}
+		});
+		setRequired(true, SignalVerificationDto.VERIFICATION_SENT);
+		sentVerification.addValueChangeListener(event -> {
+			if (event.getProperty().getValue().equals(YesNo.NO) && selectedEbs.getTriaging().getTriagingDecision() == EbsTriagingDecision.VERIFY) {
+				TriagingDataForm.reviewSignal(Strings.verifyNotifs);
+			}
+		});
+	}
 
 }
