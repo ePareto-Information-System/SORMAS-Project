@@ -20,9 +20,14 @@ import static android.view.View.GONE;
 import static de.symeda.sormas.app.core.notification.NotificationType.ERROR;
 
 import android.view.View;
+import android.widget.Toast;
+
+import org.joda.time.DateTime;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +37,7 @@ import de.symeda.sormas.api.ebs.EbsSourceType;
 import de.symeda.sormas.api.ebs.ManualScanningType;
 import de.symeda.sormas.api.ebs.MediaScannningType;
 import de.symeda.sormas.api.ebs.PersonReporting;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.utils.ValidationException;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -45,17 +51,23 @@ import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
 import de.symeda.sormas.app.backend.location.Location;
 import de.symeda.sormas.app.backend.ebs.triaging.Triaging;
 import de.symeda.sormas.app.component.Item;
+import de.symeda.sormas.app.component.controls.ControlDateField;
+import de.symeda.sormas.app.component.controls.ControlDateTimeField;
+import de.symeda.sormas.app.component.dialog.ConfirmationDialog;
 import de.symeda.sormas.app.component.dialog.LocationDialog;
 import de.symeda.sormas.app.component.validation.FragmentValidator;
 import de.symeda.sormas.app.component.validation.ValidationHelper;
+import de.symeda.sormas.app.core.NotificationContext;
 import de.symeda.sormas.app.core.notification.NotificationHelper;
+import de.symeda.sormas.app.core.notification.NotificationType;
 import de.symeda.sormas.app.databinding.FragmentEbsEditLayoutBinding;
 import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.app.util.InfrastructureDaoHelper;
 import de.symeda.sormas.app.util.InfrastructureFieldsDependencyHandler;
+import de.symeda.sormas.app.util.LocationService;
 
 public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBinding, Ebs, Ebs> {
-
+	public final String THE_DATE_OF_REPORT_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE = "The Date of Report cannot be earlier than the Date of Occurrence.";
 	private Ebs record;
 
 	private List<Item> sourceInformation;
@@ -197,9 +209,31 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 		contentBinding.ebsManualScanningType.initializeSpinner(manualScanningType);
 		contentBinding.ebsScanningType.initializeSpinner(mediaScanningType);
 		contentBinding.ebsReportDateTime.initializeDateField(getFragmentManager());
-		contentBinding.ebsDateOnset.initializeDateField(getFragmentManager());
+		contentBinding.ebsDateOnset.initializeDateTimeField(getFragmentManager());
 		contentBinding.ebsInformantName.setVisibility(GONE);
 		contentBinding.ebsCommunity.setCaption("Sub District");
+		contentBinding.ebsCity.setCaption("Community");
+		// "Pick GPS Coordinates" confirmation dialog
+		contentBinding.pickGpsCoordinates.setOnClickListener(v -> {
+			final ConfirmationDialog confirmationDialog = new ConfirmationDialog(
+					getActivity(),
+					R.string.heading_confirmation_dialog,
+					R.string.confirmation_pick_gps,
+					R.string.yes,
+					R.string.no);
+
+			confirmationDialog.setPositiveCallback(() -> {
+				android.location.Location phoneLocation = LocationService.instance().getLocation(getActivity());
+				if (phoneLocation != null) {
+					contentBinding.ebsEbsLatitude.setDoubleValue(phoneLocation.getLatitude());
+					contentBinding.ebsEbsLongitude.setDoubleValue(phoneLocation.getLongitude());
+					contentBinding.ebsEbsLatLon.setFloatValue(phoneLocation.getAccuracy());
+				} else {
+					NotificationHelper.showDialogNotification((NotificationContext) getContext(), NotificationType.WARNING, R.string.message_gps_problem);
+				}
+			});
+			confirmationDialog.show();
+		});
 		contentBinding.ebsSourceInformation.addValueChangedListener(e -> {
 			List<PersonReporting> itemsToAdd;
 
@@ -276,6 +310,47 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 
 			contentBinding.ebsScanningType.initializeSpinner(filteredInformant);
 		});
+		contentBinding.ebsReportDateTime.addValueChangedListener(
+				e->{
+					validateDateFields(contentBinding);
+				}
+		);
+		contentBinding.ebsDateOnset.addValueChangedListener(
+				e->{
+					validateDateFields(contentBinding);
+				}
+		);
+	}
+	public void validateDateFields(FragmentEbsEditLayoutBinding contentBinding) {
+		ControlDateField dateOfReport = contentBinding.ebsReportDateTime;
+		ControlDateTimeField dateOfOccurrence = contentBinding.ebsDateOnset;
+		if (dateOfReport.getValue() != null && dateOfOccurrence.getValue() != null && dateOfReport.getValue().before((Date)dateOfOccurrence.getValue())) {
+			Date dateOfReportDate = clearTime(dateOfReport.getValue());
+			Date dateOfOccurrenceDate = clearTime((Date) dateOfOccurrence.getValue());
+			if (!dateOfReportDate.toString().equals(dateOfOccurrenceDate.toString())) {
+				showError(THE_DATE_OF_REPORT_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE);
+				dateOfReport.setValidationCallback(() -> {
+					dateOfReport.enableErrorState(I18nProperties.getValidationError(THE_DATE_OF_REPORT_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE, THE_DATE_OF_REPORT_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE));
+					return true;
+				});
+			}else {
+				dateOfReport.setValidationCallback(() -> false);
+			}
+		}else {
+			dateOfReport.setValidationCallback(() -> false);
+		}
+	}
+	private Date clearTime(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		return calendar.getTime();
+	}
+	private void showError(String message) {
+		Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
 	}
 
 	@Override
