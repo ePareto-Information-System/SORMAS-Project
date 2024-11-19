@@ -307,7 +307,14 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		if (sourceContactsToggleCallback != null) {
 			ogContactWithSourceCaseKnown.addValueChangeListener(e -> {
 				YesNo sourceContactsKnown = (YesNo) FieldHelper.getNullableSourceFieldValue((Field) e.getProperty());
-				sourceContactsToggleCallback.accept(YesNo.YES == sourceContactsKnown);
+
+				if (Disease.CSM.equals(disease)) {
+					if (shouldToggleSourceContacts(sourceContactsKnown)) {
+						sourceContactsToggleCallback.accept(YesNo.YES == sourceContactsKnown);
+					}
+				} else {
+					sourceContactsToggleCallback.accept(YesNo.YES == sourceContactsKnown);
+				}
 			});
 		}
 
@@ -743,9 +750,13 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 	public void hideLabels () {
 		Arrays.asList(LOC_EXPOSURE_INVESTIGATION_HEADING, LOC_ACTIVITY_AS_CASE_INVESTIGATION_HEADING, LOC_SOURCE_CASE_CONTACTS_HEADING).stream().map(
-				//check if not null then hide
 				label -> getContent().getComponent(label)).filter(
 				label -> label != null).forEach(
 				label -> label.setVisible(false));
 	}
+
+	private boolean shouldToggleSourceContacts(YesNo sourceContactsKnown) {
+		return sourceContactsKnown != YesNo.YES;
+	}
+
 }

@@ -70,6 +70,7 @@ public class CaseEpiDataView extends AbstractCaseView {
 		UserProvider currentUser = UserProvider.getCurrent();
 		boolean sourceContactsVisible = currentUser != null && currentUser.hasUserRight(UserRight.CONTACT_VIEW);
 		VerticalLayout sourceContactsLayout = new VerticalLayout();
+		sourceContactsLayout.setVisible(false);
 		Consumer<Boolean> sourceContactsToggleCallback =
 			(visible) -> sourceContactsLayout.setVisible(visible != null && sourceContactsVisible ? visible : false);
 
