@@ -1333,7 +1333,7 @@
                     app:value="@={data.supplementalImmunizationDetails}"
                     app:dependencyParentField="@{caseDataSupplementalImmunization}"
                     app:dependencyParentValue="@{YesNoUnknown.YES}"
-                    app:showCaption="false"
+                    app:showCaption="true"
                     app:inputType="textMultiLine"
                     app:textAlignment="gravity"
                     app:gravity="top|start"

@@ -1607,8 +1607,6 @@
                 app:enumClass="@{symptomStateClass}"
                 app:slim="true"
                 app:value="@={data.otherComplications}"
-                app:dependencyParentField="@{symptomsEmergenceOfGuineaWorm}"
-                app:dependencyParentValue="@{SymptomState.YES}"
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField

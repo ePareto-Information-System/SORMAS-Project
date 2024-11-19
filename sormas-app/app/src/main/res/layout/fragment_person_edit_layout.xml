@@ -65,6 +65,12 @@
 
             <requestFocus/>
 
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_uuid"
+                app:value="@{data.uuid}"
+                app:shortUuidValue="@{data.uuid}"
+                style="@style/ControlSingleColumnStyle" />
+
             <LinearLayout
                 android:id="@+id/name_fields_layout"
                 android:layout_width="match_parent"

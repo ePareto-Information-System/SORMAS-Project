@@ -652,6 +652,12 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 
 		});
 
+		contentBinding.personPlaceOfBirthFacilityType.setVisibility(GONE);
+
+		if(contentBinding.personPlaceOfBirthFacilityType.getValue() == null) {
+			contentBinding.personPlaceOfBirthFacilityType.setValue(FacilityType.HOSPITAL);
+		}
+
 	}
 
 	@Override
