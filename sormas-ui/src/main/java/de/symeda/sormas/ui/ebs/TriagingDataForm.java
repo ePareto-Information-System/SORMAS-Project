@@ -312,6 +312,9 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 		});
 
 		outcomeSupervisor.addValueChangeListener(e -> {
+			if (e.getProperty().getValue() == null) {
+				return;
+			}
 			if (e.getProperty().getValue().equals(OutComeSupervisor.ISSIGNAL)) {
 				previousOccurrence.setVisible(true);
 				healthConcern.setVisible(false);
