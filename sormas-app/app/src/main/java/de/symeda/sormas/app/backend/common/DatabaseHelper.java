@@ -218,7 +218,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 403;
+	public static final int DATABASE_VERSION = 405;
 
 	private static DatabaseHelper instance = null;
 
@@ -3934,6 +3934,39 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFormReceivedAtRegion Date;");
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFormSentToNational Date;");
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFormReceivedAtNational Date;");
+
+				case 403:
+					currentVersion = 403;
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryType VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryCytology VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryCytologyPmn VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryCytologyLymph VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryGram VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryGramOther VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryRdtPerformed VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryRdtResults VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryLatex VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryLatexOtherResults VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateSentReportingHealthFac DATE;");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateSampleSentRegRefLab DATE;");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryCulture VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryCultureOther VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryCeftriaxone VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryPenicillinG VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryAmoxycillin VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryOxacillin VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryAntibiogramOther VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryOtherTests VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryPcrOptions VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratorySerotype VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryDatePcrPerformed DATE;");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryObservations VARCHAR(255);");
+
+				case 404:
+					currentVersion = 404;
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryFinalResults VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryFinalClassification VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateSampleSentRegLab DATE;");
 
 
 					// ATTENTION: break should only be done after last version
