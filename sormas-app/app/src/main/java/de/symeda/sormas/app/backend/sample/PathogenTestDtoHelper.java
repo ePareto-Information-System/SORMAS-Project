@@ -104,6 +104,33 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setSampleTestResultImmunoDate(source.getSampleTestResultImmunoDate());
 		target.setSecondTestedDisease(source.getSecondTestedDisease());
 		target.setTestResultForSecondDisease(source.getTestResultForSecondDisease());
+		target.setLaboratoryType(source.getLaboratoryType());
+		target.setLaboratoryCytology(source.getLaboratoryCytology());
+		target.setLaboratoryCytologyPmn(source.getLaboratoryCytologyPmn());
+		target.setLaboratoryCytologyLymph(source.getLaboratoryCytologyLymph());
+		target.setLaboratoryGram(source.getLaboratoryGram());
+		target.setLaboratoryGramOther(source.getLaboratoryGramOther());
+		target.setLaboratoryRdtPerformed(source.getLaboratoryRdtPerformed());
+		target.setLaboratoryRdtResults(source.getLaboratoryRdtResults());
+		target.setLaboratoryLatex(source.getLaboratoryLatex());
+		target.setLaboratoryLatexOtherResults(source.getLaboratoryLatexOtherResults());
+		target.setDateSentReportingHealthFac(source.getDateSentReportingHealthFac());
+		target.setDateSampleSentRegRefLab(source.getDateSampleSentRegRefLab());
+		target.setLaboratoryCulture(source.getLaboratoryCulture());
+		target.setLaboratoryCultureOther(source.getLaboratoryCultureOther());
+		target.setLaboratoryCeftriaxone(source.getLaboratoryCeftriaxone());
+		target.setLaboratoryPenicillinG(source.getLaboratoryPenicillinG());
+		target.setLaboratoryAmoxycillin(source.getLaboratoryAmoxycillin());
+		target.setLaboratoryOxacillin(source.getLaboratoryOxacillin());
+		target.setLaboratoryAntibiogramOther(source.getLaboratoryAntibiogramOther());
+		target.setLaboratoryOtherTests(source.getLaboratoryOtherTests());
+		target.setLaboratoryPcrOptions(source.getLaboratoryPcrOptions());
+		target.setLaboratorySerotype(source.getLaboratorySerotype());
+		target.setLaboratoryDatePcrPerformed(source.getLaboratoryDatePcrPerformed());
+		target.setLaboratoryObservations(source.getLaboratoryObservations());
+		target.setLaboratoryFinalResults(source.getLaboratoryFinalResults());
+		target.setLaboratoryFinalClassification(source.getLaboratoryFinalClassification());
+		target.setDateSampleSentRegLab(source.getDateSampleSentRegLab());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}
@@ -160,6 +187,33 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setSampleTestResultIGGDate(source.getSampleTestResultIGGDate());
 		target.setSampleTestResultImmuno(source.getSampleTestResultImmuno());
 		target.setSampleTestResultImmunoDate(source.getSampleTestResultImmunoDate());
+		target.setLaboratoryType(source.getLaboratoryType());
+		target.setLaboratoryCytology(source.getLaboratoryCytology());
+		target.setLaboratoryCytologyPmn(source.getLaboratoryCytologyPmn());
+		target.setLaboratoryCytologyLymph(source.getLaboratoryCytologyLymph());
+		target.setLaboratoryGram(source.getLaboratoryGram());
+		target.setLaboratoryGramOther(source.getLaboratoryGramOther());
+		target.setLaboratoryRdtPerformed(source.getLaboratoryRdtPerformed());
+		target.setLaboratoryRdtResults(source.getLaboratoryRdtResults());
+		target.setLaboratoryLatex(source.getLaboratoryLatex());
+		target.setLaboratoryLatexOtherResults(source.getLaboratoryLatexOtherResults());
+		target.setDateSentReportingHealthFac(source.getDateSentReportingHealthFac());
+		target.setDateSampleSentRegRefLab(source.getDateSampleSentRegRefLab());
+		target.setLaboratoryCulture(source.getLaboratoryCulture());
+		target.setLaboratoryCultureOther(source.getLaboratoryCultureOther());
+		target.setLaboratoryCeftriaxone(source.getLaboratoryCeftriaxone());
+		target.setLaboratoryPenicillinG(source.getLaboratoryPenicillinG());
+		target.setLaboratoryAmoxycillin(source.getLaboratoryAmoxycillin());
+		target.setLaboratoryOxacillin(source.getLaboratoryOxacillin());
+		target.setLaboratoryAntibiogramOther(source.getLaboratoryAntibiogramOther());
+		target.setLaboratoryOtherTests(source.getLaboratoryOtherTests());
+		target.setLaboratoryPcrOptions(source.getLaboratoryPcrOptions());
+		target.setLaboratorySerotype(source.getLaboratorySerotype());
+		target.setLaboratoryDatePcrPerformed(source.getLaboratoryDatePcrPerformed());
+		target.setLaboratoryObservations(source.getLaboratoryObservations());
+		target.setLaboratoryFinalResults(source.getLaboratoryFinalResults());
+		target.setLaboratoryFinalClassification(source.getLaboratoryFinalClassification());
+		target.setDateSampleSentRegLab(source.getDateSampleSentRegLab());
 
 		if (source.getLabUser() != null) {
 			User user = DatabaseHelper.getUserDao().queryForId(source.getLabUser().getId());

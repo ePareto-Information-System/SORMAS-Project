@@ -71,6 +71,7 @@ import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.CardOrHistory;
+import de.symeda.sormas.api.utils.VaccineTypes;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -140,6 +141,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 	private boolean differentPlaceOfStayJurisdiction;
 	private List<Item> idsrTypeList;
 	private List<Item> notifyByList;
+	private List<Item> vaccineList;
 
 	// Static methods
 
@@ -426,6 +428,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		caseConfirmationBasisList = DataUtils.getEnumItems(CaseConfirmationBasis.class, true);
 		idsrTypeList = DataUtils.getEnumItems(IdsrType.class, true);
 		notifyByList = DataUtils.getEnumItems(NotifiedList.class, true);
+		vaccineList = DataUtils.getEnumItems(VaccineTypes.class, true);
 	}
 
 	@Override
@@ -611,6 +614,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.setFilteredVaccinationStatusValues(filteredValues);
 		contentBinding.caseDataIdsrDiagnosis.initializeSpinner(idsrTypeList);
 		contentBinding.caseDataNotifiedByList.initializeSpinner(notifyByList);
+		contentBinding.caseDataVaccineType.initializeSpinner(vaccineList);
 
 		contentBinding.caseDataQuarantineTo.addValueChangedListener(new ValueChangeListener() {
 

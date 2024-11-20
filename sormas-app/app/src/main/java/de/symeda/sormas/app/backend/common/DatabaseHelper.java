@@ -218,7 +218,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 400;
+	public static final int DATABASE_VERSION = 405;
 
 	private static DatabaseHelper instance = null;
 
@@ -3908,6 +3908,65 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					currentVersion = 399;
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN secondTestedDisease VARCHAR(255);");
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN testResultForSecondDisease VARCHAR(255);");
+
+				case 400:
+					currentVersion = 400;
+					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN vaccineType varchar(255);");
+
+				case 401:
+					currentVersion = 401;
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN diseaseOnsetDate Date;");
+
+				case 402:
+					currentVersion = 402;
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN appearanceOfCsf varchar(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN inoculationTimeTransportMedia Date;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN sampleSentToLab varchar(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateSampleSentToLab Date;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN sampleContainerUsed varchar(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN containerOther varchar(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN rdtPerformed varchar(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN rdtResults varchar(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN districtNotificationDate Date;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN nameOfPerson varchar(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN telNumber varchar(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFormSentToRegion Date;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFormReceivedAtRegion Date;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFormSentToNational Date;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFormReceivedAtNational Date;");
+
+				case 403:
+					currentVersion = 403;
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryType VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryCytology VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryCytologyPmn VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryCytologyLymph VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryGram VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryGramOther VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryRdtPerformed VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryRdtResults VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryLatex VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryLatexOtherResults VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateSentReportingHealthFac DATE;");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateSampleSentRegRefLab DATE;");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryCulture VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryCultureOther VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryCeftriaxone VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryPenicillinG VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryAmoxycillin VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryOxacillin VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryAntibiogramOther VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryOtherTests VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryPcrOptions VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratorySerotype VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryDatePcrPerformed DATE;");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryObservations VARCHAR(255);");
+
+				case 404:
+					currentVersion = 404;
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryFinalResults VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryFinalClassification VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateSampleSentRegLab DATE;");
 
 
 					// ATTENTION: break should only be done after last version

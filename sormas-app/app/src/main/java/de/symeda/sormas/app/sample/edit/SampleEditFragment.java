@@ -53,6 +53,8 @@ import de.symeda.sormas.api.sample.SampleSource;
 import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.CsfAppearance;
+import de.symeda.sormas.api.utils.SampleContainerUsed;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -249,6 +251,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		contentBinding.setYesNoClass(YesNo.class);
 		contentBinding.setIpSampleTestTypeClass(IpSampleTestType.class);
 		contentBinding.setSampleMaterialClass(SampleMaterial.class);
+		contentBinding.setCsfAppearanceClass(CsfAppearance.class);
+		contentBinding.setSampleContainerUsedClass(SampleContainerUsed.class);
 
 		contentBinding.sampleSelectedResultIGM.initializeSpinner(posNegEqList);
 		contentBinding.sampleSelectedResultPcr.initializeSpinner(posNegList);
@@ -269,6 +273,13 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		contentBinding.sampleDateFormReceivedAtDistrict.initializeDateField(getFragmentManager());
 		contentBinding.sampleDateFormSentToDistrict.initializeDateField(getFragmentManager());
 		contentBinding.sampleDateFormSentToHigherLevel.initializeDateField(getFragmentManager());
+		contentBinding.sampleInoculationTimeTransportMedia.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSampleSentToLab.initializeDateField(getFragmentManager());
+		contentBinding.sampleDistrictNotificationDate.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateFormSentToRegion.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateFormReceivedAtRegion.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateFormSentToNational.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateFormReceivedAtNational.initializeDateField(getFragmentManager());
 
 		if(record.getAssociatedCase().getDisease() != null){
 			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_EDIT);
@@ -446,6 +457,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 				handleAHF();
 			case NEW_INFLUENZA:
 				handleILI();
+			case CSM:
+				handleCSM();
 		}
 
 
@@ -569,6 +582,25 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		);
 
 		getContentBinding().sampleSampleMaterial.initializeSpinner(DataUtils.toItems(iliSampleMaterialList));
+	}
+
+	private void handleCSM() {
+		getContentBinding().samplePurpose.setValue(SamplePurpose.EXTERNAL);
+		getContentBinding().samplePurpose.setVisibility(GONE);
+		getContentBinding().sampleHasSampleBeenCollected.setCaption("CSF Sample Collected? Note: If NO, (Please STILL complete the form and send to district control officer)");
+
+		if (getContentBinding().sampleHasSampleBeenCollected.getValue() == null) {
+			getContentBinding().sampleSampleDateTime.setVisibility(View.GONE);
+		} else {
+			int visibility = (getContentBinding().sampleHasSampleBeenCollected.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
+			getContentBinding().sampleSampleDateTime.setVisibility(visibility);
+		}
+
+		getContentBinding().sampleHasSampleBeenCollected.addValueChangedListener(field -> {
+			int visibility = (field.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
+			getContentBinding().sampleSampleDateTime.setVisibility(visibility);
+		});
+
 	}
 
 }

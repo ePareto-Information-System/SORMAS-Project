@@ -946,6 +946,14 @@
                     app:dependencyParentVisibility="@{true}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/caseData_vaccineType"
+                    app:value="@={data.vaccineType}"
+                    app:dependencyParentField="@{caseDataVaccinationStatus}"
+                    app:dependencyParentValue="@{VaccinationStatus.VACCINATED}"
+                    app:dependencyParentVisibility="@{true}"
+                    style="@style/ControlSingleColumnStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/caseData_numberOfDoses"
                     app:value="@={data.numberOfDoses}"

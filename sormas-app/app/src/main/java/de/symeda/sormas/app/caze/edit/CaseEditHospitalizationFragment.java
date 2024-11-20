@@ -201,7 +201,6 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 
 			verifyPrevHospitalizationStatus();
 		});
-
 		if (disease != null) {
 			hideFieldsForDisease(disease, contentBinding.mainContent, FormType.HOSPITALIZATION_EDIT);
 		}
@@ -228,6 +227,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		contentBinding.caseHospitalizationTerminationDateHospitalStay.initializeDateField(getFragmentManager());
 		contentBinding.caseDataOutcome.initializeSpinner(outcomeList);
 		contentBinding.caseHospitalizationSelectInpatientOutpatient.initializeSpinner(inpatientOutpatientList);
+		contentBinding.caseHospitalizationDiseaseOnsetDate.initializeDateField(getFragmentManager());
 
 		verifyPrevHospitalizationStatus();
 
@@ -236,6 +236,8 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 				handleAHF();
 			case NEW_INFLUENZA:
 				handleILI();
+			case CSM:
+				handleCSM();
 		}
 	}
 
@@ -284,6 +286,10 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 				getContentBinding().caseHospitalizationTerminationDateHospitalStay,
 				getContentBinding().caseHospitalizationIntensiveCareUnit
 		));
+	}
+
+	private void handleCSM(){
+		getContentBinding().caseHospitalizationDateFirstSeen.setCaption("DATE SEEN AT HEALTH FACILITY:");
 	}
 
 }

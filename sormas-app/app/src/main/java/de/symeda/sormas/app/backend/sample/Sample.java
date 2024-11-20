@@ -48,6 +48,8 @@ import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.sample.SampleSource;
 import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.sample.SpecimenCondition;
+import de.symeda.sormas.api.utils.CsfAppearance;
+import de.symeda.sormas.api.utils.SampleContainerUsed;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
@@ -289,7 +291,36 @@ public class Sample extends PseudonymizableAdo {
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String personCompletingForm;
-
+	@Enumerated(EnumType.STRING)
+	private CsfAppearance appearanceOfCsf;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date inoculationTimeTransportMedia;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSampleSentToLab;
+	@Enumerated(EnumType.STRING)
+	private YesNo sampleSentToLab;
+	@Enumerated(EnumType.STRING)
+	private SampleContainerUsed sampleContainerUsed;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String containerOther;
+	@Enumerated(EnumType.STRING)
+	private YesNo rdtPerformed;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String rdtResults;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date districtNotificationDate;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String nameOfPerson;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String telNumber;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateFormSentToRegion;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateFormReceivedAtRegion;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateFormSentToNational;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateFormReceivedAtNational;
 
 
 	public Case getAssociatedCase() {
@@ -1014,5 +1045,116 @@ public class Sample extends PseudonymizableAdo {
 
 	public void setHasSampleBeenCollected(YesNo hasSampleBeenCollected) {
 		this.hasSampleBeenCollected = hasSampleBeenCollected;
+	}
+
+	public CsfAppearance getAppearanceOfCsf() {return appearanceOfCsf; }
+	public void setAppearanceOfCsf(CsfAppearance appearanceOfCsf) {
+		this.appearanceOfCsf = appearanceOfCsf;
+	}
+
+	public Date getInoculationTimeTransportMedia() {
+		return inoculationTimeTransportMedia;
+	}
+
+	public void setInoculationTimeTransportMedia(Date inoculationTimeTransportMedia) {
+		this.inoculationTimeTransportMedia = inoculationTimeTransportMedia;
+	}
+	public YesNo getSampleSentToLab() {
+		return sampleSentToLab;
+	}
+	public void setSampleSentToLab(YesNo sampleSentToLab) {
+		this.sampleSentToLab = sampleSentToLab;
+	}
+
+	public Date getDateSampleSentToLab() {
+		return dateSampleSentToLab;
+	}
+
+	public void setDateSampleSentToLab(Date dateSampleSentToLab) {
+		this.dateSampleSentToLab = dateSampleSentToLab;
+	}
+
+	public SampleContainerUsed getSampleContainerUsed() {
+		return sampleContainerUsed;
+	}
+	public void setSampleContainerUsed(SampleContainerUsed sampleContainerUsed) {
+		this.sampleContainerUsed = sampleContainerUsed;
+	}
+
+	public String getContainerOther() {
+		return containerOther;
+	}
+
+	public void setContainerOther(String containerOther) {
+		this.containerOther = containerOther;
+	}
+
+	public YesNo getRdtPerformed() {
+		return rdtPerformed;
+	}
+	public void setRdtPerformed(YesNo rdtPerformed) {
+		this.rdtPerformed = rdtPerformed;
+	}
+
+	public String getRdtResults() {
+		return rdtResults;
+	}
+
+	public void setRdtResults(String rdtResults) {
+		this.rdtResults = rdtResults;
+	}
+
+	public Date getDistrictNotificationDate() {
+		return districtNotificationDate;
+	}
+
+	public void setDistrictNotificationDate(Date districtNotificationDate) {
+		this.districtNotificationDate = districtNotificationDate;
+	}
+	public String getNameOfPerson() {
+		return nameOfPerson;
+	}
+
+	public void setNameOfPerson(String nameOfPerson) {
+		this.nameOfPerson = nameOfPerson;
+	}
+	public String getTelNumber() {
+		return telNumber;
+	}
+
+	public void setTelNumber(String telNumber) {
+		this.telNumber = telNumber;
+	}
+
+	public Date getDateFormSentToRegion() {
+		return dateFormSentToRegion;
+	}
+
+	public void setDateFormSentToRegion(Date dateFormSentToRegion) {
+		this.dateFormSentToRegion = dateFormSentToRegion;
+	}
+
+	public Date getDateFormReceivedAtRegion() {
+		return dateFormReceivedAtRegion;
+	}
+
+	public void setDateFormReceivedAtRegion(Date dateFormReceivedAtRegion) {
+		this.dateFormReceivedAtRegion = dateFormReceivedAtRegion;
+	}
+
+	public Date getDateFormSentToNational() {
+		return dateFormSentToNational;
+	}
+
+	public void setDateFormSentToNational(Date dateFormSentToNational) {
+		this.dateFormSentToNational = dateFormSentToNational;
+	}
+
+	public Date getDateFormReceivedAtNational() {
+		return dateFormReceivedAtNational;
+	}
+
+	public void setDateFormReceivedAtNational(Date dateFormReceivedAtNational) {
+		this.dateFormReceivedAtNational = dateFormReceivedAtNational;
 	}
 }

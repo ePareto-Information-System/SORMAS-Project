@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.FormType;
+import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
@@ -45,7 +46,12 @@ import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.sample.PosNegEq;
 import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.sample.SamplePurpose;
+import de.symeda.sormas.api.utils.Antibiogram;
+import de.symeda.sormas.api.utils.Gram;
+import de.symeda.sormas.api.utils.LabType;
+import de.symeda.sormas.api.utils.LatexCulture;
 import de.symeda.sormas.api.utils.PosNeg;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
@@ -148,6 +154,9 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		}
 		contentBinding.setSampleTestsClass(PathogenTestType.class);
 		contentBinding.setPosNegClass(PosNeg.class);
+		contentBinding.setGramClass(Gram.class);
+		contentBinding.setYesNoClass(YesNo.class);
+		contentBinding.setAntibiogramClass(Antibiogram.class);
 
 		Set<PathogenTestType> ahfTestTypes = Arrays.stream(PathogenTestType.getAHFTestTypes())
 				.filter(c -> c != null)
@@ -158,6 +167,11 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		compatibleItems.removeIf(item -> item == null || item.toString().isEmpty()); // Remove empty names
 
 		contentBinding.pathogenTestSampleTests.initializeCheckBoxGroup(compatibleItems);
+		contentBinding.pathogenTestDateSentReportingHealthFac.initializeDateField(getFragmentManager());
+		contentBinding.pathogenTestDateSampleSentRegRefLab.initializeDateField(getFragmentManager());
+		contentBinding.pathogenTestLaboratoryDatePcrPerformed.initializeDateField(getFragmentManager());
+		contentBinding.pathogenTestLaboratoryDateResultsSentDSD.initializeDateTimeField(getFragmentManager());
+		contentBinding.pathogenTestDateSampleSentRegLab.initializeDateField(getFragmentManager());
 
 	}
 
@@ -284,6 +298,8 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 				handleAHF();
 			case NEW_INFLUENZA:
 				handleILI();
+			case CSM:
+				handleCSM();
 		}
 
 		
@@ -323,14 +339,6 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 
 	private void handleYellowFever() {
 		getContentBinding().pathogenTestTestedDisease.setEnabled(false);
-
-		/*List<FinalClassification> values1 = Arrays.stream(FinalClassification.YF_CLASSIFICATION.toArray(new FinalClassification[0]))
-				.filter(c -> fieldVisibilityCheckers.isVisible(FinalClassification.class, c.name()))
-				.collect(Collectors.toList());
-
-		List<Item> itemList = DataUtils.toItems(values1);
-		getContentBinding().pathogenTestFinalClassification.initializeSpinner(itemList);*/
-
 	}
 
 	private void handleIDSR(){
@@ -409,13 +417,44 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		if (coronaDisease != null) {
 			List<Item> coronaDiseaseItemList = Collections.singletonList(DataUtils.toItem(coronaDisease));
 			getContentBinding().pathogenTestSecondTestedDisease.initializeSpinner(coronaDiseaseItemList);
-
-			// Set the value of the spinner
 			getContentBinding().pathogenTestSecondTestedDisease.setValue(DataUtils.toItem(coronaDisease));
 			getContentBinding().pathogenTestSecondTestedDisease.setEnabled(false);
 		}
+	}
 
+	private void handleCSM(){
+		List<Item> labTypeList = DataUtils.getEnumItems(LabType.class);
+		getContentBinding().pathogenTestLaboratoryType.initializeSpinner(labTypeList);
 
+		//latex
+		List<LatexCulture> latexList = Arrays.stream(LatexCulture.LATEX.toArray(new LatexCulture[0]))
+				.filter(c -> fieldVisibilityCheckers.isVisible(LatexCulture.class, c.name()))
+				.collect(Collectors.toList());
 
+		List<Item> itemList = DataUtils.toItems(latexList);
+		getContentBinding().pathogenTestLaboratoryLatex.initializeSpinner(itemList);
+
+		//culture
+		List<LatexCulture> cultureList = Arrays.stream(LatexCulture.LAB_CULTURE.toArray(new LatexCulture[0]))
+				.filter(c -> fieldVisibilityCheckers.isVisible(LatexCulture.class, c.name()))
+				.collect(Collectors.toList());
+
+		List<Item> itemCultureList = DataUtils.toItems(cultureList);
+		getContentBinding().pathogenTestLaboratoryCulture.initializeSpinner(itemCultureList);
+
+		List<Item> antibiogramList = DataUtils.getEnumItems(Antibiogram.class);
+
+		getContentBinding().pathogenTestLaboratoryCeftriaxone.initializeSpinner(antibiogramList);
+		getContentBinding().pathogenTestLaboratoryPenicillinG.initializeSpinner(antibiogramList);
+		getContentBinding().pathogenTestLaboratoryAmoxycillin.initializeSpinner(antibiogramList);
+		getContentBinding().pathogenTestLaboratoryOxacillin.initializeSpinner(antibiogramList);
+		getContentBinding().pathogenTestLaboratoryPcrOptions.initializeSpinner(itemCultureList);
+
+		List<CaseClassification> caseClassificationList = Arrays.stream(CaseClassification.CASE_CLASSIFY.toArray(new CaseClassification[0]))
+				.filter(c -> fieldVisibilityCheckers.isVisible(CaseClassification.class, c.name()))
+				.collect(Collectors.toList());
+
+		List<Item> caseList = DataUtils.toItems(caseClassificationList);
+		getContentBinding().pathogenTestLaboratoryFinalClassification.setValue(caseList);
 	}
 }

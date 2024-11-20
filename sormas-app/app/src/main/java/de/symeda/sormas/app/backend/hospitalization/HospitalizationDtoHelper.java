@@ -78,6 +78,7 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		a.setHealthFacilityRecordNumber(b.getHealthFacilityRecordNumber());
 		a.setSelectInpatientOutpatient(b.getSelectInpatientOutpatient());
 		a.setDateFirstSeen(b.getDateFirstSeen());
+		a.setDiseaseOnsetDate(b.getDiseaseOnsetDate());
 		a.setNotifyDistrictDate(b.getNotifyDistrictDate());
 		a.setDateFormSentToDistrict(b.getDateFormSentToDistrict());
 		a.setAdmittedToHealthFacilityNew(b.getAdmittedToHealthFacilityNew());
@@ -122,6 +123,7 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		a.setHealthFacilityRecordNumber(b.getHealthFacilityRecordNumber());
 		a.setSelectInpatientOutpatient(b.getSelectInpatientOutpatient());
 		a.setDateFirstSeen(b.getDateFirstSeen());
+		a.setDiseaseOnsetDate(b.getDiseaseOnsetDate());
 		a.setNotifyDistrictDate(b.getNotifyDistrictDate());
 		a.setDateFormSentToDistrict(b.getDateFormSentToDistrict());
 		a.setAdmittedToHealthFacilityNew(b.getAdmittedToHealthFacilityNew());
