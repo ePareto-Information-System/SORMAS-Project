@@ -218,7 +218,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 405;
+	public static final int DATABASE_VERSION = 404;
 
 	private static DatabaseHelper instance = null;
 
@@ -3961,9 +3961,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratorySerotype VARCHAR(255);");
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryDatePcrPerformed DATE;");
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryObservations VARCHAR(255);");
-
-				case 404:
-					currentVersion = 404;
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryFinalResults VARCHAR(255);");
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryFinalClassification VARCHAR(255);");
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateSampleSentRegLab DATE;");
