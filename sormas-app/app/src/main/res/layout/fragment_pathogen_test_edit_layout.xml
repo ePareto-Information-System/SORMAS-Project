@@ -35,6 +35,7 @@
         <import type="de.symeda.sormas.api.i18n.Strings" />
         <import type="de.symeda.sormas.api.utils.Gram" />
         <import type="de.symeda.sormas.api.utils.YesNo" />
+        <import type="de.symeda.sormas.api.caze.CaseClassification" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.sample.PathogenTest"/>
         <variable name="sampleTestsClass" type="Class"/>
