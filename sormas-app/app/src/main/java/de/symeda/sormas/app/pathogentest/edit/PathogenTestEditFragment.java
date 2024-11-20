@@ -23,28 +23,23 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.caze.CaseClassification;
-import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.sample.FinalClassification;
-import de.symeda.sormas.api.sample.IpSampleTestType;
 import de.symeda.sormas.api.sample.PCRTestSpecification;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
-import de.symeda.sormas.api.sample.PosNegEq;
-import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.utils.Antibiogram;
 import de.symeda.sormas.api.utils.Gram;
@@ -83,6 +78,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 	private List<Item> diseaseVariantList;
 	private List<Item> testResultList;
 	private List<Item> finalClassificationList;
+	private List<Item> caseClassificationList;
 
 	// Instance methods
 
@@ -302,7 +298,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 				handleCSM();
 		}
 
-		
+
 		contentBinding.pathogenTestTestedDisease.addValueChangedListener(new ValueChangeListener() {
 			@Override
 			public void onChange(ControlPropertyField field) {
@@ -344,7 +340,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 	private void handleIDSR(){
 		getContentBinding().pathogenTestTestedDisease.setEnabled(false);
 	}
-	
+
 	public List<FinalClassification> getDiseaseFinalClassifications(Disease disease) {
 		if (disease == null) {
 			return FinalClassification.DEFAULT;
@@ -423,9 +419,6 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 	}
 
 	private void handleCSM(){
-		List<Item> labTypeList = DataUtils.getEnumItems(LabType.class);
-		getContentBinding().pathogenTestLaboratoryType.initializeSpinner(labTypeList);
-
 		//latex
 		List<LatexCulture> latexList = Arrays.stream(LatexCulture.LATEX.toArray(new LatexCulture[0]))
 				.filter(c -> fieldVisibilityCheckers.isVisible(LatexCulture.class, c.name()))
@@ -450,11 +443,115 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		getContentBinding().pathogenTestLaboratoryOxacillin.initializeSpinner(antibiogramList);
 		getContentBinding().pathogenTestLaboratoryPcrOptions.initializeSpinner(itemCultureList);
 
-		List<CaseClassification> caseClassificationList = Arrays.stream(CaseClassification.CASE_CLASSIFY.toArray(new CaseClassification[0]))
-				.filter(c -> fieldVisibilityCheckers.isVisible(CaseClassification.class, c.name()))
+		Set<CaseClassification> allowedClassifications = EnumSet.of(
+				CaseClassification.CONFIRMED,
+				CaseClassification.PROBABLE,
+				CaseClassification.SUSPECT
+		);
+
+		caseClassificationList = DataUtils.toItems(
+				Arrays.stream(CaseClassification.values())
+						.filter(Objects::nonNull)
+						.filter(allowedClassifications::contains)
+						.collect(Collectors.toList())
+		);
+
+		caseClassificationList = caseClassificationList.stream()
+				.filter(item -> item != null)
+				.filter(item -> item.getKey() != null && !item.getKey().trim().isEmpty())
+				.filter(item -> item.getValue() != null)
 				.collect(Collectors.toList());
 
-		List<Item> caseList = DataUtils.toItems(caseClassificationList);
-		getContentBinding().pathogenTestLaboratoryFinalClassification.setValue(caseList);
+		getContentBinding().pathogenTestLaboratoryFinalClassification.setEnumItems(caseClassificationList);
+
+		List<Item> labTypeList = DataUtils.getEnumItems(LabType.class);
+		getContentBinding().pathogenTestLaboratoryType.initializeSpinner(labTypeList);
+		getContentBinding().pathogenTestLaboratoryType.setValue(labTypeList.get(0));
+		getContentBinding().pathogenTestLaboratoryType.setRequired(true);
+
+		getContentBinding().pathogenTestLaboratoryType.addValueChangedListener(field -> {
+			LabType selectedItem = (LabType) getContentBinding().pathogenTestLaboratoryType.getValue();
+
+			hideAllComponents();
+
+			if (selectedItem == LabType.DISTRICT_LAB){
+				getContentBinding().pathogenTestHeadingDistrictLaboratory.setVisibility(VISIBLE);
+				showComponentsForDistrictLab();
+			}
+			else if (selectedItem == LabType.REGIONAL_LAB){
+				getContentBinding().pathogenTestHeadingRegionalLaboratory.setVisibility(VISIBLE);
+				showComponentsForRegionalLab();
+			}
+			else if(selectedItem == LabType.REFERENCE_LAB){
+				getContentBinding().pathogenTestHeadingReferenceLaboratory.setVisibility(VISIBLE);
+				showComponentsForReferenceLab();
+			}
+
+		});
+
 	}
+
+	private void showComponentsForDistrictLab() {
+		getContentBinding().pathogenTestLaboratoryLatexOtherResults.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestDateSentReportingHealthFac.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestDateSampleSentRegRefLab.setVisibility(VISIBLE);
+	}
+
+	private void showComponentsForRegionalLab() {
+		getContentBinding().pathogenTestLaboratoryCulture.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryCultureOther.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryOtherTests.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryCeftriaxone.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryAmoxycillin.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryPenicillinG.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryOxacillin.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryAntibiogramOther.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestDateSampleSentRegLab.setVisibility(VISIBLE);
+
+	}
+
+	private void showComponentsForReferenceLab() {
+		getContentBinding().pathogenTestLaboratoryCulture.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryCultureOther.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryOtherTests.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryCeftriaxone.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryAmoxycillin.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryPenicillinG.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryOxacillin.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryAntibiogramOther.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryDatePcrPerformed.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryPcrOptions.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratorySerotype.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryFinalResults.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryObservations.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryDateResultsSentDSD.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryFinalClassification.setVisibility(VISIBLE);
+	}
+
+
+	private void hideAllComponents() {
+		getContentBinding().pathogenTestHeadingDistrictLaboratory.setVisibility(GONE);
+		getContentBinding().pathogenTestHeadingRegionalLaboratory.setVisibility(GONE);
+		getContentBinding().pathogenTestHeadingReferenceLaboratory.setVisibility(GONE);
+		getContentBinding().pathogenTestLaboratoryObservations.setVisibility(GONE);
+		getContentBinding().pathogenTestLaboratoryDatePcrPerformed.setVisibility(GONE);
+		getContentBinding().pathogenTestLaboratoryPcrOptions.setVisibility(GONE);
+		getContentBinding().pathogenTestLaboratorySerotype.setVisibility(GONE);
+		getContentBinding().pathogenTestLaboratoryFinalClassification.setVisibility(GONE);
+		getContentBinding().pathogenTestLaboratoryFinalResults.setVisibility(GONE);
+		getContentBinding().pathogenTestLaboratoryAntibiogramOther.setVisibility(GONE);
+		getContentBinding().pathogenTestLaboratoryCulture.setVisibility(GONE);
+		getContentBinding().pathogenTestLaboratoryCultureOther.setVisibility(GONE);
+		getContentBinding().pathogenTestLaboratoryOtherTests.setVisibility(GONE);
+		getContentBinding().pathogenTestDateSampleSentRegLab.setVisibility(GONE);
+		getContentBinding().pathogenTestDateSampleSentRegRefLab.setVisibility(GONE);
+		getContentBinding().pathogenTestLaboratoryCeftriaxone.setVisibility(GONE);
+		getContentBinding().pathogenTestLaboratoryAmoxycillin.setVisibility(GONE);
+		getContentBinding().pathogenTestLaboratoryPenicillinG.setVisibility(GONE);
+		getContentBinding().pathogenTestLaboratoryOxacillin.setVisibility(GONE);
+		getContentBinding().pathogenTestLaboratoryLatexOtherResults.setVisibility(GONE);
+		getContentBinding().pathogenTestLaboratoryDateResultsSentDSD.setVisibility(GONE);
+
+	}
+
 }

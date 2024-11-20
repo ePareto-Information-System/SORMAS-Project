@@ -276,8 +276,8 @@ public class ControlSwitchField extends ControlPropertyEditField<Object> {
 
 		if (useBoolean) {
 			setBooleanContent();
-		} else if (enumClass == null) {
-			setEnumClass(YesNoUnknown.class);
+		} else if (enumClass != null) {
+			setEnumClass(enumClass);
 		}
 
 		input.setOnCheckedChangeListener((radioGroup, i) -> {
