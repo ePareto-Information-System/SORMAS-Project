@@ -22,6 +22,8 @@ import android.view.ViewGroup;
 
 import androidx.databinding.ObservableArrayList;
 
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -41,6 +43,7 @@ public class CaseReadHospitalizationFragment extends BaseReadFragment<FragmentCa
 	private Case caze;
 	private Hospitalization record;
 //	private MildModerateSevereCritical patientCondition;
+	private Disease disease;
 
 	// Static methods
 
@@ -59,6 +62,7 @@ public class CaseReadHospitalizationFragment extends BaseReadFragment<FragmentCa
 	protected void prepareFragmentData(Bundle savedInstanceState) {
 		caze = getActivityRootData();
 		record = caze.getHospitalization();
+		disease = caze.getDisease();
 //		patientCondition = record.getPatientConditionOnAdmission();
 	}
 
@@ -74,6 +78,8 @@ public class CaseReadHospitalizationFragment extends BaseReadFragment<FragmentCa
 		contentBinding.setPreviousHospitalizationBindCallback(v -> {
 			setFieldVisibilitiesAndAccesses(PreviousHospitalizationDto.class, (ViewGroup) v);
 		});
+
+
 	}
 
 	@Override
@@ -83,7 +89,11 @@ public class CaseReadHospitalizationFragment extends BaseReadFragment<FragmentCa
 
 		// Previous hospitalizations list
 		if (contentBinding.getData().getPreviousHospitalizations().isEmpty()) {
-			contentBinding.listPreviousHospitalizationsLayout.setVisibility(GONE);
+			contentBinding.listPreviousHospitalizations.setVisibility(GONE);
+		}
+
+		if (disease != null) {
+			super.hideFieldsForDisease(disease, contentBinding.mainContent, FormType.HOSPITALIZATION_EDIT);
 		}
 	}
 

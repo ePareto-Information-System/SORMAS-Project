@@ -24,6 +24,8 @@ import android.view.ViewGroup;
 import androidx.databinding.ObservableArrayList;
 
 import de.symeda.sormas.api.CountryHelper;
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.PersonContactDetailDto;
@@ -60,6 +62,7 @@ public class PersonReadFragment extends BaseReadFragment<FragmentPersonReadLayou
 	private boolean birthDayVisibility = true;
 	private IEntryItemOnClickListener onAddressItemClickListener;
 	private IEntryItemOnClickListener onPersonContactDetailItemClickListener;
+	private Disease disease;
 
 	// Instance methods
 
@@ -149,6 +152,7 @@ public class PersonReadFragment extends BaseReadFragment<FragmentPersonReadLayou
 		if (ado instanceof Case) {
 			record = ((Case) ado).getPerson();
 			rootData = ado;
+			disease = ((Case) ado).getDisease();
 		} else if (ado instanceof Contact) {
 			record = ((Contact) ado).getPerson();
 			rootData = ado;
@@ -193,6 +197,10 @@ public class PersonReadFragment extends BaseReadFragment<FragmentPersonReadLayou
 		contentBinding.setPersonContactDetailBindCallback(v -> {
 			setFieldAccesses(PersonContactDetailDto.class, v);
 		});
+
+		if (disease != null) {
+			super.hideFieldsForDisease(disease, contentBinding.mainContent, FormType.PERSON_EDIT);
+		}
 	}
 
 	public static void initCountryTranslations(FragmentPersonReadLayoutBinding contentBinding, Person personData) {

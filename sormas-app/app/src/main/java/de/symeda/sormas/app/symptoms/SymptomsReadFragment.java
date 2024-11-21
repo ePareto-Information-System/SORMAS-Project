@@ -27,6 +27,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.VisitOrigin;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.symptoms.SymptomState;
@@ -55,6 +56,7 @@ public class SymptomsReadFragment extends BaseReadFragment<FragmentSymptomsReadL
 	private Symptoms record;
 	private Disease disease;
 	private SymptomsContext symptomsContext;
+	private boolean isCaseInstance;
 
 	private List<String> yesResult;
 	private List<String> unknownResult;
@@ -95,6 +97,7 @@ public class SymptomsReadFragment extends BaseReadFragment<FragmentSymptomsReadL
 			symptomsContext = SymptomsContext.CASE;
 			record = ((Case) ado).getSymptoms();
 			disease = ((Case) ado).getDisease();
+			isCaseInstance = true;
 		} else if (ado instanceof Visit) {
 			symptomsContext = SymptomsContext.VISIT;
 			record = ((Visit) ado).getSymptoms();
@@ -135,6 +138,11 @@ public class SymptomsReadFragment extends BaseReadFragment<FragmentSymptomsReadL
 		if (symptomsContext == SymptomsContext.CLINICAL_VISIT) {
 			contentBinding.symptomsSeparator.setVisibility(GONE);
 		}
+
+		if ( isCaseInstance && disease != null) {
+			super.hideFieldsForDisease(disease, contentBinding.mainContent, FormType.SYMPTOMS_EDIT);
+		}
+
 	}
 
 	@Override

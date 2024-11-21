@@ -25,6 +25,7 @@ import android.webkit.WebView;
 
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseConfirmationBasis;
 import de.symeda.sormas.api.caze.CaseDataDto;
@@ -54,6 +55,7 @@ import de.symeda.sormas.api.caze.IdsrType;
 
 public class CaseReadFragment extends BaseReadFragment<FragmentCaseReadLayoutBinding, Case, Case> {
 
+	private Disease disease;
 	private Case record;
 	private CaseConfirmationBasis caseConfirmationBasis;
 
@@ -142,26 +144,26 @@ public class CaseReadFragment extends BaseReadFragment<FragmentCaseReadLayoutBin
 
 		Disease disease = record.getDisease();
 		boolean extendedClassification = DiseaseConfigurationCache.getInstance().usesExtendedClassification(disease);
-		if (extendedClassification) {
-			boolean extendedClassificationMulti = DiseaseConfigurationCache.getInstance().usesExtendedClassificationMulti(disease);
-			if (extendedClassificationMulti) {
-				contentBinding.caseDataClinicalConfirmation.setVisibility(VISIBLE);
-				contentBinding.caseDataEpidemiologicalConfirmation.setVisibility(VISIBLE);
-				contentBinding.caseDataLaboratoryDiagnosticConfirmation.setVisibility(VISIBLE);
-				contentBinding.caseDataCaseConfirmationBasis.setVisibility(GONE);
-			} else {
-				contentBinding.caseDataClinicalConfirmation.setVisibility(GONE);
-				contentBinding.caseDataEpidemiologicalConfirmation.setVisibility(GONE);
-				contentBinding.caseDataLaboratoryDiagnosticConfirmation.setVisibility(GONE);
-				contentBinding.caseDataCaseConfirmationBasis
-					.setVisibility(record.getCaseClassification() == CaseClassification.CONFIRMED ? VISIBLE : GONE);
-			}
-		} else {
-			contentBinding.caseDataClinicalConfirmation.setVisibility(GONE);
-			contentBinding.caseDataEpidemiologicalConfirmation.setVisibility(GONE);
-			contentBinding.caseDataLaboratoryDiagnosticConfirmation.setVisibility(GONE);
-			contentBinding.caseDataCaseConfirmationBasis.setVisibility(GONE);
-		}
+//		if (extendedClassification) {
+//			boolean extendedClassificationMulti = DiseaseConfigurationCache.getInstance().usesExtendedClassificationMulti(disease);
+//			if (extendedClassificationMulti) {
+//				contentBinding.caseDataClinicalConfirmation.setVisibility(VISIBLE);
+//				contentBinding.caseDataEpidemiologicalConfirmation.setVisibility(VISIBLE);
+//				contentBinding.caseDataLaboratoryDiagnosticConfirmation.setVisibility(VISIBLE);
+//				contentBinding.caseDataCaseConfirmationBasis.setVisibility(GONE);
+//			} else {
+//				contentBinding.caseDataClinicalConfirmation.setVisibility(GONE);
+//				contentBinding.caseDataEpidemiologicalConfirmation.setVisibility(GONE);
+//				contentBinding.caseDataLaboratoryDiagnosticConfirmation.setVisibility(GONE);
+//				contentBinding.caseDataCaseConfirmationBasis
+//					.setVisibility(record.getCaseClassification() == CaseClassification.CONFIRMED ? VISIBLE : GONE);
+//			}
+//		} else {
+//			contentBinding.caseDataClinicalConfirmation.setVisibility(GONE);
+//			contentBinding.caseDataEpidemiologicalConfirmation.setVisibility(GONE);
+//			contentBinding.caseDataLaboratoryDiagnosticConfirmation.setVisibility(GONE);
+//			contentBinding.caseDataCaseConfirmationBasis.setVisibility(GONE);
+//		}
 	}
 
 	private void setUpControlListeners(FragmentCaseReadLayoutBinding contentBinding) {
@@ -191,6 +193,7 @@ public class CaseReadFragment extends BaseReadFragment<FragmentCaseReadLayoutBin
 
 		contentBinding.setData(record);
 		contentBinding.setCaseTransmissionClassificationClass(record.getCaseTransmissionClassification());
+		disease = record.getDisease();
 
 		if (record.getClinicalConfirmation() == YesNoUnknown.YES) {
 			contentBinding.setSingleClassification(CaseConfirmationBasis.CLINICAL_CONFIRMATION);
@@ -232,6 +235,10 @@ public class CaseReadFragment extends BaseReadFragment<FragmentCaseReadLayoutBin
 				contentBinding.facilityTypeGroup.setVisibility(GONE);
 			}
 		}
+		if (disease != null) {
+			super.hideFieldsForDisease(disease, contentBinding.mainContent, FormType.CASE_EDIT);
+		}
+
 	}
 
 	@Override
