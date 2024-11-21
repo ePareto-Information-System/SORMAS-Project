@@ -22,10 +22,15 @@ import android.os.Bundle;
 import android.view.View;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
+import de.symeda.sormas.api.utils.Antibiogram;
+import de.symeda.sormas.api.utils.Gram;
+import de.symeda.sormas.api.utils.PosNeg;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseReadFragment;
@@ -60,6 +65,12 @@ public class PathogenTestReadFragment extends BaseReadFragment<FragmentPathogenT
 	@Override
 	public void onLayoutBinding(FragmentPathogenTestReadLayoutBinding contentBinding) {
 		contentBinding.setData(record);
+		contentBinding.setSampleTestsClass(PathogenTestType.class);
+		contentBinding.setPosNegClass(PosNeg.class);
+		contentBinding.setGramClass(Gram.class);
+		contentBinding.setYesNoClass(YesNo.class);
+		contentBinding.setAntibiogramClass(Antibiogram.class);
+
 		setFieldVisibilitiesAndAccesses(PathogenTestDto.class, contentBinding.mainContent);
 
 		if ((PathogenTestType.PCR_RT_PCR == record.getTestType() && PathogenTestResultType.POSITIVE == record.getTestResult())
@@ -77,6 +88,10 @@ public class PathogenTestReadFragment extends BaseReadFragment<FragmentPathogenT
 
 		if (isVisibleAllowed(CaseDataDto.class, contentBinding.pathogenTestTestedDiseaseVariant)) {
 			contentBinding.pathogenTestTestedDiseaseVariant.setVisibility(record.getTestedDiseaseVariant() != null ? VISIBLE : GONE);
+		}
+
+		if(record.getSample().getAssociatedCase().getDisease() != null){
+			super.hideFieldsForDisease(record.getSample().getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.PATHOGEN_TEST_EDIT);
 		}
 	}
 
