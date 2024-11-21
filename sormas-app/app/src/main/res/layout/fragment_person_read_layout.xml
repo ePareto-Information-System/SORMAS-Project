@@ -27,8 +27,18 @@
     <data>
         <import type="de.symeda.sormas.api.person.PresentCondition" />
         <import type="de.symeda.sormas.api.person.CauseOfDeath" />
+        <import type="de.symeda.sormas.api.person.EducationType" />
         <import type="de.symeda.sormas.api.person.OccupationType" />
         <import type="de.symeda.sormas.api.i18n.I18nProperties" />
+        <import type="de.symeda.sormas.api.i18n.Strings" />
+        <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
+        <import type="de.symeda.sormas.api.person.LocationOfBirth" />
+        <import type="de.symeda.sormas.api.person.AttendedBy" />
+        <import type="de.symeda.sormas.api.person.Profession" />
+        <import type="de.symeda.sormas.api.person.Salutation" />
+        <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
+        <import type="de.symeda.sormas.api.utils.YesNo" />
+
 
         <variable name="data" type="de.symeda.sormas.app.backend.person.Person" />
         <variable name="birthCountry" type="String" />
@@ -52,50 +62,122 @@
             android:orientation="vertical"
             android:id="@+id/main_content"
             style="@style/LayoutSingleContentSpaceBelowStyle">
+            
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_uuid"
+                app:value="@{data.uuid}"
+                app:shortUuidValue="@{data.uuid}"
+                style="@style/ControlSingleColumnStyle" />
 
             <LinearLayout
+                android:id="@+id/name_fields_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_firstName"
+                    android:nextFocusForward="@+id/person_lastName"
+                    app:required="true"
                     app:value="@{data.firstName}"
+                    app:imeOptions="actionNext"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_lastName"
+                    app:required="true"
                     app:value="@{data.lastName}"
+                    app:imeOptions="actionNext"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_otherName"
                     app:value="@{data.otherName}"
+                    app:imeOptions="actionNext"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
 
             <de.symeda.sormas.app.component.controls.ControlTextReadField
                 android:id="@+id/person_salutation"
-                style="@style/ControlSingleColumnStyle"
-                app:appendValue="@{data.otherSalutation}"
                 app:value="@{data.salutation}"
-                app:valueFormat="@string/two_strings_with_hyphen_format" />
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_otherSalutation"
+                app:dependencyParentField="@{personSalutation}"
+                app:dependencyParentValue="@{Salutation.OTHER}"
+                app:value="@{data.otherSalutation}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <TextView
+                android:id="@+id/person_birthdateLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/caption_date_of_birth"
+                style="@style/ControlLabelStyle"/>
 
             <LinearLayout
+                android:id="@+id/person_birthdateHeading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_birthdateYYYY"
+                    app:value="@{data.birthdateYYYY}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_birthdateMM"
+                    app:value="@{data.birthdateMM}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_birthdateDD"
+                    app:value="@{data.birthdateDD}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/person_approximateAgeHeading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_approximateAge"
-                    app:ageWithDateValue="@{data}"
-                    app:showDay="@{birthDayVisibility}"
+                    app:value="@{data.approximateAge}"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/person_sex"
-                    app:value="@{data.sex}"
+                    android:id="@+id/person_approximateAgeType"
+                    app:value="@{data.approximateAgeType}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_approximateAgeReferenceDate"
+                    app:value="@{data.approximateAgeReferenceDate}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <!--            locationOfBirth,birthInInstitution, -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/person_locationOfBirth_institution_layout"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_locationOfBirth"
+                    app:value="@{data.locationOfBirth}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_birthInInstitution"
+                    app:value="@{data.birthInInstitution}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
@@ -103,21 +185,27 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/place_of_birth_region_district_layout"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_placeOfBirthRegion"
                     app:value="@{data.placeOfBirthRegion}"
+                    app:dependencyParentField="@{personBirthInInstitution}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_placeOfBirthDistrict"
                     app:value="@{data.placeOfBirthDistrict}"
+                    app:dependencyParentField="@{personBirthInInstitution}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/place_of_birth_community_facility_type_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -125,6 +213,8 @@
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_placeOfBirthCommunity"
                     app:value="@{data.placeOfBirthCommunity}"
+                    app:dependencyParentField="@{personBirthInInstitution}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
@@ -136,8 +226,10 @@
 
             <de.symeda.sormas.app.component.controls.ControlTextReadField
                 android:id="@+id/person_placeOfBirthFacility"
-                app:value="@{data.placeOfBirthFacility}"
-                style="@style/ControlSingleColumnStyle" />
+                style="@style/ControlSingleColumnStyle"
+                app:dependencyParentField="@{personBirthInInstitution}"
+                app:dependencyParentValue="@{YesNoUnknown.YES}"
+                app:value="@{data.placeOfBirthFacility}" />
 
             <de.symeda.sormas.app.component.controls.ControlTextReadField
                 android:id="@+id/person_placeOfBirthFacilityDetails"
@@ -147,6 +239,84 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/person_prenatalCare_layout"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_receivedAntenatalCare"
+                    app:value="@{data.receivedAntenatalCare}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_prenatalTotalVisits"
+                    app:value="@{data.prenatalTotalVisits}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/person_attendedByTrainedTBA_layout"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_attendedByTrainedTBA"
+                    app:value="@{data.attendedByTrainedTBA}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_attendedByTrainedTBAMidwifeName"
+                    app:value="@{data.attendedByTrainedTBAMidwifeName}"
+                    app:dependencyParentField="@{personAttendedByTrainedTBA}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/person_attendedByDoctorNurse_cutCordWithSterileBlade_layout"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_attendedByDoctorNurse"
+                    app:value="@{data.attendedByDoctorNurse}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_cutCordWithSterileBlade"
+                    app:value="@{data.cutCordWithSterileBlade}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/person_cordTreatedWithAnything_layout"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_cordTreatedWithAnything"
+                    app:value="@{data.cordTreatedWithAnything}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_cordTreatedWithAnythingWhere"
+                    app:value="@{data.cordTreatedWithAnythingWhere}"
+                    app:dependencyParentField="@{personCordTreatedWithAnything}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/person_birthWeight_gestationAgeAtBirth_layout"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
@@ -161,9 +331,91 @@
 
             </LinearLayout>
 
-            <ImageView style="@style/FullHorizontalDividerStyle"/>
+            <LinearLayout
+                android:id="@+id/person_sex_marriageStatusHeading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_sex"
+                    app:value="@{data.sex}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_marriageStatus"
+                    app:value="@{data.marriageStatus}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_nationality"
+                app:value="@{data.nationality}"
+                style="@style/ControlSingleColumnStyle" />
 
             <LinearLayout
+                android:id="@+id/person_headHouseHold_ethnicHeading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_headHouseHold"
+                    app:value="@{data.headHouseHold}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_ethnicity"
+                    app:value="@{data.ethnicity}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
+                android:id="@+id/person_professionOfPatient"
+                app:value="@{data.professionOfPatient}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_professionOfPatientOther"
+                app:value="@{data.professionOfPatientOther}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <TextView
+                android:id="@+id/person_healthstaffLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/caption_health_staff_details"
+                style="@style/ControlLabelStyle"/>
+
+            <LinearLayout
+                android:id="@+id/person_healthStaff_Heading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_nameHealthFacility"
+                    app:value="@{data.nameHealthFacility}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_service"
+                    app:value="@{data.service}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_qualification"
+                    app:value="@{data.qualification}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <!--            <ImageView style="@style/FullHorizontalDividerStyle"/>-->
+
+            <LinearLayout
+                android:id="@+id/person_presentConditiondeathDate_Layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -171,11 +423,13 @@
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_presentCondition"
                     app:value="@{data.presentCondition}"
+                    app:softRequired="true"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
-                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                <de.symeda.sormas.app.component.controls.ControlDateField
                     android:id="@+id/person_deathDate"
                     app:value="@{data.deathDate}"
+                    app:softRequired="true"
                     app:dependencyParentField="@{personPresentCondition}"
                     app:dependencyParentValue="@{PresentCondition.DEAD}"
                     app:dependencyParentValue2="@{PresentCondition.BURIED}"
@@ -191,6 +445,7 @@
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_causeOfDeath"
                     app:value="@{data.causeOfDeath}"
+                    app:softRequired="true"
                     app:dependencyParentField="@{personPresentCondition}"
                     app:dependencyParentValue="@{PresentCondition.DEAD}"
                     app:dependencyParentValue2="@{PresentCondition.BURIED}"
@@ -199,6 +454,7 @@
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_causeOfDeathDisease"
                     app:value="@{data.causeOfDeathDisease}"
+                    app:softRequired="true"
                     app:dependencyParentField="@{personCauseOfDeath}"
                     app:dependencyParentValue="@{CauseOfDeath.EPIDEMIC_DISEASE}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
@@ -208,6 +464,7 @@
             <de.symeda.sormas.app.component.controls.ControlTextReadField
                 android:id="@+id/person_causeOfDeathDetails"
                 app:value="@{data.causeOfDeathDetails}"
+                app:softRequired="true"
                 style="@style/ControlSingleColumnStyle" />
 
             <LinearLayout
@@ -238,7 +495,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                <de.symeda.sormas.app.component.controls.ControlDateField
                     android:id="@+id/person_burialDate"
                     app:value="@{data.burialDate}"
                     app:dependencyParentField="@{personPresentCondition}"
@@ -257,26 +514,70 @@
             <de.symeda.sormas.app.component.controls.ControlTextReadField
                 android:id="@+id/person_burialPlaceDescription"
                 app:value="@{data.burialPlaceDescription}"
+                app:softRequired="true"
                 app:dependencyParentField="@{personPresentCondition}"
                 app:dependencyParentValue="@{PresentCondition.BURIED}"
                 style="@style/ControlSingleColumnStyle" />
 
             <LinearLayout
+                android:id="@+id/person_nationalHealthIdGhanaCardFieldsLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/person_passportNumber"
-                    app:value="@{data.passportNumber}"
+                    android:id="@+id/person_nationalHealthId"
+                    app:value="@{data.nationalHealthId}"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/person_nationalHealthId"
-                    app:value="@{data.nationalHealthId}"
+                    android:id="@+id/person_ghanaCard"
+                    app:value="@{data.ghanaCard}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
+
+            <!--            <ImageView style="@style/FullHorizontalDividerStyle"/>-->
+
+            <TextView
+                android:id="@+id/person_headingEducationOccupation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getString(Strings.headingPersonOccupation)}"
+                style="@style/SubHeadingStyle" />
+
+            <LinearLayout
+                android:id="@+id/person_educationFieldsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_educationType"
+                    app:value="@{data.educationType}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_educationDetails"
+                    app:value="@{data.educationDetails}"
+                    app:dependencyParentField="@{personEducationType}"
+                    app:dependencyParentValue="@{EducationType.OTHER}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_occupationType"
+                app:value="@{data.occupationType}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_occupationDetails"
+                app:value="@{data.occupationDetails}"
+                style="@style/ControlSingleColumnStyle" />
+            <!--app:customizableEnumField="@{personOccupationType}"
+            app:customizableEnumProperty="@{OccupationType.HAS_DETAILS}"
+            app:customizableEnumValue="@{Boolean.TRUE}"-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -284,23 +585,62 @@
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/person_ghanaCard"
-                    app:value="@{data.ghanaCard}"
+                    android:id="@+id/person_otherId"
+                    app:value="@{data.otherId}"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
-
-                <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/person_phone"
-                    app:value="@{data.phone}"
-                    style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
 
-            <ImageView style="@style/FullHorizontalDividerStyle"/>
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_phone"
+                app:value="@{data.phone}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextPopupField
+                android:id="@+id/person_address"
+                app:iconStart="@drawable/ic_edit_location_black_24dp"
+                app:hint="@string/hint_enter_location"
+                app:locationValue="@={data.address}"
+                style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlTextReadField
-                android:id="@+id/person_address"
-                app:maxLines="5"
-                app:value="@{data.address}"
+                android:id="@+id/person_placeOfResidenceSameAsReportingVillage"
+                app:value="@{data.placeOfResidenceSameAsReportingVillage}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_residenceSinceWhenInMonths"
+                app:value="@{data.residenceSinceWhenInMonths}"
+                app:dependencyParentField="@{personPlaceOfResidenceSameAsReportingVillage}"
+                app:dependencyParentValue="@{YesNo.NO}"
+                app:inputType="number"
+                style="@style/ControlSingleColumnStyle" />
+
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_pst14MonthsRegion"
+                app:value="@{data.pst14MonthsRegion}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_pst14MonthsDistrict"
+                app:value="@{data.pst14MonthsDistrict}"
+                style="@style/ControlSingleColumnStyle" />
+
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_pst14MonthsCommunity"
+                app:value="@{data.pst14MonthsCommunity}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_pst14MonthsZone"
+                app:value="@{data.pst14MonthsZone}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_pst14MonthsVillage"
+                app:value="@{data.pst14MonthsVillage}"
                 style="@style/ControlSingleColumnStyle" />
 
             <LinearLayout
@@ -329,6 +669,17 @@
                         android:text="@string/heading_addresses"
                         style="@style/SubHeadingCompactStyle" />
 
+                    <de.symeda.sormas.app.component.controls.ControlButton
+                        android:id="@+id/btn_add_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="@string/action_new"
+                        app:buttonType="@{ControlButtonType.LINE_PRIMARY}"
+                        app:iconStart="@drawable/ic_add_24dp"
+                        app:rounded="true"
+                        app:slim="true" />
+
                 </RelativeLayout>
 
                 <ImageView
@@ -350,31 +701,17 @@
 
             <ImageView style="@style/FullHorizontalDividerStyle"/>
 
-            <de.symeda.sormas.app.component.controls.ControlTextReadField
-                android:id="@+id/person_educationType"
-                app:value="@{data.educationType}"
-                app:appendValue="@{data.educationDetails}"
-                app:valueFormat="@string/two_strings_with_hyphen_format"
-                style="@style/ControlSingleColumnStyle" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <de.symeda.sormas.app.component.controls.ControlTextReadField
-                android:id="@+id/person_occupationType"
-                app:value="@{data.occupationType}"
-                style="@style/ControlSingleColumnStyle" />
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_armedForcesRelationType"
+                    app:value="@{data.armedForcesRelationType}"
+                    style="@style/ControlSingleColumnStyle" />
 
-
-            <de.symeda.sormas.app.component.controls.ControlTextReadField
-                android:id="@+id/person_occupationDetails"
-                app:value="@{data.occupationDetails}"
-                app:customizableEnumField="@{personOccupationType}"
-                app:customizableEnumProperty="@{OccupationType.HAS_DETAILS}"
-                app:customizableEnumValue="@{Boolean.TRUE}"
-                style="@style/ControlSingleColumnStyle" />
-
-            <de.symeda.sormas.app.component.controls.ControlTextReadField
-                android:id="@+id/person_armedForcesRelationType"
-                app:value="@{data.armedForcesRelationType}"
-                style="@style/ControlSingleColumnStyle" />
+            </LinearLayout>
 
             <ImageView style="@style/FullHorizontalDividerStyle"/>
 
@@ -385,7 +722,9 @@
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_birthName"
+                    android:nextFocusForward="@+id/person_nickname"
                     app:value="@{data.birthName}"
+                    app:imeOptions="actionNext"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
             </LinearLayout>
@@ -393,40 +732,57 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/person_mothers_name_mothersMaidenName_layout"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_nickname"
+                    android:nextFocusForward="@+id/person_mothersMaidenName"
                     app:value="@{data.nickname}"
+                    app:imeOptions="actionNext"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_mothersMaidenName"
+                    android:nextFocusForward="@+id/person_mothersName"
                     app:value="@{data.mothersMaidenName}"
+                    app:imeOptions="actionNext"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
 
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_applicable"
+                app:value="@{data.applicable}"
+                style="@style/ControlSingleColumnStyle" />
+
             <LinearLayout
+                android:id="@+id/person_parents_name_Heading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_mothersName"
+                    android:nextFocusForward="@+id/person_fathersName"
                     app:value="@{data.mothersName}"
+                    app:imeOptions="actionNext"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_fathersName"
+                    android:nextFocusForward="@+id/person_namesOfGuardians"
                     app:value="@{data.fathersName}"
+                    app:imeOptions="actionNext"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
 
             <de.symeda.sormas.app.component.controls.ControlTextReadField
                 android:id="@+id/person_namesOfGuardians"
+                android:nextFocusForward="@+id/person_birthCountry"
                 app:value="@{data.namesOfGuardians}"
+                app:imeOptions="actionNext"
                 style="@style/ControlSingleColumnStyle" />
 
             <LinearLayout
@@ -436,37 +792,19 @@
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_birthCountry"
-                    app:value="@{birthCountry}"
+                    android:nextFocusForward="@+id/person_citizenship"
+                    app:value="@{data.birthCountry}"
+                    app:imeOptions="actionNext"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/person_citizenship"
-                    app:value="@{citizenship}"
+                    app:value="@{data.citizenship}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/person_externalID"
-                    app:value="@{data.externalId}"
-                    style="@style/ControlFirstOfTwoColumnsStyle" />
-
-                <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/person_externalToken"
-                    app:value="@{data.externalToken}"
-                    style="@style/ControlSecondOfTwoColumnsStyle"/>
-
-            </LinearLayout>
-
-            <de.symeda.sormas.app.component.controls.ControlTextReadField
-                android:id="@+id/person_internalToken"
-                app:value="@{data.internalToken}"
-                style="@style/ControlSingleColumnStyle"/>
+            <ImageView style="@style/FullHorizontalDividerStyle"/>
 
             <LinearLayout
                 android:id="@+id/personContactDetails_layout"
@@ -476,9 +814,11 @@
                 android:orientation="vertical"
                 android:paddingStart="@dimen/parentLayoutHorizontalPadding"
                 android:paddingEnd="@dimen/parentLayoutHorizontalPadding"
-                android:paddingTop="@dimen/parentLayoutVerticalPadding">
+                android:paddingTop="@dimen/parentLayoutVerticalPadding"
+                android:layout_marginBottom="@dimen/parentLayoutVerticalPadding">
 
                 <RelativeLayout
+                    android:id="@+id/personContactDetailList_headline"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:alternateBottomMarginIfEmpty="@{personContactDetailList}"
@@ -493,6 +833,17 @@
                         android:layout_centerVertical="true"
                         android:text="@string/heading_person_contact_detail"
                         style="@style/SubHeadingCompactStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlButton
+                        android:id="@+id/btn_add_personContactDetail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="@string/action_new"
+                        app:buttonType="@{ControlButtonType.LINE_PRIMARY}"
+                        app:iconStart="@drawable/ic_add_24dp"
+                        app:rounded="true"
+                        app:slim="true" />
 
                 </RelativeLayout>
 
@@ -513,9 +864,70 @@
 
             </LinearLayout>
 
-            <ImageView style="@style/FullHorizontalDividerStyle"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_externalId"
+                    app:value="@{data.externalId}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_externalToken"
+                    app:value="@{data.externalToken}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"/>
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_internalToken"
+                app:value="@{data.internalToken}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/person_investigatorNameTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_investigatorName"
+                    app:value="@{data.investigatorName}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_investigatorTitle"
+                    app:value="@{data.investigatorTitle}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/person_investigatorUnitAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_investigatorUnit"
+                    app:value="@{data.investigatorUnit}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/person_investigatorAddress"
+                    app:value="@{data.investigatorAddress}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"/>
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_investigatorTel"
+                app:value="@{data.investigatorTel}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <ImageView style="@style/FullHorizontalDividerStyle" />
 
             <TextView
+                android:id="@+id/person_additionalDetailsLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/heading_additional_details"
@@ -523,10 +935,13 @@
 
             <de.symeda.sormas.app.component.controls.ControlTextReadField
                 android:id="@+id/person_additionalDetails"
-                app:value="@{data.additionalDetails}"
                 app:showCaption="false"
+                app:value="@{data.additionalDetails}"
+                app:inputType="textMultiLine"
+                app:textAlignment="gravity"
+                app:gravity="top|start"
                 app:singleLine="false"
-                app:maxLines="4000"
+                app:maxLines="6"
                 app:textArea="true"
                 style="@style/ControlSingleColumnStyle" />
 
