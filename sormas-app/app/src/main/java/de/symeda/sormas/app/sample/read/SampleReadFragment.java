@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.sample.AdditionalTestType;
 import de.symeda.sormas.api.sample.PathogenTestType;
@@ -172,6 +173,10 @@ public class SampleReadFragment extends BaseReadFragment<FragmentSampleReadLayou
 
 		if (requestedPathogenTests.isEmpty() && requestedAdditionalTests.isEmpty()) {
 			contentBinding.pathogenTestingDivider.setVisibility(GONE);
+		}
+
+		if(record.getAssociatedCase().getDisease() != null){
+			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_EDIT);
 		}
 	}
 
