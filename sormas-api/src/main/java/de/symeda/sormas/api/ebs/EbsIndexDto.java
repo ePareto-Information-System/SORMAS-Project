@@ -46,7 +46,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	public static final String PERSON_REGISTERING = "personRegistering";
 	public static final String PERSON_DESIGNATION = "personDesignation";
 
-	public static final String TRIAGING_DECISION_DATE = "triagingDecisionDate";
+	public static final String TRIAGING_DECISION_DATE = "decisionDate";
 	public static final String VERIFICATION_SENT = "verificationSent";
 	public static final String VERIFIED_DATE = "verifiedDate";
 	public static final String RISK_STATUS = "riskStatus";
