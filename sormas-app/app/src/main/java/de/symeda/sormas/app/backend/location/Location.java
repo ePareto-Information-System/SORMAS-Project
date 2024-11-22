@@ -94,6 +94,8 @@ public class Location extends PseudonymizableAdo {
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String houseNumber;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String locality;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String additionalInformation;
 	@Column
 	private PersonAddressType addressType;
@@ -248,6 +250,14 @@ public class Location extends PseudonymizableAdo {
 
 	public void setHouseNumber(String houseNumber) {
 		this.houseNumber = houseNumber;
+	}
+
+	public String getLocality() {
+		return locality;
+	}
+
+	public void setLocality(String locality) {
+		this.locality = locality;
 	}
 
 	@Bindable
