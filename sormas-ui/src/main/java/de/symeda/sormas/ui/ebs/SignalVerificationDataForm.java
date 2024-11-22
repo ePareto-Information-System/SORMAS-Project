@@ -163,6 +163,12 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 			}
 		});
 		setRequired(true, SignalVerificationDto.VERIFICATION_SENT);
+		sentVerification.addValueChangeListener(e -> {
+			String selectedValue = e.getProperty().getValue().toString();
+			if (e.getProperty().getValue().toString().equals("NO")) {
+				setRequired(false, SignalVerificationDto.WHY_NOT_VERIFY);
+			}
+		});
 		sentVerification.addValueChangeListener(event -> {
 			if (event.getProperty().getValue().equals(YesNo.NO) && selectedEbs.getTriaging().getTriagingDecision() == EbsTriagingDecision.VERIFY) {
 				TriagingDataForm.reviewSignal(Strings.verifyNotifs);
