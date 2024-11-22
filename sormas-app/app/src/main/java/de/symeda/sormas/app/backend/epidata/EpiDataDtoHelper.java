@@ -145,6 +145,17 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		target.setPlacesVisitedPastSevenDays(source.getPlacesVisitedPastSevenDays());
 		target.setRiskFactorsSevereDisease(source.getRiskFactorsSevereDisease());
 		target.setOtherSpecify(source.getOtherSpecify());
+		target.setIntlTravel(source.getIntlTravel());
+		target.setSpecifyCountries(source.getSpecifyCountries());
+		target.setDateOfDeparture(source.getDateOfDeparture());
+		target.setDateOfArrival(source.getDateOfArrival());
+		target.setDomesticTravel(source.getDomesticTravel());
+		target.setSpecifyLocation(source.getSpecifyLocation());
+		target.setDateOfDeparture2(source.getDateOfDeparture2());
+		target.setDateOfArrival2(source.getDateOfArrival2());
+		target.setContactIllPerson(source.getContactIllPerson());
+		target.setContactDate(source.getContactDate());
+		target.setSpecifyIllness(source.getSpecifyIllness());
 
 		List<Exposure> exposures = new ArrayList<>();
 		if (!source.getExposures().isEmpty()) {
@@ -286,6 +297,17 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		target.setPlacesVisitedPastSevenDays(source.getPlacesVisitedPastSevenDays());
 		target.setRiskFactorsSevereDisease(source.getRiskFactorsSevereDisease());
 		target.setOtherSpecify(source.getOtherSpecify());
+		target.setIntlTravel(source.getIntlTravel());
+		target.setSpecifyCountries(source.getSpecifyCountries());
+		target.setDateOfDeparture(source.getDateOfDeparture());
+		target.setDateOfArrival(source.getDateOfArrival());
+		target.setDomesticTravel(source.getDomesticTravel());
+		target.setSpecifyLocation(source.getSpecifyLocation());
+		target.setDateOfDeparture2(source.getDateOfDeparture2());
+		target.setDateOfArrival2(source.getDateOfArrival2());
+		target.setContactIllPerson(source.getContactIllPerson());
+		target.setContactDate(source.getContactDate());
+		target.setSpecifyIllness(source.getSpecifyIllness());
 
 		List<ExposureDto> exposureDtos = new ArrayList<>();
 		if (!source.getExposures().isEmpty()) {

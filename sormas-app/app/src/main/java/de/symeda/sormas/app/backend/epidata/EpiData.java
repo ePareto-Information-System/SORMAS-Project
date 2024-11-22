@@ -231,6 +231,18 @@ public class EpiData extends PseudonymizableAdo {
 	private RiskFactorCondition riskFactorsSevereDisease;
 	private String otherSpecify;
 
+	private YesNo intlTravel;
+	private String specifyCountries;
+	private Date dateOfDeparture;
+	private Date dateOfArrival;
+	private YesNo domesticTravel;
+	private String specifyLocation;
+	private Date dateOfDeparture2;
+	private Date dateOfArrival2;
+	private YesNo contactIllPerson;
+	private Date contactDate;
+	private String specifyIllness;
+
 	public void setExposureDetailsKnown(YesNo exposureDetailsKnown) {
 		this.exposureDetailsKnown = exposureDetailsKnown;
 	}
@@ -985,7 +997,93 @@ public class EpiData extends PseudonymizableAdo {
 		this.otherSpecify = otherSpecify;
 	}
 
+	public YesNo getIntlTravel() {
+		return intlTravel;
+	}
 
+	public void setIntlTravel(YesNo intlTravel) {
+		this.intlTravel = intlTravel;
+	}
+
+	public String getSpecifyCountries() {
+		return specifyCountries;
+	}
+
+	public void setSpecifyCountries(String specifyCountries) {
+		this.specifyCountries = specifyCountries;
+	}
+
+	public Date getDateOfDeparture() {
+		return dateOfDeparture;
+	}
+
+	public void setDateOfDeparture(Date dateOfDeparture) {
+		this.dateOfDeparture = dateOfDeparture;
+	}
+
+	public Date getDateOfArrival() {
+		return dateOfArrival;
+	}
+
+	public void setDateOfArrival(Date dateOfArrival) {
+		this.dateOfArrival = dateOfArrival;
+	}
+
+	public YesNo getDomesticTravel() {
+		return domesticTravel;
+	}
+
+	public void setDomesticTravel(YesNo domesticTravel) {
+		this.domesticTravel = domesticTravel;
+	}
+
+	public String getSpecifyLocation() {
+		return specifyLocation;
+	}
+
+	public void setSpecifyLocation(String specifyLocation) {
+		this.specifyLocation = specifyLocation;
+	}
+
+	public Date getDateOfDeparture2() {
+		return dateOfDeparture2;
+	}
+
+	public void setDateOfDeparture2(Date dateOfDeparture2) {
+		this.dateOfDeparture2 = dateOfDeparture2;
+	}
+
+	public Date getDateOfArrival2() {
+		return dateOfArrival2;
+	}
+
+	public void setDateOfArrival2(Date dateOfArrival2) {
+		this.dateOfArrival2 = dateOfArrival2;
+	}
+
+	public YesNo getContactIllPerson() {
+		return contactIllPerson;
+	}
+
+	public void setContactIllPerson(YesNo contactIllPerson) {
+		this.contactIllPerson = contactIllPerson;
+	}
+
+	public Date getContactDate() {
+		return contactDate;
+	}
+
+	public void setContactDate(Date contactDate) {
+		this.contactDate = contactDate;
+	}
+
+	public String getSpecifyIllness() {
+		return specifyIllness;
+	}
+
+	public void setSpecifyIllness(String specifyIllness) {
+		this.specifyIllness = specifyIllness;
+	}
 
 
 
