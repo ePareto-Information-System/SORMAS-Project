@@ -26,6 +26,8 @@ import android.view.ViewGroup;
 import androidx.databinding.ObservableArrayList;
 
 import de.symeda.sormas.api.CountryHelper;
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.event.MeansOfTransport;
@@ -63,6 +65,7 @@ public class EpidemiologicalDataReadFragment extends BaseReadFragment<FragmentRe
 	private EpiData record;
 	private IEntryItemOnClickListener onExposureItemClickListener;
 	private IEntryItemOnClickListener onActivityAsCaseItemClickListener;
+	private Disease caseDisease;
 
 	public static EpidemiologicalDataReadFragment newInstance(Case activityRootData) {
 		return newInstanceWithFieldCheckers(
@@ -151,6 +154,7 @@ public class EpidemiologicalDataReadFragment extends BaseReadFragment<FragmentRe
 	@Override
 	protected void prepareFragmentData(Bundle savedInstanceState) {
 		record = getEpiDataOfCaseOrContact(getActivityRootData());
+		caseDisease = getDiseaseOfCaseOrContact(getActivityRootData());
 	}
 
 	@Override
@@ -171,10 +175,10 @@ public class EpidemiologicalDataReadFragment extends BaseReadFragment<FragmentRe
 		ObservableArrayList<ActivityAsCase> activitiesAsCase = new ObservableArrayList<>();
 		activitiesAsCase.addAll(record.getActivitiesAsCase());
 
-		contentBinding.setActivityascaseList(activitiesAsCase);
-		contentBinding.setActivityascaseItemClickCallback(onActivityAsCaseItemClickListener);
+		contentBinding.setActivityAsCaseList(activitiesAsCase);
+		contentBinding.setActivityAsCaseItemClickCallback(onActivityAsCaseItemClickListener);
 		boolean isCountryGermany = CountryHelper.isCountry(ConfigProvider.getServerCountryCode(), CountryHelper.COUNTRY_CODE_GERMANY);
-		contentBinding.setActivityascaseListBindCallback(v -> {
+		contentBinding.setActivityAsCaseListBindCallback(v -> {
 			if (isCountryGermany) {
 				((ControlTextReadField) ((ViewGroup) v).findViewById(R.id.activityAsCase_typeOfPlace))
 					.setCaption(I18nProperties.getCaption(Captions.ActivityAsCase_typeOfPlaceIfSG));
@@ -193,14 +197,18 @@ public class EpidemiologicalDataReadFragment extends BaseReadFragment<FragmentRe
 
 		if (getActivityRootData() instanceof Case) {
 			if (record.getActivityAsCaseDetailsKnown() != YesNo.YES) {
-				contentBinding.activitiesascaseLayout.setVisibility(View.GONE);
+				contentBinding.activityascaseLayout.setVisibility(View.GONE);
 			}
 		}
 
 		if (!(getActivityRootData() instanceof Case)) {
 			contentBinding.epiDataContactWithSourceCaseKnown.setVisibility(GONE);
-			contentBinding.activitiesascaseLayout.setVisibility(View.GONE);
+			contentBinding.activityascaseLayout.setVisibility(View.GONE);
 			contentBinding.epiDataActivityAsCaseDetailsKnown.setVisibility(View.GONE);
+		}
+
+		if (caseDisease != null) {
+			super.hideFieldsForDisease(caseDisease, contentBinding.mainContent, FormType.EPIDEMIOLOGICAL_EDIT);
 		}
 	}
 

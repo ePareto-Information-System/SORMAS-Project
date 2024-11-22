@@ -384,6 +384,8 @@
     <string name="heading_risk_assessment_new">New Risk Assessment</string>
     <string name="heading_alert_assessment_edit">Edit Alert</string>
     <string name="heading_alert_assessment_new">New Alert</string>
+    <string name="heading_risk_mapping">Risk Mapping</string>
+    <string name="heading_risk_mapping_edit">Edit Risk Mapping</string>
     <string name="heading_event_read">Read Event</string>
     <string name="heading_event_summary">Event Summary</string>
     <string name="heading_events_list">Event Listing</string>

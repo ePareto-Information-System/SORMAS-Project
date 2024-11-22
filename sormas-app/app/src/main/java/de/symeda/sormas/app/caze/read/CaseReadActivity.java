@@ -189,6 +189,9 @@ public class CaseReadActivity extends BaseReadActivity<Case> {
 		case TASKS:
 			fragment = CaseReadTaskListFragment.newInstance(activityRootData);
 			break;
+		case RISK_FACTORS:
+			fragment = CaseReadRiskFactorFragment.newInstance(activityRootData);
+			break;
 		default:
 			throw new IndexOutOfBoundsException(DataHelper.toStringNullable(section));
 		}

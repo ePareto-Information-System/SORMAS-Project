@@ -25,15 +25,42 @@
     android:id="@+id/base_layout">
 
     <data>
+        <import type="de.symeda.sormas.api.utils.YesNo" />
+        <import type="de.symeda.sormas.api.caze.CaseOutcome" />
+        <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
+        <import type="de.symeda.sormas.api.i18n.I18nProperties" />
+        <import type="de.symeda.sormas.api.i18n.Strings" />
+        <import type="de.symeda.sormas.api.i18n.Captions" />
+        <import type="de.symeda.sormas.api.epidata.EpiDataDto" />
+        <import type="de.symeda.sormas.api.epidata.PlaceManaged" />
+        <import type="de.symeda.sormas.api.epidata.ContactSetting" />
+        <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
+        <import type="de.symeda.sormas.api.utils.RiskFactorCondition" />
+
+        <import type="android.view.View" />
         <variable name="data" type="de.symeda.sormas.app.backend.epidata.EpiData" />
 
         <variable name="exposureList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.exposure.Exposure&gt;" />
         <variable name="exposureItemClickCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
         <variable name="exposureListBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
 
-        <variable name="activityascaseList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.activityascase.ActivityAsCase&gt;" />
-        <variable name="activityascaseItemClickCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
-        <variable name="activityascaseListBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
+        <variable name="activityAsCaseList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.activityascase.ActivityAsCase&gt;" />
+        <variable name="activityAsCaseItemClickCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
+        <variable name="activityAsCaseListBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
+
+
+        <variable name="personTravelHistoryList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory&gt;" />
+        <variable name="personTravelHistoryItemClickCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
+        <variable name="personTravelHistoryListBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
+
+        <variable name="containmentMeasureList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.containmentmeasure.ContainmentMeasure&gt;" />
+        <variable name="containmentMeasureItemClickCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
+        <variable name="containmentMeasureListBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
+
+        <variable name="contaminationSourceList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.contaminationsource.ContaminationSource&gt;" />
+        <variable name="contaminationSourceItemClickCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
+        <variable name="contaminationSourceListBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
+
     </data>
 
     <ScrollView
@@ -45,100 +72,967 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:id="@+id/main_content"
-            style="@style/LayoutMultipleContentSpaceBelowStyle">
+            style="@style/LayoutMultipleContentSpaceBelowStyle"
+            android:padding="@dimen/fragment_padding"
+            >
+
+            <TextView
+                android:id="@+id/heading_exposure_investigation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getString(Strings.headingExposureInvestigation)}"
+                style="@style/SubHeadingCompactStyle" />
+
+            <TextView
+                android:id="@+id/infoEpiDataFieldsHintHeading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:htmlValue="@{I18nProperties.getString(Strings.infoEpiDataFieldsHint)}"
+                style="@style/SubHeadingDescriptionStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_highTransmissionRiskArea"
+                app:value="@{data.highTransmissionRiskArea}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_largeOutbreaksArea"
+                app:value="@{data.largeOutbreaksArea}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_areaInfectedAnimals"
+                app:value="@{data.areaInfectedAnimals}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <LinearLayout
+                android:id="@+id/epiData_exposedToRiskFactor_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_exposedToRiskFactor"
+                    app:value="@{data.exposedToRiskFactor}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_waterUsedByPatientAfterExposure"
+                    app:value="@{data.waterUsedByPatientAfterExposure}"
+                    app:dependencyParentField="@{epiDataExposedToRiskFactor}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/epiData_waterUsedForDrinking_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_waterUsedForDrinking"
+                    app:value="@{data.waterUsedForDrinking}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_waterUsedNotForDrinking"
+                    app:value="@{data.waterUsedNotForDrinking}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_foodItems"
+                    app:value="@{data.foodItems}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"/>
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_historyOfTravelOutsideTheVillageTownDistrict"
+                app:value="@{data.historyOfTravelOutsideTheVillageTownDistrict}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_historyOfTravelRegion"
+                app:value="@{data.historyOfTravelRegion}"
+                app:dependencyParentField="@{epiDataHistoryOfTravelOutsideTheVillageTownDistrict}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_historyOfTravelDistrict"
+                app:value="@{data.historyOfTravelDistrict}"
+                app:dependencyParentField="@{epiDataHistoryOfTravelOutsideTheVillageTownDistrict}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_historyOfTravelSubDistrict"
+                app:value="@{data.historyOfTravelSubDistrict}"
+                app:dependencyParentField="@{epiDataHistoryOfTravelOutsideTheVillageTownDistrict}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_historyOfTravelVillage"
+                app:value="@{data.historyOfTravelVillage}"
+                app:dependencyParentField="@{epiDataHistoryOfTravelOutsideTheVillageTownDistrict}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <TextView
+                android:id="@+id/exposure_investigation_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:htmlValue="@{I18nProperties.getString(Strings.infoExposureInvestigation)}"
+                style="@style/SubHeadingDescriptionStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_exposureDetailsKnown"
+                app:value="@{data.exposureDetailsKnown}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/exposures_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/textControlMarginBottom"
+                android:background="@color/formListSectionBackground"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/parentLayoutHorizontalPadding"
+                android:paddingEnd="@dimen/parentLayoutHorizontalPadding"
+                android:paddingTop="@dimen/parentLayoutVerticalPadding">
+
+                <RelativeLayout
+                    android:id="@+id/exposures_relativeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:alternateBottomMarginIfEmpty="@{exposureList}"
+                    app:emptyBottomMargin="@{@dimen/parentLayoutVerticalMargin}"
+                    app:nonEmptyBottomMargin="@{@dimen/closelyRelatedControlMarginBottom}">
+
+                    <TextView
+                        android:id="@+id/exposures_headline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:text="@{I18nProperties.getPrefixCaption(EpiDataDto.I18N_PREFIX, EpiDataDto.EXPOSURES)}"
+                        style="@style/ReadActivitySubListHeadingNoBMarginStyle" />
+
+
+                </RelativeLayout>
+
+                <ImageView
+                    style="@style/FullHorizontalDividerStyle"
+                    app:goneIfEmpty="@{exposureList}"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:orientation="vertical"
+                    android:padding="@dimen/rowListItemParentPadding"
+                    app:callback="@{exposureItemClickCallback}"
+                    app:entries="@{exposureList}"
+                    app:layout="@{@layout/row_epid_exposure_layout}"
+                    app:bindCallback="@{exposureListBindCallback}" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/activityascase_investigation_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:htmlValue="@{I18nProperties.getString(Strings.infoActivityAsCaseInvestigation)}"
+                style="@style/SubHeadingDescriptionStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_activityAsCaseDetailsKnown"
+                app:value="@{data.activityAsCaseDetailsKnown}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_recentTravelOutbreak"
+                app:value="@{data.recentTravelOutbreak}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_contactSimilarOutbreak"
+                app:value="@{data.contactSimilarOutbreak}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_contactSickAnimals"
+                app:value="@{data.contactSickAnimals}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_ifYesSpecifySick"
+                app:value="@{data.ifYesSpecifySick}"
+                app:dependencyParentField="@{epiDataContactSickAnimals}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_contactDeadAnimals"
+                app:value="@{data.contactDeadAnimals}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_ifYesSpecifyDead"
+                app:value="@{data.ifYesSpecifyDead}"
+                app:dependencyParentField="@{epiDataContactDeadAnimals}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_ifYesWildAnimalLocation"
+                app:value="@{data.ifYesWildAnimalLocation}"
+                app:dependencyParentField="@{epiDataContactDeadAnimals}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_ifYesWildAnimalDate"
+                style="@style/ControlSingleColumnStyle"
+                app:dependencyParentField="@{epiDataContactDeadAnimals}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                app:value="@{data.ifYesWildAnimalDate}" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_patientTravelDuringIllness"
+                app:value="@{data.patientTravelDuringIllness}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <TextView
+                android:id="@+id/epiData_indicatePlacesheading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:htmlValue="@{I18nProperties.getString(Strings.indicatePlace)}"
+                style="@style/SubHeadingDescriptionStyle" />
+
+            <LinearLayout
+                android:id="@+id/epiData_comm_health_country_fields1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_comm1"
+                    app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:value="@{data.comm1}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_healthCenter1"
+                    app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:value="@{data.healthCenter1}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_country1"
+                    app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:value="@{data.country1}" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/comm_health_country_fields2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_comm2"
+                    app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:value="@{data.comm2}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_healthCenter2"
+                    app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:value="@{data.healthCenter2}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_country2"
+                    app:dependencyParentField="@{epiDataPatientTravelDuringIllness}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:value="@{data.country2}" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/epiData_expositionRisksheading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:htmlValue="@{I18nProperties.getString(Strings.headingExpositionRisks)}"
+                style="@style/SubHeadingDescriptionStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_wasPatientHospitalized"
+                app:value="@{data.wasPatientHospitalized}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/wasPatientHospitalized_whereDates_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_ifYesWhere"
+                    app:dependencyParentField="@{epiDataWasPatientHospitalized}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:value="@{data.ifYesWhere}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_hospitalizedDate1"
+                    app:dependencyParentField="@{epiDataWasPatientHospitalized}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:value="@{data.hospitalizedDate1}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_hospitalizedDate2"
+                    app:dependencyParentField="@{epiDataWasPatientHospitalized}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:value="@{data.hospitalizedDate2}" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_didPatientConsultHealer"
+                app:value="@{data.didPatientConsultHealer}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/didPatientConsultHealer_nameCommCountry_Layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_ifYesNameHealer"
+                    app:dependencyParentField="@{epiDataDidPatientConsultHealer}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:value="@{data.ifYesNameHealer}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_community"
+                    app:dependencyParentField="@{epiDataDidPatientConsultHealer}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:value="@{data.community}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_country"
+                    app:dependencyParentField="@{epiDataDidPatientConsultHealer}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:value="@{data.country}" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_whenWhereContactTakePlace"
+                app:dependencyParentField="@{epiDataDidPatientConsultHealer}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@{data.whenWhereContactTakePlace}" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_dateOfContact"
+                app:dependencyParentField="@{epiDataDidPatientConsultHealer}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@{data.dateOfContact}" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_patientReceiveTraditionalMedicine"
+                app:value="@{data.patientReceiveTraditionalMedicine}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_ifYesExplain"
+                android:visibility="gone"
+                app:dependencyParentField="@{epiDataPatientReceiveTraditionalMedicine}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@{data.ifYesExplain}" />
+
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_patientAttendFuneralCeremonies"
+                app:value="@{data.patientAttendFuneralCeremonies}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_patientTravelAnytimePeriodBeforeIll"
+                app:value="@{data.patientTravelAnytimePeriodBeforeIll}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/patientTravelAnytimePeriodBeforeIll_whereDates_Layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_ifTravelYesWhere"
+                    app:dependencyParentField="@{epiDataPatientTravelAnytimePeriodBeforeIll}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:value="@{data.ifTravelYesWhere}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_ifYesStartDate"
+                    app:dependencyParentField="@{epiDataPatientTravelAnytimePeriodBeforeIll}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:value="@{data.ifYesStartDate}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_ifYesEndDate"
+                    app:dependencyParentField="@{epiDataPatientTravelAnytimePeriodBeforeIll}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:value="@{data.ifYesEndDate}" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_patientContactKnownSuspect"
+                app:value="@{data.patientContactKnownSuspect}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/patientContactKnownSuspect_nameIDCase_Layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_suspectLastName"
+                    app:dependencyParentField="@{epiDataPatientContactKnownSuspect}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:value="@{data.suspectLastName}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_suspectName"
+                    app:dependencyParentField="@{epiDataPatientContactKnownSuspect}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:value="@{data.suspectName}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_idCase"
+                    app:dependencyParentField="@{epiDataPatientContactKnownSuspect}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:value="@{data.idCase}" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_duringContactSuspectCase"
+                app:dependencyParentField="@{epiDataPatientContactKnownSuspect}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@{data.duringContactSuspectCase}" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_dateOfLastContactWithSuspectCase"
+                app:dependencyParentField="@{epiDataPatientContactKnownSuspect}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@{data.dateOfLastContactWithSuspectCase}" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_dateOfDeath"
+                app:dependencyParentField="@{epiDataDuringContactSuspectCase}"
+                app:dependencyParentValue="@{CaseOutcome.DECEASED}"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@{data.dateOfDeath}" />
+
+            <LinearLayout
+                android:id="@+id/activityascase_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/textControlMarginBottom"
+                android:background="@color/formListSectionBackground"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/parentLayoutHorizontalPadding"
+                android:paddingEnd="@dimen/parentLayoutHorizontalPadding"
+                android:paddingTop="@dimen/parentLayoutVerticalPadding">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:alternateBottomMarginIfEmpty="@{activityAsCaseList}"
+                    app:emptyBottomMargin="@{@dimen/parentLayoutVerticalMargin}"
+                    app:nonEmptyBottomMargin="@{@dimen/closelyRelatedControlMarginBottom}">
+
+                    <TextView
+                        android:id="@+id/activityascase_headline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:text="@{I18nProperties.getPrefixCaption(EpiDataDto.I18N_PREFIX, EpiDataDto.ACTIVITIES_AS_CASE)}"
+                        style="@style/ReadActivitySubListHeadingNoBMarginStyle" />
+
+                </RelativeLayout>
+
+                <ImageView
+                    style="@style/FullHorizontalDividerStyle"
+                    app:goneIfEmpty="@{activityAsCaseList}"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:orientation="vertical"
+                    android:padding="@dimen/rowListItemParentPadding"
+                    app:callback="@{activityAsCaseItemClickCallback}"
+                    app:entries="@{activityAsCaseList}"
+                    app:layout="@{@layout/row_epid_activity_as_case_layout}"
+                    app:bindCallback="@{activityAsCaseListBindCallback}" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/personTravelHistory_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getString(Strings.headingTravelHistoryOfPatientTenToFourteenMonth)}"
+                android:layout_marginBottom="24dp"
+                style="@style/SubHeadingCompactStyle" />
+
+            <LinearLayout
+                android:id="@+id/personTravelHistory_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/textControlMarginBottom"
+                android:background="@color/formListSectionBackground"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/parentLayoutHorizontalPadding"
+                android:paddingEnd="@dimen/parentLayoutHorizontalPadding"
+                android:paddingTop="@dimen/parentLayoutVerticalPadding">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:alternateBottomMarginIfEmpty="@{personTravelHistoryList}"
+                    app:emptyBottomMargin="@{@dimen/parentLayoutVerticalMargin}"
+                    app:nonEmptyBottomMargin="@{@dimen/closelyRelatedControlMarginBottom}">
+
+                    <TextView
+                        android:id="@+id/personTravelHistory_headline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:text="@{I18nProperties.getPrefixCaption(EpiDataDto.I18N_PREFIX, EpiDataDto.PERSON_TRAVEL_HISTORY)}"
+                        style="@style/ReadActivitySubListHeadingNoBMarginStyle" />
+
+
+                </RelativeLayout>
+
+                <ImageView
+                    style="@style/FullHorizontalDividerStyle"
+                    app:goneIfEmpty="@{personTravelHistoryList}"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:orientation="vertical"
+                    android:padding="@dimen/rowListItemParentPadding"
+                    app:callback="@{personTravelHistoryItemClickCallback}"
+                    app:entries="@{personTravelHistoryList}"
+                    app:layout="@{@layout/row_epid_person_travel_history_layout}"
+                    app:bindCallback="@{personTravelHistoryListBindCallback}" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/containmentMeasure_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getString(Strings.headingContainmentMeasures)}"
+                android:layout_marginBottom="24dp"
+                style="@style/SubHeadingCompactStyle" />
+
+            <LinearLayout
+                android:id="@+id/containmentMeasure_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/textControlMarginBottom"
+                android:background="@color/formListSectionBackground"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/parentLayoutHorizontalPadding"
+                android:paddingEnd="@dimen/parentLayoutHorizontalPadding"
+                android:paddingTop="@dimen/parentLayoutVerticalPadding">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:alternateBottomMarginIfEmpty="@{containmentMeasureList}"
+                    app:emptyBottomMargin="@{@dimen/parentLayoutVerticalMargin}"
+                    app:nonEmptyBottomMargin="@{@dimen/closelyRelatedControlMarginBottom}">
+
+                    <TextView
+                        android:id="@+id/containmentMeasure_headline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:text="@{I18nProperties.getPrefixCaption(EpiDataDto.I18N_PREFIX, EpiDataDto.CONTAINMENT_MEASURES)}"
+                        style="@style/ReadActivitySubListHeadingNoBMarginStyle" />
+
+
+                </RelativeLayout>
+
+                <ImageView
+                    style="@style/FullHorizontalDividerStyle"
+                    app:goneIfEmpty="@{containmentMeasureList}"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:orientation="vertical"
+                    android:padding="@dimen/rowListItemParentPadding"
+                    app:callback="@{containmentMeasureItemClickCallback}"
+                    app:entries="@{containmentMeasureList}"
+                    app:layout="@{@layout/row_epid_containment_measure_layout}"
+                    app:bindCallback="@{containmentMeasureListBindCallback}" />
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/contaminationSource_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getString(Strings.headingContaminationSources)}"
+                android:layout_marginBottom="24dp"
+                style="@style/SubHeadingCompactStyle" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/fragment_padding">
+                android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/epiData_highTransmissionRiskArea"
-                    app:value="@{data.highTransmissionRiskArea}"
-                    style="@style/ControlSingleColumnStyle" />
+                    android:id="@+id/epiData_receivedHealthEducation"
+                    app:value="@{data.receivedHealthEducation}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/epiData_largeOutbreaksArea"
-                    app:value="@{data.largeOutbreaksArea}"
-                    style="@style/ControlSingleColumnStyle" />
-
-                <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/epiData_areaInfectedAnimals"
-                    app:value="@{data.areaInfectedAnimals}"
-                    style="@style/ControlSingleColumnStyle" />
-
-                <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/epiData_exposureDetailsKnown"
-                    app:value="@{data.exposureDetailsKnown}"
-                    style="@style/ControlSingleColumnStyle" />
-
-                <LinearLayout
-                    android:id="@+id/exposures_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/controlReadTextMarginBottom"
-                    android:layout_marginTop="12dp"
-                    android:background="@color/formListSectionBackground"
-                    android:orientation="vertical"
-                    android:paddingStart="@dimen/parentLayoutHorizontalPadding"
-                    android:paddingEnd="@dimen/parentLayoutHorizontalPadding"
-                    android:paddingTop="@dimen/parentLayoutVerticalMargin">
-
-                    <LinearLayout
-                        android:id="@+id/list_exposures"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clipToPadding="false"
-                        android:orientation="vertical"
-                        android:padding="@dimen/rowListItemParentPadding"
-                        app:callback="@{exposureItemClickCallback}"
-                        app:entries="@{exposureList}"
-                        app:layout="@{@layout/row_epid_exposure_layout}"
-                        app:bindCallback="@{exposureListBindCallback}"/>
-
-                </LinearLayout>
-
-                <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/epiData_activityAsCaseDetailsKnown"
-                    app:value="@{data.activityAsCaseDetailsKnown}"
-                    style="@style/ControlSingleColumnStyle" />
-
-                <LinearLayout
-                    android:id="@+id/activitiesascase_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/controlReadTextMarginBottom"
-                    android:layout_marginTop="12dp"
-                    android:background="@color/formListSectionBackground"
-                    android:orientation="vertical"
-                    android:paddingStart="@dimen/parentLayoutHorizontalPadding"
-                    android:paddingEnd="@dimen/parentLayoutHorizontalPadding"
-                    android:paddingTop="@dimen/parentLayoutVerticalMargin">
-
-                    <LinearLayout
-                        android:id="@+id/list_activitiesAsCase"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clipToPadding="false"
-                        android:orientation="vertical"
-                        android:padding="@dimen/rowListItemParentPadding"
-                        app:callback="@{activityascaseItemClickCallback}"
-                        app:entries="@{activityascaseList}"
-                        app:layout="@{@layout/row_epid_activity_as_case_layout}"
-                        app:bindCallback="@{activityascaseListBindCallback}"/>
-
-                </LinearLayout>
-
-                <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/epiData_contactWithSourceCaseKnown"
-                    app:value="@{data.contactWithSourceCaseKnown}"
-                    style="@style/ControlSingleColumnStyle" />
+                    android:id="@+id/epiData_patientEnteredWaterSource"
+                    app:value="@{data.patientEnteredWaterSource}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
 
-        </LinearLayout>
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_placeManaged"
+                app:value="@{data.placeManaged}"
+                style="@style/ControlSingleColumnStyle" />
 
+            <LinearLayout
+                android:id="@+id/contaminationSource_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/textControlMarginBottom"
+                android:background="@color/formListSectionBackground"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/parentLayoutHorizontalPadding"
+                android:paddingEnd="@dimen/parentLayoutHorizontalPadding"
+                android:paddingTop="@dimen/parentLayoutVerticalPadding">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:alternateBottomMarginIfEmpty="@{contaminationSourceList}"
+                    app:emptyBottomMargin="@{@dimen/parentLayoutVerticalMargin}"
+                    app:nonEmptyBottomMargin="@{@dimen/closelyRelatedControlMarginBottom}">
+
+                    <TextView
+                        android:id="@+id/contaminationSource_headline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:text="@{I18nProperties.getPrefixCaption(EpiDataDto.I18N_PREFIX, EpiDataDto.CONTAMINATION_SOURCES)}"
+                        style="@style/ReadActivitySubListHeadingNoBMarginStyle" />
+
+                </RelativeLayout>
+
+                <ImageView
+                    style="@style/FullHorizontalDividerStyle"
+                    app:goneIfEmpty="@{contaminationSourceList}"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:orientation="vertical"
+                    android:padding="@dimen/rowListItemParentPadding"
+                    app:callback="@{contaminationSourceItemClickCallback}"
+                    app:entries="@{contaminationSourceList}"
+                    app:layout="@{@layout/row_epid_contamination_source_layout}"
+                    app:bindCallback="@{contaminationSourceListBindCallback}" />
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/source_contacts_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getString(Strings.headingEpiDataSourceCaseContacts)}"
+                android:layout_marginBottom="24dp"
+                style="@style/SubHeadingCompactStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_contactWithSourceCaseKnown"
+                app:value="@{data.contactWithSourceCaseKnown}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_patientTravelledTwoWeeksPrior"
+                app:value="@{data.patientTravelledTwoWeeksPrior}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/epiData_patientTravelledInCountryOne_patientTravelledInCountryTwo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_patientTravelledInCountryOne"
+                    app:value="@{data.patientTravelledInCountryOne}"
+                    app:dependencyParentField="@{epiDataPatientTravelledTwoWeeksPrior}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_patientTravelledInCountryTwo"
+                    app:value="@{data.patientTravelledInCountryTwo}"
+                    app:dependencyParentField="@{epiDataPatientTravelledTwoWeeksPrior}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/epiData_patientTravelledInCountryThree_patientTravelledInCountryThree"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_patientTravelledInCountryThree"
+                    app:value="@{data.patientTravelledInCountryThree}"
+                    app:dependencyParentField="@{epiDataPatientTravelledTwoWeeksPrior}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_patientTravelledInCountryFour"
+                    app:value="@{data.patientTravelledInCountryFour}"
+                    app:dependencyParentField="@{epiDataPatientTravelledTwoWeeksPrior}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/epiData_patientTravelledInternationalOne_patientTravelledInternationalTwo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_patientTravelledInternationalOne"
+                    app:value="@{data.patientTravelledInternationalOne}"
+                    app:dependencyParentField="@{epiDataPatientTravelledTwoWeeksPrior}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_patientTravelledInternationalTwo"
+                    app:value="@{data.patientTravelledInternationalTwo}"
+                    app:dependencyParentField="@{epiDataPatientTravelledTwoWeeksPrior}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/epiData_patientTravelledInternationalThree_patientTravelledInternationalFour"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_patientTravelledInternationalThree"
+                    app:value="@{data.patientTravelledInternationalThree}"
+                    app:dependencyParentField="@{epiDataPatientTravelledTwoWeeksPrior}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_patientTravelledInternationalFour"
+                    app:value="@{data.patientTravelledInternationalFour}"
+                    app:dependencyParentField="@{epiDataPatientTravelledTwoWeeksPrior}"
+                    app:dependencyParentValue="@{YesNoUnknown.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/epiData_patientVisitedHealthCareFacility_patientCloseContactWithARI"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_patientVisitedHealthCareFacility"
+                    app:value="@{data.patientVisitedHealthCareFacility}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_patientCloseContactWithARI"
+                    app:value="@{data.patientCloseContactWithARI}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"/>
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
+                android:id="@+id/epiData_patientCloseContactWithARIContactSettings"
+                app:value="@{data.patientCloseContactWithARIContactSettings}"
+                app:dependencyParentField="@{epiDataPatientCloseContactWithARI}"
+                app:dependencyParentValue="@{YesNoUnknown.YES}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_patientContactWithConfirmedCase"
+                app:value="@{data.patientContactWithConfirmedCase}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
+                android:id="@+id/epiData_patientContactWithConfirmedCaseExposureLocations"
+                app:value="@{data.patientContactWithConfirmedCaseExposureLocations}"
+                app:dependencyParentField="@{epiDataPatientContactWithConfirmedCase}"
+                app:dependencyParentValue="@{YesNoUnknown.YES}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_patientContactWithConfirmedCaseExposureLocationCityCountry"
+                app:value="@{data.patientContactWithConfirmedCaseExposureLocationCityCountry}"
+                app:dependencyParentField="@{epiDataPatientContactWithConfirmedCase}"
+                app:dependencyParentValue="@{YesNoUnknown.YES}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_previouslyVaccinatedAgainstInfluenza"
+                app:value="@{data.previouslyVaccinatedAgainstInfluenza}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/epiData_vaccinatedAgainstInfluenza_Layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_nameOfVaccine"
+                    app:value="@{data.nameOfVaccine}"
+                    app:dependencyParentField="@{epiDataPreviouslyVaccinatedAgainstInfluenza}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_yearOfVaccination"
+                    app:dependencyParentField="@{epiDataPreviouslyVaccinatedAgainstInfluenza}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    app:value="@{data.yearOfVaccination}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"/>
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_previouslyVaccinatedAgainstCovid"
+                app:value="@{data.previouslyVaccinatedAgainstCovid}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/epiData_vaccinatedAgainstCovid_Layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_nameOfVaccineCovid"
+                    app:dependencyParentField="@{epiDataPreviouslyVaccinatedAgainstCovid}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    app:value="@{data.nameOfVaccineCovid}"
+                    style="@style/ControlFirstOfTwoColumnsStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/epiData_yearOfVaccinationCovid"
+                    app:dependencyParentField="@{epiDataPreviouslyVaccinatedAgainstCovid}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    app:value="@{data.yearOfVaccinationCovid}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"/>
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_vistedPlacesConfirmedPandemic"
+                app:value="@{data.vistedPlacesConfirmedPandemic}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_placesVisitedPastSevenDays"
+                app:value="@{data.placesVisitedPastSevenDays}"
+                app:dependencyParentField="@{epiDataVistedPlacesConfirmedPandemic}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_riskFactorsSevereDisease"
+                app:value="@{data.riskFactorsSevereDisease}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_otherSpecify"
+                app:value="@{data.otherSpecify}"
+                app:dependencyParentField="@{epiDataRiskFactorsSevereDisease}"
+                app:dependencyParentValue="@{RiskFactorCondition.OTHER}"
+                style="@style/ControlSingleColumnStyle"/>
+
+
+        </LinearLayout>
     </ScrollView>
 
 </layout>
