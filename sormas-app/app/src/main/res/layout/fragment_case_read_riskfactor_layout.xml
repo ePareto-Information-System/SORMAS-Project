@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ SORMAS® - Surveillance Outbreak Response Management & Analysis System
+  ~ Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="contentDescription"
+    android:id="@+id/base_layout"
+    android:descendantFocusability="beforeDescendants">
+
+    <data>
+        <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
+        <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
+        <import type="de.symeda.sormas.api.utils.YesNo" />
+        <import type="de.symeda.sormas.api.riskfactor.DrinkingWaterSource" />
+
+        <variable name="data" type="de.symeda.sormas.app.backend.riskfactor.RiskFactor" />
+        <variable name="caze" type="de.symeda.sormas.app.backend.caze.Case" />
+        <variable name="YesNoClass" type="Class" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/fragment_padding"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:id="@+id/main_content">
+
+                <requestFocus/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/heading_risk_mapping"
+                    android:textColor="@color/lightBlue"
+                    style="@style/HeadingStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_waterUsedForDrinking"
+                    app:value="@{data.waterUsedForDrinking}"
+                    style="@style/ControlSingleColumnStyle" />
+
+
+
+                <TextView
+                    android:id="@+id/headingCaseRiskFactorPotentialVibrioVehiclesDrinkingWaterLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/lightBlue"
+                    android:text="@string/heading_case_risk_factor_potential_vibrio_vehicles_drinking_water"
+                    android:paddingTop="@dimen/riskFactorControlLabelMarginTop"
+                    style="@style/SubHeadingStyle" />
+
+            <LinearLayout
+                android:id="@+id/riskFactor_drinkingWaterSourceOne_two"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_drinkingWaterSourceOne"
+                    app:value="@{data.drinkingWaterSourceOne}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_drinkingWaterSourceTwo"
+                    app:value="@{data.drinkingWaterSourceTwo}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+                android:id="@+id/riskFactor_drinkingWaterSourceThree_four"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_drinkingWaterSourceThree"
+                    app:value="@{data.drinkingWaterSourceThree}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_drinkingWaterSourceFour"
+                    app:value="@{data.drinkingWaterSourceFour}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/headingCaseRiskFactorPotentialVibrioVehiclesNonDrinkingWaterLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/lightBlue"
+            android:text="@string/heading_case_risk_factor_potential_vibrio_vehicles_non_drinking_water"
+            android:paddingTop="@dimen/riskFactorControlLabelMarginTop"
+            style="@style/SubHeadingStyle" />
+
+        <LinearLayout
+                android:id="@+id/riskFactor_nonDrinkingWaterSourceOne_two"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_nonDrinkingWaterSourceOne"
+                    app:value="@{data.nonDrinkingWaterSourceOne}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_nonDrinkingWaterSourceTwo"
+                    app:value="@{data.nonDrinkingWaterSourceTwo}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:id="@+id/riskFactor_nonDrinkingWaterSourceThree_four"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_nonDrinkingWaterSourceThree"
+                    app:value="@{data.nonDrinkingWaterSourceThree}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_nonDrinkingWaterSourceFour"
+                    app:value="@{data.nonDrinkingWaterSourceFour}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+        </LinearLayout>
+
+            <TextView
+                android:id="@+id/headingCaseRiskFactorPotentialVibrioVehiclesFoodItemsLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/heading_case_risk_factor_potential_vibrio_vehicles_food_items"
+                android:textColor="@color/lightBlue"
+                android:paddingTop="@dimen/riskFactorControlLabelMarginTop"
+                style="@style/SubHeadingStyle" />
+
+            <LinearLayout
+                android:id="@+id/riskFactor_foodItemsOne_two"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_foodItemsOne"
+                    app:value="@{data.foodItemsOne}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_foodItemsTwo"
+                    app:value="@{data.foodItemsTwo}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/riskFactor_foodItemsThree_four"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_foodItemsThree"
+                    app:value="@{data.foodItemsThree}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_foodItemsFour"
+                    app:value="@{data.foodItemsFour}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/riskFactor_foodItemsFive_six"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_foodItemsFive"
+                    app:value="@{data.foodItemsFive}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_foodItemsSix"
+                    app:value="@{data.foodItemsSix}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                id="@+id/riskFactor_foodItemsSeven_eight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_foodItemsSeven"
+                    app:value="@{data.foodItemsSeven}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_foodItemsEight"
+                    app:value="@{data.foodItemsEight}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/headingCaseRiskFactorPotentialVibrioVehiclesBacteriologyLabFindingsLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/heading_case_risk_factor_bacteriology_lab_findings"
+                android:textColor="@color/lightBlue"
+                android:paddingTop="@dimen/riskFactorControlLabelMarginTop"
+                style="@style/SubHeadingStyle" />
+
+            <LinearLayout
+                android:id="@+id/riskFactor_drinkingWaterInfectedByVibrio_nonDrinkingWaterInfectedByVibrio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_drinkingWaterInfectedByVibrio"
+                    app:value="@{data.drinkingWaterInfectedByVibrio}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_nonDrinkingWaterInfectedByVibrio"
+                    app:value="@{data.nonDrinkingWaterInfectedByVibrio}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/riskFactor_foodItemsInfectedByVibrio_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_foodItemsInfectedByVibrio"
+                    app:value="@{data.foodItemsInfectedByVibrio}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+
+            </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/headingCaseRiskFactorThreeDaysPriorToOnsetOfDiseaseDrinkingWaterLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/heading_case_risk_factor_three_days_prior_to_onset_of_disease"
+            android:textColor="@color/lightBlue"
+            android:paddingTop="@dimen/riskFactorControlLabelMarginTop"
+            style="@style/SubHeadingStyle" />
+
+            <LinearLayout
+                android:id="@+id/riskFactor_threeDaysPriorToDiseaseWaterSourceOne_two"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_threeDaysPriorToDiseaseWaterSourceOne"
+                    app:value="@{data.threeDaysPriorToDiseaseWaterSourceOne}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_threeDaysPriorToDiseaseWaterSourceTwo"
+                    app:value="@{data.threeDaysPriorToDiseaseWaterSourceTwo}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/riskFactor_threeDaysPriorToDiseaseWaterSourceThree_four"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_threeDaysPriorToDiseaseWaterSourceThree"
+                    app:value="@{data.threeDaysPriorToDiseaseWaterSourceThree}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_threeDaysPriorToDiseaseWaterSourceFour"
+                    app:value="@{data.threeDaysPriorToDiseaseWaterSourceFour}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/riskFactor_threeDaysPriorToDiseaseWaterSourceFive_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_threeDaysPriorToDiseaseWaterSourceFive"
+                    app:value="@{data.threeDaysPriorToDiseaseWaterSourceFive}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/headingCaseRiskFactorThreeDaysPriorToOnsetOfDiseaseEatLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/heading_case_risk_factor_three_days_prior_to_onset_of_disease_eat"
+                android:textColor="@color/lightBlue"
+                android:paddingTop="@dimen/riskFactorControlLabelMarginTop"
+                style="@style/SubHeadingStyle" />
+
+            <LinearLayout
+                android:id="@+id/riskFactor_threeDaysPriorToDiseaseFoodItemsOne_two"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_threeDaysPriorToDiseaseFoodItemsOne"
+                    app:value="@{data.threeDaysPriorToDiseaseFoodItemsOne}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_threeDaysPriorToDiseaseFoodItemsTwo"
+                    app:value="@{data.threeDaysPriorToDiseaseFoodItemsTwo}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/riskFactor_threeDaysPriorToDiseaseFoodItemsThree_four"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_threeDaysPriorToDiseaseFoodItemsThree"
+                    app:value="@{data.threeDaysPriorToDiseaseFoodItemsThree}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_threeDaysPriorToDiseaseFoodItemsFour"
+                    app:value="@{data.threeDaysPriorToDiseaseFoodItemsFour}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/riskFactor_threeDaysPriorToDiseaseFoodItemsFive_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_threeDaysPriorToDiseaseFoodItemsFive"
+                    app:value="@{data.threeDaysPriorToDiseaseFoodItemsFive}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/headingCaseRiskFactorThreeDaysPriorToOnsetOfDiseaseAttendAnyLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/heading_case_risk_factor_three_days_prior_to_onset_of_disease_attend_any"
+                android:textColor="@color/lightBlue"
+                android:paddingTop="@dimen/riskFactorControlLabelMarginTop"
+                style="@style/SubHeadingStyle" />
+
+            <LinearLayout
+                android:id="@+id/riskFactor_threeDaysPriorToDiseaseAttendAnyFuneral_socialEvent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_threeDaysPriorToDiseaseAttendAnyFuneral"
+                    app:value="@{data.threeDaysPriorToDiseaseAttendAnyFuneral}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_threeDaysPriorToDiseaseAttendAnySocialEvent"
+                    app:value="@{data.threeDaysPriorToDiseaseAttendAnySocialEvent}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/riskFactor_otherSocialEventDetails"
+                    app:dependencyParentField="@{riskFactorThreeDaysPriorToDiseaseAttendAnySocialEvent}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    app:value="@{data.otherSocialEventDetails}"
+                    style="@style/ControlSingleColumnStyle" />
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+</layout>
+
