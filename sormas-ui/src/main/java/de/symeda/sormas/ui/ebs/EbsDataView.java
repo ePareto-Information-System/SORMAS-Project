@@ -15,13 +15,14 @@
 package de.symeda.sormas.ui.ebs;
 
 import com.vaadin.ui.VerticalLayout;
-import de.symeda.sormas.api.EditPermissionType;
+
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ebs.EbsDto;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.externalsurveillanceservice.ExternalSurveillanceShareComponent;
-import de.symeda.sormas.ui.utils.*;
-
+import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
+import de.symeda.sormas.ui.utils.DetailSubComponentWrapper;
+import de.symeda.sormas.ui.utils.LayoutWithSidePanel;
 
 public class EbsDataView extends AbstractEbsView {
 
@@ -41,7 +42,7 @@ public class EbsDataView extends AbstractEbsView {
 	private ExternalSurveillanceShareComponent externalSurvToolLayout;
 
 	public EbsDataView() {
-		super(VIEW_NAME,EBSView.currentview);
+		super(VIEW_NAME, EBSView.currentview);
 	}
 
 	@Override
@@ -57,25 +58,17 @@ public class EbsDataView extends AbstractEbsView {
 		setSubComponent(container);
 		container.setEnabled(true);
 
-		editComponent =
-			ControllerProvider.getEbsController().getEbsDataEditComponent(getEbsRef().getUuid(), null);
+		editComponent = ControllerProvider.getEbsController().getEbsDataEditComponent(getEbsRef().getUuid(), null);
 
-		LayoutWithSidePanel layout = new LayoutWithSidePanel(
-			editComponent,
-				TRIAGE_LOC,
-				VERIFICATION_LOC,
-				RISK_LOC
-		);
+		LayoutWithSidePanel layout = new LayoutWithSidePanel(editComponent, TRIAGE_LOC, VERIFICATION_LOC, RISK_LOC);
 
 		container.addComponent(layout);
 
 		final String uuid = ebs.getUuid();
-		final EditPermissionType ebsEditAllowed = FacadeProvider.getEbsFacade().isEditAllowed(uuid);
 
 		VerticalLayout shortcutLinksLayout = new VerticalLayout();
 		shortcutLinksLayout.setMargin(false);
 		shortcutLinksLayout.setSpacing(true);
-
 
 		layout.addSidePanelComponent(shortcutLinksLayout, SHORTCUT_LINKS_LOC);
 
