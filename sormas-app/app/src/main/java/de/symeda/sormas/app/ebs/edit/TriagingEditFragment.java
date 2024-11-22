@@ -218,6 +218,7 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 
 		contentBinding.triagingSignalCategory.addValueChangedListener(e->{
 			final Set<String> validCategories = new HashSet<>(Set.of("Human", "Environment", "Animal", "POE"));
+			contentBinding.triagingCategoryDetailsLevel.setValue(null);
 			String propertyValue = (e.getValue() != null) ? e.getValue().toString() : null;
 			if (validCategories.contains(propertyValue)) {
 				contentBinding.triagingCategoryDetailsLevel.setVisibility(View.VISIBLE);
@@ -226,7 +227,7 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 			}
 			if (contentBinding.triagingCategoryDetailsLevel.getValue() != null) {
 				try {
-					contentBinding.triagingCategoryDetailsLevel.setValue(CategoryDetailsLevel.COMMUNITY);
+//					contentBinding.triagingCategoryDetailsLevel.setValue(CategoryDetailsLevel.COMMUNITY);
 					SignalCategory category = getSignalCategory(propertyValue);
 					setVisibility(contentBinding.triagingCategoryDetailsLevel.getValue().toString(), category,contentBinding);
 				}catch (Exception exception){
@@ -260,7 +261,7 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 
 		Ebs selectedEbs = EbsEditActivity.getParentEbs();
 		Triaging selectedTriaging = selectedEbs.getTriaging();
-		if(selectedTriaging.getCategoryDetailsLevel() != null  ) {
+		if(selectedTriaging.getCategoryDetailsLevel() != null) {
 			setVisibility(selectedTriaging.getCategoryDetailsLevel().toString(), selectedTriaging.getSignalCategory(),contentBinding);
 		}
 		contentBinding.triagingOccurrencePreviously.addValueChangedListener(e->{
