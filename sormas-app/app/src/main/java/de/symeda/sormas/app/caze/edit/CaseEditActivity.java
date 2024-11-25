@@ -25,6 +25,7 @@ import android.os.AsyncTask;
 import android.view.Menu;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
@@ -45,6 +46,7 @@ import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.event.Event;
 import de.symeda.sormas.app.backend.event.EventCriteria;
 import de.symeda.sormas.app.backend.event.EventParticipant;
+import de.symeda.sormas.app.backend.formbuilder.FormBuilder;
 import de.symeda.sormas.app.backend.user.UserRole;
 import de.symeda.sormas.app.caze.CaseSection;
 import de.symeda.sormas.app.clinicalcourse.edit.ClinicalVisitNewActivity;
@@ -71,6 +73,7 @@ import de.symeda.sormas.app.therapy.edit.TreatmentNewActivity;
 import de.symeda.sormas.app.util.Bundler;
 import de.symeda.sormas.app.util.Consumer;
 import de.symeda.sormas.app.util.DiseaseConfigurationCache;
+import de.symeda.sormas.app.util.DiseaseFieldHandler;
 
 public class CaseEditActivity extends BaseEditActivity<Case> {
 
@@ -105,7 +108,11 @@ public class CaseEditActivity extends BaseEditActivity<Case> {
 	public List<PageMenuItem> getPageMenuData() {
 		List<PageMenuItem> menuItems = PageMenuItem.fromEnum(CaseSection.values(), getContext());
 		Case caze = getStoredRootEntity();
-		// Sections must be removed in reverse order
+
+		Disease disease = caze != null ? caze.getDisease() : null;
+		if (disease != null) {
+			menuItems = DiseaseFieldHandler.handleMenuDataForDisease(menuItems, disease);
+		}
 		if (DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.TASK_MANAGEMENT)) {
 			menuItems.set(CaseSection.TASKS.ordinal(), null);
 		}
@@ -163,6 +170,69 @@ public class CaseEditActivity extends BaseEditActivity<Case> {
 
 		return menuItems;
 	}
+
+
+//	public List<PageMenuItem> getPageMenuData() {
+//		List<PageMenuItem> menuItems = PageMenuItem.fromEnum(CaseSection.values(), getContext());
+//		Case caze = getStoredRootEntity();
+//		// Sections must be removed in reverse order
+//		if (DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.TASK_MANAGEMENT)) {
+//			menuItems.set(CaseSection.TASKS.ordinal(), null);
+//		}
+//		if (!ConfigProvider.hasUserRight(UserRight.CLINICAL_COURSE_VIEW)
+//			|| DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.VIEW_TAB_CASES_CLINICAL_COURSE)
+//			|| (caze != null && caze.isUnreferredPortHealthCase())
+//			|| (caze != null && caze.getClinicalCourse() == null)
+//			|| DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CLINICAL_MANAGEMENT)) {
+//			menuItems.set(CaseSection.CLINICAL_VISITS.ordinal(), null);
+//			menuItems.set(CaseSection.HEALTH_CONDITIONS.ordinal(), null);
+//		}
+//		if (!ConfigProvider.hasUserRight(UserRight.THERAPY_VIEW)
+//			|| DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.VIEW_TAB_CASES_THERAPY)
+//			|| (caze != null && caze.isUnreferredPortHealthCase())
+//			|| (caze != null && caze.getTherapy() == null)
+//			|| DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CLINICAL_MANAGEMENT)) {
+//			menuItems.set(CaseSection.TREATMENTS.ordinal(), null);
+//			menuItems.set(CaseSection.PRESCRIPTIONS.ordinal(), null);
+//		}
+//		if (caze != null && caze.isUnreferredPortHealthCase()) {
+//			menuItems.set(CaseSection.SAMPLES.ordinal(), null);
+//		}
+//		if (!ConfigProvider.hasUserRight(UserRight.IMMUNIZATION_VIEW)
+//			|| DatabaseHelper.getFeatureConfigurationDao().isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
+//			menuItems.set(CaseSection.IMMUNIZATIONS.ordinal(), null);
+//		}
+//		if (!ConfigProvider.hasUserRight(UserRight.IMMUNIZATION_VIEW)
+//			|| !DatabaseHelper.getFeatureConfigurationDao().isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
+//			menuItems.set(CaseSection.VACCINATIONS.ordinal(), null);
+//		}
+//		if (!ConfigProvider.hasUserRight(UserRight.CONTACT_VIEW)
+//			|| (caze != null && caze.isUnreferredPortHealthCase())
+//			|| (caze != null && !DiseaseConfigurationCache.getInstance().hasFollowUp(caze.getDisease()))) {
+//			menuItems.set(CaseSection.CONTACTS.ordinal(), null);
+//		}
+//		if (caze != null && caze.getDisease() == Disease.CONGENITAL_RUBELLA
+//			|| DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.VIEW_TAB_CASES_EPIDEMIOLOGICAL_DATA)) {
+//			menuItems.set(CaseSection.EPIDEMIOLOGICAL_DATA.ordinal(), null);
+//		}
+//		if (caze != null && (caze.getCaseOrigin() != CaseOrigin.POINT_OF_ENTRY || !ConfigProvider.hasUserRight(UserRight.PORT_HEALTH_INFO_EDIT))) {
+//			menuItems.set(CaseSection.PORT_HEALTH_INFO.ordinal(), null);
+//		}
+//		if (caze != null
+//			&& (caze.isUnreferredPortHealthCase()
+//				|| UserRole.isPortHealthUser(ConfigProvider.getUser().getUserRoles())
+//				|| DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.VIEW_TAB_CASES_HOSPITALIZATION))) {
+//			menuItems.set(CaseSection.HOSPITALIZATION.ordinal(), null);
+//		}
+//		if (caze != null && caze.getDisease() != Disease.CONGENITAL_RUBELLA) {
+//			menuItems.set(CaseSection.MATERNAL_HISTORY.ordinal(), null);
+//		}
+//		if (DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.VIEW_TAB_CASES_SYMPTOMS)) {
+//			menuItems.set(CaseSection.SYMPTOMS.ordinal(), null);
+//		}
+//
+//		return menuItems;
+//	}
 
 	@Override
 	protected BaseEditFragment buildEditFragment(PageMenuItem menuItem, Case activityRootData) {

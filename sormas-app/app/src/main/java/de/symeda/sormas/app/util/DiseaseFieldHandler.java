@@ -20,17 +20,20 @@ import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.formbuilder.FormBuilder;
 import de.symeda.sormas.app.backend.formfield.FormField;
+import de.symeda.sormas.app.caze.CaseSection;
 import de.symeda.sormas.app.component.controls.ControlButton;
 import de.symeda.sormas.app.component.controls.ControlCheckBoxField;
 import de.symeda.sormas.app.component.controls.ControlDateField;
 import de.symeda.sormas.app.component.controls.ControlPropertyField;
 import de.symeda.sormas.app.component.controls.ControlSwitchField;
 import de.symeda.sormas.app.component.controls.ControlTextReadField;
+import de.symeda.sormas.app.component.menu.PageMenuItem;
 
 public class DiseaseFieldHandler {
     private static String TAG = DiseaseFieldHandler.class.getSimpleName();
 
     private Context context;
+    private static  List<FormBuilder> diseaseForms;
 
     public DiseaseFieldHandler(Context context) {
         this.context = context;
@@ -234,6 +237,69 @@ public class DiseaseFieldHandler {
         }
         Log.d(TAG, "No FormBuilder found for Disease=" + diseaseName + ", FormType=" + formType);
         return new ArrayList<>();
+    }
+
+    /**
+     * Check if a form exists for a given disease and form type.
+     *
+     * @param formType The form type (e.g., "ClinicalVisits").
+     * @return true if the form exists, false otherwise.
+     */
+    private static boolean isFormNotAvailableForDisease(FormType formType) {
+        if (diseaseForms.isEmpty()) {
+            return false;
+        }
+
+        for (FormBuilder formBuilder : diseaseForms) {
+            if (formBuilder.getFormType().name() == formType.name()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Remove menu items if a form is available for a given disease.
+     *
+     * @param menuItems The list of menu items.
+     */
+    public static List<PageMenuItem> handleMenuDataForDisease(List<PageMenuItem> menuItems, Disease disease) {
+        diseaseForms = DatabaseHelper.getFormBuilderDao().getFormBuilders(disease);
+
+        removeMenuItemIfFormAvailable(menuItems, FormType.PERSON_EDIT, CaseSection.PERSON_INFO);
+        removeMenuItemIfFormAvailable(menuItems, FormType.MATERNAL_HISTORY_EDIT, CaseSection.MATERNAL_HISTORY);
+        removeMenuItemIfFormAvailable(menuItems, FormType.HOSPITALIZATION_EDIT, CaseSection.HOSPITALIZATION);
+        removeMenuItemIfFormAvailable(menuItems, FormType.PORT_HEALTH_INFO_EDIT, CaseSection.PORT_HEALTH_INFO);
+        removeMenuItemIfFormAvailable(menuItems, FormType.SYMPTOMS_EDIT, CaseSection.SYMPTOMS);
+        removeMenuItemIfFormAvailable(menuItems, FormType.HEALTH_CONDITION_EDIT, CaseSection.HEALTH_CONDITIONS);
+        removeMenuItemIfFormAvailable(menuItems, FormType.EPIDEMIOLOGICAL_EDIT, CaseSection.EPIDEMIOLOGICAL_DATA);
+        removeMenuItemIfFormAvailable(menuItems, FormType.SAMPLE_EDIT, CaseSection.SAMPLES);
+        removeMenuItemIfFormAvailable(menuItems, FormType.CONTACT_EDIT, CaseSection.CONTACTS);
+        removeMenuItemIfFormAvailable(menuItems, FormType.PRESCRIPTION_EDIT, CaseSection.PRESCRIPTIONS);
+        removeMenuItemIfFormAvailable(menuItems, FormType.TREATMENT_EDIT, CaseSection.TREATMENTS);
+        removeMenuItemIfFormAvailable(menuItems, FormType.CLINICAL_VISIT_EDIT, CaseSection.CLINICAL_VISITS);
+        removeMenuItemIfFormAvailable(menuItems, FormType.TASK_EDIT, CaseSection.TASKS);
+        removeMenuItemIfFormAvailable(menuItems, FormType.EVENT_EDIT, CaseSection.EVENTS);
+        removeMenuItemIfFormAvailable(menuItems, FormType.IMMUNIZATION_EDIT, CaseSection.IMMUNIZATIONS);
+        removeMenuItemIfFormAvailable(menuItems, FormType.VACCINATION_EDIT, CaseSection.VACCINATIONS);
+        removeMenuItemIfFormAvailable(menuItems, FormType.RISK_FACTOR_EDIT, CaseSection.RISK_FACTORS);
+
+        return menuItems;
+    }
+
+    /**
+     * Remove a menu item if a form is available for a given disease and form type.
+     *
+     * @param menuItems The list of menu items.
+     * @param formType The form type to check.
+     * @param section The section to remove if the form is available.
+     */
+    private static void removeMenuItemIfFormAvailable(List<PageMenuItem> menuItems, FormType formType, CaseSection section) {
+        boolean isFormAvailable = isFormNotAvailableForDisease(formType);
+        if (isFormAvailable) {
+            menuItems.set(section.ordinal(), null);
+        }
     }
 
 

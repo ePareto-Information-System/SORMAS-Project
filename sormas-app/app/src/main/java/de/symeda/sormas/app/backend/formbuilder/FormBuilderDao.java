@@ -151,4 +151,18 @@ public class FormBuilderDao extends AbstractAdoDao<FormBuilder> {
 			}
 		}
 	}
+
+	//get all forms for Disease
+	public List<FormBuilder> getFormBuilders(Disease disease) {
+		try {
+			QueryBuilder builder = queryBuilder();
+			Where where = builder.where();
+			where.eq(FormBuilder.DISEASE, disease);
+			return builder.query();
+		} catch (SQLException e) {
+			Log.e(getTableName(), "Could not perform getFormBuilders");
+			throw new RuntimeException(e);
+		}
+	}
+
 }

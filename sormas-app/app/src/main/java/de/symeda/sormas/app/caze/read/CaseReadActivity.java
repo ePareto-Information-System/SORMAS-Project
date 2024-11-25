@@ -45,6 +45,7 @@ import de.symeda.sormas.app.person.read.PersonReadFragment;
 import de.symeda.sormas.app.symptoms.SymptomsReadFragment;
 import de.symeda.sormas.app.util.Bundler;
 import de.symeda.sormas.app.util.DiseaseConfigurationCache;
+import de.symeda.sormas.app.util.DiseaseFieldHandler;
 
 public class CaseReadActivity extends BaseReadActivity<Case> {
 
@@ -72,6 +73,11 @@ public class CaseReadActivity extends BaseReadActivity<Case> {
 	public List<PageMenuItem> getPageMenuData() {
 		List<PageMenuItem> menuItems = PageMenuItem.fromEnum(CaseSection.values(), getContext());
 		Case caze = getStoredRootEntity();
+
+		Disease disease = caze != null ? caze.getDisease() : null;
+		if (disease != null) {
+			menuItems = DiseaseFieldHandler.handleMenuDataForDisease(menuItems, disease);
+		}
 		// Sections must be removed in reverse order
 		if (DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.TASK_MANAGEMENT)) {
 			menuItems.set(CaseSection.TASKS.ordinal(), null);
