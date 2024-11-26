@@ -42,26 +42,21 @@
             android:id="@+id/main_content"
             style="@style/LayoutSingleContentSpaceBelowStyle">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/symptoms_onsetSymptom"
                     app:value="@{data.onsetSymptom}"
                     app:goneIfVariable="@{symptomsContext}"
                     app:goneIfValue="@{SymptomsContext.CLINICAL_VISIT}"
-                    style="@style/ControlFirstOfTwoColumnsStyle" />
+                    style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/symptoms_onsetDate"
                     app:value="@{data.onsetDate}"
                     app:goneIfVariable="@{symptomsContext}"
                     app:goneIfValue="@{SymptomsContext.CLINICAL_VISIT}"
-                    style="@style/ControlSecondOfTwoColumnsStyle" />
+                    style="@style/ControlSingleColumnStyle" />
 
-            </LinearLayout>
 
             <de.symeda.sormas.app.component.controls.ControlTextReadField
                 android:id="@+id/symptoms_temperature"
@@ -244,6 +239,11 @@
                 android:id="@+id/symptoms_symptomsComments"
                 app:value="@{data.symptomsComments}"
                 app:goneIfEmpty="@{data.symptomsComments}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/symptoms_outcome"
+                app:value="@{data.outcome}"
                 style="@style/ControlSingleColumnStyle" />
 
         </LinearLayout>
