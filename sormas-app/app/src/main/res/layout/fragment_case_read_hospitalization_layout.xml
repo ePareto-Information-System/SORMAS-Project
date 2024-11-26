@@ -97,6 +97,11 @@
                     app:value="@{data.admittedToHealthFacility}"
                     style="@style/ControlSingleColumnStyle" />
 
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/caseHospitalization_admittedToHealthFacilityNew"
+                app:value="@{data.admittedToHealthFacilityNew}"
+                style="@style/ControlSingleColumnStyle" />
+
                 <LinearLayout
                     android:id="@+id/caseHospitalization_memberFamilyHelpingPatient_deathDate"
                     android:layout_width="match_parent"
