@@ -218,7 +218,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 404;
+	public static final int DATABASE_VERSION = 406;
 
 	private static DatabaseHelper instance = null;
 
@@ -3964,8 +3964,22 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryFinalResults VARCHAR(255);");
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN laboratoryFinalClassification VARCHAR(255);");
 					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN dateSampleSentRegLab DATE;");
-
-
+				case 404:
+					currentVersion = 404;
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN place varchar(255);");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN durationMonths varchar(255);");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN durationDays varchar(255);");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN place2 varchar(255);");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN durationMonths2 varchar(255);");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN durationDays2 varchar(255);");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN place3 varchar(255);");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN durationMonths3 varchar(255);");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN durationDays3 varchar(255);");
+				case 405:
+					currentVersion = 405;
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN place4 varchar(255);");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN durationMonths4 varchar(255);");
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN durationDays4 varchar(255);");
 					// ATTENTION: break should only be done after last version
 				break;
 			default:
