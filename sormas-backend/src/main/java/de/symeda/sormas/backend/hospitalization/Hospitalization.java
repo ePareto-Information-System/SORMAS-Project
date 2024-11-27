@@ -26,6 +26,9 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import de.symeda.sormas.api.hospitalization.SymptomsList;
@@ -34,7 +37,10 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.infrastructure.district.District;
 import de.symeda.sormas.backend.infrastructure.facility.Facility;
+import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 import org.apache.commons.lang3.StringUtils;
 
@@ -129,6 +135,9 @@ public class Hospitalization extends AbstractDomainObject {
 	private Date dateOfDeath;
 	private YesNo hospitalizationYesNo;
 	private Location locationType;
+	private Region soughtRegion;
+	private District soughtDistrict;
+	private Community soughtCommunity;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getAdmissionDate() {
@@ -647,5 +656,32 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setLocationType(Location locationType) {
 		this.locationType = locationType;
+	}
+
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	public Region getSoughtRegion() {
+		return soughtRegion;
+	}
+
+	public void setSoughtRegion(Region soughtRegion) {
+		this.soughtRegion = soughtRegion;
+	}
+
+	public void setSoughtDistrict(District soughtDistrict) {
+		this.soughtDistrict = soughtDistrict;
+	}
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	public District getSoughtDistrict() {
+		return soughtDistrict;
+	}
+
+	@OneToOne(cascade = CascadeType.ALL)
+
+	public Community getSoughtCommunity() {
+		return soughtCommunity;
+	}
+
+	public void setSoughtCommunity(Community soughtCommunity) {
+		this.soughtCommunity = soughtCommunity;
 	}
 }

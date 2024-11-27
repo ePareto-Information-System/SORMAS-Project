@@ -107,6 +107,10 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	OptionGroup tickSymptomField;
 	TextField physicianName;
 	TextField physicianNumber;
+	private ComboBox soughtRegion;
+	private ComboBox soughtDistrict;
+	private ComboBox soughtCommunity;
+	private ComboBox nameOfFacilityField;
 	private LocationEditForm addressForm;
 	//@formatter:off
 	private static final String HTML_LAYOUT =
@@ -152,6 +156,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					fluidRowLocs(6, HospitalizationDto.DURATION_HOURS)+
 					fluidRowLocs(6, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION)+
 					fluidRowLocs(HospitalizationDto.LOCATION_TYPE)+
+					fluidRowLocs(HospitalizationDto.SOUGHT_REGION, HospitalizationDto.SOUGHT_DISTRICT, HospitalizationDto.SOUGHT_COMMUNITY)+
 					fluidRowLocs(6, HospitalizationDto.NAME_OF_FACILITY)+
 					fluidRowLocs(6,HospitalizationDto.DATE_OF_VISIT_HOSPITAL)+
 					fluidRowLocs(6,HospitalizationDto.HOSPITALIZATION_YES_NO) +
@@ -316,6 +321,10 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 				addField(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS, PreviousHospitalizationsField.class);
 
 		NullableOptionGroup soughtMedicalAttentionField = addField(HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, NullableOptionGroup.class);
+		soughtRegion = addInfrastructureField(HospitalizationDto.SOUGHT_REGION);
+		soughtDistrict = addInfrastructureField(HospitalizationDto.SOUGHT_DISTRICT);
+		soughtCommunity = addInfrastructureField(HospitalizationDto.SOUGHT_COMMUNITY);
+		setFieldsVisible(false, soughtRegion, soughtDistrict, soughtCommunity);
 
 		if(caze.getDisease() == Disease.MONKEYPOX){
 			addressForm = new LocationEditForm(
@@ -327,16 +336,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					UiFieldAccessCheckers.getNoop(), disease);
 		}
 
-		addField(HospitalizationDto.LOCATION_TYPE, addressForm);
-		addressForm.setCaption(null);
-
-		ComboBox nameOfFacilityField = addInfrastructureField(HospitalizationDto.NAME_OF_FACILITY);
+		nameOfFacilityField = addInfrastructureField(HospitalizationDto.NAME_OF_FACILITY);
 		nameOfFacilityField.setImmediate(true);
 
 		addressForm.setNameOfFacilityField(nameOfFacilityField);
 		addressForm.hideForHospitalizationForm();
 		nameOfFacilityField.setVisible(false);
-		setVisible(false, HospitalizationDto.LOCATION_TYPE);
 
 		DateField dateOfVisitHospital = addField(HospitalizationDto.DATE_OF_VISIT_HOSPITAL, DateField.class);
 		physicianName = addField(HospitalizationDto.PHYSICIAN_NAME, TextField.class);
@@ -400,7 +405,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
-//		addressForm.hideForHospitalizationForm();
+		addressForm.hideForHospitalizationForm();
 
 		if (isVisibleAllowed(HospitalizationDto.ISOLATION_DATE)) {
 			FieldHelper.setVisibleWhen(
@@ -506,6 +511,13 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		/*caseOutcome.addValueChangeListener(e -> addSequelaeValue());
 		sequelae.addValueChangeListener(e -> addSequelaeDetailsValue());*/
 
+		addListenersToInfrastructureFields(
+				soughtRegion,
+				soughtDistrict,
+				soughtCommunity,
+				nameOfFacilityField);
+		soughtRegion.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
+
 		setVisible(false, HospitalizationDto.RECEPTION_DATE, HospitalizationDto.DATE_OF_DEATH, HospitalizationDto.MEMBER_FAMILY_HELPING_PATIENT);
 
 		hideFieldsForSelectedDisease(caze.getDisease());
@@ -610,20 +622,14 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			FieldHelper.setVisibleWhen(hospitalizedYesNo, Arrays.asList(physicianName, physicianNumber), Arrays.asList(YesNo.YES), true);
 			FieldHelper.setVisibleWhen(labTestConducted, Arrays.asList(typeOfSample, agentIdentified), Arrays.asList(YesNo.YES), true);
 
-			FieldHelper.setVisibleWhen(
-					getFieldGroup(),
-					Arrays.asList(HospitalizationDto.LOCATION_TYPE),
-					HospitalizationDto.SOUGHT_MEDICAL_ATTENTION,
-					Arrays.asList(YesNo.YES),
-					true
-			);
+			FieldHelper.setVisibleWhen(soughtMedicalAttentionField, Arrays.asList(soughtRegion, soughtDistrict, soughtCommunity), Arrays.asList(YesNo.YES), true);
 
 		}
 		
 		if(caze.getDisease() == Disease.MONKEYPOX){
+			addField(HospitalizationDto.LOCATION_TYPE, addressForm);
+			addressForm.setCaption(null);
 			setFieldsVisible(true, admittedToHealthFacilityNew);
-//			setVisible(true, HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.LOCATION_TYPE, HospitalizationDto.NAME_OF_FACILITY);
-
 			FieldHelper.setVisibleWhen(
 					getFieldGroup(),
 					Arrays.asList(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.LOCATION_TYPE, HospitalizationDto.NAME_OF_FACILITY),
@@ -833,4 +839,47 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		// this hopefully resets everything to its correct value
 		addressForm.discard();
 	}
+
+	private void addListenersToInfrastructureFields(
+			ComboBox regionField,
+			ComboBox districtField,
+			ComboBox communityField,
+			ComboBox facilityField) {
+		regionField.addValueChangeListener(e -> {
+			RegionReferenceDto regionDto = (RegionReferenceDto) e.getProperty().getValue();
+			FieldHelper
+					.updateItems(districtField, regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
+			updateFacilities();
+		});
+		districtField.addValueChangeListener(e -> {
+			DistrictReferenceDto districtDto = (DistrictReferenceDto) e.getProperty().getValue();
+			FieldHelper.updateItems(
+					communityField,
+					districtDto != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(districtDto.getUuid()) : null);
+			updateFacilities();
+		});
+		FieldHelper.updateItems(
+				facilityField,
+				Collections.singletonList(FacadeProvider.getFacilityFacade().getReferenceByUuid(FacilityDto.NONE_FACILITY_UUID)));
+
+	}
+
+	private void updateFacilities() {
+		DistrictReferenceDto selectedDistrict = (DistrictReferenceDto) soughtDistrict.getValue();
+		CommunityReferenceDto selectedCommunity = (CommunityReferenceDto) soughtCommunity.getValue();
+
+		List<FacilityReferenceDto> facilities = null;
+		if (selectedCommunity != null) {
+			facilities = FacadeProvider.getFacilityFacade().getActiveHospitalsByCommunity(selectedCommunity, true, true, true);
+		} else if (selectedDistrict != null) {
+			facilities = FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(selectedDistrict, true, true, true);
+		}
+
+		if (nameOfFacilityField!= null) {
+			FieldHelper.updateItems(nameOfFacilityField, facilities);
+		}
+
+
+	}
+
 }

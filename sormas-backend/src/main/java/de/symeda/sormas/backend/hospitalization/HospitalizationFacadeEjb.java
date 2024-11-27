@@ -164,6 +164,10 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setHospitalizationYesNo(source.getHospitalizationYesNo());
 		target.setLocationType(locationFacade.fillOrBuildEntity(source.getLocationType(), target.getLocationType(), checkChangeDate));
 
+		target.setSoughtRegion(regionService.getByReferenceDto(source.getSoughtRegion()));
+		target.setSoughtDistrict(districtService.getByReferenceDto(source.getSoughtDistrict()));
+		target.setSoughtCommunity(communityService.getByReferenceDto(source.getSoughtCommunity()));
+
 
 		return target;
 	}
@@ -278,8 +282,10 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setMemberFamilyHelpingPatient(source.getMemberFamilyHelpingPatient());
 		target.setDateOfDeath(source.getDateOfDeath());
 		target.setHospitalizationYesNo(source.getHospitalizationYesNo());
-
 		target.setLocationType(LocationFacadeEjb.toDto(source.getLocationType()));
+		target.setSoughtRegion(RegionFacadeEjb.toReferenceDto(source.getSoughtRegion()));
+		target.setSoughtDistrict(DistrictFacadeEjb.toReferenceDto(source.getSoughtDistrict()));
+		target.setSoughtCommunity(CommunityFacadeEjb.toReferenceDto(source.getSoughtCommunity()));
 
 
 		return target;

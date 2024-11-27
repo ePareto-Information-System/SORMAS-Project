@@ -15153,4 +15153,9 @@ ALTER TABLE forms_form_fields ALTER COLUMN displayOrder SET NOT NULL;
 CREATE INDEX idx_forms_form_fields_order
     ON forms_form_fields (form_id, displayOrder);
 INSERT INTO schema_version (version_number, comment) VALUES (713, 'Created index for displayorder on forms_form_fields table');
+
+ALTER TABLE hospitalization ADD COLUMN soughtRegion_id BIGINT;
+ALTER TABLE hospitalization ADD COLUMN soughtDistrict_id BIGINT;
+ALTER TABLE hospitalization ADD COLUMN soughtCommunity_id BIGINT;
+INSERT INTO schema_version (version_number, comment) VALUES (714, 'Created location module fields to reimplement region, district and community in hosp table');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
