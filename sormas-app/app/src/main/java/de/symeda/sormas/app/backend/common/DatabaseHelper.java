@@ -218,7 +218,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 406;
+	public static final int DATABASE_VERSION = 407;
 
 	private static DatabaseHelper instance = null;
 
@@ -3982,6 +3982,29 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN contactIllPerson varchar(255) ;");
 					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN contactDate DATE ;");
 					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN specifyIllness varchar(255) ;");
+
+				case 406:
+					currentVersion = 406;
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN requestedSymptomsSelectedString varchar(512);");
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN otherSymptomSelected varchar(512);");
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN onsetOfSymptomDatetime DATE;");
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN symptomsOngoing varchar(16);");
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN durationHours varchar(16);");
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN soughtMedicalAttention varchar(16);");
+
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN soughtRegion_id bigint REFERENCES region(id);");
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN soughtDistrict_id bigint REFERENCES district(id);");
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN soughtCommunity_id bigint REFERENCES community(id);");
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN nameOfFacility_id bigint REFERENCES facility(id);");
+
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN dateOfVisitHospital DATE;");
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN hospitalizationYesNo varchar(16);");
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN physicianName varchar(255);");
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN physicianNumber varchar(255);");
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN labTestConducted varchar(16);");
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN typeOfSample varchar(255);");
+					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN agentIdentified varchar(255);");
+
 
 
 					// ATTENTION: break should only be done after last version
