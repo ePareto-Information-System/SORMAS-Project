@@ -26,6 +26,7 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.person.ApproximateAgeType;
+import de.symeda.sormas.api.sample.IpSampleTestType;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
 import de.symeda.sormas.api.symptoms.GuineaWormFirstSymptom;
 import de.symeda.sormas.api.symptoms.SymptomState;
@@ -34,6 +35,8 @@ import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.symptoms.SymptomsHelper;
 import de.symeda.sormas.api.symptoms.TemperatureSource;
 import de.symeda.sormas.api.utils.DependantOn;
+import de.symeda.sormas.api.utils.InjectionSite;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
@@ -82,6 +85,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 
 	private List<ControlSwitchField> symptomFields;
 	List<Item> outcomeList;
+	private List<Item> injectionSiteList = new ArrayList<>();
 
 	public static SymptomsEditFragment newInstance(Case activityRootData) {
 		return newInstanceWithFieldCheckers(
@@ -168,9 +172,19 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		contentBinding.setSetClearedToUnknownCallback(setClearedToUnknownCallback);
 		caseOutcomeList = DataUtils.getEnumItems(CaseOutcome.class, true);
 		contentBinding.symptomsOutcome.setSpinnerData(caseOutcomeList);
+		contentBinding.setYesNoUnknownClass(YesNoUnknown.class);
+		contentBinding.symptomsDateOnsetParalysis.initializeDateField(getFragmentManager());
+		injectionSiteList = DataUtils.getEnumItems(InjectionSite.class, true);
+		contentBinding.symptomsSiteOfParalysis.initializeCheckBoxGroup(injectionSiteList);
+
+//		for (InjectionSite injectionSite : record.getSiteOfParalysis()) {
+//			injectionSiteList.clear();
+//			injectionSiteList.add(injectionSite.toString());
+//		}
 
 
 		contentBinding.setYesNoClass(YesNo.class);
+		contentBinding.setInjectionSiteClass(InjectionSite.class);
 
 		SymptomsValidator.initializeSymptomsValidation(contentBinding, ado);
 

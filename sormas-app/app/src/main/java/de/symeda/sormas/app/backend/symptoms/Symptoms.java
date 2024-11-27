@@ -465,15 +465,20 @@ public class Symptoms extends PseudonymizableAdo {
 	@Enumerated(EnumType.STRING)
 	private SymptomState abdominalCramps;
 	private Date dateOfOnset;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String provisionalDiagnosis;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateOnsetParalysis;
+	@Column
 	private String requestedSiteOfParalysisString;
 	@DatabaseField
 	private String firstSignOrSymptomsBeforeWormOthers;
 	@DatabaseField
 	private String numberOfWorms;
+	@Column
 	private String requestedSymptomsSelectedString;
 	private Date dateOfOnsetRash;
+	@Column
 	private String requestedRashSymptomsString;
 	private String rashSymptomsOtherAreas;
 	private String typeOfRashString;
@@ -483,6 +488,7 @@ public class Symptoms extends PseudonymizableAdo {
 	private String outcomePlaceCommVillage;
 	private String nameService;
 	private String placeOfFuneralNameVillage;
+	@Column
 	private String injectionSiteString;
 	private DurationHours durationHours;
 	@Column
@@ -2217,7 +2223,6 @@ public class Symptoms extends PseudonymizableAdo {
 		this.sensoryLoss = sensoryLoss;
 	}
 
-	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getProvisionalDiagnosis() {
 		return provisionalDiagnosis;
 	}
