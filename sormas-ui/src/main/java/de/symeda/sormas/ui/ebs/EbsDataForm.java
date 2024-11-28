@@ -25,7 +25,9 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import com.vaadin.ui.Label;
@@ -54,9 +56,11 @@ import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.location.LocationEditForm;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
+import de.symeda.sormas.ui.utils.DateTimeField;
+import de.symeda.sormas.ui.utils.EbsDateValidator;
+import de.symeda.sormas.ui.utils.EbsPhoneNumberValidator;
 import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.NullableOptionGroup;
-import de.symeda.sormas.ui.utils.PhoneNumberValidator;
 
 @SuppressWarnings("deprecation")
 public class EbsDataForm extends AbstractEditForm<EbsDto> {
@@ -66,6 +70,8 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 	private static final String INFORMATION_SOURCE_HEADING_LOC = "informationSourceHeadingLoc";
 	private static final String PLACE_DETECTION_HEADING_LOC = "placeOfDetectionHeadingLoc";
 	private static final String CONTACT_PHONE_NUMBER_WARNING_LOC = "contactPhoneNumberWarningLoc";
+	public final String THE_DATE_OF_REPORT_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE =
+		"The Date of Report cannot be earlier than the Date of Occurrence.";
 
 	private static final String STATUS_CHANGE = "statusChange";
 
@@ -92,6 +98,9 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 	private List<UserReferenceDto> districtEventResponsibles = new ArrayList<>();
 	private LocationEditForm locationForm;
 	private final EbsDto ebs;
+	DateField reportDate;
+	DateTimeField occurrenceDate;
+	EbsDateValidator validator = new EbsDateValidator(THE_DATE_OF_REPORT_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE, false);
 
 	public EbsDataForm(EbsDto ebsDto, boolean create, boolean isPseudonymized, boolean inJurisdiction) {
 		super(
@@ -139,18 +148,18 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 		Label locationHeadingLabel = new Label(I18nProperties.getString(Strings.headingLocation));
 		locationHeadingLabel.addStyleName(H3);
 		getContent().addComponent(locationHeadingLabel, PLACE_DETECTION_HEADING_LOC);
-		TextField contactName = addField(EbsDto.INFORMANT_NAME, TextField.class);
+		addField(EbsDto.INFORMANT_NAME, TextField.class);
 		TextField contactPhone = addField(EbsDto.INFORMANT_TEL, TextField.class);
-		TextField otherInformant = addField(EbsDto.OTHER_INFORMANT, TextField.class);
+		addField(EbsDto.OTHER_INFORMANT, TextField.class);
 		contactPhone
-			.addValidator(new PhoneNumberValidator(I18nProperties.getValidationError(Validations.validPhoneNumber, contactPhone.getCaption())));
+			.addValidator(new EbsPhoneNumberValidator(I18nProperties.getValidationError(Validations.validPhoneNumber, contactPhone.getCaption())));
 		Label contactPhoneLabel = new Label(I18nProperties.getString(Strings.messageEventExternalTokenWarning));
 		contactPhoneLabel.addStyleNames(VSPACE_3, LABEL_WHITE_SPACE_NORMAL);
 		getContent().addComponent(contactPhoneLabel, CONTACT_PHONE_NUMBER_WARNING_LOC);
 
 		addField(EbsDto.INTERNAL_TOKEN);
 
-		DateField reportDate = addField(EbsDto.REPORT_DATE_TIME, DateField.class);
+		reportDate = addField(EbsDto.REPORT_DATE_TIME, DateField.class);
 		ComboBox categoryInformant = addField(EbsDto.CATEGORY_OF_INFORMANT, ComboBox.class);
 
 		ComboBox srcType = addField(EbsDto.SOURCE_INFORMATION);
@@ -158,16 +167,17 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 		NullableOptionGroup scanningType = addField(EbsDto.SCANNING_TYPE, NullableOptionGroup.class);
 		ComboBox automaticScanningType = addField(EbsDto.AUTOMATIC_SCANNING_TYPE, ComboBox.class);
 		ComboBox manualScanningType = addField(EbsDto.MANUAL_SCANNING_TYPE, ComboBox.class);
-		TextField other = addField(EbsDto.OTHER, TextField.class);
+		addField(EbsDto.OTHER, TextField.class);
 		TextField sourceName = addField(EbsDto.SOURCE_NAME);
-		TextField sourceUrl = addField(EbsDto.SOURCE_URL);
-		DateField dateOnset = addField(EbsDto.DATE_ONSET, DateField.class);
+		addField(EbsDto.SOURCE_URL);
+		occurrenceDate = addField(EbsDto.DATE_ONSET, DateTimeField.class);
 		TextArea descriptionOccurrence = addField(EbsDto.DESCRIPTION_OCCURRENCE, TextArea.class);
 		descriptionOccurrence.setRows(4);
 		TextField personDesignation = addField(EbsDto.PERSON_DESIGNATION, TextField.class);
-		TextField personRegistering = addField(EbsDto.PERSON_REGISTERING, TextField.class);
+		addField(EbsDto.PERSON_REGISTERING, TextField.class);
 		TextField personPhone = addField(EbsDto.PERSON_PHONE, TextField.class);
-		personPhone.addValidator(new PhoneNumberValidator(I18nProperties.getValidationError(Validations.validPhoneNumber, personPhone.getCaption())));
+		personPhone
+			.addValidator(new EbsPhoneNumberValidator(I18nProperties.getValidationError(Validations.validPhoneNumber, personPhone.getCaption())));
 		addField(EbsDto.EBS_LOCATION, new LocationEditForm(fieldVisibilityCheckers, createFieldAccessCheckers(isPseudonymized, false), true))
 			.setCaption(null);
 
@@ -176,9 +186,9 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 
 		ComboBox regionField = (ComboBox) locationForm.getFieldGroup().getField(LocationDto.REGION);
 		ComboBox districtField = (ComboBox) locationForm.getFieldGroup().getField(LocationDto.DISTRICT);
-		TextField latitude = addField(EbsDto.EBS_LATITUDE, TextField.class);
-		TextField longitude = addField(EbsDto.EBS_LONGITUDE, TextField.class);
-		TextField latlong = addField(EbsDto.EBS_LATLONG, TextField.class);
+		addField(EbsDto.EBS_LATITUDE, TextField.class);
+		addField(EbsDto.EBS_LONGITUDE, TextField.class);
+		addField(EbsDto.EBS_LATLONG, TextField.class);
 		ComboBox responsibleUserField = addField(EbsDto.RESPONSIBLE_USER, ComboBox.class);
 		responsibleUserField.setNullSelectionAllowed(true);
 
@@ -344,6 +354,10 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 				contactPhone.setVisible(false);
 			}
 		});
+		reportDate.addValueChangeListener(valueChangeEvent -> validateDateFields());
+		occurrenceDate.addValueChangeListener(valueChangeEvent -> validateDateFields());
+
+		validateDateFields();
 
 	}
 
@@ -353,6 +367,33 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 		responsibleUsers.addAll(districtEventResponsibles);
 
 		FieldHelper.updateItems(responsibleUserField, responsibleUsers);
+	}
+
+	public void validateDateFields() {
+		DateField dateOfReport = reportDate;
+		DateTimeField dateOfOccurrence = occurrenceDate;
+		if (dateOfReport.getValue() != null && dateOfOccurrence.getValue() != null && dateOfReport.getValue().before(dateOfOccurrence.getValue())) {
+			Date dateOfReportDate = clearTime(dateOfReport.getValue());
+			Date dateOfOccurrenceDate = clearTime(dateOfOccurrence.getValue());
+			if (!dateOfReportDate.toString().equals(dateOfOccurrenceDate.toString())) {
+				dateOfReport.addValidator(validator);
+				addDateValidator();
+			} else {
+				dateOfReport.removeAllValidators();
+			}
+		} else {
+			dateOfReport.removeAllValidators();
+		}
+	}
+
+	private Date clearTime(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		return calendar.getTime();
 	}
 
 	@Override
@@ -378,6 +419,12 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 		// HACK: Binding to the fields will call field listeners that may clear/modify the values of other fields.
 		// this hopefully resets everything to its correct value
 		locationForm.discard();
+	}
+
+	private void addDateValidator() {
+		validator.setValidDate(false);
+		reportDate.removeValidator(validator);
+		reportDate.addValidator(validator);
 	}
 
 }
