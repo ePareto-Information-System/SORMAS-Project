@@ -294,6 +294,9 @@ public class CaseEditActivity extends BaseEditActivity<Case> {
 		case RISK_FACTORS:
 			fragment = CaseEditRiskFactorFragment.newInstance(activityRootData);
 			break;
+		case AFP_IMMUNIZATION:
+			fragment = CaseEditAfpImmunizationFragment.newInstance(activityRootData);
+			break;
 		default:
 			throw new IndexOutOfBoundsException(DataHelper.toStringNullable(section));
 		}

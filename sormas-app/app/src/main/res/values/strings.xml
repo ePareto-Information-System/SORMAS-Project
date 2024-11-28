@@ -164,6 +164,7 @@
     <string name="caption_case_immunizations">Case Immunizations</string>
     <string name="caption_case_vaccinations">Case Vaccinations</string>
     <string name="caption_case_risk_factors">Risk Factors</string>
+    <string name="caption_case_afp_immunization">Immunization History</string>
     <string name="caption_case_treatments">Treatments</string>
     <string name="caption_case_similarity_create">Create a new case</string>
     <string name="caption_changed_data_lost">Changed data lost during re-sync.</string>
@@ -386,6 +387,8 @@
     <string name="heading_alert_assessment_new">New Alert</string>
     <string name="heading_risk_mapping">Risk Mapping</string>
     <string name="heading_risk_mapping_edit">Edit Risk Mapping</string>
+    <string name="heading_afp_Immunization">AFP Immunization</string>
+    <string name="heading_afp_Immunization_edit">Edit AFP Immunization</string>
     <string name="heading_event_read">Read Event</string>
     <string name="heading_event_summary">Event Summary</string>
     <string name="heading_events_list">Event Listing</string>

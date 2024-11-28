@@ -198,6 +198,9 @@ public class CaseReadActivity extends BaseReadActivity<Case> {
 		case RISK_FACTORS:
 			fragment = CaseReadRiskFactorFragment.newInstance(activityRootData);
 			break;
+		case AFP_IMMUNIZATION:
+			fragment = CaseReadAfpImmunizationFragment.newInstance(activityRootData);
+			break;
 		default:
 			throw new IndexOutOfBoundsException(DataHelper.toStringNullable(section));
 		}

@@ -64,6 +64,7 @@ import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.VaccineTypes;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.app.backend.afpimmunization.AfpImmunization;
 import de.symeda.sormas.app.backend.caze.maternalhistory.MaternalHistory;
 import de.symeda.sormas.app.backend.caze.porthealthinfo.PortHealthInfo;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalCourse;
@@ -116,6 +117,8 @@ public class Case extends PseudonymizableAdo {
 	public static final String VACCINATION_STATUS = "vaccinationStatus";
 	public static final String HEALTH_CONDITIONS = "healthConditions";
 	public static final String RISK_FACTOR = "riskFactor";
+	public static final String AFP_IMMUNIZATION = "afpImmunization";
+
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, canBeNull = false, maxForeignAutoRefreshLevel = 3)
 	private Person person;
@@ -285,6 +288,9 @@ public class Case extends PseudonymizableAdo {
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private RiskFactor riskFactor;
+
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private AfpImmunization afpImmunization;
 
 	@Deprecated
 	@Column
@@ -954,6 +960,14 @@ public class Case extends PseudonymizableAdo {
 
 	public void setRiskFactor(RiskFactor riskFactor) {
 		this.riskFactor = riskFactor;
+	}
+
+	public AfpImmunization getAfpImmunization() {
+		return afpImmunization;
+	}
+
+	public void setAfpImmunization(AfpImmunization afpImmunization) {
+		this.afpImmunization = afpImmunization;
 	}
 
 	public Double getReportLat() {

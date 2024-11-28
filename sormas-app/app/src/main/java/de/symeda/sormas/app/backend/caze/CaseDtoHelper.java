@@ -22,6 +22,7 @@ import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
+import de.symeda.sormas.app.backend.afpimmunization.AfpImmunizationDtoHelper;
 import de.symeda.sormas.app.backend.caze.maternalhistory.MaternalHistoryDtoHelper;
 import de.symeda.sormas.app.backend.caze.porthealthinfo.PortHealthInfoDtoHelper;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalCourse;
@@ -70,6 +71,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 	private SormasToSormasOriginInfoDtoHelper sormasToSormasOriginInfoDtoHelper = new SormasToSormasOriginInfoDtoHelper();
 	private HealthConditionsDtoHelper healthConditionsDtoHelper = new HealthConditionsDtoHelper();
 	private RiskFactorDtoHelper riskFactorDtoHelper = new RiskFactorDtoHelper();
+	private AfpImmunizationDtoHelper afpImmunizationDtoHelper = new AfpImmunizationDtoHelper();
 
 	@Override
 	protected Class<Case> getAdoClass() {
@@ -148,6 +150,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setMaternalHistory(maternalHistoryDtoHelper.fillOrCreateFromDto(target.getMaternalHistory(), source.getMaternalHistory()));
 		target.setPortHealthInfo(portHealthInfoDtoHelper.fillOrCreateFromDto(target.getPortHealthInfo(), source.getPortHealthInfo()));
 		target.setRiskFactor(riskFactorDtoHelper.fillOrCreateFromDto(target.getRiskFactor(), source.getRiskFactor()));
+		target.setAfpImmunization(afpImmunizationDtoHelper.fillOrCreateFromDto(target.getAfpImmunization(), source.getAfpImmunization()));
 
 		target.setSurveillanceOfficer(DatabaseHelper.getUserDao().getByReferenceDto(source.getSurveillanceOfficer()));
 		target.setClinicianName(source.getClinicianName());
@@ -457,6 +460,13 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 				riskFactorDtoHelper.adoToDto(DatabaseHelper.getRiskFactorDao().queryForId(source.getRiskFactor().getId())));
 		} else {
 			target.setRiskFactor(null);
+		}
+
+		if (source.getAfpImmunization() != null) {
+			target.setAfpImmunization(
+				afpImmunizationDtoHelper.adoToDto(DatabaseHelper.getAfpImmunizationDao().queryForId(source.getAfpImmunization().getId())));
+		} else {
+			target.setAfpImmunization(null);
 		}
 
 		target.setClinicianName(source.getClinicianName());

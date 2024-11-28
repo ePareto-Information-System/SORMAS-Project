@@ -61,6 +61,7 @@ import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
+import de.symeda.sormas.app.backend.afpimmunization.AfpImmunization;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalCourse;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalVisit;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalVisitCriteria;
@@ -207,7 +208,15 @@ public class CaseDao extends AbstractAdoDao<Case> {
 			date = riskFactorDate;
 		}
 
+
+//		afpImmunization
+		Date afpImmunizationDate = getLatestChangeDateJoin(AfpImmunization.TABLE_NAME, Case.AFP_IMMUNIZATION);
+		if (afpImmunizationDate != null && afpImmunizationDate.after(date)) {
+			date = afpImmunizationDate;
+		}
+
 		return date;
+
 	}
 
 	public List<Case> queryBaseForEq(String fieldName, Object value, String orderBy, boolean ascending, long offset, long limit) {
@@ -285,6 +294,9 @@ public class CaseDao extends AbstractAdoDao<Case> {
 
 		// risk factor
 		caze.setRiskFactor(DatabaseHelper.getRiskFactorDao().build());
+
+		//afp immunization
+		caze.setAfpImmunization(DatabaseHelper.getAfpImmunizationDao().build());
 
 		// Location
 		User currentUser = ConfigProvider.getUser();
