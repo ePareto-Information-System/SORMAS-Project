@@ -186,8 +186,8 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 		contentBinding.setAutomaticScanningTypeClass(AutomaticScanningType.class);
 		contentBinding.setManualScanningTypeClass(ManualScanningType.class);
 		contentBinding.setMediaScannningTypeClass(MediaScannningType.class);
-		ValidationHelper.initPhoneNumberValidator(contentBinding.ebsInformantTel);
-		ValidationHelper.initPhoneNumberValidator(contentBinding.ebsPersonPhone);
+		ValidationHelper.initEbsPhoneNumberValidator(contentBinding.ebsInformantTel);
+		ValidationHelper.initEbsPhoneNumberValidator(contentBinding.ebsPersonPhone);
 		InfrastructureFieldsDependencyHandler.instance.initializeRegionFields(
 				contentBinding.ebsRegion,
 				initialRegions,
