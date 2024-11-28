@@ -44,6 +44,8 @@ public interface Validations {
 	String contactWithoutInfrastructureData = "contactWithoutInfrastructureData";
 	String duplicateEpidNumber = "duplicateEpidNumber";
 	String duplicateExternalToken = "duplicateExternalToken";
+	String ebsDecisionDateValidation = "ebsDecisionDateValidation";
+	String ebsSignalDateValidation = "ebsSignalDateValidation";
 	String emptyOverwrittenFollowUpUntilDate = "emptyOverwrittenFollowUpUntilDate";
 	String errorsInForm = "errorsInForm";
 	String eventSubordinateEventFromDateFilterValidation = "eventSubordinateEventFromDateFilterValidation";
@@ -152,6 +154,7 @@ public interface Validations {
 	String numberNotInRange = "numberNotInRange";
 	String numberTooBig = "numberTooBig";
 	String numberTooSmall = "numberTooSmall";
+	String numberOfDeathMoreThanCases = "numberOfDeathMoreThanCases";
 	String onlyDecimalNumbersAllowed = "onlyDecimalNumbersAllowed";
 	String onlyGeoCoordinatesAllowed = "onlyGeoCoordinatesAllowed";
 	String onlyIntegerNumbersAllowed = "onlyIntegerNumbersAllowed";
@@ -250,5 +253,5 @@ public interface Validations {
 	String visitDate = "visitDate";
 	String visitStatus = "visitStatus";
 	String visitSymptoms = "visitSymptoms";
-    String numberOfDeathPersonGreaterThanNumberOfPersonCases = "numberOfDeathPersonGreaterThanNumberOfPersonCases";
+	String numberOfDeathPersonGreaterThanNumberOfPersonCases = "numberOfDeathPersonGreaterThanNumberOfPersonCases";
 }
