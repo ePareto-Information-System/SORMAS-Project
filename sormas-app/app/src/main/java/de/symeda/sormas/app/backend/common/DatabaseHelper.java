@@ -58,6 +58,7 @@ import de.symeda.sormas.api.exposure.AnimalContactType;
 import de.symeda.sormas.api.exposure.ExposureType;
 import de.symeda.sormas.api.exposure.HabitationType;
 import de.symeda.sormas.api.exposure.TypeOfAnimal;
+import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
 import de.symeda.sormas.api.immunization.ImmunizationManagementStatus;
 import de.symeda.sormas.api.immunization.ImmunizationStatus;
 import de.symeda.sormas.api.immunization.MeansOfImmunization;
@@ -123,6 +124,8 @@ import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.facility.FacilityDao;
 import de.symeda.sormas.app.backend.feature.FeatureConfiguration;
 import de.symeda.sormas.app.backend.feature.FeatureConfigurationDao;
+import de.symeda.sormas.app.backend.foodhistory.FoodHistory;
+import de.symeda.sormas.app.backend.foodhistory.FoodHistoryDao;
 import de.symeda.sormas.app.backend.formbuilder.FormBuilder;
 import de.symeda.sormas.app.backend.formbuilder.FormBuilderDao;
 import de.symeda.sormas.app.backend.formbuilder.FormBuilderFormField;
@@ -218,7 +221,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 407;
+	public static final int DATABASE_VERSION = 408;
 
 	private static DatabaseHelper instance = null;
 
@@ -305,6 +308,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.clearTable(connectionSource, ContaminationSource.class);
 			TableUtils.clearTable(connectionSource, ContainmentMeasure.class);
 			TableUtils.clearTable(connectionSource, RiskFactor.class);
+			TableUtils.clearTable(connectionSource, FoodHistory.class);
 
 			if (clearInfrastructure) {
 				TableUtils.clearTable(connectionSource, UserUserRole.class);
@@ -426,6 +430,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, ContaminationSource.class);
 			TableUtils.createTable(connectionSource, ContainmentMeasure.class);
 			TableUtils.createTable(connectionSource, RiskFactor.class);
+			TableUtils.createTable(connectionSource, FoodHistory.class);
 		} catch (SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Can't build database", e);
 			throw new RuntimeException(e);
@@ -4005,6 +4010,92 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN typeOfSample varchar(255);");
 					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN agentIdentified varchar(255);");
 
+				case 407:
+					currentVersion = 407;
+					getDao(FoodHistory.class).executeRaw(
+							"CREATE TABLE foodhistory ("
+									+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
+									+ "    suspectedFood VARCHAR(255),"
+									+ "    dateConsumed DATE,"
+									+ "    foodSource VARCHAR(255),"
+									+ "    eventType VARCHAR(255),"
+									+ "    eventOtherSpecify VARCHAR(255),"
+									+ "    nameOfAffectedPerson VARCHAR(255),"
+									+ "    nameOfAffectedPerson2 VARCHAR(255),"
+									+ "    nameOfAffectedPerson3 VARCHAR(512),"
+									+ "    nameOfAffectedPerson4 VARCHAR(255),"
+									+ "    telNo VARCHAR(255),"
+									+ "    telNo2 VARCHAR(255),"
+									+ "    telNo3 VARCHAR(255),"
+									+ "    telNo4 VARCHAR(255),"
+									+ "    dateTime DATE,"
+									+ "    dateTime2 DATE,"
+									+ "    dateTime3 DATE,"
+									+ "    dateTime4 DATE,"
+									+ "    age VARCHAR(255),"
+									+ "    age2 VARCHAR(255),"
+									+ "    age3 VARCHAR(255),"
+									+ "    age4 VARCHAR(255),"
+									+ "    breakfast VARCHAR(3),"
+									+ "    totalNoPersons VARCHAR(255),"
+									+ "    foodConsumed VARCHAR(255),"
+									+ "    sourceOfFood VARCHAR(255),"
+									+ "    consumedAtPlace VARCHAR(3),"
+									+ "    lunch VARCHAR(55),"
+									+ "    totalNoPersonsL1 VARCHAR(255),"
+									+ "    foodConsumedL1 VARCHAR(255),"
+									+ "    sourceOfFoodL1 VARCHAR(255),"
+									+ "    consumedAtPlaceL1 VARCHAR(3),"
+									+ "    supper VARCHAR(55),"
+									+ "    totalNoPersonsS1 VARCHAR(255),"
+									+ "    foodConsumedS1 VARCHAR(255),"
+									+ "    sourceOfFoodS1 VARCHAR(255),"
+									+ "    consumedAtPlaceS1 VARCHAR(3),"
+									+ "    breakfast2 VARCHAR(3),"
+									+ "    totalNoPersons2 VARCHAR(255),"
+									+ "    foodConsumed2 VARCHAR(255),"
+									+ "    sourceOfFood2 VARCHAR(255),"
+									+ "    consumedAtPlace2 VARCHAR(3),"
+									+ "    lunchL2 VARCHAR(55),"
+									+ "    totalNoPersonsL2 VARCHAR(255),"
+									+ "    foodConsumedL2 VARCHAR(255),"
+									+ "    sourceOfFoodL2 VARCHAR(255),"
+									+ "    consumedAtPlaceL2 VARCHAR(3),"
+									+ "    supperS2 VARCHAR(55),"
+									+ "    totalNoPersonsS2 VARCHAR(255),"
+									+ "    foodConsumedS2 VARCHAR(255),"
+									+ "    sourceOfFoodS2 VARCHAR(255),"
+									+ "    consumedAtPlaceS2 VARCHAR(3),"
+									+ "    breakfast3 VARCHAR(55),"
+									+ "    totalNoPersons3 VARCHAR(255),"
+									+ "    foodConsumed3 VARCHAR(255),"
+									+ "    sourceOfFood3 VARCHAR(255),"
+									+ "    consumedAtPlace3 VARCHAR(3),"
+									+ "    lunchL3 VARCHAR(55),"
+									+ "    totalNoPersonsL3 VARCHAR(255),"
+									+ "    foodConsumedL3 VARCHAR(255),"
+									+ "    sourceOfFoodL3 VARCHAR(255),"
+									+ "    consumedAtPlaceL3 VARCHAR(3),"
+									+ "    supperS3 VARCHAR(55),"
+									+ "    totalNoPersonsS3 VARCHAR(255),"
+									+ "    foodConsumedS3 VARCHAR(255),"
+									+ "    sourceOfFoodS3 VARCHAR(255),"
+									+ "    consumedAtPlaceS3 VARCHAR(55),"
+									+ "    numberOfPeopleAteImplicatedFood INTEGER,"
+									+ "    numberAffected VARCHAR,"
+									+ "    changeDate BIGINT,"
+									+ "    changeUserId BIGINT,"
+									+ "    creationDate DATE,"
+									+ "    uuid VARCHAR(512),"
+									+ "		lastOpenedDate BIGINT,"
+									+ "		localChangeDate BIGINT NOT NULL,"
+									+ "		modified SMALLINT,"
+									+ "		snapshot SMALLINT,"
+									+ "		UNIQUE (snapshot ASC, uuid ASC)"
+									+ ");"
+					);
+					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN foodhistory_id BIGINT;");
+
 
 
 					// ATTENTION: break should only be done after last version
@@ -4981,6 +5072,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					dao = (AbstractAdoDao<ADO>) new ContainmentMeasureDao((Dao<ContainmentMeasure, Long>) innerDao);
 				} else if(type.equals(RiskFactor.class)) {
 					dao = (AbstractAdoDao<ADO>) new RiskFactorDao((Dao<RiskFactor, Long>) innerDao);
+				} else if(type.equals(FoodHistory.class)) {
+					dao = (AbstractAdoDao<ADO>) new FoodHistoryDao((Dao<FoodHistory, Long>) innerDao);
 				}else {
 					throw new UnsupportedOperationException(type.toString());
 				}
@@ -5101,6 +5194,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public static RiskFactorDao getRiskFactorDao() {
 		return (RiskFactorDao) getAdoDao(RiskFactor.class);
 	}
+	public static FoodHistoryDao getFoodHistoryDao() {
+		return (FoodHistoryDao) getAdoDao(FoodHistory.class);
+	}
+
 
 	public static PersonDao getPersonDao() {
 		return (PersonDao) getAdoDao(Person.class);

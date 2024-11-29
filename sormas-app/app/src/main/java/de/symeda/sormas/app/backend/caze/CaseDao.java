@@ -49,6 +49,7 @@ import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.feature.FeatureTypeProperty;
+import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.task.TaskStatus;
 import de.symeda.sormas.api.user.JurisdictionLevel;
@@ -79,6 +80,7 @@ import de.symeda.sormas.app.backend.event.EventCriteria;
 import de.symeda.sormas.app.backend.event.EventEditAuthorization;
 import de.symeda.sormas.app.backend.event.EventParticipant;
 import de.symeda.sormas.app.backend.exposure.Exposure;
+import de.symeda.sormas.app.backend.foodhistory.FoodHistory;
 import de.symeda.sormas.app.backend.person.Person;
 import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
 import de.symeda.sormas.app.backend.region.Community;
@@ -207,6 +209,11 @@ public class CaseDao extends AbstractAdoDao<Case> {
 			date = riskFactorDate;
 		}
 
+		Date foodHistoryDate = getLatestChangeDateJoin(FoodHistory.TABLE_NAME, Case.FOOD_HISTORY);
+		if (foodHistoryDate != null && foodHistoryDate.after(date)) {
+			date = foodHistoryDate;
+		}
+
 		return date;
 	}
 
@@ -285,6 +292,9 @@ public class CaseDao extends AbstractAdoDao<Case> {
 
 		// risk factor
 		caze.setRiskFactor(DatabaseHelper.getRiskFactorDao().build());
+
+		// food history
+		caze.setFoodHistory(DatabaseHelper.getFoodHistoryDao().build());
 
 		// Location
 		User currentUser = ConfigProvider.getUser();

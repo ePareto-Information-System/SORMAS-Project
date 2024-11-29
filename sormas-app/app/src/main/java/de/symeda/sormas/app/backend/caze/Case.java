@@ -72,6 +72,7 @@ import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.epidata.EpiData;
 import de.symeda.sormas.app.backend.facility.Facility;
+import de.symeda.sormas.app.backend.foodhistory.FoodHistory;
 import de.symeda.sormas.app.backend.hospitalization.Hospitalization;
 import de.symeda.sormas.app.backend.infrastructure.PointOfEntry;
 import de.symeda.sormas.app.backend.person.Person;
@@ -116,6 +117,7 @@ public class Case extends PseudonymizableAdo {
 	public static final String VACCINATION_STATUS = "vaccinationStatus";
 	public static final String HEALTH_CONDITIONS = "healthConditions";
 	public static final String RISK_FACTOR = "riskFactor";
+	public static final String FOOD_HISTORY = "foodHistory";
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, canBeNull = false, maxForeignAutoRefreshLevel = 3)
 	private Person person;
@@ -285,6 +287,9 @@ public class Case extends PseudonymizableAdo {
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private RiskFactor riskFactor;
+
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private FoodHistory foodHistory;
 
 	@Deprecated
 	@Column
@@ -954,6 +959,14 @@ public class Case extends PseudonymizableAdo {
 
 	public void setRiskFactor(RiskFactor riskFactor) {
 		this.riskFactor = riskFactor;
+	}
+
+	public FoodHistory getFoodHistory() {
+		return foodHistory;
+	}
+
+	public void setFoodHistory(FoodHistory foodHistory) {
+		this.foodHistory = foodHistory;
 	}
 
 	public Double getReportLat() {
