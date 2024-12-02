@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/base_layout"
+    android:descendantFocusability="beforeDescendants">
+
+    <data>
+        <import type="de.symeda.sormas.api.i18n.I18nProperties" />
+        <import type="de.symeda.sormas.api.i18n.Strings" />
+
+        <variable name="data" type="de.symeda.sormas.app.backend.affectedperson.AffectedPerson" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/main_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/rowListItemHorizontalMargin"
+            android:paddingRight="@dimen/rowListItemHorizontalMargin">
+
+            <requestFocus/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/affectedPerson_uuid"
+                app:shortUuidValue="@{data.uuid}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/affectedPerson_nameOfAffectedPerson"
+                app:value="@{data.nameOfAffectedPerson}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/affectedPerson_telNo"
+                app:value="@{data.telNo}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlDateTimeField
+                android:id="@+id/affectedPerson_dateTime"
+                app:value="@{data.dateTime}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/affectedPerson_age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:value="@{data.age}"
+                style="@style/ControlSingleColumnStyle" />
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</layout>

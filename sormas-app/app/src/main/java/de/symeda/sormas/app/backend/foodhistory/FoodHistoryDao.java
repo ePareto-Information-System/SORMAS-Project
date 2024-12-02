@@ -17,8 +17,11 @@ package de.symeda.sormas.app.backend.foodhistory;
 
 import com.j256.ormlite.dao.Dao;
 import java.util.Date;
+
+import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.app.backend.common.AbstractAdoDao;
 import de.symeda.sormas.app.backend.common.DaoException;
+import de.symeda.sormas.app.backend.common.DatabaseHelper;
 
 public class FoodHistoryDao extends AbstractAdoDao<FoodHistory> {
 
@@ -58,19 +61,25 @@ public class FoodHistoryDao extends AbstractAdoDao<FoodHistory> {
         return data;
     }
     private FoodHistory initLazyData(FoodHistory foodHistory) {
+        foodHistory.setAffectedPersons(DatabaseHelper.getAffectedPersonDao().getByFoodHistory(foodHistory));
         return foodHistory;
     }
+
     @Override
     public FoodHistory saveAndSnapshot(FoodHistory ado) throws DaoException {
         FoodHistory snapshot = super.saveAndSnapshot(ado);
+        DatabaseHelper.getAffectedPersonDao().saveCollectionWithSnapshot(DatabaseHelper.getAffectedPersonDao().getByFoodHistory(ado),
+                ado.getAffectedPersons(), ado);
         return snapshot;
     }
+
     @Override
     public Date getLatestChangeDate() {
         Date date = super.getLatestChangeDate();
         if (date == null) {
             return null;
         }
+        date = DateHelper.getLatestDate(date, DatabaseHelper.getAffectedPersonDao().getLatestChangeDate());
         return date;
     }
 }

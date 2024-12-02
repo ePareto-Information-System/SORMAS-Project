@@ -62,6 +62,7 @@ import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
+import de.symeda.sormas.app.backend.affectedperson.AffectedPerson;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalCourse;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalVisit;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalVisitCriteria;
@@ -212,6 +213,11 @@ public class CaseDao extends AbstractAdoDao<Case> {
 		Date foodHistoryDate = getLatestChangeDateJoin(FoodHistory.TABLE_NAME, Case.FOOD_HISTORY);
 		if (foodHistoryDate != null && foodHistoryDate.after(date)) {
 			date = foodHistoryDate;
+		}
+
+		Date affectedPersonDate = getLatestChangeDateSubJoin(FoodHistory.TABLE_NAME, Case.FOOD_HISTORY, AffectedPerson.TABLE_NAME);
+		if (affectedPersonDate != null && affectedPersonDate.after(date)) {
+			date = affectedPersonDate;
 		}
 
 		return date;

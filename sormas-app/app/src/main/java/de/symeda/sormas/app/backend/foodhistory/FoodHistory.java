@@ -21,7 +21,9 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,6 +33,7 @@ import javax.persistence.Enumerated;
 import de.symeda.sormas.api.utils.EventType;
 import de.symeda.sormas.api.utils.FoodSource;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.app.backend.affectedperson.AffectedPerson;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 
@@ -246,6 +249,8 @@ public class FoodHistory extends PseudonymizableAdo {
 
     @Column(length = CHARACTER_LIMIT_DEFAULT)
     private String numberAffected;
+
+    private List<AffectedPerson> affectedPersons = new ArrayList<>();
     public String getNameOfAffectedPerson() {
         return nameOfAffectedPerson;
     }
@@ -788,6 +793,14 @@ public class FoodHistory extends PseudonymizableAdo {
 
     public void setNumberAffected(String numberAffected) {
         this.numberAffected = numberAffected;
+    }
+
+    public List<AffectedPerson> getAffectedPersons() {
+        return affectedPersons;
+    }
+
+    public void setAffectedPersons(List<AffectedPerson> affectedPersons) {
+        this.affectedPersons = affectedPersons;
     }
 
     @Override

@@ -58,6 +58,7 @@ import de.symeda.sormas.api.exposure.AnimalContactType;
 import de.symeda.sormas.api.exposure.ExposureType;
 import de.symeda.sormas.api.exposure.HabitationType;
 import de.symeda.sormas.api.exposure.TypeOfAnimal;
+import de.symeda.sormas.api.foodhistory.AffectedPersonDto;
 import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
 import de.symeda.sormas.api.immunization.ImmunizationManagementStatus;
 import de.symeda.sormas.api.immunization.ImmunizationStatus;
@@ -66,6 +67,8 @@ import de.symeda.sormas.api.person.PersonContactDetailType;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.app.backend.affectedperson.AffectedPerson;
+import de.symeda.sormas.app.backend.affectedperson.AffectedPersonDao;
 import de.symeda.sormas.app.backend.auditlog.AuditLogEntry;
 import de.symeda.sormas.app.backend.auditlog.AuditLogEntryDao;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
@@ -221,7 +224,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 408;
+	public static final int DATABASE_VERSION = 409;
 
 	private static DatabaseHelper instance = null;
 
@@ -309,6 +312,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.clearTable(connectionSource, ContainmentMeasure.class);
 			TableUtils.clearTable(connectionSource, RiskFactor.class);
 			TableUtils.clearTable(connectionSource, FoodHistory.class);
+			TableUtils.clearTable(connectionSource, AffectedPerson.class);
 
 			if (clearInfrastructure) {
 				TableUtils.clearTable(connectionSource, UserUserRole.class);
@@ -4096,6 +4100,27 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					);
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN foodhistory_id BIGINT;");
 
+				case 408:
+					currentVersion = 408;
+					getDao(AffectedPerson.class).executeRaw(
+							"CREATE TABLE affectedperson ("
+									+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
+									+ "    uuid VARCHAR(36) NOT NULL UNIQUE,"
+									+ "    changedate BIGINT NOT NULL,"
+									+ "    creationdate BIGINT NOT NULL,"
+									+ "    foodhistory_id BIGINT NOT NULL,"
+									+ "    nameOfAffectedPerson VARCHAR(255),"
+									+ "    telNo VARCHAR(255),"
+									+ "    dateTime DATE,"
+									+ "    age VARCHAR(255),"
+									+ "    pseudonymized SMALLINT,"
+									+ "    lastOpenedDate BIGINT,"
+									+ "    localChangeDate BIGINT NOT NULL,"
+									+ "    modified SMALLINT,"
+									+ "    snapshot SMALLINT,"
+									+ "    UNIQUE (snapshot ASC, uuid ASC)"
+									+ ");"
+					);
 
 
 					// ATTENTION: break should only be done after last version
@@ -4915,6 +4940,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.dropTable(connectionSource, PersonTravelHistory.class, true);
 			TableUtils.dropTable(connectionSource, ContaminationSource.class, true);
 			TableUtils.dropTable(connectionSource, ContainmentMeasure.class, true);
+			TableUtils.dropTable(connectionSource, AffectedPerson.class, true);
 
 			if (oldVersion < 30) {
 				TableUtils.dropTable(connectionSource, Config.class, true);
@@ -5074,7 +5100,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					dao = (AbstractAdoDao<ADO>) new RiskFactorDao((Dao<RiskFactor, Long>) innerDao);
 				} else if(type.equals(FoodHistory.class)) {
 					dao = (AbstractAdoDao<ADO>) new FoodHistoryDao((Dao<FoodHistory, Long>) innerDao);
-				}else {
+				} else if (type.equals(AffectedPerson.class)) {
+					dao = (AbstractAdoDao<ADO>) new AffectedPersonDao((Dao<AffectedPerson, Long>) innerDao);
+				} else {
 					throw new UnsupportedOperationException(type.toString());
 				}
 
@@ -5407,6 +5435,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	public static ContainmentMeasureDao getContainmentMeasureDao() {
 		return (ContainmentMeasureDao) getAdoDao(ContainmentMeasure.class);
+	}
+
+	public static AffectedPersonDao getAffectedPersonDao() {
+		return (AffectedPersonDao) getAdoDao(AffectedPerson.class);
 	}
 
 	/**

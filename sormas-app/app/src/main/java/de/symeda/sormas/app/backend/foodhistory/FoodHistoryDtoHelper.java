@@ -14,16 +14,23 @@
  */
 package de.symeda.sormas.app.backend.foodhistory;
 
+import java.util.ArrayList;
 import java.util.List;
 import de.symeda.sormas.api.PostResponse;
+import de.symeda.sormas.api.foodhistory.AffectedPersonDto;
 import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
+import de.symeda.sormas.app.backend.affectedperson.AffectedPerson;
+import de.symeda.sormas.app.backend.affectedperson.AffectedPersonDtoHelper;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.rest.NoConnectionException;
 import retrofit2.Call;
 
 public class FoodHistoryDtoHelper extends AdoDtoHelper<FoodHistory, FoodHistoryDto> {
 
+    private final AffectedPersonDtoHelper affectedPersonDtoHelper;
+
     public FoodHistoryDtoHelper(){
+        affectedPersonDtoHelper = new AffectedPersonDtoHelper();
     }
 
     @Override
@@ -131,6 +138,16 @@ public class FoodHistoryDtoHelper extends AdoDtoHelper<FoodHistory, FoodHistoryD
         target.setConsumedAtPlaceS3(source.getConsumedAtPlaceS3());
         target.setNumberOfPeopleAteImplicatedFood(source.getNumberOfPeopleAteImplicatedFood());
         target.setNumberAffected(source.getNumberAffected());
+
+        List<AffectedPerson> affectedPersons = new ArrayList<>();
+        if (!source.getAffectedPersons().isEmpty()) {
+            for (AffectedPersonDto affectedPersonDto : source.getAffectedPersons()) {
+                AffectedPerson affectedPerson = affectedPersonDtoHelper.fillOrCreateFromDto(null, affectedPersonDto);
+                affectedPerson.setFoodHistory(target);
+                affectedPersons.add(affectedPerson);
+            }
+        }
+        target.setAffectedPersons(affectedPersons);
     }
 
     @Override
@@ -217,6 +234,15 @@ public class FoodHistoryDtoHelper extends AdoDtoHelper<FoodHistory, FoodHistoryD
         target.setConsumedAtPlaceS3(source.getConsumedAtPlaceS3());
         target.setNumberOfPeopleAteImplicatedFood(source.getNumberOfPeopleAteImplicatedFood());
         target.setNumberAffected(source.getNumberAffected());
+
+        List<AffectedPersonDto> affectedPersonDtos = new ArrayList<>();
+        if (!source.getAffectedPersons().isEmpty()) {
+            for (AffectedPerson affectedPerson : source.getAffectedPersons()) {
+                AffectedPersonDto affectedPersonDto = affectedPersonDtoHelper.adoToDto(affectedPerson);
+                affectedPersonDtos.add(affectedPersonDto);
+            }
+        }
+        target.setAffectedPersons(affectedPersonDtos);
     }
 
     @Override
