@@ -42,7 +42,8 @@ public enum CaseSection
 	IMMUNIZATIONS(R.string.caption_case_immunizations, R.drawable.ic_drawer_immunization_24dp),
 	VACCINATIONS(R.string.caption_case_vaccinations, R.drawable.ic_drawer_vaccines_24),
 	RISK_FACTORS(R.string.caption_case_risk_factors, R.drawable.ic_warning_black_24dp),
-	FOOD_HISTORY(R.string.caption_case_food_history, R.drawable.ic_dvr_black_24dp);
+	FOOD_HISTORY(R.string.caption_case_food_history, R.drawable.ic_dvr_black_24dp),
+	INVESTIGATION_NOTES(R.string.caption_case_investigation_notes, R.drawable.ic_drawer_case_blue_24dp);
 
 	private int friendlyNameResourceId;
 	private int iconResourceId;

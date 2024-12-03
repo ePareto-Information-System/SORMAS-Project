@@ -82,6 +82,7 @@ import de.symeda.sormas.app.backend.event.EventEditAuthorization;
 import de.symeda.sormas.app.backend.event.EventParticipant;
 import de.symeda.sormas.app.backend.exposure.Exposure;
 import de.symeda.sormas.app.backend.foodhistory.FoodHistory;
+import de.symeda.sormas.app.backend.investigationnotes.InvestigationNotes;
 import de.symeda.sormas.app.backend.person.Person;
 import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
 import de.symeda.sormas.app.backend.region.Community;
@@ -220,6 +221,11 @@ public class CaseDao extends AbstractAdoDao<Case> {
 			date = affectedPersonDate;
 		}
 
+		Date investigationNotesDate = getLatestChangeDateJoin(InvestigationNotes.TABLE_NAME, Case.INVESTIGATION_NOTES);
+		if (investigationNotesDate != null && investigationNotesDate.after(date)) {
+			date = investigationNotesDate;
+		}
+
 		return date;
 	}
 
@@ -301,6 +307,8 @@ public class CaseDao extends AbstractAdoDao<Case> {
 
 		// food history
 		caze.setFoodHistory(DatabaseHelper.getFoodHistoryDao().build());
+
+		caze.setInvestigationNotes(DatabaseHelper.getInvestigationNotesDao().build());
 
 		// Location
 		User currentUser = ConfigProvider.getUser();

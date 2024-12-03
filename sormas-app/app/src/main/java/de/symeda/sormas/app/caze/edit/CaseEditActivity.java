@@ -224,8 +224,11 @@ public class CaseEditActivity extends BaseEditActivity<Case> {
 		case RISK_FACTORS:
 			fragment = CaseEditRiskFactorFragment.newInstance(activityRootData);
 			break;
-			case FOOD_HISTORY:
+		case FOOD_HISTORY:
 			fragment = CaseEditFoodHistoryFragment.newInstance(activityRootData);
+			break;
+		case INVESTIGATION_NOTES:
+			fragment = CaseEditInvestigationNotesFragment.newInstance(activityRootData);
 			break;
 		default:
 			throw new IndexOutOfBoundsException(DataHelper.toStringNullable(section));

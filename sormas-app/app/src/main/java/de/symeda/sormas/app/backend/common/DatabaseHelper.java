@@ -142,6 +142,8 @@ import de.symeda.sormas.app.backend.immunization.Immunization;
 import de.symeda.sormas.app.backend.immunization.ImmunizationDao;
 import de.symeda.sormas.app.backend.infrastructure.PointOfEntry;
 import de.symeda.sormas.app.backend.infrastructure.PointOfEntryDao;
+import de.symeda.sormas.app.backend.investigationnotes.InvestigationNotes;
+import de.symeda.sormas.app.backend.investigationnotes.InvestigationNotesDao;
 import de.symeda.sormas.app.backend.lbds.LbdsSync;
 import de.symeda.sormas.app.backend.lbds.LbdsSyncDao;
 import de.symeda.sormas.app.backend.location.Location;
@@ -224,7 +226,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 409;
+	public static final int DATABASE_VERSION = 410;
 
 	private static DatabaseHelper instance = null;
 
@@ -313,6 +315,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.clearTable(connectionSource, RiskFactor.class);
 			TableUtils.clearTable(connectionSource, FoodHistory.class);
 			TableUtils.clearTable(connectionSource, AffectedPerson.class);
+			TableUtils.clearTable(connectionSource, InvestigationNotes.class);
 
 			if (clearInfrastructure) {
 				TableUtils.clearTable(connectionSource, UserUserRole.class);
@@ -433,8 +436,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, PersonTravelHistory.class);
 			TableUtils.createTable(connectionSource, ContaminationSource.class);
 			TableUtils.createTable(connectionSource, ContainmentMeasure.class);
+			TableUtils.createTable(connectionSource, AffectedPerson.class);
 			TableUtils.createTable(connectionSource, RiskFactor.class);
 			TableUtils.createTable(connectionSource, FoodHistory.class);
+			TableUtils.createTable(connectionSource, InvestigationNotes.class);
 		} catch (SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Can't build database", e);
 			throw new RuntimeException(e);
@@ -4122,6 +4127,30 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									+ ");"
 					);
 
+				case 409:
+					currentVersion = 409;
+					getDao(InvestigationNotes.class).executeRaw(
+							"CREATE TABLE investigationnotes ("
+									+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
+									+ "    investigationNotesData VARCHAR(255),"
+									+ "    suspectedDiagnosis VARCHAR(255),"
+									+ "    confirmedDiagnosis VARCHAR(255),"
+									+ "    investigatedBy VARCHAR(255),"
+									+ "    investigatorSignature VARCHAR(255),"
+									+ "    investigatorDate DATE,"
+									+ "    changedate BIGINT,"
+									+ "    changeUserId BIGINT,"
+									+ "    creationDate DATE,"
+									+ "    uuid VARCHAR(512),"
+									+ "    pseudonymized SMALLINT,"
+									+ "    lastOpenedDate BIGINT,"
+									+ "    localChangeDate BIGINT NOT NULL,"
+									+ "    modified SMALLINT,"
+									+ "    snapshot SMALLINT,"
+									+ "    UNIQUE (snapshot ASC, uuid ASC)"
+									+ ");"
+					);
+					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN investigationnotes_id BIGINT;");
 
 					// ATTENTION: break should only be done after last version
 				break;
@@ -5102,6 +5131,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					dao = (AbstractAdoDao<ADO>) new FoodHistoryDao((Dao<FoodHistory, Long>) innerDao);
 				} else if (type.equals(AffectedPerson.class)) {
 					dao = (AbstractAdoDao<ADO>) new AffectedPersonDao((Dao<AffectedPerson, Long>) innerDao);
+				} else if (type.equals(InvestigationNotes.class)) {
+					dao = (AbstractAdoDao<ADO>) new InvestigationNotesDao((Dao<InvestigationNotes, Long>) innerDao);
 				} else {
 					throw new UnsupportedOperationException(type.toString());
 				}
@@ -5226,6 +5257,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		return (FoodHistoryDao) getAdoDao(FoodHistory.class);
 	}
 
+	public static InvestigationNotesDao getInvestigationNotesDao() {
+		return (InvestigationNotesDao) getAdoDao(InvestigationNotes.class);
+	}
 
 	public static PersonDao getPersonDao() {
 		return (PersonDao) getAdoDao(Person.class);

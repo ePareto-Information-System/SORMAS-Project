@@ -39,6 +39,7 @@ import de.symeda.sormas.app.backend.hospitalization.Hospitalization;
 import de.symeda.sormas.app.backend.hospitalization.HospitalizationDtoHelper;
 import de.symeda.sormas.app.backend.infrastructure.PointOfEntry;
 import de.symeda.sormas.app.backend.infrastructure.PointOfEntryDtoHelper;
+import de.symeda.sormas.app.backend.investigationnotes.InvestigationNotesDtoHelper;
 import de.symeda.sormas.app.backend.person.Person;
 import de.symeda.sormas.app.backend.person.PersonDependentDtoHelper;
 import de.symeda.sormas.app.backend.person.PersonDtoHelper;
@@ -73,6 +74,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 	private HealthConditionsDtoHelper healthConditionsDtoHelper = new HealthConditionsDtoHelper();
 	private RiskFactorDtoHelper riskFactorDtoHelper = new RiskFactorDtoHelper();
 	private FoodHistoryDtoHelper foodHistoryDtoHelper = new FoodHistoryDtoHelper();
+	private InvestigationNotesDtoHelper investigationNotesDtoHelper = new InvestigationNotesDtoHelper();
 
 	@Override
 	protected Class<Case> getAdoClass() {
@@ -152,6 +154,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setPortHealthInfo(portHealthInfoDtoHelper.fillOrCreateFromDto(target.getPortHealthInfo(), source.getPortHealthInfo()));
 		target.setRiskFactor(riskFactorDtoHelper.fillOrCreateFromDto(target.getRiskFactor(), source.getRiskFactor()));
 		target.setFoodHistory(foodHistoryDtoHelper.fillOrCreateFromDto(target.getFoodHistory(), source.getFoodHistory()));
+		target.setInvestigationNotes(investigationNotesDtoHelper.fillOrCreateFromDto(target.getInvestigationNotes(), source.getInvestigationNotes()));
 
 		target.setSurveillanceOfficer(DatabaseHelper.getUserDao().getByReferenceDto(source.getSurveillanceOfficer()));
 		target.setClinicianName(source.getClinicianName());
@@ -468,6 +471,13 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 					foodHistoryDtoHelper.adoToDto(DatabaseHelper.getFoodHistoryDao().queryForId(source.getFoodHistory().getId())));
 		} else {
 			target.setFoodHistory(null);
+		}
+
+		if (source.getInvestigationNotes() != null) {
+			target.setInvestigationNotes(
+					investigationNotesDtoHelper.adoToDto(DatabaseHelper.getInvestigationNotesDao().queryForId(source.getInvestigationNotes().getId())));
+		} else {
+			target.setInvestigationNotes(null);
 		}
 
 		target.setClinicianName(source.getClinicianName());

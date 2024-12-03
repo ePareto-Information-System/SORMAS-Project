@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ SORMAS® - Surveillance Outbreak Response Management & Analysis System
+  ~ Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="contentDescription"
+    android:id="@+id/base_layout"
+    android:descendantFocusability="beforeDescendants">
+
+    <data>
+        <import type="de.symeda.sormas.api.i18n.I18nProperties" />
+        <import type="de.symeda.sormas.api.i18n.Strings" />
+        <import type="de.symeda.sormas.api.i18n.Captions" />
+        <import type="de.symeda.sormas.api.investigationnotes.InvestigationNotesDto" />
+
+        <variable name="caze" type="de.symeda.sormas.app.backend.caze.Case" />
+        <variable name="data" type="de.symeda.sormas.app.backend.investigationnotes.InvestigationNotes"/>
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/main_content"
+            style="@style/LayoutSingleContentSpaceBelowStyle">
+
+                <requestFocus/>
+
+            <TextView
+                android:id="@+id/investigationNotes_headingofficialNotes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getString(Strings.headingofficialUse)}"
+                style="@style/SubHeadingStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/investigationNotes_investigationNotesData"
+                app:inputType="textMultiLine"
+                app:textAlignment="gravity"
+                app:gravity="top|start"
+                app:textArea="true"
+                app:singleLine="false"
+                app:maxLines="3"
+                app:value="@={data.investigationNotesData}"
+                style="@style/ControlSingleColumnStyle" />
+
+                <LinearLayout
+                    android:id="@+id/investigationNotes_diagnosis_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/investigationNotes_suspectedDiagnosis"
+                        app:value="@{data.suspectedDiagnosis}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/investigationNotes_confirmedDiagnosis"
+                        app:value="@{data.confirmedDiagnosis}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/investigationNotes_investigatedBy"
+                app:value="@{data.investigatedBy}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/investigationNotes_investigatorSignature"
+                app:value="@{data.investigatorSignature}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlDateField
+                android:id="@+id/investigationNotes_investigatorDate"
+                app:value="@{data.investigatorDate}"
+                style="@style/ControlSingleColumnStyle" />
+
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </layout>

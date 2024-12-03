@@ -165,6 +165,7 @@
     <string name="caption_case_vaccinations">Case Vaccinations</string>
     <string name="caption_case_risk_factors">Risk Factors</string>
     <string name="caption_case_food_history">Food History</string>
+    <string name="caption_case_investigation_notes">Investigation Notes</string>
     <string name="caption_case_treatments">Treatments</string>
     <string name="caption_case_similarity_create">Create a new case</string>
     <string name="caption_changed_data_lost">Changed data lost during re-sync.</string>

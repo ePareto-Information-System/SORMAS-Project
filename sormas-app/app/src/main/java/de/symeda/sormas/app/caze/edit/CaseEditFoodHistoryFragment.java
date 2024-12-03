@@ -40,7 +40,6 @@ import de.symeda.sormas.app.backend.affectedperson.AffectedPerson;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
-import de.symeda.sormas.app.backend.epidata.EpiData;
 import de.symeda.sormas.app.backend.foodhistory.FoodHistory;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.core.IEntryItemOnClickListener;
