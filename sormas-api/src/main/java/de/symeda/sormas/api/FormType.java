@@ -29,8 +29,8 @@ public enum FormType {
     CONTACT_EDIT,
     PORT_HEALTH_INFO_EDIT,
     MATERNAL_HISTORY_EDIT,
-    EVENT_EDIT;
-
+    EVENT_EDIT,
+    INVESTIGATION_NOTES_EDIT;
 
     @Override
     public String toString() {

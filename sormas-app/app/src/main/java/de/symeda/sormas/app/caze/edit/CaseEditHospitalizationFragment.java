@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 
 import androidx.databinding.ObservableArrayList;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,9 +35,15 @@ import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
 import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
 import java.util.List;
 
+import de.symeda.sormas.api.hospitalization.SymptomsList;
+import de.symeda.sormas.api.sample.PathogenTestType;
+import de.symeda.sormas.api.utils.DurationHours;
 import de.symeda.sormas.api.utils.InpatOutpat;
 import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -56,6 +63,7 @@ import de.symeda.sormas.app.util.FieldVisibilityAndAccessHelper;
 import de.symeda.sormas.app.util.DataUtils;
 //import de.symeda.sormas.app.util.InfrastructureHelper;
 import de.symeda.sormas.app.util.InfrastructureDaoHelper;
+import de.symeda.sormas.app.util.InfrastructureFieldsDependencyHandler;
 
 public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCaseEditHospitalizationLayoutBinding, Hospitalization, Case> {
 
@@ -180,8 +188,15 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 
 		CaseValidator.initializeHospitalizationValidation(contentBinding, caze);
 		contentBinding.setYesNoClass(YesNo.class);
+		contentBinding.setSymptomsListClass(SymptomsList.class);
 
 		List<Item> hospitalizationReasons = DataUtils.getEnumItems(HospitalizationReasonType.class, true);
+		List<Item> durationList = DataUtils.getEnumItems(DurationHours.class, true);
+		List<Item> initialPlaceOfRegions = InfrastructureDaoHelper.loadRegionsByServerCountry();
+		List<Item> initialPlaceOfDistricts = InfrastructureDaoHelper.loadDistricts(record.getSoughtRegion());
+		List<Item> initialPlaceOfCommunities = InfrastructureDaoHelper.loadCommunities(record.getSoughtDistrict());
+		List<Item> initialPlaceOfFacilities =
+				InfrastructureDaoHelper.loadFacilities(record.getSoughtDistrict(), record.getSoughtCommunity(), null);
 
 		contentBinding.setData(record);
 		contentBinding.setCaze(caze);
@@ -191,6 +206,17 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		contentBinding.setPrevHosItemClickCallback(onPrevHosItemClickListener);
 		getContentBinding().setPreviousHospitalizationBindCallback(this::setFieldVisibilitiesAndAccesses);
 		contentBinding.caseHospitalizationHospitalizationReason.initializeSpinner(hospitalizationReasons);
+		contentBinding.caseHospitalizationDurationHours.initializeSpinner(durationList);
+
+		Set<SymptomsList> symptomList = Arrays.stream(SymptomsList.FoodBorne())
+				.filter(c -> c != null)
+				.filter(c -> fieldVisibilityCheckers.isVisible(SymptomsList.class, c.name()))
+				.collect(Collectors.toSet());
+
+		List<Item> compatibleItems = DataUtils.toItems(new ArrayList<>(symptomList));
+		compatibleItems.removeIf(item -> item == null || item.toString().isEmpty());
+
+		contentBinding.caseHospitalizationSymptomsSelected.initializeCheckBoxGroup(compatibleItems);
 
 		contentBinding.caseHospitalizationHospitalizedPreviously.addValueChangedListener(field -> {
 			YesNo value = (YesNo) field.getValue();
@@ -201,6 +227,29 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 
 			verifyPrevHospitalizationStatus();
 		});
+		InfrastructureFieldsDependencyHandler.instance.initializeFacilityFields(
+				record,
+				contentBinding.caseHospitalizationSoughtRegion,
+				initialPlaceOfRegions,
+				record.getSoughtRegion(),
+				contentBinding.caseHospitalizationSoughtDistrict,
+				initialPlaceOfDistricts,
+				record.getSoughtDistrict(),
+				contentBinding.caseHospitalizationSoughtCommunity,
+				initialPlaceOfCommunities,
+				record.getSoughtCommunity(),
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				contentBinding.caseHospitalizationNameOfFacility,
+				initialPlaceOfFacilities,
+				record.getNameOfFacility(),
+				null,
+				false);
+
 		if (disease != null) {
 			hideFieldsForDisease(disease, contentBinding.mainContent, FormType.HOSPITALIZATION_EDIT);
 		}
@@ -228,6 +277,8 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		contentBinding.caseDataOutcome.initializeSpinner(outcomeList);
 		contentBinding.caseHospitalizationSelectInpatientOutpatient.initializeSpinner(inpatientOutpatientList);
 		contentBinding.caseHospitalizationDiseaseOnsetDate.initializeDateField(getFragmentManager());
+		contentBinding.caseHospitalizationOnsetOfSymptomDatetime.initializeDateTimeField(getFragmentManager());
+		contentBinding.caseHospitalizationDateOfVisitHospital.initializeDateField(getFragmentManager());
 
 		verifyPrevHospitalizationStatus();
 

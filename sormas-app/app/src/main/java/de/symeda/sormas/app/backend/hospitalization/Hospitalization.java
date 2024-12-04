@@ -16,19 +16,31 @@
 package de.symeda.sormas.app.backend.hospitalization;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import de.symeda.sormas.api.hospitalization.AccommodationType;
+import de.symeda.sormas.api.hospitalization.SymptomsList;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.utils.DurationHours;
 import de.symeda.sormas.api.utils.InpatOutpat;
 import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
@@ -36,8 +48,15 @@ import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
+import de.symeda.sormas.app.backend.facility.Facility;
+import de.symeda.sormas.app.backend.region.Community;
+import de.symeda.sormas.app.backend.region.District;
+import de.symeda.sormas.app.backend.region.Region;
 
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
+
+import org.apache.commons.lang3.StringUtils;
 
 @Entity(name = Hospitalization.TABLE_NAME)
 @DatabaseTable(tableName = Hospitalization.TABLE_NAME)
@@ -116,6 +135,42 @@ public class Hospitalization extends AbstractDomainObject {
 	private YesNoUnknown wasPatientAdmitted;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date terminationDateHospitalStay;
+	@Transient
+	private Set<SymptomsList> symptomsSelected;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String requestedSymptomsSelectedString;
+	@Column(columnDefinition = "text")
+	private String otherSymptomSelected;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date onsetOfSymptomDatetime;
+	@Enumerated(EnumType.STRING)
+	private YesNo symptomsOngoing;
+	@Enumerated(EnumType.STRING)
+	private DurationHours durationHours;
+	@Enumerated(EnumType.STRING)
+	private YesNo soughtMedicalAttention;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
+	private Region soughtRegion;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
+	private District soughtDistrict;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
+	private Community soughtCommunity;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
+	private Facility nameOfFacility;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateOfVisitHospital;
+	@Enumerated(EnumType.STRING)
+	private YesNo hospitalizationYesNo;
+	@Column(columnDefinition = "text")
+	private String physicianName;
+	@Column(columnDefinition = "text")
+	private String physicianNumber;
+	@Enumerated(EnumType.STRING)
+	private YesNo labTestConducted;
+	@Column(columnDefinition = "text")
+	private String typeOfSample;
+	@Column(columnDefinition = "text")
+	private String agentIdentified;
 
 
 	public Date getAdmissionDate() {
@@ -362,5 +417,174 @@ public class Hospitalization extends AbstractDomainObject {
 	}
 	public void setTerminationDateHospitalStay(Date terminationDateHospitalStay) {
 		this.terminationDateHospitalStay = terminationDateHospitalStay;
+	}
+
+	@Transient
+	public Set<SymptomsList> getSymptomsSelected() {
+		if (symptomsSelected == null) {
+			if (StringUtils.isEmpty(requestedSymptomsSelectedString)) {
+				symptomsSelected = new HashSet<>();
+			} else {
+				symptomsSelected =
+						Arrays.stream(requestedSymptomsSelectedString.split(",")).map(SymptomsList::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return symptomsSelected;
+	}
+
+	public void setSymptomsSelected(Set<SymptomsList> symptomsSelected) {
+		this.symptomsSelected = symptomsSelected;
+
+		if (this.symptomsSelected == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		symptomsSelected.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		requestedSymptomsSelectedString = sb.toString();
+	}
+	public String getRequestedSymptomsSelectedString() {
+		return requestedSymptomsSelectedString;
+	}
+
+	public void setRequestedSymptomsSelectedString(String requestedSymptomsSelectedString) {
+		this.requestedSymptomsSelectedString = requestedSymptomsSelectedString;
+		symptomsSelected = null;
+	}
+
+	public String getOtherSymptomSelected() {
+		return otherSymptomSelected;
+	}
+
+	public void setOtherSymptomSelected(String otherSymptomSelected) {
+		this.otherSymptomSelected = otherSymptomSelected;
+	}
+
+	public Date getOnsetOfSymptomDatetime() {
+		return onsetOfSymptomDatetime;
+	}
+
+	public void setOnsetOfSymptomDatetime(Date onsetOfSymptomDatetime) {
+		this.onsetOfSymptomDatetime = onsetOfSymptomDatetime;
+	}
+	public YesNo getSymptomsOngoing() {
+		return symptomsOngoing;
+	}
+
+	public void setSymptomsOngoing(YesNo symptomsOngoing) {
+		this.symptomsOngoing = symptomsOngoing;
+	}
+
+	public DurationHours getDurationHours() {
+		return durationHours;
+	}
+
+	public void setDurationHours(DurationHours durationHours) {
+		this.durationHours = durationHours;
+	}
+
+	public YesNo getSoughtMedicalAttention() {
+		return soughtMedicalAttention;
+	}
+
+	public void setSoughtMedicalAttention(YesNo soughtMedicalAttention) {
+		this.soughtMedicalAttention = soughtMedicalAttention;
+	}
+
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	public Region getSoughtRegion() {
+		return soughtRegion;
+	}
+
+	public void setSoughtRegion(Region soughtRegion) {
+		this.soughtRegion = soughtRegion;
+	}
+
+	public void setSoughtDistrict(District soughtDistrict) {
+		this.soughtDistrict = soughtDistrict;
+	}
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	public District getSoughtDistrict() {
+		return soughtDistrict;
+	}
+
+	@OneToOne(cascade = CascadeType.ALL)
+
+	public Community getSoughtCommunity() {
+		return soughtCommunity;
+	}
+
+	public void setSoughtCommunity(Community soughtCommunity) {
+		this.soughtCommunity = soughtCommunity;
+	}
+
+	public Facility getNameOfFacility() {
+		return nameOfFacility;
+	}
+
+	public void setNameOfFacility(Facility nameOfFacility) {
+		this.nameOfFacility = nameOfFacility;
+	}
+
+	public Date getDateOfVisitHospital() {
+		return dateOfVisitHospital;
+	}
+
+	public void setDateOfVisitHospital(Date dateOfVisitHospital) {
+		this.dateOfVisitHospital = dateOfVisitHospital;
+	}
+
+	public YesNo getHospitalizationYesNo() {
+		return hospitalizationYesNo;
+	}
+
+	public void setHospitalizationYesNo(YesNo hospitalizationYesNo) {
+		this.hospitalizationYesNo = hospitalizationYesNo;
+	}
+
+	public String getPhysicianName() {
+		return physicianName;
+	}
+
+	public void setPhysicianName(String physicianName) {
+		this.physicianName = physicianName;
+	}
+
+	public String getPhysicianNumber() {
+		return physicianNumber;
+	}
+
+	public void setPhysicianNumber(String physicianNumber) {
+		this.physicianNumber = physicianNumber;
+	}
+
+	public YesNo getLabTestConducted() {
+		return labTestConducted;
+	}
+
+	public void setLabTestConducted(YesNo labTestConducted) {
+		this.labTestConducted = labTestConducted;
+	}
+
+	public String getTypeOfSample() {
+		return typeOfSample;
+	}
+
+	public void setTypeOfSample(String typeOfSample) {
+		this.typeOfSample = typeOfSample;
+	}
+
+	public String getAgentIdentified() {
+		return agentIdentified;
+	}
+
+	public void setAgentIdentified(String agentIdentified) {
+		this.agentIdentified = agentIdentified;
 	}
 }

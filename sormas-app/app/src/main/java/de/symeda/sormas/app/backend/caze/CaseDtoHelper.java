@@ -20,6 +20,7 @@ import java.util.List;
 import de.symeda.sormas.api.PostResponse;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.app.backend.caze.maternalhistory.MaternalHistoryDtoHelper;
@@ -33,10 +34,12 @@ import de.symeda.sormas.app.backend.epidata.EpiData;
 import de.symeda.sormas.app.backend.epidata.EpiDataDtoHelper;
 import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.facility.FacilityDtoHelper;
+import de.symeda.sormas.app.backend.foodhistory.FoodHistoryDtoHelper;
 import de.symeda.sormas.app.backend.hospitalization.Hospitalization;
 import de.symeda.sormas.app.backend.hospitalization.HospitalizationDtoHelper;
 import de.symeda.sormas.app.backend.infrastructure.PointOfEntry;
 import de.symeda.sormas.app.backend.infrastructure.PointOfEntryDtoHelper;
+import de.symeda.sormas.app.backend.investigationnotes.InvestigationNotesDtoHelper;
 import de.symeda.sormas.app.backend.person.Person;
 import de.symeda.sormas.app.backend.person.PersonDependentDtoHelper;
 import de.symeda.sormas.app.backend.person.PersonDtoHelper;
@@ -70,6 +73,8 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 	private SormasToSormasOriginInfoDtoHelper sormasToSormasOriginInfoDtoHelper = new SormasToSormasOriginInfoDtoHelper();
 	private HealthConditionsDtoHelper healthConditionsDtoHelper = new HealthConditionsDtoHelper();
 	private RiskFactorDtoHelper riskFactorDtoHelper = new RiskFactorDtoHelper();
+	private FoodHistoryDtoHelper foodHistoryDtoHelper = new FoodHistoryDtoHelper();
+	private InvestigationNotesDtoHelper investigationNotesDtoHelper = new InvestigationNotesDtoHelper();
 
 	@Override
 	protected Class<Case> getAdoClass() {
@@ -148,6 +153,8 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setMaternalHistory(maternalHistoryDtoHelper.fillOrCreateFromDto(target.getMaternalHistory(), source.getMaternalHistory()));
 		target.setPortHealthInfo(portHealthInfoDtoHelper.fillOrCreateFromDto(target.getPortHealthInfo(), source.getPortHealthInfo()));
 		target.setRiskFactor(riskFactorDtoHelper.fillOrCreateFromDto(target.getRiskFactor(), source.getRiskFactor()));
+		target.setFoodHistory(foodHistoryDtoHelper.fillOrCreateFromDto(target.getFoodHistory(), source.getFoodHistory()));
+		target.setInvestigationNotes(investigationNotesDtoHelper.fillOrCreateFromDto(target.getInvestigationNotes(), source.getInvestigationNotes()));
 
 		target.setSurveillanceOfficer(DatabaseHelper.getUserDao().getByReferenceDto(source.getSurveillanceOfficer()));
 		target.setClinicianName(source.getClinicianName());
@@ -457,6 +464,20 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 				riskFactorDtoHelper.adoToDto(DatabaseHelper.getRiskFactorDao().queryForId(source.getRiskFactor().getId())));
 		} else {
 			target.setRiskFactor(null);
+		}
+
+		if (source.getFoodHistory() != null) {
+			target.setFoodHistory(
+					foodHistoryDtoHelper.adoToDto(DatabaseHelper.getFoodHistoryDao().queryForId(source.getFoodHistory().getId())));
+		} else {
+			target.setFoodHistory(null);
+		}
+
+		if (source.getInvestigationNotes() != null) {
+			target.setInvestigationNotes(
+					investigationNotesDtoHelper.adoToDto(DatabaseHelper.getInvestigationNotesDao().queryForId(source.getInvestigationNotes().getId())));
+		} else {
+			target.setInvestigationNotes(null);
 		}
 
 		target.setClinicianName(source.getClinicianName());

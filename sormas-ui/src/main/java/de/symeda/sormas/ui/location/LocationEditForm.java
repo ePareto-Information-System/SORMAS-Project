@@ -235,15 +235,6 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	protected void addFields() {
 		caseDisease = getCaseDisease();
 
-		CaseDataDto newCazeData = getCaseData();
-		if(newCazeData != null){
-			RegionReferenceDto regionReferenceDto = newCazeData.getResponsibleRegion();
-			DistrictReferenceDto districtReferenceDto = newCazeData.getResponsibleDistrict();
-			CommunityReferenceDto communityReferenceDto = newCazeData.getResponsibleCommunity();
-		}
-
-
-
 		addressType = addField(LocationDto.ADDRESS_TYPE, ComboBox.class);
 		addressType.setVisible(false);
 		final PersonAddressType[] personAddressTypeValues = PersonAddressType.getValues(FacadeProvider.getConfigFacade().getCountryCode());

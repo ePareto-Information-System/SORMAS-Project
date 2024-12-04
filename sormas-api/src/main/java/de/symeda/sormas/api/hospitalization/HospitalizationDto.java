@@ -18,7 +18,10 @@
 package de.symeda.sormas.api.hospitalization;
 
 import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.PersonContactDetailDto;
 import de.symeda.sormas.api.person.PersonDto;
@@ -88,6 +91,9 @@ public class HospitalizationDto extends EntityDto {
 	public static final String NAME_OF_FACILITY = "nameOfFacility";
 	public static final String LOCATION_ADDRESS = "locationAddress";
 	public static final String LOCATION_TYPE = "locationType";
+	public static final String SOUGHT_REGION = "soughtRegion";
+	public static final String SOUGHT_DISTRICT = "soughtDistrict";
+	public static final String SOUGHT_COMMUNITY = "soughtCommunity";
 	public static final String DATE_OF_VISIT_HOSPITAL = "dateOfVisitHospital";
 	public static final String PHYSICIAN_NAME = "physicianName";
 	public static final String PHYSICIAN_NUMBER = "physicianNumber";
@@ -178,6 +184,9 @@ public class HospitalizationDto extends EntityDto {
 	@EmbeddedSensitiveData
 	@Valid
 	private LocationDto locationType;
+	private RegionReferenceDto soughtRegion;
+	private DistrictReferenceDto soughtDistrict;
+	private CommunityReferenceDto soughtCommunity;
 
 
 	public static HospitalizationDto build() {
@@ -649,5 +658,29 @@ public class HospitalizationDto extends EntityDto {
 
 	public void setHospitalizationYesNo(YesNo hospitalizationYesNo) {
 		this.hospitalizationYesNo = hospitalizationYesNo;
+	}
+
+	public RegionReferenceDto getSoughtRegion() {
+		return soughtRegion;
+	}
+
+	public void setSoughtRegion(RegionReferenceDto soughtRegion) {
+		this.soughtRegion = soughtRegion;
+	}
+
+	public DistrictReferenceDto getSoughtDistrict() {
+		return soughtDistrict;
+	}
+
+	public void setSoughtDistrict(DistrictReferenceDto soughtDistrict) {
+		this.soughtDistrict = soughtDistrict;
+	}
+
+	public CommunityReferenceDto getSoughtCommunity() {
+		return soughtCommunity;
+	}
+
+	public void setSoughtCommunity(CommunityReferenceDto soughtCommunity) {
+		this.soughtCommunity = soughtCommunity;
 	}
 }

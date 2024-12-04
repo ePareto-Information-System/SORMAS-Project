@@ -22,6 +22,15 @@ import de.symeda.sormas.api.PostResponse;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
+import de.symeda.sormas.app.backend.common.DatabaseHelper;
+import de.symeda.sormas.app.backend.facility.Facility;
+import de.symeda.sormas.app.backend.facility.FacilityDtoHelper;
+import de.symeda.sormas.app.backend.region.Community;
+import de.symeda.sormas.app.backend.region.CommunityDtoHelper;
+import de.symeda.sormas.app.backend.region.District;
+import de.symeda.sormas.app.backend.region.DistrictDtoHelper;
+import de.symeda.sormas.app.backend.region.Region;
+import de.symeda.sormas.app.backend.region.RegionDtoHelper;
 import de.symeda.sormas.app.rest.NoConnectionException;
 import retrofit2.Call;
 
@@ -101,6 +110,26 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		a.setDateFormSentToDistrict(b.getDateFormSentToDistrict());
 		a.setSeenAtAHealthFacility(b.getSeenAtAHealthFacility());
 		a.setWasPatientAdmitted(b.getWasPatientAdmitted());
+
+		a.setTerminationDateHospitalStay(b.getTerminationDateHospitalStay());
+		a.setSymptomsSelected(b.getSymptomsSelected());
+		a.setOtherSymptomSelected(b.getOtherSymptomSelected());
+		a.setOnsetOfSymptomDatetime(b.getOnsetOfSymptomDatetime());
+		a.setSymptomsOngoing(b.getSymptomsOngoing());
+		a.setDurationHours(b.getDurationHours());
+		a.setSoughtMedicalAttention(b.getSoughtMedicalAttention());
+		a.setSoughtRegion(DatabaseHelper.getRegionDao().getByReferenceDto(b.getSoughtRegion()));
+		a.setSoughtDistrict(DatabaseHelper.getDistrictDao().getByReferenceDto(b.getSoughtDistrict()));
+		a.setSoughtCommunity(DatabaseHelper.getCommunityDao().getByReferenceDto(b.getSoughtCommunity()));
+		a.setNameOfFacility(DatabaseHelper.getFacilityDao().getByReferenceDto(b.getNameOfFacility()));
+		a.setDateOfVisitHospital(b.getDateOfVisitHospital());
+		a.setHospitalizationYesNo(b.getHospitalizationYesNo());
+		a.setPhysicianName(b.getPhysicianName());
+		a.setPhysicianNumber(b.getPhysicianNumber());
+		a.setLabTestConducted(b.getLabTestConducted());
+		a.setTypeOfSample(b.getTypeOfSample());
+		a.setAgentIdentified(b.getAgentIdentified());
+
 	}
 
 	@Override
@@ -141,6 +170,48 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		a.setDateFormSentToDistrict(b.getDateFormSentToDistrict());
 		a.setSeenAtAHealthFacility(b.getSeenAtAHealthFacility());
 		a.setWasPatientAdmitted(b.getWasPatientAdmitted());
+
+		a.setTerminationDateHospitalStay(b.getTerminationDateHospitalStay());
+		a.setSymptomsSelected(b.getSymptomsSelected());
+		a.setOtherSymptomSelected(b.getOtherSymptomSelected());
+		a.setOnsetOfSymptomDatetime(b.getOnsetOfSymptomDatetime());
+		a.setSymptomsOngoing(b.getSymptomsOngoing());
+		a.setDurationHours(b.getDurationHours());
+		a.setSoughtMedicalAttention(b.getSoughtMedicalAttention());
+		if (b.getSoughtRegion() != null) {
+			Region region = DatabaseHelper.getRegionDao().queryForId(b.getSoughtRegion().getId());
+			a.setSoughtRegion(RegionDtoHelper.toReferenceDto(region));
+		} else {
+			a.setSoughtRegion(null);
+		}
+
+		if (b.getSoughtDistrict() != null) {
+			District district = DatabaseHelper.getDistrictDao().queryForId(b.getSoughtDistrict().getId());
+			a.setSoughtDistrict(DistrictDtoHelper.toReferenceDto(district));
+		} else {
+			a.setSoughtDistrict(null);
+		}
+
+		if (b.getSoughtCommunity() != null) {
+			Community community = DatabaseHelper.getCommunityDao().queryForId(b.getSoughtCommunity().getId());
+			a.setSoughtCommunity(CommunityDtoHelper.toReferenceDto(community));
+		} else {
+			a.setSoughtCommunity(null);
+		}
+
+		if (b.getNameOfFacility() != null) {
+			Facility facility = DatabaseHelper.getFacilityDao().queryForId(b.getNameOfFacility().getId());
+			a.setNameOfFacility(FacilityDtoHelper.toReferenceDto(facility));
+		} else {
+			a.setNameOfFacility(null);
+		}
+		a.setDateOfVisitHospital(b.getDateOfVisitHospital());
+		a.setHospitalizationYesNo(b.getHospitalizationYesNo());
+		a.setPhysicianName(b.getPhysicianName());
+		a.setPhysicianNumber(b.getPhysicianNumber());
+		a.setLabTestConducted(b.getLabTestConducted());
+		a.setTypeOfSample(b.getTypeOfSample());
+		a.setAgentIdentified(b.getAgentIdentified());
 	}
 
     @Override
