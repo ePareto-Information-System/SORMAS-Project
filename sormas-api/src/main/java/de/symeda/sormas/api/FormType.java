@@ -18,7 +18,8 @@ public enum FormType {
     SAMPLE_CREATE,
     SAMPLE_EDIT,
     PATHOGEN_TEST_CREATE,
-    PATHOGEN_TEST_EDIT;
+    PATHOGEN_TEST_EDIT,
+    INVESTIGATION_NOTES_EDIT;
 
     @Override
     public String toString() {
