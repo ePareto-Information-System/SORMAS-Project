@@ -22,6 +22,12 @@ public class InvestigationNotes extends AbstractDomainObject {
     private String investigatedBy;
     private String investigatorSignature;
     private Date investigatorDate;
+    private String surname;
+    private String firstName;
+    private String middleName;
+    private String telNo;
+    private Date dateOfCompletionOfForm;
+    private String nameOfHealthFacility;
 
     public String getInvestigationNotesData() {
         return investigationNotesData;
@@ -68,5 +74,53 @@ public class InvestigationNotes extends AbstractDomainObject {
 
     public void setInvestigatorDate(Date investigatorDate) {
         this.investigatorDate = investigatorDate;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getTelNo() {
+        return telNo;
+    }
+
+    public void setTelNo(String telNo) {
+        this.telNo = telNo;
+    }
+
+    public Date getDateOfCompletionOfForm() {
+        return dateOfCompletionOfForm;
+    }
+
+    public void setDateOfCompletionOfForm(Date dateOfCompletionOfForm) {
+        this.dateOfCompletionOfForm = dateOfCompletionOfForm;
+    }
+
+    public String getNameOfHealthFacility() {
+        return nameOfHealthFacility;
+    }
+
+    public void setNameOfHealthFacility(String nameOfHealthFacility) {
+        this.nameOfHealthFacility = nameOfHealthFacility;
     }
 }

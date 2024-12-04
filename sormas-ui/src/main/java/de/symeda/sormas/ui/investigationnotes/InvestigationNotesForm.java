@@ -9,6 +9,7 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.investigationnotes.InvestigationNotesDto;
+import de.symeda.sormas.api.sixtyday.SixtyDayDto;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
@@ -21,11 +22,15 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 public class InvestigationNotesForm extends AbstractEditForm<InvestigationNotesDto> {
     private static final long serialVersionUID = 1L;
     private static final String OFFICIAL_HEADING_LOC = "officialHeadingLoc";
+    private static final String PERSON_COMPLETING_HEADING_LOC = "personCompletingHeadingLoc";
 
     private static final String HTML_LAYOUT = loc(OFFICIAL_HEADING_LOC) +
             fluidRowLocs(InvestigationNotesDto.INVESTIGATION_NOTES) +
             fluidRowLocs(InvestigationNotesDto.SUSPECTED_DIAGNOSIS, InvestigationNotesDto.CONFIRMED_DIAGNOSIS) +
-            fluidRowLocs(InvestigationNotesDto.INVESTIGATED_BY, InvestigationNotesDto.INVESTIGATOR_SIGNATURE, InvestigationNotesDto.INVESTIGATOR_DATE);
+            fluidRowLocs(InvestigationNotesDto.INVESTIGATED_BY, InvestigationNotesDto.INVESTIGATOR_SIGNATURE, InvestigationNotesDto.INVESTIGATOR_DATE) +
+            loc(PERSON_COMPLETING_HEADING_LOC) +
+            fluidRowLocs(InvestigationNotesDto.SURNAME, InvestigationNotesDto.FIRSTNAME, InvestigationNotesDto.MIDDLENAME) +
+            fluidRowLocs(InvestigationNotesDto.TEL_NO, InvestigationNotesDto.DATE_OF_COMPLETION_OF_FORM, InvestigationNotesDto.NAME_OF_HEALTH_FACILITY);
 
     public InvestigationNotesForm(Disease disease,
                                   boolean isPseudonymized,
@@ -44,7 +49,13 @@ public class InvestigationNotesForm extends AbstractEditForm<InvestigationNotesD
     protected void addFields() {
 
         createLabel(I18nProperties.getString(Strings.headingofficialUse), H3, OFFICIAL_HEADING_LOC);
-
+        createLabel(I18nProperties.getString(Strings.headingPersonCompleting), H3, PERSON_COMPLETING_HEADING_LOC);
+        addField(InvestigationNotesDto.SURNAME, TextField.class);
+        addField(InvestigationNotesDto.FIRSTNAME, TextField.class);
+        addField(InvestigationNotesDto.MIDDLENAME, TextField.class);
+        addField(InvestigationNotesDto.TEL_NO, TextField.class);
+        addField(InvestigationNotesDto.DATE_OF_COMPLETION_OF_FORM, DateField.class);
+        addField(InvestigationNotesDto.NAME_OF_HEALTH_FACILITY, TextField.class);
         addField(InvestigationNotesDto.INVESTIGATION_NOTES, TextArea.class);
         addField(InvestigationNotesDto.SUSPECTED_DIAGNOSIS, TextField.class);
         addField(InvestigationNotesDto.CONFIRMED_DIAGNOSIS, TextField.class);

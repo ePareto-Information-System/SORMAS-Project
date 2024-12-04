@@ -2889,12 +2889,12 @@ public interface Captions {
 	String InvestigationNotes_investigatedBy = "investigatedBy";
 	String InvestigationNotes_investigatorSignature = "investigatorSignature";
 	String InvestigationNotes_investigatorDate = "investigatorDate";
-	String SixtyDay_surname = "surname";
-	String SixtyDay_firstName = "firstName";
-	String SixtyDay_middleName = "middleName";
-	String SixtyDay_telNo = "telNo";
-	String SixtyDay_dateOfCompletionOfForm = "dateOfCompletionOfForm";
-	String SixtyDay_nameOfHealthFacility = "nameOfHealthFacility";
+	String InvestigationNotes_surname = "surname";
+	String InvestigationNotes_firstName = "firstName";
+	String InvestigationNotes_middleName = "middleName";
+	String InvestigationNotes_telNo = "telNo";
+	String InvestigationNotes_dateOfCompletionOfForm = "dateOfCompletionOfForm";
+	String InvestigationNotes_nameOfHealthFacility = "nameOfHealthFacility";
 
 	String AfpImmunization_totalNumberDoses = "totalNumberDoses";
 	String AfpImmunization_opvDoseAtBirth = "opvDoseAtBirth";

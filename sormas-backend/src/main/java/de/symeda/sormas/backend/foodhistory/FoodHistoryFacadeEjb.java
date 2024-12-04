@@ -70,6 +70,7 @@ public class FoodHistoryFacadeEjb implements FoodHistoryFacade {
         target.setSuspectedFood(source.getSuspectedFood());
         target.setDateConsumed(source.getDateConsumed());
         target.setFoodSource(source.getFoodSource());
+        target.setFoodSourceOther(source.getFoodSourceOther());
         target.setEventType(source.getEventType());
         target.setEventOtherSpecify(source.getEventOtherSpecify());
 
@@ -180,6 +181,7 @@ public class FoodHistoryFacadeEjb implements FoodHistoryFacade {
         target.setSuspectedFood(source.getSuspectedFood());
         target.setDateConsumed(source.getDateConsumed());
         target.setFoodSource(source.getFoodSource());
+        target.setFoodSourceOther(source.getFoodSourceOther());
         target.setEventType(source.getEventType());
         target.setEventOtherSpecify(source.getEventOtherSpecify());
 

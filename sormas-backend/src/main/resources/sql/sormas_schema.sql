@@ -15158,4 +15158,20 @@ ALTER TABLE hospitalization ADD COLUMN soughtRegion_id BIGINT;
 ALTER TABLE hospitalization ADD COLUMN soughtDistrict_id BIGINT;
 ALTER TABLE hospitalization ADD COLUMN soughtCommunity_id BIGINT;
 INSERT INTO schema_version (version_number, comment) VALUES (714, 'Created location module fields to reimplement region, district and community in hosp table');
+
+ALTER TABLE foodhistory ADD COLUMN foodSourceOther VARCHAR(255);
+ALTER TABLE sixtyday DROP COLUMN surname;
+ALTER TABLE sixtyday DROP COLUMN firstname;
+ALTER TABLE sixtyday DROP COLUMN middlename;
+ALTER TABLE sixtyday DROP COLUMN telno;
+ALTER TABLE sixtyday DROP COLUMN dateofcompletionofform;
+ALTER TABLE sixtyday DROP COLUMN nameofhealthfacility;
+
+ALTER TABLE investigationnotes ADD COLUMN surname VARCHAR(255);
+ALTER TABLE investigationnotes ADD COLUMN firstname VARCHAR(255);
+ALTER TABLE investigationnotes ADD COLUMN middlename VARCHAR(255);
+ALTER TABLE investigationnotes ADD COLUMN telno VARCHAR(255);
+ALTER TABLE investigationnotes ADD COLUMN dateofcompletionofform DATE;
+ALTER TABLE investigationnotes ADD COLUMN nameofhealthfacility VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (715, 'Added foodSourceOther to foodhistory table: Section for person completing form under food sample testing moved to investigationnotes');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

@@ -95,12 +95,6 @@ public class SixtyDayFacadeEjb implements SixtyDayFacade {
         target.setNameOfManufacturer(source.getNameOfManufacturer());
         target.setAddress(source.getAddress());
         target.setFoodTel(source.getFoodTel());
-        target.setSurname(source.getSurname());
-        target.setFirstName(source.getFirstName());
-        target.setMiddleName(source.getMiddleName());
-        target.setTelNo(source.getTelNo());
-        target.setDateOfCompletionOfForm(source.getDateOfCompletionOfForm());
-        target.setNameOfHealthFacility(source.getNameOfHealthFacility());
         target.setSpecifySources(source.getSpecifySources());
 
         return target;
@@ -155,13 +149,6 @@ public class SixtyDayFacadeEjb implements SixtyDayFacade {
         target.setNameOfManufacturer(source.getNameOfManufacturer());
         target.setAddress(source.getAddress());
         target.setFoodTel(source.getFoodTel());
-        target.setSurname(source.getSurname());
-        target.setFirstName(source.getFirstName());
-        target.setMiddleName(source.getMiddleName());
-        target.setTelNo(source.getTelNo());
-        target.setDateOfCompletionOfForm(source.getDateOfCompletionOfForm());
-        target.setNameOfHealthFacility(source.getNameOfHealthFacility());
-        target.setSpecifySources(source.getSpecifySources());
 
 
         return target;

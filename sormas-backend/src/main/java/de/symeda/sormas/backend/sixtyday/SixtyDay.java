@@ -66,8 +66,8 @@ public class SixtyDay extends AbstractDomainObject {
     private String contactDetailsEmail;
     private String signature;
     private Date dateSubmissionForms;
-    private YesNo foodAvailableTesting;
-    private YesNo labTestConducted;
+    private YesNoUnknown foodAvailableTesting;
+    private YesNoUnknown labTestConducted;
     private String specifyFoodsSources;
     private String productName;
     private String batchNumber;
@@ -80,12 +80,6 @@ public class SixtyDay extends AbstractDomainObject {
     private String nameOfManufacturer;
     private String address;
     private String foodTel;
-    private String surname;
-    private String firstName;
-    private String middleName;
-    private String telNo;
-    private Date dateOfCompletionOfForm;
-    private String nameOfHealthFacility;
     private String specifySources;
 
 
@@ -296,18 +290,18 @@ public class SixtyDay extends AbstractDomainObject {
     public void setDateSubmissionForms(Date dateSubmissionForms) {
         this.dateSubmissionForms = dateSubmissionForms;
     }
-    public YesNo getFoodAvailableTesting() {
+    public YesNoUnknown getFoodAvailableTesting() {
         return foodAvailableTesting;
     }
 
-    public void setFoodAvailableTesting(YesNo foodAvailableTesting) {
+    public void setFoodAvailableTesting(YesNoUnknown foodAvailableTesting) {
         this.foodAvailableTesting = foodAvailableTesting;
     }
-    public YesNo getLabTestConducted() {
+    public YesNoUnknown getLabTestConducted() {
         return labTestConducted;
     }
 
-    public void setLabTestConducted(YesNo labTestConducted) {
+    public void setLabTestConducted(YesNoUnknown labTestConducted) {
         this.labTestConducted = labTestConducted;
     }
     public String getSpecifyFoodsSources() {
@@ -404,54 +398,6 @@ public class SixtyDay extends AbstractDomainObject {
 
     public void setFoodTel(String foodTel) {
         this.foodTel = foodTel;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getTelNo() {
-        return telNo;
-    }
-
-    public void setTelNo(String telNo) {
-        this.telNo = telNo;
-    }
-
-    public Date getDateOfCompletionOfForm() {
-        return dateOfCompletionOfForm;
-    }
-
-    public void setDateOfCompletionOfForm(Date dateOfCompletionOfForm) {
-        this.dateOfCompletionOfForm = dateOfCompletionOfForm;
-    }
-
-    public String getNameOfHealthFacility() {
-        return nameOfHealthFacility;
-    }
-
-    public void setNameOfHealthFacility(String nameOfHealthFacility) {
-        this.nameOfHealthFacility = nameOfHealthFacility;
     }
 
     public String getSpecifySources() {
