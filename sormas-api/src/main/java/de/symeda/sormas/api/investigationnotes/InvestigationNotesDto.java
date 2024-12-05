@@ -19,6 +19,12 @@ public class InvestigationNotesDto extends PseudonymizableDto {
     public static final String INVESTIGATED_BY = "investigatedBy";
     public static final String INVESTIGATOR_SIGNATURE = "investigatorSignature";
     public static final String INVESTIGATOR_DATE = "investigatorDate";
+    public static final String SURNAME = "surname";
+    public static final String FIRSTNAME = "firstName";
+    public static final String MIDDLENAME = "middleName";
+    public static final String TEL_NO = "telNo";
+    public static final String DATE_OF_COMPLETION_OF_FORM = "dateOfCompletionOfForm";
+    public static final String NAME_OF_HEALTH_FACILITY = "nameOfHealthFacility";
 
     private String investigationNotesData;
     private String suspectedDiagnosis;
@@ -26,6 +32,12 @@ public class InvestigationNotesDto extends PseudonymizableDto {
     private String investigatedBy;
     private String investigatorSignature;
     private Date investigatorDate;
+    private String surname;
+    private String firstName;
+    private String middleName;
+    private String telNo;
+    private Date dateOfCompletionOfForm;
+    private String nameOfHealthFacility;
 
     public static InvestigationNotesDto build() {
         InvestigationNotesDto investigationNotesDto   = new InvestigationNotesDto();
@@ -79,5 +91,53 @@ public class InvestigationNotesDto extends PseudonymizableDto {
 
     public void setInvestigatorDate(Date investigatorDate) {
         this.investigatorDate = investigatorDate;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getTelNo() {
+        return telNo;
+    }
+
+    public void setTelNo(String telNo) {
+        this.telNo = telNo;
+    }
+
+    public Date getDateOfCompletionOfForm() {
+        return dateOfCompletionOfForm;
+    }
+
+    public void setDateOfCompletionOfForm(Date dateOfCompletionOfForm) {
+        this.dateOfCompletionOfForm = dateOfCompletionOfForm;
+    }
+
+    public String getNameOfHealthFacility() {
+        return nameOfHealthFacility;
+    }
+
+    public void setNameOfHealthFacility(String nameOfHealthFacility) {
+        this.nameOfHealthFacility = nameOfHealthFacility;
     }
 }

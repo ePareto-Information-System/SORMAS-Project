@@ -40,6 +40,12 @@ public class InvestigationNotesFacadeEjb implements InvestigationNotesFacade {
         target.setInvestigatedBy(source.getInvestigatedBy());
         target.setInvestigatorSignature(source.getInvestigatorSignature());
         target.setInvestigatorDate(source.getInvestigatorDate());
+        target.setSurname(source.getSurname());
+        target.setFirstName(source.getFirstName());
+        target.setMiddleName(source.getMiddleName());
+        target.setTelNo(source.getTelNo());
+        target.setDateOfCompletionOfForm(source.getDateOfCompletionOfForm());
+        target.setNameOfHealthFacility(source.getNameOfHealthFacility());
 
         target = DtoHelper.fillOrBuildEntity(source, target, InvestigationNotes::new, checkChangeDate);
 
@@ -63,6 +69,12 @@ public class InvestigationNotesFacadeEjb implements InvestigationNotesFacade {
         target.setInvestigatedBy(source.getInvestigatedBy());
         target.setInvestigatorSignature(source.getInvestigatorSignature());
         target.setInvestigatorDate(source.getInvestigatorDate());
+        target.setSurname(source.getSurname());
+        target.setFirstName(source.getFirstName());
+        target.setMiddleName(source.getMiddleName());
+        target.setTelNo(source.getTelNo());
+        target.setDateOfCompletionOfForm(source.getDateOfCompletionOfForm());
+        target.setNameOfHealthFacility(source.getNameOfHealthFacility());
 
         return target;
     }

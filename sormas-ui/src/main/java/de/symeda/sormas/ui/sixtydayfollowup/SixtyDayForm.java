@@ -28,6 +28,7 @@ import de.symeda.sormas.api.sixtyday.SixtyDayDto;
 import de.symeda.sormas.api.utils.PackagingType;
 import de.symeda.sormas.api.utils.ParalysisSite;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
@@ -80,10 +81,7 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
                     fluidRowLocs(SixtyDayDto.DATE_OF_MANUFACTURE, SixtyDayDto.EXPIRATION_DATE) +
                     fluidRowLocs(SixtyDayDto.PACKAGE_SIZE, SixtyDayDto.PACKAGING_TYPE, SixtyDayDto.PACKAGING_TYPE_OTHER) +
                     fluidRowLocs(SixtyDayDto.PLACE_OF_PURCHASE, SixtyDayDto.NAME_OF_MANUFACTURER) +
-                    fluidRowLocs(SixtyDayDto.ADDRESS, SixtyDayDto.FOOD_TEL)+
-                    loc(PERSON_COMPLETING_HEADING_LOC) +
-            fluidRowLocs(SixtyDayDto.SURNAME, SixtyDayDto.FIRSTNAME, SixtyDayDto.MIDDLENAME) +
-            fluidRowLocs(SixtyDayDto.TEL_NO, SixtyDayDto.DATE_OF_COMPLETION_OF_FORM, SixtyDayDto.NAME_OF_HEALTH_FACILITY);
+                    fluidRowLocs(SixtyDayDto.ADDRESS, SixtyDayDto.FOOD_TEL);
 
     private final Disease disease;
     private final Class<? extends EntityDto> parentClass;
@@ -174,15 +172,9 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
         TextField nameOfManufacturer = addField(SixtyDayDto.NAME_OF_MANUFACTURER, TextField.class);
         TextField address = addField(SixtyDayDto.ADDRESS, TextField.class);
         TextField foodTel = addField(SixtyDayDto.FOOD_TEL, TextField.class);
-        addField(SixtyDayDto.SURNAME, TextField.class);
-        addField(SixtyDayDto.FIRSTNAME, TextField.class);
-        addField(SixtyDayDto.MIDDLENAME, TextField.class);
-        addField(SixtyDayDto.TEL_NO, TextField.class);
-        addField(SixtyDayDto.DATE_OF_COMPLETION_OF_FORM, DateField.class);
-        addField(SixtyDayDto.NAME_OF_HEALTH_FACILITY, TextField.class);
 
         setVisible(false,
-                SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED, SixtyDayDto.SPECIFY_FOODS_SOURCES, SixtyDayDto.SPECIFY_SOURCES, SixtyDayDto.PRODUCT_NAME, SixtyDayDto.BATCH_NUMBER, SixtyDayDto.DATE_OF_MANUFACTURE, SixtyDayDto.EXPIRATION_DATE, SixtyDayDto.PACKAGE_SIZE, SixtyDayDto.PACKAGING_TYPE, SixtyDayDto.PACKAGING_TYPE_OTHER, SixtyDayDto.PLACE_OF_PURCHASE, SixtyDayDto.NAME_OF_MANUFACTURER, SixtyDayDto.ADDRESS, SixtyDayDto.FOOD_TEL, SixtyDayDto.SURNAME, SixtyDayDto.FIRSTNAME, SixtyDayDto.MIDDLENAME, SixtyDayDto.TEL_NO, SixtyDayDto.DATE_OF_COMPLETION_OF_FORM, SixtyDayDto.NAME_OF_HEALTH_FACILITY);
+                SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED, SixtyDayDto.SPECIFY_FOODS_SOURCES, SixtyDayDto.SPECIFY_SOURCES, SixtyDayDto.PRODUCT_NAME, SixtyDayDto.BATCH_NUMBER, SixtyDayDto.DATE_OF_MANUFACTURE, SixtyDayDto.EXPIRATION_DATE, SixtyDayDto.PACKAGE_SIZE, SixtyDayDto.PACKAGING_TYPE, SixtyDayDto.PACKAGING_TYPE_OTHER, SixtyDayDto.PLACE_OF_PURCHASE, SixtyDayDto.NAME_OF_MANUFACTURER, SixtyDayDto.ADDRESS, SixtyDayDto.FOOD_TEL);
 
 
         initializeVisibilitiesAndAllowedVisibilities();
@@ -201,7 +193,6 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
 
             createLabel(I18nProperties.getString(Strings.headingProvide), H3, PROVIDE_HEADING_LOC);
             createLabel(I18nProperties.getString(Strings.headingofficialUse), H3, OFFICIAL_HEADING_LOC);
-            createLabel(I18nProperties.getString(Strings.headingPersonCompleting), H3, PERSON_COMPLETING_HEADING_LOC);
 
             setVisible(true,
                     SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED, SixtyDayDto.SURNAME, SixtyDayDto.FIRSTNAME, SixtyDayDto.MIDDLENAME, SixtyDayDto.TEL_NO, SixtyDayDto.DATE_OF_COMPLETION_OF_FORM, SixtyDayDto.NAME_OF_HEALTH_FACILITY);
@@ -210,7 +201,7 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
         FieldHelper.setVisibleWhen(
                 foodAvailable,
                 Arrays.asList(food, sources, productName, batchNumber, dateOfManufacture, expirationDate, packageSize, packagingType, placeOfPurchase, nameOfManufacturer,
-                        address, foodTel),Arrays.asList(YesNo.YES),true);
+                        address, foodTel),Arrays.asList(YesNoUnknown.YES),true);
         packagingType.addValueChangeListener(event -> {
             boolean isOther = event.getProperty().getValue() == PackagingType.OTHER;
             packagingTypeOther.setVisible(isOther);

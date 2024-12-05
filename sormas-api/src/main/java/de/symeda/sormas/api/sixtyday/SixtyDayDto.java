@@ -85,8 +85,8 @@ public class SixtyDayDto extends PseudonymizableDto {
     private String signature;
     private Date dateSubmissionForms;
 
-    private YesNo foodAvailableTesting;
-    private YesNo labTestConducted;
+    private YesNoUnknown foodAvailableTesting;
+    private YesNoUnknown labTestConducted;
     private String specifyFoodsSources;
     private String specifySources;
     private String productName;
@@ -288,18 +288,18 @@ public class SixtyDayDto extends PseudonymizableDto {
         this.dateSubmissionForms = dateSubmissionForms;
     }
 
-    public YesNo getFoodAvailableTesting() {
+    public YesNoUnknown getFoodAvailableTesting() {
         return foodAvailableTesting;
     }
 
-    public void setFoodAvailableTesting(YesNo foodAvailableTesting) {
+    public void setFoodAvailableTesting(YesNoUnknown foodAvailableTesting) {
         this.foodAvailableTesting = foodAvailableTesting;
     }
-    public YesNo getLabTestConducted() {
+    public YesNoUnknown getLabTestConducted() {
         return labTestConducted;
     }
 
-    public void setLabTestConducted(YesNo labTestConducted) {
+    public void setLabTestConducted(YesNoUnknown labTestConducted) {
         this.labTestConducted = labTestConducted;
     }
     public String getSpecifyFoodsSources() {
@@ -396,54 +396,6 @@ public class SixtyDayDto extends PseudonymizableDto {
 
     public void setFoodTel(String foodTel) {
         this.foodTel = foodTel;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getTelNo() {
-        return telNo;
-    }
-
-    public void setTelNo(String telNo) {
-        this.telNo = telNo;
-    }
-
-    public Date getDateOfCompletionOfForm() {
-        return dateOfCompletionOfForm;
-    }
-
-    public void setDateOfCompletionOfForm(Date dateOfCompletionOfForm) {
-        this.dateOfCompletionOfForm = dateOfCompletionOfForm;
-    }
-
-    public String getNameOfHealthFacility() {
-        return nameOfHealthFacility;
-    }
-
-    public void setNameOfHealthFacility(String nameOfHealthFacility) {
-        this.nameOfHealthFacility = nameOfHealthFacility;
     }
 
     public String getSpecifySources() {

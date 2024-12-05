@@ -19,6 +19,7 @@ public class FoodHistoryDto extends PseudonymizableDto {
     public static final String SUSPECTED_FOOD = "suspectedFood";
     public static final String DATE_CONSUMED = "dateConsumed";
     public static final String FOOD_SOURCE = "foodSource";
+    public static final String FOOD_SOURCE_OTHER = "foodSourceOther";
     public static final String EVENT_TYPE = "eventType";
     public static final String EVENT_OTHER_SPECIFY = "eventOtherSpecify";
     public static final String BREAKFAST = "breakfast";
@@ -112,6 +113,7 @@ public class FoodHistoryDto extends PseudonymizableDto {
     private String suspectedFood;
     private Date dateConsumed;
     private FoodSource foodSource;
+    private String foodSourceOther;
     private EventType eventType;
     private String eventOtherSpecify;
     private YesNo breakfast;
@@ -315,6 +317,14 @@ public class FoodHistoryDto extends PseudonymizableDto {
 
     public void setFoodSource(FoodSource foodSource) {
         this.foodSource = foodSource;
+    }
+
+    public String getFoodSourceOther() {
+        return foodSourceOther;
+    }
+
+    public void setFoodSourceOther(String foodSourceOther) {
+        this.foodSourceOther = foodSourceOther;
     }
 
     public EventType getEventType() {

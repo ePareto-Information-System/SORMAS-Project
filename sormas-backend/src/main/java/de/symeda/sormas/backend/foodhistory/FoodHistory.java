@@ -41,6 +41,7 @@ public class FoodHistory extends AbstractDomainObject {
     private String suspectedFood;
     private Date dateConsumed;
     private FoodSource foodSource;
+    private String foodSourceOther;
     private EventType eventType;
     private String eventOtherSpecify;
     private YesNo breakfast;
@@ -244,6 +245,14 @@ public class FoodHistory extends AbstractDomainObject {
 
     public void setFoodSource(FoodSource foodSource) {
         this.foodSource = foodSource;
+    }
+
+    public String getFoodSourceOther() {
+        return foodSourceOther;
+    }
+
+    public void setFoodSourceOther(String foodSourceOther) {
+        this.foodSourceOther = foodSourceOther;
     }
 
     public EventType getEventType() {

@@ -11,6 +11,7 @@ import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.utils.EventType;
+import de.symeda.sormas.api.utils.FoodSource;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -41,7 +42,8 @@ public class FoodHistoryForm extends AbstractEditForm<FoodHistoryDto> {
 
     private static final String HTML_LAYOUT =
                fluidRowLocs(FoodHistoryDto.SUSPECTED_FOOD, FoodHistoryDto.DATE_CONSUMED) +
-               fluidRowLocs(FoodHistoryDto.FOOD_SOURCE, FoodHistoryDto.EVENT_TYPE, FoodHistoryDto.EVENT_OTHER_SPECIFY) +
+               fluidRowLocs(FoodHistoryDto.FOOD_SOURCE, FoodHistoryDto.FOOD_SOURCE_OTHER) +
+               fluidRowLocs(FoodHistoryDto.EVENT_TYPE, FoodHistoryDto.EVENT_OTHER_SPECIFY) +
                loc(OBTAIN_HISTORY_HEADING) +
                loc(DAY_1_HEADING) +
                fluidRowLocs(FoodHistoryDto.BREAKFAST, FoodHistoryDto.TOTAL_NO_PERSONS, FoodHistoryDto.FOOD_CONSUMED, FoodHistoryDto.SOURCE_OF_FOOD, FoodHistoryDto.CONSUMED_AT_PLACE) +
@@ -113,7 +115,8 @@ public class FoodHistoryForm extends AbstractEditForm<FoodHistoryDto> {
 
         addField(FoodHistoryDto.SUSPECTED_FOOD, TextField.class);
         addField(FoodHistoryDto.DATE_CONSUMED, DateTimeField.class);
-        addField(FoodHistoryDto.FOOD_SOURCE, ComboBox.class);
+        ComboBox foodSource = addField(FoodHistoryDto.FOOD_SOURCE, ComboBox.class);
+        TextField foodSourceOther = addField(FoodHistoryDto.FOOD_SOURCE_OTHER, TextField.class);
         ComboBox eventType = addField(FoodHistoryDto.EVENT_TYPE, ComboBox.class);
         TextField eventOtherSpecify = addField(FoodHistoryDto.EVENT_OTHER_SPECIFY, TextField.class);
 
@@ -199,7 +202,9 @@ public class FoodHistoryForm extends AbstractEditForm<FoodHistoryDto> {
         initializeAccessAndAllowedAccesses();
 
         eventOtherSpecify.setVisible(false);
+        foodSourceOther.setVisible(false);
         eventType.addValueChangeListener(valueChangeEvent -> eventOtherSpecify.setVisible(eventType.getValue() == EventType.OTHER));
+        foodSource.addValueChangeListener(valueChangeEvent -> foodSourceOther.setVisible(foodSource.getValue() == FoodSource.OTHER));
     }
 
     private Label createLabel(String text, String h4, String location) {
