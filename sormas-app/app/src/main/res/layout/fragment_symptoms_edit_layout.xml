@@ -546,6 +546,13 @@
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_skinRashNew"
+                app:enumClass="@{symptomStateClass}"
+                app:slim="true"
+                app:value="@={data.skinRashNew}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
                 android:id="@+id/symptoms_vesicularRash"
                 app:enumClass="@{symptomStateClass}"
                 app:slim="true"

@@ -658,6 +658,8 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 			contentBinding.personPlaceOfBirthFacilityType.setValue(FacilityType.HOSPITAL);
 		}
 
+		contentBinding.personEthnicity.setCaption("Ethnic Group");
+
 	}
 
 	@Override

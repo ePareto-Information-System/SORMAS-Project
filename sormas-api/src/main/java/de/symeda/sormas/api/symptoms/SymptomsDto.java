@@ -1440,6 +1440,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		DENGUE,
 		POLIO,
 		UNDEFINED,
+		AHF,
 		OTHER })
 	@Outbreaks
 	@HideForCountries
