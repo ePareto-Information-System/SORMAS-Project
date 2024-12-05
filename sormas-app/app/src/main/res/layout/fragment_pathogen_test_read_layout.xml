@@ -144,11 +144,6 @@
                     app:value="@{data.lab}"
                     style="@style/ControlSingleColumnStyle" />
 
-                <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
-                    android:id="@+id/pathogenTest_sampleTests"
-                    app:value="@{data.sampleTests}"
-                    style="@style/ControlSingleColumnStyle" />
-
                 <LinearLayout
                     android:id="@+id/pathogenTest_pcrHeading"
                     android:layout_width="match_parent"

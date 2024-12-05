@@ -84,7 +84,6 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 
 	private List<Item> sampleMaterialList;
 	private List<Item> sampleSourceList;
-	private List<Item> suspectedDiseaseList;
 	private List<Facility> labList;
 	private List<Item> samplePurposeList;
 	private List<Item> samplingReasonList;
@@ -451,14 +450,20 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		switch (record.getAssociatedCase().getDisease()){
 			case YELLOW_FEVER:
 				handleYellowFever();
+				break;
 			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
 				handleIDSR();
+				break;
 			case AHF:
 				handleAHF();
+				break;
 			case NEW_INFLUENZA:
 				handleILI();
+				break;
 			case CSM:
 				handleCSM();
+				break;
+			default:
 		}
 
 
@@ -552,9 +557,6 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	}
 
 	private void handleAHF() {
-		getContentBinding().samplePurpose.setValue(SamplePurpose.EXTERNAL);
-		getContentBinding().samplePurpose.setVisibility(GONE);
-
 		if (getContentBinding().sampleHasSampleBeenCollected.getValue() == null) {
 			getContentBinding().sampleSampleDateTime.setVisibility(View.GONE);
 		} else {
