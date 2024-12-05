@@ -50,7 +50,6 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
     private static final long serialVersionUID = 1L;
     private static final String SIXTYDAY_HEADING_LOC = "hospitalizationHeadingLoc";
     private static final String OFFICIAL_HEADING_LOC = "officialHeadingLoc";
-    private static final String PERSON_COMPLETING_HEADING_LOC = "personCompletingHeadingLoc";
     private static final String PROVIDE_HEADING_LOC = "provideHeadingLoc";
 
     private static final String HTML_LAYOUT =
@@ -195,7 +194,7 @@ public class SixtyDayForm extends AbstractEditForm<SixtyDayDto>{
             createLabel(I18nProperties.getString(Strings.headingofficialUse), H3, OFFICIAL_HEADING_LOC);
 
             setVisible(true,
-                    SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED, SixtyDayDto.SURNAME, SixtyDayDto.FIRSTNAME, SixtyDayDto.MIDDLENAME, SixtyDayDto.TEL_NO, SixtyDayDto.DATE_OF_COMPLETION_OF_FORM, SixtyDayDto.NAME_OF_HEALTH_FACILITY);
+                    SixtyDayDto.FOOD_AVAILABLE_TESTING, SixtyDayDto.LAB_TEST_CONDUCTED);
         }
 
         FieldHelper.setVisibleWhen(
