@@ -280,6 +280,8 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		contentBinding.caseHospitalizationOnsetOfSymptomDatetime.initializeDateTimeField(getFragmentManager());
 		contentBinding.caseHospitalizationDateOfVisitHospital.initializeDateField(getFragmentManager());
 
+		contentBinding.caseDataHealthFacility.setCaption("Hospital Name");
+
 		verifyPrevHospitalizationStatus();
 
 		switch (disease){
@@ -307,10 +309,14 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 	}
 
 	private void handleHospitalizationVisibility(List<View> viewsToToggle) {
+		// Initialize visibility based on the current value
+		YesNo admittedToFacility = (YesNo) getContentBinding().caseHospitalizationAdmittedToHealthFacility.getValue();
+		int initialVisibility = (admittedToFacility == YesNo.YES ? VISIBLE : GONE);
 		for (View view : viewsToToggle) {
-			view.setVisibility(GONE);
+			view.setVisibility(initialVisibility);
 		}
 
+		// Add listener to update visibility when the value changes
 		getContentBinding().caseHospitalizationAdmittedToHealthFacility.addValueChangedListener(field -> {
 			int visibility = (field.getValue() == YesNo.YES ? VISIBLE : GONE);
 			for (View view : viewsToToggle) {
@@ -320,12 +326,15 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 	}
 
 	private void handleAHF() {
+		getContentBinding().caseHospitalizationAdmissionDate.setCaption("DATE OF ADMISSION IF APPLICABLE");
+		getContentBinding().caseHospitalizationDischargeDate.setCaption("DATE OF DISCHARGE OR TRANSFER");
 		handleHospitalizationVisibility(Arrays.asList(
 				getContentBinding().caseHospitalizationAdmissionDate,
 				getContentBinding().caseHospitalizationDischargeDate,
 				getContentBinding().caseHospitalizationDateOfDeath
 		));
 	}
+
 
 	private void handleILI() {
 		getContentBinding().caseHospitalizationAdmittedToHealthFacility.setCaption("WAS THE PATIENT ADMITTED AT THE FACILITY (IN-PATIENT)?");

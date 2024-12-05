@@ -114,14 +114,19 @@
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/caseHospitalization_memberFamilyHelpingPatient"
                         app:value="@={data.memberFamilyHelpingPatient}"
-                        style="@style/ControlSingleColumnStyle" />
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/caseHospitalization_dateOfDeath"
                         app:value="@={data.dateOfDeath}"
-                        style="@style/ControlSingleColumnStyle" />
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/caseHospitalization_hospitalRecordNumber"
+                app:value="@={data.hospitalRecordNumber}"
+                style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout
                     android:id="@+id/caseHospitalization_admission_discharge_Date_heading"
@@ -129,15 +134,10 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <de.symeda.sormas.app.component.controls.ControlTextEditField
-                        android:id="@+id/caseHospitalization_hospitalRecordNumber"
-                        app:value="@={data.hospitalRecordNumber}"
-                        style="@style/ControlFirstOfTwoColumnsStyle" />
-
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/caseHospitalization_admissionDate"
                         app:value="@={data.admissionDate}"
-                        style="@style/ControlSecondOfTwoColumnsStyle" />
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/caseHospitalization_dischargeDate"
