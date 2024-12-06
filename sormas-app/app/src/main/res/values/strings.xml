@@ -166,6 +166,8 @@
     <string name="caption_case_risk_factors">Risk Factors</string>
     <string name="caption_case_food_history">Food History</string>
     <string name="caption_case_investigation_notes">Investigation Notes</string>
+    <string name="caption_case_afp_immunization">Immunization History</string>
+    <string name="caption_case_sixy_day">Sixty Day</string>
     <string name="caption_case_treatments">Treatments</string>
     <string name="caption_case_similarity_create">Create a new case</string>
     <string name="caption_changed_data_lost">Changed data lost during re-sync.</string>
@@ -389,6 +391,10 @@
     <string name="heading_alert_assessment_new">New Alert</string>
     <string name="heading_risk_mapping">Risk Mapping</string>
     <string name="heading_risk_mapping_edit">Edit Risk Mapping</string>
+    <string name="heading_afp_Immunization">AFP Immunization</string>
+    <string name="heading_afp_Immunization_edit">Edit AFP Immunization</string>
+    <string name="heading_sixtyday">Sixty Day</string>
+    <string name="heading_sixtyday_edit">Edit Sixty Day</string>
     <string name="heading_event_read">Read Event</string>
     <string name="heading_event_summary">Event Summary</string>
     <string name="heading_events_list">Event Listing</string>
@@ -417,6 +423,7 @@
     <string name="heading_person_involved">Person Involved</string>
     <string name="heading_person_involved_new">New Person Involved</string>
     <string name="heading_person_contact_detail">Person contact details</string>
+    <string name="heading_person_seekHelpChild">Where has the child been seeking help for this problem before presenting at present place (in sequence of visits)?</string>
     <string name="heading_pick_or_create_person">Pick or Create Person</string>
     <string name="heading_pick_or_create_case">Pick or Create a Case</string>
     <string name="heading_pick_or_create_immunization">Pick or Create an Immunization</string>

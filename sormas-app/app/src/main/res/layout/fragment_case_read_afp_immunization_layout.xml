@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ SORMAS® - Surveillance Outbreak Response Management & Analysis System
+  ~ Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="contentDescription"
+    android:id="@+id/base_layout"
+    android:descendantFocusability="beforeDescendants">
+
+    <data>
+        <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
+        <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
+        <import type="de.symeda.sormas.api.utils.YesNo" />
+        <import type="de.symeda.sormas.api.riskfactor.DrinkingWaterSource" />
+
+        <variable name="data" type="de.symeda.sormas.app.backend.afpimmunization.AfpImmunization" />
+        <variable name="caze" type="de.symeda.sormas.app.backend.caze.Case" />
+        <variable name="YesNoClass" type="Class" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/fragment_padding"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:id="@+id/main_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/heading_afp_Immunization_edit"
+                android:textColor="@color/lightBlue"
+                style="@style/HeadingStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/afpImmunization_totalNumberDoses"
+                app:value="@{data.totalNumberDoses}"
+                app:inputType="number"
+                style="@style/ControlSingleColumnStyle" />
+
+            <LinearLayout
+                android:id="@+id/afpImmunization_opvDoseAtBirth_firstDose_secondDose_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/afpImmunization_opvDoseAtBirth"
+                    app:value="@{data.opvDoseAtBirth}"
+                    app:inputType="number"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/afpImmunization_firstDose"
+                    app:value="@{data.firstDose}"
+                    app:inputType="number"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/afpImmunization_secondDose"
+                    app:value="@{data.secondDose}"
+                    app:inputType="number"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/afpImmunization_thirdDose_fourthDose_lastDose_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/afpImmunization_thirdDose"
+                    app:value="@{data.thirdDose}"
+                    app:inputType="number"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/afpImmunization_fourthDose"
+                    app:value="@{data.fourthDose}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/afpImmunization_lastDose"
+                    app:value="@{data.lastDose}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/afpImmunization_totalOpvDosesReceived_ri_sia_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/afpImmunization_totalOpvDosesReceivedThroughSia"
+                    app:value="@{data.totalOpvDosesReceivedThroughSia}"
+                    app:inputType="number"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/afpImmunization_totalOpvDosesReceivedThroughRi"
+                    app:value="@{data.totalOpvDosesReceivedThroughRi}"
+                    app:inputType="number"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/afpImmunization_dateLastOpvDosesReceivedThroughSia"
+                app:value="@{data.dateLastOpvDosesReceivedThroughSia}"
+                app:inputType="number"
+                style="@style/ControlSingleColumnStyle" />
+
+            <LinearLayout
+                android:id="@+id/afpImmunization_totalIpvDosesReceived_ri_sia_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/afpImmunization_totalIpvDosesReceivedThroughSia"
+                    app:value="@{data.totalIpvDosesReceivedThroughSia}"
+                    app:inputType="number"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/afpImmunization_totalIpvDosesReceivedThroughRi"
+                    app:value="@{data.totalIpvDosesReceivedThroughRi}"
+                    app:inputType="number"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/afpImmunization_dateLastReceivedSia_sourceRi_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/afpImmunization_dateLastIpvDosesReceivedThroughSia"
+                    app:value="@{data.dateLastIpvDosesReceivedThroughSia}"
+                    app:inputType="number"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/afpImmunization_sourceRiVaccinationInformation"
+                    app:value="@{data.sourceRiVaccinationInformation}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</layout>
+

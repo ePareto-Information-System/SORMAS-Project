@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ SORMAS® - Surveillance Outbreak Response Management & Analysis System
+  ~ Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="contentDescription"
+    android:id="@+id/base_layout"
+    android:descendantFocusability="beforeDescendants">
+
+    <data>
+        <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
+        <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
+        <import type="de.symeda.sormas.api.utils.YesNo" />
+        <import type="de.symeda.sormas.api.riskfactor.DrinkingWaterSource" />
+
+        <variable name="data" type="de.symeda.sormas.app.backend.sixtyday.SixtyDay" />
+        <variable name="caze" type="de.symeda.sormas.app.backend.caze.Case" />
+        <variable name="YesNoClass" type="Class" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/fragment_padding"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:id="@+id/main_content">
+
+            <requestFocus/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/heading_sixtyday"
+                android:textColor="@color/lightBlue"
+                style="@style/HeadingStyle" />
+
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/sixtyDay_personExamineCase"
+                app:value="@{data.personExamineCase}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <LinearLayout
+                android:id="@+id/sixtyDay_patientFound_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/sixtyDay_dateOfFollowup"
+                    app:value="@{data.dateOfFollowup}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/sixtyDay_dateBirth"
+                    app:value="@{data.dateBirth}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/sixtyDay_residentialLocation"
+                app:value="@{data.residentialLocation}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/sixtyDay_patientFound"
+                app:value="@{data.patientFound}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/sixtyDay_patientFoundReason"
+                app:value="@{data.patientFoundReason}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/sixtyDay_locateChildAttempt"
+                app:value="@{data.locateChildAttempt}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/sixtyDay_paralysisWeaknessPresent"
+                app:value="@{data.paralysisWeaknessPresent}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <LinearLayout
+                android:id="@+id/sixtyDay_paralysisWeaknessPresentSite_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/sixtyDay_paralysisWeaknessPresentSiteString"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/sixtyDay_paralyzedPartOther"
+                    app:value="@{data.paralyzedPartOther}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/sixtyDay_paralysisWeaknessFloppy"
+                app:value="@{data.paralysisWeaknessFloppy}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <LinearLayout
+                android:id="@+id/sixtyDay_paralysisWeaknessFloppySite_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/sixtyDay_muscleToneParalyzedPart"
+                    app:value="@{data.muscleToneParalyzedPart}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/sixtyDay_muscleToneOtherPartBody"
+                    app:value="@{data.muscleToneOtherPartBody}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/sixtyDay_deepTendon"
+                app:value="@{data.deepTendon}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/sixtyDay_muscleVolume"
+                app:value="@{data.muscleVolume}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/sixtyDay_sensoryLoss"
+                app:value="@{data.sensoryLoss}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/sixtyDay_provisionalDiagnosis"
+                app:value="@{data.provisionalDiagnosis}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/sixtyDay_comments"
+                app:value="@{data.comments}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <LinearLayout
+                android:id="@+id/sixtyDay_contactDetails_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/sixtyDay_contactDetailsNumber"
+                    app:value="@{data.contactDetailsNumber}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/sixtyDay_contactDetailsEmail"
+                    app:value="@{data.contactDetailsEmail}"
+                    app:inputType="textEmailAddress"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sixtyDay_signature_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/sixtyDay_signature"
+                    app:value="@{data.signature}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/sixtyDay_dateSubmissionForms"
+                    app:value="@{data.dateSubmissionForms}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</layout>
+

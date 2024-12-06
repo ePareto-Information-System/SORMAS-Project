@@ -63,6 +63,7 @@ import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.app.backend.affectedperson.AffectedPerson;
+import de.symeda.sormas.app.backend.afpimmunization.AfpImmunization;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalCourse;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalVisit;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalVisitCriteria;
@@ -90,6 +91,7 @@ import de.symeda.sormas.app.backend.region.District;
 import de.symeda.sormas.app.backend.region.Region;
 import de.symeda.sormas.app.backend.riskfactor.RiskFactor;
 import de.symeda.sormas.app.backend.sample.Sample;
+import de.symeda.sormas.app.backend.sixtyday.SixtyDay;
 import de.symeda.sormas.app.backend.symptoms.Symptoms;
 import de.symeda.sormas.app.backend.task.Task;
 import de.symeda.sormas.app.backend.therapy.Prescription;
@@ -226,7 +228,19 @@ public class CaseDao extends AbstractAdoDao<Case> {
 			date = investigationNotesDate;
 		}
 
+
+//		afpImmunization
+		Date afpImmunizationDate = getLatestChangeDateJoin(AfpImmunization.TABLE_NAME, Case.AFP_IMMUNIZATION);
+		if (afpImmunizationDate != null && afpImmunizationDate.after(date)) {
+			date = afpImmunizationDate;
+		}
+
+		Date sixtyDayDate = getLatestChangeDateJoin(SixtyDay.TABLE_NAME, Case.SIXTY_DAY);
+		if (sixtyDayDate != null && sixtyDayDate.after(date)) {
+			date = sixtyDayDate;
+		}
 		return date;
+
 	}
 
 	public List<Case> queryBaseForEq(String fieldName, Object value, String orderBy, boolean ascending, long offset, long limit) {
@@ -309,6 +323,10 @@ public class CaseDao extends AbstractAdoDao<Case> {
 		caze.setFoodHistory(DatabaseHelper.getFoodHistoryDao().build());
 
 		caze.setInvestigationNotes(DatabaseHelper.getInvestigationNotesDao().build());
+		//afp immunization
+		caze.setAfpImmunization(DatabaseHelper.getAfpImmunizationDao().build());
+
+		caze.setSixtyDay(DatabaseHelper.getSixtyDayDao().build());
 
 		// Location
 		User currentUser = ConfigProvider.getUser();

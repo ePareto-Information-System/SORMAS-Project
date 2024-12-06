@@ -246,6 +246,64 @@
                 app:value="@{data.outcome}"
                 style="@style/ControlSingleColumnStyle" />
 
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/symptoms_feverOnsetParalysis"
+                app:value="@{data.feverOnsetParalysis}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/symptoms_progressiveParalysis"
+                app:value="@{data.progressiveParalysis}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/symptoms_dateOnsetParalysis"
+                app:value="@{data.dateOnsetParalysis}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/symptoms_progressiveFlaccidAcute"
+                app:value="@{data.progressiveFlaccidAcute}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/symptoms_assymetric"
+                app:value="@{data.assymetric}"
+                style="@style/ControlSingleColumnStyle" />
+
+<!--            <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField-->
+<!--                android:id="@+id/symptoms_siteOfParalysis"-->
+<!--                app:value="@{data.siteOfParalysis}"-->
+<!--                app:enumClass="@{injectionSiteClass}"-->
+<!--                style="@style/ControlSingleColumnStyle" />-->
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/symptoms_paralysedLimbSensitiveToPain"
+                app:value="@{data.paralysedLimbSensitiveToPain}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/symptoms_injectionSiteBeforeOnsetParalysis"
+                app:value="@{data.injectionSiteBeforeOnsetParalysis}"
+                style="@style/ControlSingleColumnStyle" />
+
+<!--            <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField-->
+<!--                android:id="@+id/symptoms_injectionSite"-->
+<!--                app:value="@{data.injectionSite}"-->
+<!--                app:enumClass="@{injectionSiteClass}"-->
+<!--                style="@style/ControlSingleColumnStyle" />-->
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/symptoms_provisionalDiagnosis"
+                app:value="@{data.provisionalDiagnosis}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/symptoms_trueAfp"
+                app:value="@{data.trueAfp}"
+                style="@style/ControlSingleColumnStyle" />
+
         </LinearLayout>
 
     </ScrollView>

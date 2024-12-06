@@ -286,7 +286,8 @@ public class DiseaseFieldHandler {
         removeMenuItemIfFormAvailable(menuItems, FormType.RISK_FACTOR_EDIT, CaseSection.RISK_FACTORS);
         removeMenuItemIfFormAvailable(menuItems, FormType.FOOD_HISTORY_EDIT, CaseSection.FOOD_HISTORY);
         removeMenuItemIfFormAvailable(menuItems, FormType.INVESTIGATION_NOTES_EDIT, CaseSection.INVESTIGATION_NOTES);
-
+        removeMenuItemIfFormAvailable(menuItems, FormType.AFP_IMMUNIZATION_EDIT, CaseSection.AFP_IMMUNIZATION);
+        removeMenuItemIfFormAvailable(menuItems, FormType.SIXTY_DAY_FOLLOW_UP_EDIT, CaseSection.SIXTY_DAY_FOLLOW_UP);
         return menuItems;
     }
 

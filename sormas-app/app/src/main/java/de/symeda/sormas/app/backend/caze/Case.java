@@ -64,6 +64,7 @@ import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.VaccineTypes;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.app.backend.afpimmunization.AfpImmunization;
 import de.symeda.sormas.app.backend.caze.maternalhistory.MaternalHistory;
 import de.symeda.sormas.app.backend.caze.porthealthinfo.PortHealthInfo;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalCourse;
@@ -81,6 +82,7 @@ import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.District;
 import de.symeda.sormas.app.backend.region.Region;
 import de.symeda.sormas.app.backend.riskfactor.RiskFactor;
+import de.symeda.sormas.app.backend.sixtyday.SixtyDay;
 import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfo;
 import de.symeda.sormas.app.backend.symptoms.Symptoms;
 import de.symeda.sormas.app.backend.therapy.Therapy;
@@ -120,6 +122,9 @@ public class Case extends PseudonymizableAdo {
 	public static final String RISK_FACTOR = "riskFactor";
 	public static final String FOOD_HISTORY = "foodHistory";
 	public static final String INVESTIGATION_NOTES = "investigationNotes";
+	public static final String AFP_IMMUNIZATION = "afpImmunization";
+	public static final String SIXTY_DAY = "sixtyDay";
+
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, canBeNull = false, maxForeignAutoRefreshLevel = 3)
 	private Person person;
@@ -295,6 +300,11 @@ public class Case extends PseudonymizableAdo {
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private InvestigationNotes investigationNotes;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private AfpImmunization afpImmunization;
+
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private SixtyDay sixtyDay;
 
 	@Deprecated
 	@Column
@@ -979,6 +989,21 @@ public class Case extends PseudonymizableAdo {
 
 	public void setInvestigationNotes(InvestigationNotes investigationNotes) {this.investigationNotes = investigationNotes; }
 
+	public AfpImmunization getAfpImmunization() {
+		return afpImmunization;
+	}
+
+	public void setAfpImmunization(AfpImmunization afpImmunization) {
+		this.afpImmunization = afpImmunization;
+	}
+
+	public SixtyDay getSixtyDay() {
+		return sixtyDay;
+	}
+
+	public void setSixtyDay(SixtyDay sixtyDay) {
+		this.sixtyDay = sixtyDay;
+	}
 
 	public Double getReportLat() {
 		return reportLat;

@@ -285,6 +285,35 @@ public class Person extends PseudonymizableAdo {
 	private String investigatorAddress;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String investigatorTel;
+	
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String place;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String durationMonths;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String durationDays;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String place2;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String durationMonths2;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String durationDays2;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String place3;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String durationMonths3;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String durationDays3;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String place4;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String durationMonths4;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String durationDays4;
+
 
 	public Person() {
 	}
@@ -1044,5 +1073,101 @@ public class Person extends PseudonymizableAdo {
 
 	public void setInvestigatorTel(String investigatorTel) {
 		this.investigatorTel = investigatorTel;
+	}
+
+	public String getPlace() {
+		return place;
+	}
+
+	public void setPlace(String place) {
+		this.place = place;
+	}
+
+	public String getDurationMonths() {
+		return durationMonths;
+	}
+
+	public void setDurationMonths(String durationMonths) {
+		this.durationMonths = durationMonths;
+	}
+
+	public String getDurationDays() {
+		return durationDays;
+	}
+
+	public void setDurationDays(String durationDays) {
+		this.durationDays = durationDays;
+	}
+
+	public String getPlace2() {
+		return place2;
+	}
+
+	public void setPlace2(String place2) {
+		this.place2 = place2;
+	}
+
+	public String getDurationMonths2() {
+		return durationMonths2;
+	}
+
+	public void setDurationMonths2(String durationMonths2) {
+		this.durationMonths2 = durationMonths2;
+	}
+
+	public String getDurationDays2() {
+		return durationDays2;
+	}
+
+	public void setDurationDays2(String durationDays2) {
+		this.durationDays2 = durationDays2;
+	}
+
+	public String getPlace3() {
+		return place3;
+	}
+
+	public void setPlace3(String place3) {
+		this.place3 = place3;
+	}
+
+	public String getDurationMonths3() {
+		return durationMonths3;
+	}
+
+	public void setDurationMonths3(String durationMonths3) {
+		this.durationMonths3 = durationMonths3;
+	}
+
+	public String getDurationDays3() {
+		return durationDays3;
+	}
+
+	public void setDurationDays3(String durationDays3) {
+		this.durationDays3 = durationDays3;
+	}
+
+	public String getPlace4() {
+		return place4;
+	}
+
+	public void setPlace4(String place4) {
+		this.place4 = place4;
+	}
+
+	public String getDurationMonths4() {
+		return durationMonths4;
+	}
+
+	public void setDurationMonths4(String durationMonths4) {
+		this.durationMonths4 = durationMonths4;
+	}
+
+	public String getDurationDays4() {
+		return durationDays4;
+	}
+
+	public void setDurationDays4(String durationDays4) {
+		this.durationDays4 = durationDays4;
 	}
 }
