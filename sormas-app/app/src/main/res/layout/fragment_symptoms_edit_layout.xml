@@ -1611,12 +1611,14 @@
             <de.symeda.sormas.app.component.controls.ControlSwitchField
                 android:id="@+id/symptoms_firstSignOrSymptomsBeforeWorm"
                 app:enumClass="@{GuineaWormFirstSymptomClass}"
+                app:slim="true"
                 app:value="@={data.firstSignOrSymptomsBeforeWorm}"
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/symptoms_firstSignOrSymptomsBeforeWormOthers"
                 app:value="@={data.firstSignOrSymptomsBeforeWormOthers}"
+                app:slim="true"
                 app:dependencyParentField="@{symptomsFirstSignOrSymptomsBeforeWorm}"
                 app:dependencyParentValue="@{GuineaWormFirstSymptom.OTHER}"
                 style="@style/ControlSingleColumnStyle" />

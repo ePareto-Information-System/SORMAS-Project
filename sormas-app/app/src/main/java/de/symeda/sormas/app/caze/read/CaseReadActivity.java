@@ -201,6 +201,9 @@ public class CaseReadActivity extends BaseReadActivity<Case> {
 		case AFP_IMMUNIZATION:
 			fragment = CaseReadAfpImmunizationFragment.newInstance(activityRootData);
 			break;
+		case SIXTY_DAY_FOLLOW_UP:
+			fragment = CaseReadSixtyDayFragment.newInstance(activityRootData);
+			break;
 		default:
 			throw new IndexOutOfBoundsException(DataHelper.toStringNullable(section));
 		}

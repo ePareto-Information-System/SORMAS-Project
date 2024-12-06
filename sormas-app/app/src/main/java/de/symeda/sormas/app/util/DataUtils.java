@@ -18,6 +18,7 @@ package de.symeda.sormas.app.util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -173,5 +174,17 @@ public class DataUtils {
 		}
 
 		return candidates.get(new Random().nextInt(candidates.size()));
+	}
+
+//	getEnumListString
+	public static <E extends Enum<?>> String getEnumListString(Set<E> enumList) {
+		if (enumList == null || enumList.isEmpty()) {
+			return null;
+		}
+		StringBuilder sb = new StringBuilder();
+		for (E enumValue : enumList) {
+			sb.append(I18nProperties.getEnumCaption(enumValue)).append(", ");
+		}
+		return sb.substring(0, sb.length() - 2);
 	}
 }

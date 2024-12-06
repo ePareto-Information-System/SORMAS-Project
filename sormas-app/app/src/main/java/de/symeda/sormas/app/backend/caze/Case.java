@@ -80,6 +80,7 @@ import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.District;
 import de.symeda.sormas.app.backend.region.Region;
 import de.symeda.sormas.app.backend.riskfactor.RiskFactor;
+import de.symeda.sormas.app.backend.sixtyday.SixtyDay;
 import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfo;
 import de.symeda.sormas.app.backend.symptoms.Symptoms;
 import de.symeda.sormas.app.backend.therapy.Therapy;
@@ -118,6 +119,7 @@ public class Case extends PseudonymizableAdo {
 	public static final String HEALTH_CONDITIONS = "healthConditions";
 	public static final String RISK_FACTOR = "riskFactor";
 	public static final String AFP_IMMUNIZATION = "afpImmunization";
+	public static final String SIXTY_DAY = "sixtyDay";
 
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, canBeNull = false, maxForeignAutoRefreshLevel = 3)
@@ -291,6 +293,9 @@ public class Case extends PseudonymizableAdo {
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private AfpImmunization afpImmunization;
+
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private SixtyDay sixtyDay;
 
 	@Deprecated
 	@Column
@@ -968,6 +973,14 @@ public class Case extends PseudonymizableAdo {
 
 	public void setAfpImmunization(AfpImmunization afpImmunization) {
 		this.afpImmunization = afpImmunization;
+	}
+
+	public SixtyDay getSixtyDay() {
+		return sixtyDay;
+	}
+
+	public void setSixtyDay(SixtyDay sixtyDay) {
+		this.sixtyDay = sixtyDay;
 	}
 
 	public Double getReportLat() {

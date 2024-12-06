@@ -297,6 +297,9 @@ public class CaseEditActivity extends BaseEditActivity<Case> {
 		case AFP_IMMUNIZATION:
 			fragment = CaseEditAfpImmunizationFragment.newInstance(activityRootData);
 			break;
+		case SIXTY_DAY_FOLLOW_UP:
+			fragment = CaseEditSixtyDayFragment.newInstance(activityRootData);
+			break;
 		default:
 			throw new IndexOutOfBoundsException(DataHelper.toStringNullable(section));
 		}

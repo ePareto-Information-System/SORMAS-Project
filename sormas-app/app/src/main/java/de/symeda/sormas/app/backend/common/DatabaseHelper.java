@@ -179,6 +179,8 @@ import de.symeda.sormas.app.backend.sample.PathogenTestDao;
 import de.symeda.sormas.app.backend.sample.Sample;
 import de.symeda.sormas.app.backend.sample.SampleDao;
 import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerificationDao;
+import de.symeda.sormas.app.backend.sixtyday.SixtyDay;
+import de.symeda.sormas.app.backend.sixtyday.SixtyDayDao;
 import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfo;
 import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfoDao;
 import de.symeda.sormas.app.backend.symptoms.Symptoms;
@@ -220,7 +222,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
-	public static final int DATABASE_VERSION = 407;
+	public static final int DATABASE_VERSION = 408;
 
 	private static DatabaseHelper instance = null;
 
@@ -308,6 +310,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.clearTable(connectionSource, ContainmentMeasure.class);
 			TableUtils.clearTable(connectionSource, RiskFactor.class);
 			TableUtils.clearTable(connectionSource, AfpImmunization.class);
+			TableUtils.clearTable(connectionSource, SixtyDay.class);
 
 			if (clearInfrastructure) {
 				TableUtils.clearTable(connectionSource, UserUserRole.class);
@@ -430,6 +433,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, ContainmentMeasure.class);
 			TableUtils.createTable(connectionSource, RiskFactor.class);
 			TableUtils.createTable(connectionSource, AfpImmunization.class);
+			TableUtils.createTable(connectionSource, SixtyDay.class);
 		} catch (SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Can't build database", e);
 			throw new RuntimeException(e);
@@ -3985,6 +3989,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN durationMonths4 varchar(255);");
 					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN durationDays4 varchar(255);");
 				case 406:
+					currentVersion = 406;
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN afpImmunization_id BIGINT;");
 					getDao(AfpImmunization.class).executeRaw(
 							"CREATE TABLE afpImmunization ("
@@ -4013,7 +4018,65 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									+ "		snapshot SMALLINT,"
 									+ "		UNIQUE (snapshot ASC, uuid ASC)"
 									+ ");");
-
+				case 407:
+					currentVersion = 407;
+					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN sixtyday_id BIGINT;");
+					getDao(SixtyDay.class).executeRaw(
+							"CREATE TABLE sixtyday ("
+									+ "     id INTEGER PRIMARY KEY AUTOINCREMENT,"
+									+ "     uuid VARCHAR(36) NOT NULL UNIQUE,"
+									+ "     changeDate BIGINT NOT NULL,"
+									+ "		personExamineCase VARCHAR(255),"
+									+ "		dateOfFollowup DATE,"
+									+ "		dateBirth DATE,"
+									+ "		residentialLocation VARCHAR(255),"
+									+ "		patientFound VARCHAR(255),"
+									+ "		patientFoundReason VARCHAR(255),"
+									+ "		locateChildAttempt VARCHAR(255),"
+									+ "		paralysisWeaknessPresent VARCHAR(255),"
+									+ "		paralysisWeaknessPresentSiteString VARCHAR(255),"
+									+ "		paralyzedPartOther VARCHAR(255),"
+									+ "		paralysisWeaknessFloppy VARCHAR(255),"
+									+ "		muscleToneParalyzedPart VARCHAR(255),"
+									+ "		muscleToneOtherPartBody VARCHAR(255),"
+									+ "		deepTendon VARCHAR(255),"
+									+ "		muscleVolume VARCHAR(255),"
+									+ "		sensoryLoss VARCHAR(255),"
+									+ "		provisionalDiagnosis VARCHAR(255),"
+									+ "		comments VARCHAR(255),"
+									+ "		contactDetailsNumber VARCHAR(255),"
+									+ "		contactDetailsEmail VARCHAR(255),"
+									+ "		signature VARCHAR(255),"
+									+ "		dateSubmissionForms DATE,"
+									+ "		foodAvailableTesting VARCHAR(255),"
+									+ "		labTestConducted VARCHAR(255),"
+									+ "		specifyFoodsSources VARCHAR(255),"
+									+ "		specifySources VARCHAR(255),"
+									+ "		productName VARCHAR(255),"
+									+ "		batchNumber VARCHAR(255),"
+									+ "		dateOfManufacture DATE,"
+									+ "		expirationDate DATE,"
+									+ "		packageSize VARCHAR(255),"
+									+ "		packagingType VARCHAR(255),"
+									+ "		packagingTypeOther VARCHAR(255),"
+									+ "		placeOfPurchase VARCHAR(255),"
+									+ "		nameOfManufacturer VARCHAR(255),"
+									+ "		address VARCHAR(255),"
+									+ "		foodTel VARCHAR(255),"
+									+ "		surname VARCHAR(255),"
+									+ "		firstName VARCHAR(255),"
+									+ "		middleName VARCHAR(255),"
+									+ "		telNo VARCHAR(255),"
+									+ "		dateOfCompletionOfForm DATE,"
+									+ "		nameOfHealthFacility VARCHAR(255),"
+									+ "		pseudonymized SMALLINT,"
+									+ "     creationdate BIGINT NOT NULL,"
+									+ "		lastOpenedDate BIGINT,"
+									+ "		localChangeDate BIGINT NOT NULL,"
+									+ "		modified SMALLINT,"
+									+ "		snapshot SMALLINT,"
+									+ "		UNIQUE (snapshot ASC, uuid ASC)"
+									+ ");");
 					// ATTENTION: break should only be done after last version
 				break;
 			default:
@@ -4831,6 +4894,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.dropTable(connectionSource, PersonTravelHistory.class, true);
 			TableUtils.dropTable(connectionSource, ContaminationSource.class, true);
 			TableUtils.dropTable(connectionSource, ContainmentMeasure.class, true);
+			TableUtils.dropTable(connectionSource, SixtyDay.class, true);
 
 			if (oldVersion < 30) {
 				TableUtils.dropTable(connectionSource, Config.class, true);
@@ -4990,6 +5054,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					dao = (AbstractAdoDao<ADO>) new RiskFactorDao((Dao<RiskFactor, Long>) innerDao);
 				} else if (type.equals(AfpImmunization.class)) {
 					dao = (AbstractAdoDao<ADO>) new AfpImmunizationDao((Dao<AfpImmunization, Long>) innerDao);
+				} else if (type.equals(SixtyDay.class)) {
+					dao = (AbstractAdoDao<ADO>) new SixtyDayDao((Dao<SixtyDay, Long>) innerDao);
 				} else {
 					throw new UnsupportedOperationException(type.toString());
 				}
@@ -5109,6 +5175,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	public static RiskFactorDao getRiskFactorDao() {
 		return (RiskFactorDao) getAdoDao(RiskFactor.class);
+	}
+
+	public static SixtyDayDao getSixtyDayDao() {
+		return (SixtyDayDao) getAdoDao(SixtyDay.class);
 	}
 
 	public static AfpImmunizationDao getAfpImmunizationDao() {

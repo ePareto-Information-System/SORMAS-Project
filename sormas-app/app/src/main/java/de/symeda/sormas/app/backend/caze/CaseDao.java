@@ -87,6 +87,7 @@ import de.symeda.sormas.app.backend.region.District;
 import de.symeda.sormas.app.backend.region.Region;
 import de.symeda.sormas.app.backend.riskfactor.RiskFactor;
 import de.symeda.sormas.app.backend.sample.Sample;
+import de.symeda.sormas.app.backend.sixtyday.SixtyDay;
 import de.symeda.sormas.app.backend.symptoms.Symptoms;
 import de.symeda.sormas.app.backend.task.Task;
 import de.symeda.sormas.app.backend.therapy.Prescription;
@@ -215,6 +216,10 @@ public class CaseDao extends AbstractAdoDao<Case> {
 			date = afpImmunizationDate;
 		}
 
+		Date sixtyDayDate = getLatestChangeDateJoin(SixtyDay.TABLE_NAME, Case.SIXTY_DAY);
+		if (sixtyDayDate != null && sixtyDayDate.after(date)) {
+			date = sixtyDayDate;
+		}
 		return date;
 
 	}
@@ -297,6 +302,8 @@ public class CaseDao extends AbstractAdoDao<Case> {
 
 		//afp immunization
 		caze.setAfpImmunization(DatabaseHelper.getAfpImmunizationDao().build());
+
+		caze.setSixtyDay(DatabaseHelper.getSixtyDayDao().build());
 
 		// Location
 		User currentUser = ConfigProvider.getUser();

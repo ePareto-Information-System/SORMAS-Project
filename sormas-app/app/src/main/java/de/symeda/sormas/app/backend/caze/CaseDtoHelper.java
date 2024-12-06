@@ -48,6 +48,7 @@ import de.symeda.sormas.app.backend.region.DistrictDtoHelper;
 import de.symeda.sormas.app.backend.region.Region;
 import de.symeda.sormas.app.backend.region.RegionDtoHelper;
 import de.symeda.sormas.app.backend.riskfactor.RiskFactorDtoHelper;
+import de.symeda.sormas.app.backend.sixtyday.SixtyDayDtoHelper;
 import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfoDtoHelper;
 import de.symeda.sormas.app.backend.symptoms.Symptoms;
 import de.symeda.sormas.app.backend.symptoms.SymptomsDtoHelper;
@@ -72,6 +73,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 	private HealthConditionsDtoHelper healthConditionsDtoHelper = new HealthConditionsDtoHelper();
 	private RiskFactorDtoHelper riskFactorDtoHelper = new RiskFactorDtoHelper();
 	private AfpImmunizationDtoHelper afpImmunizationDtoHelper = new AfpImmunizationDtoHelper();
+	private SixtyDayDtoHelper sixtyDayDtoHelper = new SixtyDayDtoHelper();
 
 	@Override
 	protected Class<Case> getAdoClass() {
@@ -151,7 +153,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setPortHealthInfo(portHealthInfoDtoHelper.fillOrCreateFromDto(target.getPortHealthInfo(), source.getPortHealthInfo()));
 		target.setRiskFactor(riskFactorDtoHelper.fillOrCreateFromDto(target.getRiskFactor(), source.getRiskFactor()));
 		target.setAfpImmunization(afpImmunizationDtoHelper.fillOrCreateFromDto(target.getAfpImmunization(), source.getAfpImmunization()));
-
+		target.setSixtyDay(sixtyDayDtoHelper.fillOrCreateFromDto(target.getSixtyDay(), source.getSixtyDay()));
 		target.setSurveillanceOfficer(DatabaseHelper.getUserDao().getByReferenceDto(source.getSurveillanceOfficer()));
 		target.setClinicianName(source.getClinicianName());
 		target.setClinicianPhone(source.getClinicianPhone());
@@ -467,6 +469,13 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 				afpImmunizationDtoHelper.adoToDto(DatabaseHelper.getAfpImmunizationDao().queryForId(source.getAfpImmunization().getId())));
 		} else {
 			target.setAfpImmunization(null);
+		}
+
+		if (source.getSixtyDay() != null) {
+			target.setSixtyDay(
+				sixtyDayDtoHelper.adoToDto(DatabaseHelper.getSixtyDayDao().queryForId(source.getSixtyDay().getId())));
+		} else {
+			target.setSixtyDay(null);
 		}
 
 		target.setClinicianName(source.getClinicianName());
