@@ -78,8 +78,6 @@ public class SixtyDayDtoHelper extends AdoDtoHelper<SixtyDay, SixtyDayDto> {
 		target.setContactDetailsEmail(source.getContactDetailsEmail());
 		target.setSignature(source.getSignature());
 		target.setDateSubmissionForms(source.getDateSubmissionForms());
-		target.setFoodAvailableTesting(source.getFoodAvailableTesting());
-		target.setLabTestConducted(source.getLabTestConducted());
 		target.setSpecifyFoodsSources(source.getSpecifyFoodsSources());
 		target.setSpecifySources(source.getSpecifySources());
 		target.setProductName(source.getProductName());
@@ -93,12 +91,6 @@ public class SixtyDayDtoHelper extends AdoDtoHelper<SixtyDay, SixtyDayDto> {
 		target.setNameOfManufacturer(source.getNameOfManufacturer());
 		target.setAddress(source.getAddress());
 		target.setFoodTel(source.getFoodTel());
-		target.setSurname(source.getSurname());
-		target.setFirstName(source.getFirstName());
-		target.setMiddleName(source.getMiddleName());
-		target.setTelNo(source.getTelNo());
-		target.setDateOfCompletionOfForm(source.getDateOfCompletionOfForm());
-		target.setNameOfHealthFacility(source.getNameOfHealthFacility());
 	}
 
 	@Override
@@ -125,8 +117,6 @@ public class SixtyDayDtoHelper extends AdoDtoHelper<SixtyDay, SixtyDayDto> {
 		target.setContactDetailsEmail(source.getContactDetailsEmail());
 		target.setSignature(source.getSignature());
 		target.setDateSubmissionForms(source.getDateSubmissionForms());
-		target.setFoodAvailableTesting(source.getFoodAvailableTesting());
-		target.setLabTestConducted(source.getLabTestConducted());
 		target.setSpecifyFoodsSources(source.getSpecifyFoodsSources());
 		target.setSpecifySources(source.getSpecifySources());
 		target.setProductName(source.getProductName());
@@ -140,12 +130,6 @@ public class SixtyDayDtoHelper extends AdoDtoHelper<SixtyDay, SixtyDayDto> {
 		target.setNameOfManufacturer(source.getNameOfManufacturer());
 		target.setAddress(source.getAddress());
 		target.setFoodTel(source.getFoodTel());
-		target.setSurname(source.getSurname());
-		target.setFirstName(source.getFirstName());
-		target.setMiddleName(source.getMiddleName());
-		target.setTelNo(source.getTelNo());
-		target.setDateOfCompletionOfForm(source.getDateOfCompletionOfForm());
-		target.setNameOfHealthFacility(source.getNameOfHealthFacility());
 	}
 
     @Override
