@@ -270,6 +270,10 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 
 		}
 
+		if ( disease == Disease.YELLOW_FEVER){
+			contentBinding.symptomsTemperature.setCaption("Maximum body temperature in ° C");
+		}
+
 		contentBinding.symptomsCongenitalHeartDisease.addValueChangedListener(e -> {
 			if (e.getValue() != SymptomState.YES) {
 				contentBinding.symptomsCongenitalHeartDiseaseDetails.setVisibility(GONE);

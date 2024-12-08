@@ -246,7 +246,7 @@ public class Case extends PseudonymizableAdo {
 	private HealthConditions healthConditions;
 
 	@Enumerated(EnumType.STRING)
-	@DatabaseField(columnName = "vaccination")
+	@DatabaseField(columnName = "vaccinationStatus")
 	private VaccinationStatus vaccinationStatus;
 	@Enumerated(EnumType.STRING)
 	@DatabaseField(columnName = "vaccinationType")
@@ -445,9 +445,6 @@ public class Case extends PseudonymizableAdo {
 	private Date followUpStatusChangeDate;
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private User followUpStatusChangeUser;
-	private String functionOfReportingOfficer;
-	private String reportingOfficerContactPhone;
-	private String reportingOfficerEmail;
 
 	@DatabaseField
 	private String reportingVillage;
@@ -469,6 +466,12 @@ public class Case extends PseudonymizableAdo {
 	private String reportingOfficerName;
 	@DatabaseField
 	private String reportingOfficerTitle;
+	@DatabaseField
+	private String functionOfReportingOfficer;
+	@DatabaseField
+	private String reportingOfficerContactPhone;
+	@DatabaseField
+	private String reportingOfficerEmail;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date secondVaccinationDate;
 	@Enumerated(EnumType.STRING)
