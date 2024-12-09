@@ -158,9 +158,9 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setW1(source.getW1());
 		target.setW2(source.getW2());
 		target.setW3(source.getW3());
-		target.setsL1(source.getsL1());
-		target.setsL2(source.getsL2());
-		target.setsL3(source.getsL3());
+		target.setSL1(source.getsL1());
+		target.setSL2(source.getsL2());
+		target.setSL3(source.getsL3());
 		target.setDateSentToNationalRegLab(source.getDateSentToNationalRegLab());
 		target.setDateDifferentiationSentToEpi(source.getDateDifferentiationSentToEpi());
 		target.setDateDifferentiationReceivedFromEpi(source.getDateDifferentiationReceivedFromEpi());
@@ -304,9 +304,9 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setW1(source.getW1());
 		target.setW2(source.getW2());
 		target.setW3(source.getW3());
-		target.setsL1(source.getsL1());
-//		target.setsL2(source.getsL2());
-		target.setsL3(source.getsL3());
+		target.setsL1(source.getSL1());
+		target.setsL2(source.getSL2());
+		target.setsL3(source.getSL3());
 		target.setDateSentToNationalRegLab(source.getDateSentToNationalRegLab());
 		target.setDateDifferentiationSentToEpi(source.getDateDifferentiationSentToEpi());
 		target.setDateDifferentiationReceivedFromEpi(source.getDateDifferentiationReceivedFromEpi());
