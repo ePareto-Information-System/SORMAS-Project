@@ -1,34 +1,35 @@
 package de.symeda.sormas.ui.ebs;
 
 
-import com.vaadin.shared.ui.ContentMode;
+import static de.symeda.sormas.ui.utils.CssStyles.H3;
+import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
+import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
+
+import java.util.Arrays;
+
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Window;
 import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
-import com.vaadin.v7.ui.VerticalLayout;
+
 import de.symeda.sormas.api.EntityDto;
-import de.symeda.sormas.api.ebs.*;
-import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.ebs.EbsDto;
+import de.symeda.sormas.api.ebs.EbsTriagingDecision;
+import de.symeda.sormas.api.ebs.SignalOutcome;
+import de.symeda.sormas.api.ebs.SignalVerificationDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.utils.YesNo;
-import de.symeda.sormas.ui.utils.*;
-import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
-import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
+import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.NullableOptionGroup;
-;
-import java.util.Arrays;
+import de.symeda.sormas.ui.utils.NumberNumericValueValidator;
 
-import static de.symeda.sormas.ui.utils.CssStyles.H3;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
-import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
-import static java.lang.Integer.parseInt;
+;
 
 public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificationDto> {
 
@@ -58,7 +59,7 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
             SignalVerificationDto.I18N_PREFIX,
             false,
             FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-            createFieldAccessCheckers(isPseudonymized, inJurisdiction, true),ebsDto);
+            createFieldAccessCheckers(isPseudonymized,  true),ebsDto);
         this.ebs = ebsDto;
         this.parentClass = parentClass;
         addFields();
@@ -66,12 +67,10 @@ public class SignalVerificationDataForm extends AbstractEditForm<SignalVerificat
 
     private static UiFieldAccessCheckers createFieldAccessCheckers(
             boolean isPseudonymized,
-            boolean inJurisdiction,
             boolean withPersonalAndSensitive) {
 
         if (withPersonalAndSensitive) {
-            return UiFieldAccessCheckers
-                    .forDataAccessLevel(UserProvider.getCurrent().getPseudonymizableDataAccessLevel(inJurisdiction), isPseudonymized);
+            return UiFieldAccessCheckers.getDefault(isPseudonymized);
         }
 
         return UiFieldAccessCheckers.getNoop();

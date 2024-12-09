@@ -65,6 +65,7 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 	private List<Item> initialRegions;
 	private List<Item> initialDistricts;
 	private List<Item> initialCommunities;
+	private List<Item> mediaScanningType;
 
 
 	public static EbsEditFragment newInstance(Ebs activityRootData) {
@@ -158,6 +159,7 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 		categoryOfInformant = DataUtils.getEnumItems(PersonReporting.class,true);
 		manualScanningType = DataUtils.getEnumItems(ManualScanningType.class,true);
 		automaticScanningType = DataUtils.getEnumItems(AutomaticScanningType.class, true);
+		mediaScanningType = DataUtils.getEnumItems(MediaScannningType.class, true);
 		initialRegions = InfrastructureDaoHelper.loadRegionsByServerCountry();
 		initialDistricts = InfrastructureDaoHelper.loadDistricts(record.getEbsLocation().getRegion());
 		initialCommunities = InfrastructureDaoHelper.loadCommunities(record.getEbsLocation().getDistrict());
@@ -170,8 +172,8 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 
 		contentBinding.setData(record);
 		contentBinding.setAutomaticScanningTypeClass(AutomaticScanningType.class);
-		contentBinding.setMediaScannningTypeClass(MediaScannningType.class);
 		contentBinding.setManualScanningTypeClass(ManualScanningType.class);
+		contentBinding.setMediaScannningTypeClass(MediaScannningType.class);
 		ValidationHelper.initPhoneNumberValidator(contentBinding.ebsInformantTel);
 		ValidationHelper.initPhoneNumberValidator(contentBinding.ebsPersonPhone);
 		InfrastructureFieldsDependencyHandler.instance.initializeRegionFields(
@@ -190,11 +192,10 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 	@Override
 	protected void onAfterLayoutBinding(FragmentEbsEditLayoutBinding contentBinding) {
 		super.onAfterLayoutBinding(contentBinding);
-		List<MediaScannningType> scannningTypes;
-		scannningTypes = Arrays.asList(MediaScannningType.AUTOMATIC);
 		contentBinding.ebsSourceInformation.initializeSpinner(sourceInformation);
 		contentBinding.ebsAutomaticScanningType.initializeSpinner(automaticScanningType);
 		contentBinding.ebsManualScanningType.initializeSpinner(manualScanningType);
+		contentBinding.ebsScanningType.initializeSpinner(mediaScanningType);
 		contentBinding.ebsReportDateTime.initializeDateField(getFragmentManager());
 		contentBinding.ebsDateOnset.initializeDateField(getFragmentManager());
 		contentBinding.ebsInformantName.setVisibility(GONE);
@@ -234,7 +235,6 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 							PersonReporting.OTHER
 					);
 					contentBinding.ebsInformantName.setVisibility(GONE);
-					contentBinding.ebsScanningType.setValue(scannningTypes);
 					break;
 				case HOTLINE_PERSON:
 					itemsToAdd = Arrays.asList(
@@ -256,7 +256,26 @@ public class EbsEditFragment extends BaseEditFragment<FragmentEbsEditLayoutBindi
 			contentBinding.ebsCategoryOfInformant.initializeSpinner(filteredInformant);
 			contentBinding.ebsInformantName.setVisibility((e.getValue() == EbsSourceType.MEDIA_NEWS) ? GONE : View.VISIBLE);
 		});
+		contentBinding.ebsCategoryOfInformant.addValueChangedListener(e->{
+			List<MediaScannningType> itemsToAdd;
+			if (e.getValue() != PersonReporting.PERSON_NATIONAL) {
+				itemsToAdd = Arrays.asList(
+						MediaScannningType.MANUAL
+				);
+            }else if (e.getValue() == PersonReporting.PERSON_NATIONAL){
+				itemsToAdd = Arrays.asList(
+						MediaScannningType.MANUAL,
+						MediaScannningType.AUTOMATIC
+				);
+			}else {
+				itemsToAdd = Collections.emptyList();
+			}
+			List<Item> filteredInformant = mediaScanningType.stream()
+					.filter(item -> itemsToAdd.toString().contains(item.toString()))
+					.collect(Collectors.toList());
 
+			contentBinding.ebsScanningType.initializeSpinner(filteredInformant);
+		});
 	}
 
 	@Override

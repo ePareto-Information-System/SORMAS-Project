@@ -17,7 +17,6 @@ package de.symeda.sormas.backend.ebs;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EditPermissionType;
-import de.symeda.sormas.api.RequestContextHolder;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.document.DocumentRelatedEntityType;
 import de.symeda.sormas.api.ebs.*;
@@ -40,8 +39,8 @@ import de.symeda.sormas.backend.share.ExternalShareInfo;
 import de.symeda.sormas.backend.share.ExternalShareInfoCountAndLatestDate;
 import de.symeda.sormas.backend.share.ExternalShareInfoService;
 import de.symeda.sormas.backend.sormastosormas.SormasToSormasFacadeEjb;
-import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfoFacadeEjb;
-import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfoService;
+import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfoFacadeEjb;
+import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfoService;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.*;
@@ -59,7 +58,7 @@ import java.util.stream.Collectors;
 
 @Stateless
 @LocalBean
-public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
+public class EbsService extends AbstractCoreAdoService<Ebs> {
 
 	@EJB
 	private CaseService caseService;
@@ -84,7 +83,6 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		super(Ebs.class);
 	}
 
-	@Override
 	@SuppressWarnings("rawtypes")
 	protected Predicate createRelevantDataFilter(CriteriaBuilder cb, CriteriaQuery cq, From<?, Ebs> from) {
 
@@ -102,7 +100,7 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		return filter;
 	}
 
-	@Override
+
 	protected List<String> referencesToBeFetched() {
 		return Arrays.asList(Ebs.EBS_LOCATION);
 	}
@@ -126,12 +124,12 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 			filter = CriteriaBuilderHelper.and(cb, filter, userFilter);
 		}
 
-		if (RequestContextHolder.isMobileSync()) {
-			Predicate predicate = createLimitedChangeDateFilter(cb, from);
-			if (predicate != null) {
-				filter = CriteriaBuilderHelper.and(cb, filter, predicate);
-			}
-		}
+//		if (RequestContextHolder.isMobileSync()) {
+//			Predicate predicate = createLimitedChangeDateFilter(cb, from);
+//			if (predicate != null) {
+//				filter = CriteriaBuilderHelper.and(cb, filter, predicate);
+//			}
+//		}
 
 		cq.where(filter);
 		cq.select(from.get(Ebs.UUID));
@@ -183,7 +181,7 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 			List<String> sharedEbsUuids = getSharedEbsUuids(entityUuids);
 			if (!sharedEbsUuids.isEmpty()) {
 				try {
-					externalSurveillanceToolGatewayFacade.sendEbsInternal(sharedEbsUuids, archived);
+					externalSurveillanceToolGatewayFacade.sendEbs(sharedEbsUuids, archived);
 				} catch (ExternalSurveillanceToolException e) {
 					throw new ExternalSurveillanceToolRuntimeException(e.getMessage(), e.getErrorCode());
 				}
@@ -288,7 +286,6 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		return createUserFilter(new EbsQueryContext(cb, cq, from));
 	}
 
-	@Override
 	protected EbsJoins toJoins(From<?, Ebs> adoPath) {
 		return new EbsJoins(adoPath);
 	}
@@ -312,12 +309,12 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		final EbsJoins ebsJoins = queryContext.getJoins();
 		final From<?, Ebs> ebsJoin = queryContext.getRoot();
 
-		if (RequestContextHolder.isMobileSync()) {
-			Predicate limitedChangeDatePredicate = CriteriaBuilderHelper.and(cb, createLimitedChangeDateFilter(cb, ebsJoin));
-			if (limitedChangeDatePredicate != null) {
-				filter = CriteriaBuilderHelper.and(cb, filter, limitedChangeDatePredicate);
-			}
-		}
+//		if (RequestContextHolder.isMobileSync()) {
+//			Predicate limitedChangeDatePredicate = CriteriaBuilderHelper.and(cb, createLimitedChangeDateFilter(cb, ebsJoin));
+//			if (limitedChangeDatePredicate != null) {
+//				filter = CriteriaBuilderHelper.and(cb, filter, limitedChangeDatePredicate);
+//			}
+//		}
 
 		return filter;
 	}
@@ -331,11 +328,10 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		return addChangeDates(new ChangeDateFilterBuilder(cb, dateExpression), joins, false).build();
 	}
 
-	@Override
 	protected <T extends ChangeDateBuilder<T>> T addChangeDates(T builder, EbsJoins joins, boolean includeExtendedChangeDateFilters) {
 
 		final From<?, Ebs> ebsFrom = joins.getRoot();
-		builder = super.addChangeDates(builder, joins, includeExtendedChangeDateFilters).add(ebsFrom, Ebs.EBS_LOCATION);
+		builder = super.addChangeDates(builder, ebsFrom, includeExtendedChangeDateFilters).add(ebsFrom, Ebs.EBS_LOCATION);
 
 		if (includeExtendedChangeDateFilters) {
 			builder.add(ebsFrom, Ebs.SORMAS_TO_SORMAS_ORIGIN_INFO)
@@ -517,31 +513,6 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 	}
 
 
-	@Override
-	public EditPermissionType getEditPermissionType(Ebs ebs) {
-
-		if (!inJurisdictionOrOwned(ebs)) {
-			return EditPermissionType.OUTSIDE_JURISDICTION;
-		}
-
-		return super.getEditPermissionType(ebs);
-	}
-
-	public boolean inJurisdiction(Ebs ebs) {
-
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Boolean> cq = cb.createQuery(Boolean.class);
-		Root<Ebs> root = cq.from(Ebs.class);
-		cq.multiselect(JurisdictionHelper.booleanSelector(cb, inJurisdiction(new EbsQueryContext(cb, cq, root), userService.getCurrentUser())));
-		cq.where(cb.equal(root.get(Ebs.UUID), ebs.getUuid()));
-		return em.createQuery(cq).getResultList().stream().anyMatch(aBoolean -> aBoolean);
-	}
-
-	public Predicate inJurisdiction(EbsQueryContext qc, User user) {
-		return EbsJurisdictionPredicateValidator.of(qc, user).inJurisdiction();
-	}
-
-	@Override
 	public Predicate inJurisdictionOrOwned(CriteriaBuilder cb, CriteriaQuery<?> cq, From<?, Ebs> from) {
 		return inJurisdictionOrOwned(new EbsQueryContext(cb, cq, from));
 	}
@@ -549,9 +520,30 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 	public Predicate inJurisdictionOrOwned(EbsQueryContext qc) {
 		return inJurisdictionOrOwned(qc, getCurrentUser());
 	}
-
-	public Predicate inJurisdictionOrOwned(EbsQueryContext qc, User user) {
+	public boolean inJurisdictionOrOwned(Ebs event) {
+		return inJurisdictionOrOwned(event, getCurrentUser());
+	}
+		public Predicate inJurisdictionOrOwned(EbsQueryContext qc, User user) {
 		return EbsJurisdictionPredicateValidator.of(qc, user).inJurisdictionOrOwned();
+	}
+
+	public boolean inJurisdictionOrOwned(Ebs ebs, User user) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Boolean> cq = cb.createQuery(Boolean.class);
+		Root<Ebs> root = cq.from(Ebs.class);
+		cq.multiselect(JurisdictionHelper.booleanSelector(cb, inJurisdictionOrOwned(new EbsQueryContext(cb, cq, root), user)));
+		cq.where(cb.equal(root.get(Ebs.UUID), ebs.getUuid()));
+		return em.createQuery(cq).getResultList().stream().anyMatch(aBoolean -> aBoolean);
+	}
+
+	public boolean inJurisdiction(Ebs ebs) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Boolean> cq = cb.createQuery(Boolean.class);
+		Root<Ebs> root = cq.from(Ebs.class);
+		cq.multiselect(JurisdictionHelper.booleanSelector(cb, inJurisdictionOrOwned(new EbsQueryContext(cb, cq, root), userService.getCurrentUser())));
+		cq.where(cb.equal(root.get(Ebs.UUID), ebs.getUuid()));
+		return em.createQuery(cq).getResultList().stream().anyMatch(aBoolean -> aBoolean);
 	}
 
 	@Transactional(rollbackOn = Exception.class)
@@ -580,6 +572,20 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		cq.distinct(true);
 
 		return em.createQuery(cq).getResultList();
+	}
+
+	@Override
+	public EditPermissionType isEditAllowed(Ebs event) {
+
+		if (event.getSormasToSormasOriginInfo() != null && !event.getSormasToSormasOriginInfo().isOwnershipHandedOver()) {
+			return EditPermissionType.REFUSED;
+		}
+
+		if (!inJurisdictionOrOwned(event) || sormasToSormasShareInfoService.isEbsOwnershipHandedOver(event)) {
+			return EditPermissionType.REFUSED;
+		}
+
+		return super.getEditPermissionType(event);
 	}
 
 	public String getUuidByCaseUuidOrPersonUuid(String searchTerm) {

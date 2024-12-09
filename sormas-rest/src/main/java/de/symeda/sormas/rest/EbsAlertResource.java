@@ -1,0 +1,72 @@
+/*
+ * SORMAS® - Surveillance Outbreak Response Management & Analysis System
+ * Copyright © 2016-2023 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package de.symeda.sormas.rest;
+
+import java.util.Date;
+import java.util.List;
+import java.util.function.UnaryOperator;
+
+import javax.validation.Valid;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.PushResult;
+import de.symeda.sormas.api.ebs.EbsAlertDto;
+
+@Path("/ebsAlert")
+@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+@Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+public class EbsAlertResource extends EntityDtoResource {
+
+	@GET
+	@Path("/all/{since}/{size}/{lastSynchronizedUuid}")
+	public List<EbsAlertDto> getAllAlerts(@PathParam("since") long since) {
+		return FacadeProvider.getAlertFacade().getAllAfter(new Date(since));
+	}
+
+	@GET
+	@Path("/{uuid}")
+	public EbsAlertDto getByUuid(@PathParam("uuid") String uuid) {
+		return FacadeProvider.getAlertFacade().getAlertByUuid(uuid, true);
+	}
+
+	@GET
+	@Path("/uuids")
+	public List<String> getAllActiveUuids() {
+		return FacadeProvider.getAlertFacade().getAllActiveUuids();
+	}
+
+	public UnaryOperator<EbsAlertDto> getSave() {
+		return FacadeProvider.getAlertFacade()::saveAlert;
+	}
+
+	@POST
+	@Path("/push")
+	public List<PushResult> postTasks(@Valid List<EbsAlertDto> dtos) {
+		List<PushResult> result = savePushedDto(dtos, FacadeProvider.getAlertFacade()::saveAlert);
+		return result;
+	}
+
+//	public Response postEntityDtos(List<EbsAlertDto> ebaDtos) {
+//		return super.postEntityDtos(ebaDtos);
+//	}
+}

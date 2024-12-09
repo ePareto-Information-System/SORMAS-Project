@@ -2,7 +2,7 @@ package de.symeda.sormas.app.backend.ebs;
 
 import java.util.List;
 
-import de.symeda.sormas.api.PostResponse;
+import de.symeda.sormas.api.PushResult;
 import de.symeda.sormas.api.ebs.EbsDto;
 import de.symeda.sormas.api.ebs.EbsReferenceDto;
 import de.symeda.sormas.api.ebs.SignalVerificationDto;
@@ -52,7 +52,7 @@ public class EbsDtoHelper extends AdoDtoHelper<Ebs, EbsDto> {
     }
 
     @Override
-    protected Call<List<PostResponse>> pushAll(List<EbsDto> ebsDtos) throws NoConnectionException {
+    protected Call<List<PushResult>> pushAll(List<EbsDto> ebsDtos) throws NoConnectionException {
         return RetroProvider.getEbsFacade().pushAll(ebsDtos);
     }
 

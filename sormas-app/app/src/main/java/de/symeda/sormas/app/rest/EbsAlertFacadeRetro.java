@@ -17,7 +17,7 @@ package de.symeda.sormas.app.rest;
 
 import java.util.List;
 
-import de.symeda.sormas.api.PostResponse;
+import de.symeda.sormas.api.PushResult;
 import de.symeda.sormas.api.ebs.EbsAlertDto;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -34,7 +34,7 @@ public interface EbsAlertFacadeRetro {
 	Call<List<EbsAlertDto>> pullByUuids(@Body List<String> uuids);
 
 	@POST("ebsAlert/push")
-	Call<List<PostResponse>> pushAll(@Body List<EbsAlertDto> dtos);
+	Call<List<PushResult>> pushAll(@Body List<EbsAlertDto> dtos);
 
 	@GET("ebsAlert/uuids")
 	Call<List<String>> pullUuids();

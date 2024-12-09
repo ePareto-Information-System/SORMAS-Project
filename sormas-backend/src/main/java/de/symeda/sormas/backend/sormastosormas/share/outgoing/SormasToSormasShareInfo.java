@@ -51,6 +51,7 @@ public class SormasToSormasShareInfo extends AbstractDomainObject {
 	public static final String CONTACT = "contact";
 	public static final String SAMPLE = "sample";
 	public static final String EVENT = "event";
+	public static final String EBS = "ebs";
 	public static final String EVENT_PARTICIPANT = "eventParticipant";
 	public static final String IMMUNIZATION = "immunization";
 	public static final String SURVEILLANCE_REPORT = "surveillanceReport";

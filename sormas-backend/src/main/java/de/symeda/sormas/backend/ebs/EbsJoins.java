@@ -15,6 +15,10 @@
 
 package de.symeda.sormas.backend.ebs;
 
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+
 import de.symeda.sormas.backend.common.QueryJoins;
 import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.infrastructure.district.District;
@@ -23,10 +27,6 @@ import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.location.LocationJoins;
 import de.symeda.sormas.backend.user.User;
-
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
 
 public class EbsJoins extends QueryJoins<Ebs> {
 
@@ -110,7 +110,7 @@ public class EbsJoins extends QueryJoins<Ebs> {
 	}
 
 	public Join<Ebs, RiskAssessment> getRiskAssessment() {
-		return riskAssessment;
+		return getOrCreate(riskAssessment, Ebs.RISK_ASSESSMENT, JoinType.LEFT, this::setRiskAssessment);
 	}
 
 	public void setRiskAssessment(Join<Ebs, RiskAssessment> riskAssessment) {

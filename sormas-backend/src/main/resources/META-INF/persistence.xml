@@ -5,7 +5,7 @@
 	<persistence-unit name="SormasPU" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 		<jta-data-source>jdbc/sormasDataPool</jta-data-source>
-        
+
 		<class>de.symeda.sormas.backend.action.Action</class>
 		<class>de.symeda.sormas.backend.caze.Case</class>
 		<class>de.symeda.sormas.backend.common.AbstractDomainObject</class>

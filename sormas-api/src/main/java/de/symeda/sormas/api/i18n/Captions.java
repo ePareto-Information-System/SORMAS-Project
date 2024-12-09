@@ -346,6 +346,7 @@ public interface Captions {
 	String CaseData_contactTracingFirstContactDate = "CaseData.contactTracingFirstContactDate";
 	String CaseData_contactTracingFirstContactType = "CaseData.contactTracingFirstContactType";
 	String CaseData_creationDate = "CaseData.creationDate";
+	String CaseData_lastDateOfVaccination = "CaseData.lastDateOfVaccination";
 	String CaseData_deletionReason = "CaseData.deletionReason";
 	String CaseData_dengueFeverType = "CaseData.dengueFeverType";
 	String CaseData_differentPlaceOfStayJurisdiction = "CaseData.differentPlaceOfStayJurisdiction";
@@ -787,6 +788,8 @@ public interface Captions {
 	String Configuration_Disease = "Configuration.Disease";
 //	FormType
 	String Configuration_FormType = "Configuration.FormType";
+	String Configuration_Diseases = "Configuration.Diseases";
+	String Configuration_Disease = "Configuration.Disease";
 	String Configuration_Outbreaks = "Configuration.Outbreaks";
 	String Configuration_PointsOfEntry = "Configuration.PointsOfEntry";
 	String Contact = "Contact";
@@ -1014,7 +1017,7 @@ public interface Captions {
 	String dashboardDiscarded = "dashboardDiscarded";
 	String dashboardDiseaseBurdenInfo = "dashboardDiseaseBurdenInfo";
 	String dashboardRegionalDiseaseBurden = "dashboardRegionalDiseaseBurden";
-	String dashboardDistrictDiseaseBurden="dashboardDistrictDiseaseBurden";
+	String dashboardDistrictDiseaseBurden = "dashboardDistrictDiseaseBurden";
 	String diseaseDetailMap = "diseaseDetailMap";
 	String dashboardDiseaseBurdenOutbreakDistricts = "dashboardDiseaseBurdenOutbreakDistricts";
 	String dashboardDiseaseCarouselSlideShow = "dashboardDiseaseCarouselSlideShow";
@@ -1746,6 +1749,7 @@ public interface Captions {
 	String exportInfrastructureData = "exportInfrastructureData";
 	String exportNewExportConfiguration = "exportNewExportConfiguration";
 	String exportSamples = "exportSamples";
+	String exportCaseSamplesDetailed = "Detailed Case And Sample Export";
 	String exportSelectSormasData = "exportSelectSormasData";
 	String exportSormasData = "exportSormasData";
 	String exportUserRoles = "exportUserRoles";
@@ -2017,8 +2021,7 @@ public interface Captions {
 
 	String importPicked = "importPicked";
 
-	String importMerged ="importMerged" +
-			"" ;
+	String importMerged = "importMerged" + "";
 	String importErrorDescription = "importErrorDescription";
 	String importErrors = "importErrors";
 	String importImportData = "importImportData";

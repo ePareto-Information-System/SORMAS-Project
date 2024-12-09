@@ -70,8 +70,7 @@ public class EbsDataView extends AbstractEbsView {
 		container.addComponent(layout);
 
 		final String uuid = ebs.getUuid();
-		final EditPermissionType ebsEditAllowed = FacadeProvider.getEbsFacade().getEditPermissionType(uuid);
-		boolean isEditAllowed = isEditAllowed();
+		final EditPermissionType ebsEditAllowed = FacadeProvider.getEbsFacade().isEditAllowed(uuid);
 
 		VerticalLayout shortcutLinksLayout = new VerticalLayout();
 		shortcutLinksLayout.setMargin(false);
@@ -81,7 +80,6 @@ public class EbsDataView extends AbstractEbsView {
 		layout.addSidePanelComponent(shortcutLinksLayout, SHORTCUT_LINKS_LOC);
 
 		final boolean deleted = FacadeProvider.getEventFacade().isDeleted(uuid);
-		layout.disableIfNecessary(deleted, ebsEditAllowed);
-		editComponent.setEnabled(isEditAllowed());
+		editComponent.setEnabled(true);
 	}
 }

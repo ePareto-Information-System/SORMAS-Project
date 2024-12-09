@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
+import android.widget.AdapterView;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -94,11 +95,9 @@ public class RiskAssessmentListActivity extends PagedBaseListActivity {
     @Override
     public List<PageMenuItem> getPageMenuData() {
         if (EbsEditActivity.getParentEbs().getSignalVerification().getVerified() != SignalOutcome.EVENT){
+            EbsListActivity.showWarningAlert = true;
+            EbsListActivity.message = R.string.risk_disabled_signal_not_verified;
             EbsListActivity.startActivity(getContext(),null);
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.indicator_warning)
-                    .setMessage(R.string.signal_not_event)
-                    .show();
         }
         return PageMenuItem.fromEnum(riskAssessments, getContext());
     }
@@ -142,6 +141,11 @@ public class RiskAssessmentListActivity extends PagedBaseListActivity {
     @Override
     protected boolean isEntryCreateAllowed() {
         return ConfigProvider.hasUserRight(UserRight.EVENT_CREATE);
+    }
+
+    @Override
+    public int onNotificationCountChangingAsync(AdapterView parent, PageMenuItem menuItem, int position) {
+        return 0;
     }
 
     @Override

@@ -63,6 +63,7 @@ public interface PathogenTestFacade {
 	List<PathogenTestDto> getAllActivePathogenTestsAfter(Date date, Integer batchSize, String lastSynchronizedUuid);
 
 	Page<PathogenTestDto> getIndexPage(PathogenTestCriteria pathogenTestCriteria, Integer offset, Integer size, List<SortProperty> sortProperties);
+	Boolean checkIfPathogenTestIsTheFirst(String sampleUuid, String pathogenTestUuid);
 
 	List<PathogenTestDto> getByPersonNames(List<PersonNameDto> personUuid);
 

@@ -18,11 +18,6 @@ package de.symeda.sormas.app.ebs.edit;
 import static android.view.View.GONE;
 
 import android.view.View;
-import android.widget.PopupWindow;
-
-import androidx.core.app.NotificationCompat;
-
-import org.apache.tapestry.wml.Go;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -168,7 +163,6 @@ public class TriagingEditFragment extends BaseEditFragment<FragmentTriagingEditL
 		contentBinding.setYesNoClass(YesNo.class);
 		contentBinding.setTriagingDecisionClass(EbsTriagingDecision.class);
 		contentBinding.setTriagingOutComeSupervisorClass(OutComeSupervisor.class);
-//		var level = contentBinding.triagingSignalCategory.getValue().toString();
 	}
 
 	@Override

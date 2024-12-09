@@ -109,6 +109,8 @@ public class EbsAlertEditActivity extends BaseEditActivity<EbsAlert> {
 		EbsSection section = EbsSection.fromOrdinal(menuItem.getPosition());
 		BaseEditFragment fragment = EbsEditFragment.newInstance(EbsEditActivity.getParentEbs());
 		if (EbsEditActivity.getParentEbs().getSignalVerification().getVerified() != SignalOutcome.EVENT){
+			EbsListActivity.showWarningAlert = true;
+			EbsListActivity.message = R.string.risk_disabled_signal_not_verified;
 			EbsListActivity.startActivity(getContext(),null);
 			return fragment;
 		}
@@ -122,6 +124,7 @@ public class EbsAlertEditActivity extends BaseEditActivity<EbsAlert> {
 				break;
 			case SIGNAL_VERIFICATION:
 				fragment = SignalVerificationEditFragment.newInstance(EbsEditActivity.getParentEbs().getSignalVerification());
+				break;
 			case RISK_ASSESSMENT:
 				RiskAssessmentListActivity.startActivity(getContext(), null);
 				break;

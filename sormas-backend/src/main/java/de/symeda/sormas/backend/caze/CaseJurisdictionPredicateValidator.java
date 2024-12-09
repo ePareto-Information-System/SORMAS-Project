@@ -143,8 +143,8 @@ public class CaseJurisdictionPredicateValidator extends PredicateJurisdictionVal
 	@Override
 	protected Predicate whenFacilityLevel() {
 		return user != null
-			? cb.equal(joins.getRoot().get(Case.HEALTH_FACILITY).get(Facility.ID), user.getHealthFacility().getId())
-			: cb.equal(joins.getRoot().get(Case.HEALTH_FACILITY).get(Facility.ID), userPath.get(User.HEALTH_FACILITY).get(Facility.ID));
+				? cb.equal(joins.getRoot().get(Case.HEALTH_FACILITY).get(Facility.ID), user.getHealthFacility().getId())
+				: cb.equal(joins.getRoot().get(Case.HEALTH_FACILITY).get(Facility.ID), userPath.get(User.HEALTH_FACILITY).get(Facility.ID));
 	}
 
 	@Override

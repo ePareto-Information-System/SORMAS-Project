@@ -186,6 +186,9 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 			toDate = DateHelper.getEpiWeekEnd((EpiWeek) weekAndDateFilter.getWeekToFilter().getValue());
 		}
 
+		SampleDateType selectedSampleDateType = (SampleDateType) weekAndDateFilter.getDateTypeSelector().getValue();
+
+
 		if ((fromDate != null && toDate != null) || (fromDate == null && toDate == null)) {
 				//applyButton.removeStyleName(ValoTheme.BUTTON_PRIMARY); not
 				
@@ -195,7 +198,8 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 				// criteria.reportDateBetween(fromDate, toDate, sampleDateType, dateFilterOption);
 
 				// fireValueChange(true);
-			criteria.sampleDateBetween(fromDate, toDate, SampleDateType.REPORT, dateFilterOption);
+//			criteria.sampleDateBetween(fromDate, toDate, SampleDateType.REPORT, dateFilterOption);
+			criteria.sampleDateBetween(fromDate, toDate, selectedSampleDateType, dateFilterOption);
 		} else {
 			weekAndDateFilter.setNotificationsForMissingFilters();
 		}

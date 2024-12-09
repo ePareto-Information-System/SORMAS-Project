@@ -17,7 +17,7 @@ package de.symeda.sormas.app.rest;
 
 import java.util.List;
 
-import de.symeda.sormas.api.PostResponse;
+import de.symeda.sormas.api.PushResult;
 import de.symeda.sormas.api.ebs.EbsDto;
 import de.symeda.sormas.api.event.EventDto;
 import retrofit2.Call;
@@ -35,7 +35,7 @@ public interface EbsFacadeRetro {
 	Call<List<EbsDto>> pullByUuids(@Body List<String> uuids);
 
 	@POST("ebs/push")
-	Call<List<PostResponse>> pushAll(@Body List<EbsDto> dtos);
+	Call<List<PushResult>> pushAll(@Body List<EbsDto> dtos);
 
 	@GET("ebs/uuids")
 	Call<List<String>> pullUuids();

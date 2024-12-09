@@ -1,124 +1,125 @@
 package de.symeda.sormas.backend.ebs;
 
-import de.symeda.sormas.api.ebs.SignalOutcome;
-import de.symeda.sormas.api.utils.YesNo;
-import de.symeda.sormas.backend.common.AbstractDomainObject;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import java.util.Date;
+
+import de.symeda.sormas.api.ebs.SignalOutcome;
+import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.backend.common.AbstractDomainObject;
 
 @Entity(name = "signalVerification")
 public class SignalVerification extends AbstractDomainObject {
 
-    private static final long serialVersionUID = 1L;
-    public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 13356;
+	private static final long serialVersionUID = 1L;
+	public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 13356;
 
-    public static final String I18N_PREFIX = "SignalVerification";
+	public static final String I18N_PREFIX = "SignalVerification";
 
-    public static final String TABLE_NAME = "signalVerification";
+	public static final String TABLE_NAME = "signalVerification";
 
+	public static final String VERIFICATION_SENT = "verificationSent";
+	public static final String VERIFIED = "verified";
+	public static final String VERIFICATION_COMPLETE_DATE = "verificationCompleteDate";
+	public static final String DATE_OF_OCCURRENCE = "dateOfOccurrence";
+	public static final String NUMBER_OF_PERSON_ANIMAL = "numberOfPersonAnimal";
+	public static final String NUMBER_OF_DEATH = "numberOfDeath";
+	public static final String NUMBER_OF_PERSON_CASES = "numberOfPersonCases";
+	public static final String NUMBER_OF_DEATH_PERSON = "numberOfDeathPerson";
+	public static final String DESCRIPTION = "description";
+	public static final String WHY_NOT_VERIFY = "whyNotVerify";
 
-    public static final String VERIFICATION_SENT = "verificationSent";
-    public static final String VERIFIED = "verified";
-    public static final String VERIFICATION_COMPLETE_DATE = "verificationCompleteDate";
-    public static final String DATE_OF_OCCURRENCE = "dateOfOccurrence";
-    public static final String NUMBER_OF_PERSON_ANIMAL = "numberOfPersonAnimal";
-    public static final String NUMBER_OF_DEATH = "numberOfDeath";
-    public static final String NUMBER_OF_PERSON_CASES = "numberOfPersonCases";
-    public static final String NUMBER_OF_DEATH_PERSON = "numberOfDeathPerson";
-    public static final String DESCRIPTION = "description";
-    public static final String WHY_NOT_VERIFY = "whyNotVerify";
+	private YesNo verificationSent;
+	private SignalOutcome verified;
+	private Date verificationCompleteDate;
+	private Date dateOfOccurrence;
+	private String numberOfPersonAnimal;
+	private String numberOfDeath;
+	private String numberOfPersonCases;
+	private String numberOfDeathPerson;
+	private String description;
+	private String whyNotVerify;
 
-    private YesNo verificationSent;
-    private SignalOutcome verified;
-    private Date verificationCompleteDate;
-    private Date dateOfOccurrence;
-    private String numberOfPersonAnimal;
-    private String numberOfDeath;
-    private String numberOfPersonCases;
-    private String numberOfDeathPerson;
-    private String description;
-    private String whyNotVerify;
+	public YesNo getVerificationSent() {
+		return verificationSent;
+	}
 
-    public YesNo getVerificationSent() {
-        return verificationSent;
-    }
+	public void setVerificationSent(YesNo verificationSent) {
+		this.verificationSent = verificationSent;
+	}
 
-    public void setVerificationSent(YesNo verificationSent) {
-        this.verificationSent = verificationSent;
-    }
-    @Enumerated(EnumType.STRING)
-    public SignalOutcome getVerified() {
-        return verified;
-    }
+	@Enumerated(EnumType.STRING)
+	public SignalOutcome getVerified() {
+		return verified;
+	}
 
-    public void setVerified(SignalOutcome verified) {
-        this.verified = verified;
-    }
+	public void setVerified(SignalOutcome verified) {
+		this.verified = verified;
+	}
 
-    public Date getVerificationCompleteDate() {
-        return verificationCompleteDate;
-    }
+	public Date getVerificationCompleteDate() {
+		return verificationCompleteDate;
+	}
 
-    public void setVerificationCompleteDate(Date verificationCompleteDate) {
-        this.verificationCompleteDate = verificationCompleteDate;
-    }
+	public void setVerificationCompleteDate(Date verificationCompleteDate) {
+		this.verificationCompleteDate = verificationCompleteDate;
+	}
 
-    public Date getDateOfOccurrence() {
-        return dateOfOccurrence;
-    }
+	public Date getDateOfOccurrence() {
+		return dateOfOccurrence;
+	}
 
-    public void setDateOfOccurrence(Date dateOfOccurrence) {
-        this.dateOfOccurrence = dateOfOccurrence;
-    }
+	public void setDateOfOccurrence(Date dateOfOccurrence) {
+		this.dateOfOccurrence = dateOfOccurrence;
+	}
 
-    public String getNumberOfPersonAnimal() {
-        return numberOfPersonAnimal;
-    }
+	public String getNumberOfPersonAnimal() {
+		return numberOfPersonAnimal;
+	}
 
-    public void setNumberOfPersonAnimal(String numberOfPersonAnimal) {
-        this.numberOfPersonAnimal = numberOfPersonAnimal;
-    }
+	public void setNumberOfPersonAnimal(String numberOfPersonAnimal) {
+		this.numberOfPersonAnimal = numberOfPersonAnimal;
+	}
 
-    public String getNumberOfDeath() {
-        return numberOfDeath;
-    }
+	public String getNumberOfDeath() {
+		return numberOfDeath;
+	}
 
-    public void setNumberOfDeath(String numberOfDeath) {
-        this.numberOfDeath = numberOfDeath;
-    }
+	public void setNumberOfDeath(String numberOfDeath) {
+		this.numberOfDeath = numberOfDeath;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public String getWhyNotVerify() {
-        return whyNotVerify;
-    }
+	public String getWhyNotVerify() {
+		return whyNotVerify;
+	}
 
-    public void setWhyNotVerify(String whyNotVerify) {
-        this.whyNotVerify = whyNotVerify;
-    }
+	public void setWhyNotVerify(String whyNotVerify) {
+		this.whyNotVerify = whyNotVerify;
+	}
 
-    public String getNumberOfPersonCases() {
-        return numberOfPersonCases;
-    }
+	public String getNumberOfPersonCases() {
+		return numberOfPersonCases;
+	}
 
-    public void setNumberOfPersonCases(String numberOfPersonCases) {
-        this.numberOfPersonCases = numberOfPersonCases;
-    }
+	public void setNumberOfPersonCases(String numberOfPersonCases) {
+		this.numberOfPersonCases = numberOfPersonCases;
+	}
 
-    public String getNumberOfDeathPerson() {
-        return numberOfDeathPerson;
-    }
+	public String getNumberOfDeathPerson() {
+		return numberOfDeathPerson;
+	}
 
-    public void setNumberOfDeathPerson(String numberOfDeathPerson) {
-        this.numberOfDeathPerson = numberOfDeathPerson;
-    }
+	public void setNumberOfDeathPerson(String numberOfDeathPerson) {
+		this.numberOfDeathPerson = numberOfDeathPerson;
+	}
 }

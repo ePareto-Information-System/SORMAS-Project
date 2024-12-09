@@ -41,11 +41,7 @@ public class SignalVerificationView extends AbstractEbsView {
 		}
 		CommitDiscardWrapperComponent<SignalVerificationDataForm> signalVerficationForm = ControllerProvider.getEbsController()
 				.getEbsCreateSignalVerficationComponent(getEbsRef().getUuid(),
-						isEditAllowed() && UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT));
+                        UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT));
 		setSubComponent(signalVerficationForm);
-		setEditPermission(
-				signalVerficationForm,
-				UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT));
-
 	}
 }

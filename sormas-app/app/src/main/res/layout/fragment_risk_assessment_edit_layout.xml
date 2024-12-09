@@ -152,11 +152,11 @@
                     <de.symeda.sormas.app.component.controls.ControlSpinnerField
                         android:id="@+id/riskAssessment_riskAssessment"
                         style="@style/ControlFirstOfTwoColumnsStyle"
+                        app:required="true"
                         app:value="@={data.riskAssessment}"/>
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/riskAssessment_assessmentDate"
                         style="@style/ControlSecondOfTwoColumnsStyle"
-                        app:required="true"
                         app:allowedDaysInFuture="0"
                         app:value="@={data.assessmentDate}" />
                 </LinearLayout>

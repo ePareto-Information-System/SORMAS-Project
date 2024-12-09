@@ -31,6 +31,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SubMenu;
+import de.symeda.sormas.ui.utils.AbstractDetailView;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.events.EventActionsView;
 import de.symeda.sormas.ui.events.EventDataView;
@@ -42,7 +43,7 @@ import de.symeda.sormas.ui.utils.DirtyStateComponent;
 import java.util.Objects;
 
 @SuppressWarnings("serial")
-public abstract class AbstractEbsView extends AbstractEditAllowedDetailView<EbsReferenceDto> {
+public abstract class AbstractEbsView extends AbstractDetailView<EbsReferenceDto> {
 
 	public static final String ROOT_VIEW_NAME = EBSView.VIEW_NAME;
 
@@ -109,7 +110,7 @@ public abstract class AbstractEbsView extends AbstractEditAllowedDetailView<EbsR
 	protected void setSubComponent(DirtyStateComponent newComponent) {
 		super.setSubComponent(newComponent);
 
-		if (getReference() != null && isEbsDeleted()) {
+		if (getReference() != null && FacadeProvider.getEventFacade().isDeleted(getReference().getUuid())) {
 			newComponent.setEnabled(false);
 		}
 	}

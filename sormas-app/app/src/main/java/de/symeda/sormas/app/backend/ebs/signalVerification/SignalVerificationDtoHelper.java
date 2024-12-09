@@ -2,7 +2,7 @@ package de.symeda.sormas.app.backend.ebs.signalVerification;
 
 import java.util.List;
 
-import de.symeda.sormas.api.PostResponse;
+import de.symeda.sormas.api.PushResult;
 import de.symeda.sormas.api.ebs.SignalVerificationDto;
 import de.symeda.sormas.api.ebs.SignalVerificationReferenceDto;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
@@ -43,7 +43,7 @@ public class SignalVerificationDtoHelper extends AdoDtoHelper<SignalVerification
     }
 
     @Override
-    protected Call<List<PostResponse>> pushAll(List<SignalVerificationDto> signalVerificationDtos) throws NoConnectionException {
+    protected Call<List<PushResult>> pushAll(List<SignalVerificationDto> signalVerificationDtos) throws NoConnectionException {
         return RetroProvider.getSignalVerificationFacade().pushAll(signalVerificationDtos);
     }
 
