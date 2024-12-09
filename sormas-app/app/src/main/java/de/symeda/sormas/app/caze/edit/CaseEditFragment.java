@@ -731,6 +731,16 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataMotherGivenProtectiveDoseTTDate.initializeDateField(getFragmentManager());
 		contentBinding.caseDataDateLatestUpdateRecord.initializeDateField(getFragmentManager());
 		contentBinding.setMotherVaccinationStatusClass(MotherVaccinationStatus.class);
+
+		switch (record.getDisease()){
+			case YELLOW_FEVER:
+				handleYellowFever();
+				break;
+			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
+				handleIDSR();
+				break;
+			default:
+		}
 	}
 
 	private void fillConfirmedCaseClassificationCombo() {
@@ -834,16 +844,6 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		// reinfection
 		contentBinding.caseDataPreviousInfectionDate.initializeDateField(getChildFragmentManager());
 
-		switch (record.getDisease()){
-			case YELLOW_FEVER:
-				handleYellowFever();
-				break;
-			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
-				handleIDSR();
-				break;
-			default:
-		}
-
 		contentBinding.caseDataMotherHaveCard.addValueChangedListener(field -> {
 			handleNNT();
 		});
@@ -909,10 +909,6 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 				.collect(Collectors.toList());
 
 		getContentBinding().caseDataVaccinationStatus.setEnumItems(vaccinationList);
-
-		getContentBinding().caseDataVaccinationStatus.addValueChangedListener(field -> {
-			Log.d(TAG, "Vaccination Status changed: " + field.getValue());
-		});
 
 	}
 

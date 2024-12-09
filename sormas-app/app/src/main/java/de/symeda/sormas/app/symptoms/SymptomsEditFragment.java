@@ -252,6 +252,10 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 
 		}
 
+		if (disease == Disease.YELLOW_FEVER || disease == Disease.AHF){
+			contentBinding.symptomsDateOfOnset.setCaption("Date Of Onset For The Fever");
+		}
+
 		if (disease == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
 			contentBinding.btnClearAll.setVisibility(GONE);
 			contentBinding.btnClearedToNo.setVisibility(GONE);

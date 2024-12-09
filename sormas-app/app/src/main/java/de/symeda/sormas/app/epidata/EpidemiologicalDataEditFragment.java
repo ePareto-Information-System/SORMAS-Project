@@ -432,10 +432,6 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		contentBinding.setActivityAsCaseListBindCallback(
 			v -> FieldVisibilityAndAccessHelper
 				.setFieldVisibilitiesAndAccesses(ActivityAsCaseDto.class, (ViewGroup) v, new FieldVisibilityCheckers(), getFieldAccessCheckers()));
-
-		if (caseDisease != null) {
-			super.hideFieldsForDisease(caseDisease, contentBinding.mainContent, FormType.EPIDEMIOLOGICAL_EDIT);
-		}
 		
 		contentBinding.setPersonTravelHistoryList(getPersonTravelHistories());
 		contentBinding.setPersonTravelHistoryItemClickCallback(onPersonTravelHistoryItemClickListener);
@@ -475,10 +471,17 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		contentBinding.epiDataYearOfVaccination.setSelectionOnOpen(year - 35);
 		contentBinding.epiDataYearOfVaccinationCovid.setSelectionOnOpen(year - 35);
 
+		if (caseDisease == Disease.AHF){
+			handleAHF();
+		}
+
+		if (caseDisease != null) {
+			super.hideFieldsForDisease(caseDisease, contentBinding.mainContent, FormType.EPIDEMIOLOGICAL_EDIT);
+		}
 
 	}
 
-		public void setDefaultValues(EpiData epiDataDto) {
+	public void setDefaultValues(EpiData epiDataDto) {
 		if (epiDataDto == null) {
 			return;
 		}
@@ -524,10 +527,6 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 			contentBinding.containmentMeasureLayout.setVisibility(GONE);
 			contentBinding.contaminationSourceLayout.setVisibility(GONE);
 		}
-		
-		if (caseDisease == Disease.AHF){
-			handleAHF();
-		}
 	}
 
 	@Override
@@ -562,7 +561,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	}
 
 	private void handleAHF(){
-		getContentBinding().epiDataComm1.setVisibility(GONE);
+		/*getContentBinding().epiDataComm1.setVisibility(GONE);
 		getContentBinding().epiDataHealthCenter1.setVisibility(GONE);
 		getContentBinding().epiDataCountry1.setVisibility(GONE);
 		getContentBinding().epiDataComm2.setVisibility(GONE);
@@ -571,7 +570,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 
 		getContentBinding().epiDataIfTravelYesWhere.setVisibility(GONE);
 		getContentBinding().epiDataIfYesStartDate.setVisibility(GONE);
-		getContentBinding().epiDataIfYesEndDate.setVisibility(GONE);
+		getContentBinding().epiDataIfYesEndDate.setVisibility(GONE);*/
 
 		List<Item<CaseOutcome>> itemsToRemove = List.of(
 				new Item<>(CaseOutcome.OTHER.toString(), CaseOutcome.OTHER),
