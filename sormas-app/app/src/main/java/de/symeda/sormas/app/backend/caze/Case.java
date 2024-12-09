@@ -251,7 +251,7 @@ public class Case extends PseudonymizableAdo {
 	private HealthConditions healthConditions;
 
 	@Enumerated(EnumType.STRING)
-	@DatabaseField(columnName = "vaccinationStatus")
+	@DatabaseField(columnName = "vaccination")
 	private VaccinationStatus vaccinationStatus;
 	@Enumerated(EnumType.STRING)
 	@DatabaseField(columnName = "vaccinationType")
