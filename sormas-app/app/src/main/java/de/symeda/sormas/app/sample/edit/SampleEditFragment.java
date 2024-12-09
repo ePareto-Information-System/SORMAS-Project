@@ -54,6 +54,7 @@ import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.CsfAppearance;
+import de.symeda.sormas.api.utils.InjectionSite;
 import de.symeda.sormas.api.utils.SampleContainerUsed;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
@@ -72,6 +73,11 @@ import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.databinding.FragmentSampleEditLayoutBinding;
 import de.symeda.sormas.app.sample.read.SampleReadActivity;
 import de.symeda.sormas.app.util.DataUtils;
+
+import de.symeda.sormas.api.sample.SpecimenCondition;
+import de.symeda.sormas.api.utils.ExamResult;
+import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.sample.FinalClassification;
 
 public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayoutBinding, Sample, Sample> {
 
@@ -96,6 +102,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	private List<Item> posNegList;
 	private List<Item> posNegEqList;
 	private List<Item> frequencyOfChangingFiltersList;
+	private List<Item> finalClassificationList;
 
 	public static SampleEditFragment newInstance(Sample activityRootData) {
 		return newInstanceWithFieldCheckers(
@@ -279,6 +286,25 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		contentBinding.sampleDateFormReceivedAtRegion.initializeDateField(getFragmentManager());
 		contentBinding.sampleDateFormSentToNational.initializeDateField(getFragmentManager());
 		contentBinding.sampleDateFormReceivedAtNational.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateFirstSpecimen.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSecondSpecimen.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSpecimenSentNationalLevel.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSpecimenReceivedNationalLevel.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSpecimenSentInter.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSpecimenReceivedInter.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateCombinedCellCultureResults.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSentToNationalRegLab.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateDifferentiationSentToEpi.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateDifferentiationReceivedFromEpi.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateIsolateSentForSequencing.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSeqResultsSentToProgram.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateFollowUpExam.initializeDateField(getFragmentManager());
+		contentBinding.sampleLaboratorySampleDateReceived.initializeDateField(getFragmentManager());
+		contentBinding.setSpecimenConditionClass(SpecimenCondition.class);
+		contentBinding.setExamResultClass(ExamResult.class);
+		contentBinding.setYesNoUnknownClass(YesNoUnknown.class);
+		contentBinding.setFinalClassificationClass(FinalClassification.class);
+		contentBinding.setInjectionSiteClas(InjectionSite.class);
 
 		if(record.getAssociatedCase().getDisease() != null){
 			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_EDIT);
@@ -469,6 +495,9 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 
 		frequencyOfChangingFiltersList = DataUtils.getEnumItems(FilterChangingFrequency.class, true);
 		contentBinding.sampleFrequencyOfChangingFilters.initializeSpinner(frequencyOfChangingFiltersList);
+
+		finalClassificationList = DataUtils.getEnumItems(FinalClassification.class, true);
+		contentBinding.sampleAfpFinalClassification.initializeSpinner(finalClassificationList);
 
 		switch (record.getAssociatedCase().getDisease()){
 			case MEASLES:

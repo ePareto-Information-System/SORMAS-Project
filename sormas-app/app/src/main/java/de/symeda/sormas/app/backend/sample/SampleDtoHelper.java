@@ -147,6 +147,31 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setDateFormReceivedAtDistrict(source.getDateFormReceivedAtDistrict());
 		target.setDateFormSentToHigherLevel(source.getDateFormSentToHigherLevel());
 		target.setPersonCompletingForm(source.getPersonCompletingForm());
+		target.setDateFirstSpecimen(source.getDateFirstSpecimen());
+		target.setDateSecondSpecimen(source.getDateSecondSpecimen());
+		target.setDateSpecimenSentNationalLevel(source.getDateSpecimenSentNationalLevel());
+		target.setDateSpecimenReceivedNationalLevel(source.getDateSpecimenReceivedNationalLevel());
+		target.setDateSpecimenSentInter(source.getDateSpecimenSentInter());
+		target.setDateSpecimenReceivedInter(source.getDateSpecimenReceivedInter());
+		target.setStatusSpecimenReceptionAtLab(source.getStatusSpecimenReceptionAtLab());
+		target.setDateCombinedCellCultureResults(source.getDateCombinedCellCultureResults());
+		target.setW1(source.getW1());
+		target.setW2(source.getW2());
+		target.setW3(source.getW3());
+		target.setsL1(source.getsL1());
+		target.setsL2(source.getsL2());
+		target.setsL3(source.getsL3());
+		target.setDateSentToNationalRegLab(source.getDateSentToNationalRegLab());
+		target.setDateDifferentiationSentToEpi(source.getDateDifferentiationSentToEpi());
+		target.setDateDifferentiationReceivedFromEpi(source.getDateDifferentiationReceivedFromEpi());
+		target.setDateIsolateSentForSequencing(source.getDateIsolateSentForSequencing());
+		target.setDateSeqResultsSentToProgram(source.getDateSeqResultsSentToProgram());
+		target.setDateFollowUpExam(source.getDateFollowUpExam());
+		target.setResidualAnalysis(source.getResidualAnalysis());
+		target.setResultExam(source.getResultExam());
+		target.setImmunocompromisedStatusSuspected(source.getImmunocompromisedStatusSuspected());
+		target.setAfpFinalClassification(source.getAfpFinalClassification());
+		target.setLaboratorySampleDateReceived(source.getLaboratorySampleDateReceived());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}
@@ -268,6 +293,31 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setDateFormReceivedAtRegion(source.getDateFormReceivedAtRegion());
 		target.setDateFormSentToNational(source.getDateFormSentToNational());
 		target.setDateFormReceivedAtNational(source.getDateFormReceivedAtNational());
+		target.setDateFirstSpecimen(source.getDateFirstSpecimen());
+		target.setDateSecondSpecimen(source.getDateSecondSpecimen());
+		target.setDateSpecimenSentNationalLevel(source.getDateSpecimenSentNationalLevel());
+		target.setDateSpecimenReceivedNationalLevel(source.getDateSpecimenReceivedNationalLevel());
+		target.setDateSpecimenSentInter(source.getDateSpecimenSentInter());
+		target.setDateSpecimenReceivedInter(source.getDateSpecimenReceivedInter());
+		target.setStatusSpecimenReceptionAtLab(source.getStatusSpecimenReceptionAtLab());
+		target.setDateCombinedCellCultureResults(source.getDateCombinedCellCultureResults());
+		target.setW1(source.getW1());
+		target.setW2(source.getW2());
+		target.setW3(source.getW3());
+		target.setsL1(source.getsL1());
+//		target.setsL2(source.getsL2());
+		target.setsL3(source.getsL3());
+		target.setDateSentToNationalRegLab(source.getDateSentToNationalRegLab());
+		target.setDateDifferentiationSentToEpi(source.getDateDifferentiationSentToEpi());
+		target.setDateDifferentiationReceivedFromEpi(source.getDateDifferentiationReceivedFromEpi());
+		target.setDateIsolateSentForSequencing(source.getDateIsolateSentForSequencing());
+		target.setDateSeqResultsSentToProgram(source.getDateSeqResultsSentToProgram());
+		target.setDateFollowUpExam(source.getDateFollowUpExam());
+		target.setResidualAnalysis(source.getResidualAnalysis());
+		target.setResultExam(source.getResultExam());
+		target.setImmunocompromisedStatusSuspected(source.getImmunocompromisedStatusSuspected());
+		target.setAfpFinalClassification(source.getAfpFinalClassification());
+		target.setLaboratorySampleDateReceived(source.getLaboratorySampleDateReceived());
 	}
 
     @Override

@@ -38,6 +38,7 @@ import javax.persistence.Transient;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.sample.AdditionalTestType;
+import de.symeda.sormas.api.sample.FinalClassification;
 import de.symeda.sormas.api.sample.IpSampleTestType;
 import de.symeda.sormas.api.sample.FilterChangingFrequency;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
@@ -49,6 +50,8 @@ import de.symeda.sormas.api.sample.SampleSource;
 import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.utils.CsfAppearance;
+import de.symeda.sormas.api.utils.ExamResult;
+import de.symeda.sormas.api.utils.InjectionSite;
 import de.symeda.sormas.api.utils.SampleContainerUsed;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -321,6 +324,56 @@ public class Sample extends PseudonymizableAdo {
 	private Date dateFormSentToNational;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateFormReceivedAtNational;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+    private Date dateFirstSpecimen;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSecondSpecimen;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSpecimenSentNationalLevel;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSpecimenReceivedNationalLevel;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSpecimenSentInter;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSpecimenReceivedInter;
+	@Enumerated(EnumType.STRING)
+	private SpecimenCondition statusSpecimenReceptionAtLab;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateCombinedCellCultureResults;
+	@Enumerated(EnumType.STRING)
+	private YesNo w1;
+	@Enumerated(EnumType.STRING)
+	private YesNo w2;
+	@Enumerated(EnumType.STRING)
+	private YesNo w3;
+	@Enumerated(EnumType.STRING)
+	private YesNo sL1;
+	@Enumerated(EnumType.STRING)
+	private YesNo sL2;
+	@Enumerated(EnumType.STRING)
+	private YesNo sL3;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSentToNationalRegLab;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateDifferentiationSentToEpi;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateDifferentiationReceivedFromEpi;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateIsolateSentForSequencing;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateSeqResultsSentToProgram;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateFollowUpExam;
+	@Enumerated(EnumType.STRING)
+	private InjectionSite residualAnalysis;
+	@Enumerated(EnumType.STRING)
+	private ExamResult resultExam;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown immunocompromisedStatusSuspected;
+	@Enumerated(EnumType.STRING)
+	private FinalClassification afpFinalClassification;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date laboratorySampleDateReceived;
 
 
 	public Case getAssociatedCase() {
@@ -1156,5 +1209,205 @@ public class Sample extends PseudonymizableAdo {
 
 	public void setDateFormReceivedAtNational(Date dateFormReceivedAtNational) {
 		this.dateFormReceivedAtNational = dateFormReceivedAtNational;
+	}
+
+	public Date getDateFirstSpecimen() {
+		return dateFirstSpecimen;
+	}
+
+	public void setDateFirstSpecimen(Date dateFirstSpecimen) {
+		this.dateFirstSpecimen = dateFirstSpecimen;
+	}
+
+	public Date getDateSecondSpecimen() {
+		return dateSecondSpecimen;
+	}
+
+	public void setDateSecondSpecimen(Date dateSecondSpecimen) {
+		this.dateSecondSpecimen = dateSecondSpecimen;
+	}
+
+	public Date getDateSpecimenSentNationalLevel() {
+		return dateSpecimenSentNationalLevel;
+	}
+
+	public void setDateSpecimenSentNationalLevel(Date dateSpecimenSentNationalLevel) {
+		this.dateSpecimenSentNationalLevel = dateSpecimenSentNationalLevel;
+	}
+
+	public Date getDateSpecimenReceivedNationalLevel() {
+		return dateSpecimenReceivedNationalLevel;
+	}
+
+	public void setDateSpecimenReceivedNationalLevel(Date dateSpecimenReceivedNationalLevel) {
+		this.dateSpecimenReceivedNationalLevel = dateSpecimenReceivedNationalLevel;
+	}
+
+	public Date getDateSpecimenSentInter() {
+		return dateSpecimenSentInter;
+	}
+
+	public void setDateSpecimenSentInter(Date dateSpecimenSentInter) {
+		this.dateSpecimenSentInter = dateSpecimenSentInter;
+	}
+
+	public Date getDateSpecimenReceivedInter() {
+		return dateSpecimenReceivedInter;
+	}
+
+	public void setDateSpecimenReceivedInter(Date dateSpecimenReceivedInter) {
+		this.dateSpecimenReceivedInter = dateSpecimenReceivedInter;
+	}
+
+	public SpecimenCondition getStatusSpecimenReceptionAtLab() {
+		return statusSpecimenReceptionAtLab;
+	}
+
+	public void setStatusSpecimenReceptionAtLab(SpecimenCondition statusSpecimenReceptionAtLab) {
+		this.statusSpecimenReceptionAtLab = statusSpecimenReceptionAtLab;
+	}
+
+	public Date getDateCombinedCellCultureResults() {
+		return dateCombinedCellCultureResults;
+	}
+
+	public void setDateCombinedCellCultureResults(Date dateCombinedCellCultureResults) {
+		this.dateCombinedCellCultureResults = dateCombinedCellCultureResults;
+	}
+
+	public YesNo getW1() {
+		return w1;
+	}
+
+	public void setW1(YesNo w1) {
+		this.w1 = w1;
+	}
+
+	public YesNo getW2() {
+		return w2;
+	}
+
+	public void setW2(YesNo w2) {
+		this.w2 = w2;
+	}
+
+	public YesNo getW3() {
+		return w3;
+	}
+
+	public void setW3(YesNo w3) {
+		this.w3 = w3;
+	}
+
+	public YesNo getsL1() {
+		return sL1;
+	}
+
+	public void setsL1(YesNo sL1) {
+		this.sL1 = sL1;
+	}
+
+	public YesNo getsL2() {
+		return sL2;
+	}
+
+	public void setsL2(YesNo sL2) {
+		this.sL2 = sL2;
+	}
+
+	public YesNo getsL3() {
+		return sL3;
+	}
+
+	public void setsL3(YesNo sL3) {
+		this.sL3 = sL3;
+	}
+
+	public Date getDateSentToNationalRegLab() {
+		return dateSentToNationalRegLab;
+	}
+
+	public void setDateSentToNationalRegLab(Date dateSentToNationalRegLab) {
+		this.dateSentToNationalRegLab = dateSentToNationalRegLab;
+	}
+
+	public Date getDateDifferentiationSentToEpi() {
+		return dateDifferentiationSentToEpi;
+	}
+
+	public void setDateDifferentiationSentToEpi(Date dateDifferentiationSentToEpi) {
+		this.dateDifferentiationSentToEpi = dateDifferentiationSentToEpi;
+	}
+
+	public Date getDateDifferentiationReceivedFromEpi() {
+		return dateDifferentiationReceivedFromEpi;
+	}
+
+	public void setDateDifferentiationReceivedFromEpi(Date dateDifferentiationReceivedFromEpi) {
+		this.dateDifferentiationReceivedFromEpi = dateDifferentiationReceivedFromEpi;
+	}
+
+	public Date getDateIsolateSentForSequencing() {
+		return dateIsolateSentForSequencing;
+	}
+
+	public void setDateIsolateSentForSequencing(Date dateIsolateSentForSequencing) {
+		this.dateIsolateSentForSequencing = dateIsolateSentForSequencing;
+	}
+
+	public Date getDateSeqResultsSentToProgram() {
+		return dateSeqResultsSentToProgram;
+	}
+
+	public void setDateSeqResultsSentToProgram(Date dateSeqResultsSentToProgram) {
+		this.dateSeqResultsSentToProgram = dateSeqResultsSentToProgram;
+	}
+
+	public Date getDateFollowUpExam() {
+		return dateFollowUpExam;
+	}
+
+	public void setDateFollowUpExam(Date dateFollowUpExam) {
+		this.dateFollowUpExam = dateFollowUpExam;
+	}
+
+	public InjectionSite getResidualAnalysis() {
+		return residualAnalysis;
+	}
+
+	public void setResidualAnalysis(InjectionSite residualAnalysis) {
+		this.residualAnalysis = residualAnalysis;
+	}
+
+	public ExamResult getResultExam() {
+		return resultExam;
+	}
+
+	public void setResultExam(ExamResult resultExam) {
+		this.resultExam = resultExam;
+	}
+
+	public YesNoUnknown getImmunocompromisedStatusSuspected() {
+		return immunocompromisedStatusSuspected;
+	}
+
+	public void setImmunocompromisedStatusSuspected(YesNoUnknown immunocompromisedStatusSuspected) {
+		this.immunocompromisedStatusSuspected = immunocompromisedStatusSuspected;
+	}
+
+	public FinalClassification getAfpFinalClassification() {
+		return afpFinalClassification;
+	}
+
+	public void setAfpFinalClassification(FinalClassification afpFinalClassification) {
+		this.afpFinalClassification = afpFinalClassification;
+	}
+
+	public Date getLaboratorySampleDateReceived() {
+		return laboratorySampleDateReceived;
+	}
+
+	public void setLaboratorySampleDateReceived(Date laboratorySampleDateReceived) {
+		this.laboratorySampleDateReceived = laboratorySampleDateReceived;
 	}
 }

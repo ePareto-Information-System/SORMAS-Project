@@ -231,7 +231,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
 	// public static final int DATABASE_VERSION = 410;
-	public static final int DATABASE_VERSION = 414;
+	public static final int DATABASE_VERSION = 415;
 
 	private static DatabaseHelper instance = null;
 
@@ -4255,6 +4255,32 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									+ "		snapshot SMALLINT,"
 									+ "		UNIQUE (snapshot ASC, uuid ASC)"
 									+ ");");
+				case 414:
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFirstSpecimen DATE;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateSecondSpecimen DATE;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateSpecimenSentNationalLevel DATE;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateSpecimenReceivedNationalLevel DATE;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateSpecimenSentInter DATE;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateSpecimenReceivedInter DATE;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN statusSpecimenReceptionAtLab VARCHAR(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateCombinedCellCultureResults DATE;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN w1 VARCHAR(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN w2 VARCHAR(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN w3 VARCHAR(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN sL1 VARCHAR(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN sL2 VARCHAR(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN sL3 VARCHAR(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateSentToNationalRegLab DATE;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateDifferentiationSentToEpi DATE;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateDifferentiationReceivedFromEpi DATE;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateIsolateSentForSequencing DATE;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateSeqResultsSentToProgram DATE;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN dateFollowUpExam DATE;");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN residualAnalysis VARCHAR(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN resultExam VARCHAR(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN immunocompromisedStatusSuspected VARCHAR(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN afpFinalClassification VARCHAR(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN laboratorySampleDateReceived DATE;");
 					// ATTENTION: break should only be done after last version
 				break;
 			default:
