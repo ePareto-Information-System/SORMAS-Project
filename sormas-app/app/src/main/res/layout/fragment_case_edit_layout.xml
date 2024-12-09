@@ -450,6 +450,13 @@
                     android:text="@{I18nProperties.getString(Strings.headingCaseResponsibleJurisidction)}"
                     style="@style/SubHeadingStyle" />
 
+                <TextView
+                    android:id="@+id/caseData_headingCaseDataReportingInvestigationInformationGuineaWorm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{I18nProperties.getString(Strings.headingCaseDataReportingInvestigationInformationGuineaWorm)}"
+                    style="@style/SubHeadingStyle" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
