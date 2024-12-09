@@ -3526,6 +3526,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
 		target.setFunctionOfReportingOfficer(source.getFunctionOfReportingOfficer());
 		target.setReportingOfficerContactPhone(source.getReportingOfficerContactPhone());
+		target.setReportingOfficerEmail(source.getReportingOfficerEmail());
 		target.setCaseOfficer(userService.getByReferenceDto(source.getCaseOfficer()));
 		target.setSymptoms(symptomsFacade.fromDto(source.getSymptoms(), checkChangeDate));
 		target.setHomeAddressRecreational(source.getHomeAddressRecreational());

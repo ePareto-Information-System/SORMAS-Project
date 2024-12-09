@@ -56,14 +56,11 @@
         <variable name="data" type="de.symeda.sormas.app.backend.caze.Case"/>
         <variable name="caseEditData" type="de.symeda.sormas.app.caze.edit.CaseEditFragment" />
         <variable name="yesNoUnknownClass" type="Class" />
-        <variable name="vaccinationStatusClass" type="Class" />
         <variable name="vaccinationTypeClass" type="Class" />
         <variable name="trimesterClass" type="Class" />
         <variable name="caseTransmissionClassificationClass" type="de.symeda.sormas.api.caze.TransmissionClassification" />
         <variable name="differentJurisdiction" type="Boolean" />
         <variable name="differentPlaceOfStayJurisdiction" type="Boolean" />
-        <variable name="filteredVaccinationStatusValues" type="VaccinationStatus[]" />
-
         <variable name="vaccinationRoutineClass" type="Class" />
         <variable name="motherVaccinationStatusClass" type="Class" />
     </data>
@@ -933,9 +930,7 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/caseData_vaccinationStatus"
                     app:value="@={data.vaccinationStatus}"
-                    app:enumValues="@{filteredVaccinationStatusValues}"
                     style="@style/ControlSingleColumnStyle" />
-
 
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/caseData_vaccinationType"
@@ -943,7 +938,6 @@
                     app:value="@={data.vaccinationType}"
                     app:dependencyParentField="@{caseDataVaccinationStatus}"
                     app:dependencyParentValue="@{VaccinationStatus.VACCINATED}"
-                    app:dependencyParentVisibility="@{true}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
@@ -951,7 +945,6 @@
                     app:value="@={data.vaccineType}"
                     app:dependencyParentField="@{caseDataVaccinationStatus}"
                     app:dependencyParentValue="@{VaccinationStatus.VACCINATED}"
-                    app:dependencyParentVisibility="@{true}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
@@ -959,7 +952,6 @@
                     app:value="@={data.numberOfDoses}"
                     app:dependencyParentField="@{caseDataVaccinationStatus}"
                     app:dependencyParentValue="@{VaccinationStatus.VACCINATED}"
-                    app:dependencyParentVisibility="@{true}"
                     app:inputType="number"
                     style="@style/ControlSingleColumnStyle" />
 

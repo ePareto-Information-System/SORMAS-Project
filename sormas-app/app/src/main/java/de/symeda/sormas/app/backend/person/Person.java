@@ -219,6 +219,7 @@ public class Person extends PseudonymizableAdo {
 	private Country citizenship;
 	@Column(columnDefinition = "text")
 	private String additionalDetails;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private MaritalStatus marriageStatus;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String nationality;
