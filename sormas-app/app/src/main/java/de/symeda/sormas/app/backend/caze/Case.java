@@ -481,12 +481,6 @@ public class Case extends PseudonymizableAdo {
 	private String reportingOfficerName;
 	@DatabaseField
 	private String reportingOfficerTitle;
-	@DatabaseField
-	private String functionOfReportingOfficer;
-	@DatabaseField
-	private String reportingOfficerContactPhone;
-	@DatabaseField
-	private String reportingOfficerEmail;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date secondVaccinationDate;
 	@Enumerated(EnumType.STRING)

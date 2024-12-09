@@ -220,7 +220,6 @@ public class Person extends PseudonymizableAdo {
 	@Column(columnDefinition = "text")
 	private String additionalDetails;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
-	@Column(columnDefinition = "text")
 	private MaritalStatus marriageStatus;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String nationality;

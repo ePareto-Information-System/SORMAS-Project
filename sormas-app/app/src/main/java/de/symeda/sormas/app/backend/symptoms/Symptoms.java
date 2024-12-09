@@ -464,6 +464,7 @@ public class Symptoms extends PseudonymizableAdo {
 	private Boolean lesionsNeck;
 	@Enumerated(EnumType.STRING)
 	private SymptomState abdominalCramps;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateOfOnset;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String provisionalDiagnosis;
