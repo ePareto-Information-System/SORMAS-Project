@@ -24,6 +24,7 @@ import java.util.Set;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
+import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.sample.IpSampleTestType;
@@ -258,6 +259,14 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 			contentBinding.symptomsOnsetSymptom.setVisibility(GONE);
 			contentBinding.symptomsDescription.setVisibility(GONE);
 			contentBinding.symptomsSignsAndSymptons.setVisibility(GONE);
+
+			List<Item<CaseOutcome>> itemsToRemove = List.of(
+					new Item<>(CaseOutcome.UNKNOWN.toString(), CaseOutcome.UNKNOWN)
+			);
+
+			outcomeList.removeAll(itemsToRemove);
+			getContentBinding().symptomsOutcome.initializeSpinner(outcomeList);
+
 		}
 
 		if (disease == Disease.NEW_INFLUENZA){
