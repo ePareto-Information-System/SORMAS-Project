@@ -372,10 +372,10 @@
 
             </LinearLayout>
 
-            <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
+            <!--<de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
                 android:id="@+id/person_professionOfPatient"
                 app:value="@{data.professionOfPatient}"
-                style="@style/ControlSingleColumnStyle" />
+                style="@style/ControlSingleColumnStyle" />-->
 
             <de.symeda.sormas.app.component.controls.ControlTextReadField
                 android:id="@+id/person_professionOfPatientOther"

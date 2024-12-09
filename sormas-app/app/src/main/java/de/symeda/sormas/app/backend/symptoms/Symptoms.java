@@ -477,29 +477,44 @@ public class Symptoms extends PseudonymizableAdo {
 	private String numberOfWorms;
 	@Column
 	private String requestedSymptomsSelectedString;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateOfOnsetRash;
 	@Column
 	private String requestedRashSymptomsString;
+	@Column
 	private String rashSymptomsOtherAreas;
 	private String typeOfRashString;
+	@Column
 	private String symptomsSelectedOther;
+	@Column
 	private String outcomeOther;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date outcomeDate;
+	@Column
 	private String outcomePlaceCommVillage;
+	@Column
 	private String nameService;
+	@Column
 	private String placeOfFuneralNameVillage;
 	@Column
 	private String injectionSiteString;
+	@Enumerated(EnumType.STRING)
 	private DurationHours durationHours;
 	@Column
 	private Integer ageAtDeathDays;
 	@Column
 	private Integer ageAtOnsetDays;
+	@Transient
 	private Set<SymptomsList> symptomsSelected;
+	@Transient
 	private Set<BodyPart> rashSymptoms;
+	@Transient
 	private Set<InjectionSite> siteOfParalysis;
+	@Transient
 	private SymptomsList typeOfRash;
+	@Transient
 	private Set<InjectionSite> injectionSite;
+	@Column
 	private String nameOfHealthFacility;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateFirstWormEmergence;

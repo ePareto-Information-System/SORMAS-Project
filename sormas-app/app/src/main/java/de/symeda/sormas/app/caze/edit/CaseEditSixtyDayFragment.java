@@ -22,9 +22,11 @@ import java.util.List;
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.utils.InjectionSite;
 import de.symeda.sormas.api.utils.NormalWasted;
+import de.symeda.sormas.api.utils.PackagingType;
 import de.symeda.sormas.api.utils.ParalysisSite;
 import de.symeda.sormas.api.utils.SymptomLevel;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
@@ -40,6 +42,7 @@ public class CaseEditSixtyDayFragment extends BaseEditFragment<FragmentCaseEditS
 	private SixtyDay record;
 	private Case caze;
 	private List<Item> cardRecallList;
+	private List<Item> packageTypeList;
 
 	// Static methods
 
@@ -75,6 +78,7 @@ public class CaseEditSixtyDayFragment extends BaseEditFragment<FragmentCaseEditS
 	protected void prepareFragmentData() {
 		caze = getActivityRootData();
 		record = caze.getSixtyDay();
+		packageTypeList = DataUtils.getEnumItems(PackagingType.class, true);
 	}
 
 	@Override
@@ -83,6 +87,7 @@ public class CaseEditSixtyDayFragment extends BaseEditFragment<FragmentCaseEditS
 		contentBinding.setData(record);
 		contentBinding.setCaze(caze);
 		contentBinding.setYesNoClass(YesNo.class);
+		contentBinding.setYesNoUnknownClass(YesNoUnknown.class);
 		contentBinding.setInjectionSiteClass(InjectionSite.class);
 		contentBinding.setSymptomLevelClass(SymptomLevel.class);
 		contentBinding.setNormalWastedClass(NormalWasted.class);
@@ -90,6 +95,13 @@ public class CaseEditSixtyDayFragment extends BaseEditFragment<FragmentCaseEditS
 		contentBinding.sixtyDayDateOfFollowup.initializeDateField(getFragmentManager());
 		contentBinding.sixtyDayDateBirth.initializeDateField(getFragmentManager());
 		contentBinding.sixtyDayDateSubmissionForms.initializeDateField(getFragmentManager());
+		contentBinding.sixtyDayDateOfManufacture.initializeDateField(getFragmentManager());
+		contentBinding.sixtyDayExpirationDate.initializeDateField(getFragmentManager());
+		contentBinding.sixtyDayPackagingType.initializeSpinner(packageTypeList);
+
+		if (caze.getDisease() != null) {
+			super.hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.SIXTY_DAY_FOLLOW_UP_EDIT);
+		}
 	}
 
 	@Override

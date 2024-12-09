@@ -258,6 +258,7 @@ public class Case extends PseudonymizableAdo {
 	private CardOrHistory vaccinationType;
 	@Enumerated(EnumType.STRING)
 	private VaccineTypes vaccineType;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String numberOfDoses;
 	@DatabaseField(columnName = "vaccinationDate", dataType = DataType.DATE_LONG)
 	private Date vaccinationDate;
@@ -448,14 +449,18 @@ public class Case extends PseudonymizableAdo {
 	private boolean notACaseReasonDifferentPathogen;
 	@DatabaseField
 	private boolean notACaseReasonOther;
-
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String notACaseReasonDetails;
 	@DatabaseField
 	private Date followUpStatusChangeDate;
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private User followUpStatusChangeUser;
-
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String functionOfReportingOfficer;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String reportingOfficerContactPhone;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String reportingOfficerEmail;
 	@DatabaseField
 	private String reportingVillage;
 	@DatabaseField
@@ -512,49 +517,39 @@ public class Case extends PseudonymizableAdo {
 
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date motherTTDateFour;
-
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date motherTTDateFive;
-
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date motherLastDoseDate;
-
 	@Enumerated(EnumType.STRING)
 	private YesNoUnknown seenInOPD;
-
 	@Enumerated(EnumType.STRING)
 	private YesNoUnknown admittedInOPD;
-
 	@Enumerated(EnumType.STRING)
 	private YesNoUnknown motherGivenProtectiveDoseTT;
-
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date motherGivenProtectiveDoseTTDate;
-
 	@Enumerated(EnumType.STRING)
 	private YesNoUnknown supplementalImmunization;
-
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String supplementalImmunizationDetails;
-
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateOfNotification;
-
 	@DatabaseField
 	private String notifiedBy;
-
 	@DatabaseField
 	private Integer numberOfPeopleInSameHousehold;
-
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateLatestUpdateRecord;
-
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String otherNotesAndObservations;
-
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String mobileTeamNo;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String informationGivenBy;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String familyLinkWithPatient;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String nameOfVillagePersonGotIll;
 
 	public boolean isUnreferredPortHealthCase() {

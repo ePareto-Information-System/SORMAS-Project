@@ -573,7 +573,10 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 				SampleMaterial.PUS,
 				SampleMaterial.SALIVA,
 				SampleMaterial.BIOPSY,
-				SampleMaterial.STOOL
+				SampleMaterial.STOOL,
+				SampleMaterial.URETHRAL,
+				SampleMaterial.SPUTUM,
+				SampleMaterial.FOOD_WATER
 		);
 
 		getContentBinding().sampleSampleMaterial.initializeSpinner(DataUtils.toItems(idsrSampleMaterialList));

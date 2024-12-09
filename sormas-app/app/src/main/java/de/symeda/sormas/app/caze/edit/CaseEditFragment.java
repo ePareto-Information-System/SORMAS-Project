@@ -920,6 +920,8 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		getContentBinding().caseDataNumberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being Reported");
 		getContentBinding().caseDataLastVaccinationDate.setCaption("Date of Last Vaccination");
 		getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
+		getContentBinding().caseDataNumberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being reported");
+		getContentBinding().caseDataVaccinationDate.setCaption("Date of last vaccination");
 		getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
 	}
 
