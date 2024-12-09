@@ -287,10 +287,17 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		switch (disease){
 			case AHF:
 				handleAHF();
+				break;
 			case NEW_INFLUENZA:
 				handleILI();
+				break;
 			case CSM:
 				handleCSM();
+				break;
+			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
+				handleIDSR();
+				break;
+			default:
 		}
 	}
 
@@ -349,6 +356,10 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 	}
 
 	private void handleCSM(){
+		getContentBinding().caseHospitalizationDateFirstSeen.setCaption("DATE SEEN AT HEALTH FACILITY:");
+	}
+
+	private void handleIDSR(){
 		getContentBinding().caseHospitalizationDateFirstSeen.setCaption("DATE SEEN AT HEALTH FACILITY:");
 	}
 

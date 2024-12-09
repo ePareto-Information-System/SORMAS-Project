@@ -289,6 +289,8 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 				contentBinding.symptomsCongenitalHeartDiseaseDetails.setVisibility(GONE);
 			}
 		});
+
+		contentBinding.symptomsSkinRashNew.setCaption("Skin Rash");
 	}
 
 	private void initSymptomFields(FragmentSymptomsEditLayoutBinding contentBinding) {

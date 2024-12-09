@@ -840,8 +840,11 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		switch (record.getDisease()){
 			case YELLOW_FEVER:
 				handleYellowFever();
+				break;
 			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
 				handleIDSR();
+				break;
+			default:
 		}
 
 		contentBinding.caseDataMotherHaveCard.addValueChangedListener(field -> {
@@ -910,6 +913,8 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 
 	private void handleIDSR() {
 		getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
+		getContentBinding().caseDataNumberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being reported");
+		getContentBinding().caseDataVaccinationDate.setCaption("Date of last vaccination");
 		getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
 	}
 

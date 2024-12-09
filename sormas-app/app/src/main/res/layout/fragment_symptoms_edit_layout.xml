@@ -1730,6 +1730,13 @@
                 app:value="@={data.outcome}"
                 style="@style/ControlSingleColumnStyle" />
 
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/symptoms_outcomeOther"
+                app:value="@{data.outcomeOther}"
+                app:dependencyParentField="@{symptomsOutcome}"
+                app:dependencyParentValue="@{CaseOutcome.OTHER}"
+                style="@style/ControlSingleColumnStyle" />
+
         </LinearLayout>
 
     </ScrollView>

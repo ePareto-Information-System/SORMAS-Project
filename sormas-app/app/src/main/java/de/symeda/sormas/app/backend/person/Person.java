@@ -190,15 +190,15 @@ public class Person extends PseudonymizableAdo {
 	@Enumerated
 	private ArmedForcesRelationType armedForcesRelationType;
 
-	@Column
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String passportNumber;
-	@Column
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String nationalHealthId;
 
-	@Column
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String ghanaCard;
 
-	@Column
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String phone;
 
 	private List<Location> addresses = new ArrayList<>();
@@ -219,6 +219,7 @@ public class Person extends PseudonymizableAdo {
 	private Country citizenship;
 	@Column(columnDefinition = "text")
 	private String additionalDetails;
+	@Column(columnDefinition = "text")
 	private MaritalStatus marriageStatus;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String nationality;

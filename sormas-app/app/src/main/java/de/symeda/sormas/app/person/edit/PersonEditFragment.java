@@ -659,6 +659,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		}
 
 		contentBinding.personEthnicity.setCaption("Ethnic Group");
+		contentBinding.personPhone.setCaption("Tel/Contact number");
 
 	}
 

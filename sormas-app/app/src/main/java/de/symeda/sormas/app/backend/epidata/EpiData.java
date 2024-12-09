@@ -89,37 +89,67 @@ public class EpiData extends PseudonymizableAdo {
 	private YesNo largeOutbreaksArea;
 	@Enumerated(EnumType.STRING)
 	private YesNo areaInfectedAnimals;
-
+	@Enumerated(EnumType.STRING)
 	private YesNo patientTravelDuringIllness;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String comm1;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String healthCenter1;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String country1;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String comm2;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String healthCenter2;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String country2;
+	@Enumerated(EnumType.STRING)
 	private YesNo wasPatientHospitalized;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String ifYesWhere;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date hospitalizedDate1;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date hospitalizedDate2;
+	@Enumerated(EnumType.STRING)
 	private YesNo didPatientConsultHealer;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String ifYesNameHealer;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String community;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String country;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String whenWhereContactTakePlace;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateOfContact;
+	@Enumerated(EnumType.STRING)
 	private YesNo patientReceiveTraditionalMedicine;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String ifYesExplain;
+	@Enumerated(EnumType.STRING)
 	private YesNo patientAttendFuneralCeremonies;
+	@Enumerated(EnumType.STRING)
 	private YesNo patientTravelAnytimePeriodBeforeIll;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String ifTravelYesWhere;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date ifYesStartDate;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date ifYesEndDate;
+	@Enumerated(EnumType.STRING)
 	private YesNo patientContactKnownSuspect;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String suspectName;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String suspectLastName;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String idCase;
+	@Enumerated(EnumType.STRING)
 	private CaseOutcome duringContactSuspectCase;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateOfDeath;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateOfLastContactWithSuspectCase;
 
 	private List<Exposure> exposures = new ArrayList<>();
