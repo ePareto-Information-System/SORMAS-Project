@@ -50,6 +50,8 @@ import javax.persistence.criteria.Subquery;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.ebs.SignalVerificationDto;
+import de.symeda.sormas.api.ebs.TriagingDto;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -882,9 +884,15 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		target.setDateOnset(source.getDateOnset());
 		target.setEbsLongitude(source.getEbsLongitude());
 		target.setEbsLatitude(source.getEbsLongitude());
-		target.setTriaging(triagingFacade.fillOrBuildEntity(source.getTriaging(), target.getTriaging(), checkChangeDate));
-		target.setSignalVerification(
-			signalVerificationFacade.fillOrBuildEntity(source.getSignalVerification(), target.getSignalVerification(), checkChangeDate));
+		if (source.getTriaging() == null) {
+			source.setTriaging(TriagingDto.build());
+		}
+		target.setTriaging(triagingFacade.fillOrBuildEntity(source.getTriaging(), target.getTriaging(), false));
+		if (source.getSignalVerification() == null) {
+			source.setSignalVerification(SignalVerificationDto.build());
+		}
+		target
+			.setSignalVerification(signalVerificationFacade.fillOrBuildEntity(source.getSignalVerification(), target.getSignalVerification(), false));
 		target.setOtherInformant(source.getOtherInformant());
 		return target;
 	}

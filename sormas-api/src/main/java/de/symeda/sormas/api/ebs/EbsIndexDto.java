@@ -46,7 +46,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	public static final String PERSON_REGISTERING = "personRegistering";
 	public static final String PERSON_DESIGNATION = "personDesignation";
 
-	public static final String TRIAGING_DECISION_DATE = "triagingDecisionDate";
+	public static final String TRIAGING_DECISION_DATE = "decisionDate";
 	public static final String VERIFICATION_SENT = "verificationSent";
 	public static final String VERIFIED_DATE = "verifiedDate";
 	public static final String RISK_STATUS = "riskStatus";
@@ -72,7 +72,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	private SignalCategory signalCategory;
 	private EbsVerified verified;
 	private EbsDeath death;
-	private DateFormatting triagingDecisionDate;
+	private EbsIndexTriagingDecisionDate triagingDecisionDate;
 	private String personRegistering;
 	private String personDesignation;
 	private EbsVerificationSent verificationSent;
@@ -137,7 +137,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		this.signalCategory = signalCategory;
 		this.verified = new EbsVerified(verified);
 		this.death = new EbsDeath(death);
-		this.triagingDecisionDate = new DateFormatting(decisionDate);
+		this.triagingDecisionDate = new EbsIndexTriagingDecisionDate(decisionDate);
 		this.verificationSent = new EbsVerificationSent(verificationSent);
 		this.verifiedDate = new DateFormatting(verifiedDate);
 		this.riskStatus = new EbsRiskStatus(riskStatus);
@@ -199,7 +199,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	}
 
 	public Date getDecisionDate() {
-		return getTriagingDecisionDate().getVerifiedDate();
+		return getTriagingDecisionDate().getDecisionDate();
 	}
 
 	public YesNo getVerificationSent() {
@@ -274,7 +274,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		this.categoryOfInformant = categoryOfInformant;
 	}
 
-	public DateFormatting getTriagingDecisionDate() {
+	public EbsIndexTriagingDecisionDate getTriagingDecisionDate() {
 		return triagingDecisionDate;
 	}
 
@@ -315,7 +315,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	}
 
 	public Date getDecisionDateCaption() {
-		return getTriagingDecisionDate().getVerifiedDate();
+		return getTriagingDecisionDate().getDecisionDate();
 	}
 
 	public void setDeath(EbsDeath death) {

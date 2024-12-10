@@ -60,6 +60,7 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 	private boolean visibilitiesInitialized;
 	private List<Field<?>> editableAllowedFields = new ArrayList<>();
 	private boolean fieldAccessesInitialized;
+	private boolean isEbsForm;
 
 	private ComboBox diseaseField;
 	private boolean setServerDiseaseAsDefault;
@@ -107,8 +108,33 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 		}
 	}
 
+	protected AbstractEditForm(
+			Class<DTO> type,
+			String propertyI18nPrefix,
+			boolean addFields,
+			FieldVisibilityCheckers fieldVisibilityCheckers,
+			UiFieldAccessCheckers fieldAccessCheckers,
+			boolean isEbsForm) {
+
+		super(type, propertyI18nPrefix, new SormasFieldGroupFieldFactory(fieldVisibilityCheckers, fieldAccessCheckers), false);
+		this.fieldVisibilityCheckers = fieldVisibilityCheckers;
+		this.fieldAccessCheckers = fieldAccessCheckers;
+		this.isEbsForm = isEbsForm;
+
+		getFieldGroup().addCommitHandler(this);
+		setWidth(900, Unit.PIXELS);
+
+		if (addFields) {
+			addFields();
+		}
+	}
+
 	public EbsDto getEbsDto() {
 		return ebsDto;
+	}
+
+	public boolean isEbsForm() {
+		return isEbsForm;
 	}
 
 	protected AbstractEditForm(

@@ -18,6 +18,7 @@
 package de.symeda.sormas.ui.ebs;
 
 import static com.vaadin.ui.Notification.Type.TRAY_NOTIFICATION;
+import static de.symeda.sormas.api.utils.DataHelper.isNullOrEmpty;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -216,6 +217,7 @@ public class EbsController {
 		editView.getDiscardButton().setCaption("Cancel");
 		editView.addCommitListener(() -> {
 			ebs.setSignalVerification(signalVerificationDataForm.getValue());
+			callDeathCount(signalVerificationDataForm);
 			FacadeProvider.getEbsFacade().save(ebs);
 			SormasUI.refreshView();
 			Notification.show(I18nProperties.getString(Strings.messageSignalVerificationSavedShort), TRAY_NOTIFICATION);
@@ -223,6 +225,17 @@ public class EbsController {
 		});
 
 		return editView;
+	}
+
+	public static void callDeathCount(SignalVerificationDataForm signalVerificationDataForm) {
+		if (!isNullOrEmpty(signalVerificationDataForm.getValue().getNumberOfDeathPerson())
+			&& isNullOrEmpty(signalVerificationDataForm.getValue().getNumberOfPersonCases())) {
+			signalVerificationDataForm.getValue().setNumberOfPersonCases(signalVerificationDataForm.getValue().getNumberOfDeathPerson());
+		}
+		if (!isNullOrEmpty(signalVerificationDataForm.getValue().getNumberOfDeath())
+			&& isNullOrEmpty(signalVerificationDataForm.getValue().getNumberOfPersonAnimal())) {
+			signalVerificationDataForm.getValue().setNumberOfPersonAnimal(signalVerificationDataForm.getValue().getNumberOfDeath());
+		}
 	}
 
 	public CommitDiscardWrapperComponent<RiskAssessmentDataForm> getEbsCreateRiskAssessmentComponent(final String ebsUuid, boolean isEditAllowed) {

@@ -5,6 +5,7 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -47,6 +48,7 @@ import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.EbsDateValidator;
 import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.NullableOptionGroup;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
@@ -56,6 +58,8 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 	private static final long serialVersionUID = 1L;
 	private static final String SIGNAL_INFORMATION_LOC = "signalInformationLoc";
 	private static final String TRIAGING_DECISION_LOC = "triagingDecisionLoc";
+	public final String THE_DATE_OF_DECISION_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE =
+		"The Date of Decision cannot be earlier than the Date of Report or Date of Occurrence.";
 
 	private final EbsDto ebs;
 	private final Class<? extends EntityDto> parentClass;
@@ -115,6 +119,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 	private OptionGroup poeCategoryDetails;
 	private NullableOptionGroup categoryLevel;
 	private ComboBox outcomeSupervisor;
+	EbsDateValidator validator = new EbsDateValidator(THE_DATE_OF_DECISION_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE, false);
 
 	private static UiFieldAccessCheckers createFieldAccessCheckers(boolean isPseudonymized, boolean withPersonalAndSensitive) {
 
@@ -219,9 +224,9 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 			true);
 
 		specificSignal.addValueChangeListener(e -> {
-			if (Objects.equals(e.getProperty().getValue().toString(), "[Yes]")) {
+			if (Objects.equals(e.getProperty().getValue().toString(), "[YES]")) {
 				handleYesCase();
-			} else if ((Objects.equals(e.getProperty().getValue().toString(), "[No]"))) {
+			} else if ((Objects.equals(e.getProperty().getValue().toString(), "[NO]"))) {
 				handleNoCase(selectedEbs);
 			}
 		});
@@ -258,7 +263,7 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 		});
 
 		previousOccurrence.addValueChangeListener(e -> {
-			if (e.getProperty().getValue().toString().equals("[No]")) {
+			if (e.getProperty().getValue().toString().equals("[NO]")) {
 				triagingDecision.setValue(EbsTriagingDecision.VERIFY);
 				selectedEbs.getSignalVerification().setVerificationSent(YesNo.YES);
 				selectedEbs.getSignalVerification().setDateOfOccurrence(new Date());
@@ -282,13 +287,13 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 		});
 
 		supervisorReview.addValueChangeListener(e -> {
-			if (e.getProperty().getValue().toString().equals("[Yes]")) {
+			if (e.getProperty().getValue().toString().equals("[YES]")) {
 				outcomeSupervisor.setVisible(true);
 				triagingDecision.setVisible(true);
 				dateOfDecision.setVisible(true);
 				triagingDecision.setRequired(true);
 				dateOfDecision.setRequired(true);
-			} else if (e.getProperty().getValue().toString().equals("[No]")) {
+			} else if (e.getProperty().getValue().toString().equals("[NO]")) {
 				if (ebs.getTriaging().getSupervisorReview() != YesNo.NO) {
 					reviewSignal(Strings.seniorOfficials);
 				}
@@ -312,6 +317,9 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 		});
 
 		outcomeSupervisor.addValueChangeListener(e -> {
+			if (e.getProperty().getValue() == null) {
+				return;
+			}
 			if (e.getProperty().getValue().equals(OutComeSupervisor.ISSIGNAL)) {
 				previousOccurrence.setVisible(true);
 				healthConcern.setVisible(false);
@@ -324,13 +332,13 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 			}
 		});
 		healthConcern.addValueChangeListener(e -> {
-			if (e.getProperty().getValue().toString().equals("[No]")) {
+			if (e.getProperty().getValue().toString().equals("[NO]")) {
 				triagingDecision.setValue(EbsTriagingDecision.DISCARD);
 				referredTo.setVisible(false);
 				referred.setVisible(false);
 				referredTo.setValue(null);
 				referred.setValue(null);
-			} else if (e.getProperty().getValue().toString().equals("[Yes]")) {
+			} else if (e.getProperty().getValue().toString().equals("[YES]")) {
 				if (ebs.getTriaging().getHealthConcern() != YesNo.YES) {
 					reviewSignal(Strings.referredNotifs);
 				}
@@ -338,10 +346,10 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 			}
 		});
 		referred.addValueChangeListener(e -> {
-			if (e.getProperty().getValue().toString().equals("[Yes]")) {
+			if (e.getProperty().getValue().toString().equals("[YES]")) {
 				referredTo.setVisible(true);
 				triagingDecision.setValue(EbsTriagingDecision.MORE_INFORMATION);
-			} else if (e.getProperty().getValue().toString().equals("[No]")) {
+			} else if (e.getProperty().getValue().toString().equals("[NO]")) {
 				referredTo.setVisible(false);
 				referredTo.setValue(null);
 				triagingDecision.setValue(EbsTriagingDecision.DISCARD);
@@ -350,8 +358,10 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 
 		if (selectedEbs != null) {
 			TriagingDto selectedTriaging = selectedEbs.getTriaging();
-			if (selectedTriaging.getCategoryDetailsLevel() != null) {
-				setVisibility(selectedTriaging.getCategoryDetailsLevel().toString(), selectedTriaging.getSignalCategory());
+			if (selectedTriaging != null) {
+				if (selectedTriaging.getCategoryDetailsLevel() != null) {
+					setVisibility(selectedTriaging.getCategoryDetailsLevel().toString(), selectedTriaging.getSignalCategory());
+				}
 			}
 		}
 
@@ -395,6 +405,10 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 			categoryLevel.setVisible(false);
 			categoryLevel.setValue(null);
 		}
+		dateOfDecision.addValueChangeListener(e -> {
+			validateDateFields(selectedEbs);
+		});
+		validateDateFields(selectedEbs);
 		setRequired(true, TriagingDto.DATE_OF_DECISION, TriagingDto.TRIAGING_DECISION);
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
@@ -560,6 +574,52 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 		animalLabCategoryDetails.setVisible(false);
 		environmentalCategoryDetails.setVisible(false);
 		poeCategoryDetails.setVisible(false);
+	}
+
+	public void validateDateFields(EbsDto selectedEbs) {
+		Date dateOfReport = selectedEbs.getReportDateTime();
+		Date dateOfOccurrence = selectedEbs.getDateOnset();
+		DateField dateDecision = dateOfDecision;
+		Date dateOfDecisionDate = dateDecision.getValue();
+		if (dateOfOccurrence == null) {
+			dateOfOccurrence = new Date(0);
+		}
+		if (dateOfReport == null) {
+			dateOfReport = new Date(0);
+		}
+
+		Date dateOfReportDate = clearTime(dateOfReport);
+		Date dateOfOccurrenceDate = clearTime(dateOfOccurrence);
+		if (dateOfDecisionDate != null) {
+			dateOfDecisionDate = clearTime(dateOfDecisionDate);
+			if (dateOfDecisionDate.before(dateOfReportDate)) {
+				if (!dateOfReportDate.toString().equals(dateOfDecisionDate.toString())) {
+					dateDecision.addValidator(validator);
+					addDateValidator();
+				}
+			} else {
+				dateDecision.removeAllValidators();
+
+			}
+		} else {
+			dateDecision.removeAllValidators();
+		}
+	}
+
+	private Date clearTime(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		return calendar.getTime();
+	}
+
+	private void addDateValidator() {
+		validator.setValidDate(false);
+		dateOfDecision.removeValidator(validator);
+		dateOfDecision.addValidator(validator);
 	}
 
 }
