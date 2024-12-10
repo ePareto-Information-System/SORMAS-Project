@@ -957,8 +957,6 @@
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/caseData_numberOfDoses"
                     app:value="@={data.numberOfDoses}"
-                    app:dependencyParentField="@{caseDataVaccinationStatus}"
-                    app:dependencyParentValue="@{VaccinationStatus.VACCINATED}"
                     app:inputType="number"
                     style="@style/ControlSingleColumnStyle" />
 

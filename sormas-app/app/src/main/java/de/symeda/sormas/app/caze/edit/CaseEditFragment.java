@@ -909,6 +909,16 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 				.collect(Collectors.toList());
 
 		getContentBinding().caseDataVaccinationStatus.setEnumItems(vaccinationList);
+		getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
+
+		getContentBinding().caseDataVaccinationStatus.addValueChangedListener( field -> {
+			if (getContentBinding().caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED){
+				getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
+			}
+			else{
+				getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
+			}
+		});
 
 	}
 
