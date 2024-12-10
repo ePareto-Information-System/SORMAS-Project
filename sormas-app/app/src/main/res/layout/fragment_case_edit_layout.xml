@@ -1348,6 +1348,16 @@
                     app:textArea="true"
                     style="@style/ControlSingleColumnStyle"/>
 
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/investigateIntoRiskFactors_btn"
+                    android:text="@{I18nProperties.getCaption(Captions.investigateIntoRiskFactors)}"
+                    android:background="@drawable/background_full_width_border"
+                    android:textColor="@color/colorPrimary"
+                    />
+
+
             </LinearLayout>
 
             <LinearLayout
