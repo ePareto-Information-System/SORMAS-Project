@@ -732,14 +732,8 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataDateLatestUpdateRecord.initializeDateField(getFragmentManager());
 		contentBinding.setMotherVaccinationStatusClass(MotherVaccinationStatus.class);
 
-		switch (record.getDisease()){
-			case YELLOW_FEVER:
-				handleYellowFever();
-				break;
-			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
-				handleIDSR();
-				break;
-			default:
+		if (record.getDisease() == Disease.YELLOW_FEVER){
+			handleYellowFever();
 		}
 	}
 
@@ -851,6 +845,12 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataMotherNumberOfDoses.addValueChangedListener(field -> {
 			handleNNT();
 		});
+		if ( record.getDisease() == Disease.IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS){
+			contentBinding.caseDataVaccinationDate.setCaption("Date of last vaccination");
+			contentBinding.caseDataVaccinationDate.setVisibility(VISIBLE);
+			contentBinding.caseDataNumberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being Reported");
+			contentBinding.caseDataNumberOfDoses.setVisibility(VISIBLE);
+		}
 	}
 
 	private void updateDiseaseVariantsField(FragmentCaseEditLayoutBinding contentBinding) {
@@ -920,15 +920,6 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			}
 		});
 
-	}
-
-	private void handleIDSR() {
-		getContentBinding().caseDataNumberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being Reported");
-		getContentBinding().caseDataLastVaccinationDate.setCaption("Date of Last Vaccination");
-		getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
-		getContentBinding().caseDataNumberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being reported");
-		getContentBinding().caseDataVaccinationDate.setCaption("Date of last vaccination");
-		getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
 	}
 
 	private void handleNNT() {
