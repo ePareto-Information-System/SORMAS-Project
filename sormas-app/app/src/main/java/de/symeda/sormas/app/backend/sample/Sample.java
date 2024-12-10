@@ -1299,27 +1299,27 @@ public class Sample extends PseudonymizableAdo {
 		this.w3 = w3;
 	}
 
-	public YesNo getsL1() {
+	public YesNo getSL1() {
 		return sL1;
 	}
 
-	public void setsL1(YesNo sL1) {
+	public void setSL1(YesNo sL1) {
 		this.sL1 = sL1;
 	}
 
-	public YesNo getsL2() {
+	public YesNo getSL2() {
 		return sL2;
 	}
 
-	public void setsL2(YesNo sL2) {
+	public void setSL2(YesNo sL2) {
 		this.sL2 = sL2;
 	}
 
-	public YesNo getsL3() {
+	public YesNo getSL3() {
 		return sL3;
 	}
 
-	public void setsL3(YesNo sL3) {
+	public void setSL3(YesNo sL3) {
 		this.sL3 = sL3;
 	}
 
