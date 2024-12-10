@@ -17,6 +17,7 @@ package de.symeda.sormas.app.caze.edit;
 import static android.view.View.GONE;
 
 import android.content.res.Resources;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import androidx.databinding.ObservableArrayList;
@@ -84,12 +85,11 @@ public class CaseEditFoodHistoryFragment extends BaseEditFragment<FragmentCaseEd
 
     @Override
     public void onLayoutBinding(final FragmentCaseEditFoodhistoryLayoutBinding contentBinding) {
-        setDefaultValues(record);
         setUpControlListeners(contentBinding);
+        setDefaultValues(record);
         contentBinding.setData(record);
-        contentBinding.setCaze(caze);
-        contentBinding.setYesNoClass(YesNo.class);
 
+        contentBinding.setYesNoClass(YesNo.class);
         contentBinding.foodHistoryFoodSource.initializeSpinner(foodSourceList);
         contentBinding.foodHistoryEventType.initializeSpinner(eventTypeList);
         contentBinding.foodHistoryDateConsumed.initializeDateTimeField(getFragmentManager());

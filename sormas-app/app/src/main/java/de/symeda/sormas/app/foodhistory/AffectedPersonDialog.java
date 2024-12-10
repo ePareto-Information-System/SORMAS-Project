@@ -56,7 +56,7 @@ public class AffectedPersonDialog extends FormDialog {
     @Override
     protected void initializeContentView(ViewDataBinding rootBinding, ViewDataBinding buttonPanelBinding) {
 
-        contentBinding.affectedPersonDateTime.initializeDateTimeField(getFragmentManager());
+        contentBinding.affectedPersonDateTime.initializeDateField(getFragmentManager());
 
         if (data.getId() == null) {
             setLiveValidationDisabled(true);

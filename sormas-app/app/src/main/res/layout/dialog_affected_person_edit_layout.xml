@@ -27,10 +27,10 @@
 
             <requestFocus/>
 
-            <de.symeda.sormas.app.component.controls.ControlTextReadField
+            <!--<de.symeda.sormas.app.component.controls.ControlTextReadField
                 android:id="@+id/affectedPerson_uuid"
                 app:shortUuidValue="@{data.uuid}"
-                style="@style/ControlSingleColumnStyle" />
+                style="@style/ControlSingleColumnStyle" />-->
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/affectedPerson_nameOfAffectedPerson"
@@ -42,7 +42,7 @@
                 app:value="@{data.telNo}"
                 style="@style/ControlSingleColumnStyle" />
 
-            <de.symeda.sormas.app.component.controls.ControlDateTimeField
+            <de.symeda.sormas.app.component.controls.ControlDateField
                 android:id="@+id/affectedPerson_dateTime"
                 app:value="@{data.dateTime}"
                 style="@style/ControlSingleColumnStyle" />

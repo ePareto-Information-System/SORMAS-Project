@@ -1,5 +1,7 @@
 package de.symeda.sormas.app.backend.affectedperson;
 
+import android.util.Log;
+
 import com.j256.ormlite.dao.Dao;
 
 import java.util.List;
@@ -8,6 +10,7 @@ import de.symeda.sormas.app.backend.common.AbstractAdoDao;
 import de.symeda.sormas.app.backend.foodhistory.FoodHistory;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.UUID;
 
 public class AffectedPersonDao extends AbstractAdoDao<AffectedPerson> {
 
