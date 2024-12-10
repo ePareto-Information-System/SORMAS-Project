@@ -20,7 +20,7 @@ import de.symeda.sormas.app.backend.foodhistory.FoodHistory;
 @EmbeddedAdo(parentAccessor = AffectedPerson.FOOD_HISTORY)
 public class AffectedPerson extends PseudonymizableAdo {
 
-    private static final long serialVersionUID = -5570515874416024602L;
+    private static final long serialVersionUID = -5570515874416024605L;
 
     public static final String TABLE_NAME = "affectedperson";
     public static final String I18N_PREFIX = "AffectedPerson";
@@ -28,29 +28,18 @@ public class AffectedPerson extends PseudonymizableAdo {
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private FoodHistory foodHistory;
-    private String uuid;
-    @Column(length = CHARACTER_LIMIT_DEFAULT)
+    @Column(columnDefinition = "text")
     private String nameOfAffectedPerson;
-    @Column(length = CHARACTER_LIMIT_DEFAULT)
+    @Column(columnDefinition = "text")
     private String telNo;
     @DatabaseField(dataType = DataType.DATE_LONG)
     private Date dateTime;
-    @Column(length = CHARACTER_LIMIT_DEFAULT)
+    @Column(columnDefinition = "text")
     private String age;
 
     @Override
     public String getI18nPrefix() {
         return I18N_PREFIX;
-    }
-
-    @Override
-    public String getUuid() {
-        return uuid;
-    }
-
-    @Override
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
     }
 
     public FoodHistory getFoodHistory() {
