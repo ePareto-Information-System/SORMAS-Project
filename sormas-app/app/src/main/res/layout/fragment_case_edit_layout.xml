@@ -1070,6 +1070,7 @@
                     style="@style/ControlSingleColumnStyle" />
 
         <LinearLayout
+            android:id="@+id/caseData_dateLatestUpdateRecord_otherNotes_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
