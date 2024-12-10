@@ -50,6 +50,7 @@
         <variable name="locationOfBirthClass" type="Class" />
         <variable name="attendedByClass" type="Class" />
         <variable name="professionClass" type="Class" />
+        <variable name="yesNoUnknownClass" type="Class" />
     </data>
 
     <ScrollView
@@ -173,7 +174,6 @@
 
             </LinearLayout>
 
-<!--            locationOfBirth,birthInInstitution, -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -188,6 +188,7 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/person_birthInInstitution"
                     app:value="@={data.birthInInstitution}"
+                    app:enumClass="@{yesNoUnknownClass}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
@@ -246,7 +247,6 @@
                 app:value="@={data.placeOfBirthFacilityDetails}"
                 style="@style/ControlSingleColumnStyle" />
 
-<!--            receivedAntenatalCare,prenatalTotalVisits,attendedByTrainedTBA,attendedByTrainedTBAMidwifeName,attendedByDoctorNurse,cutCordWithSterileBlade,cordTreatedWithAnything,cordTreatedWithAnythingWhere-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -256,6 +256,7 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/person_receivedAntenatalCare"
                     app:value="@={data.receivedAntenatalCare}"
+                    app:enumClass="@{yesNoUnknownClass}"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
@@ -275,6 +276,7 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/person_attendedByTrainedTBA"
                     app:value="@={data.attendedByTrainedTBA}"
+                    app:enumClass="@{yesNoUnknownClass}"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
@@ -301,6 +303,7 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/person_cutCordWithSterileBlade"
                     app:value="@={data.cutCordWithSterileBlade}"
+                    app:enumClass="@{yesNoUnknownClass}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
@@ -315,6 +318,7 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/person_cordTreatedWithAnything"
                     app:value="@={data.cordTreatedWithAnything}"
+                    app:enumClass="@{yesNoUnknownClass}"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField

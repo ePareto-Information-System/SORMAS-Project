@@ -55,6 +55,7 @@ import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
@@ -618,6 +619,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		getContentBinding().setPersonContactDetailBindCallback(this::setLocationFieldVisibilitiesAndAccesses);
 		setUpLayoutBinding(this, record, contentBinding);
 		contentBinding.setAttendedByClass(AttendedBy.class);
+		contentBinding.setYesNoUnknownClass(YesNoUnknown.class);
 	}
 
 	@Override
