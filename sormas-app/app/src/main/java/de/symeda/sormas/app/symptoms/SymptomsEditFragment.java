@@ -295,14 +295,6 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 			contentBinding.symptomsOutcome.initializeSpinner(outcomeList);
 			outcomeList.removeIf(item -> outcomesToRemove.contains(item.getValue()));
 
-			contentBinding.symptomsOtherComplications.addValueChangedListener(field -> {
-				if (contentBinding.symptomsOtherComplications.getValue() == YesNo.YES) {
-					contentBinding.symptomsOtherComplicationsText.setVisibility(View.VISIBLE);
-				} else {
-					contentBinding.symptomsOtherComplicationsText.setVisibility(View.GONE);
-				}
-			});
-
 		}
 
 		if ( disease == Disease.YELLOW_FEVER){
