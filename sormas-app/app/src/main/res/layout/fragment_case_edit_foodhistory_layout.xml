@@ -28,6 +28,7 @@
         <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
         <import type="de.symeda.sormas.api.utils.YesNo" />
         <import type="de.symeda.sormas.api.utils.EventType" />
+        <import type="de.symeda.sormas.api.utils.FoodSource" />
         <import type="de.symeda.sormas.api.i18n.I18nProperties" />
         <import type="de.symeda.sormas.api.i18n.Strings" />
         <import type="de.symeda.sormas.api.i18n.Captions" />
@@ -75,6 +76,13 @@
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/foodHistory_foodSource"
                     app:value="@{data.foodSource}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/foodHistory_foodSourceSpecify"
+                    app:value="@{data.foodSourceOther}"
+                    app:dependencyParentField="@{foodHistoryFoodSource}"
+                    app:dependencyParentValue="@{FoodSource.OTHER}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout
@@ -130,7 +138,6 @@
                         app:value="@{data.totalNoPersons}"
                         app:dependencyParentField="@{foodHistoryBreakfast}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        app:dependencyParentVisibility="@{true}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
@@ -138,7 +145,6 @@
                         app:value="@{data.foodConsumed}"
                         app:dependencyParentField="@{foodHistoryBreakfast}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        app:dependencyParentVisibility="@{true}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
@@ -154,7 +160,6 @@
                             app:value="@{data.sourceOfFood}"
                             app:dependencyParentField="@{foodHistoryBreakfast}"
                             app:dependencyParentValue="@{YesNo.YES}"
-                            app:dependencyParentVisibility="@{true}"
                             style="@style/ControlFirstOfTwoColumnsStyle" />
 
                         <de.symeda.sormas.app.component.controls.ControlSwitchField
@@ -163,7 +168,6 @@
                             app:enumClass="@{YesNoClass}"
                             app:dependencyParentField="@{foodHistoryBreakfast}"
                             app:dependencyParentValue="@{YesNo.YES}"
-                            app:dependencyParentVisibility="@{true}"
                             style="@style/ControlSecondOfTwoColumnsStyle" />
                 </LinearLayout>
 

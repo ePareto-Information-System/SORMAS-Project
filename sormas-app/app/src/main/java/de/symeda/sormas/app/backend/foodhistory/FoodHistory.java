@@ -103,6 +103,8 @@ public class FoodHistory extends PseudonymizableAdo {
 
     @Enumerated(EnumType.STRING)
     private FoodSource foodSource;
+    @Column(length = CHARACTER_LIMIT_DEFAULT)
+    private String foodSourceOther;
 
     @Enumerated(EnumType.STRING)
     private EventType eventType;
@@ -401,6 +403,14 @@ public class FoodHistory extends PseudonymizableAdo {
 
     public void setFoodSource(FoodSource foodSource) {
         this.foodSource = foodSource;
+    }
+
+    public String getFoodSourceOther() {
+        return foodSourceOther;
+    }
+
+    public void setFoodSourceOther(String foodSourceOther) {
+        this.foodSourceOther = foodSourceOther;
     }
 
     public EventType getEventType() {
