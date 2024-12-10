@@ -275,6 +275,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 
 		if (disease == Disease.NEW_INFLUENZA){
 			contentBinding.symptomsTemperature.setCaption("BODY TEMPERATURE AT THE TIME OF INVESTIGATION");
+			contentBinding.symptomsPatientHaveFever.setCaption("History of Fever/Body ≥ temperature 38℃");
 
 			contentBinding.symptomsPatientHaveFever.addValueChangedListener(field -> {
 				int visibility = field.getValue() == YesNo.YES ? VISIBLE : GONE;
@@ -282,7 +283,6 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 				contentBinding.symptomsTemperatureSource.setVisibility(visibility);
 
 			});
-
 
 			Set<CaseOutcome> outcomesToRemove = Set.of(
 					CaseOutcome.NO_OUTCOME,
@@ -294,6 +294,14 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 
 			contentBinding.symptomsOutcome.initializeSpinner(outcomeList);
 			outcomeList.removeIf(item -> outcomesToRemove.contains(item.getValue()));
+
+			contentBinding.symptomsOtherComplications.addValueChangedListener(field -> {
+				if (contentBinding.symptomsOtherComplications.getValue() == YesNo.YES) {
+					contentBinding.symptomsOtherComplicationsText.setVisibility(View.VISIBLE);
+				} else {
+					contentBinding.symptomsOtherComplicationsText.setVisibility(View.GONE);
+				}
+			});
 
 		}
 

@@ -1699,7 +1699,6 @@
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/symptoms_otherComplicationsText"
                 app:value="@={data.otherComplicationsText}"
-                app:softRequired="true"
                 style="@style/ControlSingleColumnStyle" />
 
             <!-- comments, etc. -->

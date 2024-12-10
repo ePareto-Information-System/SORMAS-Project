@@ -299,6 +299,7 @@ public class CaseEditActivity extends BaseEditActivity<Case> {
 			break;
 		case INVESTIGATION_NOTES:
 			fragment = CaseEditInvestigationNotesFragment.newInstance(activityRootData);
+			break;
 		case AFP_IMMUNIZATION:
 			fragment = CaseEditAfpImmunizationFragment.newInstance(activityRootData);
 			break;
