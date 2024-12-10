@@ -43,6 +43,7 @@ import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.sample.FinalClassification;
 import de.symeda.sormas.api.sample.PCRTestSpecification;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
+import de.symeda.sormas.api.sample.PathogenTestResultVariant;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.utils.Antibiogram;
 import de.symeda.sormas.api.utils.Gram;
@@ -233,6 +234,10 @@ public class PathogenTest extends PseudonymizableAdo {
 	private CaseClassification laboratoryFinalClassification;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateSampleSentRegLab;
+	@Enumerated(EnumType.STRING)
+	private PathogenTestResultVariant testResultVariant;
+	@Column
+	private String variantOtherSpecify;
 
 	public Sample getSample() {
 		return sample;
@@ -827,6 +832,22 @@ public class PathogenTest extends PseudonymizableAdo {
 
 	public void setDateSampleSentRegLab(Date dateSampleSentRegLab) {
 		this.dateSampleSentRegLab = dateSampleSentRegLab;
+	}
+
+	public PathogenTestResultVariant getTestResultVariant() {
+		return testResultVariant;
+	}
+
+	public void setTestResultVariant(PathogenTestResultVariant testResultVariant) {
+		this.testResultVariant = testResultVariant;
+	}
+
+	public String getVariantOtherSpecify() {
+		return variantOtherSpecify;
+	}
+
+	public void setVariantOtherSpecify(String variantOtherSpecify) {
+		this.variantOtherSpecify = variantOtherSpecify;
 	}
 
 

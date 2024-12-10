@@ -39,6 +39,7 @@ import de.symeda.sormas.api.sample.FinalClassification;
 import de.symeda.sormas.api.sample.PCRTestSpecification;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
+import de.symeda.sormas.api.sample.PathogenTestResultVariant;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.utils.Antibiogram;
@@ -80,6 +81,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 	private List<Item> testResultList;
 	private List<Item> finalClassificationList;
 	private List<Item> caseClassificationList;
+	private List<Item> testResultVariationList;
 
 	// Instance methods
 
@@ -112,6 +114,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		pcrTestSpecificationList = DataUtils.getEnumItems(PCRTestSpecification.class, true);
 		Disease incomingDisease = record.getSample().getAssociatedCase().getDisease();
 		Disease incomingTestedDisease = record.getTestedDisease();
+		testResultVariationList = DataUtils.getEnumItems(PathogenTestResultVariant.class, true);
 
 		if(incomingTestedDisease != null){
 			caseTestedDisease = incomingTestedDisease;
@@ -150,6 +153,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		contentBinding.pathogenTestLaboratoryDateResultsSentDSD.initializeDateTimeField(getFragmentManager());
 		finalClassificationList = DataUtils.toItems(getDiseaseFinalClassifications(record.getTestedDisease()));
 		contentBinding.pathogenTestFinalClassification.initializeSpinner(finalClassificationList);
+		contentBinding.pathogenTestTestResultVariant.initializeSpinner(testResultVariationList);
 
 		if(record.getSample().getAssociatedCase().getDisease() != null){
 			super.hideFieldsForDisease(record.getSample().getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.PATHOGEN_TEST_EDIT);

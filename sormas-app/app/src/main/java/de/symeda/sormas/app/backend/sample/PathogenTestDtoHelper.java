@@ -131,6 +131,8 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setLaboratoryFinalResults(source.getLaboratoryFinalResults());
 		target.setLaboratoryFinalClassification(source.getLaboratoryFinalClassification());
 		target.setDateSampleSentRegLab(source.getDateSampleSentRegLab());
+		target.setTestResultVariant(source.getTestResultVariant());
+		target.setVariantOtherSpecify(source.getVariantOtherSpecify());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}
@@ -214,6 +216,8 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setLaboratoryFinalResults(source.getLaboratoryFinalResults());
 		target.setLaboratoryFinalClassification(source.getLaboratoryFinalClassification());
 		target.setDateSampleSentRegLab(source.getDateSampleSentRegLab());
+		target.setTestResultVariant(source.getTestResultVariant());
+		target.setVariantOtherSpecify(source.getVariantOtherSpecify());
 
 		if (source.getLabUser() != null) {
 			User user = DatabaseHelper.getUserDao().queryForId(source.getLabUser().getId());

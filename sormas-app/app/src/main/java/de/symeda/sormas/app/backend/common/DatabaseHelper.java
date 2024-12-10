@@ -4285,6 +4285,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				case 415:
 					currentVersion = 415;
 					getDao(FoodHistory.class).executeRaw("ALTER TABLE foodhistory ADD COLUMN foodSourceOther varchar(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN testResultVariant VARCHAR(255);");
+					getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogentest ADD COLUMN variantOtherSpecify VARCHAR(255);");
 					// ATTENTION: break should only be done after last version
 				break;
 			default:

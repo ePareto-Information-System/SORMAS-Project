@@ -29,6 +29,7 @@
         <import type="de.symeda.sormas.api.sample.SampleMaterial" />
         <import type="de.symeda.sormas.api.sample.PathogenTestType" />
         <import type="de.symeda.sormas.api.sample.PathogenTestResultType" />
+        <import type="de.symeda.sormas.api.sample.PathogenTestResultVariant" />
         <import type="de.symeda.sormas.api.Disease" />
         <import type="de.symeda.sormas.api.disease.DiseaseVariant" />
         <import type="de.symeda.sormas.api.i18n.I18nProperties" />
@@ -259,6 +260,20 @@
                     android:id="@+id/pathogenTest_testResult"
                     app:required="true"
                     app:value="@={data.testResult}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/pathogenTest_testResultVariant"
+                    app:value="@{data.testResultVariant}"
+                    app:dependencyParentField="@{pathogenTestTestResult}"
+                    app:dependencyParentValue="@{PathogenTestResultType.POSITIVE}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/pathogenTest_variantOtherSpecify"
+                    app:dependencyParentField="@{pathogenTestTestResultVariant}"
+                    app:dependencyParentValue="@{PathogenTestResultVariant.OTHER}"
+                    app:value="@={data.variantOtherSpecify}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlCheckBoxField

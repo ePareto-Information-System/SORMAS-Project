@@ -251,6 +251,16 @@
                     app:value="@{data.testResult}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/pathogenTest_testResultVariant"
+                    app:value="@{data.testResultVariant}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/pathogenTest_variantOtherSpecify"
+                    app:value="@{data.variantOtherSpecify}"
+                    style="@style/ControlSingleColumnStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlCheckBoxField
                     android:id="@+id/pathogenTest_fourFoldIncreaseAntibodyTiter"
                     app:dependencyParentField="@{pathogenTestTestType}"
