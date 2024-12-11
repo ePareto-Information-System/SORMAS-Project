@@ -286,7 +286,8 @@ public class Person extends PseudonymizableAdo {
 	private String investigatorAddress;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String investigatorTel;
-	
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String telNumber;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String place;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
@@ -1074,6 +1075,14 @@ public class Person extends PseudonymizableAdo {
 
 	public void setInvestigatorTel(String investigatorTel) {
 		this.investigatorTel = investigatorTel;
+	}
+
+	public String getTelNumber() {
+		return telNumber;
+	}
+
+	public void setTelNumber(String telNumber) {
+		this.telNumber = telNumber;
 	}
 
 	public String getPlace() {

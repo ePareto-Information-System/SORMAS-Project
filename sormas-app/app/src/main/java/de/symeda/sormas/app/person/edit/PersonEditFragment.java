@@ -659,10 +659,8 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		if(contentBinding.personPlaceOfBirthFacilityType.getValue() == null) {
 			contentBinding.personPlaceOfBirthFacilityType.setValue(FacilityType.HOSPITAL);
 		}
-
 		contentBinding.personEthnicity.setCaption("Ethnic Group");
-		contentBinding.personPhone.setCaption("Tel/Contact number");
-
+		contentBinding.personTelNumber.setCaption("Tel/Contact Number");
 	}
 
 	@Override
