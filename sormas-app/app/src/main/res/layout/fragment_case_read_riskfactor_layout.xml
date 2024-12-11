@@ -51,6 +51,7 @@
                 <requestFocus/>
 
                 <TextView
+                    android:id="@+id/heading_case_riskfactor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/heading_risk_mapping"

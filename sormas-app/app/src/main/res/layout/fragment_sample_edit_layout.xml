@@ -174,6 +174,7 @@
                     style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout
+                    android:id="@+id/sample_scan_field_fieldSampleIdLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -183,12 +184,12 @@
                         android:textColor="@color/whiteOpaque"
                         android:text="@string/scan_field_sample_id"
                         app:buttonType="@{ControlButtonType.PRIMARY}"
-                        style="@style/ControlSingleColumnStyle" />
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/sample_fieldSampleID"
                         app:value="@={data.fieldSampleID}"
-                        style="@style/ControlSingleColumnStyle" />
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
 
