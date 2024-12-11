@@ -180,26 +180,6 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 	}
 
 	protected AbstractEditForm(
-		Class<DTO> type,
-		String propertyI18nPrefix,
-		boolean addFields,
-		FieldVisibilityCheckers fieldVisibilityCheckers,
-		UiFieldAccessCheckers fieldAccessCheckers,
-		boolean isEditAllowed) {
-
-		super(type, propertyI18nPrefix, new SormasFieldGroupFieldFactory(fieldVisibilityCheckers, fieldAccessCheckers, isEditAllowed), false);
-		this.fieldVisibilityCheckers = fieldVisibilityCheckers;
-		this.fieldAccessCheckers = fieldAccessCheckers;
-
-		getFieldGroup().addCommitHandler(this);
-		setWidth(900, Unit.PIXELS);
-
-		if (addFields) {
-			addFields();
-		}
-	}
-
-	protected AbstractEditForm(
 			Class<DTO> type,
 			String propertyI18nPrefix,
 			boolean addFields,

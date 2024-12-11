@@ -89,6 +89,18 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			UserRight.SAMPLE_EDIT);
 	}
 
+	protected static Disease getDiseaseOfAssociatedEntity(Sample sample) {
+		if (sample.getAssociatedCase() != null) {
+			return sample.getAssociatedCase().getDisease();
+		} else if (sample.getAssociatedContact() != null) {
+			return sample.getAssociatedContact().getDisease();
+		} else if (sample.getAssociatedEventParticipant() != null) {
+			return sample.getAssociatedEventParticipant().getEvent().getDisease();
+		} else {
+			return null;
+		}
+	}
+
 	private void setUpControlListeners(FragmentSampleEditLayoutBinding contentBinding) {
 		if (!StringUtils.isEmpty(record.getReferredToUuid())) {
 			contentBinding.sampleReferredToUuid.setOnClickListener(new View.OnClickListener() {
@@ -107,6 +119,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			});
 		}
 	}
+
+	// Overrides
 
 	private void setUpFieldVisibilities(final FragmentSampleEditLayoutBinding contentBinding) {
 		// Most recent test layout
@@ -140,8 +154,6 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		}
 	}
 
-	// Overrides
-
 	@Override
 	protected String getSubHeadingTitle() {
 		return getResources().getString(R.string.caption_sample_information);
@@ -170,7 +182,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 
 		sampleMaterialList = DataUtils.getEnumItems(SampleMaterial.class, true, getFieldVisibilityCheckers());
 		sampleSourceList = DataUtils.getEnumItems(SampleSource.class, true);
-		labList = DatabaseHelper.getFacilityDao().getActiveLaboratoriesByDisease(getDiseaseOfAssociatedEntity(record), true);
+		labList = DatabaseHelper.getFacilityDao().getActiveLaboratories(true);
 		samplePurposeList = DataUtils.getEnumItems(SamplePurpose.class, true);
 		samplingReasonList = DataUtils.getEnumItems(SamplingReason.class, true, getFieldVisibilityCheckers());
 
@@ -351,18 +363,6 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			}
 		} else {
 			super.onActivityResult(requestCode, resultCode, data);
-		}
-	}
-
-	protected static Disease getDiseaseOfAssociatedEntity(Sample sample) {
-		if (sample.getAssociatedCase() != null) {
-			return sample.getAssociatedCase().getDisease();
-		} else if (sample.getAssociatedContact() != null) {
-			return sample.getAssociatedContact().getDisease();
-		} else if (sample.getAssociatedEventParticipant() != null) {
-			return sample.getAssociatedEventParticipant().getEvent().getDisease();
-		} else {
-			return null;
 		}
 	}
 }

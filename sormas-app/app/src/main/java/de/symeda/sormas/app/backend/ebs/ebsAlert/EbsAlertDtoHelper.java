@@ -4,9 +4,9 @@ import static de.symeda.sormas.api.EntityDto.NO_LAST_SYNCED_UUID;
 
 import java.util.List;
 
-import de.symeda.sormas.api.PushResult;
-import de.symeda.sormas.api.ebs.EbsReferenceDto;
+import de.symeda.sormas.api.PostResponse;
 import de.symeda.sormas.api.ebs.EbsAlertDto;
+import de.symeda.sormas.api.ebs.EbsReferenceDto;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.ebs.Ebs;
@@ -17,76 +17,77 @@ import de.symeda.sormas.app.rest.RetroProvider;
 import retrofit2.Call;
 
 public class EbsAlertDtoHelper extends AdoDtoHelper<EbsAlert, EbsAlertDto> {
-    private LocationDtoHelper locationHelper;
 
-    private SormasToSormasOriginInfoDtoHelper sormasToSormasOriginInfoDtoHelper = new SormasToSormasOriginInfoDtoHelper();
+	private LocationDtoHelper locationHelper;
 
-    public EbsAlertDtoHelper() {
-        locationHelper = new LocationDtoHelper();
-    }
+	private SormasToSormasOriginInfoDtoHelper sormasToSormasOriginInfoDtoHelper = new SormasToSormasOriginInfoDtoHelper();
 
-    @Override
-    protected Class<EbsAlert> getAdoClass() {
-        return EbsAlert.class;
-    }
+	public EbsAlertDtoHelper() {
+		locationHelper = new LocationDtoHelper();
+	}
 
-    @Override
-    protected Class<EbsAlertDto> getDtoClass() {
-        return EbsAlertDto.class;
-    }
+	public static EbsReferenceDto toReferenceDto(Ebs ado) {
+		if (ado == null) {
+			return null;
+		}
+		EbsReferenceDto dto = new EbsReferenceDto(ado.getUuid());
 
-    @Override
-    protected Call<List<EbsAlertDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid) throws NoConnectionException {
-        return RetroProvider.getEbsAlertFacade().pullAllSince(since, 500, NO_LAST_SYNCED_UUID);
-    }
+		return dto;
+	}
 
-    @Override
-    protected Call<List<EbsAlertDto>> pullByUuids(List<String> uuids) throws NoConnectionException {
-        return RetroProvider.getEbsAlertFacade().pullByUuids(uuids);
-    }
+	@Override
+	protected Class<EbsAlert> getAdoClass() {
+		return EbsAlert.class;
+	}
 
-    @Override
-    protected Call<List<PushResult>> pushAll(List<EbsAlertDto> ebsAlertDtos) throws NoConnectionException {
-        return RetroProvider.getEbsAlertFacade().pushAll(ebsAlertDtos);
-    }
+	@Override
+	protected Class<EbsAlertDto> getDtoClass() {
+		return EbsAlertDto.class;
+	}
 
-    @Override
-    public void fillInnerFromDto(EbsAlert target, EbsAlertDto source) {
-        target.setResponseDate(source.getResponseDate());
-        target.setResponseStatus(source.getResponseStatus());
-        target.setAlertIssued(source.getAlertIssued());
-        target.setDetailsAlertUsed(source.getDetailsAlertUsed());
-        target.setDetailsResponseActivities(source.getDetailsResponseActivities());
-        target.setDetailsGiven(source.getDetailsGiven());
-        target.setActionInitiated(source.getActionInitiated());
-        target.setAlertDate(source.getAlertDate());
-        target.setEbs(DatabaseHelper.getEbsDao().getByReferenceDto(source.getEbs()));
-    }
+	@Override
+	protected Call<List<EbsAlertDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid) throws NoConnectionException {
+		return RetroProvider.getEbsAlertFacade().pullAllSince(since, 500, NO_LAST_SYNCED_UUID);
+	}
 
-    @Override
-    public void fillInnerFromAdo(EbsAlertDto target, EbsAlert source) {
-        target.setActionInitiated(source.getActionInitiated());
-        target.setResponseDate(source.getResponseDate());
-        target.setResponseStatus(source.getResponseStatus());
-        target.setAlertIssued(source.getAlertIssued());
-        target.setDetailsAlertUsed(source.getDetailsAlertUsed());
-        target.setDetailsResponseActivities(source.getDetailsResponseActivities());
-        target.setDetailsGiven(source.getDetailsGiven());
-        target.setAlertDate(source.getAlertDate());
-        target.setEbs(EbsAlertDtoHelper.toReferenceDto(source.getEbs()));
-    }
+	@Override
+	protected Call<List<EbsAlertDto>> pullByUuids(List<String> uuids) throws NoConnectionException {
+		return RetroProvider.getEbsAlertFacade().pullByUuids(uuids);
+	}
 
-    @Override
-    protected long getApproximateJsonSizeInBytes() {
-        return EbsAlertDto.APPROXIMATE_JSON_SIZE_IN_BYTES;
-    }
+	@Override
+	protected Call<List<PostResponse>> pushAll(List<EbsAlertDto> ebsAlertDtos) throws NoConnectionException {
+		return RetroProvider.getEbsAlertFacade().pushAll(ebsAlertDtos);
+	}
 
-    public static EbsReferenceDto toReferenceDto(Ebs ado) {
-        if (ado == null) {
-            return null;
-        }
-        EbsReferenceDto dto = new EbsReferenceDto(ado.getUuid());
+	@Override
+	public void fillInnerFromDto(EbsAlert target, EbsAlertDto source) {
+		target.setResponseDate(source.getResponseDate());
+		target.setResponseStatus(source.getResponseStatus());
+		target.setAlertIssued(source.getAlertIssued());
+		target.setDetailsAlertUsed(source.getDetailsAlertUsed());
+		target.setDetailsResponseActivities(source.getDetailsResponseActivities());
+		target.setDetailsGiven(source.getDetailsGiven());
+		target.setActionInitiated(source.getActionInitiated());
+		target.setAlertDate(source.getAlertDate());
+		target.setEbs(DatabaseHelper.getEbsDao().getByReferenceDto(source.getEbs()));
+	}
 
-        return dto;
-    }
+	@Override
+	public void fillInnerFromAdo(EbsAlertDto target, EbsAlert source) {
+		target.setActionInitiated(source.getActionInitiated());
+		target.setResponseDate(source.getResponseDate());
+		target.setResponseStatus(source.getResponseStatus());
+		target.setAlertIssued(source.getAlertIssued());
+		target.setDetailsAlertUsed(source.getDetailsAlertUsed());
+		target.setDetailsResponseActivities(source.getDetailsResponseActivities());
+		target.setDetailsGiven(source.getDetailsGiven());
+		target.setAlertDate(source.getAlertDate());
+		target.setEbs(EbsAlertDtoHelper.toReferenceDto(source.getEbs()));
+	}
+
+	@Override
+	protected long getApproximateJsonSizeInBytes() {
+		return EbsAlertDto.APPROXIMATE_JSON_SIZE_IN_BYTES;
+	}
 }
