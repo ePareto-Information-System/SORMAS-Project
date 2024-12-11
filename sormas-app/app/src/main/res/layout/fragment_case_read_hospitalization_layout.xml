@@ -120,16 +120,16 @@
 
                 </LinearLayout>
 
-                <LinearLayout
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/caseHospitalization_hospitalRecordNumber"
+                app:value="@{data.hospitalRecordNumber}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <LinearLayout
                     android:id="@+id/caseHospitalization_admission_discharge_Date_heading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <de.symeda.sormas.app.component.controls.ControlTextReadField
-                        android:id="@+id/caseHospitalization_hospitalRecordNumber"
-                        app:value="@{data.hospitalRecordNumber}"
-                        style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextReadField
                         android:id="@+id/caseHospitalization_admissionDate"
