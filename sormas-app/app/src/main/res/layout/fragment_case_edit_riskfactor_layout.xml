@@ -51,6 +51,7 @@
                 <requestFocus/>
 
                 <TextView
+                    android:id="@+id/heading_case_riskfactor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/heading_risk_mapping"
@@ -219,7 +220,7 @@
             </LinearLayout>
 
             <LinearLayout
-                id="@+id/riskFactor_foodItemsSeven_eight"
+                android:id="@+id/riskFactor_foodItemsSeven_eight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">

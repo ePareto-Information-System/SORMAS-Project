@@ -61,7 +61,7 @@
                     android:id="@+id/heading_most_recent_hospitalization"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/heading_most_recent_hospitalization"
+                    android:text="@string/heading_case_hospitalization"
                     style="@style/SubHeadingStyle" />
 
                 <LinearLayout
@@ -120,16 +120,16 @@
 
                 </LinearLayout>
 
-                <LinearLayout
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/caseHospitalization_hospitalRecordNumber"
+                app:value="@{data.hospitalRecordNumber}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <LinearLayout
                     android:id="@+id/caseHospitalization_admission_discharge_Date_heading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <de.symeda.sormas.app.component.controls.ControlTextReadField
-                        android:id="@+id/caseHospitalization_hospitalRecordNumber"
-                        app:value="@{data.hospitalRecordNumber}"
-                        style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextReadField
                         android:id="@+id/caseHospitalization_admissionDate"

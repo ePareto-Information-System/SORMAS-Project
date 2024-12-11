@@ -82,16 +82,15 @@ public class CaseEditRiskFactorFragment extends BaseEditFragment<FragmentCaseEdi
 		contentBinding.setData(record);
 		contentBinding.setCaze(caze);
 		contentBinding.setYesNoClass(YesNo.class);
+		if (caze.getDisease() != null) {
+			super.hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.RISK_FACTOR_EDIT);
+		}
 	}
 
 	@Override
 	protected void onAfterLayoutBinding(FragmentCaseEditRiskfactorLayoutBinding contentBinding) {
 		setFieldVisibilitiesAndAccesses(RiskFactorDto.class, contentBinding.mainContent);
 		contentBinding.riskFactorWaterUsedForDrinking.initializeSpinner(listDrinkingWaterSources);
-
-		if (caze.getDisease() != null) {
-			super.hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.RISK_FACTOR_EDIT);
-		}
 	}
 
 	@Override

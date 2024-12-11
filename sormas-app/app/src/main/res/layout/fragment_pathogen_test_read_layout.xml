@@ -407,6 +407,29 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/pathogenTest_vibrioCholeraeIdentifiedInStools_info_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/pathogenTest_vibrioCholeraeIdentifiedInStools"
+                        app:value="@{data.vibrioCholeraeIdentifiedInStools}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/pathogenTest_drugsSensitiveToVibrioStrain"
+                        app:value="@{data.drugsSensitiveToVibrioStrain}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/pathogenTest_drugsResistantToVibrioStrain"
+                        app:value="@{data.drugsResistantToVibrioStrain}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/pathogenTest_laboratoryGram"
                     app:value="@{data.laboratoryGram}"

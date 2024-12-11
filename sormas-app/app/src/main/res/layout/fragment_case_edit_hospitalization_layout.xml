@@ -70,7 +70,7 @@
                 android:id="@+id/heading_most_recent_hospitalization"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/heading_most_recent_hospitalization"
+                android:text="@string/heading_case_hospitalization"
                 style="@style/SubHeadingStyle" />
 
             <TextView

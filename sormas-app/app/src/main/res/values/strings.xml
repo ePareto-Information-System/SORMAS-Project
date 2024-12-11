@@ -417,6 +417,8 @@
     <string name="heading_missing_weekly_report">Missing Weekly Report</string>
     <string name="heading_most_recent_additional_tests">Most Recent Additional Tests</string>
     <string name="heading_most_recent_hospitalization">Most Recent Hospitalization</string>
+    <string name="heading_case_hospitalization">Hospitalization</string>
+    <string name="heading_case_riskfactor">Risk Mapping</string>
     <string name="heading_most_recent_test">Most Recent Pathogen Test</string>
     <string name="heading_new_sormas_version">New SORMAS version</string>
     <string name="heading_outbreak_response">Outbreak Response</string>

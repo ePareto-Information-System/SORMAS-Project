@@ -106,7 +106,7 @@
                 style="@style/ControlSingleColumnStyle" />
 
             <LinearLayout
-                android:id="@+id/epiData_exposedToRiskFactor_layout"
+                android:id="@+id/epiData_exposedToRiskFactor_waterUsedByPatientAfterExposure_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -126,7 +126,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/epiData_waterUsedForDrinking_layout"
+                android:id="@+id/epiData_waterUsedForDrinking_waterUsedNotForDrinking_foodItems_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">

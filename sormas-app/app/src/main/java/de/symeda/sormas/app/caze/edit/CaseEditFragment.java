@@ -360,6 +360,13 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			classificationView.loadData(DiseaseClassificationAppHelper.buildDiseaseClassificationHtml(record.getDisease()), "text/html", "utf-8");
 			classificationDialog.show();
 		});
+
+		contentBinding.investigateIntoRiskFactorsBtn.setOnClickListener(v -> {
+			CaseEditActivity activity = (CaseEditActivity) CaseEditFragment.this.getActivity();
+			activity.saveData(caze -> {
+				activity.replaceFragment(CaseEditRiskFactorFragment.newInstance(caze), true);
+			});
+		});
 	}
 
 	// Overrides
