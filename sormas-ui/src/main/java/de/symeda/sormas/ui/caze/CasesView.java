@@ -28,6 +28,8 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import de.symeda.sormas.api.user.DefaultUserRole;
+import de.symeda.sormas.api.user.UserRoleDto;
 import de.symeda.sormas.ui.caze.importer.DuplicateMergeExcelImportLayout;
 import org.vaadin.hene.popupbutton.PopupButton;
 
@@ -331,18 +333,18 @@ public class CasesView extends AbstractView {
 
 			{
 				StreamResource exportStreamResource = CaseDownloadUtil.createCaseExportResource(
-					grid.getCriteria(),
-					this::getSelectedRows,
-					CaseExportType.CASE_SURVEILLANCE,
-					detailedExportConfiguration);
+						grid.getCriteria(),
+						this::getSelectedRows,
+						CaseExportType.CASE_SURVEILLANCE,
+						detailedExportConfiguration);
 
 				addExportButton(
-					exportStreamResource,
-					exportPopupButton,
-					exportLayout,
-					VaadinIcons.FILE_TEXT,
-					Captions.exportDetailed,
-					Strings.infoDetailedExport);
+						exportStreamResource,
+						exportPopupButton,
+						exportLayout,
+						VaadinIcons.FILE_TEXT,
+						Captions.exportDetailed,
+						Strings.infoDetailedExport);
 			}
 
 			if (hasClinicalCourseRight || hasTherapyRight) {
@@ -428,6 +430,50 @@ public class CasesView extends AbstractView {
 				btnCustomCaseExport.setDescription(I18nProperties.getString(Strings.infoCustomExport));
 				btnCustomCaseExport.setWidth(100, Unit.PERCENTAGE);
 				exportLayout.addComponent(btnCustomCaseExport);
+			}
+
+//			{
+//				StreamResource exportStreamResource = CaseDownloadUtil.createCaseSamplesExportResource(
+//						grid.getCriteria(),
+//						this::getSelectedRows,
+//						CaseExportType.CASE_SURVEILLANCE,
+//						detailedExportConfiguration);
+//
+//				addExportButton(
+//						exportStreamResource,
+//						exportPopupButton,
+//						exportLayout,
+//						VaadinIcons.FILE_TEXT,
+//						Captions.exportCaseSamplesDetailed,
+//						Strings.infoDetailedExport);
+//			}
+
+			{
+
+				//	TODO: Fix hasUserRole method in UserProvider.java
+
+				Set<UserRoleDto> userRoles = UserProvider.getCurrent().getUserRoles();
+				UserRoleDto nationalUserRole = userRoles.stream()
+						.filter(userRoleDto -> userRoleDto.getCaption().equals(I18nProperties.getEnumCaption(DefaultUserRole.NATIONAL_USER)))
+						.findFirst()
+						.orElse(null);
+
+				if (nationalUserRole != null) {
+
+					StreamResource exportStreamResource = CaseDownloadUtil.createCaseSamplesExportResource(
+							grid.getCriteria(),
+							this::getSelectedRows,
+							CaseExportType.CASE_SURVEILLANCE,
+							detailedExportConfiguration);
+
+					addExportButton(
+							exportStreamResource,
+							exportPopupButton,
+							exportLayout,
+							VaadinIcons.FILE_TEXT,
+							Captions.exportCaseSamplesDetailed,
+							Strings.infoDetailedExport);
+				}
 			}
 
 			{

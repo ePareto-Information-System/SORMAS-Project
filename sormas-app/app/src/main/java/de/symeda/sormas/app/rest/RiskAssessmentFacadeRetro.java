@@ -28,7 +28,10 @@ import retrofit2.http.Path;
 public interface RiskAssessmentFacadeRetro {
 
 	@GET("riskassessment/all/{since}/{size}/{lastSynchronizedUuid}")
-	Call<List<RiskAssessmentDto>> pullAllSince(@Path("since") long since, @Path("size") int size, @Path("lastSynchronizedUuid") String lastSynchronizedUuid);
+	Call<List<RiskAssessmentDto>> pullAllSince(
+		@Path("since") long since,
+		@Path("size") int size,
+		@Path("lastSynchronizedUuid") String lastSynchronizedUuid);
 
 	@POST("riskassessment/query")
 	Call<List<RiskAssessmentDto>> pullByUuids(@Body List<String> uuids);

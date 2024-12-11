@@ -15,15 +15,14 @@
 
 package de.symeda.sormas.api.ebs;
 
+import java.util.Date;
+
 import de.symeda.sormas.api.EntityDto;
-import de.symeda.sormas.api.caze.maternalhistory.MaternalHistoryDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.user.UserReferenceDto;
-import de.symeda.sormas.api.utils.*;
-
-
-import java.util.Date;
-import java.util.Set;
+import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.DependingOnFeatureType;
+import de.symeda.sormas.api.utils.YesNo;
 
 @DependingOnFeatureType(featureType = FeatureType.EVENT_SURVEILLANCE)
 public class TriagingDto extends EntityDto {
@@ -65,8 +64,6 @@ public class TriagingDto extends EntityDto {
 	public static final String CATEGORY_DETAILS_LEVEL = "categoryDetailsLevel";
 	public static final String POTENTIAL_RISK = "potentialRisk";
 
-
-
 	private YesNo supervisorReview;
 	private YesNo referred;
 	private YesNo specificSignal;
@@ -90,17 +87,15 @@ public class TriagingDto extends EntityDto {
 	private CategoryDetailsLevel categoryDetailsLevel;
 	private YesNo potentialRisk;
 
-    public static TriagingDto build() {
+	public static TriagingDto build() {
 		TriagingDto triagingDto = new TriagingDto();
 		triagingDto.setUuid(DataHelper.createUuid());
 		return triagingDto;
-    }
-
-
-    public EbsReferenceDto toReference() {
-		return new EbsReferenceDto(getUuid());
 	}
 
+	public EbsReferenceDto toReference() {
+		return new EbsReferenceDto(getUuid());
+	}
 
 	public YesNo getSupervisorReview() {
 		return supervisorReview;

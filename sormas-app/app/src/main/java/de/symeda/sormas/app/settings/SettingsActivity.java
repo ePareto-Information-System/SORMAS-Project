@@ -111,7 +111,7 @@ public class SettingsActivity extends BaseLandingActivity {
 
 	/**
 	 * Is a sub-activity when the user needs to go back to the LoginActivity
-	 * 
+	 *
 	 * @see SettingsActivity#onOptionsItemSelected(MenuItem)
 	 */
 	@Override

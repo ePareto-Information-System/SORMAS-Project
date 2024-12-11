@@ -15,25 +15,25 @@
 
 package de.symeda.sormas.api.ebs;
 
+import java.io.Serializable;
+import java.util.Date;
+
 import de.symeda.sormas.api.importexport.ExportEntity;
 import de.symeda.sormas.api.importexport.ExportGroup;
 import de.symeda.sormas.api.importexport.ExportGroupType;
 import de.symeda.sormas.api.importexport.ExportProperty;
-import de.symeda.sormas.api.infrastructure.region.RegionDto;
 import de.symeda.sormas.api.utils.Order;
 import de.symeda.sormas.api.utils.YesNo;
-import de.symeda.sormas.api.uuid.AbstractUuidDto;
-
-import java.util.*;
 
 @ExportEntity(EbsDto.class)
-public class EbsExportDto extends AbstractUuidDto {
+public class EbsExportDto implements Serializable {
 
 	public static final String I18N_PREFIX = "EbsExport";
 	private static final String REGION = "region";
 	private static final String DISTRICT = "district";
 	private static final String COMMUNITY = "community";
 
+	private String uuid;
 	private String informantName;
 	private String informantTel;
 	private Date reportDateTime;
@@ -106,78 +106,77 @@ public class EbsExportDto extends AbstractUuidDto {
 	private Date alertDate;
 
 	public EbsExportDto(
-			String uuid,
-			String informantName,
-			String informantTel,
-			Date reportDateTime,
-			EbsSourceType sourceInformation,
-			String sourceName,
-			String sourceUrl,
-			String region,
-			String district,
-			String community,
-			Double ebsLongitude,
-			Double ebsLatitude,
-			Double ebsLatLon,
-			String descriptionOccurrence,
-			String personRegistering,
-			String personDesignation,
-			String personPhone,
-			AutomaticScanningType automaticScanningType,
-			ManualScanningType manualScanningType,
-			MediaScannningType scanningType,
-			String other,
-			PersonReporting categoryOfInformant,
-			String otherInformant,
-			YesNo supervisorReview,
-			YesNo referred,
-			YesNo specificSignal,
-			SignalCategory signalCategory,
-			YesNo healthConcern,
-			HumanCommunityCategoryDetails humanCommunityCategoryDetails,
-			HumanFaclityCategoryDetails humanFacilityCategoryDetails,
-			HumanLaboratoryCategoryDetails humanLaboratoryCategoryDetails,
-			AnimalCommunityCategoryDetails animalCommunityCategoryDetails,
-			AnimalFacilityCategoryDetails animalFacilityCategoryDetails,
-			AnimalLaboratoryCategoryDetails animalLaboratoryCategoryDetails,
-			EnvironmentalCategoryDetails environmentalCategoryDetails,
-			POE poeCategoryDetails,
-			YesNo occurrencePreviously,
-			EbsTriagingDecision triagingDecision,
-			Date decisionDate,
-			String referredTo,
-			OutComeSupervisor outcomeSupervisor,
-			boolean notSignal,
-			CategoryDetailsLevel categoryDetailsLevel,
-			YesNo potentialRisk,
-			YesNo verificationSent,
-			SignalOutcome verified,
-			Date verificationCompleteDate,
-			Date dateOfOccurrence,
-			String numberOfPersonAnimal,
-			String numberOfDeath,
-			String description,
-			String whyNotVerify,
-			String numberOfPersonCases,
-			String numberOfDeathPerson,
-			YesNo morbidityMortality,
-			String morbidityMortalityComment,
-			YesNo spreadProbability,
-			String spreadProbabilityComment,
-			YesNo controlMeasures,
-			String controlMeasuresComment,
-			RiskAssesment riskAssessment,
-			Date assessmentDate,
-			YesNo actionInitiated,
-			ResponseStatus responseStatus,
-			Date responseDate,
-			String detailsResponseActivities,
-			String detailsGiven,
-			YesNo alertIssued,
-			String detailsAlertUsed,
-			Date alertDate
-	) {
-		super(uuid);
+		String uuid,
+		String informantName,
+		String informantTel,
+		Date reportDateTime,
+		EbsSourceType sourceInformation,
+		String sourceName,
+		String sourceUrl,
+		String region,
+		String district,
+		String community,
+		Double ebsLongitude,
+		Double ebsLatitude,
+		Double ebsLatLon,
+		String descriptionOccurrence,
+		String personRegistering,
+		String personDesignation,
+		String personPhone,
+		AutomaticScanningType automaticScanningType,
+		ManualScanningType manualScanningType,
+		MediaScannningType scanningType,
+		String other,
+		PersonReporting categoryOfInformant,
+		String otherInformant,
+		YesNo supervisorReview,
+		YesNo referred,
+		YesNo specificSignal,
+		SignalCategory signalCategory,
+		YesNo healthConcern,
+		HumanCommunityCategoryDetails humanCommunityCategoryDetails,
+		HumanFaclityCategoryDetails humanFacilityCategoryDetails,
+		HumanLaboratoryCategoryDetails humanLaboratoryCategoryDetails,
+		AnimalCommunityCategoryDetails animalCommunityCategoryDetails,
+		AnimalFacilityCategoryDetails animalFacilityCategoryDetails,
+		AnimalLaboratoryCategoryDetails animalLaboratoryCategoryDetails,
+		EnvironmentalCategoryDetails environmentalCategoryDetails,
+		POE poeCategoryDetails,
+		YesNo occurrencePreviously,
+		EbsTriagingDecision triagingDecision,
+		Date decisionDate,
+		String referredTo,
+		OutComeSupervisor outcomeSupervisor,
+		boolean notSignal,
+		CategoryDetailsLevel categoryDetailsLevel,
+		YesNo potentialRisk,
+		YesNo verificationSent,
+		SignalOutcome verified,
+		Date verificationCompleteDate,
+		Date dateOfOccurrence,
+		String numberOfPersonAnimal,
+		String numberOfDeath,
+		String description,
+		String whyNotVerify,
+		String numberOfPersonCases,
+		String numberOfDeathPerson,
+		YesNo morbidityMortality,
+		String morbidityMortalityComment,
+		YesNo spreadProbability,
+		String spreadProbabilityComment,
+		YesNo controlMeasures,
+		String controlMeasuresComment,
+		RiskAssesment riskAssessment,
+		Date assessmentDate,
+		YesNo actionInitiated,
+		ResponseStatus responseStatus,
+		Date responseDate,
+		String detailsResponseActivities,
+		String detailsGiven,
+		YesNo alertIssued,
+		String detailsAlertUsed,
+		Date alertDate) {
+		this.uuid = uuid;
 		this.informantName = informantName;
 		this.informantTel = informantTel;
 		this.reportDateTime = reportDateTime;
@@ -238,7 +237,7 @@ public class EbsExportDto extends AbstractUuidDto {
 		this.controlMeasures = controlMeasures;
 		this.controlMeasuresComment = controlMeasuresComment;
 		this.riskAssessment = riskAssessment;
-		this.assessmentDate	= assessmentDate;
+		this.assessmentDate = assessmentDate;
 		this.actionInitiated = actionInitiated;
 		this.responseStatus = responseStatus;
 		this.responseDate = responseDate;
@@ -252,41 +251,50 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(0)
 	@ExportProperty(EbsDto.UUID)
 	@ExportGroup(ExportGroupType.EBS)
-	@Override
 	public String getUuid() {
-		return super.getUuid();
+		return uuid;
 	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
 	@Order(1)
 	@ExportProperty(EbsDto.SOURCE_INFORMATION)
 	@ExportGroup(ExportGroupType.EBS)
-	public String getSourceName(){
+	public String getSourceName() {
 		return sourceName;
 	}
-	public void setSourceName(String sourceName){
+
+	public void setSourceName(String sourceName) {
 		this.sourceName = sourceName;
 	}
+
 	@Order(2)
 	@ExportProperty(EbsDto.SOURCE_URL)
 	@ExportGroup(ExportGroupType.EBS)
-	public String getSourceUrl(){
+	public String getSourceUrl() {
 		return sourceUrl;
 	}
-	public void setSourceUrl(String sourceUrl){
+
+	public void setSourceUrl(String sourceUrl) {
 		this.sourceUrl = sourceUrl;
 	}
+
 	@Order(3)
 	@ExportProperty(REGION)
 	@ExportGroup(ExportGroupType.EBS)
-	public String getRegion(){
+	public String getRegion() {
 		return region;
 	}
-	public void setRegion(String region){
+
+	public void setRegion(String region) {
 		this.region = region;
 	}
 	@Order(4)
 	@ExportProperty(DISTRICT)
 	@ExportGroup(ExportGroupType.EBS)
-	public String getDistrict(){
+	public String getDistrict() {
 		return district;
 	}
 	public void setDistrict(String district){
@@ -295,7 +303,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(5)
 	@ExportProperty(COMMUNITY)
 	@ExportGroup(ExportGroupType.EBS)
-	public String getCommunity(){
+	public String getCommunity() {
 		return community;
 	}
 	public void setCommunity(String community){
@@ -304,7 +312,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(6)
 	@ExportProperty(EbsDto.EBS_LONGITUDE)
 	@ExportGroup(ExportGroupType.EBS)
-	public Double getEbsLongitude(){
+	public Double getEbsLongitude() {
 		return ebsLongitude;
 	}
 	public void setEbsLongitude(Double ebsLongitude){
@@ -313,16 +321,17 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(7)
 	@ExportProperty(EbsDto.EBS_LATITUDE)
 	@ExportGroup(ExportGroupType.EBS)
-	public Double getEbsLatitude(){
+	public Double getEbsLatitude() {
 		return ebsLatitude;
 	}
-	public void setEbsLatitude(Double ebsLatitude){
+
+	public void setEbsLatitude(Double ebsLatitude) {
 		this.ebsLatitude = ebsLatitude;
 	}
 	@Order(8)
 	@ExportProperty(EbsDto.EBS_LATLONG)
 	@ExportGroup(ExportGroupType.EBS)
-	public Double getEbsLatLon(){
+	public Double getEbsLatLon() {
 		return ebsLatLon;
 	}
 	public void setEbsLatLon(Double ebsLatLon){
@@ -331,7 +340,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(9)
 	@ExportProperty(EbsDto.DESCRIPTION_OCCURRENCE)
 	@ExportGroup(ExportGroupType.EBS)
-	public String getDescriptionOccurrence(){
+	public String getDescriptionOccurrence() {
 		return descriptionOccurrence;
 	}
 	public void setDescriptionOccurrence(String descriptionOccurrence){
@@ -340,7 +349,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(10)
 	@ExportProperty(EbsDto.PERSON_REGISTERING)
 	@ExportGroup(ExportGroupType.EBS)
-	public String getPersonRegistering(){
+	public String getPersonRegistering() {
 		return personRegistering;
 	}
 	public void setPersonRegistering(String personRegistering){
@@ -349,7 +358,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(11)
 	@ExportProperty(EbsDto.PERSON_DESIGNATION)
 	@ExportGroup(ExportGroupType.EBS)
-	public String getPersonDesignation(){
+	public String getPersonDesignation() {
 		return personDesignation;
 	}
 	public void setPersonDesignation(String personDesignation){
@@ -358,7 +367,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(12)
 	@ExportProperty(EbsDto.PERSON_PHONE)
 	@ExportGroup(ExportGroupType.EBS)
-	public String getPersonPhone(){
+	public String getPersonPhone() {
 		return personPhone;
 	}
 	public void setPersonPhone(String personPhone){
@@ -367,7 +376,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(13)
 	@ExportProperty(EbsDto.AUTOMATIC_SCANNING_TYPE)
 	@ExportGroup(ExportGroupType.EBS)
-	public AutomaticScanningType getAutomaticScanningType(){
+	public AutomaticScanningType getAutomaticScanningType() {
 		return automaticScanningType;
 	}
 	public void setAutomaticScanningType(AutomaticScanningType automaticScanningType){
@@ -376,7 +385,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(14)
 	@ExportProperty(EbsDto.MANUAL_SCANNING_TYPE)
 	@ExportGroup(ExportGroupType.EBS)
-	public ManualScanningType getManualScanningType(){
+	public ManualScanningType getManualScanningType() {
 		return manualScanningType;
 	}
 	public void setManualScanningType(ManualScanningType manualScanningType){
@@ -385,74 +394,86 @@ public class EbsExportDto extends AbstractUuidDto {
 	@Order(15)
 	@ExportProperty(EbsDto.SCANNING_TYPE)
 	@ExportGroup(ExportGroupType.EBS)
-	public MediaScannningType getScanningType(){
+	public MediaScannningType getScanningType() {
 		return scanningType;
 	}
-	public void setScanningType(MediaScannningType scanningType){
+
+	public void setScanningType(MediaScannningType scanningType) {
 		this.scanningType = scanningType;
 	}
 	@Order(16)
 	@ExportProperty(EbsDto.OTHER)
 	@ExportGroup(ExportGroupType.EBS)
-	public String getOther(){
+	public String getOther() {
 		return other;
 	}
 	public void setOther(String other){
 		this.other = other;
 	}
+
 	@Order(17)
 	@ExportProperty(EbsDto.CATEGORY_OF_INFORMANT)
 	@ExportGroup(ExportGroupType.EBS)
-	public PersonReporting getCategoryOfInformant(){
+	public PersonReporting getCategoryOfInformant() {
 		return categoryOfInformant;
 	}
-	public void setCategoryOfInformant(PersonReporting categoryOfInformant){
+
+	public void setCategoryOfInformant(PersonReporting categoryOfInformant) {
 		this.categoryOfInformant = categoryOfInformant;
 	}
+
 	@Order(18)
 	@ExportProperty(EbsDto.OTHER_INFORMANT)
 	@ExportGroup(ExportGroupType.EBS)
-	public String getOtherInformant(){
+	public String getOtherInformant() {
 		return otherInformant;
 	}
-	public void setOtherInformant(String otherInformant){
+
+	public void setOtherInformant(String otherInformant) {
 		this.otherInformant = otherInformant;
 	}
+
 	@Order(19)
 	@ExportProperty(EbsDto.INFORMANT_NAME)
 	@ExportGroup(ExportGroupType.EBS)
-	public String getInformantName(){
+	public String getInformantName() {
 		return informantName;
 	}
-	public void setInformantName(String informantName){
+
+	public void setInformantName(String informantName) {
 		this.informantName = informantName;
 	}
+
 	@Order(20)
 	@ExportProperty(EbsDto.INFORMANT_TEL)
 	@ExportGroup(ExportGroupType.EBS)
-	public String getInformantTel(){
+	public String getInformantTel() {
 		return informantTel;
 	}
-	public void setInformantTel(String informantTel){
+
+	public void setInformantTel(String informantTel) {
 		this.informantTel = informantTel;
 	}
+
 	@Order(21)
 	@ExportProperty(EbsDto.REPORT_DATE_TIME)
 	@ExportGroup(ExportGroupType.EBS)
-	public Date getReportDateTime(){
+	public Date getReportDateTime() {
 		return reportDateTime;
 	}
-	public void setReportDateTime(Date reportDateTime){
+
+	public void setReportDateTime(Date reportDateTime) {
 		this.reportDateTime = reportDateTime;
 	}
 
 	@Order(23)
 	@ExportProperty(EbsDto.SOURCE_INFORMATION)
 	@ExportGroup(ExportGroupType.EBS)
-	public EbsSourceType getSourceInformation(){
+	public EbsSourceType getSourceInformation() {
 		return sourceInformation;
 	}
-	public void setSourceInformation(EbsSourceType sourceInformation){
+
+	public void setSourceInformation(EbsSourceType sourceInformation) {
 		this.sourceInformation = sourceInformation;
 	}
 
@@ -462,6 +483,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public YesNo getSupervisorReview() {
 		return supervisorReview;
 	}
+
 	public void setSupervisorReview(YesNo supervisorReview) {
 		this.supervisorReview = supervisorReview;
 	}
@@ -472,6 +494,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public YesNo getReferred() {
 		return referred;
 	}
+
 	public void setReferred(YesNo referred) {
 		this.referred = referred;
 	}
@@ -482,6 +505,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public YesNo getSpecificSignal() {
 		return specificSignal;
 	}
+
 	public void setSpecificSignal(YesNo specificSignal) {
 		this.specificSignal = specificSignal;
 	}
@@ -492,6 +516,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public SignalCategory getSignalCategory() {
 		return signalCategory;
 	}
+
 	public void setSignalCategory(SignalCategory signalCategory) {
 		this.signalCategory = signalCategory;
 	}
@@ -502,6 +527,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public YesNo getHealthConcern() {
 		return healthConcern;
 	}
+
 	public void setHealthConcern(YesNo healthConcern) {
 		this.healthConcern = healthConcern;
 	}
@@ -512,6 +538,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public HumanCommunityCategoryDetails getHumanCommunityCategoryDetails() {
 		return humanCommunityCategoryDetails;
 	}
+
 	public void setHumanCommunityCategoryDetails(HumanCommunityCategoryDetails humanCommunityCategoryDetails) {
 		this.humanCommunityCategoryDetails = humanCommunityCategoryDetails;
 	}
@@ -522,6 +549,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public HumanFaclityCategoryDetails getHumanFacilityCategoryDetails() {
 		return humanFacilityCategoryDetails;
 	}
+
 	public void setHumanFacilityCategoryDetails(HumanFaclityCategoryDetails humanFacilityCategoryDetails) {
 		this.humanFacilityCategoryDetails = humanFacilityCategoryDetails;
 	}
@@ -532,6 +560,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public HumanLaboratoryCategoryDetails getHumanLaboratoryCategoryDetails() {
 		return humanLaboratoryCategoryDetails;
 	}
+
 	public void setHumanLaboratoryCategoryDetails(HumanLaboratoryCategoryDetails humanLaboratoryCategoryDetails) {
 		this.humanLaboratoryCategoryDetails = humanLaboratoryCategoryDetails;
 	}
@@ -542,6 +571,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public AnimalCommunityCategoryDetails getAnimalCommunityCategoryDetails() {
 		return animalCommunityCategoryDetails;
 	}
+
 	public void setAnimalCommunityCategoryDetails(AnimalCommunityCategoryDetails animalCommunityCategoryDetails) {
 		this.animalCommunityCategoryDetails = animalCommunityCategoryDetails;
 	}
@@ -552,6 +582,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public AnimalFacilityCategoryDetails getAnimalFacilityCategoryDetails() {
 		return animalFacilityCategoryDetails;
 	}
+
 	public void setAnimalFacilityCategoryDetails(AnimalFacilityCategoryDetails animalFacilityCategoryDetails) {
 		this.animalFacilityCategoryDetails = animalFacilityCategoryDetails;
 	}
@@ -562,6 +593,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public AnimalLaboratoryCategoryDetails getAnimalLaboratoryCategoryDetails() {
 		return animalLaboratoryCategoryDetails;
 	}
+
 	public void setAnimalLaboratoryCategoryDetails(AnimalLaboratoryCategoryDetails animalLaboratoryCategoryDetails) {
 		this.animalLaboratoryCategoryDetails = animalLaboratoryCategoryDetails;
 	}
@@ -572,6 +604,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public EnvironmentalCategoryDetails getEnvironmentalCategoryDetails() {
 		return environmentalCategoryDetails;
 	}
+
 	public void setEnvironmentalCategoryDetails(EnvironmentalCategoryDetails environmentalCategoryDetails) {
 		this.environmentalCategoryDetails = environmentalCategoryDetails;
 	}
@@ -582,6 +615,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public POE getPoeCategoryDetails() {
 		return poeCategoryDetails;
 	}
+
 	public void setPoeCategoryDetails(POE poeCategoryDetails) {
 		this.poeCategoryDetails = poeCategoryDetails;
 	}
@@ -592,6 +626,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public YesNo getOccurrencePreviously() {
 		return occurrencePreviously;
 	}
+
 	public void setOccurrencePreviously(YesNo occurrencePreviously) {
 		this.occurrencePreviously = occurrencePreviously;
 	}
@@ -602,6 +637,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public EbsTriagingDecision getTriagingDecision() {
 		return triagingDecision;
 	}
+
 	public void setTriagingDecision(EbsTriagingDecision triagingDecision) {
 		this.triagingDecision = triagingDecision;
 	}
@@ -612,6 +648,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public Date getDecisionDate() {
 		return decisionDate;
 	}
+
 	public void setDecisionDate(Date decisionDate) {
 		this.decisionDate = decisionDate;
 	}
@@ -622,6 +659,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public String getReferredTo() {
 		return referredTo;
 	}
+
 	public void setReferredTo(String referredTo) {
 		this.referredTo = referredTo;
 	}
@@ -632,6 +670,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public OutComeSupervisor getOutcomeSupervisor() {
 		return outcomeSupervisor;
 	}
+
 	public void setOutcomeSupervisor(OutComeSupervisor outcomeSupervisor) {
 		this.outcomeSupervisor = outcomeSupervisor;
 	}
@@ -642,6 +681,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public boolean isNotSignal() {
 		return notSignal;
 	}
+
 	public void setNotSignal(boolean notSignal) {
 		this.notSignal = notSignal;
 	}
@@ -652,6 +692,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public CategoryDetailsLevel getCategoryDetailsLevel() {
 		return categoryDetailsLevel;
 	}
+
 	public void setCategoryDetailsLevel(CategoryDetailsLevel categoryDetailsLevel) {
 		this.categoryDetailsLevel = categoryDetailsLevel;
 	}
@@ -662,6 +703,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public YesNo getPotentialRisk() {
 		return potentialRisk;
 	}
+
 	public void setPotentialRisk(YesNo potentialRisk) {
 		this.potentialRisk = potentialRisk;
 	}
@@ -672,6 +714,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public YesNo getVerificationSent() {
 		return verificationSent;
 	}
+
 	public void setVerificationSent(YesNo verificationSent) {
 		this.verificationSent = verificationSent;
 	}
@@ -682,6 +725,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public SignalOutcome getVerified() {
 		return verified;
 	}
+
 	public void setVerified(SignalOutcome verified) {
 		this.verified = verified;
 	}
@@ -692,6 +736,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public Date getVerificationCompleteDate() {
 		return verificationCompleteDate;
 	}
+
 	public void setVerificationCompleteDate(Date verificationCompleteDate) {
 		this.verificationCompleteDate = verificationCompleteDate;
 	}
@@ -702,6 +747,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public Date getDateOfOccurrence() {
 		return dateOfOccurrence;
 	}
+
 	public void setDateOfOccurrence(Date dateOfOccurrence) {
 		this.dateOfOccurrence = dateOfOccurrence;
 	}
@@ -712,6 +758,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public String getNumberOfPersonAnimal() {
 		return numberOfPersonAnimal;
 	}
+
 	public void setNumberOfPersonAnimal(String numberOfPersonAnimal) {
 		this.numberOfPersonAnimal = numberOfPersonAnimal;
 	}
@@ -722,6 +769,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public String getNumberOfDeath() {
 		return numberOfDeath;
 	}
+
 	public void setNumberOfDeath(String numberOfDeath) {
 		this.numberOfDeath = numberOfDeath;
 	}
@@ -732,6 +780,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -742,6 +791,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public String getWhyNotVerify() {
 		return whyNotVerify;
 	}
+
 	public void setWhyNotVerify(String whyNotVerify) {
 		this.whyNotVerify = whyNotVerify;
 	}
@@ -752,6 +802,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public String getNumberOfPersonCases() {
 		return numberOfPersonCases;
 	}
+
 	public void setNumberOfPersonCases(String numberOfPersonCases) {
 		this.numberOfPersonCases = numberOfPersonCases;
 	}
@@ -762,15 +813,18 @@ public class EbsExportDto extends AbstractUuidDto {
 	public String getNumberOfDeathPerson() {
 		return numberOfDeathPerson;
 	}
+
 	public void setNumberOfDeathPerson(String numberOfDeathPerson) {
 		this.numberOfDeathPerson = numberOfDeathPerson;
 	}
+
 	@Order(55)
 	@ExportProperty(RiskAssessmentDto.MORBIDITY_MORTALITY)
 	@ExportGroup(ExportGroupType.RISK_ASSESSMENT)
 	public YesNo getMorbidityMortality() {
 		return morbidityMortality;
 	}
+
 	public void setMorbidityMortality(YesNo morbidityMortality) {
 		this.morbidityMortality = morbidityMortality;
 	}
@@ -781,6 +835,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public String getMorbidityMortalityComment() {
 		return morbidityMortalityComment;
 	}
+
 	public void setMorbidityMortalityComment(String morbidityMortalityComment) {
 		this.morbidityMortalityComment = morbidityMortalityComment;
 	}
@@ -791,6 +846,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public YesNo getSpreadProbability() {
 		return spreadProbability;
 	}
+
 	public void setSpreadProbability(YesNo spreadProbability) {
 		this.spreadProbability = spreadProbability;
 	}
@@ -801,6 +857,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public String getSpreadProbabilityComment() {
 		return spreadProbabilityComment;
 	}
+
 	public void setSpreadProbabilityComment(String spreadProbabilityComment) {
 		this.spreadProbabilityComment = spreadProbabilityComment;
 	}
@@ -811,6 +868,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public YesNo getControlMeasures() {
 		return controlMeasures;
 	}
+
 	public void setControlMeasures(YesNo controlMeasures) {
 		this.controlMeasures = controlMeasures;
 	}
@@ -821,6 +879,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public String getControlMeasuresComment() {
 		return controlMeasuresComment;
 	}
+
 	public void setControlMeasuresComment(String controlMeasuresComment) {
 		this.controlMeasuresComment = controlMeasuresComment;
 	}
@@ -831,6 +890,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public RiskAssesment getRiskAssessment() {
 		return riskAssessment;
 	}
+
 	public void setRiskAssessment(RiskAssesment riskAssessment) {
 		this.riskAssessment = riskAssessment;
 	}
@@ -841,6 +901,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public Date getAssessmentDate() {
 		return assessmentDate;
 	}
+
 	public void setAssessmentDate(Date assessmentDate) {
 		this.assessmentDate = assessmentDate;
 	}
@@ -851,6 +912,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public String getAssessmentTime() {
 		return assessmentTime;
 	}
+
 	public void setAssessmentTime(String assessmentTime) {
 		this.assessmentTime = assessmentTime;
 	}
@@ -861,6 +923,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public YesNo getActionInitiated() {
 		return actionInitiated;
 	}
+
 	public void setActionInitiated(YesNo actionInitiated) {
 		this.actionInitiated = actionInitiated;
 	}
@@ -871,6 +934,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public ResponseStatus getResponseStatus() {
 		return responseStatus;
 	}
+
 	public void setResponseStatus(ResponseStatus responseStatus) {
 		this.responseStatus = responseStatus;
 	}
@@ -881,6 +945,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public Date getResponseDate() {
 		return responseDate;
 	}
+
 	public void setResponseDate(Date responseDate) {
 		this.responseDate = responseDate;
 	}
@@ -891,6 +956,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public String getDetailsResponseActivities() {
 		return detailsResponseActivities;
 	}
+
 	public void setDetailsResponseActivities(String detailsResponseActivities) {
 		this.detailsResponseActivities = detailsResponseActivities;
 	}
@@ -901,6 +967,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public String getDetailsGiven() {
 		return detailsGiven;
 	}
+
 	public void setDetailsGiven(String detailsGiven) {
 		this.detailsGiven = detailsGiven;
 	}
@@ -911,6 +978,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public YesNo getAlertIssued() {
 		return alertIssued;
 	}
+
 	public void setAlertIssued(YesNo alertIssued) {
 		this.alertIssued = alertIssued;
 	}
@@ -921,6 +989,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public String getDetailsAlertUsed() {
 		return detailsAlertUsed;
 	}
+
 	public void setDetailsAlertUsed(String detailsAlertUsed) {
 		this.detailsAlertUsed = detailsAlertUsed;
 	}
@@ -931,6 +1000,7 @@ public class EbsExportDto extends AbstractUuidDto {
 	public Date getAlertDate() {
 		return alertDate;
 	}
+
 	public void setAlertDate(Date alertDate) {
 		this.alertDate = alertDate;
 	}

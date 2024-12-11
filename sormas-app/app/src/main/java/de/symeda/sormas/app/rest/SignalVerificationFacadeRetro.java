@@ -28,7 +28,10 @@ import retrofit2.http.Path;
 public interface SignalVerificationFacadeRetro {
 
 	@GET("signalVerification/all/{since}/{size}/{lastSynchronizedUuid}")
-	Call<List<SignalVerificationDto>> pullAllSince(@Path("since") long since, @Path("size") int size, @Path("lastSynchronizedUuid") String lastSynchronizedUuid);
+	Call<List<SignalVerificationDto>> pullAllSince(
+		@Path("since") long since,
+		@Path("size") int size,
+		@Path("lastSynchronizedUuid") String lastSynchronizedUuid);
 
 	@POST("signalVerification/query")
 	Call<List<SignalVerificationDto>> pullByUuids(@Body List<String> uuids);

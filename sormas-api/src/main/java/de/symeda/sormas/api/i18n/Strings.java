@@ -1304,6 +1304,7 @@ public interface Strings {
 	String messageEventParticipantToContactWithoutEventDisease = "messageEventParticipantToContactWithoutEventDisease";
 	String messageEventParticipationUnlinked = "messageEventParticipationUnlinked";
 	String messageEventSaved = "messageEventSaved";
+	String messageEventsDearchived = "messageEventsDearchived";
 	String seniorOfficials = "seniorOfficials";
 	String referredNotifs = "referredNotifs";
 	String verifyNotifs = "verifyNotifs";

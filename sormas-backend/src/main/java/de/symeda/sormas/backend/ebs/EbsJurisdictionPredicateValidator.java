@@ -61,16 +61,16 @@ public class EbsJurisdictionPredicateValidator extends PredicateJurisdictionVali
 	public Predicate isRootInJurisdictionOrOwned() {
 
 		final Predicate reportedByCurrentUser = cb.and(
-			cb.isNotNull(joins.getRoot().get(Ebs.REPORTING_USER)),
-			user != null
-				? cb.equal(joins.getRoot().get(Ebs.REPORTING_USER).get(User.ID), user.getId())
-				: cb.equal(joins.getRoot().get(Ebs.REPORTING_USER).get(User.ID), userPath.get(User.ID)));
+				cb.isNotNull(joins.getRoot().get(Ebs.REPORTING_USER)),
+				user != null
+						? cb.equal(joins.getRoot().get(Ebs.REPORTING_USER).get(User.ID), user.getId())
+						: cb.equal(joins.getRoot().get(Ebs.REPORTING_USER).get(User.ID), userPath.get(User.ID)));
 
 		final Predicate currentUserResponsible = cb.and(
-			cb.isNotNull(joins.getRoot().get(Ebs.RESPONSIBLE_USER)),
-			user != null
-				? cb.equal(joins.getRoot().get(Ebs.RESPONSIBLE_USER).get(User.ID), user.getId())
-				: cb.equal(joins.getRoot().get(Ebs.RESPONSIBLE_USER).get(User.ID), userPath.get(User.ID)));
+				cb.isNotNull(joins.getRoot().get(Ebs.RESPONSIBLE_USER)),
+				user != null
+						? cb.equal(joins.getRoot().get(Ebs.RESPONSIBLE_USER).get(User.ID), user.getId())
+						: cb.equal(joins.getRoot().get(Ebs.RESPONSIBLE_USER).get(User.ID), userPath.get(User.ID)));
 
 		return cb.or(reportedByCurrentUser, currentUserResponsible, this.isRootInJurisdiction());
 	}
@@ -88,22 +88,22 @@ public class EbsJurisdictionPredicateValidator extends PredicateJurisdictionVali
 	@Override
 	protected Predicate whenRegionalLevel() {
 		return user != null
-			? cb.equal(joins.getLocation().get(Location.REGION).get(Region.ID), user.getRegion().getId())
-			: cb.equal(joins.getLocation().get(Location.REGION).get(Region.ID), userPath.get(User.REGION).get(Region.ID));
+				? cb.equal(joins.getLocation().get(Location.REGION).get(Region.ID), user.getRegion().getId())
+				: cb.equal(joins.getLocation().get(Location.REGION).get(Region.ID), userPath.get(User.REGION).get(Region.ID));
 	}
 
 	@Override
 	protected Predicate whenDistrictLevel() {
 		return user != null
-			? cb.equal(joins.getLocation().get(Location.DISTRICT).get(District.ID), user.getDistrict().getId())
-			: cb.equal(joins.getLocation().get(Location.DISTRICT).get(District.ID), userPath.get(User.DISTRICT).get(District.ID));
+				? cb.equal(joins.getLocation().get(Location.DISTRICT).get(District.ID), user.getDistrict().getId())
+				: cb.equal(joins.getLocation().get(Location.DISTRICT).get(District.ID), userPath.get(User.DISTRICT).get(District.ID));
 	}
 
 	@Override
 	protected Predicate whenCommunityLevel() {
 		return user != null
-			? cb.equal(joins.getLocation().get(Location.COMMUNITY).get(Community.ID), user.getCommunity().getId())
-			: cb.equal(joins.getLocation().get(Location.COMMUNITY).get(Community.ID), userPath.get(User.COMMUNITY).get(Community.ID));
+				? cb.equal(joins.getLocation().get(Location.COMMUNITY).get(Community.ID), user.getCommunity().getId())
+				: cb.equal(joins.getLocation().get(Location.COMMUNITY).get(Community.ID), userPath.get(User.COMMUNITY).get(Community.ID));
 	}
 
 	@Override

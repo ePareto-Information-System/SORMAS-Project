@@ -63,6 +63,26 @@
                 android:layout_marginBottom="@dimen/textControlMarginBottom"  />
 
             <de.symeda.sormas.app.component.controls.ControlButton
+                android:visibility="gone"
+                android:id="@+id/restore_db"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/buttonControlMarginBottom"
+                android:text="@string/action_restore_db"
+                app:buttonType="@{ControlButtonType.LINE_SECONDARY}"
+                app:rounded="true" />
+
+            <de.symeda.sormas.app.component.controls.ControlButton
+                android:visibility="gone"
+                android:id="@+id/backup_db"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/buttonControlMarginBottom"
+                android:text="@string/action_backup_db"
+                app:buttonType="@{ControlButtonType.LINE_SECONDARY}"
+                app:rounded="true" />
+
+            <de.symeda.sormas.app.component.controls.ControlButton
                 android:id="@+id/change_pin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

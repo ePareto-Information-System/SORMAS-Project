@@ -98,6 +98,18 @@ public class ValidationHelper {
 			return false;
 		});
 	}
+	public static void initEbsPhoneNumberValidator(ControlTextEditField textEditField) {
+		textEditField.setValidationCallback(() -> {
+			String phoneNumber = textEditField.getValue();
+			if (!DataHelper.isValidEbsPhoneNumber(phoneNumber)) {
+				textEditField.enableErrorState(I18nProperties.getValidationError(Validations.validPhoneNumber, textEditField.getCaption()));
+
+				return true;
+			}
+
+			return false;
+		});
+	}
 
 	public static void resetValidator(ControlTextEditField textEditField) {
 		textEditField.disableErrorState();

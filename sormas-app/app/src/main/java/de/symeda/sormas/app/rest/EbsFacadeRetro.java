@@ -19,7 +19,6 @@ import java.util.List;
 
 import de.symeda.sormas.api.PostResponse;
 import de.symeda.sormas.api.ebs.EbsDto;
-import de.symeda.sormas.api.event.EventDto;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;

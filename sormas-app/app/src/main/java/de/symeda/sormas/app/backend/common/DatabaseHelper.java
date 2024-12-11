@@ -75,6 +75,8 @@ import de.symeda.sormas.app.backend.auditlog.AuditLogEntry;
 import de.symeda.sormas.app.backend.auditlog.AuditLogEntryDao;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCaseDao;
+import de.symeda.sormas.app.backend.auditlog.AuditLogEntry;
+import de.symeda.sormas.app.backend.auditlog.AuditLogEntryDao;
 import de.symeda.sormas.app.backend.campaign.Campaign;
 import de.symeda.sormas.app.backend.campaign.CampaignDao;
 import de.symeda.sormas.app.backend.campaign.data.CampaignFormData;
@@ -115,6 +117,9 @@ import de.symeda.sormas.app.backend.ebs.ebsAlert.EbsAlertDao;
 import de.symeda.sormas.app.backend.ebs.riskAssessment.RiskAssessment;
 import de.symeda.sormas.app.backend.ebs.riskAssessment.RiskAssessmentDao;
 import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
+import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerificationDao;
+import de.symeda.sormas.app.backend.ebs.triaging.Triaging;
+import de.symeda.sormas.app.backend.ebs.triaging.TriagingDao;
 import de.symeda.sormas.app.backend.environment.Environment;
 import de.symeda.sormas.app.backend.environment.EnvironmentDao;
 import de.symeda.sormas.app.backend.epidata.EpiData;
@@ -3786,7 +3791,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									+ "		UNIQUE (snapshot ASC, uuid ASC)"
 									+ ");"
 					);
-	
+
 				case 387:
 					currentVersion = 387;
 					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN exposedToRiskFactor VARCHAR(255);");
@@ -3833,7 +3838,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN admittedToHealthFacilityNew varchar(255);");
 					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN memberFamilyHelpingPatient varchar(255);");
 					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN dateOfDeath Date;");
-		
+
 				case 392:
 					currentVersion = 392;
 					getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN contactDeadAnimals varchar(255) ;");

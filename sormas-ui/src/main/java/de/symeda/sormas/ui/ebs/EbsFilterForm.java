@@ -12,6 +12,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.location.LocationDto;
+import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.utils.*;
 
 ///*
@@ -36,7 +37,7 @@ public class EbsFilterForm extends AbstractFilterForm<EbsCriteria> {
 	protected EbsFilterForm() {
 		super(EbsCriteria.class,
 				EbsIndexDto.I18N_PREFIX,
-				true);
+				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()));
 	}
 	@Override
 	protected String[] getMainFilterLocators() {

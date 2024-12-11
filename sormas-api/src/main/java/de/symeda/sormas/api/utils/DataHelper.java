@@ -60,7 +60,8 @@ public final class DataHelper {
 
 	public static final String VALID_EMAIL_REGEX = "^([a-zA-Z0-9_\\.\\-+])+@[a-zA-Z0-9-.]+\\.[a-zA-Z0-9-]{2,}$";
 	public static final String NOT_A_VALID_PHONE_NUMBER_REGEX = ".*[a-zA-Z].*";
-	public static final String allCountryRegex = "^(\\+\\d{1,3}( )?)?((\\(\\d{1,3}\\))|\\d{1,3})[- .]?\\d{3,4}[- .]?\\d{4}$";
+	public static final String ALL_COUNTRY_REGEX = "^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$";
+	public static final String EBS_PHONE_REGEX = "^(\\+\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$";
 
 	private DataHelper() {
 		// Hide Utility Class Constructor
@@ -212,7 +213,18 @@ public final class DataHelper {
 		return uuid.substring(0, 6).toUpperCase();
 	}
 
-	@AuditedClass(includeAllFields = true)
+	public static boolean isValidEbsDate(boolean valid) {
+		return valid;
+	}
+
+	public static boolean isValidAnimalEbsDeath(boolean valid) {
+		return valid;
+	}
+
+	public static boolean isValidPersonEbsDeath(boolean valid) {
+		return valid;
+	}
+
 	public static class Pair<K, V> implements Serializable {
 
 		private static final long serialVersionUID = 7135988167451005820L;
@@ -463,9 +475,19 @@ public final class DataHelper {
 	}
 
 	public static boolean isValidPhoneNumber(String phoneNumber) {
-		return phoneNumber == null || phoneNumber.isEmpty() || (phoneNumber.matches(allCountryRegex));
-		//return phoneNumber == null || phoneNumber.isEmpty() || (phoneNumber.startsWith("+") && phoneNumber.matches(allCountryRegex));
+		if (phoneNumber == null || phoneNumber.isEmpty()) {
+			return true;
+		}
 
+		return phoneNumber.matches(ALL_COUNTRY_REGEX);
+	}
+
+	public static boolean isValidEbsPhoneNumber(String phoneNumber) {
+		if (phoneNumber == null || phoneNumber.isEmpty()) {
+			return true;
+		}
+
+		return phoneNumber.matches(EBS_PHONE_REGEX);
 	}
 
 	public static boolean isValidEmailAddress(String emailAddress) {
