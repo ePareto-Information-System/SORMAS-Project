@@ -653,16 +653,17 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 			contentBinding.personProfessionOfPatientOther.setVisibility(proOther ? View.VISIBLE : View.GONE);
 
 		});
+		if (contentBinding.personProfessionOfPatientOther.getValue() != null){
+			contentBinding.personProfessionOfPatientOther.setVisibility(View.VISIBLE);
+		}
 
 		contentBinding.personPlaceOfBirthFacilityType.setVisibility(GONE);
 
 		if(contentBinding.personPlaceOfBirthFacilityType.getValue() == null) {
 			contentBinding.personPlaceOfBirthFacilityType.setValue(FacilityType.HOSPITAL);
 		}
-
 		contentBinding.personEthnicity.setCaption("Ethnic Group");
-		contentBinding.personPhone.setCaption("Tel/Contact number");
-
+		contentBinding.personTelNumber.setCaption("Tel/Contact Number");
 	}
 
 	@Override

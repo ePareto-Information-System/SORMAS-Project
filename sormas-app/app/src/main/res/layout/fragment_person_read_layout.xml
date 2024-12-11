@@ -1033,6 +1033,12 @@
                 app:value="@{data.investigatorTel}"
                 style="@style/ControlSingleColumnStyle"/>
 
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/person_telNumber"
+                app:value="@{data.telNumber}"
+                app:inputType="number"
+                style="@style/ControlSingleColumnStyle" />
+
             <ImageView style="@style/FullHorizontalDividerStyle" />
 
             <TextView
