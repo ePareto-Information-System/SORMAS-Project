@@ -182,6 +182,7 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		target.setInvestigatorUnit(source.getInvestigatorUnit());
 		target.setInvestigatorAddress(source.getInvestigatorAddress());
 		target.setInvestigatorTel(source.getInvestigatorTel());
+		target.setTelNumber(source.getTelNumber());
 		target.setPlace(source.getPlace());
 		target.setDurationMonths(source.getDurationMonths());
 		target.setDurationDays(source.getDurationDays());
@@ -351,6 +352,7 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		target.setInvestigatorUnit(source.getInvestigatorUnit());
 		target.setInvestigatorAddress(source.getInvestigatorAddress());
 		target.setInvestigatorTel(source.getInvestigatorTel());
+		target.setTelNumber(source.getTelNumber());
 		target.setPlace(source.getPlace());
 		target.setDurationMonths(source.getDurationMonths());
 		target.setDurationDays(source.getDurationDays());
