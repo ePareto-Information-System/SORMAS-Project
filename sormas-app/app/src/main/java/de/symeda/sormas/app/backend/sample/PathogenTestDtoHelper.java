@@ -131,6 +131,9 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setLaboratoryFinalResults(source.getLaboratoryFinalResults());
 		target.setLaboratoryFinalClassification(source.getLaboratoryFinalClassification());
 		target.setDateSampleSentRegLab(source.getDateSampleSentRegLab());
+		target.setVibrioCholeraeIdentifiedInStools(source.getVibrioCholeraeIdentifiedInStools());
+		target.setDrugsSensitiveToVibrioStrain(source.getDrugsSensitiveToVibrioStrain());
+		target.setDrugsResistantToVibrioStrain(source.getDrugsResistantToVibrioStrain());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}
@@ -228,6 +231,9 @@ public class PathogenTestDtoHelper extends AdoDtoHelper<PathogenTest, PathogenTe
 		target.setDateDistrictReceivedLabResults(source.getDateDistrictReceivedLabResults());
 		target.setLaboratoryDateResultsSentDSD(source.getLaboratoryDateResultsSentDSD());
 		target.setFinalClassification(source.getFinalClassification());
+		target.setVibrioCholeraeIdentifiedInStools(source.getVibrioCholeraeIdentifiedInStools());
+		target.setDrugsSensitiveToVibrioStrain(source.getDrugsSensitiveToVibrioStrain());
+		target.setDrugsResistantToVibrioStrain(source.getDrugsResistantToVibrioStrain());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}

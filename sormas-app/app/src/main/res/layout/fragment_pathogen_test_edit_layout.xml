@@ -169,6 +169,34 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/pathogenTest_vibrioCholeraeIdentifiedInStools_info_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/pathogenTest_vibrioCholeraeIdentifiedInStools"
+                        app:value="@={data.vibrioCholeraeIdentifiedInStools}"
+                        app:enumClass="@{yesNoClass}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/pathogenTest_drugsSensitiveToVibrioStrain"
+                        app:value="@={data.drugsSensitiveToVibrioStrain}"
+                        app:dependencyParentField="@{pathogenTestVibrioCholeraeIdentifiedInStools}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/pathogenTest_drugsResistantToVibrioStrain"
+                        app:value="@={data.drugsResistantToVibrioStrain}"
+                        app:dependencyParentField="@{pathogenTestVibrioCholeraeIdentifiedInStools}"
+                        app:dependencyParentValue="@{YesNo.YES}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/pathogenTest_antigenHeading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -233,6 +233,12 @@ public class PathogenTest extends PseudonymizableAdo {
 	private CaseClassification laboratoryFinalClassification;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateSampleSentRegLab;
+	@Enumerated(EnumType.STRING)
+	private YesNo vibrioCholeraeIdentifiedInStools;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String drugsSensitiveToVibrioStrain;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String drugsResistantToVibrioStrain;
 
 	public Sample getSample() {
 		return sample;
@@ -829,6 +835,29 @@ public class PathogenTest extends PseudonymizableAdo {
 		this.dateSampleSentRegLab = dateSampleSentRegLab;
 	}
 
+	public YesNo getVibrioCholeraeIdentifiedInStools() {
+		return vibrioCholeraeIdentifiedInStools;
+	}
+
+	public void setVibrioCholeraeIdentifiedInStools(YesNo vibrioCholeraeIdentifiedInStools) {
+		this.vibrioCholeraeIdentifiedInStools = vibrioCholeraeIdentifiedInStools;
+	}
+
+	public String getDrugsSensitiveToVibrioStrain() {
+		return drugsSensitiveToVibrioStrain;
+	}
+
+	public void setDrugsSensitiveToVibrioStrain(String drugsSensitiveToVibrioStrain) {
+		this.drugsSensitiveToVibrioStrain = drugsSensitiveToVibrioStrain;
+	}
+
+	public String getDrugsResistantToVibrioStrain() {
+		return drugsResistantToVibrioStrain;
+	}
+
+	public void setDrugsResistantToVibrioStrain(String drugsResistantToVibrioStrain) {
+		this.drugsResistantToVibrioStrain = drugsResistantToVibrioStrain;
+	}
 
 	@Override
 	public String getI18nPrefix() {
