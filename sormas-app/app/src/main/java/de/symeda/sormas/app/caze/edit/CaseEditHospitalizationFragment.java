@@ -207,6 +207,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		getContentBinding().setPreviousHospitalizationBindCallback(this::setFieldVisibilitiesAndAccesses);
 		contentBinding.caseHospitalizationHospitalizationReason.initializeSpinner(hospitalizationReasons);
 		contentBinding.caseHospitalizationDurationHours.initializeSpinner(durationList);
+		contentBinding.setYesNoUnknownClass(YesNoUnknown.class);
 
 		Set<SymptomsList> symptomList = Arrays.stream(SymptomsList.FoodBorne())
 				.filter(c -> c != null)
@@ -297,6 +298,9 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 			case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
 				handleIDSR();
 				break;
+			case MEASLES:
+				handleMeasles();
+				break;
 			default:
 		}
 	}
@@ -362,5 +366,50 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 	private void handleIDSR(){
 		getContentBinding().caseHospitalizationDateFirstSeen.setCaption("DATE SEEN AT HEALTH FACILITY:");
 	}
+
+	private void handleMeasles() {
+		// Add value change listener for inpatient/outpatient
+		getContentBinding().caseHospitalizationSelectInpatientOutpatient.addValueChangedListener(field -> {
+			InpatOutpat value = (InpatOutpat) field.getValue();
+			if (value == InpatOutpat.INPATIENT) {
+				getContentBinding().caseHospitalizationAdmissionDate.setVisibility(VISIBLE);
+				getContentBinding().caseHospitalizationDischargeDate.setVisibility(VISIBLE);
+			} else {
+				getContentBinding().caseHospitalizationAdmissionDate.setVisibility(GONE);
+				getContentBinding().caseHospitalizationDischargeDate.setVisibility(GONE);
+			}
+		});
+
+		// Trigger the logic manually for the first time
+		InpatOutpat initialInpatOutpatValue = (InpatOutpat) getContentBinding().caseHospitalizationSelectInpatientOutpatient.getValue();
+		if (initialInpatOutpatValue == InpatOutpat.INPATIENT) {
+			getContentBinding().caseHospitalizationAdmissionDate.setVisibility(VISIBLE);
+			getContentBinding().caseHospitalizationDischargeDate.setVisibility(VISIBLE);
+		} else {
+			getContentBinding().caseHospitalizationAdmissionDate.setVisibility(GONE);
+			getContentBinding().caseHospitalizationDischargeDate.setVisibility(GONE);
+		}
+
+		// Add value change listener for seen at a health facility
+		getContentBinding().caseHospitalizationSeenAtAHealthFacility.addValueChangedListener(field -> {
+			YesNoUnknown value = (YesNoUnknown) field.getValue();
+			if (value == YesNoUnknown.YES) {
+				getContentBinding().caseHospitalizationDateFirstSeen.setVisibility(VISIBLE);
+			} else {
+				getContentBinding().caseHospitalizationDateFirstSeen.setVisibility(GONE);
+			}
+		});
+
+		// Trigger the logic manually for the first time
+		YesNoUnknown initialSeenAtHealthFacilityValue = (YesNoUnknown) getContentBinding().caseHospitalizationSeenAtAHealthFacility.getValue();
+		if (initialSeenAtHealthFacilityValue == YesNoUnknown.YES) {
+			getContentBinding().caseHospitalizationDateFirstSeen.setVisibility(VISIBLE);
+		} else {
+			getContentBinding().caseHospitalizationDateFirstSeen.setVisibility(GONE);
+		}
+	}
+
+
+
 
 }
