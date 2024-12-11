@@ -886,6 +886,10 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		}
 	}
 
+	@Override
+	public List<CaseExportDetailedSampleDto> getExportListDetailed(CaseCriteria caseCriteria, Collection<String> selectedRows, CaseExportType exportType, int first, int max, ExportConfigurationDto exportConfiguration, Language userLanguage) {
+		return List.of();
+	}
 
 
 	@RightsAllowed(UserRight._CASE_MERGE)

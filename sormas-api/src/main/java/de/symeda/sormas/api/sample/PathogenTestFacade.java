@@ -67,7 +67,5 @@ public interface PathogenTestFacade {
 
 	List<PathogenTestDto> getByPersonNames(List<PersonNameDto> personUuid);
 
-	Boolean checkIfPathogenTestIsTheFirst(String sampleUuid, String pathogenTestUuid);
-
 
 }

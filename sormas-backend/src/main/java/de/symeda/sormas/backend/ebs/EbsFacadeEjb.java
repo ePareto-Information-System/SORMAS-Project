@@ -276,7 +276,7 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 		return toReferenceDto(service.getByUuid(uuid));
 	}
 
-	@Override
+
 	protected void selectDtoFields(CriteriaQuery<EbsDto> cq, Root<Ebs> root) {
 
 	}
@@ -346,6 +346,11 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 			});
 		}
 		return deletedEbsUuids;
+	}
+
+	@Override
+	public List<String> restore(List<String> uuids) {
+		return List.of();
 	}
 
 	@Override
@@ -967,6 +972,11 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 	@Override
 	public void updateExternalData(@Valid List<ExternalDataDto> externalData) throws ExternalDataUpdateException {
 		service.updateExternalData(externalData);
+	}
+
+	@Override
+	public Integer saveBulkEbs(List<String> ebsUuidList, EbsDto updatedTempEbs) {
+		return 0;
 	}
 
 	@Override

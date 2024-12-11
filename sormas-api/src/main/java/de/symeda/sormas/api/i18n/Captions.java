@@ -788,8 +788,6 @@ public interface Captions {
 	String Configuration_Disease = "Configuration.Disease";
 //	FormType
 	String Configuration_FormType = "Configuration.FormType";
-	String Configuration_Diseases = "Configuration.Diseases";
-	String Configuration_Disease = "Configuration.Disease";
 	String Configuration_Outbreaks = "Configuration.Outbreaks";
 	String Configuration_PointsOfEntry = "Configuration.PointsOfEntry";
 	String Contact = "Contact";
@@ -3506,6 +3504,7 @@ public interface Captions {
 	String travelEntryOpenResultingCase = "travelEntryOpenResultingCase";
 	String travelEntryPointOfEntry = "travelEntryPointOfEntry";
 	String travelEntryTravelEntriesList = "travelEntryTravelEntriesList";
+	String Triaging_animalLaboratoryCategoryDetails = "Triaging.animalFacilityCategoryDetails";
 	String Treatment = "Treatment";
 	String Treatment_additionalNotes = "Treatment.additionalNotes";
 	String Treatment_dose = "Treatment.dose";
@@ -3776,5 +3775,6 @@ public interface Captions {
 	String years = "years";
 	String dashboardLastReportedDistrict = "Last Reported District";
 	String exportDownloadMergeFile ="exportDownloadMergeFile" ;
+
 }
 

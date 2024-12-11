@@ -53,7 +53,7 @@ public abstract class AbstractEbsView extends AbstractDetailView<EbsReferenceDto
 		this.currentView = currentView;
 	}
 
-	@Override
+
 	protected CoreFacade getEditPermissionFacade() {
 		return FacadeProvider.getEbsFacade();
 	}
