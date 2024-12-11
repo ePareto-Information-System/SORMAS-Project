@@ -13,23 +13,29 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.symeda.sormas.rest.resources;
+package de.symeda.sormas.rest;
 
-import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.ebs.EbsAlertDto;
-import de.symeda.sormas.rest.resources.base.EntityDtoResource;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.Date;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
+import javax.validation.Valid;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.PushResult;
+import de.symeda.sormas.api.ebs.EbsAlertDto;
+
 @Path("/ebsAlert")
 @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 @Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-public class EbsAlertResource extends EntityDtoResource<EbsAlertDto> {
+public class EbsAlertResource extends EntityDtoResource {
 
 	@GET
 	@Path("/all/{since}/{size}/{lastSynchronizedUuid}")
@@ -49,13 +55,18 @@ public class EbsAlertResource extends EntityDtoResource<EbsAlertDto> {
 		return FacadeProvider.getAlertFacade().getAllActiveUuids();
 	}
 
-	@Override
 	public UnaryOperator<EbsAlertDto> getSave() {
 		return FacadeProvider.getAlertFacade()::saveAlert;
 	}
 
-	@Override
-	public Response postEntityDtos(List<EbsAlertDto> ebaDtos) {
-		return super.postEntityDtos(ebaDtos);
+	@POST
+	@Path("/push")
+	public List<PushResult> postTasks(@Valid List<EbsAlertDto> dtos) {
+		List<PushResult> result = savePushedDto(dtos, FacadeProvider.getAlertFacade()::saveAlert);
+		return result;
 	}
+
+//	public Response postEntityDtos(List<EbsAlertDto> ebaDtos) {
+//		return super.postEntityDtos(ebaDtos);
+//	}
 }

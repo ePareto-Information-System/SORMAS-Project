@@ -31,7 +31,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.ebs.EbsAlertDto;
 import de.symeda.sormas.api.report.WeeklyReportDto;
 import de.symeda.sormas.rest.resources.base.EntityDtoResource;
 

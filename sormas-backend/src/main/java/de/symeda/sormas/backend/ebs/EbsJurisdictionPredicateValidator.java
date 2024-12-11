@@ -15,17 +15,18 @@
 
 package de.symeda.sormas.backend.ebs;
 
-import de.symeda.sormas.backend.event.*;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+
+import de.symeda.sormas.backend.ebs.EbsJoins;
+import de.symeda.sormas.backend.ebs.EbsQueryContext;
 import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.infrastructure.district.District;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.PredicateJurisdictionValidator;
-
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 
 public class EbsJurisdictionPredicateValidator extends PredicateJurisdictionValidator {
 
@@ -53,12 +54,12 @@ public class EbsJurisdictionPredicateValidator extends PredicateJurisdictionVali
 	}
 
 	@Override
-	public Predicate isRootInJurisdiction() {
-		return super.isRootInJurisdiction();
+	protected Predicate isInJurisdiction() {
+		return super.isInJurisdiction();
 	}
 
 	@Override
-	public Predicate isRootInJurisdictionOrOwned() {
+	protected Predicate isInJurisdictionOrOwned() {
 
 		final Predicate reportedByCurrentUser = cb.and(
 				cb.isNotNull(joins.getRoot().get(Ebs.REPORTING_USER)),
@@ -72,7 +73,7 @@ public class EbsJurisdictionPredicateValidator extends PredicateJurisdictionVali
 						? cb.equal(joins.getRoot().get(Ebs.RESPONSIBLE_USER).get(User.ID), user.getId())
 						: cb.equal(joins.getRoot().get(Ebs.RESPONSIBLE_USER).get(User.ID), userPath.get(User.ID)));
 
-		return cb.or(reportedByCurrentUser, currentUserResponsible, this.isRootInJurisdiction());
+		return cb.or(reportedByCurrentUser, currentUserResponsible, isInJurisdiction());
 	}
 
 	@Override
@@ -118,6 +119,7 @@ public class EbsJurisdictionPredicateValidator extends PredicateJurisdictionVali
 
 	@Override
 	protected Predicate whenLaboratoryLevel() {
-		return cb.disjunction();
+		return null;
 	}
+
 }

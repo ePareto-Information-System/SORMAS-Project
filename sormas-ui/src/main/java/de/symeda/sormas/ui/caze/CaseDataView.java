@@ -37,10 +37,12 @@ import de.symeda.sormas.api.vaccination.VaccinationAssociationType;
 import de.symeda.sormas.api.vaccination.VaccinationCriteria;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.caze.messaging.SmsListComponent;
 import de.symeda.sormas.ui.caze.surveillancereport.SurveillanceReportListComponent;
 import de.symeda.sormas.ui.docgeneration.QuarantineOrderDocumentsComponent;
 import de.symeda.sormas.ui.document.DocumentListComponent;
+import de.symeda.sormas.ui.entitymap.DashboardMapComponent;
 import de.symeda.sormas.ui.events.eventLink.EventListComponent;
 import de.symeda.sormas.ui.externalsurveillanceservice.ExternalSurveillanceServiceGateway;
 import de.symeda.sormas.ui.immunization.immunizationlink.ImmunizationListComponent;
@@ -77,6 +79,7 @@ public class CaseDataView extends AbstractCaseView {
 	public static final String DOCUMENTS_LOC = "documents";
 	private static final long serialVersionUID = -1L;
 	private CommitDiscardWrapperComponent<CaseDataForm> editComponent;
+	public static final String SAMPLES_LOC = "samples";
 	public static final String CASE_MAP = "map";
 
 	private CaseCriteria criteria;

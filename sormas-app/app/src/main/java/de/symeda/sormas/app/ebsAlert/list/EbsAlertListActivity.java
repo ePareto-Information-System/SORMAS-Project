@@ -1,13 +1,15 @@
 package de.symeda.sormas.app.ebsAlert.list;
 
-import java.util.List;
-
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
+import android.widget.AdapterView;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
 
 import de.symeda.sormas.api.ebs.ResponseStatus;
 import de.symeda.sormas.api.ebs.SignalOutcome;
@@ -21,123 +23,129 @@ import de.symeda.sormas.app.component.menu.PageMenuItem;
 import de.symeda.sormas.app.ebs.edit.EbsEditActivity;
 import de.symeda.sormas.app.ebs.list.EbsListActivity;
 import de.symeda.sormas.app.ebsAlert.edit.EbsAlertNewActivity;
+import de.symeda.sormas.app.triaging.edit.TriagingEditActivity;
 import de.symeda.sormas.app.util.Callback;
 
 public class EbsAlertListActivity extends PagedBaseListActivity {
 
-	public static ResponseStatus[] responseStatuses = new ResponseStatus[] {
-		null,
-		ResponseStatus.NOT_STARTED,
-		ResponseStatus.ON_GOING,
-		ResponseStatus.COMPLETED };
-	private EbsAlertListViewModel model;
+    public static ResponseStatus[] responseStatuses = new ResponseStatus[]{
+        null,
+            ResponseStatus.NOT_STARTED,
+            ResponseStatus.ON_GOING,
+            ResponseStatus.COMPLETED};
+    private EbsAlertListViewModel model;
 
-	public static void startActivity(Context context, ResponseStatus listFilter) {
-		BaseListActivity.startActivity(context, EbsAlertListActivity.class, buildBundle(getStatusFilterPosition(responseStatuses, listFilter)));
-	}
+    public static void startActivity(Context context, ResponseStatus listFilter) {
+        BaseListActivity.startActivity(context, EbsAlertListActivity.class, buildBundle(getStatusFilterPosition(responseStatuses, listFilter)));
+    }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		showPreloader();
-		adapter = new EbsAlertListAdapter();
-		adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        showPreloader();
+        adapter = new EbsAlertListAdapter();
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                if (positionStart == 0) {
+                    RecyclerView recyclerView = findViewById(R.id.recyclerViewForList);
+                    if (recyclerView != null) {
+                        recyclerView.scrollToPosition(0);
+                    }
+                }
+            }
+        });
 
-			@Override
-			public void onItemRangeInserted(int positionStart, int itemCount) {
-				if (positionStart == 0) {
-					RecyclerView recyclerView = findViewById(R.id.recyclerViewForList);
-					if (recyclerView != null) {
-						recyclerView.scrollToPosition(0);
-					}
-				}
-			}
-		});
+        model = new ViewModelProvider(this).get(EbsAlertListViewModel.class);
+        model.initializeViewModel(EbsEditActivity.getParentEbs().getId());
+        model.getEbsAlert().observe(this, tasks -> {
+            adapter.submitList(tasks);
+            hidePreloader();
+        });
 
-		model = new ViewModelProvider(this).get(EbsAlertListViewModel.class);
-		model.initializeViewModel(EbsEditActivity.getParentEbs().getId());
-		model.getEbsAlert().observe(this, tasks -> {
-			adapter.submitList(tasks);
-			hidePreloader();
-		});
+        setOpenPageCallback(p -> {
+            showPreloader();
+            model.getEbsAlertCriteria().setEbsId(EbsEditActivity.getParentEbs().getId());
+            model.getEbsAlertCriteria().setResponseStatus(responseStatuses[((PageMenuItem) p).getPosition()]);
+            model.notifyCriteriaUpdated();
+        });
 
-		setOpenPageCallback(p -> {
-			showPreloader();
-			model.getEbsAlertCriteria().setEbsId(EbsEditActivity.getParentEbs().getId());
-			model.getEbsAlertCriteria().setResponseStatus(responseStatuses[((PageMenuItem) p).getPosition()]);
-			model.notifyCriteriaUpdated();
-		});
+    }
 
-	}
 
-	@Override
-	public void onPause() {
-		super.onPause();
-		getIntent().putExtra("refreshOnResume", true);
-	}
+    @Override
+    public void onPause() {
+        super.onPause();
+        getIntent().putExtra("refreshOnResume", true);
+    }
 
-	@Override
-	public void onResume() {
-		super.onResume();
-		if (getIntent().getBooleanExtra("refreshOnResume", false)) {
-			showPreloader();
-			model.getEbsAlert().getValue().getDataSource().invalidate();
-		}
-	}
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getIntent().getBooleanExtra("refreshOnResume", false)) {
+            showPreloader();
+            model.getEbsAlert().getValue().getDataSource().invalidate();
+        }
+    }
 
-	@Override
-	public List<PageMenuItem> getPageMenuData() {
-		if (EbsEditActivity.getParentEbs().getSignalVerification().getVerified() != SignalOutcome.EVENT) {
-			EbsListActivity.showWarningAlert = true;
-			EbsListActivity.message = R.string.risk_disabled_signal_not_verified;
-			EbsListActivity.startActivity(getContext(), null);
-		}
-		return PageMenuItem.fromEnum(responseStatuses, getContext());
-	}
+    @Override
+    public List<PageMenuItem> getPageMenuData() {
+        if (EbsEditActivity.getParentEbs().getSignalVerification().getVerified() != SignalOutcome.EVENT){
+            EbsListActivity.showWarningAlert = true;
+            EbsListActivity.message = R.string.risk_disabled_signal_not_verified;
+            EbsListActivity.startActivity(getContext(),null);
+        }
+        return PageMenuItem.fromEnum(responseStatuses, getContext());
+    }
 
-	@Override
-	protected Callback getSynchronizeResultCallback() {
-		// Reload the list after a synchronization has been done
-		return () -> {
-			showPreloader();
-			model.getEbsAlert().getValue().getDataSource().invalidate();
-		};
-	}
+    @Override
+    protected Callback getSynchronizeResultCallback() {
+        // Reload the list after a synchronization has been done
+        return () -> {
+            showPreloader();
+            model.getEbsAlert().getValue().getDataSource().invalidate();
+        };
+    }
 
-	@Override
-	protected PagedBaseListFragment buildListFragment(PageMenuItem menuItem) {
-		if (menuItem != null) {
-			ResponseStatus listFilter = responseStatuses[menuItem.getPosition()];
-			return EbsAlertListFragment.newInstance(listFilter);
-		}
-		return null;
-	}
+    @Override
+    protected PagedBaseListFragment buildListFragment(PageMenuItem menuItem) {
+        if (menuItem != null) {
+            ResponseStatus listFilter = responseStatuses[menuItem.getPosition()];
+            return EbsAlertListFragment.newInstance(listFilter);
+        }
+        return null;
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		getNewMenu().setTitle(R.string.action_new_alert);
-		return true;
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getNewMenu().setTitle(R.string.action_new_alert);
+        return true;
+    }
 
-	@Override
-	protected int getActivityTitle() {
-		return R.string.heading_alert_list;
-	}
+    @Override
+    protected int getActivityTitle() {
+        return R.string.heading_alert_list;
+    }
 
-	@Override
-	public void goToNewView() {
-		EbsAlertNewActivity.startActivity(getContext());
-		finish();
-	}
+    @Override
+    public void goToNewView() {
+        EbsAlertNewActivity.startActivity(getContext());
+        finish();
+    }
 
-	@Override
-	protected boolean isEntryCreateAllowed() {
-		return ConfigProvider.hasUserRight(UserRight.EVENT_CREATE);
-	}
+    @Override
+    protected boolean isEntryCreateAllowed() {
+        return ConfigProvider.hasUserRight(UserRight.EVENT_CREATE);
+    }
 
-	@Override
-	public void addFiltersToPageMenu() {
+    @Override
+    public int onNotificationCountChangingAsync(AdapterView parent, PageMenuItem menuItem, int position) {
+        return 0;
+    }
+
+    @Override
+    public void addFiltersToPageMenu() {
 //        View ebsListFilterView = getLayoutInflater().inflate(R.layout.filter_ebs_list_layout, null);
 //        FilterEbsListLayoutBinding ebsListFilterBinding = DataBindingUtil.bind(ebsListFilterView);
 
@@ -153,5 +161,5 @@ public class EbsAlertListActivity extends PagedBaseListActivity {
 //                model.notifyCriteriaUpdated();
 //            }
 //        });
-	}
+    }
 }

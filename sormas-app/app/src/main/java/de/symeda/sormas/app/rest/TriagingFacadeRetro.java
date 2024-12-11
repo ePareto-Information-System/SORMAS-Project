@@ -17,7 +17,7 @@ package de.symeda.sormas.app.rest;
 
 import java.util.List;
 
-import de.symeda.sormas.api.PostResponse;
+import de.symeda.sormas.api.PushResult;
 import de.symeda.sormas.api.ebs.TriagingDto;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -28,15 +28,12 @@ import retrofit2.http.Path;
 public interface TriagingFacadeRetro {
 
 	@GET("triaging/all/{since}/{size}/{lastSynchronizedUuid}")
-	Call<List<TriagingDto>> pullAllSince(
-		@Path("since") long since,
-		@Path("size") int size,
-		@Path("lastSynchronizedUuid") String lastSynchronizedUuid);
+	Call<List<TriagingDto>> pullAllSince(@Path("since") long since, @Path("size") int size, @Path("lastSynchronizedUuid") String lastSynchronizedUuid);
 
 	@POST("triaging/query")
 	Call<List<TriagingDto>> pullByUuids(@Body List<String> uuids);
 
 	@POST("triaging/push")
-	Call<List<PostResponse>> pushAll(@Body List<TriagingDto> dtos);
+	Call<List<PushResult>> pushAll(@Body List<TriagingDto> dtos);
 
 }

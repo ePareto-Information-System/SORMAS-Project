@@ -15594,7 +15594,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .sormas .moderate-risk-assessment {
-	border: 3px solid #FFFF00 !important;
+	border: 3px solid #FEC100 !important;
 }
 
 .sormas .low-risk-assessment {
@@ -15616,15 +15616,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .sormas .moderate-risk-assessment .v-window-outerheader {
-	background: #FFFF00 !important;
+	background: #FEC100 !important;
 }
 
 .sormas .low-risk-assessment .v-window-outerheader {
 	background: #93D150 !important;
-}
-
-.sormas #manualScanningType {
-	width: 20em !important;
 }
 
 .sormas .window-text {
@@ -15715,9 +15711,6 @@ div.v-layout.v-horizontal.v-widget {
 	text-transform: uppercase;
 	border-color: #005A9C;
 	box-shadow: none;
-	height: fit-content;
-	text-wrap: wrap;
-	padding: 2px 5px;
 }
 
 .sormas .v-button.v-button-link, .sormas .sormas .v-button-link.v-link.v-link-button {

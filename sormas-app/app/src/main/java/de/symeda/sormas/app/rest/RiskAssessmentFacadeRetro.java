@@ -17,7 +17,7 @@ package de.symeda.sormas.app.rest;
 
 import java.util.List;
 
-import de.symeda.sormas.api.PostResponse;
+import de.symeda.sormas.api.PushResult;
 import de.symeda.sormas.api.ebs.RiskAssessmentDto;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -28,16 +28,13 @@ import retrofit2.http.Path;
 public interface RiskAssessmentFacadeRetro {
 
 	@GET("riskassessment/all/{since}/{size}/{lastSynchronizedUuid}")
-	Call<List<RiskAssessmentDto>> pullAllSince(
-		@Path("since") long since,
-		@Path("size") int size,
-		@Path("lastSynchronizedUuid") String lastSynchronizedUuid);
+	Call<List<RiskAssessmentDto>> pullAllSince(@Path("since") long since, @Path("size") int size, @Path("lastSynchronizedUuid") String lastSynchronizedUuid);
 
 	@POST("riskassessment/query")
 	Call<List<RiskAssessmentDto>> pullByUuids(@Body List<String> uuids);
 
 	@POST("riskassessment/push")
-	Call<List<PostResponse>> pushAll(@Body List<RiskAssessmentDto> dtos);
+	Call<List<PushResult>> pushAll(@Body List<RiskAssessmentDto> dtos);
 
 	@GET("riskassessment/uuids")
 	Call<List<String>> pullUuids();

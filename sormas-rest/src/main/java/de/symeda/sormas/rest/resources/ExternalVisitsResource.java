@@ -30,7 +30,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.person.JournalPersonDto;
 import de.symeda.sormas.api.person.PersonFollowUpEndDto;
 import de.symeda.sormas.api.person.PersonSymptomJournalStatusDto;
@@ -106,6 +105,7 @@ public class ExternalVisitsResource extends EntityDtoResource<ExternalVisitDto> 
 	}
 
 	@POST
+	@Path("/")
 	@Operation(summary = "Save visits", description = "Upload visits with all symptom and disease related data to SORMAS.")
 	@Override
 	public Response postEntityDtos(List<ExternalVisitDto> dtos) {

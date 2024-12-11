@@ -50,7 +50,7 @@ public class EbsAlertView extends AbstractEbsView {
 		EbsDto ebsDto = ControllerProvider.getEbsController().findEbs(getEbsRef().getUuid());
 		if (ebsAlertDto.isEmpty()) {
 			ControllerProvider.getEbsController().createAlertComponent(getEbsRef().getUuid(),
-					UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT));
+					isEditAllowed() && UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT));
 		}
 
 		addButton = ButtonHelper.createIconButton(

@@ -297,6 +297,11 @@ public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveil
 	}
 
 
+	@Override
+	public void deleteEbs(List<EbsDto> events) throws ExternalSurveillanceToolException {
+		return;
+	}
+
 	private void sendDeleteRequest(DeleteParameters params) throws ExternalSurveillanceToolException {
 		String serviceUrl = configFacade.getExternalSurveillanceToolGatewayUrl().trim();
 
@@ -310,6 +315,13 @@ public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveil
 			logger.error("Failed to send delete request to external surveillance tool", e);
 			throw new ExternalSurveillanceToolException(I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_notificationErrorDeleting));
 		}
+		Response response = ClientBuilder.newBuilder()
+				.connectTimeout(30, TimeUnit.SECONDS)
+				.build()
+				.target(serviceUrl)
+				.path("delete")
+				.request()
+				.post(Entity.json(params));
 
 		int statusCode = response.getStatus();
 

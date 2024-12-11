@@ -205,6 +205,12 @@ public final class VaadinUiUtil {
 		});
 	}
 
+	public static void setupActionColumn(Grid.Column column) {
+		column.setRenderer(new HtmlRenderer());
+		column.setWidth(20);
+		column.setSortable(false);
+		column.setHeaderCaption("");
+	}
 
 	public static Window showConfirmationPopup(
 		String caption,

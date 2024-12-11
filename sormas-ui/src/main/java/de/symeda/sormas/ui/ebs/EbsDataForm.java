@@ -178,7 +178,7 @@ public class EbsDataForm extends AbstractEditForm<EbsDto> {
 		TextField personPhone = addField(EbsDto.PERSON_PHONE, TextField.class);
 		personPhone
 			.addValidator(new EbsPhoneNumberValidator(I18nProperties.getValidationError(Validations.validPhoneNumber, personPhone.getCaption())));
-		addField(EbsDto.EBS_LOCATION, new LocationEditForm(fieldVisibilityCheckers, createFieldAccessCheckers(isPseudonymized, false)))
+		addField(EbsDto.EBS_LOCATION, new LocationEditForm(fieldVisibilityCheckers, createFieldAccessCheckers(isPseudonymized, false), true))
 			.setCaption(null);
 
 		locationForm = (LocationEditForm) getFieldGroup().getField(EbsDto.EBS_LOCATION);
