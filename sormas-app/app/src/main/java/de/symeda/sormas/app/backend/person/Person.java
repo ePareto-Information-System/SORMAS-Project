@@ -235,11 +235,10 @@ public class Person extends PseudonymizableAdo {
 	private String qualification;
 	@Transient
 	private Set<Profession> professionOfPatient;
-	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	@Column
 	private String professionOfPatientString;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String professionOfPatientOther;
-
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String otherId;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
