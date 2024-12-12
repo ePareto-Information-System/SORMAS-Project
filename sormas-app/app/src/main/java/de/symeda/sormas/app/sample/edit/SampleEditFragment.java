@@ -20,9 +20,7 @@ import static android.view.View.VISIBLE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -30,9 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.android.gms.common.api.CommonStatusCodes;
 
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 
 import androidx.annotation.Nullable;
 
@@ -74,7 +70,6 @@ import de.symeda.sormas.app.databinding.FragmentSampleEditLayoutBinding;
 import de.symeda.sormas.app.sample.read.SampleReadActivity;
 import de.symeda.sormas.app.util.DataUtils;
 
-import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.utils.ExamResult;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.sample.FinalClassification;
@@ -489,6 +484,9 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			case CSM:
 				handleCSM();
 				break;
+			case CHOLERA:
+				handleCholera();
+				break;
 			default:
 		}
 
@@ -499,10 +497,6 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		finalClassificationList = DataUtils.getEnumItems(FinalClassification.class, true);
 		contentBinding.sampleAfpFinalClassification.initializeSpinner(finalClassificationList);
 
-		switch (record.getAssociatedCase().getDisease()){
-			case MEASLES:
-				handleMeasles();
-		}
 	}
 
 	@Override
@@ -545,8 +539,6 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 				PathogenTestResultType.NEGATIVE
 		);
 		getContentBinding().samplePathogenTestResult.initializeSpinner(DataUtils.toItems(yellowFeverTestResults));
-		getContentBinding().samplePurpose.setValue(SamplePurpose.EXTERNAL);
-		getContentBinding().samplePurpose.setVisibility(GONE);
 		getContentBinding().samplePathogenTestingRequested.setVisibility(GONE);
 	}
 
@@ -582,10 +574,19 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		getContentBinding().sampleSampleMaterial.initializeSpinner(DataUtils.toItems(idsrSampleMaterialList));
 	}
 
-	private void handleMeasles() {
-		getContentBinding().samplePurpose.setValue(SamplePurpose.EXTERNAL);
-		getContentBinding().samplePurpose.setVisibility(GONE);
-		getContentBinding().samplePathogenTestingRequested.setVisibility(GONE);
+	private void handleCholera() {
+		List<SampleMaterial> sampleMaterialList = Arrays.asList(
+				SampleMaterial.STOOL,
+				SampleMaterial.VOMITUS,
+				SampleMaterial.WATER,
+				SampleMaterial.FOOD_ITEM,
+				SampleMaterial.OTHER
+		);
+		getContentBinding().sampleSampleMaterial.initializeSpinner(DataUtils.toItems(sampleMaterialList));
+
+		List<Item> compatibleItems = DataUtils.toItems(new ArrayList<>(PathogenTestType.getMeaslesTestTypes()));
+		compatibleItems.removeIf(item -> item == null || item.toString().isEmpty()); // Remove empty names
+		getContentBinding().sampleRequestedPathogenTests.initializeCheckBoxGroup(compatibleItems);
 	}
 
 	private void handleAHF() {
@@ -608,9 +609,6 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		getContentBinding().sampleSampleMaterial.initializeSpinner(DataUtils.toItems(ahfSampleMaterialList));
 	}
 	private void handleILI() {
-		getContentBinding().samplePurpose.setValue(SamplePurpose.EXTERNAL);
-		getContentBinding().samplePurpose.setVisibility(GONE);
-
 		List<SampleMaterial> iliSampleMaterialList = Arrays.asList(
 				SampleMaterial.NASOPHARYNGEAL_SWAB, SampleMaterial.OROPHARYNGEAL_SWAB, SampleMaterial.ORO_NASO, SampleMaterial.SERA, SampleMaterial.PLASMA, SampleMaterial.OTHER
 		);
@@ -619,8 +617,6 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	}
 
 	private void handleCSM() {
-		getContentBinding().samplePurpose.setValue(SamplePurpose.EXTERNAL);
-		getContentBinding().samplePurpose.setVisibility(GONE);
 		getContentBinding().sampleHasSampleBeenCollected.setCaption("CSF Sample Collected? Note: If NO, (Please STILL complete the form and send to district control officer)");
 
 		if (getContentBinding().sampleHasSampleBeenCollected.getValue() == null) {
