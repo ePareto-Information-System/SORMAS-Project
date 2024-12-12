@@ -946,15 +946,11 @@
                     android:id="@+id/caseData_vaccinationType"
                     app:enumClass="@{vaccinationTypeClass}"
                     app:value="@={data.vaccinationType}"
-                    app:dependencyParentField="@{caseDataVaccinationStatus}"
-                    app:dependencyParentValue="@{VaccinationStatus.VACCINATED}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/caseData_vaccineType"
                     app:value="@={data.vaccineType}"
-                    app:dependencyParentField="@{caseDataVaccinationStatus}"
-                    app:dependencyParentValue="@{VaccinationStatus.VACCINATED}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
@@ -967,18 +963,12 @@
                     android:id="@+id/caseData_vaccinationDate"
                     app:value="@={data.vaccinationDate}"
                     app:dateWithoutTime="@{true}"
-                    app:dependencyParentField="@{caseDataVaccinationType}"
-                    app:dependencyParentValue="@{CardOrHistory.CARD}"
-                    app:dependencyParentVisibility="@{true}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlDateField
                     android:id="@+id/caseData_secondVaccinationDate"
                     app:value="@={data.secondVaccinationDate}"
                     app:dateWithoutTime="@{true}"
-                    app:dependencyParentField="@{caseDataVaccinationType}"
-                    app:dependencyParentValue="@{CardOrHistory.CARD}"
-                    app:dependencyParentVisibility="@{true}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
@@ -1006,17 +996,11 @@
                     android:id="@+id/caseData_vaccinationRoutine"
                     app:enumClass="@{vaccinationRoutineClass}"
                     app:value="@={data.vaccinationRoutine}"
-                    app:dependencyParentField="@{caseDataVaccinationType}"
-                    app:dependencyParentValue="@{CardOrHistory.CARD}"
-                    app:dependencyParentVisibility="@{true}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlDateField
                     android:id="@+id/caseData_lastVaccinationDate"
                     app:value="@={data.lastVaccinationDate}"
-                    app:dependencyParentField="@{caseDataVaccinationType}"
-                    app:dependencyParentValue="@{CardOrHistory.CARD}"
-                    app:dependencyParentVisibility="@{true}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <TextView
