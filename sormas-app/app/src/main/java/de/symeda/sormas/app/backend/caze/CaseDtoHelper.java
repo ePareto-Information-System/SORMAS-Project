@@ -17,10 +17,12 @@ package de.symeda.sormas.app.backend.caze;
 
 import java.util.List;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.PostResponse;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
+import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.app.backend.afpimmunization.AfpImmunizationDtoHelper;
@@ -302,6 +304,31 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setInformationGivenBy(source.getInformationGivenBy());
 		target.setFamilyLinkWithPatient(source.getFamilyLinkWithPatient());
 		target.setNameOfVillagePersonGotIll(source.getNameOfVillagePersonGotIll());
+		target.setAddressMpox(source.getAddressMpox());
+		target.setVillage(source.getVillage());
+		target.setCity(source.getCity());
+		target.setNationality(source.getNationality());
+		target.setEthnicity(source.getEthnicity());
+		target.setOccupation(source.getOccupation());
+		target.setRegionOfResidence(DatabaseHelper.getRegionDao().getByReferenceDto(source.getRegionOfResidence()));
+		target.setDistrictOfResidence(DatabaseHelper.getDistrictDao().getByReferenceDto(source.getDistrictOfResidence()));
+
+		if (source.getDisease() == Disease.MONKEYPOX) {
+			if (source.getHospitalization() != null) {
+				if (source.getHospitalization().getLocationType() == null) {
+					source.getHospitalization().setLocationType(new LocationDto());
+				}
+
+				LocationDto locationType = source.getHospitalization().getLocationType();
+				if (locationType.getRegion() == null) {
+					locationType.setRegion(source.getResponsibleRegion());
+					locationType.setDistrict(source.getResponsibleDistrict());
+					locationType.setCommunity(source.getResponsibleCommunity());
+				}
+
+				source.getHospitalization().setNameOfFacility(source.getHealthFacility());
+			}
+		}
 	}
 
 	@Override
@@ -644,6 +671,26 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setInformationGivenBy(source.getInformationGivenBy());
 		target.setFamilyLinkWithPatient(source.getFamilyLinkWithPatient());
 		target.setNameOfVillagePersonGotIll(source.getNameOfVillagePersonGotIll());
+		target.setAddressMpox(source.getAddressMpox());
+		target.setVillage(source.getVillage());
+		target.setCity(source.getCity());
+		target.setNationality(source.getNationality());
+		target.setEthnicity(source.getEthnicity());
+		target.setOccupation(source.getOccupation());
+
+		if (source.getRegionOfResidence() != null) {
+			Region regionOfResidence = DatabaseHelper.getRegionDao().queryForId(source.getRegionOfResidence().getId());
+			target.setRegionOfResidence(RegionDtoHelper.toReferenceDto(regionOfResidence));
+		} else {
+			target.setRegionOfResidence(null);
+		}
+
+		if (source.getDistrictOfResidence() != null) {
+			District districtOfResidence = DatabaseHelper.getDistrictDao().queryForId(source.getDistrictOfResidence().getId());
+			target.setDistrictOfResidence(DistrictDtoHelper.toReferenceDto(districtOfResidence));
+		} else {
+			target.setDistrictOfResidence(null);
+		}
 
 	}
 

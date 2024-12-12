@@ -271,6 +271,20 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 				}
 			}
 		});
+
+		InfrastructureFieldsDependencyHandler.instance.initializeRegionFields(
+				contentBinding.caseDataRegionOfResidence,
+				initialRegions,
+				record.getRegion(),
+				contentBinding.caseDataDistrictOfResidence,
+				initialDistricts,
+				record.getDistrict(),
+				null,
+				null,
+				null
+		);
+
+
 		contentBinding.caseDataDisease.addValueChangedListener(e -> {
 			contentBinding.rapidCaseEntryCheckBox.setVisibility(
 				e.getValue() != null && ((CaseNewActivity) getActivity()).getLineListingDiseases().contains(e.getValue()) ? VISIBLE : GONE);
