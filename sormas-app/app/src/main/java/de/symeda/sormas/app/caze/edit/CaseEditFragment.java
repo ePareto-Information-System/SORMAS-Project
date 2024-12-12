@@ -483,8 +483,6 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 
 		contentBinding.setInvestigationStatusClass(InvestigationStatus.class);
 		contentBinding.caseDataInvestigatedDate.initializeDateField(getFragmentManager());
-		contentBinding.setVaccinationStatusClass(VaccinationStatus.class);
-
 		FragmentActivity thisActivity = this.getActivity();
 		contentBinding.caseDataCaseTransmissionClassification.initializeSpinner(caseTransmissionClassificationsList);
 		contentBinding.caseDataDisease.addValueChangedListener(new ValueChangeListener() {
@@ -509,6 +507,28 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			}
 		});
 		contentBinding.caseDataDisease.setEnabled(false);
+
+		if (record.getDisease() ==Disease.MEASLES) {
+			Set<VaccinationStatus> allowedVaccinations = EnumSet.of(
+					VaccinationStatus.VACCINATED,
+					VaccinationStatus.UNVACCINATED
+			);
+
+			vaccinationList = DataUtils.toItems(
+					Arrays.stream(VaccinationStatus.values())
+							.filter(Objects::nonNull)
+							.filter(allowedVaccinations::contains)
+							.collect(Collectors.toList())
+			);
+
+			vaccinationList = vaccinationList.stream()
+					.filter(item -> item != null)
+					.filter(item -> item.getKey() != null && !item.getKey().trim().isEmpty())
+					.filter(item -> item.getValue() != null)
+					.collect(Collectors.toList());
+
+			contentBinding.caseDataVaccinationStatus.setEnumItems(vaccinationList);
+		}
 
 		if (record.getDisease() != null) {
 			super.hideFieldsForDisease(record.getDisease(), contentBinding.mainContent, FormType.CASE_EDIT);
