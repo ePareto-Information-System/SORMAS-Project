@@ -163,6 +163,16 @@
                     app:enumClass="@{YesNoClass}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <TextView
+                    android:id="@+id/headingNameOfPlaceOfTravel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{I18nProperties.getString(Strings.headingNameOfPlaceOfTravel)}"
+                    android:visibility="gone"
+                    android:layout_marginBottom="24dp"
+                    android:layout_marginTop="12dp"
+                    style="@style/SubHeadingCompactStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/epiData_historyOfTravelRegion"
                     app:value="@={data.historyOfTravelRegion}"
