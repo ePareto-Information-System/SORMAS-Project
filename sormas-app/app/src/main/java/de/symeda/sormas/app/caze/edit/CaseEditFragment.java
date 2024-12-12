@@ -743,10 +743,6 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataMotherGivenProtectiveDoseTTDate.initializeDateField(getFragmentManager());
 		contentBinding.caseDataDateLatestUpdateRecord.initializeDateField(getFragmentManager());
 		contentBinding.setMotherVaccinationStatusClass(MotherVaccinationStatus.class);
-
-		if (record.getDisease() == Disease.YELLOW_FEVER){
-			handleYellowFever();
-		}
 	}
 
 	private void fillConfirmedCaseClassificationCombo() {
@@ -853,7 +849,6 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataMotherHaveCard.addValueChangedListener(field -> {
 			handleNNT();
 		});
-		handleNNT();
 		contentBinding.caseDataMotherNumberOfDoses.addValueChangedListener(field -> {
 			handleNNT();
 		});
@@ -864,8 +859,17 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			contentBinding.caseDataNumberOfDoses.setVisibility(VISIBLE);
 		}
 
-		if (record.getDisease() == Disease.MEASLES) {
-			handleMeasles();
+		switch (record.getDisease()) {
+			case MEASLES:
+				handleMeasles();
+				break;
+			case YELLOW_FEVER:
+				handleYellowFever();
+				break;
+			case NEONATAL_TETANUS:
+				handleNNT();
+			default:
+				break;
 		}
 	}
 
