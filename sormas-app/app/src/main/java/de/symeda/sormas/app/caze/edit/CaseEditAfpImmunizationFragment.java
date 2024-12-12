@@ -29,10 +29,11 @@ import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.afpimmunization.AfpImmunization;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.component.Item;
+import de.symeda.sormas.app.databinding.FragmentCaseEditAfpImmunizationLayoutBinding;
 import de.symeda.sormas.app.databinding.FragmentCaseEditAfpImmunizationLayoutBindingImpl;
 import de.symeda.sormas.app.util.DataUtils;
 
-public class CaseEditAfpImmunizationFragment extends BaseEditFragment<FragmentCaseEditAfpImmunizationLayoutBindingImpl, AfpImmunization, Case> {
+public class CaseEditAfpImmunizationFragment extends BaseEditFragment<FragmentCaseEditAfpImmunizationLayoutBinding, AfpImmunization, Case> {
 
 	private AfpImmunization record;
 	private Case caze;
@@ -75,7 +76,7 @@ public class CaseEditAfpImmunizationFragment extends BaseEditFragment<FragmentCa
 	}
 
 	@Override
-	public void onLayoutBinding(final FragmentCaseEditAfpImmunizationLayoutBindingImpl contentBinding) {
+	public void onLayoutBinding(final FragmentCaseEditAfpImmunizationLayoutBinding contentBinding) {
 		setUpControlListeners();
 		contentBinding.setData(record);
 		contentBinding.setCaze(caze);
@@ -93,7 +94,7 @@ public class CaseEditAfpImmunizationFragment extends BaseEditFragment<FragmentCa
 	}
 
 	@Override
-	protected void onAfterLayoutBinding(FragmentCaseEditAfpImmunizationLayoutBindingImpl contentBinding) {
+	protected void onAfterLayoutBinding(FragmentCaseEditAfpImmunizationLayoutBinding contentBinding) {
 		setFieldVisibilitiesAndAccesses(AfpImmunization.class, contentBinding.mainContent);
 
 		if (caze.getDisease() != null) {

@@ -63,7 +63,12 @@ public class SampleDao extends AbstractAdoDao<Sample> {
 		sample.setReportDateTime(new Date());
 		sample.setReportingUser(ConfigProvider.getUser());
 		sample.setPathogenTestResult(PathogenTestResultType.PENDING);
-		sample.setSamplePurpose(SamplePurpose.EXTERNAL);
+		if (associatedCase.getDisease() == Disease.MONKEYPOX) {
+			sample.setSamplePurpose(SamplePurpose.INTERNAL);
+		} else {
+			sample.setSamplePurpose(SamplePurpose.EXTERNAL);
+
+		}
 		return sample;
 	}
 
