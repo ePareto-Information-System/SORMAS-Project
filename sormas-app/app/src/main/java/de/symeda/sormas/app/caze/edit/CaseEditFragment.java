@@ -862,6 +862,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		switch (record.getDisease()) {
 			case MEASLES:
 				handleMeasles();
+				getContentBinding().caseDataVaccinationStatus.addValueChangedListener(field -> handleMeasles());
 				break;
 			case YELLOW_FEVER:
 				handleYellowFever();
@@ -976,9 +977,24 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 
 	}
 
-//	handleMeasles
 	private void handleMeasles() {
+		if (getContentBinding().caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED) {
+			getContentBinding().caseDataVaccinationRoutine.setVisibility(VISIBLE);
+			getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
+			getContentBinding().caseDataVaccinationType.setVisibility(VISIBLE);
+			getContentBinding().caseDataLastVaccinationDate.setVisibility(VISIBLE);
+		} else {
+			getContentBinding().caseDataVaccinationRoutine.setVisibility(GONE);
+			getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
+			getContentBinding().caseDataVaccinationType.setVisibility(GONE);
+			getContentBinding().caseDataLastVaccinationDate.setVisibility(GONE);
+		}
 
+		if (getContentBinding().caseDataVaccinationType.getValue() == CardOrHistory.CARD) {
+			getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
+		} else {
+			getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
+		}
 	}
 
 }

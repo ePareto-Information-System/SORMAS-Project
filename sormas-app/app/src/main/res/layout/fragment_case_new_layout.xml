@@ -412,6 +412,8 @@
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/person_passportNumber"
                 app:value="@={data.person.passportNumber}"
+                app:dependencyParentField="@{caseDataCaseOrigin}"
+                app:dependencyParentValue="@{CaseOrigin.POINT_OF_ENTRY}"
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField

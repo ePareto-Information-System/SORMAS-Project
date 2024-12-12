@@ -1135,6 +1135,23 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/caseData_reportLonLatLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_reportLon"
+                        app:value="@={data.reportLon}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_reportLat"
+                        app:value="@={data.reportLat}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+                </LinearLayout>
+
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/caseData_notifyingClinic"
                     app:value="@={data.notifyingClinic}"
