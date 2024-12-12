@@ -50,6 +50,7 @@ import de.symeda.sormas.api.caze.EndOfIsolationReason;
 import de.symeda.sormas.api.caze.HospitalWardType;
 import de.symeda.sormas.api.caze.IdsrType;
 import de.symeda.sormas.api.caze.InfectionSetting;
+import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.caze.NotifiedList;
 import de.symeda.sormas.api.caze.PlagueType;
 import de.symeda.sormas.api.caze.QuarantineReason;
@@ -480,6 +481,10 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			}
 		}
 
+		contentBinding.setInvestigationStatusClass(InvestigationStatus.class);
+		contentBinding.caseDataInvestigatedDate.initializeDateField(getFragmentManager());
+		contentBinding.setVaccinationStatusClass(VaccinationStatus.class);
+
 		FragmentActivity thisActivity = this.getActivity();
 		contentBinding.caseDataCaseTransmissionClassification.initializeSpinner(caseTransmissionClassificationsList);
 		contentBinding.caseDataDisease.addValueChangedListener(new ValueChangeListener() {
@@ -858,6 +863,10 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			contentBinding.caseDataNumberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being Reported");
 			contentBinding.caseDataNumberOfDoses.setVisibility(VISIBLE);
 		}
+
+		if (record.getDisease() == Disease.MEASLES) {
+			handleMeasles();
+		}
 	}
 
 	private void updateDiseaseVariantsField(FragmentCaseEditLayoutBinding contentBinding) {
@@ -961,4 +970,10 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 
 
 	}
+
+//	handleMeasles
+	private void handleMeasles() {
+
+	}
+
 }
