@@ -868,6 +868,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 				break;
 			case NEONATAL_TETANUS:
 				handleNNT();
+				break;
 			default:
 				break;
 		}
