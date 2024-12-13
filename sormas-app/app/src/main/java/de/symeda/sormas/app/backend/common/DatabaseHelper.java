@@ -4305,6 +4305,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN nationality varchar(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN ethnicity varchar(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN occupation varchar(255);");
+					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN investigationOfficerAddress varchar(255);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN regionOfResidence_id bigint REFERENCES region(id);");
 					getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN districtOfResidence_id bigint REFERENCES district(id);");
 

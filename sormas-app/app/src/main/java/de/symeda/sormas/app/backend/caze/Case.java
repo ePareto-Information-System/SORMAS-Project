@@ -563,6 +563,8 @@ public class Case extends PseudonymizableAdo {
 	private Region regionOfResidence;
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private District districtOfResidence;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String investigationOfficerAddress;
 
 	public boolean isUnreferredPortHealthCase() {
 		return caseOrigin == CaseOrigin.POINT_OF_ENTRY && healthFacility == null;
@@ -2010,6 +2012,11 @@ public class Case extends PseudonymizableAdo {
 
 	public void setDistrictOfResidence(District districtOfResidence) {
 		this.districtOfResidence = districtOfResidence;
+	}
+	public String getInvestigationOfficerAddress() {return investigationOfficerAddress;}
+
+	public void setInvestigationOfficerAddress(String investigationOfficerAddress) {
+		this.investigationOfficerAddress = investigationOfficerAddress;
 	}
 
 }

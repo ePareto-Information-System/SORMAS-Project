@@ -312,6 +312,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setOccupation(source.getOccupation());
 		target.setRegionOfResidence(DatabaseHelper.getRegionDao().getByReferenceDto(source.getRegionOfResidence()));
 		target.setDistrictOfResidence(DatabaseHelper.getDistrictDao().getByReferenceDto(source.getDistrictOfResidence()));
+		target.setInvestigationOfficerAddress(source.getInvestigationOfficerAddress());
 
 		if (source.getDisease() == Disease.MONKEYPOX) {
 			if (source.getHospitalization() != null) {
@@ -677,6 +678,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setNationality(source.getNationality());
 		target.setEthnicity(source.getEthnicity());
 		target.setOccupation(source.getOccupation());
+		target.setInvestigationOfficerAddress(source.getInvestigationOfficerAddress());
 
 		if (source.getRegionOfResidence() != null) {
 			Region regionOfResidence = DatabaseHelper.getRegionDao().queryForId(source.getRegionOfResidence().getId());

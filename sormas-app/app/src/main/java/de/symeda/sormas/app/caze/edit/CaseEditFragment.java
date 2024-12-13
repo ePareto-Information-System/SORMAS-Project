@@ -742,6 +742,9 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		if (record.getDisease() == Disease.YELLOW_FEVER){
 			handleYellowFever();
 		}
+		if (record.getDisease() == Disease.MONKEYPOX){
+			handleMpox();
+		}
 	}
 
 	private void fillConfirmedCaseClassificationCombo() {
@@ -927,6 +930,13 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			}
 		});
 
+	}
+
+	private void handleMpox(){
+		getContentBinding().caseDataReportingOfficerName.setCaption("Name");
+		getContentBinding().caseDataReportingOfficerTitle.setCaption("Job Title");
+		getContentBinding().caseDataReportingOfficerEmail.setCaption("Email Address");
+		getContentBinding().caseDataReportingOfficerContactPhone.setCaption("Contact Number");
 	}
 
 	private void handleNNT() {
