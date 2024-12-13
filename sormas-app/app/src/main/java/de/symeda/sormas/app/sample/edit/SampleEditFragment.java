@@ -300,6 +300,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		contentBinding.setYesNoUnknownClass(YesNoUnknown.class);
 		contentBinding.setFinalClassificationClass(FinalClassification.class);
 		contentBinding.setInjectionSiteClas(InjectionSite.class);
+		contentBinding.sampleDateSpecimenSentToRegion.initializeDateField(getFragmentManager());
+		contentBinding.sampleDateSpecimenSentToNational.initializeDateField(getFragmentManager());
 
 		if(record.getAssociatedCase().getDisease() != null){
 			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_EDIT);

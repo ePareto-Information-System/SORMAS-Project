@@ -44,6 +44,7 @@
         <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
         <import type="de.symeda.sormas.api.sample.FinalClassification" />
         <import type="de.symeda.sormas.api.utils.InjectionSite" />
+        <import type="de.symeda.sormas.api.i18n.Strings" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.sample.Sample"/>
         <variable name="referredSample" type="de.symeda.sormas.app.backend.sample.Sample"/>
@@ -503,6 +504,14 @@
 
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/sample_headingSpecimenHandling"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{I18nProperties.getString(Strings.headingSpecimenHandling)}"
+                    android:layout_marginBottom="24dp"
+                    style="@style/SubHeadingCompactStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/sample_specimenSavedAndPreservedInAlcohol"
                     app:value="@={data.specimenSavedAndPreservedInAlcohol}"
@@ -535,6 +544,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/sample_dateSpecimenSentToRegion_dateSpecimenReceivedAtRegion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -557,6 +567,7 @@
                     style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout
+                    android:id="@+id/sample_dateSpecimenSentToNational_dateSpecimenReceivedAtNational"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -579,7 +590,16 @@
                     app:value="@={data.nameOfPersonWhoReceivedSpecimenAtNational}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <TextView
+                    android:id="@+id/sample_headingNationalSecretariatOnly"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{I18nProperties.getString(Strings.headingNationalSecretariatOnly)}"
+                    android:layout_marginBottom="24dp"
+                    style="@style/SubHeadingCompactStyle" />
+
                 <LinearLayout
+                    android:id="@+id/sample_sentForConfirmationNational_sentForConfirmationNationalDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -600,6 +620,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/sample_sentForConfirmationTo_dateResultReceivedNational"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -620,7 +641,18 @@
 
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/sample_headingOtherInformation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{I18nProperties.getString(Strings.headingOtherInformation)}"
+                    android:layout_marginBottom="24dp"
+                    style="@style/SubHeadingCompactStyle" />
+
+
+
                 <LinearLayout
+                    android:id="@+id/sample_useOfClothFilter_frequencyOfChangingFilters_confirmedAsGuineaWorm"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">

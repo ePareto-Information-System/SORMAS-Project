@@ -808,6 +808,7 @@
                     style="@style/SubHeadingCompactStyle" />
 
                 <LinearLayout
+                    android:id="@+id/epiData_receivedHealthEducation_patientEnteredWaterSource_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
