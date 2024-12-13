@@ -50,6 +50,7 @@ import de.symeda.sormas.api.caze.EndOfIsolationReason;
 import de.symeda.sormas.api.caze.HospitalWardType;
 import de.symeda.sormas.api.caze.IdsrType;
 import de.symeda.sormas.api.caze.InfectionSetting;
+import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.caze.NotifiedList;
 import de.symeda.sormas.api.caze.PlagueType;
 import de.symeda.sormas.api.caze.QuarantineReason;
@@ -480,6 +481,8 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			}
 		}
 
+		contentBinding.setInvestigationStatusClass(InvestigationStatus.class);
+		contentBinding.caseDataInvestigatedDate.initializeDateField(getFragmentManager());
 		FragmentActivity thisActivity = this.getActivity();
 		contentBinding.caseDataCaseTransmissionClassification.initializeSpinner(caseTransmissionClassificationsList);
 		contentBinding.caseDataDisease.addValueChangedListener(new ValueChangeListener() {
@@ -504,6 +507,28 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			}
 		});
 		contentBinding.caseDataDisease.setEnabled(false);
+
+		if (record.getDisease() ==Disease.MEASLES) {
+			Set<VaccinationStatus> allowedVaccinations = EnumSet.of(
+					VaccinationStatus.VACCINATED,
+					VaccinationStatus.UNVACCINATED
+			);
+
+			vaccinationList = DataUtils.toItems(
+					Arrays.stream(VaccinationStatus.values())
+							.filter(Objects::nonNull)
+							.filter(allowedVaccinations::contains)
+							.collect(Collectors.toList())
+			);
+
+			vaccinationList = vaccinationList.stream()
+					.filter(item -> item != null)
+					.filter(item -> item.getKey() != null && !item.getKey().trim().isEmpty())
+					.filter(item -> item.getValue() != null)
+					.collect(Collectors.toList());
+
+			contentBinding.caseDataVaccinationStatus.setEnumItems(vaccinationList);
+		}
 
 		if (record.getDisease() != null) {
 			super.hideFieldsForDisease(record.getDisease(), contentBinding.mainContent, FormType.CASE_EDIT);
@@ -738,10 +763,6 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataMotherGivenProtectiveDoseTTDate.initializeDateField(getFragmentManager());
 		contentBinding.caseDataDateLatestUpdateRecord.initializeDateField(getFragmentManager());
 		contentBinding.setMotherVaccinationStatusClass(MotherVaccinationStatus.class);
-
-		if (record.getDisease() == Disease.YELLOW_FEVER){
-			handleYellowFever();
-		}
 	}
 
 	private void fillConfirmedCaseClassificationCombo() {
@@ -848,7 +869,6 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataMotherHaveCard.addValueChangedListener(field -> {
 			handleNNT();
 		});
-		handleNNT();
 		contentBinding.caseDataMotherNumberOfDoses.addValueChangedListener(field -> {
 			handleNNT();
 		});
@@ -857,6 +877,21 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			contentBinding.caseDataVaccinationDate.setVisibility(VISIBLE);
 			contentBinding.caseDataNumberOfDoses.setCaption("Number of vaccine doses received in the past against the disease being Reported");
 			contentBinding.caseDataNumberOfDoses.setVisibility(VISIBLE);
+		}
+
+		switch (record.getDisease()) {
+			case MEASLES:
+				handleMeasles();
+				getContentBinding().caseDataVaccinationStatus.addValueChangedListener(field -> handleMeasles());
+				break;
+			case YELLOW_FEVER:
+				handleYellowFever();
+				break;
+			case NEONATAL_TETANUS:
+				handleNNT();
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -961,4 +996,25 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 
 
 	}
+
+	private void handleMeasles() {
+		if (getContentBinding().caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED) {
+			getContentBinding().caseDataVaccinationRoutine.setVisibility(VISIBLE);
+			getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
+			getContentBinding().caseDataVaccinationType.setVisibility(VISIBLE);
+			getContentBinding().caseDataLastVaccinationDate.setVisibility(VISIBLE);
+		} else {
+			getContentBinding().caseDataVaccinationRoutine.setVisibility(GONE);
+			getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
+			getContentBinding().caseDataVaccinationType.setVisibility(GONE);
+			getContentBinding().caseDataLastVaccinationDate.setVisibility(GONE);
+		}
+
+		if (getContentBinding().caseDataVaccinationType.getValue() == CardOrHistory.CARD) {
+			getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
+		} else {
+			getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
+		}
+	}
+
 }

@@ -68,6 +68,7 @@ import de.symeda.sormas.app.backend.exposure.Exposure;
 import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
 import de.symeda.sormas.app.caze.edit.CaseEditActivity;
 import de.symeda.sormas.app.component.Item;
+import de.symeda.sormas.app.component.controls.ControlPropertyField;
 import de.symeda.sormas.app.core.IEntryItemOnClickListener;
 import de.symeda.sormas.app.databinding.FragmentEditEpidLayoutBinding;
 import de.symeda.sormas.app.util.DataUtils;
@@ -527,6 +528,12 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 			contentBinding.containmentMeasureLayout.setVisibility(GONE);
 			contentBinding.contaminationSourceLayout.setVisibility(GONE);
 		}
+		YesNo  epiDataHistoryOfTravelOutsideTheVillageTownDistrictValue = (YesNo) contentBinding.epiDataHistoryOfTravelOutsideTheVillageTownDistrict.getValue();
+		contentBinding.headingNameOfPlaceOfTravel.setVisibility(epiDataHistoryOfTravelOutsideTheVillageTownDistrictValue == YesNo.YES ? VISIBLE : GONE);
+		contentBinding.epiDataHistoryOfTravelOutsideTheVillageTownDistrict.addValueChangedListener(field -> {
+				YesNo value = (YesNo) field.getValue();
+				contentBinding.headingNameOfPlaceOfTravel.setVisibility(value == YesNo.YES ? VISIBLE : GONE);
+			});
 	}
 
 	@Override

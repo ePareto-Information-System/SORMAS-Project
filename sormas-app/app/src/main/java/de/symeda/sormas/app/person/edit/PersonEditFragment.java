@@ -291,7 +291,6 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		contentBinding.personDeathDate.initializeDateField(fragment.getFragmentManager());
 		contentBinding.personBurialDate.initializeDateField(fragment.getFragmentManager());
 		contentBinding.personResidenceSinceWhenInMonths.addValueChangedListener(field -> handlePersonResidenceSinceWhenInMonths(contentBinding));
-		contentBinding.setProfessionClass(Profession.class);
 	}
 
 	public static void setUpControlListeners(
@@ -606,10 +605,6 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		contentBinding.setYesNoClass(YesNo.class);
 		PersonValidator.initializePersonValidation(contentBinding);
 
-		if (disease != null) {
-			super.hideFieldsForDisease(disease, contentBinding.mainContent, FormType.PERSON_EDIT);
-		}
-
 		contentBinding.setAddressList(getAddresses());
 		contentBinding.setAddressItemClickCallback(onAddressItemClickListener);
 		getContentBinding().setAddressBindCallback(this::setLocationFieldVisibilitiesAndAccesses);
@@ -620,6 +615,11 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		setUpLayoutBinding(this, record, contentBinding);
 		contentBinding.setAttendedByClass(AttendedBy.class);
 		contentBinding.setYesNoUnknownClass(YesNoUnknown.class);
+		contentBinding.setProfessionClass(Profession.class);
+
+		if (disease != null) {
+			super.hideFieldsForDisease(disease, contentBinding.mainContent, FormType.PERSON_EDIT);
+		}
 	}
 
 	@Override

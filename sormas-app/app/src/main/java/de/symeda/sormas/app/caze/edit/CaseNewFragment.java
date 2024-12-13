@@ -38,6 +38,7 @@ import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
+import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.sample.PosNegEq;
@@ -88,6 +89,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 	private List<Item> facilityTypeGroupList;
 	private List<Item> caseTransmissionClassificationsList;
 	private List<Item> idsrTypeList;
+	List<Item> approximateAgeTypeList;
 
 	public static CaseNewFragment newInstance(Case activityRootData) {
 		return newInstance(CaseNewFragment.class, CaseNewActivity.buildBundle().get(), activityRootData);
@@ -260,6 +262,9 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 		contentBinding.personSex.initializeSpinner(sexList);
 
 		contentBinding.personPresentCondition.initializeSpinner(presentConditionList);
+		approximateAgeTypeList = DataUtils.getEnumItems(ApproximateAgeType.class, true);
+		contentBinding.personApproximateAgeType.initializeSpinner(approximateAgeTypeList);
+
 
 		contentBinding.facilityOrHome.addValueChangedListener(e -> {
 			if (e.getValue() == TypeOfPlace.FACILITY) {

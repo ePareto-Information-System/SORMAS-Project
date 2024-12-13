@@ -36,6 +36,7 @@
         <import type="de.symeda.sormas.api.i18n.I18nProperties" />
         <import type="de.symeda.sormas.api.i18n.Strings" />
 
+
         <variable name="patientCondition" type="MildModerateSevereCritical" />
         <variable name="data" type="de.symeda.sormas.app.backend.hospitalization.Hospitalization" />
         <variable name="caze" type="de.symeda.sormas.app.backend.caze.Case" />
@@ -44,6 +45,8 @@
         <variable name="previousHospitalizationBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
         <variable name="YesNoClass" type="Class" />
         <variable name="SymptomsListClass" type="Class" />
+        <variable name="yesNoUnknownClass" type="Class" />
+
 
     </data>
 
@@ -326,6 +329,7 @@
             <de.symeda.sormas.app.component.controls.ControlSwitchField
                 android:id="@+id/caseHospitalization_seenAtAHealthFacility"
                 app:value="@={data.seenAtAHealthFacility}"
+                app:enumClass="@{yesNoUnknownClass}"
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField

@@ -178,10 +178,10 @@
                         app:value="@{data.sampleDispatchMode}"
                         style="@style/ControlSingleColumnStyle" />
 
-                    <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
-                        android:id="@+id/sample_requestedSampleMaterials"
-                        app:value="@{data.requestedSampleMaterials}"
-                        style="@style/ControlSingleColumnStyle" />
+<!--                    <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField-->
+<!--                        android:id="@+id/sample_requestedSampleMaterials"-->
+<!--                        app:value="@{data.requestedSampleMaterials}"-->
+<!--                        style="@style/ControlSingleColumnStyle" />-->
 
                     <de.symeda.sormas.app.component.controls.ControlTagViewField
                         android:id="@+id/sample_requestedSampleMaterialsTags"
@@ -274,13 +274,13 @@
                             app:value="@{data.pathogenTestingRequested}"
                             style="@style/ControlSingleColumnStyle" />
 
-                        <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
-                            android:id="@+id/sample_requestedPathogenTests"
-                            app:value="@{data.requestedPathogenTests}"
-                            app:dependencyParentField="@{samplePathogenTestingRequested}"
-                            app:dependencyParentValue="@{true}"
-                            app:dependencyParentClearOnHide="@{false}"
-                            style="@style/ControlSingleColumnStyle" />
+<!--                        <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField-->
+<!--                            android:id="@+id/sample_requestedPathogenTests"-->
+<!--                            app:value="@{data.requestedPathogenTests}"-->
+<!--                            app:dependencyParentField="@{samplePathogenTestingRequested}"-->
+<!--                            app:dependencyParentValue="@{true}"-->
+<!--                            app:dependencyParentClearOnHide="@{false}"-->
+<!--                            style="@style/ControlSingleColumnStyle" />-->
 
                         <de.symeda.sormas.app.component.controls.ControlTagViewField
                             android:id="@+id/sample_requestedPathogenTestsTags"
@@ -306,13 +306,13 @@
                                 app:value="@{data.additionalTestingRequested}"
                                 style="@style/ControlSingleColumnStyle" />
 
-                            <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
-                                android:id="@+id/sample_requestedAdditionalTests"
-                                app:value="@{data.requestedAdditionalTests}"
-                                app:dependencyParentField="@{sampleAdditionalTestingRequested}"
-                                app:dependencyParentValue="@{true}"
-                                app:dependencyParentClearOnHide="@{false}"
-                                style="@style/ControlSingleColumnStyle" />
+<!--                            <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField-->
+<!--                                android:id="@+id/sample_requestedAdditionalTests"-->
+<!--                                app:value="@{data.requestedAdditionalTests}"-->
+<!--                                app:dependencyParentField="@{sampleAdditionalTestingRequested}"-->
+<!--                                app:dependencyParentValue="@{true}"-->
+<!--                                app:dependencyParentClearOnHide="@{false}"-->
+<!--                                style="@style/ControlSingleColumnStyle" />-->
 
                             <de.symeda.sormas.app.component.controls.ControlTagViewField
                                 android:id="@+id/sample_requestedAdditionalTestsTags"
@@ -365,12 +365,12 @@
                             style="@style/ControlSingleColumnStyle" />
 
 
-                        <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
-                            android:id="@+id/sample_ipSampleTestResults"
-                            app:value="@{data.ipSampleTestResults}"
-                            app:dependencyParentField="@{sampleIpSampleSent}"
-                            app:dependencyParentValue="@{YesNo.YES}"
-                            style="@style/ControlSingleColumnStyle" />
+<!--                        <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField-->
+<!--                            android:id="@+id/sample_ipSampleTestResults"-->
+<!--                            app:value="@{data.ipSampleTestResults}"-->
+<!--                            app:dependencyParentField="@{sampleIpSampleSent}"-->
+<!--                            app:dependencyParentValue="@{YesNo.YES}"-->
+<!--                            style="@style/ControlSingleColumnStyle" />-->
 
                         <LinearLayout
                             android:layout_width="match_parent"
