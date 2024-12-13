@@ -695,6 +695,12 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 						contentBinding.personPst14MonthsVillage.setVisibility(GONE);
 					}
 				}
+			} else {
+				contentBinding.personPst14MonthsRegion.setVisibility(GONE);
+				contentBinding.personPst14MonthsDistrict.setVisibility(GONE);
+				contentBinding.personPst14MonthsCommunity.setVisibility(GONE);
+				contentBinding.personPst14MonthsZone.setVisibility(GONE);
+				contentBinding.personPst14MonthsVillage.setVisibility(GONE);
 			}
 	}
 }
