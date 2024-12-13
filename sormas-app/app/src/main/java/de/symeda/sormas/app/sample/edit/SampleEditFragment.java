@@ -489,6 +489,9 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			case CSM:
 				handleCSM();
 				break;
+			case MONKEYPOX:
+				handleMpox();
+				break;
 			default:
 		}
 
@@ -586,6 +589,16 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		getContentBinding().samplePurpose.setValue(SamplePurpose.EXTERNAL);
 		getContentBinding().samplePurpose.setVisibility(GONE);
 		getContentBinding().samplePathogenTestingRequested.setVisibility(GONE);
+	}
+
+	private void handleMpox(){
+		List<SampleMaterial> idsrSampleMaterialList = Arrays.asList(
+				SampleMaterial.BLOOD,
+				SampleMaterial.CRUST,
+				SampleMaterial.SWAB
+		);
+
+		getContentBinding().sampleSampleMaterial.initializeSpinner(DataUtils.toItems(idsrSampleMaterialList));
 	}
 
 	private void handleAHF() {
