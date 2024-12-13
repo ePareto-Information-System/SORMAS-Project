@@ -10,9 +10,9 @@ import androidx.databinding.Observable;
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableField;
 import androidx.databinding.ViewDataBinding;
-import androidx.databinding.library.baseAdapters.BR;
 import androidx.fragment.app.FragmentActivity;
 
+import de.symeda.sormas.app.BR;
 import de.symeda.sormas.app.BaseActivity;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
@@ -33,16 +33,34 @@ import de.symeda.sormas.app.util.ViewHelper;
 public class EventPickOrCreateDialog extends AbstractDialog {
 
 	public static final String TAG = EventPickOrCreateDialog.class.getSimpleName();
-
+	private final ObservableField<Event> selectedEvent = new ObservableField<>();
 	private DialogEventPickOrCreateLayoutBinding contentBinding;
-
 	private EventCriteria eventCriteria;
 	private List<Event> eventSelectList;
 	private Event event;
-
 	private IEntryItemOnClickListener eventSelectItemClickCallback;
 	private Callback createCallback;
-	private final ObservableField<Event> selectedEvent = new ObservableField<>();
+
+	private EventPickOrCreateDialog(Case rootCase, final FragmentActivity activity, Event newEvent) {
+
+		super(
+			activity,
+			R.layout.dialog_root_layout,
+			R.layout.dialog_event_pick_or_create_layout,
+			R.layout.dialog_root_cancel_create_select_button_panel_layout,
+			R.string.heading_pick_or_create_event,
+			-1);
+
+		this.event = newEvent;
+		EventCriteria eventCriteria = new EventCriteria();
+		eventCriteria.setDisease(rootCase.getDisease());
+		eventCriteria.caze(rootCase);
+		this.eventCriteria = eventCriteria;
+
+		this.setSelectedEvent(null);
+	}
+
+	// Contructors
 
 	public static void pickOrCreateEvent(final Case rootCase, final Event newEvent, final Consumer<Event> pickedEventCallback) {
 		final EventPickOrCreateDialog eventDialog = new EventPickOrCreateDialog(rootCase, BaseActivity.getActiveActivity(), newEvent);
@@ -64,27 +82,6 @@ public class EventPickOrCreateDialog extends AbstractDialog {
 		};
 
 		eventDialog.show();
-	}
-
-	// Contructors
-
-	private EventPickOrCreateDialog(Case rootCase, final FragmentActivity activity, Event newEvent) {
-
-		super(
-			activity,
-			R.layout.dialog_root_layout,
-			R.layout.dialog_event_pick_or_create_layout,
-			R.layout.dialog_root_cancel_create_select_button_panel_layout,
-			R.string.heading_pick_or_create_event,
-			-1);
-
-		this.event = newEvent;
-		EventCriteria eventCriteria = new EventCriteria();
-		eventCriteria.setDisease(rootCase.getDisease());
-		eventCriteria.caze(rootCase);
-		this.eventCriteria = eventCriteria;
-
-		this.setSelectedEvent(null);
 	}
 
 	// Instance methods

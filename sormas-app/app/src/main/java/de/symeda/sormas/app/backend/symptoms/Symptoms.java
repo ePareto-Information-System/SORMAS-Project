@@ -23,22 +23,17 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-
-import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.caze.Trimester;
@@ -61,11 +56,9 @@ import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 @EmbeddedAdo
 public class Symptoms extends PseudonymizableAdo {
 
-	private static final long serialVersionUID = 392886645668778670L;
-
 	public static final String TABLE_NAME = "symptoms";
 	public static final String I18N_PREFIX = "Symptoms";
-
+	private static final long serialVersionUID = 392886645668778670L;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date onsetDate;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
@@ -459,7 +452,7 @@ public class Symptoms extends PseudonymizableAdo {
 	@Enumerated(EnumType.STRING)
 	private SymptomState shivering;
 	@Enumerated(EnumType.STRING)
-	private SymptomState  generalBodilyPains;
+	private SymptomState generalBodilyPains;
 	@DatabaseField
 	private Boolean lesionsTrunk;
 	@DatabaseField
@@ -533,9 +526,6 @@ public class Symptoms extends PseudonymizableAdo {
 
 	@Enumerated(EnumType.STRING)
 	private SymptomState skinRashNew;
-
-	@Enumerated(EnumType.STRING)
-	private SymptomState generalizedRash;
 
 	@Enumerated(EnumType.STRING)
 	private SymptomState redEyes;
@@ -661,7 +651,6 @@ public class Symptoms extends PseudonymizableAdo {
 
 	@Enumerated(EnumType.STRING)
 	private YesNo pregnant;
-
 
 	@Override
 	public String getI18nPrefix() {
@@ -835,18 +824,20 @@ public class Symptoms extends PseudonymizableAdo {
 	public void setVesicularRash(SymptomState vesicularRash) {
 		this.vesicularRash = vesicularRash;
 	}
+
 	public SymptomState getMacularRash() {
 		return macularRash;
 	}
 
-	public void setMacularRash(SymptomState macularRash){
+	public void setMacularRash(SymptomState macularRash) {
 		this.macularRash = macularRash;
 	}
+
 	public SymptomState getPapularRash() {
 		return papularRash;
 	}
 
-	public void setPapularRash(SymptomState papularRash){
+	public void setPapularRash(SymptomState papularRash) {
 		this.papularRash = papularRash;
 	}
 
@@ -1201,6 +1192,7 @@ public class Symptoms extends PseudonymizableAdo {
 	public void setLesions(SymptomState lesions) {
 		this.lesions = lesions;
 	}
+
 	public SymptomState getRashes() {
 		return rashes;
 	}
@@ -2145,13 +2137,14 @@ public class Symptoms extends PseudonymizableAdo {
 		this.shivering = shivering;
 	}
 
-	public SymptomState  getGeneralBodilyPains() {
+	public SymptomState getGeneralBodilyPains() {
 		return generalBodilyPains;
 	}
 
-	public void setGeneralBodilyPains(SymptomState  generalBodilyPains) {
+	public void setGeneralBodilyPains(SymptomState generalBodilyPains) {
 		this.generalBodilyPains = generalBodilyPains;
 	}
+
 	public Boolean getLesionsTrunk() {
 		return lesionsTrunk;
 	}
@@ -2159,6 +2152,7 @@ public class Symptoms extends PseudonymizableAdo {
 	public void setLesionsTrunk(Boolean lesionsTrunk) {
 		this.lesionsTrunk = lesionsTrunk;
 	}
+
 	public Boolean getLesionsNeck() {
 		return lesionsNeck;
 	}
@@ -2190,6 +2184,7 @@ public class Symptoms extends PseudonymizableAdo {
 	public void setDateOfOnset(Date dateOfOnset) {
 		this.dateOfOnset = dateOfOnset;
 	}
+
 	@Enumerated(EnumType.STRING)
 	public YesNo getFeverBodyTempGreater() {
 		return feverBodyTempGreater;
@@ -2198,6 +2193,7 @@ public class Symptoms extends PseudonymizableAdo {
 	public void setFeverBodyTempGreater(YesNo feverBodyTempGreater) {
 		this.feverBodyTempGreater = feverBodyTempGreater;
 	}
+
 	@Enumerated(EnumType.STRING)
 	public SymptomState getDifficultySwallow() {
 		return difficultySwallow;
@@ -2224,6 +2220,7 @@ public class Symptoms extends PseudonymizableAdo {
 	public void setMuscleTone(SymptomState muscleTone) {
 		this.muscleTone = muscleTone;
 	}
+
 	@Enumerated(EnumType.STRING)
 	public SymptomState getDeepTendonReflex() {
 		return deepTendonReflex;
@@ -2241,6 +2238,7 @@ public class Symptoms extends PseudonymizableAdo {
 	public void setMuscleVolume(SymptomState muscleVolume) {
 		this.muscleVolume = muscleVolume;
 	}
+
 	@Enumerated(EnumType.STRING)
 	public SymptomState getSensoryLoss() {
 		return sensoryLoss;
@@ -2334,15 +2332,19 @@ public class Symptoms extends PseudonymizableAdo {
 	public SymptomState getDyspnea() {
 		return dyspnea;
 	}
+
 	public void setDyspnea(SymptomState dyspnea) {
 		this.dyspnea = dyspnea;
 	}
+
 	public SymptomState getTachypnea() {
 		return tachypnea;
 	}
+
 	public void setTachypnea(SymptomState tachypnea) {
 		this.tachypnea = tachypnea;
 	}
+
 	public SymptomState getBodyAche() {
 		return bodyAche;
 	}
@@ -2406,6 +2408,7 @@ public class Symptoms extends PseudonymizableAdo {
 	public void setStiffness(SymptomState stiffness) {
 		this.stiffness = stiffness;
 	}
+
 	public SymptomState getDizziness() {
 		return dizziness;
 	}
@@ -2413,6 +2416,7 @@ public class Symptoms extends PseudonymizableAdo {
 	public void setDizziness(SymptomState dizziness) {
 		this.dizziness = dizziness;
 	}
+
 	public SymptomState getExcessiveSweating() {
 		return excessiveSweating;
 	}
@@ -2420,37 +2424,44 @@ public class Symptoms extends PseudonymizableAdo {
 	public void setExcessiveSweating(SymptomState excessiveSweating) {
 		this.excessiveSweating = excessiveSweating;
 	}
+
 	public SymptomState getNumbness() {
 		return numbness;
 	}
+
 	public void setNumbness(SymptomState numbness) {
 		this.numbness = numbness;
 	}
-	public String getOutcomeOther() { return outcomeOther;}
+
+	public String getOutcomeOther() {
+		return outcomeOther;
+	}
+
 	public void setOutcomeOther(String outcomeOther) {
 		this.outcomeOther = outcomeOther;
 	}
-	public YesNo getSymptomsOngoing(){
+
+	public YesNo getSymptomsOngoing() {
 		return symptomsOngoing;
 	}
 
-	public void setSymptomsOngoing(YesNo symptomsOngoing){
+	public void setSymptomsOngoing(YesNo symptomsOngoing) {
 		this.symptomsOngoing = symptomsOngoing;
 	}
 
-	public DurationHours getDurationHours(){
+	public DurationHours getDurationHours() {
 		return durationHours;
 	}
 
-	public void setDurationHours(DurationHours durationHours){
+	public void setDurationHours(DurationHours durationHours) {
 		this.durationHours = durationHours;
 	}
 
-	public String getNameOfHealthFacility(){
+	public String getNameOfHealthFacility() {
 		return nameOfHealthFacility;
 	}
 
-	public void setNameOfHealthFacility(String nameOfHealthFacility){
+	public void setNameOfHealthFacility(String nameOfHealthFacility) {
 		this.nameOfHealthFacility = nameOfHealthFacility;
 	}
 
@@ -2460,8 +2471,7 @@ public class Symptoms extends PseudonymizableAdo {
 			if (StringUtils.isEmpty(requestedSymptomsSelectedString)) {
 				symptomsSelected = new HashSet<>();
 			} else {
-				symptomsSelected =
-						Arrays.stream(requestedSymptomsSelectedString.split(",")).map(SymptomsList::valueOf).collect(Collectors.toSet());
+				symptomsSelected = Arrays.stream(requestedSymptomsSelectedString.split(",")).map(SymptomsList::valueOf).collect(Collectors.toSet());
 			}
 		}
 		return symptomsSelected;
@@ -2493,9 +2503,11 @@ public class Symptoms extends PseudonymizableAdo {
 		this.requestedSymptomsSelectedString = requestedSymptomsSelectedString;
 		symptomsSelected = null;
 	}
-	public Date getDateOfOnsetRash(){
+
+	public Date getDateOfOnsetRash() {
 		return dateOfOnsetRash;
 	}
+
 	public void setDateOfOnsetRash(Date dateOfOnsetRash) {
 		this.dateOfOnsetRash = dateOfOnsetRash;
 	}
@@ -2506,12 +2518,12 @@ public class Symptoms extends PseudonymizableAdo {
 			if (StringUtils.isEmpty(requestedRashSymptomsString)) {
 				rashSymptoms = new HashSet<>();
 			} else {
-				rashSymptoms =
-						Arrays.stream(requestedRashSymptomsString.split(",")).map(BodyPart::valueOf).collect(Collectors.toSet());
+				rashSymptoms = Arrays.stream(requestedRashSymptomsString.split(",")).map(BodyPart::valueOf).collect(Collectors.toSet());
 			}
 		}
 		return rashSymptoms;
 	}
+
 	public void setRashSymptoms(Set<BodyPart> rashSymptoms) {
 		this.rashSymptoms = rashSymptoms;
 
@@ -2536,8 +2548,7 @@ public class Symptoms extends PseudonymizableAdo {
 			if (StringUtils.isEmpty(requestedSiteOfParalysisString)) {
 				siteOfParalysis = new HashSet<>();
 			} else {
-				siteOfParalysis =
-						Arrays.stream(requestedSiteOfParalysisString.split(",")).map(InjectionSite::valueOf).collect(Collectors.toSet());
+				siteOfParalysis = Arrays.stream(requestedSiteOfParalysisString.split(",")).map(InjectionSite::valueOf).collect(Collectors.toSet());
 			}
 		}
 		return siteOfParalysis;
@@ -2561,34 +2572,42 @@ public class Symptoms extends PseudonymizableAdo {
 		requestedSiteOfParalysisString = sb.toString();
 	}
 
-	public String getRashSymptomsOtherAreas(){
+	public String getRashSymptomsOtherAreas() {
 		return rashSymptomsOtherAreas;
 	}
+
 	public void setRashSymptomsOtherAreas(String rashSymptomsOtherAreas) {
 		this.rashSymptomsOtherAreas = rashSymptomsOtherAreas;
 	}
 
-	public YesNo getAreLesionsSameState(){
+	public YesNo getAreLesionsSameState() {
 		return areLesionsSameState;
 	}
+
 	public void setAreLesionsSameState(YesNo areLesionsSameState) {
 		this.areLesionsSameState = areLesionsSameState;
 	}
-	public YesNo getAreLesionsSameSize(){
+
+	public YesNo getAreLesionsSameSize() {
 		return areLesionsSameSize;
 	}
+
 	public void setAreLesionsSameSize(YesNo areLesionsSameSize) {
 		this.areLesionsSameSize = areLesionsSameSize;
 	}
-	public YesNo getAreLesionsDeep(){
+
+	public YesNo getAreLesionsDeep() {
 		return areLesionsDeep;
 	}
+
 	public void setAreLesionsDeep(YesNo areLesionsDeep) {
 		this.areLesionsDeep = areLesionsDeep;
 	}
-	public YesNo getAreUlcersAmong(){
+
+	public YesNo getAreUlcersAmong() {
 		return areUlcersAmong;
 	}
+
 	public void setAreUlcersAmong(YesNo areUlcersAmong) {
 		this.areUlcersAmong = areUlcersAmong;
 	}
@@ -2596,13 +2615,15 @@ public class Symptoms extends PseudonymizableAdo {
 	public SymptomsList getTypeOfRash() {
 		return typeOfRash;
 	}
+
 	public void setTypeOfRash(SymptomsList typeOfRash) {
 		this.typeOfRash = typeOfRash;
 	}
 
-	public String getSymptomsSelectedOther(){
+	public String getSymptomsSelectedOther() {
 		return symptomsSelectedOther;
 	}
+
 	public void setSymptomsSelectedOther(String symptomsSelectedOther) {
 		this.symptomsSelectedOther = symptomsSelectedOther;
 	}
@@ -2615,7 +2636,6 @@ public class Symptoms extends PseudonymizableAdo {
 		this.requestedRashSymptomsString = requestedRashSymptomsString;
 		rashSymptoms = null;
 	}
-
 
 	public GuineaWormFirstSymptom getFirstSignOrSymptomsBeforeWorm() {
 		return firstSignOrSymptomsBeforeWorm;
@@ -2672,6 +2692,7 @@ public class Symptoms extends PseudonymizableAdo {
 	public void setCaseDetectedBeforeWormEmergence(SymptomState caseDetectedBeforeWormEmergence) {
 		this.caseDetectedBeforeWormEmergence = caseDetectedBeforeWormEmergence;
 	}
+
 	@Enumerated(EnumType.STRING)
 	public SymptomState getDiarrhoea() {
 		return diarrhoea;
@@ -2690,14 +2711,6 @@ public class Symptoms extends PseudonymizableAdo {
 		this.headaches = headaches;
 	}
 
-	public SymptomState getGeneralizedRash() {
-		return generalizedRash;
-	}
-
-	public void setGeneralizedRash(SymptomState generalizedRash) {
-		this.generalizedRash = generalizedRash;
-	}
-
 	public SymptomState getRedEyes() {
 		return redEyes;
 	}
@@ -2713,6 +2726,7 @@ public class Symptoms extends PseudonymizableAdo {
 	public void setSwollenLymphNodesBehindEars(SymptomState swollenLymphNodesBehindEars) {
 		this.swollenLymphNodesBehindEars = swollenLymphNodesBehindEars;
 	}
+
 	public String getRequestedSiteOfParalysisString() {
 		return requestedSiteOfParalysisString;
 	}
@@ -2725,18 +2739,23 @@ public class Symptoms extends PseudonymizableAdo {
 	public YesNo getPatientHaveFever() {
 		return patientHaveFever;
 	}
+
 	public void setPatientHaveFever(YesNo patientHaveFever) {
 		this.patientHaveFever = patientHaveFever;
 	}
+
 	public Date getOutcomeDate() {
 		return outcomeDate;
 	}
+
 	public void setOutcomeDate(Date outcomeDate) {
 		this.outcomeDate = outcomeDate;
 	}
+
 	public String getNameService() {
 		return nameService;
 	}
+
 	public void setNameService(String nameService) {
 		this.nameService = nameService;
 	}
@@ -2744,12 +2763,15 @@ public class Symptoms extends PseudonymizableAdo {
 	public String getOutcomePlaceCommVillage() {
 		return outcomePlaceCommVillage;
 	}
+
 	public void setOutcomePlaceCommVillage(String outcomePlaceCommVillage) {
 		this.outcomePlaceCommVillage = outcomePlaceCommVillage;
 	}
+
 	public String getPlaceOfFuneralNameVillage() {
 		return placeOfFuneralNameVillage;
 	}
+
 	public void setPlaceOfFuneralNameVillage(String placeOfFuneralNameVillage) {
 		this.placeOfFuneralNameVillage = placeOfFuneralNameVillage;
 	}
@@ -2760,8 +2782,7 @@ public class Symptoms extends PseudonymizableAdo {
 			if (StringUtils.isEmpty(injectionSiteString)) {
 				injectionSite = new HashSet<>();
 			} else {
-				injectionSite =
-						Arrays.stream(injectionSiteString.split(",")).map(InjectionSite::valueOf).collect(Collectors.toSet());
+				injectionSite = Arrays.stream(injectionSiteString.split(",")).map(InjectionSite::valueOf).collect(Collectors.toSet());
 			}
 		}
 		return injectionSite;
@@ -2802,14 +2823,15 @@ public class Symptoms extends PseudonymizableAdo {
 		this.abnormalLungAuscultation = abnormalLungAuscultation;
 	}
 
-	/*@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	public HealthConditions getHealthConditions() {
-		return healthConditions;
-	}
-
-	public void setHealthConditions(HealthConditions healthConditions) {
-		this.healthConditions = healthConditions;
-	}*/
+	/*
+	 * @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	 * public HealthConditions getHealthConditions() {
+	 * return healthConditions;
+	 * }
+	 * public void setHealthConditions(HealthConditions healthConditions) {
+	 * this.healthConditions = healthConditions;
+	 * }
+	 */
 
 	public Trimester getTrimester() {
 		return trimester;
@@ -2838,6 +2860,7 @@ public class Symptoms extends PseudonymizableAdo {
 	public CaseOutcome getOutcome() {
 		return outcome;
 	}
+
 	public void setOutcome(CaseOutcome outcome) {
 		this.outcome = outcome;
 	}

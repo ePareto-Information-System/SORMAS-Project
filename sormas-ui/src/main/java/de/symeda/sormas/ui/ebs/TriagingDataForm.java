@@ -59,41 +59,41 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 	private static final String SIGNAL_INFORMATION_LOC = "signalInformationLoc";
 	private static final String TRIAGING_DECISION_LOC = "triagingDecisionLoc";
 	public final String THE_DATE_OF_DECISION_CANNOT_BE_EARLIER_THAN_THE_DATE_OF_OCCURRENCE =
-		"The Date of Decision cannot be earlier than the Date of Report or Date of Occurrence.";
+			"The Date of Decision cannot be earlier than the Date of Report or Date of Occurrence.";
 
 	private final EbsDto ebs;
 	private final Class<? extends EntityDto> parentClass;
 
 	private static final String HTML_LAYOUT = loc(SIGNAL_INFORMATION_LOC)
-		+ fluidRowLocs(TriagingDto.SPECIFIC_SIGNAL)
-		+ fluidRowLocs(TriagingDto.SUPERVISOR_REVIEW)
-		+ fluidRowLocs(TriagingDto.OUTCOME_SUPERVISOR, "")
-		+ fluidRowLocs(TriagingDto.POTENTIAL_RISK)
-		+ fluidRowLocs(TriagingDto.HEALTH_CONCERN)
-		+ fluidRowLocs(TriagingDto.SIGNAL_CATEGORY)
-		+ fluidRowLocs(TriagingDto.CATEGORY_DETAILS_LEVEL)
-		+ fluidRowLocs(TriagingDto.HUMAN_COMMUNITY_CATEGORY_DETAILS, "")
-		+ fluidRowLocs(TriagingDto.HUMAN_LABORATORY_CATEGORY_DETAILS, "")
-		+ fluidRowLocs(TriagingDto.HUMAN_FACILITY_CATEGORY_DETAILS, "")
-		+ fluidRowLocs(TriagingDto.ANIMAL_COMMUNITY_CATEGORY_DETAILS, "")
-		+ fluidRowLocs(TriagingDto.ANIMAL_FACILITY_CATEGORY_DETAILS, "")
-		+ fluidRowLocs(TriagingDto.ANIMAL_LABORATORY_CATEGORY_DETAILS, "")
-		+ fluidRowLocs(TriagingDto.ENVIRONMENTAL_CATEGORY_DETAILS, "")
-		+ fluidRowLocs(TriagingDto.POE_CATEGORY_DETAILS, "")
-		+ fluidRowLocs(TriagingDto.OCCURRENCE_PREVIOUSLY)
-		+ fluidRowLocs(TriagingDto.REFERRED)
-		+ fluidRowLocs(TriagingDto.REFERRED_TO, "")
-		+ loc(TRIAGING_DECISION_LOC)
-		+ fluidRowLocs(TriagingDto.TRIAGING_DECISION, TriagingDto.DATE_OF_DECISION);
+			+ fluidRowLocs(TriagingDto.SPECIFIC_SIGNAL)
+			+ fluidRowLocs(TriagingDto.SUPERVISOR_REVIEW)
+			+ fluidRowLocs(TriagingDto.OUTCOME_SUPERVISOR, "")
+			+ fluidRowLocs(TriagingDto.POTENTIAL_RISK)
+			+ fluidRowLocs(TriagingDto.HEALTH_CONCERN)
+			+ fluidRowLocs(TriagingDto.SIGNAL_CATEGORY)
+			+ fluidRowLocs(TriagingDto.CATEGORY_DETAILS_LEVEL)
+			+ fluidRowLocs(TriagingDto.HUMAN_COMMUNITY_CATEGORY_DETAILS, "")
+			+ fluidRowLocs(TriagingDto.HUMAN_LABORATORY_CATEGORY_DETAILS, "")
+			+ fluidRowLocs(TriagingDto.HUMAN_FACILITY_CATEGORY_DETAILS, "")
+			+ fluidRowLocs(TriagingDto.ANIMAL_COMMUNITY_CATEGORY_DETAILS, "")
+			+ fluidRowLocs(TriagingDto.ANIMAL_FACILITY_CATEGORY_DETAILS, "")
+			+ fluidRowLocs(TriagingDto.ANIMAL_LABORATORY_CATEGORY_DETAILS, "")
+			+ fluidRowLocs(TriagingDto.ENVIRONMENTAL_CATEGORY_DETAILS, "")
+			+ fluidRowLocs(TriagingDto.POE_CATEGORY_DETAILS, "")
+			+ fluidRowLocs(TriagingDto.OCCURRENCE_PREVIOUSLY)
+			+ fluidRowLocs(TriagingDto.REFERRED)
+			+ fluidRowLocs(TriagingDto.REFERRED_TO, "")
+			+ loc(TRIAGING_DECISION_LOC)
+			+ fluidRowLocs(TriagingDto.TRIAGING_DECISION, TriagingDto.DATE_OF_DECISION);
 
 	TriagingDataForm(EbsDto ebsDto, Class<? extends EntityDto> parentClass, boolean isPseudonymized, boolean inJurisdiction, boolean isEditAllowed) {
 		super(
-			TriagingDto.class,
-			TriagingDto.I18N_PREFIX,
-			false,
-			FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-			createFieldAccessCheckers(isPseudonymized, false),
-			ebsDto);
+				TriagingDto.class,
+				TriagingDto.I18N_PREFIX,
+				false,
+				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
+				createFieldAccessCheckers(isPseudonymized, false),
+				ebsDto);
 		this.ebs = ebsDto;
 		this.parentClass = parentClass;
 		addFields();
@@ -206,9 +206,9 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 		previousOccurrence = addField(TriagingDto.OCCURRENCE_PREVIOUSLY, NullableOptionGroup.class);
 		triagingDecision = addField(TriagingDto.TRIAGING_DECISION, OptionGroup.class);
 		triagingDecision.addItems(
-			Arrays.stream(EbsTriagingDecision.values())
-				.filter(decision -> fieldVisibilityCheckers.isVisible(EbsTriagingDecision.class, decision.name()))
-				.collect(Collectors.toList()));
+				Arrays.stream(EbsTriagingDecision.values())
+						.filter(decision -> fieldVisibilityCheckers.isVisible(EbsTriagingDecision.class, decision.name()))
+						.collect(Collectors.toList()));
 		triagingDecision.addStyleName(CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
 		dateOfDecision = addField(TriagingDto.DATE_OF_DECISION, DateField.class);
 		referredTo = addField(TriagingDto.REFERRED_TO, TextField.class);
@@ -217,11 +217,11 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 		EbsDto selectedEbs = getEbsDto();
 
 		FieldHelper.setVisibleWhen(
-			getFieldGroup(),
-			Arrays.asList(TriagingDto.OCCURRENCE_PREVIOUSLY),
-			TriagingDto.SPECIFIC_SIGNAL,
-			Arrays.asList(YesNo.YES),
-			true);
+				getFieldGroup(),
+				Arrays.asList(TriagingDto.OCCURRENCE_PREVIOUSLY),
+				TriagingDto.SPECIFIC_SIGNAL,
+				Arrays.asList(YesNo.YES),
+				true);
 
 		specificSignal.addValueChangeListener(e -> {
 			if (Objects.equals(e.getProperty().getValue().toString(), "[YES]")) {
@@ -417,18 +417,18 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 	private static SignalCategory getSignalCategory(String propertyValue) {
 		SignalCategory category = null;
 		switch (propertyValue) {
-		case "[Human]":
-			category = SignalCategory.HUMAN;
-			break;
-		case "[Environment]":
-			category = SignalCategory.ENVIRONMENT;
-			break;
-		case "[Animal]":
-			category = SignalCategory.ANIMAL;
-			break;
-		case "[POE]":
-			category = SignalCategory.POE;
-			break;
+			case "[Human]":
+				category = SignalCategory.HUMAN;
+				break;
+			case "[Environment]":
+				category = SignalCategory.ENVIRONMENT;
+				break;
+			case "[Animal]":
+				category = SignalCategory.ANIMAL;
+				break;
+			case "[POE]":
+				category = SignalCategory.POE;
+				break;
 		}
 		return category;
 	}
@@ -453,26 +453,26 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 		boolean isLaboratoryLevel = "[Laboratory]".equals(level);
 
 		switch (category) {
-		case HUMAN:
-			humanCommCategoryDetails.setVisible(isCommunityLevel);
-			humanFacCategoryDetails.setVisible(isFacilityLevel);
-			humanLabCategoryDetails.setVisible(isLaboratoryLevel);
-			categoryLevel.setCaption(String.format(I18nProperties.getCaption(Captions.Triaging_categoryDetails)));
-			break;
-		case ANIMAL:
-			animalCommCategoryDetails.setVisible(isCommunityLevel);
-			animalFacCategoryDetails.setVisible(isFacilityLevel);
-			animalLabCategoryDetails.setVisible(isLaboratoryLevel);
-			categoryLevel.setCaption(String.format(I18nProperties.getCaption(Captions.Triaging_categoryDetails)));
-			break;
-		case ENVIRONMENT:
-			environmentalCategoryDetails.setVisible(true);
-			categoryLevel.setCaption(String.format(I18nProperties.getCaption(Captions.Triaging_categoryDetails)));
-			break;
-		case POE:
-			poeCategoryDetails.setVisible(true);
-			categoryLevel.setCaption(String.format(I18nProperties.getCaption(Captions.Triaging_categoryDetails)));
-			break;
+			case HUMAN:
+				humanCommCategoryDetails.setVisible(isCommunityLevel);
+				humanFacCategoryDetails.setVisible(isFacilityLevel);
+				humanLabCategoryDetails.setVisible(isLaboratoryLevel);
+				categoryLevel.setCaption(String.format(I18nProperties.getCaption(Captions.Triaging_categoryDetails)));
+				break;
+			case ANIMAL:
+				animalCommCategoryDetails.setVisible(isCommunityLevel);
+				animalFacCategoryDetails.setVisible(isFacilityLevel);
+				animalLabCategoryDetails.setVisible(isLaboratoryLevel);
+				categoryLevel.setCaption(String.format(I18nProperties.getCaption(Captions.Triaging_categoryDetails)));
+				break;
+			case ENVIRONMENT:
+				environmentalCategoryDetails.setVisible(true);
+				categoryLevel.setCaption(String.format(I18nProperties.getCaption(Captions.Triaging_categoryDetails)));
+				break;
+			case POE:
+				poeCategoryDetails.setVisible(true);
+				categoryLevel.setCaption(String.format(I18nProperties.getCaption(Captions.Triaging_categoryDetails)));
+				break;
 		}
 	}
 
@@ -491,19 +491,19 @@ public class TriagingDataForm extends AbstractEditForm<TriagingDto> {
 		List<CategoryDetailsLevel> categories;
 		categoryLevel.setVisible(true);
 		switch (property) {
-		case "[Environment]":
-		case "[POE]":
-			categories = Arrays.asList();
-			categoryLevel.setVisible(false);
-			break;
-		case "[Animal]":
-		case "[Human]":
-			categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY, CategoryDetailsLevel.FACILITY, CategoryDetailsLevel.LABORATORY);
-			break;
-		default:
-			categories = Collections.emptyList();
-			categoryLevel.setCaption("");
-			break;
+			case "[Environment]":
+			case "[POE]":
+				categories = Arrays.asList();
+				categoryLevel.setVisible(false);
+				break;
+			case "[Animal]":
+			case "[Human]":
+				categories = Arrays.asList(CategoryDetailsLevel.COMMUNITY, CategoryDetailsLevel.FACILITY, CategoryDetailsLevel.LABORATORY);
+				break;
+			default:
+				categories = Collections.emptyList();
+				categoryLevel.setCaption("");
+				break;
 		}
 		try {
 			FieldHelper.updateEnumData(categoryLevel, categories);

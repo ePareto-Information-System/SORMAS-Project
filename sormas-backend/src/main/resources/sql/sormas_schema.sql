@@ -14440,195 +14440,6 @@ ALTER TABLE symptoms ADD COLUMN skinrashnew VARCHAR(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (663, 'added nationality to persons and difficultyswallow to symptoms');
 
--- Define the ebs table
-CREATE TABLE ebs (
-                     id bigint not null,
-                     uuid VARCHAR(36) NOT NULL UNIQUE,
-                     changedate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                     creationdate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                     ebstdate TIMESTAMP,
-                     reportdatetime TIMESTAMP NOT NULL,
-                     reportinguser_id BIGINT,
-                     location_id BIGINT,
-                     externaltoken VARCHAR(512),
-                     internaltoken TEXT,
-                     deleted BOOLEAN DEFAULT FALSE,
-                     archiveundonereason VARCHAR(512),
-                     change_user_id BIGINT,
-                     deletionreason VARCHAR(255),
-                     triageDate TIMESTAMP,
-                     automaticScanningType VARCHAR(512),
-                     manualScanningType VARCHAR(512),
-                     scanningType VARCHAR(512),
-                     descriptionOccurrence VARCHAR(512),
-                     sourceName VARCHAR(512),
-                     sourceUrl VARCHAR(512),
-                     dateOnset TIMESTAMP,
-                     personRegistering VARCHAR(512),
-                     personDesignation VARCHAR(512),
-                     personPhone VARCHAR(512),
-                     other VARCHAR(512),
-                     ebsLongitude DOUBLE PRECISION,
-                     ebsLatitude DOUBLE PRECISION,
-                     ebsLatLon DOUBLE PRECISION,
-                     ebslocation_id BIGINT,
-                     sourceInformation VARCHAR(255),
-                     archived boolean DEFAULT false,
-                     sormasToSormasOriginInfo_id bigint,
-                     categoryOfInformant varchar(255),
-                     informantName VARCHAR(512),
-                     informantTel VARCHAR(20),
-                     endofprocessingdate varchar(255),
-                     enddate timestamp,
-                     responsibleuser_id bigint,
-                     otherdeletionreason varchar(255),
-                     cases varchar(255),
-                     death varchar(255),
-                     triagingdecision varchar(255),
-                     risklevel varchar(255),
-                     externalid varchar(512),
-                     triaging_id BIGINT,
-                     primary key(id)
-);
-
-ALTER TABLE ebs ADD CONSTRAINT fk_ebs_reportinguser_id FOREIGN KEY (reportinguser_id) REFERENCES users (id);
-ALTER TABLE ebs ADD CONSTRAINT fk_ebs_location_id FOREIGN KEY (location_id) REFERENCES location (id);
-ALTER TABLE ebs ADD CONSTRAINT fk_ebs_change_user_id FOREIGN KEY (change_user_id) REFERENCES users (id);
-ALTER TABLE ebs ADD CONSTRAINT fk_ebs_ebslocation_id FOREIGN KEY (ebslocation_id) REFERENCES location (id);
-
-CREATE TABLE ebs_history (
-    LIKE ebs INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
-);
-
-
-
-CREATE TABLE triaging (
-                          id bigint not null,
-                          uuid VARCHAR(36) NOT NULL UNIQUE,
-                          earlyWarning VARCHAR(3),
-                          specificSignal VARCHAR(3),
-                          signalCategory VARCHAR(255),
-                          healthConcern VARCHAR(3),
-                          categoryDetails VARCHAR(255),
-                          occurrencePreviously VARCHAR(3),
-                          triagingDecision VARCHAR(255),
-                          decisionDate DATE,
-                          referredTo VARCHAR(255),
-                          changedate timestamp not null,
-                          creationdate timestamp not null,
-                          change_user_id BIGINT,
-                          responsibleuser_id bigint,
-                          triagingDecisionString varchar(255),
-                          categoryDetailsString varchar(255),
-                          outcomeSupervisor varchar(255),
-                          notSignal boolean DEFAULT false,
-                          humanCommunityCategoryDetailsString varchar(255),
-                          humanFacilityCategoryDetailsString varchar(255),
-                          humanLaboratoryCategoryDetailsString varchar(255),
-                          animalCommunityCategoryDetailsString varchar(255),
-                          animalFacilityCategoryDetailsString varchar(255),
-                          environmentalCategoryDetailsString varchar(255),
-                          poeCategoryDetailsString varchar(255),
-                          categoryDetailsLevel varchar(255),
-                          primary key(id)
-);
-
-ALTER TABLE triaging ADD CONSTRAINT fk_ebs_change_user_id FOREIGN KEY (change_user_id) REFERENCES users (id);
-ALTER TABLE ebs ADD CONSTRAINT fk_ebs_triaging_id FOREIGN KEY (triaging_id) REFERENCES triaging (id);
-
-
-CREATE TABLE triaging_history (
-    LIKE triaging INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
-);
-
-
-CREATE TABLE signalVerification (
-                                    id bigint not null,
-                                    verificationSent VARCHAR(3),
-                                    verified VARCHAR(3),
-                                    verificationSentDate DATE,
-                                    verificationCompleteDate DATE,
-                                    dateOfOccurrence DATE,
-                                    numberOfPersonAnimal VARCHAR(255),
-                                    numberOfDeath VARCHAR(255),
-                                    description VARCHAR(255),
-                                    whyNotVerify VARCHAR(255),
-                                    archived boolean DEFAULT false,
-                                    sormasToSormasOriginInfo_id bigint,
-                                    externalid varchar(512),
-                                    responsibleuser_id bigint,
-                                    changedate timestamp not null,
-                                    creationdate timestamp not null,
-                                    change_user_id BIGINT,
-                                    uuid VARCHAR(36) NOT NULL UNIQUE,
-                                    primary key(id)
-);
-
-ALTER TABLE signalVerification ADD CONSTRAINT fk_ebs_change_user_id FOREIGN KEY (change_user_id) REFERENCES users (id);
-ALTER TABLE ebs ADD COLUMN signalVerification_id BIGINT;
-ALTER TABLE ebs ADD CONSTRAINT fk_ebs_signalVerification_id FOREIGN KEY (signalVerification_id) REFERENCES signalVerification (id);
-CREATE TABLE signalVerification_history (
-    LIKE signalVerification INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
-);
-
-CREATE TABLE riskAssessment(
-                               id bigint not null,
-                               uuid VARCHAR(36) NOT NULL UNIQUE,
-                               morbidityMortality VARCHAR(3),
-                               spreadProbability VARCHAR(3),
-                               controlMeasures VARCHAR(3),
-                               riskAssessment VARCHAR(255),
-                               archived boolean DEFAULT false,
-                               sormasToSormasOriginInfo_id bigint,
-                               externalid varchar(512),
-                               responsibleuser_id bigint,
-                               morbiditymortalitycomment VARCHAR(255),
-                               assessmentdate DATE,
-                               assessmenttime varchar(255),
-                               spreadprobabilitycomment VARCHAR(255),
-                               controlmeasurescomment varchar(255),
-                               changedate timestamp not null,
-                               creationdate timestamp not null,
-                               change_user_id BIGINT,
-                               primary key(id)
-);
-
-ALTER TABLE riskAssessment ADD CONSTRAINT fk_ebs_change_user_id FOREIGN KEY (change_user_id) REFERENCES users (id);
-ALTER TABLE ebs ADD COLUMN riskAssessment_id BIGINT;
-ALTER TABLE riskAssessment ADD COLUMN ebs_id bigint;
-ALTER TABLE riskAssessment ADD CONSTRAINT fk_riskAssessment_ebs_id FOREIGN KEY (ebs_id) REFERENCES ebs (id);
-ALTER TABLE ebs ADD CONSTRAINT fk_ebs_riskAssessment_id FOREIGN KEY (riskAssessment_id) REFERENCES riskAssessment (id);
-CREATE TABLE riskAssessment_history (
-    LIKE riskAssessment INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
-);
-
-CREATE TABLE ebsAlert(
-                         id bigint not null,
-                         actionInitiated VARCHAR(255),
-                         responseStatus VARCHAR(255),
-                         responseDate DATE,
-                         detailsResponseActivities VARCHAR(255),
-                         detailsGiven VARCHAR(255),
-                         alertUsed VARCHAR(3),
-                         detailsAlertUsed varchar(255),
-                         ebs_id  bigint,
-                         changedate timestamp not null,
-                         creationdate timestamp not null,
-                         change_user_id BIGINT,
-                         uuid VARCHAR(36) NOT NULL UNIQUE,
-                         primary key(id)
-);
-
-ALTER TABLE ebs ADD COLUMN ebsAlert_id BIGINT;
-ALTER TABLE ebsAlert ADD CONSTRAINT fk_ebs_change_user_id FOREIGN KEY (change_user_id) REFERENCES users (id);
-ALTER TABLE ebsAlert ADD CONSTRAINT fk_ebsAlert_ebs_id FOREIGN KEY (ebs_id) REFERENCES ebs (id);
-ALTER TABLE ebs ADD CONSTRAINT fk_ebs_ebsAlert_id FOREIGN KEY (ebsAlert_id) REFERENCES ebsAlert (id);
-
-CREATE TABLE ebsAlert_history (
-    LIKE ebsAlert INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES
-);
-INSERT INTO schema_version (version_number, comment) VALUES (664, 'added ebs,triaging,signalverification,riskassessment and alert');
-
 ALTER TABLE epidata ADD COLUMN waterUsedForDrinking VARCHAR(255);
 ALTER TABLE epidata ADD COLUMN waterUsedNotForDrinking VARCHAR(255);
 ALTER TABLE epidata ADD COLUMN foodItems VARCHAR(255);
@@ -14795,8 +14606,6 @@ ALTER TABLE samples ADD COLUMN labLocal VARCHAR(255);
 ALTER TABLE samples ADD COLUMN labLocalDetails VARCHAR(255);
 INSERT INTO schema_version(version_number, comment) VALUES (672, 'Added labLocal, labLocalDetails to samples');
 
-ALTER TABLE triaging ADD COLUMN potentialrisk VARCHAR(3);
-INSERT INTO schema_version (version_number, comment) VALUES (673, 'added potential risk to ebs');
 
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Case Officer';
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Contact Officer';
@@ -14805,16 +14614,6 @@ UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Hospital 
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Hospital supervisor';
 UPDATE userroles SET hasoptionalhealthfacility = true WHERE caption = 'Surveillance Officer';
 INSERT INTO schema_version (version_number, comment) VALUES (674, 'updated hasoptionalhealthfacility for userroles');
-
--- 2024-06-14 added alertdate to alert table
-ALTER TABLE triaging ADD COLUMN supervisorreview VARCHAR(3);
-ALTER TABLE triaging ADD COLUMN referred VARCHAR(3);
--- 2024-06-14 added alertdate to alert table
-ALTER TABLE ebsAlert ADD COLUMN alertdate DATE;
--- 2024-06-14 added alertdate to alert table
-ALTER TABLE signalVerification ADD numberOfPersonCases VARCHAR(255);
-ALTER TABLE signalVerification ADD numberOfDeathPerson VARCHAR(255);
-INSERT INTO schema_version (version_number, comment) VALUES (675, 'added new ebs related fields');
 
 ALTER TABLE samples ADD COLUMN ipsampletestresultsstring VARCHAR(512);
 ALTER TABLE samples ADD COLUMN selectedresultigm VARCHAR(55);
@@ -14851,33 +14650,6 @@ ALTER TABLE cases ADD COLUMN patientsex varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (679, 'Added Mpox person data to cases');
 
--- 2024-06-18 added alertdate to alert table
-ALTER TABLE ebsAlert RENAME COLUMN alertUsed TO alertIssued;
-INSERT INTO schema_version (version_number, comment) VALUES (680, 'rename alert used to alert issued fields');
-ALTER TABLE triaging ADD animalLaboratoryCategoryDetailsString varchar(255);
-INSERT INTO schema_version (version_number, comment) VALUES (681, 'rename alert used to alert issued fields');
-ALTER TABLE triaging ADD humanCommunityCategoryDetails varchar(255);
-INSERT INTO schema_version (version_number, comment) VALUES (682, 'rename alert used to alert issued fields');
-ALTER TABLE triaging Drop humanCommunityCategoryDetailsString;
-ALTER TABLE triaging Drop  humanFacilityCategoryDetailsString ;
-ALTER TABLE triaging Drop  humanLaboratoryCategoryDetailsString;
-ALTER TABLE triaging Drop  animalCommunityCategoryDetailsString;
-ALTER TABLE triaging Drop  animalFacilityCategoryDetailsString ;
-ALTER TABLE triaging Drop  environmentalCategoryDetailsString ;
-ALTER TABLE triaging Drop  poeCategoryDetailsString;
-ALTER TABLE triaging ADD COLUMN  humanFacilityCategoryDetails VARCHAR(255);
-ALTER TABLE triaging ADD COLUMN  humanLaboratoryCategoryDetails VARCHAR(255);
-ALTER TABLE triaging ADD COLUMN  animalCommunityCategoryDetails VARCHAR(255);
-ALTER TABLE triaging ADD COLUMN  animalFacilityCategoryDetails VARCHAR(255);
-ALTER TABLE triaging ADD COLUMN  environmentalCategoryDetails VARCHAR(255);
-ALTER TABLE triaging ADD COLUMN  poeCategoryDetails VARCHAR(255);
-INSERT INTO schema_version (version_number, comment) VALUES (683, 'rename alert used to alert issued fields');
-
-ALTER TABLE triaging ADD COLUMN  animalLaboratoryCategoryDetails VARCHAR(255);
-INSERT INTO schema_version (version_number, comment) VALUES (684, 'rename alert used to alert issued fields');
-
-ALTER TABLE ebs ADD COLUMN  otherInformant VARCHAR(255);
-INSERT INTO schema_version (version_number, comment) VALUES (685, 'rename alert used to alert issued fields');
 
 ALTER TABLE samples_history ALTER COLUMN samplepurpose DROP NOT NULL;
 ALTER TABLE epidata DROP COLUMN yearofvaccinationcovid;
@@ -15001,11 +14773,6 @@ ALTER TABLE hospitalization ADD COLUMN nameoffacility_id bigint;
 ALTER TABLE hospitalization ADD CONSTRAINT fk_hospitalization_nameoffacility_id FOREIGN KEY (nameoffacility_id) REFERENCES facility(id);
 ALTER TABLE hospitalization ADD COLUMN nameoffacilitydetails varchar(512);
 INSERT INTO schema_version(version_number, comment) VALUES (699, 'Added nameoffacility reference and established relationship btn hospitalization anf facility');
-
-ALTER TABLE signalVerification ALTER COLUMN verified TYPE VARCHAR(20);
-INSERT INTO schema_version (version_number, comment) VALUES (700, 'updated the verified field');
-ALTER TABLE signalVerification ALTER COLUMN description TYPE TEXT;
-INSERT INTO schema_version (version_number, comment) VALUES (701, 'updated the description field');
 
 ALTER TABLE cases ADD column regionofresidence_id BIGINT;
 ALTER TABLE cases ADD column districtofresidence_id BIGINT;
@@ -15360,4 +15127,4 @@ CREATE TABLE ebsAlert_history (
 );
 
 -- Insert version information
-INSERT INTO schema_version (version_number, comment) VALUES (697, 'Added ebs and supporting entities');
+INSERT INTO schema_version (version_number, comment) VALUES (716, 'Added ebs and supporting entities');
