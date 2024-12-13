@@ -15,14 +15,12 @@
 
 package de.symeda.sormas.api.ebs;
 
-
-import de.symeda.sormas.api.location.LocationReferenceDto;
-import de.symeda.sormas.api.utils.HasCaption;
-import de.symeda.sormas.api.utils.YesNo;
-import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
-
 import java.io.Serializable;
 import java.util.Date;
+
+import de.symeda.sormas.api.location.LocationReferenceDto;
+import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
 
 public class EbsIndexDto extends PseudonymizableIndexDto {
 
@@ -48,8 +46,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	public static final String PERSON_REGISTERING = "personRegistering";
 	public static final String PERSON_DESIGNATION = "personDesignation";
 
-
-	public static final String TRIAGING_DECISION_DATE = "triagingDecisionDate";
+	public static final String TRIAGING_DECISION_DATE = "decisionDate";
 	public static final String VERIFICATION_SENT = "verificationSent";
 	public static final String VERIFIED_DATE = "verifiedDate";
 	public static final String RISK_STATUS = "riskStatus";
@@ -79,33 +76,31 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	private String personRegistering;
 	private String personDesignation;
 	private EbsVerificationSent verificationSent;
-	private EbsVerifiedDate verifiedDate;
+	private DateFormatting verifiedDate;
 	private EbsRiskStatus riskStatus;
 	private EbsActionInitiated actionInitiated;
 	private EbsResponseStatus responseStatus;
 	private EbsLocation ebsLocation;
 	private String regionUuid;
 
-
 	public EbsIndexDto(
-			Long id,
-			String uuid,
-			EbsSourceType sourceInformation,
-			Date reportDateTime,
-			Date changeDate,
-			PersonReporting categoryOfInformant,
-			String informantName,
-			String informantTel,
-			String personRegistering,
-			String personDesignation,
-			String regionUuid,
-			String regionName,
-			String communityUuid,
-			String communityName,
-			String city,
-			String districtUuid,
-			String districtName
-	) {
+		Long id,
+		String uuid,
+		EbsSourceType sourceInformation,
+		Date reportDateTime,
+		Date changeDate,
+		PersonReporting categoryOfInformant,
+		String informantName,
+		String informantTel,
+		String personRegistering,
+		String personDesignation,
+		String regionUuid,
+		String regionName,
+		String communityUuid,
+		String communityName,
+		String city,
+		String districtUuid,
+		String districtName) {
 
 		super(uuid);
 		this.id = id;
@@ -117,64 +112,38 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		this.informantTel = informantTel;
 		this.personDesignation = personDesignation;
 		this.personRegistering = personRegistering;
-		this.ebsLocation = new EbsLocation(regionName, communityName, city,districtName);
+		this.ebsLocation = new EbsLocation(regionName, communityName, city, districtName);
 		this.regionUuid = regionUuid;
 	}
 
 	public EbsIndexDto(
-			Long id,
-			String uuid,
-			Date triageDate,
-			EbsSourceType sourceInformation,
-			EbsTriagingDecision triagingDecision,
-			Date reportDateTime,
-			Date changeDate,
-			PersonReporting categoryOfInformant,
-			String informantName,
-			String informantTel,
-			SignalCategory signalCategory,
-			SignalOutcome verified,
-			String death,
-			Date decisionDate,
-			String personRegistering,
-			String personDesignation,
-			YesNo verificationSent,
-			Date verifiedDate,
-			RiskAssesment riskStatus,
-			YesNo actionInitiated,
-			ResponseStatus responseStatus,
-			String regionUuid,
-			String regionName,
-			String communityUuid,
-			String communityName,
-			String city,
-			String districtUuid,
-			String districtName
-	) {
+		Long id,
+		String uuid,
+		EbsTriagingDecision triagingDecision,
+		SignalCategory signalCategory,
+		SignalOutcome verified,
+		String death,
+		Date decisionDate,
+		YesNo verificationSent,
+		Date verifiedDate,
+		RiskAssesment riskStatus,
+		YesNo actionInitiated,
+		ResponseStatus responseStatus,
+		Date changeDate) {
 
 		super(uuid);
 		this.id = id;
-		this.triageDate = triageDate;
-		this.sourceInformation = sourceInformation;
 		this.triagingDecision = triagingDecision;
-		this.reportDateTime = reportDateTime;
-		this.changeDate = changeDate;
-		this.categoryOfInformant = categoryOfInformant;
-		this.informantName = informantName;
-		this.informantTel = informantTel;
 		this.signalCategory = signalCategory;
 		this.verified = new EbsVerified(verified);
 		this.death = new EbsDeath(death);
 		this.triagingDecisionDate = new EbsIndexTriagingDecisionDate(decisionDate);
-		this.personDesignation = personDesignation;
-		this.personRegistering = personRegistering;
 		this.verificationSent = new EbsVerificationSent(verificationSent);
-		this.verifiedDate = new EbsVerifiedDate(verifiedDate);
+		this.verifiedDate = new DateFormatting(verifiedDate);
 		this.riskStatus = new EbsRiskStatus(riskStatus);
 		this.actionInitiated = new EbsActionInitiated(actionInitiated);
 		this.responseStatus = new EbsResponseStatus(responseStatus);
-		this.ebsLocation = new EbsLocation(regionName, communityName, city,districtName);
-		this.regionUuid = regionUuid;
+		this.changeDate = changeDate;
 	}
 
 	public EbsIndexDto(String uuid) {
@@ -220,13 +189,14 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	public void setReportDateTime(Date reportDateTime) {
 		this.reportDateTime = reportDateTime;
 	}
+
 	public Date getChangeDate() {
-			return changeDate;
-		}
+		return changeDate;
+	}
 
 	public void setChangeDate(Date changeDate) {
-			this.changeDate = changeDate;
-		}
+		this.changeDate = changeDate;
+	}
 
 	public Date getDecisionDate() {
 		return getTriagingDecisionDate().getDecisionDate();
@@ -251,6 +221,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 	public ResponseStatus getResponseStatus() {
 		return getEbsResponseStatus().getResponseStatus();
 	}
+
 	public String getDeath() {
 		return getEbsDeath().getDeath();
 	}
@@ -287,7 +258,6 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		return getEbsVerified().getVerified();
 	}
 
-
 	public EbsVerified getEbsVerified() {
 		return verified;
 	}
@@ -312,7 +282,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		return verificationSent;
 	}
 
-	public EbsVerifiedDate getEbsVerifiedDate() {
+	public DateFormatting getEbsVerifiedDate() {
 		return verifiedDate;
 	}
 
@@ -324,7 +294,9 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		return responseStatus;
 	}
 
-	public EbsActionInitiated getEbsActionInitiated() {return actionInitiated;}
+	public EbsActionInitiated getEbsActionInitiated() {
+		return actionInitiated;
+	}
 
 	public String getPersonRegistering() {
 		return personRegistering;
@@ -390,12 +362,11 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		return result;
 	}
 
-	public static class EbsIndexTriagingDecisionDate implements Serializable, HasCaption {
+	public static class EbsIndexTriagingDecisionDate implements Serializable {
 
 		private final Date decisionDate;
 
-		public EbsIndexTriagingDecisionDate(
-				Date decisionDate) {
+		public EbsIndexTriagingDecisionDate(Date decisionDate) {
 			this.decisionDate = decisionDate;
 		}
 
@@ -408,7 +379,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		}
 	}
 
-	public static class EbsVerificationSent implements Serializable, HasCaption {
+	public static class EbsVerificationSent implements Serializable {
 
 		private final YesNo verificationSent;
 
@@ -425,7 +396,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		}
 	}
 
-	public static class EbsVerified implements Serializable, HasCaption {
+	public static class EbsVerified implements Serializable {
 
 		private final SignalOutcome verified;
 
@@ -442,10 +413,11 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		}
 	}
 
-	public static class EbsVerifiedDate implements Serializable, HasCaption {
+	public static class DateFormatting implements Serializable {
+
 		private final Date verfiedDate;
 
-		public EbsVerifiedDate(Date verifiedDate) {
+		public DateFormatting(Date verifiedDate) {
 			this.verfiedDate = verifiedDate;
 		}
 
@@ -458,7 +430,8 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		}
 	}
 
-	public static class EbsRiskStatus implements Serializable, HasCaption {
+	public static class EbsRiskStatus implements Serializable {
+
 		private final RiskAssesment riskStatus;
 
 		public EbsRiskStatus(RiskAssesment riskStatus) {
@@ -474,7 +447,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		}
 	}
 
-	public static class EbsActionInitiated implements Serializable, HasCaption {
+	public static class EbsActionInitiated implements Serializable {
 
 		private final YesNo actionInitiated;
 
@@ -491,7 +464,8 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		}
 	}
 
-	public static class EbsResponseStatus implements Serializable, HasCaption {
+	public static class EbsResponseStatus implements Serializable {
+
 		private final ResponseStatus responseStatus;
 
 		public EbsResponseStatus(ResponseStatus responseStatus) {
@@ -507,7 +481,8 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		}
 	}
 
-	public static class EbsDeath implements Serializable, HasCaption {
+	public static class EbsDeath implements Serializable {
+
 		private final String death;
 
 		public EbsDeath(String death) {
@@ -522,19 +497,14 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 			return SignalVerificationReferenceDto.buildCaption(death);
 		}
 	}
-	public static class EbsLocation implements Serializable, HasCaption {
+	public static class EbsLocation implements Serializable {
 
 		private String regionName;
 		private String communityName;
 		private String city;
 		private String districtName;
 
-		public EbsLocation(
-				String regionName,
-				String communityName,
-				String city,
-				String districtName
-				) {
+		public EbsLocation(String regionName, String communityName, String city, String districtName) {
 			this.regionName = regionName;
 			this.communityName = communityName;
 			this.city = city;
@@ -558,7 +528,7 @@ public class EbsIndexDto extends PseudonymizableIndexDto {
 		}
 
 		public String buildCaption() {
-			return LocationReferenceDto.buildCaption(regionName,districtName, communityName, city,null,null,null);
+			return LocationReferenceDto.buildCaption(regionName, districtName, communityName, city, null, null, null);
 		}
 	}
 }

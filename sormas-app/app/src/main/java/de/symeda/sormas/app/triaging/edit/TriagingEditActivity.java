@@ -15,6 +15,7 @@
 
 package de.symeda.sormas.app.triaging.edit;
 
+import static de.symeda.sormas.app.core.notification.NotificationType.ERROR;
 import static de.symeda.sormas.app.core.notification.NotificationType.WARNING;
 
 import android.content.Context;
@@ -37,6 +38,7 @@ import de.symeda.sormas.app.backend.ebs.Ebs;
 import de.symeda.sormas.app.backend.ebs.ebsAlert.EbsAlert;
 import de.symeda.sormas.app.backend.ebs.triaging.Triaging;
 import de.symeda.sormas.app.component.menu.PageMenuItem;
+import de.symeda.sormas.app.component.validation.FragmentValidator;
 import de.symeda.sormas.app.core.async.AsyncTaskResult;
 import de.symeda.sormas.app.core.async.SavingAsyncTask;
 import de.symeda.sormas.app.core.async.TaskResultHolder;
@@ -153,6 +155,13 @@ public class TriagingEditActivity extends BaseEditActivity<Triaging> {
 		}
 
 		final Triaging triageToSave = getStoredRootEntity();
+
+		try {
+			FragmentValidator.validate(getContext(), getActiveFragment().getContentBinding());
+		} catch (ValidationException e) {
+			NotificationHelper.showNotification(this, ERROR, e.getMessage());
+			return;
+		}
 
 		saveTask = new SavingAsyncTask(getRootView(), triageToSave) {
 

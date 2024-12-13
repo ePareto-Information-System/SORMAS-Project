@@ -37,41 +37,33 @@ public class AlertReferenceDto extends ReferenceDto {
 		this.setCaption(caption);
 	}
 
-	public AlertReferenceDto(
-		String uuid,
-		YesNo actionInitiated) {
+	public AlertReferenceDto(String uuid, YesNo actionInitiated) {
 		this.setUuid(uuid);
 		this.setCaption(buildCaption(actionInitiated));
 	}
 
-	public AlertReferenceDto(
-		String uuid,
-		ResponseStatus responseStatus) {
+	public AlertReferenceDto(String uuid, ResponseStatus responseStatus) {
 		this.setUuid(uuid);
 		this.setCaption(buildCaption(responseStatus));
 	}
 
-	public AlertReferenceDto(
-			ResponseStatus responseStatus) {
+	public AlertReferenceDto(ResponseStatus responseStatus) {
 		this.setCaption(buildCaption(responseStatus));
 	}
 
-	public AlertReferenceDto(
-			YesNo actionInitiated) {
+	public AlertReferenceDto(YesNo actionInitiated) {
 		this.setCaption(buildCaption(actionInitiated));
 	}
 
-	public static String buildCaption(
-			ResponseStatus responseStatus) {
-		if(responseStatus == null){
+	public static String buildCaption(ResponseStatus responseStatus) {
+		if (responseStatus == null) {
 			return "";
 		}
 		return responseStatus.toString();
 	}
 
-	public static String buildCaption(
-			YesNo actionInitiated) {
-		if(actionInitiated == null){
+	public static String buildCaption(YesNo actionInitiated) {
+		if (actionInitiated == null) {
 			return "";
 		}
 		return actionInitiated.toString();

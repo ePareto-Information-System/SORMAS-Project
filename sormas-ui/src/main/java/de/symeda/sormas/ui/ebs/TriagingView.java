@@ -41,10 +41,7 @@ public class TriagingView extends AbstractEbsView {
 
 		CommitDiscardWrapperComponent<TriagingDataForm> triagingForm = ControllerProvider.getEbsController()
 				.getEbsCreateTriagingComponent(getEbsRef().getUuid(),
-						isEditAllowed() && UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT));
+                        UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT));
 		setSubComponent(triagingForm);
-		setEditPermission(
-				triagingForm,
-				UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT));
 	}
 }

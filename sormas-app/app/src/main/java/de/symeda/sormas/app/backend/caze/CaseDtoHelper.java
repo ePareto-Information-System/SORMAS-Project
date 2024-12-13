@@ -80,6 +80,15 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 	private AfpImmunizationDtoHelper afpImmunizationDtoHelper = new AfpImmunizationDtoHelper();
 	private SixtyDayDtoHelper sixtyDayDtoHelper = new SixtyDayDtoHelper();
 
+	public static CaseReferenceDto toReferenceDto(Case ado) {
+		if (ado == null) {
+			return null;
+		}
+		CaseReferenceDto dto = new CaseReferenceDto(ado.getUuid());
+
+		return dto;
+	}
+
 	@Override
 	protected Class<Case> getAdoClass() {
 		return Case.class;
@@ -91,7 +100,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 	}
 
 	@Override
-	protected Call<List<CaseDataDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid)  throws NoConnectionException {
+	protected Call<List<CaseDataDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid) throws NoConnectionException {
 		return RetroProvider.getCaseFacade().pullAllSince(since, size, lastSynchronizedUuid);
 	}
 
@@ -650,15 +659,6 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 	@Override
 	protected long getApproximateJsonSizeInBytes() {
 		return CaseDataDto.APPROXIMATE_JSON_SIZE_IN_BYTES;
-	}
-
-	public static CaseReferenceDto toReferenceDto(Case ado) {
-		if (ado == null) {
-			return null;
-		}
-		CaseReferenceDto dto = new CaseReferenceDto(ado.getUuid());
-
-		return dto;
 	}
 
 	@Override

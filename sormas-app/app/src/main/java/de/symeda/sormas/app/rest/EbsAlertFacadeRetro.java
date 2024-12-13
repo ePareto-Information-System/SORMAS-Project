@@ -28,7 +28,10 @@ import retrofit2.http.Path;
 public interface EbsAlertFacadeRetro {
 
 	@GET("ebsAlert/all/{since}/{size}/{lastSynchronizedUuid}")
-	Call<List<EbsAlertDto>> pullAllSince(@Path("since") long since, @Path("size") int size, @Path("lastSynchronizedUuid") String lastSynchronizedUuid);
+	Call<List<EbsAlertDto>> pullAllSince(
+		@Path("since") long since,
+		@Path("size") int size,
+		@Path("lastSynchronizedUuid") String lastSynchronizedUuid);
 
 	@POST("ebsAlert/query")
 	Call<List<EbsAlertDto>> pullByUuids(@Body List<String> uuids);

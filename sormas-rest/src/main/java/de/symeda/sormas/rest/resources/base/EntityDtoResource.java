@@ -93,18 +93,18 @@ public abstract class EntityDtoResource<DTO> {
 	 * See https://github.com/swagger-api/swagger-core/issues/3916
 	 */
 	@Operation(summary = "Create or update one or multiple entities.",
-		description = "A uuid will be generated for any entity that doesn't have one yet. "
-			+ "Posting entities without uuid multiple times will also create them multiple times.")
+			description = "A uuid will be generated for any entity that doesn't have one yet. "
+					+ "Posting entities without uuid multiple times will also create them multiple times.")
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "207",
-			description = "Array of responses, matching the posted array of entities. "
-				+ "Provides an HTML status code for every entity and an optional body (e.g. a string with an error message).",
-			content = {
-				@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PostResponse.class))) }),
-		@ApiResponse(description = "When the request body has one or no entry. "
-			+ "The status code of the response entry matches the response code and may have an optional body (e.g. a string with an error message).",
-			content = {
-				@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PostResponse.class))) }) })
+			@ApiResponse(responseCode = "207",
+					description = "Array of responses, matching the posted array of entities. "
+							+ "Provides an HTML status code for every entity and an optional body (e.g. a string with an error message).",
+					content = {
+							@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PostResponse.class))) }),
+			@ApiResponse(description = "When the request body has one or no entry. "
+					+ "The status code of the response entry matches the response code and may have an optional body (e.g. a string with an error message).",
+					content = {
+							@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PostResponse.class))) }) })
 	@POST
 	@Path("/push")
 	public Response postEntityDtos(@Valid List<DTO> dtos) {

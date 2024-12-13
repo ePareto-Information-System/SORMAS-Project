@@ -67,9 +67,9 @@ public class EbsStatusElaborator implements StatusElaborator {
 	public int getIconResourceId() {
 		switch (signalOutcome) {
 			case EVENT:
-			return R.drawable.ic_lp_possible_alerts_192dp;
+			return R.drawable.vd_event;
 			case NON_EVENT:
-			return R.drawable.ic_lp_confirmed_alerts_192dp;
+			return R.drawable.vd_non_event;
 		default:
 			throw new IllegalArgumentException(signalOutcome.toString());
 		}

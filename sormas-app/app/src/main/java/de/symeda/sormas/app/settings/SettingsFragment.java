@@ -17,6 +17,10 @@ package de.symeda.sormas.app.settings;
 
 import static de.symeda.sormas.app.core.notification.NotificationType.ERROR;
 
+import java.util.List;
+
+import org.hzi.sormas.lbds.messaging.LbdsRelated;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -27,10 +31,6 @@ import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.hzi.sormas.lbds.messaging.LbdsRelated;
-
-import java.util.List;
 
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -186,12 +186,11 @@ public class SettingsFragment extends BaseLandingFragment {
 		intent.putExtra(EnterPinActivity.CALLED_FROM_SETTINGS, true);
 		startActivity(intent);
 	}
+
 	public void changePassword() {
 		Intent intent = new Intent(getActivity(), ChangePasswordActivity.class);
 		startActivity(intent);
 	}
-
-
 
 	private void repullData() {
 		checkAndShowUnsynchronizedChangesDialog(() -> showRepullDataConfirmationDialog(), "SYNC");

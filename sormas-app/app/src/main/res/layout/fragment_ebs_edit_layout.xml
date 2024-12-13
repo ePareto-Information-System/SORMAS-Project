@@ -40,6 +40,7 @@
         <variable name="mediaScannningTypeClass" type="Class" />
         <variable name="mobileScannningTypeClass" type="Class" />
         <variable name="automaticScanningTypeClass" type="Class" />
+        <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
     </data>
 
     <ScrollView
@@ -195,6 +196,15 @@
 
                 </LinearLayout>
             </LinearLayout>
+            <de.symeda.sormas.app.component.controls.ControlButton
+                android:id="@+id/pick_gps_coordinates"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/buttonControlMarginBottom"
+                app:slim="true"
+                app:iconStart="@drawable/ic_gps_fixed_black_24dp"
+                app:buttonType="@{ControlButtonType.SECONDARY}"
+                android:text="@string/action_pick_gps" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -217,7 +227,7 @@
                 app:inputType="numberDecimal"
                 app:value="@={data.ebsLatLon}" />
         </LinearLayout>
-            <de.symeda.sormas.app.component.controls.ControlDateField
+            <de.symeda.sormas.app.component.controls.ControlDateTimeField
                 android:id="@+id/ebs_dateOnset"
                 style="@style/ControlSingleColumnStyle"
                 app:allowedDaysInFuture="0"

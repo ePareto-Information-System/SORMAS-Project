@@ -340,6 +340,7 @@ public interface Captions {
 	String CaseData_contactTracingFirstContactDate = "CaseData.contactTracingFirstContactDate";
 	String CaseData_contactTracingFirstContactType = "CaseData.contactTracingFirstContactType";
 	String CaseData_creationDate = "CaseData.creationDate";
+	String CaseData_lastDateOfVaccination = "CaseData.lastDateOfVaccination";
 	String CaseData_deletionReason = "CaseData.deletionReason";
 	String CaseData_dengueFeverType = "CaseData.dengueFeverType";
 	String CaseData_differentPlaceOfStayJurisdiction = "CaseData.differentPlaceOfStayJurisdiction";
@@ -1016,7 +1017,7 @@ public interface Captions {
 	String dashboardDiscarded = "dashboardDiscarded";
 	String dashboardDiseaseBurdenInfo = "dashboardDiseaseBurdenInfo";
 	String dashboardRegionalDiseaseBurden = "dashboardRegionalDiseaseBurden";
-	String dashboardDistrictDiseaseBurden="dashboardDistrictDiseaseBurden";
+	String dashboardDistrictDiseaseBurden = "dashboardDistrictDiseaseBurden";
 	String diseaseDetailMap = "diseaseDetailMap";
 	String dashboardDiseaseBurdenOutbreakDistricts = "dashboardDiseaseBurdenOutbreakDistricts";
 	String dashboardDiseaseCarouselSlideShow = "dashboardDiseaseCarouselSlideShow";
@@ -1748,6 +1749,7 @@ public interface Captions {
 	String exportInfrastructureData = "exportInfrastructureData";
 	String exportNewExportConfiguration = "exportNewExportConfiguration";
 	String exportSamples = "exportSamples";
+	String exportCaseSamplesDetailed = "Detailed Case And Sample Export";
 	String exportSelectSormasData = "exportSelectSormasData";
 	String exportSormasData = "exportSormasData";
 	String exportUserRoles = "exportUserRoles";
@@ -2018,8 +2020,7 @@ public interface Captions {
 
 	String importPicked = "importPicked";
 
-	String importMerged ="importMerged" +
-			"" ;
+	String importMerged = "importMerged" + "";
 	String importErrorDescription = "importErrorDescription";
 	String importErrors = "importErrors";
 	String importImportData = "importImportData";
@@ -3512,6 +3513,7 @@ public interface Captions {
 	String travelEntryOpenResultingCase = "travelEntryOpenResultingCase";
 	String travelEntryPointOfEntry = "travelEntryPointOfEntry";
 	String travelEntryTravelEntriesList = "travelEntryTravelEntriesList";
+	String Triaging_animalLaboratoryCategoryDetails = "Triaging.animalFacilityCategoryDetails";
 	String Treatment = "Treatment";
 	String Treatment_additionalNotes = "Treatment.additionalNotes";
 	String Treatment_dose = "Treatment.dose";
@@ -3782,5 +3784,6 @@ public interface Captions {
 	String years = "years";
 	String dashboardLastReportedDistrict = "Last Reported District";
 	String exportDownloadMergeFile ="exportDownloadMergeFile" ;
+
 }
 

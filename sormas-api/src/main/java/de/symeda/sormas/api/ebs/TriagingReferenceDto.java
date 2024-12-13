@@ -17,45 +17,19 @@
  *******************************************************************************/
 package de.symeda.sormas.api.ebs;
 
-import de.symeda.sormas.api.ReferenceDto;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import de.symeda.sormas.api.ReferenceDto;
 
 public class TriagingReferenceDto extends ReferenceDto {
 
 	private static final long serialVersionUID = -1399197327930368752L;
 
-	public TriagingReferenceDto() {
-
-	}
-
-	public TriagingReferenceDto(String uuid) {
-		this.setUuid(uuid);
-	}
-
-	public TriagingReferenceDto(String uuid, String caption) {
-		this.setUuid(uuid);
-		this.setCaption(caption);
-	}
-
-	public TriagingReferenceDto(
-		String uuid,
-		Date decisionDate) {
-		this.setUuid(uuid);
-		this.setCaption(buildCaption(decisionDate));
-	}
-
-	public TriagingReferenceDto(
-		Date decisionDate) {
-		this.setCaption(buildCaption(decisionDate));
-	}
-
-	public static String buildCaption(
-		Date decisionDate) {
+	public static String buildCaption(Date decisionDate) {
 		SimpleDateFormat sdf = new SimpleDateFormat("M/d/yyyy h:mm a");
-		if(decisionDate == null){
-			return "";
+		if (decisionDate == null) {
+			return "10/10/2024";
 		}
 		String formattedDate = sdf.format(decisionDate);
 		return formattedDate;

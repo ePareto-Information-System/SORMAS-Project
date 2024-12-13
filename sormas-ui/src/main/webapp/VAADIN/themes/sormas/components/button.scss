@@ -5,6 +5,9 @@
     text-transform: uppercase;
     border-color: $v-selection-color;
     box-shadow: none;
+    height: fit-content;
+    text-wrap: wrap;
+    padding: 2px 5px;
   
   	&.v-button-link {
   	  text-transform: none;

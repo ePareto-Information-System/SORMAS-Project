@@ -184,11 +184,11 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 				syncCallbacks.ifPresent(c -> c.getUpdateSynchronizationStepCallback().accept(SynchronizationDialog.SynchronizationStep.SYNCHRONIZE));
 				synchronizeChangedData();
 
-				syncModeTrace.stop();
-				break;
-			case Complete:
-				syncModeTrace = FirebasePerformance.getInstance().newTrace("syncModeCompleteTrace");
-				syncModeTrace.start();
+					syncModeTrace.stop();
+					break;
+				case Complete:
+					syncModeTrace = FirebasePerformance.getInstance().newTrace("syncModeCompleteTrace");
+					syncModeTrace.start();
 
 				syncCallbacks
 					.ifPresent(c -> c.getUpdateSynchronizationStepCallback().accept(SynchronizationDialog.SynchronizationStep.PULL_INFRASTRUCTURE));
@@ -200,11 +200,11 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 				syncCallbacks.ifPresent(c -> c.getUpdateSynchronizationStepCallback().accept(SynchronizationDialog.SynchronizationStep.SYNCHRONIZE));
 				synchronizeChangedData();
 
-				syncModeTrace.stop();
-				break;
-			case CompleteAndRepull:
-				syncModeTrace = FirebasePerformance.getInstance().newTrace("syncModeCompleteAndRepullTrace");
-				syncModeTrace.start();
+					syncModeTrace.stop();
+					break;
+				case CompleteAndRepull:
+					syncModeTrace = FirebasePerformance.getInstance().newTrace("syncModeCompleteAndRepullTrace");
+					syncModeTrace.start();
 
 				syncCallbacks
 					.ifPresent(c -> c.getUpdateSynchronizationStepCallback().accept(SynchronizationDialog.SynchronizationStep.PULL_INFRASTRUCTURE));
@@ -219,10 +219,10 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 				synchronizeChangedData();
 				ConfigProvider.setRepullNeeded(false);
 
-				syncModeTrace.stop();
-				break;
-			default:
-				throw new IllegalArgumentException(syncMode.toString());
+					syncModeTrace.stop();
+					break;
+				default:
+					throw new IllegalArgumentException(syncMode.toString());
 			}
 
 			if (syncMode == SyncMode.Changes && hasAnyUnsynchronizedData()) {
@@ -251,16 +251,16 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 
 			SyncMode newSyncMode = null;
 			switch (syncMode) {
-			case Changes:
-				newSyncMode = SyncMode.Complete;
-				break;
-			case Complete:
-				newSyncMode = SyncMode.CompleteAndRepull;
-				break;
-			case CompleteAndRepull:
-				break;
-			default:
-				throw new IllegalArgumentException(syncMode.toString());
+				case Changes:
+					newSyncMode = SyncMode.Complete;
+					break;
+				case Complete:
+					newSyncMode = SyncMode.CompleteAndRepull;
+					break;
+				case CompleteAndRepull:
+					break;
+				default:
+					throw new IllegalArgumentException(syncMode.toString());
 			}
 
 			if (newSyncMode != null) {
@@ -289,7 +289,7 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 
 	public static boolean hasAnyUnsynchronizedData() {
 		final boolean hasUnsynchronizedCampaignData = !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CAMPAIGNS)
-			&& (DatabaseHelper.getCampaignDao().isAnyModified()
+				&& (DatabaseHelper.getCampaignDao().isAnyModified()
 				|| DatabaseHelper.getCampaignFormMetaDao().isAnyModified()
 				|| DatabaseHelper.getCampaignFormDataDao().isAnyModified());
 

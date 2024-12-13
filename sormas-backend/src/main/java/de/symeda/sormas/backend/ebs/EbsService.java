@@ -195,7 +195,7 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		List<Long> ebsIds = getEbsIds(entityUuids);
 		List<String> sharedEbsUuids = new ArrayList<>();
 		List<ExternalShareInfoCountAndLatestDate> ebsShareInfos =
-			externalShareInfoService.getShareCountAndLatestDate(ebsIds, ExternalShareInfo.EBS);
+				externalShareInfoService.getShareCountAndLatestDate(ebsIds, ExternalShareInfo.EBS);
 		ebsShareInfos.forEach(shareInfo -> {
 			if (shareInfo.getLatestStatus() != ExternalShareStatus.DELETED) {
 				sharedEbsUuids.add(shareInfo.getAssociatedObjectUuid());
@@ -339,7 +339,7 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 
 		if (includeExtendedChangeDateFilters) {
 			builder.add(ebsFrom, Ebs.SORMAS_TO_SORMAS_ORIGIN_INFO)
-				.add(ebsFrom, Ebs.SORMAS_TO_SORMAS_SHARES);
+					.add(ebsFrom, Ebs.SORMAS_TO_SORMAS_SHARES);
 		}
 
 		return builder;
@@ -606,11 +606,11 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 		Join<Ebs, Location> locationJoin = from.join(Ebs.EBS_LOCATION, JoinType.LEFT);
 
 		cq.where(
-			CriteriaBuilderHelper.and(
-				cb,
-				cb.equal(from.get(AbstractDomainObject.UUID), ebsUuid),
-				cb.isNotNull(locationJoin.get(Location.REGION)),
-				cb.isNotNull(locationJoin.get(Location.DISTRICT))));
+				CriteriaBuilderHelper.and(
+						cb,
+						cb.equal(from.get(AbstractDomainObject.UUID), ebsUuid),
+						cb.isNotNull(locationJoin.get(Location.REGION)),
+						cb.isNotNull(locationJoin.get(Location.DISTRICT))));
 		cq.select(cb.count(from));
 
 		return em.createQuery(cq).getSingleResult() > 0;

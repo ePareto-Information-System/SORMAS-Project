@@ -106,7 +106,7 @@
                             android:scrollHorizontally="true"
                             android:maxLines="1"
                             android:ellipsize="end"
-                            app:value="@{data.categoryOfInformant}"
+                            app:value="@{data.sourceInformation}"
                             app:defaultValue='@{@string/value_type_unknown}'
                             />
 

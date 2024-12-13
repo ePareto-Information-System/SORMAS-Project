@@ -54,6 +54,22 @@ public class CaseDownloadUtil {
 			exportConfiguration);
 	}
 
+	public static StreamResource createCaseSamplesExportResource(
+			CaseCriteria criteria,
+			Supplier<Collection<String>> selectedRows,
+			CaseExportType exportType,
+			ExportConfigurationDto exportConfiguration) {
+
+		return DownloadUtil.createCsvExportStreamResource(
+				CaseExportDetailedSampleDto.class,
+				exportType,
+				(Integer start, Integer max) -> FacadeProvider.getCaseFacade()
+						.getExportListDetailed(criteria, selectedRows.get(), exportType, start, max, exportConfiguration, I18nProperties.getUserLanguage()),
+				CaseDownloadUtil::captionProvider,
+				ExportEntityName.CASES,
+				exportConfiguration);
+	}
+
 
 	public static StreamResource createCaseExportResourceDuplicates(
 			CaseCriteria criteria,

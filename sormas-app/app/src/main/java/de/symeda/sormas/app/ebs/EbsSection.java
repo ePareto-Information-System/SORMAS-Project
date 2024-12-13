@@ -24,7 +24,7 @@ public enum EbsSection
 	implements
 	StatusElaborator {
 
-	SIGNAL_INFORMATION(R.string.caption_ebs_information, R.drawable.ic_group_black_24dp),
+	SIGNAL_INFORMATION(R.string.caption_ebs_information, R.drawable.vd_vector),
 	TRIAGING(R.string.caption_triaging_information, R.drawable.ic_alert_24dp),
 	SIGNAL_VERIFICATION(R.string.caption_signal_verification, R.drawable.ic_alert_24dp),
 	RISK_ASSESSMENT(R.string.caption_risk_assessment, R.drawable.ic_alert_24dp),

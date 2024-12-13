@@ -28,7 +28,10 @@ import retrofit2.http.Path;
 public interface TriagingFacadeRetro {
 
 	@GET("triaging/all/{since}/{size}/{lastSynchronizedUuid}")
-	Call<List<TriagingDto>> pullAllSince(@Path("since") long since, @Path("size") int size, @Path("lastSynchronizedUuid") String lastSynchronizedUuid);
+	Call<List<TriagingDto>> pullAllSince(
+		@Path("since") long since,
+		@Path("size") int size,
+		@Path("lastSynchronizedUuid") String lastSynchronizedUuid);
 
 	@POST("triaging/query")
 	Call<List<TriagingDto>> pullByUuids(@Body List<String> uuids);

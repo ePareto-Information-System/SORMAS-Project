@@ -49,7 +49,9 @@ public interface ExternalSurveillanceToolFacade {
 
 	void deleteEvents(List<EventDto> events) throws ExternalSurveillanceToolException;
 
-	void deleteEbs(List<EbsDto> events) throws ExternalSurveillanceToolException;
+	void sendEbs(List<String> ebsUuids, boolean archived) throws ExternalSurveillanceToolException;
+
+	void deleteEbs(List<EbsDto> ebs) throws ExternalSurveillanceToolException;
 
 	String getVersion() throws ExternalSurveillanceToolException;
 }
