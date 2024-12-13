@@ -231,7 +231,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
 	// public static final int DATABASE_VERSION = 410;
-	public static final int DATABASE_VERSION = 420;
+	public static final int DATABASE_VERSION = 421;
 
 	private static DatabaseHelper instance = null;
 
@@ -4313,6 +4313,19 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					currentVersion = 419;
 					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN dateOfDeath Date;");
 					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN placeOfDeath varchar(255);");
+
+				case 420:
+					currentVersion = 420;
+					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientSpoxVaccinationScarPresent varchar(255);");
+					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTravelledAnywhere3WeeksPrior varchar(255);");
+					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTravelled3WeeksIfYesIndicate varchar(255);");
+					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTravelledPeriodOfIllness varchar(255);");
+					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTravelledIllnessIfYesIndicate varchar(255);");
+					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN otherPlaces varchar(255);");
+					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN during3WeeksPatientContactWithSimilarSymptoms varchar(255);");
+					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN dateOfContactWithIllPerson Date;");
+					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTouchDomesticWildAnimal varchar(255);");
+					getDao(RiskFactor.class).executeRaw("ALTER TABLE riskfactor ADD COLUMN patientTouchDomesticWildAnimalIfYes varchar(255);");
 
 					// ATTENTION: break should only be done after last version
 				break;

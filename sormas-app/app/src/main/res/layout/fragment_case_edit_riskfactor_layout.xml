@@ -29,6 +29,8 @@
         <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
         <import type="de.symeda.sormas.api.utils.YesNo" />
         <import type="de.symeda.sormas.api.riskfactor.DrinkingWaterSource" />
+        <import type="de.symeda.sormas.api.i18n.I18nProperties" />
+        <import type="de.symeda.sormas.api.i18n.Strings" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.riskfactor.RiskFactor" />
         <variable name="caze" type="de.symeda.sormas.app.backend.caze.Case" />
@@ -443,6 +445,93 @@
                     app:dependencyParentValue="@{YesNo.YES}"
                     app:value="@={data.otherSocialEventDetails}"
                     style="@style/ControlSingleColumnStyle" />
+
+                <TextView
+                    android:id="@+id/riskFactor_headingRiskFactor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{I18nProperties.getString(Strings.headingRiskFactor)}"
+                    style="@style/SubHeadingStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/riskFactor_patientSpoxVaccinationScarPresent"
+                    app:value="@={data.patientSpoxVaccinationScarPresent}"
+                    app:enumClass="@{YesNoClass}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/riskFactor_patientTravelledAnywhere3WeeksPrior"
+                    app:value="@={data.patientTravelledAnywhere3WeeksPrior}"
+                    app:enumClass="@{YesNoClass}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/riskFactor_patientTravelled3WeeksIfYesIndicate"
+                    app:inputType="textMultiLine"
+                    app:textAlignment="gravity"
+                    app:gravity="top|start"
+                    app:textArea="true"
+                    app:singleLine="false"
+                    app:maxLines="3"
+                    app:value="@={data.patientTravelled3WeeksIfYesIndicate}"
+                    app:dependencyParentField="@{riskFactorPatientTravelledAnywhere3WeeksPrior}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/riskFactor_patientTravelledPeriodOfIllness"
+                    app:value="@={data.patientTravelledPeriodOfIllness}"
+                    app:enumClass="@{YesNoClass}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/riskFactor_patientTravelledIllnessIfYesIndicate"
+                    app:inputType="textMultiLine"
+                    app:textAlignment="gravity"
+                    app:gravity="top|start"
+                    app:textArea="true"
+                    app:singleLine="false"
+                    app:maxLines="3"
+                    app:value="@{data.patientTravelledIllnessIfYesIndicate}"
+                    app:dependencyParentField="@{riskFactorPatientTravelledPeriodOfIllness}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/riskFactor_otherPlaces"
+                    app:value="@{data.otherPlaces}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/riskFactor_during3WeeksPatientContactWithSimilarSymptoms"
+                    app:value="@={data.during3WeeksPatientContactWithSimilarSymptoms}"
+                    app:enumClass="@{YesNoClass}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/riskFactor_dateOfContactWithIllPerson"
+                    app:value="@{data.dateOfContactWithIllPerson}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/riskFactor_patientTouchDomesticWildAnimal"
+                    app:value="@{data.patientTouchDomesticWildAnimal}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/riskFactor_patientTouchDomesticWildAnimalIfYes"
+                    app:inputType="textMultiLine"
+                    app:textAlignment="gravity"
+                    app:gravity="top|start"
+                    app:textArea="true"
+                    app:singleLine="false"
+                    app:maxLines="3"
+                    app:value="@{data.patientTouchDomesticWildAnimalIfYes}"
+                    app:dependencyParentField="@{riskFactorPatientTouchDomesticWildAnimal}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSingleColumnStyle" />
+
+
 
         </LinearLayout>
 

@@ -82,6 +82,8 @@ public class CaseEditRiskFactorFragment extends BaseEditFragment<FragmentCaseEdi
 		contentBinding.setData(record);
 		contentBinding.setCaze(caze);
 		contentBinding.setYesNoClass(YesNo.class);
+		contentBinding.riskFactorDateOfContactWithIllPerson.initializeDateField(getFragmentManager());
+
 		if (caze.getDisease() != null) {
 			super.hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.RISK_FACTOR_EDIT);
 		}
