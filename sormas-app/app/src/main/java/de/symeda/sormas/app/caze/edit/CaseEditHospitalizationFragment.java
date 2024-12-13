@@ -301,6 +301,10 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 			case MEASLES:
 				handleMeasles();
 				break;
+			case GUINEA_WORM:
+				handleGuineaWorm();
+				contentBinding.caseHospitalizationAdmittedToHealthFacility.addValueChangedListener(field -> handleGuineaWorm());
+				break;
 			default:
 		}
 	}
@@ -407,6 +411,19 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		} else {
 			getContentBinding().caseHospitalizationDateFirstSeen.setVisibility(GONE);
 		}
+	}
+
+	public void handleGuineaWorm() {
+		 YesNo caseHospitalizationAdmittedToHealthFacilityYesNo = (YesNo) getContentBinding().caseHospitalizationAdmittedToHealthFacility.getValue();
+		 if (caseHospitalizationAdmittedToHealthFacilityYesNo == YesNo.YES) {
+			 getContentBinding().caseHospitalizationAdmissionDate.setVisibility(VISIBLE);
+			 getContentBinding().caseHospitalizationDischargeDate.setVisibility(VISIBLE);
+			 getContentBinding().caseHospitalizationHospitalRecordNumber.setVisibility(VISIBLE);
+		 } else {
+			 getContentBinding().caseHospitalizationAdmissionDate.setVisibility(GONE);
+			 getContentBinding().caseHospitalizationDischargeDate.setVisibility(GONE);
+			 getContentBinding().caseHospitalizationHospitalRecordNumber.setVisibility(GONE);
+		 }
 	}
 
 
