@@ -27,6 +27,11 @@ import android.view.Menu;
 
 import androidx.annotation.NonNull;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -128,6 +133,13 @@ public class PathogenTestNewActivity extends BaseEditActivity<PathogenTest> {
 		}
 
 		final PathogenTest pathogenTestToSave = getStoredRootEntity();
+
+		if (pathogenTestToSave.getTestedDisease() == Disease.MONKEYPOX) {
+			LocalDateTime now = LocalDateTime.now();
+			Date currentDateTime = Date.from(now.atZone(ZoneId.systemDefault()).toInstant());
+			pathogenTestToSave.setTestDateTime(currentDateTime);
+		}
+
 		final Case associatedCase = pathogenTestToSave.getSample().getAssociatedCase();
 
 		if (associatedCase != null) {
