@@ -48,6 +48,7 @@ public class ContaminationSourceDtoHelper extends AdoDtoHelper<ContaminationSour
 
 	@Override
 	protected void fillInnerFromDto(ContaminationSource target, ContaminationSourceDto source) {
+		target.setName(source.getName());
 		target.setContaminationType(source.getContaminationType());
 		target.setLongitude(source.getLongitude());
 		target.setLatitude(source.getLatitude());
@@ -60,6 +61,7 @@ public class ContaminationSourceDtoHelper extends AdoDtoHelper<ContaminationSour
 
 	@Override
 	protected void fillInnerFromAdo(ContaminationSourceDto target, ContaminationSource source) {
+		target.setName(source.getName());
 		target.setContaminationType(source.getContaminationType());
 		target.setLongitude(source.getLongitude());
 		target.setLatitude(source.getLatitude());

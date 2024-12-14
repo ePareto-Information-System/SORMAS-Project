@@ -1618,7 +1618,6 @@
             <de.symeda.sormas.app.component.controls.ControlSwitchField
                 android:id="@+id/symptoms_firstSignOrSymptomsBeforeWorm"
                 app:enumClass="@{GuineaWormFirstSymptomClass}"
-                app:slim="true"
                 app:value="@={data.firstSignOrSymptomsBeforeWorm}"
                 style="@style/ControlSingleColumnStyle" />
 
