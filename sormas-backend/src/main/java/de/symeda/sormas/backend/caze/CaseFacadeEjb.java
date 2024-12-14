@@ -3477,13 +3477,22 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		target.setRiskFactor(riskFactorFacade.fillOrBuildEntity(source.getRiskFactor(), target.getRiskFactor(), checkChangeDate));
 		if (source.getDisease() == Disease.MONKEYPOX) {
-			if (source.getHospitalization().getLocationType().getRegion() == null) {
-				source.getHospitalization().getLocationType().setRegion(source.getResponsibleRegion());
-				source.getHospitalization().getLocationType().setDistrict(source.getResponsibleDistrict());
-				source.getHospitalization().getLocationType().setCommunity(source.getResponsibleCommunity());
+			if (source.getHospitalization() != null) {
+				if (source.getHospitalization().getLocationType() == null) {
+					source.getHospitalization().setLocationType(new LocationDto());
+				}
+
+				LocationDto locationType = source.getHospitalization().getLocationType();
+				if (locationType.getRegion() == null) {
+					locationType.setRegion(source.getResponsibleRegion());
+					locationType.setDistrict(source.getResponsibleDistrict());
+					locationType.setCommunity(source.getResponsibleCommunity());
+				}
+
 				source.getHospitalization().setNameOfFacility(source.getHealthFacility());
 			}
 		}
+
 		target.setHospitalization(hospitalizationFacade.fillOrBuildEntity(source.getHospitalization(), target.getHospitalization(), checkChangeDate));
 		target.setEpiData(epiDataFacade.fillOrBuildEntity(source.getEpiData(), target.getEpiData(), checkChangeDate));
 		if (source.getTherapy() == null) {
@@ -3698,7 +3707,6 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setFamilyLinkWithPatient(source.getFamilyLinkWithPatient());
 		target.setNameOfVillagePersonGotIll(source.getNameOfVillagePersonGotIll());
 		target.setInvestigationOfficerAddress(source.getInvestigationOfficerAddress());
-
 
 		return target;
 	}

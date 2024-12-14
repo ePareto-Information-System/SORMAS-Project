@@ -175,6 +175,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	public static final String MPOX_LAYOUT = loc(HOSPITALIZATION_HEADING_LOC) +
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW) +
 			fluidRowLocs(HospitalizationDto.LOCATION_TYPE) +
+			fluidRowLocs(HospitalizationDto.SOUGHT_REGION, HospitalizationDto.SOUGHT_DISTRICT, HospitalizationDto.SOUGHT_COMMUNITY)+
 			fluidRowLocs(6,HospitalizationDto.NAME_OF_FACILITY)+
 			fluidRowLocs(HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.ADMISSION_DATE);
 
@@ -625,19 +626,59 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			FieldHelper.setVisibleWhen(soughtMedicalAttentionField, Arrays.asList(soughtRegion, soughtDistrict, soughtCommunity), Arrays.asList(YesNo.YES), true);
 
 		}
-		
-		if(caze.getDisease() == Disease.MONKEYPOX){
-			addField(HospitalizationDto.LOCATION_TYPE, addressForm);
-			addressForm.setCaption(null);
+
+		if (caze.getDisease() == Disease.MONKEYPOX) {
+			setFieldsVisible(true, soughtRegion, soughtDistrict, soughtCommunity, nameOfFacilityField);
+
+			// Retrieve and set values for Monkeypox disease
+			RegionReferenceDto responsibleRegion = caze.getResponsibleRegion();
+			DistrictReferenceDto responsibleDistrict = caze.getResponsibleDistrict();
+			CommunityReferenceDto responsibleCommunity = caze.getResponsibleCommunity();
+			FacilityReferenceDto responsibleFacility = caze.getHealthFacility();
+
+			if (responsibleRegion != null) {
+				soughtRegion.setValue(responsibleRegion); // Set selected value
+				FieldHelper.updateItems(
+						soughtDistrict,
+						FacadeProvider.getDistrictFacade().getAllActiveByRegion(responsibleRegion.getUuid())
+				);
+			}
+
+			if (responsibleDistrict != null) {
+				soughtDistrict.setValue(responsibleDistrict); // Set selected value
+				FieldHelper.updateItems(
+						soughtCommunity,
+						FacadeProvider.getCommunityFacade().getAllActiveByDistrict(responsibleDistrict.getUuid())
+				);
+			}
+
+			if (responsibleCommunity != null) {
+				soughtCommunity.setValue(responsibleCommunity); // Set selected value
+				FieldHelper.updateItems(
+						nameOfFacilityField,
+						FacadeProvider.getFacilityFacade().getActiveHospitalsByCommunity(responsibleCommunity, true, true, true)
+				);
+			}
+
+			if (responsibleFacility != null) {
+				nameOfFacilityField.setValue(responsibleFacility); // Set selected value
+			}
+		}
+
+	/*	if(caze.getDisease() == Disease.MONKEYPOX){
+//			addField(HospitalizationDto.LOCATION_TYPE, addressForm);
+//			addressForm.setCaption(null);
 			setFieldsVisible(true, admittedToHealthFacilityNew);
-			FieldHelper.setVisibleWhen(
+			*//*FieldHelper.setVisibleWhen(
 					getFieldGroup(),
 					Arrays.asList(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.LOCATION_TYPE, HospitalizationDto.NAME_OF_FACILITY),
 					HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW,
 					Arrays.asList(YesNo.YES),
 					false
-			);
-		}
+			);*//*
+
+			setFieldsVisible(true, soughtRegion, soughtDistrict, soughtCommunity, nameOfFacilityField);
+		}*/
 
 		if (caze.getDisease() == Disease.GUINEA_WORM) {
 			hideAllFields();
