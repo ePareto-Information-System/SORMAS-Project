@@ -404,8 +404,6 @@
                 app:value="@={data.nameOfFacility}"
                 app:dependencyParentField="@{caseHospitalizationSoughtMedicalAttention}"
                 app:dependencyParentValue="@{YesNo.YES}"
-                app:dependencyParentField1="@{caseHospitalizationAdmittedToHealthFacilityNew}"
-                app:dependencyParentValue1="@{YesNo.YES}"
                 style="@style/ControlSingleColumnStyle"/>
 
             <de.symeda.sormas.app.component.controls.ControlDateField

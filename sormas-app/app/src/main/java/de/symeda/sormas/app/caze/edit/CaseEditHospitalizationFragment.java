@@ -273,6 +273,34 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 					initialPlaceOfCommunities,
 					responsibleCommunity != null ? responsibleCommunity : locationTypeCommunity
 			);
+
+			if (contentBinding.caseHospitalizationAdmittedToHealthFacilityNew.getValue() == null) {
+				contentBinding.locationTypeRegion.setVisibility(View.GONE);
+				contentBinding.locationTypeDistrict.setVisibility(View.GONE);
+				contentBinding.locationTypeCommunity.setVisibility(View.GONE);
+				contentBinding.caseHospitalizationNameOfFacility.setVisibility(View.GONE);
+				contentBinding.caseHospitalizationAdmissionDate.setVisibility(View.GONE);
+				contentBinding.caseHospitalizationHospitalRecordNumber.setVisibility(View.GONE);
+			} else {
+				int visibility = (contentBinding.caseHospitalizationAdmittedToHealthFacilityNew.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
+				contentBinding.locationTypeRegion.setVisibility(visibility);
+				contentBinding.locationTypeDistrict.setVisibility(visibility);
+				contentBinding.locationTypeCommunity.setVisibility(visibility);
+				contentBinding.caseHospitalizationNameOfFacility.setVisibility(visibility);
+				contentBinding.caseHospitalizationAdmissionDate.setVisibility(visibility);
+				contentBinding.caseHospitalizationHospitalRecordNumber.setVisibility(visibility);
+			}
+
+			contentBinding.caseHospitalizationAdmittedToHealthFacilityNew.addValueChangedListener(field -> {
+				int visibility = (field.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
+				contentBinding.locationTypeRegion.setVisibility(visibility);
+				contentBinding.locationTypeDistrict.setVisibility(visibility);
+				contentBinding.locationTypeCommunity.setVisibility(visibility);
+				contentBinding.caseHospitalizationNameOfFacility.setVisibility(visibility);
+				contentBinding.caseHospitalizationAdmissionDate.setVisibility(visibility);
+				contentBinding.caseHospitalizationHospitalRecordNumber.setVisibility(visibility);
+			});
+
 		}
 
 		if (disease != null) {
