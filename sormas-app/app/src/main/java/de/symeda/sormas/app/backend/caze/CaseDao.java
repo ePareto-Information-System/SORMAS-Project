@@ -84,6 +84,7 @@ import de.symeda.sormas.app.backend.event.EventParticipant;
 import de.symeda.sormas.app.backend.exposure.Exposure;
 import de.symeda.sormas.app.backend.foodhistory.FoodHistory;
 import de.symeda.sormas.app.backend.investigationnotes.InvestigationNotes;
+import de.symeda.sormas.app.backend.patientsymptomsprecedence.PatientSymptomsPrecedence;
 import de.symeda.sormas.app.backend.person.Person;
 import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
 import de.symeda.sormas.app.backend.region.Community;
@@ -180,6 +181,11 @@ public class CaseDao extends AbstractAdoDao<Case> {
 		Date contaminationSourceDate = getLatestChangeDateSubJoin(EpiData.TABLE_NAME, Case.EPI_DATA, ContaminationSource.TABLE_NAME);
 		if (contaminationSourceDate != null && contaminationSourceDate.after(date)) {
 			date = contaminationSourceDate;
+		}
+
+		Date patientSymptomsPrecedenceDate = getLatestChangeDateSubJoin(RiskFactor.TABLE_NAME, Case.RISK_FACTOR, PatientSymptomsPrecedence.TABLE_NAME);
+		if (patientSymptomsPrecedenceDate != null && patientSymptomsPrecedenceDate.after(date)) {
+			date = patientSymptomsPrecedenceDate;
 		}
 
 		Date therapyDate = DatabaseHelper.getTherapyDao().getLatestChangeDate();

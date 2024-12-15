@@ -46,6 +46,7 @@ import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.containmentmeasure.ContainmentMeasure;
 import de.symeda.sormas.app.backend.contaminationsource.ContaminationSource;
 import de.symeda.sormas.app.backend.exposure.Exposure;
+import de.symeda.sormas.app.backend.patientsymptomsprecedence.PatientSymptomsPrecedence;
 import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
 import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.District;
@@ -147,6 +148,8 @@ public class RiskFactor extends PseudonymizableAdo {
 	private YesNo patientTouchDomesticWildAnimal;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String patientTouchDomesticWildAnimalIfYes;
+
+	private List<PatientSymptomsPrecedence> patientSymptomsPrecedences = new ArrayList<>();
 
 	public String getDrinkingWaterSourceOne() {
 		return drinkingWaterSourceOne;
@@ -490,6 +493,13 @@ public class RiskFactor extends PseudonymizableAdo {
 
 	public void setPatientTouchDomesticWildAnimalIfYes(String patientTouchDomesticWildAnimalIfYes) {
 		this.patientTouchDomesticWildAnimalIfYes = patientTouchDomesticWildAnimalIfYes;
+	}
+
+	public List<PatientSymptomsPrecedence> getPatientSymptomsPrecedences() {
+		return patientSymptomsPrecedences;
+	}
+	public void setPatientSymptomsPrecedences(List<PatientSymptomsPrecedence> patientSymptomsPrecedences) {
+		this.patientSymptomsPrecedences = patientSymptomsPrecedences;
 	}
 
 

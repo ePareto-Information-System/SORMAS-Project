@@ -58,8 +58,6 @@ import de.symeda.sormas.api.exposure.AnimalContactType;
 import de.symeda.sormas.api.exposure.ExposureType;
 import de.symeda.sormas.api.exposure.HabitationType;
 import de.symeda.sormas.api.exposure.TypeOfAnimal;
-import de.symeda.sormas.api.foodhistory.AffectedPersonDto;
-import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
 import de.symeda.sormas.api.immunization.ImmunizationManagementStatus;
 import de.symeda.sormas.api.immunization.ImmunizationStatus;
 import de.symeda.sormas.api.immunization.MeansOfImmunization;
@@ -152,6 +150,8 @@ import de.symeda.sormas.app.backend.location.Location;
 import de.symeda.sormas.app.backend.location.LocationDao;
 import de.symeda.sormas.app.backend.outbreak.Outbreak;
 import de.symeda.sormas.app.backend.outbreak.OutbreakDao;
+import de.symeda.sormas.app.backend.patientsymptomsprecedence.PatientSymptomsPrecedence;
+import de.symeda.sormas.app.backend.patientsymptomsprecedence.PatientSymptomsPrecedenceDao;
 import de.symeda.sormas.app.backend.person.Person;
 import de.symeda.sormas.app.backend.person.PersonContactDetail;
 import de.symeda.sormas.app.backend.person.PersonContactDetailDao;
@@ -231,7 +231,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
 	// public static final int DATABASE_VERSION = 410;
-	public static final int DATABASE_VERSION = 422;
+	public static final int DATABASE_VERSION = 423;
 
 	private static DatabaseHelper instance = null;
 
@@ -316,6 +316,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.clearTable(connectionSource, Environment.class);
 			TableUtils.clearTable(connectionSource, PersonTravelHistory.class);
 			TableUtils.clearTable(connectionSource, ContaminationSource.class);
+			TableUtils.clearTable(connectionSource, PatientSymptomsPrecedence.class);
 			TableUtils.clearTable(connectionSource, ContainmentMeasure.class);
 			TableUtils.clearTable(connectionSource, RiskFactor.class);
 			TableUtils.clearTable(connectionSource, FoodHistory.class);
@@ -442,6 +443,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, FormBuilderFormField.class);
 			TableUtils.createTable(connectionSource, PersonTravelHistory.class);
 			TableUtils.createTable(connectionSource, ContaminationSource.class);
+			TableUtils.createTable(connectionSource, PatientSymptomsPrecedence.class);
 			TableUtils.createTable(connectionSource, ContainmentMeasure.class);
 			TableUtils.createTable(connectionSource, AffectedPerson.class);
 			TableUtils.createTable(connectionSource, RiskFactor.class);
@@ -4332,6 +4334,26 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN locationtype_id bigint;");
 					getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD CONSTRAINT fk_hospitalization_locationtype_id FOREIGN KEY (locationtype_id) REFERENCES location (id);;");
 
+				case 422:
+					getDao(PatientSymptomsPrecedence.class).executeRaw(
+							"CREATE TABLE patientsymptomsprecedence ("
+									+ "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
+									+ "    uuid VARCHAR(36) NOT NULL UNIQUE,"
+									+ "    changedate BIGINT NOT NULL,"
+									+ "		pseudonymized SMALLINT,"
+									+ "    creationdate BIGINT NOT NULL,"
+									+ "    riskfactor_id BIGINT NOT NULL,"
+									+ "    contactaddress VARCHAR(255),"
+									+ "    name VARCHAR(255),"
+									+ "    phone VARCHAR(255),"
+									+ "		lastOpenedDate BIGINT,"
+									+ "		localChangeDate BIGINT NOT NULL,"
+									+ "		modified SMALLINT,"
+									+ "		snapshot SMALLINT,"
+									+ "		UNIQUE (snapshot ASC, uuid ASC)"
+									+ ");"
+					);
+
 					// ATTENTION: break should only be done after last version
 				break;
 			default:
@@ -5148,6 +5170,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.dropTable(connectionSource, FormBuilderFormField.class, true);
 			TableUtils.dropTable(connectionSource, PersonTravelHistory.class, true);
 			TableUtils.dropTable(connectionSource, ContaminationSource.class, true);
+			TableUtils.dropTable(connectionSource, PatientSymptomsPrecedence.class, true);
 			TableUtils.dropTable(connectionSource, ContainmentMeasure.class, true);
 			TableUtils.dropTable(connectionSource, AffectedPerson.class, true);
 			TableUtils.dropTable(connectionSource, SixtyDay.class, true);
@@ -5304,6 +5327,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					dao = (AbstractAdoDao<ADO>) new PersonTravelHistoryDao((Dao<PersonTravelHistory, Long>) innerDao);
 				} else if (type.equals(ContaminationSource.class)) {
 					dao = (AbstractAdoDao<ADO>) new ContaminationSourceDao((Dao<ContaminationSource, Long>) innerDao);
+				} else if (type.equals(PatientSymptomsPrecedence.class)) {
+					dao = (AbstractAdoDao<ADO>) new PatientSymptomsPrecedenceDao((Dao<PatientSymptomsPrecedence, Long>) innerDao);
 				} else if (type.equals(ContainmentMeasure.class)) {
 					dao = (AbstractAdoDao<ADO>) new ContainmentMeasureDao((Dao<ContainmentMeasure, Long>) innerDao);
 				} else if(type.equals(RiskFactor.class)) {
@@ -5658,6 +5683,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	public static ContaminationSourceDao getContaminationSourceDao() {
 		return (ContaminationSourceDao) getAdoDao(ContaminationSource.class);
+	}
+
+	public static PatientSymptomsPrecedenceDao getPatientSymptomsPrecedenceDao() {
+		return (PatientSymptomsPrecedenceDao) getAdoDao(PatientSymptomsPrecedence.class);
 	}
 
 	public static ContainmentMeasureDao getContainmentMeasureDao() {

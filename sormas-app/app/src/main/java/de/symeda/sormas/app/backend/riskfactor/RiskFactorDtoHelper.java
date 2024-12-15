@@ -15,18 +15,25 @@
 
 package de.symeda.sormas.app.backend.riskfactor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.symeda.sormas.api.PostResponse;
+import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
+import de.symeda.sormas.api.riskfactor.PatientSymptomsPrecedenceDto;
 import de.symeda.sormas.api.riskfactor.RiskFactorDto;
+import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
+import de.symeda.sormas.app.backend.patientsymptomsprecedence.PatientSymptomsPrecedence;
+import de.symeda.sormas.app.backend.patientsymptomsprecedence.PatientSymptomsPrecedenceDtoHelper;
 import de.symeda.sormas.app.rest.NoConnectionException;
 import retrofit2.Call;
 
 public class RiskFactorDtoHelper extends AdoDtoHelper<RiskFactor, RiskFactorDto> {
 
-
+	private final PatientSymptomsPrecedenceDtoHelper patientSymptomsPrecedenceDtoHelper;
 	public RiskFactorDtoHelper() {
+		patientSymptomsPrecedenceDtoHelper = new PatientSymptomsPrecedenceDtoHelper();
 	}
 
 	@Override
@@ -91,6 +98,16 @@ public class RiskFactorDtoHelper extends AdoDtoHelper<RiskFactor, RiskFactorDto>
 		target.setThreeDaysPriorToDiseaseAttendAnyFuneral(source.getThreeDaysPriorToDiseaseAttendAnyFuneral());
 		target.setThreeDaysPriorToDiseaseAttendAnySocialEvent(source.getThreeDaysPriorToDiseaseAttendAnySocialEvent());
 
+		List<PatientSymptomsPrecedence> patientSymptomsPrecedences = new ArrayList<>();
+		if (!source.getPatientSymptomsPrecedence().isEmpty()) {
+			for (PatientSymptomsPrecedenceDto patientSymptomsPrecedenceDto : source.getPatientSymptomsPrecedence()) {
+				PatientSymptomsPrecedence patientSymptomsPrecedence = patientSymptomsPrecedenceDtoHelper.fillOrCreateFromDto(null, patientSymptomsPrecedenceDto);
+				patientSymptomsPrecedence.setRiskFactor(target);
+				patientSymptomsPrecedences.add(patientSymptomsPrecedence);
+			}
+		}
+		target.setPatientSymptomsPrecedences(patientSymptomsPrecedences);
+
 	}
 
 	@Override
@@ -129,6 +146,15 @@ public class RiskFactorDtoHelper extends AdoDtoHelper<RiskFactor, RiskFactorDto>
 		target.setThreeDaysPriorToDiseaseFoodItemsFive(source.getThreeDaysPriorToDiseaseFoodItemsFive());
 		target.setThreeDaysPriorToDiseaseAttendAnyFuneral(source.getThreeDaysPriorToDiseaseAttendAnyFuneral());
 		target.setThreeDaysPriorToDiseaseAttendAnySocialEvent(source.getThreeDaysPriorToDiseaseAttendAnySocialEvent());
+
+		List<PatientSymptomsPrecedenceDto> patientSymptomsPrecedenceDtos = new ArrayList<>();
+		if (!source.getPatientSymptomsPrecedences().isEmpty()) {
+			for (PatientSymptomsPrecedence patientSymptomsPrecedence : source.getPatientSymptomsPrecedences()) {
+				PatientSymptomsPrecedenceDto  patientSymptomsPrecedenceDto = patientSymptomsPrecedenceDtoHelper.adoToDto(patientSymptomsPrecedence);
+				patientSymptomsPrecedenceDtos.add(patientSymptomsPrecedenceDto);
+			}
+		}
+		target.setPatientSymptomsPrecedence(patientSymptomsPrecedenceDtos);
 
 	}
 
