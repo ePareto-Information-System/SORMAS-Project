@@ -16,23 +16,21 @@ package de.symeda.sormas.app.caze.edit;
 
 import static android.view.View.GONE;
 
-import android.content.res.Resources;
-import android.util.Log;
-import android.view.ViewGroup;
-
-import androidx.databinding.ObservableArrayList;
+import java.util.List;
 
 import com.googlecode.openbeans.Introspector;
 import com.googlecode.openbeans.PropertyDescriptor;
 
-import java.util.List;
+import android.content.res.Resources;
+import android.view.ViewGroup;
+
+import androidx.databinding.ObservableArrayList;
 
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
 import de.symeda.sormas.api.utils.EventType;
 import de.symeda.sormas.api.utils.FoodSource;
 import de.symeda.sormas.api.utils.YesNo;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
@@ -51,142 +49,149 @@ import de.symeda.sormas.app.util.FieldVisibilityAndAccessHelper;
 
 public class CaseEditFoodHistoryFragment extends BaseEditFragment<FragmentCaseEditFoodhistoryLayoutBinding, FoodHistory, Case> {
 
-    private FoodHistory record;
-    private Case caze;
-    private List<Item> foodSourceList;
-    private List<Item> eventTypeList;
-    private IEntryItemOnClickListener onAffectedPersonItemClickListener;
+	private FoodHistory record;
+	private Case caze;
+	private List<Item> foodSourceList;
+	private List<Item> eventTypeList;
+	private IEntryItemOnClickListener onAffectedPersonItemClickListener;
 
-    public static CaseEditFoodHistoryFragment newInstance(Case activityRootData) {
-        return newInstanceWithFieldCheckers(
-                CaseEditFoodHistoryFragment.class,
-                null,
-                activityRootData,
-                new FieldVisibilityCheckers(),
-                UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
-    }
+	public static CaseEditFoodHistoryFragment newInstance(Case activityRootData) {
+		return newInstanceWithFieldCheckers(
+			CaseEditFoodHistoryFragment.class,
+			null,
+			activityRootData,
+			new FieldVisibilityCheckers(),
+			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
+	}
 
-    @Override
-    protected String getSubHeadingTitle() {
-        Resources r = getResources();
-        return r.getString(R.string.caption_case_food_history);
-    }
-    @Override
-    public FoodHistory getPrimaryData() {
-        return record;
-    }
-    @Override
-    protected void prepareFragmentData() {
-        caze = getActivityRootData();
-        record = caze.getFoodHistory();
-        foodSourceList = DataUtils.getEnumItems(FoodSource.class, true);
-        eventTypeList = DataUtils.getEnumItems(EventType.class, true);
-    }
+	@Override
+	protected String getSubHeadingTitle() {
+		Resources r = getResources();
+		return r.getString(R.string.caption_case_food_history);
+	}
 
-    @Override
-    public void onLayoutBinding(final FragmentCaseEditFoodhistoryLayoutBinding contentBinding) {
-        setUpControlListeners(contentBinding);
-        setDefaultValues(record);
-        contentBinding.setData(record);
+	@Override
+	public FoodHistory getPrimaryData() {
+		return record;
+	}
 
-        contentBinding.setYesNoClass(YesNo.class);
-        contentBinding.foodHistoryFoodSource.initializeSpinner(foodSourceList);
-        contentBinding.foodHistoryEventType.initializeSpinner(eventTypeList);
-        contentBinding.foodHistoryDateConsumed.initializeDateTimeField(getFragmentManager());
+	@Override
+	protected void prepareFragmentData() {
+		caze = getActivityRootData();
+		record = caze.getFoodHistory();
+		foodSourceList = DataUtils.getEnumItems(FoodSource.class, true);
+		eventTypeList = DataUtils.getEnumItems(EventType.class, true);
+	}
 
-        contentBinding.setAffectedPersonList(getAffectedPersons());
-        contentBinding.setAffectedPersonItemClickCallback(onAffectedPersonItemClickListener);
-        contentBinding.setAffectedPersonListBindCallback(
-                v -> FieldVisibilityAndAccessHelper
-                        .setFieldVisibilitiesAndAccesses(AffectedPerson.class, (ViewGroup) v, new FieldVisibilityCheckers(), getFieldAccessCheckers()));
+	@Override
+	public void onLayoutBinding(final FragmentCaseEditFoodhistoryLayoutBinding contentBinding) {
+		setUpControlListeners(contentBinding);
+		setDefaultValues(record);
+		contentBinding.setData(record);
 
-        if (caze.getDisease() != null) {
-            super.hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.FOOD_HISTORY_EDIT);
-        }
-    }
+		contentBinding.setYesNoClass(YesNo.class);
+		contentBinding.foodHistoryFoodSource.initializeSpinner(foodSourceList);
+		contentBinding.foodHistoryEventType.initializeSpinner(eventTypeList);
+		contentBinding.foodHistoryDateConsumed.initializeDateTimeField(getFragmentManager());
 
-    public void setDefaultValues(FoodHistory foodHistoryDto) {
-        if (foodHistoryDto == null) {
-            return;
-        }
+		contentBinding.setAffectedPersonList(getAffectedPersons());
+		contentBinding.setAffectedPersonItemClickCallback(onAffectedPersonItemClickListener);
+		contentBinding.setAffectedPersonListBindCallback(
+			v -> FieldVisibilityAndAccessHelper
+				.setFieldVisibilitiesAndAccesses(AffectedPerson.class, (ViewGroup) v, new FieldVisibilityCheckers(), getFieldAccessCheckers()));
 
-        try {
-            for (PropertyDescriptor pd : Introspector.getBeanInfo(FoodHistory.class, AbstractDomainObject.class).getPropertyDescriptors()) {
-                if (pd.getWriteMethod() != null && (pd.getReadMethod().getReturnType().equals(YesNo.class))) {
-                    try {
-                        if (pd.getReadMethod().invoke(foodHistoryDto) == null)
-                            pd.getWriteMethod().invoke(foodHistoryDto, YesNo.NO);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		if (caze.getDisease() != null) {
+			super.hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.FOOD_HISTORY_EDIT);
+		}
+	}
 
-    }
+	public void setDefaultValues(FoodHistory foodHistoryDto) {
+		if (foodHistoryDto == null) {
+			return;
+		}
 
-    @Override
-    protected void onAfterLayoutBinding(FragmentCaseEditFoodhistoryLayoutBinding contentBinding) {
-        setFieldVisibilitiesAndAccesses(FoodHistoryDto.class, contentBinding.mainContent);
+		try {
+			for (PropertyDescriptor pd : Introspector.getBeanInfo(FoodHistory.class, AbstractDomainObject.class).getPropertyDescriptors()) {
+				if (pd.getWriteMethod() != null && (pd.getReadMethod().getReturnType().equals(YesNo.class))) {
+					try {
+						if (pd.getReadMethod().invoke(foodHistoryDto) == null)
+							pd.getWriteMethod().invoke(foodHistoryDto, YesNo.NO);
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        if (getActivityRootData() == null) {
-            contentBinding.affectedPersonLayout.setVisibility(GONE);
-        }
+	}
 
-    }
-    @Override
-    public int getEditLayout() {
-        return R.layout.fragment_case_edit_foodhistory_layout;
-    }
+	@Override
+	protected void onAfterLayoutBinding(FragmentCaseEditFoodhistoryLayoutBinding contentBinding) {
+		setFieldVisibilitiesAndAccesses(FoodHistoryDto.class, contentBinding.mainContent);
 
-    private void setUpControlListeners(final FragmentCaseEditFoodhistoryLayoutBinding contentBinding) {
+		if (getActivityRootData() == null) {
+			contentBinding.affectedPersonLayout.setVisibility(GONE);
+		}
 
-        contentBinding.btnAddAffectedPerson.setOnClickListener(v -> {
-            final AffectedPerson affectedPerson = DatabaseHelper.getAffectedPersonDao().build();
-            final AffectedPersonDialog dialog =
-                    new AffectedPersonDialog(CaseEditActivity.getActiveActivity(), affectedPerson, getActivityRootData(), true);
-            dialog.setPositiveCallback(() -> addAffectedPerson(affectedPerson));
-            dialog.show();
-        });
-        onAffectedPersonItemClickListener = (v, item) -> {
-            final AffectedPerson affectedPerson = (AffectedPerson) item;
-            final AffectedPerson affectedPersonClone = (AffectedPerson) affectedPerson.clone();
-            final AffectedPersonDialog dialog =
-                    new AffectedPersonDialog(CaseEditActivity.getActiveActivity(), affectedPersonClone, getActivityRootData(), false);
-            dialog.setPositiveCallback(() -> {
-                record.getAffectedPersons().set(record.getAffectedPersons().indexOf(affectedPerson), affectedPersonClone);
-                updateAffectedPersons();
-            });
-            dialog.setDeleteCallback(() -> {
-                removeAffectedPerson(affectedPerson);
-                dialog.dismiss();
-            });
-            dialog.show();
-        };
-        contentBinding.setAffectedPersonItemClickCallback(onAffectedPersonItemClickListener);
+	}
 
-    }
+	@Override
+	public int getEditLayout() {
+		return R.layout.fragment_case_edit_foodhistory_layout;
+	}
 
-    private void addAffectedPerson(AffectedPerson affectedPerson) {
-        record.getAffectedPersons().add(0, affectedPerson);
-        updateAffectedPersons();
-    }
+	private void setUpControlListeners(final FragmentCaseEditFoodhistoryLayoutBinding contentBinding) {
 
-    private void updateAffectedPersons() {
-        getContentBinding().setAffectedPersonList(getAffectedPersons());
-    }
+		contentBinding.btnAddAffectedPerson.setOnClickListener(v -> {
+			final AffectedPerson affectedPerson = DatabaseHelper.getAffectedPersonDao().build();
+			final AffectedPersonDialog dialog =
+				new AffectedPersonDialog(CaseEditActivity.getActiveActivity(), affectedPerson, getActivityRootData(), true);
+			dialog.setPositiveCallback(() -> addAffectedPerson(affectedPerson));
+			dialog.show();
+		});
+		onAffectedPersonItemClickListener = (v, item) -> {
+			AffectedPerson affectedPerson = (AffectedPerson) item;
+			final AffectedPerson affectedPersonClone = (AffectedPerson) affectedPerson.clone();
+			final AffectedPersonDialog dialog =
+				new AffectedPersonDialog(CaseEditActivity.getActiveActivity(), affectedPersonClone, getActivityRootData(), false);
+			dialog.setPositiveCallback(() -> {
+				affectedPerson.setNameOfAffectedPerson(dialog.getData().getNameOfAffectedPerson());
+				affectedPerson.setTelNo(dialog.getData().getTelNo());
+				affectedPerson.setDateTime(dialog.getData().getDateTime());
+				affectedPerson.setAge(dialog.getData().getAge());
+				record.getAffectedPersons().set(record.getAffectedPersons().indexOf(affectedPerson), affectedPersonClone);
+				updateAffectedPersons();
+			});
+			dialog.setDeleteCallback(() -> {
+				removeAffectedPerson(affectedPerson);
+				dialog.dismiss();
+			});
+			dialog.show();
+		};
+		contentBinding.setAffectedPersonItemClickCallback(onAffectedPersonItemClickListener);
 
-    private ObservableArrayList<AffectedPerson> getAffectedPersons() {
-        ObservableArrayList<AffectedPerson> affectedPersons = new ObservableArrayList<>();
-        affectedPersons.addAll(record.getAffectedPersons());
-        return affectedPersons;
-    }
+	}
 
-    private void removeAffectedPerson(AffectedPerson affectedPerson) {
-        record.getAffectedPersons().remove(affectedPerson);
-        updateAffectedPersons();
-    }
+	private void addAffectedPerson(AffectedPerson affectedPerson) {
+		record.getAffectedPersons().add(0, affectedPerson);
+		updateAffectedPersons();
+	}
+
+	private void updateAffectedPersons() {
+		getContentBinding().setAffectedPersonList(getAffectedPersons());
+	}
+
+	private ObservableArrayList<AffectedPerson> getAffectedPersons() {
+		ObservableArrayList<AffectedPerson> affectedPersons = new ObservableArrayList<>();
+		affectedPersons.addAll(record.getAffectedPersons());
+		return affectedPersons;
+	}
+
+	private void removeAffectedPerson(AffectedPerson affectedPerson) {
+		record.getAffectedPersons().remove(affectedPerson);
+		updateAffectedPersons();
+	}
 
 }
