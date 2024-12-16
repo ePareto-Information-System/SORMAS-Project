@@ -288,6 +288,10 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 				CaseOrigin currentCaseOrigin = (CaseOrigin) contentBinding.caseDataCaseOrigin.getValue();
 				contentBinding.personPassportNumber.setVisibility(currentCaseOrigin == CaseOrigin.POINT_OF_ENTRY ? VISIBLE : GONE
 				);
+				boolean caseDataDifferentPlaceOfStayJurisdiction = Boolean.TRUE.equals(contentBinding.caseDataDifferentPlaceOfStayJurisdiction.getValue());
+				contentBinding.caseDataRegion.setVisibility(caseDataDifferentPlaceOfStayJurisdiction ? VISIBLE : GONE);
+				contentBinding.caseDataDistrict.setVisibility(caseDataDifferentPlaceOfStayJurisdiction ? VISIBLE : GONE);
+				contentBinding.caseDataCommunity.setVisibility(caseDataDifferentPlaceOfStayJurisdiction ? VISIBLE : GONE);
 			}
 		});
 	}

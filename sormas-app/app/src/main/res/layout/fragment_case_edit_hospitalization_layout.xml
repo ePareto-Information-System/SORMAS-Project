@@ -40,6 +40,7 @@
         <variable name="patientCondition" type="MildModerateSevereCritical" />
         <variable name="data" type="de.symeda.sormas.app.backend.hospitalization.Hospitalization" />
         <variable name="caze" type="de.symeda.sormas.app.backend.caze.Case" />
+<!--        <variable name="previousHospitalizationList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.hospitalization.PreviousHospitalization&gt;" />-->
         <variable name="previousHospitalizationList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.hospitalization.PreviousHospitalization&gt;" />
         <variable name="prevHosItemClickCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
         <variable name="previousHospitalizationBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
@@ -267,6 +268,7 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/caseHospitalization_patientVentilated"
                     app:value="@={data.patientVentilated}"
+                    app:enumClass="@{yesNoUnknownClass}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
@@ -517,11 +519,8 @@
                 </RelativeLayout>
 
                 <ImageView
-                    android:id="@+id/prev_hospitalizations_divider"
                     style="@style/FullHorizontalDividerStyle"
                     app:goneIfEmpty="@{previousHospitalizationList}"/>
-
-                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -533,6 +532,10 @@
                     app:entries="@{previousHospitalizationList}"
                     app:layout="@{@layout/row_case_previous_hospitalization_layout}"
                     app:bindCallback="@{previousHospitalizationBindCallback}" />
+
+                </LinearLayout>
+
+
 
             </LinearLayout>
 

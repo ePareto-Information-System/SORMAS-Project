@@ -508,7 +508,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		});
 		contentBinding.caseDataDisease.setEnabled(false);
 
-		if (record.getDisease() ==Disease.MEASLES) {
+		if (record.getDisease() ==Disease.MEASLES || record.getDisease() == Disease.CORONAVIRUS) {
 			Set<VaccinationStatus> allowedVaccinations = EnumSet.of(
 					VaccinationStatus.VACCINATED,
 					VaccinationStatus.UNVACCINATED
@@ -890,6 +890,10 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			case NEONATAL_TETANUS:
 				handleNNT();
 				break;
+			case CORONAVIRUS:
+				handleCoronavirus();
+				contentBinding.caseDataVaccinationStatus.addValueChangedListener(field -> handleCoronavirus());
+				break;
 			default:
 				break;
 		}
@@ -1014,6 +1018,29 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
 		} else {
 			getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
+		}
+	}
+
+//	handleCoronavirus
+	private void handleCoronavirus() {
+		if (getContentBinding().caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED) {
+			getContentBinding().caseDataVaccinationType.setVisibility(VISIBLE);
+			getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
+			getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
+			getContentBinding().caseDataSecondVaccinationDate.setVisibility(VISIBLE);
+		} else {
+			getContentBinding().caseDataVaccinationType.setVisibility(GONE);
+			getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
+			getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
+			getContentBinding().caseDataSecondVaccinationDate.setVisibility(GONE);
+		}
+
+		if (getContentBinding().caseDataVaccinationType.getValue() == CardOrHistory.CARD) {
+			getContentBinding().caseDataVaccinationDate.setEnabled(true);
+			getContentBinding().caseDataSecondVaccinationDate.setEnabled(true);
+		} else {
+			getContentBinding().caseDataVaccinationDate.setEnabled(false);
+			getContentBinding().caseDataSecondVaccinationDate.setEnabled(false);
 		}
 	}
 
