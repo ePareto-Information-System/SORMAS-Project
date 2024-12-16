@@ -82,6 +82,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 
 	private EpiData record;
 	private Disease caseDisease;
+	private static Disease exportedCaseDisease;
 	private IEntryItemOnClickListener onExposureItemClickListener;
 	private IEntryItemOnClickListener onActivityAsCaseItemClickListener;
 	private IEntryItemOnClickListener onPersonTravelHistoryItemClickListener;
@@ -270,6 +271,14 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 
 	}
 
+	public static Disease getExportedCaseDisease() {
+		return exportedCaseDisease;
+	}
+
+	public void setExportedCaseDisease(Disease exportedCaseDisease) {
+		EpidemiologicalDataEditFragment.exportedCaseDisease = exportedCaseDisease;
+	}
+
 	private ObservableArrayList<Exposure> getExposureList() {
 		ObservableArrayList<Exposure> exposures = new ObservableArrayList<>();
 		exposures.addAll(record.getExposures());
@@ -401,6 +410,7 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	protected void prepareFragmentData() {
 		record = getEpiDataOfCaseOrContact(getActivityRootData());
 		caseDisease = getDiseaseOfCaseOrContact(getActivityRootData());
+		setExportedCaseDisease(caseDisease);
 		initialRegionsList = InfrastructureDaoHelper.loadRegionsByServerCountry();
 		initialDistrictsList = InfrastructureDaoHelper.loadDistricts(record.getHistoryOfTravelRegion());
 		initialCommunitiesList = InfrastructureDaoHelper.loadCommunities(record.getHistoryOfTravelDistrict());
