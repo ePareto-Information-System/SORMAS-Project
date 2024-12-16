@@ -55,6 +55,7 @@ import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.hospitalization.Hospitalization;
 import de.symeda.sormas.app.backend.hospitalization.PreviousHospitalization;
+import de.symeda.sormas.app.backend.location.Location;
 import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.District;
 import de.symeda.sormas.app.backend.region.Region;
@@ -255,7 +256,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 				false);
 
 		if (disease == Disease.MONKEYPOX) {
-			Region responsibleRegion = caze.getResponsibleRegion();
+			/*Region responsibleRegion = caze.getResponsibleRegion();
 			District responsibleDistrict = caze.getResponsibleDistrict();
 			Community responsibleCommunity = caze.getResponsibleCommunity();
 
@@ -273,7 +274,22 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 					contentBinding.locationTypeCommunity,
 					initialPlaceOfCommunities,
 					responsibleCommunity != null ? responsibleCommunity : locationTypeCommunity
-			);
+			);*/
+//			if (record.getLocationType() == null){
+//				record.setLocationType(new Location());
+//			}
+
+			InfrastructureFieldsDependencyHandler.instance.initializeRegionFields(
+					contentBinding.locationTypeRegion,
+					initialPlaceOfRegions,
+					record.getLocationType().getRegion(),
+					contentBinding.locationTypeDistrict,
+					initialPlaceOfDistricts,
+					record.getLocationType().getDistrict(),
+					contentBinding.locationTypeCommunity,
+					initialPlaceOfCommunities,
+					record.getLocationType().getCommunity());
+
 
 			if (contentBinding.caseHospitalizationAdmittedToHealthFacilityNew.getValue() == null) {
 				contentBinding.locationTypeRegion.setVisibility(View.GONE);
@@ -303,6 +319,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 			});
 
 		}
+
 
 		if (disease != null) {
 			hideFieldsForDisease(disease, contentBinding.mainContent, FormType.HOSPITALIZATION_EDIT);
@@ -357,6 +374,9 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 			case GUINEA_WORM:
 				handleGuineaWorm();
 				contentBinding.caseHospitalizationAdmittedToHealthFacility.addValueChangedListener(field -> handleGuineaWorm());
+				break;
+			case YELLOW_FEVER:
+				handleYF();
 				break;
 			default:
 		}
@@ -477,6 +497,10 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 			 getContentBinding().caseHospitalizationDischargeDate.setVisibility(GONE);
 			 getContentBinding().caseHospitalizationHospitalRecordNumber.setVisibility(GONE);
 		 }
+	}
+
+	private void handleYF(){
+		getContentBinding().caseHospitalizationDateFirstSeen.setCaption("DATE SEEN AT HEALTH FACILITY");
 	}
 
 

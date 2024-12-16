@@ -25,6 +25,8 @@ import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.facility.FacilityDtoHelper;
+import de.symeda.sormas.app.backend.location.Location;
+import de.symeda.sormas.app.backend.location.LocationDtoHelper;
 import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.CommunityDtoHelper;
 import de.symeda.sormas.app.backend.region.District;
@@ -35,6 +37,8 @@ import de.symeda.sormas.app.rest.NoConnectionException;
 import retrofit2.Call;
 
 public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, HospitalizationDto> {
+
+	private LocationDtoHelper locationDtoHelper = new LocationDtoHelper();
 
 	private PreviousHospitalizationDtoHelper previousHospitalizationDtoHelper;
 
@@ -129,6 +133,7 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		a.setLabTestConducted(b.getLabTestConducted());
 		a.setTypeOfSample(b.getTypeOfSample());
 		a.setAgentIdentified(b.getAgentIdentified());
+		a.setLocationType(locationDtoHelper.fillOrCreateFromDto(a.getLocationType(), b.getLocationType()));
 
 	}
 
@@ -212,6 +217,13 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		a.setLabTestConducted(b.getLabTestConducted());
 		a.setTypeOfSample(b.getTypeOfSample());
 		a.setAgentIdentified(b.getAgentIdentified());
+
+		if (b.getLocationType() != null) {
+			Location location = DatabaseHelper.getLocationDao().queryForId(b.getLocationType().getId());
+			a.setLocationType(locationDtoHelper.adoToDto(location));
+		} else {
+			b.setLocationType(null);
+		}
 	}
 
     @Override
