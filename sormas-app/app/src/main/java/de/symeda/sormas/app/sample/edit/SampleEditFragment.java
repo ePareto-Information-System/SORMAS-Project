@@ -73,6 +73,7 @@ import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.api.utils.ExamResult;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.sample.FinalClassification;
+import de.symeda.sormas.app.util.DiseaseConfigurationCache;
 
 public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayoutBinding, Sample, Sample> {
 
@@ -193,7 +194,9 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		labList = DatabaseHelper.getFacilityDao().getActiveLaboratories(true);
 		samplePurposeList = DataUtils.getEnumItems(SamplePurpose.class, true);
 		samplingReasonList = DataUtils.getEnumItems(SamplingReason.class, true, getFieldVisibilityCheckers());
-		suspectedList = DataUtils.getEnumItems(Disease.class, true);
+
+		List<Disease> diseases = DiseaseConfigurationCache.getInstance().getAllDiseases(true, true, true);
+		suspectedList = DataUtils.toItems(diseases);
 		posNegList = DataUtils.getEnumItems(PosNegEq.class, true);
 		posNegEqList = DataUtils.getEnumItems(PosNegEq.class, true);
 		posNegList.remove(new Item<>(PosNegEq.EQU.toString(), PosNegEq.EQU));
@@ -548,7 +551,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	}
 
 	private void handleIDSR() {
-		List<Disease> idsrSuspectedList = Arrays.asList(
+	/*	List<Disease> idsrSuspectedList = Arrays.asList(
 				Disease.AHF,
 				Disease.AFP,
 				Disease.CORONAVIRUS,
@@ -559,7 +562,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 				Disease.EVD,
 				Disease.FOODBORNE_ILLNESS
 		);
-		getContentBinding().sampleSuspectedDisease.initializeSpinner(DataUtils.toItems(idsrSuspectedList));
+		getContentBinding().sampleSuspectedDisease.initializeSpinner(DataUtils.toItems(idsrSuspectedList));*/
 
 		List<SampleMaterial> idsrSampleMaterialList = Arrays.asList(
 				SampleMaterial.BLOOD,
