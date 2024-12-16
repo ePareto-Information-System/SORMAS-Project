@@ -1449,26 +1449,6 @@
                     style="@style/SubHeadingStyle" />
 
                 <LinearLayout
-                    android:id="@+id/gps_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <de.symeda.sormas.app.component.controls.ControlTextEditField
-                        android:id="@+id/caseData_reportLon"
-                        style="@style/ControlFirstOfTwoColumnsStyle"
-                        app:inputType="number"
-                        app:value="@={data.reportLon}" />
-
-                    <de.symeda.sormas.app.component.controls.ControlTextEditField
-                        android:id="@+id/caseData_reportLat"
-                        style="@style/ControlSecondOfTwoColumnsStyle"
-                        app:inputType="number"
-                        app:value="@={data.reportLat}" />
-
-                </LinearLayout>
-
-                <LinearLayout
                     android:id="@+id/nationalityEthnicty_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
