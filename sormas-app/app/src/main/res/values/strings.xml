@@ -203,7 +203,7 @@
     <string name="caption_ebs_information">Signal Information</string>
     <string name="caption_triaging_information">Triaging</string>
     <string name="caption_signal_verification">Signal Verification</string>
-    <string name="caption_risk_assessment">RiskAssessment</string>
+    <string name="caption_risk_assessment">Risk Assessment</string>
     <string name="caption_ebs_alert">Ebs Alert</string>
     <string name="caption_event_participants">Persons Involved</string>
     <string name="caption_event_participant_immunizations">Event participant Immunizations</string>
