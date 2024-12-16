@@ -40,6 +40,13 @@ public class PatientSymptomsPrecedenceDialog extends FormDialog {
         this.create = create;
     }
 
+    private void setUpHeadingVisibilities() {
+    }
+
+    public PatientSymptomsPrecedence getData() {
+        return data;
+    }
+
     @Override
     protected void setContentBinding(Context context, ViewDataBinding binding, String layoutName) {
         contentBinding = (DialogPatientSymptomsPrecedenceEditLayoutBinding) binding;
@@ -49,12 +56,19 @@ public class PatientSymptomsPrecedenceDialog extends FormDialog {
     @Override
     protected void initializeContentView(ViewDataBinding rootBinding, ViewDataBinding buttonPanelBinding) {
 
+        if (data.getId() == null) {
+            setLiveValidationDisabled(true);
+        }
     }
 
     @Override
     protected void onPositiveClick() {
+        setLiveValidationDisabled(false);
         try {
             FragmentValidator.validate(getContext(), contentBinding);
+            this.data.setName(contentBinding.patientSymptomsPrecedenceName.getValue());
+            this.data.setContactAddress(contentBinding.patientSymptomsPrecedenceContactAddress.getValue());
+            this.data.setPhone(contentBinding.patientSymptomsPrecedencePhone.getValue());
         } catch (ValidationException e) {
             NotificationHelper.showDialogNotification(PatientSymptomsPrecedenceDialog.this, ERROR, e.getMessage());
             return;

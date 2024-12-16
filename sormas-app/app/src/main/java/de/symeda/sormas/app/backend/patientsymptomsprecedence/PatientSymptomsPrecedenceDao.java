@@ -22,7 +22,6 @@ public class PatientSymptomsPrecedenceDao  extends AbstractAdoDao<PatientSymptom
     @Override
     public PatientSymptomsPrecedence build() {
         PatientSymptomsPrecedence patientSymptomsPrecedence = super.build();
-        patientSymptomsPrecedence.setName("PATIENT");
         return patientSymptomsPrecedence;
     }
 
