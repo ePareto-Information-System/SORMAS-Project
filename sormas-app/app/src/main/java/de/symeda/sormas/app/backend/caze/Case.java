@@ -30,6 +30,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import de.symeda.sormas.api.Disease;
@@ -545,6 +547,24 @@ public class Case extends PseudonymizableAdo {
 	private String familyLinkWithPatient;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String nameOfVillagePersonGotIll;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String addressMpox;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String village;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String city;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String nationality;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String ethnicity;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String occupation;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private Region regionOfResidence;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private District districtOfResidence;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String investigationOfficerAddress;
 
 	public boolean isUnreferredPortHealthCase() {
 		return caseOrigin == CaseOrigin.POINT_OF_ENTRY && healthFacility == null;
@@ -1927,4 +1947,76 @@ public class Case extends PseudonymizableAdo {
 	public void setNameOfVillagePersonGotIll(String nameOfVillagePersonGotIll) {
 		this.nameOfVillagePersonGotIll = nameOfVillagePersonGotIll;
 	}
+
+	public String getAddressMpox() {
+		return addressMpox;
+	}
+
+	public void setAddressMpox(String addressMpox) {
+		this.addressMpox = addressMpox;
+	}
+
+	public String getVillage() {
+		return village;
+	}
+
+	public void setVillage(String village) {
+		this.village = village;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getNationality() {
+		return nationality;
+	}
+
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
+
+	public String getEthnicity() {
+		return ethnicity;
+	}
+
+	public void setEthnicity(String ethnicity) {
+		this.ethnicity = ethnicity;
+	}
+
+	public String getOccupation() {
+		return occupation;
+	}
+
+	public void setOccupation(String occupation) {
+		this.occupation = occupation;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	public Region getRegionOfResidence() {
+		return regionOfResidence;
+	}
+
+	public void setRegionOfResidence(Region regionOfResidence) {
+		this.regionOfResidence = regionOfResidence;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	public District getDistrictOfResidence() {
+		return districtOfResidence;
+	}
+
+	public void setDistrictOfResidence(District districtOfResidence) {
+		this.districtOfResidence = districtOfResidence;
+	}
+	public String getInvestigationOfficerAddress() {return investigationOfficerAddress;}
+
+	public void setInvestigationOfficerAddress(String investigationOfficerAddress) {
+		this.investigationOfficerAddress = investigationOfficerAddress;
+	}
+
 }

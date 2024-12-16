@@ -315,6 +315,8 @@ public class SymptomsDtoHelper extends AdoDtoHelper<Symptoms, SymptomsDto> {
 		target.setTrimester(source.getTrimester());
 		target.setPostpartum(source.getPostpartum());
 		target.setPregnant(source.getPregnant());
+		target.setDateOfDeath(source.getDateOfDeath());
+		target.setPlaceOfDeath(source.getPlaceOfDeath());
 //		target.setHealthConditions(healthConditionsDtoHelper.fillOrCreateFromDto(target.getHealthConditions(), source.getHealthConditions()));
 		target.setPseudonymized(source.isPseudonymized());
 	}
@@ -580,6 +582,8 @@ public class SymptomsDtoHelper extends AdoDtoHelper<Symptoms, SymptomsDto> {
 		target.setTrimester(source.getTrimester());
 		target.setPostpartum(source.getPostpartum());
 		target.setPregnant(source.getPregnant());
+		target.setDateOfDeath(source.getDateOfDeath());
+		target.setPlaceOfDeath(source.getPlaceOfDeath());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}

@@ -30,6 +30,7 @@ public enum FormType {
     PORT_HEALTH_INFO_EDIT,
     MATERNAL_HISTORY_EDIT,
     EVENT_EDIT,
+    EPI_LOCATION_EDIT,
     INVESTIGATION_NOTES_EDIT;
 
     @Override

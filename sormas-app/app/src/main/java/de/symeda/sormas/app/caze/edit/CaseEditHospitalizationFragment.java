@@ -55,6 +55,9 @@ import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.hospitalization.Hospitalization;
 import de.symeda.sormas.app.backend.hospitalization.PreviousHospitalization;
+import de.symeda.sormas.app.backend.region.Community;
+import de.symeda.sormas.app.backend.region.District;
+import de.symeda.sormas.app.backend.region.Region;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.core.IEntryItemOnClickListener;
 import de.symeda.sormas.app.databinding.FragmentCaseEditHospitalizationLayoutBinding;
@@ -250,6 +253,56 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 				record.getNameOfFacility(),
 				null,
 				false);
+
+		if (disease == Disease.MONKEYPOX) {
+			Region responsibleRegion = caze.getResponsibleRegion();
+			District responsibleDistrict = caze.getResponsibleDistrict();
+			Community responsibleCommunity = caze.getResponsibleCommunity();
+
+			Region locationTypeRegion = record.getLocationType() != null ? record.getLocationType().getRegion() : null;
+			District locationTypeDistrict = record.getLocationType() != null ? record.getLocationType().getDistrict() : null;
+			Community locationTypeCommunity = record.getLocationType() != null ? record.getLocationType().getCommunity() : null;
+
+			InfrastructureFieldsDependencyHandler.instance.initializeRegionFields(
+					contentBinding.locationTypeRegion,
+					initialPlaceOfRegions,
+					responsibleRegion != null ? responsibleRegion : locationTypeRegion,
+					contentBinding.locationTypeDistrict,
+					initialPlaceOfDistricts,
+					responsibleDistrict != null ? responsibleDistrict : locationTypeDistrict,
+					contentBinding.locationTypeCommunity,
+					initialPlaceOfCommunities,
+					responsibleCommunity != null ? responsibleCommunity : locationTypeCommunity
+			);
+
+			if (contentBinding.caseHospitalizationAdmittedToHealthFacilityNew.getValue() == null) {
+				contentBinding.locationTypeRegion.setVisibility(View.GONE);
+				contentBinding.locationTypeDistrict.setVisibility(View.GONE);
+				contentBinding.locationTypeCommunity.setVisibility(View.GONE);
+				contentBinding.caseHospitalizationNameOfFacility.setVisibility(View.GONE);
+				contentBinding.caseHospitalizationAdmissionDate.setVisibility(View.GONE);
+				contentBinding.caseHospitalizationHospitalRecordNumber.setVisibility(View.GONE);
+			} else {
+				int visibility = (contentBinding.caseHospitalizationAdmittedToHealthFacilityNew.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
+				contentBinding.locationTypeRegion.setVisibility(visibility);
+				contentBinding.locationTypeDistrict.setVisibility(visibility);
+				contentBinding.locationTypeCommunity.setVisibility(visibility);
+				contentBinding.caseHospitalizationNameOfFacility.setVisibility(visibility);
+				contentBinding.caseHospitalizationAdmissionDate.setVisibility(visibility);
+				contentBinding.caseHospitalizationHospitalRecordNumber.setVisibility(visibility);
+			}
+
+			contentBinding.caseHospitalizationAdmittedToHealthFacilityNew.addValueChangedListener(field -> {
+				int visibility = (field.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
+				contentBinding.locationTypeRegion.setVisibility(visibility);
+				contentBinding.locationTypeDistrict.setVisibility(visibility);
+				contentBinding.locationTypeCommunity.setVisibility(visibility);
+				contentBinding.caseHospitalizationNameOfFacility.setVisibility(visibility);
+				contentBinding.caseHospitalizationAdmissionDate.setVisibility(visibility);
+				contentBinding.caseHospitalizationHospitalRecordNumber.setVisibility(visibility);
+			});
+
+		}
 
 		if (disease != null) {
 			hideFieldsForDisease(disease, contentBinding.mainContent, FormType.HOSPITALIZATION_EDIT);

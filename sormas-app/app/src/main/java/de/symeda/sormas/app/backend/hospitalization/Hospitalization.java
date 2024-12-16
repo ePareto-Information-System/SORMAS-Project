@@ -49,6 +49,7 @@ import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
 import de.symeda.sormas.app.backend.facility.Facility;
+import de.symeda.sormas.app.backend.location.Location;
 import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.District;
 import de.symeda.sormas.app.backend.region.Region;
@@ -171,6 +172,9 @@ public class Hospitalization extends AbstractDomainObject {
 	private String typeOfSample;
 	@Column(columnDefinition = "text")
 	private String agentIdentified;
+
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "locationtype_id")
+	private Location locationType;
 
 
 	public Date getAdmissionDate() {
@@ -586,5 +590,13 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setAgentIdentified(String agentIdentified) {
 		this.agentIdentified = agentIdentified;
+	}
+
+	public Location getLocationType() {
+		return locationType;
+	}
+
+	public void setLocationType(Location locationType) {
+		this.locationType = locationType;
 	}
 }
