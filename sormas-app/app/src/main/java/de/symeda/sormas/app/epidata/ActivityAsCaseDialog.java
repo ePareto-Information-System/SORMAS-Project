@@ -12,6 +12,8 @@ import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.FragmentActivity;
 
 import de.symeda.sormas.api.CountryHelper;
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseType;
 import de.symeda.sormas.api.event.MeansOfTransport;
@@ -41,6 +43,7 @@ import de.symeda.sormas.app.component.dialog.LocationDialog;
 import de.symeda.sormas.app.component.validation.FragmentValidator;
 import de.symeda.sormas.app.core.notification.NotificationHelper;
 import de.symeda.sormas.app.databinding.DialogActivityAsCaseEditLayoutBinding;
+import de.symeda.sormas.app.person.edit.PersonEditFragment;
 import de.symeda.sormas.app.util.DataUtils;
 
 import static de.symeda.sormas.app.core.notification.NotificationType.ERROR;
@@ -67,11 +70,12 @@ public class ActivityAsCaseDialog extends FormDialog {
 		this.create = create;
 	}
 
-	private void openAddressPopup() {
+	private void openAddressPopup(Disease caseDisease) {
 		final Location location = (Location) contentBinding.activityAsCaseLocation.getValue();
 		final Location locationClone = (Location) location.clone();
 		final LocationDialog locationDialog = new LocationDialog(BaseActivity.getActiveActivity(), locationClone, fieldAccessCheckers);
 		locationDialog.show();
+		locationDialog.showHideFieldsForDisease(caseDisease, FormType.EPI_LOCATION_EDIT);
 		locationDialog.setFacilityFieldsVisible(TypeOfPlace.isFacilityType(data.getTypeOfPlace()), true);
 		locationDialog.updateContinentFieldsVisibility();
 
@@ -129,8 +133,7 @@ public class ActivityAsCaseDialog extends FormDialog {
 					? I18nProperties.getCaption(Captions.activityAsCaseFlightNumber)
 					: I18nProperties.getPrefixCaption(ActivityAsCaseDto.I18N_PREFIX, ActivityAsCaseDto.CONNECTION_NUMBER));
 		});
-
-		contentBinding.activityAsCaseLocation.setOnClickListener(v -> openAddressPopup());
+		contentBinding.activityAsCaseLocation.setOnClickListener(v -> openAddressPopup(EpidemiologicalDataEditFragment.getExportedCaseDisease()));
 
 		setFieldVisibilitiesAndAccesses(ActivityAsCaseDto.class, (ViewGroup) getRootView());
 
