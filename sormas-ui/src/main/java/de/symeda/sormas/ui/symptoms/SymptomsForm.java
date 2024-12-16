@@ -355,7 +355,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		HealthConditionsForm healthConditionsForm = addField(HEALTH_CONDITIONS, HealthConditionsForm.class);
 		healthConditionsForm.setCaption("");
 		healthConditionsForm.setVisible(false);
-		healthConditionsForm.setValue(caze.getHealthConditions());
 
 		addField(TRIMESTER, NullableOptionGroup.class);
 		addField(PREGNANT, NullableOptionGroup.class);
