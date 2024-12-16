@@ -489,6 +489,9 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			case CHOLERA:
 				handleCholera();
 				break;
+			case MONKEYPOX:
+				handleMpox();
+				break;
 			default:
 		}
 
@@ -589,6 +592,16 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		List<Item> compatibleItems = DataUtils.toItems(new ArrayList<>(PathogenTestType.getMeaslesTestTypes()));
 		compatibleItems.removeIf(item -> item == null || item.toString().isEmpty()); // Remove empty names
 		getContentBinding().sampleRequestedPathogenTests.initializeCheckBoxGroup(compatibleItems);
+	}
+
+	private void handleMpox(){
+		List<SampleMaterial> idsrSampleMaterialList = Arrays.asList(
+				SampleMaterial.BLOOD,
+				SampleMaterial.CRUST,
+				SampleMaterial.SWAB
+		);
+
+		getContentBinding().sampleSampleMaterial.initializeSpinner(DataUtils.toItems(idsrSampleMaterialList));
 	}
 
 	private void handleAHF() {

@@ -175,6 +175,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	public static final String MPOX_LAYOUT = loc(HOSPITALIZATION_HEADING_LOC) +
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY_NEW) +
 			fluidRowLocs(HospitalizationDto.LOCATION_TYPE) +
+			fluidRowLocs(HospitalizationDto.SOUGHT_REGION, HospitalizationDto.SOUGHT_DISTRICT, HospitalizationDto.SOUGHT_COMMUNITY)+
 			fluidRowLocs(6,HospitalizationDto.NAME_OF_FACILITY)+
 			fluidRowLocs(HospitalizationDto.HOSPITAL_RECORD_NUMBER, HospitalizationDto.ADMISSION_DATE);
 
@@ -625,7 +626,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			FieldHelper.setVisibleWhen(soughtMedicalAttentionField, Arrays.asList(soughtRegion, soughtDistrict, soughtCommunity), Arrays.asList(YesNo.YES), true);
 
 		}
-		
+
 		if(caze.getDisease() == Disease.MONKEYPOX){
 			addField(HospitalizationDto.LOCATION_TYPE, addressForm);
 			addressForm.setCaption(null);
@@ -637,6 +638,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 					Arrays.asList(YesNo.YES),
 					false
 			);
+
 		}
 
 		if (caze.getDisease() == Disease.GUINEA_WORM) {

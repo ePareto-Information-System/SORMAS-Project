@@ -17,12 +17,14 @@ package de.symeda.sormas.app.backend.riskfactor;
 
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +46,7 @@ import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.containmentmeasure.ContainmentMeasure;
 import de.symeda.sormas.app.backend.contaminationsource.ContaminationSource;
 import de.symeda.sormas.app.backend.exposure.Exposure;
+import de.symeda.sormas.app.backend.patientsymptomsprecedence.PatientSymptomsPrecedence;
 import de.symeda.sormas.app.backend.persontravelhistory.PersonTravelHistory;
 import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.District;
@@ -125,6 +128,28 @@ public class RiskFactor extends PseudonymizableAdo {
 	private YesNo threeDaysPriorToDiseaseAttendAnySocialEvent;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String otherSocialEventDetails;
+	@Enumerated(EnumType.STRING)
+	private YesNo patientSpoxVaccinationScarPresent;
+	@Enumerated(EnumType.STRING)
+	private YesNo patientTravelledAnywhere3WeeksPrior;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String patientTravelled3WeeksIfYesIndicate;
+	@Enumerated(EnumType.STRING)
+	private YesNo patientTravelledPeriodOfIllness;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String patientTravelledIllnessIfYesIndicate;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String otherPlaces;
+	@Enumerated(EnumType.STRING)
+	private YesNo during3WeeksPatientContactWithSimilarSymptoms;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateOfContactWithIllPerson;
+	@Enumerated(EnumType.STRING)
+	private YesNo patientTouchDomesticWildAnimal;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String patientTouchDomesticWildAnimalIfYes;
+
+	private List<PatientSymptomsPrecedence> patientSymptomsPrecedences = new ArrayList<>();
 
 	public String getDrinkingWaterSourceOne() {
 		return drinkingWaterSourceOne;
@@ -389,6 +414,94 @@ public class RiskFactor extends PseudonymizableAdo {
 	public void setOtherSocialEventDetails(String otherSocialEventDetails) {
 		this.otherSocialEventDetails = otherSocialEventDetails;
 	}
+
+	public YesNo getPatientSpoxVaccinationScarPresent() {
+		return patientSpoxVaccinationScarPresent;
+	}
+
+	public void setPatientSpoxVaccinationScarPresent(YesNo patientSpoxVaccinationScarPresent) {
+		this.patientSpoxVaccinationScarPresent = patientSpoxVaccinationScarPresent;
+	}
+
+	public YesNo getPatientTravelledAnywhere3WeeksPrior() {
+		return patientTravelledAnywhere3WeeksPrior;
+	}
+
+	public void setPatientTravelledAnywhere3WeeksPrior(YesNo patientTravelledAnywhere3WeeksPrior) {
+		this.patientTravelledAnywhere3WeeksPrior = patientTravelledAnywhere3WeeksPrior;
+	}
+
+	public String getPatientTravelled3WeeksIfYesIndicate() {
+		return patientTravelled3WeeksIfYesIndicate;
+	}
+
+	public void setPatientTravelled3WeeksIfYesIndicate(String patientTravelled3WeeksIfYesIndicate) {
+		this.patientTravelled3WeeksIfYesIndicate = patientTravelled3WeeksIfYesIndicate;
+	}
+
+	public YesNo getPatientTravelledPeriodOfIllness() {
+		return patientTravelledPeriodOfIllness;
+	}
+
+	public void setPatientTravelledPeriodOfIllness(YesNo patientTravelledPeriodOfIllness) {
+		this.patientTravelledPeriodOfIllness = patientTravelledPeriodOfIllness;
+	}
+
+	public String getPatientTravelledIllnessIfYesIndicate() {
+		return patientTravelledIllnessIfYesIndicate;
+	}
+
+	public void setPatientTravelledIllnessIfYesIndicate(String patientTravelledIllnessIfYesIndicate) {
+		this.patientTravelledIllnessIfYesIndicate = patientTravelledIllnessIfYesIndicate;
+	}
+
+	public String getOtherPlaces() {
+		return otherPlaces;
+	}
+
+	public void setOtherPlaces(String otherPlaces) {
+		this.otherPlaces = otherPlaces;
+	}
+
+	public YesNo getDuring3WeeksPatientContactWithSimilarSymptoms() {
+		return during3WeeksPatientContactWithSimilarSymptoms;
+	}
+
+	public void setDuring3WeeksPatientContactWithSimilarSymptoms(YesNo during3WeeksPatientContactWithSimilarSymptoms) {
+		this.during3WeeksPatientContactWithSimilarSymptoms = during3WeeksPatientContactWithSimilarSymptoms;
+	}
+
+	public Date getDateOfContactWithIllPerson() {
+		return dateOfContactWithIllPerson;
+	}
+
+	public void setDateOfContactWithIllPerson(Date dateOfContactWithIllPerson) {
+		this.dateOfContactWithIllPerson = dateOfContactWithIllPerson;
+	}
+
+	public YesNo getPatientTouchDomesticWildAnimal() {
+		return patientTouchDomesticWildAnimal;
+	}
+
+	public void setPatientTouchDomesticWildAnimal(YesNo patientTouchDomesticWildAnimal) {
+		this.patientTouchDomesticWildAnimal = patientTouchDomesticWildAnimal;
+	}
+
+	public String getPatientTouchDomesticWildAnimalIfYes() {
+		return patientTouchDomesticWildAnimalIfYes;
+	}
+
+	public void setPatientTouchDomesticWildAnimalIfYes(String patientTouchDomesticWildAnimalIfYes) {
+		this.patientTouchDomesticWildAnimalIfYes = patientTouchDomesticWildAnimalIfYes;
+	}
+
+	public List<PatientSymptomsPrecedence> getPatientSymptomsPrecedences() {
+		return patientSymptomsPrecedences;
+	}
+	public void setPatientSymptomsPrecedences(List<PatientSymptomsPrecedence> patientSymptomsPrecedences) {
+		this.patientSymptomsPrecedences = patientSymptomsPrecedences;
+	}
+
 
 	@Override
 	public String getI18nPrefix() {

@@ -20,9 +20,12 @@ import static android.view.View.VISIBLE;
 
 import android.view.View;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
@@ -311,6 +314,9 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 			case CSM:
 				handleCSM();
 				break;
+			case MONKEYPOX:
+				handleMPox();
+				break;
 			default:
 		}
 
@@ -427,6 +433,11 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		getContentBinding().pathogenTestSampleTestResultImmuno.setVisibility(isImmunoSelected ? View.VISIBLE : View.GONE);
 		getContentBinding().pathogenTestSampleTestResultImmunoDate.setVisibility(isImmunoSelected ? View.VISIBLE : View.GONE);
 	}
+
+	private void handleMPox() {
+		getContentBinding().pathogenTestTestDateTime.setEnabled(false);
+	}
+
 
 
 	private void handleILI(){
