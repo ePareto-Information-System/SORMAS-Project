@@ -426,11 +426,13 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 				&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
 			contentBinding.additionalTestingLayout.setVisibility(GONE);
 		}
-		contentBinding.sampleRequestedSampleMaterialsTags.setTags(requestedSampleMaterials);
+//		contentBinding.sampleRequestedSampleMaterialsTags.setTags(requestedSampleMaterials);
 
+		//Yellow Fever
 		List<SampleMaterial> allowedMaterials = Arrays.asList(
+				SampleMaterial.BLOOD,
 				SampleMaterial.SERUM,
-				SampleMaterial.PLASMA
+				SampleMaterial.POST_MORTEM_LIVER_SPECIMEN
 		);
 
 		List<Item> filteredSampleMaterialList = sampleMaterialList.stream()
