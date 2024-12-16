@@ -937,7 +937,6 @@
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/caseData_vaccinationStatus"
                     app:value="@={data.vaccinationStatus}"
-                    app:enumClass="@{vaccinationStatusClass}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
