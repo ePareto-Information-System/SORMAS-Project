@@ -20,12 +20,9 @@ import static android.view.View.VISIBLE;
 
 import android.view.View;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
@@ -359,9 +356,20 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		getContentBinding().pathogenTestTestedDisease.setEnabled(false);
 	}
 
-	private void handleIDSR(){
+	private void handleIDSR() {
+		// Disable the field
 		getContentBinding().pathogenTestTestedDisease.setEnabled(false);
+
+		Disease suspectedDisease = record.getSample().getSuspectedDisease();
+
+		if (suspectedDisease != null) {
+			List<Item> filteredDiseaseList = Collections.singletonList(DataUtils.toItem(suspectedDisease));
+
+			getContentBinding().pathogenTestTestedDisease.initializeSpinner(filteredDiseaseList);
+			getContentBinding().pathogenTestTestedDisease.setValue(suspectedDisease);
+		}
 	}
+
 
 	public List<FinalClassification> getDiseaseFinalClassifications(Disease disease) {
 		if (disease == null) {
