@@ -659,6 +659,58 @@ public class Symptoms extends PseudonymizableAdo {
 
 	@Enumerated(EnumType.STRING)
 	private YesNo pregnant;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown tuberculosis;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown asplenia;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown hepatitis;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown diabetes;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown hiv;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown hivArt;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown chronicLiverDisease;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown malignancyChemotherapy;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown chronicHeartFailure;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown chronicPulmonaryDisease;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown chronicKidneyDisease;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown chronicNeurologicCondition;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown downSyndrome;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown congenitalSyphilis;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown immunodeficiencyOtherThanHiv;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown cardiovascularDiseaseIncludingHypertension;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown obesity;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown currentSmoker;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown formerSmoker;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown asthma;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown sickleCellDisease;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown immunodeficiencyIncludingHiv;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown lungDisease;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown stroke;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown cancer;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String otherConditions;
 
 
 	@Override
@@ -2829,5 +2881,212 @@ public class Symptoms extends PseudonymizableAdo {
 	}
 	public void setOutcome(CaseOutcome outcome) {
 		this.outcome = outcome;
+	}
+	public YesNoUnknown getTuberculosis() {
+		return tuberculosis;
+	}
+
+	public void setTuberculosis(YesNoUnknown tuberculosis) {
+		this.tuberculosis = tuberculosis;
+	}
+
+	public YesNoUnknown getAsplenia() {
+		return asplenia;
+	}
+
+	public void setAsplenia(YesNoUnknown asplenia) {
+		this.asplenia = asplenia;
+	}
+
+	public YesNoUnknown getHepatitis() {
+		return hepatitis;
+	}
+
+	public void setHepatitis(YesNoUnknown hepatitis) {
+		this.hepatitis = hepatitis;
+	}
+
+	public YesNoUnknown getDiabetes() {
+		return diabetes;
+	}
+
+	public void setDiabetes(YesNoUnknown diabetes) {
+		this.diabetes = diabetes;
+	}
+
+	public YesNoUnknown getHiv() {
+		return hiv;
+	}
+
+	public void setHiv(YesNoUnknown hiv) {
+		this.hiv = hiv;
+	}
+
+	public YesNoUnknown getHivArt() {
+		return hivArt;
+	}
+
+	public void setHivArt(YesNoUnknown hivArt) {
+		this.hivArt = hivArt;
+	}
+
+	public YesNoUnknown getChronicLiverDisease() {
+		return chronicLiverDisease;
+	}
+
+	public void setChronicLiverDisease(YesNoUnknown chronicLiverDisease) {
+		this.chronicLiverDisease = chronicLiverDisease;
+	}
+
+	public YesNoUnknown getMalignancyChemotherapy() {
+		return malignancyChemotherapy;
+	}
+
+	public void setMalignancyChemotherapy(YesNoUnknown malignancyChemotherapy) {
+		this.malignancyChemotherapy = malignancyChemotherapy;
+	}
+
+	public YesNoUnknown getChronicHeartFailure() {
+		return chronicHeartFailure;
+	}
+
+	public void setChronicHeartFailure(YesNoUnknown chronicHeartFailure) {
+		this.chronicHeartFailure = chronicHeartFailure;
+	}
+
+	public YesNoUnknown getChronicPulmonaryDisease() {
+		return chronicPulmonaryDisease;
+	}
+
+	public void setChronicPulmonaryDisease(YesNoUnknown chronicPulmonaryDisease) {
+		this.chronicPulmonaryDisease = chronicPulmonaryDisease;
+	}
+
+	public YesNoUnknown getChronicKidneyDisease() {
+		return chronicKidneyDisease;
+	}
+
+	public void setChronicKidneyDisease(YesNoUnknown chronicKidneyDisease) {
+		this.chronicKidneyDisease = chronicKidneyDisease;
+	}
+
+	public YesNoUnknown getChronicNeurologicCondition() {
+		return chronicNeurologicCondition;
+	}
+
+	public void setChronicNeurologicCondition(YesNoUnknown chronicNeurologicCondition) {
+		this.chronicNeurologicCondition = chronicNeurologicCondition;
+	}
+
+	public YesNoUnknown getDownSyndrome() {
+		return downSyndrome;
+	}
+
+	public void setDownSyndrome(YesNoUnknown downSyndrome) {
+		this.downSyndrome = downSyndrome;
+	}
+
+	public YesNoUnknown getCongenitalSyphilis() {
+		return congenitalSyphilis;
+	}
+
+	public void setCongenitalSyphilis(YesNoUnknown congenitalSyphilis) {
+		this.congenitalSyphilis = congenitalSyphilis;
+	}
+
+	public YesNoUnknown getImmunodeficiencyOtherThanHiv() {
+		return immunodeficiencyOtherThanHiv;
+	}
+
+	public void setImmunodeficiencyOtherThanHiv(YesNoUnknown immunodeficiencyOtherThanHiv) {
+		this.immunodeficiencyOtherThanHiv = immunodeficiencyOtherThanHiv;
+	}
+
+	public YesNoUnknown getCardiovascularDiseaseIncludingHypertension() {
+		return cardiovascularDiseaseIncludingHypertension;
+	}
+
+	public void setCardiovascularDiseaseIncludingHypertension(YesNoUnknown cardiovascularDiseaseIncludingHypertension) {
+		this.cardiovascularDiseaseIncludingHypertension = cardiovascularDiseaseIncludingHypertension;
+	}
+
+	public YesNoUnknown getObesity() {
+		return obesity;
+	}
+
+	public void setObesity(YesNoUnknown obesity) {
+		this.obesity = obesity;
+	}
+
+	public YesNoUnknown getCurrentSmoker() {
+		return currentSmoker;
+	}
+
+	public void setCurrentSmoker(YesNoUnknown currentSmoker) {
+		this.currentSmoker = currentSmoker;
+	}
+
+	public YesNoUnknown getFormerSmoker() {
+		return formerSmoker;
+	}
+
+	public void setFormerSmoker(YesNoUnknown formerSmoker) {
+		this.formerSmoker = formerSmoker;
+	}
+
+	public YesNoUnknown getAsthma() {
+		return asthma;
+	}
+
+	public void setAsthma(YesNoUnknown asthma) {
+		this.asthma = asthma;
+	}
+
+	public YesNoUnknown getSickleCellDisease() {
+		return sickleCellDisease;
+	}
+
+	public void setSickleCellDisease(YesNoUnknown sickleCellDisease) {
+		this.sickleCellDisease = sickleCellDisease;
+	}
+
+	public YesNoUnknown getImmunodeficiencyIncludingHiv() {
+		return immunodeficiencyIncludingHiv;
+	}
+
+	public void setImmunodeficiencyIncludingHiv(YesNoUnknown immunodeficiencyIncludingHiv) {
+		this.immunodeficiencyIncludingHiv = immunodeficiencyIncludingHiv;
+	}
+
+	public YesNoUnknown getLungDisease() {
+		return lungDisease;
+	}
+
+	public void setLungDisease(YesNoUnknown lungDisease) {
+		this.lungDisease = lungDisease;
+	}
+
+	public YesNoUnknown getStroke() {
+		return stroke;
+	}
+
+	public void setStroke(YesNoUnknown stroke) {
+		this.stroke = stroke;
+	}
+
+	public YesNoUnknown getCancer() {
+		return cancer;
+	}
+
+	public void setCancer(YesNoUnknown cancer) {
+		this.cancer = cancer;
+	}
+
+	public String getOtherConditions() {
+		return otherConditions;
+	}
+
+	public void setOtherConditions(String otherConditions) {
+		this.otherConditions = otherConditions;
 	}
 }
