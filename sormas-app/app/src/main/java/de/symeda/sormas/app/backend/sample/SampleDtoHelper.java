@@ -121,6 +121,21 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setInputValuePrnt(source.getInputValuePrnt());
 		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
 		target.setHasSampleBeenCollected(source.getHasSampleBeenCollected());
+		target.setAppearanceOfCsf(source.getAppearanceOfCsf());
+		target.setInoculationTimeTransportMedia(source.getInoculationTimeTransportMedia());
+		target.setSampleSentToLab(source.getSampleSentToLab());
+		target.setDateSampleSentToLab(source.getDateSampleSentToLab());
+		target.setSampleContainerUsed(source.getSampleContainerUsed());
+		target.setContainerOther(source.getContainerOther());
+		target.setRdtPerformed(source.getRdtPerformed());
+		target.setRdtResults(source.getRdtResults());
+		target.setDistrictNotificationDate(source.getDistrictNotificationDate());
+		target.setNameOfPerson(source.getNameOfPerson());
+		target.setTelNumber(source.getTelNumber());
+		target.setDateFormSentToRegion(source.getDateFormSentToRegion());
+		target.setDateFormReceivedAtRegion(source.getDateFormReceivedAtRegion());
+		target.setDateFormSentToNational(source.getDateFormSentToNational());
+		target.setDateFormReceivedAtNational(source.getDateFormReceivedAtNational());
 
 		target.setSormasToSormasOriginInfo(
 			sormasToSormasOriginInfoDtoHelper.fillOrCreateFromDto(target.getSormasToSormasOriginInfo(), source.getSormasToSormasOriginInfo()));
