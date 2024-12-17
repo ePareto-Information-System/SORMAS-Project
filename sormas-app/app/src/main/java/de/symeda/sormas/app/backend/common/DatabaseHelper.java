@@ -316,6 +316,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.clearTable(connectionSource, InvestigationNotes.class);
 			TableUtils.clearTable(connectionSource, AfpImmunization.class);
 			TableUtils.clearTable(connectionSource, SixtyDay.class);
+			TableUtils.clearTable(connectionSource, PatientSymptomsPrecedence.class);
 
 			if (clearInfrastructure) {
 				TableUtils.clearTable(connectionSource, UserUserRole.class);
@@ -671,6 +672,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		return (AuditLogEntryDao) getAdoDao(AuditLogEntry.class);
 	}
 
+	public static PatientSymptomsPrecedenceDao getPatientSymptomsPrecedenceDao() {
+		return (PatientSymptomsPrecedenceDao) getAdoDao(PatientSymptomsPrecedence.class);
+	}
+
 	// TODO [vaccination info] integrate vaccination info
 //	public static VaccinationInfoDao getVaccinationInfoDao() {
 //		return (VaccinationInfoDao) getAdoDao(VaccinationInfo.class);
@@ -788,6 +793,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, InvestigationNotes.class);
 			TableUtils.createTable(connectionSource, AfpImmunization.class);
 			TableUtils.createTable(connectionSource, SixtyDay.class);
+			TableUtils.createTable(connectionSource, PatientSymptomsPrecedence.class);
 		} catch (SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Can't build database", e);
 			throw new RuntimeException(e);
@@ -5243,6 +5249,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.dropTable(connectionSource, ContainmentMeasure.class, true);
 			TableUtils.dropTable(connectionSource, AffectedPerson.class, true);
 			TableUtils.dropTable(connectionSource, SixtyDay.class, true);
+			TableUtils.dropTable(connectionSource, PatientSymptomsPrecedence.class, true);
 
 			if (oldVersion < 30) {
 				TableUtils.dropTable(connectionSource, Config.class, true);
@@ -5408,6 +5415,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					dao = (AbstractAdoDao<ADO>) new AfpImmunizationDao((Dao<AfpImmunization, Long>) innerDao);
 				} else if (type.equals(SixtyDay.class)) {
 					dao = (AbstractAdoDao<ADO>) new SixtyDayDao((Dao<SixtyDay, Long>) innerDao);
+				} else if (type.equals(PatientSymptomsPrecedence.class)) {
+					dao = (AbstractAdoDao<ADO>) new PatientSymptomsPrecedenceDao((Dao<PatientSymptomsPrecedence, Long>) innerDao);
 				} else {
 					throw new UnsupportedOperationException(type.toString());
 				}
