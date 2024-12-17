@@ -452,7 +452,7 @@ public class LocationDialog extends FormDialog {
 	 */
 
 	public void showHideFieldsForDisease(Disease caseDisease, FormType formType) {
-		if (caseDisease == null || contentBinding.mainContent == null) {
+		if (caseDisease == null) {
 			return;
 		}
 		super.hideFieldsForDisease(caseDisease, contentBinding.mainContent, formType);

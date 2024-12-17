@@ -50,6 +50,7 @@ import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.CsfAppearance;
+import de.symeda.sormas.api.utils.CsfReason;
 import de.symeda.sormas.api.utils.InjectionSite;
 import de.symeda.sormas.api.utils.SampleContainerUsed;
 import de.symeda.sormas.api.utils.YesNo;
@@ -73,6 +74,7 @@ import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.api.utils.ExamResult;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.sample.FinalClassification;
+import de.symeda.sormas.app.util.DiseaseConfigurationCache;
 
 public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayoutBinding, Sample, Sample> {
 
@@ -88,6 +90,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	private List<Facility> labList;
 	private List<Item> samplePurposeList;
 	private List<Item> samplingReasonList;
+	private List<Item> csfReasonList;
+	private List<Item> appearanceOfCsfList;
 	private List<String> requestedPathogenTests = new ArrayList<>();
 	private List<String> requestedSampleMaterials = new ArrayList<>();
 	private List<String> requestedAdditionalTests = new ArrayList<>();
@@ -193,7 +197,11 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		labList = DatabaseHelper.getFacilityDao().getActiveLaboratories(true);
 		samplePurposeList = DataUtils.getEnumItems(SamplePurpose.class, true);
 		samplingReasonList = DataUtils.getEnumItems(SamplingReason.class, true, getFieldVisibilityCheckers());
-		suspectedList = DataUtils.getEnumItems(Disease.class, true);
+		csfReasonList = DataUtils.getEnumItems(CsfReason.class, true, getFieldVisibilityCheckers());
+		appearanceOfCsfList = DataUtils.getEnumItems(CsfAppearance.class, true, getFieldVisibilityCheckers());
+
+		List<Disease> diseases = DiseaseConfigurationCache.getInstance().getAllDiseases(true, true, true);
+		suspectedList = DataUtils.toItems(diseases);
 		posNegList = DataUtils.getEnumItems(PosNegEq.class, true);
 		posNegEqList = DataUtils.getEnumItems(PosNegEq.class, true);
 		posNegList.remove(new Item<>(PosNegEq.EQU.toString(), PosNegEq.EQU));
@@ -258,6 +266,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		contentBinding.sampleSelectedResultIGM.initializeSpinner(posNegEqList);
 		contentBinding.sampleSelectedResultPcr.initializeSpinner(posNegList);
 		contentBinding.sampleSelectedResultPrnt.initializeSpinner(posNegList);
+		contentBinding.sampleAppearanceOfCsf.initializeSpinner(appearanceOfCsfList);
+		contentBinding.sampleCsfReason.initializeSpinner(csfReasonList);
 
 		// Initialize ControlDateFields and ControlDateTimeFields
 		contentBinding.sampleSampleDateTime.initializeDateTimeField(getFragmentManager());
@@ -423,11 +433,13 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 				&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
 			contentBinding.additionalTestingLayout.setVisibility(GONE);
 		}
-		contentBinding.sampleRequestedSampleMaterialsTags.setTags(requestedSampleMaterials);
+//		contentBinding.sampleRequestedSampleMaterialsTags.setTags(requestedSampleMaterials);
 
+		//Yellow Fever
 		List<SampleMaterial> allowedMaterials = Arrays.asList(
+				SampleMaterial.BLOOD,
 				SampleMaterial.SERUM,
-				SampleMaterial.PLASMA
+				SampleMaterial.POST_MORTEM_LIVER_SPECIMEN
 		);
 
 		List<Item> filteredSampleMaterialList = sampleMaterialList.stream()
@@ -489,6 +501,9 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			case CHOLERA:
 				handleCholera();
 				break;
+			case MONKEYPOX:
+				handleMpox();
+				break;
 			default:
 		}
 
@@ -545,7 +560,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	}
 
 	private void handleIDSR() {
-		List<Disease> idsrSuspectedList = Arrays.asList(
+	/*	List<Disease> idsrSuspectedList = Arrays.asList(
 				Disease.AHF,
 				Disease.AFP,
 				Disease.CORONAVIRUS,
@@ -556,7 +571,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 				Disease.EVD,
 				Disease.FOODBORNE_ILLNESS
 		);
-		getContentBinding().sampleSuspectedDisease.initializeSpinner(DataUtils.toItems(idsrSuspectedList));
+		getContentBinding().sampleSuspectedDisease.initializeSpinner(DataUtils.toItems(idsrSuspectedList));*/
 
 		List<SampleMaterial> idsrSampleMaterialList = Arrays.asList(
 				SampleMaterial.BLOOD,
@@ -589,6 +604,16 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		List<Item> compatibleItems = DataUtils.toItems(new ArrayList<>(PathogenTestType.getMeaslesTestTypes()));
 		compatibleItems.removeIf(item -> item == null || item.toString().isEmpty()); // Remove empty names
 		getContentBinding().sampleRequestedPathogenTests.initializeCheckBoxGroup(compatibleItems);
+	}
+
+	private void handleMpox(){
+		List<SampleMaterial> idsrSampleMaterialList = Arrays.asList(
+				SampleMaterial.BLOOD,
+				SampleMaterial.CRUST,
+				SampleMaterial.SWAB
+		);
+
+		getContentBinding().sampleSampleMaterial.initializeSpinner(DataUtils.toItems(idsrSampleMaterialList));
 	}
 
 	private void handleAHF() {

@@ -19,15 +19,23 @@ import android.content.res.Resources;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.caze.VaccinationStatus;
+import de.symeda.sormas.api.hospitalization.SymptomsList;
+import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.sample.IpSampleTestType;
+import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
 import de.symeda.sormas.api.symptoms.GuineaWormFirstSymptom;
 import de.symeda.sormas.api.symptoms.SymptomState;
@@ -35,6 +43,7 @@ import de.symeda.sormas.api.symptoms.SymptomsContext;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.symptoms.SymptomsHelper;
 import de.symeda.sormas.api.symptoms.TemperatureSource;
+import de.symeda.sormas.api.utils.BodyPart;
 import de.symeda.sormas.api.utils.DependantOn;
 import de.symeda.sormas.api.utils.InjectionSite;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -78,8 +87,6 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 	private List<Item> bodyTempList;
 	private List<Item> tempSourceList;
 	private List<Item> congenitalHeartDiseaseList;
-	private List<Item> caseOutcomeList;
-
 	private IEntryItemOnClickListener clearAllCallback;
 	private IEntryItemOnClickListener setClearedToNoCallback;
 	private IEntryItemOnClickListener setClearedToUnknownCallback;
@@ -171,10 +178,9 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		contentBinding.setClearAllCallback(clearAllCallback);
 		contentBinding.setSetClearedToNoCallback(setClearedToNoCallback);
 		contentBinding.setSetClearedToUnknownCallback(setClearedToUnknownCallback);
-		caseOutcomeList = DataUtils.getEnumItems(CaseOutcome.class, true);
-		contentBinding.symptomsOutcome.setSpinnerData(caseOutcomeList);
 		contentBinding.setYesNoUnknownClass(YesNoUnknown.class);
 		contentBinding.symptomsDateOnsetParalysis.initializeDateField(getFragmentManager());
+		contentBinding.symptomsDateOfDeath.initializeDateField(getFragmentManager());
 		injectionSiteList = DataUtils.getEnumItems(InjectionSite.class, true);
 		contentBinding.symptomsSiteOfParalysis.initializeCheckBoxGroup(injectionSiteList);
 
@@ -212,9 +218,9 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 
 		setFieldVisibilitiesAndAccesses(SymptomsDto.class, contentBinding.mainContent);
 
-		if (contentBinding.symptomsBulgingFontanelle.getVisibility() == VISIBLE && !isInfant) {
+		/*if (contentBinding.symptomsBulgingFontanelle.getVisibility() == VISIBLE && !isInfant) {
 			contentBinding.symptomsBulgingFontanelle.setVisibility(GONE);
-		}
+		}*/
 
 		contentBinding.symptomsOnsetDate.initializeDateField(getFragmentManager());
 		contentBinding.symptomsLesionsOnsetDate.initializeDateField(getFragmentManager());
@@ -225,10 +231,43 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		contentBinding.symptomsDateFirstWormEmergence.initializeDateField(getFragmentManager());
 		contentBinding.symptomsOutcome.initializeSpinner(outcomeList);
 		contentBinding.symptomsDateOfOnset.initializeDateField(getFragmentManager());
+		contentBinding.symptomsDateOfOnsetRash.initializeDateField(getFragmentManager());
 		contentBinding.symptomsTemperature.setSelectionOnOpen(37.0f);
+
 
 		initSymptomFields(contentBinding);
 		initOnsetSymptomField(contentBinding);
+
+		Set<SymptomsList> symptomList = Arrays.stream(SymptomsList.MpoxList())
+				.filter(c -> c != null)
+				.filter(c -> fieldVisibilityCheckers.isVisible(SymptomsList.class, c.name()))
+				.collect(Collectors.toSet());
+
+		List<Item> compatibleItems = DataUtils.toItems(new ArrayList<>(symptomList));
+		compatibleItems.removeIf(item -> item == null || item.toString().isEmpty());
+
+		contentBinding.symptomsSymptomsSelected.initializeCheckBoxGroup(compatibleItems);
+
+		contentBinding.symptomsSymptomsSelected.setOnValueChangeListener( field -> {
+			List<String> selectedValues = contentBinding.symptomsSymptomsSelected.getSelectedValues();
+
+			boolean other = selectedValues != null && selectedValues.contains("Other");
+			contentBinding.symptomsSymptomsSelectedOther.setVisibility(other ? View.VISIBLE : View.GONE);
+
+		});
+
+		List<Item> mainItems = DataUtils.getEnumItems(BodyPart.class);
+		mainItems.removeIf(item -> item == null || item.toString().isEmpty());
+
+		contentBinding.symptomsRashSymptoms.initializeCheckBoxGroup(mainItems);
+
+		contentBinding.symptomsRashSymptoms.setOnValueChangeListener( field -> {
+			List<String> selectedValues = contentBinding.symptomsRashSymptoms.getSelectedValues();
+
+			boolean otherRash = selectedValues != null && selectedValues.contains("Other");
+			contentBinding.symptomsRashSymptomsOtherAreas.setVisibility(otherRash ? View.VISIBLE : View.GONE);
+
+		});
 
 		// Remove the Complications heading for CRS; should be done automatically later
 		if (disease == Disease.CONGENITAL_RUBELLA||disease == Disease.MONKEYPOX) {
@@ -236,7 +275,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		}
 		//TODO: CHANGE FROM IF TO SWITCH AND REMOVE REDUNDANCY CODE
 
-		if (disease == Disease.YELLOW_FEVER || disease == Disease.AHF){
+		if (disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.MONKEYPOX){
 
 			Set<CaseOutcome> outcomesToRemove = Set.of(
 					CaseOutcome.NO_OUTCOME,
@@ -247,8 +286,22 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 					CaseOutcome.RECOVERED
 			);
 
-			contentBinding.symptomsOutcome.initializeSpinner(outcomeList);
 			outcomeList.removeIf(item -> outcomesToRemove.contains(item.getValue()));
+
+		}
+
+		if (disease == Disease.MONKEYPOX) {
+			contentBinding.symptomsOutcome.setCaption("Status of the Patient");
+
+			List<SymptomsList> rashSymptomsList = Arrays.asList(
+					SymptomsList.MACULAR,
+					SymptomsList.MACULOPAPULAR,
+					SymptomsList.VESICULAR,
+					SymptomsList.PAPULAR,
+					SymptomsList.PETECHIAL
+			);
+
+			contentBinding.symptomsTypeOfRash.initializeSpinner(DataUtils.toItems(rashSymptomsList));
 
 		}
 

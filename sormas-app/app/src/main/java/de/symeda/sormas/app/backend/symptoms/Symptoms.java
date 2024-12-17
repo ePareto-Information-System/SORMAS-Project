@@ -651,6 +651,10 @@ public class Symptoms extends PseudonymizableAdo {
 
 	@Enumerated(EnumType.STRING)
 	private YesNo pregnant;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dateOfDeath;
+	@Column
+	private String placeOfDeath;
 	@Enumerated(EnumType.STRING)
 	private YesNoUnknown tuberculosis;
 	@Enumerated(EnumType.STRING)
@@ -2915,6 +2919,22 @@ public class Symptoms extends PseudonymizableAdo {
 
 	public void setOutcome(CaseOutcome outcome) {
 		this.outcome = outcome;
+	}
+
+	public Date getDateOfDeath() {
+		return dateOfDeath;
+	}
+
+	public void setDateOfDeath(Date dateOfDeath) {
+		this.dateOfDeath = dateOfDeath;
+	}
+
+	public String getPlaceOfDeath() {
+		return placeOfDeath;
+	}
+
+	public void setPlaceOfDeath(String placeOfDeath) {
+		this.placeOfDeath = placeOfDeath;
 	}
 	public YesNoUnknown getTuberculosis() {
 		return tuberculosis;

@@ -1,6 +1,9 @@
 package de.symeda.sormas.api.riskfactor;
 
+import de.symeda.sormas.api.ImportIgnore;
+import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.epidata.ContainmentMeasureDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.sample.SpecimenCondition;
@@ -539,6 +542,7 @@ public class RiskFactorDto extends PseudonymizableDto {
         this.email = email;
     }
 
+    @ImportIgnore
     public List<PatientSymptomsPrecedenceDto> getPatientSymptomsPrecedence() {
         return patientSymptomsPrecedence;
     }
@@ -552,8 +556,8 @@ public class RiskFactorDto extends PseudonymizableDto {
         RiskFactorDto clone = (RiskFactorDto) super.clone();
 
         List<PatientSymptomsPrecedenceDto> patientSymptomsPrecedenceDtos = new ArrayList<>();
-        for (PatientSymptomsPrecedenceDto patientSymptomsPrecedenceDto : getPatientSymptomsPrecedence()) {
-            patientSymptomsPrecedenceDtos.add(patientSymptomsPrecedenceDto.clone());
+        for (PatientSymptomsPrecedenceDto patientSymptomsPrecedence : getPatientSymptomsPrecedence()) {
+            patientSymptomsPrecedenceDtos.add(patientSymptomsPrecedence.clone());
         }
         clone.getPatientSymptomsPrecedence().clear();
         clone.getPatientSymptomsPrecedence().addAll(patientSymptomsPrecedenceDtos);

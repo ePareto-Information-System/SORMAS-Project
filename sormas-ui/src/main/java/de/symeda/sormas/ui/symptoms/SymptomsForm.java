@@ -265,7 +265,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			fluidRowLocs(ARE_ULCERS_AMONG_LESIONS)+
 			fluidRowLocs(6, TYPE_OF_RASH) +
 			loc(PATIENT_STATUS) +
-			fluidRowLocs(6, STATUS_OF_PATIENT) +
+			fluidRowLocs(6, OUTCOME) +
 			fluidRowLocs(DATE_OF_DEATH, PLACE_OF_DEATH);
 
     private static String createSymptomGroupLayout(SymptomGroup symptomGroup, String loc) {
@@ -1162,7 +1162,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
         if (disease == Disease.MONKEYPOX) {
 			createLabel(I18nProperties.getString(Strings.headingPatientStatus), H3, PATIENT_STATUS);
-            setVisible(false, OUTCOME);
+//            setVisible(false, OUTCOME);
             symptomsHeadingLabel.setVisible(true);
             tickSymptomField.setVisible(true);
 
@@ -1198,23 +1198,19 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			List<SymptomsList> validValues = Arrays.asList(SymptomsList.MACULAR, SymptomsList.MACULOPAPULAR, SymptomsList.VESICULAR, SymptomsList.PAPULAR, SymptomsList.PETECHIAL);
 			FieldHelper.updateEnumData(typeOfRash, validValues);
 
-			ComboBox outcome = new ComboBox("Outcome");
+			List<CaseOutcome> outcomes = Arrays.asList(CaseOutcome.ALIVE, CaseOutcome.DECEASED);
+			FieldHelper.updateEnumData(outcome, outcomes);
 
-			for (CaseOutcome caseOutcome : CaseOutcome.values()) {
-				if (caseOutcome == CaseOutcome.DECEASED || caseOutcome == CaseOutcome.ALIVE) {
-					outcome.addItem(caseOutcome);
-				}
-			}
-			addField(STATUS_OF_PATIENT, outcome);
 			DateField dateOfDeath = addField(DATE_OF_DEATH, DateField.class);
 			TextField placeOfField = addField(PLACE_OF_DEATH, TextField.class);
 
 			setVisible(false, dateOfDeath, placeOfField);
+			outcome.setCaption("Status of the Patient");
 
 			FieldHelper.setVisibleWhen(
 					getFieldGroup(),
 					Arrays.asList(DATE_OF_DEATH, PLACE_OF_DEATH),
-					STATUS_OF_PATIENT,
+					OUTCOME,
 					Arrays.asList(CaseOutcome.DECEASED),
 					true
 			);

@@ -31,9 +31,13 @@
         <import type="de.symeda.sormas.api.symptoms.SymptomState" />
         <import type="de.symeda.sormas.api.symptoms.GuineaWormFirstSymptom" />
         <import type="de.symeda.sormas.api.caze.CaseOutcome" />
+        <import type="de.symeda.sormas.api.hospitalization.SymptomsList" />
         <import type="de.symeda.sormas.api.utils.YesNo" />
         <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
         <import type="de.symeda.sormas.api.utils.InjectionSite" />
+        <import type="de.symeda.sormas.api.utils.BodyPart" />
+        <import type="de.symeda.sormas.api.i18n.I18nProperties" />
+        <import type="de.symeda.sormas.api.i18n.Strings" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.symptoms.Symptoms"/>
         <variable name="symptomStateClass" type="Class"/>
@@ -1730,10 +1734,15 @@
             <de.symeda.sormas.app.component.controls.ControlDateField
                 android:id="@+id/symptoms_onsetDate"
                 app:value="@={data.onsetDate}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <!--<de.symeda.sormas.app.component.controls.ControlDateField
+                android:id="@+id/symptoms_onsetDate"
+                app:value="@={data.onsetDate}"
                 app:softRequired="true"
                 app:goneIfVariable="@{symptomsContext}"
                 app:goneIfValue="@{SymptomsContext.CLINICAL_VISIT}"
-                style="@style/ControlSingleColumnStyle" />
+                style="@style/ControlSingleColumnStyle" />-->
 
             <de.symeda.sormas.app.component.controls.ControlSpinnerField
                 android:id="@+id/symptoms_onsetSymptom"
@@ -1754,6 +1763,97 @@
                 app:dependencyParentField="@{symptomsOutcome}"
                 app:dependencyParentValue="@{CaseOutcome.OTHER}"
                 style="@style/ControlSingleColumnStyle" />
+
+            <TextView
+                android:id="@+id/headingSymptoms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getString(Strings.headingSymptoms)}"
+                style="@style/SubHeadingStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
+                android:id="@+id/symptoms_symptomsSelected"
+                app:value="@{data.symptomsSelected}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/symptoms_symptomsSelectedOther"
+                app:value="@{data.symptomsSelectedOther}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlDateField
+                android:id="@+id/symptoms_dateOfOnsetRash"
+                app:value="@={data.dateOfOnsetRash}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
+                android:id="@+id/symptoms_rashSymptoms"
+                app:value="@{data.rashSymptoms}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/symptoms_rashSymptomsOtherAreas"
+                app:value="@{data.rashSymptomsOtherAreas}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_areLesionsSameState"
+                app:enumClass="@{YesNoClass}"
+                app:value="@{data.areLesionsSameState}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_areLesionsSameSize"
+                app:enumClass="@{YesNoClass}"
+                app:value="@{data.areLesionsSameSize}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_areLesionsDeep"
+                app:enumClass="@{YesNoClass}"
+                app:value="@{data.areLesionsDeep}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_areUlcersAmong"
+                app:enumClass="@{YesNoClass}"
+                app:value="@{data.areUlcersAmong}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                android:id="@+id/symptoms_typeOfRash"
+                app:value="@{data.typeOfRash}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <TextView
+                android:id="@+id/headingPatientStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getString(Strings.headingPatientStatus)}"
+                style="@style/SubHeadingStyle" />
+
+            <LinearLayout
+                android:id="@+id/symptoms_deathDatePlace_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/symptoms_dateOfDeath"
+                    app:value="@={data.dateOfDeath}"
+                    app:dependencyParentField="@{symptomsOutcome}"
+                    app:dependencyParentValue="@{CaseOutcome.DECEASED}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/symptoms_placeOfDeath"
+                    app:value="@={data.placeOfDeath}"
+                    app:dependencyParentField="@{symptomsOutcome}"
+                    app:dependencyParentValue="@{CaseOutcome.DECEASED}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
 

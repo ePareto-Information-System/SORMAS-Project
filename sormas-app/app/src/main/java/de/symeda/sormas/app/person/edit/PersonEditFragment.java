@@ -95,7 +95,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 	private AbstractDomainObject rootData;
 	private IEntryItemOnClickListener onAddressItemClickListener;
 	private IEntryItemOnClickListener onPersonContactDetailItemClickListener;
-	private static Disease caseDisease;
+	public static Disease caseDisease;
 	private List<Item> locationOfBirthList;
 
 	// Instance methods

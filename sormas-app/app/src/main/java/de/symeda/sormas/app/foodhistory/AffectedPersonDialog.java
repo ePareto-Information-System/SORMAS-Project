@@ -24,80 +24,88 @@ import de.symeda.sormas.app.databinding.DialogAffectedPersonEditLayoutBinding;
 
 public class AffectedPersonDialog extends FormDialog {
 
-    private final AffectedPerson data;
-    private DialogAffectedPersonEditLayoutBinding contentBinding;
-    private final boolean create;
+	private final AffectedPerson data;
+	private final boolean create;
+	private DialogAffectedPersonEditLayoutBinding contentBinding;
 
-    public AffectedPersonDialog(final FragmentActivity activity, AffectedPerson affectedPerson, PseudonymizableAdo activityRootData, boolean create) {
-        super(
-                activity,
-                R.layout.dialog_root_layout,
-                R.layout.dialog_affected_person_edit_layout,
-                R.layout.dialog_root_three_button_panel_layout,
-                R.string.heading_affected_person_details,
-                -1,
-                false,
-                UiFieldAccessCheckers.forSensitiveData(affectedPerson.isPseudonymized()),
-                FieldVisibilityCheckers.withDisease(getDiseaseOfCaseOrContact(activityRootData)).andWithCountry(ConfigProvider.getServerCountryCode()));
+	public AffectedPersonDialog(final FragmentActivity activity, AffectedPerson affectedPerson, PseudonymizableAdo activityRootData, boolean create) {
+		super(
+			activity,
+			R.layout.dialog_root_layout,
+			R.layout.dialog_affected_person_edit_layout,
+			R.layout.dialog_root_three_button_panel_layout,
+			R.string.heading_affected_person_details,
+			-1,
+			false,
+			UiFieldAccessCheckers.forSensitiveData(affectedPerson.isPseudonymized()),
+			FieldVisibilityCheckers.withDisease(getDiseaseOfCaseOrContact(activityRootData)).andWithCountry(ConfigProvider.getServerCountryCode()));
 
-        this.data = affectedPerson;
-        this.create = create;
-    }
+		this.data = affectedPerson;
+		this.create = create;
+	}
 
-    private void setUpHeadingVisibilities() {
-    }
+	private void setUpHeadingVisibilities() {
+	}
 
-    @Override
-    protected void setContentBinding(Context context, ViewDataBinding binding, String layoutName) {
-        contentBinding = (DialogAffectedPersonEditLayoutBinding) binding;
-        binding.setVariable(BR.data, data);
-    }
+	public AffectedPerson getData() {
+		return data;
+	}
 
-    @Override
-    protected void initializeContentView(ViewDataBinding rootBinding, ViewDataBinding buttonPanelBinding) {
+	@Override
+	protected void setContentBinding(Context context, ViewDataBinding binding, String layoutName) {
+		contentBinding = (DialogAffectedPersonEditLayoutBinding) binding;
+		binding.setVariable(BR.data, data);
+	}
 
-        contentBinding.affectedPersonDateTime.initializeDateField(getFragmentManager());
+	@Override
+	protected void initializeContentView(ViewDataBinding rootBinding, ViewDataBinding buttonPanelBinding) {
 
-        if (data.getId() == null) {
-            setLiveValidationDisabled(true);
-        }
-    }
+		contentBinding.affectedPersonDateTime.initializeDateField(getFragmentManager());
 
-    @Override
-    protected void onPositiveClick() {
-        setLiveValidationDisabled(false);
-        try {
-            FragmentValidator.validate(getContext(), contentBinding);
-        } catch (ValidationException e) {
-            NotificationHelper.showDialogNotification(AffectedPersonDialog.this, ERROR, e.getMessage());
-            return;
-        }
-        super.setCloseOnPositiveButtonClick(true);
-        super.onPositiveClick();
-    }
+		if (data.getId() == null) {
+			setLiveValidationDisabled(true);
+		}
+	}
 
-    @Override
-    public boolean isDeleteButtonVisible() {
-        return !create;
-    }
+	@Override
+	protected void onPositiveClick() {
+		setLiveValidationDisabled(false);
+		try {
+			FragmentValidator.validate(getContext(), contentBinding);
+			this.data.setAge(contentBinding.affectedPersonAge.getValue());
+			this.data.setNameOfAffectedPerson(contentBinding.affectedPersonNameOfAffectedPerson.getValue());
+			this.data.setDateTime(contentBinding.affectedPersonDateTime.getValue());
+			this.data.setTelNo(contentBinding.affectedPersonTelNo.getValue());
+		} catch (ValidationException e) {
+			NotificationHelper.showDialogNotification(AffectedPersonDialog.this, ERROR, e.getMessage());
+			return;
+		}
+		super.setCloseOnPositiveButtonClick(true);
+		super.onPositiveClick();
+	}
 
-    @Override
-    public boolean isRounded() {
-        return true;
-    }
+	@Override
+	public boolean isDeleteButtonVisible() {
+		return !create;
+	}
 
-    @Override
-    public ControlButtonType getNegativeButtonType() {
-        return ControlButtonType.LINE_SECONDARY;
-    }
+	@Override
+	public boolean isRounded() {
+		return true;
+	}
 
-    @Override
-    public ControlButtonType getPositiveButtonType() {
-        return ControlButtonType.LINE_PRIMARY;
-    }
+	@Override
+	public ControlButtonType getNegativeButtonType() {
+		return ControlButtonType.LINE_SECONDARY;
+	}
 
-    @Override
-    public ControlButtonType getDeleteButtonType() {
-        return ControlButtonType.LINE_DANGER;
-    }
+	@Override
+	public ControlButtonType getPositiveButtonType() {
+		return ControlButtonType.LINE_PRIMARY;
+	}
+
+	@Override
+	public ControlButtonType getDeleteButtonType() {
+		return ControlButtonType.LINE_DANGER;
+	}
 }
