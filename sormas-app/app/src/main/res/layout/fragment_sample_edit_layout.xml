@@ -1001,6 +1001,12 @@
                     app:enumClass="@{yesNoUnknownClass}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                        android:id="@+id/sample_discordant"
+                        app:value="@={data.discordant}"
+                        app:enumClass="@{yesNoUnknownClass}"
+                        style="@style/ControlSingleColumnStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/sample_afpFinalClassification"
                     app:value="@={data.afpFinalClassification}"

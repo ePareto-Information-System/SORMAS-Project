@@ -375,6 +375,9 @@ public class Sample extends PseudonymizableAdo {
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date laboratorySampleDateReceived;
 
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown discordant;
+
 
 	public Case getAssociatedCase() {
 		return associatedCase;
@@ -1393,6 +1396,14 @@ public class Sample extends PseudonymizableAdo {
 
 	public void setImmunocompromisedStatusSuspected(YesNoUnknown immunocompromisedStatusSuspected) {
 		this.immunocompromisedStatusSuspected = immunocompromisedStatusSuspected;
+	}
+
+	public YesNoUnknown getDiscordant(){
+		return discordant;
+	}
+
+	public void setDiscordant(YesNoUnknown discordant){
+		this.discordant = discordant;
 	}
 
 	public FinalClassification getAfpFinalClassification() {
