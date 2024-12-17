@@ -3206,9 +3206,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setLaboratoryDiagnosticConfirmation(source.getLaboratoryDiagnosticConfirmation());
 		target.setInvestigationStatus(source.getInvestigationStatus());
 		target.setPerson(PersonFacadeEjb.toReferenceDto(source.getPerson()));
-		if (source.getHospitalization() != null) {
-			target.setHospitalization(HospitalizationFacadeEjb.toDto(source.getHospitalization()));
-		}
+		target.setHospitalization(HospitalizationFacadeEjb.toDto(source.getHospitalization()));
 		target.setSixtyDay(SixtyDayFacadeEjb.toDto(source.getSixtyDay()));
 		target.setInvestigationNotes(InvestigationNotesFacadeEjb.toDto(source.getInvestigationNotes()));
 		target.setAfpImmunization(AfpImmunizationFacadeEjb.toDto(source.getAfpImmunization()));
@@ -3482,23 +3480,6 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setFoodHistory(foodHistoryFacade.fillOrBuildEntity(source.getFoodHistory(), target.getFoodHistory(),checkChangeDate));
 
 		target.setRiskFactor(riskFactorFacade.fillOrBuildEntity(source.getRiskFactor(), target.getRiskFactor(), checkChangeDate));
-		if (source.getDisease() == Disease.MONKEYPOX) {
-			if (source.getHospitalization() != null) {
-				if (source.getHospitalization().getLocationType() == null) {
-					source.getHospitalization().setLocationType(new LocationDto());
-				}
-
-				LocationDto locationType = source.getHospitalization().getLocationType();
-				if (locationType.getRegion() == null) {
-					locationType.setRegion(source.getResponsibleRegion());
-					locationType.setDistrict(source.getResponsibleDistrict());
-					locationType.setCommunity(source.getResponsibleCommunity());
-				}
-
-				source.getHospitalization().setNameOfFacility(source.getHealthFacility());
-			}
-		}
-
 		target.setHospitalization(hospitalizationFacade.fillOrBuildEntity(source.getHospitalization(), target.getHospitalization(), checkChangeDate));
 		target.setEpiData(epiDataFacade.fillOrBuildEntity(source.getEpiData(), target.getEpiData(), checkChangeDate));
 		if (source.getTherapy() == null) {

@@ -41,6 +41,7 @@ import com.vaadin.v7.ui.TextField;
 import com.vaadin.v7.ui.VerticalLayout;
 import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.*;
@@ -668,6 +669,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                     }
 
                 }
+
             }
 
             //if(cbCaseClassification.getCaption())
@@ -880,7 +882,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         idsrdiagnosis.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
             specifyEvent.setVisible(idsrdiagnosis.getValue() != null && idsrdiagnosis.getValue() == IdsrType.OTHER);
         });
-
+        CaseDataDto caseDataDto = getCaseData();
         addField(CaseDataDto.QUARANTINE_HOME_POSSIBLE, NullableOptionGroup.class);
         addField(CaseDataDto.QUARANTINE_HOME_POSSIBLE_COMMENT, TextField.class);
         addField(CaseDataDto.QUARANTINE_HOME_SUPPLY_ENSURED, NullableOptionGroup.class);

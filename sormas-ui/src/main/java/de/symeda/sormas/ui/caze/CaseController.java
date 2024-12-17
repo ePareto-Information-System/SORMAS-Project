@@ -28,6 +28,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
+import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.ui.afpimmunization.AfpImmunizationForm;
 import de.symeda.sormas.ui.afpimmunization.AfpImmunizationView;
@@ -967,7 +968,6 @@ public class CaseController {
 
 		DeletionInfoDto automaticDeletionInfoDto = FacadeProvider.getCaseFacade().getAutomaticDeletionInfo(caseUuid);
 		DeletionInfoDto manuallyDeletionInfoDto = FacadeProvider.getCaseFacade().getManuallyDeletionInfo(caseUuid);
-
 		CaseDataForm caseEditForm = new CaseDataForm(
 			caseUuid,
 			FacadeProvider.getPersonFacade().getByUuid(caze.getPerson().getUuid()),
@@ -1235,6 +1235,7 @@ public class CaseController {
 		boolean isEditAllowed) {
 
 		CaseDataDto caze = findCase(caseUuid);
+		isHospitailized(caze);
 		HospitalizationForm hospitalizationForm =
 			new HospitalizationForm(caze, viewMode, caze.isPseudonymized(), caze.isInJurisdiction(), isEditAllowed);
 		hospitalizationForm.setValue(caze.getHospitalization());
@@ -1302,6 +1303,20 @@ public class CaseController {
 		});
 
 		return editView;
+	}
+
+	public void isHospitailized(CaseDataDto caze) {
+		if (caze.getDisease() == Disease.MONKEYPOX){
+			if (caze.getHospitalization().getLocationType() == null) {
+				caze.getHospitalization().setLocationType(LocationDto.build());
+			}
+			if (caze.getHospitalization().getLocationType() != null && caze.getHospitalization().getLocationType().getRegion() == null) {
+				caze.getHospitalization().getLocationType().setRegion(caze.getResponsibleRegion());
+				caze.getHospitalization().getLocationType().setDistrict(caze.getResponsibleDistrict());
+				caze.getHospitalization().getLocationType().setCommunity(caze.getResponsibleCommunity());
+				caze.getHospitalization().setNameOfFacility(caze.getHealthFacility());
+			}
+		}
 	}
 
 	public CommitDiscardWrapperComponent<SixtyDayForm> getSixtyDayComponent(final String caseUuid, ViewMode viewMode, boolean isEditAllowed) {
