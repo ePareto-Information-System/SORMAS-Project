@@ -301,6 +301,8 @@ public class Sample extends PseudonymizableAdo {
 	private Date inoculationTimeTransportMedia;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateSampleSentToLab;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String reasonNotSentToLab;
 	@Enumerated(EnumType.STRING)
 	private YesNo sampleSentToLab;
 	@Enumerated(EnumType.STRING)
@@ -1128,6 +1130,14 @@ public class Sample extends PseudonymizableAdo {
 
 	public void setDateSampleSentToLab(Date dateSampleSentToLab) {
 		this.dateSampleSentToLab = dateSampleSentToLab;
+	}
+
+	public String getReasonNotSentToLab() {
+		return reasonNotSentToLab;
+	}
+
+	public void setReasonNotSentToLab(String reasonNotSentToLab) {
+		this.reasonNotSentToLab = reasonNotSentToLab;
 	}
 
 	public SampleContainerUsed getSampleContainerUsed() {

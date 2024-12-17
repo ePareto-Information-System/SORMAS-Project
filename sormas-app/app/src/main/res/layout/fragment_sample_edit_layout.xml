@@ -706,6 +706,13 @@
                     app:enumClass="@{yesNoClass}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/sample_reasonNotSentToLab"
+                    app:value="@={data.reasonNotSentToLab}"
+                    app:dependencyParentField="@{sampleSampleSentToLab}"
+                    app:dependencyParentValue="@{YesNo.NO}"
+                    style="@style/ControlSingleColumnStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlDateField
                     android:id="@+id/sample_dateSampleSentToLab"
                     app:value="@={data.dateSampleSentToLab}"
