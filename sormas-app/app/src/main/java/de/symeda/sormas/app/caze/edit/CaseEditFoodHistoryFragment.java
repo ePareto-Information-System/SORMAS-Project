@@ -18,14 +18,13 @@ import static android.view.View.GONE;
 
 import java.util.List;
 
-import com.googlecode.openbeans.Introspector;
-import com.googlecode.openbeans.PropertyDescriptor;
 
 import android.content.res.Resources;
 import android.view.ViewGroup;
 
 import androidx.databinding.ObservableArrayList;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
 import de.symeda.sormas.api.utils.EventType;
@@ -33,12 +32,14 @@ import de.symeda.sormas.api.utils.FoodSource;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
+import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.affectedperson.AffectedPerson;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
+import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.foodhistory.FoodHistory;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.core.IEntryItemOnClickListener;
@@ -50,18 +51,20 @@ import de.symeda.sormas.app.util.FieldVisibilityAndAccessHelper;
 public class CaseEditFoodHistoryFragment extends BaseEditFragment<FragmentCaseEditFoodhistoryLayoutBinding, FoodHistory, Case> {
 
 	private FoodHistory record;
-	private Case caze;
+	private Disease disease;
+	private AbstractDomainObject ado;
 	private List<Item> foodSourceList;
 	private List<Item> eventTypeList;
 	private IEntryItemOnClickListener onAffectedPersonItemClickListener;
 
 	public static CaseEditFoodHistoryFragment newInstance(Case activityRootData) {
 		return newInstanceWithFieldCheckers(
-			CaseEditFoodHistoryFragment.class,
-			null,
-			activityRootData,
-			new FieldVisibilityCheckers(),
-			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
+				CaseEditFoodHistoryFragment.class,
+				null,
+				activityRootData,
+				FieldVisibilityCheckers.withDisease(activityRootData.getDisease())
+						.add(new CountryFieldVisibilityChecker(ConfigProvider.getServerLocale())),
+				UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
 	}
 
 	@Override
@@ -76,9 +79,22 @@ public class CaseEditFoodHistoryFragment extends BaseEditFragment<FragmentCaseEd
 	}
 
 	@Override
+	public boolean isShowSaveAction() {
+		return record != null;
+	}
+
+	@Override
 	protected void prepareFragmentData() {
-		caze = getActivityRootData();
-		record = caze.getFoodHistory();
+		ado = getActivityRootData();
+
+		if (ado != null) {
+			record = ((Case) ado).getFoodHistory();
+			disease = ((Case) ado).getDisease();
+		} else {
+			throw new UnsupportedOperationException(
+					"ActivityRootData of class " + ado.getClass().getSimpleName() + " does not support FoodHistoryReadFragment");
+		}
+
 		foodSourceList = DataUtils.getEnumItems(FoodSource.class, true);
 		eventTypeList = DataUtils.getEnumItems(EventType.class, true);
 	}
@@ -86,7 +102,6 @@ public class CaseEditFoodHistoryFragment extends BaseEditFragment<FragmentCaseEd
 	@Override
 	public void onLayoutBinding(final FragmentCaseEditFoodhistoryLayoutBinding contentBinding) {
 		setUpControlListeners(contentBinding);
-		setDefaultValues(record);
 		contentBinding.setData(record);
 
 		contentBinding.setYesNoClass(YesNo.class);
@@ -100,32 +115,11 @@ public class CaseEditFoodHistoryFragment extends BaseEditFragment<FragmentCaseEd
 			v -> FieldVisibilityAndAccessHelper
 				.setFieldVisibilitiesAndAccesses(AffectedPerson.class, (ViewGroup) v, new FieldVisibilityCheckers(), getFieldAccessCheckers()));
 
-		if (caze.getDisease() != null) {
-			super.hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.FOOD_HISTORY_EDIT);
+		if (disease != null) {
+			super.hideFieldsForDisease(disease, contentBinding.mainContent, FormType.FOOD_HISTORY_EDIT);
 		}
 	}
 
-	public void setDefaultValues(FoodHistory foodHistoryDto) {
-		if (foodHistoryDto == null) {
-			return;
-		}
-
-		try {
-			for (PropertyDescriptor pd : Introspector.getBeanInfo(FoodHistory.class, AbstractDomainObject.class).getPropertyDescriptors()) {
-				if (pd.getWriteMethod() != null && (pd.getReadMethod().getReturnType().equals(YesNo.class))) {
-					try {
-						if (pd.getReadMethod().invoke(foodHistoryDto) == null)
-							pd.getWriteMethod().invoke(foodHistoryDto, YesNo.NO);
-					} catch (Exception e) {
-						throw new RuntimeException(e);
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
 
 	@Override
 	protected void onAfterLayoutBinding(FragmentCaseEditFoodhistoryLayoutBinding contentBinding) {
@@ -134,6 +128,7 @@ public class CaseEditFoodHistoryFragment extends BaseEditFragment<FragmentCaseEd
 		if (getActivityRootData() == null) {
 			contentBinding.affectedPersonLayout.setVisibility(GONE);
 		}
+		var value = contentBinding.foodHistorySuspectedFood.getValue();
 
 	}
 
