@@ -20,13 +20,7 @@ import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import static de.symeda.sormas.ui.utils.CssStyles.H4;
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
 import static de.symeda.sormas.ui.utils.CssStyles.*;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumn;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRow;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowCss;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocsCss;
-import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
-import static de.symeda.sormas.ui.utils.LayoutUtil.locsCss;
+import static de.symeda.sormas.ui.utils.LayoutUtil.*;
 
 import java.lang.reflect.Member;
 import java.util.*;
@@ -172,7 +166,18 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					//createSymptomGroupLayout(SymptomGroup.RASH_TYPE, RASH_TYPE_AND_SYMPTOMS_HEADING_LOC) +
 //					createSymptomGroupLayout(SymptomGroup.SKIN, SKIN_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.OTHER, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
-					fluidRowLocs(HEALTH_CONDITIONS) +
+					loc(HEALTH_CONDITIONS_HEADINGS_LOC) +
+					fluidRow(
+							fluidColumn(6, 0, locs(
+									TUBERCULOSIS, ASPLENIA, HEPATITIS, DIABETES, IMMUNODEFICIENCY_OTHER_THAN_HIV,
+									IMMUNODEFICIENCY_INCLUDING_HIV, HIV, HIV_ART, CONGENITAL_SYPHILIS, DOWN_SYNDROME,
+									CHRONIC_LIVER_DISEASE, MALIGNANCY_CHEMOTHERAPY, LUNG_DISEASE, STROKE, CANCER)),
+							fluidColumn(6, 0, locs(
+									CHRONIC_HEART_FAILURE, CHRONIC_PULMONARY_DISEASE, CHRONIC_KIDNEY_DISEASE,
+									CHRONIC_NEUROLOGIC_CONDITION, CARDIOVASCULAR_DISEASE_INCLUDING_HYPERTENSION,
+									OBESITY, CURRENT_SMOKER, FORMER_SMOKER, ASTHMA, SICKLE_CELL_DISEASE))
+					) +
+					loc(OTHER_CONDITIONS) +
 					fluidRowLocs(PREGNANT, TRIMESTER, POSTPARTUM) +
 					fluidRowLocs(FEVER_ONSET_PARALYSIS, PROGRESSIVE_PARALYSIS) +
 					fluidRowLocs(DATE_ONSET_PARALYSIS, PROGRESSIVE_FLACID_ACUTE, ASSYMETRIC) +
@@ -193,7 +198,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					fluidRowLocs(SYMPTOMS_ONGOING, DURATION_HOURS, YES_NAME_OF_HEALTH_FACILITY)+
 					fluidRowLocs(PROVISONAL_DIAGNOSIS)+
 					fluidRowLocs(6, TRUEAFP)+
-
 					loc(FOOD_HISTORY_HEADING_LOC);
 
 			private static final String CHOLERA_LAYOUT =
@@ -674,7 +678,42 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			HEADACHES,
 			GENERALIZED_RASH,
 			SWOLLEN_LYMPH_NODES_BEHIND_EARS,
-			ABNORMAL_LUNG_AUSCULTATION);
+			ABNORMAL_LUNG_AUSCULTATION,
+				TUBERCULOSIS,
+				ASPLENIA,
+				HEPATITIS,
+				DIABETES,
+				HIV,
+				HIV_ART,
+				CHRONIC_LIVER_DISEASE,
+				MALIGNANCY_CHEMOTHERAPY,
+				CHRONIC_HEART_FAILURE,
+				CHRONIC_PULMONARY_DISEASE,
+				CHRONIC_KIDNEY_DISEASE,
+				CHRONIC_NEUROLOGIC_CONDITION,
+				DOWN_SYNDROME,
+				CONGENITAL_SYPHILIS,
+				IMMUNODEFICIENCY_OTHER_THAN_HIV,
+				CARDIOVASCULAR_DISEASE_INCLUDING_HYPERTENSION,
+				OBESITY,
+				CURRENT_SMOKER,
+				FORMER_SMOKER,
+				ASTHMA,
+				SICKLE_CELL_DISEASE,
+				IMMUNODEFICIENCY_INCLUDING_HIV,
+				LUNG_DISEASE,
+				STROKE,
+				CANCER);
+		TextArea otherConditions = addField(OTHER_CONDITIONS, TextArea.class);
+		otherConditions.setRows(6);
+		otherConditions.setDescription(
+				I18nProperties.getPrefixDescription(SymptomsDto.I18N_PREFIX, OTHER_CONDITIONS, "") + "\n"
+						+ I18nProperties.getDescription(Descriptions.descGdpr));
+		otherConditions.setVisible(false);
+		Label healthConditionsHeadingLabel = new Label(I18nProperties.getString(Strings.headingHealthConditions));
+		healthConditionsHeadingLabel.addStyleName(H3);
+		healthConditionsHeadingLabel.setVisible(false);
+		getContent().addComponent(healthConditionsHeadingLabel, HEALTH_CONDITIONS_HEADINGS_LOC);
 
 		addField(AGE_AT_DEATH_DAYS, TextField.class);
 		addField(AGE_AT_ONSET_DAYS, TextField.class);
@@ -1181,7 +1220,35 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			);
 
 		}
-		
+
+		setVisible(false,
+				TUBERCULOSIS,
+				ASPLENIA,
+				HEPATITIS,
+				DIABETES,
+				HIV,
+				HIV_ART,
+				CHRONIC_LIVER_DISEASE,
+				MALIGNANCY_CHEMOTHERAPY,
+				CHRONIC_HEART_FAILURE,
+				CHRONIC_PULMONARY_DISEASE,
+				CHRONIC_KIDNEY_DISEASE,
+				CHRONIC_NEUROLOGIC_CONDITION,
+				DOWN_SYNDROME,
+				CONGENITAL_SYPHILIS,
+				IMMUNODEFICIENCY_OTHER_THAN_HIV,
+				CARDIOVASCULAR_DISEASE_INCLUDING_HYPERTENSION,
+				OBESITY,
+				CURRENT_SMOKER,
+				FORMER_SMOKER,
+				ASTHMA,
+				SICKLE_CELL_DISEASE,
+				IMMUNODEFICIENCY_INCLUDING_HIV,
+				LUNG_DISEASE,
+				STROKE,
+				CANCER);
+
+
 		if (disease == Disease.CORONAVIRUS) {
 			generalSymptomsHeadingLabel.setVisible(true);
 			respiratorySymptomsHeadingLabel.setVisible(true);
@@ -1192,6 +1259,18 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			healthConditionsForm.showForCovid19();
 			setVisible(true, PREGNANT, POSTPARTUM);
 			setVisible(true, TEMPERATURE, TEMPERATURE_SOURCE );
+			setVisible(true,
+					DIABETES,
+					HIV,
+					HIV_ART,
+					CHRONIC_LIVER_DISEASE,
+					CHRONIC_KIDNEY_DISEASE,
+					CARDIOVASCULAR_DISEASE_INCLUDING_HYPERTENSION,
+					LUNG_DISEASE,
+					STROKE,
+					CANCER);
+			otherConditions.setVisible(true);
+			healthConditionsHeadingLabel.setVisible(true);
 
 		}
 

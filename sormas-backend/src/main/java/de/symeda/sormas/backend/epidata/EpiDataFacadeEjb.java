@@ -253,6 +253,7 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setPatientTravelledInCountryOne(source.getPatientTravelledInCountryOne());
 		target.setPatientTravelledInCountryTwo(source.getPatientTravelledInCountryTwo());
 		target.setPatientTravelledInCountryThree(source.getPatientTravelledInCountryThree());
+		target.setPatientTravelledInCountryFour(source.getPatientTravelledInCountryFour());
 		target.setPatientTravelledInternationalOne(source.getPatientTravelledInternationalOne());
 		target.setPatientTravelledInternationalTwo(source.getPatientTravelledInternationalTwo());
 		target.setPatientTravelledInternationalThree(source.getPatientTravelledInternationalThree());
@@ -564,6 +565,7 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 		target.setPatientTravelledInCountryOne(source.getPatientTravelledInCountryOne());
 		target.setPatientTravelledInCountryTwo(source.getPatientTravelledInCountryTwo());
 		target.setPatientTravelledInCountryThree(source.getPatientTravelledInCountryThree());
+		target.setPatientTravelledInCountryFour(source.getPatientTravelledInCountryFour());
 		target.setPatientTravelledInternationalOne(source.getPatientTravelledInternationalOne());
 		target.setPatientTravelledInternationalTwo(source.getPatientTravelledInternationalTwo());
 		target.setPatientTravelledInternationalThree(source.getPatientTravelledInternationalThree());

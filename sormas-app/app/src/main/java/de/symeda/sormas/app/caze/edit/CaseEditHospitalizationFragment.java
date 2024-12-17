@@ -103,7 +103,10 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 				updatePreviousHospitalizations();
 			});
 
-			dialog.setDeleteCallback(() -> removePreviousHospitalization(previousHospitalization));
+			dialog.setDeleteCallback(() -> {
+				removePreviousHospitalization(previousHospitalization);
+				dialog.dismiss();
+			});
 
 			dialog.show();
 		};

@@ -226,7 +226,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	// public static final int DATABASE_VERSION = 307;
 	//public static final int DATABASE_VERSION = 343;
 	// public static final int DATABASE_VERSION = 410;
-	public static final int DATABASE_VERSION = 418;
+	public static final int DATABASE_VERSION = 419;
 
 	private static DatabaseHelper instance = null;
 	private final Context context;
@@ -4332,10 +4332,38 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogenTest ADD COLUMN drugsSensitiveToVibrioStrain VARCHAR(255);");
 				getDao(PathogenTest.class).executeRaw("ALTER TABLE pathogenTest ADD COLUMN drugsResistantToVibrioStrain VARCHAR(255);");
 
-			case 417:
-				currentVersion = 417;
-				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN telNumber varchar(255);");
-				// ATTENTION: break should only be done after last version
+				case 417:
+					currentVersion = 417;
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN telNumber varchar(255);");
+				case 418:
+					currentVersion = 418;
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN tuberculosis VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN asplenia VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN hepatitis VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN diabetes VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN hiv VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN hivArt VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN chronicLiverDisease VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN malignancyChemotherapy VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN chronicHeartFailure VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN chronicPulmonaryDisease VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN chronicKidneyDisease VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN chronicNeurologicCondition VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN downSyndrome VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN congenitalSyphilis VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN immunodeficiencyOtherThanHiv VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN cardiovascularDiseaseIncludingHypertension VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN obesity VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN currentSmoker VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN formerSmoker VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN asthma VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN sickleCellDisease VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN immunodeficiencyIncludingHiv VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN lungDisease VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN stroke VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN cancer VARCHAR(255);");
+					getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN otherConditions VARCHAR(255);");
+					// ATTENTION: break should only be done after last version
 				break;
 			default:
 				throw new IllegalStateException("onUpgrade() with unknown oldVersion " + oldVersion);

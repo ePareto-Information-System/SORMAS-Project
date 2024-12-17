@@ -14941,6 +14941,38 @@ ALTER TABLE investigationnotes ADD COLUMN telno VARCHAR(255);
 ALTER TABLE investigationnotes ADD COLUMN dateofcompletionofform DATE;
 ALTER TABLE investigationnotes ADD COLUMN nameofhealthfacility VARCHAR(255);
 INSERT INTO schema_version (version_number, comment) VALUES (715, 'Added foodSourceOther to foodhistory table: Section for person completing form under food sample testing moved to investigationnotes');
+
+-- tuberculosis,asplenia,hepatitis,diabetes,hiv,hivArt,chronicLiverDisease,malignancyChemotherapy,chronicHeartFailure,chronicPulmonaryDisease,chronicKidneyDisease,chronicNeurologicCondition,downSyndrome,congenitalSyphilis,immunodeficiencyOtherThanHiv,cardiovascularDiseaseIncludingHypertension,obesity,currentSmoker,formerSmoker,asthma,sickleCellDisease,immunodeficiencyIncludingHiv,lungDisease,stroke,cancer
+ALTER TABLE symptoms ADD COLUMN tuberculosis VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN asplenia VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN hepatitis VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN diabetes VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN hiv VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN hivArt VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN chronicLiverDisease VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN malignancyChemotherapy VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN chronicHeartFailure VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN chronicPulmonaryDisease VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN chronicKidneyDisease VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN chronicNeurologicCondition VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN downSyndrome VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN congenitalSyphilis VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN immunodeficiencyOtherThanHiv VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN cardiovascularDiseaseIncludingHypertension VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN obesity VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN currentSmoker VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN formerSmoker VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN asthma VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN sickleCellDisease VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN immunodeficiencyIncludingHiv VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN lungDisease VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN stroke VARCHAR(255);
+ALTER TABLE symptoms ADD COLUMN cancer VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (716, 'Added a few fields to symptoms');
+
+-- otherConditions
+ALTER TABLE symptoms ADD COLUMN otherConditions VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (717, 'Added otherConditions to symptoms');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 -- Create the 'ebs' table without columns that cause circular dependencies
 CREATE TABLE ebs (
