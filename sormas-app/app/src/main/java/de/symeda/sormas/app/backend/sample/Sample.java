@@ -377,6 +377,8 @@ public class Sample extends PseudonymizableAdo {
 	private Date laboratorySampleDateReceived;
 	@Enumerated(EnumType.STRING)
 	private CsfReason csfReason;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown discordant;
 
 
 	public Case getAssociatedCase() {
@@ -1419,5 +1421,12 @@ public class Sample extends PseudonymizableAdo {
 	}
 	public void setCsfReason(CsfReason csfReason) {
 		this.csfReason = csfReason;
+	}
+
+	public YesNoUnknown getDiscordant(){
+		return discordant;
+	}
+	public void setDiscordant(YesNoUnknown discordant){
+		this.discordant = discordant;
 	}
 }

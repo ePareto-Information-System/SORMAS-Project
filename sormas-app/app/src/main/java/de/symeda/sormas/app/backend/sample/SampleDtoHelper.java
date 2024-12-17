@@ -188,7 +188,7 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setAfpFinalClassification(source.getAfpFinalClassification());
 		target.setLaboratorySampleDateReceived(source.getLaboratorySampleDateReceived());
 		target.setCsfReason(source.getCsfReason());
-
+		target.setDiscordant(source.getDiscordant());
 		target.setPseudonymized(source.isPseudonymized());
 	}
 
@@ -335,6 +335,7 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setAfpFinalClassification(source.getAfpFinalClassification());
 		target.setLaboratorySampleDateReceived(source.getLaboratorySampleDateReceived());
 		target.setCsfReason(source.getCsfReason());
+		target.setDiscordant(source.getDiscordant());
 	}
 
     @Override
