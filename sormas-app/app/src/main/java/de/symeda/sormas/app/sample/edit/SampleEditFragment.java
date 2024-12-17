@@ -55,6 +55,7 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.CsfAppearance;
 import de.symeda.sormas.api.utils.CsfReason;
 import de.symeda.sormas.api.utils.InjectionSite;
+import de.symeda.sormas.api.utils.PosNeg;
 import de.symeda.sormas.api.utils.SampleContainerUsed;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
@@ -107,6 +108,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	private List<Item> finalClassificationList;
 	private  List<Item> finalExamResultList;
 	private List<Item> injectionSiteList;
+	private List<Item> finalLabResultsList;
 
 	public static SampleEditFragment newInstance(Sample activityRootData) {
 		return newInstanceWithFieldCheckers(
@@ -322,6 +324,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_EDIT);
 		}
 		contentBinding.setFilterChangingFrequencyClass(FilterChangingFrequency.class);
+		finalLabResultsList = DataUtils.getEnumItems(PosNeg.class, true);
+		contentBinding.sampleFinalLabResults.initializeSpinner(finalLabResultsList);
 
 
 	}

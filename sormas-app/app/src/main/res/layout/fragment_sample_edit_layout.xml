@@ -685,6 +685,11 @@
 
                 </LinearLayout>
 
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/sample_finalLabResults"
+                    app:value="@={data.finalLabResults}"
+                    style="@style/ControlSingleColumnStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/sample_remarks"
                     app:value="@={data.remarks}"
@@ -1018,7 +1023,6 @@
                     style="@style/ControlSingleColumnStyle" />
 
             </LinearLayout>
-
 
             <LinearLayout
                 android:id="@+id/most_recent_test_layout"
