@@ -400,6 +400,12 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setLocationOfBirth(source.getLocationOfBirth());
 		target.setBirthInInstitution(source.getBirthInInstitution());
 		target.setOtherId(source.getOtherId());
+		target.setInvestigatorName(source.getInvestigatorName());
+		target.setInvestigatorTitle(source.getInvestigatorTitle());
+		target.setInvestigatorUnit(source.getInvestigatorUnit());
+		target.setInvestigatorAddress(source.getInvestigatorAddress());
+		target.setInvestigatorTel(source.getInvestigatorTel());
+
 		return target;
 	}
 
