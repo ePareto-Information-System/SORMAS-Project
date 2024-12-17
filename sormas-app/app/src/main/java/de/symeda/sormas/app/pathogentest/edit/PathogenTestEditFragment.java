@@ -555,7 +555,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 	private void showComponentsForRegionalLab() {
 		getContentBinding().pathogenTestLaboratoryCulture.setVisibility(VISIBLE);
 		getContentBinding().pathogenTestLaboratoryCultureOther.setVisibility(VISIBLE);
-		getContentBinding().pathogenTestLaboratoryOtherTests.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryLatexOtherResults.setVisibility(VISIBLE);
 		getContentBinding().pathogenTestLaboratoryCeftriaxone.setVisibility(VISIBLE);
 		getContentBinding().pathogenTestLaboratoryAmoxycillin.setVisibility(VISIBLE);
 		getContentBinding().pathogenTestLaboratoryPenicillinG.setVisibility(VISIBLE);
@@ -581,6 +581,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		getContentBinding().pathogenTestLaboratoryObservations.setVisibility(VISIBLE);
 		getContentBinding().pathogenTestLaboratoryDateResultsSentDSD.setVisibility(VISIBLE);
 		getContentBinding().pathogenTestLaboratoryFinalClassification.setVisibility(VISIBLE);
+		getContentBinding().pathogenTestLaboratoryLatexOtherResults.setVisibility(VISIBLE);
 	}
 
 
