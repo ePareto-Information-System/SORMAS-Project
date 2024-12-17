@@ -1205,6 +1205,27 @@
                     android:layout_height="wrap_content"
                     style="@style/ControlLabelStyle" />
 
+<!--                <TextView-->
+<!--                    android:id="@+id/heading_symptoms_group_general"-->
+<!--                    android:text="@string/heading_symptoms_group_general"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    style="@style/ControlLabelStyle" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/heading_symptoms_group_gastrointestinal"-->
+<!--                    android:text="@string/heading_symptoms_group_gastrointestinal"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    style="@style/ControlLabelStyle" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/heading_symptoms_group_respiratory"-->
+<!--                        android:text="@string/heading_symptoms_group_skin"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    style="@style/ControlLabelStyle" />-->
+
                 <de.symeda.sormas.app.component.controls.ControlCheckBoxField
                     android:id="@+id/symptoms_lesionsFace"
                     app:value="@={data.lesionsFace}"
