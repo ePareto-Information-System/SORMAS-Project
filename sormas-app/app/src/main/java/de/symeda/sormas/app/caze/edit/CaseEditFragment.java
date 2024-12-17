@@ -21,13 +21,11 @@ import static de.symeda.sormas.api.caze.CaseConfirmationBasis.CLINICAL_CONFIRMAT
 import static de.symeda.sormas.api.caze.CaseConfirmationBasis.EPIDEMIOLOGICAL_CONFIRMATION;
 import static de.symeda.sormas.api.caze.CaseConfirmationBasis.LABORATORY_DIAGNOSTIC_CONFIRMATION;
 
-import android.util.Log;
 import android.webkit.WebView;
 
 import androidx.fragment.app.FragmentActivity;
 
 import java.util.Arrays;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 import java.util.EnumSet;
@@ -58,10 +56,7 @@ import de.symeda.sormas.api.caze.RabiesType;
 //import de.symeda.sormas.api.caze.ReportingType;
 import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.caze.Trimester;
-import de.symeda.sormas.api.caze.VaccinationInfoSource;
 import de.symeda.sormas.api.caze.VaccinationRoutine;
-import de.symeda.sormas.api.caze.Vaccine;
-import de.symeda.sormas.api.caze.VaccineManufacturer;
 import de.symeda.sormas.api.caze.caseimport.MotherVaccinationStatus;
 import de.symeda.sormas.api.caze.surveillancereport.ReportingType;
 import de.symeda.sormas.api.caze.VaccinationStatus;
@@ -72,8 +67,6 @@ import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.sample.PathogenTestResultType;
-import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.CardOrHistory;
@@ -770,6 +763,28 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		if (record.getDisease() == Disease.MONKEYPOX){
 			handleMpox();
 		}
+		if (record.getDisease() == Disease.CSM){
+			getFilteredVaccinationList();
+
+			getContentBinding().caseDataVaccinationStatus.addValueChangedListener( field -> {
+				if (getContentBinding().caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED){
+					getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
+					getContentBinding().caseDataVaccinationType.setVisibility(VISIBLE);
+					getContentBinding().caseDataVaccineType.setVisibility(VISIBLE);
+					getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
+				}
+				else{
+					getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
+					getContentBinding().caseDataVaccinationType.setVisibility(GONE);
+					getContentBinding().caseDataVaccineType.setVisibility(GONE);
+					getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
+				}
+			});
+
+			getContentBinding().caseDataVaccinationType.addValueChangedListener( field -> {
+                getContentBinding().caseDataVaccinationDate.setEnabled(getContentBinding().caseDataVaccinationType.getValue() == CardOrHistory.CARD);
+			});
+		}
 	}
 
 	private void fillConfirmedCaseClassificationCombo() {
@@ -936,25 +951,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 
 		getContentBinding().caseDataDisease.setEnabled(false);
 
-		Set<VaccinationStatus> allowedVaccinations = EnumSet.of(
-				VaccinationStatus.VACCINATED,
-				VaccinationStatus.UNVACCINATED
-		);
-
-		vaccinationList = DataUtils.toItems(
-				Arrays.stream(VaccinationStatus.values())
-						.filter(Objects::nonNull)
-						.filter(allowedVaccinations::contains)
-						.collect(Collectors.toList())
-		);
-
-		vaccinationList = vaccinationList.stream()
-				.filter(item -> item != null)
-				.filter(item -> item.getKey() != null && !item.getKey().trim().isEmpty())
-				.filter(item -> item.getValue() != null)
-				.collect(Collectors.toList());
-
-		getContentBinding().caseDataVaccinationStatus.setEnumItems(vaccinationList);
+		getFilteredVaccinationList();
 		getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
 
 		getContentBinding().caseDataVaccinationStatus.addValueChangedListener( field -> {
@@ -978,6 +975,29 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		});
 
 	}
+
+	private void getFilteredVaccinationList() {
+		Set<VaccinationStatus> allowedVaccinations = EnumSet.of(
+				VaccinationStatus.VACCINATED,
+				VaccinationStatus.UNVACCINATED
+		);
+
+		vaccinationList = DataUtils.toItems(
+				Arrays.stream(VaccinationStatus.values())
+						.filter(Objects::nonNull)
+						.filter(allowedVaccinations::contains)
+						.collect(Collectors.toList())
+		);
+
+		vaccinationList = vaccinationList.stream()
+				.filter(item -> item != null)
+				.filter(item -> item.getKey() != null && !item.getKey().trim().isEmpty())
+				.filter(item -> item.getValue() != null)
+				.collect(Collectors.toList());
+
+		getContentBinding().caseDataVaccinationStatus.setEnumItems(vaccinationList);
+	}
+
 
 	private void handleMpox(){
 		getContentBinding().caseDataReportingOfficerName.setCaption("Name");
