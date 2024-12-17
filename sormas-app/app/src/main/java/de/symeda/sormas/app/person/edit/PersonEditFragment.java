@@ -284,6 +284,9 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 			}
 		}
 
+		sexList.remove(new Item<>(Sex.OTHER.toString(), Sex.OTHER));
+		sexList.remove(new Item<>(Sex.UNKNOWN.toString(), Sex.UNKNOWN));
+
 		contentBinding.personBirthCountry.initializeSpinner(countryList);
 		contentBinding.personCitizenship.initializeSpinner(countryList);
 

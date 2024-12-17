@@ -125,6 +125,7 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setInoculationTimeTransportMedia(source.getInoculationTimeTransportMedia());
 		target.setSampleSentToLab(source.getSampleSentToLab());
 		target.setDateSampleSentToLab(source.getDateSampleSentToLab());
+		target.setReasonNotSentToLab(source.getReasonNotSentToLab());
 		target.setSampleContainerUsed(source.getSampleContainerUsed());
 		target.setContainerOther(source.getContainerOther());
 		target.setRdtPerformed(source.getRdtPerformed());
@@ -298,6 +299,7 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setInoculationTimeTransportMedia(source.getInoculationTimeTransportMedia());
 		target.setSampleSentToLab(source.getSampleSentToLab());
 		target.setDateSampleSentToLab(source.getDateSampleSentToLab());
+		target.setReasonNotSentToLab(source.getReasonNotSentToLab());
 		target.setSampleContainerUsed(source.getSampleContainerUsed());
 		target.setContainerOther(source.getContainerOther());
 		target.setRdtPerformed(source.getRdtPerformed());

@@ -257,7 +257,7 @@
     <string name="caption_settings_server_url">Server URL</string>
     <string name="caption_smallpox_vaccination_scar_img">Smallpox Vaccination Scar</string>
     <string name="caption_suspected_case">Suspected Case</string>
-    <string name="caption_symptoms">Symptom Information</string>
+    <string name="caption_symptoms">Clinical History</string>
     <string name="caption_symptoms_onset_short">Symptom onset</string>
     <string name="caption_task_filters">Filter Task Assignees</string>
     <string name="caption_task_information">Task Information</string>
@@ -463,6 +463,9 @@
     <string name="heading_source_of_information">Source of Information</string>
     <string name="heading_surveillance_outbreak">Surveillance Outbreak</string>
     <string name="heading_symptoms">Signs &amp; Symptoms</string>
+    <string name="heading_symptoms_group_general">General</string>
+    <string name="heading_symptoms_group_gastrointestinal">Gastrointestinal</string>
+    <string name="heading_symptoms_group_respiratory">Respiratory</string>
     <string name="heading_sync_conflicts">Synchronization Conflicts</string>
     <string name="heading_synchronization">Synchronizing with server…</string>
     <string name="heading_task_edit">Task</string>
@@ -571,7 +574,7 @@
     <string name="info_sign_in">Sign into SORMAS to continue the journey of saving lives.</string>
     <string name="info_change_password">To change your Password you will <b>need to enter your SORMAS user password.</b></string>
     <string name="info_similar_persons_found">SORMAS already contains at least one person that seems to be very similar to the personal details you have entered.</string>
-    <string name="info_symptoms">Please select an answer for ALL symptoms indicating if they occurred during this illness between symptom onset and case detection:</string>
+    <string name="info_symptoms">Please tick an answer for ALL symptoms indicating if they occurred at any point in time during this illness:</string>
     <string name="info_synchronizing">Synchronizing with SORMAS server...</string>
     <string name="info_user_report">Please briefly describe the problem you have experienced. Don\'t enter any personal or otherwise sensitive data!</string>
     <string name="info_pick_or_create_case">There is at least one existing case in the database that seems very similar to the one you are about to create. Please do one of the following:\n\n\u2022 Tap on a case that you <b>are sure</b> is the same case that you were about to create\n\u2022 Scroll to the bottom of this window and check the check box if you <b>are sure</b> that your case is a new case\n\nClick on the button in the bottom right to confirm your choice.</string>

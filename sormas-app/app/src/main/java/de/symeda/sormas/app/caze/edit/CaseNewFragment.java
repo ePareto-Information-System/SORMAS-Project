@@ -260,7 +260,6 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 		contentBinding.personBirthdateYYYY.setSelectionOnOpen(year - 35);
 
 		contentBinding.personSex.initializeSpinner(sexList);
-
 		contentBinding.personPresentCondition.initializeSpinner(presentConditionList);
 		approximateAgeTypeList = DataUtils.getEnumItems(ApproximateAgeType.class, true);
 		contentBinding.personApproximateAgeType.initializeSpinner(approximateAgeTypeList);
@@ -300,12 +299,22 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 				super.hideFieldsForDisease(selectedDisease, contentBinding.mainContent, FormType.CASE_CREATE);
 
 				CaseOrigin currentCaseOrigin = (CaseOrigin) contentBinding.caseDataCaseOrigin.getValue();
-				contentBinding.personPassportNumber.setVisibility(currentCaseOrigin == CaseOrigin.POINT_OF_ENTRY ? VISIBLE : GONE
-				);
+				contentBinding.personPassportNumber.setVisibility(currentCaseOrigin == CaseOrigin.POINT_OF_ENTRY ? VISIBLE : GONE);
 				boolean caseDataDifferentPlaceOfStayJurisdiction = Boolean.TRUE.equals(contentBinding.caseDataDifferentPlaceOfStayJurisdiction.getValue());
 				contentBinding.caseDataRegion.setVisibility(caseDataDifferentPlaceOfStayJurisdiction ? VISIBLE : GONE);
 				contentBinding.caseDataDistrict.setVisibility(caseDataDifferentPlaceOfStayJurisdiction ? VISIBLE : GONE);
 				contentBinding.caseDataCommunity.setVisibility(caseDataDifferentPlaceOfStayJurisdiction ? VISIBLE : GONE);
+			}
+		});
+
+		contentBinding.facilityOrHome.addValueChangedListener(e -> {
+			TypeOfPlace value = (TypeOfPlace) e.getValue();
+			if (value.equals(TypeOfPlace.FACILITY)) {
+				contentBinding.facilityTypeGroup.setValue(FacilityTypeGroup.MEDICAL_FACILITY);
+				contentBinding.caseDataFacilityType.setValue(FacilityType.HOSPITAL);
+				initialFacilities =
+						InfrastructureDaoHelper.loadFacilities(record.getResponsibleDistrict(), record.getResponsibleCommunity(), record.getFacilityType());
+				contentBinding.caseDataHealthFacility.setSpinnerData(initialFacilities);
 			}
 		});
 	}

@@ -30,7 +30,7 @@ public enum PresentCondition {
 	@Diseases(value = {
 		Disease.CORONAVIRUS, Disease.MEASLES, Disease.CSM }, hide = true)
 	BURIED,
-	@Diseases(value = {Disease.CSM }, hide = true)
+	@Diseases(value = {Disease.CSM,Disease.CORONAVIRUS }, hide = true)
 	UNKNOWN;
 
 	public boolean isDeceased() {
