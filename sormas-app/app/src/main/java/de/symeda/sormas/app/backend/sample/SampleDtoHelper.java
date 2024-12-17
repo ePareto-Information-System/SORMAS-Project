@@ -172,6 +172,7 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setImmunocompromisedStatusSuspected(source.getImmunocompromisedStatusSuspected());
 		target.setAfpFinalClassification(source.getAfpFinalClassification());
 		target.setLaboratorySampleDateReceived(source.getLaboratorySampleDateReceived());
+		target.setCsfReason(source.getCsfReason());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}
@@ -318,6 +319,7 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setImmunocompromisedStatusSuspected(source.getImmunocompromisedStatusSuspected());
 		target.setAfpFinalClassification(source.getAfpFinalClassification());
 		target.setLaboratorySampleDateReceived(source.getLaboratorySampleDateReceived());
+		target.setCsfReason(source.getCsfReason());
 	}
 
     @Override

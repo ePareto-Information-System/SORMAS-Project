@@ -50,6 +50,7 @@ import de.symeda.sormas.api.sample.SampleSource;
 import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.utils.CsfAppearance;
+import de.symeda.sormas.api.utils.CsfReason;
 import de.symeda.sormas.api.utils.ExamResult;
 import de.symeda.sormas.api.utils.InjectionSite;
 import de.symeda.sormas.api.utils.SampleContainerUsed;
@@ -374,6 +375,8 @@ public class Sample extends PseudonymizableAdo {
 	private FinalClassification afpFinalClassification;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date laboratorySampleDateReceived;
+	@Enumerated(EnumType.STRING)
+	private CsfReason csfReason;
 
 
 	public Case getAssociatedCase() {
@@ -1409,5 +1412,12 @@ public class Sample extends PseudonymizableAdo {
 
 	public void setLaboratorySampleDateReceived(Date laboratorySampleDateReceived) {
 		this.laboratorySampleDateReceived = laboratorySampleDateReceived;
+	}
+
+	public CsfReason getCsfReason() {
+		return csfReason;
+	}
+	public void setCsfReason(CsfReason csfReason) {
+		this.csfReason = csfReason;
 	}
 }

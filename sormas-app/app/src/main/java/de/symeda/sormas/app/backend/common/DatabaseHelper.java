@@ -226,9 +226,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	// any time you make changes to your database objects, you may have to increase the database version
 
 	// public static final int DATABASE_VERSION = 307;
-	//public static final int DATABASE_VERSION = 343;
-	// public static final int DATABASE_VERSION = 410;
-	public static final int DATABASE_VERSION = 423;
+	public static final int DATABASE_VERSION = 424;
 
 	private static DatabaseHelper instance = null;
 	private final Context context;
@@ -4402,6 +4400,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 									+ "		UNIQUE (snapshot ASC, uuid ASC)"
 									+ ");"
 					);
+
+				case 423:
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD csfReason varchar(255)");
 
 					// ATTENTION: break should only be done after last version
 				break;
