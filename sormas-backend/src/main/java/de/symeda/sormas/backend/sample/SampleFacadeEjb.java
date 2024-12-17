@@ -1540,6 +1540,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setReceivedByRegion(source.getReceivedByRegion());
 		target.setReceivedByNational(source.getReceivedByNational());
 		target.setSpecimenSavedAndPreservedInAlcohol(source.getSpecimenSavedAndPreservedInAlcohol());
+		target.setSpecimenSavedAndPreservedInAlcoholWhy(source.getSpecimenSavedAndPreservedInAlcoholWhy());
 		target.setSentForConfirmationNational(source.getSentForConfirmationNational());
 		target.setSentForConfirmationNationalDate(source.getSentForConfirmationNationalDate());
 		target.setSentForConfirmationTo(source.getSentForConfirmationTo());
