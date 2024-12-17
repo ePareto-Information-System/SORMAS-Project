@@ -604,7 +604,7 @@ public class EbsController {
 		if (isSignalVerified(ebsUuid)) {
 			return null;
 		}
-		VaadinUiUtil.showModalPopupWindow(createAlertComponent, I18nProperties.getString(Strings.headingCreateNewEvent));
+		VaadinUiUtil.showModalPopupWindow(createAlertComponent, I18nProperties.getString(Strings.headingCreateNewAlert));
 		return ebsAlertDto;
 	}
 
