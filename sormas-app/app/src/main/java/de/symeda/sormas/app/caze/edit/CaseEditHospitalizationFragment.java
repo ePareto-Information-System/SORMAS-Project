@@ -95,7 +95,10 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 				updatePreviousHospitalizations();
 			});
 
-			dialog.setDeleteCallback(() -> removePreviousHospitalization(previousHospitalization));
+			dialog.setDeleteCallback(() -> {
+				removePreviousHospitalization(previousHospitalization);
+				dialog.dismiss();
+			});
 
 			dialog.show();
 		};
@@ -337,6 +340,9 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 			handleGuineaWorm();
 			contentBinding.caseHospitalizationAdmittedToHealthFacility.addValueChangedListener(field -> handleGuineaWorm());
 			break;
+		case YELLOW_FEVER:
+			handleYF();
+			break;
 		default:
 		}
 	}
@@ -455,6 +461,10 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 			getContentBinding().caseHospitalizationDischargeDate.setVisibility(GONE);
 			getContentBinding().caseHospitalizationHospitalRecordNumber.setVisibility(GONE);
 		}
+	}
+
+	private void handleYF() {
+		getContentBinding().caseHospitalizationDateFirstSeen.setCaption("DATE SEEN AT HEALTH FACILITY");
 	}
 
 }

@@ -350,24 +350,19 @@
 
             </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/person_sex_marriageStatusHeading"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+
 
             <de.symeda.sormas.app.component.controls.ControlSpinnerField
                 android:id="@+id/person_sex"
                 app:required="true"
                 app:value="@={data.sex}"
-                style="@style/ControlFirstOfTwoColumnsStyle" />
+                style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlSpinnerField
                 android:id="@+id/person_marriageStatus"
                 app:value="@={data.marriageStatus}"
-                style="@style/ControlSecondOfTwoColumnsStyle" />
+                style="@style/ControlSingleColumnStyle" />
 
-        </LinearLayout>
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/person_nationality"
@@ -435,28 +430,21 @@
 
 <!--            <ImageView style="@style/FullHorizontalDividerStyle"/>-->
 
-            <LinearLayout
-                android:id="@+id/person_presentConditiondeathDate_Layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                android:id="@+id/person_presentCondition"
+                app:value="@={data.presentCondition}"
+                app:softRequired="true"
+                style="@style/ControlSingleColumnStyle" />
 
-                <de.symeda.sormas.app.component.controls.ControlSpinnerField
-                    android:id="@+id/person_presentCondition"
-                    app:value="@={data.presentCondition}"
-                    app:softRequired="true"
-                    style="@style/ControlFirstOfTwoColumnsStyle" />
+            <de.symeda.sormas.app.component.controls.ControlDateField
+                android:id="@+id/person_deathDate"
+                app:value="@={data.deathDate}"
+                app:softRequired="true"
+                app:dependencyParentField="@{personPresentCondition}"
+                app:dependencyParentValue="@{PresentCondition.DEAD}"
+                app:dependencyParentValue2="@{PresentCondition.BURIED}"
+                style="@style/ControlSingleColumnStyle" />
 
-                <de.symeda.sormas.app.component.controls.ControlDateField
-                    android:id="@+id/person_deathDate"
-                    app:value="@={data.deathDate}"
-                    app:softRequired="true"
-                    app:dependencyParentField="@{personPresentCondition}"
-                    app:dependencyParentValue="@{PresentCondition.DEAD}"
-                    app:dependencyParentValue2="@{PresentCondition.BURIED}"
-                    style="@style/ControlSecondOfTwoColumnsStyle" />
-
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -611,17 +599,11 @@
                 app:customizableEnumProperty="@{OccupationType.HAS_DETAILS}"
                 app:customizableEnumValue="@{Boolean.TRUE}"-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_otherId"
+                app:value="@={data.otherId}"
+                style="@style/ControlSingleColumnStyle" />
 
-                <de.symeda.sormas.app.component.controls.ControlTextEditField
-                    android:id="@+id/person_otherId"
-                    app:value="@={data.otherId}"
-                    style="@style/ControlFirstOfTwoColumnsStyle" />
-
-            </LinearLayout>
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/person_phone"
@@ -1067,7 +1049,7 @@
                 app:value="@={data.investigatorTel}"
                 style="@style/ControlSingleColumnStyle"/>
 
-            <de.symeda.sormas.app.component.controls.ControlTextEditField
+             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/person_telNumber"
                 app:value="@={data.telNumber}"
                 app:inputType="number"

@@ -1,0 +1,182 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable name="data" type="de.symeda.sormas.app.backend.symptoms.Symptoms"/>
+        <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
+        <variable name="YesNoUnknownClass" type="Class" />
+
+    </data>
+
+
+    <LinearLayout
+        android:id="@+id/health_conditions_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:id="@+id/heading_health_conditions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/heading_health_conditions"
+            android:textColor="@color/lightBlue"
+            style="@style/HeadingStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_tuberculosis"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.tuberculosis}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_asplenia"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.asplenia}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_hepatitis"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.hepatitis}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_diabetes"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.diabetes}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_hiv"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.hiv}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_hivArt"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.hivArt}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_chronicLiverDisease"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.chronicLiverDisease}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_malignancyChemotherapy"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.malignancyChemotherapy}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_chronicHeartFailure"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.chronicHeartFailure}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_chronicPulmonaryDisease"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.chronicPulmonaryDisease}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_chronicKidneyDisease"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.chronicKidneyDisease}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_chronicNeurologicCondition"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.chronicNeurologicCondition}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_downSyndrome"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.downSyndrome}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_congenitalSyphilis"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.congenitalSyphilis}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_immunodeficiencyOtherThanHiv"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.immunodeficiencyOtherThanHiv}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_cardiovascularDiseaseIncludingHypertension"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.cardiovascularDiseaseIncludingHypertension}"
+            style="@style/ControlSingleColumnStyle" />
+
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_obesity"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.obesity}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_currentSmoker"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.currentSmoker}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_formerSmoker"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.formerSmoker}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_asthma"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.asthma}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_sickleCellDisease"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.sickleCellDisease}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_immunodeficiencyIncludingHiv"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.immunodeficiencyIncludingHiv}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_lungDisease"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.lungDisease}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_stroke"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.stroke}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_cancer"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.cancer}"
+            style="@style/ControlSingleColumnStyle" />
+
+
+
+
+    </LinearLayout>
+
+</layout>

@@ -927,24 +927,12 @@
 
             </LinearLayout>
 
-            <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
-                android:id="@+id/epiData_patientCloseContactWithARIContactSettings"
-                app:value="@{data.patientCloseContactWithARIContactSettings}"
-                app:dependencyParentField="@{epiDataPatientCloseContactWithARI}"
-                app:dependencyParentValue="@{YesNoUnknown.YES}"
-                style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlTextReadField
                 android:id="@+id/epiData_patientContactWithConfirmedCase"
                 app:value="@{data.patientContactWithConfirmedCase}"
                 style="@style/ControlSingleColumnStyle"/>
 
-            <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
-                android:id="@+id/epiData_patientContactWithConfirmedCaseExposureLocations"
-                app:value="@{data.patientContactWithConfirmedCaseExposureLocations}"
-                app:dependencyParentField="@{epiDataPatientContactWithConfirmedCase}"
-                app:dependencyParentValue="@{YesNoUnknown.YES}"
-                style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlTextReadField
                 android:id="@+id/epiData_patientContactWithConfirmedCaseExposureLocationCityCountry"

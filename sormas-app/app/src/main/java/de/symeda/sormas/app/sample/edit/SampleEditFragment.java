@@ -50,6 +50,7 @@ import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.CsfAppearance;
+import de.symeda.sormas.api.utils.CsfReason;
 import de.symeda.sormas.api.utils.InjectionSite;
 import de.symeda.sormas.api.utils.SampleContainerUsed;
 import de.symeda.sormas.api.utils.YesNo;
@@ -89,6 +90,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	private List<Facility> labList;
 	private List<Item> samplePurposeList;
 	private List<Item> samplingReasonList;
+	private List<Item> csfReasonList;
+	private List<Item> appearanceOfCsfList;
 	private List<String> requestedPathogenTests = new ArrayList<>();
 	private List<String> requestedSampleMaterials = new ArrayList<>();
 	private List<String> requestedAdditionalTests = new ArrayList<>();
@@ -194,6 +197,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		labList = DatabaseHelper.getFacilityDao().getActiveLaboratories(true);
 		samplePurposeList = DataUtils.getEnumItems(SamplePurpose.class, true);
 		samplingReasonList = DataUtils.getEnumItems(SamplingReason.class, true, getFieldVisibilityCheckers());
+		csfReasonList = DataUtils.getEnumItems(CsfReason.class, true, getFieldVisibilityCheckers());
+		appearanceOfCsfList = DataUtils.getEnumItems(CsfAppearance.class, true, getFieldVisibilityCheckers());
 
 		List<Disease> diseases = DiseaseConfigurationCache.getInstance().getAllDiseases(true, true, true);
 		suspectedList = DataUtils.toItems(diseases);
@@ -261,6 +266,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		contentBinding.sampleSelectedResultIGM.initializeSpinner(posNegEqList);
 		contentBinding.sampleSelectedResultPcr.initializeSpinner(posNegList);
 		contentBinding.sampleSelectedResultPrnt.initializeSpinner(posNegList);
+		contentBinding.sampleAppearanceOfCsf.initializeSpinner(appearanceOfCsfList);
+		contentBinding.sampleCsfReason.initializeSpinner(csfReasonList);
 
 		// Initialize ControlDateFields and ControlDateTimeFields
 		contentBinding.sampleSampleDateTime.initializeDateTimeField(getFragmentManager());

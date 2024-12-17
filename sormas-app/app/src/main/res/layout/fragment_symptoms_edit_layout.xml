@@ -1705,6 +1705,25 @@
                 app:dependencyParentValue="@{SymptomState.YES}"
                 style="@style/ControlSingleColumnStyle" />
 
+            <include
+                layout="@layout/health_conditions_layout"
+                android:id="@+id/symptoms_healthConditions"
+                app:data="@{data}"
+                app:YesNoUnknownClass="@{YesNoUnknownClass}" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/symptoms_otherConditions"
+                app:value="@={data.otherConditions}"
+                app:inputType="textMultiLine"
+                app:textAlignment="gravity"
+                app:gravity="top|start"
+                app:singleLine="false"
+                app:maxLines="3"
+                app:textArea="true"
+                style="@style/ControlSingleColumnStyle" />
+
+
+
             <!-- comments, etc. -->
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField

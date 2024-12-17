@@ -123,6 +123,13 @@
                     app:value="@={data.hasSampleBeenCollected}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/sample_csfReason"
+                    app:value="@={data.csfReason}"
+                    app:dependencyParentField="@{sampleHasSampleBeenCollected}"
+                    app:dependencyParentValue="@{YesNo.NO}"
+                    style="@style/ControlSingleColumnStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlDateTimeField
                     android:id="@+id/sample_sampleDateTime"
                     app:dateHint="@string/caption_date_of_sampling"
@@ -683,10 +690,9 @@
                     app:value="@={data.remarks}"
                     style="@style/ControlSingleColumnStyle" />
 
-                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/sample_appearanceOfCsf"
-                    app:value="@={data.appearanceOfCsf}"
-                    app:enumClass="@{csfAppearanceClass}"
+                    app:value="@{data.appearanceOfCsf}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlDateField

@@ -318,6 +318,32 @@ public class SymptomsDtoHelper extends AdoDtoHelper<Symptoms, SymptomsDto> {
 		target.setDateOfDeath(source.getDateOfDeath());
 		target.setPlaceOfDeath(source.getPlaceOfDeath());
 //		target.setHealthConditions(healthConditionsDtoHelper.fillOrCreateFromDto(target.getHealthConditions(), source.getHealthConditions()));
+		target.setTuberculosis(source.getTuberculosis());
+		target.setAsplenia(source.getAsplenia());
+		target.setHepatitis(source.getHepatitis());
+		target.setDiabetes(source.getDiabetes());
+		target.setHiv(source.getHiv());
+		target.setHivArt(source.getHivArt());
+		target.setChronicLiverDisease(source.getChronicLiverDisease());
+		target.setMalignancyChemotherapy(source.getMalignancyChemotherapy());
+		target.setChronicHeartFailure(source.getChronicHeartFailure());
+		target.setChronicPulmonaryDisease(source.getChronicPulmonaryDisease());
+		target.setChronicKidneyDisease(source.getChronicKidneyDisease());
+		target.setChronicNeurologicCondition(source.getChronicNeurologicCondition());
+		target.setDownSyndrome(source.getDownSyndrome());
+		target.setCongenitalSyphilis(source.getCongenitalSyphilis());
+		target.setImmunodeficiencyOtherThanHiv(source.getImmunodeficiencyOtherThanHiv());
+		target.setCardiovascularDiseaseIncludingHypertension(source.getCardiovascularDiseaseIncludingHypertension());
+		target.setObesity(source.getObesity());
+		target.setCurrentSmoker(source.getCurrentSmoker());
+		target.setFormerSmoker(source.getFormerSmoker());
+		target.setAsthma(source.getAsthma());
+		target.setSickleCellDisease(source.getSickleCellDisease());
+		target.setImmunodeficiencyIncludingHiv(source.getImmunodeficiencyIncludingHiv());
+		target.setLungDisease(source.getLungDisease());
+		target.setStroke(source.getStroke());
+		target.setCancer(source.getCancer());
+		target.setOtherConditions(source.getOtherConditions());
 		target.setPseudonymized(source.isPseudonymized());
 	}
 
@@ -585,6 +611,32 @@ public class SymptomsDtoHelper extends AdoDtoHelper<Symptoms, SymptomsDto> {
 		target.setDateOfDeath(source.getDateOfDeath());
 		target.setPlaceOfDeath(source.getPlaceOfDeath());
 
+		target.setTuberculosis(source.getTuberculosis());
+		target.setAsplenia(source.getAsplenia());
+		target.setHepatitis(source.getHepatitis());
+		target.setDiabetes(source.getDiabetes());
+		target.setHiv(source.getHiv());
+		target.setHivArt(source.getHivArt());
+		target.setChronicLiverDisease(source.getChronicLiverDisease());
+		target.setMalignancyChemotherapy(source.getMalignancyChemotherapy());
+		target.setChronicHeartFailure(source.getChronicHeartFailure());
+		target.setChronicPulmonaryDisease(source.getChronicPulmonaryDisease());
+		target.setChronicKidneyDisease(source.getChronicKidneyDisease());
+		target.setChronicNeurologicCondition(source.getChronicNeurologicCondition());
+		target.setDownSyndrome(source.getDownSyndrome());
+		target.setCongenitalSyphilis(source.getCongenitalSyphilis());
+		target.setImmunodeficiencyOtherThanHiv(source.getImmunodeficiencyOtherThanHiv());
+		target.setCardiovascularDiseaseIncludingHypertension(source.getCardiovascularDiseaseIncludingHypertension());
+		target.setObesity(source.getObesity());
+		target.setCurrentSmoker(source.getCurrentSmoker());
+		target.setFormerSmoker(source.getFormerSmoker());
+		target.setAsthma(source.getAsthma());
+		target.setSickleCellDisease(source.getSickleCellDisease());
+		target.setImmunodeficiencyIncludingHiv(source.getImmunodeficiencyIncludingHiv());
+		target.setLungDisease(source.getLungDisease());
+		target.setStroke(source.getStroke());
+		target.setCancer(source.getCancer());
+		target.setOtherConditions(source.getOtherConditions());
 		target.setPseudonymized(source.isPseudonymized());
 	}
 

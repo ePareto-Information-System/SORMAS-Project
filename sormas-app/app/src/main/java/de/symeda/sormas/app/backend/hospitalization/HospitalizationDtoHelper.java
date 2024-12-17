@@ -38,8 +38,9 @@ import retrofit2.Call;
 
 public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, HospitalizationDto> {
 
-	private PreviousHospitalizationDtoHelper previousHospitalizationDtoHelper;
 	private LocationDtoHelper locationDtoHelper = new LocationDtoHelper();
+
+	private PreviousHospitalizationDtoHelper previousHospitalizationDtoHelper;
 
 	public HospitalizationDtoHelper() {
 		previousHospitalizationDtoHelper = new PreviousHospitalizationDtoHelper();
