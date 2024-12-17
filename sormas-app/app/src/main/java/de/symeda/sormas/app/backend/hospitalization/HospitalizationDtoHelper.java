@@ -25,6 +25,8 @@ import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.facility.FacilityDtoHelper;
+import de.symeda.sormas.app.backend.location.Location;
+import de.symeda.sormas.app.backend.location.LocationDtoHelper;
 import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.CommunityDtoHelper;
 import de.symeda.sormas.app.backend.region.District;
@@ -37,6 +39,7 @@ import retrofit2.Call;
 public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, HospitalizationDto> {
 
 	private PreviousHospitalizationDtoHelper previousHospitalizationDtoHelper;
+	private LocationDtoHelper locationDtoHelper = new LocationDtoHelper();
 
 	public HospitalizationDtoHelper() {
 		previousHospitalizationDtoHelper = new PreviousHospitalizationDtoHelper();
@@ -53,7 +56,7 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 	}
 
 	@Override
-	protected Call<List<HospitalizationDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid)  throws NoConnectionException {
+	protected Call<List<HospitalizationDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid) throws NoConnectionException {
 		throw new UnsupportedOperationException("Entity is embedded");
 	}
 
@@ -94,7 +97,6 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		a.setMemberFamilyHelpingPatient(b.getMemberFamilyHelpingPatient());
 		a.setDateOfDeath(b.getDateOfDeath());
 
-
 		// It would be better to merge with the existing hospitalizations
 		List<PreviousHospitalization> previousHospitalizations = new ArrayList<>();
 		if (!b.getPreviousHospitalizations().isEmpty()) {
@@ -129,6 +131,7 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		a.setLabTestConducted(b.getLabTestConducted());
 		a.setTypeOfSample(b.getTypeOfSample());
 		a.setAgentIdentified(b.getAgentIdentified());
+		a.setLocationType(locationDtoHelper.fillOrCreateFromDto(a.getLocationType(), b.getLocationType()));
 
 	}
 
@@ -212,10 +215,16 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		a.setLabTestConducted(b.getLabTestConducted());
 		a.setTypeOfSample(b.getTypeOfSample());
 		a.setAgentIdentified(b.getAgentIdentified());
+		if (b.getLocationType() != null) {
+			Location location = DatabaseHelper.getLocationDao().queryForId(b.getLocationType().getId());
+			a.setLocationType(locationDtoHelper.adoToDto(location));
+		} else {
+			b.setLocationType(null);
+		}
 	}
 
-    @Override
-    protected long getApproximateJsonSizeInBytes() {
-        return 0;
-    }
+	@Override
+	protected long getApproximateJsonSizeInBytes() {
+		return 0;
+	}
 }

@@ -3206,7 +3206,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setLaboratoryDiagnosticConfirmation(source.getLaboratoryDiagnosticConfirmation());
 		target.setInvestigationStatus(source.getInvestigationStatus());
 		target.setPerson(PersonFacadeEjb.toReferenceDto(source.getPerson()));
-		target.setHospitalization(HospitalizationFacadeEjb.toDto(source.getHospitalization()));
+		if (source.getHospitalization() != null) {
+			target.setHospitalization(HospitalizationFacadeEjb.toDto(source.getHospitalization()));
+		}
 		target.setSixtyDay(SixtyDayFacadeEjb.toDto(source.getSixtyDay()));
 		target.setInvestigationNotes(InvestigationNotesFacadeEjb.toDto(source.getInvestigationNotes()));
 		target.setAfpImmunization(AfpImmunizationFacadeEjb.toDto(source.getAfpImmunization()));

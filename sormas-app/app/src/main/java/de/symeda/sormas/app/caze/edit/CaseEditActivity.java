@@ -25,7 +25,6 @@ import android.os.AsyncTask;
 import android.view.Menu;
 
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
@@ -46,7 +45,6 @@ import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.event.Event;
 import de.symeda.sormas.app.backend.event.EventCriteria;
 import de.symeda.sormas.app.backend.event.EventParticipant;
-import de.symeda.sormas.app.backend.formbuilder.FormBuilder;
 import de.symeda.sormas.app.backend.user.UserRole;
 import de.symeda.sormas.app.caze.CaseSection;
 import de.symeda.sormas.app.clinicalcourse.edit.ClinicalVisitNewActivity;
@@ -170,7 +168,6 @@ public class CaseEditActivity extends BaseEditActivity<Case> {
 
 		return menuItems;
 	}
-
 
 //	public List<PageMenuItem> getPageMenuData() {
 //		List<PageMenuItem> menuItems = PageMenuItem.fromEnum(CaseSection.values(), getContext());

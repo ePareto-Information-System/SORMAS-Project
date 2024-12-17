@@ -49,7 +49,6 @@ import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.feature.FeatureTypeProperty;
-import de.symeda.sormas.api.foodhistory.FoodHistoryDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.task.TaskStatus;
 import de.symeda.sormas.api.user.JurisdictionLevel;
@@ -59,7 +58,6 @@ import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.EpiWeek;
 import de.symeda.sormas.api.utils.InfoProvider;
 import de.symeda.sormas.api.utils.YesNo;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.app.backend.affectedperson.AffectedPerson;
@@ -111,6 +109,30 @@ public class CaseDao extends AbstractAdoDao<Case> {
 
 	public CaseDao(Dao<Case, Long> innerDao) throws SQLException {
 		super(innerDao);
+	}
+
+	public static Region getRegionWithFallback(Case caze) {
+		if (caze.getRegion() == null) {
+			return caze.getResponsibleRegion();
+		}
+
+		return caze.getRegion();
+	}
+
+	public static District getDistrictWithFallback(Case caze) {
+		if (caze.getDistrict() == null) {
+			return caze.getResponsibleDistrict();
+		}
+
+		return caze.getDistrict();
+	}
+
+	public static Community getCommunityWithFallback(Case caze) {
+		if (caze.getRegion() == null) {
+			return caze.getResponsibleCommunity();
+		}
+
+		return caze.getCommunity();
 	}
 
 	@Override
@@ -183,7 +205,8 @@ public class CaseDao extends AbstractAdoDao<Case> {
 			date = contaminationSourceDate;
 		}
 
-		Date patientSymptomsPrecedenceDate = getLatestChangeDateSubJoin(RiskFactor.TABLE_NAME, Case.RISK_FACTOR, PatientSymptomsPrecedence.TABLE_NAME);
+		Date patientSymptomsPrecedenceDate =
+			getLatestChangeDateSubJoin(RiskFactor.TABLE_NAME, Case.RISK_FACTOR, PatientSymptomsPrecedence.TABLE_NAME);
 		if (patientSymptomsPrecedenceDate != null && patientSymptomsPrecedenceDate.after(date)) {
 			date = patientSymptomsPrecedenceDate;
 		}
@@ -233,7 +256,6 @@ public class CaseDao extends AbstractAdoDao<Case> {
 		if (investigationNotesDate != null && investigationNotesDate.after(date)) {
 			date = investigationNotesDate;
 		}
-
 
 //		afpImmunization
 		Date afpImmunizationDate = getLatestChangeDateJoin(AfpImmunization.TABLE_NAME, Case.AFP_IMMUNIZATION);
@@ -396,6 +418,16 @@ public class CaseDao extends AbstractAdoDao<Case> {
 		return newCase;
 	}
 
+	// TODO #704
+//    @Override
+//    /**
+//     * @param caze person has to be initialized
+//     */
+//    public void markAsRead(Case caze) {
+//        super.markAsRead(caze);
+//        DatabaseHelper.getPersonDao().markAsRead(caze.getPerson());
+//    }
+
 	public void createPreviousHospitalizationAndUpdateHospitalization(Case caze, Case oldCase) {
 		if (FacilityType.HOSPITAL.equals(oldCase.getFacilityType())) {
 			caze.getHospitalization()
@@ -449,16 +481,6 @@ public class CaseDao extends AbstractAdoDao<Case> {
 			throw new RuntimeException(e);
 		}
 	}
-
-	// TODO #704
-//    @Override
-//    /**
-//     * @param caze person has to be initialized
-//     */
-//    public void markAsRead(Case caze) {
-//        super.markAsRead(caze);
-//        DatabaseHelper.getPersonDao().markAsRead(caze.getPerson());
-//    }
 
 	@Override
 	public Case mergeOrCreate(Case source) throws DaoException {
@@ -556,7 +578,18 @@ public class CaseDao extends AbstractAdoDao<Case> {
 					}
 				}
 			}
-
+			if (changedCase.getHospitalization().getLocationType() == null) {
+				changedCase.getHospitalization().setLocationType(DatabaseHelper.getLocationDao().build());
+			}
+			if (changedCase.getHospitalization().getLocationType().getRegion() == null) {
+				changedCase.getHospitalization().getLocationType().setRegion(changedCase.getResponsibleRegion());
+			}
+			if (changedCase.getHospitalization().getLocationType().getDistrict() == null) {
+				changedCase.getHospitalization().getLocationType().setDistrict(changedCase.getResponsibleDistrict());
+			}
+			if (changedCase.getHospitalization().getLocationType().getDistrict() == null) {
+				changedCase.getHospitalization().getLocationType().setCommunity(changedCase.getResponsibleCommunity());
+			}
 			boolean responsibleRegionChanged = !DataHelper.isSame(changedCase.getResponsibleRegion(), existingCase.getResponsibleRegion());
 			boolean regionChanged = !DataHelper.isSame(changedCase.getRegion(), existingCase.getRegion());
 
@@ -756,7 +789,7 @@ public class CaseDao extends AbstractAdoDao<Case> {
 			}
 		}
 
-		//Remove events linked to case by removing case_id from event participants - delete event participant and 
+		//Remove events linked to case by removing case_id from event participants - delete event participant and
 		List<EventParticipant> eventParticipants = DatabaseHelper.getEventParticipantDao().getByCase(caze);
 		for (EventParticipant eventParticipant : eventParticipants) {
 			DatabaseHelper.getEventParticipantDao().deleteEventParticipant(eventParticipant);
@@ -881,29 +914,5 @@ public class CaseDao extends AbstractAdoDao<Case> {
 		}
 		queryBuilder = queryBuilder.leftJoin(personQueryBuilder);
 		return queryBuilder;
-	}
-
-	public static Region getRegionWithFallback(Case caze) {
-		if (caze.getRegion() == null) {
-			return caze.getResponsibleRegion();
-		}
-
-		return caze.getRegion();
-	}
-
-	public static District getDistrictWithFallback(Case caze) {
-		if (caze.getDistrict() == null) {
-			return caze.getResponsibleDistrict();
-		}
-
-		return caze.getDistrict();
-	}
-
-	public static Community getCommunityWithFallback(Case caze) {
-		if (caze.getRegion() == null) {
-			return caze.getResponsibleCommunity();
-		}
-
-		return caze.getCommunity();
 	}
 }
