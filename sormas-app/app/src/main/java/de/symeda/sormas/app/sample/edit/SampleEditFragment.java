@@ -20,7 +20,10 @@ import static android.view.View.VISIBLE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +55,7 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.CsfAppearance;
 import de.symeda.sormas.api.utils.CsfReason;
 import de.symeda.sormas.api.utils.InjectionSite;
+import de.symeda.sormas.api.utils.PosNeg;
 import de.symeda.sormas.api.utils.SampleContainerUsed;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
@@ -102,6 +106,9 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	private List<Item> posNegEqList;
 	private List<Item> frequencyOfChangingFiltersList;
 	private List<Item> finalClassificationList;
+	private  List<Item> finalExamResultList;
+	private List<Item> injectionSiteList;
+	private List<Item> finalLabResultsList;
 
 	public static SampleEditFragment newInstance(Sample activityRootData) {
 		return newInstanceWithFieldCheckers(
@@ -317,6 +324,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			super.hideFieldsForDisease(record.getAssociatedCase().getDisease(), contentBinding.mainContent, FormType.SAMPLE_EDIT);
 		}
 		contentBinding.setFilterChangingFrequencyClass(FilterChangingFrequency.class);
+		finalLabResultsList = DataUtils.getEnumItems(PosNeg.class, true);
+		contentBinding.sampleFinalLabResults.initializeSpinner(finalLabResultsList);
 
 
 	}
@@ -504,6 +513,9 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			case MONKEYPOX:
 				handleMpox();
 				break;
+			case AFP:
+				handleAFP();
+				break;
 			default:
 		}
 
@@ -513,7 +525,8 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 
 		finalClassificationList = DataUtils.getEnumItems(FinalClassification.class, true);
 		contentBinding.sampleAfpFinalClassification.initializeSpinner(finalClassificationList);
-
+		finalExamResultList = DataUtils.getEnumItems(ExamResult.class,true);
+		contentBinding.sampleResultExam.initializeSpinner(finalExamResultList);
 	}
 
 	@Override
@@ -658,6 +671,27 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 			getContentBinding().sampleSampleDateTime.setVisibility(visibility);
 		});
 
+	}
+
+	private void handleAFP() {
+		Set<InjectionSite> allowedInjections = EnumSet.of(
+				InjectionSite.LEFT_ARM,
+				InjectionSite.LEFT_LEG,
+				InjectionSite.RIGHT_ARM,
+				InjectionSite.RIGHT_LEG
+		);
+		injectionSiteList = DataUtils.toItems(
+				Arrays.stream(InjectionSite.values())
+						.filter(Objects::nonNull)
+						.filter(allowedInjections::contains)
+						.collect(Collectors.toList())
+		);
+		injectionSiteList = injectionSiteList.stream()
+				.filter(item -> item != null)
+				.filter(item -> item.getKey() != null && !item.getKey().trim().isEmpty())
+				.filter(item -> item.getValue() != null)
+				.collect(Collectors.toList());
+		getContentBinding().sampleResidualAnalysis.setEnumItems(injectionSiteList);
 	}
 
 }

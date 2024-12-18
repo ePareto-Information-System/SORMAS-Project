@@ -386,6 +386,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
             } else if (TypeOfPlace.HOME.equals(facilityOrHome.getValue())
                     || ((facilityOrHome.getValue() instanceof java.util.Set) && TypeOfPlace.HOME.equals(facilityOrHome.getNullableValue()))) {
                 setNoneFacility();
+                facilityCombo.setVisible(false);
             } else {
                 FieldHelper.removeItems(facilityCombo);
                 if (TypeOfPlace.FACILITY.equals(facilityOrHome.getValue())
@@ -408,6 +409,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
                 } else if (TypeOfPlace.HOME.equals(facilityOrHome.getValue())
                         || ((facilityOrHome.getValue() instanceof java.util.Set) && TypeOfPlace.HOME.equals(facilityOrHome.getNullableValue()))) {
                     setNoneFacility();
+                    facilityCombo.setVisible(false);
                 } else {
                     facilityCombo.removeAllItems();
                     facilityCombo.setValue(null);
@@ -697,6 +699,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
         Object facilityOrHomeValue = facilityOrHome.isRequired() ? facilityOrHome.getValue() : facilityOrHome.getNullableValue();
         if (TypeOfPlace.HOME.equals(facilityOrHomeValue)) {
             setNoneFacility();
+            facilityCombo.setVisible(false);
             return;
         }
 

@@ -53,6 +53,7 @@ import de.symeda.sormas.api.utils.CsfAppearance;
 import de.symeda.sormas.api.utils.CsfReason;
 import de.symeda.sormas.api.utils.ExamResult;
 import de.symeda.sormas.api.utils.InjectionSite;
+import de.symeda.sormas.api.utils.PosNeg;
 import de.symeda.sormas.api.utils.SampleContainerUsed;
 import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -379,6 +380,10 @@ public class Sample extends PseudonymizableAdo {
 	private Date laboratorySampleDateReceived;
 	@Enumerated(EnumType.STRING)
 	private CsfReason csfReason;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown discordant;
+	@Enumerated(EnumType.STRING)
+	private PosNeg finalLabResults;
 
 
 	public Case getAssociatedCase() {
@@ -1429,5 +1434,20 @@ public class Sample extends PseudonymizableAdo {
 	}
 	public void setCsfReason(CsfReason csfReason) {
 		this.csfReason = csfReason;
+	}
+
+	public YesNoUnknown getDiscordant(){
+		return discordant;
+	}
+	public void setDiscordant(YesNoUnknown discordant){
+		this.discordant = discordant;
+	}
+
+	public PosNeg getFinalLabResults() {
+		return finalLabResults;
+	}
+
+	public void setFinalLabResults(PosNeg finalLabResults) {
+		this.finalLabResults = finalLabResults;
 	}
 }

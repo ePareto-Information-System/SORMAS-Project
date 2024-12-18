@@ -3,7 +3,13 @@
     <data>
         <variable name="data" type="de.symeda.sormas.app.backend.symptoms.Symptoms"/>
         <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
+        <import type="de.symeda.sormas.api.utils.YesNo" />
+        <import type="de.symeda.sormas.api.caze.Trimester" />
         <variable name="YesNoUnknownClass" type="Class" />
+        <variable name="YesNoClass" type="Class" />
+        <variable name="TrimesterClass" type="Class" />
+        <import type="de.symeda.sormas.api.i18n.I18nProperties" />
+        <import type="de.symeda.sormas.api.i18n.Strings" />
 
     </data>
 
@@ -19,7 +25,7 @@
             android:id="@+id/heading_health_conditions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/heading_health_conditions"
+            android:text="@{I18nProperties.getString(Strings.headingHealthConditions)}"
             android:textColor="@color/lightBlue"
             style="@style/HeadingStyle" />
 
@@ -48,6 +54,12 @@
             style="@style/ControlSingleColumnStyle" />
 
         <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_chronicKidneyDisease"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.chronicKidneyDisease}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
             android:id="@+id/symptoms_hiv"
             app:enumClass="@{YesNoUnknownClass}"
             app:value="@={data.hiv}"
@@ -57,7 +69,16 @@
             android:id="@+id/symptoms_hivArt"
             app:enumClass="@{YesNoUnknownClass}"
             app:value="@={data.hivArt}"
+            app:dependencyParentField="@{symptomsHiv}"
+            app:dependencyParentValue="@{YesNoUnknown.YES}"
             style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_cardiovascularDiseaseIncludingHypertension"
+            app:enumClass="@{YesNoUnknownClass}"
+            app:value="@={data.cardiovascularDiseaseIncludingHypertension}"
+            style="@style/ControlSingleColumnStyle" />
+
 
         <de.symeda.sormas.app.component.controls.ControlSwitchField
             android:id="@+id/symptoms_chronicLiverDisease"
@@ -84,12 +105,6 @@
             style="@style/ControlSingleColumnStyle" />
 
         <de.symeda.sormas.app.component.controls.ControlSwitchField
-            android:id="@+id/symptoms_chronicKidneyDisease"
-            app:enumClass="@{YesNoUnknownClass}"
-            app:value="@={data.chronicKidneyDisease}"
-            style="@style/ControlSingleColumnStyle" />
-
-        <de.symeda.sormas.app.component.controls.ControlSwitchField
             android:id="@+id/symptoms_chronicNeurologicCondition"
             app:enumClass="@{YesNoUnknownClass}"
             app:value="@={data.chronicNeurologicCondition}"
@@ -112,13 +127,6 @@
             app:enumClass="@{YesNoUnknownClass}"
             app:value="@={data.immunodeficiencyOtherThanHiv}"
             style="@style/ControlSingleColumnStyle" />
-
-        <de.symeda.sormas.app.component.controls.ControlSwitchField
-            android:id="@+id/symptoms_cardiovascularDiseaseIncludingHypertension"
-            app:enumClass="@{YesNoUnknownClass}"
-            app:value="@={data.cardiovascularDiseaseIncludingHypertension}"
-            style="@style/ControlSingleColumnStyle" />
-
 
         <de.symeda.sormas.app.component.controls.ControlSwitchField
             android:id="@+id/symptoms_obesity"
@@ -174,7 +182,25 @@
             app:value="@={data.cancer}"
             style="@style/ControlSingleColumnStyle" />
 
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_pregnant"
+            app:enumClass="@{YesNoClass}"
+            app:value="@={data.pregnant}"
+            style="@style/ControlSingleColumnStyle" />
 
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_trimester"
+            app:enumClass="@{TrimesterClass}"
+            app:value="@={data.trimester}"
+            app:dependencyParentField="@{symptomsPregnant}"
+            app:dependencyParentValue="@{YesNo.YES}"
+            style="@style/ControlSingleColumnStyle" />
+
+        <de.symeda.sormas.app.component.controls.ControlSwitchField
+            android:id="@+id/symptoms_postpartum"
+            app:enumClass="@{YesNoClass}"
+            app:value="@={data.postpartum}"
+            style="@style/ControlSingleColumnStyle" />
 
 
     </LinearLayout>

@@ -4430,6 +4430,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				case 424:
                     currentVersion = 424;
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD csfReason varchar(255)");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN discordant VARCHAR(255);");
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN finalLabResults DATE;");
 					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD reasonNotSentToLab varchar(255)");
 
 					// ATTENTION: break should only be done after last version

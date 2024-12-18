@@ -50,6 +50,7 @@
         <variable name="YesNoClass" type="Class" />
         <variable name="YesNoUnknownClass" type="Class" />
         <variable name="injectionSiteClass" type="Class" />
+        <variable name="TrimesterClass" type="Class" />
     </data>
 
 
@@ -1730,6 +1731,8 @@
                 layout="@layout/health_conditions_layout"
                 android:id="@+id/symptoms_healthConditions"
                 app:data="@{data}"
+                app:YesNoClass="@{YesNoClass}"
+                app:TrimesterClass="@{TrimesterClass}"
                 app:YesNoUnknownClass="@{YesNoUnknownClass}" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
