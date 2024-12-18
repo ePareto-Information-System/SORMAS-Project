@@ -677,13 +677,13 @@
                         app:dependencyParentValue="@{YesNo.YES}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
-                    <de.symeda.sormas.app.component.controls.ControlSwitchField
-                        android:id="@+id/sample_confirmedAsGuineaWorm"
-                        app:value="@={data.confirmedAsGuineaWorm}"
-                        app:enumClass="@{yesNoClass}"
-                        style="@style/ControlSecondOfTwoColumnsStyle" />
-
                 </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/sample_confirmedAsGuineaWorm"
+                    app:value="@={data.confirmedAsGuineaWorm}"
+                    app:enumClass="@{yesNoClass}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/sample_finalLabResults"
