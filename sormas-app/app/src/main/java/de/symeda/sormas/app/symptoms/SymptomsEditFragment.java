@@ -30,6 +30,7 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FormType;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.caze.Trimester;
 import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.hospitalization.SymptomsList;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
@@ -192,6 +193,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 
 		contentBinding.setYesNoClass(YesNo.class);
 		contentBinding.setInjectionSiteClass(InjectionSite.class);
+		contentBinding.setTrimesterClass(Trimester.class);
 
 		SymptomsValidator.initializeSymptomsValidation(contentBinding, ado);
 
