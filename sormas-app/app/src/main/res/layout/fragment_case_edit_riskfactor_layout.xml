@@ -514,6 +514,13 @@
                     app:enumClass="@{YesNoClass}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/riskFactor_during3WeeksPatientContactWithSimilarSymptomsIfYes"
+                    app:value="@={data.during3WeeksPatientContactWithSimilarSymptomsIfYes}"
+                    app:dependencyParentField="@{riskFactorDuring3WeeksPatientContactWithSimilarSymptoms}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSingleColumnStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlDateField
                     android:id="@+id/riskFactor_dateOfContactWithIllPerson"
                     app:value="@{data.dateOfContactWithIllPerson}"

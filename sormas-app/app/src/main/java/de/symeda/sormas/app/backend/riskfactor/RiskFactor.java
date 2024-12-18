@@ -148,6 +148,8 @@ public class RiskFactor extends PseudonymizableAdo {
 	private YesNo patientTouchDomesticWildAnimal;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String patientTouchDomesticWildAnimalIfYes;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String during3WeeksPatientContactWithSimilarSymptomsIfYes;
 
 	private List<PatientSymptomsPrecedence> patientSymptomsPrecedences = new ArrayList<>();
 
@@ -500,6 +502,14 @@ public class RiskFactor extends PseudonymizableAdo {
 	}
 	public void setPatientSymptomsPrecedences(List<PatientSymptomsPrecedence> patientSymptomsPrecedences) {
 		this.patientSymptomsPrecedences = patientSymptomsPrecedences;
+	}
+
+	public String getDuring3WeeksPatientContactWithSimilarSymptomsIfYes() {
+		return during3WeeksPatientContactWithSimilarSymptomsIfYes;
+	}
+
+	public void setDuring3WeeksPatientContactWithSimilarSymptomsIfYes(String during3WeeksPatientContactWithSimilarSymptomsIfYes) {
+		this.during3WeeksPatientContactWithSimilarSymptomsIfYes = during3WeeksPatientContactWithSimilarSymptomsIfYes;
 	}
 
 
