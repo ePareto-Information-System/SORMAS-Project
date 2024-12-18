@@ -7,6 +7,7 @@
 *.idea
 *.iml
 .vscode
+*.hprof
 
 /sormas-backend/bin
 /sormas-rest/bin
