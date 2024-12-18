@@ -388,6 +388,18 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setCutCordWithSterileBlade(source.getCutCordWithSterileBlade());
 		target.setCordTreatedWithAnything(source.getCordTreatedWithAnything());
 		target.setCordTreatedWithAnythingWhere(source.getCordTreatedWithAnythingWhere());
+		target.setPlace(source.getPlace());
+		target.setDurationMonths(source.getDurationMonths());
+		target.setDurationDays(source.getDurationDays());
+		target.setPlace2(source.getPlace2());
+		target.setDurationMonths2(source.getDurationMonths2());
+		target.setDurationDays2(source.getDurationDays2());
+		target.setPlace3(source.getPlace3());
+		target.setDurationMonths3(source.getDurationMonths3());
+		target.setDurationDays3(source.getDurationDays3());
+		target.setPlace4(source.getPlace4());
+		target.setDurationMonths4(source.getDurationMonths4());
+		target.setDurationDays4(source.getDurationDays4());
 		//target.setCadre(CadreFacadeEjb.toReferenceDto(source.getCadre()));
 		target.setPst14MonthsVillage(source.getPst14MonthsVillage());
 		target.setPst14MonthsZone(source.getPst14MonthsZone());
