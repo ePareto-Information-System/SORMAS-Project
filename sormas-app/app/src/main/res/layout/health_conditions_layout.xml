@@ -59,7 +59,7 @@
             android:id="@+id/symptoms_hivArt"
             app:enumClass="@{YesNoUnknownClass}"
             app:value="@={data.hivArt}"
-            app:dependencyParentField="@{symptomsHivArt}"
+            app:dependencyParentField="@{symptomsHiv}"
             app:dependencyParentValue="@{YesNoUnknown.YES}"
             style="@style/ControlSingleColumnStyle" />
 
