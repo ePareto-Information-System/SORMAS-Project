@@ -264,11 +264,6 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 
 		contentBinding.setContaminationSourceItemClickCallback(onContaminationSourceItemClickListener);
 
-
-
-
-
-
 	}
 
 	public static Disease getExportedCaseDisease() {
@@ -578,17 +573,6 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	}
 
 	private void handleAHF(){
-		/*getContentBinding().epiDataComm1.setVisibility(GONE);
-		getContentBinding().epiDataHealthCenter1.setVisibility(GONE);
-		getContentBinding().epiDataCountry1.setVisibility(GONE);
-		getContentBinding().epiDataComm2.setVisibility(GONE);
-		getContentBinding().epiDataHealthCenter2.setVisibility(GONE);
-		getContentBinding().epiDataCountry2.setVisibility(GONE);
-
-		getContentBinding().epiDataIfTravelYesWhere.setVisibility(GONE);
-		getContentBinding().epiDataIfYesStartDate.setVisibility(GONE);
-		getContentBinding().epiDataIfYesEndDate.setVisibility(GONE);*/
-
 		List<Item<CaseOutcome>> itemsToRemove = List.of(
 				new Item<>(CaseOutcome.OTHER.toString(), CaseOutcome.OTHER),
 				new Item<>(CaseOutcome.UNKNOWN.toString(), CaseOutcome.UNKNOWN),

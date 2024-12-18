@@ -474,6 +474,18 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			}
 		}
 
+		InfrastructureFieldsDependencyHandler.instance.initializeRegionFields(
+				contentBinding.caseDataRegionOfResidence,
+				initialRegions,
+				record.getRegion(),
+				contentBinding.caseDataDistrictOfResidence,
+				initialDistricts,
+				record.getDistrict(),
+				null,
+				null,
+				null
+		);
+
 		contentBinding.setInvestigationStatusClass(InvestigationStatus.class);
 		contentBinding.caseDataInvestigatedDate.initializeDateField(getFragmentManager());
 		FragmentActivity thisActivity = this.getActivity();

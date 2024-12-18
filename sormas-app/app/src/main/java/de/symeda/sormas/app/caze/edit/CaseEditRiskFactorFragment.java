@@ -16,6 +16,7 @@
 package de.symeda.sormas.app.caze.edit;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 import android.content.res.Resources;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
+import de.symeda.sormas.app.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
@@ -49,114 +51,6 @@ import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.app.util.FieldVisibilityAndAccessHelper;
 
 public class CaseEditRiskFactorFragment extends BaseEditFragment<FragmentCaseEditRiskfactorLayoutBinding, RiskFactor, Case> {
-
-	/*private RiskFactor record;
-	private Case caze;
-	private List<Item> listDrinkingWaterSources;
-	private IEntryItemOnClickListener onPatientSymptomsPrecedenceItemClickListener;
-
-	// Static methods
-
-	public static CaseEditRiskFactorFragment newInstance(Case activityRootData) {
-		return newInstanceWithFieldCheckers(
-			CaseEditRiskFactorFragment.class,
-			null,
-			activityRootData,
-			new FieldVisibilityCheckers(),
-			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
-	}
-
-	// Instance methods
-
-	private void setUpControlListeners(final FragmentCaseEditRiskfactorLayoutBinding contentBinding) {
-
-		contentBinding.btnAddPatientSymptomsPrecedence.setOnClickListener(v -> {
-			final PatientSymptomsPrecedence patientSymptomsPrecedence = DatabaseHelper.getPatientSymptomsPrecedenceDao().build();
-			final PatientSymptomsPrecedenceDialog dialog =
-					new PatientSymptomsPrecedenceDialog(CaseEditActivity.getActiveActivity(), patientSymptomsPrecedence, getActivityRootData(), true);
-			dialog.setPositiveCallback(() -> addPatientSymptomsPrecedence(patientSymptomsPrecedence));
-			dialog.show();
-		});
-		onPatientSymptomsPrecedenceItemClickListener = (v, item) -> {
-			final PatientSymptomsPrecedence patientSymptomsPrecedence = (PatientSymptomsPrecedence) item;
-			final PatientSymptomsPrecedence patientSymptomsPrecedenceClone = (PatientSymptomsPrecedence) patientSymptomsPrecedence.clone();
-			final PatientSymptomsPrecedenceDialog dialog =
-					new PatientSymptomsPrecedenceDialog(CaseEditActivity.getActiveActivity(), patientSymptomsPrecedenceClone, getActivityRootData(), false);
-			dialog.setPositiveCallback(() -> {
-				record.getPatientSymptomsPrecedences().set(record.getPatientSymptomsPrecedences().indexOf(patientSymptomsPrecedence), patientSymptomsPrecedenceClone);
-				updatePatientSymptomsPrecedences();
-			});
-			dialog.setDeleteCallback(() -> {
-				removePatientSymptomsPrecedence(patientSymptomsPrecedence);
-				dialog.dismiss();
-			});
-			dialog.show();
-		};
-		contentBinding.setPatientSymptomsPrecedenceItemClickCallback(onPatientSymptomsPrecedenceItemClickListener);
-
-	}
-
-	// Overrides
-
-	@Override
-	protected String getSubHeadingTitle() {
-		Resources r = getResources();
-		return r.getString(R.string.caption_case_riskfactor);
-	}
-
-	@Override
-	public RiskFactor getPrimaryData() {
-		return record;
-	}
-
-	@Override
-	protected void prepareFragmentData() {
-		caze = getActivityRootData();
-		record = caze.getRiskFactor();
-		listDrinkingWaterSources = DataUtils.getEnumItems(DrinkingWaterSource.class, true);
-	}
-
-	@Override
-	public void onLayoutBinding(final FragmentCaseEditRiskfactorLayoutBinding contentBinding) {
-		setUpControlListeners(contentBinding);
-		contentBinding.setData(record);
-		contentBinding.setCaze(caze);
-		contentBinding.setYesNoClass(YesNo.class);
-		contentBinding.riskFactorDateOfContactWithIllPerson.initializeDateField(getFragmentManager());
-
-		contentBinding.setPatientSymptomsPrecedenceList(getPatientSymptomsPrecedences());
-		contentBinding.setPatientSymptomsPrecedenceItemClickCallback(onPatientSymptomsPrecedenceItemClickListener);
-		contentBinding.setPatientSymptomsPrecedenceListBindCallback(
-				v -> FieldVisibilityAndAccessHelper
-						.setFieldVisibilitiesAndAccesses(PatientSymptomsPrecedence.class, (ViewGroup) v, new FieldVisibilityCheckers(), getFieldAccessCheckers()));
-
-		if (caze.getDisease() != null) {
-			super.hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.RISK_FACTOR_EDIT);
-		}
-	}
-
-	@Override
-	protected void onAfterLayoutBinding(FragmentCaseEditRiskfactorLayoutBinding contentBinding) {
-		setFieldVisibilitiesAndAccesses(RiskFactorDto.class, contentBinding.mainContent);
-		contentBinding.riskFactorWaterUsedForDrinking.initializeSpinner(listDrinkingWaterSources);
-	}
-
-	private ObservableArrayList<PatientSymptomsPrecedence> getPatientSymptomsPrecedences() {
-		ObservableArrayList<PatientSymptomsPrecedence> patientSymptomsPrecedences = new ObservableArrayList<>();
-		patientSymptomsPrecedences.addAll(record.getPatientSymptomsPrecedences());
-		return patientSymptomsPrecedences;
-	}
-	private void updatePatientSymptomsPrecedences() {
-		getContentBinding().setPatientSymptomsPrecedenceList(getPatientSymptomsPrecedences());
-	}
-	private void addPatientSymptomsPrecedence(PatientSymptomsPrecedence patientSymptomsPrecedence) {
-		record.getPatientSymptomsPrecedences().add(0, patientSymptomsPrecedence);
-		updatePatientSymptomsPrecedences();
-	}
-	private void removePatientSymptomsPrecedence(PatientSymptomsPrecedence patientSymptomsPrecedence) {
-		record.getPatientSymptomsPrecedences().remove(patientSymptomsPrecedence);
-		updatePatientSymptomsPrecedences();
-	}*/
 
 	private RiskFactor record;
 	private Case caze;
@@ -252,6 +146,16 @@ public class CaseEditRiskFactorFragment extends BaseEditFragment<FragmentCaseEdi
 			dialog.setPositiveCallback(() -> addPatientSymptomsPrecedence(patientSymptomsPrecedence));
 			dialog.show();
 		});
+		contentBinding.riskFactorDuring3WeeksPatientContactWithSimilarSymptoms.addValueChangedListener(field -> {
+			YesNo value = (YesNo) field.getValue();
+			contentBinding.patientSymptomsPrecedenceLayout.setVisibility(value == YesNo.YES ? VISIBLE : GONE);
+			if (value != YesNo.YES) {
+				clearPatientSymptomsPrecedences();
+			}
+
+			getContentBinding().riskFactorDuring3WeeksPatientContactWithSimilarSymptoms.setEnabled(getPatientSymptomsPrecedenceList().isEmpty());
+		});
+
 		onPatientSymptomsPrecedenceItemClickListener = (v, item) -> {
 			PatientSymptomsPrecedence patientSymptomsPrecedence = (PatientSymptomsPrecedence) item;
 			final PatientSymptomsPrecedence patientSymptomsPrecedenceClone = (PatientSymptomsPrecedence) patientSymptomsPrecedence.clone();
@@ -289,5 +193,16 @@ public class CaseEditRiskFactorFragment extends BaseEditFragment<FragmentCaseEdi
 	private void removePatientSymptomsPrecedence(PatientSymptomsPrecedence patientSymptomsPrecedence) {
 		record.getPatientSymptomsPrecedences().remove(patientSymptomsPrecedence);
 		updatePatientSymptomsPrecedences();
+	}
+
+	private void clearPatientSymptomsPrecedences() {
+		record.getPatientSymptomsPrecedences().clear();
+		updatePatientSymptomsPrecedences();
+	}
+
+	private ObservableArrayList<PatientSymptomsPrecedence> getPatientSymptomsPrecedenceList() {
+		ObservableArrayList<PatientSymptomsPrecedence> patientSymptomsPrecedence = new ObservableArrayList<>();
+		patientSymptomsPrecedence.addAll(record.getPatientSymptomsPrecedences());
+		return patientSymptomsPrecedence;
 	}
 }

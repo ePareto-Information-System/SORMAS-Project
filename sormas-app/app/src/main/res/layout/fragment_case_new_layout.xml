@@ -529,6 +529,13 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/caseData_personInfoLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getCaption(Captions.personInfoLabel)}"
+                style="@style/SubHeadingStyle" />
+
         </LinearLayout>
 
     </ScrollView>
