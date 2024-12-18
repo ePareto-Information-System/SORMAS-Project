@@ -97,6 +97,17 @@ public class RiskFactorDtoHelper extends AdoDtoHelper<RiskFactor, RiskFactorDto>
 		target.setThreeDaysPriorToDiseaseFoodItemsFive(source.getThreeDaysPriorToDiseaseFoodItemsFive());
 		target.setThreeDaysPriorToDiseaseAttendAnyFuneral(source.getThreeDaysPriorToDiseaseAttendAnyFuneral());
 		target.setThreeDaysPriorToDiseaseAttendAnySocialEvent(source.getThreeDaysPriorToDiseaseAttendAnySocialEvent());
+		target.setPatientSpoxVaccinationScarPresent(source.getPatientSpoxVaccinationScarPresent());
+		target.setPatientTravelledAnywhere3WeeksPrior(source.getPatientTravelledAnywhere3WeeksPrior());
+		target.setPatientTravelled3WeeksIfYesIndicate(source.getPatientTravelled3WeeksIfYesIndicate());
+		target.setPatientTravelledPeriodOfIllness(source.getPatientTravelledPeriodOfIllness());
+		target.setPatientTravelledIllnessIfYesIndicate(source.getPatientTravelledIllnessIfYesIndicate());
+		target.setOtherPlaces(source.getOtherPlaces());
+		target.setDuring3WeeksPatientContactWithSimilarSymptoms(source.getDuring3WeeksPatientContactWithSimilarSymptoms());
+		target.setDuring3WeeksPatientContactWithSimilarSymptomsIfYes(source.getDuring3WeeksPatientContactWithSimilarSymptomsIfYes());
+		target.setDateOfContactWithIllPerson(source.getDateOfContactWithIllPerson());
+		target.setPatientTouchDomesticWildAnimal(source.getPatientTouchDomesticWildAnimal());
+		target.setPatientTouchDomesticWildAnimalIfYes(source.getPatientTouchDomesticWildAnimalIfYes());
 
 		List<PatientSymptomsPrecedence> patientSymptomsPrecedences = new ArrayList<>();
 		if (!source.getPatientSymptomsPrecedence().isEmpty()) {
@@ -146,6 +157,17 @@ public class RiskFactorDtoHelper extends AdoDtoHelper<RiskFactor, RiskFactorDto>
 		target.setThreeDaysPriorToDiseaseFoodItemsFive(source.getThreeDaysPriorToDiseaseFoodItemsFive());
 		target.setThreeDaysPriorToDiseaseAttendAnyFuneral(source.getThreeDaysPriorToDiseaseAttendAnyFuneral());
 		target.setThreeDaysPriorToDiseaseAttendAnySocialEvent(source.getThreeDaysPriorToDiseaseAttendAnySocialEvent());
+		target.setPatientSpoxVaccinationScarPresent(source.getPatientSpoxVaccinationScarPresent());
+		target.setPatientTravelledAnywhere3WeeksPrior(source.getPatientTravelledAnywhere3WeeksPrior());
+		target.setPatientTravelled3WeeksIfYesIndicate(source.getPatientTravelled3WeeksIfYesIndicate());
+		target.setPatientTravelledPeriodOfIllness(source.getPatientTravelledPeriodOfIllness());
+		target.setPatientTravelledIllnessIfYesIndicate(source.getPatientTravelledIllnessIfYesIndicate());
+		target.setOtherPlaces(source.getOtherPlaces());
+		target.setDuring3WeeksPatientContactWithSimilarSymptoms(source.getDuring3WeeksPatientContactWithSimilarSymptoms());
+		target.setDuring3WeeksPatientContactWithSimilarSymptomsIfYes(source.getDuring3WeeksPatientContactWithSimilarSymptomsIfYes());
+		target.setDateOfContactWithIllPerson(source.getDateOfContactWithIllPerson());
+		target.setPatientTouchDomesticWildAnimal(source.getPatientTouchDomesticWildAnimal());
+		target.setPatientTouchDomesticWildAnimalIfYes(source.getPatientTouchDomesticWildAnimalIfYes());
 
 		List<PatientSymptomsPrecedenceDto> patientSymptomsPrecedenceDtos = new ArrayList<>();
 		if (!source.getPatientSymptomsPrecedences().isEmpty()) {

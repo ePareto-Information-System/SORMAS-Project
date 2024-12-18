@@ -1488,6 +1488,34 @@
 
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/caseData_notifyInvestigate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{I18nProperties.getString(Strings.notifyInvestigate)}"
+                    style="@style/SubHeadingStyle" />
+
+                <TextView
+                    android:id="@+id/caseData_headingIndicateCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{I18nProperties.getString(Strings.headingIndicateCategory)}"
+                    style="@style/SubHeadingStyle" />
+
+                <TextView
+                    android:id="@+id/caseData_personInfoLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{I18nProperties.getCaption(Captions.personInfoLabel)}"
+                    style="@style/SubHeadingStyle" />
+
+                <TextView
+                    android:id="@+id/caseData_headingInvestigatingOfficer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{I18nProperties.getCaption(Strings.headingInvestigatingOfficer)}"
+                    style="@style/SubHeadingStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/caseData_investigationOfficerAddress"
                     app:value="@{data.investigationOfficerAddress}"

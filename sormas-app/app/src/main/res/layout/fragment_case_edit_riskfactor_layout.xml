@@ -519,9 +519,10 @@
                     app:value="@{data.dateOfContactWithIllPerson}"
                     style="@style/ControlSingleColumnStyle" />
 
-                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
                     android:id="@+id/riskFactor_patientTouchDomesticWildAnimal"
                     app:value="@{data.patientTouchDomesticWildAnimal}"
+                    app:enumClass="@{YesNoClass}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
@@ -536,14 +537,6 @@
                     app:dependencyParentField="@{riskFactorPatientTouchDomesticWildAnimal}"
                     app:dependencyParentValue="@{YesNo.YES}"
                     style="@style/ControlSingleColumnStyle" />
-
-                <!--<TextView
-                    android:id="@+id/patientSymptomsPrecedence_heading"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{I18nProperties.getCaption(Captions.patientSymptomsPrecedence)}"
-                    android:layout_marginBottom="24dp"
-                    style="@style/SubHeadingCompactStyle" />-->
 
                 <LinearLayout
                     android:id="@+id/patientSymptomsPrecedence_layout"

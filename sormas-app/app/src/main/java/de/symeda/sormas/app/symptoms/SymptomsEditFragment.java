@@ -238,6 +238,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		initSymptomFields(contentBinding);
 		initOnsetSymptomField(contentBinding);
 
+
 		Set<SymptomsList> symptomList = Arrays.stream(SymptomsList.MpoxList())
 				.filter(c -> c != null)
 				.filter(c -> fieldVisibilityCheckers.isVisible(SymptomsList.class, c.name()))
@@ -302,6 +303,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 			);
 
 			contentBinding.symptomsTypeOfRash.initializeSpinner(DataUtils.toItems(rashSymptomsList));
+			contentBinding.symptomsOnsetDate.setEnabled(true);
 
 		}
 
