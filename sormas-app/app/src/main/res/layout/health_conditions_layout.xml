@@ -4,6 +4,8 @@
         <variable name="data" type="de.symeda.sormas.app.backend.symptoms.Symptoms"/>
         <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
         <variable name="YesNoUnknownClass" type="Class" />
+        <import type="de.symeda.sormas.api.i18n.I18nProperties" />
+        <import type="de.symeda.sormas.api.i18n.Strings" />
 
     </data>
 
@@ -19,7 +21,7 @@
             android:id="@+id/heading_health_conditions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/heading_health_conditions"
+            android:text="@{I18nProperties.getString(Strings.headingHealthConditions)}"
             android:textColor="@color/lightBlue"
             style="@style/HeadingStyle" />
 
@@ -57,6 +59,8 @@
             android:id="@+id/symptoms_hivArt"
             app:enumClass="@{YesNoUnknownClass}"
             app:value="@={data.hivArt}"
+            app:dependencyParentField="@{symptomsHivArt}"
+            app:dependencyParentValue="@{YesNoUnknown.YES}"
             style="@style/ControlSingleColumnStyle" />
 
         <de.symeda.sormas.app.component.controls.ControlSwitchField
