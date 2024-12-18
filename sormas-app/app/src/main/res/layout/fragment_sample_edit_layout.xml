@@ -659,7 +659,7 @@
 
 
                 <LinearLayout
-                    android:id="@+id/sample_useOfClothFilter_frequencyOfChangingFilters_confirmedAsGuineaWorm"
+                    android:id="@+id/sample_useOfClothFilter_frequencyOfChangingFilters"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -683,7 +683,7 @@
                     android:id="@+id/sample_confirmedAsGuineaWorm"
                     app:value="@={data.confirmedAsGuineaWorm}"
                     app:enumClass="@{yesNoClass}"
-                    style="@style/ControlSecondOfTwoColumnsStyle" />
+                    style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/sample_finalLabResults"
