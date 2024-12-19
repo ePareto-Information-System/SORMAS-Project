@@ -263,6 +263,36 @@ public class UserDao extends AbstractAdoDao<User> {
 		createRolesFilter(userQB, userRoles);
 	}
 
+	private UserRole getUserRoleByCaption(String caption) {
+		try {
+			QueryBuilder<UserRole, Long> userRoleQB = DatabaseHelper.getUserRoleDao().queryBuilder();
+			userRoleQB.where().eq(UserRole.CAPTION, caption);
+			return userRoleQB.queryForFirst();
+		} catch (SQLException e) {
+			Log.e(getTableName(), "Could not perform getUserRoleByCaption");
+			throw new RuntimeException(e);
+		}
+	}
+
+
+	//get users by userRole.id using users_userRole as joining table
+	public List<User> getUsersByUserRoleCaption(String caption) {
+		UserRole userRole = getUserRoleByCaption(caption);
+		if (userRole == null) {
+			return new ArrayList<>();
+		}
+		try {
+			QueryBuilder<User, Long> userQB = queryBuilder();
+			QueryBuilder userrolesQB = userUserRoleDao.queryBuilder();
+			userrolesQB.where().eq(UserUserRole.USER_ROLE + "_id", userRole);
+			userQB.join(userrolesQB);
+			return userQB.query();
+		} catch (SQLException e) {
+			Log.e(getTableName(), "Could not perform getUsersByUserRoleCaption");
+			throw new RuntimeException(e);
+		}
+	}
+
 	private void createRolesFilter(QueryBuilder<User, Long> userQB, List<UserRole> roles) throws SQLException {
 		QueryBuilder userrolesQB = userUserRoleDao.queryBuilder();
 		userrolesQB.where().in(UserUserRole.USER_ROLE + "_id", roles);

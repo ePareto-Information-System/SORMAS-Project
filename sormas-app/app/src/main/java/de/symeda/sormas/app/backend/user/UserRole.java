@@ -48,6 +48,8 @@ public class UserRole extends AbstractDomainObject {
 
 	public static final String USER_RIGHTS = "userRights";
 
+	public static final String CAPTION = "caption";
+
 	@Column(name = "userRights", length = 1024)
 	private String userRightsJson;
 
