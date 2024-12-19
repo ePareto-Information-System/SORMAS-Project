@@ -436,8 +436,10 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 				}
 			});
 		} else {
-			contentBinding.caseDataCaseOrigin.setVisibility(GONE);
-			contentBinding.caseDataPointOfEntry.setVisibility(GONE);
+
+			// TODO [Couldn't figure out why its been done this way but it seems to be a bug so i commented it out]
+//			contentBinding.caseDataCaseOrigin.setVisibility(GONE);
+//			contentBinding.caseDataPointOfEntry.setVisibility(GONE);
 		}
 	}
 
