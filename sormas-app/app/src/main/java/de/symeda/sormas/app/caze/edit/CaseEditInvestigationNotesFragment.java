@@ -62,6 +62,7 @@ public class CaseEditInvestigationNotesFragment extends BaseEditFragment<Fragmen
         contentBinding.setData(record);
         contentBinding.setCaze(caze);
         contentBinding.investigationNotesInvestigatorDate.initializeDateField(getFragmentManager());
+        contentBinding.investigationNotesDateOfCompletionOfForm.initializeDateField(getFragmentManager());
 
         if (caze.getDisease() != null) {
             super.hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.INVESTIGATION_NOTES_EDIT);

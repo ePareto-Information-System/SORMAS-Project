@@ -235,13 +235,13 @@
 
             <de.symeda.sormas.app.component.controls.ControlSwitchField
                 android:id="@+id/sixtyDay_foodAvailableTesting"
-                app:value="@{data.foodAvailableTesting}"
+                app:value="@={data.foodAvailableTesting}"
                 app:enumClass="@{YesNoUnknownClass}"
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlSwitchField
                 android:id="@+id/sixtyDay_labTestConducted"
-                app:value="@{data.labTestConducted}"
+                app:value="@={data.labTestConducted}"
                 app:enumClass="@{YesNoUnknownClass}"
                 style="@style/ControlSingleColumnStyle" />
 
@@ -326,14 +326,14 @@
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/sixtyDay_packageSize"
-                    app:value="@{data.packageSize}"
+                    app:value="@={data.packageSize}"
                     app:dependencyParentField="@{sixtyDayFoodAvailableTesting}"
                     app:dependencyParentValue="@{YesNoUnknown.YES}"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/sixtyDay_packagingType"
-                    app:value="@{data.packagingType}"
+                    app:value="@={data.packagingType}"
                     app:dependencyParentField="@{sixtyDayFoodAvailableTesting}"
                     app:dependencyParentValue="@{YesNoUnknown.YES}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
@@ -348,14 +348,14 @@
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/sixtyDay_placeOfPurchase"
-                    app:value="@{data.placeOfPurchase}"
+                    app:value="@={data.placeOfPurchase}"
                     app:dependencyParentField="@{sixtyDayFoodAvailableTesting}"
                     app:dependencyParentValue="@{YesNoUnknown.YES}"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/sixtyDay_nameOfManufacturer"
-                    app:value="@{data.nameOfManufacturer}"
+                    app:value="@={data.nameOfManufacturer}"
                     app:dependencyParentField="@{sixtyDayFoodAvailableTesting}"
                     app:dependencyParentValue="@{YesNoUnknown.YES}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
@@ -370,14 +370,14 @@
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/sixtyDay_address"
-                    app:value="@{data.address}"
+                    app:value="@={data.address}"
                     app:dependencyParentField="@{sixtyDayFoodAvailableTesting}"
                     app:dependencyParentValue="@{YesNoUnknown.YES}"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/sixtyDay_foodTel"
-                    app:value="@{data.foodTel}"
+                    app:value="@={data.foodTel}"
                     app:dependencyParentField="@{sixtyDayFoodAvailableTesting}"
                     app:dependencyParentValue="@{YesNoUnknown.YES}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />

@@ -46,6 +46,12 @@ public class InvestigationNotesDtoHelper extends AdoDtoHelper<InvestigationNotes
         target.setInvestigatedBy(source.getInvestigatedBy());
         target.setInvestigatorSignature(source.getInvestigatorSignature());
         target.setInvestigatorDate(source.getInvestigatorDate());
+        target.setSurname(source.getSurname());
+        target.setFirstName(source.getFirstName());
+        target.setMiddleName(source.getMiddleName());
+        target.setTelNo(source.getTelNo());
+        target.setDateOfCompletionOfForm(source.getDateOfCompletionOfForm());
+        target.setNameOfHealthFacility(source.getNameOfHealthFacility());
     }
 
     @Override
@@ -56,6 +62,12 @@ public class InvestigationNotesDtoHelper extends AdoDtoHelper<InvestigationNotes
         target.setInvestigatedBy(source.getInvestigatedBy());
         target.setInvestigatorSignature(source.getInvestigatorSignature());
         target.setInvestigatorDate(source.getInvestigatorDate());
+        target.setSurname(source.getSurname());
+        target.setFirstName(source.getFirstName());
+        target.setMiddleName(source.getMiddleName());
+        target.setTelNo(source.getTelNo());
+        target.setDateOfCompletionOfForm(source.getDateOfCompletionOfForm());
+        target.setNameOfHealthFacility(source.getNameOfHealthFacility());
     }
 
     @Override

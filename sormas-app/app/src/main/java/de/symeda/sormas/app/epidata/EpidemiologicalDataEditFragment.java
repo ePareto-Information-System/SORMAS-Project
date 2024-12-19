@@ -521,6 +521,11 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		contentBinding.epiDataIfYesEndDate.initializeDateField(getFragmentManager());
 		contentBinding.epiDataDateOfLastContactWithSuspectCase.initializeDateField(getFragmentManager());
 		contentBinding.epiDataDateOfDeath.initializeDateField(getFragmentManager());
+		contentBinding.epiDataDateOfDeparture.initializeDateField(getFragmentManager());
+		contentBinding.epiDataDateOfArrival.initializeDateField(getFragmentManager());
+		contentBinding.epiDataDateOfDeparture2.initializeDateField(getFragmentManager());
+		contentBinding.epiDataDateOfArrival2.initializeDateField(getFragmentManager());
+		contentBinding.epiDataContactDate.initializeDateField(getFragmentManager());
 
 		if (!(getActivityRootData() instanceof Case)) {
 			contentBinding.epiDataContactWithSourceCaseKnown.setVisibility(GONE);

@@ -323,10 +323,10 @@ public class Symptoms extends AbstractDomainObject {
 	private Set<BodyPart> rashSymptoms;
 	private String requestedRashSymptomsString;
 	private String rashSymptomsOtherAreas;
-	private YesNo areLesionsSameState;
-	private YesNo areLesionsSameSize;
-	private YesNo areLesionsDeep;
-	private YesNo areUlcersAmong;
+	private SymptomState areLesionsSameState;
+	private SymptomState areLesionsSameSize;
+	private SymptomState areLesionsDeep;
+	private SymptomState areUlcersAmong;
 	private SymptomsList typeOfRash;
 	private String symptomsSelectedOther;
 	private String outcomeOther;
@@ -2432,28 +2432,28 @@ public class Symptoms extends AbstractDomainObject {
 		this.rashSymptomsOtherAreas = rashSymptomsOtherAreas;
 	}
 
-	public YesNo getAreLesionsSameState(){
+	public SymptomState getAreLesionsSameState(){
 		return areLesionsSameState;
 	}
-	public void setAreLesionsSameState(YesNo areLesionsSameState) {
+	public void setAreLesionsSameState(SymptomState areLesionsSameState) {
 		this.areLesionsSameState = areLesionsSameState;
 	}
-	public YesNo getAreLesionsSameSize(){
+	public SymptomState getAreLesionsSameSize(){
 		return areLesionsSameSize;
 	}
-	public void setAreLesionsSameSize(YesNo areLesionsSameSize) {
+	public void setAreLesionsSameSize(SymptomState areLesionsSameSize) {
 		this.areLesionsSameSize = areLesionsSameSize;
 	}
-	public YesNo getAreLesionsDeep(){
+	public SymptomState getAreLesionsDeep(){
 		return areLesionsDeep;
 	}
-	public void setAreLesionsDeep(YesNo areLesionsDeep) {
+	public void setAreLesionsDeep(SymptomState areLesionsDeep) {
 		this.areLesionsDeep = areLesionsDeep;
 	}
-	public YesNo getAreUlcersAmong(){
+	public SymptomState getAreUlcersAmong(){
 		return areUlcersAmong;
 	}
-	public void setAreUlcersAmong(YesNo areUlcersAmong) {
+	public void setAreUlcersAmong(SymptomState areUlcersAmong) {
 		this.areUlcersAmong = areUlcersAmong;
 	}
 
