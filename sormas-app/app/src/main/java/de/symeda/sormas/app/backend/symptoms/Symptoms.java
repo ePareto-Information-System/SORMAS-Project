@@ -506,7 +506,7 @@ public class Symptoms extends PseudonymizableAdo {
 	private Set<BodyPart> rashSymptoms;
 	@Transient
 	private Set<InjectionSite> siteOfParalysis;
-	@Transient
+	@Enumerated(EnumType.STRING)
 	private SymptomsList typeOfRash;
 	@Transient
 	private Set<InjectionSite> injectionSite;

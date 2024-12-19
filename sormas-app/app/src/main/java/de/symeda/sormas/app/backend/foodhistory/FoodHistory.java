@@ -246,7 +246,7 @@ public class FoodHistory extends PseudonymizableAdo {
 
     @Enumerated(EnumType.STRING)
     private YesNo consumedAtPlaceS3;
-
+    @Column
     private Integer numberOfPeopleAteImplicatedFood;
 
     @Column(length = CHARACTER_LIMIT_DEFAULT)

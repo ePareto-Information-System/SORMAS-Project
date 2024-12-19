@@ -310,6 +310,7 @@ public class SymptomsDtoHelper extends AdoDtoHelper<Symptoms, SymptomsDto> {
 		target.setAreLesionsSameSize(source.getAreLesionsSameSize());
 		target.setAreLesionsDeep(source.getAreLesionsDeep());
 		target.setAreUlcersAmong(source.getAreUlcersAmong());
+		target.setTypeOfRash(source.getTypeOfRash());
 		target.setPatientHaveFever(source.getPatientHaveFever());
 		target.setAbnormalLungAuscultation(source.getAbnormalLungAuscultation());
 		target.setTrimester(source.getTrimester());
@@ -603,6 +604,7 @@ public class SymptomsDtoHelper extends AdoDtoHelper<Symptoms, SymptomsDto> {
 		target.setAreLesionsSameSize(source.getAreLesionsSameSize());
 		target.setAreLesionsDeep(source.getAreLesionsDeep());
 		target.setAreUlcersAmong(source.getAreUlcersAmong());
+		target.setTypeOfRash(source.getTypeOfRash());
 		target.setPatientHaveFever(source.getPatientHaveFever());
 		target.setAbnormalLungAuscultation(source.getAbnormalLungAuscultation());
 		target.setTrimester(source.getTrimester());

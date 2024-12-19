@@ -317,7 +317,7 @@
 
                         <de.symeda.sormas.app.component.controls.ControlTextEditField
                             android:id="@+id/foodHistory_sourceOfFood2"
-                            app:value="@{data.sourceOfFood2}"
+                            app:value="@={data.sourceOfFood2}"
                             app:dependencyParentField="@{foodHistoryBreakfast2}"
                             app:dependencyParentValue="@{YesNo.YES}"
                             style="@style/ControlFirstOfTwoColumnsStyle" />
@@ -368,7 +368,7 @@
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/foodHistory_sourceOfFoodL2"
-                        app:value="@{data.sourceOfFoodL2}"
+                        app:value="@={data.sourceOfFoodL2}"
                         app:dependencyParentField="@{foodHistoryLunchL2}"
                         app:dependencyParentValue="@{YesNo.YES}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
@@ -422,7 +422,7 @@
                             app:value="@={data.sourceOfFoodS2}"
                             app:dependencyParentField="@{foodHistorySupperS2}"
                             app:dependencyParentValue="@{YesNo.YES}"
-                            style="@style/ControlSecondOfTwoColumnsStyle" />
+                            style="@style/ControlFirstOfTwoColumnsStyle" />
 
                         <de.symeda.sormas.app.component.controls.ControlSwitchField
                             android:id="@+id/foodHistory_consumedAtPlaceS2"
@@ -430,7 +430,7 @@
                             app:enumClass="@{YesNoClass}"
                             app:dependencyParentField="@{foodHistorySupperS2}"
                             app:dependencyParentValue="@{YesNo.YES}"
-                            style="@style/ControlSingleColumnStyle" />
+                            style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
 
@@ -615,6 +615,7 @@
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/foodHistory_numberOfPeopleAteImplicatedFood"
                         app:value="@={data.numberOfPeopleAteImplicatedFood}"
+                        app:inputType="number"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField

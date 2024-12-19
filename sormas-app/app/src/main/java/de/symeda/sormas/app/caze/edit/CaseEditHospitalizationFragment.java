@@ -343,6 +343,9 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		case YELLOW_FEVER:
 			handleYF();
 			break;
+		case FOODBORNE_ILLNESS:
+			handleFoodBorne();
+			break;
 		default:
 		}
 	}
@@ -362,14 +365,12 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 	}
 
 	private void handleHospitalizationVisibility(List<View> viewsToToggle) {
-		// Initialize visibility based on the current value
 		YesNo admittedToFacility = (YesNo) getContentBinding().caseHospitalizationAdmittedToHealthFacility.getValue();
 		int initialVisibility = (admittedToFacility == YesNo.YES ? VISIBLE : GONE);
 		for (View view : viewsToToggle) {
 			view.setVisibility(initialVisibility);
 		}
 
-		// Add listener to update visibility when the value changes
 		getContentBinding().caseHospitalizationAdmittedToHealthFacility.addValueChangedListener(field -> {
 			int visibility = (field.getValue() == YesNo.YES ? VISIBLE : GONE);
 			for (View view : viewsToToggle) {
@@ -386,6 +387,52 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 				getContentBinding().caseHospitalizationAdmissionDate,
 				getContentBinding().caseHospitalizationDischargeDate,
 				getContentBinding().caseHospitalizationDateOfDeath));
+	}
+
+	private void handleFoodBorne(){
+
+		//hospitalized
+		getContentBinding().caseHospitalizationHospitalizationYesNo.addValueChangedListener( field ->{
+			YesNo value = (YesNo) field.getValue();
+			if (value == YesNo.YES) {
+				getContentBinding().caseHospitalizationPhysicianName.setVisibility(VISIBLE);
+				getContentBinding().caseHospitalizationPhysicianNumber.setVisibility(VISIBLE);
+			} else {
+				getContentBinding().caseHospitalizationPhysicianName.setVisibility(GONE);
+				getContentBinding().caseHospitalizationPhysicianNumber.setVisibility(GONE);
+			}
+		});
+
+		if (getContentBinding().caseHospitalizationTypeOfSample.getValue() != null) {
+			getContentBinding().caseHospitalizationTypeOfSample.setVisibility(VISIBLE);
+		}
+
+		if (getContentBinding().caseHospitalizationPhysicianNumber.getValue() != null) {
+			getContentBinding().caseHospitalizationPhysicianNumber.setVisibility(VISIBLE);
+		}
+
+
+		//labtest
+		getContentBinding().caseHospitalizationLabTestConducted.addValueChangedListener( field ->{
+			YesNo value = (YesNo) field.getValue();
+			if (value == YesNo.YES) {
+				getContentBinding().caseHospitalizationTypeOfSample.setVisibility(VISIBLE);
+				getContentBinding().caseHospitalizationAgentIdentified.setVisibility(VISIBLE);
+			} else {
+				getContentBinding().caseHospitalizationTypeOfSample.setVisibility(GONE);
+				getContentBinding().caseHospitalizationAgentIdentified.setVisibility(GONE);
+			}
+		});
+
+		if (getContentBinding().caseHospitalizationTypeOfSample.getValue() != null) {
+			getContentBinding().caseHospitalizationTypeOfSample.setVisibility(VISIBLE);
+		}
+
+		if (getContentBinding().caseHospitalizationAgentIdentified.getValue() != null) {
+			getContentBinding().caseHospitalizationAgentIdentified.setVisibility(VISIBLE);
+		}
+
+
 	}
 
 	private void handleILI() {

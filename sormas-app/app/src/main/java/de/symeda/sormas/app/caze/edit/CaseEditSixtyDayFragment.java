@@ -15,6 +15,9 @@
 
 package de.symeda.sormas.app.caze.edit;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.content.res.Resources;
 
 import java.util.List;
@@ -108,9 +111,31 @@ public class CaseEditSixtyDayFragment extends BaseEditFragment<FragmentCaseEditS
 	protected void onAfterLayoutBinding(FragmentCaseEditSixtydayLayoutBinding contentBinding) {
 		setFieldVisibilitiesAndAccesses(SixtyDay.class, contentBinding.mainContent);
 
-//		if (caze.getDisease() != null) {
-//			super.hideFieldsForDisease(caze.getDisease(), contentBinding.mainContent, FormType.RISK_FACTOR_EDIT);
-//		}
+		getContentBinding().sixtyDayPackagingType.addValueChangedListener( field ->{
+			PackagingType value = (PackagingType) field.getValue();
+			if (value == PackagingType.OTHER) {
+				getContentBinding().sixtyDayPackagingTypeOther.setVisibility(VISIBLE);
+			} else {
+				getContentBinding().sixtyDayPackagingTypeOther.setVisibility(GONE);
+			}
+		});
+
+		if (getContentBinding().sixtyDayPackagingTypeOther.getValue() != null) {
+			getContentBinding().sixtyDayPackagingTypeOther.setVisibility(VISIBLE);
+		}
+
+		getContentBinding().sixtyDayFoodAvailableTesting.addValueChangedListener( field ->{
+			YesNoUnknown value = (YesNoUnknown) field.getValue();
+			if (value == YesNoUnknown.YES) {
+				getContentBinding().sixtyDaySpecifySources.setVisibility(VISIBLE);
+			} else {
+				getContentBinding().sixtyDaySpecifySources.setVisibility(GONE);
+			}
+		});
+
+		if (getContentBinding().sixtyDaySpecifySources.getValue() != null) {
+			getContentBinding().sixtyDaySpecifySources.setVisibility(VISIBLE);
+		}
 	}
 
 	@Override

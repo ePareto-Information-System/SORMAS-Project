@@ -436,15 +436,11 @@
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/caseHospitalization_physicianName"
                     app:value="@={data.physicianName}"
-                    app:dependencyParentField="@{caseHospitalizationHospitalizationYesNo}"
-                    app:dependencyParentValue="@{YesNo.YES}"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/caseHospitalization_physicianNumber"
                     app:value="@={data.physicianNumber}"
-                    app:dependencyParentField="@{caseHospitalizationHospitalizationYesNo}"
-                    app:dependencyParentValue="@{YesNo.YES}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
@@ -466,15 +462,11 @@
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/caseHospitalization_typeOfSample"
                     app:value="@={data.typeOfSample}"
-                    app:dependencyParentField="@{caseHospitalizationLabTestConducted}"
-                    app:dependencyParentValue="@{YesNo.YES}"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/caseHospitalization_agentIdentified"
                     app:value="@={data.agentIdentified}"
-                    app:dependencyParentField="@{caseHospitalizationLabTestConducted}"
-                    app:dependencyParentValue="@{YesNo.YES}"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>

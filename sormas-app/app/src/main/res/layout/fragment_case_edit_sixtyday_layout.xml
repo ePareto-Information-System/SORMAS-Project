@@ -340,6 +340,11 @@
 
             </LinearLayout>
 
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/sixtyDay_packagingTypeOther"
+                    app:value="@={data.packagingTypeOther}"
+                    style="@style/ControlSingleColumnStyle" />
+
             <LinearLayout
                 android:id="@+id/sixtyDay_placePurchaseManufacturerName_layout"
                 android:layout_width="match_parent"
