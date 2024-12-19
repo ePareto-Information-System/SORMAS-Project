@@ -2450,10 +2450,10 @@ public class SymptomsDto extends PseudonymizableDto {
 	private Set<BodyPart> rashSymptoms;
 	private Set<InjectionSite> siteOfParalysis;
 	private String rashSymptomsOtherAreas;
-	private YesNo areLesionsSameState;
-	private YesNo areLesionsSameSize;
-	private YesNo areLesionsDeep;
-	private YesNo areUlcersAmong;
+	private SymptomState areLesionsSameState;
+	private SymptomState areLesionsSameSize;
+	private SymptomState areLesionsDeep;
+	private SymptomState areUlcersAmong;
 	private SymptomsList typeOfRash;
 	private String outcomeOther;
 	private YesNo patientHaveFever;
@@ -4231,19 +4231,19 @@ public class SymptomsDto extends PseudonymizableDto {
 		return rashSymptomsOtherAreas;
 	}
 	@Order(376)
-	public YesNo getAreLesionsSameState(){
+	public SymptomState getAreLesionsSameState(){
 		return areLesionsSameState;
 	}
 	@Order(377)
-	public YesNo getAreLesionsSameSize(){
+	public SymptomState getAreLesionsSameSize(){
 		return areLesionsSameSize;
 	}
 	@Order(378)
-	public YesNo getAreLesionsDeep(){
+	public SymptomState getAreLesionsDeep(){
 		return areLesionsDeep;
 	}
 	@Order(379)
-	public YesNo getAreUlcersAmong(){
+	public SymptomState getAreUlcersAmong(){
 		return areUlcersAmong;
 	}
 	@Order(380)
@@ -4634,16 +4634,16 @@ public class SymptomsDto extends PseudonymizableDto {
 	public void setRashSymptomsOtherAreas(String rashSymptomsOtherAreas) {
 		this.rashSymptomsOtherAreas = rashSymptomsOtherAreas;
 	}
-	public void setAreLesionsSameState(YesNo areLesionsSameState) {
+	public void setAreLesionsSameState(SymptomState areLesionsSameState) {
 		this.areLesionsSameState = areLesionsSameState;
 	}
-	public void setAreLesionsSameSize(YesNo areLesionsSameSize) {
+	public void setAreLesionsSameSize(SymptomState areLesionsSameSize) {
 		this.areLesionsSameSize = areLesionsSameSize;
 	}
-	public void setAreLesionsDeep(YesNo areLesionsDeep) {
+	public void setAreLesionsDeep(SymptomState areLesionsDeep) {
 		this.areLesionsDeep = areLesionsDeep;
 	}
-	public void setAreUlcersAmong(YesNo areUlcersAmong) {
+	public void setAreUlcersAmong(SymptomState areUlcersAmong) {
 		this.areUlcersAmong = areUlcersAmong;
 	}
 	public void setTypeOfRash(SymptomsList typeOfRash) {
