@@ -64,9 +64,11 @@ import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.event.TypeOfPlace;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.CardOrHistory;
@@ -140,6 +142,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 	private List<Item> notifyByList;
 	private List<Item> vaccineList;
 	private List<Item> vaccinationList;
+	private List<Item> surveillanceOfficerList;
 
 	// Static methods
 
@@ -434,6 +437,8 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		idsrTypeList = DataUtils.getEnumItems(IdsrType.class, true);
 		notifyByList = DataUtils.getEnumItems(NotifiedList.class, true);
 		vaccineList = DataUtils.getEnumItems(VaccineTypes.class, true);
+		List<User> surveillanceOfficersList = DatabaseHelper.getUserDao().getUsersByUserRoleCaption(I18nProperties.getEnumCaption(DefaultUserRole.SURVEILLANCE_OFFICER));
+		surveillanceOfficerList = DataUtils.toItems(surveillanceOfficersList, true);
 	}
 
 	@Override
@@ -797,6 +802,8 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
                 getContentBinding().caseDataVaccinationDate.setEnabled(getContentBinding().caseDataVaccinationType.getValue() == CardOrHistory.CARD);
 			});
 		}
+
+		contentBinding.caseDataSurveillanceOfficer.initializeSpinner(surveillanceOfficerList);
 	}
 
 	private void fillConfirmedCaseClassificationCombo() {
