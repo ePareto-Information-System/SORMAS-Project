@@ -51,6 +51,8 @@
         <variable name="YesNoUnknownClass" type="Class" />
         <variable name="injectionSiteClass" type="Class" />
         <variable name="TrimesterClass" type="Class" />
+        <variable name="symptomsListClass" type="Class" />
+        <variable name="rashSymptomsSiteClass" type="Class" />
     </data>
 
 
@@ -1797,12 +1799,13 @@
 
             <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
                 android:id="@+id/symptoms_symptomsSelected"
-                app:value="@{data.symptomsSelected}"
+                app:value="@={data.symptomsSelected}"
+                app:enumClass="@{symptomsListClass}"
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/symptoms_symptomsSelectedOther"
-                app:value="@{data.symptomsSelectedOther}"
+                app:value="@={data.symptomsSelectedOther}"
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlDateField
@@ -1812,41 +1815,19 @@
 
             <de.symeda.sormas.app.component.controls.ControlCheckBoxGroupField
                 android:id="@+id/symptoms_rashSymptoms"
-                app:value="@{data.rashSymptoms}"
+                app:enumClass="@{rashSymptomsSiteClass}"
+                app:value="@={data.rashSymptoms}"
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/symptoms_rashSymptomsOtherAreas"
-                app:value="@{data.rashSymptomsOtherAreas}"
+                app:value="@={data.rashSymptomsOtherAreas}"
                 style="@style/ControlSingleColumnStyle" />
 
-            <de.symeda.sormas.app.component.controls.ControlSwitchField
-                android:id="@+id/symptoms_areLesionsSameState"
-                app:enumClass="@{YesNoClass}"
-                app:value="@{data.areLesionsSameState}"
-                style="@style/ControlSingleColumnStyle" />
-
-            <de.symeda.sormas.app.component.controls.ControlSwitchField
-                android:id="@+id/symptoms_areLesionsSameSize"
-                app:enumClass="@{YesNoClass}"
-                app:value="@{data.areLesionsSameSize}"
-                style="@style/ControlSingleColumnStyle" />
-
-            <de.symeda.sormas.app.component.controls.ControlSwitchField
-                android:id="@+id/symptoms_areLesionsDeep"
-                app:enumClass="@{YesNoClass}"
-                app:value="@{data.areLesionsDeep}"
-                style="@style/ControlSingleColumnStyle" />
-
-            <de.symeda.sormas.app.component.controls.ControlSwitchField
-                android:id="@+id/symptoms_areUlcersAmong"
-                app:enumClass="@{YesNoClass}"
-                app:value="@{data.areUlcersAmong}"
-                style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlSpinnerField
                 android:id="@+id/symptoms_typeOfRash"
-                app:value="@{data.typeOfRash}"
+                app:value="@={data.typeOfRash}"
                 style="@style/ControlSingleColumnStyle" />
 
             <TextView
@@ -1877,6 +1858,30 @@
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_areLesionsSameState"
+                app:enumClass="@{symptomStateClass}"
+                app:value="@={data.areLesionsSameState}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_areLesionsSameSize"
+                app:enumClass="@{symptomStateClass}"
+                app:value="@={data.areLesionsSameSize}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_areLesionsDeep"
+                app:enumClass="@{symptomStateClass}"
+                app:value="@={data.areLesionsDeep}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_areUlcersAmong"
+                app:enumClass="@{symptomStateClass}"
+                app:value="@={data.areUlcersAmong}"
+                style="@style/ControlSingleColumnStyle" />
 
 
         </LinearLayout>

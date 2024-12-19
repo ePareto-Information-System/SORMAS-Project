@@ -95,6 +95,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 	private List<ControlSwitchField> symptomFields;
 	List<Item> outcomeList;
 	private List<Item> injectionSiteList = new ArrayList<>();
+	private List<Item> symptomsSelectedList;
 
 	public static SymptomsEditFragment newInstance(Case activityRootData) {
 		return newInstanceWithFieldCheckers(
@@ -166,6 +167,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		tempSourceList = DataUtils.getEnumItems(TemperatureSource.class, true);
 		congenitalHeartDiseaseList = DataUtils.getEnumItems(CongenitalHeartDiseaseType.class, true);
 		outcomeList = DataUtils.getEnumItems(CaseOutcome.class, true);
+		symptomsSelectedList = DataUtils.getEnumItems(SymptomsList.class, true, getFieldVisibilityCheckers());
 	}
 
 	@Override
@@ -184,6 +186,8 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		contentBinding.symptomsDateOfDeath.initializeDateField(getFragmentManager());
 		injectionSiteList = DataUtils.getEnumItems(InjectionSite.class, true);
 		contentBinding.symptomsSiteOfParalysis.initializeCheckBoxGroup(injectionSiteList);
+		contentBinding.setSymptomsListClass(SymptomsList.class);
+		contentBinding.setRashSymptomsSiteClass(BodyPart.class);
 
 //		for (InjectionSite injectionSite : record.getSiteOfParalysis()) {
 //			injectionSiteList.clear();
@@ -240,16 +244,25 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		initSymptomFields(contentBinding);
 		initOnsetSymptomField(contentBinding);
 
+		//Symptoms selected for Mpox
+		List<SymptomsList> allowedMaterials = Arrays.asList(
+				SymptomsList.FEVER, SymptomsList.BODY_PAINS, SymptomsList.HEADACHE, SymptomsList.LYMPH_NODES, SymptomsList.WEAKNESS, SymptomsList.RASH, SymptomsList.MUSCLE_PAIN, SymptomsList.SORE_THROAT,
+				SymptomsList.COUGH, SymptomsList.FATIGUE, SymptomsList.OTHER
+		);
 
-		Set<SymptomsList> symptomList = Arrays.stream(SymptomsList.MpoxList())
-				.filter(c -> c != null)
-				.filter(c -> fieldVisibilityCheckers.isVisible(SymptomsList.class, c.name()))
-				.collect(Collectors.toSet());
+		List<Item> filteredSymptomsSelectedList = symptomsSelectedList.stream()
+				.filter(item -> allowedMaterials.contains(item.getValue()))
+				.collect(Collectors.toList());
 
-		List<Item> compatibleItems = DataUtils.toItems(new ArrayList<>(symptomList));
-		compatibleItems.removeIf(item -> item == null || item.toString().isEmpty());
+		contentBinding.symptomsSymptomsSelected.initializeCheckBoxGroup(filteredSymptomsSelectedList);
 
-		contentBinding.symptomsSymptomsSelected.initializeCheckBoxGroup(compatibleItems);
+		if (record.getSymptomsSelected() != null) {
+			contentBinding.symptomsSymptomsSelected.setValue(
+					record.getSymptomsSelected().stream()
+							.filter(allowedMaterials::contains)
+							.collect(Collectors.toList())
+			);
+		}
 
 		contentBinding.symptomsSymptomsSelected.setOnValueChangeListener( field -> {
 			List<String> selectedValues = contentBinding.symptomsSymptomsSelected.getSelectedValues();
@@ -259,11 +272,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 
 		});
 
-		List<Item> mainItems = DataUtils.getEnumItems(BodyPart.class);
-		mainItems.removeIf(item -> item == null || item.toString().isEmpty());
-
-		contentBinding.symptomsRashSymptoms.initializeCheckBoxGroup(mainItems);
-
+		//Site of Rash for Mpox
 		contentBinding.symptomsRashSymptoms.setOnValueChangeListener( field -> {
 			List<String> selectedValues = contentBinding.symptomsRashSymptoms.getSelectedValues();
 
