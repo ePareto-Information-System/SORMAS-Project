@@ -40,6 +40,7 @@ import de.symeda.sormas.api.utils.PackagingType;
 import de.symeda.sormas.api.utils.ParalysisSite;
 import de.symeda.sormas.api.utils.SymptomLevel;
 import de.symeda.sormas.api.utils.YesNo;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 
@@ -102,9 +103,9 @@ public class SixtyDay extends PseudonymizableAdo {
 	@DatabaseField(dataType = DataType.DATE_STRING)
 	private Date dateSubmissionForms;
 	@Enumerated(EnumType.STRING)
-	private YesNo foodAvailableTesting;
+	private YesNoUnknown foodAvailableTesting;
 	@Enumerated(EnumType.STRING)
-	private YesNo labTestConducted;
+	private YesNoUnknown labTestConducted;
 	@Column
 	private String specifyFoodsSources;
 	@Column
@@ -321,19 +322,19 @@ public class SixtyDay extends PseudonymizableAdo {
 		this.dateSubmissionForms = dateSubmissionForms;
 	}
 
-	public YesNo getFoodAvailableTesting() {
+	public YesNoUnknown getFoodAvailableTesting() {
 		return foodAvailableTesting;
 	}
 
-	public void setFoodAvailableTesting(YesNo foodAvailableTesting) {
+	public void setFoodAvailableTesting(YesNoUnknown foodAvailableTesting) {
 		this.foodAvailableTesting = foodAvailableTesting;
 	}
 
-	public YesNo getLabTestConducted() {
+	public YesNoUnknown getLabTestConducted() {
 		return labTestConducted;
 	}
 
-	public void setLabTestConducted(YesNo labTestConducted) {
+	public void setLabTestConducted(YesNoUnknown labTestConducted) {
 		this.labTestConducted = labTestConducted;
 	}
 
