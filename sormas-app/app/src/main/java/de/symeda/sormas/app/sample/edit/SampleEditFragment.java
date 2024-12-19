@@ -326,6 +326,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		contentBinding.setFilterChangingFrequencyClass(FilterChangingFrequency.class);
 		finalLabResultsList = DataUtils.getEnumItems(PosNeg.class, true);
 		contentBinding.sampleFinalLabResults.initializeSpinner(finalLabResultsList);
+		contentBinding.samplePathogenTestResult.setEnabled(false);
 
 
 	}
