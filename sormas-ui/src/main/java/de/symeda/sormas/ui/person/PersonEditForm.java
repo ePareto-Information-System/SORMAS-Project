@@ -711,14 +711,15 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		causeOfDeathField.addValueChangeListener(e -> {
 			boolean causeOfDeathVisible = presentCondition.getValue() != PresentCondition.ALIVE
 					&& presentCondition.getValue() != PresentCondition.UNKNOWN
-					&& presentCondition.getValue() != null;
+					&& presentCondition.getValue() != null
+					&& disease != Disease.CORONAVIRUS;
 			toggleCauseOfDeathFields(causeOfDeathVisible);
 		});
 
 		causeOfDeathDiseaseField.addValueChangeListener(e -> {
 			boolean causeOfDeathVisible = presentCondition.getValue() != PresentCondition.ALIVE
 					&& presentCondition.getValue() != PresentCondition.UNKNOWN
-					&& presentCondition.getValue() != null;
+					&& disease != Disease.CORONAVIRUS;
 			toggleCauseOfDeathFields(causeOfDeathVisible);
 		});
 

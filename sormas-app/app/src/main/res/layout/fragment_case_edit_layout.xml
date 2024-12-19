@@ -588,6 +588,13 @@
                     android:text="@string/heading_case_place_of_stay"
                     style="@style/SubHeadingStyle" />
 
+                <TextView
+                    android:id="@+id/caseData_heading_Place_of_detection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{I18nProperties.getCaption(Captions.casePlaceOfStay)}"
+                    style="@style/SubHeadingStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/facilityOrHome"
                     app:caption="@string/caption_facility_or_home"
@@ -1011,11 +1018,12 @@
                     style="@style/ImageCaptionStyle" />
 
                 <LinearLayout
+                    android:id="@+id/caseData_surveillanceOfficer_clinicianName_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    <de.symeda.sormas.app.component.controls.ControlSpinnerField
                         android:id="@+id/caseData_surveillanceOfficer"
                         app:value="@{data.surveillanceOfficer}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
@@ -1029,6 +1037,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/caseData_clinicianPhone_clinicianEmail_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
