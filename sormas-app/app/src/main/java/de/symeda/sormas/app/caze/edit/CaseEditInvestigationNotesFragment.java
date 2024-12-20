@@ -43,7 +43,7 @@ public class CaseEditInvestigationNotesFragment extends BaseEditFragment<Fragmen
     @Override
     protected String getSubHeadingTitle() {
         Resources r = getResources();
-        return r.getString(R.string.caption_case_food_history);
+        return r.getString(R.string.caption_case_investigation_notes);
     }
 
     @Override

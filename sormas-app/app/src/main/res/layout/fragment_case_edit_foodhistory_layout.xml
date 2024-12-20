@@ -371,7 +371,7 @@
                         app:value="@={data.sourceOfFoodL2}"
                         app:dependencyParentField="@{foodHistoryLunchL2}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSecondOfTwoColumnsStyle" />
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlSwitchField
                         android:id="@+id/foodHistory_consumedAtPlaceL2"
@@ -379,7 +379,7 @@
                         app:enumClass="@{YesNoClass}"
                         app:dependencyParentField="@{foodHistoryLunchL2}"
                         app:dependencyParentValue="@{YesNo.YES}"
-                        style="@style/ControlSingleColumnStyle" />
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
 
