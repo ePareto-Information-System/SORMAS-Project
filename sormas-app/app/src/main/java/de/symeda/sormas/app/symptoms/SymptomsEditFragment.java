@@ -243,6 +243,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 
 		initSymptomFields(contentBinding);
 		initOnsetSymptomField(contentBinding);
+		contentBinding.symptomsOnsetDate.setRequired(true);
 
 		//Symptoms selected for Mpox
 		List<SymptomsList> allowedMaterials = Arrays.asList(
