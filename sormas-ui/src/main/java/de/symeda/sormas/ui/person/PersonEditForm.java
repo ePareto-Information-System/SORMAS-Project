@@ -244,7 +244,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	final Label contactInformationHeader = new Label(I18nProperties.getString(Strings.headingContactInformation));
 	private Label headingBirthOfInfant = new Label(I18nProperties.getString(Strings.headingBirthOfInfant));
 	public Label personInformationHeadingLabel;
-	private Label occupationTitleHeadingLabel;
+	public Label occupationTitleHeadingLabel;
 	private TextField firstNameField;
 	private TextField lastNameField;
 	private TextField otherNameField;

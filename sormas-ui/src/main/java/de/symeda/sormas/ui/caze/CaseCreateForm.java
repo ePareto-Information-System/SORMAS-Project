@@ -607,6 +607,8 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
                     case YELLOW_FEVER:
                         personCreateForm.hidePresentCondition();
                         personCreateForm.showPersonalEmail();
+                        personCreateForm.makeNamesRequired();
+                        facilityCombo.setRequired(true);
                         break;
                     case MONKEYPOX:
                         handleMonkeyPox();

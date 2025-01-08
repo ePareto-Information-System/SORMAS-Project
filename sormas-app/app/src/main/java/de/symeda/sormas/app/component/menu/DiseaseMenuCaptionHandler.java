@@ -24,17 +24,21 @@ public class DiseaseMenuCaptionHandler {
 
         // Get the index for each section we want to modify
         int personInfoIndex = CaseSection.PERSON_INFO.ordinal();
-        int foodsampleIndex = CaseSection.SIXTY_DAY_FOLLOW_UP.ordinal();
+        int foodSampleIndex = CaseSection.SIXTY_DAY_FOLLOW_UP.ordinal();
 
         // Update captions based on disease
         switch (disease) {
             case FOODBORNE_ILLNESS:
                 updateMenuCaption(menuItems, personInfoIndex, R.string.caption_patient_client, context);
-                updateMenuCaption(menuItems, foodsampleIndex, R.string.caption_food_sample_testing, context);
+                updateMenuCaption(menuItems, foodSampleIndex, R.string.caption_food_sample_testing, context);
                 break;
             case NEW_INFLUENZA:
                  updateMenuCaption(menuItems, personInfoIndex, R.string.caption_demographic_details, context);
                  break;
+            case IMMEDIATE_CASE_BASED_FORM_OTHER_CONDITIONS:
+            case AHF:
+                updateMenuCaption(menuItems, personInfoIndex, R.string.caption_case_person, context);
+                break;
         }
 
         return menuItems;

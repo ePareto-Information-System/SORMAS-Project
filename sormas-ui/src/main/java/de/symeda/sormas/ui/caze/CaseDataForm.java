@@ -1755,6 +1755,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 case YELLOW_FEVER:
                     setVaccinatedByCardOrHistoryVisibility();
                     outcome.setVisible(false);
+                    vaccinationStatus.setRequired(true);
                     break;
                 case CSM:
                     setVaccinationHelperVisibility();

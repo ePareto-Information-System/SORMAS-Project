@@ -976,6 +976,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 
 		getFilteredVaccinationList();
 		getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
+		getContentBinding().caseDataVaccinationStatus.setRequired(true);
 
 		getContentBinding().caseDataVaccinationStatus.addValueChangedListener( field -> {
 			if (getContentBinding().caseDataVaccinationStatus.getValue() == VaccinationStatus.VACCINATED){

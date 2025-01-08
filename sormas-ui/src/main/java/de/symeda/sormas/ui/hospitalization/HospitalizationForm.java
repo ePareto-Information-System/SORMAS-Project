@@ -567,6 +567,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			hospitalizationReason.setVisible(false);
 			hospitalizedPreviouslyField.setVisible(false);
 			previousHospitalizationsHeadingLabel.setVisible(false);
+			setVisible(false, HospitalizationDto.NOTIFY_DISTRICT_DATE);
 
 			dateFirstSeen.setVisible(true);
 			dateFirstSeen.setCaption("Date seen at health facility");

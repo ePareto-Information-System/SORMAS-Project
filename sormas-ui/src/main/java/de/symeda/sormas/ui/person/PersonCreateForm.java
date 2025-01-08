@@ -504,6 +504,9 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	public void showPersonalEmail(){
 		setVisible(false, PersonDto.EMAIL_ADDRESS);
 	}
+	public void makeNamesRequired(){
+		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME);
+	}
 
 	public void showPassportNumber(){
 		setVisible(true, PersonDto.PASSPORT_NUMBER);

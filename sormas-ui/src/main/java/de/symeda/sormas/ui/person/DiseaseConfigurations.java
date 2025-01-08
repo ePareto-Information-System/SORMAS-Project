@@ -30,6 +30,7 @@ public abstract class DiseaseConfigurations extends AbstractEditForm<PersonDto> 
         CONFIGURATIONS.put(Disease.NEW_INFLUENZA, form -> {
             form.setFieldsVisible(true,
                     form.investigatorName, form.investigatorTitle, form.investigatorUnit, form.investigatorAddress, form.investigatorTel);
+            form.occupationTitleHeadingLabel.setVisible(false);
         });
 
         CONFIGURATIONS.put(Disease.AHF, form -> {
