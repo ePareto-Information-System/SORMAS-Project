@@ -239,6 +239,9 @@
     <string name="caption_period_end">Period End</string>
     <string name="caption_period_start">Period Start</string>
     <string name="caption_person_information">Person Information</string>
+    <string name="caption_patient_client">Patient/Client</string>
+    <string name="caption_food_sample_testing">Food Sample Testing</string>
+    <string name="caption_demographic_details">Demographic Details</string>
     <string name="caption_person_involved">Person Involved</string>
     <string name="caption_positive">Positive</string>
     <string name="caption_possible_events">Possible Events</string>
