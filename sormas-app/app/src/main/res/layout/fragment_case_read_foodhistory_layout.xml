@@ -1,0 +1,680 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ SORMAS® - Surveillance Outbreak Response Management & Analysis System
+  ~ Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="contentDescription"
+    android:id="@+id/base_layout"
+    android:descendantFocusability="beforeDescendants">
+
+    <data>
+        <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
+        <import type="de.symeda.sormas.api.utils.YesNo" />
+        <import type="de.symeda.sormas.api.utils.EventType" />
+        <import type="de.symeda.sormas.api.utils.FoodSource" />
+        <import type="de.symeda.sormas.api.i18n.I18nProperties" />
+        <import type="de.symeda.sormas.api.i18n.Strings" />
+        <import type="de.symeda.sormas.api.i18n.Captions" />
+        <import type="de.symeda.sormas.api.foodhistory.FoodHistoryDto" />
+
+        <variable name="caze" type="de.symeda.sormas.app.backend.caze.Case" />
+        <variable name="data" type="de.symeda.sormas.app.backend.foodhistory.FoodHistory"/>
+        <variable name="YesNoClass" type="Class" />
+        <variable name="affectedPersonList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.affectedperson.AffectedPerson&gt;" />
+        <variable name="affectedPersonItemClickCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
+        <variable name="affectedPersonListBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/main_content"
+            style="@style/LayoutSingleContentSpaceBelowStyle">
+
+            <requestFocus/>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_suspectedFoodDate_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_suspectedFood"
+                    app:value="@{data.suspectedFood}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateTimeField
+                    android:id="@+id/foodHistory_dateConsumed"
+                    app:value="@{data.dateConsumed}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/foodHistory_foodSource"
+                app:value="@{data.foodSource}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/foodHistory_foodSourceSpecify"
+                app:value="@{data.foodSourceOther}"
+                app:dependencyParentField="@{foodHistoryFoodSource}"
+                app:dependencyParentValue="@{FoodSource.OTHER}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <LinearLayout
+                android:id="@+id/foodHistory_event_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_eventType"
+                    app:value="@{data.eventType}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_eventOtherSpecify"
+                    app:value="@{data.eventOtherSpecify}"
+                    app:dependencyParentField="@{foodHistoryEventType}"
+                    app:dependencyParentValue="@{EventType.OTHER}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/foodHistory_headingObtainHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getString(Strings.headingObtainHistory)}"
+                style="@style/SubHeadingStyle" />
+
+            <!--            0 -24 hr (Day 1)-->
+
+            <TextView
+                android:id="@+id/foodHistory_headingDay1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getString(Strings.headingDay1)}"
+                style="@style/SubHeadingStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/foodHistory_breakfast"
+                app:value="@{data.breakfast}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_breakFast_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_totalNoPersons"
+                    app:value="@{data.totalNoPersons}"
+                    app:dependencyParentField="@{foodHistoryBreakfast}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_foodConsumed"
+                    app:value="@{data.foodConsumed}"
+                    app:dependencyParentField="@{foodHistoryBreakfast}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_breakFast_sourceOfFoodConsumed_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_sourceOfFood"
+                    app:value="@{data.sourceOfFood}"
+                    app:dependencyParentField="@{foodHistoryBreakfast}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_consumedAtPlace"
+                    app:value="@{data.consumedAtPlace}"
+                    app:dependencyParentField="@{foodHistoryBreakfast}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/foodHistory_lunch"
+                app:value="@{data.lunch}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_lunch_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_totalNoPersonsL1"
+                    app:value="@{data.totalNoPersonsL1}"
+                    app:dependencyParentField="@{foodHistoryLunch}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_foodConsumedL1"
+                    app:value="@{data.foodConsumedL1}"
+                    app:dependencyParentField="@{foodHistoryLunch}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_lunch2_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_sourceOfFoodL1"
+                    app:value="@{data.sourceOfFoodL1}"
+                    app:dependencyParentField="@{foodHistoryLunch}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_consumedAtPlaceL1"
+                    app:value="@{data.consumedAtPlaceL1}"
+                    app:dependencyParentField="@{foodHistoryLunch}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/foodHistory_supper"
+                app:value="@{data.supper}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_supper_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_totalNoPersonsS1"
+                    app:value="@{data.totalNoPersonsS1}"
+                    app:dependencyParentField="@{foodHistorySupper}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_foodConsumedS1"
+                    app:value="@{data.foodConsumedS1}"
+                    app:dependencyParentField="@{foodHistorySupper}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_supper2_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_sourceOfFoodsS1"
+                    app:value="@{data.sourceOfFoodsS1}"
+                    app:dependencyParentField="@{foodHistorySupper}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_consumedAtPlaceS1"
+                    app:value="@{data.consumedAtPlaceS1}"
+                    app:dependencyParentField="@{foodHistorySupper}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+            </LinearLayout>
+
+            <!--            0 -24 hr (Day 2)-->
+
+            <TextView
+                android:id="@+id/foodHistory_headingDay2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getString(Strings.headingDay2)}"
+                style="@style/SubHeadingStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/foodHistory_breakfast2"
+                app:value="@{data.breakfast2}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_breakfast2_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_totalNoPersons2"
+                    app:value="@{data.totalNoPersons2}"
+                    app:dependencyParentField="@{foodHistoryBreakfast2}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_foodConsumed2"
+                    app:value="@{data.foodConsumed2}"
+                    app:dependencyParentField="@{foodHistoryBreakfast2}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_breakfast2_sourceOfFood2consumed_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_sourceOfFood2"
+                    app:value="@{data.sourceOfFood2}"
+                    app:dependencyParentField="@{foodHistoryBreakfast2}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_consumedAtPlace2"
+                    app:value="@{data.consumedAtPlace2}"
+                    app:dependencyParentField="@{foodHistoryBreakfast2}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/foodHistory_lunchL2"
+                app:value="@{data.lunchL2}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_lunchL2_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_totalNoPersonsL2"
+                    app:value="@{data.totalNoPersonsL2}"
+                    app:dependencyParentField="@{foodHistoryLunchL2}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_foodConsumedL2"
+                    app:value="@{data.foodConsumedL2}"
+                    app:dependencyParentField="@{foodHistoryLunchL2}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_lunchL2sourceOfFoodL2consumed_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_sourceOfFoodL2"
+                    app:value="@{data.sourceOfFoodL2}"
+                    app:dependencyParentField="@{foodHistoryLunchL2}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_consumedAtPlaceL2"
+                    app:value="@{data.consumedAtPlaceL2}"
+                    app:dependencyParentField="@{foodHistoryLunchL2}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/foodHistory_supperS2"
+                app:value="@{data.supperS2}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_supperS2_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_totalNoPersonsS2"
+                    app:value="@{data.totalNoPersonsS2}"
+                    app:dependencyParentField="@{foodHistorySupperS2}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_foodConsumedS2"
+                    app:value="@{data.foodConsumedS2}"
+                    app:dependencyParentField="@{foodHistorySupperS2}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_supperS2sourceOfFoodS2consumed_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_sourceOfFoodS2"
+                    app:value="@{data.sourceOfFoodS2}"
+                    app:dependencyParentField="@{foodHistorySupperS2}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_consumedAtPlaceS2"
+                    app:value="@{data.consumedAtPlaceS2}"
+                    app:dependencyParentField="@{foodHistorySupperS2}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <!--            0 -24 hr (Day 3)-->
+
+            <TextView
+                android:id="@+id/foodHistory_headingDay3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getString(Strings.headingDay3)}"
+                style="@style/SubHeadingStyle" />
+
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/foodHistory_breakfast3"
+                app:value="@{data.breakfast3}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_breakfast3_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_totalNoPersons3"
+                    app:value="@{data.totalNoPersons3}"
+                    app:dependencyParentField="@{foodHistoryBreakfast3}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_foodConsumed3"
+                    app:value="@{data.foodConsumed3}"
+                    app:dependencyParentField="@{foodHistoryBreakfast3}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_breakfast3sourceOfFood3consumed_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_sourceOfFood3"
+                    app:value="@{data.sourceOfFood3}"
+                    app:dependencyParentField="@{foodHistoryBreakfast3}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_consumedAtPlace3"
+                    app:value="@{data.consumedAtPlace3}"
+                    app:dependencyParentField="@{foodHistoryBreakfast3}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/foodHistory_lunchL3"
+                app:value="@{data.lunchL3}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_lunchL3_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_totalNoPersonsL3"
+                    app:value="@{data.totalNoPersonsL3}"
+                    app:dependencyParentField="@{foodHistoryLunchL3}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_foodConsumedL3"
+                    app:value="@{data.foodConsumedL3}"
+                    app:dependencyParentField="@{foodHistoryLunchL3}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_lunchL3sourceOfFoodL3consumed_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_sourceOfFoodL3"
+                    app:value="@{data.sourceOfFoodL3}"
+                    app:dependencyParentField="@{foodHistoryLunchL3}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_consumedAtPlaceL3"
+                    app:value="@{data.consumedAtPlaceL3}"
+                    app:dependencyParentField="@{foodHistoryLunchL3}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/foodHistory_supperS3"
+                app:value="@{data.supperS3}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_supperS3_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_totalNoPersonsS3"
+                    app:value="@{data.totalNoPersonsS3}"
+                    app:dependencyParentField="@{foodHistorySupperS3}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_foodConsumedS3"
+                    app:value="@{data.foodConsumedS3}"
+                    app:dependencyParentField="@{foodHistorySupperS3}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/foodHistory_supperS3sourceOfFoodS3consumed_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_sourceOfFoodS3"
+                    app:value="@{data.sourceOfFoodS3}"
+                    app:dependencyParentField="@{foodHistorySupperS3}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_consumedAtPlaceS3"
+                    app:value="@{data.consumedAtPlaceS3}"
+                    app:dependencyParentField="@{foodHistorySupperS3}"
+                    app:dependencyParentValue="@{YesNo.YES}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    tools:ignore="TooManyViews" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/foodHistory_headingOtherPersons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/heading_other_persons"
+                style="@style/SubHeadingStyle"
+                tools:ignore="TooManyViews" />
+
+            <LinearLayout
+                android:id="@+id/foodHistory_ImplicatedFoodNumber_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_numberOfPeopleAteImplicatedFood"
+                    app:value="@{data.numberOfPeopleAteImplicatedFood}"
+                    app:inputType="number"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/foodHistory_numberAffected"
+                    app:value="@{data.numberAffected}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/affectedPerson_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getString(Strings.entityAffectedPerson)}"
+                android:layout_marginBottom="24dp"
+                style="@style/SubHeadingCompactStyle" />
+
+            <LinearLayout
+                android:id="@+id/affectedPerson_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/textControlMarginBottom"
+                android:background="@color/formListSectionBackground"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/parentLayoutHorizontalPadding"
+                android:paddingEnd="@dimen/parentLayoutHorizontalPadding"
+                android:paddingTop="@dimen/parentLayoutVerticalPadding">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:alternateBottomMarginIfEmpty="@{affectedPersonList}"
+                    app:emptyBottomMargin="@{@dimen/parentLayoutVerticalMargin}"
+                    app:nonEmptyBottomMargin="@{@dimen/closelyRelatedControlMarginBottom}">
+
+                    <TextView
+                        android:id="@+id/affectedPerson_headline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:text="@{I18nProperties.getPrefixCaption(FoodHistoryDto.I18N_PREFIX, FoodHistoryDto.AFFECTED_PERSONS)}"
+                        style="@style/ReadActivitySubListHeadingNoBMarginStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlButton
+                        android:id="@+id/btn_add_affectedPerson"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="@string/action_new"
+                        app:buttonType="@{ControlButtonType.LINE_PRIMARY}"
+                        app:iconStart="@drawable/ic_add_24dp"
+                        app:rounded="true"
+                        app:slim="true" />
+
+                </RelativeLayout>
+
+                <ImageView
+                    style="@style/FullHorizontalDividerStyle"
+                    app:goneIfEmpty="@{affectedPersonList}"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:orientation="vertical"
+                    android:padding="@dimen/rowListItemParentPadding"
+                    app:callback="@{affectedPersonItemClickCallback}"
+                    app:entries="@{affectedPersonList}"
+                    app:layout="@{@layout/row_food_history_affected_person_layout}"
+                    app:bindCallback="@{affectedPersonListBindCallback}" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</layout>
+

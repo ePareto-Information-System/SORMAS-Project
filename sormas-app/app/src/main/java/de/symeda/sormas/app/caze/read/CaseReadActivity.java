@@ -204,6 +204,9 @@ public class CaseReadActivity extends BaseReadActivity<Case> {
 		case SIXTY_DAY_FOLLOW_UP:
 			fragment = CaseReadSixtyDayFragment.newInstance(activityRootData);
 			break;
+		case FOOD_HISTORY:
+			fragment = CaseReadFoodHistoryFragment.newInstance(activityRootData);
+			break;
 		default:
 			throw new IndexOutOfBoundsException(DataHelper.toStringNullable(section));
 		}
