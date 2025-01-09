@@ -1,9 +1,9 @@
 package de.symeda.sormas.ui.ebs;
 
-
-import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.data.Property;
+import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.Field;
+
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ebs.EbsCriteria;
 import de.symeda.sormas.api.ebs.EbsIndexDto;
@@ -12,10 +12,13 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.location.LocationDto;
+import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
-import de.symeda.sormas.ui.utils.*;
+import de.symeda.sormas.ui.utils.AbstractFilterForm;
+import de.symeda.sormas.ui.utils.FieldConfiguration;
+import de.symeda.sormas.ui.utils.FieldHelper;
 
-///*
+/// *
 // * SORMAS® - Surveillance Outbreak Response Management & Analysis System
 // * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
 // * This program is free software: you can redistribute it and/or modify
@@ -30,42 +33,55 @@ import de.symeda.sormas.ui.utils.*;
 // * along with this program. If not, see <https://www.gnu.org/licenses/>.
 // */
 
-
 public class EbsFilterForm extends AbstractFilterForm<EbsCriteria> {
 
 	private static final long serialVersionUID = -1366745065032487009L;
+
 	protected EbsFilterForm() {
-		super(EbsCriteria.class,
-				EbsIndexDto.I18N_PREFIX,
-				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()));
+		super(EbsCriteria.class, EbsIndexDto.I18N_PREFIX, FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()));
+		displayRegionAndDistrictFilterUser();
 	}
+
+	JurisdictionLevel userJurisdictionLevel = FacadeProvider.getUserFacade().getCurrentUser().getJurisdictionLevel();
+
 	@Override
 	protected String[] getMainFilterLocators() {
 
 		return new String[] {
-				EbsIndexDto.SOURCE_INFORMATION,
-				EbsIndexDto.REGION,
-				EbsIndexDto.DISTRICT,
-				EbsIndexDto.COMMUNITY,
-				EbsIndexDto.REPORT_DATE_TIME,
-				EbsIndexDto.TRIAGING_DECISION,
-				EbsIndexDto.SIGNAL_CATEGORY,
-				EbsIndexDto.TRIAGE_DATE
-		};
+			EbsIndexDto.SOURCE_INFORMATION,
+			EbsIndexDto.REGION,
+			EbsIndexDto.DISTRICT,
+			EbsIndexDto.COMMUNITY,
+			EbsIndexDto.REPORT_DATE_TIME,
+			EbsIndexDto.TRIAGING_DECISION,
+			EbsIndexDto.SIGNAL_CATEGORY,
+			EbsIndexDto.TRIAGE_DATE };
 	}
+
+	ComboBox regionField;
+	ComboBox districtField;
+	ComboBox communityField;
 
 	@Override
 	protected void addFields() {
 		final ComboBox srcField = addField(FieldConfiguration.pixelSized(EbsIndexDto.SOURCE_INFORMATION, 140));
 		final ComboBox signalCategory = addField(FieldConfiguration.pixelSized(EbsIndexDto.SIGNAL_CATEGORY, 140));
-		ComboBox regionField = addField(FieldConfiguration.withCaptionAndPixelSized(LocationDto.REGION, I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.REGION), 140));
+		regionField = addField(
+			FieldConfiguration
+				.withCaptionAndPixelSized(LocationDto.REGION, I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.REGION), 140));
 		regionField.addItems(FacadeProvider.getRegionFacade().getAllActiveAsReference());
 
-		ComboBox districtField = addField(FieldConfiguration.withCaptionAndPixelSized(LocationDto.DISTRICT, I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.DISTRICT), 140));
+		districtField = addField(
+			FieldConfiguration
+				.withCaptionAndPixelSized(LocationDto.DISTRICT, I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.DISTRICT), 140));
 		districtField.setDescription(I18nProperties.getDescription(Descriptions.descDistrictFilter));
 		districtField.setEnabled(false);
 
-		ComboBox communityField = addField(FieldConfiguration.withCaptionAndPixelSized(LocationDto.COMMUNITY, I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.COMMUNITY), 140));
+		communityField = addField(
+			FieldConfiguration.withCaptionAndPixelSized(
+				LocationDto.COMMUNITY,
+				I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.COMMUNITY),
+				140));
 		communityField.setDescription(I18nProperties.getDescription(Descriptions.descCommunityFilter));
 		communityField.setEnabled(false);
 		Field<?> reportDate = addField(FieldConfiguration.pixelSized(EbsIndexDto.REPORT_DATE_TIME, 200));
@@ -74,7 +90,6 @@ public class EbsFilterForm extends AbstractFilterForm<EbsCriteria> {
 		Field<?> triageDate = addField(FieldConfiguration.pixelSized(EbsIndexDto.TRIAGE_DATE, 200));
 		triageDate.removeAllValidators();
 	}
-
 
 	@Override
 	protected void applyDependenciesOnFieldChange(String propertyId, Property.ValueChangeEvent event) {
@@ -128,4 +143,17 @@ public class EbsFilterForm extends AbstractFilterForm<EbsCriteria> {
 		DistrictReferenceDto district = criteria.getDistrict();
 		applyRegionAndDistrictFilterDependency(region, LocationDto.DISTRICT, district, LocationDto.COMMUNITY);
 	}
+
+	protected void displayRegionAndDistrictFilterUser() {
+		if (userJurisdictionLevel == JurisdictionLevel.NATION) {
+			regionField.setVisible(true);
+			districtField.setVisible(true);
+			communityField.setVisible(true);
+		} else {
+			regionField.setVisible(false);
+			districtField.setVisible(false);
+			communityField.setVisible(false);
+		}
+	}
+
 }
