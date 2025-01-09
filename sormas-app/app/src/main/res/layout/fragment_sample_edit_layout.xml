@@ -123,10 +123,16 @@
                     app:value="@={data.hasSampleBeenCollected}"
                     style="@style/ControlSingleColumnStyle" />
 
+                <de.symeda.sormas.app.component.controls.ControlSwitchField
+                    android:id="@+id/sample_csfSampleCollected"
+                    app:enumClass="@{yesNoClass}"
+                    app:value="@={data.csfSampleCollected}"
+                    style="@style/ControlSingleColumnStyle" />
+
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/sample_csfReason"
                     app:value="@={data.csfReason}"
-                    app:dependencyParentField="@{sampleHasSampleBeenCollected}"
+                    app:dependencyParentField="@{sampleCsfSampleCollected}"
                     app:dependencyParentValue="@{YesNo.NO}"
                     style="@style/ControlSingleColumnStyle" />
 

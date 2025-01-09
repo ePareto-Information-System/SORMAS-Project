@@ -233,6 +233,8 @@ public class Sample extends PseudonymizableAdo {
 	private YesNo ipSampleSent;
 	@Enumerated(EnumType.STRING)
 	private YesNo hasSampleBeenCollected;
+	@Enumerated(EnumType.STRING)
+	private YesNo csfSampleCollected;
 
 	@Enumerated(EnumType.STRING)
 	private YesNo specimenSavedAndPreservedInAlcohol;
@@ -1100,6 +1102,13 @@ public class Sample extends PseudonymizableAdo {
 
 	public void setPersonCompletingForm(String personCompletingForm) {
 		this.personCompletingForm = personCompletingForm;
+	}
+
+	public YesNo getCsfSampleCollected() {
+		return csfSampleCollected;
+	}
+	public void setCsfSampleCollected(YesNo csfSampleCollected) {
+		this.csfSampleCollected = csfSampleCollected;
 	}
 
 	public YesNo getHasSampleBeenCollected() {
