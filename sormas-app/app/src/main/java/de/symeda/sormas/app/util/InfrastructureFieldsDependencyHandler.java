@@ -398,7 +398,9 @@ public class InfrastructureFieldsDependencyHandler {
 				} else if (TypeOfPlace.FACILITY.equals(selectedType)) {
 					typeGroupField.setSpinnerData(typeGroups);
 					if (facilityField.getValue() != null
-						&& !FacilityDto.OTHER_FACILITY_UUID.equals(((Facility) facilityField.getValue()).getUuid())) {
+						&& !FacilityDto.OTHER_FACILITY_UUID.equals(((Facility) facilityField.getValue()).getUuid())
+							&& !FacilityDto.NOT_SET_FACILITY_UUID.equals(((Facility) facilityField.getValue()).getUuid())
+							&& !FacilityDto.NOT_FACILITY_BASED.equals(((Facility) facilityField.getValue()).getUuid())){
 						facilityDetailsField.setValue(null);
 						facilityDetailsField.setVisibility(GONE);
 					}
