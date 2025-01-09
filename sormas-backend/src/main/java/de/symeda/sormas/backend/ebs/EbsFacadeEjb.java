@@ -50,8 +50,6 @@ import javax.persistence.criteria.Subquery;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import de.symeda.sormas.api.ebs.SignalVerificationDto;
-import de.symeda.sormas.api.ebs.TriagingDto;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -71,6 +69,8 @@ import de.symeda.sormas.api.ebs.EbsFacade;
 import de.symeda.sormas.api.ebs.EbsIndexDto;
 import de.symeda.sormas.api.ebs.EbsReferenceDto;
 import de.symeda.sormas.api.ebs.SignalOutcome;
+import de.symeda.sormas.api.ebs.SignalVerificationDto;
+import de.symeda.sormas.api.ebs.TriagingDto;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
@@ -459,6 +459,9 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 
 				Predicate criteriaFilter = service.buildCriteriaFilter(ebsCriteria, ebsQueryContext);
 				filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
+			}
+			if (filter != null) {
+				cq.where(filter);
 			}
 
 			sortBy(sortProperties, ebsQueryContext);
