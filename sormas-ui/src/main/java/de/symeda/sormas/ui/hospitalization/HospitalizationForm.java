@@ -618,6 +618,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			tickSymptomField.setVisible(true);
 
 			setVisible(true, HospitalizationDto.SOUGHT_MEDICAL_ATTENTION, HospitalizationDto.AGENT_IDENTIFIED, HospitalizationDto.OTHER_SYMPTOM_SELECTED, HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME, HospitalizationDto.SYMPTOMS_ONGOING, HospitalizationDto.DURATION_HOURS);
+			setRequired(true, HospitalizationDto.ONSET_OF_SYMPTOM_DATETIME);
 
 			FieldHelper.setVisibleWhen(ongoing, Arrays.asList(durationHours), Arrays.asList(YesNo.NO), true);
 			FieldHelper.setVisibleWhen(soughtMedicalAttentionField, Arrays.asList(dateOfVisitHospital, hospitalizedYesNo, labTestConducted, nameOfFacilityField), Arrays.asList(YesNo.YES), true);

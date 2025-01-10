@@ -429,6 +429,7 @@
                     app:value="@={data.person.approximateAge}"
                     app:inputType="number"
                     app:maxLength="3"
+                    app:required="true"
                     style="@style/ControlFirstOfTwoColumnsStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField

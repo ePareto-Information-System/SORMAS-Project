@@ -504,9 +504,6 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	public void showPersonalEmail(){
 		setVisible(false, PersonDto.EMAIL_ADDRESS);
 	}
-	public void makeNamesRequired(){
-		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME);
-	}
 
 	public void showPassportNumber(){
 		setVisible(true, PersonDto.PASSPORT_NUMBER);
@@ -519,7 +516,9 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	}
 	public void showFields(){
 		setVisible(true, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE);
-		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.SEX);
+	}
+	public void makePersonDataRequired(){
+		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.SEX, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE);
 	}
 	public void showPresentCondition(){
 		setVisible(true, PersonDto.PRESENT_CONDITION);

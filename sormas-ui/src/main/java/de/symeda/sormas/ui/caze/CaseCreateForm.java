@@ -277,6 +277,8 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
             } else {
                 personCreateForm.showPassportNumber();
             }
+            personCreateForm.showFields();
+            personCreateForm.makePersonDataRequired();
 
         });
         facilityOrHome =
@@ -607,7 +609,6 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
                     case YELLOW_FEVER:
                         personCreateForm.hidePresentCondition();
                         personCreateForm.showPersonalEmail();
-                        personCreateForm.makeNamesRequired();
                         facilityCombo.setRequired(true);
                         break;
                     case MONKEYPOX:
@@ -647,7 +648,6 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 
     private void handleMonkeyPox(){
         personCreateForm.hideFields();
-        personCreateForm.showFields();
         reportDate.setVisible(false);
         reportDate.setRequired(false);
         setRequired(true, CaseDataDto.HEALTH_FACILITY);
