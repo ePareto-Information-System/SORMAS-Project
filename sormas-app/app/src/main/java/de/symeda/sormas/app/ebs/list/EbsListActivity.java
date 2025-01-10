@@ -17,6 +17,7 @@ import de.symeda.sormas.api.ebs.EbsSourceType;
 import de.symeda.sormas.api.ebs.EbsTriagingDecision;
 import de.symeda.sormas.api.ebs.SignalCategory;
 import de.symeda.sormas.api.ebs.SignalOutcome;
+import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.app.BaseListActivity;
 import de.symeda.sormas.app.PagedBaseListActivity;
@@ -26,6 +27,7 @@ import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.ebs.Ebs;
 import de.symeda.sormas.app.backend.region.District;
 import de.symeda.sormas.app.backend.region.Region;
+import de.symeda.sormas.app.backend.user.User;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.component.menu.PageMenuItem;
 import de.symeda.sormas.app.databinding.FilterEbsListLayoutBinding;
@@ -44,7 +46,7 @@ public class EbsListActivity extends PagedBaseListActivity {
     private FilterEbsListLayoutBinding filterBinding;
     public static boolean showWarningAlert = false;
     public static int message = 0;
-
+    User currentUser = ConfigProvider.getUser();
     public static void startActivity(Context context, SignalOutcome listFilter) {
         BaseListActivity.startActivity(context, EbsListActivity.class, buildBundle(getStatusFilterPosition(signalOutcomes, listFilter)));
     }
@@ -164,15 +166,15 @@ public class EbsListActivity extends PagedBaseListActivity {
         filterBinding.ebsSourceInformationFilter.initializeSpinner(sourceInformation);
         filterBinding.triagingSignalCategoryFilter.initializeSpinner(signalCategory);
         filterBinding.triagingTriagingDecisionFilter.initializeSpinner(triagingDecision);
-        filterBinding.ebsRegionFilter.initializeSpinner(InfrastructureDaoHelper.loadRegionsByServerCountry());
-        filterBinding.ebsRegionFilter.addValueChangedListener(e->{
-            filterBinding.ebsDistrictFilter.initializeSpinner(InfrastructureDaoHelper.loadDistricts((Region) e.getValue()));
-        });
-        filterBinding.ebsDistrictFilter.addValueChangedListener(e->{
-            filterBinding.ebsCommunityFilter.initializeSpinner(InfrastructureDaoHelper.loadCommunities((District) e.getValue()));
-        });
-
-
+        if(currentUser.getJurisdictionLevel() == JurisdictionLevel.NATION) {
+            filterBinding.ebsRegionFilter.initializeSpinner(InfrastructureDaoHelper.loadRegionsByServerCountry());
+            filterBinding.ebsRegionFilter.addValueChangedListener(e -> {
+                filterBinding.ebsDistrictFilter.initializeSpinner(InfrastructureDaoHelper.loadDistricts((Region) e.getValue()));
+            });
+            filterBinding.ebsDistrictFilter.addValueChangedListener(e -> {
+                filterBinding.ebsCommunityFilter.initializeSpinner(InfrastructureDaoHelper.loadCommunities((District) e.getValue()));
+            });
+        }
         filterBinding.ebsReportDateTimeFilter.initializeDateField(getSupportFragmentManager());
         filterBinding.triagingDecisionDateFilter.initializeDateField(getSupportFragmentManager());
 
