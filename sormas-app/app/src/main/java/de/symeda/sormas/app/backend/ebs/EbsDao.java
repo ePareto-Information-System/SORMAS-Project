@@ -135,19 +135,6 @@ public class EbsDao extends AbstractAdoDao<Ebs> {
             }
             queryBuilder.leftJoin(locationLongQueryBuilder);
         }
-
-//        if (currentUser.getCommunity() != null) {
-//            locationLongQueryBuilder.where().eq(Location.COMMUNITY + "_id", currentUser.getCommunity().getId());
-//        }
-//        if (currentUser.getRegion() != null) {
-//            locationLongQueryBuilder.where().eq(Location.REGION + "_id", currentUser.getRegion().getId());
-//            queryBuilder.leftJoin(locationLongQueryBuilder);
-//        }
-//                if (criteria.getRegion() != null) {
-//            if (Objects.equals(currentUser.getRegion().getId(), criteria.getRegion().getId())) {
-//                System.out.println("User Region: " + currentUser.getRegion().getId());
-//            }
-//        }
                 if (criteria.getDistrict() != null) {
             if (Objects.equals(currentUser.getDistrict().getId(), criteria.getDistrict().getId())) {
                 System.out.println("User District: " + currentUser.getDistrict().getId() + " Criteria District: " + criteria.getDistrict().getId());
