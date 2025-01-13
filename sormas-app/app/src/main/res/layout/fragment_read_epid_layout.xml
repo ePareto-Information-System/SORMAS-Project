@@ -1019,6 +1019,85 @@
                 app:dependencyParentValue="@{RiskFactorCondition.OTHER}"
                 style="@style/ControlSingleColumnStyle"/>
 
+            <TextView
+                android:id="@+id/exposureHistoryHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getString(Strings.headingExposureHistory)}"
+                style="@style/SubHeadingCompactStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_intlTravel"
+                app:value="@{data.intlTravel}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_specifyCountries"
+                app:value="@{data.specifyCountries}"
+                app:dependencyParentField="@{epiDataIntlTravel}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_dateOfDeparture"
+                app:value="@{data.dateOfDeparture}"
+                app:dependencyParentField="@{epiDataIntlTravel}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_dateOfArrival"
+                app:value="@{data.dateOfArrival}"
+                app:dependencyParentField="@{epiDataIntlTravel}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"/>
+
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_domesticTravel"
+                app:value="@{data.domesticTravel}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_specifyLocation"
+                app:value="@{data.specifyLocation}"
+                app:dependencyParentField="@{epiDataDomesticTravel}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_dateOfDeparture2"
+                app:value="@{data.dateOfDeparture2}"
+                app:dependencyParentField="@{epiDataDomesticTravel}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_dateOfArrival2"
+                app:value="@{data.dateOfArrival2}"
+                app:dependencyParentField="@{epiDataDomesticTravel}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_contactIllPerson"
+                app:value="@{data.contactIllPerson}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_contactDate"
+                app:value="@{data.contactDate}"
+                app:dependencyParentField="@{epiDataContactIllPerson}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"/>
+
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/epiData_specifyIllness"
+                app:value="@{data.specifyIllness}"
+                app:dependencyParentField="@{epiDataContactIllPerson}"
+                app:dependencyParentValue="@{YesNo.YES}"
+                style="@style/ControlSingleColumnStyle"/>
+
 
         </LinearLayout>
     </ScrollView>

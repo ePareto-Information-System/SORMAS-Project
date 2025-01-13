@@ -73,30 +73,83 @@
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/investigationNotes_suspectedDiagnosis"
-                        app:value="@{data.suspectedDiagnosis}"
+                        app:value="@={data.suspectedDiagnosis}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextEditField
                         android:id="@+id/investigationNotes_confirmedDiagnosis"
-                        app:value="@{data.confirmedDiagnosis}"
+                        app:value="@={data.confirmedDiagnosis}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/investigationNotes_investigatedBy"
-                app:value="@{data.investigatedBy}"
+                app:value="@={data.investigatedBy}"
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/investigationNotes_investigatorSignature"
-                app:value="@{data.investigatorSignature}"
+                app:value="@={data.investigatorSignature}"
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlDateField
                 android:id="@+id/investigationNotes_investigatorDate"
-                app:value="@{data.investigatorDate}"
+                app:value="@={data.investigatorDate}"
                 style="@style/ControlSingleColumnStyle" />
+
+            <TextView
+                android:id="@+id/investigationNotes_headingPersonCompleting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{I18nProperties.getString(Strings.headingPersonCompleting)}"
+                style="@style/SubHeadingStyle" />
+
+            <LinearLayout
+                android:id="@+id/investigationNotes_names_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/investigationNotes_surname"
+                    app:value="@={data.surname}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/investigationNotes_firstName"
+                    app:value="@={data.firstName}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/investigationNotes_middleName"
+                    app:value="@={data.middleName}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/investigationNotes_telDateFacility_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/investigationNotes_telNo"
+                    app:value="@={data.telNo}"
+                    style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/investigationNotes_dateOfCompletionOfForm"
+                    app:value="@={data.dateOfCompletionOfForm}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/investigationNotes_nameOfHealthFacility"
+                    app:value="@={data.nameOfHealthFacility}"
+                    style="@style/ControlSecondOfTwoColumnsStyle" />
+
+            </LinearLayout>
 
 
             </LinearLayout>

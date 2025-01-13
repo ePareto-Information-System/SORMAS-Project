@@ -518,10 +518,11 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 
 		if (source.getInvestigationNotes() != null) {
 			target.setInvestigationNotes(
-					investigationNotesDtoHelper.adoToDto(DatabaseHelper.getInvestigationNotesDao().queryForId(source.getInvestigationNotes().getId())));
+					investigationNotesDtoHelper.adoToDto(
+							DatabaseHelper.getInvestigationNotesDao().queryForId(source.getInvestigationNotes().getId())));
 		} else {
-		}
 			target.setInvestigationNotes(null);
+		}
 		if (source.getAfpImmunization() != null) {
 			target.setAfpImmunization(
 				afpImmunizationDtoHelper.adoToDto(DatabaseHelper.getAfpImmunizationDao().queryForId(source.getAfpImmunization().getId())));

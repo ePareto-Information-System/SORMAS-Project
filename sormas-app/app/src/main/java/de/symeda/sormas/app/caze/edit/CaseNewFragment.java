@@ -22,6 +22,8 @@ import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import de.symeda.sormas.api.CountryHelper;
@@ -41,10 +43,9 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.sample.PosNegEq;
 import de.symeda.sormas.api.user.JurisdictionLevel;
+import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
@@ -309,13 +310,29 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 
 		contentBinding.facilityOrHome.addValueChangedListener(e -> {
 			TypeOfPlace value = (TypeOfPlace) e.getValue();
-			if (value.equals(TypeOfPlace.FACILITY)) {
+			if (value != null && value.equals(TypeOfPlace.FACILITY)) {
 				contentBinding.facilityTypeGroup.setValue(FacilityTypeGroup.MEDICAL_FACILITY);
 				contentBinding.caseDataFacilityType.setValue(FacilityType.HOSPITAL);
 				initialFacilities =
 						InfrastructureDaoHelper.loadFacilities(record.getResponsibleDistrict(), record.getResponsibleCommunity(), record.getFacilityType());
 				contentBinding.caseDataHealthFacility.setSpinnerData(initialFacilities);
 			}
+		});
+
+		contentBinding.personBirthdateDD.initializeSpinner(new ArrayList<>(), field -> updateApproximateAgeField(contentBinding));
+		contentBinding.personBirthdateMM.initializeSpinner(monthList, field -> {
+			updateApproximateAgeField(contentBinding);
+			DataUtils.updateListOfDays(
+					contentBinding.personBirthdateDD,
+					(Integer) contentBinding.personBirthdateYYYY.getValue(),
+					(Integer) field.getValue());
+		});
+		contentBinding.personBirthdateYYYY.initializeSpinner(yearList, field -> {
+			updateApproximateAgeField(contentBinding);
+			DataUtils.updateListOfDays(
+					contentBinding.personBirthdateDD,
+					(Integer) field.getValue(),
+					(Integer) contentBinding.personBirthdateMM.getValue());
 		});
 	}
 
@@ -436,8 +453,10 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 				}
 			});
 		} else {
-			contentBinding.caseDataCaseOrigin.setVisibility(GONE);
-			contentBinding.caseDataPointOfEntry.setVisibility(GONE);
+
+			// TODO [Couldn't figure out why its been done this way but it seems to be a bug so i commented it out]
+//			contentBinding.caseDataCaseOrigin.setVisibility(GONE);
+//			contentBinding.caseDataPointOfEntry.setVisibility(GONE);
 		}
 	}
 
@@ -500,6 +519,44 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 		record.setCaseTransmissionClassification(lastCase.getCaseTransmissionClassification());
 
 		getContentBinding().setData(record);
+	}
+
+	private static void updateApproximateAgeField(FragmentCaseNewLayoutBinding contentBinding) {
+
+		Date birthDate = calculateBirthDateValue(contentBinding);
+		if (birthDate != null) {
+
+			Date to = new Date();
+			DataHelper.Pair<Integer, ApproximateAgeType> approximateAge = ApproximateAgeType.ApproximateAgeHelper.getApproximateAge(birthDate, to);
+			ApproximateAgeType ageType = approximateAge.getElement1();
+			contentBinding.personApproximateAge.setValue(String.valueOf(approximateAge.getElement0()));
+			contentBinding.personApproximateAgeType.setValue(ageType);
+		} else {
+			if (contentBinding.personApproximateAge.isEnabled() == false && contentBinding.personApproximateAgeType.isEnabled() == false) {
+				contentBinding.personApproximateAge.setValue(null);
+				contentBinding.personApproximateAgeType.setValue(null);
+			}
+			contentBinding.personApproximateAge.setEnabled(true);
+			contentBinding.personApproximateAgeType.setEnabled(true);
+		}
+	}
+
+
+	public static Date calculateBirthDateValue(FragmentCaseNewLayoutBinding contentBinding) {
+		Integer birthYear = (Integer) contentBinding.personBirthdateYYYY.getValue();
+
+		if (birthYear != null) {
+			contentBinding.personApproximateAge.setEnabled(false);
+			contentBinding.personApproximateAgeType.setEnabled(false);
+
+			Integer birthDay = (Integer) contentBinding.personBirthdateDD.getValue();
+			Integer birthMonth = (Integer) contentBinding.personBirthdateMM.getValue();
+
+			Calendar birthDate = new GregorianCalendar();
+			birthDate.set(birthYear, birthMonth != null ? birthMonth - 1 : 0, birthDay != null ? birthDay : 1);
+			return birthDate.getTime();
+		}
+		return null;
 	}
 
 //	public void hideFieldsForDisease(LinearLayout contentBinding, String selectedDisease) {

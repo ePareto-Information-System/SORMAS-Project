@@ -38,8 +38,10 @@
         <import type="de.symeda.sormas.api.person.LocationOfBirth" />
         <import type="de.symeda.sormas.api.person.AttendedBy" />
         <import type="de.symeda.sormas.api.person.Profession" />
+        <import type="de.symeda.sormas.api.caze.CaseOrigin" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.person.Person"/>
+        <variable name="caseData" type="de.symeda.sormas.app.backend.caze.Case"/>
         <variable name="addressList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.location.Location&gt;" />
         <variable name="addressItemClickCallback" type="de.symeda.sormas.app.core.IEntryItemOnClickListener" />
         <variable name="addressBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
@@ -361,6 +363,13 @@
             <de.symeda.sormas.app.component.controls.ControlSpinnerField
                 android:id="@+id/person_marriageStatus"
                 app:value="@={data.marriageStatus}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/person_passportNumber"
+                app:value="@={data.passportNumber}"
+                app:goneIfVariable="@{caseData.caseOrigin}"
+                app:goneIfValue="@{CaseOrigin.POINT_OF_ENTRY}"
                 style="@style/ControlSingleColumnStyle" />
 
 

@@ -169,9 +169,11 @@ public class CaseFacilityChangeForm extends AbstractEditForm<CaseDataDto> {
 				facility.setValue(noFacilityRef);
 			}
 			if (TypeOfPlace.FACILITY.equals(facilityOrHome.getValue())) {
-				typeGroup.setVisible(true);
-				type.setVisible(true);
+				typeGroup.setVisible(false);
+				typeGroup.setValue(FacilityTypeGroup.MEDICAL_FACILITY);
+				type.setVisible(false);
 				facility.setVisible(true);
+				type.setValue(FacilityType.HOSPITAL);
 				facility.setRequired(true);
 				if (type.getValue() != null)
 					updateFacility((DistrictReferenceDto) district.getValue(), (CommunityReferenceDto) community.getValue(), facility);

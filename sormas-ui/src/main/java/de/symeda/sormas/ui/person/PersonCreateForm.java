@@ -90,7 +90,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	private TextField otherId;
 
 	private static final String HTML_LAYOUT =
-		"%s" + fluidRow(fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD), fluidRowLocs(PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE, PersonDto.SEX))
+		"%s" + fluidRow(fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD), fluidRowLocs(PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.SEX))
 			+ fluidRowLocs(PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID)
 			+ fluidRowLocs(PersonDto.PASSPORT_NUMBER, PersonDto.OTHER_ID)
 			+ fluidRowLocs(PersonDto.PHONE, PersonDto.PRESENT_CONDITION) + fluidRowLocs(6,PersonDto.EMAIL_ADDRESS, 6, SymptomsDto.ONSET_DATE)
@@ -516,7 +516,9 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 	}
 	public void showFields(){
 		setVisible(true, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE);
-		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.SEX);
+	}
+	public void makePersonDataRequired(){
+		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.SEX, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE);
 	}
 	public void showPresentCondition(){
 		setVisible(true, PersonDto.PRESENT_CONDITION);

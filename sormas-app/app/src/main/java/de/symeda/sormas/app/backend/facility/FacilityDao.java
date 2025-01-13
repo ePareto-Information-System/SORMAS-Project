@@ -86,7 +86,9 @@ public class FacilityDao extends AbstractInfrastructureAdoDao<Facility> {
 		District district,
 		FacilityType type,
 		boolean includeOtherFacility,
-		boolean includeOtherPlace) {
+		boolean includeOtherPlace,
+		boolean includeNotSetFacility,
+		boolean includeNotFacilityBasedFacility) {
 
 		try {
 			QueryBuilder builder = queryBuilder();
@@ -112,6 +114,18 @@ public class FacilityDao extends AbstractInfrastructureAdoDao<Facility> {
 					facilities.add(noneFacility);
 				}
 			}
+			if (includeNotSetFacility) {
+				Facility notSetFacility = queryUuid(FacilityDto.NOT_SET_FACILITY_UUID);
+				if (notSetFacility != null) {
+					facilities.add(notSetFacility);
+				}
+			}
+			if (includeNotFacilityBasedFacility) {
+				Facility notFacilityBasedFacility = queryUuid(FacilityDto.NOT_FACILITY_BASED_UUID);
+				if (notFacilityBasedFacility != null) {
+					facilities.add(notFacilityBasedFacility);
+				}
+			}
 
 			return facilities;
 
@@ -125,7 +139,9 @@ public class FacilityDao extends AbstractInfrastructureAdoDao<Facility> {
 		Community community,
 		FacilityType type,
 		boolean includeOtherFacility,
-		boolean includeOtherPlace) {
+		boolean includeOtherPlace,
+		boolean includeNotSetFacility,
+		boolean includeNotFacilityBasedFacility) {
 
 		try {
 			QueryBuilder builder = queryBuilder();
@@ -144,6 +160,12 @@ public class FacilityDao extends AbstractInfrastructureAdoDao<Facility> {
 			}
 			if (includeOtherPlace) {
 				facilities.add(queryUuid(FacilityDto.NONE_FACILITY_UUID));
+			}
+			if (includeNotSetFacility) {
+				facilities.add(queryUuid(FacilityDto.NOT_SET_FACILITY_UUID));
+			}
+			if (includeNotFacilityBasedFacility) {
+				facilities.add(queryUuid(FacilityDto.NOT_FACILITY_BASED_UUID));
 			}
 
 			return facilities;

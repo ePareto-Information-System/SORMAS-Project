@@ -39,6 +39,7 @@ import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.user.UserRole;
 import de.symeda.sormas.app.caze.CaseSection;
 import de.symeda.sormas.app.caze.edit.CaseEditActivity;
+import de.symeda.sormas.app.component.menu.DiseaseMenuCaptionHandler;
 import de.symeda.sormas.app.component.menu.PageMenuItem;
 import de.symeda.sormas.app.epidata.EpidemiologicalDataReadFragment;
 import de.symeda.sormas.app.person.read.PersonReadFragment;
@@ -76,6 +77,7 @@ public class CaseReadActivity extends BaseReadActivity<Case> {
 
 		Disease disease = caze != null ? caze.getDisease() : null;
 		if (disease != null) {
+			menuItems = DiseaseMenuCaptionHandler.updateMenuCaptionsForDisease(menuItems, disease, getContext());
 			menuItems = DiseaseFieldHandler.handleMenuDataForDisease(menuItems, disease);
 		}
 		// Sections must be removed in reverse order
@@ -203,6 +205,9 @@ public class CaseReadActivity extends BaseReadActivity<Case> {
 			break;
 		case SIXTY_DAY_FOLLOW_UP:
 			fragment = CaseReadSixtyDayFragment.newInstance(activityRootData);
+			break;
+		case FOOD_HISTORY:
+			fragment = CaseReadFoodHistoryFragment.newInstance(activityRootData);
 			break;
 		default:
 			throw new IndexOutOfBoundsException(DataHelper.toStringNullable(section));

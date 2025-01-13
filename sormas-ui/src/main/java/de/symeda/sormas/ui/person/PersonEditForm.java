@@ -244,7 +244,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	final Label contactInformationHeader = new Label(I18nProperties.getString(Strings.headingContactInformation));
 	private Label headingBirthOfInfant = new Label(I18nProperties.getString(Strings.headingBirthOfInfant));
 	public Label personInformationHeadingLabel;
-	private Label occupationTitleHeadingLabel;
+	public Label occupationTitleHeadingLabel;
 	private TextField firstNameField;
 	private TextField lastNameField;
 	private TextField otherNameField;
@@ -711,14 +711,15 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		causeOfDeathField.addValueChangeListener(e -> {
 			boolean causeOfDeathVisible = presentCondition.getValue() != PresentCondition.ALIVE
 					&& presentCondition.getValue() != PresentCondition.UNKNOWN
-					&& presentCondition.getValue() != null;
+					&& presentCondition.getValue() != null
+					&& disease != Disease.CORONAVIRUS;
 			toggleCauseOfDeathFields(causeOfDeathVisible);
 		});
 
 		causeOfDeathDiseaseField.addValueChangeListener(e -> {
 			boolean causeOfDeathVisible = presentCondition.getValue() != PresentCondition.ALIVE
 					&& presentCondition.getValue() != PresentCondition.UNKNOWN
-					&& presentCondition.getValue() != null;
+					&& disease != Disease.CORONAVIRUS;
 			toggleCauseOfDeathFields(causeOfDeathVisible);
 		});
 
@@ -832,7 +833,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			generalCommentLabel.setVisible(false);
 			setVisible(false, PersonDto.ADDITIONAL_DETAILS);
 			setVisible(false, PersonDto.MOTHERS_MAIDEN_NAME);
-			setVisible(false, PersonDto.NICKNAME);
+			setVisible(false, PersonDto.NICKNAME, OCCUPATION_HEADER);
 			setVisible(true, PersonDto.GHANA_CARD, PersonDto.NATIONAL_HEALTH_ID);
 		}
 

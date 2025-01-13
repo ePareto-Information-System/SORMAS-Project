@@ -250,27 +250,47 @@ public class EpiData extends PseudonymizableAdo {
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private YesNo foodItems;
+	@Enumerated(EnumType.STRING)
 	private YesNo previouslyVaccinatedAgainstInfluenza;
+	@Enumerated(EnumType.STRING)
 	private YesNo previouslyVaccinatedAgainstCovid;
+	@Column
 	private Integer yearOfVaccination;
+	@Column
 	private Integer yearOfVaccinationCovid;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String nameOfVaccine;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String nameOfVaccineCovid;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String placesVisitedPastSevenDays;
+	@Enumerated(EnumType.STRING)
 	private YesNo vistedPlacesConfirmedPandemic;
+	@Enumerated(EnumType.STRING)
 	private RiskFactorCondition riskFactorsSevereDisease;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String otherSpecify;
-
+	@Enumerated(EnumType.STRING)
 	private YesNo intlTravel;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String specifyCountries;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateOfDeparture;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateOfArrival;
+	@Enumerated(EnumType.STRING)
 	private YesNo domesticTravel;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String specifyLocation;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateOfDeparture2;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date dateOfArrival2;
+	@Enumerated(EnumType.STRING)
 	private YesNo contactIllPerson;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date contactDate;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String specifyIllness;
 
 	public void setExposureDetailsKnown(YesNo exposureDetailsKnown) {

@@ -54,23 +54,23 @@ public class FacilityBackendTest {
 
 		// There should be exactly one health facility and one laboratory in this district
 		assertThat(
-			DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByDistrictAndType(district, FacilityType.LABORATORY, false, false).size(),
+			DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByDistrictAndType(district, FacilityType.LABORATORY, false, false, false, false).size(),
 			is(1));
 
 		assertThat(
-			DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByDistrictAndType(district, FacilityType.HOSPITAL, false, false).size(),
+			DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByDistrictAndType(district, FacilityType.HOSPITAL, false, false, false, false).size(),
 			is(1));
 
-		assertThat(DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByDistrictAndType(district, null, false, false).size(), is(2));
+		assertThat(DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByDistrictAndType(district, null, false, false,false,false).size(), is(2));
 
-		assertThat(DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByDistrictAndType(district, null, false, true).size(), is(3));
+		assertThat(DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByDistrictAndType(district, null, false, true, false, false).size(), is(3));
 
-		assertThat(DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByDistrictAndType(district, null, true, false).size(), is(3));
+		assertThat(DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByDistrictAndType(district, null, true, false, true, true).size(), is(3));
 
-		assertThat(DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByDistrictAndType(district, null, true, true).size(), is(4));
+		assertThat(DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByDistrictAndType(district, null, true, true, true, true).size(), is(4));
 
 		assertThat(
-			DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByDistrictAndType(district, FacilityType.HOSPITAL, true, true).size(),
+			DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByDistrictAndType(district, FacilityType.HOSPITAL, true, true, true, true).size(),
 			is(3));
 	}
 }

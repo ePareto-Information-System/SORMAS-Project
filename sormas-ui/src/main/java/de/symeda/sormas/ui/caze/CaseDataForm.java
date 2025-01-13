@@ -27,11 +27,9 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 import static de.symeda.sormas.ui.utils.LayoutUtil.locCss;
 import static de.symeda.sormas.ui.utils.LayoutUtil.locs;
 
-import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.data.validator.RegexpValidator;
 import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.ComboBox;
@@ -41,11 +39,8 @@ import com.vaadin.v7.ui.TextField;
 import com.vaadin.v7.ui.VerticalLayout;
 import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
-import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
-import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.utils.*;
-import de.symeda.sormas.ui.person.PersonCreateForm;
 import de.symeda.sormas.ui.person.PersonEditForm;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -1161,11 +1156,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
         vaccinatedByCardOrHistory.setVisible(false);
 
         vaccinationRoutine = addField(CaseDataDto.VACCINATION_ROUTINE, NullableOptionGroup.class);
-        vaccinationRoutine.addItems(VaccinationRoutine.MR1, VaccinationRoutine.MR2, VaccinationRoutine.SIA);
+        vaccinationRoutine.addItems(VaccinationRoutine.M, VaccinationRoutine.MR, VaccinationRoutine.MMR);
         vaccinationRoutine.setVisible(disease == Disease.MEASLES);
         vaccinationRoutineDate = addDateField(CaseDataDto.VACCINATION_ROUTINE_DATE, DateField.class, -1);
         vaccinationRoutineDate.setVisible(false);
-        FieldHelper.setEnabledWhen(vaccinationRoutine, Arrays.asList(VaccinationRoutine.MR1, VaccinationRoutine.MR2, VaccinationRoutine.SIA), Collections.singletonList(
+        FieldHelper.setEnabledWhen(vaccinationRoutine, Arrays.asList(VaccinationRoutine.M, VaccinationRoutine.MR, VaccinationRoutine.MMR), Collections.singletonList(
                 vaccinationRoutineDate
         ), false);
 
@@ -1755,6 +1750,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
                 case YELLOW_FEVER:
                     setVaccinatedByCardOrHistoryVisibility();
                     outcome.setVisible(false);
+                    vaccinationStatus.setRequired(true);
                     break;
                 case CSM:
                     setVaccinationHelperVisibility();

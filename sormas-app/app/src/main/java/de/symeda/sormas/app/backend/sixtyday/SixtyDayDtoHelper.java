@@ -91,6 +91,8 @@ public class SixtyDayDtoHelper extends AdoDtoHelper<SixtyDay, SixtyDayDto> {
 		target.setNameOfManufacturer(source.getNameOfManufacturer());
 		target.setAddress(source.getAddress());
 		target.setFoodTel(source.getFoodTel());
+		target.setFoodAvailableTesting(source.getFoodAvailableTesting());
+		target.setLabTestConducted(source.getLabTestConducted());
 	}
 
 	@Override
@@ -130,6 +132,8 @@ public class SixtyDayDtoHelper extends AdoDtoHelper<SixtyDay, SixtyDayDto> {
 		target.setNameOfManufacturer(source.getNameOfManufacturer());
 		target.setAddress(source.getAddress());
 		target.setFoodTel(source.getFoodTel());
+		target.setFoodAvailableTesting(source.getFoodAvailableTesting());
+		target.setLabTestConducted(source.getLabTestConducted());
 	}
 
     @Override

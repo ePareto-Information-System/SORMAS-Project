@@ -162,15 +162,15 @@ public class Hospitalization extends AbstractDomainObject {
 	private Date dateOfVisitHospital;
 	@Enumerated(EnumType.STRING)
 	private YesNo hospitalizationYesNo;
-	@Column(columnDefinition = "text")
+	@Column(length = CHARACTER_LIMIT_BIG)
 	private String physicianName;
-	@Column(columnDefinition = "text")
+	@Column(length = CHARACTER_LIMIT_BIG)
 	private String physicianNumber;
 	@Enumerated(EnumType.STRING)
 	private YesNo labTestConducted;
-	@Column(columnDefinition = "text")
+	@Column(length = CHARACTER_LIMIT_BIG)
 	private String typeOfSample;
-	@Column(columnDefinition = "text")
+	@Column(length = CHARACTER_LIMIT_BIG)
 	private String agentIdentified;
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "locationtype_id")

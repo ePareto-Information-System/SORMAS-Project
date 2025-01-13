@@ -149,6 +149,7 @@ public class SixtyDayFacadeEjb implements SixtyDayFacade {
         target.setNameOfManufacturer(source.getNameOfManufacturer());
         target.setAddress(source.getAddress());
         target.setFoodTel(source.getFoodTel());
+        target.setSpecifySources(source.getSpecifySources());
 
 
         return target;

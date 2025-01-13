@@ -544,7 +544,7 @@ public class AggregateReportsFragment extends BaseReportFragment<FragmentReports
 			}
 
 			DatabaseHelper.getFacilityDao()
-				.getActiveHealthFacilitiesByDistrictAndType(user.getDistrict(), FacilityType.HOSPITAL, false, false)
+				.getActiveHealthFacilitiesByDistrictAndType(user.getDistrict(), FacilityType.HOSPITAL, false, false, false, false)
 				.stream()
 				.filter(f -> reports.stream().noneMatch(r -> f.equals(r.getHealthFacility())))
 				.collect(Collectors.toList())

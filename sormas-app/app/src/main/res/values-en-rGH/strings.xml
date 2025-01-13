@@ -126,7 +126,7 @@
     <string name="caption_attended_by">Attended by</string>
     <string name="caption_case_clinical_visits">Clinical Assessments</string>
     <string name="caption_case_contacts">Case Contacts</string>
-    <string name="caption_case_epidemiological_data">Epidemiological Info</string>
+    <string name="caption_case_epidemiological_data">Epidemiological Data</string>
     <string name="caption_case_fatality_rate">Case Fatality Rate</string>
     <string name="caption_case_health_conditions">Pre-Existing Conditions</string>
     <string name="caption_case_hospitalization">Hospitalization Info</string>

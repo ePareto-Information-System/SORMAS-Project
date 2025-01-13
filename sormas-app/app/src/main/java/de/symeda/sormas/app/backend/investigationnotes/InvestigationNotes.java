@@ -36,6 +36,18 @@ public class InvestigationNotes extends PseudonymizableAdo {
     private String investigatorSignature;
     @DatabaseField(dataType = DataType.DATE_LONG)
     private Date investigatorDate;
+    @Column(length = CHARACTER_LIMIT_DEFAULT)
+    private String surname;
+    @Column(length = CHARACTER_LIMIT_DEFAULT)
+    private String firstName;
+    @Column(length = CHARACTER_LIMIT_DEFAULT)
+    private String middleName;
+    @Column(length = CHARACTER_LIMIT_DEFAULT)
+    private String telNo;
+    @DatabaseField(dataType = DataType.DATE_LONG)
+    private Date dateOfCompletionOfForm;
+    @Column(length = CHARACTER_LIMIT_DEFAULT)
+    private String nameOfHealthFacility;
 
     public String getInvestigationNotesData() {
         return investigationNotesData;
@@ -82,6 +94,54 @@ public class InvestigationNotes extends PseudonymizableAdo {
 
     public void setInvestigatorDate(Date investigatorDate) {
         this.investigatorDate = investigatorDate;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getTelNo() {
+        return telNo;
+    }
+
+    public void setTelNo(String telNo) {
+        this.telNo = telNo;
+    }
+
+    public Date getDateOfCompletionOfForm() {
+        return dateOfCompletionOfForm;
+    }
+
+    public void setDateOfCompletionOfForm(Date dateOfCompletionOfForm) {
+        this.dateOfCompletionOfForm = dateOfCompletionOfForm;
+    }
+
+    public String getNameOfHealthFacility() {
+        return nameOfHealthFacility;
+    }
+
+    public void setNameOfHealthFacility(String nameOfHealthFacility) {
+        this.nameOfHealthFacility = nameOfHealthFacility;
     }
 
     @Override

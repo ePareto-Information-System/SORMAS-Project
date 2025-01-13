@@ -156,10 +156,10 @@ public final class InfrastructureDaoHelper {
 	public static List<Item> loadFacilities(District district, Community community, FacilityType type) {
 		return toItems(
 			community != null
-				? DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByCommunityAndType(community, type, true, false)
+				? DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByCommunityAndType(community, type, true, false, true, true)
 				: isEmptyDistrict(district)
 					? new ArrayList<>()
-					: DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByDistrictAndType(district, type, true, false),
+					: DatabaseHelper.getFacilityDao().getActiveHealthFacilitiesByDistrictAndType(district, type, true, false, true, true),
 			true);
 	}
 

@@ -506,7 +506,7 @@ public class Symptoms extends PseudonymizableAdo {
 	private Set<BodyPart> rashSymptoms;
 	@Transient
 	private Set<InjectionSite> siteOfParalysis;
-	@Transient
+	@Enumerated(EnumType.STRING)
 	private SymptomsList typeOfRash;
 	@Transient
 	private Set<InjectionSite> injectionSite;
@@ -624,24 +624,22 @@ public class Symptoms extends PseudonymizableAdo {
 	private YesNo symptomsOngoing;
 
 	@Enumerated(EnumType.STRING)
-	private YesNo areLesionsSameState;
+	private SymptomState areLesionsSameState;
 
 	@Enumerated(EnumType.STRING)
-	private YesNo areLesionsSameSize;
+	private SymptomState areLesionsSameSize;
 
 	@Enumerated(EnumType.STRING)
-	private YesNo areLesionsDeep;
+	private SymptomState areLesionsDeep;
 
 	@Enumerated(EnumType.STRING)
-	private YesNo areUlcersAmong;
+	private SymptomState areUlcersAmong;
 
 	@Enumerated(EnumType.STRING)
 	private YesNo patientHaveFever;
 
 	@Enumerated(EnumType.STRING)
 	private SymptomState abnormalLungAuscultation;
-
-	private HealthConditions healthConditions;
 
 	@Enumerated(EnumType.STRING)
 	private Trimester trimester;
@@ -2636,35 +2634,35 @@ public class Symptoms extends PseudonymizableAdo {
 		this.rashSymptomsOtherAreas = rashSymptomsOtherAreas;
 	}
 
-	public YesNo getAreLesionsSameState() {
+	public SymptomState getAreLesionsSameState() {
 		return areLesionsSameState;
 	}
 
-	public void setAreLesionsSameState(YesNo areLesionsSameState) {
+	public void setAreLesionsSameState(SymptomState areLesionsSameState) {
 		this.areLesionsSameState = areLesionsSameState;
 	}
 
-	public YesNo getAreLesionsSameSize() {
+	public SymptomState getAreLesionsSameSize() {
 		return areLesionsSameSize;
 	}
 
-	public void setAreLesionsSameSize(YesNo areLesionsSameSize) {
+	public void setAreLesionsSameSize(SymptomState areLesionsSameSize) {
 		this.areLesionsSameSize = areLesionsSameSize;
 	}
 
-	public YesNo getAreLesionsDeep() {
+	public SymptomState getAreLesionsDeep() {
 		return areLesionsDeep;
 	}
 
-	public void setAreLesionsDeep(YesNo areLesionsDeep) {
+	public void setAreLesionsDeep(SymptomState areLesionsDeep) {
 		this.areLesionsDeep = areLesionsDeep;
 	}
 
-	public YesNo getAreUlcersAmong() {
+	public SymptomState getAreUlcersAmong() {
 		return areUlcersAmong;
 	}
 
-	public void setAreUlcersAmong(YesNo areUlcersAmong) {
+	public void setAreUlcersAmong(SymptomState areUlcersAmong) {
 		this.areUlcersAmong = areUlcersAmong;
 	}
 

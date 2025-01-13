@@ -151,7 +151,7 @@
     <string name="caption_attended_by">Attended by</string>
     <string name="caption_case_clinical_visits">Clinical Assessments</string>
     <string name="caption_case_contacts">Case Contacts</string>
-    <string name="caption_case_epidemiological_data">Epidemiological Info</string>
+    <string name="caption_case_epidemiological_data">Epidemiological Data</string>
     <string name="caption_case_fatality_rate">Case Fatality Rate</string>
     <string name="caption_case_health_conditions">Pre-Existing Conditions</string>
     <string name="caption_case_hospitalization">Hospitalization Info</string>
@@ -239,6 +239,10 @@
     <string name="caption_period_end">Period End</string>
     <string name="caption_period_start">Period Start</string>
     <string name="caption_person_information">Person Information</string>
+    <string name="caption_case_person">Case Person</string>
+    <string name="caption_patient_client">Patient/Client</string>
+    <string name="caption_food_sample_testing">Food Sample Testing</string>
+    <string name="caption_demographic_details">Demographic Details</string>
     <string name="caption_person_involved">Person Involved</string>
     <string name="caption_positive">Positive</string>
     <string name="caption_possible_events">Possible Events</string>
@@ -379,7 +383,7 @@
     <string name="heading_disease_prevention">Disease Prevention</string>
     <string name="heading_enter_pin">Enter PIN</string>
     <string name="heading_environmental_exposure">Environmental Exposure</string>
-    <string name="heading_epidemiological_info">Epidemiological Info</string>
+    <string name="heading_epidemiological_info">Epidemiological Data</string>
     <string name="heading_error_dialog">Error!</string>
     <string name="heading_error_notification_dialog">Oops, something went wrong.</string>
     <string name="heading_event_edit">Edit Event</string>
@@ -395,6 +399,8 @@
     <string name="heading_risk_mapping_edit">Edit Risk Mapping</string>
     <string name="heading_afp_Immunization">AFP Immunization</string>
     <string name="heading_afp_Immunization_edit">Edit AFP Immunization</string>
+    <string name="heading_foodsample">Food Sample Testing</string>
+    <string name="heading_foodsample_edit">Edit Food Sample Testing</string>
     <string name="heading_sixtyday">Sixty Day</string>
     <string name="heading_sixtyday_edit">Edit Sixty Day</string>
     <string name="heading_event_read">Read Event</string>

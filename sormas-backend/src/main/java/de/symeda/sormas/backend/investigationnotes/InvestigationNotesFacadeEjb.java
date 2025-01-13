@@ -7,6 +7,7 @@ import de.symeda.sormas.backend.infrastructure.community.CommunityService;
 import de.symeda.sormas.backend.infrastructure.district.DistrictService;
 import de.symeda.sormas.backend.infrastructure.facility.FacilityService;
 import de.symeda.sormas.backend.infrastructure.region.RegionService;
+import de.symeda.sormas.backend.sixtyday.SixtyDay;
 import de.symeda.sormas.backend.util.DtoHelper;
 
 import javax.ejb.EJB;
@@ -34,6 +35,8 @@ public class InvestigationNotesFacadeEjb implements InvestigationNotesFacade {
         if (source == null) {
             return null;
         }
+        target = DtoHelper.fillOrBuildEntity(source, target, InvestigationNotes::new, checkChangeDate);
+
         target.setInvestigationNotesData(source.getInvestigationNotesData());
         target.setSuspectedDiagnosis(source.getSuspectedDiagnosis());
         target.setConfirmedDiagnosis(source.getConfirmedDiagnosis());
@@ -47,7 +50,6 @@ public class InvestigationNotesFacadeEjb implements InvestigationNotesFacade {
         target.setDateOfCompletionOfForm(source.getDateOfCompletionOfForm());
         target.setNameOfHealthFacility(source.getNameOfHealthFacility());
 
-        target = DtoHelper.fillOrBuildEntity(source, target, InvestigationNotes::new, checkChangeDate);
 
         return target;
     }

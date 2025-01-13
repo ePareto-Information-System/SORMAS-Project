@@ -120,6 +120,7 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setSelectedResultPrntDate(source.getSelectedResultPrntDate());
 		target.setInputValuePrnt(source.getInputValuePrnt());
 		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
+		target.setCsfSampleCollected(source.getCsfSampleCollected());
 		target.setHasSampleBeenCollected(source.getHasSampleBeenCollected());
 		target.setAppearanceOfCsf(source.getAppearanceOfCsf());
 		target.setInoculationTimeTransportMedia(source.getInoculationTimeTransportMedia());
@@ -295,6 +296,7 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 
 		target.setPseudonymized(source.isPseudonymized());
 		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
+		target.setCsfSampleCollected(source.getCsfSampleCollected());
 		target.setHasSampleBeenCollected(source.getHasSampleBeenCollected());
 		target.setAppearanceOfCsf(source.getAppearanceOfCsf());
 		target.setInoculationTimeTransportMedia(source.getInoculationTimeTransportMedia());

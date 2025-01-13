@@ -326,6 +326,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		contentBinding.setFilterChangingFrequencyClass(FilterChangingFrequency.class);
 		finalLabResultsList = DataUtils.getEnumItems(PosNeg.class, true);
 		contentBinding.sampleFinalLabResults.initializeSpinner(finalLabResultsList);
+		contentBinding.samplePathogenTestResult.setEnabled(false);
 
 
 	}
@@ -657,16 +658,15 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	}
 
 	private void handleCSM() {
-		getContentBinding().sampleHasSampleBeenCollected.setCaption("CSF Sample Collected? Note: If NO, (Please STILL complete the form and send to district control officer)");
 
-		if (getContentBinding().sampleHasSampleBeenCollected.getValue() == null) {
+		if (getContentBinding().sampleCsfSampleCollected.getValue() == null) {
 			getContentBinding().sampleSampleDateTime.setVisibility(View.GONE);
 		} else {
-			int visibility = (getContentBinding().sampleHasSampleBeenCollected.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
+			int visibility = (getContentBinding().sampleCsfSampleCollected.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
 			getContentBinding().sampleSampleDateTime.setVisibility(visibility);
 		}
 
-		getContentBinding().sampleHasSampleBeenCollected.addValueChangedListener(field -> {
+		getContentBinding().sampleCsfSampleCollected.addValueChangedListener(field -> {
 			int visibility = (field.getValue() == YesNo.YES ? View.VISIBLE : View.GONE);
 			getContentBinding().sampleSampleDateTime.setVisibility(visibility);
 		});
