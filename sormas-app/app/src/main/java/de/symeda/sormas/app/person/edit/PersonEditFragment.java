@@ -92,6 +92,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 
 	private Person record;
 	private Disease disease;
+	private Case caseData;
 	private AbstractDomainObject rootData;
 	private IEntryItemOnClickListener onAddressItemClickListener;
 	private IEntryItemOnClickListener onPersonContactDetailItemClickListener;
@@ -576,6 +577,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 			record = ((Case) ado).getPerson();
 			rootData = ado;
 			disease = ((Case) ado).getDisease();
+			caseData = ((Case) ado);
 		} else if (ado instanceof Contact) {
 			record = ((Contact) ado).getPerson();
 			rootData = ado;
@@ -605,6 +607,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		setUpControlListeners();
 
 		contentBinding.setData(record);
+		contentBinding.setCaseData(caseData);
 		contentBinding.setYesNoClass(YesNo.class);
 		PersonValidator.initializePersonValidation(contentBinding);
 

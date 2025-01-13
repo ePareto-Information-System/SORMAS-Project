@@ -435,6 +435,7 @@
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/person_approximateAgeType"
                     app:value="@={data.person.approximateAgeType}"
+                    app:required="true"
                     style="@style/ControlSecondOfTwoColumnsStyle" />
 
             </LinearLayout>

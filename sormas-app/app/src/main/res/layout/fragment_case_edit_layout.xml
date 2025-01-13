@@ -1005,6 +1005,7 @@
                 <de.symeda.sormas.app.component.controls.ControlDateField
                     android:id="@+id/caseData_lastVaccinationDate"
                     app:value="@={data.lastVaccinationDate}"
+                    android:visibility="gone"
                     style="@style/ControlSingleColumnStyle" />
 
                 <TextView

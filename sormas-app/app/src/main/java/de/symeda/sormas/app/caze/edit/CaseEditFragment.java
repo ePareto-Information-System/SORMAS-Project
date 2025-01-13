@@ -992,9 +992,11 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		getContentBinding().caseDataVaccinationType.addValueChangedListener( field -> {
 			if (getContentBinding().caseDataVaccinationType.getValue() == CardOrHistory.CARD){
 				getContentBinding().caseDataVaccinationDate.setVisibility(VISIBLE);
+				getContentBinding().caseDataLastVaccinationDate.setVisibility(VISIBLE);
 			}
 			else{
 				getContentBinding().caseDataVaccinationDate.setVisibility(GONE);
+				getContentBinding().caseDataLastVaccinationDate.setVisibility(GONE);
 			}
 		});
 
@@ -1068,12 +1070,10 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			getContentBinding().caseDataVaccinationRoutine.setVisibility(VISIBLE);
 			getContentBinding().caseDataNumberOfDoses.setVisibility(VISIBLE);
 			getContentBinding().caseDataVaccinationType.setVisibility(VISIBLE);
-			getContentBinding().caseDataLastVaccinationDate.setVisibility(VISIBLE);
 		} else {
 			getContentBinding().caseDataVaccinationRoutine.setVisibility(GONE);
 			getContentBinding().caseDataNumberOfDoses.setVisibility(GONE);
 			getContentBinding().caseDataVaccinationType.setVisibility(GONE);
-			getContentBinding().caseDataLastVaccinationDate.setVisibility(GONE);
 		}
 
 		if (getContentBinding().caseDataVaccinationType.getValue() == CardOrHistory.CARD) {
