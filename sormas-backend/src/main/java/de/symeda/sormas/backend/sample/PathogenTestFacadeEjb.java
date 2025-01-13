@@ -482,6 +482,9 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 
 		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
 		target.setDateSurveillanceSentResultsToDistrict(source.getDateSurveillanceSentResultsToDistrict());
+		target.setThirdPathogenTested(source.getThirdPathogenTested());
+		target.setTestResultForThirdPathogen(source.getTestResultForThirdPathogen());
+		target.setPositiveSubtypes(source.getPositiveSubtypes());
 		return target;
 	}
 
@@ -632,6 +635,9 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 
 		target.setOtherNotesAndObservations(source.getOtherNotesAndObservations());
 		target.setDateSurveillanceSentResultsToDistrict(source.getDateSurveillanceSentResultsToDistrict());
+		target.setThirdPathogenTested(source.getThirdPathogenTested());
+		target.setTestResultForThirdPathogen(source.getTestResultForThirdPathogen());
+		target.setPositiveSubtypes(source.getPositiveSubtypes());
 		return target;
 	}
 

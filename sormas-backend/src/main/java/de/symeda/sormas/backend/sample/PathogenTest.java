@@ -193,6 +193,9 @@ public class PathogenTest extends DeletableAdo {
 	private YesNo vibrioCholeraeIdentifiedInStools;
 	private String drugsSensitiveToVibrioStrain;
 	private String drugsResistantToVibrioStrain;
+	private String thirdPathogenTested;
+	private PathogenTestResultType testResultForThirdPathogen;
+	private Subtype positiveSubtypes;
 
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -1077,5 +1080,29 @@ public class PathogenTest extends DeletableAdo {
 
 	public void setSampleTestResultImmunoDate(Date sampleTestResultImmunoDate) {
 		this.sampleTestResultImmunoDate = sampleTestResultImmunoDate;
+	}
+
+	public String getThirdPathogenTested() {
+		return thirdPathogenTested;
+	}
+
+	public void setThirdPathogenTested(String thirdPathogenTested) {
+		this.thirdPathogenTested = thirdPathogenTested;
+	}
+
+	public PathogenTestResultType getTestResultForThirdPathogen() {
+		return testResultForThirdPathogen;
+	}
+
+	public void setTestResultForThirdPathogen(PathogenTestResultType testResultForThirdPathogen) {
+		this.testResultForThirdPathogen = testResultForThirdPathogen;
+	}
+
+	public Subtype getPositiveSubtypes() {
+		return positiveSubtypes;
+	}
+
+	public void setPositiveSubtypes(Subtype positiveSubtypes) {
+		this.positiveSubtypes = positiveSubtypes;
 	}
 }

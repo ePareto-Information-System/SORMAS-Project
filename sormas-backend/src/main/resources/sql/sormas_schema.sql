@@ -15160,3 +15160,8 @@ INSERT INTO schema_version (version_number, comment) VALUES (717, 'Added a few f
 ALTER TABLE externalshareinfo ADD COLUMN ebs_id BIGINT;
 ALTER TABLE externalshareinfo_history ADD COLUMN ebs_id BIGINT;
 INSERT INTO schema_version (version_number, comment) VALUES (718, 'Added ebs_id field to externalshare');
+
+ALTER TABLE pathogentest ADD COLUMN thirdpathogentested VARCHAR(512);
+ALTER TABLE pathogentest ADD COLUMN testresultforthirdpathogen VARCHAR(255);
+ALTER TABLE pathogentest ADD COLUMN positivesubtypes VARCHAR(255);
+INSERT INTO schema_version (version_number, comment) VALUES (719, 'Added thirdpathogentested,testresultforthirdpathogen, positivesubtypesfield to pathogentest');
