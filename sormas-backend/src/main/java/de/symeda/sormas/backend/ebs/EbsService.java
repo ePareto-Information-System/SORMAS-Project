@@ -397,6 +397,28 @@ public class EbsService extends AbstractCoreAdoService<Ebs, EbsJoins> {
 
 		Predicate filter = null;
 
+		User currentUser = getCurrentUser();
+		if (currentUser == null) {
+			return null;
+		}
+		final JurisdictionLevel jurisdictionLevel = currentUser.getJurisdictionLevel();
+		if (jurisdictionLevel != JurisdictionLevel.NATION) {
+			if (currentUser.getRegion() != null) {
+				Predicate regionPredicate = cb.equal(joins.getLocation().get(Location.REGION).get(Region.ID), currentUser.getRegion().getId());
+				filter = regionPredicate;
+				if (currentUser.getDistrict() != null) {
+					Predicate districtPredicate =
+							cb.equal(joins.getLocation().get(Location.DISTRICT).get(District.ID), currentUser.getDistrict().getId());
+					filter = cb.and(filter, districtPredicate);
+				}
+				if (currentUser.getCommunity() != null) {
+					Predicate communityPredicate =
+							cb.equal(joins.getLocation().get(Location.COMMUNITY).get(Community.ID), currentUser.getCommunity().getId());
+					filter = cb.and(filter, communityPredicate);
+				}
+			}
+		}
+
 		if (ebsCriteria.getRiskAssessment() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getRiskAssessment().get(RiskAssessment.RISK_ASSESSMENT), ebsCriteria.getRiskAssessment()));
 		}

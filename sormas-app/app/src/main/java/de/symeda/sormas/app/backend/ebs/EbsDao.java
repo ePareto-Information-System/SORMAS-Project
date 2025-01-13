@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -18,9 +19,11 @@ import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.app.backend.common.AbstractAdoDao;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
+import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.ebs.signalVerification.SignalVerification;
 import de.symeda.sormas.app.backend.ebs.triaging.Triaging;
 import de.symeda.sormas.app.backend.location.Location;
+import de.symeda.sormas.app.backend.user.User;
 
 public class EbsDao extends AbstractAdoDao<Ebs> {
 
@@ -124,15 +127,24 @@ public class EbsDao extends AbstractAdoDao<Ebs> {
 					DateHelper.getEndOfDay(criteria.getTriageDate()));
 		}
 
-		if (criteria.getRegion() != null) {
-			locationLongQueryBuilder.where().eq(Location.REGION + "_id", criteria.getRegion().getId());
+		User currentUser = ConfigProvider.getUser();
+
+		if (currentUser.getRegion() != null || currentUser.getDistrict() != null) {
+			if (currentUser.getRegion() != null) {
+				locationLongQueryBuilder.where().eq(Location.REGION + "_id", currentUser.getRegion().getId());
+			}
+			if (currentUser.getDistrict() != null) {
+				locationLongQueryBuilder.where().eq(Location.DISTRICT + "_id", currentUser.getDistrict().getId());
+			}
+			if (currentUser.getCommunity() != null) {
+				locationLongQueryBuilder.where().eq(Location.COMMUNITY + "_id", currentUser.getCommunity().getId());
+			}
 			queryBuilder.leftJoin(locationLongQueryBuilder);
 		}
 		if (criteria.getDistrict() != null) {
-			locationLongQueryBuilder.where().eq(Location.DISTRICT + "_id", criteria.getDistrict().getId());
-		}
-		if (criteria.getCommunity() != null) {
-			locationLongQueryBuilder.where().eq(Location.COMMUNITY + "_id", criteria.getCommunity().getId());
+			if (Objects.equals(currentUser.getDistrict().getId(), criteria.getDistrict().getId())) {
+				System.out.println("User District: " + currentUser.getDistrict().getId() + " Criteria District: " + criteria.getDistrict().getId());
+			}
 		}
 		if (!whereStatements.isEmpty()) {
 			Where<Ebs, Long> whereStatement = where.and(whereStatements.size());

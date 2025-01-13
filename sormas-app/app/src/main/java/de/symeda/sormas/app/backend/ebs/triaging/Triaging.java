@@ -1,14 +1,14 @@
 package de.symeda.sormas.app.backend.ebs.triaging;
 
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-
 import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import de.symeda.sormas.api.ebs.AnimalCommunityCategoryDetails;
 import de.symeda.sormas.api.ebs.AnimalFacilityCategoryDetails;
@@ -33,283 +33,258 @@ import de.symeda.sormas.app.backend.ebs.Ebs;
 @DatabaseTable(tableName = Triaging.TABLE_NAME)
 public class Triaging extends PseudonymizableAdo {
 
-    private static final long serialVersionUID = 2430932452606853497L;
+	public static final String TABLE_NAME = "triaging";
+	public static final String I18N_PREFIX = "triaging";
+	public static final String SIGNAL_CATEGORY = "signalCategory";
+	public static final String TRIAGING_DECISION = "triagingDecision";
+	public static final String DATE_OF_DECISION = "decisionDate";
+	private static final long serialVersionUID = 2430932452606853497L;
+	@Enumerated(EnumType.STRING)
+	private YesNo supervisorReview;
+	@Enumerated(EnumType.STRING)
+	private YesNo referred;
+	@Enumerated(EnumType.STRING)
+	private YesNo specificSignal;
+	@Enumerated(EnumType.STRING)
+	private SignalCategory signalCategory;
+	@Enumerated(EnumType.STRING)
+	private YesNo healthConcern;
+	@Enumerated(EnumType.STRING)
+	private HumanCommunityCategoryDetails humanCommunityCategoryDetails;
+	@Enumerated(EnumType.STRING)
+	private HumanFaclityCategoryDetails humanFacilityCategoryDetails;
+	@Enumerated(EnumType.STRING)
+	private HumanLaboratoryCategoryDetails humanLaboratoryCategoryDetails;
+	@Enumerated(EnumType.STRING)
+	private AnimalCommunityCategoryDetails animalCommunityCategoryDetails;
+	@Enumerated(EnumType.STRING)
+	private AnimalFacilityCategoryDetails animalFacilityCategoryDetails;
+	@Enumerated(EnumType.STRING)
+	private AnimalLaboratoryCategoryDetails animalLaboratoryCategoryDetails;
+	@Enumerated(EnumType.STRING)
+	private EnvironmentalCategoryDetails environmentalCategoryDetails;
+	@Enumerated(EnumType.STRING)
+	private POE poeCategoryDetails;
+	@Enumerated(EnumType.STRING)
+	private CategoryDetailsLevel categoryDetailsLevel;
 
-    public static final String TABLE_NAME = "triaging";
-    public static final String I18N_PREFIX = "triaging";
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private Ebs ebs;
 
-    public static final String SUPERVISOR_REVIEW = "supervisorReview";
-    public static final String SPECIFIC_SIGNAL = "specificSignal";
-    public static final String HEALTH_CONCERN = "healthConcern";
-    public static final String SIGNAL_CATEGORY = "signalCategory";
-    public static final String HUMAN_COMMUNITY_CATEGORY_DETAILS = "humanCommunityCategoryDetails";
-    public static final String HUMAN_FACILITY_CATEGORY_DETAILS = "humanFacilityCategoryDetails";
-    public static final String HUMAN_LABORATORY_CATEGORY_DETAILS = "humanLaboratoryCategoryDetails";
-    public static final String ANIMAL_COMMUNITY_CATEGORY_DETAILS = "animalCommunityCategoryDetails";
-    public static final String ANIMAL_FACILITY_CATEGORY_DETAILS = "animalFacilityCategoryDetails";
-    public static final String ANIMAL_LABORATORY_CATEGORY_DETAILS = "animalLaboratoryCategoryDetails";
-    public static final String ENVIRONMENTAL_CATEGORY_DETAILS = "environmentalCategoryDetails";
-    public static final String POE_CATEGORY_DETAILS = "poeCategoryDetails";
-    public static final String OCCURRENCE_PREVIOUSLY = "occurrencePreviously";
-    public static final String TRIAGING_DECISION = "triagingDecision";
-    public static final String DATE_OF_DECISION = "decisionDate";
-    public static final String REFERRED_TO = "referredTo";
-    public static final String RESPONSIBLE_USER = "responsibleUser";
-    public static final String OUTCOME_SUPERVISOR = "outcomeSupervisor";
-    public static final String NOT_SIGNAL = "notSignal";
-    public static final String CATEGORY_DETAILS_LEVEL = "categoryDetailsLevel";
-    public static final String POTENTIAL_RISK = "potentialRisk";
-    public static final String REFERRED = "referred";
+	@Enumerated(EnumType.STRING)
+	private YesNo occurrencePreviously;
+	@Enumerated(EnumType.STRING)
+	private EbsTriagingDecision triagingDecision;
 
+	@DatabaseField
+	private String triagingDecisionString;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date decisionDate;
+	@DatabaseField
+	private String referredTo;
 
-    @Enumerated(EnumType.STRING)
-    private YesNo supervisorReview;
-    @Enumerated(EnumType.STRING)
-    private YesNo referred;
-    @Enumerated(EnumType.STRING)
-    private YesNo specificSignal;
-    @Enumerated(EnumType.STRING)
-    private SignalCategory signalCategory;
-    @Enumerated(EnumType.STRING)
-    private YesNo healthConcern;
-    @Enumerated(EnumType.STRING)
-    private HumanCommunityCategoryDetails humanCommunityCategoryDetails;
-    @Enumerated(EnumType.STRING)
-    private HumanFaclityCategoryDetails humanFacilityCategoryDetails;
-    @Enumerated(EnumType.STRING)
-    private HumanLaboratoryCategoryDetails humanLaboratoryCategoryDetails;
-    @Enumerated(EnumType.STRING)
-    private AnimalCommunityCategoryDetails animalCommunityCategoryDetails;
-    @Enumerated(EnumType.STRING)
-    private AnimalFacilityCategoryDetails animalFacilityCategoryDetails;
-    @Enumerated(EnumType.STRING)
-    private AnimalLaboratoryCategoryDetails animalLaboratoryCategoryDetails;
-    @Enumerated(EnumType.STRING)
-    private EnvironmentalCategoryDetails environmentalCategoryDetails;
-    @Enumerated(EnumType.STRING)
-    private POE poeCategoryDetails;
-    @Enumerated(EnumType.STRING)
-    private CategoryDetailsLevel categoryDetailsLevel;
+	@Enumerated(EnumType.STRING)
+	private OutComeSupervisor outcomeSupervisor;
+	@DatabaseField
+	private boolean notSignal;
+	@Enumerated(EnumType.STRING)
+	private YesNo potentialRisk;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
-    private Ebs ebs;
+	public EbsReferenceDto toReference() {
+		return new EbsReferenceDto(getUuid());
+	}
 
-    @Enumerated(EnumType.STRING)
-    private YesNo occurrencePreviously;
-    @Enumerated(EnumType.STRING)
-    private EbsTriagingDecision triagingDecision;
+	public YesNo getSupervisorReview() {
+		return supervisorReview;
+	}
 
-    @DatabaseField
-    private String triagingDecisionString;
-    @DatabaseField(dataType = DataType.DATE_LONG)
-    private Date decisionDate;
-    @DatabaseField
-    private String referredTo;
+	public void setSupervisorReview(YesNo earlyWarning) {
+		this.supervisorReview = earlyWarning;
+	}
 
-    @Enumerated(EnumType.STRING)
-    private OutComeSupervisor outcomeSupervisor;
-    @DatabaseField
-    private boolean notSignal;
-    @Enumerated(EnumType.STRING)
-    private YesNo potentialRisk;
+	public YesNo getSpecificSignal() {
+		return specificSignal;
+	}
 
-    public EbsReferenceDto toReference() {
-        return new EbsReferenceDto(getUuid());
-    }
+	public void setSpecificSignal(YesNo specificSignal) {
+		this.specificSignal = specificSignal;
+	}
 
+	@Enumerated(EnumType.STRING)
+	public SignalCategory getSignalCategory() {
+		return signalCategory;
+	}
 
-    public YesNo getSupervisorReview() {
-        return supervisorReview;
-    }
+	public void setSignalCategory(SignalCategory signalCategory) {
+		this.signalCategory = signalCategory;
+	}
 
-    public void setSupervisorReview(YesNo earlyWarning) {
-        this.supervisorReview = earlyWarning;
-    }
+	public YesNo getHealthConcern() {
+		return healthConcern;
+	}
 
-    public YesNo getSpecificSignal() {
-        return specificSignal;
-    }
+	public void setHealthConcern(YesNo healthConcern) {
+		this.healthConcern = healthConcern;
+	}
 
-    public void setSpecificSignal(YesNo specificSignal) {
-        this.specificSignal = specificSignal;
-    }
+	public HumanCommunityCategoryDetails getHumanCommunityCategoryDetails() {
+		return humanCommunityCategoryDetails;
+	}
 
-    @Enumerated(EnumType.STRING)
-    public SignalCategory getSignalCategory() {
-        return signalCategory;
-    }
+	public void setHumanCommunityCategoryDetails(HumanCommunityCategoryDetails humanCommunityCategoryDetails) {
+		this.humanCommunityCategoryDetails = humanCommunityCategoryDetails;
+	}
 
-    public void setSignalCategory(SignalCategory signalCategory) {
-        this.signalCategory = signalCategory;
-    }
+	public HumanFaclityCategoryDetails getHumanFacilityCategoryDetails() {
+		return humanFacilityCategoryDetails;
+	}
 
-    public YesNo getHealthConcern() {
-        return healthConcern;
-    }
+	public void setHumanFacilityCategoryDetails(HumanFaclityCategoryDetails humanFacilityCategoryDetails) {
+		this.humanFacilityCategoryDetails = humanFacilityCategoryDetails;
+	}
 
-    public void setHealthConcern(YesNo healthConcern) {
-        this.healthConcern = healthConcern;
-    }
+	public HumanLaboratoryCategoryDetails getHumanLaboratoryCategoryDetails() {
+		return humanLaboratoryCategoryDetails;
+	}
 
+	public void setHumanLaboratoryCategoryDetails(HumanLaboratoryCategoryDetails humanLaboratoryCategoryDetails) {
+		this.humanLaboratoryCategoryDetails = humanLaboratoryCategoryDetails;
+	}
 
-    public HumanCommunityCategoryDetails getHumanCommunityCategoryDetails() {
-        return humanCommunityCategoryDetails;
-    }
+	public AnimalCommunityCategoryDetails getAnimalCommunityCategoryDetails() {
+		return animalCommunityCategoryDetails;
+	}
 
-    public void setHumanCommunityCategoryDetails(HumanCommunityCategoryDetails humanCommunityCategoryDetails) {
-        this.humanCommunityCategoryDetails = humanCommunityCategoryDetails;
-    }
+	public void setAnimalCommunityCategoryDetails(AnimalCommunityCategoryDetails animalCommunityCategoryDetails) {
+		this.animalCommunityCategoryDetails = animalCommunityCategoryDetails;
+	}
 
-    public HumanFaclityCategoryDetails getHumanFacilityCategoryDetails() {
-        return humanFacilityCategoryDetails;
-    }
+	public AnimalFacilityCategoryDetails getAnimalFacilityCategoryDetails() {
+		return animalFacilityCategoryDetails;
+	}
 
-    public void setHumanFacilityCategoryDetails(HumanFaclityCategoryDetails humanFacilityCategoryDetails) {
-        this.humanFacilityCategoryDetails = humanFacilityCategoryDetails;
-    }
+	public void setAnimalFacilityCategoryDetails(AnimalFacilityCategoryDetails animalFacilityCategoryDetails) {
+		this.animalFacilityCategoryDetails = animalFacilityCategoryDetails;
 
-    public HumanLaboratoryCategoryDetails getHumanLaboratoryCategoryDetails() {
-        return humanLaboratoryCategoryDetails;
-    }
+	}
 
-    public void setHumanLaboratoryCategoryDetails(HumanLaboratoryCategoryDetails humanLaboratoryCategoryDetails) {
-        this.humanLaboratoryCategoryDetails = humanLaboratoryCategoryDetails;
-    }
+	public AnimalLaboratoryCategoryDetails getAnimalLaboratoryCategoryDetails() {
+		return animalLaboratoryCategoryDetails;
+	}
 
-    public AnimalCommunityCategoryDetails getAnimalCommunityCategoryDetails() {
-        return animalCommunityCategoryDetails;
-    }
+	public void setAnimalLaboratoryCategoryDetails(AnimalLaboratoryCategoryDetails animalLaboratoryCategoryDetails) {
+		this.animalLaboratoryCategoryDetails = animalLaboratoryCategoryDetails;
+	}
 
-    public void setAnimalCommunityCategoryDetails(AnimalCommunityCategoryDetails animalCommunityCategoryDetails) {
-        this.animalCommunityCategoryDetails = animalCommunityCategoryDetails;
-    }
+	public EnvironmentalCategoryDetails getEnvironmentalCategoryDetails() {
+		return environmentalCategoryDetails;
+	}
 
-    public AnimalFacilityCategoryDetails getAnimalFacilityCategoryDetails() {
-        return animalFacilityCategoryDetails;
-    }
+	public void setEnvironmentalCategoryDetails(EnvironmentalCategoryDetails environmentalCategoryDetails) {
+		this.environmentalCategoryDetails = environmentalCategoryDetails;
+	}
 
-    public void setAnimalFacilityCategoryDetails(AnimalFacilityCategoryDetails animalFacilityCategoryDetails) {
-        this.animalFacilityCategoryDetails = animalFacilityCategoryDetails;
+	public POE getPoeCategoryDetails() {
+		return poeCategoryDetails;
+	}
 
-    }
+	public void setPoeCategoryDetails(POE poeCategoryDetails) {
+		this.poeCategoryDetails = poeCategoryDetails;
 
-    public AnimalLaboratoryCategoryDetails getAnimalLaboratoryCategoryDetails() {
-        return animalLaboratoryCategoryDetails;
-    }
+	}
 
-    public void setAnimalLaboratoryCategoryDetails(AnimalLaboratoryCategoryDetails animalLaboratoryCategoryDetails) {
-        this.animalLaboratoryCategoryDetails = animalLaboratoryCategoryDetails;
-    }
+	public YesNo getOccurrencePreviously() {
+		return occurrencePreviously;
+	}
 
-    public EnvironmentalCategoryDetails getEnvironmentalCategoryDetails() {
-        return environmentalCategoryDetails;
-    }
+	public void setOccurrencePreviously(YesNo occurrencePreviously) {
+		this.occurrencePreviously = occurrencePreviously;
+	}
 
-    public void setEnvironmentalCategoryDetails(EnvironmentalCategoryDetails environmentalCategoryDetails) {
-        this.environmentalCategoryDetails = environmentalCategoryDetails;
-    }
+	public EbsTriagingDecision getTriagingDecision() {
+		return triagingDecision;
+	}
 
-    public POE getPoeCategoryDetails() {
-        return poeCategoryDetails;
-    }
+	public void setTriagingDecision(EbsTriagingDecision triagingDecision) {
+		this.triagingDecision = triagingDecision;
+	}
 
-    public void setPoeCategoryDetails(POE poeCategoryDetails) {
-        this.poeCategoryDetails = poeCategoryDetails;
+	public Date getDecisionDate() {
+		return decisionDate;
+	}
 
-    }
+	public void setDecisionDate(Date decisionDate) {
+		this.decisionDate = decisionDate;
+	}
 
-    public YesNo getOccurrencePreviously() {
-        return occurrencePreviously;
-    }
+	public String getReferredTo() {
+		return referredTo;
+	}
 
-    public void setOccurrencePreviously(YesNo occurrencePreviously) {
-        this.occurrencePreviously = occurrencePreviously;
-    }
+	public void setReferredTo(String referredTo) {
+		this.referredTo = referredTo;
+	}
 
-    public EbsTriagingDecision getTriagingDecision() {
-        return triagingDecision;
-    }
+	public String getTriagingDecisionString() {
+		return triagingDecisionString;
+	}
 
-    public void setTriagingDecision(EbsTriagingDecision triagingDecision) {
-        this.triagingDecision = triagingDecision;
-    }
+	public void setTriagingDecisionString(String triagingDecisionString) {
+		this.triagingDecisionString = triagingDecisionString;
+	}
 
-    public Date getDecisionDate() {
-        return decisionDate;
-    }
+	@Enumerated(EnumType.STRING)
+	public OutComeSupervisor getOutcomeSupervisor() {
+		return outcomeSupervisor;
+	}
 
-    public void setDecisionDate(Date decisionDate) {
-        this.decisionDate = decisionDate;
-    }
+	public void setOutcomeSupervisor(OutComeSupervisor outcomeSupervisor) {
+		this.outcomeSupervisor = outcomeSupervisor;
+	}
 
-    public String getReferredTo() {
-        return referredTo;
-    }
+	public boolean getNotSignal() {
+		return notSignal;
+	}
 
-    public void setReferredTo(String referredTo) {
-        this.referredTo = referredTo;
-    }
+	public void setNotSignal(boolean notSignal) {
+		this.notSignal = notSignal;
+	}
 
+	@Enumerated(EnumType.STRING)
+	public CategoryDetailsLevel getCategoryDetailsLevel() {
+		return categoryDetailsLevel;
+	}
 
-    public String getTriagingDecisionString() {
-        return triagingDecisionString;
-    }
+	public void setCategoryDetailsLevel(CategoryDetailsLevel categoryDetailsLevel) {
+		this.categoryDetailsLevel = categoryDetailsLevel;
+	}
 
-    public void setTriagingDecisionString(String triagingDecisionString) {
-        this.triagingDecisionString = triagingDecisionString;
-    }
-    @Enumerated(EnumType.STRING)
-    public OutComeSupervisor getOutcomeSupervisor() {
-        return outcomeSupervisor;
-    }
+	public YesNo getPotentialRisk() {
+		return potentialRisk;
+	}
 
-    public void setOutcomeSupervisor(OutComeSupervisor outcomeSupervisor) {
-        this.outcomeSupervisor = outcomeSupervisor;
-    }
+	public void setPotentialRisk(YesNo potentialRisk) {
+		this.potentialRisk = potentialRisk;
+	}
 
+	public YesNo getReferred() {
+		return referred;
+	}
 
-    public boolean getNotSignal() {
-        return notSignal;
-    }
+	public void setReferred(YesNo referred) {
+		this.referred = referred;
+	}
 
-    public void setNotSignal(boolean notSignal) {
-        this.notSignal = notSignal;
-    }
-    @Enumerated(EnumType.STRING)
-    public CategoryDetailsLevel getCategoryDetailsLevel() {
-        return categoryDetailsLevel;
-    }
+	@Override
+	public String getI18nPrefix() {
+		return I18N_PREFIX;
+	}
 
-    public void setCategoryDetailsLevel(CategoryDetailsLevel categoryDetailsLevel) {
-        this.categoryDetailsLevel = categoryDetailsLevel;
-    }
+	public Ebs getEbs() {
+		return ebs;
+	}
 
-    public YesNo getPotentialRisk() {
-        return potentialRisk;
-    }
-
-    public void setPotentialRisk(YesNo potentialRisk) {
-        this.potentialRisk = potentialRisk;
-    }
-
-    public YesNo getReferred() {
-        return referred;
-    }
-
-    public void setReferred(YesNo referred) {
-        this.referred = referred;
-    }
-
-    @Override
-    public String getI18nPrefix() {
-        return I18N_PREFIX;
-    }
-
-    public Ebs getEbs() {
-        return ebs;
-    }
-
-    public void setEbs(Ebs ebs) {
-        this.ebs = ebs;
-    }
+	public void setEbs(Ebs ebs) {
+		this.ebs = ebs;
+	}
 }

@@ -471,6 +471,9 @@ public class EbsFacadeEjb extends AbstractCoreFacadeEjb<Ebs, EbsDto, EbsIndexDto
 				Predicate criteriaFilter = service.buildCriteriaFilter(ebsCriteria, ebsQueryContext);
 				filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
 			}
+			if (filter != null) {
+				cq.where(filter);
+			}
 
 			sortBy(sortProperties, ebsQueryContext);
 			cq.distinct(true);
