@@ -407,6 +407,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
         foodHistoryHeadingLabel.setVisible(false);
 
         DateField onsetDateField = addField(ONSET_DATE, DateField.class);
+		onsetDateField.setRequired(true);
         ComboBox onsetSymptom = addField(ONSET_SYMPTOM, ComboBox.class);
         if (symptomsContext == SymptomsContext.CASE) {
             // If the symptom onset date is after the hospital admission date, show a warning but don't prevent the user from saving
