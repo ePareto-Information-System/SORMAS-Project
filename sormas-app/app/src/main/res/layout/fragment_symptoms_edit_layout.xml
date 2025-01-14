@@ -1445,9 +1445,6 @@
                 <de.symeda.sormas.app.component.controls.ControlDateField
                     android:id="@+id/symptoms_lesionsOnsetDate"
                     app:value="@={data.lesionsOnsetDate}"
-                    app:softRequired="true"
-                    app:dependencyParentField="@{symptomsGeneralizedRash}"
-                    app:dependencyParentValue="@{SymptomState.YES}"
                     style="@style/ControlSingleColumnStyle" />
 
 
@@ -1781,6 +1778,7 @@
             <de.symeda.sormas.app.component.controls.ControlSpinnerField
                 android:id="@+id/symptoms_outcome"
                 app:value="@={data.outcome}"
+                app:required="true"
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
