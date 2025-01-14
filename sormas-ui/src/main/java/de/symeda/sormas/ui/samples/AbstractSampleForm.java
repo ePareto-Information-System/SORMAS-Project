@@ -262,7 +262,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			fluidRowLocs(SampleDto.SAMPLE_DATE_TIME) +
 			fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
 			fluidRowLocs(4, SampleDto.FIELD_SAMPLE_ID) +
-			fluidRowLocs(6, SampleDto.SAMPLE_MATERIAL) +
+			fluidRowLocs(6, SampleDto.SAMPLE_MATERIAL, 6, SampleDto.SAMPLE_MATERIAL_TEXT) +
 			fluidRowLocs(SampleDto.DATE_FORM_SENT_TO_HIGHER_LEVEL, SampleDto.PERSON_COMPLETING_FORM) +
 			locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
 			fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
@@ -1191,6 +1191,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			dateFormReceivedAtDistrict.setVisible(true);
 			dateFormSentToDistrict.setVisible(false);
 
+		FieldHelper
+				.setVisibleWhen(getFieldGroup(), SampleDto.SAMPLE_MATERIAL_TEXT, SampleDto.SAMPLE_MATERIAL, Arrays.asList(SampleMaterial.OTHER), true);
 		dateSurveillanceSentResultsToDistrict.setVisible(true);
 		dateFormSentToHigherLevel.setVisible(true);
 		personCompletingForm.setVisible(true);
