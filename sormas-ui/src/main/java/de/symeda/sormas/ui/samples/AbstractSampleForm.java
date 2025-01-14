@@ -76,6 +76,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private TextField labSampleId;
 	private DateTimeField sampleDateTimeField;
 	private NullableOptionGroup hasSampleBeenCollected;
+	private TextField sampleMaterialText;
 	OptionGroup requestedSampleMaterialsField;
 	private ComboBox testResultField;
 	private ComboBox suspectedDisease;
@@ -284,6 +285,16 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					fluidRowLocs(6, SampleDto.RECEIVED_DATE, 6, SampleDto.SPECIMEN_CONDITION) +
 					fluidRowLocs("", SampleDto.PATHOGEN_TEST_RESULT);
 
+	protected static final String AHF_LAYOUT =
+			fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
+					fluidRowLocs(SampleDto.HAS_SAMPLE_BEEN_COLLECTED) +
+					fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
+					fluidRowLocs(SampleDto.SAMPLE_MATERIAL, SampleDto.SAMPLE_MATERIAL_TEXT) +
+					locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
+					fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
+					locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
+					fluidRowLocs(6, SampleDto.RECEIVED_DATE);
+
 
 
     //@formatter:on
@@ -325,7 +336,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		dateLabReceivedSpecimen = addField(SampleDto.DATE_LAB_RECEIVED_SPECIMEN);
 		hasSampleBeenCollected.setVisible(false);
 
-        addField(SampleDto.SAMPLE_MATERIAL_TEXT, TextField.class);
+		sampleMaterialText = addField(SampleDto.SAMPLE_MATERIAL_TEXT, TextField.class);
         sampleSource = addField(SampleDto.SAMPLE_SOURCE, ComboBox.class);
         addField(SampleDto.FIELD_SAMPLE_ID, TextField.class);
         addDateField(SampleDto.SHIPMENT_DATE, DateField.class, 7);
@@ -998,6 +1009,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
         hasSampleBeenCollected.setVisible(true);
         FieldHelper.setVisibleWhen(hasSampleBeenCollected, Arrays.asList(sampleDateTimeField), Arrays.asList(YesNo.YES), true);
+        FieldHelper.setVisibleWhen(sampleMaterialComboBox, Arrays.asList(sampleMaterialText), Arrays.asList(SampleMaterial.OTHER), true);
 
     }
 
