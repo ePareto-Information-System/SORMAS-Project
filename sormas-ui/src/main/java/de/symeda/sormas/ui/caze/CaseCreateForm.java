@@ -663,7 +663,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
         getContent().addComponent(personInfoLabel, PERSON_INFO_LABEL);
 
         addFields(CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT);
-        addFields(CaseDataDto.NATIONALITY, CaseDataDto.ETHNICITY);
+        addFields(CaseDataDto.NATIONALITY);
         addField(CaseDataDto.OCCUPATION);
         ComboBox regionOfResidence  = addInfrastructureField(CaseDataDto.REGION_OF_RESIDENCE);
         ComboBox districtOfResidence  = addInfrastructureField(CaseDataDto.DISTRICT_OF_RESIDENCE);
