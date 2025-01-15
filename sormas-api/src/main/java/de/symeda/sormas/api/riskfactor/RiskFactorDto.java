@@ -66,6 +66,8 @@ public class RiskFactorDto extends PseudonymizableDto {
     public static final String OTHER_PLACES = "otherPlaces";
     public static final String DURING_3WEEKS_PATIENT_CONTACT_WITH_SIMILAR_SYMPTOMS = "during3WeeksPatientContactWithSimilarSymptoms";
     public static final String PATIENT_SYMPTOMS_PRECEDENCE = "patientSymptomsPrecedence";
+    public static final String PATIENT_TRAVEL_DETAILS_PRIOR = "patientTravelDetailsPrior";
+    public static final String PATIENT_TRAVEL_DETAILS_DURING = "patientTravelDetailsDuring";
     public static final String DATE_OF_CONTACT_WITH_ILL_PERSON = "dateOfContactWithIllPerson";
     public static final String PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL = "patientTouchDomesticWildAnimal";
     public static final String PATIENT_TOUCH_DOMESTIC_WILD_ANIMAL_IF_YES = "patientTouchDomesticWildAnimalIfYes";
@@ -126,6 +128,10 @@ public class RiskFactorDto extends PseudonymizableDto {
     private String email;
     @Valid
     private List<PatientSymptomsPrecedenceDto> patientSymptomsPrecedence = new ArrayList<>();
+    @Valid
+    private List<PatientTravelDetailsPriorDto> patientTravelDetailsPrior = new ArrayList<>();
+    @Valid
+    private List<PatientTravelDetailsDuringDto> patientTravelDetailsDuring = new ArrayList<>();
 
     public static RiskFactorDto build() {
         RiskFactorDto riskFactorDto  = new RiskFactorDto();
@@ -551,6 +557,24 @@ public class RiskFactorDto extends PseudonymizableDto {
         this.patientSymptomsPrecedence = patientSymptomsPrecedence;
     }
 
+    @ImportIgnore
+    public List<PatientTravelDetailsPriorDto> getPatientTravelDetailsPrior() {
+        return patientTravelDetailsPrior;
+    }
+
+    public void setPatientTravelDetailsPrior(List<PatientTravelDetailsPriorDto> patientTravelDetailsPrior) {
+        this.patientTravelDetailsPrior = patientTravelDetailsPrior;
+    }
+
+    @ImportIgnore
+    public List<PatientTravelDetailsDuringDto> getPatientTravelDetailsDuring() {
+        return patientTravelDetailsDuring;
+    }
+
+    public void setPatientTravelDetailsDuring(List<PatientTravelDetailsDuringDto> patientTravelDetailsDuring) {
+        this.patientTravelDetailsDuring = patientTravelDetailsDuring;
+    }
+
     @Override
     public RiskFactorDto clone() throws CloneNotSupportedException {
         RiskFactorDto clone = (RiskFactorDto) super.clone();
@@ -561,6 +585,22 @@ public class RiskFactorDto extends PseudonymizableDto {
         }
         clone.getPatientSymptomsPrecedence().clear();
         clone.getPatientSymptomsPrecedence().addAll(patientSymptomsPrecedenceDtos);
+
+        //prior
+        List<PatientTravelDetailsPriorDto> patientTravelDetailsPriorDtos = new ArrayList<>();
+        for (PatientTravelDetailsPriorDto patientTravelDetailsPrior : getPatientTravelDetailsPrior()) {
+            patientTravelDetailsPriorDtos.add(patientTravelDetailsPrior.clone());
+        }
+        clone.getPatientTravelDetailsPrior().clear();
+        clone.getPatientTravelDetailsPrior().addAll(patientTravelDetailsPriorDtos);
+
+        //during
+        List<PatientTravelDetailsDuringDto> patientTravelDetailsDuringDtos = new ArrayList<>();
+        for (PatientTravelDetailsDuringDto patientTravelDetailsDuring : getPatientTravelDetailsDuring()) {
+            patientTravelDetailsDuringDtos.add(patientTravelDetailsDuring.clone());
+        }
+        clone.getPatientTravelDetailsDuring().clear();
+        clone.getPatientTravelDetailsDuring().addAll(patientTravelDetailsDuringDtos);
 
         return clone;
     }

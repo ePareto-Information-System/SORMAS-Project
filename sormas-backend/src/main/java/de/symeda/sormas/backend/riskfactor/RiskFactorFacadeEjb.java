@@ -1,8 +1,6 @@
 package de.symeda.sormas.backend.riskfactor;
 
-import de.symeda.sormas.api.riskfactor.PatientSymptomsPrecedenceDto;
-import de.symeda.sormas.api.riskfactor.RiskFactorDto;
-import de.symeda.sormas.api.riskfactor.RiskFactorFacade;
+import de.symeda.sormas.api.riskfactor.*;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.caze.CaseService;
 import de.symeda.sormas.backend.infrastructure.community.CommunityService;
@@ -11,6 +9,10 @@ import de.symeda.sormas.backend.infrastructure.facility.FacilityService;
 import de.symeda.sormas.backend.infrastructure.region.RegionService;
 import de.symeda.sormas.backend.patientsymptomsprecedence.PatientSymptomsPrecedence;
 import de.symeda.sormas.backend.patientsymptomsprecedence.PatientSymptomsPrecedenceService;
+import de.symeda.sormas.backend.patienttraveldetailsduring.PatientTravelDetailsDuring;
+import de.symeda.sormas.backend.patienttraveldetailsduring.PatientTravelDetailsDuringService;
+import de.symeda.sormas.backend.patienttraveldetailsprior.PatientTravelDetailsPrior;
+import de.symeda.sormas.backend.patienttraveldetailsprior.PatientTravelDetailsPriorService;
 import de.symeda.sormas.backend.util.DtoHelper;
 
 import javax.ejb.EJB;
@@ -37,6 +39,10 @@ public class RiskFactorFacadeEjb implements RiskFactorFacade {
     private FacilityService facilityService;
     @EJB
     private PatientSymptomsPrecedenceService patientSymptomsPrecedenceService;
+    @EJB
+    private PatientTravelDetailsPriorService patientTravelDetailsPriorService;
+    @EJB
+    private PatientTravelDetailsDuringService patientTravelDetailsDuringService;
 
 public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boolean checkChangeDate) {
         if (source == null) {
@@ -110,6 +116,34 @@ public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boo
     target.getPatientSymptomsPrecedence().clear();
     target.getPatientSymptomsPrecedence().addAll(patientSymptomsPrecedences);
 
+    //prior
+    List<PatientTravelDetailsPrior> patientTravelDetailsPriors = new ArrayList<>();
+    for (PatientTravelDetailsPriorDto patientTravelDetailsPriorDto : source.getPatientTravelDetailsPrior()) {
+        PatientTravelDetailsPrior patientTravelDetailsPrior = patientTravelDetailsPriorService.getByUuid(patientTravelDetailsPriorDto.getUuid());
+        patientTravelDetailsPrior = fillOrBuildPatientTravelDetailsPriorEntity(patientTravelDetailsPriorDto, patientTravelDetailsPrior, checkChangeDate);
+        patientTravelDetailsPrior.setRiskFactor(target);
+        patientTravelDetailsPriors.add(patientTravelDetailsPrior);
+    }
+    if (!DataHelper.equalContains(target.getPatientTravelDetailsPrior(), patientTravelDetailsPriors)) {
+        target.setChangeDateOfEmbeddedLists(new Date());
+    }
+    target.getPatientTravelDetailsPrior().clear();
+    target.getPatientTravelDetailsPrior().addAll(patientTravelDetailsPriors);
+
+    //during
+    List<PatientTravelDetailsDuring> patientTravelDetailsDurings = new ArrayList<>();
+    for (PatientTravelDetailsDuringDto patientTravelDetailsDuringDto : source.getPatientTravelDetailsDuring()) {
+        PatientTravelDetailsDuring patientTravelDetailsDuring = patientTravelDetailsDuringService.getByUuid(patientTravelDetailsDuringDto.getUuid());
+        patientTravelDetailsDuring = fillOrBuildPatientTravelDetailsDuringEntity(patientTravelDetailsDuringDto, patientTravelDetailsDuring, checkChangeDate);
+        patientTravelDetailsDuring.setRiskFactor(target);
+        patientTravelDetailsDurings.add(patientTravelDetailsDuring);
+    }
+    if (!DataHelper.equalContains(target.getPatientTravelDetailsDuring(), patientTravelDetailsDurings)) {
+        target.setChangeDateOfEmbeddedLists(new Date());
+    }
+    target.getPatientTravelDetailsDuring().clear();
+    target.getPatientTravelDetailsDuring().addAll(patientTravelDetailsDurings);
+
     return target;
     }
 
@@ -180,6 +214,20 @@ public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boo
         }
         target.setPatientSymptomsPrecedence(patientSymptomsPrecedenceDtos);
 
+        List<PatientTravelDetailsPriorDto> patientTravelDetailsPriorDtos = new ArrayList<>();
+        for (PatientTravelDetailsPrior patientTravelDetailsPrior : source.getPatientTravelDetailsPrior()) {
+            PatientTravelDetailsPriorDto patientTravelDetailsPriorDto = toPatientTravelDetailsPriorDto(patientTravelDetailsPrior);
+            patientTravelDetailsPriorDtos.add(patientTravelDetailsPriorDto);
+        }
+        target.setPatientTravelDetailsPrior(patientTravelDetailsPriorDtos);
+
+        List<PatientTravelDetailsDuringDto> patientTravelDetailsDuringDtos = new ArrayList<>();
+        for (PatientTravelDetailsDuring patientTravelDetailsDuring : source.getPatientTravelDetailsDuring()) {
+            PatientTravelDetailsDuringDto patientTravelDetailsDuringDto = toPatientTravelDetailsDuringDto(patientTravelDetailsDuring);
+            patientTravelDetailsDuringDtos.add(patientTravelDetailsDuringDto);
+        }
+        target.setPatientTravelDetailsDuring(patientTravelDetailsDuringDtos);
+
         return target;
     }
 
@@ -208,6 +256,60 @@ public RiskFactor fillOrBuildEntity(RiskFactorDto source, RiskFactor target, boo
         target.setName(source.getName());
         target.setContactAddress(source.getContactAddress());
         target.setPhone(source.getPhone());
+
+        return target;
+    }
+
+    public PatientTravelDetailsPrior fillOrBuildPatientTravelDetailsPriorEntity(PatientTravelDetailsPriorDto source, PatientTravelDetailsPrior target, boolean checkChangeDate) {
+        if (source == null) {
+            return null;
+        }
+        target = DtoHelper.fillOrBuildEntity(source, target, PatientTravelDetailsPrior::new, checkChangeDate);
+
+        target.setDateOfTravel(source.getDateOfTravel());
+        target.setPlaceOfTravel(source.getPlaceOfTravel());
+
+        return target;
+    }
+
+    public static PatientTravelDetailsPriorDto toPatientTravelDetailsPriorDto(PatientTravelDetailsPrior source) {
+
+        if (source == null) {
+            return null;
+        }
+
+        PatientTravelDetailsPriorDto target = new PatientTravelDetailsPriorDto();
+
+        DtoHelper.fillDto(target, source);
+        target.setDateOfTravel(source.getDateOfTravel());
+        target.setPlaceOfTravel(source.getPlaceOfTravel());
+
+        return target;
+    }
+
+    public PatientTravelDetailsDuring fillOrBuildPatientTravelDetailsDuringEntity(PatientTravelDetailsDuringDto source, PatientTravelDetailsDuring target, boolean checkChangeDate) {
+        if (source == null) {
+            return null;
+        }
+        target = DtoHelper.fillOrBuildEntity(source, target, PatientTravelDetailsDuring::new, checkChangeDate);
+
+        target.setDateOfTravel(source.getDateOfTravel());
+        target.setPlaceOfTravel(source.getPlaceOfTravel());
+
+        return target;
+    }
+
+    public static PatientTravelDetailsDuringDto toPatientTravelDetailsDuringDto(PatientTravelDetailsDuring source) {
+
+        if (source == null) {
+            return null;
+        }
+
+        PatientTravelDetailsDuringDto target = new PatientTravelDetailsDuringDto();
+
+        DtoHelper.fillDto(target, source);
+        target.setDateOfTravel(source.getDateOfTravel());
+        target.setPlaceOfTravel(source.getPlaceOfTravel());
 
         return target;
     }

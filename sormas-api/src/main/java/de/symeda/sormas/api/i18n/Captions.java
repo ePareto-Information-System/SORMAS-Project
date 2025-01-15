@@ -3010,6 +3010,12 @@ public interface Captions {
 	String PatientSymptomsPrecedence_name = "name";
 	String PatientSymptomsPrecedence_phone = "phone";
 	String PatientSymptomsPrecedence_contactAddress = "contactAddress";
+	String RiskFactor_patientTravelDetailsPrior = "patientTravelDetailsPrior";
+	String RiskFactor_patientTravelDetailsDuring = "patientTravelDetailsDuring";
+	String PatientTravelDetailsPrior_dateOfTravel = "PatientTravelDetailsPrior.dateOfTravel";
+	String PatientTravelDetailsPrior_placeOfTravel = "PatientTravelDetailsPrior.placeOfTravel";
+	String PatientTravelDetailsDuring_dateOfTravel = "PatientTravelDetailsDuring.dateOfTravel";
+	String PatientTravelDetailsDuring_placeOfTravel = "PatientTravelDetailsDuring.placeOfTravel";
 
 
 	String sormasToSormasCaseNotShared = "sormasToSormasCaseNotShared";

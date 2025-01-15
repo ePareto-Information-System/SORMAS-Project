@@ -25,6 +25,8 @@ import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.NotExposedToApi;
 import de.symeda.sormas.backend.patientsymptomsprecedence.PatientSymptomsPrecedence;
+import de.symeda.sormas.backend.patienttraveldetailsduring.PatientTravelDetailsDuring;
+import de.symeda.sormas.backend.patienttraveldetailsprior.PatientTravelDetailsPrior;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -91,6 +93,8 @@ public class RiskFactor extends AbstractDomainObject {
     private String investigatorTel;
     private String email;
     private List<PatientSymptomsPrecedence> patientSymptomsPrecedence = new ArrayList<>();
+    private List<PatientTravelDetailsPrior> patientTravelDetailsPrior = new ArrayList<>();
+    private List<PatientTravelDetailsDuring> patientTravelDetailsDuring = new ArrayList<>();
     @NotExposedToApi
     private Date changeDateOfEmbeddedLists;
 
@@ -510,6 +514,24 @@ public class RiskFactor extends AbstractDomainObject {
 
     public void setPatientSymptomsPrecedence(List<PatientSymptomsPrecedence> patientSymptomsPrecedence) {
         this.patientSymptomsPrecedence = patientSymptomsPrecedence;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = PatientTravelDetailsPrior.RISK_FACTOR)
+    public List<PatientTravelDetailsPrior> getPatientTravelDetailsPrior() {
+        return patientTravelDetailsPrior;
+    }
+
+    public void setPatientTravelDetailsPrior(List<PatientTravelDetailsPrior> patientTravelDetailsPrior) {
+        this.patientTravelDetailsPrior = patientTravelDetailsPrior;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = PatientTravelDetailsDuring.RISK_FACTOR)
+    public List<PatientTravelDetailsDuring> getPatientTravelDetailsDuring() {
+        return patientTravelDetailsDuring;
+    }
+
+    public void setPatientTravelDetailsDuring(List<PatientTravelDetailsDuring> patientTravelDetailsDuring) {
+        this.patientTravelDetailsDuring = patientTravelDetailsDuring;
     }
 
     /**
